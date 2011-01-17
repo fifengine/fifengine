@@ -24,10 +24,7 @@
 #include "video/image.h"
 #include "video/cursor.h"
 #include "video/animation.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
 #include "video/renderbackend.h"
-#include "video/image_location.h"
 #include "video/devicecaps.h"
 #include "util/base/exception.h"
 %}
@@ -44,15 +41,14 @@ namespace std {
 }
 
 namespace FIFE {
-	class Pool;
 	class Point;
 	class ResourceLocation;
 
 	%apply uint8_t *OUTPUT { uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a };
 
-	class AbstractImage {
+	class IImage {
 	public:
-		virtual ~AbstractImage() {}
+		virtual ~IImage() {}
 		virtual SDL_Surface* getSurface() = 0;
 		virtual uint32_t getWidth() const = 0;
 		virtual uint32_t getHeight() const = 0;
@@ -73,7 +69,7 @@ namespace FIFE {
 		virtual bool isAlphaOptimizerEnabled() = 0;
 	};
 	
-	class Image : public AbstractImage, public ResourceClass {
+	class Image : public IResource, public IImage {
 	public:
 		void render(const Rect& rect, uint8_t alpha = 255);
 		virtual ~Image();
@@ -91,16 +87,13 @@ namespace FIFE {
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
-		void addRef();
-		void decRef();
-		uint32_t getRefCount();
 		
 	private:
 		Image(SDL_Surface* surface);
 		Image(const uint8_t* data, uint32_t width, uint32_t height);
 	};
 	
-	class Animation: public ResourceClass {
+	class Animation: public IResource {
 	public:
 		explicit Animation();
 		~Animation();
@@ -115,44 +108,9 @@ namespace FIFE {
 		void setDirection(uint32_t direction);
 		uint32_t getDirection();
 		int32_t getDuration();
-		void addRef();
-		void decRef();
-		uint32_t getRefCount();
 	};
 
-	class ImageLocation: public ResourceLocation {
-	public:
-		ImageLocation(const std::string& filename);
-		virtual ~ImageLocation() {};
-		virtual void setXShift(int32_t xshift) { m_xshift = xshift; }
-		virtual int32_t getXShift() const { return m_xshift; }
-		virtual void setYShift(int32_t yshift) { m_yshift = yshift; }
-		virtual int32_t getYShift() const { return m_yshift; }
-		virtual void setWidth(uint32_t width) { m_width = width; }
-		virtual uint32_t getWidth() const { return m_width; }
-		virtual void setHeight(uint32_t height) { m_height = height; }
-		virtual uint32_t getHeight() const { return m_height; }
-		virtual void setParentSource(Image* image) { m_parent_image = image; }
-		virtual Image* getParentSource() const { return m_parent_image; }
-	};
-
-	class ImagePool: public Pool {
-	public:
-		virtual ~ImagePool();
-		inline Image& getImage(uint32_t index);
-	private:
-		ImagePool();
-	};
-
-	class AnimationPool: public Pool {
-	public:
-		virtual ~AnimationPool();
-		inline Animation& getAnimation(uint32_t index);
-	private:
-		AnimationPool();
-	};
-
-	class RenderBackend: public AbstractImage {
+	class RenderBackend: public IImage {
 	public:
 		virtual ~RenderBackend();
 		virtual const std::string& getName() const = 0;
@@ -232,7 +190,7 @@ namespace FIFE {
 		uint32_t getY() const;
 	
 	private:
-		Cursor(ImagePool* imgpool, AnimationPool* animpool);
+		Cursor();
 	};
 	
 	class ScreenMode {

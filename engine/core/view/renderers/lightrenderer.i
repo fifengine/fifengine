@@ -154,7 +154,7 @@ namespace FIFE {
 	};
 	class LightRenderer: public RendererBase {
 	public:
-		LightRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
+		LightRenderer(RenderBackend* renderbackend, int32_t position);
 		~LightRenderer();
 		std::string getName();
 		static LightRenderer* getInstance(IRendererContainer* cnt);

@@ -51,10 +51,10 @@ namespace FIFE {
 		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
 
-	class Map : public ResourceClass {
+	class Map : public FifeClass {
 		public:
 
-			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, ImagePool* imagepool, AnimationPool* animpool, TimeProvider* tp_master=NULL);
+			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, TimeProvider* tp_master=NULL);
 			~Map();
 
 			const std::string& getId() const;

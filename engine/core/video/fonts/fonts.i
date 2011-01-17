@@ -61,11 +61,10 @@ namespace FIFE {
 		virtual int32_t getHeight() const;
 	};
 
-	class ImagePool;
 	%feature("notabstract") SubImageFont;
 	class SubImageFont: public FontBase {
 	public:
-		SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
+		SubImageFont(const std::string& filename, const std::string& glyphs);
 		virtual ~SubImageFont();
 		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 		virtual int32_t getWidth(const std::string& text) const;

@@ -29,9 +29,6 @@ namespace FIFE {
 	class EventManager;
 	class TimeManager;
 	class GUIManager;
-	class ImagePool;
-	class AnimationPool;
-	class SoundClipPool;
 	class RenderBackend;
 	class Model;
 	class LogManager;
@@ -115,9 +112,6 @@ namespace FIFE {
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
 		GUIManager* getGuiManager();
-		ImagePool* getImagePool();
-		AnimationPool* getAnimationPool();
-		SoundClipPool* getSoundClipPool();
 		RenderBackend* getRenderBackend();
 		Model* getModel();
 		LogManager* getLogManager();

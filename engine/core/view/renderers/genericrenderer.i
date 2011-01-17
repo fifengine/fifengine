@@ -176,7 +176,7 @@ namespace FIFE {
 	};
 	class GenericRenderer: public RendererBase {
 	public:
-		GenericRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
+		GenericRenderer(RenderBackend* renderbackend, int32_t position);
 		~GenericRenderer();
 		std::string getName();
 		static GenericRenderer* getInstance(IRendererContainer* cnt);

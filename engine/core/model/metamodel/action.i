@@ -29,7 +29,7 @@
 
 namespace FIFE {
 
-	class Action : public ResourceClass {
+	class Action : public FifeClass {
 	public:
 		Action(const std::string& identifier);
 		virtual ~Action();
