@@ -45,14 +45,27 @@ namespace FIFE {
 		//gets the total amount of memory used by resources
 		virtual size_t getMemoryUsed() const;
 
+		//gets the total number of resources created but not loaded
+		virtual uint32_t getTotalResourcesCreated();
+
+		//gets the total number of resource loaded
+		virtual uint32_t getTotalResourcesLoaded();
+
+		//gets the total number of resources defined
+		virtual uint32_t getTotalResources();
+
 		//creates a blank resource but does not load it immediately
 		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
 
 		//creates a resources and loads it
-		virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0) = 0;
+		virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0);
 
 		//add a resrouce to the manager that the manager did not load
 		virtual ResourcePtr add(IResource* res);
+
+		//checks to make sure resouce exists
+		virtual bool exists(const std::string& name);
+		virtual bool exists(ResourceHandle handle);
 
 		//forces a reload of a resource (even if it's not loaded)
 		virtual void reload(const std::string& name);
@@ -80,14 +93,14 @@ namespace FIFE {
 		virtual void removeUnreferenced();
 
 		//get a shared pointer to the resource
-		//loads the resrouce if required
+		//loads the resource if required
 		virtual ResourcePtr get(const std::string& name);
 		virtual ResourcePtr get(ResourceHandle handle);
 
 		//get the resource handle by name
 		virtual ResourceHandle getResourceHandle(const std::string& name);
 
-	private:
+	protected:
 		typedef std::map< ResourceHandle, ResourcePtr > ResourceHandleMap;
 		typedef std::map< ResourceHandle, ResourcePtr >::iterator ResourceHandleMapIterator;
 		typedef std::map< ResourceHandle, ResourcePtr >::const_iterator ResourceHandleMapConstIterator;
