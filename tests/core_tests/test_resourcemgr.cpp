@@ -58,18 +58,24 @@ public:
 		TestResource* ptr = new TestResource(name, loader);
 		return add(ptr);
 	}
-
-	//creates a resources and loads it
-	virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0){
-		TestResource* ptr = new TestResource(name, loader);
-		ptr->load();
-		return add(ptr);
-	}
 };
 
-TEST(case1) {
-	TestManager resmgr;
+//Global resource manager to be used this entire unittest
+TestManager resmgr;
 
+/**
+* 1. "Create" a resource and save the SharedPtr
+* 2. Check that the resource is not loaded
+* 3. "Get" another shared pointer to that resource
+* 4. Check to make sure that resource is now loaded
+* 5. Check equality of both shared pointers
+* 6. "Free" the second shared pointer
+* 7. Check that the resource has now been freed and is not loaded
+* 8. Remove the resource
+* 9. Check to make sure resource no longer exists
+**/
+
+TEST(case1) {
 	ResourcePtr ptr = resmgr.create("test_resource1");
 
 	CHECK(ptr->getState() == IResource::RES_NOT_LOADED);
@@ -83,6 +89,55 @@ TEST(case1) {
 	resmgr.free(ptr2->getHandle());
 
 	CHECK(ptr2->getState() == IResource::RES_NOT_LOADED);
+
+	resmgr.remove(ptr2->getHandle());
+
+	CHECK(!resmgr.exists(ptr->getHandle()));
+}
+
+/**
+* 1. "Load" a resource and save the SharedPtr
+* 2. Check that the resource is loaded
+* 3. reset the shared pointer to the resource
+* 3. Remove all unreferenced resources
+* 4. Check that the resource has been removed from the manager
+**/
+
+TEST(case2) {
+	ResourcePtr ptr = resmgr.load("test_resource2");
+
+	CHECK(ptr->getState() == IResource::RES_LOADED);
+
+	ptr.reset();
+
+	resmgr.removeUnreferenced();
+
+	CHECK(!resmgr.exists("test_resource2"));
+
+}
+
+/**
+* 1. "Load" a resource and save the SharedPtr
+* 2. Check that the resource is loaded
+* 3. reset the shared pointer to the resource
+* 3. Unload all unreferenced resources
+* 4. Check that the resource has not been removed from the manager
+* 5. Check to make sure that 1 resource is defined but not loaded
+**/
+
+TEST(case3) {
+	ResourcePtr ptr = resmgr.load("test_resource3");
+
+	CHECK(ptr->getState() == IResource::RES_LOADED);
+
+	ptr.reset();
+
+	resmgr.freeUnreferenced();
+
+	CHECK(resmgr.exists("test_resource3"));
+
+	CHECK(resmgr.getTotalResourcesCreated() == 1);
+	CHECK(resmgr.getTotalResourcesLoaded() == 0);
 }
 
 int32_t main() {

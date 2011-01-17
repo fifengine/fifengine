@@ -52,7 +52,61 @@ namespace FIFE {
 		return totalSize;
 	}
 
-	ResourcePtr IResourceManager::add(IResource* res){
+	uint32_t IResourceManager::getTotalResourcesCreated() {
+		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		uint32_t count = 0;
+
+		for ( ; it != m_resHandleMap.end(); it++) {
+			if ( it->second->getState() == IResource::RES_NOT_LOADED ) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	uint32_t IResourceManager::getTotalResourcesLoaded() {
+		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		uint32_t count = 0;
+
+		for ( ; it != m_resHandleMap.end(); it++) {
+			if ( it->second->getState() == IResource::RES_LOADED ) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	uint32_t IResourceManager::getTotalResources() {
+		return m_resHandleMap.size();
+	}
+
+	ResourcePtr IResourceManager::load(const std::string& name, IResourceLoader* loader) {
+		ResourceHandleMapIterator it = m_resHandleMap.begin();
+
+		for ( ; it != m_resHandleMap.end(); it++) {
+			if ( it->second->getName() == name ) {
+				if ( it->second->getState() == IResource::RES_NOT_LOADED ) {
+					it->second->load();
+				}
+				return it->second;
+			}
+		}
+
+		//was not found so create and load resource
+		ResourcePtr ptr = create(name, loader);
+		ptr->load();
+
+		if (ptr->getState() == IResource::RES_NOT_LOADED){
+			FL_WARN(_log, LMsg("IResourceManager::load(std::string) - ") << "Resource name " << name << " was not found and could not be loaded.");
+			remove(name);
+		}
+
+		return ptr;
+	}
+
+	ResourcePtr IResourceManager::add(IResource* res) {
 		assert(res);
 
 		ResourcePtr resptr(res);
@@ -64,6 +118,27 @@ namespace FIFE {
 			FL_WARN(_log, LMsg("IResourceManager::add(IResource*) - ") << "Resource " << res->getName() << " already exists.... ignoring.");
 
 		return returnValue.first->second;
+	}
+
+	bool IResourceManager::exists(const std::string& name) {
+		ResourceHandleMapIterator it = m_resHandleMap.begin();
+
+		for ( ; it != m_resHandleMap.end(); it++) {
+			if ( it->second->getName() == name ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool IResourceManager::exists(ResourceHandle handle) {
+		ResourceHandleMapConstIterator it = m_resHandleMap.find(handle);
+		if (it != m_resHandleMap.end()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	void IResourceManager::reload(const std::string& name) {
@@ -210,7 +285,7 @@ namespace FIFE {
 
 		int32_t count = 0;
 		for ( ; it != m_resHandleMap.end(); it++) {
-			if ( it->second.useCount() == 1) {
+			if ( it->second.useCount() <= 1) {
 				m_resHandleMap.erase(it);
 				count++;
 			}
@@ -233,13 +308,8 @@ namespace FIFE {
 			}
 		}
 
-		//not found (or not loaded)... attempt to load
+		//not found (or not loaded)... create and attmpt to create and load resource
 		ResourcePtr ptr = load(name);
-
-		if (!ptr){
-			FL_WARN(_log, LMsg("IResourceManager::get(std::string) - ") << "Resource name " << name << " was not found and could not be loaded.");
-		}
-
 		return ptr;
 	}
 
