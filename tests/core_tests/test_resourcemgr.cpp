@@ -138,6 +138,104 @@ TEST(case3) {
 
 	CHECK(resmgr.getTotalResourcesCreated() == 1);
 	CHECK(resmgr.getTotalResourcesLoaded() == 0);
+
+	//clean up for the next test
+	CHECK(resmgr.getTotalResources() == 1);
+	resmgr.removeAll();
+	CHECK(resmgr.getTotalResources() == 0);
+}
+
+/**
+* 1. "Create" a couple resources
+* 2. Check to make sure there are 2 non loaded resources
+* 3. "Reload" all unreferenced resources
+* 4. Check to make sure there are 2 loaded resources
+**/
+
+TEST(case4) {
+	resmgr.create("test_resource4a");
+	resmgr.create("test_resource4b");
+
+	CHECK(resmgr.getTotalResourcesCreated() == 2);
+	CHECK(resmgr.getTotalResourcesLoaded() == 0);
+
+	//clean up for the next test
+	resmgr.removeAll();
+}
+
+/**
+* 1. "Load" a couple resources
+* 2. Check to make sure there are 2 loaded resources
+* 3. Free all resources
+* 4. Check that there are 0 resources loaded and 2 created
+**/
+
+TEST(case5) {
+	resmgr.load("test_resource5a");
+	resmgr.load("test_resource5b");
+
+	CHECK(resmgr.getTotalResourcesCreated() == 0);
+	CHECK(resmgr.getTotalResourcesLoaded() == 2);
+
+	resmgr.freeAll();
+
+	CHECK(resmgr.getTotalResourcesCreated() == 2);
+	CHECK(resmgr.getTotalResourcesLoaded() == 0);
+
+	//clean up for the next test
+	resmgr.removeAll();
+}
+
+/**
+* 1. "Load" a couple resources
+* 2. Check to make sure there are 2 loaded resources
+* 3. Free one resource
+* 4. Check that there are 1 resources loaded and 1 created
+**/
+
+TEST(case6) {
+	resmgr.load("test_resource6a");
+	resmgr.load("test_resource6b");
+
+	CHECK(resmgr.getTotalResourcesLoaded() == 2);
+
+	resmgr.free("test_resource6a");
+
+	CHECK(resmgr.getTotalResourcesCreated() == 1);
+	CHECK(resmgr.getTotalResourcesLoaded() == 1);
+
+	//clean up for the next test
+	resmgr.removeAll();
+}
+
+/**
+* 1. "Load" a resources
+* 2. Get the resource handle
+* 3. Free the resource using it's handle
+* 4. Check that there is 0 resource loaded and 1 created
+* 5. "Get" the resource
+* 6. Check that the resource is now loaded
+**/
+
+TEST(case7) {
+	resmgr.load("test_resource7");
+
+	CHECK(resmgr.getTotalResourcesCreated() == 0);
+	CHECK(resmgr.getTotalResourcesLoaded() == 1);
+
+	std::size_t handle = resmgr.getResourceHandle("test_resource7");
+
+	resmgr.free(handle);
+
+	CHECK(resmgr.getTotalResourcesCreated() == 1);
+	CHECK(resmgr.getTotalResourcesLoaded() == 0);
+
+	ResourcePtr ptr = resmgr.get(handle);
+
+	CHECK(ptr->getState() == IResource::RES_LOADED);
+
+	//clean up for the next test
+	resmgr.removeAll();
 }
 
 int32_t main() {
