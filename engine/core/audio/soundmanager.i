@@ -22,7 +22,6 @@
 %module soundmanager
 %{
 #include "audio/soundmanager.h"
-#include "audio/soundclippool.h"
 %}
 
 %include "util/resource/resource.i"
@@ -30,17 +29,9 @@
 namespace FIFE {
 	class SoundClip;
 
-	class SoundClipPool: public Pool {
-	public:
-		virtual ~SoundClipPool();
-		inline SoundClip& getSoundClip(uint32_t index);
-	private:
-		SoundClipPool();
-	};
-
 	class SoundManager {
 		public:
-			SoundManager(SoundClipPool*);
+			SoundManager();
 			~SoundManager();
 	
 			void init();

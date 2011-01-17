@@ -21,7 +21,6 @@
 
 %module fife
 %{
-#include "util/base/resourceclass.h"
 #include "util/base/fifeclass.h"
 %}
 
@@ -37,25 +36,4 @@ namespace FIFE {
 		virtual ~FifeClass();
 		fifeid_t getFifeId();
 	};
-
-	class ResourceClass: public FifeClass, public IResource {
-	public:
-		virtual ~ResourceClass();
-		const ResourceLocation& getResourceLocation();
-		const std::string& getResourceFile();
-
-		virtual void setResourceLocation(const ResourceLocation& location);
-		virtual void setResourceFile(const std::string& filename);
-	
-		int32_t getPoolId();
-		void setPoolId(int32_t poolid);
-
-		void addRef();
-		void decRef();
-		uint32_t getRefCount();
-	
-	private:
-		ResourceClass();
-	};	
-	
 }

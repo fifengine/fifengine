@@ -43,7 +43,7 @@ namespace FIFE {
 	class GuiImage: public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int32_t id, ImagePool& pool);
+		GuiImage(int32_t id);
 		int32_t getWidth() const;
 		int32_t getHeight() const;
 	};

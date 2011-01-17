@@ -53,7 +53,7 @@ namespace FIFE {
 	};
 	
 
-	class Layer : public ResourceClass {
+	class Layer : public FifeClass {
 		public:
 			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
 			~Layer();

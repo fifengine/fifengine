@@ -21,91 +21,85 @@
 %module fife
 
 %{
+#include "util/base/sharedptr.h"
 #include "util/resource/resource.h"
-#include "util/resource/resource_ptr.h"
-#include "util/resource/resource_location.h"
-#include "util/resource/pool.h"
 %}
 
 namespace FIFE {
 
-	enum ResourceLocationType {
-		RES_TYPE_FILE = 0,
-		RES_TYPE_IMAGE = 1
-	};
-	
-	
-	class ResourceLocation {
+//	%warnfilter(473) ResourceLoader; // filter out "returning a pointer or reference in a director method is not recommended"
+//	%feature("director") ResourceLoader;
+//	class ResourceLoader {
+//	public:
+//		virtual ~ResourceLoader() { };
+//		virtual IResource* loadResource(const ResourceLocation& location) = 0;
+//	};
+
+	typedef std::size_t ResourceHandle;
+
+	class IResource;
+
+	class IResourceLoader {
 	public:
-		ResourceLocation(const std::string& filename);
-		virtual ~ResourceLocation() {};
-		const std::string& getFilename() const;
-		virtual bool operator ==(const ResourceLocation& loc) const;
-		virtual bool operator <(const ResourceLocation& loc) const;
-		virtual ResourceLocation* clone() const;
-		
-		ResourceLocationType getType() const;
+		IResourceLoader() { }
+		virtual ~IResourceLoader() { }
+
+		virtual void load(IResource* resource) = 0;
 	};
 
-
-	class IReferenceCounted {
-		virtual ~IReferenceCounted();
-		virtual void addRef() = 0;
-		virtual void decRef() = 0;
-		virtual uint32_t getRefCount() = 0;
-	};
-
-	class IResource: public IReferenceCounted {
+	class IResource {
 	public:
-		virtual ~IResource() {};
-		virtual const ResourceLocation& getResourceLocation() = 0;
-		virtual const std::string& getResourceFile() = 0;
-		virtual void setResourceLocation(const ResourceLocation& location) = 0;
-		virtual void setResourceFile(const std::string& filename) = 0;
-		virtual int32_t getPoolId() = 0;
-		virtual void setPoolId(int32_t poolid) = 0;
+		enum ResourceState {
+			RES_NOT_LOADED,
+			RES_LOADED
+		};
+
+		virtual ~IResource();
+
+		virtual const std::string& getName();
+
+		ResourceHandle getHandle();
+
+		virtual ResourceState getState();
+		virtual void setState(ResourceState& state);
+
+		virtual size_t getSize() = 0;
+
+		virtual void load() = 0;
+		virtual void free() = 0;
 	};
 
-	%warnfilter(473) ResourceLoader; // filter out "returning a pointer or reference in a director method is not recommended"
-	%feature("director") ResourceLoader;
-	class ResourceLoader {
-	public:
-		virtual ~ResourceLoader() { };
-		virtual IResource* loadResource(const ResourceLocation& location) = 0;
+    template <typename T>
+    class SharedPtr {
+    public:
+        SharedPtr();
+        
+        template <typename U>
+        explicit SharedPtr(U *ptr);
+        
+        SharedPtr(const SharedPtr& rhs);
+        
+        template <typename U>
+        SharedPtr(const SharedPtr<U>& rhs);
+        
+        ~SharedPtr();
+        
+        SharedPtr& operator=(const SharedPtr& rhs);
+        
+        template <typename U>
+        SharedPtr& operator=(const SharedPtr<U>& rhs);
+        
+        inline T& operator*() const;
+        inline T* operator->() const;
+        inline T* get() const;
+        inline void reset(T* ptr = 0);
+        inline uint32_t useCount() const;
+        inline uint32_t* useCountPtr() const;
+        inline bool unique() const;
+        operator bool();
+        bool operator!() const;
 	};
 
-	class ResourceSaver {
-	public:
-		virtual ~ResourceSaver() { };
-		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
-		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
-	};
+	typedef SharedPtr<IResource> ResourcePtr;
 
-	class Pool {
-	public:
-		static const int32_t INVALID_ID = -1;
-		virtual ~Pool();
-		virtual int32_t addResourceFromFile(const std::string& filename);
-		virtual int32_t addResourceFromLocation(ResourceLocation* loc);
-		virtual int32_t getResourceCount(int32_t status);
-		virtual int32_t purgeLoadedResources();
-		virtual void addResourceLoader(ResourceLoader* loader);
-		virtual void clearResourceLoaders();
-		virtual void release(uint32_t index, bool dec = false);
-		virtual IResource& get(uint32_t index, bool inc = false);
-		virtual void printStatistics();
-
-	private:
-		Pool();
-	};
-
-	class ResourcePtr {
-	public:
-		ResourcePtr(IResource* ptr = 0);
-		ResourcePtr(Pool* pool,int32_t index);
-		ResourcePtr(const ResourcePtr& r);
-		void release();
-		void load();
-		void unload();
-	};
 }

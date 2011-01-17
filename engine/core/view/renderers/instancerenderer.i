@@ -27,8 +27,6 @@
 namespace FIFE {
 	class Location;
 	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -48,6 +46,6 @@ namespace FIFE {
 		void removeAllIgnoreLight();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 	private:
-		InstanceRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
+		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }
