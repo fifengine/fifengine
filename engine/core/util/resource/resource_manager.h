@@ -69,7 +69,7 @@ namespace FIFE {
 
 		//forces a reload of a resource (even if it's not loaded)
 		virtual void reload(const std::string& name);
-		virtual void reload(ResourcePtr& res);
+		virtual void reload(ResourceHandle res);
 		virtual void reloadAll();
 
 		//loads all unreferenced resources
@@ -84,7 +84,7 @@ namespace FIFE {
 		virtual void freeUnreferenced();
 
 		//free memory and remove from manager
-		virtual void remove(ResourcePtr& resource);
+		virtual void remove(ResourcePtr& resource); //useful to remove ownership from the manager
 		virtual void remove(const std::string& name);
 		virtual void remove(ResourceHandle handle);
 		virtual void removeAll();
@@ -106,15 +106,14 @@ namespace FIFE {
 		typedef std::map< ResourceHandle, ResourcePtr >::const_iterator ResourceHandleMapConstIterator;
 		typedef std::pair< ResourceHandle, ResourcePtr > ResourceHandleMapPair;
 
-		typedef std::map< std::string, ResourceHandle > ResourceNameHandleMap;
-		typedef std::map< std::string, ResourceHandle >::iterator ResourceNameHandleMapIterator;
-		typedef std::map< std::string, ResourceHandle >::const_iterator ResourceNameHandleMapConstIterator;
-		typedef std::pair< std::string, ResourceHandle > ResourceNameHandleMapPair;
+		typedef std::map< std::string, ResourcePtr > ResourceNameMap;
+		typedef std::map< std::string, ResourcePtr >::iterator ResourceNameMapIterator;
+		typedef std::map< std::string, ResourcePtr >::const_iterator ResourceNameMapConstIterator;
+		typedef std::pair< std::string, ResourcePtr > ResourceNameMapPair;
 
 		ResourceHandleMap m_resHandleMap;
 
-		//@todo implement this for faster name lookup
-		ResourceNameHandleMap m_resNameHandleMap;
+		ResourceNameMap m_resNameMap;
 	};
 
 } //FIFE
