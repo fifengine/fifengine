@@ -84,11 +84,6 @@ namespace FIFE {
         
         ~SharedPtr();
         
-        SharedPtr& operator=(const SharedPtr& rhs);
-        
-        template <typename U>
-        SharedPtr& operator=(const SharedPtr<U>& rhs);
-        
         inline T& operator*() const;
         inline T* operator->() const;
         inline T* get() const;
@@ -97,7 +92,6 @@ namespace FIFE {
         inline uint32_t* useCountPtr() const;
         inline bool unique() const;
         operator bool();
-        bool operator!() const;
 	};
 
 	typedef SharedPtr<IResource> ResourcePtr;

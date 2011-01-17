@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 
-#include "resource_manager.h"
+#include "resourcemanager.h"
 #include "resource.h"
 
 namespace FIFE {
