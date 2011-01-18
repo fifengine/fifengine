@@ -52,8 +52,8 @@ namespace FIFE {
 		return totalSize;
 	}
 
-	uint32_t IResourceManager::getTotalResourcesCreated() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+	uint32_t IResourceManager::getTotalResourcesCreated() const {
+		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
 		uint32_t count = 0;
 
 		for ( ; it != m_resHandleMap.end(); it++) {
@@ -65,8 +65,8 @@ namespace FIFE {
 		return count;
 	}
 
-	uint32_t IResourceManager::getTotalResourcesLoaded() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+	uint32_t IResourceManager::getTotalResourcesLoaded() const {
+		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
 		uint32_t count = 0;
 
 		for ( ; it != m_resHandleMap.end(); it++) {
@@ -78,7 +78,7 @@ namespace FIFE {
 		return count;
 	}
 
-	uint32_t IResourceManager::getTotalResources() {
+	uint32_t IResourceManager::getTotalResources() const {
 		return m_resHandleMap.size();
 	}
 
@@ -152,7 +152,7 @@ namespace FIFE {
 			return;
 		}
 
-		FL_DBG(_log, LMsg("IResourceManager::reload(std::string) - ") << "Resource name " << name << " not found.");
+		FL_WARN(_log, LMsg("IResourceManager::reload(std::string) - ") << "Resource name " << name << " not found.");
 	}
 
 	void IResourceManager::reload(ResourceHandle handle) {
@@ -166,7 +166,7 @@ namespace FIFE {
 			return;
 		}
 
-		FL_DBG(_log, LMsg("IResourceManager::reload(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
+		FL_WARN(_log, LMsg("IResourceManager::reload(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
 
 	}
 
@@ -201,7 +201,10 @@ namespace FIFE {
 			if ( nit->second->getState() == IResource::RES_LOADED) {
 				nit->second->free();
 			}
+			return;
 		}
+
+		FL_WARN(_log, LMsg("IResourceManager::free(std::string) - ") << "Resource name " << name << " not found.");
 	}
 
 	void IResourceManager::free(ResourceHandle handle) {
@@ -210,7 +213,10 @@ namespace FIFE {
 			if ( it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 			}
+			return;
 		}
+
+		FL_WARN(_log, LMsg("IResourceManager::free(ResourceHandle) - ") << "Resource handle " << handle << " not found.");
 	}
 
 	void IResourceManager::freeAll() {
@@ -238,6 +244,7 @@ namespace FIFE {
 				count++;
 			}
 		}
+
 		FL_DBG(_log, LMsg("IResourceManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
 	}
 
