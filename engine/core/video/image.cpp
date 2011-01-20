@@ -114,10 +114,12 @@ namespace FIFE {
 	void Image::load() {
 		ImageLoader loader;
 		loader.load(this);
+		m_state = IResource::RES_LOADED;
 	}
 
 	void Image::free() {
 		reset(NULL);
+		m_state = IResource::RES_NOT_LOADED;
 	}
 
 	SDL_Surface* Image::detachSurface() {

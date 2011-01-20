@@ -41,6 +41,7 @@
 #include "video/renderbackend.h"
 #include "video/image.h"
 #include "video/animation.h"
+#include "video/imagemanager.h"
 
 #include "camera.h"
 #include "layercache.h"
@@ -184,7 +185,8 @@ namespace FIFE {
 			} else {
 //prock - 504
 //				image = &m_image_pool->getImage(image_id);
-				image = NULL;
+				ResourcePtr resptr = ImageManager::instance()->get(image_id);
+				Image* image = dynamic_cast<Image*>(resptr.get());
 			}
 		}
 		item.force_update = bool(action);

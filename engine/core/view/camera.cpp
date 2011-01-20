@@ -43,6 +43,7 @@
 #include "video/renderbackend.h"
 #include "video/image.h"
 #include "video/animation.h"
+#include "video/imagemanager.h"
 
 #include "camera.h"
 #include "layercache.h"
@@ -740,8 +741,8 @@ namespace FIFE {
 		// image overlay
 		if (m_img_overlay) {
 //prock - 504
-//			Image* img = &m_ipool->getImage(m_img_id);
-			Image* img = NULL;
+			ResourcePtr resptr = ImageManager::instance()->get(m_img_id);
+			Image* img = dynamic_cast<Image*>(resptr.get());
 			if (img) {
 				if (m_img_fill) {
 					r.w = width;

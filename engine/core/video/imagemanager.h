@@ -33,6 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/singleton.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
 
@@ -48,7 +49,7 @@ namespace FIFE {
 	 *
 	 */
 
-	class ImageManager : public IResourceManager {
+	class ImageManager : public IResourceManager, public DynamicSingleton<ImageManager> {
 	public:
 
 		/** Default constructor.
