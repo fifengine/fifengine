@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 #include "util/base/fife_stdint.h"
-#include "util/resource/resource_manager.h"
+#include "util/resource/resourcemanager.h"
 #include "util/resource/resource.h"
 
 using namespace FIFE;

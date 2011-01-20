@@ -31,38 +31,43 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "controller/engine.h"
 #include "util/base/exception.h"
 #include "util/resource/resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
 
-#include "image_loader.h"
+#include "imageloader.h"
 
 namespace FIFE {
 	void ImageLoader::load(IResource* res) {
 //prock - 504
-//		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
-//
-//		const std::string& filename = location.getFilename();
-//		boost::scoped_ptr<RawData> data (m_vfs->open(filename));
-//		size_t datalen = data->getDataLength();
-//		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
-//		data->readInto(darray.get(), datalen);
-//		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
-//		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-//		SDL_FreeRW(rwops);
+		VFS* vfs = VFS::instance();
+
+		Image* img = dynamic_cast<Image*>(res);
+
+		const std::string& filename = img->getName();
+		boost::scoped_ptr<RawData> data (vfs->open(filename));
+		size_t datalen = data->getDataLength();
+		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+		data->readInto(darray.get(), datalen);
+		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
+
+		SDL_Surface* surface = IMG_Load_RW(rwops, false);
+		img->setSurface(surface);
+
+		SDL_FreeRW(rwops);
+
 //		if( !surface ) {
 //			return 0;
 //		}
-//
 //		Image* res = RenderBackend::instance()->createImage(surface);
 //		res->setResourceLocation(location);
 //		if (loc) {
 //			res->setXShift(loc->getXShift());
 //			res->setYShift(loc->getYShift());
 //		}
-//		res->setAlphaOptimizerEnabled(true);
-//		return res;
+		img->setAlphaOptimizerEnabled(true);
 	}
 }

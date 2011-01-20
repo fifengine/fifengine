@@ -74,6 +74,11 @@ namespace FIFE {
 		return m_screen->getSurface();
 	}
 
+	void RenderBackend::setSurface(SDL_Surface* surface) {
+		assert(m_screen);
+		m_screen->setSurface(surface);
+	}
+
 	const ScreenMode& RenderBackend::getCurrentScreenMode() const{
 		return m_screenMode;
 	}

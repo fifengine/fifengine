@@ -24,6 +24,7 @@
 #include "video/image.h"
 #include "video/cursor.h"
 #include "video/animation.h"
+#include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
 #include "util/base/exception.h"
@@ -91,6 +92,14 @@ namespace FIFE {
 	private:
 		Image(SDL_Surface* surface);
 		Image(const uint8_t* data, uint32_t width, uint32_t height);
+	};
+	
+	class ImageManager : public IResourceManager {
+	public:
+		virtual ~ImageManager();
+		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0);
+	private:
+		ImageManager();
 	};
 	
 	class Animation: public IResource {

@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
+#include "loaders/native/video/imageloader.h"
 
 #include "image.h"
 
@@ -110,10 +111,23 @@ namespace FIFE {
 		reset(NULL);
 	}
 
+	void Image::load() {
+		ImageLoader loader;
+		loader.load(this);
+	}
+
+	void Image::free() {
+		reset(NULL);
+	}
+
 	SDL_Surface* Image::detachSurface() {
 		SDL_Surface* srf = m_surface;
 		m_surface = NULL;
 		return srf;
+	}
+
+	void Image::setSurface(SDL_Surface* surface) {
+		reset(surface);
 	}
 
 	uint32_t Image::getWidth() const {

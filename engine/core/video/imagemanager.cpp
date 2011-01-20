@@ -39,6 +39,10 @@
 namespace FIFE {
 	static Logger _log(LM_RESMGR);
 
+	ImageManager::~ImageManager() {
+
+	}
+
 	ResourcePtr ImageManager::create(const std::string& name, IResourceLoader* loader){
 		Image* ptr = RenderBackend::instance()->createImage(name, loader);
 		return add(ptr);
