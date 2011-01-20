@@ -96,6 +96,17 @@ namespace FIFE {
 		resetGlimage();
 	}
 
+	void GLImage::setSurface(SDL_Surface* surface) {
+		reset(surface);
+
+		assert(m_sdlimage);
+		m_sdlimage->detachSurface();
+		delete m_sdlimage;
+
+		m_sdlimage = new SDLImage(m_surface);
+		resetGlimage();
+	}
+
 	void GLImage::resetGlimage() {
 		cleanup();
 

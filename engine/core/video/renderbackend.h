@@ -189,6 +189,7 @@ namespace FIFE {
 		void captureScreen(const std::string& filename);
 
 		SDL_Surface* getSurface();
+		void setSurface(SDL_Surface* surface);
 
 		/** Get current screen mode
 		 * @return The current screen mode

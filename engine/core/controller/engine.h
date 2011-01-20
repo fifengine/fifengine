@@ -61,6 +61,7 @@ namespace FIFE {
 	class Cursor;
 	class RendererBase;
 	class Image;
+	class ImageManager;
 
 
 	class IEngineChangeListener {
@@ -146,9 +147,9 @@ namespace FIFE {
 		GUIManager* getGuiManager() const { return m_guimanager; }
 
 //prock - 504
-//		/** Provides access point to the ImagePool
-//		 */
-//		ImagePool* getImagePool() const { return m_imagepool; }
+		/** Provides access point to the ImageManager
+		 */
+		ImageManager* getImageManager() const { return m_imagemanager; }
 //
 //		/** Provides access point to the AnimationPool
 //		 */
@@ -200,6 +201,7 @@ namespace FIFE {
 		TimeManager* m_timemanager;
 //prock - 504
 //		ImagePool* m_imagepool;
+		ImageManager* m_imagemanager;
 //		AnimationPool* m_animpool;
 //		SoundClipPool* m_soundclippool;
 

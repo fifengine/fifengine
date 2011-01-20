@@ -39,6 +39,7 @@ namespace FIFE {
 	class DeviceCaps;
 	class ScreenMode;
 	class Image;
+	class ImageManager;
 
 	class EngineSettings {
 	public:
@@ -112,6 +113,7 @@ namespace FIFE {
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
 		GUIManager* getGuiManager();
+		ImageManager* getImageManager();
 		RenderBackend* getRenderBackend();
 		Model* getModel();
 		LogManager* getLogManager();

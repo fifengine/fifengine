@@ -45,7 +45,7 @@
 #endif
 #include "eventchannel/eventmanager.h"
 //prock - 504
-//#include "video/imagepool.h"
+#include "video/imagemanager.h"
 //#include "video/animationpool.h"
 //#include "audio/soundclippool.h"
 #include "video/renderbackend.h"
@@ -60,8 +60,8 @@
 #include "gui/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/fonts/abstractfont.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
-#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video/subimageloader.h"
+#include "loaders/native/video/imageloader.h"
 #include "loaders/native/audio_loaders/ogg_loader.h"
 #include "model/model.h"
 #include "pathfinder/routepather/routepather.h"
@@ -101,7 +101,7 @@ namespace FIFE {
 		m_soundmanager(0),
 		m_timemanager(0),
 //prock - 504
-//		m_imagepool(0),
+		m_imagemanager(0),
 //		m_animpool(0),
 //		m_soundclippool(0),
 		m_vfs(0),
@@ -193,7 +193,7 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating pools");
 //prock - 504
-//		m_imagepool = new ImagePool();
+		m_imagemanager = new ImageManager();
 //		m_animpool = new AnimationPool();
 //		m_soundclippool = new SoundClipPool();
 //		m_imagepool->addResourceLoader(new SubImageLoader());
@@ -324,7 +324,7 @@ namespace FIFE {
 		// before clearing the image pool.
 //prock - 504
 //		delete m_animpool;
-//		delete m_imagepool;
+		delete m_imagemanager;
 //		delete m_eventmanager;
 
 		// properly remove all the renderers created during init

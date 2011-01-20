@@ -53,13 +53,13 @@ namespace FIFE {
 
 		/** Default constructor.
 		 */
-		ImageManager() { }
+		ImageManager() : IResourceManager() { }
 
 		/** Destructor.
 		 */
 		virtual ~ImageManager();
 
-		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
+		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0);
 	};
 
 } //FIFE

@@ -24,23 +24,22 @@
 
 import os, sys, unittest
 
-def genpath(somepath):
-	return os.path.sep.join(somepath.split('/'))
+fife_path = os.path.join('..','..','engine','python')
+if os.path.isdir(fife_path) and fife_path not in sys.path:
+	sys.path.insert(0,fife_path)
 
-_paths = ('engine/swigwrappers/python', 'engine/extensions')
-for p in _paths:
-	if p not in sys.path:
-		sys.path.append(os.path.sep.join(p.split('/')))
+from fife import fife
+print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
-import fife, fifelog
+from fife.extensions import fifelog
 
 def getEngine(minimized=False):
 	e = fife.Engine()
 	log = fifelog.LogManager(e, promptlog=False, filelog=True)
-	#log.setVisibleModules('all')
+	log.setVisibleModules('all')
 	s = e.getSettings()
-	#s.setRenderBackend('OpenGL')
-	s.setDefaultFontPath('tests/data/FreeMono.ttf')
+	s.setRenderBackend('OpenGL')
+	s.setDefaultFontPath('../data/FreeMono.ttf')
 	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
 			".,!?-+/:();%`'*#=[]")
 	if minimized:
@@ -54,5 +53,4 @@ __all__ = []
 __all__.append('unittest')
 __all__.append('fife')
 __all__.append('fifelog')
-__all__.append('genpath')
 __all__.append('getEngine')

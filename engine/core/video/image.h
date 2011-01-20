@@ -49,6 +49,8 @@ namespace FIFE {
 		 */
 		virtual SDL_Surface* getSurface() = 0;
 
+		virtual void setSurface(SDL_Surface* surface) = 0;
+
 		/** Returns the @b maximum width occupied by this image.
 		 * This should return the maximum width that could be covered by the
 		 * image.
@@ -193,6 +195,8 @@ namespace FIFE {
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 
 		SDL_Surface* getSurface() { return m_surface; }
+		virtual void setSurface(SDL_Surface* surface);
+
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
 		const Rect& getArea();
@@ -212,8 +216,8 @@ namespace FIFE {
 		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
 
 		virtual size_t getSize() { return 0; }
-		virtual void load() { }
-		virtual void free() { }
+		virtual void load();
+		virtual void free();
 
 	protected:
 		/** Sets given clip area into image
@@ -247,8 +251,10 @@ namespace FIFE {
 		bool m_isbackgroundcolor;
 		SDL_Color m_backgroundcolor;
 
-	private:
 		void reset(SDL_Surface* surface);
+
+	private:
+
 		std::string createUniqueImageName();
 	};
 
