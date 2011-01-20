@@ -38,7 +38,7 @@ def getEngine(minimized=False):
 	log = fifelog.LogManager(e, promptlog=False, filelog=True)
 	log.setVisibleModules('all')
 	s = e.getSettings()
-	s.setRenderBackend('OpenGL')
+	#s.setRenderBackend('OpenGL')
 	s.setDefaultFontPath('../data/FreeMono.ttf')
 	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
 			".,!?-+/:();%`'*#=[]")

@@ -31,6 +31,7 @@
 #include "video/animation.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
+#include "video/imagemanager.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
@@ -324,8 +325,9 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
+			ResourcePtr resptr = ImageManager::instance()->get(m_image);
+			Image* img = dynamic_cast<Image*>(resptr.get());
 //			Image* img = &imagepool->getImage(m_image);
-			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -402,8 +404,9 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
+			ResourcePtr resptr = ImageManager::instance()->get(m_image);
+			Image* img = dynamic_cast<Image*>(resptr.get());
 //			Image* img = &imagepool->getImage(m_image);
-			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(m_width * cam->getZoom());
