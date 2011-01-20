@@ -290,8 +290,7 @@ namespace FIFE {
 		 * @see IResource
 		 *
 		 */
-		//free memory and remove from manager
-		virtual void remove(ResourcePtr& resource); //useful to remove ownership from the manager
+		virtual void remove(ResourcePtr& resource);
 
 		/** Removes a resource
 		 *

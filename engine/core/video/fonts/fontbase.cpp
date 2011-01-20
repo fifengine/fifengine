@@ -116,7 +116,7 @@ namespace FIFE {
 		Image* image = NULL;
 		if (!image) {
 			SDL_Surface* textSurface = renderString(text);
-			image = RenderBackend::instance()->createImage(textSurface);
+			image = RenderBackend::instance()->createImage(text, textSurface);
 //prock - 504
 //			m_pool.addRenderedText( this, text, image );
 		}
@@ -171,7 +171,7 @@ namespace FIFE {
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}
-			image = RenderBackend::instance()->createImage(final_surface);
+			image = RenderBackend::instance()->createImage(text, final_surface);
 //prock - 504
 //			m_pool.addRenderedText(this, text, image);
 		}

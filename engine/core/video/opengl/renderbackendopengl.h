@@ -65,9 +65,13 @@ namespace FIFE {
 		void changeBlending(int32_t scr, int32_t dst);
 
 		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
-		Image*  setScreenMode(const ScreenMode& mode);
+		Image* setScreenMode(const ScreenMode& mode);
+		Image* createImage(IResourceLoader* loader = 0);
+		Image* createImage(const std::string& name, IResourceLoader* loader = 0);
 		Image* createImage(const uint8_t* data, uint32_t width, uint32_t height);
+		Image* createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 		Image* createImage(SDL_Surface* surface);
+		Image* createImage(const std::string& name, SDL_Surface* surface);
  		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255);

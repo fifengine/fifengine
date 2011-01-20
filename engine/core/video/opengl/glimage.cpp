@@ -35,9 +35,29 @@
 #include "glimage.h"
 
 namespace FIFE {
+	GLImage::GLImage(IResourceLoader* loader):
+			Image(loader) {
+	}
+
+	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
+		Image(name, loader) {
+	}
+
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface) {
+
+		//@todo This generates a new handle and name for the resource.
+		//Need to look at fixing this.
 		m_sdlimage = new SDLImage(surface);
+
+		m_textureids = NULL;
+
+		resetGlimage();
+	}
+
+	GLImage::GLImage(const std::string& name, SDL_Surface* surface):
+		Image(name, surface) {
+		m_sdlimage = new SDLImage(name, surface);
 
 		m_textureids = NULL;
 
@@ -48,6 +68,16 @@ namespace FIFE {
 		Image(data, width, height) {
 		assert(m_surface);
 		m_sdlimage = new SDLImage(m_surface);
+
+		m_textureids = NULL;
+
+		resetGlimage();
+	}
+
+	GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		Image(name, data, width, height) {
+		assert(m_surface);
+		m_sdlimage = new SDLImage(name, m_surface);
 
 		m_textureids = NULL;
 

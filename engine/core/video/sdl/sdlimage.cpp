@@ -40,13 +40,27 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
+	SDLImage::SDLImage(const std::string& name, IResourceLoader* loader):
+		Image(name, loader) {
+	}
+
 	SDLImage::SDLImage(SDL_Surface* surface):
 		Image(surface) {
 		resetSdlimage();
 	 }
 
+	SDLImage::SDLImage(const std::string& name, SDL_Surface* surface):
+		Image(name, surface) {
+		resetSdlimage();
+	 }
+
 	SDLImage::SDLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height) {
+		resetSdlimage();
+	}
+
+	SDLImage::SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		Image(name, data, width, height) {
 		resetSdlimage();
 	}
 

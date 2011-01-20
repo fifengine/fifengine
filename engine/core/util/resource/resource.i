@@ -23,6 +23,7 @@
 %{
 #include "util/base/sharedptr.h"
 #include "util/resource/resource.h"
+#include "util/resource/resourcemanager.h"
 %}
 
 namespace FIFE {
@@ -41,7 +42,6 @@ namespace FIFE {
 
 	class IResourceLoader {
 	public:
-		IResourceLoader() { }
 		virtual ~IResourceLoader() { }
 
 		virtual void load(IResource* resource) = 0;
@@ -95,5 +95,39 @@ namespace FIFE {
 	};
 
 	typedef SharedPtr<IResource> ResourcePtr;
+	
+	class IResourceManager {
+	public:
+		virtual ~IResourceManager();
 
+		virtual size_t getMemoryUsed() const;
+		virtual uint32_t getTotalResourcesCreated() const;
+		virtual uint32_t getTotalResourcesLoaded() const;
+		virtual uint32_t getTotalResources() const;
+
+		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
+		virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0);
+		virtual ResourcePtr add(IResource* res);
+
+		virtual bool exists(const std::string& name);
+		virtual bool exists(ResourceHandle handle);
+
+		virtual void reload(const std::string& name);
+		virtual void reload(ResourceHandle handle);
+		virtual void reloadAll();
+
+		virtual void loadUnreferenced();
+
+		virtual void free(const std::string& name);
+		virtual void free(ResourceHandle handle);
+		virtual void freeAll();
+		virtual void freeUnreferenced();
+
+		virtual void remove(const std::string& name);
+		virtual void remove(ResourceHandle handle);
+		virtual void removeAll();
+		virtual void removeUnreferenced();
+
+		virtual ResourceHandle getResourceHandle(const std::string& name);
+	};
 }

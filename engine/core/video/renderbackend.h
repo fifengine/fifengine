@@ -159,6 +159,9 @@ namespace FIFE {
 		 */
 		virtual Image* setScreenMode(const ScreenMode& mode) = 0;
 
+		virtual Image* createImage(IResourceLoader* loader = 0) = 0;
+		virtual Image* createImage(const std::string& name, IResourceLoader* loader = 0) = 0;
+
 		/** Creates an Image suitable for this renderbackend.
 		 * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
 		 * @param width Width of the image.
@@ -166,6 +169,7 @@ namespace FIFE {
 		 * @return The new Image.
 		 */
 		virtual Image* createImage(const uint8_t* data, uint32_t width, uint32_t height) = 0;
+		virtual Image* createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) = 0;
 
 		/** Helper function to create images from SDL_Surfaces.
 		 * Takes ownership over the surface.
@@ -173,6 +177,7 @@ namespace FIFE {
 		 * @return The new Image.
 		 */
 		virtual Image* createImage(SDL_Surface* surface) = 0;
+		virtual Image* createImage(const std::string& name, SDL_Surface* surface) = 0;
 
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.

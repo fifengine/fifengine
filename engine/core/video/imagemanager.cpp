@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -19,10 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 
@@ -30,17 +28,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log/logger.h"
+#include "util/resource/resourcemanager.h"
 #include "util/resource/resource.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
+
+#include "imagemanager.h"
 
 namespace FIFE {
-	class VFS;
+	static Logger _log(LM_RESMGR);
 
-	/** ImageLoader for some basic formats like jpeg, png etc.
-	 */
-	class ImageLoader : public IResourceLoader {
-	public:
-		ImageLoader() {}
-		virtual void load(IResource* res);
-	};
-}
-#endif
+	ResourcePtr ImageManager::create(const std::string& name, IResourceLoader* loader){
+		Image* ptr = RenderBackend::instance()->createImage(name, loader);
+		return add(ptr);
+	}
+
+} //FIFE
