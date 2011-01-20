@@ -39,8 +39,13 @@ namespace FIFE {
 	 */
 	class SDLImage : public Image {
 	public:
+		SDLImage(IResourceLoader* loader = 0);
+		SDLImage(const std::string& name, IResourceLoader* loader = 0);
 		SDLImage(SDL_Surface* surface);
+		SDLImage(const std::string& name, SDL_Surface* surface);
 		SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
+		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+
 		virtual ~SDLImage();
 		void invalidate() {}; //do nothing for SDL images (for now)
 		void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255);

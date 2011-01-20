@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -30,18 +31,51 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/resource/resource.h"
+
 #include "image.h"
 
 namespace FIFE {
 
+	Image::Image(IResourceLoader* loader):
+		IResource(createUniqueImageName(), loader),
+		m_surface(NULL) {
+	}
+
+	Image::Image(const std::string& name, IResourceLoader* loader):
+		IResource(name, loader),
+		m_surface(NULL) {
+	}
+
 	Image::Image(SDL_Surface* surface):
-		IResource("blah"),
+		IResource(createUniqueImageName()),
 		m_surface(NULL) {
 		reset(surface);
 	}
 
+	Image::Image(const std::string& name, SDL_Surface* surface):
+		IResource(name),
+		m_surface(NULL) {
+		reset(surface);
+	}
+
+	//todo make a private function to handle this
 	Image::Image(const uint8_t* data, uint32_t width, uint32_t height):
-		IResource("blah"),
+		IResource(createUniqueImageName()),
+		m_surface(NULL) {
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
+		                                            RMASK, GMASK, BMASK ,AMASK);
+		SDL_LockSurface(surface);
+
+		uint32_t size = width * height * 4;
+		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
+		std::copy(data, data + size, pixeldata);
+		SDL_UnlockSurface(surface);
+		reset(surface);
+	}
+
+	Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		IResource(name),
 		m_surface(NULL) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
@@ -58,7 +92,7 @@ namespace FIFE {
 		if( m_surface ) {
 			SDL_FreeSurface(m_surface);
 		}
-		m_surface = surface;
+
 		m_xshift = 0;
 		m_yshift = 0;
 		while (!m_clipstack.empty()) {
@@ -73,7 +107,6 @@ namespace FIFE {
 	}
 
 	Image::~Image() {
-		//assert(m_refcount == 0);
 		reset(NULL);
 	}
 
@@ -256,5 +289,19 @@ namespace FIFE {
 		png_destroy_write_struct(&pngptr, &infoptr);
 		fclose(fp);
 
+	}
+
+	std::string Image::createUniqueImageName() {
+	        // automated counting for name generation, in case the user doesn't provide a name
+	        static uint32_t uniqueNumber = 0;
+	        static std::string baseName = "image";
+
+	        std::ostringstream oss;
+	        oss << uniqueNumber << "_" << baseName;
+
+	        const std::string name = oss.str();
+	        ++uniqueNumber;
+
+	        return name;
 	}
 }

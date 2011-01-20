@@ -140,12 +140,28 @@ namespace FIFE {
 		SDL_Flip(m_screen->getSurface());
 	}
 
+	Image* RenderBackendSDL::createImage(IResourceLoader* loader) {
+		return new SDLImage(loader);
+	}
+
+	Image* RenderBackendSDL::createImage(const std::string& name, IResourceLoader* loader) {
+		return new SDLImage(name, loader);
+	}
+
 	Image* RenderBackendSDL::createImage(SDL_Surface* surface) {
 		return new SDLImage(surface);
 	}
 
+	Image* RenderBackendSDL::createImage(const std::string& name, SDL_Surface* surface) {
+		return new SDLImage(name, surface);
+	}
+
 	Image* RenderBackendSDL::createImage(const uint8_t* data, uint32_t width, uint32_t height) {
 		return new SDLImage(data, width, height);
+	}
+
+	Image* RenderBackendSDL::createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) {
+		return new SDLImage(name, data, width, height);
 	}
 
 	void RenderBackendSDL::setLightingModel(uint32_t lighting) {

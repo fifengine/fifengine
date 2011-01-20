@@ -19,10 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
+#ifndef FIFE_IMAGE_MANAGER_H
+#define FIFE_IMAGE_MANAGER_H
 
 // Standard C++ library includes
+#include <map>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 
@@ -31,16 +34,34 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
+#include "util/resource/resourcemanager.h"
 
 namespace FIFE {
-	class VFS;
 
-	/** ImageLoader for some basic formats like jpeg, png etc.
+	/** ImageManager
+	 *
+	 * An interface for managing images.
+	 *
+	 * @see IResource
+	 * @see IResourceLoader
+	 * @see IResourceManager
+	 *
 	 */
-	class ImageLoader : public IResourceLoader {
+
+	class ImageManager : public IResourceManager {
 	public:
-		ImageLoader() {}
-		virtual void load(IResource* res);
+
+		/** Default constructor.
+		 */
+		ImageManager() { }
+
+		/** Destructor.
+		 */
+		virtual ~ImageManager();
+
+		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
 	};
-}
-#endif
+
+} //FIFE
+
+#endif //FIFE_IMAGE_MANAGER_H

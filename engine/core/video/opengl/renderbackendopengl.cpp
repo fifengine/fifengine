@@ -167,6 +167,14 @@ namespace FIFE {
 		SDL_GL_SwapBuffers();
 	}
 
+	Image* RenderBackendOpenGL::createImage(IResourceLoader* loader) {
+		return new GLImage(loader);
+	}
+
+	Image* RenderBackendOpenGL::createImage(const std::string& name, IResourceLoader* loader) {
+		return new GLImage(name, loader);
+	}
+
 	Image* RenderBackendOpenGL::createImage(SDL_Surface* surface) {
 		// Given an abritary surface, we must convert it to the format GLImage will understand.
 		// It's easiest to let SDL do this for us.
@@ -198,8 +206,43 @@ namespace FIFE {
 		return image;
 	}
 
+	Image* RenderBackendOpenGL::createImage(const std::string& name, SDL_Surface* surface) {
+		// Given an abritary surface, we must convert it to the format GLImage will understand.
+		// It's easiest to let SDL do this for us.
+
+		// Uh. Gotta love this :-)
+		// Check for colorkey too?
+		// Leave out the loss/shift checks?
+		if(    m_rgba_format.BitsPerPixel == surface->format->BitsPerPixel
+			&& m_rgba_format.Rmask == surface->format->Rmask
+			&& m_rgba_format.Gmask == surface->format->Gmask
+			&& m_rgba_format.Bmask == surface->format->Bmask
+			&& m_rgba_format.Amask == surface->format->Amask
+			&& m_rgba_format.Rshift == surface->format->Rshift
+			&& m_rgba_format.Gshift == surface->format->Gshift
+			&& m_rgba_format.Bshift == surface->format->Bshift
+			&& m_rgba_format.Ashift == surface->format->Ashift
+			&& m_rgba_format.Rloss == surface->format->Rloss
+			&& m_rgba_format.Gloss == surface->format->Gloss
+			&& m_rgba_format.Bloss == surface->format->Bloss
+			&& m_rgba_format.Aloss == surface->format->Aloss
+			&& surface->flags & SDL_SRCALPHA   ) {
+
+			return new GLImage(name, surface);
+		}
+
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
+		GLImage* image = new GLImage(name, conv);
+		SDL_FreeSurface( surface );
+		return image;
+	}
+
 	Image* RenderBackendOpenGL::createImage(const uint8_t* data, uint32_t width, uint32_t height) {
 		return new GLImage(data, width, height);
+	}
+
+	Image* RenderBackendOpenGL::createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) {
+		return new GLImage(name, data, width, height);
 	}
 
 	void RenderBackendOpenGL::setLightingModel(uint32_t lighting) {

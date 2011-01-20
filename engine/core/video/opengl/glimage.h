@@ -57,8 +57,13 @@ namespace FIFE {
 	 */
 	class GLImage : public Image {
 	public:
+		GLImage(IResourceLoader* loader = 0);
+		GLImage(const std::string& name, IResourceLoader* loader = 0);
 		GLImage(SDL_Surface* surface);
+		GLImage(const std::string& name, SDL_Surface* surface);
 		GLImage(const uint8_t* data, uint32_t width, uint32_t height);
+		GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+
 		virtual ~GLImage();
 		void invalidate();
 		void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255);
