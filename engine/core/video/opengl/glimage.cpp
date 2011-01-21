@@ -37,10 +37,16 @@
 namespace FIFE {
 	GLImage::GLImage(IResourceLoader* loader):
 			Image(loader) {
+		m_textureids = NULL;
+
+		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
 		Image(name, loader) {
+		m_textureids = NULL;
+
+		resetGlimage();
 	}
 
 	GLImage::GLImage(SDL_Surface* surface):
@@ -99,14 +105,11 @@ namespace FIFE {
 	void GLImage::setSurface(SDL_Surface* surface) {
 		reset(surface);
 
-		if(m_sdlimage){
-			m_sdlimage->detachSurface();
-		}
-
 		delete m_sdlimage;
-		m_sdlimage = NULL;
-
 		m_sdlimage = new SDLImage(m_surface);
+
+		m_textureids = NULL;
+
 		resetGlimage();
 	}
 
@@ -241,6 +244,8 @@ namespace FIFE {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 		delete[] oglbuffer;
+
+		std::cout << "got here\n";
 	}
 
 	void GLImage::saveImage(const std::string& filename) {

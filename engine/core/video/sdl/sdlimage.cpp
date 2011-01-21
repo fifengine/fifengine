@@ -42,10 +42,12 @@ namespace FIFE {
 
 	SDLImage::SDLImage(IResourceLoader* loader):
 		Image(loader) {
+		resetSdlimage();
 	}
 
 	SDLImage::SDLImage(const std::string& name, IResourceLoader* loader):
 		Image(name, loader) {
+		resetSdlimage();
 	}
 
 	SDLImage::SDLImage(SDL_Surface* surface):
@@ -82,6 +84,11 @@ namespace FIFE {
 		if (m_zoom_surface) {
 			SDL_FreeSurface(m_zoom_surface);
 		}
+	}
+
+	void SDLImage::setSurface(SDL_Surface* surface) {
+		reset(surface);
+		resetSdlimage();
 	}
 
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
