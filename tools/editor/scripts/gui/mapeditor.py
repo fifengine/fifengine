@@ -428,8 +428,11 @@ class MapEditor:
 					else:
 						self._controller.deselectSelection()
 						self._controller.selectCell(realCoords[0], realCoords[1])
-						
-					self._selected_instances = self._controller.getInstancesFromSelection()
+					
+					if self._controller._single_instance:
+						self._selected_instances = self._controller.getInstance()
+					else:
+						self._selected_instances = self._controller.getInstancesFromSelection()
 					
 					self._controller.getUndoManager().startGroup("Moved instances")
 					self._undogroup = True

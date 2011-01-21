@@ -46,6 +46,8 @@ class MapController(object):
 		self._camera = None     # currently selected camera
 		self._layer = None      # currently selected layer
 		self._selection = []	# currently selected cells
+		self._single_instance = False # flag to force selection of one single instance
+		self._instance = None	# current selected single instance
 		self._map = None
 		self._undo = False
 		self._undomanager = undomanager.UndoManager()
@@ -188,7 +190,12 @@ class MapController(object):
 				self._selection.remove( loc )
 				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(loc)
 				return
-		
+
+	def getInstance(self):
+		""" Returns a single instance packed into a list (compat to API) """
+		if self._instance:
+			return [self._instance, ]
+		return []
 		
 	def getInstancesFromSelection(self):
 		""" Returns all instances in the selected cells """
@@ -200,7 +207,10 @@ class MapController(object):
 		return instances
 
 	def getInstancesFromPosition(self, position, layer=None):
-		""" Returns all instances on a specified position """
+		""" Returns all instances on a specified position
+			Interprets ivar _single_instance and returns only the 
+			first instance if flag is set to True
+		"""
 		if not self._layer and not layer:
 			if self.debug: print 'No layer assigned in getInstancesFromPosition'
 			return
@@ -221,6 +231,9 @@ class MapController(object):
 			instances = layer.getInstancesAt(loc)
 		else:
 			instances = self._layer.getInstancesAt(loc)
+			
+		if self._single_instance and instances:
+			return [instances[0], ]
 
 		return instances
 
