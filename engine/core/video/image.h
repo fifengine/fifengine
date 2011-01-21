@@ -195,7 +195,7 @@ namespace FIFE {
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 
 		SDL_Surface* getSurface() { return m_surface; }
-		virtual void setSurface(SDL_Surface* surface);
+		virtual void setSurface(SDL_Surface* surface) = 0;
 
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;

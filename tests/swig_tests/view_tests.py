@@ -47,8 +47,8 @@ class TestView(unittest.TestCase):
 		imgid = self.pool.getResourceHandle('../data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
 
-		self.screen_cell_w = 30
-		self.screen_cell_h = 30
+		self.screen_cell_w = 126
+		self.screen_cell_h = 96
 		
 		self.layer = self.map.createLayer("layer001", self.grid)
 

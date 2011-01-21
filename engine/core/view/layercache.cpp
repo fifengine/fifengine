@@ -178,7 +178,7 @@ namespace FIFE {
 			int32_t image_id = render_item.getStaticImageIndexByAngle(angle, instance);
 //prock - 504
 //			if(image_id == Pool::INVALID_ID) {
-			if(image_id == -1) {
+			if(image_id == 0) {
 				if (!instance->getObject()->isStatic()) {
 					action = instance->getObject()->getDefaultAction();
 				}
@@ -186,7 +186,7 @@ namespace FIFE {
 //prock - 504
 //				image = &m_image_pool->getImage(image_id);
 				ResourcePtr resptr = ImageManager::instance()->get(image_id);
-				Image* image = dynamic_cast<Image*>(resptr.get());
+				image = dynamic_cast<Image*>(resptr.get());
 			}
 		}
 		item.force_update = bool(action);

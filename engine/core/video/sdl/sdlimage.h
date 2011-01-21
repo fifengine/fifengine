@@ -48,6 +48,7 @@ namespace FIFE {
 
 		virtual ~SDLImage();
 		void invalidate() {}; //do nothing for SDL images (for now)
+		virtual void setSurface(SDL_Surface* surface);
 		void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255);
 		void saveImage(const std::string& filename);
  		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);

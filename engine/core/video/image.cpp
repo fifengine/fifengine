@@ -128,10 +128,6 @@ namespace FIFE {
 		return srf;
 	}
 
-	void Image::setSurface(SDL_Surface* surface) {
-		reset(surface);
-	}
-
 	uint32_t Image::getWidth() const {
 		if (!m_surface) {
 			return 0;
