@@ -33,17 +33,12 @@
 #include "util/resource/resource.h"
 
 namespace FIFE {
-	class VFS;
-
 	/** ImageLoader for some basic formats like jpeg, png etc.
 	 */
 	class ImageLoader : public IResourceLoader {
 	public:
-		ImageLoader(VFS* vfs): m_vfs(vfs) {}
+		ImageLoader() {}
 		virtual void load(IResource* res);
-
-	private:
-		VFS* m_vfs;
 	};
 }
 #endif

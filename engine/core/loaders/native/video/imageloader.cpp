@@ -70,4 +70,4 @@ namespace FIFE {
 //		}
 		img->setAlphaOptimizerEnabled(true);
 	}
-}
+}  //FIFE
