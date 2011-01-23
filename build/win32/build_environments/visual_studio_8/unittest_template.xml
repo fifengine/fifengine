@@ -41,7 +41,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\libguichan;..\..\..\includes\unittest++;..\..\..\includes\libogg;..\..\..\includes\openal-soft;..\..\..\includes\sdl;..\..\..\includes\sdl_image;..\..\..\includes\sdl_ttf;..\..\..\includes\zlib;..\..\..\includes\libvorbis;..\..\..\includes\libpng;..\..\..\includes\python26;..\..\..\includes\boost_1_38_0" PreprocessorDefinitions="WIN32;_CONSOLE" MinimalRebuild="true" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\libguichan;..\..\..\includes\unittest++;..\..\..\includes\libogg;..\..\..\includes\openal-soft;..\..\..\includes\sdl;..\..\..\includes\sdl_image;..\..\..\includes\sdl_ttf;..\..\..\includes\zlib;..\..\..\includes\libvorbis;..\..\..\includes\libpng;..\..\..\includes\python27;..\..\..\includes\boost_1_38_0" PreprocessorDefinitions="WIN32;_CONSOLE" MinimalRebuild="true" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
