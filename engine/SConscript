@@ -58,10 +58,13 @@ compilefiles = utils.filter_by_dir(['swigwrappers'], implfiles)
 
 if sys.platform == 'win32':
 	dllpath = upath(opts['DLLPATH'])
-	dllfilelist = list(dllpath.walkfiles('*.dll'))
+	dllfilelist = list()
 	dllfiles = list()
-	for f in dllfilelist:
-		dllfiles.append(utils.relpath(f,opts['DLLPATH'])) 
+	
+	if os.path.isdir(dllpath):
+		dllfilelist = list(dllpath.walkfiles('*.dll'))
+		for f in dllfilelist:
+			dllfiles.append(utils.relpath(f,opts['DLLPATH'])) 
 	
 	
 
