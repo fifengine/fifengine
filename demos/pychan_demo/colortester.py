@@ -27,7 +27,9 @@ from pychan_demo import PyChanExample
 from fife.extensions import pychan
 
 class ColorExample(PyChanExample):
-	""" a small app (^^) to show how guichan uses colors on various widgets """
+	""" a small app (^^) to show how guichan uses colors on various widgets 
+	
+	"""
 	def __init__(self):
 		super(ColorExample,self).__init__('gui/colortester.xml')
 		
@@ -46,16 +48,30 @@ class ColorExample(PyChanExample):
 			'background_gslider': self.update_background_color,
 			'background_bslider': self.update_background_color,
 			'background_aslider': self.update_background_color,
+			
+			'foreground_rslider': self.update_foreground_color,
+			'foreground_gslider': self.update_foreground_color,
+			'foreground_bslider': self.update_foreground_color,
+			'foreground_aslider': self.update_foreground_color,
+			
+			'selection_rslider': self.update_selection_color,
+			'selection_gslider': self.update_selection_color,
+			'selection_bslider': self.update_selection_color,
+			'selection_aslider': self.update_selection_color,						
 
 			'closeButton':self.stop,
 		})
 		# alpha value needs to be set, otherwise you don't see colors ;-)
 		self.widget.findChild(name="base_aslider").setValue(float(255))
 		self.widget.findChild(name="background_aslider").setValue(float(255))
+		self.widget.findChild(name="foreground_aslider").setValue(float(255))
+		self.widget.findChild(name="selection_aslider").setValue(float(255))
 		
 		# init stuff
 		self.update_basecolor()
 		self.update_background_color()
+		self.update_foreground_color()
+		self.update_selection_color()
 		self.widget.show()
 
 	def update_basecolor(self):
@@ -75,7 +91,6 @@ class ColorExample(PyChanExample):
 		
 		rgba = (r, g, b, a)
 		
-		# background_color, foreground_color, base_color, selection_color (listbox)
 		self.widget.findChild(name="example1").base_color = rgba
 		self.widget.findChild(name="example2").base_color = rgba
 		self.widget.findChild(name="example3").base_color = rgba
@@ -103,7 +118,6 @@ class ColorExample(PyChanExample):
 		
 		rgba = (r, g, b, a)
 		
-		# background_color, foreground_color, background_color, selection_color (listbox)
 		self.widget.findChild(name="example1").background_color = rgba
 		self.widget.findChild(name="example2").background_color = rgba
 		self.widget.findChild(name="example3").background_color = rgba
@@ -113,3 +127,57 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example7").background_color = rgba
 		self.widget.findChild(name="example8").background_color = rgba
 		self.widget.findChild(name="example9").background_color = rgba
+		
+	def update_selection_color(self):
+		"""
+		Update rgba selection colors of all examples and show the values
+		"""
+		r = int(self.widget.findChild(name="selection_rslider").getValue())
+		g = int(self.widget.findChild(name="selection_gslider").getValue())
+		b = int(self.widget.findChild(name="selection_bslider").getValue())
+		a = int(self.widget.findChild(name="selection_aslider").getValue())
+
+		# update slider labels
+		self.widget.findChild(name="selection_rvalue").text = unicode(str(r), "utf-8")
+		self.widget.findChild(name="selection_gvalue").text = unicode(str(g), "utf-8")
+		self.widget.findChild(name="selection_bvalue").text = unicode(str(b), "utf-8")
+		self.widget.findChild(name="selection_avalue").text = unicode(str(a), "utf-8")
+		
+		rgba = (r, g, b, a)
+		
+		self.widget.findChild(name="example1").selection_color = rgba
+		self.widget.findChild(name="example2").selection_color = rgba
+		self.widget.findChild(name="example3").selection_color = rgba
+		self.widget.findChild(name="example4").selection_color = rgba
+		self.widget.findChild(name="example5").selection_color = rgba
+		self.widget.findChild(name="example6").selection_color = rgba
+		self.widget.findChild(name="example7").selection_color = rgba
+		self.widget.findChild(name="example8").selection_color = rgba
+		self.widget.findChild(name="example9").selection_color = rgba
+		
+	def update_foreground_color(self):
+		"""
+		Update rgba foreground colors of all examples and show the values
+		"""
+		r = int(self.widget.findChild(name="foreground_rslider").getValue())
+		g = int(self.widget.findChild(name="foreground_gslider").getValue())
+		b = int(self.widget.findChild(name="foreground_bslider").getValue())
+		a = int(self.widget.findChild(name="foreground_aslider").getValue())
+
+		# update slider labels
+		self.widget.findChild(name="foreground_rvalue").text = unicode(str(r), "utf-8")
+		self.widget.findChild(name="foreground_gvalue").text = unicode(str(g), "utf-8")
+		self.widget.findChild(name="foreground_bvalue").text = unicode(str(b), "utf-8")
+		self.widget.findChild(name="foreground_avalue").text = unicode(str(a), "utf-8")
+		
+		rgba = (r, g, b, a)
+		
+		self.widget.findChild(name="example1").foreground_color = rgba
+		self.widget.findChild(name="example2").foreground_color = rgba
+		self.widget.findChild(name="example3").foreground_color = rgba
+		self.widget.findChild(name="example4").foreground_color = rgba
+		self.widget.findChild(name="example5").foreground_color = rgba
+		self.widget.findChild(name="example6").foreground_color = rgba
+		self.widget.findChild(name="example7").foreground_color = rgba
+		self.widget.findChild(name="example8").foreground_color = rgba
+		self.widget.findChild(name="example9").foreground_color = rgba

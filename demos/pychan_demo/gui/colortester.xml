@@ -62,6 +62,52 @@
 					<Label text="" name="background_avalue" />
 				</HBox>
 			</VBox>
+			<VBox name="Fackground_colors">
+				<Label text="Move the sliders to change the foreground_color attribute"/>
+				<HBox>
+					<Slider name="foreground_rslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="R" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="foreground_rvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="foreground_gslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="G" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="foreground_gvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="foreground_bslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="B" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="foreground_bvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="foreground_aslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="A" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="foreground_avalue" />
+				</HBox>
+			</VBox>			
+			<VBox name="Selection_colors">
+				<Label text="Move the sliders to change the selection_color attribute"/>
+				<HBox>
+					<Slider name="selection_rslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="R" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="selection_rvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="selection_gslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="G" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="selection_gvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="selection_bslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="B" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="selection_bvalue" />
+				</HBox>
+				<HBox>
+					<Slider name="selection_aslider" scale_start="0" scale_end="255" size="100,10" min_size="100,10" max_size="100,10"/>
+					<Label text="A" size="25,15" min_size="25,15" max_size="25,15" />
+					<Label text="" name="selection_avalue" />
+				</HBox>
+			</VBox>			
 		</VBox>
 	</HBox>
 
