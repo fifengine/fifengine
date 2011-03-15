@@ -25,6 +25,7 @@
 // 3rd party library includes
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/version.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,6 +36,17 @@
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 #include "vfsdirectory.h"
+
+namespace 
+{
+    // grab the major and minor version of boost, taken from boost/version.hpp
+#define BOOST_MAJOR_VERSION BOOST_VERSION / 100000
+#define BOOST_MINOR_VERSION BOOST_VERSION / 100 % 1000
+
+#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 36)
+    #define USE_NEW_BOOST_FILESYSTEM
+#endif
+}
 
 namespace bfs = boost::filesystem;
 namespace FIFE {
@@ -94,10 +106,13 @@ namespace FIFE {
 				if (bfs::is_directory(*i) != directorys)
 					continue;
 
-				// This only works with boost 1.34 and up
-				// list.insert(i->path().leaf());
-				// This one should be ok with both 1.33 and above
-				list.insert(i->leaf());
+#if defined(USE_NEW_BOOST_FILESYSTEM)
+                // the new way to get a filename using 1.36 and above
+                list.insert(i->path().filename());
+#else
+                // the old way to get a filename in version 1.35 and below
+                list.insert(i->leaf());
+#endif
 			}
 		}
 		catch (const bfs::filesystem_error& ex) {
