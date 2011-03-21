@@ -646,7 +646,7 @@ namespace FIFE {
 		return convert;
 	} // end optimize
 
-	bool SDLImage::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
+	bool SDLImage::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
 			return false;
 		}
@@ -686,7 +686,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void SDLImage::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void SDLImage::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		// Draw a line with Bresenham, imitated from guichan
 		int32_t x1 = p1.x;
 		int32_t x2 = p2.x;
@@ -778,7 +778,7 @@ namespace FIFE {
 		}
 	}
 
-	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);
 		drawLine(p3, p1, r, g, b, a);
@@ -813,14 +813,14 @@ namespace FIFE {
 		SDL_FillRect(m_surface, &rect, color);
 	}
 
-	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);
 		drawLine(p3, p4, r, g, b, a);
 		drawLine(p4, p1, r, g, b, a);
 	}
 
-	void SDLImage::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a){
+	void SDLImage::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 		Point p1 = Point(p.x-size, p.y+size);
 		Point p2 = Point(p.x+size, p.y+size);
 		Point p3 = Point(p.x+size, p.y-size);

@@ -181,6 +181,7 @@ namespace FIFE {
 				}
 			}
 		}
+		m_renderbackend->renderVertexArrays();
 		m_renderbackend->enableLighting();
 	}
 

@@ -179,6 +179,10 @@ namespace FIFE {
 		virtual Image* createImage(SDL_Surface* surface) = 0;
 		virtual Image* createImage(const std::string& name, SDL_Surface* surface) = 0;
 
+		/** Render the Vertex Arrays, only for primitives (points, lines,...)
+		 */
+		virtual void renderVertexArrays() = 0;
+
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
 		 */

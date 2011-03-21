@@ -112,6 +112,7 @@ namespace FIFE {
 					if(m_backborder) {
 						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
 					}
+					m_renderbackend->renderVertexArrays();
 				}
 				img->render(r);
 			}

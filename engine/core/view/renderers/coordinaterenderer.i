@@ -31,7 +31,7 @@ namespace FIFE {
 	public:
 		virtual ~CoordinateRenderer();
 		std::string getName();
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 		
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 				

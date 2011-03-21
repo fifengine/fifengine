@@ -212,15 +212,15 @@ namespace FIFE {
 	void RenderBackendSDL::changeBlending(int32_t scr, int32_t dst){
 	}
 
-	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
+	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		static_cast<SDLImage*>(m_screen)->drawLine(p1, p2, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		static_cast<SDLImage*>(m_screen)->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
 
@@ -232,15 +232,19 @@ namespace FIFE {
 		static_cast<SDLImage*>(m_screen)->fillRectangle(p, w, h, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a) {
+	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		static_cast<SDLImage*>(m_screen)->drawQuad(p1, p2, p3, p4, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a){
+	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 		static_cast<SDLImage*>(m_screen)->drawVertex(p, 2, r, g, b, a);
 	}
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue){
 		static_cast<SDLImage*>(m_screen)->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
+	}
+
+	void RenderBackendSDL::renderVertexArrays() {
+
 	}
 }//FIFE

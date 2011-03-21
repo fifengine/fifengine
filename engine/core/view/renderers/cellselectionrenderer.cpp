@@ -95,8 +95,12 @@ namespace FIFE {
 	}
 
 	void CellSelectionRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
-		std::vector<Location>::const_iterator locit = m_locations.begin();
+		if (m_locations.empty()) {
+			return;
+		}
+		m_renderbackend->disableLighting();
 
+		std::vector<Location>::const_iterator locit = m_locations.begin();
 		for (; locit != m_locations.end(); locit++) {
 			const Location loc = *locit;
 			if (layer != loc.getLayer()) {
@@ -108,8 +112,6 @@ namespace FIFE {
 				FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
 				continue;
 			}
-
-			m_renderbackend->disableLighting();
 
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, loc.getLayerCoordinates());
@@ -127,11 +129,12 @@ namespace FIFE {
 				pt1 = pt2;
 			}
 			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-			m_renderbackend->enableLighting();
 		}
+		m_renderbackend->renderVertexArrays();
+		m_renderbackend->enableLighting();
 	}
 
-	void CellSelectionRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void CellSelectionRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
