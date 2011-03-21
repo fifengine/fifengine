@@ -560,6 +560,7 @@ namespace FIFE {
 				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
+		m_renderbackend->renderVertexArrays();
 		m_renderbackend->disableAlphaTest();
 		m_renderbackend->disableStencilTest();
 		m_renderbackend->changeBlending(4, 5);

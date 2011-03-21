@@ -150,6 +150,9 @@ namespace FIFE {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_SCISSOR_TEST);
+		
+		glEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
 
 		glPointSize(1.0);
 		glLineWidth(1.0);
@@ -164,6 +167,9 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::endFrame() {
+		// last chance to render (needed for gui or if no map is loaded)
+		renderVertexArrays();
+
 		SDL_GL_SwapBuffers();
 	}
 
@@ -422,106 +428,235 @@ namespace FIFE {
 		}
 	}
 
-	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void RenderBackendOpenGL::renderVertexArrays() {
+		// point check
+		if (!m_points.empty()) {
+			renderArray(m_points, 0);
+			m_points.clear();
+		}
+		// line check
+		if (!m_lines.empty()) {
+			renderArray(m_lines, 1);
+			m_lines.clear();
+		}
+		// loop line check
+		if (!m_looplines.empty()) {
+			renderArray(m_looplines, 3);
+			m_looplines.clear();
+		}
+		// triangle check
+		if (!m_triangles.empty()) {
+			renderArray(m_triangles, 4);
+			m_triangles.clear();
+		}
+		// quad check
+		if (!m_quads.empty()) {
+			renderArray(m_quads, 7);
+			m_quads.clear();
+		}
+	}
+
+	void RenderBackendOpenGL::renderArray(std::vector<Vertex>& vertice, uint8_t type) {
+		const uint32_t size = vertice.size();
+		GLfloat vertices[2 * size];
+		GLubyte colors[4 * size];
+		uint32_t vc = 0;
+		uint32_t cc = 0;
+		for(std::vector<Vertex>::iterator iv = vertice.begin(); iv != vertice.end(); iv++) {
+			vertices[vc] = (*iv).x;
+			++vc;
+			vertices[vc] = (*iv).y;
+			++vc;
+
+			colors[cc] = (*iv).r;
+			++cc;
+			colors[cc] = (*iv).g;
+			++cc;
+			colors[cc] = (*iv).b;
+			++cc;
+			colors[cc] = (*iv).a;
+			++cc;
+		}
+		glVertexPointer(2, GL_FLOAT, 0, vertices);
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+
+		GLenum mode;
+		switch(type) {
+			case 0  : mode = GL_POINTS; break;
+			case 1  : mode = GL_LINES; break;
+			case 2  : mode = GL_LINE_STRIP; break;
+			case 3  : mode = GL_LINE_LOOP; break;
+			case 4  : mode = GL_TRIANGLES; break;
+			case 5  : mode = GL_TRIANGLE_STRIP; break;
+			case 6  : mode = GL_TRIANGLE_FAN; break;
+			case 7  : mode = GL_QUADS; break;
+			case 8  : mode = GL_QUAD_STRIP; break;
+			case 9  : mode = GL_POLYGON; break;
+			default : mode = GL_QUADS;
+		}
+		glDrawArrays(mode, 0, size);
+	}
+
+	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		if ((x < 0) || (x >= (int32_t)getWidth()) || (y < 0) || (y >= (int32_t)getHeight())) {
 			return false;
 		}
+		Vertex v;
+		v.x = float(x);
+		v.y = float(y);
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_points.push_back(v);
 
-		glColor4ub(r, g, b, a);
-
-		glBegin(GL_POINTS);
-		glVertex2i(x, y);
-		glEnd();
 		return true;
 	}
 
-	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
-		glColor4ub(r, g, b, a);
+	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		Vertex v;
+		v.x = p1.x;
+		v.y = p1.y;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_lines.push_back(v);
 
-		glBegin(GL_LINES);
-		glVertex2f(p1.x+0.5f, p1.y+0.5f);
-		glVertex2f(p2.x+0.5f, p2.y+0.5f);
-		glEnd();
-
-		glBegin(GL_POINTS);
-		glVertex2f(p2.x+0.5f, p2.y+0.5f);
-		glEnd();
+		v.x = p2.x;
+		v.y = p2.y;
+		m_lines.push_back(v);
 	}
 
-	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
-		glColor4ub(r, g, b, a);
+	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		Vertex v;
+		v.x = p1.x;
+		v.y = p1.y;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_triangles.push_back(v);
 
-		glBegin(GL_TRIANGLES);
-		glVertex2f(p1.x, p1.y);
-		glVertex2f(p2.x, p2.y);
-		glVertex2f(p3.x, p3.y);
-		glEnd();
+		v.x = p2.x;
+		v.y = p2.y;
+		m_triangles.push_back(v);
+
+		v.x = p3.x;
+		v.y = p3.y;
+		m_triangles.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		glColor4ub(r, g, b, a);
+		Vertex v;
+		v.x = p.x;
+		v.y = p.y;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_looplines.push_back(v);
 
-		glBegin(GL_LINE_LOOP);
-		glVertex2f(p.x, p.y);
-		glVertex2f(p.x+w, p.y);
-		glVertex2f(p.x+w, p.y+h);
-		glVertex2f(p.x, p.y+h);
-		glEnd();
+		v.x = p.x+w;
+		m_looplines.push_back(v);
+
+		v.y = p.y+h;
+		m_looplines.push_back(v);
+
+		v.x = p.x;
+		m_looplines.push_back(v);
 	}
 
 	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		glColor4ub(r, g, b, a);
+		Vertex v;
+		v.x = p.x;
+		v.y = p.y;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_quads.push_back(v);
 
-		glBegin(GL_QUADS);
-		glVertex2f(p.x, p.y);
-		glVertex2f(p.x+w, p.y);
-		glVertex2f(p.x+w, p.y+h);
-		glVertex2f(p.x, p.y+h);
-		glEnd();
+		v.x = p.x+w;
+		m_quads.push_back(v);
+
+		v.y = p.y+h;
+		m_quads.push_back(v);
+
+		v.x = p.x;
+		m_quads.push_back(v);
 	}
 
-	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a) {
-		glColor4ub(r, g, b, a);
+	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		Vertex v;
+		v.x = p1.x;
+		v.y = p1.y;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_quads.push_back(v);
 
-		glBegin(GL_QUADS);
-		glVertex2f(p1.x, p1.y);
-		glVertex2f(p2.x, p2.y);
-		glVertex2f(p3.x, p3.y);
-		glVertex2f(p4.x, p4.y);
-		glEnd();
+		v.x = p2.x;
+		v.y = p2.y;
+		m_quads.push_back(v);
+
+		v.x = p3.x;
+		v.y = p3.y;
+		m_quads.push_back(v);
+
+		v.x = p4.x;
+		v.y = p4.y;
+		m_quads.push_back(v);
 	}
 
-	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a){
-		GLfloat width;
-		glGetFloatv(GL_LINE_WIDTH, &width);
-		glLineWidth(1.0);
+	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+		Vertex v;
+		v.x = p.x-size;
+		v.y = p.y+size;
+		v.r = r;
+		v.g = g;
+		v.b = b;
+		v.a = a;
+		m_looplines.push_back(v);
 
-		glColor4ub(r, g, b, a);
+		v.x = p.x+size;
+		m_looplines.push_back(v);
 
-		glBegin(GL_LINE_LOOP);
-		glVertex2f(p.x-size, p.y+size);
-		glVertex2f(p.x+size, p.y+size);
-		glVertex2f(p.x+size, p.y-size);
-		glVertex2f(p.x-size, p.y-size);
-		glEnd();
+		v.y = p.y-size;
+		m_looplines.push_back(v);
 
-		glLineWidth(width);
+		v.x = p.x-size;
+		m_looplines.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-		glBegin(GL_TRIANGLE_FAN);
-		glColor4ub(red, green, blue, intensity);
-		glVertex2f(p.x, p.y);
-		if (m_lightmodel == 2) {
-			glColor4ub(0, 0, 0, intensity);
-		} else {
-			glColor4ub(0, 0, 0, 255);
+		uint8_t alpha = intensity;
+		if (m_lightmodel != 2) {
+			alpha = 255;
 		}
-		for(float angle=0; angle<=Mathf::twoPi(); angle+=(Mathf::twoPi()/subdivisions)){
-			glVertex2f( radius*Mathf::Cos(angle)*xstretch + p.x,
-						radius*Mathf::Sin(angle)*ystretch + p.y);
+		const float step = Mathf::twoPi()/subdivisions;
+		Vertex v;
+		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
+			v.x = p.x;
+			v.y = p.y;
+			v.r = red;
+			v.g = green;
+			v.b = blue;
+			v.a = intensity;
+			m_triangles.push_back(v);
+
+			v.x = radius*Mathf::Cos(angle)*xstretch + p.x;
+			v.y = radius*Mathf::Sin(angle)*ystretch + p.y;
+			v.r = 0;
+			v.g = 0;
+			v.b = 0;
+			v.a = alpha;
+			m_triangles.push_back(v);
+
+			v.x = radius*Mathf::Cos(angle+step)*xstretch + p.x;
+			v.y = radius*Mathf::Sin(angle+step)*ystretch + p.y;
+			m_triangles.push_back(v);
 		}
-		glVertex2f(p.x+radius*xstretch, p.y);
-		glEnd();
 	}
 }

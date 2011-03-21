@@ -75,6 +75,7 @@ namespace FIFE {
 		}
 		
 		Rect cv = cam->getViewPort();
+		m_renderbackend->disableLighting();
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -104,9 +105,11 @@ namespace FIFE {
 			Point pt4(spt2.x, spt2.y);
 			m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
 		}
+		m_renderbackend->renderVertexArrays();
+		m_renderbackend->enableLighting();
 	}
 
-	void BlockingInfoRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void BlockingInfoRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;

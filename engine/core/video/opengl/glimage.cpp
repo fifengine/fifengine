@@ -157,27 +157,23 @@ namespace FIFE {
 		uint16_t w = static_cast<int32_t>(round(scale_x*m_surface->w));
 		uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
 
-		// setting transparency for the whole primitive:
-		glColor4ub( 255, 255, 255, alpha );
+		// fill the arrays
+		GLint vertices[] = {rect.x, rect.y, rect.x, rect.y+rect.h, rect.x+rect.w, rect.y+rect.h, rect.x+rect.w, rect.y};
+		GLfloat texcoord[] = {0.0, 0.0, 0.0, m_row_tex_coord, m_col_tex_coord, m_row_tex_coord, m_col_tex_coord, 0.0};
+		GLubyte colors[] = {255, 255, 255, alpha, 255, 255, 255, alpha, 255, 255, 255, alpha, 255, 255, 255, alpha};
+		// set pointer to arrays
+		glVertexPointer(2, GL_INT, 0, vertices);
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+		glTexCoordPointer(2, GL_FLOAT, 0, texcoord);
 
 		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		// bind texture and render
 		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
+		glDrawArrays(GL_QUADS, 0, 4);
 
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex2i(rect.x, rect.y);
-
-			glTexCoord2f(0.0f, m_row_tex_coord);
-			glVertex2i(rect.x, rect.y + h);
-
-			glTexCoord2f(m_col_tex_coord, m_row_tex_coord);
-			glVertex2i(rect.x + w, rect.y + h);
-
-			glTexCoord2f(m_col_tex_coord, 0.0f);
-			glVertex2i(rect.x + w, rect.y);
-		glEnd();
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisable(GL_TEXTURE_2D);
-
 	}
 
 	void GLImage::generateGLTexture() {
@@ -299,17 +295,17 @@ namespace FIFE {
 		}
 	}
 
-	bool GLImage::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
+	bool GLImage::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		cleanup();
 		return m_sdlimage->putPixel(x, y, r, g, b, a);
 	}
 
-	void GLImage::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void GLImage::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		cleanup();
 		m_sdlimage->drawLine(p1, p2, r, g, b, a);
 	}
 
-	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		cleanup();
 		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
@@ -324,12 +320,12 @@ namespace FIFE {
 		m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
 	}
 
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a) {
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		cleanup();
 		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
 	}
 
-	void GLImage::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a) {
+	void GLImage::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		cleanup();
 		m_sdlimage->drawVertex(p, size, r, g, b, a);
 	}

@@ -68,15 +68,15 @@ namespace FIFE {
 
 		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
 		 */
- 		virtual bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+ 		virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws line between given points with given RGBA
 		 */
-		virtual void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws triangle between given points with given RGBA
 		 */
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws an axis parallel rectangle.
 		 */
@@ -88,11 +88,11 @@ namespace FIFE {
 
 		/** Draws quad between given points with given RGBA
 		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws a quad that represents a vertex with given RGBA
 		 */
-		virtual void drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws a light primitive that based on a triangle fan
 		 */

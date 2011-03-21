@@ -504,5 +504,6 @@ namespace FIFE {
 				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
+		m_renderbackend->renderVertexArrays();
 	}
 }

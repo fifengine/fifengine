@@ -137,7 +137,7 @@ namespace FIFE {
 		}
 	}
 
-	void CoordinateRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void CoordinateRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;

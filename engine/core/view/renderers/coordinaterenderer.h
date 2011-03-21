@@ -56,7 +56,7 @@ namespace FIFE {
 
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 		std::string getName() { return "CoordinateRenderer"; }
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 

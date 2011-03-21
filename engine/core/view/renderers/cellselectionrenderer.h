@@ -77,7 +77,7 @@ namespace FIFE {
 		 */
 		const std::vector<Location> getLocations() const { return m_locations; }
 
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 		
 	private:
 		// selected locations

@@ -90,12 +90,10 @@ namespace FIFE {
 		emc= cg->toMapCoordinates(ExactModelCoordinate( x+size,y+size) );
 		ScreenPoint scrpt4 =m_camera->toScreenCoordinates( emc );
 
-		m_renderbackend->disableLighting();
 		m_renderbackend->drawLine( Point(scrpt1.x,scrpt1.y) , Point(scrpt2.x,scrpt2.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt1.x,scrpt1.y), Point(scrpt3.x,scrpt3.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt3.x,scrpt3.y), Point(scrpt4.x,scrpt4.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt2.x,scrpt2.y), Point(scrpt4.x,scrpt4.y), 255, 255, 255);
-		m_renderbackend->enableLighting();
 
 		return true;
 	}
@@ -110,6 +108,9 @@ namespace FIFE {
 		InstanceTree * itree = layer->getInstanceTree();
 		RenderVisitor VIPguess(m_renderbackend, layer,cam);
 		itree->applyVisitor(VIPguess);
+		m_renderbackend->disableLighting();
+		m_renderbackend->renderVertexArrays();
+		m_renderbackend->enableLighting();
 	}
 
 }
