@@ -37,18 +37,28 @@
 #include "util/base/exception.h"
 #include "vfsdirectory.h"
 
+namespace bfs = boost::filesystem;
+
 namespace 
 {
-    // grab the major and minor version of boost, taken from boost/version.hpp
-#define BOOST_MAJOR_VERSION BOOST_VERSION / 100000
-#define BOOST_MINOR_VERSION BOOST_VERSION / 100 % 1000
+    // grab the major and minor version of boost, 
+    // calculations taken from boost/version.hpp
+    #define BOOST_MAJOR_VERSION BOOST_VERSION / 100000
+    #define BOOST_MINOR_VERSION BOOST_VERSION / 100 % 1000
 
-#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 36)
-    #define USE_NEW_BOOST_FILESYSTEM
+#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 46)
+    // this define will tell us to use boost filesystem
+    // version 3 since this is the default version of the library
+    // starting in boost version 1.46 and above
+    #define USE_BOOST_FILESYSTEM_V3
+#elif (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 36)
+    // this define will tell us not to use the deprecated functions
+    // in boost filesystem version 2 library which were introduced
+    // in boost version 1.36 and above
+    #define USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2
 #endif
 }
 
-namespace bfs = boost::filesystem;
 namespace FIFE {
 	static Logger _log(LM_VFS);
 
@@ -106,11 +116,22 @@ namespace FIFE {
 				if (bfs::is_directory(*i) != directorys)
 					continue;
 
-#if defined(USE_NEW_BOOST_FILESYSTEM)
-                // the new way to get a filename using 1.36 and above
+#if defined(USE_BOOST_FILESYSTEM_V3)
+                // boost version 1.46 and above uses
+                // boost filesystem version 3 as the default
+                // which has yet a different way of getting
+                // a filename string
+                bfs::path filenamePath = i->path().filename();
+                list.insert(filenamePath.string());
+#elif defined(USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2)
+                // the new way in boost filesystem version 2
+                // to get a filename string
+                //(this is for boost version 1.36 and above)
                 list.insert(i->path().filename());
 #else
-                // the old way to get a filename in version 1.35 and below
+                // the old way in boost filesystem version 2
+                // to get a filename string 
+                //(this is for boost version 1.35 and below)
                 list.insert(i->leaf());
 #endif
 			}
