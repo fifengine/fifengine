@@ -25,6 +25,7 @@
 // 3rd party library includes
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/version.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -37,6 +38,27 @@
 #include "vfsdirectory.h"
 
 namespace bfs = boost::filesystem;
+
+namespace 
+{
+    // grab the major and minor version of boost, 
+    // calculations taken from boost/version.hpp
+    #define BOOST_MAJOR_VERSION BOOST_VERSION / 100000
+    #define BOOST_MINOR_VERSION BOOST_VERSION / 100 % 1000
+
+#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 46)
+    // this define will tell us to use boost filesystem
+    // version 3 since this is the default version of the library
+    // starting in boost version 1.46 and above
+    #define USE_BOOST_FILESYSTEM_V3
+#elif (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 36)
+    // this define will tell us not to use the deprecated functions
+    // in boost filesystem version 2 library which were introduced
+    // in boost version 1.36 and above
+    #define USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2
+#endif
+}
+
 namespace FIFE {
 	static Logger _log(LM_VFS);
 
@@ -94,10 +116,24 @@ namespace FIFE {
 				if (bfs::is_directory(*i) != directorys)
 					continue;
 
-				// This only works with boost 1.34 and up
-				// list.insert(i->path().leaf());
-				// This one should be ok with both 1.33 and above
-				list.insert(i->leaf());
+#if defined(USE_BOOST_FILESYSTEM_V3)
+                // boost version 1.46 and above uses
+                // boost filesystem version 3 as the default
+                // which has yet a different way of getting
+                // a filename string
+                bfs::path filenamePath = i->path().filename();
+                list.insert(filenamePath.string());
+#elif defined(USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2)
+                // the new way in boost filesystem version 2
+                // to get a filename string
+                //(this is for boost version 1.36 and above)
+                list.insert(i->path().filename());
+#else
+                // the old way in boost filesystem version 2
+                // to get a filename string 
+                //(this is for boost version 1.35 and below)
+                list.insert(i->leaf());
+#endif
 			}
 		}
 		catch (const bfs::filesystem_error& ex) {
