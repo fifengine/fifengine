@@ -240,8 +240,6 @@ namespace FIFE {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 		delete[] oglbuffer;
-
-		std::cout << "got here\n";
 	}
 
 	void GLImage::saveImage(const std::string& filename) {
