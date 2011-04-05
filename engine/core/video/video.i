@@ -27,6 +27,7 @@
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
+#include "util/base/sharedptr.h"
 #include "util/base/exception.h"
 %}
 
@@ -94,13 +95,47 @@ namespace FIFE {
 		Image(const uint8_t* data, uint32_t width, uint32_t height);
 	};
 	
+	typedef SharedPtr<Image> ImagePtr;	
+	
 	class ImageManager : public IResourceManager {
 	public:
 		virtual ~ImageManager();
-		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0);
-	private:
-		ImageManager();
+		
+		virtual size_t getMemoryUsed() const;
+		virtual uint32_t getTotalResourcesCreated() const;
+		virtual uint32_t getTotalResourcesLoaded() const;
+		virtual uint32_t getTotalResources() const;		
+
+		virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
+		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);		
+		virtual ImagePtr add(Image* res);
+
+		virtual bool exists(const std::string& name);
+		virtual bool exists(ResourceHandle handle);
+
+		virtual void reload(const std::string& name);
+		virtual void reload(ResourceHandle handle);
+		virtual void reloadAll();
+		virtual void loadUnreferenced();
+
+		virtual void free(const std::string& name);
+		virtual void free(ResourceHandle handle);
+		virtual void freeAll();
+		virtual void freeUnreferenced();
+
+		virtual void remove(ImagePtr& resource);
+		virtual void remove(const std::string& name);
+		virtual void remove(ResourceHandle handle);
+		virtual void removeAll();
+		virtual void removeUnreferenced();
+
+		virtual ImagePtr get(const std::string& name);
+		virtual ImagePtr get(ResourceHandle handle);
+
+		virtual ResourceHandle getResourceHandle(const std::string& name);
+		
 	};
+	
 	
 	class Animation: public IResource {
 	public:
@@ -153,6 +188,7 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
 		const SDL_Color& getColorKey() const;
+		const SDL_PixelFormat& getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
 	};

@@ -91,8 +91,6 @@ namespace FIFE {
 
 		void renderArray(std::vector<Vertex>& vertice, uint8_t sides);
 
-		SDL_PixelFormat m_rgba_format;
-
 		uint32_t m_lightmodel;
 		float m_lred;
 		float m_lgreen;

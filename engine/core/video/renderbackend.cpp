@@ -145,5 +145,9 @@ namespace FIFE {
 		assert(m_screen);
 		m_screen->setBackgroundColor(0,0,0);
 	}
+	
+	const SDL_PixelFormat& RenderBackend::getPixelFormat() const {
+		return m_rgba_format;
+	}
 
 }

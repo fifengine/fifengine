@@ -117,7 +117,13 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
 			<< " at " << int32_t(screen->format->BitsPerPixel) << " bpp");
-
+		
+		m_rgba_format = *(screen->format);
+		m_rgba_format.Rmask = RMASK;
+		m_rgba_format.Gmask = GMASK;
+		m_rgba_format.Bmask = BMASK;
+		m_rgba_format.Amask = AMASK;
+		
 		//update the screen mode with the actual flags used
 		m_screenMode = ScreenMode(width,
 		                          height,

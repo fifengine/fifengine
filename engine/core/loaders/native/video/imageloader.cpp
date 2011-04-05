@@ -37,6 +37,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
+#include "video/opengl/glimage.h"
 
 #include "imageloader.h"
 
@@ -55,7 +56,12 @@ namespace FIFE {
 		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
 
 		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-		img->setSurface(surface);
+		
+		SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
+		
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
+		img->setSurface(conv);
+		SDL_FreeSurface(surface);		
 
 		SDL_FreeRW(rwops);
 

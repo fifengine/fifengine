@@ -236,6 +236,10 @@ namespace FIFE {
 		/** Reset the background color to black
 		 */
 		void resetBackgroundColor();
+		
+		/** Gets the current screen rgba format
+		*/
+		const SDL_PixelFormat& getPixelFormat() const;
 
 
 	protected:
@@ -245,6 +249,7 @@ namespace FIFE {
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 		ScreenMode m_screenMode;
+		SDL_PixelFormat m_rgba_format;
 	};
 }
 
