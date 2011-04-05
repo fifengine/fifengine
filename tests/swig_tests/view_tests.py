@@ -32,7 +32,7 @@ class TestView(unittest.TestCase):
 		model = self.engine.getModel()
 		self.map = model.createMap("map001")
 		
-		self.grid = fife.SquareGrid()
+		self.grid = model.createCellGrid("square")
 		self.pool = self.engine.getImageManager()
 
 		self.obj1 = model.createObject('0','test_nspace')
@@ -53,8 +53,6 @@ class TestView(unittest.TestCase):
 		self.layer = self.map.createLayer("layer001", self.grid)
 
 		self.camcoord = fife.ExactModelCoordinate(2,0)
-		
-
 		
 	def tearDown(self):
 		self.engine.destroy()
