@@ -95,6 +95,7 @@ namespace FIFE {
 	};
 
 	typedef SharedPtr<IResource> ResourcePtr;
+	%template(SharedResourcePointer) SharedPtr<IResource>;
 	
 	class IResourceManager {
 	public:
