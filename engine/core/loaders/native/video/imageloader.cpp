@@ -56,12 +56,21 @@ namespace FIFE {
 		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
 
 		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-		
+
+		if (!surface) {
+			throw SDLException("Fatal Error when loading image into a SDL_Surface!");
+		}
+
 		SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
-		
+
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
+
+		if (!conv) {
+			throw SDLException("Fatal Error when converting surface to the screen format!");
+		}
+
 		img->setSurface(conv);
-		SDL_FreeSurface(surface);		
+		SDL_FreeSurface(surface);
 
 		SDL_FreeRW(rwops);
 

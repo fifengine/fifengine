@@ -213,10 +213,10 @@ namespace FIFE {
 			for (uint32_t x = 0; x < width; ++x) {
 				uint32_t pos = (y * pitch) + (x * 4);
 
-				uint8_t r = data[pos + 3];
-				uint8_t g = data[pos + 2];
-				uint8_t b = data[pos + 1];
-				uint8_t a = data[pos + 0];
+				uint8_t a = data[pos + 3];
+				uint8_t b = data[pos + 2];
+				uint8_t g = data[pos + 1];
+				uint8_t r = data[pos + 0];
 
 				if (RenderBackend::instance()->isColorKeyEnabled()) {
 					// only set alpha to zero if colorkey feature is enabled
