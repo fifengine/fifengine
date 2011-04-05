@@ -185,8 +185,8 @@ namespace FIFE {
 			} else {
 //prock - 504
 //				image = &m_image_pool->getImage(image_id);
-				ResourcePtr resptr = ImageManager::instance()->get(image_id);
-				image = dynamic_cast<Image*>(resptr.get());
+				ImagePtr resptr = ImageManager::instance()->get(image_id);
+				image = resptr.get();
 			}
 		}
 		item.force_update = bool(action);

@@ -741,8 +741,8 @@ namespace FIFE {
 		// image overlay
 		if (m_img_overlay) {
 //prock - 504
-			ResourcePtr resptr = ImageManager::instance()->get(m_img_id);
-			Image* img = dynamic_cast<Image*>(resptr.get());
+			ImagePtr resptr = ImageManager::instance()->get(m_img_id);
+			Image* img = resptr.get();
 			if (img) {
 				if (m_img_fill) {
 					r.w = width;
