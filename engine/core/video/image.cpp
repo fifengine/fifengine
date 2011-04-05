@@ -112,8 +112,13 @@ namespace FIFE {
 	}
 
 	void Image::load() {
-		ImageLoader loader;
-		loader.load(this);
+		if (m_loader){
+			m_loader->load(this);
+		}
+		else {
+			ImageLoader loader;
+			loader.load(this);
+		}
 		m_state = IResource::RES_LOADED;
 	}
 

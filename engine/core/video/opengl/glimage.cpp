@@ -37,6 +37,7 @@
 namespace FIFE {
 	GLImage::GLImage(IResourceLoader* loader):
 			Image(loader) {
+		m_sdlimage = NULL;
 		m_textureids = NULL;
 
 		resetGlimage();
@@ -44,6 +45,7 @@ namespace FIFE {
 
 	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
 		Image(name, loader) {
+		m_sdlimage = NULL;
 		m_textureids = NULL;
 
 		resetGlimage();
