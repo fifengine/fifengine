@@ -29,11 +29,12 @@
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
-#include "video/image.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 #include "gui/base/gui_image.h"
 #include "util/structures/rect.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
 #include "video/opengl/fife_opengl.h"
 
 #include "opengl_gui_graphics.h"
@@ -60,6 +61,7 @@ namespace FIFE {
 		GLEnable flag(GL_TEXTURE_2D);
 //prock - 504
 //		fifeimg.render(rect, mTarget);
+//		RenderBackend::instance()->renderVertexArrays();
 	}
 
 	void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,

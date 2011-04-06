@@ -165,6 +165,7 @@ namespace FIFE {
 			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
+			m_renderbackend->renderVertexArrays();
 			m_renderbackend->popClipArea();
 		}
 
@@ -185,6 +186,7 @@ namespace FIFE {
 			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
+			m_renderbackend->renderVertexArrays();
 			m_renderbackend->popClipArea();
 		}
 	}

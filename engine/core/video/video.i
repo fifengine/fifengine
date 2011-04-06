@@ -193,6 +193,7 @@ namespace FIFE {
 		const SDL_PixelFormat& getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
+		void renderVertexArrays();
 	};
 	
 	enum MouseCursorType {

@@ -151,31 +151,17 @@ namespace FIFE {
 			return;
 		}
 
-		// the amount of "zooming" for the image
-		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
-		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
+		// we dont need this atm
+		//// the amount of "zooming" for the image
+		//float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
+		//float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
 
-		// apply the scale to the width and height of the image
-		uint16_t w = static_cast<int32_t>(round(scale_x*m_surface->w));
-		uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
+		//// apply the scale to the width and height of the image
+		//uint16_t w = static_cast<int32_t>(round(scale_x*m_surface->w));
+		//uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
 
-		// fill the arrays
-		GLint vertices[] = {rect.x, rect.y, rect.x, rect.y+rect.h, rect.x+rect.w, rect.y+rect.h, rect.x+rect.w, rect.y};
-		GLfloat texcoord[] = {0.0, 0.0, 0.0, m_row_tex_coord, m_col_tex_coord, m_row_tex_coord, m_col_tex_coord, 0.0};
-		GLubyte colors[] = {255, 255, 255, alpha, 255, 255, 255, alpha, 255, 255, 255, alpha, 255, 255, 255, alpha};
-		// set pointer to arrays
-		glVertexPointer(2, GL_INT, 0, vertices);
-		glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
-		glTexCoordPointer(2, GL_FLOAT, 0, texcoord);
-
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		// bind texture and render
-		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
-		glDrawArrays(GL_QUADS, 0, 4);
-
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable(GL_TEXTURE_2D);
+		Rect rec = rect;
+		RenderBackend::instance()->addImageToArray(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha);
 	}
 
 	void GLImage::generateGLTexture() {

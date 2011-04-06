@@ -251,6 +251,8 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::renderVertexArrays() {
+	}
 
+	void RenderBackendSDL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
 	}
 }//FIFE

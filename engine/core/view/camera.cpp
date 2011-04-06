@@ -845,6 +845,7 @@ namespace FIFE {
 			m_renderbackend->resetLighting();
 		}
 		renderOverlay();
+		m_renderbackend->renderVertexArrays();
 		m_renderbackend->popClipArea();
 	}
 }

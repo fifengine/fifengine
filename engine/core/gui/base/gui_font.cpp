@@ -67,6 +67,7 @@ namespace FIFE {
 
 		Image* image = getAsImage(text);
 		image->render(rect);
+		RenderBackend::instance()->renderVertexArrays();
 	}
 
 	void GuiFont::drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y) {
@@ -89,6 +90,7 @@ namespace FIFE {
 			return;
 		}
 		image->render(rect);
+		RenderBackend::instance()->renderVertexArrays();
 	}
 
 	void GuiFont::setRowSpacing (int32_t spacing) {

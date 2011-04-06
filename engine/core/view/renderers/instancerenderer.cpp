@@ -224,12 +224,14 @@ namespace FIFE {
 
 					m_renderbackend->setAlphaTest(0.0);
 					vc.image->render(vc.dimensions, vc.transparency);
+					m_renderbackend->renderVertexArrays();
 					continue;
 				}
 			}
 			vc.image->render(vc.dimensions, vc.transparency);
 
 		}
+		m_renderbackend->renderVertexArrays();
 		if(lm != 0) {
 			m_renderbackend->disableAlphaTest();
 			m_renderbackend->disableStencilTest();
