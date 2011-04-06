@@ -117,6 +117,7 @@ namespace FIFE {
 				img->render(r);
 			}
 		}
+		m_renderbackend->renderVertexArrays();
 		if(lm != 0) {
 			m_renderbackend->disableAlphaTest();
 			m_renderbackend->disableStencilTest();

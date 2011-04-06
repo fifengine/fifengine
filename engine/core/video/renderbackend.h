@@ -183,6 +183,10 @@ namespace FIFE {
 		 */
 		virtual void renderVertexArrays() = 0;
 
+		/** Add the Image data to the array
+		 */
+		virtual void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) = 0;
+
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
 		 */

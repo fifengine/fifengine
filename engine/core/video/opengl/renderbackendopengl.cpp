@@ -438,54 +438,42 @@ namespace FIFE {
 	void RenderBackendOpenGL::renderVertexArrays() {
 		// point check
 		if (!m_points.empty()) {
-			renderArray(m_points, 0);
+			renderPrimitives(m_points, 0);
 			m_points.clear();
 		}
 		// line check
 		if (!m_lines.empty()) {
-			renderArray(m_lines, 1);
+			renderPrimitives(m_lines, 1);
 			m_lines.clear();
 		}
 		// loop line check
 		if (!m_looplines.empty()) {
-			renderArray(m_looplines, 3);
+			renderPrimitives(m_looplines, 3);
 			m_looplines.clear();
 		}
 		// triangle check
 		if (!m_triangles.empty()) {
-			renderArray(m_triangles, 4);
+			renderPrimitives(m_triangles, 4);
 			m_triangles.clear();
 		}
 		// quad check
 		if (!m_quads.empty()) {
-			renderArray(m_quads, 7);
+			renderPrimitives(m_quads, 7);
 			m_quads.clear();
+		}
+		// texture quad check
+		if (!m_texture_quads.empty()) {
+			renderTextures();
+			m_texture_quads.clear();
 		}
 	}
 
-	void RenderBackendOpenGL::renderArray(std::vector<Vertex>& vertice, uint8_t type) {
+	void RenderBackendOpenGL::renderPrimitives(std::vector<colorVertex>& vertice, uint8_t type) {
 		const uint32_t size = vertice.size();
-		GLfloat vertices[2 * size];
-		GLubyte colors[4 * size];
-		uint32_t vc = 0;
-		uint32_t cc = 0;
-		for(std::vector<Vertex>::iterator iv = vertice.begin(); iv != vertice.end(); iv++) {
-			vertices[vc] = (*iv).x;
-			++vc;
-			vertices[vc] = (*iv).y;
-			++vc;
+		const uint32_t stride = sizeof(colorVertex);
 
-			colors[cc] = (*iv).r;
-			++cc;
-			colors[cc] = (*iv).g;
-			++cc;
-			colors[cc] = (*iv).b;
-			++cc;
-			colors[cc] = (*iv).a;
-			++cc;
-		}
-		glVertexPointer(2, GL_FLOAT, 0, vertices);
-		glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+		glVertexPointer(2, GL_FLOAT, stride, &vertice[0].vertex);
+		glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertice[0].color);
 
 		GLenum mode;
 		switch(type) {
@@ -504,136 +492,170 @@ namespace FIFE {
 		glDrawArrays(mode, 0, size);
 	}
 
+	void RenderBackendOpenGL::renderTextures() {
+		const uint32_t stride = sizeof(textureVertex);
+
+		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glVertexPointer(2, GL_INT, stride, &m_texture_quads[0].vertex);
+		glTexCoordPointer(2, GL_FLOAT, stride, &m_texture_quads[0].texel);
+		glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_texture_quads[0].color);
+
+		int32_t index = 0;
+		uint32_t old_id = 0;
+		uint32_t elements = 0;
+		std::vector<textureVertex>::iterator iv = m_texture_quads.begin();
+		while (iv != m_texture_quads.end()) {
+			if (old_id != (*iv).id) {
+				if (elements > 0) {
+					glDrawArrays(GL_QUADS, index, elements);
+					index += elements;
+				}
+				elements = 4;
+				old_id = (*iv).id;
+				glBindTexture(GL_TEXTURE_2D, (*iv).id);
+			} else {
+				elements += 4;
+			}
+			iv += 4;
+		}
+		glDrawArrays(GL_QUADS, index, elements);
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable(GL_TEXTURE_2D);
+	}
+
 	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		if ((x < 0) || (x >= (int32_t)getWidth()) || (y < 0) || (y >= (int32_t)getHeight())) {
 			return false;
 		}
-		Vertex v;
-		v.x = float(x);
-		v.y = float(y);
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = float(x);
+		v.vertex[1] = float(y);
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_points.push_back(v);
 
 		return true;
 	}
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Vertex v;
-		v.x = p1.x;
-		v.y = p1.y;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p1.x;
+		v.vertex[1] = p1.y;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_lines.push_back(v);
 
-		v.x = p2.x;
-		v.y = p2.y;
+		v.vertex[0] = p2.x;
+		v.vertex[1] = p2.y;
 		m_lines.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Vertex v;
-		v.x = p1.x;
-		v.y = p1.y;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p1.x;
+		v.vertex[1] = p1.y;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_triangles.push_back(v);
 
-		v.x = p2.x;
-		v.y = p2.y;
+		v.vertex[0] = p2.x;
+		v.vertex[1] = p2.y;
 		m_triangles.push_back(v);
 
-		v.x = p3.x;
-		v.y = p3.y;
+		v.vertex[0] = p3.x;
+		v.vertex[1] = p3.y;
 		m_triangles.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Vertex v;
-		v.x = p.x;
-		v.y = p.y;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p.x;
+		v.vertex[1]= p.y;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_looplines.push_back(v);
 
-		v.x = p.x+w;
+		v.vertex[0] = p.x+w;
 		m_looplines.push_back(v);
 
-		v.y = p.y+h;
+		v.vertex[1] = p.y+h;
 		m_looplines.push_back(v);
 
-		v.x = p.x;
+		v.vertex[0] = p.x;
 		m_looplines.push_back(v);
 	}
 
 	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Vertex v;
-		v.x = p.x;
-		v.y = p.y;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p.x;
+		v.vertex[1] = p.y;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_quads.push_back(v);
 
-		v.x = p.x+w;
+		v.vertex[0] = p.x+w;
 		m_quads.push_back(v);
 
-		v.y = p.y+h;
+		v.vertex[1] = p.y+h;
 		m_quads.push_back(v);
 
-		v.x = p.x;
+		v.vertex[0] = p.x;
 		m_quads.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Vertex v;
-		v.x = p1.x;
-		v.y = p1.y;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p1.x;
+		v.vertex[1] = p1.y;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_quads.push_back(v);
 
-		v.x = p2.x;
-		v.y = p2.y;
+		v.vertex[0] = p2.x;
+		v.vertex[1] = p2.y;
 		m_quads.push_back(v);
 
-		v.x = p3.x;
-		v.y = p3.y;
+		v.vertex[0] = p3.x;
+		v.vertex[1] = p3.y;
 		m_quads.push_back(v);
 
-		v.x = p4.x;
-		v.y = p4.y;
+		v.vertex[0] = p4.x;
+		v.vertex[1] = p4.y;
 		m_quads.push_back(v);
 	}
 
 	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-		Vertex v;
-		v.x = p.x-size;
-		v.y = p.y+size;
-		v.r = r;
-		v.g = g;
-		v.b = b;
-		v.a = a;
+		colorVertex v;
+		v.vertex[0] = p.x-size;
+		v.vertex[1] = p.y+size;
+		v.color[0] = r;
+		v.color[1] = g;
+		v.color[2] = b;
+		v.color[3] = a;
 		m_looplines.push_back(v);
 
-		v.x = p.x+size;
+		v.vertex[0] = p.x+size;
 		m_looplines.push_back(v);
 
-		v.y = p.y-size;
+		v.vertex[1] = p.y-size;
 		m_looplines.push_back(v);
 
-		v.x = p.x-size;
+		v.vertex[0] = p.x-size;
 		m_looplines.push_back(v);
 	}
 
@@ -643,27 +665,57 @@ namespace FIFE {
 			alpha = 255;
 		}
 		const float step = Mathf::twoPi()/subdivisions;
-		Vertex v;
+		colorVertex v;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
-			v.x = p.x;
-			v.y = p.y;
-			v.r = red;
-			v.g = green;
-			v.b = blue;
-			v.a = intensity;
+			v.vertex[0] = p.x;
+			v.vertex[1] = p.y;
+			v.color[0] = red;
+			v.color[1] = green;
+			v.color[2] = blue;
+			v.color[3] = intensity;
 			m_triangles.push_back(v);
 
-			v.x = radius*Mathf::Cos(angle)*xstretch + p.x;
-			v.y = radius*Mathf::Sin(angle)*ystretch + p.y;
-			v.r = 0;
-			v.g = 0;
-			v.b = 0;
-			v.a = alpha;
+			v.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
+			v.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
+			v.color[0] = 0;
+			v.color[1] = 0;
+			v.color[2] = 0;
+			v.color[3] = alpha;
 			m_triangles.push_back(v);
 
-			v.x = radius*Mathf::Cos(angle+step)*xstretch + p.x;
-			v.y = radius*Mathf::Sin(angle+step)*ystretch + p.y;
+			v.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
+			v.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			m_triangles.push_back(v);
 		}
+	}
+
+	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
+		textureVertex v;
+
+		v.vertex[0] = rec.x;
+		v.vertex[1] = rec.y;
+		v.texel[0] = 0.0;
+		v.texel[1] = 0.0;
+		v.color[0] = 255;
+		v.color[1] = 255;
+		v.color[2] = 255;
+		v.color[3] = alpha;
+		v.id = id;
+		m_texture_quads.push_back(v);
+		
+		v.vertex[0] = rec.x;
+		v.vertex[1] = rec.y+rec.h;
+		v.texel[1] = rt;
+		m_texture_quads.push_back(v);
+		
+		v.vertex[0] = rec.x+rec.w;
+		v.vertex[1] = rec.y+rec.h;
+		v.texel[0] = ct;
+		m_texture_quads.push_back(v);
+		
+		v.vertex[0] = rec.x+rec.w;
+		v.vertex[1] = rec.y;
+		v.texel[1] = 0.0;
+		m_texture_quads.push_back(v);
 	}
 }

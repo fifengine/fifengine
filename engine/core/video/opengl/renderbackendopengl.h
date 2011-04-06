@@ -82,14 +82,23 @@ namespace FIFE {
 		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 
 		void renderVertexArrays();
+		void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha);
 
 	private:
-		struct Vertex{
-			GLfloat x,y;
-			uint8_t r, g, b, a;
+		struct colorVertex {
+			GLfloat vertex[2];
+			GLubyte color[4];
 		};
 
-		void renderArray(std::vector<Vertex>& vertice, uint8_t sides);
+		struct textureVertex {
+			GLint vertex[2];
+			GLfloat texel[2];
+			GLubyte color[4];
+			uint32_t id;
+		};
+
+		void renderPrimitives(std::vector<colorVertex>& vertice, uint8_t sides);
+		void renderTextures();
 
 		uint32_t m_lightmodel;
 		float m_lred;
@@ -107,11 +116,13 @@ namespace FIFE {
 		GLenum m_blend_dst;
 
 		// For each primitive type a vertex vector
-		std::vector<Vertex> m_points;
-		std::vector<Vertex> m_lines;
-		std::vector<Vertex> m_looplines;
-		std::vector<Vertex> m_triangles;
-		std::vector<Vertex> m_quads;
+		std::vector<colorVertex> m_points;
+		std::vector<colorVertex> m_lines;
+		std::vector<colorVertex> m_looplines;
+		std::vector<colorVertex> m_triangles;
+		std::vector<colorVertex> m_quads;
+
+		std::vector<textureVertex> m_texture_quads;
 	};
 
 }
