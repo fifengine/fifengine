@@ -44,6 +44,7 @@ namespace FIFE {
 	Map::Map(const std::string& identifier, RenderBackend* renderBackend,
 			const std::vector<RendererBase*>& renderers, TimeProvider* tp_master):
 		m_id(identifier),
+		m_filename(""),
 		m_timeprovider(tp_master),
 		m_changelisteners(),
 		m_changedlayers(),

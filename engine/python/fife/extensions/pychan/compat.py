@@ -59,8 +59,9 @@ def _munge_engine_hook(engine):
 	guimanager = engine.getGuiManager()
 
 	def _fife_load_image(filename):
-		index = engine.getImagePool().addResourceFromFile(filename)
-		return guichan.GuiImage(index,engine.getImagePool())
+		img = engine.getImageManager().load(filename)
+		#print "Image Handle:" + str(img.getHandle())
+		return guichan.GuiImage(img.getHandle())
 
 	class hook:
 		pass

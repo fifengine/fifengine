@@ -132,6 +132,9 @@ namespace FIFE {
 		 */
 		bool isStatic() const;
 
+		void setFilename(const std::string& file) { m_filename = file; }
+		const std::string& getFilename() const { return m_filename; }
+
 		bool operator==(const Object& obj) const;
 		bool operator!=(const Object& obj) const;
 
@@ -142,6 +145,7 @@ namespace FIFE {
 	private:
 		std::string m_id;
 		std::string m_namespace;
+		std::string m_filename;
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;

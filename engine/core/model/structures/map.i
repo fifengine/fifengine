@@ -82,5 +82,8 @@ namespace FIFE {
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
 			std::vector<Camera*>& getCameras();
+			
+			void setFilename(const std::string& file);
+			const std::string& getFilename() const;
 	};
 }

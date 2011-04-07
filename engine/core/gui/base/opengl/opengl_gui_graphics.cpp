@@ -34,6 +34,7 @@
 #include "gui/base/gui_image.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
+#include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #include "video/opengl/fife_opengl.h"
 
@@ -53,15 +54,15 @@ namespace FIFE {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);
 //prock - 504
-//		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
+		ImagePtr fifeimg = ImageManager::instance()->get(g_img->getPoolId());
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
 		GLEnable flag(GL_TEXTURE_2D);
 //prock - 504
-//		fifeimg.render(rect, mTarget);
-//		RenderBackend::instance()->renderVertexArrays();
+		fifeimg->render(rect, mTarget);
+		RenderBackend::instance()->renderVertexArrays();
 	}
 
 	void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,

@@ -325,7 +325,7 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
-			ResourcePtr resptr = ImageManager::instance()->get(m_image);
+			ImagePtr resptr = ImageManager::instance()->get(m_image);
 			Image* img = dynamic_cast<Image*>(resptr.get());
 //			Image* img = &imagepool->getImage(m_image);
 			Rect r;
@@ -404,7 +404,7 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
-			ResourcePtr resptr = ImageManager::instance()->get(m_image);
+			ImagePtr resptr = ImageManager::instance()->get(m_image);
 			Image* img = dynamic_cast<Image*>(resptr.get());
 //			Image* img = &imagepool->getImage(m_image);
 			Rect r;

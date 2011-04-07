@@ -192,8 +192,12 @@ namespace FIFE {
 			*/
 			std::vector<Camera*>& getCameras();
 
+			void setFilename(const std::string& file) { m_filename = file; }
+			const std::string& getFilename() const { return m_filename; }
+
 		private:
 			std::string m_id;
+			std::string m_filename;
 
 			std::list<Layer*> m_layers;
 			TimeProvider m_timeprovider;
