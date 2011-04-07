@@ -81,6 +81,10 @@ namespace FIFE {
 		uint32_t getLightingModel() const;
 		void setBackBufferClearing(bool clear);
 		bool getBackBufferClearing() const;
+		void setFrameLimitEnabled(bool limited);
+		bool isFrameLimitEnabled() const;
+		void setFrameLimit(uint16_t framelimit);
+		uint16_t getFrameLimit() const;
 		
 	private:
 		EngineSettings();

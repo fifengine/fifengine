@@ -194,6 +194,10 @@ namespace FIFE {
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
 		void renderVertexArrays();
+		void setFrameLimitEnabled(bool limited);
+		bool isFrameLimitEnabled() const;
+		void setFrameLimit(uint16_t framelimit);
+		uint16_t getFrameLimit() const;
 	};
 	
 	enum MouseCursorType {

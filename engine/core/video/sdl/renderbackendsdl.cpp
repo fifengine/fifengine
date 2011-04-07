@@ -140,10 +140,12 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::startFrame() {
+		RenderBackend::startFrame();
 	}
 
 	void RenderBackendSDL::endFrame() {
 		SDL_Flip(m_screen->getSurface());
+		RenderBackend::endFrame();
 	}
 
 	Image* RenderBackendSDL::createImage(IResourceLoader* loader) {

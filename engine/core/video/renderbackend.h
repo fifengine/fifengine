@@ -67,11 +67,11 @@ namespace FIFE {
 
 		/** Called when a new frame starts.
 		 */
-		virtual void startFrame() = 0;
+		virtual void startFrame();
 
 		/** Called when a frame is finished and ready to be displayed.
 		 */
-		virtual void endFrame() = 0;
+		virtual void endFrame();
 
 		/** Initializes the backend.
 		 */
@@ -245,6 +245,21 @@ namespace FIFE {
 		*/
 		const SDL_PixelFormat& getPixelFormat() const;
 
+		/** Sets whether to use the frame limiter
+		 */
+		void setFrameLimitEnabled(bool limited);
+		
+		/** Gets whether the frame limiter is in use
+		 */
+		bool isFrameLimitEnabled() const;
+
+		/** Sets the frame limit
+		 */
+		void setFrameLimit(uint16_t framelimit);
+
+		/** Gets the frame limit
+		 */
+		uint16_t getFrameLimit() const;
 
 	protected:
 		Image* m_screen;
@@ -254,6 +269,11 @@ namespace FIFE {
 		SDL_Color m_colorkey;
 		ScreenMode m_screenMode;
 		SDL_PixelFormat m_rgba_format;
+
+	private:
+		bool m_isframelimit;
+		uint32_t m_frame_start;
+		uint16_t m_framelimit;
 	};
 }
 
