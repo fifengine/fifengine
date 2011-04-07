@@ -81,6 +81,9 @@ class XMLObjectLoader(fife.ResourceLoader):
 
 			if not isobjectfile:
 				return
+				
+				# this will never be hit currently, if this is put before the return it can provide useful debugging
+				# but animation.xml files will raise this exception because apparently they come through here first
 				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
 
 		self.do_load_resource(f)

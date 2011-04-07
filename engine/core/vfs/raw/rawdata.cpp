@@ -47,14 +47,18 @@ namespace FIFE {
 	}
 
 	std::vector<uint8_t> RawData::getDataInBytes() {
-		std::vector<uint8_t> target;
+        // get the total file size
 		uint32_t size = getDataLength();
-		uint8_t* array = new uint8_t[size];
-		readInto(array, size);
-		for (uint32_t i = 0; i < size; i++) {
-			target.push_back(array[i]);
-		}
-		delete array;
+
+        // create output vector
+        std::vector<uint8_t> target;
+
+        // resize vector to file size
+        target.resize(size);
+
+        // read bytes directly into vector
+        readInto(&target[0], target.size());
+
 		return target;
 	}
 
@@ -122,28 +126,38 @@ namespace FIFE {
 	}
 
 	std::string RawData::readString(size_t len) {
-		char* str = new char[len+1];
-		readInto(reinterpret_cast<uint8_t*>(str), len);
-		str[len] = 0x00;
-		std::string ret = str;
-		delete [] str;
+        // create output string
+        std::string ret;
+
+        // resize to len + 1 for the null terminator
+        ret.resize(len);
+
+        // read directly into string
+		readInto(reinterpret_cast<uint8_t*>(&ret[0]), ret.size());
+
+        // add null terminator
+		ret[len] = '\0';
+
 		return ret;
 	}
 
 	void RawData::read(std::string& outbuffer, int32_t size) {
-		if ((size < 0) || ((size + m_index_current + 1) > getDataLength())) {
-			size = getDataLength() - m_index_current - 1;
+		if ((size < 0) || ((size + m_index_current) > getDataLength())) {
+			size = getDataLength() - m_index_current;
 		}
 		if (size == 0) {
 			outbuffer = "";
 			return;
 		}
-		uint8_t* array = new uint8_t[size + 1];
-		m_datasource->readInto(array, m_index_current, size);
-		array[size] = 0x00;
-		outbuffer = reinterpret_cast<char*>(array);
-		delete[] array;
-		m_index_current += size;
+
+        // resize to len + 1 for the null terminator
+        outbuffer.resize(size);
+
+        // read directly into string
+        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), outbuffer.size());
+
+        // add null terminator
+        outbuffer[size] = '\0';
 	}
 	
 
