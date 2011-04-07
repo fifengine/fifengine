@@ -28,6 +28,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log/logger.h"
+#include "video/image.h"
+#include "video/imagemanager.h"
 
 #include "gui_image.h"
 
@@ -37,33 +39,31 @@ namespace FIFE {
 	GuiImage::GuiImage(): gcn::Image() {
 	}
 
-	GuiImage::GuiImage(int32_t id): gcn::Image() {
+	GuiImage::GuiImage(int32_t id = 0): gcn::Image(), m_poolid(id) {
 //prock - 504
-//		m_pool->getImage(m_poolid);
+//TODO: this store a ImagePtr
 	}
 
 	GuiImage::~GuiImage() {
-// 		 m_pool->release(m_poolid,true);
+ 		//ImageManager::instance()->free(m_poolid);
 	}
 
 	void GuiImage::free() {
-		// the imagepool should do this; should we tell it?
+		//ImageManager::instance()->free(m_poolid);
 	}
 
 	int32_t GuiImage::getWidth() const {
 //prock - 504
-//		if(m_poolid==Pool::INVALID_ID)
-//			return 0;
-//		return m_pool->getImage(m_poolid).getWidth();
-		return 0;
+		if(m_poolid==0)
+			return 0;
+		return ImageManager::instance()->get(m_poolid)->getWidth();
 	}
 
 	int32_t GuiImage::getHeight() const {
 //prock - 504
-//		if(m_poolid==Pool::INVALID_ID)
-//			return 0;
-//		return m_pool->getImage(m_poolid).getHeight();
-		return 0;
+		if(m_poolid==0)
+			return 0;
+		return ImageManager::instance()->get(m_poolid)->getHeight();
 	}
 
 	gcn::Color GuiImage::getPixel(int32_t x, int32_t y) {

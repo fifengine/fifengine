@@ -38,6 +38,7 @@ namespace FIFE {
 		IResource(identifier),
 		m_id(identifier),
 		m_namespace(name_space),
+		m_filename(""),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_blocking(false),

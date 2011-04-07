@@ -83,8 +83,7 @@ class ApplicationBase(object):
 
 		self.engine.init()
 
-		self._animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
-		self.engine.getAnimationPool().addResourceLoader(self._animationloader)
+		self._animationloader = XMLAnimationLoader(self.engine.getImageManager(), self.engine.getVFS())
 
 		pychan.init(self.engine, debug=self._setting.get("FIFE", "PychanDebug", False))
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)

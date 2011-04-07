@@ -37,6 +37,7 @@
 #include "util/structures/rect.h"
 #include "util/utf8/utf8.h"
 #include "video/image.h"
+#include "video/imagemanager.h"
 #include "video/renderbackend.h"
 
 #include "subimagefont.h"
@@ -50,14 +51,11 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
 
 //prock - 504
-//		int32_t image_id = m_pool.addResourceFromFile(filename);
-		int32_t image_id = 0;
+		ImagePtr img = ImageManager::instance()->load(filename);
+		int32_t image_id = img->getHandle();
 
 //prock - 504
-//		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
-//		SDL_Surface* surface = img.getSurface();
-
-		SDL_Surface* surface = NULL;
+		SDL_Surface* surface = img->getSurface();
 		m_colorkey = RenderBackend::instance()->getColorKey();
 
 		if( !surface ) {

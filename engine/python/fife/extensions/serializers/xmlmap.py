@@ -39,7 +39,7 @@ from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_r
 
 FORMAT = '1.0'
 
-class XMLMapLoader(fife.ResourceLoader):
+class XMLMapLoader(object):
 	""" The B{XMLMapLoader} parses the xml map using several section. 
 	Each section fires a callback (if given) which can e. g. be
 	used to show a progress bar.
@@ -58,8 +58,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		@type	extensions:	dict
 		@param	extensions:	information package which extension should be activated (lights, sounds)
 		"""
-		fife.ResourceLoader.__init__(self)
-		self.thisown = 0
+#		self.thisown = 0
 		
 		self.callback = callback
 		self.debug = debug
@@ -67,12 +66,12 @@ class XMLMapLoader(fife.ResourceLoader):
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
 		self.model = self.engine.getModel()
-		self.pool = self.engine.getImagePool()
-		self.anim_pool = self.engine.getAnimationPool()
+		self.pool = self.engine.getImageManager()
+		self.anim_pool = None
 		
 		self.obj_loader = XMLObjectLoader(
-			engine.getImagePool(),
-			engine.getAnimationPool(),
+			engine.getImageManager(),
+			None,
 			engine.getModel(),
 			engine.getVFS()
 		)
@@ -109,7 +108,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		@return	map:	FIFE map object
 		"""
 		start_time = time.time()
-		self.source = location.getFilename()
+		self.source = location
 		f = self.vfs.open(self.source)
 		f.thisown = 1
 		tree = ET.parse(f)
@@ -139,7 +138,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		map = None
 		try:
 			self.map = self.model.createMap(str(_id))
-			self.map.setResourceFile(self.source)
+			self.map.setFilename(self.source)
 		except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
 			print e.getMessage()
 			print ''.join(['File: ', self.source, '. The map ', str(_id), ' already exists! Ignoring map definition.'])

@@ -43,9 +43,10 @@ class TestView(unittest.TestCase):
 		
 		self.obj2 = model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
-		self.pool.create('../data/earth_1.png')
-		imgid = self.pool.getResourceHandle('../data/earth_1.png')
-		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
+		image = self.pool.create('../data/earth_1.png')
+		self.obj2.get2dGfxVisual().addStaticImage(0, image.getHandle())
+		#imgid = self.pool.getResourceHandle('../data/earth_1.png')
+		#self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
 
 		self.screen_cell_w = 126
 		self.screen_cell_h = 96

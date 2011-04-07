@@ -64,12 +64,12 @@ def decorate_addFrame(f):
 		return f(self,image_ptr,delay)
 	return addFrame
 
-fife.Animation.addFrame = decorate_addFrame(fife.Animation.addFrame)
-fife.Pool.getIndex = this_is_deprecated(
-	fife.Pool.addResourceFromFile,
-	revision = 2617,
-	message  = "Use addResourceFromFile instead of getIndex"
-)
+#fife.Animation.addFrame = decorate_addFrame(fife.Animation.addFrame)
+#fife.Pool.getIndex = this_is_deprecated(
+#	fife.Pool.addResourceFromFile,
+#	revision = 2617,
+#	message  = "Use addResourceFromFile instead of getIndex"
+#)
 
 def _compat_NonConsumableKeys():
 	class CompatKeyFilter(fife.IKeyFilter):

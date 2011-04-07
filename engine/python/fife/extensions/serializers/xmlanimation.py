@@ -24,9 +24,8 @@
 from fife import fife
 from fife.extensions.serializers import ET
 
-class XMLAnimationLoader(fife.ResourceLoader):
+class XMLAnimationLoader(object):
 	def __init__(self, imagepool, vfs):
-		fife.ResourceLoader.__init__(self)
 		self.imagepool = imagepool
 		self.vfs = vfs
 		self.thisown = 0
@@ -34,7 +33,7 @@ class XMLAnimationLoader(fife.ResourceLoader):
 		self.node = None
 
 	def loadResource(self, location):
-		self.filename = location.getFilename()
+		self.filename = location
 		return self.do_load_resource()
 
 	def do_load_resource(self):
