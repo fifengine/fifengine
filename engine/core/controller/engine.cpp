@@ -219,6 +219,11 @@ namespace FIFE {
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
 
+		if (m_settings.isFrameLimitEnabled()) {
+			m_renderbackend->setFrameLimitEnabled(true);
+			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
+		}
+
 		std::string driver = m_settings.getVideoDriver();
 		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
 
@@ -358,8 +363,8 @@ namespace FIFE {
 	}
 
 	void Engine::pump() {
-		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();
+		m_eventmanager->processEvents();
 		m_timemanager->update();
 
 		if (m_model->getMapCount() == 0) {

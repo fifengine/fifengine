@@ -171,13 +171,12 @@ namespace FIFE {
 
 
 	void RenderBackendOpenGL::startFrame() {
+		RenderBackend::startFrame();
 	}
 
 	void RenderBackendOpenGL::endFrame() {
-		// last chance to render (needed for gui or if no map is loaded)
-		renderVertexArrays();
-
 		SDL_GL_SwapBuffers();
+		RenderBackend::endFrame();
 	}
 
 	Image* RenderBackendOpenGL::createImage(IResourceLoader* loader) {

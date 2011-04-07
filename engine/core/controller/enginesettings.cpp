@@ -55,7 +55,9 @@ namespace FIFE {
 		m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""),
 		m_iscolorkeyenabled(false),
 		m_lighting(0),
-		m_buffer_clearing(true) {
+		m_buffer_clearing(true),
+		m_isframelimit(false),
+		m_framelimit(60) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
@@ -210,6 +212,22 @@ namespace FIFE {
 
 	void EngineSettings::setBackBufferClearing(bool clear) {
 		m_buffer_clearing = clear;
+	}
+
+	void EngineSettings::setFrameLimitEnabled(bool limited) {
+		m_isframelimit = limited;
+	}
+
+	bool EngineSettings::isFrameLimitEnabled() const {
+		return m_isframelimit;
+	}
+
+	void EngineSettings::setFrameLimit(uint16_t framelimit) {
+		m_framelimit = framelimit;
+	}
+
+	uint16_t EngineSettings::getFrameLimit() const {
+		return m_framelimit;
 	}
 }
 

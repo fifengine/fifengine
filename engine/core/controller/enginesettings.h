@@ -226,6 +226,22 @@ namespace FIFE {
 			return m_buffer_clearing;
 		}
 
+		/** Sets whether to use the frame limiter
+		 */
+		void setFrameLimitEnabled(bool limited);
+		
+		/** Gets whether the frame limiter is in use
+		 */
+		bool isFrameLimitEnabled() const;
+
+		/** Sets the frame limit
+		 */
+		void setFrameLimit(uint16_t framelimit);
+
+		/** Gets the frame limit
+		 */
+		uint16_t getFrameLimit() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -246,6 +262,8 @@ namespace FIFE {
 		std::string m_videodriver;
 		uint32_t m_lighting;
 		bool m_buffer_clearing;
+		bool m_isframelimit;
+		uint16_t m_framelimit;
 	};
 
 }//FIFE

@@ -37,7 +37,9 @@ namespace FIFE {
 		m_screen(NULL),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
-		m_colorkey(colorkey) {
+		m_colorkey(colorkey),
+		m_isframelimit(false),
+		m_framelimit(60) {
 	}
 
 
@@ -48,6 +50,22 @@ namespace FIFE {
 		delete m_screen;
 		m_screen = NULL;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	}
+
+	void RenderBackend::startFrame() {
+		if (m_isframelimit) {
+			m_frame_start = SDL_GetTicks();
+		}
+	}
+
+	void RenderBackend::endFrame () {
+		if (m_isframelimit) {
+			uint16_t frame_time = SDL_GetTicks() - m_frame_start;
+			const float frame_limit = 1000/m_framelimit;
+			if (frame_time < frame_limit) {
+				SDL_Delay(frame_limit - frame_time);
+			}
+		}
 	}
 
 	void RenderBackend::captureScreen(const std::string& filename) {
@@ -150,4 +168,19 @@ namespace FIFE {
 		return m_rgba_format;
 	}
 
+	void RenderBackend::setFrameLimitEnabled(bool limited) {
+		m_isframelimit = limited;
+	}
+
+	bool RenderBackend::isFrameLimitEnabled() const {
+		return m_isframelimit;
+	}
+
+	void RenderBackend::setFrameLimit(uint16_t framelimit) {
+		m_framelimit = framelimit;
+	}
+
+	uint16_t RenderBackend::getFrameLimit() const {
+		return m_framelimit;
+	}
 }

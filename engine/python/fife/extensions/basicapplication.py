@@ -133,6 +133,12 @@ class ApplicationBase(object):
 		except:
 			pass
 
+		try:
+			engineSetting.setFrameLimitEnabled(self._setting.get("FIFE", "FrameLimitEnabled", False))
+			engineSetting.setFrameLimit(self._setting.get("FIFE", "FrameLimit", 60))
+		except:
+			pass		
+
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
