@@ -35,6 +35,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "textrenderpool.h"
 #include "abstractfont.h"
 
 struct SDL_Surface;
@@ -67,8 +68,7 @@ namespace FIFE {
 		virtual SDL_Surface* renderString(const std::string& text) = 0;
 
 	protected:
-//prock - 504
-//		TextRenderPool m_pool;
+		TextRenderPool m_pool;
 
 		SDL_Color mColor;
 		int32_t mGlyphSpacing;

@@ -36,12 +36,15 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	GuiImage::GuiImage(): gcn::Image() {
+	GuiImage::GuiImage(): gcn::Image(), m_poolid(0) {
 	}
 
 	GuiImage::GuiImage(int32_t id = 0): gcn::Image(), m_poolid(id) {
 //prock - 504
 //TODO: this store a ImagePtr
+		if (m_poolid != 0) {
+			ImageManager::instance()->get(m_poolid);
+		}
 	}
 
 	GuiImage::~GuiImage() {
