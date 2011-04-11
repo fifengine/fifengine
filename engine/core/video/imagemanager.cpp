@@ -323,6 +323,8 @@ namespace FIFE {
 		//should always be equal
 		assert (m_resHandleMap.size() == m_resNameMap.size());
 
+		uint32_t count = m_resHandleMap.size();
+
 		m_resHandleMap.clear();
 		m_resNameMap.clear();
 
