@@ -253,9 +253,18 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			renderbackend->changeBlending(m_src, m_dst);
-			if(r.intersects(viewport))
+			
+			if(r.intersects(viewport)) {
 				img->render(r);
+				uint8_t lm = renderbackend->getLightingModel();
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+				} else if (lm == 2) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+				}
+			}
 		}
 	}
 	void LightRendererImageInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
@@ -306,9 +315,18 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			renderbackend->changeBlending(m_src, m_dst);
-			if(r.intersects(viewport))
+			
+			if(r.intersects(viewport)) {
 				img->render(r);
+				uint8_t lm = renderbackend->getLightingModel();
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+				} else if (lm == 2) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+				}
+			}
 		}
 	}
 	void LightRendererAnimationInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
@@ -357,9 +375,18 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			renderbackend->changeBlending(m_src, m_dst);
-			if(r.intersects(viewport))
+			
+			if(r.intersects(viewport)) {
 				img->render(r);
+				uint8_t lm = renderbackend->getLightingModel();
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+				} else if (lm == 2) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+				}
+			}
 		}
 	}
 	void LightRendererResizeInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
@@ -403,8 +430,16 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
-			renderbackend->changeBlending(m_src, m_dst);
 			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions, m_xstretch * zoom, m_ystretch * zoom, m_red, m_green, m_blue);
+
+			uint8_t lm = renderbackend->getLightingModel();
+			if (m_stencil) {
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+			} else if (lm == 1) {
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 255, 0, 6);
+			} else if (lm == 2) {
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 0, 2, 4);
+			}
 		}
 	}
 	void LightRendererSimpleLightInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
@@ -535,36 +570,21 @@ namespace FIFE {
 		if (!layer->areInstancesVisible()) {
 			return;
 		}
-		m_renderbackend->disableLighting();
+
 		std::map<std::string, std::vector<LightRendererElementInfo*> >::iterator group_it = m_groups.begin();
 		for (; group_it != m_groups.end(); ++group_it) {
 			std::vector<LightRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
 			for (;info_it != group_it->second.end(); ++info_it) {
 				if (lm != 0) {
-					if ((*info_it)->getStencil() != -1) {
-						uint8_t sref = (*info_it)->getStencil();
-						float aref = (*info_it)->getAlpha();
+					if ((*info_it)->getStencil() != -1 && (*info_it)->getStencil() < 255) {
 						if(info_it != group_it->second.begin()) {
-							sref += 1;
+							(*info_it)->setStencil((*info_it)->getStencil()+1, (*info_it)->getAlpha());
 						}
-						m_renderbackend->setStencilTest(sref, 3, 4);
-						m_renderbackend->setAlphaTest(aref);
-					} else if(lm == 1) {
-						m_renderbackend->setStencilTest(255, 0, 6);
-						m_renderbackend->setAlphaTest(0);
-					} else if(lm == 2) {
-						m_renderbackend->setStencilTest(1, 2, 4);
-						m_renderbackend->setAlphaTest(0);
 					}
 				}
 				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
-		m_renderbackend->renderVertexArrays();
-		m_renderbackend->disableAlphaTest();
-		m_renderbackend->disableStencilTest();
-		m_renderbackend->changeBlending(4, 5);
-		m_renderbackend->enableLighting();
 	}
 
 }

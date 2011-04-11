@@ -841,11 +841,14 @@ namespace FIFE {
 			}
 		}
 
-		if (m_lighting) {
+		if (m_lighting && m_renderbackend->getLightingModel() == 2) {
 			m_renderbackend->resetLighting();
 		}
 		renderOverlay();
 		m_renderbackend->renderVertexArrays();
+		if (m_lighting && m_renderbackend->getLightingModel() == 1) {
+			m_renderbackend->resetLighting();
+		}
 		m_renderbackend->popClipArea();
 	}
 }

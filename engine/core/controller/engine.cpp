@@ -374,19 +374,8 @@ namespace FIFE {
 		} else {
 			m_model->update();
 		}
-
-#ifdef HAVE_OPENGL
-		if (m_settings.getLightingModel() == 1) {
-			m_renderbackend->disableLighting();
-		}
-#endif
 		m_guimanager->turn();
 		m_cursor->draw();
-#ifdef HAVE_OPENGL
-		if (m_settings.getLightingModel() == 1) {
-			m_renderbackend->enableLighting();
-		}
-#endif
 		m_renderbackend->endFrame();
 	}
 

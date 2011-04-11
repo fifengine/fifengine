@@ -386,9 +386,10 @@ namespace FIFE {
 			r.w = img->getWidth();
 			r.h = img->getHeight();
 			if(r.intersects(viewport)) {
-				renderbackend->disableLighting();
 				img->render(r);
-				renderbackend->enableLighting();
+				if (renderbackend->getLightingModel() > 0) {
+					renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, 0, 0);
+				}
 			}
 		}
 	}
@@ -504,6 +505,5 @@ namespace FIFE {
 				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
-		m_renderbackend->renderVertexArrays();
 	}
 }

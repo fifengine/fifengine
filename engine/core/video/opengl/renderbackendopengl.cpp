@@ -40,6 +40,32 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
+	class RenderObject {
+	public:
+		RenderObject(uint8_t m, uint16_t s, uint32_t t=0):
+			mode(m),
+			size(s),
+			texture_id(t),
+			src(4),
+			dst(5),
+			light(true),
+			stencil_test(false),
+			stencil_ref(0),
+			stencil_op(0),
+			stencil_func(0) {}
+
+		uint32_t texture_id;
+		uint8_t mode;
+		uint16_t size;
+		int32_t src;
+		int32_t dst;
+		bool light;
+		bool stencil_test;
+		uint8_t stencil_ref;
+		uint32_t stencil_op;
+		uint32_t stencil_func;
+	};
+
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
 		// Get the pixelformat we want.
 //		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
@@ -310,9 +336,8 @@ namespace FIFE {
 			uint16_t width = getScreenWidth();
 			uint16_t height = getScreenHeight();
 			Point p = Point(0,0);
-			setStencilTest(0, 0, 5);
 			fillRectangle(p, width, height, m_lred*255, m_lgreen*255, m_lblue*255, m_lalpha*255);
-			disableStencilTest();
+			changeRenderInfos(1, 4, 5, false, true, 0, 0, 5);
 		}
 	}
 
@@ -435,228 +460,340 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::renderVertexArrays() {
-		// point check
-		if (!m_points.empty()) {
-			renderPrimitives(m_points, 0);
-			m_points.clear();
-		}
-		// line check
-		if (!m_lines.empty()) {
-			renderPrimitives(m_lines, 1);
-			m_lines.clear();
-		}
-		// loop line check
-		if (!m_looplines.empty()) {
-			renderPrimitives(m_looplines, 3);
-			m_looplines.clear();
-		}
-		// triangle check
-		if (!m_triangles.empty()) {
-			renderPrimitives(m_triangles, 4);
-			m_triangles.clear();
-		}
-		// quad check
-		if (!m_quads.empty()) {
-			renderPrimitives(m_quads, 7);
-			m_quads.clear();
-		}
-		// texture quad check
-		if (!m_texture_quads.empty()) {
-			renderTextures();
-			m_texture_quads.clear();
-		}
-	}
+	void RenderBackendOpenGL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
+		bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) {
 
-	void RenderBackendOpenGL::renderPrimitives(std::vector<colorVertex>& vertice, uint8_t type) {
-		const uint32_t size = vertice.size();
-		const uint32_t stride = sizeof(colorVertex);
+		uint16_t count = 0;
+		uint32_t size = m_render_objects.size();
+		while (count != elements) {
+			++count;
+			RenderObject& r = m_render_objects.at(size-count);
 
-		glVertexPointer(2, GL_FLOAT, stride, &vertice[0].vertex);
-		glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertice[0].color);
-
-		GLenum mode;
-		switch(type) {
-			case 0  : mode = GL_POINTS; break;
-			case 1  : mode = GL_LINES; break;
-			case 2  : mode = GL_LINE_STRIP; break;
-			case 3  : mode = GL_LINE_LOOP; break;
-			case 4  : mode = GL_TRIANGLES; break;
-			case 5  : mode = GL_TRIANGLE_STRIP; break;
-			case 6  : mode = GL_TRIANGLE_FAN; break;
-			case 7  : mode = GL_QUADS; break;
-			case 8  : mode = GL_QUAD_STRIP; break;
-			case 9  : mode = GL_POLYGON; break;
-			default : mode = GL_QUADS;
-		}
-		glDrawArrays(mode, 0, size);
-	}
-
-	void RenderBackendOpenGL::renderTextures() {
-		const uint32_t stride = sizeof(textureVertex);
-
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-		glVertexPointer(2, GL_INT, stride, &m_texture_quads[0].vertex);
-		glTexCoordPointer(2, GL_FLOAT, stride, &m_texture_quads[0].texel);
-		glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_texture_quads[0].color);
-
-		int32_t index = 0;
-		uint32_t old_id = 0;
-		uint32_t elements = 0;
-		std::vector<textureVertex>::iterator iv = m_texture_quads.begin();
-		while (iv != m_texture_quads.end()) {
-			if (old_id != (*iv).id) {
-				if (elements > 0) {
-					glDrawArrays(GL_QUADS, index, elements);
-					index += elements;
-				}
-				elements = 4;
-				old_id = (*iv).id;
-				glBindTexture(GL_TEXTURE_2D, (*iv).id);
-			} else {
-				elements += 4;
+			r.src = src;
+			r.dst = dst;
+			r.light = light;
+			if (stentest) {
+				r.stencil_test = stentest;
+				r.stencil_ref = stenref;
+				r.stencil_op = stenop;
+				r.stencil_func = stenfunc;
 			}
-			iv += 4;
 		}
-		glDrawArrays(GL_QUADS, index, elements);
+	}
 
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable(GL_TEXTURE_2D);
+	void RenderBackendOpenGL::renderVertexArrays() {
+		if (!m_render_objects.empty()) {
+			//bools to indicate changes
+			bool typ = false;
+			bool texture = false;
+			bool blending = false;
+			bool light = false;
+			bool stencil = false;
+			bool render = false;
+
+			//stride
+			const uint32_t stride = sizeof(renderData);
+			
+			//set pointer
+			glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
+			glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas[0].texel);
+			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas[0].color);
+
+			// array index
+			int32_t index = 0;
+			// elements to render
+			uint32_t elements = 0;
+			// render mode
+			GLenum mode = GL_QUADS;
+			// render type
+			uint8_t type = 7;
+			// texture id
+			uint32_t texture_id = 0;
+			// src blending mode
+			int32_t src = 4;
+			// dst blending mode
+			int32_t dst = 5;
+
+			for(std::vector<RenderObject>::iterator ir = m_render_objects.begin(); ir != m_render_objects.end(); ir++) {
+				RenderObject& ro = (*ir);
+
+				//first we look for changes
+				if (ro.mode != type) {
+					typ = true;
+					render = true;
+				}
+				if (ro.texture_id != texture_id) {
+					texture = true;
+					render = true;
+				}
+				if (m_lightmodel != 0) {
+					if (ro.src != src || ro.dst != dst) {
+						blending = true;
+						render = true;
+					}
+					if (ro.light != m_light_enabled) {
+						light = true;
+						render = true;
+					}
+					if (ro.stencil_test != m_stencil_enabled) {
+						stencil = true;
+						render = true;
+					} else if (ro.stencil_test) {
+						if (ro.stencil_ref != m_sten_ref || ro.stencil_op != m_sten_op || ro.stencil_func != m_sten_func) {
+							stencil = true;
+							render = true;
+						}
+					}
+				}
+
+				// if changes then we render all previously elements
+				if (render) {
+					if (elements > 0) {
+						//render
+						glDrawArrays(mode, index, elements);
+						index += elements;
+					}
+					// switch mode
+					if (typ) {
+						switch(ro.mode) {
+							case 0  : mode = GL_POINTS; break;
+							case 1  : mode = GL_LINES; break;
+							case 2  : mode = GL_LINE_STRIP; break;
+							case 3  : mode = GL_LINE_LOOP; break;
+							case 4  : mode = GL_TRIANGLES; break;
+							case 5  : mode = GL_TRIANGLE_STRIP; break;
+							case 6  : mode = GL_TRIANGLE_FAN; break;
+							case 7  : mode = GL_QUADS; break;
+							case 8  : mode = GL_QUAD_STRIP; break;
+							case 9  : mode = GL_POLYGON; break;
+						}
+						type = ro.mode;
+						typ = false;
+					}
+					// set element to current size
+					elements = ro.size;
+
+					// switch texturing
+					if (texture) {
+						if (ro.texture_id != 0) {
+							glEnable(GL_TEXTURE_2D);
+							glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+							glBindTexture(GL_TEXTURE_2D, ro.texture_id);
+							texture_id = ro.texture_id;
+						} else {
+							glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+							glDisable(GL_TEXTURE_2D);
+							texture_id = 0;
+						}
+						texture = false;
+					}
+
+					// if lighting is enabled we have to consider a few more values
+					if (m_lightmodel != 0) {
+						// change blending
+						if (blending) {
+							src = ro.src;
+							dst = ro.dst;
+							changeBlending(ro.src, ro.dst);
+							blending = false;
+						}
+						// change light
+						if (light) {
+							if (ro.light && !m_light_enabled) {
+								enableLighting();
+							} else if (!ro.light && m_light_enabled) {
+								disableLighting();
+							}
+							light = false;
+						}
+						// change stencil
+						if (stencil) {
+							if (ro.stencil_test) {
+								setStencilTest(ro.stencil_ref, ro.stencil_op, ro.stencil_func);
+								setAlphaTest(0.0);
+							} else {
+								disableAlphaTest();
+								disableStencilTest();
+							}
+							stencil = false;
+						}
+					}
+					render = false;
+				} else {
+					// else add the element
+					elements += ro.size;
+				}
+			}
+			// render
+			glDrawArrays(mode, index, elements);
+
+			//reset all states
+			if (texture_id != 0) {
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+				glDisable(GL_TEXTURE_2D);
+			}
+			changeBlending(4, 5);
+			disableLighting();
+			disableStencilTest();
+			disableAlphaTest();
+
+			m_render_objects.clear();
+			m_render_datas.clear();
+		}
 	}
 
 	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		if ((x < 0) || (x >= (int32_t)getWidth()) || (y < 0) || (y >= (int32_t)getHeight())) {
 			return false;
 		}
-		colorVertex v;
-		v.vertex[0] = float(x);
-		v.vertex[1] = float(y);
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_points.push_back(v);
+		renderData rd;
+		rd.vertex[0] = float(x);
+		rd.vertex[1] = float(y);
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(0,1);
+		m_render_objects.push_back(ro);
 
 		return true;
 	}
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		colorVertex v;
-		v.vertex[0] = p1.x;
-		v.vertex[1] = p1.y;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_lines.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p1.x;
+		rd.vertex[1] = p1.y;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p2.x;
-		v.vertex[1] = p2.y;
-		m_lines.push_back(v);
+		rd.vertex[0] = p2.x;
+		rd.vertex[1] = p2.y;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(1,2);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		colorVertex v;
-		v.vertex[0] = p1.x;
-		v.vertex[1] = p1.y;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_triangles.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p1.x;
+		rd.vertex[1] = p1.y;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p2.x;
-		v.vertex[1] = p2.y;
-		m_triangles.push_back(v);
+		rd.vertex[0] = p2.x;
+		rd.vertex[1] = p2.y;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p3.x;
-		v.vertex[1] = p3.y;
-		m_triangles.push_back(v);
+		rd.vertex[0] = p3.x;
+		rd.vertex[1] = p3.y;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(4,3);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		colorVertex v;
-		v.vertex[0] = p.x;
-		v.vertex[1]= p.y;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_looplines.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p.x;
+		rd.vertex[1] = p.y;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x+w;
-		m_looplines.push_back(v);
+		rd.vertex[0] = p.x+w;
+		m_render_datas.push_back(rd);
 
-		v.vertex[1] = p.y+h;
-		m_looplines.push_back(v);
+		rd.vertex[1] = p.y+h;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x;
-		m_looplines.push_back(v);
+		rd.vertex[0] = p.x;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(3,4);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		colorVertex v;
-		v.vertex[0] = p.x;
-		v.vertex[1] = p.y;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_quads.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p.x;
+		rd.vertex[1] = p.y;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x+w;
-		m_quads.push_back(v);
+		rd.vertex[0] = p.x+w;
+		m_render_datas.push_back(rd);
 
-		v.vertex[1] = p.y+h;
-		m_quads.push_back(v);
+		rd.vertex[1] = p.y+h;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x;
-		m_quads.push_back(v);
+		rd.vertex[0] = p.x;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(7,4);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		colorVertex v;
-		v.vertex[0] = p1.x;
-		v.vertex[1] = p1.y;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_quads.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p1.x;
+		rd.vertex[1] = p1.y;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p2.x;
-		v.vertex[1] = p2.y;
-		m_quads.push_back(v);
+		rd.vertex[0] = p2.x;
+		rd.vertex[1] = p2.y;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p3.x;
-		v.vertex[1] = p3.y;
-		m_quads.push_back(v);
+		rd.vertex[0] = p3.x;
+		rd.vertex[1] = p3.y;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p4.x;
-		v.vertex[1] = p4.y;
-		m_quads.push_back(v);
+		rd.vertex[0] = p4.x;
+		rd.vertex[1] = p4.y;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(7,4);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-		colorVertex v;
-		v.vertex[0] = p.x-size;
-		v.vertex[1] = p.y+size;
-		v.color[0] = r;
-		v.color[1] = g;
-		v.color[2] = b;
-		v.color[3] = a;
-		m_looplines.push_back(v);
+		renderData rd;
+		rd.vertex[0] = p.x-size;
+		rd.vertex[1] = p.y+size;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x+size;
-		m_looplines.push_back(v);
+		rd.vertex[0] = p.x+size;
+		m_render_datas.push_back(rd);
 
-		v.vertex[1] = p.y-size;
-		m_looplines.push_back(v);
+		rd.vertex[1] = p.y-size;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = p.x-size;
-		m_looplines.push_back(v);
+		rd.vertex[0] = p.x-size;
+		m_render_datas.push_back(rd);
+
+		RenderObject ro(3,4);
+		m_render_objects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
@@ -665,57 +802,61 @@ namespace FIFE {
 			alpha = 255;
 		}
 		const float step = Mathf::twoPi()/subdivisions;
-		colorVertex v;
+		renderData rd;;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
-			v.vertex[0] = p.x;
-			v.vertex[1] = p.y;
-			v.color[0] = red;
-			v.color[1] = green;
-			v.color[2] = blue;
-			v.color[3] = intensity;
-			m_triangles.push_back(v);
+			rd.vertex[0] = p.x;
+			rd.vertex[1] = p.y;
+			rd.color[0] = red;
+			rd.color[1] = green;
+			rd.color[2] = blue;
+			rd.color[3] = intensity;
+			m_render_datas.push_back(rd);
 
-			v.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
-			v.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
-			v.color[0] = 0;
-			v.color[1] = 0;
-			v.color[2] = 0;
-			v.color[3] = alpha;
-			m_triangles.push_back(v);
+			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
+			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
+			rd.color[0] = 0;
+			rd.color[1] = 0;
+			rd.color[2] = 0;
+			rd.color[3] = alpha;
+			m_render_datas.push_back(rd);
 
-			v.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
-			v.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
-			m_triangles.push_back(v);
+			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
+			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
+			m_render_datas.push_back(rd);
+
+			RenderObject ro(4,3);
+			m_render_objects.push_back(ro);
 		}
 	}
 
 	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
-		textureVertex v;
+		renderData rd;
+		rd.vertex[0] = float(rec.x);
+		rd.vertex[1] = float(rec.y);
+		rd.texel[0] = 0.0;
+		rd.texel[1] = 0.0;
+		rd.color[0] = 255;
+		rd.color[1] = 255;
+		rd.color[2] = 255;
+		rd.color[3] = alpha;
+		m_render_datas.push_back(rd);
+		
+		rd.vertex[0] = float(rec.x);
+		rd.vertex[1] = float(rec.y+rec.h);
+		rd.texel[1] = rt;
+		m_render_datas.push_back(rd);
+		
+		rd.vertex[0] = float(rec.x+rec.w);
+		rd.vertex[1] = float(rec.y+rec.h);
+		rd.texel[0] = ct;
+		m_render_datas.push_back(rd);
+		
+		rd.vertex[0] = float(rec.x+rec.w);
+		rd.vertex[1] = float(rec.y);
+		rd.texel[1] = 0.0;
+		m_render_datas.push_back(rd);
 
-		v.vertex[0] = rec.x;
-		v.vertex[1] = rec.y;
-		v.texel[0] = 0.0;
-		v.texel[1] = 0.0;
-		v.color[0] = 255;
-		v.color[1] = 255;
-		v.color[2] = 255;
-		v.color[3] = alpha;
-		v.id = id;
-		m_texture_quads.push_back(v);
-
-		v.vertex[0] = rec.x;
-		v.vertex[1] = rec.y+rec.h;
-		v.texel[1] = rt;
-		m_texture_quads.push_back(v);
-
-		v.vertex[0] = rec.x+rec.w;
-		v.vertex[1] = rec.y+rec.h;
-		v.texel[0] = ct;
-		m_texture_quads.push_back(v);
-
-		v.vertex[0] = rec.x+rec.w;
-		v.vertex[1] = rec.y;
-		v.texel[1] = 0.0;
-		m_texture_quads.push_back(v);
+		RenderObject ro(7,4,id);
+		m_render_objects.push_back(ro);
 	}
 }
