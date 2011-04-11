@@ -46,9 +46,9 @@ namespace FIFE {
 	std::size_t ImageManager::getMemoryUsed() const {
 		std::size_t totalSize = 0;
 
-		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
+		ImageHandleMapConstIterator it = m_imgHandleMap.begin();
 
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			totalSize += it->second->getSize();
 		}
 
@@ -56,10 +56,10 @@ namespace FIFE {
 	}
 
 	uint32_t ImageManager::getTotalResourcesCreated() const {
-		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
+		ImageHandleMapConstIterator it = m_imgHandleMap.begin();
 		uint32_t count = 0;
 
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if ( it->second->getState() == IResource::RES_NOT_LOADED ) {
 				count++;
 			}
@@ -69,10 +69,10 @@ namespace FIFE {
 	}
 
 	uint32_t ImageManager::getTotalResourcesLoaded() const {
-		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
+		ImageHandleMapConstIterator it = m_imgHandleMap.begin();
 		uint32_t count = 0;
 
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if ( it->second->getState() == IResource::RES_LOADED ) {
 				count++;
 			}
@@ -82,7 +82,7 @@ namespace FIFE {
 	}
 
 	uint32_t ImageManager::getTotalResources() const {
-		return m_resHandleMap.size();
+		return m_imgHandleMap.size();
 	}
 
 
@@ -92,9 +92,9 @@ namespace FIFE {
 	}
 
 	ImagePtr ImageManager::load(const std::string& name, IResourceLoader* loader) {
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
 
-		if (nit != m_resNameMap.end()) {
+		if (nit != m_imgNameMap.end()) {
 			if ( nit->second->getState() == IResource::RES_NOT_LOADED ) {
 				nit->second->load();
 			}
@@ -119,11 +119,11 @@ namespace FIFE {
 
 		ImagePtr resptr(res);
 
-		std::pair<ResourceHandleMapIterator, bool> returnValue;
-		returnValue = m_resHandleMap.insert ( ResourceHandleMapPair(res->getHandle(), resptr));
+		std::pair<ImageHandleMapIterator, bool> returnValue;
+		returnValue = m_imgHandleMap.insert ( ImageHandleMapPair(res->getHandle(), resptr));
 
 		if (returnValue.second) {
-			m_resNameMap.insert ( ResourceNameMapPair(returnValue.first->second->getName(), returnValue.first->second) );
+			m_imgNameMap.insert ( ImageNameMapPair(returnValue.first->second->getName(), returnValue.first->second) );
 		}
 		else {
 			FL_WARN(_log, LMsg("IResourceManager::add(IResource*) - ") << "Resource " << res->getName() << " already exists.... ignoring.");
@@ -133,8 +133,8 @@ namespace FIFE {
 	}
 
 	bool ImageManager::exists(const std::string& name) {
-		ResourceNameMapIterator it = m_resNameMap.find(name);
-		if (it != m_resNameMap.end()) {
+		ImageNameMapIterator it = m_imgNameMap.find(name);
+		if (it != m_imgNameMap.end()) {
 			return true;
 		}
 
@@ -142,8 +142,8 @@ namespace FIFE {
 	}
 
 	bool ImageManager::exists(ResourceHandle handle) {
-		ResourceHandleMapConstIterator it = m_resHandleMap.find(handle);
-		if (it != m_resHandleMap.end()) {
+		ImageHandleMapConstIterator it = m_imgHandleMap.find(handle);
+		if (it != m_imgHandleMap.end()) {
 			return true;
 		}
 
@@ -151,9 +151,9 @@ namespace FIFE {
 	}
 
 	void ImageManager::reload(const std::string& name) {
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
 
-		if (nit != m_resNameMap.end()) {
+		if (nit != m_imgNameMap.end()) {
 			if ( nit->second->getState() == IResource::RES_LOADED) {
 				nit->second->free();
 			}
@@ -165,9 +165,9 @@ namespace FIFE {
 	}
 
 	void ImageManager::reload(ResourceHandle handle) {
-		ResourceHandleMapIterator it = m_resHandleMap.find(handle);
+		ImageHandleMapIterator it = m_imgHandleMap.find(handle);
 
-		if ( it != m_resHandleMap.end()) {
+		if ( it != m_imgHandleMap.end()) {
 			if ( it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 			}
@@ -180,9 +180,9 @@ namespace FIFE {
 	}
 
 	void ImageManager::reloadAll() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		ImageHandleMapIterator it = m_imgHandleMap.begin();
 
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if ( it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 			}
@@ -191,10 +191,10 @@ namespace FIFE {
 	}
 
 	void ImageManager::loadUnreferenced() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		ImageHandleMapIterator it = m_imgHandleMap.begin();
 
 		int32_t count = 0;
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if (it->second.useCount() == 2 && it->second->getState() != IResource::RES_LOADED){
 				it->second->load();
 				count++;
@@ -204,9 +204,9 @@ namespace FIFE {
 	}
 
 	void ImageManager::free(const std::string& name) {
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
 
-		if (nit != m_resNameMap.end()) {
+		if (nit != m_imgNameMap.end()) {
 			if ( nit->second->getState() == IResource::RES_LOADED) {
 				nit->second->free();
 			}
@@ -217,8 +217,8 @@ namespace FIFE {
 	}
 
 	void ImageManager::free(ResourceHandle handle) {
-		ResourceHandleMapConstIterator it = m_resHandleMap.find(handle);
-		if (it != m_resHandleMap.end()) {
+		ImageHandleMapConstIterator it = m_imgHandleMap.find(handle);
+		if (it != m_imgHandleMap.end()) {
 			if ( it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 			}
@@ -229,11 +229,11 @@ namespace FIFE {
 	}
 
 	void ImageManager::freeAll() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		ImageHandleMapIterator it = m_imgHandleMap.begin();
 
 		int32_t count = 0;
 
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if ( it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 				count++;
@@ -244,10 +244,10 @@ namespace FIFE {
 	}
 
 	void ImageManager::freeUnreferenced() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		ImageHandleMapIterator it = m_imgHandleMap.begin();
 
 		int32_t count = 0;
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if (it->second.useCount() == 2 && it->second->getState() == IResource::RES_LOADED ){
 				it->second->free();
 				count++;
@@ -258,14 +258,14 @@ namespace FIFE {
 	}
 
 	void ImageManager::remove(ImagePtr& resource) {
-		ResourceHandleMapIterator it = m_resHandleMap.find(resource->getHandle());
-		ResourceNameMapIterator nit = m_resNameMap.find(resource->getName());
+		ImageHandleMapIterator it = m_imgHandleMap.find(resource->getHandle());
+		ImageNameMapIterator nit = m_imgNameMap.find(resource->getName());
 
-		if (it != m_resHandleMap.end()) {
-			m_resHandleMap.erase(it);
+		if (it != m_imgHandleMap.end()) {
+			m_imgHandleMap.erase(it);
 
-			if (nit != m_resNameMap.end()) {
-				m_resNameMap.erase(nit);
+			if (nit != m_imgNameMap.end()) {
+				m_imgNameMap.erase(nit);
 				return;
 			}
 			assert(false); //should never get here
@@ -277,19 +277,19 @@ namespace FIFE {
 	void ImageManager::remove(const std::string& name) {
 		std::size_t handle;
 
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
-		if (nit != m_resNameMap.end()) {
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
+		if (nit != m_imgNameMap.end()) {
 			handle = nit->second->getHandle();
-			m_resNameMap.erase(nit);
+			m_imgNameMap.erase(nit);
 		}
 		else {
 			FL_WARN(_log, LMsg("IResourceManager::remove(std::string) - ") << "Resource " << name << " was not found.");
 			return;
 		}
 
-		ResourceHandleMapIterator it = m_resHandleMap.find(handle);
-		if ( it != m_resHandleMap.end()) {
-			m_resHandleMap.erase(it);
+		ImageHandleMapIterator it = m_imgHandleMap.find(handle);
+		if ( it != m_imgHandleMap.end()) {
+			m_imgHandleMap.erase(it);
 			return;
 		}
 
@@ -299,20 +299,20 @@ namespace FIFE {
 	void ImageManager::remove(ResourceHandle handle) {
 		std::string name;
 
-		ResourceHandleMapIterator it = m_resHandleMap.find(handle);
+		ImageHandleMapIterator it = m_imgHandleMap.find(handle);
 
-		if (it != m_resHandleMap.end()) {
+		if (it != m_imgHandleMap.end()) {
 			name = it->second->getName();
-			m_resHandleMap.erase(it);
+			m_imgHandleMap.erase(it);
 		}
 		else {
 			FL_WARN(_log, LMsg("IResourceManager::remove(ResourceHandle) - ") << "Resource handle " << handle << " was not found.");
 			return;
 		}
 
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
-		if ( nit != m_resNameMap.end() ) {
-			m_resNameMap.erase(nit);
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
+		if ( nit != m_imgNameMap.end() ) {
+			m_imgNameMap.erase(nit);
 			return;
 		}
 
@@ -321,21 +321,21 @@ namespace FIFE {
 
 	void ImageManager::removeAll() {
 		//should always be equal
-		assert (m_resHandleMap.size() == m_resNameMap.size());
+		assert (m_imgHandleMap.size() == m_imgNameMap.size());
 
-		uint32_t count = m_resHandleMap.size();
+		uint32_t count = m_imgHandleMap.size();
 
-		m_resHandleMap.clear();
-		m_resNameMap.clear();
+		m_imgHandleMap.clear();
+		m_imgNameMap.clear();
 
 		FL_DBG(_log, LMsg("IResourceManager::removeAll() - ") << "Removed all " << count << " resources.");
 	}
 
 	void ImageManager::removeUnreferenced() {
-		ResourceHandleMapIterator it = m_resHandleMap.begin();
+		ImageHandleMapIterator it = m_imgHandleMap.begin();
 
 		int32_t count = 0;
-		for ( ; it != m_resHandleMap.end(); it++) {
+		for ( ; it != m_imgHandleMap.end(); it++) {
 			if ( it->second.useCount() == 2) {
 				remove(it->second->getHandle());
 				count++;
@@ -346,9 +346,9 @@ namespace FIFE {
 	}
 
 	ImagePtr ImageManager::get(const std::string& name) {
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
 
-		if (nit != m_resNameMap.end()) {
+		if (nit != m_imgNameMap.end()) {
 			if (nit->second->getState() != IResource::RES_LOADED){
 				//resource is not loaded so load it
 				nit->second->load();
@@ -362,8 +362,8 @@ namespace FIFE {
 	}
 
 	ImagePtr ImageManager::get(ResourceHandle handle) {
-		ResourceHandleMapConstIterator it = m_resHandleMap.find(handle);
-		if (it != m_resHandleMap.end()) {
+		ImageHandleMapConstIterator it = m_imgHandleMap.find(handle);
+		if (it != m_imgHandleMap.end()) {
 			if (it->second->getState() != IResource::RES_LOADED){
 				//resource is not loaded so load it
 				it->second->load();
@@ -377,8 +377,8 @@ namespace FIFE {
 	}
 
 	ResourceHandle ImageManager::getResourceHandle(const std::string& name) {
-		ResourceNameMapIterator nit = m_resNameMap.find(name);
-		if (nit != m_resNameMap.end()) {
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
+		if (nit != m_imgNameMap.end()) {
 			return nit->second->getHandle();
 		}
 
