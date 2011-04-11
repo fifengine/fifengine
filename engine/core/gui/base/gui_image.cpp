@@ -41,32 +41,31 @@ namespace FIFE {
 
 	GuiImage::GuiImage(int32_t id = 0): gcn::Image(), m_poolid(id) {
 //prock - 504
-//TODO: this store a ImagePtr
 		if (m_poolid != 0) {
-			ImageManager::instance()->get(m_poolid);
+			//grab a pointer to the image so it doesn't get deleted by mistake
+			m_imgPtr = ImageManager::instance()->get(m_poolid);
 		}
 	}
 
 	GuiImage::~GuiImage() {
- 		//ImageManager::instance()->free(m_poolid);
 	}
 
 	void GuiImage::free() {
-		//ImageManager::instance()->free(m_poolid);
+		ImageManager::instance()->free(m_poolid);
 	}
 
 	int32_t GuiImage::getWidth() const {
 //prock - 504
 		if(m_poolid==0)
 			return 0;
-		return ImageManager::instance()->get(m_poolid)->getWidth();
+		return m_imgPtr->getWidth();
 	}
 
 	int32_t GuiImage::getHeight() const {
 //prock - 504
 		if(m_poolid==0)
 			return 0;
-		return ImageManager::instance()->get(m_poolid)->getHeight();
+		return m_imgPtr->getHeight();
 	}
 
 	gcn::Color GuiImage::getPixel(int32_t x, int32_t y) {

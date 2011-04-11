@@ -50,6 +50,7 @@ namespace FIFE {
 	class IResource {
 	public:
 		enum ResourceState {
+			RES_INVALID = 0,
 			RES_NOT_LOADED,
 			RES_LOADED
 		};

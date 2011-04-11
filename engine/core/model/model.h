@@ -150,10 +150,6 @@ namespace FIFE {
 		 */
 		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
 
-		virtual size_t getSize() { return 0; }
-		virtual void load() { }
-		virtual void free() { }
-
 	private:
 
 		std::list<Map*> m_maps;

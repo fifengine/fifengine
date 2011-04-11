@@ -33,6 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
+#include "video/imagemanager.h"
 
 namespace FIFE {
 
@@ -50,6 +51,7 @@ namespace FIFE {
 		int32_t getPoolId() const { return m_poolid; }
 	protected:
 		int32_t m_poolid;
+		ImagePtr m_imgPtr;
 	};
 }
 
