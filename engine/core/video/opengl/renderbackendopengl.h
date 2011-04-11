@@ -33,8 +33,8 @@
 #include "video/renderbackend.h"
 
 namespace FIFE {
-
 	class ScreenMode;
+	class RenderObject;
 
 	/** The main class of the OpenGL-based renderer.
 	 * @see RenderBackend
@@ -83,22 +83,16 @@ namespace FIFE {
 
 		void renderVertexArrays();
 		void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha);
+		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc);
 
 	private:
-		struct colorVertex {
+		struct renderData {
 			GLfloat vertex[2];
-			GLubyte color[4];
-		};
-
-		struct textureVertex {
-			GLint vertex[2];
 			GLfloat texel[2];
 			GLubyte color[4];
-			uint32_t id;
 		};
-
-		void renderPrimitives(std::vector<colorVertex>& vertice, uint8_t sides);
-		void renderTextures();
+		std::vector<renderData> m_render_datas;
+		std::vector<RenderObject> m_render_objects;
 
 		uint32_t m_lightmodel;
 		float m_lred;
@@ -114,15 +108,6 @@ namespace FIFE {
 		uint32_t m_sten_func;
 		GLenum m_blend_src;
 		GLenum m_blend_dst;
-
-		// For each primitive type a vertex vector
-		std::vector<colorVertex> m_points;
-		std::vector<colorVertex> m_lines;
-		std::vector<colorVertex> m_looplines;
-		std::vector<colorVertex> m_triangles;
-		std::vector<colorVertex> m_quads;
-
-		std::vector<textureVertex> m_texture_quads;
 	};
 
 }

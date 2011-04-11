@@ -184,15 +184,10 @@ namespace FIFE {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
 					if (lm != 0) {
-						m_renderbackend->disableLighting();
-						m_renderbackend->setStencilTest(255, 2, 7);
-						m_renderbackend->setAlphaTest(0.0);
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-						m_renderbackend->enableLighting();
-						m_renderbackend->setStencilTest(0, 2, 7);
+						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, 2, 7);
 						vc.image->render(vc.dimensions, vc.transparency);
-						m_renderbackend->disableAlphaTest();
-						m_renderbackend->disableStencilTest();
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, 2, 7);
 						continue;
 					}
 					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
@@ -200,9 +195,8 @@ namespace FIFE {
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-					m_renderbackend->disableLighting();
 					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-					m_renderbackend->enableLighting();
+					m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, 0, 0);
 					continue; // Skip normal rendering after drawing overlay
 				}
 			}
@@ -213,28 +207,21 @@ namespace FIFE {
 					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
 					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
 						if(lit_name.find(*unlit_it) != std::string::npos) {
-							m_renderbackend->setStencilTest(255, 2, 7);
 							found = true;
 							break;
 						}
 					}
-					// This is very expensiv, we have to change it
-					if(!found)
-						m_renderbackend->setStencilTest(0, 1, 7);
-
-					m_renderbackend->setAlphaTest(0.0);
 					vc.image->render(vc.dimensions, vc.transparency);
-					m_renderbackend->renderVertexArrays();
+					if (found) {
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 255, 2, 7);
+					} else {
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, 1, 7);
+					}
 					continue;
 				}
 			}
 			vc.image->render(vc.dimensions, vc.transparency);
 
-		}
-		m_renderbackend->renderVertexArrays();
-		if(lm != 0) {
-			m_renderbackend->disableAlphaTest();
-			m_renderbackend->disableStencilTest();
 		}
 	}
 

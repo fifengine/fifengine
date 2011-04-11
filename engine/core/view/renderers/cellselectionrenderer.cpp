@@ -98,7 +98,6 @@ namespace FIFE {
 		if (m_locations.empty()) {
 			return;
 		}
-		m_renderbackend->disableLighting();
 
 		std::vector<Location>::const_iterator locit = m_locations.begin();
 		for (; locit != m_locations.end(); locit++) {
@@ -130,8 +129,6 @@ namespace FIFE {
 			}
 			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
 		}
-		m_renderbackend->renderVertexArrays();
-		m_renderbackend->enableLighting();
 	}
 
 	void CellSelectionRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {

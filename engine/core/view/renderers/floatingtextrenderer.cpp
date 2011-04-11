@@ -83,11 +83,6 @@ namespace FIFE {
 		if(m_font_color) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.unused);
 		}
-		if(lm != 0) {
-			m_renderbackend->disableLighting();
-			m_renderbackend->setStencilTest(255, 2, 7);
-			m_renderbackend->setAlphaTest(0.0);
-		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
 			saytext = instance->getSayText();
@@ -112,16 +107,19 @@ namespace FIFE {
 					if(m_backborder) {
 						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
 					}
-					m_renderbackend->renderVertexArrays();
 				}
 				img->render(r);
+				if(lm > 0) {
+					uint16_t elements = 1;
+					if (m_background) {
+						++elements;
+					}
+					if (m_backborder) {
+						++elements;
+					}
+					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, 2, 7);
+				}
 			}
-		}
-		m_renderbackend->renderVertexArrays();
-		if(lm != 0) {
-			m_renderbackend->disableAlphaTest();
-			m_renderbackend->disableStencilTest();
-			m_renderbackend->enableLighting();
 		}
 		if(m_font_color) {
 			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.unused);

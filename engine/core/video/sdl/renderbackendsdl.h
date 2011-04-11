@@ -84,6 +84,7 @@ namespace FIFE {
 		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 		void renderVertexArrays();
 		void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha);
+		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc);
 	};
 
 }

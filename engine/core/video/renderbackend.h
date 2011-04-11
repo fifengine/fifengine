@@ -187,6 +187,10 @@ namespace FIFE {
 		 */
 		virtual void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) = 0;
 
+		/** Dirty helper function to change the render infos
+		 */
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) = 0;
+
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
 		 */

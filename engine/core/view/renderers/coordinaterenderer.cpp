@@ -128,8 +128,6 @@ namespace FIFE {
 					r.w = img->getWidth();
 					r.h = img->getHeight();
 					img->render(r);
-					// Fixme
-					m_renderbackend->renderVertexArrays();
 				}
 			}
 		}

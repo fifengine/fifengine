@@ -257,4 +257,7 @@ namespace FIFE {
 
 	void RenderBackendSDL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
 	}
+	
+	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) {
+	}
 }//FIFE
