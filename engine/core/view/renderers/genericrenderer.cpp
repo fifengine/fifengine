@@ -327,7 +327,7 @@ namespace FIFE {
 //prock - 504
 			ImagePtr resptr = ImageManager::instance()->get(m_image);
 			Image* img = dynamic_cast<Image*>(resptr.get());
-//			Image* img = &imagepool->getImage(m_image);
+
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -406,7 +406,7 @@ namespace FIFE {
 //prock - 504
 			ImagePtr resptr = ImageManager::instance()->get(m_image);
 			Image* img = dynamic_cast<Image*>(resptr.get());
-//			Image* img = &imagepool->getImage(m_image);
+
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(m_width * cam->getZoom());

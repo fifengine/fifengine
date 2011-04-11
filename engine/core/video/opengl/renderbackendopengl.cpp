@@ -132,8 +132,8 @@ namespace FIFE {
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
-		m_rgba_format.Amask = AMASK;		
-		
+		m_rgba_format.Amask = AMASK;
+
 		//update the screen mode with the actual flags used
 		m_screenMode = ScreenMode(width,
 		                          height,
@@ -157,7 +157,7 @@ namespace FIFE {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_SCISSOR_TEST);
-		
+
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -225,6 +225,7 @@ namespace FIFE {
 		// Uh. Gotta love this :-)
 		// Check for colorkey too?
 		// Leave out the loss/shift checks?
+
 		if(    m_rgba_format.BitsPerPixel == surface->format->BitsPerPixel
 			&& m_rgba_format.Rmask == surface->format->Rmask
 			&& m_rgba_format.Gmask == surface->format->Gmask
@@ -701,17 +702,17 @@ namespace FIFE {
 		v.color[3] = alpha;
 		v.id = id;
 		m_texture_quads.push_back(v);
-		
+
 		v.vertex[0] = rec.x;
 		v.vertex[1] = rec.y+rec.h;
 		v.texel[1] = rt;
 		m_texture_quads.push_back(v);
-		
+
 		v.vertex[0] = rec.x+rec.w;
 		v.vertex[1] = rec.y+rec.h;
 		v.texel[0] = ct;
 		m_texture_quads.push_back(v);
-		
+
 		v.vertex[0] = rec.x+rec.w;
 		v.vertex[1] = rec.y;
 		v.texel[1] = 0.0;

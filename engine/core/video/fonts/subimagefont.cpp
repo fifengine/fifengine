@@ -53,8 +53,6 @@ namespace FIFE {
 //prock - 504
 		ImagePtr img = ImageManager::instance()->load(filename);
 		int32_t image_id = img->getHandle();
-
-//prock - 504
 		SDL_Surface* surface = img->getSurface();
 		m_colorkey = RenderBackend::instance()->getColorKey();
 
@@ -81,7 +79,7 @@ namespace FIFE {
 
 		src.h = surface->h;
 		src.y = 0;
-
+		
 		uint32_t separator = pixels[0];
 		uint32_t colorkey = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
@@ -90,18 +88,18 @@ namespace FIFE {
 			while(x < surface->w && pixels[x] == separator) {
 				++x;
 			}
-
+			
 			colorkey = pixels[x];
 		}
-
+		
 		// Disable alpha blending, so that we use color keying
 		SDL_SetAlpha(surface,0,255);
 		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		FL_DBG(_log, LMsg("image_font")
-			<< " glyph separator is "
+			<< " glyph separator is " 
 			<< pprint(reinterpret_cast<void*>(separator))
-			<< " transparent color is "
+			<< " transparent color is " 
 			<< pprint(reinterpret_cast<void*>(colorkey)));
 
 		// Finally extract all glyphs
