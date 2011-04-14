@@ -258,11 +258,11 @@ namespace FIFE {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
 				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
 				}
 			}
 		}
@@ -320,11 +320,11 @@ namespace FIFE {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
 				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
 				}
 			}
 		}
@@ -380,11 +380,11 @@ namespace FIFE {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, 0, 6);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
 				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, 2, 4);
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
 				}
 			}
 		}
@@ -434,11 +434,11 @@ namespace FIFE {
 
 			uint8_t lm = renderbackend->getLightingModel();
 			if (m_stencil) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, m_stencil_ref, 3, 4);
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
 			} else if (lm == 1) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 255, 0, 6);
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
 			} else if (lm == 2) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 0, 2, 4);
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
 			}
 		}
 	}

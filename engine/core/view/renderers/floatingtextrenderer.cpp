@@ -117,7 +117,7 @@ namespace FIFE {
 					if (m_backborder) {
 						++elements;
 					}
-					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, 2, 7);
+					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
 				}
 			}
 		}

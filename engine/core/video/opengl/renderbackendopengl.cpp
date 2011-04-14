@@ -42,7 +42,7 @@ namespace FIFE {
 
 	class RenderObject {
 	public:
-		RenderObject(uint8_t m, uint16_t s, uint32_t t=0):
+		RenderObject(GLenum m, uint16_t s, uint32_t t=0):
 			mode(m),
 			size(s),
 			texture_id(t),
@@ -54,16 +54,16 @@ namespace FIFE {
 			stencil_op(0),
 			stencil_func(0) {}
 
-		uint32_t texture_id;
-		uint8_t mode;
+		GLenum mode;
 		uint16_t size;
+		uint32_t texture_id;
 		int32_t src;
 		int32_t dst;
 		bool light;
 		bool stencil_test;
 		uint8_t stencil_ref;
-		uint32_t stencil_op;
-		uint32_t stencil_func;
+		GLenum stencil_op;
+		GLenum stencil_func;
 	};
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
@@ -337,7 +337,7 @@ namespace FIFE {
 			uint16_t height = getScreenHeight();
 			Point p = Point(0,0);
 			fillRectangle(p, width, height, m_lred*255, m_lgreen*255, m_lblue*255, m_lalpha*255);
-			changeRenderInfos(1, 4, 5, false, true, 0, 0, 5);
+			changeRenderInfos(1, 4, 5, false, true, 0, KEEP, EQUAL);
 		}
 	}
 
@@ -355,39 +355,17 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, uint32_t stencil_op, uint32_t stencil_func) {
+	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, GLenum stencil_op, GLenum stencil_func) {
 		enableStencilTest();
 		if(m_sten_op != stencil_op) {
-			GLenum op;
 			m_sten_op = stencil_op;
-			switch(stencil_op) {
-				default :
-				case 0  : op = GL_KEEP; break;
-				case 1  : op = GL_ZERO; break;
-				case 2  : op = GL_REPLACE; break;
-				case 3  : op = GL_INCR; break;
-				case 4  : op = GL_DECR; break;
-				case 5  : op = GL_INVERT; break;
-			}
-			glStencilOp(GL_KEEP, GL_KEEP, op);
+			glStencilOp(GL_KEEP, GL_KEEP, m_sten_op);
 		}
 
 		if(m_sten_ref != stencil_ref || m_sten_func != stencil_func) {
-			GLenum func;
 			m_sten_ref = stencil_ref;
 			m_sten_func = stencil_func;
-			switch(stencil_func) {
-				default :
-				case 0  : func = GL_NEVER; break;
-				case 1  : func = GL_LESS; break;
-				case 2  : func = GL_LEQUAL; break;
-				case 3  : func = GL_GREATER; break;
-				case 4  : func = GL_GEQUAL; break;
-				case 5  : func = GL_EQUAL; break;
-				case 6  : func = GL_NOTEQUAL; break;
-				case 7  : func = GL_ALWAYS; break;
-			}
-			glStencilFunc(func, stencil_ref, 0xff);
+			glStencilFunc(m_sten_func, stencil_ref, 0xff);
 		}
 	}
 
@@ -461,7 +439,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
-		bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) {
+		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
 
 		uint16_t count = 0;
 		uint32_t size = m_render_objects.size();
@@ -484,7 +462,7 @@ namespace FIFE {
 	void RenderBackendOpenGL::renderVertexArrays() {
 		if (!m_render_objects.empty()) {
 			//bools to indicate changes
-			bool typ = false;
+			bool type = false;
 			bool texture = false;
 			bool blending = false;
 			bool light = false;
@@ -505,8 +483,6 @@ namespace FIFE {
 			uint32_t elements = 0;
 			// render mode
 			GLenum mode = GL_QUADS;
-			// render type
-			uint8_t type = 7;
 			// texture id
 			uint32_t texture_id = 0;
 			// src blending mode
@@ -518,8 +494,8 @@ namespace FIFE {
 				RenderObject& ro = (*ir);
 
 				//first we look for changes
-				if (ro.mode != type) {
-					typ = true;
+				if (ro.mode != mode) {
+					type = true;
 					render = true;
 				}
 				if (ro.texture_id != texture_id) {
@@ -531,7 +507,7 @@ namespace FIFE {
 						blending = true;
 						render = true;
 					}
-					if (ro.light != m_light_enabled) {
+					if (ro.light != m_light_enabled && m_lightmodel == 1) {
 						light = true;
 						render = true;
 					}
@@ -554,21 +530,9 @@ namespace FIFE {
 						index += elements;
 					}
 					// switch mode
-					if (typ) {
-						switch(ro.mode) {
-							case 0  : mode = GL_POINTS; break;
-							case 1  : mode = GL_LINES; break;
-							case 2  : mode = GL_LINE_STRIP; break;
-							case 3  : mode = GL_LINE_LOOP; break;
-							case 4  : mode = GL_TRIANGLES; break;
-							case 5  : mode = GL_TRIANGLE_STRIP; break;
-							case 6  : mode = GL_TRIANGLE_FAN; break;
-							case 7  : mode = GL_QUADS; break;
-							case 8  : mode = GL_QUAD_STRIP; break;
-							case 9  : mode = GL_POLYGON; break;
-						}
-						type = ro.mode;
-						typ = false;
+					if (type) {
+						mode = ro.mode;
+						type = false;
 					}
 					// set element to current size
 					elements = ro.size;
@@ -632,10 +596,12 @@ namespace FIFE {
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				glDisable(GL_TEXTURE_2D);
 			}
-			changeBlending(4, 5);
-			disableLighting();
-			disableStencilTest();
-			disableAlphaTest();
+			if (m_lightmodel != 0) {
+				changeBlending(4, 5);
+				disableLighting();
+				disableStencilTest();
+				disableAlphaTest();
+			}
 
 			m_render_objects.clear();
 			m_render_datas.clear();
@@ -655,7 +621,7 @@ namespace FIFE {
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(0,1);
+		RenderObject ro(GL_POINTS, 1);
 		m_render_objects.push_back(ro);
 
 		return true;
@@ -675,7 +641,7 @@ namespace FIFE {
 		rd.vertex[1] = p2.y;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(1,2);
+		RenderObject ro(GL_LINES, 2);
 		m_render_objects.push_back(ro);
 	}
 
@@ -697,7 +663,7 @@ namespace FIFE {
 		rd.vertex[1] = p3.y;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(4,3);
+		RenderObject ro(GL_TRIANGLES, 3);
 		m_render_objects.push_back(ro);
 	}
 
@@ -720,7 +686,7 @@ namespace FIFE {
 		rd.vertex[0] = p.x;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(3,4);
+		RenderObject ro(GL_LINE_LOOP, 4);
 		m_render_objects.push_back(ro);
 	}
 
@@ -743,7 +709,7 @@ namespace FIFE {
 		rd.vertex[0] = p.x;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(7,4);
+		RenderObject ro(GL_QUADS, 4);
 		m_render_objects.push_back(ro);
 	}
 
@@ -769,7 +735,7 @@ namespace FIFE {
 		rd.vertex[1] = p4.y;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(7,4);
+		RenderObject ro(GL_QUADS, 4);
 		m_render_objects.push_back(ro);
 	}
 
@@ -792,7 +758,7 @@ namespace FIFE {
 		rd.vertex[0] = p.x-size;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(3,4);
+		RenderObject ro(GL_LINE_LOOP, 4);
 		m_render_objects.push_back(ro);
 	}
 
@@ -824,7 +790,7 @@ namespace FIFE {
 			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			m_render_datas.push_back(rd);
 
-			RenderObject ro(4,3);
+			RenderObject ro(GL_TRIANGLES, 3);
 			m_render_objects.push_back(ro);
 		}
 	}
@@ -856,7 +822,7 @@ namespace FIFE {
 		rd.texel[1] = 0.0;
 		m_render_datas.push_back(rd);
 
-		RenderObject ro(7,4,id);
+		RenderObject ro(GL_QUADS, 4, id);
 		m_render_objects.push_back(ro);
 	}
 }

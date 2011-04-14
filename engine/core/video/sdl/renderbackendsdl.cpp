@@ -180,41 +180,13 @@ namespace FIFE {
 		return 0;
 	}
 
-	void RenderBackendSDL::enableLighting() {
-	}
-
-	void RenderBackendSDL::disableLighting() {
-	}
-
 	void RenderBackendSDL::setLighting(float red, float green, float blue, float alpha) {
 	}
 
 	void RenderBackendSDL::resetLighting() {
 	}
 
-	void RenderBackendSDL::enableStencilTest() {
-	}
-
-	void RenderBackendSDL::disableStencilTest() {
-	}
-
-	void RenderBackendSDL::setStencilTest(uint8_t stencil_ref, uint32_t stencil_op, uint32_t stencil_func) {
-	}
-
 	void RenderBackendSDL::resetStencilBuffer(uint8_t buffer) {
-	}
-
-	uint8_t RenderBackendSDL::getStencilRef() const {
-		return 0;
-	}
-
-	void RenderBackendSDL::enableAlphaTest() {
-	}
-
-	void RenderBackendSDL::disableAlphaTest() {
-	}
-
-	void RenderBackendSDL::setAlphaTest(float ref_alpha) {
 	}
 
 	void RenderBackendSDL::changeBlending(int32_t scr, int32_t dst){
@@ -258,6 +230,6 @@ namespace FIFE {
 	void RenderBackendSDL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
 	}
 	
-	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) {
+	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
 	}
 }//FIFE
