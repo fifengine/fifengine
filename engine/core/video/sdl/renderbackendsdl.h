@@ -52,18 +52,9 @@ namespace FIFE {
 		void clearBackBuffer();
 		void setLightingModel(uint32_t lighting);
 		uint32_t getLightingModel() const;
-		void enableLighting();
-		void disableLighting();
 		void setLighting(float red, float green, float blue, float alpha);
 		void resetLighting();
-		void enableStencilTest();
-		void disableStencilTest();
-		void setStencilTest(uint8_t stencil_ref, uint32_t stencil_op, uint32_t stencil_func);
 		void resetStencilBuffer(uint8_t buffer);
-		uint8_t getStencilRef() const;
-		void enableAlphaTest();
-		void disableAlphaTest();
-		void setAlphaTest(float ref_alpha);
 		void changeBlending(int32_t scr, int32_t dst);
 
 		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
@@ -84,7 +75,7 @@ namespace FIFE {
 		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 		void renderVertexArrays();
 		void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha);
-		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc);
+		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 	};
 
 }

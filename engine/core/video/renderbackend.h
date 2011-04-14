@@ -44,9 +44,49 @@
 
 #include "image.h"
 
+#ifdef HAVE_OPENGL
+#include "video/opengl/fife_opengl.h"
+#endif
+
 namespace FIFE {
 
 	class Image;
+
+#ifdef HAVE_OPENGL
+	enum GLConstants {
+		KEEP = GL_KEEP,
+		ZERO = GL_ZERO,
+		REPLACE = GL_REPLACE,
+		INCR = GL_INCR,
+		DECR = GL_DECR,
+		INVERT = GL_INVERT,
+		NEVER = GL_NEVER,
+		LESS = GL_LESS,
+		LEQUAL = GL_LEQUAL,
+		GREATER = GL_GREATER,
+		GEQUAL = GL_GEQUAL,
+		EQUAL = GL_EQUAL,
+		NOTEQUAL = GL_NOTEQUAL,
+		ALWAYS = GL_ALWAYS
+	};
+#else
+	enum GLConstants {
+		KEEP = 0,
+		ZERO,
+		REPLACE,
+		INCR,
+		DECR,
+		INVERT,
+		NEVER,
+		LESS,
+		LEQUAL,
+		GREATER,
+		GEQUAL,
+		EQUAL,
+		NOTEQUAL,
+		ALWAYS
+	};
+#endif
 
 	 /** Abstract interface for all the renderbackends. */
 	class RenderBackend: public IImage, public DynamicSingleton<RenderBackend> {
@@ -89,14 +129,6 @@ namespace FIFE {
 		 */
 		virtual uint32_t getLightingModel() const = 0;
 
-		/** Enable the lighting.
-		 */
-		virtual void enableLighting() = 0;
-
-		/** Disable the lighting.
-		 */
-		virtual void disableLighting() = 0;
-
 		/** Set colors for lighting
 		 */
 		virtual void setLighting(float red, float green, float blue, float alpha) = 0;
@@ -105,37 +137,9 @@ namespace FIFE {
 		 */
 		virtual void resetLighting() = 0;
 
-		/** Enable the stencil test.
-		 */
-		virtual void enableStencilTest() = 0;
-
-		/** Disable the stencil test.
-		 */
-		virtual void disableStencilTest() = 0;
-
-		/** Set reference for the stencil test.
-		 */
-		virtual void setStencilTest(Uint8 stencil_ref, uint32_t stencil_op, uint32_t stencil_func) = 0;
-
 		/** Reset stencil buffer with given value.
 		 */
-		virtual void resetStencilBuffer(Uint8 buffer) = 0;
-
-		/** Return the reference value for the stencil test.
-		 */
-		virtual Uint8 getStencilRef() const = 0;
-
-		/** Enable the alpha test.
-		 */
-		virtual void enableAlphaTest() = 0;
-
-		/** Disable the stencil test.
-		 */
-		virtual void disableAlphaTest() = 0;
-
-		/** Set reference for the alpha test.
-		 */
-		virtual void setAlphaTest(float ref_alpha) = 0;
+		virtual void resetStencilBuffer(uint8_t buffer) = 0;
 
 		/** Change the Blendingmodel.
 		 */
@@ -189,7 +193,7 @@ namespace FIFE {
 
 		/** Dirty helper function to change the render infos
 		 */
-		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, uint32_t stenop, uint32_t stenfunc) = 0;
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) = 0;
 
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.

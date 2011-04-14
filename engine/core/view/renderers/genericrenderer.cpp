@@ -388,7 +388,7 @@ namespace FIFE {
 			if(r.intersects(viewport)) {
 				img->render(r);
 				if (renderbackend->getLightingModel() > 0) {
-					renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, 0, 0);
+					renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
 				}
 			}
 		}
