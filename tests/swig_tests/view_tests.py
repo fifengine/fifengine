@@ -29,27 +29,25 @@ class TestView(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine()
-		model = self.engine.getModel()
-		self.map = model.createMap("map001")
+		self.model = self.engine.getModel()
+		self.map = self.model.createMap("map001")
 		
-		self.grid = model.createCellGrid("square")
-		self.pool = self.engine.getImageManager()
+		self.grid = self.model.createCellGrid("square")
+		
+		self.imgMgr = self.engine.getImageManager()
 
-		self.obj1 = model.createObject('0','test_nspace')
+		self.obj1 = self.model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj1)
-		self.pool.create('../data/mushroom_007.png')
-		imgid = self.pool.getResourceHandle('../data/mushroom_007.png')
-		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
+		img1 = self.imgMgr.load('../data/mushroom_007.png')
+		self.obj1.get2dGfxVisual().addStaticImage(0, img1.getHandle())
 		
-		self.obj2 = model.createObject('1','test_nspace')
+		self.obj2 = self.model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
-		image = self.pool.create('../data/earth_1.png')
-		self.obj2.get2dGfxVisual().addStaticImage(0, image.getHandle())
-		#imgid = self.pool.getResourceHandle('../data/earth_1.png')
-		#self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
+		img2 = self.imgMgr.get('../data/earth_1.png')
+		self.obj2.get2dGfxVisual().addStaticImage(0, img2.getHandle())
 
-		self.screen_cell_w = 126
-		self.screen_cell_h = 96
+		self.screen_cell_w = img2.getWidth()
+		self.screen_cell_h = img2.getHeight()
 		
 		self.layer = self.map.createLayer("layer001", self.grid)
 

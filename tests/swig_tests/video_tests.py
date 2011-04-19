@@ -40,13 +40,21 @@ class TestVideo(unittest.TestCase):
 		self.engine.initializePumping()
 		
 		be = self.engine.getRenderBackend()
-		for i in xrange(2000):
+		
+		clipb = fife.Rect(0,0, be.getWidth(), be.getHeight())
+		
+		be.pushClipArea(clipb, False)
+
+		for i in xrange(200):
 			prevPt = fife.Point(*points[1])
 			for pt in points[1:]:
 				curPt = fife.Point(*pt)
 				be.drawLine(prevPt, curPt, 255, 255, 255)
 				prevPt = curPt
 			self.engine.pump()
+
+		be.popClipArea()
+
 		self.engine.finalizePumping()
 	
 
