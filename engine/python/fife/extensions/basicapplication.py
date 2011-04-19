@@ -83,9 +83,18 @@ class ApplicationBase(object):
 		
 		self.engine.init()
 
+		"""
+		we are giving users a valid screen resolution option that is supported
+		"""
+		screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes() 
+		resolutions = list(set([(mode.getWidth(), mode.getHeight())
+		for mode in screen_modes]))
+		
+		resolutions = ["{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]] 
+		self._setting.setValidResolutions(resolutions)
+
 		self._animationloader = XMLAnimationLoader(self.engine.getImageManager(), self.engine.getVFS())
 
-		#pychan.init(self.engine, debug=self._setting.get("FIFE", "PychanDebug", False))
 		pychan.init(self.engine, debug = self._finalSetting['PychanDebug'])
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 
@@ -132,11 +141,6 @@ class ApplicationBase(object):
 		try:
 			engineSetting.setWindowTitle(self._finalSetting['WindowTitle'])
 			engineSetting.setWindowIcon(self._finalSetting['WindowIcon'])
-		except:
-			pass
-
-		try:
-			engineSetting.setImageChunkingSize(self._finalSetting['ImageChunkSize'])
 		except:
 			pass
 			

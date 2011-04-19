@@ -152,7 +152,7 @@ class Setting(object):
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1,2],
 			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
-			'ImageChunkSize':"", 'PlaySounds':[True,False], 'LogToFile':[0,1],
+			'PlaySounds':[True,False], 'LogToFile':[0,1],
 			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0]
@@ -169,7 +169,7 @@ class Setting(object):
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
-			'ImageChunkSize':256, 'PlaySounds':True, 'LogToFile':0,
+			'PlaySounds':True, 'LogToFile':0,
 			'LogToPrompt':0,'UsePsyco':False,'LogLevelFilter':[0],
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60
@@ -240,6 +240,13 @@ class Setting(object):
 			return self._validSetting[module][name]
 		else:
 			return self._defaultSetting[module][name]
+
+	# sets valid resolution options in the settings->Resolution
+	def setValidResolutions(self, options):
+		if options:
+			self._resolutions = options
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		              requiresrestart=True)
 
 	def initSerializer(self):
 		self._serializer.load(os.path.join(self._appdata, self._settings_file))
