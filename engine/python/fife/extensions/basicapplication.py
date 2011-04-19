@@ -77,15 +77,16 @@ class ApplicationBase(object):
 			self._setting =  Setting(app_name="", settings_file="./settings.xml", settings_gui_xml="")
 
 		self.engine = fife.Engine()
-
+		
 		self.initLogging()
-		self.loadSettings()
-
+		self.loadSettings()	
+		
 		self.engine.init()
 
 		self._animationloader = XMLAnimationLoader(self.engine.getImageManager(), self.engine.getVFS())
 
-		pychan.init(self.engine, debug=self._setting.get("FIFE", "PychanDebug", False))
+		#pychan.init(self.engine, debug=self._setting.get("FIFE", "PychanDebug", False))
+		pychan.init(self.engine, debug = self._finalSetting['PychanDebug'])
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 
 		self.quitRequested = False
@@ -98,46 +99,54 @@ class ApplicationBase(object):
 		Called in the ApplicationBase constructor.
 		"""
 
-		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
+		
+		# get finalSetting (from the xml file, or if absent the default value)
+		self._finalSetting = self._setting.getSettingsFromFile("FIFE", self._log)
+		
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(self._setting.get("FIFE", "FontGlyphs", glyphDft))
-		engineSetting.setDefaultFontPath(self._setting.get("FIFE", "Font", "fonts/FreeSans.ttf"))
-		engineSetting.setDefaultFontSize(self._setting.get("FIFE", "DefaultFontSize", 12))
-		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
-		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
-		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
-		(width, height) = self._setting.get("FIFE", "ScreenResolution", "1024x768").split('x')
+		
+		engineSetting.setDefaultFontGlyphs(self._finalSetting['FontGlyphs'])
+		engineSetting.setDefaultFontPath(self._finalSetting['Font'])
+		engineSetting.setDefaultFontSize(self._finalSetting['DefaultFontSize'])
+		engineSetting.setBitsPerPixel(self._finalSetting['BitsPerPixel'])
+		engineSetting.setInitialVolume(self._finalSetting['InitialVolume'])
+		engineSetting.setSDLRemoveFakeAlpha(self._finalSetting['SDLRemoveFakeAlpha'])
+		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))
-		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
-		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", False))
-		engineSetting.setVideoDriver(self._setting.get("FIFE", "VideoDriver", ""))
-		engineSetting.setLightingModel(self._setting.get("FIFE", "Lighting", 0))
-		engineSetting.setBackBufferClearing(self._setting.get("FIFE", "Clearing", True))
+		engineSetting.setRenderBackend(self._finalSetting['RenderBackend'])
+		engineSetting.setFullScreen(self._finalSetting['FullScreen'])
+		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
+		engineSetting.setLightingModel(self._finalSetting['Lighting'])
 
 		try:
-			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))
+			engineSetting.setColorKeyEnabled(self._finalSetting['ColorKeyEnabled'])
 		except:
 			pass
 
 		try:
-			key = self._setting.get("FIFE", "ColorKey", "255,0,255").split(',')
-			engineSetting.setColorKey(int(key[0]), int(key[1]), int(key[2]))
+			engineSetting.setColorKey(self._finalSetting['ColorKey'][0],self._finalSetting['ColorKey'][1],self._finalSetting['ColorKey'][2])
 		except:
 			pass
 
 		try:
-			engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
-			engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
+			engineSetting.setWindowTitle(self._finalSetting['WindowTitle'])
+			engineSetting.setWindowIcon(self._finalSetting['WindowIcon'])
 		except:
 			pass
 
 		try:
-			engineSetting.setFrameLimitEnabled(self._setting.get("FIFE", "FrameLimitEnabled", False))
-			engineSetting.setFrameLimit(self._setting.get("FIFE", "FrameLimit", 60))
+			engineSetting.setImageChunkingSize(self._finalSetting['ImageChunkSize'])
 		except:
-			pass		
-
+			pass
+			
+		try:
+			engineSetting.setFrameLimitEnabled(self._finalSetting['FrameLimitEnabled'])
+			engineSetting.setFrameLimit(self._finalSetting['FrameLimit'])
+		except:
+			pass
+		
+		
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
