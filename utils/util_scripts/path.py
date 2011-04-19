@@ -29,7 +29,14 @@ Date:    9 Mar 2007
 
 from __future__ import generators
 
-import sys, warnings, os, fnmatch, glob, shutil, codecs, md5
+import sys, warnings, os, fnmatch, glob, shutil, codecs
+
+try:
+	# Python 2.5 or higher
+	from hashlib import md5
+except ImportError:
+	# Python 2.4 or lower
+	from md5 import new as md5
 
 __version__ = '2.2'
 __all__ = ['path']
@@ -767,7 +774,7 @@ class path(_base):
         """
         f = self.open('rb')
         try:
-            m = md5.new()
+            m = md5()
             while True:
                 d = f.read(8192)
                 if not d:
