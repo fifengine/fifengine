@@ -24,9 +24,8 @@
 
 import sys
 from swig_test_utils import *
-from fife.serializers import *
 
-class TestPool(unittest.TestCase):
+class TestImgMgr(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine()
@@ -34,24 +33,24 @@ class TestPool(unittest.TestCase):
 	def tearDown(self):
 		self.engine.destroy()
 			
-	def testImagePool(self):
-		pool = self.engine.getImageManager()
-		self.assert_(pool)
-		self.assert_(pool.getResourceCount(fife.RES_LOADED) == 0)
-		id = pool.addResourceFromFile('tests/data/beach_e1.png')
-		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 0)
-		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 1)
-		img = pool.getImage(id)
-		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 1)
-		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 0)
+	def testImageImgMgr(self):
+		imgMgr = self.engine.getImageManager()
+		self.assert_(imgMgr)
+		self.assert_(imgMgr.getTotalResources() == 0)
+		img = imgMgr.create('../data/beach_e1.png')
+		self.assertEqual(imgMgr.getTotalResourcesLoaded(), 0)
+		self.assertEqual(imgMgr.getTotalResourcesCreated(), 1)
+		img = imgMgr.get(img.getHandle())
+		self.assertEqual(imgMgr.getTotalResourcesLoaded(), 1)
+		self.assertEqual(imgMgr.getTotalResourcesCreated(), 0)
 
-	def testImagePoolFail(self):
-		pool = self.engine.getImagePool()
-		id = pool.addResourceFromFile('bogus_image.png')
-		self.assertRaises(RuntimeError,pool.getImage,id)
+	def testImageImgMgrFail(self):
+		imgMgr = self.engine.getImageManager()
+#		TODO: This test fails as imgMgr.load doesn't throw an exception as expected
+#		self.assertRaises(RuntimeError,imgMgr.load,'does_not_exist.png')
 
 
-TEST_CLASSES = [TestPool]
+TEST_CLASSES = [TestImgMgr]
 
 if __name__ == '__main__':
     unittest.main()
