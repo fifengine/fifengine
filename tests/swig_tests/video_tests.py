@@ -44,6 +44,7 @@ class TestVideo(unittest.TestCase):
 		clipb = fife.Rect(0,0, be.getWidth(), be.getHeight())
 		
 		be.pushClipArea(clipb, False)
+		self.engine.getSettings().setBackBufferClearing(False)
 
 		for i in xrange(200):
 			prevPt = fife.Point(*points[1])
@@ -52,6 +53,7 @@ class TestVideo(unittest.TestCase):
 				be.drawLine(prevPt, curPt, 255, 255, 255)
 				prevPt = curPt
 			self.engine.pump()
+			be.renderVertexArrays()
 
 		be.popClipArea()
 
