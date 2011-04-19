@@ -33,6 +33,7 @@ import shutil
 import os
 from StringIO import StringIO
 
+from fife.extensions import fifelog
 from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
@@ -139,11 +140,56 @@ class Setting(object):
 			if os.path.exists(self._default_settings_file) and copy_dist:
 				shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 
-		#default settings
-		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
-		self._renderbackends = ['OpenGL', 'SDL']
-		self._lightingmodels = [0, 1, 2]
+		# valid values possible for the engineSettings
+		
+		self._validSetting = {}
+		self._validSetting['FIFE'] = {
+			'FullScreen':[True,False], 'PychanDebug':[True,False]
+			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1],
+			'RenderBackend':['OpenGL','SDL'],
+			'ScreenResolution':['640x480', '800x600', '1024x768', '1280x800', '1440x900'],
+			'BitsPerPixel':[0,16,24,32],
+			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
+			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1,2],
+			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
+			'ImageChunkSize':"", 'PlaySounds':[True,False], 'LogToFile':[0,1],
+			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
+			'LogModules':['controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
+			'FrameLimitEnabled':[True,False], 'FrameLimit':[0]
+			}
+	
+		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
+		
+		# we at this point assume default values are final values for engineSettings
+		self._defaultSetting = {}
+		self._defaultSetting['FIFE'] = {
+			'FullScreen':False, 'PychanDebug':False
+			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':0,
+			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
+			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
+			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
+			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
+			'ImageChunkSize':256, 'PlaySounds':True, 'LogToFile':0,
+			'LogToPrompt':0,'UsePsyco':False,'LogLevelFilter':[0],
+			'LogModules':['controller','script'],
+			'FrameLimitEnabled':False, 'FrameLimit':60
+			}
+		
+		# has the settings file been read
+		self._readSettingsCompleted = {}
+		
+		# the global dictionary from which we will read after self._readSettingsCompleted is True
+		self._settingsFromFile = {}
+		
+		# the logger needed to write in log file. It will be initialized in this file when self.getSettings()
+		# method is called by logger
+		self._logger = None
 
+		#default settings
+		self._resolutions = self._validSetting['FIFE']['ScreenResolution']
+		self._renderbackends = self._validSetting['FIFE']['RenderBackend']
+		self._lightingmodels = self._validSetting['FIFE']['Lighting']
+		
 		#Used to stylize the options gui
 		self._gui_style = "default"
 
@@ -152,10 +198,48 @@ class Setting(object):
 			self._serializer = serializer
 		else:
 			self._serializer = SimpleXMLSerializer()
-	
+		
 		self.initSerializer()
-	
+		
+		# Get all modules and initialize reading of them from xml file as false
+		self._allModules = self._serializer.getModuleName()
+		# print("All Module Names:",self._allModules)
+		for module in self._allModules:
+			self._readSettingsCompleted[module] = False
+				
 		self._initDefaultSettingEntries()
+		
+		#self.setOneSetting('FIFE','Font','fonts/FreeSans.ttf',False)
+		
+		#print self.getSettingsFromFile('unknownhorizons')
+
+	# set all Settings in either validSetting or defaultSetting
+	def setAllSettings(self,module,settings,validSetting = True):
+		if validSettings:
+			self._validSetting[module] = settings
+		else:
+			self._defaultSetting[module] = settings
+	
+	# set an entry in the validSetting or defaultSetting dictionary
+	def setOneSetting(self,module,name,value,validSetting = True):
+		if validSetting:
+			self._validSetting[module][name] = value
+		else:
+			self._defaultSetting[module][name] = value
+
+	# get all the Settings(either validSetting or defaultSetting)
+	def getAllSettings(self,module,validSetting = True):
+		if validSettings:
+			return self._validSetting[module]
+		else:
+			return self._defaultSetting[module]
+	
+	# get an entry from either validSetting or defaultSetting
+	def getOneSetting(self,module,name,validSetting = True):
+		if validSetting:
+			return self._validSetting[module][name]
+		else:
+			return self._defaultSetting[module][name]
 
 	def initSerializer(self):
 		self._serializer.load(os.path.join(self._appdata, self._settings_file))
@@ -205,14 +289,16 @@ class Setting(object):
 			self._entries[entry.module] = {}
 		self._entries[entry.module][entry.name] = entry
 
+		"""
 		# Make sure the new entry is available
 		if self.get(entry.module, entry.name) is None:
 			print "Updating", self._settings_file, "to the default, it is missing the entry:"\
 			      , entry.name ,"for module", entry.module
-			self.setDefaults()
+			
+			#self.setDefaults()
 		if self.get(entry.module, entry.name) is None:
 			print "WARNING:", entry.module, ":", entry.name, "still not found!"
-
+		"""
 
 	def saveSettings(self, filename=""):
 		""" Writes the settings to the settings file 
@@ -227,6 +313,119 @@ class Setting(object):
 			else:
 				self._serializer.save(filename)
 
+	# get all the settings of a module name module
+	def getSettingsFromFile(self, module, logger=None):
+		if self._serializer:
+			
+			self._logger = logger			
+			modules = self._serializer.getModuleName()			
+			self._settingsFromFile[module] = self._serializer.getAllSettings(module)
+
+			if self._logger:
+				self._logger.log_log("Loading Settings From File ...")
+
+			if self._settingsFromFile[module] is not None:
+				self._readSettingsCompleted[module] = True
+				
+			# we need validation for the module FIFE only
+			if module is not "FIFE":
+				return self._settingsFromFile[module]
+			"""
+			Now we have all the settings we needed. We have to validate the settings. Applicable for module
+			FIFE only
+			"""			
+			for name in self._settingsFromFile[module]:
+				# if the setting name is known, so that it is
+				# both in self._settingsFromFile and validSetting
+				if name in self._validSetting[module]:
+					
+					e_value = self._settingsFromFile[module][name]
+	
+					if name == "InitialVolume":
+						if e_value >= self._validSetting[module][name][0] and e_value <= self._validSetting[module][name][1]:
+							self._settingsFromFile[module][name] = e_value
+						else:
+							if self._logger:
+								self._logger.log_log("InitalVolume must have a value between 0.0 and 10.0")
+								
+					elif name == "ColorKey":
+						e_value = e_value.split(',')
+						if int(e_value[0]) in range(0,256) and int(e_value[1]) in range(0,256) and int(e_value[2]) in range(0,256):
+							self._settingsFromFile[name] = [int(e_value[0]),int(e_value[1]),int(e_value[2])];
+							
+						else:
+							if self._logger:
+								self._logger.log_log("ColorKey values must be within 0 and 255. Setting to Default Value.")
+	
+					elif name == "ScreenResolution":
+						temp = e_value.split('x')
+						if len(temp) == 2:
+							self._settingsFromFile[module][name]=e_value
+						else:
+							if self._logger:
+								self._logger.log_log("Invalid Screen Resolution value. We expect two integer seperted by x")
+						
+					elif len(self._validSetting[module][name]) == 0:
+						self._settingsFromFile[module][name] = e_value
+					
+					elif name == "LogModules":
+						for checking_element in e_value:
+							module_valid = False
+							for base_element in self._validSetting[module][name]:
+								# checking_element is valid
+									
+								if checking_element == base_element:
+									module_valid = True
+									already_in = False
+									for element in self._settingsFromFile[module][name]:
+										if element == checking_element:
+											already_in = True
+									if already_in == False:
+										self._settingsFromFile[module][name].append(checking_element)
+							if module_valid == False:
+								if self._logger:
+									self._logger.log_log(checking_element +" is not a valid logModule")
+					elif name == "FrameLimit":
+						if e_value > 0:
+							self._settingsFromFile[module][name] = e_value
+						else:
+							if self._logger:
+								self._logger.log_log(e_value + " is not a valid FrameLimit setting.  You must specify a positive integer!")
+					else:
+							
+						if isinstance(self._settingsFromFile[module][name],list) == True or isinstance(self._settingsFromFile[module][name],dict) == True:
+							valid = False
+							for value in self._validSetting[module][name]:
+								if value == e_value:
+									valid = True
+									self._settingsFromFile[module][name] = e_value;
+							if valid == False:
+								if self._logger:
+									self._logger.log_log("Setting " + name + " got invalid value. Setting to Default.")
+						else: self._settingsFromFile[module][name] = e_value	
+							
+				# name is unknown
+				else:
+					if self._logger:
+						self._logger.log_log("Setting "+ name + " is unknown")
+					
+			if self._logger:
+				self._logger.log_log("Settings Loaded ...")
+
+			"""
+			Upto this point we have validated all the settings that are in settings.xml file. But, what if a setting is valid and still it is 
+			not present in the settings.xml file. For this, we should give them the default Values that are in defaultSetting.
+			"""
+
+			for name in self._defaultSetting[module]:
+				if name not in self._settingsFromFile[module]:
+					self._settingsFromFile[module][name] = self._defaultSetting[module][name]
+	
+			return self._settingsFromFile[module]
+	
+		else:
+			return None
+
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified setting
 
@@ -235,10 +434,35 @@ class Setting(object):
 		@param defaultValue: Specifies the default value to return if the setting is not found
 		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
 		"""
+
 		if self._serializer:
-			return self._serializer.get(module, name, defaultValue)
+			if module is "FIFE":
+				# check whether getAllSettings has been called already
+				if self._readSettingsCompleted[module] is not True:
+					value = self._serializer.get(module, name, defaultValue)
+					
+					if value is not None:
+						return value
+					else:
+						if name in self._defaultSetting[module]:
+							return self._defaultSetting[module][name]
+						else:
+							raise Exception(name + ' is neither in settings.xml nor it has a default value set')
+				else:
+					if name in self._settingsFromFile[module]:
+						return self._settingsFromFile[module][name]
+					else:
+						raise Exception(name + ' is neither in settings.xml nor it has a default value set')
+			else:
+				return self._serializer.get(module, name, defaultValue)
 		else:
-			return None
+			"""
+			serializer not set, reading from default value
+			"""
+			if name in self._defaultSetting:
+				return self._defaultSetting[module][name]
+			else:
+				raise Exception(name + ' is neither in settings.xml nor it has a default value set')
 	
 	def set(self, module, name, value, extra_attrs={}):
 		"""
@@ -296,7 +520,18 @@ class Setting(object):
 		for module in self._entries.itervalues():
 			for entry in module.itervalues():
 				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
+				
+				"""
+				little change to prevent crash from no settings
+				in settings.xml file
+				"""
+				"""
+				The checking of value for None is specially for the clients who use settings
+				with different names under modules other than "FIFE" for which we have no
+				default value to set. This will prevent the settings widget from crash
+				"""
 				value = self.get(entry.module, entry.name)
+				
 				if type(entry.initialdata) is list:
 					try:
 						value = entry.initialdata.index(value)
@@ -313,7 +548,7 @@ class Setting(object):
 			for entry in module.itervalues():
 				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
 				data = widget.getData()
-
+				
 				# If the data is a list we need to get the correct selected data
 				# from the list. This is needed for e.g. dropdowns or listboxs
 				if type(entry.initialdata) is list:
@@ -466,5 +701,4 @@ class SettingEntry(object):
 		return "SettingEntry: " +  self.name + " Module: " + self.module + " Widget: " + \
 		       self.settingwidgetname + " requiresrestart: " + str(self.requiresrestart) + \
 		       " initialdata: " + str(self.initialdata)
-
 

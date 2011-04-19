@@ -57,7 +57,19 @@ class SimpleSerializer(object):
 		
 	def save(self, filename=None):
 		pass
-		
+
+	def getModuleName(self):
+		"""
+		@note: Returns all the module names that are present in the settings.xml file
+		as a list of strings
+		"""
+		pass
+	
+	def getAllSettings(self,module):
+		"""
+		@note: Returns all the setting names under the Module name module as a dictionary structure
+		"""
+		pass
 
 class SimpleXMLSerializer(SimpleSerializer):
 	"""
@@ -128,6 +140,27 @@ class SimpleXMLSerializer(SimpleSerializer):
 		self._tree.write(savefile, 'UTF-8')
 
 
+	def getValue(self, e_type, e_value):
+		if e_type == 'int':
+			return int(e_value)
+		elif e_type == 'float':
+			return float(e_value)
+		elif e_type == 'bool':
+			e_value = e_value.lower()
+			if e_value == "" or e_value == "false" or e_value == "no" or e_value == "0":
+				return False
+			else:
+				return True
+		elif e_type == 'str' or e_type == 'string':
+			return str(e_value)
+		elif e_type == 'unicode':
+			return unicode(e_value)
+		elif e_type == 'list':
+			return self._deserializeList(e_value)
+		elif e_type == 'dict':
+			return self._deserializeDict(e_value)
+		
+
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified variable
 
@@ -143,6 +176,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
 
+		#get the module tree: for example find tree under module FIFE
 		moduleTree = self._getModuleTree(module)
 		element = None
 		for e in moduleTree.getchildren():
@@ -170,24 +204,9 @@ class SimpleXMLSerializer(SimpleSerializer):
 			e_value = e_value.strip()
 
 		# Return value
-		if e_type == 'int':
-			return int(e_value)
-		elif e_type == 'float':
-			return float(e_value)
-		elif e_type == 'bool':
-			e_value = e_value.lower()
-			if e_value == "" or e_value == "false" or e_value == "no" or e_value == "0":
-				return False
-			else:
-				return True
-		elif e_type == 'str':
-			return str(e_value)
-		elif e_type == 'unicode':
-			return unicode(e_value)
-		elif e_type == 'list':
-			return self._deserializeList(e_value)
-		elif e_type == 'dict':
-			return self._deserializeDict(e_value)
+		e_value = self.getValue(e_type,e_value)
+		
+		return e_value
 
 	def set(self, module, name, value, extra_attrs={}):
 		"""
@@ -244,6 +263,67 @@ class SimpleXMLSerializer(SimpleSerializer):
 					attrs[k] = extra_args[k]
 			elm = ET.SubElement(moduleTree, "Setting", attrs)
 			elm.text = value
+
+	"""
+	returns a list of string, where each string is a module name
+	"""
+	def getModuleName(self):
+		self._moduleNames = []
+		for c in self._root_element.getchildren():
+			if c.tag == "Module":
+				name = c.get("name","")
+				if not isinstance(name, str) and not isinstance(name, unicode):
+					raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+				
+				self._moduleNames.append(name)
+		return self._moduleNames
+		
+	
+	def getAllSettings(self,module):
+		self._settingsFromFile = {}
+		
+		# if file has not been loaded, load the file
+		if not self._initialized:
+			self.load()
+			self._initialized = True
+			
+		# get the module tree, as we want to get values for module FIFE only
+		moduleTree = self._getModuleTree(module)
+		
+		# now from the tree read every value, and put the necessary values
+		# to the list
+		for e in moduleTree.getchildren():
+			if e.tag == "Setting":
+				name = e.get("name", "")
+	
+				# check the name
+				if not isinstance(name, str) and not isinstance(name, unicode):
+					raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+				element = e
+				
+				e_value = element.text
+				e_strip = element.get("strip", "1").strip().lower()
+				e_type	= str(element.get("type", "str")).strip()
+					
+				# Strip value
+				if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
+					e_strip = False
+				else: e_strip = True
+			
+				if e_type == "str" or e_type == "unicode":
+					if e_strip and e_value:
+						e_value = e_value.strip()
+				else:
+					if e_value:
+						e_value = e_value.strip()
+					
+				# get the value
+				e_value = self.getValue(e_type,e_value)
+				self._settingsFromFile[name] = e_value;
+		
+		return self._settingsFromFile				
+
+
 
 	def _validateTree(self):
 		""" 
