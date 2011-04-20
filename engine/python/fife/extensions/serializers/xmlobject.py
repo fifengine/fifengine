@@ -168,16 +168,16 @@ class XMLObjectLoader(object):
 		
 		"""
 		pass
-#		for anim in actelt.findall('animation'):
-#			source = anim.get('source')
-#			if not source:
-#				raise InvalidFormat('Animation declared with no source location.')
-#
-#			# animation paths are relative to this resource's path
-#			path = self.filename.split('/')
-#			path.pop()
-#			path.append(str(source))
-#
+		for anim in actelt.findall('animation'):
+			source = anim.get('source')
+			if not source:
+				raise InvalidFormat('Animation declared with no source location.')
+
+			# animation paths are relative to this resource's path
+			path = self.filename.split('/')
+			path.pop()
+			path.append(str(source))
+
 #			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
 #			animation = self.anim_pool.getAnimation(anim_id)
 #			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)

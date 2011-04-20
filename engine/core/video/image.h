@@ -258,6 +258,8 @@ namespace FIFE {
 		std::string createUniqueImageName();
 	};
 
+	typedef SharedPtr<Image> ImagePtr;
+
 }
 
 #endif

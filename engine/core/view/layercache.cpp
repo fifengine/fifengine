@@ -192,12 +192,14 @@ namespace FIFE {
 		item.force_update = bool(action);
 
 		if(action) {
-			int32_t animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
 //prock - 504
 //			Animation& animation = m_animation_pool->getAnimation(animation_id);
-			Animation animation;
-			unsigned animation_time = instance->getActionRuntime() % animation.getDuration();
-			image = animation.getFrameByTimestamp(animation_time);
+			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(render_item.facing_angle + m_camera->getRotation());
+			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
+
+			//@fixme image should be a ImagePtr
+			ImagePtr imgPtr = animation->getFrameByTimestamp(animation_time);
+			image = imgPtr.get();
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){

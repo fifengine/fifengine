@@ -35,11 +35,10 @@ class TestGui(unittest.TestCase):
 		self.engine.destroy()
 	
 	def testFonts(self):
-		ttffont = fife.TTFont('tests/data/FreeMono.ttf', 14)
+		ttffont = fife.TTFont('../data/FreeMono.ttf', 14)
 		ttffont.thisown = 0
-		subimagefont = fife.SubImageFont('tests/data/rpgfont.png', 
-			       ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',
-				self.engine.getImagePool())
+		subimagefont = fife.SubImageFont('../data/rpgfont.png', 
+			       ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"')
 		subimagefont.thisown = 0
 		fonts = [fife.GuiFont(ttffont), fife.GuiFont(subimagefont)]
 		for f in fonts:
@@ -53,7 +52,7 @@ class TestGui(unittest.TestCase):
 		label1.setPosition(0, 70)
 		label1.setFont(fonts[0])
 		container.add(label1)
-		label2 = fife.Label('This is a Image font')
+		label2 = fife.Label('This is an Image font')
 		label2.setPosition(0, 100)
 		label2.setFont(fonts[1])
 		container.add(label2)

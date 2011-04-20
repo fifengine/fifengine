@@ -67,8 +67,8 @@ namespace FIFE {
 	public:
 		static ActionVisual* create(Action* action);
 		virtual ~ActionVisual();
-		void addAnimation(uint32_t angle, int32_t animation_index);
-		int32_t getAnimationIndexByAngle(int32_t angle);
+		void addAnimation(uint32_t angle, AnimationPtr animationptr);
+		AnimationPtr getAnimationByAngle(int32_t angle);
 		void getActionImageAngles(std::vector<int32_t>& angles);
 	private:
 		ActionVisual();
