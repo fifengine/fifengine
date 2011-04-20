@@ -66,7 +66,7 @@ namespace FIFE {
 	#define FIFE_EXCEPTION_DECL(_name, _description) \
 	class _name : public Exception { \
 	public: \
-		_name(const std::string& msg) : Exception(msg) { Logger _log(LM_EXCEPTION); FL_PANIC(_log, what()); } \
+		_name(const std::string& msg) : Exception(msg) { Logger _log(LM_EXCEPTION); FL_ERR(_log, what()); } \
 		const std::string& getTypeStr() const { static const std::string s = #_name; return s; } \
 		const std::string& getDescription() const { static const std::string s = _description; return s; } \
 	}
