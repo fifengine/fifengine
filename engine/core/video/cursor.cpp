@@ -38,6 +38,7 @@
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "util/log/logger.h"
+#include "video/imagemanager.h"
 
 #include "animation.h"
 #include "image.h"
@@ -149,11 +150,10 @@ namespace FIFE {
 		}
 
 		// render possible drag image
-		Image* img = NULL;
+		ImagePtr img = ImagePtr();
 		if (m_drag_type == CURSOR_IMAGE) {
 //prock - 504
-//			img = &m_imgpool->getImage(m_drag_id);
-			img = NULL;
+			img = ImageManager::instance()->get(m_drag_id);
 		} else if (m_drag_type == CURSOR_ANIMATION) {
 //prock - 504
 //			Animation& anim = m_animpool->getAnimation(m_drag_id);
@@ -170,11 +170,10 @@ namespace FIFE {
 		}
 
 		// render possible cursor image
-		img = NULL;
+		img = ImagePtr();
 		if (m_cursor_type == CURSOR_IMAGE) {
 //prock - 504
-//			img = &m_imgpool->getImage(m_cursor_id);
-			img = NULL;
+			img = ImageManager::instance()->get(m_cursor_id);
 		} else if (m_cursor_type == CURSOR_ANIMATION) {
 //prock - 504
 //			Animation& anim = m_animpool->getAnimation(m_cursor_id);

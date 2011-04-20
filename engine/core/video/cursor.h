@@ -31,6 +31,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+#include "animation.h"
+
 struct SDL_Cursor;
 
 namespace FIFE {
@@ -154,6 +156,8 @@ namespace FIFE {
 		MouseCursorType m_drag_type;
 
 		SDL_Cursor* m_native_cursor;
+
+		AnimationPtr m_cursor_animation;
 
 		RenderBackend* m_renderbackend;
 

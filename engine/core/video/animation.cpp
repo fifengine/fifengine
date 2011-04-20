@@ -39,7 +39,6 @@
 namespace FIFE {
 
 	Animation::Animation():
-		IResource(""),
 		m_action_frame(-1),
 		m_animation_endtime(-1),
 		m_direction(0) {
@@ -50,7 +49,7 @@ namespace FIFE {
 		// smart references.
 	}
 
-	void Animation::addFrame(ResourcePtr image, uint32_t duration) {
+	void Animation::addFrame(ImagePtr image, uint32_t duration) {
 		FrameInfo info;
 		info.index = m_frames.size();
 		info.duration = duration;
@@ -85,17 +84,16 @@ namespace FIFE {
 		return size > 0 && index >= 0 && index < size;
 	}
 
-	Image* Animation::getFrame(int32_t index) {
+	ImagePtr Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
 //prock - 504
-//			return m_frames[index].image.get<Image>();
-			return NULL;
+			return m_frames[index].image;
 		} else {
-			return NULL;
+			return ImagePtr();  //return an invalid image pointer
 		}
 	}
 
-	Image* Animation::getFrameByTimestamp(uint32_t timestamp) {
+	ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp) {
 		return getFrame(getFrameIndex(timestamp));
 	}
 

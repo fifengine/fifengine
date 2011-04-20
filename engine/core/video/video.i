@@ -139,14 +139,14 @@ namespace FIFE {
 	};
 	
 	
-	class Animation: public IResource {
+	class Animation: public FifeClass {
 	public:
 		explicit Animation();
 		~Animation();
-		void addFrame(ResourcePtr image, uint32_t duration);
+		void addFrame(ImagePtr image, uint32_t duration);
 		int32_t getFrameIndex(uint32_t timestamp);
-		Image* getFrame(int32_t index);
-		Image* getFrameByTimestamp(uint32_t timestamp);
+		ImagePtr getFrame(int32_t index);
+		ImagePtr getFrameByTimestamp(uint32_t timestamp);
 		int32_t getFrameDuration(int32_t index);
 		uint32_t getFrameCount() const;
 		void setActionFrame(int32_t num);
@@ -155,6 +155,9 @@ namespace FIFE {
 		uint32_t getDirection();
 		int32_t getDuration();
 	};
+	
+	typedef SharedPtr<Animation> AnimationPtr;	
+	%template(SharedAnimationPointer) SharedPtr<Animation>;
 
 	class RenderBackend: public IImage {
 	public:

@@ -41,8 +41,6 @@
 
 namespace FIFE {
 
-	typedef SharedPtr<Image> ImagePtr;
-
 	/** ImageManager
 	 *
 	 * An interface for managing images.

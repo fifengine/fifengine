@@ -29,6 +29,10 @@
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
+#include "util/base/fifeclass.h"
+#include "util/base/sharedptr.h"
+
+#include "image.h"
 
 // 3rd party library includes
 
@@ -36,7 +40,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource.h"
 
 namespace FIFE {
 
@@ -50,7 +53,7 @@ namespace FIFE {
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation : public IResource {
+	class Animation : public FifeClass {
 	public:
 		/** Constructor.
 		 */
@@ -66,7 +69,7 @@ namespace FIFE {
 		 * @param image Pointer to Image. Does not transfer the ownership
 		 * @param duration Duration for given frame in the animation
 		 */
-		void addFrame(ResourcePtr image, uint32_t duration);
+		void addFrame(ImagePtr image, uint32_t duration);
 
 		/** Get the frame index that matches given timestamp. In case there is no exact match,
 		 * correct frame is calculated. E.g. if there are frames for timestamps 50 and 100
@@ -76,13 +79,13 @@ namespace FIFE {
 		 */
 		int32_t getFrameIndex(uint32_t timestamp);
 
-		/** Gets the frame that matches the given index. If no matches found, returns NULL
+		/** Gets the frame that matches the given index. If no matches found, returns an invalid ImagePtr
 		 */
-		Image* getFrame(int32_t index);
+		ImagePtr getFrame(int32_t index);
 
 		/** Gets the frame that matches the given timestamp.
 		 */
-		Image* getFrameByTimestamp(uint32_t timestamp);
+		ImagePtr getFrameByTimestamp(uint32_t timestamp);
 
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index
@@ -125,17 +128,13 @@ namespace FIFE {
 		 */
 		uint32_t getDuration() const { return m_animation_endtime; }
 
-		virtual size_t getSize() { return 0; }
-		virtual void load() { }
-		virtual void free() { }
-
 	private:
 		/** Contains information about one animation frame (duration + frame index + frame pointer)
 		 */
 		struct FrameInfo {
 			uint32_t index;
 			uint32_t duration;
-			ResourcePtr image;
+			ImagePtr image;
 		};
 
 		/** Checks for animation frame index overflows
@@ -154,6 +153,9 @@ namespace FIFE {
 		uint32_t m_direction;
 
 	};
+
+	typedef SharedPtr<Animation> AnimationPtr;
+
 }
 
 #endif

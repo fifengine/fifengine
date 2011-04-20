@@ -33,6 +33,8 @@
 #include "model/metamodel/abstractvisual.h"
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
+#include "video/animation.h"
+
 
 namespace FIFE {
 	class Object;
@@ -40,7 +42,7 @@ namespace FIFE {
 	class Action;
 	class Image;
 	class Camera;
-	
+
 	/** Base class for all 2 dimensional visual classes
 	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
 	 * The reason why its separated is to keep model view-agnostic, so that we could
@@ -173,12 +175,12 @@ namespace FIFE {
 
 		/** Adds new animation with given angle (degrees)
 		 */
-		void addAnimation(uint32_t angle, int32_t animation_index);
+		void addAnimation(uint32_t angle, AnimationPtr animationptr);
 
 		/** Gets index to animation closest to given angle
 		 * @return animation index, -1 if no animations available
 		 */
-		int32_t getAnimationIndexByAngle(int32_t angle);
+		AnimationPtr getAnimationByAngle(int32_t angle);
 
 		/** Returns list of available angles for this Action
 		 */
@@ -189,9 +191,13 @@ namespace FIFE {
 		 */
 		ActionVisual();
 
-		// animations associated with this action (handles to pool)
-		//   mapping = direction -> animation
-		type_angle2id m_animations;
+		// animations associated with this action
+		typedef std::map<uint32_t, AnimationPtr> AngleAnimationMap;
+		AngleAnimationMap m_animation_map;
+
+		//@fixme need this map to use the getIndexByAngle() function in angles.h
+		//should fix this
+		type_angle2id m_map;
 	};
 
 }

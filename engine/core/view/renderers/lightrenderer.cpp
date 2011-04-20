@@ -31,6 +31,7 @@
 #include "video/renderbackend.h"
 #include "video/animation.h"
 #include "video/fonts/abstractfont.h"
+#include "video/imagemanager.h"
 #include "video/image.h"
 #include "video/opengl/glimage.h"
 #include "util/math/fife_math.h"
@@ -243,8 +244,7 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
-//			Image* img = &imagepool->getImage(m_image);
-			Image* img = NULL;
+			ImagePtr img = ImageManager::instance()->get(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -253,7 +253,7 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			
+
 			if(r.intersects(viewport)) {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
@@ -306,7 +306,7 @@ namespace FIFE {
 //			Animation& animation = animpool->getAnimation(m_animation);
 			Animation animation;
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			Image* img = animation.getFrameByTimestamp(animtime);
+			ImagePtr img = animation.getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -315,7 +315,7 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			
+
 			if(r.intersects(viewport)) {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
@@ -375,7 +375,7 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			
+
 			if(r.intersects(viewport)) {
 				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
