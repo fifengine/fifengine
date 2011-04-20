@@ -23,7 +23,6 @@
 # ####################################################################
 
 from swig_test_utils import *
-import fifelog
 
 P = fife.ModelCoordinate
 D = fife.ExactModelCoordinate
@@ -39,7 +38,9 @@ def pt_is_near(p1, p2):
 class TestLocation(unittest.TestCase):
 	def setUp(self):
 		self.squaregrid1 = fife.SquareGrid()
+		self.squaregrid1.thisown = 0
 		self.squaregrid2 = fife.SquareGrid()
+		self.squaregrid2.thisown = 0
 		self.layer1 = fife.Layer("layer1", None, self.squaregrid1)
 		self.layer2 = fife.Layer("layer2", None, self.squaregrid2)
 		self.loc1 = fife.Location(self.layer1)
@@ -96,7 +97,9 @@ class TestLocation(unittest.TestCase):
 class TestHexGrid(unittest.TestCase):
 	def setUp(self):
 		self.hexgrid1 = fife.HexGrid()
+		self.hexgrid1.thisown = 0
 		self.squaregrid1 = fife.SquareGrid()
+		self.squaregrid1.thisown = 0
 		self.hex_layer1 = fife.Layer("hexlayer", None, self.hexgrid1)
 		self.square_layer1 = fife.Layer("squarelayer", None, self.squaregrid1)
 		self.loc1 = fife.Location(self.hex_layer1)
