@@ -32,6 +32,8 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 
+#include "fife_opengl.h"
+
 namespace FIFE {
 	class ScreenMode;
 	class RenderObject;
