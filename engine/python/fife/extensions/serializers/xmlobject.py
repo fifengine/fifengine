@@ -27,19 +27,21 @@ from fife import fife
 from fife.extensions.serializers import ET
 from fife.extensions.serializers import SerializerError, InvalidFormat 
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class XMLObjectLoader(object):
 	"""
 	
 	"""
-	def __init__(self, image_pool, anim_pool, model, vfs=None):
+	def __init__(self, engine):
 		"""
 		
 		"""
-		self.image_pool = image_pool
-		self.anim_pool = anim_pool
-		self.model = model
-		self.vfs = vfs
+		self.engine = engine
+		self.imgMgr = engine.getImageManager()
+		self.anim_pool = None
+		self.model = engine.getModel()
+		self.vfs = engine.getVFS()
 		self.source = None
 		self.filename = ''
 
@@ -144,7 +146,7 @@ class XMLObjectLoader(object):
 			path.pop()
 			path.append(str(source))
 
-			img = self.image_pool.create('/'.join(path))
+			img = self.imgMgr.create('/'.join(path))
 			img.setXShift(int( image.get('x_offset', 0) ))
 			img.setYShift(int( image.get('y_offset', 0) ))
 			
@@ -178,7 +180,6 @@ class XMLObjectLoader(object):
 			path.pop()
 			path.append(str(source))
 
-#			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
-#			animation = self.anim_pool.getAnimation(anim_id)
-#			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
-#			action.setDuration(animation.getDuration())
+			animation = loadXMLAnimation(self.engine, '/'.join(path))
+			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), animation)
+			action.setDuration(animation.getDuration())

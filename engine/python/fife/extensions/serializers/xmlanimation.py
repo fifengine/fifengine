@@ -24,55 +24,51 @@
 from fife import fife
 from fife.extensions.serializers import ET
 
-class XMLAnimationLoader(object):
-	def __init__(self, imagepool, vfs):
-		self.imagepool = imagepool
-		self.vfs = vfs
-		self.thisown = 0
-		self.filename = ''
-		self.node = None
+def loadXMLAnimation(engine, filename):
+	f = engine.getVFS().open(filename)
+	f.thisown = 1
 
-	def loadResource(self, location):
-		self.filename = location
-		return self.do_load_resource()
+	imgMgr = engine.getImageManager()
+	
+	tree = ET.parse(f)
+	node = tree.getroot()
 
-	def do_load_resource(self):
-		f = self.vfs.open(self.filename)
-		f.thisown = 1
-		tree = ET.parse(f)
-		self.node = tree.getroot()
+	animation = fife.SharedAnimationPointer()
+	anim = fife.Animation()
+	anim.thisown = 0
+	animation.reset(anim)
+	
+	common_frame_delay = int(node.get('delay', 0))
+	x_offset = int(node.get('x_offset', 0))
+	y_offset = int(node.get('y_offset', 0))
+	animation.setActionFrame(int(node.get('action', 0)))
 
-		animation = fife.Animation()
-		common_frame_delay = int(self.node.get('delay', 0))
-		x_offset = int(self.node.get('x_offset', 0))
-		y_offset = int(self.node.get('y_offset', 0))
-		animation.setActionFrame(int(self.node.get('action', 0)))
+	frames = node.findall('frame')
+	if not frames:
+		raise InvalidFormat('animation without <frame>s')
 
-		frames = self.node.findall('frame')
-		if not frames:
+	for frame in frames:
+		source = frame.get('source')
+		if not source:
 			raise InvalidFormat('animation without <frame>s')
 
-		for frame in frames:
-			source = frame.get('source')
-			if not source:
-				raise InvalidFormat('animation without <frame>s')
+		frame_x_offset = int(frame.get('x_offset', x_offset))
+		frame_y_offset = int(frame.get('y_offset', y_offset))
+		frame_delay = int(frame.get('delay', common_frame_delay))
 
-			frame_x_offset = int(frame.get('x_offset', x_offset))
-			frame_y_offset = int(frame.get('y_offset', y_offset))
-			frame_delay = int(frame.get('delay', common_frame_delay))
+		# xml paths are relative to the directory of the file they're used in.
+		path = filename.split('/')
+		path.pop()
+		path.append(str(source))
 
-			# xml paths are relative to the directory of the file they're used in.
-			path = self.filename.split('/')
-			path.pop()
-			path.append(str(source))
+		image_file = '/'.join(path)
 
-			image_location = fife.ImageLocation('/'.join(path))
-			image_location.setXShift(frame_x_offset)
-			image_location.setYShift(frame_y_offset)
-
-			image_index = self.imagepool.addResourceFromLocation(image_location)
-			animation.addFrame(fife.ResourcePtr(self.imagepool,image_index), frame_delay)
-
-		animation.thisown = 0
-		return animation
+		img = imgMgr.load(image_file)
+		img.setXShift(frame_x_offset)
+		img.setYShift(frame_y_offset)
+		
+		animation.addFrame(img, frame_delay)
+		
+#		animation.thisown = 0
+	return animation
 

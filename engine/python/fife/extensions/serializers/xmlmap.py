@@ -31,7 +31,7 @@ from fife.extensions.serializers import SerializerError, InvalidFormat
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
 
 from fife.extensions.serializers.xmlobject import XMLObjectLoader
-from fife.extensions.serializers.xmlanimation import XMLAnimationLoader
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir
 from fife.extensions.serializers.xml_loader_tools import loadImportDirRec
 from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_root_subfile	
@@ -66,15 +66,10 @@ class XMLMapLoader(object):
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
 		self.model = self.engine.getModel()
-		self.pool = self.engine.getImageManager()
+		self.imageManager = self.engine.getImageManager()
 		self.anim_pool = None
 		
-		self.obj_loader = XMLObjectLoader(
-			engine.getImageManager(),
-			None,
-			engine.getModel(),
-			engine.getVFS()
-		)
+		self.obj_loader = XMLObjectLoader(engine)
 	
 		self.map = None
 		self.source = None

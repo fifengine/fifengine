@@ -199,7 +199,7 @@ namespace FIFE {
 
 			//@fixme image should be a ImagePtr
 			ImagePtr imgPtr = animation->getFrameByTimestamp(animation_time);
-			image = imgPtr.get();
+			image = dynamic_cast<Image*>(imgPtr.get());
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){

@@ -58,12 +58,7 @@ class Scene(Serializer):
 		self._objectsettings = None
 		self._modelsettings = None
 
-		self.obj_loader = XMLObjectLoader(
-			gamecontroller.engine.getImagePool(),
-			gamecontroller.engine.getAnimationPool(),
-			gamecontroller.engine.getModel(),
-			gamecontroller.engine.getVFS()
-		)
+		self.obj_loader = XMLObjectLoader( self._gamecontroller.engine )
 
 	def loadObject(self, objectname, objectid=None, valuedict=None):
 		if objectid:

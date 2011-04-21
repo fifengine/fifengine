@@ -29,7 +29,6 @@ See the L{ApplicationBase} documentation.
 
 from fife import fife
 from fife.extensions import fifelog
-from fife.extensions.serializers.xmlanimation import XMLAnimationLoader
 from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting
 
@@ -92,8 +91,6 @@ class ApplicationBase(object):
 		
 		resolutions = ["{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]] 
 		self._setting.setValidResolutions(resolutions)
-
-		self._animationloader = XMLAnimationLoader(self.engine.getImageManager(), self.engine.getVFS())
 
 		pychan.init(self.engine, debug = self._finalSetting['PychanDebug'])
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)

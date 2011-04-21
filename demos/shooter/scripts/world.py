@@ -59,12 +59,7 @@ class World(EventListenerBase):
 		self._timemanager = engine.getTimeManager()
 		self._eventmanager = engine.getEventManager()
 		self._model = engine.getModel()
-		self.obj_loader = XMLObjectLoader(
-			engine.getImagePool(),
-			engine.getAnimationPool(),
-			engine.getModel(),
-			engine.getVFS()
-		)
+		self.obj_loader = XMLObjectLoader(engine)
 		self._filename = ''
 		self._keystate = { 'UP': False, 
 		                   'DOWN': False, 
@@ -102,7 +97,6 @@ class World(EventListenerBase):
 		self._genericrenderer = None
 		
 		self._gamecomplete = False
-		self._savingscore = False
 		
 	def showMainMenu(self):
 		if self._scene:
@@ -125,10 +119,6 @@ class World(EventListenerBase):
 		self._applictaion.requestQuit()
 		
 	def reset(self):
-		"""
-		Resets the game state to an acceptable point for starting a new level
-		"""
-		
 		if self._map:
 			self._model.deleteMap(self._map)
 		self._map = None
@@ -140,8 +130,6 @@ class World(EventListenerBase):
 			self._scene = None
 			
 		self._gamecomplete = False
-		self._savingscore = False
-		self._paused = False
 
 	def loadLevel(self, filename):
 		"""
@@ -251,10 +239,10 @@ class World(EventListenerBase):
 		self._hudwindow.hide()
 
 	def saveScore(self):
+		self._gamecomplete = False
+	
 		if self._highscores.isHighScore(self._scene.player.score):
 			score = self._scene.player.score
-			
-			self._savingscore = True
 			
 			dlg = pychan.loadXML('gui/highscoredialog.xml')
 			dlg.execute({ 'okay' : "Yay!" })
@@ -267,6 +255,7 @@ class World(EventListenerBase):
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
 		self._mainmenu.hide()
+		self._paused = False
 		
 	def continueGame(self):
 		self._mainmenu.hide()
@@ -382,7 +371,7 @@ class World(EventListenerBase):
 			if not self._scene.paused:
 				self._scene.pause(self._timemanager.getTime() - self._starttime)
 
-		if self._gamecomplete and not self._savingscore:
+		if self._gamecomplete:
 			self.saveScore()
 			self.reset()		
 		
