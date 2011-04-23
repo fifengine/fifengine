@@ -178,7 +178,7 @@ namespace FIFE {
 			int32_t image_id = render_item.getStaticImageIndexByAngle(angle, instance);
 //prock - 504
 //			if(image_id == Pool::INVALID_ID) {
-			if(image_id == 0) {
+			if(image_id == -1) {
 				if (!instance->getObject()->isStatic()) {
 					action = instance->getObject()->getDefaultAction();
 				}
