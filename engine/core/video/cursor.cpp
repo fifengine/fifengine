@@ -156,10 +156,12 @@ namespace FIFE {
 			img = ImageManager::instance()->get(m_drag_id);
 		} else if (m_drag_type == CURSOR_ANIMATION) {
 //prock - 504
+//@fixme animations should be added to cursor.  This is currently broken.
 //			Animation& anim = m_animpool->getAnimation(m_drag_id);
 			Animation anim = Animation();
 			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
- 			img = anim.getFrameByTimestamp(animtime);
+			uint32_t imgid = anim.getFrameByTimestamp(animtime);
+			img = ImageManager::instance()->get(imgid);
 		}
 		if (img) {
 			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
@@ -169,22 +171,24 @@ namespace FIFE {
 			m_renderbackend->popClipArea();
 		}
 
+		ImagePtr img2 = ImagePtr();
 		// render possible cursor image
-		img = ImagePtr();
 		if (m_cursor_type == CURSOR_IMAGE) {
 //prock - 504
-			img = ImageManager::instance()->get(m_cursor_id);
+			img2 = ImageManager::instance()->get(m_cursor_id);
 		} else if (m_cursor_type == CURSOR_ANIMATION) {
 //prock - 504
+//@fixme see above fixme
 //			Animation& anim = m_animpool->getAnimation(m_cursor_id);
 			Animation anim = Animation();
 			int32_t animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
-			img = anim.getFrameByTimestamp(animtime);
+			uint32_t imgid = anim.getFrameByTimestamp(animtime);
+			img2 = ImageManager::instance()->get(imgid);
 		}
-		if (img) {
+		if (img2) {
 			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
-			img->render(area);
+			img2->render(area);
 			m_renderbackend->renderVertexArrays();
 			m_renderbackend->popClipArea();
 		}

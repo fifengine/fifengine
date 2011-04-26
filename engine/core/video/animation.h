@@ -81,11 +81,11 @@ namespace FIFE {
 
 		/** Gets the frame that matches the given index. If no matches found, returns an invalid ImagePtr
 		 */
-		ImagePtr getFrame(int32_t index);
+		uint32_t getFrame(int32_t index);
 
 		/** Gets the frame that matches the given timestamp.
 		 */
-		ImagePtr getFrameByTimestamp(uint32_t timestamp);
+		uint32_t getFrameByTimestamp(uint32_t timestamp);
 
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index

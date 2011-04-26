@@ -84,16 +84,16 @@ namespace FIFE {
 		return size > 0 && index >= 0 && index < size;
 	}
 
-	ImagePtr Animation::getFrame(int32_t index) {
+	uint32_t Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
 //prock - 504
-			return m_frames[index].image;
+			return m_frames[index].image->getHandle();
 		} else {
-			return ImagePtr();  //return an invalid image pointer
+			return 0;  //return an invalid image ID.
 		}
 	}
 
-	ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp) {
+	uint32_t Animation::getFrameByTimestamp(uint32_t timestamp) {
 		return getFrame(getFrameIndex(timestamp));
 	}
 
