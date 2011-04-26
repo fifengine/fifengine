@@ -69,6 +69,21 @@ namespace FIFE {
 
 		/** Creates a blank Image but does not load it immediately
 		 *
+		 * @param loader A pointer to the custom resource loader.  The
+		 * default is NULL.  If this parameter is present the resource
+		 * will use the loader to load instead of the default built in
+		 * functions.
+		 * @return An ImagePtr to the newly created Image
+		 *
+		 * @see Image
+		 * @see ImageLoader
+		 * @see IResourceLoader
+		 *
+		 */
+		virtual ImagePtr create(IResourceLoader* loader = 0);
+
+		/** Creates a blank Image but does not load it immediately
+		 *
 		 * @param name The resource name. Typically a filename.
 		 * @param loader A pointer to the custom resource loader.  The
 		 * default is NULL.  If this parameter is present the resource

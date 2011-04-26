@@ -186,7 +186,7 @@ namespace FIFE {
 //prock - 504
 //				image = &m_image_pool->getImage(image_id);
 				ImagePtr resptr = ImageManager::instance()->get(image_id);
-				image = dynamic_cast<Image*>(resptr.get());
+				image = resptr.get();
 			}
 		}
 		item.force_update = bool(action);
@@ -197,9 +197,10 @@ namespace FIFE {
 			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(render_item.facing_angle + m_camera->getRotation());
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
-			//@fixme image should be a ImagePtr
+			//@fixme get the image pointer but it might not be loaded yet.
+			//Must request the image manager to load it.
 			ImagePtr imgPtr = animation->getFrameByTimestamp(animation_time);
-			image = dynamic_cast<Image*>(imgPtr.get());
+			image = ImageManager::instance()->get(imgPtr->getHandle()).get();
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){
