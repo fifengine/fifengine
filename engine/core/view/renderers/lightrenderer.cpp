@@ -304,9 +304,10 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
 //			Animation& animation = animpool->getAnimation(m_animation);
+//@fixme must be able to set the animation to use.  This is currently broken.
 			Animation animation;
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			ImagePtr img = animation.getFrameByTimestamp(animtime);
+			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());

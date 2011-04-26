@@ -197,10 +197,7 @@ namespace FIFE {
 			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(render_item.facing_angle + m_camera->getRotation());
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
-			//@fixme get the image pointer but it might not be loaded yet.
-			//Must request the image manager to load it.
-			ImagePtr imgPtr = animation->getFrameByTimestamp(animation_time);
-			image = ImageManager::instance()->get(imgPtr->getHandle()).get();
+			image = ImageManager::instance()->get(animation->getFrameByTimestamp(animation_time)).get();
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){

@@ -760,12 +760,14 @@ namespace FIFE {
 		if (m_ani_overlay) {
 //prock - 504
 //			Animation& animation = m_apool->getAnimation(m_ani_id);
+//@fixme the get and set functions above for the animation should set the animations.  This
+//is currently broken
 			Animation animation;
 			if (m_start_time == 0) {
 				m_start_time = TimeManager::instance()->getTime();
 			}
 			int32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			ImagePtr img = animation.getFrameByTimestamp(animtime);
+			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
 			if (img) {
 				if (m_ani_fill) {
 					r.w = width;
