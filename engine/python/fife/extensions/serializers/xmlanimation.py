@@ -63,7 +63,7 @@ def loadXMLAnimation(engine, filename):
 
 		image_file = '/'.join(path)
 
-		img = imgMgr.load(image_file)
+		img = imgMgr.create(image_file)
 		img.setXShift(frame_x_offset)
 		img.setYShift(frame_y_offset)
 		

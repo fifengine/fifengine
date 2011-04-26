@@ -85,6 +85,10 @@ namespace FIFE {
 		return m_imgHandleMap.size();
 	}
 
+	ImagePtr ImageManager::create(IResourceLoader* loader){
+		Image* ptr = RenderBackend::instance()->createImage(loader);
+		return add(ptr);
+	}
 
 	ImagePtr ImageManager::create(const std::string& name, IResourceLoader* loader){
 		Image* ptr = RenderBackend::instance()->createImage(name, loader);

@@ -74,15 +74,6 @@ namespace FIFE {
 
 		SDL_FreeRW(rwops);
 
-//		if( !surface ) {
-//			return 0;
-//		}
-//		Image* res = RenderBackend::instance()->createImage(surface);
-//		res->setResourceLocation(location);
-//		if (loc) {
-//			res->setXShift(loc->getXShift());
-//			res->setYShift(loc->getYShift());
-//		}
 		img->setAlphaOptimizerEnabled(true);
 	}
 }  //FIFE
