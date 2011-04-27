@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -48,187 +48,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(relative_location),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(relative_location),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(NULL),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(NULL),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point):
-		m_instance(NULL),
-		m_location(attached_location),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(const Location &attached_location, const Point &relative_point):
-		m_instance(NULL),
-		m_location(attached_location),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(Layer* attached_layer, const Point &relative_point):
-		m_instance(NULL),
-		m_location(NULL),
-		m_layer(attached_layer),
-		m_point(relative_point) {
-	}
-	GenericRendererNode::GenericRendererNode(const Point &attached_point):
-		m_instance(NULL),
-		m_location(NULL),
-		m_layer(NULL),
-		m_point(attached_point) {
-	}
-	GenericRendererNode::~GenericRendererNode() {
-	}
-
-	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point) {
-		m_instance = attached_instance;
-		m_location = relative_location;
-		m_point = relative_point;
-	}
-	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location) {
-		m_instance = attached_instance;
-		m_location = relative_location;
-	}
-	void GenericRendererNode::setAttached(Instance* attached_instance, const Point &relative_point) {
-		m_instance = attached_instance;
-		m_point = relative_point;
-	}
-	void GenericRendererNode::setAttached(Instance* attached_instance) {
-		m_instance = attached_instance;
-	}
-	void GenericRendererNode::setAttached(const Location &attached_location, const Point &relative_point) {
-		m_instance = NULL;
-		m_location = attached_location;
-		m_point = relative_point;
-	}
-	void GenericRendererNode::setAttached(const Location &attached_location) {
-		m_instance = NULL;
-		m_location = attached_location;
-	}
-	void GenericRendererNode::setAttached(Layer* attached_layer) {
-		m_layer = attached_layer;
-	}
-	void GenericRendererNode::setAttached(const Point &attached_point) {
-		m_instance = NULL;
-		m_location = NULL;
-		m_point = attached_point;
-	}
-
-	void GenericRendererNode::setRelative(const Location &relative_location) {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		m_location = relative_location;
-	}
-	void GenericRendererNode::setRelative(const Location &relative_location, Point relative_point) {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		m_location = relative_location;
-		m_point = relative_point;
-	}
-	void GenericRendererNode::setRelative(const Point &relative_point) {
-		if(m_instance == NULL || m_location == NULL) {
-			throw NotSupported("No instance or location attached.");
-		}
-		m_point = relative_point;
-	}
-
-	Instance* GenericRendererNode::getAttachedInstance() {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		return m_instance;
-	}
-	Location GenericRendererNode::getAttachedLocation() {
-		if(m_instance != NULL || m_location == NULL) {
-			throw NotSupported("No location attached.");
-		}
-		return m_location;
-	}
-	Layer* GenericRendererNode::getAttachedLayer() {
-		if(m_layer == NULL) {
-			throw NotSupported("No layer attached.");
-		}
-		return m_layer;
-	}
-	Point GenericRendererNode::getAttachedPoint() {
-		if(m_instance != NULL || m_location != NULL) {
-			throw NotSupported("No point attached.");
-		}
-		return m_point;
-	}
-
-	Location GenericRendererNode::getOffsetLocation() {
-		if(m_instance == NULL || m_location == NULL) {
-			throw NotSupported("No location as offset used.");
-		}
-		return m_location;
-	}
-	Point GenericRendererNode::getOffsetPoint() {
-		if(m_instance == NULL && m_location == NULL) {
-			throw NotSupported("No point as offset used.");
-		}
-		return m_point;
-	}
-
-	Instance* GenericRendererNode::getInstance() {
-		return m_instance;
-	}
-	Location GenericRendererNode::getLocation() {
-		return m_location;
-	}
-	Layer* GenericRendererNode::getLayer() {
-		return m_layer;
-	}
-	Point GenericRendererNode::getPoint() {
-		return m_point;
-	}
-
-	Point GenericRendererNode::getCalculatedPoint(Camera* cam, Layer* layer) {
-		ScreenPoint p;
-		if(m_instance != NULL) {
-			if(m_layer == NULL) {
-				m_layer = m_instance->getLocation().getLayer();
-			}
-			if(m_location != NULL) {
-				p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates() + m_location.getMapCoordinates());
-			} else {
-				p = cam->toScreenCoordinates(m_instance->getLocation().getMapCoordinates());
-			}
-		} else if(m_location != NULL) {
-			if(m_layer == NULL) {
-				m_layer = m_location.getLayer();
-			}
-			p = cam->toScreenCoordinates(m_location.getMapCoordinates());
-		} else if(m_layer == NULL) {
-			const std::list<Layer*>& layers = cam->getRenderer("GenericRenderer")->getActiveLayers();
-			std::list<Layer*>::const_reverse_iterator layer_it = layers.rbegin();
-			setAttached(*layer_it);
-		}
-		return Point(m_point.x + p.x, m_point.y + p.y);
-	}
-
-	GenericRendererLineInfo::GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererLineInfo::GenericRendererLineInfo(RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
 		m_edge2(n2),
@@ -245,7 +65,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererPointInfo::GenericRendererPointInfo(RendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_red(r),
@@ -260,7 +80,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererTriangleInfo::GenericRendererTriangleInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererTriangleInfo::GenericRendererTriangleInfo(RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
 		m_edge2(n2),
@@ -279,7 +99,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererQuadInfo::GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererQuadInfo::GenericRendererQuadInfo(RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
 		m_edge2(n2),
@@ -300,7 +120,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererVertexInfo::GenericRendererVertexInfo(RendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_center(center),
 		m_size(size),
@@ -316,7 +136,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode anchor, int32_t image):
+	GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, int32_t image):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image) {
@@ -336,12 +156,13 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			if(r.intersects(viewport))
+			if(r.intersects(viewport)) {
 				img->render(r);
+			}
 		}
 	}
 
-	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int32_t animation):
+	GenericRendererAnimationInfo::GenericRendererAnimationInfo(RendererNode anchor, int32_t animation):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -365,12 +186,13 @@ namespace FIFE {
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
-			if(r.intersects(viewport))
+			if(r.intersects(viewport)) {
 				img->render(r);
+			}
 		}
 	}
 
-	GenericRendererTextInfo::GenericRendererTextInfo(GenericRendererNode anchor, AbstractFont* font, std::string text):
+	GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, AbstractFont* font, std::string text):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_font(font),
@@ -395,7 +217,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererResizeInfo::GenericRendererResizeInfo(GenericRendererNode anchor, int32_t image, int32_t width, int32_t height):
+	GenericRendererResizeInfo::GenericRendererResizeInfo(RendererNode anchor, int32_t image, int32_t width, int32_t height):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -445,39 +267,39 @@ namespace FIFE {
 
 	GenericRenderer::~GenericRenderer() {
 	}
-	void GenericRenderer::addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addLine(const std::string &group, RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addPoint(const std::string &group, RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addTriangle(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addTriangle(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererTriangleInfo(n1, n2, n3, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addQuad(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addVertex(const std::string &group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text) {
+	void GenericRenderer::addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text) {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(const std::string &group, GenericRendererNode n, int32_t image) {
+	void GenericRenderer::addImage(const std::string &group, RendererNode n, int32_t image) {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(const std::string &group, GenericRendererNode n, int32_t animation) {
+	void GenericRenderer::addAnimation(const std::string &group, RendererNode n, int32_t animation) {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::resizeImage(const std::string &group, GenericRendererNode n, int32_t image, int32_t width, int32_t height) {
+	void GenericRenderer::resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height) {
 		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height);
 		m_groups[group].push_back(info);
 	}

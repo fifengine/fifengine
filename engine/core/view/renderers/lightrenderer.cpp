@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -50,187 +50,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	LightRendererNode::LightRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(relative_location),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(relative_location),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(NULL),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(Instance* attached_instance, const Point &relative_point):
-		m_instance(attached_instance),
-		m_location(NULL),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point):
-		m_instance(NULL),
-		m_location(attached_location),
-		m_layer(relative_layer),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(const Location &attached_location, const Point &relative_point):
-		m_instance(NULL),
-		m_location(attached_location),
-		m_layer(NULL),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(Layer* attached_layer, const Point &relative_point):
-		m_instance(NULL),
-		m_location(NULL),
-		m_layer(attached_layer),
-		m_point(relative_point) {
-	}
-	LightRendererNode::LightRendererNode(const Point &attached_point):
-		m_instance(NULL),
-		m_location(NULL),
-		m_layer(NULL),
-		m_point(attached_point) {
-	}
-	LightRendererNode::~LightRendererNode() {
-	}
-
-	void LightRendererNode::setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point) {
-		m_instance = attached_instance;
-		m_location = relative_location;
-		m_point = relative_point;
-	}
-	void LightRendererNode::setAttached(Instance* attached_instance, const Location &relative_location) {
-		m_instance = attached_instance;
-		m_location = relative_location;
-	}
-	void LightRendererNode::setAttached(Instance* attached_instance, const Point &relative_point) {
-		m_instance = attached_instance;
-		m_point = relative_point;
-	}
-	void LightRendererNode::setAttached(Instance* attached_instance) {
-		m_instance = attached_instance;
-	}
-	void LightRendererNode::setAttached(const Location &attached_location, const Point &relative_point) {
-		m_instance = NULL;
-		m_location = attached_location;
-		m_point = relative_point;
-	}
-	void LightRendererNode::setAttached(const Location &attached_location) {
-		m_instance = NULL;
-		m_location = attached_location;
-	}
-	void LightRendererNode::setAttached(Layer* attached_layer) {
-		m_layer = attached_layer;
-	}
-	void LightRendererNode::setAttached(const Point &attached_point) {
-		m_instance = NULL;
-		m_location = NULL;
-		m_point = attached_point;
-	}
-
-	void LightRendererNode::setRelative(const Location &relative_location) {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		m_location = relative_location;
-	}
-	void LightRendererNode::setRelative(const Location &relative_location, Point relative_point) {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		m_location = relative_location;
-		m_point = relative_point;
-	}
-	void LightRendererNode::setRelative(const Point &relative_point) {
-		if(m_instance == NULL || m_location == NULL) {
-			throw NotSupported("No instance or location attached.");
-		}
-		m_point = relative_point;
-	}
-
-	Instance* LightRendererNode::getAttachedInstance() {
-		if(m_instance == NULL) {
-			throw NotSupported("No instance attached.");
-		}
-		return m_instance;
-	}
-	Location LightRendererNode::getAttachedLocation() {
-		if(m_instance != NULL || m_location == NULL) {
-			throw NotSupported("No location attached.");
-		}
-		return m_location;
-	}
-	Layer* LightRendererNode::getAttachedLayer() {
-		if(m_layer == NULL) {
-			throw NotSupported("No layer attached.");
-		}
-		return m_layer;
-	}
-	Point LightRendererNode::getAttachedPoint() {
-		if(m_instance != NULL || m_location != NULL) {
-			throw NotSupported("No point attached.");
-		}
-		return m_point;
-	}
-
-	Location LightRendererNode::getOffsetLocation() {
-		if(m_instance == NULL || m_location == NULL) {
-			throw NotSupported("No location as offset used.");
-		}
-		return m_location;
-	}
-	Point LightRendererNode::getOffsetPoint() {
-		if(m_instance == NULL && m_location == NULL) {
-			throw NotSupported("No point as offset used.");
-		}
-		return m_point;
-	}
-
-	Instance* LightRendererNode::getInstance() {
-		return m_instance;
-	}
-	Location LightRendererNode::getLocation() {
-		return m_location;
-	}
-	Layer* LightRendererNode::getLayer() {
-		return m_layer;
-	}
-	Point LightRendererNode::getPoint() {
-		return m_point;
-	}
-
-	Point LightRendererNode::getCalculatedPoint(Camera* cam, Layer* layer) {
-		ScreenPoint p;
-		if(m_instance != NULL) {
-			if(m_layer == NULL) {
-				m_layer = m_instance->getLocation().getLayer();
-			}
-			if(m_location != NULL) {
-				p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates() + m_location.getMapCoordinates());
-			} else {
-				p = cam->toScreenCoordinates(m_instance->getLocation().getMapCoordinates());
-			}
-		} else if(m_location != NULL) {
-			if(m_layer == NULL) {
-				m_layer = m_location.getLayer();
-			}
-			p = cam->toScreenCoordinates(m_location.getMapCoordinates());
-		} else if(m_layer == NULL) {
-			const std::list<Layer*>& layers = cam->getRenderer("LightRenderer")->getActiveLayers();
-			std::list<Layer*>::const_reverse_iterator layer_it = layers.rbegin();
-			setAttached(*layer_it);
-		}
-		return Point(m_point.x + p.x, m_point.y + p.y);
-	}
-
-	LightRendererImageInfo::LightRendererImageInfo(LightRendererNode anchor, int32_t image, int32_t src, int32_t dst):
+	LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, int32_t image, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -287,7 +107,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererAnimationInfo::LightRendererAnimationInfo(LightRendererNode anchor, int32_t animation, int32_t src, int32_t dst):
+	LightRendererAnimationInfo::LightRendererAnimationInfo(RendererNode anchor, int32_t animation, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -350,7 +170,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererResizeInfo::LightRendererResizeInfo(LightRendererNode anchor, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst):
+	LightRendererResizeInfo::LightRendererResizeInfo(RendererNode anchor, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -410,7 +230,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(LightRendererNode anchor, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst):
+	LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(RendererNode anchor, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_intensity(intensity),
@@ -494,22 +314,22 @@ namespace FIFE {
 	LightRenderer::~LightRenderer() {
 	}
 	// Add a static lightmap
-	void LightRenderer::addImage(const std::string &group, LightRendererNode n, int32_t image, int32_t src, int32_t dst) {
+	void LightRenderer::addImage(const std::string &group, RendererNode n, int32_t image, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Add a animation lightmap
-	void LightRenderer::addAnimation(const std::string &group, LightRendererNode n, int32_t animation, int32_t src, int32_t dst) {
+	void LightRenderer::addAnimation(const std::string &group, RendererNode n, int32_t animation, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Add a simple light
-	void LightRenderer::addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst) {
+	void LightRenderer::addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererSimpleLightInfo(n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Resize an Image
-	void LightRenderer::resizeImage(const std::string &group, LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst) {
+	void LightRenderer::resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
 		m_groups[group].push_back(info);
 	}

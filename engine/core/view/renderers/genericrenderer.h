@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -30,57 +30,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/structures/renderernode.h"
 #include "view/rendererbase.h"
 
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
 
-	class GenericRendererNode {
-	public:
-		GenericRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Instance* attached_instance, const Point &relative_point = Point(0,0));
-		GenericRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(const Location &attached_location, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(const Point &attached_point);
-		~GenericRendererNode();
-
-		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
-		void setAttached(Instance* attached_instance, const Location &relative_location);
-		void setAttached(Instance* attached_instance, const Point &relative_point);
-		void setAttached(Instance* attached_instance);
-		void setAttached(const Location &attached_location, const Point &relative_point);
-		void setAttached(const Location &attached_location);
-		void setAttached(Layer* attached_layer);
-		void setAttached(const Point &attached_point);
-
-		void setRelative(const Location &relative_location);
-		void setRelative(const Location &relative_location, Point relative_point);
-		void setRelative(const Point &relative_point);
-
-		Instance* getAttachedInstance();
-		Location getAttachedLocation();
-		Layer* getAttachedLayer();
-		Point getAttachedPoint();
-
-		Location getOffsetLocation();
-		Point getOffsetPoint();
-
-		Instance* getInstance();
-		Location getLocation();
-		Layer* getLayer();
-		Point getPoint();
-
-		Point getCalculatedPoint(Camera* cam, Layer* layer);
-	private:
-		Instance* m_instance;
-		Location m_location;
-		Layer* m_layer;
-		Point m_point;
-	};
 	class GenericRendererElementInfo {
 	public:
 		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {};
@@ -90,11 +46,11 @@ namespace FIFE {
 	class GenericRendererLineInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererLineInfo(RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererLineInfo() {};
 	private:
-		GenericRendererNode m_edge1;
-		GenericRendererNode m_edge2;
+		RendererNode m_edge1;
+		RendererNode m_edge2;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
@@ -103,10 +59,10 @@ namespace FIFE {
 	class GenericRendererPointInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererPointInfo(RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererPointInfo() {};
 	private:
-		GenericRendererNode m_anchor;
+		RendererNode m_anchor;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
@@ -115,12 +71,12 @@ namespace FIFE {
 	class GenericRendererTriangleInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererTriangleInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererTriangleInfo(RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererTriangleInfo() {};
 	private:
-		GenericRendererNode m_edge1;
-		GenericRendererNode m_edge2;
-		GenericRendererNode m_edge3;
+		RendererNode m_edge1;
+		RendererNode m_edge2;
+		RendererNode m_edge3;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
@@ -129,13 +85,13 @@ namespace FIFE {
 	class GenericRendererQuadInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererQuadInfo(RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererQuadInfo() {};
 	private:
-		GenericRendererNode m_edge1;
-		GenericRendererNode m_edge2;
-		GenericRendererNode m_edge3;
-		GenericRendererNode m_edge4;
+		RendererNode m_edge1;
+		RendererNode m_edge2;
+		RendererNode m_edge3;
+		RendererNode m_edge4;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
@@ -145,10 +101,10 @@ namespace FIFE {
 	class GenericRendererVertexInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererVertexInfo(GenericRendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererVertexInfo(RendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererVertexInfo() {};
 	private:
-		GenericRendererNode m_center;
+		RendererNode m_center;
 		int32_t m_size;
 		uint8_t m_red;
 		uint8_t m_green;
@@ -159,19 +115,19 @@ namespace FIFE {
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererImageInfo(GenericRendererNode n, int32_t image);
+		GenericRendererImageInfo(RendererNode n, int32_t image);
 		virtual ~GenericRendererImageInfo() {};
 	private:
-		GenericRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_image;
 	};
 	class GenericRendererAnimationInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererAnimationInfo(GenericRendererNode n, int32_t animation);
+		GenericRendererAnimationInfo(RendererNode n, int32_t animation);
 		virtual ~GenericRendererAnimationInfo() {};
 	private:
-		GenericRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_animation;
 		uint32_t m_start_time;
 		float m_time_scale;
@@ -179,20 +135,20 @@ namespace FIFE {
 	class GenericRendererTextInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererTextInfo(GenericRendererNode n, AbstractFont* font, std::string text);
+		GenericRendererTextInfo(RendererNode n, AbstractFont* font, std::string text);
 		virtual ~GenericRendererTextInfo() {};
 	private:
-		GenericRendererNode m_anchor;
+		RendererNode m_anchor;
 		AbstractFont* m_font;
 		std::string m_text;
 	};
 	class GenericRendererResizeInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererResizeInfo(GenericRendererNode n, int32_t image, int32_t width, int32_t height);
+		GenericRendererResizeInfo(RendererNode n, int32_t image, int32_t width, int32_t height);
 		virtual ~GenericRendererResizeInfo() {};
 	private:
-		GenericRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_image;
 		int32_t m_width;
 		int32_t m_height;
@@ -219,15 +175,15 @@ namespace FIFE {
 		 */
 		static GenericRenderer* getInstance(IRendererContainer* cnt);
 
-		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addTriangle(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addVertex(const std::string &group, GenericRendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
-		void addImage(const std::string &group, GenericRendererNode n, int32_t image);
-		void addAnimation(const std::string &group, GenericRendererNode n, int32_t animation);
-		void resizeImage(const std::string &group, GenericRendererNode n, int32_t image, int32_t width, int32_t height);
+		void addLine(const std::string &group, RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addPoint(const std::string &group, RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addTriangle(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addQuad(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addVertex(const std::string &group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text);
+		void addImage(const std::string &group, RendererNode n, int32_t image);
+		void addAnimation(const std::string &group, RendererNode n, int32_t animation);
+		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();
 		void reset();
