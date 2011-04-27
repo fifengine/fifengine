@@ -216,16 +216,6 @@ namespace FIFE {
 			return m_lighting;
 		}
 
-		/** Activate or deactivate the backbuffer clearing if no map is loaded
-		 */
-		void setBackBufferClearing(bool clear);
-
-		/** Returns true if the backbuffer cleaning is enabled else it returns false
-		 */
-		bool getBackBufferClearing() const {
-			return m_buffer_clearing;
-		}
-
 		/** Sets whether to use the frame limiter
 		 */
 		void setFrameLimitEnabled(bool limited);
@@ -261,7 +251,6 @@ namespace FIFE {
 		SDL_Color m_colorkey;
 		std::string m_videodriver;
 		uint32_t m_lighting;
-		bool m_buffer_clearing;
 		bool m_isframelimit;
 		uint16_t m_framelimit;
 	};

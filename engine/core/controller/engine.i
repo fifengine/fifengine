@@ -40,6 +40,7 @@ namespace FIFE {
 	class ScreenMode;
 	class Image;
 	class ImageManager;
+	class OffRenderer;
 
 	class EngineSettings {
 	public:
@@ -79,8 +80,6 @@ namespace FIFE {
 		const std::string& getVideoDriver() const;
 		void setLightingModel(uint32_t lighting);
 		uint32_t getLightingModel() const;
-		void setBackBufferClearing(bool clear);
-		bool getBackBufferClearing() const;
 		void setFrameLimitEnabled(bool limited);
 		bool isFrameLimitEnabled() const;
 		void setFrameLimit(uint16_t framelimit);
@@ -124,6 +123,7 @@ namespace FIFE {
 		GuiFont* getDefaultFont();
 		VFS* getVFS();
 		Cursor* getCursor();
+		OffRenderer* getOffRenderer();
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);

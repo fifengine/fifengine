@@ -174,17 +174,6 @@ namespace FIFE {
 		uint32_t getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		void changeBlending(int32_t src, int32_t dst);
- 		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);
-		void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255);
-		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255);
-		void drawVertex(const Point& p, int32_t size,  int32_t r, int32_t g, int32_t b, int32_t a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
-		void pushClipArea(const Rect& cliparea, bool clear=true);
-		void popClipArea();
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
@@ -196,7 +185,6 @@ namespace FIFE {
 		const SDL_PixelFormat& getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
-		void renderVertexArrays();
 		void setFrameLimitEnabled(bool limited);
 		bool isFrameLimitEnabled() const;
 		void setFrameLimit(uint16_t framelimit);

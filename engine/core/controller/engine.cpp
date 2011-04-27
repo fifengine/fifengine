@@ -76,6 +76,7 @@
 #include "view/renderers/blockinginforenderer.h"
 #include "view/renderers/genericrenderer.h"
 #include "view/renderers/lightrenderer.h"
+#include "view/renderers/offrenderer.h"
 #include "video/image.h"
 #include "gui/console/console.h"
 #include "engine.h"
@@ -111,6 +112,7 @@ namespace FIFE {
 		m_cursor(0),
 		m_settings(),
 		m_devcaps(),
+		m_offrenderer(0),
 		m_changelisteners() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
@@ -288,6 +290,7 @@ namespace FIFE {
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating renderers");
+		m_offrenderer = new OffRenderer(m_renderbackend);
 		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
@@ -333,6 +336,7 @@ namespace FIFE {
 //		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
+		delete m_offrenderer;
 		std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();
 		for ( ; rendererIter != m_renderers.end(); ++rendererIter)
 		{
@@ -368,9 +372,8 @@ namespace FIFE {
 		m_timemanager->update();
 
 		if (m_model->getMapCount() == 0) {
-			if (m_settings.getBackBufferClearing()) {
-				m_renderbackend->clearBackBuffer();
-			}
+			m_renderbackend->clearBackBuffer();
+			m_offrenderer->render();
 		} else {
 			m_model->update();
 		}

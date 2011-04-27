@@ -62,6 +62,7 @@ namespace FIFE {
 	class RendererBase;
 	class Image;
 	class ImageManager;
+	class OffRenderer;
 
 
 	class IEngineChangeListener {
@@ -183,6 +184,10 @@ namespace FIFE {
 		 */
 		Cursor* getCursor() const { return m_cursor; }
 
+		/** Provides access point to the OffRenderer
+		 */
+		OffRenderer* getOffRenderer() const { return m_offrenderer; }
+
 		/** Adds new change listener
 		* @param listener to add
 		*/
@@ -218,6 +223,7 @@ namespace FIFE {
 
 		ScreenMode m_screenMode;
 
+		OffRenderer* m_offrenderer;
 		std::vector<RendererBase*> m_renderers;
 
 		std::vector<IEngineChangeListener*> m_changelisteners;

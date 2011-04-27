@@ -55,7 +55,6 @@ namespace FIFE {
 		m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""),
 		m_iscolorkeyenabled(false),
 		m_lighting(0),
-		m_buffer_clearing(true),
 		m_isframelimit(false),
 		m_framelimit(60) {
 			m_colorkey.r = 255;
@@ -208,10 +207,6 @@ namespace FIFE {
 			".  Setting the lighting model to the default value of 0 (off)");
 
 		m_lighting = 0;
-	}
-
-	void EngineSettings::setBackBufferClearing(bool clear) {
-		m_buffer_clearing = clear;
 	}
 
 	void EngineSettings::setFrameLimitEnabled(bool limited) {
