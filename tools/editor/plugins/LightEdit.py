@@ -550,7 +550,7 @@ class LightEdit(plugin.Plugin):
 		if not self._instances[0]: return
 		self.lightrenderer.removeAll(str(self._widgets["group"]._getText()))
 
-		node = fife.LightRendererNode(self._instances[0])
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addSimpleLight(str(self._widgets["group"]._getText()),
 											node,
 											self._light["intensity"],
@@ -572,7 +572,7 @@ class LightEdit(plugin.Plugin):
 		if image == "": return
 		img_id = self.imagepool.addResourceFromFile(image)
 		self._light["image"] = int(img_id)
-		node = fife.LightRendererNode(self._instances[0])
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addImage(str(self._widgets["group"]._getText()),
 											node,
 											self._light["image"],
@@ -588,7 +588,7 @@ class LightEdit(plugin.Plugin):
 		rloc = fife.ResourceLocation(animation)
 		ani_id = self._animationpool.addResourceFromLocation(rloc)
 		self._light["animation"] = int(ani_id)
-		node = fife.LightRendererNode(self._instances[0])
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addAnimation(str(self._widgets["group"]._getText()),
 											node,
 											self._light["animation"],

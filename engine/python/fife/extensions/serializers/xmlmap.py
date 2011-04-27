@@ -597,7 +597,7 @@ class XMLMapLoader(object):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -627,7 +627,7 @@ class XMLMapLoader(object):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -650,7 +650,7 @@ class XMLMapLoader(object):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -705,13 +705,13 @@ class XMLMapLoader(object):
 			# node at layer coordinates
 			if point and not instance:
 				point = fife.Point(point[0], point[1])
-				node = fife.LightRendererNode(point);
+				node = fife.RendererNode(point);
 			# node with offset
 			if instance and point:
-				node = fife.LightRendererNode(instance, layer, fife.Point(point[0], point[1]))
+				node = fife.RendererNode(instance, layer, fife.Point(point[0], point[1]))
 			# node attached to instance
 			if instance and not point:
-				node = fife.LightRendererNode(instance, layer)
+				node = fife.RendererNode(instance, layer)
 
 			if node:
 				node.thisown = 0

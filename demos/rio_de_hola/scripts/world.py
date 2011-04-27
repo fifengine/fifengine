@@ -396,27 +396,27 @@ class World(EventListenerBase):
 			renderer.removeAll("girl_simple_light")
 
 			if self.lightmodel == 1:
-				node = fife.LightRendererNode(self.hero.agent)
+				node = fife.RendererNode(self.hero.agent)
 				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
 
-				node = fife.LightRendererNode(self.girl.agent)		
+				node = fife.RendererNode(self.girl.agent)		
 				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
 
 				for beekeeper in self.beekeepers:
-					node = fife.LightRendererNode(beekeeper.agent)
+					node = fife.RendererNode(beekeeper.agent)
 					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)
 
 			if self.lightmodel == 2:
-				node = fife.LightRendererNode(self.hero.agent)
+				node = fife.RendererNode(self.hero.agent)
 				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
 				renderer.addStencilTest("hero_simple_light")
 
-				node = fife.LightRendererNode(self.girl.agent)		
+				node = fife.RendererNode(self.girl.agent)		
 				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
 				renderer.addStencilTest("girl_simple_light")
 
 				for beekeeper in self.beekeepers:
-					node = fife.LightRendererNode(beekeeper.agent)
+					node = fife.RendererNode(beekeeper.agent)
 					renderer.addSimpleLight("beekeeper_simple_light", node, 255, 120, 32, 1, 1, 0, 0, 0)
 					renderer.addStencilTest("beekeeper_simple_light")				
 

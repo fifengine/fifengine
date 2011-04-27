@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -31,63 +31,18 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/structures/renderernode.h"
 #include "view/rendererbase.h"
 
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
 
-	class LightRendererNode {
-	public:
-		LightRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Location &attached_location, const Point &relative_point = Point(0,0));
-		LightRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Point &attached_point);
-		~LightRendererNode();
-
-		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
-		void setAttached(Instance* attached_instance, const Location &relative_location);
-		void setAttached(Instance* attached_instance, const Point &relative_point);
-		void setAttached(Instance* attached_instance);
-		void setAttached(const Location &attached_location, const Point &relative_point);
-		void setAttached(const Location &attached_location);
-		void setAttached(Layer* attached_layer);
-		void setAttached(const Point &attached_point);
-
-		void setRelative(const Location &relative_location);
-		void setRelative(const Location &relative_location, Point relative_point);
-		void setRelative(const Point &relative_point);
-
-		Instance* getAttachedInstance();
-		Location getAttachedLocation();
-		Layer* getAttachedLayer();
-		Point getAttachedPoint();
-
-		Location getOffsetLocation();
-		Point getOffsetPoint();
-
-		Instance* getInstance();
-		Location getLocation();
-		Layer* getLayer();
-		Point getPoint();
-
-		Point getCalculatedPoint(Camera* cam, Layer* layer);
-	private:
-		Instance* m_instance;
-		Location m_location;
-		Layer* m_layer;
-		Point m_point;
-	};
-
 	class LightRendererElementInfo {
 	public:
 		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {};
 		virtual std::string getName() { return 0; };
-		virtual LightRendererNode* getNode() { return NULL; };
+		virtual RendererNode* getNode() { return NULL; };
 		virtual int32_t getId() { return -1; };
 		virtual int32_t getSrcBlend() { return -1; };
 		virtual int32_t getDstBlend() { return -1; };
@@ -107,7 +62,7 @@ namespace FIFE {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "image"; };
-		LightRendererNode* getNode() { return &m_anchor; };
+		RendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_image; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
@@ -115,10 +70,10 @@ namespace FIFE {
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererImageInfo(LightRendererNode n, int32_t image, int32_t src, int32_t dst);
+		LightRendererImageInfo(RendererNode n, int32_t image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo() {};
 	private:
-		LightRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_image;
 		int32_t m_src;
 		int32_t m_dst;
@@ -130,7 +85,7 @@ namespace FIFE {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "animation"; };
-		LightRendererNode* getNode() { return &m_anchor; };
+		RendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_animation; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
@@ -138,10 +93,10 @@ namespace FIFE {
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererAnimationInfo(LightRendererNode n, int32_t animation, int32_t src, int32_t dst);
+		LightRendererAnimationInfo(RendererNode n, int32_t animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
 	private:
-		LightRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_animation;
 		int32_t m_src;
 		int32_t m_dst;
@@ -155,7 +110,7 @@ namespace FIFE {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "simple"; };
-		LightRendererNode* getNode() { return &m_anchor; };
+		RendererNode* getNode() { return &m_anchor; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
 		void setStencil(uint8_t stencil_ref, float alpha_ref);
@@ -167,10 +122,10 @@ namespace FIFE {
 		int32_t getSubdivisions() { return m_subdivisions; };
 		float getXStretch() { return m_xstretch; };
 		float getYStretch() { return m_ystretch; };
-		LightRendererSimpleLightInfo(LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
+		LightRendererSimpleLightInfo(RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
 		virtual ~LightRendererSimpleLightInfo() {};
 	private:
-		LightRendererNode m_anchor;
+		RendererNode m_anchor;
 		uint8_t m_intensity;
 		float m_radius;
 		int32_t m_subdivisions;
@@ -189,7 +144,7 @@ namespace FIFE {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "resize"; };
-		LightRendererNode* getNode() { return &m_anchor; };
+		RendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_image; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
@@ -197,10 +152,10 @@ namespace FIFE {
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererResizeInfo(LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst);
+		LightRendererResizeInfo(RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo() {};
 	private:
-		LightRendererNode m_anchor;
+		RendererNode m_anchor;
 		int32_t m_image;
 		int32_t m_width;
 		int32_t m_height;
@@ -232,10 +187,10 @@ namespace FIFE {
 		 */
 		static LightRenderer* getInstance(IRendererContainer* cnt);
 
-		void addImage(const std::string &group, LightRendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
-		void addAnimation(const std::string &group, LightRendererNode n, int32_t animation, int32_t src=-1, int32_t dst=-1);
-		void addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
-		void resizeImage(const std::string &group, LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
+		void addImage(const std::string &group, RendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
+		void addAnimation(const std::string &group, RendererNode n, int32_t animation, int32_t src=-1, int32_t dst=-1);
+		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
+		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();
