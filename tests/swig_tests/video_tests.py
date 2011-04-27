@@ -38,24 +38,20 @@ class TestVideo(unittest.TestCase):
 			(10,10), (70,40), (80,30), (300,520), (340,220), (170,600),
 		)
 		self.engine.initializePumping()
-		
-		be = self.engine.getRenderBackend()
-		
-		clipb = fife.Rect(0,0, be.getWidth(), be.getHeight())
-		
-		be.pushClipArea(clipb, False)
-		self.engine.getSettings().setBackBufferClearing(False)
+
+		renderer = self.engine.getOffRenderer()
+		renderer.setEnable(True)
+
+		prevPt = fife.Point(*points[1])
+		for pt in points[1:]:
+			curPt = fife.Point(*pt)
+			renderer.addLine("lines", prevPt, curPt, 255, 255, 255)
+			prevPt = curPt		
 
 		for i in xrange(200):
-			prevPt = fife.Point(*points[1])
-			for pt in points[1:]:
-				curPt = fife.Point(*pt)
-				be.drawLine(prevPt, curPt, 255, 255, 255)
-				prevPt = curPt
 			self.engine.pump()
-			be.renderVertexArrays()
 
-		be.popClipArea()
+		renderer.removeAll("lines")
 
 		self.engine.finalizePumping()
 	
