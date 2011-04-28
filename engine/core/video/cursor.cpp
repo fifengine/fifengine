@@ -93,7 +93,11 @@ namespace FIFE {
 	}
 
 	void Cursor::set(MouseCursorType ctype, uint32_t cursor_id) {
-		m_cursor_id = cursor_id;
+		if (ctype == CURSOR_ANIMATION) {
+			FL_WARN(_log, "Cursor: CURSOR_ANIMATION cursor type specified in Cursor::set(MouseCursorType ctype, uint32_t cursor_id).  Ignoring...");
+			return;
+		}
+
 		m_cursor_type = ctype;
 		int32_t mx, my;
 		SDL_GetMouseState(&mx, &my);
@@ -109,23 +113,42 @@ namespace FIFE {
 				SDL_PumpEvents();
 				SDL_WarpMouse(mx, my);
 			}
-			if (ctype == CURSOR_ANIMATION) {
-				m_animtime = m_timemanager->getTime();
-			}
 		}
-		m_invalidated = false;
+	}
+
+	void Cursor::set(AnimationPtr anim) {
+		m_cursor_animation = anim;
+		m_cursor_type = CURSOR_ANIMATION;
+
+		int32_t mx, my;
+		SDL_GetMouseState(&mx, &my);
+
+		if (SDL_ShowCursor(0)) {
+			SDL_PumpEvents();
+			SDL_WarpMouse(mx, my);
+		}
+		m_animtime = m_timemanager->getTime();
 	}
 
 	void Cursor::setDrag(MouseCursorType ctype, uint32_t drag_id, int32_t drag_offset_x, int32_t drag_offset_y) {
+		if (ctype == CURSOR_ANIMATION) {
+			FL_WARN(_log, "Cursor: CURSOR_ANIMATION cursor type specified in Cursor::setDrag(MouseCursorType ctype, uint32_t drag_id, int32_t drag_offset_x, int32_t drag_offset_y).  Ignoring...");
+			return;
+		}
+
 		m_drag_type = ctype;
 		m_drag_id = drag_id;
 		m_drag_offset_x = drag_offset_x;
 		m_drag_offset_y = drag_offset_y;
-		if (ctype != CURSOR_NONE) {
-			if (ctype == CURSOR_ANIMATION) {
-				m_drag_animtime = m_timemanager->getTime();
-			}
-		}
+	}
+
+	void Cursor::setDrag(AnimationPtr anim, int32_t drag_offset_x, int32_t drag_offset_y) {
+		m_cursor_drag_animation = anim;
+		m_drag_type = CURSOR_ANIMATION;
+		m_drag_offset_x = drag_offset_x;
+		m_drag_offset_y = drag_offset_y;
+
+		m_drag_animtime = m_timemanager->getTime();
 	}
 
 	void Cursor::invalidate() {
@@ -141,7 +164,11 @@ namespace FIFE {
 
 	void Cursor::draw() {
 		if (m_invalidated) {
-			set(m_cursor_type, m_cursor_id);
+			if (m_cursor_type != CURSOR_ANIMATION) {
+				set(m_cursor_type, m_cursor_id);
+			}
+
+			m_invalidated = false;
 		}
 
 		SDL_GetMouseState(&m_mx, &m_my);
@@ -152,17 +179,14 @@ namespace FIFE {
 		// render possible drag image
 		ImagePtr img = ImagePtr();
 		if (m_drag_type == CURSOR_IMAGE) {
-//prock - 504
 			img = ImageManager::instance()->get(m_drag_id);
-		} else if (m_drag_type == CURSOR_ANIMATION) {
-//prock - 504
-//@fixme animations should be added to cursor.  This is currently broken.
-//			Animation& anim = m_animpool->getAnimation(m_drag_id);
-			Animation anim = Animation();
-			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
-			uint32_t imgid = anim.getFrameByTimestamp(animtime);
+		}
+		else if (m_drag_type == CURSOR_ANIMATION) {
+			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
+			uint32_t imgid = m_cursor_drag_animation->getFrameByTimestamp(animtime);
 			img = ImageManager::instance()->get(imgid);
 		}
+
 		if (img) {
 			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
@@ -174,17 +198,14 @@ namespace FIFE {
 		ImagePtr img2 = ImagePtr();
 		// render possible cursor image
 		if (m_cursor_type == CURSOR_IMAGE) {
-//prock - 504
 			img2 = ImageManager::instance()->get(m_cursor_id);
-		} else if (m_cursor_type == CURSOR_ANIMATION) {
-//prock - 504
-//@fixme see above fixme
-//			Animation& anim = m_animpool->getAnimation(m_cursor_id);
-			Animation anim = Animation();
-			int32_t animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
-			uint32_t imgid = anim.getFrameByTimestamp(animtime);
+		}
+		else if (m_cursor_type == CURSOR_ANIMATION) {
+			int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
+			uint32_t imgid = m_cursor_animation->getFrameByTimestamp(animtime);
 			img2 = ImageManager::instance()->get(imgid);
 		}
+
 		if (img2) {
 			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);

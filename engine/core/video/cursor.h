@@ -100,8 +100,11 @@ namespace FIFE {
 		/** Sets the current mouse cursor type and possible pool value
 		 * @param ctype cursor type
 		 * @param cursor_id Pool id to image or animation. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
+		 * @param anim Shared pointer to an animation.
 		 */
 		void set(MouseCursorType ctype, uint32_t cursor_id=0);
+
+		void set(AnimationPtr anim);
 
 		/** Sets the current drag cursor type and pool value
 		 * @param ctype drag cursor type
@@ -109,6 +112,8 @@ namespace FIFE {
 		 * @param drag_offset offset of drag image shown with cursor
 		 */
 		void setDrag(MouseCursorType ctype, uint32_t drag_id=0, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+
+		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
 		/** Gets the current mouse cursor type
 		 */
@@ -158,6 +163,7 @@ namespace FIFE {
 		SDL_Cursor* m_native_cursor;
 
 		AnimationPtr m_cursor_animation;
+		AnimationPtr m_cursor_drag_animation;
 
 		RenderBackend* m_renderbackend;
 
