@@ -79,13 +79,13 @@ namespace FIFE {
 		 *
 		 * @return The time in milliseconds.
 		 */
-		uint64_t getTime() const;
+		uint32_t getTime() const;
 
 		/** Get the time since the last frame.
 		 *
 		 * @return Time since last frame in milliseconds.
 		 */
-		uint64_t getTimeDelta() const;
+		uint32_t getTimeDelta() const;
 
 		/** Gets average frame time
 		 *
@@ -99,15 +99,15 @@ namespace FIFE {
 
 	private:
 		/// Current time in milliseconds.
-		uint64_t m_current_time;
+		uint32_t m_current_time;
 		/// Time since last frame in milliseconds.
-		uint64_t m_time_delta;
+		uint32_t m_time_delta;
 		/// Average frame time in milliseconds.
 		double m_average_frame_time;
 
 		/// List of active TimeEvents.
 		std::vector<TimeEvent*> m_events_list;
-        };
+	};
 
 }//FIFE
 

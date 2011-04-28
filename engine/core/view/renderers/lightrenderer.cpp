@@ -67,8 +67,8 @@ namespace FIFE {
 			ImagePtr img = ImageManager::instance()->get(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = round(img->getWidth() * cam->getZoom());
-			uint32_t height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+			uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -130,8 +130,8 @@ namespace FIFE {
 			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = round(img->getWidth() * cam->getZoom());
-			uint32_t height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+			uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -190,8 +190,8 @@ namespace FIFE {
 			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = round(m_width * cam->getZoom());
-			uint32_t height = round(m_height * cam->getZoom());
+			uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+			uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -251,7 +251,9 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
-			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions, m_xstretch * zoom, m_ystretch * zoom, m_red, m_green, m_blue);
+			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
+				static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
+				m_red, m_green, m_blue);
 
 			uint8_t lm = renderbackend->getLightingModel();
 			if (m_stencil) {

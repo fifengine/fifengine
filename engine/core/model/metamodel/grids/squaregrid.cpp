@@ -86,13 +86,13 @@ namespace FIFE {
 		return false;
 	}
 
-	float SquareGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+	double SquareGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
 		}
 		if (isAccessibleDiagonal(curpos, target)) {
-			return Mathf::Sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
+			return Mathd::Sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
 		}
 		if (curpos.x == target.x) {
 			return m_xscale;

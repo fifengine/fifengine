@@ -57,7 +57,7 @@ namespace FIFE {
 		m_active = false;
 	}
 
-	void Timer::setInterval(uint64_t msec) {
+	void Timer::setInterval(int32_t msec) {
 		setPeriod(msec);
 		stop();
 	}
@@ -65,7 +65,7 @@ namespace FIFE {
 		m_callback = cb;
 	}
 
-	void Timer::updateEvent(uint64_t) {
+	void Timer::updateEvent(uint32_t) {
 		if(!m_active)
 			return;
 

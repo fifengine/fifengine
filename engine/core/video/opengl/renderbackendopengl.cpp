@@ -336,7 +336,11 @@ namespace FIFE {
 			uint16_t width = getScreenWidth();
 			uint16_t height = getScreenHeight();
 			Point p = Point(0,0);
-			fillRectangle(p, width, height, m_lred*255, m_lgreen*255, m_lblue*255, m_lalpha*255);
+			fillRectangle(p, width, height,
+				static_cast<uint8_t>(m_lred*255.0f),
+				static_cast<uint8_t>(m_lgreen*255.0f),
+				static_cast<uint8_t>(m_lblue*255.0f),
+				static_cast<uint8_t>(m_lalpha*255.0f));
 			changeRenderInfos(1, 4, 5, false, true, 0, KEEP, EQUAL);
 		}
 	}
@@ -613,8 +617,8 @@ namespace FIFE {
 			return false;
 		}
 		renderData rd;
-		rd.vertex[0] = float(x);
-		rd.vertex[1] = float(y);
+		rd.vertex[0] = static_cast<float>(x);
+		rd.vertex[1] = static_cast<float>(y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
@@ -629,16 +633,16 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = p1.x;
-		rd.vertex[1] = p1.y;
+		rd.vertex[0] = static_cast<float>(p1.x);
+		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p2.x;
-		rd.vertex[1] = p2.y;
+		rd.vertex[0] = static_cast<float>(p2.x);
+		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_LINES, 2);
@@ -647,20 +651,20 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = p1.x;
-		rd.vertex[1] = p1.y;
+		rd.vertex[0] = static_cast<float>(p1.x);
+		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p2.x;
-		rd.vertex[1] = p2.y;
+		rd.vertex[0] = static_cast<float>(p2.x);
+		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p3.x;
-		rd.vertex[1] = p3.y;
+		rd.vertex[0] = static_cast<float>(p3.x);
+		rd.vertex[1] = static_cast<float>(p3.y);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_TRIANGLES, 3);
@@ -669,21 +673,21 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = p.x;
-		rd.vertex[1] = p.y;
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x+w;
+		rd.vertex[0] = static_cast<float>(p.x+w);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[1] = p.y+h;
+		rd.vertex[1] = static_cast<float>(p.y+h);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x;
+		rd.vertex[0] = static_cast<float>(p.x);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
@@ -692,21 +696,21 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = p.x;
-		rd.vertex[1] = p.y;
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x+w;
+		rd.vertex[0] = static_cast<float>(p.x+w);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[1] = p.y+h;
+		rd.vertex[1] = static_cast<float>(p.y+h);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x;
+		rd.vertex[0] = static_cast<float>(p.x);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_QUADS, 4);
@@ -715,24 +719,24 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = p1.x;
-		rd.vertex[1] = p1.y;
+		rd.vertex[0] = static_cast<float>(p1.x);
+		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p2.x;
-		rd.vertex[1] = p2.y;
+		rd.vertex[0] = static_cast<float>(p2.x);
+		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p3.x;
-		rd.vertex[1] = p3.y;
+		rd.vertex[0] = static_cast<float>(p3.x);
+		rd.vertex[1] = static_cast<float>(p3.y);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p4.x;
-		rd.vertex[1] = p4.y;
+		rd.vertex[0] = static_cast<float>(p4.x);
+		rd.vertex[1] = static_cast<float>(p4.y);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_QUADS, 4);
@@ -741,21 +745,21 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 		renderData rd;
-		rd.vertex[0] = p.x-size;
-		rd.vertex[1] = p.y+size;
+		rd.vertex[0] = static_cast<float>(p.x-size);
+		rd.vertex[1] = static_cast<float>(p.y+size);
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x+size;
+		rd.vertex[0] = static_cast<float>(p.x+size);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[1] = p.y-size;
+		rd.vertex[1] = static_cast<float>(p.y-size);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = p.x-size;
+		rd.vertex[0] = static_cast<float>(p.x-size);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
@@ -770,8 +774,8 @@ namespace FIFE {
 		const float step = Mathf::twoPi()/subdivisions;
 		renderData rd;;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
-			rd.vertex[0] = p.x;
-			rd.vertex[1] = p.y;
+			rd.vertex[0] = static_cast<float>(p.x);
+			rd.vertex[1] = static_cast<float>(p.y);
 			rd.color[0] = red;
 			rd.color[1] = green;
 			rd.color[2] = blue;
@@ -797,8 +801,8 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
 		renderData rd;
-		rd.vertex[0] = float(rec.x);
-		rd.vertex[1] = float(rec.y);
+		rd.vertex[0] = static_cast<float>(rec.x);
+		rd.vertex[1] = static_cast<float>(rec.y);
 		rd.texel[0] = 0.0;
 		rd.texel[1] = 0.0;
 		rd.color[0] = 255;
@@ -807,18 +811,18 @@ namespace FIFE {
 		rd.color[3] = alpha;
 		m_render_datas.push_back(rd);
 		
-		rd.vertex[0] = float(rec.x);
-		rd.vertex[1] = float(rec.y+rec.h);
+		rd.vertex[0] = static_cast<float>(rec.x);
+		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
 		rd.texel[1] = rt;
 		m_render_datas.push_back(rd);
 		
-		rd.vertex[0] = float(rec.x+rec.w);
-		rd.vertex[1] = float(rec.y+rec.h);
+		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
+		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
 		rd.texel[0] = ct;
 		m_render_datas.push_back(rd);
 		
-		rd.vertex[0] = float(rec.x+rec.w);
-		rd.vertex[1] = float(rec.y);
+		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
+		rd.vertex[1] = static_cast<float>(rec.y);
 		rd.texel[1] = 0.0;
 		m_render_datas.push_back(rd);
 

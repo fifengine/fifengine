@@ -43,7 +43,7 @@ namespace FIFE {
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		const std::string& getType() const;
 		const std::string& getName() const;
-		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		uint32_t getCellSideCount() const { return 6; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);

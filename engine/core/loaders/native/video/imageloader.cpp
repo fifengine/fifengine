@@ -53,7 +53,7 @@ namespace FIFE {
 		size_t datalen = data->getDataLength();
 		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
 		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
+		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
 		SDL_Surface* surface = IMG_Load_RW(rwops, false);
 

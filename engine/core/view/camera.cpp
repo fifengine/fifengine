@@ -766,7 +766,7 @@ namespace FIFE {
 			if (m_start_time == 0) {
 				m_start_time = TimeManager::instance()->getTime();
 			}
-			int32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
+			uint32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
 			if (img) {
 				if (m_ani_fill) {

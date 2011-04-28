@@ -128,7 +128,7 @@ namespace FIFE {
 
 	}
 
-	float HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+	double HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
@@ -137,7 +137,7 @@ namespace FIFE {
 		} else {
 			double a = VERTICAL_MULTIP * m_yscale;
 			double b = HEX_TO_EDGE * m_xscale;
-			return Mathf::Sqrt((a * a) + (b * b));
+			return Mathd::Sqrt((a * a) + (b * b));
 		}
 	}
 

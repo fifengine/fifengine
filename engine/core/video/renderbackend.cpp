@@ -61,9 +61,9 @@ namespace FIFE {
 	void RenderBackend::endFrame () {
 		if (m_isframelimit) {
 			uint16_t frame_time = SDL_GetTicks() - m_frame_start;
-			const float frame_limit = 1000/m_framelimit;
+			const float frame_limit = 1000.0f/m_framelimit;
 			if (frame_time < frame_limit) {
-				SDL_Delay(frame_limit - frame_time);
+				SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
 			}
 		}
 	}

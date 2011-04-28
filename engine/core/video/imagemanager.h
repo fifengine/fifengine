@@ -63,9 +63,9 @@ namespace FIFE {
 		virtual ~ImageManager();
 
 		virtual size_t getMemoryUsed() const;
-		virtual uint32_t getTotalResourcesCreated() const;
-		virtual uint32_t getTotalResourcesLoaded() const;
-		virtual uint32_t getTotalResources() const;
+		virtual size_t getTotalResourcesCreated() const;
+		virtual size_t getTotalResourcesLoaded() const;
+		virtual size_t getTotalResources() const;
 
 		/** Creates a blank Image but does not load it immediately
 		 *

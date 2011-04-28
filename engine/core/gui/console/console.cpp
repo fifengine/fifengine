@@ -161,7 +161,7 @@ namespace FIFE {
 
 	void Console::updateCaption() {
 		std::string caption = "FIFE Console - FPS: ";
-		float fps = 1e3/double(TimeManager::instance()->getAverageFrameTime());
+		double fps = 1e3/TimeManager::instance()->getAverageFrameTime();
 		caption += boost::lexical_cast<std::string>(fps);
 		m_status->setCaption( caption );
 	}

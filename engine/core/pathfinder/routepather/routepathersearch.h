@@ -128,10 +128,10 @@ namespace FIFE {
 		std::vector<int32_t>	      m_sf;
 
 		//A table to hold the costs.
-		std::vector<float>		  m_gCosts;
+		std::vector<double>		  m_gCosts;
 
 		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int32_t, float> m_sortedfrontier;
+		PriorityQueue<int32_t, double> m_sortedfrontier;
 	};
 }
 #endif

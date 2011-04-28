@@ -36,7 +36,7 @@
 #include "timemanager.h"
 
 namespace FIFE {
-	static const uint64_t UNDEFINED_TIME_DELTA = 999999;
+	static const uint32_t UNDEFINED_TIME_DELTA = 999999;
 	static Logger _log(LM_UTIL);
 
 	TimeManager::TimeManager():
@@ -97,11 +97,11 @@ namespace FIFE {
 		}
 	}
 
-	uint64_t TimeManager::getTime() const {
+	uint32_t TimeManager::getTime() const {
 		return m_current_time;
 	}
 
-	uint64_t TimeManager::getTimeDelta() const {
+	uint32_t TimeManager::getTimeDelta() const {
 		return m_time_delta;
 	}
 
