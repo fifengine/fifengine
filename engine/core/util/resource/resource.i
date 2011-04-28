@@ -100,8 +100,8 @@ namespace FIFE {
 	class IResourceManager {
 	public:
 		virtual size_t getMemoryUsed() const = 0;
-		virtual uint32_t getTotalResourcesCreated() const = 0;
-		virtual uint32_t getTotalResourcesLoaded() const = 0;
-		virtual uint32_t getTotalResources() const = 0;
+		virtual size_t getTotalResourcesCreated() const = 0;
+		virtual size_t getTotalResourcesLoaded() const = 0;
+		virtual size_t getTotalResources() const = 0;
 	};
 }

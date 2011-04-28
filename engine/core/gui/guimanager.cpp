@@ -111,7 +111,7 @@ namespace FIFE {
 				if( m_had_mouse ) {
 					// We only keep the mouse if a widget/window has requested
 					// dragging.
-					m_had_mouse = bool(m_focushandler->getDraggedWidget());
+					m_had_mouse = m_focushandler->getDraggedWidget() != 0;
 					m_input->pushInput(evt);
 					return true;
 				}

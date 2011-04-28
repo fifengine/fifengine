@@ -166,7 +166,8 @@ namespace FIFE {
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(instance->getLocationRef().getMapCoordinates());
 
 		render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-		int32_t angle = m_camera->getRotation() + render_item.facing_angle + instance->getRotation();
+		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + 
+			render_item.facing_angle + instance->getRotation();
 
 		Image* image = NULL;
 		Action* action = instance->getCurrentAction();
@@ -189,12 +190,13 @@ namespace FIFE {
 				image = resptr.get();
 			}
 		}
-		item.force_update = bool(action);
+		item.force_update = (action != 0);
 
 		if(action) {
 //prock - 504
 //			Animation& animation = m_animation_pool->getAnimation(animation_id);
-			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(render_item.facing_angle + m_camera->getRotation());
+			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(
+				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
 			image = ImageManager::instance()->get(animation->getFrameByTimestamp(animation_time)).get();
@@ -223,8 +225,8 @@ namespace FIFE {
 		}
 		render_item.screenpoint = screen_position;
 
-		render_item.bbox.x = screen_position.x;
-		render_item.bbox.y = screen_position.y;
+		render_item.bbox.x = static_cast<int32_t>(screen_position.x);
+		render_item.bbox.y = static_cast<int32_t>(screen_position.y);
 		render_item.bbox.w = w;
 		render_item.bbox.h = h;
 
@@ -305,13 +307,13 @@ namespace FIFE {
 
 		Rect viewport = m_camera->getViewPort();
 		Rect screen_viewport = viewport;
-		float zoom = m_camera->getZoom();
+		double zoom = m_camera->getZoom();
 		DoublePoint3D viewport_a = m_camera->screenToVirtualScreen(Point3D(viewport.x, viewport.y));
 		DoublePoint3D viewport_b = m_camera->screenToVirtualScreen(Point3D(viewport.right(), viewport.bottom()));
-		viewport.x = std::min(viewport_a.x, viewport_b.x);
-		viewport.y = std::min(viewport_a.y, viewport_b.y);
-		viewport.w = std::max(viewport_a.x, viewport_b.x) - viewport.x;
-		viewport.h = std::max(viewport_a.y, viewport_b.y) - viewport.y;
+		viewport.x = static_cast<int32_t>(std::min(viewport_a.x, viewport_b.x));
+		viewport.y = static_cast<int32_t>(std::min(viewport_a.y, viewport_b.y));
+		viewport.w = static_cast<int32_t>(std::max(viewport_a.x, viewport_b.x) - viewport.x);
+		viewport.h = static_cast<int32_t>(std::max(viewport_a.y, viewport_b.y) - viewport.y);
 		uint8_t layer_trans = m_layer->getLayerTransparency();
 
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
@@ -330,7 +332,7 @@ namespace FIFE {
 
 			RenderItem& item = m_instances[entry.instance_index];
 			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
-			bool visible = visual->isVisible();
+			bool visible = (visual->isVisible() != 0);
 			uint8_t instance_trans = visual->getTransparency();
 			if(!item.image || !visible || (instance_trans == 255 && layer_trans == 0)
 									   || (instance_trans == 0 && layer_trans == 255)) {

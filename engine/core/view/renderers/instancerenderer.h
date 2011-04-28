@@ -154,7 +154,7 @@ namespace FIFE {
 			uint32_t h;
 			uint8_t trans;
 			bool front;
-			float z;
+			double z;
 			AreaInfo();
 			~AreaInfo();
 		};

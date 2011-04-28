@@ -43,7 +43,7 @@ namespace FIFE {
 		return;
 	}
 
-	void TimeEvent::managerUpdateEvent(uint64_t time) {
+	void TimeEvent::managerUpdateEvent(uint32_t time) {
 		int32_t time_delta = static_cast<int32_t>(time - m_last_updated);
 		if (m_period < 0) {
 			return;
@@ -61,11 +61,11 @@ namespace FIFE {
 		return m_period;
 	}
 
-	uint64_t TimeEvent::getLastUpdateTime() {
+	uint32_t TimeEvent::getLastUpdateTime() {
 		return m_last_updated;
 	}
 
-	void TimeEvent::setLastUpdateTime(uint64_t ms) {
+	void TimeEvent::setLastUpdateTime(uint32_t ms) {
 		m_last_updated = ms;
 	}
 

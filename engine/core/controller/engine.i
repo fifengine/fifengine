@@ -46,15 +46,15 @@ namespace FIFE {
 	public:
 		~EngineSettings();
 		void setBitsPerPixel(uint8_t bitsperpixel);
-		uint16_t getBitsPerPixel() const;
-		std::vector<uint16_t> getPossibleBitsPerPixel() const;
+		uint8_t getBitsPerPixel() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
 		void setInitialVolume(float volume);
 		float getInitialVolume() const;
 		float getMaxVolume() const;
 		void setRenderBackend(const std::string& renderbackend);
-		const std::string getRenderBackend() const;
+		const std::string& getRenderBackend() const;
 		std::vector<std::string> getPossibleRenderBackends();
 		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
 		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const;
@@ -63,15 +63,15 @@ namespace FIFE {
 		void setScreenHeight(uint16_t screenheight);
 		uint16_t getScreenHeight() const;
 		void setDefaultFontPath(const std::string& defaultfontpath);
-		std::string getDefaultFontPath() const;
+		const std::string& getDefaultFontPath() const;
 		void setDefaultFontSize(uint16_t defaultfontsize);
 		uint16_t getDefaultFontSize() const;
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
-		std::string getDefaultFontGlyphs() const;
+		const std::string& getDefaultFontGlyphs() const;
 		void setWindowTitle(const std::string& title);
-		std::string getWindowTitle() const;
+		const std::string& getWindowTitle() const;
 		void setWindowIcon(const std::string& icon);
-		std::string getWindowIcon() const;
+		const std::string& getWindowIcon() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(uint8_t r, uint8_t g, uint8_t b);

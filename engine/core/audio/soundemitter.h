@@ -211,7 +211,7 @@ namespace FIFE {
 	private:
 		/** Implementation of the pure virtual function from TimeEvent to update streaming
 		 */
-		virtual void updateEvent(uint64_t time);
+		virtual void updateEvent(uint32_t time);
 
 		/** Internal function to attach a soundclip to the source
 		 */

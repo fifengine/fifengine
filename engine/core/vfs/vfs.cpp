@@ -127,7 +127,7 @@ namespace FIFE {
 	}
 
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(file);
+		return getSourceForFile(file) != 0;
 	}
 
 	bool VFS::isDirectory(const std::string& path) const {

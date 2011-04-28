@@ -50,7 +50,7 @@ namespace FIFE {
 		  m_next(0),
 		  m_heuristic(Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType())) 
 	{
-		m_sortedfrontier.pushElement(PriorityQueue<int32_t, float>::value_type(m_startCoordInt, 0.0f));
+		m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));
 		int32_t max_index = m_searchspace->getMaxIndex();
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
@@ -63,7 +63,7 @@ namespace FIFE {
 			setSearchStatus(search_status_failed);
 			return;
 		}
-		PriorityQueue<int32_t, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
+		PriorityQueue<int32_t, double>::value_type topvalue = m_sortedfrontier.getPriorityElement();
 		m_sortedfrontier.popElement();
 		m_next = topvalue.first;
 		m_spt[m_next] = m_sf[m_next];
@@ -88,11 +88,11 @@ namespace FIFE {
 					adjacentInt != m_destCoordInt) {
 					continue;
 				}
-                                	float hCost = m_heuristic->calculate((*i), destCoord);
+                                	double hCost = m_heuristic->calculate((*i), destCoord);
 				//float hCost = Heuristic::getHeuristic(m_searchspace->getLayer()->getCellGrid()->getType())->calculate((*i), destCoord);
-				float gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
+				double gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
-					m_sortedfrontier.pushElement(PriorityQueue<int32_t, float>::value_type(adjacentInt, gCost + hCost));
+					m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
 					m_gCosts[adjacentInt] = gCost;
 					m_sf[adjacentInt] = m_next;
 				}

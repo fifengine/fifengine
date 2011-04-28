@@ -350,9 +350,9 @@ namespace FIFE {
 		// The double SDL_PollEvent calls don't throw away events,
 		// but try to combine (mouse motion) events.
 		SDL_Event event, next_event;
-		bool has_next_event = SDL_PollEvent(&event);
+		bool has_next_event = (SDL_PollEvent(&event) != 0);
 		while (has_next_event) {
-			has_next_event = SDL_PollEvent(&next_event);
+			has_next_event = (SDL_PollEvent(&next_event) != 0);
 			if(has_next_event && combineEvents(event, next_event))
 				continue;
 
@@ -515,10 +515,10 @@ namespace FIFE {
 		}
 		SDL_keysym keysym = sdlevt.key.keysym;
 
-		keyevt.setShiftPressed(keysym.mod & KMOD_SHIFT);
-		keyevt.setControlPressed(keysym.mod & KMOD_CTRL);
-		keyevt.setAltPressed(keysym.mod & KMOD_ALT);
-		keyevt.setMetaPressed(keysym.mod & KMOD_META);
+		keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
+		keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
+		keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
+		keyevt.setMetaPressed((keysym.mod & KMOD_META) != 0);
 		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
 	}

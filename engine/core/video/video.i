@@ -104,9 +104,9 @@ namespace FIFE {
 		virtual ~ImageManager();
 		
 		virtual size_t getMemoryUsed() const;
-		virtual uint32_t getTotalResourcesCreated() const;
-		virtual uint32_t getTotalResourcesLoaded() const;
-		virtual uint32_t getTotalResources() const;		
+		virtual size_t getTotalResourcesCreated() const;
+		virtual size_t getTotalResourcesLoaded() const;
+		virtual size_t getTotalResources() const;
 
 		virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
 		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);		

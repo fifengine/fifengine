@@ -54,13 +54,13 @@ namespace FIFE {
 			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			switch (whence) {
 				case SEEK_SET:
-					(*rdp).setIndex(offset);
+					(*rdp).setIndex(static_cast<uint32_t>(offset));
 					return 0;
 				case SEEK_CUR:
-					(*rdp).moveIndex(offset);
+					(*rdp).moveIndex(static_cast<uint32_t>(offset));
 					return 0;
 				case SEEK_END:
-					(*rdp).setIndex( (*rdp).getDataLength() -1 + offset);
+					(*rdp).setIndex( (*rdp).getDataLength() -1 + static_cast<uint32_t>(offset));
 					return 0;
 			}
 			return -1;

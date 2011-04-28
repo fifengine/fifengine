@@ -77,7 +77,7 @@ namespace FIFE {
 		 *  @param target target coordinate to check
 		 *  @return distance cost from curpos to target
 		 */
-		virtual float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+		virtual double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell

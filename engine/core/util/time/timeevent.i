@@ -30,10 +30,10 @@ namespace FIFE {
 	public:
 		TimeEvent(int32_t period = -1);
 		virtual ~TimeEvent();
-		virtual void updateEvent(uint64_t time) = 0;
+		virtual void updateEvent(uint32_t time) = 0;
 		void setPeriod(int32_t period);
 		int32_t getPeriod();
-		uint64_t getLastUpdateTime();	
-		void setLastUpdateTime(uint64_t);	
+		uint32_t getLastUpdateTime();	
+		void setLastUpdateTime(uint32_t);	
 	};
 }

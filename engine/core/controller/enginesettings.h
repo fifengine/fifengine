@@ -52,17 +52,17 @@ namespace FIFE {
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
-		void setBitsPerPixel(uint16_t bitsperpixel);
+		void setBitsPerPixel(uint8_t bitsperpixel);
 
 		/** Gets currently set bits per pixel value
 		 */
-		uint16_t getBitsPerPixel() const {
+		uint8_t getBitsPerPixel() const {
 			return m_bitsperpixel;
 		}
 
 		/** Gets all possible bits per pixel values
 		 */
-		std::vector<uint16_t> getPossibleBitsPerPixel() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
 
 		/** Sets fullscreen / windowed mode
 		 */
@@ -98,7 +98,13 @@ namespace FIFE {
 
 		/** Gets currently set renderbackend name
 		 */
-		const std::string getRenderBackend() const {
+		const std::string& getRenderBackend() const {
+			return m_renderbackend;
+		}
+
+		/** Gets currently set renderbackend name
+		 */
+		std::string getRenderBackend() {
 			return m_renderbackend;
 		}
 
@@ -140,9 +146,15 @@ namespace FIFE {
 		 */
 		void setDefaultFontPath(const std::string& defaultfontpath);
 
-		/** Sets current path for default font
+		/** Gets current path for default font
 		 */
-		std::string getDefaultFontPath() const {
+		const std::string& getDefaultFontPath() const {
+			return m_defaultfontpath;
+		}
+
+		/** Gets current path for default font
+		 */
+		std::string getDefaultFontPath() {
 			return m_defaultfontpath;
 		}
 
@@ -162,7 +174,13 @@ namespace FIFE {
 
 		/** Gets current glyphs for default font
 		 */
-		std::string getDefaultFontGlyphs() const {
+		const std::string& getDefaultFontGlyphs() const {
+			return m_defaultfontglyphs;
+		}
+
+				/** Gets current glyphs for default font
+		 */
+		std::string getDefaultFontGlyphs() {
 			return m_defaultfontglyphs;
 		}
 
@@ -172,7 +190,13 @@ namespace FIFE {
 
 		/** Gets the current window title
 		 */
-		std::string getWindowTitle() const {
+		const std::string& getWindowTitle() const {
+			return m_windowtitle;
+		}
+
+		/** Gets the current window title
+		 */
+		std::string getWindowTitle() {
 			return m_windowtitle;
 		}
 
@@ -182,7 +206,13 @@ namespace FIFE {
 
 		/** Gets the icon in the window title bar
 		 */
-		std::string getWindowIcon() const {
+		const std::string& getWindowIcon() const {
+			return m_windowicon;
+		}
+
+		/** Gets the icon in the window title bar
+		 */
+		std::string getWindowIcon() {
 			return m_windowicon;
 		}
 

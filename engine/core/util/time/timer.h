@@ -81,7 +81,7 @@ namespace FIFE {
 		 *  @param msec The interval
 		 *  If you use an intervall 0 the timer will fire every frame.
 		 */
-		void setInterval(uint64_t msec);
+		void setInterval(int32_t msec);
 
 		/** Start the timer
 		 *
@@ -106,7 +106,7 @@ namespace FIFE {
 	protected:
 		bool m_active;
 		type_callback m_callback;
-		void updateEvent(uint64_t);
+		void updateEvent(uint32_t);
 	};
 
 }//FIFE
