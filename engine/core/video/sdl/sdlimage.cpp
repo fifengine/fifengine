@@ -875,7 +875,7 @@ namespace FIFE {
 	size_t SDLImage::getSize() {
 		size_t zoomSize = 0;
 		if (m_zoom_surface) {
-			zoomSize = m_zoom_surface->format->BitsPerPixel * m_zoom_surface->h * m_zoom_surface->pitch;
+			zoomSize = m_zoom_surface->h * m_zoom_surface->pitch;
 		}
 
 		return Image::getSize() + zoomSize;
