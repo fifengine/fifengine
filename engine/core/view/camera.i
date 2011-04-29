@@ -74,8 +74,8 @@ namespace FIFE {
 		void setOverlayImage(int32_t id, bool fill = false);
 		int32_t getOverlayImage();
 		void resetOverlayImage();
-		void setOverlayAnimation(int32_t id, bool fill = false);
-		int32_t getOverlayAnimation();
+		void setOverlayAnimation(AnimationPtr anim, bool fill = false);
+		AnimationPtr getOverlayAnimation();
 		void resetOverlayAnimation();
 	
 		void refresh();

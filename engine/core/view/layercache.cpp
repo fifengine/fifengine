@@ -166,7 +166,7 @@ namespace FIFE {
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(instance->getLocationRef().getMapCoordinates());
 
 		render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + 
+		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) +
 			render_item.facing_angle + instance->getRotation();
 
 		Image* image = NULL;
@@ -194,7 +194,6 @@ namespace FIFE {
 
 		if(action) {
 //prock - 504
-//			Animation& animation = m_animation_pool->getAnimation(animation_id);
 			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(
 				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();

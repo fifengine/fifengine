@@ -36,6 +36,7 @@
 #include "model/structures/location.h"
 #include "util/structures/rect.h"
 #include "util/math/matrix.h"
+#include "video/animation.h"
 
 #include "rendererbase.h"
 
@@ -276,14 +277,17 @@ namespace FIFE {
 		void calculateZValue(ScreenPoint& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
+
 		void onRendererEnabledChanged(RendererBase* renderer);
 
 		/** Sets lighting color
 		 */
 		void setLightingColor(float red, float green, float blue, float alpha);
+
 		/** Resets lighting color
 		 */
 		void resetLightingColor();
+
 		/** Returns a vector that contain the light color
 		 */
 		std::vector<float> getLightingColor();
@@ -291,29 +295,37 @@ namespace FIFE {
 		/** Sets a color as overlay
 		 */
 		void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+
 		/** Returns a vector that contain the overlay color
 		 */
 		std::vector<uint8_t> getOverlayColor();
+
 		/** Resets the color overlay
 		 */
 		void resetOverlayColor();
+
 		/** Sets a image as overlay,
 		 *  if fill is true the image gets the viewport size.
 		 */
 		void setOverlayImage(int32_t id, bool fill = false);
+
 		/** Returns the pool id of the overlay image
 		 */
 		int32_t getOverlayImage();
+
 		/** Resets the image overlay
 		 */
 		void resetOverlayImage();
+
 		/** Sets a animation as overlay,
 		 *  if fill is true the animation gets the viewport size.
 		 */
-		void setOverlayAnimation(int32_t id, bool fill = false);
-		/** Returns the pool id of the overlay animation
+		void setOverlayAnimation(AnimationPtr anim, bool fill = false);
+
+		/** Returns an AnimationPtr to the overlay animation
 		 */
-		int32_t getOverlayAnimation();
+		AnimationPtr getOverlayAnimation();
+
 		/** Resets the animation overlay
 		 */
 		void resetOverlayAnimation();
@@ -413,7 +425,7 @@ namespace FIFE {
 		bool m_ani_overlay;
 		SDL_Color m_overlay_color;
 		int32_t m_img_id;
-		int32_t m_ani_id;
+		AnimationPtr m_ani_ptr;
 		bool m_img_fill;
 		bool m_ani_fill;
 		uint32_t m_start_time;

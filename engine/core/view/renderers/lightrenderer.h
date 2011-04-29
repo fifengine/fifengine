@@ -33,6 +33,7 @@
 // Second block: files included from the same folder
 #include "model/structures/renderernode.h"
 #include "view/rendererbase.h"
+#include "video/animation.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -86,18 +87,18 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "animation"; };
 		RendererNode* getNode() { return &m_anchor; };
-		int32_t getId() { return m_animation; };
+		AnimationPtr getAnimation() { return m_animation; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
 		void setStencil(uint8_t stencil_ref, float alpha_ref);
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererAnimationInfo(RendererNode n, int32_t animation, int32_t src, int32_t dst);
+		LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
 	private:
 		RendererNode m_anchor;
-		int32_t m_animation;
+		AnimationPtr m_animation;
 		int32_t m_src;
 		int32_t m_dst;
 		uint32_t m_start_time;
@@ -188,7 +189,7 @@ namespace FIFE {
 		static LightRenderer* getInstance(IRendererContainer* cnt);
 
 		void addImage(const std::string &group, RendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
-		void addAnimation(const std::string &group, RendererNode n, int32_t animation, int32_t src=-1, int32_t dst=-1);
+		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
 		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
 		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
