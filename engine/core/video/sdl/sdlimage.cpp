@@ -871,4 +871,13 @@ namespace FIFE {
 			SDL_FillRect(m_surface, &rect, color);
 		}
 	}
+
+	size_t SDLImage::getSize() {
+		size_t zoomSize = 0;
+		if (m_zoom_surface) {
+			zoomSize = m_zoom_surface->w * m_zoom_surface->h * m_zoom_surface->pitch;
+		}
+
+		return Image::getSize() + zoomSize;
+	}
 }

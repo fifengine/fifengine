@@ -320,4 +320,13 @@ namespace FIFE {
 		cleanup();
 		m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
 	}
+
+	size_t GLImage::getSize() {
+		//this is just an approximation..  The Image surface, plus the GLImage sufrace, plus the GL texture size (approx)
+		size_t glSize = 0;
+		if (m_sdlimage) {
+			glSize = m_sdlimage->getSize()*2;  //one for the SDL_Surface, the other for the GL texture
+		}
+		return Image::getSize() + glSize;
+	}
 }
