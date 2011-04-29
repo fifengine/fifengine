@@ -147,6 +147,13 @@ namespace FIFE {
 		return m_surface->h;
 	}
 
+	size_t Image::getSize() {
+		if (!m_surface) {
+			return 0;
+		}
+		return m_surface->w * m_surface->h * m_surface->pitch;
+	}
+
 	const Rect& Image::getArea() {
 		m_area.w = getWidth();
 		m_area.h = getHeight();

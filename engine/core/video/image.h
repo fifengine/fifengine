@@ -215,7 +215,7 @@ namespace FIFE {
 		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
 		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
 
-		virtual size_t getSize() { return 0; }
+		virtual size_t getSize();
 		virtual void load();
 		virtual void free();
 
