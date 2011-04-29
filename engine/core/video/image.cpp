@@ -151,7 +151,7 @@ namespace FIFE {
 		if (!m_surface) {
 			return 0;
 		}
-		return m_surface->w * m_surface->h * m_surface->pitch;
+		return m_surface->format->BitsPerPixel * m_surface->h * m_surface->pitch;
 	}
 
 	const Rect& Image::getArea() {
