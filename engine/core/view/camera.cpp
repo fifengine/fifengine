@@ -704,24 +704,20 @@ namespace FIFE {
 		m_img_id = -1;
 	}
 
-	void Camera::setOverlayAnimation(int32_t id, bool fill) {
+	void Camera::setOverlayAnimation(AnimationPtr anim, bool fill) {
 		m_ani_overlay = true;
-		m_ani_id = id;
+		m_ani_ptr = anim;
 		m_ani_fill = fill;
 		m_start_time = 0;
 	}
 
-	int32_t Camera::getOverlayAnimation() {
-		int32_t id = -1;
-		if (m_ani_overlay) {
-			id = m_ani_id;
-		}
-		return id;
+	AnimationPtr Camera::getOverlayAnimation() {
+		return m_ani_ptr;
 	}
 
 	void Camera::resetOverlayAnimation() {
 		m_ani_overlay = false;
-		m_ani_id = -1;
+		m_ani_ptr.reset();
 	}
 
 	void Camera::renderOverlay() {
@@ -740,7 +736,6 @@ namespace FIFE {
 		}
 		// image overlay
 		if (m_img_overlay) {
-//prock - 504
 			ImagePtr resptr = ImageManager::instance()->get(m_img_id);
 			Image* img = resptr.get();
 			if (img) {
@@ -758,16 +753,13 @@ namespace FIFE {
 		}
 		// animation overlay
 		if (m_ani_overlay) {
-//prock - 504
-//			Animation& animation = m_apool->getAnimation(m_ani_id);
-//@fixme the get and set functions above for the animation should set the animations.  This
-//is currently broken
-			Animation animation;
+			assert(m_ani_ptr != 0);
+
 			if (m_start_time == 0) {
 				m_start_time = TimeManager::instance()->getTime();
 			}
-			uint32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
+			uint32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % m_ani_ptr->getDuration();
+			ImagePtr img = ImageManager::instance()->get(m_ani_ptr->getFrameByTimestamp(animtime));
 			if (img) {
 				if (m_ani_fill) {
 					r.w = width;

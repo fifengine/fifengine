@@ -162,7 +162,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererAnimationInfo::GenericRendererAnimationInfo(RendererNode anchor, int32_t animation):
+	GenericRendererAnimationInfo::GenericRendererAnimationInfo(RendererNode anchor, AnimationPtr animation):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -172,12 +172,8 @@ namespace FIFE {
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
-//			Animation& animation = animpool->getAnimation(m_animation);
-//@fixme must be able to set the animation to use.  This is currently broken.
-			Animation animation;
-			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
+			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
+			ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
@@ -295,7 +291,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(const std::string &group, RendererNode n, int32_t animation) {
+	void GenericRenderer::addAnimation(const std::string &group, RendererNode n, AnimationPtr animation) {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}

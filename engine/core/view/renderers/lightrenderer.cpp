@@ -107,7 +107,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererAnimationInfo::LightRendererAnimationInfo(RendererNode anchor, int32_t animation, int32_t src, int32_t dst):
+	LightRendererAnimationInfo::LightRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -122,12 +122,8 @@ namespace FIFE {
 	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
-//			Animation& animation = animpool->getAnimation(m_animation);
-//@fixme must be able to set the animation to use.  This is currently broken.
-			Animation animation;
-			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-			ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
+			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
+			ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
@@ -321,7 +317,7 @@ namespace FIFE {
 		m_groups[group].push_back(info);
 	}
 	// Add a animation lightmap
-	void LightRenderer::addAnimation(const std::string &group, RendererNode n, int32_t animation, int32_t src, int32_t dst) {
+	void LightRenderer::addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
 		m_groups[group].push_back(info);
 	}

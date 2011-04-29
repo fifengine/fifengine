@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 #include "model/structures/renderernode.h"
 #include "view/rendererbase.h"
+#include "video/animation.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -124,11 +125,11 @@ namespace FIFE {
 	class GenericRendererAnimationInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		GenericRendererAnimationInfo(RendererNode n, int32_t animation);
+		GenericRendererAnimationInfo(RendererNode n, AnimationPtr animation);
 		virtual ~GenericRendererAnimationInfo() {};
 	private:
 		RendererNode m_anchor;
-		int32_t m_animation;
+		AnimationPtr m_animation;
 		uint32_t m_start_time;
 		float m_time_scale;
 	};
@@ -182,7 +183,7 @@ namespace FIFE {
 		void addVertex(const std::string &group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, RendererNode n, int32_t image);
-		void addAnimation(const std::string &group, RendererNode n, int32_t animation);
+		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation);
 		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();

@@ -28,7 +28,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/animation.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
@@ -131,7 +130,7 @@ namespace FIFE {
 		img->render(r);
 	}
 
-	OffRendererAnimationInfo::OffRendererAnimationInfo(Point anchor, int32_t animation):
+	OffRendererAnimationInfo::OffRendererAnimationInfo(Point anchor, AnimationPtr animation):
 		OffRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -139,13 +138,9 @@ namespace FIFE {
 		m_time_scale(1.0) {
 	}
 	void OffRendererAnimationInfo::render(RenderBackend* renderbackend) {
-//prock - 504
-//		Animation& animation = animpool->getAnimation(m_animation);
-//@fixme must be able to set the animation to use.  This is currently broken.
-		Animation animation;
-		int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
-		ImagePtr img = ImageManager::instance()->get(animation.getFrameByTimestamp(animtime));
-			
+		int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
+		ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
+
 		Rect r;
 		uint16_t widtht = img->getWidth();
 		uint16_t height = img->getHeight();
@@ -165,7 +160,7 @@ namespace FIFE {
 	}
 	void OffRendererTextInfo::render(RenderBackend* renderbackend) {
 		Image* img = m_font->getAsImageMultiline(m_text);
-		
+
 		Rect r;
 		uint16_t widtht = img->getWidth();
 		uint16_t height = img->getHeight();
@@ -185,9 +180,7 @@ namespace FIFE {
 		m_height(height){
 	}
 	void OffRendererResizeInfo::render(RenderBackend* renderbackend) {
-//prock - 504
-		ImagePtr resptr = ImageManager::instance()->get(m_image);
-		Image* img = dynamic_cast<Image*>(resptr.get());
+		ImagePtr imgptr = ImageManager::instance()->get(m_image);
 
 		Rect r;
 		uint16_t widtht = m_width;
@@ -197,7 +190,7 @@ namespace FIFE {
 		r.w = widtht;
 		r.h = height;
 
-		img->render(r);
+		imgptr->render(r);
 	}
 
 	OffRenderer::OffRenderer(RenderBackend* renderbackend):
@@ -255,7 +248,7 @@ namespace FIFE {
 		OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
-	void OffRenderer::addAnimation(const std::string &group, Point n, int32_t animation) {
+	void OffRenderer::addAnimation(const std::string &group, Point n, AnimationPtr animation) {
 		OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}

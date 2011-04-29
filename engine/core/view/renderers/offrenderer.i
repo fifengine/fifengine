@@ -64,7 +64,7 @@ namespace FIFE {
 	};
 	class OffRendererAnimationInfo : public OffRendererElementInfo {
 	public:
-		OffRendererAnimationInfo(Point n, int32_t animation);
+		OffRendererAnimationInfo(Point n, AnimationPtr animation);
 		virtual ~OffRendererAnimationInfo() {};
 	};
 	class OffRendererTextInfo : public OffRendererElementInfo {
@@ -92,7 +92,7 @@ namespace FIFE {
 		void addVertex(const std::string &group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, Point n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, Point n, int32_t image);
-		void addAnimation(const std::string &group, Point n, int32_t animation);
+		void addAnimation(const std::string &group, Point n, AnimationPtr animation);
 		void resizeImage(const std::string &group, Point n, int32_t image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();

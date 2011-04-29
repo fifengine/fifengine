@@ -53,7 +53,7 @@ namespace FIFE {
 	};
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
-		LightRendererAnimationInfo(RendererNode n, int32_t animation, int32_t src, int32_t dst);
+		LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
 	};
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
@@ -73,7 +73,7 @@ namespace FIFE {
 		std::string getName();
 		static LightRenderer* getInstance(IRendererContainer* cnt);
 		void addImage(const std::string &group, RendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
-		void addAnimation(const std::string &group, RendererNode n, int32_t animation, int32_t src=-1, int32_t dst=-1);
+		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
 		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
 		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);

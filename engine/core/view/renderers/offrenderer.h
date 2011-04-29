@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/animation.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -122,11 +123,11 @@ namespace FIFE {
 	class OffRendererAnimationInfo : public OffRendererElementInfo {
 	public:
 		void render(RenderBackend* renderbackend);
-		OffRendererAnimationInfo(Point n, int32_t animation);
+		OffRendererAnimationInfo(Point n, AnimationPtr animation);
 		virtual ~OffRendererAnimationInfo() {};
 	private:
 		Point m_anchor;
-		int32_t m_animation;
+		AnimationPtr m_animation;
 		uint32_t m_start_time;
 		float m_time_scale;
 	};
@@ -175,7 +176,7 @@ namespace FIFE {
 		void addVertex(const std::string &group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, Point n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, Point n, int32_t image);
-		void addAnimation(const std::string &group, Point n, int32_t animation);
+		void addAnimation(const std::string &group, Point n, AnimationPtr animation);
 		void resizeImage(const std::string &group, Point n, int32_t image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();
