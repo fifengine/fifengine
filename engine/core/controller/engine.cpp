@@ -196,7 +196,6 @@ namespace FIFE {
 		FL_LOG(_log, "Creating pools");
 //prock - 504
 		m_imagemanager = new ImageManager();
-//		m_animpool = new AnimationPool();
 //		m_soundclippool = new SoundClipPool();
 //		m_imagepool->addResourceLoader(new SubImageLoader());
 //		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
@@ -331,7 +330,6 @@ namespace FIFE {
 		// as animations reference images they have to be deleted
 		// before clearing the image pool.
 //prock - 504
-//		delete m_animpool;
 		delete m_imagemanager;
 //		delete m_eventmanager;
 

@@ -151,15 +151,7 @@ namespace FIFE {
 		/** Provides access point to the ImageManager
 		 */
 		ImageManager* getImageManager() const { return m_imagemanager; }
-//
-//		/** Provides access point to the AnimationPool
-//		 */
-//		AnimationPool* getAnimationPool() const { return m_animpool; }
-//
-//		/** Provides access point to the SoundClipPool
-//		 */
-//		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
-//
+
 		/** Provides access point to the RenderBackend
 		 */
 		RenderBackend* getRenderBackend() const { return m_renderbackend; }
