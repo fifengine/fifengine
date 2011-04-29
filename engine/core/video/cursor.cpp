@@ -117,6 +117,8 @@ namespace FIFE {
 	}
 
 	void Cursor::set(AnimationPtr anim) {
+		assert(anim != 0);
+
 		m_cursor_animation = anim;
 		m_cursor_type = CURSOR_ANIMATION;
 
@@ -143,6 +145,8 @@ namespace FIFE {
 	}
 
 	void Cursor::setDrag(AnimationPtr anim, int32_t drag_offset_x, int32_t drag_offset_y) {
+		assert(anim != 0);
+
 		m_cursor_drag_animation = anim;
 		m_drag_type = CURSOR_ANIMATION;
 		m_drag_offset_x = drag_offset_x;
@@ -177,7 +181,7 @@ namespace FIFE {
 		}
 
 		// render possible drag image
-		ImagePtr img = ImagePtr();
+		ImagePtr img;
 		if (m_drag_type == CURSOR_IMAGE) {
 			img = ImageManager::instance()->get(m_drag_id);
 		}
@@ -187,7 +191,7 @@ namespace FIFE {
 			img = ImageManager::instance()->get(imgid);
 		}
 
-		if (img) {
+		if (img != 0) {
 			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
@@ -195,7 +199,7 @@ namespace FIFE {
 			m_renderbackend->popClipArea();
 		}
 
-		ImagePtr img2 = ImagePtr();
+		ImagePtr img2;
 		// render possible cursor image
 		if (m_cursor_type == CURSOR_IMAGE) {
 			img2 = ImageManager::instance()->get(m_cursor_id);
@@ -206,8 +210,8 @@ namespace FIFE {
 			img2 = ImageManager::instance()->get(imgid);
 		}
 
-		if (img2) {
-			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
+		if (img2 != 0) {
+			Rect area(m_mx + img2->getXShift(), m_my + img2->getYShift(), img2->getWidth(), img2->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img2->render(area);
 			m_renderbackend->renderVertexArrays();

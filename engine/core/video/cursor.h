@@ -99,37 +99,53 @@ namespace FIFE {
 
 		/** Sets the current mouse cursor type and possible pool value
 		 * @param ctype cursor type
-		 * @param cursor_id Pool id to image or animation. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
-		 * @param anim Shared pointer to an animation.
+		 * @param cursor_id resource handle for image. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
 		 */
 		void set(MouseCursorType ctype, uint32_t cursor_id=0);
 
+		/** Sets the current mouse cursor type to animation
+		 * @param anim AnimationPtr to a loaded animation used for the cursor
+		 * @param cursor_id resource handle for image. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
+		 */
 		void set(AnimationPtr anim);
 
 		/** Sets the current drag cursor type and pool value
 		 * @param ctype drag cursor type
-		 * @param drag_id pool id for the drag cursor (either image or animation)
+		 * @param drag_id resource handle for the drag cursor
 		 * @param drag_offset offset of drag image shown with cursor
 		 */
 		void setDrag(MouseCursorType ctype, uint32_t drag_id=0, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
+
+		/** Sets the current drag animated cursor
+		 * @param anim AnimationPtr to a loaded animation used for the drag
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+		 */
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
 		/** Gets the current mouse cursor type
 		 */
 		MouseCursorType getType() const { return m_cursor_type; }
 
-		/** Gets the current mouse cursor pool id
+		/** Gets the current mouse cursor handle
 		 */
 		uint32_t getId() const { return m_cursor_id; }
+
+		/** Gets the current mouse animation
+		 */
+		AnimationPtr getAnimation() { return m_cursor_animation; }
 
 		/** Gets the current mouse cursor type
 		 */
 		MouseCursorType getDragType() const { return m_drag_type; }
 
-		/** Gets the current mouse cursor pool id
+		/** Gets the current mouse cursor handle
 		 */
 		uint32_t getDragId() const { return m_drag_id; }
+
+		/** Gets the current mouse drag animation
+		 */
+		AnimationPtr getDragAnimation() { return m_cursor_drag_animation; }
 
 		/** Gets the current mouse x position
 		 */

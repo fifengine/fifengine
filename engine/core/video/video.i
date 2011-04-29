@@ -229,8 +229,10 @@ namespace FIFE {
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 		MouseCursorType getType() const;
 		uint32_t getId() const;
+		AnimationPtr getAnimation();
 		MouseCursorType getDragType() const;
 		uint32_t getDragId() const;
+		AnimationPtr getDragAnimation();
 		uint32_t getX() const;
 		uint32_t getY() const;
 	
