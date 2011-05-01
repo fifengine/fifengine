@@ -399,5 +399,34 @@ namespace FIFE {
 		return 0;
 	}
 
+	void ImageManager::invalidate(const std::string& name) {
+		ImageNameMapIterator it = m_imgNameMap.find(name);
+		if (it != m_imgNameMap.end()) {
+			if (it->second->getState() == IResource::RES_LOADED){
+				it->second.get()->invalidate();
+			}
+		}
+	}
+
+	void ImageManager::invalidate(ResourceHandle handle) {
+		ImageHandleMapIterator it = m_imgHandleMap.find(handle);
+		if (it != m_imgHandleMap.end()) {
+			if (it->second->getState() == IResource::RES_LOADED) {
+				it->second.get()->invalidate();
+			}
+		}
+	}
+
+	void ImageManager::invalidateAll() {
+		ImageHandleMapIterator it = m_imgHandleMap.begin(),
+			itend = m_imgHandleMap.end();
+
+		for ( ; it != itend; ++it) {
+			if (it->second->getState() == IResource::RES_LOADED) {
+				it->second.get()->invalidate();
+			}
+		}
+
+	}
 
 } //FIFE

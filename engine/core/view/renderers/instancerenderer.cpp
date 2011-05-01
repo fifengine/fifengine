@@ -226,11 +226,11 @@ namespace FIFE {
 	}
 
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
-		if (!info.dirty && info.curimg == vc.image) {
+		if (!info.dirty && info.curimg == vc.image.get()) {
 			// optimization for outline that has not changed
 			return info.outline;
 		} else {
-			info.curimg = vc.image;
+			info.curimg = vc.image.get();
 		}
 
 		if (info.outline) {
@@ -298,12 +298,12 @@ namespace FIFE {
 	}
 
 	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
-		if (!info.dirty && info.curimg == vc.image) {
+		if (!info.dirty && info.curimg == vc.image.get()) {
 			// optimization for coloring overlay that has not changed
 			return info.overlay;
 		}
 		else {
-			info.curimg = vc.image;
+			info.curimg = vc.image.get();
 		}
 
 		if (info.overlay) {
