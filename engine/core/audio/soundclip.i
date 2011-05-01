@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -19,41 +19,24 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-// Standard C++ library includes
-
-// Platform specific includes
-
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+%module fife
+%{
 #include "audio/soundclip.h"
-#include "vfs/vfs.h"
-#include "util/log/logger.h"
-#include "util/base/exception.h"
+#include "util/base/sharedptr.h"
+%}
 
-#include "ogg_loader.h"
-#include "sounddecoder_ogg.h"
+%include "util/resource/resource.i"
 
 namespace FIFE {
-  static Logger _log(LM_NATIVE_LOADERS);
 
-	void OggLoader::load(IResource* res) {
-//prock - 504
-//		std::string filename = location.getFilename();
-//		std::string filename = "blank";
+	class SoundClip : public IResource {
+	public:
 
-//		SoundClip* ptr;
-//		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
-//			RawData* rdptr = m_vfs->open(location.getFilename());
-//			ptr = new SoundClip(new SoundDecoderOgg(rdptr));
-//			ptr->setResourceLocation(location);
-//		} else {
-//			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
-//			throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
-//		}
-//		return ptr;
-	}
+		~SoundClip();
+		bool isStream();
+	};
+
+	typedef SharedPtr<SoundClip> SoundClipPtr;
+	%template(SharedSoundClipPointer) SharedPtr<SoundClip>;
 }
+

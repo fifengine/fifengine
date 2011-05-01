@@ -58,7 +58,8 @@ namespace FIFE {
 	class SoundClip : public IResource {
 	public:
 
-	   SoundClip(SoundDecoder* decptr, bool deletedecoder = true);
+		SoundClip(IResourceLoader* loader = 0);
+		SoundClip(const std::string& name, IResourceLoader* loader = 0);
 
 		~SoundClip();
 
@@ -117,15 +118,13 @@ namespace FIFE {
 		 */
 		void quitStreaming(uint32_t streamid);
 
-		//void addRef() {
-		//	m_refcount++;
-		//}
-		//void decRef() {
-		//	m_refcount--;
-		//}
-	//	uint32_t getRefCount() {
-	//		return m_refcount;
-	//	}
+		/** Adopts a decoder to use so DONT delete it
+		 */
+		void adobtDecoder(SoundDecoder* decoder) { m_decoder = decoder; m_deletedecoder = true; }
+
+		/** Sets the decoder to use so DONT delete it before this SoundClip is done with it
+		 */
+		void setDecoder(SoundDecoder* decoder) { m_decoder = decoder; m_deletedecoder = false; }
 
 		/** Returns the attached decoder
 		 */
@@ -133,13 +132,21 @@ namespace FIFE {
 			return m_decoder;
 		}
 
+		virtual size_t getSize() { return 0; }
+
+		virtual void load();
+		virtual void free();
+
 	private:
-		//uint32_t 		m_refcount;			// Reference count of that soundclip
 		bool						m_isstream; 		// is stream?
 		SoundDecoder*		m_decoder;			// attached decoder
 		bool						m_deletedecoder;	// when loadFromDecoder-method is used, decoder shouldn't be deleted
 		std::vector<SoundBufferEntry*> m_buffervec;
+
+		std::string createUniqueClipName();
 	};
+
+	typedef SharedPtr<SoundClip> SoundClipPtr;
 }
 
 #endif
