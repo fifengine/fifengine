@@ -44,10 +44,8 @@
 #include "vfs/zip/zipprovider.h"
 #endif
 #include "eventchannel/eventmanager.h"
-//prock - 504
 #include "video/imagemanager.h"
-//#include "video/animationpool.h"
-//#include "audio/soundclippool.h"
+#include "audio/soundclipmanager.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
 #include "video/devicecaps.h"
@@ -62,7 +60,7 @@
 #include "video/fonts/abstractfont.h"
 #include "loaders/native/video/subimageloader.h"
 #include "loaders/native/video/imageloader.h"
-#include "loaders/native/audio_loaders/ogg_loader.h"
+#include "loaders/native/audio/ogg_loader.h"
 #include "model/model.h"
 #include "pathfinder/routepather/routepather.h"
 #include "model/metamodel/grids/hexgrid.h"
@@ -101,10 +99,8 @@ namespace FIFE {
 		m_eventmanager(0),
 		m_soundmanager(0),
 		m_timemanager(0),
-//prock - 504
 		m_imagemanager(0),
-//		m_animpool(0),
-//		m_soundclippool(0),
+		m_soundclipmanager(0),
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
@@ -141,7 +137,7 @@ namespace FIFE {
 
 	Image* Engine::changeScreenMode(const ScreenMode& mode){
 		m_cursor->invalidate();
-//prock - 504
+
 		m_imagemanager->invalidateAll();
 		m_defaultfont->invalidate();
 		m_guimanager->invalidateFonts();
@@ -193,13 +189,10 @@ namespace FIFE {
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
 
-		FL_LOG(_log, "Creating pools");
+		FL_LOG(_log, "Creating resource managers");
 //prock - 504
 		m_imagemanager = new ImageManager();
-//		m_soundclippool = new SoundClipPool();
-//		m_imagepool->addResourceLoader(new SubImageLoader());
-//		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
-//		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
+		m_soundclipmanager = new SoundClipManager();
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
@@ -331,6 +324,7 @@ namespace FIFE {
 		// before clearing the image pool.
 //prock - 504
 		delete m_imagemanager;
+		delete m_soundclipmanager;
 //		delete m_eventmanager;
 
 		// properly remove all the renderers created during init

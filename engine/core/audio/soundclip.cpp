@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // Platform specific includes
+#include <sstream>
 
 // 3rd party library includes
 
@@ -31,13 +32,47 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
+#include "loaders/native/audio/ogg_loader.h"
 
 #include "soundclip.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundClip::SoundClip(SoundDecoder* decptr, bool deletedecoder) : IResource(""), m_isstream(decptr->needsStreaming()), m_decoder(decptr), m_deletedecoder(deletedecoder) {
+	SoundClip::SoundClip(IResourceLoader* loader) :
+		IResource(createUniqueClipName(), loader),
+		m_isstream(false),
+		m_decoder(NULL),
+		m_deletedecoder(false) {
+
+	}
+
+	SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
+		IResource(name, loader),
+		m_isstream(false),
+		m_decoder(NULL),
+		m_deletedecoder(false) {
+
+	}
+
+	void SoundClip::load(){
+		if (m_loader){
+			m_loader->load(this);
+		}
+		else {  //no loader specified so find one to use
+			if(m_name.find(".ogg", m_name.size() - 4) != std::string::npos) {
+				OggLoader loader;
+				loader.load(this);
+			} else {
+				FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << m_name << "\"!");
+				throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
+			}
+		}
+
+		assert(m_decoder);  //should be set by now
+
+		m_isstream = m_decoder->needsStreaming();
+
 		if (!m_isstream) {
 
 			// only for non-streaming buffers
@@ -68,6 +103,34 @@ namespace FIFE {
 			m_buffervec.push_back(ptr);
 
 		}
+
+		m_state = IResource::RES_LOADED;
+	}
+
+	void SoundClip::free(){
+		if (m_state == IResource::RES_LOADED) {
+			if (m_isstream) {
+				// erase all elements from the list
+				std::vector<SoundBufferEntry*>::iterator it;
+
+				for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
+					if ((*it)->buffers[0] != 0) {
+						alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
+					}
+					delete (*it);
+				}
+				m_buffervec.clear();
+			}
+			else {
+				// for non-streaming soundclips
+				SoundBufferEntry* ptr = m_buffervec.at(0);
+
+				for(uint32_t i = 0; i < ptr->usedbufs; i++) {
+					alDeleteBuffers(1, &ptr->buffers[i]);
+				}
+			}
+		}
+		m_state = IResource::RES_NOT_LOADED;
 	}
 
 	uint32_t SoundClip::beginStreaming() {
@@ -169,30 +232,25 @@ namespace FIFE {
 	}
 
 	SoundClip::~SoundClip() {
-		if (m_isstream) {
-			// erase all elements from the list
-			std::vector<SoundBufferEntry*>::iterator it;
-
-			for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
-				if ((*it)->buffers[0] != 0) {
-					alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
-				}
-				delete (*it);
-			}
-			m_buffervec.clear();
-		}
-		else {
-			// for non-streaming soundclips
-			SoundBufferEntry* ptr = m_buffervec.at(0);
-
-			for(uint32_t i = 0; i < ptr->usedbufs; i++) {
-				alDeleteBuffers(1, &ptr->buffers[i]);
-			}
-		}
+		free();
 
 		// delete decoder
 		if (m_deletedecoder && m_decoder != NULL) {
 			delete m_decoder;
 		}
+	}
+
+	std::string SoundClip::createUniqueClipName() {
+	        // automated counting for name generation, in case the user doesn't provide a name
+	        static uint32_t uniqueNumber = 0;
+	        static std::string baseName = "soundclip";
+
+	        std::ostringstream oss;
+	        oss << uniqueNumber << "_" << baseName;
+
+	        const std::string name = oss.str();
+	        ++uniqueNumber;
+
+	        return name;
 	}
 }

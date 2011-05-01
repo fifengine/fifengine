@@ -34,11 +34,12 @@
 #include "util/base/exception.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
+#include "soundclipmanager.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) : m_manager(manager), m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
+	SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) : m_manager(manager), m_source(0), m_soundclip(), m_soundclipid(0), m_streamid(0),
 															m_emitterid(uid), m_loop(false) {
 		if (!m_manager->isActive()) {
 			return;
@@ -62,7 +63,7 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::reset(bool defaultall) {
-		if (m_soundclip != NULL) {
+		if (m_soundclip) {
 
 			setPeriod(-1);
 			alSourceStop(m_source);
@@ -76,8 +77,8 @@ namespace FIFE {
 			}
 
 			// release the soundclip
-			//m_pool->release(m_soundclipid, true);
-			m_soundclip = NULL;
+			//SoundClipManager::instance()->free(m_soundclipid);
+			m_soundclip.reset();
 
 			// default source properties
 			if (defaultall) {
@@ -96,8 +97,7 @@ namespace FIFE {
 
 	void SoundEmitter::setSoundClip(uint32_t sound_id) {
 		m_soundclipid = sound_id;
-		//m_soundclip = &(m_pool->getSoundClip(m_soundclipid));
-		//m_soundclip->addRef();
+		m_soundclip = SoundClipManager::instance()->get(m_soundclipid);
 
 		attachSoundClip();
 	}

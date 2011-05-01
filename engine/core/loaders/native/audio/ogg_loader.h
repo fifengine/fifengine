@@ -19,53 +19,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-%module soundemitter
-%{
-#include "audio/soundemitter.h"
-%}
+#ifndef FIFE_OGGLOADER_H_
+#define FIFE_OGGLOADER_H_
+
+// Standard C++ library includes
+
+// Platform specific includes
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/resource/resource.h"
 
 namespace FIFE {
 
-	enum SoundPositionType {
-		SD_SAMPLE_POS,
-		SD_TIME_POS,
-		SD_BYTE_POS
-	};
-
-	class SoundDecoder;
-	class SoundManager;
-
-	class SoundEmitter {
+	class OggLoader : public IResourceLoader {
 	public:
-		SoundEmitter(SoundManager* manager, uint32_t uid);
-		~SoundEmitter();
-
-		uint32_t getId() const;
-
-		void setSoundClip(uint32_t sound_id);
-		void reset(bool defaultall = false);
-		void release();
-
-		void play();
-		void pause();
-		void stop();
-
-		void setLooping(bool loop);
-		void setRolloff(float rolloff);
-		void setPositioning(bool relative);
-		void setPosition(float x, float y, float z);
-		void setVelocity(float x, float y, float z);
-		void setGain(float gain);
-		float getGain();
-
-		bool isStereo();
-		int16_t getBitResolution();
-		uint64_t getSampleRate();
-		uint64_t getDecodedLength();
-		uint64_t getDuration();
-
-		void setCursor(SoundPositionType type, float value);
-		float getCursor(SoundPositionType type);
+		OggLoader() { }
+		virtual void load(IResource* res);
 	};
 }
 
+#endif

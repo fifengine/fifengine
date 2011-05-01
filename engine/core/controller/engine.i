@@ -40,6 +40,7 @@ namespace FIFE {
 	class ScreenMode;
 	class Image;
 	class ImageManager;
+	class SoundClipManager;
 	class OffRenderer;
 
 	class EngineSettings {
@@ -117,6 +118,7 @@ namespace FIFE {
 		TimeManager* getTimeManager();
 		GUIManager* getGuiManager();
 		ImageManager* getImageManager();
+		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
 		Model* getModel();
 		LogManager* getLogManager();

@@ -19,9 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_OGGLOADER_H_
-#define FIFE_OGGLOADER_H_
-
 // Standard C++ library includes
 
 // Platform specific includes
@@ -32,20 +29,23 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource.h"
+#include "audio/soundclip.h"
+#include "vfs/vfs.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
+
+#include "ogg_loader.h"
+#include "sounddecoder_ogg.h"
 
 namespace FIFE {
+  static Logger _log(LM_NATIVE_LOADERS);
 
-	class VFS;
+	void OggLoader::load(IResource* res) {
+		VFS* vfs = VFS::instance();
 
-	class OggLoader : public IResourceLoader {
-	public:
-		OggLoader(VFS* vfs) : m_vfs(vfs) { }
-		virtual void load(IResource* res);
+		std::string filename = res->getName();
 
-	private:
-		VFS* m_vfs;
-	};
+		RawData* rdptr = vfs->open(filename);
+		dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));
+	}
 }
-
-#endif

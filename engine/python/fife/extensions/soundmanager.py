@@ -228,7 +228,7 @@ class SoundManager(object):
 		@rtype: L{SoundEmitter}
 		"""
 		if not self._loadedclips.has_key(filename):
-			clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
+			clipid = self._engine.getSoundClipManager().get(filename).getHandle()
 			fifeemitter = self._fifesoundmanager.createEmitter()
 			fifeemitter.thisown = 0
 			fifeemitter.setSoundClip(clipid)
@@ -237,7 +237,7 @@ class SoundManager(object):
 			clip.duration = fifeemitter.getDuration()
 		else:
 			if forceUnique:
-				clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
+				clipid = self._engine.getSoundClipManager().get(filename).getHandle()
 				fifeemitter = self._fifesoundmanager.createEmitter()
 				fifeemitter.thisown = 0
 				fifeemitter.setSoundClip(clipid)

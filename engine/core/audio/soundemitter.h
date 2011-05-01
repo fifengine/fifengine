@@ -138,7 +138,7 @@ namespace FIFE {
 		 *
 		 * @return Returns true if the audio data is stereo, false if mono.
 		 */
-		bool isStereo() const{
+		bool isStereo() {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->isStereo();
 			}
@@ -147,7 +147,7 @@ namespace FIFE {
 
 		/** Returns the bit resolution
 		 */
-		int16_t getBitResolution() const {
+		int16_t getBitResolution() {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getBitResolution();
 			}
@@ -156,7 +156,7 @@ namespace FIFE {
 
 		/** Returns the sample rate
 		 */
-		uint64_t getSampleRate() const{
+		uint64_t getSampleRate() {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getSampleRate();
 			}
@@ -165,7 +165,7 @@ namespace FIFE {
 
 		/** Returns the length of the decoded length in bytes
 		 */
-		uint64_t getDecodedLength() const{
+		uint64_t getDecodedLength() {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getDecodedLength();
 
@@ -175,7 +175,7 @@ namespace FIFE {
 
 		/** Returns the duration of the sound clip in milliseconds
 		 */
-		uint64_t getDuration() const{
+		uint64_t getDuration() {
 			if (m_soundclip) {
 				double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
 				double bitres = static_cast<double>(getBitResolution());
@@ -219,7 +219,7 @@ namespace FIFE {
 
 		SoundManager*	m_manager;
 		ALuint			m_source;			// The openAL-source
-		SoundClip*		m_soundclip;	// the attached soundclip
+		SoundClipPtr	m_soundclip;	// the attached soundclip
 		uint32_t	m_soundclipid;// id of the attached soundclip
 		uint32_t	m_streamid;		// the id of the stream
 		uint32_t	m_emitterid;	// the emitter-id

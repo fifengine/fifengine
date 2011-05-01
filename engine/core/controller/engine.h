@@ -62,6 +62,7 @@ namespace FIFE {
 	class RendererBase;
 	class Image;
 	class ImageManager;
+	class SoundClipManager;
 	class OffRenderer;
 
 
@@ -147,10 +148,13 @@ namespace FIFE {
 		 */
 		GUIManager* getGuiManager() const { return m_guimanager; }
 
-//prock - 504
 		/** Provides access point to the ImageManager
 		 */
 		ImageManager* getImageManager() const { return m_imagemanager; }
+
+		/** Provides access point to the ImageManager
+		 */
+		SoundClipManager* getSoundClipManager() const { return m_soundclipmanager; }
 
 		/** Provides access point to the RenderBackend
 		 */
@@ -199,6 +203,7 @@ namespace FIFE {
 //prock - 504
 //		ImagePool* m_imagepool;
 		ImageManager* m_imagemanager;
+		SoundClipManager* m_soundclipmanager;
 //		AnimationPool* m_animpool;
 //		SoundClipPool* m_soundclippool;
 
