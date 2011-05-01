@@ -460,7 +460,7 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
-				assert(vc.image);
+				assert(vc.image.get());
 				uint8_t r, g, b, a;
 				int32_t x = screen_coords.x - vc.dimensions.x;
 				int32_t y = screen_coords.y - vc.dimensions.y;
@@ -496,7 +496,7 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.intersects(screen_rect))) {
-				assert(vc.image);
+				assert(vc.image.get());
 				uint8_t r, g, b, a;
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {

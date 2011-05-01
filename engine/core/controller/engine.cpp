@@ -142,7 +142,7 @@ namespace FIFE {
 	Image* Engine::changeScreenMode(const ScreenMode& mode){
 		m_cursor->invalidate();
 //prock - 504
-//		m_imagepool->invalidateLoadedImages();
+		m_imagemanager->invalidateAll();
 		m_defaultfont->invalidate();
 		m_guimanager->invalidateFonts();
 

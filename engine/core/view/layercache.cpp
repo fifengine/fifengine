@@ -169,7 +169,7 @@ namespace FIFE {
 		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) +
 			render_item.facing_angle + instance->getRotation();
 
-		Image* image = NULL;
+		ImagePtr image;
 		Action* action = instance->getCurrentAction();
 		int32_t w = 0;
 		int32_t h = 0;
@@ -186,8 +186,7 @@ namespace FIFE {
 			} else {
 //prock - 504
 //				image = &m_image_pool->getImage(image_id);
-				ImagePtr resptr = ImageManager::instance()->get(image_id);
-				image = resptr.get();
+				image = ImageManager::instance()->get(image_id);
 			}
 		}
 		item.force_update = (action != 0);
@@ -198,7 +197,7 @@ namespace FIFE {
 				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
-			image = ImageManager::instance()->get(animation->getFrameByTimestamp(animation_time)).get();
+			image = ImageManager::instance()->get(animation->getFrameByTimestamp(animation_time));
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){

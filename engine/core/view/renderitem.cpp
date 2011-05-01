@@ -40,7 +40,6 @@ namespace FIFE {
 	RenderItem::RenderItem():
 		screenpoint(),
 		dimensions(),
-		image(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cached_static_img_angle(0) {
 	}

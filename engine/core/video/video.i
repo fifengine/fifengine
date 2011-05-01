@@ -135,7 +135,10 @@ namespace FIFE {
 		virtual ImagePtr get(ResourceHandle handle);
 
 		virtual ResourceHandle getResourceHandle(const std::string& name);
-		
+
+		virtual void invalidate(const std::string& name);
+		virtual void invalidate(ResourceHandle handle);
+		virtual void invalidateAll();
 	};
 	
 	

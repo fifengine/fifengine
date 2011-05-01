@@ -119,6 +119,7 @@ namespace FIFE {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
 				SDL_WM_SetIcon(img, 0);
+				SDL_FreeSurface(img);
 			}
 		}
 
@@ -173,6 +174,7 @@ namespace FIFE {
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 		gluOrtho2D(0, width, height, 0);
 		glMatrixMode(GL_MODELVIEW);
 

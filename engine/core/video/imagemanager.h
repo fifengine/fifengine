@@ -352,6 +352,10 @@ namespace FIFE {
 		 */
 		virtual ResourceHandle getResourceHandle(const std::string& name);
 
+		virtual void invalidate(const std::string& name);
+		virtual void invalidate(ResourceHandle handle);
+		virtual void invalidateAll();
+
 	private:
 		typedef std::map< ResourceHandle, ImagePtr > ImageHandleMap;
 		typedef std::map< ResourceHandle, ImagePtr >::iterator ImageHandleMapIterator;

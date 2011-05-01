@@ -60,7 +60,7 @@ namespace FIFE {
 			Rect dimensions;
 
 			// image used during previous render
-			Image* image;
+			ImagePtr image;
 
 			// current facing angle
 			int32_t facing_angle;
