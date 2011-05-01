@@ -67,32 +67,32 @@ namespace FIFE {
 		virtual size_t getTotalResourcesLoaded() const;
 		virtual size_t getTotalResources() const;
 
-		/** Creates a blank Image but does not load it immediately
+		/** Creates a blank SoundClip but does not load it immediately
 		 *
 		 * @param loader A pointer to the custom resource loader.  The
 		 * default is NULL.  If this parameter is present the resource
 		 * will use the loader to load instead of the default built in
 		 * functions.
-		 * @return An SoundClipPtr to the newly created Image
+		 * @return An SoundClipPtr to the newly created SoundClip
 		 *
-		 * @see Image
-		 * @see ImageLoader
+		 * @see SoundClip
+		 * @see OggLoader
 		 * @see IResourceLoader
 		 *
 		 */
 		virtual SoundClipPtr create(IResourceLoader* loader = 0);
 
-		/** Creates a blank Image but does not load it immediately
+		/** Creates a blank SoundClip but does not load it immediately
 		 *
 		 * @param name The resource name. Typically a filename.
 		 * @param loader A pointer to the custom resource loader.  The
 		 * default is NULL.  If this parameter is present the resource
 		 * will use the loader to load instead of the default built in
 		 * functions.
-		 * @return An SoundClipPtr to the newly created Image
+		 * @return An SoundClipPtr to the newly created SoundClip
 		 *
-		 * @see Image
-		 * @see ImageLoader
+		 * @see SoundClip
+		 * @see OggLoader
 		 * @see IResourceLoader
 		 *
 		 */
@@ -100,8 +100,8 @@ namespace FIFE {
 
 		/** Creates a blank resource and loads it from disk
 		 *
-		 * This function will create the Image if necessary and load
-		 * the Image from disk.  If the Image is not defined it
+		 * This function will create the SoundClip if necessary and load
+		 * the clip from disk.  If the SoundClip is not defined it
 		 * will call SoundClipManager::create() before loading.
 		 *
 		 * @param name The resource name. Typically a filename.
@@ -109,10 +109,10 @@ namespace FIFE {
 		 * default is NULL.  If this parameter is present the resource
 		 * will use the loader to load instead of the default built in
 		 * functions.
-		 * @return A SoundClipPtr to the loaded Image
+		 * @return A SoundClipPtr to the loaded SoundClip
 		 *
-		 * @see Image
-		 * @see ImageLoader
+		 * @see SoundClip
+		 * @see OggLoader
 		 * @see IResourceLoader
 		 *
 		 */
@@ -120,46 +120,46 @@ namespace FIFE {
 
 		/** Add an Image to the manager
 		 *
-		 * This function will create a SoundClipPtr and add the Image
-		 * to the manager.  The manager assumes ownership of the Image
+		 * This function will create a SoundClipPtr and add the SoundClip
+		 * to the manager.  The manager assumes ownership of the SoundClip
 		 * so DO NOT delete it.
 		 *
-		 * @param res A pointer to the Image
+		 * @param res A pointer to the SoundClip
 		 * @return A SoundClipPtr to the added resource
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual SoundClipPtr add(SoundClip* res);
 
-		/** Checks to see if an Image exists
+		/** Checks to see if a SoundClip exists
 		 *
-		 * This function will search the manager for Images
+		 * This function will search the manager for SoundClips
 		 * that match the parameter
 		 *
-		 * @param name The name of the Image
-		 * @return True if the Image exists.  False otherwise.
+		 * @param name The name of the SoundClip
+		 * @return True if the SoundClip exists.  False otherwise.
 		 *
 		 */
 		virtual bool exists(const std::string& name);
 
-		/** Checks to see if an Image exists
+		/** Checks to see if an SoundClip exists
 		 *
-		 * This function will search the manager for Images
+		 * This function will search the manager for SoundClips
 		 * that match the parameter
 		 *
-		 * @param handle The handle of the Image
-		 * @return True if the Image exists.  False otherwise.
+		 * @param handle The handle of the SoundClip
+		 * @return True if the SoundClip exists.  False otherwise.
 		 *
 		 */
 		virtual bool exists(ResourceHandle handle);
 
-		/** Reloads an Image
+		/** Reloads a SoundClip
 		 *
-		 * This function will reload an Image if it is managed
+		 * This function will reload a SoundClip if it is managed
 		 * by the manager.  If not it creates an entry in the log
-		 * specifying that the Image could not be found.  It will
-		 * load the Image if it is not already loaded.
+		 * specifying that the SoundClip could not be found.  It will
+		 * load the SoundClip if it is not already loaded.
 		 *
 		 * @param name The name of the resource
 		 *
@@ -168,20 +168,20 @@ namespace FIFE {
 
 		/** Reloads a resource
 		 *
-		 * This function will reload an Image if it is managed
+		 * This function will reload a SoundClip if it is managed
 		 * by the manager.  If not it creates an entry in the log
-		 * specifying that the Image could not be found.  It will
-		 * load the Image if it is not already loaded.
+		 * specifying that the SoundClip could not be found.  It will
+		 * load the SoundClip if it is not already loaded.
 		 *
 		 * @param handle The handle of the resource
 		 *
 		 */
 		virtual void reload(ResourceHandle handle);
 
-		/** Reloads all Images
+		/** Reloads all SoundClips
 		 *
-		 * This function will reload all Images managed by the
-		 * manager.  It will load an Image if it is not already loaded.
+		 * This function will reload all SoundClips managed by the
+		 * manager.  It will load a SoundClip if it is not already loaded.
 		 *
 		 * @todo It might be beneficial to supply a parameter to
 		 * only reload resources that are already loaded
@@ -189,70 +189,70 @@ namespace FIFE {
 		 */
 		virtual void reloadAll();
 
-		/** Loads all unreferenced Images
+		/** Loads all unreferenced SoundClips
 		 *
-		 * All Images that have no external references will be
+		 * All SoundClips that have no external references will be
 		 * loaded into memory.
 		 *
 		 */
 		virtual void loadUnreferenced();
 
-		/** Frees an Image from memory
+		/** Frees a SoundClip from memory
 		 *
-		 * The Image is not deleted but it's data is freed.
-		 * This calls the Image::free() function and it is
+		 * The SoundClip is not deleted but it's data is freed.
+		 * This calls the SoundClip::free() function and it is
 		 * up to the resource to properly free it's memory.  The
-		 * manager keeps a reference to the Image in case
+		 * manager keeps a reference to the SoundClip in case
 		 * its required in the future.
 		 *
-		 * @param name The name of the Image
+		 * @param name The name of the SoundClip
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void free(const std::string& name);
 
-		/** Frees an Image from memory
+		/** Frees a SoundClip from memory
 		 *
-		 * The Image is not deleted but it's data is freed.
-		 * This calls the Image::free() function and it is
+		 * The SoundClip is not deleted but it's data is freed.
+		 * This calls the SoundClip::free() function and it is
 		 * up to the resource to properly free it's memory.  The
-		 * manager keeps a reference to the Image in case
+		 * manager keeps a reference to the SoundClip in case
 		 * its required in the future.
 		 *
-		 * @param handle The handle of the Image
+		 * @param handle The handle of the SoundClip
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void free(ResourceHandle handle);
 
-		/** Frees all Images
+		/** Frees all SoundClips
 		 *
-		 * This calls the Image::free() function for every
+		 * This calls the SoundClip::free() function for every
 		 * Image the manager is managing.  It does not remove
 		 * them from the manager.
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void freeAll();
 
-		/** Frees all unreferenced Image
+		/** Frees all unreferenced SoundClip
 		 *
-		 * This calls the IResource::free() function for Images
+		 * This calls the SoundClip::free() function for SoundClips
 		 * that have no external references to them.  It does not
 		 * remove them from the manager.
 		 *
-		 * @see IResource
+		 * @see SoundClip
 		 *
 		 */
 		virtual void freeUnreferenced();
 
-		/** Removes an Image from the manager
+		/** Removes a SoundClip from the manager
 		 *
-		 * This removes all references to the Image from the
-		 * manager. It does not however guarantee that the resources
+		 * This removes all references to the SoundClip from the
+		 * manager. It does not however guarantee that the resource's
 		 * destructor is called.  If the client has any left over
 		 * references to the resource it will not be freed.
 		 *
@@ -262,73 +262,73 @@ namespace FIFE {
 		 * @note This is useful if you want to remove ownership of a resource
 		 * from the manager
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void remove(SoundClipPtr& resource);
 
-		/** Removes an Image from the manager
+		/** Removes an SoundClip from the manager
 		 *
-		 * This removes all references to the Image from the
-		 * manager. It does not however guarantee that the resources
+		 * This removes all references to the SoundClip from the
+		 * manager. It does not however guarantee that the resource's
 		 * destructor is called.  If the client has any left over
 		 * references to the resource it will not be freed.
 		 *
-		 * @param name The name of the Image
+		 * @param name The name of the SoundClip
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void remove(const std::string& name);
 
-		/** Removes an Image from the manager
+		/** Removes a SoundClip from the manager
 		 *
-		 * This removes all references to the Image from the
-		 * manager. It does not however guarantee that the resources
+		 * This removes all references to the SoundClip from the
+		 * manager. It does not however guarantee that the resource's
 		 * destructor is called.  If the client has any left over
 		 * references to the resource it will not be freed.
 		 *
-		 * @param handle The handle of the Image
+		 * @param handle The handle of the SoundClip
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void remove(ResourceHandle handle);
 
-		/** Removes all Images from the manager
+		/** Removes all SoundClips from the manager
 		 *
-		 * This effectively removes all references to all Images from
+		 * This effectively removes all references to all SoundClips from
 		 * the manager.  If there are left over shared pointers to
 		 * any resources they will not be deleted.
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void removeAll();
 
-		/** Removes all unreferenced Images
+		/** Removes all unreferenced SoundClips
 		 *
-		 * This effectively removes all Images that dont have an
+		 * This effectively removes all SoundClips that dont have an
 		 * external reference.  The resources will be deleted.
 		 *
-		 * @see Image
+		 * @see SoundClip
 		 *
 		 */
 		virtual void removeUnreferenced();
 
-		/** Gets a shared pointer to the Image
+		/** Gets a shared pointer to the SoundClip
 		 *
-		 * If the Image is not defined it will attempt to create
-		 * and load the Image based on the name (it assumes the name
+		 * If the SoundClip is not defined it will attempt to create
+		 * and load the SoundClip based on the name (it assumes the name
 		 * is a filename)
 		 *
-		 * @param name The name of the Image
-		 * @return An SoundClipPtr to the Image
+		 * @param name The name of the SoundClip
+		 * @return An SoundClipPtr to the SoundClip
 		 *
 		 */
 		virtual SoundClipPtr get(const std::string& name);
 
-		/** Gets a shared pointer to the Image
+		/** Gets a shared pointer to the SoundClip
 		 *
 		 * If the resource is not defined it returns an empty
 		 * (or invalid) SoundClipPtr and makes an entry in the log.
@@ -336,7 +336,7 @@ namespace FIFE {
 		 * @param handle The handle of the resource
 		 * @return A SoundClipPtr to the resource
 		 *
-		 * @todo This shoudl throw an exception instead of an
+		 * @todo This should throw an exception instead of an
 		 * empty SoundClipPtr
 		 *
 		 */
