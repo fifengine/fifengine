@@ -169,7 +169,7 @@ namespace FIFE {
 
 		std::vector<AbstractPather*> m_pathers;
 		std::vector<CellGrid*> m_adopted_grids;
-		std::vector<CellGrid*> m_created_grids;
+		//std::vector<CellGrid*> m_created_grids;
 		TimeProvider m_timeprovider;
 
 		RenderBackend* m_renderbackend;

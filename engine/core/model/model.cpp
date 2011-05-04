@@ -49,9 +49,6 @@ namespace FIFE {
 		m_last_namespace(NULL),
 		m_timeprovider(NULL),
 		m_renderbackend(renderbackend),
-//prock - 504
-//		m_imagepool(imagepool),
-//		m_animpool(animpool),
 		m_renderers(renderers){
 	}
 
@@ -60,7 +57,7 @@ namespace FIFE {
 		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
 			purge_map(nspace->second);
 		purge(m_pathers);
-		purge(m_created_grids);
+		purge(m_adopted_grids);
 	}
 
 	Map* Model::createMap(const std::string& identifier) {

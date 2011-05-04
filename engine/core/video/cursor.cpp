@@ -71,7 +71,7 @@ struct WMcursor {
 #endif
 
 namespace FIFE {
-	static Logger _log(LM_GUI); // We should have a log module for cursor
+	static Logger _log(LM_GUI); //@todo We should have a log module for cursor
 
 	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
