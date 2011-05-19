@@ -61,7 +61,7 @@ namespace FIFE {
 		void deleteMaps();
 
 		AbstractPather* getPather(const std::string& pathername);
-		CellGrid* createCellGrid(const std::string& gridtype);
+		CellGrid* getCellGrid(const std::string& gridtype);
 		
 		void setTimeMultiplier(float multip);
 		double getTimeMultiplier() const;

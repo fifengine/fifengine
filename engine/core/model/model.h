@@ -134,7 +134,7 @@ namespace FIFE {
 
 		/** Returns new copy of cellgrid corresponding given name. If none found, returns NULL
 		 */
-		CellGrid* createCellGrid(const std::string& gridtype);
+		CellGrid* getCellGrid(const std::string& gridtype);
 
 		/** Called periodically to update events on model
 		 */
@@ -168,6 +168,7 @@ namespace FIFE {
 		const namespace_t* selectNamespace(const std::string& name_space) const;
 
 		std::vector<AbstractPather*> m_pathers;
+		std::vector<CellGrid*> m_created_grids;
 		std::vector<CellGrid*> m_adopted_grids;
 		//std::vector<CellGrid*> m_created_grids;
 		TimeProvider m_timeprovider;

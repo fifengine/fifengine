@@ -30,7 +30,6 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/structures/purge.h"
-#include "model/metamodel/grids/cellgrid.h"
 
 #include "layer.h"
 #include "instance.h"
@@ -56,7 +55,6 @@ namespace FIFE {
 
 	Layer::~Layer() {
 		purge(m_instances);
-		delete m_grid;
 		delete m_instanceTree;
 	}
 

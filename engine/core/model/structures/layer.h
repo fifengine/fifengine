@@ -95,7 +95,6 @@ namespace FIFE {
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus
 			 * this method should really be called only by map or test code.
-			 * @note Layer adopts ownership of the CellGrid!!
 			 */
 			Layer(const std::string& identifier, Map* map, CellGrid* grid);
 
@@ -120,9 +119,9 @@ namespace FIFE {
 			 */
 			CellGrid* getCellGrid() const { return m_grid; }
 
-			/** Adopts the Cellgrid
+			/** Set the Cellgrid
 			 */
-			void adoptCellGrid(CellGrid* grid) { m_grid = grid; }
+			void setCellGrid(CellGrid* grid) { m_grid = grid; }
 
 			/** Get the instance tree.
 			 * @return this layers instance tree.
