@@ -70,7 +70,7 @@ class ObjectEdit(plugin.Plugin):
 		
 		self._enabled = False
 		
-		self.imagepool = None
+		self.imageManager = None
 		self._animationpool = None
 		
 		self.guidata = {}
@@ -118,8 +118,7 @@ class ObjectEdit(plugin.Plugin):
 		self._editor = scripts.editor.getEditor()
 		self.engine = self._editor.getEngine()
 		
-		self.imagepool = self.engine.getImagePool()
-		self._animationpool = self.engine.getAnimationPool()
+		self.imageManager = self.engine.getImageManager()
 		
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
@@ -680,7 +679,7 @@ class ObjectEdit(plugin.Plugin):
 		elif index is not -1:
 			# object is a static image
 			self._animation = False
-			self._image = self.imagepool.getImage(index)
+			self._image = self.imageManager.getImage(index)
 
 		if not self._animation:
 			rotations = visual.getStaticImageAngles()

@@ -435,14 +435,12 @@ class ObjectSelector(plugin.Plugin):
 		if index == -1:
 			action = obj.getDefaultAction()
 			if action:
-				animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(0)
-				animation = self.engine.getAnimationPool().getAnimation(animation_id)
-				image = animation.getFrameByTimestamp(0)
-				index = image.getPoolId()
+				animation = action.get2dGfxVisual().getAnimationByAngle(0)
+				index = animation.getFrameByTimestamp(0)
 
 		# Construct the new GuiImage that is to be returned
 		if index != -1:
-			image = fife.GuiImage(index, self.engine.getImagePool())
+			image = fife.GuiImage(index)
 
 		return image
 

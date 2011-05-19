@@ -45,15 +45,43 @@ class ResizableBase(object):
 		self.capture(self.mouseReleased, "mouseReleased", "ResizableBase")
 		
 		self.cursor_id = 0
-		self.cursor_type = 1
+		self.cursor_type = fife.CURSOR_NATIVE
+		self.cursor_image = None
+		self.cursor_animation = None
+
+	def _saveCursor(self):
+		cursor = self._engine.getCursor()
+		self.cursor_type = cursor.getType()
 		
+		if self.cursor_type == fife.CURSOR_NATIVE:
+			self.cursor_id = cursor.getId()
+			self.cursor_image = None
+			self.cursor_animation = None
+			
+		elif self.cursor_type == fife.CURSOR_IMAGE:
+			self.cursor_id = 0
+			self.cursor_image = cursor.getImage()
+			self.cursor_animation = None
+		
+		elif self.cursor_type == fife.CURSOR_ANIMATION:
+			self.cursor_id = 0
+			self.cursor_image = None
+			self.cursor_animation = cursor.getAnimation()
+	
+	def _restoreCursor(self):
+		cursor = self._engine.getCursor()
+		
+		if self.cursor_type == fife.CURSOR_NATIVE:
+			cursor.set(self.cursor_id)
+		elif self.cursor_type == fife.CURSOR_IMAGE:
+			cursor.set(self.cursor_image)
+		elif self.cursor_type == fife.CURSOR_ANIMATION:
+			cursor.set(self.cursor_animation)
 	
 	def mouseEntered(self, event):
-		# Save cursor id
+		# Save cursor
 		if self.resizable and self._resize is False:
-			cursor = self._engine.getCursor()
-			self.cursor_id = cursor.getId()
-			self.cursor_type = cursor.getType()
+			self._saveCursor()
 		
 	def mouseMoved(self, event):
 		if self.resizable is False: 
@@ -80,23 +108,23 @@ class ResizableBase(object):
 		bottom	= event.getY() - titleheight > self.height-5 and self.resizable_bottom
 
 		if left and top:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZENW)
+			cursor.set(fife.NC_RESIZENW)
 		elif right and top:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZENE)
+			cursor.set(fife.NC_RESIZENE)
 		elif left and bottom:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZESW)
+			cursor.set(fife.NC_RESIZESW)
 		elif right and bottom:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZESE)
+			cursor.set(fife.NC_RESIZESE)
 		elif left:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZEW)
+			cursor.set(fife.NC_RESIZEW)
 		elif right:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZEE)
+			cursor.set(fife.NC_RESIZEE)
 		elif top:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZEN)
+			cursor.set(fife.NC_RESIZEN)
 		elif bottom:
-			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZES)
+			cursor.set(fife.NC_RESIZES)
 		else:
-			cursor.set(self.cursor_type, self.cursor_id)
+			self._restoreCursor()
 			return
 			
 		event.consume()
@@ -105,8 +133,7 @@ class ResizableBase(object):
 	def mouseExited(self, event):
 		# Reset cursor to whatever it was before it entered this window
 		if self.resizable and self._resize is False:
-			cursor = self._engine.getCursor()
-			cursor.set(self.cursor_type, self.cursor_id)
+			self._restoreCursor()
 		
 	def mouseDragged(self, event):
 		if self.resizable and self._resize:

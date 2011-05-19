@@ -226,15 +226,18 @@ namespace FIFE {
 	public:
 		virtual ~Cursor() {}
 		virtual void draw();
-		void set(MouseCursorType ctype, uint32_t cursor_id=0);
+		void set(uint32_t cursor_id=0);
 		void set(AnimationPtr anim);
-		void setDrag(MouseCursorType ctype, uint32_t drag_id=0, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+		void set(ImagePtr image);
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+		void resetDrag();
 		MouseCursorType getType() const;
 		uint32_t getId() const;
+		ImagePtr getImage();
 		AnimationPtr getAnimation();
 		MouseCursorType getDragType() const;
-		uint32_t getDragId() const;
+		ImagePtr getDragImage();
 		AnimationPtr getDragAnimation();
 		uint32_t getX() const;
 		uint32_t getY() const;

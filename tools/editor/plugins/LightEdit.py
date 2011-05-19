@@ -122,8 +122,7 @@ class LightEdit(plugin.Plugin):
 		self._editor = scripts.editor.getEditor()
 		self.engine = self._editor.getEngine()
 		
-		self.imagepool = self.engine.getImagePool()
-		self._animationpool = self.engine.getAnimationPool()
+		self.imagemanager = self.engine.getImageManager()
 		
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
