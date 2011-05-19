@@ -55,12 +55,7 @@ class FileManager(object):
 		self._importbrowser = None
 		self._savebrowser = None
 
-		self.obj_loader = XMLObjectLoader(
-			self.engine.getImagePool(),
-			self.engine.getAnimationPool(),
-			self.engine.getModel(),
-			self.engine.getVFS()
-		)		
+		self.obj_loader = XMLObjectLoader(self.engine)		
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")

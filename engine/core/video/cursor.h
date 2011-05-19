@@ -97,31 +97,36 @@ namespace FIFE {
 		 */
 		virtual void draw();
 
-		/** Sets the current mouse cursor type and possible pool value
-		 * @param ctype cursor type
-		 * @param cursor_id resource handle for image. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
+		/** Sets the current mouse cursor
+		 * @param cursor_id For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
 		 */
-		void set(MouseCursorType ctype, uint32_t cursor_id=0);
+		void set(uint32_t cursor_id=0);
+
+		/** Sets the current mouse cursor type to image
+		 * @param image ImagePtr to a image used for the cursor
+		 */
+		void set(ImagePtr image);
 
 		/** Sets the current mouse cursor type to animation
 		 * @param anim AnimationPtr to a loaded animation used for the cursor
-		 * @param cursor_id resource handle for image. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
 		 */
 		void set(AnimationPtr anim);
 
-		/** Sets the current drag cursor type and pool value
-		 * @param ctype drag cursor type
-		 * @param drag_id resource handle for the drag cursor
-		 * @param drag_offset offset of drag image shown with cursor
+		/** Sets the current drag image cursor
+		 * @param image ImagePtr to a image used for the drag
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
-		void setDrag(MouseCursorType ctype, uint32_t drag_id=0, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
-
+		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
 		/** Sets the current drag animated cursor
 		 * @param anim AnimationPtr to a loaded animation used for the drag
          * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+
+		/** Resets the cursor drag type to CURSOR_NONE
+		 */
+		void resetDrag();
 
 		/** Gets the current mouse cursor type
 		 */
@@ -131,6 +136,10 @@ namespace FIFE {
 		 */
 		uint32_t getId() const { return m_cursor_id; }
 
+		/** Gets the current mouse image
+		 */
+		ImagePtr getImage() { return m_cursor_image; }
+
 		/** Gets the current mouse animation
 		 */
 		AnimationPtr getAnimation() { return m_cursor_animation; }
@@ -139,9 +148,9 @@ namespace FIFE {
 		 */
 		MouseCursorType getDragType() const { return m_drag_type; }
 
-		/** Gets the current mouse cursor handle
+		/** Gets the current mouse drag image
 		 */
-		uint32_t getDragId() const { return m_drag_id; }
+		ImagePtr getDragImage() { return m_cursor_drag_image; }
 
 		/** Gets the current mouse drag animation
 		 */
@@ -177,6 +186,9 @@ namespace FIFE {
 		MouseCursorType m_drag_type;
 
 		SDL_Cursor* m_native_cursor;
+
+		ImagePtr m_cursor_image;
+		ImagePtr m_cursor_drag_image;
 
 		AnimationPtr m_cursor_animation;
 		AnimationPtr m_cursor_drag_animation;
