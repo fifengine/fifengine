@@ -32,7 +32,7 @@ class TestView(unittest.TestCase):
 		self.model = self.engine.getModel()
 		self.map = self.model.createMap("map001")
 		
-		self.grid = self.model.createCellGrid("square")
+		self.grid = self.model.getCellGrid("square")
 		
 		self.imgMgr = self.engine.getImageManager()
 
@@ -52,6 +52,8 @@ class TestView(unittest.TestCase):
 		self.layer = self.map.createLayer("layer001", self.grid)
 
 		self.camcoord = fife.ExactModelCoordinate(2,0)
+		
+		print "Total Image Memory Used: " + str(self.imgMgr.getMemoryUsed())
 		
 	def tearDown(self):
 		self.engine.destroy()

@@ -57,6 +57,7 @@ namespace FIFE {
 		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
 			purge_map(nspace->second);
 		purge(m_pathers);
+		purge(m_created_grids);
 		purge(m_adopted_grids);
 	}
 
@@ -92,11 +93,12 @@ namespace FIFE {
 		m_adopted_grids.push_back(grid);
 	}
 
-	CellGrid* Model::createCellGrid(const std::string& gridtype) {
+	CellGrid* Model::getCellGrid(const std::string& gridtype) {
 		std::vector<CellGrid*>::const_iterator it = m_adopted_grids.begin();
 		for(; it != m_adopted_grids.end(); ++it) {
 			if ((*it)->getType() == gridtype) {
 				CellGrid* newcg = (*it)->clone();
+				m_created_grids.push_back(newcg);
 				return newcg;
 			}
 		}

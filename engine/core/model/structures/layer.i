@@ -62,7 +62,7 @@ namespace FIFE {
 			void setId(const std::string& id);
 
 			CellGrid* getCellGrid() const;
-			void adoptCellGrid(CellGrid* grid);
+			void setCellGrid(CellGrid* grid);
 
 			Map* getMap();
 			bool hasInstances() const;

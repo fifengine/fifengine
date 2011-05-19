@@ -32,7 +32,7 @@ class TestView(unittest.TestCase):
 		self.model = self.engine.getModel()
 		self.map = self.model.createMap("map001")
 		
-		self.grid = self.model.createCellGrid("square")
+		self.grid = self.model.getCellGrid("square")
 		
 		self.imgMgr = self.engine.getImageManager()
 
