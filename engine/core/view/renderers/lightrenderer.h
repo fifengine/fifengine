@@ -64,18 +64,18 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "image"; };
 		RendererNode* getNode() { return &m_anchor; };
-		int32_t getId() { return m_image; };
+		ImagePtr getImage() { return m_image; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
 		void setStencil(uint8_t stencil_ref, float alpha_ref);
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererImageInfo(RendererNode n, int32_t image, int32_t src, int32_t dst);
+		LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo() {};
 	private:
 		RendererNode m_anchor;
-		int32_t m_image;
+		ImagePtr m_image;
 		int32_t m_src;
 		int32_t m_dst;
 		bool m_stencil;
@@ -146,18 +146,18 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "resize"; };
 		RendererNode* getNode() { return &m_anchor; };
-		int32_t getId() { return m_image; };
+		ImagePtr getImage() { return m_image; };
 		int32_t getSrcBlend() { return m_src; };
 		int32_t getDstBlend() { return m_dst; };
 		void setStencil(uint8_t stencil_ref, float alpha_ref);
 		int32_t getStencil();
 		float getAlpha();
 		void removeStencil();
-		LightRendererResizeInfo(RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst);
+		LightRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo() {};
 	private:
 		RendererNode m_anchor;
-		int32_t m_image;
+		ImagePtr m_image;
 		int32_t m_width;
 		int32_t m_height;
 		int32_t m_src;
@@ -188,10 +188,10 @@ namespace FIFE {
 		 */
 		static LightRenderer* getInstance(IRendererContainer* cnt);
 
-		void addImage(const std::string &group, RendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
+		void addImage(const std::string &group, RendererNode n, ImagePtr image, int32_t src=-1, int32_t dst=-1);
 		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
 		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
-		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
+		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();
