@@ -66,7 +66,7 @@ class XMLMapLoader(object):
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
 		self.model = self.engine.getModel()
-		self.imageManager = self.engine.getImageManager()
+		self.image_manager = self.engine.getImageManager()
 		self.anim_pool = None
 		
 		self.obj_loader = XMLObjectLoader(engine)
@@ -351,8 +351,8 @@ class XMLMapLoader(object):
 						continue
 					node['type'] = 'image'
 					image = reverse_root_subfile(self.source, image)
-					img_id = self.pool.addResourceFromFile(image)
-					node['image'] = int(img_id)
+					img = self.image_manager.create(image)
+					node['image'] = img
 				elif type == 'animation':
 					animation = light.get('animation')					
 					if not animation:
@@ -360,9 +360,8 @@ class XMLMapLoader(object):
 						continue
 					node['type'] = 'animation'
 					animation = reverse_root_subfile(self.source, animation)
-					rloc = fife.ResourceLocation(animation)
-					ani_id = self.anim_pool.addResourceFromLocation(rloc)
-					node['animation'] = int(ani_id)					
+					anim = loadXMLAnimation(self.engine, animation)
+					node['animation'] = anim					
 				elif type == 'simple':
 					node['type'] = type
 					radius = light.get('radius')
