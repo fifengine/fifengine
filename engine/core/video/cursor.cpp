@@ -102,6 +102,9 @@ namespace FIFE {
 			SDL_WarpMouse(mx, my);
 		}
 		setNativeCursor(cursor_id);
+
+		m_cursor_image.reset();
+		m_cursor_animation.reset();
 	}
 
 	void Cursor::set(ImagePtr image) {
@@ -117,6 +120,9 @@ namespace FIFE {
 			SDL_PumpEvents();
 			SDL_WarpMouse(mx, my);
 		}
+
+		m_cursor_id = NC_ARROW;
+		m_cursor_animation.reset();
 	}
 
 	void Cursor::set(AnimationPtr anim) {
@@ -133,6 +139,9 @@ namespace FIFE {
 			SDL_WarpMouse(mx, my);
 		}
 		m_animtime = m_timemanager->getTime();
+
+		m_cursor_id = NC_ARROW;
+		m_cursor_image.reset();
 	}
 
 	void Cursor::setDrag(ImagePtr image, int32_t drag_offset_x, int32_t drag_offset_y) {
@@ -142,6 +151,8 @@ namespace FIFE {
 		m_drag_type = CURSOR_IMAGE;
 		m_drag_offset_x = drag_offset_x;
 		m_drag_offset_y = drag_offset_y;
+
+		m_cursor_drag_animation.reset();
 	}
 
 	void Cursor::setDrag(AnimationPtr anim, int32_t drag_offset_x, int32_t drag_offset_y) {
@@ -153,6 +164,8 @@ namespace FIFE {
 		m_drag_offset_y = drag_offset_y;
 
 		m_drag_animtime = m_timemanager->getTime();
+
+		m_cursor_drag_image.reset();
 	}
 
 	void Cursor::resetDrag() {
