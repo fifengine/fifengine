@@ -50,7 +50,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, int32_t image, int32_t src, int32_t dst):
+	LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -63,19 +63,17 @@ namespace FIFE {
 	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
-			ImagePtr img = ImageManager::instance()->get(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-			uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			uint32_t widtht = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+			uint32_t height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
 
 			if(r.intersects(viewport)) {
-				img->render(r);
+				m_image->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
 				if (m_stencil) {
 					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
@@ -166,7 +164,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererResizeInfo::LightRendererResizeInfo(RendererNode anchor, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst):
+	LightRendererResizeInfo::LightRendererResizeInfo(RendererNode anchor, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -182,8 +180,6 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 //prock - 504
-//			Image* img = &imagepool->getImage(m_image);
-			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
@@ -194,7 +190,7 @@ namespace FIFE {
 			r.h = height;
 
 			if(r.intersects(viewport)) {
-				img->render(r);
+				m_image->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
 				if (m_stencil) {
 					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
@@ -312,7 +308,7 @@ namespace FIFE {
 	LightRenderer::~LightRenderer() {
 	}
 	// Add a static lightmap
-	void LightRenderer::addImage(const std::string &group, RendererNode n, int32_t image, int32_t src, int32_t dst) {
+	void LightRenderer::addImage(const std::string &group, RendererNode n, ImagePtr image, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
 		m_groups[group].push_back(info);
 	}
@@ -327,7 +323,7 @@ namespace FIFE {
 		m_groups[group].push_back(info);
 	}
 	// Resize an Image
-	void LightRenderer::resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst) {
+	void LightRenderer::resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
 		m_groups[group].push_back(info);
 	}

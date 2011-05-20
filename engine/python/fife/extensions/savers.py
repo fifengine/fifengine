@@ -38,8 +38,7 @@ class ModelSaver:
 
 		self.engine = engine
 		self.model = self.engine.getModel()
-		self.pool = self.engine.getImagePool()
-		self.anim_pool = self.engine.getAnimationPool()
+		self.image_manager = self.engine.getImageManager()
 
 		if (state):
 			self.state = state
@@ -292,19 +291,19 @@ class ModelSaver:
 							attr_names[(None, 'ystretch')] = 'ystretch'
 
 					elif type == 'image':
-						if info.getId() == -1: continue
-						img = self.pool.getImage(info.getId());
-						name = img.getResourceFile()
+						if info.getImage() == 0: continue
+						img = info.getImage()
+						name = img.getName()
 						attr_vals[(None, 'image')] = str('../' + name)
 						attr_names[(None, 'image')] = 'image'
 
 					elif type == 'animation':
-						if info.getId() == -1: continue
-						ani = self.anim_pool.getAnimation(info.getId());
+						if info.getAnimation() == 0: continue
+						ani = info.getAnimation();
 						count = 0
 						newstr = ''
 						image = ani.getFrame(ani.getActionFrame())
-						fname = image.getResourceFile()
+						fname = image.getName()
 						strings = ([str(s) for s in fname.split('/')])
 						leng = len(strings) -1
 						while count < leng:
