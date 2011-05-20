@@ -93,16 +93,16 @@ class ModelSaver:
 
 	def write_imports(self, map, importList):
 		for importdir in importList:
-			self.write_importdir(root_subfile(map.getResourceFile(), importdir))
+			self.write_importdir(root_subfile(map.getFilename(), importdir))
 
 		imports = []
 		for layer in map.getLayers():
 			for instance in layer.getInstances():
-				file = instance.getObject().getResourceFile()
+				file = instance.getObject().getFilename()
 				if not (file in imports):
 					if not self.have_superdir(file, importList):
 						imports.append(file)	
-						self.write_import(root_subfile(map.getResourceFile(), file))
+						self.write_import(root_subfile(map.getFilename(), file))
 
 	def have_superdir(self, file, importList):
 		'''returns true, if file is in directories given in importList'''
@@ -372,6 +372,6 @@ class ModelSaver:
 		self.file.close()
 
 def saveMapFile(path, engine, map, importList=[]):
-	map.setResourceFile(path)
+	map.setFilename(path)
 	writer = ModelSaver(path, engine)
 	writer.write_map(map, importList)
