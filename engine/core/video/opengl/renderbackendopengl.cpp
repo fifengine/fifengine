@@ -52,7 +52,8 @@ namespace FIFE {
 			stencil_test(false),
 			stencil_ref(0),
 			stencil_op(0),
-			stencil_func(0) {}
+			stencil_func(0),
+			multitextured(false) {}
 
 		GLenum mode;
 		uint16_t size;
@@ -64,9 +65,13 @@ namespace FIFE {
 		uint8_t stencil_ref;
 		GLenum stencil_op;
 		GLenum stencil_func;
+		bool multitextured;
+		GLfloat rgb[3];
 	};
 
-	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
+	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
+		: RenderBackend(colorkey), maskForOverlays(0)
+	{
 		// Get the pixelformat we want.
 //		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
 //				RMASK, GMASK, BMASK ,AMASK);
@@ -92,6 +97,7 @@ namespace FIFE {
 	}
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
+		glDeleteTextures(1, &maskForOverlays);
 	}
 
 
@@ -122,7 +128,7 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 		Image *image = setScreenMode(mode);
 
 		SDL_WM_SetCaption(title.c_str(), 0);
@@ -188,6 +194,8 @@ namespace FIFE {
 
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
+
+		prepareForOverlays();
 
 		glPointSize(1.0);
 		glLineWidth(1.0);
@@ -474,9 +482,11 @@ namespace FIFE {
 			bool light = false;
 			bool stencil = false;
 			bool render = false;
-
+			bool mt = false;
+			
 			//stride
 			const uint32_t stride = sizeof(renderData);
+			const uint32_t stride2T = sizeof(renderData2T);
 			
 			//set pointer
 			glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
@@ -495,6 +505,15 @@ namespace FIFE {
 			int32_t src = 4;
 			// dst blending mode
 			int32_t dst = 5;
+
+			bool multitextured = false;
+			GLfloat color[3] = {0.0f, 0.0f, 0.0f};
+
+			int32_t index2T = 0;
+			uint32_t elements2T = 0;
+
+			int32_t* currentIndex = &index;
+			uint32_t* currentElements = &elements;
 
 			for(std::vector<RenderObject>::iterator ir = m_render_objects.begin(); ir != m_render_objects.end(); ir++) {
 				RenderObject& ro = (*ir);
@@ -527,21 +546,61 @@ namespace FIFE {
 						}
 					}
 				}
+				if(ro.multitextured != multitextured || !memcmp(color, ro.rgb, sizeof(GLfloat)*3)) {
+					mt = true;
+					render = true;
+				}
 
 				// if changes then we render all previously elements
 				if (render) {
 					if (elements > 0) {
 						//render
-						glDrawArrays(mode, index, elements);
-						index += elements;
+						glDrawArrays(mode, *currentIndex, *currentElements);
+						*currentIndex += *currentElements;
 					}
 					// switch mode
 					if (type) {
 						mode = ro.mode;
 						type = false;
 					}
-					// set element to current size
-					elements = ro.size;
+
+					if(mt) {
+						if(ro.multitextured) {
+							glActiveTexture(GL_TEXTURE1);
+							glEnable(GL_TEXTURE_2D);
+							glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, ro.rgb);
+							glActiveTexture(GL_TEXTURE0);
+							
+							// set pointers
+							glVertexPointer(2, GL_FLOAT, stride2T, &m_render_datas2T[0].vertex);
+							glColorPointer(4, GL_UNSIGNED_BYTE, stride2T, &m_render_datas2T[0].color);
+
+							glClientActiveTexture(GL_TEXTURE1);
+							glTexCoordPointer(2, GL_FLOAT, stride2T, &m_render_datas2T[0].texel2);
+							glClientActiveTexture(GL_TEXTURE0);
+							glTexCoordPointer(2, GL_FLOAT, stride2T, &m_render_datas2T[0].texel);
+
+							memcpy(color, ro.rgb, sizeof(GLfloat)*3);
+							multitextured = true;
+							currentElements = &elements2T;
+							currentIndex = &index2T;
+
+						} else {
+							glActiveTexture(GL_TEXTURE1);
+							glDisable(GL_TEXTURE_2D);
+							glActiveTexture(GL_TEXTURE0);
+
+							// set pointers
+							glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
+							glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas[0].texel);
+							glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas[0].color);
+
+							multitextured = false;
+							currentIndex = &index;
+							currentElements = &elements;
+						}
+						mt = false;
+					}
 
 					// switch texturing
 					if (texture) {
@@ -554,9 +613,30 @@ namespace FIFE {
 							glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 							glDisable(GL_TEXTURE_2D);
 							texture_id = 0;
+
+							// TODO: This should cover the case when previous RenderObject was multitextured 
+							// and current one isn't even textured.
+							// Not sure if this is necessary - needs more testing
+							if(multitextured) {
+								glActiveTexture(GL_TEXTURE1);
+								glDisable(GL_TEXTURE_2D);
+								glActiveTexture(GL_TEXTURE0);
+
+								// set pointers
+								glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
+								glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas[0].texel);
+								glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas[0].color);
+
+								multitextured = false;
+								currentIndex = &index;
+								currentElements = &elements;
+							}
 						}
 						texture = false;
 					}
+
+					// set element to current size
+					*currentElements = ro.size;
 
 					// if lighting is enabled we have to consider a few more values
 					if (m_lightmodel != 0) {
@@ -591,11 +671,11 @@ namespace FIFE {
 					render = false;
 				} else {
 					// else add the element
-					elements += ro.size;
+					*currentElements += ro.size;
 				}
 			}
 			// render
-			glDrawArrays(mode, index, elements);
+			glDrawArrays(mode, *currentIndex, *currentElements);
 
 			//reset all states
 			if (texture_id != 0) {
@@ -608,9 +688,15 @@ namespace FIFE {
 				disableStencilTest();
 				disableAlphaTest();
 			}
+			if(multitextured) {
+				glActiveTexture(GL_TEXTURE1);
+				glDisable(GL_TEXTURE_2D);
+				glActiveTexture(GL_TEXTURE0);
+			}
 
 			m_render_objects.clear();
 			m_render_datas.clear();
+			m_render_datas2T.clear();
 		}
 	}
 
@@ -830,5 +916,98 @@ namespace FIFE {
 
 		RenderObject ro(GL_QUADS, 4, id);
 		m_render_objects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha, uint8_t const* rgb) {
+		//addImageToArray(id, rec, rt, ct, alpha);
+		renderData2T rd;
+		rd.vertex[0] = static_cast<float>(rec.x);
+		rd.vertex[1] = static_cast<float>(rec.y);
+		rd.texel[0] = 0.0;
+		rd.texel[1] = 0.0;
+		rd.texel2[0] = 0.0;
+		rd.texel2[1] = 0.0;
+		rd.color[0] = 255;
+		rd.color[1] = 255;
+		rd.color[2] = 255;
+		rd.color[3] = alpha;
+		m_render_datas2T.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rec.x);
+		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
+		rd.texel[1] = rt;
+		rd.texel2[1] = 1.0;
+		m_render_datas2T.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
+		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
+		rd.texel[0] = ct;
+		rd.texel2[0] = 1.0;
+		m_render_datas2T.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
+		rd.vertex[1] = static_cast<float>(rec.y);
+		rd.texel[1] = 0.0;
+		rd.texel2[1] = 0.0;
+		m_render_datas2T.push_back(rd);
+
+		RenderObject ro(GL_QUADS, 4, id);
+
+		ro.multitextured = true;
+		ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
+		ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
+		ro.rgb[2] = static_cast<float>(rgb[2] / 255.0f);
+		m_render_objects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::prepareForOverlays() {
+		glActiveTexture(GL_TEXTURE1);
+		glEnable(GL_TEXTURE_2D);
+
+		if(maskForOverlays == 0) {
+			// Constant texture - can be constant across every tilesets
+			glGenTextures(1, &maskForOverlays);
+
+			uint8_t dummydata[3] = {127, 127, 127};
+			glBindTexture(GL_TEXTURE_2D, maskForOverlays);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0,
+				GL_RGB, GL_UNSIGNED_BYTE, dummydata);
+		} else {
+			glBindTexture(GL_TEXTURE_2D, maskForOverlays);
+		}
+
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE); 
+
+		// Arg0
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE0);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE0);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);	
+
+		// The alpha component is taken only from 0th tex unit which is 
+		// Arg0 in our case, therefore we doesn't need to set operands
+		// and sources for the rest of arguments
+
+		// Arg1
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+
+		// Arg2
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_TEXTURE1);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_COLOR);
+
+		// Return to normal sampling mode
+		glActiveTexture(GL_TEXTURE1);
+		glDisable(GL_TEXTURE_2D);
+		glActiveTexture(GL_TEXTURE0);
+
+		// For now it's unneecessary - Only needed if we intend to use the 2nd texture unit in different case
+		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 }

@@ -128,7 +128,7 @@ namespace FIFE {
 		/** Normalizes the point
 		 */
 		void normalize() {
-			T invLength = 1.0/length();
+			T invLength = static_cast<T>(1.0/length());
 
 			//TODO: get rid of this static cast
 			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
@@ -278,7 +278,7 @@ namespace FIFE {
 		/** Normalizes the point
 		 */
 		void normalize() {
-			T invLength = 1.0/length();
+			T invLength = static_cast<T>(1.0/length());
 
 			//TODO: get rid of this static cast
 			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {

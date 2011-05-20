@@ -27,7 +27,7 @@
 // Platform specific includes
 // Linux
 #if defined( __unix__ )
-#include <GL/gl.h>
+#include "GLee.h"
 #include <GL/glu.h>
 #endif
 
@@ -35,22 +35,20 @@
 #if defined( WIN32 )
 // MSVC
 #if defined( _MSC_VER )
-#include <windows.h>
-#include <GL/gl.h>
+#include "GLee.h"
 #include <GL/glu.h>
-#undef DELETE
 // MinGW
 #else
-#include <GL/gl.h>
+#include "GLee.h"
 #include <GL/glu.h>
 #endif
+#undef DELETE
 #endif
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include <OpenGL/gl.h>
+#include "GLee.h"
 #include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
 #endif
 
 // 3rd party library includes

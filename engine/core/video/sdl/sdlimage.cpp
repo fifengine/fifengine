@@ -331,7 +331,7 @@ namespace FIFE {
 		return ABS(a - b) <= 0.00001;
 	}
 
-	void SDLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha) {
+	void SDLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* /*unused rgb*/) {
 		if (alpha == 0) {
 			return;
 		}

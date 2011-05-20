@@ -76,6 +76,7 @@ namespace FIFE {
 
 		void renderVertexArrays();
 		void addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha);
+		void addImageToArray2T(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha, uint8_t const* rgb);
 		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 
 	private:
@@ -89,12 +90,23 @@ namespace FIFE {
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
 
+		GLuint maskForOverlays;
+		void prepareForOverlays();
+
+		struct renderData2T {
+			GLfloat vertex[2];
+			GLfloat texel[2];
+			GLfloat texel2[2];
+			GLubyte color[4];
+		};
+
 		struct renderData {
 			GLfloat vertex[2];
 			GLfloat texel[2];
 			GLubyte color[4];
 		};
 		std::vector<renderData> m_render_datas;
+		std::vector<renderData2T> m_render_datas2T;
 		std::vector<RenderObject> m_render_objects;
 
 		uint32_t m_lightmodel;
