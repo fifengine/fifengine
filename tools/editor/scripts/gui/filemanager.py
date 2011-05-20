@@ -202,7 +202,7 @@ class FileManager(object):
 			return
 		
 		try:
-			curname = mapview.getMap().getResourceLocation().getFilename()
+			curname = mapview.getMap().getFilename()
 		except RuntimeError:
 			self.showSaveDialog()
 			return
