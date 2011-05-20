@@ -21,6 +21,9 @@
 
 // Standard C++ library includes
 
+// This needs to be here, before guichan includes gl.h
+#include "video/opengl/fife_opengl.h"
+
 // 3rd party library includes
 #include <guichan/opengl.hpp>
 #include <guichan/font.hpp>
@@ -36,7 +39,6 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
-#include "video/opengl/fife_opengl.h"
 
 #include "opengl_gui_graphics.h"
 

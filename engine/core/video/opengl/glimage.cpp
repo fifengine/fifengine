@@ -136,7 +136,7 @@ namespace FIFE {
 		m_row_tex_coord = 0;
 	}
 
-	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha) {
+	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* rgb) {
 		if (!m_textureids) {
 			generateGLTexture();
 		}
@@ -161,7 +161,11 @@ namespace FIFE {
 		//uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
 
 		Rect rec = rect;
-		RenderBackend::instance()->addImageToArray(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha);
+		if(!rgb) {
+			RenderBackend::instance()->addImageToArray(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha);
+		} else {
+			RenderBackend::instance()->addImageToArray2T(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha, rgb);
+		}
 	}
 
 	void GLImage::generateGLTexture() {

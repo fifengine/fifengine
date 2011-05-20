@@ -189,13 +189,22 @@ namespace FIFE {
 						vc.image->render(vc.dimensions, vc.transparency);
 						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, REPLACE, ALWAYS);
 						continue;
+					} else {
+						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+						continue;
 					}
-					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 				}
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+
+					//bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+					uint8_t rgb[3] = {
+						coloring_it->second.r,
+						coloring_it->second.g,
+						coloring_it->second.b
+					};
+					vc.image->render(vc.dimensions, vc.transparency, rgb);
 					m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
 					continue; // Skip normal rendering after drawing overlay
 				}
