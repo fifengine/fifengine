@@ -27,6 +27,7 @@ from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets as widgets
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 from fife.extensions.fife_timer import Timer
 
@@ -100,8 +101,8 @@ class LightEdit(plugin.Plugin):
 		self._light["xstretch"] = 1
 		self._light["ystretch"] = 1
 
-		self._light["image"] = ""
-		self._light["animation"] = ""
+		self._light["image"] = None
+		self._light["animation"] = None
 
 		self._simple_l = False
 		self._image_l = False
@@ -425,26 +426,26 @@ class LightEdit(plugin.Plugin):
 						self._light["ystretch"] = info.getYStretch()
 						self.toggle_simple_gui()
 					elif str(info.getName()) == "image":
-						if info.getId() == -1: continue
-						img = self.imagepool.getImage(info.getId());
-						name = img.getResourceFile()
+						if !info.getImage(): continue
+						img = info.getImage()
+						name = img.getName()
 						self._widgets["image"].text = unicode(str(name))
-						self._light["image"] = info.getId()
+						self._light["image"] = image
 						self.toggle_image_gui()
 					elif str(info.getName()) == "animation":
-						if info.getId() == -1: continue
-						ani = self._animationpool.getAnimation(info.getId());
+						if !info.getAnimation(): continue
+						ani = info.getAnimation();
 						count = 0
 						newstr = ''
-						image = ani.getFrame(ani.getActionFrame())
-						fname = image.getResourceFile()
+						image = self.engine.getImageManager().get(ani.getFrame(ani.getActionFrame()))
+						fname = image.getName()
 						strings = ([str(s) for s in fname.split('/')])
 						leng = len(strings) -1
 						while count < leng:
 							newstr = str(newstr + strings[count] + '/')
 							count += 1
 						self._widgets["animation"].text = unicode(str(newstr + 'animation.xml'))
-						self._light["animation"] = info.getId()
+						self._light["animation"] = ani
 						self.toggle_animation_gui()
 
 	def change_image(self):
@@ -493,8 +494,8 @@ class LightEdit(plugin.Plugin):
 		self._light["xstretch"] = 1
 		self._light["ystretch"] = 1
 		
-		self._light["image"] = ""
-		self._light["animation"] = ""
+		self._light["image"] = None
+		self._light["animation"] = None
 		
 		self.lightrenderer.removeAll(str(self._widgets["group"]._getText()))
 		self._widgets["group"].text = unicode(str(""))
@@ -569,8 +570,8 @@ class LightEdit(plugin.Plugin):
 
 		image = str(self._widgets["image"]._getText())
 		if image == "": return
-		img_id = self.imagepool.addResourceFromFile(image)
-		self._light["image"] = int(img_id)
+		img = self.engine.getImageManager().load(image)
+		self._light["image"] = img
 		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addImage(str(self._widgets["group"]._getText()),
 											node,
@@ -584,9 +585,9 @@ class LightEdit(plugin.Plugin):
 
 		animation = str(self._widgets["animation"]._getText())
 		if animation == "": return
-		rloc = fife.ResourceLocation(animation)
-		ani_id = self._animationpool.addResourceFromLocation(rloc)
-		self._light["animation"] = int(ani_id)
+		rloc = animation
+		ani = loadXMLAnimation(self.engine, rloc)
+		self._light["animation"] = ani
 		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addAnimation(str(self._widgets["group"]._getText()),
 											node,
