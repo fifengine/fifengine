@@ -71,7 +71,6 @@ class ObjectEdit(plugin.Plugin):
 		self._enabled = False
 		
 		self.imageManager = None
-		self._animationpool = None
 		
 		self.guidata = {}
 		self.objectdata = {}
@@ -309,7 +308,7 @@ class ObjectEdit(plugin.Plugin):
 					break
 											
 			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
-			self.container.findChild(name="animTest").image = image.getResourceFile()
+			self.container.findChild(name="animTest").image = self.engine.getImageManager().get(image).getName()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
 		
@@ -512,7 +511,7 @@ class ObjectEdit(plugin.Plugin):
 		if self._animation:
 			return
 		
-		file = self._object.getResourceFile()	
+		file = self._object.getName()	
 		self.tree = ET.parse(file)
 		
 		img_lst = self.tree.findall("image")
@@ -582,8 +581,8 @@ class ObjectEdit(plugin.Plugin):
 		@return	animation	current selected animation
 		"""
 		if action:
-			animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(self._fixed_rotation)
-			animation = self._animationpool.getAnimation(animation_id)		
+			animation = action.get2dGfxVisual().getAnimationByAngle(self._fixed_rotation)
+			animation_id = animation.getFifeId()
 
 		action_ids = []
 		actions = []
@@ -671,15 +670,15 @@ class ObjectEdit(plugin.Plugin):
 					self._gui_anim_actions_dropdown._setSelected(0)					
 				
 				if timestamp is None and frame is not None:
-					self._image = animation.getFrame(frame)	
+					self._image = self.imageManager.get(animation.getFrame(frame))	
 				elif timestamp is not None and frame is None:
-					self._image = animation.getFrameByTimestamp(timestamp)
+					self._image = self.imageManager.get(animation.getFrameByTimestamp(timestamp))
 				else:
-					self._image = animation.getFrameByTimestamp(0)
+					self._image = self.imageManager.get(animation.getFrameByTimestamp(0))
 		elif index is not -1:
 			# object is a static image
 			self._animation = False
-			self._image = self.imageManager.getImage(index)
+			self._image = self.imageManager.get(index)
 
 		if not self._animation:
 			rotations = visual.getStaticImageAngles()
