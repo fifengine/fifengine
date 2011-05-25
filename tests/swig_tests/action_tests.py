@@ -23,48 +23,48 @@
 # ####################################################################
 
 from swig_test_utils import *
-import pythonize
-from serializers.xmlanimation import XMLAnimationLoader
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
-		template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
+		template = '../data/wolf_walk/wolf_walk_%s.xml'
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 
 		self.engine = getEngine()
-		pool = self.engine.getAnimationPool()
-		self.animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
-		pool.addResourceLoader(self.animationloader)
 		
 		_map = self.engine.getModel().createMap("map001")
 		
-		self.grid = fife.SquareGrid(True)
+		self.grid = fife.SquareGrid()
+		self.grid.thisown = 0
+		
 		self.layer = _map.createLayer("Layer001", self.grid)
 		
 		self.target = fife.Location(self.layer)
 	
 		self.obj = fife.Object("object001", 'plaa')
 		fife.ObjectVisual.create(self.obj)
-#		self.pather = fife.LinearPather()
-                self.pather = fife.RoutePather()
+		self.pather = fife.RoutePather()
+				
 		self.obj.setPather(self.pather)
 		self.action = self.obj.createAction('walk')
 		fife.ActionVisual.create(self.action)
-		addResource = self.engine.animationPool.addResourceFromFile
+
 		for index, direction in enumerate(dirnames):
 			degree = 45 * index
-			self.action.get2dGfxVisual().addAnimation(degree, addResource(files[index]))
+			self.action.get2dGfxVisual().addAnimation(degree, loadXMLAnimation(self.engine, files[index]))
 
 		self.ground = fife.Object("ground", 'plaa')
-		imgid = self.engine.imagePool.addResourceFromFile('tests/data/earth_1.png')
+		image = self.engine.getImageManager().load('../data/earth_1.png')
 		fife.ObjectVisual.create(self.ground)
-		self.ground.get2dGfxVisual().addStaticImage(0, imgid)		
-		self.ground.img = self.engine.getImagePool().getImage(imgid)
+		self.ground.get2dGfxVisual().addStaticImage(0, image.getHandle())
+		self.ground.img = self.engine.getImageManager().get(image.getHandle())
+		
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
 				inst = self.layer.createInstance(self.ground, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(inst)
+				
 		self.inst = self.layer.createInstance(self.obj, fife.ModelCoordinate(-2,-2))
 		fife.InstanceVisual.create(self.inst)
 			
@@ -72,9 +72,7 @@ class ActionTests(unittest.TestCase):
 		self.engine.destroy()
 
 	def _testWalkingAction(self):
-		print 'test1'
-		getAnimation = self.engine.animationPool.getAnimation
-		print 'test2'
+
 		self.inst.move('walk', self.target, 0.05)
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend
@@ -86,7 +84,7 @@ class ActionTests(unittest.TestCase):
 			self.inst.update()
 			action = self.inst.currentAction
 			angle = 0 #self.inst.orientation
-			animation = getAnimation( action.getAnimationIndexByAngle(angle) )
+			animation = action.getAnimationByAngle(angle)
 			timestamp = self.inst.actionRuntime % animation.duration
 			image = animation.getFrameByTimestamp( timestamp )
 			if image:
