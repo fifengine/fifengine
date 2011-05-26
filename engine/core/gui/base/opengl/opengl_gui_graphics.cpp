@@ -39,6 +39,7 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
+#include "video/opengl/renderbackendopengl.h"
 
 #include "opengl_gui_graphics.h"
 
@@ -61,7 +62,6 @@ namespace FIFE {
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
-		GLEnable flag(GL_TEXTURE_2D);
 //prock - 504
 		fifeimg->render(rect, mTarget);
 		RenderBackend::instance()->renderVertexArrays();
@@ -74,7 +74,7 @@ namespace FIFE {
 			throw GuiException("OpenGLGuiGraphics::drawText() - No font set!");
 		}
 
-		GLEnable flag(GL_TEXTURE_2D);
+		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->enableTextures(0);
 		switch (alignment)
 		{
 			case LEFT:
@@ -93,17 +93,17 @@ namespace FIFE {
 	}
 
 	void OpenGLGuiGraphics::drawPoint(int32_t x, int32_t y) {
-		GLDisable flag(GL_TEXTURE_2D);
+		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
 		gcn::OpenGLGraphics::drawPoint(x, y);
 	}
 
 	void OpenGLGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
-		GLDisable flag(GL_TEXTURE_2D);
+		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
 		gcn::OpenGLGraphics::drawLine(x1, y1, x2, y2);
 	}
 
 	void OpenGLGuiGraphics::drawRectangle(const gcn::Rectangle& rectangle) {
-		GLDisable flag(GL_TEXTURE_2D);
+		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
 		gcn::OpenGLGraphics::drawRectangle(rectangle);
 	}
 }
