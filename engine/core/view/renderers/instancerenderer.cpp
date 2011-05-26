@@ -66,10 +66,10 @@ namespace FIFE {
 	InstanceRenderer::ColoringInfo::ColoringInfo():
 		r(0),
 		g(0),
-		b(0),
-		dirty(false),
-		overlay(NULL),
-		curimg(NULL) {
+		b(0) {
+		//dirty(false),
+		//overlay(NULL),
+		//curimg(NULL)
 	}
 
 	InstanceRenderer::AreaInfo::AreaInfo():
@@ -87,7 +87,7 @@ namespace FIFE {
 	}
 
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
-		delete overlay;
+		//delete overlay;
 	}
 
 	InstanceRenderer::AreaInfo::~AreaInfo() {
@@ -142,6 +142,9 @@ namespace FIFE {
 				}
 			}
 		}
+		
+		typedef std::pair<RenderItem*, InstanceToColoring_t::iterator> ColoredInfo;
+		static std::vector<ColoredInfo> coloredList;
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
@@ -197,16 +200,8 @@ namespace FIFE {
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-
-					//bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-					uint8_t rgb[3] = {
-						coloring_it->second.r,
-						coloring_it->second.g,
-						coloring_it->second.b
-					};
-					vc.image->render(vc.dimensions, vc.transparency, rgb);
-					m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
-					continue; // Skip normal rendering after drawing overlay
+					// defer colored overlays until whole layer is rendered
+					coloredList.push_back(std::make_pair(*instance_it, coloring_it));
 				}
 			}
 			if(lm != 0) {
@@ -232,6 +227,19 @@ namespace FIFE {
 			vc.image->render(vc.dimensions, vc.transparency);
 
 		}
+
+		// render deferred overlays
+		for(std::vector<ColoredInfo>::iterator it = coloredList.begin();
+			it != coloredList.end(); ++it) {
+				uint8_t rgb[3] = {
+					it->second->second.r,
+					it->second->second.g,
+					it->second->second.b };
+				it->first->image->render(it->first->dimensions, it->first->transparency, rgb);
+		}
+
+		m_renderbackend->changeRenderInfos(coloredList.size(), 4, 5, true, false, 0, KEEP, ALWAYS);
+		coloredList.clear();
 	}
 
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
@@ -306,49 +314,6 @@ namespace FIFE {
 		return info.outline;
 	}
 
-	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
-		if (!info.dirty && info.curimg == vc.image.get()) {
-			// optimization for coloring overlay that has not changed
-			return info.overlay;
-		}
-		else {
-			info.curimg = vc.image.get();
-		}
-
-		if (info.overlay) {
-			delete info.overlay; // delete old mask
-			info.overlay = NULL;
-		}
-
-		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
-
-		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
-		SDLImage* img = new SDLImage(overlay_surface);
-
-		uint8_t r, g, b, a = 0;
-
-		for (uint32_t x = 0; x < img->getWidth(); x ++) {
-			for (uint32_t y = 0; y < img->getHeight(); y ++) {
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if (a > 0) {
-					img->putPixel(x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1);
-				}
-			}
-		}
-
-		// In case of OpenGL backend, SDLImage needs to be converted
-		info.overlay = m_renderbackend->createImage(img->detachSurface());
-		delete img;
-
-		if (info.overlay) {
-			// mark overlay coloring as not dirty since we created it here
-			info.dirty = false;
-		}
-
-		return info.overlay;
-	}
-
 	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width) {
 		OutlineInfo newinfo;
 		newinfo.r = r;
@@ -385,7 +350,6 @@ namespace FIFE {
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
-		newinfo.dirty = true;
 
 		// attempts to insert the element into the coloring map
 		// will return false in the second value of the pair if the instance already exists
@@ -400,11 +364,9 @@ namespace FIFE {
 
 			if (info.r != r || info.g != g || info.b != b) {
 				// only update the coloring info if its changed since the last call
-				// flag the coloring info as dirty so it will get processed during rendering
 				info.r = r;
 				info.b = b;
 				info.g = g;
-				info.dirty = true;
 			}
 		}
 	}

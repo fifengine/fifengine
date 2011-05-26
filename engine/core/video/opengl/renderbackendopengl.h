@@ -79,6 +79,10 @@ namespace FIFE {
 		void addImageToArray2T(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha, uint8_t const* rgb);
 		void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 
+		void enableTextures(uint32_t texUnit);
+		void disableTextures(uint32_t texUnit);
+		void bindTexture(uint32_t texUnit, GLuint texId);
+
 	private:
 		void enableLighting();
 		void disableLighting();
@@ -89,6 +93,12 @@ namespace FIFE {
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
+		void setEnvironmentalColor(const GLfloat* rgb);
+		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
+		void setColorPointer(GLsizei stride, const GLvoid* ptr);
+		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
+		void enableScissorTest();
+		void disableScissorTest();
 
 		GLuint maskForOverlays;
 		void prepareForOverlays();
@@ -109,20 +119,41 @@ namespace FIFE {
 		std::vector<renderData2T> m_render_datas2T;
 		std::vector<RenderObject> m_render_objects;
 
-		uint32_t m_lightmodel;
-		float m_lred;
-		float m_lgreen;
-		float m_lblue;
-		float m_lalpha;
-		bool m_light_enabled;
-		bool m_stencil_enabled;
-		bool m_alpha_enabled;
-		uint8_t m_sten_ref;
-		GLint m_sten_buf;
-		GLenum m_sten_op;
-		GLenum m_sten_func;
-		GLenum m_blend_src;
-		GLenum m_blend_dst;
+		struct currentState
+		{
+			// Textures
+			bool tex_enabled[2];
+			GLuint texture[2];
+			uint32_t active_tex;
+			uint32_t active_client_tex;
+
+			// Pointers
+			const void* vertex_pointer;
+			const void* tex_pointer[2];
+			const void* color_pointer;
+
+			// Stencil
+			bool sten_enabled;
+			uint8_t sten_ref;
+			GLint sten_buf;
+			GLenum sten_op;
+			GLenum sten_func;
+
+			// Light
+			uint32_t lightmodel;
+			float lred;
+			float lgreen;
+			float lblue;
+			float lalpha;
+			bool light_enabled;
+
+			// The rest
+			GLfloat env_color[3];
+			GLenum blend_src;
+			GLenum blend_dst;
+			bool alpha_enabled;
+			bool scissor_test;
+		} m_state;
 	};
 
 }

@@ -139,9 +139,6 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
-			bool dirty;
-			Image* overlay;
-			Image* curimg;
 			ColoringInfo();
 			~ColoringInfo();
 		};

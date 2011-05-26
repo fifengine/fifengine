@@ -24,10 +24,12 @@
 
 // Standard C++ library includes
 
+// 3rd party library includes
+#include "ext/GLee.h"
+
 // Platform specific includes
 // Linux
 #if defined( __unix__ )
-#include "GLee.h"
 #include <GL/glu.h>
 #endif
 
@@ -35,11 +37,9 @@
 #if defined( WIN32 )
 // MSVC
 #if defined( _MSC_VER )
-#include "GLee.h"
 #include <GL/glu.h>
 // MinGW
 #else
-#include "GLee.h"
 #include <GL/glu.h>
 #endif
 #undef DELETE
@@ -47,7 +47,6 @@
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include "GLee.h"
 #include <OpenGL/glu.h>
 #endif
 
@@ -59,39 +58,6 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
-
-	struct GLEnable {
-		GLenum m_flag;
-		GLboolean m_oldval;
-		GLEnable(GLenum flag) : m_flag(flag) {
-			glGetBooleanv(flag, &m_oldval);
-			if (!m_oldval) {
-				glEnable(flag);
-			}
-		}
-		~GLEnable() {
-			if (!m_oldval) {
-				glDisable(m_flag);
-			}
-		}
-	};
-
-	struct GLDisable {
-		GLenum m_flag;
-		GLboolean m_oldval;
-		GLDisable(GLenum flag) : m_flag(flag) {
-			glGetBooleanv(flag, &m_oldval);
-			if (m_oldval) {
-				glDisable(flag);
-			}
-		}
-		~GLDisable() {
-			if (m_oldval) {
-				glEnable(m_flag);
-			}
-		}
-	};
-
 
 } //FIFE
 
