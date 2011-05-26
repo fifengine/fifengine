@@ -76,14 +76,11 @@ def getRequiredLibs(opengl):
 			('SDL_image', 'SDL_image.h'),
 			('guichan', 'guichan.hpp'),
 			('guichan_sdl', ''),
+			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
 			('png', 'png.h'),
 			('Xcursor', '')]
-
-	# fedora hack
-	if 'fedora' in platform.platform():	
-		libs.insert(0,('boost_system', ''))
 
 	if (opengl):
 		libs.append(('guichan_opengl', ''))
