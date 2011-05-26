@@ -95,9 +95,9 @@ namespace FIFE {
 		m_manager->releaseEmitter(m_emitterid);
 	}
 
-	void SoundEmitter::setSoundClip(uint32_t sound_id) {
-		m_soundclipid = sound_id;
-		m_soundclip = SoundClipManager::instance()->get(m_soundclipid);
+	void SoundEmitter::setSoundClip(SoundClipPtr soundclip) {
+		m_soundclipid = soundclip->getHandle();
+		m_soundclip = soundclip;
 
 		attachSoundClip();
 	}

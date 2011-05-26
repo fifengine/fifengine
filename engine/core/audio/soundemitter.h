@@ -75,9 +75,14 @@ namespace FIFE {
 		}
 
 		/** Sets the sound clip to be used by this emitter.
-		 * @param sound_id SoundClipPool id of the sound to be used.
+		 * @param SoundClipPtr of the sound to be used.
 		 */
-		void setSoundClip(uint32_t sound_id);
+		void setSoundClip(SoundClipPtr soundclip);
+
+		/** Get the current sound clip used by this emitter.
+		 *  @return A SoundClipPtr of the sound clip.
+		 */
+		SoundClipPtr getSoundClip() { return m_soundclip; };
 
 		/** Sets the callback to use when the STREAM has finished being played.
 		 *  NOTE: This only works with streaming audio.

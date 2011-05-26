@@ -342,11 +342,11 @@ namespace FIFE {
 		 */
 		virtual SoundClipPtr get(ResourceHandle handle);
 
-		/** Gets an Image handle by name
+		/** Gets a SoundClip handle by name
 		 *
-		 * Returns the Image handle associated with the name
+		 * Returns the SoundClip handle associated with the name
 		 *
-		 * @param name The name of the Image
+		 * @param name The name of the SoundClip
 		 * @return 0 if the resource name is invalid
 		 *
 		 */
