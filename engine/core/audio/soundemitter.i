@@ -42,7 +42,8 @@ namespace FIFE {
 
 		uint32_t getId() const;
 
-		void setSoundClip(uint32_t sound_id);
+		void setSoundClip(SoundClipPtr soundclip);
+		SoundClipPtr getSoundClip();
 		void reset(bool defaultall = false);
 		void release();
 
