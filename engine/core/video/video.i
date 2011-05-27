@@ -162,6 +162,13 @@ namespace FIFE {
 	typedef SharedPtr<Animation> AnimationPtr;	
 	%template(SharedAnimationPointer) SharedPtr<Animation>;
 
+	%extend Animation {
+		static SharedPtr<Animation> createAnimation() {
+			FIFE::SharedPtr<FIFE::Animation> ani(new FIFE::Animation());
+			return ani;
+		}
+	}
+
 	class RenderBackend: public IImage {
 	public:
 		virtual ~RenderBackend();

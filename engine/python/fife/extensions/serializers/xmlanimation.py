@@ -33,10 +33,7 @@ def loadXMLAnimation(engine, filename):
 	tree = ET.parse(f)
 	node = tree.getroot()
 
-	animation = fife.SharedAnimationPointer()
-	anim = fife.Animation()
-	anim.thisown = 0
-	animation.reset(anim)
+	animation = fife.Animation.createAnimation()
 	
 	common_frame_delay = int(node.get('delay', 0))
 	x_offset = int(node.get('x_offset', 0))
