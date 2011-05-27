@@ -511,7 +511,7 @@ class ObjectEdit(plugin.Plugin):
 		if self._animation:
 			return
 		
-		file = self._object.getName()	
+		file = self._object.getFilename()	
 		self.tree = ET.parse(file)
 		
 		img_lst = self.tree.findall("image")
