@@ -40,30 +40,40 @@ namespace FIFE {
 
 	Image::Image(IResourceLoader* loader):
 		IResource(createUniqueImageName(), loader),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0){
 	}
 
 	Image::Image(const std::string& name, IResourceLoader* loader):
 		IResource(name, loader),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0){
 	}
 
 	Image::Image(SDL_Surface* surface):
 		IResource(createUniqueImageName()),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0){
 		reset(surface);
 	}
 
 	Image::Image(const std::string& name, SDL_Surface* surface):
 		IResource(name),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0){
 		reset(surface);
 	}
 
-	//todo make a private function to handle this
+	//@todo make a private function to handle this
 	Image::Image(const uint8_t* data, uint32_t width, uint32_t height):
 		IResource(createUniqueImageName()),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0){
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
@@ -77,7 +87,9 @@ namespace FIFE {
 
 	Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
 		IResource(name),
-		m_surface(NULL) {
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
