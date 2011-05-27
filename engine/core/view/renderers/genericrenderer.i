@@ -59,7 +59,7 @@ namespace FIFE {
 	};
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererImageInfo(RendererNode n, int32_t image);
+		GenericRendererImageInfo(RendererNode n, ImagePtr image);
 		virtual ~GenericRendererImageInfo() {};
 	};
 	class GenericRendererAnimationInfo : public GenericRendererElementInfo {
@@ -74,7 +74,7 @@ namespace FIFE {
 	};
 	class GenericRendererResizeInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererResizeInfo(RendererNode n, int32_t image, int32_t width, int32_t height);
+		GenericRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height);
 		virtual ~GenericRendererResizeInfo() {};
 	};
 	class GenericRenderer: public RendererBase {
@@ -89,9 +89,9 @@ namespace FIFE {
 		void addQuad(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addVertex(const std::string &group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text);
-		void addImage(const std::string &group, RendererNode n, int32_t image);
+		void addImage(const std::string &group, RendererNode n, ImagePtr image);
 		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation);
-		void resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height);
+		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();
 	};
