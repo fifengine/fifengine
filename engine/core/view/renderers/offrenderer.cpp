@@ -109,25 +109,21 @@ namespace FIFE {
 		renderbackend->drawVertex(m_center, m_size, m_red, m_green, m_blue, m_alpha);
 	}
 
-	OffRendererImageInfo::OffRendererImageInfo(Point anchor, int32_t image):
+	OffRendererImageInfo::OffRendererImageInfo(Point anchor, ImagePtr image):
 		OffRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image) {
 	}
 	void OffRendererImageInfo::render(RenderBackend* renderbackend) {
-//prock - 504
-		ImagePtr resptr = ImageManager::instance()->get(m_image);
-		Image* img = dynamic_cast<Image*>(resptr.get());
-
 		Rect r;
-		uint16_t widtht = img->getWidth();
-		uint16_t height = img->getHeight();
+		uint16_t widtht = m_image->getWidth();
+		uint16_t height = m_image->getHeight();
 		r.x = m_anchor.x-widtht/2;
 		r.y = m_anchor.y-height/2;
 		r.w = widtht;
 		r.h = height;
 
-		img->render(r);
+		m_image->render(r);
 	}
 
 	OffRendererAnimationInfo::OffRendererAnimationInfo(Point anchor, AnimationPtr animation):
@@ -172,7 +168,7 @@ namespace FIFE {
 		img->render(r);
 	}
 
-	OffRendererResizeInfo::OffRendererResizeInfo(Point anchor, int32_t image, int32_t width, int32_t height):
+	OffRendererResizeInfo::OffRendererResizeInfo(Point anchor, ImagePtr image, int32_t width, int32_t height):
 		OffRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -180,8 +176,6 @@ namespace FIFE {
 		m_height(height){
 	}
 	void OffRendererResizeInfo::render(RenderBackend* renderbackend) {
-		ImagePtr imgptr = ImageManager::instance()->get(m_image);
-
 		Rect r;
 		uint16_t widtht = m_width;
 		uint16_t height = m_height;
@@ -190,7 +184,7 @@ namespace FIFE {
 		r.w = widtht;
 		r.h = height;
 
-		imgptr->render(r);
+		m_image->render(r);
 	}
 
 	OffRenderer::OffRenderer(RenderBackend* renderbackend):
@@ -244,7 +238,7 @@ namespace FIFE {
 		OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void OffRenderer::addImage(const std::string &group, Point n, int32_t image) {
+	void OffRenderer::addImage(const std::string &group, Point n, ImagePtr image) {
 		OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
@@ -252,7 +246,7 @@ namespace FIFE {
 		OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-	void OffRenderer::resizeImage(const std::string &group, Point n, int32_t image, int32_t width, int32_t height) {
+	void OffRenderer::resizeImage(const std::string &group, Point n, ImagePtr image, int32_t width, int32_t height) {
 		OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
 		m_groups[group].push_back(info);
 	}

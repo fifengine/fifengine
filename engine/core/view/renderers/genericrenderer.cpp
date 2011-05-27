@@ -136,7 +136,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, int32_t image):
+	GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, ImagePtr image):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image) {
@@ -144,20 +144,16 @@ namespace FIFE {
 	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
-			ImagePtr resptr = ImageManager::instance()->get(m_image);
-			Image* img = dynamic_cast<Image*>(resptr.get());
-
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-			uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			uint32_t widtht = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+			uint32_t height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
 			r.h = height;
 			if(r.intersects(viewport)) {
-				img->render(r);
+				m_image->render(r);
 			}
 		}
 	}
@@ -213,7 +209,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererResizeInfo::GenericRendererResizeInfo(RendererNode anchor, int32_t image, int32_t width, int32_t height):
+	GenericRendererResizeInfo::GenericRendererResizeInfo(RendererNode anchor, ImagePtr image, int32_t width, int32_t height):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -223,10 +219,6 @@ namespace FIFE {
 	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
-			ImagePtr resptr = ImageManager::instance()->get(m_image);
-			Image* img = dynamic_cast<Image*>(resptr.get());
-
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
@@ -236,7 +228,7 @@ namespace FIFE {
 			r.w = widtht;
 			r.h = height;
 			if(r.intersects(viewport)) {
-				img->render(r);
+				m_image->render(r);
 			}
 		}
 	}
@@ -287,7 +279,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(const std::string &group, RendererNode n, int32_t image) {
+	void GenericRenderer::addImage(const std::string &group, RendererNode n, ImagePtr image) {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
@@ -295,7 +287,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::resizeImage(const std::string &group, RendererNode n, int32_t image, int32_t width, int32_t height) {
+	void GenericRenderer::resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height) {
 		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height);
 		m_groups[group].push_back(info);
 	}

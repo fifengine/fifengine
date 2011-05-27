@@ -114,11 +114,11 @@ namespace FIFE {
 	class OffRendererImageInfo : public OffRendererElementInfo {
 	public:
 		void render(RenderBackend* renderbackend);
-		OffRendererImageInfo(Point n, int32_t image);
+		OffRendererImageInfo(Point n, ImagePtr image);
 		virtual ~OffRendererImageInfo() {};
 	private:
 		Point m_anchor;
-		int32_t m_image;
+		ImagePtr m_image;
 	};
 	class OffRendererAnimationInfo : public OffRendererElementInfo {
 	public:
@@ -144,11 +144,11 @@ namespace FIFE {
 	class OffRendererResizeInfo : public OffRendererElementInfo {
 	public:
 		void render(RenderBackend* renderbackend);
-		OffRendererResizeInfo(Point n, int32_t image, int32_t width, int32_t height);
+		OffRendererResizeInfo(Point n, ImagePtr image, int32_t width, int32_t height);
 		virtual ~OffRendererResizeInfo() {};
 	private:
 		Point m_anchor;
-		int32_t m_image;
+		ImagePtr m_image;
 		int32_t m_width;
 		int32_t m_height;
 	};
@@ -175,9 +175,9 @@ namespace FIFE {
 		void addQuad(const std::string &group, Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addVertex(const std::string &group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, Point n, AbstractFont* font, const std::string &text);
-		void addImage(const std::string &group, Point n, int32_t image);
+		void addImage(const std::string &group, Point n, ImagePtr image);
 		void addAnimation(const std::string &group, Point n, AnimationPtr animation);
-		void resizeImage(const std::string &group, Point n, int32_t image, int32_t width, int32_t height);
+		void resizeImage(const std::string &group, Point n, ImagePtr image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();
 
