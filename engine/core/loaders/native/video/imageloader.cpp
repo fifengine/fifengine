@@ -43,10 +43,14 @@
 
 namespace FIFE {
 	void ImageLoader::load(IResource* res) {
-//prock - 504
 		VFS* vfs = VFS::instance();
 
 		Image* img = dynamic_cast<Image*>(res);
+
+		//Have to save the images x and y shift or it gets lost when it's
+		//loaded again.
+		int32_t xShiftSave = img->getXShift();
+		int32_t yShiftSave = img->getYShift();
 
 		const std::string& filename = img->getName();
 		boost::scoped_ptr<RawData> data (vfs->open(filename));
@@ -74,6 +78,11 @@ namespace FIFE {
 
 		SDL_FreeRW(rwops);
 
+		//we always set this to true
 		img->setAlphaOptimizerEnabled(true);
+
+		//restore saved x and y shifts
+		img->setXShift(xShiftSave);
+		img->setYShift(yShiftSave);
 	}
 }  //FIFE
