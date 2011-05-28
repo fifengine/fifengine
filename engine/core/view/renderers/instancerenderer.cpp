@@ -67,9 +67,6 @@ namespace FIFE {
 		r(0),
 		g(0),
 		b(0) {
-		//dirty(false),
-		//overlay(NULL),
-		//curimg(NULL)
 	}
 
 	InstanceRenderer::AreaInfo::AreaInfo():
@@ -87,7 +84,6 @@ namespace FIFE {
 	}
 
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
-		//delete overlay;
 	}
 
 	InstanceRenderer::AreaInfo::~AreaInfo() {
@@ -143,8 +139,10 @@ namespace FIFE {
 			}
 		}
 		
-		typedef std::pair<RenderItem*, InstanceToColoring_t::iterator> ColoredInfo;
-		static std::vector<ColoredInfo> coloredList;
+		typedef std::pair<RenderItem*, ColoringInfo*> DeferredColored;
+		typedef std::pair<RenderItem*, OutlineInfo*> DeferredOutline;
+		static std::vector<DeferredColored> coloredList;
+		static std::vector<DeferredOutline> outlineList;
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
@@ -186,22 +184,16 @@ namespace FIFE {
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
-					if (lm != 0) {
-						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
-						vc.image->render(vc.dimensions, vc.transparency);
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, REPLACE, ALWAYS);
-						continue;
-					} else {
-						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-						continue;
-					}
+					// defer outlines until whole layer is rendered
+					outlineList.push_back(std::make_pair(*instance_it, &outline_it->second));
+					continue;
 				}
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
 					// defer colored overlays until whole layer is rendered
-					coloredList.push_back(std::make_pair(*instance_it, coloring_it));
+					coloredList.push_back(std::make_pair(*instance_it, &coloring_it->second));
+					continue;
 				}
 			}
 			if(lm != 0) {
@@ -228,18 +220,33 @@ namespace FIFE {
 
 		}
 
-		// render deferred overlays
-		for(std::vector<ColoredInfo>::iterator it = coloredList.begin();
+		// first render deferred overlays
+		for(std::vector<DeferredColored>::iterator it = coloredList.begin();
 			it != coloredList.end(); ++it) {
 				uint8_t rgb[3] = {
-					it->second->second.r,
-					it->second->second.g,
-					it->second->second.b };
+					it->second->r,
+					it->second->g,
+					it->second->b };
 				it->first->image->render(it->first->dimensions, it->first->transparency, rgb);
 		}
-
 		m_renderbackend->changeRenderInfos(coloredList.size(), 4, 5, true, false, 0, KEEP, ALWAYS);
 		coloredList.clear();
+
+		// then render deferred outlines	
+		for(std::vector<DeferredOutline>::iterator it = outlineList.begin();
+			it != outlineList.end(); ++it) {
+				bindOutline(*it->second, *it->first, cam)->render(it->first->dimensions, it->first->transparency);
+		}
+
+		if(lm != 0) {
+			m_renderbackend->changeRenderInfos(outlineList.size(), 4, 5, false, true, 255, REPLACE, ALWAYS);
+			for(std::vector<DeferredOutline>::iterator it = outlineList.begin();
+				it != outlineList.end(); ++it) {
+					it->first->image->render(it->first->dimensions, it->first->transparency);
+			}
+			m_renderbackend->changeRenderInfos(outlineList.size(), 4, 5, true, true, 0, REPLACE, ALWAYS);
+		}
+		outlineList.clear();
 	}
 
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
