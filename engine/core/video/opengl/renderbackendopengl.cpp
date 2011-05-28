@@ -767,8 +767,8 @@ namespace FIFE {
 			glDrawArrays(mode, *currentIndex, *currentElements);
 
 			//reset all states
-			disableTextures(0);
 			disableTextures(1);
+			disableTextures(0);
 
 			if (m_state.lightmodel != 0) {
 				changeBlending(4, 5);
