@@ -33,6 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
+#include "video/image.h"
 #include "video/imagemanager.h"
 
 namespace FIFE {
@@ -40,7 +41,7 @@ namespace FIFE {
 	class GuiImage : public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int32_t id);
+		GuiImage(ImagePtr img);
 		~GuiImage();
 		void free();
 		int32_t getWidth() const;
@@ -48,9 +49,8 @@ namespace FIFE {
 		gcn::Color getPixel(int32_t x, int32_t y);
 		void putPixel(int32_t x, int32_t y, const gcn::Color& color);
 		void convertToDisplayFormat();
-		int32_t getPoolId() const { return m_poolid; }
+		ImagePtr getFIFEImage() const { return m_imgPtr; }
 	protected:
-		int32_t m_poolid;
 		ImagePtr m_imgPtr;
 	};
 }

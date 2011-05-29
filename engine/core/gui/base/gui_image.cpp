@@ -36,34 +36,28 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	GuiImage::GuiImage(): gcn::Image(), m_poolid(0) {
+	GuiImage::GuiImage(): gcn::Image(), m_imgPtr() {
 	}
 
-	GuiImage::GuiImage(int32_t id = 0): gcn::Image(), m_poolid(id) {
-//prock - 504
-		if (m_poolid != 0) {
-			//grab a pointer to the image so it doesn't get deleted by mistake
-			m_imgPtr = ImageManager::instance()->get(m_poolid);
-		}
+	GuiImage::GuiImage(ImagePtr img): gcn::Image(), m_imgPtr(img) {
+
 	}
 
 	GuiImage::~GuiImage() {
 	}
 
 	void GuiImage::free() {
-		ImageManager::instance()->free(m_poolid);
+		ImageManager::instance()->free(m_imgPtr->getHandle());
 	}
 
 	int32_t GuiImage::getWidth() const {
-//prock - 504
-		if(m_poolid==0)
+		if(!m_imgPtr)
 			return 0;
 		return m_imgPtr->getWidth();
 	}
 
 	int32_t GuiImage::getHeight() const {
-//prock - 504
-		if(m_poolid==0)
+		if(!m_imgPtr)
 			return 0;
 		return m_imgPtr->getHeight();
 	}

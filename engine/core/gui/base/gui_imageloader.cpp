@@ -27,6 +27,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/image.h"
+#include "video/imagemanager.h"
 
 #include "gui_imageloader.h"
 
@@ -35,9 +37,7 @@ namespace FIFE {
 	}
 
 	gcn::Image* GuiImageLoader::load(const std::string& filename, bool convertToDisplayFormat) {
-//prock - 504
-//		int32_t id = m_pool.addResourceFromFile(filename);
-//		return new GuiImage(id, m_pool);
-		return new GuiImage(0);
+		ImagePtr img = ImageManager::instance()->create(filename);
+		return new GuiImage(img);
 	}
 }
