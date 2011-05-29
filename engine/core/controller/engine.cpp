@@ -190,7 +190,7 @@ namespace FIFE {
 		m_eventmanager = new EventManager();
 
 		FL_LOG(_log, "Creating resource managers");
-//prock - 504
+
 		m_imagemanager = new ImageManager();
 		m_soundclipmanager = new SoundClipManager();
 
@@ -319,10 +319,6 @@ namespace FIFE {
 		delete m_guimanager;
 		delete m_gui_graphics;
 
-		// Note the dependancy between image and animation pools
-		// as animations reference images they have to be deleted
-		// before clearing the image pool.
-//prock - 504
 		delete m_imagemanager;
 		delete m_soundclipmanager;
 //		delete m_eventmanager;

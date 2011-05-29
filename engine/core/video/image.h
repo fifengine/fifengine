@@ -195,6 +195,12 @@ namespace FIFE {
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 
 		SDL_Surface* getSurface() { return m_surface; }
+
+		/** This frees the current suface and replaces it with the
+		 * surface passed in the parameter (which can be NULL).
+		 * @see Image::reset(SDL_Surface* surface)
+		 * @param surface the SDL_Surface to use for this image
+		 */
 		virtual void setSurface(SDL_Surface* surface) = 0;
 
 		uint32_t getWidth() const;
@@ -251,6 +257,12 @@ namespace FIFE {
 		bool m_isbackgroundcolor;
 		SDL_Color m_backgroundcolor;
 
+		/** Resets the image to default values (including the x and y shift
+		 * valuse), frees the current surface  and sets the surface to the
+		 * passed SDL_Surface (which can be NULL).
+		 * @see IImage::setSurface(SDL_Surface* surface)
+		 * @param surface the SDL_Surface to use for this image
+		 */
 		void reset(SDL_Surface* surface);
 
 	private:
