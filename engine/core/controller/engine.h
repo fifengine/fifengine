@@ -200,12 +200,8 @@ namespace FIFE {
 		EventManager* m_eventmanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
-//prock - 504
-//		ImagePool* m_imagepool;
 		ImageManager* m_imagemanager;
 		SoundClipManager* m_soundclipmanager;
-//		AnimationPool* m_animpool;
-//		SoundClipPool* m_soundclippool;
 
 		VFS* m_vfs;
 		Model* m_model;

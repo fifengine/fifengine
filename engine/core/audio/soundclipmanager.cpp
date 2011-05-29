@@ -92,6 +92,11 @@ namespace FIFE {
 	}
 
 	SoundClipPtr SoundClipManager::create(const std::string& name, IResourceLoader* loader){
+		if (exists(name)) {
+			FL_WARN(_log, LMsg("SoundClipManager::create(std::string, IResourceLoader* loader) - ") << "Resource name " << name << " was previously created.  Returning original SoundClip...");
+			return get(name);
+		}
+
 		SoundClip* ptr = new SoundClip(name, loader);
 		return add(ptr);
 	}
@@ -121,6 +126,7 @@ namespace FIFE {
 
 	SoundClipPtr SoundClipManager::add(SoundClip* res) {
 		assert(res);
+		assert(!(exists(res->getHandle()) || exists(res->getName())));
 
 		SoundClipPtr resptr(res);
 
