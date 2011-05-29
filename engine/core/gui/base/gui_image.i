@@ -23,6 +23,7 @@
 %{
 #include <guichan/image.hpp>
 #include "gui/base/gui_image.h"
+#include "video/image.h"
 %}
 
 %rename(GcnImage) gcn::Image;
@@ -43,7 +44,7 @@ namespace FIFE {
 	class GuiImage: public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int32_t id);
+		GuiImage(FIFE::ImagePtr Image);
 		int32_t getWidth() const;
 		int32_t getHeight() const;
 	};

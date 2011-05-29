@@ -56,13 +56,13 @@ namespace FIFE {
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);
-//prock - 504
-		ImagePtr fifeimg = ImageManager::instance()->get(g_img->getPoolId());
+
+		ImagePtr fifeimg = g_img->getFIFEImage();
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
-//prock - 504
+
 		fifeimg->render(rect, mTarget);
 		RenderBackend::instance()->renderVertexArrays();
 	}

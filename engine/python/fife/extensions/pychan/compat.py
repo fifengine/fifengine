@@ -60,7 +60,7 @@ def _munge_engine_hook(engine):
 
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)
-		return guichan.GuiImage(img.getHandle())
+		return guichan.GuiImage(img)
 
 	class hook:
 		pass
