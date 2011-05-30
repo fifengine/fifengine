@@ -519,8 +519,8 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::disableScissorTest() {
-		if(m_state.scissor_test == false)	{
-			m_state.scissor_test = true;
+		if(m_state.scissor_test == true)	{
+			m_state.scissor_test = false;
 			glDisable(GL_SCISSOR_TEST);
 		}
 	}
