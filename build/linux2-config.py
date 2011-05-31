@@ -55,6 +55,9 @@ def addExtras(env, opengl):
 		env.Append(LIBS = ['stdc++', 'GL', 'GLU'])
 		env.Append(LIBPATH = os.path.join('/', 'usr', 'X11R6', 'lib'))
 		
+	# define for using tinyxml with stl support enabled
+	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
+	
 	return env
 
 def getRequiredHeaders(opengl):
@@ -88,7 +91,9 @@ def getRequiredLibs(opengl):
 	return libs
 
 def getOptionalLibs(opengl):
-	return None
+	libs = [('tinyxml', 'tinyxml.h')]
+	
+	return libs
 	
 # vim: set filetype=python:
 			   

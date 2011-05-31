@@ -29,9 +29,6 @@ from fife.extensions.pychan import widgets
 from fife.extensions.soundmanager import SoundManager
 
 from scripts.common.eventlistenerbase import EventListenerBase
-from fife.extensions.loaders import loadMapFile
-from fife.extensions.serializers.xml_loader_tools import loadImportFile
-from fife.extensions.serializers.xmlobject import XMLObjectLoader
 
 from scripts.gui.guis import *
 
@@ -59,7 +56,6 @@ class World(EventListenerBase):
 		self._timemanager = engine.getTimeManager()
 		self._eventmanager = engine.getEventManager()
 		self._model = engine.getModel()
-		self.obj_loader = XMLObjectLoader(engine)
 		self._filename = ''
 		self._keystate = { 'UP': False, 
 		                   'DOWN': False, 
@@ -141,13 +137,16 @@ class World(EventListenerBase):
 		self._filename = filename
 		self.reset()
 		
-		#specific imports that needed to be added
-		#@todo: you should be able to add file imports via the map editor
-		loadImportFile(self.obj_loader, "objects/projectiles/bullet1/object.xml", self._engine)
-		loadImportFile(self.obj_loader,"objects/projectiles/fireball/object.xml", self._engine)
-		
-		self._map = loadMapFile(self._filename, self._engine)
-
+		loader = fife.MapLoader(self._engine.getModel(), 
+								self._engine.getVFS(), 
+								self._engine.getImageManager(), 
+								self._engine.getRenderBackend())
+								
+		if loader.isLoadable(self._filename):
+			self._map = loader.load(self._filename)
+			loader.loadImportFile("objects/projectiles/bullet1/object.xml")
+			loader.loadImportFile("objects/projectiles/fireball/object.xml")
+									
 		self._scene = Scene(self, self._engine, self._map.getLayer('objects'), self._soundmanager)
 		self._scene.initScene(self._map)
 

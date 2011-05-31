@@ -100,6 +100,12 @@ AddOption('--python-prefix',
 		metavar='DIR',
 		help='Python module installation prefix')
 		
+AddOption('--local-tinyxml',
+		dest='local-tinyxml',
+		action="store_true",
+		help='Forces fife to use the local version of tinyxml that ships with fife',
+		default=False)
+		
 #**************************************************************************
 #save command line options here
 #**************************************************************************
@@ -140,6 +146,13 @@ if GetOption('enable-profile'):
 	profile = 1
 else:
 	profile = 0
+	
+if GetOption('local-tinyxml'):
+	local_tinyxml = 1
+	env['LOCAL_TINYXML'] = True
+else:
+	local_tinyxml = 0
+	env['LOCAL_TINYXML'] = False
 
 #**************************************************************************
 #set the installation directories.
@@ -190,9 +203,15 @@ def checkForLib(lib, header='', language='c++'):
 					
 	return ret
 	
-def checkForLibs(liblist, required=1, language='c++'):
+def checkForLibs(env, liblist, required=1, language='c++'):
 	ret = 0
 	for lib, header in liblist:
+		# special case for the user overriding on the scons build line to
+		# force using the local tinyxml version that ships with fife
+		#if not isinstance(lib, tuple) and lib == 'tinyxml' and env['LOCAL_TINYXML'] == True:
+			#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
+			#continue
+			
 		if (isinstance(lib, tuple)):
 			for item in lib:
 				ret = checkForLib(item, header, language)
@@ -201,9 +220,21 @@ def checkForLibs(liblist, required=1, language='c++'):
 					env.AppendUnique(LIBS = [item])
 					break
 		else:
-			ret = checkForLib(lib, header, language)
-			if ret:
-				env.AppendUnique(LIBS=[lib])
+			# special handling for tinyxml
+			if lib == 'tinyxml':
+				if env['LOCAL_TINYXML'] == False:
+					# look for system version of tinyxml
+					ret = checkForLib(lib, header, language)
+					
+					if ret:
+						# system version found so set the compilation flag
+						# and store the lib in the lib list
+						env.AppendUnique(CPPDEFINES = ['USE_SYSTEM_TINY_XML'])
+						env.AppendUnique(LIBS = [lib])
+			else:	
+				ret = checkForLib(lib, header, language)
+				if ret:
+					env.AppendUnique(LIBS = [lib])
 	
 		if required and not ret:
 			if (isinstance(lib, tuple)):
@@ -212,6 +243,16 @@ def checkForLibs(liblist, required=1, language='c++'):
 			else:
 				print 'Required lib %s not found!' %lib
 			Exit(1)
+		#elif not required and not ret:
+			# special handling for libs that are not required
+			# and were not added
+			#if not isinstance(lib, tuple) and lib == 'tinyxml':
+				# we will use our own included version if
+				# the system version was not found
+				#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
+				
+	return env
+				
 		
 #**************************************************************************
 #check the existence of required libraries and headers
@@ -225,9 +266,9 @@ required_headers = platformConfig.getRequiredHeaders(opengl)
 # a clean or building the external dependencies
 if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
 	if required_libs:
-		checkForLibs(required_libs, required = 1)
+		env = checkForLibs(required_libs, required = 1)
 	if optional_libs:
-		checkForLibs(optional_libs, required = 0)
+		env = checkForLibs(env, optional_libs, required = 0)
 	if required_headers:
 		for h in required_headers:
 			conf.CheckHeader(h)

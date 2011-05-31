@@ -26,10 +26,7 @@
 import sys, os, re, math, random, shutil, uuid
 
 from fife import fife
-from fife.extensions.loaders import loadMapFile
-from fife.extensions.serializers.xml_loader_tools import loadImportFile
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
-from fife.extensions.serializers.xmlobject import XMLObjectLoader
 
 from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
@@ -58,7 +55,11 @@ class Scene(Serializer):
 		self._objectsettings = None
 		self._modelsettings = None
 
-		self.obj_loader = XMLObjectLoader( self._gamecontroller.engine )
+		self._loader = fife.MapLoader(self._gamecontroller.engine.getModel(), 
+									self._gamecontroller.engine.getVFS(), 
+									self._gamecontroller.engine.getImageManager(), 
+									self._gamecontroller.engine.getRenderBackend())
+									
 
 	def loadObject(self, objectname, objectid=None, valuedict=None):
 		if objectid:
@@ -70,7 +71,7 @@ class Scene(Serializer):
 			objdict = self._modelsettings.get("objects", objectname, {})
 			modeldict = self._modelsettings.get("models", objdict["modelname"], {})
 			
-			loadImportFile(self.obj_loader, modeldict["file"], self._gamecontroller.engine)
+			self._loader.loadImportFile(modeldict["file"])
 			
 			if objdict["type"] == "GOLD":
 				newobject = GoldStack(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
@@ -117,7 +118,8 @@ class Scene(Serializer):
 		"""
 		modeldict = self._modelsettings.get("models", "Player", {})
 	
-		loadImportFile(self.obj_loader, modeldict["file"], self._gamecontroller.engine)
+		print 'loading: %s' % modeldict["file"]
+		self._loader.loadImportFile(modeldict["file"])
 		self._player = Player(self._gamecontroller, self.actorlayer, "warrior")
 		
 		playerfilename = os.path.join("saves", "player_save.xml")
@@ -132,8 +134,9 @@ class Scene(Serializer):
 		
 		if self._map:
 			self.destroyScene()
-			
-		self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
+										
+		if self._loader.isLoadable(mapfilename):
+			self._map = self._loader.load(mapfilename)
 			
 		self._mapname = mapname
 

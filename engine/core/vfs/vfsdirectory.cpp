@@ -74,8 +74,11 @@ namespace FIFE {
 
 
 	bool VFSDirectory::fileExists(const std::string& name) const {
-		std::string fullpath = m_root + name;
-		std::ifstream file(fullpath.c_str());
+		std::string fullFilename = m_root + name;
+
+        bfs::path fullPath(fullFilename);
+		std::ifstream file(fullPath.file_string().c_str());
+
 		if (file)
 			return true;
 

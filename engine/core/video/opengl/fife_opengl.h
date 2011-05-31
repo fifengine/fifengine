@@ -25,7 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include "ext/GLee.h"
+#include "ext/glee/GLee.h"
 
 // Platform specific includes
 // Linux
