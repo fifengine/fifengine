@@ -27,7 +27,6 @@ from fife.extensions import pychan
 from fife.extensions.pychan import widgets
 
 from scripts.common.eventlistenerbase import EventListenerBase
-from fife.extensions.loaders import loadMapFile
 from fife.extensions.savers import saveMapFile
 from fife.extensions.soundmanager import SoundManager
 from agents.hero import Hero
@@ -161,8 +160,13 @@ class World(EventListenerBase):
 		
 		self.filename = filename
 		self.reset()
-		self.map = loadMapFile(filename, self.engine, extensions = {'lights': True})
-		self.maplistener = MapListener(self.map)
+		loader = fife.MapLoader(self.engine.getModel(), 
+								self.engine.getVFS(), 
+								self.engine.getImageManager(), 
+								self.engine.getRenderBackend())
+								
+		if loader.isLoadable(filename):
+			self.map = loader.load(filename)
 
 		self.initAgents()
 		self.initCameras()
