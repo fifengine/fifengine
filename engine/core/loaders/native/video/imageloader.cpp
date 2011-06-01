@@ -52,37 +52,42 @@ namespace FIFE {
 		int32_t xShiftSave = img->getXShift();
 		int32_t yShiftSave = img->getYShift();
 
-		const std::string& filename = img->getName();
-		boost::scoped_ptr<RawData> data (vfs->open(filename));
-		size_t datalen = data->getDataLength();
-		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
-		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
+		if(!img->isSharedImage()) {
+			const std::string& filename = img->getName();
+			boost::scoped_ptr<RawData> data (vfs->open(filename));
+			size_t datalen = data->getDataLength();
+			boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+			data->readInto(darray.get(), datalen);
+			SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
-		SDL_Surface* surface = IMG_Load_RW(rwops, false);
+			//FILE* fp = fopen("log.txt", "a+");
+			//fprintf(fp, "%d %d %s\n", xShiftSave, yShiftSave, filename.c_str());
+			//fclose(fp);
 
-		if (!surface) {
-			throw SDLException("Fatal Error when loading image into a SDL_Surface!");
+			SDL_Surface* surface = IMG_Load_RW(rwops, false);
+
+			if (!surface) {
+				throw SDLException("Fatal Error when loading image into a SDL_Surface!");
+			}
+
+			SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
+
+			SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
+
+			if (!conv) {
+				throw SDLException("Fatal Error when converting surface to the screen format!");
+			}
+
+			img->setSurface(conv);
+
+			SDL_FreeSurface(surface);
+			SDL_FreeRW(rwops);
 		}
-
-		SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
-
-		SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
-
-		if (!conv) {
-			throw SDLException("Fatal Error when converting surface to the screen format!");
-		}
-
-		img->setSurface(conv);
-		SDL_FreeSurface(surface);
-
-		SDL_FreeRW(rwops);
-
 		//we always set this to true
 		img->setAlphaOptimizerEnabled(true);
 
 		//restore saved x and y shifts
-		img->setXShift(xShiftSave);
-		img->setYShift(yShiftSave);
+		//img->setXShift(xShiftSave);
+		//img->setYShift(yShiftSave);
 	}
 }  //FIFE

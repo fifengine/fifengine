@@ -36,67 +36,50 @@
 
 namespace FIFE {
 	GLImage::GLImage(IResourceLoader* loader):
-			Image(loader) {
-		m_sdlimage = NULL;
-		m_textureids = NULL;
+		Image(loader),
+		m_texId(0){
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
-		Image(name, loader) {
-		m_sdlimage = NULL;
-		m_textureids = NULL;
+		Image(name, loader),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(SDL_Surface* surface):
-		Image(surface) {
-
-		//@todo This generates a new handle and name for the resource.
-		//Need to look at fixing this.
-		m_sdlimage = new SDLImage(surface);
-
-		m_textureids = NULL;
+		Image(surface),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, SDL_Surface* surface):
-		Image(name, surface) {
-		m_sdlimage = new SDLImage(name, surface);
-
-		m_textureids = NULL;
+		Image(name, surface),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height):
-		Image(data, width, height) {
+		Image(data, width, height),
+		m_texId(0) {
+
 		assert(m_surface);
-		m_sdlimage = new SDLImage(m_surface);
-
-		m_textureids = NULL;
-
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
-		Image(name, data, width, height) {
+		Image(name, data, width, height),
+		m_texId(0) {
+
 		assert(m_surface);
-		m_sdlimage = new SDLImage(name, m_surface);
-
-		m_textureids = NULL;
-
 		resetGlimage();
 	}
 
 	GLImage::~GLImage() {
-		// remove surface so that deletion happens correctly (by base class destructor)
-		m_sdlimage->detachSurface();
-		delete m_sdlimage;
-
 		cleanup();
 	}
 
@@ -106,12 +89,6 @@ namespace FIFE {
 
 	void GLImage::setSurface(SDL_Surface* surface) {
 		reset(surface);
-
-		delete m_sdlimage;
-		m_sdlimage = new SDLImage(m_surface);
-
-		m_textureids = NULL;
-
 		resetGlimage();
 	}
 
@@ -125,22 +102,16 @@ namespace FIFE {
 	}
 
 	void GLImage::cleanup() {
-		if (m_textureids) {
-			glDeleteTextures(1, &m_textureids[0]);
-
-			delete[] m_textureids;
-			m_textureids = NULL;
+		if (m_texId) {
+			glDeleteTextures(1, &m_texId);
+			m_texId = 0;
 		}
 
-		m_col_tex_coord = 0;
-		m_row_tex_coord = 0;
+		texCoords[0] = texCoords[1] = 
+			texCoords[2] = texCoords[3] = 0.0f;
 	}
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* rgb) {
-		if (!m_textureids) {
-			generateGLTexture();
-		}
-
 		//not on the screen.  dont render
 		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
 			return;
@@ -149,6 +120,10 @@ namespace FIFE {
 		//completely transparent so dont bother rendering
 		if (0 == alpha) {
 			return;
+		}
+
+		if (!m_texId) {
+			generateGLTexture();
 		}
 
 		// we dont need this atm
@@ -162,9 +137,9 @@ namespace FIFE {
 
 		Rect rec = rect;
 		if(!rgb) {
-			RenderBackend::instance()->addImageToArray(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha);
+			RenderBackend::instance()->addImageToArray(m_texId, rec, texCoords, alpha);
 		} else {
-			RenderBackend::instance()->addImageToArray2T(m_textureids[0], rec, m_row_tex_coord, m_col_tex_coord, alpha, rgb);
+			RenderBackend::instance()->addImageToArray2T(m_texId, rec, texCoords, alpha, rgb);
 		}
 	}
 
@@ -172,66 +147,107 @@ namespace FIFE {
 		const uint32_t width = m_surface->w;
 		const uint32_t height = m_surface->h;
 
-		//calculate the nearest larger power of 2
-		m_chunk_size_w = nextPow2(width);
-		m_chunk_size_h = nextPow2(height);
-
-		// used to calculate the fill ratio for given chunk
-		m_col_tex_coord = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
-		m_row_tex_coord = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
-
-		if (m_col_tex_coord == 0.0f){
-			m_col_tex_coord = 1.0f;
+		// With OpenGL 2.0 or GL_ARB_texture_non_power_of_two we don't really need to care
+		// about non power of 2 textures 
+		if(GLEE_ARB_texture_non_power_of_two) {
+			m_chunk_size_w = width;
+			m_chunk_size_h = height;
+		}
+		else {
+			//calculate the nearest larger power of 2
+			m_chunk_size_w = nextPow2(width);
+			m_chunk_size_h = nextPow2(height);
 		}
 
-		if (m_row_tex_coord == 0.0f){
-			m_row_tex_coord = 1.0f;
+		// used to calculate the fill ratio for given chunk
+		texCoords[0] = texCoords[1] = 0.0f;
+		texCoords[2] = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
+		texCoords[3] = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
+
+		if (texCoords[2] == 0.0f){
+			texCoords[2] = 1.0f;
+		}
+
+		if (texCoords[3] == 0.0f){
+			texCoords[3] = 1.0f;
 		}
 
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
 		int32_t pitch = m_surface->pitch;
 
-
-		assert(!m_textureids);
-
-		m_textureids = new GLuint[1];
-		memset(m_textureids, 0x00, 1*sizeof(GLuint));
-
-
-		uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
-		memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
-
-		for (uint32_t y = 0;  y < height; ++y) {
-			for (uint32_t x = 0; x < width; ++x) {
-				uint32_t pos = (y * pitch) + (x * 4);
-
-				uint8_t a = data[pos + 3];
-				uint8_t b = data[pos + 2];
-				uint8_t g = data[pos + 1];
-				uint8_t r = data[pos + 0];
-
-				if (RenderBackend::instance()->isColorKeyEnabled()) {
-					// only set alpha to zero if colorkey feature is enabled
-					if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
-						a = 0;
-					}
-				}
-
-				oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
-			}
-		}
+		assert(!m_texId);
 
 		// get texture id from opengl
-		glGenTextures(1, &m_textureids[0]);
+		glGenTextures(1, &m_texId);
 		// set focus on that texture
-		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
+		glBindTexture(GL_TEXTURE_2D, m_texId);
 		// set filters for texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		// transfer data from sdl buffer
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
+		
+		if(GLEE_ARB_texture_non_power_of_two) {
+			if(RenderBackend::instance()->isColorKeyEnabled()) {
+				uint8_t* oglbuffer = new uint8_t[width * height * 4];
+				memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
 
-		delete[] oglbuffer;
+				for (uint32_t y = 0;  y < height; ++y) {
+					for (uint32_t x = 0; x < width * 4; x += 4) {
+						uint32_t gid = x + y * width;
+
+						uint8_t r = oglbuffer[gid + 0];
+						uint8_t g = oglbuffer[gid + 1];
+						uint8_t b = oglbuffer[gid + 2];
+						uint8_t a = oglbuffer[gid + 3];
+
+						// set alpha to zero
+						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+							oglbuffer[gid + 3] = 0;
+						}
+					}
+				}
+
+				// transfer data from sdl buffer
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, oglbuffer);
+
+				delete [] oglbuffer;
+			} else {
+
+				// transfer data directly from sdl buffer
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			}
+		// Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
+		} else {
+			uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
+			memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
+
+			for (uint32_t y = 0;  y < height; ++y) {
+				for (uint32_t x = 0; x < width; ++x) {
+					uint32_t pos = (y * pitch) + (x * 4);
+
+					uint8_t a = data[pos + 3];
+					uint8_t b = data[pos + 2];
+					uint8_t g = data[pos + 1];
+					uint8_t r = data[pos + 0];
+
+					if (RenderBackend::instance()->isColorKeyEnabled()) {
+						// only set alpha to zero if colorkey feature is enabled
+						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+							a = 0;
+						}
+					}
+
+					oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
+				}
+			}
+
+			// transfer data from sdl buffer
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
+
+			delete[] oglbuffer;
+		}
 	}
 
 	void GLImage::saveImage(const std::string& filename) {
@@ -286,51 +302,66 @@ namespace FIFE {
 	}
 
 	bool GLImage::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		return m_sdlimage->putPixel(x, y, r, g, b, a);
+		//cleanup();
+		//return m_sdlimage->putPixel(x, y, r, g, b, a);
+		return false;
 	}
 
 	void GLImage::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawLine(p1, p2, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->drawLine(p1, p2, r, g, b, a);
 	}
 
 	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
 
 	void GLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawRectangle(p, w, h, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->drawRectangle(p, w, h, r, g, b, a);
 	}
 
 	void GLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
 	}
 
 	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
 	}
 
 	void GLImage::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawVertex(p, size, r, g, b, a);
+		//cleanup();
+		//m_sdlimage->drawVertex(p, size, r, g, b, a);
 	}
 
 	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-		cleanup();
-		m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
+		//cleanup();
+		//m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
 	}
 
 	size_t GLImage::getSize() {
-		//this is just an approximation..  The Image surface, plus the GLImage sufrace, plus the GL texture size (approx)
-		size_t glSize = 0;
-		if (m_sdlimage) {
-			glSize = m_sdlimage->getSize()*2;  //one for the SDL_Surface, the other for the GL texture
-		}
-		return Image::getSize() + glSize;
+		return Image::getSize();
+	}
+
+	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height) {
+		GLImage* img = static_cast<GLImage*>(shared.get());
+		setSurface(img->m_surface);
+
+		m_texId = img->m_texId;
+		m_shared = true;
+
+		texCoords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
+		texCoords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
+		texCoords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
+		texCoords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
+
+		m_subimagerect = region;
+	}
+
+	void GLImage::forceLoadInternal() {
+		generateGLTexture();
 	}
 }

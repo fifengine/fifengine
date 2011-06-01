@@ -80,18 +80,32 @@ namespace FIFE {
 
 		virtual size_t getSize();
 
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height);
+		virtual void forceLoadInternal();
+
 	protected:
 		void setClipArea(const Rect& cliparea, bool clear);
 
 	private:
 		// texture coords to use
-		float m_col_tex_coord;
-		// @see m_col_tex_coord
-		float m_row_tex_coord;
+		GLfloat texCoords[4];
+
+		//     [0]    [2]    ->(x)
+		// [1]  +------+
+		//      |      |
+		//      |      |
+		// [3]  +------+
+		//
+		//      |
+		//      v
+		//     (y)
+		// To map these indices with previous one:
+		// [0]:=[1]:=0.0f, [2]:=m_col_tex_coords, [3]:=m_row_tex_coords
+
 
 		/** Holds texture ids that are used to access textures in GL rendering context
 		 */
-		GLuint* m_textureids;
+		GLuint m_texId;
 
 		/** Frees allocated memory and calls resetGlImage
 		 */
@@ -107,20 +121,12 @@ namespace FIFE {
 		 */
 		void generateGLTexture();
 
-		/** Original SDLImage where GLImage is created from
-		 * FIXME: at the moment SDLImage is used to draw graphics (e.g. line) on screen
-		 * this is clearly not optimal, but image chunking makes somewhat harder to do
-		 * proper drawing of graphics (e.g. how to segment lines into correct boxes).
-		 * It might be possible to use some kind of offscreen OpenGL image for this
-		 * purpose
-		 */
-		SDLImage* m_sdlimage;
-
 		uint32_t m_chunk_size_w;
 		uint32_t m_chunk_size_h;
 
 		SDL_Color m_colorkey;
 	};
+
 }
 
 #endif

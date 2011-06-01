@@ -139,6 +139,8 @@ namespace FIFE {
 		virtual void invalidate(const std::string& name);
 		virtual void invalidate(ResourceHandle handle);
 		virtual void invalidateAll();
+		
+		virtual void createAtlas(const std::string& name);
 	};
 	
 	

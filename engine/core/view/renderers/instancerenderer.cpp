@@ -247,6 +247,8 @@ namespace FIFE {
 			m_renderbackend->changeRenderInfos(outlineList.size(), 4, 5, true, true, 0, REPLACE, ALWAYS);
 		}
 		outlineList.clear();
+
+		m_renderbackend->renderVertexArrays();
 	}
 
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
