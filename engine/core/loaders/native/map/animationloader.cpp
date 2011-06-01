@@ -46,8 +46,8 @@ namespace fs = boost::filesystem;
 namespace FIFE {
     static Logger _log(LM_NATIVE_LOADERS);
 
-    AnimationLoader::AnimationLoader(VFS* vfs, ImageManager* imageManager, const std::string& mapDirectory)
-    : m_vfs(vfs), m_imageManager(imageManager), m_mapDirectory(mapDirectory) {
+    AnimationLoader::AnimationLoader(VFS* vfs, ImageManager* imageManager)
+    : m_vfs(vfs), m_imageManager(imageManager) {
 
     }
 
