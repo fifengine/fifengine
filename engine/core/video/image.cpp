@@ -42,21 +42,24 @@ namespace FIFE {
 		IResource(createUniqueImageName(), loader),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0){
+		m_yshift(0),
+		m_shared(false){
 	}
 
 	Image::Image(const std::string& name, IResourceLoader* loader):
 		IResource(name, loader),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0){
+		m_yshift(0),
+		m_shared(false){
 	}
 
 	Image::Image(SDL_Surface* surface):
 		IResource(createUniqueImageName()),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0){
+		m_yshift(0),
+		m_shared(false){
 		reset(surface);
 	}
 
@@ -64,7 +67,8 @@ namespace FIFE {
 		IResource(name),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0){
+		m_yshift(0),
+		m_shared(false){
 		reset(surface);
 	}
 
@@ -73,7 +77,8 @@ namespace FIFE {
 		IResource(createUniqueImageName()),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0){
+		m_yshift(0),
+		m_shared(false){
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
@@ -89,7 +94,8 @@ namespace FIFE {
 		IResource(name),
 		m_surface(NULL),
 		m_xshift(0),
-		m_yshift(0) {
+		m_yshift(0),
+		m_shared(false) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
@@ -108,6 +114,7 @@ namespace FIFE {
 
 		m_xshift = 0;
 		m_yshift = 0;
+		m_shared = false;
 		while (!m_clipstack.empty()) {
 			m_clipstack.pop();
 		}
@@ -146,21 +153,25 @@ namespace FIFE {
 	}
 
 	uint32_t Image::getWidth() const {
-		if (!m_surface) {
+		if (m_shared) { 
+			return m_subimagerect.w;
+		} else if (!m_surface) {
 			return 0;
 		}
 		return m_surface->w;
 	}
 
 	uint32_t Image::getHeight() const {
-		if (!m_surface) {
+		if (m_shared) { 
+			return m_subimagerect.h;
+		} else if (!m_surface) {
 			return 0;
 		}
 		return m_surface->h;
 	}
 
 	size_t Image::getSize() {
-		if (!m_surface) {
+		if (!m_surface || m_shared) {
 			return 0;
 		}
 		return m_surface->h * m_surface->pitch;

@@ -146,7 +146,7 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
 		Image *image = setScreenMode(mode);
 
 		SDL_WM_SetCaption(title.c_str(), 0);
@@ -201,6 +201,12 @@ namespace FIFE {
 		glLoadIdentity();
 		gluOrtho2D(0, width, height, 0);
 		glMatrixMode(GL_MODELVIEW);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_CW);
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -970,12 +976,12 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha) {
+	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[0] = 0.0;
-		rd.texel[1] = 0.0;
+		rd.texel[0] = st[0];
+		rd.texel[1] = st[1];
 		rd.color[0] = 255;
 		rd.color[1] = 255;
 		rd.color[2] = 255;
@@ -984,30 +990,30 @@ namespace FIFE {
 		
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[1] = rt;
+		rd.texel[1] = st[3];
 		m_render_datas.push_back(rd);
 		
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[0] = ct;
+		rd.texel[0] = st[2];
 		m_render_datas.push_back(rd);
 		
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[1] = 0.0;
+		rd.texel[1] = st[1];
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_QUADS, 4, id);
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, Rect& rec, float& rt, float& ct, uint8_t& alpha, uint8_t const* rgb) {
+	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
 		//addImageToArray(id, rec, rt, ct, alpha);
 		renderData2T rd;
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[0] = 0.0;
-		rd.texel[1] = 0.0;
+		rd.texel[0] = st[0];
+		rd.texel[1] = st[1];
 		rd.texel2[0] = 0.0;
 		rd.texel2[1] = 0.0;
 		rd.color[0] = 255;
@@ -1018,19 +1024,19 @@ namespace FIFE {
 
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[1] = rt;
+		rd.texel[1] = st[3];
 		rd.texel2[1] = 1.0;
 		m_render_datas2T.push_back(rd);
 
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[0] = ct;
+		rd.texel[0] = st[2];
 		rd.texel2[0] = 1.0;
 		m_render_datas2T.push_back(rd);
 
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[1] = 0.0;
+		rd.texel[1] = st[1];
 		rd.texel2[1] = 0.0;
 		m_render_datas2T.push_back(rd);
 

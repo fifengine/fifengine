@@ -134,6 +134,9 @@ namespace FIFE {
 		virtual bool isAlphaOptimizerEnabled() = 0;
 	};
 
+	class Image;
+	typedef SharedPtr<Image> ImagePtr;
+
 	/** Base Class for Images.
 	 */
 	class Image : public IResource, public IImage {
@@ -225,6 +228,10 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height) = 0;
+		virtual void forceLoadInternal() = 0;
+		bool isSharedImage() const { return m_shared; }
+
 	protected:
 		/** Sets given clip area into image
 		 *  @see pushClipArea
@@ -265,13 +272,13 @@ namespace FIFE {
 		 */
 		void reset(SDL_Surface* surface);
 
+		bool m_shared; // false on init
+		Rect m_subimagerect;
+
 	private:
 
 		std::string createUniqueImageName();
 	};
-
-	typedef SharedPtr<Image> ImagePtr;
-
 }
 
 #endif
