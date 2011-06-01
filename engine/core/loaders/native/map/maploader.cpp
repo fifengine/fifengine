@@ -85,9 +85,7 @@ namespace FIFE
 			    m_mapDirectory = mapPath.branch_path().directory_string();
 
                 // create a new animation loader
-                m_animationLoader.reset(new AnimationLoader(m_vfs, m_imageManager, m_mapDirectory));
-
-			    m_vfs->addSource(new VFSDirectory(m_vfs, mapPath.branch_path().directory_string()));
+                m_animationLoader.reset(new AnimationLoader(m_vfs, m_imageManager));
             }
 		}
 
@@ -170,10 +168,22 @@ namespace FIFE
                         }
 
                         if (importDir && !importFile) {
-                            loadImportDirectory(directory);
+                            fs::path fullPath(m_mapDirectory);
+                            fullPath /= directory;
+                            loadImportDirectory(fullPath.directory_string());
                         }
                         else if (importFile) {
-                            loadImportFile(file, directory);
+                            fs::path fullFilePath(file);
+                            fs::path fullDirPath(directory);
+                            if (importDir) {
+                                fullDirPath = fs::path(m_mapDirectory);
+                                fullDirPath /= directory;
+                            }
+                            else {
+                                fullFilePath = fs::path(m_mapDirectory);
+                                fullFilePath /= file;
+                            }
+                            loadImportFile(fullFilePath.file_string(), fullDirPath.directory_string());
                         }
 					}
 

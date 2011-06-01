@@ -41,7 +41,7 @@ namespace FIFE {
 
     class AnimationLoader : public IAnimationLoader {
     public:
-        AnimationLoader(VFS* vfs, ImageManager* imageManager, const std::string& mapDirectory);
+        AnimationLoader(VFS* vfs, ImageManager* imageManager);
 
         /** 
         * @see IAnimationLoader::isLoadable
@@ -56,7 +56,6 @@ namespace FIFE {
     private:
         VFS* m_vfs;
         ImageManager* m_imageManager;
-        std::string m_mapDirectory;
     };
 }
 
