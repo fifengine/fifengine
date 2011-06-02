@@ -266,7 +266,7 @@ required_headers = platformConfig.getRequiredHeaders(opengl)
 # a clean or building the external dependencies
 if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
 	if required_libs:
-		env = checkForLibs(required_libs, required = 1)
+		env = checkForLibs(env, required_libs, required = 1)
 	if optional_libs:
 		env = checkForLibs(env, optional_libs, required = 0)
 	if required_headers:
