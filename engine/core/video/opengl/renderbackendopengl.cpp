@@ -146,7 +146,7 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 		Image *image = setScreenMode(mode);
 
 		SDL_WM_SetCaption(title.c_str(), 0);
@@ -376,6 +376,13 @@ namespace FIFE {
 				glActiveTexture(GL_TEXTURE0 + texUnit);
 			}
 			m_state.texture[texUnit] = texId;
+			glBindTexture(GL_TEXTURE_2D, texId);
+		}
+	}
+
+	void RenderBackendOpenGL::bindTexture(GLuint texId) {
+		if(m_state.texture[m_state.active_tex] != texId) {
+			m_state.texture[m_state.active_tex] = texId;
 			glBindTexture(GL_TEXTURE_2D, texId);
 		}
 	}

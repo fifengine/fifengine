@@ -31,6 +31,7 @@
 #include "util/structures/rect.h"
 #include "video/sdl/sdlimage.h"
 #include "video/renderbackend.h"
+#include "video/opengl/renderbackendopengl.h"
 
 #include "glimage.h"
 
@@ -180,7 +181,7 @@ namespace FIFE {
 		// get texture id from opengl
 		glGenTextures(1, &m_texId);
 		// set focus on that texture
-		glBindTexture(GL_TEXTURE_2D, m_texId);
+		static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
 		// set filters for texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

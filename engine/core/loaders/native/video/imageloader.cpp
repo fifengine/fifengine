@@ -60,10 +60,6 @@ namespace FIFE {
 			data->readInto(darray.get(), datalen);
 			SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
-			//FILE* fp = fopen("log.txt", "a+");
-			//fprintf(fp, "%d %d %s\n", xShiftSave, yShiftSave, filename.c_str());
-			//fclose(fp);
-
 			SDL_Surface* surface = IMG_Load_RW(rwops, false);
 
 			if (!surface) {
@@ -87,7 +83,7 @@ namespace FIFE {
 		img->setAlphaOptimizerEnabled(true);
 
 		//restore saved x and y shifts
-		//img->setXShift(xShiftSave);
-		//img->setYShift(yShiftSave);
+		img->setXShift(xShiftSave);
+		img->setYShift(yShiftSave);
 	}
 }  //FIFE
