@@ -48,14 +48,12 @@ private slots:
 	void removeTexturesPressed();
 	void refreshPressed();
 	void savePressed();
-	void absolutePathChanged(int state);
 	void showFullPathChanged(int state);
 	void showSubImageChanged(int state);
+	void subimageNoChanged(int index);
 
 private:
     Ui::MainWindow *ui;
-
-	GLWidget* mGLWidget;
 
 	QVector<Image*> subImgs;
 	QVector<AtlasBlock> regions;
@@ -63,4 +61,5 @@ private:
 
 	QVector< QPair<QString, QString> > texturePaths;
 	int numAtlases;
+	int sharedPathNumChars;
 };

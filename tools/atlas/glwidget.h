@@ -23,6 +23,7 @@
 
 #include <QGLWidget>
 #include "image.h"
+#include "atlas.h"
 
 class MainWindow;
 
@@ -35,10 +36,13 @@ public:
 
 	void resizeGL(int width, int height);
 	void refreshed(QVector<Image> const& tex);
+	void updateOccupation(QVector<AtlasBlock> const& regions, int numAtlases);
 
 private slots:
-	void atlasBookChanged(int);
+	void atlasBookChanged(int index);
 	void alphaBlendingChecked(int state);
+	void showOccupationChecked(int state);
+	void subimageNoChanged(int index);
 
 protected:
 	void initializeGL();
@@ -61,5 +65,15 @@ private:
 	GLuint alphaCheckedTex;
 
 	QPoint mAnchor;
+
+	struct OccupationVertex {
+		GLfloat pos[3];
+		GLubyte color[4];
+	};
+
+	QVector<QVector<OccupationVertex> > regionsData;
+	bool showOccupation;
+	int highlightedIndex;
+	QVector<AtlasBlock> const* atlasBlocks;
 };
 
