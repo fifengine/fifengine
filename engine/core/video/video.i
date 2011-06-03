@@ -89,6 +89,7 @@ namespace FIFE {
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
+		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
 		
 	private:
 		Image(SDL_Surface* surface);
@@ -98,6 +99,12 @@ namespace FIFE {
 	typedef SharedPtr<Image> ImagePtr;
 	
 	%template(SharedImagePointer) SharedPtr<Image>;
+	
+	%extend Image {
+		static void saveAsPng(const std::string& filename, const FIFE::ImagePtr& image) {
+			FIFE::Image::saveAsPng(filename, *image->getSurface());
+		}
+	}
 	
 	class ImageManager : public IResourceManager {
 	public:
@@ -139,8 +146,6 @@ namespace FIFE {
 		virtual void invalidate(const std::string& name);
 		virtual void invalidate(ResourceHandle handle);
 		virtual void invalidateAll();
-		
-		virtual void createAtlas(const std::string& name);
 	};
 	
 	

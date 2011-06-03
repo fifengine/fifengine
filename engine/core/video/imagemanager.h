@@ -356,8 +356,6 @@ namespace FIFE {
 		virtual void invalidate(ResourceHandle handle);
 		virtual void invalidateAll();
 
-		virtual void createAtlas(const std::string& name);
-
 	private:
 		typedef std::map< ResourceHandle, ImagePtr > ImageHandleMap;
 		typedef std::map< ResourceHandle, ImagePtr >::iterator ImageHandleMapIterator;
@@ -372,15 +370,6 @@ namespace FIFE {
 		ImageHandleMap m_imgHandleMap;
 
 		ImageNameMap m_imgNameMap;
-
-		struct Atlas {
-			typedef std::map<std::string, Rect> SubimageMap;
-			SubimageMap m_subimages;
-			ImagePtr m_image;
-		};
-
-		typedef SharedPtr<Atlas> AtlasPtr;
-		std::vector<AtlasPtr> m_atlases;
 	};
 
 } //FIFE

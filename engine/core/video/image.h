@@ -198,6 +198,7 @@ namespace FIFE {
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 
 		SDL_Surface* getSurface() { return m_surface; }
+		const SDL_Surface* getSurface() const { return m_surface; }
 
 		/** This frees the current suface and replaces it with the
 		 * surface passed in the parameter (which can be NULL).
@@ -231,14 +232,17 @@ namespace FIFE {
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height) = 0;
 		virtual void forceLoadInternal() = 0;
 		bool isSharedImage() const { return m_shared; }
+		const Rect& getSubImageRect() const { return m_subimagerect; }
+
+		// saves images to png format
+		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
 
 	protected:
 		/** Sets given clip area into image
 		 *  @see pushClipArea
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-		//saves images to png format
-		virtual void saveAsPng(const std::string& filename, SDL_Surface& surface);
+
 		/** Clears any possible clip areas
 		 *  @see pushClipArea
 		 */

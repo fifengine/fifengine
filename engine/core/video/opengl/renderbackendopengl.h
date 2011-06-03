@@ -82,6 +82,7 @@ namespace FIFE {
 		void enableTextures(uint32_t texUnit);
 		void disableTextures(uint32_t texUnit);
 		void bindTexture(uint32_t texUnit, GLuint texId);
+		void bindTexture(GLuint textId);
 
 	private:
 		void enableLighting();

@@ -263,8 +263,24 @@ namespace FIFE {
 			delete info.outline; // delete old mask
 			info.outline = NULL;
 		}
+
 		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		SDL_Surface* outline_surface;
+		
+		if(vc.image->isSharedImage()) {
+			outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+				vc.image->getWidth(), vc.image->getHeight(), 32,
+				RMASK, GMASK, BMASK, AMASK);
+			SDL_SetAlpha(surface, 0, 0);
+ 
+			// can't directly cast Rect to SDL_Rect as int32_t isn't compatible with Sint16 or Uint16
+			const Rect& rect = vc.image->getSubImageRect();
+			SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+			SDL_BlitSurface(surface, &srcrect, outline_surface, NULL);
+			SDL_SetAlpha(surface, SDL_SRCALPHA, 0);
+		} else {
+			outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		}
 
 		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
 		SDLImage* img = new SDLImage(outline_surface);

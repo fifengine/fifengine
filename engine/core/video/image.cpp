@@ -192,23 +192,32 @@ namespace FIFE {
 	}
 
 	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
-		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
-			r = 0;
-			g = 0;
-			b = 0;
-			a = 0;
-			return;
+		Uint8 *p;
+		int32_t bpp = m_surface->format->BytesPerPixel;
+
+		if(!isSharedImage()) {
+			if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+				r = g = b = a = 0;
+				return;
+			}
+			p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
+		} else {
+			if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+				r = g = b = a = 0;
+				return;
+			}
+			p = (Uint8*)m_surface->pixels + (y + m_subimagerect.y) * m_surface->pitch + (x + m_subimagerect.x) * bpp;
 		}
 
-		int32_t bpp = m_surface->format->BytesPerPixel;
-		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		uint32_t pixel = 0;
 		switch(bpp) {
 		case 1:
 			pixel = *p;
+			break;
 
 		case 2:
 			pixel = *(Uint16 *)p;
+			break;
 
 		case 3:
 			if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
@@ -216,9 +225,11 @@ namespace FIFE {
 			} else {
 				pixel = p[0] | p[1] << 8 | p[2] << 16;
 			}
+			break;
 
 		case 4:
 			pixel = *(Uint32 *)p;
+			break;
 		}
 		SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
 	}
@@ -267,7 +278,7 @@ namespace FIFE {
 		setClipArea(m_area, true);
 	}
 
-	void Image::saveAsPng(const std::string& filename, SDL_Surface& surface) {
+	void Image::saveAsPng(const std::string& filename, const SDL_Surface& surface) {
 		FILE *fp;
 		png_structp pngptr;
 		png_infop infoptr;
@@ -305,14 +316,14 @@ namespace FIFE {
 		//initialize io
 		png_init_io(pngptr, fp);
 
-		//lock the surface for access
-		SDL_LockSurface(&surface);
+		// lock the surface for access (we strip it off of const but we promise not to modify it, just read)
+		SDL_LockSurface(const_cast<SDL_Surface*>(&surface));
 
 		colortype = PNG_COLOR_TYPE_RGB;
-		if(m_surface->format->palette){
+		if(surface.format->palette){
 			colortype |= PNG_COLOR_TYPE_PALETTE;
 		}
-		else if (m_surface->format->Amask){
+		else if (surface.format->Amask){
 			colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
 		}
 		else{}
@@ -331,7 +342,7 @@ namespace FIFE {
 		png_write_image(pngptr, rowpointers);
 		png_write_end(pngptr, infoptr);
 
-		SDL_UnlockSurface(&surface);
+		SDL_UnlockSurface(const_cast<SDL_Surface*>(&surface));
 		delete [] rowpointers;
 		png_destroy_write_struct(&pngptr, &infoptr);
 		fclose(fp);
