@@ -136,18 +136,23 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, ImagePtr image):
+	GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, ImagePtr image, bool zoomed):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
-		m_image(image) {
+		m_image(image),
+		m_zoomed(zoomed) {
 	}
 	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
-			uint32_t height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+			uint32_t widtht = m_image->getWidth();
+			uint32_t height = m_image->getHeight();
+			if (m_zoomed) {
+				widtht = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+				height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+			}
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -158,12 +163,13 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererAnimationInfo::GenericRendererAnimationInfo(RendererNode anchor, AnimationPtr animation):
+	GenericRendererAnimationInfo::GenericRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, bool zoomed):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
 		m_start_time(TimeManager::instance()->getTime()),
-		m_time_scale(1.0) {
+		m_time_scale(1.0),
+		m_zoomed(zoomed) {
 	}
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
@@ -172,8 +178,12 @@ namespace FIFE {
 			ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-			uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			uint32_t widtht = img->getWidth();
+			uint32_t height = img->getHeight();
+			if (m_zoomed) {
+				widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+				height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			}
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -209,20 +219,25 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererResizeInfo::GenericRendererResizeInfo(RendererNode anchor, ImagePtr image, int32_t width, int32_t height):
+	GenericRendererResizeInfo::GenericRendererResizeInfo(RendererNode anchor, ImagePtr image, int32_t width, int32_t height, bool zoomed):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
 		m_width(width),
-		m_height(height){
+		m_height(height),
+		m_zoomed(zoomed) {
 	}
 	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-			uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+			uint32_t widtht = m_width;
+			uint32_t height = m_height;
+			if (m_zoomed) {
+				uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+				uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+			}
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -279,16 +294,16 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(const std::string &group, RendererNode n, ImagePtr image) {
-		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
+	void GenericRenderer::addImage(const std::string &group, RendererNode n, ImagePtr image, bool zoomed) {
+		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image, zoomed);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(const std::string &group, RendererNode n, AnimationPtr animation) {
-		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
+	void GenericRenderer::addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, bool zoomed) {
+		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation, zoomed);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height) {
-		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height);
+	void GenericRenderer::resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, bool zoomed) {
+		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height, zoomed);
 		m_groups[group].push_back(info);
 	}
 	void GenericRenderer::removeAll(const std::string &group) {
