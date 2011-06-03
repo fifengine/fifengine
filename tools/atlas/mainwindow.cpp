@@ -29,7 +29,8 @@
 #include <QDir>
 #include <QDirIterator>
 
-#if 0
+//#define USE_QT_XML
+#ifdef USE_QT_XML
 #include <QDomDocument>
 #else
 #include "rapidxml/rapidxml.hpp"
@@ -45,9 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow), numAtlases(0)
 {
     ui->setupUi(this);
-	mGLWidget = new GLWidget(ui->previewWidget);
-	mGLWidget->setMinimumSize(ui->previewWidget->minimumSize());
-	mGLWidget->setMaximumSize(ui->previewWidget->maximumSize());
 
 	// signals
 	connect(ui->addTexturesPushBtn, SIGNAL(pressed()),
@@ -60,17 +58,21 @@ MainWindow::MainWindow(QWidget *parent) :
 		this, SLOT(refreshPressed()));
 	connect(ui->savePushBtn, SIGNAL(pressed()),
 		this, SLOT(savePressed()));
-	connect(ui->absolutePathCheckBox, SIGNAL(stateChanged(int)),
-		this, SLOT(absolutePathChanged(int)));
 	connect(ui->showFullPathCheckBox, SIGNAL(stateChanged(int)),
 		this, SLOT(showFullPathChanged(int)));
 	connect(ui->showSubimageCheckBox, SIGNAL(stateChanged(int)),
 		this, SLOT(showSubImageChanged(int)));
+	connect(ui->subimageNoSpinBox, SIGNAL(valueChanged(int)),
+		this, SLOT(subimageNoChanged(int)));
 
 	connect(ui->atlasPageSpinBox, SIGNAL(valueChanged(int)),
-		mGLWidget, SLOT(atlasBookChanged(int)));
+		ui->previewWidget, SLOT(atlasBookChanged(int)));
 	connect(ui->alphaBlendingCheckBox, SIGNAL(stateChanged(int)),
-		mGLWidget, SLOT(alphaBlendingChecked(int)));
+		ui->previewWidget, SLOT(alphaBlendingChecked(int)));
+	connect(ui->showOccupationCheckBox, SIGNAL(stateChanged(int)),
+		ui->previewWidget, SLOT(showOccupationChecked(int)));
+	connect(ui->subimageNoSpinBox, SIGNAL(valueChanged(int)),
+		ui->previewWidget, SLOT(subimageNoChanged(int)));
 
 	// default values
 	ui->tabWidget->setCurrentIndex(0);
@@ -79,23 +81,15 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->pOTAtlasCheckBox->setChecked(true);
 	ui->pOTTexturesCheckBox->setChecked(false);
 	ui->shrinkCheckBox->setChecked(true);
-	ui->absolutePathCheckBox->setChecked(false);
 	ui->atlasPageSpinBox->setRange(0, 0);
 	ui->showFullPathCheckBox->setChecked(true);
 
 	ui->alphaBlendingCheckBox->setChecked(false);
 	ui->showSubimageCheckBox->setChecked(false);
-	ui->subimageNoSpinBox->setValue(0);
 	ui->subimageNoSpinBox->setVisible(false);
+	ui->subimageNoSpinBox->setRange(-1, 0);
+	ui->subimageNoSpinBox->setValue(-1);
 	ui->subimageNoLabel->setVisible(false);
-
-	// TODO
-	ui->absolutePathCheckBox->setVisible(false);
-	ui->absolutePathLabel->setVisible(false);
-	ui->relativePathLabel->setVisible(false);
-	ui->relativePathLineEdit->setVisible(false);
-	ui->showSubimageCheckBox->setVisible(false);
-	ui->showSubimageLabel->setVisible(false);
 
 	// validators
 	QValidator* atlasSizeValidator = new QIntValidator(1, 16384, this);
@@ -148,11 +142,13 @@ void MainWindow::removeTexturesPressed()
 	}
 }
 
-
 void MainWindow::addDirectoryPressed()
 {
 	QString dirPath = QFileDialog::getExistingDirectory(this,
 		"Select your images directory", QDir::currentPath());
+
+	if(dirPath.isEmpty())
+		return;
 
 	QDirIterator dirWalker(dirPath, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
 
@@ -166,8 +162,8 @@ void MainWindow::addDirectoryPressed()
 			QString filepath = dirWalker.filePath();
 
 			texturePaths.push_back(QPair<QString, QString>(
-					filepath,
-					QFileInfo(filepath).completeBaseName() + "." +QFileInfo(filepath).suffix()));
+					filepath, // fullpath
+					QFileInfo(filepath).completeBaseName() + "." +QFileInfo(filepath).suffix())); // filename only
 
 			if(ui->showFullPathCheckBox->isChecked())
 			{
@@ -215,21 +211,6 @@ void MainWindow::addTexturesPressed()
 	ui->tabWidget->setCurrentIndex(1);
 }
 
-void MainWindow::absolutePathChanged(int state)
-{
-	Qt::CheckState s = static_cast<Qt::CheckState>(state);
-	switch(s)
-	{
-	case Qt::Unchecked:
-		ui->relativePathLineEdit->setEnabled(true);
-		break;
-	case Qt::Checked:
-		ui->relativePathLineEdit->setEnabled(false);
-		break;
-	default:break;
-	}
-}
-
 void MainWindow::showFullPathChanged(int state)
 {
 	for(int i = 0; i < ui->fileListWidget->count(); ++i)
@@ -247,16 +228,41 @@ void MainWindow::showFullPathChanged(int state)
 
 void MainWindow::showSubImageChanged(int state)
 {
+	static int oldIndex = 0;
+
 	if(state == Qt::Checked)
 	{
 		ui->subimageNoSpinBox->setVisible(true);
 		ui->subimageNoLabel->setVisible(true);
+
+		ui->subimageNoSpinBox->setMinimum(0);
+		ui->subimageNoSpinBox->setValue(oldIndex);
 	}
 	else
 	{
 		ui->subimageNoSpinBox->setVisible(false);
 		ui->subimageNoLabel->setVisible(false);
+
+		oldIndex = ui->subimageNoSpinBox->value();
+		ui->subimageNoSpinBox->setMinimum(-1);
+		ui->subimageNoSpinBox->setValue(-1);
 	}
+}
+
+void MainWindow::subimageNoChanged(int index)
+{
+	if(subImgs.isEmpty())
+		return;
+
+	if(index < 0)
+	{
+		ui->statusBar->clearMessage();
+		return;
+	}
+
+	ui->atlasPageSpinBox->setValue(regions[index].page);
+	ui->statusBar->clearMessage();
+	ui->statusBar->showMessage(QString::fromStdString(subImgs[index]->getImageName()));
 }
 
 bool ImageGreater(Image const* a, Image const* b)
@@ -356,10 +362,44 @@ void MainWindow::refreshPressed()
 			regions[i].left, regions[i].top, *subImgs[i]);
 	}
 
-	mGLWidget->refreshed(imgAtlases);
-
+	ui->previewWidget->refreshed(imgAtlases);
+	ui->previewWidget->updateOccupation(regions, numAtlases);
 	ui->atlasPageSpinBox->setRange(0, numAtlases-1);
-	ui->subimageNoSpinBox->setRange(0, subImgs.size()-1);
+	ui->subimageNoSpinBox->setMaximum(subImgs.size()-1);
+
+	if(ui->showSubimageCheckBox->checkState() == Qt::Checked)
+	{
+		ui->subimageNoSpinBox->setMinimum(0);
+		ui->subimageNoSpinBox->setValue(0);
+	}
+	else
+	{
+		ui->subimageNoSpinBox->setMinimum(-1);
+		ui->subimageNoSpinBox->setValue(-1);
+	}
+
+	// find the best file path matching
+	QString bestMatch = texturePaths[0].first;
+	for(int i = 1; i < texturePaths.size(); ++i)
+	{
+		int q = 0;
+		while(q < texturePaths[i].first.size() &&
+			  q < bestMatch.size() &&
+			  texturePaths[i].first.at(q) == bestMatch.at(q))
+			++q;
+		if(!q)
+			break;
+		bestMatch = bestMatch.left(q);
+	}
+
+	// we only need to match whole directories, not part of them (or even part of filenames)
+	if(!bestMatch.endsWith('/') && !bestMatch.isEmpty())
+	{
+		bestMatch = bestMatch.left(bestMatch.lastIndexOf('/') + 1);
+	}
+
+	sharedPathNumChars = bestMatch.size();
+	ui->prependPathLineEdit->setText(bestMatch);
 }
 
 void MainWindow::savePressed()
@@ -404,23 +444,19 @@ void MainWindow::savePressed()
 	}
 
 	//
-	// Atlas descriptor (.xml)
+	// Atlas descriptor (.atlas)
 	//
 
-// QtXML gives strange order of node attributes
-#if 0
-	QDomDocument doc;
-	QDomElement root = doc.createElement("atlases");
-	doc.appendChild(root);
-
+#ifdef USE_QT_XML
 	for(int i = 0; i < numAtlases; ++i)
 	{
-		QDomElement tag = doc.createElement("atlas");
-		root.appendChild(tag);
+		QDomDocument doc;
+		QDomElement root = doc.createElement("atlas");
+		doc.appendChild(root);
 
-		tag.setAttribute("source", atlasNames[i]);
-		tag.setAttribute("width", QString::number(imgAtlases[i].getWidth()));
-		tag.setAttribute("height", QString::number(imgAtlases[i].getHeight()));
+		root.setAttribute("source", atlasNames[i]);
+		root.setAttribute("width", QString::number(imgAtlases[i].getWidth()));
+		root.setAttribute("height", QString::number(imgAtlases[i].getHeight()));
 
 		for(int j = 0; j < subImgs.size(); ++j)
 		{
@@ -428,38 +464,48 @@ void MainWindow::savePressed()
 				continue;
 
 			QDomElement elem = doc.createElement("image");
-			QFileInfo filePath(QString::fromStdString(subImgs[j]->getImageName()));
 
-			elem.setAttribute("source", filePath.completeBaseName() + "." + filePath.suffix());
+			QString imagePath = QString::fromStdString(subImgs[j]->getImageName());
+			QFileInfo filePath(imagePath);
+			QString dirPath = filePath.absoluteDir().path();
+			QString source = ui->prependPathLineEdit->text() +
+								dirPath.right(dirPath.size() - sharedPathNumChars) + "/" +
+								filePath.completeBaseName() + "." + filePath.suffix();
+
+			elem.setAttribute("source", source);
 			elem.setAttribute("xoffset", QString::number(regions[j].left));
 			elem.setAttribute("yoffset", QString::number(regions[j].top));
 			elem.setAttribute("width", QString::number(regions[j].getWidth()));
 			elem.setAttribute("height", QString::number(regions[j].getHeight()));
 
-			tag.appendChild(elem);
+			root.appendChild(elem);
+		}
+
+		// save it
+		QFileInfo pathInfo(filenameBase);
+
+		// generate proper filename
+		QString descFilename = pathInfo.absolutePath() + "/" + pathInfo.completeBaseName();
+		if(numAtlases > 1)
+			descFilename += QString::number(i);
+		descFilename += ".atlas";
+
+		// save xml doc
+		QFile data(descFilename);
+		if (data.open(QFile::WriteOnly | QFile::Truncate))
+		{
+			QTextStream out(&data);
+			out << doc.toString();
 		}
 	}
-
-	// save it
-	QFileInfo pathInfo(filenameBase);
-	QFile data(pathInfo.absolutePath() + "/" + pathInfo.completeBaseName() + ".atlas");
-	if (data.open(QFile::WriteOnly | QFile::Truncate))
-	{
-		QTextStream out(&data);
-		out << doc.toString();
-	}
 #else
-	rapidxml::xml_document<> doc; // character type defaults to char
-	rapidxml::xml_node<>* node;
-	rapidxml::xml_attribute<>* attr;
-
-	node = doc.allocate_node(rapidxml::node_element, "atlases");
-	doc.append_node(node);
-
 	for(int i = 0; i < numAtlases; ++i)
 	{
+		rapidxml::xml_document<> doc; // character type defaults to char
+		rapidxml::xml_attribute<>* attr;
+
 		rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "atlas");
-		node->append_node(child);
+		doc.append_node(child);
 
 		char const* nameAttr = doc.allocate_string(
 			atlasNames[i].toLocal8Bit().constData());
@@ -483,12 +529,15 @@ void MainWindow::savePressed()
 			rapidxml::xml_node<>* newNode = doc.allocate_node(rapidxml::node_element, "image");
 			child->append_node(newNode);
 
-			QFileInfo filePath(QString::fromStdString(subImgs[j]->getImageName()));
+			QString imagePath = QString::fromStdString(subImgs[j]->getImageName());
+			QFileInfo filePath(imagePath);
+			QString dirPath = filePath.absoluteDir().path();
+			QString source = ui->prependPathLineEdit->text() +
+								dirPath.right(dirPath.size() - sharedPathNumChars) + "/" +
+								filePath.completeBaseName() + "." + filePath.suffix();
 
-			//char const* sourceAttr = doc.allocate_string(
-			//	(filePath.completeBaseName() + "." + filePath.suffix()).toLocal8Bit().constData());
 			char const* sourceAttr = doc.allocate_string(
-					filePath.absoluteFilePath().toLocal8Bit().constData());
+				source.toLocal8Bit().constData());
 			char const* xoffsetAttr = doc.allocate_string(
 				QString::number(regions[j].left).toLocal8Bit().constData());
 			char const* yoffsetAttr = doc.allocate_string(
@@ -509,19 +558,26 @@ void MainWindow::savePressed()
 			attr = doc.allocate_attribute("height", heightAttr);
 			newNode->append_attribute(attr);
 		}
-	}
 
+		std::string s;
+		rapidxml::print(std::back_inserter(s), doc, 0);
 
-	std::string s;
-	rapidxml::print(std::back_inserter(s), doc, 0);
+		// save it
+		QFileInfo pathInfo(filenameBase);
 
-	// save it
-	QFileInfo pathInfo(filenameBase);
-	QFile data(pathInfo.absolutePath() + "/" + pathInfo.completeBaseName() + ".atlas");
-	if (data.open(QFile::WriteOnly | QFile::Truncate))
-	{
-		QTextStream out(&data);
-		out << QString::fromStdString(s);
+		// generate proper filename
+		QString descFilename = pathInfo.absolutePath() + "/" + pathInfo.completeBaseName();
+		if(numAtlases > 1)
+			descFilename += QString::number(i);
+		descFilename += ".atlas";
+
+		// save xml doc
+		QFile data(descFilename);
+		if (data.open(QFile::WriteOnly | QFile::Truncate))
+		{
+			QTextStream out(&data);
+			out << QString::fromStdString(s);
+		}
 	}
 #endif
 }

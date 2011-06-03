@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>983</width>
-    <height>615</height>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,325 +26,334 @@
      <height>615</height>
     </size>
    </property>
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>961</width>
-      <height>591</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-     <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Files</string>
-        </attribute>
-        <widget class="QListWidget" name="fileListWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>330</width>
-           <height>411</height>
-          </rect>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>369</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>369</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Files</string>
+         </attribute>
+         <widget class="QListWidget" name="fileListWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>330</width>
+            <height>411</height>
+           </rect>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="addTexturesPushBtn">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>430</y>
+            <width>191</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add textures</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="removeTexturesPushBtn">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>490</y>
+            <width>191</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Remove textures</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="showFullPathCheckBox">
+          <property name="geometry">
+           <rect>
+            <x>120</x>
+            <y>530</y>
+            <width>111</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Show full path</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="addDirPushBtn">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>460</y>
+            <width>191</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add directory</string>
+          </property>
+         </widget>
         </widget>
-        <widget class="QPushButton" name="addTexturesPushBtn">
-         <property name="geometry">
-          <rect>
-           <x>80</x>
-           <y>430</y>
-           <width>191</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Add Textures</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="removeTexturesPushBtn">
-         <property name="geometry">
-          <rect>
-           <x>80</x>
-           <y>490</y>
-           <width>191</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Remove Textures</string>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="showFullPathCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>120</x>
-           <y>530</y>
-           <width>111</width>
-           <height>17</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Show Full Path</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="addDirPushBtn">
-         <property name="geometry">
-          <rect>
-           <x>80</x>
-           <y>460</y>
-           <width>191</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Add Directory</string>
-         </property>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Options</string>
+         </attribute>
+         <widget class="QWidget" name="formLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>90</y>
+            <width>341</width>
+            <height>314</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <property name="rowWrapPolicy">
+            <enum>QFormLayout::DontWrapRows</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="pOTAtlasLabel">
+             <property name="text">
+              <string>Power of two atlases</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="pOTAtlasCheckBox">
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="pOTTexturesLabel">
+             <property name="text">
+              <string>Power of two textures</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="pOTTexturesCheckBox"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="maxWidthLabel">
+             <property name="text">
+              <string>Maximium allowed width</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="maxWidthLineEdit">
+             <property name="text">
+              <string>2048</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="maxHeightLabel">
+             <property name="text">
+              <string>Maximum allowed height</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="maxHeightLineEdit">
+             <property name="text">
+              <string>2048</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="shrinkLabel">
+             <property name="text">
+              <string>Try to shrink</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="shrinkCheckBox">
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="atlasPageLabel">
+             <property name="text">
+              <string>Atlas page</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QSpinBox" name="atlasPageSpinBox"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="prependPathLabel">
+             <property name="text">
+              <string>Prepend path</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="prependPathLineEdit"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QPushButton" name="refreshPushBtn">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>320</y>
+            <width>191</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Generate</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="savePushBtn">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>350</y>
+            <width>191</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
+         <widget class="QWidget" name="formLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>430</y>
+            <width>171</width>
+            <height>131</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="alphaBlendingLabel">
+             <property name="text">
+              <string>Alpha blending</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="alphaBlendingCheckBox"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="showSubimageLabel">
+             <property name="text">
+              <string>Show subimage</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="subimageNoLabel">
+             <property name="text">
+              <string>Subimage No.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="subimageNoSpinBox"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="showSubimageCheckBox"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="showOccupationLabel">
+             <property name="text">
+              <string>Show occupation</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="showOccupationCheckBox"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Options</string>
-        </attribute>
-        <widget class="QWidget" name="formLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>60</x>
-           <y>130</y>
-           <width>231</width>
-           <height>176</height>
-          </rect>
-         </property>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="pOTAtlasLabel">
-            <property name="text">
-             <string>Power of two Atlases</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="pOTAtlasCheckBox">
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="pOTTexturesLabel">
-            <property name="text">
-             <string>Power of two Textures</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="pOTTexturesCheckBox"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="maxWidthLabel">
-            <property name="text">
-             <string>Maximium allowed width</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="maxWidthLineEdit">
-            <property name="text">
-             <string>2048</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="maxHeightLabel">
-            <property name="text">
-             <string>Maximum allowed height</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="maxHeightLineEdit">
-            <property name="text">
-             <string>2048</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="shrinkLabel">
-            <property name="text">
-             <string>Try to shrink</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="shrinkCheckBox">
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="atlasPageLabel">
-            <property name="text">
-             <string>Atlas Page</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="atlasPageSpinBox"/>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="absolutePathLabel">
-            <property name="text">
-             <string>Absolute Path</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QCheckBox" name="absolutePathCheckBox"/>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="relativePathLabel">
-            <property name="text">
-             <string>Relative Path</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLineEdit" name="relativePathLineEdit"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QPushButton" name="refreshPushBtn">
-         <property name="geometry">
-          <rect>
-           <x>80</x>
-           <y>320</y>
-           <width>191</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Generate</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="savePushBtn">
-         <property name="geometry">
-          <rect>
-           <x>80</x>
-           <y>350</y>
-           <width>191</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
-        <widget class="QWidget" name="formLayoutWidget_2">
-         <property name="geometry">
-          <rect>
-           <x>60</x>
-           <y>450</y>
-           <width>160</width>
-           <height>79</height>
-          </rect>
-         </property>
-         <layout class="QFormLayout" name="formLayout_2">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="alphaBlendingLabel">
-            <property name="text">
-             <string>Alpha Blending</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="alphaBlendingCheckBox"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="showSubimageLabel">
-            <property name="text">
-             <string>Show subimage</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="subimageNoLabel">
-            <property name="text">
-             <string>Subimage No.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="subimageNoSpinBox"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="showSubimageCheckBox"/>
-          </item>
-         </layout>
-        </widget>
+      </item>
+      <item>
+       <widget class="GLWidget" name="previewWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>589</width>
+          <height>600</height>
+         </size>
+        </property>
        </widget>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="previewWidget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>600</width>
-         <height>589</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GLWidget</class>
+   <extends>QWidget</extends>
+   <header>glwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

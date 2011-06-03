@@ -147,9 +147,8 @@ public:
 					freePixels -= width*height*pixelSize;
 					assert(freePixels >= 0);
 
-					// try to squeeze a little bit (horizontal only)
-					// experimental (hardcoded binary search :)
-					if(1) { if(newBlock->left > 0)
+					// try to squeeze a little bit (horizontal)
+					if(newBlock->left > 0)
 					{
 						AtlasBlock squeezed(*newBlock);
 
@@ -158,32 +157,25 @@ public:
 
 						if(!(intersection = intersects(&squeezed)))
 						{
-							squeezed.left -= newBlock->getWidth() / 2 - 1;
-							squeezed.right -= newBlock->getWidth() / 2 - 1;
+							++squeezed.left;
+							++squeezed.right;
+							int blockWidth = newBlock->getWidth();
 
-							if(!(intersection = intersects(&squeezed)))
+							// binary search
+							for(int i = 0, div = 2; i < 4; ++i)
 							{
-								squeezed.left -= newBlock->getWidth() / 4;
-								squeezed.right -= newBlock->getWidth() / 4;
-							}
-							else
-							{
-								squeezed.left += newBlock->getWidth() / 4;
-								squeezed.right += newBlock->getWidth() / 4;
-							}
+								squeezed.left -= blockWidth / div;
+								squeezed.right -= blockWidth / div;
 
-							if(!(intersection = intersects(&squeezed)))
-							{
-								squeezed.left -= newBlock->getWidth() / 8;
-								squeezed.right -= newBlock->getWidth() / 8;
-							}
-							else
-							{
-								squeezed.left += newBlock->getWidth() / 8;
-								squeezed.right += newBlock->getWidth() / 8;
+								if((intersection = intersects(&squeezed)))
+								{
+									squeezed.left += blockWidth / div;
+									squeezed.right += blockWidth / div;
+								}
+								div <<= 1;
 							}
 
-							// linear
+							// linear search
 							while(!(intersection = intersects(&squeezed)) && squeezed.left > 0)
 							{
 								--squeezed.left;
@@ -193,7 +185,47 @@ public:
 							newBlock->left = squeezed.left + 1;
 							newBlock->right = squeezed.right + 1;
 						}
-					}}
+					}
+
+					// try to squeeze a little bit (vertical)
+					if(newBlock->top > 0)
+					{
+						AtlasBlock squeezed(*newBlock);
+
+						--squeezed.top;
+						--squeezed.bottom;
+
+						if(!(intersection = intersects(&squeezed)))
+						{
+							++squeezed.top;
+							++squeezed.bottom;
+							int blockHeight = newBlock->getHeight();
+
+							// binary search
+							for(int i = 0, div = 2; i < 4; ++i)
+							{
+								squeezed.top -= blockHeight / div;
+								squeezed.bottom -= blockHeight / div;
+
+								if((intersection = intersects(&squeezed)))
+								{
+									squeezed.top += blockHeight / div;
+									squeezed.bottom += blockHeight / div;
+								}
+								div <<= 1;
+							}
+
+							// linear search
+							while(!(intersection = intersects(&squeezed)) && squeezed.top > 0)
+							{
+								--squeezed.top;
+								--squeezed.bottom;
+							}
+
+							newBlock->top = squeezed.top + 1;
+							newBlock->bottom = squeezed.bottom + 1;
+						}
+					}
 
 					newBlock->page = this->page;
 					return newBlock;

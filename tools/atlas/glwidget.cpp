@@ -24,14 +24,18 @@
 
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QTime>
 
 const int timerInterval = 20;
 
 GLWidget::GLWidget(QWidget* parent)
 	: QGLWidget(parent), mCam_xpos(-0.5f), mCam_ypos(-0.5f), mCam_zpos(-2.0f),
-	texWidth(1), texHeight(1), currentTex(0)
+	texWidth(1), texHeight(1), currentTex(0), showOccupation(false),
+	highlightedIndex(-1), atlasBlocks(NULL)
 {
 	startTimer(timerInterval); //64-65fps
+
+	qsrand(QTime::currentTime().msec());
 }
 
 GLWidget::~GLWidget()
@@ -45,9 +49,6 @@ void GLWidget::atlasBookChanged(int index)
 	if(index < texId.size())
 	{
 		currentTex = index;
-		mCam_xpos = -(texWidth[currentTex]/2);
-		mCam_ypos = -(texHeight[currentTex]/2);
-		mCam_zpos = -texWidth[currentTex];
 	}
 }
 
@@ -66,6 +67,20 @@ void GLWidget::alphaBlendingChecked(int state)
 	}
 }
 
+void GLWidget::showOccupationChecked(int state)
+{
+	if(state == Qt::Checked)
+		showOccupation = true;
+	else
+		showOccupation = false;
+}
+
+void GLWidget::subimageNoChanged(int index)
+{
+	if(atlasBlocks && index < atlasBlocks->size())
+		highlightedIndex = index;
+}
+
 void GLWidget::initializeGL()
 {	
 	// just basic set up
@@ -79,6 +94,9 @@ void GLWidget::initializeGL()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	texId.resize(1);
 	glGenTextures(1, &texId[0]);
@@ -181,35 +199,126 @@ void GLWidget::paintGL()
 	const float texWidthScale = texWidth[currentTex] * 0.03125;
 	const float texHeightScale = texHeight[currentTex] * 0.03125;
 
+	float st0[] = {
+		0.0f, texHeightScale,
+		texWidthScale, texHeightScale,
+		texWidthScale, 0.0f,
+		0.0f, 0.0f
+	};
+
+	float pos[] = {
+		0.0f, texHeight[currentTex], 1.0f,
+		texWidth[currentTex], texHeight[currentTex], 1.0f,
+		texWidth[currentTex], 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f
+	};
+
+	float st1[] = {
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f
+	};
+
 	glBindTexture(GL_TEXTURE_2D, alphaCheckedTex);
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, texHeightScale);
-		glVertex3f(0.0f, texHeight[currentTex], 1.0f);
 
-		glTexCoord2f(texWidthScale, texHeightScale);
-		glVertex3f(texWidth[currentTex], texHeight[currentTex], 1.0f);
+	glVertexPointer(3, GL_FLOAT, 0, pos);
+	glTexCoordPointer(2, GL_FLOAT, 0, st0);
+	glDrawArrays(GL_QUADS, 0, 4);
 
-		glTexCoord2f(texWidthScale, 0.0f);
-		glVertex3f(texWidth[currentTex], 0.0f, 1.0f);
+	if(!showOccupation)
+	{
+		glBindTexture(GL_TEXTURE_2D, texId[currentTex]);
 
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 1.0f);
-	glEnd();
+		glTexCoordPointer(2, GL_FLOAT, 0, st1);
+		glDrawArrays(GL_QUADS, 0, 4);
+	}
+	else if(!regionsData.isEmpty())
+	{
+		GLboolean blend;
+		glGetBooleanv(GL_BLEND, &blend);
+		glDisable(GL_BLEND);
 
-	glBindTexture(GL_TEXTURE_2D, texId[currentTex]);
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(0.0f, texHeight[currentTex], 0.0f);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glDisable(GL_TEXTURE_2D);
 
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(texWidth[currentTex], texHeight[currentTex], 0.0f);
+		glVertexPointer(3, GL_FLOAT, sizeof(OccupationVertex), regionsData[currentTex].data()->pos);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(OccupationVertex), regionsData[currentTex].data()->color);
+		glDrawArrays(GL_QUADS, 0, regionsData[currentTex].size());
 
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(texWidth[currentTex], 0.0f, 0.0f);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnable(GL_TEXTURE_2D);
 
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-	glEnd();
+		if(blend)
+			glEnable(GL_BLEND);
+	}
+
+	if(highlightedIndex != -1)
+	{
+		GLboolean blend;
+		glGetBooleanv(GL_BLEND, &blend);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_DST_COLOR, GL_ONE);
+
+		float posHigh[] = {
+			atlasBlocks->at(highlightedIndex).left, texHeight[currentTex] - atlasBlocks->at(highlightedIndex).top, 1.0f,
+			atlasBlocks->at(highlightedIndex).right, texHeight[currentTex] - atlasBlocks->at(highlightedIndex).top, 1.0f,
+			atlasBlocks->at(highlightedIndex).right, texHeight[currentTex] - atlasBlocks->at(highlightedIndex).bottom, 1.0f,
+			atlasBlocks->at(highlightedIndex).left, texHeight[currentTex] - atlasBlocks->at(highlightedIndex).bottom, 1.0f
+		};
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable(GL_TEXTURE_2D);
+
+		glColor4ub(127, 127, 127, 0);
+		glVertexPointer(3, GL_FLOAT, 0, posHigh);
+		glDrawArrays(GL_QUADS, 0, 4);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnable(GL_TEXTURE_2D);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		if(!blend)
+			glDisable(GL_BLEND);
+	}
+}
+
+void GLWidget::updateOccupation(QVector<AtlasBlock> const& regions, int numAtlases)
+{
+	regionsData.clear();
+	regionsData.resize(numAtlases);
+
+	foreach(AtlasBlock block, regions)
+	{
+		OccupationVertex vertex;
+		vertex.pos[2] = 0.0f;
+
+		vertex.color[0] = qrand() % 255;
+		vertex.color[1] = qrand() % 255;
+		vertex.color[2] = qrand() % 255;
+		vertex.color[3] = qrand() % 255;
+
+		vertex.pos[0] = block.left;
+		vertex.pos[1] = texHeight[currentTex] - block.top;
+		regionsData[block.page].push_back(vertex);
+
+		vertex.pos[0] = block.right;
+		vertex.pos[1] = texHeight[currentTex] - block.top;
+		regionsData[block.page].push_back(vertex);
+
+		vertex.pos[0] = block.right;
+		vertex.pos[1] = texHeight[currentTex] - block.bottom;
+		regionsData[block.page].push_back(vertex);
+
+		vertex.pos[0] = block.left;
+		vertex.pos[1] = texHeight[currentTex] - block.bottom;
+		regionsData[block.page].push_back(vertex);
+	}
+
+	atlasBlocks = &regions;
 }
 
 void GLWidget::mousePressEvent(QMouseEvent* event)
