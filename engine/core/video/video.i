@@ -31,6 +31,7 @@
 #include "util/base/exception.h"
 %}
 
+%include "util/base/utilbase.i"
 %include "util/structures/utilstructures.i"
 %include "util/resource/resource.i"
 

@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/image.h"
 #include "util/resource/resource.h"
 
 namespace FIFE {
@@ -37,8 +38,16 @@ namespace FIFE {
 	/** SubImageLoader for cropping another image */
 	class SubImageLoader : public IResourceLoader {
 	public:
-		SubImageLoader() {}
+		SubImageLoader() {};
+		~SubImageLoader() {};
 		virtual void load(IResource* res);
+
+		void setAreaRect(const Rect& rect) { m_rect = rect; };
+		void setParentImage(ImagePtr img) { m_img = img; };
+
+	private:
+		Rect m_rect;
+		ImagePtr m_img;
 	};
 
 }
