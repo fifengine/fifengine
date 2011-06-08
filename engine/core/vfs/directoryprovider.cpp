@@ -23,6 +23,8 @@
 #include <iostream>
 
 // 3rd party library includes
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -34,14 +36,17 @@
 #include "directoryprovider.h"
 #include "vfsdirectory.h"
 
+// alias boost::filesystem namespace to make shorter
+namespace bfs = boost::filesystem;
+
 namespace FIFE {
 	bool DirectoryProvider::isReadable(const std::string& path) const {
-		return getVFS()->isDirectory(path);
+        return bfs::is_directory(bfs::path(path));
 	}
 
 	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) const {
 		if (isReadable(path))
-			return new VFSDirectory(getVFS(), path);
+            return new VFSDirectory(getVFS(), path);
 		else
 			throw Exception("Path " + path + " is not readable.");
 	}
