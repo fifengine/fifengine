@@ -43,18 +43,20 @@ namespace FIFE {
 		public:
 			DirectoryProvider() : VFSSourceProvider("OS Directory") { }
 
-			/** Check if a given directory is readable for this VFSSource.
- 			 * Directory sources must be denoted by a trailing '/', otherwise VFS will consider
- 			 * the source to be a file, and unreadable asa a directory.
+			/** Check if a given directory is readable.
+ 			 * The path must either be an absolute path or relative
+             * to the current working directory where the client was launched
 			 *
-			 * @param file the filename to check
+			 * @param path the filename to check
 			 * @return true if readable, false otherwise
 			 */
 			virtual bool isReadable(const std::string& path) const;
 
 			/** Create a new instance of a VFSSource initialized with the given directory
-			 *
-			 * @param file the directory to open
+			 * This will only pass if the path is readable and recognized
+             * as a directory as per the description of isReadable
+             *
+			 * @param path the directory to open
 			 * @return the new VFSSource
 			 */
 			virtual VFSSource* createSource(const std::string& path) const;
