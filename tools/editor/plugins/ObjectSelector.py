@@ -440,7 +440,7 @@ class ObjectSelector(plugin.Plugin):
 
 		# Construct the new GuiImage that is to be returned
 		if index != -1:
-			image = fife.GuiImage(index)
+			image = fife.GuiImage(self.engine.getImageManager().get(index))
 
 		return image
 
