@@ -121,7 +121,7 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
-			ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
+			ImagePtr img = m_animation->getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));

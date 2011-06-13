@@ -84,17 +84,22 @@ namespace FIFE {
 		return size > 0 && index >= 0 && index < size;
 	}
 
-	uint32_t Animation::getFrame(int32_t index) {
+	ImagePtr Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
-//prock - 504
-			return m_frames[index].image->getHandle();
+			return m_frames[index].image;
 		} else {
-			return 0;  //return an invalid image ID.
+			return ImagePtr();  //return an invalid image .
 		}
 	}
 
-	uint32_t Animation::getFrameByTimestamp(uint32_t timestamp) {
-		return getFrame(getFrameIndex(timestamp));
+	ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp) {
+		ImagePtr val;
+		if ((static_cast<int32_t>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
+			std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
+			--i;
+			val = i->second.image;
+		}
+		return val;
 	}
 
 	int32_t Animation::getFrameDuration(int32_t index) const{

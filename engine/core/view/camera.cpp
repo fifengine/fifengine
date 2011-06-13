@@ -759,7 +759,7 @@ namespace FIFE {
 				m_start_time = TimeManager::instance()->getTime();
 			}
 			uint32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % m_ani_ptr->getDuration();
-			ImagePtr img = ImageManager::instance()->get(m_ani_ptr->getFrameByTimestamp(animtime));
+			ImagePtr img = m_ani_ptr->getFrameByTimestamp(animtime);
 			if (img) {
 				if (m_ani_fill) {
 					r.w = width;

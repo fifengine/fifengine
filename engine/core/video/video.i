@@ -156,8 +156,8 @@ namespace FIFE {
 		~Animation();
 		void addFrame(ImagePtr image, uint32_t duration);
 		int32_t getFrameIndex(uint32_t timestamp);
-		uint32_t getFrame(int32_t index);
-		uint32_t getFrameByTimestamp(uint32_t timestamp);
+		ImagePtr getFrame(int32_t index);
+		ImagePtr getFrameByTimestamp(uint32_t timestamp);
 		int32_t getFrameDuration(int32_t index);
 		uint32_t getFrameCount() const;
 		void setActionFrame(int32_t num);

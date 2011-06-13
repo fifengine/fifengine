@@ -135,7 +135,7 @@ namespace FIFE {
 	}
 	void OffRendererAnimationInfo::render(RenderBackend* renderbackend) {
 		int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
-		ImagePtr img = ImageManager::instance()->get(m_animation->getFrameByTimestamp(animtime));
+		ImagePtr img = m_animation->getFrameByTimestamp(animtime);
 
 		Rect r;
 		uint16_t widtht = img->getWidth();
