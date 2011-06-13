@@ -118,6 +118,14 @@ namespace FIFE {
 		 */
 		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
 
+		/** Loads a blank resource
+		 * 
+		 * @param width
+		 * @param height
+		 * @return An ImagePtr to the blank image (ready to be modified)
+		 */
+		virtual ImagePtr loadBlank(uint32_t width, uint32_t height);
+
 		/** Add an Image to the manager
 		 *
 		 * This function will create a ImagePtr and add the Image

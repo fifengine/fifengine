@@ -303,9 +303,15 @@ namespace FIFE {
 	}
 
 	bool GLImage::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		// TODO:temporary ugly hack for uh minimap to work correctly
+		SDLImage* img = new SDLImage(m_surface);
+		bool res = img->putPixel(x, y, r, g, b, a);
+		SDL_Surface* p = img->detachSurface();
+		delete img;
+		return res;
 		//cleanup();
 		//return m_sdlimage->putPixel(x, y, r, g, b, a);
-		return false;
+		//return false;
 	}
 
 	void GLImage::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -347,12 +353,15 @@ namespace FIFE {
 		return Image::getSize();
 	}
 
-	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height) {
+	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
 		GLImage* img = static_cast<GLImage*>(shared.get());
 		setSurface(img->m_surface);
 
 		m_texId = img->m_texId;
 		m_shared = true;
+
+		uint32_t width = shared->getWidth();
+		uint32_t height = shared->getHeight();
 
 		texCoords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
 		texCoords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
@@ -363,6 +372,10 @@ namespace FIFE {
 	}
 
 	void GLImage::forceLoadInternal() {
+		assert(m_surface);
+
+		if(m_shared)
+			return;
 		generateGLTexture();
 	}
 }

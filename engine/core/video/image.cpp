@@ -108,7 +108,7 @@ namespace FIFE {
 	}
 
 	void Image::reset(SDL_Surface* surface) {
-		if( m_surface ) {
+		if( m_surface && !m_shared) {
 			SDL_FreeSurface(m_surface);
 		}
 
@@ -361,5 +361,15 @@ namespace FIFE {
 	        ++uniqueNumber;
 
 	        return name;
+	}
+
+	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img){
+		assert(!img->isSharedImage());
+		SDL_SetAlpha(img->m_surface, 0, 0);
+		SDL_Rect dstrect = { xoffset, yoffset,
+			static_cast<Uint16>(img->getWidth()),
+			static_cast<Uint16>(img->getHeight()) };
+		SDL_BlitSurface(img->m_surface, NULL, m_surface, &dstrect);
+		SDL_SetAlpha(img->m_surface, SDL_SRCALPHA, 0);
 	}
 }

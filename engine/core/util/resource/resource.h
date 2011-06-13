@@ -68,7 +68,7 @@ namespace FIFE {
 		ResourceHandle getHandle() { return m_handle; }
 
 		virtual ResourceState getState() { return m_state; }
-		virtual void setState(ResourceState& state) { m_state = state; }
+		virtual void setState(const ResourceState& state) { m_state = state; }
 
 		virtual size_t getSize() = 0;
 

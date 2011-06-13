@@ -229,10 +229,12 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
-		virtual void useSharedImage(const ImagePtr& shared, const Rect& region, uint32_t width, uint32_t height) = 0;
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region) = 0;
 		virtual void forceLoadInternal() = 0;
 		bool isSharedImage() const { return m_shared; }
 		const Rect& getSubImageRect() const { return m_subimagerect; }
+
+		void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
 		// saves images to png format
 		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
