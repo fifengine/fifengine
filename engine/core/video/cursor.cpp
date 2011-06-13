@@ -211,8 +211,7 @@ namespace FIFE {
 		}
 		else if (m_drag_type == CURSOR_ANIMATION) {
 			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
-			uint32_t imgid = m_cursor_drag_animation->getFrameByTimestamp(animtime);
-			img = ImageManager::instance()->get(imgid);
+			img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
 		}
 
 		if (img != 0) {
@@ -230,8 +229,7 @@ namespace FIFE {
 		}
 		else if (m_cursor_type == CURSOR_ANIMATION) {
 			int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
-			uint32_t imgid = m_cursor_animation->getFrameByTimestamp(animtime);
-			img2 = ImageManager::instance()->get(imgid);
+			img2 = m_cursor_animation->getFrameByTimestamp(animtime);
 		}
 
 		if (img2 != 0) {

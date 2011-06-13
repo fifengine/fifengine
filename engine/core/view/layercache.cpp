@@ -197,7 +197,7 @@ namespace FIFE {
 				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
-			image = ImageManager::instance()->get(animation->getFrameByTimestamp(animation_time));
+			image = animation->getFrameByTimestamp(animation_time);
 
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){
