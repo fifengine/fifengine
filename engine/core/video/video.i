@@ -27,6 +27,7 @@
 #include "video/imagemanager.h"
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
+#include "video/atlasbook.h"
 #include "util/base/sharedptr.h"
 #include "util/base/exception.h"
 %}
@@ -74,7 +75,7 @@ namespace FIFE {
 	
 	class Image : public IResource, public IImage {
 	public:
-		void render(const Rect& rect, uint8_t alpha = 255);
+		void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
 		uint32_t getWidth() const;
@@ -91,6 +92,12 @@ namespace FIFE {
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
 		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
+		
+		virtual void useSharedImage(const FIFE::ImagePtr& shared, const Rect& region) = 0;
+		virtual void forceLoadInternal() = 0;
+		bool isSharedImage() const;
+		const Rect& getSubImageRect() const;
+		void copySubimage(uint32_t xoffset, uint32_t yoffset, const FIFE::ImagePtr& img);		
 		
 	private:
 		Image(SDL_Surface* surface);
@@ -117,7 +124,8 @@ namespace FIFE {
 		virtual size_t getTotalResources() const;
 
 		virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
-		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);		
+		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
+		virtual ImagePtr loadBlank(uint32_t width, uint32_t height);		
 		virtual ImagePtr add(Image* res);
 
 		virtual bool exists(const std::string& name);
@@ -304,4 +312,39 @@ namespace FIFE {
 		
 		uint32_t getVideoMemory() const;
 	};
+	
+	class AtlasBlock {
+	public:
+		uint32_t page;
+		uint32_t left, right, top, bottom;
+
+		AtlasBlock(const Rect& rect, uint32_t page);
+		AtlasBlock();
+
+		void setTrivial();
+		bool isTrivial() const;
+
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
+
+		AtlasBlock intersects(AtlasBlock const& rect) const;
+		void merge(AtlasBlock const& rect);
+	};	
+	
+	class AtlasBook {
+	public:
+		AtlasBook(uint32_t pageWidth, uint32_t pageHeight, uint32_t pixelSize = 4);
+
+		AtlasBlock* getBlock(uint32_t width, uint32_t height);
+		void shrink(bool pot);
+	};
+	
+	%extend AtlasBook {
+		uint32_t getPageWidth(uint32_t index) {
+			return $self->getPage(index).getWidth();
+		}
+		uint32_t getPageHeight(uint32_t index) {
+			return $self->getPage(index).getHeight();
+		}
+	}		
 }
