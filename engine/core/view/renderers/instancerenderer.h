@@ -166,7 +166,6 @@ namespace FIFE {
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
-		Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
 	};
 }
 
