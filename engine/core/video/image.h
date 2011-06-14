@@ -210,18 +210,26 @@ namespace FIFE {
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
 		const Rect& getArea();
-		void setXShift(int32_t xshift);
-		inline int32_t getXShift() const {
+
+		void setXShift(int32_t xshift) {
+			m_xshift = xshift;
+		}
+		int32_t getXShift() const {
 			return m_xshift;
 		}
-		void setYShift(int32_t yshift);
-		inline int32_t getYShift() const {
+		void setYShift(int32_t yshift) {
+			m_yshift = yshift;
+		}
+		int32_t getYShift() const {
 			return m_yshift;
 		}
+
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		void pushClipArea(const Rect& cliparea, bool clear=true);
+
+		void pushClipArea(const Rect& cliparea, bool clear = true);
 		void popClipArea();
 		const Rect& getClipArea() const;
+
 		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
 		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
 
@@ -229,11 +237,24 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
+		/** After this call all image data will be taken from the given image and its subregion 
+		 */
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region) = 0;
+
+		/** Forces to load the image into internal memory of GPU
+		 */
 		virtual void forceLoadInternal() = 0;
+
+		/** Returns true if this image shares data with another one
+		 */
 		bool isSharedImage() const { return m_shared; }
+
+		/** Returns area of the image it occupies in the shared image
+		 */
 		const Rect& getSubImageRect() const { return m_subimagerect; }
 
+		/** Copies given image into this one with respect to given offsets
+		 */
 		void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
 		// saves images to png format
@@ -278,7 +299,9 @@ namespace FIFE {
 		 */
 		void reset(SDL_Surface* surface);
 
-		bool m_shared; // false on init
+		// Does this image share data with another
+		bool m_shared;
+		// Area which this image occupy in shared image
 		Rect m_subimagerect;
 
 	private:
