@@ -33,7 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "core/util/structures/rect.h"
+#include "util/structures/rect.h"
 
 namespace FIFE {
 
@@ -43,7 +43,7 @@ namespace FIFE {
 		uint32_t left, right, top, bottom;
 
 		AtlasBlock(const Rect& rect, uint32_t page)
-			: page(page), 
+			: page(page),
 			left(rect.x), right(rect.right()),
 			top(rect.y), bottom(rect.bottom()){
 		}
