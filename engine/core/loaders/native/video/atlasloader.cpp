@@ -144,19 +144,19 @@ namespace FIFE {
 				for (TiXmlElement* imageElem = root->FirstChildElement("image");
 					imageElem != 0; imageElem = imageElem->NextSiblingElement("image")) {
 
-						Rect region;
-						imageElem->QueryValueAttribute("xpos", &region.x);
-						imageElem->QueryValueAttribute("ypos", &region.y);
-						imageElem->QueryValueAttribute("width", &region.w);
-						imageElem->QueryValueAttribute("height", &region.h);
+					Rect region;
+					imageElem->QueryValueAttribute("xpos", &region.x);
+					imageElem->QueryValueAttribute("ypos", &region.y);
+					imageElem->QueryValueAttribute("width", &region.w);
+					imageElem->QueryValueAttribute("height", &region.h);
 
-						const std::string* subimageName = imageElem->Attribute(std::string("source"));
-						subimages.insert(std::make_pair(*subimageName, region));
+					const std::string* subimageName = imageElem->Attribute(std::string("source"));
+					subimages.insert(std::make_pair(*subimageName, region));
 
-						if(!atlasExists) {
-							ImagePtr subImage = m_imageManager->create(*subimageName);
-							subImage->useSharedImage(atlas->getImage(), region);
-						}
+					if(!atlasExists) {
+						ImagePtr subImage = m_imageManager->create(*subimageName);
+						subImage->useSharedImage(atlas->getImage(), region);
+					}
 				}
 			}
 		}

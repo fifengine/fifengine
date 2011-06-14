@@ -183,14 +183,6 @@ namespace FIFE {
 		return m_area;
 	}
 
-	void Image::setXShift(int32_t xshift) {
-		m_xshift = xshift;
-	}
-
-	void Image::setYShift(int32_t yshift) {
-		m_yshift = yshift;
-	}
-
 	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		Uint8 *p;
 		int32_t bpp = m_surface->format->BytesPerPixel;
@@ -363,13 +355,33 @@ namespace FIFE {
 	        return name;
 	}
 
-	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img){
-		assert(!img->isSharedImage());
-		SDL_SetAlpha(img->m_surface, 0, 0);
-		SDL_Rect dstrect = { xoffset, yoffset,
-			static_cast<Uint16>(img->getWidth()),
-			static_cast<Uint16>(img->getHeight()) };
-		SDL_BlitSurface(img->m_surface, NULL, m_surface, &dstrect);
-		SDL_SetAlpha(img->m_surface, SDL_SRCALPHA, 0);
+	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg){
+		SDL_SetAlpha(srcimg->m_surface, 0, 0);
+		if(this->isSharedImage()) {
+			Rect const& rect = this->getSubImageRect();
+			SDL_Rect dstrect = { 
+				rect.x + xoffset, rect.y + yoffset,
+				static_cast<Uint16>(srcimg->getWidth()),
+				static_cast<Uint16>(srcimg->getHeight()) };
+			if(srcimg->isSharedImage()) {
+				Rect const& rect = srcimg->getSubImageRect();
+				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
+			} else {
+				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+			}
+		} else {
+			SDL_Rect dstrect = { xoffset, yoffset,
+				static_cast<Uint16>(srcimg->getWidth()),
+				static_cast<Uint16>(srcimg->getHeight()) };
+			if(srcimg->isSharedImage()) {
+				Rect const& rect = srcimg->getSubImageRect();
+				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
+			} else {
+				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+			}
+		}
+		SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
 	}
 }
