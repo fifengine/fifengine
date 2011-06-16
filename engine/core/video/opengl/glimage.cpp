@@ -363,12 +363,18 @@ namespace FIFE {
 		uint32_t width = shared->getWidth();
 		uint32_t height = shared->getHeight();
 
+		if(!GLEE_ARB_texture_non_power_of_two) {
+			width = nextPow2(width);
+			height = nextPow2(height);
+		}
+
 		texCoords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
 		texCoords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
 		texCoords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
 		texCoords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
 
 		m_subimagerect = region;
+		setState(IResource::RES_LOADED);
 	}
 
 	void GLImage::forceLoadInternal() {

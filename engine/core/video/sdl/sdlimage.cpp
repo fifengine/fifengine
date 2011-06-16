@@ -880,4 +880,20 @@ namespace FIFE {
 
 		return Image::getSize() + zoomSize;
 	}
+
+	void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h, 32,
+			RMASK, GMASK, BMASK ,AMASK);
+		SDL_Surface* src_surface = shared->getSurface();
+
+		SDL_SetAlpha(src_surface, 0, 0);
+		SDL_Rect srcrect = { region.x, region.y, region.w, region.h };
+		SDL_BlitSurface(src_surface, &srcrect, surface, NULL);
+		SDL_SetAlpha(src_surface, SDL_SRCALPHA, 0);
+
+		setSurface(surface);
+		m_shared = false; // this isn't a mistake
+		m_subimagerect = region;
+		setState(IResource::RES_LOADED);
+	}
 }
