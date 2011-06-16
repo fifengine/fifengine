@@ -50,6 +50,7 @@
 #include "view/visual.h"
 #include "view/camera.h"
 #include "view/renderers/instancerenderer.h"
+#include "util/base/stringutils.h"
 
 #include "maploader.h"
 #include "animationloader.h"
@@ -390,43 +391,8 @@ namespace FIFE
 							if (layer) {
 								if (viewport) {
 									// parse out the viewport parameters
-									std::string::size_type lastpos = 0;
-									std::string::size_type pos = 0;
-									std::vector<int> viewportParameters;
-									while ((pos = viewport->find(',', lastpos)) != std::string::npos) {
-										std::string value = viewport->substr(lastpos, pos-lastpos);
-										std::istringstream iss(value);
-										
-										int viewportParameter = 0;
-										if (!(iss >> viewportParameter)) {
-											// something bad happened
-											// clear vector and exit loop
-											viewportParameters.clear();
-											break;
-										}
-
-										viewportParameters.push_back(viewportParameter);
-
-										lastpos = pos+1;
-
-										if (viewportParameters.size() == 3) {
-											// go ahead and grab the last parameter
-											// no more commas coming
-											std::string value = viewport->substr(lastpos, viewport->size()-lastpos);
-											std::istringstream iss(value);
-
-											int viewportParameter = 0;
-											if (!(iss >> viewportParameter)) {
-												// something bad happened
-												// clear vector and exit loop
-												viewportParameters.clear();
-												break;
-											}
-
-											viewportParameters.push_back(viewportParameter);
-										}
-									}
-
+									IntVector viewportParameters = tokenize(*viewport, ','); 
+									
 									// make sure the right number of viewport parameters were parsed
 									if (viewportParameters.size() == 4) {
 										Rect rect(viewportParameters[0], viewportParameters[1], 
@@ -702,33 +668,119 @@ namespace FIFE
 						ActionVisual::create(action);
 
 						for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement; animElement = animElement->NextSiblingElement("animation")) {
-							const std::string* sourceId = animElement->Attribute(std::string("source"));
+							const std::string* sourceId = animElement->Attribute(std::string("atlas"));
+							if(sourceId) {
+								std::string atlasFile = *sourceId;
+								fs::path atlasPath(file);
+								if (atlasPath.has_branch_path()) {
+									atlasFile = atlasPath.branch_path().string() + "/" + *sourceId;
+								}
+								atlasPath = fs::path(atlasFile);
+								// we need to load this since its shared image
+								ImagePtr atlasImgPtr = m_imageManager->load(atlasPath.file_string());
+								atlasImgPtr->forceLoadInternal();
 
-							if (sourceId) {
-								std::string animFile = *sourceId;
+								// TODO: kto trzyma wskaznik na dzielony obraz? action?
 
-								fs::path animPath(file);
+								int animFrames = 0;
+								int animDelay = 0;
+								int animXoffset = 0;
+								int animYoffset = 0;
+								int frameWidth = 0;
+								int frameHeight = 0;
 
-								if (animPath.has_branch_path()) {
-									animFile = animPath.branch_path().string() + "/" + *sourceId;
+								animElement->QueryValueAttribute("width", &frameWidth);
+								animElement->QueryValueAttribute("height", &frameHeight);
+								animElement->QueryValueAttribute("frames", &animFrames);
+								animElement->QueryValueAttribute("delay", &animDelay);
+								animElement->QueryValueAttribute("x_offset", &animXoffset);
+								animElement->QueryValueAttribute("y_offset", &animYoffset);
+								int nDir = 0;
+
+								for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
+									dirElement; dirElement = dirElement->NextSiblingElement("direction")) {
+									AnimationPtr animation(new Animation);
+
+									int dir;
+									dirElement->QueryIntAttribute("dir", &dir);
+
+									int frames;
+									int success;
+
+									success = dirElement->QueryValueAttribute("frames", &frames);
+									if(success != TIXML_SUCCESS) {
+										frames = animFrames;
+									}
+
+									int delay;
+									success = dirElement->QueryValueAttribute("delay", &delay);
+									if(success != TIXML_SUCCESS) {
+										delay = animDelay;
+									}
+
+									int xoffset;
+									success = dirElement->QueryValueAttribute("x_offset", &xoffset);
+									if(success != TIXML_SUCCESS) {
+										xoffset = animXoffset;
+									}
+
+									int yoffset;
+									success = dirElement->QueryValueAttribute("y_offset", &yoffset);
+									if(success != TIXML_SUCCESS) {
+										yoffset = animYoffset;
+									}
+
+									for (int iframe = 0; iframe < frames; ++iframe) {
+										static char tmpBuf[64];
+										sprintf(tmpBuf, "%03d:%04d", dir, iframe);
+
+										std::string frameId = *objectId + ":" + *actionId + ":" + std::string(tmpBuf);
+										ImagePtr framePtr = m_imageManager->create(frameId);
+										Rect region(
+											frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
+										);
+										framePtr->useSharedImage(atlasImgPtr, region);
+										framePtr->setXShift(xoffset);
+										framePtr->setXShift(yoffset);
+										animation->addFrame(framePtr, delay);
+									}
+
+									ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+									if(actionVisual) {
+										actionVisual->addAnimation(dir, animation);
+										action->setDuration(animation->getDuration());
+									}
+									++nDir;
 								}
 
-								animPath = fs::path(animFile);
+							} else {
+								sourceId = animElement->Attribute(std::string("source"));
+								if (sourceId) {
+									std::string animFile = *sourceId;
 
-                                AnimationPtr animation;
-                                if (m_animationLoader && m_animationLoader->isLoadable(animPath.file_string())) {
-                                    animation = m_animationLoader->load(animPath.file_string());    
-                                }
+									fs::path animPath(file);
 
-								int direction = 0;
-								int success = animElement->QueryIntAttribute("direction", &direction);
+									if (animPath.has_branch_path()) {
+										animFile = animPath.branch_path().string() + "/" + *sourceId;
+									}
 
-								if (action && animation) {
-									ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+									animPath = fs::path(animFile);
 
-									if (actionVisual) {
-										actionVisual->addAnimation(direction, animation);
-                                        action->setDuration(animation->getDuration());
+									AnimationPtr animation;
+									if (m_animationLoader && m_animationLoader->isLoadable(animPath.file_string())) {
+										animation = m_animationLoader->load(animPath.file_string());    
+									}
+
+									int direction = 0;
+									int success = animElement->QueryIntAttribute("direction", &direction);
+
+									if (action && animation) {
+										ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+
+										if (actionVisual) {
+											actionVisual->addAnimation(direction, animation);
+											action->setDuration(animation->getDuration());
+										}
 									}
 								}
 							}

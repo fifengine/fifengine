@@ -62,7 +62,7 @@ namespace FIFE {
 
 		virtual size_t getSize();
 
-		virtual void useSharedImage(const ImagePtr& shared, const Rect& region) {}
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal() {}
 
 	protected:
