@@ -35,8 +35,9 @@
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "audio/soundmanager.h"
-#include "gui/console/console.h"
+#include "gui/guichan/console/console.h"
 #include "gui/guimanager.h"
+#include "gui/guichan/guichanmanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/directoryprovider.h"
@@ -52,10 +53,10 @@
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "gui/base/opengl/opengl_gui_graphics.h"
+#include "gui/guichan/base/opengl/opengl_gui_graphics.h"
 #endif
-#include "gui/base/sdl/sdl_gui_graphics.h"
-#include "gui/base/gui_font.h"
+#include "gui/guichan/base/sdl/sdl_gui_graphics.h"
+#include "gui/guichan/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/fonts/abstractfont.h"
 #include "loaders/native/video/subimageloader.h"
@@ -76,7 +77,7 @@
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
 #include "video/image.h"
-#include "gui/console/console.h"
+#include "gui/guichan/console/console.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -140,12 +141,12 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 		m_defaultfont->invalidate();
-		m_guimanager->invalidateFonts();
+		dynamic_cast<GUIChanManager*>(m_guimanager)->invalidateFonts();
 
 		Image* screen = m_renderbackend->setScreenMode(mode);
 
 		m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
-		m_guimanager->getConsole()->reLayout();
+		dynamic_cast<GUIChanManager*>(m_guimanager)->getConsole()->reLayout();
 
 		std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
@@ -263,17 +264,17 @@ namespace FIFE {
 			m_gui_graphics = new SdlGuiGraphics();
 		}
 		FL_LOG(_log, "Constructing GUI manager");
-		m_guimanager = new GUIManager();
+		m_guimanager = new GUIChanManager();
 		FL_LOG(_log, "Events bind to GUI manager");
 		m_eventmanager->addSdlEventListener(m_guimanager);
 
 		FL_LOG(_log, "Creating default font");
-		m_defaultfont = m_guimanager->setDefaultFont(
+		m_defaultfont = dynamic_cast<GUIChanManager*>(m_guimanager)->setDefaultFont(
 			m_settings.getDefaultFontPath(),
 			m_settings.getDefaultFontSize(),
 			m_settings.getDefaultFontGlyphs());
 		FL_LOG(_log, "Initializing GUI manager");
-		m_guimanager->init(m_gui_graphics, m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight());
+		dynamic_cast<GUIChanManager*>(m_guimanager)->init(m_gui_graphics, m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight());
 		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
 

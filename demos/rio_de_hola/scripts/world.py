@@ -241,7 +241,7 @@ class World(EventListenerBase):
 		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
 		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
+		textfont = self.engine.getGuiChanManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
 		renderer.changeDefaultFont(textfont)
 		renderer.activateAllLayers(self.map)
 		renderer.setBackground(100, 255, 100, 165)

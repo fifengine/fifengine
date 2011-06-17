@@ -56,7 +56,7 @@ def _munge_engine_hook(engine):
 	if not isinstance(engine,fife.Engine):
 		return engine
 
-	guimanager = engine.getGuiManager()
+	guimanager = engine.getGuiChanManager()
 
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)

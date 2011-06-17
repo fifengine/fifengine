@@ -38,7 +38,7 @@ class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseLis
 			self.eventmanager.addMouseListener(self)
 		fife.ConsoleExecuter.__init__(self)
 		if regConsole:
-			engine.getGuiManager().getConsole().setConsoleExecuter(self)
+			engine.getGuiChanManager().getConsole().setConsoleExecuter(self)
 
 
 	def mousePressed(self, evt):

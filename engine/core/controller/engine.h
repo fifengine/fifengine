@@ -50,7 +50,7 @@ namespace FIFE {
 
 	class SoundManager;
 	class RenderBackend;
-	class GUIManager;
+	class IGUIManager;
 	class VFS;
 	class VFSSourceFactory;
 	class EventManager;
@@ -146,13 +146,13 @@ namespace FIFE {
 
 		/** Provides access point to the GuiManager
 		 */
-		GUIManager* getGuiManager() const { return m_guimanager; }
+		IGUIManager* getGuiManager() const { return m_guimanager; }
 
 		/** Provides access point to the ImageManager
 		 */
 		ImageManager* getImageManager() const { return m_imagemanager; }
 
-		/** Provides access point to the ImageManager
+		/** Provides access point to the SoundClipManager
 		 */
 		SoundClipManager* getSoundClipManager() const { return m_soundclipmanager; }
 
@@ -196,7 +196,7 @@ namespace FIFE {
 
 	private:
 		RenderBackend* m_renderbackend;
-		GUIManager* m_guimanager;
+		IGUIManager* m_guimanager;
 		EventManager* m_eventmanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
