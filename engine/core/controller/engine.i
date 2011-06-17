@@ -21,14 +21,17 @@
 %module fife
 %{
 #include "controller/engine.h"
+#include "gui/guichan/guichanmanager.h"
 %}
+
 
 namespace FIFE {
 
 	class SoundManager;
 	class EventManager;
 	class TimeManager;
-	class GUIManager;
+	class IGUIManager;
+	class GUIChanManager;
 	class RenderBackend;
 	class Model;
 	class LogManager;
@@ -116,7 +119,7 @@ namespace FIFE {
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
-		GUIManager* getGuiManager();
+		IGUIManager* getGuiManager();
 		ImageManager* getImageManager();
 		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
@@ -130,4 +133,10 @@ namespace FIFE {
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);
 	};
+	
+	%extend Engine {
+		GUIChanManager* getGuiChanManager() {
+			return dynamic_cast<FIFE::GUIChanManager*>($self->getGuiManager());
+		}
+	}	
 }

@@ -95,7 +95,7 @@ class EventListener:
 		eventmanager.addKeyListener(self.keylistener)
 		eventmanager.addCommandListener(self.commandlistener)
 		eventmanager.addMouseListener(self.mouselistener)
-		self.engine.getGuiManager().getConsole().setConsoleExecuter(self.consoleexecuter)
+		self.engine.getGuiChanManager().getConsole().setConsoleExecuter(self.consoleexecuter)
 		
 		keyPressed.connect(self.keyPressed)
 		keyReleased.connect(self.keyReleased)
@@ -147,7 +147,7 @@ class EventListener:
 		elif keyval == fife.Key.ESCAPE:
 			scripts.editor.getEditor().quit()
 		elif keyval == fife.Key.F10:
-			self.engine.getGuiManager().getConsole().toggleShowHide()
+			self.engine.getGuiChanManager().getConsole().toggleShowHide()
 		elif keystr == "d":
 			pdb.set_trace()
 			
