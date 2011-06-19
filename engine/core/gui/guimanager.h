@@ -58,9 +58,6 @@ namespace FIFE {
 			 * @param height The new height.
 			 */
 			virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-
-			virtual bool onSdlEvent(SDL_Event& evt) = 0;
-
 	};
 }
 

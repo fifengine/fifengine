@@ -242,7 +242,7 @@ class World(EventListenerBase):
 		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
 		textfont = self.engine.getGuiChanManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
-		renderer.changeDefaultFont(textfont)
+		renderer.setFont(textfont)
 		renderer.activateAllLayers(self.map)
 		renderer.setBackground(100, 255, 100, 165)
 		renderer.setBorder(50, 255, 50)
@@ -255,7 +255,7 @@ class World(EventListenerBase):
 		# The small camera shouldn't be cluttered by the 'humm di dums' of our hero.
 		# So we disable the renderer simply by setting its font to None.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
-		renderer.changeDefaultFont(None)
+		renderer.setFont(None)
 
 		# The following renderers are used for debugging.
 		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )

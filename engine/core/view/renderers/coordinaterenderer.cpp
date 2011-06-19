@@ -46,15 +46,14 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font):
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
-		m_font(font) {
+		m_font(0) {
 		setEnabled(false);
 		m_font_color = false;
-		m_color = m_font->getColor();
 	}
 
  	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
@@ -91,6 +90,10 @@ namespace FIFE {
 	const int32_t MIN_COORD = -9999999;
 	const int32_t MAX_COORD = 9999999;
 	void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
+		if (!m_font) {
+			//no font selected.. nothing to render
+			return;
+		}
 		m_layer_area.x = MAX_COORD;
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;

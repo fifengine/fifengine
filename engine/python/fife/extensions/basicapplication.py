@@ -81,6 +81,25 @@ class ApplicationBase(object):
 		self.loadSettings()	
 		
 		self.engine.init()
+		
+		guimanager = fife.GUIChanManager()
+		guimanager.thisown = 0
+
+		self.engine.setGuiManager(guimanager)
+		
+		guimanager.setDefaultFont(
+			self.engine.getSettings().getDefaultFontPath(),
+			self.engine.getSettings().getDefaultFontSize(),
+			self.engine.getSettings().getDefaultFontGlyphs()
+		)
+		
+		guimanager.init(
+			self.engine.getRenderBackend().getName(),
+			self.engine.getRenderBackend().getScreenWidth(),
+			self.engine.getRenderBackend().getScreenHeight()
+		)
+
+		self.engine.getEventManager().addSdlEventListener(guimanager)
 
 		"""
 		we are giving users a valid screen resolution option that is supported

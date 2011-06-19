@@ -33,6 +33,10 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#ifdef HAVE_OPENGL
+#include "gui/guichan/base/opengl/opengl_gui_graphics.h"
+#endif
+#include "gui/guichan/base/sdl/sdl_gui_graphics.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "video/renderbackend.h"
@@ -59,6 +63,7 @@ namespace FIFE {
 		m_imgloader(new GuiImageLoader()) ,
 		m_input(new gcn::SDLInput()),
 		m_console(0),
+		m_defaultfont(0),
 		m_fonts(),
 		m_logic_executed(false) {
 
@@ -79,6 +84,7 @@ namespace FIFE {
 		delete m_imgloader;
 		delete m_input;
 		delete m_gcn_gui;
+		delete m_gui_graphics;
 		std::vector<GuiFont*>::iterator i = m_fonts.begin();
 		while (i != m_fonts.end()) {
 			delete *i;
@@ -137,6 +143,8 @@ namespace FIFE {
 
 	void GUIChanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 		m_gcn_topcontainer->setDimension(gcn::Rectangle(x, y, width, height));
+		this->invalidateFonts();
+		this->m_console->reLayout();
 	}
 
 	gcn::Gui* GUIChanManager::getGuichanGUI() const {
@@ -157,10 +165,22 @@ namespace FIFE {
 		}
 	}
 
-	void GUIChanManager::init(gcn::Graphics* graphics, int32_t screenWidth, int32_t screenHeight) {
-		m_gcn_gui->setGraphics(graphics);
-		resizeTopContainer(0, 0, screenWidth, screenHeight);
+	void GUIChanManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
+		if( backend == "SDL" ) {
+			m_gui_graphics = new SdlGuiGraphics();
+		}
+		else if (backend == "OpenGL") {
+			m_gui_graphics = new OpenGLGuiGraphics();
+		}
+		else {
+			//should never get here
+			assert(0);
+		}
+
+		m_gcn_gui->setGraphics(m_gui_graphics);
 		m_console = new Console();
+
+		resizeTopContainer(0, 0, screenWidth, screenHeight);
 	}
 
 	GuiFont* GUIChanManager::createFont(const std::string& path, uint32_t size, const std::string& glyphs) {
@@ -217,13 +237,13 @@ namespace FIFE {
 		m_fontsize = size;
 		m_fontglyphs = glyphs;
 
-		GuiFont* defaultfont = createFont();
-		gcn::Widget::setGlobalFont(defaultfont);
+		m_defaultfont = createFont();
+		gcn::Widget::setGlobalFont(m_defaultfont);
 		if (m_console) {
 			m_console->reLayout();
 		}
 
-		return defaultfont;
+		return m_defaultfont;
 	}
 
 	void GUIChanManager::turn() {

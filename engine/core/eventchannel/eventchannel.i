@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,6 +34,7 @@
 #include "eventchannel/source/ec_ieventsource.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
 #include "eventchannel/eventmanager.h"
 %}
 
@@ -118,6 +119,13 @@ namespace FIFE {
 		virtual void keyReleased(KeyEvent& evt) = 0;
 		virtual ~IKeyListener();
 	};
+	
+	%feature("director") ISdlEventListener;
+	class ISdlEventListener {
+	public:
+		virtual bool onSdlEvent(SDL_Event& evt) = 0;
+		virtual ~ISdlEventListener();
+	};
 
 	class MouseEvent: public InputEvent {
 	public:
@@ -185,6 +193,11 @@ namespace FIFE {
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
+		
+		void addSdlEventListener(ISdlEventListener* listener);
+		void addSdlEventListenerFront(ISdlEventListener* listener);
+		void removeSdlEventListener(ISdlEventListener* listener);
+		
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);

@@ -68,7 +68,7 @@ def _munge_engine_hook(engine):
 
 	hook.add_widget    = guimanager.add
 	hook.remove_widget = guimanager.remove
-	hook.default_font  = engine.getDefaultFont()
+	hook.default_font  = engine.getGuiChanManager().getDefaultFont()
 	hook.load_image    = _fife_load_image
 	hook.translate_mouse_event = guimanager.translateMouseEvent
 	hook.translate_key_event   = guimanager.translateKeyEvent

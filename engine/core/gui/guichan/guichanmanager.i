@@ -23,7 +23,10 @@
 %{
 #include <guichan.hpp>
 #include "gui/guichan/guichanmanager.h"
+#include "gui/guimanager.h"
 %}
+
+%include "gui/guimanager.i"
 
 namespace gcn {
 	class Widget;
@@ -31,19 +34,28 @@ namespace gcn {
 namespace FIFE {
 	class Console;
 	
-	%feature("notabstract") GUIChanManager;
-	class GUIChanManager {
+	class GUIChanManager : public IGUIManager {
 	public:
+		GUIChanManager();
+		virtual ~GUIChanManager();
+		
+		void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
+		
 		Console* getConsole() const;
+		
 		void add(gcn::Widget* widget);
 		void remove(gcn::Widget* widget);
+		
 		GuiFont* createFont(const std::string& path, uint32_t size, const std::string& glyphs);
 		void releaseFont(GuiFont* font);
-
+		GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
+		GuiFont* getDefaultFont();
+		
 		KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);
 		MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
-		
 	private:
-		GUIChanManager();
+		virtual void turn();
+		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+		virtual bool onSdlEvent(SDL_Event& evt);
 	};
 }

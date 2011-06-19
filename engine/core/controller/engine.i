@@ -119,13 +119,13 @@ namespace FIFE {
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
+		void setGuiManager(IGUIManager* guimanager);
 		IGUIManager* getGuiManager();
 		ImageManager* getImageManager();
 		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
 		Model* getModel();
 		LogManager* getLogManager();
-		GuiFont* getDefaultFont();
 		VFS* getVFS();
 		Cursor* getCursor();
 		OffRenderer* getOffRenderer();
