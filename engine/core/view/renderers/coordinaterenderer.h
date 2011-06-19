@@ -44,7 +44,7 @@ namespace FIFE {
 		 * @param position position for this renderer in rendering pipeline
 		 * @param font font used to render the coordinates
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font);
+		CoordinateRenderer(RenderBackend* renderbackend, int32_t position);
 
 		CoordinateRenderer(const CoordinateRenderer& old);
 
@@ -57,6 +57,11 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 		std::string getName() { return "CoordinateRenderer"; }
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
+
+		/** Changes default font in the renderer
+		 * Note that this does not change the font ownership
+		 */
+		void setFont(AbstractFont* font) { m_font = font; }
 
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 

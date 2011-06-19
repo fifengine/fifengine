@@ -91,8 +91,7 @@ namespace FIFE {
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(gcn::Graphics* graphics, int32_t screenWidth, int32_t
-			screenHeight);
+			void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
 
 			/** Resizes the top container.
 			 *
@@ -129,6 +128,10 @@ namespace FIFE {
 			 */
 			GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
 
+			/** Gets the default font
+			 */
+			GuiFont* getDefaultFont() { return m_defaultfont; };
+
 			/** Gets font with given properties. Note that font will be owned by GUIChanManager
 			 */
 			GuiFont* createFont(const std::string& path = "", uint32_t size = 0, const std::string& glyphs = "");
@@ -150,6 +153,8 @@ namespace FIFE {
 		private:
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;
+			// GUIChan Graphics
+			gcn::Graphics* m_gui_graphics;
 			// Focus handler for input management
 			gcn::FocusHandler* m_focushandler;
 			// The top container of the GUI.
@@ -160,6 +165,8 @@ namespace FIFE {
 			gcn::SDLInput *m_input;
 			// The console.
 			Console       *m_console;
+			//The default font
+			GuiFont* m_defaultfont;
 			// The fonts used
 			std::vector<GuiFont*> m_fonts;
 			// Added widgets

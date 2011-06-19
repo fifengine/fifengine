@@ -42,10 +42,6 @@
 #include "enginesettings.h"
 #include "video/devicecaps.h"
 
-namespace gcn {
-	class Graphics;
-}
-
 namespace FIFE {
 
 	class SoundManager;
@@ -57,7 +53,6 @@ namespace FIFE {
 	class TimeManager;
 	class Model;
 	class LogManager;
-	class GuiFont;
 	class Cursor;
 	class RendererBase;
 	class Image;
@@ -144,7 +139,13 @@ namespace FIFE {
 		 */
 		TimeManager* getTimeManager() const { return m_timemanager; }
 
-		/** Provides access point to the GuiManager
+
+		/** Sets the GUI Manager to use.  Engine takes
+		 * ownership of the manager so DONT DELETE IT!
+		 */
+		void setGuiManager(IGUIManager* guimanager) { m_guimanager = guimanager; }
+
+		/** Provides access point to the GUI Manager
 		 */
 		IGUIManager* getGuiManager() const { return m_guimanager; }
 
@@ -167,10 +168,6 @@ namespace FIFE {
 		/** Provides access point to the LogManager
 		 */
 		LogManager* getLogManager() const { return m_logmanager; }
-
-		/** Returns default font used in the engine
-		 */
-		GuiFont* getDefaultFont() const { return m_defaultfont; }
 
 		/** Provides access point to the VFS
 		 */
@@ -205,9 +202,8 @@ namespace FIFE {
 
 		VFS* m_vfs;
 		Model* m_model;
-		gcn::Graphics* m_gui_graphics;
 		LogManager* m_logmanager;
-		GuiFont* m_defaultfont;
+
 		Cursor* m_cursor;
 		bool m_destroyed;
 

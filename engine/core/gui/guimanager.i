@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -21,30 +21,15 @@
 
 %module fife
 %{
-#include <guichan/image.hpp>
-#include "gui/guichan/base/gui_image.h"
-#include "video/image.h"
+#include "gui/guimanager.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
 %}
 
-%rename(GcnImage) gcn::Image;
-namespace gcn {
-	class Image
-	{
-	public:
-		Image();
-		virtual ~Image();
-		static Image* load(const std::string& filename, bool convertToDisplayFormat = true);
-		virtual int32_t getWidth() const = 0;
-		virtual int32_t getHeight() const = 0;
-	};
-}
-
 namespace FIFE {
-	class GuiImage: public gcn::Image {
+	class IGUIManager :	public ISdlEventListener {
 	public:
-		GuiImage();
-		GuiImage(FIFE::ImagePtr Image);
-		int32_t getWidth() const;
-		int32_t getHeight() const;
+		virtual ~IGUIManager();
+		virtual void turn() = 0;
+		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 	};
 }

@@ -45,13 +45,12 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 
-	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font):
+	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_renderbackend(renderbackend),
-		m_font(font) {
+		m_font(0) {
 		setEnabled(false);
 		m_font_color = false;
-		m_color = m_font->getColor();
 	}
 
  	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
@@ -73,6 +72,7 @@ namespace FIFE {
 
 	void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		if (!m_font) {
+			//no font selected.. nothing to render
 			return;
 		}
 

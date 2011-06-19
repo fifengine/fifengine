@@ -35,9 +35,7 @@
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "audio/soundmanager.h"
-#include "gui/guichan/console/console.h"
 #include "gui/guimanager.h"
-#include "gui/guichan/guichanmanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/directoryprovider.h"
@@ -53,12 +51,8 @@
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "gui/guichan/base/opengl/opengl_gui_graphics.h"
 #endif
-#include "gui/guichan/base/sdl/sdl_gui_graphics.h"
-#include "gui/guichan/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
-#include "video/fonts/abstractfont.h"
 #include "loaders/native/video/subimageloader.h"
 #include "loaders/native/video/imageloader.h"
 #include "loaders/native/audio/ogg_loader.h"
@@ -77,7 +71,6 @@
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
 #include "video/image.h"
-#include "gui/guichan/console/console.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -104,7 +97,6 @@ namespace FIFE {
 		m_soundclipmanager(0),
 		m_vfs(0),
 		m_model(0),
-		m_gui_graphics(0),
 		m_logmanager(0),
 		m_cursor(0),
 		m_settings(),
@@ -141,12 +133,12 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 		m_defaultfont->invalidate();
-		dynamic_cast<GUIChanManager*>(m_guimanager)->invalidateFonts();
 
 		Image* screen = m_renderbackend->setScreenMode(mode);
 
-		m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
-		dynamic_cast<GUIChanManager*>(m_guimanager)->getConsole()->reLayout();
+		if (m_guimanager) {
+			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
+		}
 
 		std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
@@ -251,31 +243,11 @@ namespace FIFE {
 		FL_LOG(_log, "Main screen created");
 
 #ifdef HAVE_OPENGL
-		if( rbackend != "SDL" ) {
-			m_gui_graphics = new OpenGLGuiGraphics();
-		}
-
 		if (m_settings.getLightingModel() != 0) {
 			m_renderbackend->setLightingModel(m_settings.getLightingModel());
 		}
 
 #endif
-		if( rbackend == "SDL" ) {
-			m_gui_graphics = new SdlGuiGraphics();
-		}
-		FL_LOG(_log, "Constructing GUI manager");
-		m_guimanager = new GUIChanManager();
-		FL_LOG(_log, "Events bind to GUI manager");
-		m_eventmanager->addSdlEventListener(m_guimanager);
-
-		FL_LOG(_log, "Creating default font");
-		m_defaultfont = dynamic_cast<GUIChanManager*>(m_guimanager)->setDefaultFont(
-			m_settings.getDefaultFontPath(),
-			m_settings.getDefaultFontSize(),
-			m_settings.getDefaultFontGlyphs());
-		FL_LOG(_log, "Initializing GUI manager");
-		dynamic_cast<GUIChanManager*>(m_guimanager)->init(m_gui_graphics, m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight());
-		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
 
 		FL_LOG(_log, "Creating sound manager");
@@ -288,9 +260,9 @@ namespace FIFE {
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
 		m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
-		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50));
 		m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
-		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70));
 		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
 		m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
 
@@ -318,7 +290,6 @@ namespace FIFE {
 		delete m_model;
 		delete m_soundmanager;
 		delete m_guimanager;
-		delete m_gui_graphics;
 
 		delete m_imagemanager;
 		delete m_soundclipmanager;
@@ -366,7 +337,11 @@ namespace FIFE {
 		} else {
 			m_model->update();
 		}
-		m_guimanager->turn();
+
+		if (m_guimanager) {
+			m_guimanager->turn();
+		}
+
 		m_cursor->draw();
 		m_renderbackend->endFrame();
 	}
