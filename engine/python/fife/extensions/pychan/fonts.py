@@ -38,7 +38,7 @@ class Font(object):
 			self.size = int(get("size"))
 			self.antialias = int(get("antialias",1))
 			self.color = map(int,get("color","255,255,255").split(','))
-			self.font = get_manager().hook.engine.getGuiChanManager().createFont(self.source,self.size,"")
+			self.font = get_manager().hook.guimanager.createFont(self.source,self.size,"")
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)

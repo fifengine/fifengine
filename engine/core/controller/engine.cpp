@@ -132,7 +132,6 @@ namespace FIFE {
 		m_cursor->invalidate();
 
 		m_imagemanager->invalidateAll();
-		m_defaultfont->invalidate();
 
 		Image* screen = m_renderbackend->setScreenMode(mode);
 

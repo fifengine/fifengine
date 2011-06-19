@@ -25,6 +25,8 @@ from fife import fife
 import scripts
 from fife.fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
 from signal import Signal
+from fife.extensions import pychan
+
 import pdb
 
 #--- Signals ---#
@@ -95,7 +97,7 @@ class EventListener:
 		eventmanager.addKeyListener(self.keylistener)
 		eventmanager.addCommandListener(self.commandlistener)
 		eventmanager.addMouseListener(self.mouselistener)
-		self.engine.getGuiChanManager().getConsole().setConsoleExecuter(self.consoleexecuter)
+		pychan.manager.hook.guimanager.getConsole().setConsoleExecuter(self.consoleexecuter)
 		
 		keyPressed.connect(self.keyPressed)
 		keyReleased.connect(self.keyReleased)

@@ -303,7 +303,7 @@ class Editor(ApplicationBase, MainWindow):
 				if not r.isEnabled():
 					r.clearActiveLayers()
 					color = str(self._settings.get("Colors", "Coordinate", "255,255,255"))
-					r.setFont(self.engine.getGuiChanManager().getDefaultFont())
+					r.setFont(pychan.manager.hook.guimanager.getDefaultFont())
 					r.setColor(*[int(c) for c in color.split(',')])
 					for layer in self._mapview.getMap().getLayers():
 						if layer.areInstancesVisible():

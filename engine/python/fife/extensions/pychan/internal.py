@@ -56,7 +56,7 @@ class Manager(object):
 		if in_fife:
 			if not hook.engine.getEventManager():
 				raise InitializationError("No event manager installed.")
-			if not hook.engine.getGuiChanManager():
+			if not hook.guimanager:
 				raise InitializationError("No GUI manager installed.")
 		timer.init(hook.engine.getTimeManager())
 
