@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+from fife.extensions import pychan
 
 class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, fife.ConsoleExecuter):
 	def __init__(self, engine, regKeys=False, regCmd=False, regMouse=False, regConsole=False, regWidget=False):
@@ -38,7 +39,7 @@ class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseLis
 			self.eventmanager.addMouseListener(self)
 		fife.ConsoleExecuter.__init__(self)
 		if regConsole:
-			engine.getGuiChanManager().getConsole().setConsoleExecuter(self)
+			pychan.manager.hook.guimanager.getConsole().setConsoleExecuter(self)
 
 
 	def mousePressed(self, evt):

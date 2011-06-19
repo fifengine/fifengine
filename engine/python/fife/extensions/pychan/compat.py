@@ -56,7 +56,25 @@ def _munge_engine_hook(engine):
 	if not isinstance(engine,fife.Engine):
 		return engine
 
-	guimanager = engine.getGuiChanManager()
+
+	guimanager = fife.GUIChanManager()
+	guimanager.thisown = 0
+
+	engine.setGuiManager(guimanager)
+		
+	guimanager.setDefaultFont(
+		engine.getSettings().getDefaultFontPath(),
+		engine.getSettings().getDefaultFontSize(),
+		engine.getSettings().getDefaultFontGlyphs()
+	)
+		
+	guimanager.init(
+		engine.getRenderBackend().getName(),
+		engine.getRenderBackend().getScreenWidth(),
+		engine.getRenderBackend().getScreenHeight()
+	)
+
+	engine.getEventManager().addSdlEventListener(guimanager)
 
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)
@@ -68,10 +86,11 @@ def _munge_engine_hook(engine):
 
 	hook.add_widget    = guimanager.add
 	hook.remove_widget = guimanager.remove
-	hook.default_font  = engine.getGuiChanManager().getDefaultFont()
+	hook.default_font  = guimanager.getDefaultFont()
 	hook.load_image    = _fife_load_image
 	hook.translate_mouse_event = guimanager.translateMouseEvent
 	hook.translate_key_event   = guimanager.translateKeyEvent
+	hook.guimanager = guimanager
 
 	hook.screen_width  = engine.getRenderBackend().getScreenWidth()
 	hook.screen_height = engine.getRenderBackend().getScreenHeight()

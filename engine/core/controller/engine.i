@@ -133,10 +133,4 @@ namespace FIFE {
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);
 	};
-	
-	%extend Engine {
-		GUIChanManager* getGuiChanManager() {
-			return dynamic_cast<FIFE::GUIChanManager*>($self->getGuiManager());
-		}
-	}	
 }
