@@ -99,6 +99,18 @@ namespace FIFE {
 			explicit RectType(T x = 0, T y = 0, T w = 0, T h = 0) : x(x), y(y), w(w), h(h) {
 			}
 
+			/** Constructor.
+			 *
+			 * Creates a new Rect of type T from the given Rect of type U
+			 */
+			template<typename U>
+			explicit RectType(const RectType<U>& r)
+				: x(static_cast<T>(r.x)), 
+				y(static_cast<T>(r.y)), 
+				w(static_cast<T>(r.w)), 
+				h(static_cast<T>(r.h)) {
+			}
+
 			/** The X coordinate of the right edge.
 			 */
 			T right() const;
@@ -137,7 +149,6 @@ namespace FIFE {
 			 * This includes edges that cover each other.
 			 */
 			bool intersectInplace( const RectType<T>& rect );
-
 	};
 
 	/** Stream output operator.

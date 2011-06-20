@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -113,12 +113,12 @@ namespace FIFE {
 	}
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* rgb) {
-		//not on the screen.  dont render
+		// not on the screen.  dont render
 		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
 			return;
 		}
 
-		//completely transparent so dont bother rendering
+		// completely transparent so dont bother rendering
 		if (0 == alpha) {
 			return;
 		}
@@ -127,20 +127,10 @@ namespace FIFE {
 			generateGLTexture();
 		}
 
-		// we dont need this atm
-		//// the amount of "zooming" for the image
-		//float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
-		//float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
-
-		//// apply the scale to the width and height of the image
-		//uint16_t w = static_cast<int32_t>(round(scale_x*m_surface->w));
-		//uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
-
-		Rect rec = rect;
 		if(!rgb) {
-			RenderBackend::instance()->addImageToArray(m_texId, rec, texCoords, alpha);
+			RenderBackend::instance()->addImageToArray(m_texId, rect, texCoords, alpha);
 		} else {
-			RenderBackend::instance()->addImageToArray2T(m_texId, rec, texCoords, alpha, rgb);
+			RenderBackend::instance()->addImageToArray2T(m_texId, rect, texCoords, alpha, rgb);
 		}
 	}
 
@@ -249,108 +239,6 @@ namespace FIFE {
 
 			delete[] oglbuffer;
 		}
-	}
-
-	void GLImage::saveImage(const std::string& filename) {
-		const uint32_t swidth = getWidth();
-		const uint32_t sheight = getHeight();
-		SDL_Surface *surface = NULL;
-		uint8_t *pixels;
-
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
-			sheight, 24,
-			RMASK,GMASK,BMASK, NULLMASK);
-
-		if(surface == NULL) {
-			return;
-		}
-
-		SDL_LockSurface(surface);
-		pixels = new uint8_t[swidth * sheight * 3];
-		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-
-		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
-		// Copy the "reversed_image" memory to the "image" memory
-		for (int32_t y = (sheight - 1); y >= 0; --y) {
-			uint8_t *rowbegin = pixels + y * swidth * 3;
-			uint8_t *rowend = rowbegin + swidth * 3;
-
-			std::copy(rowbegin, rowend, imagepixels);
-
-			// Advance a row in the output surface.
-			imagepixels += surface->pitch;
-		}
-
-		SDL_UnlockSurface(surface);
-		saveAsPng(filename, *surface);
-		SDL_FreeSurface(surface);
-		delete [] pixels;
-	}
-
-	void GLImage::setClipArea(const Rect& cliparea, bool clear) {
-		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
-
-		if (clear) {
-			if (m_isbackgroundcolor) {
-				float red = float(m_backgroundcolor.r/255.0);
-				float green = float(m_backgroundcolor.g/255.0);
-				float blue = float(m_backgroundcolor.b/255.0);
-				glClearColor(red, green, blue, 0.0);
-				m_isbackgroundcolor = false;
-			}
-			glClear(GL_COLOR_BUFFER_BIT);
-		}
-	}
-
-	bool GLImage::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		// TODO:temporary ugly hack for uh minimap to work correctly
-		SDLImage* img = new SDLImage(m_surface);
-		bool res = img->putPixel(x, y, r, g, b, a);
-		SDL_Surface* p = img->detachSurface();
-		delete img;
-		return res;
-		//cleanup();
-		//return m_sdlimage->putPixel(x, y, r, g, b, a);
-		//return false;
-	}
-
-	void GLImage::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->drawLine(p1, p2, r, g, b, a);
-	}
-
-	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
-	}
-
-	void GLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->drawRectangle(p, w, h, r, g, b, a);
-	}
-
-	void GLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
-	}
-
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
-	}
-
-	void GLImage::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		//cleanup();
-		//m_sdlimage->drawVertex(p, size, r, g, b, a);
-	}
-
-	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-		//cleanup();
-		//m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
-	}
-
-	size_t GLImage::getSize() {
-		return Image::getSize();
 	}
 
 	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {

@@ -128,12 +128,12 @@ namespace FIFE {
 		return m_devcaps;
 	}
 
-	Image* Engine::changeScreenMode(const ScreenMode& mode){
+	void Engine::changeScreenMode(const ScreenMode& mode){
 		m_cursor->invalidate();
 
 		m_imagemanager->invalidateAll();
 
-		Image* screen = m_renderbackend->setScreenMode(mode);
+		m_renderbackend->setScreenMode(mode);
 
 		if (m_guimanager) {
 			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
@@ -144,8 +144,6 @@ namespace FIFE {
 			(*i)->onScreenModeChanged(mode);
 			++i;
 		}
-
-		return screen;
 	}
 
 	void Engine::init() {
@@ -204,6 +202,8 @@ namespace FIFE {
 		}
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
+		// we always set this to false
+		//m_renderbackend->setAlphaOptimizerEnabled(false);
 
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);

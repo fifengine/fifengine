@@ -79,9 +79,6 @@ namespace FIFE {
 			SDL_FreeSurface(surface);
 			SDL_FreeRW(rwops);
 		}
-		//we always set this to true
-		img->setAlphaOptimizerEnabled(true);
-
 		//restore saved x and y shifts
 		img->setXShift(xShiftSave);
 		img->setYShift(yShiftSave);

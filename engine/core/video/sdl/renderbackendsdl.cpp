@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -41,9 +41,9 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
-	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
+	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) :
+		RenderBackend(colorkey){
 	}
-
 
 	RenderBackendSDL::~RenderBackendSDL() {
 		deinit();
@@ -74,33 +74,29 @@ namespace FIFE {
 		rect.y = 0;
 		rect.w = getWidth();
 		rect.h = getHeight();
-		SDL_SetClipRect(m_screen->getSurface(), &rect);
-		SDL_FillRect(m_screen->getSurface(), 0, 0x00);
+		SDL_SetClipRect(m_screen, &rect);
+		SDL_FillRect(m_screen, 0, 0x00);
 	}
 
-	Image* RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+	void RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
 				SDL_WM_SetIcon(img, 0);
+				SDL_FreeSurface(img);
 			}
 		}
 
-		Image *image = setScreenMode(mode);
-
+		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
-
-		return image;
 	}
 
-	Image* RenderBackendSDL::setScreenMode(const ScreenMode& mode) {
+	void RenderBackendSDL::setScreenMode(const ScreenMode& mode) {
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		bool fs = mode.isFullScreen();
 		uint32_t flags = mode.getSDLFlags();
-
-		SDL_Surface* screen = NULL;
 
 		if (bitsPerPixel != 0) {
 			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
@@ -109,16 +105,19 @@ namespace FIFE {
 			}
 		}
 
-		screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-		if( !screen ) {
+		if(m_screen) {
+			SDL_FreeSurface(m_screen);
+		}
+		m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
+		if( !m_screen ) {
 			throw SDLException("Unable to set video mode selected!");
 		}
 
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
-			<< " at " << int32_t(screen->format->BitsPerPixel) << " bpp");
+			<< " at " << int32_t(m_screen->format->BitsPerPixel) << " bpp");
 		
-		m_rgba_format = *(screen->format);
+		m_rgba_format = *(m_screen->format);
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
@@ -128,15 +127,7 @@ namespace FIFE {
 		m_screenMode = ScreenMode(width,
 		                          height,
 		                          bitsPerPixel,
-		                          screen->flags);
-
-		if (!screen) {
-			throw SDLException(SDL_GetError());
-		}
-
-		delete m_screen;
-		m_screen = new SDLImage(screen);
-		return m_screen;
+		                          m_screen->flags);
 	}
 
 	void RenderBackendSDL::startFrame() {
@@ -144,7 +135,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::endFrame() {
-		SDL_Flip(m_screen->getSurface());
+		SDL_Flip(m_screen);
 		RenderBackend::endFrame();
 	}
 
@@ -192,48 +183,205 @@ namespace FIFE {
 	void RenderBackendSDL::changeBlending(int32_t scr, int32_t dst){
 	}
 
-	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		static_cast<SDLImage*>(m_screen)->drawLine(p1, p2, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		static_cast<SDLImage*>(m_screen)->drawTriangle(p1, p2, p3, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		static_cast<SDLImage*>(m_screen)->drawRectangle(p, w, h, r, g, b, a);
-	}
-
-	void RenderBackendSDL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		static_cast<SDLImage*>(m_screen)->fillRectangle(p, w, h, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		static_cast<SDLImage*>(m_screen)->drawQuad(p1, p2, p3, p4, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-		static_cast<SDLImage*>(m_screen)->drawVertex(p, 2, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue){
-		static_cast<SDLImage*>(m_screen)->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
-	}
-
 	void RenderBackendSDL::renderVertexArrays() {
 	}
 
-	void RenderBackendSDL::addImageToArray(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha) {
+	void RenderBackendSDL::addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha) {
 	}
 
-	void RenderBackendSDL::addImageToArray2T(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
+	void RenderBackendSDL::addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
 	}
 	
 	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
 	}
 
-}//FIFE
+	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		return Image::putPixel(m_screen, x, y, r, g, b, a);
+	}
+
+	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		// Draw a line with Bresenham, imitated from guichan
+		int32_t x1 = p1.x;
+		int32_t x2 = p2.x;
+		int32_t y1 = p1.y;
+		int32_t y2 = p2.y;
+		int32_t dx = ABS(x2 - x1);
+		int32_t dy = ABS(y2 - y1);
+
+		if (dx > dy) {
+			if (x1 > x2) {
+				// swap x1, x2
+				x1 ^= x2;
+				x2 ^= x1;
+				x1 ^= x2;
+
+				// swap y1, y2
+				y1 ^= y2;
+				y2 ^= y1;
+				y1 ^= y2;
+			}
+
+			if (y1 < y2) {
+				int32_t y = y1;
+				int32_t p = 0;
+
+				for (int32_t x = x1; x <= x2; x++) {
+					putPixel(x, y, r, g, b, a);
+					p += dy;
+					if (p * 2 >= dx) {
+						y++;
+						p -= dx;
+					}
+				}
+			}
+			else {
+				int32_t y = y1;
+				int32_t p = 0;
+
+				for (int32_t x = x1; x <= x2; x++) {
+					putPixel(x, y, r, g, b, a);
+
+					p += dy;
+					if (p * 2 >= dx) {
+						y--;
+						p -= dx;
+					}
+				}
+			}
+		}
+		else {
+			if (y1 > y2) {
+				// swap y1, y2
+				y1 ^= y2;
+				y2 ^= y1;
+				y1 ^= y2;
+
+				// swap x1, x2
+				x1 ^= x2;
+				x2 ^= x1;
+				x1 ^= x2;
+			}
+
+			if (x1 < x2) {
+				int32_t x = x1;
+				int32_t p = 0;
+
+				for (int32_t y = y1; y <= y2; y++) {
+					putPixel(x, y, r, g, b, a);
+					p += dx;
+					if (p * 2 >= dy) {
+						x++;
+						p -= dy;
+					}
+				}
+			}
+			else {
+				int32_t x = x1;
+				int32_t p = 0;
+
+				for (int32_t y = y1; y <= y2; y++) {
+					putPixel(x, y, r, g, b, a);
+					p += dx;
+					if (p * 2 >= dy) {
+						x--;
+						p -= dy;
+					}
+				}
+			}
+		}
+	}
+
+	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p1, r, g, b, a);
+	}
+
+	void RenderBackendSDL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		Point p1, p2, p3, p4;
+
+		p1.x = p.x;
+		p1.y = p.y;
+		p2.x = p.x+w;
+		p2.y = p.y;
+		p3.x = p.x+w;
+		p3.y = p.y+h;
+		p4.x = p.x;
+		p4.y = p.y+h;
+
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
+	}
+
+	void RenderBackendSDL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		SDL_Rect rect;
+		rect.x = p.x;
+		rect.y = p.y;
+		rect.w = w;
+		rect.h = h;
+
+		Uint32 color = SDL_MapRGBA(m_screen->format, r, g, b, a);
+		SDL_FillRect(m_screen, &rect, color);
+	}
+
+	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
+	}
+
+	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+		Point p1 = Point(p.x-size, p.y+size);
+		Point p2 = Point(p.x+size, p.y+size);
+		Point p3 = Point(p.x+size, p.y-size);
+		Point p4 = Point(p.x-size, p.y-size);
+
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
+	}
+
+	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue){
+	}
+
+	void RenderBackendSDL::captureScreen(const std::string& filename) {
+		if(m_screen) {
+			const uint32_t swidth = getWidth();
+			const uint32_t sheight = getHeight();
+			SDL_Surface *surface = NULL;
+
+			surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
+				sheight, 24,
+				RMASK, GMASK, BMASK, 0);
+
+			if(surface == NULL) {
+				return;
+			}
+
+			SDL_BlitSurface(m_screen, NULL, surface, NULL);
+
+			Image::saveAsPng(filename, *surface);
+			SDL_FreeSurface(surface);
+		}
+	}
+
+	void RenderBackendSDL::setClipArea(const Rect& cliparea, bool clear) {
+		SDL_Rect rect;
+		rect.x = cliparea.x;
+		rect.y = cliparea.y;
+		rect.w = cliparea.w;
+		rect.h = cliparea.h;
+		SDL_SetClipRect(m_screen, &rect);
+		if (clear) {
+			uint32_t color = 0;
+			if (m_isbackgroundcolor) {
+				color = SDL_MapRGB(m_screen->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
+			}
+			SDL_FillRect(m_screen, &rect, color);
+		}
+	}
+}

@@ -111,7 +111,7 @@ namespace FIFE {
 		EngineSettings& getSettings();
 		const DeviceCaps& getDeviceCaps() const;
 		
-		Image* changeScreenMode(const ScreenMode& mode);
+		void changeScreenMode(const ScreenMode& mode);
 
 		void init();
 		void destroy();

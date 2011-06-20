@@ -282,25 +282,22 @@ namespace FIFE {
 			outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
 		}
 
-		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
-		SDLImage* img = new SDLImage(outline_surface);
-
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
 
 		// vertical sweep
-		for (uint32_t x = 0; x < img->getWidth(); x ++) {
+		for (int32_t x = 0; x < outline_surface->w; x ++) {
 			uint8_t prev_a = 0;
-			for (uint32_t y = 0; y < img->getHeight(); y ++) {
+			for (int32_t y = 0; y < outline_surface->h; y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
-						for (uint32_t yy = y; yy < y + info.width; yy++) {
-							img->putPixel(x, yy, info.r, info.g, info.b);
+						for (int32_t yy = y; yy < y + info.width; yy++) {
+							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
 						}
 					} else {
-						for (uint32_t yy = y - info.width; yy < y; yy++) {
-							img->putPixel(x, yy, info.r, info.g, info.b);
+						for (int32_t yy = y - info.width; yy < y; yy++) {
+							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
 						}
 					}
 				}
@@ -308,18 +305,18 @@ namespace FIFE {
 			}
 		}
 		// horizontal sweep
-		for (uint32_t y = 0; y < img->getHeight(); y ++) {
+		for (int32_t y = 0; y < outline_surface->h; y ++) {
 			uint8_t prev_a = 0;
-			for (uint32_t x = 0; x < img->getWidth(); x ++) {
+			for (int32_t x = 0; x < outline_surface->w; x ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
-						for (uint32_t xx = x; xx < x + info.width; xx++) {
-							img->putPixel(xx, y, info.r, info.g, info.b);
+						for (int32_t xx = x; xx < x + info.width; xx++) {
+							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
 						}
 					} else {
-						for (uint32_t xx = x - info.width; xx < x; xx++) {
-							img->putPixel(xx, y, info.r, info.g, info.b);
+						for (int32_t xx = x - info.width; xx < x; xx++) {
+							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
 						}
 					}
 				}
@@ -328,8 +325,7 @@ namespace FIFE {
 		}
 
 		// In case of OpenGL backend, SDLImage needs to be converted
-		info.outline = m_renderbackend->createImage(img->detachSurface());
-		delete img;
+		info.outline = m_renderbackend->createImage(outline_surface);
 
 		if (info.outline) {
 			// mark outline as not dirty since we created it here
