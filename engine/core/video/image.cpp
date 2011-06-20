@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -115,15 +115,7 @@ namespace FIFE {
 		m_xshift = 0;
 		m_yshift = 0;
 		m_shared = false;
-		while (!m_clipstack.empty()) {
-			m_clipstack.pop();
-		}
-		m_area.x = m_area.y = m_area.w = m_area.h = 0;
 		m_surface = surface;
-		m_isbackgroundcolor = false;
-		m_backgroundcolor.r = 0;
-		m_backgroundcolor.g = 0;
-		m_backgroundcolor.b = 0;
 	}
 
 	Image::~Image() {
@@ -177,10 +169,9 @@ namespace FIFE {
 		return m_surface->h * m_surface->pitch;
 	}
 
-	const Rect& Image::getArea() {
-		m_area.w = getWidth();
-		m_area.h = getHeight();
-		return m_area;
+	const Rect& Image::getArea() const {
+		static Rect r(0, 0, getWidth(), getHeight());
+		return r;
 	}
 
 	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
@@ -230,44 +221,8 @@ namespace FIFE {
 		render(rect, SDL_GetVideoSurface(), alpha, rgb);
 	}
 
-	void Image::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b) {
-		if (r != m_backgroundcolor.r || g != m_backgroundcolor.g || b != m_backgroundcolor.b) {
-			m_isbackgroundcolor = true;
-			m_backgroundcolor.r = r;
-			m_backgroundcolor.g = g;
-			m_backgroundcolor.b = b;
-		}
-	}
-
-	void Image::pushClipArea(const Rect& cliparea, bool clear) {
-		ClipInfo ci;
-		ci.r = cliparea;
-		ci.clearing = clear;
-		m_clipstack.push(ci);
-		setClipArea(cliparea, clear);
-	}
-
-	void Image::popClipArea() {
-		assert(!m_clipstack.empty());
-		m_clipstack.pop();
-		if (m_clipstack.empty()) {
-			clearClipArea();
-		} else {
-			ClipInfo ci = m_clipstack.top();
-			setClipArea(ci.r, ci.clearing);
-		}
-	}
-
-	const Rect& Image::getClipArea() const {
-		if (m_clipstack.empty()) {
-			return m_clipstack.top().r;
-		} else {
-			return m_area;
-		}
-	}
-
-	void Image::clearClipArea() {
-		setClipArea(m_area, true);
+	void Image::saveImage(const std::string& filename) {
+		saveAsPng(filename, *m_surface);
 	}
 
 	void Image::saveAsPng(const std::string& filename, const SDL_Surface& surface) {
@@ -338,21 +293,20 @@ namespace FIFE {
 		delete [] rowpointers;
 		png_destroy_write_struct(&pngptr, &infoptr);
 		fclose(fp);
-
 	}
 
 	std::string Image::createUniqueImageName() {
-	        // automated counting for name generation, in case the user doesn't provide a name
-	        static uint32_t uniqueNumber = 0;
-	        static std::string baseName = "image";
+		// automated counting for name generation, in case the user doesn't provide a name
+		static uint32_t uniqueNumber = 0;
+		static std::string baseName = "image";
 
-	        std::ostringstream oss;
-	        oss << uniqueNumber << "_" << baseName;
+		std::ostringstream oss;
+		oss << uniqueNumber << "_" << baseName;
 
-	        const std::string name = oss.str();
-	        ++uniqueNumber;
+		const std::string name = oss.str();
+		++uniqueNumber;
 
-	        return name;
+		return name;
 	}
 
 	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg){
@@ -383,5 +337,45 @@ namespace FIFE {
 			}
 		}
 		SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
+	}
+
+	bool Image::putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if ((x < 0) || (x >= surface->w) || (y < 0) || (y >= surface->h)) {
+			return false;
+		}
+
+		int32_t bpp = surface->format->BytesPerPixel;
+		SDL_LockSurface(surface);
+		Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+		Uint32 pixel = SDL_MapRGB(surface->format, r, g, b);
+		switch(bpp)
+		{
+		case 1:
+			*p = pixel;
+			break;
+
+		case 2:
+			*(Uint16 *)p = pixel;
+			break;
+
+		case 3:
+			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+				p[0] = (pixel >> 16) & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = pixel & 0xff;
+			}
+			else {
+				p[0] = pixel & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = (pixel >> 16) & 0xff;
+			}
+			break;
+
+		case 4:
+			*(Uint32 *)p = pixel;
+			break;
+		}
+		SDL_UnlockSurface(surface);
+		return true;
 	}
 }

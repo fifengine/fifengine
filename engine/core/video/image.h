@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -39,107 +39,12 @@
 #include "util/structures/rect.h"
 
 namespace FIFE {
-
-	class IImage {
-	public:
-		virtual ~IImage() {}
-
-		/** Get the surface used by this image
-		 * @return pointer to used surface
-		 */
-		virtual SDL_Surface* getSurface() = 0;
-
-		virtual void setSurface(SDL_Surface* surface) = 0;
-
-		/** Returns the @b maximum width occupied by this image.
-		 * This should return the maximum width that could be covered by the
-		 * image.
-		 */
-		virtual uint32_t getWidth() const = 0;
-
-		/** Returns the @b maximum height occupied by this image.
-		 */
-		virtual uint32_t getHeight() const = 0;
-
-		/** Gets the area of the image
-		 * @return Image area in rect
-		 */
-		virtual const Rect& getArea() = 0;
-
-		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
-		 */
- 		virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws line between given points with given RGBA
-		 */
-		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws triangle between given points with given RGBA
-		 */
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws an axis parallel rectangle.
-		 */
-		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws a filled axis parallel rectangle.
-		 */
-		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)  = 0;
-
-		/** Draws quad between given points with given RGBA
-		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws a quad that represents a vertex with given RGBA
-		 */
-		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws a light primitive that based on a triangle fan
-		 */
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
-
-		/** Returns pixel RGBA values from given position
-		 */
-		virtual void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
-
-		/** Pushes clip area to clip stack
-		 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
-		 *  note that previous items in stack do not affect the latest area pushed
-		 */
-		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
-
-		/** Pops clip area from clip stack
-		 *  @see pushClipArea
-		 */
-		virtual void popClipArea() = 0;
-
-		/** Gets the current clip area
-		 *  @see pushClipArea
-		 */
-		virtual const Rect& getClipArea() const = 0;
-
-		/** Saves the image using given filename
-		 */
-		virtual void saveImage(const std::string& filename) = 0;
-
-		/** Enable or disable the alpha 'optimizing' code
-		 *
-		 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
-		 * Only implemented by and useful for the SDL backend at the moment.
-		 */
-		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
-
-		/** @see setAlphaOptimizerEnabled
-		 */
-		virtual bool isAlphaOptimizerEnabled() = 0;
-	};
-
 	class Image;
 	typedef SharedPtr<Image> ImagePtr;
 
 	/** Base Class for Images.
 	 */
-	class Image : public IResource, public IImage {
+	class Image : public IResource {
 	public:
 		/** Constructor.
 		*/
@@ -189,14 +94,6 @@ namespace FIFE {
 		 */
 		SDL_Surface* detachSurface();
 
-		/** Choose a color to be used when the clip area is cleared
-		 * this function deselects an eventual previous background image
-		 * @param r Red color
-		 * @param g Green color
-		 * @param b Blue color
-		 */
-		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
-
 		SDL_Surface* getSurface() { return m_surface; }
 		const SDL_Surface* getSurface() const { return m_surface; }
 
@@ -207,9 +104,18 @@ namespace FIFE {
 		 */
 		virtual void setSurface(SDL_Surface* surface) = 0;
 
+		/** Saves the image using given filename.
+		 */
+		void saveImage(const std::string& filename);
+
+		/** Saves the SDL_Surface to png format
+		 */
+		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
+		static bool putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		const Rect& getArea();
+		const Rect& getArea() const;
 
 		void setXShift(int32_t xshift) {
 			m_xshift = xshift;
@@ -225,13 +131,6 @@ namespace FIFE {
 		}
 
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-
-		void pushClipArea(const Rect& cliparea, bool clear = true);
-		void popClipArea();
-		const Rect& getClipArea() const;
-
-		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
-		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
 
 		virtual size_t getSize();
 		virtual void load();
@@ -257,39 +156,13 @@ namespace FIFE {
 		 */
 		void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
-		// saves images to png format
-		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
-
 	protected:
-		/** Sets given clip area into image
-		 *  @see pushClipArea
-		 */
-		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-
-		/** Clears any possible clip areas
-		 *  @see pushClipArea
-		 */
-		virtual void clearClipArea();
-
 		// The SDL Surface used.
 		SDL_Surface* m_surface;
 		// The X shift of the Image
 		int32_t m_xshift;
 		// The Y shift of the Image
 		int32_t m_yshift;
-
-		class ClipInfo {
-		public:
-			Rect r;
-			bool clearing;
-		};
-		std::stack<ClipInfo> m_clipstack;
-
-		// image area
-		Rect m_area;
-		bool m_isalphaoptimized;
-		bool m_isbackgroundcolor;
-		SDL_Color m_backgroundcolor;
 
 		/** Resets the image to default values (including the x and y shift
 		 * valuse), frees the current surface  and sets the surface to the
@@ -305,7 +178,6 @@ namespace FIFE {
 		Rect m_subimagerect;
 
 	private:
-
 		std::string createUniqueImageName();
 	};
 }

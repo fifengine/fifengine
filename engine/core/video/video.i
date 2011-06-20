@@ -50,34 +50,11 @@ namespace FIFE {
 
 	%apply uint8_t *OUTPUT { uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a };
 
-	class IImage {
-	public:
-		virtual ~IImage() {}
-		virtual SDL_Surface* getSurface() = 0;
-		virtual uint32_t getWidth() const = 0;
-		virtual uint32_t getHeight() const = 0;
-		virtual const Rect& getArea() = 0;
-		virtual void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
- 		virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
-		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
-		virtual void popClipArea() = 0;
-		virtual const Rect& getClipArea() const = 0;
-		virtual void saveImage(const std::string& filename) = 0;
-		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
-		virtual bool isAlphaOptimizerEnabled() = 0;
-	};
-	
-	class Image : public IResource, public IImage {
+	class Image : public IResource {
 	public:
 		void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual ~Image();
-		SDL_Surface* getSurface() { return m_surface; }
+		SDL_Surface* getSurface();
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
 		const Rect& getArea();
@@ -86,12 +63,7 @@ namespace FIFE {
 		void setYShift(int32_t yshift);
 		inline int32_t getYShift() const;
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		void pushClipArea(const Rect& cliparea, bool clear=true);
-		void popClipArea();
-		const Rect& getClipArea() const;
-		void setAlphaOptimizerEnabled(bool enabled);
-		bool isAlphaOptimizerEnabled();
-		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
+		void saveImage(const std::string& filename);
 		
 		virtual void useSharedImage(const FIFE::ImagePtr& shared, const Rect& region) = 0;
 		virtual void forceLoadInternal() = 0;
@@ -105,14 +77,7 @@ namespace FIFE {
 	};
 	
 	typedef SharedPtr<Image> ImagePtr;
-	
 	%template(SharedImagePointer) SharedPtr<Image>;
-	
-	%extend Image {
-		static void saveAsPng(const std::string& filename, const FIFE::ImagePtr& image) {
-			FIFE::Image::saveAsPng(filename, *image->getSurface());
-		}
-	}
 	
 	class ImageManager : public IResourceManager {
 	public:
@@ -157,7 +122,6 @@ namespace FIFE {
 		virtual void invalidateAll();
 	};
 	
-	
 	class Animation: public FifeClass {
 	public:
 		explicit Animation();
@@ -185,25 +149,21 @@ namespace FIFE {
 		}
 	}
 
-	class RenderBackend: public IImage {
+	class RenderBackend {
 	public:
 		virtual ~RenderBackend();
 		virtual const std::string& getName() const = 0;
 		
-		Image* getScreenImage() const { return m_screen; };
 		void captureScreen(const std::string& filename);
-		SDL_Surface* getSurface();
 		const ScreenMode& getCurrentScreenMode() const;
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		uint32_t getScreenWidth() const { return getWidth(); }
-		uint32_t getScreenHeight() const { return getHeight(); }
+		uint32_t getScreenWidth() const;
+		uint32_t getScreenHeight() const;
 		const Rect& getArea();
-		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
-		void saveImage(const std::string& filename);
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -70,14 +70,7 @@ namespace FIFE {
 	};
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
-		: RenderBackend(colorkey), maskForOverlays(0)
-	{
-		// Get the pixelformat we want.
-//		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
-//				RMASK, GMASK, BMASK ,AMASK);
-
-//		m_rgba_format = *(testsurface->format);
-//		SDL_FreeSurface(testsurface);
+		: RenderBackend(colorkey), m_mask_overlays(0){
 
 		m_state.tex_enabled[0] = false;
 		m_state.tex_enabled[1] = false;
@@ -108,28 +101,26 @@ namespace FIFE {
 		m_state.scissor_test = true;
 	}
 
+	RenderBackendOpenGL::~RenderBackendOpenGL() {
+		glDeleteTextures(1, &m_mask_overlays);
+		deinit();
+	}
+
 	const std::string& RenderBackendOpenGL::getName() const {
 		static std::string backend_name = "OpenGL";
 		return backend_name;
 	}
 
-	RenderBackendOpenGL::~RenderBackendOpenGL() {
-		glDeleteTextures(1, &maskForOverlays);
-	}
-
-
 	void RenderBackendOpenGL::init(const std::string& driver) {
-
-		//note: driver has no affect on the opengl renderer so do nothing with it here.
-
+		// note: driver has no affect on the opengl renderer so do nothing with it here.
 		Uint32 flags = SDL_INIT_VIDEO;
 		if (SDL_InitSubSystem(flags) < 0)
 			throw SDLException(SDL_GetError());
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
-
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {
@@ -138,7 +129,7 @@ namespace FIFE {
 		enableScissorTest();
 	}
 
-	Image* RenderBackendOpenGL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+	void RenderBackendOpenGL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
@@ -146,22 +137,17 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
-		Image *image = setScreenMode(mode);
-
+		
+		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
-
-		return image;
 	}
 
-	Image* RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
+	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		bool fs = mode.isFullScreen();
 		uint32_t flags = mode.getSDLFlags();
-
-		SDL_Surface* screen = NULL;
 
 		if (bitsPerPixel != 0) {
 			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
@@ -170,8 +156,11 @@ namespace FIFE {
 			}
 		}
 
-		screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-		if( !screen ) {
+		if(m_screen) {
+			SDL_FreeSurface(m_screen);
+		}
+		m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
+		if( !m_screen ) {
 			throw SDLException("Unable to set video mode selected!");
 		}
 
@@ -179,7 +168,7 @@ namespace FIFE {
 			<< "Videomode " << width << "x" << height
 			<< " at " << int32_t(bitsPerPixel) << " bpp");
 
-		m_rgba_format = *(screen->format);
+		m_rgba_format = *(m_screen->format);
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
@@ -189,10 +178,9 @@ namespace FIFE {
 		m_screenMode = ScreenMode(width,
 		                          height,
 		                          bitsPerPixel,
-		                          screen->flags);
+		                          m_screen->flags);
 
-
-		if (!screen) {
+		if (!m_screen) {
 			throw SDLException(SDL_GetError());
 		}
 
@@ -203,7 +191,8 @@ namespace FIFE {
 		glMatrixMode(GL_MODELVIEW);
 
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_CW);
+		glFrontFace(GL_CCW);
+		glCullFace(GL_BACK);
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -222,12 +211,7 @@ namespace FIFE {
 
 		glPointSize(1.0);
 		glLineWidth(1.0);
-		delete m_screen;
-
-		m_screen = new GLImage(screen);
-		return m_screen;
 	}
-
 
 	void RenderBackendOpenGL::startFrame() {
 		RenderBackend::startFrame();
@@ -610,11 +594,13 @@ namespace FIFE {
 			//stride
 			const uint32_t stride = sizeof(renderData);
 			const uint32_t stride2T = sizeof(renderData2T);
-			
-			//set pointer
-			setVertexPointer(stride, &m_render_datas[0].vertex);
-			setTexCoordPointer(0, stride, &m_render_datas[0].texel);
-			setColorPointer(stride, &m_render_datas[0].color);
+
+			if(!m_render_objects[0].multitextured) {
+				//set pointer
+				setVertexPointer(stride, &m_render_datas[0].vertex);
+				setTexCoordPointer(0, stride, &m_render_datas[0].texel);
+				setColorPointer(stride, &m_render_datas[0].color);
+			}
 
 			// array index
 			int32_t index = 0;
@@ -674,14 +660,14 @@ namespace FIFE {
 					}
 				}
 				if (ro.multitextured != multitextured ||
-				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(GLfloat)*3))) {
+ 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(GLfloat)*3))) {
 					mt = true;
 					render = true;
 				}
 
 				// if changes then we render all previously elements
 				if (render) {
-					if (elements > 0) {
+					if (*currentElements > 0) {
 						//render
 						glDrawArrays(mode, *currentIndex, *currentElements);
 						*currentIndex += *currentElements;
@@ -824,7 +810,7 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
-
+		
 		rd.vertex[0] = static_cast<float>(p2.x);
 		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
@@ -864,13 +850,12 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
-
 		rd.vertex[0] = static_cast<float>(p.x+w);
+		
 		m_render_datas.push_back(rd);
-
 		rd.vertex[1] = static_cast<float>(p.y+h);
+		
 		m_render_datas.push_back(rd);
-
 		rd.vertex[0] = static_cast<float>(p.x);
 		m_render_datas.push_back(rd);
 
@@ -927,7 +912,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p.x-size);
 		rd.vertex[1] = static_cast<float>(p.y+size);
@@ -977,13 +962,13 @@ namespace FIFE {
 			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			m_render_datas.push_back(rd);
-
+			
 			RenderObject ro(GL_TRIANGLES, 3);
 			m_render_objects.push_back(ro);
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha) {
+	void RenderBackendOpenGL::addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y);
@@ -994,17 +979,17 @@ namespace FIFE {
 		rd.color[2] = 255;
 		rd.color[3] = alpha;
 		m_render_datas.push_back(rd);
-		
+
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
 		rd.texel[1] = st[3];
 		m_render_datas.push_back(rd);
-		
+
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
 		rd.texel[0] = st[2];
 		m_render_datas.push_back(rd);
-		
+
 		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
 		rd.vertex[1] = static_cast<float>(rec.y);
 		rd.texel[1] = st[1];
@@ -1014,8 +999,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
-		//addImageToArray(id, rec, rt, ct, alpha);
+	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
 		renderData2T rd;
 		rd.vertex[0] = static_cast<float>(rec.x);
 		rd.vertex[1] = static_cast<float>(rec.y);
@@ -1048,7 +1032,6 @@ namespace FIFE {
 		m_render_datas2T.push_back(rd);
 
 		RenderObject ro(GL_QUADS, 4, id);
-
 		ro.multitextured = true;
 		ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
 		ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
@@ -1060,12 +1043,12 @@ namespace FIFE {
 		glActiveTexture(GL_TEXTURE1);
 		glEnable(GL_TEXTURE_2D);
 
-		if(maskForOverlays == 0) {
+		if(m_mask_overlays == 0) {
 			// Constant texture - can be constant across every tilesets
-			glGenTextures(1, &maskForOverlays);
+			glGenTextures(1, &m_mask_overlays);
 
 			uint8_t dummydata[3] = {127, 127, 127};
-			glBindTexture(GL_TEXTURE_2D, maskForOverlays);
+			glBindTexture(GL_TEXTURE_2D, m_mask_overlays);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1073,10 +1056,10 @@ namespace FIFE {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0,
 				GL_RGB, GL_UNSIGNED_BYTE, dummydata);
 		} else {
-			glBindTexture(GL_TEXTURE_2D, maskForOverlays);
+			glBindTexture(GL_TEXTURE_2D, m_mask_overlays);
 		}
 
-		m_state.texture[1] = maskForOverlays;
+		m_state.texture[1] = m_mask_overlays;
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
@@ -1107,5 +1090,56 @@ namespace FIFE {
 
 		// For now it's unneecessary - Only needed if we intend to use the 2nd texture unit in different case
 		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+
+	
+	void RenderBackendOpenGL::captureScreen(const std::string& filename) {
+		const uint32_t swidth = getWidth();
+		const uint32_t sheight = getHeight();
+		SDL_Surface *surface = NULL;
+		uint8_t *pixels;
+
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
+		sheight, 24,
+		RMASK,GMASK,BMASK, NULLMASK);
+
+		if(surface == NULL) {
+			return;
+		}
+
+		SDL_LockSurface(surface);
+		pixels = new uint8_t[swidth * sheight * 3];
+		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
+
+		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
+		// Copy the "reversed_image" memory to the "image" memory
+		for (int32_t y = (sheight - 1); y >= 0; --y) {
+			uint8_t *rowbegin = pixels + y * swidth * 3;
+			uint8_t *rowend = rowbegin + swidth * 3;
+
+			std::copy(rowbegin, rowend, imagepixels);
+
+			// Advance a row in the output surface.
+			imagepixels += surface->pitch;
+		}
+
+		SDL_UnlockSurface(surface);
+		Image::saveAsPng(filename, *surface);
+		SDL_FreeSurface(surface);
+		delete [] pixels;
+	}
+
+	void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear) {
+		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
+		if (clear) {
+			if (m_isbackgroundcolor) {
+				float red = float(m_backgroundcolor.r/255.0);
+				float green = float(m_backgroundcolor.g/255.0);
+				float blue = float(m_backgroundcolor.b/255.0);
+				glClearColor(red, green, blue, 0.0);
+				m_isbackgroundcolor = false;
+			}
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
 	}
 }

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,8 +31,6 @@
 #include "video/devicecaps.h"
 
 namespace FIFE {
-
-
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
 		m_screen(NULL),
 		m_isalphaoptimized(false),
@@ -40,16 +38,21 @@ namespace FIFE {
 		m_colorkey(colorkey),
 		m_isframelimit(false),
 		m_framelimit(60) {
-	}
 
+		m_isbackgroundcolor = false;
+		m_backgroundcolor.r = 0;
+		m_backgroundcolor.g = 0;
+		m_backgroundcolor.b = 0;
+	}
 
 	RenderBackend::~RenderBackend() {
 	}
 
 	void RenderBackend::deinit() {
-		delete m_screen;
-		m_screen = NULL;
+		//delete m_screen;
+		//m_screen = NULL;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+		SDL_Quit();
 	}
 
 	void RenderBackend::startFrame() {
@@ -68,75 +71,54 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackend::captureScreen(const std::string& filename) {
-		m_screen->saveImage(filename);
-	}
-
-	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
-		assert(m_screen);
-		m_screen->pushClipArea(cliparea, clear);
-	}
-
-	void RenderBackend::popClipArea() {
-		assert(m_screen);
-		m_screen->popClipArea();
-	}
-
-	const Rect& RenderBackend::getClipArea() const {
-		assert(m_screen);
-		return m_screen->getClipArea();
-	}
-
-	SDL_Surface* RenderBackend::getSurface() {
-		assert(m_screen);
-		return m_screen->getSurface();
-	}
-
-	void RenderBackend::setSurface(SDL_Surface* surface) {
-		assert(m_screen);
-		m_screen->setSurface(surface);
-	}
-
 	const ScreenMode& RenderBackend::getCurrentScreenMode() const{
 		return m_screenMode;
 	}
 
 	uint32_t RenderBackend::getWidth() const {
-		assert(m_screen);
-		return m_screen->getWidth();
+		return m_screen->w;
 	}
 
 	uint32_t RenderBackend::getHeight() const {
-		assert(m_screen);
-		return m_screen->getHeight();
+		return m_screen->h;
 	}
 
-	const Rect& RenderBackend::getArea() {
-		assert(m_screen);
-		SDL_Surface* s = m_screen->getSurface();
-		static Rect r(0, 0, s->w, s->h);
+	const Rect& RenderBackend::getArea() const {
+		static Rect r(0, 0, m_screen->w, m_screen->h);
 		return r;
 	}
 
-	void RenderBackend::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
-		assert(m_screen);
-		m_screen->getPixelRGBA(x, y, r, g, b, a);
+	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
+		ClipInfo ci;
+		ci.r = cliparea;
+		ci.clearing = clear;
+		m_clipstack.push(ci);
+		setClipArea(cliparea, clear);
 	}
 
-	void RenderBackend::saveImage(const std::string& filename) {
-		assert(m_screen);
-		m_screen->saveImage(filename);
+	void RenderBackend::popClipArea() {
+		assert(!m_clipstack.empty());
+		m_clipstack.pop();
+		if (m_clipstack.empty()) {
+			setClipArea(getArea(), false);
+		} else {
+			ClipInfo ci = m_clipstack.top();
+			setClipArea(ci.r, ci.clearing);
+		}
 	}
 
-	void RenderBackend::setAlphaOptimizerEnabled(bool enabled) {
-		assert(m_screen);
-		m_screen->setAlphaOptimizerEnabled(enabled);
+	const Rect& RenderBackend::getClipArea() const {
+		if (m_clipstack.empty()) {
+			return m_clipstack.top().r;
+		} else {
+			return getArea();
+		}
 	}
 
-	bool RenderBackend::isAlphaOptimizerEnabled() {
-		assert(m_screen);
-		return m_screen->isAlphaOptimizerEnabled();
+	void RenderBackend::clearClipArea() {
+		setClipArea(getArea(), true);
 	}
+
 
 	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {
 		m_iscolorkeyenabled = colorkeyenable;
@@ -155,13 +137,16 @@ namespace FIFE {
 	}
 
 	void RenderBackend::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b) {
-		assert(m_screen);
-		m_screen->setBackgroundColor(r,g,b);
+		if (r != m_backgroundcolor.r || g != m_backgroundcolor.g || b != m_backgroundcolor.b) {
+			m_isbackgroundcolor = true;
+			m_backgroundcolor.r = r;
+			m_backgroundcolor.g = g;
+			m_backgroundcolor.b = b;
+		}
 	}
 
 	void RenderBackend::resetBackgroundColor() {
-		assert(m_screen);
-		m_screen->setBackgroundColor(0,0,0);
+		setBackgroundColor(0,0,0);
 	}
 	
 	const SDL_PixelFormat& RenderBackend::getPixelFormat() const {

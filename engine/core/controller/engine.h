@@ -100,9 +100,8 @@ namespace FIFE {
 		 * screen modes.
 		 *
 		 * @param mode A valid ScreenMode retrieved from FIFE::DeviceCaps::getNearestScreenMode()
-		 * @return The new Screen Image
 		 */
-		Image* changeScreenMode(const ScreenMode& mode);
+		void changeScreenMode(const ScreenMode& mode);
 
 		/** Initializes the engine
 		 */

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -40,10 +40,6 @@
 #include "fife_opengl.h"
 
 namespace FIFE {
-	// FIXME: due to image chunking issues, GLImage uses SDLImage to draw primitives on its surface
-	// remember though that OpenGL backend is not separate thing of SDL; instead it sits on top of it
-	class SDLImage;
-
 
 	/** Implements an Image using OpenGL.
 	 *
@@ -52,7 +48,7 @@ namespace FIFE {
 	 *
 	 * @see Image
 	 * @note Width and height are not limited to powers of two; non-power of two
-	 * images will be converted internally.
+	 * images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
@@ -65,26 +61,11 @@ namespace FIFE {
 		GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
 		virtual ~GLImage();
-		void invalidate();
-		void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255, uint8_t const* rgb = 0);
-		void setSurface(SDL_Surface* surface);
-		void saveImage(const std::string& filename);
- 		bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
-
-		virtual size_t getSize();
-
+		virtual void invalidate();
+		virtual void setSurface(SDL_Surface* surface);
+		virtual void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
-
-	protected:
-		void setClipArea(const Rect& cliparea, bool clear);
 
 	private:
 		// texture coords to use
@@ -114,8 +95,6 @@ namespace FIFE {
 		/** Resets GLImage variables
 		 */
 		void resetGlimage();
-
-		//void saveAsPng(const std::string& filename, SDL_Surface& surface);
 
 		/** Generates the GL Texture for use when rendering.
 		 */
