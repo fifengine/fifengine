@@ -50,7 +50,7 @@
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 
-#include "GUIChanManager.h"
+#include "guichanmanager.h"
 
 
 namespace FIFE {

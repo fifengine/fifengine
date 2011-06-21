@@ -26,6 +26,8 @@
 #include <string>
 #include <vector>
 
+#include "util/base/fife_stdint.h"
+
 namespace FIFE {
 	typedef std::vector<int32_t> IntVector;
 	int makeInt32(const std::string& str);
