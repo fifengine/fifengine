@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -30,7 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "model/metamodel/abstractvisual.h"
+#include "model/metamodel/ivisual.h"
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
 #include "video/animation.h"
@@ -48,7 +48,7 @@ namespace FIFE {
 	 * The reason why its separated is to keep model view-agnostic, so that we could
 	 * have e.g. 3d, 2d and character based visualizations to the same data
 	 */
-	class Visual2DGfx: public AbstractVisual {
+	class Visual2DGfx: public IVisual {
 	public:
 		/** Destructor
 		 */

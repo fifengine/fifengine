@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -21,7 +21,7 @@
 
 %module fife
 %{
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
@@ -30,9 +30,9 @@
 typedef uint8_t Uint8;
 
 namespace FIFE {
-	class AbstractFont {
+	class IFont {
 	public:
-		virtual ~AbstractFont();
+		virtual ~IFont();
 		virtual void setRowSpacing (int32_t spacing) = 0;
 		virtual int32_t getRowSpacing() const = 0;
 		virtual void setGlyphSpacing(int32_t spacing) = 0;
@@ -45,7 +45,7 @@ namespace FIFE {
 		virtual int32_t getHeight() const = 0;
 	};
 
-	class FontBase: public AbstractFont {
+	class FontBase: public IFont {
 	public:
 		virtual ~FontBase(){ }
 	};

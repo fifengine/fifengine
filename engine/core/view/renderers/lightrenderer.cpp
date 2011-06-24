@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/animation.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/imagemanager.h"
 #include "video/image.h"
 #include "video/opengl/glimage.h"

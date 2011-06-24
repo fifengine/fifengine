@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "model/metamodel/abstractpather.h"
+#include "model/metamodel/ipather.h"
 #include "model/structures/location.h"
 #include "model/structures/map.h"
 #include "util/structures/priorityqueue.h"
@@ -43,18 +43,18 @@ namespace FIFE {
 	class SearchSpace;
 	class RoutePatherSearch;
 
-	class RoutePather : public AbstractPather {
+	class RoutePather : public IPather {
 	public:
 		/** Constructor.
 		 *
 		 */
 		RoutePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(1000) {
 		}
-		
+
 		void setMap(Map* map);
-		int32_t getNextLocation(const Instance* instance, const Location& target, 
+		int32_t getNextLocation(const Instance* instance, const Location& target,
 		                    double distance_to_travel, Location& nextLocation,
-		                    Location& facingLocation, int32_t session_id=-1, 
+		                    Location& facingLocation, int32_t session_id=-1,
 							int32_t priority = MEDIUM_PRIORITY);
 
 		/** Updates the route pather.
@@ -68,7 +68,7 @@ namespace FIFE {
 		/** Cancels a session.
 		 *
 		 * Cancels a route pather session. Determines if it is an active session
-		 * or not and acts accordingly. 
+		 * or not and acts accordingly.
 		 *
 		 * @param session_id The id of the session to cancel.
 		 * @return True if the session could be canceled false otherwise.
@@ -89,7 +89,7 @@ namespace FIFE {
 		 */
 		SearchSpace* getSearchSpace(Layer * const layer);
 
-		std::string getName() const { return "RoutePather"; };		
+		std::string getName() const { return "RoutePather"; };
 	private:
 		typedef std::list<Location> Path;
 		typedef PriorityQueue<RoutePatherSearch*, int32_t> SessionQueue;
@@ -99,8 +99,8 @@ namespace FIFE {
 		typedef std::map<int32_t, Location> LocationMap;
 		/** Makes the instance follow the given path.
 		 *
-		 * Calculates the next position the instance should move to given the 
-		 * the instance's speed. 
+		 * Calculates the next position the instance should move to given the
+		 * the instance's speed.
 		 *
 		 * @param instance A pointer to the instance to move.
 		 * @param speed The speed to move the instance.
@@ -117,9 +117,9 @@ namespace FIFE {
 		 * @param sessionId The session id to store.
 		 */
 		void addSessionId(const int32_t sessionId);
-		
+
 		/** Schedules a plan to be created for the given instance to reach the given
-		 * target; the session id is where the plan should be stored 
+		 * target; the session id is where the plan should be stored
 		 *
 		 * @param instance is the instance to pathfind for
 		 * @param target is where the instance is going
@@ -127,27 +127,27 @@ namespace FIFE {
 		 * @param priority is the priority of the request
 		 */
 		void makePlan(const Instance *instance, const Location& target, int32_t session_id, int32_t priority);
-		
-		/** make a new session id 
+
+		/** make a new session id
 			@return the new session id
 		*/
 		int32_t makeSessionId();
-		
+
 		/** are two locations equivalent from the perspective of pathing */
 		bool locationsEqual(const Location &a, const Location &b);
-		
+
 		/** check whether it's safe to continue moving down the path
 			@param instance is the instance following the path
 			@param path is the path to step through
 			@return true if the path could be followed, false if blocked
 		*/
 		bool testStep(const Instance *instance, Path& path);
-		
+
 		/** Determines if the given session Id is valid.
 		 *
 		 * Searches the session list to determine if a search with the given session id
 		 * has been registered.
-		 * 
+		 *
 		 * @return true if one has, false otherwise.
 		 */
 		bool sessionIdValid(const int32_t sessionId);
@@ -173,9 +173,9 @@ namespace FIFE {
 
 		//The endpoints for which those paths were calculated
 		LocationMap        m_path_targets;
-		
+
 		//A map of searchspaces.
-		SearchSpaceMap m_searchspaces; 
+		SearchSpaceMap m_searchspaces;
 
 		//The next free session id.
 		int32_t            m_nextFreeSessionId;

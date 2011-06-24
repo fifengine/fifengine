@@ -199,7 +199,7 @@ namespace FIFE {
 			fontglyphs = m_fontglyphs;
 		}
 
-		AbstractFont* font = NULL;
+		IFont* font = NULL;
 		GuiFont* guifont = NULL;
 		if( boost::filesystem::extension(fontpath) == ".ttf" ) {
 			font = new TrueTypeFont(fontpath, fontsize);

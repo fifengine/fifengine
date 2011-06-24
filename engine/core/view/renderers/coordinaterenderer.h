@@ -35,7 +35,7 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class AbstractFont;
+	class IFont;
 
 	class CoordinateRenderer: public RendererBase {
 	public:
@@ -61,7 +61,7 @@ namespace FIFE {
 		/** Changes default font in the renderer
 		 * Note that this does not change the font ownership
 		 */
-		void setFont(AbstractFont* font) { m_font = font; }
+		void setFont(IFont* font) { m_font = font; }
 
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
@@ -71,7 +71,7 @@ namespace FIFE {
 		Rect m_layer_area;
 		Location m_tmploc;
 		ExactModelCoordinate m_c;
-		AbstractFont* m_font;
+		IFont* m_font;
 		bool m_font_color;
 		SDL_Color m_color;
 	};

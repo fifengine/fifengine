@@ -31,17 +31,17 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 
 
 namespace FIFE {
 
-	class GuiFont : public gcn::Font, public AbstractFont {
+	class GuiFont : public gcn::Font, public IFont {
 	public:
 		/** Constructor
 		 *  Takes the ownership of given font
 		 */
-		GuiFont(AbstractFont* font);
+		GuiFont(IFont* font);
 		virtual ~GuiFont();
 
 		int32_t getStringIndexAt(const std::string& text, int32_t x) const;
@@ -64,7 +64,7 @@ namespace FIFE {
 		void invalidate();
 
 	private:
-		AbstractFont* m_font;
+		IFont* m_font;
 	};
 }
 

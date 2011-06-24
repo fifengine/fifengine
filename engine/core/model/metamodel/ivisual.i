@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -21,14 +21,14 @@
 
 %module fife
 %{
-#include "model/metamodel/abstractvisual.h"
+#include "model/metamodel/ivisual.h"
 %}
 
 namespace FIFE {
-	class AbstractVisual {
+	class IVisual {
 	public:
-		virtual ~AbstractVisual();
+		virtual ~IVisual();
 	private:
-		AbstractVisual();
+		IVisual();
 	};
 }

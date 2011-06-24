@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -36,7 +36,7 @@
 #include "util/math/angles.h"
 #include "util/base/fifeclass.h"
 
-#include "abstractvisual.h"
+#include "ivisual.h"
 
 namespace FIFE {
 
@@ -66,7 +66,7 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
+		void adoptVisual(IVisual* visual) { m_visual = visual; }
 
 		/** Gets used visualization
 		 */
@@ -79,7 +79,7 @@ namespace FIFE {
 		// duration of the action
 		uint32_t m_duration;
 		// visualization for action
-		AbstractVisual* m_visual;
+		IVisual* m_visual;
 	};
 
 }

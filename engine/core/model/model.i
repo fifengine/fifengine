@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -36,7 +36,7 @@ namespace std {
 }
 
 namespace FIFE {
-	class AbstractPather;
+	class IPather;
 
 	class Model: public FifeClass {
 	public:
@@ -60,7 +60,7 @@ namespace FIFE {
 		uint32_t getMapCount() const;
 		void deleteMaps();
 
-		AbstractPather* getPather(const std::string& pathername);
+		IPather* getPather(const std::string& pathername);
 		CellGrid* getCellGrid(const std::string& gridtype);
 		
 		void setTimeMultiplier(float multip);

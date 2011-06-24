@@ -54,7 +54,7 @@ namespace FIFE {
 	class Console;
 	class KeyEvent;
 	class MouseEvent;
-	class AbstractFont;
+	class IFont;
 	class GuiFont;
 
 

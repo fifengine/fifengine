@@ -36,7 +36,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "textrenderpool.h"
-#include "abstractfont.h"
+#include "ifont.h"
 
 struct SDL_Surface;
 namespace FIFE {
@@ -45,7 +45,7 @@ namespace FIFE {
 	 *  Uses a pool for rendered strings.
 	 *  @see TextRenderPool
 	 */
-	class FontBase: public AbstractFont {
+	class FontBase: public IFont {
 	public:
 		FontBase();
 		virtual ~FontBase() {};

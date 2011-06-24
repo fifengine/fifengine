@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -24,11 +24,11 @@
 #include "pathfinder/routepather/routepather.h"
 %}
 
-%include "model/metamodel/abstractpather.i"
+%include "model/metamodel/ipather.i"
 
 namespace FIFE {
 	%feature("notabstract") RoutePather;
-	class RoutePather : public AbstractPather {
+	class RoutePather : public IPather {
 	public:
 		RoutePather();
 		virtual ~RoutePather();
