@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -44,7 +44,7 @@ namespace FIFE {
 	class RenderBackend;
 	class RendererBase;
 	class MetaModel;
-	class AbstractPather;
+	class IPather;
 	class Object;
 
 	/**
@@ -122,11 +122,11 @@ namespace FIFE {
 
 		/** Adds pather to model. Moves ownership to model
 		 */
-		void adoptPather(AbstractPather* pather);
+		void adoptPather(IPather* pather);
 
 		/** Returns pather corresponding given name. If none found, returns NULL
 		 */
-		AbstractPather* getPather(const std::string& pathername);
+		IPather* getPather(const std::string& pathername);
 
 		/** Adds cellgrid to model. Moves ownership to model
 		 */
@@ -167,7 +167,7 @@ namespace FIFE {
 		/// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
 		const namespace_t* selectNamespace(const std::string& name_space) const;
 
-		std::vector<AbstractPather*> m_pathers;
+		std::vector<IPather*> m_pathers;
 		std::vector<CellGrid*> m_created_grids;
 		std::vector<CellGrid*> m_adopted_grids;
 		//std::vector<CellGrid*> m_created_grids;

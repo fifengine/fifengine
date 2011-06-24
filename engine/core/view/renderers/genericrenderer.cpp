@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/animation.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "util/math/fife_math.h"
@@ -194,7 +194,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, AbstractFont* font, std::string text):
+	GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_font(font),
@@ -290,7 +290,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text) {
+	void GenericRenderer::addText(const std::string &group, RendererNode n, IFont* font, const std::string &text) {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}

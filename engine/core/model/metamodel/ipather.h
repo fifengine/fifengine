@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -37,16 +37,16 @@ namespace FIFE {
 	class Location;
 	class Instance;
 
-	enum 
+	enum
 	{
 		HIGH_PRIORITY,
 		MEDIUM_PRIORITY,
 		LOW_PRIORITY
 	};
 
-	class AbstractPather {
+	class IPather {
 	public:
-		virtual ~AbstractPather() {};
+		virtual ~IPather() {};
 
 		/** Gets next location from pathfinder
 		 * Model will call this function periodically when instances should
@@ -64,9 +64,9 @@ namespace FIFE {
 		 * @param priority The priority to assign to search (high are pushed to the front of the queue).
 		 * @return session_id to use with further calls
 		 */
-		virtual int32_t getNextLocation(const Instance* instance, const Location& target, 
+		virtual int32_t getNextLocation(const Instance* instance, const Location& target,
 		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int32_t session_id=-1, 
+		                            Location& facingLocation, int32_t session_id=-1,
 									int32_t priority = MEDIUM_PRIORITY) = 0;
 
 		/** Updates the pather (should it need updating).
@@ -77,13 +77,13 @@ namespace FIFE {
 		 * a maximum amount of search updating to prevent this method from stalling the application.
 		 */
 		virtual void update() = 0;
-		
+
 		/** Cancels a given session.
 		 *
 		 * This function is called when (for instance) the user changes their mind about
 		 * a destination while the agent is already moving, the old session needs to be
-		 * cancelled and a new one created. 
-		 * 
+		 * cancelled and a new one created.
+		 *
 		 * @param session_id The id of the session to cancel.
 		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */

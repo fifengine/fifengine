@@ -23,7 +23,7 @@
 %{
 #include <guichan/font.hpp>
 #include "gui/guichan/base/gui_font.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 %}
 
 %include "video/fonts/fonts.i"
@@ -43,9 +43,9 @@ namespace FIFE {
 	class Image;
 	
 	%feature("notabstract") GuiFont;
-	class GuiFont : public gcn::Font, public AbstractFont {
+	class GuiFont : public gcn::Font, public IFont {
 	public:
-		GuiFont(AbstractFont* font);
+		GuiFont(IFont* font);
 		virtual ~GuiFont();
 		
 		int32_t getStringIndexAt(const std::string& text, int32_t x);

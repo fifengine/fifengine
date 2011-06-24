@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "util/structures/purge.h"
 #include "util/log/logger.h"
-#include "model/metamodel/abstractpather.h"
+#include "model/metamodel/ipather.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "structures/map.h"
@@ -74,12 +74,12 @@ namespace FIFE {
 		return map;
 	}
 
-	void Model::adoptPather(AbstractPather* pather) {
+	void Model::adoptPather(IPather* pather) {
 		m_pathers.push_back(pather);
 	}
 
-	AbstractPather* Model::getPather(const std::string& pathername) {
-		std::vector<AbstractPather*>::const_iterator it = m_pathers.begin();
+	IPather* Model::getPather(const std::string& pathername) {
+		std::vector<IPather*>::const_iterator it = m_pathers.begin();
 		for(; it != m_pathers.end(); ++it) {
 			if ((*it)->getName() == pathername) {
 				return *it;
@@ -277,7 +277,7 @@ namespace FIFE {
 		for(; it != m_maps.end(); ++it) {
 			(*it)->update();
 		}
-		std::vector<AbstractPather*>::iterator jt = m_pathers.begin();
+		std::vector<IPather*>::iterator jt = m_pathers.begin();
 		for(; jt != m_pathers.end(); ++jt) {
 			(*jt)->update();
 		}

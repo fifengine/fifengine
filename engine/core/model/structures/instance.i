@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -25,7 +25,7 @@
 %}
 
 %include "model/metamodel/modelcoords.i"
-%include "model/metamodel/abstractvisual.i"
+%include "model/metamodel/ivisual.i"
 %include "util/structures/utilstructures.i"
 %include "util/base/utilbase.i"
 %include "location.i"
@@ -101,7 +101,7 @@ namespace FIFE {
 		void refresh();
 		InstanceChangeInfo getChangeInfo();
 		
-		void setVisual(AbstractVisual* visual);
+		void setVisual(IVisual* visual);
 		template<typename T> T* getVisual() const;
 	};
 }

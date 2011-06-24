@@ -37,7 +37,7 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class AbstractFont;
+	class IFont;
 
 	class LightRendererElementInfo {
 	public:

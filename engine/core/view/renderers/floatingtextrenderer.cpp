@@ -30,7 +30,7 @@
 #include "video/renderbackend.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"

@@ -35,7 +35,7 @@
 #include "gui_font.h"
 
 namespace FIFE {
-	GuiFont::GuiFont(AbstractFont* font): m_font(font) {
+	GuiFont::GuiFont(IFont* font): m_font(font) {
 		assert(font);
 	}
 

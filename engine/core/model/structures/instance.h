@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,7 +34,7 @@
 #include "util/base/fifeclass.h"
 
 #include "model/metamodel/object.h"
-#include "model/metamodel/abstractvisual.h"
+#include "model/metamodel/ivisual.h"
 
 #include "location.h"
 
@@ -275,7 +275,7 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void setVisual(AbstractVisual* visual) { m_visual = visual; }
+		void setVisual(IVisual* visual) { m_visual = visual; }
 
 		/** Gets used visualization
 		 */
@@ -374,7 +374,7 @@ namespace FIFE {
 		// current facing location. Just a pointer to save space e.g. on tiles
 		Location* m_facinglocation;
 		// instance visualization
-		AbstractVisual* m_visual;
+		IVisual* m_visual;
 		// instance blocking info
 		bool m_blocking;
 		// allow to override the blocking property

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -40,9 +40,9 @@ namespace FIFE {
 
 	/** Pure abstract Font interface
 	 */
-	class AbstractFont {
+	class IFont {
 	public:
-		virtual ~AbstractFont() {}
+		virtual ~IFont() {}
 
 		/**
 		 * Sets the spacing between rows in pixels. Default is 0 pixels.

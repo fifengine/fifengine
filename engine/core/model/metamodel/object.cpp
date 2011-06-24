@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,7 +31,7 @@
 
 #include "object.h"
 #include "action.h"
-#include "abstractpather.h"
+#include "ipather.h"
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited):
@@ -109,7 +109,7 @@ namespace FIFE {
 		return action_ids;
 	}
 
-	void Object::setPather(AbstractPather* pather) {
+	void Object::setPather(IPather* pather) {
 		m_pather = pather;
 	}
 

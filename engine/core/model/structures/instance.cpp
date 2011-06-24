@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,7 +34,7 @@
 #include "util/math/fife_math.h"
 #include "util/time/timemanager.h"
 #include "model/metamodel/grids/cellgrid.h"
-#include "model/metamodel/abstractpather.h"
+#include "model/metamodel/ipather.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/timeprovider.h"
 #include "model/structures/layer.h"
@@ -48,7 +48,7 @@ namespace FIFE {
 
 	class ActionInfo {
 	public:
-		ActionInfo(AbstractPather* pather, const Location& curloc):
+		ActionInfo(IPather* pather, const Location& curloc):
 			m_action(NULL),
 			m_target(NULL),
 			m_speed(0),
@@ -85,7 +85,7 @@ namespace FIFE {
 		// session id for pather
 		int32_t m_pather_session_id;
 		// pather
-		AbstractPather* m_pather;
+		IPather* m_pather;
 		// leader for follow activity
 		Instance* m_leader;
 	};

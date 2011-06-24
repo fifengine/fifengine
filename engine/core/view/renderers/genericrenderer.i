@@ -69,7 +69,7 @@ namespace FIFE {
 	};
 	class GenericRendererTextInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererTextInfo(RendererNode n, AbstractFont* font, std::string text);
+		GenericRendererTextInfo(RendererNode n, IFont* font, std::string text);
 		virtual ~GenericRendererTextInfo() {};
 	};
 	class GenericRendererResizeInfo : public GenericRendererElementInfo {
@@ -88,7 +88,7 @@ namespace FIFE {
 		void addTriangle(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addQuad(const std::string &group, RendererNode n1, RendererNode n2, RendererNode n3, RendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addVertex(const std::string &group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addText(const std::string &group, RendererNode n, AbstractFont* font, const std::string &text);
+		void addText(const std::string &group, RendererNode n, IFont* font, const std::string &text);
 		void addImage(const std::string &group, RendererNode n, ImagePtr image, bool zoomed = true);
 		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, bool zoomed = true);
 		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, bool zoomed = true);

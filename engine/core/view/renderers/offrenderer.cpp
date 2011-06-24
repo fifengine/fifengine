@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
 #include "util/math/fife_math.h"
@@ -148,7 +148,7 @@ namespace FIFE {
 		img->render(r);
 	}
 
-	OffRendererTextInfo::OffRendererTextInfo(Point anchor, AbstractFont* font, std::string text):
+	OffRendererTextInfo::OffRendererTextInfo(Point anchor, IFont* font, std::string text):
 		OffRendererElementInfo(),
 		m_anchor(anchor),
 		m_font(font),
@@ -234,7 +234,7 @@ namespace FIFE {
 		OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void OffRenderer::addText(const std::string &group, Point n, AbstractFont* font, const std::string &text) {
+	void OffRenderer::addText(const std::string &group, Point n, IFont* font, const std::string &text) {
 		OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}

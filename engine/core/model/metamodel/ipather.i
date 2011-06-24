@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -19,23 +19,25 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_ABSTRACTVISUAL_H
-#define FIFE_MODEL_ABSTRACTVISUAL_H
+%module fife
+%{
+#include "model/metamodel/ipather.h"
+%}
 
-// Standard C++ library includes
-
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+%include "model/structures/instance.i"
 
 namespace FIFE {
-	class AbstractVisual {
+	class Map;
+	
+	class IPather {
 	public:
-		virtual ~AbstractVisual() {};
+		virtual ~IPather();
+		virtual int32_t getNextLocation(const Instance* instance, const Location& target, 
+		                            double distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, int32_t session_id=-1, 
+									int32_t priority = MEDIUM_PRIORITY) = 0;
+		virtual std::string getName() const = 0;
+	private:
+		IPather();
 	};
 }
-
-#endif

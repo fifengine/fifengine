@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -39,8 +39,8 @@
 namespace FIFE {
 
 	class Action;
-	class AbstractPather;
-	class AbstractVisual;
+	class IPather;
+	class IVisual;
 
 	/** Object class
 	 *
@@ -97,11 +97,11 @@ namespace FIFE {
 
 		/** Sets pather used by instances created out of this object
 		 */
-		void setPather(AbstractPather* pather);
+		void setPather(IPather* pather);
 
 		/** Gets associated pather
 		 */
-		AbstractPather* getPather() const { return m_pather; }
+		IPather* getPather() const { return m_pather; }
 
 		/** Gets an object where this object was inherited from
 		 * @see inherited object
@@ -110,7 +110,7 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
+		void adoptVisual(IVisual* visual) { m_visual = visual; }
 
 		/** Gets used visualization
 		 */
@@ -150,8 +150,8 @@ namespace FIFE {
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;
 		bool m_static;
-		AbstractPather* m_pather;
-		AbstractVisual* m_visual;
+		IPather* m_pather;
+		IVisual* m_visual;
 		Action* m_defaultaction;
 	};
 
