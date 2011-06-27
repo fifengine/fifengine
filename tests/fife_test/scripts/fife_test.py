@@ -212,4 +212,8 @@ class FifeTestApplication(ApplicationBase):
 	def _getLogManager(self):
 		return self._log
 
+	def _getTestManager(self):
+		return self._testmanager
+
 	logger = property(_getLogManager)
+	testmanager = property(_getTestManager)
