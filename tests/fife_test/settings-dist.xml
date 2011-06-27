@@ -10,7 +10,7 @@
 		<Setting name="SDLRemoveFakeAlpha" type="int"> 1 </Setting>
 		<Setting name="WindowTitle" type="str"> FIFE - Test </Setting>
 		<Setting name="WindowIcon" type="str"> </Setting>
-		<Setting name="Font" type="str"> fonts/FreeSans.ttf </Setting>
+		<Setting name="Font" type="str"> data/fonts/FreeSans.ttf </Setting>
 		<Setting name="FontGlyphs" strip="0" type="str"> abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"</Setting>
 		<Setting name="DefaultFontSize" type="int"> 16 </Setting>
 		<Setting name="LogModules" type="list"> controller ; script </Setting>
@@ -22,6 +22,6 @@
 		<Setting name="Lighting" type="int"> 0 </Setting>
 	</Module>
 	<Module name="Tests">
-		<Setting name="Test1" type="bool">True</Setting>
+		<Setting name="PychanTest" type="bool">True</Setting>
 	</Module>
 </Settings>
