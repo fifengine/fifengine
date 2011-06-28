@@ -17,6 +17,6 @@
 	</HBox>
 	<HBox>
 		<Label name="creditsLink" text="Credits"/>
-		<Button name="closeButton" text="Quit Demo"/>
+		<Button name="closeButton" text="Quit Test"/>
 	</HBox>
 </VBox>
