@@ -167,6 +167,16 @@ class LayerDialog(object):
 		
 		for cam in self.map.getCameras():
 			cam.resetRenderers()
+			
+			if layer:
+				# make sure the layer is active for the various renderers
+				fife.InstanceRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.GridRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.BlockingInfoRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.CoordinateRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.CellSelectionRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.LightRenderer.getInstance(cam).addActiveLayer(layer)
+				fife.GenericRenderer.getInstance(cam).addActiveLayer(layer)
 		
 		# Hide dialog and call back
 		self._widget.hide()
