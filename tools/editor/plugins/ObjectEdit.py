@@ -308,7 +308,7 @@ class ObjectEdit(plugin.Plugin):
 					break
 											
 			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
-			self.container.findChild(name="animTest").image = self.engine.getImageManager().get(image).getName()
+			self.container.findChild(name="animTest").image = image.getName()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
 		
@@ -670,11 +670,11 @@ class ObjectEdit(plugin.Plugin):
 					self._gui_anim_actions_dropdown._setSelected(0)					
 				
 				if timestamp is None and frame is not None:
-					self._image = self.imageManager.get(animation.getFrame(frame))	
+					self._image = animation.getFrame(frame)	
 				elif timestamp is not None and frame is None:
-					self._image = self.imageManager.get(animation.getFrameByTimestamp(timestamp))
+					self._image = animation.getFrameByTimestamp(timestamp)
 				else:
-					self._image = self.imageManager.get(animation.getFrameByTimestamp(0))
+					self._image = animation.getFrameByTimestamp(0)
 		elif index is not -1:
 			# object is a static image
 			self._animation = False
