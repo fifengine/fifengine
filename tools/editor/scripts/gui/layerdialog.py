@@ -134,12 +134,8 @@ class LayerDialog(object):
 
 		# Set up layer
 		layer = self.layer
-		cellgrid = None
-
-		if not layer:
-			cellgrid = self.model.createCellGrid(grid_type)
-		else:
-			cellgrid = layer.getCellGrid()
+		
+		cellgrid = self.model.getCellGrid(grid_type)
 
 		if not cellgrid:
 			print "Invalid grid"
@@ -160,7 +156,7 @@ class LayerDialog(object):
 				del cellgrid
 				return
 		else:
-			layer.adoptCellGrid(cellgrid)
+			layer.setCellGrid(cellgrid)
 			try:
 				layer.setId(str(layerId))
 			except fife.NameClash:
