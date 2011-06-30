@@ -426,14 +426,14 @@ class LightEdit(plugin.Plugin):
 						self._light["ystretch"] = info.getYStretch()
 						self.toggle_simple_gui()
 					elif str(info.getName()) == "image":
-						if !info.getImage(): continue
+						if info.getImage() is None: continue
 						img = info.getImage()
 						name = img.getName()
 						self._widgets["image"].text = unicode(str(name))
 						self._light["image"] = image
 						self.toggle_image_gui()
 					elif str(info.getName()) == "animation":
-						if !info.getAnimation(): continue
+						if info.getAnimation() is None: continue
 						ani = info.getAnimation();
 						count = 0
 						newstr = ''

@@ -26,7 +26,7 @@ from common import *
 
 class BasicTextWidget(Widget):
 	"""
-	The base class for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
+	The base class for widgets which display a string - L{Label},L{Button}, etc.
 	Do not use directly.
 
 	New Attributes

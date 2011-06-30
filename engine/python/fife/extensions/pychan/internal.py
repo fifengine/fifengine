@@ -219,9 +219,6 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'background_color' : guichan.Color(50,50,50,0)
 	},
-	'ClickLabel' : {
-		'border_size': 0,
-	},
 	'ListBox' : {
 		'border_size': 0,
 	},

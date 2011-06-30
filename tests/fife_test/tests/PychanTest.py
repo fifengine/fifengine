@@ -62,10 +62,6 @@ STYLES= {
 		'border_size': 0,
 		'font' : 'samanata_small'
 	},
-	'ClickLabel' : {
-		'border_size': 0,
-		'font' : 'samanata_small'
-	},
 	'ListBox' : {
 		'border_size': 0,
 		'font' : 'samanata_small'
