@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2011 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -132,7 +132,7 @@ namespace FIFE {
 		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, width, height));
 		rj.discard = false;
 
-		std::pair<RenderJobMap::iterator, bool> ret = 
+		std::pair<RenderJobMap::iterator, bool> ret =
 			m_targets.insert(std::make_pair<std::string, RenderJob>(name, rj));
 
 		return ret.first->second.target;
@@ -145,7 +145,7 @@ namespace FIFE {
 		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, image));
 		rj.discard = false;
 
-		std::pair<RenderJobMap::iterator, bool> ret = 
+		std::pair<RenderJobMap::iterator, bool> ret =
 			m_targets.insert(std::make_pair<std::string, RenderJob>(image->getName(), rj));
 
 		return ret.first->second.target;
