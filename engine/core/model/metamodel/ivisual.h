@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_ABSTRACTVISUAL_H
-#define FIFE_MODEL_ABSTRACTVISUAL_H
+#ifndef FIFE_MODEL_IVISUAL_H
+#define FIFE_MODEL_IVISUAL_H
 
 // Standard C++ library includes
 

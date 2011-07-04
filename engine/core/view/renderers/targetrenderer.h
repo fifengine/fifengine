@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2011 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_IMAGERENDERER_H
-#define FIFE_IMAGERENDERER_H
+#ifndef FIFE_TARGETRENDERER_H
+#define FIFE_TARGETRENDERER_H
 
 // Standard C++ library includes
 
@@ -80,7 +80,7 @@ namespace FIFE {
 		 */
 		virtual ~TargetRenderer();
 
-		/** Creates render target 
+		/** Creates render target
 		 */
 		RenderTargetPtr createRenderTarget(const std::string& name, uint32_t width, uint32_t height);
 		RenderTargetPtr createRenderTarget(ImagePtr& image);
