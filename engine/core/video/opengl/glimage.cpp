@@ -108,18 +108,22 @@ namespace FIFE {
 			m_texId = 0;
 		}
 
-		texCoords[0] = texCoords[1] = 
-			texCoords[2] = texCoords[3] = 0.0f;
+		m_tex_coords[0] = m_tex_coords[1] = 
+			m_tex_coords[2] = m_tex_coords[3] = 0.0f;
 	}
 
-	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* rgb) {
-		// not on the screen.  dont render
-		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
-			return;
-		}
-
+	void GLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* rgb) {
 		// completely transparent so dont bother rendering
 		if (0 == alpha) {
+			return;
+		}
+		RenderBackend* rb = RenderBackend::instance();
+		SDL_Surface* target = rb->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
+
+		// not on the screen.  dont render
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
 
@@ -127,11 +131,7 @@ namespace FIFE {
 			generateGLTexture();
 		}
 
-		if(!rgb) {
-			RenderBackend::instance()->addImageToArray(m_texId, rect, texCoords, alpha);
-		} else {
-			RenderBackend::instance()->addImageToArray2T(m_texId, rect, texCoords, alpha, rgb);
-		}
+		rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 	}
 
 	void GLImage::generateGLTexture() {
@@ -151,16 +151,16 @@ namespace FIFE {
 		}
 
 		// used to calculate the fill ratio for given chunk
-		texCoords[0] = texCoords[1] = 0.0f;
-		texCoords[2] = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
-		texCoords[3] = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
+		m_tex_coords[0] = m_tex_coords[1] = 0.0f;
+		m_tex_coords[2] = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
+		m_tex_coords[3] = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
 
-		if (texCoords[2] == 0.0f){
-			texCoords[2] = 1.0f;
+		if (m_tex_coords[2] == 0.0f){
+			m_tex_coords[2] = 1.0f;
 		}
 
-		if (texCoords[3] == 0.0f){
-			texCoords[3] = 1.0f;
+		if (m_tex_coords[3] == 0.0f){
+			m_tex_coords[3] = 1.0f;
 		}
 
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
@@ -256,10 +256,10 @@ namespace FIFE {
 			height = nextPow2(height);
 		}
 
-		texCoords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
-		texCoords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
-		texCoords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
-		texCoords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
+		m_tex_coords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
+		m_tex_coords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
+		m_tex_coords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
+		m_tex_coords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
 
 		m_subimagerect = region;
 		setState(IResource::RES_LOADED);
@@ -268,8 +268,18 @@ namespace FIFE {
 	void GLImage::forceLoadInternal() {
 		assert(m_surface);
 
-		if(m_shared)
+		if (m_shared) {
 			return;
-		generateGLTexture();
+		} else if (m_texId == 0) {
+			generateGLTexture();
+		}
+	}
+
+	GLuint GLImage::getTexId() const {
+		return m_texId;
+	}
+
+	const GLfloat* GLImage::getTexCoords() const {
+		return m_tex_coords;
 	}
 }

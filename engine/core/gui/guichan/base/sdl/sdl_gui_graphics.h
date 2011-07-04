@@ -40,9 +40,6 @@ namespace FIFE {
 		 */
 		SdlGuiGraphics();
 		virtual void drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height);
-
-	private:
-
 	};
 }
 

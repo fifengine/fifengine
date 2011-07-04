@@ -47,10 +47,9 @@ namespace FIFE {
 	static Logger _log(LM_GUI);
 
 	OpenGLGuiGraphics::OpenGLGuiGraphics() {
-		mTarget = SDL_GetVideoSurface();
-		assert(mTarget);
-		setTargetPlane(mTarget->w, mTarget->h);
-
+		SDL_Surface* target = SDL_GetVideoSurface();
+		assert(target);
+		setTargetPlane(target->w, target->h);
 	}
 
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
@@ -63,7 +62,7 @@ namespace FIFE {
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
 
-		fifeimg->render(rect, mTarget);
+		fifeimg->render(rect);
 		RenderBackend::instance()->renderVertexArrays();
 	}
 

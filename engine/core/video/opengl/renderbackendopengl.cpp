@@ -103,6 +103,9 @@ namespace FIFE {
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
 		glDeleteTextures(1, &m_mask_overlays);
+		if(GLEE_EXT_framebuffer_object) {
+			glDeleteFramebuffers(1, &m_fbo_id);
+		}
 		deinit();
 	}
 
@@ -163,6 +166,7 @@ namespace FIFE {
 		if( !m_screen ) {
 			throw SDLException("Unable to set video mode selected!");
 		}
+		m_target = m_screen;
 
 		FL_LOG(_log, LMsg("RenderBackendOpenGL")
 			<< "Videomode " << width << "x" << height
@@ -211,6 +215,10 @@ namespace FIFE {
 
 		glPointSize(1.0);
 		glLineWidth(1.0);
+
+		if(GLEE_EXT_framebuffer_object) {
+			glGenFramebuffers(1, &m_fbo_id);
+		}
 	}
 
 	void RenderBackendOpenGL::startFrame() {
@@ -783,7 +791,8 @@ namespace FIFE {
 	}
 
 	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		if ((x < 0) || (x >= (int32_t)getWidth()) || (y < 0) || (y >= (int32_t)getHeight())) {
+		if ((x < 0) || (x >= (int32_t)m_target->w) ||
+			(y < 0) || (y >= (int32_t)m_target->h)) {
 			return false;
 		}
 		renderData rd;
@@ -873,13 +882,13 @@ namespace FIFE {
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(p.x+w);
-		m_render_datas.push_back(rd);
-
 		rd.vertex[1] = static_cast<float>(p.y+h);
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[0] = static_cast<float>(p.x+w);
+		m_render_datas.push_back(rd);
+
+		rd.vertex[1] = static_cast<float>(p.y);
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_QUADS, 4);
@@ -968,75 +977,75 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha) {
-		renderData rd;
-		rd.vertex[0] = static_cast<float>(rec.x);
-		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[0] = st[0];
-		rd.texel[1] = st[1];
-		rd.color[0] = 255;
-		rd.color[1] = 255;
-		rd.color[2] = 255;
-		rd.color[3] = alpha;
-		m_render_datas.push_back(rd);
+	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
+		if (!rgb) {
+			renderData rd;
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.texel[0] = st[0];
+			rd.texel[1] = st[1];
+			rd.color[0] = 255;
+			rd.color[1] = 255;
+			rd.color[2] = 255;
+			rd.color[3] = alpha;
+			m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x);
-		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[1] = st[3];
-		m_render_datas.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[1] = st[3];
+			m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
-		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[0] = st[2];
-		m_render_datas.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[0] = st[2];
+			m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
-		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[1] = st[1];
-		m_render_datas.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.texel[1] = st[1];
+			m_render_datas.push_back(rd);
 
-		RenderObject ro(GL_QUADS, 4, id);
+			RenderObject ro(GL_QUADS, 4, id);
 		m_render_objects.push_back(ro);
-	}
+		} else {
+			renderData2T rd;
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.texel[0] = st[0];
+			rd.texel[1] = st[1];
+			rd.texel2[0] = 0.0;
+			rd.texel2[1] = 0.0;
+			rd.color[0] = 255;
+			rd.color[1] = 255;
+			rd.color[2] = 255;
+			rd.color[3] = alpha;
+			m_render_datas2T.push_back(rd);
 
-	void RenderBackendOpenGL::addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
-		renderData2T rd;
-		rd.vertex[0] = static_cast<float>(rec.x);
-		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[0] = st[0];
-		rd.texel[1] = st[1];
-		rd.texel2[0] = 0.0;
-		rd.texel2[1] = 0.0;
-		rd.color[0] = 255;
-		rd.color[1] = 255;
-		rd.color[2] = 255;
-		rd.color[3] = alpha;
-		m_render_datas2T.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[1] = st[3];
+			rd.texel2[1] = 1.0;
+			m_render_datas2T.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x);
-		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[1] = st[3];
-		rd.texel2[1] = 1.0;
-		m_render_datas2T.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[0] = st[2];
+			rd.texel2[0] = 1.0;
+			m_render_datas2T.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
-		rd.vertex[1] = static_cast<float>(rec.y+rec.h);
-		rd.texel[0] = st[2];
-		rd.texel2[0] = 1.0;
-		m_render_datas2T.push_back(rd);
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.texel[1] = st[1];
+			rd.texel2[1] = 0.0;
+			m_render_datas2T.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(rec.x+rec.w);
-		rd.vertex[1] = static_cast<float>(rec.y);
-		rd.texel[1] = st[1];
-		rd.texel2[1] = 0.0;
-		m_render_datas2T.push_back(rd);
-
-		RenderObject ro(GL_QUADS, 4, id);
-		ro.multitextured = true;
-		ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
-		ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
-		ro.rgb[2] = static_cast<float>(rgb[2] / 255.0f);
-		m_render_objects.push_back(ro);
+			RenderObject ro(GL_QUADS, 4, id);
+			ro.multitextured = true;
+			ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
+			ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
+			ro.rgb[2] = static_cast<float>(rgb[2] / 255.0f);
+			m_render_objects.push_back(ro);
+		}
 	}
 
 	void RenderBackendOpenGL::prepareForOverlays() {
@@ -1141,5 +1150,65 @@ namespace FIFE {
 			}
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
+	}
+
+	void RenderBackendOpenGL::attachRenderTarget(ImagePtr& img, bool discard) {
+		m_img_target = img;
+		m_target_discard = discard;
+
+		// to render on something, we need to make sure its loaded already in gpu memory
+		m_img_target->forceLoadInternal();
+		m_target = m_img_target->getSurface();
+
+		GLuint targetid = static_cast<GLImage*>(m_img_target.get())->getTexId();
+		uint32_t w = m_img_target->getWidth();
+		uint32_t h = m_img_target->getHeight();
+
+		// can we use fbo?
+		if (GLEE_EXT_framebuffer_object) {
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo_id);
+			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+				GL_TEXTURE_2D, targetid, 0);
+		}
+
+		glViewport(0, 0, w, h);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		// invert top with bottom
+		gluOrtho2D(0, w, 0, h); 
+		glMatrixMode(GL_MODELVIEW);
+		// because of inversion 2 lines above we need to also invert culling faces
+		glCullFace(GL_FRONT);
+
+		if (m_target_discard) {
+			glClear(GL_COLOR_BUFFER_BIT);
+		} else if (!m_target_discard && !GLEE_EXT_framebuffer_object) {
+			// if we wanna just add something to render target, we need to first render previous contents
+			addImageToArray(targetid, m_img_target->getArea(), 
+				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
+		}
+	}
+
+	void RenderBackendOpenGL::detachRenderTarget() {
+		assert(m_target != m_screen);
+
+		// flush down what we batched
+		renderVertexArrays();
+
+		if (GLEE_EXT_framebuffer_object) {
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		} else {
+			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 
+				m_img_target->getWidth(), m_img_target->getHeight(), 0);
+		}
+
+		m_target = m_screen;
+		glViewport(0, 0, m_screen->w, m_screen->h);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0, m_screen->w, m_screen->h, 0);
+		glMatrixMode(GL_MODELVIEW);
+		glCullFace(GL_BACK); 
 	}
 }

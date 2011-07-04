@@ -68,6 +68,7 @@
 #include "view/renderers/cellselectionrenderer.h"
 #include "view/renderers/blockinginforenderer.h"
 #include "view/renderers/genericrenderer.h"
+#include "view/renderers/targetrenderer.h"
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
 #include "video/image.h"
@@ -255,6 +256,7 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating renderers");
 		m_offrenderer = new OffRenderer(m_renderbackend);
+		m_targetrenderer = new TargetRenderer(m_renderbackend);
 		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
@@ -296,6 +298,7 @@ namespace FIFE {
 
 		// properly remove all the renderers created during init
 		delete m_offrenderer;
+		delete m_targetrenderer;
 		std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();
 		for ( ; rendererIter != m_renderers.end(); ++rendererIter)
 		{
@@ -334,6 +337,7 @@ namespace FIFE {
 			m_renderbackend->clearBackBuffer();
 			m_offrenderer->render();
 		} else {
+			m_targetrenderer->render();
 			m_model->update();
 		}
 

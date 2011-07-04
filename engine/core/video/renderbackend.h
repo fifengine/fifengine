@@ -187,8 +187,7 @@ namespace FIFE {
 
 		/** Add the Image data to the array
 		 */
-		virtual void addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha) = 0;
-		virtual void addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) = 0;
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb) = 0;
 
 		/** Dirty helper function to change the render infos
 		 */
@@ -312,8 +311,21 @@ namespace FIFE {
 		 */
 		uint16_t getFrameLimit() const;
 
+		/** Returns currently attached render surface
+		 */
+		SDL_Surface* getRenderTargetSurface();
+
+		/** Attaches given image as a new render surface
+		 */
+		virtual void attachRenderTarget(ImagePtr& img, bool discard) = 0;
+
+		/** Detaches current render surface
+		 */
+		virtual void detachRenderTarget() = 0;
+
 	protected:
 		SDL_Surface* m_screen;
+		SDL_Surface* m_target;
 		bool m_isalphaoptimized;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
