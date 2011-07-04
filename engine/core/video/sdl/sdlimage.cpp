@@ -330,17 +330,19 @@ namespace FIFE {
 		return ABS(a - b) <= 0.00001;
 	}
 
-	void SDLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha, uint8_t const* /*unused rgb*/) {
+	void SDLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* /*unused rgb*/) {
 		if (alpha == 0) {
 			return;
 		}
+		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
 
-		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) ||
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
 		finalize();
 
-		SDL_Surface* surface = screen;
 		SDL_Rect r;
 		r.x = rect.x;
 		r.y = rect.y;
@@ -369,36 +371,36 @@ namespace FIFE {
 				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 			}
 			if (!zoomed) {
-				SDL_BlitSurface(m_surface, 0, surface, &r);
+				SDL_BlitSurface(m_surface, 0, target, &r);
 			} else if (equal && m_zoom_surface) {
-				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 			} else {
 				SDL_FreeSurface(m_zoom_surface);
 				m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 			}
  		} else {
 			if( 255 != alpha ) {
 				// Special blitting routine with alpha blending:
 				// dst.rgb = ( src.rgb * src.a * alpha ) + ( dst.rgb * (255 - ( src.a * alpha ) ) );
 				if (!zoomed) {
-					SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha( m_surface, 0, target, &r, alpha );
 				} else if (equal && m_zoom_surface) {
-					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, target, &r, alpha );
 				} else {
 					SDL_FreeSurface(m_zoom_surface);
 					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, target, &r, alpha );
 				}
 			} else {
 				if (!zoomed) {
-					SDL_BlitSurface(m_surface, 0, surface, &r);
+					SDL_BlitSurface(m_surface, 0, target, &r);
 				} else if (equal && m_zoom_surface) {
-					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+					SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 				} else {
 					SDL_FreeSurface(m_zoom_surface);
 					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+					SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 				}
 			}
 		}

@@ -33,6 +33,7 @@
 namespace FIFE {
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
 		m_screen(NULL),
+		m_target(NULL),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),
@@ -167,5 +168,9 @@ namespace FIFE {
 
 	uint16_t RenderBackend::getFrameLimit() const {
 		return m_framelimit;
+	}
+
+	SDL_Surface* RenderBackend::getRenderTargetSurface() {
+		return m_target;
 	}
 }

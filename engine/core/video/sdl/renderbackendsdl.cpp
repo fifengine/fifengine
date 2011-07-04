@@ -112,6 +112,7 @@ namespace FIFE {
 		if( !m_screen ) {
 			throw SDLException("Unable to set video mode selected!");
 		}
+		m_target = m_screen;
 
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
@@ -186,17 +187,14 @@ namespace FIFE {
 	void RenderBackendSDL::renderVertexArrays() {
 	}
 
-	void RenderBackendSDL::addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha) {
+	void RenderBackendSDL::addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb) {
 	}
 
-	void RenderBackendSDL::addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb) {
-	}
-	
 	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
 	}
 
 	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		return Image::putPixel(m_screen, x, y, r, g, b, a);
+		return Image::putPixel(m_target, x, y, r, g, b, a);
 	}
 
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -322,8 +320,8 @@ namespace FIFE {
 		rect.w = w;
 		rect.h = h;
 
-		Uint32 color = SDL_MapRGBA(m_screen->format, r, g, b, a);
-		SDL_FillRect(m_screen, &rect, color);
+		Uint32 color = SDL_MapRGBA(m_target->format, r, g, b, a);
+		SDL_FillRect(m_target, &rect, color);
 	}
 
 	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -375,13 +373,24 @@ namespace FIFE {
 		rect.y = cliparea.y;
 		rect.w = cliparea.w;
 		rect.h = cliparea.h;
-		SDL_SetClipRect(m_screen, &rect);
+		SDL_SetClipRect(m_target, &rect);
 		if (clear) {
 			uint32_t color = 0;
 			if (m_isbackgroundcolor) {
-				color = SDL_MapRGB(m_screen->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
+				color = SDL_MapRGB(m_target->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
 			}
-			SDL_FillRect(m_screen, &rect, color);
+			SDL_FillRect(m_target, &rect, color);
 		}
+	}
+
+	void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard) {
+		m_target = img->getSurface();
+		if (discard) {
+			setClipArea(img->getArea(), true);
+		}
+	}
+
+	void RenderBackendSDL::detachRenderTarget(){
+		m_target = m_screen;
 	}
 }

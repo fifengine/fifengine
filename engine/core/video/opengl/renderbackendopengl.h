@@ -68,8 +68,7 @@ namespace FIFE {
 		virtual Image* createImage(const std::string& name, SDL_Surface* surface);
 
 		virtual void renderVertexArrays();
-		virtual void addImageToArray(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha);
-		virtual void addImageToArray2T(uint32_t& id, const Rect& rec, float const* st, uint8_t& alpha, uint8_t const* rgb);
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
 
@@ -81,6 +80,9 @@ namespace FIFE {
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+
+		virtual void attachRenderTarget(ImagePtr& img, bool discard);
+		virtual void detachRenderTarget();
 
 		void enableTextures(uint32_t texUnit);
 		void disableTextures(uint32_t texUnit);
@@ -159,6 +161,10 @@ namespace FIFE {
 			bool alpha_enabled;
 			bool scissor_test;
 		} m_state;
+
+		GLuint m_fbo_id;
+		ImagePtr m_img_target;
+		bool m_target_discard;
 	};
 
 }

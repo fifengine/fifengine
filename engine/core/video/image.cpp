@@ -217,10 +217,6 @@ namespace FIFE {
 		SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
 	}
 
-	void Image::render(const Rect& rect, uint8_t alpha, uint8_t const* const rgb) {
-		render(rect, SDL_GetVideoSurface(), alpha, rgb);
-	}
-
 	void Image::saveImage(const std::string& filename) {
 		saveAsPng(filename, *m_surface);
 	}

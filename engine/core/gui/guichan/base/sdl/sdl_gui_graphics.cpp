@@ -48,6 +48,6 @@ namespace FIFE {
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
 
-		fifeimg->render(rect, mTarget);
+		fifeimg->render(rect);
 	}
 }

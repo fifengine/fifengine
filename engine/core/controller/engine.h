@@ -59,7 +59,7 @@ namespace FIFE {
 	class ImageManager;
 	class SoundClipManager;
 	class OffRenderer;
-
+	class TargetRenderer;
 
 	class IEngineChangeListener {
 	public:
@@ -180,6 +180,10 @@ namespace FIFE {
 		 */
 		OffRenderer* getOffRenderer() const { return m_offrenderer; }
 
+		/** Provides access point to the TargetRenderer
+		 */
+		TargetRenderer* getTargetRenderer() const { return m_targetrenderer; }
+
 		/** Adds new change listener
 		* @param listener to add
 		*/
@@ -212,6 +216,7 @@ namespace FIFE {
 		ScreenMode m_screenMode;
 
 		OffRenderer* m_offrenderer;
+		TargetRenderer* m_targetrenderer;
 		std::vector<RendererBase*> m_renderers;
 
 		std::vector<IEngineChangeListener*> m_changelisteners;

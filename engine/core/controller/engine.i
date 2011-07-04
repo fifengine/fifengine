@@ -45,6 +45,7 @@ namespace FIFE {
 	class ImageManager;
 	class SoundClipManager;
 	class OffRenderer;
+	class TargetRenderer;
 
 	class EngineSettings {
 	public:
@@ -129,6 +130,7 @@ namespace FIFE {
 		VFS* getVFS();
 		Cursor* getCursor();
 		OffRenderer* getOffRenderer();
+		TargetRenderer* getTargetRenderer();
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);

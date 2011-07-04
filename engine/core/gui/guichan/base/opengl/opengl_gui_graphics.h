@@ -45,9 +45,6 @@ namespace FIFE {
 		virtual void drawPoint(int32_t x, int32_t y);
 		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 		virtual void drawRectangle(const gcn::Rectangle& rectangle);
-
-	private:
-		SDL_Surface* mTarget;
 	};
 }
 

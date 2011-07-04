@@ -63,13 +63,15 @@ namespace FIFE {
 		virtual ~GLImage();
 		virtual void invalidate();
 		virtual void setSurface(SDL_Surface* surface);
-		virtual void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
 
+		GLuint getTexId() const;
+		const GLfloat* getTexCoords() const;
 	private:
 		// texture coords to use
-		GLfloat texCoords[4];
+		GLfloat m_tex_coords[4];
 
 		//     [0]    [2]    ->(x)
 		// [1]  +------+
