@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import os
+
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
@@ -149,7 +151,11 @@ class HighScores(object):
 		self.load()
 		
 	def load(self):
-		self._widget = pychan.loadXML('gui/highscores.xml')
+		if os.path.exists('gui/highscores.xml'):
+			self._widget = pychan.loadXML('gui/highscores.xml')
+		else:
+			self._widget = pychan.loadXML('gui/hstemplate.xml')
+			
 		self._scores = list()
 		
 		for i in range(1,11):

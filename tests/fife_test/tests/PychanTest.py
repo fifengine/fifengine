@@ -669,9 +669,6 @@ class PychanTest(test.Test):
 	def getDescription(self):
 		return "Use this to test all pychan widgets."
 
-	def getLicense(self):
-		return ""
-
-	def getVersion(self):
-		return "0.1"
+	def getHelp(self):
+		return open( 'data/help/PychanTest.txt', 'r' ).read()
 

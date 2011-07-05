@@ -119,11 +119,7 @@ class Test(object):
 	def getDescription(self):
 		return "none"
 
-	def getLicense(self):
-		return ""
-
-	def getVersion(self):
-		return "0.1"
-
+	def getHelp(self):
+		return "You're on your own for this one!"
 	
 
