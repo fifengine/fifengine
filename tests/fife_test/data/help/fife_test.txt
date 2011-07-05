@@ -1,0 +1,21 @@
+Welcome to the FIFE testing application!
+ 
+Keybindings:
+--------------
+- prtscr = Make screenshot
+- ~      = Toggle console on / off
+- ESC    = Quit
+ 
+Commands:
+--------------
+- clear      = Clear the console window
+- help       = This message
+- list       = List available tests
+- lsrunning  = List the currently running test
+- run <test> = Run test
+- stop       = Stops the currently running test
+ 
+Have fun,
+The FIFE team
+ 
+http://www.fifengine.net

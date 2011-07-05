@@ -39,7 +39,7 @@ namespace FIFE {
 		void hide();
 		void clear();
 		void toggleShowHide();
-    void println( const std::string & s );
+		void println( const std::string & s );
 		void setConsoleExecuter(ConsoleExecuter* const consoleexec);
 		void removeConsoleExecuter();
 	};

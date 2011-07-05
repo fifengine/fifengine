@@ -129,7 +129,7 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
-		/** After this call all image data will be taken from the given image and its subregion 
+		/** After this call all image data will be taken from the given image and its subregion
 		 */
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region) = 0;
 
@@ -158,7 +158,7 @@ namespace FIFE {
 		int32_t m_yshift;
 
 		/** Resets the image to default values (including the x and y shift
-		 * valuse), frees the current surface  and sets the surface to the
+		 * values), frees the current surface  and sets the surface to the
 		 * passed SDL_Surface (which can be NULL).
 		 * @see IImage::setSurface(SDL_Surface* surface)
 		 * @param surface the SDL_Surface to use for this image

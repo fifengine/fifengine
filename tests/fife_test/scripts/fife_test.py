@@ -84,7 +84,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 
 	def keyPressed(self, event):
 		"""
-		Processes any non game related keyboar input.
+		Processes any non game related keyboard input.
 		"""
 		if event.isConsumed():
 			return
@@ -127,8 +127,22 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			result = "quitting."
 
 		elif cmd[0].lower() in ('help', 'h'):
-			self._console.println( "Displaying help..." )
-
+			if len(cmd) == 2:
+				found = False
+				for test in self._testmanager.tests:
+					if test.getName().lower() == cmd[1].lower():
+						self._console.println( test.getHelp() )
+						found = True
+						break
+				if not found:
+					result = "No help available for: " + cmd[1]
+						
+			else:
+				self._console.println( open( 'data/help/fife_test.txt', 'r' ).read() )
+		
+		elif cmd[0].lower() in ('clear', 'cls'):
+			self._console.clear()
+			
 		elif cmd[0].lower() in ('list', 'ls'):
 			self._console.println( "List of test modules:" )
 			count = 1
@@ -137,6 +151,10 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 
 		elif cmd[0].lower() in ('run', 'r'):
 			runtest = None
+			
+			if len(cmd) != 2:
+				result = "Invalid number of arguments!"
+				return result
 			
 			if self._testmanager.runningtest:
 				result = self._testmanager.runningtest.getName() + " is currently running.  Please stop the test before running another one!"
