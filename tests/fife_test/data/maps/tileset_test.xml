@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ascii"?>
+<map format="1.0" id="tileset_test">
+	<layer transparency="0" y_offset="0.0" id="layer1" x_offset="0.0" x_scale="1.0" rotation="0.0" pathing="cell_edges_only" y_scale="1.0" grid_type="square">
+		<instances>
+		</instances>
+		<lights>
+		</lights>
+	</layer>
+	<camera ref_cell_width="48" zoom="1.0" ref_cell_height="48" rotation="0.0" tilt="0.0" ref_layer_id="layer1" id="camera1">
+	</camera>
+</map>
