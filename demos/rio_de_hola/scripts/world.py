@@ -260,7 +260,8 @@ class World(EventListenerBase):
 		# The following renderers are used for debugging.
 		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )
 		# renderers will be handed all layers. That's handled here.
-		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
+		renderer = fife.CoordinateRenderer.getInstance(self.cameras['main'])
+		renderer.setFont(textfont)
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.map.getLayer(str(TDS.get("rio", "CoordinateLayerName"))))
 
