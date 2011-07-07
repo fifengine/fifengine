@@ -1,23 +1,23 @@
 /***************************************************************************
-*   Copyright (C) 2005-2009 by the FIFE team                              *
-*   http://www.fifengine.net                                              *
-*   This file is part of FIFE.                                            *
-*                                                                         *
-*   FIFE is free software; you can redistribute it and/or                 *
-*   modify it under the terms of the GNU Lesser General Public            *
-*   License as published by the Free Software Foundation; either          *
-*   version 2.1 of the License, or (at your option) any later version.    *
-*                                                                         *
-*   This library is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
-*   Lesser General Public License for more details.                       *
-*                                                                         *
-*   You should have received a copy of the GNU Lesser General Public      *
-*   License along with this library; if not, write to the                 *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
-***************************************************************************/
+ *   Copyright (C) 2005-2009 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or                 *
+ *   modify it under the terms of the GNU Lesser General Public            *
+ *   License as published by the Free Software Foundation; either          *
+ *   version 2.1 of the License, or (at your option) any later version.    *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
+ *   Lesser General Public License for more details.                       *
+ *                                                                         *
+ *   You should have received a copy of the GNU Lesser General Public      *
+ *   License along with this library; if not, write to the                 *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
+ ***************************************************************************/
 
 // Standard C++ library includes
 #include <string>
@@ -80,10 +80,10 @@ namespace FIFE
 
 		fs::path mapPath(filename);
 		
-		if (mapPath.has_branch_path()) {
-            if (mapPath.branch_path().directory_string() != m_mapDirectory) {
+		if (mapPath.has_parent_path()) {
+            if (mapPath.parent_path().string() != m_mapDirectory) {
 			    // save the directory where the map file is located
-			    m_mapDirectory = mapPath.branch_path().directory_string();
+			    m_mapDirectory = mapPath.parent_path().string();
 
                 // create a new animation loader
                 m_animationLoader.reset(new AnimationLoader(m_vfs, m_imageManager));
@@ -92,7 +92,7 @@ namespace FIFE
 
 		TiXmlDocument mapFile;
         
-        std::string mapFilename = mapPath.file_string();
+        std::string mapFilename = mapPath.string();
 
         try {
             RawData* data = m_vfs->open(mapFilename);
@@ -171,7 +171,7 @@ namespace FIFE
                         if (importDir && !importFile) {
                             fs::path fullPath(m_mapDirectory);
                             fullPath /= directory;
-                            loadImportDirectory(fullPath.directory_string());
+                            loadImportDirectory(fullPath.string());
                         }
                         else if (importFile) {
                             fs::path fullFilePath(file);
@@ -184,7 +184,7 @@ namespace FIFE
                                 fullFilePath = fs::path(m_mapDirectory);
                                 fullFilePath /= file;
                             }
-                            loadImportFile(fullFilePath.file_string(), fullDirPath.directory_string());
+                            loadImportFile(fullFilePath.string(), fullDirPath.string());
                         }
 					}
 
@@ -450,7 +450,7 @@ namespace FIFE
 
 		TiXmlDocument mapFile;
 
-        std::string mapFilename = mapPath.file_string();
+        std::string mapFilename = mapPath.string();
 
         try {
             RawData* data = m_vfs->open(mapFilename);
@@ -496,15 +496,15 @@ namespace FIFE
         if (!file.empty()) {
             fs::path importFile(directory);
             importFile /= file;
-            loadObjectFile(importFile.file_string());
+            loadObjectFile(importFile.string());
         }
     }
 
     void MapLoader::loadImportDirectory(const std::string& directory) {
         if (!directory.empty()) {
             fs::path importDirectory(directory);
-            loadObjectDirectory(importDirectory.file_string());
-            m_importDirectories.push_back(importDirectory.file_string());
+            loadObjectDirectory(importDirectory.string());
+            m_importDirectories.push_back(importDirectory.string());
         }
     }
 
@@ -526,7 +526,7 @@ namespace FIFE
         TiXmlDocument objectFile;
 
         try {
-            RawData* data = m_vfs->open(objectPath.file_string());
+            RawData* data = m_vfs->open(objectPath.string());
 
             if (data) {
                 if (data->getDataLength() != 0) {
@@ -615,18 +615,16 @@ namespace FIFE
 				for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {
 					const std::string* sourceId = imageElement->Attribute(std::string("source"));
 
-					if (sourceId) {					
-						std::string imageFile = *sourceId;
-
+					if (sourceId) {	
 						fs::path imagePath(file);
 
-						if (imagePath.has_branch_path()) {
-							imageFile = imagePath.branch_path().string() + "/" + *sourceId;
+						if (imagePath.has_parent_path()) {
+							imagePath = imagePath.parent_path() / *sourceId;
+						} else {
+							imagePath = fs::path(*sourceId);
 						}
 
-						imagePath = fs::path(imageFile);
-
-                        ImagePtr imagePtr = m_imageManager->create(imagePath.file_string());
+                        ImagePtr imagePtr = m_imageManager->create(imagePath.string());
 
 						if (imagePtr) {
 							int xOffset = 0;
@@ -663,24 +661,25 @@ namespace FIFE
 				for (TiXmlElement* actionElement = root->FirstChildElement("action"); actionElement; actionElement = actionElement->NextSiblingElement("action")) {
 					const std::string* actionId = actionElement->Attribute(std::string("id"));
 
-					if (actionId) {						
+					if (actionId) { 
 						Action* action = obj->createAction(*actionId);
 						ActionVisual::create(action);
 
 						for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement; animElement = animElement->NextSiblingElement("animation")) {
 							const std::string* sourceId = animElement->Attribute(std::string("atlas"));
 							if(sourceId) {
-								std::string atlasFile = *sourceId;
 								fs::path atlasPath(file);
-								if (atlasPath.has_branch_path()) {
-									atlasFile = atlasPath.branch_path().string() + "/" + *sourceId;
-								}
-								atlasPath = fs::path(atlasFile);
-								// we need to load this since its shared image
-								ImagePtr atlasImgPtr = m_imageManager->load(atlasPath.file_string());
-								atlasImgPtr->forceLoadInternal();
 
-								// TODO: kto trzyma wskaznik na dzielony obraz? action?
+								if (atlasPath.has_parent_path()) {
+									atlasPath = atlasPath.parent_path() / *sourceId;
+								} else {
+									atlasPath = fs::path(*sourceId);
+								}
+
+								// we need to load this since its shared image
+								ImagePtr atlasImgPtr = m_imageManager->load(atlasPath.string());
+								atlasImgPtr->forceLoadInternal();
+								action->holdAnimationPack(atlasImgPtr);
 
 								int animFrames = 0;
 								int animDelay = 0;
@@ -756,19 +755,17 @@ namespace FIFE
 							} else {
 								sourceId = animElement->Attribute(std::string("source"));
 								if (sourceId) {
-									std::string animFile = *sourceId;
-
 									fs::path animPath(file);
 
-									if (animPath.has_branch_path()) {
-										animFile = animPath.branch_path().string() + "/" + *sourceId;
+									if (animPath.has_parent_path()) {
+										animPath = animPath.parent_path() / *sourceId;
+									} else {
+										animPath = fs::path(*sourceId);
 									}
 
-									animPath = fs::path(animFile);
-
 									AnimationPtr animation;
-									if (m_animationLoader && m_animationLoader->isLoadable(animPath.file_string())) {
-										animation = m_animationLoader->load(animPath.file_string());    
+									if (m_animationLoader && m_animationLoader->isLoadable(animPath.string())) {
+										animation = m_animationLoader->load(animPath.string());    
 									}
 
 									int direction = 0;
@@ -800,19 +797,19 @@ namespace FIFE
 	void MapLoader::loadObjectDirectory(const std::string& directory) {
 		fs::path fullDirPath(directory);
 
-		std::set<std::string> files = m_vfs->listFiles(fullDirPath.directory_string());
+		std::set<std::string> files = m_vfs->listFiles(fullDirPath.string());
 
         // load all xml files in the directory
 		std::set<std::string>::iterator iter;
 		for (iter = files.begin(); iter != files.end(); ++iter) {
 			if (fs::extension(*iter) == ".xml") {
-                fs::path objectFilePath(fullDirPath.directory_string());
+                fs::path objectFilePath(fullDirPath.string());
                 objectFilePath /= *iter;
-				loadObjectFile(objectFilePath.file_string());
+				loadObjectFile(objectFilePath.string());
 			}	
 		}
 
-		std::set<std::string> setNestedDirectories = m_vfs->listDirectories(fullDirPath.directory_string());
+		std::set<std::string> setNestedDirectories = m_vfs->listDirectories(fullDirPath.string());
 
 		// had to copy std::set contents to a vector to get around
 		// the problem of std::remove not compiling because of a
@@ -824,7 +821,7 @@ namespace FIFE
 
 		std::vector<std::string>::iterator vecIter;
 		for (vecIter = nestedDirectories.begin(); vecIter != nestedDirectories.end(); ++vecIter) {
-			loadObjectDirectory(fullDirPath.directory_string() + *vecIter);
+			loadObjectDirectory(fullDirPath.string() + *vecIter);
 		}
 	}
 

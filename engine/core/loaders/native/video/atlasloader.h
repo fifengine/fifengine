@@ -1,23 +1,23 @@
 /***************************************************************************
-*   Copyright (C) 2005-2008 by the FIFE team                              *
-*   http://www.fifengine.de                                               *
-*   This file is part of FIFE.                                            *
-*                                                                         *
-*   FIFE is free software; you can redistribute it and/or                 *
-*   modify it under the terms of the GNU Lesser General Public            *
-*   License as published by the Free Software Foundation; either          *
-*   version 2.1 of the License, or (at your option) any later version.    *
-*                                                                         *
-*   This library is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
-*   Lesser General Public License for more details.                       *
-*                                                                         *
-*   You should have received a copy of the GNU Lesser General Public      *
-*   License along with this library; if not, write to the                 *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
-***************************************************************************/
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or                 *
+ *   modify it under the terms of the GNU Lesser General Public            *
+ *   License as published by the Free Software Foundation; either          *
+ *   version 2.1 of the License, or (at your option) any later version.    *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
+ *   Lesser General Public License for more details.                       *
+ *                                                                         *
+ *   You should have received a copy of the GNU Lesser General Public      *
+ *   License along with this library; if not, write to the                 *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
+ ***************************************************************************/
 
 #ifndef FIFE_ATLAS_LOADER_H
 #define FIFE_ATLAS_LOADER_H
@@ -37,6 +37,54 @@
 namespace FIFE {
 	class VFS;
 	class ImageManager;
+
+	class Atlas {
+	public:
+		Atlas(const std::string& name)
+			: m_name(name) {;}
+		~Atlas() {;}
+
+		struct AtlasData {
+			Rect rect;
+			ImagePtr image;
+		};
+
+		/** Returns the number of subimages that belongs to this atlas.
+		*/
+		size_t getImageCount() const;
+
+		/** Returns an (packed) Image for this atlas.
+		*/
+		ImagePtr& getPackedImage();
+
+		/** Return an Image of given id.
+		 */
+		ImagePtr getImage(const std::string& id);
+
+		/** Return an Image of given (serial) index in atlas
+		 */
+		ImagePtr getImage(uint32_t index);
+
+		/** Adds new information about subimage that belongs to this atlas.
+		 *  @remarks This is essential function in parsing atlas files.
+		 *  @returns True, when image of given name hasn't been added before.
+		 */
+		bool addImage(const std::string& imagename, const AtlasData& data);
+
+		/** Sets the image for atlas to use it for rendering.
+		 *  @remarks Should only be used during loading stage
+		 */
+		void setPackedImage(const ImagePtr& image);
+
+		const std::string& getName() const { return m_name; }
+	protected:
+		typedef std::map<std::string, AtlasData> SubimageMap;
+		SubimageMap m_subimages;
+		ImagePtr m_image;
+
+		// Unique atlas name
+		std::string m_name;
+	};
 
 	class AtlasLoader : public IAtlasLoader {
 	public:
