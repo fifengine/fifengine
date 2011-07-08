@@ -363,8 +363,10 @@ class Setting(object):
 		self.changesRequireRestart = True
 		self.initSerializer()
 		
-		#update all widgets with the new data
-		self.fillWidgets()
+		#On startup the settings dialog is not yet initialized.  We dont
+		#fill the widgets with data in that case.
+		if self.OptionsDlg:
+			self.fillWidgets()
 
 	def _getEntries(self):
 		return self._entries
