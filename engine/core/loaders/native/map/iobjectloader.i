@@ -26,8 +26,6 @@
 
 namespace FIFE {
 	%feature("director") IObjectLoader;
-	
-	typedef SharedPtr<IObjectLoader> ObjectLoaderPtr;
 }
 
 %include "loaders/native/map/iobjectloader.h"
