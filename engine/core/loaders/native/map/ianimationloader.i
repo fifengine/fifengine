@@ -27,8 +27,6 @@
 
 namespace FIFE {
 	%feature("director") IAnimationLoader;
-	
-	typedef SharedPtr<IAnimationLoader> AnimationLoaderPtr;
 }
 
 %include "loaders/native/map/ianimationloader.h"

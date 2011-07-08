@@ -26,8 +26,6 @@
 
 namespace FIFE {
 	%feature("director") IAtlasLoader;
-	
-	typedef SharedPtr<IAtlasLoader> AtlasLoaderPtr;
 }
 
 %include "loaders/native/video/iatlasloader.h"
