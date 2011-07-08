@@ -18,18 +18,57 @@
 *   Free Software Foundation, Inc.,                                       *
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
 ***************************************************************************/
-%module fife
-%{
-#include "loaders/native/video/iatlasloader.h"
-#include "loaders/native/video/atlasloader.h"
-%}
+
+#ifndef FIFE_OBJECT_LOADER_H_
+#define FIFE_OBJECT_LOADER_H_
+
+// Standard C++ library includes
+#include <string>
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/base/sharedptr.h"
+
+#include "iobjectloader.h"
+#include "ianimationloader.h"
 
 namespace FIFE {
-	%feature("director") IAtlasLoader;
-	
-	typedef SharedPtr<IAtlasLoader> AtlasLoaderPtr;
+
+    class Model;
+    class VFS;
+    class ImageManager;
+
+    class ObjectLoader : public IObjectLoader {
+    public:
+        ObjectLoader(Model* model, VFS* vfs, ImageManager* imageManager, const AnimationLoaderPtr& animationLoader=AnimationLoaderPtr());
+
+        ~ObjectLoader();
+
+        /** 
+        * @see IObjectLoader::setAnimationLoader
+        */
+        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader);
+
+        /** 
+        * @see IObjectLoader::isLoadable
+        */
+        virtual bool isLoadable(const std::string& filename) const;
+
+        /** 
+        * @see IObjectLoader::load
+        */
+        virtual void load(const std::string& filename);
+
+    private:
+        Model* m_model;
+        VFS* m_vfs;
+        ImageManager* m_imageManager;
+        AnimationLoaderPtr m_animationLoader;
+    };
 }
 
-%include "loaders/native/video/iatlasloader.h"
-%include "loaders/native/video/atlasloader.h"
-
+#endif

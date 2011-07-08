@@ -204,7 +204,7 @@ namespace FIFE {
         * a convenience for checking validity
         * of a shared pointer in a conditional
         */
-        operator bool() {
+        operator bool() const {
             return (m_ptr != 0);
         }
 

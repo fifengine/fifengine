@@ -18,18 +18,49 @@
 *   Free Software Foundation, Inc.,                                       *
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
 ***************************************************************************/
-%module fife
-%{
-#include "loaders/native/video/iatlasloader.h"
-#include "loaders/native/video/atlasloader.h"
-%}
+
+#ifndef FIFE_IOBJECTLOADER_H_
+#define FIFE_IOBJECTLOADER_H_
+
+// Standard C++ library includes
+#include <string>
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/base/sharedptr.h"
+
+#include "ianimationloader.h"
 
 namespace FIFE {
-	%feature("director") IAtlasLoader;
-	
-	typedef SharedPtr<IAtlasLoader> AtlasLoaderPtr;
+
+    /** Interface class that all object loaders should derive from
+    */
+    class IObjectLoader {
+    public:
+        virtual ~IObjectLoader() { };
+
+        /** allows setting which animation loader will be
+        * used to load animation files
+        */
+        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader) = 0;
+
+        /** determines whether the resource is in
+        *	the correct format for this loader
+        */
+        virtual bool isLoadable(const std::string& filename) const = 0;
+
+        /** responsible for loading the object resource
+        *	and populating the engine
+        */
+        virtual void load(const std::string& filename) = 0;
+
+    };
+
+    typedef SharedPtr<FIFE::IObjectLoader> ObjectLoaderPtr;
 }
 
-%include "loaders/native/video/iatlasloader.h"
-%include "loaders/native/video/atlasloader.h"
-
+#endif

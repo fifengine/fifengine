@@ -53,6 +53,21 @@ namespace FIFE {
         ~MapLoader();
 
         /** 
+        * @see IMapLoader::setObjectLoader
+        */
+        void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader);
+
+        /** 
+        * @see IMapLoader::setAnimationLoader
+        */
+        void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader);
+
+        /** 
+        * @see IMapLoader::setAtlasLoader
+        */
+        void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader);
+
+        /** 
         * @see IMapLoader::isLoadable
         */
         bool isLoadable(const std::string& filename) const;
@@ -75,11 +90,6 @@ namespace FIFE {
         */
         void loadImportDirectory(const std::string& directory);
 
-        /** returns a vector of all the directories 
-        * that were imported as part of the map load
-        */
-		std::vector<std::string> getImportDirectories() const;
-
         /** 
         * allows adding a listener to the map loader 
         * for percent completed events
@@ -92,21 +102,12 @@ namespace FIFE {
         */
         const std::string& getLoaderName() const;
 
-    private:
-        /** loads an objects specified in the map file
-        */
-		void loadObjectFile(const std::string& file);
-
-        /** recursively loads a directory of objects
-        * recurses into subdirectories as well
-        */
-		void loadObjectDirectory(const std::string& directory);
-
 	private:
 		Model* m_model;
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
-        AnimationLoaderPtr m_animationLoader;
+        ObjectLoaderPtr m_objectLoader;
+        AtlasLoaderPtr m_atlasLoader;
 		RenderBackend* m_renderBackend;
 		PercentDoneCallback m_percentDoneListener;
 

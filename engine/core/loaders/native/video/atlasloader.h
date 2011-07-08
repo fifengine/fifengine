@@ -31,6 +31,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //#include "video/animation.h"
+#include "util/structures/rect.h"
+#include "video/image.h"
+#include "video/imagemanager.h"
 
 #include "iatlasloader.h"
 
