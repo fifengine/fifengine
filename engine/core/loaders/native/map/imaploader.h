@@ -23,6 +23,7 @@
 #define FIFE_IMAPLOADER_H_
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -30,17 +31,34 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/fifeclass.h"
+#include "loaders/native/video/iatlasloader.h"
+
+#include "iobjectloader.h"
+#include "ianimationloader.h"
 
 namespace FIFE {
 	class Map;
-	class ResourceLocation;
 
 	/** Interface class that all map loaders should derive from
 	 */
 	class IMapLoader {
 	public:
 		virtual ~IMapLoader() { };
+
+        /** allows setting which object loader will be
+        * used to load object files
+        */
+        virtual void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader) = 0;
+
+        /** allows setting which animation loader will be
+        * used to load animation files
+        */
+        virtual void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader) = 0;
+
+        /** allows setting which atlas loader will be
+        * used to load atlas files
+        */
+        virtual void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader) = 0;
 
         /** determines whether the resource is in
         *	the correct format for this loader
