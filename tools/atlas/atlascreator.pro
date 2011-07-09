@@ -4,38 +4,29 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl #xml
+QT       += core gui opengl
 
 TARGET = atlascreator
 TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    image.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    objectcreator.cpp
 
 HEADERS  += mainwindow.h \
     atlas.h \
-    image.h \
     glwidget.h \
-    stable.h
+    stable.h \
+    objectcreator.h
 
 PRECOMPILED_HEADER = stable.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    objectcreator.ui
 
 INCLUDEPATH += .
+DEFINES += NOMINMAX
 
-win32 {
-	LIBS += FreeImage.lib
-}
-
-unix {
-	LIBS += -lfreeimage
-}
-
-# OpenMP
-# C++ flags
-#QMAKE_CXXFLAGS += -fopenmp
-# linker options
-#QMAKE_LFLAGS += -fopenmp
+RESOURCES += \
+    resources.qrc

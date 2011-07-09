@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>resources/add.png</file>
+        <file>resources/remove.png</file>
+        <file>resources/save.png</file>
+    </qresource>
+</RCC>

@@ -22,7 +22,7 @@
 #pragma once
 
 #include <QGLWidget>
-#include "image.h"
+#include <QImage>
 #include "atlas.h"
 
 class MainWindow;
@@ -35,14 +35,13 @@ public:
 	virtual ~GLWidget();
 
 	void resizeGL(int width, int height);
-	void refreshed(QVector<Image> const& tex);
-	void updateOccupation(QVector<AtlasBlock> const& regions, int numAtlases);
+	void refreshed(QImage const& tex);
+	void updateOccupation(QVector<AtlasBlock> const& regions);
+	void highlightedChanged(const QVector<int>& vec);
 
 private slots:
-	void atlasBookChanged(int index);
 	void alphaBlendingChecked(int state);
 	void showOccupationChecked(int state);
-	void subimageNoChanged(int index);
 
 protected:
 	void initializeGL();
@@ -58,10 +57,8 @@ private:
 	float mCam_ypos;
 	float mCam_zpos;
 
-	QVector<int> texWidth, texHeight;
-
-	QVector<GLuint> texId;
-	int currentTex;
+	int texWidth, texHeight;
+	GLuint texId;
 	GLuint alphaCheckedTex;
 
 	QPoint mAnchor;
@@ -71,9 +68,9 @@ private:
 		GLubyte color[4];
 	};
 
-	QVector<QVector<OccupationVertex> > regionsData;
+	QVector<OccupationVertex> regionsData;
 	bool showOccupation;
-	int highlightedIndex;
+	QVector<float> highlightedData;
 	QVector<AtlasBlock> const* atlasBlocks;
 };
 

@@ -22,6 +22,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "glwidget.h"
+#include "objectcreator.h"
+#include "atlas.h"
+
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
@@ -29,21 +33,12 @@
 #include <QDir>
 #include <QDirIterator>
 
-//#define USE_QT_XML
-#ifdef USE_QT_XML
-#include <QDomDocument>
-#else
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
-#endif
-
-#if defined(_OPENMP)
-#	include <omp.h>
-#endif
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-	ui(new Ui::MainWindow), numAtlases(0)
+	ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -60,86 +55,87 @@ MainWindow::MainWindow(QWidget *parent) :
 		this, SLOT(savePressed()));
 	connect(ui->showFullPathCheckBox, SIGNAL(stateChanged(int)),
 		this, SLOT(showFullPathChanged(int)));
-	connect(ui->showSubimageCheckBox, SIGNAL(stateChanged(int)),
-		this, SLOT(showSubImageChanged(int)));
-	connect(ui->subimageNoSpinBox, SIGNAL(valueChanged(int)),
-		this, SLOT(subimageNoChanged(int)));
+	connect(ui->fileListWidget, SIGNAL(itemSelectionChanged()),
+		this, SLOT(textureSelectionChanged()));
 
-	connect(ui->atlasPageSpinBox, SIGNAL(valueChanged(int)),
-		ui->previewWidget, SLOT(atlasBookChanged(int)));
+	connect(ui->addObjectPushBtn, SIGNAL(pressed()),
+		this, SLOT(addObjectPressed()));
+	connect(ui->removeObjectsPushBtn, SIGNAL(pressed()),
+		this, SLOT(removeObjectsPressed()));
+	connect(ui->objectListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+		this, SLOT(objectDoubleClicked(QListWidgetItem*)));
+
+	connect(ui->disassemblePushBtn, SIGNAL(pressed()),
+		this, SLOT(disassemblePressed()));
+
 	connect(ui->alphaBlendingCheckBox, SIGNAL(stateChanged(int)),
 		ui->previewWidget, SLOT(alphaBlendingChecked(int)));
 	connect(ui->showOccupationCheckBox, SIGNAL(stateChanged(int)),
 		ui->previewWidget, SLOT(showOccupationChecked(int)));
-	connect(ui->subimageNoSpinBox, SIGNAL(valueChanged(int)),
-		ui->previewWidget, SLOT(subimageNoChanged(int)));
 
 	// default values
 	ui->tabWidget->setCurrentIndex(0);
 	ui->maxWidthLineEdit->setText("2048");
 	ui->maxHeightLineEdit->setText("2048");
 	ui->pOTAtlasCheckBox->setChecked(true);
-	ui->pOTTexturesCheckBox->setChecked(false);
 	ui->shrinkCheckBox->setChecked(true);
-	ui->atlasPageSpinBox->setRange(0, 0);
 	ui->showFullPathCheckBox->setChecked(true);
 
 	ui->alphaBlendingCheckBox->setChecked(false);
-	ui->showSubimageCheckBox->setChecked(false);
-	ui->subimageNoSpinBox->setVisible(false);
-	ui->subimageNoSpinBox->setRange(-1, 0);
-	ui->subimageNoSpinBox->setValue(-1);
-	ui->subimageNoLabel->setVisible(false);
+	ui->tabWidget->setCurrentIndex(0);
+	//ui->objectEditorTabs->setEnabled(false);
 
 	// validators
 	QValidator* atlasSizeValidator = new QIntValidator(1, 16384, this);
 
 	ui->maxWidthLineEdit->setValidator(atlasSizeValidator);
 	ui->maxHeightLineEdit->setValidator(atlasSizeValidator);
+
+	fileExtAllowed.push_back("png");
+	fileExtAllowed.push_back("jpg");
+	fileExtAllowed.push_back("jpeg");
+	fileExtAllowed.push_back("tga");
+	fileExtAllowed.push_back("bmp");
+
+	filter = "Texture Files (";
+	foreach(QString ext, fileExtAllowed)
+		filter += "*." + ext + " ";
+	filter.chop(1);
+	filter += ")";
 }
 
 MainWindow::~MainWindow()
 {
-	// Cleanup
-	for(int i = 0; i < subImgs.size(); ++i)
-		delete subImgs[i];
-
-	subImgs.clear();
-	regions.clear();
-	imgAtlases.clear();
-
     delete ui;
 }
 
-void MainWindow::removeTexturesPressed()
+void MainWindow::addTexturesPressed()
 {
-	QList<QListWidgetItem*> selectedList =
-			ui->fileListWidget->selectedItems();
+	QStringList filenames = QFileDialog::getOpenFileNames(this, "Add textures",
+		".", filter);
 
-	foreach(QListWidgetItem* item, selectedList)
+	if(filenames.empty())
+		return;
+
+	foreach(QString filename, filenames)
 	{
-		// remove this item from texturePath as well
-		for(int i = 0; i < texturePaths.count(); ++i)
+
+		QFileInfo q(filename);
+		QString filename1 = q.absoluteFilePath();
+		QString filename2 = q.completeBaseName() + "." + q.suffix();
+		texturePaths.push_back(QPair<QString, QString>(filename1, filename2));
+
+		if(ui->showFullPathCheckBox->isChecked())
 		{
-			if(ui->showFullPathCheckBox->isChecked())
-			{
-				if(texturePaths.at(i).first == item->text())
-				{
-					texturePaths.remove(i);
-					break;
-				}
-			}
-			else
-			{
-				if(texturePaths.at(i).second == item->text())
-				{
-					texturePaths.remove(i);
-					break;
-				}
-			}
+			ui->fileListWidget->addItem(filename1);
 		}
-		delete item;
+		else
+		{
+			ui->fileListWidget->addItem(filename2);
+		}
 	}
+
+	ui->tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::addDirectoryPressed()
@@ -157,13 +153,24 @@ void MainWindow::addDirectoryPressed()
 		dirWalker.next();
 
 		QString suffix = dirWalker.fileInfo().completeSuffix();
-		if(suffix == "png" || suffix == "jpg" || suffix == "jpeg" || suffix == "tga" || suffix == "bmp")
+		bool suffixok = false;
+		foreach(QString ext, fileExtAllowed)
 		{
-			QString filepath = dirWalker.filePath();
+			if(suffix == ext)
+			{
+				suffixok = true;
+				break;
+			}
+		}
+
+		if(suffixok)
+		{
+			QString filepath = dirWalker.filePath(); // fullpath
+			QFileInfo fileInfo(filepath);
+			QString basename = fileInfo.completeBaseName() + "." + fileInfo.suffix();// filename only
 
 			texturePaths.push_back(QPair<QString, QString>(
-					filepath, // fullpath
-					QFileInfo(filepath).completeBaseName() + "." +QFileInfo(filepath).suffix())); // filename only
+					filepath, basename));
 
 			if(ui->showFullPathCheckBox->isChecked())
 			{
@@ -175,40 +182,39 @@ void MainWindow::addDirectoryPressed()
 			}
 		}
 	}
+
 	ui->tabWidget->setCurrentIndex(1);
 }
 
-void MainWindow::addTexturesPressed()
+void MainWindow::removeTexturesPressed()
 {
-	QStringList filenames = QFileDialog::getOpenFileNames(this, "Add textures",
-		".", "Texture Files (*.png *.bmp *.jpg *.jpeg *.tga)");
+	QList<QListWidgetItem*> selectedList =
+			ui->fileListWidget->selectedItems();
 
-	// for now we allow duplicates on the texture list
-
-	if(filenames.empty())
-		return;
-
-	foreach(QString filename, filenames)
+	foreach(QListWidgetItem* item, selectedList)
 	{
-		texturePaths.push_back(QPair<QString, QString>(
-				filename,
-				QFileInfo(filename).completeBaseName() + "." +QFileInfo(filename).suffix()));
-	}
-
-	if(ui->showFullPathCheckBox->isChecked())
-	{
-		ui->fileListWidget->addItems(filenames);
-	}
-	else
-	{
-		typedef QPair<QString, QString> PairOfString;
-		foreach(PairOfString pair, texturePaths)
+		// remove this item from texturePath as well
+		for(int i = texturePaths.count() - 1; i >= 0; --i)
 		{
-			ui->fileListWidget->addItem(pair.second);
+			if(ui->showFullPathCheckBox->isChecked())
+			{
+				if(texturePaths[i].first == item->text())
+				{
+					texturePaths.remove(i);
+					break;
+				}
+			}
+			else
+			{
+				if(texturePaths[i].second == item->text())
+				{
+					texturePaths.remove(i);
+					break;
+				}
+			}
 		}
+		delete item;
 	}
-
-	ui->tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::showFullPathChanged(int state)
@@ -217,111 +223,119 @@ void MainWindow::showFullPathChanged(int state)
 	{
 		if(state == Qt::Checked)
 		{
-			ui->fileListWidget->item(i)->setText(texturePaths.at(i).first);
+			ui->fileListWidget->item(i)->setText(texturePaths[i].first);
 		}
 		else
 		{
-			ui->fileListWidget->item(i)->setText(texturePaths.at(i).second);
+			ui->fileListWidget->item(i)->setText(texturePaths[i].second);
 		}
 	}
 }
 
-void MainWindow::showSubImageChanged(int state)
+void MainWindow::textureSelectionChanged()
 {
-	static int oldIndex = 0;
+	QList<QListWidgetItem*> selectedList =
+			ui->fileListWidget->selectedItems();
+	QVector<int> indices;
 
-	if(state == Qt::Checked)
+	if(selectedList.isEmpty())
 	{
-		ui->subimageNoSpinBox->setVisible(true);
-		ui->subimageNoLabel->setVisible(true);
-
-		ui->subimageNoSpinBox->setMinimum(0);
-		ui->subimageNoSpinBox->setValue(oldIndex);
-	}
-	else
-	{
-		ui->subimageNoSpinBox->setVisible(false);
-		ui->subimageNoLabel->setVisible(false);
-
-		oldIndex = ui->subimageNoSpinBox->value();
-		ui->subimageNoSpinBox->setMinimum(-1);
-		ui->subimageNoSpinBox->setValue(-1);
-	}
-}
-
-void MainWindow::subimageNoChanged(int index)
-{
-	if(subImgs.isEmpty())
-		return;
-
-	if(index < 0)
-	{
-		ui->statusBar->clearMessage();
-		return;
+		if(!subImgs.isEmpty())
+		{
+			ui->previewWidget->highlightedChanged(indices);
+		}
+		else return;
 	}
 
-	ui->atlasPageSpinBox->setValue(regions[index].page);
-	ui->statusBar->clearMessage();
-	ui->statusBar->showMessage(QString::fromStdString(subImgs[index]->getImageName()));
+	foreach(QListWidgetItem* item, selectedList)
+	{
+		int row = ui->fileListWidget->row(item);
+		int id = -1;
+
+		for(int i = 0; i < subImgs.size(); ++i)
+		{
+			if(subImgs[i].name == texturePaths[row].second)
+			{
+				id = i;
+				break;
+			}
+		}
+		if(id != -1)
+			indices.push_back(id);
+	}
+
+	ui->previewWidget->highlightedChanged(indices);
 }
-
-bool ImageGreater(Image const* a, Image const* b)
-{
-	uint32_t aa = a->getWidth() * a->getHeight();
-	uint32_t bb = b->getWidth() * b->getHeight();
-
-	if(aa > bb)
-		return true;
-
-	else if(a->getHeight() > b->getHeight() && aa == bb)
-		return true;
-
-	else if(a->getWidth() > b->getWidth() && aa == bb)
-		return true;
-
-	else
-		return false;
-}
-
 
 void MainWindow::refreshPressed()
 {
-	int atlasX = ui->maxWidthLineEdit->text().toInt();
-	int atlasY = ui->maxHeightLineEdit->text().toInt();
 	int numTextures = ui->fileListWidget->count();
 
 	if(!numTextures)
 	{
-		QMessageBox::warning(this, "Warning", "There are no textures to be atlased.");
+		QMessageBox::critical(this, "Atlas Creator", "There are no textures to be atlased.");
 		return;
 	}
 
-	AtlasBook book(atlasX, atlasY, 4);
+	// find the best file path matching
+	if(numTextures > 1)
+	{
+		QString bestMatch = texturePaths[0].first;
+		for(int i = 1; i < texturePaths.size(); ++i)
+		{
+			int q = 0;
+			while(q < texturePaths[i].first.size() &&
+				  q < bestMatch.size() &&
+				  texturePaths[i].first.at(q) == bestMatch.at(q))
+				++q;
+			if(!q)
+				break;
+			bestMatch = bestMatch.left(q);
+		}
+
+		// we only need to match whole directories, not part of them (or even part of filenames)
+		if(!bestMatch.endsWith('/') && !bestMatch.isEmpty())
+		{
+			bestMatch = bestMatch.left(bestMatch.lastIndexOf('/') + 1);
+		}
+
+		sharedPathNumChars = bestMatch.size();
+	}
+	else
+	{
+		sharedPathNumChars = texturePaths[0].first.lastIndexOf('/') + 1;
+	}
 
 	// OPTIMIZE: dont release and load from the beginning the same images
 	// only those who was changed
+	int atlasX = ui->maxWidthLineEdit->text().toInt();
+	int atlasY = ui->maxHeightLineEdit->text().toInt();
+	AtlasBook book(atlasX, atlasY, 4);
 
 	// Cleanup
-	for(int i = 0; i < subImgs.size(); ++i)
-		delete subImgs[i];
-
 	subImgs.clear();
 	regions.clear();
-	imgAtlases.clear();
 
 	// New images
-	subImgs.resize(numTextures);
 	regions.resize(numTextures);
-	numAtlases = 0;
-
-	int i;
 
 	// Load the image
-	//#pragma omp parallel for private(i) default(shared)
-	for(i = 0; i < numTextures; ++i)
+	for(int i = 0; i < numTextures; ++i)
 	{
-		subImgs[i] = new Image;
-		subImgs[i]->loadImage(texturePaths[i].first.toStdString(), ui->pOTTexturesCheckBox->isChecked());
+		QFileInfo imagePath(texturePaths[i].first);
+		QString dirPath = imagePath.absoluteDir().path() + "/";
+		QString append = (dirPath.size() == sharedPathNumChars) ?
+					"" : dirPath.right(dirPath.size() - sharedPathNumChars) ;
+		QString source = append + imagePath.completeBaseName() + "." + imagePath.suffix();
+		texturePaths[i].second = source;
+
+		QImage img(texturePaths[i].first);
+		if(img.format() != QImage::Format_ARGB32)
+			img = img.convertToFormat(QImage::Format_ARGB32);
+
+		QNamedImage nimg(img);
+		nimg.name = source;
+		subImgs.push_back(nimg);
 	}
 
 	// sort images by size
@@ -329,84 +343,56 @@ void MainWindow::refreshPressed()
 
 	try
 	{
-		for(i = 0; i < numTextures; ++i)
+		int i = 0;
+		foreach(QNamedImage img, subImgs)
 		{
-			// find suitable region for it
 			regions[i] = *book.getBlock(
-				subImgs[i]->getWidth(), subImgs[i]->getHeight());
+				img.width(), img.height());
+
+			// temporary hack - we now allowed only one atlas to be created
+			if(regions[i].page > 0)
+			{
+				QMessageBox::critical(this, "Atlas Creator",
+					"Too much images to be packed.\n"
+					"Remove some of them or enlarge atlas maximum allowed size and try again.");
+				return;
+			}
+
+			++i;
 		}
 	}
 	catch(std::string const& msg)
 	{
-		QMessageBox::critical(this, "Critical Error", QString::fromStdString(msg));
+		QMessageBox::critical(this, "Atlas Creator", QString::fromStdString(msg));
 		return;
 	}
-
-	numAtlases = 1;
-	for(i = 0; i < numTextures; ++i)
-		numAtlases = qMax(static_cast<int>(regions[i].page + 1), numAtlases);
 
 	if(ui->shrinkCheckBox->isChecked())
 		book.shrink(ui->pOTAtlasCheckBox->isChecked());
 
-	// Save the atlases
-	imgAtlases.resize(numAtlases);
-	for(i = 0; i < numAtlases; ++i)
-		imgAtlases[i].setImage(book.pages[i].width, book.pages[i].height, 32);
+	// Generate empty atlas
+	imgAtlas = QImage(book.pages[0].width, book.pages[0].height, QImage::Format_ARGB32);
+	imgAtlas.fill(qRgba(0, 0, 0, 0));
 
 	// For every subimage, copy its contents to corresponding atlas
-	//#pragma omp parallel for private(i) default(shared)
-	for(i = 0; i < numTextures; ++i)
+	int i = 0;
+	foreach(QImage img, subImgs)
 	{
-		imgAtlases[regions[i].page].updateSubimage(
-			regions[i].left, regions[i].top, *subImgs[i]);
+		updateSubimage(imgAtlas, regions[i].left, regions[i].top, img);
+		++i;
 	}
 
-	ui->previewWidget->refreshed(imgAtlases);
-	ui->previewWidget->updateOccupation(regions, numAtlases);
-	ui->atlasPageSpinBox->setRange(0, numAtlases-1);
-	ui->subimageNoSpinBox->setMaximum(subImgs.size()-1);
-
-	if(ui->showSubimageCheckBox->checkState() == Qt::Checked)
-	{
-		ui->subimageNoSpinBox->setMinimum(0);
-		ui->subimageNoSpinBox->setValue(0);
-	}
-	else
-	{
-		ui->subimageNoSpinBox->setMinimum(-1);
-		ui->subimageNoSpinBox->setValue(-1);
-	}
-
-	// find the best file path matching
-	QString bestMatch = texturePaths[0].first;
-	for(int i = 1; i < texturePaths.size(); ++i)
-	{
-		int q = 0;
-		while(q < texturePaths[i].first.size() &&
-			  q < bestMatch.size() &&
-			  texturePaths[i].first.at(q) == bestMatch.at(q))
-			++q;
-		if(!q)
-			break;
-		bestMatch = bestMatch.left(q);
-	}
-
-	// we only need to match whole directories, not part of them (or even part of filenames)
-	if(!bestMatch.endsWith('/') && !bestMatch.isEmpty())
-	{
-		bestMatch = bestMatch.left(bestMatch.lastIndexOf('/') + 1);
-	}
-
-	sharedPathNumChars = bestMatch.size();
-	ui->prependPathLineEdit->setText(bestMatch);
+	textureSelectionChanged();
+	ui->previewWidget->refreshed(imgAtlas);
+	ui->previewWidget->updateOccupation(regions);
+	ui->objectEditorTabs->setEnabled(true);
 }
 
 void MainWindow::savePressed()
 {
-	if(!numAtlases || subImgs.empty())
+	if(subImgs.empty())
 	{
-		QMessageBox::warning(this, "Warning", "There are no atlases to be saved.");
+		QMessageBox::critical(this, "Atlas Creator", "Atlas hasn't been generated yet.");
 		return;
 	}
 
@@ -415,169 +401,334 @@ void MainWindow::savePressed()
 	if(filenameBase.isNull())
 		return;
 
-	QVector<QString> atlasNames;
-	if(numAtlases > 1)
+	QFileInfo pathInfo(filenameBase);
+	QString filename = pathInfo.completeBaseName();
+	QString ext = pathInfo.suffix();
+	QString atlasName = filename + "." + ext;
+
+	bool res = imgAtlas.save(filenameBase, "PNG");
+	if(!res)
 	{
-		QFileInfo pathInfo(filenameBase);
-		QString absPath = pathInfo.absolutePath();
-		QString filename = pathInfo.completeBaseName();
-		QString ext = pathInfo.suffix();
-
-		for(int i = 0; i < numAtlases; ++i)
-		{
-			QString name;
-			QTextStream strm(&name);
-			strm << absPath << "/" << filename << i << "." << ext;
-
-			imgAtlases[i].saveImage(name.toStdString());
-			atlasNames.push_back(filename + QString::number(i) + "." + ext);
-		}
-	}
-	else
-	{
-		QFileInfo pathInfo(filenameBase);
-		QString filename = pathInfo.completeBaseName();
-		QString ext = pathInfo.suffix();
-
-		atlasNames.push_back(filename + "." + ext);
-		imgAtlases[0].saveImage(filenameBase.toStdString());
+		QMessageBox::critical(this, "Atlas Creator", "Something went wrong with saving atlas image");
+		return;
 	}
 
 	//
-	// Atlas descriptor (.atlas)
+	// Atlas descriptor (.xml)
 	//
 
-#ifdef USE_QT_XML
-	for(int i = 0; i < numAtlases; ++i)
+	rapidxml::xml_document<> doc; // character type defaults to char
+	rapidxml::xml_attribute<>* attr;
+
+	rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_pi, "fife", "type=\"atlas\"");
+	doc.append_node(child);
+	child = doc.allocate_node(rapidxml::node_element, "atlas");
+	doc.append_node(child);
+
+	char const* nameAttr = doc.allocate_string(
+		atlasName.toLocal8Bit().constData());
+	char const* widthAttr = doc.allocate_string(
+		QString::number(imgAtlas.width()).toLocal8Bit().constData());
+	char const* heightAttr = doc.allocate_string(
+		QString::number(imgAtlas.height()).toLocal8Bit().constData());
+
+	QString ns = atlasName;
+	ns.chop(4);
+	const char* nsAttr = doc.allocate_string(
+				ui->namespaceLineEdit->text().isEmpty() ?
+					ns.toLocal8Bit().constData() : ui->namespaceLineEdit->text().toLocal8Bit().constData());
+
+	attr = doc.allocate_attribute("name", nameAttr);
+	child->append_attribute(attr);
+	attr = doc.allocate_attribute("namespace", nsAttr);
+	child->append_attribute(attr);
+	attr = doc.allocate_attribute("width", widthAttr);
+	child->append_attribute(attr);
+	attr = doc.allocate_attribute("height", heightAttr);
+	child->append_attribute(attr);
+
+	int j = 0;
+	foreach(QNamedImage img, subImgs)
 	{
-		QDomDocument doc;
-		QDomElement root = doc.createElement("atlas");
-		doc.appendChild(root);
+		rapidxml::xml_node<>* newNode = doc.allocate_node(rapidxml::node_element, "image");
+		child->append_node(newNode);
 
-		root.setAttribute("source", atlasNames[i]);
-		root.setAttribute("width", QString::number(imgAtlases[i].getWidth()));
-		root.setAttribute("height", QString::number(imgAtlases[i].getHeight()));
+		char const* sourceAttr = doc.allocate_string(
+			img.name.toLocal8Bit().constData());
+		char const* xoffsetAttr = doc.allocate_string(
+			QString::number(regions[j].left).toLocal8Bit().constData());
+		char const* yoffsetAttr = doc.allocate_string(
+			QString::number(regions[j].top).toLocal8Bit().constData());
+		char const* widthAttr = doc.allocate_string(
+			QString::number(regions[j].getWidth()).toLocal8Bit().constData());
+		char const* heightAttr = doc.allocate_string(
+			QString::number(regions[j].getHeight()).toLocal8Bit().constData());
 
-		for(int j = 0; j < subImgs.size(); ++j)
-		{
-			if(regions[j].page != (uint32_t) i)
-				continue;
+		attr = doc.allocate_attribute("source", sourceAttr);
+		newNode->append_attribute(attr);
+		attr = doc.allocate_attribute("xpos", xoffsetAttr);
+		newNode->append_attribute(attr);
+		attr = doc.allocate_attribute("ypos", yoffsetAttr);
+		newNode->append_attribute(attr);
+		attr = doc.allocate_attribute("width", widthAttr);
+		newNode->append_attribute(attr);
+		attr = doc.allocate_attribute("height", heightAttr);
+		newNode->append_attribute(attr);
 
-			QDomElement elem = doc.createElement("image");
-
-			QString imagePath = QString::fromStdString(subImgs[j]->getImageName());
-			QFileInfo filePath(imagePath);
-			QString dirPath = filePath.absoluteDir().path();
-			QString source = ui->prependPathLineEdit->text() +
-								dirPath.right(dirPath.size() - sharedPathNumChars) + "/" +
-								filePath.completeBaseName() + "." + filePath.suffix();
-
-			elem.setAttribute("source", source);
-			elem.setAttribute("xoffset", QString::number(regions[j].left));
-			elem.setAttribute("yoffset", QString::number(regions[j].top));
-			elem.setAttribute("width", QString::number(regions[j].getWidth()));
-			elem.setAttribute("height", QString::number(regions[j].getHeight()));
-
-			root.appendChild(elem);
-		}
-
-		// save it
-		QFileInfo pathInfo(filenameBase);
-
-		// generate proper filename
-		QString descFilename = pathInfo.absolutePath() + "/" + pathInfo.completeBaseName();
-		if(numAtlases > 1)
-			descFilename += QString::number(i);
-		descFilename += ".atlas";
-
-		// save xml doc
-		QFile data(descFilename);
-		if (data.open(QFile::WriteOnly | QFile::Truncate))
-		{
-			QTextStream out(&data);
-			out << doc.toString();
-		}
+		++j;
 	}
-#else
-	for(int i = 0; i < numAtlases; ++i)
-	{
-		rapidxml::xml_document<> doc; // character type defaults to char
-		rapidxml::xml_attribute<>* attr;
 
-		rapidxml::xml_node<>* child = doc.allocate_node(rapidxml::node_element, "atlas");
+	// Now save all of the objects
+	foreach(FifeObject obj, fifeObjects)
+	{
+		child = doc.allocate_node(rapidxml::node_element, "object");
 		doc.append_node(child);
 
-		char const* nameAttr = doc.allocate_string(
-			atlasNames[i].toLocal8Bit().constData());
-		char const* widthAttr = doc.allocate_string(
-			QString::number(imgAtlases[i].getWidth()).toLocal8Bit().constData());
-		char const* heightAttr = doc.allocate_string(
-			QString::number(imgAtlases[i].getHeight()).toLocal8Bit().constData());
+		// if object namespace isnt declared use one provided from atlas
+		QString nsobj = obj.ns.isEmpty() ? QString(nsAttr) : obj.ns;
 
-		attr = doc.allocate_attribute("name", nameAttr);
+		char const* idAttr = doc.allocate_string(
+			obj.objId.toLocal8Bit().constData());
+		char const* nsAttr = doc.allocate_string(
+			nsobj.toLocal8Bit().constData());
+		char const* blockingAttr = doc.allocate_string(
+			QString::number(static_cast<int>(obj.isBlocking)).toLocal8Bit().constData());
+		char const* staticAttr = doc.allocate_string(
+			QString::number(static_cast<int>(obj.isStatic)).toLocal8Bit().constData());
+
+		attr = doc.allocate_attribute("id", idAttr);
 		child->append_attribute(attr);
-		attr = doc.allocate_attribute("width", widthAttr);
+		attr = doc.allocate_attribute("namespace", nsAttr);
 		child->append_attribute(attr);
-		attr = doc.allocate_attribute("height", heightAttr);
+		attr = doc.allocate_attribute("blocking", blockingAttr);
+		child->append_attribute(attr);
+		attr = doc.allocate_attribute("static", staticAttr);
 		child->append_attribute(attr);
 
-		for(int j = 0; j < subImgs.size(); ++j)
+		if(!obj.pather.isEmpty())
 		{
-			if(regions[j].page != (uint32_t) i)
-				continue;
+			attr = doc.allocate_attribute("pather", doc.allocate_string(
+				obj.pather.toLocal8Bit().constData()));
+			child->append_attribute(attr);
+		}
 
+		foreach(FifeObject::ImageData img, obj.images)
+		{
 			rapidxml::xml_node<>* newNode = doc.allocate_node(rapidxml::node_element, "image");
 			child->append_node(newNode);
 
-			QString imagePath = QString::fromStdString(subImgs[j]->getImageName());
-			QFileInfo filePath(imagePath);
-			QString dirPath = filePath.absoluteDir().path();
-			QString source = ui->prependPathLineEdit->text() +
-								dirPath.right(dirPath.size() - sharedPathNumChars) + "/" +
-								filePath.completeBaseName() + "." + filePath.suffix();
-
 			char const* sourceAttr = doc.allocate_string(
-				source.toLocal8Bit().constData());
-			char const* xoffsetAttr = doc.allocate_string(
-				QString::number(regions[j].left).toLocal8Bit().constData());
-			char const* yoffsetAttr = doc.allocate_string(
-				QString::number(regions[j].top).toLocal8Bit().constData());
-			char const* widthAttr = doc.allocate_string(
-				QString::number(regions[j].getWidth()).toLocal8Bit().constData());
-			char const* heightAttr = doc.allocate_string(
-				QString::number(regions[j].getHeight()).toLocal8Bit().constData());
+				img.source.toLocal8Bit().constData());
+			char const* directionAttr = doc.allocate_string(
+				QString::number(img.direction).toLocal8Bit().constData());
 
 			attr = doc.allocate_attribute("source", sourceAttr);
 			newNode->append_attribute(attr);
-			attr = doc.allocate_attribute("xpos", xoffsetAttr);
+			attr = doc.allocate_attribute("direction", directionAttr);
 			newNode->append_attribute(attr);
-			attr = doc.allocate_attribute("ypos", yoffsetAttr);
-			newNode->append_attribute(attr);
-			attr = doc.allocate_attribute("width", widthAttr);
-			newNode->append_attribute(attr);
-			attr = doc.allocate_attribute("height", heightAttr);
-			newNode->append_attribute(attr);
-		}
 
-		std::string s;
-		rapidxml::print(std::back_inserter(s), doc, 0);
-
-		// save it
-		QFileInfo pathInfo(filenameBase);
-
-		// generate proper filename
-		QString descFilename = pathInfo.absolutePath() + "/" + pathInfo.completeBaseName();
-		if(numAtlases > 1)
-			descFilename += QString::number(i);
-		descFilename += ".atlas";
-
-		// save xml doc
-		QFile data(descFilename);
-		if (data.open(QFile::WriteOnly | QFile::Truncate))
-		{
-			QTextStream out(&data);
-			out << QString::fromStdString(s);
+			if(img.xoffset != 0)
+			{
+				attr = doc.allocate_attribute("x_offset", doc.allocate_string(
+					QString::number(img.xoffset).toLocal8Bit().constData()));
+				newNode->append_attribute(attr);
+			}
+			if(img.yoffset != 0)
+			{
+				attr = doc.allocate_attribute("y_offset", doc.allocate_string(
+					QString::number(img.yoffset).toLocal8Bit().constData()));
+				newNode->append_attribute(attr);
+			}
 		}
 	}
-#endif
+
+	std::string s;
+	rapidxml::print(std::back_inserter(s), doc, 0);
+
+	// save it - generate proper filename
+	QString descFilename = pathInfo.absolutePath() + "/" + pathInfo.completeBaseName();
+	descFilename += ".xml";
+
+	// save xml doc
+	QFile data(descFilename);
+	if (data.open(QFile::WriteOnly | QFile::Truncate))
+	{
+		QTextStream out(&data);
+		out << QString::fromStdString(s);
+	}
+}
+
+void MainWindow::addObjectPressed()
+{
+	FifeObject newobj;
+	newobj.objId = "!NEWONE!";
+	// at this point we dont know what would be final namespace for atlas
+	// this is known during saving .xml file
+	newobj.ns = ui->namespaceLineEdit->text().isEmpty() ? "" : ui->namespaceLineEdit->text();
+	ObjectCreator dialog(newobj, this);
+	dialog.exec();
+
+	if(dialog.result() == QDialog::Accepted)
+	{
+		QString ns = newobj.ns.isEmpty() ? "" : (newobj.ns + ":");
+		QString key = ns + newobj.objId;
+		fifeObjects.insert(key, newobj);
+
+		// add this item to displayed list
+		ui->objectListWidget->addItem(key);
+	}
+}
+
+void MainWindow::objectDoubleClicked(QListWidgetItem* item)
+{
+	FifeObject obj = fifeObjects[item->text()];
+	ObjectCreator dialog(obj, this);
+	dialog.exec();
+
+	if(dialog.result() == QDialog::Accepted)
+	{
+		QString ns = obj.ns.isEmpty() ? "" : (obj.ns + ":");
+		QString key = ns + obj.objId;
+		fifeObjects.remove(item->text());
+		fifeObjects.insert(key, obj);
+
+		// update selected item
+		item->setText(key);
+	}
+}
+
+void MainWindow::removeObjectsPressed()
+{
+	QList<QListWidgetItem*> selectedList =
+			ui->objectListWidget->selectedItems();
+
+	if(selectedList.isEmpty())
+		return;
+
+	int res = QMessageBox::question(this, "Atlas Creator",
+		"Are you sure to remove " + QString::number(selectedList.count()) + " object(s)",
+		QMessageBox::Yes, QMessageBox::No);
+
+	if(res == QMessageBox::Yes)
+	{
+		foreach(QListWidgetItem* item, selectedList)
+		{
+			fifeObjects.remove(item->text());
+			delete item;
+		}
+	}
+}
+
+void MainWindow::updateSubimage(QImage& dest, int xoffset, int yoffset, const QImage& src)
+{
+	Q_ASSERT(src.constBits());
+	Q_ASSERT(dest.bits());
+	Q_ASSERT(src.depth() == dest.depth());
+	Q_ASSERT(xoffset + src.width() <= dest.width());
+	Q_ASSERT(yoffset + src.height() <= dest.height());
+
+	xoffset = xoffset * dest.depth() / 8;
+
+	for(int y = 0; y < src.height(); ++y)
+	{
+		const uint8_t* pSrc = src.scanLine(y);
+		uint8_t* pDst = dest.scanLine(yoffset + y);
+		qMemCopy(pDst + xoffset, pSrc, src.bytesPerLine());
+	}
+}
+
+void MainWindow::disassemblePressed()
+{
+	QString filename = QFileDialog::getOpenFileName(this,
+		"Disassemble atlas", ".", "Atlas files (*.xml)");
+
+	if(filename.isNull())
+		return;
+	QFileInfo fileInfo(filename);
+	QString appendPath = fileInfo.path() + '/';
+
+	QFile data(filename);
+	if (!data.open(QFile::ReadOnly))
+	{
+		QMessageBox::critical(this, "Atlas Creator",
+			"Couldn't read selected file");
+		return;
+	}
+
+	QTextStream in(&data);
+	QString inputXml = in.readAll();
+
+	QByteArray xmlCopy(inputXml.toLocal8Bit().constData(), inputXml.size());
+	xmlCopy.push_back('\0');
+
+	// parse file
+	rapidxml::xml_document<> doc;
+	try
+	{
+		doc.parse<rapidxml::parse_pi_nodes>(xmlCopy.data());
+	}
+	catch(rapidxml::parse_error& error)
+	{
+		QMessageBox::critical(this, "Atlas Creator", QString::fromAscii(error.what()));
+		return;
+	}
+
+	rapidxml::xml_node<>* root = doc.first_node();
+	if(qstrcmp(root->value(), "type=\"atlas\""))
+	{
+		QMessageBox::critical(this, "Atlas Creator",
+			"Selected file doesn't seem to be proper FIFE atlas file.");
+		return;
+	}
+
+	root = root->next_sibling();
+	rapidxml::xml_attribute<>* attr = root->first_attribute("namespace");
+	if(!attr)
+	{
+		QMessageBox::critical(this, "Atlas Creator",
+			"Selected file doesn't seem to be proper FIFE atlas file.");
+		return;
+	}
+	QString ns = appendPath + QString::fromAscii(attr->value());
+
+	// make new directory if necessary for subimages
+	if(!QDir(ns).exists())
+		QDir().mkdir(ns);
+
+	attr = root->first_attribute("name");
+	if(!attr)
+	{
+		QMessageBox::critical(this, "Atlas Creator",
+			"Selected file doesn't seem to be proper FIFE atlas file.");
+		return;
+	}
+	QString atlasFile = appendPath + QString::fromAscii(attr->value());
+
+	QImage atlas;
+	if(!atlas.load(atlasFile))
+	{
+		QMessageBox::critical(this, "Atlas Creator",
+			"Couldn't load atlas image file.");
+		return;
+	}
+
+	for(rapidxml::xml_node<>* node = root->first_node();
+		node != 0; node = node->next_sibling())
+	{
+		attr = node->first_attribute("source");
+		QString dest = ns + "/" + QString::fromAscii(attr->value());
+		attr = node->first_attribute("xpos");
+		int xpos = QString::fromAscii(attr->value()).toInt();
+		attr = node->first_attribute("ypos");
+		int ypos = QString::fromAscii(attr->value()).toInt();
+		attr = node->first_attribute("width");
+		int width = QString::fromAscii(attr->value()).toInt();
+		attr = node->first_attribute("height");
+		int height = QString::fromAscii(attr->value()).toInt();
+
+		QDir().mkdir(QFileInfo(dest).path());
+		QImage subImage = atlas.copy(xpos, ypos, width, height);
+		subImage.save(dest, "PNG");
+	}
+	QMessageBox::information(this, "Atlas Creator", "Disassembling done.");
 }
