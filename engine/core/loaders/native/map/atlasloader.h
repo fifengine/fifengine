@@ -30,16 +30,22 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//#include "video/animation.h"
-#include "util/structures/rect.h"
-#include "video/image.h"
-#include "video/imagemanager.h"
+#include "util/structures/rect.h" 
+#include "video/image.h" 
+#include "video/imagemanager.h" 
 
 #include "iatlasloader.h"
+
+class TiXmlElement;
 
 namespace FIFE {
 	class VFS;
 	class ImageManager;
+
+	struct AtlasData {
+		Rect rect;
+		ImagePtr image;
+	};
 
 	class Atlas {
 	public:
@@ -47,10 +53,6 @@ namespace FIFE {
 			: m_name(name) {;}
 		~Atlas() {;}
 
-		struct AtlasData {
-			Rect rect;
-			ImagePtr image;
-		};
 
 		/** Returns the number of subimages that belongs to this atlas.
 		*/
@@ -61,25 +63,25 @@ namespace FIFE {
 		ImagePtr& getPackedImage();
 
 		/** Return an Image of given id.
-		 */
+		*/
 		ImagePtr getImage(const std::string& id);
 
 		/** Return an Image of given (serial) index in atlas
-		 */
+		*/
 		ImagePtr getImage(uint32_t index);
 
 		/** Adds new information about subimage that belongs to this atlas.
-		 *  @remarks This is essential function in parsing atlas files.
-		 *  @returns True, when image of given name hasn't been added before.
-		 */
+		*  @remarks This is essential function in parsing atlas files.
+		*  @returns True, when image of given name hasn't been added before.
+		*/
 		bool addImage(const std::string& imagename, const AtlasData& data);
 
 		/** Sets the image for atlas to use it for rendering.
-		 *  @remarks Should only be used during loading stage
-		 */
+		*  @remarks Should only be used during loading stage
+		*/
 		void setPackedImage(const ImagePtr& image);
 
-		const std::string& getName() const { return m_name; }
+		const std::string& getName() const;
 	protected:
 		typedef std::map<std::string, AtlasData> SubimageMap;
 		SubimageMap m_subimages;
@@ -91,7 +93,7 @@ namespace FIFE {
 
 	class AtlasLoader : public IAtlasLoader {
 	public:
-		AtlasLoader(VFS* vfs, ImageManager* imageManager);
+		AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager);
 
 		virtual ~AtlasLoader();
 
@@ -103,18 +105,21 @@ namespace FIFE {
 		/** 
 		* @see IAtlasLoader::load
 		*/
-		virtual Atlas* load(const std::string& filename);
+		virtual AtlasPtr load(const std::string& filename);
 
 	private:
+		Model* m_model;
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
+
+		void parseObject(Atlas* atlas, TiXmlElement* root);
 	};
 
 	/** convenience function for creating the default fife atlas loader
 	 *  deleting the object returned from this function is the
 	 *  responsibility of the caller
 	 */
-	AtlasLoader* createDefaultAtlasLoader(VFS* vfs, ImageManager* imageManager);
+	AtlasLoader* createDefaultAtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager);
 }
 
 #endif

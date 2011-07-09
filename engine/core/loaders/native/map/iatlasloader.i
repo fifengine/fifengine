@@ -20,14 +20,14 @@
 ***************************************************************************/
 %module fife
 %{
-#include "loaders/native/video/iatlasloader.h"
-#include "loaders/native/video/atlasloader.h"
+#include "loaders/native/map/iatlasloader.h"
+#include "loaders/native/map/atlasloader.h"
 %}
 
 namespace FIFE {
 	%feature("director") IAtlasLoader;
 }
 
-%include "loaders/native/video/iatlasloader.h"
-%include "loaders/native/video/atlasloader.h"
+%include "loaders/native/map/iatlasloader.h"
+%include "loaders/native/map/atlasloader.h"
 
