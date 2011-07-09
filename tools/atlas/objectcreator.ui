@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectCreator</class>
+ <widget class="QDialog" name="ObjectCreator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>453</width>
+    <height>589</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Create/Modify FIFE object</string>
+  </property>
+  <widget class="QGroupBox" name="objectBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>431</width>
+     <height>561</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Object</string>
+   </property>
+   <widget class="QWidget" name="formLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>20</y>
+      <width>241</width>
+      <height>112</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout_3">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="objNamespaceLabel">
+       <property name="text">
+        <string>Namespace*</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="objNamespaceLineEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="objectIDLabel">
+       <property name="text">
+        <string>Object ID</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="objectIDLineEdit"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="blockingLabel">
+       <property name="text">
+        <string>Blocking</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="blockingCheckBox"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="staticLabel">
+       <property name="text">
+        <string>Static</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="staticCheckBox"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="patherLabel">
+       <property name="text">
+        <string>Pather*</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="patherLineEdit"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="imagesBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>190</y>
+      <width>391</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Images</string>
+    </property>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>121</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Offsets</string>
+     </property>
+     <widget class="QWidget" name="formLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>71</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="xLabel">
+         <property name="text">
+          <string>X</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="xLineEdit">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="yLabel">
+         <property name="text">
+          <string>Y</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="yLineEdit">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="previewLabel">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>20</y>
+       <width>231</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="previewComboBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>250</y>
+       <width>371</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="saveObjectPushBtn">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>490</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save changes</string>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/image/resources/save.png</normaloff>:/image/resources/save.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancelObjectPushBtn">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>520</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cancel</string>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/image/resources/remove.png</normaloff>:/image/resources/remove.png</iconset>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>140</y>
+      <width>271</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="selectDirectionLabel">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Select direction</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="2">
+        <widget class="QPushButton" name="addDirectionPushBtn">
+         <property name="maximumSize">
+          <size>
+           <width>32</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/image/resources/add.png</normaloff>:/image/resources/add.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="removeDirectionPushBtn">
+         <property name="maximumSize">
+          <size>
+           <width>32</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/image/resources/remove.png</normaloff>:/image/resources/remove.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="directionComboBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>objNamespaceLineEdit</tabstop>
+  <tabstop>objectIDLineEdit</tabstop>
+  <tabstop>blockingCheckBox</tabstop>
+  <tabstop>staticCheckBox</tabstop>
+  <tabstop>patherLineEdit</tabstop>
+  <tabstop>directionComboBox</tabstop>
+  <tabstop>addDirectionPushBtn</tabstop>
+  <tabstop>removeDirectionPushBtn</tabstop>
+  <tabstop>xLineEdit</tabstop>
+  <tabstop>yLineEdit</tabstop>
+  <tabstop>previewComboBox</tabstop>
+  <tabstop>saveObjectPushBtn</tabstop>
+  <tabstop>cancelObjectPushBtn</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

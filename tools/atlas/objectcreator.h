@@ -19,24 +19,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QMainWindow>
-#include <QVector>
-#include <QMap>
-#include <QPair>
-#include <QImage>
-#include <QFileDialog>
-#include <QTextStream>
-#include <QFileInfo>
-#include <QDir>
-#include <QDirIterator>
-#include <QGLWidget>
+#pragma once
 #include <QDialog>
-#include <QMouseEvent>
-#include <QTime>
-#include <QtGui/QApplication>
 
-#include <vector>
-#include <cassert>
-#include <cmath>
+namespace Ui {
+    class ObjectCreator;
+}
+
+struct FifeObject;
+
+class ObjectCreator : public QDialog
+{
+    Q_OBJECT
+
+public:
+	explicit ObjectCreator(FifeObject& fobj, QWidget *parent = 0);
+    ~ObjectCreator();
+
+private slots:
+	void addDirectionPressed();
+	void removeDirectionPressed();
+	void directionIndexChanged(int index);
+	void previewImageIndexChanged(int index);
+
+	void savePressed();
+	void cancelPressed();
+
+private:
+    Ui::ObjectCreator *ui;
+	FifeObject& obj;
+};

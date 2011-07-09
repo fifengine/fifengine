@@ -22,17 +22,50 @@
 #pragma once
 
 #include <QMainWindow>
-
-#include "glwidget.h"
-#include "atlas.h"
-#include "image.h"
-
 #include <QVector>
+#include <QMap>
 #include <QPair>
+#include <QImage>
 
 namespace Ui {
     class MainWindow;
 }
+class AtlasBlock;
+class QListWidgetItem;
+
+struct FifeObject
+{
+	QString objId;
+	QString ns;
+	bool isBlocking;
+	bool isStatic;
+	QString pather;
+
+	struct ImageData
+	{
+		QString source;
+		int xoffset;
+		int yoffset;
+		int direction;
+	};
+
+	QVector<ImageData> images;
+};
+
+class QNamedImage : public QImage
+{
+public:
+	QNamedImage()
+		: QImage() {}
+	QNamedImage(const QString & fileName)
+		: QImage(fileName) {}
+	QNamedImage(int width, int height, Format format)
+		: QImage(width, height ,format) {}
+	QNamedImage(const QImage& img)
+		: QImage(img) {}
+
+	QString name;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -42,24 +75,70 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	typedef QVector<QNamedImage> Images;
+	const Images& images() const { return subImgs; }
+
 private slots:
 	void addTexturesPressed();
 	void addDirectoryPressed();
 	void removeTexturesPressed();
-	void refreshPressed();
-	void savePressed();
 	void showFullPathChanged(int state);
-	void showSubImageChanged(int state);
-	void subimageNoChanged(int index);
+	void textureSelectionChanged();
+	void refreshPressed();
+	void savePressed();	
+
+	void addObjectPressed();
+	void removeObjectsPressed();
+	void objectDoubleClicked(QListWidgetItem* item);
+
+	void disassemblePressed();
 
 private:
     Ui::MainWindow *ui;
 
-	QVector<Image*> subImgs;
+	// Subimages with their sources
+	Images subImgs;
+
+	// Atlas data
 	QVector<AtlasBlock> regions;
-	QVector<Image> imgAtlases;
+	QImage imgAtlas;
 
 	QVector< QPair<QString, QString> > texturePaths;
-	int numAtlases;
 	int sharedPathNumChars;
+
+	QVector<QString> fileExtAllowed;
+	QString filter;
+
+	QMap<QString, FifeObject> fifeObjects;
+
+	void updateSubimage(QImage& dest, int xoffset, int yoffset, const QImage& src);
 };
+
+#ifdef _MSC_VER
+typedef signed __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+#endif
+
+inline bool ImageGreater(QNamedImage const& a, QNamedImage const& b)
+{
+	uint32_t aa = a.width() * a.height();
+	uint32_t bb = b.width() * b.height();
+
+	if(aa > bb)
+		return true;
+
+	if(aa < bb)
+		return false;
+
+	// aa == bb from here
+	// a is taller but narrower
+	if(a.height() > b.height())
+		return true;
+
+	if(a.width() > b.width())
+		return false;
+
+	// equal sized images sort alphabetically
+	return a.name < b.name;
+}
+
