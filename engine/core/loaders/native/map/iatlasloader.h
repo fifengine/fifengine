@@ -30,10 +30,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/sharedptr.h"
+#include "video/imagemanager.h"
 
 namespace FIFE {
 	class Atlas;
+	typedef SharedPtr<Atlas> AtlasPtr;
 
 	class IAtlasLoader {
 	public:
@@ -47,10 +48,10 @@ namespace FIFE {
 		/** responsible for loading the atlas
 		 * returns a shared pointer to an image resource
 		*/
-		virtual Atlas* load(const std::string& filename) = 0;
+		virtual AtlasPtr load(const std::string& filename) = 0;
 	};
 
-    typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr;
+	typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr; 
 }
 
 #endif

@@ -51,8 +51,8 @@
 #include "view/camera.h"
 #include "view/renderers/instancerenderer.h"
 #include "util/base/stringutils.h"
-#include "loaders/native/video/atlasloader.h"
 
+#include "atlasloader.h"
 #include "maploader.h"
 #include "animationloader.h"
 #include "objectloader.h"
@@ -68,7 +68,7 @@ namespace FIFE {
 	  m_loaderName("fife"), m_mapDirectory("") {
         AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager));
         m_objectLoader.reset(new ObjectLoader(m_model, m_vfs, m_imageManager, animationLoader));
-        m_atlasLoader.reset(new AtlasLoader(m_vfs, m_imageManager));
+        m_atlasLoader.reset(new AtlasLoader(m_model, m_vfs, m_imageManager));
 	}
 
     MapLoader::~MapLoader() {
@@ -567,6 +567,7 @@ namespace FIFE {
 
 	const std::string& MapLoader::getLoaderName() const {
 		return m_loaderName;
+
 	}
 
 	MapLoader* createDefaultMapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend) {
