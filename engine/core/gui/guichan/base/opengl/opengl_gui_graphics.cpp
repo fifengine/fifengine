@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -38,7 +38,6 @@
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
-#include "video/renderbackend.h"
 #include "video/opengl/renderbackendopengl.h"
 
 #include "opengl_gui_graphics.h"
@@ -50,6 +49,8 @@ namespace FIFE {
 		SDL_Surface* target = SDL_GetVideoSurface();
 		assert(target);
 		setTargetPlane(target->w, target->h);
+		mColor = gcn::Color(255, 255, 255, 255);
+		m_renderbackend = static_cast<RenderBackendOpenGL*>(RenderBackend::instance());
 	}
 
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
@@ -57,13 +58,9 @@ namespace FIFE {
 		assert(g_img);
 
 		ImagePtr fifeimg = g_img->getFIFEImage();
-		const gcn::ClipRectangle& clip = getCurrentClipArea();
-		Rect rect(dstX, dstY, width, height);
-		rect.x += clip.xOffset;
-		rect.y += clip.yOffset;
-
-		fifeimg->render(rect);
-		RenderBackend::instance()->renderVertexArrays();
+		const gcn::ClipRectangle& clip = mClipStack.top();
+		fifeimg->render(Rect(dstX + clip.xOffset, dstY + clip.yOffset,
+			width, height));
 	}
 
 	void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,
@@ -73,7 +70,6 @@ namespace FIFE {
 			throw GuiException("OpenGLGuiGraphics::drawText() - No font set!");
 		}
 
-		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->enableTextures(0);
 		switch (alignment)
 		{
 			case LEFT:
@@ -92,17 +88,83 @@ namespace FIFE {
 	}
 
 	void OpenGLGuiGraphics::drawPoint(int32_t x, int32_t y) {
-		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
-		gcn::OpenGLGraphics::drawPoint(x, y);
+		const gcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset, 
+			mColor.r, mColor.g, mColor.b, mColor.a);
 	}
 
 	void OpenGLGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
-		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
-		gcn::OpenGLGraphics::drawLine(x1, y1, x2, y2);
+		const gcn::ClipRectangle& top = mClipStack.top();
+		x1 += top.xOffset;
+		x2 += top.xOffset;
+		y1 += top.yOffset;
+		y2 += top.yOffset;
+
+		Point pbegin(static_cast<int32_t>(ceil(x1 + 0.375f)), static_cast<int32_t>(ceil(y1 + 0.375f)));
+		Point pend(static_cast<int32_t>(ceil(x2 + 0.625f)), static_cast<int32_t>(ceil(y2 + 0.625f)));
+
+		m_renderbackend->drawLine(pbegin, pend,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+		m_renderbackend->putPixel(pbegin.x, pbegin.y,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+		m_renderbackend->putPixel(pend.x, pend.y,
+			mColor.r, mColor.g, mColor.b, mColor.a);
 	}
 
 	void OpenGLGuiGraphics::drawRectangle(const gcn::Rectangle& rectangle) {
-		reinterpret_cast<RenderBackendOpenGL*>(RenderBackend::instance())->disableTextures(0);
-		gcn::OpenGLGraphics::drawRectangle(rectangle);
+		const gcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->drawRectangle(
+			Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
+			rectangle.width, rectangle.height,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void OpenGLGuiGraphics::fillRectangle(const gcn::Rectangle& rectangle) {
+		const gcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->fillRectangle(
+			Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
+			rectangle.width, rectangle.height,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void OpenGLGuiGraphics::_beginDraw() {
+		gcn::Rectangle area(0, 0, mWidth, mHeight);
+		gcn::Graphics::pushClipArea(area);
+		m_renderbackend->pushClipArea(Rect(0, 0, mWidth, mHeight), false);
+	}
+
+	void OpenGLGuiGraphics::_endDraw() {
+		m_renderbackend->renderVertexArrays();
+
+		// Cleanup
+		gcn::Graphics::popClipArea();
+		m_renderbackend->popClipArea();
+	}
+
+	bool OpenGLGuiGraphics::pushClipArea(gcn::Rectangle area) {
+		// Render what we gathered so far
+		m_renderbackend->renderVertexArrays();
+		gcn::Graphics::pushClipArea(area);
+
+		// Due to some odd conception in guiChan some of area
+		// has xOffset and yOffset > 0. And if it happens we 
+		// need to offset our clip area. Or we can use guichan stack.
+		const gcn::ClipRectangle& top = mClipStack.top();
+
+		m_renderbackend->pushClipArea(
+			Rect(top.x, top.y, top.width, top.height), false);
+
+		return true;
+	}
+
+	void OpenGLGuiGraphics::popClipArea() {
+		// Render what we gathered so far
+		m_renderbackend->renderVertexArrays();
+		gcn::Graphics::popClipArea();
+		m_renderbackend->popClipArea();
+	}
+
+	void OpenGLGuiGraphics::setColor(const gcn::Color& color) {
+		mColor = color;
 	}
 }
