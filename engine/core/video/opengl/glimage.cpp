@@ -38,40 +38,40 @@
 namespace FIFE {
 	GLImage::GLImage(IResourceLoader* loader):
 		Image(loader),
-		m_texId(0),
-		m_compressed(false){
+		m_compressed(false),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
 		Image(name, loader),
-		m_texId(0),
-		m_compressed(false){
+		m_compressed(false),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface),
-		m_texId(0),
-		m_compressed(false){
+		m_compressed(false),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, SDL_Surface* surface):
 		Image(name, surface),
-		m_texId(0) ,
-		m_compressed(false){
+		m_compressed(false),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height),
-		m_texId(0),
-		m_compressed(false) {
+		m_compressed(false),
+		m_texId(0) {
 
 		assert(m_surface);
 		resetGlimage();
@@ -79,8 +79,8 @@ namespace FIFE {
 
 	GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
 		Image(name, data, width, height),
-		m_texId(0),
-		m_compressed(false){
+		m_compressed(false),
+		m_texId(0) {
 
 		assert(m_surface);
 		resetGlimage();

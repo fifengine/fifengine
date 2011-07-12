@@ -34,12 +34,12 @@ namespace FIFE {
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
 		m_screen(NULL),
 		m_target(NULL),
+		m_compressimages(false),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),
 		m_isframelimit(false),
-		m_framelimit(60),
-		m_compressimages(false) {
+		m_framelimit(60) {
 
 		m_isbackgroundcolor = false;
 		m_backgroundcolor.r = 0;

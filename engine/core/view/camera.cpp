@@ -92,6 +92,7 @@ namespace FIFE {
 			m_reference_scale(1),
 			m_enabled(true),
 			m_attachedto(NULL),
+			m_draw_reversed(false),
 			m_image_dimensions(),
 			m_iswarped(false),
 			m_renderers(),
@@ -103,8 +104,7 @@ namespace FIFE {
 			m_light_colors(),
 			m_col_overlay(false),
 			m_img_overlay(false),
-			m_ani_overlay(false),
-			m_draw_reversed(false){
+			m_ani_overlay(false) {
 
 		m_viewport = viewport;
 		m_map_observer = new MapObserver(this);
