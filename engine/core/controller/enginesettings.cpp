@@ -46,6 +46,7 @@ namespace FIFE {
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),
+		m_oglcompressimages(false),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -140,6 +141,10 @@ namespace FIFE {
 
 	void EngineSettings::setSDLRemoveFakeAlpha(bool sdlremovefakealpha) {
 		m_sdlremovefakealpha = sdlremovefakealpha;
+	}
+
+	void EngineSettings::setGLCompressImages(bool oglcompressimages) {
+		m_oglcompressimages = oglcompressimages;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {

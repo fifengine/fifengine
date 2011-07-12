@@ -164,6 +164,8 @@ namespace FIFE {
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
+		void setImageCompressingEnabled(bool enabled);
+		bool isImageCompressingEnabled() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);

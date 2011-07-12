@@ -38,7 +38,8 @@ namespace FIFE {
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),
 		m_isframelimit(false),
-		m_framelimit(60) {
+		m_framelimit(60),
+		m_compressimages(false) {
 
 		m_isbackgroundcolor = false;
 		m_backgroundcolor.r = 0;

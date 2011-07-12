@@ -121,7 +121,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
@@ -191,7 +190,7 @@ namespace FIFE {
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0, width, height, 0);
+		glOrtho(0, width, height, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
 
 		glEnable(GL_CULL_FACE);
@@ -1160,9 +1159,23 @@ namespace FIFE {
 		m_img_target->forceLoadInternal();
 		m_target = m_img_target->getSurface();
 
-		GLuint targetid = static_cast<GLImage*>(m_img_target.get())->getTexId();
+		GLImage* glimage = static_cast<GLImage*>(m_img_target.get());
+
+		GLuint targetid = glimage->getTexId();
 		uint32_t w = m_img_target->getWidth();
 		uint32_t h = m_img_target->getHeight();
+
+		// quick & dirty hack for attaching compressed texture
+		if(glimage->isCompressed()) {
+			GLint compressedSize;
+			bindTexture(targetid);
+			GLubyte* pixels = new GLubyte[w*h*4];
+			// here we get decompressed pixels
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+			delete [] pixels;
+			glimage->setCompressed(false);
+		}
 
 		// can we use fbo?
 		if (GLEE_EXT_framebuffer_object) {
@@ -1175,7 +1188,7 @@ namespace FIFE {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		// invert top with bottom
-		gluOrtho2D(0, w, 0, h); 
+		glOrtho(0, w, 0, h, -1, 1); 
 		glMatrixMode(GL_MODELVIEW);
 		// because of inversion 2 lines above we need to also invert culling faces
 		glCullFace(GL_FRONT);
@@ -1207,7 +1220,7 @@ namespace FIFE {
 		glViewport(0, 0, m_screen->w, m_screen->h);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0, m_screen->w, m_screen->h, 0);
+		glOrtho(0, m_screen->w, m_screen->h, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
 		glCullFace(GL_BACK); 
 	}

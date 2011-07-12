@@ -69,9 +69,14 @@ namespace FIFE {
 
 		GLuint getTexId() const;
 		const GLfloat* getTexCoords() const;
+		bool isCompressed() const { return m_compressed; }
+		void setCompressed(bool compressed) { m_compressed = compressed; }
 	private:
 		// texture coords to use
 		GLfloat m_tex_coords[4];
+
+		// Was this image compressed by OpenGL driver during loading ?
+		bool m_compressed;
 
 		//     [0]    [2]    ->(x)
 		// [1]  +------+
