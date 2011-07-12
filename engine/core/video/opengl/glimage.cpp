@@ -38,35 +38,40 @@
 namespace FIFE {
 	GLImage::GLImage(IResourceLoader* loader):
 		Image(loader),
-		m_texId(0){
+		m_texId(0),
+		m_compressed(false){
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
 		Image(name, loader),
-		m_texId(0) {
+		m_texId(0),
+		m_compressed(false){
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface),
-		m_texId(0) {
+		m_texId(0),
+		m_compressed(false){
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const std::string& name, SDL_Surface* surface):
 		Image(name, surface),
-		m_texId(0) {
+		m_texId(0) ,
+		m_compressed(false){
 
 		resetGlimage();
 	}
 
 	GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height),
-		m_texId(0) {
+		m_texId(0),
+		m_compressed(false) {
 
 		assert(m_surface);
 		resetGlimage();
@@ -74,7 +79,8 @@ namespace FIFE {
 
 	GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
 		Image(name, data, width, height),
-		m_texId(0) {
+		m_texId(0),
+		m_compressed(false){
 
 		assert(m_surface);
 		resetGlimage();
@@ -106,6 +112,7 @@ namespace FIFE {
 		if (m_texId) {
 			glDeleteTextures(1, &m_texId);
 			m_texId = 0;
+			m_compressed = false;
 		}
 
 		m_tex_coords[0] = m_tex_coords[1] = 
@@ -175,6 +182,14 @@ namespace FIFE {
 		// set filters for texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		GLint internalFormat = GL_RGBA8;
+		if(GLEE_ARB_texture_compression && RenderBackend::instance()->isImageCompressingEnabled()) {
+			internalFormat = GL_COMPRESSED_RGBA;
+			m_compressed = true;
+		} else {
+			m_compressed = false;
+		}
 		
 		if(GLEE_ARB_texture_non_power_of_two) {
 			if(RenderBackend::instance()->isColorKeyEnabled()) {
@@ -198,14 +213,14 @@ namespace FIFE {
 				}
 
 				// transfer data from sdl buffer
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
 					0, GL_RGBA, GL_UNSIGNED_BYTE, oglbuffer);
 
 				delete [] oglbuffer;
 			} else {
 
 				// transfer data directly from sdl buffer
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
 					0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 			}
 		// Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
@@ -234,7 +249,7 @@ namespace FIFE {
 			}
 
 			// transfer data from sdl buffer
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h,
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
 				0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 			delete[] oglbuffer;

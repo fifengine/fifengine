@@ -205,6 +205,7 @@ namespace FIFE {
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
 		// we always set this to false
 		//m_renderbackend->setAlphaOptimizerEnabled(false);
+		m_renderbackend->setImageCompressingEnabled(m_settings.isGLCompressImages());
 
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);

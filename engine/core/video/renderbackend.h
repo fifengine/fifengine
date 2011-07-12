@@ -267,6 +267,15 @@ namespace FIFE {
 		 */
 		bool isAlphaOptimizerEnabled() const { return m_isalphaoptimized; }
 
+		/** Enables or disable compressing images by video driver. 
+		 * @remarks This is relevant for in OpenGL renderbackend
+		 */
+		void setImageCompressingEnabled(bool enabled) { m_compressimages = enabled; }
+
+		/** @see setImageCompressingEnabled
+		 */
+		bool isImageCompressingEnabled() const { return m_compressimages; }
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -326,6 +335,7 @@ namespace FIFE {
 	protected:
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
+		bool m_compressimages;
 		bool m_isalphaoptimized;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;

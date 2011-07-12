@@ -199,12 +199,12 @@ namespace FIFE {
 		/** Transforms given point from map coordinates to screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
+		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
 
 		/** Transforms given point from map coordinates to virtual screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		DoublePoint3D toVirtualScreenCoordinates(ExactModelCoordinate map_coords);
+		DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& map_coords);
 
 		ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
 		DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
@@ -362,11 +362,6 @@ namespace FIFE {
 		 */
 		void updateRenderLists();
 
-		/** Use with OpenGL only! Checks to see if the entire viewport was rendered last frame.
-		 * If so it wont clear the backbuffer.
-		 */
-		bool isViewPortFull();
-
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
@@ -395,7 +390,6 @@ namespace FIFE {
 		double m_reference_scale;
 		bool m_enabled;
 		Instance* m_attachedto;
-		bool m_backendSDL;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped; // true, if the geometry had changed
