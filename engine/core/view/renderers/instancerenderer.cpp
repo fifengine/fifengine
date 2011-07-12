@@ -256,7 +256,6 @@ namespace FIFE {
 						continue;
 					} else {
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-						continue;
 					}
 				}
 
