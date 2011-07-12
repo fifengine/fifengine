@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -32,6 +32,8 @@
 // First block: files included from the FIFE root src dir
 
 namespace FIFE {
+	class RenderBackendOpenGL;
+
 	/** Overrides Guichan Graphics to enable usage of normal fife images & related facilities
 	 */
 	class OpenGLGuiGraphics: public gcn::OpenGLGraphics {
@@ -45,6 +47,18 @@ namespace FIFE {
 		virtual void drawPoint(int32_t x, int32_t y);
 		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 		virtual void drawRectangle(const gcn::Rectangle& rectangle);
+		virtual void fillRectangle(const gcn::Rectangle& rectangle);
+
+		virtual void _beginDraw();
+		virtual void _endDraw();
+
+		virtual bool pushClipArea(gcn::Rectangle area);
+		virtual void popClipArea();
+
+		virtual void setColor(const gcn::Color& color);
+
+	private:
+		RenderBackendOpenGL* m_renderbackend;
 	};
 }
 
