@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
-#define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLEIMAGE_H
+#define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLEIMAGE_H
 
 // Standard C++ library includes
 #include <vector>
@@ -36,12 +36,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/image.h"
-
-#include "fife_opengl.h"
+#include "video/opengl/fife_opengl.h"
 
 namespace FIFE {
 
-	/** Implements an Image using OpenGL.
+	/** Implements an Image using experimental OpenGL.
 	 *
 	 * This class contains a texture handle bound to the data given to the constructor;
 	 * it draws a textured @i Quad to the screen.
@@ -50,19 +49,20 @@ namespace FIFE {
 	 * @note Width and height are not limited to powers of two; non-power of two images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
-	class GLImage : public Image {
+	class GLeImage : public Image {
 	public:
-		GLImage(IResourceLoader* loader = 0);
-		GLImage(const std::string& name, IResourceLoader* loader = 0);
-		GLImage(SDL_Surface* surface);
-		GLImage(const std::string& name, SDL_Surface* surface);
-		GLImage(const uint8_t* data, uint32_t width, uint32_t height);
-		GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+		GLeImage(IResourceLoader* loader = 0);
+		GLeImage(const std::string& name, IResourceLoader* loader = 0);
+		GLeImage(SDL_Surface* surface);
+		GLeImage(const std::string& name, SDL_Surface* surface);
+		GLeImage(const uint8_t* data, uint32_t width, uint32_t height);
+		GLeImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
-		virtual ~GLImage();
+		virtual ~GLeImage();
 		virtual void invalidate();
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
 
@@ -98,13 +98,15 @@ namespace FIFE {
 		 */
 		void cleanup();
 
-		/** Resets GLImage variables
+		/** Resets GLeImage variables
 		 */
 		void resetGlimage();
 
 		/** Generates the GL Texture for use when rendering.
 		 */
 		void generateGLTexture();
+
+		inline bool renderCheck(const Rect& rect, uint8_t alpha);
 
 		uint32_t m_chunk_size_w;
 		uint32_t m_chunk_size_h;

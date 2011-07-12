@@ -292,7 +292,7 @@ namespace FIFE {
 				fsCheck = true;
 			}
 
-			if ((m_screenModes[i].isOpenGL() && renderer == "OpenGL") || (!m_screenModes[i].isOpenGL() && renderer == "SDL")){
+			if ((m_screenModes[i].isOpenGL() && (renderer == "OpenGL" || renderer == "OpenGLe")) || (!m_screenModes[i].isOpenGL() && renderer == "SDL")){
 				rendCheck = true;
 			}
 

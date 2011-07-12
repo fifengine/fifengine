@@ -103,7 +103,8 @@ namespace FIFE {
 			m_light_colors(),
 			m_col_overlay(false),
 			m_img_overlay(false),
-			m_ani_overlay(false) {
+			m_ani_overlay(false),
+			m_draw_reversed(false){
 
 		m_viewport = viewport;
 		m_map_observer = new MapObserver(this);
@@ -111,6 +112,9 @@ namespace FIFE {
 		Location location;
 		location.setLayer(layer);
 		setLocation(location);
+		if(m_renderbackend->getName() == "OpenGLe") {
+			m_draw_reversed = true;
+		}
 	}
 
 	Camera::~Camera() {
@@ -761,13 +765,30 @@ namespace FIFE {
 		m_renderbackend->pushClipArea(getViewPort());
 
 		const std::list<Layer*>& layers = map->getLayers();
-		std::list<Layer*>::const_iterator layer_it = layers.begin();
-		for (;layer_it != layers.end(); ++layer_it) {
-			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-			for (; r_it != m_pipeline.end(); ++r_it) {
-				if ((*r_it)->isActivedLayer(*layer_it)) {
-					(*r_it)->render(this, *layer_it, instances_to_render);
+
+		// For SDL and OpenGL backends we need to render back to front
+		if(!m_draw_reversed) {
+			std::list<Layer*>::const_iterator layer_it = layers.begin();
+			for ( ; layer_it != layers.end(); ++layer_it) {
+				RenderList& instances_to_render = m_layer_to_instances[*layer_it];
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(*layer_it)) {
+						(*r_it)->render(this, *layer_it, instances_to_render);
+					}
+				}
+			}
+		// For OpenGLe backend, we rather draw front to back, and utilise z buffer 
+		// to do the rest for us - that way we minimise the number of pixel overdraw 
+		} else {
+			std::list<Layer*>::const_reverse_iterator layer_it = layers.rbegin();
+			for ( ; layer_it != layers.rend(); ++layer_it) {
+				RenderList& instances_to_render = m_layer_to_instances[*layer_it];
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(*layer_it)) {
+						(*r_it)->render(this, *layer_it, instances_to_render);
+					}
 				}
 			}
 		}

@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -185,13 +184,14 @@ namespace FIFE {
 			layer = this;
 		}
 
-		bool first_found = false;
-		for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
-			if (!first_found) {
-				min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
-				max = min;
-				first_found = true;
-			} else {
+		if (m_instances.empty()) {
+			min = ModelCoordinate();
+			max = min;
+		} else {
+			min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
+			max = min;
+
+			for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
 				ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
 
 				if(coord.x < min.x) {
@@ -211,10 +211,7 @@ namespace FIFE {
 				}
 			}
 		}
-		if (!first_found) {
-			min = ModelCoordinate();
-			max = min;
-		}
+
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
@@ -240,6 +237,7 @@ namespace FIFE {
 		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
 			if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
 				blockingInstance = true;
+				break;
 			}
 		}
 		return blockingInstance;

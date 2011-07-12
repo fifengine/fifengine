@@ -31,15 +31,17 @@
 #include "util/log/logger.h"
 #include "video/devicecaps.h"
 
-#include "glimage.h"
-#include "renderbackendopengl.h"
+#include "gleimage.h"
+#include "renderbackendopengle.h"
 #include "SDL_image.h"
+
+#define ALPHA_REF 0.5f
 
 
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
-	class RenderBackendOpenGL::RenderObject {
+	class RenderBackendOpenGLe::RenderObject {
 	public:
 		RenderObject(GLenum m, uint16_t s, uint32_t t=0):
 			mode(m),
@@ -68,7 +70,10 @@ namespace FIFE {
 		GLfloat rgb[3];
 	};
 
-	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
+	const float RenderBackendOpenGLe::zfar =   200.0f;
+	const float RenderBackendOpenGLe::znear = -200.0f;
+
+	RenderBackendOpenGLe::RenderBackendOpenGLe(const SDL_Color& colorkey)
 		: RenderBackend(colorkey), m_mask_overlays(0){
 
 		m_state.tex_enabled[0] = false;
@@ -76,11 +81,6 @@ namespace FIFE {
 		m_state.texture[0] = 0;
 		m_state.texture[1] = 0;
 		m_state.active_tex = 0;
-
-		m_state.color_pointer = 0;
-		m_state.tex_pointer[0] = 0;
-		m_state.tex_pointer[1] = 0;
-		m_state.vertex_pointer = 0;
 
 		m_state.sten_enabled = false;
 		m_state.sten_ref = 0;
@@ -96,11 +96,12 @@ namespace FIFE {
 		m_state.env_color[2] = 0;
 		m_state.blend_src = GL_SRC_ALPHA;
 		m_state.blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-		m_state.alpha_enabled = false;
+		m_state.alpha_enabled = true;
+		m_state.depth_enabled = true;
 		m_state.scissor_test = true;
 	}
 
-	RenderBackendOpenGL::~RenderBackendOpenGL() {
+	RenderBackendOpenGLe::~RenderBackendOpenGLe() {
 		glDeleteTextures(1, &m_mask_overlays);
 		if(GLEE_EXT_framebuffer_object) {
 			glDeleteFramebuffers(1, &m_fbo_id);
@@ -108,12 +109,12 @@ namespace FIFE {
 		deinit();
 	}
 
-	const std::string& RenderBackendOpenGL::getName() const {
-		static std::string backend_name = "OpenGL";
+	const std::string& RenderBackendOpenGLe::getName() const {
+		static std::string backend_name = "OpenGLe";
 		return backend_name;
 	}
 
-	void RenderBackendOpenGL::init(const std::string& driver) {
+	void RenderBackendOpenGLe::init(const std::string& driver) {
 		// note: driver has no affect on the opengl renderer so do nothing with it here.
 		Uint32 flags = SDL_INIT_VIDEO;
 		if (SDL_InitSubSystem(flags) < 0)
@@ -124,13 +125,13 @@ namespace FIFE {
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
 
-	void RenderBackendOpenGL::clearBackBuffer() {
+	void RenderBackendOpenGLe::clearBackBuffer() {
 		disableScissorTest();
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		enableScissorTest();
 	}
 
-	void RenderBackendOpenGL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+	void RenderBackendOpenGLe::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
@@ -143,7 +144,7 @@ namespace FIFE {
 		SDL_WM_SetCaption(title.c_str(), 0);
 	}
 
-	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
+	void RenderBackendOpenGLe::setScreenMode(const ScreenMode& mode) {
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
@@ -166,7 +167,7 @@ namespace FIFE {
 		}
 		m_target = m_screen;
 
-		FL_LOG(_log, LMsg("RenderBackendOpenGL")
+		FL_LOG(_log, LMsg("RenderBackendOpenGLe")
 			<< "Videomode " << width << "x" << height
 			<< " at " << int32_t(bitsPerPixel) << " bpp");
 
@@ -189,7 +190,7 @@ namespace FIFE {
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, width, height, 0, -1, 1);
+		glOrtho(0, width, height, 0, znear, zfar);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
@@ -201,13 +202,17 @@ namespace FIFE {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearDepth(1.0f);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, ALPHA_REF);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 
 		glEnable(GL_SCISSOR_TEST);
 
-		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
 
 		prepareForOverlays();
@@ -220,25 +225,25 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::startFrame() {
+	void RenderBackendOpenGLe::startFrame() {
 		RenderBackend::startFrame();
 	}
 
-	void RenderBackendOpenGL::endFrame() {
+	void RenderBackendOpenGLe::endFrame() {
 		SDL_GL_SwapBuffers();
 		RenderBackend::endFrame();
 	}
 
-	Image* RenderBackendOpenGL::createImage(IResourceLoader* loader) {
-		return new GLImage(loader);
+	Image* RenderBackendOpenGLe::createImage(IResourceLoader* loader) {
+		return new GLeImage(loader);
 	}
 
-	Image* RenderBackendOpenGL::createImage(const std::string& name, IResourceLoader* loader) {
-		return new GLImage(name, loader);
+	Image* RenderBackendOpenGLe::createImage(const std::string& name, IResourceLoader* loader) {
+		return new GLeImage(name, loader);
 	}
 
-	Image* RenderBackendOpenGL::createImage(SDL_Surface* surface) {
-		// Given an abritary surface, we must convert it to the format GLImage will understand.
+	Image* RenderBackendOpenGLe::createImage(SDL_Surface* surface) {
+		// Given an abritary surface, we must convert it to the format GLeImage will understand.
 		// It's easiest to let SDL do this for us.
 
 		// Uh. Gotta love this :-)
@@ -259,17 +264,17 @@ namespace FIFE {
 			&& m_rgba_format.Aloss == surface->format->Aloss
 			&& surface->flags & SDL_SRCALPHA   ) {
 
-			return new GLImage(surface);
+			return new GLeImage(surface);
 		}
 
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
-		GLImage* image = new GLImage(conv);
+		GLeImage* image = new GLeImage(conv);
 		SDL_FreeSurface( surface );
 		return image;
 	}
 
-	Image* RenderBackendOpenGL::createImage(const std::string& name, SDL_Surface* surface) {
-		// Given an abritary surface, we must convert it to the format GLImage will understand.
+	Image* RenderBackendOpenGLe::createImage(const std::string& name, SDL_Surface* surface) {
+		// Given an abritary surface, we must convert it to the format GLeImage will understand.
 		// It's easiest to let SDL do this for us.
 
 		// Uh. Gotta love this :-)
@@ -291,24 +296,24 @@ namespace FIFE {
 			&& m_rgba_format.Aloss == surface->format->Aloss
 			&& surface->flags & SDL_SRCALPHA   ) {
 
-			return new GLImage(name, surface);
+			return new GLeImage(name, surface);
 		}
 
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
-		GLImage* image = new GLImage(name, conv);
+		GLeImage* image = new GLeImage(name, conv);
 		SDL_FreeSurface( surface );
 		return image;
 	}
 
-	Image* RenderBackendOpenGL::createImage(const uint8_t* data, uint32_t width, uint32_t height) {
-		return new GLImage(data, width, height);
+	Image* RenderBackendOpenGLe::createImage(const uint8_t* data, uint32_t width, uint32_t height) {
+		return new GLeImage(data, width, height);
 	}
 
-	Image* RenderBackendOpenGL::createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) {
-		return new GLImage(name, data, width, height);
+	Image* RenderBackendOpenGLe::createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) {
+		return new GLeImage(name, data, width, height);
 	}
 
-	void RenderBackendOpenGL::setLightingModel(uint32_t lighting) {
+	void RenderBackendOpenGLe::setLightingModel(uint32_t lighting) {
 		if (m_state.lightmodel != lighting) {
 			if (m_state.lightmodel == 1) {
 				disableLighting();
@@ -323,11 +328,11 @@ namespace FIFE {
 		}
 	}
 
-	uint32_t RenderBackendOpenGL::getLightingModel() const {
+	uint32_t RenderBackendOpenGLe::getLightingModel() const {
 		return m_state.lightmodel;
 	}
 
-	void RenderBackendOpenGL::enableTextures(uint32_t texUnit) {
+	void RenderBackendOpenGLe::enableTextures(uint32_t texUnit) {
 		if(m_state.tex_enabled[texUnit] == false) {
 			if(m_state.active_tex != texUnit) {
 				m_state.active_tex = texUnit;
@@ -342,7 +347,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::disableTextures(uint32_t texUnit)
+	void RenderBackendOpenGLe::disableTextures(uint32_t texUnit)
 	{
 		if(m_state.tex_enabled[texUnit] == true) {
 			if(m_state.active_tex != texUnit) {
@@ -358,7 +363,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::bindTexture(uint32_t texUnit, GLuint texId) {
+	void RenderBackendOpenGLe::bindTexture(uint32_t texUnit, GLuint texId) {
 		enableTextures(texUnit);
 
 		if(m_state.texture[texUnit] != texId) {
@@ -371,28 +376,28 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::bindTexture(GLuint texId) {
+	void RenderBackendOpenGLe::bindTexture(GLuint texId) {
 		if(m_state.texture[m_state.active_tex] != texId) {
 			m_state.texture[m_state.active_tex] = texId;
 			glBindTexture(GL_TEXTURE_2D, texId);
 		}
 	}
 
-	void RenderBackendOpenGL::enableLighting() {
+	void RenderBackendOpenGLe::enableLighting() {
 		if (m_state.lightmodel == 1 && !m_state.light_enabled) {
 			glEnable(GL_LIGHTING);
 			m_state.light_enabled = true;
 		}
 	}
 
-	void RenderBackendOpenGL::disableLighting() {
+	void RenderBackendOpenGLe::disableLighting() {
 		if (m_state.lightmodel == 1 && m_state.light_enabled) {
 			glDisable(GL_LIGHTING);
 			m_state.light_enabled = false;
 		}
 	}
 
-	void RenderBackendOpenGL::setLighting(float red, float green, float blue, float alpha) {
+	void RenderBackendOpenGLe::setLighting(float red, float green, float blue, float alpha) {
 		if (m_state.lightmodel == 1) {
 			GLfloat lightDiffuse[] = {red, green, blue, alpha};
 			glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
@@ -404,7 +409,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::resetLighting() {
+	void RenderBackendOpenGLe::resetLighting() {
 		if (m_state.lightmodel == 1) {
 			setLighting(1.0, 1.0, 1.0, 1.0);
 		} else if (m_state.lightmodel == 2 && m_state.lalpha > 0.01) {
@@ -420,21 +425,21 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::enableStencilTest() {
+	void RenderBackendOpenGLe::enableStencilTest() {
 		if (!m_state.sten_enabled) {
 			glEnable(GL_STENCIL_TEST);
 			m_state.sten_enabled = true;
 		}
 	}
 
-	void RenderBackendOpenGL::disableStencilTest() {
+	void RenderBackendOpenGLe::disableStencilTest() {
 		if (m_state.sten_enabled) {
 			glDisable(GL_STENCIL_TEST);
 			m_state.sten_enabled = false;
 		}
 	}
 
-	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, GLenum stencil_op, GLenum stencil_func) {
+	void RenderBackendOpenGLe::setStencilTest(uint8_t stencil_ref, GLenum stencil_op, GLenum stencil_func) {
 		enableStencilTest();
 		if(m_state.sten_op != stencil_op) {
 			m_state.sten_op = stencil_op;
@@ -448,7 +453,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::resetStencilBuffer(uint8_t buffer) {
+	void RenderBackendOpenGLe::resetStencilBuffer(uint8_t buffer) {
 		if (buffer != m_state.sten_buf) {
 			m_state.sten_buf = buffer;
 			glClearStencil(buffer);
@@ -458,30 +463,44 @@ namespace FIFE {
 		enableScissorTest();
 	}
 
-	uint8_t RenderBackendOpenGL::getStencilRef() const {
+	uint8_t RenderBackendOpenGLe::getStencilRef() const {
 		return m_state.sten_ref;
 	}
 
-	void RenderBackendOpenGL::enableAlphaTest() {
+	void RenderBackendOpenGLe::enableAlphaTest() {
 		if (!m_state.alpha_enabled) {
 			glEnable(GL_ALPHA_TEST);
 			m_state.alpha_enabled = true;
 		}
 	}
 
-	void RenderBackendOpenGL::disableAlphaTest() {
+	void RenderBackendOpenGLe::disableAlphaTest() {
 		if (m_state.alpha_enabled) {
 			glDisable(GL_ALPHA_TEST);
 			m_state.alpha_enabled = false;
 		}
 	}
 
-	void RenderBackendOpenGL::setAlphaTest(float ref_alpha) {
+	void RenderBackendOpenGLe::setAlphaTest(float ref_alpha) {
 		enableAlphaTest();
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
-	void RenderBackendOpenGL::setEnvironmentalColor(const GLfloat* rgb) {
+	void RenderBackendOpenGLe::enableDepthTest() {
+		if (!m_state.depth_enabled) {
+			glEnable(GL_DEPTH_TEST);
+			m_state.depth_enabled = true;
+		}
+	}
+
+	void RenderBackendOpenGLe::disableDepthTest() {
+		if (m_state.depth_enabled) {
+			glDisable(GL_DEPTH_TEST);
+			m_state.depth_enabled = false;
+		}
+	}
+
+	void RenderBackendOpenGLe::setEnvironmentalColor(const GLfloat* rgb) {
 		if(memcmp(m_state.env_color, rgb, sizeof(GLfloat) * 3))
 		{
 			// Use memcpy or just 3x '='
@@ -490,46 +509,21 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::setVertexPointer(GLsizei stride, const GLvoid* ptr) {
-		if(m_state.vertex_pointer != ptr)	{
-			m_state.vertex_pointer = ptr;
-			glVertexPointer(2, GL_FLOAT, stride, ptr);
-		}
-	}
-
-	void RenderBackendOpenGL::setColorPointer(GLsizei stride, const GLvoid* ptr) {
-		if(m_state.color_pointer != ptr) {
-			m_state.color_pointer = ptr;
-			glColorPointer(4, GL_UNSIGNED_BYTE, stride, ptr);
-		}
-	}
-
-	void RenderBackendOpenGL::setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr) {
-		if(m_state.tex_pointer[texUnit] != ptr) {
-			if(m_state.active_client_tex != texUnit) {
-				m_state.active_client_tex = texUnit;
-				glClientActiveTexture(GL_TEXTURE0 + texUnit);
-			}
-			m_state.tex_pointer[texUnit] = ptr;
-			glTexCoordPointer(2, GL_FLOAT, stride, ptr);
-		}
-	}
-
-	void RenderBackendOpenGL::enableScissorTest() {
+	void RenderBackendOpenGLe::enableScissorTest() {
 		if(m_state.scissor_test == false) {
 			m_state.scissor_test = true;
 			glEnable(GL_SCISSOR_TEST);
 		}
 	}
 
-	void RenderBackendOpenGL::disableScissorTest() {
+	void RenderBackendOpenGLe::disableScissorTest() {
 		if(m_state.scissor_test == true)	{
 			m_state.scissor_test = false;
 			glDisable(GL_SCISSOR_TEST);
 		}
 	}
 
-	void RenderBackendOpenGL::changeBlending(int32_t src, int32_t dst) {
+	void RenderBackendOpenGLe::changeBlending(int32_t src, int32_t dst) {
 		GLenum src_fact;
 		GLenum dst_fact;
 
@@ -566,7 +560,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
+	void RenderBackendOpenGLe::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
 		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
 
 		uint16_t count = 0;
@@ -587,142 +581,116 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::renderVertexArrays() {
-		if (!m_render_objects.empty()) {
-			//bools to indicate changes
-			bool type = false;
-			bool texture = false;
-			bool blending = false;
-			bool light = false;
-			bool stencil = false;
-			bool render = false;
-			bool mt = false;
-			
-			//stride
-			const uint32_t stride = sizeof(renderData);
-			const uint32_t stride2T = sizeof(renderData2T);
+	void RenderBackendOpenGLe::renderVertexArrays() {
+		if(!m_renderZ_objects.empty()) {
+			renderWithZ();
+		}
 
-			if(!m_render_objects[0].multitextured) {
-				//set pointer
-				setVertexPointer(stride, &m_render_datas[0].vertex);
-				setTexCoordPointer(0, stride, &m_render_datas[0].texel);
-				setColorPointer(stride, &m_render_datas[0].color);
-			}
+		if(!m_render_objects.empty()) {
+			renderWithoutZ();
+		}
+	}
 
-			// array index
-			int32_t index = 0;
-			// elements to render
-			uint32_t elements = 0;
-			// render mode
-			GLenum mode = GL_QUADS;
-			// texture id
-			uint32_t texture_id = 0;
-			// src blending mode
-			int32_t src = 4;
-			// dst blending mode
-			int32_t dst = 5;
+	void RenderBackendOpenGLe::renderWithZ() {
+		enableAlphaTest();
+		enableDepthTest();
+		enableTextures(0);
 
-			bool multitextured = false;
-			GLfloat color[3] = {0.0f, 0.0f, 0.0f};
+		static const uint32_t stride = sizeof(renderZData);
 
-			int32_t index2T = 0;
-			uint32_t elements2T = 0;
+		glVertexPointer(3, GL_FLOAT, stride, &m_renderZ_datas[0].vertex);
+		glTexCoordPointer(2, GL_FLOAT, stride, &m_renderZ_datas[0].texel);
 
-			int32_t* currentIndex = &index;
-			uint32_t* currentElements = &elements;
+		// array index
+		GLint index = 0;
+		// elements to render
+		GLsizei elements = 0;
 
-			int t=0;
+		for(std::vector<RenderObject>::iterator iter = m_renderZ_objects.begin();
+			iter != m_renderZ_objects.end(); ++iter) {
 
-			for(std::vector<RenderObject>::iterator ir = m_render_objects.begin(); ir != m_render_objects.end(); ++ir, t++) {
-				RenderObject& ro = (*ir);
+			bindTexture(iter->texture_id);
+
+			elements = iter->size;
+			glDrawArrays(GL_QUADS, index, elements);
+			index += elements;
+		}
+
+		disableTextures(0);
+		disableTextures(1);
+
+		m_renderZ_objects.clear();
+		m_renderZ_datas.clear();
+	}
+
+	void RenderBackendOpenGLe::renderWithoutZ() {
+		//bools to indicate changes
+		bool type = false;
+		bool texture = false;
+		bool blending = false;
+		bool light = false;
+		bool stencil = false;
+		bool render = false;
+
+		static const uint32_t stride = sizeof(renderData);
+
+		glEnableClientState(GL_COLOR_ARRAY);
+		glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
+		glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas[0].texel);
+		glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas[0].color);
+
+		disableAlphaTest();
+		disableDepthTest();
+		disableTextures(0);	
+
+		// array index
+		int32_t index = 0;
+		// elements to render
+		uint32_t elements = 0;
+		// render mode
+		GLenum mode = GL_QUADS;
+		// texture id
+		uint32_t texture_id = 0;
+
+		for(std::vector<RenderObject>::iterator iter = m_render_objects.begin();
+			iter != m_render_objects.end(); ++iter) {
 
 				//first we look for changes
-				if (ro.mode != mode) {
+				if (iter->mode != mode) {
 					type = true;
 					render = true;
 				}
-				if (ro.texture_id != texture_id) {
+				if (iter->texture_id != texture_id) {
 					texture = true;
 					render = true;
 				}
-				if (m_state.lightmodel != 0) {
-					if (ro.src != src || ro.dst != dst) {
-						blending = true;
-						render = true;
-					}
-					if (ro.light != m_state.light_enabled && m_state.lightmodel == 1) {
-						light = true;
-						render = true;
-					}
-					if (ro.stencil_test != m_state.sten_enabled) {
-						stencil = true;
-						render = true;
-					} else if (ro.stencil_test) {
-						if (ro.stencil_ref != m_state.sten_ref || 
-							ro.stencil_op != m_state.sten_op || 
-							ro.stencil_func != m_state.sten_func) {
-							stencil = true;
-							render = true;
-						}
-					}
-				}
-				if (ro.multitextured != multitextured ||
- 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(GLfloat)*3))) {
-					mt = true;
-					render = true;
-				}
 
-				// if changes then we render all previously elements
-				if (render) {
-					if (*currentElements > 0) {
+				// if no changes then we iterate to next element
+				if (!render) {
+					elements += iter->size;
+					// else we render everything so far
+				} else {
+					if (elements > 0) {
 						//render
-						glDrawArrays(mode, *currentIndex, *currentElements);
-						*currentIndex += *currentElements;
+						glDrawArrays(mode, index, elements);
+						index += elements;
 					}
+
+					// set element to current size
+					elements = iter->size;
+
 					// switch mode
 					if (type) {
-						mode = ro.mode;
+						mode = iter->mode;
 						type = false;
-					}
-
-					if(mt) {
-						if(ro.multitextured) {
-							enableTextures(1); // or bindTexture(1, maskForOverlays); if we change it somewhere
-							setEnvironmentalColor(ro.rgb);
-							enableTextures(0);
-
-							// set pointers
-							setVertexPointer(stride2T, &m_render_datas2T[0].vertex);
-							setColorPointer(stride2T, &m_render_datas2T[0].color);
-							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
-							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
-
-							memcpy(color, ro.rgb, sizeof(GLfloat)*3);
-							multitextured = true;
-							currentElements = &elements2T;
-							currentIndex = &index2T;
-
-						} else {
-							disableTextures(1);
-							enableTextures(0);
-
-							// set pointers
-							setVertexPointer(stride, &m_render_datas[0].vertex);
-							setTexCoordPointer(0, stride, &m_render_datas[0].texel);
-							setColorPointer(stride, &m_render_datas[0].color);
-
-							multitextured = false;
-							currentIndex = &index;
-							currentElements = &elements;
-						}
-						mt = false;
 					}
 
 					// switch texturing
 					if (texture) {
-						if (ro.texture_id != 0) {
-							bindTexture(0, ro.texture_id);
-							texture_id = ro.texture_id;
+						if (iter->texture_id != 0) {
+							enableTextures(0);
+							bindTexture(iter->texture_id);
+							texture_id = iter->texture_id;
 						} else {
 							disableTextures(0);
 							texture_id = 0;
@@ -730,66 +698,21 @@ namespace FIFE {
 						texture = false;
 					}
 
-					// set element to current size
-					*currentElements = ro.size;
-
-					// if lighting is enabled we have to consider a few more values
-					if (m_state.lightmodel != 0) {
-						// change blending
-						if (blending) {
-							src = ro.src;
-							dst = ro.dst;
-							changeBlending(ro.src, ro.dst);
-							blending = false;
-						}
-						// change light
-						if (light) {
-							if (ro.light && !m_state.light_enabled) {
-								enableLighting();
-							} else if (!ro.light && m_state.light_enabled) {
-								disableLighting();
-							}
-							light = false;
-						}
-						// change stencil
-						if (stencil) {
-							if (ro.stencil_test) {
-								setStencilTest(ro.stencil_ref, ro.stencil_op, ro.stencil_func);
-								setAlphaTest(0.0);
-							} else {
-								disableAlphaTest();
-								disableStencilTest();
-							}
-							stencil = false;
-						}
-					}
 					render = false;
-				} else {
-					// else add the element
-					*currentElements += ro.size;
 				}
-			}
-			// render
-			glDrawArrays(mode, *currentIndex, *currentElements);
 
-			//reset all states
-			disableTextures(1);
-			disableTextures(0);
-
-			if (m_state.lightmodel != 0) {
-				changeBlending(4, 5);
-				disableLighting();
-				disableStencilTest();
-				disableAlphaTest();
-			}
-
-			m_render_objects.clear();
-			m_render_datas.clear();
-			m_render_datas2T.clear();
 		}
+		// render
+		glDrawArrays(mode, index, elements);
+
+		//reset all states
+		glDisableClientState(GL_COLOR_ARRAY);
+
+		m_render_objects.clear();
+		m_render_datas.clear();
 	}
 
-	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	bool RenderBackendOpenGLe::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		if ((x < 0) || (x >= (int32_t)m_target->w) ||
 			(y < 0) || (y >= (int32_t)m_target->h)) {
 			return false;
@@ -809,7 +732,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
@@ -827,7 +750,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
@@ -849,7 +772,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
@@ -871,7 +794,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
@@ -894,7 +817,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
@@ -920,7 +843,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void RenderBackendOpenGLe::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
 		rd.vertex[0] = static_cast<float>(p.x-size);
 		rd.vertex[1] = static_cast<float>(p.y+size);
@@ -943,7 +866,7 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	void RenderBackendOpenGLe::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		uint8_t alpha = intensity;
 		if (m_state.lightmodel != 2) {
 			alpha = 255;
@@ -970,84 +893,75 @@ namespace FIFE {
 			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			m_render_datas.push_back(rd);
-			
+
 			RenderObject ro(GL_TRIANGLES, 3);
 			m_render_objects.push_back(ro);
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
-		if (!rgb) {
-			renderData rd;
-			rd.vertex[0] = static_cast<float>(rect.x);
-			rd.vertex[1] = static_cast<float>(rect.y);
-			rd.texel[0] = st[0];
-			rd.texel[1] = st[1];
-			rd.color[0] = 255;
-			rd.color[1] = 255;
-			rd.color[2] = 255;
-			rd.color[3] = alpha;
-			m_render_datas.push_back(rd);
+	void RenderBackendOpenGLe::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
+		renderData rd;
+		rd.vertex[0] = static_cast<float>(rect.x);
+		rd.vertex[1] = static_cast<float>(rect.y);
+		rd.texel[0] = st[0];
+		rd.texel[1] = st[1];
+		rd.color[0] = 255;
+		rd.color[1] = 255;
+		rd.color[2] = 255;
+		rd.color[3] = alpha;
+		m_render_datas.push_back(rd);
 
-			rd.vertex[0] = static_cast<float>(rect.x);
-			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-			rd.texel[1] = st[3];
-			m_render_datas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(rect.x);
+		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+		rd.texel[1] = st[3];
+		m_render_datas.push_back(rd);
 
-			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-			rd.texel[0] = st[2];
-			m_render_datas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+		rd.texel[0] = st[2];
+		m_render_datas.push_back(rd);
 
-			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-			rd.vertex[1] = static_cast<float>(rect.y);
-			rd.texel[1] = st[1];
-			m_render_datas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+		rd.vertex[1] = static_cast<float>(rect.y);
+		rd.texel[1] = st[1];
+		m_render_datas.push_back(rd);
 
-			RenderObject ro(GL_QUADS, 4, id);
-		m_render_objects.push_back(ro);
-		} else {
-			renderData2T rd;
-			rd.vertex[0] = static_cast<float>(rect.x);
-			rd.vertex[1] = static_cast<float>(rect.y);
-			rd.texel[0] = st[0];
-			rd.texel[1] = st[1];
-			rd.texel2[0] = 0.0;
-			rd.texel2[1] = 0.0;
-			rd.color[0] = 255;
-			rd.color[1] = 255;
-			rd.color[2] = 255;
-			rd.color[3] = alpha;
-			m_render_datas2T.push_back(rd);
-
-			rd.vertex[0] = static_cast<float>(rect.x);
-			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-			rd.texel[1] = st[3];
-			rd.texel2[1] = 1.0;
-			m_render_datas2T.push_back(rd);
-
-			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-			rd.texel[0] = st[2];
-			rd.texel2[0] = 1.0;
-			m_render_datas2T.push_back(rd);
-
-			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-			rd.vertex[1] = static_cast<float>(rect.y);
-			rd.texel[1] = st[1];
-			rd.texel2[1] = 0.0;
-			m_render_datas2T.push_back(rd);
-
-			RenderObject ro(GL_QUADS, 4, id);
-			ro.multitextured = true;
-			ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
-			ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
-			ro.rgb[2] = static_cast<float>(rgb[2] / 255.0f);
-			m_render_objects.push_back(ro);
-		}
+		RenderObject ro(GL_QUADS, 4, id);
+		m_render_objects.push_back(ro);	
 	}
 
-	void RenderBackendOpenGL::prepareForOverlays() {
+	void RenderBackendOpenGLe::addImageToArrayZ(uint32_t id, const Rect& rect, float vertexZ, float const* st, uint8_t alpha, uint8_t const* rgb) {
+		renderZData rd;
+		rd.vertex[0] = static_cast<float>(rect.x);
+		rd.vertex[1] = static_cast<float>(rect.y);
+		rd.vertex[2] = vertexZ;
+		rd.texel[0] = st[0];
+		rd.texel[1] = st[1];
+		m_renderZ_datas.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rect.x);
+		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+		rd.vertex[2] = vertexZ;
+		rd.texel[1] = st[3];
+		m_renderZ_datas.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+		rd.vertex[2] = vertexZ;
+		rd.texel[0] = st[2];
+		m_renderZ_datas.push_back(rd);
+
+		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+		rd.vertex[1] = static_cast<float>(rect.y);
+		rd.vertex[2] = vertexZ;
+		rd.texel[1] = st[1];
+		m_renderZ_datas.push_back(rd);
+
+		RenderObject ro(GL_QUADS, 4, id);
+		m_renderZ_objects.push_back(ro);
+	}
+
+	void RenderBackendOpenGLe::prepareForOverlays() {
 		glActiveTexture(GL_TEXTURE1);
 		glEnable(GL_TEXTURE_2D);
 
@@ -1101,7 +1015,7 @@ namespace FIFE {
 	}
 
 	
-	void RenderBackendOpenGL::captureScreen(const std::string& filename) {
+	void RenderBackendOpenGLe::captureScreen(const std::string& filename) {
 		const uint32_t swidth = getWidth();
 		const uint32_t sheight = getHeight();
 		SDL_Surface *surface = NULL;
@@ -1137,7 +1051,7 @@ namespace FIFE {
 		delete [] pixels;
 	}
 
-	void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear) {
+	void RenderBackendOpenGLe::setClipArea(const Rect& cliparea, bool clear) {
 		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
 		if (clear) {
 			if (m_isbackgroundcolor) {
@@ -1147,11 +1061,11 @@ namespace FIFE {
 				glClearColor(red, green, blue, 0.0);
 				m_isbackgroundcolor = false;
 			}
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 	}
 
-	void RenderBackendOpenGL::attachRenderTarget(ImagePtr& img, bool discard) {
+	void RenderBackendOpenGLe::attachRenderTarget(ImagePtr& img, bool discard) {
 		m_img_target = img;
 		m_target_discard = discard;
 
@@ -1159,7 +1073,7 @@ namespace FIFE {
 		m_img_target->forceLoadInternal();
 		m_target = m_img_target->getSurface();
 
-		GLImage* glimage = static_cast<GLImage*>(m_img_target.get());
+		GLeImage* glimage = static_cast<GLeImage*>(m_img_target.get());
 
 		GLuint targetid = glimage->getTexId();
 		uint32_t w = m_img_target->getWidth();
@@ -1193,15 +1107,17 @@ namespace FIFE {
 		glCullFace(GL_FRONT);
 
 		if (m_target_discard) {
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		} else if (!m_target_discard && !GLEE_EXT_framebuffer_object) {
 			// if we wanna just add something to render target, we need to first render previous contents
 			addImageToArray(targetid, m_img_target->getArea(), 
-				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
+				static_cast<GLeImage*>(m_img_target.get())->getTexCoords(), 255, 0);
+			// flush it down
+			renderWithoutZ();
 		}
 	}
 
-	void RenderBackendOpenGL::detachRenderTarget() {
+	void RenderBackendOpenGLe::detachRenderTarget() {
 		assert(m_target != m_screen);
 
 		// flush down what we batched
@@ -1210,9 +1126,10 @@ namespace FIFE {
 		if (GLEE_EXT_framebuffer_object) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		} else {
-			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());
+			bindTexture(0, static_cast<GLeImage*>(m_img_target.get())->getTexId());
 			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 
 				m_img_target->getWidth(), m_img_target->getHeight(), 0);
+			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 
 		m_target = m_screen;
