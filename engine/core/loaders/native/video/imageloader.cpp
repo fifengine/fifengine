@@ -37,7 +37,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
-#include "video/opengl/glimage.h"
+#include "video/image.h"
 
 #include "imageloader.h"
 

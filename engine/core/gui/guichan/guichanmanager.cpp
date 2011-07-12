@@ -35,6 +35,7 @@
 // Second block: files included from the same folder
 #ifdef HAVE_OPENGL
 #include "gui/guichan/base/opengl/opengl_gui_graphics.h"
+#include "gui/guichan/base/opengle/opengle_gui_graphics.h"
 #endif
 #include "gui/guichan/base/sdl/sdl_gui_graphics.h"
 #include "util/base/exception.h"
@@ -172,7 +173,9 @@ namespace FIFE {
 		else if (backend == "OpenGL") {
 			m_gui_graphics = new OpenGLGuiGraphics();
 		}
-		else {
+		else if (backend == "OpenGLe") {
+			m_gui_graphics = new OpenGLeGuiGraphics();
+		} else {
 			//should never get here
 			assert(0);
 		}

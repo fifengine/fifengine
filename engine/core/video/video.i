@@ -52,7 +52,7 @@ namespace FIFE {
 
 	class Image : public IResource {
 	public:
-		void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		//void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual ~Image();
 		SDL_Surface* getSurface();
 		uint32_t getWidth() const;

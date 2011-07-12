@@ -146,7 +146,7 @@ class Setting(object):
 		self._validSetting['FIFE'] = {
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[0,1],
-			'RenderBackend':['OpenGL','SDL'],
+			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
 			'ScreenResolution':['640x480', '800x600', '1024x768', '1280x800', '1440x900'],
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",

@@ -136,6 +136,7 @@ namespace FIFE {
 		std::vector<std::string> tmp;
 		tmp.push_back("SDL");
 		tmp.push_back("OpenGL");
+		tmp.push_back("OpenGLe");
 		return tmp;
 	}
 

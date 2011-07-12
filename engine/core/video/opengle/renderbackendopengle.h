@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGL_H
-#define FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGL_H
+#ifndef FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGLE_H
+#define FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGLE_H
 
 // Standard C++ library includes
 
@@ -31,19 +31,18 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-
-#include "fife_opengl.h"
+#include "video/opengl/fife_opengl.h"
 
 namespace FIFE {
 	class ScreenMode;
 
-	/** The main class of the OpenGL-based renderer.
+	/** The main class of the OpenGL-based experimental renderer.
 	 * @see RenderBackend
 	 */
-	class RenderBackendOpenGL : public RenderBackend {
+	class RenderBackendOpenGLe : public RenderBackend {
 	public:
-		RenderBackendOpenGL(const SDL_Color& colorkey);
-		virtual ~RenderBackendOpenGL();
+		RenderBackendOpenGLe(const SDL_Color& colorkey);
+		virtual ~RenderBackendOpenGLe();
 		virtual const std::string& getName() const;
 		virtual void startFrame();
 		virtual void endFrame();
@@ -68,6 +67,7 @@ namespace FIFE {
 
 		virtual void renderVertexArrays();
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
+		virtual void addImageToArrayZ(uint32_t id, const Rect& rec, float vertexZ, float const* st, uint8_t alpha, uint8_t const* rgb);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
 
@@ -88,6 +88,9 @@ namespace FIFE {
 		void bindTexture(uint32_t texUnit, GLuint texId);
 		void bindTexture(GLuint textId);
 
+		static const float zfar;
+		static const float znear;
+
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);
 
@@ -100,6 +103,8 @@ namespace FIFE {
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
+		void enableDepthTest();
+		void disableDepthTest();
 		void setEnvironmentalColor(const GLfloat* rgb);
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
@@ -107,25 +112,46 @@ namespace FIFE {
 		void enableScissorTest();
 		void disableScissorTest();
 
+		void renderWithZ();
+		void renderWithoutZ();
+
 		GLuint m_mask_overlays;
 		void prepareForOverlays();
-
+		
 		class RenderObject;
 
-		struct renderData2T {
-			GLfloat vertex[2];
+		// only for textures
+		struct renderZData {
+			GLfloat vertex[3];
 			GLfloat texel[2];
-			GLfloat texel2[2];
-			GLubyte color[4];
 		};
+
+		// TODO
+		//struct renderZTranslucentData {
+		//	GLfloat vertex[3];
+		//	GLfloat texel[2];
+		 // GLfloat texel2[2];
+		//	GLfloat color[4];
+		//};
+
+		// TODO
+		//struct renderData2T {
+		//	GLfloat vertex[2];
+		//	GLfloat texel[2];
+		//	GLfloat texel2[2];
+		//	GLubyte color[4];
+		//};
 
 		struct renderData {
 			GLfloat vertex[2];
 			GLfloat texel[2];
 			GLubyte color[4];
 		};
+
+		std::vector<renderZData> m_renderZ_datas;
 		std::vector<renderData> m_render_datas;
-		std::vector<renderData2T> m_render_datas2T;
+
+		std::vector<RenderObject> m_renderZ_objects;
 		std::vector<RenderObject> m_render_objects;
 
 		struct currentState	{
@@ -134,11 +160,6 @@ namespace FIFE {
 			GLuint texture[2];
 			uint32_t active_tex;
 			uint32_t active_client_tex;
-
-			// Pointers
-			const void* vertex_pointer;
-			const void* tex_pointer[2];
-			const void* color_pointer;
 
 			// Stencil
 			bool sten_enabled;
@@ -160,6 +181,7 @@ namespace FIFE {
 			GLenum blend_src;
 			GLenum blend_dst;
 			bool alpha_enabled;
+			bool depth_enabled;
 			bool scissor_test;
 		} m_state;
 

@@ -38,6 +38,7 @@
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
+#include "model/structures/map.h"
 #include "video/opengl/fife_opengl.h"
 
 #include "view/camera.h"
@@ -97,12 +98,22 @@ namespace FIFE {
 		RendererBase(renderbackend, position),
 		m_area_layer(false) {
 		setEnabled(true);
+		if(m_renderbackend->getName() == "OpenGLe") {
+			m_need_sorting = false;
+		} else {
+			m_need_sorting = true;
+		}
 	}
 
  	InstanceRenderer::InstanceRenderer(const InstanceRenderer& old):
 		RendererBase(old),
 		m_area_layer(old.m_area_layer) {
 		setEnabled(true);
+		if(m_renderbackend->getName() == "OpenGLe") {
+			m_need_sorting = false;
+		} else {
+			m_need_sorting = true;
+		}
 	}
 
 	RendererBase* InstanceRenderer::clone() {
@@ -120,6 +131,59 @@ namespace FIFE {
 			return;
 		}
 
+		if(m_need_sorting) {
+			renderAlreadySorted(cam, layer, instances);
+		} else {
+			renderUnsorted(cam, layer, instances);
+		}
+	}
+
+	void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
+	{
+		// TODO much stuff was cut off
+
+		// Get layer index (this is needed for tweaking vertexZ for OpenGL renderbackend)
+		Map* parent = layer->getMap();
+		int num_layers = parent->getLayerCount();
+		int this_layer = 1; // we don't need 0 indexed
+		const std::list<Layer*>& layers = parent->getLayers();
+		std::list<Layer*>::const_iterator iter = layers.begin();
+		for (; iter != layers.end(); ++iter, ++this_layer) {
+			if (*iter == layer) {
+				break;
+			}
+		}
+
+		// This values comes from glOrtho settings
+		double global_z_min = -200.0;
+		double global_z_max = 200.0;
+		double depth_range = fabs(global_z_min - global_z_max);
+
+		// This is how much depth we can sacrifice for given layer
+		// f.e: We have 200 depth range and 4 layers. That means we can assing
+		// each layer 50 depth range:
+		// 1st layer gets -100..-50
+		// 2nd layer gets  -50..0
+		// 3rd layer gets    0..50
+		// 4th layer gets   50..100
+		double layer_depth_range = depth_range / static_cast<double>(num_layers);
+		// What's left, is to compute z offset for given layer 
+		double layer_z_offset = global_z_min + 
+			layer_depth_range * static_cast<double>(this_layer) - 
+			layer_depth_range * 0.5;
+
+		RenderList::iterator instance_it = instances.begin();
+		for (;instance_it != instances.end(); ++instance_it) {
+			FL_DBG(_log, "Iterating instances...");
+			Instance* instance = (*instance_it)->instance;
+			RenderItem& vc = **instance_it;
+
+			float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
+			vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency);
+		}
+	}
+
+	void InstanceRenderer::renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances) {
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 		const bool unlit = !m_unlit_groups.empty();
 		uint32_t lm = m_renderbackend->getLightingModel();

@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -81,6 +80,11 @@ namespace FIFE {
 		m_layer = 0;
 		m_tree = 0;
 		m_needupdate = false;
+		m_need_sorting = true;
+
+		if(RenderBackend::instance()->getName() == "OpenGLe") {
+			m_need_sorting = false;
+		}
 	}
 
 	LayerCache::~LayerCache() {
@@ -177,22 +181,17 @@ namespace FIFE {
 		if(!action) {
 			// Try static images then default action.
 			int32_t image_id = render_item.getStaticImageIndexByAngle(angle, instance);
-//prock - 504
-//			if(image_id == Pool::INVALID_ID) {
 			if(image_id == -1) {
 				if (!instance->getObject()->isStatic()) {
 					action = instance->getObject()->getDefaultAction();
 				}
 			} else {
-//prock - 504
-//				image = &m_image_pool->getImage(image_id);
 				image = ImageManager::instance()->get(image_id);
 			}
 		}
 		item.force_update = (action != 0);
 
 		if(action) {
-//prock - 504
 			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(
 				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
@@ -314,6 +313,11 @@ namespace FIFE {
 		viewport.h = static_cast<int32_t>(std::max(viewport_a.y, viewport_b.y) - viewport.y);
 		uint8_t layer_trans = m_layer->getLayerTransparency();
 
+		double a, b;
+		if(!m_need_sorting) {
+			getZScallingCoefficient(a, b);
+		}
+
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
 		std::vector<int32_t> index_list;
 		collect(viewport, index_list);
@@ -372,13 +376,91 @@ namespace FIFE {
 				item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
 			}
 
+			if (!m_need_sorting) {
+				// simple scaling using (a,b) values as linear function coefficents
+				// to put z values inside [-10,10]
+				item.screenpoint.z = a * item.screenpoint.z + b;
+			}
+
 			if(item.dimensions.intersects(screen_viewport)) {
 				renderlist.push_back(&item);
 			}
 		}
 
-		InstanceDistanceSort ids;
-		std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+		if (m_need_sorting) {
+			InstanceDistanceSort ids;
+			std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+		}
 		//  FL_LOG(_log, LMsg("camera-update ") << " N=" <<renderlist.size() << "/" << m_instances.size() << "/" << index_list.size());
+	}
+
+	void LayerCache::getZScallingCoefficient(double& a, double& b) {
+		// TODO in final version this should be calculated only when there was a change in cached layer
+		ExactModelCoordinate min_coords, max_coords;
+		const std::vector<Instance*>& layer_instances = m_layer->getInstances();
+		if(layer_instances.empty())
+			return;
+
+		min_coords = layer_instances.front()->getLocationRef().getExactLayerCoordinatesRef();
+		max_coords = min_coords;
+
+		// This is a bit different than layer->getMinMaxCoords()
+		for (std::vector<Instance*>::const_iterator i = layer_instances.begin(); i != layer_instances.end(); ++i) {
+			Location loc = (*i)->getLocationRef();
+			ExactModelCoordinate coord = loc.getExactLayerCoordinatesRef();
+
+			if(coord.x < max_coords.x) {
+				min_coords.x = coord.x;
+			}
+
+			if(coord.x > max_coords.x) {
+				max_coords.x = coord.x;
+			}
+
+			if(coord.y < max_coords.y) {
+				min_coords.y = coord.y;
+			}
+
+			if(coord.y > max_coords.y) {
+				max_coords.y = coord.y;
+			}
+
+			if(coord.z < max_coords.z) {
+				min_coords.z = coord.z;
+			}
+
+			if(coord.z > max_coords.z) {
+				max_coords.z = coord.z;
+			}
+		}
+
+		double min_y = min_coords.y - 1;
+		double max_y = max_coords.y + 1;
+		double min_z = min_coords.z - 1;
+		double max_z = max_coords.z + 1;
+
+		// NOTE: This only works when tilt is less than 180 degrees (which is rather common)
+		double reference_scale = m_camera->getReferenceScale();
+		double tilt = m_camera->getTilt();
+		double trad = tilt * Mathd::pi() / 180.0;
+		double max_z_buffer = (-reference_scale * sin(trad) * max_y) + (reference_scale * cos(trad) * max_z);
+		double min_z_buffer = (-reference_scale * sin(trad) * min_y) + (reference_scale * cos(trad) * min_z);
+
+		// We want to put every z value in [-10,10] range.
+		// To do it, we simply solve 
+		// { y1 = a*x1 + b
+		// { y2 = a*x2 + b
+		// where [y1,y2]' = [-10,10]' is required z range, 
+		// and [x1,x2]' is expected min,max z coords.
+		double det = min_z_buffer - max_z_buffer;
+		if (fabs(det) > FLT_EPSILON) {
+			double det_a = -10.0 - 10.0;
+			double det_b = 10.0 * min_z_buffer + 10.0 * max_z_buffer;
+			a = static_cast<float>(det_a / det);
+			b = static_cast<float>(det_b / det);
+		} else {
+			a = 1;
+			b = 0;
+		}
 	}
 }
