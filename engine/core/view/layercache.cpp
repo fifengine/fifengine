@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <float.h>
 
 // 3rd party library includes
 
