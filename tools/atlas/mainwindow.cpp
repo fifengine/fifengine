@@ -637,6 +637,28 @@ void MainWindow::updateSubimage(QImage& dest, int xoffset, int yoffset, const QI
 	}
 }
 
+QString getAttrib(rapidxml::xml_node<>* node, QString const& attribName,
+	QString const& defValue = "")
+{
+	static rapidxml::xml_attribute<>* attr;
+	attr = node->first_attribute(attribName.toLocal8Bit().constData());
+	if(!attr)
+		return defValue;
+	
+	return QString::fromAscii(attr->value());
+}
+
+int getAttribInt(rapidxml::xml_node<>* node, QString const& attribName,
+	int defValue = -1)
+{
+	static rapidxml::xml_attribute<>* attr;
+	attr = node->first_attribute(attribName.toLocal8Bit().constData());
+	if(!attr)
+		return defValue;
+	
+	return QString::fromAscii(attr->value()).toInt();
+}
+
 void MainWindow::disassemblePressed()
 {
 	QString filename = QFileDialog::getOpenFileName(this,
@@ -651,7 +673,7 @@ void MainWindow::disassemblePressed()
 	if (!data.open(QFile::ReadOnly))
 	{
 		QMessageBox::critical(this, "Atlas Creator",
-			"Couldn't read selected file");
+			"Couldn't read selected file.");
 		return;
 	}
 
@@ -682,27 +704,27 @@ void MainWindow::disassemblePressed()
 	}
 
 	root = root->next_sibling();
-	rapidxml::xml_attribute<>* attr = root->first_attribute("namespace");
-	if(!attr)
+	QString ns = getAttrib(root, "namespace");
+	if(ns.isEmpty())
 	{
 		QMessageBox::critical(this, "Atlas Creator",
 			"Selected file doesn't seem to be proper FIFE atlas file.");
 		return;
 	}
-	QString ns = appendPath + QString::fromAscii(attr->value());
+	ns = appendPath + ns;
 
 	// make new directory if necessary for subimages
 	if(!QDir(ns).exists())
 		QDir().mkdir(ns);
 
-	attr = root->first_attribute("name");
-	if(!attr)
+	QString atlasFile = getAttrib(root, "name");
+	if(atlasFile.isEmpty())
 	{
 		QMessageBox::critical(this, "Atlas Creator",
 			"Selected file doesn't seem to be proper FIFE atlas file.");
 		return;
 	}
-	QString atlasFile = appendPath + QString::fromAscii(attr->value());
+	atlasFile = appendPath + atlasFile;
 
 	QImage atlas;
 	if(!atlas.load(atlasFile))
@@ -715,17 +737,27 @@ void MainWindow::disassemblePressed()
 	for(rapidxml::xml_node<>* node = root->first_node();
 		node != 0; node = node->next_sibling())
 	{
-		attr = node->first_attribute("source");
-		QString dest = ns + "/" + QString::fromAscii(attr->value());
-		attr = node->first_attribute("xpos");
-		int xpos = QString::fromAscii(attr->value()).toInt();
-		attr = node->first_attribute("ypos");
-		int ypos = QString::fromAscii(attr->value()).toInt();
-		attr = node->first_attribute("width");
-		int width = QString::fromAscii(attr->value()).toInt();
-		attr = node->first_attribute("height");
-		int height = QString::fromAscii(attr->value()).toInt();
-
+		QString dest = getAttrib(node, "source");
+		if(dest.isEmpty())
+		{
+			QMessageBox::critical(this, "Atlas Creator",
+				"One of image doesn't have source attrib.");
+			return;
+		}
+		dest = ns + "/" + dest;
+		
+		int xpos = getAttrib(node, "xpos");
+		int ypos = getAttrib(node, "ypos");
+		int width = getAttrib(node, "width");
+		int height = getAttrib(node, "height");
+		
+		if(xpos < 0 || ypos < 0 || width < 0 || height < 0)
+		{
+			QMessageBox::critical(this, "Atlas Creator",
+				"One of image doesn't have valid rectangle defined.");
+			return;
+		}
+		
 		QDir().mkdir(QFileInfo(dest).path());
 		QImage subImage = atlas.copy(xpos, ypos, width, height);
 		subImage.save(dest, "PNG");
