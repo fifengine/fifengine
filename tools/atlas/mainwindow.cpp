@@ -746,10 +746,10 @@ void MainWindow::disassemblePressed()
 		}
 		dest = ns + "/" + dest;
 		
-        int xpos = getAttrib(node, "xpos").toInt();
-		int ypos = getAttrib(node, "ypos").toInt();
-		int width = getAttrib(node, "width").toInt();
-		int height = getAttrib(node, "height").toInt();
+        int xpos = getAttribInt(node, "xpos");
+		int ypos = getAttribInt(node, "ypos");
+		int width = getAttribInt(node, "width");
+		int height = getAttribInt(node, "height");
 		
 		if(xpos < 0 || ypos < 0 || width < 0 || height < 0)
 		{
