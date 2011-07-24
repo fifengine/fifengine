@@ -35,7 +35,7 @@
 #include "renderbackendopengle.h"
 #include "SDL_image.h"
 
-#define ALPHA_REF 0.5f
+#define ALPHA_REF 0.2f
 
 
 namespace FIFE {
@@ -67,7 +67,7 @@ namespace FIFE {
 		GLenum stencil_op;
 		GLenum stencil_func;
 		bool multitextured;
-		GLfloat rgb[3];
+		uint8_t rgb[3];
 	};
 
 	const float RenderBackendOpenGLe::zfar =   200.0f;
@@ -223,6 +223,9 @@ namespace FIFE {
 		if(GLEE_EXT_framebuffer_object) {
 			glGenFramebuffers(1, &m_fbo_id);
 		}
+
+		m_renderZ_datas.resize(4*500*500);
+		m_renderZ_objects.clear();
 	}
 
 	void RenderBackendOpenGLe::startFrame() {
@@ -500,12 +503,16 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGLe::setEnvironmentalColor(const GLfloat* rgb) {
-		if(memcmp(m_state.env_color, rgb, sizeof(GLfloat) * 3))
-		{
-			// Use memcpy or just 3x '='
-			memcpy(m_state.env_color, rgb, sizeof(GLfloat) * 3);
-			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgb);
+	void RenderBackendOpenGLe::setEnvironmentalColor(const uint8_t* rgb) {
+		if (memcmp(m_state.env_color, rgb, sizeof(uint8_t) * 3)) {
+			memcpy(m_state.env_color, rgb, sizeof(uint8_t) * 3);
+			GLfloat rgbf[4] = {
+				static_cast<float>(m_state.env_color[0]) / 255.0f,
+				static_cast<float>(m_state.env_color[1]) / 255.0f,
+				static_cast<float>(m_state.env_color[2]) / 255.0f, 0.0f};
+			glActiveTexture(GL_TEXTURE1);
+			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbf);
+			glActiveTexture(GL_TEXTURE0);
 		}
 	}
 
@@ -596,31 +603,122 @@ namespace FIFE {
 		enableDepthTest();
 		enableTextures(0);
 
-		static const uint32_t stride = sizeof(renderZData);
+		// ordinary z-valued quads
+		static const uint32_t stride = sizeof(RenderZData);
 
 		glVertexPointer(3, GL_FLOAT, stride, &m_renderZ_datas[0].vertex);
 		glTexCoordPointer(2, GL_FLOAT, stride, &m_renderZ_datas[0].texel);
-
-		// array index
-		GLint index = 0;
-		// elements to render
-		GLsizei elements = 0;
-
-		for(std::vector<RenderObject>::iterator iter = m_renderZ_objects.begin();
-			iter != m_renderZ_objects.end(); ++iter) {
-
+		
+		std::vector<RenderZObject>::iterator iter = m_renderZ_objects.begin();
+		for ( ; iter != m_renderZ_objects.end(); ++iter) {
 			bindTexture(iter->texture_id);
+			glDrawArrays(GL_QUADS, iter->index, iter->elements);
+		}
+		m_renderZ_objects.clear();
 
-			elements = iter->size;
+		// full opacity colored overlays
+		if (!m_render_objects2T.empty()) {
+			static const uint32_t stride = sizeof(RenderZData2T);
+
+			glActiveTexture(GL_TEXTURE1);
+			glEnable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0);
+
+			glEnableClientState(GL_COLOR_ARRAY);
+			glVertexPointer(3, GL_FLOAT, stride, &m_render_datas2T[0].vertex);
+			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas2T[0].color);
+
+			glClientActiveTexture(GL_TEXTURE1);
+			glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas2T[0].texel2);
+			glClientActiveTexture(GL_TEXTURE0);
+			glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas2T[0].texel);
+
+			// array index
+			GLint index = 0;
+			// elements to render
+			GLsizei elements = 0;
+			// texture id
+			uint32_t texture_id = 0;
+			// color of overlay
+			uint8_t rgb[3] = {0};
+
+			std::vector<RenderObject>::iterator iter = m_render_objects2T.begin();
+			for (; iter != m_render_objects2T.end(); ++iter) {
+				if (iter->texture_id != texture_id || memcmp(rgb, iter->rgb, sizeof(uint8_t)*3)) {
+					if (elements > 0) {
+						glDrawArrays(GL_QUADS, index, elements);
+						index += elements;
+					}
+
+					setEnvironmentalColor(iter->rgb);
+					bindTexture(iter->texture_id);
+					texture_id = iter->texture_id;
+					elements = iter->size;;
+					memcpy(rgb, iter->rgb, sizeof(uint8_t)*3);
+				} else {
+					elements += iter->size;
+				}
+			}
 			glDrawArrays(GL_QUADS, index, elements);
-			index += elements;
+
+			glActiveTexture(GL_TEXTURE1);
+			glDisable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0);
+
+			glDisableClientState(GL_COLOR_ARRAY);
+
+			m_render_objects2T.clear();
+			m_render_datas2T.clear();
+		}
+
+		disableAlphaTest();
+
+		// now render (semi)transparent data (they are already sorted by instancerenderer)
+		if (!m_render_trans_objects.empty()) {
+			static const uint32_t strideTransparent = sizeof(RenderZData2T);
+
+			glEnableClientState(GL_COLOR_ARRAY);
+			glVertexPointer(3, GL_FLOAT, strideTransparent, &m_render_trans_datas[0].vertex);
+			glColorPointer(4, GL_UNSIGNED_BYTE, strideTransparent, &m_render_trans_datas[0].color);
+
+			//glClientActiveTexture(GL_TEXTURE1);
+			//glTexCoordPointer(2, GL_FLOAT, strideTransparent, &m_render_trans_datas[0].texel2);
+			glClientActiveTexture(GL_TEXTURE0);
+			glTexCoordPointer(2, GL_FLOAT, strideTransparent, &m_render_trans_datas[0].texel);
+			
+			// array index
+			GLint index = 0;
+			// elements to render
+			GLsizei elements = 0;
+			// texture id
+			uint32_t texture_id = 0;
+			// color of overlay
+			GLfloat rgb[3] = {0};
+
+			std::vector<RenderObject>::iterator iter = m_render_trans_objects.begin();
+			for( ; iter != m_render_trans_objects.end(); ++iter) {
+				if (iter->texture_id != texture_id) {
+					if (elements > 0) {
+						glDrawArrays(GL_QUADS, index, elements);
+						index += elements;
+					}
+
+					bindTexture(iter->texture_id);
+					texture_id = iter->texture_id;
+					elements = iter->size;;
+				} else {
+					elements += iter->size;
+				}
+			}
+			glDrawArrays(GL_QUADS, index, elements);
+
+			glDisableClientState(GL_COLOR_ARRAY);
+
+			m_render_trans_datas.clear();
+			m_render_trans_objects.clear();
 		}
 
 		disableTextures(0);
-		disableTextures(1);
-
-		m_renderZ_objects.clear();
-		m_renderZ_datas.clear();
 	}
 
 	void RenderBackendOpenGLe::renderWithoutZ() {
@@ -632,7 +730,7 @@ namespace FIFE {
 		bool stencil = false;
 		bool render = false;
 
-		static const uint32_t stride = sizeof(renderData);
+		static const uint32_t stride = sizeof(RenderData);
 
 		glEnableClientState(GL_COLOR_ARRAY);
 		glVertexPointer(2, GL_FLOAT, stride, &m_render_datas[0].vertex);
@@ -655,52 +753,51 @@ namespace FIFE {
 		for(std::vector<RenderObject>::iterator iter = m_render_objects.begin();
 			iter != m_render_objects.end(); ++iter) {
 
-				//first we look for changes
-				if (iter->mode != mode) {
-					type = true;
-					render = true;
-				}
-				if (iter->texture_id != texture_id) {
-					texture = true;
-					render = true;
-				}
+			//first we look for changes
+			if (iter->mode != mode) {
+				type = true;
+				render = true;
+			}
+			if (iter->texture_id != texture_id) {
+				texture = true;
+				render = true;
+			}
 
-				// if no changes then we iterate to next element
-				if (!render) {
-					elements += iter->size;
-					// else we render everything so far
-				} else {
-					if (elements > 0) {
-						//render
-						glDrawArrays(mode, index, elements);
-						index += elements;
-					}
-
-					// set element to current size
-					elements = iter->size;
-
-					// switch mode
-					if (type) {
-						mode = iter->mode;
-						type = false;
-					}
-
-					// switch texturing
-					if (texture) {
-						if (iter->texture_id != 0) {
-							enableTextures(0);
-							bindTexture(iter->texture_id);
-							texture_id = iter->texture_id;
-						} else {
-							disableTextures(0);
-							texture_id = 0;
-						}
-						texture = false;
-					}
-
-					render = false;
+			// if no changes then we iterate to next element
+			if (!render) {
+				elements += iter->size;
+				// else we render everything so far
+			} else {
+				if (elements > 0) {
+					//render
+					glDrawArrays(mode, index, elements);
+					index += elements;
 				}
 
+				// set element to current size
+				elements = iter->size;
+
+				// switch mode
+				if (type) {
+					mode = iter->mode;
+					type = false;
+				}
+
+				// switch texturing
+				if (texture) {
+					if (iter->texture_id != 0) {
+						enableTextures(0);
+						bindTexture(iter->texture_id);
+						texture_id = iter->texture_id;
+					} else {
+						disableTextures(0);
+						texture_id = 0;
+					}
+					texture = false;
+				}
+
+				render = false;
+			}
 		}
 		// render
 		glDrawArrays(mode, index, elements);
@@ -717,7 +814,7 @@ namespace FIFE {
 			(y < 0) || (y >= (int32_t)m_target->h)) {
 			return false;
 		}
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(x);
 		rd.vertex[1] = static_cast<float>(y);
 		rd.color[0] = r;
@@ -733,7 +830,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
@@ -751,7 +848,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
@@ -773,7 +870,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
@@ -795,7 +892,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
@@ -818,7 +915,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p1.x);
 		rd.vertex[1] = static_cast<float>(p1.y);
 		rd.color[0] = r;
@@ -844,7 +941,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(p.x-size);
 		rd.vertex[1] = static_cast<float>(p.y+size);
 		rd.color[0] = r;
@@ -872,7 +969,7 @@ namespace FIFE {
 			alpha = 255;
 		}
 		const float step = Mathf::twoPi()/subdivisions;
-		renderData rd;;
+		RenderData rd;;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
 			rd.vertex[0] = static_cast<float>(p.x);
 			rd.vertex[1] = static_cast<float>(p.y);
@@ -900,7 +997,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
-		renderData rd;
+		RenderData rd;
 		rd.vertex[0] = static_cast<float>(rect.x);
 		rd.vertex[1] = static_cast<float>(rect.y);
 		rd.texel[0] = st[0];
@@ -930,35 +1027,144 @@ namespace FIFE {
 		m_render_objects.push_back(ro);	
 	}
 
+	RenderBackendOpenGLe::RenderZObject* RenderBackendOpenGLe::getRenderBufferObject(GLuint texture_id) {
+		for (std::vector<RenderZObject>::iterator it = m_renderZ_objects.begin(); it != m_renderZ_objects.end(); ++it) {		
+			if (it->texture_id == texture_id) {
+				if (it->elements < it->max_size - 4) {
+					return &(*it);	
+				}
+			}
+		}
+
+		// nothing is found, we need to create new one
+		RenderZObject obj;
+		if (!m_renderZ_objects.empty()) {
+			obj.index = m_renderZ_objects.back().index + m_renderZ_objects.back().max_size;
+		} else {
+			obj.index = 0;
+		}
+		obj.texture_id = texture_id;
+		obj.elements = 0;
+		obj.max_size = 300 * 4;
+		m_renderZ_objects.push_back(obj);
+		return &m_renderZ_objects.back();
+	}
+
 	void RenderBackendOpenGLe::addImageToArrayZ(uint32_t id, const Rect& rect, float vertexZ, float const* st, uint8_t alpha, uint8_t const* rgb) {
-		renderZData rd;
-		rd.vertex[0] = static_cast<float>(rect.x);
-		rd.vertex[1] = static_cast<float>(rect.y);
-		rd.vertex[2] = vertexZ;
-		rd.texel[0] = st[0];
-		rd.texel[1] = st[1];
-		m_renderZ_datas.push_back(rd);
+		if (alpha == 255) {
+			if (rgb == NULL) {
+				// ordinary z-valued quad
+				RenderZObject* renderObj = getRenderBufferObject(id);
+				uint32_t offset = renderObj->index + renderObj->elements;
+				renderObj->elements += 4;
 
-		rd.vertex[0] = static_cast<float>(rect.x);
-		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-		rd.vertex[2] = vertexZ;
-		rd.texel[1] = st[3];
-		m_renderZ_datas.push_back(rd);
+				RenderZData* rd = &m_renderZ_datas[offset];
+				rd->vertex[0] = static_cast<float>(rect.x);
+				rd->vertex[1] = static_cast<float>(rect.y);
+				rd->vertex[2] = vertexZ;
+				rd->texel[0] = st[0];
+				rd->texel[1] = st[1];
 
-		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-		rd.vertex[2] = vertexZ;
-		rd.texel[0] = st[2];
-		m_renderZ_datas.push_back(rd);
+				++rd;
+				rd->vertex[0] = static_cast<float>(rect.x);
+				rd->vertex[1] = static_cast<float>(rect.y+rect.h);
+				rd->vertex[2] = vertexZ;
+				rd->texel[0] = st[0];
+				rd->texel[1] = st[3];
 
-		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-		rd.vertex[1] = static_cast<float>(rect.y);
-		rd.vertex[2] = vertexZ;
-		rd.texel[1] = st[1];
-		m_renderZ_datas.push_back(rd);
+				++rd;
+				rd->vertex[0] = static_cast<float>(rect.x+rect.w);
+				rd->vertex[1] = static_cast<float>(rect.y+rect.h);
+				rd->vertex[2] = vertexZ;
+				rd->texel[0] = st[2];
+				rd->texel[1] = st[3];
 
-		RenderObject ro(GL_QUADS, 4, id);
-		m_renderZ_objects.push_back(ro);
+				++rd;
+				rd->vertex[0] = static_cast<float>(rect.x+rect.w);
+				rd->vertex[1] = static_cast<float>(rect.y);
+				rd->vertex[2] = vertexZ;
+				rd->texel[0] = st[2];
+				rd->texel[1] = st[1];
+			} else {
+				// full opacity colored overlay
+				RenderZData2T rd;
+				rd.vertex[0] = static_cast<float>(rect.x);
+				rd.vertex[1] = static_cast<float>(rect.y);
+				rd.vertex[2] = vertexZ;
+				rd.texel[0] = st[0];
+				rd.texel[1] = st[1];
+				rd.texel2[0] = 0.0;
+				rd.texel2[1] = 0.0;
+				rd.color[0] = 255;
+				rd.color[1] = 255;
+				rd.color[2] = 255;
+				rd.color[3] = 255;
+				m_render_datas2T.push_back(rd);
+
+				rd.vertex[0] = static_cast<float>(rect.x);
+				rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+				rd.texel[1] = st[3];
+				rd.texel2[1] = 1.0;
+				m_render_datas2T.push_back(rd);
+
+				rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+				rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+				rd.texel[0] = st[2];
+				rd.texel2[0] = 1.0;
+				m_render_datas2T.push_back(rd);
+
+				rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+				rd.vertex[1] = static_cast<float>(rect.y);
+				rd.texel[1] = st[1];
+				rd.texel2[1] = 0.0;
+				m_render_datas2T.push_back(rd);
+
+				RenderObject ro(GL_QUADS, 4, id);
+				ro.multitextured = true;
+				ro.rgb[0] = rgb[0];
+				ro.rgb[1] = rgb[1];
+				ro.rgb[2] = rgb[2];
+				m_render_objects2T.push_back(ro);
+			}
+		} else {
+			RenderZData2T rd;
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.vertex[2] = vertexZ;
+			rd.texel[0] = st[0];
+			rd.texel[1] = st[1];
+			rd.color[0] = 255;
+			rd.color[1] = 255;
+			rd.color[2] = 255;
+			rd.color[3] = alpha;
+			m_render_trans_datas.push_back(rd);
+
+			rd.vertex[0] = static_cast<float>(rect.x);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[1] = st[3];
+			m_render_trans_datas.push_back(rd);
+
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y+rect.h);
+			rd.texel[0] = st[2];
+			m_render_trans_datas.push_back(rd);
+
+			rd.vertex[0] = static_cast<float>(rect.x+rect.w);
+			rd.vertex[1] = static_cast<float>(rect.y);
+			rd.texel[1] = st[1];
+			m_render_trans_datas.push_back(rd);
+
+			RenderObject ro(GL_QUADS, 4, id);
+			if (rgb != NULL) {
+				RenderObject ro(GL_QUADS, 4, id);
+				ro.multitextured = true;
+				ro.rgb[0] = rgb[0];
+				ro.rgb[1] = rgb[1];
+				ro.rgb[2] = rgb[2];
+			}
+			m_render_trans_objects.push_back(ro);
+
+		}
 	}
 
 	void RenderBackendOpenGLe::prepareForOverlays() {
@@ -1136,7 +1342,7 @@ namespace FIFE {
 		glViewport(0, 0, m_screen->w, m_screen->h);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, m_screen->w, m_screen->h, 0, -1, 1);
+		glOrtho(0, m_screen->w, m_screen->h, 0, znear, zfar);
 		glMatrixMode(GL_MODELVIEW);
 		glCullFace(GL_BACK); 
 	}

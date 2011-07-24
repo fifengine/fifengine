@@ -87,7 +87,6 @@ namespace FIFE {
 		CacheLayerChangeListener* m_layer_observer;
 
 		void updateEntry(Entry& item);
-		void getZScallingCoefficient(double& a, double& b);
 
 		std::map<Instance*,int32_t> m_instance_map;
 		std::vector<Entry> m_entries;

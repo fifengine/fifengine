@@ -65,7 +65,7 @@ namespace FIFE {
 		GLenum stencil_op;
 		GLenum stencil_func;
 		bool multitextured;
-		GLfloat rgb[3];
+		uint8_t rgb[3];
 	};
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
@@ -481,12 +481,21 @@ namespace FIFE {
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
-	void RenderBackendOpenGL::setEnvironmentalColor(const GLfloat* rgb) {
-		if(memcmp(m_state.env_color, rgb, sizeof(GLfloat) * 3))
-		{
-			// Use memcpy or just 3x '='
-			memcpy(m_state.env_color, rgb, sizeof(GLfloat) * 3);
-			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgb);
+	void RenderBackendOpenGL::setEnvironmentalColor(const uint8_t* rgb) {
+		if (memcmp(m_state.env_color, rgb, sizeof(uint8_t) * 3)) {
+
+			memcpy(m_state.env_color, rgb, sizeof(uint8_t) * 3);
+			GLfloat rgbf[4] = {
+				static_cast<float>(m_state.env_color[0]) / 255.0f,
+				static_cast<float>(m_state.env_color[1]) / 255.0f,
+				static_cast<float>(m_state.env_color[2]) / 255.0f, 0.0f};
+
+			if(m_state.active_tex != 1) {
+				m_state.active_tex = 1;
+				glActiveTexture(GL_TEXTURE1);
+			}
+
+			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbf);
 		}
 	}
 
@@ -623,7 +632,7 @@ namespace FIFE {
 			int32_t dst = 5;
 
 			bool multitextured = false;
-			GLfloat color[3] = {0.0f, 0.0f, 0.0f};
+			uint8_t color[3] = {0};
 
 			int32_t index2T = 0;
 			uint32_t elements2T = 0;
@@ -667,7 +676,7 @@ namespace FIFE {
 					}
 				}
 				if (ro.multitextured != multitextured ||
- 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(GLfloat)*3))) {
+ 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(uint8_t) * 3))) {
 					mt = true;
 					render = true;
 				}
@@ -697,7 +706,7 @@ namespace FIFE {
 							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
-							memcpy(color, ro.rgb, sizeof(GLfloat)*3);
+							memcpy(color, ro.rgb, sizeof(uint8_t) * 3);
 							multitextured = true;
 							currentElements = &elements2T;
 							currentIndex = &index2T;
@@ -1040,9 +1049,9 @@ namespace FIFE {
 
 			RenderObject ro(GL_QUADS, 4, id);
 			ro.multitextured = true;
-			ro.rgb[0] = static_cast<float>(rgb[0] / 255.0f);
-			ro.rgb[1] = static_cast<float>(rgb[1] / 255.0f);
-			ro.rgb[2] = static_cast<float>(rgb[2] / 255.0f);
+			ro.rgb[0] = rgb[0];
+			ro.rgb[1] = rgb[1];
+			ro.rgb[2] = rgb[2];
 			m_render_objects.push_back(ro);
 		}
 	}

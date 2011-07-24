@@ -100,7 +100,7 @@ namespace FIFE {
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
-		void setEnvironmentalColor(const GLfloat* rgb);
+		void setEnvironmentalColor(const uint8_t* rgb);
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
@@ -156,7 +156,7 @@ namespace FIFE {
 			bool light_enabled;
 
 			// The rest
-			GLfloat env_color[3];
+			uint8_t env_color[3];
 			GLenum blend_src;
 			GLenum blend_dst;
 			bool alpha_enabled;
