@@ -120,6 +120,7 @@ namespace FIFE {
 		bool m_area_layer;
 		std::list<std::string> m_unlit_groups;
 		bool m_need_sorting;
+		bool m_need_bind_coloring;
 
 		// contains per-instance information for outline drawing
 		class OutlineInfo {
@@ -140,6 +141,9 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
+			bool dirty;
+			Image* overlay;
+			Image* curimg;
 			ColoringInfo();
 			~ColoringInfo();
 		};
@@ -167,6 +171,7 @@ namespace FIFE {
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
+		Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
 
 		void renderUnsorted(Camera* cam, Layer* layer, RenderList& instances);
 		void renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances);

@@ -67,7 +67,10 @@ namespace FIFE {
 	InstanceRenderer::ColoringInfo::ColoringInfo():
 		r(0),
 		g(0),
-		b(0) {
+		b(0),
+		dirty(false),
+		overlay(NULL),
+		curimg(NULL) {
 	}
 
 	InstanceRenderer::AreaInfo::AreaInfo():
@@ -102,6 +105,11 @@ namespace FIFE {
 			m_need_sorting = false;
 		} else {
 			m_need_sorting = true;
+			if(m_renderbackend->getName() == "SDL") {
+				m_need_bind_coloring = true;
+			} else {
+				m_need_bind_coloring = false;
+			}
 		}
 	}
 
@@ -113,6 +121,11 @@ namespace FIFE {
 			m_need_sorting = false;
 		} else {
 			m_need_sorting = true;
+			if(m_renderbackend->getName() == "SDL") {
+				m_need_bind_coloring = true;
+			} else {
+				m_need_bind_coloring = false;
+			}
 		}
 	}
 
@@ -140,7 +153,11 @@ namespace FIFE {
 
 	void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
 	{
-		// TODO much stuff was cut off
+		// TODO lighting stuff was cut off
+		// TODO transparent area stuff was cut off
+		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+		//const bool unlit = !m_unlit_groups.empty();
+		//uint32_t lm = m_renderbackend->getLightingModel();
 
 		// Get layer index (this is needed for tweaking vertexZ for OpenGL renderbackend)
 		Map* parent = layer->getMap();
@@ -160,7 +177,7 @@ namespace FIFE {
 		double depth_range = fabs(global_z_min - global_z_max);
 
 		// This is how much depth we can sacrifice for given layer
-		// f.e: We have 200 depth range and 4 layers. That means we can assing
+		// f.e: We have 200 depth range and 4 layers. That means we can assign
 		// each layer 50 depth range:
 		// 1st layer gets -100..-50
 		// 2nd layer gets  -50..0
@@ -172,14 +189,61 @@ namespace FIFE {
 			layer_depth_range * static_cast<double>(this_layer) - 
 			layer_depth_range * 0.5;
 
+		// thanks to multimap, we will have transparent instances already sorted by their z value (key)
+		std::multimap<float, RenderItem*> transparentInstances;
+
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
-
 			float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
-			vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency);
+
+			if(vc.transparency == 255) {
+				if (any_effects) {
+					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
+					if (outline_it != m_instance_outlines.end()) {
+						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, 255);
+						continue;
+					}
+
+					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
+					if (coloring_it != m_instance_colorings.end()) {
+						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
+						vc.image->renderZ(vc.dimensions, vertexZ, 255, rgb);
+						continue;
+					}
+				}
+				vc.image->renderZ(vc.dimensions, vertexZ, 255);
+			} else {
+				transparentInstances.insert(std::pair<float, RenderItem*>(vertexZ, &vc));
+			}
+		}
+
+		// iterate through all (semi) transparent instances
+		if(!transparentInstances.empty()) {
+			std::multimap<float, RenderItem*>::iterator it = transparentInstances.begin();
+			for( ; it != transparentInstances.end(); ++it) {
+				RenderItem& vc = *(it->second);
+				uint8_t alpha = vc.transparency;// or? 255 - vc.transparency;
+				float vertexZ = it->first;
+
+				if (any_effects) {
+					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(vc.instance);
+					if (outline_it != m_instance_outlines.end()) {
+						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, alpha);
+						continue;
+					}
+
+					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(vc.instance);
+					if (coloring_it != m_instance_colorings.end()) {
+						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
+						vc.image->renderZ(vc.dimensions, vertexZ, alpha, rgb);
+						continue;
+					}
+				}
+				vc.image->renderZ(vc.dimensions, vertexZ, alpha);
+			}
 		}
 	}
 
@@ -202,11 +266,6 @@ namespace FIFE {
 				}
 			}
 		}
-		
-		typedef std::pair<RenderItem*, ColoringInfo*> DeferredColored;
-		typedef std::pair<RenderItem*, OutlineInfo*> DeferredOutline;
-		static std::vector<DeferredColored> coloredList;
-		static std::vector<DeferredOutline> outlineList;
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
@@ -261,13 +320,16 @@ namespace FIFE {
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-					uint8_t rgb[3] = {
-						coloring_it->second.r,
-						coloring_it->second.g,
-						coloring_it->second.b };
-					vc.image->render(vc.dimensions, vc.transparency, rgb);
-					m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
-					continue;
+					if(m_need_bind_coloring) {
+						bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
+						continue;
+					} else {
+						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
+						vc.image->render(vc.dimensions, vc.transparency, rgb);
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
+						continue;
+					}
 				}
 			}
 			if(lm != 0) {
@@ -379,6 +441,59 @@ namespace FIFE {
 		return info.outline;
 	}
 
+	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
+		if (!info.dirty && info.curimg == vc.image.get()) {
+			// optimization for outline that has not changed
+			return info.overlay;
+		} else {
+			info.curimg = vc.image.get();
+		}
+
+		if (info.overlay) {
+			delete info.overlay; // delete old mask
+			info.overlay = NULL;
+		}
+
+		SDL_Surface* surface = vc.image->getSurface();
+		SDL_Surface* overlay_surface;
+
+		if(vc.image->isSharedImage()) {
+			overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+				vc.image->getWidth(), vc.image->getHeight(), 32,
+				RMASK, GMASK, BMASK, AMASK);
+			SDL_SetAlpha(surface, 0, 0);
+
+			// can't directly cast Rect to SDL_Rect as int32_t isn't compatible with Sint16 or Uint16
+			const Rect& rect = vc.image->getSubImageRect();
+			SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+			SDL_BlitSurface(surface, &srcrect, overlay_surface, NULL);
+			SDL_SetAlpha(surface, SDL_SRCALPHA, 0);
+		} else {
+			overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		}
+
+		uint8_t r, g, b, a = 0;
+
+		for (int32_t x = 0; x < overlay_surface->w; x ++) {
+			for (int32_t y = 0; y < overlay_surface->h; y ++) {
+				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+				if (a > 0) {
+					Image::putPixel(overlay_surface, x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1, a);
+				}
+			}
+		}
+
+		// In case of OpenGL backend, SDLImage needs to be converted
+		info.overlay = m_renderbackend->createImage(overlay_surface);
+
+		if (info.overlay) {
+			// mark overlay coloring as not dirty since we created it here
+			info.dirty = false;
+		}
+
+		return info.overlay;
+	}
+
 	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width) {
 		OutlineInfo newinfo;
 		newinfo.r = r;
@@ -432,6 +547,7 @@ namespace FIFE {
 				info.r = r;
 				info.b = b;
 				info.g = g;
+				info.dirty = true;
 			}
 		}
 	}

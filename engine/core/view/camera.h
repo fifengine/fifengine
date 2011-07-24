@@ -394,7 +394,6 @@ namespace FIFE {
 		double m_reference_scale;
 		bool m_enabled;
 		Instance* m_attachedto;
-		bool m_draw_reversed;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped; // true, if the geometry had changed

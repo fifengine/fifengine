@@ -314,11 +314,8 @@ namespace FIFE {
 		}
 		m_renderers.clear();
 
-		m_renderbackend->deinit();
 		delete m_renderbackend;
-
 		delete m_vfs;
-
 		delete m_timemanager;
 
 		TTF_Quit();

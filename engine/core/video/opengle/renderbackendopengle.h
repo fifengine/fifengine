@@ -105,7 +105,7 @@ namespace FIFE {
 		void setAlphaTest(float ref_alpha);
 		void enableDepthTest();
 		void disableDepthTest();
-		void setEnvironmentalColor(const GLfloat* rgb);
+		void setEnvironmentalColor(const uint8_t* rgb);
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
@@ -121,38 +121,45 @@ namespace FIFE {
 		class RenderObject;
 
 		// only for textures
-		struct renderZData {
+		struct RenderZData {
 			GLfloat vertex[3];
 			GLfloat texel[2];
 		};
 
-		// TODO
-		//struct renderZTranslucentData {
-		//	GLfloat vertex[3];
-		//	GLfloat texel[2];
-		 // GLfloat texel2[2];
-		//	GLfloat color[4];
-		//};
+		struct RenderZObject {
+			GLuint texture_id;
+			uint32_t elements;
+			uint32_t index;
+			uint32_t max_size;
+		};
 
-		// TODO
-		//struct renderData2T {
-		//	GLfloat vertex[2];
-		//	GLfloat texel[2];
-		//	GLfloat texel2[2];
-		//	GLubyte color[4];
-		//};
+		std::vector<RenderZData> m_renderZ_datas;
+		std::vector<RenderZObject> m_renderZ_objects;
 
-		struct renderData {
+		RenderZObject* getRenderBufferObject(GLuint texture_id);
+
+		// structure for colored overlay
+		struct RenderZData2T {
+			GLfloat vertex[3];
+			GLfloat texel[2];
+			GLfloat texel2[2];
+			GLubyte color[4];
+		};
+
+		// rest (data for objects that don't utilise depth buffer)
+		struct RenderData {
 			GLfloat vertex[2];
 			GLfloat texel[2];
 			GLubyte color[4];
 		};
 
-		std::vector<renderZData> m_renderZ_datas;
-		std::vector<renderData> m_render_datas;
+		std::vector<RenderData> m_render_datas;
+		std::vector<RenderZData2T> m_render_trans_datas;
+		std::vector<RenderZData2T> m_render_datas2T;
 
-		std::vector<RenderObject> m_renderZ_objects;
 		std::vector<RenderObject> m_render_objects;
+		std::vector<RenderObject> m_render_trans_objects;
+		std::vector<RenderObject> m_render_objects2T;
 
 		struct currentState	{
 			// Textures
@@ -177,7 +184,7 @@ namespace FIFE {
 			bool light_enabled;
 
 			// The rest
-			GLfloat env_color[3];
+			uint8_t env_color[3];
 			GLenum blend_src;
 			GLenum blend_dst;
 			bool alpha_enabled;
