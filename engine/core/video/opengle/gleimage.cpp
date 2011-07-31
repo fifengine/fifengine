@@ -109,7 +109,9 @@ namespace FIFE {
 
 	void GLeImage::cleanup() {
 		if (m_texId) {
-			glDeleteTextures(1, &m_texId);
+			if (!m_shared) {
+				glDeleteTextures(1, &m_texId);
+			}
 			m_texId = 0;
 			m_compressed = false;
 		}
@@ -146,10 +148,17 @@ namespace FIFE {
 		}
 	}
 
-	void GLeImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, uint8_t const* rgb) {
+	void GLeImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, bool forceNewBatch, uint8_t const* rgb) {
 		if(renderCheck(rect, alpha)) {
 			static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->addImageToArrayZ(
-				m_texId, rect, vertexZ, m_tex_coords, alpha, rgb);
+				m_texId, rect, vertexZ, m_tex_coords, alpha, forceNewBatch, rgb);
+		}
+	}
+
+	void GLeImage::renderLightmap(const Rect& rect, const GLRenderState& state) {
+		if(renderCheck(rect, 255)) {
+			static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->drawLightmap(
+				m_texId, rect, m_tex_coords, state);
 		}
 	}
 
@@ -299,6 +308,16 @@ namespace FIFE {
 			return;
 		} else if (m_texId == 0) {
 			generateGLTexture();
+		}
+	}
+
+	void GLeImage::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img) {
+		Image::copySubimage(xoffset, yoffset, img);
+
+		if(m_texId) {
+			static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->bindTexture(m_texId);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, img->getWidth(), img->getHeight(),
+				GL_RGBA, GL_UNSIGNED_BYTE, img->getSurface()->pixels);
 		}
 	}
 

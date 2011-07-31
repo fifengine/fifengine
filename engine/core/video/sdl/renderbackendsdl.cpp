@@ -172,7 +172,7 @@ namespace FIFE {
 		return 0;
 	}
 
-	void RenderBackendSDL::setLighting(float red, float green, float blue, float alpha) {
+	void RenderBackendSDL::setLighting(float red, float green, float blue) {
 	}
 
 	void RenderBackendSDL::resetLighting() {
@@ -341,9 +341,6 @@ namespace FIFE {
 		drawLine(p2, p3, r, g, b, a);
 		drawLine(p3, p4, r, g, b, a);
 		drawLine(p4, p1, r, g, b, a);
-	}
-
-	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue){
 	}
 
 	void RenderBackendSDL::captureScreen(const std::string& filename) {

@@ -51,7 +51,7 @@ namespace FIFE {
 		virtual void clearBackBuffer();
 		virtual void setLightingModel(uint32_t lighting);
 		virtual uint32_t getLightingModel() const;
-		virtual void setLighting(float red, float green, float blue, float alpha);
+		virtual void setLighting(float red, float green, float blue);
 		virtual void resetLighting();
 		virtual void resetStencilBuffer(uint8_t buffer);
 		virtual void changeBlending(int32_t scr, int32_t dst);
@@ -78,7 +78,7 @@ namespace FIFE {
 		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 
 		virtual void attachRenderTarget(ImagePtr& img, bool discard);
 		virtual void detachRenderTarget();
@@ -149,10 +149,6 @@ namespace FIFE {
 
 			// Light
 			uint32_t lightmodel;
-			float lred;
-			float lgreen;
-			float lblue;
-			float lalpha;
 			bool light_enabled;
 
 			// The rest

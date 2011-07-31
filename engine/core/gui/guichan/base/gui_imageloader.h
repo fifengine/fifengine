@@ -35,15 +35,18 @@
 #include "gui_image.h"
 
 namespace FIFE {
+	class AtlasBook;
 
 	/* Image Loader.
 	 */
 	class GuiImageLoader : public gcn::ImageLoader {
 	public:
 		GuiImageLoader();
-      		gcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
+		virtual ~GuiImageLoader();
+      	virtual gcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
 	private:
-
+		AtlasBook* m_atlasbook;
+		std::vector<ImagePtr> m_atlases;
 	};
 
 }

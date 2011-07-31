@@ -81,7 +81,7 @@ namespace FIFE {
 		 * @param rgb The color value of overlay if any.
 		 */
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0) = 0;
-		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const* rgb = 0) {}
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const* rgb = 0) {}
 
 		/** Removes underlying SDL_Surface from the image (if exists) and returns this
 		 * @note this effectively causes SDL_Surface not to be freed on destruction
@@ -148,7 +148,7 @@ namespace FIFE {
 
 		/** Copies given image into this one with respect to given offsets
 		 */
-		void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
+		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
 	protected:
 		// The SDL Surface used.
