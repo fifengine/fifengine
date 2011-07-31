@@ -64,7 +64,7 @@ namespace FIFE {
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
 		
-		void setLightingColor(float red, float green, float blue, float alpha);
+		void setLightingColor(float red, float green, float blue);
 		void resetLightingColor();
 		std::vector<float> getLightingColor();
 

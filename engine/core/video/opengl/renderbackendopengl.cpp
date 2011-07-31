@@ -310,16 +310,16 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::setLightingModel(uint32_t lighting) {
 		if (m_state.lightmodel != lighting) {
-			if (m_state.lightmodel == 1) {
+			if (m_state.lightmodel != 0) {
 				disableLighting();
 				glDisable(GL_COLOR_MATERIAL);
-			} else if (lighting == 1) {
+			} else if (lighting != 0) {
 				enableLighting();
 				glEnable(GL_LIGHT0);
 				glColorMaterial(GL_FRONT, GL_DIFFUSE);
 				glEnable(GL_COLOR_MATERIAL);
 			}
-			m_state.lightmodel = lighting;
+			m_state.lightmodel = lighting;			
 		}
 	}
 
@@ -379,44 +379,29 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::enableLighting() {
-		if (m_state.lightmodel == 1 && !m_state.light_enabled) {
+		if (m_state.lightmodel != 0 && !m_state.light_enabled) {
 			glEnable(GL_LIGHTING);
 			m_state.light_enabled = true;
 		}
 	}
 
 	void RenderBackendOpenGL::disableLighting() {
-		if (m_state.lightmodel == 1 && m_state.light_enabled) {
+		if (m_state.lightmodel != 0 && m_state.light_enabled) {
 			glDisable(GL_LIGHTING);
 			m_state.light_enabled = false;
 		}
 	}
 
-	void RenderBackendOpenGL::setLighting(float red, float green, float blue, float alpha) {
-		if (m_state.lightmodel == 1) {
-			GLfloat lightDiffuse[] = {red, green, blue, alpha};
+	void RenderBackendOpenGL::setLighting(float red, float green, float blue) {
+		if (m_state.lightmodel != 0) {
+			GLfloat lightDiffuse[] = {red, green, blue, 1.0f};
 			glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-		} else if(m_state.lightmodel == 2) {
-			m_state.lred = red;
-			m_state.lgreen = green;
-			m_state.lblue = blue;
-			m_state.lalpha = alpha;
 		}
 	}
 
 	void RenderBackendOpenGL::resetLighting() {
-		if (m_state.lightmodel == 1) {
-			setLighting(1.0, 1.0, 1.0, 1.0);
-		} else if (m_state.lightmodel == 2 && m_state.lalpha > 0.01) {
-			uint16_t width = getScreenWidth();
-			uint16_t height = getScreenHeight();
-			Point p = Point(0,0);
-			fillRectangle(p, width, height,
-				static_cast<uint8_t>(m_state.lred*255.0f),
-				static_cast<uint8_t>(m_state.lgreen*255.0f),
-				static_cast<uint8_t>(m_state.lblue*255.0f),
-				static_cast<uint8_t>(m_state.lalpha*255.0f));
-			changeRenderInfos(1, 4, 5, false, true, 0, KEEP, EQUAL);
+		if (m_state.lightmodel != 0) {
+			setLighting(1.0, 1.0, 1.0);
 		}
 	}
 
@@ -640,9 +625,7 @@ namespace FIFE {
 			int32_t* currentIndex = &index;
 			uint32_t* currentElements = &elements;
 
-			int t=0;
-
-			for(std::vector<RenderObject>::iterator ir = m_render_objects.begin(); ir != m_render_objects.end(); ++ir, t++) {
+			for(std::vector<RenderObject>::iterator ir = m_render_objects.begin(); ir != m_render_objects.end(); ++ir) {
 				RenderObject& ro = (*ir);
 
 				//first we look for changes
@@ -659,7 +642,7 @@ namespace FIFE {
 						blending = true;
 						render = true;
 					}
-					if (ro.light != m_state.light_enabled && m_state.lightmodel == 1) {
+					if (ro.light != m_state.light_enabled) {
 						light = true;
 						render = true;
 					}
@@ -953,10 +936,6 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-		uint8_t alpha = intensity;
-		if (m_state.lightmodel != 2) {
-			alpha = 255;
-		}
 		const float step = Mathf::twoPi()/subdivisions;
 		renderData rd;;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
@@ -968,16 +947,16 @@ namespace FIFE {
 			rd.color[3] = intensity;
 			m_render_datas.push_back(rd);
 
-			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
-			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
+			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
+			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			rd.color[0] = 0;
 			rd.color[1] = 0;
 			rd.color[2] = 0;
-			rd.color[3] = alpha;
+			rd.color[3] = 255;
 			m_render_datas.push_back(rd);
 
-			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
-			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
+			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
+			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
 			m_render_datas.push_back(rd);
 			
 			RenderObject ro(GL_TRIANGLES, 3);
@@ -1014,7 +993,7 @@ namespace FIFE {
 			m_render_datas.push_back(rd);
 
 			RenderObject ro(GL_QUADS, 4, id);
-		m_render_objects.push_back(ro);
+			m_render_objects.push_back(ro);
 		} else {
 			renderData2T rd;
 			rd.vertex[0] = static_cast<float>(rect.x);
@@ -1080,7 +1059,7 @@ namespace FIFE {
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE); 
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE); 
 
 		// Arg0
 		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE0);

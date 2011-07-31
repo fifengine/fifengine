@@ -404,11 +404,15 @@ namespace FIFE {
 				double det_b = 10.0 * zmin - (-10.0) * zmax;
 				double a = static_cast<float>(det_a / det);
 				double b = static_cast<float>(det_b / det);
+				float estimate = sqrtf(static_cast<float>(renderlist.size()));
+				float stack_delta = fabs(-10.0f - 10.0f) / estimate * 0.1f;
 
 				RenderList::iterator it = renderlist.begin();
 				for ( ; it != renderlist.end(); ++it) {
 					double& z = (*it)->screenpoint.z;
 					z = a * z + b;
+					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
+					z += vis->getStackPosition() * stack_delta;					
 				}
 			}
 		}

@@ -35,6 +35,7 @@
 
 namespace FIFE {
 	class ScreenMode;
+	struct GLRenderState;
 
 	/** The main class of the OpenGL-based experimental renderer.
 	 * @see RenderBackend
@@ -50,7 +51,7 @@ namespace FIFE {
 		virtual void clearBackBuffer();
 		virtual void setLightingModel(uint32_t lighting);
 		virtual uint32_t getLightingModel() const;
-		virtual void setLighting(float red, float green, float blue, float alpha);
+		virtual void setLighting(float red, float green, float blue);
 		virtual void resetLighting();
 		virtual void resetStencilBuffer(uint8_t buffer);
 		virtual void changeBlending(int32_t scr, int32_t dst);
@@ -67,7 +68,7 @@ namespace FIFE {
 
 		virtual void renderVertexArrays();
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
-		virtual void addImageToArrayZ(uint32_t id, const Rect& rec, float vertexZ, float const* st, uint8_t alpha, uint8_t const* rgb);
+		virtual void addImageToArrayZ(uint32_t id, const Rect& rec, float vertexZ, float const* st, uint8_t alpha, bool forceNewBatch, uint8_t const* rgb);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
 
@@ -78,7 +79,9 @@ namespace FIFE {
 		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+
+		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue, const GLRenderState& state);
+		void drawLightmap(uint32_t id, const Rect& rec, float const* st, const GLRenderState& state);
 
 		virtual void attachRenderTarget(ImagePtr& img, bool discard);
 		virtual void detachRenderTarget();
@@ -99,7 +102,6 @@ namespace FIFE {
 		void enableStencilTest();
 		void disableStencilTest();
 		void setStencilTest(uint8_t stencil_ref, GLenum stencil_op, GLenum stencil_func);
-		uint8_t getStencilRef() const;
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
@@ -113,30 +115,17 @@ namespace FIFE {
 		void disableScissorTest();
 
 		void renderWithZ();
+		void renderLights();
 		void renderWithoutZ();
 
 		GLuint m_mask_overlays;
 		void prepareForOverlays();
 		
-		class RenderObject;
-
-		// only for textures
+		// only for textured quads
 		struct RenderZData {
 			GLfloat vertex[3];
 			GLfloat texel[2];
 		};
-
-		struct RenderZObject {
-			GLuint texture_id;
-			uint32_t elements;
-			uint32_t index;
-			uint32_t max_size;
-		};
-
-		std::vector<RenderZData> m_renderZ_datas;
-		std::vector<RenderZObject> m_renderZ_objects;
-
-		RenderZObject* getRenderBufferObject(GLuint texture_id);
 
 		// structure for colored overlay
 		struct RenderZData2T {
@@ -153,13 +142,40 @@ namespace FIFE {
 			GLubyte color[4];
 		};
 
-		std::vector<RenderData> m_render_datas;
-		std::vector<RenderZData2T> m_render_trans_datas;
-		std::vector<RenderZData2T> m_render_datas2T;
+		// describe chunk of batched (by texture) quads 
+		struct RenderZObject {
+			GLuint texture_id;
+			uint32_t elements;
+			uint32_t index;
+			uint32_t max_size;
+		};
+		class RenderObject;
+		class RenderObjectLight;
 
-		std::vector<RenderObject> m_render_objects;
+		RenderZObject* getRenderBufferObject(GLuint texture_id, bool unlit = false);
+
+		// main source of vertex data - described by m_renderZ_objects
+		std::vector<RenderZData> m_renderZ_datas;
+		std::vector<RenderZObject> m_renderZ_objects;
+
+		// vertex data source for transparent primitives - described by m_render_trans_objects
+		std::vector<RenderZData2T> m_render_trans_datas;
 		std::vector<RenderObject> m_render_trans_objects;
+
+		// vertex data source for colored overlays - described by m_render_objects2T
+		std::vector<RenderZData2T> m_render_datas2T;
 		std::vector<RenderObject> m_render_objects2T;
+
+		// note: vertex data comes from m_renderZ_datas
+		std::vector<RenderZObject> m_renderZ_objects_forced;
+
+		// vertex data source for primitives that dont use depth buffer - described by m_render_objects
+		std::vector<RenderData> m_render_datas;
+		std::vector<RenderObject> m_render_objects;
+		
+		// for lighting stuff
+		std::vector<RenderData> m_render_datas_lights;
+		std::vector<RenderObjectLight> m_render_objects_light;
 
 		struct currentState	{
 			// Textures
@@ -168,20 +184,16 @@ namespace FIFE {
 			uint32_t active_tex;
 			uint32_t active_client_tex;
 
+			// Light
+			uint32_t lightmodel;
+			bool light_enabled;
+
 			// Stencil
 			bool sten_enabled;
 			uint8_t sten_ref;
 			GLint sten_buf;
 			GLenum sten_op;
 			GLenum sten_func;
-
-			// Light
-			uint32_t lightmodel;
-			float lred;
-			float lgreen;
-			float lblue;
-			float lalpha;
-			bool light_enabled;
 
 			// The rest
 			uint8_t env_color[3];
@@ -197,6 +209,15 @@ namespace FIFE {
 		bool m_target_discard;
 	};
 
+	struct GLRenderState {
+		int32_t src;
+		int32_t dst;
+		//bool light; // always on
+		//bool stencil_test; // always on
+		uint8_t stencil_ref;
+		GLenum stencil_op;
+		GLenum stencil_func;
+	};
 }
 
 #endif

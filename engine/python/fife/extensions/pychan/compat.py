@@ -79,6 +79,9 @@ def _munge_engine_hook(engine):
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)
 		return guichan.GuiImage(img)
+		# use below line instead of above ones to let guichan
+		# use its image loader that supports  creating/using atlases
+		#return guichan.GuiImage().load(filename)
 
 	class hook:
 		pass

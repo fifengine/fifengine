@@ -386,10 +386,7 @@ class World(EventListenerBase):
 			self.light_intensity = self.light_intensity + value
 
 			if self.lightmodel == 1:
-				self.cameras['main'].setLightingColor(self.light_intensity, self.light_intensity, self.light_intensity, 1.0)
-
-			if self.lightmodel == 2:
-				self.cameras['main'].setLightingColor(0, 0, 0, 1-self.light_intensity)
+				self.cameras['main'].setLightingColor(self.light_intensity, self.light_intensity, self.light_intensity)
 
 	def lightSourceIntensity(self, value):
 		if self.light_sources+value <= 255 and self.light_sources+value >= 0:
@@ -409,21 +406,7 @@ class World(EventListenerBase):
 
 				for beekeeper in self.beekeepers:
 					node = fife.RendererNode(beekeeper.agent)
-					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)
-
-			if self.lightmodel == 2:
-				node = fife.RendererNode(self.hero.agent)
-				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
-				renderer.addStencilTest("hero_simple_light")
-
-				node = fife.RendererNode(self.girl.agent)		
-				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
-				renderer.addStencilTest("girl_simple_light")
-
-				for beekeeper in self.beekeepers:
-					node = fife.RendererNode(beekeeper.agent)
-					renderer.addSimpleLight("beekeeper_simple_light", node, 255, 120, 32, 1, 1, 0, 0, 0)
-					renderer.addStencilTest("beekeeper_simple_light")				
+					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)		
 
 	def onConsoleCommand(self, command):
 		result = ''

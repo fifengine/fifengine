@@ -286,7 +286,7 @@ namespace FIFE {
 
 		/** Sets lighting color
 		 */
-		void setLightingColor(float red, float green, float blue, float alpha);
+		void setLightingColor(float red, float green, float blue);
 
 		/** Resets lighting color
 		 */

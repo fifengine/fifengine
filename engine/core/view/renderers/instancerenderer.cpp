@@ -45,6 +45,8 @@
 #include "view/visual.h"
 #include "instancerenderer.h"
 
+#include "video/opengle/gleimage.h"
+
 
 namespace {
 	uint32_t scale(uint32_t val, double factor) {
@@ -88,6 +90,7 @@ namespace FIFE {
 	}
 
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
+		delete overlay;
 	}
 
 	InstanceRenderer::AreaInfo::~AreaInfo() {
@@ -153,11 +156,10 @@ namespace FIFE {
 
 	void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
 	{
-		// TODO lighting stuff was cut off
 		// TODO transparent area stuff was cut off
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
-		//const bool unlit = !m_unlit_groups.empty();
-		//uint32_t lm = m_renderbackend->getLightingModel();
+		const bool unlit = !m_unlit_groups.empty();
+		uint32_t lm = m_renderbackend->getLightingModel();
 
 		// Get layer index (this is needed for tweaking vertexZ for OpenGL renderbackend)
 		Map* parent = layer->getMap();
@@ -172,9 +174,10 @@ namespace FIFE {
 		}
 
 		// This values comes from glOrtho settings
-		double global_z_min = -200.0;
-		double global_z_max = 200.0;
-		double depth_range = fabs(global_z_min - global_z_max);
+		static const double global_z_min = -100.0;
+		static const double global_z_max = 100.0;
+#if 0
+		static const double depth_range = fabs(global_z_min - global_z_max);
 
 		// This is how much depth we can sacrifice for given layer
 		// f.e: We have 200 depth range and 4 layers. That means we can assign
@@ -188,7 +191,11 @@ namespace FIFE {
 		double layer_z_offset = global_z_min + 
 			layer_depth_range * static_cast<double>(this_layer) - 
 			layer_depth_range * 0.5;
+#else
 
+		// 2nd version, better usage of depth buffer as values closer to near plane in depth buffer have more precise (1/z)
+		double layer_z_offset = global_z_max - (num_layers - (this_layer - 1)) * 20;
+#endif
 		// thanks to multimap, we will have transparent instances already sorted by their z value (key)
 		std::multimap<float, RenderItem*> transparentInstances;
 
@@ -199,21 +206,41 @@ namespace FIFE {
 			RenderItem& vc = **instance_it;
 			float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
 
+			// if the instance is opacous
 			if(vc.transparency == 255) {
 				if (any_effects) {
 					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 					if (outline_it != m_instance_outlines.end()) {
-						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, 255);
+						Image* outline = bindOutline(outline_it->second, vc, cam);
+						outline->renderZ(vc.dimensions, vertexZ, 255, lm != 0 ? true : false);
+						vc.image->renderZ(vc.dimensions, vertexZ, 255);
 						continue;
 					}
 
 					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 					if (coloring_it != m_instance_colorings.end()) {
 						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
-						vc.image->renderZ(vc.dimensions, vertexZ, 255, rgb);
+						vc.image->renderZ(vc.dimensions, vertexZ, 255, false, rgb);
 						continue;
 					}
 				}
+
+				// if we use lighting and appointed some of the instances as unlit
+				if(lm != 0 && unlit) {
+					bool found = false;
+					std::string lit_name = instance->getObject()->getNamespace();
+					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+						if(lit_name.find(*unlit_it) != std::string::npos) {
+							found = true;
+							break;
+						}
+					}
+
+					vc.image->renderZ(vc.dimensions, vertexZ, 255, found ? true : false);
+					continue;
+				}
+
 				vc.image->renderZ(vc.dimensions, vertexZ, 255);
 			} else {
 				transparentInstances.insert(std::pair<float, RenderItem*>(vertexZ, &vc));
@@ -231,17 +258,36 @@ namespace FIFE {
 				if (any_effects) {
 					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(vc.instance);
 					if (outline_it != m_instance_outlines.end()) {
-						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, alpha);
+						Image* outline = bindOutline(outline_it->second, vc, cam);
+						outline->renderZ(vc.dimensions, vertexZ, alpha, lm != 0 ? true : false);
+						vc.image->renderZ(vc.dimensions, vertexZ, alpha);
 						continue;
 					}
 
 					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(vc.instance);
 					if (coloring_it != m_instance_colorings.end()) {
 						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
-						vc.image->renderZ(vc.dimensions, vertexZ, alpha, rgb);
+						vc.image->renderZ(vc.dimensions, vertexZ, alpha, false, rgb);
 						continue;
 					}
 				}
+
+				// if we use lighting and appointed some of the instances as unlit
+				if(lm != 0 && unlit) {
+					bool found = false;
+					std::string lit_name = vc.instance->getObject()->getNamespace();
+					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+						if(lit_name.find(*unlit_it) != std::string::npos) {
+							found = true;
+							break;
+						}
+					}
+
+					vc.image->renderZ(vc.dimensions, vertexZ, alpha, found ? true : false);
+					continue;
+				}
+
 				vc.image->renderZ(vc.dimensions, vertexZ, alpha);
 			}
 		}
@@ -308,13 +354,16 @@ namespace FIFE {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
 					if (lm != 0) {
+						// first render normal image without stencil and alpha test (0)
+						// so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+						vc.image->render(vc.dimensions, vc.transparency);
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
-						vc.image->render(vc.dimensions, vc.transparency);
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, REPLACE, ALWAYS);
 						continue;
 					} else {
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+						vc.image->render(vc.dimensions, vc.transparency);
+						continue;
 					}
 				}
 
@@ -370,23 +419,14 @@ namespace FIFE {
 			info.outline = NULL;
 		}
 
+		// NOTE: Since r3721 outline is just the 'border' so to render everything correctly
+		// we need to first render normal image, and then its outline.
+		// This helps much with lighting stuff and doesn't require from us to copy image.
+
 		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* outline_surface;
-		
-		if(vc.image->isSharedImage()) {
-			outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
-				vc.image->getWidth(), vc.image->getHeight(), 32,
-				RMASK, GMASK, BMASK, AMASK);
-			SDL_SetAlpha(surface, 0, 0);
- 
-			// can't directly cast Rect to SDL_Rect as int32_t isn't compatible with Sint16 or Uint16
-			const Rect& rect = vc.image->getSubImageRect();
-			SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
-			SDL_BlitSurface(surface, &srcrect, outline_surface, NULL);
-			SDL_SetAlpha(surface, SDL_SRCALPHA, 0);
-		} else {
-			outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
-		}
+		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+			vc.image->getWidth(), vc.image->getHeight(), 32,
+			RMASK, GMASK, BMASK, AMASK);
 
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
@@ -432,11 +472,8 @@ namespace FIFE {
 
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.outline = m_renderbackend->createImage(outline_surface);
-
-		if (info.outline) {
-			// mark outline as not dirty since we created it here
-			info.dirty = false;
-		}
+		// mark outline as not dirty since we created it here
+		info.dirty = false;
 
 		return info.outline;
 	}
@@ -455,22 +492,9 @@ namespace FIFE {
 		}
 
 		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* overlay_surface;
-
-		if(vc.image->isSharedImage()) {
-			overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
-				vc.image->getWidth(), vc.image->getHeight(), 32,
-				RMASK, GMASK, BMASK, AMASK);
-			SDL_SetAlpha(surface, 0, 0);
-
-			// can't directly cast Rect to SDL_Rect as int32_t isn't compatible with Sint16 or Uint16
-			const Rect& rect = vc.image->getSubImageRect();
-			SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
-			SDL_BlitSurface(surface, &srcrect, overlay_surface, NULL);
-			SDL_SetAlpha(surface, SDL_SRCALPHA, 0);
-		} else {
-			overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
-		}
+		SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+			vc.image->getWidth(), vc.image->getHeight(), 32,
+			RMASK, GMASK, BMASK, AMASK);
 
 		uint8_t r, g, b, a = 0;
 
@@ -485,11 +509,8 @@ namespace FIFE {
 
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.overlay = m_renderbackend->createImage(overlay_surface);
-
-		if (info.overlay) {
-			// mark overlay coloring as not dirty since we created it here
-			info.dirty = false;
-		}
+		// mark overlay coloring as not dirty since we created it here
+		info.dirty = false;
 
 		return info.overlay;
 	}
@@ -530,6 +551,7 @@ namespace FIFE {
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
+		newinfo.dirty = true;
 
 		// attempts to insert the element into the coloring map
 		// will return false in the second value of the pair if the instance already exists

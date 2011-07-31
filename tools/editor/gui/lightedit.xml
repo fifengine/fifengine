@@ -25,13 +25,6 @@
     </HBox>
 
     <HBox>
-      <Label text="Alpha Test: " min_size="25,20"/>
-      <TextBox text="0.0" name="alpha" size="30,20" min_size="30,20" max_size="30,20" />
-      <Button name="alpha_up" text="+" max_size="20,20"/>
-      <Button name="alpha_dn" text="-" max_size="20,20"/>
-    </HBox>
-
-    <HBox>
       <Label text="Src Blend Mode: " min_size="25,20"/>
       <TextBox text="-1" name="src" size="30,20" min_size="30,20" max_size="30,20"/>
       <Button name="src_up" text="+" max_size="20,20"/>
@@ -165,12 +158,6 @@
         <TextBox text="1.0" name="value_B" min_size="30,20"/>
 		<Button text="+" name="increase_B" />
 		<Button text="-" name="decrease_B" />
-	</HBox>
-	<HBox>
-		<Label text="A" />
-        <TextBox text="1.0" name="value_A" min_size="30,20"/>
-		<Button text="+" name="increase_A" />
-		<Button text="-" name="decrease_A" />
 	</HBox>
 	<VBox>
 		<Button text="Random" name="random_global_light" />

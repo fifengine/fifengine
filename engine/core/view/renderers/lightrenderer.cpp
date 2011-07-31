@@ -34,6 +34,9 @@
 #include "video/imagemanager.h"
 #include "video/image.h"
 #include "video/opengl/glimage.h"
+#include "video/opengle/gleimage.h"
+#include "video/opengl/renderbackendopengl.h"
+#include "video/opengle/renderbackendopengle.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
@@ -50,15 +53,30 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst):
-		LightRendererElementInfo(),
-		m_anchor(anchor),
-		m_image(image),
+	LightRendererElementInfo::LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst):
+		m_anchor(n),
 		m_src(src),
 		m_dst(dst),
 		m_stencil(false),
-		m_stencil_ref(0),
-		m_alpha_ref(0.0) {
+		m_stencil_ref(0) {
+	}
+	void LightRendererElementInfo::setStencil(uint8_t stencil_ref) {
+		m_stencil = true;
+		m_stencil_ref = stencil_ref;
+	}
+	int32_t LightRendererElementInfo::getStencil() {
+		if(!m_stencil) {
+			return -1;
+		}
+		return m_stencil_ref;
+	}
+	void LightRendererElementInfo::removeStencil() {
+		m_stencil = false;
+		m_stencil_ref = 0;
+	}
+	LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst):
+		LightRendererElementInfo(anchor, src, dst),
+		m_image(image){
 	}
 	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
@@ -73,49 +91,37 @@ namespace FIFE {
 			r.h = height;
 
 			if(r.intersects(viewport)) {
-				m_image->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
-				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
-				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
-				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
+				if (renderbackend->getName() == "OpenGL") {
+					m_image->render(r);
+					if (m_stencil) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					} else if (lm == 1) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					}
+				} else {
+					GLRenderState state;
+					state.src = m_src;
+					state.dst = m_dst;
+					if (m_stencil) {
+						state.stencil_func = GEQUAL;
+						state.stencil_op = INCR;
+						state.stencil_ref = m_stencil_ref;
+					} else if (lm == 1) {
+						state.stencil_func = NOTEQUAL;
+						state.stencil_op = KEEP;
+						state.stencil_ref = 255;
+					}
+					static_cast<GLeImage*>(m_image.get())->renderLightmap(r, state);
 				}
 			}
 		}
 	}
-	void LightRendererImageInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
-		m_stencil = true;
-		m_stencil_ref = stencil_ref;
-		m_alpha_ref = alpha_ref;
-	}
-	int32_t LightRendererImageInfo::getStencil() {
-		if(!m_stencil) {
-			return -1;
-		}
-		return m_stencil_ref;
-	}
-	float LightRendererImageInfo::getAlpha() {
-		return m_alpha_ref;
-	}
-	void LightRendererImageInfo::removeStencil() {
-		m_stencil = false;
-		m_stencil_ref = 0;
-		m_alpha_ref = 0.0;
-	}
-
 	LightRendererAnimationInfo::LightRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, int32_t src, int32_t dst):
-		LightRendererElementInfo(),
-		m_anchor(anchor),
+		LightRendererElementInfo(anchor, src, dst),
 		m_animation(animation),
-		m_src(src),
-		m_dst(dst),
 		m_start_time(TimeManager::instance()->getTime()),
-		m_time_scale(1.0),
-		m_stencil(false),
-		m_stencil_ref(0),
-		m_alpha_ref(0.0) {
+		m_time_scale(1.0){
 	}
 	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
@@ -132,54 +138,41 @@ namespace FIFE {
 			r.h = height;
 
 			if(r.intersects(viewport)) {
-				img->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
-				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
-				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
-				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
+				if (renderbackend->getName() == "OpenGL") {
+					img->render(r);
+					if (m_stencil) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					} else if (lm == 1) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					}
+				} else {
+					GLRenderState state;
+					state.src = m_src;
+					state.dst = m_dst;
+					if (m_stencil) {
+						state.stencil_func = GEQUAL;
+						state.stencil_op = INCR;
+						state.stencil_ref = m_stencil_ref;
+					} else if (lm == 1) {
+						state.stencil_func = NOTEQUAL;
+						state.stencil_op = KEEP;
+						state.stencil_ref = 255;
+					}
+					static_cast<GLeImage*>(img.get())->renderLightmap(r, state);
 				}
 			}
 		}
 	}
-	void LightRendererAnimationInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
-		m_stencil = true;
-		m_stencil_ref = stencil_ref;
-		m_alpha_ref = alpha_ref;
-	}
-	int32_t LightRendererAnimationInfo::getStencil() {
-		if(!m_stencil) {
-			return -1;
-		}
-		return m_stencil_ref;
-	}
-	float LightRendererAnimationInfo::getAlpha() {
-		return m_alpha_ref;
-	}
-	void LightRendererAnimationInfo::removeStencil() {
-		m_stencil = false;
-		m_stencil_ref = 0;
-		m_alpha_ref = 0.0;
-	}
-
 	LightRendererResizeInfo::LightRendererResizeInfo(RendererNode anchor, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst):
-		LightRendererElementInfo(),
-		m_anchor(anchor),
+		LightRendererElementInfo(anchor, src, dst),
 		m_image(image),
 		m_width(width),
-		m_height(height),
-		m_src(src),
-		m_dst(dst),
-		m_stencil(false),
-		m_stencil_ref(0),
-		m_alpha_ref(0.0) {
+		m_height(height) {
 	}
 	void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-//prock - 504
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
@@ -190,41 +183,34 @@ namespace FIFE {
 			r.h = height;
 
 			if(r.intersects(viewport)) {
-				m_image->render(r);
 				uint8_t lm = renderbackend->getLightingModel();
-				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
-				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
-				} else if (lm == 2) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
+				if (renderbackend->getName() == "OpenGL") {
+					m_image->render(r);
+					if (m_stencil) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					} else if (lm == 1) {
+						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					}
+				} else {
+					GLRenderState state;
+					state.src = m_src;
+					state.dst = m_dst;
+					if (m_stencil) {
+						state.stencil_func = GEQUAL;
+						state.stencil_op = INCR;
+						state.stencil_ref = m_stencil_ref;
+					} else if (lm == 1) {
+						state.stencil_func = NOTEQUAL;
+						state.stencil_op = KEEP;
+						state.stencil_ref = 255;
+					}
+					static_cast<GLeImage*>(m_image.get())->renderLightmap(r, state);
 				}
 			}
 		}
 	}
-	void LightRendererResizeInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
-		m_stencil = true;
-		m_stencil_ref = stencil_ref;
-		m_alpha_ref = alpha_ref;
-	}
-	int32_t LightRendererResizeInfo::getStencil() {
-		if(!m_stencil) {
-			return -1;
-		}
-		return m_stencil_ref;
-	}
-	float LightRendererResizeInfo::getAlpha() {
-		return m_alpha_ref;
-	}
-	void LightRendererResizeInfo::removeStencil() {
-		m_stencil = false;
-		m_stencil_ref = 0;
-		m_alpha_ref = 0.0;
-	}
-
 	LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(RendererNode anchor, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst):
-		LightRendererElementInfo(),
-		m_anchor(anchor),
+		LightRendererElementInfo(anchor, src, dst),
 		m_intensity(intensity),
 		m_radius(radius),
 		m_subdivisions(subdivisions),
@@ -232,49 +218,43 @@ namespace FIFE {
 		m_ystretch(ystretch),
 		m_red(r),
 		m_green(g),
-		m_blue(b),
-		m_src(src),
-		m_dst(dst),
-		m_stencil(false),
-		m_stencil_ref(0),
-		m_alpha_ref(0.0) {
+		m_blue(b){
 	}
 	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
-			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
-				static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
-				m_red, m_green, m_blue);
 
 			uint8_t lm = renderbackend->getLightingModel();
-			if (m_stencil) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, m_stencil_ref, INCR, GEQUAL);
-			} else if (lm == 1) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 255, KEEP, NOTEQUAL);
-			} else if (lm == 2) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, m_stencil, 0, REPLACE, GEQUAL);
+			if (renderbackend->getName() == "OpenGL") {
+				static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
+					static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
+					m_red, m_green, m_blue);
+
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+				}
+			} else {
+				GLRenderState state;
+				state.src = m_src;
+				state.dst = m_dst;
+				if (m_stencil) {
+					state.stencil_func = GEQUAL;
+					state.stencil_op = INCR;
+					state.stencil_ref = m_stencil_ref;
+				} else if (lm == 1) {
+					state.stencil_func = NOTEQUAL;
+					state.stencil_op = KEEP;
+					state.stencil_ref = 255;
+				}
+
+				static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
+					static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
+					m_red, m_green, m_blue, state);
 			}
 		}
-	}
-	void LightRendererSimpleLightInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {
-		m_stencil = true;
-		m_stencil_ref = stencil_ref;
-		m_alpha_ref = alpha_ref;
-	}
-	int32_t LightRendererSimpleLightInfo::getStencil() {
-		if(!m_stencil) {
-			return -1;
-		}
-		return m_stencil_ref;
-	}
-	float LightRendererSimpleLightInfo::getAlpha() {
-		return m_alpha_ref;
-	}
-	void LightRendererSimpleLightInfo::removeStencil() {
-		m_stencil = false;
-		m_stencil_ref = 0;
-		m_alpha_ref = 0.0;
 	}
 	std::vector<uint8_t> LightRendererSimpleLightInfo::getColor() {
 		std::vector<uint8_t> colors;
@@ -284,27 +264,22 @@ namespace FIFE {
 		colors.push_back(m_intensity);
 		return colors;
 	}
-
 	LightRenderer* LightRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<LightRenderer*>(cnt->getRenderer("LightRenderer"));
 	}
-
 	LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_groups() {
 		setEnabled(false);
 	}
-
 	LightRenderer::LightRenderer(const LightRenderer& old):
 		RendererBase(old),
 		m_groups() {
 		setEnabled(false);
 	}
-
 	RendererBase* LightRenderer::clone() {
 		return new LightRenderer(*this);
 	}
-
 	LightRenderer::~LightRenderer() {
 	}
 	// Add a static lightmap
@@ -328,10 +303,10 @@ namespace FIFE {
 		m_groups[group].push_back(info);
 	}
 	// Enable stencil test for the group
-	void LightRenderer::addStencilTest(const std::string &group, uint8_t stencil_ref, float alpha_ref) {
+	void LightRenderer::addStencilTest(const std::string &group, uint8_t stencil_ref) {
 		std::vector<LightRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
 		for (;info_it != m_groups[group].end(); ++info_it) {
-			(*info_it)->setStencil(stencil_ref, alpha_ref);
+			(*info_it)->setStencil(stencil_ref);
 		}
 	}
 	// Disable stencil test for the group
@@ -393,7 +368,7 @@ namespace FIFE {
 				if (lm != 0) {
 					if ((*info_it)->getStencil() != -1 && (*info_it)->getStencil() < 255) {
 						if(info_it != group_it->second.begin()) {
-							(*info_it)->setStencil((*info_it)->getStencil()+1, (*info_it)->getAlpha());
+							(*info_it)->setStencil((*info_it)->getStencil()+1);
 						}
 					}
 				}

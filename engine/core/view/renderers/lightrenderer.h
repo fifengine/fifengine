@@ -41,92 +41,77 @@ namespace FIFE {
 
 	class LightRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {};
-		virtual std::string getName() { return 0; };
-		virtual RendererNode* getNode() { return NULL; };
-		virtual int32_t getId() { return -1; };
-		virtual int32_t getSrcBlend() { return -1; };
-		virtual int32_t getDstBlend() { return -1; };
-		virtual void setStencil(uint8_t stencil_ref, float alpha_ref) {};
-		virtual int32_t getStencil() { return 0; };
-		virtual float getAlpha() { return 0; };
-		virtual void removeStencil() {};
+		LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst);
+		virtual ~LightRendererElementInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
+		virtual std::string getName() = 0;
+
+		RendererNode* getNode() { return &m_anchor; };
+		int32_t getSrcBlend() { return m_src; };
+		int32_t getDstBlend() { return m_dst; };
+
+		void setStencil(uint8_t stencil_ref);
+		int32_t getStencil();
+		void removeStencil();
+
 		virtual std::vector<uint8_t> getColor() { return std::vector<uint8_t>(); };
 		virtual float getRadius() { return 0; };
 		virtual int32_t getSubdivisions() { return 0; };
 		virtual float getXStretch() { return 0; };
 		virtual float getYStretch() { return 0; };
-		virtual ~LightRendererElementInfo() {};
+	
+	protected:
+		RendererNode m_anchor;
+		int32_t m_src;
+		int32_t m_dst;
+		bool m_stencil;
+		uint8_t m_stencil_ref;
 	};
 
 	class LightRendererImageInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		std::string getName() { return "image"; };
-		RendererNode* getNode() { return &m_anchor; };
-		ImagePtr getImage() { return m_image; };
-		int32_t getSrcBlend() { return m_src; };
-		int32_t getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int32_t getStencil();
-		float getAlpha();
-		void removeStencil();
 		LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "image"; };
+		ImagePtr getImage() { return m_image; };
+
 	private:
-		RendererNode m_anchor;
 		ImagePtr m_image;
-		int32_t m_src;
-		int32_t m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		std::string getName() { return "animation"; };
-		RendererNode* getNode() { return &m_anchor; };
-		AnimationPtr getAnimation() { return m_animation; };
-		int32_t getSrcBlend() { return m_src; };
-		int32_t getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int32_t getStencil();
-		float getAlpha();
-		void removeStencil();
 		LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "animation"; };
+		AnimationPtr getAnimation() { return m_animation; };
+
 	private:
-		RendererNode m_anchor;
 		AnimationPtr m_animation;
-		int32_t m_src;
-		int32_t m_dst;
 		uint32_t m_start_time;
 		float m_time_scale;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		std::string getName() { return "simple"; };
-		RendererNode* getNode() { return &m_anchor; };
-		int32_t getSrcBlend() { return m_src; };
-		int32_t getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int32_t getStencil();
-		float getAlpha();
-		void removeStencil();
+		LightRendererSimpleLightInfo(RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
+		virtual ~LightRendererSimpleLightInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "simple"; };
+
 		std::vector<uint8_t> getColor();
 		float getRadius() { return m_radius; };
 		int32_t getSubdivisions() { return m_subdivisions; };
 		float getXStretch() { return m_xstretch; };
 		float getYStretch() { return m_ystretch; };
-		LightRendererSimpleLightInfo(RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
-		virtual ~LightRendererSimpleLightInfo() {};
+
 	private:
-		RendererNode m_anchor;
 		uint8_t m_intensity;
 		float m_radius;
 		int32_t m_subdivisions;
@@ -135,37 +120,24 @@ namespace FIFE {
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
-		int32_t m_src;
-		int32_t m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRendererResizeInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-		std::string getName() { return "resize"; };
-		RendererNode* getNode() { return &m_anchor; };
-		ImagePtr getImage() { return m_image; };
-		int32_t getSrcBlend() { return m_src; };
-		int32_t getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int32_t getStencil();
-		float getAlpha();
-		void removeStencil();
 		LightRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "resize"; };
+
+		ImagePtr getImage() { return m_image; };
+
 	private:
-		RendererNode m_anchor;
 		ImagePtr m_image;
 		int32_t m_width;
 		int32_t m_height;
-		int32_t m_src;
-		int32_t m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRenderer: public RendererBase {
 	public:
 		/** constructor.
@@ -192,7 +164,7 @@ namespace FIFE {
 		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
 		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
 		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
-		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
+		void addStencilTest(const std::string &group, uint8_t stencil_ref=0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();
 		std::vector<LightRendererElementInfo*> getLightInfo(const std::string &group);

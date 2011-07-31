@@ -575,18 +575,17 @@ namespace FIFE {
 		m_layer_to_instances.erase(layer);
 	}
 
-	void Camera::setLightingColor(float red, float green, float blue, float alpha) {
+	void Camera::setLightingColor(float red, float green, float blue) {
 		m_lighting = true;
 		m_light_colors.clear();
 		m_light_colors.push_back(red);
 		m_light_colors.push_back(green);
 		m_light_colors.push_back(blue);
-		m_light_colors.push_back(alpha);
 	}
 
 	std::vector<float> Camera::getLightingColor() {
 		if(m_light_colors.empty()) {
-			for(int32_t colors = 0; colors != 4; ++colors) {
+			for(int32_t colors = 0; colors != 3; ++colors) {
 				m_light_colors.push_back(1.0f);
 			}
 		}
@@ -750,10 +749,11 @@ namespace FIFE {
 			return;
 		}
 
-		if (m_renderbackend->getLightingModel() != 0) {
+		uint32_t lm = m_renderbackend->getLightingModel();
+		if (lm != 0) {
 			m_renderbackend->resetStencilBuffer(0);
 			if (m_lighting) {
-				m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2], m_light_colors[3]);
+				m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2]);
 			}
 		}
 
@@ -769,14 +769,14 @@ namespace FIFE {
 					(*r_it)->render(this, *layer_it, instances_to_render);
 				}
 			}
+			if (m_lighting && lm != 0) {
+				m_renderbackend->renderVertexArrays();
+			}
 		}
 
-		if (m_lighting && m_renderbackend->getLightingModel() == 2) {
-			m_renderbackend->resetLighting();
-		}
 		renderOverlay();
 		m_renderbackend->renderVertexArrays();
-		if (m_lighting && m_renderbackend->getLightingModel() == 1) {
+		if (m_lighting && lm != 0) {
 			m_renderbackend->resetLighting();
 		}
 		m_renderbackend->popClipArea();

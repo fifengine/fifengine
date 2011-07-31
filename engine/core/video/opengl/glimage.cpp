@@ -110,7 +110,9 @@ namespace FIFE {
 
 	void GLImage::cleanup() {
 		if (m_texId) {
-			glDeleteTextures(1, &m_texId);
+			if(!m_shared) {
+				glDeleteTextures(1, &m_texId);
+			}
 			m_texId = 0;
 			m_compressed = false;
 		}
@@ -287,6 +289,16 @@ namespace FIFE {
 			return;
 		} else if (m_texId == 0) {
 			generateGLTexture();
+		}
+	}
+
+	void GLImage::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img) {
+		Image::copySubimage(xoffset, yoffset, img);
+
+		if(m_texId) {
+			static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, img->getWidth(), img->getHeight(),
+				GL_RGBA, GL_UNSIGNED_BYTE, img->getSurface()->pixels);
 		}
 	}
 

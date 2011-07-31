@@ -65,6 +65,7 @@ namespace FIFE {
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
+		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
 		GLuint getTexId() const;
 		const GLfloat* getTexCoords() const;
