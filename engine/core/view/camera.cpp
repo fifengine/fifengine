@@ -743,6 +743,7 @@ namespace FIFE {
 	}
 
 	void Camera::render() {
+		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
 		updateRenderLists();
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -769,7 +770,7 @@ namespace FIFE {
 					(*r_it)->render(this, *layer_it, instances_to_render);
 				}
 			}
-			if (m_lighting && lm != 0) {
+			if (renderbackendOpenGLe) {
 				m_renderbackend->renderVertexArrays();
 			}
 		}

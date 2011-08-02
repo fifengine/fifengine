@@ -343,6 +343,9 @@ namespace FIFE {
 		drawLine(p4, p1, r, g, b, a);
 	}
 
+	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	}
+
 	void RenderBackendSDL::captureScreen(const std::string& filename) {
 		if(m_screen) {
 			const uint32_t swidth = getWidth();

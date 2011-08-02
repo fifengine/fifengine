@@ -68,8 +68,6 @@ namespace FIFE {
 		virtual void forceLoadInternal();
 		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
-		void renderLightmap(const Rect& rect, const GLRenderState& state);
-
 		GLuint getTexId() const;
 		const GLfloat* getTexCoords() const;
 		bool isCompressed() const { return m_compressed; }
