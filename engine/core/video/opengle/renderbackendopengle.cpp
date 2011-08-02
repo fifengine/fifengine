@@ -46,27 +46,28 @@ namespace FIFE {
 		RenderObject(GLenum m, uint16_t s, uint32_t t=0):
 			mode(m),
 			size(s),
-			texture_id(t) {
-		}
+			texture_id(t),
+			src(4),
+			dst(5),
+			light(true),
+			stencil_test(false),
+			stencil_ref(0),
+			stencil_op(0),
+			stencil_func(0)
+			{}
 
-		GLenum mode;
-		uint16_t size;
-		uint32_t texture_id;
-		uint8_t rgb[3];
-	};
-
-	class RenderBackendOpenGLe::RenderObjectLight {
 	public:
-		RenderObjectLight(GLenum m, uint16_t s, uint32_t t=0):
-			mode(m),
-			size(s),
-			texture_id(t) {
-		 }
-
 		GLenum mode;
 		uint16_t size;
 		uint32_t texture_id;
-		GLRenderState state;
+		int32_t src;
+		int32_t dst;
+		bool light;
+		bool stencil_test;
+		uint8_t stencil_ref;
+		GLenum stencil_op;
+		GLenum stencil_func;
+		uint8_t rgb[3];
 	};
 
 	const float RenderBackendOpenGLe::zfar =   100.0f;
@@ -552,7 +553,23 @@ namespace FIFE {
 
 	void RenderBackendOpenGLe::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
 		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
-		// In this renderer we use slightly different method
+		
+		uint16_t count = 0;
+		uint32_t size = m_render_objects.size();
+		while (count != elements) {
+			++count;
+			RenderObject& r = m_render_objects.at(size-count);
+
+			r.src = src;
+			r.dst = dst;
+			r.light = light;
+			if (stentest) {
+				r.stencil_test = stentest;
+				r.stencil_ref = stenref;
+				r.stencil_op = stenop;
+				r.stencil_func = stenfunc;
+			}
+		}
 	}
 
 	void RenderBackendOpenGLe::renderVertexArrays() {
@@ -565,14 +582,9 @@ namespace FIFE {
 			renderWithZ();
 		}
 
-		// * light primitives (textured quad and light primitives - both from lightrenderer)
-		if(!m_render_objects_light.empty()) {
-			renderLights();
-		}
-
 		// * everything else that doesn't use Z value or features like
 		//   stencil test/alpha test/colored overlays/semi transparency:
-		//    - different renderers (aside from instance and light ones)
+		//    - different renderers (aside from instance one)
 		//    - gui
 		if(!m_render_objects.empty()) {
 			renderWithoutZ();
@@ -722,121 +734,13 @@ namespace FIFE {
 		disableLighting();
 	}
 
-	void RenderBackendOpenGLe::renderLights() {
-		if (!m_render_objects_light.empty()) {
-			enableAlphaTest();
-
-			static const uint32_t stride = sizeof(RenderData);
-
-			glVertexPointer(2, GL_FLOAT, stride, &m_render_datas_lights[0].vertex);
-			glTexCoordPointer(2, GL_FLOAT, stride, &m_render_datas_lights[0].texel);
-			glColorPointer(4, GL_UNSIGNED_BYTE, stride, &m_render_datas_lights[0].color);
-
-			//bools to indicate changes
-			bool type = false;
-			bool texture = false;
-			bool blending = false;
-			bool stencil = false;
-			bool render = false;
-
-			// array index
-			int32_t index = 0;
-			// elements to render
-			uint32_t elements = 0;
-			// render mode
-			GLenum mode = GL_QUADS;
-			// texture id
-			uint32_t texture_id = 0;
-			// src blending mode
-			int32_t src = 4;
-			// dst blending mode
-			int32_t dst = 5;
-
-			for(std::vector<RenderObjectLight>::iterator ir = m_render_objects_light.begin(); ir != m_render_objects_light.end(); ++ir) {
-				RenderObjectLight& ro = (*ir);
-
-				//first we look for changes
-				if (ro.mode != mode) {
-					type = true;
-					render = true;
-				}
-				if (ro.texture_id != texture_id) {
-					texture = true;
-					render = true;
-				}
-				if (ro.state.src != src || ro.state.dst != dst) {
-					blending = true;
-					render = true;
-				}
-				if (ro.state.stencil_ref != m_state.sten_ref || 
-					ro.state.stencil_op != m_state.sten_op || 
-					ro.state.stencil_func != m_state.sten_func) {
-						stencil = true;
-						render = true;
-				}
-				// if changes then we render all previously elements
-				if (render) {
-					if (elements > 0) {
-						//render
-						glDrawArrays(mode, index, elements);
-						index += elements;
-					}
-					// switch mode
-					if (type) {
-						mode = ro.mode;
-						type = false;
-					}
-
-					// switch texturing
-					if (texture) {
-						if (ro.texture_id != 0) {
-							bindTexture(0, ro.texture_id);
-							texture_id = ro.texture_id;
-						} else {
-							disableTextures(0);
-							texture_id = 0;
-						}
-						texture = false;
-					}
-
-					// set element to current size
-					elements = ro.size;
-
-					// change blending
-					if (blending) {
-						src = ro.state.src;
-						dst = ro.state.dst;
-						changeBlending(src, dst);
-						blending = false;
-					}
-					// change stencil
-					if (stencil) {
-						setStencilTest(ro.state.stencil_ref, ro.state.stencil_op, ro.state.stencil_func);
-						stencil = false;
-					}
-					render = false;
-				} else {
-					// else add the element
-					elements += ro.size;
-				}
-			}
-			// render
-			glDrawArrays(mode, index, elements);
-
-			changeBlending(4, 5);
-			disableStencilTest();
-			disableTextures(0);
-
-			m_render_datas_lights.clear();
-			m_render_objects_light.clear();
-		}
-	}
-
 	void RenderBackendOpenGLe::renderWithoutZ() {
 		//bools to indicate changes
 		bool type = false;
 		bool texture = false;
 		bool render = false;
+		bool blending = false;
+		bool stencil = false;
 
 		static const uint32_t stride = sizeof(RenderData);
 
@@ -857,10 +761,12 @@ namespace FIFE {
 		GLenum mode = GL_QUADS;
 		// texture id
 		uint32_t texture_id = 0;
+		// src blending mode
+		int32_t src = 4;
+		// dst blending mode
+		int32_t dst = 5;
 
-		for(std::vector<RenderObject>::iterator iter = m_render_objects.begin();
-			iter != m_render_objects.end(); ++iter) {
-
+		for(std::vector<RenderObject>::iterator iter = m_render_objects.begin(); iter != m_render_objects.end(); ++iter) {
 			//first we look for changes
 			if (iter->mode != mode) {
 				type = true;
@@ -870,18 +776,34 @@ namespace FIFE {
 				texture = true;
 				render = true;
 			}
+			if (m_state.lightmodel != 0) {
+				if (iter->src != src || iter->dst != dst) {
+					blending = true;
+					render = true;
+				}
+				// Note that we don't need to check iter->light_enabled since only Instances can be lightened
+				if (iter->stencil_test != m_state.sten_enabled) {
+					stencil = true;
+					render = true;
+				}
+				if (iter->stencil_ref != m_state.sten_ref || 
+					iter->stencil_op != m_state.sten_op || 
+					iter->stencil_func != m_state.sten_func) {
+					stencil = true;
+					render = true;
+				}
+			}
 
 			// if no changes then we iterate to next element
 			if (!render) {
 				elements += iter->size;
-				// else we render everything so far
+			// else we render everything so far
 			} else {
 				if (elements > 0) {
 					//render
 					glDrawArrays(mode, index, elements);
 					index += elements;
 				}
-
 				// set element to current size
 				elements = iter->size;
 
@@ -890,7 +812,6 @@ namespace FIFE {
 					mode = iter->mode;
 					type = false;
 				}
-
 				// switch texturing
 				if (texture) {
 					if (iter->texture_id != 0) {
@@ -903,12 +824,37 @@ namespace FIFE {
 					}
 					texture = false;
 				}
+				// if lighting is enabled we have to consider a few more values
+				if (m_state.lightmodel != 0) {
+					// change blending
+					if (blending) {
+						src = iter->src;
+						dst = iter->dst;
+						changeBlending(src, dst);
+						blending = false;
+					}
+					// change stencil
+					if (stencil) {
+						if (iter->stencil_test) {
+							setStencilTest(iter->stencil_ref, iter->stencil_op, iter->stencil_func);
+							enableAlphaTest();
+						} else {
+							disableStencilTest();
+							disableAlphaTest();
+						}
+						stencil = false;
+					}
+				}
 
 				render = false;
 			}
 		}
 		// render
 		glDrawArrays(mode, index, elements);
+
+		changeBlending(4, 5);
+		disableStencilTest();
+		disableTextures(0);
 
 		//reset all states
 		glDisableClientState(GL_COLOR_ARRAY);
@@ -1072,7 +1018,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions,
-		float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue, const GLRenderState& state) {
+		float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		const float step = Mathf::twoPi()/subdivisions;
 		RenderData rd;;
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
@@ -1082,7 +1028,7 @@ namespace FIFE {
 			rd.color[1] = green;
 			rd.color[2] = blue;
 			rd.color[3] = intensity;
-			m_render_datas_lights.push_back(rd);
+			m_render_datas.push_back(rd);
 
 			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
@@ -1090,48 +1036,15 @@ namespace FIFE {
 			rd.color[1] = 0;
 			rd.color[2] = 0;
 			rd.color[3] = 255;
-			m_render_datas_lights.push_back(rd);
+			m_render_datas.push_back(rd);
 
 			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
-			m_render_datas_lights.push_back(rd);
+			m_render_datas.push_back(rd);
 
-			RenderObjectLight ro(GL_TRIANGLES, 3);
-			ro.state = state;
-			m_render_objects_light.push_back(ro);
+			RenderObject ro(GL_TRIANGLES, 3);
+			m_render_objects.push_back(ro);
 		}
-	}
-
-	void RenderBackendOpenGLe::drawLightmap(uint32_t id, const Rect& rect, float const* st, const GLRenderState& state) {
-		RenderData rd;
-		rd.vertex[0] = static_cast<float>(rect.x);
-		rd.vertex[1] = static_cast<float>(rect.y);
-		rd.texel[0] = st[0];
-		rd.texel[1] = st[1];
-		rd.color[0] = 255;
-		rd.color[1] = 255;
-		rd.color[2] = 255;
-		rd.color[3] = 255;
-		m_render_datas_lights.push_back(rd);
-
-		rd.vertex[0] = static_cast<float>(rect.x);
-		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-		rd.texel[1] = st[3];
-		m_render_datas_lights.push_back(rd);
-
-		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-		rd.vertex[1] = static_cast<float>(rect.y+rect.h);
-		rd.texel[0] = st[2];
-		m_render_datas_lights.push_back(rd);
-
-		rd.vertex[0] = static_cast<float>(rect.x+rect.w);
-		rd.vertex[1] = static_cast<float>(rect.y);
-		rd.texel[1] = st[1];
-		m_render_datas_lights.push_back(rd);
-
-		RenderObjectLight ro(GL_QUADS, 4, id);
-		ro.state = state;
-		m_render_objects_light.push_back(ro);
 	}
 
 	void RenderBackendOpenGLe::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {

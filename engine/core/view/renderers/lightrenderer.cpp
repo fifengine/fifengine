@@ -92,27 +92,11 @@ namespace FIFE {
 
 			if(r.intersects(viewport)) {
 				uint8_t lm = renderbackend->getLightingModel();
-				if (renderbackend->getName() == "OpenGL") {
-					m_image->render(r);
-					if (m_stencil) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
-					} else if (lm == 1) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
-					}
-				} else {
-					GLRenderState state;
-					state.src = m_src;
-					state.dst = m_dst;
-					if (m_stencil) {
-						state.stencil_func = GEQUAL;
-						state.stencil_op = INCR;
-						state.stencil_ref = m_stencil_ref;
-					} else if (lm == 1) {
-						state.stencil_func = NOTEQUAL;
-						state.stencil_op = KEEP;
-						state.stencil_ref = 255;
-					}
-					static_cast<GLeImage*>(m_image.get())->renderLightmap(r, state);
+				m_image->render(r);
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -139,27 +123,11 @@ namespace FIFE {
 
 			if(r.intersects(viewport)) {
 				uint8_t lm = renderbackend->getLightingModel();
-				if (renderbackend->getName() == "OpenGL") {
-					img->render(r);
-					if (m_stencil) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
-					} else if (lm == 1) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
-					}
-				} else {
-					GLRenderState state;
-					state.src = m_src;
-					state.dst = m_dst;
-					if (m_stencil) {
-						state.stencil_func = GEQUAL;
-						state.stencil_op = INCR;
-						state.stencil_ref = m_stencil_ref;
-					} else if (lm == 1) {
-						state.stencil_func = NOTEQUAL;
-						state.stencil_op = KEEP;
-						state.stencil_ref = 255;
-					}
-					static_cast<GLeImage*>(img.get())->renderLightmap(r, state);
+				img->render(r);
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -184,27 +152,11 @@ namespace FIFE {
 
 			if(r.intersects(viewport)) {
 				uint8_t lm = renderbackend->getLightingModel();
-				if (renderbackend->getName() == "OpenGL") {
-					m_image->render(r);
-					if (m_stencil) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
-					} else if (lm == 1) {
-						renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
-					}
-				} else {
-					GLRenderState state;
-					state.src = m_src;
-					state.dst = m_dst;
-					if (m_stencil) {
-						state.stencil_func = GEQUAL;
-						state.stencil_op = INCR;
-						state.stencil_ref = m_stencil_ref;
-					} else if (lm == 1) {
-						state.stencil_func = NOTEQUAL;
-						state.stencil_op = KEEP;
-						state.stencil_ref = 255;
-					}
-					static_cast<GLeImage*>(m_image.get())->renderLightmap(r, state);
+				m_image->render(r);
+				if (m_stencil) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				} else if (lm == 1) {
+					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -226,33 +178,14 @@ namespace FIFE {
 			double zoom = cam->getZoom();
 
 			uint8_t lm = renderbackend->getLightingModel();
-			if (renderbackend->getName() == "OpenGL") {
-				static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
-					static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
-					m_red, m_green, m_blue);
+			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
+				static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
+				m_red, m_green, m_blue);
 
-				if (m_stencil) {
-					renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
-				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
-				}
-			} else {
-				GLRenderState state;
-				state.src = m_src;
-				state.dst = m_dst;
-				if (m_stencil) {
-					state.stencil_func = GEQUAL;
-					state.stencil_op = INCR;
-					state.stencil_ref = m_stencil_ref;
-				} else if (lm == 1) {
-					state.stencil_func = NOTEQUAL;
-					state.stencil_op = KEEP;
-					state.stencil_ref = 255;
-				}
-
-				static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions,
-					static_cast<float>(m_xstretch * zoom), static_cast<float>(m_ystretch * zoom),
-					m_red, m_green, m_blue, state);
+			if (m_stencil) {
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+			} else if (lm == 1) {
+				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 			}
 		}
 	}

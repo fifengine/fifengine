@@ -35,7 +35,6 @@
 
 namespace FIFE {
 	class ScreenMode;
-	struct GLRenderState;
 
 	/** The main class of the OpenGL-based experimental renderer.
 	 * @see RenderBackend
@@ -79,9 +78,7 @@ namespace FIFE {
 		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue, const GLRenderState& state);
-		void drawLightmap(uint32_t id, const Rect& rec, float const* st, const GLRenderState& state);
+		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 
 		virtual void attachRenderTarget(ImagePtr& img, bool discard);
 		virtual void detachRenderTarget();
@@ -115,7 +112,6 @@ namespace FIFE {
 		void disableScissorTest();
 
 		void renderWithZ();
-		void renderLights();
 		void renderWithoutZ();
 
 		GLuint m_mask_overlays;
@@ -150,7 +146,6 @@ namespace FIFE {
 			uint32_t max_size;
 		};
 		class RenderObject;
-		class RenderObjectLight;
 
 		RenderZObject* getRenderBufferObject(GLuint texture_id, bool unlit = false);
 
@@ -172,10 +167,6 @@ namespace FIFE {
 		// vertex data source for primitives that dont use depth buffer - described by m_render_objects
 		std::vector<RenderData> m_render_datas;
 		std::vector<RenderObject> m_render_objects;
-		
-		// for lighting stuff
-		std::vector<RenderData> m_render_datas_lights;
-		std::vector<RenderObjectLight> m_render_objects_light;
 
 		struct currentState	{
 			// Textures
@@ -207,16 +198,6 @@ namespace FIFE {
 		GLuint m_fbo_id;
 		ImagePtr m_img_target;
 		bool m_target_discard;
-	};
-
-	struct GLRenderState {
-		int32_t src;
-		int32_t dst;
-		//bool light; // always on
-		//bool stencil_test; // always on
-		uint8_t stencil_ref;
-		GLenum stencil_op;
-		GLenum stencil_func;
 	};
 }
 

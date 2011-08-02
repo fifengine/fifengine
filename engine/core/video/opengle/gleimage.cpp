@@ -155,13 +155,6 @@ namespace FIFE {
 		}
 	}
 
-	void GLeImage::renderLightmap(const Rect& rect, const GLRenderState& state) {
-		if(renderCheck(rect, 255)) {
-			static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->drawLightmap(
-				m_texId, rect, m_tex_coords, state);
-		}
-	}
-
 	void GLeImage::generateGLTexture() {
 		const uint32_t width = m_surface->w;
 		const uint32_t height = m_surface->h;
