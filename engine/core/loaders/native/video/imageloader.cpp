@@ -63,7 +63,7 @@ namespace FIFE {
 			SDL_Surface* surface = IMG_Load_RW(rwops, false);
 
 			if (!surface) {
-				throw SDLException("Fatal Error when loading image into a SDL_Surface!");
+				throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
 			}
 
 			SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
@@ -71,7 +71,7 @@ namespace FIFE {
 			SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
 
 			if (!conv) {
-				throw SDLException("Fatal Error when converting surface to the screen format!");
+				throw SDLException(std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
 			}
 
 			img->setSurface(conv);
