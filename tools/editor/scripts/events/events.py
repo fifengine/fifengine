@@ -149,7 +149,10 @@ class EventListener:
 		elif keyval == fife.Key.ESCAPE:
 			scripts.editor.getEditor().quit()
 		elif keyval == fife.Key.F10:
-			self.engine.getGuiChanManager().getConsole().toggleShowHide()
+			# ugly hack, as self.engine.getGuiChanManager() doesn´t work
+			# yet
+			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+			# self.engine.getGuiChanManager().getConsole().toggleShowHide()
 		elif keystr == "d":
 			pdb.set_trace()
 			
