@@ -108,21 +108,18 @@ private:
 
 	QVector<QString> fileExtAllowed;
 	QString filter;
+	QString lastLoadDir;
+	QString lastSaveDir;
 
 	QMap<QString, FifeObject> fifeObjects;
 
 	void updateSubimage(QImage& dest, int xoffset, int yoffset, const QImage& src);
 };
 
-#ifdef _MSC_VER
-typedef signed __int32 int32_t;
-typedef unsigned __int32 uint32_t;
-#endif
-
 inline bool ImageGreater(QNamedImage const& a, QNamedImage const& b)
 {
-	uint32_t aa = a.width() * a.height();
-	uint32_t bb = b.width() * b.height();
+	quint32 aa = a.width() * a.height();
+	quint32 bb = b.width() * b.height();
 
 	if(aa > bb)
 		return true;

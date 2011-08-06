@@ -659,6 +659,9 @@ namespace FIFE {
 	void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h, 32,
 			RMASK, GMASK, BMASK ,AMASK);
+		if(shared->getState() != IResource::RES_LOADED) {
+			shared->load();
+		}
 		SDL_Surface* src_surface = shared->getSurface();
 
 		SDL_SetAlpha(src_surface, 0, 0);

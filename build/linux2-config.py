@@ -52,7 +52,7 @@ def addExtras(env, opengl):
 	env.Append(LIBS = pythonversion)
 
 	if opengl:
-		env.Append(LIBS = ['stdc++', 'GL', 'GLU'])
+		env.Append(LIBS = ['stdc++', 'GL',])
 		env.Append(LIBPATH = os.path.join('/', 'usr', 'X11R6', 'lib'))
 		
 	# define for using tinyxml with stl support enabled

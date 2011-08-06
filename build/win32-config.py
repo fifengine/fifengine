@@ -58,7 +58,7 @@ def addExtras(env, opengl):
 
 	if opengl:
 		env.Prepend(LIBS = ['libguichan_opengl'])
-		env.Append(LIBS = ['opengl32', 'glu32'])
+		env.Append(LIBS = ['opengl32'])
 
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])

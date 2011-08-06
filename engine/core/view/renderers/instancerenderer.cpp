@@ -423,6 +423,12 @@ namespace FIFE {
 		// we need to first render normal image, and then its outline.
 		// This helps much with lighting stuff and doesn't require from us to copy image.
 
+		// With lazy loading we can come upon a situation where we need to generate outline from
+		// uninitialised shared image
+		if(vc.image->isSharedImage()) {
+			vc.image->forceLoadInternal();
+		}
+
 		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
 			vc.image->getWidth(), vc.image->getHeight(), 32,

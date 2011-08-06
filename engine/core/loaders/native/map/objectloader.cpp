@@ -270,8 +270,7 @@ namespace FIFE {
                                 }
 
                                 // we need to load this since its shared image
-                                ImagePtr atlasImgPtr = m_imageManager->load(atlasPath.string());
-                                atlasImgPtr->forceLoadInternal();
+                                ImagePtr atlasImgPtr = m_imageManager->create(atlasPath.string());
 
                                 int animFrames = 0;
                                 int animDelay = 0;
