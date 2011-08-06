@@ -106,11 +106,14 @@ namespace FIFE {
 		/** Generates the GL Texture for use when rendering.
 		 */
 		void generateGLTexture();
+		void generateGLSharedTexture(const GLImage* shared, const Rect& region);
 
 		uint32_t m_chunk_size_w;
 		uint32_t m_chunk_size_h;
 
 		SDL_Color m_colorkey;
+
+		GLImage* m_shared_img;
 	};
 
 }

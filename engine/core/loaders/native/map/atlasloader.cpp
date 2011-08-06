@@ -191,8 +191,7 @@ namespace FIFE {
 				bool atlasExists = m_imageManager->exists(atlas->getName());
 
 				if(!atlasExists) {
-					atlas->setPackedImage(m_imageManager->load(atlas->getName()));
-					atlas->getPackedImage()->forceLoadInternal();
+					atlas->setPackedImage(m_imageManager->create(atlas->getName()));
 				}
 
 				// We don't really need this now, though we could use it to assert if the loaded atlas is the same sized as these

@@ -144,6 +144,20 @@ namespace FIFE {
 	}
 
 	void GLImage::generateGLTexture() {
+		if(m_shared) {
+			// First make sure we loaded big image to opengl
+			if(m_shared_img->m_texId == 0) {
+				m_shared_img->load();
+				m_shared_img->generateGLTexture();
+			}
+			m_texId = m_shared_img->m_texId;
+			m_surface = m_shared_img->m_surface;
+			m_compressed = m_shared_img->m_compressed;
+
+			generateGLSharedTexture(m_shared_img, m_subimagerect);
+			return;
+		}
+
 		const uint32_t width = m_surface->w;
 		const uint32_t height = m_surface->h;
 
@@ -258,13 +272,7 @@ namespace FIFE {
 		}
 	}
 
-	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
-		GLImage* img = static_cast<GLImage*>(shared.get());
-		setSurface(img->m_surface);
-
-		m_texId = img->m_texId;
-		m_shared = true;
-
+	void GLImage::generateGLSharedTexture(const GLImage* shared, const Rect& region) {
 		uint32_t width = shared->getWidth();
 		uint32_t height = shared->getHeight();
 
@@ -277,17 +285,27 @@ namespace FIFE {
 		m_tex_coords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
 		m_tex_coords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
 		m_tex_coords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
+	}
 
+	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
+		GLImage* img = static_cast<GLImage*>(shared.get());
+
+		m_shared_img = img;
+		m_texId = img->m_texId;
+		m_shared = true;
 		m_subimagerect = region;
+
+		if(m_texId) {
+			generateGLSharedTexture(img, region);
+		}
+
 		setState(IResource::RES_LOADED);
 	}
 
 	void GLImage::forceLoadInternal() {
 		assert(m_surface);
 
-		if (m_shared) {
-			return;
-		} else if (m_texId == 0) {
+		if (m_texId == 0) {
 			generateGLTexture();
 		}
 	}

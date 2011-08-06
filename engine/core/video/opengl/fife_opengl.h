@@ -27,29 +27,6 @@
 // 3rd party library includes
 #include "ext/glee/GLee.h"
 
-// Platform specific includes
-// Linux
-#if defined( __unix__ )
-#include <GL/glu.h>
-#endif
-
-// Win32
-#if defined( WIN32 )
-// MSVC
-#if defined( _MSC_VER )
-#include <GL/glu.h>
-// MinGW
-#else
-#include <GL/glu.h>
-#endif
-#undef DELETE
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-#include <OpenGL/glu.h>
-#endif
-
 // 3rd party library includes
 
 // FIFE includes

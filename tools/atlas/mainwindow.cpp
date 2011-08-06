@@ -37,10 +37,10 @@
 #include "rapidxml/rapidxml_print.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
+	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
 	// signals
 	connect(ui->addTexturesPushBtn, SIGNAL(pressed()),
@@ -106,16 +106,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+	delete ui;
 }
 
 void MainWindow::addTexturesPressed()
 {
 	QStringList filenames = QFileDialog::getOpenFileNames(this, "Add textures",
-		".", filter);
+		lastLoadDir, filter);
 
 	if(filenames.empty())
 		return;
+
+	QDir dir(filenames.back());
+	lastLoadDir = dir.absolutePath();
 
 	foreach(QString filename, filenames)
 	{
@@ -141,10 +144,14 @@ void MainWindow::addTexturesPressed()
 void MainWindow::addDirectoryPressed()
 {
 	QString dirPath = QFileDialog::getExistingDirectory(this,
-		"Select your images directory", QDir::currentPath());
+		"Select your images directory", lastLoadDir);
 
 	if(dirPath.isEmpty())
 		return;
+
+	QDir dir(dirPath);
+	dir.cdUp();
+	lastLoadDir = dir.absolutePath();
 
 	QDirIterator dirWalker(dirPath, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
 
@@ -306,6 +313,18 @@ void MainWindow::refreshPressed()
 		sharedPathNumChars = texturePaths[0].first.lastIndexOf('/') + 1;
 	}
 
+	// find possible root directories
+	QString highestRootDir = texturePaths[0].first.left(sharedPathNumChars);
+	QDir dirTrav(highestRootDir);
+
+	ui->lwRootDir->clear();
+	do
+	{
+		ui->lwRootDir->addItem(dirTrav.absolutePath());
+	} while(dirTrav.cdUp());
+	ui->lwRootDir->setCurrentItem(ui->lwRootDir->item(0));
+
+
 	// OPTIMIZE: dont release and load from the beginning the same images
 	// only those who was changed
 	int atlasX = ui->maxWidthLineEdit->text().toInt();
@@ -397,9 +416,12 @@ void MainWindow::savePressed()
 	}
 
 	QString filenameBase = QFileDialog::getSaveFileName(this, "Save atlas",
-		".", "Atlas Texture (*.png)");
+		lastSaveDir, "Atlas Texture (*.png)");
 	if(filenameBase.isNull())
 		return;
+
+	QDir dir(filenameBase);
+	lastSaveDir = dir.absolutePath();
 
 	QFileInfo pathInfo(filenameBase);
 	QString filename = pathInfo.completeBaseName();
@@ -411,6 +433,23 @@ void MainWindow::savePressed()
 	{
 		QMessageBox::critical(this, "Atlas Creator", "Something went wrong with saving atlas image");
 		return;
+	}
+
+	QString append;
+	if(ui->lwRootDir->currentRow() != 0)
+	{
+		QString root = ui->lwRootDir->item(0)->text();
+		QString chosenRoot = ui->lwRootDir->currentItem()->text();
+
+		if(ui->lwRootDir->currentRow() ==  ui->lwRootDir->count() - 1)
+		{
+			append = root;
+		}
+		else
+		{
+			int len = root.length() - chosenRoot.length();
+			append = root.right(len - 1) + '/';
+		}
 	}
 
 	//
@@ -454,7 +493,7 @@ void MainWindow::savePressed()
 		child->append_node(newNode);
 
 		char const* sourceAttr = doc.allocate_string(
-			img.name.toLocal8Bit().constData());
+			(append + img.name).toLocal8Bit().constData());
 		char const* xoffsetAttr = doc.allocate_string(
 			QString::number(regions[j].left).toLocal8Bit().constData());
 		char const* yoffsetAttr = doc.allocate_string(
@@ -518,7 +557,7 @@ void MainWindow::savePressed()
 			child->append_node(newNode);
 
 			char const* sourceAttr = doc.allocate_string(
-				img.source.toLocal8Bit().constData());
+				(append + img.source).toLocal8Bit().constData());
 			char const* directionAttr = doc.allocate_string(
 				QString::number(img.direction).toLocal8Bit().constData());
 
@@ -644,7 +683,7 @@ QString getAttrib(rapidxml::xml_node<>* node, QString const& attribName,
 	attr = node->first_attribute(attribName.toLocal8Bit().constData());
 	if(!attr)
 		return defValue;
-	
+
 	return QString::fromAscii(attr->value());
 }
 
@@ -655,7 +694,7 @@ int getAttribInt(rapidxml::xml_node<>* node, QString const& attribName,
 	attr = node->first_attribute(attribName.toLocal8Bit().constData());
 	if(!attr)
 		return defValue;
-	
+
 	return QString::fromAscii(attr->value()).toInt();
 }
 
@@ -745,19 +784,19 @@ void MainWindow::disassemblePressed()
 			return;
 		}
 		dest = ns + "/" + dest;
-		
-        int xpos = getAttribInt(node, "xpos");
+
+		int xpos = getAttribInt(node, "xpos");
 		int ypos = getAttribInt(node, "ypos");
 		int width = getAttribInt(node, "width");
 		int height = getAttribInt(node, "height");
-		
+
 		if(xpos < 0 || ypos < 0 || width < 0 || height < 0)
 		{
 			QMessageBox::critical(this, "Atlas Creator",
 				"One of image doesn't have valid rectangle defined.");
 			return;
 		}
-		
+
 		QDir().mkdir(QFileInfo(dest).path());
 		QImage subImage = atlas.copy(xpos, ypos, width, height);
 		subImage.save(dest, "PNG");
