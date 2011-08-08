@@ -27,6 +27,11 @@
 // 3rd party library includes
 #include "ext/glee/GLee.h"
 
+// For MinGW
+#if defined (WIN32) && !defined(_MSC_VER)
+	#undef DELETE
+#endif
+
 // 3rd party library includes
 
 // FIFE includes
