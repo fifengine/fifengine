@@ -211,7 +211,7 @@ namespace FIFE {
                 for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {
                     const std::string* sourceId = imageElement->Attribute(std::string("source"));
 
-                    if (sourceId) {	
+                    if (sourceId) {
                         fs::path imagePath(filename);
 
                         if (imagePath.has_parent_path()) {
@@ -254,7 +254,7 @@ namespace FIFE {
                 for (TiXmlElement* actionElement = root->FirstChildElement("action"); actionElement; actionElement = actionElement->NextSiblingElement("action")) {
                     const std::string* actionId = actionElement->Attribute(std::string("id"));
 
-                    if (actionId) { 
+                    if (actionId) {
                         Action* action = obj->createAction(*actionId);
                         ActionVisual::create(action);
 
@@ -331,7 +331,7 @@ namespace FIFE {
                                                 );
                                             framePtr->useSharedImage(atlasImgPtr, region);
                                             framePtr->setXShift(xoffset);
-                                            framePtr->setXShift(yoffset);
+                                            framePtr->setYShift(yoffset);
                                             animation->addFrame(framePtr, delay);
                                         }
 
@@ -356,7 +356,7 @@ namespace FIFE {
 
                                     AnimationPtr animation;
                                     if (m_animationLoader && m_animationLoader->isLoadable(animPath.string())) {
-                                        animation = m_animationLoader->load(animPath.string());    
+                                        animation = m_animationLoader->load(animPath.string());
                                     }
 
                                     int direction = 0;
