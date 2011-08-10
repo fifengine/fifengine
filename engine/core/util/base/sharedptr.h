@@ -92,7 +92,7 @@ namespace FIFE {
             decRefCount();
 
             // check to see if we need to delete
-            if (m_refCount && m_refCount == 0) {
+            if (m_refCount && *m_refCount == 0) {
                 // delete and set pointers to null
                 delete m_ptr;
                 delete m_refCount;

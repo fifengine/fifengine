@@ -222,22 +222,24 @@ namespace FIFE {
 
 	void Instance::setLocation(const Location& loc) {
 		if(m_location != loc) {
-			m_location = loc;
 			if(isActive()) {
+				m_location = loc;
 				refresh();
 			} else {
 				initializeChanges();
+				m_location = loc;
 			}
 		}
 	}
 
 	void Instance::setRotation(int32_t rotation) {
 		if(m_rotation != rotation) {
-			m_rotation = rotation;
 			if(isActive()) {
+				m_rotation = rotation;
 				refresh();
 			} else {
 				initializeChanges();
+				m_rotation = rotation;
 			}
 		}
 	}
