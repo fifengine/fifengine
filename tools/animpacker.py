@@ -113,6 +113,18 @@ class AnimPacker:
 		object_elem.setAttribute('blocking', str(int(fifeObject.isBlocking())))
 		object_elem.setAttribute('static', str(int(fifeObject.isStatic())))
 		doc.appendChild(object_elem)
+		
+		visual = self.object.get2dGfxVisual()
+		for angle in visual.getStaticImageAngles():
+			image_id = visual.getStaticImageIndexByAngle(angle)
+			image = self.imagemgr.get(image_id)
+			image_src = doc.createElement('image')
+			image_src.setAttribute('source', os.path.basename(image.getName()))
+			image_src.setAttribute('direction', str(angle))
+			image_src.setAttribute('x_offset', str(image.getXShift()))
+			image_src.setAttribute('y_offset', str(image.getYShift()))
+			object_elem.appendChild(image_src)
+			image.saveImage(os.path.join(os.path.dirname(output), os.path.basename(image.getName())))
 
 		actions = self.object.getActionIds()
 		for actionId in actions:
@@ -148,9 +160,11 @@ class AnimPacker:
 					dir_elem.setAttribute('y_offset', str(yshift))
 					
 				anim_elem.appendChild(dir_elem)
-				
+		
 		fp = open(output, 'w')
-		doc.writexml(fp, '', '\t', '\n', 'ascii')
+		fp.write('<?fife type="object"?>\n')
+		# doc.writexml(fp, '', '\t', '\n', 'ascii')
+		doc.documentElement.writexml(fp, '', '\t', '\n')
 		fp.close()
 		
 	def startPacking(self, file, outdir = None):

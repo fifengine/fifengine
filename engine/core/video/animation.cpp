@@ -51,9 +51,6 @@ namespace FIFE {
 
 	void Animation::addFrame(ImagePtr image, uint32_t duration) {
 		FrameInfo info;
-		if(image->getState() == IResource::RES_NOT_LOADED) {
-			image->load();
-		}
 		info.index = m_frames.size();
 		info.duration = duration;
 		info.image = image;
