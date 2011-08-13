@@ -86,7 +86,11 @@ namespace FIFE {
 
 	ImagePtr Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
-			return m_frames[index].image;
+			ImagePtr image =  m_frames[index].image;
+			if(image->getState() == IResource::RES_NOT_LOADED) {
+				image->load();
+			}
+			return image;
 		} else {
 			return ImagePtr();  //return an invalid image .
 		}
@@ -98,6 +102,9 @@ namespace FIFE {
 			std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
 			--i;
 			val = i->second.image;
+		}
+		if(val && val->getState() == IResource::RES_NOT_LOADED) {
+			val->load();
 		}
 		return val;
 	}
