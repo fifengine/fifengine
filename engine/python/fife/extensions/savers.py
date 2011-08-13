@@ -360,9 +360,9 @@ class ModelSaver:
 					attr_vals[(None,'viewport')] = '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h)
 
 				colors = cam.getLightingColor()
-				if colors[0] < 1.0 or colors[1] < 1.0 or colors[2] < 1.0 or colors[3] < 1.0:
+				if colors[0] < 1.0 or colors[1] < 1.0 or colors[2] < 1.0:
 					attr_names[(None,'light_color')] = 'light_color'
-					attr_vals[(None,'light_color')] = '%f,%f,%f,%f' % (colors[0], colors[1], colors[2], colors[3])
+					attr_vals[(None,'light_color')] = '%f,%f,%f' % (colors[0], colors[1], colors[2])
 				attrs = AttributesNSImpl( attr_vals, attr_names )
 				self.startElement( 'camera', attrs );
 				self.endElement( 'camera' );

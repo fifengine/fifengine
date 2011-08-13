@@ -324,7 +324,6 @@ void MainWindow::refreshPressed()
 	} while(dirTrav.cdUp());
 	ui->lwRootDir->setCurrentItem(ui->lwRootDir->item(0));
 
-
 	// OPTIMIZE: dont release and load from the beginning the same images
 	// only those who was changed
 	int atlasX = ui->maxWidthLineEdit->text().toInt();
@@ -405,6 +404,9 @@ void MainWindow::refreshPressed()
 	ui->previewWidget->refreshed(imgAtlas);
 	ui->previewWidget->updateOccupation(regions);
 	ui->objectEditorTabs->setEnabled(true);
+	ui->statusBar->showMessage(QString("Atlas size: %1x%2")
+	   .arg(imgAtlas.width())
+	   .arg(imgAtlas.height()));
 }
 
 void MainWindow::savePressed()
@@ -797,7 +799,7 @@ void MainWindow::disassemblePressed()
 			return;
 		}
 
-		QDir().mkdir(QFileInfo(dest).path());
+		QDir().mkpath(QFileInfo(dest).path());
 		QImage subImage = atlas.copy(xpos, ypos, width, height);
 		subImage.save(dest, "PNG");
 	}

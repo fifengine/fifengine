@@ -150,7 +150,7 @@ class Setting(object):
 			'ScreenResolution':['640x480', '800x600', '1024x768', '1280x800', '1440x900'],
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
-			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1,2],
+			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
 			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
 			'PlaySounds':[True,False], 'LogToFile':[0,1],
 			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
