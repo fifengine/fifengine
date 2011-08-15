@@ -366,6 +366,10 @@ namespace FIFE {
 		 */
 		void updateRenderLists();
 
+		/** Returns true if associated LayerCache need update
+		 */
+		bool cacheNeedUpdate(Layer* layer);
+
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
