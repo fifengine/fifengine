@@ -391,8 +391,22 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
+	bool Camera::cacheNeedUpdate(Layer* layer) {
+		LayerCache* cache = m_cache[layer];
+		if(!cache) {
+			return true;
+		}
+
+		if (m_iswarped || !m_updated || cache->needUpdate()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool update = cacheNeedUpdate(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -401,6 +415,7 @@ namespace FIFE {
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image.get());
+				bool found = false;
 				uint8_t r, g, b, a = 0;
 				int32_t x = screen_coords.x - vc.dimensions.x;
 				int32_t y = screen_coords.y - vc.dimensions.y;
@@ -418,10 +433,38 @@ namespace FIFE {
 				// instance is hit with mouse if not totally transparent
 				if (alpha != 0) {
 					if (a >= alpha) {
-						instances.push_back(i);
+						found = true;
 					}
 				} else if (a != 0) {
-					instances.push_back(i);
+					found = true;
+				}
+				if (found) {
+					if (update) {
+						// convert ScreenCoordinates to MapCoordinates
+						const ExactModelCoordinate emc = toMapCoordinates(screen_coords, false);
+						Location loc(&layer);
+						loc.setMapCoordinates(emc);
+						// convert image size to LayerCoordinates
+						Point p = getCellImageDimensions(&layer);
+						int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / p.x));
+						int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / p.y));
+						// construct a Rect with LayerCoordinates to fetch instance
+						Rect rec;
+						rec.x = loc.getLayerCoordinates().x - x2;
+						rec.y = loc.getLayerCoordinates().y - y2;
+						rec.w = x2*2;
+						rec.h = y2*2;
+						// use InstanceTree for fast picking
+						std::list<Instance*> inslist = layer.getInstancesIn(rec);
+						for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
+							if (i == *it) {
+								instances.push_back(i);
+								break;
+							}
+						}
+					} else {
+						instances.push_back(i);
+					}
 				}
 			}
 		}
@@ -429,6 +472,7 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool update = cacheNeedUpdate(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -441,6 +485,7 @@ namespace FIFE {
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
 						if ((vc.dimensions.contains(Point(xx, yy)))) {
+							bool found = false;
 							int32_t x = xx - vc.dimensions.x;
 							int32_t y = yy - vc.dimensions.y;
 							if (m_zoom != 1.0) {
@@ -457,12 +502,41 @@ namespace FIFE {
 							// instance is hit with mouse if not totally transparent
 							if (alpha != 0) {
 								if (a >= alpha) {
+									found = true;
+								}
+							} else if (a != 0) {
+								//instances.push_back(i);
+								found = true;
+								//goto found_non_transparent_pixel;
+							}
+							if (found) {
+								if (update) {
+									// convert ScreenCoordinates to MapCoordinates
+									const ExactModelCoordinate emc = toMapCoordinates(ScreenPoint(xx, yy), false);
+									Location loc(&layer);
+									loc.setMapCoordinates(emc);
+									// convert image size to LayerCoordinates
+									Point p = getCellImageDimensions(&layer);
+									int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / p.x));
+									int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / p.y));
+									// construct a Rect with LayerCoordinates to fetch instance
+									Rect rec;
+									rec.x = loc.getLayerCoordinates().x - x2;
+									rec.y = loc.getLayerCoordinates().y - y2;
+									rec.w = x2*2;
+									rec.h = y2*2;
+									// use InstanceTree for fast picking
+									std::list<Instance*> inslist = layer.getInstancesIn(rec);
+									for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
+										if (i == *it) {
+											instances.push_back(i);
+											goto found_non_transparent_pixel;
+										}
+									}
+								} else {
 									instances.push_back(i);
 									goto found_non_transparent_pixel;
 								}
-							} else if (a != 0) {
-								instances.push_back(i);
-								goto found_non_transparent_pixel;
 							}
 						}
 					}
@@ -474,18 +548,34 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
-		const RenderList& layer_instances = m_layer_to_instances[loc.getLayer()];
-		RenderList::const_iterator instance_it = layer_instances.end();
-		while (instance_it != layer_instances.begin()) {
-			--instance_it;
-			Instance* i = (*instance_it)->instance;
-			if (use_exactcoordinates) {
-				if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
-					instances.push_back(i);
+		Layer* layer = loc.getLayer();
+		if(!layer) {
+			return;
+		}
+
+		if (cacheNeedUpdate(layer)) {
+			std::vector<Instance*> insvec = layer->getInstancesAt(loc, use_exactcoordinates);
+			for (std::vector<Instance*>::iterator it = insvec.begin(); it != insvec.end(); ++it) {
+				InstanceVisual* visual = (*it)->getVisual<InstanceVisual>();
+				// check if instance is visible
+				if (visual->isVisible() && visual->getTransparency() < 255) {
+					instances.push_back(*it);
 				}
-			} else {
-				if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
-					instances.push_back(i);
+			}
+		} else {
+			const RenderList& layer_instances = m_layer_to_instances[layer];
+			RenderList::const_iterator instance_it = layer_instances.end();
+			while (instance_it != layer_instances.begin()) {
+				--instance_it;
+				Instance* i = (*instance_it)->instance;
+				if (use_exactcoordinates) {
+					if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+						instances.push_back(i);
+					}
+				} else {
+					if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+						instances.push_back(i);
+					}
 				}
 			}
 		}

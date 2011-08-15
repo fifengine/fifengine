@@ -179,6 +179,14 @@ namespace FIFE {
 		return matching_instances;
 	}
 
+	std::list<Instance*> Layer::getInstancesIn(Rect& rec) {
+		std::list<Instance*> matching_instances;
+		ModelCoordinate mc(rec.x, rec.y);
+		m_instanceTree->findInstances(mc, rec.w, rec.h, matching_instances);
+
+		return matching_instances;
+	}
+
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
 		if (!layer) {
 			layer = this;

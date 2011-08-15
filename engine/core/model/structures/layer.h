@@ -35,6 +35,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fifeclass.h"
+#include "util/structures/rect.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
 
@@ -163,6 +164,11 @@ namespace FIFE {
 			 * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are used
 			 */
 			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
+
+			/** Returns instances that match given rect.
+			 * @param rec rect where to fetch instances from
+			 */
+			std::list<Instance*> getInstancesIn(Rect& rec);
 
 			/** Get the first instance on this layer with the given identifier.
 			 */
