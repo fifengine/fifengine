@@ -303,8 +303,6 @@ namespace FIFE {
 	}
 
 	void GLImage::forceLoadInternal() {
-		assert(m_surface);
-
 		if (m_texId == 0) {
 			generateGLTexture();
 		}
