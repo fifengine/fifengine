@@ -446,8 +446,8 @@ namespace FIFE {
 						loc.setMapCoordinates(emc);
 						// convert image size to LayerCoordinates
 						Point p = getCellImageDimensions(&layer);
-						int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / p.x));
-						int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / p.y));
+						int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
+						int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
 						// construct a Rect with LayerCoordinates to fetch instance
 						Rect rec;
 						rec.x = loc.getLayerCoordinates().x - x2;
@@ -517,8 +517,8 @@ namespace FIFE {
 									loc.setMapCoordinates(emc);
 									// convert image size to LayerCoordinates
 									Point p = getCellImageDimensions(&layer);
-									int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / p.x));
-									int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / p.y));
+									int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
+									int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
 									// construct a Rect with LayerCoordinates to fetch instance
 									Rect rec;
 									rec.x = loc.getLayerCoordinates().x - x2;
