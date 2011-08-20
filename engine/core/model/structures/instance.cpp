@@ -445,6 +445,11 @@ namespace FIFE {
 					say("");
 				}
 			}
+		} else if (!m_activity->m_actioninfo && m_changeinfo == ICHANGE_NO_CHANGES && m_activity->m_actionlisteners.empty()) {
+			// delete superfluous activity
+			delete m_activity;
+			m_activity = 0;
+			return ICHANGE_NO_CHANGES;
 		}
 		return m_changeinfo;
 	}

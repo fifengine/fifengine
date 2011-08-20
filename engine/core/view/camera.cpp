@@ -441,6 +441,8 @@ namespace FIFE {
 				if (found) {
 					if (update) {
 						// convert ScreenCoordinates to MapCoordinates
+						screen_coords.x -= vc.image->getXShift();
+						screen_coords.y -= vc.image->getYShift();
 						const ExactModelCoordinate emc = toMapCoordinates(screen_coords, false);
 						Location loc(&layer);
 						loc.setMapCoordinates(emc);
@@ -505,13 +507,13 @@ namespace FIFE {
 									found = true;
 								}
 							} else if (a != 0) {
-								//instances.push_back(i);
 								found = true;
-								//goto found_non_transparent_pixel;
 							}
 							if (found) {
 								if (update) {
 									// convert ScreenCoordinates to MapCoordinates
+									xx -= vc.image->getXShift();
+									yy -= vc.image->getYShift();
 									const ExactModelCoordinate emc = toMapCoordinates(ScreenPoint(xx, yy), false);
 									Location loc(&layer);
 									loc.setMapCoordinates(emc);

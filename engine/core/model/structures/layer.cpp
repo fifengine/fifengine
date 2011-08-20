@@ -253,11 +253,14 @@ namespace FIFE {
 
 	bool Layer::update() {
 		m_changedinstances.clear();
+		std::vector<Instance*> inactive_instances;
 		std::set<Instance*>::iterator it = m_active_instances.begin();
 		for(; it != m_active_instances.end(); ++it) {
 			if ((*it)->update() != ICHANGE_NO_CHANGES) {
 				m_changedinstances.push_back(*it);
 				m_changed = true;
+			} else if (!(*it)->isActive()) {
+				inactive_instances.push_back(*it);
 			}
 		}
 		if (!m_changedinstances.empty()) {
@@ -267,6 +270,14 @@ namespace FIFE {
 				++i;
 			}
 			//std::cout << "Layer named " << Id() << " changed = 1\n";
+		}
+		// remove inactive instances from m_active_instances
+		if (!inactive_instances.empty()) {
+			std::vector<Instance*>::iterator i = inactive_instances.begin();
+			while (i != inactive_instances.end()) {
+				m_active_instances.erase(*i);
+				++i;
+			}
 		}
 		//std::cout << "Layer named " << Id() << " changed = 0\n";
 		bool retval = m_changed;
