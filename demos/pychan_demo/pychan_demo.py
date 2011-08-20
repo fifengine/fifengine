@@ -162,14 +162,12 @@ class DemoApplication(basicapplication.ApplicationBase):
 
 		# A simple hover-effect for the credits label
 		credits = self.gui.findChild(name="creditsLink")
-		# setEnterCallback is deprecated - we use it here to test it.
-		credits.setEnterCallback(TextSetter(u"CREDITS"))
 		# Note that we can't simply write:
 		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
 		# that's because that would call credits._setText _NOW_ and we want to call
 		# it later.
+		credits.capture(lambda : TextSetter(u"CREDITS"), event_name="mouseEntered")
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
-
 
 		# import example modules
 		from dynamic import DynamicExample
