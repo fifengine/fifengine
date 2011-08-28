@@ -22,13 +22,13 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include "boost/filesystem.hpp"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "ext/tinyxml/fife_tinyxml.h"
+#include "vfs/fife_vfs.h"
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "video/imagemanager.h"
@@ -41,8 +41,6 @@
 
 #include "animationloader.h"
 
-namespace fs = boost::filesystem;
-
 namespace FIFE {
     static Logger _log(LM_NATIVE_LOADERS);
 
@@ -52,7 +50,7 @@ namespace FIFE {
     }
 
     bool AnimationLoader::isLoadable(const std::string& filename) {
-        fs::path animPath(filename);
+        bfs::path animPath(filename);
 
         std::string animationFilename = animPath.string();
 
@@ -83,7 +81,7 @@ namespace FIFE {
     }
 
     AnimationPtr AnimationLoader::load(const std::string& filename) {
-        fs::path animPath(filename);
+        bfs::path animPath(filename);
 
         std::string animationFilename = animPath.string();
 
@@ -142,12 +140,12 @@ namespace FIFE {
                     const std::string* sourceId = frameElement->Attribute(std::string("source"));
 
                     if (sourceId) {
-                        fs::path framePath(filename);
+                        bfs::path framePath(filename);
 
-                        if (framePath.has_parent_path()) {
-							framePath = framePath.parent_path() / *sourceId;
+                        if (HasParentPath(framePath)) {
+							framePath = GetParentPath(framePath) / *sourceId;
 						} else {
-							framePath = fs::path(*sourceId);
+							framePath = bfs::path(*sourceId);
 						}                        
 
                         ImagePtr imagePtr = m_imageManager->create(framePath.string());

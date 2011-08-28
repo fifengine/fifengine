@@ -20,10 +20,8 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
-#include <boost/filesystem/convenience.hpp>
 #include <guichan/sdl/sdlinput.hpp>
 #include <guichan/key.hpp>
 #include <guichan/focushandler.hpp>
@@ -50,9 +48,9 @@
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
+#include "vfs/fife_vfs.h"
 
 #include "guichanmanager.h"
-
 
 namespace FIFE {
 	static Logger _log(LM_GUI);
@@ -204,7 +202,7 @@ namespace FIFE {
 
 		IFont* font = NULL;
 		GuiFont* guifont = NULL;
-		if( boost::filesystem::extension(fontpath) == ".ttf" ) {
+		if( bfs::extension(fontpath) == ".ttf" ) {
 			font = new TrueTypeFont(fontpath, fontsize);
 		} else {
 			font = new SubImageFont(fontpath, fontglyphs);

@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include "boost/filesystem.hpp"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -31,6 +30,7 @@
 #include "ext/tinyxml/fife_tinyxml.h"
 #include "model/model.h"
 #include "model/structures/layer.h"
+#include "vfs/fife_vfs.h"
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "util/base/exception.h"
@@ -40,8 +40,6 @@
 #include "view/visual.h"
 
 #include "atlasloader.h"
-
-namespace fs = boost::filesystem;
 
 namespace FIFE {
 	static Logger _log(LM_NATIVE_LOADERS);
@@ -91,7 +89,7 @@ namespace FIFE {
 	}
 
 	bool AtlasLoader::isLoadable(const std::string& filename) {
-		fs::path atlasPath(filename);
+		bfs::path atlasPath(filename);
 		std::string atlasFilename = atlasPath.string();
 		TiXmlDocument atlasFile;
 
@@ -129,13 +127,13 @@ namespace FIFE {
 	}
 
 	AtlasPtr AtlasLoader::load(const std::string& filename) {
-		fs::path atlasPath(filename);
-		fs::path atlasPathDirectory;
+		bfs::path atlasPath(filename);
+		bfs::path atlasPathDirectory;
 		std::string atlasFilename = atlasPath.string();
 
-		if (atlasPath.has_parent_path()) {
+		if (HasParentPath(atlasPath)) {
 			// save the directory where the atlas file is located
-			atlasPathDirectory = atlasPath.parent_path();
+			atlasPathDirectory = GetParentPath(atlasPath);
 		}
 
 		TiXmlDocument doc;
@@ -181,7 +179,7 @@ namespace FIFE {
 				}
 
 				// Atlas itself doesn't have appended namespace
-				fs::path atlasImagePath = atlasPathDirectory / *atlasName;
+				bfs::path atlasImagePath = atlasPathDirectory / *atlasName;
 				atlas.reset(new Atlas(atlasImagePath.string()));
 
 				// End-user could create the same atlas for the second time.
