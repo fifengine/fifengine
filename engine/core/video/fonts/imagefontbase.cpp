@@ -23,8 +23,6 @@
 #include <algorithm>
 
 // 3rd party library includes
-#include <boost/filesystem/convenience.hpp>
-#include <boost/scoped_array.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
 

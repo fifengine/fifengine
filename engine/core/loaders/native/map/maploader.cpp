@@ -24,7 +24,6 @@
 #include <vector>
 
 // 3rd party includes
-#include "boost/filesystem.hpp"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -37,6 +36,7 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/action.h"
+#include "vfs/fife_vfs.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/raw/rawdata.h"
@@ -56,9 +56,6 @@
 #include "maploader.h"
 #include "animationloader.h"
 #include "objectloader.h"
-
-
-namespace fs = boost::filesystem;
 
 namespace FIFE {
     static Logger _log(LM_NATIVE_LOADERS);
@@ -82,12 +79,12 @@ namespace FIFE {
 		// it has residual data from last load
 		m_percentDoneListener.reset();
 
-		fs::path mapPath(filename);
+		bfs::path mapPath(filename);
 		
-		if (mapPath.has_parent_path()) {
-            if (mapPath.parent_path().string() != m_mapDirectory) {
+		if (HasParentPath(mapPath)) {
+            if (GetParentPath(mapPath).string() != m_mapDirectory) {
 			    // save the directory where the map file is located
-			    m_mapDirectory = mapPath.parent_path().string();
+			    m_mapDirectory = GetParentPath(mapPath).string();
             }
 		}
 
@@ -170,19 +167,19 @@ namespace FIFE {
                         }
 
                         if (importDir && !importFile) {
-                            fs::path fullPath(m_mapDirectory);
+                            bfs::path fullPath(m_mapDirectory);
                             fullPath /= directory;
                             loadImportDirectory(fullPath.string());
                         }
                         else if (importFile) {
-                            fs::path fullFilePath(file);
-                            fs::path fullDirPath(directory);
+                            bfs::path fullFilePath(file);
+                            bfs::path fullDirPath(directory);
                             if (importDir) {
-                                fullDirPath = fs::path(m_mapDirectory);
+                                fullDirPath = bfs::path(m_mapDirectory);
                                 fullDirPath /= directory;
                             }
                             else {
-                                fullFilePath = fs::path(m_mapDirectory);
+                                fullFilePath = bfs::path(m_mapDirectory);
                                 fullFilePath /= file;
                             }
                             loadImportFile(fullFilePath.string(), fullDirPath.string());
@@ -466,7 +463,7 @@ namespace FIFE {
     }
 
     bool MapLoader::isLoadable(const std::string& filename) const {
-		fs::path mapPath(filename);
+		bfs::path mapPath(filename);
 
 		TiXmlDocument mapFile;
 
@@ -514,7 +511,7 @@ namespace FIFE {
 
     void MapLoader::loadImportFile(const std::string& file, const std::string& directory) {
         if (!file.empty()) {
-            fs::path importFilePath(directory);
+            bfs::path importFilePath(directory);
             importFilePath /= file;
 
             std::string importFileString = importFilePath.string();
@@ -529,7 +526,7 @@ namespace FIFE {
 
     void MapLoader::loadImportDirectory(const std::string& directory) {
         if (!directory.empty()) {
-            fs::path importDirectory(directory);
+            bfs::path importDirectory(directory);
             std::string importDirectoryString = importDirectory.string();
 
             std::set<std::string> files = m_vfs->listFiles(importDirectoryString);
@@ -538,7 +535,7 @@ namespace FIFE {
             std::set<std::string>::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
                 // TODO - vtchill - may need a way to allow clients to load things other than .xml files
-                if (fs::extension(*iter) == ".xml") {
+                if (bfs::extension(*iter) == ".xml") {
                     loadImportFile(*iter, importDirectoryString);
                 }	
             }

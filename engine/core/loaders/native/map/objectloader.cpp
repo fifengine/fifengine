@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include "boost/filesystem.hpp"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -33,6 +32,7 @@
 #include "model/model.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/action.h"
+#include "vfs/fife_vfs.h"
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "view/visual.h"
@@ -40,8 +40,6 @@
 
 #include "objectloader.h"
 #include "animationloader.h"
-
-namespace fs = boost::filesystem;
 
 namespace FIFE {
     static Logger _log(LM_NATIVE_LOADERS);
@@ -69,7 +67,7 @@ namespace FIFE {
     }
 
     bool ObjectLoader::isLoadable(const std::string& filename) const {
-        fs::path objectPath(filename);
+        bfs::path objectPath(filename);
 
         TiXmlDocument objectFile;
 
@@ -118,7 +116,7 @@ namespace FIFE {
     }
 
     void ObjectLoader::load(const std::string& filename) {
-        fs::path objectPath(filename);
+        bfs::path objectPath(filename);
 
         TiXmlDocument objectFile;
 
@@ -212,12 +210,12 @@ namespace FIFE {
                     const std::string* sourceId = imageElement->Attribute(std::string("source"));
 
                     if (sourceId) {
-                        fs::path imagePath(filename);
+                        bfs::path imagePath(filename);
 
-                        if (imagePath.has_parent_path()) {
-                            imagePath = imagePath.parent_path() / *sourceId;
+                        if (HasParentPath(imagePath)) {
+                            imagePath = GetParentPath(imagePath) / *sourceId;
                         } else {
-                            imagePath = fs::path(*sourceId);
+                            imagePath = bfs::path(*sourceId);
                         }
 
                         ImagePtr imagePtr = m_imageManager->create(imagePath.string());
@@ -261,12 +259,12 @@ namespace FIFE {
                         for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement; animElement = animElement->NextSiblingElement("animation")) {
                             const std::string* sourceId = animElement->Attribute(std::string("atlas"));
                             if(sourceId) {
-                                fs::path atlasPath(filename);
+                                bfs::path atlasPath(filename);
 
-                                if (atlasPath.has_parent_path()) {
-                                    atlasPath = atlasPath.parent_path() / *sourceId;
+                                if (HasParentPath(atlasPath)) {
+                                    atlasPath = GetParentPath(atlasPath) / *sourceId;
                                 } else {
-                                    atlasPath = fs::path(*sourceId);
+                                    atlasPath = bfs::path(*sourceId);
                                 }
 
                                 // we need to load this since its shared image
@@ -346,12 +344,12 @@ namespace FIFE {
                             } else {
                                 sourceId = animElement->Attribute(std::string("source"));
                                 if (sourceId) {
-                                    fs::path animPath(filename);
+                                    bfs::path animPath(filename);
 
-                                    if (animPath.has_parent_path()) {
-                                        animPath = animPath.parent_path() / *sourceId;
+                                    if (HasParentPath(animPath)) {
+                                        animPath = GetParentPath(animPath) / *sourceId;
                                     } else {
-                                        animPath = fs::path(*sourceId);
+                                        animPath = bfs::path(*sourceId);
                                     }
 
                                     AnimationPtr animation;
