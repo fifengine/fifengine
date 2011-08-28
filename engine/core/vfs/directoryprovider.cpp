@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 
-#include "fife_vfs.h"
+#include "fife_boost_filesystem.h"
 #include "vfs.h"
 #include "directoryprovider.h"
 #include "vfsdirectory.h"

@@ -32,7 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-#include "fife_vfs.h"
+#include "fife_boost_filesystem.h"
 
 namespace 
 {
