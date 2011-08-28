@@ -30,7 +30,7 @@
 #include "ext/tinyxml/fife_tinyxml.h"
 #include "model/model.h"
 #include "model/structures/layer.h"
-#include "vfs/fife_vfs.h"
+#include "vfs/fife_boost_filesystem.h"
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "util/base/exception.h"

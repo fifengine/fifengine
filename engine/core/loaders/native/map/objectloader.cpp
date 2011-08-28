@@ -32,7 +32,7 @@
 #include "model/model.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/action.h"
-#include "vfs/fife_vfs.h"
+#include "vfs/fife_boost_filesystem.h"
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "view/visual.h"

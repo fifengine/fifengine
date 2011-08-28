@@ -48,7 +48,7 @@
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
-#include "vfs/fife_vfs.h"
+#include "vfs/fife_boost_filesystem.h"
 
 #include "guichanmanager.h"
 

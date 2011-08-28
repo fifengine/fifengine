@@ -36,7 +36,7 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/action.h"
-#include "vfs/fife_vfs.h"
+#include "vfs/fife_boost_filesystem.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/raw/rawdata.h"
