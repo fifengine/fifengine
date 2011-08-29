@@ -53,7 +53,7 @@ namespace FIFE {
 		std::string fullFilename = m_root + name;
 
         bfs::path fullPath(fullFilename);
-		std::ifstream file(fullPath.file_string().c_str());
+		std::ifstream file(fullPath.string().c_str());
 
 		if (file)
 			return true;
