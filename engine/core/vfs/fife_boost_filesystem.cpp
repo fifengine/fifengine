@@ -41,16 +41,28 @@ namespace
 #define BOOST_MAJOR_VERSION BOOST_VERSION / 100000
 #define BOOST_MINOR_VERSION BOOST_VERSION / 100 % 1000
 
-#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 46)
+#if (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 44 && defined(BOOST_FILESYSTEM_VERSION))
+    #if (BOOST_FILESYSTEM_VERSION == 2)
+        // if this macro is defined to 2 the the user wants to
+        // force the use of boost filesystem version 2 so we
+        // will set our internal macros correctly to do that
+        #define USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2
+    #elif (BOOST_FILESYSTEM_VERSION == 3)
+        // if this macro is set to 3 then the user wants to force
+        // the use of boost filesystem version 3 so we will set
+        // our internal macros correctly to do that
+        #define USE_BOOST_FILESYSTEM_V3
+    #endif
+#elif (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 46)
     // this define will tell us to use boost filesystem
     // version 3 since this is the default version of the library
     // starting in boost version 1.46 and above
-#define USE_BOOST_FILESYSTEM_V3
+    #define USE_BOOST_FILESYSTEM_V3
 #elif (BOOST_MAJOR_VERSION >= 1 && BOOST_MINOR_VERSION >= 36)
     // this define will tell us not to use the deprecated functions
     // in boost filesystem version 2 library which were introduced
     // in boost version 1.36 and above
-#define USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2
+    #define USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2
 #endif
 }
 
