@@ -406,6 +406,24 @@ namespace FIFE {
 		}
 	}
 
+	inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha) {
+		if(threshold > 1) {
+			// new behavior
+			if (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// old behavior
+			if((alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
 		if (!info.dirty && info.curimg == vc.image.get()) {
 			// optimization for outline that has not changed
@@ -442,8 +460,7 @@ namespace FIFE {
 			int32_t prev_a = 0;
 			for (int32_t y = 0; y < outline_surface->h; y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				int32_t aa = a;
-				if (((aa - info.threshold) >= 0 || (prev_a - info.threshold) >= 0) && (aa != prev_a)) {
+				if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
 					if (a < prev_a) {
 						for (int32_t yy = y; yy < y + info.width; yy++) {
 							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
@@ -462,8 +479,7 @@ namespace FIFE {
 			int32_t prev_a = 0;
 			for (int32_t x = 0; x < outline_surface->w; x ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				int32_t aa = a;
-				if (((aa - info.threshold) >= 0 || (prev_a - info.threshold) >= 0) && (aa != prev_a)) {
+				if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
 					if (a < prev_a) {
 						for (int32_t xx = x; xx < x + info.width; xx++) {
 							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
