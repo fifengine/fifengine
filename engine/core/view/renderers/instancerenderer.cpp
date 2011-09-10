@@ -439,10 +439,11 @@ namespace FIFE {
 
 		// vertical sweep
 		for (int32_t x = 0; x < outline_surface->w; x ++) {
-			uint8_t prev_a = 0;
+			int32_t prev_a = 0;
 			for (int32_t y = 0; y < outline_surface->h; y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
+				int32_t aa = a;
+				if (((aa - info.threshold) >= 0 || (prev_a - info.threshold) >= 0) && (aa != prev_a)) {
 					if (a < prev_a) {
 						for (int32_t yy = y; yy < y + info.width; yy++) {
 							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
@@ -458,10 +459,11 @@ namespace FIFE {
 		}
 		// horizontal sweep
 		for (int32_t y = 0; y < outline_surface->h; y ++) {
-			uint8_t prev_a = 0;
+			int32_t prev_a = 0;
 			for (int32_t x = 0; x < outline_surface->w; x ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
+				int32_t aa = a;
+				if (((aa - info.threshold) >= 0 || (prev_a - info.threshold) >= 0) && (aa != prev_a)) {
 					if (a < prev_a) {
 						for (int32_t xx = x; xx < x + info.width; xx++) {
 							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
@@ -521,11 +523,12 @@ namespace FIFE {
 		return info.overlay;
 	}
 
-	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width) {
+	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold) {
 		OutlineInfo newinfo;
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
+		newinfo.threshold = threshold;
 		newinfo.width = width;
 		newinfo.dirty = true;
 
@@ -547,6 +550,7 @@ namespace FIFE {
 				info.b = b;
 				info.g = g;
 				info.width = width;
+				info.threshold = threshold;
 				info.dirty = true;
 			}
 		}

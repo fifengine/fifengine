@@ -32,7 +32,7 @@ namespace FIFE {
 	public:
 		virtual ~InstanceRenderer();
 		std::string getName();
-		void addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width);
+		void addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold = 1);
 		void removeOutlined(Instance* instance);
 		void removeAllOutlines();
 		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
