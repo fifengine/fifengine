@@ -51,6 +51,7 @@ namespace FIFE {
 			virtual ~RawData();
 			
 			/** get the data as a vector of bytes
+             * This does not append a null terminator to the end
 			 */
 			std::vector<uint8_t> getDataInBytes();
 
@@ -131,7 +132,8 @@ namespace FIFE {
 			uint32_t read32Big();
 
 			/** read a string with len bytes, not assuming a terminating 0
-			 *
+			 * Appends a null terminator character to the end
+             *
 			 * @param len the stringlen
 			 * @return the string
 			 * @throws IndexOverflow
@@ -139,6 +141,7 @@ namespace FIFE {
 			std::string readString(size_t len);
 
 			/** Reads all data into the buffer
+             * Appends a null terminator character to the end
 			 * Created to especially fulfill python file interface requirements
 			 */
 			void read(std::string& outbuffer, int32_t size=-1);

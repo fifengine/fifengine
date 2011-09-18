@@ -76,13 +76,29 @@ namespace FIFE {
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    objectFile.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+                    objectFile.Parse(data->readString(data->getDataLength()).c_str());
 
                     if (objectFile.Error()) {
+                         std::ostringstream oss;
+                        oss << " Failed to load"
+                            << objectPath.string()
+                            << " : " << __FILE__ 
+                            << " [" << __LINE__ << "]"
+                            << std::endl;
+                        FL_ERR(_log, oss.str());
+
                         return false;
                     }
                 }
                 else {
+                    std::ostringstream oss;
+                    oss << " Failed to load"
+                        << objectPath.string()
+                        << " : " << __FILE__ 
+                        << " [" << __LINE__ << "]"
+                        << std::endl;
+                    FL_ERR(_log, oss.str());
+
                     return false;
                 }
 
@@ -91,11 +107,25 @@ namespace FIFE {
                 data = 0;
             }
             else {
+                std::ostringstream oss;
+                oss << " Failed to load"
+                    << objectPath.string()
+                    << " : " << __FILE__ 
+                    << " [" << __LINE__ << "]"
+                    << std::endl;
+                FL_ERR(_log, oss.str());
+
                 return false;
             }
         }
         catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            std::ostringstream oss;
+            oss << " Failed to load"
+                << objectPath.string()
+                << " : " << __FILE__ 
+                << " [" << __LINE__ << "]"
+                << std::endl;
+            FL_ERR(_log, oss.str());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -125,7 +155,7 @@ namespace FIFE {
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    objectFile.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+                    objectFile.Parse(data->readString(data->getDataLength()).c_str());
 
                     if (objectFile.Error()) {
                         return;
@@ -138,7 +168,13 @@ namespace FIFE {
             }
         }
         catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+            std::ostringstream oss;
+            oss << " Failed to load"
+                << objectPath.string()
+                << " : " << __FILE__ 
+                << " [" << __LINE__ << "]"
+                << std::endl;
+            FL_ERR(_log, oss.str());
 
             // TODO - should we abort here
             //        or rethrow the exception
@@ -176,7 +212,9 @@ namespace FIFE {
                         try {
                             obj = m_model->createObject(*objectId, *namespaceId);
                         }
-                        catch (NameClash&) {
+                        catch (NameClash &e) {
+                            FL_ERR(_log, e.what());
+
                             // TODO - handle exception
                             assert(false);
                         }
