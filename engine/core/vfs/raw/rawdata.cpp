@@ -130,13 +130,13 @@ namespace FIFE {
         std::string ret;
 
         // resize to len + 1 for the null terminator
-        ret.resize(len);
+        ret.resize(len+1);
 
         // read directly into string
-		readInto(reinterpret_cast<uint8_t*>(&ret[0]), ret.size());
+		readInto(reinterpret_cast<uint8_t*>(&ret[0]), len);
 
         // add null terminator
-		ret[len] = '\0';
+		ret[len+1] = '\0';
 
 		return ret;
 	}
@@ -151,13 +151,13 @@ namespace FIFE {
 		}
 
         // resize to len + 1 for the null terminator
-        outbuffer.resize(size);
+        outbuffer.resize(size+1);
 
         // read directly into string
-        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), outbuffer.size());
+        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), size);
 
         // add null terminator
-        outbuffer[size] = '\0';
+        outbuffer[size+1] = '\0';
 	}
 	
 

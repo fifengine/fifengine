@@ -97,9 +97,17 @@ namespace FIFE {
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    mapFile.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
 
                     if (mapFile.Error()) {
+                        std::ostringstream oss;
+                        oss << " Failed to load"
+                            << mapFilename
+                            << " : " << __FILE__ 
+                            << " [" << __LINE__ << "]"
+                            << std::endl;
+                        FL_ERR(_log, oss.str().c_str());
+
                         return map;
                     }
                 }
@@ -342,6 +350,16 @@ namespace FIFE {
 															inst->act("default", target, true);
 														}
 													}
+                                                    else
+                                                    {
+                                                        std::ostringstream oss;
+                                                        oss << " Failed to create instance of object "
+                                                            << *objectId
+                                                            << " : " << __FILE__ 
+                                                            << " [" << __LINE__ << "]"
+                                                            << std::endl;
+                                                        FL_ERR(_log, oss.str().c_str());
+                                                    }
 												}
 											}
 
@@ -474,7 +492,7 @@ namespace FIFE {
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    mapFile.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
 
                     if (mapFile.Error()) {
                         return false;

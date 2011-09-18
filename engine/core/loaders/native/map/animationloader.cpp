@@ -61,7 +61,7 @@ namespace FIFE {
                 if (data->getDataLength() != 0) {
                     // TODO - this could be expanded to do more checks
                     TiXmlDocument doc;
-                    doc.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+                    doc.Parse(data->readString(data->getDataLength()).c_str());
 
                     if (doc.Error()) {
                         return false;
@@ -94,8 +94,8 @@ namespace FIFE {
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    doc.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
-                    //bool isFileLoaded = doc.LoadFile(animationFilename);
+                    doc.Parse(data->readString(data->getDataLength()).c_str());
+
                     if (doc.Error()) {
                         return animation;
                     }

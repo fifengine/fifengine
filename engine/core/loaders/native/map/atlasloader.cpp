@@ -98,7 +98,7 @@ namespace FIFE {
 
 			if (data) {
 				if (data->getDataLength() != 0) {
-					atlasFile.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
+					atlasFile.Parse(data->readString(data->getDataLength()).c_str());
 
 					if (atlasFile.Error()) {
 						return false;
@@ -144,8 +144,8 @@ namespace FIFE {
 
 			if (data) {
 				if (data->getDataLength() != 0) {
-					doc.Parse(reinterpret_cast<const char*>(&data->getDataInBytes()[0]));
-					//bool isFileLoaded = doc.LoadFile(atlasFilename);
+					doc.Parse(data->readString(data->getDataLength()).c_str());
+
 					if (doc.Error()) {
 						return atlas;
 					}
