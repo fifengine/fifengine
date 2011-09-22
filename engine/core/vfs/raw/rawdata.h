@@ -141,7 +141,7 @@ namespace FIFE {
 			std::string readString(size_t len);
 
 			/** Reads all data into the buffer
-             * Appends a null terminator character to the end
+             * This does not append a null terminator to the end
 			 * Created to especially fulfill python file interface requirements
 			 */
 			void read(std::string& outbuffer, int32_t size=-1);
