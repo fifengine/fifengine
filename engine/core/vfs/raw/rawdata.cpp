@@ -136,7 +136,7 @@ namespace FIFE {
 		readInto(reinterpret_cast<uint8_t*>(&ret[0]), len);
 
         // add null terminator
-		ret[len+1] = '\0';
+		ret[len] = '\0';
 
 		return ret;
 	}
@@ -150,14 +150,10 @@ namespace FIFE {
 			return;
 		}
 
-        // resize to len + 1 for the null terminator
-        outbuffer.resize(size+1);
+        outbuffer.resize(size);
 
         // read directly into string
         readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), size);
-
-        // add null terminator
-        outbuffer[size+1] = '\0';
 	}
 	
 

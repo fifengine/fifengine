@@ -106,7 +106,7 @@ namespace FIFE {
                             << " : " << __FILE__ 
                             << " [" << __LINE__ << "]"
                             << std::endl;
-                        FL_ERR(_log, oss.str().c_str());
+                        FL_ERR(_log, oss.str());
 
                         return map;
                     }
@@ -358,7 +358,7 @@ namespace FIFE {
                                                             << " : " << __FILE__ 
                                                             << " [" << __LINE__ << "]"
                                                             << std::endl;
-                                                        FL_ERR(_log, oss.str().c_str());
+                                                        FL_ERR(_log, oss.str());
                                                     }
 												}
 											}
