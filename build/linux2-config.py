@@ -73,6 +73,7 @@ def getRequiredLibs(opengl):
 	#		guichan_sdl - depends on at least the SDL libs and guichan prior in the list
 	#		guichan_opengl - depends on at least guichan prior in the list
 	libs = [('vorbisfile', 'vorbisfile.h'),
+			(pythonversion, pythonversion + '/Python.h'),
 			('openal', 'AL/al.h'),
 			('SDL', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
