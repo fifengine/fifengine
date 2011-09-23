@@ -65,8 +65,8 @@ class XMLObjectLoader(object):
 				s = f.readString(len(obj_identifier))
 			except fife.IndexOverflow:
 				isobjectfile = False
-
-			if isobjectfile and s != obj_identifier:
+				
+			if isobjectfile and not s.startswith(obj_identifier):
 				isobjectfile = False
 
 			if not isobjectfile:
