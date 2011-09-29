@@ -322,7 +322,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		try:
 			print self.indent + tag
 		except UnicodeEncodeError, e:
-			print self.indent + tag.encode('ascii', 'xmlcharrefreplace')
+			print self.indent + tag.encode('ascii', 'backslashreplace')
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
