@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -22,18 +22,15 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
-#include "util/structures/purge.h"
 #include "model/metamodel/grids/cellgrid.h"
 
 #include "layer.h"
-#include "instance.h"
 
 namespace FIFE {
 	static std::string INVALID_LAYER_SET = "Cannot set layer coordinates, given layer is not initialized properly";
@@ -113,7 +110,7 @@ namespace FIFE {
 	}
 	
 	ModelCoordinate Location::getLayerCoordinates() const {
-		return getLayerCoordinates(m_layer);
+		return ModelCoordinate(doublePt2intPt(m_exact_layer_coords));
 	}
 	
 	ExactModelCoordinate Location::getMapCoordinates() const {
@@ -129,13 +126,28 @@ namespace FIFE {
 	}
 	
 	ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const {
-		return m_exact_layer_coords;
+		if (!isValid(layer)) {
+			throw NotSet(INVALID_LAYER_GET);
+		}
+
+		if (layer == m_layer) {
+			return m_exact_layer_coords;
+		}
+
+		CellGrid* cg1 = m_layer->getCellGrid();
+		CellGrid* cg2 = layer->getCellGrid();
+		return cg2->toExactLayerCoordinates(cg1->toMapCoordinates(m_exact_layer_coords));
 	}
 	
 	ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const {
 		if (!isValid(layer)) {
 			throw NotSet(INVALID_LAYER_GET);
 		}
+
+		if (layer == m_layer) {
+			return getLayerCoordinates();
+		}
+
 		CellGrid* cg1 = m_layer->getCellGrid();
 		CellGrid* cg2 = layer->getCellGrid();
 		return cg2->toLayerCoordinates(cg1->toMapCoordinates(m_exact_layer_coords));
