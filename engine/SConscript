@@ -126,9 +126,17 @@ if sys.platform == 'win32':
 								  source = compilefiles,
 								  OBJPREFIX='shared_',
 								  SHLIBEMITTER = '')
-else:
+elif sys.platform == 'darwin':
 	sharedlib = env.SharedLibrary(target = fife_tgt,
 								  source = compilefiles)
+else:
+	# soname will be libfife.so.major
+	majorVersion = opts['FIFE_VERSION'].split('.')[0]	
+	soname = env.subst('$SHLIBPREFIX') + fife_tgt + env.subst('$SHLIBSUFFIX') + '.' + majorVersion
+	sharedlib = env.SharedLibrary(target = fife_tgt,
+								  source = compilefiles,
+								  SHLIBSUFFIX = env.subst('$SHLIBSUFFIX') + '.' + opts['FIFE_VERSION'],
+								  LINKFLAGS=['-Wl,-soname,' + str(soname)])
 
 #**************************************************************************
 #python library target
@@ -179,8 +187,8 @@ staticlib = env.StaticLibrary(target = fife_tgt,
 
 #TODO: This is not complete.  Because of the current linux rpath issue this
 #will not work as expected.
-install_static = env.Install(os.path.join(opts['PREFIX'], 'lib'), staticlib)
-install_shared = env.Install(os.path.join(opts['PREFIX'], 'lib'), sharedlib)
+install_static = env.Install(opts['LIBDIR'], staticlib)
+install_shared = env.Install(opts['LIBDIR'], sharedlib)
 
 headerdestlist = utils.gen_dest_files(os.path.join(opts['PREFIX'], 'include', 'fife'), headerfiles)
 install_headers = env.InstallAs(headerdestlist, headerfiles)
