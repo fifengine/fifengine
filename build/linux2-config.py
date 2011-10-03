@@ -40,7 +40,8 @@ def initEnvironment(env):
 							extincludepath])
 
 	env.Append(LIBPATH = [os.path.join('/', 'opt', 'lib'),
-						  extlibpath])
+						  extlibpath,
+						  env.subst('$LIBDIR')])
 	
 	env.AppendENVPath('LD_RUN_PATH', os.path.join('..', '..', '..', extlibpath))
 	

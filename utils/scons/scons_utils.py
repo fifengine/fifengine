@@ -22,6 +22,7 @@
 # ####################################################################
 
 import os, sys
+import re
 from string import Template
 
 _sep = os.path.sep
@@ -107,3 +108,21 @@ def gen_swig_interface(templatefile, source, outdir):
 	inclusions = '\n'.join(inclusions)
 	interfacefile = os.path.join(outdir, 'fife.i')
 	open(interfacefile, 'w').write(template.substitute(inclusions=inclusions))
+
+def get_fife_version(srcpath):
+    MAJOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MAJOR_VERSION\s+(.*)")
+    MINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MINOR_VERSION\s+(.*)")
+    SUBMINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_SUBMINOR_VERSION\s+(.*)")
+    
+    patterns = [MAJOR_VERSION_PATTERN,
+                MINOR_VERSION_PATTERN,
+                SUBMINOR_VERSION_PATTERN]
+	
+    source = open(os.path.join(srcpath, 'version.h'), 'r').read()
+    versionInfo = []
+    for pattern in patterns:
+        match = pattern.search(source)
+        if match:
+			versionInfo.append(match.group(1).strip())
+            
+    return '.'.join(versionInfo)

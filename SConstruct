@@ -105,6 +105,13 @@ AddOption('--local-tinyxml',
 		action="store_true",
 		help='Forces fife to use the local version of tinyxml that ships with fife',
 		default=False)
+
+AddOption('--lib-dir',
+		dest='lib-dir',
+		nargs=1, type='string',
+		action='store',
+		metavar='DIR',
+		help='Shared Library install location') 
 		
 #**************************************************************************
 #save command line options here
@@ -173,6 +180,14 @@ if pythonprefix is None:
 if env.has_key('DESTDIR'):
 	prefix = env['DESTDIR'] + prefix
 	pythonprefix = env['DESTDIR'] + pythonprefix
+
+libdir = GetOption('lib-dir')
+if libdir is None:
+	libdir = os.path.join(prefix, 'lib')
+else:
+	libdir = os.path.join(prefix, libdir)
+	
+env['LIBDIR'] = libdir
 
 #**************************************************************************
 #get platform specific information
@@ -338,10 +353,13 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'DLLPATH' : os.path.join(os.getcwd(), 'build', 'win32', 'binaries', 'mingw'),
 		'DEBUG' : debug,
 		'PREFIX' : prefix,
+		'LIBDIR' : libdir,
 		'TESTLIBS' : ['fife', 'UnitTest++'],
 		'PYTHON_PREFIX' : pythonprefix,
 		'WRAP_COPY_DEST' : os.path.join('#engine', 'swigwrappers', 'python'),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
+
+opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
