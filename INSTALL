@@ -12,16 +12,20 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 == Building, Installing and Running FIFE ==
 
 === Notes ===
-We are finally able to provide install targets for most platforms.  There may be a few minor issues left over to work out but for the most part the install targets work as advertized.
+We are finally able to provide install targets for most platforms.  There may be
+a few minor issues left over to work out but for the most part the install 
+targets work as advertized.
 
 
 === Dependencies ===
-A list of all dependencies (including accurate version numbers) that you'll need to obtain to build FIFE on your platform can be found at the project wiki:
+A list of all dependencies (including accurate version numbers) that you'll need
+to obtain to build FIFE on your platform can be found at the project wiki:
  * http://wiki.fifengine.de/index.php?title=Build_dependencies
 
 
 === SCons Build System Notes ===
-FIFE utilizes the SCons (http://www.scons.org) build system. Here is a quick list of scons commands that can be important for building FIFE on your platform:
+FIFE utilizes the SCons (http://www.scons.org) build system. Here is a quick 
+list of scons commands that can be important for building FIFE on your platform:
  * 'scons -h' will list additional compile options.
  * 'scons -c' deletes any compiled objects (scons equivalent of 'make clean').
  * 'scons' will build FIFE (default target is fife-python).
@@ -39,7 +43,8 @@ Valid targets include:
   * install-python : installs the python module and library
   * install-dev : installed the shared, static and header files
   * install-all : installs the shared, static and python libraries
-  * projects : build msvc, msvc9 and code-blocks (win32 and linux) project files
+  * projects : build msvc, msvc9 and code-blocks (win32 and linux) project 
+    files
 
 Build options:
   * --release : builds the release versions of the binaries
@@ -51,25 +56,32 @@ Build options:
   * --enable-profile : build with profiling information
   * --prefix : installation prefix for the shared and static libraries
   * --python-prefix : installation prefix for the python library
+  * --lib-dir : installation directory for the libraries
 
 
 == Platform specific details ==
 
 === Linux ===
-Detailed information how to build FIFE on Linux-based distributions can be found at the project wiki:
+Detailed information how to build FIFE on Linux-based distributions can be found
+at the project wiki:
  * http://wiki.fifengine.de/index.php?title=Building:Linux:SCons
 
-After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola directory and run: 'python run.py'
+After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
+directory and run: 'python run.py'
 
 === OS X ===
-Detailed information how to build FIFE on OS X systems can be found at the project wiki:
+Detailed information how to build FIFE on OS X systems can be found at the 
+project wiki:
  * http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 
 After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola directory and run: 'python run.py'
 
 
 === Win32 ===
-The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.7:
+The Win32 package ships with precompiled binaries. Simply unpack the package to
+location of your choice. After that you'll need to install ActivePython 2.7:
  * http://downloads.activestate.com/ActivePython/releases/2.7.0.2/ActivePython-2.7.0.2-win32-x86.msi
 
-Move into the <FIFE>\demos\rio_de_hola directory and start the run.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
+Move into the <FIFE>\demos\rio_de_hola directory and start the run.py script. 
+You can simply double-click with your mouse on it. It should be automatically 
+associated with the Python interpreter after installing ActivePython.
