@@ -10,10 +10,14 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
-== 0.3.3 (October 4th, 2011)                                                  ==
+== 0.3.3 (October 6th, 2011)                                                  ==
 ================================================================================
 
 === Engine ===
+  * Many optimizations/improvements to the OpenGL renderer.  Depth testing was 
+    modified and now works properly with alpha blending enabled.  Alpha testing
+    is used to discard pixels. [t:556]
+  * Optimized color overlays. [t:539]
   * Re-implemented the Resouce Pools (ImagePool AnimationPool, etc) as 
     ImangeManager, SoundClipManager, etc. [t:504]  
   * Fixed the problem that the objects of the renderers don't get deallocated 
@@ -32,7 +36,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     the screen. [t:307]
   * Added camera overlay functions. Clients can now add a color, image and 
     animation overlay to the camera [t:460]
-  * Made sure that the fife logger is part of the FIFE namespace .
+  * Made sure that the fife logger is part of the FIFE namespace.
   * Modifying all integer definitions to conform to the C99 standard.
   * Added the getMinMaxCoordinates() function to the map class. It retrieves 
     the minimum/maximum coordinates of instances on the map.
@@ -118,7 +122,6 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     nothing.
   * Added GLee - currently it's compiled with fife as .cpp (scons doesn't get 
     compiled .c files).
-  * Optimized color overlays. [t:539]
   * Initial support for c++ map/object/animation loaders. [t:491]
   * Added dependency tinyxml for reading xml files. This is stored in 
     engine/core/ext/tinyxml directory. The scons scripts will attempt to use 
@@ -157,9 +160,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added animated percentagebar widget to gui animation demo.
   * Pychan demo now closes when you press escape or when you close the window. 
     [t:531]
-  * In the shooter demo I removed the annoying highscores.xml file from svn. 
-    Now the highscores.xml file is generated from a template file. No need to 
-    ignore the file when dong a commit now.
+  * Shooter demo now generates a hichscore file if one does not exist.
 
 === Documentation ===
   * Documented the shooter World.reset() function.

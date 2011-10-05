@@ -74,7 +74,8 @@ Detailed information how to build FIFE on OS X systems can be found at the
 project wiki:
  * http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 
-After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola directory and run: 'python run.py'
+After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
+directory and run: 'python run.py'
 
 
 === Win32 ===
