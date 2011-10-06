@@ -45,11 +45,11 @@ namespace FIFE {
 		m_map = map;
 	}
 
-	int RoutePather::makeSessionId() {
+	int32_t RoutePather::makeSessionId() {
 		return m_nextFreeSessionId++;
 	}
 	
-	void RoutePather::makePlan(const Instance *instance, const Location& target, int session_id, int priority) {
+	void RoutePather::makePlan(const Instance *instance, const Location& target, int32_t session_id, int32_t priority) {
 		SearchSpace* searchspace = getSearchSpace(target.getLayer());
 		if(!searchspace) {
 			searchspace = new SearchSpace(target.getLayer());
@@ -83,9 +83,9 @@ namespace FIFE {
 		return true;
 	}
 	
-	int RoutePather::getNextLocation(const Instance* instance, const Location& target, 
+	int32_t RoutePather::getNextLocation(const Instance* instance, const Location& target, 
 									 double distance_to_travel, Location& nextLocation,
-									 Location& facingLocation, int session_id, int priority) {
+									 Location& facingLocation, int32_t session_id, int32_t priority) {
 		assert(instance);
 		assert(instance->getLocation().getLayer() == target.getLayer());
 		bool plan_needed = true;
@@ -124,7 +124,7 @@ namespace FIFE {
 	}
 	
 	void RoutePather::update() {
-		int ticksleft = m_maxticks;
+		int32_t ticksleft = m_maxticks;
 		while(ticksleft >= 0) {
 			if(m_sessions.empty()) {
 				break;
@@ -137,7 +137,7 @@ namespace FIFE {
 			}
 			priority_session->updateSearch();
 			if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_complete) {
-				const int session_id = priority_session->getSessionId();
+				const int32_t session_id = priority_session->getSessionId();
 				Path newPath = priority_session->calcPath();
 				newPath.erase(newPath.begin());
 				m_paths.insert(PathMap::value_type(session_id, newPath));
@@ -145,7 +145,7 @@ namespace FIFE {
 				delete priority_session;
 				m_sessions.popElement();
 			} else if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_failed) {
-				const int session_id = priority_session->getSessionId();
+				const int32_t session_id = priority_session->getSessionId();
 				invalidateSessionId(session_id);
 				delete priority_session;
 				m_sessions.popElement();
@@ -174,7 +174,14 @@ namespace FIFE {
 		CellGrid* grid = instanceLoc.getLayer()->getCellGrid();
 		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
 		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
-		double distance = sqrt(dx * dx + dy * dy);
+		double distance;
+
+		if (grid->getType() == "square") {
+			distance = Mathd::Sqrt(dx * dx + dy * dy);
+		} else {
+			distance = Mathd::Sqrt((dx*dx) + (dy*dy) + (ABS(dx) * ABS(dy)));
+		}
+
 		bool pop = false;
 		if(speed > distance) {
 			speed = distance;
@@ -197,7 +204,7 @@ namespace FIFE {
 		return true;
 	}
 	
-	bool RoutePather::cancelSession(const int session_id) {
+	bool RoutePather::cancelSession(const int32_t session_id) {
 		if(session_id >= 0) {
 			PathMap::iterator i = m_paths.find(session_id);
 			if(i != m_paths.end()) {
@@ -213,11 +220,11 @@ namespace FIFE {
 		return false;
 	}
 	
-	void RoutePather::addSessionId(const int sessionId) {
+	void RoutePather::addSessionId(const int32_t sessionId) {
 		m_registeredSessionIds.push_back(sessionId);
 	}
 	
-	bool RoutePather::sessionIdValid(const int sessionId) {
+	bool RoutePather::sessionIdValid(const int32_t sessionId) {
 		for(SessionList::const_iterator i = m_registeredSessionIds.begin();
 			i != m_registeredSessionIds.end();
 			++i) {
@@ -228,7 +235,7 @@ namespace FIFE {
 		return false;
 	}
 	
-	bool RoutePather::invalidateSessionId(const int sessionId) {
+	bool RoutePather::invalidateSessionId(const int32_t sessionId) {
 		for(SessionList::iterator i = m_registeredSessionIds.begin();
 			i != m_registeredSessionIds.end();
 			++i) {

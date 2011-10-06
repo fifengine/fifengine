@@ -44,7 +44,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int position):
+	QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
 	}
@@ -68,14 +68,14 @@ namespace FIFE {
 
 	RenderVisitor::~RenderVisitor() {}
 
-	template<typename T> bool RenderVisitor::visit(QuadNode<T,2>* node, int d) {
+	template<typename T> bool RenderVisitor::visit(QuadNode<T,InstanceTree::MIN_TREE_SIZE>* node, int32_t d) {
 
 		if (d==0)
 			visited = 0;
 
-		int x = node->x();
-		int y = node->y();
-		int size = node->size();
+		int32_t x = node->x();
+		int32_t y = node->y();
+		int32_t size = node->size();
 
 		++visited;
 		CellGrid *cg = m_layer->getCellGrid(); ///we have checked for null pointer in  quadtreerenderer::render().. no need to check again
@@ -90,12 +90,10 @@ namespace FIFE {
 		emc= cg->toMapCoordinates(ExactModelCoordinate( x+size,y+size) );
 		ScreenPoint scrpt4 =m_camera->toScreenCoordinates( emc );
 
-		m_renderbackend->disableLighting();
-		m_renderbackend->drawLine( Point(scrpt1.x,scrpt1.y) , Point(scrpt2.x,scrpt2.y), 255, 255, 255);
+		m_renderbackend->drawLine(Point(scrpt1.x,scrpt1.y), Point(scrpt2.x,scrpt2.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt1.x,scrpt1.y), Point(scrpt3.x,scrpt3.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt3.x,scrpt3.y), Point(scrpt4.x,scrpt4.y), 255, 255, 255);
 		m_renderbackend->drawLine(Point(scrpt2.x,scrpt2.y), Point(scrpt4.x,scrpt4.y), 255, 255, 255);
-		m_renderbackend->enableLighting();
 
 		return true;
 	}

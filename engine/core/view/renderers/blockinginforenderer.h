@@ -40,7 +40,7 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 */
-		BlockingInfoRenderer(RenderBackend* renderbackend, int position);
+		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
 		
 		BlockingInfoRenderer(const BlockingInfoRenderer& old);
 
@@ -52,7 +52,7 @@ namespace FIFE {
 
 		std::string getName() { return "BlockingInfoRenderer"; }
 		void render(Camera* cam, Layer* layer, RenderList& instances);
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 

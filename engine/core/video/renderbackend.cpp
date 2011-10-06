@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,89 +31,96 @@
 #include "video/devicecaps.h"
 
 namespace FIFE {
-
-
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
 		m_screen(NULL),
+		m_target(NULL),
+		m_compressimages(false),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
-		m_colorkey(colorkey) {
-	}
+		m_colorkey(colorkey),
+		m_isframelimit(false),
+		m_framelimit(60) {
 
+		m_isbackgroundcolor = false;
+		m_backgroundcolor.r = 0;
+		m_backgroundcolor.g = 0;
+		m_backgroundcolor.b = 0;
+	}
 
 	RenderBackend::~RenderBackend() {
 	}
 
 	void RenderBackend::deinit() {
-		delete m_screen;
-		m_screen = NULL;
+		//delete m_screen;
+		//m_screen = NULL;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+		SDL_Quit();
 	}
 
-	void RenderBackend::captureScreen(const std::string& filename) {
-		m_screen->saveImage(filename);
+	void RenderBackend::startFrame() {
+		if (m_isframelimit) {
+			m_frame_start = SDL_GetTicks();
+		}
 	}
 
-	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
-		assert(m_screen);
-		m_screen->pushClipArea(cliparea, clear);
-	}
-
-	void RenderBackend::popClipArea() {
-		assert(m_screen);
-		m_screen->popClipArea();
-	}
-
-	const Rect& RenderBackend::getClipArea() const {
-		assert(m_screen);
-		return m_screen->getClipArea();
-	}
-
-	SDL_Surface* RenderBackend::getSurface() {
-		assert(m_screen);
-		return m_screen->getSurface();
+	void RenderBackend::endFrame () {
+		if (m_isframelimit) {
+			uint16_t frame_time = SDL_GetTicks() - m_frame_start;
+			const float frame_limit = 1000.0f/m_framelimit;
+			if (frame_time < frame_limit) {
+				SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
+			}
+		}
 	}
 
 	const ScreenMode& RenderBackend::getCurrentScreenMode() const{
 		return m_screenMode;
 	}
 
-	unsigned int RenderBackend::getWidth() const {
-		assert(m_screen);
-		return m_screen->getWidth();
+	uint32_t RenderBackend::getWidth() const {
+		return m_screen->w;
 	}
 
-	unsigned int RenderBackend::getHeight() const {
-		assert(m_screen);
-		return m_screen->getHeight();
+	uint32_t RenderBackend::getHeight() const {
+		return m_screen->h;
 	}
 
-	const Rect& RenderBackend::getArea() {
-		assert(m_screen);
-		SDL_Surface* s = m_screen->getSurface();
-		static Rect r(0, 0, s->w, s->h);
+	const Rect& RenderBackend::getArea() const {
+		static Rect r(0, 0, m_screen->w, m_screen->h);
 		return r;
 	}
 
-	void RenderBackend::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
-		assert(m_screen);
-		m_screen->getPixelRGBA(x, y, r, g, b, a);
+	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
+		ClipInfo ci;
+		ci.r = cliparea;
+		ci.clearing = clear;
+		m_clipstack.push(ci);
+		setClipArea(cliparea, clear);
 	}
 
-	void RenderBackend::saveImage(const std::string& filename) {
-		assert(m_screen);
-		m_screen->saveImage(filename);
+	void RenderBackend::popClipArea() {
+		assert(!m_clipstack.empty());
+		m_clipstack.pop();
+		if (m_clipstack.empty()) {
+			setClipArea(getArea(), false);
+		} else {
+			ClipInfo ci = m_clipstack.top();
+			setClipArea(ci.r, ci.clearing);
+		}
 	}
 
-	void RenderBackend::setAlphaOptimizerEnabled(bool enabled) {
-		assert(m_screen);
-		m_screen->setAlphaOptimizerEnabled(enabled);
+	const Rect& RenderBackend::getClipArea() const {
+		if (m_clipstack.empty()) {
+			return m_clipstack.top().r;
+		} else {
+			return getArea();
+		}
 	}
 
-	bool RenderBackend::isAlphaOptimizerEnabled() {
-		assert(m_screen);
-		return m_screen->isAlphaOptimizerEnabled();
+	void RenderBackend::clearClipArea() {
+		setClipArea(getArea(), true);
 	}
+
 
 	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {
 		m_iscolorkeyenabled = colorkeyenable;
@@ -129,5 +136,42 @@ namespace FIFE {
 
 	const SDL_Color& RenderBackend::getColorKey() const {
 		return m_colorkey;
+	}
+
+	void RenderBackend::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b) {
+		if (r != m_backgroundcolor.r || g != m_backgroundcolor.g || b != m_backgroundcolor.b) {
+			m_isbackgroundcolor = true;
+			m_backgroundcolor.r = r;
+			m_backgroundcolor.g = g;
+			m_backgroundcolor.b = b;
+		}
+	}
+
+	void RenderBackend::resetBackgroundColor() {
+		setBackgroundColor(0,0,0);
+	}
+	
+	const SDL_PixelFormat& RenderBackend::getPixelFormat() const {
+		return m_rgba_format;
+	}
+
+	void RenderBackend::setFrameLimitEnabled(bool limited) {
+		m_isframelimit = limited;
+	}
+
+	bool RenderBackend::isFrameLimitEnabled() const {
+		return m_isframelimit;
+	}
+
+	void RenderBackend::setFrameLimit(uint16_t framelimit) {
+		m_framelimit = framelimit;
+	}
+
+	uint16_t RenderBackend::getFrameLimit() const {
+		return m_framelimit;
+	}
+
+	SDL_Surface* RenderBackend::getRenderTargetSurface() {
+		return m_target;
 	}
 }

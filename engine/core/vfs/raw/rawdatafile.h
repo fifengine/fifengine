@@ -51,14 +51,14 @@ namespace FIFE {
 			RawDataFile(const std::string& file);
 			virtual ~RawDataFile();
 
-			virtual unsigned int getSize() const;
-			virtual void readInto(uint8_t* buffer, unsigned int start, unsigned int length);
+			virtual uint32_t getSize() const;
+			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length);
 
 		private:
 			std::string m_file;
 			std::ifstream m_stream;
 
-			unsigned int m_filesize;
+			uint32_t m_filesize;
 
 	};
 

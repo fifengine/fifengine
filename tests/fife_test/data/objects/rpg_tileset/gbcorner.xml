@@ -1,0 +1,7 @@
+<?fife type="object"?>
+<object id="gbcorner" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_0_0.png" direction="0" />
+	<image source="tile_0_2.png" direction="90" />
+	<image source="tile_2_2.png" direction="180" />
+	<image source="tile_2_0.png" direction="270" />
+</object>

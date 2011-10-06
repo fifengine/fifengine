@@ -57,7 +57,7 @@ class SoundEmitter(object):
 	@todo: At some point this class will store positional information
 	and also be responsible for updating the L{fife.SoundEmitter} position.
 	"""
-	def __init__(self, soundmanager, clipid, soundname, emitter):
+	def __init__(self, soundmanager, clip, soundname, emitter):
 		"""
 		@param soundmanager: A reference to the SoundManager
 		@type soundmanager: L{SoundManager}
@@ -76,7 +76,7 @@ class SoundEmitter(object):
 		#Note that we do NOT own the emitter.
 		self._fifeemitter = emitter
 		self._fifeemitter.thisown = 0
-		self._fifeclipid = clipid
+		self._fifeclip = clip
 
 		#0 = mute, 255 = normal volume
 		self._gain = 255.0
@@ -103,8 +103,8 @@ class SoundEmitter(object):
 	def stop(self):
 		self._soundmanager.stopClip(self)
 
-	def _getClipID(self):
-		return self._fifeclipid
+	def _getClip(self):
+		return self._fifeclip
 
 	def _getGain(self):
 		return self._gain
@@ -169,7 +169,7 @@ class SoundEmitter(object):
 	rolloff = property(_getRolloff, _setRolloff)
 	position = property(_getPosition, _setPosition)
 	timer = property(_getTimer, _setTimer)
-	clipid = property(_getClipID)
+	clip = property(_getClip)
 	gain = property(_getGain, _setGain)
 	looping = property(_getLooping, _setLooping)
 	fifeemitter = property(_getFifeEmitter, _setFifeEmitter)
@@ -192,6 +192,8 @@ class SoundManager(object):
 		"""
 
 		self._engine = engine
+		
+		self._fifesoundclipmanager = self._engine.getSoundClipManager()
 
 		self._fifesoundmanager = self._engine.getSoundManager()
 		self._fifesoundmanager.init()
@@ -228,24 +230,24 @@ class SoundManager(object):
 		@rtype: L{SoundEmitter}
 		"""
 		if not self._loadedclips.has_key(filename):
-			clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
+			soundclipptr = self._fifesoundclipmanager.get(filename)
 			fifeemitter = self._fifesoundmanager.createEmitter()
 			fifeemitter.thisown = 0
-			fifeemitter.setSoundClip(clipid)
+			fifeemitter.setSoundClip(soundclipptr)
 			self._loadedclips[filename] = [fifeemitter]
-			clip = SoundEmitter(self, clipid, filename, fifeemitter)
+			clip = SoundEmitter(self, soundclipptr, filename, fifeemitter)
 			clip.duration = fifeemitter.getDuration()
 		else:
 			if forceUnique:
-				clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
+				soundclipptr = self._fifesoundclipmanager.get(filename)
 				fifeemitter = self._fifesoundmanager.createEmitter()
 				fifeemitter.thisown = 0
-				fifeemitter.setSoundClip(clipid)
+				fifeemitter.setSoundClip(soundclipptr)
 				self._loadedclips[filename].append(fifeemitter)
 			else:
 				fifeemitter = self._loadedclips[filename][0]
 
-			clip = SoundEmitter(self, fifeemitter.getId(), filename, fifeemitter)
+			clip = SoundEmitter(self, fifeemitter.getSoundClip(), filename, fifeemitter)
 			clip.duration = fifeemitter.getDuration()
 
 		if position is not None:

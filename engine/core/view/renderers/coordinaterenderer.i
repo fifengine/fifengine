@@ -26,17 +26,19 @@
 
 namespace FIFE {
 	class RenderBackend;
+	class IFont;
 
 	class CoordinateRenderer: public RendererBase {
 	public:
 		virtual ~CoordinateRenderer();
 		std::string getName();
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setFont(IFont* font);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 		
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 				
 	private:
-		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		CoordinateRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }
 

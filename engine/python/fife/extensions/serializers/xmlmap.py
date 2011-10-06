@@ -31,7 +31,7 @@ from fife.extensions.serializers import SerializerError, InvalidFormat
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
 
 from fife.extensions.serializers.xmlobject import XMLObjectLoader
-from fife.extensions.serializers.xmlanimation import XMLAnimationLoader
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir
 from fife.extensions.serializers.xml_loader_tools import loadImportDirRec
 from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_root_subfile	
@@ -39,7 +39,7 @@ from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_r
 
 FORMAT = '1.0'
 
-class XMLMapLoader(fife.ResourceLoader):
+class XMLMapLoader(object):
 	""" The B{XMLMapLoader} parses the xml map using several section. 
 	Each section fires a callback (if given) which can e. g. be
 	used to show a progress bar.
@@ -58,8 +58,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		@type	extensions:	dict
 		@param	extensions:	information package which extension should be activated (lights, sounds)
 		"""
-		fife.ResourceLoader.__init__(self)
-		self.thisown = 0
+#		self.thisown = 0
 		
 		self.callback = callback
 		self.debug = debug
@@ -67,15 +66,10 @@ class XMLMapLoader(fife.ResourceLoader):
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
 		self.model = self.engine.getModel()
-		self.pool = self.engine.getImagePool()
-		self.anim_pool = self.engine.getAnimationPool()
+		self.image_manager = self.engine.getImageManager()
+		self.anim_pool = None
 		
-		self.obj_loader = XMLObjectLoader(
-			engine.getImagePool(),
-			engine.getAnimationPool(),
-			engine.getModel(),
-			engine.getVFS()
-		)
+		self.obj_loader = XMLObjectLoader(engine)
 	
 		self.map = None
 		self.source = None
@@ -109,7 +103,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		@return	map:	FIFE map object
 		"""
 		start_time = time.time()
-		self.source = location.getFilename()
+		self.source = location
 		f = self.vfs.open(self.source)
 		f.thisown = 1
 		tree = ET.parse(f)
@@ -139,7 +133,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		map = None
 		try:
 			self.map = self.model.createMap(str(_id))
-			self.map.setResourceFile(self.source)
+			self.map.setFilename(self.source)
 		except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
 			print e.getMessage()
 			print ''.join(['File: ', self.source, '. The map ', str(_id), ' already exists! Ignoring map definition.'])
@@ -256,6 +250,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			except fife.Exception, e:
 				print e.getMessage()
 				print 'The layer ' + str(_id) + ' already exists! Ignoring this layer.'
+
 				continue
 
 			strgy = fife.CELL_EDGES_ONLY
@@ -356,8 +351,8 @@ class XMLMapLoader(fife.ResourceLoader):
 						continue
 					node['type'] = 'image'
 					image = reverse_root_subfile(self.source, image)
-					img_id = self.pool.addResourceFromFile(image)
-					node['image'] = int(img_id)
+					img = self.image_manager.create(image)
+					node['image'] = img
 				elif type == 'animation':
 					animation = light.get('animation')					
 					if not animation:
@@ -365,9 +360,8 @@ class XMLMapLoader(fife.ResourceLoader):
 						continue
 					node['type'] = 'animation'
 					animation = reverse_root_subfile(self.source, animation)
-					rloc = fife.ResourceLocation(animation)
-					ani_id = self.anim_pool.addResourceFromLocation(rloc)
-					node['animation'] = int(ani_id)					
+					anim = loadXMLAnimation(self.engine, animation)
+					node['animation'] = anim					
 				elif type == 'simple':
 					node['type'] = type
 					radius = light.get('radius')
@@ -600,7 +594,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -630,7 +624,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -653,7 +647,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			@type	renderer:	object
 			@param	renderer:	fife.LightRenderer instance
 			@type	node:		object
-			@param	node:		fife.LightRendererNode instance
+			@param	node:		fife.RendererNode instance
 			@type	data:		dict
 			@param	data:		all data for the light type creation
 			"""
@@ -708,13 +702,13 @@ class XMLMapLoader(fife.ResourceLoader):
 			# node at layer coordinates
 			if point and not instance:
 				point = fife.Point(point[0], point[1])
-				node = fife.LightRendererNode(point);
+				node = fife.RendererNode(point);
 			# node with offset
 			if instance and point:
-				node = fife.LightRendererNode(instance, layer, fife.Point(point[0], point[1]))
+				node = fife.RendererNode(instance, layer, fife.Point(point[0], point[1]))
 			# node attached to instance
 			if instance and not point:
-				node = fife.LightRendererNode(instance, layer)
+				node = fife.RendererNode(instance, layer)
 
 			if node:
 				node.thisown = 0

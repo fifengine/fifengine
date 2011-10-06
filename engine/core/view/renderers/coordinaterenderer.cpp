@@ -29,8 +29,7 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "video/imagepool.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -47,15 +46,14 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
-		m_font(font) {
+		m_font(0) {
 		setEnabled(false);
 		m_font_color = false;
-		m_color = m_font->getColor();
 	}
 
  	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
@@ -72,7 +70,7 @@ namespace FIFE {
 	RendererBase* CoordinateRenderer::clone() {
 		return new CoordinateRenderer(*this);
 	}
-	
+
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
 
@@ -89,9 +87,13 @@ namespace FIFE {
 		m_layer_area.h = std::max(c.y, m_layer_area.h);
 	}
 
-	const int MIN_COORD = -9999999;
-	const int MAX_COORD = 9999999;
+	const int32_t MIN_COORD = -9999999;
+	const int32_t MAX_COORD = 9999999;
 	void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
+		if (!m_font) {
+			//no font selected.. nothing to render
+			return;
+		}
 		m_layer_area.x = MAX_COORD;
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;
@@ -114,8 +116,8 @@ namespace FIFE {
 			m_font->setColor(m_color.r, m_color.g, m_color.b);
 			m_font_color = true;
 		}
-		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
-			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
+		for (int32_t x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
+			for (int32_t y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());
@@ -138,7 +140,7 @@ namespace FIFE {
 		}
 	}
 
-	void CoordinateRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void CoordinateRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;

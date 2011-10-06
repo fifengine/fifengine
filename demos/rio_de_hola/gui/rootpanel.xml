@@ -1,5 +1,5 @@
 <HBox opaque='1'>
-	<Label name="Title" text="Rio de hola - FIFE 0.3.2"/>
+	<Label name="Title" text="Rio de hola - FIFE 0.3.3"/>
 	<Button name="quitButton" text="Quit"/>
 	<Button name="aboutButton" text="About"/>
 	<Button name="optionsButton" text="Options"/>

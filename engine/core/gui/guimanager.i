@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -21,29 +21,15 @@
 
 %module fife
 %{
-#include <guichan.hpp>
 #include "gui/guimanager.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
 %}
 
-namespace gcn {
-	class Widget;
-}
 namespace FIFE {
-	class Console;
-	
-	%feature("notabstract") GUIManager;
-	class GUIManager {
+	class IGUIManager :	public ISdlEventListener {
 	public:
-		Console* getConsole() const;
-		void add(gcn::Widget* widget);
-		void remove(gcn::Widget* widget);
-		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
-		void releaseFont(GuiFont* font);
-
-		KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);
-		MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
-		
-	private:
-		GUIManager();
+		virtual ~IGUIManager();
+		virtual void turn() = 0;
+		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 	};
 }

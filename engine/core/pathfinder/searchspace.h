@@ -40,28 +40,28 @@ namespace FIFE {
 	public:
 		SearchSpace(Layer* layer);
 
-		int getUpperX() const {
+		int32_t getUpperX() const {
 			return m_upperX;
 		}
 
-		int getUpperY() const {
+		int32_t getUpperY() const {
 			return m_upperY;
 		}
 
-		int getLowerX() const {
+		int32_t getLowerX() const {
 			return m_lowerX;
 		}
 
-		int getLowerY() const {
+		int32_t getLowerY() const {
 			return m_lowerY;
 		}
 
-		int getWidth() const { 
+		int32_t getWidth() const { 
 			//1 is added to make it inclusive of the first cell.
 			return (m_upperX - m_lowerX) + 1;
 		}
 
-		int getHeight() const {
+		int32_t getHeight() const {
 			return (m_upperY - m_lowerY) + 1;
 		}
 
@@ -96,7 +96,7 @@ namespace FIFE {
 		 * @param coord The model coord to get the integer of.
 		 * @return The unique identifier.
 		 */
-		int convertCoordToInt(const ModelCoordinate& coord) const;
+		int32_t convertCoordToInt(const ModelCoordinate& coord) const;
 
 		/** Converts an integer to a ModelCoordinate.
 		 *
@@ -106,19 +106,19 @@ namespace FIFE {
 		 * @param cell An integer of the cell to get the coordinate of.
 		 * @return The model coordinate in question.
 		 */
-		ModelCoordinate convertIntToCoord(const int cell) const;
+		ModelCoordinate convertIntToCoord(const int32_t cell) const;
 
 		/** Returns the maximum index on the layer.
 		 * Returns the maximum indexible coordinate on the search space.
 		 * @return The maximum indexible coordinate.
 		 */
-		int getMaxIndex() const;
+		int32_t getMaxIndex() const;
 	private:
 		//The boundries of the search space.
-		int m_upperX;
-		int m_upperY;
-		int m_lowerX;
-		int m_lowerY;
+		int32_t m_upperX;
+		int32_t m_upperY;
+		int32_t m_lowerX;
+		int32_t m_lowerY;
 
 		//The layer of the search space.
 		Layer* m_layer;

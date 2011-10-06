@@ -30,31 +30,32 @@
 #include "model/structures/instance.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/action.h"
-#include "util/resource/pool.h"
 
 #include "visual.h"
 #include "renderitem.h"
 
 namespace FIFE {
-	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
+	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -2;
 
 	RenderItem::RenderItem():
 		screenpoint(),
 		dimensions(),
-		image(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cached_static_img_angle(0) {
 	}
 
-	int RenderItem::getStaticImageIndexByAngle(unsigned int angle, Instance* instance) {
-		if (static_cast<int>(angle) != m_cached_static_img_angle) {
+	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
+		if (static_cast<int32_t>(angle) != m_cached_static_img_angle) {
 			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
 		}
 		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cached_static_img_id;
 		}
 		if(!instance->getObject()->getVisual<ObjectVisual>())
-			return Pool::INVALID_ID;
+//prock - 504
+//			return Pool::INVALID_ID;
+			return -1;
+
 		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
 		m_cached_static_img_angle = angle;
 		return m_cached_static_img_id;

@@ -42,7 +42,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	GridRenderer::GridRenderer(RenderBackend* renderbackend, int position):
+	GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
 		m_color.r = 0;
@@ -73,8 +73,7 @@ namespace FIFE {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
 			return;
 		}
-		m_renderbackend->disableLighting();
-//
+
 //
 //		//render elev_coord box
 //		//draw front quad
@@ -144,8 +143,8 @@ namespace FIFE {
 
 
 		Rect cv = cam->getViewPort();
-		int cvx2 = cv.x+cv.w;
-		int cvy2 = cv.y+cv.h;
+		int32_t cvx2 = cv.x+cv.w;
+		int32_t cvy2 = cv.y+cv.h;
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -181,7 +180,6 @@ namespace FIFE {
 				}
 			}
 		}
-		m_renderbackend->enableLighting();
 	}
 
 	void GridRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {

@@ -27,15 +27,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/log/logger.h"
 #include "exception.h"
 
 
 namespace FIFE {
 static Logger _log(LM_EXCEPTION);
 
-	Exception::Exception(const std::string& msg): std::runtime_error(msg) {
-		FL_PANIC(_log, LMsg() << what());
+	Exception::Exception(const std::string& msg): std::runtime_error(msg), m_what(msg) {
 	}
 
 	Exception::~Exception() throw() {}
@@ -43,7 +41,8 @@ static Logger _log(LM_EXCEPTION);
 	const char* Exception::what() const throw() {
 		std::stringstream str;
 
-		str << "_[" << getTypeStr() << "]_ , " << std::runtime_error::what();
+		str << "_[" << getTypeStr() << "]_ , " << getDescription() << " :: " << m_what;
+
 		return str.str().c_str();
 	}
 }//FIFE

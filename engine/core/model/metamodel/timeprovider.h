@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fife_stdint.h"
 #include "util/base/exception.h"
 
 namespace FIFE {
@@ -62,7 +63,7 @@ namespace FIFE {
 		
 		/** Returns current game ticks, already scaled.
 		 */
-		unsigned int getGameTime() const;
+		uint32_t getGameTime() const;
 		
 	private:
 		TimeProvider* m_master;
@@ -78,7 +79,7 @@ namespace FIFE {
 	 * with related casting
 	 * @return multiplier * ticks
 	 */
-	unsigned int scaleTime(float multiplier, unsigned int ticks);
+	uint32_t scaleTime(float multiplier, uint32_t ticks);
 
 } //FIFE
 #endif

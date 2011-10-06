@@ -27,7 +27,6 @@ from fife.extensions import pychan
 from fife.extensions.pychan import widgets
 
 from scripts.common.eventlistenerbase import EventListenerBase
-from fife.extensions.loaders import loadMapFile
 from fife.extensions.savers import saveMapFile
 from fife.extensions.soundmanager import SoundManager
 from agents.hero import Hero
@@ -161,11 +160,19 @@ class World(EventListenerBase):
 		
 		self.filename = filename
 		self.reset()
-		self.map = loadMapFile(filename, self.engine, extensions = {'lights': True})
-		self.maplistener = MapListener(self.map)
+		loader = fife.MapLoader(self.engine.getModel(), 
+								self.engine.getVFS(), 
+								self.engine.getImageManager(), 
+								self.engine.getRenderBackend())
+								
+		if loader.isLoadable(filename):
+			self.map = loader.load(filename)
 
 		self.initAgents()
 		self.initCameras()
+
+		#Set background color
+		self.engine.getRenderBackend().setBackgroundColor(80,80,255)
 
 		if int(TDS.get("FIFE", "PlaySounds")):
 			# play track as background music
@@ -234,8 +241,8 @@ class World(EventListenerBase):
 		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
 		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
-		renderer.changeDefaultFont(textfont)
+		textfont = pychan.manager.hook.guimanager.createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
+		renderer.setFont(textfont)
 		renderer.activateAllLayers(self.map)
 		renderer.setBackground(100, 255, 100, 165)
 		renderer.setBorder(50, 255, 50)
@@ -248,12 +255,13 @@ class World(EventListenerBase):
 		# The small camera shouldn't be cluttered by the 'humm di dums' of our hero.
 		# So we disable the renderer simply by setting its font to None.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
-		renderer.changeDefaultFont(None)
+		renderer.setFont(None)
 
 		# The following renderers are used for debugging.
 		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )
 		# renderers will be handed all layers. That's handled here.
-		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
+		renderer = fife.CoordinateRenderer.getInstance(self.cameras['main'])
+		renderer.setFont(textfont)
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.map.getLayer(str(TDS.get("rio", "CoordinateLayerName"))))
 
@@ -378,10 +386,7 @@ class World(EventListenerBase):
 			self.light_intensity = self.light_intensity + value
 
 			if self.lightmodel == 1:
-				self.cameras['main'].setLightingColor(self.light_intensity, self.light_intensity, self.light_intensity, 1.0)
-
-			if self.lightmodel == 2:
-				self.cameras['main'].setLightingColor(0, 0, 0, 1-self.light_intensity)
+				self.cameras['main'].setLightingColor(self.light_intensity, self.light_intensity, self.light_intensity)
 
 	def lightSourceIntensity(self, value):
 		if self.light_sources+value <= 255 and self.light_sources+value >= 0:
@@ -393,29 +398,15 @@ class World(EventListenerBase):
 			renderer.removeAll("girl_simple_light")
 
 			if self.lightmodel == 1:
-				node = fife.LightRendererNode(self.hero.agent)
+				node = fife.RendererNode(self.hero.agent)
 				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
 
-				node = fife.LightRendererNode(self.girl.agent)		
+				node = fife.RendererNode(self.girl.agent)		
 				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
 
 				for beekeeper in self.beekeepers:
-					node = fife.LightRendererNode(beekeeper.agent)
-					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)
-
-			if self.lightmodel == 2:
-				node = fife.LightRendererNode(self.hero.agent)
-				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
-				renderer.addStencilTest("hero_simple_light")
-
-				node = fife.LightRendererNode(self.girl.agent)		
-				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
-				renderer.addStencilTest("girl_simple_light")
-
-				for beekeeper in self.beekeepers:
-					node = fife.LightRendererNode(beekeeper.agent)
-					renderer.addSimpleLight("beekeeper_simple_light", node, 255, 120, 32, 1, 1, 0, 0, 0)
-					renderer.addStencilTest("beekeeper_simple_light")				
+					node = fife.RendererNode(beekeeper.agent)
+					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)		
 
 	def onConsoleCommand(self, command):
 		result = ''

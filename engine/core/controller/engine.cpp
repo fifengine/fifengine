@@ -35,7 +35,6 @@
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "audio/soundmanager.h"
-#include "gui/console/console.h"
 #include "gui/guimanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
@@ -44,24 +43,20 @@
 #include "vfs/zip/zipprovider.h"
 #endif
 #include "eventchannel/eventmanager.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
-#include "audio/soundclippool.h"
+#include "video/imagemanager.h"
+#include "audio/soundclipmanager.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
 #include "video/devicecaps.h"
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "gui/base/opengl/opengl_gui_graphics.h"
+#include "video/opengle/renderbackendopengle.h"
 #endif
-#include "gui/base/sdl/sdl_gui_graphics.h"
-#include "gui/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
-#include "video/fonts/abstractfont.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
-#include "loaders/native/video_loaders/image_loader.h"
-#include "loaders/native/audio_loaders/ogg_loader.h"
+#include "loaders/native/video/subimageloader.h"
+#include "loaders/native/video/imageloader.h"
+#include "loaders/native/audio/ogg_loader.h"
 #include "model/model.h"
 #include "pathfinder/routepather/routepather.h"
 #include "model/metamodel/grids/hexgrid.h"
@@ -74,9 +69,10 @@
 #include "view/renderers/cellselectionrenderer.h"
 #include "view/renderers/blockinginforenderer.h"
 #include "view/renderers/genericrenderer.h"
+#include "view/renderers/targetrenderer.h"
 #include "view/renderers/lightrenderer.h"
+#include "view/renderers/offrenderer.h"
 #include "video/image.h"
-#include "gui/console/console.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -84,7 +80,7 @@
 #include <objc/message.h>
 #include <dlfcn.h>
 
-int main(int argc, char **argv)
+int32_t main(int32_t argc, char **argv)
 {
     return 0;
 }
@@ -99,16 +95,15 @@ namespace FIFE {
 		m_eventmanager(0),
 		m_soundmanager(0),
 		m_timemanager(0),
-		m_imagepool(0),
-		m_animpool(0),
-		m_soundclippool(0),
+		m_imagemanager(0),
+		m_soundclipmanager(0),
 		m_vfs(0),
 		m_model(0),
-		m_gui_graphics(0),
 		m_logmanager(0),
 		m_cursor(0),
 		m_settings(),
 		m_devcaps(),
+		m_offrenderer(0),
 		m_changelisteners() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
@@ -124,7 +119,7 @@ namespace FIFE {
 		m_autoreleasePool =
 			objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
 #endif
-		preInit();
+		m_logmanager = LogManager::instance();
 	}
 
 	EngineSettings& Engine::getSettings() {
@@ -135,30 +130,28 @@ namespace FIFE {
 		return m_devcaps;
 	}
 
-	Image* Engine::changeScreenMode(const ScreenMode& mode){
+	void Engine::changeScreenMode(const ScreenMode& mode){
 		m_cursor->invalidate();
-		m_imagepool->invalidateLoadedImages();
-		m_defaultfont->invalidate();
-		m_guimanager->invalidateFonts();
 
-		Image* screen = m_renderbackend->setScreenMode(mode);
+		m_imagemanager->invalidateAll();
 
-		m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
-		m_guimanager->getConsole()->reLayout();
+		m_renderbackend->setScreenMode(mode);
+
+		if (m_guimanager) {
+			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
+		}
 
 		std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
 			(*i)->onScreenModeChanged(mode);
 			++i;
 		}
-
-		return screen;
 	}
 
-	void Engine::preInit() {
-		m_logmanager = LogManager::instance();
+	void Engine::init() {
+		m_destroyed = false;
 
-		FL_LOG(_log, "================== Engine pre-init start =================");
+		FL_LOG(_log, "================== Engine initialize start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
 
@@ -175,13 +168,6 @@ namespace FIFE {
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
-		m_destroyed = false;
-	}
-
-	void Engine::init() {
-		FL_LOG(_log, "Engine initialize start");
-		m_settings.validate();
-		FL_LOG(_log, "Engine settings validated");
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
@@ -195,13 +181,10 @@ namespace FIFE {
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
 
-		FL_LOG(_log, "Creating pools");
-		m_imagepool = new ImagePool();
-		m_animpool = new AnimationPool();
-		m_soundclippool = new SoundClipPool();
-		m_imagepool->addResourceLoader(new SubImageLoader());
-		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
-		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
+		FL_LOG(_log, "Creating resource managers");
+
+		m_imagemanager = new ImageManager();
+		m_soundclipmanager = new SoundClipManager();
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
@@ -210,8 +193,14 @@ namespace FIFE {
 			FL_LOG(_log, "SDL Render backend created");
 		} else {
 #ifdef HAVE_OPENGL
-			m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
-			FL_LOG(_log, "OpenGL Render backend created");
+			if (rbackend == "OpenGLe") {
+				m_renderbackend = new RenderBackendOpenGLe(m_settings.getColorKey());
+				FL_LOG(_log, "OpenGLe Render backend created");
+				FL_LOG(_log, "This is highly experimental so bear in mind some features may not work/work correctly.");
+			} else {
+				m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
+				FL_LOG(_log, "OpenGL Render backend created");
+			}
 #else
 			m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
 			// Remember  the choice so we pick the right graphics class.
@@ -221,6 +210,14 @@ namespace FIFE {
 		}
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
+		// we always set this to false
+		//m_renderbackend->setAlphaOptimizerEnabled(false);
+		m_renderbackend->setImageCompressingEnabled(m_settings.isGLCompressImages());
+
+		if (m_settings.isFrameLimitEnabled()) {
+			m_renderbackend->setFrameLimitEnabled(true);
+			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
+		}
 
 		std::string driver = m_settings.getVideoDriver();
 		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
@@ -254,57 +251,39 @@ namespace FIFE {
 		FL_LOG(_log, "Main screen created");
 
 #ifdef HAVE_OPENGL
-		if( rbackend != "SDL" ) {
-			m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
-		}
-
 		if (m_settings.getLightingModel() != 0) {
 			m_renderbackend->setLightingModel(m_settings.getLightingModel());
 		}
 
 #endif
-		if( rbackend == "SDL" ) {
-			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
-		}
-		FL_LOG(_log, "Constructing GUI manager");
-		m_guimanager = new GUIManager(*m_imagepool);
-		FL_LOG(_log, "Events bind to GUI manager");
-		m_eventmanager->addSdlEventListener(m_guimanager);
-
-		FL_LOG(_log, "Creating default font");
-		m_defaultfont = m_guimanager->setDefaultFont(
-			m_settings.getDefaultFontPath(),
-			m_settings.getDefaultFontSize(),
-			m_settings.getDefaultFontGlyphs());
-		FL_LOG(_log, "Initializing GUI manager");
-		m_guimanager->init(m_gui_graphics, m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight());
-		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
 
 		FL_LOG(_log, "Creating sound manager");
-		m_soundmanager = new SoundManager(m_soundclippool);
+		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating renderers");
-		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
+		m_offrenderer = new OffRenderer(m_renderbackend);
+		m_targetrenderer = new TargetRenderer(m_renderbackend);
+		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
 		m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
-		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50));
 		m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
-		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
-		m_renderers.push_back(new LightRenderer(m_renderbackend, 90, m_imagepool, m_animpool));
+		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70));
+		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
+		m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
 
 		FL_LOG(_log, "Creating model");
-		m_model = new Model(m_renderbackend, m_renderers, m_imagepool, m_animpool);
+		m_model = new Model(m_renderbackend, m_renderers);
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
 		m_model->adoptCellGrid(new HexGrid());
 
-		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
+		m_cursor = new Cursor(m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
 
@@ -320,16 +299,14 @@ namespace FIFE {
 		delete m_model;
 		delete m_soundmanager;
 		delete m_guimanager;
-		delete m_gui_graphics;
 
-		// Note the dependancy between image and animation pools
-		// as animations reference images they have to be deleted
-		// before clearing the image pool.
-		delete m_animpool;
-		delete m_imagepool;
-		delete m_eventmanager;
+		delete m_imagemanager;
+		delete m_soundclipmanager;
+//		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
+		delete m_offrenderer;
+		delete m_targetrenderer;
 		std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();
 		for ( ; rendererIter != m_renderers.end(); ++rendererIter)
 		{
@@ -337,11 +314,8 @@ namespace FIFE {
 		}
 		m_renderers.clear();
 
-		m_renderbackend->deinit();
 		delete m_renderbackend;
-
 		delete m_vfs;
-
 		delete m_timemanager;
 
 		TTF_Quit();
@@ -360,27 +334,23 @@ namespace FIFE {
 	}
 
 	void Engine::pump() {
-		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();
+		m_eventmanager->processEvents();
 		m_timemanager->update();
 
-		if (m_model->getNumMaps() == 0) {
+		if (m_model->getMapCount() == 0) {
 			m_renderbackend->clearBackBuffer();
+			m_offrenderer->render();
+		} else {
+			m_targetrenderer->render();
+			m_model->update();
 		}
 
-		m_model->update();
-#ifdef HAVE_OPENGL
-		if (m_settings.getLightingModel() == 1) {
-			m_renderbackend->disableLighting();
+		if (m_guimanager) {
+			m_guimanager->turn();
 		}
-#endif
-		m_guimanager->turn();
+
 		m_cursor->draw();
-#ifdef HAVE_OPENGL
-		if (m_settings.getLightingModel() == 1) {
-			m_renderbackend->enableLighting();
-		}
-#endif
 		m_renderbackend->endFrame();
 	}
 

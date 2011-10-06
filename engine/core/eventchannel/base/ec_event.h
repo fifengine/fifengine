@@ -78,11 +78,11 @@ namespace FIFE {
 
 		/** Gets the timestamp of the event
 		 */
-		virtual int getTimeStamp() const { return m_timestamp; }
+		virtual int32_t getTimeStamp() const { return m_timestamp; }
 
 		/** Sets the timestamp of the event
 		 */
-		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
+		virtual void setTimeStamp(int32_t timestamp ) { m_timestamp = timestamp; }
 
 		/** Gets the name of the event
 		 */
@@ -113,7 +113,7 @@ namespace FIFE {
 	private:
 		bool m_isconsumed;
 		IEventSource* m_eventsource;
-		int m_timestamp;
+		int32_t m_timestamp;
 	};
 
 } //FIFE

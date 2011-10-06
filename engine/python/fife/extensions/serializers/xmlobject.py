@@ -27,31 +27,21 @@ from fife import fife
 from fife.extensions.serializers import ET
 from fife.extensions.serializers import SerializerError, InvalidFormat 
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
-class ObjectLocation(fife.ResourceLocation):
+class XMLObjectLoader(object):
 	"""
 	
-	
 	"""
-	def __init__(self, file, node=None):
+	def __init__(self, engine):
 		"""
 		
 		"""
-		fife.ResourceLocation.__init__(self, file)
-		self.node = node
-
-class XMLObjectLoader(fife.ResourceLoader):
-	"""
-	
-	"""
-	def __init__(self, image_pool, anim_pool, model, vfs=None):
-		"""
-		
-		"""
-		self.image_pool = image_pool
-		self.anim_pool = anim_pool
-		self.model = model
-		self.vfs = vfs
+		self.engine = engine
+		self.imgMgr = engine.getImageManager()
+		self.anim_pool = None
+		self.model = engine.getModel()
+		self.vfs = engine.getVFS()
 		self.source = None
 		self.filename = ''
 
@@ -60,7 +50,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 		
 		"""
 		self.source = location
-		self.filename = self.source.getFilename()
+		self.filename = self.source
 		self.node = None
 		self.file = None
 		if hasattr(location, 'node'):
@@ -75,12 +65,15 @@ class XMLObjectLoader(fife.ResourceLoader):
 				s = f.readString(len(obj_identifier))
 			except fife.IndexOverflow:
 				isobjectfile = False
-
-			if isobjectfile and s != obj_identifier:
+				
+			if isobjectfile and not s.startswith(obj_identifier):
 				isobjectfile = False
 
 			if not isobjectfile:
 				return
+				
+				# this will never be hit currently, if this is put before the return it can provide useful debugging
+				# but animation.xml files will raise this exception because apparently they come through here first
 				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
 
 		self.do_load_resource(f)
@@ -128,7 +121,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 			print NameClash('Tried to create already existing object \n\t...ignoring: %s, %s' % (_id, nspace))
 			return
 
-		obj.setResourceLocation(self.source)
+		obj.setFilename(self.source)
 		fife.ObjectVisual.create(obj)
 		obj.setBlocking(bool( int(object.get('blocking', False)) ))
 		obj.setStatic(bool( int(object.get('static', False)) ))
@@ -153,11 +146,11 @@ class XMLObjectLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			image_location = fife.ImageLocation('/'.join(path))
-			image_location .setXShift(int( image.get('x_offset', 0) ))
-			image_location .setYShift(int( image.get('y_offset', 0) ))
-			id = self.image_pool.addResourceFromLocation(image_location)
-			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
+			img = self.imgMgr.create('/'.join(path))
+			img.setXShift(int( image.get('x_offset', 0) ))
+			img.setYShift(int( image.get('y_offset', 0) ))
+			
+			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), img.getHandle())
 
 	def parse_actions(self, objelt, object):
 		"""
@@ -176,6 +169,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 		"""
 		
 		"""
+		pass
 		for anim in actelt.findall('animation'):
 			source = anim.get('source')
 			if not source:
@@ -186,7 +180,6 @@ class XMLObjectLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
-			animation = self.anim_pool.getAnimation(anim_id)
-			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
+			animation = loadXMLAnimation(self.engine, '/'.join(path))
+			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), animation)
 			action.setDuration(animation.getDuration())

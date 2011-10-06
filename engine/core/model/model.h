@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -43,10 +43,8 @@ namespace FIFE {
 
 	class RenderBackend;
 	class RendererBase;
-	class ImagePool;
-	class AnimationPool;
 	class MetaModel;
-	class AbstractPather;
+	class IPather;
 	class Object;
 
 	/**
@@ -58,8 +56,7 @@ namespace FIFE {
 		/** Constructor
 		 *
 		 */
-		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
-				ImagePool* imagepool, AnimationPool* animpool);
+		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers);
 
 		/** Destructor
 		 *
@@ -87,7 +84,7 @@ namespace FIFE {
 
 		/** Return the number of maps in this model
 		 */
-		uint32_t getNumMaps() const;
+		uint32_t getMapCount() const;
 
 		/** Removes all maps from this model
 		 */
@@ -125,11 +122,11 @@ namespace FIFE {
 
 		/** Adds pather to model. Moves ownership to model
 		 */
-		void adoptPather(AbstractPather* pather);
+		void adoptPather(IPather* pather);
 
 		/** Returns pather corresponding given name. If none found, returns NULL
 		 */
-		AbstractPather* getPather(const std::string& pathername);
+		IPather* getPather(const std::string& pathername);
 
 		/** Adds cellgrid to model. Moves ownership to model
 		 */
@@ -170,14 +167,13 @@ namespace FIFE {
 		/// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
 		const namespace_t* selectNamespace(const std::string& name_space) const;
 
-		std::vector<AbstractPather*> m_pathers;
-		std::vector<CellGrid*> m_adopted_grids;
+		std::vector<IPather*> m_pathers;
 		std::vector<CellGrid*> m_created_grids;
+		std::vector<CellGrid*> m_adopted_grids;
+		//std::vector<CellGrid*> m_created_grids;
 		TimeProvider m_timeprovider;
 
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animpool;
 
 		std::vector<RendererBase*> m_renderers;
 	};

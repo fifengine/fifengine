@@ -86,7 +86,7 @@ namespace FIFE {
 			/// number of file entries to read
 			mutable uint32_t m_filecount;
 			/// current index in file
-			mutable unsigned int m_currentIndex;
+			mutable uint32_t m_currentIndex;
 			/// lazy loading timer
 			mutable Timer m_timer;
 

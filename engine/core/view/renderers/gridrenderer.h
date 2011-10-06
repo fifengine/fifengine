@@ -40,7 +40,7 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 */
-		GridRenderer(RenderBackend* renderbackend, int position);
+		GridRenderer(RenderBackend* renderbackend, int32_t position);
 		
 		GridRenderer(const GridRenderer& old);
 		

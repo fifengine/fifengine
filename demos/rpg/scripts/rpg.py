@@ -68,7 +68,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self._eventmanager.addCommandListener(self)
 		
 		fife.ConsoleExecuter.__init__(self)
-		self._engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		pychan.manager.hook.guimanager.getConsole().setConsoleExecuter(self)
 		
 		keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.BACKQUOTE, fife.Key.PRINT_SCREEN])
 		keyfilter.__disown__()		
@@ -91,7 +91,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			self.quit = True
 			event.consume()
 		elif keyval == fife.Key.BACKQUOTE:
-			self._engine.getGuiManager().getConsole().toggleShowHide()
+			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
 			event.consume()
 		elif keyval == fife.Key.PRINT_SCREEN:
 			self._engine.getRenderBackend().captureScreen(time.strftime("%Y%m%d_%H%M%S", time.localtime()) + ".png")
@@ -120,7 +120,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			result = 'quitting'
 		elif cmd[0].lower() in ( 'help' ):
 			helptextfile = self._gamecontroller.settings.get("RPG", "HelpText", "misc/help.txt")
-			self._engine.getGuiManager().getConsole().println( open( helptextfile, 'r' ).read() )
+			pychan.manager.hook.guimanager.getConsole().println( open( helptextfile, 'r' ).read() )
 			result = "--OK--"
 		elif cmd[0].lower() in ( 'eval' ):
 			try:

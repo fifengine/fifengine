@@ -48,28 +48,28 @@ namespace FIFE {
 			* @return id for static image
 			* @see ObjectVisual::getStaticImageIndexByAngle
 			*/
-			int getStaticImageIndexByAngle(unsigned int angle, Instance* instance);
-		
+			int32_t getStaticImageIndexByAngle(uint32_t angle, Instance* instance);
+
 			// point where instance was drawn during the previous render
 			DoublePoint3D screenpoint;
-			
+
 			// dimensions of this visual on the virtual screen
 			Rect bbox;
 
 			// dimensions of this visual during the previous render
 			Rect dimensions;
-			
+
 			// image used during previous render
-			Image* image;
-			
+			ImagePtr image;
+
 			// current facing angle
-			int facing_angle;
+			int32_t facing_angle;
 
 			// current transparency
-			unsigned char transparency;
+			uint8_t transparency;
 		private:
-			int m_cached_static_img_id;
-			int m_cached_static_img_angle;
+			int32_t m_cached_static_img_id;
+			int32_t m_cached_static_img_angle;
 	};
 
 	typedef std::vector<RenderItem*> RenderList;

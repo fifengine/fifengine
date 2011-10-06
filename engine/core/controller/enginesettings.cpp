@@ -31,10 +31,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 
 #include "enginesettings.h"
 
 namespace FIFE {
+	static Logger _log(LM_CONTROLLER);
+
 	const float MAXIMUM_VOLUME = 10.0;
 
 	EngineSettings::EngineSettings():
@@ -43,15 +46,18 @@ namespace FIFE {
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),
+		m_oglcompressimages(false),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
 		m_windowicon(""),
-		m_defaultfontpath(""),
+		m_defaultfontpath("fonts/FreeSans.ttf"),
 		m_defaultfontsize(8),
-		m_defaultfontglyphs(""),
+		m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""),
 		m_iscolorkeyenabled(false),
-		m_lighting(0) {
+		m_lighting(0),
+		m_isframelimit(false),
+		m_framelimit(60) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
@@ -71,40 +77,23 @@ namespace FIFE {
 	EngineSettings::~EngineSettings() {
 	}
 
-	void EngineSettings::validate() const {
-		if (m_defaultfontpath == "") {
-			throw NotSet("Path for default font is not set");
-		}
-		std::string::size_type loc = m_defaultfontpath.find(".ttf", 0);
-		if ((loc == std::string::npos) && (m_defaultfontglyphs == "")) {
-			throw NotSet("Glyphs for default font are not set");
-		}
-	}
-
-	std::vector<std::pair<uint16_t, uint16_t> > EngineSettings::getPossibleResolutions() const {
-		SDL_Rect **modes = SDL_ListModes(NULL, ((getRenderBackend() != "SDL") ? (SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL) : 0) | (isFullScreen() ? SDL_FULLSCREEN : 0));
-		if(modes == (SDL_Rect **)0)
-			throw NotFound("No VideoMode Found");
-
-		std::vector<std::pair<uint16_t, uint16_t> > result;
-		if(modes != (SDL_Rect **)-1)
-			for(unsigned int i = 0; modes[i]; ++i)
-				result.push_back(std::pair<uint16_t, uint16_t>(modes[i]->w, modes[i]->h));
-		return result;
-	}
-
-	void EngineSettings::setBitsPerPixel(uint16_t bitsperpixel) {
-		std::vector<uint16_t> pv = getPossibleBitsPerPixel();
-		std::vector<uint16_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
+	void EngineSettings::setBitsPerPixel(uint8_t bitsperpixel) {
+		std::vector<uint8_t> pv = getPossibleBitsPerPixel();
+		std::vector<uint8_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
 		if (i != pv.end()) {
 			m_bitsperpixel = bitsperpixel;
 			return;
 		}
-		throw NotSupported("Given bits per pixel value is not supported");
+
+		FL_WARN(_log, LMsg("EngineSettings::setBitsPerPixel() - ")
+			<< " Tried to set screen bpp to an unsupporded value of " << bitsperpixel <<
+			".  Setting bpp to use the default value of 0 (the current screen bpp)");
+
+		m_bitsperpixel = 0;  //default value
 	}
 
-	std::vector<uint16_t> EngineSettings::getPossibleBitsPerPixel() const {
-		std::vector<uint16_t> tmp;
+	std::vector<uint8_t> EngineSettings::getPossibleBitsPerPixel() const {
+		std::vector<uint8_t> tmp;
 		tmp.push_back(0);
 		tmp.push_back(16);
 		tmp.push_back(24);
@@ -113,12 +102,15 @@ namespace FIFE {
 	}
 
 	void EngineSettings::setInitialVolume(float volume) {
-		if (volume > getMaxVolume()) {
-			throw NotSupported("Given volume exceeds maximum volume");
+		if (volume > getMaxVolume() || volume < 0) {
+			FL_WARN(_log, LMsg("EngineSettings::setInitialVolume() - ")
+				<< " Tried to set initial volume to an unsupporded value of " << volume <<
+				".  Setting volume to the default value of 5 (minumum is 0, maximum is 10)");
+
+			m_initialvolume = 5.0;
+			return;
 		}
-		if (volume < 0) {
-			throw NotSupported("Given volume is below 0");
-		}
+
 		m_initialvolume = volume;
 	}
 
@@ -133,18 +125,27 @@ namespace FIFE {
 			m_renderbackend = renderbackend;
 			return;
 		}
-		throw NotSupported("Given render backend is not supported");
+		FL_WARN(_log, LMsg("EngineSettings::setRenderBackend() - ")
+			<< renderbackend << " is not a valid render backend " <<
+			".  Setting the render backend to the default value of \"SDL\".");
+
+		m_renderbackend = "SDL";
 	}
 
 	std::vector<std::string> EngineSettings::getPossibleRenderBackends() {
 		std::vector<std::string> tmp;
 		tmp.push_back("SDL");
 		tmp.push_back("OpenGL");
+		tmp.push_back("OpenGLe");
 		return tmp;
 	}
 
 	void EngineSettings::setSDLRemoveFakeAlpha(bool sdlremovefakealpha) {
 		m_sdlremovefakealpha = sdlremovefakealpha;
+	}
+
+	void EngineSettings::setGLCompressImages(bool oglcompressimages) {
+		m_oglcompressimages = oglcompressimages;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {
@@ -194,19 +195,40 @@ namespace FIFE {
 	}
 
 	void EngineSettings::setVideoDriver(const std::string& driver) {
+		//TODO: validate the video driver
 		m_videodriver = driver;
 	}
 
 	const std::string& EngineSettings::getVideoDriver() const {
 		return m_videodriver;
 	}
-	void EngineSettings::setLightingModel(unsigned int lighting) {
-		if (lighting <= 2) {
+	void EngineSettings::setLightingModel(uint32_t lighting) {
+		if (lighting <= 2 && lighting >=0) {
 			m_lighting = lighting;
 			return;
 		}
-		throw NotSupported("Given light model is not supported");
+
+		FL_WARN(_log, LMsg("EngineSettings::setLightingModel() - ")
+			<< lighting << " is not a valid lighting model." <<
+			".  Setting the lighting model to the default value of 0 (off)");
+
+		m_lighting = 0;
 	}
 
+	void EngineSettings::setFrameLimitEnabled(bool limited) {
+		m_isframelimit = limited;
+	}
+
+	bool EngineSettings::isFrameLimitEnabled() const {
+		return m_isframelimit;
+	}
+
+	void EngineSettings::setFrameLimit(uint16_t framelimit) {
+		m_framelimit = framelimit;
+	}
+
+	uint16_t EngineSettings::getFrameLimit() const {
+		return m_framelimit;
+	}
 }
 

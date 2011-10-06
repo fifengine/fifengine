@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -30,22 +31,76 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/resource/resource.h"
+#include "loaders/native/video/imageloader.h"
+
 #include "image.h"
 
 namespace FIFE {
 
+	Image::Image(IResourceLoader* loader):
+		IResource(createUniqueImageName(), loader),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false){
+	}
+
+	Image::Image(const std::string& name, IResourceLoader* loader):
+		IResource(name, loader),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false){
+	}
+
 	Image::Image(SDL_Surface* surface):
-		m_surface(NULL) {
+		IResource(createUniqueImageName()),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false){
 		reset(surface);
 	}
 
-	Image::Image(const uint8_t* data, unsigned int width, unsigned int height):
-		m_surface(NULL) {
+	Image::Image(const std::string& name, SDL_Surface* surface):
+		IResource(name),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false){
+		reset(surface);
+	}
+
+	//@todo make a private function to handle this
+	Image::Image(const uint8_t* data, uint32_t width, uint32_t height):
+		IResource(createUniqueImageName()),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false){
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
 
-		unsigned int size = width * height * 4;
+		uint32_t size = width * height * 4;
+		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
+		std::copy(data, data + size, pixeldata);
+		SDL_UnlockSurface(surface);
+		reset(surface);
+	}
+
+	Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		IResource(name),
+		m_surface(NULL),
+		m_xshift(0),
+		m_yshift(0),
+		m_shared(false) {
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
+		                                            RMASK, GMASK, BMASK ,AMASK);
+		SDL_LockSurface(surface);
+
+		uint32_t size = width * height * 4;
 		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
 		std::copy(data, data + size, pixeldata);
 		SDL_UnlockSurface(surface);
@@ -53,22 +108,34 @@ namespace FIFE {
 	}
 
 	void Image::reset(SDL_Surface* surface) {
-		if( m_surface ) {
+		if( m_surface && !m_shared) {
 			SDL_FreeSurface(m_surface);
 		}
-		m_surface = surface;
+
 		m_xshift = 0;
 		m_yshift = 0;
-		while (!m_clipstack.empty()) {
-			m_clipstack.pop();
-		}
-		m_area.x = m_area.y = m_area.w = m_area.h = 0;
+		m_shared = false;
 		m_surface = surface;
 	}
 
 	Image::~Image() {
-		//assert(m_refcount == 0);
 		reset(NULL);
+	}
+
+	void Image::load() {
+		if (m_loader){
+			m_loader->load(this);
+		}
+		else {
+			ImageLoader loader;
+			loader.load(this);
+		}
+		m_state = IResource::RES_LOADED;
+	}
+
+	void Image::free() {
+		reset(NULL);
+		m_state = IResource::RES_NOT_LOADED;
 	}
 
 	SDL_Surface* Image::detachSurface() {
@@ -77,52 +144,63 @@ namespace FIFE {
 		return srf;
 	}
 
-	unsigned int Image::getWidth() const {
-		if (!m_surface) {
+	uint32_t Image::getWidth() const {
+		if (m_shared) { 
+			return m_subimagerect.w;
+		} else if (!m_surface) {
 			return 0;
 		}
 		return m_surface->w;
 	}
 
-	unsigned int Image::getHeight() const {
-		if (!m_surface) {
+	uint32_t Image::getHeight() const {
+		if (m_shared) { 
+			return m_subimagerect.h;
+		} else if (!m_surface) {
 			return 0;
 		}
 		return m_surface->h;
 	}
 
-	const Rect& Image::getArea() {
-		m_area.w = getWidth();
-		m_area.h = getHeight();
-		return m_area;
+	size_t Image::getSize() {
+		if (!m_surface || m_shared) {
+			return 0;
+		}
+		return m_surface->h * m_surface->pitch;
 	}
 
-	void Image::setXShift(int xshift) {
-		m_xshift = xshift;
+	const Rect& Image::getArea() const {
+		static Rect r(0, 0, getWidth(), getHeight());
+		return r;
 	}
 
-	void Image::setYShift(int yshift) {
-		m_yshift = yshift;
-	}
+	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+		Uint8 *p;
+		int32_t bpp = m_surface->format->BytesPerPixel;
 
-	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
-		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
-			r = 0;
-			g = 0;
-			b = 0;
-			a = 0;
-			return;
+		if(!isSharedImage()) {
+			if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+				r = g = b = a = 0;
+				return;
+			}
+			p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
+		} else {
+			if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+				r = g = b = a = 0;
+				return;
+			}
+			p = (Uint8*)m_surface->pixels + (y + m_subimagerect.y) * m_surface->pitch + (x + m_subimagerect.x) * bpp;
 		}
 
-		int bpp = m_surface->format->BytesPerPixel;
-		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		uint32_t pixel = 0;
 		switch(bpp) {
 		case 1:
 			pixel = *p;
+			break;
 
 		case 2:
 			pixel = *(Uint16 *)p;
+			break;
 
 		case 3:
 			if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
@@ -130,53 +208,24 @@ namespace FIFE {
 			} else {
 				pixel = p[0] | p[1] << 8 | p[2] << 16;
 			}
+			break;
 
 		case 4:
 			pixel = *(Uint32 *)p;
+			break;
 		}
 		SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
 	}
 
-	void Image::render(const Rect& rect, unsigned char alpha) {
-		render(rect, SDL_GetVideoSurface(), alpha);
+	void Image::saveImage(const std::string& filename) {
+		saveAsPng(filename, *m_surface);
 	}
 
-	void Image::pushClipArea(const Rect& cliparea, bool clear) {
-		ClipInfo ci;
-		ci.r = cliparea;
-		ci.clearing = clear;
-		m_clipstack.push(ci);
-		setClipArea(cliparea, clear);
-	}
-
-	void Image::popClipArea() {
-		assert(!m_clipstack.empty());
-		m_clipstack.pop();
-		if (m_clipstack.empty()) {
-			clearClipArea();
-		} else {
-			ClipInfo ci = m_clipstack.top();
-			setClipArea(ci.r, ci.clearing);
-		}
-	}
-
-	const Rect& Image::getClipArea() const {
-		if (m_clipstack.empty()) {
-			return m_clipstack.top().r;
-		} else {
-			return m_area;
-		}
-	}
-
-	void Image::clearClipArea() {
-		setClipArea(m_area, true);
-	}
-
-	void Image::saveAsPng(const std::string& filename, SDL_Surface& surface) {
+	void Image::saveAsPng(const std::string& filename, const SDL_Surface& surface) {
 		FILE *fp;
 		png_structp pngptr;
 		png_infop infoptr;
-		int colortype;
+		int32_t colortype;
 		png_bytep *rowpointers = NULL;
 
 		fp = fopen(filename.c_str(), "wb");
@@ -210,14 +259,14 @@ namespace FIFE {
 		//initialize io
 		png_init_io(pngptr, fp);
 
-		//lock the surface for access
-		SDL_LockSurface(&surface);
+		// lock the surface for access (we strip it off of const but we promise not to modify it, just read)
+		SDL_LockSurface(const_cast<SDL_Surface*>(&surface));
 
 		colortype = PNG_COLOR_TYPE_RGB;
-		if(m_surface->format->palette){
+		if(surface.format->palette){
 			colortype |= PNG_COLOR_TYPE_PALETTE;
 		}
-		else if (m_surface->format->Amask){
+		else if (surface.format->Amask){
 			colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
 		}
 		else{}
@@ -229,17 +278,100 @@ namespace FIFE {
 		png_set_packing(pngptr);
 
 		rowpointers = new png_bytep[surface.h];
-		for (int i = 0; i < surface.h; i++) {
+		for (int32_t i = 0; i < surface.h; i++) {
 			rowpointers[i] = (png_bytep)(Uint8 *)surface.pixels + i*surface.pitch;
 		}
 		//write the image
 		png_write_image(pngptr, rowpointers);
 		png_write_end(pngptr, infoptr);
 
-		SDL_UnlockSurface(&surface);
+		SDL_UnlockSurface(const_cast<SDL_Surface*>(&surface));
 		delete [] rowpointers;
 		png_destroy_write_struct(&pngptr, &infoptr);
 		fclose(fp);
+	}
 
+	std::string Image::createUniqueImageName() {
+		// automated counting for name generation, in case the user doesn't provide a name
+		static uint32_t uniqueNumber = 0;
+		static std::string baseName = "image";
+
+		std::ostringstream oss;
+		oss << uniqueNumber << "_" << baseName;
+
+		const std::string name = oss.str();
+		++uniqueNumber;
+
+		return name;
+	}
+
+	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg){
+		SDL_SetAlpha(srcimg->m_surface, 0, 0);
+		if(this->isSharedImage()) {
+			Rect const& rect = this->getSubImageRect();
+			SDL_Rect dstrect = { 
+				rect.x + xoffset, rect.y + yoffset,
+				static_cast<Uint16>(srcimg->getWidth()),
+				static_cast<Uint16>(srcimg->getHeight()) };
+			if(srcimg->isSharedImage()) {
+				Rect const& rect = srcimg->getSubImageRect();
+				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
+			} else {
+				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+			}
+		} else {
+			SDL_Rect dstrect = { xoffset, yoffset,
+				static_cast<Uint16>(srcimg->getWidth()),
+				static_cast<Uint16>(srcimg->getHeight()) };
+			if(srcimg->isSharedImage()) {
+				Rect const& rect = srcimg->getSubImageRect();
+				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
+			} else {
+				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+			}
+		}
+		SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
+	}
+
+	bool Image::putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if ((x < 0) || (x >= surface->w) || (y < 0) || (y >= surface->h)) {
+			return false;
+		}
+
+		int32_t bpp = surface->format->BytesPerPixel;
+		SDL_LockSurface(surface);
+		Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+		Uint32 pixel = SDL_MapRGBA(surface->format, r, g, b, a);
+		switch(bpp)
+		{
+		case 1:
+			*p = pixel;
+			break;
+
+		case 2:
+			*(Uint16 *)p = pixel;
+			break;
+
+		case 3:
+			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+				p[0] = (pixel >> 16) & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = pixel & 0xff;
+			}
+			else {
+				p[0] = pixel & 0xff;
+				p[1] = (pixel >> 8) & 0xff;
+				p[2] = (pixel >> 16) & 0xff;
+			}
+			break;
+
+		case 4:
+			*(Uint32 *)p = pixel;
+			break;
+		}
+		SDL_UnlockSurface(surface);
+		return true;
 	}
 }

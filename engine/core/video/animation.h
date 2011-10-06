@@ -29,6 +29,10 @@
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
+#include "util/base/fifeclass.h"
+#include "util/base/sharedptr.h"
+
+#include "image.h"
 
 // 3rd party library includes
 
@@ -36,8 +40,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
-#include "util/resource/resource_ptr.h"
 
 namespace FIFE {
 
@@ -45,16 +47,16 @@ namespace FIFE {
 
 	/** Animation.
 	 *
-	 * A container of Images describing an animation. Animation itself does 
+	 * A container of Images describing an animation. Animation itself does
 	 * not take care of animating the images. Instead it contains images
-	 * having associated timestamps. It is the responsibility of the 
+	 * having associated timestamps. It is the responsibility of the
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation : public ResourceClass {
+	class Animation : public FifeClass {
 	public:
 		/** Constructor.
-		 */ 
+		 */
 		explicit Animation();
 
 		/** Destructor. Decreases the reference count of all referred images.
@@ -67,7 +69,7 @@ namespace FIFE {
 		 * @param image Pointer to Image. Does not transfer the ownership
 		 * @param duration Duration for given frame in the animation
 		 */
-		void addFrame(ResourcePtr image, unsigned int duration);
+		void addFrame(ImagePtr image, uint32_t duration);
 
 		/** Get the frame index that matches given timestamp. In case there is no exact match,
 		 * correct frame is calculated. E.g. if there are frames for timestamps 50 and 100
@@ -75,24 +77,24 @@ namespace FIFE {
 		 * In case the timestamp is past the sequence, negative value is returned
 		 * @see addFrame
 		 */
-		int getFrameIndex(unsigned int timestamp);
+		int32_t getFrameIndex(uint32_t timestamp);
 
-		/** Gets the frame that matches the given index. If no matches found, returns NULL
+		/** Gets the frame iamge that matches the given index. If no matches found, returns an invalid ImagePtr
 		 */
-		Image* getFrame(int index);
+		ImagePtr getFrame(int32_t index);
 
-		/** Gets the frame that matches the given timestamp.
+		/** Gets the frame image that matches the given timestamp.
 		 */
-		Image* getFrameByTimestamp(unsigned int timestamp);
+		ImagePtr getFrameByTimestamp(uint32_t timestamp);
 
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index
 		 */
-		int getFrameDuration(int index) const;
+		int32_t getFrameDuration(int32_t index) const;
 
 		/** Get the number of frames
 		 */
-		unsigned int getNumFrames() const;
+		uint32_t getFrameCount() const;
 
 		/** Sets the action frame. Action frame is the frame when the related
 		 * action actually happens. E.g. in case of punch animation, action frame is
@@ -100,12 +102,12 @@ namespace FIFE {
 		 * action frame, value is negative
 		 * @param num index of the action frame.
 		 */
-		void setActionFrame(int num) { m_action_frame = num; }
+		void setActionFrame(int32_t num) { m_action_frame = num; }
 
 		/** Gets the action frame.
 		 * @see setActionFrame
 		 */
-		int getActionFrame() const { return m_action_frame; }
+		int32_t getActionFrame() const { return m_action_frame; }
 
 		/** Animation direction tells how this animation is associated
 		 * with movement when played starting from frame 0
@@ -114,43 +116,46 @@ namespace FIFE {
 		 * moved around the map area
 		 * @param direction direction to set
 		 */
-		void setDirection(unsigned int direction);
+		void setDirection(uint32_t direction);
 
 		/** Gets the animation direction
 		 * @see setDirection
 		 * @return direction for this animation
 		 */
-		unsigned int getDirection() const { return m_direction; }
+		uint32_t getDirection() const { return m_direction; }
 
 		/** Gets the total duration for the whole animation
 		 */
-		unsigned int getDuration() const { return m_animation_endtime; }
+		uint32_t getDuration() const { return m_animation_endtime; }
 
 	private:
 		/** Contains information about one animation frame (duration + frame index + frame pointer)
 		 */
 		struct FrameInfo {
-			unsigned int index;
-			unsigned int duration;
-			ResourcePtr image;
+			uint32_t index;
+			uint32_t duration;
+			ImagePtr image;
 		};
 
 		/** Checks for animation frame index overflows
 		 */
-		bool isValidIndex(int index) const;
+		bool isValidIndex(int32_t index) const;
 
 		// Map of timestamp + associated frame
-		std::map<unsigned int, FrameInfo> m_framemap;
+		std::map<uint32_t, FrameInfo> m_framemap;
 		// vector of frames for fast indexed access
 		std::vector<FrameInfo> m_frames;
 		// Action frame of the Animation.
-		int m_action_frame;
+		int32_t m_action_frame;
 		// time when animation ends (zero based)
-		int m_animation_endtime;
+		int32_t m_animation_endtime;
 		// Direction for this animation
-		unsigned int m_direction;
+		uint32_t m_direction;
 
 	};
+
+	typedef SharedPtr<Animation> AnimationPtr;
+
 }
 
 #endif

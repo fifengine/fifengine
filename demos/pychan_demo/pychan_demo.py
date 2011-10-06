@@ -80,6 +80,65 @@ class TextSetter(object):
 	def __call__(self,widget):
 		widget.text = self.text
 
+class KeyFilter(fife.IKeyFilter):
+	"""
+	This is the implementation of the fife.IKeyFilter class.
+	
+	Prevents any filtered keys from being consumed by guichan.
+	"""
+	def __init__(self, keys):
+		fife.IKeyFilter.__init__(self)
+		self._keys = keys
+
+	def isFiltered(self, event):
+		return event.getKey().getValue() in self._keys
+
+class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
+	"""
+	Listens for window commands.
+	"""
+	def __init__(self, engine):
+		"""
+		Initializes listener and registers itself with the eventmanager.
+		"""
+		self._engine = engine
+		self._eventmanager = self._engine.getEventManager()
+		
+		fife.IKeyListener.__init__(self)
+		self._eventmanager.addKeyListener(self)
+		
+		fife.ICommandListener.__init__(self)
+		self._eventmanager.addCommandListener(self)
+		
+		keyfilter = KeyFilter([fife.Key.ESCAPE])
+		keyfilter.__disown__()		
+		
+		self._eventmanager.setKeyFilter(keyfilter)		
+		
+		self.quit = False
+
+	def keyPressed(self, event):
+		"""
+		Processes any non game related keyboard input.
+		"""
+		if event.isConsumed():
+			return
+
+		keyval = event.getKey().getValue()
+		keystr = event.getKey().getAsString().lower()
+		
+		if keyval == fife.Key.ESCAPE:
+			self.quit = True
+			event.consume()
+
+	def keyReleased(self, event):
+		pass
+
+	def onCommand(self, command):
+		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
+		if self.quit:
+			command.consume()
+
 class DemoApplication(basicapplication.ApplicationBase):
 	def __init__(self):
 		# Let the ApplicationBase initialise FIFE
@@ -103,14 +162,12 @@ class DemoApplication(basicapplication.ApplicationBase):
 
 		# A simple hover-effect for the credits label
 		credits = self.gui.findChild(name="creditsLink")
-		# setEnterCallback is deprecated - we use it here to test it.
-		credits.setEnterCallback(TextSetter(u"CREDITS"))
 		# Note that we can't simply write:
 		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
 		# that's because that would call credits._setText _NOW_ and we want to call
 		# it later.
+		credits.capture(lambda : TextSetter(u"CREDITS"), event_name="mouseEntered")
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
-
 
 		# import example modules
 		from dynamic import DynamicExample
@@ -163,6 +220,22 @@ class DemoApplication(basicapplication.ApplicationBase):
 		"""
 		# We use PyChan's synchronous execution feature here.
 		pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
+		
+	def createListener(self):
+		"""
+		@note: This function had to be overloaded otherwise the default
+		listener would have been created.
+		"""
+		self._listener = ApplicationListener(self.engine)
+		return self._listener
+		
+	def _pump(self):
+		"""
+		Overloaded this function to check for quit message.  Quit if message
+		is received.
+		"""
+		if self._listener.quit:
+			self.quit()
 		
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

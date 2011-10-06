@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -28,7 +28,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/structures/purge.h"
-#include "model/metamodel/abstractpather.h"
+#include "util/log/logger.h"
+#include "model/metamodel/ipather.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "structures/map.h"
@@ -37,21 +38,17 @@
 #include "util/base/exception.h"
 #include "view/rendererbase.h"
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
 
 #include "model.h"
 
 namespace FIFE {
+	static Logger _log(LM_MODEL);
 
-	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
-					ImagePool* imagepool, AnimationPool* animpool):
-		FifeClass(),
+	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers)
+	:	FifeClass(),
 		m_last_namespace(NULL),
 		m_timeprovider(NULL),
 		m_renderbackend(renderbackend),
-		m_imagepool(imagepool),
-		m_animpool(animpool),
 		m_renderers(renderers){
 	}
 
@@ -72,22 +69,23 @@ namespace FIFE {
 			}
 		}
 
-		Map* map = new Map(identifier, m_renderbackend, m_renderers, m_imagepool, m_animpool, &m_timeprovider);
+		Map* map = new Map(identifier, m_renderbackend, m_renderers, &m_timeprovider);
 		m_maps.push_back(map);
 		return map;
 	}
 
-	void Model::adoptPather(AbstractPather* pather) {
+	void Model::adoptPather(IPather* pather) {
 		m_pathers.push_back(pather);
 	}
 
-	AbstractPather* Model::getPather(const std::string& pathername) {
-		std::vector<AbstractPather*>::const_iterator it = m_pathers.begin();
+	IPather* Model::getPather(const std::string& pathername) {
+		std::vector<IPather*>::const_iterator it = m_pathers.begin();
 		for(; it != m_pathers.end(); ++it) {
 			if ((*it)->getName() == pathername) {
 				return *it;
 			}
 		}
+		FL_WARN(_log, "No pather of requested type \"" + pathername + "\" found.");
 		return NULL;
 	}
 
@@ -104,6 +102,7 @@ namespace FIFE {
 				return newcg;
 			}
 		}
+		FL_WARN(_log, "No cellgrid of requested type \"" + gridtype + "\" found.");
 		return NULL;
 	}
 
@@ -129,7 +128,7 @@ namespace FIFE {
 		}
 	}
 
-	uint32_t Model::getNumMaps() const {
+	uint32_t Model::getMapCount() const {
 		return m_maps.size();
 	}
 
@@ -229,7 +228,9 @@ namespace FIFE {
 			if( it !=  nspace->second.end() )
 				return it->second;
 		}
-		return 0;
+		FL_WARN(_log, "No object of requested named \"" + id + "\" in namespace \"" + name_space
+		              + "\" found.");
+		return NULL;
 	}
 
 	std::list<Object*> Model::getObjects(const std::string& name_space) const {
@@ -251,7 +252,9 @@ namespace FIFE {
 				return &(*nspace);
 			}
 		}
-		return 0;
+
+		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
+		return NULL;
 	}
 
 	Model::namespace_t* Model::selectNamespace(const std::string& name_space) {
@@ -265,7 +268,8 @@ namespace FIFE {
 			}
 		}
 		m_last_namespace = 0;
-		return 0;
+		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
+		return NULL;
 	}
 
 	void Model::update() {
@@ -273,7 +277,7 @@ namespace FIFE {
 		for(; it != m_maps.end(); ++it) {
 			(*it)->update();
 		}
-		std::vector<AbstractPather*>::iterator jt = m_pathers.begin();
+		std::vector<IPather*>::iterator jt = m_pathers.begin();
 		for(; jt != m_pathers.end(); ++jt) {
 			(*jt)->update();
 		}

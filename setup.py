@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2011 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -33,7 +33,7 @@ else:
 
 
 setup(name='fife',
-      version='0.3.2r2',
+      version='0.3.3',
       description='Flexible Isometric Free Engine',
       url='www.fifengine.net',
       packages = ['fife', 'fife.extensions', 'fife.extensions.pychan', 'fife.extensions.pychan.widgets', 'fife.extensions.pychan.widgets.ext', 'fife.extensions.serializers' ],

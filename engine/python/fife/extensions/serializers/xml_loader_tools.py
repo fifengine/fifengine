@@ -35,7 +35,7 @@ def loadImportFile(loader, path, engine, debug=False):
 	@type	debug:	bool
 	@param	debug:	flag to activate / deactivate print statements
 	"""
-	loader.loadResource(fife.ResourceLocation(path))
+	loader.loadResource(path)
 	if debug: print 'imported object file ' + path
 
 def loadImportDir(loader, path, engine, debug=False):

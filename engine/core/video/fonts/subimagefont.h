@@ -37,7 +37,6 @@
 #include "imagefontbase.h"
 
 namespace FIFE {
-	class ImagePool;
 
 	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
 	 *  guichan imagefontcollection (google for it)
@@ -50,10 +49,9 @@ namespace FIFE {
 			 * @param filename the filename of the Image Font.
 			 * @param glyphs the glyphs for Guichan format.
 			 */
-			SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
+			SubImageFont(const std::string& filename, const std::string& glyphs);
 			~SubImageFont() {}
 		private:
-			ImagePool& m_pool;
 			SDL_Color m_colorkey;
 	};
 

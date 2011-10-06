@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -25,18 +25,18 @@
 %}
 
 %include "util/base/utilbase.i"
-%include "model/metamodel/abstractvisual.i"
+%include "model/metamodel/ivisual.i"
 
 namespace FIFE {
 
-	class Action : public ResourceClass {
+	class Action : public FifeClass {
 	public:
 		Action(const std::string& identifier);
 		virtual ~Action();
 		const std::string& getId();
-		void adoptVisual(AbstractVisual* visual);
+		void adoptVisual(IVisual* visual);
 		template<typename T> T* getVisual() const;
-		void setDuration(unsigned int duration);
-		unsigned int getDuration();
+		void setDuration(uint32_t duration);
+		uint32_t getDuration();
 	};
 }

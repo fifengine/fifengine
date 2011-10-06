@@ -49,28 +49,20 @@ namespace FIFE {
 		 */
 		~EngineSettings();
 
-		/** Validates settings. On invalid settings, throws NotSet with message
-		 */
-		void validate() const;
-
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
-		void setBitsPerPixel(uint16_t bitsperpixel);
+		void setBitsPerPixel(uint8_t bitsperpixel);
 
 		/** Gets currently set bits per pixel value
 		 */
-		uint16_t getBitsPerPixel() const {
+		uint8_t getBitsPerPixel() const {
 			return m_bitsperpixel;
 		}
 
 		/** Gets all possible bits per pixel values
 		 */
-		std::vector<uint16_t> getPossibleBitsPerPixel() const;
-
-		/** Gets all possible screen resolutions
-		 */
-		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
 
 		/** Sets fullscreen / windowed mode
 		 */
@@ -106,7 +98,13 @@ namespace FIFE {
 
 		/** Gets currently set renderbackend name
 		 */
-		const std::string getRenderBackend() const {
+		const std::string& getRenderBackend() const {
+			return m_renderbackend;
+		}
+
+		/** Gets currently set renderbackend name
+		 */
+		std::string getRenderBackend() {
 			return m_renderbackend;
 		}
 
@@ -120,8 +118,18 @@ namespace FIFE {
 
 		/** Tells if fake alpha is removed in SDL renderbackend
 		 */
-		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const {
+		bool isSDLRemoveFakeAlpha() const {
 			return m_sdlremovefakealpha;
+		}
+
+		/** Sets if images are compress by video driver in OpenGL renderbackend
+		*/
+		void setGLCompressImages(bool oglcompressimages);
+
+		/** Tells if fake alpha is removed in SDL renderbackend
+		*/
+		bool isGLCompressImages() const {
+			return m_oglcompressimages;
 		}
 
 		/** Sets screen width (pixels)
@@ -148,9 +156,15 @@ namespace FIFE {
 		 */
 		void setDefaultFontPath(const std::string& defaultfontpath);
 
-		/** Sets current path for default font
+		/** Gets current path for default font
 		 */
-		std::string getDefaultFontPath() const {
+		const std::string& getDefaultFontPath() const {
+			return m_defaultfontpath;
+		}
+
+		/** Gets current path for default font
+		 */
+		std::string getDefaultFontPath() {
 			return m_defaultfontpath;
 		}
 
@@ -170,7 +184,13 @@ namespace FIFE {
 
 		/** Gets current glyphs for default font
 		 */
-		std::string getDefaultFontGlyphs() const {
+		const std::string& getDefaultFontGlyphs() const {
+			return m_defaultfontglyphs;
+		}
+
+				/** Gets current glyphs for default font
+		 */
+		std::string getDefaultFontGlyphs() {
 			return m_defaultfontglyphs;
 		}
 
@@ -180,7 +200,13 @@ namespace FIFE {
 
 		/** Gets the current window title
 		 */
-		std::string getWindowTitle() const {
+		const std::string& getWindowTitle() const {
+			return m_windowtitle;
+		}
+
+		/** Gets the current window title
+		 */
+		std::string getWindowTitle() {
 			return m_windowtitle;
 		}
 
@@ -190,7 +216,13 @@ namespace FIFE {
 
 		/** Gets the icon in the window title bar
 		 */
-		std::string getWindowIcon() const {
+		const std::string& getWindowIcon() const {
+			return m_windowicon;
+		}
+
+		/** Gets the icon in the window title bar
+		 */
+		std::string getWindowIcon() {
 			return m_windowicon;
 		}
 
@@ -216,13 +248,29 @@ namespace FIFE {
 
 		/** Sets the light model
 		 */
-		void setLightingModel(unsigned int lighting);
+		void setLightingModel(uint32_t lighting);
 
 		/** Gets the currently set light model
 		 */
-		unsigned int getLightingModel() const {
+		uint32_t getLightingModel() const {
 			return m_lighting;
 		}
+
+		/** Sets whether to use the frame limiter
+		 */
+		void setFrameLimitEnabled(bool limited);
+		
+		/** Gets whether the frame limiter is in use
+		 */
+		bool isFrameLimitEnabled() const;
+
+		/** Sets the frame limit
+		 */
+		void setFrameLimit(uint16_t framelimit);
+
+		/** Gets the frame limit
+		 */
+		uint16_t getFrameLimit() const;
 
 	private:
 		uint8_t m_bitsperpixel;
@@ -230,10 +278,11 @@ namespace FIFE {
 		float m_initialvolume;
 		std::string m_renderbackend;
 		bool m_sdlremovefakealpha;
+		bool m_oglcompressimages;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;
-		std::string m_windowicon;		
+		std::string m_windowicon;
 
 
 		std::string m_defaultfontpath;
@@ -242,7 +291,9 @@ namespace FIFE {
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 		std::string m_videodriver;
-		unsigned int m_lighting;
+		uint32_t m_lighting;
+		bool m_isframelimit;
+		uint16_t m_framelimit;
 	};
 
 }//FIFE

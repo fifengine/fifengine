@@ -10,21 +10,190 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
-== 0.3.2r2 (December 6th, 2010)                                                ==
+== 0.3.3 (October 6th, 2011)                                                  ==
 ================================================================================
 
 === Engine ===
-  * Instances now inherit blocking property from objects (#514)
-  * Added additional flag to Instance for overriding blocking attribute (r3520)
-  * FIFE::Exception is now derived from std::runtime_error.  (#511)
-  * Fixed the image/animation functions to consider zoom level (r3513)
-  
-=== Editor ===
-  * Added the light editor plugin (r3513)
-  
-=== Build System ===
-  * FIFE now builds on Fedora as expected
+  * Many optimizations/improvements to the OpenGL renderer.  Depth testing was 
+    modified and now works properly with alpha blending enabled.  Alpha testing
+    is used to discard pixels. [t:556]
+  * Optimized color overlays. [t:539]
+  * Customizable alpha threshold value for outlines / outlining [t:569]
+  * Added support for drawing/modifying images. [t:553]
+  * Re-implemented the Resouce Pools (ImagePool AnimationPool, etc) as 
+    ImangeManager, SoundClipManager, etc. [t:504]  
+  * Setting module no longer crashes when settings dialog has not been loaded.
+    [t:555]
+  * Fixed the problem that the objects of the renderers don't get deallocated 
+    when the camera deconstructor was called. Affected renderers: Instance-, 
+    Cellsection-, Generic- and LightRenderer.
+  * Added the missing reset() and removeAll() functions to the GenericRender 
+    and LightRenderer.
+  * Removed the Engine::preInit() function.
+  * Removed EngineSetting::getPossibleResolutions() and validate() functions
+  * EngineSettings no longer throws any exceptions. Instead default values as 
+    assigned and a warning message is sent to the logger.
+  * Some optimizations to LayerCache and Camera
+  * Removed some unnecessary includes.
+  * Changed when some exceptions are thrown. [t:511]  
+  * Added setBackgroundColor(), so a client can change the clearing color for 
+    the screen. [t:307]
+  * Added camera overlay functions. Clients can now add a color, image and 
+    animation overlay to the camera [t:460]
+  * Made sure that the fife logger is part of the FIFE namespace.
+  * Modifying all integer definitions to conform to the C99 standard.
+  * Added the getMinMaxCoordinates() function to the map class. It retrieves 
+    the minimum/maximum coordinates of instances on the map.
+  * Changed Model::getNumMaps() to Model::getMapCount().
+  * Changed Map::getNumLayers() to Map::getLayerCount().
+  * Changed Animation::getNumFrames() to Animation::getFrameCount().
+  * FifeClass is no longer derived from IReferenceCounted.
+  * ResourceClass now implements the reference counting routines.
+  * Singletons are no longer derived from FifeClass.
+  * Modified the HexGrid? and SquareGrid? clone process to work as expected 
+    (even though it's not really used). This doesn't fix the obvious problems 
+    with CellGrid? and the way grids are created. This will have to be looked 
+    at closer in the future.
+  * Made the quad tree depth easily changeable (instead of hard coded to 2)  .
+  * SquareGrid? now uses diagonals by default.
+  * Model now logs to the LM_MODEL log module.
+  * Small modifications to Exception to make it output to the log correctly. 
+    Now we can read the exception output.
+  * Changed a few sqrt to match the new math definition.
+  * Added layers getMinMaxCoordinate() function to python.
+  * Renaming the only 2 .hpp files to conform to standards.
+  * Optimized the lightrenderer a bit.
+  * Fixed a build error on updating project files. This was caused by not 
+    installing the mingw part in the devkit installer.
+  * Added code to support different versions of boost filesystem. [t:529]
+  * Fixed some color variables (Uint8, int32_t to uint8_t).
+  * Added some code to the python build environment to support python 2.4+.
+    [t:465]
+  * Fixed a segfault in the view_tests.py unittest.
+  * Settings now list valid screen modes. [t:494]
+  * the default image loader now throws exceptions if the image fails to load.
+  * Fixed a bug in RawData::read where an incorrect calculation was done to 
+    check the validity of a passed in parameter. This caused a problem with 
+    loading asset files when the file did not have an appended new line at the 
+    bottom. Also modified the RawData::getDataInBytes, RawData::readString, and
+    RawData::read methods so that they do not create a temporary data array and
+    instead read directly into the output buffer, this should be more efficient.
+    Added a quick comment to xmlobject.py describing why a raise call is 
+    subverted by an earlier return statement. [t:516]
+  * Removes an unnecessary call from endFrame().
+  * Fixed some unittests.
+  * Added a framerate limiter. [t:525]
+  * Replaced the Generic- and LightRendererNode with RendererNode.
+  * Fixed the distance calculation in routepather.cpp.
+  * Added the OffRenderer. This is the only renderer that does not need a map 
+    or camera. The functions are identical to those of the GenericRenderer, 
+    but it use screen coordinates. This renderer is only intended for cases 
+    where no map is loaded, eg for an intro.
+  * Changed the swig video_tests.py to use the new renderer.
+  * Removed the primitives and a few other functions from the python interface. 
+    These are no longer needed.
+  * Added the swig cursor unit test.
+  * Added some getter functions to cursor along with some documentation.
+  * RenderItem now stores an ImagePtr.
+  * Fixed SharedPtr destructor. [t:561]
+  * Added the getInstancesIn() function to Layer. This picks the Instances from
+    the InstanceTree.
+  * Fixed getMatchingInstances(). The picked instances be checked with the 
+    instances of the layer. To compare the instances, getInstancesIn() is used.
+    [t:562]
+  * Unnecessary InstanceActivity? are now detected and deleted. Inactive 
+    Instances are removed from Layer m_active_instances. [t:564]
+  * Changed from using RawData::getDataInBytes to use RawData::readString in 
+    the animation/atlas/object/map loaders because the readString function 
+    appends a null terminator onto the end of the data contents. Without the 
+    null terminator errors were sometimes seen when trying to load map assets. 
+  * Added some error log printing indicating when map assets fail to load.
+    [t:567]
+  * Modified the RawData::read function so that it no longer appends a null 
+    terminator as this was causing the python xml loaders to throw a 
+    ParseError exception. Also fixed the RawData::readString function so that 
+    it now appends the null terminator in the proper place. [t:567]
+  * Made scons check for the dev libraries of whatever python the user ran 
+    scons with. [t:523]
+  * Fixed a  problem where pychan will throw an exception when trying to print 
+    UTF8 characters to the console. [t:571]
+  * Fixed and optimized a few functions in location.cpp. [t:563] and [t:568]
+  * Added option --lib-dir to scons build system to specify a shared library 
+    install location. The shared library generated will now contain an soname 
+    that will be libfife.so.major. Also changed the generated shared library 
+    name to be libfife.so.major.minor.release. Added a version.h file to 
+    engine/core that will contain the current fife major, minor, and subminor 
+    versions and should be updated for each fife release. [t:575]  
+  * Fixed minor bug in getMatchingInstances(). This means that sometimes a wrong
+    choice was made, because alpha value was not correct.
+  * Change the way you set FIFE::Cursor to allow cursor to save a reference to 
+    the image or animation. Added a function to reset the cursor drag to 
+    nothing.
+  * Added GLee - currently it's compiled with fife as .cpp (scons doesn't get 
+    compiled .c files).
+  * Initial support for c++ map/object/animation loaders. [t:491]
+  * Added dependency tinyxml for reading xml files. This is stored in 
+    engine/core/ext/tinyxml directory. The scons scripts will attempt to use 
+    system version of tinyxml if available otherwise the local one will be used.
+    [t:491]
+  * Added image Atlas support. [t:542] 
+  * Added a zoom flag to the image/animation functions of the GenericRenderer. 
+    So a client can disable the zoom for images. [t:543]
+  * Fixed a bug that caused the generated SWIG interface file for fife to not 
+    compile when building with gcc 4.6.1. [t:546]
+  * Began work on de-coupling FIFE from guichan. [t:549]
+  * Changed Guichan graphics renderer to utilize vertex array instead of 
+    immediate mode. [t:549]
+  * Removed Abstract* classes in favor of I* classes. This is to conform to our 
+    coding standards. [t:550]
+  * After a new layer is added it is now activated for all renderers. This fixes
+    the problem of no instances being rendered for a newly created layer. 
+    [t:551]
+  * Added the option to change the alpha value for instance picking.
+  * Added a setting for backbuffer clearing. So clients can deactivate it if 
+    they have reasons for this.
+  * Removed the old setImageChunkingSize() setting because its useless.
+  * Changed the pump function. Model update gets only called if a map is loaded.
+  * Adding a quick and dirty shared pointer implementation that does not rely 
+    on any 3rd party libraries. This will need to be extensively tested and can 
+    always be swapped out for another implementation including 
+    boost::shared_ptr.
+  * Added the unittest for SharedPtr.
+  * Instances now inherit blocking property from objects [t:514]
+  * Settings are now validated. [t:528]
+  * VFS now allows paths outside of launched applications when using a python
+    client. [t:544]
+  * Reworked the lighting module.  [t:557]
+  * The Windows icon is now freed correctly. [t:530]
+    
+=== Demos ===
+  * Fixed a bug in the shooter demo that caused a crash. [t:495]
+  * Updating the rio settings-dist.xml file to include the log level filter 
+    setting.
+  * Added animated percentagebar widget to gui animation demo.
+  * Pychan demo now closes when you press escape or when you close the window. 
+    [t:531]
+  * Shooter demo now generates a hichscore file if one does not exist.
 
+=== Documentation ===
+  * Documented the shooter World.reset() function.
+  * Updating the dependency graphs. [t:554]
+  * Documented all valid FIFE settings. [t:527]
+
+=== Extensions ===
+  * Updated basicapplication.py to initialize the logger before settings so 
+    that setting messages will be logged.
+  * Removed some deprecated functions in pychan.
+  * Removed the deprecated ClickLabel widget from pychan. [t:552]
+  * Added changeBlending() to python.
+
+=== Tools ===
+  * Editor no longer crashes when there are too many instances on the map when
+    using the OpenGL renderer. [t:500]
+  * Added Atlas Creator tool. Currently it's a standalone application written 
+    in Qt. [t:541]  
+
+  
 ================================================================================
 == 0.3.2 (November 19th, 2010)                                                ==
 ================================================================================

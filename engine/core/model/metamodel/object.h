@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -33,14 +33,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/resource/resource.h"
 #include "util/math/angles.h"
 
 namespace FIFE {
 
 	class Action;
-	class AbstractPather;
-	class AbstractVisual;
+	class IPather;
+	class IVisual;
 
 	/** Object class
 	 *
@@ -48,7 +48,7 @@ namespace FIFE {
 	 * Objects may inherit default values from another object.
 	 *
 	 */
-	class Object : public ResourceClass {
+	class Object : public IResource {
 	public:
 		/** Constructor
 		 * An object may optionally inherit default attributes
@@ -94,14 +94,14 @@ namespace FIFE {
 		/** Gets default action assigned to this object. If none available, returns NULL
 		 */
 		Action* getDefaultAction() const { return m_defaultaction; }
-		
+
 		/** Sets pather used by instances created out of this object
 		 */
-		void setPather(AbstractPather* pather);
+		void setPather(IPather* pather);
 
 		/** Gets associated pather
 		 */
-		AbstractPather* getPather() const { return m_pather; }
+		IPather* getPather() const { return m_pather; }
 
 		/** Gets an object where this object was inherited from
 		 * @see inherited object
@@ -110,12 +110,12 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
-		
+		void adoptVisual(IVisual* visual) { m_visual = visual; }
+
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
-		
+
 		/** Sets if object blocks movement
 		 */
 		void setBlocking(bool blocking) { m_blocking = blocking; }
@@ -123,7 +123,7 @@ namespace FIFE {
 		/** Gets if object blocks movement
 		 */
 		bool isBlocking() const;
-	
+
 		/** Set to true, if object is such that it doesn't move
 		 */
 		void setStatic(bool stat) { m_static = stat; }
@@ -131,19 +131,27 @@ namespace FIFE {
 		/** Gets if object moves
 		 */
 		bool isStatic() const;
-	
+
+		void setFilename(const std::string& file) { m_filename = file; }
+		const std::string& getFilename() const { return m_filename; }
+
 		bool operator==(const Object& obj) const;
 		bool operator!=(const Object& obj) const;
-		
+
+		virtual size_t getSize() { return 0; }
+		virtual void load() { }
+		virtual void free() { }
+
 	private:
 		std::string m_id;
 		std::string m_namespace;
+		std::string m_filename;
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;
 		bool m_static;
-		AbstractPather* m_pather;
-		AbstractVisual* m_visual;
+		IPather* m_pather;
+		IVisual* m_visual;
 		Action* m_defaultaction;
 	};
 

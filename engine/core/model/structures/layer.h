@@ -34,7 +34,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
+#include "util/structures/rect.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
 
@@ -90,11 +91,11 @@ namespace FIFE {
 
 	/** A basic layer on a map
 	 */
-	class Layer : public ResourceClass {
+	class Layer : public FifeClass {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus
-			 * this method should really be called only by map or test code
+			 * this method should really be called only by map or test code.
 			 */
 			Layer(const std::string& identifier, Map* map, CellGrid* grid);
 
@@ -115,7 +116,7 @@ namespace FIFE {
 			Map* getMap() const { return m_map; }
 
 			/** Get the Cellgrid
-			 * @return a valid cellgrid
+			 * @return pointer to a valid cellgrid
 			 */
 			CellGrid* getCellGrid() const { return m_grid; }
 
@@ -163,6 +164,11 @@ namespace FIFE {
 			 * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are used
 			 */
 			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
+
+			/** Returns instances that match given rect.
+			 * @param rec rect where to fetch instances from
+			 */
+			std::list<Instance*> getInstancesIn(Rect& rec);
 
 			/** Get the first instance on this layer with the given identifier.
 			 */

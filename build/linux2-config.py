@@ -40,7 +40,8 @@ def initEnvironment(env):
 							extincludepath])
 
 	env.Append(LIBPATH = [os.path.join('/', 'opt', 'lib'),
-						  extlibpath])
+						  extlibpath,
+						  env.subst('$LIBDIR')])
 	
 	env.AppendENVPath('LD_RUN_PATH', os.path.join('..', '..', '..', extlibpath))
 	
@@ -52,9 +53,12 @@ def addExtras(env, opengl):
 	env.Append(LIBS = pythonversion)
 
 	if opengl:
-		env.Append(LIBS = ['stdc++', 'GL', 'GLU'])
+		env.Append(LIBS = ['stdc++', 'GL',])
 		env.Append(LIBPATH = os.path.join('/', 'usr', 'X11R6', 'lib'))
 		
+	# define for using tinyxml with stl support enabled
+	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
+	
 	return env
 
 def getRequiredHeaders(opengl):
@@ -70,6 +74,7 @@ def getRequiredLibs(opengl):
 	#		guichan_sdl - depends on at least the SDL libs and guichan prior in the list
 	#		guichan_opengl - depends on at least guichan prior in the list
 	libs = [('vorbisfile', 'vorbisfile.h'),
+			(pythonversion, pythonversion + '/Python.h'),
 			('openal', 'AL/al.h'),
 			('SDL', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
@@ -88,7 +93,9 @@ def getRequiredLibs(opengl):
 	return libs
 
 def getOptionalLibs(opengl):
-	return None
+	libs = [('tinyxml', 'tinyxml.h')]
+	
+	return libs
 	
 # vim: set filetype=python:
 			   

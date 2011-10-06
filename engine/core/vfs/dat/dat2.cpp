@@ -73,7 +73,7 @@ namespace FIFE {
 
 		// Load more items per call,
 		// otherwise it takes _ages_ until everything is in.
-		unsigned int load_per_cycle = 50;
+		uint32_t load_per_cycle = 50;
 		if( load_per_cycle > m_filecount )
 			load_per_cycle = m_filecount;
 		m_filecount -= load_per_cycle;
@@ -175,7 +175,7 @@ namespace FIFE {
 			path.erase(0, 2);
 		}
 		
-		int lastIndex = path.size() - 1;
+		size_t lastIndex = path.size() - 1;
 		if ((lastIndex != -1) && path[lastIndex] != '/') {
 			path += '/';
 		}

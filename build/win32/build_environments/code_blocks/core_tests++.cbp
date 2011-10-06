@@ -39,7 +39,7 @@
 			<Add directory="..\..\includes\libvorbis" />
 			<Add directory="..\..\includes\openal" />
 			<Add directory="..\..\includes\physfs" />
-			<Add directory="..\..\includes\python27" />
+			<Add directory="..\..\includes\python26" />
 			<Add directory="..\..\includes\sdl" />
 			<Add directory="..\..\includes\sdl_image" />
 			<Add directory="..\..\includes\sdl_ttf" />
@@ -66,7 +66,7 @@
 			<Add library="..\..\static_libs\mingw\SDL_image.lib" />
 			<Add library="..\..\static_libs\mingw\SDL_ttf.lib" />
 			<Add library="..\..\static_libs\mingw\libUnittest++.a" />
-			<Add library="..\..\static_libs\mingw\python27\libpython27.a" />
+			<Add library="..\..\static_libs\mingw\python26\libpython26.a" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 		</Linker>

@@ -29,23 +29,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 
 #include "soundmanager.h"
 #include "soundemitter.h"
-#include "soundclippool.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundManager::SoundManager(SoundClipPool* pool) : m_context(0),
+	SoundManager::SoundManager() : m_context(0),
 				       m_device(0),
-	             m_pool(pool),
 				       m_mutevol(0),
-							 m_volume(1.0) {
+					   m_volume(1.0) {
 	}
 
 	SoundManager::~SoundManager() {
@@ -103,17 +100,17 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_volume);
 	}
 
-	SoundEmitter* SoundManager::getEmitter(unsigned int emitterid) const{
+	SoundEmitter* SoundManager::getEmitter(uint32_t emitterid) const{
 		return m_emittervec.at(emitterid);
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(this, m_pool, m_emittervec.size());
+		SoundEmitter* ptr = new SoundEmitter(this, m_emittervec.size());
 		m_emittervec.push_back(ptr);
 		return ptr;
 	}
 
-	void SoundManager::releaseEmitter(unsigned int emitterid) {
+	void SoundManager::releaseEmitter(uint32_t emitterid) {
 		SoundEmitter** ptr = &m_emittervec.at(emitterid);
 		delete *ptr;
 		*ptr = NULL;

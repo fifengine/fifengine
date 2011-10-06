@@ -1,6 +1,8 @@
 <?fife type="object"?>
-<object id="clouds" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="0">
+<object blocking="0" id="clouds" namespace="clouds" static="0">
 	<action id="disappear">
-		<animation source="disappear/000/animation.xml" direction="0" />
+		<animation atlas="disappear.png" height="64" width="128">
+			<direction delay="200" dir="0" frames="6"/>
+		</animation>
 	</action>
 </object>

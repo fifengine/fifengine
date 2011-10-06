@@ -121,7 +121,7 @@ class MapView:
 		"""
 		curname = ""
 		try:
-			curname = self._map.getResourceLocation().getFilename()
+			curname = self._map.getFilename()
 		except RuntimeError:
 			print "Map has no filename yet, can't save."
 			return

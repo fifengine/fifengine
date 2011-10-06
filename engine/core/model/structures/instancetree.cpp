@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "model/structures/instance.h"
 #include "util/structures/rect.h"
 
@@ -36,6 +37,7 @@
 
 
 namespace FIFE {
+	static Logger _log(LM_STRUCTURES);
 
 	InstanceTree::InstanceTree(): FifeClass() {
 	}
@@ -48,16 +50,20 @@ namespace FIFE {
 		InstanceTreeNode * node = m_tree.find_container(coords.x,coords.y,0,0);
 		InstanceList& list = node->data();
 		list.push_back(instance);
-		if( m_reverse.find(instance) != m_reverse.end() )
-			throw new InconsistencyDetected("Duplicate Instance.");
+		if( m_reverse.find(instance) != m_reverse.end() ) {
+			FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
+			return;
+		}
 		m_reverse[instance] = node;
 	}
 
 	void InstanceTree::removeInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_reverse[instance];
-		if( !node )
-			throw new InconsistencyDetected("Removing Ghost Instance.");
+		if( !node ) {
+			FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");
+			return;
+		}
 		m_reverse.erase(instance);
 		InstanceList& list = node->data();
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
@@ -66,7 +72,7 @@ namespace FIFE {
 				return;
 			}
 		}
-		throw new InconsistencyDetected("Removing Ghost Instance (not in list?).");
+		FL_WARN(_log, "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
 	}
 
 	class InstanceListCollector {
@@ -76,10 +82,10 @@ namespace FIFE {
 			InstanceListCollector(InstanceTree::InstanceList& a_instanceList, const Rect& rect)
 			: instanceList(a_instanceList), searchRect(rect) {
 			}
-			bool visit(InstanceTree::InstanceTreeNode* node, int d);
+			bool visit(InstanceTree::InstanceTreeNode* node, int32_t d);
 	};
 
-	bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int d) {
+	bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int32_t d) {
 		InstanceTree::InstanceList& list = node->data();
 		for(InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
 			ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
@@ -90,7 +96,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void InstanceTree::findInstances(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& list) {
+	void InstanceTree::findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceTree::InstanceList& list) {
 		InstanceTreeNode * node = m_tree.find_container(point.x, point.y, w, h);
 		Rect rect(point.x, point.y, w, h);
 		InstanceListCollector collector(list,rect);

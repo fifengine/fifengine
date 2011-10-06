@@ -48,6 +48,7 @@ class PocAnimations(PyChanExample):
 		self._move_timer = None
 		self._resize_timer = None
 		self._color_timer = None
+		self._progress_timer = None
 		
 	def start(self):
 		""" 
@@ -79,6 +80,9 @@ class PocAnimations(PyChanExample):
 		
 		self.delay_display = self.widget.findChild(name="delay_label")
 		self.delay_display.text = unicode(str(DEFAULT_DELAY))
+		
+		self.progressbar = self.widget.findChild(name="progressbar")
+#		self.progressbar2 = self.widget.findChild(name="progressbar2")
 		
 		self.little_matrix = []
 		for x in range(1,4):
@@ -120,6 +124,13 @@ class PocAnimations(PyChanExample):
 			kwargs['callback'] = self._color
 			self._color_timer = Timer(**kwargs)
 			self._color_timer.start()
+		
+		# progressbar
+		kwargs['callback'] = self._update_progress
+		self.progressbar.value = 0
+#		self.progressbar2.value = 0
+		self._progress_timer = Timer(**kwargs)
+		self._progress_timer.start()
 			
 	def _reset_anim(self, type=None):
 		""" undo changes made by the animation (but leave alone disco matrix ^^) """
@@ -140,6 +151,11 @@ class PocAnimations(PyChanExample):
 				self._color_timer.stop()
 			COLOR = 255, 255, 255, 100
 			self.cew.base_color = COLOR
+		
+		if self._progress_timer:
+			self._progress_timer.stop()
+			self.progressbar.value = 0
+#			self.progressbar2.value = 0
 							
 	def _move(self):
 		""" move the mew widget """
@@ -176,4 +192,14 @@ class PocAnimations(PyChanExample):
 				widget.background_color = color
 		else:
 			self._reset_anim(ACTION_COLOR)
+			
+	def _update_progress(self):
+		""" """
+		if self.progressbar.value < self.progressbar.size[0]:
+			size = self.progressbar.size
+			value = int(self.progressbar.value) + random.randint(0, DEFAULT_DELAY)
+			self.progressbar.value = value
+#			self.progressbar2.value = value
+		else:
+			self._reset_anim()
 			

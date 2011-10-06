@@ -21,17 +21,17 @@
 %module fife
 %{
 #include "controller/engine.h"
+#include "gui/guichan/guichanmanager.h"
 %}
+
 
 namespace FIFE {
 
 	class SoundManager;
 	class EventManager;
 	class TimeManager;
-	class GUIManager;
-	class ImagePool;
-	class AnimationPool;
-	class SoundClipPool;
+	class IGUIManager;
+	class GUIChanManager;
 	class RenderBackend;
 	class Model;
 	class LogManager;
@@ -42,47 +42,55 @@ namespace FIFE {
 	class DeviceCaps;
 	class ScreenMode;
 	class Image;
+	class ImageManager;
+	class SoundClipManager;
+	class OffRenderer;
+	class TargetRenderer;
 
 	class EngineSettings {
 	public:
 		~EngineSettings();
-		void validate() const;
 		void setBitsPerPixel(uint8_t bitsperpixel);
-		uint16_t getBitsPerPixel() const;
-		std::vector<uint16_t> getPossibleBitsPerPixel() const;
-		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
+		uint8_t getBitsPerPixel() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
 		void setInitialVolume(float volume);
 		float getInitialVolume() const;
 		float getMaxVolume() const;
 		void setRenderBackend(const std::string& renderbackend);
-		const std::string getRenderBackend() const;
+		const std::string& getRenderBackend() const;
 		std::vector<std::string> getPossibleRenderBackends();
 		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
-		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const;
+		bool isSDLRemoveFakeAlpha() const;
+		void setGLCompressImages(bool oglcompressimages);
+		bool isGLCompressImages() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);
 		uint16_t getScreenHeight() const;
 		void setDefaultFontPath(const std::string& defaultfontpath);
-		std::string getDefaultFontPath() const;
+		const std::string& getDefaultFontPath() const;
 		void setDefaultFontSize(uint16_t defaultfontsize);
 		uint16_t getDefaultFontSize() const;
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
-		std::string getDefaultFontGlyphs() const;
+		const std::string& getDefaultFontGlyphs() const;
 		void setWindowTitle(const std::string& title);
-		std::string getWindowTitle() const;
+		const std::string& getWindowTitle() const;
 		void setWindowIcon(const std::string& icon);
-		std::string getWindowIcon() const;
+		const std::string& getWindowIcon() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(uint8_t r, uint8_t g, uint8_t b);
 		const SDL_Color& getColorKey() const;
 		void setVideoDriver(const std::string& driver);
 		const std::string& getVideoDriver() const;
-		void setLightingModel(unsigned int lighting);
-		unsigned int getLightingModel() const;
+		void setLightingModel(uint32_t lighting);
+		uint32_t getLightingModel() const;
+		void setFrameLimitEnabled(bool limited);
+		bool isFrameLimitEnabled() const;
+		void setFrameLimit(uint16_t framelimit);
+		uint16_t getFrameLimit() const;
 		
 	private:
 		EngineSettings();
@@ -106,24 +114,25 @@ namespace FIFE {
 		EngineSettings& getSettings();
 		const DeviceCaps& getDeviceCaps() const;
 		
-		Image* changeScreenMode(const ScreenMode& mode);
-		
+		void changeScreenMode(const ScreenMode& mode);
+
 		void init();
 		void destroy();
 
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
-		GUIManager* getGuiManager();
-		ImagePool* getImagePool();
-		AnimationPool* getAnimationPool();
-		SoundClipPool* getSoundClipPool();
+		void setGuiManager(IGUIManager* guimanager);
+		IGUIManager* getGuiManager();
+		ImageManager* getImageManager();
+		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
 		Model* getModel();
 		LogManager* getLogManager();
-		GuiFont* getDefaultFont();
 		VFS* getVFS();
 		Cursor* getCursor();
+		OffRenderer* getOffRenderer();
+		TargetRenderer* getTargetRenderer();
 		
 		void addChangeListener(IEngineChangeListener* listener);
 		void removeChangeListener(IEngineChangeListener* listener);

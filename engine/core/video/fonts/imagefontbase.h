@@ -59,11 +59,11 @@ namespace FIFE {
 			/** Get the width in pixels a given text would occupy
 			 *  @param text The text that should be measured.
 			 */
-			virtual int getWidth(const std::string& text) const;
+			virtual int32_t getWidth(const std::string& text) const;
 
 			/** Get the height in pixels a text line would occupy
 			 */
-			virtual int getHeight() const;
+			virtual int32_t getHeight() const;
 
 			virtual SDL_Surface *renderString(const std::string& text);
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
@@ -78,16 +78,16 @@ namespace FIFE {
 				SDL_Surface* surface;
 			} s_glyph;
 
-			typedef std::map<int,s_glyph> type_glyphs;
+			typedef std::map<int32_t,s_glyph> type_glyphs;
 			type_glyphs m_glyphs;
 
 			// The glyph used, when the real glyph is not found
 			// Should default to '?'
 			s_glyph m_placeholder;
 
-			int mHeight;
-			int mGlyphSpacing;
-			int mRowSpacing;
+			int32_t mHeight;
+			int32_t mGlyphSpacing;
+			int32_t mRowSpacing;
 
 			std::string mFilename;
 			bool mAntiAlias;

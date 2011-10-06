@@ -36,15 +36,14 @@
 
 namespace FIFE {
 	class SoundEmitter;
-	class SoundClipPool;
 
 	class SoundManager {
 	public:
-	
-		SoundManager(SoundClipPool* pool);
-		
+
+		SoundManager();
+
 		~SoundManager();
-		
+
 		/** Initializes the audio system
 		 */
 		void init();
@@ -54,24 +53,24 @@ namespace FIFE {
 		 * @param emitterid The id of the Emitter
 		 *
 		 */
-		SoundEmitter* getEmitter(unsigned int emitterid) const;
-		
+		SoundEmitter* getEmitter(uint32_t emitterid) const;
+
 		/** Returns a pointer to an allocated emitter-instance
 		 */
 		SoundEmitter* createEmitter();
-		
+
 		/** Release an emitter-instance given by emitter-id
 		 */
-		void releaseEmitter(unsigned int emitterid);
-		
+		void releaseEmitter(uint32_t emitterid);
+
 		/** Returns an openAL context
 		 */
 		ALCcontext* getContext() const {
 			return m_context;
 		}
-		
+
 		/** Sets the Master Volume
-		 * 
+		 *
 		 * @param vol The volume value. 0=silence ... 1.0=normal loudness.
 		 */
 		void setVolume(float vol) {
@@ -86,49 +85,48 @@ namespace FIFE {
 		float getVolume() const{
 			return m_volume;
 		}
-		
+
 		/** Mute
 		 */
 		void mute() {
 			alGetListenerf(AL_GAIN, &m_mutevol);
 			alListenerf(AL_GAIN, 0);
 		}
-		
+
 		/** Unmutes to volume before mute() was called.
 		 */
 		void unmute() {
 			alListenerf(AL_GAIN, m_mutevol);
 		}
-		
+
 		/** Sets the position of the listener (alter ego).
 		 */
 		void setListenerPosition(float x, float y, float z) {
 			alListener3f(AL_POSITION, x, y, z);
 		}
-		
+
 		/** Sets the orientation of the listener (alter ego).
 		 */
 		void setListenerOrientation(float x, float y, float z) {
 			ALfloat vec[6] = { x, y, z, 0.0, 0.0, 1.0};
 			alListenerfv(AL_ORIENTATION, vec);
 		}
-		
+
 		/** Sets the velocity of the listener (alter ego).
 		 */
 		void setListenerVelocity(float x, float y, float z);
-		
+
 		/** Returns true if audio module is active
 		 */
 		bool isActive() const{
 			return m_device != NULL;
 		}
-		
+
 	private:
-	
+
 		std::vector<SoundEmitter*> m_emittervec;	// emitter-vector
 		ALCcontext*						m_context; 		// OpenAL context
 		ALCdevice*						m_device; 		// OpenAL device
-		SoundClipPool*				m_pool;
 		float								m_mutevol;		// volume before mute() was called
 		float								m_volume;		// volume to support setVolume-calls before initialization
 	};

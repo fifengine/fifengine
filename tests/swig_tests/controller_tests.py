@@ -41,10 +41,6 @@ class TestController(unittest.TestCase):
 		self.assert_(self.engine.getTimeManager())
 		print "Test GuiManager"
 		self.assert_(self.engine.getGuiManager())
-		print "Test ImagePool"		
-		self.assert_(self.engine.getImagePool())
-		print "Test AnimationPool"
-		self.assert_(self.engine.getAnimationPool())
 		pass
 
 	def testPumping(self):

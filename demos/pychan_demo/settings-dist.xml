@@ -8,6 +8,7 @@
 		<Setting name="BitsPerPixel" type="int"> 0 </Setting>
 		<Setting name="InitialVolume" type="float"> 5.0 </Setting>
 		<Setting name="SDLRemoveFakeAlpha" type="int"> 1 </Setting>
+		<Setting name="GLCompressImages" type="bool"> False </Setting>
 		<Setting name="WindowTitle" type="str"> Pychan demo [FIFE Client] </Setting>
 		<Setting name="WindowIcon" type="str"> gui/icons/pychan_logo.png </Setting>
 		<Setting name="Font" type="str"> fonts/freefont/FreeMono.ttf </Setting>

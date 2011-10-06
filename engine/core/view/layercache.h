@@ -48,12 +48,14 @@ namespace FIFE {
 
 	class LayerCache {
 	public:
-		typedef QuadTree<std::set<int> > CacheTree;
+		typedef QuadTree<std::set<int32_t> > CacheTree;
 
-		LayerCache(Camera* camera, ImagePool* image_pool, AnimationPool* animation_pool);
+		LayerCache(Camera* camera);
 		~LayerCache();
 
 		void setLayer(Layer* layer);
+
+		bool needUpdate() { return m_needupdate; }
 		void update(Camera::Transform transform, RenderList& renderlist);
 
 		void addInstance(Instance* instance);
@@ -63,7 +65,7 @@ namespace FIFE {
 
 
 	private:
-		void collect(const Rect& viewport, std::vector<int>& indices);
+		void collect(const Rect& viewport, std::vector<int32_t>& indices);
 		void reset();
 		void fullUpdate();
 
@@ -72,27 +74,28 @@ namespace FIFE {
 			CacheTree::Node* node;
 
 			/// Index in m_instances;
-			unsigned instance_index;
+			signed instance_index;
 
 			/// Index in m_entries;
-			unsigned entry_index;
+			signed entry_index;
 			/// Force update for entries with animation
 			bool force_update;
 		};
 
-		ImagePool* m_image_pool;
-		AnimationPool* m_animation_pool;
 		Camera* m_camera;
 		Layer* m_layer;
 		CacheLayerChangeListener* m_layer_observer;
 
 		void updateEntry(Entry& item);
 
-		std::map<Instance*,int> m_instance_map;
+		std::map<Instance*,int32_t> m_instance_map;
 		std::vector<Entry> m_entries;
 
 		CacheTree* m_tree;
 		std::vector<RenderItem> m_instances;
+
+		bool m_needupdate;
+		bool m_need_sorting;
 	};
 
 }

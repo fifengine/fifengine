@@ -30,19 +30,21 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fife_stdint.h"
+
 #include "cellgrid.h"
 
 namespace FIFE {
 	class SquareGrid: public CellGrid {
 	public:
-		SquareGrid(bool allow_diagonals=false);
+		SquareGrid(bool allow_diagonals=true);
 		virtual ~SquareGrid();
 
 		const std::string& getType() const;
 		const std::string& getName() const;
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		unsigned int getCellSideCount() const { return 4; }
+		double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		uint32_t getCellSideCount() const { return 4; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);

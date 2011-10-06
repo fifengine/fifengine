@@ -37,22 +37,23 @@
 #include "util/structures/rect.h"
 #include "util/utf8/utf8.h"
 #include "video/image.h"
+#include "video/imagemanager.h"
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
 
 #include "subimagefont.h"
 
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
-		: ImageFontBase(), m_pool(pool) {
+	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs)
+		: ImageFontBase() {
 
 		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
 
-		int image_id = m_pool.addResourceFromFile(filename);
-		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
-		SDL_Surface* surface = img.getSurface();
+//prock - 504
+		ImagePtr img = ImageManager::instance()->load(filename);
+		int32_t image_id = img->getHandle();
+		SDL_Surface* surface = img->getSurface();
 		m_colorkey = RenderBackend::instance()->getColorKey();
 
 		if( !surface ) {
@@ -71,7 +72,7 @@ namespace FIFE {
 		// Prepare the data for extracting the glyphs.
 		uint32_t *pixels = reinterpret_cast<uint32_t*>(surface->pixels);
 
-		int x, w;
+		int32_t x, w;
 		x = 0; w=0;
 
 		SDL_Rect src;
@@ -83,7 +84,7 @@ namespace FIFE {
 		uint32_t colorkey = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
 		// if colorkey feature is not enabled then manually find the color key in the font
-		if (!RenderBackend::instance()->isColorKeyEnabled()) {	
+		if (!RenderBackend::instance()->isColorKeyEnabled()) {
 			while(x < surface->w && pixels[x] == separator) {
 				++x;
 			}

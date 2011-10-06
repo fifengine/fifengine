@@ -34,17 +34,16 @@ namespace FIFE {
 
 	class SoundDecoder;
 	class SoundManager;
-	class SoundClipPool;
-
 
 	class SoundEmitter {
 	public:
-		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
+		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
 
-		unsigned int getId() const;
+		uint32_t getId() const;
 
-		void setSoundClip(unsigned int sound_id);
+		void setSoundClip(SoundClipPtr soundclip);
+		SoundClipPtr getSoundClip();
 		void reset(bool defaultall = false);
 		void release();
 
@@ -61,10 +60,10 @@ namespace FIFE {
 		float getGain();
 
 		bool isStereo();
-		short getBitResolution();
-		unsigned long getSampleRate();
-		unsigned long getDecodedLength();
-		unsigned long getDuration();
+		int16_t getBitResolution();
+		uint64_t getSampleRate();
+		uint64_t getDecodedLength();
+		uint64_t getDuration();
 
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);

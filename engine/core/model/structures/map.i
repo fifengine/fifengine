@@ -51,10 +51,10 @@ namespace FIFE {
 		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
 
-	class Map : public ResourceClass {
+	class Map : public FifeClass {
 		public:
 
-			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, ImagePool* imagepool, AnimationPool* animpool, TimeProvider* tp_master=NULL);
+			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, TimeProvider* tp_master=NULL);
 			~Map();
 
 			const std::string& getId() const;
@@ -66,9 +66,11 @@ namespace FIFE {
 			std::list<Layer*> getLayers() const;
 			Layer* getLayer(const std::string& id);
 
-			uint32_t getNumLayers() const;
+			uint32_t getLayerCount() const;
 			void deleteLayers();
-			
+
+			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
+
 			void setTimeMultiplier(float multip);
 			double getTimeMultiplier() const;
 			
@@ -80,5 +82,8 @@ namespace FIFE {
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
 			std::vector<Camera*>& getCameras();
+			
+			void setFilename(const std::string& file);
+			const std::string& getFilename() const;
 	};
 }

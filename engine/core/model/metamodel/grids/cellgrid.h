@@ -34,6 +34,7 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/math/matrix.h"
 #include "util/base/fifeclass.h"
+#include "util/base/fife_stdint.h"
 
 namespace FIFE {
 	class CellGrid: public FifeClass {
@@ -76,12 +77,12 @@ namespace FIFE {
 		 *  @param target target coordinate to check
 		 *  @return distance cost from curpos to target
 		 */
-		virtual float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+		virtual double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
 		 */
-		virtual unsigned int getCellSideCount() const = 0;
+		virtual uint32_t getCellSideCount() const = 0;
 
 		/** Transforms given point from layer coordinates to map coordinates
 		 *  @return point in map coordinates
@@ -192,7 +193,7 @@ namespace FIFE {
 		bool m_allow_diagonals;
 		
 	private:
-		int orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
+		int32_t orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
 	};
 }
 

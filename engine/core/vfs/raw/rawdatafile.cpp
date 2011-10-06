@@ -47,11 +47,11 @@ namespace FIFE {
 	}
 
 
-	unsigned int RawDataFile::getSize( ) const {
+	uint32_t RawDataFile::getSize( ) const {
 		return m_filesize;
 	}
 
-	void RawDataFile::readInto(uint8_t* buffer, unsigned int start, unsigned int length) {
+	void RawDataFile::readInto(uint8_t* buffer, uint32_t start, uint32_t length) {
 		m_stream.seekg(start);
 		m_stream.read(reinterpret_cast<char*>(buffer), length);
 	}

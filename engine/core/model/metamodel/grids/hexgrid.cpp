@@ -40,7 +40,7 @@ namespace FIFE {
 	static const double HEX_TO_EDGE = HEX_WIDTH / 2;
 	static const double HEX_TO_CORNER = 0.5 / Mathd::Cos(Mathd::pi() / 6);
 	static const double HEX_EDGE_HALF = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
-	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
+	static const double VERTICAL_MULTIP = Mathd::Sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
 	HexGrid::HexGrid(bool allow_diagonals): CellGrid(allow_diagonals) {
@@ -53,7 +53,14 @@ namespace FIFE {
 	}
 
 	CellGrid* HexGrid::clone() {
-		return new HexGrid(this);
+		HexGrid* nGrid = new HexGrid(m_allow_diagonals);
+		nGrid->setRotation(m_rotation);
+		nGrid->setXScale(m_xscale);
+		nGrid->setYScale(m_yscale);
+		nGrid->setXShift(m_xshift);
+		nGrid->setYShift(m_yshift);
+
+		return nGrid;
 	}
 
 	HexGrid::~HexGrid() {
@@ -121,7 +128,7 @@ namespace FIFE {
 
 	}
 
-	float HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+	double HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
@@ -130,7 +137,7 @@ namespace FIFE {
 		} else {
 			double a = VERTICAL_MULTIP * m_yscale;
 			double b = HEX_TO_EDGE * m_xscale;
-			return sqrt((a * a) + (b * b));
+			return Mathd::Sqrt((a * a) + (b * b));
 		}
 	}
 
@@ -148,7 +155,7 @@ namespace FIFE {
 		// each uneven row has shifted coordinate of 0.5 horizontally
 		// shift has to be gradual on vertical axis
 		double ay = ABS(y);
-		int i_layer_y = static_cast<int>(ay);
+		int32_t i_layer_y = static_cast<int32_t>(ay);
 		double offset = ay - static_cast<double>(i_layer_y);
 		if ((i_layer_y % 2) == 1) {
 			offset = 1 - offset;
@@ -174,14 +181,14 @@ namespace FIFE {
 	}
 
 	ModelCoordinate HexGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
-		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int layer coords...");
+		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
 		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y));
 		double dx = elc.x - lc.x;
 		double dy = elc.y - lc.y;
-		int x = static_cast<int>(lc.x);
-		int y = static_cast<int>(lc.y);
+		int32_t x = static_cast<int32_t>(lc.x);
+		int32_t y = static_cast<int32_t>(lc.y);
 		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
 		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		ModelCoordinate result;

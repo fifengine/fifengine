@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,13 +34,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/math/angles.h"
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
 
-#include "abstractvisual.h"
+#include "ivisual.h"
 
 namespace FIFE {
 
-	class Action : public ResourceClass {
+	class Action : public FifeClass {
 	public:
 		/** Constructor
 		 * Actions are created by calling addAction from object, thus
@@ -58,16 +58,16 @@ namespace FIFE {
 
 		/** Sets the duration for this action
 		 */
-		void setDuration(unsigned int duration) { m_duration = duration; }
+		void setDuration(uint32_t duration) { m_duration = duration; }
 
 		/** Gets the duration of this action
 		 */
-		unsigned int getDuration() { return m_duration; }
+		uint32_t getDuration() { return m_duration; }
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
-		
+		void adoptVisual(IVisual* visual) { m_visual = visual; }
+
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
@@ -77,9 +77,9 @@ namespace FIFE {
 		std::string m_id;
 
 		// duration of the action
-		unsigned int m_duration;
+		uint32_t m_duration;
 		// visualization for action
-		AbstractVisual* m_visual;
+		IVisual* m_visual;
 	};
 
 }

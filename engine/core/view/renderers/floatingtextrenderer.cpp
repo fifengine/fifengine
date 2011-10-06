@@ -30,7 +30,7 @@
 #include "video/renderbackend.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
-#include "video/fonts/abstractfont.h"
+#include "video/fonts/ifont.h"
 #include "video/image.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -45,13 +45,12 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 
-	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_renderbackend(renderbackend),
-		m_font(font) {
+		m_font(0) {
 		setEnabled(false);
 		m_font_color = false;
-		m_color = m_font->getColor();
 	}
 
  	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
@@ -73,20 +72,16 @@ namespace FIFE {
 
 	void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		if (!m_font) {
+			//no font selected.. nothing to render
 			return;
 		}
 
 		RenderList::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
-		unsigned int lm = m_renderbackend->getLightingModel();
+		uint32_t lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
 		if(m_font_color) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.unused);
-		}
-		if(lm != 0) {
-			m_renderbackend->disableLighting();
-			m_renderbackend->setStencilTest(255, 2, 7);
-			m_renderbackend->setAlphaTest(0.0);
 		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -101,7 +96,7 @@ namespace FIFE {
 				r.h = img->getHeight();
 
 				if(m_background || m_backborder) {
-					const int overdraw = 5;
+					const int32_t overdraw = 5;
 
 					Point p = Point(r.x-overdraw, r.y-overdraw);
 
@@ -114,12 +109,17 @@ namespace FIFE {
 					}
 				}
 				img->render(r);
+				if(lm > 0) {
+					uint16_t elements = 1;
+					if (m_background) {
+						++elements;
+					}
+					if (m_backborder) {
+						++elements;
+					}
+					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+				}
 			}
-		}
-		if(lm != 0) {
-			m_renderbackend->disableAlphaTest();
-			m_renderbackend->disableStencilTest();
-			m_renderbackend->enableLighting();
 		}
 		if(m_font_color) {
 			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.unused);

@@ -128,7 +128,7 @@ namespace FIFE {
 		/** Normalizes the point
 		 */
 		void normalize() {
-			T invLength = 1.0/length();
+			T invLength = static_cast<T>(1.0/length());
 
 			//TODO: get rid of this static cast
 			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
@@ -171,7 +171,7 @@ namespace FIFE {
 			y = sintheta * nx + costheta * ny;
 		}
 
-		inline T& operator[] (int ind) {
+		inline T& operator[] (int32_t ind) {
 			assert(ind > -1 && ind < 2);
 			return val[ind];
 		}
@@ -184,7 +184,7 @@ namespace FIFE {
 		return os << "(" << p.x << ":" << p.y << ")";
 	}
 
-	typedef PointType2D<int> Point;
+	typedef PointType2D<int32_t> Point;
 	typedef PointType2D<double> DoublePoint;
 
 	/** A 3D Point
@@ -272,13 +272,13 @@ namespace FIFE {
 		T length() const {
 			double sq;
 			sq = x*x + y*y + z*z;
-			return static_cast<T>(sqrt(sq));
+			return static_cast<T>(Mathd::Sqrt(sq));
 		}
 
 		/** Normalizes the point
 		 */
 		void normalize() {
-			T invLength = 1.0/length();
+			T invLength = static_cast<T>(1.0/length());
 
 			//TODO: get rid of this static cast
 			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
@@ -293,7 +293,7 @@ namespace FIFE {
 			}
 		}
 
-		inline T& operator[] (int ind) {
+		inline T& operator[] (int32_t ind) {
 			assert(ind > -1 && ind < 3);
 			return val[ind];
 		}
@@ -306,31 +306,31 @@ namespace FIFE {
 		return os << "(" << p.x << ":" << p.y << ":" << p.z << ")";
 	}
 
-	typedef PointType3D<int> Point3D;
+	typedef PointType3D<int32_t> Point3D;
 	typedef PointType3D<double> DoublePoint3D;
 
-	/** Convert from 2D double point to 2D int point
+	/** Convert from 2D double point to 2D int32_t point
 	 */
 	inline Point doublePt2intPt(DoublePoint pt) {
-		Point tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)));
+		Point tmp(static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)));
 		return tmp;
 	}
 
-	/** Convert from 3D double point to 3D int point
+	/** Convert from 3D double point to 3D int32_t point
 	 */
 	inline Point3D doublePt2intPt(DoublePoint3D pt) {
-		Point3D tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)), static_cast<int>(round(pt.z)));
+		Point3D tmp(static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)), static_cast<int32_t>(round(pt.z)));
 		return tmp;
 	}
 
-	/** Convert from 2D int point to 2D double point
+	/** Convert from 2D int32_t point to 2D double point
 	 */
 	inline DoublePoint intPt2doublePt(Point pt) {
 		DoublePoint tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
 		return tmp;
 	}
 
-	/** Convert from 3D int point to 3D double point
+	/** Convert from 3D int32_t point to 3D double point
 	 */
 	inline DoublePoint3D intPt2doublePt(Point3D pt) {
 		DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));

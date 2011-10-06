@@ -34,7 +34,7 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class AbstractFont;
+	class IFont;
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
@@ -43,7 +43,7 @@ namespace FIFE {
 		 * @param position position for this renderer in rendering pipeline
 		 * @param font default font used to render the texts
 		 */
-		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position);
 
 		FloatingTextRenderer(const FloatingTextRenderer& old);
 
@@ -60,7 +60,7 @@ namespace FIFE {
 		/** Changes default font in the renderer
 		 * Note that this does not change the font ownership
 		 */
-		void changeDefaultFont(AbstractFont* font) { m_font = font; }
+		void setFont(IFont* font) { m_font = font; }
 
 		/** Changes default font color
 		 * Only usefull for .ttf fonts
@@ -95,7 +95,7 @@ namespace FIFE {
 
 	private:
 		RenderBackend* m_renderbackend;
-		AbstractFont* m_font;
+		IFont* m_font;
 		bool m_font_color;
 		SDL_Color m_color;
 		bool m_background;

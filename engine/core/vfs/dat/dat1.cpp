@@ -121,7 +121,7 @@ namespace FIFE {
 			path.erase(0, 2);
 		}
 		
-		int lastIndex = path.size() - 1;
+		size_t lastIndex = path.size() - 1;
 		if ((lastIndex != -1) && path[lastIndex] != '/') {
 			path += '/';
 		}

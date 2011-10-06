@@ -31,7 +31,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-// #include "guichan_addon/console.h"
 #include "modules.h"
 #include "logger.h"
 #include "util/base/exception.h"
@@ -84,29 +83,29 @@ namespace FIFE {
 		}
 		std::string lvlstr = "";
 		switch (level) {
-			case LEVEL_DEBUG: lvlstr = "dbg";
+			case LEVEL_DEBUG: lvlstr = "DEBUG";
 			break;
 
-			case LEVEL_LOG: lvlstr = "log";
+			case LEVEL_LOG: lvlstr = "LOG";
 			break;
 
-			case LEVEL_WARN: lvlstr = "warn";
+			case LEVEL_WARN: lvlstr = "WARN";
 			break;
 
-			case LEVEL_ERROR: lvlstr = "error";
+			case LEVEL_ERROR: lvlstr = "ERROR";
 			break;
 
-			case LEVEL_PANIC: lvlstr = "panic";
+			case LEVEL_PANIC: lvlstr = "PANIC";
 			break;
 
-			default: lvlstr = "error";
+			default: lvlstr = "ERROR";
 			break;
 		}
 		if (m_logtoprompt) {
-			std::cout << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
+			std::cout << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
 		}
 		if (m_logtofile) {
-			*m_logfile << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
+			*m_logfile << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
 		}
 		if (level == LEVEL_PANIC) {
 			abort();
@@ -123,7 +122,7 @@ namespace FIFE {
 
 	void LogManager::addVisibleModule(logmodule_t module) {
 		validateModule(module);
- 		int ind = static_cast<int>(module);
+ 		int32_t ind = static_cast<int32_t>(module);
  		m_modules[ind] = true;
  		if (moduleInfos[ind].parent != LM_CORE) {
   			addVisibleModule(moduleInfos[ind].parent);
@@ -136,7 +135,7 @@ namespace FIFE {
 	}
 
 	void LogManager::clearVisibleModules() {
-		for (int i = 0; i < LM_MODULE_MAX; i++) {
+		for (int32_t i = 0; i < LM_MODULE_MAX; i++) {
 			m_modules[i] = false;
 		}
 	}
@@ -194,7 +193,7 @@ namespace FIFE {
 
 	void LogManager::validateModuleDescription(logmodule_t module) {
 		if (module == LM_CORE) {
-			for (int m = static_cast<int>(LM_CORE)+1; m < static_cast<int>(LM_MODULE_MAX); m++) {
+			for (int32_t m = static_cast<int32_t>(LM_CORE)+1; m < static_cast<int32_t>(LM_MODULE_MAX); m++) {
 				if (moduleInfos[m].module != static_cast<logmodule_t>(m)) {
 					std::ostringstream stream;
 					stream << m;
