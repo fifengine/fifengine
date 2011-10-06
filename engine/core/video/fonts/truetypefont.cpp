@@ -39,7 +39,7 @@
 
 namespace FIFE {
 
-	TrueTypeFont::TrueTypeFont(const std::string& filename, int size)
+	TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size)
 		: FIFE::FontBase() {
 		mFilename = filename;
 		mFont = NULL;
@@ -56,14 +56,14 @@ namespace FIFE {
 		TTF_CloseFont(mFont);
 	}
 
-	int TrueTypeFont::getWidth(const std::string& text) const {
-		int w, h;
+	int32_t TrueTypeFont::getWidth(const std::string& text) const {
+		int32_t w, h;
 		assert( utf8::is_valid(text.begin(), text.end()) );
 		TTF_SizeUTF8(mFont, text.c_str(), &w, &h);
 		return w;
 	}
 
-	int TrueTypeFont::getHeight() const {
+	int32_t TrueTypeFont::getHeight() const {
 		return TTF_FontHeight(mFont) + getRowSpacing();
 	}
 

@@ -53,24 +53,6 @@ def this_is_deprecated(func,revision=0,message=None):
 		return func(*args,**kwargs)
 	return wrapped_func
 
-# 2008.1 compatibility functions
-
-def decorate_addFrame(f):
-	
-	def addFrame(self,image_ptr, delay):
-		if not isinstance(image_ptr,fife.ResourcePtr):
-			image_ptr = fife.ResourcePtr(image_ptr)
-			deprecated(2616,"Animation.addFrame doesn't accept Image* anymore ")
-		return f(self,image_ptr,delay)
-	return addFrame
-
-fife.Animation.addFrame = decorate_addFrame(fife.Animation.addFrame)
-fife.Pool.getIndex = this_is_deprecated(
-	fife.Pool.addResourceFromFile,
-	revision = 2617,
-	message  = "Use addResourceFromFile instead of getIndex"
-)
-
 def _compat_NonConsumableKeys():
 	class CompatKeyFilter(fife.IKeyFilter):
 		def __init__(self, keys):

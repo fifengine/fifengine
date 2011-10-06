@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -31,197 +31,123 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/structures/renderernode.h"
 #include "view/rendererbase.h"
+#include "video/animation.h"
 
 namespace FIFE {
 	class RenderBackend;
-	class AbstractFont;
-	class ImagePool;
-	class AnimationPool;
-
-	class LightRendererNode {
-	public:
-		LightRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(Instance* attached_instance, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Location &attached_location, const Point &relative_point = Point(0,0));
-		LightRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
-		LightRendererNode(const Point &attached_point);
-		~LightRendererNode();
-		
-		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
-		void setAttached(Instance* attached_instance, const Location &relative_location);
-		void setAttached(Instance* attached_instance, const Point &relative_point);
-		void setAttached(Instance* attached_instance);
-		void setAttached(const Location &attached_location, const Point &relative_point);
-		void setAttached(const Location &attached_location);
-		void setAttached(Layer* attached_layer);
-		void setAttached(const Point &attached_point);
-		
-		void setRelative(const Location &relative_location);
-		void setRelative(const Location &relative_location, Point relative_point);
-		void setRelative(const Point &relative_point);
-		
-		Instance* getAttachedInstance();
-		Location getAttachedLocation();
-		Layer* getAttachedLayer();
-		Point getAttachedPoint();
-		
-		Location getOffsetLocation();
-		Point getOffsetPoint();
-		
-		Instance* getInstance();
-		Location getLocation();
-		Layer* getLayer();
-		Point getPoint();
-
-		Point getCalculatedPoint(Camera* cam, Layer* layer);
-	private:
-		Instance* m_instance;
-		Location m_location;
-		Layer* m_layer;
-		Point m_point;
-	};
+	class IFont;
 
 	class LightRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {};
-		virtual std::string getName() { return 0; };
-		virtual LightRendererNode* getNode() { return NULL; };
-		virtual int getId() { return -1; };
-		virtual int getSrcBlend() { return -1; };
-		virtual int getDstBlend() { return -1; };
-		virtual void setStencil(uint8_t stencil_ref, float alpha_ref) {};
-		virtual int getStencil() { return 0; };
-		virtual float getAlpha() { return 0; };
-		virtual void removeStencil() {};
+		LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst);
+		virtual ~LightRendererElementInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
+		virtual std::string getName() = 0;
+
+		RendererNode* getNode() { return &m_anchor; };
+		int32_t getSrcBlend() { return m_src; };
+		int32_t getDstBlend() { return m_dst; };
+
+		void setStencil(uint8_t stencil_ref);
+		int32_t getStencil();
+		void removeStencil();
+
 		virtual std::vector<uint8_t> getColor() { return std::vector<uint8_t>(); };
 		virtual float getRadius() { return 0; };
-		virtual int getSubdivisions() { return 0; };
+		virtual int32_t getSubdivisions() { return 0; };
 		virtual float getXStretch() { return 0; };
 		virtual float getYStretch() { return 0; };
-		virtual ~LightRendererElementInfo() {};
+	
+	protected:
+		RendererNode m_anchor;
+		int32_t m_src;
+		int32_t m_dst;
+		bool m_stencil;
+		uint8_t m_stencil_ref;
 	};
 
 	class LightRendererImageInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		std::string getName() { return "image"; };
-		LightRendererNode* getNode() { return &m_anchor; };
-		int getId() { return m_image; };
-		int getSrcBlend() { return m_src; };
-		int getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int getStencil();
-		float getAlpha();
-		void removeStencil();
-		LightRendererImageInfo(LightRendererNode n, int image, int src, int dst);
+		LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "image"; };
+		ImagePtr getImage() { return m_image; };
+
 	private:
-		LightRendererNode m_anchor;
-		int m_image;
-		int m_src;
-		int m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
+		ImagePtr m_image;
 	};
+
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		std::string getName() { return "animation"; };
-		LightRendererNode* getNode() { return &m_anchor; };
-		int getId() { return m_animation; };
-		int getSrcBlend() { return m_src; };
-		int getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int getStencil();
-		float getAlpha();
-		void removeStencil();
-		LightRendererAnimationInfo(LightRendererNode n, int animation, int src, int dst);
+		LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "animation"; };
+		AnimationPtr getAnimation() { return m_animation; };
+
 	private:
-		LightRendererNode m_anchor;
-		int m_animation;
-		int m_src;
-		int m_dst;
-		unsigned int m_start_time;
+		AnimationPtr m_animation;
+		uint32_t m_start_time;
 		float m_time_scale;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		std::string getName() { return "simple"; };
-		LightRendererNode* getNode() { return &m_anchor; };
-		int getSrcBlend() { return m_src; };
-		int getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int getStencil();
-		float getAlpha();
-		void removeStencil();
+		LightRendererSimpleLightInfo(RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
+		virtual ~LightRendererSimpleLightInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "simple"; };
+
 		std::vector<uint8_t> getColor();
 		float getRadius() { return m_radius; };
-		int getSubdivisions() { return m_subdivisions; };
+		int32_t getSubdivisions() { return m_subdivisions; };
 		float getXStretch() { return m_xstretch; };
 		float getYStretch() { return m_ystretch; };
-		LightRendererSimpleLightInfo(LightRendererNode n, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src, int dst);
-		virtual ~LightRendererSimpleLightInfo() {};
+
 	private:
-		LightRendererNode m_anchor;
 		uint8_t m_intensity;
 		float m_radius;
-		int m_subdivisions;
+		int32_t m_subdivisions;
 		float m_xstretch;
 		float m_ystretch;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
-		int m_src;
-		int m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
 	};
+
 	class LightRendererResizeInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		std::string getName() { return "resize"; };
-		LightRendererNode* getNode() { return &m_anchor; };
-		int getId() { return m_image; };
-		int getSrcBlend() { return m_src; };
-		int getDstBlend() { return m_dst; };
-		void setStencil(uint8_t stencil_ref, float alpha_ref);
-		int getStencil();
-		float getAlpha();
-		void removeStencil();
-		LightRendererResizeInfo(LightRendererNode n, int image, int width, int height, int src, int dst);
+		LightRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo() {};
+
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
+		virtual std::string getName() { return "resize"; };
+
+		ImagePtr getImage() { return m_image; };
+
 	private:
-		LightRendererNode m_anchor;
-		int m_image;
-		int m_width;
-		int m_height;
-		int m_src;
-		int m_dst;
-		bool m_stencil;
-		uint8_t m_stencil_ref;
-		float m_alpha_ref;
+		ImagePtr m_image;
+		int32_t m_width;
+		int32_t m_height;
 	};
+
 	class LightRenderer: public RendererBase {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
-		LightRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
-		
+		LightRenderer(RenderBackend* renderbackend, int32_t position);
+
 		LightRenderer(const LightRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
@@ -234,19 +160,19 @@ namespace FIFE {
 		 */
 		static LightRenderer* getInstance(IRendererContainer* cnt);
 
-		void addImage(const std::string &group, LightRendererNode n, int image, int src=-1, int dst=-1);
-		void addAnimation(const std::string &group, LightRendererNode n, int animation, int src=-1, int dst=-1);
-		void addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src=-1, int dst=-1);
-		void resizeImage(const std::string &group, LightRendererNode n, int image, int width, int height, int src=-1, int dst=-1);
-		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
+		void addImage(const std::string &group, RendererNode n, ImagePtr image, int32_t src=-1, int32_t dst=-1);
+		void addAnimation(const std::string &group, RendererNode n, AnimationPtr animation, int32_t src=-1, int32_t dst=-1);
+		void addSimpleLight(const std::string &group, RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
+		void resizeImage(const std::string &group, RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
+		void addStencilTest(const std::string &group, uint8_t stencil_ref=0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();
 		std::vector<LightRendererElementInfo*> getLightInfo(const std::string &group);
 		void removeAll(const std::string &group);
+		void removeAll();
+		void reset();
 
 	private:
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
 		std::map<std::string, std::vector<LightRendererElementInfo*> > m_groups;
 	};
 

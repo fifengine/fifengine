@@ -26,12 +26,12 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class AbstractFont;
+	class IFont;
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
 		virtual ~FloatingTextRenderer();
-		void changeDefaultFont(AbstractFont* font);
+		void setFont(IFont* font);
 		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
 		void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
@@ -41,7 +41,7 @@ namespace FIFE {
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
-		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position, IFont* font);
 	};
 
 

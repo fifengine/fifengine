@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,12 +31,14 @@
 
 #include "object.h"
 #include "action.h"
-#include "abstractpather.h"
+#include "ipather.h"
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited):
+		IResource(identifier),
 		m_id(identifier),
 		m_namespace(name_space),
+		m_filename(""),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_blocking(false),
@@ -94,7 +96,7 @@ namespace FIFE {
 		}
 		return i->second;
 	}
-	
+
 	std::list<std::string> Object::getActionIds() const {
 		std::list<std::string> action_ids;
 		action_ids.clear();
@@ -107,10 +109,10 @@ namespace FIFE {
 		return action_ids;
 	}
 
-	void Object::setPather(AbstractPather* pather) {
+	void Object::setPather(IPather* pather) {
 		m_pather = pather;
 	}
-	
+
 	bool Object::isBlocking() const {
 		if (m_blocking) {
 			return true;
@@ -120,7 +122,7 @@ namespace FIFE {
 		}
 		return false;
 	}
-	
+
 	bool Object::isStatic() const {
 		if (m_static) {
 			return true;
@@ -129,7 +131,7 @@ namespace FIFE {
 			return m_inherited->isStatic();
 		}
 		return false;
-	}	
+	}
 
 	bool Object::operator==(const Object& obj) const {
 		return m_id == obj.getId() && m_namespace == obj.getNamespace();

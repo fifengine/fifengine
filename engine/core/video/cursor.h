@@ -31,12 +31,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+#include "animation.h"
+
 struct SDL_Cursor;
 
 namespace FIFE {
 
-	class ImagePool;
-	class AnimationPool;
 	class RenderBackend;
 	class TimeManager;
 
@@ -85,7 +85,7 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		 */
-		Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend);
+		Cursor(RenderBackend* renderbackend);
 
 		/** Destructor.
 		 */
@@ -97,48 +97,78 @@ namespace FIFE {
 		 */
 		virtual void draw();
 
-		/** Sets the current mouse cursor type and possible pool value
-		 * @param ctype cursor type
-		 * @param cursor_id Pool id to image or animation. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
+		/** Sets the current mouse cursor
+		 * @param cursor_id For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
 		 */
-		void set(MouseCursorType ctype, unsigned int cursor_id=0);
+		void set(uint32_t cursor_id=0);
 
-		/** Sets the current drag cursor type and pool value
-		 * @param ctype drag cursor type
-		 * @param drag_id pool id for the drag cursor (either image or animation)
-		 * @param drag_offset offset of drag image shown with cursor
+		/** Sets the current mouse cursor type to image
+		 * @param image ImagePtr to a image used for the cursor
 		 */
-		void setDrag(MouseCursorType ctype, unsigned int drag_id=0, int drag_offset_x=0, int drag_offset_y=0);
+		void set(ImagePtr image);
+
+		/** Sets the current mouse cursor type to animation
+		 * @param anim AnimationPtr to a loaded animation used for the cursor
+		 */
+		void set(AnimationPtr anim);
+
+		/** Sets the current drag image cursor
+		 * @param image ImagePtr to a image used for the drag
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+		 */
+		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+
+		/** Sets the current drag animated cursor
+		 * @param anim AnimationPtr to a loaded animation used for the drag
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+		 */
+		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+
+		/** Resets the cursor drag type to CURSOR_NONE
+		 */
+		void resetDrag();
 
 		/** Gets the current mouse cursor type
 		 */
 		MouseCursorType getType() const { return m_cursor_type; }
 
-		/** Gets the current mouse cursor pool id
+		/** Gets the current mouse cursor handle
 		 */
-		unsigned int getId() const { return m_cursor_id; }
+		uint32_t getId() const { return m_cursor_id; }
+
+		/** Gets the current mouse image
+		 */
+		ImagePtr getImage() { return m_cursor_image; }
+
+		/** Gets the current mouse animation
+		 */
+		AnimationPtr getAnimation() { return m_cursor_animation; }
 
 		/** Gets the current mouse cursor type
 		 */
 		MouseCursorType getDragType() const { return m_drag_type; }
 
-		/** Gets the current mouse cursor pool id
+		/** Gets the current mouse drag image
 		 */
-		unsigned int getDragId() const { return m_drag_id; }
+		ImagePtr getDragImage() { return m_cursor_drag_image; }
+
+		/** Gets the current mouse drag animation
+		 */
+		AnimationPtr getDragAnimation() { return m_cursor_drag_animation; }
 
 		/** Gets the current mouse x position
 		 */
-		unsigned int getX() const {return m_mx;}
+		uint32_t getX() const {return m_mx;}
 
 		/** Gets the current mouse y position
 		 */
-		unsigned int getY() const {return m_my;}
+		uint32_t getY() const {return m_my;}
 
 	protected:
 		/** Sets the cursor to a native type.
 		  * @param cursor_id Resource id to native cursor, or one of the values in NativeCursor
 		  */
-		void setNativeCursor(unsigned int cursor_id);
+		void setNativeCursor(uint32_t cursor_id);
 
 		/** To get some consistancy between platforms, this function checks
 		  * if cursor_id matches any of the values in NativeCursor, and
@@ -147,27 +177,31 @@ namespace FIFE {
 		  *
 		  * @param One of the values in NativeCursor
 		  */
-		unsigned int getNativeId(unsigned int cursor_id);
+		uint32_t getNativeId(uint32_t cursor_id);
 
 	private:
-		unsigned int m_cursor_id;
-		unsigned int m_drag_id;
+		uint32_t m_cursor_id;
+		uint32_t m_drag_id;
 		MouseCursorType m_cursor_type;
 		MouseCursorType m_drag_type;
 
 		SDL_Cursor* m_native_cursor;
 
+		ImagePtr m_cursor_image;
+		ImagePtr m_cursor_drag_image;
+
+		AnimationPtr m_cursor_animation;
+		AnimationPtr m_cursor_drag_animation;
+
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imgpool;
-		AnimationPool* m_animpool;
 
-		unsigned int m_animtime;
-		unsigned int m_drag_animtime;
+		uint32_t m_animtime;
+		uint32_t m_drag_animtime;
 
-		int m_drag_offset_x;
-		int m_drag_offset_y;
-		int m_mx;
-		int m_my;
+		int32_t m_drag_offset_x;
+		int32_t m_drag_offset_y;
+		int32_t m_mx;
+		int32_t m_my;
 		TimeManager* m_timemanager;
 
 		bool m_invalidated;

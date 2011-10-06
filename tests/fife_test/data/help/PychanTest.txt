@@ -1,0 +1,16 @@
+PychanTest
+-------------- 
+The purpose of this test is to ensure all Pychan/Guichan widgets.
+ 
+-------------- 
+Please perform the following tests:
+ 
+Test1: Absolute Positioning
+Test2: All Widgets
+Test3: Basic Styling
+Test4: Colortester
+Test5: Dynamic Widgets
+Test6: GuiAnimations
+Test7: ScrollArea
+Test8: Sliders
+ 

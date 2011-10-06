@@ -56,7 +56,7 @@ class Manager(object):
 		if in_fife:
 			if not hook.engine.getEventManager():
 				raise InitializationError("No event manager installed.")
-			if not hook.engine.getGuiManager():
+			if not hook.guimanager:
 				raise InitializationError("No GUI manager installed.")
 		timer.init(hook.engine.getTimeManager())
 
@@ -218,9 +218,6 @@ DEFAULT_STYLE = {
 	'Label' : {
 		'border_size': 0,
 		'background_color' : guichan.Color(50,50,50,0)
-	},
-	'ClickLabel' : {
-		'border_size': 0,
 	},
 	'ListBox' : {
 		'border_size': 0,

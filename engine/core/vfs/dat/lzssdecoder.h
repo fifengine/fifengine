@@ -31,7 +31,7 @@
 #include "vfs/vfs.h"
 
 namespace FIFE {
-	/** A helper class for unpacking LZSS encoded data 
+	/** A helper class for unpacking LZSS encoded data
 	 * @bug just a quick&dirty LZSS implementation, optimized a bit
 	 *      see revision 719 for the original one and 795 for the broken optimized one
 	 * @bug the lzss decoder might very well crash on corrupt data.
@@ -56,7 +56,7 @@ namespace FIFE {
 		private:
 			uint32_t m_outlen;
 			uint32_t m_outindex;
-			void LZSSDecode(uint8_t* in, long len, uint8_t* out);
+			void LZSSDecode(uint8_t* in, int64_t len, uint8_t* out);
 
 	};
 

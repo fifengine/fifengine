@@ -36,6 +36,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "util/base/fife_stdint.h"
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/command/ec_icommandcontroller.h"
 #include "eventchannel/command/ec_icommandlistener.h"
@@ -142,9 +143,9 @@ namespace FIFE {
 		std::deque<ISdlEventListener*> m_pending_sdleventlisteners_front;
 		std::deque<ISdlEventListener*> m_pending_sdldeletions;
 
-		std::map<int, bool> m_keystatemap;
+		std::map<int32_t, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
-		int m_mousestate;
+		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 
 	};

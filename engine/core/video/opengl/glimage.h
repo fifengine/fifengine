@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -40,10 +40,6 @@
 #include "fife_opengl.h"
 
 namespace FIFE {
-	// FIXME: due to image chunking issues, GLImage uses SDLImage to draw primitives on its surface
-	// remember though that OpenGL backend is not separate thing of SDL; instead it sits on top of it
-	class SDLImage;
-
 
 	/** Implements an Image using OpenGL.
 	 *
@@ -51,39 +47,53 @@ namespace FIFE {
 	 * it draws a textured @i Quad to the screen.
 	 *
 	 * @see Image
-	 * @note Width and height are not limited to powers of two; non-power of two
-	 * images will be converted internally.
+	 * @note Width and height are not limited to powers of two; non-power of two images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
 	public:
+		GLImage(IResourceLoader* loader = 0);
+		GLImage(const std::string& name, IResourceLoader* loader = 0);
 		GLImage(SDL_Surface* surface);
-		GLImage(const uint8_t* data, unsigned int width, unsigned int height);
+		GLImage(const std::string& name, SDL_Surface* surface);
+		GLImage(const uint8_t* data, uint32_t width, uint32_t height);
+		GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+
 		virtual ~GLImage();
-		void invalidate();
-		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
-		void saveImage(const std::string& filename);
- 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
-		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
-		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		virtual void invalidate();
+		virtual void setSurface(SDL_Surface* surface);
+		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
+		virtual void forceLoadInternal();
+		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
-	protected:
-		void setClipArea(const Rect& cliparea, bool clear);
-
+		GLuint getTexId() const;
+		const GLfloat* getTexCoords() const;
+		bool isCompressed() const { return m_compressed; }
+		void setCompressed(bool compressed) { m_compressed = compressed; }
 	private:
 		// texture coords to use
-		float m_col_tex_coord;
-		// @see m_col_tex_coord
-		float m_row_tex_coord;
+		GLfloat m_tex_coords[4];
+
+		// Was this image compressed by OpenGL driver during loading ?
+		bool m_compressed;
+
+		//     [0]    [2]    ->(x)
+		// [1]  +------+
+		//      |      |
+		//      |      |
+		// [3]  +------+
+		//
+		//      |
+		//      v
+		//     (y)
+		// To map these indices with previous one:
+		// [0]:=[1]:=0.0f, [2]:=m_col_tex_coords, [3]:=m_row_tex_coords
+
 
 		/** Holds texture ids that are used to access textures in GL rendering context
 		 */
-		GLuint* m_textureids;
+		GLuint m_texId;
 
 		/** Frees allocated memory and calls resetGlImage
 		 */
@@ -93,26 +103,19 @@ namespace FIFE {
 		 */
 		void resetGlimage();
 
-		//void saveAsPng(const std::string& filename, SDL_Surface& surface);
-
 		/** Generates the GL Texture for use when rendering.
 		 */
 		void generateGLTexture();
-
-		/** Original SDLImage where GLImage is created from
-		 * FIXME: at the moment SDLImage is used to draw graphics (e.g. line) on screen
-		 * this is clearly not optimal, but image chunking makes somewhat harder to do
-		 * proper drawing of graphics (e.g. how to segment lines into correct boxes).
-		 * It might be possible to use some kind of offscreen OpenGL image for this
-		 * purpose
-		 */
-		SDLImage* m_sdlimage;
+		void generateGLSharedTexture(const GLImage* shared, const Rect& region);
 
 		uint32_t m_chunk_size_w;
 		uint32_t m_chunk_size_h;
 
 		SDL_Color m_colorkey;
+
+		GLImage* m_shared_img;
 	};
+
 }
 
 #endif

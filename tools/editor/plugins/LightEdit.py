@@ -27,6 +27,7 @@ from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets as widgets
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 from fife.extensions.fife_timer import Timer
 
@@ -54,8 +55,7 @@ OUTLINE_SIZE = 1
 DEFAULT_GLOBAL_LIGHT = {
 	"R"	:	1.0,
 	"G"	:	1.0,
-	"B"	:	1.0,
-	"A" :	1.0,
+	"B"	:	1.0
 }
 
 class LightEdit(plugin.Plugin):
@@ -87,7 +87,6 @@ class LightEdit(plugin.Plugin):
 		"""
 		self._instances = None
 		self._light["stencil"] = -1
-		self._light["alpha"] = 0.0
 		self._light["src"] = -1
 		self._light["dst"] = -1
 		
@@ -100,8 +99,8 @@ class LightEdit(plugin.Plugin):
 		self._light["xstretch"] = 1
 		self._light["ystretch"] = 1
 
-		self._light["image"] = ""
-		self._light["animation"] = ""
+		self._light["image"] = None
+		self._light["animation"] = None
 
 		self._simple_l = False
 		self._image_l = False
@@ -122,8 +121,7 @@ class LightEdit(plugin.Plugin):
 		self._editor = scripts.editor.getEditor()
 		self.engine = self._editor.getEngine()
 		
-		self.imagepool = self.engine.getImagePool()
-		self._animationpool = self.engine.getAnimationPool()
+		self.imagemanager = self.engine.getImageManager()
 		
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
@@ -177,12 +175,7 @@ class LightEdit(plugin.Plugin):
 			"stencil_up" 		: cbwa(self.change_light, value=1, option="stencil"),
 			"stencil_dn" 		: cbwa(self.change_light, value=-1, option="stencil"),
 			"stencil/mouseWheelMovedUp"			:	cbwa(self.change_light, value=10, option="stencil"),
-			"stencil/mouseWheelMovedDown" : cbwa(self.change_light, value=-10, option="stencil"),
-
-			"alpha_up" 		: cbwa(self.change_light, value=0.01, option="alpha"),
-			"alpha_dn" 		: cbwa(self.change_light, value=-0.01, option="alpha"),
-			"alpha/mouseWheelMovedUp"			:	cbwa(self.change_light, value=0.1, option="alpha"),
-			"alpha/mouseWheelMovedDown" : cbwa(self.change_light, value=-0.1, option="alpha"),			
+			"stencil/mouseWheelMovedDown" : cbwa(self.change_light, value=-10, option="stencil"),		
 
 			"intensity_up" 		: cbwa(self.change_light, value=1, option="intensity"),
 			"intensity_dn" 		: cbwa(self.change_light, value=-1, option="intensity"),
@@ -250,12 +243,7 @@ class LightEdit(plugin.Plugin):
 			"increase_B"			:	cbwa(self.increase_color, b=True),
 			"decrease_B"			:	cbwa(self.decrease_color, b=True),
 			"value_B/mouseWheelMovedUp"			:	cbwa(self.increase_color, step=0.1, b=True),
-			"value_B/mouseWheelMovedDown"		:	cbwa(self.decrease_color, step=0.1, b=True),
-			
-			"increase_A"			:	cbwa(self.increase_color, a=True),
-			"decrease_A"			:	cbwa(self.decrease_color, a=True),			
-			"value_A/mouseWheelMovedUp"			:	cbwa(self.increase_color, step=0.1, a=True),
-			"value_A/mouseWheelMovedDown"		:	cbwa(self.decrease_color, step=0.1, a=True),			
+			"value_B/mouseWheelMovedDown"		:	cbwa(self.decrease_color, step=0.1, b=True)			
 		})
 
 		self._widgets = {
@@ -263,7 +251,6 @@ class LightEdit(plugin.Plugin):
 			"ins_id"			:	self.container.findChild(name="ins_id"),
 			"obj_id"			:	self.container.findChild(name="obj_id"),
 			"stencil"			:	self.container.findChild(name="stencil"),
-			"alpha"				:	self.container.findChild(name="alpha"),
 			
 			"intensity"			:	self.container.findChild(name="intensity"),
 			"red"                           :       self.container.findChild(name="red"),
@@ -281,8 +268,7 @@ class LightEdit(plugin.Plugin):
 
 			"value_R"				:	self.container.findChild(name="value_R"),
 			"value_G"				:	self.container.findChild(name="value_G"),
-			"value_B"				:	self.container.findChild(name="value_B"),
-			"value_A"				:	self.container.findChild(name="value_A"),			
+			"value_B"				:	self.container.findChild(name="value_B")		
 		}
 
 		self._gui_simple_panel_wrapper = self.container.findChild(name="simple_panel_wrapper")
@@ -303,7 +289,6 @@ class LightEdit(plugin.Plugin):
 		self._widgets["ins_id"].text = unicode(str(self._instances[0].getId()))
 		self._widgets["obj_id"].text = unicode(str(self._instances[0].getObject().getId()))
 		self._widgets["stencil"].text = unicode(str(self._light["stencil"]))
-		self._widgets["alpha"].text = unicode(str(self._light["alpha"]))
 		self._widgets["src"].text = unicode(str(self._light["src"]))
 		self._widgets["dst"].text = unicode(str(self._light["dst"]))
 		
@@ -319,7 +304,6 @@ class LightEdit(plugin.Plugin):
 		self._widgets["value_R"].text = unicode(str(self._color["R"]))
 		self._widgets["value_G"].text = unicode(str(self._color["G"]))
 		self._widgets["value_B"].text = unicode(str(self._color["B"]))
-		self._widgets["value_A"].text = unicode(str(self._color["A"]))		
 		
 		if self._simple_l:
 			if not self._gui_simple_panel_wrapper.findChild(name="simple_panel"):
@@ -401,7 +385,6 @@ class LightEdit(plugin.Plugin):
 		self._color["R"] = color[0]
 		self._color["G"] = color[1]
 		self._color["B"] = color[2]
-		self._color["A"] = color[3]
 		
 		groups = self.lightrenderer.getGroups()
 		for group in groups:
@@ -412,7 +395,6 @@ class LightEdit(plugin.Plugin):
 				if node.getInstance().getId() == self._instances[0].getId():
 					self._widgets["group"].text = unicode(str(group))
 					self._light["stencil"] = info.getStencil()
-					self._light["alpha"] = info.getAlpha()
 					self._light["src"] = info.getSrcBlend()
 					self._light["dst"] = info.getDstBlend()
 					if str(info.getName()) == "simple":
@@ -426,26 +408,26 @@ class LightEdit(plugin.Plugin):
 						self._light["ystretch"] = info.getYStretch()
 						self.toggle_simple_gui()
 					elif str(info.getName()) == "image":
-						if info.getId() == -1: continue
-						img = self.imagepool.getImage(info.getId());
-						name = img.getResourceFile()
+						if info.getImage() is None: continue
+						img = info.getImage()
+						name = img.getName()
 						self._widgets["image"].text = unicode(str(name))
-						self._light["image"] = info.getId()
+						self._light["image"] = image
 						self.toggle_image_gui()
 					elif str(info.getName()) == "animation":
-						if info.getId() == -1: continue
-						ani = self._animationpool.getAnimation(info.getId());
+						if info.getAnimation() is None: continue
+						ani = info.getAnimation();
 						count = 0
 						newstr = ''
-						image = ani.getFrame(ani.getActionFrame())
-						fname = image.getResourceFile()
+						image = self.engine.getImageManager().get(ani.getFrame(ani.getActionFrame()))
+						fname = image.getName()
 						strings = ([str(s) for s in fname.split('/')])
 						leng = len(strings) -1
 						while count < leng:
 							newstr = str(newstr + strings[count] + '/')
 							count += 1
 						self._widgets["animation"].text = unicode(str(newstr + 'animation.xml'))
-						self._light["animation"] = info.getId()
+						self._light["animation"] = ani
 						self.toggle_animation_gui()
 
 	def change_image(self):
@@ -481,7 +463,6 @@ class LightEdit(plugin.Plugin):
 
 	def reset_light(self):
 		self._light["stencil"] = -1
-		self._light["alpha"] = 0.0
 		self._light["src"] = -1
 		self._light["dst"] = -1
 		
@@ -494,8 +475,8 @@ class LightEdit(plugin.Plugin):
 		self._light["xstretch"] = 1
 		self._light["ystretch"] = 1
 		
-		self._light["image"] = ""
-		self._light["animation"] = ""
+		self._light["image"] = None
+		self._light["animation"] = None
 		
 		self.lightrenderer.removeAll(str(self._widgets["group"]._getText()))
 		self._widgets["group"].text = unicode(str(""))
@@ -514,7 +495,7 @@ class LightEdit(plugin.Plugin):
 				insid = str(objid + str(counter))
 			self._instances[0].setId(insid)
 		
-		if self._light["stencil"] is not -1 and self._light["alpha"] is not 0.0: self.stencil_test()
+		if self._light["stencil"] is not -1 : self.stencil_test()
 		if self._simple_l: self.simple_light()
 		if self._image_l: self.image_light()
 		if self._animation_l: self.animation_light()
@@ -537,20 +518,18 @@ class LightEdit(plugin.Plugin):
 											or option == "green"
 											or option == "blue"
 											or option == "stencil"):
-			self._light[option] = 255
-		if self._light[option]+ value > 1 and option == "alpha":
-			self._light[option] = 1.0			
+			self._light[option] = 255	
 
 		self.update_gui()
 
 	def stencil_test(self):
-		self.lightrenderer.addStencilTest(str(self._widgets["group"]._getText()), self._light["stencil"], self._light["alpha"])
+		self.lightrenderer.addStencilTest(str(self._widgets["group"]._getText()), self._light["stencil"])
 
 	def simple_light(self):
 		if not self._instances[0]: return
 		self.lightrenderer.removeAll(str(self._widgets["group"]._getText()))
 
-		node = fife.LightRendererNode(self._instances[0])
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addSimpleLight(str(self._widgets["group"]._getText()),
 											node,
 											self._light["intensity"],
@@ -570,9 +549,9 @@ class LightEdit(plugin.Plugin):
 
 		image = str(self._widgets["image"]._getText())
 		if image == "": return
-		img_id = self.imagepool.addResourceFromFile(image)
-		self._light["image"] = int(img_id)
-		node = fife.LightRendererNode(self._instances[0])
+		img = self.engine.getImageManager().load(image)
+		self._light["image"] = img
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addImage(str(self._widgets["group"]._getText()),
 											node,
 											self._light["image"],
@@ -585,10 +564,10 @@ class LightEdit(plugin.Plugin):
 
 		animation = str(self._widgets["animation"]._getText())
 		if animation == "": return
-		rloc = fife.ResourceLocation(animation)
-		ani_id = self._animationpool.addResourceFromLocation(rloc)
-		self._light["animation"] = int(ani_id)
-		node = fife.LightRendererNode(self._instances[0])
+		rloc = animation
+		ani = loadXMLAnimation(self.engine, rloc)
+		self._light["animation"] = ani
+		node = fife.RendererNode(self._instances[0])
 		self.lightrenderer.addAnimation(str(self._widgets["group"]._getText()),
 											node,
 											self._light["animation"],
@@ -612,8 +591,6 @@ class LightEdit(plugin.Plugin):
 		@param	g		flag to alter green color value
 		@type	b		bool
 		@param	b		flag to alter blue color value
-		@type	a		bool
-		@type	a		flag to alter alpha channel value (no effect atm)		
 		"""
 		if r:
 			if self._color["R"] + step > 1.0:
@@ -630,11 +607,6 @@ class LightEdit(plugin.Plugin):
 				self._color["B"] = 1.0
 			else:
 				self._color["B"] += step
-		if a:
-			if self._color["A"] + step > 1.0:
-				self._color["A"] = 1.0
-			else:
-				self._color["A"] += step
 
 		self.update_gui()					
 		self.set_global_light()
@@ -650,8 +622,6 @@ class LightEdit(plugin.Plugin):
 		@param	g		flag to alter green color value
 		@type	b		bool
 		@param	b		flag to alter blue color value
-		@type	a		bool
-		@type	a		flag to alter alpha channel value (no effect atm)		
 		"""
 		if r:
 			if self._color["R"] - step < 0.0:
@@ -668,12 +638,7 @@ class LightEdit(plugin.Plugin):
 				self._color["B"] = 0.0
 			else:
 				self._color["B"] -= step
-		if a:
-			if self._color["A"] - step < 0.0:
-				self._color["A"] = 0.0
-			else:
-				self._color["A"] -= step
-			
+
 		self.update_gui()					
 		self.set_global_light()
 			
@@ -682,7 +647,6 @@ class LightEdit(plugin.Plugin):
 		self._color["R"] = random.uniform(0,1)
 		self._color["G"] = random.uniform(0,1)
 		self._color["B"] = random.uniform(0,1)
-		self._color["A"] = random.uniform(0,1)
 
 		self.update_gui()					
 		self.set_global_light()
@@ -691,9 +655,7 @@ class LightEdit(plugin.Plugin):
 		""" update the global light with the current set colors """
 		self._camera.setLightingColor(self._color["R"],
 									  self._color["G"],
-									  self._color["B"],
-									  self._color["A"]
-									  )
+									  self._color["B"])
 
 	def input(self, instances):
 		if instances != self._instances:

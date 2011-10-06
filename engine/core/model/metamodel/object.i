@@ -25,5 +25,5 @@
 %}
 
 %include "util/base/utilbase.i"
-%include "model/metamodel/abstractvisual.i"
+%include "model/metamodel/ivisual.i"
 %include "model/metamodel/object.h"

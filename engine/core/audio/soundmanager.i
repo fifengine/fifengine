@@ -22,7 +22,6 @@
 %module soundmanager
 %{
 #include "audio/soundmanager.h"
-#include "audio/soundclippool.h"
 %}
 
 %include "util/resource/resource.i"
@@ -30,24 +29,16 @@
 namespace FIFE {
 	class SoundClip;
 
-	class SoundClipPool: public Pool {
-	public:
-		virtual ~SoundClipPool();
-		inline SoundClip& getSoundClip(unsigned int index);
-	private:
-		SoundClipPool();
-	};
-
 	class SoundManager {
 		public:
-			SoundManager(SoundClipPool*);
+			SoundManager();
 			~SoundManager();
 	
 			void init();
 			
 			SoundEmitter* createEmitter();
-			SoundEmitter* getEmitter(unsigned int emitterid);
-			void releaseEmitter(unsigned int emitterid);
+			SoundEmitter* getEmitter(uint32_t emitterid);
+			void releaseEmitter(uint32_t emitterid);
 			
 			ALCcontext* getContext();
 			

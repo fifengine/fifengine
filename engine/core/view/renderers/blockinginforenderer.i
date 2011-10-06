@@ -31,12 +31,12 @@ namespace FIFE {
 	public:
 		virtual ~BlockingInfoRenderer();
 		std::string getName();
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
 		
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 		
 	private:
-		BlockingInfoRenderer(RenderBackend* renderbackend, int position);
+		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }
 

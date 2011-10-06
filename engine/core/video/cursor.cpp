@@ -38,9 +38,8 @@
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "util/log/logger.h"
+#include "video/imagemanager.h"
 
-#include "imagepool.h"
-#include "animationpool.h"
 #include "animation.h"
 #include "image.h"
 #include "renderbackend.h"
@@ -72,17 +71,15 @@ struct WMcursor {
 #endif
 
 namespace FIFE {
-	static Logger _log(LM_GUI); // We should have a log module for cursor
+	static Logger _log(LM_GUI); //@todo We should have a log module for cursor
 
-	Cursor::Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend):
+	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
 		m_drag_id(0),
 		m_cursor_type(CURSOR_NATIVE),
 		m_drag_type(CURSOR_NONE),
 		m_native_cursor(NULL),
 		m_renderbackend(renderbackend),
-		m_imgpool(imgpool),
-		m_animpool(animpool),
 		m_animtime(0),
 		m_drag_animtime(0),
 		m_drag_offset_x(0),
@@ -92,43 +89,94 @@ namespace FIFE {
 		m_timemanager(TimeManager::instance()),
 		m_invalidated(false) {
 		assert(m_timemanager);
-		set(m_cursor_type, m_cursor_id);
+		set(m_cursor_id);
 	}
 
-	void Cursor::set(MouseCursorType ctype, unsigned int cursor_id) {
-		m_cursor_id = cursor_id;
-		m_cursor_type = ctype;
-		int mx, my;
+	void Cursor::set(uint32_t cursor_id) {
+		m_cursor_type = CURSOR_NATIVE;
+		int32_t mx, my;
 		SDL_GetMouseState(&mx, &my);
 
-		if (ctype == CURSOR_NATIVE) {
-			if (!SDL_ShowCursor(1)) {
-				SDL_PumpEvents();
-				SDL_WarpMouse(mx, my);
-			}
-			setNativeCursor(cursor_id);
-		} else {
-			if (SDL_ShowCursor(0)) {
-				SDL_PumpEvents();
-				SDL_WarpMouse(mx, my);
-			}
-			if (ctype == CURSOR_ANIMATION) {
-				m_animtime = m_timemanager->getTime();
-			}
+		if (!SDL_ShowCursor(1)) {
+			SDL_PumpEvents();
+			SDL_WarpMouse(mx, my);
 		}
-		m_invalidated = false;
+		setNativeCursor(cursor_id);
+
+		m_cursor_image.reset();
+		m_cursor_animation.reset();
 	}
 
-	void Cursor::setDrag(MouseCursorType ctype, unsigned int drag_id, int drag_offset_x, int drag_offset_y) {
-		m_drag_type = ctype;
-		m_drag_id = drag_id;
+	void Cursor::set(ImagePtr image) {
+		assert(image != 0);
+
+		m_cursor_image = image;
+		m_cursor_type = CURSOR_IMAGE;
+
+		int32_t mx, my;
+		SDL_GetMouseState(&mx, &my);
+
+		if (SDL_ShowCursor(0)) {
+			SDL_PumpEvents();
+			SDL_WarpMouse(mx, my);
+		}
+
+		m_cursor_id = NC_ARROW;
+		m_cursor_animation.reset();
+	}
+
+	void Cursor::set(AnimationPtr anim) {
+		assert(anim != 0);
+
+		m_cursor_animation = anim;
+		m_cursor_type = CURSOR_ANIMATION;
+
+		int32_t mx, my;
+		SDL_GetMouseState(&mx, &my);
+
+		if (SDL_ShowCursor(0)) {
+			SDL_PumpEvents();
+			SDL_WarpMouse(mx, my);
+		}
+		m_animtime = m_timemanager->getTime();
+
+		m_cursor_id = NC_ARROW;
+		m_cursor_image.reset();
+	}
+
+	void Cursor::setDrag(ImagePtr image, int32_t drag_offset_x, int32_t drag_offset_y) {
+		assert(image != 0);
+
+		m_cursor_drag_image = image;
+		m_drag_type = CURSOR_IMAGE;
 		m_drag_offset_x = drag_offset_x;
 		m_drag_offset_y = drag_offset_y;
-		if (ctype != CURSOR_NONE) {
-			if (ctype == CURSOR_ANIMATION) {
-				m_drag_animtime = m_timemanager->getTime();
-			}
-		}
+
+		m_cursor_drag_animation.reset();
+	}
+
+	void Cursor::setDrag(AnimationPtr anim, int32_t drag_offset_x, int32_t drag_offset_y) {
+		assert(anim != 0);
+
+		m_cursor_drag_animation = anim;
+		m_drag_type = CURSOR_ANIMATION;
+		m_drag_offset_x = drag_offset_x;
+		m_drag_offset_y = drag_offset_y;
+
+		m_drag_animtime = m_timemanager->getTime();
+
+		m_cursor_drag_image.reset();
+	}
+
+	void Cursor::resetDrag() {
+		m_drag_type = CURSOR_NONE;
+
+		m_drag_animtime = 0;
+		m_drag_offset_x = 0;
+		m_drag_offset_y = 0;
+
+		m_cursor_drag_animation.reset();
+		m_cursor_drag_image.reset();
 	}
 
 	void Cursor::invalidate() {
@@ -144,7 +192,11 @@ namespace FIFE {
 
 	void Cursor::draw() {
 		if (m_invalidated) {
-			set(m_cursor_type, m_cursor_id);
+			if (m_cursor_type != CURSOR_ANIMATION || m_cursor_type == CURSOR_IMAGE ) {
+				set(m_cursor_id);
+			}
+
+			m_invalidated = false;
 		}
 
 		SDL_GetMouseState(&m_mx, &m_my);
@@ -153,39 +205,43 @@ namespace FIFE {
 		}
 
 		// render possible drag image
-		Image* img = NULL;
+		ImagePtr img;
 		if (m_drag_type == CURSOR_IMAGE) {
-			img = &m_imgpool->getImage(m_drag_id);
-		} else if (m_drag_type == CURSOR_ANIMATION) {
-			Animation& anim = m_animpool->getAnimation(m_drag_id);
-			int animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
- 			img = anim.getFrameByTimestamp(animtime);
+			img = m_cursor_drag_image;
 		}
-		if (img) {
+		else if (m_drag_type == CURSOR_ANIMATION) {
+			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
+			img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
+		}
+
+		if (img != 0) {
 			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
+			m_renderbackend->renderVertexArrays();
 			m_renderbackend->popClipArea();
 		}
 
+		ImagePtr img2;
 		// render possible cursor image
-		img = NULL;
 		if (m_cursor_type == CURSOR_IMAGE) {
-			img = &m_imgpool->getImage(m_cursor_id);
-		} else if (m_cursor_type == CURSOR_ANIMATION) {
-			Animation& anim = m_animpool->getAnimation(m_cursor_id);
-			int animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
-			img = anim.getFrameByTimestamp(animtime);
+			img2 = m_cursor_image;
 		}
-		if (img) {
-			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
+		else if (m_cursor_type == CURSOR_ANIMATION) {
+			int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
+			img2 = m_cursor_animation->getFrameByTimestamp(animtime);
+		}
+
+		if (img2 != 0) {
+			Rect area(m_mx + img2->getXShift(), m_my + img2->getYShift(), img2->getWidth(), img2->getHeight());
 			m_renderbackend->pushClipArea(area, false);
-			img->render(area);
+			img2->render(area);
+			m_renderbackend->renderVertexArrays();
 			m_renderbackend->popClipArea();
 		}
 	}
 
-	unsigned int Cursor::getNativeId(unsigned int cursor_id) {
+	uint32_t Cursor::getNativeId(uint32_t cursor_id) {
 #if defined( WIN32 )
 		switch (cursor_id) {
 			case NC_ARROW:
@@ -273,7 +329,7 @@ namespace FIFE {
 		return cursor_id;
 	}
 
-	void Cursor::setNativeCursor(unsigned int cursor_id) {
+	void Cursor::setNativeCursor(uint32_t cursor_id) {
 #if defined( WIN32 ) || defined(__unix__)
 		// Check if a value in NativeCursors is requested
 		cursor_id = getNativeId(cursor_id);

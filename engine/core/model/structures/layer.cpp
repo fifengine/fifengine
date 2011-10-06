@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -180,18 +179,27 @@ namespace FIFE {
 		return matching_instances;
 	}
 
+	std::list<Instance*> Layer::getInstancesIn(Rect& rec) {
+		std::list<Instance*> matching_instances;
+		ModelCoordinate mc(rec.x, rec.y);
+		m_instanceTree->findInstances(mc, rec.w, rec.h, matching_instances);
+
+		return matching_instances;
+	}
+
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
 		if (!layer) {
 			layer = this;
 		}
 
-		bool first_found = false;
-		for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
-			if (!first_found) {
-				min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
-				max = min;
-				first_found = true;
-			} else {
+		if (m_instances.empty()) {
+			min = ModelCoordinate();
+			max = min;
+		} else {
+			min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
+			max = min;
+
+			for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
 				ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
 
 				if(coord.x < min.x) {
@@ -211,10 +219,7 @@ namespace FIFE {
 				}
 			}
 		}
-		if (!first_found) {
-			min = ModelCoordinate();
-			max = min;
-		}
+
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
@@ -240,6 +245,7 @@ namespace FIFE {
 		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
 			if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
 				blockingInstance = true;
+				break;
 			}
 		}
 		return blockingInstance;
@@ -247,11 +253,14 @@ namespace FIFE {
 
 	bool Layer::update() {
 		m_changedinstances.clear();
+		std::vector<Instance*> inactive_instances;
 		std::set<Instance*>::iterator it = m_active_instances.begin();
 		for(; it != m_active_instances.end(); ++it) {
 			if ((*it)->update() != ICHANGE_NO_CHANGES) {
 				m_changedinstances.push_back(*it);
 				m_changed = true;
+			} else if (!(*it)->isActive()) {
+				inactive_instances.push_back(*it);
 			}
 		}
 		if (!m_changedinstances.empty()) {
@@ -261,6 +270,14 @@ namespace FIFE {
 				++i;
 			}
 			//std::cout << "Layer named " << Id() << " changed = 1\n";
+		}
+		// remove inactive instances from m_active_instances
+		if (!inactive_instances.empty()) {
+			std::vector<Instance*>::iterator i = inactive_instances.begin();
+			while (i != inactive_instances.end()) {
+				m_active_instances.erase(*i);
+				++i;
+			}
 		}
 		//std::cout << "Layer named " << Id() << " changed = 0\n";
 		bool retval = m_changed;

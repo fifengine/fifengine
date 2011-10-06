@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -43,9 +42,8 @@
 #include "util/time/timemanager.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
+#include "video/imagemanager.h"
 
 #include "camera.h"
 #include "layercache.h"
@@ -79,9 +77,7 @@ namespace FIFE {
 	Camera::Camera(const std::string& id,
 		Layer *layer,
 		const Rect& viewport,
-		RenderBackend* renderbackend,
-		ImagePool* ipool,
-		AnimationPool* apool):
+		RenderBackend* renderbackend):
 			m_id(id),
 			m_matrix(),
 			m_inverse_matrix(),
@@ -89,7 +85,6 @@ namespace FIFE {
 			m_rotation(0),
 			m_zoom(1),
 			m_location(),
-			m_prev_origo(ScreenPoint(0,0,0)),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
 			m_screen_cell_width(1),
@@ -103,23 +98,18 @@ namespace FIFE {
 			m_pipeline(),
 			m_updated(false),
 			m_renderbackend(renderbackend),
-			m_ipool(ipool),
-			m_apool(apool),
 			m_layer_to_instances(),
 			m_lighting(false),
-			m_light_colors() {
-
+			m_light_colors(),
+			m_col_overlay(false),
+			m_img_overlay(false),
+			m_ani_overlay(false) {
 		m_viewport = viewport;
 		m_map_observer = new MapObserver(this);
 		m_map = 0;
 		Location location;
 		location.setLayer(layer);
 		setLocation(location);
-		if(m_renderbackend->getName() == "SDL") {
-			m_backendSDL = true;
-		} else {
-			m_backendSDL = false;
-		}
 	}
 
 	Camera::~Camera() {
@@ -128,6 +118,7 @@ namespace FIFE {
 
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for(; r_it != m_renderers.end(); ++r_it) {
+			r_it->second->reset();
 			delete r_it->second;
 		}
 		m_renderers.clear();
@@ -167,6 +158,7 @@ namespace FIFE {
 				m_zoom = 0.001;
 			}
 			updateMatrices();
+			m_updated = false;
 		}
 	}
 
@@ -174,7 +166,7 @@ namespace FIFE {
 		return m_zoom;
 	}
 
-	void Camera::setCellImageDimensions(unsigned int width, unsigned int height) {
+	void Camera::setCellImageDimensions(uint32_t width, uint32_t height) {
 		m_screen_cell_width = width;
 		m_screen_cell_height = height;
 		updateReferenceScale();
@@ -183,10 +175,8 @@ namespace FIFE {
 	}
 
 	void Camera::setLocation(const Location& location) {
-		// initialize first set properly
-		if ((m_prev_origo == m_cur_origo) && (m_prev_origo == ScreenPoint(0,0,0))) {
-			m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
-			m_prev_origo = m_cur_origo;
+		if (m_location == location ) {
+			return;
 		}
 
 		CellGrid* cell_grid = NULL;
@@ -202,20 +192,21 @@ namespace FIFE {
 		m_location = location;
 		updateMatrices();
 
+		ExactModelCoordinate emc = m_location.getMapCoordinates();
+		m_cur_origo = toScreenCoordinates(emc);
+
 		// WARNING
 		// It is important that m_location is already set,
 		// as the updates which are triggered here
 		// need to calculate screen-coordinates
 		// which depend on m_location.
-		updateMap(location.getMap());
+		updateMap(m_location.getMap());
 
-		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
+		m_updated = false;
 	}
 
-	void Camera::updateMap(Map* map)
-	{
-		if(m_map == map)
-		{
+	void Camera::updateMap(Map* map) {
+		if(m_map == map) {
 			return;
 		}
 		if(m_map) {
@@ -228,8 +219,9 @@ namespace FIFE {
 		if(map) {
 			map->addChangeListener(m_map_observer);
 			const std::list<Layer*>& layers = map->getLayers();
-			for(std::list<Layer*>::const_iterator i = layers.begin(); i !=layers.end(); ++i)
+			for(std::list<Layer*>::const_iterator i = layers.begin(); i !=layers.end(); ++i) {
 				addLayer(*i);
+			}
 		}
 		m_map = map;
 	}
@@ -250,8 +242,8 @@ namespace FIFE {
 		CellGrid* cg = layer->getCellGrid();
 		assert(cg);
 		DoublePoint dimensions = getLogicalCellDimensions(layer);
-		p.x = static_cast<int>(round(m_reference_scale * dimensions.x));
-		p.y = static_cast<int>(round(m_reference_scale * dimensions.y));
+		p.x = static_cast<int32_t>(round(m_reference_scale * dimensions.x));
+		p.y = static_cast<int32_t>(round(m_reference_scale * dimensions.y));
 		m_image_dimensions[layer] = p;
 		return p;
 	}
@@ -302,8 +294,6 @@ namespace FIFE {
 		m_matrix.applyTranslate(+m_viewport.x+m_viewport.w/2, +m_viewport.y+m_viewport.h/2, 0);
 		m_inverse_matrix = m_matrix.inverse();
 
-
-		m_vs_matrix.applyTranslate(0,0,0);
 		m_vs_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
 		m_vs_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
 		m_vs_inverse_matrix = m_vs_matrix.inverse();
@@ -314,8 +304,8 @@ namespace FIFE {
 		// NOTE: mult4by4 is an in-place modification.
 		m_vscreen_2_screen.mult4by4(m_vs_inverse_matrix);
 		// set the z transformation to unity
-		const int N=4;
-		for(int i=0; i!=N; ++i) {
+		const int32_t N=4;
+		for(int32_t i=0; i!=N; ++i) {
 			  m_vscreen_2_screen[2*N + i] = 0;
 			  m_vscreen_2_screen[i*N + 2] = 0;
 		}
@@ -327,8 +317,8 @@ namespace FIFE {
 	}
 
 	void Camera::calculateZValue(ScreenPoint& screen_coords) {
-		int dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
-		screen_coords.z = static_cast<int>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
+		int32_t dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
+		screen_coords.z = static_cast<int32_t>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
 	}
 
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
@@ -338,15 +328,13 @@ namespace FIFE {
 		return m_inverse_matrix  * intPt2doublePt(screen_coords);
 	}
 
-	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
-		ExactModelCoordinate p = elevation_coords;
-		ScreenPoint pt = doublePt2intPt( m_matrix* p  );
+	ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
+		ScreenPoint pt = doublePt2intPt(m_matrix * elevation_coords);
 		return pt;
 	}
 
-	DoublePoint3D  Camera::toVirtualScreenCoordinates(ExactModelCoordinate elevation_coords) {
-		ExactModelCoordinate p = elevation_coords;
-		DoublePoint3D  pt = (m_vs_matrix * p);
+	DoublePoint3D Camera::toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
+		DoublePoint3D pt = (m_vs_matrix * elevation_coords);
 		return pt;
 	}
 
@@ -378,7 +366,7 @@ namespace FIFE {
 		double y1 = 0;
 		double y2 = 0;
 
-		for (unsigned int i = 0; i < vertices.size(); i++) {
+		for (uint32_t i = 0; i < vertices.size(); i++) {
 			vertices[i] = cg->toMapCoordinates(vertices[i]);
 			vertices[i] = mtx * vertices[i];
 			if (i == 0) {
@@ -403,58 +391,22 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
-	bool Camera::testRenderedViewPort() {
-		Map* map = m_location.getMap();
-		Rect cv = m_viewport;
-		int cv2x = cv.x+cv.w;
-		int cv2y = cv.y+cv.h;
-		bool trec1 = false, trec2 = false, trec3 = false, trec4 = false;
-		Rect rec1 = Rect(cv.x, cv.y, 1, 1);
-		Rect rec2 = Rect(cv.x, cv2y, 1, 1);
-		Rect rec3 = Rect(cv2x, cv.y, 1, 1);
-		Rect rec4 = Rect(cv2x, cv2y, 1, 1);
-
-		const std::list<Layer*>& layers = map->getLayers();
-		std::list<Layer*>::const_iterator layer_it = layers.begin();
-		m_layer_to_instances.clear();
-		const RenderList& layer_instances = m_layer_to_instances[*layer_it];
-		RenderList::const_iterator instance_it = layer_instances.begin();
-		for(; instance_it != layer_instances.end(); ++instance_it) {
-			const RenderItem& vc = **instance_it;
-			if(vc.dimensions.intersects(rec1) && !trec1) {
-				trec1 = true;
-			}
-			if(vc.dimensions.intersects(rec2) && !trec2) {
-				trec2 = true;
-			}
-			if(trec1 && trec2) {
-				break;
-			}
-		}
-		if(trec1 && trec2) {
-			RenderList::const_reverse_iterator instance_itr = layer_instances.rbegin();
-			for(; instance_itr != layer_instances.rend(); ++instance_itr) {
-				const RenderItem& vc = **instance_itr;
-				if(vc.dimensions.intersects(rec3) && !trec3) {
-					trec3 = true;
-				}
-				if(vc.dimensions.intersects(rec4) && !trec4) {
-					trec4 = true;
-				}
-				if(trec3 && trec4) {
-					break;
-				}
-			}
+	bool Camera::cacheNeedUpdate(Layer* layer) {
+		LayerCache* cache = m_cache[layer];
+		if(!cache) {
+			return true;
 		}
 
-		if(trec1 && trec2 && trec3 && trec4) {
-			return false;
+		if (m_iswarped || !m_updated || cache->needUpdate()) {
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 
-	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
+	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool update = cacheNeedUpdate(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -462,10 +414,11 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
-				assert(vc.image);
-				Uint8 r, g, b, a;
-				int x = screen_coords.x - vc.dimensions.x;
-				int y = screen_coords.y - vc.dimensions.y;
+				assert(vc.image.get());
+				bool found = false;
+				uint8_t r, g, b, a = 0;
+				int32_t x = screen_coords.x - vc.dimensions.x;
+				int32_t y = screen_coords.y - vc.dimensions.y;
 				if (m_zoom != 1.0) {
 					double fx = static_cast<double>(x);
 					double fy = static_cast<double>(y);
@@ -473,20 +426,55 @@ namespace FIFE {
 					double foh = static_cast<double>(vc.image->getHeight());
 					double fsw = static_cast<double>(vc.dimensions.w);
 					double fsh = static_cast<double>(vc.dimensions.h);
-					x = static_cast<int>(round(fx / fsw * fow));
-					y = static_cast<int>(round(fy / fsh * foh));
+					x = static_cast<int32_t>(round(fx / fsw * fow));
+					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				// instance is hit with mouse if not totally transparent
-				if (a != 0) {
-					instances.push_back(i);
+				if (alpha != 0) {
+					if (a >= alpha) {
+						found = true;
+					}
+				} else if (a != 0) {
+					found = true;
+				}
+				if (found) {
+					if (update) {
+						// convert ScreenCoordinates to MapCoordinates
+						screen_coords.x -= vc.image->getXShift();
+						screen_coords.y -= vc.image->getYShift();
+						const ExactModelCoordinate emc = toMapCoordinates(screen_coords, false);
+						Location loc(&layer);
+						loc.setMapCoordinates(emc);
+						// convert image size to LayerCoordinates
+						Point p = getCellImageDimensions(&layer);
+						int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
+						int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
+						// construct a Rect with LayerCoordinates to fetch instance
+						Rect rec;
+						rec.x = loc.getLayerCoordinates().x - x2;
+						rec.y = loc.getLayerCoordinates().y - y2;
+						rec.w = x2*2;
+						rec.h = y2*2;
+						// use InstanceTree for fast picking
+						std::list<Instance*> inslist = layer.getInstancesIn(rec);
+						for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
+							if (i == *it) {
+								instances.push_back(i);
+								break;
+							}
+						}
+					} else {
+						instances.push_back(i);
+					}
 				}
 			}
 		}
 	}
 
-	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
+	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool update = cacheNeedUpdate(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -494,13 +482,14 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.intersects(screen_rect))) {
-				assert(vc.image);
-				Uint8 r, g, b, a;
-				for(int xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
-					for(int yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
+				assert(vc.image.get());
+				uint8_t r, g, b, a = 0;
+				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
+					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
 						if ((vc.dimensions.contains(Point(xx, yy)))) {
-							int x = xx - vc.dimensions.x;
-							int y = yy - vc.dimensions.y;
+							bool found = false;
+							int32_t x = xx - vc.dimensions.x;
+							int32_t y = yy - vc.dimensions.y;
 							if (m_zoom != 1.0) {
 								double fx = static_cast<double>(x);
 								double fy = static_cast<double>(y);
@@ -508,14 +497,48 @@ namespace FIFE {
 								double foh = static_cast<double>(vc.image->getHeight());
 								double fsw = static_cast<double>(vc.dimensions.w);
 								double fsh = static_cast<double>(vc.dimensions.h);
-								x = static_cast<int>(round(fx / fsw * fow));
-								y = static_cast<int>(round(fy / fsh * foh));
+								x = static_cast<int32_t>(round(fx / fsw * fow));
+								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
 							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 							// instance is hit with mouse if not totally transparent
-							if (a != 0) {
-								instances.push_back(i);
-								goto found_non_transparent_pixel;
+							if (alpha != 0) {
+								if (a >= alpha) {
+									found = true;
+								}
+							} else if (a != 0) {
+								found = true;
+							}
+							if (found) {
+								if (update) {
+									// convert ScreenCoordinates to MapCoordinates
+									xx -= vc.image->getXShift();
+									yy -= vc.image->getYShift();
+									const ExactModelCoordinate emc = toMapCoordinates(ScreenPoint(xx, yy), false);
+									Location loc(&layer);
+									loc.setMapCoordinates(emc);
+									// convert image size to LayerCoordinates
+									Point p = getCellImageDimensions(&layer);
+									int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
+									int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
+									// construct a Rect with LayerCoordinates to fetch instance
+									Rect rec;
+									rec.x = loc.getLayerCoordinates().x - x2;
+									rec.y = loc.getLayerCoordinates().y - y2;
+									rec.w = x2*2;
+									rec.h = y2*2;
+									// use InstanceTree for fast picking
+									std::list<Instance*> inslist = layer.getInstancesIn(rec);
+									for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
+										if (i == *it) {
+											instances.push_back(i);
+											goto found_non_transparent_pixel;
+										}
+									}
+								} else {
+									instances.push_back(i);
+									goto found_non_transparent_pixel;
+								}
 							}
 						}
 					}
@@ -527,18 +550,34 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
-		const RenderList& layer_instances = m_layer_to_instances[loc.getLayer()];
-		RenderList::const_iterator instance_it = layer_instances.end();
-		while (instance_it != layer_instances.begin()) {
-			--instance_it;
-			Instance* i = (*instance_it)->instance;
-			if (use_exactcoordinates) {
-				if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
-					instances.push_back(i);
+		Layer* layer = loc.getLayer();
+		if(!layer) {
+			return;
+		}
+
+		if (cacheNeedUpdate(layer)) {
+			std::vector<Instance*> insvec = layer->getInstancesAt(loc, use_exactcoordinates);
+			for (std::vector<Instance*>::iterator it = insvec.begin(); it != insvec.end(); ++it) {
+				InstanceVisual* visual = (*it)->getVisual<InstanceVisual>();
+				// check if instance is visible
+				if (visual->isVisible() && visual->getTransparency() < 255) {
+					instances.push_back(*it);
 				}
-			} else {
-				if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
-					instances.push_back(i);
+			}
+		} else {
+			const RenderList& layer_instances = m_layer_to_instances[layer];
+			RenderList::const_iterator instance_it = layer_instances.end();
+			while (instance_it != layer_instances.begin()) {
+				--instance_it;
+				Instance* i = (*instance_it)->instance;
+				if (use_exactcoordinates) {
+					if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+						instances.push_back(i);
+					}
+				} else {
+					if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+						instances.push_back(i);
+					}
 				}
 			}
 		}
@@ -574,7 +613,7 @@ namespace FIFE {
 
 	void Camera::resetUpdates() {
 		m_iswarped = false;
-		m_prev_origo = m_cur_origo;
+		m_updated = true;
 	}
 
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
@@ -612,13 +651,12 @@ namespace FIFE {
 	void Camera::resetRenderers() {
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for (; r_it != m_renderers.end(); ++r_it) {
-			Map* map = m_location.getMap();
 			r_it->second->reset();
 		}
 	}
 
 	void Camera::addLayer(Layer* layer) {
-		m_cache[layer] = new LayerCache(this, m_ipool, m_apool);
+		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layer_to_instances[layer] = RenderList();
 	}
@@ -629,18 +667,17 @@ namespace FIFE {
 		m_layer_to_instances.erase(layer);
 	}
 
-	void Camera::setLightingColor(float red, float green, float blue, float alpha) {
+	void Camera::setLightingColor(float red, float green, float blue) {
 		m_lighting = true;
 		m_light_colors.clear();
 		m_light_colors.push_back(red);
 		m_light_colors.push_back(green);
 		m_light_colors.push_back(blue);
-		m_light_colors.push_back(alpha);
 	}
 
 	std::vector<float> Camera::getLightingColor() {
 		if(m_light_colors.empty()) {
-			for(int colors = 0; colors != 4; ++colors) {
+			for(int32_t colors = 0; colors != 3; ++colors) {
 				m_light_colors.push_back(1.0f);
 			}
 		}
@@ -652,37 +689,134 @@ namespace FIFE {
 		m_renderbackend->resetLighting();
 	}
 
-	void Camera::render() {
-		Transform transform = NormalTransform;
-		if(m_iswarped)
-			  transform = WarpedTransform;
-		m_iswarped = false;
+	void Camera::setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+		m_col_overlay = true;
+		m_overlay_color.r = red;
+		m_overlay_color.g = green;
+		m_overlay_color.b = blue;
+		m_overlay_color.unused = alpha;
+	}
 
+	std::vector<uint8_t> Camera::getOverlayColor() {
+		std::vector<uint8_t> colors;
+		if (m_col_overlay) {
+			colors.push_back(m_overlay_color.r);
+			colors.push_back(m_overlay_color.g);
+			colors.push_back(m_overlay_color.b);
+			colors.push_back(m_overlay_color.unused);
+		} else {
+			for(uint8_t cc = 0; cc != 4; ++cc) {
+				colors.push_back(255);
+			}
+		}
+		return colors;
+	}
+
+	void Camera::resetOverlayColor() {
+		m_col_overlay = false;
+	}
+
+	void Camera::setOverlayImage(int32_t id, bool fill) {
+		m_img_overlay = true;
+		m_img_id = id;
+		m_img_fill = fill;
+	}
+
+	int32_t Camera::getOverlayImage() {
+		int32_t id = -1;
+		if (m_img_overlay) {
+			id = m_img_id;
+		}
+		return id;
+	}
+
+	void Camera::resetOverlayImage() {
+		m_img_overlay = false;
+		m_img_id = -1;
+	}
+
+	void Camera::setOverlayAnimation(AnimationPtr anim, bool fill) {
+		m_ani_overlay = true;
+		m_ani_ptr = anim;
+		m_ani_fill = fill;
+		m_start_time = 0;
+	}
+
+	AnimationPtr Camera::getOverlayAnimation() {
+		return m_ani_ptr;
+	}
+
+	void Camera::resetOverlayAnimation() {
+		m_ani_overlay = false;
+		m_ani_ptr.reset();
+	}
+
+	void Camera::renderOverlay() {
+		if (!m_col_overlay && !m_img_overlay && !m_ani_overlay) {
+			return;
+		}
+		uint16_t width = m_viewport.w;
+		uint16_t height = m_viewport.h;
+		Point pm = Point(m_viewport.x + width/2, m_viewport.y + height/2);
+		Rect r;
+
+		// color overlay
+		if (m_col_overlay) {
+			Point p = Point(m_viewport.x, m_viewport.y);
+			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.unused);
+		}
+		// image overlay
+		if (m_img_overlay) {
+			ImagePtr resptr = ImageManager::instance()->get(m_img_id);
+			Image* img = resptr.get();
+			if (img) {
+				if (m_img_fill) {
+					r.w = width;
+					r.h = height;
+				} else {
+					r.w = img->getWidth();
+					r.h = img->getHeight();
+				}
+				r.x = pm.x-r.w/2;
+				r.y = pm.y-r.h/2;
+				img->render(r);
+			}
+		}
+		// animation overlay
+		if (m_ani_overlay) {
+			assert(m_ani_ptr != 0);
+
+			if (m_start_time == 0) {
+				m_start_time = TimeManager::instance()->getTime();
+			}
+			uint32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % m_ani_ptr->getDuration();
+			ImagePtr img = m_ani_ptr->getFrameByTimestamp(animtime);
+			if (img) {
+				if (m_ani_fill) {
+					r.w = width;
+					r.h = height;
+				} else {
+					r.w = img->getWidth();
+					r.h = img->getHeight();
+				}
+				r.x = pm.x-r.w/2;
+				r.y = pm.y-r.h/2;
+				img->render(r);
+			}
+		}
+	}
+
+	void Camera::updateRenderLists() {
 		Map* map = m_location.getMap();
 		if (!map) {
 			FL_ERR(_log, "No map for camera found");
 			return;
 		}
-		//if ((!map->isChanged()) && (!m_iswarped) && (cammove == ScreenPoint(0,0,0))) {
-		//	return;
-		//}
 
-		if (m_renderbackend->getLightingModel() != 0) {
-			m_renderbackend->resetStencilBuffer(0);
-			if (m_lighting) {
-				m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2], m_light_colors[3]);
-			}
+		Transform transform = NormalTransform;
+		if (m_iswarped) {
+			transform = WarpedTransform;
 		}
-
-		if(m_backendSDL) {
-			m_renderbackend->pushClipArea(getViewPort());
-		} else {
-			m_renderbackend->pushClipArea(getViewPort(), testRenderedViewPort());
-		}
-
-		// update each layer
-// 		m_layer_to_instances.clear();
-
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -693,23 +827,51 @@ namespace FIFE {
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			cache->update(transform, instances_to_render);
+			if (m_iswarped || !m_updated || cache->needUpdate()) {
+				cache->update(transform, instances_to_render);
+			}
+		}
+		resetUpdates();
+	}
 
+	void Camera::render() {
+		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
+		updateRenderLists();
+		Map* map = m_location.getMap();
+		if (!map) {
+			return;
+		}
+
+		uint32_t lm = m_renderbackend->getLightingModel();
+		if (lm != 0) {
+			m_renderbackend->resetStencilBuffer(0);
+			if (m_lighting) {
+				m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2]);
+			}
+		}
+
+		m_renderbackend->pushClipArea(getViewPort());
+
+		const std::list<Layer*>& layers = map->getLayers();
+		std::list<Layer*>::const_iterator layer_it = layers.begin();
+		for ( ; layer_it != layers.end(); ++layer_it) {
+			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
 			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 			for (; r_it != m_pipeline.end(); ++r_it) {
 				if ((*r_it)->isActivedLayer(*layer_it)) {
 					(*r_it)->render(this, *layer_it, instances_to_render);
 				}
 			}
+			if (renderbackendOpenGLe) {
+				m_renderbackend->renderVertexArrays();
+			}
 		}
 
-		if (m_lighting) {
+		renderOverlay();
+		m_renderbackend->renderVertexArrays();
+		if (m_lighting && lm != 0) {
 			m_renderbackend->resetLighting();
 		}
-
 		m_renderbackend->popClipArea();
-		resetUpdates();
-		m_updated = true;
 	}
-
 }

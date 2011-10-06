@@ -57,9 +57,3 @@ class Label(BasicTextWidget):
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
-
-class ClickLabel(Label):
-	"""
-	Deprecated - use L{Label} instead.
-	"""
-	__init__ = tools.this_is_deprecated(Label.__init__,message = "ClickLabel - Use Label instead")

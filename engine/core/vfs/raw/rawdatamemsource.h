@@ -51,7 +51,7 @@ namespace FIFE {
 			 *	Create a new RawDataMemSource that allocates datalen bytes.
 			 * @param datalen the datalen to allocate
 			 */
-			RawDataMemSource(unsigned int datalen);
+			RawDataMemSource(uint32_t datalen);
 			virtual ~RawDataMemSource();
 
 			/** Get a Pointer to the data
@@ -59,12 +59,12 @@ namespace FIFE {
 			 */
 			uint8_t* getRawData() const;
 
-			virtual unsigned int getSize() const;
-			virtual void readInto(uint8_t* buffer, unsigned int start, unsigned int length);
+			virtual uint32_t getSize() const;
+			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length);
 
 		private:
 			uint8_t* m_data;
-			unsigned int m_datalen;
+			uint32_t m_datalen;
 
 			RawDataMemSource(const RawDataMemSource&) {};
 			RawDataMemSource& operator=(const RawDataMemSource) { return *this; }

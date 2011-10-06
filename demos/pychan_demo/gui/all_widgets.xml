@@ -42,7 +42,7 @@
 	<Icon image="gui/backgrounds/stripe.png" />
 	<ImageButton up_image="gui/backgrounds/stripe.png" text="Click me for a Bug demonstration" />
 	<HBox>
-		<Label text="I'm a ClickLabel[br]Multiline enabled?![br]I do hope so."/>
+		<Label text="I'm a Label[br]Multiline enabled?![br]I do hope so."/>
 		<Spacer/>
 		<Button name="okButton" text="OK"/>
 	</HBox>

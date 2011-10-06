@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -48,7 +48,7 @@ namespace FIFE {
 			virtual ~RawDataSource();
 
 			/** get the complete datasize */
-			virtual unsigned int getSize() const = 0;
+			virtual uint32_t getSize() const = 0;
 
 			/** read data from the source
 			 *
@@ -56,7 +56,7 @@ namespace FIFE {
 			 * @param start the startindex inside the source
 			 * @param length length bytes will be written into buffer
 			 */
-			virtual void readInto(uint8_t* buffer, unsigned int start, unsigned int length) = 0;
+			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
 
 	};
 

@@ -86,8 +86,8 @@ namespace FIFE {
 		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int getTimeStamp() const { return InputEvent::getTimeStamp(); }
-		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
+		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
+		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
 		virtual const std::string& getName() const {
 			const static std::string eventName("KeyEvent");

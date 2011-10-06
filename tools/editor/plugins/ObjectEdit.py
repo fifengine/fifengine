@@ -70,8 +70,7 @@ class ObjectEdit(plugin.Plugin):
 		
 		self._enabled = False
 		
-		self.imagepool = None
-		self._animationpool = None
+		self.imageManager = None
 		
 		self.guidata = {}
 		self.objectdata = {}
@@ -118,8 +117,7 @@ class ObjectEdit(plugin.Plugin):
 		self._editor = scripts.editor.getEditor()
 		self.engine = self._editor.getEngine()
 		
-		self.imagepool = self.engine.getImagePool()
-		self._animationpool = self.engine.getAnimationPool()
+		self.imageManager = self.engine.getImageManager()
 		
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
@@ -310,7 +308,7 @@ class ObjectEdit(plugin.Plugin):
 					break
 											
 			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
-			self.container.findChild(name="animTest").image = image.getResourceFile()
+			self.container.findChild(name="animTest").image = image.getName()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
 		
@@ -513,7 +511,7 @@ class ObjectEdit(plugin.Plugin):
 		if self._animation:
 			return
 		
-		file = self._object.getResourceFile()	
+		file = self._object.getFilename()	
 		self.tree = ET.parse(file)
 		
 		img_lst = self.tree.findall("image")
@@ -583,8 +581,8 @@ class ObjectEdit(plugin.Plugin):
 		@return	animation	current selected animation
 		"""
 		if action:
-			animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(self._fixed_rotation)
-			animation = self._animationpool.getAnimation(animation_id)		
+			animation = action.get2dGfxVisual().getAnimationByAngle(self._fixed_rotation)
+			animation_id = animation.getFifeId()
 
 		action_ids = []
 		actions = []
@@ -599,7 +597,7 @@ class ObjectEdit(plugin.Plugin):
 		self._anim_data = {}
 		self._anim_data['obj'] = animation
 		self._anim_data['id'] = animation_id
-		self._anim_data['frames'] = animation.getNumFrames()
+		self._anim_data['frames'] = animation.getFrameCount()
 		self._anim_data['current'] = 0
 		self._anim_data['actions'] = actions
 		self._anim_data['action_ids'] = action_ids
@@ -680,7 +678,7 @@ class ObjectEdit(plugin.Plugin):
 		elif index is not -1:
 			# object is a static image
 			self._animation = False
-			self._image = self.imagepool.getImage(index)
+			self._image = self.imageManager.get(index)
 
 		if not self._animation:
 			rotations = visual.getStaticImageAngles()

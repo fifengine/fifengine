@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -25,7 +25,7 @@
 %}
 
 %include "model/metamodel/modelcoords.i"
-%include "model/metamodel/abstractvisual.i"
+%include "model/metamodel/ivisual.i"
 %include "util/structures/utilstructures.i"
 %include "util/base/utilbase.i"
 %include "location.i"
@@ -54,7 +54,7 @@ namespace FIFE {
 		ICHANGE_SAYTEXT = 0x0020,
 		ICHANGE_ROTATION = 0x0040,
 	};
-	typedef unsigned int InstanceChangeInfo;
+	typedef uint32_t InstanceChangeInfo;
 	
 	%feature("director") InstanceChangeListener;
 	class InstanceChangeListener {
@@ -74,8 +74,8 @@ namespace FIFE {
 		Location getLocation() const;
 		Location& getLocationRef();
 		Location getTargetLocation() const;
-		void setRotation(int);
-		int getRotation() const;
+		void setRotation(int32_t);
+		int32_t getRotation() const;
 		void setBlocking(bool blocking);
 		bool isBlocking() const;
 		void setOverrideBlocking(bool overblock);
@@ -89,19 +89,19 @@ namespace FIFE {
 		void setFacingLocation(const Location& loc);
 		Location getFacingLocation();
 		Location& getFacingLocationRef();
-		unsigned int getActionRuntime();
-		void setActionRuntime(unsigned int time_offset);
+		uint32_t getActionRuntime();
+		void setActionRuntime(uint32_t time_offset);
 		void move(const std::string& action_name, const Location& target, const double speed);
 		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 		void follow(const std::string& action_name, Instance* leader, const double speed);
-		void say(const std::string& text, unsigned int duration=0);
+		void say(const std::string& text, uint32_t duration=0);
 		void setTimeMultiplier(float multip);
 		float getTimeMultiplier();
-		unsigned int getRuntime();
+		uint32_t getRuntime();
 		void refresh();
 		InstanceChangeInfo getChangeInfo();
 		
-		void setVisual(AbstractVisual* visual);
+		void setVisual(IVisual* visual);
 		template<typename T> T* getVisual() const;
 	};
 }

@@ -42,29 +42,24 @@
 #include "enginesettings.h"
 #include "video/devicecaps.h"
 
-namespace gcn {
-	class Graphics;
-}
-
 namespace FIFE {
 
 	class SoundManager;
 	class RenderBackend;
-	class GUIManager;
+	class IGUIManager;
 	class VFS;
 	class VFSSourceFactory;
 	class EventManager;
 	class TimeManager;
-	class ImagePool;
-	class AnimationPool;
 	class Model;
 	class LogManager;
-	class GuiFont;
 	class Cursor;
-	class SoundClipPool;
 	class RendererBase;
 	class Image;
-
+	class ImageManager;
+	class SoundClipManager;
+	class OffRenderer;
+	class TargetRenderer;
 
 	class IEngineChangeListener {
 	public:
@@ -105,9 +100,8 @@ namespace FIFE {
 		 * screen modes.
 		 *
 		 * @param mode A valid ScreenMode retrieved from FIFE::DeviceCaps::getNearestScreenMode()
-		 * @return The new Screen Image
 		 */
-		Image* changeScreenMode(const ScreenMode& mode);
+		void changeScreenMode(const ScreenMode& mode);
 
 		/** Initializes the engine
 		 */
@@ -144,21 +138,23 @@ namespace FIFE {
 		 */
 		TimeManager* getTimeManager() const { return m_timemanager; }
 
-		/** Provides access point to the GuiManager
-		 */
-		GUIManager* getGuiManager() const { return m_guimanager; }
 
-		/** Provides access point to the ImagePool
+		/** Sets the GUI Manager to use.  Engine takes
+		 * ownership of the manager so DONT DELETE IT!
 		 */
-		ImagePool* getImagePool() const { return m_imagepool; }
+		void setGuiManager(IGUIManager* guimanager) { m_guimanager = guimanager; }
 
-		/** Provides access point to the AnimationPool
+		/** Provides access point to the GUI Manager
 		 */
-		AnimationPool* getAnimationPool() const { return m_animpool; }
+		IGUIManager* getGuiManager() const { return m_guimanager; }
 
-		/** Provides access point to the SoundClipPool
+		/** Provides access point to the ImageManager
 		 */
-		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
+		ImageManager* getImageManager() const { return m_imagemanager; }
+
+		/** Provides access point to the SoundClipManager
+		 */
+		SoundClipManager* getSoundClipManager() const { return m_soundclipmanager; }
 
 		/** Provides access point to the RenderBackend
 		 */
@@ -172,10 +168,6 @@ namespace FIFE {
 		 */
 		LogManager* getLogManager() const { return m_logmanager; }
 
-		/** Returns default font used in the engine
-		 */
-		GuiFont* getDefaultFont() const { return m_defaultfont; }
-
 		/** Provides access point to the VFS
 		 */
 		VFS* getVFS() const { return m_vfs; }
@@ -183,6 +175,14 @@ namespace FIFE {
 		/** Returns cursor used in the engine
 		 */
 		Cursor* getCursor() const { return m_cursor; }
+
+		/** Provides access point to the OffRenderer
+		 */
+		OffRenderer* getOffRenderer() const { return m_offrenderer; }
+
+		/** Provides access point to the TargetRenderer
+		 */
+		TargetRenderer* getTargetRenderer() const { return m_targetrenderer; }
 
 		/** Adds new change listener
 		* @param listener to add
@@ -195,21 +195,18 @@ namespace FIFE {
 		void removeChangeListener(IEngineChangeListener* listener);
 
 	private:
-		void preInit();
-
 		RenderBackend* m_renderbackend;
-		GUIManager* m_guimanager;
+		IGUIManager* m_guimanager;
 		EventManager* m_eventmanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animpool;
-		SoundClipPool* m_soundclippool;
+		ImageManager* m_imagemanager;
+		SoundClipManager* m_soundclipmanager;
+
 		VFS* m_vfs;
 		Model* m_model;
-		gcn::Graphics* m_gui_graphics;
 		LogManager* m_logmanager;
-		GuiFont* m_defaultfont;
+
 		Cursor* m_cursor;
 		bool m_destroyed;
 
@@ -218,6 +215,8 @@ namespace FIFE {
 
 		ScreenMode m_screenMode;
 
+		OffRenderer* m_offrenderer;
+		TargetRenderer* m_targetrenderer;
 		std::vector<RendererBase*> m_renderers;
 
 		std::vector<IEngineChangeListener*> m_changelisteners;

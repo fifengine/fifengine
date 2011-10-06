@@ -26,7 +26,7 @@ def addExtras(context):
 	context.checkSimpleLib(['png'], 'png.h')
 
 	if context.env['opengl']:
-		context.env.Append(LIBS = ['GL', 'GLU'])
+		context.env.Append(LIBS = ['GL'])
 		context.env.Append(CPPPATH = ['/usr/local/include'])
 		context.env.Append(LIBPATH = ['/usr/local/lib'])
 		context.checkSimpleLib(['guichan_opengl'])

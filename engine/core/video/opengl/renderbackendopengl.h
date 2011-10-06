@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -32,8 +32,9 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 
-namespace FIFE {
+#include "fife_opengl.h"
 
+namespace FIFE {
 	class ScreenMode;
 
 	/** The main class of the OpenGL-based renderer.
@@ -43,57 +44,124 @@ namespace FIFE {
 	public:
 		RenderBackendOpenGL(const SDL_Color& colorkey);
 		virtual ~RenderBackendOpenGL();
-		const std::string& getName() const;
-		void startFrame();
-		void endFrame();
-		void init(const std::string& driver);
-		void clearBackBuffer();
-		void setLightingModel(unsigned int lighting);
-		unsigned int getLightingModel() const;
+		virtual const std::string& getName() const;
+		virtual void startFrame();
+		virtual void endFrame();
+		virtual void init(const std::string& driver);
+		virtual void clearBackBuffer();
+		virtual void setLightingModel(uint32_t lighting);
+		virtual uint32_t getLightingModel() const;
+		virtual void setLighting(float red, float green, float blue);
+		virtual void resetLighting();
+		virtual void resetStencilBuffer(uint8_t buffer);
+		virtual void changeBlending(int32_t scr, int32_t dst);
+
+		virtual void createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
+		virtual void setScreenMode(const ScreenMode& mode);
+
+		virtual Image* createImage(IResourceLoader* loader = 0);
+		virtual Image* createImage(const std::string& name, IResourceLoader* loader = 0);
+		virtual Image* createImage(const uint8_t* data, uint32_t width, uint32_t height);
+		virtual Image* createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+		virtual Image* createImage(SDL_Surface* surface);
+		virtual Image* createImage(const std::string& name, SDL_Surface* surface);
+
+		virtual void renderVertexArrays();
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
+		virtual void captureScreen(const std::string& filename);
+
+		virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+
+		virtual void attachRenderTarget(ImagePtr& img, bool discard);
+		virtual void detachRenderTarget();
+
+		void enableTextures(uint32_t texUnit);
+		void disableTextures(uint32_t texUnit);
+		void bindTexture(uint32_t texUnit, GLuint texId);
+		void bindTexture(GLuint textId);
+
+	protected:
+		virtual void setClipArea(const Rect& cliparea, bool clear);
+
 		void enableLighting();
 		void disableLighting();
-		void setLighting(float red, float green, float blue, float alpha);
-		void resetLighting();
 		void enableStencilTest();
 		void disableStencilTest();
-		void setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func);
-		void resetStencilBuffer(uint8_t buffer);
+		void setStencilTest(uint8_t stencil_ref, GLenum stencil_op, GLenum stencil_func);
 		uint8_t getStencilRef() const;
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
-		void changeBlending(int scr, int dst);
+		void setEnvironmentalColor(const uint8_t* rgb);
+		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
+		void setColorPointer(GLsizei stride, const GLvoid* ptr);
+		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
+		void enableScissorTest();
+		void disableScissorTest();
 
-		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
-		Image*  setScreenMode(const ScreenMode& mode);
-		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
-		Image* createImage(SDL_Surface* surface);
- 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
-		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
-		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		GLuint m_mask_overlays;
+		void prepareForOverlays();
 
-	private:
-		SDL_PixelFormat m_rgba_format;
+		class RenderObject;
 
-		unsigned int m_lightmodel;
-		float m_lred;
-		float m_lgreen;
-		float m_lblue;
-		float m_lalpha;
-		bool m_light_enabled;
-		bool m_stencil_enabled;
-		bool m_alpha_enabled;
-		uint8_t m_sten_ref;
-		GLint m_sten_buf;
-		unsigned int m_sten_op;
-		unsigned int m_sten_func;
-		GLenum m_blend_src;
-		GLenum m_blend_dst;
+		struct renderData2T {
+			GLfloat vertex[2];
+			GLfloat texel[2];
+			GLfloat texel2[2];
+			GLubyte color[4];
+		};
+
+		struct renderData {
+			GLfloat vertex[2];
+			GLfloat texel[2];
+			GLubyte color[4];
+		};
+		std::vector<renderData> m_render_datas;
+		std::vector<renderData2T> m_render_datas2T;
+		std::vector<RenderObject> m_render_objects;
+
+		struct currentState	{
+			// Textures
+			bool tex_enabled[2];
+			GLuint texture[2];
+			uint32_t active_tex;
+			uint32_t active_client_tex;
+
+			// Pointers
+			const void* vertex_pointer;
+			const void* tex_pointer[2];
+			const void* color_pointer;
+
+			// Stencil
+			bool sten_enabled;
+			uint8_t sten_ref;
+			GLint sten_buf;
+			GLenum sten_op;
+			GLenum sten_func;
+
+			// Light
+			uint32_t lightmodel;
+			bool light_enabled;
+
+			// The rest
+			uint8_t env_color[3];
+			GLenum blend_src;
+			GLenum blend_dst;
+			bool alpha_enabled;
+			bool scissor_test;
+		} m_state;
+
+		GLuint m_fbo_id;
+		ImagePtr m_img_target;
+		bool m_target_discard;
 	};
 
 }

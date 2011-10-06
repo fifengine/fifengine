@@ -72,7 +72,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			evt.consume()
 		elif keyval == fife.Key.F10:
-			self.engine.getGuiManager().getConsole().toggleShowHide()
+			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
 			evt.consume()
 		elif keystr == 'p':
 			self.engine.getRenderBackend().captureScreen('screenshot.png')
@@ -89,7 +89,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			result = 'quitting'
 		elif command.lower() in ( 'help', 'help()' ):
-			self.engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
+			pychan.manager.hook.guimanager.getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
 			result = "-- End of help --"
 		else:
 			result = self.world.onConsoleCommand(command)

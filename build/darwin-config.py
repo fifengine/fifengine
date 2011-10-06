@@ -56,6 +56,9 @@ def addExtras(env, opengl):
 	if opengl:
 		env.Append(SHLINKFLAGS='-framework OpenGL')
 	
+	# define for using tinyxml with stl support enabled
+	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
+	
 	return env
 	
 def getRequiredHeaders(opengl):
@@ -82,5 +85,7 @@ def getRequiredLibs(opengl):
 	return libs
 
 def getOptionalLibs(opengl):
-	return None
+	libs = [('tinyxml', 'tinyxml.h')]
+	
+	return libs
 

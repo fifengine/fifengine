@@ -35,8 +35,7 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class ImagePool;
-	class AbstractFont;
+	class IFont;
 
 	class CoordinateRenderer: public RendererBase {
 	public:
@@ -45,10 +44,10 @@ namespace FIFE {
 		 * @param position position for this renderer in rendering pipeline
 		 * @param font font used to render the coordinates
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
-		
+		CoordinateRenderer(RenderBackend* renderbackend, int32_t position);
+
 		CoordinateRenderer(const CoordinateRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
@@ -57,7 +56,12 @@ namespace FIFE {
 
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 		std::string getName() { return "CoordinateRenderer"; }
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
+
+		/** Changes default font in the renderer
+		 * Note that this does not change the font ownership
+		 */
+		void setFont(IFont* font) { m_font = font; }
 
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
@@ -67,7 +71,7 @@ namespace FIFE {
 		Rect m_layer_area;
 		Location m_tmploc;
 		ExactModelCoordinate m_c;
-		AbstractFont* m_font;
+		IFont* m_font;
 		bool m_font_color;
 		SDL_Color m_color;
 	};

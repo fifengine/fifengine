@@ -33,7 +33,7 @@ from widget import Widget
 
 from layout import Spacer
 from containers import Container, VBox, HBox, Window
-from label import Label, ClickLabel
+from label import Label
 from icon import Icon
 from buttons import Button, ToggleButton, ImageButton
 from checkbox import CheckBox
@@ -59,7 +59,6 @@ WIDGETS = {
 	# Simple Widgets
 	"Icon" : Icon,
 	"Label" : Label,
-	"ClickLabel" : ClickLabel,
 	"PercentageBar" : PercentageBar,
 
 	# Button Widgets

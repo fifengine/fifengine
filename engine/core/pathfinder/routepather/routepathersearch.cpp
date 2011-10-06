@@ -39,7 +39,7 @@
 #include "routepathersearch.h"
 
 namespace FIFE {
-	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
+	RoutePatherSearch::RoutePatherSearch(const int32_t session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
 		: m_to(to), 
 		  m_from(from), 
 		  m_sessionId(session_id), 
@@ -50,8 +50,8 @@ namespace FIFE {
 		  m_next(0),
 		  m_heuristic(Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType())) 
 	{
-		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(m_startCoordInt, 0.0f));
-		int max_index = m_searchspace->getMaxIndex();
+		m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));
+		int32_t max_index = m_searchspace->getMaxIndex();
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
 		m_gCosts.resize(max_index + 1, 0.0f);;
@@ -63,7 +63,7 @@ namespace FIFE {
 			setSearchStatus(search_status_failed);
 			return;
 		}
-		PriorityQueue<int, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
+		PriorityQueue<int32_t, double>::value_type topvalue = m_sortedfrontier.getPriorityElement();
 		m_sortedfrontier.popElement();
 		m_next = topvalue.first;
 		m_spt[m_next] = m_sf[m_next];
@@ -82,17 +82,17 @@ namespace FIFE {
 			Location loc;
 			loc.setLayer(m_searchspace->getLayer());
 			loc.setLayerCoordinates((*i));
-			int adjacentInt = m_searchspace->convertCoordToInt((*i));
+			int32_t adjacentInt = m_searchspace->convertCoordToInt((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
 				if((adjacentInt == m_next || loc.getLayer()->cellContainsBlockingInstance(loc.getLayerCoordinates())) &&
 					adjacentInt != m_destCoordInt) {
 					continue;
 				}
-                                	float hCost = m_heuristic->calculate((*i), destCoord);
+                                	double hCost = m_heuristic->calculate((*i), destCoord);
 				//float hCost = Heuristic::getHeuristic(m_searchspace->getLayer()->getCellGrid()->getType())->calculate((*i), destCoord);
-				float gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
+				double gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
-					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
+					m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
 					m_gCosts[adjacentInt] = gCost;
 					m_sf[adjacentInt] = m_next;
 				}
@@ -106,8 +106,8 @@ namespace FIFE {
 	}
 
 	RoutePatherSearch::Path RoutePatherSearch::calcPath() {
-		int current = m_destCoordInt;
-		int end = m_startCoordInt;
+		int32_t current = m_destCoordInt;
+		int32_t end = m_startCoordInt;
 		Path path;
 		//This assures that the agent always steps into the center of the cell.
 		Location to(m_to);

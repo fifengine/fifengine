@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeyfilter.h"
@@ -38,6 +39,7 @@
 #include "eventmanager.h"
 
 namespace FIFE {
+	static Logger _log(LM_EVTCHANNEL);
 
 	EventManager::EventManager():
 		m_commandlisteners(),
@@ -348,9 +350,9 @@ namespace FIFE {
 		// The double SDL_PollEvent calls don't throw away events,
 		// but try to combine (mouse motion) events.
 		SDL_Event event, next_event;
-		bool has_next_event = SDL_PollEvent(&event);
+		bool has_next_event = (SDL_PollEvent(&event) != 0);
 		while (has_next_event) {
-			has_next_event = SDL_PollEvent(&next_event);
+			has_next_event = (SDL_PollEvent(&next_event) != 0);
 			if(has_next_event && combineEvents(event, next_event))
 				continue;
 
@@ -442,10 +444,10 @@ namespace FIFE {
 		fillMouseEvent(event, mouseevt);
 		fillModifiers(mouseevt);
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			m_mousestate |= static_cast<int>(mouseevt.getButton());
+			m_mousestate |= static_cast<int32_t>(mouseevt.getButton());
 			m_mostrecentbtn = mouseevt.getButton();
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
-			m_mousestate &= ~static_cast<int>(mouseevt.getButton());
+			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
 		// fire scrollwheel events only once
 		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
@@ -507,14 +509,16 @@ namespace FIFE {
 		} else if (sdlevt.type == SDL_KEYUP) {
 			keyevt.setType(KeyEvent::RELEASED);
 		} else {
-			throw EventException("Invalid event type in fillKeyEvent");
+			FL_WARN(_log, LMsg("fillKeyEvent()")
+				<< " Invalid key event type of " << sdlevt.type << ".  Ignoring event.");
+			return;
 		}
 		SDL_keysym keysym = sdlevt.key.keysym;
 
-		keyevt.setShiftPressed(keysym.mod & KMOD_SHIFT);
-		keyevt.setControlPressed(keysym.mod & KMOD_CTRL);
-		keyevt.setAltPressed(keysym.mod & KMOD_ALT);
-		keyevt.setMetaPressed(keysym.mod & KMOD_META);
+		keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
+		keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
+		keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
+		keyevt.setMetaPressed((keysym.mod & KMOD_META) != 0);
 		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
 	}

@@ -27,20 +27,18 @@
 namespace FIFE {
 	class Location;
 	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
 
 	class InstanceRenderer: public RendererBase {
 	public:
 		virtual ~InstanceRenderer();
 		std::string getName();
-		void addOutlined(Instance* instance, int r, int g, int b, int width);
+		void addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold = 1);
 		void removeOutlined(Instance* instance);
 		void removeAllOutlines();
-		void addColored(Instance* instance, int r, int g, int b);
+		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
 		void removeColored(Instance* instance);
 		void removeAllColored();
-		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
+		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front = true);
 		void removeTransparentArea(Instance* instance);
 		void removeAllTransparentAreas();
 		void addIgnoreLight(const std::list<std::string> &groups);
@@ -48,6 +46,6 @@ namespace FIFE {
 		void removeAllIgnoreLight();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 	private:
-		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
+		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,7 +34,7 @@
 #include "util/math/fife_math.h"
 #include "util/time/timemanager.h"
 #include "model/metamodel/grids/cellgrid.h"
-#include "model/metamodel/abstractpather.h"
+#include "model/metamodel/ipather.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/timeprovider.h"
 #include "model/structures/layer.h"
@@ -48,7 +48,7 @@ namespace FIFE {
 
 	class ActionInfo {
 	public:
-		ActionInfo(AbstractPather* pather, const Location& curloc):
+		ActionInfo(IPather* pather, const Location& curloc):
 			m_action(NULL),
 			m_target(NULL),
 			m_speed(0),
@@ -77,29 +77,29 @@ namespace FIFE {
 		// should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
 		bool m_repeating;
 		// action start time (ticks)
-		unsigned int m_action_start_time;
+		uint32_t m_action_start_time;
 		// action offset time (ticks) for resuming an action
-		unsigned int m_action_offset_time;
+		uint32_t m_action_offset_time;
 		// ticks since last call
-		unsigned int m_prev_call_time;
+		uint32_t m_prev_call_time;
 		// session id for pather
-		int m_pather_session_id;
+		int32_t m_pather_session_id;
 		// pather
-		AbstractPather* m_pather;
+		IPather* m_pather;
 		// leader for follow activity
 		Instance* m_leader;
 	};
 
 	class SayInfo {
 	public:
-		SayInfo(const std::string& txt, unsigned int duration):
+		SayInfo(const std::string& txt, uint32_t duration):
 			m_txt(txt),
 			m_duration(duration),
 			m_start_time(0) {}
 
 		std::string m_txt;
-		unsigned int m_duration;
-		unsigned int m_start_time;
+		uint32_t m_duration;
+		uint32_t m_start_time;
 	};
 
 	Instance::InstanceActivity::InstanceActivity(Instance& source):
@@ -217,27 +217,29 @@ namespace FIFE {
 	}
 
 	bool Instance::isActive() const {
-		return bool(m_activity);
+		return (m_activity != 0);
 	}
 
 	void Instance::setLocation(const Location& loc) {
 		if(m_location != loc) {
-			m_location = loc;
 			if(isActive()) {
+				m_location = loc;
 				refresh();
 			} else {
 				initializeChanges();
+				m_location = loc;
 			}
 		}
 	}
 
-	void Instance::setRotation(int rotation) {
+	void Instance::setRotation(int32_t rotation) {
 		if(m_rotation != rotation) {
-			m_rotation = rotation;
 			if(isActive()) {
+				m_rotation = rotation;
 				refresh();
 			} else {
 				initializeChanges();
+				m_rotation = rotation;
 			}
 		}
 	}
@@ -343,7 +345,7 @@ namespace FIFE {
 		setFacingLocation(direction);
 	}
 
-	void Instance::say(const std::string& text, unsigned int duration) {
+	void Instance::say(const std::string& text, uint32_t duration) {
 		initializeChanges();
 		delete m_activity->m_sayinfo;
 		m_activity->m_sayinfo = NULL;
@@ -373,7 +375,7 @@ namespace FIFE {
 		FL_DBG(_log, "Moving...");
 		ActionInfo* info = m_activity->m_actioninfo;
 		// timeslice for this movement
-		unsigned int timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
+		uint32_t timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
 		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << info->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
@@ -443,6 +445,11 @@ namespace FIFE {
 					say("");
 				}
 			}
+		} else if (!m_activity->m_actioninfo && m_changeinfo == ICHANGE_NO_CHANGES && m_activity->m_actionlisteners.empty()) {
+			// delete superfluous activity
+			delete m_activity;
+			m_activity = 0;
+			return ICHANGE_NO_CHANGES;
 		}
 		return m_changeinfo;
 	}
@@ -507,7 +514,7 @@ namespace FIFE {
 		return *m_facinglocation;
 	}
 
-	unsigned int Instance::getActionRuntime() {
+	uint32_t Instance::getActionRuntime() {
 		if (m_activity && m_activity->m_actioninfo) {
 			if(!m_activity->m_timeprovider)
 				bindTimeProvider();
@@ -516,7 +523,7 @@ namespace FIFE {
 		return getRuntime();
 	}
 
-	void Instance::setActionRuntime(unsigned int time_offset) {
+	void Instance::setActionRuntime(uint32_t time_offset) {
 		m_activity->m_actioninfo->m_action_offset_time = time_offset;
 	}
 
@@ -573,7 +580,7 @@ namespace FIFE {
 		return 1.0;
 	}
 
-	unsigned int Instance::getRuntime() {
+	uint32_t Instance::getRuntime() {
 		if (m_activity) {
 			if(!m_activity->m_timeprovider)
 				bindTimeProvider();
@@ -587,25 +594,28 @@ namespace FIFE {
 		}
 		return TimeManager::instance()->getTime();
 	}
-        void Instance::addDeleteListener(InstanceDeleteListener *listener) {
-                m_deletelisteners.push_back(listener);
-        }
-        void Instance::removeDeleteListener(InstanceDeleteListener *listener) {
-                std::vector<InstanceDeleteListener*>::iterator itor;
-                itor = std::find(m_deletelisteners.begin(),
-                                 m_deletelisteners.end(),
-                                 listener);
-                if(itor != m_deletelisteners.end()) {
-                        m_deletelisteners.erase(itor);
-                } else {
-                        FL_WARN(_log, "Cannot remove unknown listener");
-                }
-        }
-        void Instance::onInstanceDeleted(Instance* instance) {
-                if(m_activity &&
-                   m_activity->m_actioninfo &&
-                   m_activity->m_actioninfo->m_leader == instance) {
-                        m_activity->m_actioninfo->m_leader = NULL;
-                }
-        }
+
+    void Instance::addDeleteListener(InstanceDeleteListener *listener) {
+            m_deletelisteners.push_back(listener);
+    }
+
+    void Instance::removeDeleteListener(InstanceDeleteListener *listener) {
+            std::vector<InstanceDeleteListener*>::iterator itor;
+            itor = std::find(m_deletelisteners.begin(),
+                             m_deletelisteners.end(),
+                             listener);
+            if(itor != m_deletelisteners.end()) {
+                    m_deletelisteners.erase(itor);
+            } else {
+                    FL_WARN(_log, "Cannot remove unknown listener");
+            }
+    }
+
+    void Instance::onInstanceDeleted(Instance* instance) {
+            if(m_activity &&
+               m_activity->m_actioninfo &&
+               m_activity->m_actioninfo->m_leader == instance) {
+                    m_activity->m_actioninfo->m_leader = NULL;
+            }
+    }
 }

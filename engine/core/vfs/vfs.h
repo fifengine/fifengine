@@ -34,6 +34,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/singleton.h"
+
 
 namespace FIFE {
 
@@ -53,7 +55,7 @@ namespace FIFE {
 	 * and emit a warning. This is done to avoid problems with filesystems which are not
 	 * case sensitive.
 	 */
-	class VFS {
+	class VFS : public DynamicSingleton<VFS>{
 		public:
 			/** Constructor
 			 * Called by the Engine on startup. Never create one yourself.

@@ -62,22 +62,22 @@ namespace FIFE {
 	ObjectVisual::~ObjectVisual() {
 	}
 
-	void ObjectVisual::addStaticImage(unsigned int angle, int image_index) {
+	void ObjectVisual::addStaticImage(uint32_t angle, int32_t image_index) {
 		m_angle2img[angle % 360] = image_index;
 	}
 
-	int ObjectVisual::getStaticImageIndexByAngle(int angle) {
-		int closestMatch = 0;
+	int32_t ObjectVisual::getStaticImageIndexByAngle(int32_t angle) {
+		int32_t closestMatch = 0;
 		return getIndexByAngle(angle, m_angle2img, closestMatch);
 	}
 
-	int ObjectVisual::getClosestMatchingAngle(int angle) {
-		int closestMatch = 0;
+	int32_t ObjectVisual::getClosestMatchingAngle(int32_t angle) {
+		int32_t closestMatch = 0;
 		getIndexByAngle(angle, m_angle2img, closestMatch);
 		return closestMatch;
 	}
 
-	void ObjectVisual::getStaticImageAngles(std::vector<int>& angles) {
+	void ObjectVisual::getStaticImageAngles(std::vector<int32_t>& angles) {
 		angles.clear();
 		type_angle2id::const_iterator i(m_angle2img.begin());
 		while (i != m_angle2img.end()) {
@@ -86,7 +86,7 @@ namespace FIFE {
 		}
 	}
 
-	InstanceVisual::InstanceVisual(): 
+	InstanceVisual::InstanceVisual():
 		m_stackposition(0) {
 	}
 
@@ -102,7 +102,7 @@ namespace FIFE {
 	InstanceVisual::~InstanceVisual() {
 	}
 
-	ActionVisual::ActionVisual(): m_animations() {
+	ActionVisual::ActionVisual(): m_animation_map(), m_map() {
 	}
 
 	ActionVisual* ActionVisual::create(Action* action) {
@@ -117,19 +117,20 @@ namespace FIFE {
 	ActionVisual::~ActionVisual() {
 	}
 
-	void ActionVisual::addAnimation(unsigned int angle, int animation_index) {
-		m_animations[angle % 360] = animation_index;
+	void ActionVisual::addAnimation(uint32_t angle, AnimationPtr animationptr) {
+		m_animation_map[angle % 360] = animationptr;
+		m_map[angle % 360] = angle % 360;
 	}
 
-	int ActionVisual::getAnimationIndexByAngle(int angle) {
-		int closestMatch = 0;
-		return getIndexByAngle(angle, m_animations, closestMatch);
+	AnimationPtr ActionVisual::getAnimationByAngle(int32_t angle) {
+		int32_t closestMatch = 0;
+		return m_animation_map[getIndexByAngle(angle, m_map, closestMatch)];
 	}
 
-	void ActionVisual::getActionImageAngles(std::vector<int>& angles) {
+	void ActionVisual::getActionImageAngles(std::vector<int32_t>& angles) {
 		angles.clear();
-		type_angle2id::const_iterator i(m_animations.begin());
-		while (i != m_animations.end()) {
+		AngleAnimationMap::const_iterator i(m_animation_map.begin());
+		while (i != m_animation_map.end()) {
 			angles.push_back(i->first);
 			++i;
 		}

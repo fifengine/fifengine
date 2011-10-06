@@ -30,6 +30,8 @@ from fife import fife
 from fife.extensions.soundmanager import SoundManager
 from fife.extensions.serializers.xml_loader_tools import loadImportFile
 
+from fife.extensions import pychan
+
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
 from scripts.actors.baseactor import TalkAction, AttackAction, PickUpItemAction, EnterPortalAction
@@ -340,6 +342,8 @@ class GameController(object):
 		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer = fife.FloatingTextRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
+		font = pychan.manager.hook.guimanager.getDefaultFont()
+		self._floatingtextrenderer.setFont(font)
 		self._floatingtextrenderer.setBackground(255, 100, 100, 165) 
 		self._floatingtextrenderer.setBorder(255, 50, 50)
 		self._floatingtextrenderer.setEnabled(True)

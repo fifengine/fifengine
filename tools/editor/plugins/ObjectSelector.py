@@ -431,18 +431,20 @@ class ObjectSelector(plugin.Plugin):
 		# Try to find a usable image
 		index = visual.getStaticImageIndexByAngle(0)
 		image = None
+		imageptr = None
 		# if no static image available, try default action
 		if index == -1:
 			action = obj.getDefaultAction()
 			if action:
-				animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(0)
-				animation = self.engine.getAnimationPool().getAnimation(animation_id)
-				image = animation.getFrameByTimestamp(0)
-				index = image.getPoolId()
+				animation = action.get2dGfxVisual().getAnimationByAngle(0)
+				imageptr = animation.getFrameByTimestamp(0)
+		else:
+			# static image found use the index to get the image from the image manager
+			imageptr = self.engine.getImageManager().get(index)
 
 		# Construct the new GuiImage that is to be returned
-		if index != -1:
-			image = fife.GuiImage(index, self.engine.getImagePool())
+		if imageptr is not None:
+			image = fife.GuiImage(imageptr)
 
 		return image
 

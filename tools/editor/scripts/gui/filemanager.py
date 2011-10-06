@@ -55,13 +55,6 @@ class FileManager(object):
 		self._importbrowser = None
 		self._savebrowser = None
 
-		self.obj_loader = XMLObjectLoader(
-			self.engine.getImagePool(),
-			self.engine.getAnimationPool(),
-			self.engine.getModel(),
-			self.engine.getVFS()
-		)		
-
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
 		closeAction = Action(u"Close", "gui/icons/close_map.png")
@@ -207,7 +200,7 @@ class FileManager(object):
 			return
 		
 		try:
-			curname = mapview.getMap().getResourceLocation().getFilename()
+			curname = mapview.getMap().getFilename()
 		except RuntimeError:
 			self.showSaveDialog()
 			return
@@ -223,7 +216,9 @@ class FileManager(object):
 		
 		try:
 			if os.path.isfile(file):
-				loadImportFile(self.obj_loader, file, self.engine)
+				#loadImportFile(self.obj_loader, file, self.engine)
+				loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
+				loader.loadImportFile(file)
 			else:
 				raise file+ " is not a file!"
 		except:
@@ -248,7 +243,8 @@ class FileManager(object):
 		
 		try:
 			if os.path.isdir(path):
-				loadImportDirRec(self.obj_loader, path, self.engine)
+				loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
+				loader.loadImportDirectory(path)
 			else:
 				raise file+ " is not a directory!"
 		except:

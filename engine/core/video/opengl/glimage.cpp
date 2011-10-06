@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,38 +31,71 @@
 #include "util/structures/rect.h"
 #include "video/sdl/sdlimage.h"
 #include "video/renderbackend.h"
+#include "video/opengl/renderbackendopengl.h"
 
 #include "glimage.h"
 
 namespace FIFE {
-	GLImage::GLImage(SDL_Surface* surface):
-		Image(surface) {
-		m_sdlimage = new SDLImage(surface);
-
-		m_textureids = NULL;
+	GLImage::GLImage(IResourceLoader* loader):
+		Image(loader),
+		m_compressed(false),
+		m_texId(0) {
 
 		resetGlimage();
 	}
 
-	GLImage::GLImage(const uint8_t* data, unsigned int width, unsigned int height):
-		Image(data, width, height) {
+	GLImage::GLImage(const std::string& name, IResourceLoader* loader):
+		Image(name, loader),
+		m_compressed(false),
+		m_texId(0) {
+
+		resetGlimage();
+	}
+
+	GLImage::GLImage(SDL_Surface* surface):
+		Image(surface),
+		m_compressed(false),
+		m_texId(0) {
+
+		resetGlimage();
+	}
+
+	GLImage::GLImage(const std::string& name, SDL_Surface* surface):
+		Image(name, surface),
+		m_compressed(false),
+		m_texId(0) {
+
+		resetGlimage();
+	}
+
+	GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height):
+		Image(data, width, height),
+		m_compressed(false),
+		m_texId(0) {
+
 		assert(m_surface);
-		m_sdlimage = new SDLImage(m_surface);
+		resetGlimage();
+	}
 
-		m_textureids = NULL;
+	GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		Image(name, data, width, height),
+		m_compressed(false),
+		m_texId(0) {
 
+		assert(m_surface);
 		resetGlimage();
 	}
 
 	GLImage::~GLImage() {
-		// remove surface so that deletion happens correctly (by base class destructor)
-		m_sdlimage->detachSurface();
-		delete m_sdlimage;
-
 		cleanup();
 	}
 
 	void GLImage::invalidate() {
+		resetGlimage();
+	}
+
+	void GLImage::setSurface(SDL_Surface* surface) {
+		reset(surface);
 		resetGlimage();
 	}
 
@@ -76,210 +109,220 @@ namespace FIFE {
 	}
 
 	void GLImage::cleanup() {
-		if (m_textureids) {
-			glDeleteTextures(1, &m_textureids[0]);
-
-			delete[] m_textureids;
-			m_textureids = NULL;
+		if (m_texId) {
+			if(!m_shared) {
+				glDeleteTextures(1, &m_texId);
+			}
+			m_texId = 0;
+			m_compressed = false;
 		}
 
-		m_col_tex_coord = 0;
-		m_row_tex_coord = 0;
+		m_tex_coords[0] = m_tex_coords[1] = 
+			m_tex_coords[2] = m_tex_coords[3] = 0.0f;
 	}
 
-	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
-		if (!m_textureids) {
-			generateGLTexture();
-		}
-
-		//not on the screen.  dont render
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
-			return;
-		}
-
-		//completely transparent so dont bother rendering
+	void GLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* rgb) {
+		// completely transparent so dont bother rendering
 		if (0 == alpha) {
 			return;
 		}
+		RenderBackend* rb = RenderBackend::instance();
+		SDL_Surface* target = rb->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
 
-		// the amount of "zooming" for the image
-		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
-		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
-
-		// apply the scale to the width and height of the image
-		uint16_t w = static_cast<int>(round(scale_x*m_surface->w));
-		uint16_t h = static_cast<int>(round(scale_y*m_surface->h));
-
-		// setting transparency for the whole primitive:
-		glColor4ub( 255, 255, 255, alpha );
-
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
-
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex2i(rect.x, rect.y);
-
-			glTexCoord2f(0.0f, m_row_tex_coord);
-			glVertex2i(rect.x, rect.y + h);
-
-			glTexCoord2f(m_col_tex_coord, m_row_tex_coord);
-			glVertex2i(rect.x + w, rect.y + h);
-
-			glTexCoord2f(m_col_tex_coord, 0.0f);
-			glVertex2i(rect.x + w, rect.y);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-
-	}
-
-	void GLImage::generateGLTexture() {
-		const unsigned int width = m_surface->w;
-		const unsigned int height = m_surface->h;
-
-		//calculate the nearest larger power of 2
-		m_chunk_size_w = nextPow2(width);
-		m_chunk_size_h = nextPow2(height);
-
-		// used to calculate the fill ratio for given chunk
-		m_col_tex_coord = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
-		m_row_tex_coord = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
-
-		if (m_col_tex_coord == 0.0f){
-			m_col_tex_coord = 1.0f;
-		}
-
-		if (m_row_tex_coord == 0.0f){
-			m_row_tex_coord = 1.0f;
-		}
-
-		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
-		int pitch = m_surface->pitch;
-
-
-		assert(!m_textureids);
-
-		m_textureids = new GLuint[1];
-		memset(m_textureids, 0x00, 1*sizeof(GLuint));
-
-
-		uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
-		memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
-
-		for (unsigned int y = 0;  y < height; ++y) {
-			for (unsigned int x = 0; x < width; ++x) {
-				unsigned int pos = (y * pitch) + (x * 4);
-
-				uint8_t r = data[pos + 3];
-				uint8_t g = data[pos + 2];
-				uint8_t b = data[pos + 1];
-				uint8_t a = data[pos + 0];
-
-				if (RenderBackend::instance()->isColorKeyEnabled()) {
-					// only set alpha to zero if colorkey feature is enabled
-					if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
-						a = 0;
-					}
-				}
-
-				oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
-			}
-		}
-
-		// get texture id from opengl
-		glGenTextures(1, &m_textureids[0]);
-		// set focus on that texture
-		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
-		// set filters for texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		// transfer data from sdl buffer
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
-
-		delete[] oglbuffer;
-	}
-
-	void GLImage::saveImage(const std::string& filename) {
-		const unsigned int swidth = getWidth();
-		const unsigned int sheight = getHeight();
-		SDL_Surface *surface = NULL;
-		uint8_t *pixels;
-
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
-			sheight, 24,
-			RMASK,GMASK,BMASK, NULLMASK);
-
-		if(surface == NULL) {
+		// not on the screen.  dont render
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
 
-		SDL_LockSurface(surface);
-		pixels = new uint8_t[swidth * sheight * 3];
-		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-
-		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
-		// Copy the "reversed_image" memory to the "image" memory
-		for (int y = (sheight - 1); y >= 0; --y) {
-			uint8_t *rowbegin = pixels + y * swidth * 3;
-			uint8_t *rowend = rowbegin + swidth * 3;
-
-			std::copy(rowbegin, rowend, imagepixels);
-
-			// Advance a row in the output surface.
-			imagepixels += surface->pitch;
+		if (!m_texId) {
+			generateGLTexture();
 		}
 
-		SDL_UnlockSurface(surface);
-		saveAsPng(filename, *surface);
-		SDL_FreeSurface(surface);
-		delete [] pixels;
+		rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 	}
 
-	void GLImage::setClipArea(const Rect& cliparea, bool clear) {
-		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
+	void GLImage::generateGLTexture() {
+		if(m_shared) {
+			// First make sure we loaded big image to opengl
+			if(m_shared_img->m_texId == 0) {
+				m_shared_img->load();
+				m_shared_img->generateGLTexture();
+			}
+			m_texId = m_shared_img->m_texId;
+			m_surface = m_shared_img->m_surface;
+			m_compressed = m_shared_img->m_compressed;
 
-		if (clear) {
-			glClear(GL_COLOR_BUFFER_BIT);
+			generateGLSharedTexture(m_shared_img, m_subimagerect);
+			return;
+		}
+
+		const uint32_t width = m_surface->w;
+		const uint32_t height = m_surface->h;
+
+		// With OpenGL 2.0 or GL_ARB_texture_non_power_of_two we don't really need to care
+		// about non power of 2 textures 
+		if(GLEE_ARB_texture_non_power_of_two) {
+			m_chunk_size_w = width;
+			m_chunk_size_h = height;
+		}
+		else {
+			//calculate the nearest larger power of 2
+			m_chunk_size_w = nextPow2(width);
+			m_chunk_size_h = nextPow2(height);
+		}
+
+		// used to calculate the fill ratio for given chunk
+		m_tex_coords[0] = m_tex_coords[1] = 0.0f;
+		m_tex_coords[2] = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
+		m_tex_coords[3] = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
+
+		if (m_tex_coords[2] == 0.0f){
+			m_tex_coords[2] = 1.0f;
+		}
+
+		if (m_tex_coords[3] == 0.0f){
+			m_tex_coords[3] = 1.0f;
+		}
+
+		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
+		int32_t pitch = m_surface->pitch;
+
+		assert(!m_texId);
+
+		// get texture id from opengl
+		glGenTextures(1, &m_texId);
+		// set focus on that texture
+		static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+		// set filters for texture
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		GLint internalFormat = GL_RGBA8;
+		if(GLEE_ARB_texture_compression && RenderBackend::instance()->isImageCompressingEnabled()) {
+			internalFormat = GL_COMPRESSED_RGBA;
+			m_compressed = true;
+		} else {
+			m_compressed = false;
+		}
+		
+		if(GLEE_ARB_texture_non_power_of_two) {
+			if(RenderBackend::instance()->isColorKeyEnabled()) {
+				uint8_t* oglbuffer = new uint8_t[width * height * 4];
+				memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
+
+				for (uint32_t y = 0;  y < height; ++y) {
+					for (uint32_t x = 0; x < width * 4; x += 4) {
+						uint32_t gid = x + y * width;
+
+						uint8_t r = oglbuffer[gid + 0];
+						uint8_t g = oglbuffer[gid + 1];
+						uint8_t b = oglbuffer[gid + 2];
+						uint8_t a = oglbuffer[gid + 3];
+
+						// set alpha to zero
+						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+							oglbuffer[gid + 3] = 0;
+						}
+					}
+				}
+
+				// transfer data from sdl buffer
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, oglbuffer);
+
+				delete [] oglbuffer;
+			} else {
+
+				// transfer data directly from sdl buffer
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			}
+		// Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
+		} else {
+			uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
+			memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
+
+			for (uint32_t y = 0;  y < height; ++y) {
+				for (uint32_t x = 0; x < width; ++x) {
+					uint32_t pos = (y * pitch) + (x * 4);
+
+					uint8_t a = data[pos + 3];
+					uint8_t b = data[pos + 2];
+					uint8_t g = data[pos + 1];
+					uint8_t r = data[pos + 0];
+
+					if (RenderBackend::instance()->isColorKeyEnabled()) {
+						// only set alpha to zero if colorkey feature is enabled
+						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+							a = 0;
+						}
+					}
+
+					oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
+				}
+			}
+
+			// transfer data from sdl buffer
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
+
+			delete[] oglbuffer;
 		}
 	}
 
-	bool GLImage::putPixel(int x, int y, int r, int g, int b, int a) {
-		cleanup();
-		return m_sdlimage->putPixel(x, y, r, g, b, a);
+	void GLImage::generateGLSharedTexture(const GLImage* shared, const Rect& region) {
+		uint32_t width = shared->getWidth();
+		uint32_t height = shared->getHeight();
+
+		if(!GLEE_ARB_texture_non_power_of_two) {
+			width = nextPow2(width);
+			height = nextPow2(height);
+		}
+
+		m_tex_coords[0] = static_cast<GLfloat>(region.x) / static_cast<GLfloat>(width);
+		m_tex_coords[1] = static_cast<GLfloat>(region.y) / static_cast<GLfloat>(height);
+		m_tex_coords[2] = static_cast<GLfloat>(region.x + region.w) / static_cast<GLfloat>(width);
+		m_tex_coords[3] = static_cast<GLfloat>(region.y + region.h) / static_cast<GLfloat>(height);
 	}
 
-	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
-		cleanup();
-		m_sdlimage->drawLine(p1, p2, r, g, b, a);
+	void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
+		GLImage* img = static_cast<GLImage*>(shared.get());
+
+		m_shared_img = img;
+		m_texId = img->m_texId;
+		m_shared = true;
+		m_subimagerect = region;
+
+		if(m_texId) {
+			generateGLSharedTexture(img, region);
+		}
+
+		setState(IResource::RES_LOADED);
 	}
 
-	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
-		cleanup();
-		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
+	void GLImage::forceLoadInternal() {
+		if (m_texId == 0) {
+			generateGLTexture();
+		}
 	}
 
-	void GLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->drawRectangle(p, w, h, r, g, b, a);
+	void GLImage::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img) {
+		Image::copySubimage(xoffset, yoffset, img);
+
+		if(m_texId) {
+			static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, img->getWidth(), img->getHeight(),
+				GL_RGBA, GL_UNSIGNED_BYTE, img->getSurface()->pixels);
+		}
 	}
 
-	void GLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		cleanup();
-		m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
+	GLuint GLImage::getTexId() const {
+		return m_texId;
 	}
 
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
-		cleanup();
-		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
-	}
-
-	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a) {
-		cleanup();
-		m_sdlimage->drawVertex(p, size, r, g, b, a);
-	}
-
-	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-		cleanup();
-		m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
+	const GLfloat* GLImage::getTexCoords() const {
+		return m_tex_coords;
 	}
 }

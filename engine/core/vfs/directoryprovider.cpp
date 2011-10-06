@@ -20,24 +20,19 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
-#include "vfs/vfs.h"
 
+#include "fife_boost_filesystem.h"
+#include "vfs.h"
 #include "directoryprovider.h"
 #include "vfsdirectory.h"
-
-// alias boost::filesystem namespace to make shorter
-namespace bfs = boost::filesystem;
 
 namespace FIFE {
 	bool DirectoryProvider::isReadable(const std::string& path) const {

@@ -173,44 +173,44 @@ class MapEditor:
 		
 		id = -1
 		if self._mode == MapEditor.SELECTING:
-			id = engine.getImagePool().addResourceFromFile("gui/icons/select_instance.png")
-			image = engine.getImagePool().getImage(id)
+			image = engine.getImageManager().get("gui/icons/select_instance.png")
+			id = image.getHandle()
 			image.setXShift(-7)
 			image.setYShift(-7)
 			
 		elif self._mode == MapEditor.INSERTING:
-			id = engine.getImagePool().addResourceFromFile("gui/icons/add_instance.png")
-			image = engine.getImagePool().getImage(id)
+			image = engine.getImageManager().get("gui/icons/add_instance.png")
+			id = image.getHandle()
 			image.setXShift(-2)
 			image.setYShift(-20)
 			
 		elif self._mode == MapEditor.REMOVING:
-			id = engine.getImagePool().addResourceFromFile("gui/icons/erase_instance.png")
-			image = engine.getImagePool().getImage(id)
+			image = engine.getImageManager().get("gui/icons/erase_instance.png")
+			id = image.getHandle()
 			image.setXShift(-2)
 			image.setYShift(-19)
 			
 		elif self._mode == MapEditor.MOVING:
-			id = engine.getImagePool().addResourceFromFile("gui/icons/move_instance.png")
-			image = engine.getImagePool().getImage(id)
+			image = engine.getImageManager().get("gui/icons/move_instance.png")
+			id = image.getHandle()
 			image.setXShift(-11)
 			image.setYShift(-11)
 			
 		elif self._mode == MapEditor.OBJECTPICKER:
-			id = engine.getImagePool().addResourceFromFile("gui/icons/objectpicker.png")
-			image = engine.getImagePool().getImage(id)
+			image = engine.getImageManager().get("gui/icons/objectpicker.png")
+			id = image.getHandle()
 			image.setXShift(-0)
 			image.setYShift(-22)
 			
 		if id < 0:
 			self._resetCursor()
 		else:
-			cursor.set(fife.CURSOR_IMAGE, id)
+			cursor.set(image)
 			
 	def _resetCursor(self):
 		""" Reset the cursor to the standard native one """
 		cursor = self._editor.getEngine().getCursor()
-		cursor.set(fife.CURSOR_NATIVE, fife.NC_ARROW)
+		cursor.set(fife.NC_ARROW)
 		
 	def _initToolboxButtons(self):
 		""" Sets up and connects buttons related to the toolbox """
@@ -428,8 +428,11 @@ class MapEditor:
 					else:
 						self._controller.deselectSelection()
 						self._controller.selectCell(realCoords[0], realCoords[1])
-						
-					self._selected_instances = self._controller.getInstancesFromSelection()
+					
+					if self._controller._single_instance:
+						self._selected_instances = self._controller.getInstance()
+					else:
+						self._selected_instances = self._controller.getInstancesFromSelection()
 					
 					self._controller.getUndoManager().startGroup("Moved instances")
 					self._undogroup = True

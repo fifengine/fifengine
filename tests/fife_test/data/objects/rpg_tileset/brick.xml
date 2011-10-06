@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="brick" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_4_2.png" direction="0" />
+</object>

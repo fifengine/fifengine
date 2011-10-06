@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,200 +34,146 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
-#include "util/base/resourceclass.h"
 #include "util/resource/resource.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
 
 namespace FIFE {
-
-	class AbstractImage {
-	public:
-		virtual ~AbstractImage() {}
-
-		/** Get the surface used by this image
-		 * @return pointer to used surface
-		 */
-		virtual SDL_Surface* getSurface() = 0;
-
-		/** Returns the @b maximum width occupied by this image.
-		 * This should return the maximum width that could be covered by the
-		 * image.
-		 */
-		virtual unsigned int getWidth() const = 0;
-
-		/** Returns the @b maximum height occupied by this image.
-		 */
-		virtual unsigned int getHeight() const = 0;
-
-		/** Gets the area of the image
-		 * @return Image area in rect
-		 */
-		virtual const Rect& getArea() = 0;
-
-		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
-		 */
- 		virtual bool putPixel(int x, int y, int r, int g, int b, int a = 255) = 0;
-
-		/** Draws line between given points with given RGBA
-		 */
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255) = 0;
-
-		/** Draws triangle between given points with given RGBA
-		 */
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255) = 0;
-
-		/** Draws an axis parallel rectangle.
-		 */
-		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-
-		/** Draws a filled axis parallel rectangle.
-		 */
-		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)  = 0;
-
-		/** Draws quad between given points with given RGBA
-		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255) = 0;
-
-		/** Draws a quad that represents a vertex with given RGBA
-		 */
-		virtual void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255) = 0;
-
-		/** Draws a light primitive that based on a triangle fan
-		 */
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
-
-		/** Returns pixel RGBA values from given position
-		 */
-		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
-
-		/** Pushes clip area to clip stack
-		 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
-		 *  note that previous items in stack do not affect the latest area pushed
-		 */
-		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
-
-		/** Pops clip area from clip stack
-		 *  @see pushClipArea
-		 */
-		virtual void popClipArea() = 0;
-
-		/** Gets the current clip area
-		 *  @see pushClipArea
-		 */
-		virtual const Rect& getClipArea() const = 0;
-
-		/** Saves the image using given filename
-		 */
-		virtual void saveImage(const std::string& filename) = 0;
-
-		/** Enable or disable the alpha 'optimizing' code
-		 *
-		 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
-		 * Only implemented by and useful for the SDL backend at the moment.
-		 */
-		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
-
-		/** @see setAlphaOptimizerEnabled
-		 */
-		virtual bool isAlphaOptimizerEnabled() = 0;
-	};
+	class Image;
+	typedef SharedPtr<Image> ImagePtr;
 
 	/** Base Class for Images.
 	 */
-	class Image : public ResourceClass, public AbstractImage {
+	class Image : public IResource {
 	public:
+		/** Constructor.
+		*/
+		Image(IResourceLoader* loader = 0);
+		Image(const std::string& name, IResourceLoader* loader = 0);
+
 		/** Constructor.
 		* @note Takes ownership of the SDL Surface
 		* @param surface SDL Surface in RGBA format
 		 */
 		Image(SDL_Surface* surface);
+		Image(const std::string& name, SDL_Surface* surface);
 
 		/** Constructor
 		* @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
 		* @param width Width of the image.
 		* @param height Height of the image.
 		 */
-		Image(const uint8_t* data, unsigned int width, unsigned int height);
+		Image(const uint8_t* data, uint32_t width, uint32_t height);
+		Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+
+		/** Destructor.
+		*/
+		virtual ~Image();
 
 		/** Invalidates the Image causing it to be reset or re-loaded
 		 */
 		virtual void invalidate() = 0;
 
-		/** Renders itself to the Destination surface at the rectangle rect.
-		 *
-		 * @param rect The position and clipping where to draw this image to.
-		 * @param target Target surface to draw to, e.g. main screen or other image
-		 * @param alpha The alpha value, with which to draw self. opaque by default.
-		 */
-		virtual void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255) = 0;
-
-		/** Renders itself to the main screen at the rectangle rect.
+		/** Renders itself to the current render target (main screen or attached destination image) at the rectangle rect.
 		 * Convenience function
 		 * @param rect The position and clipping where to draw this image to.
 		 * @param alpha The alpha value, with which to draw self.
+		 * @param rgb The color value of overlay if any.
 		 */
-		void render(const Rect& rect, unsigned char alpha = 255);
+		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0) = 0;
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const* rgb = 0) {}
 
 		/** Removes underlying SDL_Surface from the image (if exists) and returns this
 		 * @note this effectively causes SDL_Surface not to be freed on destruction
 		 */
 		SDL_Surface* detachSurface();
 
-		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
-		const Rect& getArea();
-		void setXShift(int xshift);
-		inline int getXShift() const {
+		const SDL_Surface* getSurface() const { return m_surface; }
+
+		/** This frees the current suface and replaces it with the
+		 * surface passed in the parameter (which can be NULL).
+		 * @see Image::reset(SDL_Surface* surface)
+		 * @param surface the SDL_Surface to use for this image
+		 */
+		virtual void setSurface(SDL_Surface* surface) = 0;
+
+		/** Saves the image using given filename.
+		 */
+		void saveImage(const std::string& filename);
+
+		/** Saves the SDL_Surface to png format
+		 */
+		static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
+		static bool putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
+		const Rect& getArea() const;
+
+		void setXShift(int32_t xshift) {
+			m_xshift = xshift;
+		}
+		int32_t getXShift() const {
 			return m_xshift;
 		}
-		void setYShift(int yshift);
-		inline int getYShift() const {
+		void setYShift(int32_t yshift) {
+			m_yshift = yshift;
+		}
+		int32_t getYShift() const {
 			return m_yshift;
 		}
-		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		void pushClipArea(const Rect& cliparea, bool clear=true);
-		void popClipArea();
-		const Rect& getClipArea() const;
-		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
-		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
+
+		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+
+		virtual size_t getSize();
+		virtual void load();
+		virtual void free();
+
+		/** After this call all image data will be taken from the given image and its subregion
+		 */
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region) = 0;
+
+		/** Forces to load the image into internal memory of GPU
+		 */
+		virtual void forceLoadInternal() = 0;
+
+		/** Returns true if this image shares data with another one
+		 */
+		bool isSharedImage() const { return m_shared; }
+
+		/** Returns area of the image it occupies in the shared image
+		 */
+		const Rect& getSubImageRect() const { return m_subimagerect; }
+
+		/** Copies given image into this one with respect to given offsets
+		 */
+		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
 
 	protected:
-		/** Sets given clip area into image
-		 *  @see pushClipArea
-		 */
-		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-		//saves images to png format
-		virtual void saveAsPng(const std::string& filename, SDL_Surface& surface);
-		/** Clears any possible clip areas
-		 *  @see pushClipArea
-		 */
-		virtual void clearClipArea();
-
 		// The SDL Surface used.
 		SDL_Surface* m_surface;
 		// The X shift of the Image
-		int m_xshift;
+		int32_t m_xshift;
 		// The Y shift of the Image
-		int m_yshift;
+		int32_t m_yshift;
 
-		class ClipInfo {
-		public:
-			Rect r;
-			bool clearing;
-		};
-		std::stack<ClipInfo> m_clipstack;
+		/** Resets the image to default values (including the x and y shift
+		 * values), frees the current surface  and sets the surface to the
+		 * passed SDL_Surface (which can be NULL).
+		 * @see IImage::setSurface(SDL_Surface* surface)
+		 * @param surface the SDL_Surface to use for this image
+		 */
+		void reset(SDL_Surface* surface);
 
-		// image area
-		Rect m_area;
-		bool m_isalphaoptimized;
+		// Does this image share data with another
+		bool m_shared;
+		// Area which this image occupy in shared image
+		Rect m_subimagerect;
 
 	private:
-		void reset(SDL_Surface* surface);
+		std::string createUniqueImageName();
 	};
-
 }
 
 #endif

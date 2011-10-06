@@ -113,7 +113,7 @@ namespace FIFE {
 			inline Matrix& loadRotate(T angle, T x, T y, T z) {
 				register T magSqr = x*x + y*y + z*z;
 				if (magSqr != 1.0) {
-					register T mag = sqrt(magSqr);
+					register T mag = Math<T>::Sqrt(magSqr);
 					x/=mag;
 					y/=mag;
 					z/=mag;
@@ -219,11 +219,11 @@ namespace FIFE {
 
 			/** Direct access to the matrix elements, just remember they are in column major format!!
 			 */
-			inline T& operator[] (int ind) {
+			inline T& operator[] (int32_t ind) {
 				assert(ind > -1 && ind < 16);
 				return m[ind];
 			}
-			inline const T& operator[] (int ind) const {
+			inline const T& operator[] (int32_t ind) const {
 				assert(ind > -1 && ind < 16);
 				return m[ind];
 			}
@@ -373,7 +373,7 @@ namespace FIFE {
 	};
 
 	typedef Matrix<double> DoubleMatrix;
-	typedef Matrix<int> IntMatrix;
+	typedef Matrix<int32_t> IntMatrix;
 
 	/** Print coords of the Matrix to a stream
 	 */

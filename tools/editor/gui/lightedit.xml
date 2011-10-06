@@ -2,7 +2,7 @@
 
   <VBox>
     <Label text="General Options" min_size="45,20"/>
-    <HBox>
+	<HBox>
       <Label text="Group: " min_size="100,20"/>
       <TextField name="group" text="" min_size="100, 20" />
     </HBox>
@@ -22,13 +22,6 @@
       <TextBox text="-1" name="stencil" size="30,20" min_size="30,20" max_size="30,20" />
       <Button name="stencil_up" text="+" max_size="20,20"/>
       <Button name="stencil_dn" text="-" max_size="20,20"/>
-    </HBox>
-
-    <HBox>
-      <Label text="Alpha Test: " min_size="25,20"/>
-      <TextBox text="0.0" name="alpha" size="30,20" min_size="30,20" max_size="30,20" />
-      <Button name="alpha_up" text="+" max_size="20,20"/>
-      <Button name="alpha_dn" text="-" max_size="20,20"/>
     </HBox>
 
     <HBox>
@@ -149,32 +142,26 @@
     <VBox name="global_panel">
       <Label text="RGB values for Global Light" />
       <HBox>
-        <Label text="R" />
+		<Label text="R" />
         <TextBox text="1.0" name="value_R" min_size="30,20"/>
-        <Button text="+" name="increase_R" />
-        <Button text="-" name="decrease_R" />
-      </HBox>
-      <HBox>
-        <Label text="G" />
+		<Button text="+" name="increase_R" />
+		<Button text="-" name="decrease_R" />
+	</HBox>
+	<HBox>
+		<Label text="G" />
         <TextBox text="1.0" name="value_G" min_size="30,20"/>
-        <Button text="+" name="increase_G" />
-        <Button text="-" name="decrease_G" />
-      </HBox>
-      <HBox>
-        <Label text="B" />
+		<Button text="+" name="increase_G" />
+		<Button text="-" name="decrease_G" />
+	</HBox>
+	<HBox>
+		<Label text="B" />
         <TextBox text="1.0" name="value_B" min_size="30,20"/>
-        <Button text="+" name="increase_B" />
-        <Button text="-" name="decrease_B" />
-      </HBox>
-      <HBox>
-        <Label text="A" />
-        <TextBox text="1.0" name="value_A" min_size="30,20"/>
-        <Button text="+" name="increase_A" />
-        <Button text="-" name="decrease_A" />
-      </HBox>
-      <VBox>
-        <Button text="Random" name="random_global_light" />
-        <Button text="Reset" name="reset_global_light" />
+		<Button text="+" name="increase_B" />
+		<Button text="-" name="decrease_B" />
+	</HBox>
+	<VBox>
+		<Button text="Random" name="random_global_light" />
+		<Button text="Reset" name="reset_global_light" />
       </VBox>
     </VBox>
   </VBox>

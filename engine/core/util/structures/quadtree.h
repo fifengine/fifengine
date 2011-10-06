@@ -37,12 +37,12 @@ namespace FIFE {
 
 /** QuadTree Node
  */
-template<typename DataType, int MinimumSize = 128>
+template<typename DataType, int32_t MinimumSize = 128>
 class QuadNode {
 	protected:
 		QuadNode *m_parent;
 		QuadNode *m_nodes[4];
-		int m_x,m_y,m_size;
+		int32_t m_x,m_y,m_size;
 		DataType m_data;
 
 	public:
@@ -52,7 +52,7 @@ class QuadNode {
 		 *  @param y The Y position of this QuadNode.
 		 *  @param size The width and height of this QuadNode.
 		 */
-		QuadNode(QuadNode* parent, int x, int y, int size) 
+		QuadNode(QuadNode* parent, int32_t x, int32_t y, int32_t size) 
 			: m_parent(parent),m_x(x),m_y(y),m_size(size),m_data() {
 			m_nodes[0] = m_nodes[1] = m_nodes[2] = m_nodes[3] = 0L;
 		}
@@ -75,7 +75,7 @@ class QuadNode {
 		 *  This function will extend the tree automatically so that this guarantee
 		 *  can be fulfilled.
 		 */
-		QuadNode* find_container(int x, int y, int w, int h);
+		QuadNode* find_container(int32_t x, int32_t y, int32_t w, int32_t h);
 		QuadNode* find_container(const Rect& rect) {
 			return find_container(rect.x,rect.y,rect.w,rect.h);
 		}
@@ -90,7 +90,7 @@ class QuadNode {
 		 * left and finally bottom right).
 		 */
 		template<typename Visitor>
-		void apply_visitor(Visitor& visitor, int d = 0) {
+		void apply_visitor(Visitor& visitor, int32_t d = 0) {
 			if( !visitor.visit(this, d) )
 				return;
 			if( m_nodes[0] ) m_nodes[0]->apply_visitor(visitor, d + 1);
@@ -101,15 +101,15 @@ class QuadNode {
 
 		/** Return the X position of the node.
 		 */
-		int x() const { return m_x; };
+		int32_t x() const { return m_x; };
 
 		/** Return the Y position of the node.
 		 */
-		int y() const { return m_y; };
+		int32_t y() const { return m_y; };
 
 		/** Return the size (width and height) of the node.
 		 */
-		int size() const { return m_size; };
+		int32_t size() const { return m_size; };
 
 		/** Return a reference to the data of the node.
 		 */
@@ -123,7 +123,7 @@ class QuadNode {
 		 * That is the top and left borders are inclusive, but the right and bottom
 		 * borders are exclusive.
 		 */
-		bool contains(int x, int y, int w, int h) const;
+		bool contains(int32_t x, int32_t y, int32_t w, int32_t h) const;
 
 		/// Expand the subnodes - only needed for debugging/profiling worst cases.
 		void splice();
@@ -137,16 +137,16 @@ class QuadNode {
 		 *  the given rectangle will eventually be contained after enough calls
 		 *  of this function.
 		 */
-		QuadNode* create_parent(int x, int y, int w, int h);
+		QuadNode* create_parent(int32_t x, int32_t y, int32_t w, int32_t h);
 	protected:
-		int  subnode(int x, int y, int w, int h) const;
+		int32_t  subnode(int32_t x, int32_t y, int32_t w, int32_t h) const;
 };
 
 /** Dynamic QuadTree
  *  A space partitioning tree automatically expanding to adjust
  *  to any object size put into the data structure.
  */
-template<typename DataType, int MinimumSize = 128>
+template<typename DataType, int32_t MinimumSize = 128>
 class QuadTree {
 	public:
 		typedef QuadNode<DataType,MinimumSize> Node;
@@ -156,7 +156,7 @@ class QuadTree {
 		 *  @param y The Y position of the starting node.
 		 *  @param starting_size The width and height of the starting node.
 		 */
-		QuadTree(int x = 0, int y = 0, int starting_size = MinimumSize) {
+		QuadTree(int32_t x = 0, int32_t y = 0, int32_t starting_size = MinimumSize) {
 			assert(starting_size>1);
 			m_cursor = m_root = new Node(0L,x,y,starting_size);
 		}
@@ -179,7 +179,7 @@ class QuadTree {
 		 *  the returned node will @b not contain all objects which might intersect with the given
 		 *  rectangle.
 		 */
-		Node* find_container(int x, int y, int w, int h);
+		Node* find_container(int32_t x, int32_t y, int32_t w, int32_t h);
 		Node* find_container(const Rect& rect) {
 			return find_container(rect.x,rect.y,rect.w,rect.h);
 		}
@@ -193,9 +193,9 @@ class QuadTree {
 		}
 
 		void clear() {
-			int x = m_root->x();
-			int y = m_root->y();
-			int s = m_root->size();
+			int32_t x = m_root->x();
+			int32_t y = m_root->y();
+			int32_t s = m_root->size();
 			delete m_root;
 			m_cursor = m_root = new Node(0L,x,y,s);
 		}
@@ -206,9 +206,9 @@ class QuadTree {
 };
 
 
-template<typename DataType, int MinimumSize>
+template<typename DataType, int32_t MinimumSize>
 inline
-bool QuadNode<DataType,MinimumSize>::contains(int x, int y, int w, int h) const {
+bool QuadNode<DataType,MinimumSize>::contains(int32_t x, int32_t y, int32_t w, int32_t h) const {
 	if (x < m_x)
 		return false;
 	if (y < m_y)
@@ -220,9 +220,9 @@ bool QuadNode<DataType,MinimumSize>::contains(int x, int y, int w, int h) const 
 	return true;
 }
 
-template<typename DataType, int MinimumSize>
+template<typename DataType, int32_t MinimumSize>
 inline
-int QuadNode<DataType,MinimumSize>::subnode(int x, int y, int w, int h) const {
+int32_t QuadNode<DataType,MinimumSize>::subnode(int32_t x, int32_t y, int32_t w, int32_t h) const {
 	/*
 		Very small performance impact - roughly 5% for
 		the already very fast find_container function.
@@ -249,9 +249,9 @@ int QuadNode<DataType,MinimumSize>::subnode(int x, int y, int w, int h) const {
 	return -1;
 }
 
-template<typename DataType,int MinimumSize>
+template<typename DataType,int32_t MinimumSize>
 QuadNode<DataType,MinimumSize>*
-QuadNode<DataType,MinimumSize>::find_container(int x, int y, int w, int h) {
+QuadNode<DataType,MinimumSize>::find_container(int32_t x, int32_t y, int32_t w, int32_t h) {
 	if( !contains(x,y,w,h) ) {
 		if (m_parent) {
 			return m_parent->find_container(x,y,w,h);
@@ -263,7 +263,7 @@ QuadNode<DataType,MinimumSize>::find_container(int x, int y, int w, int h) {
 		return this;
 	}
 
-	int r = subnode(x,y,w,h);
+	int32_t r = subnode(x,y,w,h);
 	switch(r) {
 	case -1:
 		return this;
@@ -293,9 +293,9 @@ QuadNode<DataType,MinimumSize>::find_container(int x, int y, int w, int h) {
 	}
 }
 
-template<typename DataType,int MinimumSize>
+template<typename DataType,int32_t MinimumSize>
 QuadNode<DataType,MinimumSize>* 
-QuadNode<DataType,MinimumSize>::create_parent(int x, int y, int w, int h) {
+QuadNode<DataType,MinimumSize>::create_parent(int32_t x, int32_t y, int32_t w, int32_t h) {
 	/*
 		If used only by the tree, these two are superfluous.
 	*/
@@ -335,7 +335,7 @@ QuadNode<DataType,MinimumSize>::create_parent(int x, int y, int w, int h) {
 	return m_parent;
 }
 
-template<typename DataType,int MinimumSize>
+template<typename DataType,int32_t MinimumSize>
 void QuadNode<DataType,MinimumSize>::splice() {
 	if (m_size <= MinimumSize)
 		return;
@@ -354,9 +354,9 @@ void QuadNode<DataType,MinimumSize>::splice() {
 	}
 }
 
-template<typename DataType,int MinimumSize>
+template<typename DataType,int32_t MinimumSize>
 QuadNode<DataType,MinimumSize>*
-QuadTree<DataType,MinimumSize>::find_container(int x, int y, int w, int h) {
+QuadTree<DataType,MinimumSize>::find_container(int32_t x, int32_t y, int32_t w, int32_t h) {
 	m_cursor = m_cursor->find_container(x,y,w,h);
 	while( m_cursor == 0L ) {
 		m_root = m_root->create_parent(x,y,w,h);

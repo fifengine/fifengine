@@ -36,9 +36,9 @@ namespace FIFE {
 	static Logger _log(LM_VIEW);
 	
 	// use some big value, so that non-positioned renderers show on top
-	const int DEFAULT_RENDERER_POSITION = 1000;	
+	const int32_t DEFAULT_RENDERER_POSITION = 1000;	
 	
-	RendererBase::RendererBase(RenderBackend* renderbackend, int position): 
+	RendererBase::RendererBase(RenderBackend* renderbackend, int32_t position): 
 		m_renderbackend(renderbackend),
 		m_enabled(false),
 		m_pipeline_position(DEFAULT_RENDERER_POSITION),
@@ -61,7 +61,7 @@ namespace FIFE {
 		m_listener(NULL) {
 	}
 	
-	void RendererBase::setPipelinePosition(int position) { 
+	void RendererBase::setPipelinePosition(int32_t position) { 
 		if (position !=m_pipeline_position) { 
 			m_pipeline_position = position; 
 			if (m_listener) {

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -39,23 +39,20 @@ namespace FIFE {
 	 */
 	class SDLImage : public Image {
 	public:
+		SDLImage(IResourceLoader* loader = 0);
+		SDLImage(const std::string& name, IResourceLoader* loader = 0);
 		SDLImage(SDL_Surface* surface);
-		SDLImage(const uint8_t* data, unsigned int width, unsigned int height);
-		virtual ~SDLImage();
-		void invalidate() {}; //do nothing for SDL images (for now)
-		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
-		void saveImage(const std::string& filename);
- 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
-		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
-		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		SDLImage(const std::string& name, SDL_Surface* surface);
+		SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
+		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
-	protected:
-		void setClipArea(const Rect& cliparea, bool clear);
+		virtual ~SDLImage();
+		virtual void invalidate() {}; //do nothing for SDL images (for now)
+		virtual void setSurface(SDL_Surface* surface);
+		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual size_t getSize();
+		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
+		virtual void forceLoadInternal() {}
 
 	private:
 		// Call this before rendering

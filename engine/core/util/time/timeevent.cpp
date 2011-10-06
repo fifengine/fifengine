@@ -34,7 +34,7 @@
 
 namespace FIFE {
 
-	TimeEvent::TimeEvent(int period):
+	TimeEvent::TimeEvent(int32_t period):
 		m_period(period),
 		m_last_updated(TimeManager::instance()->getTime()) {
 	}
@@ -43,8 +43,8 @@ namespace FIFE {
 		return;
 	}
 
-	void TimeEvent::managerUpdateEvent(unsigned long time) {
-		int time_delta = static_cast<int>(time - m_last_updated);
+	void TimeEvent::managerUpdateEvent(uint32_t time) {
+		int32_t time_delta = static_cast<int32_t>(time - m_last_updated);
 		if (m_period < 0) {
 			return;
 		} else if (m_period == 0 || time_delta >= m_period) {
@@ -53,19 +53,19 @@ namespace FIFE {
 		}
 	}
 
-	void TimeEvent::setPeriod(int period) {
+	void TimeEvent::setPeriod(int32_t period) {
 		m_period = period;
 	}
 
-	int TimeEvent::getPeriod() {
+	int32_t TimeEvent::getPeriod() {
 		return m_period;
 	}
 
-	unsigned long TimeEvent::getLastUpdateTime() {
+	uint32_t TimeEvent::getLastUpdateTime() {
 		return m_last_updated;
 	}
 
-	void TimeEvent::setLastUpdateTime(unsigned long ms) {
+	void TimeEvent::setLastUpdateTime(uint32_t ms) {
 		m_last_updated = ms;
 	}
 

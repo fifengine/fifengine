@@ -60,9 +60,9 @@ namespace FIFE {
 					uint16_t comp;
 					uint32_t crc32;
 					std::string path;
-					unsigned int size_comp;
-					unsigned int size_real;
-					unsigned int offset;
+					uint32_t size_comp;
+					uint32_t size_real;
+					uint32_t offset;
 				};
 
 			typedef std::map<std::string, s_data> type_files;

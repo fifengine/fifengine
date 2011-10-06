@@ -27,6 +27,7 @@
 #include <map>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,6 +36,7 @@
 #include "model/structures/location.h"
 #include "util/structures/rect.h"
 #include "util/math/matrix.h"
+#include "video/animation.h"
 
 #include "rendererbase.h"
 
@@ -43,8 +45,6 @@ namespace FIFE {
 	typedef Point3D ScreenPoint;
 	class Layer;
 	class Instance;
-	class ImagePool;
-	class AnimationPool;
 	class RenderBackend;
 	class LayerCache;
 	class MapObserver;
@@ -77,9 +77,7 @@ namespace FIFE {
 		Camera(const std::string& id,
 			Layer* layer,
 			const Rect& viewport,
-			RenderBackend* renderbackend,
-			ImagePool* ipool,
-			AnimationPool* apool);
+			RenderBackend* renderbackend);
 
 		/** Destructor
 		 */
@@ -131,7 +129,7 @@ namespace FIFE {
 		 * one cell in the layer where camera is bind
 		 * @return Point Point containing x=width and y=height
 		 */
-		void setCellImageDimensions(unsigned int width, unsigned int height);
+		void setCellImageDimensions(uint32_t width, uint32_t height);
 
 		/** Gets screen cell image dimensions.
 		 * @see setCellImageDimensions
@@ -144,6 +142,10 @@ namespace FIFE {
 		*/
 		Point getCellImageDimensions(Layer* layer);
 
+		/** Gets reference scale for cell image dimensions
+		 */
+		double getReferenceScale() const { return m_reference_scale; }
+
 		/** Sets the location for camera
 		 * @param location location (center point) to render
 		 */
@@ -154,6 +156,9 @@ namespace FIFE {
 		 */
 		Location getLocation() const;
 
+		/** Gets screen point for the camera location
+		 * @return camera screen point
+		 */
 		Point3D getOrigin() const;
 
 		/** Gets a reference to the camera location
@@ -198,12 +203,12 @@ namespace FIFE {
 		/** Transforms given point from map coordinates to screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
+		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
 
 		/** Transforms given point from map coordinates to virtual screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		DoublePoint3D toVirtualScreenCoordinates(ExactModelCoordinate map_coords);
+		DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& map_coords);
 
 		ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
 		DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
@@ -221,7 +226,7 @@ namespace FIFE {
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
 		 */
-		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
+		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
 		/** Returns instances that match given screen coordinate
 		 * @param screen_point1 top left screen coordinates to be used for hit search
@@ -229,7 +234,7 @@ namespace FIFE {
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
 		 */
-		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances);
+		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
 		/** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
 		 * instance is first in returned list
@@ -276,16 +281,58 @@ namespace FIFE {
 		void calculateZValue(ScreenPoint& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
+
 		void onRendererEnabledChanged(RendererBase* renderer);
 
-		/** Use with OpenGL only! Checks to see if the entire viewport was rendered last frame.
-		 * If so it wont clear the backbuffer.
+		/** Sets lighting color
 		 */
-		bool testRenderedViewPort();
+		void setLightingColor(float red, float green, float blue);
 
-		void setLightingColor(float red, float green, float blue, float alpha);
+		/** Resets lighting color
+		 */
 		void resetLightingColor();
+
+		/** Returns a vector that contain the light color
+		 */
 		std::vector<float> getLightingColor();
+
+		/** Sets a color as overlay
+		 */
+		void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+
+		/** Returns a vector that contain the overlay color
+		 */
+		std::vector<uint8_t> getOverlayColor();
+
+		/** Resets the color overlay
+		 */
+		void resetOverlayColor();
+
+		/** Sets a image as overlay,
+		 *  if fill is true the image gets the viewport size.
+		 */
+		void setOverlayImage(int32_t id, bool fill = false);
+
+		/** Returns the pool id of the overlay image
+		 */
+		int32_t getOverlayImage();
+
+		/** Resets the image overlay
+		 */
+		void resetOverlayImage();
+
+		/** Sets a animation as overlay,
+		 *  if fill is true the animation gets the viewport size.
+		 */
+		void setOverlayAnimation(AnimationPtr anim, bool fill = false);
+
+		/** Returns an AnimationPtr to the overlay animation
+		 */
+		AnimationPtr getOverlayAnimation();
+
+		/** Resets the animation overlay
+		 */
+		void resetOverlayAnimation();
 
 		/** Renders camera
 		 */
@@ -315,9 +362,21 @@ namespace FIFE {
 		 */
 		void updateReferenceScale();
 
+		/** Updates camera RenderLists
+		 */
+		void updateRenderLists();
+
+		/** Returns true if associated LayerCache need update
+		 */
+		bool cacheNeedUpdate(Layer* layer);
+
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
+
+		/** Renders the overlay(color, image, animation) for the camera.
+		 */
+		void renderOverlay();
 
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
@@ -331,28 +390,24 @@ namespace FIFE {
 		double m_rotation;
 		double m_zoom;
 		Location m_location;
-		ScreenPoint m_prev_origo;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
 		bool m_view_updated;
-		unsigned int m_screen_cell_width;
-		unsigned int m_screen_cell_height;
+		uint32_t m_screen_cell_width;
+		uint32_t m_screen_cell_height;
 		double m_reference_scale;
 		bool m_enabled;
 		Instance* m_attachedto;
-		bool m_backendSDL;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
-		bool m_iswarped;
+		bool m_iswarped; // true, if the geometry had changed
 
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
-		bool m_updated; // false, if view has never been updated before
+		bool m_updated; // false, if view has not been updated
 
 		RenderBackend* m_renderbackend;
-		ImagePool* m_ipool;
-		AnimationPool* m_apool;
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
 		t_layer_to_instances m_layer_to_instances;
@@ -365,6 +420,17 @@ namespace FIFE {
 		bool m_lighting;
 		// caches the light color for the camera
 		std::vector<float> m_light_colors;
+
+		// overlay stuff
+		bool m_col_overlay;
+		bool m_img_overlay;
+		bool m_ani_overlay;
+		SDL_Color m_overlay_color;
+		int32_t m_img_id;
+		AnimationPtr m_ani_ptr;
+		bool m_img_fill;
+		bool m_ani_fill;
+		uint32_t m_start_time;
 	};
 }
 #endif

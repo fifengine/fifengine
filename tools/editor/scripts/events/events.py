@@ -25,6 +25,8 @@ from fife import fife
 import scripts
 from fife.fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
 from signal import Signal
+from fife.extensions import pychan
+
 import pdb
 
 #--- Signals ---#
@@ -95,7 +97,7 @@ class EventListener:
 		eventmanager.addKeyListener(self.keylistener)
 		eventmanager.addCommandListener(self.commandlistener)
 		eventmanager.addMouseListener(self.mouselistener)
-		self.engine.getGuiManager().getConsole().setConsoleExecuter(self.consoleexecuter)
+		pychan.manager.hook.guimanager.getConsole().setConsoleExecuter(self.consoleexecuter)
 		
 		keyPressed.connect(self.keyPressed)
 		keyReleased.connect(self.keyReleased)
@@ -147,7 +149,10 @@ class EventListener:
 		elif keyval == fife.Key.ESCAPE:
 			scripts.editor.getEditor().quit()
 		elif keyval == fife.Key.F10:
-			self.engine.getGuiManager().getConsole().toggleShowHide()
+			# ugly hack, as self.engine.getGuiChanManager() doesn´t work
+			# yet
+			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+			# self.engine.getGuiChanManager().getConsole().toggleShowHide()
 		elif keystr == "d":
 			pdb.set_trace()
 			

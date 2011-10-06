@@ -31,8 +31,8 @@
 #include "angles.h"
 
 namespace FIFE {
-	int getIndexByAngle(int angle, const type_angle2id& angle2id, int& closestMatchingAngle) {
-		int wangle = (360 + angle) % 360;
+	int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle) {
+		int32_t wangle = (360 + angle) % 360;
 
 		if (angle2id.size() == 0) {
 			return -1;
@@ -47,8 +47,8 @@ namespace FIFE {
 
 		// take care of the forward wrapping case
 		if (u == angle2id.end()) {
-			int ud = wangle - (--u)->first;
-			int ld = 360 - wangle + angle2id.begin()->first;
+			int32_t ud = wangle - (--u)->first;
+			int32_t ld = 360 - wangle + angle2id.begin()->first;
 			if (ud > ld) {
 				// wrapped value (first)
 				closestMatchingAngle = angle2id.begin()->first;
@@ -63,8 +63,8 @@ namespace FIFE {
 		if (u == angle2id.begin()) {
 			tmp = angle2id.end();
 			tmp--;
-			int ld = u->first - wangle;
-			int ud = 360 - tmp->first + wangle;
+			int32_t ld = u->first - wangle;
+			int32_t ud = 360 - tmp->first + wangle;
 			if (ud > ld) {
 				// non-wrapped value (first)
 				closestMatchingAngle = angle2id.begin()->first;
@@ -76,13 +76,13 @@ namespace FIFE {
 		}
 
 		// value in the middle...
-		int ud = u->first - wangle;
-		int ucm = u->first;
-		int ui = u->second;
+		int32_t ud = u->first - wangle;
+		int32_t ucm = u->first;
+		int32_t ui = u->second;
 		u--;
-		int ld = wangle - u->first;
-		int lcm = u->first;
-		int li = u->second;
+		int32_t ld = wangle - u->first;
+		int32_t lcm = u->first;
+		int32_t li = u->second;
 
 		if (ud <= ld) {
 			closestMatchingAngle = ucm;

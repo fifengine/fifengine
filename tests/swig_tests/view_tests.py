@@ -29,31 +29,31 @@ class TestView(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine()
-		model = self.engine.getModel()
-		map = model.createMap("map001")
+		self.model = self.engine.getModel()
+		self.map = self.model.createMap("map001")
 		
-		self.grid = fife.SquareGrid()
-		pool = self.engine.getImagePool()
+		self.grid = self.model.getCellGrid("square")
+		
+		self.imgMgr = self.engine.getImageManager()
 
-		self.obj1 = model.createObject('0','test_nspace')
+		self.obj1 = self.model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj1)
-		imgid = pool.addResourceFromFile('tests/data/mushroom_007.png')
-		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
+		img1 = self.imgMgr.load('../data/mushroom_007.png')
+		self.obj1.get2dGfxVisual().addStaticImage(0, img1.getHandle())
 		
-		self.obj2 = model.createObject('1','test_nspace')
+		self.obj2 = self.model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
-		imgid = pool.addResourceFromFile('tests/data/earth_1.png')
-		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
+		img2 = self.imgMgr.get('../data/earth_1.png')
+		self.obj2.get2dGfxVisual().addStaticImage(0, img2.getHandle())
 
-		img = pool.getImage(imgid)
-		self.screen_cell_w = img.getWidth()
-		self.screen_cell_h = img.getHeight()
+		self.screen_cell_w = img2.getWidth()
+		self.screen_cell_h = img2.getHeight()
 		
-		self.layer = map.createLayer("layer001", self.grid)
+		self.layer = self.map.createLayer("layer001", self.grid)
 
 		self.camcoord = fife.ExactModelCoordinate(2,0)
 		
-
+		print "Total Image Memory Used: " + str(self.imgMgr.getMemoryUsed())
 		
 	def tearDown(self):
 		self.engine.destroy()
@@ -62,13 +62,15 @@ class TestView(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 
-		cam = self.engine.getView().addCamera("foo", self.layer, viewport, self.camcoord )
+		cam = self.map.addCamera("foo", self.layer, viewport )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
 		
 		cam.setViewPort(viewport)
-		self.engine.getView().resetRenderers()
+		
+		renderer = fife.InstanceRenderer.getInstance(cam)
+		renderer.activateAllLayers(self.map)
 		
 		self.engine.initializePumping()
 		
@@ -108,7 +110,6 @@ class TestView(unittest.TestCase):
 				cam.setZoom(cam.getZoom() - 0.010)
 			self.engine.pump()
 		self.engine.finalizePumping()
-		self.engine.getView().removeCamera(cam)
 	
 		
 

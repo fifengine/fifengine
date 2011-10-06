@@ -33,7 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
 #include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
 #include "util/structures/rect.h"
@@ -44,8 +44,6 @@ namespace FIFE {
 
 	class RendererBase;
 	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
 	class Layer;
 	class CellGrid;
 	class Map;
@@ -85,7 +83,7 @@ namespace FIFE {
 	 * The actual data is contained in \c Layer objects
 	 * @see Layer
 	 */
-	class Map : public ResourceClass {
+	class Map : public FifeClass {
 		public:
 
 			/** Construct a map
@@ -93,8 +91,7 @@ namespace FIFE {
 			 * map is not registered with the engine properly)
 			 */
 			Map(const std::string& identifier, RenderBackend* renderbackend,
-				const std::vector<RendererBase*>& renderers, ImagePool* imagepool,
-				AnimationPool* animpool, TimeProvider* tp_master=NULL);
+				const std::vector<RendererBase*>& renderers, TimeProvider* tp_master=NULL);
 
 			/** Destructor
 			 */
@@ -126,7 +123,7 @@ namespace FIFE {
 
 			/** Get the overall number of layers
 			 */
-			uint32_t getNumLayers() const;
+			uint32_t getLayerCount() const;
 
 			/** Delete all layers from the map
 			 */
@@ -136,6 +133,12 @@ namespace FIFE {
 			 */
 			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer,
 				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
+
+			/** Retrieves the minimum/maximum coordinates of instances on the map.
+			 * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.
+			 * @param max A reference to a ExactModelCoordinate that will hold the maximum coordinate.
+			 */
+			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
 
 			/** Called periodically to update events on map
 			 * @returns true, if map was changed
@@ -189,8 +192,12 @@ namespace FIFE {
 			*/
 			std::vector<Camera*>& getCameras();
 
+			void setFilename(const std::string& file) { m_filename = file; }
+			const std::string& getFilename() const { return m_filename; }
+
 		private:
 			std::string m_id;
+			std::string m_filename;
 
 			std::list<Layer*> m_layers;
 			TimeProvider m_timeprovider;
@@ -208,8 +215,6 @@ namespace FIFE {
 			std::vector<Camera*> m_cameras;
 
 			RenderBackend* m_renderbackend;
-			ImagePool* m_imagepool;
-			AnimationPool* m_animpool;
 
 			// holds handles to all created renderers
 			std::vector<RendererBase*> m_renderers;

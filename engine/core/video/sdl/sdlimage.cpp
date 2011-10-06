@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -40,20 +40,39 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
+	SDLImage::SDLImage(IResourceLoader* loader):
+		Image(loader) {
+		resetSdlimage();
+	}
+
+	SDLImage::SDLImage(const std::string& name, IResourceLoader* loader):
+		Image(name, loader) {
+		resetSdlimage();
+	}
+
 	SDLImage::SDLImage(SDL_Surface* surface):
 		Image(surface) {
 		resetSdlimage();
 	 }
 
-	SDLImage::SDLImage(const uint8_t* data, unsigned int width, unsigned int height):
+	SDLImage::SDLImage(const std::string& name, SDL_Surface* surface):
+		Image(name, surface) {
+		resetSdlimage();
+	 }
+
+	SDLImage::SDLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height) {
+		resetSdlimage();
+	}
+
+	SDLImage::SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height):
+		Image(name, data, width, height) {
 		resetSdlimage();
 	}
 
 	void SDLImage::resetSdlimage() {
 		m_last_alpha = 255;
 		m_finalized = false;
-		m_isalphaoptimized = false;
 		m_colorkey = RenderBackend::instance()->getColorKey();
 		m_scale_x = 1.0;
 		m_scale_y = 1.0;
@@ -66,13 +85,18 @@ namespace FIFE {
 		}
 	}
 
+	void SDLImage::setSurface(SDL_Surface* surface) {
+		reset(surface);
+		resetSdlimage();
+	}
+
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
-		SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
+		SDL_Surface* dst,  SDL_Rect* dstRect, uint8_t alpha ) {
 		if( 0 == alpha ) {
 			return;
 		}
 
-		int screenX, screenY;
+		int32_t screenX, screenY;
 		if( dstRect ) {
 			screenX = dstRect->x;
 			screenY = dstRect->y;
@@ -81,7 +105,7 @@ namespace FIFE {
 			screenY = dst->clip_rect.y;
 		}
 
-		int width, height, tX, tY;
+		int32_t width, height, tX, tY;
 		if( srcRect ) {
 			tX = srcRect->x;
 			tY = srcRect->y;
@@ -103,26 +127,26 @@ namespace FIFE {
 		}
 
 		if( screenX < dst->clip_rect.x ) {
-			int dX = dst->clip_rect.x - screenX;
+			int32_t dX = dst->clip_rect.x - screenX;
 			screenX += dX;
 			width -= dX;
 			tX += dX;
 		}
 
 		if( ( screenX + width ) > ( dst->clip_rect.x + dst->clip_rect.w ) ) {
-			int dX = ( screenX + width ) - ( dst->clip_rect.x + dst->clip_rect.w );
+			int32_t dX = ( screenX + width ) - ( dst->clip_rect.x + dst->clip_rect.w );
 			width -= dX;
 		}
 
 		if( screenY < dst->clip_rect.y ) {
-			int dY = dst->clip_rect.y - screenY;
+			int32_t dY = dst->clip_rect.y - screenY;
 			screenY += dY;
 			height -= dY;
 			tY += dY;
 		}
 
 		if( ( screenY + height ) > ( dst->clip_rect.y + dst->clip_rect.h ) ) {
-			int dY = ( screenY + height ) - ( dst->clip_rect.y + dst->clip_rect.h );
+			int32_t dY = ( screenY + height ) - ( dst->clip_rect.y + dst->clip_rect.h );
 			height -= dY;
 		}
 
@@ -132,8 +156,8 @@ namespace FIFE {
 
 		SDL_LockSurface( dst );
 
-		unsigned char* srcData = reinterpret_cast< unsigned char* > ( src->pixels );
-		unsigned char* dstData = reinterpret_cast< unsigned char* > ( dst->pixels );
+		uint8_t* srcData = reinterpret_cast< uint8_t* > ( src->pixels );
+		uint8_t* dstData = reinterpret_cast< uint8_t* > ( dst->pixels );
 
 		// move data pointers to the start of the pixels we're copying
 		srcData += tY * src->pitch  + tX * src->format->BytesPerPixel;
@@ -144,7 +168,7 @@ namespace FIFE {
 				switch( dst->format->BitsPerPixel ) {
 					case 16: {
 						if( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) {
-							for( int y = height; y > 0; --y ) {
+							for( int32_t y = height; y > 0; --y ) {
 								SDL_BlendRow_RGBA8_to_RGB565( srcData, dstData, alpha, width );
 								srcData += src->pitch;
 								dstData += dst->pitch;
@@ -154,7 +178,7 @@ namespace FIFE {
 					break;
 
 					case 24: {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA8_to_RGB8( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -163,7 +187,7 @@ namespace FIFE {
 					break;
 
 					case 32: {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA8_to_RGBA8( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -181,7 +205,7 @@ namespace FIFE {
 				if( 0x000F == src->format->Amask ) {
 					if( ( 16 == dst->format->BitsPerPixel ) &&
 						( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) ) {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA4_to_RGB565( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -203,15 +227,15 @@ namespace FIFE {
 		SDL_Color* src_help_pointer = src_pointer;
 		SDL_Color* dst_pointer = (SDL_Color*)dst->pixels;
 
-		int x, y, *sx_ca, *sy_ca;
-		int dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
-		int sx = static_cast<int>(0xffff * src->w / dst->w);
-		int sy = static_cast<int>(0xffff * src->h / dst->h);
-		int sx_c = 0;
-		int sy_c = 0;
+		int32_t x, y, *sx_ca, *sy_ca;
+		int32_t dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
+		int32_t sx = static_cast<int32_t>(0xffff * src->w / dst->w);
+		int32_t sy = static_cast<int32_t>(0xffff * src->h / dst->h);
+		int32_t sx_c = 0;
+		int32_t sy_c = 0;
 
 		// Allocates memory and calculates row wide&height
-		int* sx_a = (int*)malloc((dst->w + 1) * sizeof(Uint32));
+		int32_t* sx_a = (int32_t*)malloc((dst->w + 1) * sizeof(Uint32));
 		if (sx_a == NULL) {
 			return;
 		} else {
@@ -223,7 +247,7 @@ namespace FIFE {
 				sx_c += sx;
 			}
 		}
-		int* sy_a = (int*)malloc((dst->h + 1) * sizeof(Uint32));
+		int32_t* sy_a = (int32_t*)malloc((dst->h + 1) * sizeof(Uint32));
 		if (sy_a == NULL) {
 			free(sx_a);
 			return;
@@ -275,8 +299,8 @@ namespace FIFE {
 
 		SDL_Surface *zoom_src;
 		SDL_Surface *zoom_dst;
-		int dst_w = static_cast<int>(round(src->w * zoomx));
-		int dst_h = static_cast<int>(round(src->h * zoomy));
+		int32_t dst_w = static_cast<int32_t>(round(src->w * zoomx));
+		int32_t dst_h = static_cast<int32_t>(round(src->h * zoomy));
 		if (dst_w < 1)
 			dst_w = 1;
 		if (dst_h < 1)
@@ -306,17 +330,19 @@ namespace FIFE {
 		return ABS(a - b) <= 0.00001;
 	}
 
-	void SDLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
+	void SDLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* /*unused rgb*/) {
 		if (alpha == 0) {
 			return;
 		}
+		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
 
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) ||
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
 		finalize();
 
-		SDL_Surface* surface = screen;
 		SDL_Rect r;
 		r.x = rect.x;
 		r.y = rect.y;
@@ -338,43 +364,43 @@ namespace FIFE {
 			}
 		}
 
-		if (m_surface->format->Amask == 0) {
+ 		if (m_surface->format->Amask == 0) {
 			// Image has no alpha channel. This allows us to use the per-surface alpha.
 			if (m_last_alpha != alpha) {
 				m_last_alpha = alpha;
 				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 			}
 			if (!zoomed) {
-				SDL_BlitSurface(m_surface, 0, surface, &r);
+				SDL_BlitSurface(m_surface, 0, target, &r);
 			} else if (equal && m_zoom_surface) {
-				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 			} else {
 				SDL_FreeSurface(m_zoom_surface);
 				m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 			}
-		} else {
+ 		} else {
 			if( 255 != alpha ) {
 				// Special blitting routine with alpha blending:
 				// dst.rgb = ( src.rgb * src.a * alpha ) + ( dst.rgb * (255 - ( src.a * alpha ) ) );
 				if (!zoomed) {
-					SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha( m_surface, 0, target, &r, alpha );
 				} else if (equal && m_zoom_surface) {
-					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, target, &r, alpha );
 				} else {
 					SDL_FreeSurface(m_zoom_surface);
 					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, target, &r, alpha );
 				}
 			} else {
 				if (!zoomed) {
-					SDL_BlitSurface(m_surface, 0, surface, &r);
+					SDL_BlitSurface(m_surface, 0, target, &r);
 				} else if (equal && m_zoom_surface) {
-					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+					SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 				} else {
 					SDL_FreeSurface(m_zoom_surface);
 					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
-					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+					SDL_BlitSurface(m_zoom_surface, 0, target, &r);
 				}
 			}
 		}
@@ -397,7 +423,7 @@ namespace FIFE {
 			m_surface = SDL_DisplayFormat(m_surface);
 		} else {
 			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
-			m_isalphaoptimized = be->isAlphaOptimizerEnabled();
+			bool m_isalphaoptimized = be->isAlphaOptimizerEnabled();
 			if( m_isalphaoptimized ) {
 				m_surface = optimize(m_surface);
 			} else  {
@@ -425,15 +451,15 @@ namespace FIFE {
 
 		// As a reminder: src->format->Amask != 0 here
 
-		int transparent = 0;
-		int opaque = 0;
-		int semitransparent = 0;
-		int alphasum = 0;
-		int alphasquaresum = 0;
+		int32_t transparent = 0;
+		int32_t opaque = 0;
+		int32_t semitransparent = 0;
+		int32_t alphasum = 0;
+		int32_t alphasquaresum = 0;
 		bool colors[(1 << 12)];
 		memset(colors, 0, (1 << 12) * sizeof(bool));
 
-		int bpp = src->format->BytesPerPixel;
+		int32_t bpp = src->format->BytesPerPixel;
 		if(SDL_MUSTLOCK(src)) {
 			SDL_LockSurface(src);
 		}
@@ -441,8 +467,8 @@ namespace FIFE {
 			and the number of semitransparent pixels.
 			We also try to find a useable color.
 		*/
-		for(int y = 0;y < src->h;y++) {
-			for(int x = 0;x < src->w;x++) {
+		for(int32_t y = 0;y < src->h;y++) {
+			for(int32_t x = 0;x < src->w;x++) {
 				Uint8 *pixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
 				Uint32 mapped = 0;
 				switch(bpp) {
@@ -486,8 +512,8 @@ namespace FIFE {
 				}
 			}
 		}
-		int avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
-		int alphavariance = 0;
+		int32_t avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
+		int32_t alphavariance = 0;
 
 		if(SDL_MUSTLOCK(src)) {
 			SDL_UnlockSurface(src);
@@ -507,8 +533,8 @@ namespace FIFE {
 		}
 
 		// check availability of a suitable color as colorkey
-		int keycolor = -1;
-		for(int i = 0;i < (1 << 12);i++) {
+		int32_t keycolor = -1;
+		for(int32_t i = 0;i < (1 << 12);i++) {
 			if(!colors[i]) {
 				keycolor = i;
 				break;
@@ -542,8 +568,8 @@ namespace FIFE {
 		if(SDL_MUSTLOCK(dst)) {
 			SDL_LockSurface(dst);
 		}
-		for(int y = 0;y < dst->h;y++) {
-			for(int x = 0;x < dst->w;x++) {
+		for(int32_t y = 0;y < dst->h;y++) {
+			for(int32_t x = 0;x < dst->w;x++) {
 				Uint8 *srcpixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
 				Uint8 *dstpixel = (Uint8 *) dst->pixels + y * dst->pitch + x * bpp;
 				Uint32 mapped = 0;
@@ -621,225 +647,31 @@ namespace FIFE {
 		return convert;
 	} // end optimize
 
-	bool SDLImage::putPixel(int x, int y, int r, int g, int b, int a) {
-		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
-			return false;
+	size_t SDLImage::getSize() {
+		size_t zoomSize = 0;
+		if (m_zoom_surface) {
+			zoomSize = m_zoom_surface->h * m_zoom_surface->pitch;
 		}
 
-		int bpp = m_surface->format->BytesPerPixel;
-		SDL_LockSurface(m_surface);
-		Uint8* p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
-		Uint32 pixel = SDL_MapRGB(m_surface->format, r, g, b);
-		switch(bpp)
-		{
-			case 1:
-				*p = pixel;
-				break;
+		return m_surface->h * m_surface->pitch + zoomSize;
+	}
 
-			case 2:
-				*(Uint16 *)p = pixel;
-				break;
-
-			case 3:
-				if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-					p[0] = (pixel >> 16) & 0xff;
-					p[1] = (pixel >> 8) & 0xff;
-					p[2] = pixel & 0xff;
-				}
-				else {
-					p[0] = pixel & 0xff;
-					p[1] = (pixel >> 8) & 0xff;
-					p[2] = (pixel >> 16) & 0xff;
-				}
-				break;
-
-			case 4:
-				*(Uint32 *)p = pixel;
-				break;
+	void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h, 32,
+			RMASK, GMASK, BMASK ,AMASK);
+		if(shared->getState() != IResource::RES_LOADED) {
+			shared->load();
 		}
-		SDL_UnlockSurface(m_surface);
-		return true;
-	}
+		SDL_Surface* src_surface = shared->getSurface();
 
-	void SDLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
-		// Draw a line with Bresenham, imitated from guichan
-		int x1 = p1.x;
-		int x2 = p2.x;
-		int y1 = p1.y;
-		int y2 = p2.y;
-		int dx = ABS(x2 - x1);
-		int dy = ABS(y2 - y1);
+		SDL_SetAlpha(src_surface, 0, 0);
+		SDL_Rect srcrect = { region.x, region.y, region.w, region.h };
+		SDL_BlitSurface(src_surface, &srcrect, surface, NULL);
+		SDL_SetAlpha(src_surface, SDL_SRCALPHA, 0);
 
-		if (dx > dy) {
-			if (x1 > x2) {
-				// swap x1, x2
-				x1 ^= x2;
-				x2 ^= x1;
-				x1 ^= x2;
-
-				// swap y1, y2
-				y1 ^= y2;
-				y2 ^= y1;
-				y1 ^= y2;
-			}
-
-			if (y1 < y2) {
-				int y = y1;
-				int p = 0;
-
-				for (int x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b, a);
-					p += dy;
-					if (p * 2 >= dx) {
-						y++;
-						p -= dx;
-					}
-				}
-			}
-			else {
-				int y = y1;
-				int p = 0;
-
-				for (int x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b, a);
-
-					p += dy;
-					if (p * 2 >= dx) {
-						y--;
-						p -= dx;
-					}
-				}
-			}
-		}
-		else {
-			if (y1 > y2) {
-				// swap y1, y2
-				y1 ^= y2;
-				y2 ^= y1;
-				y1 ^= y2;
-
-				// swap x1, x2
-				x1 ^= x2;
-				x2 ^= x1;
-				x1 ^= x2;
-			}
-
-			if (x1 < x2) {
-				int x = x1;
-				int p = 0;
-
-				for (int y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b, a);
-					p += dx;
-					if (p * 2 >= dy) {
-						x++;
-						p -= dy;
-					}
-				}
-			}
-			else {
-				int x = x1;
-				int p = 0;
-
-				for (int y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b, a);
-					p += dx;
-					if (p * 2 >= dy) {
-						x--;
-						p -= dy;
-					}
-				}
-			}
-		}
-	}
-
-	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p1, r, g, b, a);
-	}
-
-	void SDLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Point p1, p2, p3, p4;
-
-		p1.x = p.x;
-		p1.y = p.y;
-		p2.x = p.x+w;
-		p2.y = p.y;
-		p3.x = p.x+w;
-		p3.y = p.y+h;
-		p4.x = p.x;
-		p4.y = p.y+h;
-
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
-	}
-
-	void SDLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		SDL_Rect rect;
-		rect.x = p.x;
-		rect.y = p.y;
-		rect.w = w;
-		rect.h = h;
-
-		Uint32 color = SDL_MapRGBA(m_surface->format, r, g, b, a);
-		SDL_FillRect(m_surface, &rect, color);
-	}
-
-	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int r, int g, int b, int a) {
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
-	}
-
-	void SDLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
-		Point p1 = Point(p.x-size, p.y+size);
-		Point p2 = Point(p.x+size, p.y+size);
-		Point p3 = Point(p.x+size, p.y-size);
-		Point p4 = Point(p.x-size, p.y-size);
-
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
-	}
-
-	void SDLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
-	}
-
-	void SDLImage::saveImage(const std::string& filename) {
-		if(m_surface) {
-			const unsigned int swidth = getWidth();
-			const unsigned int sheight = getHeight();
-			SDL_Surface *surface = NULL;
-
-			surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
-				sheight, 24,
-				RMASK, GMASK, BMASK, 0);
-
-			if(surface == NULL) {
-				return;
-			}
-
-			SDL_BlitSurface(m_surface, NULL, surface, NULL);
-
-			saveAsPng(filename, *surface);
-			SDL_FreeSurface(surface);
-		}
-	}
-
-	void SDLImage::setClipArea(const Rect& cliparea, bool clear) {
-		SDL_Rect rect;
-		rect.x = cliparea.x;
-		rect.y = cliparea.y;
-		rect.w = cliparea.w;
-		rect.h = cliparea.h;
-		SDL_SetClipRect(m_surface, &rect);
-		if (clear) {
-			SDL_FillRect(m_surface, &rect, 0x00);
-		}
+		setSurface(surface);
+		m_shared = false; // this isn't a mistake
+		m_subimagerect = region;
+		setState(IResource::RES_LOADED);
 	}
 }

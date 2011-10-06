@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -30,9 +30,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "model/metamodel/abstractvisual.h"
+#include "model/metamodel/ivisual.h"
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
+#include "video/animation.h"
+
 
 namespace FIFE {
 	class Object;
@@ -40,13 +42,13 @@ namespace FIFE {
 	class Action;
 	class Image;
 	class Camera;
-	
+
 	/** Base class for all 2 dimensional visual classes
 	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
 	 * The reason why its separated is to keep model view-agnostic, so that we could
 	 * have e.g. 3d, 2d and character based visualizations to the same data
 	 */
-	class Visual2DGfx: public AbstractVisual {
+	class Visual2DGfx: public IVisual {
 	public:
 		/** Destructor
 		 */
@@ -60,7 +62,7 @@ namespace FIFE {
 		/** Gets current transparency value (0-255)
 		 *  @return current transparency value
 		 */
-		unsigned int getTransparency() { return m_transparency; }
+		uint32_t getTransparency() { return m_transparency; }
 
 		/** Sets visibility value for object to be visualized
 		 *  @param visible is object visible or not
@@ -70,7 +72,7 @@ namespace FIFE {
 		/** Is instance visible or not
 		 *  @return is instance visible or not
 		 */
-		unsigned int isVisible() { return m_visible; }
+		uint32_t isVisible() { return m_visible; }
 
 	protected:
 		/** Constructor
@@ -103,21 +105,21 @@ namespace FIFE {
 		 *              (normal math notation)
 		  @param image_index index of image to use for given degress
 		 */
-		void addStaticImage(unsigned int angle, int image_index);
+		void addStaticImage(uint32_t angle, int32_t image_index);
 
 		/** Returns closest matching static image for given angle
 		 * @return id for static image
 		 */
-		int getStaticImageIndexByAngle(int angle);
+		int32_t getStaticImageIndexByAngle(int32_t angle);
 
 		/** Returns closest matching image angle for given angle
 		 * @return closest matching angle
 		 */
-		int getClosestMatchingAngle(int angle);
+		int32_t getClosestMatchingAngle(int32_t angle);
 
 		/** Returns list of available static image angles for this object
 		 */
-		void getStaticImageAngles(std::vector<int>& angles);
+		void getStaticImageAngles(std::vector<int32_t>& angles);
 
 	private:
 		/** Constructor
@@ -145,18 +147,18 @@ namespace FIFE {
 		 *  in the same location are drawn
 		 *  @param stackposition new stack position
 		 */
-		void setStackPosition(int stackposition) { m_stackposition = stackposition; }
+		void setStackPosition(int32_t stackposition) { m_stackposition = stackposition; }
 
 		/** Gets current stack position of instance
 		 *  @return current stack position
 		 */
-		int getStackPosition() { return m_stackposition; }
+		int32_t getStackPosition() { return m_stackposition; }
 
 	private:
 		/** Constructor
 		 */
 		InstanceVisual();
-		int m_stackposition;
+		int32_t m_stackposition;
 	};
 
 	/** Action visual contains data that is needed to visualize different actions on screen
@@ -173,25 +175,29 @@ namespace FIFE {
 
 		/** Adds new animation with given angle (degrees)
 		 */
-		void addAnimation(unsigned int angle, int animation_index);
+		void addAnimation(uint32_t angle, AnimationPtr animationptr);
 
 		/** Gets index to animation closest to given angle
 		 * @return animation index, -1 if no animations available
 		 */
-		int getAnimationIndexByAngle(int angle);
+		AnimationPtr getAnimationByAngle(int32_t angle);
 
 		/** Returns list of available angles for this Action
 		 */
-		void getActionImageAngles(std::vector<int>& angles);
+		void getActionImageAngles(std::vector<int32_t>& angles);
 
 	private:
 		/** Constructor
 		 */
 		ActionVisual();
 
-		// animations associated with this action (handles to pool)
-		//   mapping = direction -> animation
-		type_angle2id m_animations;
+		// animations associated with this action
+		typedef std::map<uint32_t, AnimationPtr> AngleAnimationMap;
+		AngleAnimationMap m_animation_map;
+
+		//@fixme need this map to use the getIndexByAngle() function in angles.h
+		//should fix this
+		type_angle2id m_map;
 	};
 
 }

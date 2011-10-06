@@ -53,7 +53,7 @@ namespace FIFE {
 	};
 	
 
-	class Layer : public ResourceClass {
+	class Layer : public FifeClass {
 		public:
 			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
 			~Layer();
@@ -74,11 +74,13 @@ namespace FIFE {
 			const std::vector<Instance*>& getInstances() const;
 			std::vector<Instance*> getInstances(const std::string& identifier);
 			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
+			std::list<Instance*> getInstancesIn(Rect& rec);
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);
 			void setLayerTransparency(uint8_t transparency);
 			uint8_t getLayerTransparency();
+			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;

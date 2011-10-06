@@ -41,7 +41,7 @@ namespace FIFE {
 	 *
 	 * @see DynamicSingleton
 	 */
-	template <typename T> class StaticSingleton: public FifeClass {
+	template <typename T> class StaticSingleton {
 		public:
 
 			static T* instance() {
@@ -51,14 +51,14 @@ namespace FIFE {
 
 		protected:
 
-			StaticSingleton(): FifeClass() {
+			StaticSingleton() {
 			}
 
 			virtual ~StaticSingleton() {
 			}
 
 		private:
-			StaticSingleton(const StaticSingleton<T>&): FifeClass() {}
+			StaticSingleton(const StaticSingleton<T>&) {}
 			StaticSingleton<T>& operator=(const StaticSingleton<T>&) {
 				return this;
 			}
@@ -79,14 +79,14 @@ namespace FIFE {
 	 * @see StaticSingleton
 	 * @see Engine
 	 */
-	template <typename T> class DynamicSingleton: public FifeClass {
+	template <typename T> class DynamicSingleton {
 		public:
 			static T* instance() {
 				assert(m_instance);
 				return m_instance;
 			}
 
-			DynamicSingleton(): FifeClass() {
+			DynamicSingleton() {
 				assert(!m_instance);
 				m_instance = static_cast<T*>(this);
 			}
@@ -98,7 +98,7 @@ namespace FIFE {
 		private:
 			static T* m_instance;
 
-			DynamicSingleton(const DynamicSingleton<T>&): FifeClass() {};
+			DynamicSingleton(const DynamicSingleton<T>&) {};
 			DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) {};
 
 	};
