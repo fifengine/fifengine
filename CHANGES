@@ -18,8 +18,12 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     modified and now works properly with alpha blending enabled.  Alpha testing
     is used to discard pixels. [t:556]
   * Optimized color overlays. [t:539]
+  * Customizable alpha threshold value for outlines / outlining [t:569]
+  * Added support for drawing/modifying images. [t:553]
   * Re-implemented the Resouce Pools (ImagePool AnimationPool, etc) as 
     ImangeManager, SoundClipManager, etc. [t:504]  
+  * Setting module no longer crashes when settings dialog has not been loaded.
+    [t:555]
   * Fixed the problem that the objects of the renderers don't get deallocated 
     when the camera deconstructor was called. Affected renderers: Instance-, 
     Cellsection-, Generic- and LightRenderer.
@@ -27,7 +31,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     and LightRenderer.
   * Removed the Engine::preInit() function.
   * Removed EngineSetting::getPossibleResolutions() and validate() functions
-  * EngineSettings? no longer throws any exceptions. Instead default values as 
+  * EngineSettings no longer throws any exceptions. Instead default values as 
     assigned and a warning message is sent to the logger.
   * Some optimizations to LayerCache and Camera
   * Removed some unnecessary includes.
@@ -66,12 +70,16 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added some code to the python build environment to support python 2.4+.
     [t:465]
   * Fixed a segfault in the view_tests.py unittest.
+  * Settings now list valid screen modes. [t:494]
   * the default image loader now throws exceptions if the image fails to load.
   * Fixed a bug in RawData::read where an incorrect calculation was done to 
     check the validity of a passed in parameter. This caused a problem with 
     loading asset files when the file did not have an appended new line at the 
     bottom. Also modified the RawData::getDataInBytes, RawData::readString, and
-    RawData::read methods so that they do not create a temporary data array and instead read directly into the output buffer, this should be more efficient. Added a quick comment to xmlobject.py describing why a raise call is subverted by an earlier return statement. fixes[t:516]
+    RawData::read methods so that they do not create a temporary data array and
+    instead read directly into the output buffer, this should be more efficient.
+    Added a quick comment to xmlobject.py describing why a raise call is 
+    subverted by an earlier return statement. [t:516]
   * Removes an unnecessary call from endFrame().
   * Fixed some unittests.
   * Added a framerate limiter. [t:525]
@@ -99,7 +107,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     the animation/atlas/object/map loaders because the readString function 
     appends a null terminator onto the end of the data contents. Without the 
     null terminator errors were sometimes seen when trying to load map assets. 
-  * Also added some error log printing indicating when map assets fail to load. fixes[t:567]
+  * Added some error log printing indicating when map assets fail to load.
+    [t:567]
   * Modified the RawData::read function so that it no longer appends a null 
     terminator as this was causing the python xml loaders to throw a 
     ParseError exception. Also fixed the RawData::readString function so that 
@@ -127,8 +136,6 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     engine/core/ext/tinyxml directory. The scons scripts will attempt to use 
     system version of tinyxml if available otherwise the local one will be used.
     [t:491]
-  * Added Atlas Creator tool. Currently it's a standalone application written 
-    in Qt. [t:541]
   * Added image Atlas support. [t:542] 
   * Added a zoom flag to the image/animation functions of the GenericRenderer. 
     So a client can disable the zoom for images. [t:543]
@@ -152,9 +159,15 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     always be swapped out for another implementation including 
     boost::shared_ptr.
   * Added the unittest for SharedPtr.
+  * Instances now inherit blocking property from objects [t:514]
+  * Settings are now validated. [t:528]
+  * VFS now allows paths outside of launched applications when using a python
+    client. [t:544]
+  * Reworked the lighting module.  [t:557]
+  * The Windows icon is now freed correctly. [t:530]
     
 === Demos ===
-  * Fixed a bug in the shooter demo that caused a crash.
+  * Fixed a bug in the shooter demo that caused a crash. [t:495]
   * Updating the rio settings-dist.xml file to include the log level filter 
     setting.
   * Added animated percentagebar widget to gui animation demo.
@@ -165,6 +178,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 === Documentation ===
   * Documented the shooter World.reset() function.
   * Updating the dependency graphs. [t:554]
+  * Documented all valid FIFE settings. [t:527]
 
 === Extensions ===
   * Updated basicapplication.py to initialize the logger before settings so 
@@ -172,6 +186,13 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Removed some deprecated functions in pychan.
   * Removed the deprecated ClickLabel widget from pychan. [t:552]
   * Added changeBlending() to python.
+
+=== Tools ===
+  * Editor no longer crashes when there are too many instances on the map when
+    using the OpenGL renderer. [t:500]
+  * Added Atlas Creator tool. Currently it's a standalone application written 
+    in Qt. [t:541]  
+
   
 ================================================================================
 == 0.3.2 (November 19th, 2010)                                                ==
