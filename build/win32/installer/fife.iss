@@ -6,9 +6,9 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{99CDEFC4-8CC3-410A-ABB9-FC58F61DF70E}
-AppName=FIFE 0.3.2
+AppName=FIFE 0.3.3
 ; Version is yyyy.mm
-AppVerName=FIFE 0.3.2
+AppVerName=FIFE 0.3.3
 AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.net/
 AppSupportURL=http://www.fifengine.net/
@@ -21,7 +21,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_0.3.2_installer_win32
+OutputBaseFilename=FIFE_0.3.3_installer_win32
 OutputDir=.
 DisableReadyPage=yes
 
@@ -65,7 +65,7 @@ Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\engine\fife-0.3.2.win32.exe";
+Filename: "{app}\engine\fife-0.3.3.win32.exe";
 
 
 
