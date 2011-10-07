@@ -229,7 +229,7 @@ class Setting(object):
 
 	# get all the Settings(either validSetting or defaultSetting)
 	def getAllSettings(self,module,validSetting = True):
-		if validSettings:
+		if validSetting:
 			return self._validSetting[module]
 		else:
 			return self._defaultSetting[module]
@@ -482,6 +482,10 @@ class Setting(object):
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
+		
+		#update the setting cache
+		self._settingsFromFile[module][name] = value
+		
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
 
