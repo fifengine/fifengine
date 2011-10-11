@@ -484,8 +484,11 @@ class Setting(object):
 		"""
 		
 		#update the setting cache
-		self._settingsFromFile[module][name] = value
-		
+		if module in self._settingsFromFile:
+			self._settingsFromFile[module][name] = value
+		else:
+			self._settingsFromFile[module] = { name: value }
+					
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
 
