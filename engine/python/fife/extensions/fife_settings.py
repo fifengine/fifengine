@@ -154,7 +154,7 @@ class Setting(object):
 			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
 			'PlaySounds':[True,False], 'LogToFile':[0,1],
 			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
-			'LogModules':['controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
+			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0]
 			}
 	
