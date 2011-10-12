@@ -18,56 +18,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
-
-#ifndef FIFE_VERSION_H
-#define FIFE_VERSION_H
-
-// These version numbers should be checked and updated
-// as part of the release process for FIFE.
-#define FIFE_MAJOR_VERSION 0
-#define FIFE_MINOR_VERSION 3
-#define FIFE_SUBMINOR_VERSION 3
-
-// -------------------------------------------------------------------------
-//  Do not update anything below this line!
-// -------------------------------------------------------------------------
-
-#define FIFE_STR(s)			# s
-#define FIFE_XSTR(s)		FIFE_STR(s)
-
-#define FIFE_DOT(a,b)		a ## . ## b
-#define FIFE_XDOT(a,b)		FIFE_DOT(a,b)
-
-#define FIFE_VERSION_STRING \
-	FIFE_XDOT( \
-		FIFE_XDOT(FIFE_MAJOR_VERSION, FIFE_MINOR_VERSION), \
-		FIFE_SUBMINOR_VERSION \
-	)
+%module fife
+%{
+#include "version.h"
+%}
 
 namespace FIFE {
-	inline const char* getVersion() {
-		return FIFE_XSTR(FIFE_VERSION_STRING);
-	}
-
-	inline int getMajor() {
-		return FIFE_MAJOR_VERSION;
-	}
-
-	inline int getMinor() {
-		return FIFE_MINOR_VERSION;
-	}
-
-	inline int getSubMinor() {
-		return FIFE_SUBMINOR_VERSION;
-	}
+	inline const char* getVersion();
+	inline int getMajor();
+	inline int getMinor();
+	inline int getSubMinor();
 } //FIFE
-
-//cleanup
-#undef FIFE_STR
-#undef FIFE_XSTR
-#undef FIFE_DOT
-#undef FIFE_XDOT
-#undef FIFE_VERSION_STRING
-
-#endif //FIFE_VERSION_H
-
