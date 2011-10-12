@@ -14,6 +14,6 @@
 				up_image="gui/icons/edit.png" down_image="gui/icons/edit.png" hover_image="gui/icons/edit.png" />
 		<ImageButton name="remove_layer_button" hexpand="0" offset="1,1" 
 				helptext="Removes selected layer"
-				up_image="gui/icons/quit.png" down_image="gui/icons/quit.png" hover_image="gui/icons/quit.png" />	
+				up_image="gui/icons/delete_layer.png" down_image="gui/icons/delete_layer.png" hover_image="gui/icons/delete_layer.png" />	
 	</HBox>
 </Panel>
