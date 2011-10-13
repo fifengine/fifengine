@@ -406,7 +406,9 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool update = cacheNeedUpdate(&layer);
+		bool special_alpha = alpha != 0;
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -415,11 +417,10 @@ namespace FIFE {
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image.get());
-				bool found = false;
 				uint8_t r, g, b, a = 0;
 				int32_t x = screen_coords.x - vc.dimensions.x;
 				int32_t y = screen_coords.y - vc.dimensions.y;
-				if (m_zoom != 1.0) {
+				if (zoomed) {
 					double fx = static_cast<double>(x);
 					double fy = static_cast<double>(y);
 					double fow = static_cast<double>(vc.image->getWidth());
@@ -431,42 +432,35 @@ namespace FIFE {
 				}
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				// instance is hit with mouse if not totally transparent
-				if (alpha != 0) {
-					if (a >= alpha) {
-						found = true;
-					}
-				} else if (a != 0) {
-					found = true;
+				if (a == 0 || (special_alpha && a < alpha)) {
+					continue;
 				}
-				if (found) {
-					if (update) {
-						// convert ScreenCoordinates to MapCoordinates
-						screen_coords.x -= vc.image->getXShift();
-						screen_coords.y -= vc.image->getYShift();
-						const ExactModelCoordinate emc = toMapCoordinates(screen_coords, false);
-						Location loc(&layer);
-						loc.setMapCoordinates(emc);
-						// convert image size to LayerCoordinates
-						Point p = getCellImageDimensions(&layer);
-						int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
-						int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
-						// construct a Rect with LayerCoordinates to fetch instance
-						Rect rec;
-						rec.x = loc.getLayerCoordinates().x - x2;
-						rec.y = loc.getLayerCoordinates().y - y2;
-						rec.w = x2*2;
-						rec.h = y2*2;
-						// use InstanceTree for fast picking
-						std::list<Instance*> inslist = layer.getInstancesIn(rec);
-						for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
-							if (i == *it) {
-								instances.push_back(i);
-								break;
-							}
+				if (update) {
+					// convert ScreenCoordinates to MapCoordinates
+					ScreenPoint sp(screen_coords.x-vc.image->getXShift(), screen_coords.y-vc.image->getYShift());
+					const ExactModelCoordinate emc = toMapCoordinates(sp, false);
+					Location loc(&layer);
+					loc.setMapCoordinates(emc);
+					// convert image size to LayerCoordinates
+					Point p = getCellImageDimensions(&layer);
+					int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
+					int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
+					// construct a Rect with LayerCoordinates to fetch instance
+					Rect rec;
+					rec.x = loc.getLayerCoordinates().x - x2;
+					rec.y = loc.getLayerCoordinates().y - y2;
+					rec.w = x2*2;
+					rec.h = y2*2;
+					// use InstanceTree for fast picking
+					std::list<Instance*> inslist = layer.getInstancesIn(rec);
+					for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
+						if (i == *it) {
+							instances.push_back(i);
+							break;
 						}
-					} else {
-						instances.push_back(i);
 					}
+				} else {
+					instances.push_back(i);
 				}
 			}
 		}
@@ -474,7 +468,38 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
+		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool update = cacheNeedUpdate(&layer);
+		bool special_alpha = alpha != 0;
+		std::list<Instance*> tree_instances;
+		if (update) {
+			// convert screen_rect to tree_rect and use it to collect instances
+			std::vector<ScreenPoint> points;
+			ScreenPoint sp(screen_rect.x, screen_rect.y);
+			points.push_back(sp);
+			sp.y = screen_rect.y+screen_rect.h;
+			points.push_back(sp);
+			sp.x = screen_rect.x+screen_rect.w;
+			points.push_back(sp);
+			sp.y = screen_rect.y;
+			points.push_back(sp);
+
+			Location loc(&layer);
+			ModelCoordinate max;
+			ModelCoordinate min;
+			for (std::vector<ScreenPoint>::iterator it = points.begin(); it != points.end(); ++it) {
+				loc.setMapCoordinates(toMapCoordinates(*it, false));
+				ModelCoordinate mc = loc.getLayerCoordinates();
+				max.x = std::max(max.x, mc.x);
+				max.y = std::max(max.y, mc.y);
+				min.x = std::min(min.x, mc.x);
+				min.y = std::min(min.y, mc.y);
+			}
+
+			Rect tree_rect(min.x, min.y, max.x-min.x, max.y-min.y);
+			tree_instances = layer.getInstancesIn(tree_rect);
+		}
+
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -487,10 +512,9 @@ namespace FIFE {
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
 						if ((vc.dimensions.contains(Point(xx, yy)))) {
-							bool found = false;
 							int32_t x = xx - vc.dimensions.x;
 							int32_t y = yy - vc.dimensions.y;
-							if (m_zoom != 1.0) {
+							if (zoomed) {
 								double fx = static_cast<double>(x);
 								double fy = static_cast<double>(y);
 								double fow = static_cast<double>(vc.image->getWidth());
@@ -502,43 +526,22 @@ namespace FIFE {
 							}
 							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 							// instance is hit with mouse if not totally transparent
-							if (alpha != 0) {
-								if (a >= alpha) {
-									found = true;
-								}
-							} else if (a != 0) {
-								found = true;
+							if (a == 0 || (special_alpha && a < alpha)) {
+								continue;
 							}
-							if (found) {
-								if (update) {
-									// convert ScreenCoordinates to MapCoordinates
-									xx -= vc.image->getXShift();
-									yy -= vc.image->getYShift();
-									const ExactModelCoordinate emc = toMapCoordinates(ScreenPoint(xx, yy), false);
-									Location loc(&layer);
-									loc.setMapCoordinates(emc);
-									// convert image size to LayerCoordinates
-									Point p = getCellImageDimensions(&layer);
-									int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
-									int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
-									// construct a Rect with LayerCoordinates to fetch instance
-									Rect rec;
-									rec.x = loc.getLayerCoordinates().x - x2;
-									rec.y = loc.getLayerCoordinates().y - y2;
-									rec.w = x2*2;
-									rec.h = y2*2;
-									// use InstanceTree for fast picking
-									std::list<Instance*> inslist = layer.getInstancesIn(rec);
-									for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
-										if (i == *it) {
-											instances.push_back(i);
-											goto found_non_transparent_pixel;
-										}
+
+							if (update) {
+								for (std::list<Instance*>::iterator it = tree_instances.begin(); it != tree_instances.end(); ++it) {
+									// if the instance has been found in tree then it should be a valid instance
+									if (i == *it) {
+										instances.push_back(i);
+										tree_instances.erase(it);
+										goto found_non_transparent_pixel;
 									}
-								} else {
-									instances.push_back(i);
-									goto found_non_transparent_pixel;
 								}
+							} else {
+								instances.push_back(i);
+								goto found_non_transparent_pixel;
 							}
 						}
 					}

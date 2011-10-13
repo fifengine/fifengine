@@ -161,6 +161,7 @@ namespace FIFE {
 		static T Sqr(T _val);
 		static T Sqrt(T _val);
 		static T Tan(T _val);
+		static bool Equal(T _val1, T _val2);
 	};
 
 	typedef Math<float> Mathf;
@@ -279,6 +280,11 @@ namespace FIFE {
 	template <class T>
 	inline T Math<T>::Tan(T _val) {
 		return static_cast<T>(std::tan(_val));
+	}
+
+	template <class T>
+	inline bool Math<T>::Equal(T _val1, T _val2) {
+		return std::fabs(_val1 - _val2) < epsilon();
 	}
 
 	/** Returns the next higher power of 2 based on the passed argument
