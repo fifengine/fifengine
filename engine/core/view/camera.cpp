@@ -466,13 +466,13 @@ namespace FIFE {
 		}
 	}
 
-	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
+	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, bool accurate, uint8_t alpha) {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool update = cacheNeedUpdate(&layer);
 		bool special_alpha = alpha != 0;
 		std::list<Instance*> tree_instances;
-		if (update) {
+		if (update || !accurate) {
 			// convert screen_rect to tree_rect and use it to collect instances
 			std::vector<ScreenPoint> points;
 			ScreenPoint sp(screen_rect.x, screen_rect.y);
@@ -485,8 +485,8 @@ namespace FIFE {
 			points.push_back(sp);
 
 			Location loc(&layer);
-			ModelCoordinate max;
-			ModelCoordinate min;
+			ModelCoordinate max(-1000000,-1000000);
+			ModelCoordinate min(1000000,1000000);
 			for (std::vector<ScreenPoint>::iterator it = points.begin(); it != points.end(); ++it) {
 				loc.setMapCoordinates(toMapCoordinates(*it, false));
 				ModelCoordinate mc = loc.getLayerCoordinates();
@@ -498,6 +498,21 @@ namespace FIFE {
 
 			Rect tree_rect(min.x, min.y, max.x-min.x, max.y-min.y);
 			tree_instances = layer.getInstancesIn(tree_rect);
+
+			if (!accurate) {
+				for (std::list<Instance*>::iterator insit = tree_instances.begin(); insit != tree_instances.end(); ++insit) {
+					InstanceVisual* visual = (*insit)->getVisual<InstanceVisual>();
+					if (!visual) {
+						continue;
+					}
+					// check if instance is visible
+					if (visual->isVisible() && (visual->getTransparency() < 255 ||
+						(special_alpha && (255-visual->getTransparency()) >= alpha))) {
+						instances.push_back(*insit);
+					}
+				}
+				return;
+			}
 		}
 
 		const RenderList& layer_instances = m_layer_to_instances[&layer];

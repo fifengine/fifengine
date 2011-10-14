@@ -229,12 +229,12 @@ namespace FIFE {
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
 		/** Returns instances that match given screen coordinate
-		 * @param screen_point1 top left screen coordinates to be used for hit search
-		 * @param screen_point2 right bottom screen coordinates to be used for hit search
+		 * @param screen_rect rect that contains screen coordinates to be used for search
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
+		 * @param accurate should be true if the search should be exactly but its also much slower
 		 */
-		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
+		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, bool accurate, uint8_t alpha = 0);
 
 		/** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
 		 * instance is first in returned list
