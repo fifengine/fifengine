@@ -1,0 +1,18 @@
+<Window title="Show Hide test">
+	<Label name="text1" text="Text 1" />
+	<VBox name="vbox1">
+		<Label name="text2" text="Text 2" />
+		<Label name="text3" text="Text 3" />
+	</VBox>
+	<HBox>
+		<Button name="hideText1" text="Hide Text 1"/>
+		<Button name="showText1" text="Show Text 1"/>
+		<Button name="hideText2" text="Hide Text 2"/>
+		<Button name="showText2" text="Show Text 2"/>
+		<Button name="hideText3" text="Hide Text 3"/>
+		<Button name="showText3" text="Show Text 3"/>
+		<Button name="hideVBox1" text="Hide VBox 1"/>
+		<Button name="showVBox1" text="Show VBox 1"/>
+	</HBox>
+	<Button name="closeButton" text="Ok" position="160,150" base_color="255,0,0" />
+</Window>

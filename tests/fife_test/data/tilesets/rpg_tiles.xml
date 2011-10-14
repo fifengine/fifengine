@@ -160,4 +160,33 @@
 	<image source="tile_02_01.png" direction="180"/>
 	<image source="tile_01_02.png" direction="270"/>
 </object>
-
+<object id="gtreebase" namespace="rpg_tileset" blocking="1" static="1">
+	<image source="tile_01_05.png" direction="0"/>
+</object>
+<object id="streebase" namespace="rpg_tileset" blocking="1" static="1">
+	<image source="tile_02_05.png" direction="0"/>
+</object>
+<object id="treetop" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_01_06.png" direction="0"/>
+</object>
+<object id="btreebase" namespace="rpg_tileset" blocking="1" static="1">
+	<image source="tile_02_06.png" direction="0"/>
+</object>
+<object id="gscorner" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_00_07.png" direction="0"/>
+	<image source="tile_01_07.png" direction="90"/>
+	<image source="tile_01_08.png" direction="180"/>
+	<image source="tile_00_08.png" direction="270"/>
+</object>
+<object id="sgcorner" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_00_09.png" direction="0"/>
+	<image source="tile_02_09.png" direction="90"/>
+	<image source="tile_02_11.png" direction="180"/>
+	<image source="tile_00_11.png" direction="270"/>
+</object>
+<object id="sgside" namespace="rpg_tileset" blocking="0" static="1">
+	<image source="tile_00_10.png" direction="0"/>
+	<image source="tile_01_09.png" direction="90"/>
+	<image source="tile_02_10.png" direction="180"/>
+	<image source="tile_01_11.png" direction="270"/>
+</object>

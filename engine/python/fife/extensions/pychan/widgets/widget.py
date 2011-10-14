@@ -121,6 +121,9 @@ class Widget(object):
 		# that tests self.__parent - so make sure we have the attr here.
 		self.__parent = None
 		self.parent = parent
+		
+		#used when saving the position of the widget when hiding it
+		self._widgetposition = -1
 
 		self.has_name = False
 		self.name = name
@@ -227,36 +230,51 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self.parent:
-			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if self._visible: return
-		self.adaptLayout()
-		self.beforeShow()
-		get_manager().show(self)
-		self._visible = True
+
+		if self.parent:
+			self.beforeShow()
+			self.parent.showChild(self)
+			self.parent.adaptLayout()
+			self._visible = True
+		else:
+			self.adaptLayout()
+			self.beforeShow()
+			get_manager().show(self)
+			self._visible = True
+			
+		def _show(widget):
+			widget._visible = True
+				
+		self.deepApply(_show)
 
 	def hide(self):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if self.parent:
-			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if not self._visible: return
-
-		get_manager().hide(self)
+		
+		if self.parent:
+			self.parent.hideChild(self)
+			self.parent.adaptLayout()
+		else:
+			get_manager().hide(self)
 
 		self.afterHide()
 		self._visible = False
+		
+		def _hide(widget):
+			widget._visible = False
+				
+		self.deepApply(_hide)
 
 	def isVisible(self):
 		"""
 		Check whether the widget is currently shown,
 		either directly or as part of a container widget.
 		"""
-		widget = self
-		while widget.parent:
-			widget = widget.parent
-		return widget._visible
+
+		return self._visible
 
 	def adaptLayout(self,recurse=True):
 		"""
