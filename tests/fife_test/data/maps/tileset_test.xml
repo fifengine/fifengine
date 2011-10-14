@@ -1,12 +1,61 @@
 <?xml version="1.0" encoding="ascii"?>
 <map format="1.0" id="tileset_test">
 	<import file="../tilesets/rpg_tiles.xml"></import>
-	<layer transparency="0" y_offset="0.0" id="layer1" x_offset="0.0" x_scale="1.0" rotation="0.0" pathing="cell_edges_only" y_scale="1.0" grid_type="square">
+	<layer transparency="0" id="layer1" x_offset="0.0" x_scale="1.0" y_scale="1.0" grid_type="square" pathing="cell_edges_only" y_offset="0.0" rotation="0.0">
 		<instances>
+			<i stackpos="0" r="0" ns="rpg_tileset" x="-2.0" y="-2.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-2.0" y="-1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="-1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="-2.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="-2.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="-1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="0.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="0.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-2.0" y="0.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-2.0" y="1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="-1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="-2.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="-3.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="-3.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="-3.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-2.0" y="-3.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="-3.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="-2.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="-1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="0.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="-3.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="-2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="-1.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="0.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="1.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="-4.0" y="-4.0" o="gbcorner" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="-4.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="0.0" y="-4.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="-1.0" y="-4.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="-2.0" y="-4.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="-3.0" y="-4.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="1.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="0" x="1.0" y="0.0" o="brick" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="-3.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="-2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="-1.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="0.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="1.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="180" x="1.0" y="2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="180" x="0.0" y="2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="180" x="-1.0" y="2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="180" x="-2.0" y="2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="180" x="-3.0" y="2.0" o="gbside" z="0.0"></i>
+			<i stackpos="0" r="270" x="2.0" y="-4.0" o="gbcorner" z="0.0"></i>
+			<i stackpos="0" r="180" x="2.0" y="2.0" o="gbcorner" z="0.0"></i>
+			<i stackpos="0" r="90" x="-4.0" y="2.0" o="gbcorner" z="0.0"></i>
 		</instances>
 		<lights>
 		</lights>
 	</layer>
-	<camera ref_cell_width="48" zoom="1.0" ref_cell_height="48" rotation="0.0" tilt="0.0" ref_layer_id="layer1" id="camera1">
+	<camera ref_layer_id="layer1" id="camera1" tilt="0.0" zoom="1.0" ref_cell_width="48" ref_cell_height="48" rotation="0.0">
 	</camera>
 </map>
