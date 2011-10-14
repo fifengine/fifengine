@@ -320,7 +320,7 @@ namespace FIFE {
                                 animElement->QueryValueAttribute("frames", &animFrames);
                                 animElement->QueryValueAttribute("delay", &animDelay);
                                 animElement->QueryValueAttribute("x_offset", &animXoffset);
-                                animElement->QueryValueAttribute("y_offset", &animYoffset);
+								animElement->QueryValueAttribute("y_offset", &animYoffset);
                                 int nDir = 0;
 
                                 for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
@@ -355,6 +355,12 @@ namespace FIFE {
                                         if(success != TIXML_SUCCESS) {
                                             yoffset = animYoffset;
                                         }
+
+										int action_frame;
+										success = dirElement->QueryValueAttribute("action", &action_frame);
+										if(success == TIXML_SUCCESS) {
+											animation->setActionFrame(action_frame);
+										}
 
                                         for (int iframe = 0; iframe < frames; ++iframe) {
                                             static char tmpBuf[64];

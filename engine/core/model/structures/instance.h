@@ -52,6 +52,7 @@ namespace FIFE {
 	public:
 		virtual ~InstanceActionListener() {};
 		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
+		virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
 	};
 
 	enum InstanceChangeType {
@@ -63,6 +64,8 @@ namespace FIFE {
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
 		ICHANGE_ROTATION = 0x0040,
+		ICHANGE_BLOCK = 0x0080,
+		ICHANGE_CELL = 0x0100
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -173,6 +176,12 @@ namespace FIFE {
 		/** Gets if instance blocking can overriden
 		 */
 		bool isOverrideBlocking() const { return m_override_blocking; }
+
+		/** Auxiliary function to inform ActionListeners about the active ActionFrame.
+		 *  @param action pointer to the action
+		 *  @param frame frame index number of the animation
+		 */
+		void callOnActionFrame(Action* action, int32_t frame);
 
 		/** Adds new instance action listener
 		 * @param listener to add
@@ -348,6 +357,8 @@ namespace FIFE {
 			float m_timemultiplier;
 			// say text on previous round
 			std::string m_saytxt;
+			// blocking status on previous round
+			bool m_blocking;
 			// listeners for changes
 			std::vector<InstanceChangeListener*> m_changelisteners;
 

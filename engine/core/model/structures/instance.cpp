@@ -114,7 +114,8 @@ namespace FIFE {
 		m_actionlisteners(),
 		m_actioninfo(NULL),
 		m_sayinfo(NULL),
-		m_timeprovider(NULL) {
+		m_timeprovider(NULL),
+		m_blocking(source.m_blocking) {
 		if (source.m_facinglocation) {
 			m_facinglocation = *source.m_facinglocation;
 		}
@@ -130,6 +131,9 @@ namespace FIFE {
 		source.m_changeinfo = ICHANGE_NO_CHANGES;
 		if (m_location != source.m_location) {
 			source.m_changeinfo |= ICHANGE_LOC;
+			if (m_location.getLayerCoordinates() != source.m_location.getLayerCoordinates()) {
+				source.m_changeinfo |= ICHANGE_CELL;
+			}
 			m_location = source.m_location;
 		}
 		if (m_rotation != source.m_rotation) {
@@ -155,6 +159,10 @@ namespace FIFE {
 		if (m_sayinfo && (m_saytxt != m_sayinfo->m_txt)) {
 			source.m_changeinfo |= ICHANGE_SAYTEXT;
 			m_saytxt = m_sayinfo->m_txt;
+		}
+		if (m_blocking != source.m_blocking) {
+			source.m_changeinfo |= ICHANGE_BLOCK;
+			m_blocking = source.m_blocking;
 		}
 
 		if (source.m_changeinfo != ICHANGE_NO_CHANGES) {
@@ -281,6 +289,20 @@ namespace FIFE {
 	void Instance::addChangeListener(InstanceChangeListener* listener) {
 		initializeChanges();
 		m_activity->m_changelisteners.push_back(listener);
+	}
+
+	void Instance::callOnActionFrame(Action* action, int32_t frame) {
+		if (!m_activity) {
+			return;
+		}
+
+		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionlisteners.begin();
+		while (i != m_activity->m_actionlisteners.end()) {
+			if(*i) {
+				(*i)->onInstanceActionFrame(this, action, frame);
+			}
+			++i;
+		}
 	}
 
 	void Instance::removeChangeListener(InstanceChangeListener* listener) {

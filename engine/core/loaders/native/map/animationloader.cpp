@@ -128,7 +128,7 @@ namespace FIFE {
 
             int animXoffset = 0;
             int animYoffset = 0;
-            int action = 0;
+            int action = -1;
             root->QueryValueAttribute("x_offset", &animXoffset);
             root->QueryValueAttribute("y_offset", &animYoffset);
             root->QueryValueAttribute("action", &action);

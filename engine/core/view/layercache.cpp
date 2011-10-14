@@ -200,6 +200,15 @@ namespace FIFE {
 
 			image = animation->getFrameByTimestamp(animation_time);
 
+			int32_t action_frame = animation->getActionFrame();
+			if (action_frame != -1) {
+				if (render_item.image != image) {
+					if (action_frame == animation->getFrameIndex(animation_time)) {
+						instance->callOnActionFrame(action, action_frame);
+					}
+				}
+			}
+
 			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){
 				facing_angle += 360;
