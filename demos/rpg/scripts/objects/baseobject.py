@@ -63,6 +63,8 @@ class ObjectActionListener(fife.InstanceActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		pass
 
+	def onInstanceActionFrame(self, instance, action, frame):
+		pass
 
 class BaseGameObject(Serializer):
 	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):

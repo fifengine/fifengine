@@ -42,6 +42,7 @@ namespace FIFE {
 	public:
 		virtual ~InstanceActionListener() {};
 		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
+		virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
 	};
 
 	enum InstanceChangeType {
@@ -53,6 +54,8 @@ namespace FIFE {
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
 		ICHANGE_ROTATION = 0x0040,
+		ICHANGE_BLOCK = 0x0080,
+		ICHANGE_CELL = 0x0100
 	};
 	typedef uint32_t InstanceChangeInfo;
 	
