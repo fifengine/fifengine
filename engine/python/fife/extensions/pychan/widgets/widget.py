@@ -121,9 +121,6 @@ class Widget(object):
 		# that tests self.__parent - so make sure we have the attr here.
 		self.__parent = None
 		self.parent = parent
-		
-		#used when saving the position of the widget when hiding it
-		self._widgetposition = -1
 
 		self.has_name = False
 		self.name = name

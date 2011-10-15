@@ -48,6 +48,7 @@ class Container(Widget):
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
 		self.real_widget = _real_widget or fife.Container()
 		self.children = []
+		self.children_position_cache = []
 		self.hidden_children = []
 		self.margins = margins
 		self.padding = padding
@@ -59,6 +60,7 @@ class Container(Widget):
 		widget.parent = self
 		widget._visible = self._visible
 		self.children.append(widget)
+		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
 
 	def insertChild(self, widget, position):
@@ -85,6 +87,7 @@ class Container(Widget):
 		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
 		self.children.remove(widget)
+		self.children_position_cache.remove(widget)
 		self.real_widget.remove(widget.real_widget)
 		
 		if widget in self.hidden_children:
@@ -97,22 +100,28 @@ class Container(Widget):
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self), str(child)))
 		
 		self.hidden_children.append(child)
-		child._widgetposition = self.children.index(child)
-	
 		self.children.remove(child)
+
 		self.real_widget.remove(child.real_widget)
 		
 	def showChild(self, child):
 		if not child in self.hidden_children:
-			raise RuntimeError("%s does not have %s as direct hidden child widget." % (str(self), str(child)))
-
-		if child._widgetposition > len(self.children) or 0-child._widgetposition > len(self.children):
-			self.addChild(child)
-		else:
-			self.insertChild(child, child._widgetposition)			
+			return
 			
 		self.hidden_children.remove(child)
-		child._widgetposition = -1
+		
+		children = self.children[:]
+		children_position_cache = self.children_position_cache[:]
+		hidden_children = self.hidden_children[:]
+		
+		self.removeAllChildren()
+		
+		for child_widget in children_position_cache:
+			if not child_widget in hidden_children:
+				self.addChild(child_widget)
+		
+		self.children_position_cache = children_position_cache[:]
+		self.hidden_children = hidden_children[:]
 			
 	def add(self,*widgets):
 		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
