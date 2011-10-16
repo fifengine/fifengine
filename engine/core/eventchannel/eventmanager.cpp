@@ -347,6 +347,7 @@ namespace FIFE {
 	}
 
 	void EventManager::processEvents() {
+		//std::cout << "processEvents \n";
 		// The double SDL_PollEvent calls don't throw away events,
 		// but try to combine (mouse motion) events.
 		SDL_Event event, next_event;
@@ -386,34 +387,46 @@ namespace FIFE {
 	}
 
 	void EventManager::processActiveEvent(SDL_Event event) {
-		if(dispatchSdlEvent(event))
+		if (dispatchSdlEvent(event)) {
 			return;
+		}
 
-		Command cmd;
-		cmd.setSource(this);
 		SDL_ActiveEvent actevt = event.active;
-		if (actevt.state == SDL_APPMOUSEFOCUS)
-		{
-			if (actevt.gain)
-				cmd.setCommandType(CMD_MOUSE_FOCUS_GAINED);
-			else
-				cmd.setCommandType(CMD_MOUSE_FOCUS_LOST);
+		std::vector<Command*> commands;
+		
+		if (actevt.state & SDL_APPMOUSEFOCUS) {
+			Command* cmd = new Command();
+			if (actevt.gain) {
+				cmd->setCommandType(CMD_MOUSE_FOCUS_GAINED);
+			} else {
+				cmd->setCommandType(CMD_MOUSE_FOCUS_LOST);
+			}
+			commands.push_back(cmd);
 		}
-		else if (actevt.state == SDL_APPINPUTFOCUS)
-		{
-			if (actevt.gain)
-				cmd.setCommandType(CMD_INPUT_FOCUS_GAINED);
-			else
-				cmd.setCommandType(CMD_INPUT_FOCUS_LOST);
+		if (actevt.state & SDL_APPINPUTFOCUS) {
+			Command* cmd = new Command();
+			if (actevt.gain) {
+				cmd->setCommandType(CMD_INPUT_FOCUS_GAINED);
+			} else {
+				cmd->setCommandType(CMD_INPUT_FOCUS_LOST);
+			}
+			commands.push_back(cmd);
 		}
-		else if (actevt.state == SDL_APPACTIVE)
-		{
-			if (actevt.gain)
-				cmd.setCommandType(CMD_APP_RESTORED);
-			else
-				cmd.setCommandType(CMD_APP_ICONIFIED);
+		if (actevt.state & SDL_APPACTIVE) {
+			Command* cmd = new Command();
+			if (actevt.gain) {
+				cmd->setCommandType(CMD_APP_RESTORED);
+			} else {
+				cmd->setCommandType(CMD_APP_ICONIFIED);
+			}
+			commands.push_back(cmd);
 		}
-		dispatchCommand(cmd);
+
+		std::vector<Command*>::iterator it = commands.begin();
+		for (; it != commands.end(); ++it) {
+			dispatchCommand(**it);
+			delete *it;
+		}
 	}
 
 	void EventManager::processKeyEvent(SDL_Event event) {
