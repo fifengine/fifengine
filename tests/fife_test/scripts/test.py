@@ -95,7 +95,7 @@ class TestManager(object):
 class Test(object):
 	""" The base calss for all tests.  All tests must override these functions! """
 
-	def create(self, application, engine):
+	def create(self, engine, application):
 		raise NotImplementedError, "Test has not implemented the init() function!"
 	
 	def destroy(self):
