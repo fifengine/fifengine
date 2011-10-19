@@ -272,6 +272,24 @@ namespace FIFE {
 		 */
 		uint16_t getFrameLimit() const;
 
+		/** Sets mouse sensitivity
+		 */
+		void setMouseSensitivity(float sens);
+
+		/** Gets mouse sensitivity
+		 */
+		float getMouseSensitivity() const;
+
+		/** Sets mouse acceleration
+		 * if mouse acceleration is enabled,
+		 * then the mouse sensitivity is used as speed max.
+		 */
+		void setMouseAcceleration(bool acceleration);
+
+		/** Gets mouse acceleration
+		 */
+		bool getMouseAcceleration() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -294,6 +312,8 @@ namespace FIFE {
 		uint32_t m_lighting;
 		bool m_isframelimit;
 		uint16_t m_framelimit;
+		float m_mousesensitivity;
+		bool m_mouseacceleration;
 	};
 
 }//FIFE
