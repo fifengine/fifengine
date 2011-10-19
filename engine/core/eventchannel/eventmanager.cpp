@@ -458,6 +458,9 @@ namespace FIFE {
 	}
 
 	void EventManager::processMouseEvent(SDL_Event event) {
+		if (dispatchSdlEvent(event) && event.type != SDL_MOUSEMOTION) {
+			return;
+		}
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -474,8 +477,7 @@ namespace FIFE {
 				return;
 			}
 		}
-		dispatchMouseEvent(mouseevt); 
-		dispatchSdlEvent(event);
+		dispatchMouseEvent(mouseevt);
 	}
 
 
@@ -484,7 +486,7 @@ namespace FIFE {
 			return;
 		}
 
-		if (sdlevt.type & SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+		if (sdlevt.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
 			uint16_t tmp_x = sdlevt.motion.x;
 			uint16_t tmp_y = sdlevt.motion.y;
 			if (m_enter) {
@@ -549,7 +551,7 @@ namespace FIFE {
 
 		mouseevt.setButton(MouseEvent::EMPTY);
 		mouseevt.setType(MouseEvent::MOVED);
-		if ((sdlevt.type & SDL_MOUSEBUTTONUP) || (sdlevt.type & SDL_MOUSEBUTTONDOWN)) {
+		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
 			switch (sdlevt.button.button) {
 				case SDL_BUTTON_LEFT:
 					mouseevt.setButton(MouseEvent::LEFT);
@@ -565,7 +567,7 @@ namespace FIFE {
 					break;
 			}
 
-			if (sdlevt.type & SDL_MOUSEBUTTONUP ) {
+			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
 				mouseevt.setType(MouseEvent::RELEASED);
 			} else {
 				mouseevt.setType(MouseEvent::PRESSED);
