@@ -458,9 +458,6 @@ namespace FIFE {
 	}
 
 	void EventManager::processMouseEvent(SDL_Event event) {
-		if(dispatchSdlEvent(event))
-			return;
-
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -477,7 +474,8 @@ namespace FIFE {
 				return;
 			}
 		}
-		dispatchMouseEvent(mouseevt);
+		dispatchMouseEvent(mouseevt); 
+		dispatchSdlEvent(event);
 	}
 
 
@@ -486,7 +484,7 @@ namespace FIFE {
 			return;
 		}
 
-		if (sdlevt.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+		if (sdlevt.type & SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
 			uint16_t tmp_x = sdlevt.motion.x;
 			uint16_t tmp_y = sdlevt.motion.y;
 			if (m_enter) {
@@ -499,7 +497,7 @@ namespace FIFE {
 			float modifier;
 			if (m_acceleration) {
 				uint32_t ticks = SDL_GetTicks();
-				float difference = static_cast<float>(ticks - m_lastticks);
+				float difference = static_cast<float>((ticks - m_lastticks) + 1);
 				m_lastticks = ticks;
 				float dx = static_cast<float>(tmp_x - m_oldx);
 				float dy = static_cast<float>(tmp_y - m_oldy);
@@ -551,7 +549,7 @@ namespace FIFE {
 
 		mouseevt.setButton(MouseEvent::EMPTY);
 		mouseevt.setType(MouseEvent::MOVED);
-		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
+		if ((sdlevt.type & SDL_MOUSEBUTTONUP) || (sdlevt.type & SDL_MOUSEBUTTONDOWN)) {
 			switch (sdlevt.button.button) {
 				case SDL_BUTTON_LEFT:
 					mouseevt.setButton(MouseEvent::LEFT);
@@ -567,7 +565,7 @@ namespace FIFE {
 					break;
 			}
 
-			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
+			if (sdlevt.type & SDL_MOUSEBUTTONUP ) {
 				mouseevt.setType(MouseEvent::RELEASED);
 			} else {
 				mouseevt.setType(MouseEvent::PRESSED);
