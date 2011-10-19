@@ -147,6 +147,16 @@ class ApplicationBase(object):
 			engineSetting.setFrameLimit(self._finalSetting['FrameLimit'])
 		except:
 			pass
+
+		try:
+			engineSetting.setMouseSensitivity(self._finalSetting['MouseSensitivity'])
+		except:
+			pass
+
+		try:
+			engineSetting.setMouseAcceleration(self._finalSetting['MouseAcceleration'])
+		except:
+			pass
 		
 		
 	def initLogging(self):

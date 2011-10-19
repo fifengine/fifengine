@@ -106,6 +106,25 @@ namespace FIFE {
 
 		void setKeyFilter(IKeyFilter* keyFilter);
 
+		/** Sets mouse sensitivity
+		 * The sensitivity is limited to the range -0.99 - 10.0.
+		 */
+		void setMouseSensitivity(float sensitivity);
+
+		/** Gets mouse sensitivity
+		 */
+		float getMouseSensitivity() const;
+
+		/** Sets mouse acceleration
+		 * if mouse acceleration is enabled,
+		 * then the mouse sensitivity is used as speed max.
+		 */
+		void setMouseAcceleration(bool acceleration);
+
+		/** Gets mouse acceleration
+		 */
+		bool getMouseAcceleration() const;
+
 	private:
 		// Helpers for processEvents
 		void processActiveEvent(SDL_Event event);
@@ -147,6 +166,18 @@ namespace FIFE {
 		IKeyFilter* m_keyfilter;
 		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
+
+		// m_mousesensitivity is the mouse speed factor - 1, so a value of 0 won't
+		// influence mouse speed, a value of 1 would double the speed and
+		// -.5 would make it half the speed
+		float m_mousesensitivity;
+		bool m_acceleration;
+		bool m_warp;
+		bool m_enter;
+		uint16_t m_oldx;
+		uint16_t m_oldy;
+		uint32_t m_lastticks;
+		float m_oldvelocity;
 
 	};
 } //FIFE

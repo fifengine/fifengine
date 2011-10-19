@@ -180,6 +180,8 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
+		m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
+		m_eventmanager->setMouseAcceleration(m_settings.getMouseAcceleration());
 
 		FL_LOG(_log, "Creating resource managers");
 

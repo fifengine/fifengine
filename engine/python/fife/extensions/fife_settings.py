@@ -155,7 +155,7 @@ class Setting(object):
 			'PlaySounds':[True,False], 'LogToFile':[0,1],
 			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
-			'FrameLimitEnabled':[True,False], 'FrameLimit':[0]
+			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
 			}
 	
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
@@ -172,7 +172,9 @@ class Setting(object):
 			'PlaySounds':True, 'LogToFile':0,
 			'LogToPrompt':0,'UsePsyco':False,'LogLevelFilter':[0],
 			'LogModules':['controller','script'],
-			'FrameLimitEnabled':False, 'FrameLimit':60
+			'FrameLimitEnabled':False, 'FrameLimit':60,
+			'MouseSensitivity':0.0,
+			'MouseAcceleration':False
 			}
 		
 		# has the settings file been read
@@ -398,6 +400,10 @@ class Setting(object):
 						else:
 							if self._logger:
 								self._logger.log_log(e_value + " is not a valid FrameLimit setting.  You must specify a positive integer!")
+					elif name == "MouseSensitivity":
+						self._settingsFromFile[module][name] = e_value
+					elif name == "MouseAcceleration":
+						self._settingsFromFile[module][name] = e_value
 					else:
 							
 						if isinstance(self._settingsFromFile[module][name],list) == True or isinstance(self._settingsFromFile[module][name],dict) == True:

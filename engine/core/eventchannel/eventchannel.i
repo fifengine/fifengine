@@ -201,5 +201,10 @@ namespace FIFE {
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);
+
+		void setMouseSensitivity(float sensitivity);
+		float getMouseSensitivity() const;
+		void setMouseAcceleration(bool acceleration);
+		bool getMouseAcceleration() const;
 	};
 };

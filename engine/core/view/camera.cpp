@@ -126,7 +126,7 @@ namespace FIFE {
 	}
 
 	void Camera::setTilt(double tilt) {
-		if(m_tilt != tilt) {
+		if (!Mathd::Equal(m_tilt, tilt)) {
 			m_tilt = tilt;
 			updateReferenceScale();
 			updateMatrices();
@@ -139,7 +139,7 @@ namespace FIFE {
 	}
 
 	void Camera::setRotation(double rotation) {
-		if(m_rotation != rotation) {
+		if (!Mathd::Equal(m_rotation, rotation)) {
 			m_rotation = rotation;
 			updateReferenceScale();
 			updateMatrices();
@@ -152,7 +152,7 @@ namespace FIFE {
 	}
 
 	void Camera::setZoom(double zoom) {
-		if(m_zoom!=zoom) {
+		if (!Mathd::Equal(m_zoom, zoom)) {
 			m_zoom = zoom;
 			if (m_zoom < 0.001) {
 				m_zoom = 0.001;

@@ -30,11 +30,13 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/log/logger.h"
+#include "util/math/fife_math.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeyfilter.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/command/ec_command.h"
+#include "video/renderbackend.h"
 
 #include "eventmanager.h"
 
@@ -49,8 +51,15 @@ namespace FIFE {
 		m_keystatemap(),
 		m_keyfilter(0),
 		m_mousestate(0),
-		m_mostrecentbtn(MouseEvent::EMPTY)
- 	{
+		m_mostrecentbtn(MouseEvent::EMPTY),
+		m_mousesensitivity(0.0),
+		m_acceleration(false),
+		m_warp(false),
+		m_enter(false),
+		m_oldx(0),
+		m_oldy(0),
+		m_lastticks(0),
+		m_oldvelocity(0.0) {
 	}
 
 	EventManager::~EventManager() {
@@ -347,7 +356,6 @@ namespace FIFE {
 	}
 
 	void EventManager::processEvents() {
-		//std::cout << "processEvents \n";
 		// The double SDL_PollEvent calls don't throw away events,
 		// but try to combine (mouse motion) events.
 		SDL_Event event, next_event;
@@ -398,6 +406,7 @@ namespace FIFE {
 			Command* cmd = new Command();
 			if (actevt.gain) {
 				cmd->setCommandType(CMD_MOUSE_FOCUS_GAINED);
+				m_enter = true;
 			} else {
 				cmd->setCommandType(CMD_MOUSE_FOCUS_LOST);
 			}
@@ -473,8 +482,73 @@ namespace FIFE {
 
 
 	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
-		mouseevt.setX(sdlevt.button.x);
-		mouseevt.setY(sdlevt.button.y);
+		if (m_warp) {
+			return;
+		}
+
+		if (sdlevt.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+			uint16_t tmp_x = sdlevt.motion.x;
+			uint16_t tmp_y = sdlevt.motion.y;
+			if (m_enter) {
+				m_oldx = tmp_x;
+				m_oldy = tmp_y;
+				m_oldvelocity = 0.0;
+				m_enter = false;
+			}
+
+			float modifier;
+			if (m_acceleration) {
+				uint32_t ticks = SDL_GetTicks();
+				float difference = static_cast<float>(ticks - m_lastticks);
+				m_lastticks = ticks;
+				float dx = static_cast<float>(tmp_x - m_oldx);
+				float dy = static_cast<float>(tmp_y - m_oldy);
+				float distance = Mathf::Sqrt(dx * dx + dy * dy);
+				float acceleration = static_cast<float>((distance / difference) / difference);
+				float velocity = (m_oldvelocity + acceleration * difference)/2;
+				if (velocity > m_mousesensitivity+1) {
+					velocity = m_mousesensitivity+1;
+				}
+				m_oldvelocity = velocity;
+				modifier = velocity;
+			} else {
+				modifier = m_mousesensitivity;
+			}
+
+			int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldx);
+			int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldy);
+			if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
+				Rect screen = RenderBackend::instance()->getArea();
+				int16_t x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
+				int16_t y_fact = static_cast<int16_t>(round(static_cast<float>(tmp_yrel * modifier)));
+				if ((tmp_x + x_fact) > screen.w) {
+					tmp_x = screen.w;
+				} else if ((tmp_x + x_fact) < screen.x) {
+					tmp_x = screen.x;
+				} else {
+					tmp_x += x_fact;
+				}
+
+				if (tmp_y + y_fact > screen.h) {
+					tmp_y = screen.h;
+				} else if ((tmp_y + y_fact) < screen.y) {
+					tmp_y = screen.y;
+				} else {
+					tmp_y += y_fact;
+				}
+				m_oldx = tmp_x;
+				m_oldy = tmp_y;
+				mouseevt.setX(tmp_x);
+				mouseevt.setY(tmp_y);
+				m_warp = true; //don't trigger an event handler when warping
+				SDL_WarpMouse(tmp_x, tmp_y);
+				m_warp = false;
+			}
+		} else {
+			mouseevt.setX(sdlevt.button.x);
+			mouseevt.setY(sdlevt.button.y);
+		}
+
 		mouseevt.setButton(MouseEvent::EMPTY);
 		mouseevt.setType(MouseEvent::MOVED);
 		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
@@ -554,5 +628,26 @@ namespace FIFE {
 
 	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
 		m_keyfilter = keyFilter;
+	}
+
+	void EventManager::setMouseSensitivity(float sensitivity) {
+		if (sensitivity < -0.99) {
+			sensitivity = -0.99;
+		} else if (sensitivity > 10.0) {
+			sensitivity = 10.0;
+		}
+		m_mousesensitivity = sensitivity;
+	}
+
+	float EventManager::getMouseSensitivity() const {
+		return m_mousesensitivity;
+	}
+
+	void EventManager::setMouseAcceleration(bool acceleration) {
+		m_acceleration = acceleration;
+	}
+
+	bool EventManager::getMouseAcceleration() const {
+		return m_acceleration;
 	}
 }
