@@ -458,37 +458,9 @@ namespace FIFE {
 	}
 
 	void EventManager::processMouseEvent(SDL_Event event) {
-		if (dispatchSdlEvent(event) && event.type != SDL_MOUSEMOTION) {
-			return;
-		}
-		MouseEvent mouseevt;
-		mouseevt.setSource(this);
-		fillMouseEvent(event, mouseevt);
-		fillModifiers(mouseevt);
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			m_mousestate |= static_cast<int32_t>(mouseevt.getButton());
-			m_mostrecentbtn = mouseevt.getButton();
-		} else if (event.type == SDL_MOUSEBUTTONUP) {
-			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
-		}
-		// fire scrollwheel events only once
-		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
-			if (event.type == SDL_MOUSEBUTTONUP) {
-				return;
-			}
-		}
-		dispatchMouseEvent(mouseevt);
-	}
-
-
-	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
-		if (m_warp) {
-			return;
-		}
-
-		if (sdlevt.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
-			uint16_t tmp_x = sdlevt.motion.x;
-			uint16_t tmp_y = sdlevt.motion.y;
+		if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+			uint16_t tmp_x = event.motion.x;
+			uint16_t tmp_y = event.motion.y;
 			if (m_enter) {
 				m_oldx = tmp_x;
 				m_oldy = tmp_y;
@@ -538,16 +510,44 @@ namespace FIFE {
 				}
 				m_oldx = tmp_x;
 				m_oldy = tmp_y;
-				mouseevt.setX(tmp_x);
-				mouseevt.setY(tmp_y);
+				event.motion.x = tmp_x;
+				event.motion.y = tmp_y;
 				m_warp = true; //don't trigger an event handler when warping
 				SDL_WarpMouse(tmp_x, tmp_y);
 				m_warp = false;
 			}
-		} else {
-			mouseevt.setX(sdlevt.button.x);
-			mouseevt.setY(sdlevt.button.y);
+
 		}
+		if (dispatchSdlEvent(event)) {
+			return;
+		}
+		MouseEvent mouseevt;
+		mouseevt.setSource(this);
+		fillMouseEvent(event, mouseevt);
+		fillModifiers(mouseevt);
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			m_mousestate |= static_cast<int32_t>(mouseevt.getButton());
+			m_mostrecentbtn = mouseevt.getButton();
+		} else if (event.type == SDL_MOUSEBUTTONUP) {
+			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
+		}
+		// fire scrollwheel events only once
+		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
+			if (event.type == SDL_MOUSEBUTTONUP) {
+				return;
+			}
+		}
+		dispatchMouseEvent(mouseevt);
+	}
+
+
+	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
+		if (m_warp) {
+			return;
+		}
+
+		mouseevt.setX(sdlevt.button.x);
+		mouseevt.setY(sdlevt.button.y);
 
 		mouseevt.setButton(MouseEvent::EMPTY);
 		mouseevt.setType(MouseEvent::MOVED);
