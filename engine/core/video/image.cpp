@@ -145,7 +145,7 @@ namespace FIFE {
 	}
 
 	uint32_t Image::getWidth() const {
-		if (m_shared) { 
+		if (m_shared) {
 			return m_subimagerect.w;
 		} else if (!m_surface) {
 			return 0;
@@ -154,7 +154,7 @@ namespace FIFE {
 	}
 
 	uint32_t Image::getHeight() const {
-		if (m_shared) { 
+		if (m_shared) {
 			return m_subimagerect.h;
 		} else if (!m_surface) {
 			return 0;
@@ -176,6 +176,9 @@ namespace FIFE {
 
 	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		Uint8 *p;
+
+		assert(m_surface);
+
 		int32_t bpp = m_surface->format->BytesPerPixel;
 
 		if(!isSharedImage()) {
@@ -309,7 +312,7 @@ namespace FIFE {
 		SDL_SetAlpha(srcimg->m_surface, 0, 0);
 		if(this->isSharedImage()) {
 			Rect const& rect = this->getSubImageRect();
-			SDL_Rect dstrect = { 
+			SDL_Rect dstrect = {
 				rect.x + xoffset, rect.y + yoffset,
 				static_cast<Uint16>(srcimg->getWidth()),
 				static_cast<Uint16>(srcimg->getHeight()) };

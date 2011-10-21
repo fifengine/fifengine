@@ -88,8 +88,8 @@ namespace FIFE {
 		 */
 		SDL_Surface* detachSurface();
 
-		SDL_Surface* getSurface() { return m_surface; }
-		const SDL_Surface* getSurface() const { return m_surface; }
+		SDL_Surface* getSurface() { assert(m_surface); return m_surface; }
+		const SDL_Surface* getSurface() const { assert(m_surface); return m_surface; }
 
 		/** This frees the current suface and replaces it with the
 		 * surface passed in the parameter (which can be NULL).

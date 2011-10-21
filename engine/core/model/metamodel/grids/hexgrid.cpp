@@ -189,108 +189,108 @@ namespace FIFE {
 		double dy = elc.y - lc.y;
 		int32_t x = static_cast<int32_t>(lc.x);
 		int32_t y = static_cast<int32_t>(lc.y);
-		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
-		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
+//		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
+//		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		ModelCoordinate result;
 
 		if ((y % 2) == 0) {
-			FL_DBG(_log, "In even row");
+//			FL_DBG(_log, "In even row");
 			if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
 				result = ModelCoordinate(x, y+1);
 			}
 			else if (dy < HEX_EDGE_HALF) {
-				FL_DBG(_log, "In upper rect area");
+//				FL_DBG(_log, "In upper rect area");
 				if (dx > 0.5) {
-					FL_DBG(_log, "...on right");
+//					FL_DBG(_log, "...on right");
 					result = ModelCoordinate(x+1, y);
 				}
 				else {
-					FL_DBG(_log, "...on left");
+//					FL_DBG(_log, "...on left");
 					result = ModelCoordinate(x, y);
 				}
 			}
 			// in middle triangle area
 			else {
-				FL_DBG(_log, "In middle triangle area");
+//				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
-					FL_DBG(_log, "In left triangles");
+//					FL_DBG(_log, "In left triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
 					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
 					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
-						FL_DBG(_log, "..upper part");
+//						FL_DBG(_log, "..upper part");
 						result = ModelCoordinate(x, y);
 					} else {
-						FL_DBG(_log, "..lower part");
+//						FL_DBG(_log, "..lower part");
 						result = ModelCoordinate(x, y+1);
 					}
 				} else {
-					FL_DBG(_log, "In right triangles");
+//					FL_DBG(_log, "In right triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
 					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
 					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
-						FL_DBG(_log, "..upper part");
+//						FL_DBG(_log, "..upper part");
 						result = ModelCoordinate(x+1, y);
 					} else {
-						FL_DBG(_log, "..lower part");
+//						FL_DBG(_log, "..lower part");
 						result = ModelCoordinate(x, y+1);
 					}
 				}
 			}
 		}
 		else {
-			FL_DBG(_log, "In uneven row");
+//			FL_DBG(_log, "In uneven row");
 			if (dy < HEX_EDGE_HALF) {
-				FL_DBG(_log, "In upper rect area");
+//				FL_DBG(_log, "In upper rect area");
 				result = ModelCoordinate(x, y);
 			}
 			else if ((1 - dy) < HEX_EDGE_HALF) {
-				FL_DBG(_log, "In lower rect area");
+//				FL_DBG(_log, "In lower rect area");
 				if (dx > 0.5) {
-					FL_DBG(_log, "...on right");
+//					FL_DBG(_log, "...on right");
 					result = ModelCoordinate(x+1, y+1);
 				}
 				else {
-					FL_DBG(_log, "...on left");
+//					FL_DBG(_log, "...on left");
 					result = ModelCoordinate(x, y+1);
 				}
 			}
 			else {
-				FL_DBG(_log, "In middle triangle area");
+//				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
-					FL_DBG(_log, "In left triangles");
+//					FL_DBG(_log, "In left triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
 					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
 					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
-						FL_DBG(_log, "..lower part");
+//						FL_DBG(_log, "..lower part");
 						result = ModelCoordinate(x, y+1);
 					} else {
-						FL_DBG(_log, "..upper part");
+//						FL_DBG(_log, "..upper part");
 						result = ModelCoordinate(x, y);
 					}
 				} else {
-					FL_DBG(_log, "In right triangles");
+//					FL_DBG(_log, "In right triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
 					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
 					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
-					        FL_DBG(_log, "..lower part");
+//					        FL_DBG(_log, "..lower part");
 						result = ModelCoordinate(x+1, y+1);
 					} else {
-						FL_DBG(_log, "..upper part");
+//						FL_DBG(_log, "..upper part");
 						result = ModelCoordinate(x, y);
 					}
 				}
 			}
 		}
-		FL_DBG(_log, LMsg("  result = ") << result);
+//		FL_DBG(_log, LMsg("  result = ") << result);
 		return result;
 	}
 

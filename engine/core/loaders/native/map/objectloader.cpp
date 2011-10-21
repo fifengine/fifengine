@@ -82,7 +82,7 @@ namespace FIFE {
                          std::ostringstream oss;
                         oss << " Failed to load"
                             << objectPath.string()
-                            << " : " << __FILE__ 
+                            << " : " << __FILE__
                             << " [" << __LINE__ << "]"
                             << std::endl;
                         FL_ERR(_log, oss.str());
@@ -94,7 +94,7 @@ namespace FIFE {
                     std::ostringstream oss;
                     oss << " Failed to load"
                         << objectPath.string()
-                        << " : " << __FILE__ 
+                        << " : " << __FILE__
                         << " [" << __LINE__ << "]"
                         << std::endl;
                     FL_ERR(_log, oss.str());
@@ -110,7 +110,7 @@ namespace FIFE {
                 std::ostringstream oss;
                 oss << " Failed to load"
                     << objectPath.string()
-                    << " : " << __FILE__ 
+                    << " : " << __FILE__
                     << " [" << __LINE__ << "]"
                     << std::endl;
                 FL_ERR(_log, oss.str());
@@ -122,7 +122,7 @@ namespace FIFE {
             std::ostringstream oss;
             oss << " Failed to load"
                 << objectPath.string()
-                << " : " << __FILE__ 
+                << " : " << __FILE__
                 << " [" << __LINE__ << "]"
                 << std::endl;
             FL_ERR(_log, oss.str());
@@ -171,7 +171,7 @@ namespace FIFE {
             std::ostringstream oss;
             oss << " Failed to load"
                 << objectPath.string()
-                << " : " << __FILE__ 
+                << " : " << __FILE__
                 << " [" << __LINE__ << "]"
                 << std::endl;
             FL_ERR(_log, oss.str());
@@ -256,7 +256,13 @@ namespace FIFE {
                             imagePath = bfs::path(*sourceId);
                         }
 
-                        ImagePtr imagePtr = m_imageManager->create(imagePath.string());
+						ImagePtr imagePtr;
+						if(!m_imageManager->exists(imagePath.string())) {
+                        	imagePtr = m_imageManager->create(imagePath.string());
+						}
+						else {
+							imagePtr = m_imageManager->getPtr(imagePath.string());
+						}
 
                         if (imagePtr) {
                             int xOffset = 0;
@@ -305,8 +311,14 @@ namespace FIFE {
                                     atlasPath = bfs::path(*sourceId);
                                 }
 
+								ImagePtr atlasImgPtr;
                                 // we need to load this since its shared image
-                                ImagePtr atlasImgPtr = m_imageManager->create(atlasPath.string());
+                                if(!m_imageManager->exists(atlasPath.string())) {
+									atlasImgPtr = m_imageManager->create(atlasPath.string());
+								}
+                                else {
+									atlasImgPtr = m_imageManager->getPtr(atlasPath.string());
+								}
 
                                 int animFrames = 0;
                                 int animDelay = 0;
@@ -367,7 +379,15 @@ namespace FIFE {
                                             sprintf(tmpBuf, "%03d:%04d", dir, iframe);
 
                                             std::string frameId = *objectId + ":" + *actionId + ":" + std::string(tmpBuf);
-                                            ImagePtr framePtr = m_imageManager->create(frameId);
+
+                                            ImagePtr framePtr;
+                                            if (!m_imageManager->exists(frameId)) {
+												framePtr = m_imageManager->create(frameId);
+											}
+											else {
+												framePtr = m_imageManager->getPtr(frameId);
+											}
+
                                             Rect region(
                                                 frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
                                                 );

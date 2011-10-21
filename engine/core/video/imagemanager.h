@@ -119,7 +119,7 @@ namespace FIFE {
 		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
 
 		/** Loads a blank resource
-		 * 
+		 *
 		 * @param width
 		 * @param height
 		 * @return An ImagePtr to the blank image (ready to be modified)
@@ -349,6 +349,9 @@ namespace FIFE {
 		 *
 		 */
 		virtual ImagePtr get(ResourceHandle handle);
+
+		virtual ImagePtr getPtr(const std::string& name);
+		virtual ImagePtr getPtr(ResourceHandle handle);
 
 		/** Gets an Image handle by name
 		 *

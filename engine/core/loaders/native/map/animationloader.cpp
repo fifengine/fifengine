@@ -146,9 +146,15 @@ namespace FIFE {
 							framePath = GetParentPath(framePath) / *sourceId;
 						} else {
 							framePath = bfs::path(*sourceId);
-						}                        
+						}
 
-                        ImagePtr imagePtr = m_imageManager->create(framePath.string());
+						ImagePtr imagePtr;
+						if(!m_imageManager->exists(framePath.string())) {
+                        	imagePtr = m_imageManager->create(framePath.string());
+						}
+						else {
+							imagePtr = m_imageManager->getPtr(framePath.string());
+						}
 
                         if (imagePtr) {
                             int frameXoffset = 0;

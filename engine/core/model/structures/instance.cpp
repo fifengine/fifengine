@@ -394,14 +394,14 @@ namespace FIFE {
 	}
 
 	bool Instance::process_movement() {
-		FL_DBG(_log, "Moving...");
+//		FL_DBG(_log, "Moving...");
 		ActionInfo* info = m_activity->m_actioninfo;
 		// timeslice for this movement
 		uint32_t timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
-		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << info->m_prev_call_time);
+//		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << info->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
-		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
+//		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
 
 		Location nextLocation = m_location;
 		info->m_pather_session_id = info->m_pather->getNextLocation(
@@ -430,21 +430,21 @@ namespace FIFE {
 		}
 		ActionInfo* info = m_activity->m_actioninfo;
 		if (info) {
-			FL_DBG(_log, "updating instance");
+//			FL_DBG(_log, "updating instance");
 
 			if (info->m_target) {
-				FL_DBG(_log, "action contains target for movement");
+//				FL_DBG(_log, "action contains target for movement");
 				// update target if needed
 				if (info->m_leader && (info->m_leader->getLocationRef() != *info->m_target)) {
 					*info->m_target = info->m_leader->getLocation();
 				}
 				bool movement_finished = process_movement();
 				if (movement_finished) {
-					FL_DBG(_log, "movement finished");
+//					FL_DBG(_log, "movement finished");
 					finalizeAction();
 				}
 			} else {
-				FL_DBG(_log, "action does not contain target for movement");
+//				FL_DBG(_log, "action does not contain target for movement");
 				if (m_activity->m_timeprovider->getGameTime() - info->m_action_start_time + info->m_action_offset_time >= info->m_action->getDuration()) {
 					if (info->m_repeating) {
 						info->m_action_start_time = m_activity->m_timeprovider->getGameTime();
