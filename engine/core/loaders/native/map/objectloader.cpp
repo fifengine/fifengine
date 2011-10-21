@@ -383,18 +383,17 @@ namespace FIFE {
                                             ImagePtr framePtr;
                                             if (!m_imageManager->exists(frameId)) {
 												framePtr = m_imageManager->create(frameId);
+                                           		Rect region(
+													frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
+												);
+												framePtr->useSharedImage(atlasImgPtr, region);
+												framePtr->setXShift(xoffset);
+												framePtr->setYShift(yoffset);
 											}
 											else {
 												framePtr = m_imageManager->getPtr(frameId);
 											}
-
-                                            Rect region(
-                                                frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
-                                                );
-                                            framePtr->useSharedImage(atlasImgPtr, region);
-                                            framePtr->setXShift(xoffset);
-                                            framePtr->setYShift(yoffset);
-                                            animation->addFrame(framePtr, delay);
+											animation->addFrame(framePtr, delay);
                                         }
 
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();
