@@ -140,7 +140,7 @@ namespace FIFE {
 	}
 
 	void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
-		FL_DBG(_log, "Iterating layer...");
+//		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
@@ -187,9 +187,9 @@ namespace FIFE {
 		// 3rd layer gets    0..50
 		// 4th layer gets   50..100
 		double layer_depth_range = depth_range / static_cast<double>(num_layers);
-		// What's left, is to compute z offset for given layer 
-		double layer_z_offset = global_z_min + 
-			layer_depth_range * static_cast<double>(this_layer) - 
+		// What's left, is to compute z offset for given layer
+		double layer_z_offset = global_z_min +
+			layer_depth_range * static_cast<double>(this_layer) -
 			layer_depth_range * 0.5;
 #else
 
@@ -201,7 +201,7 @@ namespace FIFE {
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
-			FL_DBG(_log, "Iterating instances...");
+//			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
 			float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
@@ -315,7 +315,7 @@ namespace FIFE {
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
-			FL_DBG(_log, "Iterating instances...");
+//			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
 
@@ -348,7 +348,7 @@ namespace FIFE {
 				}
 			}
 
-			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
+//			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);

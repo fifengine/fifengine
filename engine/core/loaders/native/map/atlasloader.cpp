@@ -45,11 +45,11 @@ namespace FIFE {
 	static Logger _log(LM_NATIVE_LOADERS);
 
 
-	size_t Atlas::getImageCount() const { 
+	size_t Atlas::getImageCount() const {
 		return m_subimages.size();
 	}
 
-	ImagePtr& Atlas::getPackedImage() { 
+	ImagePtr& Atlas::getPackedImage() {
 		return m_image;
 	}
 
@@ -104,7 +104,7 @@ namespace FIFE {
 						return false;
 					}
 				} else {
-					return false; 
+					return false;
 				}
 
 				// done with data delete resource
@@ -183,13 +183,16 @@ namespace FIFE {
 				atlas.reset(new Atlas(atlasImagePath.string()));
 
 				// End-user could create the same atlas for the second time.
-				// Since we don't hold any data for Atlases like ImageManager we need to recreate 
+				// Since we don't hold any data for Atlases like ImageManager we need to recreate
 				// atlas parameters (to return proper AtlasPtr) but don't reload pixel data (they are held by ImageManager).
 
 				bool atlasExists = m_imageManager->exists(atlas->getName());
 
 				if(!atlasExists) {
 					atlas->setPackedImage(m_imageManager->create(atlas->getName()));
+				}
+				else {
+					atlas->setPackedImage(m_imageManager->getPtr(atlas->getName()));
 				}
 
 				// We don't really need this now, though we could use it to assert if the loaded atlas is the same sized as these
@@ -208,12 +211,18 @@ namespace FIFE {
 
 					const std::string* subimageName = imageElem->Attribute(std::string("source"));
 
-					if(!atlasExists && subimageName) {
-
+					if (subimageName) {
 						std::string finalname = *namespaceId + ":" +*subimageName;
-						ImagePtr subImage = m_imageManager->create(finalname);
+						ImagePtr subImage;
+
+						if (!atlasExists) {
+							subImage = m_imageManager->create(finalname);
+						}
+						else {
+							subImage = m_imageManager->getPtr(finalname);
+						}
 						subImage->useSharedImage(atlas->getPackedImage(), region);
-						
+
 						AtlasData atlas_data = {region, subImage};
 						atlas->addImage(finalname, atlas_data);
 					}
@@ -293,7 +302,7 @@ namespace FIFE {
 			for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {
 				const std::string* sourceId = imageElement->Attribute(std::string("source"));
 
-				if (sourceId) {	
+				if (sourceId) {
 					std::string source = *namespaceId + ":" + *sourceId;
 					if(!m_imageManager->exists(source)) {
 						throw NotFound(source + " couldn't be found.");

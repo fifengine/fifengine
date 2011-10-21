@@ -362,12 +362,18 @@ namespace FIFE {
 		ImageHandleMapIterator it = m_imgHandleMap.begin(),
 			itend = m_imgHandleMap.end();
 
+		std::vector<int> imgHandles;
+
 		int32_t count = 0;
 		for ( ; it != itend; ++it) {
 			if ( it->second.useCount() == 2) {
-				remove(it->second->getHandle());
+				imgHandles.push_back(it->second->getHandle());
 				count++;
 			}
+		}
+
+		for (std::vector<int>::iterator it = imgHandles.begin(); it != imgHandles.end(); ++it) {
+			remove(*it);
 		}
 
 		FL_DBG(_log, LMsg("ImageManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
@@ -400,6 +406,29 @@ namespace FIFE {
 		}
 
 		FL_WARN(_log, LMsg("ImageManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
+
+		return ImagePtr();
+	}
+
+	ImagePtr ImageManager::getPtr(const std::string& name) {
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
+
+		if (nit != m_imgNameMap.end()) {
+			return nit->second;
+		}
+
+		FL_WARN(_log, LMsg("ImageManager::getPtr(std::string) - ") << "Resource " << name << " is undefined.");
+
+		return ImagePtr();
+	}
+
+	ImagePtr ImageManager::getPtr(ResourceHandle handle) {
+		ImageHandleMapConstIterator it = m_imgHandleMap.find(handle);
+		if (it != m_imgHandleMap.end()) {
+			return it->second;
+		}
+
+		FL_WARN(_log, LMsg("ImageManager::getPtr(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
 
 		return ImagePtr();
 	}
