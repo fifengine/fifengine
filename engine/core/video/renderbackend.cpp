@@ -35,6 +35,7 @@ namespace FIFE {
 		m_screen(NULL),
 		m_target(NULL),
 		m_compressimages(false),
+		m_useframebuffer(false),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),

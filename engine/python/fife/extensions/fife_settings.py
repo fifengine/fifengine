@@ -145,7 +145,7 @@ class Setting(object):
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
-			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[False,True],
+			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True],
 			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
 			'ScreenResolution':['640x480', '800x600', '1024x768', '1280x800', '1440x900'],
 			'BitsPerPixel':[0,16,24,32],
@@ -164,7 +164,7 @@ class Setting(object):
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
 			'FullScreen':False, 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':0, 'GLCompressImages':False,
+			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':0, 'GLCompressImages':False, 'GLUseFramebuffer':True,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,

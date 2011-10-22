@@ -47,6 +47,7 @@ namespace FIFE {
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),
 		m_oglcompressimages(false),
+		m_ogluseframebuffer(true),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -148,6 +149,10 @@ namespace FIFE {
 
 	void EngineSettings::setGLCompressImages(bool oglcompressimages) {
 		m_oglcompressimages = oglcompressimages;
+	}
+
+	void EngineSettings::setGLUseFramebuffer(bool ogluseframebuffer) {
+		m_ogluseframebuffer = ogluseframebuffer;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {

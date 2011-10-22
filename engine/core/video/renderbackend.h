@@ -277,6 +277,14 @@ namespace FIFE {
 		 */
 		bool isImageCompressingEnabled() const { return m_compressimages; }
 
+		/** Enables or disable the usage of the framebuffer, if available
+		 */
+		void setFramebufferEnabled(bool enabled) { m_useframebuffer = enabled; }
+
+		/** @see setFramebufferEnabled
+		 */
+		bool isFramebufferEnabled() const { return m_useframebuffer; }
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -337,6 +345,7 @@ namespace FIFE {
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
 		bool m_compressimages;
+		bool m_useframebuffer;
 		bool m_isalphaoptimized;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;

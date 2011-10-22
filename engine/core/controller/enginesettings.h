@@ -126,10 +126,20 @@ namespace FIFE {
 		*/
 		void setGLCompressImages(bool oglcompressimages);
 
-		/** Tells if fake alpha is removed in SDL renderbackend
+		/** Tells if images are compress by video driver in OpenGL renderbackend
 		*/
 		bool isGLCompressImages() const {
 			return m_oglcompressimages;
+		}
+
+		/** Sets if OpenGL renderbackend should use FramebufferObject (when available)
+		*/
+		void setGLUseFramebuffer(bool ogluseframebuffer);
+
+		/** Tells if OpenGL renderbackend should use FramebufferObject
+		*/
+		bool isGLUseFramebuffer() const {
+			return m_ogluseframebuffer;
 		}
 
 		/** Sets screen width (pixels)
@@ -297,6 +307,7 @@ namespace FIFE {
 		std::string m_renderbackend;
 		bool m_sdlremovefakealpha;
 		bool m_oglcompressimages;
+		bool m_ogluseframebuffer;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;
