@@ -65,6 +65,8 @@ namespace FIFE {
 		bool isSDLRemoveFakeAlpha() const;
 		void setGLCompressImages(bool oglcompressimages);
 		bool isGLCompressImages() const;
+		void setGLUseFramebuffer(bool ogluseframebuffer);
+		bool isGLUseFramebuffer() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);
