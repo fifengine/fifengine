@@ -17,8 +17,9 @@ Welcome to the FIFE v0.3.3 README. This snapshot is based on SVN revision 3750.
 2 License
 3 FIFE Clients
 4 Known Issues
-5 Feedback
-6 Closing Notes
+5 Troubleshooting
+6 Feedback
+7 Closing Notes
 
 
 == 1) Features ==
@@ -117,7 +118,18 @@ Editor
  * Editor file browser widget can't be closed (#499)
  * Misc FIFE Editor crashes (user input validation/exception handling missing) (#537)
 
-== 5) Feedback ==
+== 5) Troubleshooting ==
+
+=== Video Card/Driver Issues ===
+There are some known driver/card combinations that exhibit the some problems
+with FIFE.  Users have reported seeing blank screens or fuzzy images.  If this 
+is happening to you please report it on our forums in the Help and 
+troubleshooting section here: http://forums.fifengine.net/index.php?board=4.0
+Please include your Card/Driver/OS information in your post.  Currently the fix
+is to modify your settings.xml file and set both GLUseFramebuffer and GLUseNPOT
+to False (they are True by default).
+
+== 6) Feedback ==
 We appreciate every kind of feedback concerning the release, the project in general 
 and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you 
 would like to get in contact with us and provide feedback you can either visit our 
@@ -126,7 +138,7 @@ IRC channel or our forums:
  * http://forums.fifengine.de/index.php?board=5.0
 
 
-== 6) Closing Notes ==
+== 7) Closing Notes ==
 Have fun with the release and let us know what you think about it!
 -- The FIFE team.
 
