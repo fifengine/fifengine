@@ -216,6 +216,7 @@ namespace FIFE {
 		//m_renderbackend->setAlphaOptimizerEnabled(false);
 		m_renderbackend->setImageCompressingEnabled(m_settings.isGLCompressImages());
 		m_renderbackend->setFramebufferEnabled(m_settings.isGLUseFramebuffer());
+		m_renderbackend->setNPOTEnabled(m_settings.isGLUseNPOT());
 
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);

@@ -67,6 +67,8 @@ namespace FIFE {
 		bool isGLCompressImages() const;
 		void setGLUseFramebuffer(bool ogluseframebuffer);
 		bool isGLUseFramebuffer() const;
+		void setGLUseNPOT(bool oglusenpot);
+		bool isGLUseNPOT() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);

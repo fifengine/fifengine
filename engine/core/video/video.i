@@ -168,6 +168,8 @@ namespace FIFE {
 		bool isImageCompressingEnabled() const;
 		void setFramebufferEnabled(bool enabled);
 		bool isFramebufferEnabled() const;
+		void setNPOTEnabled(bool enabled);
+		bool isNPOTEnabled() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);

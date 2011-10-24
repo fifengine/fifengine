@@ -163,7 +163,7 @@ namespace FIFE {
 
 		// With OpenGL 2.0 or GL_ARB_texture_non_power_of_two we don't really need to care
 		// about non power of 2 textures 
-		if(GLEE_ARB_texture_non_power_of_two) {
+		if(GLEE_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
 			m_chunk_size_w = width;
 			m_chunk_size_h = height;
 		}
@@ -207,7 +207,7 @@ namespace FIFE {
 			m_compressed = false;
 		}
 		
-		if(GLEE_ARB_texture_non_power_of_two) {
+		if(GLEE_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
 			if(RenderBackend::instance()->isColorKeyEnabled()) {
 				uint8_t* oglbuffer = new uint8_t[width * height * 4];
 				memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
@@ -276,7 +276,7 @@ namespace FIFE {
 		uint32_t width = shared->getWidth();
 		uint32_t height = shared->getHeight();
 
-		if(!GLEE_ARB_texture_non_power_of_two) {
+		if(!GLEE_ARB_texture_non_power_of_two || !RenderBackend::instance()->isNPOTEnabled()) {
 			width = nextPow2(width);
 			height = nextPow2(height);
 		}

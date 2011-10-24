@@ -116,11 +116,11 @@ namespace FIFE {
 	}
 	void OffRendererImageInfo::render(RenderBackend* renderbackend) {
 		Rect r;
-		uint16_t widtht = m_image->getWidth();
+		uint16_t width = m_image->getWidth();
 		uint16_t height = m_image->getHeight();
-		r.x = m_anchor.x-widtht/2;
+		r.x = m_anchor.x-width/2;
 		r.y = m_anchor.y-height/2;
-		r.w = widtht;
+		r.w = width;
 		r.h = height;
 
 		m_image->render(r);
@@ -138,11 +138,11 @@ namespace FIFE {
 		ImagePtr img = m_animation->getFrameByTimestamp(animtime);
 
 		Rect r;
-		uint16_t widtht = img->getWidth();
+		uint16_t width = img->getWidth();
 		uint16_t height = img->getHeight();
-		r.x = m_anchor.x-widtht/2;
+		r.x = m_anchor.x-width/2;
 		r.y = m_anchor.y-height/2;
-		r.w = widtht;
+		r.w = width;
 		r.h = height;
 
 		img->render(r);
@@ -158,11 +158,11 @@ namespace FIFE {
 		Image* img = m_font->getAsImageMultiline(m_text);
 
 		Rect r;
-		uint16_t widtht = img->getWidth();
+		uint16_t width = img->getWidth();
 		uint16_t height = img->getHeight();
-		r.x = m_anchor.x-widtht/2;
+		r.x = m_anchor.x-width/2;
 		r.y = m_anchor.y-height/2;
-		r.w = widtht;
+		r.w = width;
 		r.h = height;
 
 		img->render(r);
@@ -177,11 +177,11 @@ namespace FIFE {
 	}
 	void OffRendererResizeInfo::render(RenderBackend* renderbackend) {
 		Rect r;
-		uint16_t widtht = m_width;
+		uint16_t width = m_width;
 		uint16_t height = m_height;
-		r.x = m_anchor.x-widtht/2;
+		r.x = m_anchor.x-width/2;
 		r.y = m_anchor.y-height/2;
-		r.w = widtht;
+		r.w = width;
 		r.h = height;
 
 		m_image->render(r);

@@ -119,6 +119,7 @@ class ApplicationBase(object):
 		engineSetting.setSDLRemoveFakeAlpha(self._finalSetting['SDLRemoveFakeAlpha'])
 		engineSetting.setGLCompressImages(self._finalSetting['GLCompressImages'])
 		engineSetting.setGLUseFramebuffer(self._finalSetting['GLUseFramebuffer'])
+		engineSetting.setGLUseNPOT(self._finalSetting['GLUseNPOT'])
 		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))

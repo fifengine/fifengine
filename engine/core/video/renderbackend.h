@@ -285,6 +285,14 @@ namespace FIFE {
 		 */
 		bool isFramebufferEnabled() const { return m_useframebuffer; }
 
+		/** Enables or disable the usage of npot, if available
+		 */
+		void setNPOTEnabled(bool enabled) { m_usenpot = enabled; }
+
+		/** @see setNPOTEnabled
+		 */
+		bool isNPOTEnabled() const { return m_usenpot; }
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -346,6 +354,7 @@ namespace FIFE {
 		SDL_Surface* m_target;
 		bool m_compressimages;
 		bool m_useframebuffer;
+		bool m_usenpot;
 		bool m_isalphaoptimized;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
