@@ -147,15 +147,15 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = m_image->getWidth();
+			uint32_t width = m_image->getWidth();
 			uint32_t height = m_image->getHeight();
 			if (m_zoomed) {
-				widtht = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+				width = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
 				height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
 			}
-			r.x = p.x-widtht/2;
+			r.x = p.x-width/2;
 			r.y = p.y-height/2;
-			r.w = widtht;
+			r.w = width;
 			r.h = height;
 			if(r.intersects(viewport)) {
 				m_image->render(r);
@@ -178,15 +178,15 @@ namespace FIFE {
 			ImagePtr img = m_animation->getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = img->getWidth();
+			uint32_t width = img->getWidth();
 			uint32_t height = img->getHeight();
 			if (m_zoomed) {
-				widtht = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+				width = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
 				height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
 			}
-			r.x = p.x-widtht/2;
+			r.x = p.x-width/2;
 			r.y = p.y-height/2;
-			r.w = widtht;
+			r.w = width;
 			r.h = height;
 			if(r.intersects(viewport)) {
 				img->render(r);
@@ -232,15 +232,15 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t widtht = m_width;
+			uint32_t width = m_width;
 			uint32_t height = m_height;
 			if (m_zoomed) {
-				uint32_t widtht = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+				uint32_t width = static_cast<uint32_t>(round(m_width * cam->getZoom()));
 				uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
 			}
-			r.x = p.x-widtht/2;
+			r.x = p.x-width/2;
 			r.y = p.y-height/2;
-			r.w = widtht;
+			r.w = width;
 			r.h = height;
 			if(r.intersects(viewport)) {
 				m_image->render(r);

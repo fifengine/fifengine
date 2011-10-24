@@ -142,6 +142,16 @@ namespace FIFE {
 			return m_ogluseframebuffer;
 		}
 
+		/** Sets if OpenGL renderbackend should use NPOT Textures (when available)
+		*/
+		void setGLUseNPOT(bool oglusenpot);
+
+		/** Tells if OpenGL renderbackend should use NPOT Textures
+		*/
+		bool isGLUseNPOT() const {
+			return m_oglusenpot;
+		}
+
 		/** Sets screen width (pixels)
 		 */
 		void setScreenWidth(uint16_t screenwidth);
@@ -308,6 +318,7 @@ namespace FIFE {
 		bool m_sdlremovefakealpha;
 		bool m_oglcompressimages;
 		bool m_ogluseframebuffer;
+		bool m_oglusenpot;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;
