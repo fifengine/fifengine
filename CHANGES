@@ -215,8 +215,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Generic renderer now only renders objects on the specified layer (#458)
   * Fixed a memory leak when deleting maps.  The camera was not being
     deleted
-  * Removed the NotFound exceptions in layer.getInstance() and model.getObjects()
-    to be more consistent with the rest of the API
+  * Removed the NotFound exceptions in layer.getInstance() and 
+    model.getObjects() to be more consistent with the rest of the API
   * Fixed a bug in RenderBackendSDL, the clip area was not properly set
   * Renamed the backquad and border commands of the FloatingTextRenderer
   * Added the TransparentArea commands to the InstanceRenderer
@@ -237,8 +237,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed the genericrenderer.  It is now tested whether the images are in the 
     viewport
   * Fixed the gridrenderer to only render the grin within the viewport
-  * Changed the vertex functions in opengl/renderbackendopengl.cpp from vertex3f() 
-    to vertex2f()
+  * Changed the vertex functions in opengl/renderbackendopengl.cpp from 
+    vertex3f() to vertex2f()
   * Moved the layer visibility and transparency, from instancerenderer.cpp to 
     layercache.cpp and improved it (r3395) 
   * Corrected the h,w calculation for zooming in layercache.cpp (r3369)
@@ -246,7 +246,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * GLImage now only creates one "texture chunk" (r3445, r3452)
   * Added nextPow2() math function (r3445)
   * Fixed color mask definitions and use them throughout the engine (r3445)
-  * Moved the GLEnable and GLDisable structures to be globally accessible (r3445)
+  * Moved the GLEnable and GLDisable structures to be globally accessible 
+    (r3445)
   * Templatized Rect to extend it's functionality beyond integers (r3447)
   * Added some typedefs: Rect, FloatRect, DoubleRect (r3447)
   * Removed the unused "trigger" system as it was unused (r3449)
@@ -267,9 +268,10 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Small change to the way the screen is initialized. The screen mode now 
     MUST be in the supported screen mode list before the screen will 
     initialize. (r3467)
-  * Added clearResourceLoaders() to the Pool class. This can be used if different 
-    resourceloaders have to be added at a later point in time (running editor for 
-    example, a plugin might want to have it's own loader added) (r3469)
+  * Added clearResourceLoaders() to the Pool class. This can be used if 
+    different resourceloaders have to be added at a later point in time 
+    (running editor for example, a plugin might want to have it's own loader 
+    added) (r3469)
   * Added the ability to normalize a 2D and 3D point (r3470)
   * You can now rotate a 2D point around the origin or a specific point (r3470)
   * Major improvements to fife_math.h and added corresponding Python bindings. 
@@ -307,10 +309,11 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed the write_instances function so it saves the stack position variable
     of instance visual when saving maps
   * Added getVolume() to the SoundManager
-  * Added debug flag to loaders to enable/disable annoying print spam on maploading
+  * Added debug flag to loaders to enable/disable annoying print spam on 
+    maploading
   * BasicApplication now initializes pychan (r3388)
-  * loaders extension can now handle multiple loaders for different filetypes. A 
-    difference between map and object files is now being made! (r3469)
+  * loaders extension can now handle multiple loaders for different filetypes. 
+    A difference between map and object files is now being made! (r3469)
   * Modified the sound manager to better take care of sound clips (r3476)
   
 === Docs ===
@@ -325,7 +328,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Renamed <fife>/demos/pychan_demo/pychan_test.py to pychan_demo.py
   * Added a new pychan demo - gui animations
   * Added the Shooter demo
-  * Made the dynamic widget test in the pychan_demo work/look a little better (r3484)
+  * Made the dynamic widget test in the pychan_demo work/look a little better 
+    (r3484)
   
 === Misc ===
   * Fixed some compiler warning messages
@@ -395,7 +399,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   
 === Misc ===
   * Added color tester to pychan demo
-  * Demos now look for a local copy of FIFE before importing the installed version of FIFE
+  * Demos now look for a local copy of FIFE before importing the installed 
+    version of FIFE
   
 
 

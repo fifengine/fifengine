@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
         
 == Introduction ==
-Welcome to the FIFE v0.3.3 README. This snapshot is based on SVN revision 3750.
+Welcome to the FIFE v0.3.4 README. This snapshot is based on SVN revision XXXX.
 
 == Table of contents ==
 1 Features
@@ -23,7 +23,8 @@ Welcome to the FIFE v0.3.3 README. This snapshot is based on SVN revision 3750.
 
 
 == 1) Features ==
-A complete list of the features that FIFE offers can be found at the project wiki:
+A complete list of the features that FIFE offers can be found at the project 
+wiki:
  * http://wiki.fifengine.de/index.php?title=Engine_features
 
 
@@ -31,9 +32,9 @@ A complete list of the features that FIFE offers can be found at the project wik
 The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
  * http://www.gnu.org/licenses/lgpl-2.1.html
 
-Content was taken from a lot a lot of different 3rd party sources. Therefore each 
-client directory comes with a separate LICENSE file that states the origin of the 
-content, the author and the actual license it was published under.
+Content was taken from a lot a lot of different 3rd party sources. Therefore 
+each client directory comes with a separate LICENSE file that states the origin
+of the content, the author and the actual license it was published under.
 
 
 == 3) FIFE Clients ==
@@ -43,33 +44,35 @@ The editor tool can be found within the <FIFE>/tools/editor directory. You can
 launch it by running 'run.py'.  It is used to edit map files for the tech demo 
 (rio do hola).  Other clients extend it and use it to edit their maps.
 
-
 === 3.2) Rio De Hola ===
 Rio de hola is a technology demo showing off many of the FIFE features.  It is 
-located in the <FIFE>/demos/rio_de_hola directory and can be launched by running 
-run.py.  It was at one time meant to be an example game but we have moved away 
-from that idea and it is now more of a technology demo and a playground for 
-developers to test their code.  It does serve as a good starting point for people 
-wishing to play around with FIFE or base your game off of.
-
+located in the <FIFE>/demos/rio_de_hola directory and can be launched by 
+running run.py.  It was at one time meant to be an example game but we have 
+moved away from that idea and it is now more of a technology demo and a 
+playground for developers to test their code.  It does serve as a good starting
+point for people wishing to play around with FIFE or base your game off of.
 
 === 3.3) Shooter Demo ===
 The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
 It is a simple side scrolling shooter that has a main menu, one level and an
 end boss.  Try your luck and see if you can defeat the boss!
 
+=== 3.4) PyChan Demo ===
+Last but not least there is an example client residing in 
+<FIFE>\demos\pychan_demo that shows how the pychan GUI library works. Start the
+GUI demo application by running pychan_test.py.
 
-=== 3.4) PyChan Example ===
-Last but not least there is an example client residing in <FIFE>\demos\pychan_demo 
-that shows how the pychan GUI library works. Start the GUI demo application by 
-running pychan_test.py.
+=== 3.5) Configuring the Editor and Demos ===
+The engine utilizes special settings files for configuring FIFE. This file is 
+called settings.xml and resides in the ~/.fife directory (in 
+<User>/Application Data/fife for Windows users).  The Shooter Demo and the
+PyChan demo are exceptions.  They both store their settings.xml file in their
+root directories.
 
-
-=== 3.5) Configuring the Clients ===
-The engine utilizes special settings files for configuring FIFE. This file is called 
-settings.xml and resides in your home directory (in Application Data for Windows users).
-For the Shooter demo this file is in the same directory as the shooter demo.
-
+NOTE that the settings.xml file is auto generated and wont be there until you
+run the demos for the first time.  FIFE automatically fills the settings file
+with default values.  For more information on FIFE settings please see the wiki
+page here: http://wiki.fifengine.net/Engine_Extensions#Engine_Settings
 
 == 4) Known issues ==
 Documentation
@@ -85,9 +88,6 @@ Engine
  * cameras must be attached to layers (#305)
  * Loaders have a circular import (#478)
  * Several FIFE::Command type events are not being handled correctly (#503)
- * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't 
-   hear sound while running a FIFE client, run oalinst.exe that ships with the 
-   Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
 Guichan/Pychan
  * Fix UTF8 support using vanilla guichan source (#432)
@@ -95,9 +95,12 @@ Guichan/Pychan
  * De-couple FIFE from Guichan (#549)
  * Button doesn't react to click when drawn below mouse pointer (#387)
  * Pychan dropdowns refuse to open if there is no space below (#445)
- * Slider size is overwritten by label max_size when residing in the same (parent) box (#488)
- * Pychan widget constructors silently ignore unexpected keyword arguments (#520)
- * Borders are not rendered on edges of widgets that touch their parent container's edge. (#522)
+ * Slider size is overwritten by label max_size when residing in the same 
+   (parent) box (#488)
+ * Pychan widget constructors silently ignore unexpected keyword arguments 
+   (#520)
+ * Borders are not rendered on edges of widgets that touch their parent 
+   container's edge. (#522)
  * GuiImage unable to find loader for JPEG in ImagePool (#548)
  * Cursor is sometimes displayed over letter in TextField (#547)
 
@@ -112,11 +115,13 @@ Editor
  * Map editor shouldn't clobber custom attributes (#379)
  * Editor crashes after docking the object editor and closing map (#450)
  * History bugs (#452)
- * Placing an instance on top of another then undoing resets the original instances properties (#459)
+ * Placing an instance on top of another then undoing resets the original 
+   instances properties (#459)
  * Should be able to set the default zoom level for a camera (#467)
  * Editor should allow you to add additional import statements (#468)
  * Editor file browser widget can't be closed (#499)
- * Misc FIFE Editor crashes (user input validation/exception handling missing) (#537)
+ * Misc FIFE Editor crashes (user input validation/exception handling missing) 
+   (#537)
 
 == 5) Troubleshooting ==
 
@@ -129,11 +134,16 @@ Please include your Card/Driver/OS information in your post.  Currently the fix
 is to modify your settings.xml file and set both GLUseFramebuffer and GLUseNPOT
 to False (they are True by default).
 
+=== Audio ===
+Win32 users tend to suffer from problems with the OpenAL drivers. If you don't 
+hear sound while running a FIFE client, run oalinst.exe that ships with the
+Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
+
 == 6) Feedback ==
-We appreciate every kind of feedback concerning the release, the project in general 
-and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you 
-would like to get in contact with us and provide feedback you can either visit our 
-IRC channel or our forums:
+We appreciate every kind of feedback concerning the release, the project in 
+general and the bundled techdemo. Feedback is a great way to help us to improve 
+FIFE. If you would like to get in contact with us and provide feedback you can 
+either visit our IRC channel or our forums:
  * http://wiki.fifengine.de/index.php?title=IRC
  * http://forums.fifengine.de/index.php?board=5.0
 
@@ -144,4 +154,4 @@ Have fun with the release and let us know what you think about it!
 
 http://www.fifengine.net/
 
-2011/10/04
+YYYY/MM/DD
