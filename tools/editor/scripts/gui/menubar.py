@@ -323,7 +323,7 @@ class MenuButton(widgets.HBox):
 					icon = widgets.ToggleButton(hexpand=0, offset=(1,1))
 					icon.toggled = self._action.isChecked()
 				else:
-					icon = widgets.Button(text=u"", hexpand=0, offset=(1,1))
+					icon = widgets.Button(text=u"", hexpand=0)
 				
 			icon.min_size = icon.max_size = (MENU_ICON_SIZE, MENU_ICON_SIZE)
 			icon.capture(self._action.activate)

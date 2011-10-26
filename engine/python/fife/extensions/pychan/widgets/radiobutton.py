@@ -40,11 +40,36 @@ class RadioButton(BasicTextWidget):
 	The marked status can be read and set via L{distributeData} and L{collectData}
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked'),Attr('group')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [ BoolAttr('marked'),
+											    Attr('group')
+											  ]
 
-	def __init__(self,group="_no_group_",**kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = BasicTextWidget.DEFAULT_NAME,
+				 size = BasicTextWidget.DEFAULT_SIZE, 
+				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
+				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
+				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
+				 position = BasicTextWidget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text=u"", 
+				 group="_no_group_"):
+				 
 		self.real_widget = fife.RadioButton()
-		super(RadioButton,self).__init__(**kwargs)
+		super(RadioButton,self).__init__(parent=parent, 
+										 name=name, 
+										 size=size, 
+										 min_size=min_size, 
+										 max_size=max_size,
+										 helptext=helptext, 
+										 position=position,
+										 style=style, 
+										 hexpand=hexpand, 
+										 vexpand=vexpand,
+										 text=text)
 
 		self.group = group
 

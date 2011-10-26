@@ -40,12 +40,35 @@ class Label(BasicTextWidget):
 
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [ BoolAttr('wrap_text') ]
 
-	def __init__(self,wrap_text=False,**kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = BasicTextWidget.DEFAULT_NAME,
+				 size = BasicTextWidget.DEFAULT_SIZE, 
+				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
+				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
+				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
+				 position = BasicTextWidget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u"", 
+				 wrap_text = False):
+				 
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
-		super(Label,self).__init__(**kwargs)
+		super(Label,self).__init__(parent=parent, 
+								   name=name, 
+								   size=size, 
+								   min_size=min_size, 
+								   max_size=max_size,
+								   helptext=helptext, 
+								   position=position,
+								   style=style, 
+								   hexpand=hexpand, 
+								   vexpand=vexpand,
+								   text=text)
 
 	def resizeToContent(self, recurse=True):
 		self.real_widget.setWidth( self.max_size[0] )

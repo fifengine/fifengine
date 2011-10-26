@@ -51,6 +51,7 @@ class Widget(object):
 	  - selection_color: Color
 	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - helptext: Unicode: Text which can be used for e.g. tooltips.
+	  - comment: Unicode: Additional text stored by the widget.  Not used by PyChan directly. Can be used by the client for additional info about the widget.
 	  - border_size: Integer: The size of the border in pixels.
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
@@ -78,18 +79,34 @@ class Widget(object):
 
 	"""
 
-	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
-		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
-		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
-		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
-		IntAttr('vexpand'),IntAttr('hexpand'),
-		UnicodeAttr('helptext'), BoolAttr('is_focusable')
+	ATTRIBUTES = [ Attr('name'), 
+				   PointAttr('position'),
+				   PointAttr('min_size'), 
+				   PointAttr('size'), 
+				   PointAttr('max_size'),
+				   ColorAttr('base_color'),
+				   ColorAttr('background_color'),
+				   ColorAttr('foreground_color'),
+				   ColorAttr('selection_color'),
+				   Attr('style'), 
+				   Attr('font'),
+				   IntAttr('border_size'),
+				   Attr('position_technique'),
+				   IntAttr('vexpand'),
+				   IntAttr('hexpand'), 
+				   UnicodeAttr('helptext'),
+				   BoolAttr('is_focusable'), 
+				   UnicodeAttr('comment')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 0
 	DEFAULT_MAX_SIZE = 500000, 500000
+	DEFAULT_SIZE = -1, -1
+	DEFAULT_MIN_SIZE = 0, 0
+	DEFAULT_HELPTEXT = u""
+	DEFAULT_POSITION = 0, 0
 
 	HIDE_SHOW_ERROR = """\
 		You can only show/hide the top widget of a hierachy.
@@ -97,18 +114,24 @@ class Widget(object):
 		"""
 
 
-	def __init__(self,parent = None, name = DEFAULT_NAME,
-				 size = (-1,-1), min_size=(0,0), max_size=DEFAULT_MAX_SIZE,
-				 helptext=u"",
-				 position = (0,0),
-				 style = None, **kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = DEFAULT_NAME,
+				 size = DEFAULT_SIZE, 
+				 min_size = DEFAULT_MIN_SIZE, 
+				 max_size = DEFAULT_MAX_SIZE, 
+				 helptext = DEFAULT_HELPTEXT, 
+				 position = DEFAULT_POSITION, 
+				 style = None, 
+				 hexpand = None,
+				 vexpand = None):
 
 		assert( hasattr(self,'real_widget') )
 		self.event_mapper = events.EventMapper(self)
 		self._visible = False
 		self._extra_border = (0,0)
-		self.hexpand = kwargs.get("hexpand",self.DEFAULT_HEXPAND)
-		self.vexpand = kwargs.get("vexpand",self.DEFAULT_VEXPAND)
+		self.hexpand = hexpand or self.DEFAULT_HEXPAND
+		self.vexpand = vexpand or self.DEFAULT_VEXPAND 
 		# Simple way to get at least some compat layout:
 		if get_manager().compat_layout:
 			self.hexpand, self.vexpand = 0,0
@@ -138,6 +161,7 @@ class Widget(object):
 		self.style = style or "default"
 
 		self.helptext = helptext
+		self.comment = u""
 		# Not needed as attrib assignment will trigger manager.stylize call
 		#manager.stylize(self,self.style)
 

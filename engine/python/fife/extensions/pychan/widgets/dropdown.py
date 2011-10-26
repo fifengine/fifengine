@@ -43,10 +43,31 @@ class DropDown(Widget):
 	The selected attribute can be read and set via L{distributeData} and L{collectData}.
 	The list items can be set via L{distributeInitialData}.
 	"""
-	def __init__(self,items=[],**kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 items=[]):
+				 
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.DropDown(self._items)
-		super(DropDown,self).__init__(**kwargs)
+		super(DropDown,self).__init__(parent=parent, 
+									  name=name, 
+									  size=size, 
+									  min_size=min_size, 
+									  max_size=max_size,
+									  helptext=helptext, 
+									  position=position,
+									  style=style, 
+									  hexpand=hexpand, 
+									  vexpand=vexpand)
 
 		# Prepare Data collection framework
 		self.accepts_initial_data = True

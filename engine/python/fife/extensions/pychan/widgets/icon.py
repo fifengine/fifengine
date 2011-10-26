@@ -34,11 +34,32 @@ class Icon(Widget):
 
 	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
 	"""
-	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('image')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image') ]
 
-	def __init__(self,image="",**kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 image = None):
+				 
 		self.real_widget = fife.Icon(None)
-		super(Icon,self).__init__(**kwargs)
+		super(Icon,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand)
 		self.image = image
 
 	_image = ImageProperty("Image")

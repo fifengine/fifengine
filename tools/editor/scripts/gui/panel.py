@@ -31,9 +31,13 @@ class Panel(widgets.Window, ResizableBase):
 	""" Panel is a window which can be resized and docked. 
 	"""
 	def __init__(self, dockable=True, *args, **kwargs):
-		widgets.Window.__init__(self, *args, **kwargs)
+		
+		argscopy = kwargs.copy()
+		if "resizable" in argscopy:
+			del argscopy["resizable"]
+		widgets.Window.__init__(self, *args, **argscopy)
 		ResizableBase.__init__(self, *args, **kwargs)
-	
+		
 		self.dockable = dockable
 		self._movable = self.real_widget.isMovable()
 		self._resizable = self.resizable

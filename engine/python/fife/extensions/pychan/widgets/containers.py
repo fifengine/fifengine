@@ -43,18 +43,50 @@ class Container(Widget):
 	  - children - Just contains the list of contained child widgets. Do NOT modify.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), Attr('background_image'), BoolAttr('opaque'),PointAttr('margins') ]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), 
+									   Attr('background_image'), 
+									   BoolAttr('opaque'),
+									   PointAttr('margins') 
+									 ]
 
-	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 padding = 5,
+				 background_image = None,
+				 opaque = True,
+				 margins = (5,5),
+				 _real_widget = None):
+				 
 		self.real_widget = _real_widget or fife.Container()
+		self._background = []
+		self._background_image = None
+		self.background_image = background_image 
 		self.children = []
 		self.children_position_cache = []
 		self.hidden_children = []
 		self.margins = margins
 		self.padding = padding
-		self._background = []
-		self._background_image = None
-		super(Container,self).__init__(**kwargs)
+		self.opaque = opaque
+
+		super(Container,self).__init__(parent=parent, 
+									   name=name, 
+									   size=size, 
+									   min_size=min_size, 
+									   max_size=max_size,
+									   helptext=helptext, 
+									   position=position,
+									   style=style, 
+									   hexpand=hexpand, 
+									   vexpand=vexpand)
 
 	def addChild(self, widget):
 		widget.parent = self
@@ -209,8 +241,38 @@ class VBox(VBoxLayoutMixin,Container):
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 1
 
-	def __init__(self,padding=5,**kwargs):
-		super(VBox,self).__init__(**kwargs)
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 padding = 5,
+				 background_image = None,
+				 opaque = True,
+				 margins = (5,5),
+				 _real_widget = None):
+				 
+		super(VBox,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  padding=padding,
+								  background_image=background_image,
+								  opaque=opaque,
+								  margins=margins,
+								  _real_widget=_real_widget)
 		self.padding = padding
 
 
@@ -223,8 +285,38 @@ class HBox(HBoxLayoutMixin,Container):
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
-	def __init__(self,padding=5,**kwargs):
-		super(HBox,self).__init__(**kwargs)
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 padding = 5,
+				 background_image = None,
+				 opaque = True,
+				 margins = (5,5),
+				 _real_widget = None):
+				 
+		super(HBox,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  padding=padding,
+								  background_image=background_image,
+								  opaque=opaque,
+								  margins=margins,
+								  _real_widget=_real_widget)
 		self.padding = padding
 
 class Window(VBoxLayoutMixin,Container):
@@ -238,10 +330,42 @@ class Window(VBoxLayoutMixin,Container):
 	  - titlebar_height: The height of the window title bar
 	"""
 
-	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('title'), IntAttr('titlebar_height') ]
+	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('title'), 
+										  IntAttr('titlebar_height') 
+										]
 
-	def __init__(self,title=u"title",titlebar_height=0,**kwargs):
-		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 padding = 5,
+				 background_image = None,
+				 margins = (5,5),
+				 _real_widget = None,
+				 title = u"title",
+				 titlebar_height = 0):
+				 
+		super(Window,self).__init__(parent=parent, 
+								    name=name, 
+								    size=size, 
+								    min_size=min_size, 
+								    max_size=max_size,
+								    helptext=helptext, 
+								    position=position,
+								    style=style, 
+								    hexpand=hexpand, 
+								    vexpand=vexpand,
+								    padding=padding,
+								    background_image=background_image,
+								    margins=margins,
+								    _real_widget= fife.Window())
 		if titlebar_height == 0:
 			titlebar_height = self.real_font.getHeight() + 4
 		self.titlebar_height = titlebar_height
