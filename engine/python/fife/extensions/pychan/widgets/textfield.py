@@ -38,14 +38,35 @@ class TextField(Widget):
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
-	def __init__(self,text=u"",**kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE, 
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u""):
+				 
 		self.real_widget = fife.TextField()
 		self.text = text
-		super(TextField,self).__init__(**kwargs)
+		super(TextField,self).__init__(parent=parent, 
+									   name=name, 
+									   size=size, 
+									   min_size=min_size, 
+									   max_size=max_size,
+									   helptext=helptext, 
+									   position=position,
+									   style=style, 
+									   hexpand=hexpand, 
+									   vexpand=vexpand)
 
 		# Prepare Data collection framework
 		self.accepts_data = True

@@ -39,15 +39,39 @@ class TextBox(Widget):
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text'),Attr('filename')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text'),
+									   Attr('filename')
+									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
 
-	def __init__(self,text=u"",filename = "", **kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT,
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u"",
+				 filename = ""):
+				 
 		self.real_widget = fife.TextBox()
 		self.text = text
 		self.filename = filename
-		super(TextBox,self).__init__(**kwargs)
+		super(TextBox,self).__init__(parent=parent, 
+								  	 name=name, 
+								  	 size=size, 
+								  	 min_size=min_size, 
+								  	 max_size=max_size,
+								  	 helptext=helptext, 
+								  	 position=position,
+								  	 style=style, 
+								  	 hexpand=hexpand, 
+								  	 vexpand=vexpand)
 
 		# Prepare Data collection framework
 		self.accepts_data = True

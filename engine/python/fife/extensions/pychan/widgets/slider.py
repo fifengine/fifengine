@@ -45,15 +45,43 @@ class Slider(Widget):
 	HORIZONTAL = fife.Slider.HORIZONTAL
 	VERTICAL = fife.Slider.VERTICAL
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end'), FloatAttr('step_length'), IntAttr('marker_length')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
+									   FloatAttr('scale_start'), 
+									   FloatAttr('scale_end'), 
+									   FloatAttr('step_length'), 
+									   IntAttr('marker_length')
+									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
-	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, min_size=(10,10),**kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size=(10,10), 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 scaleStart = 0.0, 
+				 scaleEnd = 1.0, 
+				 orientation = HORIZONTAL):
+				 
 		self.real_widget = fife.Slider(scaleStart, scaleEnd)
 		self.orientation = orientation
 		self.setOrientation(self.orientation)
-		super(Slider, self).__init__(min_size=min_size,**kwargs)
+		super(Slider, self).__init__(parent=parent, 
+									 name=name, 
+									 size=size, 
+									 min_size=min_size, 
+									 max_size=max_size,
+									 helptext=helptext, 
+									 position=position,
+									 style=style, 
+									 hexpand=hexpand, 
+									 vexpand=vexpand)
 
 		self.accepts_data = True
 		self._realSetData = self.setValue

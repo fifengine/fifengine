@@ -64,10 +64,34 @@ class ListBox(Widget):
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
 
-	def __init__(self,items=[],**kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = Widget.DEFAULT_MIN_SIZE, 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT,
+				 position = Widget.DEFAULT_POSITION,
+				 style = None,
+				 hexpand = None, 
+				 vexpand = None,
+				 items = [],
+				 selected = None):
+				 
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.ListBox(self._items)
-		super(ListBox,self).__init__(**kwargs)
+		if selected is not None:
+			self.selected = selected
+		super(ListBox,self).__init__(parent=parent, 
+									 name=name, 
+									 size=size, 
+									 min_size=min_size, 
+									 max_size=max_size,
+									 helptext=helptext, 
+									 position=position,
+									 style=style, 
+									 hexpand=hexpand, 
+									 vexpand=vexpand)
 
 		# Prepare Data collection framework
 		self.accepts_initial_data = True

@@ -42,12 +42,34 @@ class PercentageBar(Widget):
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
-	def __init__(self, value=0, orientation=HORIZONTAL, min_size=(10,10),**kwargs):
+	def __init__(self,
+				 parent = None, 
+				 name = Widget.DEFAULT_NAME,
+				 size = Widget.DEFAULT_SIZE, 
+				 min_size = (10,10), 
+				 max_size = Widget.DEFAULT_MAX_SIZE,
+				 helptext = Widget.DEFAULT_HELPTEXT, 
+				 position = Widget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 value = 0, 
+				 orientation = HORIZONTAL):
+				 
 		self.real_widget = fife.PercentageBar()
 		self.orientation = orientation
 		self.setOrientation(self.orientation)
 		self.setValue(value)
-		super(PercentageBar, self).__init__(min_size=min_size,**kwargs)
+		super(PercentageBar, self).__init__(parent=parent, 
+									 		name=name, 
+									 		size=size, 
+									 		min_size=min_size, 
+									 		max_size=max_size,
+									 		helptext=helptext, 
+									 		position=position,
+									 		style=style, 
+									 		hexpand=hexpand, 
+									 		vexpand=vexpand)
 
 		self.accepts_data = True
 		self._realSetData = self.setValue

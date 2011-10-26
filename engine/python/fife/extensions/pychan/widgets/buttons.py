@@ -29,9 +29,31 @@ class Button(BasicTextWidget):
 	"""
 	A basic push button.
 	"""
-	def __init__(self,**kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = BasicTextWidget.DEFAULT_NAME,
+				 size = BasicTextWidget.DEFAULT_SIZE, 
+				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
+				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
+				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
+				 position = BasicTextWidget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u""):
+				 
 		self.real_widget = fife.Button("")
-		super(Button,self).__init__(**kwargs)
+		super(Button,self).__init__(parent=parent, 
+									name=name, 
+									size=size, 
+									min_size=min_size, 
+									max_size=max_size,
+									helptext=helptext, 
+									position=position,
+									style=style, 
+									hexpand=hexpand, 
+									vexpand=vexpand,
+									text=text)
 
 class ImageButton(BasicTextWidget):
 	"""
@@ -47,11 +69,46 @@ class ImageButton(BasicTextWidget):
 	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('hover_image')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [ Attr('up_image'),
+												Attr('down_image'),
+												PointAttr('offset'),
+												Attr('hover_image')
+											  ]
 
-	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
-		self.real_widget = kwargs.get("real_widget", fife.TwoButton())
-		super(ImageButton,self).__init__(**kwargs)
+	def __init__(self, 
+				 parent = None, 
+				 name = BasicTextWidget.DEFAULT_NAME,
+				 size = BasicTextWidget.DEFAULT_SIZE, 
+				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
+				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
+				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
+				 position = BasicTextWidget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u"",
+				 up_image="",
+				 down_image="",
+				 hover_image="",
+				 offset=(0,0),
+				 real_widget=None):
+
+		if real_widget is None:
+			self.real_widget = fife.TwoButton()
+		else:
+			self.real_widget = real_widget
+			
+		super(ImageButton,self).__init__(parent=parent, 
+										 name=name, 
+										 size=size, 
+										 min_size=min_size, 
+										 max_size=max_size,
+										 helptext=helptext, 
+										 position=position,
+										 style=style, 
+										 hexpand=hexpand, 
+										 vexpand=vexpand,
+										 text=text)
 
 		self.up_image = up_image
 		self.down_image = down_image
@@ -97,14 +154,47 @@ class ToggleButton(ImageButton):
 	  - toggled: Boolean: Whether the button is toggled or not.
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
-		Attr('up_image'),Attr('down_image'),Attr('hover_image'),
-		PointAttr('offset'),Attr('group')
-	]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [	Attr('up_image'),
+												Attr('down_image'),
+												Attr('hover_image'),
+												PointAttr('offset'),
+												Attr('group')
+											  ]
 
-	def __init__(self,group="",**kwargs):
+	def __init__(self, 
+				 parent = None, 
+				 name = BasicTextWidget.DEFAULT_NAME,
+				 size = BasicTextWidget.DEFAULT_SIZE, 
+				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
+				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
+				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
+				 position = BasicTextWidget.DEFAULT_POSITION,
+				 style = None, 
+				 hexpand = None, 
+				 vexpand = None,
+				 text = u"",
+				 up_image = "",
+				 down_image = "",
+				 hover_image = "",
+				 offset = (0,0), 
+				 group = ""):
 
-		super(ToggleButton,self).__init__(real_widget = fife.ToggleButton(), **kwargs)
+		super(ToggleButton,self).__init__(parent=parent, 
+										  name=name, 
+										  size=size, 
+										  min_size=min_size, 
+										  max_size=max_size,
+										  helptext=helptext, 
+										  position=position,
+										  style=style, 
+										  hexpand=hexpand, 
+										  vexpand=vexpand,
+										  text=text, 
+										  real_widget=fife.ToggleButton(),
+										  up_image=up_image, 
+										  down_image=down_image, 
+										  hover_image=hover_image,
+										  offset=offset)
 		self.group = group
 
 	def _setGroup(self,group):
