@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -49,33 +49,47 @@ class Container(Widget):
 									   PointAttr('margins') 
 									 ]
 
+	DEFAULT_OPAQUE = True
+	DEFAULT_MARGINS = 5,5
+	DEFAULT_PADDING = 5
+	DEFAULT_BACKGROUND = None
+	
 	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 padding = 5,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
 				 background_image = None,
-				 opaque = True,
-				 margins = (5,5),
+				 opaque = None,
+				 margins = None,
 				 _real_widget = None):
 				 
 		self.real_widget = _real_widget or fife.Container()
-		self._background = []
-		self._background_image = None
-		self.background_image = background_image 
 		self.children = []
 		self.children_position_cache = []
 		self.hidden_children = []
-		self.margins = margins
-		self.padding = padding
-		self.opaque = opaque
+		self._background = []
+		self._background_image = None
+		self.background_image = self.DEFAULT_BACKGROUND
+		self.margins = self.DEFAULT_MARGINS
+		self.padding = self.DEFAULT_PADDING
+		self.opaque = self.DEFAULT_OPAQUE
 
 		super(Container,self).__init__(parent=parent, 
 									   name=name, 
@@ -86,7 +100,21 @@ class Container(Widget):
 									   position=position,
 									   style=style, 
 									   hexpand=hexpand, 
-									   vexpand=vexpand)
+									   vexpand=vexpand,
+									   font=font,
+									   base_color=base_color,
+									   background_color=background_color,
+									   foreground_color=foreground_color,
+									   selection_color=selection_color,
+									   border_size=border_size,
+									   position_technique=position_technique,
+									   is_focusable=is_focusable,
+									   comment=comment)
+									   
+		if margins is not None: self.margins = margins
+		if padding is not None: self.padding = padding
+		if opaque is not None: self.opaque = opaque
+		if background_image is not None: self.background_image = background_image
 
 	def addChild(self, widget):
 		widget.parent = self
@@ -208,7 +236,7 @@ class Container(Widget):
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)
 		if image is None:
-			self._background_image = image
+			self._background_image = None
 			map(self.real_widget.remove,self._background)
 			self._background = []
 			return
@@ -241,21 +269,30 @@ class VBox(VBoxLayoutMixin,Container):
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 1
 
-	def __init__(self,
+	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 padding = 5,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
 				 background_image = None,
-				 opaque = True,
-				 margins = (5,5),
+				 opaque = None,
+				 margins = None,
 				 _real_widget = None):
 				 
 		super(VBox,self).__init__(parent=parent, 
@@ -268,12 +305,20 @@ class VBox(VBoxLayoutMixin,Container):
 								  style=style, 
 								  hexpand=hexpand, 
 								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment,
 								  padding=padding,
 								  background_image=background_image,
 								  opaque=opaque,
 								  margins=margins,
 								  _real_widget=_real_widget)
-		self.padding = padding
 
 
 class HBox(HBoxLayoutMixin,Container):
@@ -285,21 +330,30 @@ class HBox(HBoxLayoutMixin,Container):
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
-	def __init__(self,
+	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 padding = 5,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
 				 background_image = None,
-				 opaque = True,
-				 margins = (5,5),
+				 opaque = None,
+				 margins = None,
 				 _real_widget = None):
 				 
 		super(HBox,self).__init__(parent=parent, 
@@ -312,12 +366,20 @@ class HBox(HBoxLayoutMixin,Container):
 								  style=style, 
 								  hexpand=hexpand, 
 								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment,
 								  padding=padding,
 								  background_image=background_image,
 								  opaque=opaque,
 								  margins=margins,
 								  _real_widget=_real_widget)
-		self.padding = padding
 
 class Window(VBoxLayoutMixin,Container):
 	"""
@@ -334,24 +396,38 @@ class Window(VBoxLayoutMixin,Container):
 										  IntAttr('titlebar_height') 
 										]
 
-	def __init__(self,
+	DEFAULT_TITLE = u"title"
+	DEFAULT_TITLE_HEIGHT = 0
+	DEFAULT_POSITION_TECHNIQUE = "automatic"
+
+	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 padding = 5,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
 				 background_image = None,
-				 margins = (5,5),
+				 opaque = None,
+				 margins = None,
 				 _real_widget = None,
-				 title = u"title",
-				 titlebar_height = 0):
-				 
+				 title = None,
+				 titlebar_height = None):
+		
 		super(Window,self).__init__(parent=parent, 
 								    name=name, 
 								    size=size, 
@@ -362,18 +438,32 @@ class Window(VBoxLayoutMixin,Container):
 								    style=style, 
 								    hexpand=hexpand, 
 								    vexpand=vexpand,
+								    font=font,
+								    base_color=base_color,
+								    background_color=background_color,
+								    foreground_color=foreground_color,
+								    selection_color=selection_color,
+								    border_size=border_size,
+								    position_technique=position_technique,
+								    is_focusable=is_focusable,
+								    comment=comment,
 								    padding=padding,
 								    background_image=background_image,
+								    opaque=opaque,
 								    margins=margins,
 								    _real_widget= fife.Window())
-		if titlebar_height == 0:
-			titlebar_height = self.real_font.getHeight() + 4
-		self.titlebar_height = titlebar_height
-		self.title = title
 
-		# Override explicit positioning
-		self.position_technique = "automatic"
-
+		if titlebar_height is not None:
+			if titlebar_height == 0:
+				titlebar_height = self.real_font.getHeight() + 4
+			self.titlebar_height = titlebar_height
+		else:
+			self.titlebar_height = self.real_font.getHeight() + 4
+		
+		if title is not None: 
+			self.title = title
+		else:
+			self.title = self.DEFAULT_TITLE
 
 	def _getTitle(self): return gui2text(self.real_widget.getCaption())
 	def _setTitle(self,text): self.real_widget.setCaption(text2gui(text))

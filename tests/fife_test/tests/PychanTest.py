@@ -273,7 +273,7 @@ class SliderExample(PyChanExample):
 		pbarslider = self.widget.findChild(name="pbarslider")
 		pbar = self.widget.findChild(name="pbar")
 		
-		pbar.value = int(pbarslider.getValue())
+		pbar.value = int(pbarslider.value)
 
 class ColorExample(PyChanExample):
 	""" a small app (^^) to show how guichan uses colors on various widgets 
@@ -311,10 +311,10 @@ class ColorExample(PyChanExample):
 			'closeButton':self.stop,
 		})
 		# alpha value needs to be set, otherwise you don't see colors ;-)
-		self.widget.findChild(name="base_aslider").setValue(float(255))
-		self.widget.findChild(name="background_aslider").setValue(float(255))
-		self.widget.findChild(name="foreground_aslider").setValue(float(255))
-		self.widget.findChild(name="selection_aslider").setValue(float(255))
+		self.widget.findChild(name="base_aslider").value = float(255)
+		self.widget.findChild(name="background_aslider").value = float(255)
+		self.widget.findChild(name="foreground_aslider").value = float(255)
+		self.widget.findChild(name="selection_aslider").value = float(255)
 		
 		# init stuff
 		self.update_basecolor()
@@ -327,10 +327,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba base colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="base_rslider").getValue())
-		g = int(self.widget.findChild(name="base_gslider").getValue())
-		b = int(self.widget.findChild(name="base_bslider").getValue())
-		a = int(self.widget.findChild(name="base_aslider").getValue())
+		r = int(self.widget.findChild(name="base_rslider").value)
+		g = int(self.widget.findChild(name="base_gslider").value)
+		b = int(self.widget.findChild(name="base_bslider").value)
+		a = int(self.widget.findChild(name="base_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="base_rvalue").text = unicode(str(r), "utf-8")
@@ -354,10 +354,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba background colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="background_rslider").getValue())
-		g = int(self.widget.findChild(name="background_gslider").getValue())
-		b = int(self.widget.findChild(name="background_bslider").getValue())
-		a = int(self.widget.findChild(name="background_aslider").getValue())
+		r = int(self.widget.findChild(name="background_rslider").value)
+		g = int(self.widget.findChild(name="background_gslider").value)
+		b = int(self.widget.findChild(name="background_bslider").value)
+		a = int(self.widget.findChild(name="background_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="background_rvalue").text = unicode(str(r), "utf-8")
@@ -381,10 +381,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba selection colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="selection_rslider").getValue())
-		g = int(self.widget.findChild(name="selection_gslider").getValue())
-		b = int(self.widget.findChild(name="selection_bslider").getValue())
-		a = int(self.widget.findChild(name="selection_aslider").getValue())
+		r = int(self.widget.findChild(name="selection_rslider").value)
+		g = int(self.widget.findChild(name="selection_gslider").value)
+		b = int(self.widget.findChild(name="selection_bslider").value)
+		a = int(self.widget.findChild(name="selection_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="selection_rvalue").text = unicode(str(r), "utf-8")
@@ -408,10 +408,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba foreground colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="foreground_rslider").getValue())
-		g = int(self.widget.findChild(name="foreground_gslider").getValue())
-		b = int(self.widget.findChild(name="foreground_bslider").getValue())
-		a = int(self.widget.findChild(name="foreground_aslider").getValue())
+		r = int(self.widget.findChild(name="foreground_rslider").value)
+		g = int(self.widget.findChild(name="foreground_gslider").value)
+		b = int(self.widget.findChild(name="foreground_bslider").value)
+		a = int(self.widget.findChild(name="foreground_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="foreground_rvalue").text = unicode(str(r), "utf-8")
@@ -447,6 +447,7 @@ class PocAnimations(PyChanExample):
 		""" 
 		load XML file and setup callbacks
 		"""
+		
 		self.widget = pychan.loadXML(self.xmlFile)
 		
 		self.widget.mapEvents({
@@ -469,7 +470,7 @@ class PocAnimations(PyChanExample):
 		self.cew = self.color_example_widget
 		
 		self.delay_slider = self.widget.findChild(name="delay")
-		self.delay_slider.setValue(float(DEFAULT_DELAY))
+		self.delay_slider.value = float(DEFAULT_DELAY)
 		
 		self.delay_display = self.widget.findChild(name="delay_label")
 		self.delay_display.text = unicode(str(DEFAULT_DELAY))
@@ -489,7 +490,7 @@ class PocAnimations(PyChanExample):
 		
 	def _set_delay_display(self):
 		""" set delay display according to slider value """
-		value = self.delay_slider.getValue()
+		value = self.delay_slider.value
 		self.delay_display.text = unicode(str(int(value)))		
 		
 	def _anim_all(self):
@@ -501,7 +502,7 @@ class PocAnimations(PyChanExample):
 		""" start the animation of the given type """
 		self._reset_anim(type)
 		kwargs = {
-			'delay' : int(self.delay_slider.getValue()),
+			'delay' : int(self.delay_slider.value),
 			'callback' : None,
 			'repeat' : 0,
 		}

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -63,25 +63,50 @@ class ListBox(Widget):
 	"""
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
-
-	def __init__(self,
+	DEFAULT_ITEMS = []
+	
+	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT,
-				 position = Widget.DEFAULT_POSITION,
-				 style = None,
-				 hexpand = None, 
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
+				 style = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 items = [],
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 items = None,
 				 selected = None):
 				 
-		self._items = GenericListmodel(*items)
+		if items is None:
+			self._items = GenericListmodel(*self.DEFAULT_ITEMS)
+		else:
+			if type(items) is list:
+				self._items = GenericListmodel(*items)
+			else:
+				raise RuntimeError("items parameter must be a list!")
+			
 		self.real_widget = fife.ListBox(self._items)
-		if selected is not None:
-			self.selected = selected
+		
+		if selected is not None and items is not None:
+			if len(items) > 0 and selected < len(items) and selected > 0:
+				self.selected = selected
+			else:
+				raise RuntimeError("Invalid selected item index specified for listbox!")
+		elif selected is None and items is not None:
+			if len(items) > 0:
+				self.selected = 0
+				
 		super(ListBox,self).__init__(parent=parent, 
 									 name=name, 
 									 size=size, 
@@ -91,7 +116,16 @@ class ListBox(Widget):
 									 position=position,
 									 style=style, 
 									 hexpand=hexpand, 
-									 vexpand=vexpand)
+									 vexpand=vexpand,
+									 font=font,
+									 base_color=base_color,
+									 background_color=background_color,
+									 foreground_color=foreground_color,
+									 selection_color=selection_color,
+									 border_size=border_size,
+									 position_technique=position_technique,
+									 is_focusable=is_focusable,
+									 comment=comment)
 
 		# Prepare Data collection framework
 		self.accepts_initial_data = True

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -107,6 +107,10 @@ class Widget(object):
 	DEFAULT_MIN_SIZE = 0, 0
 	DEFAULT_HELPTEXT = u""
 	DEFAULT_POSITION = 0, 0
+	DEFAULT_FONT = "default"
+	DEFAULT_BORDER_SIZE = 0
+	DEFAULT_POSITION_TECHNIQUE = "explicit"
+	DEFAULT_COMMENT = u""
 
 	HIDE_SHOW_ERROR = """\
 		You can only show/hide the top widget of a hierachy.
@@ -116,54 +120,93 @@ class Widget(object):
 
 	def __init__(self,
 				 parent = None, 
-				 name = DEFAULT_NAME,
-				 size = DEFAULT_SIZE, 
-				 min_size = DEFAULT_MIN_SIZE, 
-				 max_size = DEFAULT_MAX_SIZE, 
-				 helptext = DEFAULT_HELPTEXT, 
-				 position = DEFAULT_POSITION, 
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
 				 hexpand = None,
-				 vexpand = None):
-
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None):
+		
+		# Make sure the real_widget has been created
 		assert( hasattr(self,'real_widget') )
+		
 		self.event_mapper = events.EventMapper(self)
+		
 		self._visible = False
 		self._extra_border = (0,0)
-		self.hexpand = hexpand or self.DEFAULT_HEXPAND
-		self.vexpand = vexpand or self.DEFAULT_VEXPAND 
-		# Simple way to get at least some compat layout:
-		if get_manager().compat_layout:
-			self.hexpand, self.vexpand = 0,0
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
+		
+		#set all defaults
+		if get_manager().compat_layout:
+			self.hexpand, self.vexpand = 0,0
+		else:
+			self.hexpand = self.DEFAULT_HEXPAND
+			self.vexpand = self.DEFAULT_VEXPAND 		
 
+		self.name = self.DEFAULT_NAME
+		self.has_name = False
+		self.position = self.DEFAULT_POSITION
+		self.position_technique = self.DEFAULT_POSITION_TECHNIQUE
+		self.font = self.DEFAULT_FONT
+		self.min_size = self.DEFAULT_MIN_SIZE
+		self.max_size = self.DEFAULT_MAX_SIZE
+		self.size = self.DEFAULT_SIZE
+		self.border_size = self.DEFAULT_BORDER_SIZE
+		self.helptext = self.DEFAULT_HELPTEXT
+		self.comment = self.DEFAULT_COMMENT
+	
 		# Parent attribute makes sure we only have one parent,
 		# that tests self.__parent - so make sure we have the attr here.
 		self.__parent = None
 		self.parent = parent
 
-		self.has_name = False
-		self.name = name
-
-		self.position = position
-		self.min_size = min_size
-		self.max_size = max_size
-		self.size = size
-		self.position_technique = "explicit"
-		self.font = 'default'
-
-		# Inherit style
+		# Inherit and apply style
 		if style is None and parent:
 			style = parent.style
 		self.style = style or "default"
+		
+		# override everything style has set
+		if vexpand is not None:	self.vexpand = vexpand
+		if hexpand is not None: self.hexpand = hexpand
+		if name is not None: 
+			self.name = name
+			self.has_name = True
 
-		self.helptext = helptext
-		self.comment = u""
-		# Not needed as attrib assignment will trigger manager.stylize call
-		#manager.stylize(self,self.style)
+		if position is not None: self.position = position
+		if position_technique is not None: self.position_technique = position_technique
+		if font is not None: self.font = font
+		
+		# only set this if it's provided
+		if is_focusable is not None: self.is_focusable = is_focusable
+		
+		if min_size is not None: self.min_size = min_size
+		if max_size is not None: self.max_size = max_size
+		if size is not None: self.size = size
+		if border_size is not None: self.border_size = border_size
+		
+		if helptext is not None: self.helptext = helptext
+		if comment is not None: self.comment = comment
+
+		# these are set in the default style
+		if base_color is not None: self.base_color = base_color
+		if background_color is not None: self.background_color = background_color
+		if foreground_color is not None: self.foreground_color = foreground_color
+		if selection_color is not None: self.selection_color = selection_color
 
 	def execute(self,bind):
 		"""
@@ -828,6 +871,9 @@ class Widget(object):
 
 	def _getParent(self): return self.__parent
 	def _setParent(self,parent):
+		if parent and not issubclass(type(parent), Widget):
+			raise RuntimeError("Parent must be subclass of the Widget type.")
+	
 		if self.__parent is not parent:
 			if self.__parent and parent is not None:
 				print "Widget containment fumble:", self, self.__parent, parent

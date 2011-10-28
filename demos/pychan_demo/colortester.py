@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -62,10 +62,10 @@ class ColorExample(PyChanExample):
 			'closeButton':self.stop,
 		})
 		# alpha value needs to be set, otherwise you don't see colors ;-)
-		self.widget.findChild(name="base_aslider").setValue(float(255))
-		self.widget.findChild(name="background_aslider").setValue(float(255))
-		self.widget.findChild(name="foreground_aslider").setValue(float(255))
-		self.widget.findChild(name="selection_aslider").setValue(float(255))
+		self.widget.findChild(name="base_aslider").value = float(255)
+		self.widget.findChild(name="background_aslider").value = float(255)
+		self.widget.findChild(name="foreground_aslider").value = float(255)
+		self.widget.findChild(name="selection_aslider").value = float(255)
 		
 		# init stuff
 		self.update_basecolor()
@@ -78,10 +78,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba base colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="base_rslider").getValue())
-		g = int(self.widget.findChild(name="base_gslider").getValue())
-		b = int(self.widget.findChild(name="base_bslider").getValue())
-		a = int(self.widget.findChild(name="base_aslider").getValue())
+		r = int(self.widget.findChild(name="base_rslider").value)
+		g = int(self.widget.findChild(name="base_gslider").value)
+		b = int(self.widget.findChild(name="base_bslider").value)
+		a = int(self.widget.findChild(name="base_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="base_rvalue").text = unicode(str(r), "utf-8")
@@ -105,10 +105,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba background colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="background_rslider").getValue())
-		g = int(self.widget.findChild(name="background_gslider").getValue())
-		b = int(self.widget.findChild(name="background_bslider").getValue())
-		a = int(self.widget.findChild(name="background_aslider").getValue())
+		r = int(self.widget.findChild(name="background_rslider").value)
+		g = int(self.widget.findChild(name="background_gslider").value)
+		b = int(self.widget.findChild(name="background_bslider").value)
+		a = int(self.widget.findChild(name="background_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="background_rvalue").text = unicode(str(r), "utf-8")
@@ -132,10 +132,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba selection colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="selection_rslider").getValue())
-		g = int(self.widget.findChild(name="selection_gslider").getValue())
-		b = int(self.widget.findChild(name="selection_bslider").getValue())
-		a = int(self.widget.findChild(name="selection_aslider").getValue())
+		r = int(self.widget.findChild(name="selection_rslider").value)
+		g = int(self.widget.findChild(name="selection_gslider").value)
+		b = int(self.widget.findChild(name="selection_bslider").value)
+		a = int(self.widget.findChild(name="selection_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="selection_rvalue").text = unicode(str(r), "utf-8")
@@ -159,10 +159,10 @@ class ColorExample(PyChanExample):
 		"""
 		Update rgba foreground colors of all examples and show the values
 		"""
-		r = int(self.widget.findChild(name="foreground_rslider").getValue())
-		g = int(self.widget.findChild(name="foreground_gslider").getValue())
-		b = int(self.widget.findChild(name="foreground_bslider").getValue())
-		a = int(self.widget.findChild(name="foreground_aslider").getValue())
+		r = int(self.widget.findChild(name="foreground_rslider").value)
+		g = int(self.widget.findChild(name="foreground_gslider").value)
+		b = int(self.widget.findChild(name="foreground_bslider").value)
+		a = int(self.widget.findChild(name="foreground_aslider").value)
 
 		# update slider labels
 		self.widget.findChild(name="foreground_rvalue").text = unicode(str(r), "utf-8")

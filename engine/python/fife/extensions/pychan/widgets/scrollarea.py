@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -45,15 +45,27 @@ class ScrollArea(Widget):
 
 	def __init__(self,
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = u"", 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
-				 vexpand = None):
+				 hexpand = None,
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 content = None,
+				 vertical_scrollbar = None,
+				 horizontal_scrollbar = None):
 				 
 		self.real_widget = fife.ScrollArea()
 		self._content = None
@@ -67,6 +79,10 @@ class ScrollArea(Widget):
 										style=style, 
 										hexpand=hexpand, 
 										vexpand=vexpand)
+										
+		if content is not None: self.content = content
+		if vertical_scrollbar is not None: self.vertical_scrollbar = vertical_scrollbar
+		if horizontal_scrollbar is not None: self.horizontal_scrollbar = horizontal_scrollbar
 
 	def addChild(self,widget):
 		self.content = widget

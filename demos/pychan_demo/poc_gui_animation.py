@@ -76,7 +76,7 @@ class PocAnimations(PyChanExample):
 		self.cew = self.color_example_widget
 		
 		self.delay_slider = self.widget.findChild(name="delay")
-		self.delay_slider.setValue(float(DEFAULT_DELAY))
+		self.delay_slider.value = float(DEFAULT_DELAY)
 		
 		self.delay_display = self.widget.findChild(name="delay_label")
 		self.delay_display.text = unicode(str(DEFAULT_DELAY))
@@ -96,7 +96,7 @@ class PocAnimations(PyChanExample):
 		
 	def _set_delay_display(self):
 		""" set delay display according to slider value """
-		value = self.delay_slider.getValue()
+		value = self.delay_slider.value
 		self.delay_display.text = unicode(str(int(value)))		
 		
 	def _anim_all(self):
@@ -108,7 +108,7 @@ class PocAnimations(PyChanExample):
 		""" start the animation of the given type """
 		self._reset_anim(type)
 		kwargs = {
-			'delay' : int(self.delay_slider.getValue()),
+			'delay' : int(self.delay_slider.value),
 			'callback' : None,
 			'repeat' : 0,
 		}

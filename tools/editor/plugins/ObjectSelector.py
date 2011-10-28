@@ -45,7 +45,7 @@ class ObjectIcon(widgets.VBox):
 	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image"), attrs.BoolAttr("selected") ]
 	
 	def __init__(self,callback,**kwargs):
-		super(ObjectIcon,self).__init__(**kwargs)
+		super(ObjectIcon,self).__init__()
 
 		self.callback = callback	
 
@@ -56,13 +56,13 @@ class ObjectIcon(widgets.VBox):
 		vbox = widgets.VBox(padding=3)
 
 		# Icon
-		self.icon = widgets.Icon(**kwargs)
+		self.icon = widgets.Icon(image=kwargs["image"])
 		self.addChild(self.icon)
 
 		# Label
 		hbox = widgets.HBox(padding=1)
 		self.addChild(hbox)
-		self.label = widgets.Label(**kwargs)
+		self.label = widgets.Label(text=kwargs["text"])
 		hbox.addChild(self.label)
 
 	def _setText(self, text):
@@ -113,7 +113,7 @@ class ObjectIconList(widgets.VBox):
 	ATTRIBUTES = widgets.VBox.ATTRIBUTES
 	
 	def __init__(self,**kwargs):
-		super(ObjectIconList, self).__init__(max_size=(5000,500000), **kwargs)
+		super(ObjectIconList, self).__init__(max_size=(5000,500000), name=kwargs['name'])
 		self.base_color = self.background_color
 
 		self.capture(self._keyPressed, "keyPressed")

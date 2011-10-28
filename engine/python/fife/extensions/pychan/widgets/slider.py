@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2011 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -53,25 +53,47 @@ class Slider(Widget):
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
+	
+	DEFAULT_SIZE = 10,10
+	DEFAULT_MIN_SIZE = 10,10
+	
+	DEFAULT_SCALE_START = 0.0
+	DEFAULT_SCALE_END = 1.0
+	DEFAULT_STEP_LENGTH = 0.1
+	DEFAULT_MARKER_LENGTH = 10
+	DEFAULT_ORIENTATION = HORIZONTAL
 
 	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size=(10,10), 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None, 
+				 min_size = None, 
+				 max_size = None,
+				 helptext = None, 
+				 position = None,
 				 style = None, 
 				 hexpand = None, 
 				 vexpand = None,
-				 scaleStart = 0.0, 
-				 scaleEnd = 1.0, 
-				 orientation = HORIZONTAL):
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 scale_start = None, 
+				 scale_end = None,
+				 step_length = None,
+				 marker_length = None,
+				 orientation = None):
 				 
-		self.real_widget = fife.Slider(scaleStart, scaleEnd)
-		self.orientation = orientation
-		self.setOrientation(self.orientation)
+		self.real_widget = fife.Slider(scale_start or self.DEFAULT_SCALE_START, scale_end or self.DEFAULT_SCALE_END)
+		self.orientation = self.DEFAULT_ORIENTATION
+		self.step_length = self.DEFAULT_STEP_LENGTH
+		self.marker_length = self.DEFAULT_MARKER_LENGTH
+		
 		super(Slider, self).__init__(parent=parent, 
 									 name=name, 
 									 size=size, 
@@ -81,11 +103,26 @@ class Slider(Widget):
 									 position=position,
 									 style=style, 
 									 hexpand=hexpand, 
-									 vexpand=vexpand)
-
+									 vexpand=vexpand,
+									 font=font,
+									 base_color=base_color,
+									 background_color=background_color,
+									 foreground_color=foreground_color,
+									 selection_color=selection_color,
+									 border_size=border_size,
+									 position_technique=position_technique,
+									 is_focusable=is_focusable,
+									 comment=comment)
+		
+		if orientation is not None: self.orientation = orientation
+		if scale_start is not None: self.scale_start = scale_start
+		if scale_end is not None: self.scale_end = scale_end
+		if step_length is not None: self.step_lenght = step_length
+		if marker_length is not None: self.marker_length = marker_length
+		
 		self.accepts_data = True
-		self._realSetData = self.setValue
-		self._realGetData = self.getValue
+		self._realSetData = self._setValue
+		self._realGetData = self._getValue
 
 	def _setScale(self, start, end):
 		"""setScale(self, double scaleStart, double scaleEnd)"""
@@ -95,65 +132,66 @@ class Slider(Widget):
 			raise RuntimeError("Slider expects float for end scale")
 		self.real_widget.setScale(start, end)
 
-	def getScaleStart(self):
+	def _getScaleStart(self):
 		"""getScaleStart(self) -> double"""
 		return self.real_widget.getScaleStart()
 
-	def setScaleStart(self, start):
+	def _setScaleStart(self, start):
 		"""setScaleStart(self, double scaleStart)"""
 		if type(start) != float:
 			raise RuntimeError("Slider expects float for start scale")
 		self.real_widget.setScaleStart(start)
-	scale_start = property(getScaleStart, setScaleStart)
+	scale_start = property(_getScaleStart, _setScaleStart)
 
-	def getScaleEnd(self):
+	def _getScaleEnd(self):
 		"""getScaleEnd(self) -> double"""
 		return self.real_widget.getScaleEnd()
 
-	def setScaleEnd(self, end):
+	def _setScaleEnd(self, end):
 		"""setScaleEnd(self, double scaleEnd)"""
 		if type(end) != float:
 			raise RuntimeError("Slider expects float for end scale")
 		self.real_widget.setScaleEnd(end)
-	scale_end = property(getScaleEnd, setScaleEnd)
+	scale_end = property(_getScaleEnd, _setScaleEnd)
 
-	def getValue(self):
+	def _getValue(self):
 		"""getValue(self) -> double"""
 		return self.real_widget.getValue()
 
-	def setValue(self, value):
+	def _setValue(self, value):
 		"""setValue(self, double value)"""
 		if type(value) != float:
 			raise RuntimeError("Slider only accepts float values")
-		self.real_widget.setValue(value)
+		self.real_widget.setValue(value)		
+	value = property(_getValue, _setValue)
 
-	def setMarkerLength(self, length):
+	def _setMarkerLength(self, length):
 		"""setMarkerLength(self, int length)"""
 		if type(length) != int:
 			raise RuntimeError("Slider only accepts int for Marker lenght")
 		self.real_widget.setMarkerLength(length)
 
-	def getMarkerLength(self):
+	def _getMarkerLength(self):
 		"""getMarkerLength(self) -> int"""
 		return self.real_widget.getMarkerLength()
-	marker_length = property(getMarkerLength, setMarkerLength)
+	marker_length = property(_getMarkerLength, _setMarkerLength)
 
-	def setOrientation(self, orientation):
+	def _setOrientation(self, orientation):
 		"""setOrientation(self, Orientation orientation)"""
 		self.real_widget.setOrientation(orientation)
 
-	def getOrientation(self):
+	def _getOrientation(self):
 		"""getOrientation(self) -> int"""
 		return self.real_widget.getOrientation()
-	orientation = property(getOrientation, setOrientation)
+	orientation = property(_getOrientation, _setOrientation)
 
-	def setStepLength(self, length):
+	def _setStepLength(self, length):
 		"""setStepLength(self, double length)"""
 		if type(length) != float:
 			raise RuntimeError("Slider only accepts floats for step length")
 		self.real_widget.setStepLength(length)
 
-	def getStepLength(self):
+	def _getStepLength(self):
 		"""getStepLength(self) -> double"""
 		return self.real_widget.getStepLength()
-	step_length = property(getStepLength, setStepLength)
+	step_length = property(_getStepLength, _setStepLength)
