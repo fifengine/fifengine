@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -36,17 +36,26 @@ class Icon(Widget):
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image') ]
 
-	def __init__(self,
+	def __init__(self, 
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = Widget.DEFAULT_MIN_SIZE, 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
 				 image = None):
 				 
 		self.real_widget = fife.Icon(None)
@@ -59,7 +68,16 @@ class Icon(Widget):
 								  position=position,
 								  style=style, 
 								  hexpand=hexpand, 
-								  vexpand=vexpand)
+								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment)
 		self.image = image
 
 	_image = ImageProperty("Image")

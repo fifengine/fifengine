@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2011 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -38,59 +38,85 @@ class PercentageBar(Widget):
 	HORIZONTAL = fife.PercentageBar.HORIZONTAL
 	VERTICAL = fife.PercentageBar.VERTICAL
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), IntAttr('value')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
+									   IntAttr('value')
+									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
-
+	DEFAULT_MIN_SIZE = 10,10
+	DEFAULT_VALUE = 0
+	DEFAULT_ORIENTATION = HORIZONTAL
+	
 	def __init__(self,
 				 parent = None, 
-				 name = Widget.DEFAULT_NAME,
-				 size = Widget.DEFAULT_SIZE, 
-				 min_size = (10,10), 
-				 max_size = Widget.DEFAULT_MAX_SIZE,
-				 helptext = Widget.DEFAULT_HELPTEXT, 
-				 position = Widget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 value = 0, 
-				 orientation = HORIZONTAL):
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 value = None, 
+				 orientation = None):
 				 
 		self.real_widget = fife.PercentageBar()
-		self.orientation = orientation
-		self.setOrientation(self.orientation)
-		self.setValue(value)
+		self.orientation = self.DEFAULT_ORIENTATION
+		self.value = self.DEFAULT_VALUE
+		
 		super(PercentageBar, self).__init__(parent=parent, 
-									 		name=name, 
-									 		size=size, 
-									 		min_size=min_size, 
-									 		max_size=max_size,
-									 		helptext=helptext, 
-									 		position=position,
-									 		style=style, 
-									 		hexpand=hexpand, 
-									 		vexpand=vexpand)
+											name=name, 
+											size=size, 
+											min_size=min_size, 
+											max_size=max_size,
+											helptext=helptext, 
+											position=position,
+											style=style, 
+											hexpand=hexpand, 
+											vexpand=vexpand,
+											font=font,
+											base_color=base_color,
+											background_color=background_color,
+											foreground_color=foreground_color,
+											selection_color=selection_color,
+											border_size=border_size,
+											position_technique=position_technique,
+											is_focusable=is_focusable,
+											comment=comment)
+
+		if orientation is not None: self.orientation = orientation
+		if value is not None: self.value = value
 
 		self.accepts_data = True
-		self._realSetData = self.setValue
-		self._realGetData = self.getValue
+		self._realSetData = self._setValue
+		self._realGetData = self._getValue
 
-	def getValue(self):
+	def _getValue(self):
 		"""getValue(self) -> int"""
 		return self.real_widget.getValue()
 
-	def setValue(self, value):
+	def _setValue(self, value):
 		"""setValue(self, int value)"""
 		if type(value) != int:
 			raise RuntimeError("PercentageBar only accepts integer values")
 		self.real_widget.setValue(value)
-	value = property(getValue, setValue)
+	value = property(_getValue, _setValue)
 
-	def setOrientation(self, orientation):
+	def _setOrientation(self, orientation):
 		"""setOrientation(self, Orientation orientation)"""
 		self.real_widget.setOrientation(orientation)
 
-	def getOrientation(self):
+	def _getOrientation(self):
 		"""getOrientation(self) -> int"""
 		return self.real_widget.getOrientation()
-	orientation = property(getOrientation, setOrientation)
+	orientation = property(_getOrientation, _setOrientation)

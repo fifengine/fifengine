@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -56,4 +56,4 @@ class SliderExample(PyChanExample):
 		pbarslider = self.widget.findChild(name="pbarslider")
 		pbar = self.widget.findChild(name="pbar")
 		
-		pbar.value = int(pbarslider.getValue())
+		pbar.value = int(pbarslider.value)

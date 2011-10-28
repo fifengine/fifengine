@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2011 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -31,16 +31,26 @@ class Button(BasicTextWidget):
 	"""
 	def __init__(self, 
 				 parent = None, 
-				 name = BasicTextWidget.DEFAULT_NAME,
-				 size = BasicTextWidget.DEFAULT_SIZE, 
-				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
-				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
-				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
-				 position = BasicTextWidget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 text = u""):
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 margins = None,
+				 text = None):
 				 
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(parent=parent, 
@@ -53,6 +63,16 @@ class Button(BasicTextWidget):
 									style=style, 
 									hexpand=hexpand, 
 									vexpand=vexpand,
+									font=font,
+									base_color=base_color,
+									background_color=background_color,
+									foreground_color=foreground_color,
+									selection_color=selection_color,
+									border_size=border_size,
+									position_technique=position_technique,
+									is_focusable=is_focusable,
+									comment=comment,
+									margins=margins,
 									text=text)
 
 class ImageButton(BasicTextWidget):
@@ -75,29 +95,46 @@ class ImageButton(BasicTextWidget):
 												Attr('hover_image')
 											  ]
 
+	DEFAULT_UPIMAGE = ""
+	DEFAULT_DOWNIMAGE = ""
+	DEFAULT_HOVERIMAGE = ""
+	DEFAULT_OFFSET = 0,0
 	def __init__(self, 
 				 parent = None, 
-				 name = BasicTextWidget.DEFAULT_NAME,
-				 size = BasicTextWidget.DEFAULT_SIZE, 
-				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
-				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
-				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
-				 position = BasicTextWidget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 text = u"",
-				 up_image="",
-				 down_image="",
-				 hover_image="",
-				 offset=(0,0),
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 margins = None,
+				 text = None,
+				 up_image=None,
+				 down_image=None,
+				 hover_image=None,
+				 offset=None,
 				 real_widget=None):
 
 		if real_widget is None:
 			self.real_widget = fife.TwoButton()
 		else:
 			self.real_widget = real_widget
-			
+		
+		# set the defaulst
+		offset = self.DEFAULT_OFFSET
+		
 		super(ImageButton,self).__init__(parent=parent, 
 										 name=name, 
 										 size=size, 
@@ -108,12 +145,35 @@ class ImageButton(BasicTextWidget):
 										 style=style, 
 										 hexpand=hexpand, 
 										 vexpand=vexpand,
+										 font=font,
+										 base_color=base_color,
+										 background_color=background_color,
+										 foreground_color=foreground_color,
+										 selection_color=selection_color,
+										 border_size=border_size,
+										 position_technique=position_technique,
+										 is_focusable=is_focusable,
+										 comment=comment,
+										 margins=margins,
 										 text=text)
-
-		self.up_image = up_image
-		self.down_image = down_image
-		self.hover_image = hover_image
-		self.offset = offset
+		
+		if up_image is not None: 
+			self.up_image = up_image
+		else:
+			self.up_image = self.DEFAULT_UPIMAGE
+			
+		if down_image is not None: 
+			self.down_image = down_image
+		else:
+			self.down_image = self.DEFAULT_DOWNIMAGE
+			
+		if hover_image is not None: 
+			self.hover_image = hover_image
+		else:
+			self.hover_image = self.DEFAULT_HOVERIMAGE
+		
+		# Override anything set when stylize was called
+		if offset is not None: self.offset = offset
 
 	up_image = ImageProperty("UpImage")
 	down_image = ImageProperty("DownImage")
@@ -160,24 +220,37 @@ class ToggleButton(ImageButton):
 												PointAttr('offset'),
 												Attr('group')
 											  ]
+	DEFAULT_GROUP = ""
 
 	def __init__(self, 
 				 parent = None, 
-				 name = BasicTextWidget.DEFAULT_NAME,
-				 size = BasicTextWidget.DEFAULT_SIZE, 
-				 min_size = BasicTextWidget.DEFAULT_MIN_SIZE, 
-				 max_size = BasicTextWidget.DEFAULT_MAX_SIZE,
-				 helptext = BasicTextWidget.DEFAULT_HELPTEXT, 
-				 position = BasicTextWidget.DEFAULT_POSITION,
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
 				 style = None, 
-				 hexpand = None, 
+				 hexpand = None,
 				 vexpand = None,
-				 text = u"",
-				 up_image = "",
-				 down_image = "",
-				 hover_image = "",
-				 offset = (0,0), 
-				 group = ""):
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 margins = None,
+				 text = None,
+				 up_image = None,
+				 down_image = None,
+				 hover_image = None,
+				 offset = None, 
+				 group = None):
+
+		group = self.DEFAULT_GROUP
 
 		super(ToggleButton,self).__init__(parent=parent, 
 										  name=name, 
@@ -189,16 +262,28 @@ class ToggleButton(ImageButton):
 										  style=style, 
 										  hexpand=hexpand, 
 										  vexpand=vexpand,
-										  text=text, 
-										  real_widget=fife.ToggleButton(),
-										  up_image=up_image, 
-										  down_image=down_image, 
+										  font=font,
+										  base_color=base_color,
+										  background_color=background_color,
+										  foreground_color=foreground_color,
+										  selection_color=selection_color,
+										  border_size=border_size,
+										  position_technique=position_technique,
+										  is_focusable=is_focusable,
+										  comment=comment,
+										  margins=margins,
+										  text=text,
+										  up_image=up_image,
+										  down_image=down_image,
 										  hover_image=hover_image,
-										  offset=offset)
-		self.group = group
+										  offset=offset,
+										  real_widget=fife.ToggleButton())
+										  
+		if group is not None: self.group = group
 
 	def _setGroup(self,group):
-		self.real_widget.setGroup( group )
+		if group is not None and group != "":
+			self.real_widget.setGroup( group )
 
 	def _getGroup(self):
 		return self.real_widget.getGroup()
