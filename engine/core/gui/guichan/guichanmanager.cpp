@@ -100,11 +100,11 @@ namespace FIFE {
 		switch(evt.type) {
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
+				m_input->pushInput(evt);
+
 				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
-					m_input->pushInput(evt);
 					return true;
 				}
-				m_focushandler->focusNone();
 				return false;
 
 			case SDL_MOUSEMOTION:
