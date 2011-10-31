@@ -38,9 +38,9 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	RenderTarget::RenderTarget(RenderBackend* rb, uint32_t width, uint32_t height):
+	RenderTarget::RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height):
 		m_renderbackend(rb) {
-		m_target = ImageManager::instance()->loadBlank(width, height);
+		m_target = ImageManager::instance()->loadBlank(name, width, height);
 	}
 
 	RenderTarget::RenderTarget(RenderBackend* rb, ImagePtr& image):
@@ -129,7 +129,7 @@ namespace FIFE {
 		RenderJob rj;
 		rj.ndraws = -1;
 		rj.lasttime_draw = 0;
-		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, width, height));
+		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, name, width, height));
 		rj.discard = false;
 
 		std::pair<RenderJobMap::iterator, bool> ret =
@@ -162,7 +162,6 @@ namespace FIFE {
 	void TargetRenderer::render() {
 		for (RenderJobMap::iterator it = m_targets.begin(); it != m_targets.end(); ++it) {
 			if (it->second.ndraws != -1) {
-
 				if (it->second.ndraws == it->second.lasttime_draw) {
 					RenderTargetPtr rt = it->second.target;
 					m_renderbackend->attachRenderTarget(rt->m_target, it->second.discard);
