@@ -374,6 +374,10 @@ namespace FIFE {
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
 
+		/** Gets real cell image dimensions for given layer
+		 */
+		Point getRealCellDimensions(Layer* layer);
+
 		/** Renders the overlay(color, image, animation) for the camera.
 		 */
 		void renderOverlay();
