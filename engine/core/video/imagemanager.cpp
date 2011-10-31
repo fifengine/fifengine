@@ -136,6 +136,19 @@ namespace FIFE {
 		return add(ptr);
 	}
 
+	ImagePtr ImageManager::loadBlank(const std::string& name, uint32_t width, uint32_t height) {
+		ImageNameMapIterator nit = m_imgNameMap.find(name);
+		if (nit != m_imgNameMap.end()) {
+			remove(nit->second);
+		}
+		uint8_t* pixdata = new uint8_t[width * height * 4];
+		memset(pixdata, 0, width * height * 4);
+		Image* ptr = RenderBackend::instance()->createImage(name, pixdata, width, height);
+		delete [] pixdata;
+		ptr->setState(IResource::RES_LOADED);
+		return add(ptr);
+	}
+
 	ImagePtr ImageManager::add(Image* res) {
 		assert(res);
 		assert(!(exists(res->getHandle()) || exists(res->getName())));
