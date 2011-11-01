@@ -461,22 +461,16 @@ namespace FIFE {
 					continue;
 				}
 				if (update) {
-					// convert ScreenCoordinates to MapCoordinates
-					ScreenPoint sp(screen_coords.x-vc.image->getXShift(), screen_coords.y-vc.image->getYShift());
-					const ExactModelCoordinate emc = toMapCoordinates(sp, false);
+					Point p = getRealCellDimensions(&layer);
+					int32_t w_steps = static_cast<int32_t>(vc.dimensions.w / static_cast<float>(p.x) + 0.5);
+					int32_t h_steps = static_cast<int32_t>(vc.dimensions.h / static_cast<float>(p.y) + 0.5);
+					ExactModelCoordinate emc = toMapCoordinates(screen_coords , false);
 					Location loc(&layer);
 					loc.setMapCoordinates(emc);
-					// convert image size to LayerCoordinates
-					Point p = getCellImageDimensions(&layer);
-					int32_t x2 = static_cast<int32_t>(ceil(vc.image->getWidth() / static_cast<float>(p.x)));
-					int32_t y2 = static_cast<int32_t>(ceil(vc.image->getHeight() / static_cast<float>(p.y)));
-					// construct a Rect with LayerCoordinates to fetch instance
-					Rect rec;
-					rec.x = loc.getLayerCoordinates().x - x2;
-					rec.y = loc.getLayerCoordinates().y - y2;
-					rec.w = x2*2;
-					rec.h = y2*2;
-					// use InstanceTree for fast picking
+					ModelCoordinate mc = loc.getLayerCoordinates();
+					mc.x -= static_cast<int32_t>(w_steps/2.0 + 0.5);
+					mc.y -= static_cast<int32_t>(h_steps/2.0 + 0.5);
+					Rect rec(mc.x, mc.y, w_steps, h_steps);
 					std::list<Instance*> inslist = layer.getInstancesIn(rec);
 					for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
 						if (i == *it) {
@@ -499,8 +493,8 @@ namespace FIFE {
 		std::list<Instance*> tree_instances;
 		if (update || !accurate) {
 			Point p = getRealCellDimensions(&layer);
-			int32_t w_step = screen_rect.w / p.x;
-			int32_t h_step = screen_rect.h / p.y;
+			int32_t w_step = static_cast<int32_t>(screen_rect.w / static_cast<float>(p.x) + 0.5);
+			int32_t h_step = static_cast<int32_t>(screen_rect.h / static_cast<float>(p.y) + 0.5);
 			ScreenPoint sp(screen_rect.x, screen_rect.y);
 			Location loc(&layer);
 			Rect rec(0, 0, 0, 0);
