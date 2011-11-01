@@ -56,7 +56,7 @@ namespace FIFE {
 
 		ImagePtr getTarget() { return m_target; }
 	private:
-		RenderTarget(RenderBackend* rb, uint32_t width, uint32_t height);
+		RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height);
 		RenderTarget(RenderBackend* rb, ImagePtr& image);
 
 		// Non copyable

@@ -382,6 +382,31 @@ namespace FIFE {
 		return DoublePoint( x2 - x1, y2 - y1 );
 	}
 
+	Point Camera::getRealCellDimensions(Layer* layer) {
+		CellGrid* cg = NULL;
+		if (layer) {
+			cg = layer->getCellGrid();
+		}
+		assert(cg);
+
+		Location loc(layer);
+		ModelCoordinate cell(0,0);
+		loc.setLayerCoordinates(cell);
+		ScreenPoint sp1 = toScreenCoordinates(loc.getMapCoordinates());
+		++cell.y;
+		loc.setLayerCoordinates(cell);
+		ScreenPoint sp2 = toScreenCoordinates(loc.getMapCoordinates());
+
+		Point p(ABS(sp2.x - sp1.x), ABS(sp2.y - sp1.y));
+		if (p.x == 0) {
+			p.x = 1;
+		}
+		if (p.y == 0) {
+			p.y = 1;
+		}
+		return p;
+	}
+
 	void Camera::updateReferenceScale() {
 		DoublePoint dim = getLogicalCellDimensions(m_location.getLayer());
 		m_reference_scale = static_cast<double>(m_screen_cell_width) / dim.x;
@@ -473,31 +498,29 @@ namespace FIFE {
 		bool special_alpha = alpha != 0;
 		std::list<Instance*> tree_instances;
 		if (update || !accurate) {
-			// convert screen_rect to tree_rect and use it to collect instances
-			std::vector<ScreenPoint> points;
+			Point p = getRealCellDimensions(&layer);
+			int32_t w_step = screen_rect.w / p.x;
+			int32_t h_step = screen_rect.h / p.y;
 			ScreenPoint sp(screen_rect.x, screen_rect.y);
-			points.push_back(sp);
-			sp.y = screen_rect.y+screen_rect.h;
-			points.push_back(sp);
-			sp.x = screen_rect.x+screen_rect.w;
-			points.push_back(sp);
-			sp.y = screen_rect.y;
-			points.push_back(sp);
-
 			Location loc(&layer);
-			ModelCoordinate max(-1000000,-1000000);
-			ModelCoordinate min(1000000,1000000);
-			for (std::vector<ScreenPoint>::iterator it = points.begin(); it != points.end(); ++it) {
-				loc.setMapCoordinates(toMapCoordinates(*it, false));
-				ModelCoordinate mc = loc.getLayerCoordinates();
-				max.x = std::max(max.x, mc.x);
-				max.y = std::max(max.y, mc.y);
-				min.x = std::min(min.x, mc.x);
-				min.y = std::min(min.y, mc.y);
+			Rect rec(0, 0, 0, 0);
+			for (int32_t i = 0; i <= w_step; ++i) {
+				sp.x = screen_rect.x + i * p.x;
+				for (int32_t ii = 0; ii <= h_step; ++ii) {					
+					sp.y = screen_rect.y + ii * p.y;
+					loc.setMapCoordinates(toMapCoordinates(sp, false));
+					ModelCoordinate mc = loc.getLayerCoordinates();
+					if (rec.x == mc.x && rec.y == mc.y) {
+						continue;
+					}
+					rec.x = mc.x;
+					rec.y = mc.y;
+					std::list<Instance*> tmp_instances = layer.getInstancesIn(rec);
+					std::copy(tmp_instances.begin(), tmp_instances.end(), std::back_inserter(tree_instances));
+				}
 			}
-
-			Rect tree_rect(min.x, min.y, max.x-min.x, max.y-min.y);
-			tree_instances = layer.getInstancesIn(tree_rect);
+			tree_instances.sort();
+			tree_instances.unique();
 
 			if (!accurate) {
 				for (std::list<Instance*>::iterator insit = tree_instances.begin(); insit != tree_instances.end(); ++insit) {
