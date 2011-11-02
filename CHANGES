@@ -56,6 +56,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     an event is lost. [t:594]
   * Added getRealCellDimensions() function to camera. [t:592]
   * Fixed a bug with Image names in TargetRenderer. [t:595]
+  * Added 1024x600 as a valid resolution. [t:597]
   
 === Extensions ===
   * Fixed a problem where the setting value cache is not updated [t:578]
