@@ -141,13 +141,14 @@ class Setting(object):
 				shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 
 		# valid values possible for the engineSettings
-		
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
-			'ScreenResolution':['640x480', '800x600', '1024x768', '1280x800', '1440x900'],
+			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768', 
+								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
+								'1600x900', '1600x1200', '1680x1050', '1920x1080', '1920x1200'],
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
