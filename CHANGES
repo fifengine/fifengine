@@ -9,6 +9,84 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
        _\/\\\_______________/\\\\\\\\\\\__\/\\\______________\/\\\\\\\\\\\\\\\_ 
         _\///_______________\///////////___\///_______________\///////////////__
 
+
+================================================================================
+== 0.3.3r2 (November 2nd, 2011)                                               ==
+================================================================================
+
+=== Engine ===
+  * Added getVersion(), getMajor(), getMinor(), getSubMinor() functions and 
+    exposed them to python. [t:582]
+  * Added a new math function to compare floats/doubles. It returns true if the 
+    difference is smaller as delta.
+  * Fixed the getMatchingInstances() function. [t:579]
+  * Added an bool to getMatchingInstances(). If a client need pixel accuracy 
+    results it should be set to true. Otherwise it should be set to false 
+    because so it skips the pixel compare and is much faster. [t:586]
+  * Added two more InstanceChangeTypes, ICHANGE_BLOCK and ICHANGE_CELL. [t:574]
+  * The ActionFrame for animations has been made functional. This means a minor
+    API change. For details look into the changed demo scripts. [t:573]
+  * Fixed the broken FIFE::Command type events. Now all event states are 
+    evaluated and not just one. Example from the ticket works now as expected. 
+    [t:503]
+  * The DELETE macro which is defined in winnt.h is undef'ed on any windows 
+    platform that defines the WIN32 macro. This fixes compilation when using 
+    visual studio. [t:589]
+  * Added two new mouse settings. The first one is the mouse sensitivity and 
+    the second can enable mouse acceleration. The sensitivity is limited to 
+    -0.99 (the slowest) and 10.0 (the fastest). If you enable mouse acceleration
+    then the sensitivity is used as the max speed value. You can also change it 
+    on runtime with the EventManager. [t:487]
+  * Added the getPtr() functions to ImageManager. All loaders now check to see 
+    if an image has been defined before creating it. This was a small bug that 
+    caused the image to be loaded even if the image was defined but not loaded 
+    in the first place. [t:590]
+  * Fixed a bug in ImageManager::removeUnreferenced(). It would cause a segfault 
+    when executed. This has been fixed.
+  * Fixed the problem where the animation atlas image becomes invalid after 
+    deleting all objects from model. [t:590]
+  * Added a setting to allow users to deactivate the usage of the Framebuffer 
+    Object in opengl backends. refs[t:581]
+  * Added a setting to allow users to deactivate the usage of NPOT Textures in 
+    opengl backends. [t:581]
+  * Fixed a condition where if a widget is dragged to an area on the screen 
+    where there is no widget the event gets lost. It also prevents the focus 
+    from being dropped. [t:594]
+  * Fixed a condition where the user drags from the map to a guichan widget and 
+    an event is lost. [t:594]
+  * Added getRealCellDimensions() function to camera. [t:592]
+  * Fixed a bug with Image names in TargetRenderer. [t:595]
+  * Added 1024x600 as a valid resolution. [t:597]
+  
+=== Extensions ===
+  * Fixed a problem where the setting value cache is not updated [t:578]
+  * Fixed a problem in fife_settings.py when starting the editor because the 
+    editor tried to modify the value of a setting not in the FIFE module. 
+    [t:578]
+  * Added 'all' to the valid LogModules setting [t:578]
+  * Pychan widgets can now be shown/hidden even if they are not top level 
+    containers [t:375]
+  * Fixed a small bug with basicapplication. It was grabbing a reference to 
+    the gui manager incorrectly.
+    
+=== Editor ===
+  * Fixed a bug in the layertool GUI. It was using the quit.png icon as its 
+    delete layer image instead of the delete_layer.png icon. [t:583]
+  * Replacing the editor's icon files with free ones. [t:584]
+
+=== Misc ===
+  * Fixed the Free Software Foundation address in COPYING as it was outdated.
+  * Added some more tiles to the rpg tileset in fife_test.
+  * Added a Show Hide test to the PychanTest module in fife_test.
+  * Small fix for the base class Test in the fife_test application. The create 
+    function reversed the engine and application parameters from what is 
+    actually passed in by the TestManager. The PychanTest was unaffected because
+    it had the parameters in the correct order as opposed to reversed in the 
+    base class.
+  * Commented out a whole lot of debug statements to make the debug output in 
+    FIFE useful again. I left them in the code in case anyone still needed them.
+    
+    
 ================================================================================
 == 0.3.3 (October 6th, 2011)                                                  ==
 ================================================================================

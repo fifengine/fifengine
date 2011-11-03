@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
  *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -196,10 +196,11 @@ namespace FIFE {
 		bpps[2] = 32;
 
 		//COMMON FS RESOLUTIONS
-		const uint32_t numRes = 15;
+		const uint32_t numRes = 16;
 		uint16_t resolutions[numRes][2] = {
 			{640, 480},
 			{800, 600},
+			{1024, 600},
 			{1024, 768},
 			{1152, 864},
 			{1280, 768},
