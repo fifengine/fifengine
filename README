@@ -82,12 +82,9 @@ Documentation
  * Atlas Creator needs to be documented (#559)
 
 Engine
- * Using FIFE Console breaks gettext calls, thus crashing the client (#560)
- * ActionFrame is not functional (#573)
  * Fallback solution for special characters (Fontsupport) (#302)
  * cameras must be attached to layers (#305)
  * Loaders have a circular import (#478)
- * Several FIFE::Command type events are not being handled correctly (#503)
 
 Guichan/Pychan
  * Fix UTF8 support using vanilla guichan source (#432)
@@ -95,8 +92,6 @@ Guichan/Pychan
  * De-couple FIFE from Guichan (#549)
  * Button doesn't react to click when drawn below mouse pointer (#387)
  * Pychan dropdowns refuse to open if there is no space below (#445)
- * Slider size is overwritten by label max_size when residing in the same 
-   (parent) box (#488)
  * Pychan widget constructors silently ignore unexpected keyword arguments 
    (#520)
  * Borders are not rendered on edges of widgets that touch their parent 
