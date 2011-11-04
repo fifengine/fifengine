@@ -61,7 +61,7 @@ Name: "{group}\Changes.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Cha
 Name: "{group}\tools\Map Editor"; Filename: "python.exe"; Parameters: """{app}\tools\editor\run.py"""; WorkingDir: "{app}\tools\editor"; Comment: "FIFE Editor"; Components: "tools"
 Name: "{group}\demos\Rio de hola"; Filename: "python.exe"; Parameters: """{app}\demos\rio_de_hola\run.py"""; WorkingDir: "{app}\demos\rio_de_hola"; Comment: "Techdemo"; Components: "demos"
 Name: "{group}\demos\Shooter"; Filename: "python.exe"; Parameters: """{app}\demos\shooter\run.py"""; WorkingDir: "{app}\demos\shooter"; Comment: "Side scrolling shooter demo"; Components: "demos"
-Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\demos\pychan_demo\pychan_test.py"""; WorkingDir: "{app}\demos\pychan_demo"; Comment: "FIFE GUI demo"; Components: "demos"
+Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\demos\pychan_demo\pychan_demo.py"""; WorkingDir: "{app}\demos\pychan_demo"; Comment: "FIFE GUI demo"; Components: "demos"
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
