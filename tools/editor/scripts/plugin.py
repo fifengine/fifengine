@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-import os
+import os, sys, traceback
 
 class PluginManager:
 	""" Currently, pluginmanager iterates through the plugin directory
@@ -32,33 +32,50 @@ class PluginManager:
 	If a plugin fails to load due to exceptions, they are caught and a line
 	of the error is printed to console.
 	"""
-	def __init__(self, settings, *args, **kwargs):
+	def __init__(self, settings, addPluginDir, *args, **kwargs):
+		"""
+		@param addPluginDir - directory that is scanned for plugins additionally to
+						   the default pluginDir
+		"""
 		self._settings = settings
 		
 		self._pluginDir = "plugins"
 		self._plugins = []
+
+		dirs = [self._pluginDir]
+		if addPluginDir is not None:
+			dirs.append(addPluginDir)
 		
 		files = []
-		for f in os.listdir(self._pluginDir):
-			path = os.path.join(self._pluginDir, f)
-			if os.path.isfile(path) and os.path.splitext(f)[1] == ".py" and f != "__init__.py":
-				files.append(os.path.splitext(f)[0])
+		for d in dirs:
+			for f in os.listdir(d):
+				path = os.path.join(d, f)
+				if os.path.isfile(path) and os.path.splitext(f)[1] == ".py" and f != "__init__.py":
+					files.append((d,os.path.splitext(f)[0]))
 				
-		for f in files:
+		for d,f in files:
 			importPlugin = self._settings.get("Plugins", f, False)
 			if importPlugin:
 				try:
 					print "Importing plugin:", f
-					exec "import plugins."+f
-					plugin = eval("plugins."+f+"."+f+"()")
+					plugin = None
+
+					if d == "plugins":
+						# default plugins dir needs special treating
+						plugin = __import__(d+"."+f)
+						plugin = eval("plugin."+f+"."+f+"()")
+					else:
+						plugin = __import__(f)
+						plugin = eval("plugin."+f+"()")
+
 					if isinstance(plugin, Plugin) is False:
 						print f+" is not an instance of Plugin!"
 					else:
 						plugin.enable()
 						self._plugins.append(plugin)
 				except BaseException, error:
-					print "Error: ", error
 					print "Invalid plugin:", f
+					traceback.print_exc()
 			else:
 				print "Not importing plugin:", f
 				

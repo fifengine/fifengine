@@ -71,12 +71,13 @@ class Editor(ApplicationBase, MainWindow):
 	""" Editor sets up all subsystems and provides access to them """
 	editor = None
 
-	def __init__(self, params, *args, **kwargs):
+	def __init__(self, options, mapfile, *args, **kwargs):
 		Editor.editor = self
 	
 		self._filemanager = None
 	
-		self._params = params
+		self._options = options
+		self._mapfile = mapfile
 		self._eventlistener = None
 		self._pluginmanager = None
 		
@@ -107,7 +108,10 @@ class Editor(ApplicationBase, MainWindow):
 		
 	def _initTools(self):
 		""" Initializes tools """
-		self._pluginmanager = plugin.PluginManager(self.getSettings())
+		if self._options.plugin_dir is not None:
+			sys.path.append(os.path.abspath(self._options.plugin_dir))
+
+		self._pluginmanager = plugin.PluginManager(self.getSettings(), self._options.plugin_dir)
 		
 		self._filemanager = FileManager()
 		self._toolbar.adaptLayout()
@@ -453,7 +457,7 @@ class Editor(ApplicationBase, MainWindow):
 		if self._inited == False:
 			self._initGui()
 			self._initTools()
-			if self._params: self.openFile(self._params)
+			if self._mapfile: self.openFile(self._mapfile)
 			self._inited = True
 			
 		# FIXME: This isn't very nice, but it is needed to change the map
