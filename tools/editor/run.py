@@ -22,17 +22,23 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-import sys, os, re
+import sys, os, re, optparse
 
 #--- Main function ---#
 if __name__ == '__main__':
 
+	p = optparse.OptionParser(usage="%prog [options] <map>", version="development")
+	p.add_option("--plugin-dir", dest="plugin_dir", default=None, \
+	             help="specify additional plug-in directory")
+
+	(options, args) =  p.parse_args()
+
 	# Get command line arguments
-	params = None
-	if len(sys.argv) > 1:
-		params = sys.argv[1]
-	
+	mapfile = None
+	if len(args) >= 1:
+		mapfile = args[0]
+
 	# Start editor
 	from scripts.editor import Editor
-	app = Editor(params)
+	app = Editor(options, mapfile)
 	app.run()
