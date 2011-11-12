@@ -59,6 +59,7 @@ namespace FIFE {
 		nGrid->setYScale(m_yscale);
 		nGrid->setXShift(m_xshift);
 		nGrid->setYShift(m_yshift);
+		nGrid->setZShift(m_zshift);
 
 		return nGrid;
 	}
@@ -184,11 +185,13 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
-		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y));
+		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y), floor(elc.z));
 		double dx = elc.x - lc.x;
 		double dy = elc.y - lc.y;
+		double dz = elc.z - lc.z;
 		int32_t x = static_cast<int32_t>(lc.x);
 		int32_t y = static_cast<int32_t>(lc.y);
+		int32_t z = static_cast<int32_t>(lc.z);
 //		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
 //		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		ModelCoordinate result;
@@ -197,17 +200,17 @@ namespace FIFE {
 //			FL_DBG(_log, "In even row");
 			if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
-				result = ModelCoordinate(x, y+1);
+				result = ModelCoordinate(x, y+1, z);
 			}
 			else if (dy < HEX_EDGE_HALF) {
 //				FL_DBG(_log, "In upper rect area");
 				if (dx > 0.5) {
 //					FL_DBG(_log, "...on right");
-					result = ModelCoordinate(x+1, y);
+					result = ModelCoordinate(x+1, y, z);
 				}
 				else {
 //					FL_DBG(_log, "...on left");
-					result = ModelCoordinate(x, y);
+					result = ModelCoordinate(x, y, z);
 				}
 			}
 			// in middle triangle area
@@ -221,10 +224,10 @@ namespace FIFE {
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 //						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y);
+						result = ModelCoordinate(x, y, z);
 					} else {
 //						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1);
+						result = ModelCoordinate(x, y+1, z);
 					}
 				} else {
 //					FL_DBG(_log, "In right triangles");
@@ -234,10 +237,10 @@ namespace FIFE {
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 //						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x+1, y);
+						result = ModelCoordinate(x+1, y, z);
 					} else {
 //						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1);
+						result = ModelCoordinate(x, y+1, z);
 					}
 				}
 			}
@@ -246,17 +249,17 @@ namespace FIFE {
 //			FL_DBG(_log, "In uneven row");
 			if (dy < HEX_EDGE_HALF) {
 //				FL_DBG(_log, "In upper rect area");
-				result = ModelCoordinate(x, y);
+				result = ModelCoordinate(x, y, z);
 			}
 			else if ((1 - dy) < HEX_EDGE_HALF) {
 //				FL_DBG(_log, "In lower rect area");
 				if (dx > 0.5) {
 //					FL_DBG(_log, "...on right");
-					result = ModelCoordinate(x+1, y+1);
+					result = ModelCoordinate(x+1, y+1, z);
 				}
 				else {
 //					FL_DBG(_log, "...on left");
-					result = ModelCoordinate(x, y+1);
+					result = ModelCoordinate(x, y+1, z);
 				}
 			}
 			else {
@@ -269,10 +272,10 @@ namespace FIFE {
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
 //						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1);
+						result = ModelCoordinate(x, y+1, z);
 					} else {
 //						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y);
+						result = ModelCoordinate(x, y, z);
 					}
 				} else {
 //					FL_DBG(_log, "In right triangles");
@@ -282,10 +285,10 @@ namespace FIFE {
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
 //					        FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x+1, y+1);
+						result = ModelCoordinate(x+1, y+1, z);
 					} else {
 //						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y);
+						result = ModelCoordinate(x, y, z);
 					}
 				}
 			}

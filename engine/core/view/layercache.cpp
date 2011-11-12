@@ -170,6 +170,7 @@ namespace FIFE {
 
 		ExactModelCoordinate map_coords = instance->getLocationRef().getMapCoordinates();
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(map_coords);
+		render_item.instance_z = instance->getLocationRef().getExactLayerCoordinates().z;
 
 		render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) +

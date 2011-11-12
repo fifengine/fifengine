@@ -131,10 +131,23 @@ namespace FIFE {
 			updateMatrices();
 		}
 
-		/** Get the cellgrid x shift 
-		 *  @return The x shift in map coords
+		/** Get the cellgrid y shift 
+		 *  @return The y shift in map coords
 		 */
 		const double getYShift() const { return m_yshift; }
+
+		/** Set the cellgrid z shift
+		 *  @param shift The shift in map coords
+		 */ 
+		void setZShift(const double zshift) {
+			m_zshift = zshift;
+			updateMatrices();
+		}
+
+		/** Get the cellgrid z shift
+		 *  @return The z shift in map coords
+		 */
+		const double getZShift() const { return m_zshift; }
 
 		/** Set the cellgrid x-scaling
 		 *  @param scale The x-scale of cellgrid
@@ -187,6 +200,7 @@ namespace FIFE {
 		DoubleMatrix m_inverse_matrix;
 		double m_xshift;
 		double m_yshift;
+		double m_zshift;
 		double m_xscale;
 		double m_yscale;
 		double m_rotation;

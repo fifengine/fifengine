@@ -221,6 +221,7 @@ class XMLMapLoader(object):
 			rotation = layer.get('rotation')
 			x_offset = layer.get('x_offset')
 			y_offset = layer.get('y_offset')
+			z_offset = layer.get('z_offset')
 			pathing = layer.get('pathing')
 			transparency = layer.get('transparency')
 			
@@ -229,6 +230,7 @@ class XMLMapLoader(object):
 			if not rotation: rotation = 0.0
 			if not x_offset: x_offset = 0.0
 			if not y_offset: y_offset = 0.0
+			if not z_offset: z_offset = 0.0
 			if not pathing: pathing = "cell_edges_only"
 			if not transparency: 
 				transparency = 0
@@ -243,6 +245,7 @@ class XMLMapLoader(object):
 			cellgrid.setYScale(float(y_scale))
 			cellgrid.setXShift(float(x_offset))
 			cellgrid.setYShift(float(y_offset))
+			cellgrid.setZShift(float(z_offset))
 
 			layer_obj = None
 			try:

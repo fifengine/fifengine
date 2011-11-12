@@ -229,13 +229,26 @@ namespace FIFE {
 	}
 
 	void Instance::setLocation(const Location& loc) {
+		// ToDo: Handle the case when the layers are different
 		if(m_location != loc) {
 			if(isActive()) {
-				m_location = loc;
+				if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
+					m_location.getLayer()->getInstanceTree()->removeInstance(this);
+					m_location = loc;
+					m_location.getLayer()->getInstanceTree()->addInstance(this);
+				} else {
+					m_location = loc;
+				}
 				refresh();
 			} else {
 				initializeChanges();
-				m_location = loc;
+				if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
+					m_location.getLayer()->getInstanceTree()->removeInstance(this);
+					m_location = loc;
+					m_location.getLayer()->getInstanceTree()->addInstance(this);
+				} else {
+					m_location = loc;
+				}
 			}
 		}
 	}

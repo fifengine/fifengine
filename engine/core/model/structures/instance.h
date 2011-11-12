@@ -357,8 +357,6 @@ namespace FIFE {
 			float m_timemultiplier;
 			// say text on previous round
 			std::string m_saytxt;
-			// blocking status on previous round
-			bool m_blocking;
 			// listeners for changes
 			std::vector<InstanceChangeListener*> m_changelisteners;
 
@@ -371,6 +369,8 @@ namespace FIFE {
 			SayInfo* m_sayinfo;
 			// time scaler for this instance
 			TimeProvider* m_timeprovider;
+			// blocking status on previous round
+			bool m_blocking;
 		};
 		InstanceActivity* m_activity;
 		// bitmask stating current changes
