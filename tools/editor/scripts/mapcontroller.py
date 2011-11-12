@@ -158,16 +158,13 @@ class MapController(object):
 			if self.debug: print 'No layer assigned in selectCell'
 			return
 
-		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
-		position = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
-		
 		loc = fife.Location(self._layer)
-		loc.setLayerCoordinates(position)
+		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
 		
 		for i in self._selection:
 			if loc == i: return
 			
-		self._selection.append( loc )
+		self._selection.append(loc)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		
 	def deselectCell(self, screenx, screeny):
@@ -179,15 +176,12 @@ class MapController(object):
 			if self.debug: print 'No layer assigned in selectCell'
 			return
 
-		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
-		position = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
-		
 		loc = fife.Location(self._layer)
-		loc.setLayerCoordinates(position)
+		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
 		
 		for i in self._selection:
 			if loc == i:
-				self._selection.remove( loc )
+				self._selection.remove(loc)
 				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(loc)
 				return
 
@@ -202,7 +196,7 @@ class MapController(object):
 		instances = []
 		
 		for loc in self._selection:
-			instances.extend(self.getInstancesFromPosition(loc.getLayerCoordinates()))
+			instances.extend(self.getInstancesFromPosition(loc.getExactLayerCoordinates(), loc.getLayer()))
 
 		return instances
 
@@ -226,11 +220,14 @@ class MapController(object):
 			loc.setExactLayerCoordinates(position)
 		else:
 			loc.setLayerCoordinates(position)
-			
+
+		map_coords = loc.getMapCoordinates()
+		screen_point = self._camera.toScreenCoordinates(map_coords)
+
 		if layer:
-			instances = layer.getInstancesAt(loc)
+			instances = self._camera.getMatchingInstances(screen_point, layer)
 		else:
-			instances = self._layer.getInstancesAt(loc)
+			instances = self._camera.getMatchingInstances(screen_point, self._layer)
 			
 		if self._single_instance and instances:
 			return [instances[0], ]
@@ -344,7 +341,7 @@ class MapController(object):
 			moveBy = fife.ExactModelCoordinate(float(moveBy.x), float(moveBy.y), float(moveBy.z))
 		elif exact is False and type(moveBy) != fife.ModelCoordinate:
 			moveBy = fife.ModelCoordinate(int(round(moveBy.x)), int(round(moveBy.y)), int(round(moveBy.z)))
-			
+
 		for i in instances:
 			loc = i.getLocation()
 			f = i.getFacingLocation()
@@ -413,3 +410,35 @@ class MapController(object):
 			coords.y -= screen_y / z * math.cos(-r / 180.0 * math.pi) / 100;
 		coords = self._camera.getLocationRef().setMapCoordinates(coords)
 		self._camera.refresh()
+
+	def screenToMapCoordinates(self, screenx, screeny):
+		""" Convert screen coordinates to map coordinates, including z """
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet in screenToMapCoordinates'
+			return
+		if not self._layer:
+			if self.debug: print 'No layer assigned in screenToMapCoordinates'
+			return
+
+		screencoords = fife.ScreenPoint(screenx, screeny)
+		z_offset = self._camera.getZOffset(self._layer)
+		if self._layer == self._camera.getLocation().getLayer():
+			instance_z = float(-self._camera.getLocation().getExactLayerCoordinates().z)
+			layer_z = float(self._layer.getCellGrid().getZShift() - (self._camera.getLocation().getMapCoordinates().z - self._camera.getLocation().getExactLayerCoordinates().z))
+			z_offset.x *= int(instance_z + layer_z * self._layer.getCellGrid().getXScale())
+			z_offset.y *= int(instance_z + layer_z * self._layer.getCellGrid().getYScale())
+		else:
+			instance_z = float(-self._camera.getLocation().getExactLayerCoordinates(self._layer).z)
+			layer_z = float(self._layer.getCellGrid().getZShift() - (self._camera.getLocation().getMapCoordinates().z - self._camera.getLocation().getExactLayerCoordinates(self._layer).z))
+			z_offset.x *= int(instance_z + layer_z * self._layer.getCellGrid().getXScale())
+			z_offset.y *= int(instance_z + layer_z * self._layer.getCellGrid().getYScale())
+
+		if (z_offset.z <= 0):
+			screencoords.y += int(z_offset.y)
+		else:
+			screencoords.y -= int(z_offset.y)
+
+		mapCoords = self._camera.toMapCoordinates(screencoords, False)
+		mapCoords.z = self._layer.getCellGrid().getZShift()
+
+		return mapCoords

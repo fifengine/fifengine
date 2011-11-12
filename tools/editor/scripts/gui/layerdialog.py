@@ -61,6 +61,7 @@ class LayerDialog(object):
 				"rotBox" : unicode(cg.getRotation()),
 				"xOffsetBox" : unicode(cg.getXShift()),
 				"yOffsetBox" : unicode(cg.getYShift()),
+				"zOffsetBox" : unicode(cg.getZShift()),
 				"transBox" : unicode(layer.getLayerTransparency())
 			})
 			
@@ -94,6 +95,7 @@ class LayerDialog(object):
 		try:
 			x_offset = float(self._widget.collectData('xOffsetBox'))
 			y_offset = float(self._widget.collectData('yOffsetBox'))
+			z_offset = float(self._widget.collectData('zOffsetBox'))
 		except ValueError:
 			dialogs.message(message=unicode("Please enter integer or decimal values for offset."), caption=unicode("Error"))
 			return
@@ -146,6 +148,7 @@ class LayerDialog(object):
 		cellgrid.setYScale(y_scale)
 		cellgrid.setXShift(x_offset)
 		cellgrid.setYShift(y_offset)
+		cellgrid.setZShift(z_offset)
 	
 		if not self.layer:
 			try:

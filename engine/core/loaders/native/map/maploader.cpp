@@ -199,12 +199,14 @@ namespace FIFE {
 						// defaults
 						double xOffset = 0.0;
 						double yOffset = 0.0;
+						double zOffset = 0.0;
 						double xScale = 1.0;
 						double yScale = 1.0;
 						double rotation = 0.0;
 
 						int xOffsetRetVal = layerElement->QueryValueAttribute("x_offset", &xOffset);
 						int yOffsetRetVal = layerElement->QueryValueAttribute("y_offset", &yOffset);
+						int zOffsetRetVal = layerElement->QueryValueAttribute("z_offset", &zOffset);
 						int xScaleRetVal = layerElement->QueryValueAttribute("x_scale", &xScale);
 						int yScaleRetVal = layerElement->QueryValueAttribute("y_scale", &yScale);
 						int rotationRetVal = layerElement->QueryValueAttribute("rotation", &rotation);
@@ -243,6 +245,7 @@ namespace FIFE {
 								grid->setXScale(xScale);
 								grid->setYShift(yOffset);
 								grid->setYScale(yScale);
+								grid->setZShift(zOffset);
 								grid->setRotation(rotation);
 
 								Layer *layer = NULL;

@@ -52,12 +52,12 @@ namespace FIFE {
 	}
 	
 	Location::~Location() {
-		reset();
 	}
 	
 	void Location::reset() {
 		m_exact_layer_coords.x = 0;
 		m_exact_layer_coords.y = 0;
+		m_exact_layer_coords.z = 0;
 		m_layer = NULL;
 	}
 	
@@ -65,6 +65,7 @@ namespace FIFE {
 		m_layer = rhs.m_layer;
 		m_exact_layer_coords.x = rhs.m_exact_layer_coords.x;
 		m_exact_layer_coords.y = rhs.m_exact_layer_coords.y;
+		m_exact_layer_coords.z = rhs.m_exact_layer_coords.z;
 		return *this;
 	}
 	

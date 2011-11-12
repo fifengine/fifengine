@@ -284,7 +284,7 @@ namespace FIFE {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
 				ExactModelCoordinate pt = m_location.getMapCoordinates();
-				m_matrix.applyTranslate( -pt.x *m_reference_scale,-pt.y *m_reference_scale, 0);
+				m_matrix.applyTranslate( -pt.x *m_reference_scale,-pt.y *m_reference_scale, -pt.z*m_reference_scale);
 			}
 		}
 		scale = m_zoom;
@@ -407,6 +407,24 @@ namespace FIFE {
 		return p;
 	}
 
+	Point3D Camera::getZOffset(Layer* layer) {
+		CellGrid* cg = NULL;
+		if (layer) {
+			cg = layer->getCellGrid();
+		}
+		assert(cg);
+
+		Location loc(layer);
+		ModelCoordinate cell(0,0,0);
+		loc.setLayerCoordinates(cell);
+		ScreenPoint sp1 = toScreenCoordinates(loc.getMapCoordinates());
+		++cell.z;
+		loc.setLayerCoordinates(cell);
+		ScreenPoint sp2 = toScreenCoordinates(loc.getMapCoordinates());
+
+		return Point3D(sp2.x - sp1.x, sp2.y - sp1.y, sp2.z - sp1.z);
+	}
+
 	void Camera::updateReferenceScale() {
 		DoublePoint dim = getLogicalCellDimensions(m_location.getLayer());
 		m_reference_scale = static_cast<double>(m_screen_cell_width) / dim.x;
@@ -434,6 +452,7 @@ namespace FIFE {
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool update = cacheNeedUpdate(&layer);
 		bool special_alpha = alpha != 0;
+		Point3D z_offset = getZOffset(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -461,13 +480,35 @@ namespace FIFE {
 					continue;
 				}
 				if (update) {
-					Point p = getRealCellDimensions(&layer);
-					int32_t w_steps = static_cast<int32_t>(vc.dimensions.w / static_cast<float>(p.x) + 0.5);
-					int32_t h_steps = static_cast<int32_t>(vc.dimensions.h / static_cast<float>(p.y) + 0.5);
-					ExactModelCoordinate emc = toMapCoordinates(screen_coords , false);
+					ScreenPoint screen_coords_tmp = screen_coords;
+					if (&layer == m_location.getLayer()) {
+						double instance_z = vc.instance_z - m_location.getExactLayerCoordinates().z;
+						double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates().z);
+
+						if (z_offset.z <= 0) {
+							screen_coords_tmp.y += z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
+						} else {
+							screen_coords_tmp.y -= z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
+						}
+					} else {
+						double instance_z = vc.instance_z - m_location.getExactLayerCoordinates(&layer).z;
+						double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates(&layer).z);
+
+						if (z_offset.z <= 0) {
+							screen_coords_tmp.y += z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
+						} else {
+							screen_coords_tmp.y -= z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
+						}
+					}
+					ExactModelCoordinate emc = toMapCoordinates(screen_coords_tmp, false);
+					emc.z = layer.getCellGrid()->getZShift() + vc.instance_z;
 					Location loc(&layer);
 					loc.setMapCoordinates(emc);
 					ModelCoordinate mc = loc.getLayerCoordinates();
+
+					Point p = getRealCellDimensions(&layer);
+					int32_t w_steps = static_cast<int32_t>(vc.dimensions.w / static_cast<float>(p.x) + 0.5);
+					int32_t h_steps = static_cast<int32_t>(vc.dimensions.h / static_cast<float>(p.y) + 0.5);
 					mc.x -= static_cast<int32_t>(w_steps/2.0 + 0.5);
 					mc.y -= static_cast<int32_t>(h_steps/2.0 + 0.5);
 					Rect rec(mc.x, mc.y, w_steps, h_steps);
@@ -495,14 +536,28 @@ namespace FIFE {
 			Point p = getRealCellDimensions(&layer);
 			int32_t w_step = static_cast<int32_t>(screen_rect.w / static_cast<float>(p.x) + 0.5);
 			int32_t h_step = static_cast<int32_t>(screen_rect.h / static_cast<float>(p.y) + 0.5);
-			ScreenPoint sp(screen_rect.x, screen_rect.y);
+			
+			Point3D z_offset = getZOffset(&layer);
+			double instance_z = -m_location.getExactLayerCoordinates().z;
+			double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates().z);
+			z_offset.x *= instance_z + layer_z * layer.getCellGrid()->getXScale();
+			z_offset.y *= instance_z + layer_z * layer.getCellGrid()->getYScale();
+			ScreenPoint screen_coords_tmp(screen_rect.x, screen_rect.y);
+			if (z_offset.z <= 0) {
+				screen_coords_tmp.y += z_offset.y;
+			} else {
+				screen_coords_tmp.y -= z_offset.y;
+			}
+			ScreenPoint sp = screen_coords_tmp;
 			Location loc(&layer);
 			Rect rec(0, 0, 0, 0);
 			for (int32_t i = 0; i <= w_step; ++i) {
-				sp.x = screen_rect.x + i * p.x;
+				sp.x = screen_coords_tmp.x + i * p.x;
 				for (int32_t ii = 0; ii <= h_step; ++ii) {					
-					sp.y = screen_rect.y + ii * p.y;
-					loc.setMapCoordinates(toMapCoordinates(sp, false));
+					sp.y = screen_coords_tmp.y + ii * p.y;
+					ExactModelCoordinate emc = toMapCoordinates(sp, false);
+					emc.z = layer.getCellGrid()->getZShift();
+					loc.setMapCoordinates(emc);
 					ModelCoordinate mc = loc.getLayerCoordinates();
 					if (rec.x == mc.x && rec.y == mc.y) {
 						continue;

@@ -67,6 +67,9 @@ namespace FIFE {
 
 			// current transparency
 			uint8_t transparency;
+
+			// current instance z
+			double instance_z;
 		private:
 			int32_t m_cached_static_img_id;
 			int32_t m_cached_static_img_angle;

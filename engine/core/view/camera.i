@@ -53,6 +53,7 @@ namespace FIFE {
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(uint32_t width, uint32_t height);
 		Point getCellImageDimensions();
+		Point3D getZOffset(Layer* layer);
 		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
 		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 		void setEnabled(bool enabled);

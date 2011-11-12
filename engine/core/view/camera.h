@@ -146,6 +146,11 @@ namespace FIFE {
 		 */
 		double getReferenceScale() const { return m_reference_scale; }
 
+		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
+		 * @return Point3D Point3D containing x, y, z
+		 */ 
+		Point3D getZOffset(Layer* layer);
+
 		/** Sets the location for camera
 		 * @param location location (center point) to render
 		 */

@@ -41,6 +41,7 @@ namespace FIFE {
 		m_inverse_matrix(),
 		m_xshift(0),
 		m_yshift(0),
+		m_zshift(0),
 		m_xscale(1),
 		m_yscale(1),
 		m_rotation(0),
@@ -68,7 +69,7 @@ namespace FIFE {
 	void CellGrid::updateMatrices() {
 		m_matrix.loadRotate(m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyScale(m_xscale,m_yscale, 1);
-		m_matrix.applyTranslate(m_xshift, m_yshift, 0);
+		m_matrix.applyTranslate(m_xshift, m_yshift, m_zshift);
 		m_inverse_matrix = m_matrix.inverse();
 	}
 

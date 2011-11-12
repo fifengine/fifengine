@@ -398,8 +398,8 @@ class MapEditor:
 					self._controller.selectCell(realCoords[0], realCoords[1])
 					self._controller.getUndoManager().startGroup("Inserted instances")
 					self._undogroup = True
-					
-					position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+
+					position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
 					position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 					
 					self._controller.selectCell(realCoords[0], realCoords[1])
@@ -416,8 +416,7 @@ class MapEditor:
 				
 			elif self._mode == MapEditor.MOVING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-				
-					position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+					position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
 
 					self._last_drag_pos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 					self._last_drag_pos_exact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
@@ -438,7 +437,7 @@ class MapEditor:
 					self._undogroup = True
 					
 			elif self._mode == MapEditor.OBJECTPICKER:
-				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
 				exact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 				instances = self._controller.getInstancesFromPosition(exact)
 				if len(instances) >= 1:
@@ -472,7 +471,7 @@ class MapEditor:
 						self._controller.selectCell(realCoords[0], realCoords[1])
 					
 			elif self._mode == MapEditor.INSERTING:
-				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
 				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 				
 				self._controller.selectCell(realCoords[0], realCoords[1])
@@ -483,8 +482,7 @@ class MapEditor:
 				self._controller.removeInstances(self._controller.getInstancesFromSelection())
 				
 			elif self._mode == MapEditor.MOVING:
-				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
-				
+				position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])				
 				positionExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 				

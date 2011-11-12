@@ -40,6 +40,7 @@ namespace FIFE {
 	RenderItem::RenderItem():
 		screenpoint(),
 		dimensions(),
+		instance_z(0.0),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cached_static_img_angle(0) {
 	}
@@ -51,10 +52,9 @@ namespace FIFE {
 		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cached_static_img_id;
 		}
-		if(!instance->getObject()->getVisual<ObjectVisual>())
-//prock - 504
-//			return Pool::INVALID_ID;
+		if(!instance->getObject()->getVisual<ObjectVisual>()) {
 			return -1;
+		}
 
 		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
 		m_cached_static_img_angle = angle;

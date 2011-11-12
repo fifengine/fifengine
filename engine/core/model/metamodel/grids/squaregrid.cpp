@@ -48,6 +48,7 @@ namespace FIFE {
 		nGrid->setYScale(m_yscale);
 		nGrid->setXShift(m_xshift);
 		nGrid->setYShift(m_yshift);
+		nGrid->setZShift(m_zshift);
 
 		return nGrid;
 	}
@@ -123,12 +124,16 @@ namespace FIFE {
 		ModelCoordinate result;
 		result.x = static_cast<int32_t>(floor(dblpt.x));
 		result.y = static_cast<int32_t>(floor(dblpt.y));
+		result.z = static_cast<int32_t>(floor(dblpt.z));
 
 		if ((dblpt.x - static_cast<double>(result.x)) > 0.5) {
 			result.x++;
 		}
 		if ((dblpt.y - static_cast<double>(result.y)) > 0.5) {
 			result.y++;
+		}
+		if ((dblpt.z - static_cast<double>(result.z)) > 0.5) {
+			result.z++;
 		}
 
 		return result;
