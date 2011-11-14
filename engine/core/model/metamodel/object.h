@@ -48,7 +48,7 @@ namespace FIFE {
 	 * Objects may inherit default values from another object.
 	 *
 	 */
-	class Object : public IResource {
+	class Object {
 	public:
 		/** Constructor
 		 * An object may optionally inherit default attributes
@@ -137,10 +137,6 @@ namespace FIFE {
 
 		bool operator==(const Object& obj) const;
 		bool operator!=(const Object& obj) const;
-
-		virtual size_t getSize() { return 0; }
-		virtual void load() { }
-		virtual void free() { }
 
 	private:
 		std::string m_id;

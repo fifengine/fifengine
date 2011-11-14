@@ -35,7 +35,6 @@
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited):
-		IResource(identifier),
 		m_id(identifier),
 		m_namespace(name_space),
 		m_filename(""),

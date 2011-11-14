@@ -54,7 +54,6 @@
 #include "video/opengle/renderbackendopengle.h"
 #endif
 #include "video/sdl/renderbackendsdl.h"
-#include "loaders/native/video/subimageloader.h"
 #include "loaders/native/video/imageloader.h"
 #include "loaders/native/audio/ogg_loader.h"
 #include "model/model.h"
