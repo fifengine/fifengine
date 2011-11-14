@@ -413,13 +413,11 @@ class Editor(ApplicationBase, MainWindow):
 	def openFile(self, path):
 		""" Opens a file """
 		try:
-			if self._lighting_mode == 0:
-				loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
-				if loader.isLoadable(path):
-					map = loader.load(path)
-					print 'map loaded: %s' % (map.getFilename())
-				else:
-					print 'map could not be loaded: %s' % (map.getFilename())
+			map = None
+			fife_loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
+			if self._lighting_mode == 0 and fife_loader.isLoadable(path):
+				map = fife_loader.load(path)
+				print 'map loaded: %s' % (map.getFilename())
 			else:
 				# TODO: vtchill - once lights are supported by the c++ map loader this can be removed
 				map = loaders.loadMapFile(path, self.engine, extensions = {'lights': True})
@@ -427,6 +425,7 @@ class Editor(ApplicationBase, MainWindow):
 			if map:
 				return self.newMapView(map)
 			else:
+				print 'map could not be loaded: %s' % path
 				return None
 		except:
 			traceback.print_exc(sys.exc_info()[1])
