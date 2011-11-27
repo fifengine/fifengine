@@ -51,9 +51,10 @@ namespace FIFE {
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
-		m_font(0) {
+		m_font(0),
+		m_font_color(false),
+		m_zoom(true) {
 		setEnabled(false);
-		m_font_color = false;
 	}
 
  	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
@@ -62,8 +63,9 @@ namespace FIFE {
 		m_tmploc(),
 		m_c(),
 		m_font(old.m_font),
-		m_font_color(old.m_font_color),
-		m_color(old.m_color) {
+		m_font_color(false),
+		m_color(old.m_color),
+		m_zoom(old.m_zoom) {
 		setEnabled(false);
 	}
 
@@ -94,13 +96,16 @@ namespace FIFE {
 			//no font selected.. nothing to render
 			return;
 		}
+		Rect r = Rect();
+		const bool zoomed = (!Mathd::Equal(1.0, cam->getZoom()) && m_zoom);
+		Rect cv = cam->getViewPort();
+
+		m_tmploc.setLayer(layer);
 		m_layer_area.x = MAX_COORD;
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;
 		m_layer_area.h = MIN_COORD;
 
-		m_tmploc.setLayer(layer);
-		Rect cv = cam->getViewPort();
 		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y), false);
 		adjustLayerArea();
 		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y), false);
@@ -110,7 +115,6 @@ namespace FIFE {
 		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h), false);
 		adjustLayerArea();
 
-		Rect r = Rect();
 		SDL_Color old_color = m_font->getColor();
 		if(old_color.r != m_color.r || old_color.g != m_color.g || old_color.b != m_color.b) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b);
@@ -121,16 +125,47 @@ namespace FIFE {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());
-				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.x + cv.w) &&
-				    (drawpt.y >= cv.y) && (drawpt.y <= cv.y + cv.h)) {
-					std::stringstream ss;
-					ss << mc.x <<","<< mc.y;
-					Image * img = m_font->getAsImage(ss.str());
-					r.x = drawpt.x;
-					r.y = drawpt.y;
-					r.w = img->getWidth();
-					r.h = img->getHeight();
-					img->render(r);
+				if (drawpt.x < cv.x || drawpt.x > cv.x + cv.w ||
+					drawpt.y < cv.y || drawpt.y > cv.y + cv.h) {
+					continue;
+				}
+
+				// we split the stringstream in three images, because so the TextRenderPool can reuse the most images.
+				// more to render but less images to generate
+				std::stringstream sts;
+				sts << mc.x;
+				Image* imgx = m_font->getAsImage(sts.str());
+				sts.str(",");
+				Image* imgc = m_font->getAsImage(sts.str());
+				sts.str("");
+				sts << mc.y;
+				Image* imgy = m_font->getAsImage(sts.str());
+
+				if (zoomed) {
+					double zoom = cam->getZoom();
+					r.x = drawpt.x - ((imgx->getWidth() + imgc->getWidth() + imgy->getWidth())/2) * zoom;
+					r.y = drawpt.y - (imgx->getHeight()/2) * zoom;
+					r.w = imgx->getWidth() * zoom;
+					r.h = imgx->getHeight() * zoom;
+					imgx->render(r);
+					r.x += r.w;
+					r.w = imgc->getWidth() * zoom;
+					imgc->render(r);
+					r.x += r.w;
+					r.w = imgy->getWidth() * zoom;
+					imgy->render(r);
+				} else {
+					r.x = drawpt.x - (imgx->getWidth() + imgc->getWidth() + imgy->getWidth())/2;
+					r.y = drawpt.y - imgx->getHeight()/2;
+					r.w = imgx->getWidth();
+					r.h = imgx->getHeight();
+					imgx->render(r);
+					r.x += r.w;
+					r.w = imgc->getWidth();
+					imgc->render(r);
+					r.x += r.w;
+					r.w = imgy->getWidth();
+					imgy->render(r);
 				}
 			}
 		}
