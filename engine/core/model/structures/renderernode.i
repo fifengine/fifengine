@@ -25,7 +25,9 @@
 %}
 
 namespace FIFE {
-	
+
+	%ignore RendererNode::operator=;
+
 	class RendererNode {
 	public:
 		RendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
@@ -36,6 +38,8 @@ namespace FIFE {
 		RendererNode(const Location &attached_location, const Point &relative_point = Point(0,0));
 		RendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
 		RendererNode(const Point &attached_point);
+		RendererNode(const RendererNode &old);
+		RendererNode& operator=(const RendererNode &source);
 		~RendererNode();
 		
 		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
@@ -61,8 +65,10 @@ namespace FIFE {
 		
 		Instance* getInstance();
 		Location getLocation();
+		const Location& getLocationRef();
 		Layer* getLayer();
 		Point getPoint();
+		const Point& getPointRef();
 
 		Point getCalculatedPoint(Camera* cam, Layer* layer);
 	};
