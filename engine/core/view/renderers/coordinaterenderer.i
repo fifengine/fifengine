@@ -34,6 +34,7 @@ namespace FIFE {
 		std::string getName();
 		void setFont(IFont* font);
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
+		void setZoom(bool enable);
 		
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 				

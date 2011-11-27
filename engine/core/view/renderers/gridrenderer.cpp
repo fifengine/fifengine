@@ -142,9 +142,12 @@ namespace FIFE {
 //		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
 
 
+		// make the viewport 25% larger
 		Rect cv = cam->getViewPort();
-		int32_t cvx2 = cv.x+cv.w;
-		int32_t cvy2 = cv.y+cv.h;
+		int32_t cvx2 = round((cv.x+cv.w) * 1.25);
+		int32_t cvy2 = round((cv.y+cv.h) * 1.25);
+		cv.x -= round((cv.x+cv.w) * 0.125);
+		cv.y -= round((cv.y+cv.h) * 0.125);
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;

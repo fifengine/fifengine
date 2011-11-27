@@ -63,6 +63,10 @@ namespace FIFE {
 		 */
 		void setFont(IFont* font) { m_font = font; }
 
+		/** Enables / disables zooming for coordinate images, by default it is enabled.
+		 */
+		void setZoom(bool enable) { m_zoom = enable; }
+
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
@@ -74,6 +78,7 @@ namespace FIFE {
 		IFont* m_font;
 		bool m_font_color;
 		SDL_Color m_color;
+		bool m_zoom;
 	};
 }
 
