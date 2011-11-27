@@ -41,87 +41,133 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
+	class NodeInstanceDeleteListener : public InstanceDeleteListener {
+	public:
+		NodeInstanceDeleteListener(RendererNode* node)	{
+			m_node = node;
+		}
+		virtual ~NodeInstanceDeleteListener() {}
+
+		virtual void onInstanceDeleted(Instance* instance) {
+			m_node->removeInstance(instance, false);
+		}
+
+	private:
+		RendererNode* m_node;
+	};
+
 	RendererNode::RendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
+		m_instance(NULL),
 		m_location(relative_location),
 		m_layer(relative_layer),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
+		addInstance(attached_instance);
 	}
 	RendererNode::RendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point):
-		m_instance(attached_instance),
+		m_instance(NULL),
 		m_location(relative_location),
 		m_layer(NULL),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
+		addInstance(attached_instance);
 	}
 	RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point):
-		m_instance(attached_instance),
+		m_instance(NULL),
 		m_location(NULL),
 		m_layer(relative_layer),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
+		addInstance(attached_instance);
 	}
 	RendererNode::RendererNode(Instance* attached_instance, const Point &relative_point):
-		m_instance(attached_instance),
+		m_instance(NULL),
 		m_location(NULL),
 		m_layer(NULL),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
+		addInstance(attached_instance);
 	}
 	RendererNode::RendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point):
 		m_instance(NULL),
 		m_location(attached_location),
 		m_layer(relative_layer),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
 	}
 	RendererNode::RendererNode(const Location &attached_location, const Point &relative_point):
 		m_instance(NULL),
 		m_location(attached_location),
 		m_layer(NULL),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
 	}
 	RendererNode::RendererNode(Layer* attached_layer, const Point &relative_point):
 		m_instance(NULL),
 		m_location(NULL),
 		m_layer(attached_layer),
-		m_point(relative_point) {
+		m_point(relative_point),
+		m_listener(NULL) {
 	}
 	RendererNode::RendererNode(const Point &attached_point):
 		m_instance(NULL),
 		m_location(NULL),
 		m_layer(NULL),
-		m_point(attached_point) {
+		m_point(attached_point),
+		m_listener(NULL) {
+	}
+	RendererNode::RendererNode(const RendererNode& old):
+		m_instance(NULL),
+		m_location(old.m_location),
+		m_layer(old.m_layer),
+		m_point(old.m_point),
+		m_listener(NULL) {
+		addInstance(old.m_instance);
+	}
+	RendererNode& RendererNode::operator=(const RendererNode &source) {
+		if (this != &source) {
+			changeInstance(source.m_instance);
+			m_location = source.m_location;
+			m_layer = source.m_layer;
+			m_point = source.m_point;
+		}
+		return *this;
 	}
 	RendererNode::~RendererNode() {
+		removeInstance(m_instance);
+		delete m_listener;
 	}
 
 	void RendererNode::setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point) {
-		m_instance = attached_instance;
+		changeInstance(attached_instance);
 		m_location = relative_location;
 		m_point = relative_point;
 	}
 	void RendererNode::setAttached(Instance* attached_instance, const Location &relative_location) {
-		m_instance = attached_instance;
+		changeInstance(attached_instance);
 		m_location = relative_location;
 	}
 	void RendererNode::setAttached(Instance* attached_instance, const Point &relative_point) {
-		m_instance = attached_instance;
+		changeInstance(attached_instance);
 		m_point = relative_point;
 	}
 	void RendererNode::setAttached(Instance* attached_instance) {
-		m_instance = attached_instance;
+		changeInstance(attached_instance);
 	}
 	void RendererNode::setAttached(const Location &attached_location, const Point &relative_point) {
-		m_instance = NULL;
+		changeInstance(NULL);
 		m_location = attached_location;
 		m_point = relative_point;
 	}
 	void RendererNode::setAttached(const Location &attached_location) {
-		m_instance = NULL;
+		changeInstance(NULL);
 		m_location = attached_location;
 	}
 	void RendererNode::setAttached(Layer* attached_layer) {
 		m_layer = attached_layer;
 	}
 	void RendererNode::setAttached(const Point &attached_point) {
-		m_instance = NULL;
+		changeInstance(NULL);
 		m_location = NULL;
 		m_point = attached_point;
 	}
@@ -190,11 +236,55 @@ namespace FIFE {
 	Location RendererNode::getLocation() {
 		return m_location;
 	}
+	const Location& RendererNode::getLocationRef() {
+		return m_location;
+	}
 	Layer* RendererNode::getLayer() {
 		return m_layer;
 	}
 	Point RendererNode::getPoint() {
 		return m_point;
+	}
+	const Point& RendererNode::getPointRef() {
+		return m_point;
+	}
+
+	void RendererNode::addInstance(Instance* instance) {
+		checkDeleteListener();
+		m_instance = instance;
+		if (m_instance) {
+			m_instance->addDeleteListener(m_listener);
+		}
+	}
+
+	void RendererNode::changeInstance(Instance* instance) {
+		if (m_instance == instance) {
+			return;
+		}
+		checkDeleteListener();
+		if (m_instance) {
+			m_instance->removeDeleteListener(m_listener);
+		}
+		m_instance = instance;
+		if (m_instance) {
+			m_instance->addDeleteListener(m_listener);
+		}
+	}
+
+	void RendererNode::removeInstance(Instance* instance, bool listener) {
+		if (m_instance == instance && instance) {
+			if (listener) {
+				m_instance->removeDeleteListener(m_listener);
+			}
+			m_instance = NULL;
+		}
+	}
+
+	void RendererNode::checkDeleteListener() {
+		if (m_listener) {
+			return;
+		}
+		m_listener = new NodeInstanceDeleteListener(this);
 	}
 
 	Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer) {

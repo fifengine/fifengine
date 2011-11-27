@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -29,10 +30,12 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/image.h"
+#include "video/imagemanager.h"
 #include "video/sdl/sdlimage.h"
 #include "video/animation.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
+#include "util/time/timemanager.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
 #include "model/structures/instance.h"
@@ -57,22 +60,37 @@ namespace {
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	InstanceRenderer::OutlineInfo::OutlineInfo():
+	class InstanceRendererDeleteListener : public InstanceDeleteListener {
+	public:
+		InstanceRendererDeleteListener(InstanceRenderer* r)	{
+			m_renderer = r;
+		}
+		virtual ~InstanceRendererDeleteListener() {}
+
+		virtual void onInstanceDeleted(Instance* instance) {
+			m_renderer->removeInstance(instance);
+		}
+
+	private:
+		InstanceRenderer* m_renderer;
+	};
+
+	InstanceRenderer::OutlineInfo::OutlineInfo(InstanceRenderer* r):
 		r(0),
 		g(0),
 		b(0),
 		width(1),
 		dirty(false),
-		outline(NULL),
-		curimg(NULL) {
+		curimg(NULL),
+		renderer(r) {
 	}
-	InstanceRenderer::ColoringInfo::ColoringInfo():
+	InstanceRenderer::ColoringInfo::ColoringInfo(InstanceRenderer* r):
 		r(0),
 		g(0),
 		b(0),
 		dirty(false),
-		overlay(NULL),
-		curimg(NULL) {
+		curimg(NULL),
+		renderer(r) {
 	}
 
 	InstanceRenderer::AreaInfo::AreaInfo():
@@ -86,11 +104,19 @@ namespace FIFE {
 	}
 
 	InstanceRenderer::OutlineInfo::~OutlineInfo() {
-		delete outline;
+		if (outline.get()) {
+			if (outline.useCount() == 3) {
+				renderer->addOldEffectImage(outline);
+			}
+		}
 	}
 
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
-		delete overlay;
+		if (overlay.get()) {
+			if (overlay.useCount() == 3) {
+				renderer->addOldEffectImage(overlay);
+			}
+		}
 	}
 
 	InstanceRenderer::AreaInfo::~AreaInfo() {
@@ -102,7 +128,9 @@ namespace FIFE {
 
 	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
-		m_area_layer(false) {
+		m_area_layer(false),
+		m_interval(60*1000),
+		m_timer_enabled(false) {
 		setEnabled(true);
 		if(m_renderbackend->getName() == "OpenGLe") {
 			m_need_sorting = false;
@@ -114,11 +142,18 @@ namespace FIFE {
 				m_need_bind_coloring = false;
 			}
 		}
+		// init timer
+		m_timer.setInterval(m_interval);
+		m_timer.setCallback(boost::bind(&InstanceRenderer::removeEffectImages, this));
+		// create delete listener
+		m_delete_listener = new InstanceRendererDeleteListener(this);
 	}
 
  	InstanceRenderer::InstanceRenderer(const InstanceRenderer& old):
 		RendererBase(old),
-		m_area_layer(old.m_area_layer) {
+		m_area_layer(false),
+		m_interval(old.m_interval),
+		m_timer_enabled(false) {
 		setEnabled(true);
 		if(m_renderbackend->getName() == "OpenGLe") {
 			m_need_sorting = false;
@@ -130,6 +165,11 @@ namespace FIFE {
 				m_need_bind_coloring = false;
 			}
 		}
+		// init timer
+		m_timer.setInterval(m_interval);
+		m_timer.setCallback(boost::bind(&InstanceRenderer::removeEffectImages, this));
+		// create delete listener
+		m_delete_listener = new InstanceRendererDeleteListener(this);
 	}
 
 	RendererBase* InstanceRenderer::clone() {
@@ -137,6 +177,8 @@ namespace FIFE {
 	}
 
 	InstanceRenderer::~InstanceRenderer() {
+		// delete listener
+		delete m_delete_listener;
 	}
 
 	void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
@@ -427,120 +469,155 @@ namespace FIFE {
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
 		if (!info.dirty && info.curimg == vc.image.get()) {
 			// optimization for outline that has not changed
-			return info.outline;
+			return info.outline.get();
 		} else {
 			info.curimg = vc.image.get();
 		}
 
-		if (info.outline) {
-			delete info.outline; // delete old mask
-			info.outline = NULL;
+		if (info.outline.get()) {
+			if (info.outline.useCount() == 3) {
+				addOldEffectImage(info.outline);
+			}
 		}
 
 		// NOTE: Since r3721 outline is just the 'border' so to render everything correctly
 		// we need to first render normal image, and then its outline.
 		// This helps much with lighting stuff and doesn't require from us to copy image.
 
-		// With lazy loading we can come upon a situation where we need to generate outline from
-		// uninitialised shared image
-		if(vc.image->isSharedImage()) {
-			vc.image->forceLoadInternal();
-		}
-
-		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
-			vc.image->getWidth(), vc.image->getHeight(), 32,
-			RMASK, GMASK, BMASK, AMASK);
-
-		// TODO: optimize...
-		uint8_t r, g, b, a = 0;
-
-		// vertical sweep
-		for (int32_t x = 0; x < outline_surface->w; x ++) {
-			int32_t prev_a = 0;
-			for (int32_t y = 0; y < outline_surface->h; y ++) {
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-					if (a < prev_a) {
-						for (int32_t yy = y; yy < y + info.width; yy++) {
-							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
-						}
-					} else {
-						for (int32_t yy = y - info.width; yy < y; yy++) {
-							Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
-						}
-					}
-				}
-				prev_a = a;
+		// create name
+		std::stringstream sts;
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
+			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b) << "," << info.width;
+		// search image
+		if (ImageManager::instance()->exists(sts.str())) {
+			info.outline = ImageManager::instance()->get(sts.str());
+			// mark outline as not dirty since we found it here
+			info.dirty = false;
+			
+			return info.outline.get();
+		} else {
+			// not found so we create it
+			
+			// With lazy loading we can come upon a situation where we need to generate outline from
+			// uninitialised shared image
+			if(vc.image->isSharedImage()) {
+				vc.image->forceLoadInternal();
 			}
-		}
-		// horizontal sweep
-		for (int32_t y = 0; y < outline_surface->h; y ++) {
-			int32_t prev_a = 0;
+
+			SDL_Surface* surface = vc.image->getSurface();
+			SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+				vc.image->getWidth(), vc.image->getHeight(), 32,
+				RMASK, GMASK, BMASK, AMASK);
+
+			// TODO: optimize...
+			uint8_t r, g, b, a = 0;
+
+			// vertical sweep
 			for (int32_t x = 0; x < outline_surface->w; x ++) {
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-					if (a < prev_a) {
-						for (int32_t xx = x; xx < x + info.width; xx++) {
-							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
-						}
-					} else {
-						for (int32_t xx = x - info.width; xx < x; xx++) {
-							Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
+				int32_t prev_a = 0;
+				for (int32_t y = 0; y < outline_surface->h; y ++) {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+						if (a < prev_a) {
+							for (int32_t yy = y; yy < y + info.width; yy++) {
+								Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
+							}
+						} else {
+							for (int32_t yy = y - info.width; yy < y; yy++) {
+								Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
+							}
 						}
 					}
+					prev_a = a;
 				}
-				prev_a = a;
 			}
+			// horizontal sweep
+			for (int32_t y = 0; y < outline_surface->h; y ++) {
+				int32_t prev_a = 0;
+				for (int32_t x = 0; x < outline_surface->w; x ++) {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
+						if (a < prev_a) {
+							for (int32_t xx = x; xx < x + info.width; xx++) {
+								Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
+							}
+						} else {
+							for (int32_t xx = x - info.width; xx < x; xx++) {
+								Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
+							}
+						}
+					}
+					prev_a = a;
+				}
+			}
+
+			// In case of OpenGL backend, SDLImage needs to be converted
+			Image* img = m_renderbackend->createImage(sts.str(), outline_surface);
+			img->setState(IResource::RES_LOADED);
+			info.outline = ImageManager::instance()->add(img);
+			// mark outline as not dirty since we created it here
+			info.dirty = false;
+			
+			return info.outline.get();
 		}
-
-		// In case of OpenGL backend, SDLImage needs to be converted
-		info.outline = m_renderbackend->createImage(outline_surface);
-		// mark outline as not dirty since we created it here
-		info.dirty = false;
-
-		return info.outline;
 	}
 
 	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
 		if (!info.dirty && info.curimg == vc.image.get()) {
-			// optimization for outline that has not changed
-			return info.overlay;
+			// optimization for coloring that has not changed
+			return info.overlay.get();
 		} else {
 			info.curimg = vc.image.get();
 		}
 
-		if (info.overlay) {
-			delete info.overlay; // delete old mask
-			info.overlay = NULL;
-		}
-
-		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
-			vc.image->getWidth(), vc.image->getHeight(), 32,
-			RMASK, GMASK, BMASK, AMASK);
-
-		uint8_t r, g, b, a = 0;
-
-		for (int32_t x = 0; x < overlay_surface->w; x ++) {
-			for (int32_t y = 0; y < overlay_surface->h; y ++) {
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				if (a > 0) {
-					Image::putPixel(overlay_surface, x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1, a);
-				}
+		if (info.overlay.get()) {
+			if (info.overlay.useCount() == 3) {
+				addOldEffectImage(info.overlay);
 			}
 		}
 
-		// In case of OpenGL backend, SDLImage needs to be converted
-		info.overlay = m_renderbackend->createImage(overlay_surface);
-		// mark overlay coloring as not dirty since we created it here
-		info.dirty = false;
+		// create name
+		std::stringstream sts;
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
+			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b);
+		// search image
+		if (ImageManager::instance()->exists(sts.str())) {
+			info.overlay = ImageManager::instance()->get(sts.str());
+			// mark overlay coloring as not dirty since we found it here
+			info.dirty = false;
+			
+			return info.overlay.get();
+		} else {
+			// not found so we create it
+			SDL_Surface* surface = vc.image->getSurface();
+			SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+				vc.image->getWidth(), vc.image->getHeight(), 32,
+				RMASK, GMASK, BMASK, AMASK);
 
-		return info.overlay;
+			uint8_t r, g, b, a = 0;
+
+			for (int32_t x = 0; x < overlay_surface->w; x ++) {
+				for (int32_t y = 0; y < overlay_surface->h; y ++) {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					if (a > 0) {
+						Image::putPixel(overlay_surface, x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1, a);
+					}
+				}
+			}
+
+			// In case of OpenGL backend, SDLImage needs to be converted
+			Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+			img->setState(IResource::RES_LOADED);
+			info.overlay = ImageManager::instance()->add(img);
+			// mark overlay coloring as not dirty since we created it here
+			info.dirty = false;
+			
+			return info.overlay.get();
+		}
 	}
 
 	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold) {
-		OutlineInfo newinfo;
+		OutlineInfo newinfo(this);
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
@@ -569,11 +646,13 @@ namespace FIFE {
 				info.threshold = threshold;
 				info.dirty = true;
 			}
+		} else {
+			instance->addDeleteListener(m_delete_listener);
 		}
 	}
 
 	void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b) {
-		ColoringInfo newinfo;
+		ColoringInfo newinfo(this);
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
@@ -597,6 +676,8 @@ namespace FIFE {
 				info.g = g;
 				info.dirty = true;
 			}
+		} else {
+			instance->addDeleteListener(m_delete_listener);
 		}
 	}
 
@@ -621,30 +702,50 @@ namespace FIFE {
 			// the insertion did not happen because the instance
 			// already exists in the map so lets just update its area info
 			AreaInfo& info = insertiter.first->second;
+		} else {
+			instance->addDeleteListener(m_delete_listener);
 		}
 	}
 
 	void InstanceRenderer::removeOutlined(Instance* instance) {
+		instance->removeDeleteListener(m_delete_listener);
 		m_instance_outlines.erase(instance);
 	}
 
 	void InstanceRenderer::removeColored(Instance* instance) {
+		instance->removeDeleteListener(m_delete_listener);
 		m_instance_colorings.erase(instance);
 	}
 
 	void InstanceRenderer::removeTransparentArea(Instance* instance) {
+		instance->removeDeleteListener(m_delete_listener);
 		m_instance_areas.erase(instance);
 	}
 
 	void InstanceRenderer::removeAllOutlines() {
+		InstanceToOutlines_t::iterator outline_it = m_instance_outlines.begin();
+		while (outline_it != m_instance_outlines.end()) {
+			(*outline_it).first->removeDeleteListener(m_delete_listener);
+			++outline_it;
+		}
 		m_instance_outlines.clear();
 	}
 
 	void InstanceRenderer::removeAllColored() {
+		InstanceToColoring_t::iterator color_it = m_instance_colorings.begin();
+		while (color_it != m_instance_colorings.end()) {
+			(*color_it).first->removeDeleteListener(m_delete_listener);
+			++color_it;
+		}
 		m_instance_colorings.clear();
 	}
 
 	void InstanceRenderer::removeAllTransparentAreas() {
+		InstanceToAreas_t::iterator area_it = m_instance_areas.begin();
+		while (area_it != m_instance_areas.end()) {
+			(*area_it).first->removeDeleteListener(m_delete_listener);
+			++area_it;
+		}
 		m_instance_areas.clear();
 	}
 
@@ -675,10 +776,79 @@ namespace FIFE {
 	}
 
 	void InstanceRenderer::reset() {
+		// stop timer
+		if (m_timer_enabled) {
+			m_timer.stop();
+		}
+
 		removeAllOutlines();
 		removeAllColored();
 		removeAllTransparentAreas();
 		removeAllIgnoreLight();
+
+		// removes effect images if there is no other reference
+		ImagesToCheck_t::iterator it = m_effect_images.begin();
+		while (it != m_effect_images.end()) {
+			if (it->image.get()) {
+				if (it->image.useCount() == 3) {
+					ImageManager::instance()->free(it->image.get()->getName());
+					ImageManager::instance()->remove(it->image);
+				}
+			}
+			it = m_effect_images.erase(it);
+		}
 	}
 
+	void InstanceRenderer::setRemoveInterval(uint32_t interval) {
+		if (m_interval != interval*1000) {
+			m_interval = interval*1000;
+			m_timer.setInterval(m_interval);
+		}
+	}
+
+	uint32_t InstanceRenderer::getRemoveInterval() const {
+		return m_interval/1000;
+	}
+
+	void InstanceRenderer::addOldEffectImage(const ImagePtr& image) {
+		s_image_entry entry;
+		entry.image = image;
+		entry.timestamp = TimeManager::instance()->getTime();
+		m_effect_images.push_front(entry);
+
+		if (!m_timer_enabled) {
+			m_timer_enabled = true;
+			m_timer.start();
+		}
+	}
+
+	void InstanceRenderer::removeEffectImages() {
+		ImagesToCheck_t::iterator it = m_effect_images.begin();
+		uint32_t now = TimeManager::instance()->getTime();
+		while (it != m_effect_images.end()) {
+			if (now - it->timestamp > m_interval) {
+				if (it->image.get()) {
+					if (it->image.useCount() == 3) {
+						ImageManager::instance()->free(it->image.get()->getName());
+						ImageManager::instance()->remove(it->image);
+					}
+				}
+				it = m_effect_images.erase(it);
+			} else {
+				it->timestamp = now;
+				++it;
+			}
+		}
+
+		if (m_effect_images.empty() && m_timer_enabled) {
+			m_timer_enabled = false;
+			m_timer.stop();
+		}
+	}
+
+	void InstanceRenderer::removeInstance(Instance* instance) {
+		m_instance_outlines.erase(instance);
+		m_instance_colorings.erase(instance);
+		m_instance_areas.erase(instance);
+	}
 }

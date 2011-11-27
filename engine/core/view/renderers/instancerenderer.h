@@ -33,10 +33,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
+#include "util/time/timer.h"
 
 namespace FIFE {
 	class Location;
 	class RenderBackend;
+	class InstanceDeleteListener;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -114,10 +116,36 @@ namespace FIFE {
 		 */
 		RenderBackend* getRenderBackend() const {return m_renderbackend;}
 
+		/** Removes all stuff
+		 */
 		void reset();
+
+		/** Sets the interval in seconds (default is 60).
+		 */
+		void setRemoveInterval(uint32_t interval);
+		
+		/** Gets the interval in seconds (default is 60).
+		 */
+		uint32_t getRemoveInterval() const;
+		
+		/** Add properly old ImagePtr into a check list.
+		  * If it is still not used after a time(interval) then it is removed.
+		 */
+		void addOldEffectImage(const ImagePtr& image);
+
+		/** Timer callback, tried to remove old effect images
+		 */
+		void removeEffectImages();
+
+		/** Removes instance from all effects.
+		  * Should only be called by delete listener!
+		 */
+		void removeInstance(Instance* instance);
 
 	private:
 		bool m_area_layer;
+		uint32_t m_interval;
+		bool m_timer_enabled;
 		std::list<std::string> m_unlit_groups;
 		bool m_need_sorting;
 		bool m_need_bind_coloring;
@@ -131,9 +159,10 @@ namespace FIFE {
 			int32_t width;
 			int32_t threshold;
 			bool dirty;
-			Image* outline;
+			ImagePtr outline;
 			Image* curimg;
-			OutlineInfo();
+			InstanceRenderer* renderer;
+			OutlineInfo(InstanceRenderer* r);
 			~OutlineInfo();
 		};
 		// contains per-instance information for overlay drawing
@@ -143,15 +172,15 @@ namespace FIFE {
 			uint8_t g;
 			uint8_t b;
 			bool dirty;
-			Image* overlay;
+			ImagePtr overlay;
 			Image* curimg;
-			ColoringInfo();
+			InstanceRenderer* renderer;
+			ColoringInfo(InstanceRenderer* r);
 			~ColoringInfo();
 		};
 		class AreaInfo {
 		public:
 			Instance* instance;
-			//std::string groups;
 			std::list<std::string> groups;
 			uint32_t w;
 			uint32_t h;
@@ -168,6 +197,19 @@ namespace FIFE {
 		InstanceToOutlines_t m_instance_outlines;
 		InstanceToColoring_t m_instance_colorings;
 		InstanceToAreas_t m_instance_areas;
+
+		// struct to hold the ImagePtr with a timestamp
+		typedef struct {
+			ImagePtr image;
+			uint32_t timestamp;
+		} s_image_entry;
+		typedef std::list<s_image_entry> ImagesToCheck_t;
+		// old effect images
+		ImagesToCheck_t m_effect_images;
+		// timer
+		Timer m_timer;
+		// InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
+		InstanceDeleteListener* m_delete_listener;
 
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */

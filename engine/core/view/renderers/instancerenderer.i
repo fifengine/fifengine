@@ -45,6 +45,8 @@ namespace FIFE {
 		void removeIgnoreLight(const std::list<std::string> &groups);
 		void removeAllIgnoreLight();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
+		void setRemoveInterval(uint32_t interval);
+		uint32_t getRemoveInterval() const;
 	private:
 		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 	};
