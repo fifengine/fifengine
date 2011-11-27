@@ -324,11 +324,8 @@ namespace FIFE {
 		SDL_FillRect(m_target, &rect, color);
 	}
 
-	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
+	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		fillRectangle(p1, static_cast<uint16_t>(p3.x-p1.x), static_cast<uint16_t>(p3.y-p1.y), r, g, b, a);
 	}
 
 	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
