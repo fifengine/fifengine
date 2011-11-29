@@ -171,6 +171,13 @@ namespace FIFE {
 			y = sintheta * nx + costheta * ny;
 		}
 
+		/** Sets the x and y coordinate of the 2D point
+		 */
+		void set(T _x, T _y) {
+			x = _x;
+			y = _y;
+		}
+
 		inline T& operator[] (int32_t ind) {
 			assert(ind > -1 && ind < 2);
 			return val[ind];
@@ -291,6 +298,14 @@ namespace FIFE {
 				y = 0;
 				z = 0;
 			}
+		}
+
+		/** Sets the x, y and z coordinates of the 3D point
+		 */
+		void set(T _x, T _y, T _z) {
+			x = _x;
+			y = _y;
+			z = _z;
 		}
 
 		inline T& operator[] (int32_t ind) {
