@@ -20,7 +20,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-""" Loader interface for FIFE's native xml format """
+""" Loaders plugin manager """
 
 import os.path
 
@@ -28,8 +28,7 @@ from fife import fife
 from fife.extensions.serializers.xmlmap import XMLMapLoader
 
 mapFileMapping = { 'xml' : XMLMapLoader}
-fileExtensions = ('xml',)
-mapFileExtensions = ('xml',)
+fileExtensions = set(['xml'])
 
 def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
 	""" load map file and get (an optional) callback if major stuff is done:
@@ -70,4 +69,5 @@ def addMapLoader(fileExtension, loaderClass):
 	_updateMapFileExtensions()
 
 def _updateMapFileExtensions():
-	mapFileExtensions = set(mapFileMapping.keys())
+	global fileExtensions
+	fileExtensions = set(mapFileMapping.keys())
