@@ -44,6 +44,7 @@ namespace FIFE {
 		void normalize();
 		void rotate(T angle);
 		void rotate(const PointType2D<T>& origin, T angle);
+		void set(T _x, T _y);
 	};
 
 	template<typename T>
@@ -75,6 +76,7 @@ namespace FIFE {
 		bool operator!=(const PointType3D<T>& p) const;
 		T length() const;
 		void normalize();
+		void set(T _x, T _y, T _z);
 	};
 
 	template<typename T>
