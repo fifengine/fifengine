@@ -179,6 +179,17 @@ namespace FIFE {
 		m_cursor_drag_image.reset();
 	}
 
+    void Cursor::setPosition(uint32_t x, uint32_t y) {
+        m_mx = x;
+        m_my = y;
+        SDL_WarpMouse(m_mx, m_my);
+    }
+
+    void Cursor::getPosition(int32_t* x, int32_t* y) {
+        *x = m_mx;
+        *y = m_my;
+    }
+
 	void Cursor::invalidate() {
 		if (m_native_cursor != NULL) {
 			SDL_free(m_native_cursor->wm_cursor);
