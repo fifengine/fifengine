@@ -460,6 +460,9 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
+				if(vc.image->isSharedImage()) {
+					vc.image->forceLoadInternal();
+				}
 				assert(vc.image.get());
 				uint8_t r, g, b, a = 0;
 				int32_t x = screen_coords.x - vc.dimensions.x;
@@ -594,6 +597,9 @@ namespace FIFE {
 			Instance* i = (*instance_it)->instance;;
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.intersects(screen_rect))) {
+				if(vc.image->isSharedImage()) {
+					vc.image->forceLoadInternal();
+				}
 				assert(vc.image.get());
 				uint8_t r, g, b, a = 0;
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
