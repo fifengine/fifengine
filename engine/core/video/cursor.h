@@ -114,13 +114,13 @@ namespace FIFE {
 
 		/** Sets the current drag image cursor
 		 * @param image ImagePtr to a image used for the drag
-         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
 		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
 		/** Sets the current drag animated cursor
 		 * @param anim AnimationPtr to a loaded animation used for the drag
-         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
@@ -158,11 +158,20 @@ namespace FIFE {
 
 		/** Gets the current mouse x position
 		 */
-		uint32_t getX() const {return m_mx;}
+		uint32_t getX() const { return m_mx; }
 
 		/** Gets the current mouse y position
 		 */
-		uint32_t getY() const {return m_my;}
+		uint32_t getY() const { return m_my; }
+
+		/** Set the mouse position
+		 * @param x,y: The new position in screen coordinates
+		 */
+		void setPosition(uint32_t x, uint32_t y);
+
+		/** Get the current mouse position
+		*/
+		void getPosition(int32_t* x, int32_t* y);
 
 	protected:
 		/** Sets the cursor to a native type.

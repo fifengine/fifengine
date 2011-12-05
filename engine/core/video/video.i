@@ -210,6 +210,8 @@ namespace FIFE {
 		NC_APPSTARTING,
 		NC_HELP
 	};
+
+    %apply int32_t *OUTPUT { int32_t* x, int32_t* y }; 
 	
 	class Cursor {
 	public:
@@ -230,7 +232,9 @@ namespace FIFE {
 		AnimationPtr getDragAnimation();
 		uint32_t getX() const;
 		uint32_t getY() const;
-	
+		void setPosition(uint32_t x, uint32_t y);
+		void getPosition(int32_t* x, int32_t* y);
+
 	private:
 		Cursor();
 	};
