@@ -129,18 +129,22 @@ namespace FIFE {
 		uint32_t getRemoveInterval() const;
 		
 		/** Add properly old ImagePtr into a check list.
-		  * If it is still not used after a time(interval) then it is removed.
+		  * If it is still not used after a time(interval) then it is freed.
 		 */
-		void addOldEffectImage(const ImagePtr& image);
+		void addToCheck(const ImagePtr& image);
 
 		/** Timer callback, tried to remove old effect images
 		 */
-		void removeEffectImages();
+		void check();
 
 		/** Removes instance from all effects.
 		  * Should only be called by delete listener!
 		 */
 		void removeInstance(Instance* instance);
+
+		/** Returns true if coloring need binding, otherwise false
+		 */
+		bool needColorBinding() { return m_need_bind_coloring; }
 
 	private:
 		bool m_area_layer;
@@ -149,6 +153,14 @@ namespace FIFE {
 		std::list<std::string> m_unlit_groups;
 		bool m_need_sorting;
 		bool m_need_bind_coloring;
+
+		enum InstanceRendererEffect {
+			NOTHING = 0x00,
+			OUTLINE = 0x01,
+			COLOR = 0x02,
+			AREA = 0x04
+		};
+		typedef uint8_t Effect;
 
 		// contains per-instance information for outline drawing
 		class OutlineInfo {
@@ -205,11 +217,14 @@ namespace FIFE {
 		} s_image_entry;
 		typedef std::list<s_image_entry> ImagesToCheck_t;
 		// old effect images
-		ImagesToCheck_t m_effect_images;
+		ImagesToCheck_t m_check_images;
 		// timer
 		Timer m_timer;
+		
 		// InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
 		InstanceDeleteListener* m_delete_listener;
+		typedef std::map<Instance*, Effect> InstanceToEffects_t;
+		InstanceToEffects_t m_assigned_instances;
 
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
@@ -218,6 +233,9 @@ namespace FIFE {
 
 		void renderUnsorted(Camera* cam, Layer* layer, RenderList& instances);
 		void renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances);
+
+		void removeFromCheck(const ImagePtr& image);
+		bool isValidImage(const ImagePtr& image);
 	};
 }
 

@@ -67,6 +67,8 @@ namespace FIFE {
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
 		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
+		virtual void load();
+		virtual void free();
 
 		GLuint getTexId() const;
 		const GLfloat* getTexCoords() const;
@@ -108,6 +110,7 @@ namespace FIFE {
 		 */
 		void generateGLTexture();
 		void generateGLSharedTexture(const GLeImage* shared, const Rect& region);
+		void validateShared();
 
 		inline bool renderCheck(const Rect& rect, uint8_t alpha);
 
@@ -117,6 +120,10 @@ namespace FIFE {
 		SDL_Color m_colorkey;
 
 		GLeImage* m_shared_img;
+		// Holds Atlas ImagePtr if this is a shared image
+		ImagePtr m_atlas_img;
+		// Holds Atlas Name if this is a shared image
+		std::string m_atlas_name;
 	};
 
 }

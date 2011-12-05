@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
+#include "video/imagemanager.h"
 #include "video/sdl/sdlimage.h"
 #include "video/renderbackend.h"
 #include "video/opengl/renderbackendopengl.h"
@@ -138,23 +139,17 @@ namespace FIFE {
 
 		if (!m_texId) {
 			generateGLTexture();
+		} else if (m_shared) {
+			validateShared();
 		}
 
 		rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 	}
 
 	void GLImage::generateGLTexture() {
-		if(m_shared) {
+		if (m_shared) {
 			// First make sure we loaded big image to opengl
-			if(m_shared_img->m_texId == 0) {
-				m_shared_img->load();
-				m_shared_img->generateGLTexture();
-			}
-			m_texId = m_shared_img->m_texId;
-			m_surface = m_shared_img->m_surface;
-			m_compressed = m_shared_img->m_compressed;
-
-			generateGLSharedTexture(m_shared_img, m_subimagerect);
+			validateShared();
 			return;
 		}
 
@@ -294,6 +289,10 @@ namespace FIFE {
 		m_texId = img->m_texId;
 		m_shared = true;
 		m_subimagerect = region;
+		m_atlas_img = shared;
+		m_surface = m_shared_img->m_surface;
+		m_compressed = m_shared_img->m_compressed;
+		m_atlas_name = m_shared_img->getName();
 
 		if(m_texId) {
 			generateGLSharedTexture(img, region);
@@ -305,7 +304,26 @@ namespace FIFE {
 	void GLImage::forceLoadInternal() {
 		if (m_texId == 0) {
 			generateGLTexture();
+		} else if (m_shared) {
+			validateShared();
 		}
+	}
+
+	void GLImage::validateShared() {
+		// if image is valid we can return
+		if (m_shared_img->m_texId && m_shared_img->m_texId == m_texId) {
+			return;
+		}
+
+		if (m_shared_img->getState() == IResource::RES_NOT_LOADED) {
+			m_shared_img->load();
+			m_shared_img->generateGLTexture();
+		}
+
+		m_texId = m_shared_img->m_texId;
+		m_surface = m_shared_img->m_surface;
+		m_compressed = m_shared_img->m_compressed;
+		generateGLSharedTexture(m_shared_img, m_subimagerect);
 	}
 
 	void GLImage::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img) {
@@ -316,6 +334,37 @@ namespace FIFE {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, img->getWidth(), img->getHeight(),
 				GL_RGBA, GL_UNSIGNED_BYTE, img->getSurface()->pixels);
 		}
+	}
+
+	void GLImage::load() {
+		if (m_shared) {
+			// check atlas image
+			// if it does not exist, it is generated.
+			if (!ImageManager::instance()->exists(m_atlas_name)) {
+				ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
+				GLImage* img = static_cast<GLImage*>(newAtlas.get());
+				m_atlas_img = newAtlas;
+				m_shared_img = img;
+			}
+			
+			// check if texture ids and surfaces are identical
+			if (m_shared_img->m_surface != m_surface || m_texId != m_shared_img->m_texId) {
+				m_texId = m_shared_img->m_texId;
+				m_surface = m_shared_img->m_surface;
+				m_compressed = m_shared_img->m_compressed;
+				if (m_texId) {
+					generateGLSharedTexture(m_shared_img, m_subimagerect);
+				}
+			}
+			m_state = IResource::RES_LOADED;
+		} else {
+			Image::load();
+		}
+	}
+
+	void GLImage::free() {
+		setSurface(NULL);
+		m_state = IResource::RES_NOT_LOADED;
 	}
 
 	GLuint GLImage::getTexId() const {

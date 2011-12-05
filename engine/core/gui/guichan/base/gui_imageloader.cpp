@@ -34,7 +34,7 @@
 
 #include "gui_imageloader.h"
 
-static const int ATLAS_SIZE = 512;
+static const uint32_t ATLAS_SIZE = 512;
 
 namespace FIFE {
 	GuiImageLoader::GuiImageLoader() {

@@ -112,7 +112,7 @@ namespace FIFE {
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
 
-		void parseObject(Atlas* atlas, TiXmlElement* root);
+		void parseObject(Atlas* atlas, TiXmlElement* root, bool exists);
 	};
 
 	/** convenience function for creating the default fife atlas loader

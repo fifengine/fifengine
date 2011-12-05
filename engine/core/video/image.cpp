@@ -114,7 +114,6 @@ namespace FIFE {
 
 		m_xshift = 0;
 		m_yshift = 0;
-		m_shared = false;
 		m_surface = surface;
 	}
 
@@ -309,6 +308,12 @@ namespace FIFE {
 	}
 
 	void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg){
+		if (!srcimg->m_surface) {
+			return;
+		} else if (!m_surface) {
+			m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, srcimg->getWidth(),
+				srcimg->getHeight(), 32, RMASK, GMASK, BMASK ,AMASK);
+		}
 		SDL_SetAlpha(srcimg->m_surface, 0, 0);
 		if(this->isSharedImage()) {
 			Rect const& rect = this->getSubImageRect();
