@@ -31,6 +31,7 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
+#include "video/imagemanager.h"
 #include "video/renderbackend.h"
 
 #include "renderbackendsdl.h"
@@ -334,6 +335,7 @@ namespace FIFE {
 		if (alpha == 0) {
 			return;
 		}
+		validateShared();
 		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
 		assert(target != m_surface); // can't draw on the source surface
 
@@ -652,8 +654,11 @@ namespace FIFE {
 		if (m_zoom_surface) {
 			zoomSize = m_zoom_surface->h * m_zoom_surface->pitch;
 		}
+		if (m_surface) {
+			zoomSize += m_surface->h * m_surface->pitch;
+		}
 
-		return m_surface->h * m_surface->pitch + zoomSize;
+		return zoomSize;
 	}
 
 	void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
@@ -672,6 +677,42 @@ namespace FIFE {
 		setSurface(surface);
 		m_shared = false; // this isn't a mistake
 		m_subimagerect = region;
+		m_atlas_img = shared;
+		m_atlas_name = shared->getName();
 		setState(IResource::RES_LOADED);
+	}
+
+	void SDLImage::forceLoadInternal() {
+		validateShared();
+	}
+
+	void SDLImage::validateShared() {
+		if (m_atlas_name.empty()) {
+			return;
+		}
+
+		if (m_atlas_img->getState() == IResource::RES_NOT_LOADED ||
+			getState() == IResource::RES_NOT_LOADED) {
+			load();
+		}
+	}
+
+	void SDLImage::load() {
+		if (!m_atlas_name.empty()) {
+			// check atlas image
+			// if it does not exist, it is created.
+			if (!ImageManager::instance()->exists(m_atlas_name)) {
+				ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
+				m_atlas_img = newAtlas;
+			}
+			useSharedImage(m_atlas_img , m_subimagerect);
+		} else {
+			Image::load();
+		}
+	}
+
+	void SDLImage::free() {
+		setSurface(NULL);
+		m_state = IResource::RES_NOT_LOADED;
 	}
 }

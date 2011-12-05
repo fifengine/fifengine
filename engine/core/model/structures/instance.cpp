@@ -197,10 +197,10 @@ namespace FIFE {
 
 	Instance::~Instance() {
 		std::vector<InstanceDeleteListener *>::iterator itor;
-		for(itor = m_deletelisteners.begin();
-			itor != m_deletelisteners.end();
-			++itor) {
+		for(itor = m_deletelisteners.begin(); itor != m_deletelisteners.end(); ++itor) {
+			if (*itor != NULL) {
 				(*itor)->onInstanceDeleted(this);
+			}
 		}
 
 		if(m_activity && m_activity->m_actioninfo) {
@@ -437,6 +437,9 @@ namespace FIFE {
 		if (!m_activity) {
 			return ICHANGE_NO_CHANGES;
 		}
+		// remove DeleteListeners
+		m_deletelisteners.erase(std::remove(m_deletelisteners.begin(),m_deletelisteners.end(),
+				(InstanceDeleteListener*)NULL),	m_deletelisteners.end());
 		m_activity->update(*this);
 		if (!m_activity->m_timeprovider) {
 			bindTimeProvider();
@@ -630,27 +633,29 @@ namespace FIFE {
 		return TimeManager::instance()->getTime();
 	}
 
-    void Instance::addDeleteListener(InstanceDeleteListener *listener) {
-            m_deletelisteners.push_back(listener);
-    }
+	void Instance::addDeleteListener(InstanceDeleteListener *listener) {
+		m_deletelisteners.push_back(listener);
+	}
 
-    void Instance::removeDeleteListener(InstanceDeleteListener *listener) {
-            std::vector<InstanceDeleteListener*>::iterator itor;
-            itor = std::find(m_deletelisteners.begin(),
-                             m_deletelisteners.end(),
-                             listener);
-            if(itor != m_deletelisteners.end()) {
-                    m_deletelisteners.erase(itor);
-            } else {
-                    FL_WARN(_log, "Cannot remove unknown listener");
-            }
-    }
+	void Instance::removeDeleteListener(InstanceDeleteListener *listener) {
+		if (!m_deletelisteners.empty()) {
+			std::vector<InstanceDeleteListener*>::iterator itor;
+			itor = std::find(m_deletelisteners.begin(), m_deletelisteners.end(), listener);
+			if(itor != m_deletelisteners.end()) {
+				if ((*itor) == listener) {
+					*itor = NULL;
+					return;
+				}
+			} else {
+				FL_WARN(_log, "Cannot remove unknown listener");
+			}
+		}
+	}
 
-    void Instance::onInstanceDeleted(Instance* instance) {
-            if(m_activity &&
-               m_activity->m_actioninfo &&
-               m_activity->m_actioninfo->m_leader == instance) {
-                    m_activity->m_actioninfo->m_leader = NULL;
-            }
-    }
+	void Instance::onInstanceDeleted(Instance* instance) {
+		if(m_activity && m_activity->m_actioninfo &&
+			m_activity->m_actioninfo->m_leader == instance) {
+				m_activity->m_actioninfo->m_leader = NULL;
+		}
+	}
 }

@@ -52,7 +52,9 @@ namespace FIFE {
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual size_t getSize();
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
-		virtual void forceLoadInternal() {}
+		virtual void forceLoadInternal();
+		virtual void load();
+		virtual void free();
 
 	private:
 		// Call this before rendering
@@ -66,6 +68,7 @@ namespace FIFE {
 		SDL_Surface* optimize(SDL_Surface* surface);
 
 		void resetSdlimage();
+		void validateShared();
 
 		// SDLSurface used to create the SDLImage.
 		Uint8 m_last_alpha;
@@ -76,6 +79,10 @@ namespace FIFE {
 		SDL_Surface* m_zoom_surface;
 		float m_scale_x;
 		float m_scale_y;
+		// Holds Atlas ImagePtr if this is a shared image
+		ImagePtr m_atlas_img;
+		// Holds Atlas Name if this is a shared image
+		std::string m_atlas_name;
 	};
 
 }

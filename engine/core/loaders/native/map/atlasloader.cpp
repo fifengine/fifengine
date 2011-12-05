@@ -199,7 +199,7 @@ namespace FIFE {
 				//int atlasWidth, atlasHeight;
 				//root->QueryValueAttribute("width", &atlasWidth);
 				//root->QueryValueAttribute("height", &atlasHeight);
-
+				bool subsExists = true;
 				for (TiXmlElement* imageElem = root->FirstChildElement("image");
 					imageElem != 0; imageElem = imageElem->NextSiblingElement("image")) {
 
@@ -215,7 +215,9 @@ namespace FIFE {
 						std::string finalname = *namespaceId + ":" +*subimageName;
 						ImagePtr subImage;
 
-						if (!atlasExists) {
+						bool subExists = m_imageManager->exists(finalname);
+						if (!subExists) {
+							subsExists = false;
 							subImage = m_imageManager->create(finalname);
 						}
 						else {
@@ -227,6 +229,7 @@ namespace FIFE {
 						atlas->addImage(finalname, atlas_data);
 					}
 				}
+				subsExists = subsExists && atlasExists;
 
 				// Now parse object definition
 				for(TiXmlElement* objElem = root->NextSiblingElement("object");
@@ -234,7 +237,7 @@ namespace FIFE {
 				{
 					// sanity check
 					if(objElem->ValueStr() == "object") {
-						parseObject(atlas.get(), objElem);
+						parseObject(atlas.get(), objElem, subsExists);
 					}
 				}
 			}
@@ -243,7 +246,7 @@ namespace FIFE {
 		return atlas;
 	}
 
-	void AtlasLoader::parseObject(Atlas* atlas, TiXmlElement* root) {
+	void AtlasLoader::parseObject(Atlas* atlas, TiXmlElement* root, bool exists) {
 		const std::string* objectId = root->Attribute(std::string("id"));
 		const std::string* namespaceId = root->Attribute(std::string("namespace"));
 
@@ -273,6 +276,47 @@ namespace FIFE {
 						// TODO - handle exception
 						assert(false);
 					}
+				// if atlas or subimage was recreated then we have to update the ObjectVisual
+				} else if (!exists) {
+					obj = m_model->getObject(*objectId, *namespaceId);
+					ObjectVisual* objVisual = obj->getVisual<ObjectVisual>();
+					// make sure obj have visual
+					if (!objVisual) {
+						objVisual = ObjectVisual::create(obj);
+					}
+
+					for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {
+						const std::string* sourceId = imageElement->Attribute(std::string("source"));
+
+						if (sourceId) {
+							std::string source = *namespaceId + ":" + *sourceId;
+							if(!m_imageManager->exists(source)) {
+								throw NotFound(source + " couldn't be found.");
+							}
+							ImagePtr imagePtr = m_imageManager->getPtr(source);
+
+							int xOffset = 0;
+							int success = imageElement->QueryIntAttribute("x_offset", &xOffset);
+							if (success == TIXML_SUCCESS) {
+								imagePtr->setXShift(xOffset);
+							}
+
+							int yOffset = 0;
+							success = imageElement->QueryIntAttribute("y_offset", &yOffset);
+							if (success == TIXML_SUCCESS) {
+								imagePtr->setYShift(yOffset);
+							}
+
+							int direction = 0;
+							success = imageElement->QueryIntAttribute("direction", &direction);
+							if (success == TIXML_SUCCESS) {
+								if (objVisual) {
+									objVisual->addStaticImage(direction, static_cast<int32_t>(imagePtr->getHandle()));
+								}
+							}
+						}
+					}
+					return;
 				}
 			}
 		}
@@ -307,7 +351,7 @@ namespace FIFE {
 					if(!m_imageManager->exists(source)) {
 						throw NotFound(source + " couldn't be found.");
 					}
-					ImagePtr imagePtr = m_imageManager->get(source);
+					ImagePtr imagePtr = m_imageManager->getPtr(source);
 					int xOffset = 0;
 					int success = imageElement->QueryIntAttribute("x_offset", &xOffset);
 
