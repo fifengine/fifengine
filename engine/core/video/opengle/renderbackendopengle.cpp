@@ -1282,10 +1282,17 @@ namespace FIFE {
 		//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 
-	
 	void RenderBackendOpenGLe::captureScreen(const std::string& filename) {
 		const uint32_t swidth = getWidth();
 		const uint32_t sheight = getHeight();
+
+		captureScreen(filename, swidth, sheight);
+	}
+
+	void RenderBackendOpenGLe::captureScreen(const std::string& filename, uint32_t width, uint32_t height) {
+		const uint32_t swidth = getWidth();
+		const uint32_t sheight = getHeight();
+		const bool same_size = (width == swidth && height == sheight);
 		SDL_Surface *surface = NULL;
 		uint8_t *pixels;
 
@@ -1314,9 +1321,112 @@ namespace FIFE {
 		}
 
 		SDL_UnlockSurface(surface);
-		Image::saveAsPng(filename, *surface);
+		
+		// screenshot size = screen size
+		if (same_size) {
+			Image::saveAsPng(filename, *surface);
+			SDL_FreeSurface(surface);
+			delete [] pixels;
+			return;
+		}
+
+		SDL_Surface* zoom_src;
+		SDL_Surface* zoom_dst;
+		int32_t dst_w = width;
+		int32_t dst_h = height;
+		if (dst_w < 1)
+			dst_w = 1;
+		if (dst_h < 1)
+			dst_h = 1;
+
+		// If source surface has no alpha channel then convert it
+		if (surface->format->Amask == 0) {
+			zoom_src = SDL_CreateRGBSurface(SDL_SWSURFACE, surface->w, surface->h, 32,
+					RMASK, GMASK,
+					BMASK, AMASK);
+			SDL_BlitSurface(surface, NULL, zoom_src, NULL);
+		} else {
+			zoom_src = surface;
+		}
+		// Create destination surface
+		zoom_dst = SDL_CreateRGBSurface(SDL_SWSURFACE, dst_w, dst_h, 32,
+				zoom_src->format->Rmask, zoom_src->format->Gmask,
+				zoom_src->format->Bmask, zoom_src->format->Amask);
+
+		// Zoom surface
+		SDL_Color* src_pointer = (SDL_Color*)zoom_src->pixels;
+		SDL_Color* src_help_pointer = src_pointer;
+		SDL_Color* dst_pointer = (SDL_Color*)zoom_dst->pixels;
+
+		int32_t x, y, *sx_ca, *sy_ca;
+		int32_t dst_gap = zoom_dst->pitch - zoom_dst->w * zoom_dst->format->BytesPerPixel;
+		int32_t sx = static_cast<int32_t>(0xffff * zoom_src->w / zoom_dst->w);
+		int32_t sy = static_cast<int32_t>(0xffff * zoom_src->h / zoom_dst->h);
+		int32_t sx_c = 0;
+		int32_t sy_c = 0;
+
+		// Allocates memory and calculates row wide&height
+		int32_t* sx_a = (int32_t*)malloc((zoom_dst->w + 1) * sizeof(Uint32));
+		if (sx_a == NULL) {
+			return;
+		} else {
+			sx_ca = sx_a;
+			for (x = 0; x <= zoom_dst->w; x++) {
+				*sx_ca = sx_c;
+				sx_ca++;
+				sx_c &= 0xffff;
+				sx_c += sx;
+			}
+		}
+		int32_t* sy_a = (int32_t*)malloc((zoom_dst->h + 1) * sizeof(Uint32));
+		if (sy_a == NULL) {
+			free(sx_a);
+			return;
+		} else {
+			sy_ca = sy_a;
+			for (y = 0; y <= zoom_dst->h; y++) {
+				*sy_ca = sy_c;
+				sy_ca++;
+				sy_c &= 0xffff;
+				sy_c += sy;
+			}
+			sy_ca = sy_a;
+		}
+
+		// Transfers the image data
+		if(SDL_MUSTLOCK(zoom_src))
+			SDL_LockSurface(zoom_src);
+		if(SDL_MUSTLOCK(zoom_dst))
+			SDL_LockSurface(zoom_dst);
+
+		for (y = 0; y < zoom_dst->h; y++) {
+			src_pointer = src_help_pointer;
+			sx_ca = sx_a;
+			for (x = 0; x < zoom_dst->w; x++) {
+				*dst_pointer = *src_pointer;
+				sx_ca++;
+				src_pointer += (*sx_ca >> 16);
+				dst_pointer++;
+			}
+			sy_ca++;
+			src_help_pointer = (SDL_Color*)((Uint8*)src_help_pointer + (*sy_ca >> 16) * zoom_src->pitch);
+			dst_pointer = (SDL_Color*)((Uint8*)dst_pointer + dst_gap);
+		}
+
+		if(SDL_MUSTLOCK(zoom_dst))
+			SDL_UnlockSurface(zoom_dst);
+		if(SDL_MUSTLOCK(zoom_src))
+			SDL_UnlockSurface(zoom_src);
+
+
+		Image::saveAsPng(filename, *zoom_dst);
+
 		SDL_FreeSurface(surface);
+		SDL_FreeSurface(zoom_src);
+		SDL_FreeSurface(zoom_dst);
 		delete [] pixels;
+		free(sx_a);
+		free(sy_a);
 	}
 
 	void RenderBackendOpenGLe::setClipArea(const Rect& cliparea, bool clear) {

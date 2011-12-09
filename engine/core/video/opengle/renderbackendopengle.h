@@ -70,6 +70,7 @@ namespace FIFE {
 		virtual void addImageToArrayZ(uint32_t id, const Rect& rec, float vertexZ, float const* st, uint8_t alpha, bool forceNewBatch, uint8_t const* rgb);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
+		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
 
 		virtual bool putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
