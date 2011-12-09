@@ -196,6 +196,10 @@ namespace FIFE {
 		/** Creates a Screenshot and saves it to a file.
 		 */
 		virtual void captureScreen(const std::string& filename) = 0;
+		
+		/** Creates a Screenshot with the given size(w,h) and saves it to a file.
+		 */
+		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height) = 0;
 
 		/** Get current screen mode
 		 * @return The current screen mode

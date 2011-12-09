@@ -155,6 +155,7 @@ namespace FIFE {
 		virtual const std::string& getName() const = 0;
 		
 		void captureScreen(const std::string& filename);
+		void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
 		const ScreenMode& getCurrentScreenMode() const;
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
