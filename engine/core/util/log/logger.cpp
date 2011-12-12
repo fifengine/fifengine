@@ -208,7 +208,7 @@ namespace FIFE {
 		} else {
 			module_check_stack.push_back(module);
 			if (count(module_check_stack.begin(), module_check_stack.end(), module) > 1) {
-				throw InvalidFormat("Log module definition hierachy contains cycles");
+				throw InvalidFormat("Log module definition hierarchy contains cycles");
 			}
 		}
 	}
