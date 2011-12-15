@@ -87,6 +87,10 @@ namespace FIFE {
 	}
 
 	void SDLImage::setSurface(SDL_Surface* surface) {
+		if (m_zoom_surface) {
+			SDL_FreeSurface(m_zoom_surface);
+			m_zoom_surface = NULL;
+		}
 		reset(surface);
 		resetSdlimage();
 	}
@@ -224,51 +228,44 @@ namespace FIFE {
 	}
 
 	void zoomSurface(SDL_Surface* src, SDL_Surface* dst) {
-		SDL_Color* src_pointer = (SDL_Color*)src->pixels;
-		SDL_Color* src_help_pointer = src_pointer;
-		SDL_Color* dst_pointer = (SDL_Color*)dst->pixels;
+		uint32_t* src_pointer = static_cast<uint32_t*>(src->pixels);
+		uint32_t* src_help_pointer = src_pointer;
+		uint32_t* dst_pointer = static_cast<uint32_t*>(dst->pixels);
 
 		int32_t x, y, *sx_ca, *sy_ca;
-		int32_t dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
 		int32_t sx = static_cast<int32_t>(0xffff * src->w / dst->w);
 		int32_t sy = static_cast<int32_t>(0xffff * src->h / dst->h);
 		int32_t sx_c = 0;
 		int32_t sy_c = 0;
 
 		// Allocates memory and calculates row wide&height
-		int32_t* sx_a = (int32_t*)malloc((dst->w + 1) * sizeof(Uint32));
-		if (sx_a == NULL) {
-			return;
-		} else {
-			sx_ca = sx_a;
-			for (x = 0; x <= dst->w; x++) {
-				*sx_ca = sx_c;
-				sx_ca++;
-				sx_c &= 0xffff;
-				sx_c += sx;
-			}
+		int32_t* sx_a = new int32_t[dst->w + 1];
+		sx_ca = sx_a;
+		for (x = 0; x <= dst->w; x++) {
+			*sx_ca = sx_c;
+			sx_ca++;
+			sx_c &= 0xffff;
+			sx_c += sx;
 		}
-		int32_t* sy_a = (int32_t*)malloc((dst->h + 1) * sizeof(Uint32));
-		if (sy_a == NULL) {
-			free(sx_a);
-			return;
-		} else {
-			sy_ca = sy_a;
-			for (y = 0; y <= dst->h; y++) {
-				*sy_ca = sy_c;
-				sy_ca++;
-				sy_c &= 0xffff;
-				sy_c += sy;
-			}
-			sy_ca = sy_a;
+
+		int32_t* sy_a = new int32_t[dst->h + 1];
+		sy_ca = sy_a;
+		for (y = 0; y <= dst->h; y++) {
+			*sy_ca = sy_c;
+			sy_ca++;
+			sy_c &= 0xffff;
+			sy_c += sy;
 		}
+		sy_ca = sy_a;
 
 		// Transfers the image data
 
-		if(SDL_MUSTLOCK(src))
+		if (SDL_MUSTLOCK(src)) {
 			SDL_LockSurface(src);
-		if(SDL_MUSTLOCK(dst))
+		}
+		if (SDL_MUSTLOCK(dst)) {
 			SDL_LockSurface(dst);
+		}
 
 		for (y = 0; y < dst->h; y++) {
 			src_pointer = src_help_pointer;
@@ -280,18 +277,19 @@ namespace FIFE {
 				dst_pointer++;
 			}
 			sy_ca++;
-			src_help_pointer = (SDL_Color*)((Uint8*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
-			dst_pointer = (SDL_Color*)((Uint8*)dst_pointer + dst_gap);
+			src_help_pointer = (uint32_t*)((uint8_t*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
 		}
 
-		if(SDL_MUSTLOCK(dst))
+		if (SDL_MUSTLOCK(dst)) {
 			SDL_UnlockSurface(dst);
-		if(SDL_MUSTLOCK(src))
+		}
+		if (SDL_MUSTLOCK(src)) {
 			SDL_UnlockSurface(src);
+		}
 
 		// Free memory
-		free(sx_a);
-		free(sy_a);
+		delete [] sx_a;
+		delete [] sy_a;
 	}
 
 	SDL_Surface* getZoomedSurface(SDL_Surface * src, double zoomx, double zoomy) {
@@ -662,12 +660,13 @@ namespace FIFE {
 	}
 
 	void SDLImage::useSharedImage(const ImagePtr& shared, const Rect& region) {
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h, 32,
-			RMASK, GMASK, BMASK ,AMASK);
 		if(shared->getState() != IResource::RES_LOADED) {
 			shared->load();
 		}
 		SDL_Surface* src_surface = shared->getSurface();
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h,
+			src_surface->format->BitsPerPixel, src_surface->format->Rmask, src_surface->format->Gmask,
+			src_surface->format->Bmask, src_surface->format->Amask);
 
 		SDL_SetAlpha(src_surface, 0, 0);
 		SDL_Rect srcrect = { region.x, region.y, region.w, region.h };

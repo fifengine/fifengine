@@ -201,6 +201,49 @@ namespace FIFE {
 		} else {
 			m_compressed = false;
 		}
+
+		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
+		int32_t bpp_target = target->format->BitsPerPixel;
+		int32_t bpp_source = m_surface->format->BitsPerPixel;
+		// create 16 bit texture, RGBA_4444
+		if (bpp_target == 16 && bpp_source == 32) {
+			uint16_t* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];
+			memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint16_t));
+
+			for (uint32_t y = 0;  y < height; ++y) {
+				for (uint32_t x = 0; x < width; ++x) {
+					uint32_t pos = (y * pitch) + (x * 4);
+
+					uint8_t r = data[pos + 0];
+					uint8_t g = data[pos + 1];
+					uint8_t b = data[pos + 2];
+					uint8_t a = data[pos + 3];
+
+					if (RenderBackend::instance()->isColorKeyEnabled()) {
+						// only set alpha to zero if colorkey feature is enabled
+						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+							a = 0;
+						}
+					}
+
+					oglbuffer[(y*m_chunk_size_w) + x] = ((r >> 4) << 12) |
+														((g >> 4) << 8) |
+														((b >> 4) << 4) |
+														((a >> 4) << 0);
+				}
+			}
+			// in case of compression we let OpenGL handle it
+			if (!m_compressed) {
+				internalFormat = GL_RGBA4;
+			}
+
+			// transfer data from sdl buffer
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
+				0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, oglbuffer);
+
+			delete[] oglbuffer;
+			return;
+		}
 		
 		if(GLEE_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
 			if(RenderBackend::instance()->isColorKeyEnabled()) {
@@ -229,7 +272,6 @@ namespace FIFE {
 
 				delete [] oglbuffer;
 			} else {
-
 				// transfer data directly from sdl buffer
 				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
 					0, GL_RGBA, GL_UNSIGNED_BYTE, data);
