@@ -244,7 +244,7 @@ namespace FIFE {
 		// Uh. Gotta love this :-)
 		// Check for colorkey too?
 		// Leave out the loss/shift checks?
-		if(    m_rgba_format.BitsPerPixel == surface->format->BitsPerPixel
+		if (32 == surface->format->BitsPerPixel
 			&& m_rgba_format.Rmask == surface->format->Rmask
 			&& m_rgba_format.Gmask == surface->format->Gmask
 			&& m_rgba_format.Bmask == surface->format->Bmask
@@ -262,9 +262,13 @@ namespace FIFE {
 			return new GLImage(surface);
 		}
 
+		uint8_t bpp = m_rgba_format.BitsPerPixel;
+		m_rgba_format.BitsPerPixel = 32;
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
+		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(conv);
-		SDL_FreeSurface( surface );
+
+		SDL_FreeSurface(surface);
 		return image;
 	}
 
@@ -275,8 +279,7 @@ namespace FIFE {
 		// Uh. Gotta love this :-)
 		// Check for colorkey too?
 		// Leave out the loss/shift checks?
-
-		if(    m_rgba_format.BitsPerPixel == surface->format->BitsPerPixel
+		if (32 == surface->format->BitsPerPixel
 			&& m_rgba_format.Rmask == surface->format->Rmask
 			&& m_rgba_format.Gmask == surface->format->Gmask
 			&& m_rgba_format.Bmask == surface->format->Bmask
@@ -294,9 +297,13 @@ namespace FIFE {
 			return new GLImage(name, surface);
 		}
 
+		uint8_t bpp = m_rgba_format.BitsPerPixel;
+		m_rgba_format.BitsPerPixel = 32;
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
+		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(name, conv);
-		SDL_FreeSurface( surface );
+		
+		SDL_FreeSurface(surface);
 		return image;
 	}
 
@@ -1092,29 +1099,17 @@ namespace FIFE {
 		const uint32_t swidth = getWidth();
 		const uint32_t sheight = getHeight();
 
-		captureScreen(filename, swidth, sheight);
-	}
-	
-	void RenderBackendOpenGL::captureScreen(const std::string& filename, uint32_t width, uint32_t height) {
-		const uint32_t swidth = getWidth();
-		const uint32_t sheight = getHeight();
-		const bool same_size = (width == swidth && height == sheight);
-
-		SDL_Surface *surface = NULL;
 		uint8_t *pixels;
+		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
+			RMASK, GMASK, BMASK, NULLMASK);
 
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
-		sheight, 24,
-		RMASK,GMASK,BMASK, NULLMASK);
-
-		if(surface == NULL) {
+		if (!surface) {
 			return;
 		}
 
 		SDL_LockSurface(surface);
 		pixels = new uint8_t[swidth * sheight * 3];
 		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-
 		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
 		// Copy the "reversed_image" memory to the "image" memory
 		for (int32_t y = (sheight - 1); y >= 0; --y) {
@@ -1128,112 +1123,121 @@ namespace FIFE {
 		}
 
 		SDL_UnlockSurface(surface);
+		Image::saveAsPng(filename, *surface);
+		
+		SDL_FreeSurface(surface);
+		delete[] pixels;
+	}
+	
+	void RenderBackendOpenGL::captureScreen(const std::string& filename, uint32_t width, uint32_t height) {
+		const uint32_t swidth = getWidth();
+		const uint32_t sheight = getHeight();
+		const bool same_size = (width == swidth && height == sheight);
 
-		// screenshot size = screen size
-		if (same_size) {
-			Image::saveAsPng(filename, *surface);
-			SDL_FreeSurface(surface);
-			delete [] pixels;
+		if (width < 1 || height < 1) {
 			return;
 		}
 
-		SDL_Surface* zoom_src;
-		SDL_Surface* zoom_dst;
-		int32_t dst_w = width;
-		int32_t dst_h = height;
-		if (dst_w < 1)
-			dst_w = 1;
-		if (dst_h < 1)
-			dst_h = 1;
-
-		// If source surface has no alpha channel then convert it
-		if (surface->format->Amask == 0) {
-			zoom_src = SDL_CreateRGBSurface(SDL_SWSURFACE, surface->w, surface->h, 32,
-					RMASK, GMASK,
-					BMASK, AMASK);
-			SDL_BlitSurface(surface, NULL, zoom_src, NULL);
-		} else {
-			zoom_src = surface;
+		if (same_size) {
+			captureScreen(filename);
+			return;
 		}
-		// Create destination surface
-		zoom_dst = SDL_CreateRGBSurface(SDL_SWSURFACE, dst_w, dst_h, 32,
-				zoom_src->format->Rmask, zoom_src->format->Gmask,
-				zoom_src->format->Bmask, zoom_src->format->Amask);
 
-		// Zoom surface
-		SDL_Color* src_pointer = (SDL_Color*)zoom_src->pixels;
-		SDL_Color* src_help_pointer = src_pointer;
-		SDL_Color* dst_pointer = (SDL_Color*)zoom_dst->pixels;
+		uint8_t *pixels;
+		// create source surface
+		SDL_Surface* src = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 32,
+			RMASK, GMASK, BMASK, AMASK);
+
+		if (!src) {
+			return;
+		}
+
+		if (SDL_MUSTLOCK(src)) {
+			SDL_LockSurface(src);
+		}
+		pixels = new uint8_t[swidth * sheight * 4];
+		glReadPixels(0, 0, swidth, sheight, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
+
+		uint8_t* imagepixels = reinterpret_cast<uint8_t*>(src->pixels);
+		// Copy the "reversed_image" memory to the "image" memory
+		for (int32_t y = (sheight - 1); y >= 0; --y) {
+			uint8_t *rowbegin = pixels + y * swidth * 4;
+			uint8_t *rowend = rowbegin + swidth * 4;
+
+			std::copy(rowbegin, rowend, imagepixels);
+
+			// Advance a row in the output surface.
+			imagepixels += src->pitch;
+		}
+
+		// create destination surface
+		SDL_Surface* dst = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32,
+			RMASK, GMASK, BMASK, AMASK);
+
+		uint32_t* src_pointer = static_cast<uint32_t*>(src->pixels);
+		uint32_t* src_help_pointer = src_pointer;
+		uint32_t* dst_pointer = static_cast<uint32_t*>(dst->pixels);
 
 		int32_t x, y, *sx_ca, *sy_ca;
-		int32_t dst_gap = zoom_dst->pitch - zoom_dst->w * zoom_dst->format->BytesPerPixel;
-		int32_t sx = static_cast<int32_t>(0xffff * zoom_src->w / zoom_dst->w);
-		int32_t sy = static_cast<int32_t>(0xffff * zoom_src->h / zoom_dst->h);
+		int32_t sx = static_cast<int32_t>(0xffff * src->w / dst->w);
+		int32_t sy = static_cast<int32_t>(0xffff * src->h / dst->h);
 		int32_t sx_c = 0;
 		int32_t sy_c = 0;
 
 		// Allocates memory and calculates row wide&height
-		int32_t* sx_a = (int32_t*)malloc((zoom_dst->w + 1) * sizeof(Uint32));
-		if (sx_a == NULL) {
-			return;
-		} else {
-			sx_ca = sx_a;
-			for (x = 0; x <= zoom_dst->w; x++) {
-				*sx_ca = sx_c;
-				sx_ca++;
-				sx_c &= 0xffff;
-				sx_c += sx;
-			}
+		int32_t* sx_a = new int32_t[dst->w + 1];
+		sx_ca = sx_a;
+		for (x = 0; x <= dst->w; x++) {
+			*sx_ca = sx_c;
+			sx_ca++;
+			sx_c &= 0xffff;
+			sx_c += sx;
 		}
-		int32_t* sy_a = (int32_t*)malloc((zoom_dst->h + 1) * sizeof(Uint32));
-		if (sy_a == NULL) {
-			free(sx_a);
-			return;
-		} else {
-			sy_ca = sy_a;
-			for (y = 0; y <= zoom_dst->h; y++) {
-				*sy_ca = sy_c;
-				sy_ca++;
-				sy_c &= 0xffff;
-				sy_c += sy;
-			}
-			sy_ca = sy_a;
+
+		int32_t* sy_a = new int32_t[dst->h + 1];
+		sy_ca = sy_a;
+		for (y = 0; y <= dst->h; y++) {
+			*sy_ca = sy_c;
+			sy_ca++;
+			sy_c &= 0xffff;
+			sy_c += sy;
 		}
+		sy_ca = sy_a;
 
 		// Transfers the image data
-		if(SDL_MUSTLOCK(zoom_src))
-			SDL_LockSurface(zoom_src);
-		if(SDL_MUSTLOCK(zoom_dst))
-			SDL_LockSurface(zoom_dst);
 
-		for (y = 0; y < zoom_dst->h; y++) {
+		if (SDL_MUSTLOCK(dst)) {
+			SDL_LockSurface(dst);
+		}
+
+		for (y = 0; y < dst->h; y++) {
 			src_pointer = src_help_pointer;
 			sx_ca = sx_a;
-			for (x = 0; x < zoom_dst->w; x++) {
+			for (x = 0; x < dst->w; x++) {
 				*dst_pointer = *src_pointer;
 				sx_ca++;
 				src_pointer += (*sx_ca >> 16);
 				dst_pointer++;
 			}
 			sy_ca++;
-			src_help_pointer = (SDL_Color*)((Uint8*)src_help_pointer + (*sy_ca >> 16) * zoom_src->pitch);
-			dst_pointer = (SDL_Color*)((Uint8*)dst_pointer + dst_gap);
+			src_help_pointer = (uint32_t*)((uint8_t*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
 		}
 
-		if(SDL_MUSTLOCK(zoom_dst))
-			SDL_UnlockSurface(zoom_dst);
-		if(SDL_MUSTLOCK(zoom_src))
-			SDL_UnlockSurface(zoom_src);
+		if (SDL_MUSTLOCK(dst)) {
+			SDL_UnlockSurface(dst);
+		}
+		if (SDL_MUSTLOCK(src)) {
+			SDL_UnlockSurface(src);
+		}
 
+		Image::saveAsPng(filename, *dst);
 
-		Image::saveAsPng(filename, *zoom_dst);
-
-		SDL_FreeSurface(surface);
-		SDL_FreeSurface(zoom_src);
-		SDL_FreeSurface(zoom_dst);
-		delete [] pixels;
-		free(sx_a);
-		free(sy_a);
+		// Free memory
+		SDL_FreeSurface(src);
+		SDL_FreeSurface(dst);
+		delete[] sx_a;
+		delete[] sy_a;
+		delete[] pixels;
 	}
 
 	void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear) {

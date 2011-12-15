@@ -66,17 +66,34 @@ namespace FIFE {
 				throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
 			}
 
-			SDL_PixelFormat format = RenderBackend::instance()->getPixelFormat();
+			RenderBackend* rb = RenderBackend::instance();
+			// in case of SDL we don't need to convert the surface
+			if (rb->getName() == "SDL") {
+				img->setSurface(surface);
+			// in case of OpenGL we need a 32bit surface
+			} else {
+				SDL_PixelFormat dst_format = rb->getPixelFormat();
+				SDL_PixelFormat src_format = *surface->format;
+				uint8_t dstbits = dst_format.BitsPerPixel;
+				uint8_t srcbits = src_format.BitsPerPixel;
 
-			SDL_Surface* conv = SDL_ConvertSurface(surface, &format, SDL_SWSURFACE | SDL_SRCALPHA);
+				if (srcbits != 32 || dst_format.Rmask != src_format.Rmask || dst_format.Gmask != src_format.Gmask ||
+					dst_format.Bmask != src_format.Bmask || dst_format.Amask != src_format.Amask) {
+					dst_format.BitsPerPixel = 32;
+					SDL_Surface* conv = SDL_ConvertSurface(surface, &dst_format, SDL_SWSURFACE | SDL_SRCALPHA);
+					dst_format.BitsPerPixel = dstbits;
 
-			if (!conv) {
-				throw SDLException(std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
+					if (!conv) {
+						throw SDLException(std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
+					}
+
+					img->setSurface(conv);
+					SDL_FreeSurface(surface);
+				} else {
+					img->setSurface(surface);
+				}
 			}
 
-			img->setSurface(conv);
-
-			SDL_FreeSurface(surface);
 			SDL_FreeRW(rwops);
 		}
 		//restore saved x and y shifts
