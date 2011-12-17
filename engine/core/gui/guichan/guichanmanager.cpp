@@ -219,7 +219,7 @@ namespace FIFE {
 
 		IFont* font = NULL;
 		GuiFont* guifont = NULL;
-		if( bfs::extension(fontpath) == ".ttf" ) {
+		if( bfs::extension(fontpath) == ".ttf" || bfs::extension(fontpath) == ".ttc" ) {
 			font = new TrueTypeFont(fontpath, fontsize);
 		} else {
 			font = new SubImageFont(fontpath, fontglyphs);
