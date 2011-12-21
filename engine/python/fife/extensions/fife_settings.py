@@ -461,12 +461,12 @@ class Setting(object):
 						if name in self._defaultSetting[module]:
 							return self._defaultSetting[module][name]
 						else:
-							raise Exception(name + ' is neither in settings.xml nor it has a default value set')
+							raise Exception(str(name) + ' is neither in settings.xml nor it has a default value set')
 				else:
 					if name in self._settingsFromFile[module]:
 						return self._settingsFromFile[module][name]
 					else:
-						raise Exception(name + ' is neither in settings.xml nor it has a default value set')
+						raise Exception(str(name) + ' is neither in settings.xml nor it has a default value set')
 			else:
 				return self._serializer.get(module, name, defaultValue)
 		else:
@@ -476,7 +476,7 @@ class Setting(object):
 			if name in self._defaultSetting:
 				return self._defaultSetting[module][name]
 			else:
-				raise Exception(name + ' is neither in settings.xml nor it has a default value set')
+				raise Exception(str(name) + ' is neither in settings.xml nor it has a default value set')
 	
 	def set(self, module, name, value, extra_attrs={}):
 		"""
@@ -557,7 +557,7 @@ class Setting(object):
 					try:
 						value = entry.initialdata.index(value)
 					except ValueError:
-						raise ValueError("\"" + value + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
 				entry.initializeWidget(widget, value)
 
 	def applySettings(self):
