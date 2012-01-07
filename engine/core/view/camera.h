@@ -239,7 +239,7 @@ namespace FIFE {
 		 * @param instances list of instances that is filled based on hit test results
 		 * @param accurate should be true if the search should be exactly but its also much slower
 		 */
-		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, bool accurate, uint8_t alpha = 0);
+		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
 		/** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
 		 * instance is first in returned list
@@ -371,9 +371,9 @@ namespace FIFE {
 		 */
 		void updateRenderLists();
 
-		/** Returns true if associated LayerCache need update
+		/** Updates LayerCache if necessary
 		 */
-		bool cacheNeedUpdate(Layer* layer);
+		void cacheUpdate(Layer* layer);
 
 		/** Gets logical cell image dimensions for given layer
 		 */

@@ -434,25 +434,39 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
-	bool Camera::cacheNeedUpdate(Layer* layer) {
-		LayerCache* cache = m_cache[layer];
-		if(!cache) {
-			return true;
+	void Camera::cacheUpdate(Layer* layer) {
+		Map* map = m_location.getMap();
+		if (!map) {
+			FL_ERR(_log, "No map for camera found");
+			return;
 		}
-
-		if (m_iswarped || !m_updated || cache->needUpdate()) {
-			return true;
+		// if camera need update, we update all caches
+		if (m_iswarped || !m_updated) {
+			updateRenderLists();
+		} else {
+			LayerCache* cache = m_cache[layer];
+			if(!cache) {
+				addLayer(layer);
+				cache = m_cache[layer];
+				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << layer->getId());
+			}
+			// only this cache need an update, e.g. a instance is added/removed
+			if (cache->needUpdate()) {
+				Transform transform = NormalTransform;
+				if (m_iswarped) {
+					transform = WarpedTransform;
+				}
+				RenderList& instances_to_render = m_layer_to_instances[layer];
+				cache->update(transform, instances_to_render);
+			}
 		}
-
-		return false;
 	}
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
-		bool update = cacheNeedUpdate(&layer);
 		bool special_alpha = alpha != 0;
-		Point3D z_offset = getZOffset(&layer);
+		cacheUpdate(&layer);
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -463,7 +477,6 @@ namespace FIFE {
 				if(vc.image->isSharedImage()) {
 					vc.image->forceLoadInternal();
 				}
-				assert(vc.image.get());
 				uint8_t r, g, b, a = 0;
 				int32_t x = screen_coords.x - vc.dimensions.x;
 				int32_t y = screen_coords.y - vc.dimensions.y;
@@ -482,113 +495,16 @@ namespace FIFE {
 				if (a == 0 || (special_alpha && a < alpha)) {
 					continue;
 				}
-				if (update) {
-					ScreenPoint screen_coords_tmp = screen_coords;
-					if (&layer == m_location.getLayer()) {
-						double instance_z = vc.instance_z - m_location.getExactLayerCoordinates().z;
-						double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates().z);
-
-						if (z_offset.z <= 0) {
-							screen_coords_tmp.y += z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
-						} else {
-							screen_coords_tmp.y -= z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
-						}
-					} else {
-						double instance_z = vc.instance_z - m_location.getExactLayerCoordinates(&layer).z;
-						double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates(&layer).z);
-
-						if (z_offset.z <= 0) {
-							screen_coords_tmp.y += z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
-						} else {
-							screen_coords_tmp.y -= z_offset.y * (instance_z + layer_z * layer.getCellGrid()->getXScale());
-						}
-					}
-					ExactModelCoordinate emc = toMapCoordinates(screen_coords_tmp, false);
-					emc.z = layer.getCellGrid()->getZShift() + vc.instance_z;
-					Location loc(&layer);
-					loc.setMapCoordinates(emc);
-					ModelCoordinate mc = loc.getLayerCoordinates();
-
-					Point p = getRealCellDimensions(&layer);
-					int32_t w_steps = static_cast<int32_t>(vc.dimensions.w / static_cast<float>(p.x) + 0.5);
-					int32_t h_steps = static_cast<int32_t>(vc.dimensions.h / static_cast<float>(p.y) + 0.5);
-					mc.x -= static_cast<int32_t>(w_steps/2.0 + 0.5);
-					mc.y -= static_cast<int32_t>(h_steps/2.0 + 0.5);
-					Rect rec(mc.x, mc.y, w_steps, h_steps);
-					std::list<Instance*> inslist = layer.getInstancesIn(rec);
-					for (std::list<Instance*>::iterator it = inslist.begin(); it != inslist.end(); ++it) {
-						if (i == *it) {
-							instances.push_back(i);
-							break;
-						}
-					}
-				} else {
-					instances.push_back(i);
-				}
+				instances.push_back(i);
 			}
 		}
 	}
 
-	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, bool accurate, uint8_t alpha) {
+	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
-		bool update = cacheNeedUpdate(&layer);
 		bool special_alpha = alpha != 0;
-		std::list<Instance*> tree_instances;
-		if (update || !accurate) {
-			Point p = getRealCellDimensions(&layer);
-			int32_t w_step = static_cast<int32_t>(screen_rect.w / static_cast<float>(p.x) + 0.5);
-			int32_t h_step = static_cast<int32_t>(screen_rect.h / static_cast<float>(p.y) + 0.5);
-			
-			Point3D z_offset = getZOffset(&layer);
-			double instance_z = -m_location.getExactLayerCoordinates().z;
-			double layer_z = layer.getCellGrid()->getZShift() - (m_location.getMapCoordinates().z - m_location.getExactLayerCoordinates().z);
-			z_offset.x *= instance_z + layer_z * layer.getCellGrid()->getXScale();
-			z_offset.y *= instance_z + layer_z * layer.getCellGrid()->getYScale();
-			ScreenPoint screen_coords_tmp(screen_rect.x, screen_rect.y);
-			if (z_offset.z <= 0) {
-				screen_coords_tmp.y += z_offset.y;
-			} else {
-				screen_coords_tmp.y -= z_offset.y;
-			}
-			ScreenPoint sp = screen_coords_tmp;
-			Location loc(&layer);
-			Rect rec(0, 0, 0, 0);
-			for (int32_t i = 0; i <= w_step; ++i) {
-				sp.x = screen_coords_tmp.x + i * p.x;
-				for (int32_t ii = 0; ii <= h_step; ++ii) {					
-					sp.y = screen_coords_tmp.y + ii * p.y;
-					ExactModelCoordinate emc = toMapCoordinates(sp, false);
-					emc.z = layer.getCellGrid()->getZShift();
-					loc.setMapCoordinates(emc);
-					ModelCoordinate mc = loc.getLayerCoordinates();
-					if (rec.x == mc.x && rec.y == mc.y) {
-						continue;
-					}
-					rec.x = mc.x;
-					rec.y = mc.y;
-					std::list<Instance*> tmp_instances = layer.getInstancesIn(rec);
-					std::copy(tmp_instances.begin(), tmp_instances.end(), std::back_inserter(tree_instances));
-				}
-			}
-			tree_instances.sort();
-			tree_instances.unique();
-
-			if (!accurate) {
-				for (std::list<Instance*>::iterator insit = tree_instances.begin(); insit != tree_instances.end(); ++insit) {
-					InstanceVisual* visual = (*insit)->getVisual<InstanceVisual>();
-					if (!visual) {
-						continue;
-					}
-					// check if instance is visible
-					if (visual->isVisible() && (visual->getTransparency() < 255 ||
-						(special_alpha && (255-visual->getTransparency()) >= alpha))) {
-						instances.push_back(*insit);
-					}
-				}
-				return;
-			}
-		}
+		cacheUpdate(&layer);
 
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
@@ -600,7 +516,6 @@ namespace FIFE {
 				if(vc.image->isSharedImage()) {
 					vc.image->forceLoadInternal();
 				}
-				assert(vc.image.get());
 				uint8_t r, g, b, a = 0;
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
@@ -623,19 +538,8 @@ namespace FIFE {
 								continue;
 							}
 
-							if (update) {
-								for (std::list<Instance*>::iterator it = tree_instances.begin(); it != tree_instances.end(); ++it) {
-									// if the instance has been found in tree then it should be a valid instance
-									if (i == *it) {
-										instances.push_back(i);
-										tree_instances.erase(it);
-										goto found_non_transparent_pixel;
-									}
-								}
-							} else {
-								instances.push_back(i);
-								goto found_non_transparent_pixel;
-							}
+							instances.push_back(i);
+							goto found_non_transparent_pixel;
 						}
 					}
 				}
@@ -651,29 +555,19 @@ namespace FIFE {
 			return;
 		}
 
-		if (cacheNeedUpdate(layer)) {
-			std::vector<Instance*> insvec = layer->getInstancesAt(loc, use_exactcoordinates);
-			for (std::vector<Instance*>::iterator it = insvec.begin(); it != insvec.end(); ++it) {
-				InstanceVisual* visual = (*it)->getVisual<InstanceVisual>();
-				// check if instance is visible
-				if (visual->isVisible() && visual->getTransparency() < 255) {
-					instances.push_back(*it);
+		cacheUpdate(layer);
+		const RenderList& layer_instances = m_layer_to_instances[layer];
+		RenderList::const_iterator instance_it = layer_instances.end();
+		while (instance_it != layer_instances.begin()) {
+			--instance_it;
+			Instance* i = (*instance_it)->instance;
+			if (use_exactcoordinates) {
+				if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+					instances.push_back(i);
 				}
-			}
-		} else {
-			const RenderList& layer_instances = m_layer_to_instances[layer];
-			RenderList::const_iterator instance_it = layer_instances.end();
-			while (instance_it != layer_instances.begin()) {
-				--instance_it;
-				Instance* i = (*instance_it)->instance;
-				if (use_exactcoordinates) {
-					if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
-						instances.push_back(i);
-					}
-				} else {
-					if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
-						instances.push_back(i);
-					}
+			} else {
+				if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+					instances.push_back(i);
 				}
 			}
 		}

@@ -157,7 +157,6 @@ namespace FIFE {
 	void LayerCache::updateInstance(Instance* instance) {
 		Entry& entry = m_entries[m_instance_map[instance]];
 		updateEntry(entry);
-		m_needupdate = true;
 	}
 
 	void LayerCache::updateEntry(LayerCache::Entry& item) {
@@ -232,6 +231,7 @@ namespace FIFE {
 		if (render_item.screenpoint == screen_position) {
 			return;
 		}
+		m_needupdate = true;
 		render_item.screenpoint = screen_position;
 
 		render_item.bbox.x = static_cast<int32_t>(screen_position.x);
