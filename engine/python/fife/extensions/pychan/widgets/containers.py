@@ -163,6 +163,7 @@ class Container(Widget):
 		self.children.remove(child)
 
 		self.real_widget.remove(child.real_widget)
+		child._visible = False
 		
 	def showChild(self, child):
 		if not child in self.hidden_children:
