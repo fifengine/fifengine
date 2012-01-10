@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2012 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -366,7 +366,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		Adds whitespace, so the resulting XML-file is properly indented.
 		Shamelessly stolen from http://effbot.org/zone/element-lib.htm
 		"""
-		i = "\n" + level*"  "
+		i = os.linesep + level*"  "
 		if len(elem):
 			if not elem.text or not elem.text.strip():
 				elem.text = i + "  "
