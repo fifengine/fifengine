@@ -250,17 +250,21 @@ namespace FIFE {
 			if(vc.transparency == 255) {
 				if (any_effects) {
 					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
-					if (outline_it != m_instance_outlines.end()) {
+					const bool outline = outline_it != m_instance_outlines.end();
+					if (outline) {
 						Image* outline = bindOutline(outline_it->second, vc, cam);
 						outline->renderZ(vc.dimensions, vertexZ, 255, lm != 0 ? true : false);
 						vc.image->renderZ(vc.dimensions, vertexZ, 255);
-						continue;
 					}
 
 					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
-					if (coloring_it != m_instance_colorings.end()) {
+					const bool coloring = coloring_it != m_instance_colorings.end();
+					if (coloring) {
 						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
 						vc.image->renderZ(vc.dimensions, vertexZ, 255, false, rgb);
+					}
+
+					if (outline || coloring) {
 						continue;
 					}
 				}
@@ -297,17 +301,21 @@ namespace FIFE {
 
 				if (any_effects) {
 					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(vc.instance);
-					if (outline_it != m_instance_outlines.end()) {
+					const bool outline = outline_it != m_instance_outlines.end();
+					if (outline) {
 						Image* outline = bindOutline(outline_it->second, vc, cam);
 						outline->renderZ(vc.dimensions, vertexZ, alpha, lm != 0 ? true : false);
 						vc.image->renderZ(vc.dimensions, vertexZ, alpha);
-						continue;
 					}
 
 					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(vc.instance);
-					if (coloring_it != m_instance_colorings.end()) {
+					const bool coloring = coloring_it != m_instance_colorings.end();
+					if (coloring) {
 						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
 						vc.image->renderZ(vc.dimensions, vertexZ, alpha, false, rgb);
+					}
+
+					if (outline || coloring) {
 						continue;
 					}
 				}
@@ -392,33 +400,35 @@ namespace FIFE {
 
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
-				if (outline_it != m_instance_outlines.end()) {
+				const bool outline = outline_it != m_instance_outlines.end();
+				if (outline) {
 					if (lm != 0) {
 						// first render normal image without stencil and alpha test (0)
 						// so it wont look aliased and then with alpha test render only outline (its 'binary' image)
 						vc.image->render(vc.dimensions, vc.transparency);
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
-						continue;
 					} else {
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 						vc.image->render(vc.dimensions, vc.transparency);
-						continue;
 					}
 				}
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
-				if (coloring_it != m_instance_colorings.end()) {
+				const bool coloring = coloring_it != m_instance_colorings.end();
+				if (coloring) {
 					if(m_need_bind_coloring) {
 						bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
-						continue;
 					} else {
 						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
 						vc.image->render(vc.dimensions, vc.transparency, rgb);
 						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
-						continue;
 					}
+				}
+
+				if (outline || coloring) {
+					continue;
 				}
 			}
 			if(lm != 0) {
