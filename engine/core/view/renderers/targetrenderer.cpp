@@ -160,21 +160,23 @@ namespace FIFE {
 	}
 
 	void TargetRenderer::render() {
-		for (RenderJobMap::iterator it = m_targets.begin(); it != m_targets.end(); ++it) {
-			if (it->second.ndraws != -1) {
-				if (it->second.ndraws == it->second.lasttime_draw) {
-					RenderTargetPtr rt = it->second.target;
-					m_renderbackend->attachRenderTarget(rt->m_target, it->second.discard);
-					rt->render();
-					m_renderbackend->detachRenderTarget();
+		if (!m_targets.empty()) {
+			for (RenderJobMap::iterator it = m_targets.begin(); it != m_targets.end(); ++it) {
+				if (it->second.ndraws != -1) {
+					if (it->second.ndraws == it->second.lasttime_draw) {
+						RenderTargetPtr rt = it->second.target;
+						m_renderbackend->attachRenderTarget(rt->m_target, it->second.discard);
+						rt->render();
+						m_renderbackend->detachRenderTarget();
 
-					if(it->second.ndraws == 0) {
-						it->second.ndraws = -1;
+						if(it->second.ndraws == 0) {
+							it->second.ndraws = -1;
+						} else {
+							it->second.lasttime_draw = 0;
+						}
 					} else {
-						it->second.lasttime_draw = 0;
+						++it->second.lasttime_draw;
 					}
-				} else {
-					++it->second.lasttime_draw;
 				}
 			}
 		}

@@ -198,8 +198,8 @@ namespace FIFE {
 		removeAll();
 	}
 
-	void OffRenderer::setEnable(bool enable) {
-		m_enabled = enable;
+	void OffRenderer::setEnabled(bool enabled) {
+		m_enabled = enabled;
 	}
 
 	bool OffRenderer::isEnabled() {

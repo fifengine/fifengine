@@ -163,7 +163,7 @@ namespace FIFE {
 		 */
 		virtual ~OffRenderer();
 
-		void setEnable(bool enable);
+		void setEnabled(bool enabled);
 		bool isEnabled();
 		void setClipArea(Rect area);
 		const Rect& getClipArea() const;
