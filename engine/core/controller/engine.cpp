@@ -340,12 +340,12 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_eventmanager->processEvents();
 		m_timemanager->update();
-
+		
+		m_targetrenderer->render();
 		if (m_model->getMapCount() == 0) {
 			m_renderbackend->clearBackBuffer();
 			m_offrenderer->render();
 		} else {
-			m_targetrenderer->render();
 			m_model->update();
 		}
 
