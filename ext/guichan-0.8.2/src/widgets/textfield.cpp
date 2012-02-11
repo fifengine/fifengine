@@ -121,9 +121,10 @@ namespace gcn
             graphics->drawRectangle(Rectangle(1, 1, getWidth() - 4, getHeight() - 4));
         }
 
+        // Draw both caret and text with an x-offset of 3 to make it look nicer
         if (isFocused())
         {
-            drawCaret(graphics, getFont()->getWidth(mText.substr(0, mCaretPosition)) - mXScroll);
+            drawCaret(graphics, getFont()->getWidth(mText.substr(0, mCaretPosition)) + 3 - mXScroll);
         }
 
         graphics->setColor(getForegroundColor());
