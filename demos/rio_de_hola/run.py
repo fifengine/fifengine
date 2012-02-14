@@ -39,6 +39,7 @@ from scripts.common import eventlistenerbase
 from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_settings import Setting
 from fife.extensions.fife_utils import getUserDataDirectory
 
@@ -72,7 +73,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			evt.consume()
 		elif keyval == fife.Key.F10:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+			get_manager().getConsole().toggleShowHide()
 			evt.consume()
 		elif keystr == 'p':
 			self.engine.getRenderBackend().captureScreen('screenshot.png')
@@ -89,7 +90,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			result = 'quitting'
 		elif command.lower() in ( 'help', 'help()' ):
-			pychan.manager.hook.guimanager.getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
+			get_manager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
 			result = "-- End of help --"
 		else:
 			result = self.world.onConsoleCommand(command)

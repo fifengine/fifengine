@@ -25,6 +25,7 @@ from fife import fife
 import math, random
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.internal import get_manager
 
 from scripts.common.eventlistenerbase import EventListenerBase
 from fife.extensions.savers import saveMapFile
@@ -241,7 +242,7 @@ class World(EventListenerBase):
 		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
 		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = pychan.manager.hook.guimanager.createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
+		textfont = get_manager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
 		renderer.setFont(textfont)
 		renderer.activateAllLayers(self.map)
 		renderer.setBackground(100, 255, 100, 165)

@@ -31,6 +31,7 @@ from fife.extensions import *
 from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_utils import getUserDataDirectory
 
 import test
@@ -70,7 +71,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		fife.ICommandListener.__init__(self)
 		self._eventmanager.addCommandListener(self)
 
-		self._console = pychan.manager.hook.guimanager.getConsole()
+		self._console = get_manager().getConsole()
 		
 		fife.ConsoleExecuter.__init__(self)
 		self._console.setConsoleExecuter(self)
@@ -96,7 +97,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			self.quit = True
 			event.consume()
 		elif keyval == fife.Key.BACKQUOTE:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+			get_manager().getConsole().toggleShowHide()
 			event.consume()
 		elif keyval == fife.Key.PRINT_SCREEN:
 			self._engine.getRenderBackend().captureScreen(time.strftime("%Y%m%d_%H%M%S", time.localtime()) + ".png")
