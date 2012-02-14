@@ -172,6 +172,10 @@ class MainWindow(object):
 				
 			else:
 				print "Invalid dockarea"
+				
+			
+			widget.dockareaname = dockarea
+				
 		else:
 			if dockarea == DOCKAREA['left']:
 				dockareas[DOCKAREA['left']].dockChild(widget, x, y)
@@ -187,7 +191,7 @@ class MainWindow(object):
 				
 			else:
 				print "Invalid dockarea"
-				
+
 	def getToolbarAreaAt(self, x, y, mark=False):
 		if self.dockareamarker is None:
 			self.dockareamarker = pychan.widgets.Container()

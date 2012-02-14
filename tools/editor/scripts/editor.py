@@ -102,6 +102,11 @@ class Editor(ApplicationBase, MainWindow):
 
 		self._lighting_mode = int(TDS.get("FIFE", "Lighting"))		
 		self._help_dialog = None
+		
+		self._toolbar_docked = False
+		self._toolbar_dockname = ""
+		self._toolbox_docked = False
+		self._toolbox_dockname = ""
 	
 		ApplicationBase.__init__(self, TDS, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -261,32 +266,44 @@ class Editor(ApplicationBase, MainWindow):
 		""" Toggles toolbar """
 		toolbar = self.getToolBar()
 		if toolbar.isVisible():
-			toolbar.setDocked(False)
+			self._toolbar_docked = toolbar.isDocked()
+			self._toolbar_dockname = toolbar.dockareaname
 			toolbar.hide()
 			self._action_show_toolbar.setChecked(False)
 		else: 
-			tx = toolbar.x
-			ty = toolbar.y
-			toolbar.show()
-			toolbar.x = tx
-			toolbar.y = ty
+			if not self._toolbar_docked:
+				tx = toolbar.x
+				ty = toolbar.y
+				toolbar.show()
+				toolbar.x = tx
+				toolbar.y = ty
+			else:
+				toolbar.setDocked(True)
+				self.dockWidgetTo(toolbar, self._toolbar_dockname)
+			
 			self._action_show_toolbar.setChecked(True)
 			
 	def toggleToolbox(self):
 		""" Toggles tool box """
 		toolbox = self.getToolbox()
 		if toolbox.isVisible():
-			toolbox.setDocked(False)
+			self._toolbox_docked = toolbox.isDocked()
+			self._toolbox_dockname = toolbox.dockareaname
 			toolbox.hide()
 			self._action_show_toolbox.setChecked(False)
 		else:
-			tx = toolbox.x
-			ty = toolbox.y
-			toolbox.show()
-			toolbox.x = tx
-			toolbox.y = ty
+			if not self._toolbox_docked:
+				tx = toolbox.x
+				ty = toolbox.y
+				toolbox.show()
+				toolbox.x = tx
+				toolbox.y = ty
+			else:
+				toolbox.setDocked(True)
+				self.dockWidgetTo(toolbox, self._toolbox_dockname)
+				
 			self._action_show_toolbox.setChecked(True)
-		toolbox.adaptLayout()
+		#toolbox.adaptLayout()
 
 	def toggleBlocking(self, sender):
 		if self._mapview is not None:

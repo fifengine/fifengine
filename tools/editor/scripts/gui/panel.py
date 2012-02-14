@@ -23,6 +23,7 @@
 
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.internal import get_manager
 import scripts.editor
 from fife import fife
 from resizablebase import ResizableBase
@@ -46,6 +47,8 @@ class Panel(widgets.Window, ResizableBase):
 		self._titlebarheight = 16
 		
 		self.dockarea = None
+		
+		self.dockareaname = ""
 		
 		self._editor = scripts.editor.getEditor()
 		
@@ -78,6 +81,7 @@ class Panel(widgets.Window, ResizableBase):
 			self._movable = True
 			self.real_widget.setMovable(True)
 			self.resizable = self._resizable
+			self.dockareaname = ""
 			
 			# Since x and y coordinates are reset if the widget gets hidden,
 			# we need to store them
@@ -94,7 +98,7 @@ class Panel(widgets.Window, ResizableBase):
 				widgetParent = self.parent
 				widgetParent.removeChild(self)
 				widgetParent.adaptLayout()
-				self.hide()
+				get_manager().show(self)
 				
 			self.real_widget.setTitleBarHeight(self._titlebarheight)
 			self.show()
