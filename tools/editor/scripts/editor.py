@@ -47,6 +47,7 @@ from fife.extensions.basicapplication import ApplicationBase
 
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+from fife.extensions.pychan.internal import get_manager
 
 from events import *
 from gui import ToolBar, action
@@ -328,7 +329,7 @@ class Editor(ApplicationBase, MainWindow):
 				if not r.isEnabled():
 					r.clearActiveLayers()
 					color = str(self._settings.get("Colors", "Coordinate", "255,255,255"))
-					r.setFont(pychan.manager.hook.guimanager.getDefaultFont())
+					r.setFont(get_manager().getDefaultFont())
 					r.setColor(*[int(c) for c in color.split(',')])
 					for layer in self._mapview.getMap().getLayers():
 						if layer.areInstancesVisible():

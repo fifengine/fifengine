@@ -105,6 +105,18 @@ class Manager(object):
 		self.hook.remove_widget( widget.real_widget )
 		del self.allWidgets[ widget ]
 
+	def getConsole(self):
+		"""
+		Gets a reference to the console
+		"""
+		return self.hook.console
+
+	def getDefaultFont(self):
+		"""
+		Returns the default font
+		"""
+		return self.fonts['default']
+
 	def setDefaultFont(self,name):
 		self.fonts['default'] = self.getFont(name)
 
@@ -125,6 +137,23 @@ class Manager(object):
 			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
 		else:
 			return self.hook.get_font(name)
+
+	def createFont(self, path="", size=0, glyphs=""):
+		"""
+		Creates and returns a GuiFont from the GUI Manager
+		"""
+		return self.hook.create_font(path,size,glyphs)
+
+	def releaseFont(self, font):
+		"""
+		Releases a font from memory.  Expects a guichan.GuiFont. 
+		
+		@todo This needs to be tested.  Also should add a way to release
+		a font by name (fonts.Font).
+		"""
+		if not isinstance(font,guichan.GuiFont):
+			raise InitializationError("PyChan Manager expected a guichan.GuiFont instance, not %s." % repr(font))
+		self.hook.release_font(font)
 
 	def addFont(self,font):
 		"""

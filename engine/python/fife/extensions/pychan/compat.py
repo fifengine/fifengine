@@ -94,6 +94,9 @@ def _munge_engine_hook(engine):
 	hook.translate_mouse_event = guimanager.translateMouseEvent
 	hook.translate_key_event   = guimanager.translateKeyEvent
 	hook.guimanager = guimanager
+	hook.console = guimanager.getConsole()
+	hook.create_font = guimanager.createFont
+	hook.release_font = guimanager.releaseFont
 
 	hook.screen_width  = engine.getRenderBackend().getScreenWidth()
 	hook.screen_height = engine.getRenderBackend().getScreenHeight()
