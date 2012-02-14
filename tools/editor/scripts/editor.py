@@ -177,15 +177,15 @@ class Editor(ApplicationBase, MainWindow):
 		self._window_menu = Menu(name=u"Window")
 		self._help_menu = Menu(name=u"Help")
 		
-		self._action_show_statusbar = Action(u"Statusbar")
+		self._action_show_statusbar = Action(u"Statusbar", checkable=True)
 		self._action_show_statusbar.helptext = u"Toggle statusbar"
 		action.activated.connect(self.toggleStatusbar, sender=self._action_show_statusbar)
 		
-		self._action_show_toolbar = Action(u"Toolbar")
+		self._action_show_toolbar = Action(u"Toolbar", checkable=True)
 		self._action_show_toolbar.helptext = u"Toggle toolbar"
 		action.activated.connect(self.toggleToolbar, sender=self._action_show_toolbar)
 		
-		self._action_show_toolbox = Action(u"Tool box")
+		self._action_show_toolbox = Action(u"Tool box", checkable=True)
 		self._action_show_toolbox.helptext = u"Toggle tool box"
 		action.activated.connect(self.toggleToolbox, sender=self._action_show_toolbox)
 		
@@ -193,7 +193,11 @@ class Editor(ApplicationBase, MainWindow):
 		self._view_menu.addAction(self._action_show_toolbar)
 		self._view_menu.addAction(self._action_show_toolbox)
 		self._view_menu.addSeparator()
-	
+
+		#These 3 are enabled by default therefore should be checked
+		self._action_show_statusbar.setChecked(True)
+		self._action_show_toolbar.setChecked(True)
+		self._action_show_toolbox.setChecked(True)
 	
 		test_action1 = Action(u"Cycle buttonstyles", "gui/icons/cycle_styles.png")
 		test_action1.helptext = u"Cycles button styles. There are currently four button styles."
