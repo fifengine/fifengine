@@ -101,6 +101,7 @@ class Panel(widgets.Window, ResizableBase):
 				get_manager().show(self)
 				
 			self.real_widget.setTitleBarHeight(self._titlebarheight)
+			self.adaptLayout()
 			self.show()
 			
 			# Slighly offset toolbar when undocking
