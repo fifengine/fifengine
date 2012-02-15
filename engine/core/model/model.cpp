@@ -228,8 +228,6 @@ namespace FIFE {
 			if( it !=  nspace->second.end() )
 				return it->second;
 		}
-		FL_WARN(_log, "No object of requested named \"" + id + "\" in namespace \"" + name_space
-		              + "\" found.");
 		return NULL;
 	}
 
@@ -253,7 +251,6 @@ namespace FIFE {
 			}
 		}
 
-		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
 		return NULL;
 	}
 
@@ -268,7 +265,6 @@ namespace FIFE {
 			}
 		}
 		m_last_namespace = 0;
-		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
 		return NULL;
 	}
 
