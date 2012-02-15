@@ -197,12 +197,16 @@ class Container(Widget):
 		return max(widget.height for widget in self.children)
 
 	def deepApply(self,visitorFunc, leaves_first = True):
+		children = []
+		children.extend(self.children)
+		children.extend(self.hidden_children)
+		
 		if leaves_first:
-			for child in self.children:
+			for child in children:
 				child.deepApply(visitorFunc, leaves_first = leaves_first)
 		visitorFunc(self)
 		if not leaves_first:
-			for child in self.children:
+			for child in children:
 				child.deepApply(visitorFunc, leaves_first = leaves_first)
 
 	def beforeShow(self):
