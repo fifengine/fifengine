@@ -310,7 +310,7 @@ class Widget(object):
 		def _show(widget):
 			widget._visible = True
 				
-		self.deepApply(_show)
+		self.deepApply(_show, shown_only=True)
 
 	def hide(self):
 		"""
@@ -330,7 +330,7 @@ class Widget(object):
 		def _hide(widget):
 			widget._visible = False
 				
-		self.deepApply(_hide)
+		self.deepApply(_hide, shown_only=True)
 
 	def isVisible(self):
 		"""
@@ -765,7 +765,7 @@ class Widget(object):
 			widget.expandContent()
 		self.deepApply(_callExpandContent, leaves_first=False)
 
-	def deepApply(self,visitorFunc, leaves_first = True):
+	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		"""
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""

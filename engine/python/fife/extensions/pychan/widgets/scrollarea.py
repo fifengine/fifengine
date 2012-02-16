@@ -103,12 +103,12 @@ class ScrollArea(Widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def deepApply(self,visitorFunc, leaves_first = True):
+	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		if leaves_first:
-			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 		visitorFunc(self)
 		if not leaves_first:
-			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return

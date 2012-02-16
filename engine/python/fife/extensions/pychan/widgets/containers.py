@@ -117,12 +117,34 @@ class Container(Widget):
 		if background_image is not None: self.background_image = background_image
 
 	def addChild(self, widget):
+		"""
+		Adds a child widget to the container.
+		
+		This makes the childs widgets visible state the same as the containers.
+		i.e. if the containter is visible the child will be as well and if the
+		container widget is hidden so will the child.  The child however WILL
+		be shown when you show the container widget.  If you want the child to 
+		be hidden when you show the container widget you must call child.hide().
+		"""
 		widget.parent = self
 		widget._visible = self._visible
 		self.children.append(widget)
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
-
+		
+		#update the states of the child widgets.  This does not actually call
+		#the show() or hide() functions of the widget.
+		if self._visible:
+			def _show(shown_widget):
+				shown_widget._visible = True
+				
+			self.deepApply(_show, shown_only=True)
+		else:
+			def _hide(hidden_widget):
+				hidden_widget._visible = False
+				
+			self.deepApply(_hide)
+		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
 			print "insertChild: Warning: Index overflow.",
@@ -134,7 +156,10 @@ class Container(Widget):
 		
 		children = self.children[0:position]+[widget]+self.children[position:]
 		#assert len(children) == len(self.children) + 1
-		self.removeAllChildren()
+
+		for widget in self.children:
+			self.removeChild(widget)
+		
 		for child in children:
 			self.addChild(child)
 
@@ -144,15 +169,17 @@ class Container(Widget):
 		self.insertChild(widget, self.children.index(before))
 
 	def removeChild(self,widget):
-		if not widget in self.children:
+		if not widget in self.children and not widget in self.hidden_children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
-		self.children.remove(widget)
-		self.children_position_cache.remove(widget)
-		self.real_widget.remove(widget.real_widget)
-		
+
+		if widget in self.children:
+			self.children.remove(widget)
+			self.children_position_cache.remove(widget)
+			self.real_widget.remove(widget.real_widget)
+
 		if widget in self.hidden_children:
 			self.hidden_children.remove(widget)
-			
+
 		widget.parent = None
 
 	def hideChild(self, child):
@@ -167,15 +194,16 @@ class Container(Widget):
 		
 	def showChild(self, child):
 		if not child in self.hidden_children:
-			return
-			
+			raise RuntimeError("%s does not have %s as hidden child widget." % (str(self), str(child)))
+	
 		self.hidden_children.remove(child)
 		
 		children = self.children[:]
 		children_position_cache = self.children_position_cache[:]
 		hidden_children = self.hidden_children[:]
 		
-		self.removeAllChildren()
+		for widget in children:
+			self.removeChild(widget)
 		
 		for child_widget in children_position_cache:
 			if not child_widget in hidden_children:
@@ -196,18 +224,20 @@ class Container(Widget):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def deepApply(self,visitorFunc, leaves_first = True):
-		children = []
-		children.extend(self.children)
-		children.extend(self.hidden_children)
+	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
+		
+		if not shown_only:
+			children = self.children + self.hidden_children
+		else:
+			children = self.children
 		
 		if leaves_first:
 			for child in children:
-				child.deepApply(visitorFunc, leaves_first = leaves_first)
+				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 		visitorFunc(self)
 		if not leaves_first:
 			for child in children:
-				child.deepApply(visitorFunc, leaves_first = leaves_first)
+				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
 	def beforeShow(self):
 		self._resetTiling()
