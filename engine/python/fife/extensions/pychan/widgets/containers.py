@@ -157,8 +157,8 @@ class Container(Widget):
 		children = self.children[0:position]+[widget]+self.children[position:]
 		#assert len(children) == len(self.children) + 1
 
-		for widget in self.children:
-			self.removeChild(widget)
+		for child_to_remove in self.children[:]:
+			self.removeChild(child_to_remove)
 		
 		for child in children:
 			self.addChild(child)
@@ -174,8 +174,10 @@ class Container(Widget):
 
 		if widget in self.children:
 			self.children.remove(widget)
-			self.children_position_cache.remove(widget)
 			self.real_widget.remove(widget.real_widget)
+
+		if widget in self.children_position_cache:
+			self.children_position_cache.remove(widget)
 
 		if widget in self.hidden_children:
 			self.hidden_children.remove(widget)
@@ -201,7 +203,7 @@ class Container(Widget):
 		children = self.children[:]
 		children_position_cache = self.children_position_cache[:]
 		hidden_children = self.hidden_children[:]
-		
+
 		for widget in children:
 			self.removeChild(widget)
 		
@@ -225,7 +227,6 @@ class Container(Widget):
 		return max(widget.height for widget in self.children)
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
-		
 		if not shown_only:
 			children = self.children + self.hidden_children
 		else:
