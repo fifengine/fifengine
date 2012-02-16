@@ -194,7 +194,7 @@ class Container(Widget):
 		
 	def showChild(self, child):
 		if not child in self.hidden_children:
-			raise RuntimeError("%s does not have %s as hidden child widget." % (str(self), str(child)))
+			return
 	
 		self.hidden_children.remove(child)
 		

@@ -753,7 +753,7 @@ class Widget(object):
 		def _callResizeToContent(widget):
 			#print "RTC:",widget
 			widget.resizeToContent()
-		self.deepApply(_callResizeToContent)
+		self.deepApply(_callResizeToContent, shown_only = True)
 
 	def _recursiveExpandContent(self):
 		"""
@@ -763,7 +763,7 @@ class Widget(object):
 		def _callExpandContent(widget):
 			#print "ETC:",widget
 			widget.expandContent()
-		self.deepApply(_callExpandContent, leaves_first=False)
+		self.deepApply(_callExpandContent, leaves_first=False, shown_only = True)
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		"""
