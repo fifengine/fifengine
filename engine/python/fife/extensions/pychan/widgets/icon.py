@@ -84,13 +84,6 @@ class Icon(Widget):
 
 	def _setImage(self,source):
 		self._image = source
-		# This is a bit odd.
-		# ... not sure whether to leave the sizes alone, but that might
-		# break layouts. yikes.
-		self.min_size = self.real_widget.getWidth(),self.real_widget.getHeight()
-		self.max_size = self.min_size
-		self.size  = self.min_size
-		#print self._image, self.min_size, self.max_size
 
 	def _getImage(self):
 		return self._image

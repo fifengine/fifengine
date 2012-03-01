@@ -214,6 +214,43 @@ class ShowHideTest(PyChanExample):
 		self.widget.mapEvents(eventMap)
 		
 		self.widget.show()
+		
+class ModalTest(PyChanExample):
+		def __init__(self):
+			super(ModalTest,self).__init__('data/gui/showhide.xml')
+		
+		def start(self):
+			self.widget = pychan.loadXML(self.xmlFile)
+			
+			self.text1widget = self.widget.findChild(name="text1")
+			self.text2widget = self.widget.findChild(name="text2")
+			self.text3widget = self.widget.findChild(name="text3")
+			self.vbox1widget = self.widget.findChild(name="vbox1")
+			
+			
+			eventMap = {
+				'closeButton':self.stop,
+				'hideText1': self.requestModal,
+				'showText1': self.releaseModal,
+				'hideText2': self.requestMouseModal,
+				'showText2': self.releaseMouseModal,
+			}
+			
+			self.widget.mapEvents(eventMap)
+			
+			self.widget.show()
+			
+		def requestModal(self):
+			self.widget.real_widget.requestModalFocus()
+		
+		def releaseModal(self):
+			self.widget.real_widget.releaseModalFocus()
+			
+		def requestMouseModal(self):
+			self.widget.real_widget.requestModalMouseInputFocus()
+			
+		def releaseMouseModal(self):
+			self.widget.real_widget.releaseModalMouseInputFocus()
 
 class DynamicExample(PyChanExample):
 	def __init__(self):
@@ -645,6 +682,7 @@ class PychanTest(test.Test):
 			'Colortester': ColorExample(),
 			'GuiAnimations' : PocAnimations(),
 			'Show Hide Test' : ShowHideTest(),
+			'Modal Test' : ModalTest(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self._examples.keys())

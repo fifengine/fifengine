@@ -104,7 +104,7 @@ namespace gcn
     void Icon2::draw(Graphics* graphics)
     {
         if ( mImage )
-            graphics->drawImage(mImage, 0, 0);
+            graphics->drawImage(mImage, 0, 0, 0, 0, getWidth(), getHeight());
 
     }
 
