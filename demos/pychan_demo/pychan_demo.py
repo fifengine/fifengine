@@ -175,6 +175,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		from sliders import SliderExample
 		from colortester import ColorExample
 		from poc_gui_animation import PocAnimations
+		from stretching import StretchingExample
 
 		# Our list of examples
 		# We keep a dictionary of these and fill
@@ -188,6 +189,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
 			'Colortester': ColorExample(),
 			'GuiAnimations' : PocAnimations(),
+			'Image Stretching' : StretchingExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())
