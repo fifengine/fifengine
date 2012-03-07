@@ -69,20 +69,7 @@ namespace FIFE {
     }
 
     void MapSaver::save(const Map& map, const std::string& filename) {
-        TiXmlDocument doc(filename);
-
-        if (doc.Error())
-        {
-            // log error and drop out of save
-            std::ostringstream oss;
-            oss << " Failed to open"
-                << filename
-                << " : " << __FILE__ 
-                << " [" << __LINE__ << "]"
-                << std::endl;
-            FL_ERR(_log, oss.str());
-            return;
-        }
+        TiXmlDocument doc;
 
         // add xml declaration
         TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "ascii", "");
@@ -238,5 +225,8 @@ namespace FIFE {
                 mapElement->LinkEndChild(cameraElement);
             }
         }
+
+        // save the map xml file
+        doc.SaveFile(filename);
     }
 }
