@@ -190,7 +190,7 @@ namespace FIFE {
 
 			/** Get a list containing all cameras.
 			*/
-			std::vector<Camera*>& getCameras();
+			const std::vector<Camera*>& getCameras() const;
 
 			void setFilename(const std::string& file) { m_filename = file; }
 			const std::string& getFilename() const { return m_filename; }
