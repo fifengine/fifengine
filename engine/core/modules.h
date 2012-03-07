@@ -42,6 +42,7 @@ enum logmodule_t {
 	LM_CONSOLE,
 	LM_LOADERS,
 	LM_NATIVE_LOADERS,
+    LM_NATIVE_SAVERS,
 	LM_FO_LOADERS,
 	LM_MODEL,
 	LM_STRUCTURES,
@@ -78,6 +79,7 @@ enum logmodule_t {
 		{LM_LOADERS, LM_CORE, "Loaders"}, \
 		  {LM_NATIVE_LOADERS, LM_LOADERS, "Native loaders"}, \
 		  {LM_FO_LOADERS, LM_LOADERS, "Fallout loaders"}, \
+        {LM_NATIVE_SAVERS, LM_CORE, "Native savers"}, \
 		{LM_MODEL, LM_CORE, "Model"}, \
 		  {LM_STRUCTURES, LM_MODEL, "Structures"}, \
 		    {LM_INSTANCE, LM_STRUCTURES, "Instance"}, \

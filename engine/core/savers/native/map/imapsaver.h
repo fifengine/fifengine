@@ -62,7 +62,7 @@ namespace FIFE {
 		/** responsible for saving the map resource
 		 * used to save map files
 		 */
-		virtual void save(const std::string& filename) = 0;
+		virtual void save(const Map& map, const std::string& filename) = 0;
 
 	};
 }

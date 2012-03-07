@@ -253,7 +253,7 @@ namespace FIFE {
 		return NULL;
 	}
 
-	std::vector<Camera*>& Map::getCameras() {
+	const std::vector<Camera*>& Map::getCameras() const {
 		return m_cameras;
 	}
 
