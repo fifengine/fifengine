@@ -118,7 +118,7 @@ class ObjectEdit(plugin.Plugin):
 		self.engine = self._editor.getEngine()
 		
 		self.imageManager = self.engine.getImageManager()
-		
+
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
 	
@@ -260,13 +260,13 @@ class ObjectEdit(plugin.Plugin):
 		if self._anim_data['current'] > 0:
 			self._anim_data['current'] -= 1
 		else:
-			self._anim_data['current'] = self._anim_data['frames']
+			self._anim_data['current'] = self._anim_data['frames']-1
 
 		self.update_gui()
 		
 	def next_anim_frame(self):
 		""" show next anim frame and reset animation frame to 0 if playback looping is active"""
-		if self._anim_data['current'] < self._anim_data['frames']:
+		if self._anim_data['current'] < self._anim_data['frames']-1:
 			self._anim_data['current'] += 1
 		else:
 			self._anim_data['current'] = 0
@@ -280,7 +280,7 @@ class ObjectEdit(plugin.Plugin):
 
 	def anim_end_frame(self):
 		""" set end frame of animation """		
-		self._anim_data['current'] = self._anim_data['frames']
+		self._anim_data['current'] = self._anim_data['frames']-1
 		self.update_gui()
 
 	def update_gui(self):
@@ -307,7 +307,7 @@ class ObjectEdit(plugin.Plugin):
 						self._anim_timer.setPeriod(self._anim_data['obj'].getFrameDuration(self._anim_data['current']))		
 					break
 											
-			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
+			image = self._anim_data['obj'].getFrame(self._anim_data['current'])
 			self.container.findChild(name="animTest").image = image.getName()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
