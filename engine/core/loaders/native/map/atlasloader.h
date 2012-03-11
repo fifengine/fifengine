@@ -111,6 +111,7 @@ namespace FIFE {
 		Model* m_model;
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
+        std::string m_atlasFilename;
 
 		void parseObject(Atlas* atlas, TiXmlElement* root, bool exists);
 	};
