@@ -65,7 +65,7 @@ namespace FIFE {
         /** responsible for saving the map resource
         * used to save map files
         */
-        virtual void save(const Map& map, const std::string& filename);
+        virtual void save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles);
 
     private:
         ObjectSaverPtr m_objectSaver;

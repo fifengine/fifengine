@@ -68,7 +68,7 @@ namespace FIFE {
         m_atlasSaver = atlasSaver;
     }
 
-    void MapSaver::save(const Map& map, const std::string& filename) {
+    void MapSaver::save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles) {
         TiXmlDocument doc;
 
         // add xml declaration
@@ -81,11 +81,20 @@ namespace FIFE {
         mapElement->SetAttribute("format", "1.0");
         doc.LinkEndChild(mapElement);
 
+        for (std::vector<std::string>::const_iterator iter = importFiles.begin(); iter != importFiles.end(); ++iter)
+        {
+            TiXmlElement* importElement = new TiXmlElement("import");
+            importElement->SetAttribute("file", *iter);
+
+            // link to map element
+            mapElement->LinkEndChild(importElement);
+        }
+
         typedef std::list<Layer*> LayerList;
         LayerList layers = map.getLayers();
         for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter)
         {
-            TiXmlElement *layerElement = new TiXmlElement("layer");
+            TiXmlElement* layerElement = new TiXmlElement("layer");
             CellGrid* grid = (*iter)->getCellGrid();
             layerElement->SetAttribute("id", (*iter)->getId());
             layerElement->SetDoubleAttribute("x_offset", grid->getXShift());
@@ -130,6 +139,7 @@ namespace FIFE {
             TiXmlElement* instancesElement = new TiXmlElement("instances");
             layerElement->LinkEndChild(instancesElement);
 
+            std::string currentNamespace = "";
             typedef std::vector<Instance*> InstancesContainer;
             InstancesContainer instances = (*iter)->getInstances();
             for (InstancesContainer::iterator iter = instances.begin(); iter != instances.end(); ++iter)
@@ -138,9 +148,12 @@ namespace FIFE {
                 TiXmlElement* instanceElement = new TiXmlElement("i");
 
                 Object* obj = (*iter)->getObject();
-                if (!obj->getNamespace().empty())
+                if (!obj->getNamespace().empty() && currentNamespace != obj->getNamespace())
                 {
                     instanceElement->SetAttribute("ns", obj->getNamespace());
+                    
+                    // update current namespace
+                    currentNamespace = obj->getNamespace();
                 }
 
                 if (!(*iter)->getId().empty())
