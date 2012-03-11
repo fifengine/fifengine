@@ -35,7 +35,7 @@ from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 from fife.extensions.fife_settings import Setting
 
 TDS = Setting(app_name="editor")
-
+		
 class MapController(object):
 	""" MapController provides an interface for editing maps """
 	def __init__(self, map):
@@ -59,6 +59,8 @@ class MapController(object):
 		self._settings = TDS
 		
 		self.overwriteInstances = True # Remove instances on cell before placing new instance
+		
+		self.importList	= {} # used to keep track of current imports needed by the map
 		
 		if map is not None:
 			self.setMap(map.getId())
@@ -93,6 +95,14 @@ class MapController(object):
 				self._camera = cam
 				break
 
+		# remove imports from previous map
+		self.importList.clear()
+		
+		# keep track of imports that were loaded with the map
+		for layer in self._map.getLayers():
+			for i in layer.getInstances():
+				self.incrementReferenceCountForObject(i.getObject())
+				
 		self._layer = self._map.getLayers()[0]
 		
 		gridrenderer = fife.GridRenderer.getInstance(self._camera)
@@ -289,6 +299,9 @@ class MapController(object):
 			inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
 		
+		# update reference count in import list for object
+		self.incrementReferenceCountForObject(object)
+		
 		if not self._undo:
 			redocall = cbwa(self.placeInstance, position, object, inst.getLocation().getLayer())
 			undocall = cbwa(self.removeInstanceOfObjectAt, position, object, inst.getLocation().getLayer())
@@ -326,6 +339,8 @@ class MapController(object):
 				layer.deleteInstance(i)
 			else:
 				self._layer.deleteInstance(i)
+							
+			self.decrementReferenceCountForObject(i.getObject())
 
 	def moveInstances(self, instances, moveBy, exact=False, origLoc=None, origFacing=None):
 		""" Moves provided instances by moveBy. If exact is false, the instances are
@@ -442,3 +457,21 @@ class MapController(object):
 		mapCoords.z = self._layer.getCellGrid().getZShift()
 
 		return mapCoords
+	
+	def incrementReferenceCountForObject(self, object):
+		""" updates the import count for the object passed in """
+		objFilename = object.getFilename()
+		if objFilename not in self.importList.keys():
+			self.importList[objFilename] = 1
+		else:
+			self.importList[objFilename] += 1
+		
+	def decrementReferenceCountForObject(self, object):
+		""" decrements the reference count for the object passed in
+		and removes the object from the import list if the reference count hits 0 """
+		objFilename = object.getFilename()
+		if objFilename in self.importList.keys():
+			self.importList[objFilename] -= 1
+			if self.importList[objFilename] == 0:
+				del self.importList[objFilename]
+		

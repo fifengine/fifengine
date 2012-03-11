@@ -23,7 +23,7 @@
 
 from fife import fife
 import editor
-from fife.extensions import loaders, savers
+from fife.extensions.serializers.xml_loader_tools import root_subfile
 from events import events
 from mapcontroller import MapController
 
@@ -50,10 +50,6 @@ class MapView:
 			layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
 			
 		events.onLayerCreate.connect(self._layerCreated)
-
-		self.importlist = []
-		if hasattr(map, "importDirs"):
-			self.importlist.extend(map.importDirs)
 			
 	def _cleanUp(self):
 		events.onLayerCreate.disconnect(self._layerCreated)
@@ -126,8 +122,12 @@ class MapView:
 			print "Map has no filename yet, can't save."
 			return
 
+		# create final import list
+		importList = [root_subfile(curname, i) for i in self._controller.importList.keys()]
+
 		events.preSave.send(sender=self, mapview=self)
-		savers.saveMapFile(curname, self._editor.getEngine(), self._map, importList=self.importlist)
+		mapSaver = fife.MapSaver();
+		mapSaver.save(self._map, curname, importList);
 		events.postSave.send(sender=self, mapview=self)
 		
 	def saveAs(self, filename):
@@ -135,8 +135,13 @@ class MapView:
 		
 		Emits preSave and postSave signals.
 		"""
+		
+		#create final import list
+		importList = [root_subfile(str(filename), i) for i in self._controller.importList.keys()]
+		
 		events.preSave.send(sender=self, mapview=self)
-		savers.saveMapFile(str(filename), self._editor.getEngine(), self._map, importList=self.importlist)
+		mapSaver = fife.MapSaver();	
+		mapSaver.save(self._map, str(filename), importList);
 		events.postSave.send(sender=self, mapview=self)
 		
 	def close(self):
