@@ -129,7 +129,7 @@ namespace FIFE {
 	AtlasPtr AtlasLoader::load(const std::string& filename) {
 		bfs::path atlasPath(filename);
 		bfs::path atlasPathDirectory;
-		std::string atlasFilename = atlasPath.string();
+		m_atlasFilename = atlasPath.string();
 
 		if (HasParentPath(atlasPath)) {
 			// save the directory where the atlas file is located
@@ -140,7 +140,7 @@ namespace FIFE {
 		AtlasPtr atlas;
 
 		try {
-			RawData* data = m_vfs->open(atlasFilename);
+			RawData* data = m_vfs->open(m_atlasFilename);
 
 			if (data) {
 				if (data->getDataLength() != 0) {
@@ -322,7 +322,8 @@ namespace FIFE {
 		}
 
 		if (obj) {
-			obj->setFilename(atlas->getName());
+			//obj->setFilename(atlas->getName());
+            obj->setFilename(m_atlasFilename);
 			ObjectVisual::create(obj);
 
 			int isBlocking = 0;
