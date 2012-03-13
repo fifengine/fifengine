@@ -143,15 +143,18 @@ namespace FIFE {
 		m_zoomed(zoomed) {
 	}
 	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t width = m_image->getWidth();
-			uint32_t height = m_image->getHeight();
-			if (m_zoomed) {
+			uint32_t width, height;
+			if(m_zoomed) {
 				width = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
 				height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+			}
+			else {
+				width = m_image->getWidth();
+				height = m_image->getHeight();
 			}
 			r.x = p.x-width/2;
 			r.y = p.y-height/2;
@@ -172,17 +175,19 @@ namespace FIFE {
 		m_zoomed(zoomed) {
 	}
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
 		if(m_anchor.getLayer() == layer) {
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
 			ImagePtr img = m_animation->getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t width = img->getWidth();
-			uint32_t height = img->getHeight();
-			if (m_zoomed) {
+			uint32_t width, height;
+			if(m_zoomed) {
 				width = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
 				height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			} else {
+				width = img->getWidth();
+				height = img->getHeight();
 			}
 			r.x = p.x-width/2;
 			r.y = p.y-height/2;
@@ -228,15 +233,17 @@ namespace FIFE {
 		m_zoomed(zoomed) {
 	}
 	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			uint32_t width = m_width;
-			uint32_t height = m_height;
-			if (m_zoomed) {
-				uint32_t width = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-				uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+			uint32_t width, height;
+			if(m_zoomed) {
+				width = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+				height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+			} else {
+				width = m_width;
+				height = m_height;
 			}
 			r.x = p.x-width/2;
 			r.y = p.y-height/2;

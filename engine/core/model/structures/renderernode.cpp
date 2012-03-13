@@ -287,7 +287,7 @@ namespace FIFE {
 		m_listener = new NodeInstanceDeleteListener(this);
 	}
 
-	Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer) {
+	Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, const bool zoomed) {
 		ScreenPoint p;
 		if(m_instance != NULL) {
 			if(m_layer == NULL) {
@@ -308,6 +308,11 @@ namespace FIFE {
 			FL_WARN(_log, LMsg("RendererNode::getCalculatedPoint(Camera, Layer) - ") << "No layer attached. So we use the first active layer of the renderer.");
 			setAttached(layer);
 		}
-		return Point(m_point.x + p.x, m_point.y + p.y);
+		if(zoomed) {
+			return Point(round(m_point.x * cam->getZoom()) + p.x, round(m_point.y * cam->getZoom()) + p.y);
+		} else {
+			return Point(m_point.x + p.x, m_point.y + p.y);
+		}
+
 	}
 }
