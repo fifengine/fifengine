@@ -84,6 +84,26 @@ namespace FIFE {
         #endif
     }
 
+    std::string GetFilenameFromPath(const bfs::path& path) {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            // boost version 1.46 and above uses
+            // boost filesystem version 3 as the default
+            // which has yet a different way of getting
+            // a filename string
+            return path.filename().string();
+        #elif defined(USE_NON_DEPRECATED_BOOST_FILESYSTEM_V2)
+            // the new way in boost filesystem version 2
+            // to get a filename string
+            //(this is for boost version 1.36 and above)
+            return path.filename();
+        #else
+            // the old way in boost filesystem version 2
+            // to get a filename string 
+            //(this is for boost version 1.35 and below)
+            return path.leaf();
+        #endif
+    }
+
     std::string GetFilenameFromDirectoryIterator(const bfs::directory_iterator& iter) {
         bfs::directory_iterator badIter;
 
@@ -108,6 +128,52 @@ namespace FIFE {
             // to get a filename string 
             //(this is for boost version 1.35 and below)
             return iter->leaf();
+        #endif
+    }
+
+    bfs::path GetAbsolutePath(const std::string& path) {
+        return GetAbsolutePath(bfs::path(path));
+    }
+
+    bfs::path GetAbsolutePath(const bfs::path& path) {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            return bfs::absolute(path);
+        #else
+            return bfs::complete(path);
+        #endif
+    }
+
+    bool HasExtension(const std::string& path) {
+        return HasExtension(bfs::path(path));
+    }
+
+    bool HasExtension(const bfs::path& path) {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            // not sure this gives the same results as below
+            // because the "." will be included in the extension
+            // meaning that this may return true for a path that
+            // is simply has an empty extension
+            // see link for more information:
+            // http://www.boost.org/doc/libs/1_49_0/libs/filesystem/v3/doc/reference.html#path-extension
+            //return path.has_extension();
+            
+            // instead we will get the extension ourselves 
+            // and do the same check as below
+            std::string extension = path.extension().string();
+            if (extension.empty() || extension == ".") {
+                return false;
+            }
+            else {
+                return true;
+            }
+        #else
+            std::string extension = bfs::extension(path);
+            if (extension.empty() || extension == ".") {
+                return false;
+            }
+            else {
+                return true;
+            }
         #endif
     }
 }

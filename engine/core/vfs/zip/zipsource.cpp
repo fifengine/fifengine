@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
+#include "vfs/fife_boost_filesystem.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 
@@ -46,7 +47,7 @@ namespace FIFE {
 
 	static Logger _log(LM_LOADERS);
 
-	ZipSource::ZipSource(VFS* vfs, const std::string& zip_file) : VFSSource(vfs),  m_zipfile(vfs->open(zip_file)) {
+    ZipSource::ZipSource(VFS* vfs, const std::string& zip_file) : VFSSource(vfs), m_zipfile(vfs->open(zip_file)) {
 		readIndex();
 	}
 
@@ -54,12 +55,12 @@ namespace FIFE {
 		delete m_zipfile;
 	}
 
-	bool ZipSource::fileExists(const std::string& file) const {
-		return m_files.find(file) != m_files.end();
+    bool ZipSource::fileExists(const std::string& file) const {
+        return (GetFile(file) != m_files.end());
 	}
 
 	RawData* ZipSource::open(const std::string& path) const {
-		type_files::const_iterator i = m_files.find(path);
+        type_files::const_iterator i = GetFile(path);
 		assert(i != m_files.end());
 		const s_data& info = i->second;
 
@@ -144,6 +145,7 @@ namespace FIFE {
 		}
 
 		std::string filename = m_zipfile->readString(fnamelen);
+
 		m_zipfile->moveIndex(extralen);
 		uint32_t offset = m_zipfile->getCurrentIndex();
 		FL_DBG(_log, LMsg("found file: ") << filename << " (" << compsize << "/" << realsize << ") on offset " << offset);
@@ -225,4 +227,31 @@ namespace FIFE {
 
 		return result;
 	}
+
+    ZipSource::type_files::const_iterator ZipSource::GetFile(const std::string& filename) const {
+        // This function searches the zip archive for a file that has a path/filename
+        // combination contained in the filename parameter that is passed in.
+        // This means that the filename parameter passed in can contain any amount of extra
+        // path information and this function should still work correctly.
+        // One key thing this function does to avoid matching incorrect files is
+        // that it skips over any directories (paths without an extension) contained 
+        // in the zip archive as these would be a false-positive match for a filename.
+        std::string zipFilecompatibleFilename = bfs::path(filename).string();
+        for (type_files::const_iterator iter = m_files.begin(); iter != m_files.end(); ++iter)
+        {
+            bfs::path zipFilepath = bfs::path(iter->first);
+            std::string zipFilename = bfs::path(iter->first).string();
+            // look for the zip file name/path within the passed in file name
+            // only do the comparison if the iterator is pointing to a file and
+            // not a directory
+            if (HasExtension(zipFilepath) && 
+                zipFilecompatibleFilename.find(zipFilename) != std::string::npos)
+            {
+                return iter;
+            }
+        }
+
+        return m_files.end();
+    }
+
 }

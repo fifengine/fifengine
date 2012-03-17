@@ -50,11 +50,42 @@ namespace FIFE {
     */
     bfs::path GetParentPath(const bfs::path& path);
 
+    /** Helper function to retrieve the filename from a boost filesystem path
+    *   filename is just the name of the file and any extension without a path
+    * @param boost filesystem path object
+    * @return filename string
+    */
+    std::string GetFilenameFromPath(const bfs::path& path);
+
     /** Helper function to retrieve a filename string from a directory iterator
     * @param boost filesystem directory_iterator object
     * @return a filename string
     */
     std::string GetFilenameFromDirectoryIterator(const bfs::directory_iterator& iter);
+
+    /** Helper function to retrieve an absolute path from a given relative path
+    * @param std::string object
+    * @return a boost filesystem path object
+    */
+    bfs::path GetAbsolutePath(const std::string& path);
+
+    /** Helper function to retrieve an absolute path from a given relative path
+    * @param boost filesystem path object
+    * @return a boost filesystem path object
+    */
+    bfs::path GetAbsolutePath(const bfs::path& path);
+
+    /** Helper function to check if a filename has an extension
+    * @param boost filesystem path object
+    * @return true if filename has extension, false if not
+    */
+    bool HasExtension(const std::string& path);
+
+    /** Helper function to check if a filename has an extension
+     * @param boost filesystem path object
+     * @return true if filename has extension, false if not
+     */
+    bool HasExtension(const bfs::path& path);
 }
 
 #endif
