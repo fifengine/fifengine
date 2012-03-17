@@ -72,6 +72,16 @@ namespace FIFE {
 
 			void readIndex();
 			bool readFileToIndex();
+
+            /** this function is responsible for matching a filename in the zip
+             * zip archive with a requested filename to be opened. The logic of
+             * this function is a little tricky and is explained further in the
+             * implementation file.
+             * @param filename The filename to search for
+             * return The iterator in the files container for the found file
+             *        or an invalid iterator (container.end()) if not found
+             */
+            type_files::const_iterator GetFile(const std::string& filename) const;
 	};
 
 } //FIFE

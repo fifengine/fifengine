@@ -555,8 +555,10 @@ namespace FIFE {
             // load all xml files in the directory
             std::set<std::string>::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
-                // TODO - vtchill - may need a way to allow clients to load things other than .xml files
-                if (bfs::extension(*iter) == ".xml") {
+                // TODO - vtchill - may need a way to allow clients to load things other 
+                // than .xml and .zip files
+                std::string ext = bfs::extension(*iter);
+                if (ext == ".xml" || ext == ".zip") {
                     loadImportFile(*iter, importDirectoryString);
                 }	
             }
