@@ -36,52 +36,35 @@
 #include "util/base/fife_stdint.h"
 #include "vfs/vfssource.h"
 
+#include "ziptree.h"
+
 namespace FIFE {
 	/**  Implements a Zip archive file source.
 	 *
 	 * @see FIFE::VFSSource
 	 */
 	class ZipSource : public VFSSource {
-		public:
-			ZipSource(VFS* vfs, const std::string& zip_file);
-			~ZipSource();
+    public:
+        ZipSource(VFS* vfs, const std::string& zip_file);
+        ~ZipSource();
 
-			/// WARNING: fileExists, listFiles and listDirectories are not
-			// thread-safe, and will probably break if called from multiple
-			// threads at the same time.
-			bool fileExists(const std::string& file) const;
-			std::set<std::string> listFiles(const std::string& path) const;
-			std::set<std::string> listDirectories(const std::string& path) const;
+        /// WARNING: fileExists, listFiles and listDirectories are not
+        // thread-safe, and will probably break if called from multiple
+        // threads at the same time.
+        bool fileExists(const std::string& file) const;
+        std::set<std::string> listFiles(const std::string& path) const;
+        std::set<std::string> listDirectories(const std::string& path) const;
 
-			virtual RawData* open(const std::string& path) const;
+        virtual RawData* open(const std::string& path) const;
 
-		private:
-			struct s_data {
-					uint16_t comp;
-					uint32_t crc32;
-					std::string path;
-					uint32_t size_comp;
-					uint32_t size_real;
-					uint32_t offset;
-				};
+    private:
+        void readIndex();
+        bool readFileToIndex();
 
-			typedef std::map<std::string, s_data> type_files;
+    private:
+        ZipTree m_zipTree;
+		RawData* m_zipfile;
 
-			RawData* m_zipfile;
-			type_files m_files;
-
-			void readIndex();
-			bool readFileToIndex();
-
-            /** this function is responsible for matching a filename in the zip
-             * zip archive with a requested filename to be opened. The logic of
-             * this function is a little tricky and is explained further in the
-             * implementation file.
-             * @param filename The filename to search for
-             * return The iterator in the files container for the found file
-             *        or an invalid iterator (container.end()) if not found
-             */
-            type_files::const_iterator GetFile(const std::string& filename) const;
 	};
 
 } //FIFE

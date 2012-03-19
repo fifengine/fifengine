@@ -86,6 +86,34 @@ namespace FIFE {
      * @return true if filename has extension, false if not
      */
     bool HasExtension(const bfs::path& path);
+
+    /** Helper function to retrieve the extension
+     *  @note the extension includes the "."
+     *  @param path the input path string
+     *  @return the extension on the input path
+     */
+    std::string GetExtension(const std::string& path);
+
+    /** Helper function to retrieve the extension
+    *  @note the extension includes the "."
+    *  @param path the input path object
+    *  @return the extension on the input path
+    */
+    std::string GetExtension(const bfs::path& path);
+
+    /** Helper function to retrieve the filename minus any extension
+     *  @note the "." is NOT included
+     *  @param path the input path string
+     *  @return the filename minus any extension
+     */
+    std::string GetStem(const std::string& path);
+
+    /** Helper function to retrieve the filename minus any extension
+    *  @note the "." is NOT included
+    *  @param path the input path object
+    *  @return the filename minus any extension
+    */
+    std::string GetStem(const bfs::path& path);
 }
 
 #endif

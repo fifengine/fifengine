@@ -148,7 +148,6 @@ namespace FIFE {
     }
 
     bool HasExtension(const bfs::path& path) {
-        #if defined(USE_BOOST_FILESYSTEM_V3)
             // not sure this gives the same results as below
             // because the "." will be included in the extension
             // meaning that this may return true for a path that
@@ -157,22 +156,47 @@ namespace FIFE {
             // http://www.boost.org/doc/libs/1_49_0/libs/filesystem/v3/doc/reference.html#path-extension
             //return path.has_extension();
             
-            // instead we will get the extension ourselves 
-            // and do the same check as below
-            std::string extension = path.extension().string();
+            std::string extension = GetExtension(path);
             if (extension.empty() || extension == ".") {
                 return false;
             }
             else {
                 return true;
+            }
+    }
+
+    std::string GetExtension(const std::string& path) {
+        return GetExtension(bfs::path(path));
+    }
+
+    std::string GetExtension(const bfs::path& path) {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            return path.extension().string();
+        #else
+            return bfs::extension(path);
+        #endif
+    }
+
+    std::string GetStem(const std::string& path){
+        return GetStem(bfs::path(path));
+    }
+
+    std::string GetStem(const bfs::path& path) {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            if (!HasExtension(path)) {
+                // if no extension return empty string
+                return "";
+            }
+            else {
+                return path.stem().string();
             }
         #else
-            std::string extension = bfs::extension(path);
-            if (extension.empty() || extension == ".") {
-                return false;
+            if (!HasExtension(path)) {
+                // if no extension, return empty string
+                return "";
             }
             else {
-                return true;
+                return path.stem();
             }
         #endif
     }
