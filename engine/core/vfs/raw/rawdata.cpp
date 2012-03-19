@@ -126,19 +126,13 @@ namespace FIFE {
 	}
 
 	std::string RawData::readString(size_t len) {
-        // create output string
-        std::string ret;
+        std::vector<uint8_t> strVector;
+        strVector.resize(len);
+        readInto(&strVector[0], len);
 
-        // resize to len + 1 for the null terminator
-        ret.resize(len+1);
+        std::string ret(strVector.begin(), strVector.end());
 
-        // read directly into string
-		readInto(reinterpret_cast<uint8_t*>(&ret[0]), len);
-
-        // add null terminator
-		ret[len] = '\0';
-
-		return ret;
+        return ret;
 	}
 
 	void RawData::read(std::string& outbuffer, int32_t size) {

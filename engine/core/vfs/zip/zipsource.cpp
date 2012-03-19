@@ -38,6 +38,7 @@
 
 #include "zipsource.h"
 #include "zipfilesource.h"
+#include "zipnode.h"
 
 namespace FIFE {
 
@@ -56,63 +57,70 @@ namespace FIFE {
 	}
 
     bool ZipSource::fileExists(const std::string& file) const {
-        return (GetFile(file) != m_files.end());
+        bfs::path path(file);
+        return (m_zipTree.getNode(path.string()) != 0);
 	}
 
 	RawData* ZipSource::open(const std::string& path) const {
-        type_files::const_iterator i = GetFile(path);
-		assert(i != m_files.end());
-		const s_data& info = i->second;
+        bfs::path filePath(path);
+        ZipNode* node = m_zipTree.getNode(filePath.string());
 
-		m_zipfile->setIndex(info.offset);
-		uint8_t* data = new uint8_t[info.size_real]; // beware of me - one day i WILL cause memory leaks
-		if (info.comp == 8) { // compressed using deflate
-			FL_DBG(_log, LMsg("trying to uncompress file ") <<  path << " (compressed with method " << info.comp << ")");
-			boost::scoped_array<uint8_t> compdata(new uint8_t[info.size_comp]);
-			m_zipfile->readInto(compdata.get(), info.size_comp);
+        assert(node != 0);
 
-			z_stream zstream;
-			zstream.next_in = compdata.get();
-			zstream.avail_in = info.size_comp;
-			zstream.zalloc = Z_NULL;
-			zstream.zfree = Z_NULL;
-			zstream.opaque = Z_NULL;
-			zstream.next_out = data;
-			zstream.avail_out = info.size_real;
+        if (node) {
+            const ZipEntryData& entryData = node->getZipEntryData();
 
-			if (inflateInit2(&zstream, -15) != Z_OK) {
-				FL_ERR(_log, LMsg("inflateInit2 failed"));
-				delete[] data;
-				return 0;
-			}
+		    m_zipfile->setIndex(entryData.offset);
+		    uint8_t* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
+		    if (entryData.comp == 8) { // compressed using deflate
+			    FL_DBG(_log, LMsg("trying to uncompress file ") <<  path << " (compressed with method " << entryData.comp << ")");
+			    boost::scoped_array<uint8_t> compdata(new uint8_t[entryData.size_comp]);
+			    m_zipfile->readInto(compdata.get(), entryData.size_comp);
 
-			int32_t err = inflate(&zstream, Z_FINISH);
-			if (err != Z_STREAM_END) {
-				if (zstream.msg) {
-					FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
-				} else {
-					FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
-				}
+			    z_stream zstream;
+			    zstream.next_in = compdata.get();
+			    zstream.avail_in = entryData.size_comp;
+			    zstream.zalloc = Z_NULL;
+			    zstream.zfree = Z_NULL;
+			    zstream.opaque = Z_NULL;
+			    zstream.next_out = data;
+			    zstream.avail_out = entryData.size_real;
 
-				inflateEnd(&zstream);
-				delete[] data;
-				return 0;
-			}
+			    if (inflateInit2(&zstream, -15) != Z_OK) {
+				    FL_ERR(_log, LMsg("inflateInit2 failed"));
+				    delete[] data;
+				    return 0;
+			    }
 
-			inflateEnd(&zstream);
-		} else if (info.comp == 0) { // uncompressed
-			m_zipfile->readInto(data, info.size_real);
-		} else {
-			FL_ERR(_log, LMsg("unsupported compression"));
-			return 0;
-		}
+			    int32_t err = inflate(&zstream, Z_FINISH);
+			    if (err != Z_STREAM_END) {
+				    if (zstream.msg) {
+					    FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
+				    } else {
+					    FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
+				    }
 
-		return new RawData(new ZipFileSource(data, info.size_real));
+				    inflateEnd(&zstream);
+				    delete[] data;
+				    return 0;
+			    }
+
+			    inflateEnd(&zstream);
+		    } else if (entryData.comp == 0) { // uncompressed
+			    m_zipfile->readInto(data, entryData.size_real);
+		    } else {
+			    FL_ERR(_log, LMsg("unsupported compression"));
+			    return 0;
+		    }
+
+		    return new RawData(new ZipFileSource(data, entryData.size_real));
+        }
+
+        return 0;
 	}
 
 	void ZipSource::readIndex() {
 		m_zipfile->setIndex(0);
-		m_files.clear();
 
 		while (!readFileToIndex()) {}
 	}
@@ -144,11 +152,11 @@ namespace FIFE {
 			return true;
 		}
 
-		std::string filename = m_zipfile->readString(fnamelen);
+        bfs::path filePath = bfs::path(m_zipfile->readString(fnamelen));
 
 		m_zipfile->moveIndex(extralen);
 		uint32_t offset = m_zipfile->getCurrentIndex();
-		FL_DBG(_log, LMsg("found file: ") << filename << " (" << compsize << "/" << realsize << ") on offset " << offset);
+		FL_DBG(_log, LMsg("found file: ") << filePath.string() << " (" << compsize << "/" << realsize << ") on offset " << offset);
 
 		m_zipfile->moveIndex(compsize);
 		if (gflags & (0x01 << 3)) {
@@ -158,44 +166,40 @@ namespace FIFE {
 		}
 
 		if (lmodtime || lmoddate) {} // shut up the compiler (warnings of unused variables)
-
-		s_data data;
+		
+        ZipEntryData data;
 		data.comp = comp;
 		data.size_real = realsize;
 		data.size_comp = compsize;
 		data.offset = offset;
-		data.path = filename;
 		data.crc32 = crc;
 
-		m_files[filename] = data;
+        std::string filename = filePath.string();
+        ZipNode* node = m_zipTree.addNode(filename);
+
+        if (node) {
+            // store the zip entry information in the node
+            node->setZipEntryData(data);
+        }
+
 		return false;
 	}
 
 
-	// FIXME: quick&very dirty..
 	std::set<std::string> ZipSource::listFiles(const std::string& path) const {
 		std::set<std::string> result;
 
-		std::string fixedPath = fixPath(path);
-		int32_t path_len = path.length();
-		if (fixedPath[path_len - 1] != '/') {
-			fixedPath += '/';
-			path_len++;
-		}
+        bfs::path fixedPath(path);
 
-		type_files::const_iterator end = m_files.end();
-		for (type_files::const_iterator i = m_files.begin(); i != end; ++i) {
-			std::string name = i->first;
-			int32_t len = name.length();
-			if (len && name.find(fixedPath) == 0 && name[len - 1] != '/') {
-				name = name.substr(path_len);
-				size_t pos = name.find("/");
-				if (pos != std::string::npos)
-					continue;
-
-				result.insert(name);
-			}
-		}
+        ZipNode* node = m_zipTree.getNode(fixedPath.string());
+        
+        if (node) {
+            ZipNodeContainer files = node->getChildren(ZipContentType::File);
+            ZipNodeContainer::iterator iter;
+            for (iter = files.begin(); iter != files.end(); ++iter) {
+                result.insert((*iter)->getFullName());
+            }
+        }
 
 		return result;
 	}
@@ -204,54 +208,18 @@ namespace FIFE {
 	std::set<std::string> ZipSource::listDirectories(const std::string& path) const {
 		std::set<std::string> result;
 
-		std::string fixedPath = fixPath(path);
-		int32_t path_len = path.length();
-		if (fixedPath[path_len - 1] != '/') {
-			fixedPath += '/';
-			path_len++;
-		}
+        bfs::path fixedPath(path);
 
-		type_files::const_iterator end = m_files.end();
-		for (type_files::const_iterator i = m_files.begin(); i != end; ++i) {
-			std::string name = i->first;
-			int32_t len = name.length();
-			if (len && name.find(fixedPath) == 0 && name[len - 1] == '/' && len > path_len) {
-				name = name.substr(path_len);
-				size_t pos = name.find("/");
-				if (pos != std::string::npos) {
-					name = name.substr(0, pos);
-				}
-				result.insert(name);
-			}
-		}
+        ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
-		return result;
-	}
-
-    ZipSource::type_files::const_iterator ZipSource::GetFile(const std::string& filename) const {
-        // This function searches the zip archive for a file that has a path/filename
-        // combination contained in the filename parameter that is passed in.
-        // This means that the filename parameter passed in can contain any amount of extra
-        // path information and this function should still work correctly.
-        // One key thing this function does to avoid matching incorrect files is
-        // that it skips over any directories (paths without an extension) contained 
-        // in the zip archive as these would be a false-positive match for a filename.
-        std::string zipFilecompatibleFilename = bfs::path(filename).string();
-        for (type_files::const_iterator iter = m_files.begin(); iter != m_files.end(); ++iter)
-        {
-            bfs::path zipFilepath = bfs::path(iter->first);
-            std::string zipFilename = bfs::path(iter->first).string();
-            // look for the zip file name/path within the passed in file name
-            // only do the comparison if the iterator is pointing to a file and
-            // not a directory
-            if (HasExtension(zipFilepath) && 
-                zipFilecompatibleFilename.find(zipFilename) != std::string::npos)
-            {
-                return iter;
+        if (node) {
+            ZipNodeContainer files = node->getChildren(ZipContentType::Directory);
+            ZipNodeContainer::iterator iter;
+            for (iter = files.begin(); iter != files.end(); ++iter) {
+                result.insert((*iter)->getFullName());
             }
         }
 
-        return m_files.end();
-    }
-
+		return result;
+	}
 }
