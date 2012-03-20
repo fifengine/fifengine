@@ -63,6 +63,12 @@ namespace FIFE {
     */
     std::string GetFilenameFromDirectoryIterator(const bfs::directory_iterator& iter);
 
+    /** Helper function to retrieve the path iterator in a string representation
+     *  @param pathIter the iterator to get the string from
+     *  @return a string representing the value in the path iterator
+     */
+    std::string GetPathIteratorAsString(const bfs::path::iterator& pathIter);
+
     /** Helper function to retrieve an absolute path from a given relative path
     * @param std::string object
     * @return a boost filesystem path object

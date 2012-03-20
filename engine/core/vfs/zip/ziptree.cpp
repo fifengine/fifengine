@@ -62,12 +62,13 @@ namespace FIFE {
         ZipNode* tempNode = 0;
         ZipNode* returnNode = 0;
         for (bfs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
-            tempNode = node->getChild(*iter);
+            std::string pathString = GetPathIteratorAsString(iter);
+            tempNode = node->getChild(pathString);
 
             if (!tempNode) {
                 // attempt to add the child since it was not found
                 // and reset the node to the new child node
-                node = node->addChild(*iter);
+                node = node->addChild(pathString);
             }
             else {
                 // node found so reset node
@@ -93,9 +94,11 @@ namespace FIFE {
         ZipNode* returnNode = 0;
         ZipNode* tempNode = 0;
         ZipNode* node = m_rootNode;
-        for (bfs::path::iterator pathIter = filePath.begin(); pathIter != filePath.end(); ++pathIter) {
+        for (bfs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
+            std::string pathString = GetPathIteratorAsString(iter);
+
             // look for the path name in the child nodes
-            tempNode = node->getChild(*pathIter);
+            tempNode = node->getChild(pathString);
 
             if (tempNode) {
                 node = tempNode;
@@ -104,17 +107,12 @@ namespace FIFE {
                 // to the newly found node
                 returnNode = node;
             }
-//             else {
-//                 // node not found, return NULL
-//                 return 0;
-//             }
         }
 
         return returnNode;
     }
 
-    ZipNode* ZipTree::getRootNode() const
-    {
+    ZipNode* ZipTree::getRootNode() const {
         return m_rootNode;
     }
 }

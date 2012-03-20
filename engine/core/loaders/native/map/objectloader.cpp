@@ -118,7 +118,7 @@ namespace FIFE {
                 return false;
             }
         }
-        catch (NotFound& e) {
+        catch (NotFound&) {
             std::ostringstream oss;
             oss << " Failed to load"
                 << objectPath.string()
@@ -167,7 +167,7 @@ namespace FIFE {
                 data = 0;
             }
         }
-        catch (NotFound& e) {
+        catch (NotFound&) {
             std::ostringstream oss;
             oss << " Failed to load"
                 << objectPath.string()

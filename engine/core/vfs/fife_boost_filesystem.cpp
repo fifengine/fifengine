@@ -131,6 +131,22 @@ namespace FIFE {
         #endif
     }
 
+    std::string GetPathIteratorAsString(const bfs::path::iterator& pathIter)
+    {
+        #if defined(USE_BOOST_FILESYSTEM_V3)
+            // in boost::filesystem v3 the path iterator is now
+            // represented by a path object internally so we
+            // must now additionally call the .string() method
+            // to get an std::string representation
+            return (*pathIter).string();
+        #else
+            // in boost::filesystem v2 the path iterator 
+            // holds the string representation so we can
+            // use it directly
+            return (*pathIter);
+        #endif
+    }
+
     bfs::path GetAbsolutePath(const std::string& path) {
         return GetAbsolutePath(bfs::path(path));
     }
