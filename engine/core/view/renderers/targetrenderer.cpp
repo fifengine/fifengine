@@ -128,7 +128,7 @@ namespace FIFE {
 	RenderTargetPtr TargetRenderer::createRenderTarget(const std::string& name, uint32_t width, uint32_t height) {
 		RenderJob rj;
 		rj.ndraws = -1;
-		rj.lasttime_draw = 0;
+		rj.lasttime_draw = 1;
 		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, name, width, height));
 		rj.discard = false;
 
@@ -141,7 +141,7 @@ namespace FIFE {
 	RenderTargetPtr TargetRenderer::createRenderTarget(ImagePtr& image) {
 		RenderJob rj;
 		rj.ndraws = -1;
-		rj.lasttime_draw = 0;
+		rj.lasttime_draw = 1;
 		rj.target = RenderTargetPtr(new RenderTarget(m_renderbackend, image));
 		rj.discard = false;
 
@@ -154,8 +154,13 @@ namespace FIFE {
 	void TargetRenderer::setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws) {
 		RenderJobMap::iterator it = m_targets.find(targetname);
 		if (it != m_targets.end()) {
+			int32_t lasttime_draw = 1;
+			if (ndraws == 0) {
+				lasttime_draw = 0;
+			}
 			it->second.ndraws = ndraws;
 			it->second.discard = discard;
+			it->second.lasttime_draw = lasttime_draw;
 		}
 	}
 
@@ -172,7 +177,7 @@ namespace FIFE {
 						if(it->second.ndraws == 0) {
 							it->second.ndraws = -1;
 						} else {
-							it->second.lasttime_draw = 0;
+							it->second.lasttime_draw = 1;
 						}
 					} else {
 						++it->second.lasttime_draw;
