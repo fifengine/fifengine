@@ -84,6 +84,34 @@ class ScrollArea(Widget):
 		if vertical_scrollbar is not None: self.vertical_scrollbar = vertical_scrollbar
 		if horizontal_scrollbar is not None: self.horizontal_scrollbar = horizontal_scrollbar
 
+	def clone(self, prefix):
+		scrollareaClone = ScrollArea(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						None, #NOTE since content is a widget hierarchy it should be cloned too
+						self.vertical_scrollbar,
+						self.horizontal_scrollbar)
+	
+		scrollareaClone.content = self.content.clone(prefix)
+
+		return scrollareaClone
+		
 	def addChild(self,widget):
 		self.content = widget
 		widget.parent = self

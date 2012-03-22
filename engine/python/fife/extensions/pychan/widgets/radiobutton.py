@@ -101,6 +101,34 @@ class RadioButton(BasicTextWidget):
 		self._realSetData = self._setMarked
 
 		# Initial data stuff inherited.
+		
+	def clone(self, prefix):
+		rbuttonClone = RadioButton(None,
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.margins,
+						self.text, 
+						self.group)
+						
+		return rbuttonClone
+						
+		
 
 	def _isMarked(self): return self.real_widget.isSelected()
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)

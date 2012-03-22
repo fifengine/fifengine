@@ -89,7 +89,6 @@ class CheckBox(BasicTextWidget):
 									  comment=comment,
 									  margins=margins,
 									  text=text)
-
 		if marked is not None: 
 			self.marked = marked
 
@@ -97,6 +96,31 @@ class CheckBox(BasicTextWidget):
 		self.accepts_data = True
 		self._realGetData = self._isMarked
 		self._realSetData = self._setMarked
+
+	def clone(self, prefix):
+		checkboxClone = CheckBox(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.margins,
+						self.text,
+						self.marked)
+		return checkboxClone
 
 	def _isMarked(self): return self.real_widget.isSelected()
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)

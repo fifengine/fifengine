@@ -93,6 +93,33 @@ class Label(BasicTextWidget):
 								   text=text)
 								   
 		if wrap_text is not None: self.wrap_text = wrap_text
+		
+	def clone(self, prefix):
+		lblClone = Label(None,
+				 self._createNameWithPrefix(prefix),
+				 self.size, 
+				 self.min_size,
+				 self.max_size, 
+				 self.helptext, 
+				 self.position, 
+				 self.style, 
+				 self.hexpand,
+				 self.vexpand,
+				 self.font,
+				 self.base_color,
+				 self.background_color,
+				 self.foreground_color,
+				 self.selection_color,
+				 self.border_size,
+				 self.position_technique,
+				 self.is_focusable,
+				 self.comment,
+				 self.margins,
+				 self.text,
+				 self.wrap_text)
+		
+		return lblClone;
+				 
 
 	def resizeToContent(self, recurse=True):
 		self.real_widget.setWidth( self.max_size[0] )

@@ -135,6 +135,39 @@ class ListBox(Widget):
 		self._realSetData = self._setSelected
 		self._realGetData = self._getSelected
 
+	def clone(self, prefix):
+		
+		itemsList = []
+		
+		for i in range(self.items.getNumberOfElements()):
+			itemsList.append(self.items.getElementAt(i))
+		
+		listboxClone = ListBox(None, 
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.styleNone, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					itemsList,
+					self.selected)			
+					
+		return listboxClone
+				
+		
+		
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list

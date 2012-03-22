@@ -169,6 +169,7 @@ class Widget(object):
 		self.border_size = self.DEFAULT_BORDER_SIZE
 		self.helptext = self.DEFAULT_HELPTEXT
 		self.comment = self.DEFAULT_COMMENT
+		self._usedPrefixes = []
 	
 		# Parent attribute makes sure we only have one parent,
 		# that tests self.__parent - so make sure we have the attr here.
@@ -203,10 +204,23 @@ class Widget(object):
 		if comment is not None: self.comment = comment
 
 		# these are set in the default style
-		if base_color is not None: self.base_color = base_color
+		#if base_color is not None: self.base_color = base_color
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
+		
+	
+	def clone(self, prefix):
+		"""
+		Clones this widget.
+		
+		Concrete widgets should implement this one, if not, an exception should
+		be raised.
+		
+		Prefix is used to create the name of the cloned widget.
+		"""
+		raise RuntimeError("No implementation of clone method for %s" % self.__class__)
+			      
 
 	def execute(self,bind):
 		"""
@@ -893,6 +907,21 @@ class Widget(object):
 	def _setFocusable(self, b): self.real_widget.setFocusable(b)
 	def _isFocusable(self):
 		return self.real_widget.isFocusable()
+	              
+	def _createNameWithPrefix(self, prefix):
+		
+		if not isinstance(prefix, str):
+			raise RuntimeError("Widget names should be prefixed with a string")
+		
+		if prefix in self._usedPrefixes:
+			raise RuntimeError("Widget %s already cloned with prefix %s" % (self.name, prefix))
+		
+		if len(prefix) == 0:
+			raise RuntimeError("New widget name cannot be created with an empty prefix")
+		
+		self._usedPrefixes.append(prefix)
+		
+		return prefix + self.name
 
 	x = property(_getX,_setX)
 	y = property(_getY,_setY)

@@ -101,6 +101,30 @@ class PercentageBar(Widget):
 		self._realSetData = self._setValue
 		self._realGetData = self._getValue
 
+	def clone(self, prefix):
+		pbarClone = PercentageBar(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.value, 
+						self.orientation)
+		return pbarClone
+		
 	def _getValue(self):
 		"""getValue(self) -> int"""
 		return self.real_widget.getValue()

@@ -101,6 +101,32 @@ class TextBox(Widget):
 		self._realSetData = self._setText
 		self._realGetData = self._getText
 
+	def clone(self, prefix):
+		textboxClone = TextBox(None,  
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.margins,
+					self.text,
+					self.filename)
+		return textboxClone
+		
+		
 	def _getFileName(self): return self._filename
 	def _loadFromFile(self,filename):
 		self._filename = filename
