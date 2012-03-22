@@ -154,13 +154,8 @@ namespace FIFE {
 	void TargetRenderer::setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws) {
 		RenderJobMap::iterator it = m_targets.find(targetname);
 		if (it != m_targets.end()) {
-			int32_t lasttime_draw = 1;
-			if (ndraws == 0) {
-				lasttime_draw = 0;
-			}
 			it->second.ndraws = ndraws;
 			it->second.discard = discard;
-			it->second.lasttime_draw = lasttime_draw;
 		}
 	}
 
@@ -168,7 +163,7 @@ namespace FIFE {
 		if (!m_targets.empty()) {
 			for (RenderJobMap::iterator it = m_targets.begin(); it != m_targets.end(); ++it) {
 				if (it->second.ndraws != -1) {
-					if (it->second.ndraws == it->second.lasttime_draw) {
+					if (it->second.ndraws <= it->second.lasttime_draw) {
 						RenderTargetPtr rt = it->second.target;
 						m_renderbackend->attachRenderTarget(rt->m_target, it->second.discard);
 						rt->render();
