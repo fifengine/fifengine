@@ -115,6 +115,36 @@ class Container(Widget):
 		if padding is not None: self.padding = padding
 		if opaque is not None: self.opaque = opaque
 		if background_image is not None: self.background_image = background_image
+		
+	def clone(self, prefix):
+		containerClone = Container(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.padding,
+						self.background_image,
+						self.opaque,
+						self.margins)
+			
+		containerClone.addChildren(self._cloneChildren(prefix))
+			
+		return containerClone
+		
 
 	def addChild(self, widget):
 		"""
@@ -126,6 +156,7 @@ class Container(Widget):
 		be shown when you show the container widget.  If you want the child to 
 		be hidden when you show the container widget you must call child.hide().
 		"""
+		
 		widget.parent = self
 		widget._visible = self._visible
 		self.children.append(widget)
@@ -288,6 +319,17 @@ class Container(Widget):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
+	
+	def _cloneChildren(self, prefix):
+		"""
+		Clones each child and return the clones in a list.
+		"""
+		cloneList = []
+		
+		for child in self.children:
+			cloneList.append(child.clone(prefix))
+		
+		return cloneList
 
 class VBox(VBoxLayoutMixin,Container):
 	"""
@@ -355,7 +397,35 @@ class VBox(VBoxLayoutMixin,Container):
 								  opaque=opaque,
 								  margins=margins,
 								  _real_widget=_real_widget)
-
+	def clone(self, prefix):
+		vboxClone = VBox(None, 
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.padding,
+					self.background_image,
+					self.opaque,
+					self.margins)
+					
+		vboxClone.addChildren(self._cloneChildren(prefix))
+					
+		return vboxClone
+		
 
 class HBox(HBoxLayoutMixin,Container):
 	"""
@@ -417,6 +487,36 @@ class HBox(HBoxLayoutMixin,Container):
 								  margins=margins,
 								  _real_widget=_real_widget)
 
+	def clone(self, prefix):
+		hboxClone = HBox(None,
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.padding,
+					self.background_image,
+					self.opaque,
+					self.margins)
+					
+		hboxClone.addChildren(self._cloneChildren(prefix))
+		
+		return hboxClone
+		
+								  
 class Window(VBoxLayoutMixin,Container):
 	"""
 	A L{VBox} with a draggable title bar aka a window
@@ -501,6 +601,40 @@ class Window(VBoxLayoutMixin,Container):
 		else:
 			self.title = self.DEFAULT_TITLE
 
+	def clone(self, prefix):
+		
+		windowClone = Window(None, 
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.padding,
+					self.background_image,
+					self.opaque,
+					self.margins,
+					None,
+					self.title,
+					self.titlebar_height
+				    )
+				     
+		windowClone.addChildren(self._cloneChildren(prefix))
+				     
+		return windowClone
+			
 	def _getTitle(self): return gui2text(self.real_widget.getCaption())
 	def _setTitle(self,text): self.real_widget.setCaption(text2gui(text))
 	title = property(_getTitle,_setTitle)

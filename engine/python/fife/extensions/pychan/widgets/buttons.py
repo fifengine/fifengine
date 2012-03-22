@@ -74,6 +74,32 @@ class Button(BasicTextWidget):
 									comment=comment,
 									margins=margins,
 									text=text)
+									
+	def clone(self, prefix):
+		btnClone = Button(None, 
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.margins,
+					self.text)
+			          
+		return btnClone;
+			
 
 class ImageButton(BasicTextWidget):
 	"""
@@ -175,6 +201,37 @@ class ImageButton(BasicTextWidget):
 		# Override anything set when stylize was called
 		if offset is not None: self.offset = offset
 
+		
+	def clone(self, prefix):
+		
+		imgButtonClone = ImageButton(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.margins,
+						self.text,
+						self.up_image,
+						self.down_image,
+						self.hover_image,
+						self.offset)
+		return imgButtonClone
+		
+	
 	up_image = ImageProperty("UpImage")
 	down_image = ImageProperty("DownImage")
 	hover_image = ImageProperty("HoverImage")
@@ -281,6 +338,35 @@ class ToggleButton(ImageButton):
 										  
 		if group is not None: self.group = group
 
+	def clone(self, prefix):
+		toggleButtonClone = ToggleButton(None,
+							self._createNameWithPrefix(prefix),
+							self.size,
+							self.min_size,
+							self.max_size,
+							self.helptext,
+							self.position,
+							self.style,
+							self.hexpand,
+							self.vexpand,
+							self.font,
+							self.base_color,
+							self.background_color,
+							self.foreground_color,
+							self.selection_color,
+							self.border_size,
+							self.position_technique,
+							self.is_focusable,
+							self.comment,
+							self.margins,
+							self.text,
+							self.up_image,
+							self.down_image,
+							self.hover_image,
+							self.offset,
+							self.group)
+		return toggleButtonClone
+		
 	def _setGroup(self,group):
 		if group is not None and group != "":
 			self.real_widget.setGroup( group )

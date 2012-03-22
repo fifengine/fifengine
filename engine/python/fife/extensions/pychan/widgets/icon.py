@@ -80,6 +80,31 @@ class Icon(Widget):
 								  comment=comment)
 		self.image = image
 
+	def clone(self, prefix):
+		iconClone(None,
+				self._createNameWithPrefix(prefix),
+				self.size,
+				self.min_size, 
+				self.max_size, 
+				self.helptext, 
+				self.position, 
+				self.style, 
+				self.hexpand,
+				self.vexpand,
+				self.font,
+				self.base_color,
+				self.background_color,
+				self.foreground_color,
+				self.selection_color,
+				self.border_size,
+				self.position_technique,
+				self.is_focusable,
+				self.comment,
+				self.image)
+				 
+		
+		return iconClone
+		
 	_image = ImageProperty("Image")
 
 	def _setImage(self,source):

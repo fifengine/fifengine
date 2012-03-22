@@ -124,6 +124,33 @@ class Slider(Widget):
 		self._realSetData = self._setValue
 		self._realGetData = self._getValue
 
+	def clone(self, prefix):
+		sliderClone = Slider(None, 
+					self._createNameWithPrefix(prefix),
+					self.size, 
+					self.min_size, 
+					self.max_size,
+					self.helptext, 
+					self.position,
+					self.style, 
+					self.hexpand, 
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.scale_start, 
+					self.scale_end,
+					self.step_length,
+					self.marker_length,
+					self.orientation)
+		return sliderClone
+		
 	def _setScale(self, start, end):
 		"""setScale(self, double scaleStart, double scaleEnd)"""
 		if type(start) != float:
