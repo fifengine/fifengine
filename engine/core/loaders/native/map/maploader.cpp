@@ -563,20 +563,12 @@ namespace FIFE {
                 }	
             }
 
-            std::set<std::string> setNestedDirectories = m_vfs->listDirectories(importDirectoryString);
-
-            // had to copy std::set contents to a vector to get around
-            // the problem of std::remove not compiling because of a
-            // problem with how set defines its iterators on gcc
-            std::vector<std::string> nestedDirectories(setNestedDirectories.begin(), setNestedDirectories.end());
-
-            // don't like this, but need to make sure to not include the .svn directory
-            nestedDirectories.erase(std::remove(nestedDirectories.begin(), nestedDirectories.end(), ".svn"), nestedDirectories.end());
-
-            // recursively load all sub directories
-            std::vector<std::string>::iterator vecIter;
-            for (vecIter = nestedDirectories.begin(); vecIter != nestedDirectories.end(); ++vecIter) {
-                loadImportDirectory(importDirectoryString + "/" + *vecIter);
+            std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
+            for (iter  = nestedDirectories.begin(); iter != nestedDirectories.end(); ++iter) {
+                // do not attempt to load anything from a .svn directory
+                if ((*iter).find(".svn") == std::string::npos) {
+                    loadImportDirectory(importDirectoryString + "/" + *iter);
+                }
             }
         }
     }
