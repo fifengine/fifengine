@@ -30,7 +30,7 @@ class TextField(Widget):
 
 	New Attributes
 	==============
-
+	
 	  - text: The text in the TextBox.
 
 	Data
@@ -108,7 +108,7 @@ class TextField(Widget):
 					self.comment,
 					self.margins,
 					self.text)
-		return textfieldClone
+			return textfieldClone
 		
 		
 	def resizeToContent(self,recurse=True):
