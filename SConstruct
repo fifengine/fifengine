@@ -391,6 +391,15 @@ env.Append(BUILDERS = {'BuildDocs': doc_builder})
 Alias('docs', env.BuildDocs('docs', os.path.join('doc', 'doxygen', 'doxyfile')))
 
 #**************************************************************************
+#Create a distclean target
+#**************************************************************************
+env.Clean("distclean",
+		[
+		 ".sconsign.dblite",
+		 os.path.join('build','.sconf_temp'),
+		])
+
+#**************************************************************************
 #Set the default target
 #**************************************************************************
 #clear the default target
