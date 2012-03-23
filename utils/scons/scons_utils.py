@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2012 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 
 import os, sys
 import re
+import subprocess
 from string import Template
 
 _sep = os.path.sep
@@ -126,3 +127,34 @@ def get_fife_version(srcpath):
 			versionInfo.append(match.group(1).strip())
             
     return '.'.join(versionInfo)
+
+def get_fife_revision():
+	svnversion = which("svnversion")
+	if not svnversion:
+		return "0" # could not find svnverion
+	
+	retval = subprocess.check_call(svnversion)
+	fiferev = retval.rstrip('MSP')
+	
+	if not fiferev.isdigit():
+		return "0" #somethine went wrong (could mean a mixed revision)
+	
+	return fiferev
+
+#checks the users PATH environment variable for a executable program and 
+#returns the full path
+def which(program):
+    def is_exe(fpath):
+        return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
