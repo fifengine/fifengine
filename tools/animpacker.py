@@ -102,7 +102,11 @@ class AnimPacker:
 
 		# save them
 		out.outname = os.path.basename(output) + '.png'
+		# replace : in string with _
+		output = output.replace(":", "_")
 		imageAtlas.saveImage(output + '.png')
+		# free all images, otherwise we can ran out of memory
+		self.imagemgr.freeAll()
 		return out
 	
 	def packActions(self, fifeObject, output):
