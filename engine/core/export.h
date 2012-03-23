@@ -19,63 +19,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VERSION_H
-#define FIFE_VERSION_H
+#ifndef FIFE_EXPORT_H
+#define FIFE_EXPORT_H
 
-// These version numbers should be checked and updated
-// as part of the release process for FIFE.
-#define FIFE_MAJOR_VERSION 0
-#define FIFE_MINOR_VERSION 3
-#define FIFE_SUBMINOR_VERSION 3
-
-// -------------------------------------------------------------------------
-//  Do not update anything below this line!
-// -------------------------------------------------------------------------
-
-#define FIFE_STR(s)			# s
-#define FIFE_XSTR(s)		FIFE_STR(s)
-
-#define FIFE_DOT(a,b)		a ## . ## b
-#define FIFE_XDOT(a,b)		FIFE_DOT(a,b)
-
-#define FIFE_VERSION_STRING \
-	FIFE_XDOT( \
-		FIFE_XDOT(FIFE_MAJOR_VERSION, FIFE_MINOR_VERSION), \
-		FIFE_SUBMINOR_VERSION \
-	)
-
-namespace FIFE {
-	inline const char* getVersion() {
-		return FIFE_XSTR(FIFE_VERSION_STRING);
-	}
-
-	inline int getMajor() {
-		return FIFE_MAJOR_VERSION;
-	}
-
-	inline int getMinor() {
-		return FIFE_MINOR_VERSION;
-	}
-
-	inline int getSubMinor() {
-		return FIFE_SUBMINOR_VERSION;
-	}
-
-	inline int getRevision() {
-#ifdef FIFE_REVISION
-		return FIFE_REVISION;
+#if defined _WIN32 || defined __CYGWIN__
+	#ifdef FIFE_EXPORTING
+		#ifdef __GNUC__
+			#define FIFE_PUBLIC __attribute__((dllexport))
+		#else
+			#define FIFE_PUBLIC __declspec(dllexport)
+		#endif
+	#else
+		#ifdef __GNUC__
+			#define FIFE_PUBLIC __attribute__((dllimport))
+		#else
+			#define FIFE_PUBLIC __declspec(dllimport)
+		#endif
+	#endif
+	#define FIFE_HIDDEN
 #else
-		return 0;
+	#if __GNUC__ >= 4
+		#define FIFE_PUBLIC __attribute__((visibility("default")))
+		#define FIFE_HIDDEN __attribute__((visibility("hidden")))
+	#else
+		#define FIFE_PUBLIC
+		#define FIFE_HIDDEN
+	#endif
 #endif
-	}
-} //FIFE
 
-//cleanup
-#undef FIFE_STR
-#undef FIFE_XSTR
-#undef FIFE_DOT
-#undef FIFE_XDOT
-#undef FIFE_VERSION_STRING
 
-#endif //FIFE_VERSION_H
-
+#endif //FIFE_EXPORT_H

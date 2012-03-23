@@ -360,6 +360,7 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
 
 opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
+opts['FIFE_REVISION'] = utils.get_fife_revision()
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
