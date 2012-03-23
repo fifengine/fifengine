@@ -133,13 +133,16 @@ def get_fife_revision():
 	if not svnversion:
 		return "0" # could not find svnverion
 	
-	retval = subprocess.check_call(svnversion)
-	fiferev = retval.rstrip('MSP')
+	p = subprocess.Popen(svnversion, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	retval, errors = p.communicate()
+
+	fiferev = retval.lstrip().rstrip().rstrip('MSP')
 	
 	if not fiferev.isdigit():
 		return "0" #somethine went wrong (could mean a mixed revision)
 	
 	return fiferev
+	
 
 #checks the users PATH environment variable for a executable program and 
 #returns the full path
