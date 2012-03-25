@@ -81,7 +81,7 @@ class Icon(Widget):
 		self.image = image
 
 	def clone(self, prefix):
-		iconClone(None,
+		iconClone = Icon(None,
 				self._createNameWithPrefix(prefix),
 				self.size,
 				self.min_size, 
