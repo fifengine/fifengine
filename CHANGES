@@ -9,6 +9,83 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
        _\/\\\_______________/\\\\\\\\\\\__\/\\\______________\/\\\\\\\\\\\\\\\_ 
         _\///_______________\///////////___\///_______________\///////////////__
 
+================================================================================
+== 0.3.3r3 (March Xxx, 2012)                                                  ==
+================================================================================
+
+=== Engine ===
+* Implemented C++ map savers which is now being used by the editor. [t:491]
+* Fixed instance Z so it works now as expected.  This should only be used for
+  small optical corrections. (r3810)
+* Added layer z offset. [t:366]
+* Fixed a problem with instance setLocation(). (r3810)
+* Removed sub image loaders as they are not used. (r3811)
+* Object is no longer derived from IResource. (r3811)
+* SDL Renderer now renders quads as expected. [t:607]
+* Changed the Image creation in CoordinateRenderer?. The coordinate is now 
+  splitted into three images. So the TextRenderPool? can reuse the most images 
+  and must not create one for each coordinate. Additional the images take camera
+  zoom into account, but you can also disable it. [t:612]
+* Added InstanceDeleteListener to InstanceRenderer and RenderNode. [t:602]
+* All images created by effects are now owned by ImageManager and freed
+  if no longer used after 60 seconds. [t:611]
+* Added the set method to PointType2D and PointeType3D. [t:615]
+* Changed the way Atlases and SubImages?(SharedImages?) are loaded and freed. 
+  SubImages now store a ImagePtr to its Atlas and the name. So a AtlasImage is 
+  only unreferenced if all SubImages are removed. It is also possible to free 
+  all images. Images that are required but were freed, invite self-adjusting. 
+  [t:605]
+* Added functions to allow the client to set the mouse position on the screen
+  and retrieve it as a tuple in python.  [t:617]
+* Added another version of captureScreen() that can take resize the capture. 
+  [t:618]
+* Fixed a bug that led to Segmentation Faults, if the BitsPerPixel? setting was 
+  different than 32. [t:623]
+* Added support for True Type Collection fonts. [t:614]
+* Optimized getMatchingInstances(). [t:592]
+* TargetRenderer is no longer dependent on map loading. [t:636]
+* Small fix in the AtlasLoader to set the filename of any objects read from 
+  the atlas file to the atlas xml file instead of the image file like it was 
+  doing previously. This fixes a problem seen in the map loading/saving where 
+  the imports would save the image file instead of the xml description file in 
+  the map. [t:491]
+* Zooming now works as expected with x and y offsets. [t:667]
+* We now get more information when gcn::Exception is thrown. [t:665]
+* MapLoader now allows for .zip files to be loaded.  ZipSource implements a 
+  smarter file search so it can properly load files from a zip archive. [t:491]
+* Removed the lasttime_draw reset from TargetRenderer, because this can cause 
+  problems. [t:674]
+
+=== Extensions ===
+* Fixed the file extensions registration for python plugin map loaders. [t:609]
+* Setting module is more robust on errors concerning non-string parameters. 
+  [t:626]
+* SimpleXMLSerializer now saves XML files with platform specific line engines. 
+  [t:630]
+* Child widgets should correctly report if they are hidden or not. [t:628]
+* Removing the hack to grab references to the GUIChanManager. Now we just use 
+  the pychan manager to grab what we need to grab from the GUIManager. Added 4 
+  new functions to pychan Manager. getConsole(), getDefaultFont(), createFont(),
+  and releaseFont(). [t:644]
+* Fixed deepApply() to now include hidden children in it's search. also added
+  the ability to only search for visible widgets. [t:608]
+* GUI Icons can now be rezied at render time. [t:655]
+* Widgets can now be clonsed to make widget templating possible. [t:376]
+
+=== Editor ===
+* Users can now specify an additional plugin directory for the editor. [t:598]
+* Fixed a couple small editor bugs regarding map loading. [t:603] and [t:604]
+* Added a plugin interface to extend the editor with savers. [t:610]
+* Toolbars can be docked/undocked again.  [t:635], [t:640], and [t:641]
+* The toolbox, toolbar, and statusbars statuses are now reflected correctly in
+  the menu. [t:643]
+* Object Editor plugin now displays animations as expected. [t:624]
+
+=== Misc ===
+* Removed some unnecessary warning messages from Model. [t:645]
+* Removed non-free icons from the atlas editor and added license file to the
+  atlas editor. [t:637]
+
 
 ================================================================================
 == 0.3.3r2 (November 2nd, 2011)                                               ==
