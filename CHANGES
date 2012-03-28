@@ -37,8 +37,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   [t:605]
 * Added functions to allow the client to set the mouse position on the screen
   and retrieve it as a tuple in python.  [t:617]
-* Added another version of captureScreen() that can take resize the capture. 
-  [t:618]
+* Added another version of captureScreen() that takes width and height params
+  allowing you to resize the resulting image. [t:618]
 * Fixed a bug that led to Segmentation Faults, if the BitsPerPixel? setting was 
   different than 32. [t:623]
 * Added support for True Type Collection fonts. [t:614]
@@ -51,7 +51,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   the map. [t:491]
 * Zooming now works as expected with x and y offsets. [t:667]
 * We now get more information when gcn::Exception is thrown. [t:665]
-* MapLoader now allows for .zip files to be loaded.  ZipSource implements a 
+* MapLoader now allows for .zip files to be loaded. ZipSource implements a 
   smarter file search so it can properly load files from a zip archive. [t:491]
 * Removed the lasttime_draw reset from TargetRenderer, because this can cause 
   problems. [t:674]
@@ -69,8 +69,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   and releaseFont(). [t:644]
 * Fixed deepApply() to now include hidden children in it's search. also added
   the ability to only search for visible widgets. [t:608]
-* GUI Icons can now be rezied at render time. [t:655]
-* Widgets can now be clonsed to make widget templating possible. [t:376]
+* GUI Icons can now be resized at render time. [t:655]
+* Widgets can now be cloned to make widget templating possible. [t:376]
 
 === Editor ===
 * Users can now specify an additional plugin directory for the editor. [t:598]
@@ -85,7 +85,13 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Removed some unnecessary warning messages from Model. [t:645]
 * Removed non-free icons from the atlas editor and added license file to the
   atlas editor. [t:637]
-
+* Added a proper distclean build target. [t:622]
+* Added getRevision() to allow client to query the revision FIFE was build from.
+  This only works if svnverion is present in the users PATH.  Window users will
+  always get 0. [t:671]
+* Added a check to animpacker.py to convert double points in action names to 
+  underlines. Additional the convert now consumes less RAM, because the 
+  ImageManager free images. [t:677]
 
 ================================================================================
 == 0.3.3r2 (November 2nd, 2011)                                               ==
