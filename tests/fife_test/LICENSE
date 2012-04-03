@@ -1,0 +1,27 @@
+== Fonts ==
+=== Ubuntu ===
+Author:
+Samir Karmacharya (sanir@email.com)
+
+Download:
+http://www.ubuntu.com/
+
+License:
+Public domain
+http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-fonts_0.4.7.4/ttf-devanagari-fonts.copyright
+
+Affected files:
+data/fonts/samanata.ttf
+
+== Graphics ==
+
+=== Open Game Art ===
+Author: Clint Bellanger
+
+Website: www.opengameart.org
+
+License: CC-BY-SA 3.0
+
+Affected files:
+data/objects/*.png
+data/tilesets/grassland_tiles.png

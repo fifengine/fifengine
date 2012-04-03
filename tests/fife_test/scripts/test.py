@@ -121,5 +121,11 @@ class Test(object):
 
 	def getHelp(self):
 		return "You're on your own for this one!"
+		
+	def onConsoleCommand(self, cmd):
+		return cmd[0] + ": not found."
+		
+	def pump(self):
+		pass
 	
 
