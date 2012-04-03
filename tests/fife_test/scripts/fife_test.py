@@ -82,6 +82,12 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self._eventmanager.setKeyFilter(keyfilter)
 
 		self.quit = False
+		
+		# Init Pychan
+		pychan.loadFonts("data/fonts/freefont.fontdef")
+		pychan.loadFonts("data/fonts/samanata.fontdef")
+		pychan.manager.setDefaultFont("FreeSans")
+		pychan.setupModalExecution(self._application.mainLoop, self._application.breakFromMainLoop)
 
 	def keyPressed(self, event):
 		"""
@@ -182,7 +188,10 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			else:
 				self._console.println( "No test currently running." )
 		else:
-			result = cmd[0] + ": not found."
+			if self._testmanager.runningtest:
+				result = self._testmanager.runningtest.onConsoleCommand(cmd)
+			else:
+				result = cmd[0] + ": not found."
 			
 		return result
 
@@ -225,7 +234,8 @@ class FifeTestApplication(ApplicationBase):
 		if self._listener.quit:
 			self.quit()
 		else:
-			pass
+			if self.testmanager.runningtest:
+				self.testmanager.runningtest.pump()
 
 
 	def _getLogManager(self):

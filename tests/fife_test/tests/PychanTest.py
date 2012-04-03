@@ -641,12 +641,6 @@ class PychanTest(test.Test):
 		self._application = application
 		self._engine = engine
 		self._running = False
-		
-		# Init Pychan
-		pychan.loadFonts("data/fonts/freefont.fontdef")
-		pychan.loadFonts("data/fonts/samanata.fontdef")
-		pychan.manager.setDefaultFont("FreeSans")
-		pychan.setupModalExecution(self._application.mainLoop, self._application.breakFromMainLoop)
 
 		# Build the main GUI
 		self.gui = pychan.loadXML('data/gui/demoapp.xml')

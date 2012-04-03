@@ -1,0 +1,6 @@
+MapLoadTest
+-------------- 
+The purpose of this test is to test the ability to load maps using the default map loaders.
+
+It may also be used as a template for more complicated tests.
+ 
