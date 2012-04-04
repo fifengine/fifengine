@@ -94,7 +94,7 @@ class MapLoadTest(test.Test):
 		self._mouselistener = MouseListener(self)
 		self._eventmanager.addMouseListenerFront(self._mouselistener)
 		
-		self.loadMap("data/maps/testmap1.xml")
+		self.loadMap("data/maps/grassland.xml")
 
 	def stop(self):
 		self._running = False
