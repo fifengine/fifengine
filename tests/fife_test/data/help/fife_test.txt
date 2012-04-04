@@ -3,7 +3,7 @@ Welcome to the FIFE testing application!
 Keybindings:
 --------------
 - prtscr = Make screenshot
-- ~      = Toggle console on / off
+- F10      = Toggle console on / off
 - ESC    = Quit
  
 Commands:
