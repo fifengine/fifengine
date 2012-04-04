@@ -107,7 +107,7 @@ class ObjectEdit(plugin.Plugin):
 		self._fixed_rotation = None
 		
 		if self._camera is not None:
-			self.renderer.removeAllOutlines()			
+			self.renderer.removeAllOutlines()
 
 	def enable(self):
 		""" plugin method """
@@ -184,7 +184,7 @@ class ObjectEdit(plugin.Plugin):
 			- creates the gui skeleton by loading the xml file
 			- finds some important childs and saves their widget in the object
 			
-		FIXME:
+	@todo:
 			- move all dynamic widgets to dict
 		"""
 		self.container = pychan.loadXML('gui/objectedit.xml')
@@ -462,7 +462,7 @@ class ObjectEdit(plugin.Plugin):
 			- writes previous data record
 			- updates gui
 		
-			FIXME:
+		@todo:
 			- parse user data in case user think strings are considered to be integer offset values...
 		"""
 		instance_id = str(self._gui_instance_id_textfield._getText())
@@ -500,10 +500,10 @@ class ObjectEdit(plugin.Plugin):
 	def save_user_data(self):
 		""" saves the current object to its xml file 
 		
-			NOTE:
+		@note
 				- animations can't be saved for now
 				
-			FIXME:
+		@todo:
 				- add missing object attributes to saving routine		
 		"""
 		if self._object is None:

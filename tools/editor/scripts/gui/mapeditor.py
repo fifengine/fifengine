@@ -80,8 +80,7 @@ class MapEditor:
 		self._object = None
 		
 		# Variables used for moving instances
-		self._last_drag_pos = None
-		self._last_drag_pos_exact = None
+		self._last_drag_pos_exact = fife.ExactModelCoordinate(0,0,0)
 		
 		self._selected_instances = []
 		
@@ -417,16 +416,7 @@ class MapEditor:
 			elif self._mode == MapEditor.MOVING:
 				if event.getButton() == fife.MouseEvent.LEFT:
 					position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
-
-					self._last_drag_pos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 					self._last_drag_pos_exact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
-	
-					for loc in self._controller._selection:
-						if loc.getLayerCoordinates() == self._last_drag_pos:
-							break
-					else:
-						self._controller.deselectSelection()
-						self._controller.selectCell(realCoords[0], realCoords[1])
 					
 					if self._controller._single_instance:
 						self._selected_instances = self._controller.getInstance()
@@ -484,14 +474,15 @@ class MapEditor:
 			elif self._mode == MapEditor.MOVING:
 				position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])				
 				positionExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
-				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
-				
-				if self._eventlistener.shiftPressed:
-					self._controller.moveInstances(self._selected_instances, positionExact-self._last_drag_pos_exact, True)
-				else:
-					self._controller.moveInstances(self._selected_instances, position-self._last_drag_pos, False)
-				self._last_drag_pos = position
-				self._last_drag_pos_exact = positionExact
+
+				res = self._controller.moveInstances(
+					self._selected_instances,
+					positionExact-self._last_drag_pos_exact,
+					exact=self._eventlistener.shiftPressed)
+
+				# update only if the instances moved
+				if res:
+					self._last_drag_pos_exact = positionExact
 				
 				# Update selection
 				self._controller.deselectSelection()

@@ -39,109 +39,17 @@ _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
 _DEFAULT_SELECTION_COLOR = internal.DEFAULT_STYLE['default']['selection_color']
 _DEFAULT_COLOR_STEP = Color(10, 10, 10)
 
-class ObjectIcon(widgets.VBox):
-	""" The ObjectIcon is used to represent the object in the object selector.
-	"""	
-	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image"), attrs.BoolAttr("selected") ]
-	
-	def __init__(self,callback,**kwargs):
-		super(ObjectIcon,self).__init__()
+_MAX_PREVIEW_SIZE = (150,150)
 
-		self.callback = callback	
-
-		self.capture(self._mouseEntered, "mouseEntered")
-		self.capture(self._mouseExited, "mouseExited")
-		self.capture(self._mouseClicked, "mouseClicked")
-
-		vbox = widgets.VBox(padding=3)
-
-		# Icon
-		self.icon = widgets.Icon(image=kwargs["image"])
-		self.addChild(self.icon)
-
-		# Label
-		hbox = widgets.HBox(padding=1)
-		self.addChild(hbox)
-		self.label = widgets.Label(text=kwargs["text"])
-		hbox.addChild(self.label)
-
-	def _setText(self, text):
-		self.label.text = text
+# plugin default settings
+_PLUGIN_SETTINGS = {
+	'module' : "ObjectSelectorSettings",
+	'items' : {
+		'dockarea' : 'right',
+		'docked' : True,
 		
-	def _getText(self):
-		return self.label.text
-	text = property(_getText, _setText)
-
-	def _setImage(self, image):
-		self.icon.image = image
-
-	def _getImage(self):
-		return self.icon.image
-	image = property(_getImage, _setImage)
-
-	def _setSelected(self, enabled):
-		if isinstance(self.parent, ObjectIconList):
-			if enabled == True:
-				self.parent.selected_item = self
-			else:
-				if self.selected:
-					self.parent.selected_item = None
-		
-		if self.selected:
-			self.base_color = _DEFAULT_SELECTION_COLOR
-		else:
-			self.base_color = _DEFAULT_BASE_COLOR
-
-	def _isSelected(self):
-		if isinstance(self.parent, ObjectIconList):
-			return self == self.parent.selected_item
-		return False
-	selected = property(_isSelected, _setSelected)
-
-	#--- Event handling ---#
-	def _mouseEntered(self, event):
-		self.base_color += _DEFAULT_COLOR_STEP
-
-	def _mouseExited(self, event):
-		self.base_color -= _DEFAULT_COLOR_STEP
-
-	def _mouseClicked(self, event):
-		self.selected = True
-		self.callback()
-
-class ObjectIconList(widgets.VBox):
-	ATTRIBUTES = widgets.VBox.ATTRIBUTES
-	
-	def __init__(self,**kwargs):
-		super(ObjectIconList, self).__init__(max_size=(5000,500000), name=kwargs['name'])
-		self.base_color = self.background_color
-
-		self.capture(self._keyPressed, "keyPressed")
-		#self.capture(self._keyPressed, "keyReleased")
-		self._selectedItem = None
-		self.is_focusable = True
-
-	def _keyPressed(self, event):
-		print "KeyEvent", event
-
-	def clear(self):
-		for c in reversed(self.children):
-			self.removeChild(c)
-
-	def _setSelectedItem(self, item):
-		if isinstance(item, ObjectIcon) or item is None:
-			if self._selectedItem is not None:
-				tmp = self._selectedItem
-				self._selectedItem = item
-				tmp.selected = False
-			else:
-				self._selectedItem = item
-		#if item is not None:
-		#	item.selected = True
-
-	def _getSelectedItem(self):
-		return self._selectedItem
-	selected_item = property(_getSelectedItem, _setSelectedItem)
+	},
+}
 	
 class ObjectSelector(plugin.Plugin):
 	"""The ObjectSelector class offers a gui Widget that let's you select the object you
@@ -151,35 +59,47 @@ class ObjectSelector(plugin.Plugin):
 	@param selectNotify: callback function used to tell the editor you selected an object.
 	"""
 	def __init__(self):
-		self.editor = None
-		self.engine = None
+		super(ObjectSelector, self).__init__()
+		# Editor instance
+		self._editor = scripts.editor.getEditor()
+		self.engine = self._editor.getEngine()
+		
 		self.mode = 'list' # Other mode is 'preview'
+		
+		self.gui = None
 		
 		self._enabled = False
 		self.object = None
+		
+		self.default_settings = _PLUGIN_SETTINGS
+		self.eds = self._editor._settings
+		self.update_settings()		
 
 	def enable(self):
-		if self._enabled is True:
-			return
+		if self._enabled: return
 			
-		self.editor = scripts.editor.getEditor()
-		self.engine = self.editor.getEngine()
+		self._enabled = True
 			
 		self._showAction = Action(u"Object selector", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
-		
-		self.editor._tools_menu.addAction(self._showAction)
+		self._editor._tools_menu.addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update_namespace)
 		events.onObjectSelected.connect(self.setPreview)
 		events.onObjectsImported.connect(self.update_namespace)
 		
 		self.buildGui()
-
+		self.toggle()
+		
+		if self.settings['docked']:
+			self._editor.dockWidgetTo(self.gui, self.settings['dockarea'])
+		
 	def disable(self):
-		if self._enabled is False:
-			return
+		if not self._enabled: return
 			
+		self._enabled = False
+
+		self.gui.setDocked(False)
 		self.gui.hide()
 		self.removeAllChildren()
 		
@@ -187,16 +107,34 @@ class ObjectSelector(plugin.Plugin):
 		events.onObjectSelected.disconnect(self.setPreview)
 		events.onObjectsImported.disconnect(self.update_namespace)
 		
-		self.editor._tools_menu.removeAction(self._showAction)
+		self._editor._tools_menu.removeAction(self._showAction)
+		
+	def on_dock(self):
+		""" callback for dock event of B{Panel}	widget """
+		side = self.gui.dockarea.side
+		if not side: return
+
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', side)
+		self.eds.set(module, 'docked', True)
+	
+	def on_undock(self):
+		""" callback for undock event of B{Panel} widget """
+		self.gui.hide()
+		self.toggle()
+
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', '')
+		self.eds.set(module, 'docked', False)				
 
 	def isEnabled(self):
 		return self._enabled;
 
 	def getName(self):
-		return "Object selector"
-		
+		return "Object selector"		
 
 	def buildGui(self):
+		if self.gui is not None: return
 		self.gui = pychan.loadXML('gui/objectselector.xml')
 
 		# Add search field
@@ -229,9 +167,11 @@ class ObjectSelector(plugin.Plugin):
 		self.gui.findChild(name="closeButton").capture(self.hide)
 
 		# Preview area
-		self.gui.findChild(name="previewScrollArea").background_color = self.gui.base_color
 		self.preview = self.gui.findChild(name="previewIcon")
 		
+		# overwrite Panel.afterUndock
+		self.gui.afterUndock = self.on_undock
+		self.gui.afterDock = self.on_dock
 
 	def toggleMode(self):
 		if self.mode == 'list':
@@ -348,6 +288,10 @@ class ObjectSelector(plugin.Plugin):
 
 			callback = tools.callbackWithArguments(self.objectSelected, obj)	
 			icon = ObjectIcon(callback=callback, image=image, text=unicode(obj.getId()))
+			
+			w, h = image.getWidth(), image.getHeight()
+			icon.icon.size = icon.icon.max_size = (w,h)
+			
 			self.objects.addChild(icon)
 			if obj == self.object:
 				icon.selected = True
@@ -357,8 +301,10 @@ class ObjectSelector(plugin.Plugin):
 				self.objectSelected(objects[0])
 				
 		self.mainScrollArea.adaptLayout(False)
-		self.mainScrollArea.real_widget.setVerticalScrollAmount(self.objects.selected_item.y)
-
+		
+		selected_item = self.objects._getSelectedItem()
+		if selected_item is not None:		
+			self.mainScrollArea.real_widget.setVerticalScrollAmount(selected_item.y)
 
 	def objectSelected(self, obj):
 		"""This is used as callback function to notify the editor that a new object has
@@ -379,10 +325,19 @@ class ObjectSelector(plugin.Plugin):
 			
 		self.object = object
 		self.scrollToObject(object)
-		self.preview.image = self._getImage(object)
-		height = self.preview.image.getHeight();
-		if height > 200: height = 200
-		self.preview.parent.max_height = height
+		
+		image = self._getImage(object)
+#		parent = self.preview.parent
+		w, h = image.getWidth(), image.getHeight()
+		
+		self.preview.image = image
+		
+		if h > _MAX_PREVIEW_SIZE[1]: h = _MAX_PREVIEW_SIZE[1]
+		if w > _MAX_PREVIEW_SIZE[0]: w = _MAX_PREVIEW_SIZE[0]
+
+		self.preview.max_size = (w, h)
+#		parent.size = parent.max_size = _MAX_PREVIEW_SIZE
+#		parent.adaptLayout()
 		
 	def scrollToObject(self, object):
 		# Select namespace
@@ -462,5 +417,110 @@ class ObjectSelector(plugin.Plugin):
 	def toggle(self):
 		if self.gui.isVisible() or self.gui.isDocked():
 			self.hide()
+			self._showAction.setChecked(False)
 		else:
 			self.show()
+			self._showAction.setChecked(True)
+
+
+class ObjectIcon(widgets.VBox):
+	""" The ObjectIcon is used to represent the object in the object selector.
+	"""	
+	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image"), attrs.BoolAttr("selected") ]
+	
+	def __init__(self,callback,**kwargs):
+		super(ObjectIcon,self).__init__()
+
+		self.callback = callback	
+
+		self.capture(self._mouseEntered, "mouseEntered")
+		self.capture(self._mouseExited, "mouseExited")
+		self.capture(self._mouseClicked, "mouseClicked")
+
+		# Icon
+		self.icon = widgets.Icon(image=kwargs["image"])
+		self.addChild(self.icon)
+
+		# Label
+		hbox = widgets.HBox(padding=1)
+		self.addChild(hbox)
+		self.label = widgets.Label(text=kwargs["text"])
+		hbox.addChild(self.label)
+
+	def _setText(self, text):
+		self.label.text = text
+		
+	def _getText(self):
+		return self.label.text
+	text = property(_getText, _setText)
+
+	def _setImage(self, image):
+		self.icon.image = image
+
+	def _getImage(self):
+		return self.icon.image
+	image = property(_getImage, _setImage)
+
+	def _setSelected(self, enabled):
+		if isinstance(self.parent, ObjectIconList):
+			if enabled == True:
+				self.parent.selected_item = self
+			else:
+				if self.selected:
+					self.parent.selected_item = None
+		
+		if self.selected:
+			self.base_color = _DEFAULT_SELECTION_COLOR
+		else:
+			self.base_color = _DEFAULT_BASE_COLOR
+
+	def _isSelected(self):
+		if isinstance(self.parent, ObjectIconList):
+			return self == self.parent.selected_item
+		return False
+	selected = property(_isSelected, _setSelected)
+
+	#--- Event handling ---#
+	def _mouseEntered(self, event):
+		self.base_color += _DEFAULT_COLOR_STEP
+
+	def _mouseExited(self, event):
+		self.base_color -= _DEFAULT_COLOR_STEP
+
+	def _mouseClicked(self, event):
+		self.selected = True
+		self.callback()
+
+class ObjectIconList(widgets.VBox):
+	ATTRIBUTES = widgets.VBox.ATTRIBUTES
+	
+	def __init__(self,**kwargs):
+		super(ObjectIconList, self).__init__(max_size=(5000,500000), name=kwargs['name'])
+		self.base_color = self.background_color
+
+		self.capture(self._keyPressed, "keyPressed")
+		#self.capture(self._keyPressed, "keyReleased")
+		self._selectedItem = None
+		self.is_focusable = True
+
+	def _keyPressed(self, event):
+		print "KeyEvent", event
+
+	def clear(self):
+		for c in reversed(self.children):
+			self.removeChild(c)
+
+	def _setSelectedItem(self, item):
+		if isinstance(item, ObjectIcon) or item is None:
+			if self._selectedItem is not None:
+				tmp = self._selectedItem
+				self._selectedItem = item
+				tmp.selected = False
+			else:
+				self._selectedItem = item
+		#if item is not None:
+		#	item.selected = True
+
+	def _getSelectedItem(self):
+		return self._selectedItem
+	selected_item = property(_getSelectedItem, _setSelectedItem)

@@ -172,7 +172,7 @@ class MapController(object):
 		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
 		
 		for i in self._selection:
-			if loc == i: return
+			if loc.getLayerCoordinates() == i.getLayerCoordinates(): return
 			
 		self._selection.append(loc)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
@@ -189,10 +189,10 @@ class MapController(object):
 		loc = fife.Location(self._layer)
 		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
 		
-		for i in self._selection:
-			if loc == i:
-				self._selection.remove(loc)
-				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(loc)
+		for i in self._selection[:]:
+			if loc.getLayerCoordinates() == i.getLayerCoordinates():
+				self._selection.remove(i)
+				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(i)
 				return
 
 	def getInstance(self):
@@ -221,23 +221,18 @@ class MapController(object):
 		if not position:
 			if self.debug: print 'No position assigned in getInstancesFromPosition'
 			return
-
+			
 		if layer:
 			loc = fife.Location(layer)
 		else:
 			loc = fife.Location(self._layer)
-		if type(position) == fife.ExactModelCoordinate:
+
+		if isinstance(position, fife.ExactModelCoordinate):
 			loc.setExactLayerCoordinates(position)
 		else:
 			loc.setLayerCoordinates(position)
 
-		map_coords = loc.getMapCoordinates()
-		screen_point = self._camera.toScreenCoordinates(map_coords)
-
-		if layer:
-			instances = self._camera.getMatchingInstances(screen_point, layer)
-		else:
-			instances = self._camera.getMatchingInstances(screen_point, self._layer)
+		instances = self._camera.getMatchingInstances(loc)
 			
 		if self._single_instance and instances:
 			return [instances[0], ]
@@ -344,31 +339,44 @@ class MapController(object):
 
 	def moveInstances(self, instances, moveBy, exact=False, origLoc=None, origFacing=None):
 		""" Moves provided instances by moveBy. If exact is false, the instances are
-		snapped to closest cell. origLoc and origFacing are only set when an undo/redo
-		operation takes place and will have no effect and should not be used under normal
-		circumstances."""
+			snapped to closest cell. origLoc and origFacing are only set when an undo/redo
+			operation takes place and will have no effect and should not be used under normal
+			circumstances.
+		
+		@type	instances:	list
+		@param	instances:	a bunch of selected fife.Instance objects
+		@type	moveBy:	fife.Point3D
+		@param	moveBy:	diff of last and current exact model coordinate relative to the cursor
+		@type	exact:	bool
+		@param	exact:	flag to either set exactLayerCoordinates or LayerCoordinates
+		@rtype	result:	bool
+		@return	result:	flag wether the instances were moved or not (always True if exact=True)
+		"""
+		result = True
 		mname = 'moveInstances'
 		if not self._layer:
 			if self.debug: print 'No layer assigned in %s' % mname
-			return
-			
-		if exact and type(moveBy) != fife.ExactModelCoordinate:
-			moveBy = fife.ExactModelCoordinate(float(moveBy.x), float(moveBy.y), float(moveBy.z))
-		elif exact is False and type(moveBy) != fife.ModelCoordinate:
-			moveBy = fife.ModelCoordinate(int(round(moveBy.x)), int(round(moveBy.y)), int(round(moveBy.z)))
+			return not result
+
+		moveBy = fife.ExactModelCoordinate(float(moveBy.x), float(moveBy.y), float(moveBy.z))
 
 		for i in instances:
 			loc = i.getLocation()
 			f = i.getFacingLocation()
+			
+			nloc = fife.Location(self._layer)
+			nloc.setExactLayerCoordinates(loc.getExactLayerCoordinates() + moveBy)
+			
+			if loc.getLayerCoordinates() == nloc.getLayerCoordinates() and not exact:
+				result = False
+				break
+			
 			if exact:
-				newCoords = loc.getExactLayerCoordinates() + moveBy
-				loc.setExactLayerCoordinates(newCoords)
-				f.setExactLayerCoordinates(f.getExactLayerCoordinates() + moveBy)
-			else:
-				# Move instance and snap to closest cell
-				newCoords = loc.getLayerCoordinates() + moveBy
-				loc.setLayerCoordinates(newCoords)
-				f.setLayerCoordinates(f.getLayerCoordinates() + moveBy)
+				loc.setExactLayerCoordinates(nloc.getExactLayerCoordinates())
+				f.setExactLayerCoordinates(loc.getExactLayerCoordinates())
+			else:	
+				loc.setLayerCoordinates(nloc.getLayerCoordinates())
+				f.setLayerCoordinates(loc.getLayerCoordinates())
 				
 			if not self._undo:
 				undocall = cbwa(self.moveInstances, [i], moveBy, exact, i.getLocation(), i.getFacingLocation())
@@ -383,6 +391,8 @@ class MapController(object):
 				assert(origFacing)
 				i.setLocation(origLoc)
 				i.setFacingLocation(origFacing)
+				
+		return result
 
 
 	def rotateCounterClockwise(self):
@@ -418,11 +428,12 @@ class MapController(object):
 		z = self._camera.getZoom()
 		r = self._camera.getRotation()
 		if screen_x:
-			coords.x -= screen_x / z * math.cos(r / 180.0 * math.pi) / 100;
-			coords.y -= screen_x / z * math.sin(r / 180.0 * math.pi) / 100;
+			coords.x -= screen_x / z * math.cos(r / 180.0 * math.pi) / 100
+			coords.y -= screen_x / z * math.sin(r / 180.0 * math.pi) / 100
 		if screen_y:
-			coords.x -= screen_y / z * math.sin(-r / 180.0 * math.pi) / 100;
-			coords.y -= screen_y / z * math.cos(-r / 180.0 * math.pi) / 100;
+			coords.x -= screen_y / z * math.sin(-r / 180.0 * math.pi) / 100
+			coords.y -= screen_y / z * math.cos(-r / 180.0 * math.pi) / 100
+			
 		coords = self._camera.getLocationRef().setMapCoordinates(coords)
 		self._camera.refresh()
 
@@ -434,7 +445,7 @@ class MapController(object):
 		if not self._layer:
 			if self.debug: print 'No layer assigned in screenToMapCoordinates'
 			return
-
+			
 		screencoords = fife.ScreenPoint(screenx, screeny)
 		z_offset = self._camera.getZOffset(self._layer)
 		if self._layer == self._camera.getLocation().getLayer():
@@ -455,7 +466,7 @@ class MapController(object):
 
 		mapCoords = self._camera.toMapCoordinates(screencoords, False)
 		mapCoords.z = self._layer.getCellGrid().getZShift()
-
+		
 		return mapCoords
 	
 	def incrementReferenceCountForObject(self, object):

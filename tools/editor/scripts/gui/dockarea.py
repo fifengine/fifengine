@@ -125,7 +125,7 @@ class DockArea(widgets.VBox, ResizableBase):
 		
 	def undockChild(self, child, childIsCaller=False):
 		tabwidget = None
-		for panel in self.panels:
+		for panel in self.panels[:]:
 			if panel[0] == child:
 				tabwidget = panel[1]
 				self.panels.remove(panel)

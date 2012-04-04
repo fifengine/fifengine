@@ -4,7 +4,7 @@
 			<!-- Content is added dynamically here -->
 		</VBox>
 	</ScrollArea>
-	<HBox name="button_wrapper">
+	<HBox name="button_wrapper" padding="4">
 		<Spacer />
 		<ImageButton name="add_layer_button" hexpand="0" offset="1,1" 
 				helptext="Creates a new layer"

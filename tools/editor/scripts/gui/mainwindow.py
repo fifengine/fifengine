@@ -128,6 +128,28 @@ class MainWindow(object):
 		return self._toolbar
 	
 	def dockWidgetTo(self, widget, dockarea, x=-1, y=-1):
+		""" docks a B{Panel} widget to the given dock area
+		
+		@note:	
+			- ToolBar needs special treatment, given x, y coordinates
+			  have no effect on this Panel
+			- x, y are cursor coordinates, without giving them the
+			  widgets are added beneath the already existing ones
+			  nice feature, but also makes problems on editor startup
+			  (e.g. if a user docked 2 widgets left, on startup they
+			   are added in a col instead of a grouped tab)
+				
+		@todo:	turn x,y documentation into something more useful
+		
+		@type	widget:	Panel
+		@param	widget:	a panel widget instance
+		@type	dockarea:	str
+		@param	dockarea:	id of the target dock area
+		@type	x:	int
+		@param	x:	x coordinate
+		@type	y:	int
+		@param	y:	y coordinate
+		"""
 		if isinstance(widget, pychan.widgets.Widget) is False:
 			print "Argument is not a valid widget"
 			return
@@ -235,6 +257,22 @@ class MainWindow(object):
 		return None
 			
 	def getDockAreaAt(self, x, y, mark=False):
+		""" returns the dock area at the given cursor coordinates (if possible)
+		
+			also used for highlighting the dock area (this method is used
+			on drag mouse events of a B{Panel} widget)
+		
+		@type	x:	int
+		@param	x:	cursor x coordinates
+		@type	y:	int
+		@param	y:	cursor y coordinates
+		@type	mark:	bool
+		@param	mark:	flag to wether show the dock area marker (red area indicator) or not
+		@rtype	side:	str
+		@return	side:	dockarea id (e.g. 'right', 'left' ...)
+		"""
+		side = None
+		
 		if self.dockareamarker is None:
 			self.dockareamarker = pychan.widgets.Container()
 			self.dockareamarker.base_color = fife.Color(200, 0, 0, 100)
@@ -273,7 +311,9 @@ class MainWindow(object):
 						
 					self.dockareamarker.show()
 				return side
-			
+
+		# reset side, next attempt to find a new home
+		side = None
 
 		# Mouse wasn't over any dockwidgets. See if it is near any edge of the screen instead
 		if x <= self._dockareas["left"].getAbsolutePos()[0]+10:
@@ -281,7 +321,8 @@ class MainWindow(object):
 				self.dockareamarker.position = self._dockareas["left"].getAbsolutePos()
 				self.dockareamarker.size = (10, self._dockareas["left"].height)
 				self.dockareamarker.show()
-			return DOCKAREA["left"]
+			side = DOCKAREA["left"]
+			return side
 			
 		elif x >= self._dockareas["right"].getAbsolutePos()[0]-10:
 			if mark:
@@ -289,14 +330,16 @@ class MainWindow(object):
 				self.dockareamarker.size = (10, self._dockareas["right"].height)
 				self.dockareamarker.x -= 10
 				self.dockareamarker.show()
-			return DOCKAREA["right"]
+			side = DOCKAREA["right"]
+			return side
 			
 		elif y <= self._dockareas["top"].getAbsolutePos()[1]+10:
 			if mark:
 				self.dockareamarker.position = self._dockareas["top"].getAbsolutePos()
 				self.dockareamarker.size = (self._dockareas["top"].width, 10)
 				self.dockareamarker.show()
-			return DOCKAREA["top"]
+			side = DOCKAREA["top"]
+			return side
 			
 		elif y >= self._dockareas["bottom"].getAbsolutePos()[1]-10:
 			if mark:
@@ -304,8 +347,10 @@ class MainWindow(object):
 				self.dockareamarker.y -= 10
 				self.dockareamarker.size = (self._dockareas["bottom"].width, 10)
 				self.dockareamarker.show()
-			return DOCKAREA["bottom"]
+			side = DOCKAREA["bottom"]
+			return side
 
 		if mark is True:
 			self.dockareamarker.hide()
-		return None
+			
+		return side

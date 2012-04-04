@@ -158,7 +158,7 @@ class LightEdit(plugin.Plugin):
 		"""
 			- creates the gui skeleton by loading the xml file
 			
-		FIXME:
+	@todo:
 			- move all dynamic widgets to dict
 		"""
 		self.container = pychan.loadXML('gui/lightedit.xml')

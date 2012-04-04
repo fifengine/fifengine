@@ -202,6 +202,9 @@ class ToolBar(Panel):
 			if self.isDocked():
 				self.setDocked(False)
 				event.consume()
+			else:
+				self.setOrientation(not self.getOrientation())
+				event.consume()
 			
 	def mouseDragged(self, event):
 		if self._resize is False and self.isDocked() is False:

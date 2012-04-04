@@ -84,8 +84,26 @@ class PluginManager:
 		self._settings.saveSettings()
 
 		
-class Plugin:
-	""" The base class for all plugins. All plugins should override these functions. """
+class Plugin(object):
+	""" The base class for all plugins. All plugins should implement these functions. 
+	
+	@type	default_settings:	dict
+	@ivar	default_settings:	mapping with (generic) default settings, used as fallback
+								and to create the entries in settings.xml if they are not present
+	@note:	plugins should provide their own default settings by overwriting this ivar
+	
+	@type	settings:	dict
+	@ivar	settings:	current settings, simple item - value mapping (e.g. docking : True)
+	@note:	plugins shouldn't touch that ivar
+	
+	@type	eds:	fife_settings
+	@ivar	eds:	editor settings module (fife extension)
+	@note:	plugins have to provide the settings module by overwriting this ivar
+	"""
+	def __init__(self):
+		self.default_settings = {}
+		self.settings = {}
+		self.eds = None
 	
 	def enable(self):
 		raise NotImplementedError, "Plugin has not implemented the enable() function!"
@@ -99,6 +117,26 @@ class Plugin:
 	def getName(self):
 		raise NotImplementedError, "Plugin has not implemented the getName() function!"
 		
+	def update_settings(self):
+		""" read the settings for this plugin from the editor's settings file 
+		
+		@note:	
+			- in order to use stored settings, a plugin has to call this method
+			  on init
+			- default settings have to be provided by the plugin, otherwise
+			  we don't do anything here
+		"""
+		if self.eds is None: return
+		if not self.default_settings: return
+		if 'module' not in self.default_settings: return
+		if 'items' not in self.default_settings: return
+		
+		module = self.default_settings['module']
+
+		for name, default_value in self.default_settings['items'].iteritems():
+			value = self.eds.get(module, name, default_value)
+			self.settings[name] = value
+
 	#--- These are not so important ---#
 	def getAuthor(self):
 		return "Unknown"
