@@ -30,9 +30,20 @@ from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 import scripts.plugin as plugin
 import scripts.editor
+
 from scripts.events import *
 from scripts.gui.action import Action
 from scripts.gui.layerdialog import LayerDialog
+
+# plugin default settings
+_PLUGIN_SETTINGS = {
+	'module' : "LayerToolSettings",
+	'items' : {
+		'dockarea' : 'left',
+		'docked' : True,
+		
+	},
+}
 
 class LayerTool(plugin.Plugin):
 	""" The B{LayerTool} allows to select and show / hide layers of a loaded
@@ -47,8 +58,9 @@ class LayerTool(plugin.Plugin):
 	LABEL_NAME_PREFIX = "select_"
 
 	def __init__(self):	
+		super(LayerTool, self).__init__()
 		# Editor instance
-		self._editor = None
+		self._editor = scripts.editor.getEditor()
 		
 		# Plugin variables
 		self._enabled = False
@@ -61,37 +73,41 @@ class LayerTool(plugin.Plugin):
 		
 		# GUI
 		self._layer_wizard = None
-		self._container = None
-		self._wrapper = None
-		self._remove_layer_button = None
-		self._create_layer_button = None
-		self._edit_layer_button = None
+		self.container = None
+		self.wrapper = None
+		self.remove_layer_button = None
+		self.create_layer_button = None
+		self.edit_layer_button = None
+		
+		self.default_settings = _PLUGIN_SETTINGS
+		self.eds = self._editor._settings
+		self.update_settings()
 			
 	#--- Plugin functions ---#
 	def enable(self):
 		""" Enable plugin """
-		if self._enabled is True:
-			return
+		if self._enabled: return
 			
 		# Fifedit plugin data
-		self._editor = scripts.editor.getEditor()
 		self._action_show = Action(u"LayerTool", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._action_show)
 		self._editor._tools_menu.addAction(self._action_show)
 
-		self._createGui()
-		
+		self.create()
 		self.toggle()
 		
 		events.postMapShown.connect(self.update)
 		events.preMapClosed.connect(self._mapClosed)
+		
+		if self.settings['docked']:
+			self._editor.dockWidgetTo(self.container, self.settings['dockarea'])
 
 	def disable(self):
 		""" Disable plugin """
-		if self._enabled is False:
-			return
-		self._container.setDocked(False)
-		self._container.hide()
+		if not self._enabled: return
+		
+		self.container.setDocked(False)
+		self.container.hide()
 		
 		events.postMapShown.disconnect(self.update)
 		events.preMapClosed.disconnect(self._mapClosed)
@@ -129,7 +145,7 @@ class LayerTool(plugin.Plugin):
 		
 	def clear(self):
 		""" Remove all subwrappers """
-		self._wrapper.removeAllChildren()
+		self.wrapper.removeAllChildren()
 		
 	def update(self, mapview):
 		""" Update layertool with information from mapview
@@ -160,7 +176,7 @@ class LayerTool(plugin.Plugin):
 			layerLabel.name = LayerTool.LABEL_NAME_PREFIX + layerid
 			subwrapper.addChild(layerLabel)
 			
-			self._wrapper.addChild(subwrapper)
+			self.wrapper.addChild(subwrapper)
 		
 		active_layer = self.getActiveLayer()
 		if active_layer:
@@ -188,9 +204,9 @@ class LayerTool(plugin.Plugin):
 			subwrapper.addChild(toggleVisibleButton)
 			subwrapper.addChild(layerLabel)
 			
-			self._wrapper.addChild(subwrapper)
+			self.wrapper.addChild(subwrapper)
 		
-		self._container.adaptLayout()		
+		self.container.adaptLayout()		
 			
 	def toggleLayerVisibility(self, event, widget):
 		""" Callback for ToggleButtons 
@@ -260,7 +276,7 @@ class LayerTool(plugin.Plugin):
 		previous_active_layer = self.getActiveLayer()
 		if previous_active_layer is not None:
 			previous_layer_id = previous_active_layer.getId()
-			previous_active_widget = self._container.findChild(name=LayerTool.LABEL_NAME_PREFIX + previous_layer_id)
+			previous_active_widget = self.container.findChild(name=LayerTool.LABEL_NAME_PREFIX + previous_layer_id)
 			previous_active_widget.background_color = LayerTool.DEFAULT_BACKGROUND_COLOR
 			previous_active_widget.foreground_color = LayerTool.DEFAULT_BACKGROUND_COLOR
 			previous_active_widget.base_color = LayerTool.DEFAULT_BACKGROUND_COLOR
@@ -286,7 +302,7 @@ class LayerTool(plugin.Plugin):
 		
 		# FIFE will crash if we try to delete the layer which is in use by a camera
 		# so we will set the camera to another layer instead
-		for cam in map.getCameras:
+		for cam in map.getCameras():
 			if cam.getLocationRef().getMap().getId() != map.getId():
 				continue
 				
@@ -307,48 +323,70 @@ class LayerTool(plugin.Plugin):
 		"""	Toggles the layertool visible / invisible and sets
 			dock status 
 		"""
-		if self._container.isVisible() or self._container.isDocked():
-			self._container.setDocked(False)
-			self._container.hide()
+		if self.container.isVisible() or self.container.isDocked():
+			self.container.setDocked(False)
+			self.container.hide()
 
 			self._action_show.setChecked(False)
 		else:
-			self._container.show()
+			self.container.show()
 			self._action_show.setChecked(True)
 			self._adjustPosition()
 			
-	def _createGui(self):
+	def create(self):
 		""" Create the basic gui container """
-		self._container =  pychan.loadXML('gui/layertool.xml')
-		self._wrapper = self._container.findChild(name="layers_wrapper")
-		self._remove_layer_button = self._container.findChild(name="remove_layer_button")
-		self._create_layer_button = self._container.findChild(name="add_layer_button")
-		self._edit_layer_button = self._container.findChild(name="edit_layer_button")
+		self.container =  pychan.loadXML('gui/layertool.xml')
+		self.wrapper = self.container.findChild(name="layers_wrapper")
+		self.remove_layer_button = self.container.findChild(name="remove_layer_button")
+		self.create_layer_button = self.container.findChild(name="add_layer_button")
+		self.edit_layer_button = self.container.findChild(name="edit_layer_button")
 		
-		self._remove_layer_button.capture(self.removeSelectedLayer)
-		self._remove_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._remove_layer_button.helptext), 'mouseEntered')
-		self._remove_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		self.remove_layer_button.capture(self.removeSelectedLayer)
+		self.remove_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self.remove_layer_button.helptext), 'mouseEntered')
+		self.remove_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
 		
-		self._create_layer_button.capture(self.showLayerWizard)
-		self._create_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._create_layer_button.helptext), 'mouseEntered')
-		self._create_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		self.create_layer_button.capture(self.showLayerWizard)
+		self.create_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self.create_layer_button.helptext), 'mouseEntered')
+		self.create_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
 		
-		self._edit_layer_button.capture(self.showEditDialog)
-		self._edit_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._edit_layer_button.helptext), 'mouseEntered')
-		self._edit_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		self.edit_layer_button.capture(self.showEditDialog)
+		self.edit_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self.edit_layer_button.helptext), 'mouseEntered')
+		self.edit_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
 		
 		self.update(None)
+		
+		# overwrite Panel.afterUndock
+		self.container.afterUndock = self.on_undock
+		self.container.afterDock = self.on_dock
+		
+	def on_dock(self):
+		""" callback for dock event of B{Panel}	widget """
+		side = self.container.dockarea.side
+		if not side: return
+
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', side)
+		self.eds.set(module, 'docked', True)
+	
+	def on_undock(self):
+		""" callback for undock event of B{Panel} widget """
+		self.container.hide()
+		self.toggle()
+
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', '')
+		self.eds.set(module, 'docked', False)				
 
 	def _adjustPosition(self):
 		"""	Adjusts the position of the container - we don't want to
 		let the window appear at the center of the screen.
 		(new default position: left, beneath the tools window)
 		"""
-		self._container.position = (50, 200)
+		self.container.position = (50, 200)
 
 	def _layerCreated(self, layer):
 		self.update(self._mapview)
-		self.selectLayer(None, self._wrapper.findChild(name=LayerTool.LABEL_NAME_PREFIX + layer.getId()))
+		self.selectLayer(None, self.wrapper.findChild(name=LayerTool.LABEL_NAME_PREFIX + layer.getId()))
 		
 
 

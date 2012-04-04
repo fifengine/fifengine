@@ -101,8 +101,27 @@ class Manager(object):
 	def hide(self,widget):
 		"""
 		Hides a widget again. Used by L{Widget.hide} - do not use directly.
+
+		@todo:	delete calls occur even if the widget is not in self.allWidgets
+				we can't rely on a perfect show/hide/show/hide chain here (which we do!)
+				
+				this method is called way too frequent and unmanaged as that we can 
+				ever hope to achieve a strict show/hide/show chain
+				
+				weak ref should only be deleted if there is one, because
+				hiding/showing a widget is a different process then updating
+				the self.allWidgets datastructure
+				
+				the assert check will trigger on a frequent basis, thus
+				I added it but uncommented it for further notice
 		"""
 		self.hook.remove_widget( widget.real_widget )
+
+		# triggered on a regular basis
+#		assert widget not in self.allWidgets, "KeyError: pychan tried to delete this widget: %s" % widget
+
+		if widget not in self.allWidgets:
+			return
 		del self.allWidgets[ widget ]
 
 	def getConsole(self):

@@ -53,6 +53,45 @@ class Panel(widgets.Window, ResizableBase):
 		self._editor = scripts.editor.getEditor()
 		
 		self._panel_startPos = (0, 0)
+		self.abs_pos_backup = ()
+		
+	def afterDock(self):
+		""" called after setDocked() process if the panel is docked
+		
+			overwrite this to e.g. keep a record on where the widget
+			was last docked
+		"""
+		pass
+		
+	def afterUndock(self):
+		""" called after setDocked() process if the panel is undocked 
+		
+			overwrite and implement this in your Panel instance
+			to e.g. restore a particular default position
+			(otherwise the panel would re-appear on the top-left)
+			
+		@todo:
+			- this implementation is focused on the ToolBar (probably a
+			  leftover from previous versions as the Panel widget only
+			  was designed for the ToolBar)
+			- this should be more generalized to work better for all Panels
+		"""
+		if not self.abs_pos_backup: return 
+		absX, absY = self.abs_pos_backup
+
+		# Slighly offset toolbar when undocking
+		mw = pychan.internal.screen_width() / 2
+		mh = pychan.internal.screen_height() / 2
+		if absX < mw:
+			self.x = absX + self._titlebarheight
+		else:
+			self.x = absX - self._titlebarheight
+		if absY < mh:
+			self.y = absY + self._titlebarheight
+		else:
+			self.y = absY - self._titlebarheight
+
+		self.abs_pos_backup = ()
 		
 	def setDocked(self, docked):
 		""" 
@@ -65,18 +104,22 @@ class Panel(widgets.Window, ResizableBase):
 		If this panel is docked in a dockarea or widget,
 		it will undock itself. The new position will be 
 		offset by panelSize.
+		
+		@type	docked:	bool
+		@param	docked:	flag to either set the Panel to docked status or not
 		"""
-		if self.dockable is False:
+		if not self.dockable:
 			return
 		
-		if docked is True and self._floating == True:
+		if docked and self._floating:
 			self._floating = False
 			self.real_widget.setTitleBarHeight(0)
 			self.real_widget.setMovable(False)
 			self._movable = False
 			self.resizable = False
+			self.afterDock()
 				
-		elif docked is False and self._floating is False:			
+		elif not docked and not self._floating:
 			self._floating = True
 			self._movable = True
 			self.real_widget.setMovable(True)
@@ -85,43 +128,38 @@ class Panel(widgets.Window, ResizableBase):
 			
 			# Since x and y coordinates are reset if the widget gets hidden,
 			# we need to store them
-			absX, absY = self.getAbsolutePos()
+			self.abs_pos_backup = self.getAbsolutePos()
 			
 			# Remove from parent widget
 			if self.dockarea is not None:
+				# @note: this step is necessary, otherwise the widget.isVisible()
+				# call returns True although the widget is not visible
+				# @note: self.parent is not None if the ToolBar calls this method
+				# that's why cheesesucker added the elif branch
+				if self.parent is None:
+					self.hide()
 				# Use dockareas undock method
 				self.dockarea.undockChild(self, True)
 				self.dockarea = None
-
 			elif self.parent is not None:
 				# Force removal
 				widgetParent = self.parent
 				widgetParent.removeChild(self)
 				widgetParent.adaptLayout()
 				get_manager().show(self)
-				
+
 			self.real_widget.setTitleBarHeight(self._titlebarheight)
-			self.adaptLayout()
 			self.show()
+			self.adaptLayout()
 			
-			# Slighly offset toolbar when undocking
-			mw = pychan.internal.screen_width() / 2
-			mh = pychan.internal.screen_height() / 2
-			if absX < mw:
-				self.x = absX + self._titlebarheight
-			else:
-				self.x = absX - self._titlebarheight
-			if absY < mh:
-				self.y = absY + self._titlebarheight
-			else:
-				self.y = absY - self._titlebarheight
+			self.afterUndock()		
 
 	def isDocked(self):
 		""" Returns true if the panel is docked """
 		return self._floating == False
 		
 	def mousePressed(self, event):
-		if self.resizable is False:
+		if not self.resizable:
 			return
 			
 		self._panel_startPos = (self.x, self.y)
@@ -133,7 +171,7 @@ class Panel(widgets.Window, ResizableBase):
 			
 	def mouseDragged(self, event):
 		self._dragging = True
-		if self._resize is False and self.isDocked() is False:
+		if not self._resize and not self.isDocked():
 			if (self.x, self.y) == self._panel_startPos:
 				return
 			mouseX = self.x+event.getX()
@@ -171,7 +209,6 @@ class Panel(widgets.Window, ResizableBase):
 		if self.isDocked():
 			return
 		widgets.Window.show(self)
-				
 	
 # Register widget to pychan
 if 'Panel' not in widgets.WIDGETS:

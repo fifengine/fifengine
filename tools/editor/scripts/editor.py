@@ -434,6 +434,8 @@ class Editor(ApplicationBase, MainWindow):
 
 	def openFile(self, path):
 		""" Opens a file """
+		events.onOpenMapFile.send(sender=self, path=path)
+		
 		try:
 			map = None
 			fife_loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
