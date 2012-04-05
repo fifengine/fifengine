@@ -152,9 +152,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			
 		elif cmd[0].lower() in ('list', 'ls'):
 			self._console.println( "List of test modules:" )
-			count = 1
 			for test in self._testmanager.tests:
-				self._console.println( str(count) + ")  " + test.getName() + " - " + test.getDescription() )
+				self._console.println( "\'" + test.getName() + "\' - " + test.getDescription() )
 
 		elif cmd[0].lower() in ('run', 'r'):
 			runtest = None
@@ -173,14 +172,26 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			
 			if runtest:
 				self._console.println( "Running test " + runtest.getName() )
-				self._testmanager.runTest(runtest)		
+				self._testmanager.runTest(runtest)	
+				get_manager().getConsole().toggleShowHide()
 			else:
 				result = "Test " + cmd[1] + " was not found!"
 			
 				
 		elif cmd[0].lower() in ('stop', 'st'):
-			self._console.println("Stopping running test..")
-			self._testmanager.stopTest()
+			if self._testmanager.runningtest:
+				self._console.println("Stopping running test..")
+				self._testmanager.stopTest()
+			else:
+				result = "Nothing is running!"
+			
+		elif cmd[0].lower() in ('reset', 'rst'):
+			if self._testmanager.runningtest:
+				self._console.println("Resetting test " + self._testmanager.runningtest.getName() + "...")
+				self._testmanager.resetTest()
+				get_manager().getConsole().toggleShowHide()
+			else:
+				result = "Nothing is running!"
 			
 		elif cmd[0].lower() in ('lsrunning', 'lsrun', 'running'):
 			if self._testmanager.runningtest:

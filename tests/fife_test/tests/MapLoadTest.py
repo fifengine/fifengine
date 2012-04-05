@@ -30,6 +30,27 @@ from fife.extensions.fife_timer import Timer
 
 import scripts.test as test
 
+class KeyListener(fife.IKeyListener):
+	def __init__(self, test):
+		self._engine = test._engine
+		self._test = test
+		self._eventmanager = self._engine.getEventManager()
+		
+		fife.IKeyListener.__init__(self)
+
+	def keyPressed(self, evt):
+		keyval = evt.getKey().getValue()
+		keystr = evt.getKey().getAsString().lower()
+		if keystr == 't':
+			r = self._test._camera.getRenderer('GridRenderer')
+			r.setEnabled(not r.isEnabled())
+		elif keystr == 'c':
+			r = self._test._camera.getRenderer('CoordinateRenderer')
+			r.setEnabled(not r.isEnabled())
+		
+	def keyReleased(self, evt):
+		pass
+
 class MouseListener(fife.IMouseListener):
 	def __init__(self, test):
 		self._engine = test._engine
@@ -92,8 +113,15 @@ class MapLoadTest(test.Test):
 		self._running = True
 		
 		self._mouselistener = MouseListener(self)
-		self._eventmanager.addMouseListenerFront(self._mouselistener)
+		self._eventmanager.addMouseListener(self._mouselistener)
 		
+		self._keylistener = KeyListener(self)
+		self._eventmanager.addKeyListener(self._keylistener)
+
+		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
+		if self._font is None:
+			raise InitializationError("Could not load font %s" % name)
+
 		self.loadMap("data/maps/grassland.xml")
 
 	def stop(self):
@@ -103,6 +131,10 @@ class MapLoadTest(test.Test):
 		self._engine.getModel().deleteObjects()
 		
 		self._eventmanager.removeMouseListener(self._mouselistener)
+		self._eventmanager.removeKeyListener(self._keylistener)
+		
+		del self._mouselistener
+		del self._keylistener
 		
 	def isRunning(self):
 		return self._running
@@ -141,8 +173,18 @@ class MapLoadTest(test.Test):
 			self._mapLoaded = True
 
 		self._camera = self._map.getCamera("camera1")
-		self._actorlayer = self._map.getLayer("actor_layer")
+		self._actorlayer = self._map.getLayer("item_layer")
+		self._groundlayer = self._map.getLayer("ground_layer")
 		self._player = self._actorlayer.getInstance("player")
+		
+		gridrenderer = self._camera.getRenderer('GridRenderer')
+		gridrenderer.activateAllLayers(self._map)
+
+		coordrenderer = fife.CoordinateRenderer.getInstance(self._camera)
+		coordrenderer.setFont(self._font)
+		coordrenderer.clearActiveLayers()
+		coordrenderer.addActiveLayer(self._groundlayer)
+
 
 	def getLocationAt(self, screenpoint):
 		"""

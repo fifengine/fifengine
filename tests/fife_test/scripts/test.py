@@ -77,7 +77,16 @@ class TestManager(object):
 				self._running.destroy()
 			
 			self._running = None	
+
+	def resetTest(self):
+		if self._running:
+			if self._running.isRunning():
+				self._running.stop()
 			
+			self._running.destroy()
+			self._running.create(self._engine, self._application)
+			self._running.run()				
+		
 	def _getTests(self):
 		return self._tests
 			
