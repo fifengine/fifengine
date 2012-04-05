@@ -13,6 +13,16 @@ http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-font
 Affected files:
 data/fonts/samanata.ttf
 
+=== GNU Free Fonts ===
+Author: various
+
+Download:
+http://ftp.gnu.org/gnu/freefont/
+
+License:
+GNU General Public License v3 or later
+http://www.gnu.org/licenses/gpl.html
+
 == Graphics ==
 
 === Open Game Art ===
@@ -20,8 +30,25 @@ Author: Clint Bellanger
 
 Website: www.opengameart.org
 
-License: CC-BY-SA 3.0
+License: 
+CC-BY-SA 3.0
+http://creativecommons.org/licenses/by-sa/3.0/
 
 Affected files:
-data/objects/*.png
+data/objects/actors/player/skel/*.png
 data/tilesets/grassland_tiles.png
+
+== Fonts ==
+
+=== Worldforge ===
+Author: Alistair Riddoch (alriddoch@googlemail.com)
+
+Website:
+http://guichan.sourceforge.net/oldsite/images/rpgfont.png
+
+License: 
+GPL 2.0 
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Affected files:
+fonts/rpgfont.png
