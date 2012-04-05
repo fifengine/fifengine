@@ -7,9 +7,9 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{FE01A2E9-77CE-4293-B667-2FA8A184D4E7}
-AppName=FIFE Development Kit (November 2010)
+AppName=FIFE Development Kit (April 2012)
 ; Version is yyyy.mm
-AppVerName=FIFE DevKit 2010.11
+AppVerName=FIFE DevKit 2012.04
 AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.net
 AppSupportURL=http://www.fifengine.net
@@ -22,7 +22,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_Development_Kit_Nov2010
+OutputBaseFilename=FIFE_Development_Kit_Apr2012
 OutputDir=.
 DisableReadyPage=yes
 ; This will require some testing. We can't install to Program files if the user is not an admin.
@@ -48,7 +48,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "..\applications\scons\*"; DestDir: "{app}\applications\scons"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\applications\swigwin-2.0.1\*"; DestDir: "{app}\applications\swigwin-2.0.1"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\includes\*"; DestDir: "{app}\includes"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "README_DevKit_Nov2010.txt"; DestDir:"{app}"; Flags: isreadme
+Source: "README_DevKit_Apr2012.txt"; DestDir:"{app}"; Flags: isreadme
 
 ; MinGW
 Source: "..\applications\mingw\*"; DestDir: "{app}\applications\mingw"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs

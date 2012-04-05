@@ -22,8 +22,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Removed sub image loaders as they are not used. (r3811)
 * Object is no longer derived from IResource. (r3811)
 * SDL Renderer now renders quads as expected. [t:607]
-* Changed the Image creation in CoordinateRenderer?. The coordinate is now 
-  splitted into three images. So the TextRenderPool? can reuse the most images 
+* Changed the Image creation in CoordinateRenderer. The coordinate is now 
+  splitted into three images. So the TextRenderPool can reuse the most images 
   and must not create one for each coordinate. Additional the images take camera
   zoom into account, but you can also disable it. [t:612]
 * Added InstanceDeleteListener to InstanceRenderer and RenderNode. [t:602]
@@ -39,7 +39,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   and retrieve it as a tuple in python.  [t:617]
 * Added another version of captureScreen() that takes width and height params
   allowing you to resize the resulting image. [t:618]
-* Fixed a bug that led to Segmentation Faults, if the BitsPerPixel? setting was 
+* Fixed a bug that led to Segmentation Faults, if the BitsPerPixel setting was 
   different than 32. [t:623]
 * Added support for True Type Collection fonts. [t:614]
 * Optimized getMatchingInstances(). [t:592]
@@ -92,6 +92,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Added a check to animpacker.py to convert double points in action names to 
   underlines. Additional the convert now consumes less RAM, because the 
   ImageManager free images. [t:677]
+
 
 ================================================================================
 == 0.3.3r2 (November 2nd, 2011)                                               ==
@@ -156,7 +157,33 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed a bug in the layertool GUI. It was using the quit.png icon as its 
     delete layer image instead of the delete_layer.png icon. [t:583]
   * Replacing the editor's icon files with free ones. [t:584]
-
+  * fixed a bug in pychan.internal (hide() method didn't handle deletion 
+    correctly, added a guard & docstring to explain why this is bad)
+  * added new functionality to Plugin base class (read settings from editor's 
+    settings file)
+  * added afterDock / afterUndock methods to Panel widget; did some code 
+    cleanup & improvements to meet coding standard
+  * added documentation to the editor (mostly in docking functionality)
+  * updated both MapFileHistory? and LayerTool? plugins to use the new Plugin 
+    functionality - their docking status is now saved & loaded again
+  * added new event 'onOpenMapFile' to the signalmanager which sends the path of
+    the requested mapfile
+  * added MapFileHistory? plugin
+  * records previous loaded mapfiles and loads them on editor startup via 
+    settings xml
+  * selecting a mapfile either loads the map or updates outdated entries (e.g. 
+    if a map has been deleted)
+  * I added a max value of 5 entries, can be adjusted in the plugin file though
+  * fixed minor issue with moving multiple selected instances
+  * fixed "move"-mode of editor - it now doesn't try to select / deselect cells
+    (that's the task of "selection mode")
+  * fifedit now can handle instances on hex grids again
+  * deselection of cells is now possible (previous implementation never could 
+    work)
+  * switched instance selection from pixel-perfect to location (click on a cell
+    -> you select your instance, even if the cursor didn't scratch the instance 
+    image)
+  
 === Misc ===
   * Fixed the Free Software Foundation address in COPYING as it was outdated.
   * Added some more tiles to the rpg tileset in fife_test.
@@ -168,7 +195,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     base class.
   * Commented out a whole lot of debug statements to make the debug output in 
     FIFE useful again. I left them in the code in case anyone still needed them.
-    
+  * Added more tests to the fife_test testing platform. [t:683]   
     
 ================================================================================
 == 0.3.3 (October 6th, 2011)                                                  ==
@@ -562,8 +589,6 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added color tester to pychan demo
   * Demos now look for a local copy of FIFE before importing the installed 
     version of FIFE
-  
-
 
 
 ================================================================================
@@ -749,8 +774,7 @@ Bugs:
 
 === Misc ===
   * Removed old testmaps
-
-
+  
 
 ================================================================================
 == 2008.1 (July, 2008)                                                        ==
