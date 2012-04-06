@@ -64,6 +64,16 @@ class MainWindow(object):
 			
 	def initGui(self, screen_width, screen_height):
 		bar_height = 30
+
+		self._dockareas[DOCKAREA['left']] = DockArea("left")
+		self._dockareas[DOCKAREA['right']] = DockArea("right")
+		self._dockareas[DOCKAREA['top']] = DockArea("top")
+		self._dockareas[DOCKAREA['bottom']] = DockArea("bottom")
+
+		self._toolbarareas[DOCKAREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
+		self._toolbarareas[DOCKAREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
+		self._toolbarareas[DOCKAREA['top']] = pychan.widgets.HBox(margins=(0,0,0,0))
+		self._toolbarareas[DOCKAREA['bottom']] = pychan.widgets.HBox(margins=(0,0,0,0))
 		
 		self._statusbar = StatusBar(text=u"", panel_size=bar_height)
 		self._toolbar = ToolBar(title=u"Toolbar", button_style=0)
@@ -74,16 +84,6 @@ class MainWindow(object):
 		self._rootwidget.min_size = \
 		self._rootwidget.max_size = (screen_width, screen_height)
 		self._rootwidget.opaque = False
-		
-		self._dockareas[DOCKAREA['left']] = DockArea("left")
-		self._dockareas[DOCKAREA['right']] = DockArea("right")
-		self._dockareas[DOCKAREA['top']] = DockArea("top")
-		self._dockareas[DOCKAREA['bottom']] = DockArea("bottom")
-
-		self._toolbarareas[DOCKAREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._toolbarareas[DOCKAREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._toolbarareas[DOCKAREA['top']] = pychan.widgets.HBox(margins=(0,0,0,0))
-		self._toolbarareas[DOCKAREA['bottom']] = pychan.widgets.HBox(margins=(0,0,0,0))
 		
 		# This is where the map will be displayed
 		self._centralwidget = pychan.widgets.VBox(vexpand=1, hexpand=1)
@@ -172,31 +172,32 @@ class MainWindow(object):
 				widget.setOrientation(ToolBar.ORIENTATION["Horizontal"])
 	
 		if isinstance(widget, ToolBar):
+			docked = False
 			if dockarea == DOCKAREA['left']:
-				widget.setDocked(True)
+				docked = True
 				dockareas[DOCKAREA['left']].addChild(widget)
 				dockareas[DOCKAREA['left']].adaptLayout()
 				
 			elif dockarea == DOCKAREA['right']:
-				widget.setDocked(True)
+				docked = True
 				dockareas[DOCKAREA['right']].addChild(widget)
 				dockareas[DOCKAREA['right']].adaptLayout()
 				
 			elif dockarea == DOCKAREA['top']:
-				widget.setDocked(True)
+				docked = True
 				dockareas[DOCKAREA['top']].addChild(widget)
 				dockareas[DOCKAREA['top']].adaptLayout()
 				
 			elif dockarea == DOCKAREA['bottom']:
-				widget.setDocked(True)
+				docked = True
 				dockareas[DOCKAREA['bottom']].addChild(widget)
 				dockareas[DOCKAREA['bottom']].adaptLayout()
 				
 			else:
 				print "Invalid dockarea"
-				
 			
 			widget.dockareaname = dockarea
+			widget.setDocked(docked)
 				
 		else:
 			if dockarea == DOCKAREA['left']:

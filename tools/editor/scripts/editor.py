@@ -129,7 +129,7 @@ class Editor(ApplicationBase, MainWindow):
 		screen_height = self.engine.getSettings().getScreenHeight()
 		MainWindow.initGui(self, screen_width, screen_height)
 
-		self._toolbox = ToolBar(title=u"", orientation=1)
+		self._toolbox = ToolBar(name="ToolBox", title=u"", orientation=1)
 		self._toolbox.position_technique = "explicit"
 		self._toolbox.position = (150, 150)
 		

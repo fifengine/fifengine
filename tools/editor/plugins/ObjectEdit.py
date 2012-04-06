@@ -43,28 +43,21 @@ except:
 
 import math
 
-WHITE = {
-	"r"	:	205,
-	"g"	:	205,
-	"b"	:	205
-}
-OUTLINE_SIZE = 1
-
 class ObjectEdit(plugin.Plugin):
 	""" The B{ObjectEdit} module is a plugin for FIFedit and allows to edit
 	attributes of an selected instance - like offset, instance id or rotation
 	(namespaces and object id editing is excluded)
-	
-	current features:
-		- click instance and get all known data
-		- edit offsets, rotation, instance id
-		- save offsets to object file
-		- outline highlighting of the selected object
-		- animation viewer
+		
+	@note: 
+		- current features:
+		  - click instance and get all known data
+		  - edit offsets, rotation, instance id
+		  - animation viewer
+		- [disabled] save offsets to object file
+		
 	"""
 	def __init__(self):
 		self.active = False
-		self._camera = None
 		self._layer = None
 		self._anim_timer = None
 		
@@ -106,9 +99,6 @@ class ObjectEdit(plugin.Plugin):
 		self._instance_id = None
 		self._fixed_rotation = None
 		
-		if self._camera is not None:
-			self.renderer.removeAllOutlines()
-
 	def enable(self):
 		""" plugin method """
 		if self._enabled is True:
@@ -184,7 +174,7 @@ class ObjectEdit(plugin.Plugin):
 			- creates the gui skeleton by loading the xml file
 			- finds some important childs and saves their widget in the object
 			
-	@todo:
+		@todo:
 			- move all dynamic widgets to dict
 		"""
 		self.container = pychan.loadXML('gui/objectedit.xml')
@@ -352,7 +342,6 @@ class ObjectEdit(plugin.Plugin):
 				self._gui_rotation_dropdown._setSelected(index)
 #			else:
 #				print "Internal FIFE rotation: ", self._instances[0].getRotation()
-#				print "Fixed rotation (cam rot) ", self._fixed_rotation + int(abs(self._camera.getRotation()))
 #				print "Collected rots from object ", self._avail_rotations
 				
 
@@ -372,11 +361,6 @@ class ObjectEdit(plugin.Plugin):
 			self.active = True
 			self._showAction.setChecked(True)
 	
-	def highlight_selected_instance(self):
-		""" highlights selected instance """
-		self.renderer.removeAllOutlines() 
-		self.renderer.addOutlined(self._instances[0], WHITE["r"], WHITE["g"], WHITE["b"], OUTLINE_SIZE)
-			
 	def change_offset(self, event, widget):
 		""" widget callback: change the offset of an object 
 		
@@ -501,20 +485,32 @@ class ObjectEdit(plugin.Plugin):
 		""" saves the current object to its xml file 
 		
 		@note
-				- animations can't be saved for now
+				- nothing can't be saved for now
 				
 		@todo:
-				- add missing object attributes to saving routine		
+				- add saving once the new xml structure is introduced
 		"""
+		self._editor.getStatusBar().setText(u"Saving object data is disabled for the time being.")
+		return
 		if self._object is None:
 			return
 		if self._animation:
 			return
 		
-		file = self._object.getFilename()	
-		self.tree = ET.parse(file)
+		file = self._object.getFilename()
+		file = " ./../../../fife-trunk/tests/fife_test/data/tilesets/grassland_tiles.xml"
+		print file
 		
-		img_lst = self.tree.findall("image")
+		if not file: return
+		
+		tree = ET.parse(file)
+		root = tree.getroot()
+		
+		tree.dump(root)
+		
+		return
+		
+		img_lst = tree.findall("image")
 
 		# apply changes to the XML structure due to current user settings in the gui
 		for img_tag in img_lst:
@@ -523,10 +519,10 @@ class ObjectEdit(plugin.Plugin):
 				img_tag.attrib["y_offset"] = self._gui_yoffset_textfield._getText()
 				break
 
-		block = self.tree.getroot()
+		block = tree.getroot()
 		block.attrib["blocking"] = str(int(self._object_blocking))
 
-		xmlcontent = ET.tostring(self.tree.getroot())
+		xmlcontent = ET.tostring(tree.getroot())
 
 		# save xml data beneath the <?fife type="object"?> definition into the object file
 		tmp = open(file, 'w')
@@ -715,14 +711,9 @@ class ObjectEdit(plugin.Plugin):
 				self._reset()
 				self._instances = instances
 				
-				if self._camera is None:
-					self._camera = self._editor.getActiveMapView().getCamera()
-					self.renderer = fife.InstanceRenderer.getInstance(self._camera)				
-					
 				self._layer = self._editor.getActiveMapView().getController()._layer
 			
 				if self._instances:
-					self.highlight_selected_instance()
 					self.get_instance_data()
 
 					self.show()
