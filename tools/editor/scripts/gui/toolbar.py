@@ -32,6 +32,19 @@ from fife.fife import Color
 from panel import Panel
 from resizablebase import ResizableBase
 
+
+# @note: this constant was added to save the docking status, see update_settings()
+_DOCKING_SETTINGS = {
+	'ToolBox' : {
+		'module' : "ToolBoxSettings",
+		'items' : {
+			'dockarea' : 'left',
+			'docked' : True,
+			
+		},
+	}
+}
+
 class ToolBar(Panel):
 	ORIENTATION = {
 			"Horizontal"	: 0,
@@ -61,6 +74,66 @@ class ToolBar(Panel):
 		
 		self.capture(self.mouseReleased, "mouseReleased", "toolbar")
 		self.capture(self.mouseClicked, "mouseClicked", "toolbar")
+
+		# only use dock status saving if we have default settings
+		if self.name and self.name not in _DOCKING_SETTINGS: return
+		# @note: those ivars were added to save the docking status, see update_settings()
+		self.default_settings = _DOCKING_SETTINGS[self.name]
+		self.settings = {}
+		self.eds = self._editor._settings
+		self.afterUndock = self.on_undock
+		self.afterDock = self.on_dock
+		self.update_settings()
+		if self.settings['docked']:
+			self._editor.dockWidgetTo(self, self.settings['dockarea'])
+
+	def update_settings(self):
+		""" read the settings for this plugin from the editor's settings file 
+		
+		@note:	
+			- in order to use stored settings, a plugin has to call this method
+			  on init
+			- default settings have to be provided by the plugin, otherwise
+			  we don't do anything here
+			  
+		@todo:
+			- this is a code duplication from plugins/plugin.Plugin
+			- the functionality should be moved into a separate class
+			- this could be connected with the task to write a setting
+			  manager gui for the editor
+		"""
+		if not self.default_settings: return
+		if 'module' not in self.default_settings: return
+		if 'items' not in self.default_settings: return
+		
+		module = self.default_settings['module']
+
+		for name, default_value in self.default_settings['items'].iteritems():
+			value = self.eds.get(module, name, default_value)
+			self.settings[name] = value
+			
+	def on_dock(self):
+		""" callback for dock event of B{Panel}	widget 
+		
+		@note: this was added to save the docking status of the toolbar, see update_settings()
+		"""
+		if self.dockareaname is None: return
+		side = self.dockareaname
+		if not side: return
+
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', side)
+		self.eds.set(module, 'docked', True)
+		self.eds.saveSettings()		
+	
+	def on_undock(self):
+		""" callback for undock event of B{Panel} widget 
+		
+		@note: this was added to save the docking status of the toolbar, see update_settings()
+		"""
+		module = self.default_settings['module']
+		self.eds.set(module, 'dockarea', '')
+		self.eds.set(module, 'docked', False)						
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
