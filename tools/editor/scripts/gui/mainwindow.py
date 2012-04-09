@@ -164,14 +164,19 @@ class MainWindow(object):
 		# of screen.
 		widget.hide() 
 		dockareas = self._dockareas
-		if isinstance(widget, ToolBar):
-			dockareas = self._toolbarareas
+		
+		# Panel widgets which provide an implementation for set_orientation()
+		# should check if they need to re-align themselves
+		if hasattr(widget, 'set_orientation'):
+			key = ''
 			if dockarea == DOCKAREA['left'] or dockarea == DOCKAREA['right']:
-				widget.setOrientation(ToolBar.ORIENTATION["Vertical"])
+				key = 'Vertical'
 			elif dockarea == DOCKAREA['top'] or dockarea == DOCKAREA['bottom']:
-				widget.setOrientation(ToolBar.ORIENTATION["Horizontal"])
+				key = 'Horizontal'
+			widget.set_orientation(key=key)
 	
 		if isinstance(widget, ToolBar):
+			dockareas = self._toolbarareas
 			docked = False
 			if dockarea == DOCKAREA['left']:
 				docked = True

@@ -21,6 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
 
@@ -124,7 +125,6 @@ class ToolBar(Panel):
 		module = self.default_settings['module']
 		self.eds.set(module, 'dockarea', side)
 		self.eds.set(module, 'docked', True)
-		self.eds.saveSettings()		
 	
 	def on_undock(self):
 		""" callback for undock event of B{Panel} widget 
@@ -246,7 +246,13 @@ class ToolBar(Panel):
 
 		self.adaptLayout()
 		
-	def setOrientation(self, orientation):
+	def set_orientation(self, orientation=None, key=None):
+		if key is not None:
+			if key not in ToolBar.ORIENTATION: return
+			orientation = ToolBar.ORIENTATION[key]
+		
+		if orientation is None: return
+		
 		if orientation == ToolBar.ORIENTATION['Vertical']:
 			self._orientation = ToolBar.ORIENTATION['Vertical']
 			self._max_size = (self._panel_size, 5000)
@@ -257,26 +263,26 @@ class ToolBar(Panel):
 		
 		self._updateToolbar()
 		
-	def getOrientation(self):
+	def get_orientation(self):
 		return self._orientation
-	orientation = property(getOrientation, setOrientation)
+	orientation = property(get_orientation, set_orientation)
 		
 	def setPanelSize(self, panel_size):
 		self._panel_size = panel_size
 		self.min_size = self.gui.min_size = (self._panel_size, self._panel_size)
-		self.setOrientation(self._orientation)
+		self.set_orientation(self._orientation)
 		
 	def getPanelSize(self):
 		return self._panel_size
 	panel_size = property(getPanelSize, setPanelSize)
 			
 	def mouseClicked(self, event):
-		if event.getButton() == 2: # Right click
+		if event.getButton() == fife.MouseEvent.RIGHT:
 			if self.isDocked():
 				self.setDocked(False)
 				event.consume()
 			else:
-				self.setOrientation(not self.getOrientation())
+				self.set_orientation(orientation=not self.get_orientation())
 				event.consume()
 			
 	def mouseDragged(self, event):
