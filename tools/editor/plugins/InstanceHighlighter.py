@@ -99,7 +99,7 @@ class InstanceHighlighter(plugin.Plugin):
 
 	def getName(self):
 		""" returns the plugin name as unicode string """
-		return u"".self.__class__.__name___
+		return u"Instance highlighter"
 
 	def highlight(self, instances):
 		""" highlights the given instances

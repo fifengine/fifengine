@@ -434,6 +434,13 @@ class Editor(ApplicationBase, MainWindow):
 
 	def openFile(self, path):
 		""" Opens a file """
+		parts = path.split(os.sep)
+
+		for mapview in self._mapviewlist:
+			if path == mapview._map.getFilename():
+				self.getStatusBar().text = u"Map already loaded, omitting map " + parts[-1]
+				return
+		
 		events.onOpenMapFile.send(sender=self, path=path)
 		
 		try:
@@ -441,15 +448,15 @@ class Editor(ApplicationBase, MainWindow):
 			fife_loader = fife.MapLoader(self.engine.getModel(), self.engine.getVFS(), self.engine.getImageManager(), self.engine.getRenderBackend())
 			if self._lighting_mode == 0 and fife_loader.isLoadable(path):
 				map = fife_loader.load(path)
-				print 'map loaded: %s' % (map.getFilename())
 			else:
 				# TODO: vtchill - once lights are supported by the c++ map loader this can be removed
 				map = loaders.loadMapFile(path, self.engine, extensions = {'lights': True})
 				
 			if map:
+				self.getStatusBar().text = u"Loaded map: " + parts[-1]
 				return self.newMapView(map)
 			else:
-				print 'map could not be loaded: %s' % path
+				self.getStatusBar().text = u"Map could not be loaded: " + parts[-1]
 				return None
 		except:
 			traceback.print_exc(sys.exc_info()[1])

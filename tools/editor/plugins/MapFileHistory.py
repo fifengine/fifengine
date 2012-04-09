@@ -73,7 +73,7 @@ class MapFileHistory(plugin.Plugin):
 	"""
 	def __init__(self):
 		super(MapFileHistory, self).__init__()
-		# Editor instance
+		# editor instance
 		self._editor = scripts.editor.getEditor()
 
 		# Plugin variables

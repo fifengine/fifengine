@@ -5,7 +5,8 @@
 		</VBox>
 	</ScrollArea>
 	<HBox name="button_wrapper" padding="4">
-		<Spacer />
+		<Spacer size="1" />
+	
 		<ImageButton name="add_layer_button" hexpand="0" offset="1,1" 
 				helptext="Creates a new layer"
 				up_image="gui/icons/add_layer.png" down_image="gui/icons/add_layer.png" hover_image="gui/icons/add_layer.png" />
@@ -15,5 +16,6 @@
 		<ImageButton name="remove_layer_button" hexpand="0" offset="1,1" 
 				helptext="Removes selected layer"
 				up_image="gui/icons/delete_layer.png" down_image="gui/icons/delete_layer.png" hover_image="gui/icons/delete_layer.png" />	
+		<Spacer size="1" />
 	</HBox>
 </Panel>
