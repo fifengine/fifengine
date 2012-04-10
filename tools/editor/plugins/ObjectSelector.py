@@ -463,8 +463,10 @@ class ObjectSelector(plugin.Plugin):
 			if self.namespace_list.items == list(namespaces):
 				return
 			self.namespace_list.items = a.union(b)
-		
-		self.namespace_list.items = namespaces
+		else:
+			self.namespace_list.items = namespaces
+			
+		self.namespace_list.items.sort()
 
 		if namespaces:
 			self.namespace_list.selected = 0

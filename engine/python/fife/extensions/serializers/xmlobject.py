@@ -29,6 +29,175 @@ from fife.extensions.serializers import SerializerError, InvalidFormat
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
+class XMLObjectSaver(object):
+	""" The B{XMLObjectSaver} serializes a fife.Object instance by saving
+		it back to it's XML file
+		
+	@note:
+		- this code does NOT allow the creation of a new xml file
+		- this code does NOT touch atlas or animation definitions
+		- this code does NOT allow saving to non-well-formed xml files
+		- this code DOES save blocking & static flag, as well as
+		  image offsets
+		
+	@type	engine:	fife
+	@ivar	engine:	pointer to initialized fife engine instance
+	@type	img_manager:	fife.ImageManager
+	@ivar	img_manager:	pointer to fife image manager
+	@type	compat:	bool
+	@ivar	compat:	flag to either use outdated xml definitions or new approach
+	@type	debug:	bool
+	@ivar	debug:	flag to activate/deactivate debug output
+	@type	vfs:	fife.VFS
+	@ivar	vfs:	pointer to fife vfs
+	@type	change:	bool
+	@ivar	change:	flag if object data differs from file data
+	"""
+	PROCESSING_INSTRUCTION = '<?fife type="object"?>'
+	def __init__(self, engine, debug=False, compat=True):
+		"""
+		
+		@type	engine:	fife
+		@param	engine:	intialized fife engine
+		"""
+		self.compat = compat
+		self.debug = debug
+		self.engine = engine
+		self.img_manager = engine.getImageManager()
+		self.vfs = self.engine.getVFS()
+		self.change = False
+		
+	def save(self, object):
+		""" saves the data of a fife.Object to it's xml file
+		
+		@type	object:	fife.Object
+		@param	object:	the object which should be saved
+		@rtype	result:	bool
+		@return	result:	flag wether the saving was successful or not
+		"""
+		self.change = False
+		result = False
+		
+		file = object.getFilename()
+		if not file:
+			raise SerializerError("Object cannot be saved, no file found %s" % object)
+			return result
+
+		if not self.vfs.exists(file):
+			raise NotFound("File not within vfs: %s" % file)
+			return result
+
+		file_handle = self.vfs.open(file)
+		file_handle.thisown = 1
+		tree = ET.parse(file_handle)
+		root = tree.getroot()
+		
+		object_id = object.getId()
+		blocking = object.isBlocking()
+		static = object.isStatic()
+
+		if self.debug:
+			print "XML tree dump: (pre-save)"
+			ET.dump(root)
+			print "Object data: "
+			print "\tid", object_id
+			print "\tblocking", blocking
+			print "\tstatic", static
+		
+		# check for compat mode
+		if root.tag != 'assets':
+			self.compat = True
+
+		# in compat mode tree is <object>
+		if self.compat:
+			objects = [root,]
+		# new XML structure has tree root <assets> which groups multiple objects
+		else:		
+			objects = root.findall("object")
+		
+		for obj in objects:
+			_id = obj.get("id")
+			if _id != object_id: 
+				if self.debug:
+					print "...ommitting object %s " % _id			
+				continue
+			
+			if int(obj.attrib['blocking']) != int(blocking):
+				self.change = True
+			if int(obj.attrib['static']) != int(static):
+				self.change = True
+
+			obj.attrib['blocking'] = str(int(blocking))
+			obj.attrib['static'] = str(int(static))
+			
+			if self.debug and self.change:
+				print "\tSet new data in xml tree: "
+				print "\t\tblocking: ", obj.attrib['blocking']
+				print "\t\tstatic: ", obj.attrib['static']
+			
+			images = obj.findall("image")
+			
+			if self.debug:
+				print "\tAttempting to save image data: "
+				print "\t...found these image elements: "
+				print "\t", images
+				print "object dump: "
+				print ET.dump(obj)
+			
+			self.save_images(images, object)
+			
+		if not self.change:
+			return result			
+			
+		xmlcontent = ET.tostring(root)
+		
+		if self.debug:
+			print "XML tree dump: (post-manipulation)"
+			ET.dump(root)			
+
+		# save xml data beneath the <?fife type="object"?> definition into the object file
+		file = open(file, 'w')		
+		file.write(XMLObjectSaver.PROCESSING_INSTRUCTION+'\n')
+		file.write(xmlcontent + "\n")
+		file.close()
+		result = True		
+		return result			
+			
+	def save_images(self, images, object):
+		"""	save image definitions
+		
+		@type	images:	list
+		@param	images:	list of <image> elements
+		@type	object:	fife.Object
+		@param	object:	the object which should be saved
+		"""
+		visual = object.get2dGfxVisual()			
+		angles = visual.getStaticImageAngles()
+		if self.debug:
+			print "\t\tobject angles: ", angles
+
+		for element in images:
+			angle = int(element.get("direction"))
+			if angle not in angles: continue
+			
+			index = visual.getStaticImageIndexByAngle(angle)
+			image = self.img_manager.get(index)
+			x_offset = image.getXShift()
+			y_offset = image.getYShift()
+			
+			if int(element.attrib['x_offset']) != x_offset:
+				self.change = True
+			if int(element.attrib['y_offset']) != y_offset:
+				self.change = True
+			
+			element.attrib['x_offset'] = str(x_offset)
+			element.attrib['y_offset'] = str(y_offset)
+
+			if self.debug and self.change:
+				print "\tSet new data in xml tree: (<image>) "
+				print "\t\tx offset: ", element.attrib['x_offset']
+				print "\t\ty offset: ", element.attrib['y_offset']
+
 class XMLObjectLoader(object):
 	"""
 	
