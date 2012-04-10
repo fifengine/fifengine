@@ -29,6 +29,7 @@ import fife.extensions.pychan.widgets as widgets
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 from fife.extensions.fife_timer import Timer
+from fife.extensions.serializers.xmlobject import XMLObjectSaver
 
 import scripts
 import scripts.plugin as plugin
@@ -36,11 +37,6 @@ from scripts.events import *
 from scripts.gui.action import Action
 
 import os
-try:
-	import xml.etree.cElementTree as ET
-except:
-	import xml.etree.ElementTree as ET
-
 import math
 
 class ObjectEdit(plugin.Plugin):
@@ -57,9 +53,13 @@ class ObjectEdit(plugin.Plugin):
 		
 	"""
 	def __init__(self):
+		self._editor = scripts.editor.getEditor()
+		self.engine = self._editor.getEngine()
+				
 		self.active = False
 		self._layer = None
 		self._anim_timer = None
+		self.xml_saver = XMLObjectSaver(self.engine)
 		
 		self._enabled = False
 		
@@ -104,9 +104,6 @@ class ObjectEdit(plugin.Plugin):
 		if self._enabled is True:
 			return
 			
-		self._editor = scripts.editor.getEditor()
-		self.engine = self._editor.getEngine()
-		
 		self.imageManager = self.engine.getImageManager()
 
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
@@ -490,46 +487,13 @@ class ObjectEdit(plugin.Plugin):
 		@todo:
 				- add saving once the new xml structure is introduced
 		"""
-		self._editor.getStatusBar().setText(u"Saving object data is disabled for the time being.")
-		return
 		if self._object is None:
 			return
-		if self._animation:
-			return
 		
-		file = self._object.getFilename()
-		file = " ./../../../fife-trunk/tests/fife_test/data/tilesets/grassland_tiles.xml"
-		print file
+		self.xml_saver.save(self._object)
 		
-		if not file: return
-		
-		tree = ET.parse(file)
-		root = tree.getroot()
-		
-		tree.dump(root)
-		
-		return
-		
-		img_lst = tree.findall("image")
-
-		# apply changes to the XML structure due to current user settings in the gui
-		for img_tag in img_lst:
-			if img_tag.attrib["direction"] == str(self._avail_rotations[self._gui_rotation_dropdown._getSelected()]):
-				img_tag.attrib["x_offset"] = self._gui_xoffset_textfield._getText()
-				img_tag.attrib["y_offset"] = self._gui_yoffset_textfield._getText()
-				break
-
-		block = tree.getroot()
-		block.attrib["blocking"] = str(int(self._object_blocking))
-
-		xmlcontent = ET.tostring(tree.getroot())
-
-		# save xml data beneath the <?fife type="object"?> definition into the object file
-		tmp = open(file, 'w')
-		tmp.write('<?fife type="object"?>\n')
-		tmp.write(xmlcontent + "\n")
-		tmp.close()
-		
+		self._editor.getStatusBar().setText(u"Saving of object data successful")
+	
 	def gui_rotate_instance(self):
 		""" rotate an instance due to selected angle """
 		angle = self.eval_gui_rotation()
