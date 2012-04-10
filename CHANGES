@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
-== 0.3.3r3 (March Xxx, 2012)                                                  ==
+== 0.3.3r3 (April 10th, 2012)                                                  ==
 ================================================================================
 
 === Engine ===
@@ -80,6 +80,29 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * The toolbox, toolbar, and statusbars statuses are now reflected correctly in
   the menu. [t:643]
 * Object Editor plugin now displays animations as expected. [t:624]
+* Added InstanceHighlighter plugin
+* Added docking status saving to ToolBar widget class, added default docking 
+  settings for Toolbox
+* Re-arranged init order in MainWindow.initGui() to make dockareas available 
+  for ToolBar
+* Small change to screenshot icon to give it a bit more space on the left
+* Refactored ObjectSelector
+** Added auto-alignment depending on docking area (vertical/horizontal)
+** Right click can be used to trigger the alignment change manually
+** No annoying resizes on object selection
+** Speed issues not fully solved, but pin-pointed: resizing ~200 icons is a bit
+   too much for pychan
+* GUI Plugins can now use auto-alignment functionality from the ToolBar class
+* Small design fix in LayerTool
+* Small fix for MapFileHistory
+* Editor now doesn't load the same mapfile twice (gives feedback in the 
+  statusbar)
+* Re-enabled saving for ObjectEdit? plugin
+* Implemented XMLObjectSaver which allows serialization of a fife.Object
+** NOTE: only well-formed xml files are accepted
+** NOTE: provides a compat-mode to scan for <object> tree roots, but also uses 
+   new <asset> tree root
+* Added namespace sorting to ObjectSelector
 
 === Misc ===
 * Removed some unnecessary warning messages from Model. [t:645]

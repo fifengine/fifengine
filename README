@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
         
 == Introduction ==
-Welcome to the FIFE v0.3.4 README. This snapshot is based on SVN revision XXXX
+Welcome to the FIFE v0.3.3r3 README. This snapshot is based on SVN revision 3910
 
 == Table of contents ==
 1 Features
@@ -77,46 +77,50 @@ page here: http://wiki.fifengine.net/Engine_Extensions#Engine_Settings
 == 4) Known issues ==
 Documentation
  * Bug in dep_analyzer.py which prevents graphs from being generated (#554)
- * Crashing when making application window active in Mac OSX (#515)
- * Some unit tests are broken (#423)
  * Atlas Creator needs to be documented (#559)
 
 Engine
  * Fallback solution for special characters (Fontsupport) (#302)
  * cameras must be attached to layers (#305)
  * Loaders have a circular import (#478)
+ * Unit-tests are broken (#423)
+ * Mouse gets stuck in top left corner after alt+tab in fullscreen modes (#593)
+ * Segfault in TimeEvent::managerUpdateEvent (#606)
+ * For some users the mouse cursor moves to 0,0 on application startup (#670)
 
 Guichan/Pychan
  * Fix UTF8 support using vanilla guichan source (#432)
  * Pychan dropdown menus crash FIFE-based client on win32 (#508)
- * De-couple FIFE from Guichan (#549)
  * Button doesn't react to click when drawn below mouse pointer (#387)
  * Pychan dropdowns refuse to open if there is no space below (#445)
- * Pychan widget constructors silently ignore unexpected keyword arguments 
-   (#520)
  * Borders are not rendered on edges of widgets that touch their parent 
    container's edge. (#522)
  * GuiImage unable to find loader for JPEG in ImagePool (#548)
- * Cursor is sometimes displayed over letter in TextField (#547)
+ * Some strings are cut short in some widgets (#585)
+ * applyOnlySuitable fails on functools.partial (#638)
+ * Default style will sometimes override custom style (#656)
+ * adjustSize() sometimes sets width to invalid values (#666)
+ * Guichan adds hardcoded value to user setting of base_color attribute (#678)
 
 Build
  * Uninstaller Doesn't Remove fife Module (#526)
- * libguichan fails to install when src path contains a space (#533)
- * Improve build system shared library support on linux (#575, $435)
+ * Improve build system shared library support on linux (#575)
  * Cannot build a usable debug version of _fife_d.pyd with mingw
+ * _fife.so linked with absurd rpath (#620)
+ * Swig interfaces are built each time which can lead to long build times (#670)
 
 Editor
  * Clean up editor code to match python coding standards (#371)
  * Map editor shouldn't clobber custom attributes (#379)
- * Editor crashes after docking the object editor and closing map (#450)
  * History bugs (#452)
  * Placing an instance on top of another then undoing resets the original 
    instances properties (#459)
  * Should be able to set the default zoom level for a camera (#467)
  * Editor should allow you to add additional import statements (#468)
- * Editor file browser widget can't be closed (#499)
  * Misc FIFE Editor crashes (user input validation/exception handling missing) 
    (#537)
+ * Editor file dialog uses botched relative paths (#616)
+ * Keyerror while saving a new map (#646)
 
 == 5) Troubleshooting ==
 
