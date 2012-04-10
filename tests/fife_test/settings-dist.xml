@@ -25,5 +25,6 @@
 	<Module name="Tests">
 		<Setting name="PychanTest" type="bool">True</Setting>
 		<Setting name="MapLoadTest" type="bool">True</Setting>
+		<Setting name="SelectionTest" type="bool">True</Setting>
 	</Module>
 </Settings>

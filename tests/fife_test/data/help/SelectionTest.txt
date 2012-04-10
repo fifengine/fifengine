@@ -1,0 +1,3 @@
+SelectionTest
+-------------- 
+The purpose of this test is to test the ability to select multiple instances with the mouse.
