@@ -7,7 +7,6 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8A27DF0C-689B-4B76-8BFC-AFCDD90C1A31}
 AppName=FIFE 0.3.3r3
-; Version is yyyy.mm
 AppVerName=FIFE 0.3.3r3
 AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.net/
@@ -65,7 +64,7 @@ Name: "{group}\demos\Pychan demo"; Filename: "pythonw.exe"; Parameters: """{app}
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\engine\fife-0.3.3r2.win32.exe";
+Filename: "{app}\engine\fife-0.3.3r3.win32.exe";
 
 
 
