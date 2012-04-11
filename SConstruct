@@ -86,6 +86,12 @@ AddOption('--enable-profile',
 		help='Build with profiling information.  This automatically enables debug.',
 		default=False)
 		
+AddOption('--enable-release-assert',
+		dest='enable-release-assert',
+		action="store_true",
+		help='Build with assert enabled in release mode.  This should only be used when you have a tricky bug to track down.',
+		default=False)
+	
 AddOption('--prefix',
 		dest='prefix',
 		nargs=1, type='string',
@@ -112,6 +118,8 @@ AddOption('--lib-dir',
 		action='store',
 		metavar='DIR',
 		help='Shared Library install location') 
+		
+
 		
 #**************************************************************************
 #save command line options here
@@ -153,6 +161,11 @@ if GetOption('enable-profile'):
 	profile = 1
 else:
 	profile = 0
+	
+if GetOption('enable-release-assert'):
+	assert_release = 1
+else:
+	assert_release = 0
 	
 if GetOption('local-tinyxml'):
 	local_tinyxml = 1
@@ -322,6 +335,10 @@ else:
 		env.AppendUnique(CXXFLAGS=['-O2', '-Wall', '-Wno-unused'])
 	
 	env.AppendUnique(LINKFLAGS=['-Wl'])
+	
+	if not assert_release:
+		env.AppendUnique(CPPDEFINES = ['NDEBUG'])
+	
 	engine_var_dir = os.path.join('build','engine','release')
 	tests_var_dir = os.path.join('build','tests','release')
 	print "Building RELEASE binaries..."

@@ -94,12 +94,9 @@ namespace FIFE {
 
 	void Cursor::set(uint32_t cursor_id) {
 		m_cursor_type = CURSOR_NATIVE;
-		int32_t mx, my;
-		SDL_GetMouseState(&mx, &my);
 
 		if (!SDL_ShowCursor(1)) {
 			SDL_PumpEvents();
-			SDL_WarpMouse(mx, my);
 		}
 		setNativeCursor(cursor_id);
 
@@ -113,12 +110,8 @@ namespace FIFE {
 		m_cursor_image = image;
 		m_cursor_type = CURSOR_IMAGE;
 
-		int32_t mx, my;
-		SDL_GetMouseState(&mx, &my);
-
 		if (SDL_ShowCursor(0)) {
 			SDL_PumpEvents();
-			SDL_WarpMouse(mx, my);
 		}
 
 		m_cursor_id = NC_ARROW;
@@ -131,12 +124,8 @@ namespace FIFE {
 		m_cursor_animation = anim;
 		m_cursor_type = CURSOR_ANIMATION;
 
-		int32_t mx, my;
-		SDL_GetMouseState(&mx, &my);
-
 		if (SDL_ShowCursor(0)) {
 			SDL_PumpEvents();
-			SDL_WarpMouse(mx, my);
 		}
 		m_animtime = m_timemanager->getTime();
 
