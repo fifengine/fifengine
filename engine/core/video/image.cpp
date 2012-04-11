@@ -187,7 +187,7 @@ namespace FIFE {
 			}
 			p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		} else {
-			if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+			if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) || ((y + m_subimagerect.y) >= m_surface->h)) {
 				r = g = b = a = 0;
 				return;
 			}
