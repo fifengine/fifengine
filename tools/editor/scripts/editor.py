@@ -369,6 +369,7 @@ class Editor(ApplicationBase, MainWindow):
 			# if it exists before switching
 			if self._mapview.getMap() != None:
 				for cam in self._mapview.getMap().getCameras():
+					cam.resetRenderers()
 					cam.setEnabled(False)
 		
 		# if light model is set then enable LightRenderer for all layers
@@ -414,6 +415,7 @@ class Editor(ApplicationBase, MainWindow):
 		index = self._mapviewlist.index(mapview)-1
 		
 		for cam in mapview.getMap().getCameras():
+			cam.resetRenderers()
 			cam.setEnabled(False)
 			
 		self._mapviewlist.remove(mapview)
@@ -477,6 +479,8 @@ class Editor(ApplicationBase, MainWindow):
 	def quit(self):
 		""" Quits the editor. An onQuit signal is sent before the application closes """
 		events.onQuit.send(sender=self)
+		
+		self._pluginmanager.stop()
 		
 		self._settings.saveSettings()
 		ApplicationBase.quit(self)

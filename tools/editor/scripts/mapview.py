@@ -54,9 +54,7 @@ class MapView:
 	def _cleanUp(self):
 		events.onLayerCreate.disconnect(self._layerCreated)
 		
-		if self._map:
-			for layer in self._map.getLayers():
-				layer.removeChangeListener(self._editor.getEventListener().layerchangelistener)
+		self.removeLayerlisteners()
 		
 		self.importlist = []
 		self._map = None
@@ -67,6 +65,19 @@ class MapView:
 	def _layerCreated(self, map, layer):
 		if map.getId() == self._map.getId():
 			layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
+
+	def removeLayerlisteners(self):
+		""" remove all layer listeners for this map """
+		if self._map:
+			for layer in self._map.getLayers():
+				listener = self._editor.getEventListener().layerchangelistener
+				layer.removeChangeListener(listener)
+
+	def removeMaplistener(self):
+		""" remove map listener """
+		if self._map:
+			listener = self._editor.getEventListener().mapchangelistener
+			self._map.removeChangeListener(listener)
 		
 	# Copied from mapeditor.py
 	def show(self):
@@ -152,10 +163,14 @@ class MapView:
 				
 		for cam in self._map.getCameras():
 			cam.resetRenderers()
+			cam.setEnabled(False)
+			
+		self.removeLayerlisteners()
+		self.removeMaplistener()
 		
 		# Unload the map from FIFE
 		self._editor.getEngine().getModel().deleteMap(self._map)
-		self._map = None
+
 		self._cleanUp()
 		
 		events.postMapClosed.send(sender=self, mapview=self)

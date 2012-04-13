@@ -60,8 +60,6 @@ class InstanceHighlighter(plugin.Plugin):
 	def __init__(self):
 		super(InstanceHighlighter, self).__init__()
 		self._enabled = False
-		self._camera = None
-		self._renderer = None
 		self._editor = scripts.editor.getEditor()
 		
 	def enable(self):
@@ -88,11 +86,6 @@ class InstanceHighlighter(plugin.Plugin):
 		mouseClicked.disconnect(self.mouse_clicked)
 		onQuit.disconnect(self.reset)
 
-		self.reset()
-
-		self._camera = None
-		self._renderer = None
-
 	def isEnabled(self):
 		""" returns plugin status """
 		return self._enabled
@@ -101,19 +94,35 @@ class InstanceHighlighter(plugin.Plugin):
 		""" returns the plugin name as unicode string """
 		return u"Instance highlighter"
 
+	def get_instance_renderer(self):
+		""" returns the instance renderer from the editor or None
+
+		@rtype	renderer:	fife.InstanceRenderer
+		@return renderer:	pointer to initialized fife.InstanceRenderer or None
+		"""
+		renderer = None
+		mapview = self._editor.getActiveMapView()		
+		if mapview is None: return renderer
+		camera = mapview.getCamera()
+		if camera is None: return renderer
+		renderer = fife.InstanceRenderer.getInstance(camera)
+		if renderer is None: return renderer
+
+		return renderer
+
 	def highlight(self, instances):
 		""" highlights the given instances
 		
 		@type	instances:	list
 		@param	instances:	selected instances
 		"""
-		self.update_camera()
-		if self._renderer is None: return
+		renderer = self.get_instance_renderer()
+		if renderer is None: return
 		
 		if _HIGHLIGHT_TYPE not in InstanceHighlighter._VALID_TYPES:
 			return
 		
-		r = self._renderer
+		r = renderer
 		
 		col_args = [int(i) for i in _HIGHLIGHT_COLOR]
 		
@@ -128,25 +137,15 @@ class InstanceHighlighter(plugin.Plugin):
 			else:
 				continue
 		
-	def update_camera(self):
-		""" updates camera and fetches the renderer """
-		mapview = self._editor.getActiveMapView()
-		if mapview is None: return
-		self._camera = mapview.getCamera()
-		if self._camera is None: return
-		self._renderer = fife.InstanceRenderer.getInstance(self._camera)					
-		if self._renderer is None: return
-
-		self.reset()
-		
 	def reset(self):
 		""" resets the renderer """
-		if self._renderer is None: return
+		renderer = self.get_instance_renderer()
+		if renderer is None: return
 
 		if _HIGHLIGHT_TYPE == 'outline':
-			self._renderer.removeAllOutlines()
+			renderer.removeAllOutlines()
 		elif _HIGHLIGHT_TYPE == 'colored':
-			fun = self._renderer.removeAllColored()
+			renderer.removeAllColored()
 		
 	def mouse_clicked(self, event):
 		""" callback for mouse events, we
@@ -169,4 +168,3 @@ class InstanceHighlighter(plugin.Plugin):
 	def getVersion(self):
 		return "0.1"
 	
-
