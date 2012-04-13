@@ -83,6 +83,10 @@ class PluginManager:
 			
 		self._settings.saveSettings()
 
+	def stop(self):
+		""" stop signal from editor on app shutdown """
+		for plugin in self._plugins:
+			plugin.disable()
 		
 class Plugin(object):
 	""" The base class for all plugins. All plugins should implement these functions. 
