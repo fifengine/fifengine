@@ -526,6 +526,7 @@ class ObjectSelector(plugin.Plugin):
 			object = self._engine.getModel().getObject(object_id, namespace)
 			
 			self.object_selected(object)
+			onObjectSelected.send(sender=self, object=object)
 
 	def object_selected(self, object):
 		""" plugin event on selecting a new object
@@ -548,7 +549,6 @@ class ObjectSelector(plugin.Plugin):
 		"""
 		if sender == self: return
 		self._object = object
-		onObjectSelected.send(sender=self, object=object)
 		
 	def on_dock(self):
 		""" callback for dock event of B{Panel}	widget """

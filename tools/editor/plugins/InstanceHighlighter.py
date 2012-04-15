@@ -116,6 +116,7 @@ class InstanceHighlighter(plugin.Plugin):
 		@type	instances:	list
 		@param	instances:	selected instances
 		"""
+		self.reset()
 		renderer = self.get_instance_renderer()
 		if renderer is None: return
 		
@@ -168,3 +169,4 @@ class InstanceHighlighter(plugin.Plugin):
 	def getVersion(self):
 		return "0.1"
 	
+

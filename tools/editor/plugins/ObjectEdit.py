@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2012 by the FIFE team
 #  http://www.fifengine.de
 #  This file is part of FIFE.
 #
@@ -25,7 +25,6 @@
 
 from fife import fife
 from fife.extensions import pychan
-import fife.extensions.pychan.widgets as widgets
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 from fife.extensions.fife_timer import Timer
@@ -33,105 +32,99 @@ from fife.extensions.serializers.xmlobject import XMLObjectSaver
 
 import scripts
 import scripts.plugin as plugin
-from scripts.events import *
 from scripts.gui.action import Action
 
-import os
-import math
+from scripts.events import onObjectSelected
+from scripts.events import preMapClosed
+from scripts.events import postMapShown
+from scripts.events import onInstancesSelected
+
+_DEFAULT_ENTRY = u'N/A'
+_POSITION = (120,200)
+
+# plugin default settings
+_PLUGIN_SETTINGS = {
+	'module' : "ObjectEditSettings",
+	'items' : {
+		'dockarea' : 'right',
+		'docked' : True,
+	},
+}
+
 
 class ObjectEdit(plugin.Plugin):
 	""" The B{ObjectEdit} module is a plugin for FIFedit and allows to edit
-	attributes of an selected instance - like offset, instance id or rotation
-	(namespaces and object id editing is excluded)
+		attributes of an selected object
 		
-	@note: 
-		- current features:
-		  - click instance and get all known data
-		  - edit offsets, rotation, instance id
-		  - animation viewer
-		- [disabled] save offsets to object file
+		fife.Objects can be selected via the B{ObjectSelector}. fife.Instances
+		are instances of fife.Objects - so clicking on an "map object" is
+		actually not selecting an object. Not sure how to handle that - 
+		for now this Plugin only reacts on selections in the ObjectSelector
 		
+		There is a InstanceEdit plugin yet to be written which allows
+		the manipulation of instance data.
 	"""
 	def __init__(self):
+		super(ObjectEdit, self).__init__()
+		
 		self._editor = scripts.editor.getEditor()
 		self.engine = self._editor.getEngine()
 				
-		self.active = False
-		self._layer = None
-		self._anim_timer = None
 		self.xml_saver = XMLObjectSaver(self.engine)
+
+		self.default_x, self.default_y = _POSITION
 		
 		self._enabled = False
-		
-		self.imageManager = None
-		
-		self.guidata = {}
-		self.objectdata = {}
-		
+		self._showAction = None
 		self._help_dialog = None
 
-	def _reset(self):
-		"""
-			resets all dynamic vars, but leaves out static ones (e.g. camera, layer)
+		self.default_settings = _PLUGIN_SETTINGS
+		self.eds = self._editor._settings
+		self.update_settings()
 
-		"""
-		if self._anim_timer:
-			self._anim_timer.stop()
-			# reset the ToggleButton
-			if self._gui_anim_playback._isToggled():
-				self._gui_anim_playback._setToggled(0)
-		self._anim_timer = None
+		self.reset()
 		
+	def reset(self):
+		""" reset major ivars """		
+		self.current_angle = None
+		self.current_action = None
 		self._object = None
-		self._instances = None
-		self._image = None
-		self._image_default_x_offset = None
-		self._image_default_y_offset = None
-		self._animation = False
-		self._anim_data = {}
-		self._rotation = None
-		self._avail_rotations = []
-		self._namespace = None	
-		self._object_blocking = 0
-		self._instance_blocking = 0
-		self._static = 0
-		self._object_id = None	
-		self._instance_id = None
-		self._fixed_rotation = None
+		self._instance = None
 		
 	def enable(self):
 		""" plugin method """
-		if self._enabled is True:
-			return
-			
-		self.imageManager = self.engine.getImageManager()
+		if self._enabled: return
+		self._enabled = True
 
-		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
-		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
-	
-		self._editor._tools_menu.addAction(self._showAction)
+		self._action_show = Action(unicode(self.getName(),"utf-8"), checkable=True)
+		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._action_show)
+		self._editor._tools_menu.addAction(self._action_show)
 		
-		events.onInstancesSelected.connect(self.input)
-		events.preMapClosed.connect(self.hide)
-		events.preMapShown.connect(self.hide)
-		
-		self._reset()		
+		onObjectSelected.connect(self.update)
+		onInstancesSelected.connect(self.update)
+		preMapClosed.connect(self.hide)
+		postMapShown.connect(self.update)
+
 		self.create_gui()
+		self.update_gui()
+		
+		if self.settings['docked']:
+			self._editor.dockWidgetTo(self.container, self.settings['dockarea'])
 
 	def disable(self):
 		""" plugin method """
-		if self._enabled is False:
-			return
+		if not self._enabled: return
+		self._enabled = False
 			
-		self._reset()
 		self.container.hide()
-		self.removeAllChildren()
+		self.reset()
 		
-		events.onInstancesSelected.disconnect(self.input)
-		events.preMapClosed.disconnect(self.hide)
-		events.preMapShown.disconnect(self.hide)
+		onObjectSelected.disconnect(self.update)
+		onInstancesSelected.disconnect(self.update)
+		preMapClosed.disconnect(self.hide)
+		postMapShown.disconnect(self.update)
 		
-		self._editor._tools_menu.removeAction(self._showAction)
+		self._editor._tools_menu.removeAction(self._action_show)
 
 	def isEnabled(self):
 		""" plugin method """
@@ -175,188 +168,177 @@ class ObjectEdit(plugin.Plugin):
 			- move all dynamic widgets to dict
 		"""
 		self.container = pychan.loadXML('gui/objectedit.xml')
+		self.container.position_technique = 'explicit'
+		self.container.position = _POSITION
+		
 		self.container.mapEvents({
-			'use_data'			: self.use_user_data,
-			'change_data'		: self.save_user_data,
-			
-			'anim_left'			: self.previous_anim_frame,
-			'anim_right'		: self.next_anim_frame,
-			'anim_start_pos' 	: self.anim_start_frame,
-			'anim_end_pos'		: self.anim_end_frame,
-			
+			'change_data'		: self.save,
 			'show_help'	: self._show_help,
 		})
 		
 		self.container.findChild(name="x_offset_up").capture(self.change_offset, "mousePressed")
 		self.container.findChild(name="x_offset_dn").capture(self.change_offset, "mousePressed")
-		self._gui_x_offset = self.container.findChild(name="x_offset")
-		self._gui_x_offset.capture(self.change_offset, "mouseWheelMovedUp")
-		self._gui_x_offset.capture(self.change_offset, "mouseWheelMovedDown")
+		self.x_offset = self.container.findChild(name="x_offset")
+		self.x_offset.capture(self.change_offset, "mouseWheelMovedUp")
+		self.x_offset.capture(self.change_offset, "mouseWheelMovedDown")
 
 		self.container.findChild(name="y_offset_up").capture(self.change_offset, "mousePressed")
 		self.container.findChild(name="y_offset_dn").capture(self.change_offset, "mousePressed")
-		self._gui_y_offset = self.container.findChild(name="y_offset")
-		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedUp")
-		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedDown")
+		self.y_offset = self.container.findChild(name="y_offset")
+		self.y_offset.capture(self.change_offset, "mouseWheelMovedUp")
+		self.y_offset.capture(self.change_offset, "mouseWheelMovedDown")
 
 		self.container.findChild(name="object_blocking_toggle").capture(self.object_blocking_toggle, "mousePressed")
-		self.container.findChild(name="instance_blocking_toggle").capture(self.instance_blocking_toggle, "mousePressed")
 
-		self._gui_anim_panel_wrapper = self.container.findChild(name="animation_panel_wrapper")
-		self._gui_anim_panel = self._gui_anim_panel_wrapper.findChild(name="animation_panel")
+		self.rotations_listbox = self.container.findChild(name="select_rotations")
+		self.rotations_listbox.capture(self.select_rotation,"mouseWheelMovedUp")
+		self.rotations_listbox.capture(self.select_rotation,"mouseWheelMovedDown")
+		self.rotations_listbox.capture(self.select_rotation,"action")	
 		
-		self._gui_rotation_dropdown = self.container.findChild(name="select_rotations")
-		self._gui_rotation_dropdown.capture(self.gui_rotate_instance,"mouseWheelMovedUp")
-		self._gui_rotation_dropdown.capture(self.gui_rotate_instance,"mouseWheelMovedDown")
-		self._gui_rotation_dropdown.capture(self.gui_rotate_instance,"action")	
+		self.xoffset_textfield = self.container.findChild(name="x_offset")
+		self.yoffset_textfield = self.container.findChild(name="y_offset")
 		
-		self._gui_anim_actions_dropdown = self._gui_anim_panel_wrapper.findChild(name="select_actions")	
-		self._gui_anim_actions_dropdown.capture(self.eval_gui_anim_action,"mouseWheelMovedUp")
-		self._gui_anim_actions_dropdown.capture(self.eval_gui_anim_action,"mouseWheelMovedDown")
-		self._gui_anim_actions_dropdown.capture(self.eval_gui_anim_action,"action")	
+		self.actions_wrapper = self.container.findChild(name="actions_wrapper")
+		self.rotations_wrapper = self.container.findChild(name="rotations_wrapper")
 		
-		self._gui_anim_playback = self._gui_anim_panel_wrapper.findChild(name="anim_playback")
-		self._gui_anim_playback.capture(self.anim_playback, "mousePressed")
-		self._gui_anim_loop = self._gui_anim_panel_wrapper.findChild(name="anim_loop")
+		self.actions_listbox = self.container.findChild(name="select_actions")
+		self.actions_listbox.capture(self.select_action,"mouseWheelMovedUp")
+		self.actions_listbox.capture(self.select_action,"mouseWheelMovedDown")
+		self.actions_listbox.capture(self.select_action,"action")	
 
-		self._gui_current_frame = self._gui_anim_panel_wrapper.findChild(name="anim_current_frame")
-		self._gui_current_frame.capture(self.previous_anim_frame,"mouseWheelMovedUp")
-		self._gui_current_frame.capture(self.next_anim_frame,"mouseWheelMovedDown")	
+	def get_image(self, rotations=None):
+		""" try to get the current image of the object 
 		
-		self._gui_xoffset_textfield = self.container.findChild(name="x_offset")
-		self._gui_yoffset_textfield = self.container.findChild(name="y_offset")
-		
-		self._gui_instance_id_textfield = self.container.findChild(name="instance_id")
-
-	def anim_playback(self, widget):
-		""" start / stop playback of an animation due to status of a gui ToggleButton
-			Sets also two ivars of timer object (active & loop)
+		@rtype	image:	fife.Image
+		@return	image:	image of the current angle of the current object
 		"""
-		if widget._isToggled():
-			self._anim_timer.stop()
-			self._anim_timer.active = False
-		else:
-			frame_delay = self._anim_data['obj'].getFrameDuration(self._anim_data['current'])
-			self._anim_timer = Timer(delay=frame_delay,callback=self.next_anim_frame)
-			self._anim_timer.active = True
-			self._anim_timer.loop = self._gui_anim_loop._isMarked()
-			self._anim_timer.start()
-	
-	def previous_anim_frame(self):
-		""" show previous anim frame """
-		if self._anim_data['current'] > 0:
-			self._anim_data['current'] -= 1
-		else:
-			self._anim_data['current'] = self._anim_data['frames']-1
+		if self._object is None: return
+		image = None
 
-		self.update_gui()
+		if rotations is None:
+			rotations = self.get_rotations()
+
+		if rotations:
+			if self.current_angle is not None and self.current_angle in rotations:
+				angle = self.current_angle
+			else:
+				angle = rotations[0]
+			visual = self._object.get2dGfxVisual()
+			index = visual.getStaticImageIndexByAngle(angle)
+
+			if index == -1:
+				action = self._object.getDefaultAction()
+				if action:
+					animation = action.get2dGfxVisual().getAnimationByAngle(angle)
+					image = animation.getFrameByTimestamp(0)
+			else:
+				image = self.engine.getImageManager().get(index)
+
+		return image
 		
-	def next_anim_frame(self):
-		""" show next anim frame and reset animation frame to 0 if playback looping is active"""
-		if self._anim_data['current'] < self._anim_data['frames']-1:
-			self._anim_data['current'] += 1
-		else:
-			self._anim_data['current'] = 0
+	def get_rotations(self):
+		""" get either the static rotations or those of the action (if the object
+			has one)
+		"""
+		rotations = []
+		
+		visual = self._object.get2dGfxVisual()
+		rotations = visual.getStaticImageAngles()
+		
+		if not rotations and self._object.getDefaultAction():
+			rotations = self._object.getDefaultAction().get2dGfxVisual().getActionImageAngles()
 			
-		self.update_gui()
-		
-	def anim_start_frame(self):
-		""" set start frame of animation """
-		self._anim_data['current'] = 0
-		self.update_gui()
-
-	def anim_end_frame(self):
-		""" set end frame of animation """		
-		self._anim_data['current'] = self._anim_data['frames']-1
-		self.update_gui()
+		return rotations
 
 	def update_gui(self):
-		""" updates the gui widgets with current instance data """
-		if self._instances is None: return
-		
-		# show the image we retrieved from an animated object
-		if self._animation:
-			if not self._gui_anim_panel_wrapper.findChild(name="animation_panel"):
-				self._gui_anim_panel_wrapper.addChild(self._gui_anim_panel)			
+		""" updates the gui widgets with current object data """
 
-			# get current selected image and update the icon widget				
-			dur = 0
-			for i in range(self._anim_data['frames']):
-				dur += self._anim_data['obj'].getFrameDuration(i)
+		x_offset = _DEFAULT_ENTRY
+		y_offset = _DEFAULT_ENTRY
+		rotations = []
+		actions = []
+		namespace = _DEFAULT_ENTRY
+		blocking = bool(_DEFAULT_ENTRY)
+		static = _DEFAULT_ENTRY
+		_id = _DEFAULT_ENTRY
+		cost_id = _DEFAULT_ENTRY
+		cost = _DEFAULT_ENTRY
+		cellstack_pos = _DEFAULT_ENTRY
+
+		if self._object is not None:
+			actions = list(self._object.getActionIds())
+			rotations = self.get_rotations()
+			image = self.get_image(rotations=rotations)
+			if image is not None:
+				x_offset = unicode(str(image.getXShift()), 'utf-8')
+				y_offset = unicode(str(image.getYShift()), 'utf-8')
+			namespace = unicode(self._object.getNamespace(), 'utf-8')
+			blocking = self._object.isBlocking()
+			static = unicode(str(int(self._object.isStatic())), 'utf-8')
+			_id = unicode(self._object.getId(), 'utf-8')
+			if hasattr(self._object, 'getCostId'):
+				cost_id = unicode(self._object.getCostId(), 'utf-8')
+			if hasattr(self._object, 'getCost'):
+				cost = unicode(str(self._object.getCost()), 'utf-8')
+			if hasattr(self._object, 'getCellStackPosition'):
+				cellstack_pos = unicode(str(self._object.getCellStackPosition()), 'utf-8')
 				
-				# set new duration for the playback timer
-				if self._anim_timer:
-					frame_delay = self._anim_data['obj'].getFrameDuration(self._anim_data['current'])
-				
-				if i == self._anim_data['current']:
-					# set new duration for the playback timer
-					if self._anim_timer and self._anim_timer.active:
-						self._anim_timer.setPeriod(self._anim_data['obj'].getFrameDuration(self._anim_data['current']))		
-					break
-											
-			image = self._anim_data['obj'].getFrame(self._anim_data['current'])
-			self.container.findChild(name="animTest").image = image.getName()
-			self.container.findChild(name="animTest").size= (250,250)
-			self.container.findChild(name="animTest").min_size= (250,250)
-		
-			self.container.distributeInitialData({
-				'anim_current_frame'	:	unicode(str(self._anim_data['current'])),
-				'anim_rotation'			:	unicode(str(self._anim_data['obj'].getDirection())),
-			})	
-
-		else:
-			if self._gui_anim_panel_wrapper.findChild(name="animation_panel"):
-				self._gui_anim_panel_wrapper.removeChild(self._gui_anim_panel)			
-			
-		if self._image is not None:
-			x_offset = unicode( self._image.getXShift() )
-			y_offset = unicode( self._image.getYShift() )
-		else:
-			x_offset = unicode( 0 )
-			y_offset = unicode( 0 )
-
-		if self._instances[0].isOverrideBlocking():
-			self.container.findChild(name="override_blocking_toggle")._setMarked(True)
-		else:
-			self.container.findChild(name="override_blocking_toggle")._setMarked(False)
-
 		self.container.distributeInitialData({
-			'select_rotations' 	: self._avail_rotations,
-			'instance_id'		: unicode( self._instances[0].getId() ),
-			'object_id'			: unicode( self._object_id ),
+			'object_id'			: u"\t" + _id,
 			'x_offset'			: x_offset,
 			'y_offset'			: y_offset,
-			'instance_rotation' : unicode( self._instances[0].getRotation() ),
-			'object_namespace'	: unicode( self._namespace ),
-			'instance_blocking'	: unicode( self._instance_blocking ),
-			'object_blocking'	: unicode( self._object_blocking ),
-			'object_static'		: unicode( self._static ),
+			'object_namespace'	: u"\t" + namespace,
+			'object_static'		: static,
+			'cost_id'	: cost_id,
+			'cost_value' : cost,
+			'object_cellstack_pos' : cellstack_pos,
 		})
 		
-		if not self._animation:
-			if self._fixed_rotation in self._avail_rotations:
-				index = self._avail_rotations.index( self._fixed_rotation )
-				self._gui_rotation_dropdown._setSelected(index)
-#			else:
-#				print "Internal FIFE rotation: ", self._instances[0].getRotation()
-#				print "Collected rots from object ", self._avail_rotations
-				
+		wdgt = self.container.findChild(name="object_blocking_toggle")
+		wdgt.marked = blocking
+		
+		self.rotations_listbox.items = rotations
+		if rotations:
+			if self.current_angle in rotations:
+				index = rotations.index(self.current_angle)
+			else:
+				index = 0
+			self.rotations_listbox.selected = index
+			self.rotations_wrapper.show()
+		else:
+			self.rotations_wrapper.hide()
 
-		self.container.adaptLayout(False)			
+		self.actions_listbox.items = actions
+		if actions:
+			if self.current_action in actions:
+				index = actions.index(self.current_action)
+			else:
+				index = 0
+			self.actions_listbox.selected = index
+			self.actions_wrapper.show()
+		else:
+			self.actions_wrapper.hide()
+		
+		if not self.container.isDocked():
+			self.container.adaptLayout(True)
 		
 	def toggle_gui(self):
 		"""
 			show / hide the gui
 		"""
-		if self.active is True:
-			self.active = False
-			if self.container.isVisible() or self.container.isDocked():
-				self.container.setDocked(False)
-				self.container.hide()
-			self._showAction.setChecked(False)
+		if self.container.isVisible():
+			self.last_dockarea = self.container.dockarea
+			self.container.hide()
+			self._action_show.setChecked(False)			
 		else:
-			self.active = True
-			self._showAction.setChecked(True)
+			if not self.container.isDocked():
+				self.container.show()
+				self.container.x = self.default_x
+				self.container.y = self.default_y
+			else:
+				self.container.setDocked(True)
+				self.dockWidgetTo(self.container, self.last_dockarea)
+			self._action_show.setChecked(True)			
 	
 	def change_offset(self, event, widget):
 		""" widget callback: change the offset of an object 
@@ -366,14 +348,15 @@ class ObjectEdit(plugin.Plugin):
 		@type	widget:	object
 		@param	widget:	pychan widget
 		"""
-		if self._animation:
-			self._editor.getStatusBar().setText(u"Offset changes of animations are not supported yet")
-			return
+		if self._object is None: return
 		
 		etype = event.getType()
 		
-		x = self._image.getXShift()
-		y = self._image.getYShift()
+		image = self.get_image()
+		if image is None: return
+		
+		x = image.getXShift()
+		y = image.getYShift()
 		
 		if etype == fife.MouseEvent.WHEEL_MOVED_UP or widget.name.endswith("up"):
 			modifier = 1
@@ -385,7 +368,7 @@ class ObjectEdit(plugin.Plugin):
 		elif widget.name.startswith("y"):
 			y += modifier
 
-		self.set_offset(x, y)
+		self.set_offset(x, y, image=image)
 		self.update_gui()
 
 	def object_blocking_toggle(self, event, widget):
@@ -396,290 +379,131 @@ class ObjectEdit(plugin.Plugin):
 		@type	widget:	object
 		@param	widget:	pychan widget
 		"""
-		self.check_override_blocking()
-		object = self._instances[0].getObject()
-		object_id = object.getId()
-		blocking = not object.isBlocking()
-		object.setBlocking(blocking)
-
-		instances = self._layer.getInstances()
-		for instance in instances:
-			object = instance.getObject()
-			if object.getId() == object_id:
-				instance.setBlocking(blocking)
-
-		self._object_blocking = int(blocking)
-		self._instance_blocking = int(self._instances[0].isBlocking())
-
+		if self._object is None: return
+		blocking = widget.marked
+		self._object.setBlocking(bool(blocking))
 		self.update_gui()
 
-	def instance_blocking_toggle(self, event, widget):
-		""" widget callback: change the blocking of an instance 
-
-		@type	event:	object
-		@param	event:	FIFE mouseevent or keyevent
-		@type	widget:	object
-		@param	widget:	pychan widget
-		"""
-		self.check_override_blocking()
-		instance = self._instances[0]
-		instance.setBlocking(not instance.isBlocking())
-		self._instance_blocking = int(instance.isBlocking())
-
-		self.update_gui()
-
-	def check_override_blocking(self):
-		instance = self._instances[0]
-		marked = self.container.findChild(name="override_blocking_toggle")._isMarked()
-		if marked:
-			instance.setOverrideBlocking(True)
-		else:
-			instance.setOverrideBlocking(False)
-
-	def use_user_data(self):
-		"""
-			- takes the users values and applies them directly to the current ._instance
-			- writes current data record
-			- writes previous data record
-			- updates gui
-		
-		@todo:
-			- parse user data in case user think strings are considered to be integer offset values...
-		"""
-		instance_id = str(self._gui_instance_id_textfield._getText())
-		msg = ''
-		
-		if instance_id == "":
-			instance_id = "None"
-
-		if instance_id is not None and instance_id is not "None":
-			existing_instances = self._editor.getActiveMapView().getController()._layer.getInstances(instance_id)
-			if len(existing_instances) <= 0:
-				self._instances[0].setId(instance_id)
-				msg = unicode("Set new instance id: " + str(instance_id))
-				self._editor.getStatusBar().setText(msg)
-			else:
-				self._editor.getStatusBar().setText(u"Instance ID is already in use.")
-
-		if self._animation:
-			msg = msg + "\n" + u"Editing offset and rotation of animated instances is not supported yet"
-			self._editor.getStatusBar().setText(msg)
-			return
-
-		xoffset = self._gui_xoffset_textfield._getText()
-		yoffset = self._gui_yoffset_textfield._getText()
-
-		# update rotation
-		angle = self.eval_gui_rotation()
-		self.set_rotation(angle)
-		
-		# update offsets
-		self.set_offset(int(xoffset), int(yoffset))
-
-		self.update_gui()
-		
-	def save_user_data(self):
+	def save(self):
 		""" saves the current object to its xml file 
 		
-		@note
-				- nothing can't be saved for now
-				
-		@todo:
-				- add saving once the new xml structure is introduced
+		@note:
+			- saves only object data and static image data
+			- no animation data or atlas data is saved
 		"""
-		if self._object is None:
-			return
+		if self._object is None: return
 		
 		self.xml_saver.save(self._object)
+		self._editor.getStatusBar().setText(u"Saving of object data successful: %s" % self._object.getId())
 		
-		self._editor.getStatusBar().setText(u"Saving of object data successful")
+	def select_action(self):
+		""" let an instance act and set the action of the current object """
+		if self._object is None: return
+		action = str(self.actions_listbox.selected_item)
+		self.current_action = action
+		
+		# @todo: compat layer - trunk/ doesn't have this method exposed
+		# to python yet (cell pathfinding branch has)
+		# @todo: remove this check later
+		if hasattr(self._object, 'setDefaultAction'):
+			self._object.setDefaultAction(action)
+		
+		if self._instance is not None and action is not None:
+			f_loc = self._instance.getFacingLocation()
+			self._instance.act(action, f_loc)
 	
-	def gui_rotate_instance(self):
+	def select_rotation(self):
 		""" rotate an instance due to selected angle """
-		angle = self.eval_gui_rotation()
-		self.set_rotation(angle)
+		if self._object is None: return
+		angle = self.eval_rotation()
+		self.current_angle = angle
 		
-	def eval_gui_rotation(self):
+		if self._instance is not None and angle is not None:
+			self._instance.setRotation(int(angle))
+		
+		self.update_gui()
+		
+	def eval_rotation(self):
 		""" prepare rotation from gui and apply it to the current selected instance """
-		index = self._gui_rotation_dropdown._getSelected()
-		angle = int( self._avail_rotations[index] )
+		selected = self.rotations_listbox.selected_item
+		if selected is None: return selected
+		angle = int(selected)
 	
 		if angle == 360:
 			angle = 0
 			
 		return angle
 		
-	def eval_gui_anim_action(self):	
-		""" check the selected action of an animation and update the gui accordingly """
-		if not self._anim_data['actions']: return
-		
-		index = self._gui_anim_actions_dropdown._getSelected()
-		action = self._anim_data['actions'][index]
-		
-		self.update_anim_data(action)
-		self.update_gui()
-		
-	def set_rotation(self, angle):
-		""" set the rotation of the current instance """	
-#		print "...setting instance rotation from %s to %s" % (self._rotation, angle)
-		self._instances[0].setRotation(angle)
-		self.get_instance_data(None, None, angle)
-		self.update_gui()	
-#		print "...new internal FIFE rotation ", int(self._instances[0].getRotation())
-		
-	def set_offset(self, x=None, y=None):
+	def set_offset(self, x=None, y=None, image=None):
 		""" set x/y offset of current selected instance """
-		if x is not None:
-			self._image.setXShift(x)
-		if y is not None:
-			self._image.setYShift(y)
-			
-	def update_anim_data(self, action=None):
-		""" update animation data for the current selected instance from FIFE's data structure
-		
-		@type	animation	FIFE animation
-		@return	animation	current selected animation
-		"""
-		if action:
-			animation = action.get2dGfxVisual().getAnimationByAngle(self._fixed_rotation)
-			animation_id = animation.getFifeId()
+		if self._object is None: return
+		if self._object.isStatic():
+			if image is None:
+				image = self.get_image()
+			if image is None: return
 
-		action_ids = []
-		actions = []
-		
-		try:
-			action_ids = self._object.getActionIds()
-			for id in action_ids:
-				actions.append(self._object.getAction(id))
-		except:
-			pass		
-		
-		self._anim_data = {}
-		self._anim_data['obj'] = animation
-		self._anim_data['id'] = animation_id
-		self._anim_data['frames'] = animation.getFrameCount()
-		self._anim_data['current'] = 0
-		self._anim_data['actions'] = actions
-		self._anim_data['action_ids'] = action_ids
-		self._anim_data['default_action'] = self._object.getDefaultAction()	
-		self._anim_data['action'] = action		
-
-		return animation
-		
-	def get_instance_data(self, timestamp=None, frame=None, angle=-1, instance=None):
-		"""
-			- grabs all available data from both object and instance
-		
-		"""
-		visual = None
-		self._avail_rotations = []
-			
-		if instance is None:
-			instance = self._instances[0]
-			
-		object = instance.getObject()
-		self._object = object
-		self._namespace = object.getNamespace()
-		self._object_id = object.getId()
-		
-		self._instance_id = instance.getId()
-	
-		if self._instance_id == '':
-			self._instance_id = 'None'
-
-		if angle == -1:
-			angle = int(instance.getRotation())
+			if x is not None:
+				image.setXShift(x)
+			if y is not None:
+				image.setYShift(y)
 		else:
-			angle = int(angle)	
+			self.set_animation_offset(x, y)
 			
-		self._rotation = angle
-		
-		if object.isBlocking():
-			self._object_blocking = 1
-
-		if instance.isBlocking():
-			self._instance_blocking = 1
-
-		if object.isStatic():
-			self._static = 1
-		
-		try:
-			visual = object.get2dGfxVisual()
-		except:
-			self._editor.getStatusBar().setText(u"Fetching visual of object failed")
-			raise			
-
-		self._fixed_rotation = instance.getRotation()
-
-		index = visual.getStaticImageIndexByAngle(self._fixed_rotation)
-
-		if index is -1:
-			# object is an animation
-			self._animation = True
-			self._image = None
-			
-			# no static image available, try default action
-			action = object.getDefaultAction()
-
-			if action:
-				animation = self.update_anim_data(action)
-
-				# update gui
-				if animation:
-					self._gui_anim_actions_dropdown._setItems(self._anim_data['action_ids'])
-					self._gui_anim_actions_dropdown._setSelected(0)					
-				
-				if timestamp is None and frame is not None:
-					self._image = animation.getFrame(frame)	
-				elif timestamp is not None and frame is None:
-					self._image = animation.getFrameByTimestamp(timestamp)
-				else:
-					self._image = animation.getFrameByTimestamp(0)
-		elif index is not -1:
-			# object is a static image
-			self._animation = False
-			self._image = self.imageManager.get(index)
-
-		if not self._animation:
-			rotations = visual.getStaticImageAngles()
-			for angle in rotations:
-				self._avail_rotations.append(angle)
-	
-			self._image_default_x_offset = self._image.getXShift()
-			self._image_default_y_offset = self._image.getYShift()
+	def set_animation_offset(self, x, y):
+		""" apply the offset to all frames of the default action """
+		if self.current_action is not None:
+			action = self._object.getAction(self.current_action)
 		else:
-			self._avail_rotations = object.getDefaultAction().get2dGfxVisual().getActionImageAngles()
+			action = self._object.getDefaultAction()
+		if not action: return
+		
+		if self.current_angle is not None:
+			angle = self.current_angle
+		else:
+			angle = 0
+		
+		animation = action.get2dGfxVisual().getAnimationByAngle(angle)
+		
+		if not animation: return
 
+		for index in range(animation.getFrameCount()):
+			image = animation.getFrame(index)
+			image.setXShift(x)
+			image.setYShift(y)
+		
 	def show(self):
-		""" show the plugin gui - and update it """
-		self.update_gui()
+		""" show the plugin gui """
 		self.container.show()	
 		self.container.adaptLayout(False)						
 	
 	def hide(self):
 		""" hide the plugin gui - and reset it """
 		self.container.hide()
-		self._reset()		
+		self.reset()		
 
-	def input(self, instances):
-		""" if called _and_ the user wishes to edit offsets,
-			gets instance data and show gui
-
+	def update(self, object=None, instances=[]):
+		""" called by the editor onObjectSelected or onInstancesSelected
+		
 			(we only use the top instance of the selected cell)
 
 		@type	instances:	list
 		@param	instances:	a list of instances in the selected cell 
 		"""
-		if instances != self._instances:
-			if self.active is True:
-				self._reset()
-				self._instances = instances
-				
-				self._layer = self._editor.getActiveMapView().getController()._layer
+		self.reset()
+		
+		if object is None and not instances: 
+			self._object = None
+			self._instance = None
+			self.update_gui()
+			return
 			
-				if self._instances:
-					self.get_instance_data()
+		if instances:
+			self._instance = instances[0]
+			object = instances[0].getObject()
+		
+		action = object.getDefaultAction()
+		if action:
+			self.current_action = action.getId()
 
-					self.show()
-				else:
-					self.hide()
+		self._object = object
+		self.update_gui()
