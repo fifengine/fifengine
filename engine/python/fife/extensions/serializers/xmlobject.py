@@ -95,6 +95,22 @@ class XMLObjectSaver(object):
 		object_id = object.getId()
 		blocking = object.isBlocking()
 		static = object.isStatic()
+		
+		# @todo:
+		# compat layer - remove as soon as cell_pathfinding branch
+		# is merged back to trunk/
+		if hasattr(object, 'getCostId'):
+			cost_id = object.getCostId()
+		else:
+			cost_id = ''
+		if hasattr(object, 'getCost'):
+			cost = object.getCost()
+		else:
+			cost = 0.0
+		if hasattr(object, 'getCellStackPosition'):
+			cellstack_pos = object.getCellStackPosition()
+		else:
+			cellstack_pos = 0
 
 		if self.debug:
 			print "XML tree dump: (pre-save)"
@@ -103,6 +119,8 @@ class XMLObjectSaver(object):
 			print "\tid", object_id
 			print "\tblocking", blocking
 			print "\tstatic", static
+			print "\tcost id", cost_id
+			print "\tcost", cost
 		
 		# check for compat mode
 		if root.tag != 'assets':
@@ -122,13 +140,23 @@ class XMLObjectSaver(object):
 					print "...ommitting object %s " % _id			
 				continue
 			
-			if int(obj.attrib['blocking']) != int(blocking):
+			if 'blocking' not in obj.attrib or int(obj.attrib['blocking']) != int(blocking):
 				self.change = True
-			if int(obj.attrib['static']) != int(static):
+			if 'static' not in obj.attrib or int(obj.attrib['static']) != int(static):
+				self.change = True
+			if 'cost_id' not in obj.attrib or str(obj.attrib['cost_id']) != str(cost_id):
+				self.change = True
+			if 'cost' not in obj.attrib or float(obj.attrib['cost']) != float(cost):
+				self.change = True
+			if 'cellstack_position'  not in obj.attrib or int(obj.attrib['cellstack_position']) != int(cellstack_pos):
 				self.change = True
 
 			obj.attrib['blocking'] = str(int(blocking))
 			obj.attrib['static'] = str(int(static))
+			if cost_id and cost:
+				obj.attrib['cost_id'] = str(cost_id)
+				obj.attrib['cost'] = str(cost)
+			obj.attrib['cellstack_position'] = str(cellstack_pos)
 			
 			if self.debug and self.change:
 				print "\tSet new data in xml tree: "
@@ -136,6 +164,7 @@ class XMLObjectSaver(object):
 				print "\t\tstatic: ", obj.attrib['static']
 			
 			images = obj.findall("image")
+			actions = obj.findall("action")
 			
 			if self.debug:
 				print "\tAttempting to save image data: "
@@ -145,6 +174,7 @@ class XMLObjectSaver(object):
 				print ET.dump(obj)
 			
 			self.save_images(images, object)
+			self.save_actions(actions, object)
 			
 		if not self.change:
 			return result			
@@ -161,7 +191,33 @@ class XMLObjectSaver(object):
 		file.write(xmlcontent + "\n")
 		file.close()
 		result = True		
-		return result			
+		return result
+		
+	def save_actions(self, actions, object):
+		""" save action definitions 
+		
+		@type	actions:	list
+		@param	actions:	list of <action> elements
+		@type	object:	fife.Object
+		@param	object:	the object which should be saved
+		"""
+		for element in actions:
+			# new xml format uses this, we only save the new format
+			if 'animation_id' not in element.attrib:
+				break
+				
+			animation_id = element.attrib['animation_id']
+			self.save_animation(animation_id, object)
+			
+	def save_animation(self, animation_id, object):
+		""" save animation definitions for the given id 
+		
+		@type	animation_id:	str
+		@param	animation_id:	id of the animation data structure
+		@type	object:	fife.Object
+		@param	object:	the object which should be saved
+		"""
+		pass
 			
 	def save_images(self, images, object):
 		"""	save image definitions
@@ -185,9 +241,9 @@ class XMLObjectSaver(object):
 			x_offset = image.getXShift()
 			y_offset = image.getYShift()
 			
-			if int(element.attrib['x_offset']) != x_offset:
+			if 'x_offset' not in element.attrib or int(element.attrib['x_offset']) != x_offset:
 				self.change = True
-			if int(element.attrib['y_offset']) != y_offset:
+			if 'y_offset' not in element.attrib or int(element.attrib['y_offset']) != y_offset:
 				self.change = True
 			
 			element.attrib['x_offset'] = str(x_offset)
