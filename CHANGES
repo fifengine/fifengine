@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
-== 0.3.3r3 (April 10th, 2012)                                                  ==
+== 0.3.3r3 (April 17th, 2012)                                                  ==
 ================================================================================
 
 === Engine ===
@@ -55,6 +55,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   smarter file search so it can properly load files from a zip archive. [t:491]
 * Removed the lasttime_draw reset from TargetRenderer, because this can cause 
   problems. [t:674]
+* Cursor no longer moves to 0,0 on startup. [t:670]
+* Removed unneeded command line option -Wl from both release and debug builds 
+  as this was breaking builds on gcc 4.7 and above. [t:691]
 
 === Extensions ===
 * Fixed the file extensions registration for python plugin map loaders. [t:609]
@@ -103,6 +106,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 ** NOTE: provides a compat-mode to scan for <object> tree roots, but also uses 
    new <asset> tree root
 * Added namespace sorting to ObjectSelector
+* Refactored ObjectEdit
 
 === Misc ===
 * Removed some unnecessary warning messages from Model. [t:645]
