@@ -27,7 +27,8 @@
 		<Setting name="ObjectEdit" type="bool">True</Setting>
 		<Setting name="ObjectSelector" type="bool">True</Setting>
 		<Setting name="LightEdit" type="bool">True</Setting>
-		<Setting name="MapFileHistory" type="bool">True</Setting>		
+		<Setting name="MapFileHistory" type="bool">True</Setting>	
+		<Setting name="InstanceHighlighter" type="bool">True</Setting>
 	</Module>
   <Module name="Colors">
     <Setting name="Blocking" type="str">0,255,0</Setting>
