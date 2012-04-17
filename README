@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
         
 == Introduction ==
-Welcome to the FIFE v0.3.3r3 README. This snapshot is based on SVN revision 3910
+Welcome to the FIFE v0.3.3r3 README. This snapshot is based on SVN revision 3920
 
 == Table of contents ==
 1 Features
@@ -86,7 +86,6 @@ Engine
  * Unit-tests are broken (#423)
  * Mouse gets stuck in top left corner after alt+tab in fullscreen modes (#593)
  * Segfault in TimeEvent::managerUpdateEvent (#606)
- * For some users the mouse cursor moves to 0,0 on application startup (#670)
 
 Guichan/Pychan
  * Fix UTF8 support using vanilla guichan source (#432)
@@ -153,4 +152,4 @@ Have fun with the release and let us know what you think about it!
 
 http://www.fifengine.net/
 
-2012/04/10
+2012/04/17
