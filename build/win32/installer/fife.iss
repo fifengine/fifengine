@@ -48,19 +48,19 @@ Source: "..\..\..\CHANGES"; DestDir: "{app}\doc\"; DestName:"Changes.txt"
 Source: "..\..\..\README"; DestDir:"{app}"; DestName: "README.txt"; Flags: isreadme
 
 ; demos
-Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: "rpg,.svn,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; tools
-Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn,atlas,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.net/"
 Name: "{group}\Copying.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Copying.txt"
 Name: "{group}\Changes.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Changes.txt"
-Name: "{group}\tools\Map Editor"; Filename: "pythonw.exe"; Parameters: """{app}\tools\editor\run.py"""; WorkingDir: "{app}\tools\editor"; Comment: "FIFE Editor"; Components: "tools"
-Name: "{group}\demos\Rio de hola"; Filename: "pythonw.exe"; Parameters: """{app}\demos\rio_de_hola\run.py"""; WorkingDir: "{app}\demos\rio_de_hola"; Comment: "Techdemo"; Components: "demos"
-Name: "{group}\demos\Shooter"; Filename: "pythonw.exe"; Parameters: """{app}\demos\shooter\run.py"""; WorkingDir: "{app}\demos\shooter"; Comment: "Side scrolling shooter demo"; Components: "demos"
-Name: "{group}\demos\Pychan demo"; Filename: "pythonw.exe"; Parameters: """{app}\demos\pychan_demo\pychan_demo.py"""; WorkingDir: "{app}\demos\pychan_demo"; Comment: "FIFE GUI demo"; Components: "demos"
+Name: "{group}\tools\Map Editor"; Filename: "python.exe"; Parameters: """{app}\tools\editor\run.py"""; WorkingDir: "{app}\tools\editor"; Comment: "FIFE Editor"; Components: "tools"
+Name: "{group}\demos\Rio de hola"; Filename: "python.exe"; Parameters: """{app}\demos\rio_de_hola\run.py"""; WorkingDir: "{app}\demos\rio_de_hola"; Comment: "Techdemo"; Components: "demos"
+Name: "{group}\demos\Shooter"; Filename: "python.exe"; Parameters: """{app}\demos\shooter\run.py"""; WorkingDir: "{app}\demos\shooter"; Comment: "Side scrolling shooter demo"; Components: "demos"
+Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\demos\pychan_demo\pychan_demo.py"""; WorkingDir: "{app}\demos\pychan_demo"; Comment: "FIFE GUI demo"; Components: "demos"
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
