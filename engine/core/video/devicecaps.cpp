@@ -174,7 +174,7 @@ namespace FIFE {
 		flags[5] = ScreenMode::FULLSCREEN_SDL_DB_HW;
 
 #else
-		const uint32_tnumFlags = 4;
+		const uint32_t numFlags = 4;
 		uint32_t flags[numFlags];
 
 		//SDL, windowed
