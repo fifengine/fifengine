@@ -185,12 +185,15 @@ namespace FIFE {
 		if( backend == "SDL" ) {
 			m_gui_graphics = new SdlGuiGraphics();
 		}
+#ifdef HAVE_OPENGL
 		else if (backend == "OpenGL") {
 			m_gui_graphics = new OpenGLGuiGraphics();
 		}
 		else if (backend == "OpenGLe") {
 			m_gui_graphics = new OpenGLeGuiGraphics();
-		} else {
+		} 
+#endif
+        else {
 			//should never get here
 			assert(0);
 		}
