@@ -46,13 +46,12 @@ namespace gcn {
 
 	void UTF8TextField::keyPressed(KeyEvent & keyEvent)
 	{
-		/*
-		 *NOTE: This function relies on the fact that a TextField object contains single-line text. So
+		
+		/*NOTE: This function relies on the fact that a TextField object contains single-line text. So
 		 *using row 0 for Text manipulation is sufficient. It may be safer to use a temporary string
 		 *to manipulate row 0  because if Text has no rows at all, the Text object's sanity relies to the
 		 *caret's position. Currently there hasn't been any problem with changing row 0 directly  and since
-		 *its more efficient than copying it, we stick to this implementation.
-		 */
+		 *its more efficient than copying it, we stick to this implementation.*/
 
 		Key key = keyEvent.getKey();
 
