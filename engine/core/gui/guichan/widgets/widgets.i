@@ -43,9 +43,9 @@ namespace gcn {
 	class Graphics {
 	public:
 		enum Alignment {
-			LEFT = 0,
-			CENTER,
-			RIGHT
+			Left = 0,
+			Center,
+			Right
 		};
 	};
 	%clearnodefaultctor;
@@ -164,7 +164,7 @@ namespace gcn {
 		UTF8TextField();
 		UTF8TextField(const std::string& text);
 		virtual void setText(const std::string& text);
-		virtual const std::string& getText() const;
+		virtual std::string getText() const;
 		virtual void adjustSize();
 		virtual void adjustHeight();
 		virtual void setCaretPosition(uint32_t position);
@@ -257,9 +257,9 @@ namespace gcn {
 		virtual int32_t getDownButtonScrollAmount();
 		enum ScrollPolicy
 		{
-			SHOW_ALWAYS,
-			SHOW_NEVER,
-			SHOW_AUTO
+			ShowAlways,
+			ShowNever,
+			ShowAuto
 		};
 	};
 	
@@ -272,7 +272,7 @@ namespace gcn {
 		UTF8TextBox(const std::string& text);
 		virtual void setText(const std::string& text);
 		virtual std::string getText() const;
-		virtual const std::string& getTextRow(int32_t row) const;
+		virtual std::string getTextRow(int row) const;
 		virtual void setTextRow(int32_t row, const std::string& text);
 		virtual uint32_t getNumberOfRows() const;
 		virtual uint32_t getCaretPosition() const;
@@ -374,8 +374,8 @@ namespace gcn {
 		virtual double getStepLength() const;
 		enum Orientation
 		{
-			HORIZONTAL = 0,
-			VERTICAL
+			Horizontal = 0,
+			Vertical
 		};
 	};
 

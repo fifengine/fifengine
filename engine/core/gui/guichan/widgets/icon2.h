@@ -107,6 +107,7 @@ namespace gcn
 		Icon2(Image* image);
 		virtual ~Icon2() {}
 		
+		virtual Widget* clone(const std::string& prefix);
 		
 		// Inherited from Widget
 		

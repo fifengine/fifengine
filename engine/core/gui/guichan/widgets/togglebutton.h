@@ -62,6 +62,8 @@ namespace gcn {
 			 */
 			~ToggleButton();
 
+                       virtual Widget* clone(const std::string& prefix);
+            
 			/**
 			 * Draws the button
 			 */

@@ -45,6 +45,12 @@ namespace gcn
 		setOrientation(HORIZONTAL);
         setValue(0);
     }
+    
+    Widget* PercentageBar::clone(const std::string& prefix) 
+    {
+        //NOT IMPLEMENTED YET!
+        return NULL;
+    }
 
     void PercentageBar::draw(Graphics* graphics)
     {

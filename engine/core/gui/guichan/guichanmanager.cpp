@@ -276,9 +276,9 @@ namespace FIFE {
 
 	KeyEvent GUIChanManager::translateKeyEvent(const gcn::KeyEvent& gcnevt) {
 		KeyEvent keyevt;
-		if(gcnevt.getType() == gcn::KeyEvent::PRESSED)
+		if(gcnevt.getType() == gcn::KeyEvent::Pressed)
 			keyevt.setType(KeyEvent::PRESSED);
-		else if(gcnevt.getType() == gcn::KeyEvent::RELEASED)
+		else if(gcnevt.getType() == gcn::KeyEvent::Released)
 			keyevt.setType(KeyEvent::RELEASED);
 		else {
 			FL_WARN(_log, LMsg("GUIChanManager::translateKeyEvent() - ") << "Unknown event type: " << gcnevt.getType());
@@ -309,31 +309,31 @@ namespace FIFE {
 		mouseevt.setY(gcnevt.getY());
 
 		switch(gcnevt.getType()) {
-			case gcn::MouseEvent::PRESSED:
+			case gcn::MouseEvent::Pressed:
 				mouseevt.setType(MouseEvent::PRESSED);
 				break;
-			case gcn::MouseEvent::RELEASED:
+			case gcn::MouseEvent::Released:
 				mouseevt.setType(MouseEvent::RELEASED);
 				break;
-			case gcn::MouseEvent::MOVED:
+			case gcn::MouseEvent::Moved:
 				mouseevt.setType(MouseEvent::MOVED);
 				break;
-			case gcn::MouseEvent::CLICKED:
+			case gcn::MouseEvent::Clicked:
 				mouseevt.setType(MouseEvent::CLICKED);
 				break;
-			case gcn::MouseEvent::ENTERED:
+			case gcn::MouseEvent::Entered:
 				mouseevt.setType(MouseEvent::ENTERED);
 				break;
-			case gcn::MouseEvent::EXITED:
+			case gcn::MouseEvent::Exited:
 				mouseevt.setType(MouseEvent::EXITED);
 				break;
-			case gcn::MouseEvent::DRAGGED:
+			case gcn::MouseEvent::Dragged:
 				mouseevt.setType(MouseEvent::DRAGGED);
 				break;
-			case gcn::MouseEvent::WHEEL_MOVED_DOWN:
+			case gcn::MouseEvent::WheelMovedDown:
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
 				break;
-			case gcn::MouseEvent::WHEEL_MOVED_UP:
+			case gcn::MouseEvent::WheelMovedUp:
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
 				break;
 			default:
@@ -341,13 +341,13 @@ namespace FIFE {
 		}
 
 		switch(gcnevt.getButton()) {
-			case gcn::MouseInput::LEFT:
+			case gcn::MouseInput::Left:
 				mouseevt.setButton(MouseEvent::LEFT);
 				break;
-			case gcn::MouseInput::RIGHT:
+			case gcn::MouseInput::Right:
 				mouseevt.setButton(MouseEvent::RIGHT);
 				break;
-			case gcn::MouseInput::MIDDLE:
+			case gcn::MouseInput::Middle:
 				mouseevt.setButton(MouseEvent::MIDDLE);
 				break;
 			default:
@@ -361,58 +361,58 @@ namespace FIFE {
 	int32_t GUIChanManager::convertGuichanKeyToFifeKey(int32_t value) {
 
 		switch (value) {
-			case gcn::Key::TAB:
+			case gcn::Key::Tab:
 				value = Key::TAB;
 				break;
-			case gcn::Key::LEFT_ALT:
+			case gcn::Key::LeftAlt:
 				value = Key::LEFT_ALT;
 				break;
-			case gcn::Key::RIGHT_ALT:
+			case gcn::Key::RightAlt:
 				value = Key::RIGHT_ALT;
 				break;
-			case gcn::Key::LEFT_SHIFT:
+			case gcn::Key::LeftShift:
 				value = Key::LEFT_SHIFT;
 				break;
-			case gcn::Key::RIGHT_SHIFT:
+			case gcn::Key::RightShift:
 				value = Key::RIGHT_SHIFT;
 				break;
-			case gcn::Key::LEFT_CONTROL:
+			case gcn::Key::LeftControl:
 				value = Key::LEFT_CONTROL;
 				break;
-			case gcn::Key::RIGHT_CONTROL:
+			case gcn::Key::RightControl:
 				value = Key::RIGHT_CONTROL;
 				break;
-			case gcn::Key::BACKSPACE:
+			case gcn::Key::Backspace:
 				value = Key::BACKSPACE;
 				break;
-			case gcn::Key::PAUSE:
+			case gcn::Key::Pause:
 				value = Key::PAUSE;
 				break;
-			case gcn::Key::SPACE:
+			case gcn::Key::Space:
 				value = Key::SPACE;
 				break;
-			case gcn::Key::ESCAPE:
+			case gcn::Key::Escape:
 				value = Key::ESCAPE;
 				break;
-			case gcn::Key::DELETE:
+			case gcn::Key::Delete:
 				value = Key::DELETE;
 				break;
-			case gcn::Key::INSERT:
+			case gcn::Key::Insert:
 				value = Key::INSERT;
 				break;
-			case gcn::Key::HOME:
+			case gcn::Key::Home:
 				value = Key::HOME;
 				break;
-			case gcn::Key::END:
+			case gcn::Key::End:
 				value = Key::END;
 				break;
-			case gcn::Key::PAGE_UP:
+			case gcn::Key::PageUp:
 				value = Key::PAGE_UP;
 				break;
-			case gcn::Key::PRINT_SCREEN:
+			case gcn::Key::PrintScreen:
 				value = Key::PRINT_SCREEN;
 				break;
-			case gcn::Key::PAGE_DOWN:
+			case gcn::Key::PageDown:
 				value = Key::PAGE_DOWN;
 				break;
 			case gcn::Key::F1:
@@ -460,43 +460,43 @@ namespace FIFE {
 			case gcn::Key::F15:
 				value = Key::F15;
 				break;
-			case gcn::Key::NUM_LOCK:
+			case gcn::Key::NumLock:
 				value = Key::NUM_LOCK;
 				break;
-			case gcn::Key::CAPS_LOCK:
+			case gcn::Key::CapsLock:
 				value = Key::CAPS_LOCK;
 				break;
-			case gcn::Key::SCROLL_LOCK:
+			case gcn::Key::ScrollLock:
 				value = Key::SCROLL_LOCK;
 				break;
-			case gcn::Key::RIGHT_META:
+			case gcn::Key::RightMeta:
 				value = Key::RIGHT_META;
 				break;
-			case gcn::Key::LEFT_META:
+			case gcn::Key::LeftMeta:
 				value = Key::LEFT_META;
 				break;
-			case gcn::Key::LEFT_SUPER:
+			case gcn::Key::LeftSuper:
 				value = Key::LEFT_SUPER;
 				break;
-			case gcn::Key::RIGHT_SUPER:
+			case gcn::Key::RightSuper:
 				value = Key::RIGHT_SUPER;
 				break;
-			case gcn::Key::ALT_GR:
+			case gcn::Key::AltGr:
 				value = Key::ALT_GR;
 				break;
-			case gcn::Key::UP:
+			case gcn::Key::Up:
 				value = Key::UP;
 				break;
-			case gcn::Key::DOWN:
+			case gcn::Key::Down:
 				value = Key::DOWN;
 				break;
-			case gcn::Key::LEFT:
+			case gcn::Key::Left:
 				value = Key::LEFT;
 				break;
-			case gcn::Key::RIGHT:
+			case gcn::Key::Right:
 				value = Key::RIGHT;
 				break;
-			case gcn::Key::ENTER:
+			case gcn::Key::Enter:
 				value = Key::ENTER;
 				break;
 

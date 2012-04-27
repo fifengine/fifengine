@@ -23,6 +23,7 @@
 #include <cassert>
 
 // 3rd party library includes
+#include <guichan/text.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -45,49 +46,58 @@ namespace gcn {
 
 	void UTF8TextField::keyPressed(KeyEvent & keyEvent)
 	{
+		/*
+		 *NOTE: This function relies on the fact that a TextField object contains single-line text. So
+		 *using row 0 for Text manipulation is sufficient. It may be safer to use a temporary string
+		 *to manipulate row 0  because if Text has no rows at all, the Text object's sanity relies to the
+		 *caret's position. Currently there hasn't been any problem with changing row 0 directly  and since
+		 *its more efficient than copying it, we stick to this implementation.
+		 */
+
 		Key key = keyEvent.getKey();
 
-		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
+		if (key.getValue() == Key::Left && getCaretPosition() > 0)
 		{
-			mCaretPosition = mStringEditor->prevChar(mText, mCaretPosition);
+			setCaretPosition(mStringEditor->prevChar(getText(), static_cast<int>(getCaretPosition())));
 		}
-		else if (key.getValue() == Key::RIGHT && mCaretPosition < mText.size())
+		else if (key.getValue() == Key::Right && getCaretPosition() < getText().size())
 		{
-			mCaretPosition = mStringEditor->nextChar(mText, mCaretPosition);
+			setCaretPosition(mStringEditor->nextChar(getText(), static_cast<int>(getCaretPosition())));
 		}
-		else if (key.getValue() == Key::DELETE && mCaretPosition < mText.size())
+		else if (key.getValue() == Key::Delete && getCaretPosition() < getText().size())
 		{
-			mCaretPosition = mStringEditor->eraseChar(mText, mCaretPosition);
+			setCaretPosition(mStringEditor->eraseChar(mText->getRow(0), static_cast<int>(getCaretPosition())));
 		}
-		else if (key.getValue() == Key::BACKSPACE && mCaretPosition > 0)
+		else if (key.getValue() == Key::Backspace && getCaretPosition() > 0)
 		{
-			mCaretPosition = mStringEditor->prevChar(mText, mCaretPosition);
-			mCaretPosition = mStringEditor->eraseChar(mText, mCaretPosition);
+			setCaretPosition(mStringEditor->prevChar(mText->getRow(0), static_cast<int>(getCaretPosition())));
+			setCaretPosition(mStringEditor->eraseChar(mText->getRow(0), static_cast<int>(getCaretPosition())));
 		}
-		else if (key.getValue() == Key::ENTER)
+		else if (key.getValue() == Key::Enter)
 		{
 			distributeActionEvent();
 		}
-		else if (key.getValue() == Key::HOME)
+		else if (key.getValue() == Key::Home)
 		{
-			mCaretPosition = 0;
+			setCaretPosition(0);
 		}
 
-		else if (key.getValue() == Key::END)
+		else if (key.getValue() == Key::End)
 		{
-			mCaretPosition = mText.size();
+			setCaretPosition(getText().size());
 		}
 
 		// Add character to text, if key is realy a ASCII character
 		// or is greater than 8bits long and the character is not
 		// the tab key.
+
 		else if ((key.isCharacter() || key.getValue() > 255)
-			&& key.getValue() != Key::TAB)
+			&& key.getValue() != Key::Tab)
 		{
-			mCaretPosition = mStringEditor->insertChar(mText, mCaretPosition, key.getValue());
+			setCaretPosition(mStringEditor->insertChar(mText->getRow(0), getCaretPosition(), key.getValue()));
 		}
 
-		if (key.getValue() != Key::TAB)
+		if (key.getValue() != Key::Tab)
 		{
 			// consume all characters except TAB which is needed
 			// for traversing through widgets in a container.

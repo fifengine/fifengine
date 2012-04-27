@@ -72,13 +72,13 @@ namespace FIFE {
 
 		switch (alignment)
 		{
-			case LEFT:
+			case Left:
 				mFont->drawString(this, text, x, y);
 				break;
-			case CENTER:
+			case Center:
 				mFont->drawString(this, text, x - mFont->getWidth(text) / 2, y);
 				break;
-			case RIGHT:
+			case Right:
 				mFont->drawString(this, text, x - mFont->getWidth(text), y);
 				break;
 			default:
@@ -89,7 +89,7 @@ namespace FIFE {
 
 	void OpenGLeGuiGraphics::drawPoint(int32_t x, int32_t y) {
 		const gcn::ClipRectangle& top = mClipStack.top();
-		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset, 
+		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset,
 			mColor.r, mColor.g, mColor.b, mColor.a);
 	}
 
@@ -147,7 +147,7 @@ namespace FIFE {
 		gcn::Graphics::pushClipArea(area);
 
 		// Due to some odd conception in guiChan some of area
-		// has xOffset and yOffset > 0. And if it happens we 
+		// has xOffset and yOffset > 0. And if it happens we
 		// need to offset our clip area. Or we can use guichan stack.
 		const gcn::ClipRectangle& top = mClipStack.top();
 

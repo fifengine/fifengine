@@ -70,63 +70,63 @@ namespace FIFE {
 	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
 		gcn::Key key = keyEvent.getKey();
 		int32_t keyType = key.getValue();
-		
-		if (keyType == Key::LEFT && mCaretPosition > 0)
+
+		if (keyType == Key::Left && getCaretPosition() > 0)
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (keyType == Key::RIGHT && mCaretPosition < mText.size())
+		else if (keyType == Key::Right && getCaretPosition() < getText().size())
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (keyType == Key::DOWN && !m_history.empty())
+		else if (keyType == Key::Down && !m_history.empty())
 		{
 			if( m_history_position < m_history.size() ) {
-				
+
 				if( ++m_history_position == m_history.size() ) {
-					setText( m_cmdline ); 
+					setText( m_cmdline );
 				} else {
-					setText( m_history[m_history_position] ); 
+					setText( m_history[m_history_position] );
 				}
 			};
 		}
-		else if (keyType == Key::UP && !m_history.empty())
+		else if (keyType == Key::Up && !m_history.empty())
 		{
 			if( m_history_position > 0 ) {
 				if( m_history_position == m_history.size() ) {
-					m_cmdline = mText; 
+					m_cmdline = getText();
 				}
 				--m_history_position;
-				setText( m_history[m_history_position] ); 
+				setText( m_history[m_history_position] );
 			};
 		}
-		else if (keyType == Key::DELETE && mCaretPosition < mText.size())
+		else if (keyType == Key::Delete && getCaretPosition() < getText().size())
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (keyType  == Key::BACKSPACE && mCaretPosition > 0)
+		else if (keyType  == Key::Backspace && getCaretPosition() > 0)
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (keyType == Key::ENTER)
+		else if (keyType == Key::Enter)
 		{
-			if( mText != "" ) {
+			if( getText() != "" ) {
 				if(m_callback) {
-					m_callback( mText );
+					m_callback( getText() );
 				}
-				m_history.push_back( mText ); 
+				m_history.push_back( getText() );
 				m_history_position = m_history.size();
 				setText("");
 			}
 		}
-		else if (keyType == Key::HOME)
+		else if (keyType == Key::Home)
 		{
-			mCaretPosition = 0;
-		}    
-		else if (keyType == Key::END)
+			setCaretPosition(0);
+		}
+		else if (keyType == Key::End)
 		{
-			mCaretPosition = mText.size();
-		}    
+			setCaretPosition(getText().size());
+		}
 		else if (key.isCharacter())
 		{
 			UTF8TextField::keyPressed(keyEvent);

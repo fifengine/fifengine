@@ -42,8 +42,8 @@ class Slider(Widget):
 		- update docstrings
 	"""
 
-	HORIZONTAL = fife.Slider.HORIZONTAL
-	VERTICAL = fife.Slider.VERTICAL
+	HORIZONTAL = fife.Slider.Horizontal
+	VERTICAL = fife.Slider.Vertical
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
 									   FloatAttr('scale_start'), 

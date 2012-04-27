@@ -49,7 +49,7 @@ def initEnvironment(env):
 	
 	
 def addExtras(env, opengl):
-	env.Append(LIBS = ['libguichan_sdl', 'libguichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
+	env.Append(LIBS = ['libfifechan_sdl', 'libfifechan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
 
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
@@ -57,7 +57,7 @@ def addExtras(env, opengl):
 		env.Append(LIBS = ['python27'])
 
 	if opengl:
-		env.Prepend(LIBS = ['libguichan_opengl'])
+		env.Prepend(LIBS = ['libfifechan_opengl'])
 		env.Append(LIBS = ['opengl32'])
 
 	# define for using tinyxml with stl support enabled

@@ -61,6 +61,11 @@ namespace gcn {
 
 	ClickLabel::~ClickLabel() {
 	}
+	
+	Widget* ClickLabel::clone(const std::string& prefix) {
+               //NOT IMPLEMENTED YET!
+               return NULL;
+       }
 
 	void ClickLabel::setCaption(const std::string& caption) {
 		mCaption = caption;
@@ -133,7 +138,7 @@ namespace gcn {
 
 	void ClickLabel::mousePressed(MouseEvent& mouseEvent)
 	{
-		if (mouseEvent.getButton() == MouseEvent::LEFT) {
+		if (mouseEvent.getButton() == MouseEvent::Left) {
 			mMousePressed = true;
 			mouseEvent.consume();
 		}
@@ -151,11 +156,11 @@ namespace gcn {
 
 	void ClickLabel::mouseReleased(MouseEvent& mouseEvent)
 	{
-		if (mouseEvent.getButton() == MouseEvent::LEFT && mMousePressed && mHasMouse) {
+		if (mouseEvent.getButton() == MouseEvent::Left && mMousePressed && mHasMouse) {
 			mMousePressed = false;
 			distributeActionEvent();
 			mouseEvent.consume();
-		} else if (mouseEvent.getButton() == MouseEvent::LEFT) {
+		} else if (mouseEvent.getButton() == MouseEvent::Left) {
 			mMousePressed = false;
 			mouseEvent.consume();
 		}
@@ -170,7 +175,7 @@ namespace gcn {
 	{
 		Key key = keyEvent.getKey();
 
-		if (key.getValue() == Key::ENTER || key.getValue() == Key::SPACE) {
+		if (key.getValue() == Key::Enter || key.getValue() == Key::Space) {
 			mKeyPressed = true;
 			keyEvent.consume();
 		}
@@ -180,7 +185,7 @@ namespace gcn {
 	{
 		Key key = keyEvent.getKey();
 
-		if ((key.getValue() == Key::ENTER || key.getValue() == Key::SPACE) && mKeyPressed) {
+		if ((key.getValue() == Key::Enter || key.getValue() == Key::Space) && mKeyPressed) {
 			mKeyPressed = false;
 			distributeActionEvent();
 			keyEvent.consume();

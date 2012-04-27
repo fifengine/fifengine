@@ -23,6 +23,7 @@
 #include <cassert>
 
 // 3rd party library includes
+#include <guichan/text.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -48,155 +49,148 @@ namespace gcn {
 	{
 		Key key = keyEvent.getKey();
 
-		if (key.getValue() == Key::LEFT)
+		if (key.getValue() == Key::Left)
 		{
-			if (mCaretColumn == 0)
+			if (getCaretColumn() == 0)
 			{
-				if (mCaretRow > 0)
+				if (getCaretRow() > 0)
 				{
-					mCaretRow--;
-					mCaretColumn = mTextRows[mCaretRow].size();
+					setCaretRow(getCaretRow()-1);
+					setCaretColumn(getTextRow(getCaretRow()).size());
 				}
 			}
 			else
 			{
-				mCaretColumn = mStringEditor->prevChar(mTextRows[mCaretRow], mCaretColumn);
+				setCaretColumn(mStringEditor->prevChar(getTextRow(getCaretRow()), getCaretColumn()));
 			}
 		}
-		else if (key.getValue() == Key::RIGHT)
+		else if (key.getValue() == Key::Right)
 		{
-			if (mCaretColumn < mTextRows[mCaretRow].size())
+			if (getCaretColumn() < getTextRow(getCaretRow()).size())
 			{
-				mCaretColumn = mStringEditor->nextChar(mTextRows[mCaretRow], mCaretColumn);
+				setCaretColumn(mStringEditor->nextChar(getTextRow(getCaretRow()), getCaretColumn()));
 			}
 			else
 			{
-				if (mCaretRow < mTextRows.size() - 1)
+				if (getCaretRow() < getNumberOfRows() - 1)
 				{
-					mCaretRow++;
-					mCaretColumn = 0;
+					setCaretRow(getCaretRow()+1);
+					setCaretColumn(0);
 				}
 			}
 		}
-		else if (key.getValue() == Key::DOWN)
+		else if (key.getValue() == Key::Down)
 		{
-			setCaretRowUTF8(mCaretRow + 1);
+			setCaretRowUTF8(getCaretRow() + 1);
 		}
 
-		else if (key.getValue() == Key::UP)
+		else if (key.getValue() == Key::Up)
 		{
-			setCaretRowUTF8(mCaretRow - 1);
+			setCaretRowUTF8(getCaretRow() - 1);
 		}
 
-		else if (key.getValue() == Key::HOME)
+		else if (key.getValue() == Key::Home)
 		{
-			mCaretColumn = 0;
+			setCaretColumn(0);
 		}
 
-		else if (key.getValue() == Key::END)
+		else if (key.getValue() == Key::End)
 		{
-			mCaretColumn = mTextRows[mCaretRow].size();
+			setCaretColumn(getTextRow(getCaretRow()).size());
 		}
-
-		else if (key.getValue() == Key::ENTER && mEditable)
+		else if (key.getValue() == Key::Enter && mEditable)
 		{
-			mTextRows.insert(mTextRows.begin() + mCaretRow + 1,
-								mTextRows[mCaretRow].substr(mCaretColumn, mTextRows[mCaretRow].size() - mCaretColumn));
-			mTextRows[mCaretRow].resize(mCaretColumn);
-			++mCaretRow;
-			mCaretColumn = 0;
+			mText->insertRow(getTextRow(getCaretRow()).substr(getCaretColumn(), getTextRow(getCaretRow()).size() - getCaretColumn())
+                            ,getCaretRow() + 1);
+            
+			mText->getRow(getCaretRow()).resize(getCaretColumn());
+			setCaretRow(getCaretRow() + 1);
+			setCaretColumn(0);
 		}
-
-		else if (key.getValue() == Key::BACKSPACE
-					&& mCaretColumn != 0
+        else if (key.getValue() == Key::Backspace
+					&& getCaretColumn() != 0
 					&& mEditable)
 		{
-			mCaretColumn = mStringEditor->prevChar(mTextRows[mCaretRow], mCaretColumn);
-			mCaretColumn = mStringEditor->eraseChar(mTextRows[mCaretRow], mCaretColumn);
+            std::string& currRow = mText->getRow(getCaretRow());
+			setCaretColumn(mStringEditor->prevChar(currRow, static_cast<int>(getCaretColumn())));
+			setCaretColumn(mStringEditor->eraseChar(currRow, static_cast<int>(getCaretColumn())));
 		}
-
-		else if (key.getValue() == Key::BACKSPACE
-					&& mCaretColumn == 0
-					&& mCaretRow != 0
+		else if (key.getValue() == Key::Backspace
+					&& getCaretColumn() == 0
+					&& getCaretRow() != 0
 					&& mEditable)
 		{
-			mCaretColumn = mTextRows[mCaretRow - 1].size();
-			mTextRows[mCaretRow - 1] += mTextRows[mCaretRow];
-			mTextRows.erase(mTextRows.begin() + mCaretRow);
-			mCaretRow--;
+			setCaretColumn(getTextRow(getCaretRow() - 1).size());
+			mText->getRow(getCaretRow() - 1) += getTextRow(getCaretRow());
+			mText->eraseRow(getCaretRow());
+			setCaretRow(getCaretRow() - 1);
 		}
-
-		else if (key.getValue() == Key::DELETE
-					&& mCaretColumn < (int32_t)mTextRows[mCaretRow].size()
+		else if (key.getValue() == Key::Delete
+					&& getCaretColumn() < (int32_t)getTextRow(getCaretRow()).size()
+					&& mEditable)
+        {
+			setCaretColumn(mStringEditor->eraseChar(mText->getRow(getCaretRow()), getCaretColumn()));
+		}
+		else if (key.getValue() == Key::Delete
+					&& getCaretColumn() == (int32_t)getTextRow(getCaretRow()).size()
+					&& getCaretRow() < ((int32_t)getNumberOfRows() - 1)
 					&& mEditable)
 		{
-			mCaretColumn = mStringEditor->eraseChar(mTextRows[mCaretRow], mCaretColumn);
+			mText->getRow(getCaretRow()) += getTextRow((getCaretRow() + 1));
+			mText->eraseRow(getCaretRow() + 1);
 		}
-
-		else if (key.getValue() == Key::DELETE
-					&& mCaretColumn == (int32_t)mTextRows[mCaretRow].size()
-					&& mCaretRow < ((int32_t)mTextRows.size() - 1)
-					&& mEditable)
-		{
-			mTextRows[mCaretRow] += mTextRows[mCaretRow + 1];
-			mTextRows.erase(mTextRows.begin() + mCaretRow + 1);
-		}
-
-		else if(key.getValue() == Key::PAGE_UP)
+     	else if(key.getValue() == Key::PageUp)
 		{
 			Widget* par = getParent();
 
 			if (par != NULL)
 			{
 				int32_t rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-				int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
-				mCaretRow -= rowsPerPage;
+				int32_t chars = mStringEditor->countChars(getTextRow(getCaretRow()), getCaretColumn());
+				setCaretRow(getCaretRow() - rowsPerPage);
 
-				if (mCaretRow < 0)
+				if (getCaretRow() < 0)
 				{
-					mCaretRow = 0;
+					setCaretRow(0);
 				}
-				mCaretColumn = mStringEditor->getOffset(mTextRows[mCaretRow], chars);
+				setCaretColumn(mStringEditor->getOffset(getTextRow(getCaretRow()), chars));
 			}
 		}
-
-		else if(key.getValue() == Key::PAGE_DOWN)
+		else if(key.getValue() == Key::PageDown)
 		{
 			Widget* par = getParent();
 
 			if (par != NULL)
 			{
 				int32_t rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-				int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
-				mCaretRow += rowsPerPage;
+				int32_t chars = mStringEditor->countChars(getTextRow(getCaretRow()), getCaretColumn());
+				setCaretRow(getCaretRow() + rowsPerPage);
 
-				if (mCaretRow >= (int32_t)mTextRows.size())
+				if (getCaretRow() >= (int32_t)getNumberOfRows())
 				{
-					mCaretRow = mTextRows.size() - 1;
+					setCaretRow(getNumberOfRows() - 1);
 				}
 
-				mCaretColumn = mStringEditor->getOffset(mTextRows[mCaretRow], chars);
+				setCaretColumn(mStringEditor->getOffset(getTextRow(getCaretRow()), chars));
 			}
 		}
-
-		else if(key.getValue() == Key::TAB
+		else if(key.getValue() == Key::Tab
 				&& mEditable)
 		{
-			// FIXME: jump X spaces, so mCaretColumn % TAB_SIZE = 0 and X <= TAB_SIZE
-			mTextRows[mCaretRow].insert(mCaretColumn,std::string("    "));
-			mCaretColumn += 4;
+			// FIXME: jump X spaces, so getCaretColumn() % TAB_SIZE = 0 and X <= TAB_SIZE
+			mText->getRow(getCaretRow()).insert(getCaretColumn(),std::string("    "));
+			setCaretColumn(getCaretColumn() + 4);
 		}
-
 		else if ((key.isCharacter() || key.getValue() > 255)
 					&& mEditable)
 		{
-			mCaretColumn = mStringEditor->insertChar(mTextRows[mCaretRow], mCaretColumn, key.getValue());
+			setCaretColumn(mStringEditor->insertChar(mText->getRow(getCaretRow()), getCaretColumn(), key.getValue()));
 		}
 
 		adjustSize();
 		scrollToCaret();
-		assert( utf8::is_valid(mTextRows[mCaretRow].begin(),mTextRows[mCaretRow].end()) );
-		assert( utf8::is_valid(mTextRows[mCaretRow].begin(),mTextRows[mCaretRow].begin() + mCaretColumn) );
+		assert( utf8::is_valid(getTextRow(getCaretRow()).begin(),getTextRow(getCaretRow()).end()) );
+		assert( utf8::is_valid(getTextRow(getCaretRow()).begin(),getTextRow(getCaretRow()).begin() + getCaretColumn()) );
 		keyEvent.consume();
 	}
 
@@ -204,19 +198,19 @@ namespace gcn {
 	void UTF8TextBox::setCaretColumnUTF8(int32_t column)
 	{
 		// no need to clip the column, mStringEditor handles it automaticly
-		mCaretColumn = mStringEditor->getOffset(mTextRows[mCaretRow], column);
+		setCaretColumn(mStringEditor->getOffset(getTextRow(getCaretRow()), column));
 	}
 
 	void UTF8TextBox::setCaretRowUTF8(int32_t row)
 	{
-		int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
+		int32_t chars = mStringEditor->countChars(getTextRow(getCaretRow()), getCaretColumn());
 		if (row < 0) {
 			row = 0;
-		} else if (row >= mTextRows.size()) {
-			row = mTextRows.size() - 1;
+		} else if (row >= getNumberOfRows()) {
+			row = getNumberOfRows() - 1;
 		}
-		mCaretRow = row;
-		mCaretColumn = mStringEditor->getOffset(mTextRows[mCaretRow], chars);
+		setCaretRow(row);
+		setCaretColumn(mStringEditor->getOffset(getTextRow(getCaretRow()), chars));
 	}
 
 }

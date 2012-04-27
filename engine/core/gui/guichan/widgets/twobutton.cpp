@@ -50,6 +50,11 @@ namespace gcn {
 
 	TwoButton::~TwoButton() {
 	}
+	
+	Widget* TwoButton::clone(const std::string& prefix) {
+        //NOT IMPLEMENTED YET!
+        return NULL;
+    }
 
 	void TwoButton::setDownOffset(int32_t x, int32_t y) {
 		x_downoffset = x;
@@ -82,13 +87,13 @@ namespace gcn {
 		int32_t textY = getHeight() / 2 - getFont()->getHeight() / 2;
 		switch (getAlignment())
 		{
-			case Graphics::LEFT:
+			case Graphics::Left:
 				textX = 4;
 				break;
-			case Graphics::CENTER:
+			case Graphics::Center:
 				textX = getWidth() / 2;
 				break;
-			case Graphics::RIGHT:
+			case Graphics::Right:
 				textX = getWidth() - 4;
 				break;
 			default:

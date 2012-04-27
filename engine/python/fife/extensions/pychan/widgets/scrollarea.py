@@ -146,11 +146,11 @@ class ScrollArea(Widget):
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
-			return fife.ScrollArea.SHOW_AUTO
-		return fife.ScrollArea.SHOW_NEVER
+			return fife.ScrollArea.ShowAuto
+		return fife.ScrollArea.ShowNever
 
 	def _scrollPolicyToVisibility(self,policy):
-		if policy == fife.ScrollArea.SHOW_NEVER:
+		if policy == fife.ScrollArea.ShowNever:
 			return False
 		return True
 
