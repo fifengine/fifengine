@@ -22,7 +22,7 @@
 %module fife
 %{
 #include <fifechan.hpp>
-#include "gui/fifechan/guichanmanager.h"
+#include "gui/fifechan/fifechanmanager.h"
 #include "gui/guimanager.h"
 %}
 

@@ -36,7 +36,7 @@
 #include "util/time/timemanager.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
-#include "gui/fifechan/guichanmanager.h"
+#include "gui/fifechan/fifechanmanager.h"
 #include "gui/fifechan/base/gui_font.h"
 #include "gui/fifechan/widgets/utf8textbox.h"
 
