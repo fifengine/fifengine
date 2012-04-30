@@ -79,8 +79,8 @@ def getRequiredLibs(opengl):
 			('SDL', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
 			('SDL_image', 'SDL_image.h'),
-			('guichan', 'guichan.hpp'),
-			('guichan_sdl', ''),
+			('fifechan', 'guichan.hpp'),
+			('fifechan_sdl', ''),
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
@@ -88,7 +88,7 @@ def getRequiredLibs(opengl):
 			('Xcursor', '')]
 
 	if (opengl):
-		libs.append(('guichan_opengl', ''))
+		libs.append(('fifechan_opengl', ''))
 		
 	return libs
 

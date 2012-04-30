@@ -19,20 +19,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef GCN_UTF8STRINGEDITOR_HPP
-#define GCN_UTF8STRINGEDITOR_HPP
+#ifndef FCN_UTF8STRINGEDITOR_HPP
+#define FCN_UTF8STRINGEDITOR_HPP
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <guichan.hpp>
+#include <fifechan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace gcn {
+namespace fcn {
 
 	/**
 	 * UTF-8 string editor.
@@ -105,4 +105,4 @@ namespace gcn {
 
 };
 
-#endif // !GCN_UTF8STRINGEDITOR_HPP
+#endif // !FCN_UTF8STRINGEDITOR_HPP

@@ -31,7 +31,7 @@
 #include "utf8stringeditor.h"
 #include "utf8.h"
 
-namespace gcn {
+namespace fcn {
 
 	int UTF8StringEditor::nextChar(const std::string & text, int byteOffset)
 	{

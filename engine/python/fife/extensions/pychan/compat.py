@@ -57,7 +57,7 @@ def _munge_engine_hook(engine):
 		return engine
 
 
-	guimanager = fife.GUIChanManager()
+	guimanager = fife.FifechanManager()
 	guimanager.thisown = 0
 
 	engine.setGuiManager(guimanager)
