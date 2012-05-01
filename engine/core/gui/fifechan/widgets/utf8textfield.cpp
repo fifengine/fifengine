@@ -57,12 +57,9 @@ namespace fcn {
 		{
 			setCaretPosition(mStringEditor->nextChar(getText(), static_cast<int>(getCaretPosition())));
 		}
-		else if (key.getValue() == Key::Delete && getCaretPosition() < getText().size())
+		else if (key.getValue() == Key::Delete && getCaretPosition() < getText().size() && mText->getNumberOfRows() > 0)
 		{
-			std::string textfieldContents(getText());
-		  
-			setCaretPosition(mStringEditor->eraseChar(textfieldContents, static_cast<int>(getCaretPosition())));
-			setText(textfieldContents);
+			setCaretPosition(mStringEditor->eraseChar(mText->getRow(0), static_cast<int>(getCaretPosition())));
 		}
 		else if (key.getValue() == Key::Backspace && getCaretPosition() > 0 && mText->getNumberOfRows() > 0)
 		{
