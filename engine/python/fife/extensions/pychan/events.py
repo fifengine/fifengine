@@ -59,7 +59,7 @@ Available Events
 
 """
 
-from compat import guichan
+from compat import fifechan
 import widgets
 
 import exceptions
@@ -192,14 +192,14 @@ class EventListenerBase(object):
 			return get_manager().hook.translate_key_event(event)
 		return event
 
-class _ActionEventListener(EventListenerBase,guichan.ActionListener):
+class _ActionEventListener(EventListenerBase,fifechan.ActionListener):
 	def __init__(self):super(_ActionEventListener,self).__init__()
 	def doAttach(self,real_widget): real_widget.addActionListener(self)
 	def doDetach(self,real_widget): real_widget.removeActionListener(self)
 
 	def action(self,e): self._redirectEvent("action",e)
 
-class _MouseEventListener(EventListenerBase,guichan.MouseListener):
+class _MouseEventListener(EventListenerBase,fifechan.MouseListener):
 	def __init__(self):super(_MouseEventListener,self).__init__()
 	def doAttach(self,real_widget): real_widget.addMouseListener(self)
 	def doDetach(self,real_widget): real_widget.removeMouseListener(self)
@@ -214,7 +214,7 @@ class _MouseEventListener(EventListenerBase,guichan.MouseListener):
 	def mouseWheelMovedDown(self,e): self._redirectEvent("mouseWheelMovedDown",e)
 	def mouseDragged(self,e): self._redirectEvent("mouseDragged",e)
 
-class _KeyEventListener(EventListenerBase,guichan.KeyListener):
+class _KeyEventListener(EventListenerBase,fifechan.KeyListener):
 	def __init__(self):super(_KeyEventListener,self).__init__()
 	def doAttach(self,real_widget): real_widget.addKeyListener(self)
 	def doDetach(self,real_widget): real_widget.removeKeyListener(self)

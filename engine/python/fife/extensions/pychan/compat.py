@@ -22,9 +22,9 @@
 # ####################################################################
 
 in_fife = None
-guichan = None
+fifechan = None
 
-def _import_guichan():
+def _import_fifechan():
 	global in_fife
 
 	err_fife = ""
@@ -36,14 +36,14 @@ def _import_guichan():
 		err_fife = str(e)
 	
 	try:
-		import guichan
+		import fifechan
 		in_fife = False
-		return guichan
+		return fifechan
 	except ImportError, e:
 		import traceback
 		traceback.print_exc()
-		raise ImportError("Couldn't import neither fife nor guichan: fife:'%s' guichan:'%s'" % (err_fife,str(e)))
-guichan = _import_guichan()
+		raise ImportError("Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'" % (err_fife,str(e)))
+fifechan = _import_fifechan()
 
 
 
@@ -78,10 +78,10 @@ def _munge_engine_hook(engine):
 
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)
-		return guichan.GuiImage(img)
-		# use below line instead of above ones to let guichan
+		return fifechan.GuiImage(img)
+		# use below line instead of above ones to let fifechan 
 		# use its image loader that supports creating/using atlases
-		# return guichan.GuiImage().load(filename)
+		# return fifechan.GuiImage().load(filename)
 
 	class hook:
 		pass
@@ -105,11 +105,11 @@ def _munge_engine_hook(engine):
 	return hook
 
 
-class _multilistener(guichan.ActionListener,guichan.MouseListener,guichan.KeyListener):
+class _multilistener(fifechan.ActionListener,fifechan.MouseListener,fifechan.KeyListener):
 	def __init__(self):
-		guichan.ActionListener.__init__(self)
-		guichan.MouseListener.__init__(self)
-		guichan.KeyListener.__init__(self)
+		fifechan.ActionListener.__init__(self)
+		fifechan.MouseListener.__init__(self)
+		fifechan.KeyListener.__init__(self)
 
 
 class _point(object):
@@ -118,16 +118,16 @@ class _point(object):
 		self.y=0
 
 if in_fife:
-	fife = guichan
-	guichan.ActionListener._ActionListener_init__ = lambda x : x
-	#guichan.MouseListener.__init__ = lambda x : x
-	#guichan.KeyListener.__init__ = lambda x : x
+	fife = fifechan
+	fifechan.ActionListener._ActionListener_init__ = lambda x : x
+	#fifechan.MouseListener.__init__ = lambda x : x
+	#fifechan.KeyListener.__init__ = lambda x : x
 else:
-	guichan.Point = _point
-	guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto
-	guichan.ScrollArea.SHOW_NEVER = guichan.ScrollArea.ShowNever
-	guichan.ScrollArea.SHOW_ALWAYS = guichan.ScrollArea.ShowAlways
+	fifechan.Point = _point
+	fifechan.ScrollArea.SHOW_AUTO = fifechan.ScrollArea.ShowAuto
+	fifechan.ScrollArea.SHOW_NEVER = fifechan.ScrollArea.ShowNever
+	fifechan.ScrollArea.SHOW_ALWAYS = fifechan.ScrollArea.ShowAlways
 
-assert isinstance(_multilistener(),guichan.ActionListener)
-assert isinstance(_multilistener(),guichan.MouseListener)
-assert isinstance(_multilistener(),guichan.KeyListener)
+assert isinstance(_multilistener(),fifechan.ActionListener)
+assert isinstance(_multilistener(),fifechan.MouseListener)
+assert isinstance(_multilistener(),fifechan.KeyListener)

@@ -48,7 +48,7 @@ namespace FIFE {
 	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs)
 		: ImageFontBase() {
 
-		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
+		FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);
 
 //prock - 504
 		ImagePtr img = ImageManager::instance()->load(filename);

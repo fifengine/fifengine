@@ -182,7 +182,7 @@ namespace FIFE {
 			std::string m_fontglyphs;
 			int32_t m_fontsize;
 
-			// true, if guichan logic has already been executed for this round
+			// true, if fifechan logic has already been executed for this round
 			bool m_logic_executed;
 	};
 

@@ -39,7 +39,7 @@ class KeyFilter(fife.IKeyFilter):
 	"""
 	This is the implementation of the fife.IKeyFilter class.
 	
-	Prevents any filtered keys from being consumed by guichan.
+	Prevents any filtered keys from being consumed by fifechan.
 	"""
 	def __init__(self, keys):
 		fife.IKeyFilter.__init__(self)

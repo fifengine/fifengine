@@ -296,7 +296,7 @@ class SliderExample(PyChanExample):
 		Update Icon position from the sliders.
 		"""
 		icon = self.widget.findChild(name="icon")
-		# sliders have floats, guichan is picky and wants ints
+		# sliders have floats, fifechan is picky and wants ints
 		# so we convert here.
 		icon.position = map(int, self.widget.collectData('xslider','yslider'))
 		# we distribute to the labels with the x,y value.
@@ -313,7 +313,7 @@ class SliderExample(PyChanExample):
 		pbar.value = int(pbarslider.value)
 
 class ColorExample(PyChanExample):
-	""" a small app (^^) to show how guichan uses colors on various widgets 
+	""" a small app (^^) to show how fifechan uses colors on various widgets 
 	
 	"""
 	def __init__(self):

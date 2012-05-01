@@ -27,7 +27,7 @@ from pychan_demo import PyChanExample
 from fife.extensions import pychan
 
 class ColorExample(PyChanExample):
-	""" a small app (^^) to show how guichan uses colors on various widgets 
+	""" a small app (^^) to show how fifechan uses colors on various widgets 
 	
 	"""
 	def __init__(self):

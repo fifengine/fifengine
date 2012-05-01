@@ -94,7 +94,7 @@ namespace FIFE {
 
 	bool FifechanManager::onSdlEvent(SDL_Event& evt) {
 		if (!m_input) {
-			FL_WARN(_log, "GUIChanManager, GuichanGUI->getInput == 0 ... discarding events!");
+			FL_WARN(_log, "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
 			return false;
 		}
 
@@ -104,7 +104,7 @@ namespace FIFE {
 			case SDL_MOUSEBUTTONDOWN:
 				m_had_widget = overWidget;
 			case SDL_MOUSEBUTTONUP:
-				// Always send the button up/down events to guichan
+				// Always send the button up/down events to fifechan 
 				m_input->pushInput(evt);
 
 				// Button was pressed over a widget and still is over a widget
@@ -119,7 +119,7 @@ namespace FIFE {
 					m_focushandler->focusNone();
 				}
 
-				// Button up was processed by guichan but there was no widget under
+				// Button up was processed by fifechan but there was no widget under
 				// the mouse at the time.  Don't mark it as processed here so the
 				// other listeners have a chance to process the event.
 				return false;
@@ -290,7 +290,7 @@ namespace FIFE {
 		keyevt.setMetaPressed(fcnevt.isMetaPressed());
 		keyevt.setNumericPad(fcnevt.isNumericPad());
 
-		// Convert from guichan keyval to FIFE keyval
+		// Convert from fifechan keyval to FIFE keyval
 		int32_t keyval = fcnevt.getKey().getValue();
 		keyval = convertGuichanKeyToFifeKey(keyval);
 

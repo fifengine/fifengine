@@ -198,7 +198,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		// Draw a line with Bresenham, imitated from guichan
+		// Draw a line with Bresenham, imitated from fifechan 
 		int32_t x1 = p1.x;
 		int32_t x2 = p2.x;
 		int32_t y1 = p1.y;

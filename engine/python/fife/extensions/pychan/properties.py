@@ -49,7 +49,7 @@ class WrappedProperty(object):
 
 class ColorProperty(WrappedProperty):
 	"""
-	A color property. Fakes a color attribute of a guichan widget.
+	A color property. Fakes a color attribute of a fifechan widget.
 	This accepts either tuples of the colors (r,g,b)
 	or L{fife.Color} objects.
 
