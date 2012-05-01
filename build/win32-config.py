@@ -39,7 +39,7 @@ def initEnvironment(env):
 	includepath = os.path.join(path, 'build', 'win32', 'includes')
 	staticlibpath = os.path.join(path, 'build', 'win32', 'static_libs', 'mingw')
 
-	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_47_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python27', includepath + '\\unittest++\\src'])
+	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libfifechan', includepath + '\\boost_1_47_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python27', includepath + '\\unittest++\\src'])
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
 	env.Tool('swig')
