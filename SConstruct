@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2012 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -410,8 +410,12 @@ Alias('docs', env.BuildDocs('docs', os.path.join('doc', 'doxygen', 'doxyfile')))
 #**************************************************************************
 env.Clean("distclean",
 		[
-		 ".sconsign.dblite",
+		 '.sconsign.dblite',
 		 os.path.join('build','.sconf_temp'),
+		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.cc'),
+		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.h'),
+		 os.path.join('engine','swigwrappers', 'python', 'fife.i'),
+		 os.path.join('engine','python', 'fife', 'fife.py'),
 		])
 
 #**************************************************************************
@@ -423,4 +427,3 @@ Default()
 Default('fife-python')
 
 # vim: set filetype=python:
-
