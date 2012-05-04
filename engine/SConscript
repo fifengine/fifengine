@@ -241,3 +241,5 @@ else:
 	
 alias_install_dev = Alias('install-dev', [alias_install_shared, alias_install_static, install_headers])
 Alias('install-all', [alias_install_python, alias_install_dev])
+
+# vim: set filetype=python:
