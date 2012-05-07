@@ -159,7 +159,7 @@ class EventListenerBase(object):
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
-					def delayed_f(timer):
+					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
 						
