@@ -320,9 +320,10 @@ class Widget(object):
 			self.beforeShow()
 			get_manager().show(self)
 			self._visible = True
-			
+						
 		def _show(widget):
 			widget._visible = True
+			widget.real_widget.setVisible(True)
 				
 		self.deepApply(_show, shown_only=True)
 
@@ -343,6 +344,7 @@ class Widget(object):
 		
 		def _hide(widget):
 			widget._visible = False
+			widget.real_widget.setVisible(False)
 				
 		self.deepApply(_hide, shown_only=True)
 

@@ -23,6 +23,7 @@
 %{
 #include <fifechan.hpp>
 #include <fifechan/actionevent.hpp>
+#include <fifechan/event.hpp>
 #include <fifechan/keyevent.hpp>
 %}
 
@@ -63,6 +64,20 @@ namespace fcn {
 	public:
 		virtual ~ActionListener() { }
 		virtual void action(const fcn::ActionEvent& actionEvent) = 0;
+	};
+	
+	%feature("director") WidgetListener;
+	class WidgetListener {
+	public:
+	    virtual ~WidgetListener() { }
+	    
+	    virtual void widgetResized(const fcn::Event& event);
+	    virtual void widgetMoved(const fcn::Event& event);
+	    virtual void widgetHidden(const fcn::Event& event);
+	    virtual void widgetShown(const fcn::Event& event);
+	    
+	protected:
+	    WidgetListener() { }
 	};
 }
 

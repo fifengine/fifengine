@@ -128,6 +128,8 @@ namespace fcn {
 		virtual void removeMouseListener(MouseListener* actionListener);
 		virtual void addKeyListener(KeyListener* actionListener);
 		virtual void removeKeyListener(KeyListener* actionListener);
+		virtual void addWidgetListener(WidgetListener* widgetListener);
+		virtual void removeWidgetListener(WidgetListener* widgetListener);
 /* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
 	};
