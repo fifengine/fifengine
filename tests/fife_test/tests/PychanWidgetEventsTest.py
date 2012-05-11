@@ -63,6 +63,14 @@ class PychanWidgetEventsTest(test.Test):
     
     def stop(self):
         self._running = False
+        
+	#any callbacks referencing _controlsPanel or _window and listening for a widgetHidden event
+	#should be removed, because after hiding these widget hierarchies will be freed from memory
+	self._window.mapEvents({
+	    "testButtonHide/widgetHidden" : None,
+	})
+	self._window.capture(event_name="widgetHidden", callback=None)
+
         self._controlsPanel.hide()
         self._window.hide()
     
