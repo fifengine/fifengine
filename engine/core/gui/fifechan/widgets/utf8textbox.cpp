@@ -120,10 +120,16 @@ namespace fcn {
 					&& getCaretRow() != 0
 					&& mEditable)
 		{
-			setCaretColumn(getTextRow(getCaretRow() - 1).size());
+			/*setCaretColumn(mText->getRow(getCaretRow() - 1).size());
+			mText->getRow(getCaretRow() - 1) += getTextRow(getCaretRow());
+			mText->eraseRow(getCaretRow());
+			setCaretRow(getCaretRow() - 1);*/
+			unsigned newCaretColumn = getTextRow(getCaretRow() - 1).size();
+			//setCaretColumn(getTextRow(getCaretRow() - 1).size());
 			mText->getRow(getCaretRow() - 1) += getTextRow(getCaretRow());
 			mText->eraseRow(getCaretRow());
 			setCaretRow(getCaretRow() - 1);
+			setCaretColumn(newCaretColumn);
 		}
 		else if (key.getValue() == Key::Delete
 					&& getCaretColumn() < (int32_t)getTextRow(getCaretRow()).size()

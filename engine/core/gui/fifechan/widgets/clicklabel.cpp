@@ -65,7 +65,7 @@ namespace fcn {
 	Widget* ClickLabel::clone(const std::string& prefix) {
                //NOT IMPLEMENTED YET!
                return NULL;
-       }
+    }
 
 	void ClickLabel::setCaption(const std::string& caption) {
 		mCaption = caption;

@@ -64,6 +64,18 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		})
 		self.rootpanel.show()
 
+		self.testpanel = pychan.loadXML('gui/test.xml')
+		self.testpanel.position = (0, 200)
+		self.testpanel.mapEvents({
+		    'okBtn' : self._ok_clicked
+		})
+		self.testpanel.show()
+		
+	def _ok_clicked(self):
+		txt = self.testpanel.findChild(name="txtBox").text
+		self.testpanel.findChild(name="txt").text = txt
+		self.testpanel.findChild(name="txt").resizeToContent()
+
 	def keyPressed(self, evt):
 		print evt
 		keyval = evt.getKey().getValue()
