@@ -79,7 +79,7 @@ def getRequiredLibs(opengl):
 			('SDL', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
 			('SDL_image', 'SDL_image.h'),
-			('fifechan', 'guichan.hpp'),
+			('fifechan', 'fifechan.hpp'),
 			('fifechan_sdl', ''),
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
