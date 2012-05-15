@@ -101,11 +101,6 @@ namespace fcn
         }
     }
     
-    Widget* Icon2::clone(const std::string& prefix) {
-        //NOT IMPLEMENTED YET!
-        return NULL;
-    }
-
     void Icon2::draw(Graphics* graphics)
     {
         if ( mImage )

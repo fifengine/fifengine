@@ -62,11 +62,6 @@ namespace fcn {
 	ClickLabel::~ClickLabel() {
 	}
 	
-	Widget* ClickLabel::clone(const std::string& prefix) {
-               //NOT IMPLEMENTED YET!
-               return NULL;
-    }
-
 	void ClickLabel::setCaption(const std::string& caption) {
 		mCaption = caption;
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());

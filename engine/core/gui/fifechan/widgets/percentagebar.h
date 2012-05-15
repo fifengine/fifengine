@@ -59,9 +59,6 @@ namespace fcn
 		PercentageBar();
 		virtual ~PercentageBar() {}
 
-
-		virtual Widget* clone(const std::string& prefix);
-		
 		// Inherited from Widget
 
 		virtual void draw(Graphics* graphics);

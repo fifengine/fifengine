@@ -62,8 +62,6 @@ namespace fcn {
 			 */
 			~ToggleButton();
 
-                       virtual Widget* clone(const std::string& prefix);
-            
 			/**
 			 * Draws the button
 			 */

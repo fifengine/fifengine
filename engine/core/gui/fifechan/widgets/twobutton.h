@@ -42,8 +42,6 @@ namespace fcn {
 			TwoButton(Image *up_image = 0, Image *down_image = 0, Image *hover_file = 0, const std::string& caption = "");
 			~TwoButton();
             
-            virtual Widget* clone(const std::string& prefix);
-            
 			void draw(Graphics *graphics);
 			void adjustSize();
 

@@ -51,11 +51,6 @@ namespace fcn {
 	TwoButton::~TwoButton() {
 	}
 	
-	Widget* TwoButton::clone(const std::string& prefix) {
-        //NOT IMPLEMENTED YET!
-        return NULL;
-    }
-
 	void TwoButton::setDownOffset(int32_t x, int32_t y) {
 		x_downoffset = x;
 		y_downoffset = y;
