@@ -53,6 +53,10 @@ namespace FIFE {
 		 */
 		IResourceManager() { }
 
+		/** destructor
+		 */
+		virtual ~IResourceManager() { }
+
 		/** Gets the total amount of memory used by resources
 		 *
 		 * This function uses the IResource's getSize() function
