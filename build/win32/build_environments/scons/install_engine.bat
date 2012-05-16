@@ -1,5 +1,7 @@
 @echo off
 
 :: run scons
-python ..\..\applications\scons\scons.py -C ..\..\..\..\ install-python
+pushd ..\..\..\..\
+python setup.py install
+popd
 
