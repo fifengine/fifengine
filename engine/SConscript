@@ -157,7 +157,9 @@ pythonlib = env.SharedLibrary(target = fife_tgt,
 							  SHLIBSUFFIX=dest_suffix,
 							  SHLIBEMITTER = '')
 
-pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fife_wrap.cc'), os.path.join('python', 'fife', 'fife.py')],
+pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fife_wrap.cc'),
+                                           os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
+                                           os.path.join('python', 'fife', 'fife.py')],
 							  source = os.path.join('swigwrappers', 'python' ,'fife.i'),
 							  SWIGFLAGS=['-python','-c++','-w511'],
 							  SWIGPATH='core',
