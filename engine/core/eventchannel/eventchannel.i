@@ -58,7 +58,7 @@ namespace FIFE {
 		virtual int32_t getTimeStamp() const;
 		virtual std::string getDebugString() const;
 		virtual const std::string& getName() const;
-		virtual ~IEvent() {}
+		virtual ~Event() {}
 	private:
 		Event();
 	};
@@ -70,7 +70,7 @@ namespace FIFE {
 		virtual bool isControlPressed() const;
 		virtual bool isMetaPressed() const;
 		virtual bool isShiftPressed() const;
-		virtual ~IInputEvent() {}
+		virtual ~InputEvent() {}
 	private:
 		InputEvent();
 	};
@@ -153,7 +153,7 @@ namespace FIFE {
 		virtual int32_t getY() const;
 		virtual MouseEventType getType() const;
 		virtual MouseButtonType getButton() const;
-		virtual ~IMouseEvent();
+		virtual ~MouseEvent();
 	private:
 		MouseEvent();
 	};
