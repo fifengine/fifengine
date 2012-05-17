@@ -60,6 +60,8 @@ namespace FIFE {
 		const double getYScale() const;
 		void setRotation(const double rotation);
 		const double getRotation() const;
+		void setAllowDiagonals(const bool allow_diagonals);
+		const bool getAllowDiagonals() const;
 	};
 
 	class HexGrid: public CellGrid {
