@@ -246,6 +246,7 @@ class XMLMapLoader(object):
 			cellgrid.setXShift(float(x_offset))
 			cellgrid.setYShift(float(y_offset))
 			cellgrid.setZShift(float(z_offset))
+			cellgrid.setAllowDiagonals(pathing != "cell_edges_only");
 
 			layer_obj = None
 			try:

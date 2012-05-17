@@ -80,7 +80,7 @@ namespace FIFE {
 		m_percentDoneListener.reset();
 
 		bfs::path mapPath(filename);
-		
+
 		if (HasParentPath(mapPath)) {
             if (GetParentPath(mapPath).string() != m_mapDirectory) {
 			    // save the directory where the map file is located
@@ -89,7 +89,7 @@ namespace FIFE {
 		}
 
 		TiXmlDocument mapFile;
-        
+
         std::string mapFilename = mapPath.string();
 
         try {
@@ -103,7 +103,7 @@ namespace FIFE {
                         std::ostringstream oss;
                         oss << " Failed to load"
                             << mapFilename
-                            << " : " << __FILE__ 
+                            << " : " << __FILE__
                             << " [" << __LINE__ << "]"
                             << std::endl;
                         FL_ERR(_log, oss.str());
@@ -134,7 +134,7 @@ namespace FIFE {
 
 		if (root) {
 			const std::string* loaderName = root->Attribute(std::string("loaderName"));
-			
+
 			if (loaderName) {
 				m_loaderName = *loaderName;
 			}
@@ -217,11 +217,11 @@ namespace FIFE {
 
 						if (xOffsetRetVal == TIXML_SUCCESS &&
 							yOffsetRetVal == TIXML_SUCCESS &&
-							xScaleRetVal == TIXML_SUCCESS && 
+							xScaleRetVal == TIXML_SUCCESS &&
 							yScaleRetVal == TIXML_SUCCESS &&
 							rotationRetVal == TIXML_SUCCESS &&
-							layerName && 
-							pathing && 
+							layerName &&
+							pathing &&
 							gridType) {
 							PathingStrategy pathStrategy = CELL_EDGES_ONLY;
 
@@ -247,6 +247,7 @@ namespace FIFE {
 								grid->setYScale(yScale);
 								grid->setZShift(zOffset);
 								grid->setRotation(rotation);
+								grid->setAllowDiagonals(pathStrategy != CELL_EDGES_ONLY);
 
 								Layer *layer = NULL;
 								try {
@@ -262,7 +263,7 @@ namespace FIFE {
 
 									double curr_x = 0;
 									double curr_y = 0;
-									
+
 									for (const TiXmlElement* instances = layerElement->FirstChildElement("instances"); instances; instances = instances->NextSiblingElement("instances")) {
 										for (const TiXmlElement* instance = instances->FirstChildElement("i"); instance; instance = instance->NextSiblingElement("i")) {
 											double x = 0;
@@ -297,7 +298,7 @@ namespace FIFE {
 												curr_x = x;
 											}
 											else {
-												x = ++curr_x;		
+												x = ++curr_x;
 											}
 
 											if (yRetVal == TIXML_SUCCESS) {
@@ -342,7 +343,7 @@ namespace FIFE {
 														inst->setRotation(r);
 
 														InstanceVisual* instVisual = InstanceVisual::create(inst);
-														
+
 														if  (instVisual && (stackRetVal == TIXML_SUCCESS)) {
 															instVisual->setStackPosition(stackpos);
 														}
@@ -358,7 +359,7 @@ namespace FIFE {
                                                         std::ostringstream oss;
                                                         oss << " Failed to create instance of object "
                                                             << *objectId
-                                                            << " : " << __FILE__ 
+                                                            << " : " << __FILE__
                                                             << " [" << __LINE__ << "]"
                                                             << std::endl;
                                                         FL_ERR(_log, oss.str());
@@ -381,7 +382,7 @@ namespace FIFE {
 					for (const TiXmlElement* cameraElement = root->FirstChildElement("camera"); cameraElement; cameraElement = cameraElement->NextSiblingElement("camera")) {
 						const std::string* cameraId = cameraElement->Attribute(std::string("id"));
 						const std::string* refLayerId = cameraElement->Attribute(std::string("ref_layer_id"));
-						
+
 						int refCellWidth = 0;
 						int refCellHeight = 0;
 						int success = cameraElement->QueryIntAttribute("ref_cell_width", &refCellWidth);
@@ -410,11 +411,11 @@ namespace FIFE {
 							if (layer) {
 								if (viewport) {
 									// parse out the viewport parameters
-									IntVector viewportParameters = tokenize(*viewport, ','); 
-									
+									IntVector viewportParameters = tokenize(*viewport, ',');
+
 									// make sure the right number of viewport parameters were parsed
 									if (viewportParameters.size() == 4) {
-										Rect rect(viewportParameters[0], viewportParameters[1], 
+										Rect rect(viewportParameters[0], viewportParameters[1],
 													viewportParameters[2], viewportParameters[3]);
 
 										try {
@@ -555,12 +556,12 @@ namespace FIFE {
             // load all xml files in the directory
             std::set<std::string>::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
-                // TODO - vtchill - may need a way to allow clients to load things other 
+                // TODO - vtchill - may need a way to allow clients to load things other
                 // than .xml and .zip files
                 std::string ext = bfs::extension(*iter);
                 if (ext == ".xml" || ext == ".zip") {
                     loadImportFile(*iter, importDirectoryString);
-                }	
+                }
             }
 
             std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
