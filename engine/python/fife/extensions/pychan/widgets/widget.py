@@ -315,15 +315,16 @@ class Widget(object):
 			self.parent.showChild(self)
 			self.parent.adaptLayout()
 			self._visible = True
+			self.real_widget.setVisible(True)
 		else:
 			self.adaptLayout()
 			self.beforeShow()
 			get_manager().show(self)
 			self._visible = True
+			self.real_widget.setVisible(True)
 						
 		def _show(widget):
 			widget._visible = True
-			widget.real_widget.setVisible(True)
 				
 		self.deepApply(_show, shown_only=True)
 
@@ -341,10 +342,10 @@ class Widget(object):
 
 		self.afterHide()
 		self._visible = False
+		self.real_widget.setVisible(False)
 		
 		def _hide(widget):
 			widget._visible = False
-			widget.real_widget.setVisible(False)
 				
 		self.deepApply(_hide, shown_only=True)
 
