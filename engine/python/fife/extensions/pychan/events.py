@@ -86,7 +86,10 @@ EVENTS = [
 	"widgetResized",
 	"widgetMoved",
 	"widgetHidden",
-	"widgetShown"
+	"widgetShown",
+	"ancestorMoved",
+	"ancestorHidden",
+	"ancestorShown"
 ]
 
 # Add the EVENTS to the docs.
@@ -103,7 +106,7 @@ def getEventType(name):
 		return MOUSE_EVENT
 	if "key" in name:
 		return KEY_EVENT
-	if "widget" in name:
+	if ("widget" in name) or ("ancestor" in name):
 		return WIDGET_EVENT
 	return ACTION_EVENT
 
@@ -237,6 +240,9 @@ class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
 	def widgetMoved(self, e): self._redirectEvent("widgetMoved",e)
 	def widgetHidden(self, e): self._redirectEvent("widgetHidden",e)
 	def widgetShown(self, e): self._redirectEvent("widgetShown",e)
+	def ancestorMoved(self, e): self._redirectEvent("ancestorMoved",e)
+	def ancestorHidden(self, e): self._redirectEvent("ancestorHidden",e)
+	def ancestorShown(self, e): self._redirectEvent("ancestorShown",e)
 
 
 class EventMapper(object):

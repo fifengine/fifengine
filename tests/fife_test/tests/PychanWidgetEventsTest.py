@@ -47,10 +47,11 @@ class PychanWidgetEventsTest(test.Test):
         self._window = pychan.loadXML('data/gui/widget_events_window.xml')
         self._window.capture(event_name="widgetHidden", callback=cbwa(self._widgetHiddenCallback, self._window.name))
         self._window.capture(event_name="widgetShown", callback=cbwa(self._widgetShownCallback, self._window.name))
-        self._window.capture(event_name="widgetMoved", callback=self._windowMovedCallback)
+        self._window.capture(event_name="widgetMoved", callback=cbwa(self._widgetMovedCallback, self._window.name))
         self._window.mapEvents({
-            "testButtonHide/widgetHidden" : cbwa(self._widgetHiddenCallback, self._window.findChild(name="testButtonHide").name),
-            "testButtonShow/widgetShown" : cbwa(self._widgetShownCallback, self._window.findChild(name="testButtonShow").name),
+            "testButtonHide/ancestorHidden" : cbwa(self._widgetHiddenCallback, self._window.findChild(name="testButtonHide").name),
+            "testButtonShow/ancestorShown" : cbwa(self._widgetShownCallback, self._window.findChild(name="testButtonShow").name),
+            "testButtonMove/ancestorMoved" : cbwa(self._widgetMovedCallback, self._window.findChild(name="testButtonMove").name)
         })
     
     def destroy(self):
@@ -102,8 +103,8 @@ class PychanWidgetEventsTest(test.Test):
         txt = unicode("Widget with name %s was shown" % widget_name, "UTF-8")
         self._printToOutput(txt)
         
-    def _windowMovedCallback(self):
-        txt = unicode("Window was moved", "UTF-8")
+    def _widgetMovedCallback(self, widget_name):
+        txt = unicode("%s was moved" % widget_name, "UTF-8")
         self._printToOutput(txt)
         
     def _printToOutput(self, txt):
