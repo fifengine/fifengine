@@ -93,7 +93,7 @@ namespace FIFE {
 		 *  @return point in map coordinates
 		 */
 		virtual ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) = 0;
-		
+
 		/** Transforms given point from map coordinates to layer coordinates
 		 *  @return point in layer coordinates
 		 */
@@ -110,35 +110,35 @@ namespace FIFE {
 		 */
 		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
 
-		/** Set the cellgrid x shift 
+		/** Set the cellgrid x shift
 		 *  @param shift The shift in map coords
 		 */
-		void setXShift(const double& xshift) { 
-			m_xshift = xshift; 
+		void setXShift(const double& xshift) {
+			m_xshift = xshift;
 			updateMatrices();
 		}
 
-		/** Get the cellgrid x shift 
+		/** Get the cellgrid x shift
 		 *  @return The x shift
 		 */
 		const double getXShift() const { return m_xshift; }
 
-		/** Set the cellgrid y shift 
+		/** Set the cellgrid y shift
 		 *  @param shift The shift in map coords
 		 */
 		void setYShift(const double yshift) {
-			m_yshift = yshift; 
+			m_yshift = yshift;
 			updateMatrices();
 		}
 
-		/** Get the cellgrid y shift 
+		/** Get the cellgrid y shift
 		 *  @return The y shift in map coords
 		 */
 		const double getYShift() const { return m_yshift; }
 
 		/** Set the cellgrid z shift
 		 *  @param shift The shift in map coords
-		 */ 
+		 */
 		void setZShift(const double zshift) {
 			m_zshift = zshift;
 			updateMatrices();
@@ -152,7 +152,7 @@ namespace FIFE {
 		/** Set the cellgrid x-scaling
 		 *  @param scale The x-scale of cellgrid
 		 */
-		void setXScale(const double scale) { 
+		void setXScale(const double scale) {
 			m_xscale = scale;
 			updateMatrices();
 		}
@@ -160,11 +160,11 @@ namespace FIFE {
 		/** Set the cellgrid y-scaling
 		 *  @param scale The y-scale of cellgrid
 		 */
-		void setYScale(const double scale) { 
+		void setYScale(const double scale) {
 			m_yscale = scale;
 			updateMatrices();
 		}
-		
+
 		/** Get the cellgrid x-scaling
 		 *  @return The x-scale of cellgrid
 		 */
@@ -174,12 +174,12 @@ namespace FIFE {
 		 *  @return The y-scale of cellgrid
 		 */
 		const double getYScale() const { return m_yscale; }
-		
+
 		/** Set the cellgrid rotation
 		 *  @param rotation The rotation of the cellgrid
 		 */
-		void setRotation(const double rotation) { 
-			m_rotation = rotation; 
+		void setRotation(const double rotation) {
+			m_rotation = rotation;
 			updateMatrices();
 		}
 
@@ -187,6 +187,18 @@ namespace FIFE {
 		 *  @return rotation The rotation of the cellgrid
 		 */
 		const double getRotation() const { return m_rotation; }
+
+		/** Set whether diagonal cell access is allowed
+		 *  @param allow_diagonals True if diagonal access allowed, false if only cell edges allowed
+		 */
+		void setAllowDiagonals(const bool allow_diagonals) {
+			m_allow_diagonals = allow_diagonals;
+		}
+
+		/** Get whether diagonal cell access is allowed
+		 *  @return True if diagonal access allowed, false if only cell edges allowed
+		 */
+		const bool getAllowDiagonals() const { return m_allow_diagonals; }
 
 		/** Returns clone of this cellgrid
 		 */
@@ -205,9 +217,9 @@ namespace FIFE {
 		double m_yscale;
 		double m_rotation;
 		bool m_allow_diagonals;
-		
+
 	private:
-		int32_t orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
+		int32_t orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);
 	};
 }
 

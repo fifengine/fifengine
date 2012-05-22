@@ -324,10 +324,7 @@ class Container(Widget):
 		"""
 		Clones each child and return the clones in a list.
 		"""
-		cloneList = []
-		
-		for child in self.children:
-			cloneList.append(child.clone(prefix))
+		cloneList = [ child.clone(prefix) for child in self.children ]
 		
 		return cloneList
 
