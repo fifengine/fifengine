@@ -37,7 +37,7 @@ namespace fcn {
 
 	class TwoButton;
 
-	class TwoButton : public Button {
+	class TwoButton : public Button, public WidgetListener {
 		public:
 			TwoButton(Image *up_image = 0, Image *down_image = 0, Image *hover_file = 0, const std::string& caption = "");
 			~TwoButton();
@@ -52,6 +52,8 @@ namespace fcn {
 			void setDownOffset(int32_t x, int32_t y);
 			int32_t getDownXOffset() { return x_downoffset; }
 			int32_t getDownYOffset() { return y_downoffset; }
+			
+			virtual void ancestorHidden(const Event& e);
 			
 		private:
 			Image *m_upImage;

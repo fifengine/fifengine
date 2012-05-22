@@ -309,19 +309,20 @@ class Widget(object):
 		Show the widget and all contained widgets.
 		"""
 		if self._visible: return
-
+		
 		if self.parent:
 			self.beforeShow()
 			self.parent.showChild(self)
 			self.parent.adaptLayout()
 			self._visible = True
-			self.real_widget.setVisible(True)
 		else:
 			self.adaptLayout()
 			self.beforeShow()
 			get_manager().show(self)
-			self._visible = True
-			self.real_widget.setVisible(True)
+			self._visible = True	
+
+		#show real widget to distribute a widgetShown event.
+		self.real_widget.setVisible(True)	
 						
 		def _show(widget):
 			widget._visible = True
@@ -342,11 +343,14 @@ class Widget(object):
 
 		self.afterHide()
 		self._visible = False
-		self.real_widget.setVisible(False)
+		
+	    #Hide real widget to distribute a widgetHidden event.
+		self.real_widget.setVisible(False)		
+				
 		
 		def _hide(widget):
 			widget._visible = False
-				
+			
 		self.deepApply(_hide, shown_only=True)
 
 	def isVisible(self):

@@ -42,6 +42,8 @@ namespace fcn {
 		m_hoverImage(hover_file),
 		x_downoffset(0),
 		y_downoffset(0) {
+		addWidgetListener(this);
+			
 		m_hoverImage = hover_file;
 		setFrameSize(0);
 		adjustSize();
@@ -135,6 +137,10 @@ namespace fcn {
 	void TwoButton::setHoverImage(Image* image) {
 		m_hoverImage = image;
 		adjustSize();
+	}
+	
+	void TwoButton::ancestorHidden(const Event& e) {
+		mHasMouse = false;
 	}
 
 }
