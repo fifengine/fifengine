@@ -112,6 +112,22 @@ class LogManager(object):
    			fife.LogManager.LEVEL_ERROR
 		"""
 		self.lm.setLevelFilter(fltr)
+
+	def setLogToPrompt(self, promptlog):
+		return self.lm.setLogToPrompt(promptlog)
+		
+	def getLogToPrompt(self):
+		return self.lm.isLoggingToPrompt()
+	
+	logToPrompt = property(getLogToPrompt, setLogToPrompt)
+
+	def setLogToFile(self, filelog):
+		return self.lm.setLogToFile(filelog)
+
+	def getLogToFile(self):
+		return self.lm.isLoggingToFile()
+
+	logToFile = property(getLogToFile, setLogToFile)
 		
 	def log_debug(self, message):
 		self.lm.log(0, self.name2mod["script"], message)
