@@ -140,11 +140,11 @@ namespace FIFE {
 		}
 	}
 
-	void LogManager::setLogToPrompt(bool log_to_promt) {
-		m_logtoprompt = log_to_promt;
+	void LogManager::setLogToPrompt(bool logtoprompt) {
+		m_logtoprompt = logtoprompt;
 	}
 
-	bool LogManager::isLoggingToPrompt() {
+	bool LogManager::isLogToPrompt() {
 		return m_logtoprompt;
 	}
 
@@ -160,7 +160,7 @@ namespace FIFE {
 		m_logtofile = logtofile;
 	}
 
-	bool LogManager::isLoggingToFile() {
+	bool LogManager::isLogToFile() {
 		return m_logtofile;
 	}
 

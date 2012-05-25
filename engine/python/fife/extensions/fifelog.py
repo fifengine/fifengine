@@ -117,7 +117,7 @@ class LogManager(object):
 		return self.lm.setLogToPrompt(promptlog)
 		
 	def getLogToPrompt(self):
-		return self.lm.isLoggingToPrompt()
+		return self.lm.isLogToPrompt()
 	
 	logToPrompt = property(getLogToPrompt, setLogToPrompt)
 
@@ -125,7 +125,7 @@ class LogManager(object):
 		return self.lm.setLogToFile(filelog)
 
 	def getLogToFile(self):
-		return self.lm.isLoggingToFile()
+		return self.lm.isLogToFile()
 
 	logToFile = property(getLogToFile, setLogToFile)
 		
