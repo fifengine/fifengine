@@ -40,7 +40,8 @@
 #include "model/structures/instancetree.h"
 #include "util/structures/quadtree.h"
 
-///credit to phoku for his NodeDisplay example which the visitor code is adapted from ( he coded the quadtree after all )
+//credit to phoku for his NodeDisplay example which the visitor code is adapted from ( he coded the quadtree after all )
+
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
