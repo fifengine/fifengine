@@ -51,11 +51,11 @@ namespace FIFE {
 		void clearVisibleModules();
 		bool isVisible(logmodule_t module);
 		
-		void setLogToPrompt(bool log_to_promt);
-		bool isLoggingToPrompt();
+		void setLogToPrompt(bool logtoprompt);
+		bool isLogToPrompt();
 		
 		void setLogToFile(bool logtofile);
-		bool isLoggingToFile();
+		bool isLogToFile();
 		std::string getModuleName(logmodule_t module);
 		
 	private:

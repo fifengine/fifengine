@@ -160,19 +160,19 @@ namespace FIFE {
 
 		/** Sets LogManager to log to prompt
 		 */
-		void setLogToPrompt(bool log_to_promt);
+		void setLogToPrompt(bool logtoprompt);
 
-		/** Tells if LogManager is set to log to prompt
+		/** Returns if LogManager is set to log to prompt
 		 */
-		bool isLoggingToPrompt();
+		bool isLogToPrompt();
 
 		/** Sets LogManager to log to a file
 		 */
 		void setLogToFile(bool logtofile);
 
-		/** Tells if LogManager is set to log to a file
+		/** Returns if LogManager is set to log to a file
 		 */
-		bool isLoggingToFile();
+		bool isLogToFile();
 
 		/** Gets display name for given module id
 		 * E.g. LM_AUDIO -> "Audio"
