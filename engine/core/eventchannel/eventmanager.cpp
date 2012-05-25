@@ -401,7 +401,7 @@ namespace FIFE {
 
 		SDL_ActiveEvent actevt = event.active;
 		std::vector<Command*> commands;
-		
+
 		if (actevt.state & SDL_APPMOUSEFOCUS) {
 			Command* cmd = new Command();
 			if (actevt.gain) {
@@ -643,11 +643,11 @@ namespace FIFE {
 		return m_mousesensitivity;
 	}
 
-	void EventManager::setMouseAcceleration(bool acceleration) {
+	void EventManager::setMouseAccelerationEnabled(bool acceleration) {
 		m_acceleration = acceleration;
 	}
 
-	bool EventManager::getMouseAcceleration() const {
+	bool EventManager::isMouseAccelerationEnabled() const {
 		return m_acceleration;
 	}
 }

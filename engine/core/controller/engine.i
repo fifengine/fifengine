@@ -97,8 +97,8 @@ namespace FIFE {
 		uint16_t getFrameLimit() const;
 		void setMouseSensitivity(float sens);
 		float getMouseSensitivity() const;
-		void setMouseAcceleration(bool acceleration);
-		bool getMouseAcceleration() const;
+		void setMouseAccelerationEnabled(bool acceleration);
+		bool isMouseAccelerationEnabled() const;
 		
 	private:
 		EngineSettings();

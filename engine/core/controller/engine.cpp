@@ -180,7 +180,7 @@ namespace FIFE {
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
 		m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
-		m_eventmanager->setMouseAcceleration(m_settings.getMouseAcceleration());
+		m_eventmanager->setMouseAccelerationEnabled(m_settings.isMouseAccelerationEnabled());
 
 		FL_LOG(_log, "Creating resource managers");
 
@@ -340,7 +340,7 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_eventmanager->processEvents();
 		m_timemanager->update();
-		
+
 		m_targetrenderer->render();
 		if (m_model->getMapCount() == 0) {
 			m_renderbackend->clearBackBuffer();
