@@ -204,7 +204,7 @@ namespace FIFE {
 
 		void setMouseSensitivity(float sensitivity);
 		float getMouseSensitivity() const;
-		void setMouseAcceleration(bool acceleration);
-		bool getMouseAcceleration() const;
+		void setMouseAccelerationEnabled(bool acceleration);
+		bool isMouseAccelerationEnabled() const;
 	};
 };

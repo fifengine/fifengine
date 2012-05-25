@@ -251,11 +251,11 @@ namespace FIFE {
 		return m_mousesensitivity;
 	}
 
-	void EngineSettings::setMouseAcceleration(bool acceleration) {
+	void EngineSettings::setMouseAccelerationEnabled(bool acceleration) {
 		m_mouseacceleration = acceleration;
 	}
 
-	bool EngineSettings::getMouseAcceleration() const {
+	bool EngineSettings::isMouseAccelerationEnabled() const {
 		return m_mouseacceleration;
 	}
 }
