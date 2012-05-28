@@ -43,7 +43,7 @@ from fife.extensions import loaders
 import events
 import plugin
 
-from fife.extensions.basicapplication import ApplicationBase
+from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -68,7 +68,7 @@ def getEditor():
 		Editor(None)
 	return Editor.editor
 
-class Editor(ApplicationBase, MainWindow):
+class Editor(PychanApplicationBase, MainWindow):
 	""" Editor sets up all subsystems and provides access to them """
 	editor = None
 
@@ -109,7 +109,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbox_docked = False
 		self._toolbox_dockname = ""
 	
-		ApplicationBase.__init__(self, TDS, *args, **kwargs)
+		PychanApplicationBase.__init__(self, TDS, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
 		
 	def _initTools(self):
@@ -483,7 +483,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._pluginmanager.stop()
 		
 		self._settings.saveSettings()
-		ApplicationBase.quit(self)
+		PychanApplicationBase.quit(self)
 
 	def _pump(self):
 		""" Called once per frame """

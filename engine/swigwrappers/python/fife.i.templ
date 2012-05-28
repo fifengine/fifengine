@@ -124,14 +124,6 @@ print s\n\
 		SWIG_exception(_converted_type, _e.what()); \
 	}
 
-#define _FCN_EXC_HANDLER() \
-	catch (fcn::Exception& _e) { \
-		PyErr_Clear(); \
-		char _err_line[12]; \
-		sprintf(_err_line, ":%u", _e.getLine()); \
-		std::string _err_msg = "Caught an fcn exception thrown in " + _e.getFilename() + _err_line + " in function " + _e.getFunction() + ": " + _e.getMessage(); \
-		SWIG_exception(SWIG_RuntimeError, _err_msg.c_str()); \
-	}
 
 #define _FIFE_DIRECTOR_EXC_HANDLER() \
 	catch (Swig::DirectorException &) { \
@@ -152,7 +144,6 @@ print s\n\
 		$$action
 	}
 	_FIFE_DIRECTOR_EXC_HANDLER()
-	_FCN_EXC_HANDLER()
 	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
 }
 

@@ -103,11 +103,15 @@ def filter_by_dir(dirfilters, files):
 			result.append(f)
 	return result
 	
-def gen_swig_interface(templatefile, source, outdir):
+def include_by_dir(dirfilters, files):
+	result = [ f for f in files for p in dirfilters for s in f.split(_sep) if s == p ]
+	return result
+	
+def gen_swig_interface(templatefile, source, outdir, outfile):
 	template = Template(open(templatefile).read())
 	inclusions = sorted([os.path.join('%include engine', str(f)) for f in source])
 	inclusions = '\n'.join(inclusions)
-	interfacefile = os.path.join(outdir, 'fife.i')
+	interfacefile = os.path.join(outdir, outfile)
 	open(interfacefile, 'w').write(template.substitute(inclusions=inclusions))
 
 def get_fife_version(srcpath):

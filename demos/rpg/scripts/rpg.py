@@ -29,8 +29,8 @@ from datetime import datetime
 from fife import fife
 from fife.extensions import *
 from scripts.gamecontroller import GameController
-from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
+from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from fife.extensions.pychan import widgets
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_utils import getUserDataDirectory
@@ -139,7 +139,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 	def onToolsClick(self):
 		print "No tools set up yet"
 
-class RPGApplication(ApplicationBase):
+class RPGApplication(PychanApplicationBase):
 	"""
 	The main application.  It inherits fife.extensions.ApplicationBase.
 	

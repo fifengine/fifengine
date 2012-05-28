@@ -36,8 +36,8 @@ print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__
 from fife.extensions import *
 from scripts import world
 from scripts.common import eventlistenerbase
-from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
+from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from fife.extensions.pychan import widgets
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_settings import Setting
@@ -116,7 +116,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.aboutWindow.distributeData({ 'helpText' : open("misc/infotext.txt").read() })
 		self.aboutWindow.show()
 
-class IslandDemo(ApplicationBase):
+class IslandDemo(PychanApplicationBase):
 	def __init__(self):
 		super(IslandDemo,self).__init__(TDS)
 		self.world = world.World(self.engine)

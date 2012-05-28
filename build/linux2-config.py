@@ -64,31 +64,35 @@ def addExtras(env, opengl):
 def getRequiredHeaders(opengl):
 	return None
 
-def getRequiredLibs(opengl):
+def getRequiredLibs(reqLibs):
 	# libs is a list of tuples that have the form:
 	#	(libname, headers)
 	#	libname - may be a single library or a tuple of libraries
 	#	headers - may be a single header or a list of headers
 	#
 	#	This list is somewhat order dependent
-	#		guichan_sdl - depends on at least the SDL libs and guichan prior in the list
-	#		guichan_opengl - depends on at least guichan prior in the list
+	#		fifechan_sdl - depends on at least the SDL libs and guichan prior in the list
+	#		fifechan_opengl - depends on at least guichan prior in the list
 	libs = [('vorbisfile', 'vorbisfile.h'),
 			(pythonversion, pythonversion + '/Python.h'),
 			('openal', 'AL/al.h'),
 			('SDL', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
 			('SDL_image', 'SDL_image.h'),
-			('fifechan', 'fifechan.hpp'),
-			('fifechan_sdl', ''),
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
 			('png', 'png.h'),
 			('Xcursor', '')]
 
-	if (opengl):
-		libs.append(('fifechan_opengl', ''))
+	opengl = reqLibs['opengl']
+	fifechan = reqLibs['fifechan']
+	
+	if fifechan:
+		libs.append(('fifechan', 'fifechan.hpp'))
+		libs.append(('fifechan_sdl', ''))
+		if opengl:
+			libs.append(('fifechan_opengl', ''))
 		
 	return libs
 

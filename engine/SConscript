@@ -34,9 +34,12 @@ engine_path = opts['SRC']
 core_path = os.path.join('engine', 'core')
 extensionpath = upath(os.path.join(opts['SRC'], 'python', 'fife', 'extensions'))
 
+fifechan = env['ENABLE_FIFECHAN']
+
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
+dirfilters = ['swigwrappers', 'fifechan']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -53,8 +56,9 @@ for f in extpyfiles:
 headerfiles = [f for f in allfiles_base if utils.is_headerfile(f)]
 implfiles = [f for f in allfiles_base if utils.is_implfile(f)]
 swigfiles = [f for f in allfiles_base if utils.is_swigfile(f)]
-intfiles = utils.filter_by_dir(['swigwrappers'], swigfiles)
-compilefiles = utils.filter_by_dir(['swigwrappers'], implfiles)
+intfiles = utils.filter_by_dir(dirfilters, swigfiles)
+compilefiles = utils.filter_by_dir(dirfilters, implfiles)
+headerfiles = utils.filter_by_dir(['fifechan'], headerfiles)
 
 if sys.platform == 'win32':
 	dllpath = upath(opts['DLLPATH'])
@@ -63,6 +67,18 @@ if sys.platform == 'win32':
 	for f in dllfilelist:
 		dllfiles.append(utils.relpath(f,opts['DLLPATH'])) 
 	
+
+#**************************************************************************
+#Compile the list of fifechan and pychan code
+#**************************************************************************
+fifechan_glue_headerfiles = utils.include_by_dir(['fifechan'], headerfiles)
+fifechan_glue_implfiles = utils.include_by_dir(['fifechan'], implfiles)
+fifechan_glue_swigfiles = utils.include_by_dir(['fifechan'], swigfiles)
+
+#if fifechan is enabled add fifechan glue source code to all source code
+if fifechan:
+	headerfiles = headerfiles + fifechan_glue_headerfiles
+	compilefiles = compilefiles + fifechan_glue_implfiles 
 
 #**************************************************************************
 #define the FIFE revision number
@@ -74,13 +90,24 @@ if opts['FIFE_REVISION'] is not "0":
 #python
 #**************************************************************************
 
+#if fifechan is enabled, generate swig interface file for fifechan glue and add it to the fife module
+if fifechan:
+	utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fifechan_glue.i.templ'), 
+		                                  fifechan_glue_swigfiles,
+		                                  os.path.join(engine_path, 'swigwrappers', 'python'),
+		                                  'fifechan_glue.i')
+	intfiles.append(os.path.join('swigwrappers', 'python', 'fifechan_glue.i'))
+	intfiles.sort()
+
 #generate swig interface file
 utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fife.i.templ'), 
-		   intfiles,
-		   os.path.join(engine_path, 'swigwrappers', 'python'))
+	          intfiles,
+	          os.path.join(engine_path, 'swigwrappers', 'python'),
+	          'fife.i')
 
 pyfiles = list(compilefiles)
 pyfiles.append([os.path.join('swigwrappers', 'python' ,'fife_wrap.cc')])
+
 
 #**************************************************************************
 #definition of scons builders for project files
@@ -119,6 +146,7 @@ if opts['DEBUG'] and sys.platform == 'win32':
 	fife_tgt = 'fife_d'
 else:
 	fife_tgt = 'fife'
+
 
 #**************************************************************************
 #shared library target
@@ -164,13 +192,12 @@ pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python'
 							  SWIGFLAGS=['-python','-c++','-w511'],
 							  SWIGPATH='core',
 							  SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
-							  
 
 if opts['DEBUG'] and sys.platform == 'win32':
 	copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fife_d' + dest_suffix)
 else:
 	copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fife' + dest_suffix)
-	
+
 copy_cmd = env.Command(copy_dest, pythonlib, [Copy('$TARGET', '$SOURCE')])
 copy_cmd2 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.h'),
 				os.path.join('swigwrappers','python','fife_wrap.h'),

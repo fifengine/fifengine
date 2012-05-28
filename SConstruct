@@ -50,6 +50,12 @@ AddOption('--enable-debug',
 		help='Builds the debug version of the binaries',
 		default=False)
 		
+AddOption('--disable-fifechan',
+		dest='disable-fifechan',
+		action="store_true",
+		help='Disable fifechan gui subsystem',
+		default=False)
+
 AddOption('--disable-opengl',
 		dest='disable-opengl',
 		action="store_true",
@@ -120,10 +126,11 @@ AddOption('--lib-dir',
 		help='Shared Library install location') 
 		
 
-		
 #**************************************************************************
 #save command line options here
 #**************************************************************************
+extra_libs = dict()		
+
 if GetOption('enable-debug'):
 	debug = 1
 	env['FIFE_DEBUG'] = True
@@ -131,10 +138,19 @@ else:
 	debug = 0
 	env['FIFE_DEBUG'] = False
 	
+if GetOption('disable-fifechan'):
+	env['ENABLE_FIFECHAN'] = False
+	extra_libs['fifechan'] = False
+else:
+	env['ENABLE_FIFECHAN'] = True
+	extra_libs['fifechan'] = True
+
 if GetOption('disable-opengl'):
 	opengl = 0
+	extra_libs['opengl'] = False
 else:
 	opengl = 1
+	extra_libs['opengl'] = True
 
 if GetOption('disable-zip'):
 	zip = 0
@@ -238,7 +254,7 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 		# force using the local tinyxml version that ships with fife
 		#if not isinstance(lib, tuple) and lib == 'tinyxml' and env['LOCAL_TINYXML'] == True:
 			#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
-			#continue
+			#continue\
 			
 		if (isinstance(lib, tuple)):
 			for item in lib:
@@ -285,7 +301,7 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 #**************************************************************************
 #check the existence of required libraries and headers
 #**************************************************************************
-required_libs = platformConfig.getRequiredLibs(opengl)
+required_libs = platformConfig.getRequiredLibs(extra_libs)
 optional_libs = platformConfig.getOptionalLibs(opengl)
 
 required_headers = platformConfig.getRequiredHeaders(opengl)
@@ -378,8 +394,10 @@ opts['FIFE_REVISION'] = utils.get_fife_revision()
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
+	opts['REL_LIBPATH'] = os.path.join('build', 'engine', 'debug')
 else:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'release')
+	opts['REL_LIBPATH'] = os.path.join('build', 'engine', 'release')
 
 #**************************************************************************
 #target for static and shared libraries
@@ -415,6 +433,7 @@ env.Clean("distclean",
 		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.cc'),
 		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.h'),
 		 os.path.join('engine','swigwrappers', 'python', 'fife.i'),
+		 os.path.join('engine','swigwrappers', 'python', 'fifechan.i'),
 		 os.path.join('engine','python', 'fife', 'fife.py'),
 		])
 

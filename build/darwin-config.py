@@ -65,22 +65,26 @@ def getRequiredHeaders(opengl):
 	return ['SDL/SDL_image.h',
 			'SDL/SDL_ttf.h']
 
-def getRequiredLibs(opengl):
+def getRequiredLibs(reqLibs):
 	libs = [('objc', ''),
 		('png', ''),
 		('SDL', ''),
 		('SDL_image', ''),
 		('SDL_ttf', ''),
 		('vorbisfile', 'vorbisfile.h'),
-		('guichan', ''),
-		('guichan_sdl', ''),
 		('z', 'zlib.h'),
 		('boost_filesystem-mt', ''),
 		('boost_system-mt', ''),
-		('boost_regex-mt', '')]
+		('boost_regex-mt', '')
 	
-	if opengl:
-		libs.append(('guichan_opengl', ''))
+	opengl = reqLibs['opengl']
+	fifechan = reqLibs['fifechan']
+	
+	if fifechan:
+		libs.append(('fifechan', ''))
+		libs.append(('fifechan_sdl', ''))
+		if opengl:
+			libs.append(('fifechan_opengl', ''))
 		
 	return libs
 

@@ -34,8 +34,8 @@ from fife import fife
 print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
 from fife.extensions import fifelog
-from fife.extensions import basicapplication
 from fife.extensions import pychan
+from fife.extensions.pychan import pychanbasicapplication
 from fife.extensions.pychan.dialogs import trace
 
 class PyChanExample(object):
@@ -139,7 +139,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
 		if self.quit:
 			command.consume()
 
-class DemoApplication(basicapplication.ApplicationBase):
+class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 	def __init__(self):
 		# Let the ApplicationBase initialise FIFE
 		super(DemoApplication,self).__init__()
@@ -239,7 +239,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		if self._listener.quit:
 			self.quit()
 		
-class TestXMLApplication(basicapplication.ApplicationBase):
+class TestXMLApplication(pychanbasicapplication.PychanApplicationBase):
 	"""
 	Test Application. Run the pychan_test.py file
 	with the XML file you want to load as argument.
