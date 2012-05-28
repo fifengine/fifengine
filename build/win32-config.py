@@ -65,8 +65,8 @@ def addExtras(env, reqLibs):
 	if fifechan:
 		env.Prepend(LIBS = ['libfifechan_sdl', 'libfifechan']) 
 		if opengl:
-			env.Prepend(LIBS = ['libfifechan_opengl']
-		
+			env.Prepend(LIBS = ['libfifechan_opengl'])
+
 	if opengl:
 		env.Append(LIBS = ['opengl32'])
 

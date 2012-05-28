@@ -223,7 +223,7 @@ env['LIBDIR'] = libdir
 #**************************************************************************
 platformConfig = utils.getPlatformConfig()
 env = platformConfig.initEnvironment(env)
-env = platformConfig.addExtras(env, opengl)
+env = platformConfig.addExtras(env, extra_libs)
 
 #**************************************************************************
 #define custom library/header check functions
