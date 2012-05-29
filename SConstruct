@@ -50,8 +50,8 @@ AddOption('--enable-debug',
 		help='Builds the debug version of the binaries',
 		default=False)
 		
-AddOption('--disable-fifechan',
-		dest='disable-fifechan',
+AddOption('--without-fifechan',
+		dest='without-fifechan',
 		action="store_true",
 		help='Disable fifechan gui subsystem',
 		default=False)
@@ -138,7 +138,7 @@ else:
 	debug = 0
 	env['FIFE_DEBUG'] = False
 	
-if GetOption('disable-fifechan'):
+if GetOption('without-fifechan'):
 	env['ENABLE_FIFECHAN'] = False
 	extra_libs['fifechan'] = False
 else:
