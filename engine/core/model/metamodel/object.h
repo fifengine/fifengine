@@ -75,6 +75,7 @@ namespace FIFE {
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
 		 *  Action instances are managed by object
+		 * @param identifier An identifier or name to give the action.
 		 * @param is_default if true, becomes default action for this object
 		 * 	default objects are used e.g. when showing them on editor.
 		 *      if multiple default actions are created, last one remains.

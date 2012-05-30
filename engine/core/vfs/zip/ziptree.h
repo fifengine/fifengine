@@ -35,7 +35,7 @@
 
 
 namespace FIFE {
-    
+
     class ZipNode;
 
     class ZipTree {
@@ -50,8 +50,8 @@ namespace FIFE {
 
         /** adds a node to the proper place in the tree
          *  based on the node path name
-         *  @param name the node description
-         *  @return ZipNode of the most derived path added 
+         *  @param nodePath the node description
+         *  @return ZipNode of the most derived path added
                     (value after the last path separator)
                     or NULL if the path could not be added
          */
@@ -62,7 +62,7 @@ namespace FIFE {
          *  @ param ZipNode pointer, or NULL if not found
          */
         ZipNode* getNode(const std::string& name) const;
-        
+
         /** accessor for the root node of the tree
          *  mostly used for debugging purposes
          *  @return ZipNode pointer to the root node

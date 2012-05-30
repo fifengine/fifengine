@@ -50,29 +50,27 @@ namespace FIFE {
 	};
 
 	class QuadTreeRenderer: public RendererBase {
-		public:
-			/** constructor.
-			 * @param renderbackend to use
-			 */
-			QuadTreeRenderer(RenderBackend* renderbackend, int32_t position);
+	public:
+		/** constructor.
+		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
+		 */
+		QuadTreeRenderer(RenderBackend* renderbackend, int32_t position);
 
-			QuadTreeRenderer(const QuadTreeRenderer& old);
+		QuadTreeRenderer(const QuadTreeRenderer& old);
 
-			RendererBase* clone();
+		RendererBase* clone();
 
-			/** Destructor.
-			 */
-			virtual ~QuadTreeRenderer();
+		/** Destructor.
+		 */
+		virtual ~QuadTreeRenderer();
 
-			void render(Camera* cam, Layer* layer, RenderList& instances);
+		void render(Camera* cam, Layer* layer, RenderList& instances);
 
-			std::string getName() {
-				return "QuadTreeRenderer";
-			}
-
-		private:
+		std::string getName() {
+			return "QuadTreeRenderer";
+		}
 	};
-
 }
 
 #endif

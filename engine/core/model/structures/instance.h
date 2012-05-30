@@ -234,7 +234,7 @@ namespace FIFE {
 		/** Sets the time in milliseconds how long an action has been active
 		*  This was requested in Ticket #373.  This way the state
 		*  of the action can be saved and restored at a later time
-		*  @parm The action time offset that should be applied
+		*  @param time_offset The action time offset that should be applied
 		*/
 		void setActionRuntime(uint32_t time_offset);
 

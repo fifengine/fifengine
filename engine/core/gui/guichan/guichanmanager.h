@@ -88,7 +88,7 @@ namespace FIFE {
 			virtual void turn();
 
 			/** Inits the GUI Manager.
-			 * @param graphics backend specific grapchics object to use
+			 * @param backend graphics backend specific grapchics object to use
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
@@ -105,12 +105,12 @@ namespace FIFE {
 
 			/** Adds a new widget.
 			 *
-			 * @param A pointer to the widget to add.
+			 * @param widget A pointer to the Widget to add.
 			 */
 			void add(gcn::Widget* widget);
 			/** Removes a widget.
 			 *
-			 * @param A pointer to the widget to remove.
+			 * @param widget A pointer to the Widget to remove.
 			 */
 			void remove(gcn::Widget* widget);
 			/** Gets the top container.

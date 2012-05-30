@@ -70,7 +70,7 @@ namespace FIFE {
 
 			/** add new VFSSourceProvider
 			 *
-			 * @NOTE VFS assumes ownership over the given provider - so don't do anything with it
+			 * @note VFS assumes ownership over the given provider - so don't do anything with it
 			 * after you call this function, especialy don't delete it!
 			 * @param provider the new provider
 			 */
@@ -79,7 +79,7 @@ namespace FIFE {
 			/** tries to create a new VFSSource for the given file
 			 *
 			 * all currently known VFSSourceProviders are tried until one succeeds - if no provider succeeds 0 is returned
-			 * @param file the archive-file
+			 * @param path the archive-file
 			 * @return the new VFSSource or 0 if no provider was succesfull or the file was already used as source
 			 */
 			VFSSource* createSource(const std::string& path) const;

@@ -44,12 +44,12 @@
 
 namespace FIFE {
 	class RawData;
-	
+
 	/** VFSource for the Fallout2 DAT file format
 	 *
 	 *  Implements a kind of lazy initializing, by reading the file list
 	 *  in chunks. Behaviour is the same as if it wouldn't do this,
-	 *  but startup is very fast. But a open/fileExists call with a 
+	 *  but startup is very fast. But a open/fileExists call with a
 	 *  filename that doesn't exist, does trigger completely loading
 	 *  the file entries.
 	 *
@@ -61,7 +61,8 @@ namespace FIFE {
 		public:
 			/** Constructor
 			 * Create a VFSSource for a Fallout2 DAT file.
-			 * @param file A Fallout2 DAT file - e.g. master.DAT
+			 * @param vfs A pointer to the VFS.
+			 * @param path A Fallout2 DAT file - e.g. master.DAT
 			 */
 			DAT2(VFS* vfs, const std::string& path);
 
@@ -90,7 +91,7 @@ namespace FIFE {
 			/// lazy loading timer
 			mutable Timer m_timer;
 
-			/// read a bunch of file entries 
+			/// read a bunch of file entries
 			void readFileEntry() const;
 
 			/// find a file entry
