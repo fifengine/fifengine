@@ -40,7 +40,7 @@ namespace gcn {
      * An implementation of a toggleable button.
 	 *
 	 * If the button is in a group, all other buttons in that group will be untoggled
-	 * when a button gets toggled. If the button is already toggled, you can untoggle 
+	 * when a button gets toggled. If the button is already toggled, you can untoggle
 	 * it by clicking on it.
 	 *
      */
@@ -51,7 +51,7 @@ namespace gcn {
 			 *
 			 * @param up_image Image displayed when the button isn't toggled
 			 * @param down_image Image displayed when the button is toggled
-			 * @param hover_file Image displayed when the mouse cursor is over button
+			 * @param hover_image Image displayed when the mouse cursor is over button
 			 * @param caption Text to be displayed on button
 			 * @param group The group the button belongs to
 			 */
@@ -92,7 +92,7 @@ namespace gcn {
 			 * @param image Image to be displayed
 			 */
 			void setHoverImage(Image* image);
-			
+
 			/**
 			 * Sets the number of pixels the image or text will be offset from
 			 * the top left corner of button when the button is pressed or toggled.
@@ -133,8 +133,8 @@ namespace gcn {
 			/**
 			 * Sets the radio button to selected or not.
 			 *
-			 * @param selected True if the radio button should be selected,
-			 *                 false otherwise.
+			 * @param toggled True if the radio button should be selected,
+			 *                false otherwise.
 			 * @see isSelected
 			 */
 			void setToggled(bool toggled);
@@ -185,7 +185,7 @@ namespace gcn {
 			/**
 			 * Whether the button is toggled or not.
 			 */
-			bool m_toggled;			
+			bool m_toggled;
 
 			//-- From Guichan 0.8.1 --
 			/**
