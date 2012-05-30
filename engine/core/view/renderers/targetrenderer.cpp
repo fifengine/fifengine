@@ -36,6 +36,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	RenderTarget::RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height):

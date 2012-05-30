@@ -58,6 +58,9 @@
 #include "objectloader.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
     static Logger _log(LM_NATIVE_LOADERS);
 
 	MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend)

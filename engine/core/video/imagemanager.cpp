@@ -38,6 +38,9 @@
 #include "imagemanager.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_RESMGR);
 
 	ImageManager::~ImageManager() {

@@ -40,6 +40,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position):
@@ -73,7 +76,7 @@ namespace FIFE {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
 			return;
 		}
-		
+
 		Rect cv = cam->getViewPort();
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
