@@ -58,6 +58,9 @@ namespace {
 }
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	class InstanceRendererDeleteListener : public InstanceDeleteListener {
@@ -496,7 +499,7 @@ namespace FIFE {
 		bool found = false;
 		// create name
 		std::stringstream sts;
-		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," <<
 			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b) << "," << info.width;
 		// search image
 		if (ImageManager::instance()->exists(sts.str())) {
@@ -510,7 +513,7 @@ namespace FIFE {
 			found = true;
 		}
 
-			
+
 		// With lazy loading we can come upon a situation where we need to generate outline from
 		// uninitialised shared image
 		if(vc.image->isSharedImage()) {
@@ -602,7 +605,7 @@ namespace FIFE {
 		bool found = false;
 		// create name
 		std::stringstream sts;
-		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," <<
 			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b);
 		// search image
 		if (ImageManager::instance()->exists(sts.str())) {
@@ -656,7 +659,7 @@ namespace FIFE {
 		}
 		// mark overlay as not dirty since we created/recreated it here
 		info.dirty = false;
-		
+
 		return info.overlay.get();
 	}
 
@@ -928,7 +931,7 @@ namespace FIFE {
 			ImagesToCheck_t::iterator it = m_check_images.begin();
 			for (; it != m_check_images.end(); ++it) {
 				if (it->image.get()->getName() == image.get()->getName()) {
-					return;					
+					return;
 				}
 			}
 			s_image_entry entry;

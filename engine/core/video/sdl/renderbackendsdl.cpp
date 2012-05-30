@@ -39,6 +39,9 @@
 #include "SDL_getenv.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) :
@@ -117,13 +120,13 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
 			<< " at " << int32_t(m_screen->format->BitsPerPixel) << " bpp");
-		
+
 		m_rgba_format = *(m_screen->format);
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
 		m_rgba_format.Amask = AMASK;
-		
+
 		//update the screen mode with the actual flags used
 		m_screenMode = ScreenMode(width,
 		                          height,
@@ -354,7 +357,7 @@ namespace FIFE {
 			if(!surface) {
 				return;
 			}
-			
+
 			SDL_BlitSurface(m_screen, NULL, surface, NULL);
 
 			Image::saveAsPng(filename, *surface);

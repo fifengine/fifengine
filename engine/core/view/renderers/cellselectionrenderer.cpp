@@ -40,6 +40,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int32_t position):
@@ -66,7 +69,7 @@ namespace FIFE {
 	CellSelectionRenderer* CellSelectionRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<CellSelectionRenderer*>(cnt->getRenderer("CellSelectionRenderer"));
 	}
-	
+
 	void CellSelectionRenderer::reset() {
 		m_locations.clear();
 	}
@@ -105,7 +108,7 @@ namespace FIFE {
 			if (layer != loc.getLayer()) {
 				continue;
 			}
-			
+
 			CellGrid* cg = layer->getCellGrid();
 			if (!cg) {
 				FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");

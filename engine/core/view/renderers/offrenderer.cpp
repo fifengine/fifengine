@@ -40,6 +40,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	OffRendererLineInfo::OffRendererLineInfo(Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a):

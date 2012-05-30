@@ -49,6 +49,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_CAMERA);
 
 	class CacheLayerChangeListener : public LayerChangeListener {
@@ -403,10 +406,10 @@ namespace FIFE {
 			zmax += 0.5;
 
 			// We want to put every z value in [-10,10] range.
-			// To do it, we simply solve 
+			// To do it, we simply solve
 			// { y1 = a*x1 + b
 			// { y2 = a*x2 + b
-			// where [y1,y2]' = [-10,10]' is required z range, 
+			// where [y1,y2]' = [-10,10]' is required z range,
 			// and [x1,x2]' is expected min,max z coords.
 			double det = zmin - zmax;
 			if (fabs(det) > FLT_EPSILON) {
@@ -422,7 +425,7 @@ namespace FIFE {
 					double& z = (*it)->screenpoint.z;
 					z = a * z + b;
 					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
-					z += vis->getStackPosition() * stack_delta;					
+					z += vis->getStackPosition() * stack_delta;
 				}
 			}
 		}

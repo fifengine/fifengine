@@ -39,6 +39,9 @@
 #include "sdlimage.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIDEO);
 
 	SDLImage::SDLImage(IResourceLoader* loader):

@@ -33,7 +33,10 @@
 #include "vfssourceprovider.h"
 
 namespace FIFE {
-  static Logger _log(LM_VFS);
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
+	static Logger _log(LM_VFS);
 
 	VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(0), m_name(name) {
 	}

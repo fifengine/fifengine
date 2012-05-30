@@ -42,6 +42,9 @@
 #include "animationloader.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
     static Logger _log(LM_NATIVE_LOADERS);
 
     ObjectLoader::ObjectLoader(Model* model, VFS* vfs, ImageManager* imageManager, const AnimationLoaderPtr& animationLoader)

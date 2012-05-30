@@ -39,8 +39,10 @@
 #include "vfssourceprovider.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VFS);
-
 
 	VFS::VFS() : m_sources() {}
 

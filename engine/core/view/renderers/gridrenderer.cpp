@@ -40,6 +40,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position):
@@ -173,7 +176,7 @@ namespace FIFE {
 				if (cpt2.x > cvx2) cpt2.x = cvx2;
 				if (cpt1.y > cvy2) cpt1.y = cvy2;
 				if (cpt2.y > cvy2) cpt2.y = cvy2;
-				
+
 				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
 				pt1 = pt2;
 			}

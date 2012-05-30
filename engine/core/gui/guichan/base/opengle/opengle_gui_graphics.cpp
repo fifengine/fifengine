@@ -43,6 +43,9 @@
 #include "opengle_gui_graphics.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_GUI);
 
 	OpenGLeGuiGraphics::OpenGLeGuiGraphics() {
@@ -89,7 +92,7 @@ namespace FIFE {
 
 	void OpenGLeGuiGraphics::drawPoint(int32_t x, int32_t y) {
 		const gcn::ClipRectangle& top = mClipStack.top();
-		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset, 
+		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset,
 			mColor.r, mColor.g, mColor.b, mColor.a);
 	}
 
@@ -147,7 +150,7 @@ namespace FIFE {
 		gcn::Graphics::pushClipArea(area);
 
 		// Due to some odd conception in guiChan some of area
-		// has xOffset and yOffset > 0. And if it happens we 
+		// has xOffset and yOffset > 0. And if it happens we
 		// need to offset our clip area. Or we can use guichan stack.
 		const gcn::ClipRectangle& top = mClipStack.top();
 

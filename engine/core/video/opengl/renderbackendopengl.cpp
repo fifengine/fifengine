@@ -37,6 +37,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIDEO);
 
 	class RenderBackendOpenGL::RenderObject {
@@ -138,7 +141,7 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-		
+
 		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
 	}
@@ -302,7 +305,7 @@ namespace FIFE {
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
 		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(name, conv);
-		
+
 		SDL_FreeSurface(surface);
 		return image;
 	}
@@ -326,7 +329,7 @@ namespace FIFE {
 				glColorMaterial(GL_FRONT, GL_DIFFUSE);
 				glEnable(GL_COLOR_MATERIAL);
 			}
-			m_state.lightmodel = lighting;			
+			m_state.lightmodel = lighting;
 		}
 	}
 
@@ -598,7 +601,7 @@ namespace FIFE {
 			bool stencil = false;
 			bool render = false;
 			bool mt = false;
-			
+
 			//stride
 			const uint32_t stride = sizeof(renderData);
 			const uint32_t stride2T = sizeof(renderData2T);
@@ -657,8 +660,8 @@ namespace FIFE {
 						stencil = true;
 						render = true;
 					} else if (ro.stencil_test) {
-						if (ro.stencil_ref != m_state.sten_ref || 
-							ro.stencil_op != m_state.sten_op || 
+						if (ro.stencil_ref != m_state.sten_ref ||
+							ro.stencil_op != m_state.sten_op ||
 							ro.stencil_func != m_state.sten_func) {
 							stencil = true;
 							render = true;
@@ -817,7 +820,7 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
-		
+
 		rd.vertex[0] = static_cast<float>(p2.x);
 		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
@@ -858,10 +861,10 @@ namespace FIFE {
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 		rd.vertex[0] = static_cast<float>(p.x+w);
-		
+
 		m_render_datas.push_back(rd);
 		rd.vertex[1] = static_cast<float>(p.y+h);
-		
+
 		m_render_datas.push_back(rd);
 		rd.vertex[0] = static_cast<float>(p.x);
 		m_render_datas.push_back(rd);
@@ -965,7 +968,7 @@ namespace FIFE {
 			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
 			m_render_datas.push_back(rd);
-			
+
 			RenderObject ro(GL_TRIANGLES, 3);
 			m_render_objects.push_back(ro);
 		}
@@ -1066,15 +1069,15 @@ namespace FIFE {
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE); 
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
 
 		// Arg0
 		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE0);
 		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE0);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);	
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 
-		// The alpha component is taken only from 0th tex unit which is 
+		// The alpha component is taken only from 0th tex unit which is
 		// Arg0 in our case, therefore we doesn't need to set operands
 		// and sources for the rest of arguments
 
@@ -1124,11 +1127,11 @@ namespace FIFE {
 
 		SDL_UnlockSurface(surface);
 		Image::saveAsPng(filename, *surface);
-		
+
 		SDL_FreeSurface(surface);
 		delete[] pixels;
 	}
-	
+
 	void RenderBackendOpenGL::captureScreen(const std::string& filename, uint32_t width, uint32_t height) {
 		const uint32_t swidth = getWidth();
 		const uint32_t sheight = getHeight();
@@ -1290,7 +1293,7 @@ namespace FIFE {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		// invert top with bottom
-		glOrtho(0, w, 0, h, -1, 1); 
+		glOrtho(0, w, 0, h, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
 		// because of inversion 2 lines above we need to also invert culling faces
 		glCullFace(GL_FRONT);
@@ -1299,7 +1302,7 @@ namespace FIFE {
 			glClear(GL_COLOR_BUFFER_BIT);
 		} else if (!m_target_discard && (!GLEE_EXT_framebuffer_object || !m_useframebuffer)) {
 			// if we wanna just add something to render target, we need to first render previous contents
-			addImageToArray(targetid, m_img_target->getArea(), 
+			addImageToArray(targetid, m_img_target->getArea(),
 				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
 		}
 	}
@@ -1314,7 +1317,7 @@ namespace FIFE {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		} else {
 			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());
-			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
 				m_img_target->getWidth(), m_img_target->getHeight(), 0);
 		}
 
@@ -1324,6 +1327,6 @@ namespace FIFE {
 		glLoadIdentity();
 		glOrtho(0, m_screen->w, m_screen->h, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
-		glCullFace(GL_BACK); 
+		glCullFace(GL_BACK);
 	}
 }

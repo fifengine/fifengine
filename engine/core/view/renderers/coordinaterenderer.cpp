@@ -44,6 +44,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position):

@@ -36,7 +36,9 @@
 #include "instancetree.h"
 
 namespace FIFE {
-
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_STRUCTURES);
 
 	Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid)

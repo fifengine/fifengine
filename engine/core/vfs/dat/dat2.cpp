@@ -35,21 +35,24 @@
 #include "dat2.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_FO_LOADERS);
 
-	DAT2::DAT2(VFS* vfs, const std::string& file) 
+	DAT2::DAT2(VFS* vfs, const std::string& file)
 		: VFSSource(vfs), m_datpath(file), m_data(vfs->open(file)), m_filelist() {
 
-		FL_LOG(_log, LMsg("MFFalloutDAT2") 
-			<< "loading: " << file 
+		FL_LOG(_log, LMsg("MFFalloutDAT2")
+			<< "loading: " << file
 			<< " filesize: " << m_data->getDataLength());
 
 		m_data->setIndex(m_data->getDataLength() - 8);
 		uint32_t fileListLength = m_data->read32Little();
 		uint32_t archiveSize = m_data->read32Little();
 
-		FL_LOG(_log, LMsg("MFFalloutDAT2") 
-			<< "FileListLength: " << fileListLength 
+		FL_LOG(_log, LMsg("MFFalloutDAT2")
+			<< "FileListLength: " << fileListLength
 			<< " ArchiveSize: " << archiveSize);
 
 		if (archiveSize != m_data->getDataLength())
@@ -87,12 +90,12 @@ namespace FIFE {
 		while( load_per_cycle-- ) {
 			uint32_t namelen = m_data->read32Little();
 			info.name = fixPath(m_data->readString(namelen));
-	
+
 			info.type = m_data->read8();
 			info.unpackedLength = m_data->read32Little();
 			info.packedLength = m_data->read32Little();
 			info.offset = m_data->read32Little();
-	
+
 			m_filelist.insert(std::make_pair(info.name, info));
 		}
 		m_currentIndex = m_data->getCurrentIndex();
@@ -174,7 +177,7 @@ namespace FIFE {
 		if (path.find("./") == 0) {
 			path.erase(0, 2);
 		}
-		
+
 		size_t lastIndex = path.size();
 		if (lastIndex != 0 && path[lastIndex-1] != '/') {
 			path += '/';
