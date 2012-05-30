@@ -45,6 +45,7 @@ namespace FIFE {
 		public:
 			/** Constructor
 			 * Create a VFSSource for a Fallout1 DAT file.
+			 * @param vfs A pointer to the VFS.
 			 * @param file A Fallout1 DAT file - e.g. master.DAT
 			 */
 			DAT1(VFS* vfs, const std::string& file);

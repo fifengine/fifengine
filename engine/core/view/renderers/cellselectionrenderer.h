@@ -42,11 +42,12 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
 		 */
 		CellSelectionRenderer(RenderBackend* renderbackend, int32_t position);
-		
+
 		CellSelectionRenderer(const CellSelectionRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
@@ -61,10 +62,10 @@ namespace FIFE {
 		/** returns instance used in given view
 		 */
 		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
-		
+
 		/** Deselects all locations */
 		void reset();
-		
+
 		/** Selects given location on map
 		 */
 		void selectLocation(const Location* loc);
@@ -78,7 +79,7 @@ namespace FIFE {
 		const std::vector<Location> getLocations() const { return m_locations; }
 
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
-		
+
 	private:
 		// selected locations
 		std::vector<Location> m_locations;

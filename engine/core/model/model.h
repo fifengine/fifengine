@@ -97,6 +97,7 @@ namespace FIFE {
 		/** Add an object to the metamodel.
 		 *
 		 * @param identifier A string for identifying this object; must be unique for its namespace.
+		 * @param name_space A string identifying the namespace this object resides in.
 		 * @param parent Objects may optionally inherit values from a parent object.
 		 * @note This object belongs to the model, so don't delete the returned pointer
 		 */

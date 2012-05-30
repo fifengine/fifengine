@@ -39,7 +39,7 @@ namespace FIFE {
 	class MouseEvent;
 
 	/**  Listener of mouse events.
-	 * To be able to listen for mouse events you must make a class which inherits 
+	 * To be able to listen for mouse events you must make a class which inherits
 	 * from this class and implements its functions.
 	 */
 	class IMouseListener {
@@ -84,7 +84,7 @@ namespace FIFE {
 
 		/**
 		 * Called when the mouse wheel has moved down on the event source area.
-		 * @param mousEvent describes the event.
+		 * @param evt MouseEvent that describes the event.
 		 */
 		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
 

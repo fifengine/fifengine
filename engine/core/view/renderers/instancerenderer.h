@@ -44,8 +44,7 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
-		 * @param imagepool image pool where from fetch images
-		 * @param animpool animation pool where from fetch images
+		 * @param position position for this renderer in rendering pipeline
 		 */
 		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 
@@ -123,11 +122,11 @@ namespace FIFE {
 		/** Sets the interval in seconds (default is 60).
 		 */
 		void setRemoveInterval(uint32_t interval);
-		
+
 		/** Gets the interval in seconds (default is 60).
 		 */
 		uint32_t getRemoveInterval() const;
-		
+
 		/** Add properly old ImagePtr into a check list.
 		  * If it is still not used after a time(interval) then it is freed.
 		 */
@@ -220,7 +219,7 @@ namespace FIFE {
 		ImagesToCheck_t m_check_images;
 		// timer
 		Timer m_timer;
-		
+
 		// InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
 		InstanceDeleteListener* m_delete_listener;
 		typedef std::map<Instance*, Effect> InstanceToEffects_t;

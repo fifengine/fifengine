@@ -75,7 +75,7 @@ namespace FIFE {
 		}
 
 		/** Sets the sound clip to be used by this emitter.
-		 * @param SoundClipPtr of the sound to be used.
+		 * @param soundclip SoundClipPtr of the sound to be used.
 		 */
 		void setSoundClip(SoundClipPtr soundclip);
 

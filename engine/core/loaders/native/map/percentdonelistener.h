@@ -52,7 +52,7 @@ namespace FIFE {
 		void removeListener(PercentDoneListener* listener);
 
 	private:
-		void fireEvent(unsigned int percent);
+		void fireEvent(uint32_t percent);
 
 	private:
 		uint32_t m_totalElements;

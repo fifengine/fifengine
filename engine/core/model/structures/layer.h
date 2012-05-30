@@ -179,7 +179,7 @@ namespace FIFE {
 			void setInstancesVisible(bool vis);
 
 			/** Sets the transparency of all instances on the layer.  0=opaque, 255=transparent
-			 * @parm transparency Transparency value from 0-255.
+			 * @param transparency Transparency value from 0-255.
 			*/
 			void setLayerTransparency(uint8_t transparency);
 

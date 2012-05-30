@@ -39,13 +39,14 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
 		 */
 		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
-		
+
 		BlockingInfoRenderer(const BlockingInfoRenderer& old);
 
 		RendererBase* clone();
-		
+
 		/** Destructor.
 		 */
 		virtual ~BlockingInfoRenderer();

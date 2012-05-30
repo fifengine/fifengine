@@ -84,7 +84,7 @@ namespace FIFE {
 
 		/** Retrieves a searchspace associated with the given layer.
 		 *
-		 * @param A pointer to the search space
+		 * @param layer A pointer to the layer
 		 * @return A pointer to the search space if it could be found, 0 otherwise.
 		 */
 		SearchSpace* getSearchSpace(Layer * const layer);
@@ -103,10 +103,11 @@ namespace FIFE {
 		 * the instance's speed.
 		 *
 		 * @param instance A pointer to the instance to move.
+		 * @param path The Path to follow.
 		 * @param speed The speed to move the instance.
 		 * @param nextLocation An out variable which will store the instances next location.
 		 * @param facingLocation An out variable which will store the instances facing location.
-                 * @return true if it was possible to follow the path, false if it was not
+		 * @return true if it was possible to follow the path, false if it was not
 		 */
 		bool followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 

@@ -278,35 +278,35 @@ namespace FIFE {
 		};
 
 		/** Constructor
-		 * @param value value of the key
+		 * @param key value of the key
 		 * @param codepoint Unicode representation of the key
 		*/
 		Key(KeyType key = INVALID_KEY, uint32_t codepoint = 0):
 			m_key(key),
 			m_unicode(codepoint) {}
-			
+
 		/** Destructor.
 		 */
 		virtual ~Key() {}
-		
+
 		/** Tells whether the Key can be represented as a string.
 		 */
 		bool isPrintable() const {
 			// Unicode does not have control characters, so this should be sufficient
 			return m_unicode != 0;
 		}
-		
+
 		bool isFunctionKey() const {
 			return m_key >= F1 && m_key <= F15;
 		}
-		
-		/** Gets the value of the key. 
+
+		/** Gets the value of the key.
 		 */
 		KeyType getValue() const {
 			return m_key;
 		}
 
-		/** Gets the string representation of the key, encoded as UTF-8. 
+		/** Gets the string representation of the key, encoded as UTF-8.
 		 */
 		std::string getAsString() const {
 			// older sdl versions have the 3rd argument non const, but it is in fact const...

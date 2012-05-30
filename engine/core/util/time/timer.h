@@ -41,7 +41,6 @@ namespace FIFE {
 	 *  which makes the later usable without having to
 	 *  subclass it every time.
 	 *
-	 *  @example MemberUpdater
 	 *  @code
 	 *  m_timer.setInterval(1000);
 	 *  m_timer.setCallback( boost::bind(&Class::update, this) );

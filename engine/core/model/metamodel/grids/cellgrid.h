@@ -51,7 +51,7 @@ namespace FIFE {
 		/** Gets the coordinates that are accesible from given point
 		 *  only cells adjacent to given cell are considered in the evaluation
 		 *  @param curpos position (coordinates) to evaluate
-		 *  @param coordinate accessible coordinates
+		 *  @param coordinates accessible coordinates
 		 */
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 
@@ -111,7 +111,7 @@ namespace FIFE {
 		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
 
 		/** Set the cellgrid x shift
-		 *  @param shift The shift in map coords
+		 *  @param xshift The shift in map coords
 		 */
 		void setXShift(const double& xshift) {
 			m_xshift = xshift;
@@ -124,7 +124,7 @@ namespace FIFE {
 		const double getXShift() const { return m_xshift; }
 
 		/** Set the cellgrid y shift
-		 *  @param shift The shift in map coords
+		 *  @param yshift The shift in map coords
 		 */
 		void setYShift(const double yshift) {
 			m_yshift = yshift;
@@ -137,7 +137,7 @@ namespace FIFE {
 		const double getYShift() const { return m_yshift; }
 
 		/** Set the cellgrid z shift
-		 *  @param shift The shift in map coords
+		 *  @param zshift The shift in map coords
 		 */
 		void setZShift(const double zshift) {
 			m_zshift = zshift;

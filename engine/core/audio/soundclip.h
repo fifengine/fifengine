@@ -111,6 +111,7 @@ namespace FIFE {
 		 *
 		 *  @return True if file was EOF
 		 *  @param streamid The stream ID
+		 *  @param buffer The OpenAL buffer ID
 		 */
 		bool getStream(uint32_t streamid, ALuint buffer);
 
