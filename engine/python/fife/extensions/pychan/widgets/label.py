@@ -68,7 +68,7 @@ class Label(BasicTextWidget):
 				 text = None,
 				 wrap_text = None):
 				 
-		self.real_widget = fife.Label("")
+		self.real_widget = fifechan.Label("")
 		self.wrap_text = self.DEFAULT_WRAP_TEXT
 		super(Label,self).__init__(parent=parent, 
 								   name=name, 

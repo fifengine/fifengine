@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
+from fife import fife, fifechan
 
 from fife.extensions import pychan
 from fife.extensions.pychan import internal
@@ -45,7 +45,7 @@ _MODE_TEXT = 0
 _MODE_IMAGE = 1
 _MODES = [_MODE_TEXT, _MODE_IMAGE]
 
-_COLOR_STEP = fife.Color(10,10,10)
+_COLOR_STEP = fifechan.Color(10,10,10)
 _MAX_PREVIEW_WRAPPER_SIZE = (140,140)
 
 _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']

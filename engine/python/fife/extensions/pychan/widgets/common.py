@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+from fife import fifechan
 from fife.extensions.pychan import tools
 from fife.extensions.pychan import events
 from fife.extensions.pychan.exceptions import *

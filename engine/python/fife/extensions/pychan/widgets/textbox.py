@@ -71,7 +71,7 @@ class TextBox(Widget):
 				 text = None,
 				 filename = None):
 				 
-		self.real_widget = fife.TextBox()
+		self.real_widget = fifechan.TextBox()
 		self.text = text or self.DEFAULT_TEXT
 		self.filename = filename or self.DEFAULT_FILENAME
 		super(TextBox,self).__init__(parent=parent, 

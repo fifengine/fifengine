@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from compat import fifechan, in_fife
+from compat import fifechan, fife, in_fife
 import widgets
 from fife.extensions import fife_timer as timer
 import fonts
@@ -149,9 +149,9 @@ class Manager(object):
 		"""
 		if in_fife:
 			font = self.fonts.get(name)
-			if isinstance(font,fifechan.GuiFont):
+			if isinstance(font,fife.GuiFont):
 				return font
-			if hasattr(font,"font") and isinstance(getattr(font,"font"),fifechan.GuiFont):
+			if hasattr(font,"font") and isinstance(getattr(font,"font"),fife.GuiFont):
 				return font.font
 			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
 		else:

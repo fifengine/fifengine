@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-%module fife
+%module fifechan
 %{
 #include <fifechan.hpp>
 #include <fifechan/actionevent.hpp>

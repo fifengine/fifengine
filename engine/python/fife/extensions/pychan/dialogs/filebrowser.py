@@ -23,8 +23,8 @@
 
 """ a filebrowser implementation for pychan """
 
-import pychan
-import pychan.widgets as widgets
+import fife.extensions.pychan.widgets as widgets
+import fife.extensions.pychan as pychan
 import sys
 
 def u2s(string):

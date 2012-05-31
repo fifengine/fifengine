@@ -58,7 +58,7 @@ class Icon(Widget):
 				 comment = None,
 				 image = None):
 				 
-		self.real_widget = fife.Icon(None)
+		self.real_widget = fifechan.Icon(None)
 		super(Icon,self).__init__(parent=parent, 
 								  name=name, 
 								  size=size, 

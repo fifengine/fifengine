@@ -27,7 +27,7 @@ from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 import scripts.events
 import scripts.gui.action
 from action import Action, ActionGroup
-from fife.fife import Color
+from fife.fifechan import Color
 from fife.extensions import fife_timer
 
 MENU_ICON_SIZE = 24

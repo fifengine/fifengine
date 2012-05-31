@@ -58,7 +58,7 @@ TEST(DAT2_test){
 	}
 	catch (Exception& e)
 	{
-		std::cout << e.getMessage() << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 		
 	CHECK(vfs->exists(RAW_FILE));

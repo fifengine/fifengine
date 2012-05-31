@@ -24,7 +24,7 @@
 from common import *
 from widget import Widget
 
-class GenericListmodel(fife.ListModel,list):
+class GenericListmodel(fifechan.ListModel,list):
 	"""
 	A wrapper for the exported list model to behave more like a Python list.
 	Don't use directly.
@@ -96,7 +96,7 @@ class ListBox(Widget):
 			else:
 				raise RuntimeError("items parameter must be a list!")
 			
-		self.real_widget = fife.ListBox(self._items)
+		self.real_widget = fifechan.ListBox(self._items)
 		
 		if selected is not None and items is not None:
 			if len(items) > 0 and selected < len(items) and selected > 0:

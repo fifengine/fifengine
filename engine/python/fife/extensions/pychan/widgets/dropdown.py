@@ -86,7 +86,7 @@ class DropDown(Widget):
 			if len(items) > 0:
 				self.selected = 0
 				
-		self.real_widget = fife.DropDown(self._items)
+		self.real_widget = fifechan.DropDown(self._items)
 		super(DropDown,self).__init__(parent=parent, 
 									  name=name, 
 									  size=size, 

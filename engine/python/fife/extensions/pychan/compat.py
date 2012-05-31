@@ -21,6 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import inspect
 in_fife = None
 fifechan = None
 
@@ -30,20 +31,27 @@ def _import_fifechan():
 	err_fife = ""
 	try:
 		from fife import fife
+		from fife import fifechan
 		in_fife = True
-		return fife
+				
+		#move fife custom widgets to fifechan module
+		for member in inspect.getmembers(fife, inspect.isclass):
+			if issubclass(member[1], fifechan.Widget):
+				setattr(fifechan, member[0], member[1])
+		
+		return fife, fifechan
 	except ImportError, e:
 		err_fife = str(e)
 	
 	try:
 		import fifechan
 		in_fife = False
-		return fifechan
+		return None, fifechan
 	except ImportError, e:
 		import traceback
 		traceback.print_exc()
 		raise ImportError("Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'" % (err_fife,str(e)))
-fifechan = _import_fifechan()
+fife, fifechan = _import_fifechan()
 
 
 
@@ -78,7 +86,7 @@ def _munge_engine_hook(engine):
 
 	def _fife_load_image(filename):
 		img = engine.getImageManager().load(filename)
-		return fifechan.GuiImage(img)
+		return fife.GuiImage(img)
 		# use below line instead of above ones to let fifechan 
 		# use its image loader that supports creating/using atlases
 		# return fifechan.GuiImage().load(filename)
@@ -118,7 +126,7 @@ class _point(object):
 		self.y=0
 
 if in_fife:
-	fife = fifechan
+	#fife = fifechan
 	fifechan.ActionListener._ActionListener_init__ = lambda x : x
 	#fifechan.MouseListener.__init__ = lambda x : x
 	#fifechan.KeyListener.__init__ = lambda x : x

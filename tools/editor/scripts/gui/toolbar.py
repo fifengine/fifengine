@@ -29,7 +29,7 @@ import scripts.events
 import action
 import scripts.editor
 from action import Action, ActionGroup
-from fife.fife import Color
+from fife.fifechan import Color
 from panel import Panel
 from resizablebase import ResizableBase
 

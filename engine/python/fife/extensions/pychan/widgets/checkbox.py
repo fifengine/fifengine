@@ -66,7 +66,7 @@ class CheckBox(BasicTextWidget):
 				 text = None,
 				 marked = None):
 				 
-		self.real_widget = fife.CheckBox()
+		self.real_widget = fifechan.CheckBox()
 		self.marked = self.DEFAULT_MARKED
 		super(CheckBox,self).__init__(parent=parent, 
 									  name=name, 

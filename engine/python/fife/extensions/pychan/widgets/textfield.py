@@ -66,7 +66,7 @@ class TextField(Widget):
 				 margins = None,
 				 text = None):
 				 
-		self.real_widget = fife.TextField()
+		self.real_widget = fifechan.TextField()
 		self.text = text or self.DEFAULT_TEXT
 		super(TextField,self).__init__(parent=parent, 
 									   name=name, 

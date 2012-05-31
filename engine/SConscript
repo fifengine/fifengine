@@ -59,21 +59,25 @@ swigfiles = [f for f in allfiles_base if utils.is_swigfile(f)]
 intfiles = utils.filter_by_dir(dirfilters, swigfiles)
 compilefiles = utils.filter_by_dir(dirfilters, implfiles)
 headerfiles = utils.filter_by_dir(['fifechan'], headerfiles)
+fife_imports = []
 
 if sys.platform == 'win32':
 	dllpath = upath(opts['DLLPATH'])
 	dllfilelist = list(dllpath.walkfiles('*.dll'))
 	dllfiles = list()
 	for f in dllfilelist:
-		dllfiles.append(utils.relpath(f,opts['DLLPATH'])) 
-	
+		dllfiles.append(utils.relpath(f,opts['DLLPATH']))
 
 #**************************************************************************
-#Compile the list of fifechan and pychan code
+#Compile the list of fifechan glue and pychan code
 #**************************************************************************
 fifechan_glue_headerfiles = utils.include_by_dir(['fifechan'], headerfiles)
 fifechan_glue_implfiles = utils.include_by_dir(['fifechan'], implfiles)
 fifechan_glue_swigfiles = utils.include_by_dir(['fifechan'], swigfiles)
+
+fifechan_lib_swigfiles = utils.include_by_dir(['lib'], swigfiles)
+
+fifechan_glue_swigfiles = list(set(fifechan_glue_swigfiles).difference(set(fifechan_lib_swigfiles)))
 
 #if fifechan is enabled add fifechan glue source code to all source code
 if fifechan:
@@ -90,20 +94,23 @@ if opts['FIFE_REVISION'] is not "0":
 #python
 #**************************************************************************
 
-#if fifechan is enabled, generate swig interface file for fifechan glue and add it to the fife module
+#if fifechan is enabled 
 if fifechan:
-	utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fifechan_glue.i.templ'), 
-		                                  fifechan_glue_swigfiles,
+	intfiles = intfiles + fifechan_glue_swigfiles
+
+	utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fifechan.i.templ'), 
+		                                  fifechan_lib_swigfiles,
 		                                  os.path.join(engine_path, 'swigwrappers', 'python'),
-		                                  'fifechan_glue.i')
-	intfiles.append(os.path.join('swigwrappers', 'python', 'fifechan_glue.i'))
-	intfiles.sort()
+		                                  'fifechan.i')
+	fife_imports.append(os.path.join('swigwrappers', 'python', 'fifechan.i'))
+	fifechan_pyfiles = [os.path.join('swigwrappers', 'python', 'fifechan_wrap.cc')]
 
 #generate swig interface file
 utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fife.i.templ'), 
 	          intfiles,
 	          os.path.join(engine_path, 'swigwrappers', 'python'),
-	          'fife.i')
+	          'fife.i',
+              fife_imports)
 
 pyfiles = list(compilefiles)
 pyfiles.append([os.path.join('swigwrappers', 'python' ,'fife_wrap.cc')])
@@ -206,6 +213,37 @@ copy_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.cc'),
 				os.path.join('swigwrappers','python','fife_wrap.cc'),
 				[Copy('$TARGET', '$SOURCE')])
 
+if fifechan:
+	fifechan_lib_env = env.Clone(LIBS = ['SDL', 'SDL_image', 'fifechan'])
+
+	fifechan_pythonlib = fifechan_lib_env.SharedLibrary(target = 'fifechan',
+												         source = fifechan_pyfiles,
+												         OBJPREFIX='py_',
+												         SHLIBPREFIX='_',
+												         SHLIBSUFFIX=dest_suffix,
+												         SHLIBEMITTER = '')
+
+	fifechan_pythonext = fifechan_lib_env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fifechan_wrap.cc'),
+														             os.path.join('swigwrappers', 'python' ,'fifechan_wrap.h'),
+														             os.path.join('python', 'fife', 'fifechan.py')],
+														   source = os.path.join('swigwrappers', 'python' ,'fifechan.i'),
+														   SWIGFLAGS=['-python','-c++','-w511'],
+														   SWIGPATH='core',
+														   SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
+	if opts['DEBUG'] and sys.platform == 'win32':
+		copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fifechan_d' + dest_suffix)
+	else:
+		copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fifechan' + dest_suffix)
+
+	copy_fcn_cmd = env.Command(copy_dest, fifechan_pythonlib, [Copy('$TARGET', '$SOURCE')])
+	copy_fcn_cmd2 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fifechan_wrap.h'),
+							    os.path.join('swigwrappers','python','fifechan_wrap.h'),
+								[Copy('$TARGET', '$SOURCE')])
+	copy_fcn_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fifechan_wrap.cc'),
+							    os.path.join('swigwrappers','python','fifechan_wrap.cc'),
+							    [Copy('$TARGET', '$SOURCE')])
+
+
 #**************************************************************************
 #static library target
 #**************************************************************************
@@ -252,19 +290,27 @@ Alias('projects',[alias_msvc, alias_msvc9, alias_cbwin32, alias_cblinux])
 
 alias_shared = Alias('fife-shared', sharedlib)
 alias_static = Alias('fife-static', staticlib)
-alias_swig = Alias('fife-swig', [pythonext, copy_cmd2, copy_cmd3])
+
+alias_swig_commands = [pythonext, copy_cmd2, copy_cmd3]
+if fifechan:
+	alias_swig_commands = alias_swig_commands + [fifechan_pythonext, copy_fcn_cmd2, copy_fcn_cmd3]
+alias_swig = Alias('fife-swig', alias_swig_commands)
+
+alias_python_commands = [pythonlib, copy_cmd, alias_swig]
+if fifechan:
+	alias_python_commands = [fifechan_pythonlib, copy_fcn_cmd] + alias_python_commands
 
 if sys.platform == 'win32':
-	alias_python = Alias('fife-python', [pythonlib, copy_cmd, alias_swig, install_dlls2])
-else:
-	alias_python = Alias('fife-python', [pythonlib, copy_cmd, alias_swig])
+	alias_python_commands.append(install_dlls2)
+
+alias_python = Alias('fife-python', alias_python_commands)
 	
 Alias('fife', [alias_shared, alias_static, alias_python])
 alias_install_shared = Alias('install-shared', install_shared)
 alias_install_static = Alias('install-static', install_static)
 
 if sys.platform == 'win32':
-	alias_install_python = Alias('install-python', [alias_python, install_python_lib, install_python_module, install_python_extensions, install_dlls])
+	alias_install_python = Alias('install-python', [alias_python, install_python_lib, install_python_module, install_python_extensions, install_dlls]) 
 else:
 	alias_install_python = Alias('install-python', [alias_python, install_python_lib, install_python_module, install_python_extensions])
 	
