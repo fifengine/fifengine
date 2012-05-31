@@ -55,7 +55,7 @@ class PychanWidgetEventsTest(test.Test):
         })
     
     def destroy(self):
-        del self._controlsPanel
+        #del self._controlsPanel
         del self._window
     
     def run(self):
