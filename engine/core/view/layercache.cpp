@@ -384,8 +384,14 @@ namespace FIFE {
 				// NOTE: Due to image alignment, there is additional additions on image dimensions
 				//       There's probabaly some better solution for this, but works "good enough" for now.
 				//       In case additions are removed, gaps appear between tiles.
-				item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
-				item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
+				//       This is only needed if the zoom is a non-integer value.
+				if (fmod(zoom, 1.0) != 0.0) {
+					item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
+					item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
+				} else {
+					item.dimensions.w = unsigned(double(item.bbox.w) * zoom);
+					item.dimensions.h = unsigned(double(item.bbox.h) * zoom);
+				}
 			}
 
 			if (!m_need_sorting) {
