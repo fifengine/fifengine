@@ -74,7 +74,7 @@ namespace gcn {
 		}
 
 		if (img) {
-			graphics->drawImage(img, xoffset, yoffset);
+			graphics->drawImage(img, xoffset, yoffset, 0, 0, getWidth(), getHeight());
 		}
 
 		graphics->setColor(getForegroundColor());
