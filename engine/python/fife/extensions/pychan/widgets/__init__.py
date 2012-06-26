@@ -45,6 +45,7 @@ from dropdown import DropDown
 from scrollarea import ScrollArea
 from slider import Slider
 from percentagebar import PercentageBar
+from passwordfield import PasswordField
 
 # Global Widget Class registry
 
@@ -71,6 +72,7 @@ WIDGETS = {
 	#Complexer Widgets / Text io
 	"TextField" : TextField,
 	"TextBox" : TextBox,
+	"PasswordField" : PasswordField,
 	"ListBox" : ListBox,
 	"DropDown" : DropDown,
 	"Slider" : Slider

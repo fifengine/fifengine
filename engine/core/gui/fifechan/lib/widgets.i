@@ -313,6 +313,28 @@ namespace fcn {
 		virtual bool isOpaque();
 		virtual void resizeToContent();
 	};
+	
+	
+	%feature("notabstract") TextField;
+	class TextField: public Widget {
+	public:
+		TextField();
+		TextField(const std::string& text);
+		virtual ~TextField();
+		virtual void setText(const std::string& text);
+		virtual std::string getText() const;
+		virtual void adjustSize();
+		virtual void adjustHeight();
+		virtual void setCaretPosition(uint32_t position);
+		virtual uint32_t getCaretPosition() const;
+    };
+	
+	%feature("notabstract") PasswordField;
+	class PasswordField : public TextField {
+	public:
+		PasswordField(const std::string& text = "");
+		virtual ~PasswordField();
+	};
 }
 
 

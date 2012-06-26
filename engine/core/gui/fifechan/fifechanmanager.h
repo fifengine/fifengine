@@ -149,7 +149,7 @@ namespace FIFE {
 			MouseEvent translateMouseEvent(const fcn::MouseEvent& evt);
 
 		protected:
-			static int32_t convertGuichanKeyToFifeKey(int32_t value);
+			static int32_t convertFifechanKeyToFifeKey(int32_t value);
 
 		private:
 			// The Fifechan GUI.

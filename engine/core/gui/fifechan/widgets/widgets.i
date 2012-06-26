@@ -22,7 +22,6 @@
 %module fife
 %{
 #include <fifechan.hpp>
-#include "gui/fifechan/widgets/utf8textfield.h"
 #include "gui/fifechan/widgets/utf8textbox.h"
 #include "gui/fifechan/widgets/twobutton.h"
 #include "gui/fifechan/widgets/togglebutton.h"
@@ -41,19 +40,6 @@ namespace fcn {
 	class WidgetListener;
 	class Widget;
 
-	%feature("notabstract") UTF8TextField;
-	%rename(TextField) UTF8TextField;
-	class UTF8TextField: public Widget {
-	public:
-		UTF8TextField();
-		UTF8TextField(const std::string& text);
-		virtual void setText(const std::string& text);
-		virtual std::string getText() const;
-		virtual void adjustSize();
-		virtual void adjustHeight();
-		virtual void setCaretPosition(uint32_t position);
-		virtual uint32_t getCaretPosition() const;
-	};
 		
 	%feature("notabstract") TwoButton;
 	class TwoButton: public Widget {

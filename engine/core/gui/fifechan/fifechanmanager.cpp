@@ -292,7 +292,7 @@ namespace FIFE {
 
 		// Convert from fifechan keyval to FIFE keyval
 		int32_t keyval = fcnevt.getKey().getValue();
-		keyval = convertGuichanKeyToFifeKey(keyval);
+		keyval = convertFifechanKeyToFifeKey(keyval);
 
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
 
@@ -358,7 +358,7 @@ namespace FIFE {
 	}
 
 
-	int32_t FifechanManager::convertGuichanKeyToFifeKey(int32_t value) {
+	int32_t FifechanManager::convertFifechanKeyToFifeKey(int32_t value) {
 
 		switch (value) {
 			case fcn::Key::Tab:
