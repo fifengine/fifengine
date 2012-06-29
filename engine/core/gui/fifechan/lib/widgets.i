@@ -313,6 +313,32 @@ namespace fcn {
 		virtual bool isOpaque();
 		virtual void resizeToContent();
 	};
+
+
+	%feature("notabstract") TextBox;
+	class TextBox: public Widget {
+	public:
+		TextBox();
+		TextBox(const std::string& text);
+		virtual void setText(const std::string& text);
+		virtual std::string getText() const;
+		virtual std::string getTextRow(int row) const;
+		virtual void setTextRow(int row, const std::string& text);
+		virtual int getNumberOfRows() const;
+		virtual int getCaretPosition() const;
+		virtual void setCaretPosition(int position);
+		virtual int getCaretRow() const;
+		virtual void setCaretRow(int row);
+		virtual int getCaretColumn() const;
+		virtual void setCaretColumn(int column);
+		virtual void setCaretRowColumn(int row, int column);
+		virtual void scrollToCaret();
+		virtual bool isEditable() const;
+		virtual void setEditable(bool editable);
+		virtual void addRow(const std::string row);
+		virtual bool isOpaque();
+		virtual void setOpaque(bool opaque);
+	};
 	
 	
 	%feature("notabstract") TextField;

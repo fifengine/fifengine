@@ -81,35 +81,6 @@ namespace fcn {
 		const std::string &getGroup() const;
 	};
 	
-	
-	%feature("notabstract") UTF8TextBox;
-	%rename(TextBox) UTF8TextBox;
-	class UTF8TextBox: public Widget {
-	public:
-		UTF8TextBox();
-		UTF8TextBox(const std::string& text);
-		virtual void setText(const std::string& text);
-		virtual std::string getText() const;
-		virtual std::string getTextRow(int row) const;
-		virtual void setTextRow(int32_t row, const std::string& text);
-		virtual uint32_t getNumberOfRows() const;
-		virtual uint32_t getCaretPosition() const;
-		virtual void setCaretPosition(uint32_t position);
-		virtual uint32_t getCaretRow() const;
-		virtual void setCaretRow(int32_t row);
-		virtual uint32_t getCaretColumn() const;
-		virtual void setCaretColumn(int32_t column);
-		virtual void setCaretRowColumn(int32_t row, int32_t column);
-		virtual void scrollToCaret();
-		virtual bool isEditable() const;
-		virtual void setEditable(bool editable);
-		virtual void addRow(const std::string row);
-		virtual bool isOpaque();
-		virtual void setOpaque(bool opaque);
-	};
-
-	
-
 	%feature("notabstract") ClickLabel;
 	%rename(Label) ClickLabel;
 	class ClickLabel: public Widget {
