@@ -31,7 +31,7 @@ def initEnvironment(env):
 		        '/usr/local/include',
 			'/usr/X11/include',
 			'/opt/local/include/SDL',
-			'/opt/local/include/guichan',
+			'/opt/local/include/fifechan',
 			'/opt/local/include/boost',
 			'/System/Library/Frameworks/OpenAL.framework/Headers',
 			'/opt/local/include/vorbis/',
@@ -75,7 +75,7 @@ def getRequiredLibs(reqLibs):
 		('z', 'zlib.h'),
 		('boost_filesystem-mt', ''),
 		('boost_system-mt', ''),
-		('boost_regex-mt', '')
+		('boost_regex-mt', '')]
 	
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
