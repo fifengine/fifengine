@@ -361,6 +361,28 @@ namespace fcn {
 		PasswordField(const std::string& text = "");
 		virtual ~PasswordField();
 	};
+	
+	%feature("notabstract") IconProgressBar;
+	class IconProgressBar : public Widget {
+	public:
+		IconProgressBar();
+		IconProgressBar(Image *image, int maxIcons);
+		virtual ~IconProgressBar();
+		void setImage(Image* image);
+		const Image* getImage() const;
+		void setMaxIcons(int32_t maxIcons);
+		int32_t getMaxIcons() const;
+		void setOrientation(IconProgressBar::Orientation orientation);
+		IconProgressBar::Orientation getOrientation() const;
+		void advance();
+		void reset();
+		
+		enum Orientation
+		{
+			HORIZONTAL = 0,
+			VERTICAL
+		};
+	};
 }
 
 
