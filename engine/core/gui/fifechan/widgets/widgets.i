@@ -22,7 +22,6 @@
 %module fife
 %{
 #include <fifechan.hpp>
-#include "gui/fifechan/widgets/utf8textbox.h"
 #include "gui/fifechan/widgets/twobutton.h"
 #include "gui/fifechan/widgets/togglebutton.h"
 #include "gui/fifechan/widgets/clicklabel.h"

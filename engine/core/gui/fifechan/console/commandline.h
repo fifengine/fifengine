@@ -35,13 +35,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timer.h"
-#include "gui/fifechan/widgets/utf8textfield.h"
 
 namespace FIFE {
 
 	/** A Command line widget
 	 */
-	class CommandLine : public fcn::UTF8TextField {
+	class CommandLine : public fcn::TextField {
 		public:
 			typedef boost::function1<void,std::string> type_callback;
 

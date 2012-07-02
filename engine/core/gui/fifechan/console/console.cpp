@@ -38,7 +38,6 @@
 #include "util/base/exception.h"
 #include "gui/fifechan/fifechanmanager.h"
 #include "gui/fifechan/base/gui_font.h"
-#include "gui/fifechan/widgets/utf8textbox.h"
 
 #include "commandline.h"
 #include "console.h"
@@ -51,7 +50,7 @@ namespace FIFE {
 		: fcn::Container(),
 		m_consoleexec(0),
 		m_input(new CommandLine()),
-		m_output(new fcn::UTF8TextBox()),
+		m_output(new fcn::TextBox()),
 		m_outputscrollarea(new fcn::ScrollArea(m_output)),
 		m_status(new fcn::Label()),
 		m_toolsbutton(new fcn::Button("Tools"))

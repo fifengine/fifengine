@@ -38,7 +38,7 @@ namespace FIFE {
 	using namespace fcn;
 
 
-	CommandLine::CommandLine() : fcn::UTF8TextField(), m_history_position(0) {
+	CommandLine::CommandLine() : fcn::TextField(), m_history_position(0) {
 
 		m_blinkTimer.setInterval(500);
 		m_blinkTimer.setCallback(boost::bind(&CommandLine::toggleCaretVisible,this));
@@ -73,11 +73,11 @@ namespace FIFE {
 
 		if (keyType == Key::Left && getCaretPosition() > 0)
 		{
-			UTF8TextField::keyPressed(keyEvent);
+			TextField::keyPressed(keyEvent);
 		}
 		else if (keyType == Key::Right && getCaretPosition() < getText().size())
 		{
-			UTF8TextField::keyPressed(keyEvent);
+			TextField::keyPressed(keyEvent);
 		}
 		else if (keyType == Key::Down && !m_history.empty())
 		{
@@ -102,11 +102,11 @@ namespace FIFE {
 		}
 		else if (keyType == Key::Delete && getCaretPosition() < getText().size())
 		{
-			UTF8TextField::keyPressed(keyEvent);
+			TextField::keyPressed(keyEvent);
 		}
 		else if (keyType  == Key::Backspace && getCaretPosition() > 0)
 		{
-			UTF8TextField::keyPressed(keyEvent);
+			TextField::keyPressed(keyEvent);
 		}
 		else if (keyType == Key::Enter)
 		{
@@ -129,7 +129,7 @@ namespace FIFE {
 		}
 		else if (key.isCharacter())
 		{
-			UTF8TextField::keyPressed(keyEvent);
+			TextField::keyPressed(keyEvent);
 		}
 		stopBlinking();
 		fixScroll();
