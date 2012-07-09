@@ -376,6 +376,8 @@ namespace fcn {
 		IconProgressBar::Orientation getOrientation() const;
 		void advance();
 		void reset();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
 		
 		enum Orientation
 		{

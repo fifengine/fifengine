@@ -36,9 +36,12 @@ class IconProgressBar(Widget):
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image'), 
 									   IntAttr('max_icons'),
-									   IntAttr('orientation')
+									   IntAttr('orientation'),
+									   BoolAttr('opaque')
 									 ]
 
+	DEFAULT_OPAQUE = True
+									 
 	def __init__(self, 
 				 parent = None, 
 				 name = None,
@@ -61,9 +64,11 @@ class IconProgressBar(Widget):
 				 comment = None,
 				 image = None,
 				 max_icons = None,
-				 orientation = None):
+				 orientation = None,
+				 opaque = None):
 				 
 		self.real_widget = fifechan.IconProgressBar() 
+		self.opaque = opaque or DEFAULT_OPAQUE
 		
 		super(IconProgressBar,self).__init__(parent=parent, 
 								  name=name, 
@@ -143,3 +148,9 @@ class IconProgressBar(Widget):
 	def _getOrientation(self):
 		return self.real_widget.getOrientation()
 	orientation = property(_getOrientation, _setOrientation)
+	
+	def _setOpaque(self,opaque): 
+		self.real_widget.setOpaque(opaque)
+	def _getOpaque(self): 
+		return self.real_widget.isOpaque()
+	opaque = property(_getOpaque,_setOpaque)
