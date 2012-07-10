@@ -37,22 +37,22 @@
 namespace FIFE {
 	class SquareGrid: public CellGrid {
 	public:
-		SquareGrid(bool allow_diagonals=true);
+		SquareGrid();
 		virtual ~SquareGrid();
 
 		const std::string& getType() const;
 		const std::string& getName() const;
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		uint32_t getCellSideCount() const { return 4; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
+		std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
 		CellGrid* clone();
 
-	private:
-		bool isAccessibleDiagonal(const ModelCoordinate& curpos, const ModelCoordinate& target);
 	};
 }
 

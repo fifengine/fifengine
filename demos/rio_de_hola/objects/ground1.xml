@@ -110,6 +110,6 @@
 		water
 -->
 
-<object id="water" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="water" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
 	<image source="water/000.png" direction="0" />
 </object>

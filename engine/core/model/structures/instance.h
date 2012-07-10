@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -47,6 +47,7 @@ namespace FIFE {
 	class ActionInfo;
 	class SayInfo;
 	class TimeProvider;
+	class Route;
 
 	class InstanceActionListener {
 	public:
@@ -58,14 +59,13 @@ namespace FIFE {
 	enum InstanceChangeType {
 		ICHANGE_NO_CHANGES = 0x0000,
 		ICHANGE_LOC = 0x0001,
-		ICHANGE_FACING_LOC = 0x0002,
+		ICHANGE_ROTATION = 0x0002,
 		ICHANGE_SPEED = 0x0004,
 		ICHANGE_ACTION = 0x0008,
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
-		ICHANGE_ROTATION = 0x0040,
-		ICHANGE_BLOCK = 0x0080,
-		ICHANGE_CELL = 0x0100
+		ICHANGE_BLOCK = 0x0040,
+		ICHANGE_CELL = 0x0080
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -75,15 +75,14 @@ namespace FIFE {
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
 
-
 	class InstanceDeleteListener {
 	public:
 		virtual ~InstanceDeleteListener() {};
 		virtual void onInstanceDeleted(Instance* instance) =0;
 	};
 
-	/**
-	 *  An Instance is an "instantiation" of an Object at a Location.
+	/** An Instance is an "instantiation" of an Object at a Location.
+	 *
 	 */
 	class Instance : public FifeClass, public InstanceDeleteListener {
 	public:
@@ -100,7 +99,7 @@ namespace FIFE {
 
 		/** Get the identifier for this instance; possibly null.
 		 */
-		const std::string& getId() { return m_id; }
+		const std::string& getId();
 
 		/** Set the identifier for this instance.
 		 */
@@ -108,7 +107,7 @@ namespace FIFE {
 
 		/** Gets object where this instance is instantiated from
 		 */
-		Object* getObject() { return m_object; }
+		Object* getObject();
 
 		/** Sets location of the instance
 		 *  @param loc new location
@@ -119,12 +118,12 @@ namespace FIFE {
 		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return current location
 		 */
-		Location getLocation() const { return m_location; }
+		Location getLocation() const;
 
 		/** Gets reference of current location of instance
 		 *  @return reference to current location
 		 */
-		Location& getLocationRef() { return m_location; }
+		Location& getLocationRef();
 
 		/** Gets movement target in case instance is moving. In case not, returns current location
 		 *  To move target location, call move-method
@@ -145,21 +144,24 @@ namespace FIFE {
 		 */
 		Location getFacingLocation();
 
+		/** Gets reference of old location of instance
+		 *  @return reference to old location
+		 */
+		Location& getOldLocationRef();
+
 		/** Set the rotation offset of this instance
 		 */
 		void setRotation(int32_t rotation);
 
 		/** Get the rotation offset of this instance
+		 *  Returns direction where instance is heading
 		 */
-		int32_t getRotation() const { return m_rotation; }
+		int32_t getRotation() const;
 
-		/** Returns reference to the direction where instance is heading
-		 * Note: if instance didn't previously hadn't defined facing location
-		 * (e.g. by movement or setFacingLocation), method creates the location
-		 * thus increasing memory consumption.
-		 * @return reference to the direction of instance.
+		/** Get the old rotation offset of this instance
+		 *  Returns direction where instance was heading
 		 */
-		Location& getFacingLocationRef();
+		int32_t getOldRotation() const;
 
 		/** Sets if instance blocks movement
 		 */
@@ -171,11 +173,11 @@ namespace FIFE {
 
 		/** Sets if instance blocking can overriden
 		 */
-		void setOverrideBlocking(bool overblock) { m_override_blocking = overblock; }
+		void setOverrideBlocking(bool overblock);
 
 		/** Gets if instance blocking can overriden
 		 */
-		bool isOverrideBlocking() const { return m_override_blocking; }
+		bool isOverrideBlocking() const;
 
 		/** Auxiliary function to inform ActionListeners about the active ActionFrame.
 		 *  @param action pointer to the action
@@ -240,18 +242,32 @@ namespace FIFE {
 
 		/** Performs given named action to the instance. While performing the action
 		 *  moves instance to given target with given speed
-		 *  @param action_name name of the action
+		 *  @param actionName name of the action
 		 *  @param target place where to move this instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
+		 *  @param costid id for special costs which is be used as extra multiplier.
 		 */
-		void move(const std::string& action_name, const Location& target, const double speed);
+		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
 
 		/** Performs given named action to the instance. Performs no movement
-		 *  @param action_name name of the action
+		 *  @param actionName name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
 		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& action_name, const Location& direction, bool repeating=false);
+		void act(const std::string& actionName, const Location& direction, bool repeating=false);
+
+		/** Performs given named action to the instance. Performs no movement
+		 *  @param actionName name of the action
+		 *  @param rotation rotation which the instance use when performing the action
+		 *  @param repeating in case true, keeps repeating this action
+		 */
+		void act(const std::string& actionName, int32_t rotation, bool repeating=false);
+
+		/** Performs given named action to the instance. Performs no movement and use current rotation
+		 *  @param actionName name of the action
+		 *  @param repeating in case true, keeps repeating this action
+		 */
+		void act(const std::string& actionName, bool repeating=false);
 
 		/** Causes instance to "say" given text (shown on screen next to the instance)
 		 *  @param text text to say. If "" given, clear the text
@@ -261,11 +277,25 @@ namespace FIFE {
 
 		/** Performs given named action to the instance. While performing the action
 		 *  follows given instance with given speed
-		 *  @param action_name name of the action
+		 *  @param actionName name of the action
 		 *  @param leader followed instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
 		 */
-		void follow(const std::string& action_name, Instance* leader, const double speed);
+		void follow(const std::string& actionName, Instance* leader, const double speed);
+
+		/** Performs given named action to the instance. While performing the action
+		 *  follows given route with given speed. Note: In this case route isn't delete at the end.
+		 *  @param actionName name of the action
+		 *  @param route followed route
+		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
+		 */
+		void follow(const std::string& actionName, Route* route, const double speed);
+
+		/** Cancel movement after a given length.
+		 *  If no lenght is set then 1 is used. This mean that the instance
+		 *  stops at the center of the next cell (can be the same as the current).
+		 */
+		void cancelMovement(uint32_t length = 1);
 
 		/** Returns pointer to currently set saytext. In case no text is set, returns NULL
 		 */
@@ -320,11 +350,77 @@ namespace FIFE {
 		*/
 		void onInstanceDeleted(Instance* instance);
 
+		/** Returns a pointer to the route, in case there is no, it returns NULL.
+		 */
+		Route* getRoute();
+
+		/** Marks this instance as a visitor.
+		 */
+		void setVisitor(bool visit);
+
+		/** If instance is a visitor it returns true otherwise false.
+		 */
+		bool isVisitor();
+
+		/** Sets the range for a visitor.
+		*/
+		void setVisitorRadius(uint16_t radius);
+
+		/** Gets the visitor range.
+		*/
+		uint16_t getVisitorRadius();
+
+		/** Sets the cell stack position.
+		*/
+		void setCellStackPosition(uint8_t stack);
+
+		/** Gets the cell stack position.
+		*/
+		uint8_t getCellStackPosition();
+
+		/** Returns true if instance or object have special cost otherwise false.
+		 */
+		bool isSpecialCost();
+
+		/** Sets for the given cost id a cost.
+		*  @param id name of the cost id
+		*  @param cost value for the cost
+		*/
+		void setCost(const std::string& id, double cost);
+
+		/** Resets cost.
+		 */
+		void resetCost();
+
+		/** Returns cost value. In case there is no it returns the object cost.
+		 */
+		double getCost();
+
+		/** Returns cost id. In case there is no it returns the object cost id.
+		 */
+		const std::string& getCostId();
+
+		/** Returns true if it is multi cell otherwise false
+		 */
+		bool isMultiCell();
+
+		/** Returns true if it is multi object otherwise false
+		 */
+		bool isMultiObject();
+
+		/** Updates the visual positions of all instances in case this is a multi object
+		 */
+		void updateMultiInstances();
+
+		/** Returns a vector that contains all instances of a multi object
+		 */
+		const std::vector<Instance*>& getMultiInstances();
+
 	private:
 		std::string m_id;
 
-		// The rotation offset of this instance. This is in addition to possible camera rotation and
-		// intended for setting, for example, a rotation of a tile.
+		//! The rotation offset of this instance. This is in addition to possible camera rotation and
+		//! intended for setting, for example, a rotation of a tile.
 		int32_t m_rotation;
 
 		/** InstanceActivity gets allocated in case there is some runtime
@@ -341,75 +437,90 @@ namespace FIFE {
 			~InstanceActivity();
 
 			// ----- Fields related to change tracking -----
-			// updates cached variables, marks changes
+			//! updates cached variables, marks changes
 			void update(Instance& source);
-			// location on previous round
+			//! location on previous round
 			Location m_location;
-			// rotation on previous round
+			//! location on previous cell
+			Location m_oldLocation;
+			//! rotation on previous round
 			int32_t m_rotation;
-			// facing location on previous round
-			Location m_facinglocation;
-			// action on previous round. @NOTE: might become invalid, only used for address comparison
+			//! rotation on previous round
+			int32_t m_oldRotation;
+			//! action on previous round. @NOTE: might become invalid, only used for address comparison
 			Action* m_action;
-			// speed on previous round
+			//! speed on previous round
 			double m_speed;
-			// time multiplier on previous round
-			float m_timemultiplier;
-			// say text on previous round
-			std::string m_saytxt;
-			// listeners for changes
-			std::vector<InstanceChangeListener*> m_changelisteners;
+			//! time multiplier on previous round
+			float m_timeMultiplier;
+			//! say text on previous round
+			std::string m_sayText;
+			//! listeners for changes
+			std::vector<InstanceChangeListener*> m_changeListeners;
 
 			// ----- Fields related to generic activity -----
-			// listeners for action related events
-			std::vector<InstanceActionListener*> m_actionlisteners;
-			// action information, allocated when actions are bind
-			ActionInfo* m_actioninfo;
-			// text to say + duration, allocated when something is said
-			SayInfo* m_sayinfo;
-			// time scaler for this instance
-			TimeProvider* m_timeprovider;
-			// blocking status on previous round
+			//! listeners for action related events
+			std::vector<InstanceActionListener*> m_actionListeners;
+			//! action information, allocated when actions are bind
+			ActionInfo* m_actionInfo;
+			//! text to say + duration, allocated when something is said
+			SayInfo* m_sayInfo;
+			//! time scaler for this instance
+			TimeProvider* m_timeProvider;
+			//! blocking status on previous round
 			bool m_blocking;
 		};
 		InstanceActivity* m_activity;
-		// bitmask stating current changes
-		InstanceChangeInfo m_changeinfo;
-		// listeners for deletion of the instance
-		std::vector<InstanceDeleteListener*> m_deletelisteners;
+		//! bitmask stating current changes
+		InstanceChangeInfo m_changeInfo;
+		//! listeners for deletion of the instance
+		std::vector<InstanceDeleteListener*> m_deleteListeners;
 
-		// object where instantiated from
+		//! object where instantiated from
 		Object* m_object;
-		// current location
+		//! current location
 		Location m_location;
-		// current facing location. Just a pointer to save space e.g. on tiles
-		Location* m_facinglocation;
-		// instance visualization
+		//! instance visualization
 		IVisual* m_visual;
-		// instance blocking info
+		//! instance blocking info
 		bool m_blocking;
-		// allow to override the blocking property
-		bool m_override_blocking;
+		//! allow to override the blocking property
+		bool m_overrideBlocking;
+		//! is instance a visitor (FoW)
+		bool m_isVisitor;
+		//! visitor radius (FoW)
+		uint16_t m_visitorRadius;
+		//! position on cell stack
+		uint8_t m_cellStackPos;
+		//! indicates special cost
+		bool m_specialCost;
+		//! holds cost value
+		double m_cost;
+		//! holds cost id
+		std::string m_costId;
+
+		//! vector that holds all multi instances
+		std::vector<Instance*> m_multiInstances;
 
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
-		// Finalize current action
+		//! Finalize current action
 		void finalizeAction();
-		// Initialize action for use
-		void initializeAction(const std::string& action_name);
-		// Moves instance. Returns true if finished
-		bool process_movement();
-		// Calculates movement based current location and speed
+		//! Initialize action for use
+		void initializeAction(const std::string& actionName);
+		//! Moves instance. Returns true if finished
+		bool processMovement();
+		//! Calculates movement based current location and speed
 		void calcMovement();
-		// rebinds time provider based on new location
+		//! rebinds time provider based on new location
 		void bindTimeProvider();
-		// called when instance has been changed. Causes instance to create InstanceActivity
+		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
 	};
 
 	inline InstanceChangeInfo Instance::getChangeInfo() {
 		if (m_activity) {
-			return m_changeinfo;
+			return m_changeInfo;
 		}
 		return ICHANGE_NO_CHANGES;
 	}

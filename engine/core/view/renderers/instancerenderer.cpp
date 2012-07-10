@@ -42,10 +42,13 @@
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 #include "model/structures/map.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
 #include "video/opengl/fife_opengl.h"
 
 #include "view/camera.h"
 #include "view/visual.h"
+#include "cellrenderer.h"
 #include "instancerenderer.h"
 
 #include "video/opengle/gleimage.h"
@@ -363,12 +366,25 @@ namespace FIFE {
 				}
 			}
 		}
+		// Fixme
+		CellRenderer* cr = dynamic_cast<CellRenderer*>(cam->getRenderer("CellRenderer"));
+		Layer* fow_layer = cr->getFowLayer();
+		bool check_fow = (fow_layer == layer && cr->isEnabledFogOfWar());
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 //			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
+
+			if (check_fow) {
+				Cell* cell = layer->getCellCache()->getCell(instance->getLocationRef().getLayerCoordinates());
+				if (cell) {
+					if (cell->getFoWType() != CELLV_REVEALED) {
+						continue;
+					}
+				}
+			}
 
 			if(m_area_layer) {
 				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();

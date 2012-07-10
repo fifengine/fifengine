@@ -53,8 +53,24 @@ namespace FIFE {
 		double dx = (c2.x - c1.x);
 
 		int32_t angle = static_cast<int32_t>(Mathd::ATan2(-dy,dx)*(180.0/Mathd::pi()));
-
+		if (angle < 0) {
+			angle += 360;
+		}
+		angle %= 360;
 		return angle;
+	}
+	
+	/** Gets facing location defined by given angle and location
+	 *  @return facing location
+	 */
+	inline Location getFacing(const Location& loc, const int32_t angle) {
+		Location facing(loc);
+		ExactModelCoordinate emc = facing.getMapCoordinates();
+		emc.x += Mathd::Cos(double(angle) * (Mathd::pi()/180.0));
+		emc.y -= Mathd::Sin(double(angle) * (Mathd::pi()/180.0));
+		facing.setMapCoordinates(emc);
+
+		return facing;
 	}
 }
 

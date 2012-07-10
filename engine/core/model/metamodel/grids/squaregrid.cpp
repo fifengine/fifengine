@@ -37,18 +37,19 @@
 namespace FIFE {
 	static Logger _log(LM_SQUAREGRID);
 
-	SquareGrid::SquareGrid(bool allow_diagonals):
-		CellGrid(allow_diagonals) {
+	SquareGrid::SquareGrid():
+		CellGrid() {
 	}
 
 	CellGrid* SquareGrid::clone() {
-		SquareGrid* nGrid = new SquareGrid(m_allow_diagonals);
+		SquareGrid* nGrid = new SquareGrid();
 		nGrid->setRotation(m_rotation);
 		nGrid->setXScale(m_xscale);
 		nGrid->setYScale(m_yscale);
 		nGrid->setXShift(m_xshift);
 		nGrid->setYShift(m_yshift);
 		nGrid->setZShift(m_zshift);
+		nGrid->setAllowDiagonals(m_allow_diagonals);
 
 		return nGrid;
 	}
@@ -57,48 +58,30 @@ namespace FIFE {
 	}
 
 	bool SquareGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		if (curpos == target)
-			return true;
-		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y == target.y))
-			return true;
-		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
-			return true;
-
-		if (m_allow_diagonals) {
-			return isAccessibleDiagonal(curpos, target);
+		uint8_t x = ABS(target.x-curpos.x);
+		uint8_t y = ABS(target.y-curpos.y); 
+		if ((x<=1) && (y<=1)) {
+			if (m_allow_diagonals) {
+				return true;
+			} else if (x^y) {
+				return true;
+			}
 		}
 
-		return false;
-	}
-
-	bool SquareGrid::isAccessibleDiagonal(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
 		return false;
 	}
 
 	double SquareGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		assert(isAccessible(curpos, target));
 		if (curpos == target) {
-			return 0;
+			return 0.0;
+		} else if (ABS(target.x-curpos.x)^ABS(target.y-curpos.y)) {
+			return 1.0;
 		}
-		if (isAccessibleDiagonal(curpos, target)) {
-			return Mathd::Sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
-		}
-		if (curpos.x == target.x) {
-			return m_xscale;
-		}
-		return m_yscale;
+		return 1.4;
+	}
+	
+	double SquareGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+		return static_cast<double>(ABS(target.x - curpos.x) + ABS(target.y - curpos.y));
 	}
 
 	const std::string& SquareGrid::getType() const {
@@ -121,20 +104,7 @@ namespace FIFE {
 
 	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
 		ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
-		ModelCoordinate result;
-		result.x = static_cast<int32_t>(floor(dblpt.x));
-		result.y = static_cast<int32_t>(floor(dblpt.y));
-		result.z = static_cast<int32_t>(floor(dblpt.z));
-
-		if ((dblpt.x - static_cast<double>(result.x)) > 0.5) {
-			result.x++;
-		}
-		if ((dblpt.y - static_cast<double>(result.y)) > 0.5) {
-			result.y++;
-		}
-		if ((dblpt.z - static_cast<double>(result.z)) > 0.5) {
-			result.z++;
-		}
+		ModelCoordinate result(round(dblpt.x), round(dblpt.y), round(dblpt.z));
 
 		return result;
 	}
@@ -147,5 +117,26 @@ namespace FIFE {
 		vtx.push_back(ExactModelCoordinate(x+0.5, y-0.5));
 		vtx.push_back(ExactModelCoordinate(x+0.5, y+0.5));
 		vtx.push_back(ExactModelCoordinate(x-0.5, y+0.5));
+	}
+
+	std::vector<ModelCoordinate> SquareGrid::toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse) {
+		std::vector<ModelCoordinate> coords;
+		std::vector<ModelCoordinate>::const_iterator it = orig.begin();
+		if (reverse) {
+			for (; it != orig.end(); ++it) {
+				ModelCoordinate mc = position;
+				mc.x -= (*it).x;
+				mc.y -= (*it).y;
+				coords.push_back(mc);
+			}
+		} else {
+			for (; it != orig.end(); ++it) {
+				ModelCoordinate mc = position;
+				mc.x += (*it).x;
+				mc.y += (*it).y;
+				coords.push_back(mc);
+			}
+		}
+		return coords;
 	}
 }

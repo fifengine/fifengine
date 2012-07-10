@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -29,11 +29,14 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/structures/purge.h"
+#include "model/metamodel/grids/cellgrid.h"
 
 #include "layer.h"
 #include "instance.h"
 #include "map.h"
 #include "instancetree.h"
+#include "cell.h"
+#include "cellcache.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -44,19 +47,65 @@ namespace FIFE {
 	Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid)
 		: m_id(identifier),
 		m_map(map),
-		m_instances_visibility(true),
+		m_instancesVisibility(true),
 		m_transparency(0),
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),
-		m_pathingstrategy(CELL_EDGES_ONLY),
-		m_changelisteners(),
-		m_changedinstances(),
+		m_pathingStrategy(CELL_EDGES_ONLY),
+		m_walkable(false),
+		m_interact(false),
+		m_walkableId(""),
+		m_cellCache(NULL),
+		m_changeListeners(),
+		m_changedInstances(),
 		m_changed(false) {
 	}
 
 	Layer::~Layer() {
+		// if this is a walkable layer
+		if (m_walkable) {
+			if (!m_interacts.empty()) {
+				std::vector<Layer*>::iterator it = m_interacts.begin();
+				for (; it != m_interacts.end(); ++it) {
+					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+					(*it)->setInteract(false, "");
+				}
+			}
+			m_interacts.clear();
+			delete m_cellCache;
+		// if this is a interact layer
+		} else if (m_interact) {
+			Layer* temp = m_map->getLayer(m_walkableId);
+			if (temp) {
+				temp->removeInteractLayer(this);
+			}
+		}
 		purge(m_instances);
 		delete m_instanceTree;
+	}
+
+	const std::string& Layer::getId() const { 
+		return m_id;
+	}
+
+	void Layer::setId(const std::string& id) {
+		m_id = id;
+	}
+
+	Map* Layer::getMap() const {
+		return m_map;
+	}
+
+	CellGrid* Layer::getCellGrid() const {
+		return m_grid;
+	}
+
+	void Layer::setCellGrid(CellGrid* grid) {
+		m_grid = grid;
+	}
+
+	InstanceTree* Layer::getInstanceTree(void) const {
+		return m_instanceTree;
 	}
 
 	bool Layer::hasInstances() const {
@@ -69,8 +118,7 @@ namespace FIFE {
 	}
 
 	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
-		Location location;
-		location.setLayer(this);
+		Location location(this);
 		location.setExactLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, location, id);
@@ -80,8 +128,8 @@ namespace FIFE {
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 
-		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceCreate(this, instance);
 			++i;
 		}
@@ -95,10 +143,9 @@ namespace FIFE {
             return false;
         }
 
-	    Location location;
+	    Location& location = instance->getLocationRef();
 		location.setLayer(this);
 		location.setExactLayerCoordinates(p);
-		instance->setLocation(location);
 
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
@@ -106,8 +153,8 @@ namespace FIFE {
 			setInstanceActivityStatus(instance, instance->isActive());
 		}
 
-		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceCreate(this, instance);
 			++i;
 		}
@@ -115,9 +162,27 @@ namespace FIFE {
 		return true;
 	}
 
+	void Layer::removeInstance(Instance* instance) {
+		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
+			(*i)->onInstanceDelete(this, instance);
+			++i;
+		}
+		setInstanceActivityStatus(instance, false);
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			if(*it == instance) {
+				m_instanceTree->removeInstance(*it);
+				m_instances.erase(it);
+				break;
+			}
+		}
+		m_changed = true;
+	}
+
 	void Layer::deleteInstance(Instance* instance) {
-		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
 			++i;
 		}
@@ -134,11 +199,15 @@ namespace FIFE {
 		m_changed = true;
 	}
 
+	const std::vector<Instance*>& Layer::getInstances() const {
+		return m_instances;
+	}
+
 	void Layer::setInstanceActivityStatus(Instance* instance, bool active) {
 		if(active) {
-			m_active_instances.insert(instance);
+			m_activeInstances.insert(instance);
 		} else {
-			m_active_instances.erase(instance);
+			m_activeInstances.erase(instance);
 		}
 	}
 
@@ -203,29 +272,17 @@ namespace FIFE {
 
 			for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
 				ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
-
-				if(coord.x < min.x) {
-					min.x = coord.x;
-				}
-
-				if(coord.x > max.x) {
-					max.x = coord.x;
-				}
-
-				if(coord.y < min.y) {
-					min.y = coord.y;
-				}
-
-				if(coord.y > max.y) {
-					max.y = coord.y;
-				}
+				min.x = std::min(min.x, coord.x);
+				max.x = std::max(max.x, coord.x);
+				min.y = std::min(min.y, coord.y);
+				max.y = std::max(max.y, coord.y);
 			}
 		}
 
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
-		m_instances_visibility = vis;
+		m_instancesVisibility = vis;
 	}
 
 	void Layer::setLayerTransparency(uint8_t transparency) {
@@ -237,47 +294,145 @@ namespace FIFE {
 	}
 
 	void Layer::toggleInstancesVisible() {
-		m_instances_visibility = !m_instances_visibility;
+		m_instancesVisibility = !m_instancesVisibility;
+	}
+
+	bool Layer::areInstancesVisible() const {
+		return m_instancesVisibility;
 	}
 
 	bool Layer::cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate) {
-		std::list<Instance*> adjacentInstances;
-		m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
 		bool blockingInstance = false;
-		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
-			if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
-				blockingInstance = true;
-				break;
+		if (m_cellCache) {
+			Cell* cell = m_cellCache->getCell(cellCoordinate);
+			if (cell) {
+				return cell->getCellType() != CTYPE_NO_BLOCKER;
+			}
+		} else {
+			std::list<Instance*> adjacentInstances;
+			m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
+			for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
+				if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
+					blockingInstance = true;
+					break;
+				}
 			}
 		}
 		return blockingInstance;
 	}
 
-	bool Layer::update() {
-		m_changedinstances.clear();
-		std::vector<Instance*> inactive_instances;
-		std::set<Instance*>::iterator it = m_active_instances.begin();
-		for(; it != m_active_instances.end(); ++it) {
-			if ((*it)->update() != ICHANGE_NO_CHANGES) {
-				m_changedinstances.push_back(*it);
-				m_changed = true;
-			} else if (!(*it)->isActive()) {
-				inactive_instances.push_back(*it);
+	std::vector<Instance*> Layer::getBlockingInstances(const ModelCoordinate& cellCoordinate) {
+		std::vector<Instance*> blockingInstances;
+		if (m_cellCache) {
+			Cell* cell = m_cellCache->getCell(cellCoordinate);
+			if (cell) {
+				const std::set<Instance*>& blocker = cell->getInstances();
+				for (std::set<Instance*>::const_iterator it = blocker.begin(); it != blocker.end(); ++it) {
+					if ((*it)->isBlocking()) {
+						blockingInstances.push_back(*it);
+					}
+				}
+			}
+		} else {
+			std::list<Instance*> adjacentInstances;
+			m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
+			for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
+				if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
+					blockingInstances.push_back(*j);
+				}
 			}
 		}
-		if (!m_changedinstances.empty()) {
-			std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
-			while (i != m_changelisteners.end()) {
-				(*i)->onLayerChanged(this, m_changedinstances);
+		return blockingInstances;
+	}
+
+	void Layer::setPathingStrategy(PathingStrategy strategy) {
+		m_pathingStrategy = strategy;
+		m_grid->setAllowDiagonals(m_pathingStrategy != CELL_EDGES_ONLY);
+	}
+
+	PathingStrategy Layer::getPathingStrategy() const {
+		return m_pathingStrategy;
+	}
+
+	void Layer::setWalkable(bool walkable) {
+		m_walkable = walkable;
+	}
+
+	bool Layer::isWalkable() {
+		return m_walkable;
+	}
+
+	void Layer::setInteract(bool interact, const std::string& id) {
+		m_interact = interact;
+		m_walkableId = id;
+	}
+
+	bool Layer::isInteract() {
+		return m_interact;
+	}
+
+	const std::string& Layer::getWalkableId() {
+		return m_walkableId;
+	}
+
+	void Layer::addInteractLayer(Layer* layer) {
+		if (m_walkable) {
+			m_interacts.push_back(layer);
+		}
+	}
+
+	const std::vector<Layer*>& Layer::getInteractLayers() {
+		return m_interacts;
+	}
+
+	void Layer::removeInteractLayer(Layer* layer) {
+		if (m_walkable) {
+			std::vector<Layer*>::iterator it = m_interacts.begin();
+			for (; it != m_interacts.end(); ++it) {
+				if (*it == layer) {
+					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+					m_interacts.erase(it);
+					break;
+				}
+			}
+		}
+	}
+
+	void Layer::createCellCache() {
+		if (!m_cellCache && m_walkable) {
+			m_cellCache = new CellCache(this);
+		}
+	}
+	
+	CellCache* Layer::getCellCache() {
+		return m_cellCache;
+	}
+
+	bool Layer::update() {
+		m_changedInstances.clear();
+		std::vector<Instance*> inactiveInstances;
+		std::set<Instance*>::iterator it = m_activeInstances.begin();
+		for(; it != m_activeInstances.end(); ++it) {
+			if ((*it)->update() != ICHANGE_NO_CHANGES) {
+				m_changedInstances.push_back(*it);
+				m_changed = true;
+			} else if (!(*it)->isActive()) {
+				inactiveInstances.push_back(*it);
+			}
+		}
+		if (!m_changedInstances.empty()) {
+			std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+			while (i != m_changeListeners.end()) {
+				(*i)->onLayerChanged(this, m_changedInstances);
 				++i;
 			}
 			//std::cout << "Layer named " << Id() << " changed = 1\n";
 		}
-		// remove inactive instances from m_active_instances
-		if (!inactive_instances.empty()) {
-			std::vector<Instance*>::iterator i = inactive_instances.begin();
-			while (i != inactive_instances.end()) {
-				m_active_instances.erase(*i);
+		// remove inactive instances from m_activeInstances
+		if (!inactiveInstances.empty()) {
+			std::vector<Instance*>::iterator i = inactiveInstances.begin();
+			while (i != inactiveInstances.end()) {
+				m_activeInstances.erase(*i);
 				++i;
 			}
 		}
@@ -288,17 +443,25 @@ namespace FIFE {
 	}
 
 	void Layer::addChangeListener(LayerChangeListener* listener) {
-		m_changelisteners.push_back(listener);
+		m_changeListeners.push_back(listener);
 	}
 
 	void Layer::removeChangeListener(LayerChangeListener* listener) {
-		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			if ((*i) == listener) {
-				m_changelisteners.erase(i);
+				m_changeListeners.erase(i);
 				return;
 			}
 			++i;
 		}
+	}
+
+	bool Layer::isChanged() {
+		return m_changed;
+	}
+
+	std::vector<Instance*>& Layer::getChangedInstances() {
+		return m_changedInstances;
 	}
 } // FIFE

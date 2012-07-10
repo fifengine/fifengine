@@ -100,7 +100,7 @@ namespace FIFE {
 	ImagePtr ImageManager::create(const std::string& name, IResourceLoader* loader){
 		if (exists(name)) {
 			FL_WARN(_log, LMsg("ImageManager::create(std::string, IResourceLoader* loader) - ") << "Resource name " << name << " was previously created.  Returning original Image...");
-			return get(name);
+			return getPtr(name);
 		}
 
 		Image* ptr = RenderBackend::instance()->createImage(name, loader);

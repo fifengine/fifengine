@@ -245,6 +245,59 @@ namespace FIFE {
                 else {
                     obj->setPather(m_model->getPather("RoutePather"));
                 }
+				
+				const std::string* costId = root->Attribute(std::string("cost_id"));
+				if (costId) {
+					obj->setCostId(*costId);
+					double cost = 1.0;
+					int success = root->QueryDoubleAttribute("cost", &cost);
+					if (success == TIXML_SUCCESS) {
+						obj->setCost(cost);
+					}
+				}
+				
+				int cellStack = 0;
+				root->QueryIntAttribute("cellstack", &cellStack);
+				obj->setCellStackPosition(cellStack);
+				
+				double ax = 0;
+				double ay = 0;
+				double az = 0;
+
+				int xRetVal = root->QueryValueAttribute("anchor_x", &ax);
+				int yRetVal = root->QueryValueAttribute("anchor_y", &ay);
+				int zRetVal = root->QueryValueAttribute("anchor_z", &az);
+				if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+					obj->setRotationAnchor(ExactModelCoordinate(ax, ay, az));
+				}
+
+				int isRestrictedRotation = 0;
+                root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
+                obj->setRestrictedRotation(isRestrictedRotation!=0);
+
+				// loop over all multi parts
+                for (TiXmlElement* multiElement = root->FirstChildElement("multipart"); multiElement; multiElement = multiElement->NextSiblingElement("multipart")) {
+                    const std::string* partId = multiElement->Attribute(std::string("id"));
+					if (partId) {
+						obj->addMultiPartId(*partId);
+					}
+					for (TiXmlElement* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation; multiRotation = multiRotation->NextSiblingElement("rotation")) {
+						int rotation = 0;
+						multiRotation->QueryIntAttribute("rot", &rotation);
+						// relative coordinates which are used to position the object
+						for (TiXmlElement* multiCoordinate = multiRotation->FirstChildElement("occupied_coord"); multiCoordinate; multiCoordinate = multiCoordinate->NextSiblingElement("occupied_coord")) {
+							int x = 0;
+							int y = 0;
+							xRetVal = multiCoordinate->QueryValueAttribute("x", &x);
+							yRetVal = multiCoordinate->QueryValueAttribute("y", &y);
+							if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+								int z = 0;
+								multiCoordinate->QueryIntAttribute("z", &z);
+								obj->addMultiPartCoordinate(rotation, ModelCoordinate(x, y, z));
+							}
+						}
+					}
+				}
 
                 // loop over all image tags
                 for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {

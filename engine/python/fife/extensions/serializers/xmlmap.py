@@ -225,6 +225,9 @@ class XMLMapLoader(object):
 			pathing = layer.get('pathing')
 			transparency = layer.get('transparency')
 			
+			layer_type = layer.get('layer_type')
+			layer_type_id = layer.get('layer_type_id')
+			
 			if not x_scale: x_scale = 1.0
 			if not y_scale: y_scale = 1.0
 			if not rotation: rotation = 0.0
@@ -246,7 +249,6 @@ class XMLMapLoader(object):
 			cellgrid.setXShift(float(x_offset))
 			cellgrid.setYShift(float(y_offset))
 			cellgrid.setZShift(float(z_offset))
-			cellgrid.setAllowDiagonals(pathing != "cell_edges_only");
 
 			layer_obj = None
 			try:
@@ -260,11 +262,15 @@ class XMLMapLoader(object):
 			strgy = fife.CELL_EDGES_ONLY
 			if pathing == "cell_edges_and_diagonals":
 				strgy = fife.CELL_EDGES_AND_DIAGONALS
-			if pathing == "freeform":
-				strgy = fife.FREEFORM
 
 			layer_obj.setPathingStrategy(strgy)
 			layer_obj.setLayerTransparency(transparency)
+
+			if layer_type:
+				if layer_type == 'walkable':
+					layer_obj.setWalkable(True)
+				elif layer_type == 'interact' and layer_type_id:
+					layer_obj.setInteract(True, layer_type_id)
 
 			self.parse_instances(layer, layer_obj)
 			
@@ -276,6 +282,18 @@ class XMLMapLoader(object):
 			if self.callback is not None:
 				i += 1
 				self.callback(self.msg['layer'] % str(_id), float( i / float(len(tmplist)) * 0.25 + 0.5 ) )
+
+
+		layers = map.getLayers()
+		for l in layers:
+			if l.isInteract():
+				walk_layer = map.getLayer(l.getWalkableId())
+				if walk_layer:
+					walk_layer.addInteractLayer(l);
+				
+		for l in layers:
+			if l.isWalkable():
+				l.createCellCache()
 
 		# cleanup
 		if self.callback is not None:

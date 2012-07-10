@@ -275,9 +275,11 @@ class ToggleButton(ImageButton):
 												Attr('down_image'),
 												Attr('hover_image'),
 												PointAttr('offset'),
-												Attr('group')
+												Attr('group'),
+												BoolAttr('toggled')
 											  ]
 	DEFAULT_GROUP = ""
+	DEFAULT_TOGGLED = False
 
 	def __init__(self, 
 				 parent = None, 
@@ -305,9 +307,11 @@ class ToggleButton(ImageButton):
 				 down_image = None,
 				 hover_image = None,
 				 offset = None, 
-				 group = None):
+				 group = None,
+				 toggled = None):
 
 		group = self.DEFAULT_GROUP
+		toggled = self.DEFAULT_TOGGLED
 
 		super(ToggleButton,self).__init__(parent=parent, 
 										  name=name, 
@@ -337,6 +341,7 @@ class ToggleButton(ImageButton):
 										  real_widget=fife.ToggleButton())
 										  
 		if group is not None: self.group = group
+		if toggled: self.toggled = toggled
 
 	def clone(self, prefix):
 		toggleButtonClone = ToggleButton(None,

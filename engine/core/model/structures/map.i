@@ -85,5 +85,8 @@ namespace FIFE {
 			
 			void setFilename(const std::string& file);
 			const std::string& getFilename() const;
+
+			void initializeCellCaches();
+			void finalizeCellCaches();
 	};
 }

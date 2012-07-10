@@ -78,7 +78,9 @@ namespace FIFE {
 		if (loc) {
 			std::vector<Location>::const_iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
-				if (*it == *loc) return;
+				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
+					return;
+				}
 			}
 
 			m_locations.push_back(Location(*loc));
@@ -89,7 +91,7 @@ namespace FIFE {
 		if (loc) {
 			std::vector<Location>::iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
-				if (*it == *loc) {
+				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
 					m_locations.erase(it);
 					break;
 				}

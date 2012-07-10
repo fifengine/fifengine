@@ -507,6 +507,11 @@ class MapEditor:
 			instances = self._controller.getInstancesFromSelection()
 			if len(instances) > 0:
 				events.onInstancesSelected.send(sender=self, instances=instances)
+
+		if self._mode == MapEditor.SELECTING:
+			locations = self._controller.getLocationsFromSelection()
+			if len(locations) > 0:
+				events.onCellSelected.send(sender=self, locations=locations)
 			
 		if event.getButton() == fife.MouseEvent.MIDDLE:
 			self._scrollX = 0
