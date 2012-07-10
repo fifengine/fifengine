@@ -150,6 +150,11 @@ class XMLMapSaver:
 			return "freeform"
 		return "cell_edges_only"
 
+	def layer_type_to_str(self, layer):
+		if layer.isWalkable(): return "walkable"
+		elif layer.isInteract(): return "interact"
+		return ""
+	
 	def write_layers(self, map):
 		for layer in map.getLayers():
 			cellgrid = layer.getCellGrid()
@@ -164,6 +169,8 @@ class XMLMapSaver:
 				(None, 'z_offset'): str(cellgrid.getZShift()),
 				(None, 'pathing'): self.pathing_val_to_str(layer.getPathingStrategy()),
 				(None, 'transparency'): str(layer.getLayerTransparency()),
+				(None, 'layer_type'): str(self.layer_type_to_str(layer)),
+				(None, 'layer_type_id'): str(layer.getWalkableId()),
 			}
 			attr_names = {
 				(None, 'id'): 'id',
@@ -174,6 +181,8 @@ class XMLMapSaver:
 				(None, 'y_offset'): 'y_offset',
 				(None, 'z_offset'): 'z_offset',
 				(None, 'pathing'): 'pathing',
+				(None, 'layer_type'): 'layer_type',
+				(None, 'layer_type_id'): 'layer_type_id',
 			}
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.startElement('layer', attrs)

@@ -1450,6 +1450,9 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::attachRenderTarget(ImagePtr& img, bool discard) {
+		// flush down what we batched for the old target
+		renderVertexArrays();
+
 		m_img_target = img;
 		m_target_discard = discard;
 

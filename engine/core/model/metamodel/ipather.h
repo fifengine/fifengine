@@ -33,12 +33,14 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
-	class Map;
 	class Location;
 	class Instance;
+	class Route;
+	
+	//! A path is a list with locations. Each location holds the coordinate for one cell.
+	typedef std::list<Location> Path;
 
-	enum
-	{
+	enum PriorityType {
 		HIGH_PRIORITY,
 		MEDIUM_PRIORITY,
 		LOW_PRIORITY
@@ -48,26 +50,34 @@ namespace FIFE {
 	public:
 		virtual ~IPather() {};
 
-		/** Gets next location from pathfinder
-		 * Model will call this function periodically when instances should
-		 * move on map. Pather must return next location where instance should be moved.
-		 * Pather must be able to store multiple sessions for multiple simultaneous searches
-		 * (coming from multiple instances)
+		/** Creates a route between the start and end location that needs be solved.
 		 *
-		 * @param instance Instance making the call
-		 * @param target Target of the movement. This must be always on same layer as curpos
-		 * @param distance_to_travel  Distance how far caller can travel (in layer units)
-		 * @param nextLocation next location returned by the pather
-		 * @param facingLocation next facing location returned by the pather
-		 * @param session_id pather can do pathfinding in increments.
-		 *   Further increments are bind to previous ones with given session_id
-		 * @param priority The priority to assign to search (high are pushed to the front of the queue).
-		 * @return session_id to use with further calls
+		 * @param start A const reference to the start location.
+		 * @param end A const reference to the target location.
+		 * @param immediate A optional boolean, if true the route bypass the max. ticks limit and solves the path immediately, otherwise false.
+		 * @param costId A const reference to the string that holds the cost identifier. You can use it optional then this cost id is used instead of the default cost.
 		 */
-		virtual int32_t getNextLocation(const Instance* instance, const Location& target,
-		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int32_t session_id=-1,
-									int32_t priority = MEDIUM_PRIORITY) = 0;
+		virtual Route* createRoute(const Location& start, const Location& end, bool immediate = false, const std::string& cost_id = "") = 0;
+
+		/** Solves the route to create a path.
+		 *
+		 * @param route A pointer to the route which should be solved.
+		 * @param priority The priority to assign to search (high are pushed to the front of the queue). @see PriorityType
+		 * @param immediate A optional boolean, if true the route bypass the max. ticks limit and solves the path immediately, otherwise false.
+		 * @return A boolean, if true the route could be solved, otherwise false.
+		 */
+		virtual bool solveRoute(Route* route, int32_t priority = MEDIUM_PRIORITY, bool immediate = false) = 0;
+
+		/** Follows the path of the route.
+		 *
+		 * @param current A const reference to the current location.
+		 * @param route A pointer to the route which should be followed.
+		 * @param speed A double which holds the speed.
+		 * @param nextLocation A reference to the next location returned by the pather.
+		 * @param rotation A reference to the facing location returned by the pather.
+		 * @return A boolean, if true the route could be followed, otherwise false.
+		 */
+		virtual bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation) = 0;
 
 		/** Updates the pather (should it need updating).
 		 *
@@ -84,10 +94,20 @@ namespace FIFE {
 		 * a destination while the agent is already moving, the old session needs to be
 		 * cancelled and a new one created.
 		 *
-		 * @param session_id The id of the session to cancel.
+		 * @param sessionId The id of the session to cancel.
 		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */
-		virtual bool cancelSession(const int32_t session_id) = 0;
+		virtual bool cancelSession(const int32_t sessionId) = 0;
+
+		/** Sets maximal ticks (update steps) to solve routes. @see update()
+		 * @param ticks A integer which holds the steps. default is 1000
+		 */
+		virtual void setMaxTicks(int32_t ticks) = 0;
+
+		/** Returns maximal ticks (update steps) to solve routes. @see update()
+		 * @return A integer which holds the steps. default is 1000
+		 */
+		virtual int32_t getMaxTicks() = 0;
 
 		/** Gets the name of this pather
 		 */

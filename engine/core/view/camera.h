@@ -271,6 +271,10 @@ namespace FIFE {
 		 */
 		void resetUpdates();
 
+		/** Returns true if camera view has been updated, otherwise false
+		 */
+		bool isUpdated() { return m_updated; }
+
 		/** Adds new renderer on the view. Ownership is transferred to the camera.
 		 */
 		void addRenderer(RendererBase* renderer);
@@ -416,7 +420,9 @@ namespace FIFE {
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
-		bool m_updated; // false, if view has not been updated
+		// false, if view has not been updated
+		bool m_updated;
+		bool m_need_update;
 
 		RenderBackend* m_renderbackend;
 

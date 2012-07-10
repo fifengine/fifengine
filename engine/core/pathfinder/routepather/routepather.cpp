@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,214 +31,85 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
-
-#include "pathfinder/searchspace.h"
+#include "model/structures/cellcache.h"
+#include "util/math/angles.h"
+#include "pathfinder/route.h"
 
 #include "routepather.h"
 #include "routepathersearch.h"
+#include "singlelayersearch.h"
+#include "multilayersearch.h"
 
 namespace FIFE {
-	void RoutePather::setMap(Map* map) {
-		if(!map) {
-			return;
-		}
-		m_map = map;
-	}
 
 	int32_t RoutePather::makeSessionId() {
 		return m_nextFreeSessionId++;
 	}
-	
-	void RoutePather::makePlan(const Instance *instance, const Location& target, int32_t session_id, int32_t priority) {
-		SearchSpace* searchspace = getSearchSpace(target.getLayer());
-		if(!searchspace) {
-			searchspace = new SearchSpace(target.getLayer());
-			addSearchSpace(searchspace);
-		}
-		if(searchspace->isInSearchSpace(target)) {
-			RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, searchspace);
-			m_sessions.pushElement(SessionQueue::value_type(newSearch, priority));
-			addSessionId(session_id);
-			m_path_targets.insert(LocationMap::value_type(session_id,target));
-		}
-	}
-	
-	bool RoutePather::locationsEqual(const Location &a, const Location &b) {
-		
+
+	bool RoutePather::locationsEqual(const Location& a, const Location& b) {
+		bool sameLayer = a.getLayer() == b.getLayer();
 		const ModelCoordinate a_coord = a.getLayerCoordinates();
 		const ModelCoordinate b_coord = b.getLayerCoordinates();
-		
-		return a_coord == b_coord;
+
+		return (a_coord == b_coord) && sameLayer;
 	}
-	
-	bool RoutePather::testStep(const Instance *instance, Path& path) {
-		Location instanceLoc = instance->getLocation();
-		if(!path.empty() && 
-		   !locationsEqual(path.front(), instanceLoc) &&
-		   instanceLoc.getLayer()->cellContainsBlockingInstance(path.front().getLayerCoordinates())) {
-			const bool last_step = path.front() == path.back();
-			path.clear();
-			return last_step;
-		}
-		return true;
-	}
-	
-	int32_t RoutePather::getNextLocation(const Instance* instance, const Location& target, 
-									 double distance_to_travel, Location& nextLocation,
-									 Location& facingLocation, int32_t session_id, int32_t priority) {
-		assert(instance);
-		assert(instance->getLocation().getLayer() == target.getLayer());
-		bool plan_needed = true;
-		
-		if(session_id != -1) {
-			plan_needed = false;
-			PathMap::iterator path_itor = m_paths.find(session_id);
-			if(path_itor != m_paths.end()) {
-				LocationMap::iterator location_itor = m_path_targets.find(session_id);
-				assert(location_itor != m_path_targets.end());
-				
-				if(path_itor->second.empty()) {
-					m_paths.erase(path_itor);
-					m_path_targets.erase(location_itor);
-					return -1;
-				}
-				
-				if(!followPath(instance, path_itor->second, distance_to_travel, nextLocation, facingLocation) 
-				   || !locationsEqual(location_itor->second, target)) {
-					m_paths.erase(path_itor);
-					m_path_targets.erase(location_itor);
-					plan_needed = true;
-				}
-			} else if(!sessionIdValid(session_id)) {
-				//Session id is invalid.
-				return -1;
-			}
-		}
-		if(plan_needed) {
-			if(session_id == -1) {
-				session_id = makeSessionId();
-			}
-			makePlan(instance, target, session_id, priority);
-		}
-		return session_id;
-	}
-	
+
 	void RoutePather::update() {
-		int32_t ticksleft = m_maxticks;
-		while(ticksleft >= 0) {
+		int32_t ticksleft = m_maxTicks;
+		while (ticksleft > 0) {
 			if(m_sessions.empty()) {
 				break;
 			}
-			RoutePatherSearch* priority_session = m_sessions.getPriorityElement().first;
-			if(!sessionIdValid(priority_session->getSessionId())) {
-				delete priority_session;
+			RoutePatherSearch* prioritySession = m_sessions.getPriorityElement().first;
+			if(!sessionIdValid(prioritySession->getSessionId())) {
+				delete prioritySession;
 				m_sessions.popElement();
 				continue;
 			}
-			priority_session->updateSearch();
-			if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_complete) {
-				const int32_t session_id = priority_session->getSessionId();
-				Path newPath = priority_session->calcPath();
-				newPath.erase(newPath.begin());
-				m_paths.insert(PathMap::value_type(session_id, newPath));
-				invalidateSessionId(session_id);
-				delete priority_session;
-				m_sessions.popElement();
-			} else if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_failed) {
-				const int32_t session_id = priority_session->getSessionId();
-				invalidateSessionId(session_id);
-				delete priority_session;
+			prioritySession->updateSearch();
+			if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_complete) {
+				const int32_t sessionId = prioritySession->getSessionId();
+				prioritySession->calcPath();
+				Route* route = prioritySession->getRoute();
+				if (route->getRouteStatus() == ROUTE_SOLVED) {
+					invalidateSessionId(sessionId);
+					delete prioritySession;
+					m_sessions.popElement();
+				}
+			} else if (prioritySession->getSearchStatus() == RoutePatherSearch::search_status_failed) {
+				const int32_t sessionId = prioritySession->getSessionId();
+				invalidateSessionId(sessionId);
+				delete prioritySession;
 				m_sessions.popElement();
 			}
 			--ticksleft;
 		}
 	}
-	
-	bool RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
-		Location instanceLoc = instance->getLocation();                      
-		if(!testStep(instance, path)) {
-			return false;
-		}
-		
-		if(path.empty()) {
-			return true;
-		}
-		
-		ExactModelCoordinate instancePos = instanceLoc.getMapCoordinates();
-		ExactModelCoordinate facingPos = path.front().getMapCoordinates();
-		facingPos.x = facingPos.x + (facingPos.x - instancePos.x);
-		facingPos.y = facingPos.y + (facingPos.y - instancePos.y);
-		facingLocation = path.front();
-		facingLocation.setMapCoordinates(facingPos);
-		ExactModelCoordinate targetPos = path.front().getMapCoordinates();
-		CellGrid* grid = instanceLoc.getLayer()->getCellGrid();
-		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
-		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
-		double distance;
 
-		if (grid->getType() == "square") {
-			distance = Mathd::Sqrt(dx * dx + dy * dy);
-		} else {
-			distance = Mathd::Sqrt((dx*dx) + (dy*dy) + (ABS(dx) * ABS(dy)));
-		}
-
-		bool pop = false;
-		if(speed > distance) {
-			speed = distance;
-			pop = true;
-		}
-		if(distance != 0) {
-			instancePos.x += (dx / distance) * speed;
-			instancePos.y += (dy / distance) * speed;
-		} else {
-			pop = true;
-		}
-		
-		nextLocation.setMapCoordinates(instancePos);
-		if(pop) {
-			path.pop_front();
-			if(!testStep(instance, path)) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	bool RoutePather::cancelSession(const int32_t session_id) {
-		if(session_id >= 0) {
-			PathMap::iterator i = m_paths.find(session_id);
-			if(i != m_paths.end()) {
-				LocationMap::iterator j = m_path_targets.find(session_id);
-				assert(j != m_path_targets.end());
-				m_paths.erase(i);
-				m_path_targets.erase(j);
-				return true;
-			} else {
-				invalidateSessionId(session_id);
-			}
+	bool RoutePather::cancelSession(const int32_t sessionId) {
+		if (sessionId >= 0) {
+			return invalidateSessionId(sessionId);
 		}
 		return false;
 	}
-	
+
 	void RoutePather::addSessionId(const int32_t sessionId) {
 		m_registeredSessionIds.push_back(sessionId);
 	}
-	
+
 	bool RoutePather::sessionIdValid(const int32_t sessionId) {
 		for(SessionList::const_iterator i = m_registeredSessionIds.begin();
-			i != m_registeredSessionIds.end();
-			++i) {
+			i != m_registeredSessionIds.end(); ++i) {
 			if((*i) == sessionId) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	bool RoutePather::invalidateSessionId(const int32_t sessionId) {
 		for(SessionList::iterator i = m_registeredSessionIds.begin();
-			i != m_registeredSessionIds.end();
-			++i) {
+			i != m_registeredSessionIds.end(); ++i) {
 			if((*i) == sessionId) {
 				m_registeredSessionIds.erase(i);
 				return true;
@@ -246,18 +117,260 @@ namespace FIFE {
 		}
 		return false;
 	}
-	
-	bool RoutePather::addSearchSpace(SearchSpace* search_space) {
-		std::pair<SearchSpaceMap::iterator, bool> res = m_searchspaces.insert(SearchSpaceMap::value_type(search_space->getLayer(), search_space));
-		
-		return res.second;
-	}
-	
-	SearchSpace* RoutePather::getSearchSpace(Layer * const layer) {
-		SearchSpaceMap::iterator i = m_searchspaces.find(layer);
-		if(i == m_searchspaces.end()) {
-			return 0;
+
+	Route* RoutePather::createRoute(const Location& start, const Location& end, bool immediate, const std::string& costId) {
+		Route* route = new Route(start, end);
+		if (costId != "") {
+			route->setCostId(costId);
 		}
-		return i->second;
+		if (immediate) {
+			if (!solveRoute(route, MEDIUM_PRIORITY, true)) {
+				route->setRouteStatus(ROUTE_FAILED);
+			}
+			return route;
+ 		}
+		return route;
+	}
+
+	bool RoutePather::solveRoute(Route* route, int32_t priority, bool immediate) {
+		if (sessionIdValid(route->getSessionId())) {
+			return false;
+		}
+
+		const Location& start = route->getStartNode();
+		const Location& end = route->getEndNode();
+
+		if (locationsEqual(start, end)) {
+			return false;
+		}
+
+		CellCache* startCache = start.getLayer()->getCellCache();
+		CellCache* endCache = end.getLayer()->getCellCache();
+
+		if (!startCache || !endCache) {
+			return false;
+		}
+
+		if (!startCache->isInCellCache(start) || !endCache->isInCellCache(end)) {
+			return false;
+		}
+
+		Cell* startCell = startCache->getCell(start.getLayerCoordinates());
+		Cell* endCell = endCache->getCell(end.getLayerCoordinates());
+
+		bool multilayer = startCache != endCache;
+		if (!multilayer) {
+			Zone* startZone = startCell->getZone();
+			Zone* endZone = endCell->getZone();
+			if (startZone != endZone) {
+				// look for special cases (start is zone border or end is static blocker)
+				if (!endZone || startCell->isZoneProtected()) {
+					bool found = false;
+					const std::vector<Cell*>& neighbors = endCell->getNeighbors();
+					for (std::vector<Cell*>::const_iterator it = neighbors.begin();
+						it != neighbors.end(); ++it) {
+						Zone* tmpZone = (*it)->getZone();
+						if (tmpZone) {
+							endZone = tmpZone;
+							if (tmpZone == startZone) {
+								found = true;
+								break;
+							}
+						}
+					}
+					if (!found && startCell->isZoneProtected()) {
+						const std::vector<Cell*>& neighbors = startCell->getNeighbors();
+						for (std::vector<Cell*>::const_iterator it = neighbors.begin();
+							it != neighbors.end(); ++it) {
+							Zone* tmpZone = (*it)->getZone();
+							if (tmpZone) {
+								if (tmpZone == startZone) {
+									endZone = tmpZone;
+									break;
+								}
+							}
+						}
+					}
+				}
+				// target and all neighbors are static blockers
+				if (!endZone) {
+					return false;
+				}
+				// same CellCache but different zones
+				if (startZone != endZone) {
+					multilayer = true;
+				}
+			}
+		}
+
+		int32_t sessionId = route->getSessionId();
+		if (sessionId == -1) {
+			sessionId = makeSessionId();
+			route->setSessionId(sessionId);
+		}
+
+		RoutePatherSearch* newSearch;
+		if (multilayer) {
+			newSearch = new MultiLayerSearch(route, sessionId);
+		} else {
+			newSearch = new SingleLayerSearch(route, sessionId);
+		}
+		if (immediate) {
+			while (newSearch->getSearchStatus() != RoutePatherSearch::search_status_complete) {
+				newSearch->updateSearch();
+				if (newSearch->getSearchStatus() == RoutePatherSearch::search_status_failed) {
+					route->setRouteStatus(ROUTE_FAILED);
+					break;
+				}
+			}
+
+			if (newSearch->getSearchStatus() == RoutePatherSearch::search_status_complete) {
+				newSearch->calcPath();
+				route->setRouteStatus(ROUTE_SOLVED);
+			}
+			delete newSearch;
+			return true;
+		}
+		m_sessions.pushElement(SessionQueue::value_type(newSearch, priority));
+		addSessionId(sessionId);
+		return true;
+	}
+
+	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation) {
+		Path path = route->getPath();
+		if (path.empty()) {
+			return false;
+		}
+		if (Mathd::Equal(speed, 0.0)) {
+			return true;
+		}
+		bool nextBlocker = false;
+		Location currentNode = route->getCurrentNode();
+		bool multiCell = route->isMultiCell();
+		if (!locationsEqual(current, currentNode)) {
+			// special blocker check for multicell
+			if (multiCell) {
+				rotation = getAngleBetween(current, currentNode);
+				std::vector<ModelCoordinate> newCoords = currentNode.getLayer()->getCellGrid()->
+					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(rotation));
+				newCoords.push_back(currentNode.getLayerCoordinates());
+				const std::set<Object*>& parts = route->getObject()->getMultiParts();
+				std::vector<ModelCoordinate>::const_iterator nco_it = newCoords.begin();
+				for (; nco_it != newCoords.end(); ++nco_it) {
+					if (currentNode.getLayer()->cellContainsBlockingInstance(*nco_it)) {
+						std::vector<Instance*> blocker = currentNode.getLayer()->getBlockingInstances(*nco_it);
+						std::vector<Instance*>::iterator block_it = blocker.begin();
+						for (; block_it != blocker.end(); ++block_it) {
+							std::set<Object*>::iterator obj_it = std::find(parts.begin(), parts.end(), (*block_it)->getObject());
+							if (obj_it != parts.end() || route->getObject() == (*block_it)->getObject()) {
+								continue;
+							}
+							nextBlocker = true;
+							break;
+						}
+						if (nextBlocker) {
+							break;
+						}
+					}
+				}
+			} else {
+				rotation = getAngleBetween(current, currentNode);
+				if (currentNode.getLayer()->cellContainsBlockingInstance(currentNode.getLayerCoordinates())) {
+					nextBlocker = true;
+				}
+			}
+		}
+		// set facinglocation
+		ExactModelCoordinate instancePos = current.getMapCoordinates();
+		// if next node is blocker
+		if (nextBlocker) {
+			nextLocation.setLayerCoordinates(FIFE::doublePt2intPt(current.getExactLayerCoordinates()));
+			return false;
+		}
+		// calculate distance
+		ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
+		CellGrid* grid = current.getLayer()->getCellGrid();
+		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
+		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
+		double distance = Mathd::Sqrt(dx * dx + dy * dy);
+
+		// cell speed multi
+		double multi;
+		CellCache* cache = current.getLayer()->getCellCache();
+		if (cache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
+			speed *= multi;
+		} else {
+			speed *= cache->getDefaultSpeedMultiplier();
+		}
+		bool pop = false;
+		if (speed > distance) {
+			speed = distance;
+			pop = true;
+		}
+
+		if (!Mathd::Equal(distance, 0.0) && !pop) {
+			instancePos.x += (dx / distance) * speed;
+			instancePos.y += (dy / distance) * speed;
+		} else {
+			pop = true;
+		}
+		// pop to next node
+		if (pop) {
+			nextLocation.setMapCoordinates(targetPos);
+			// if cw is false we have reached the end
+			bool cw = route->walkToNextNode();
+			// check transistion
+			CellCache* cache = nextLocation.getLayer()->getCellCache();
+			if (cache) {
+				Cell* cell = cache->getCell(nextLocation.getLayerCoordinates());
+				if (cell) {
+					TransitionInfo* ti = cell->getTransition();
+					if (ti) {
+						// "beam" if it is a part of path
+						if (cw &&
+							!cell->getLayer()->getCellGrid()->isAccessible(nextLocation.getLayerCoordinates(),
+							route->getCurrentNode().getLayerCoordinates())) {
+							if (ti->m_difflayer) {
+								nextLocation.setLayer(ti->m_layer);
+							}
+							nextLocation.setLayerCoordinates(ti->m_mc);
+							return cw;
+						// immediate "beam"
+						} else if (ti->m_immediate) {
+							if (ti->m_difflayer) {
+								nextLocation.setLayer(ti->m_layer);
+							}
+							nextLocation.setLayerCoordinates(ti->m_mc);
+							route->setEndNode(nextLocation);
+							return false;
+						}
+					}
+				}
+			}
+			if (cw && !multiCell &&
+				currentNode.getLayer()->cellContainsBlockingInstance(route->getCurrentNode().getLayerCoordinates())) {
+				//set facing to end blocker
+				Location facing = route->getCurrentNode();
+				rotation = getAngleBetween(current, facing);
+
+				return false;
+			}
+			return cw;
+		}
+		nextLocation.setMapCoordinates(instancePos);
+
+		return true;
+	}
+
+	void RoutePather::setMaxTicks(int32_t ticks) {
+		m_maxTicks = ticks;
+	}
+
+	int32_t RoutePather::getMaxTicks() {
+		return m_maxTicks;
+	}
+
+	std::string RoutePather::getName() const {
+		return "RoutePather";
 	}
 }

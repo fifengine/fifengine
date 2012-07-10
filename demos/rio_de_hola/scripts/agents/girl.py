@@ -60,7 +60,7 @@ class Girl(Agent):
 
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('stand', self.agent.getFacingLocation(), False)
+		self.agent.act('stand')
 
 	def follow_hero(self):
 		self.state = _STATE_FOLLOW

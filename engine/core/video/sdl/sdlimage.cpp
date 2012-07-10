@@ -413,6 +413,13 @@ namespace FIFE {
 		if( m_finalized ) {
 			return;
 		}
+		// ultimate possibility to load the image
+		// is used e.g. in case a cursor or gui image is freed even if there is a reference 
+		if (!m_surface) {
+			if (m_state == IResource::RES_NOT_LOADED) {
+				load();
+			}
+		}
 		m_finalized = true;
 		SDL_Surface *old_surface = m_surface;
 		Uint32 key = SDL_MapRGB(m_surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);

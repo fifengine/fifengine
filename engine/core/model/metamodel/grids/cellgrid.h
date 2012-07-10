@@ -40,9 +40,8 @@ namespace FIFE {
 	class CellGrid: public FifeClass {
 	public:
 		/** Constructor
-		 *  @param allow_diagonals if true, cellgrid allows diagonal access
 		 */
- 		CellGrid(bool allow_diagonals=false);
+ 		CellGrid();
 
 		/** Destructor
 		 */
@@ -79,6 +78,13 @@ namespace FIFE {
 		 */
 		virtual double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 
+		/** Returns *distance* const from curpos to target point
+		 *  @param curpos position (coordinates) to evaluate
+		 *  @param target target coordinate to check
+		 *  @return distance cost from curpos to target
+		 */
+		virtual double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
 		 */
@@ -109,6 +115,14 @@ namespace FIFE {
 		 *  @param cell cell to get vertices from
 		 */
 		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
+
+		/** Returns point vector with coordinates for a multi object
+		 *  @param position The center position
+		 *  @param orig The vector with the original coordinates from object
+		 *  @param reverse If true the orig coordinates are subtracted otherwise they are added
+		 */
+		virtual std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position,
+			const std::vector<ModelCoordinate>& orig, bool reverse = false) = 0;
 
 		/** Set the cellgrid x shift
 		 *  @param xshift The shift in map coords

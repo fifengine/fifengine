@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -34,34 +34,57 @@
 // Second block: files included from the same folder
 #include "model/metamodel/ipather.h"
 #include "model/structures/location.h"
-#include "model/structures/map.h"
 #include "util/structures/priorityqueue.h"
 
 namespace FIFE {
 
-	class Search;
-	class SearchSpace;
+	class CellCache;
 	class RoutePatherSearch;
+	class Route;
 
 	class RoutePather : public IPather {
 	public:
 		/** Constructor.
 		 *
 		 */
-		RoutePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(1000) {
+		RoutePather() : m_nextFreeSessionId(0), m_maxTicks(1000) {
 		}
 
-		void setMap(Map* map);
-		int32_t getNextLocation(const Instance* instance, const Location& target,
-		                    double distance_to_travel, Location& nextLocation,
-		                    Location& facingLocation, int32_t session_id=-1,
-							int32_t priority = MEDIUM_PRIORITY);
+		/** Creates a route between the start and end location that needs be solved.
+		 *
+		 * @param start A const reference to the start location.
+		 * @param end A const reference to the target location.
+		 * @param immediate A optional boolean, if true the route bypass the max. ticks limit and solves the path immediately, otherwise false.
+		 * @param costId A const reference to the string that holds the cost identifier. You can use it optional then this cost id is used instead of the default cost.
+		 */
+		Route* createRoute(const Location& start, const Location& end, bool immediate = false, const std::string& costId = "");
 
+		/** Solves the route to create a path.
+		 *
+		 * @param route A pointer to the route which should be solved.
+		 * @param priority The priority to assign to search (high are pushed to the front of the queue). @see PriorityType
+		 * @param immediate A optional boolean, if true the route bypass the max. ticks limit and solves the path immediately, otherwise false.
+		 * @return A boolean, if true the route could be solved, otherwise false.
+		 */
+		bool solveRoute(Route* route, int32_t priority = MEDIUM_PRIORITY, bool immediate = false);
+
+		/** Follows the path of the route.
+		 *
+		 * @param current A const reference to the current location.
+		 * @param route A pointer to the route which should be followed.
+		 * @param speed A double which holds the speed.
+		 * @param nextLocation A reference to the next location returned by the pather.
+		 * @param rotation A reference to the facing location returned by the pather.
+		 * @return A boolean, if true the route could be followed, otherwise false.
+		 */
+		bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation);
+		
 		/** Updates the route pather.
 		 *
 		 * Advances the active search by so many time steps. If the search
 		 * completes then this function pops it from the active session list and
 		 * continues updating the next session until it runs out of time.
+		 * @see setMaxTicks()
 		 */
 		void update();
 
@@ -70,46 +93,35 @@ namespace FIFE {
 		 * Cancels a route pather session. Determines if it is an active session
 		 * or not and acts accordingly.
 		 *
-		 * @param session_id The id of the session to cancel.
+		 * @param sessionId The id of the session to cancel.
 		 * @return True if the session could be canceled false otherwise.
 		 */
-		bool cancelSession(const int32_t session_id);
+		bool cancelSession(const int32_t sessionId);
 
-		/** Adds a search space to the route pather.
-		 *
-		 * @param search_space A pointer to the search space to add.
-		 * @return a boolean signifying whether the search space was correctly added or not.
+		/** Sets maximal ticks (update steps) to solve routes. @see update()
+		 * @param ticks A integer which holds the steps. default is 1000
 		 */
-		bool addSearchSpace(SearchSpace* search_space);
+		void setMaxTicks(int32_t ticks);
 
-		/** Retrieves a searchspace associated with the given layer.
-		 *
-		 * @param layer A pointer to the layer
-		 * @return A pointer to the search space if it could be found, 0 otherwise.
+		/** Returns maximal ticks (update steps) to solve routes. @see update()
+		 * @return A integer which holds the steps. default is 1000
 		 */
-		SearchSpace* getSearchSpace(Layer * const layer);
+		int32_t getMaxTicks();
 
-		std::string getName() const { return "RoutePather"; };
+		/** Returns name of the pathfinder.
+		 * @return A string that contains the name of the pathfinder.
+		 */
+		std::string getName() const;
+
 	private:
+		//! A path is a list with locations. Each location holds the coordinate for one cell.
 		typedef std::list<Location> Path;
+
+		//! Holds the searches and their priority.
 		typedef PriorityQueue<RoutePatherSearch*, int32_t> SessionQueue;
+
+		//! Holds the sessions.
 		typedef std::list<int32_t> SessionList;
-		typedef std::map<int32_t, Path> PathMap;
-		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
-		typedef std::map<int32_t, Location> LocationMap;
-		/** Makes the instance follow the given path.
-		 *
-		 * Calculates the next position the instance should move to given the
-		 * the instance's speed.
-		 *
-		 * @param instance A pointer to the instance to move.
-		 * @param path The Path to follow.
-		 * @param speed The speed to move the instance.
-		 * @param nextLocation An out variable which will store the instances next location.
-		 * @param facingLocation An out variable which will store the instances facing location.
-		 * @return true if it was possible to follow the path, false if it was not
-		 */
-		bool followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 
 		/** Adds a session id to the session map.
 		 *
@@ -119,36 +131,25 @@ namespace FIFE {
 		 */
 		void addSessionId(const int32_t sessionId);
 
-		/** Schedules a plan to be created for the given instance to reach the given
-		 * target; the session id is where the plan should be stored
+		/** Makes a new session id.
 		 *
-		 * @param instance is the instance to pathfind for
-		 * @param target is where the instance is going
-		 * @param session_id is which pathfinding slot to put the plan in
-		 * @param priority is the priority of the request
+		 *  @return The new session id.
 		 */
-		void makePlan(const Instance *instance, const Location& target, int32_t session_id, int32_t priority);
-
-		/** make a new session id
-			@return the new session id
-		*/
 		int32_t makeSessionId();
 
-		/** are two locations equivalent from the perspective of pathing */
-		bool locationsEqual(const Location &a, const Location &b);
-
-		/** check whether it's safe to continue moving down the path
-			@param instance is the instance following the path
-			@param path is the path to step through
-			@return true if the path could be followed, false if blocked
-		*/
-		bool testStep(const Instance *instance, Path& path);
+		/** Are two locations equivalent from the perspective of pathing (same layer coordinates and layer).
+		 *
+		 * @param a A const reference to the first location to check.
+		 * @param b A const reference to the second location to check.
+		 * @return A boolean, true if the locations are equal, false otherwise.
+		 */
+		bool locationsEqual(const Location& a, const Location& b);
 
 		/** Determines if the given session Id is valid.
 		 *
 		 * Searches the session list to determine if a search with the given session id
 		 * has been registered.
-		 *
+		 * @param sessionId The session id to check.
 		 * @return true if one has, false otherwise.
 		 */
 		bool sessionIdValid(const int32_t sessionId);
@@ -160,29 +161,17 @@ namespace FIFE {
 		 */
 		bool invalidateSessionId(const int32_t sessionId);
 
-		//The map the search is running on.
-		Map*	       m_map;
+		//! A map of currently running sessions (searches).
+		SessionQueue m_sessions;
 
-		//A map of currently running sessions (searches).
-		SessionQueue   m_sessions;
+		//! A list of session ids that have been registered.
+		SessionList m_registeredSessionIds;
 
-		//A list of session ids that have been registered.
-		SessionList    m_registeredSessionIds;
+		//! The next free session id.
+		int32_t m_nextFreeSessionId;
 
-		//Calculated paths for the movement phase.
-		PathMap		   m_paths;
-
-		//The endpoints for which those paths were calculated
-		LocationMap        m_path_targets;
-
-		//A map of searchspaces.
-		SearchSpaceMap m_searchspaces;
-
-		//The next free session id.
-		int32_t            m_nextFreeSessionId;
-
-		//The maximum number of ticks allowed.
-		int32_t			   m_maxticks;
+		//! The maximum number of ticks allowed.
+		int32_t m_maxTicks;
 	};
 }
 #endif

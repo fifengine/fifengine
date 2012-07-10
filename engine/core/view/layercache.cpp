@@ -174,9 +174,8 @@ namespace FIFE {
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(map_coords);
 		render_item.instance_z = instance->getLocationRef().getExactLayerCoordinates().z;
 
-		render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) +
-			render_item.facing_angle + instance->getRotation();
+		render_item.facing_angle = instance->getRotation();
+		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + render_item.facing_angle;
 
 		ImagePtr image;
 		Action* action = instance->getCurrentAction();
@@ -197,8 +196,7 @@ namespace FIFE {
 		item.force_update = (action != 0);
 
 		if(action) {
-			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(
-				render_item.facing_angle + static_cast<int32_t>(m_camera->getRotation()));
+			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
 			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
 
 			image = animation->getFrameByTimestamp(animation_time);
@@ -206,34 +204,30 @@ namespace FIFE {
 			int32_t action_frame = animation->getActionFrame();
 			if (action_frame != -1) {
 				if (render_item.image != image) {
-					if (action_frame == animation->getFrameIndex(animation_time)) {
+					int32_t new_frame = animation->getFrameIndex(animation_time);
+					if (action_frame == new_frame) {
+						instance->callOnActionFrame(action, action_frame);
+					// if action frame was skipped
+					} else if (new_frame > action_frame && render_item.current_frame < action_frame) {
 						instance->callOnActionFrame(action, action_frame);
 					}
+					render_item.current_frame = new_frame;
 				}
 			}
-
-			int32_t facing_angle = render_item.facing_angle;
-			if (facing_angle < 0){
-				facing_angle += 360;
-			}
-			instance->setRotation(facing_angle);
-			m_needupdate = true;
 		}
 
 		if (image) {
 			w = image->getWidth();
 			h = image->getHeight();
 
-			screen_position.x -= w / 2;
+			screen_position.x -= w / 2.0;
 			screen_position.x += image->getXShift();
-			screen_position.y -= h / 2;
+			screen_position.y -= h / 2.0;
 			screen_position.y += image->getYShift();
 		}
 
 		render_item.image = image;
-		if (render_item.screenpoint == screen_position) {
-			return;
-		}
+
 		m_needupdate = true;
 		render_item.screenpoint = screen_position;
 
@@ -295,7 +289,7 @@ namespace FIFE {
 	class InstanceDistanceSort {
 	public:
 		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
-			if (lhs->screenpoint.z == rhs->screenpoint.z) {
+			if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
 				InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
 				InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
 				return liv->getStackPosition() < riv->getStackPosition();
@@ -305,7 +299,7 @@ namespace FIFE {
 	};
 
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
-		const double OVERDRAW = 2.5;
+		const double OVERDRAW = 1.5;
 		renderlist.clear();
 		m_needupdate = false;
 		if(!m_layer->areInstancesVisible()) {
@@ -328,7 +322,8 @@ namespace FIFE {
 		viewport.h = static_cast<int32_t>(std::max(viewport_a.y, viewport_b.y) - viewport.y);
 		uint8_t layer_trans = m_layer->getLayerTransparency();
 
-		double zmin = 0.0, zmax = 0.0;
+		double zmin = 0.0;
+		double zmax = 0.0;
 
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
 		std::vector<int32_t> index_list;
@@ -365,32 +360,32 @@ namespace FIFE {
 					instance_trans = layer_trans;
 				}
 			}
+			item.transparency = 255 - instance_trans;
 
+			// seems wrong but these rounds fix the "wobbling" and gaps between tiles
+			// in case the zoom is 1.0
+			item.screenpoint.x = round(item.screenpoint.x);
+			item.screenpoint.y = round(item.screenpoint.y);
 			Point3D screen_point = m_camera->virtualScreenToScreen(item.screenpoint);
 			// NOTE:
 			// One would expect this to be necessary here,
 			// however it works the same without, sofar
 			// m_camera->calculateZValue(screen_point);
 			// item.screenpoint.z = -screen_point.z;
-
 			item.dimensions.x = screen_point.x;
 			item.dimensions.y = screen_point.y;
-			item.dimensions.w = item.bbox.w;
-			item.dimensions.h = item.bbox.h;
 
-			item.transparency = 255 - instance_trans;
-
-			if (zoom != 1.0) {
+			if (!Mathd::Equal(zoom, 1.0)) {
 				// NOTE: Due to image alignment, there is additional additions on image dimensions
 				//       There's probabaly some better solution for this, but works "good enough" for now.
 				//       In case additions are removed, gaps appear between tiles.
 				//       This is only needed if the zoom is a non-integer value.
-				if (fmod(zoom, 1.0) != 0.0) {
-					item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
-					item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
+				if (!Mathd::Equal(fmod(zoom, 1.0), 0.0)) {
+					item.dimensions.w = round(double(item.bbox.w) * zoom + OVERDRAW);
+					item.dimensions.h = round(double(item.bbox.h) * zoom + OVERDRAW);
 				} else {
-					item.dimensions.w = unsigned(double(item.bbox.w) * zoom);
-					item.dimensions.h = unsigned(double(item.bbox.h) * zoom);
+					item.dimensions.w = round(double(item.bbox.w) * zoom);
+					item.dimensions.h = round(double(item.bbox.h) * zoom);
 				}
 			}
 

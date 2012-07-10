@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -48,6 +48,7 @@ namespace FIFE {
 	class CellGrid;
 	class Map;
 	class Camera;
+	class Instance;
 
 	/** Listener interface for changes happening on map
 	 */
@@ -147,15 +148,15 @@ namespace FIFE {
 
 			/** Sets speed for the map. See Model::setTimeMultiplier.
 			 */
-			void setTimeMultiplier(float multip) { m_timeprovider.setMultiplier(multip); }
+			void setTimeMultiplier(float multip) { m_timeProvider.setMultiplier(multip); }
 
 			/** Gets model speed. @see setTimeMultiplier.
 			 */
-			float getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
+			float getTimeMultiplier() const { return m_timeProvider.getMultiplier(); }
 
 			/** Gets timeprovider used in the map
 			 */
-			TimeProvider* getTimeProvider() { return &m_timeprovider; }
+			TimeProvider* getTimeProvider() { return &m_timeProvider; }
 
 			/** Adds new change listener
 			* @param listener to add
@@ -169,11 +170,11 @@ namespace FIFE {
 
 			/** Returns true, if map information was changed during previous update round
 			*/
-			bool isChanged() { return !m_changedlayers.empty(); }
+			bool isChanged() { return !m_changedLayers.empty(); }
 
 			/** Returns layers that were changed during previous update round
 			*/
-			std::vector<Layer*>& getChangedLayers() { return m_changedlayers; }
+			std::vector<Layer*>& getChangedLayers() { return m_changedLayers; }
 
 			/** Adds camera to the map. The Map takes ownership of the camera
 				so don't delete it.
@@ -194,33 +195,55 @@ namespace FIFE {
 
 			void setFilename(const std::string& file) { m_filename = file; }
 			const std::string& getFilename() const { return m_filename; }
+			
+			/** Adds instance that is to be transferred to another layer.
+			* @param instance A pointer to the instance that is to be transferred.
+			* @param target A const reference to the target location.
+			*/
+			void addInstanceForTransfer(Instance* instance, const Location& target);
 
+			/** Removes instance that should be transferred to another layer.
+			* @param instance A pointer to the instance that should be transferred.
+			*/
+			void removeInstanceForTransfer(Instance* instance);
+
+			/** Creates cellcaches for this map. Called from maploader.
+			*/
+			void initializeCellCaches();
+
+			/** Creates cellcaches for this map. Called from maploader.
+			*/
+			void finalizeCellCaches();
 		private:
 			std::string m_id;
 			std::string m_filename;
 
 			std::list<Layer*> m_layers;
-			TimeProvider m_timeprovider;
+			TimeProvider m_timeProvider;
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
 
-			// listeners for map changes
-			std::vector<MapChangeListener*> m_changelisteners;
+			//! listeners for map changes
+			std::vector<MapChangeListener*> m_changeListeners;
 
-			// holds changed layers after each update
-			std::vector<Layer*> m_changedlayers;
+			//! holds changed layers after each update
+			std::vector<Layer*> m_changedLayers;
 
-			// holds the cameras attached to this map
+			//! holds the cameras attached to this map
 			std::vector<Camera*> m_cameras;
+			
+			//! pointer to renderbackend
+			RenderBackend* m_renderBackend;
 
-			RenderBackend* m_renderbackend;
-
-			// holds handles to all created renderers
+			//! holds handles to all created renderers
 			std::vector<RendererBase*> m_renderers;
 
-			// true, if something was changed on map during previous update (layer change, creation, deletion)
+			//! true, if something was changed on map during previous update (layer change, creation, deletion)
 			bool m_changed;
+			
+			//! holds instances which should be transferred on the next update
+			std::map<Instance*, Location> m_transferInstances;
 	};
 
 } //FIFE

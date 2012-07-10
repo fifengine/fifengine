@@ -35,7 +35,7 @@
 namespace FIFE {
 	static Logger _log(LM_CELLGRID);
 
-	CellGrid::CellGrid(bool allow_diagonals):
+	CellGrid::CellGrid():
 		FifeClass(),
 		m_matrix(),
 		m_inverse_matrix(),
@@ -45,7 +45,7 @@ namespace FIFE {
 		m_xscale(1),
 		m_yscale(1),
 		m_rotation(0),
-		m_allow_diagonals(allow_diagonals) {
+		m_allow_diagonals(false) {
 		updateMatrices();
 	}
 
@@ -56,9 +56,7 @@ namespace FIFE {
 		coordinates.clear();
 		for (int32_t x = curpos.x - 1; x <= curpos.x + 1; x++) {
 			for (int32_t y = curpos.y - 1; y <= curpos.y + 1; y++) {
-				ModelCoordinate pt;
-				pt.x = x;
-				pt.y = y;
+				ModelCoordinate pt(x, y);
 				if (isAccessible(curpos, pt)) {
 					coordinates.push_back(pt);
 				}

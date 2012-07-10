@@ -71,6 +71,7 @@
 #include "view/renderers/targetrenderer.h"
 #include "view/renderers/lightrenderer.h"
 #include "view/renderers/offrenderer.h"
+#include "view/renderers/cellrenderer.h"
 #include "video/image.h"
 #include "engine.h"
 
@@ -277,6 +278,7 @@ namespace FIFE {
 		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70));
 		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
 		m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
+		m_renderers.push_back(new CellRenderer(m_renderbackend, 100));
 
 		FL_LOG(_log, "Creating model");
 		m_model = new Model(m_renderbackend, m_renderers);

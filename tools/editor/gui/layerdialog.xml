@@ -35,7 +35,11 @@
 			<Label name="transLabel" text="Transparency:" hexpand="0" />
 			<TextField name="transBox" text="0" min_size="45,10" />
 		</HBox>
+
+		<CheckBox name="checkWalkable" text="Walkable" />
+
 	</VBox>
+	
 	
 	<HBox>
 		<Spacer />

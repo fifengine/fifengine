@@ -195,6 +195,10 @@ class MapController(object):
 				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(i)
 				return
 
+	def getLocationsFromSelection(self):
+		""" Returns all locations in the selected cells """
+		return self._selection
+	
 	def getInstance(self):
 		""" Returns a single instance packed into a list (compat to API) """
 		if self._instance:

@@ -35,13 +35,14 @@ namespace std {
 namespace FIFE {
 	class CellGrid {
 	public:
-		CellGrid(bool allow_diagonals=false);
+		CellGrid();
 		virtual ~CellGrid();
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 		virtual const std::string& getType() const = 0;
 		virtual const std::string& getName() const = 0;
 		virtual bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 		virtual double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+		virtual double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 		virtual uint32_t getCellSideCount() const = 0;
 		ExactModelCoordinate toMapCoordinates(const ModelCoordinate& layer_coords);
 		virtual ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) = 0;
@@ -60,13 +61,11 @@ namespace FIFE {
 		const double getYScale() const;
 		void setRotation(const double rotation);
 		const double getRotation() const;
-		void setAllowDiagonals(const bool allow_diagonals);
-		const bool getAllowDiagonals() const;
 	};
 
 	class HexGrid: public CellGrid {
 	public:
-		HexGrid(bool diagonals_accessible=false);
+		HexGrid();
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
@@ -82,7 +81,7 @@ namespace FIFE {
 
 	class SquareGrid: public CellGrid {
 	public:
-		SquareGrid(bool diagonals_accessible=false);
+		SquareGrid();
 		virtual ~SquareGrid();
 
 		const std::string& getType() const;
