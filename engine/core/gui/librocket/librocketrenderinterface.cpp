@@ -51,7 +51,6 @@ namespace FIFE {
 	}
 	
 	void LibRocketRenderInterface::RenderCompiledGeometry(Rocket::Core::CompiledGeometryHandle geometry, const Rocket::Core::Vector2f& translation) {
-		
 	}
 	
 	void LibRocketRenderInterface::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle ROCKET_UNUSED(geometry)) {
@@ -64,5 +63,14 @@ namespace FIFE {
 	
 	void LibRocketRenderInterface::SetScissorRegion(int x, int y, int width, int height)
 	{
+	}
+	
+	bool LibRocketRenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source) {
+	}
+	
+	bool LibRocketRenderInterface::GenerateTexture(Rocket::Core::TextureHandle& texture_handle, const Rocket::Core::byte* source, const Rocket::Core::Vector2i& source_dimensions) {
+	}
+	
+	void LibRocketRenderInterface::ReleaseTexture(Rocket::Core::TextureHandle texture_handle) {
 	}
 };
