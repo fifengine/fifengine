@@ -342,6 +342,12 @@ namespace FIFE {
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 	}
+	
+	void RenderBackendSDL::enableScissorTest() {
+	}
+	
+	void RenderBackendSDL::disableScissorTest() {
+	}
 
 	void RenderBackendSDL::captureScreen(const std::string& filename) {
 		if(m_screen) {

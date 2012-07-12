@@ -260,6 +260,13 @@ namespace FIFE {
 		 */
 		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
 
+		/** Enables scissor test on the render backend.
+		 */
+		virtual void enableScissorTest() = 0;
+		
+		/** Disables scissor test on the render backend.
+		 */
+		virtual void disableScissorTest() = 0;
 
 		/** Enable or disable the alpha 'optimizing' code
 		 *
@@ -352,8 +359,14 @@ namespace FIFE {
 		/** Detaches current render surface
 		 */
 		virtual void detachRenderTarget() = 0;
-
+		
 	protected:
+		
+		/** Sets given clip area into image
+		 *  @see pushClipArea
+		 */
+		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
+		
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
 		bool m_compressimages;
@@ -367,11 +380,6 @@ namespace FIFE {
 
 		bool m_isbackgroundcolor;
 		SDL_Color m_backgroundcolor;
-
-		/** Sets given clip area into image
-		 *  @see pushClipArea
-		 */
-		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea
