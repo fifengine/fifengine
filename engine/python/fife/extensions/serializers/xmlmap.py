@@ -99,8 +99,8 @@ class XMLMapLoader(object):
 		
 		@type	location:	object
 		@param	location:	path to a map file as a fife.ResourceLocation
-		@type	map:	object
-		@return	map:	FIFE map object
+		@return	FIFE map object
+		@rtype	object
 		"""
 		start_time = time.time()
 		self.source = location
@@ -115,13 +115,13 @@ class XMLMapLoader(object):
 
 	def parse_map(self, mapelt):
 		""" start parsing the xml structure and
-		    call submethods for turning found tags
-		    into FIFE objects and create the map
+		call submethods for turning found tags
+		into FIFE objects and create the map
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
-		@type	map:	object
-		@return	map:	FIFE map object		
+		@return	FIFE map object
+		@rtype	object
 		"""
 		if not mapelt:
 			self._err('No <map> element found at top level of map file definition.')
@@ -160,8 +160,8 @@ class XMLMapLoader(object):
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
-		@type	map:	object
-		@map	map:	FIFE map object			
+		@return	FIFE map object			
+		@rtype	object
 		"""
 		parsedImports = {}
 
@@ -203,7 +203,7 @@ class XMLMapLoader(object):
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@map	map:	FIFE map object			
+		@param	map:	FIFE map object			
 		"""		
 		if self.callback is not None:		
 			tmplist = mapelt.findall('layer')
@@ -306,7 +306,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""
 		_LIGHT_DEFAULT_BLENDING_SRC = -1
 		_LIGHT_DEFAULT_BLENDING_DST = -1
@@ -441,7 +441,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""	
 		# to be continued		
 		pass
@@ -452,7 +452,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""			
 		instelt = layerelt.find('instances')
 
@@ -537,15 +537,15 @@ class XMLMapLoader(object):
 	def parse_cameras(self, mapelt, map):
 		""" create all cameras and activate them
 		
-			FIXME:
-				- should the cameras really be enabled here?
-				  IMO that's part of the setup within a client
-				  (we just _load_ things here)
+		FIXME:
+			- should the cameras really be enabled here?
+			  IMO that's part of the setup within a client
+			  (we just _load_ things here)
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@map	map:	FIFE map object			
+		@param	map:	FIFE map object			
 		"""				
 		if self.callback:		
 			tmplist = mapelt.findall('camera')
@@ -599,7 +599,7 @@ class XMLMapLoader(object):
 				
 	def create_light_nodes(self, map):
 		""" loop through all preloaded lights and create them
-			according to their data
+		according to their data
 		
 		@type	map:	object
 		@param	map:	FIFE map object
