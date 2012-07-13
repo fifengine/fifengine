@@ -23,7 +23,8 @@
 #define FIFE_GUI_LIBROCKETRENDERINTERFACE_H
 
 // Standard C++ library includes
-#include <set>
+#include <queue>
+#include <vector>
 
 // 3rd party library includes
 #include <Rocket/Core/RenderInterface.h>
@@ -84,11 +85,30 @@ namespace FIFE {
 		/** Called by Rocket when a loaded texture is no longer required.
 		 */
 		virtual void ReleaseTexture(Rocket::Core::TextureHandle texture_handle);
+		
 	private:
 		
 		RenderBackend* m_renderBackend;
 		
 		ImageManager* m_imageManager;
+		
+		class GeometryCallData {
+		public:
+			std::vector<Rocket::Core::Vertex> vertices;
+			std::vector<int> indices;
+			Rocket::Core::TextureHandle textureHandle;
+			Rocket::Core::Vector2f translation;
+		};
+		
+		typedef std::queue<GeometryCallData> GeometryCallDataChain;
+		
+		class GeometryCall {
+		public:
+			GeometryCallDataChain callChain;
+			Rect scissorArea;
+		};
+		
+		std::queue<GeometryCall> m_geometryCalls;
 	};
 	
 };

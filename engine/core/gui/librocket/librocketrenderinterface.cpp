@@ -54,23 +54,49 @@ namespace FIFE {
 	}
 	
 	void LibRocketRenderInterface::ReleaseCompiledGeometry(Rocket::Core::CompiledGeometryHandle ROCKET_UNUSED(geometry)) {
-		
 	}
 	
-	void LibRocketRenderInterface::EnableScissorRegion(bool enable)
-	{
+	void LibRocketRenderInterface::EnableScissorRegion(bool enable) {
+		if(enable)
+			m_renderBackend->enableScissorTest();
+		else
+			m_renderBackend->disableScissorTest();
 	}
 	
-	void LibRocketRenderInterface::SetScissorRegion(int x, int y, int width, int height)
-	{
+	void LibRocketRenderInterface::SetScissorRegion(int x, int y, int width, int height) {
 	}
 	
 	bool LibRocketRenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source) {
+		
+		std::string filename(source.CString());
+		
+		ImagePtr loadedTexture = m_imageManager->exists(filename) ? 
+		                         m_imageManager->get(filename) :
+		                         m_imageManager->load(filename);
+		
+		texture_handle = static_cast<Rocket::Core::TextureHandle>(loadedTexture->getHandle());
+		texture_dimensions.x = loadedTexture->getWidth();
+		texture_dimensions.y = loadedTexture->getHeight();
+		
+		return true;
 	}
 	
 	bool LibRocketRenderInterface::GenerateTexture(Rocket::Core::TextureHandle& texture_handle, const Rocket::Core::byte* source, const Rocket::Core::Vector2i& source_dimensions) {
+		
+		Image* generatedTexture = m_renderBackend->createImage(source, source_dimensions.x, source_dimensions.y);
+		
+		generatedTexture->setState(IResource::RES_LOADED);
+		m_imageManager->add(generatedTexture);
+		
+		texture_handle = static_cast<Rocket::Core::TextureHandle>(generatedTexture->getHandle());
+		
+		return true;
 	}
 	
 	void LibRocketRenderInterface::ReleaseTexture(Rocket::Core::TextureHandle texture_handle) {
+		
+		ResourceHandle handle = static_cast<ResourceHandle>(texture_handle);
+		ImagePtr texture = m_imageManager->get(handle);
+		texture->free();
 	}
 };

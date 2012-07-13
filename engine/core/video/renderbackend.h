@@ -393,10 +393,12 @@ namespace FIFE {
 		};
 		std::stack<ClipInfo> m_clipstack;
 
+		ClipInfo m_guiClip;
 	private:
 		bool m_isframelimit;
 		uint32_t m_frame_start;
 		uint16_t m_framelimit;
+		
 	};
 }
 
