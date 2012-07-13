@@ -23,6 +23,7 @@
 #define FIFE_GUI_LIBROCKETRENDERINTERFACE_H
 
 // Standard C++ library includes
+#include <list>
 #include <queue>
 #include <vector>
 
@@ -34,6 +35,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/singleton.h"
+#include "util/resource/resource.h"
 
 namespace FIFE {
 	
@@ -86,6 +88,11 @@ namespace FIFE {
 		 */
 		virtual void ReleaseTexture(Rocket::Core::TextureHandle texture_handle);
 		
+		/**
+		 * Frees all textures that are no longer needed by librocket.
+		 */
+		void freeTextures();
+		
 	private:
 		
 		RenderBackend* m_renderBackend;
@@ -104,11 +111,17 @@ namespace FIFE {
 		
 		class GeometryCall {
 		public:
+			
+			GeometryCall() : hasScissorArea(false) { }
+			
 			GeometryCallDataChain callChain;
 			Rect scissorArea;
+			bool hasScissorArea;
 		};
 		
 		std::queue<GeometryCall> m_geometryCalls;
+		
+		std::list<ResourceHandle> m_freedTextures;
 	};
 	
 };

@@ -41,9 +41,32 @@ namespace FIFE {
 	}
 	
 	LibRocketRenderInterface::~LibRocketRenderInterface() {
+		freeTextures();
 	}
 	
 	void LibRocketRenderInterface::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation) {
+		GeometryCallData geometryCallData;
+		
+		for(int i = 0; i < num_vertices; i++) {
+			geometryCallData.vertices.push_back(vertices[i]);
+		}
+		
+		for(int i = 0; i < num_indices; i++) {
+			geometryCallData.indices.push_back(indices[i]);
+		}
+		
+		geometryCallData.textureHandle = texture;
+		geometryCallData.translation = translation;
+		
+		if(m_geometryCalls.empty()) {
+			GeometryCall geometryCall;
+			geometryCall.callChain.push(geometryCallData);
+			
+			m_geometryCalls.push(geometryCall);
+		} else {
+			GeometryCall& geometryCall = m_geometryCalls.front();
+			geometryCall.callChain.push(geometryCallData);
+		}
 	}
 	
 	Rocket::Core::CompiledGeometryHandle LibRocketRenderInterface::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture) {
@@ -64,6 +87,11 @@ namespace FIFE {
 	}
 	
 	void LibRocketRenderInterface::SetScissorRegion(int x, int y, int width, int height) {
+		GeometryCall gc;
+		
+		gc.hasScissorArea = true;
+		gc.scissorArea = Rect(x, y, width, height);
+		m_geometryCalls.push(gc);
 	}
 	
 	bool LibRocketRenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source) {
@@ -95,8 +123,20 @@ namespace FIFE {
 	
 	void LibRocketRenderInterface::ReleaseTexture(Rocket::Core::TextureHandle texture_handle) {
 		
-		ResourceHandle handle = static_cast<ResourceHandle>(texture_handle);
-		ImagePtr texture = m_imageManager->get(handle);
-		texture->free();
+		ResourceHandle rh = static_cast<ResourceHandle>(texture_handle);
+		m_freedTextures.push_back(rh);
+	}
+	
+	void LibRocketRenderInterface::freeTextures() {
+		std::list<ResourceHandle>::iterator it(m_freedTextures.begin());
+		std::list<ResourceHandle>::iterator end(m_freedTextures.end());
+		
+		for(; it != end; ++it) {
+			ResourceHandle rh = (*it);
+			ImagePtr texture = m_imageManager->get(rh);
+			texture->free();
+		}
+		
+		m_freedTextures.clear();
 	}
 };
