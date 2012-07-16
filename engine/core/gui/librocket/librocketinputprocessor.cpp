@@ -28,15 +28,19 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-#include "librocketinputconverter.h"
+#include "librocketinputprocessor.h"
 
 namespace FIFE {
 	
-	LibRocketInputConverter::LibRocketInputConverter(Rocket::Core::Context* context) 
+	LibRocketInputProcessor::LibRocketInputProcessor(Rocket::Core::Context* context) 
 	: m_context(context) {
 		
 	}
 	
-	LibRocketInputConverter::~LibRocketInputConverter() {
+	LibRocketInputProcessor::~LibRocketInputProcessor() {
+	}
+	
+	bool LibRocketInputProcessor::onSdlEvent(SDL_Event& event) {
+		
 	}
 };

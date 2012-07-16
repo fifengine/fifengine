@@ -31,15 +31,15 @@
 #include "video/renderbackend.h"
 
 #include "librocketmanager.h"
-#include "librocketinputconverter.h"
+#include "librocketinputprocessor.h"
 #include "librocketrenderinterface.h"
 
 namespace FIFE {
 	
-	
-	
-	LibRocketManager::LibRocketManager() {
-		m_renderInterface = new LibRocketRenderInterface;
+	LibRocketManager::LibRocketManager()
+	: 
+	m_renderInterface(new LibRocketRenderInterface),
+	m_inputProcessor(NULL) {
 		
 		Rocket::Core::SetSystemInterface(this);
 		Rocket::Core::SetRenderInterface(m_renderInterface);
@@ -48,16 +48,20 @@ namespace FIFE {
 	}
 	
 	LibRocketManager::~LibRocketManager() {
+		//cleanup and shutdown rocket
 		unloadDocuments();
 		m_context->RemoveReference();
 		Rocket::Core::Shutdown();
+		
+		delete m_renderInterface;
+		delete m_inputProcessor;
 	}
 	
 	void LibRocketManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
 		
 		m_context = Rocket::Core::CreateContext("default", Rocket::Core::Vector2i(screenWidth, screenHeight));
 		
-		m_inputConverter = new LibRocketInputConverter(m_context);
+		m_inputProcessor = new LibRocketInputProcessor(m_context);
 	}
 	
 	float LibRocketManager::GetElapsedTime() {
@@ -98,6 +102,7 @@ namespace FIFE {
 	}
 	
 	bool LibRocketManager::onSdlEvent(SDL_Event& evt) {
+		return m_inputProcessor->onSdlEvent(evt);
 	}
 	
 	void LibRocketManager::unloadDocuments() {

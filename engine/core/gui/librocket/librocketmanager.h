@@ -46,7 +46,7 @@ namespace Rocket {
 
 namespace FIFE {
 	
-	class LibRocketInputConverter;
+	class LibRocketInputProcessor;
 	class LibRocketRenderInterface;
 	
 	class LibRocketManager : 
@@ -103,8 +103,10 @@ namespace FIFE {
 		 */
 		virtual void unloadDocument(Rocket::Core::ElementDocument* document);
 		
-		/** Receives input and converts it to librocket format, then it forwards it
-		 * to librocket.
+		/** Forwards the SDL input to the internal input processor.
+		 *
+		 * @param evt The SDL input event.
+		 * @return A boolean value indicating if the event was consumed.
 		 */
 		virtual bool onSdlEvent(SDL_Event& evt);
 		
@@ -125,7 +127,7 @@ namespace FIFE {
 		
 		/** Object that converts SDL input to LibRocket input.
 		 */
-		LibRocketInputConverter *m_inputConverter;
+		LibRocketInputProcessor *m_inputProcessor;
 		
 		/** A set of all open documents.
 		 */

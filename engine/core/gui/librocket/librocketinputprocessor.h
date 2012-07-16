@@ -19,12 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_LIBROCKETINPUTCONVERTER_H
-#define FIFE_GUI_LIBROCKETINPUTCONVERTER_H
+#ifndef FIFE_GUI_LIBROCKETINPUTPROCESSOR_H
+#define FIFE_GUI_LIBROCKETINPUTPROCESSOR_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL/SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -39,16 +40,25 @@ namespace Rocket {
 
 namespace FIFE {
 	
-	class LibRocketInputConverter { 
+	class LibRocketInputProcessor { 
 	public:
 		
 		/** Constructor
 		 */
-		LibRocketInputConverter(Rocket::Core::Context* context);
+		LibRocketInputProcessor(Rocket::Core::Context* context);
 		
 		/** Destructor
 		 */
-		~LibRocketInputConverter();
+		~LibRocketInputProcessor();
+		
+		/**
+		 * Processes SDL input and converts it to librocket input, then forwards it to
+		 * the librocket context.
+		 * 
+		 * @param evt The SDL input.
+		 * @return A boolean value indicating if the event was consumed by librocket or not.
+		 */
+		bool onSdlEvent(SDL_Event &evt);
 		
 	private:
 		
@@ -57,4 +67,4 @@ namespace FIFE {
 	
 };
 
-#endif //FIFE_GUI_LIBROCKETINPUTCONVERTER_H
+#endif //FIFE_GUI_LIBROCKETINPUTPROCESSOR_H
