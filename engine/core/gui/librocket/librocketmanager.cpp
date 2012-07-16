@@ -31,9 +31,12 @@
 #include "video/renderbackend.h"
 
 #include "librocketmanager.h"
+#include "librocketinputconverter.h"
 #include "librocketrenderinterface.h"
 
 namespace FIFE {
+	
+	
 	
 	LibRocketManager::LibRocketManager() {
 		m_renderInterface = new LibRocketRenderInterface;
@@ -53,6 +56,8 @@ namespace FIFE {
 	void LibRocketManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
 		
 		m_context = Rocket::Core::CreateContext("default", Rocket::Core::Vector2i(screenWidth, screenHeight));
+		
+		m_inputConverter = new LibRocketInputConverter(m_context);
 	}
 	
 	float LibRocketManager::GetElapsedTime() {

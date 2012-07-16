@@ -19,9 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_LIBROCKETINPUTCONVERTER_H
-#define FIFE_GUI_LIBROCKETINPUTCONVERTER_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -36,11 +33,10 @@
 namespace FIFE {
 	
 	LibRocketInputConverter::LibRocketInputConverter(Rocket::Core::Context* context) 
-	m_context(context) {
+	: m_context(context) {
 		
 	}
 	
-	
-}
-
-#endif //FIFE_GUI_LIBROCKETINPUTCONVERTER_H
+	LibRocketInputConverter::~LibRocketInputConverter() {
+	}
+};

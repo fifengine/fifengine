@@ -44,17 +44,17 @@ namespace FIFE {
 		
 		/** Constructor
 		 */
-		RocketInputConverter(Rocket::Core::Context* context);
+		LibRocketInputConverter(Rocket::Core::Context* context);
 		
 		/** Destructor
 		 */
-		~RocketInputConverter();
+		~LibRocketInputConverter();
 		
 	private:
 		
 		Rocket::Core::Context* m_context;
 	};
 	
-}
+};
 
 #endif //FIFE_GUI_LIBROCKETINPUTCONVERTER_H

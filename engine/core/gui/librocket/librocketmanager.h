@@ -46,6 +46,7 @@ namespace Rocket {
 
 namespace FIFE {
 	
+	class LibRocketInputConverter;
 	class LibRocketRenderInterface;
 	
 	class LibRocketManager : 
@@ -91,7 +92,7 @@ namespace FIFE {
 		 */
 		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 		
-		/** Loads a rocket .rml file and shows it.
+		/** Loads a rocket .rml file.
 		 * 
 		 * @param documentPath Path to the file.
 		 * @return A document if the .rml file exists, NULL otherwise.
@@ -121,6 +122,10 @@ namespace FIFE {
 		/** Render Interface for librocket.
 		 */
 		LibRocketRenderInterface* m_renderInterface;
+		
+		/** Object that converts SDL input to LibRocket input.
+		 */
+		LibRocketInputConverter *m_inputConverter;
 		
 		/** A set of all open documents.
 		 */
