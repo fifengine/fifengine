@@ -29,9 +29,8 @@ See the L{ApplicationBase} documentation.
 
 from fife import fife
 from fife.extensions import fifelog
-from fife.extensions.basicapplication import ApplicationBase
-from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting
+from fife.extensions.basicapplication import ApplicationBase
 
 class ExitEventListener(fife.IKeyListener):
 	"""
@@ -52,24 +51,29 @@ class ExitEventListener(fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-		elif keyval == fife.Key.F10:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
-			evt.consume()
 
 	def keyReleased(self, evt):
 		pass
 
-class PychanApplicationBase(ApplicationBase):
+class RocketApplicationBase(ApplicationBase):
 	"""
 	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	This class should be extended if you 've build fife with fifechan support, in order to use pychan.
+	This class should be extended if you 've build fife with librocket support.
 	"""
 	def __init__(self, setting=None):
-		super(PychanApplicationBase, self).__init__(setting)
+		super(RocketApplicationBase, self).__init__()
 		
-		pychan.init(self.engine, debug = self._finalSetting['PychanDebug'])
-		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
+		settings = self.engine.getSettings()
+		guimanager = fife.LibRocketManager()
+		
+		#make engine own the gui manager
+		guimanager.thisown = 0
+		
+		guimanager.init(settings.getRenderBackend(), settings.getScreenWidth(), settings.getScreenHeight())
+		self.engine.setGuiManager(guimanager)
+		self.guimanager = guimanager
 		
 	def createListener(self):
 		self._listener = ExitEventListener(self)
 		return self._listener
+

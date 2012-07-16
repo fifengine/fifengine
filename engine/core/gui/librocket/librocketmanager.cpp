@@ -20,21 +20,39 @@
  ***************************************************************************/
 
 // 3rd party library includes
+#include <Rocket/Core.h>
+#include <Rocket/Controls.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timemanager.h"
+#include "video/renderbackend.h"
 
 #include "librocketmanager.h"
+#include "librocketrenderinterface.h"
 
 namespace FIFE {
 	
 	LibRocketManager::LibRocketManager() {
+		m_renderInterface = new LibRocketRenderInterface;
+		
+		Rocket::Core::SetSystemInterface(this);
+		Rocket::Core::SetRenderInterface(m_renderInterface);
+		Rocket::Core::Initialise();
+		Rocket::Controls::Initialise();
 	}
 	
 	LibRocketManager::~LibRocketManager() {
+		unloadDocuments();
+		m_context->RemoveReference();
+		Rocket::Core::Shutdown();
+	}
+	
+	void LibRocketManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
+		
+		m_context = Rocket::Core::CreateContext("default", Rocket::Core::Vector2i(screenWidth, screenHeight));
 	}
 	
 	float LibRocketManager::GetElapsedTime() {
@@ -44,18 +62,48 @@ namespace FIFE {
 	}
 	
 	void LibRocketManager::turn() {
+		m_context->Update();
+		m_context->Render();
+		
+		m_renderInterface->render();
 	}
 	
 	void LibRocketManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	}
 	
 	Rocket::Core::ElementDocument* LibRocketManager::loadDocument(const std::string& documentPath) {
+		Rocket::Core::String rocketDocumentPath(documentPath.c_str());
 		
+		Rocket::Core::ElementDocument* document = m_context->LoadDocument(rocketDocumentPath);
+		
+		if(document != NULL) {
+			m_openDocuments.insert(document);
+		}
+		
+		return document;
 	}
 	
 	void LibRocketManager::unloadDocument(Rocket::Core::ElementDocument* document) {
+		std::set<Rocket::Core::ElementDocument*>::iterator doc(m_openDocuments.find(document));
+		
+		if(doc != m_openDocuments.end()) {
+			document->GetContext()->UnloadDocument(document);
+			m_openDocuments.erase(doc);
+		}
 	}
 	
 	bool LibRocketManager::onSdlEvent(SDL_Event& evt) {
+	}
+	
+	void LibRocketManager::unloadDocuments() {
+		
+		std::set<Rocket::Core::ElementDocument*>::iterator currDoc(m_openDocuments.begin());
+		std::set<Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
+		
+		for(; currDoc != endDocs; ++currDoc) {
+			unloadDocument(*currDoc);
+		}
+		
+		m_openDocuments.clear();
 	}
 };

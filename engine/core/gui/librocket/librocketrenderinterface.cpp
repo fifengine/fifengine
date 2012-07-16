@@ -127,6 +127,55 @@ namespace FIFE {
 		m_freedTextures.push_back(rh);
 	}
 	
+	void LibRocketRenderInterface::render() {
+		
+		while(!m_geometryCalls.empty()) {
+			
+			GeometryCall& currentCall = m_geometryCalls.front();
+			
+			bool clipped = currentCall.hasScissorArea;
+			
+			if(clipped)
+				m_renderBackend->pushClipArea(currentCall.scissorArea, false);
+			
+			while(!currentCall.callChain.empty()) {
+				
+				GeometryCallData& currentCallData = currentCall.callChain.front();
+				
+				glPushMatrix();
+				glTranslatef(currentCallData.translation.x, currentCallData.translation.y, 0);
+
+				glVertexPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].position);
+				glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].colour);
+
+				if (!currentCallData.textureHandle)
+				{
+					glDisable(GL_TEXTURE_2D);
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+				}
+				else
+				{
+					glEnable(GL_TEXTURE_2D);
+					glBindTexture(GL_TEXTURE_2D, (GLuint) currentCallData.textureHandle);
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
+				}
+
+				glDrawElements(GL_TRIANGLES, currentCallData.indices.size(), GL_UNSIGNED_INT, &currentCallData.indices[0]);
+
+				glPopMatrix();
+				
+				currentCall.callChain.pop();
+			}
+			
+			if(clipped)
+				m_renderBackend->popClipArea();
+			
+			m_geometryCalls.pop();
+		}
+		
+	}
+	
 	void LibRocketRenderInterface::freeTextures() {
 		std::list<ResourceHandle>::iterator it(m_freedTextures.begin());
 		std::list<ResourceHandle>::iterator end(m_freedTextures.end());

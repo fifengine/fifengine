@@ -45,6 +45,9 @@ namespace Rocket {
 };
 
 namespace FIFE {
+	
+	class LibRocketRenderInterface;
+	
 	class LibRocketManager : 
 	public Rocket::Core::SystemInterface,
 	public IGUIManager, 
@@ -60,6 +63,11 @@ namespace FIFE {
 		 * Destructor.
 		 */
 		virtual ~LibRocketManager();
+		
+		/**
+		 * Initializes the librocket manager.
+		 */
+		void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 		
         /**
 		 * @NOTE There is an inconsistency in the naming of this method, it's in
@@ -101,9 +109,18 @@ namespace FIFE {
 		
 	private:
 		
-		/** LibRocket's context.
+		/**
+		 * Unloads documents opened by librocket.
+		 */
+		void unloadDocuments();
+		
+		/** Librocket's context.
 		 */
 		Rocket::Core::Context* m_context;
+		
+		/** Render Interface for librocket.
+		 */
+		LibRocketRenderInterface* m_renderInterface;
 		
 		/** A set of all open documents.
 		 */

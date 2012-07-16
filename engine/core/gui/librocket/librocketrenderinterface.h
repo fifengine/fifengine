@@ -36,9 +36,11 @@
 // Second block: files included from the same folder
 #include "util/base/singleton.h"
 #include "util/resource/resource.h"
+#include "util/structures/rect.h"
 
 namespace FIFE {
 	
+	class ImageManager;
 	class RenderBackend;
 	
 	class LibRocketRenderInterface : public Rocket::Core::RenderInterface {
@@ -87,6 +89,11 @@ namespace FIFE {
 		/** Called by Rocket when a loaded texture is no longer required.
 		 */
 		virtual void ReleaseTexture(Rocket::Core::TextureHandle texture_handle);
+		
+		/**
+		 * Renders librocket gui.
+		 */
+		void render();
 		
 		/**
 		 * Frees all textures that are no longer needed by librocket.

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2011 by the FIFE team
-#  http://www.fifengine.net
+#  Copyright (C) 2005-2009 by the FIFE team
+#  http://www.fifengine.de
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -22,24 +22,23 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
 
-from distutils.core import setup
-import os, sys
+class RocketDemo(RocketApplicationBase):
+	
+	def __init__(self):
+		super(RocketDemo, self).__init__()
+		
+		self.doc = self.guimanager.loadDocument('gui/simple.rml')
+		self.doc.Show()
+	
+	def _pump(self):
+		"""
+		Overloaded this function to check for quit message.  Quit if message
+		is received.
+		"""
+		pass
 
-if sys.platform == 'win32':
-	pkg_data = {'fife': ['*.pyd','*.dll'] }
-else:
-	pkg_data = {'fife': ['*.so'] }
-
-
-setup(name='fife',
-      version='0.3.3r3',
-      description='Flexible Isometric Free Engine',
-      url='www.fifengine.net',
-      packages = ['fife', 'fife.extensions', 'fife.extensions.pychan', 'fife.extensions.librocket', 'fife.extensions.pychan.widgets', 'fife.extensions.pychan.dialog', 'fife.extensions.pychan.widgets.ext', 'fife.extensions.serializers' ],
-      package_dir = { '': os.path.join('engine','python') },
-      package_data = pkg_data,
-      data_files = [(os.path.join('lib','site-packages', 'fife'),['AUTHORS','CHANGES', 'COPYING' ,'README'])],
-      license = 'GNU Lesser General Public License, version 2.1'
-      )
-
+if __name__ == '__main__':
+	app = RocketDemo()
+	app.run()
