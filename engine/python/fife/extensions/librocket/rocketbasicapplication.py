@@ -72,6 +72,7 @@ class RocketApplicationBase(ApplicationBase):
 		guimanager.init(settings.getRenderBackend(), settings.getScreenWidth(), settings.getScreenHeight())
 		self.engine.setGuiManager(guimanager)
 		self.guimanager = guimanager
+		self.engine.getEventManager().addSdlEventListener(guimanager)
 		
 	def createListener(self):
 		self._listener = ExitEventListener(self)

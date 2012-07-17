@@ -92,7 +92,7 @@ namespace FIFE {
 		 */
 		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 		
-		/** Loads a rocket .rml file.
+		/** Loads a rocket .rml file and shows it.
 		 * 
 		 * @param documentPath Path to the file.
 		 * @return A document if the .rml file exists, NULL otherwise.
@@ -103,10 +103,8 @@ namespace FIFE {
 		 */
 		virtual void unloadDocument(Rocket::Core::ElementDocument* document);
 		
-		/** Forwards the SDL input to the internal input processor.
-		 *
-		 * @param evt The SDL input event.
-		 * @return A boolean value indicating if the event was consumed.
+		/** Receives input and converts it to librocket format, then it forwards it
+		 * to librocket.
 		 */
 		virtual bool onSdlEvent(SDL_Event& evt);
 		
@@ -125,9 +123,9 @@ namespace FIFE {
 		 */
 		LibRocketRenderInterface* m_renderInterface;
 		
-		/** Object that converts SDL input to LibRocket input.
+		/** Input processor for librocket.
 		 */
-		LibRocketInputProcessor *m_inputProcessor;
+		LibRocketInputProcessor* m_inputProcessor;
 		
 		/** A set of all open documents.
 		 */

@@ -37,10 +37,9 @@
 namespace FIFE {
 	
 	LibRocketManager::LibRocketManager()
-	: 
+	:
 	m_renderInterface(new LibRocketRenderInterface),
 	m_inputProcessor(NULL) {
-		
 		Rocket::Core::SetSystemInterface(this);
 		Rocket::Core::SetRenderInterface(m_renderInterface);
 		Rocket::Core::Initialise();
@@ -48,7 +47,6 @@ namespace FIFE {
 	}
 	
 	LibRocketManager::~LibRocketManager() {
-		//cleanup and shutdown rocket
 		unloadDocuments();
 		m_context->RemoveReference();
 		Rocket::Core::Shutdown();
@@ -102,7 +100,8 @@ namespace FIFE {
 	}
 	
 	bool LibRocketManager::onSdlEvent(SDL_Event& evt) {
-		return m_inputProcessor->onSdlEvent(evt);
+		return (m_inputProcessor != NULL) ? m_inputProcessor->onSdlEvent(evt)
+		                                   : false;
 	}
 	
 	void LibRocketManager::unloadDocuments() {

@@ -27,16 +27,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/log/logger.h"
-#include "video/opengl/glimage.h"
 #include "video/renderbackend.h"
 #include "video/imagemanager.h"
 
 #include "librocketrenderinterface.h"
 
 namespace FIFE {
-	
-	static Logger _log(LM_GUI);
 	
 	LibRocketRenderInterface::LibRocketRenderInterface()
 	:
@@ -146,45 +142,28 @@ namespace FIFE {
 				
 				GeometryCallData& currentCallData = currentCall.callChain.front();
 				
-				/*************************ALL OF THIS WILL BE MOVED TO THE RENDER BACKEND*******************************/
-				
 				glPushMatrix();
 				glTranslatef(currentCallData.translation.x, currentCallData.translation.y, 0);
 
 				glVertexPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].position);
 				glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].colour);
 
-				
-				ImagePtr img = m_imageManager->get(currentCallData.textureHandle);
-				
-				GLImage* glImage = dynamic_cast<GLImage*>(img.get());
-				if(!glImage) {
-					
-					FL_WARN(_log, LMsg() << "No GLImage with resource handle " << currentCallData.textureHandle);
-					
-				} else {
-				
-					ResourceHandle textureHandle = glImage->getTexId();
-				
-					if (textureHandle == 0)
-					{
-						glDisable(GL_TEXTURE_2D);
-						glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-					}
-					else
-					{
-						glEnable(GL_TEXTURE_2D);
-						glBindTexture(GL_TEXTURE_2D, textureHandle);
-						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-						glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
-					}
-					
-					glDrawElements(GL_TRIANGLES, currentCallData.indices.size(), GL_UNSIGNED_INT, &currentCallData.indices[0]);
-
-					glPopMatrix();
+				if (!currentCallData.textureHandle)
+				{
+					glDisable(GL_TEXTURE_2D);
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				}
-				
-				/***********************************************************************************************************/
+				else
+				{
+					glEnable(GL_TEXTURE_2D);
+					glBindTexture(GL_TEXTURE_2D, (GLuint) currentCallData.textureHandle);
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
+				}
+
+				glDrawElements(GL_TRIANGLES, currentCallData.indices.size(), GL_UNSIGNED_INT, &currentCallData.indices[0]);
+
+				glPopMatrix();
 				
 				currentCall.callChain.pop();
 			}
