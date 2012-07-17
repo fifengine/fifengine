@@ -190,10 +190,21 @@ namespace FIFE {
 		 */
 		void setViewPort(const Rect& viewport);
 
-		/** Gets the viewport for camera
+		/** Gets the viewport for camera in pixel coordinates
 		 * @return camera viewport
 		 */
 		const Rect& getViewPort() const;
+
+		/** Gets the viewport for camera in map coordinates
+		 * @return camera viewport
+		 */
+		const Rect& getMapViewPort();
+
+		/** Gets the viewport for camera in layer coordinates
+		 * @param layer A pointer to the layer whose geometry is used for the conversion
+		 * @return camera viewport
+		 */
+		Rect getLayerViewPort(Layer* layer);
 
 		/** Transforms given point from screen coordinates to map coordinates
 		 * @param screen_coords screen coordinates to transform
@@ -407,6 +418,8 @@ namespace FIFE {
 		Location m_location;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
+		Rect m_mapViewPort;
+		bool m_mapViewPortUpdated;
 		bool m_view_updated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;

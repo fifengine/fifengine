@@ -51,6 +51,8 @@ namespace FIFE {
 		Instance* getAttached() const;
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
+		const Rect& getMapViewPort();
+		Rect getLayerViewPort(Layer* layer);
 		void setCellImageDimensions(uint32_t width, uint32_t height);
 		Point getCellImageDimensions();
 		Point3D getZOffset(Layer* layer);

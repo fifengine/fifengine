@@ -848,8 +848,6 @@ namespace FIFE {
 				Cell* c = getCell(current);
 				if (c) {
 					cells.push_back(c);
-				} else {
-					return cells;
 				}
 			}
 		}
