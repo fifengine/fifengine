@@ -87,6 +87,8 @@ namespace FIFE {
 			m_location(),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
+			m_mapViewPort(),
+			m_mapViewPortUpdated(false),
 			m_screen_cell_width(1),
 			m_screen_cell_height(1),
 			m_reference_scale(1),
@@ -260,6 +262,55 @@ namespace FIFE {
 		return m_viewport;
 	}
 
+	const Rect& Camera::getMapViewPort() {
+		if (!m_mapViewPortUpdated) {
+			ScreenPoint sp1(m_viewport.x, m_viewport.y);
+			ScreenPoint sp2(m_viewport.x, m_viewport.y + m_viewport.h);
+			ScreenPoint sp3(m_viewport.x + m_viewport.w, m_viewport.y);
+			ScreenPoint sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
+
+			std::vector<ExactModelCoordinate> coords;
+			coords.push_back(toMapCoordinates(sp2, false));
+			coords.push_back(toMapCoordinates(sp3, false));
+			coords.push_back(toMapCoordinates(sp4, false));
+		
+			ExactModelCoordinate emc = toMapCoordinates(sp1, false);
+			ModelCoordinate min(static_cast<int32_t>(emc.x), static_cast<int32_t>(emc.y));
+			ModelCoordinate max(static_cast<int32_t>(emc.x+0.5), static_cast<int32_t>(emc.y+0.5));
+			std::vector<ExactModelCoordinate>::iterator it = coords.begin();
+			for (; it != coords.end(); ++it) {
+				min.x = std::min(min.x, static_cast<int32_t>((*it).x));
+				min.y = std::min(min.y, static_cast<int32_t>((*it).y));
+				max.x = std::max(max.x, static_cast<int32_t>((*it).x+0.5));
+				max.y = std::max(max.y, static_cast<int32_t>((*it).y+0.5));
+			}
+			// makes the viewport a bit larger
+			m_mapViewPort.x = min.x - 1;
+			m_mapViewPort.y = min.y - 1;
+			m_mapViewPort.w = ABS(max.x - min.x) + 2;
+			m_mapViewPort.h = ABS(max.y - min.y) + 2;
+			m_mapViewPortUpdated = true;
+		}
+
+		return m_mapViewPort;
+	}
+
+	Rect Camera::getLayerViewPort(Layer* layer) {
+		Rect mapView = getMapViewPort();
+		Location loc(layer);
+		ExactModelCoordinate emc(mapView.x, mapView.y);
+		loc.setMapCoordinates(emc);
+		emc.x = mapView.x+mapView.w;
+		emc.y = mapView.y+mapView.h;
+		mapView.x = loc.getLayerCoordinates().x;
+		mapView.y = loc.getLayerCoordinates().y;
+		loc.setMapCoordinates(emc);
+		mapView.w = ABS(loc.getLayerCoordinates().x - mapView.x);
+		mapView.h = ABS(loc.getLayerCoordinates().y - mapView.y);
+
+		return mapView;
+	}
+
 	void Camera::setEnabled(bool enabled) {
 		m_enabled = enabled;
 	}
@@ -308,6 +359,7 @@ namespace FIFE {
 		m_vscreen_2_screen[2*N + 2] = 1;
 		m_screen_2_vscreen = m_vscreen_2_screen.inverse();
 		m_iswarped = true;
+		m_mapViewPortUpdated = false;
 		// FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
 	}

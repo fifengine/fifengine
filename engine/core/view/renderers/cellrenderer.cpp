@@ -116,112 +116,97 @@ namespace FIFE {
 		const bool render_costs = (!m_visualCosts.empty() && m_font);
 		const bool zoomed = !Mathd::Equal(1.0, cam->getZoom());
 
-		// make viewport 25% larger
-		Rect cv = cam->getViewPort();
-		int32_t cvx2 = round((cv.x+cv.w) * 1.25);
-		int32_t cvy2 = round((cv.y+cv.h) * 1.25);
-		cv.x -= round((cv.x+cv.w) * 0.125);
-		cv.y -= round((cv.y+cv.h) * 0.125);
-		cv.w = cvx2;
-		cv.h = cvy2;
-
-		const std::vector<std::vector<Cell*> >& cells = cache->getCells();
-		std::vector<std::vector<Cell*> >::const_iterator it = cells.begin();
-		for (; it != cells.end(); ++it) {
-			std::vector<Cell*>::const_iterator cit = (*it).begin();
-			for (; cit != (*it).end(); ++cit) {
-				ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(FIFE::intPt2doublePt((*cit)->getLayerCoordinates())));
-				// if it's not in cameras view then continue
-				if (sp.x < cv.x || sp.x > cv.x + cv.w ||
-					sp.y < cv.y || sp.y > cv.y + cv.h) {
-					continue;
-				}
-				
-				if (m_blockingEnabled) {
-					if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
-						std::vector<ExactModelCoordinate> vertices;
-						cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-						std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-						int32_t halfind = vertices.size() / 2;
-						ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-						Point pt1(firstpt.x, firstpt.y);
-						Point pt2;
-						++it;
-						for (; it != vertices.end(); it++) {
-							ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-							pt2.x = pts.x;
-							pt2.y = pts.y;
-							m_renderbackend->drawLine(pt1, pt2, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-							pt1 = pt2;
-						}
-						m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-						ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-						Point pt3(spt1.x, spt1.y);
-						ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-						Point pt4(spt2.x, spt2.y);
-						m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
+		Rect layerView = cam->getLayerViewPort(layer);
+		std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+		std::vector<Cell*>::iterator cit = cells.begin();
+		for (; cit != cells.end(); ++cit) {
+			if (m_blockingEnabled) {
+				if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
+					std::vector<ExactModelCoordinate> vertices;
+					cg->getVertices(vertices, (*cit)->getLayerCoordinates());
+					std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+					int32_t halfind = vertices.size() / 2;
+					ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+					Point pt1(firstpt.x, firstpt.y);
+					Point pt2;
+					++it;
+					for (; it != vertices.end(); it++) {
+						ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+						pt2.x = pts.x;
+						pt2.y = pts.y;
+						m_renderbackend->drawLine(pt1, pt2, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
+						pt1 = pt2;
 					}
+					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
+					ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
+					Point pt3(spt1.x, spt1.y);
+					ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
+					Point pt4(spt2.x, spt2.y);
+					m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
 				}
+			}
 				
-				if (render_costs) {
-					bool match = false;
-					double cost;
-					std::set<std::string>::iterator cost_it = m_visualCosts.begin();
-					for (; cost_it != m_visualCosts.end(); ++cost_it) {
-						std::vector<std::string> cell_costs = cache->getCellCosts(*cit);
-						std::vector<std::string>::iterator cc_it = cell_costs.begin();
-						for (; cc_it != cell_costs.end(); ++cc_it) {
-							if (*cc_it == *cost_it) {
-								match = true;
-								cost = cache->getCost(*cost_it);
-								break;
-							}
-						}
-						if (match) {
+			if (render_costs) {
+				bool match = false;
+				double cost;
+				std::set<std::string>::iterator cost_it = m_visualCosts.begin();
+				for (; cost_it != m_visualCosts.end(); ++cost_it) {
+					std::vector<std::string> cell_costs = cache->getCellCosts(*cit);
+					std::vector<std::string>::iterator cc_it = cell_costs.begin();
+					for (; cc_it != cell_costs.end(); ++cc_it) {
+						if (*cc_it == *cost_it) {
+							match = true;
+							cost = cache->getCost(*cost_it);
 							break;
 						}
 					}
 					if (match) {
-						Location loc(layer);
-						loc.setLayerCoordinates((*cit)->getLayerCoordinates());
-						ScreenPoint drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
-
-						std::stringstream stream;
-						stream << cost;
-						Image* img = m_font->getAsImage(stream.str());
-
-						Rect r;
-						if (zoomed) {
-							double zoom = cam->getZoom();
-							r.x = drawpt.x - (img->getWidth()/2) * zoom;
-							r.y = drawpt.y - (img->getHeight()/2) * zoom;
-							r.w = img->getWidth() * zoom;
-							r.h = img->getHeight() * zoom;
-							img->render(r);
-						} else {
-							r.x = drawpt.x - img->getWidth()/2;
-							r.y = drawpt.y - img->getHeight()/2;
-							r.w = img->getWidth();
-							r.h = img->getHeight();
-							img->render(r);
-						}
+						break;
 					}
 				}
+				if (match) {
+					Location loc(layer);
+					loc.setLayerCoordinates((*cit)->getLayerCoordinates());
+					ScreenPoint drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
 
-				if (fow_update) {
-					CellVisualEffect cve = (*cit)->getFoWType();
-					if (cve == CELLV_CONCEALED) {
-						if (m_concealImage.get()) {
-							addConcealImageToMap(cam, Point(sp.x, sp.y), m_concealImage);
-						}
-					} else if (cve == CELLV_MASKED) {
-						if (m_maskImage.get()) {
-							addMaskImageToMap(cam, Point(sp.x, sp.y), m_maskImage);
-						}
+					std::stringstream stream;
+					stream << cost;
+					Image* img = m_font->getAsImage(stream.str());
+					
+					Rect r;
+					if (zoomed) {
+						double zoom = cam->getZoom();
+						r.x = drawpt.x - (img->getWidth()/2) * zoom;
+						r.y = drawpt.y - (img->getHeight()/2) * zoom;
+						r.w = img->getWidth() * zoom;
+						r.h = img->getHeight() * zoom;
+						img->render(r);
+					} else {
+						r.x = drawpt.x - img->getWidth()/2;
+						r.y = drawpt.y - img->getHeight()/2;
+						r.w = img->getWidth();
+						r.h = img->getHeight();
+						img->render(r);
+					}
+				}
+			}
+
+			if (fow_update) {
+				ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(
+					FIFE::intPt2doublePt((*cit)->getLayerCoordinates())));
+				CellVisualEffect cve = (*cit)->getFoWType();
+				if (cve == CELLV_CONCEALED) {
+					if (m_concealImage.get()) {
+						addConcealImageToMap(cam, Point(sp.x, sp.y), m_concealImage);
+					}
+				} else if (cve == CELLV_MASKED) {
+					if (m_maskImage.get()) {
+						addMaskImageToMap(cam, Point(sp.x, sp.y), m_maskImage);
 					}
 				}
 			}
 		}
+
 		if (m_pathVisualEnabled && !m_visualPaths.empty()) {
 			std::vector<Instance*>::iterator it = m_visualPaths.begin();
 			for (; it != m_visualPaths.end(); ++it) {
