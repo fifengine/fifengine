@@ -43,6 +43,7 @@
 #include "video/devicecaps.h"
 
 #include "image.h"
+#include "color.h"
 
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
@@ -359,6 +360,10 @@ namespace FIFE {
 		/** Detaches current render surface
 		 */
 		virtual void detachRenderTarget() = 0;
+		
+		/** Renders geometry required by gui.
+		 */
+		virtual void renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId) = 0;
 		
 	protected:
 		

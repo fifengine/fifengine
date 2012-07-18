@@ -1521,4 +1521,8 @@ namespace FIFE {
 		glMatrixMode(GL_MODELVIEW);
 		glCullFace(GL_BACK); 
 	}
+	
+	void RenderBackendOpenGLe::renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId) {
+		
+	}
 }

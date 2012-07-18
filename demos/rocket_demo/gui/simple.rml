@@ -28,9 +28,9 @@
 	</head>	
 	<body>
 		<handle move_target="#document" style="position: absolute;  right: 0px; top: 0px;"></handle>
-		<p>HELLO WORLDZ!</p>
+		<p>HELLO FIFE!</p>
 		<form>
-			<textarea cols=20 rows=5>Whaddup</textarea>
+			<textarea cols=20 rows=5>NEED TO IMPLEMENT TEXT MANIPULATION! :)</textarea>
 		</form>
 		<handle size_target="#document" style="position: absolute; bottom: 0px; right: 0px;"></handle>
 	</body>

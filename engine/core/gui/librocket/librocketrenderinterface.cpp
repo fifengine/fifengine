@@ -164,7 +164,7 @@ namespace FIFE {
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
 				
-				} else {	
+				} else {
 					glDisable(GL_TEXTURE_2D);
 					glDisableClientState(GL_TEXTURE_COORD_ARRAY);	
 				}

@@ -491,4 +491,8 @@ namespace FIFE {
 	void RenderBackendSDL::detachRenderTarget(){
 		m_target = m_screen;
 	}
+	
+	void RenderBackendSDL::renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId) {
+		
+	}
 }
