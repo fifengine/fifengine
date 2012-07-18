@@ -69,6 +69,8 @@ namespace FIFE {
 	}
 	
 	void LibRocketManager::turn() {
+		m_inputProcessor->turn();
+		
 		m_context->Update();
 		m_context->Render();
 		

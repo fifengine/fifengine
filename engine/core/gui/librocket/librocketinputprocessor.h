@@ -65,6 +65,11 @@ namespace FIFE {
 		 */
 		bool onSdlEvent(SDL_Event &evt);
 		
+		/**
+		 * Called each frame to perform update operations.
+		 */
+		void turn();
+		
 	private:
 		
 	    /** Updates the key mod state bitmask.
@@ -98,6 +103,12 @@ namespace FIFE {
 		/** Bitmask that stores key modifiers.
 		 */
 		uint32_t m_keyModState;
+		
+		/** Counts how many times the wheel has been moved. Negative
+		 * value means that the wheel has been moved abs(m_wheelCounter) upwards,
+		 * positive value means that the wheel has been moved m_wheelCounter times downwards.
+		 */
+		int32_t m_wheelCounter;
 		
 		/** Keymap to convert SDL key to Librocket key.
 		 */

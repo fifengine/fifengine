@@ -37,7 +37,8 @@ namespace FIFE {
 	LibRocketInputProcessor::LibRocketInputProcessor(Rocket::Core::Context* context) 
 	: 
 	m_context(context),
-	m_keyModState(0) {
+	m_keyModState(0),
+	m_wheelCounter(0) {
 		populateKeyMap();
 	}
 	
@@ -109,6 +110,12 @@ namespace FIFE {
 		return consumed;
 	}
 	
+	void LibRocketInputProcessor::turn() {
+		if(m_wheelCounter != 0) {
+			m_context->ProcessMouseWheel(m_wheelCounter, m_keyModState);
+		}
+	}
+	
 	bool LibRocketInputProcessor::processMouseMotion(SDL_Event& event) {
 		
 		int x = static_cast<int>(event.motion.x);
@@ -145,10 +152,22 @@ namespace FIFE {
 	bool LibRocketInputProcessor::processMouseWheelMotion(SDL_Event& event) {
 		
 		if(event.button.button == SDL_BUTTON_WHEELUP) {
-			m_context->ProcessMouseWheel(-1, m_keyModState);
+			if(m_wheelCounter <= 0) {
+				m_wheelCounter--;
+			} else {
+				//the wheel had been moving downwards so sent those movements before reseting the counter
+				m_context->ProcessMouseWheel(m_wheelCounter, m_keyModState);
+				m_wheelCounter = -1;
+			}
 		} 
 		else if(event.button.button == SDL_BUTTON_WHEELDOWN) {
-			m_context->ProcessMouseWheel(1, m_keyModState);
+			if(m_wheelCounter >= 0) {
+				m_wheelCounter++;
+			} else {
+				//the wheel had been moving upwards so sent those movements before reseting the counter
+				m_context->ProcessMouseWheel(m_wheelCounter, m_keyModState);
+				m_wheelCounter = 1;
+			}
 		}
 		
 		return false;
