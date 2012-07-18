@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/imagemanager.h"
+#include "video/opengl/glimage.h"
 
 #include "librocketrenderinterface.h"
 
@@ -148,23 +149,23 @@ namespace FIFE {
 				glVertexPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].position);
 				glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].colour);
 
-				if (!currentCallData.textureHandle)
-				{
-					glDisable(GL_TEXTURE_2D);
-					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				}
-				else
-				{
+				ImagePtr img = m_imageManager->get(currentCallData.textureHandle);
+				GLImage* glImg = dynamic_cast<GLImage*>(img.get());
+				
+				if (glImg != NULL && glImg->getTexId() != 0) {
 					glEnable(GL_TEXTURE_2D);
-					glBindTexture(GL_TEXTURE_2D, (GLuint) currentCallData.textureHandle);
+					glBindTexture(GL_TEXTURE_2D, glImg->getTexId());
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
+				
+				} else {	
+					glDisable(GL_TEXTURE_2D);
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);	
 				}
 
 				glDrawElements(GL_TRIANGLES, currentCallData.indices.size(), GL_UNSIGNED_INT, &currentCallData.indices[0]);
 
 				glPopMatrix();
-				
 				currentCall.callChain.pop();
 			}
 			
