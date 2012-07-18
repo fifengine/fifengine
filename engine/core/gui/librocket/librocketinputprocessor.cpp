@@ -113,6 +113,7 @@ namespace FIFE {
 	void LibRocketInputProcessor::turn() {
 		if(m_wheelCounter != 0) {
 			m_context->ProcessMouseWheel(m_wheelCounter, m_keyModState);
+			m_wheelCounter = 0;
 		}
 	}
 	

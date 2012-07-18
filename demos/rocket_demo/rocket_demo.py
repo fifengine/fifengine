@@ -22,15 +22,44 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from fife import fife
 from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
+import os
 
 class RocketDemo(RocketApplicationBase):
 	
 	def __init__(self):
 		super(RocketDemo, self).__init__()
+	
+		self._loadFonts()
+		self._loadDocuments()
+		self._showDocuments()
+	
+	def _loadFonts(self):
+		font_dir = 'fonts/'
 		
-		self.doc = self.guimanager.loadDocument('gui/simple.rml')
-		self.doc.Show()
+		fonts = [
+					'Delicious-Bold.otf',
+					'Delicious-BoldItalic.otf',
+					'Delicious-Italic.otf',
+					'Delicious-Roman.otf'
+				]
+				
+		for font in fonts:
+			self.guimanager.loadFont(font_dir + font)
+	
+	def _loadDocuments(self):
+		doc_dir = 'gui/'
+		
+		docs =  [
+					'simple.rml'
+				]
+				
+		self._documents = [self.guimanager.loadDocument(doc_dir + doc) for doc in docs if doc]
+		
+	def _showDocuments(self):
+		for doc in self._documents:
+			doc.Show()
 	
 	def _pump(self):
 		"""

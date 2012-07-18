@@ -103,6 +103,13 @@ namespace FIFE {
 		 */
 		virtual void unloadDocument(Rocket::Core::ElementDocument* document);
 		
+		/**
+		 * Loads a font to be used by librocket.
+		 * 
+		 * @param filepath Path of the font.
+		 */
+		virtual void loadFont(const std::string& filepath);
+		
 		/** Receives input and converts it to librocket format, then it forwards it
 		 * to librocket.
 		 */

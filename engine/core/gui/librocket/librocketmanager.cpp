@@ -27,8 +27,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 #include "util/time/timemanager.h"
-#include "video/renderbackend.h"
 
 #include "librocketmanager.h"
 #include "librocketinputprocessor.h"
@@ -98,6 +98,15 @@ namespace FIFE {
 		if(doc != m_openDocuments.end()) {
 			document->GetContext()->UnloadDocument(document);
 			m_openDocuments.erase(doc);
+		}
+	}
+	
+	void LibRocketManager::loadFont(const std::string& filepath) {
+		Rocket::Core::String rocketFontPath(filepath.c_str());
+		
+		bool succeeded = Rocket::Core::FontDatabase::LoadFontFace(rocketFontPath);
+		if(!succeeded) {
+			throw GuiException("Librocket cannot open font: " + filepath);
 		}
 	}
 	

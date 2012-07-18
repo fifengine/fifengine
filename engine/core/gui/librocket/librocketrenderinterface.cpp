@@ -152,9 +152,15 @@ namespace FIFE {
 				ImagePtr img = m_imageManager->get(currentCallData.textureHandle);
 				GLImage* glImg = dynamic_cast<GLImage*>(img.get());
 				
-				if (glImg != NULL && glImg->getTexId() != 0) {
+				GLuint texId = 0;
+				if(glImg != NULL) {
+					glImg->forceLoadInternal();
+					texId = glImg->getTexId();
+				}
+				
+				if (texId != 0) {
 					glEnable(GL_TEXTURE_2D);
-					glBindTexture(GL_TEXTURE_2D, glImg->getTexId());
+					glBindTexture(GL_TEXTURE_2D, texId);
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &currentCallData.vertices[0].tex_coord);
 				
