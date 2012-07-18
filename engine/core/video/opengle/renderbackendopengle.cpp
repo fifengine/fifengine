@@ -1522,7 +1522,7 @@ namespace FIFE {
 		glCullFace(GL_BACK); 
 	}
 	
-	void RenderBackendOpenGLe::renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId) {
+	void RenderBackendOpenGLe::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {
 		
 	}
 }

@@ -87,7 +87,7 @@ namespace FIFE {
 		virtual void attachRenderTarget(ImagePtr& img, bool discard);
 		virtual void detachRenderTarget();
 
-		virtual void renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId);
+		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
 		
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);

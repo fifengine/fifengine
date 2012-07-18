@@ -88,6 +88,13 @@ namespace FIFE {
 		ALWAYS
 	};
 #endif
+	
+	class GuiVertex {
+	public:
+		DoublePoint position;
+		Color color;
+		DoublePoint texCoords;
+	};
 
 	 /** Abstract interface for all the renderbackends. */
 	class RenderBackend: public DynamicSingleton<RenderBackend> {
@@ -363,7 +370,7 @@ namespace FIFE {
 		
 		/** Renders geometry required by gui.
 		 */
-		virtual void renderGuiGeometry(std::vector<DoublePoint>& vertices, std::vector<DoublePoint>& texCoords, std::vector<Color>& colors, std::vector<int> indices, DoublePoint translation, ResourceHandle texId) = 0;
+		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) = 0;
 		
 	protected:
 		

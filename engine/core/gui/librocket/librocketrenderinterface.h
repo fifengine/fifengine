@@ -37,6 +37,9 @@
 #include "util/base/singleton.h"
 #include "util/resource/resource.h"
 #include "util/structures/rect.h"
+#include "util/structures/point.h"
+#include "video/color.h"
+#include "video/renderbackend.h"
 
 namespace FIFE {
 	
@@ -108,10 +111,10 @@ namespace FIFE {
 		
 		class GeometryCallData {
 		public:
-			std::vector<Rocket::Core::Vertex> vertices;
+			std::vector<GuiVertex> vertices;
 			std::vector<int> indices;
-			Rocket::Core::TextureHandle textureHandle;
-			Rocket::Core::Vector2f translation;
+			ResourceHandle textureHandle;
+			DoublePoint translation;
 		};
 		
 		typedef std::queue<GeometryCallData> GeometryCallDataChain;
