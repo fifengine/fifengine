@@ -70,12 +70,12 @@ class ApplicationBase(object):
 		if setting:
 			self._setting = setting
 		else:
-			self._setting =  Setting(app_name="", settings_file="./settings.xml", settings_gui_xml="")
+			self._setting =  Setting(app_name="", settings_file="./settings.xml")
 
 		self.engine = fife.Engine()
 		
 		self.initLogging()
-		self.loadSettings()	
+		self.loadSettings()
 		
 		self.engine.init()
 		

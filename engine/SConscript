@@ -35,11 +35,12 @@ core_path = os.path.join('engine', 'core')
 extensionpath = upath(os.path.join(opts['SRC'], 'python', 'fife', 'extensions'))
 
 fifechan = env['ENABLE_FIFECHAN']
+librocket = env['ENABLE_LIBROCKET']
 
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
-dirfilters = ['swigwrappers', 'fifechan']
+dirfilters = ['swigwrappers', 'fifechan', 'librocket']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -69,13 +70,13 @@ if sys.platform == 'win32':
 		dllfiles.append(utils.relpath(f,opts['DLLPATH']))
 
 #**************************************************************************
-#Compile the list of fifechan glue and pychan code
+#Compile the list of fifechan glue code
 #**************************************************************************
 fifechan_glue_headerfiles = utils.include_by_dir(['fifechan'], headerfiles)
 fifechan_glue_implfiles = utils.include_by_dir(['fifechan'], implfiles)
 fifechan_glue_swigfiles = utils.include_by_dir(['fifechan'], swigfiles)
 
-fifechan_lib_swigfiles = utils.include_by_dir(['lib'], swigfiles)
+fifechan_lib_swigfiles = utils.include_by_dir(['lib'], fifechan_glue_swigfiles)
 
 fifechan_glue_swigfiles = list(set(fifechan_glue_swigfiles).difference(set(fifechan_lib_swigfiles)))
 
@@ -83,7 +84,21 @@ fifechan_glue_swigfiles = list(set(fifechan_glue_swigfiles).difference(set(fifec
 if fifechan:
 	headerfiles = headerfiles + fifechan_glue_headerfiles
 	compilefiles = compilefiles + fifechan_glue_implfiles 
+	
+#**************************************************************************
+#Compile the list of rocket glue code
+#**************************************************************************
+rocket_glue_headerfiles = utils.include_by_dir(['librocket'], headerfiles)
+rocket_glue_implfiles = utils.include_by_dir(['librocket'], implfiles)
+rocket_glue_swigfiles = utils.include_by_dir(['librocket'], swigfiles)
 
+rocket_lib_swigfiles = utils.include_by_dir(['lib'], rocket_glue_swigfiles)
+
+rocket_glue_swigfiles = list(set(rocket_glue_swigfiles).difference(set(rocket_lib_swigfiles)))
+
+if librocket:
+	headerfiles = headerfiles + rocket_glue_headerfiles
+	compilefiles = compilefiles + rocket_glue_implfiles
 #**************************************************************************
 #define the FIFE revision number
 #**************************************************************************
@@ -96,8 +111,10 @@ if opts['FIFE_REVISION'] is not "0":
 
 #if fifechan is enabled 
 if fifechan:
+	#add interface files with fifechan glue code to the standard fife module 
 	intfiles = intfiles + fifechan_glue_swigfiles
 
+	#generate swig interface file for fifechan module
 	utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fifechan.i.templ'), 
 		                                  fifechan_lib_swigfiles,
 		                                  os.path.join(engine_path, 'swigwrappers', 'python'),
@@ -105,7 +122,20 @@ if fifechan:
 	fife_imports.append(os.path.join('swigwrappers', 'python', 'fifechan.i'))
 	fifechan_pyfiles = [os.path.join('swigwrappers', 'python', 'fifechan_wrap.cc')]
 
-#generate swig interface file
+#if librocket is enabled
+if librocket:
+	#add interface files with librocket glue code to the standard fife module 
+	intfiles = intfiles + rocket_glue_swigfiles
+
+	#generate swig interface file for librocket module
+	utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'librocket.i.templ'), 
+		                                  rocket_lib_swigfiles,
+		                                  os.path.join(engine_path, 'swigwrappers', 'python'),
+		                                  'librocket.i')
+	fife_imports.append(os.path.join('swigwrappers', 'python', 'librocket.i'))
+	librocket_pyfiles = [os.path.join('swigwrappers', 'python', 'librocket_wrap.cc')]
+	
+#generate swig interface file for fife module
 utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fife.i.templ'), 
 	          intfiles,
 	          os.path.join(engine_path, 'swigwrappers', 'python'),
@@ -242,6 +272,37 @@ if fifechan:
 	copy_fcn_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fifechan_wrap.cc'),
 							    os.path.join('swigwrappers','python','fifechan_wrap.cc'),
 							    [Copy('$TARGET', '$SOURCE')])
+							    
+							    
+if librocket:
+	librocket_lib_env = env.Clone(LIBS = ['RocketCore', 'RocketControls'])
+
+	librocket_pythonlib = librocket_lib_env.SharedLibrary(target = 'librocket',
+												         source = librocket_pyfiles,
+												         OBJPREFIX='py_',
+												         SHLIBPREFIX='_',
+												         SHLIBSUFFIX=dest_suffix,
+												         SHLIBEMITTER = '')
+
+	librocket_pythonext = librocket_lib_env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'librocket_wrap.cc'),
+														             os.path.join('swigwrappers', 'python' ,'librocket_wrap.h'),
+														             os.path.join('python', 'librocket', 'librocket.py')],
+														   source = os.path.join('swigwrappers', 'python' ,'librocket.i'),
+														   SWIGFLAGS=['-python','-c++','-w511'],
+														   SWIGPATH='core',
+														   SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
+	if opts['DEBUG'] and sys.platform == 'win32':
+		copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_librocket_d' + dest_suffix)
+	else:
+		copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_librocket' + dest_suffix)
+
+	copy_librocket_cmd = env.Command(copy_dest, librocket_pythonlib, [Copy('$TARGET', '$SOURCE')])
+	copy_librocket_cmd2 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'librocket_wrap.h'),
+							    os.path.join('swigwrappers','python','librocket_wrap.h'),
+								[Copy('$TARGET', '$SOURCE')])
+	copy_librocket_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'librocket_wrap.cc'),
+							    os.path.join('swigwrappers','python','librocket_wrap.cc'),
+							    [Copy('$TARGET', '$SOURCE')])
 
 
 #**************************************************************************
@@ -294,12 +355,19 @@ alias_static = Alias('fife-static', staticlib)
 alias_swig_commands = [pythonext, copy_cmd2, copy_cmd3]
 if fifechan:
 	alias_swig_commands = alias_swig_commands + [fifechan_pythonext, copy_fcn_cmd2, copy_fcn_cmd3]
+	
+if librocket:
+	alias_swig_commands = alias_swig_commands + [librocket_pythonext, copy_librocket_cmd2, copy_librocket_cmd3]
+	
 alias_swig = Alias('fife-swig', alias_swig_commands)
 
 alias_python_commands = [pythonlib, copy_cmd, alias_swig]
 if fifechan:
 	alias_python_commands = [fifechan_pythonlib, copy_fcn_cmd] + alias_python_commands
 
+if librocket:
+	alias_python_commands = [librocket_pythonlib, copy_librocket_cmd] + alias_python_commands
+	
 if sys.platform == 'win32':
 	alias_python_commands.append(install_dlls2)
 

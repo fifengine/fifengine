@@ -50,6 +50,12 @@ AddOption('--enable-debug',
 		help='Builds the debug version of the binaries',
 		default=False)
 		
+AddOption('--with-librocket',
+		dest='with-librocket',
+		action='store_true',
+		help='Enable librocket gui sybsystem',
+		default=False)
+		
 AddOption('--without-fifechan',
 		dest='without-fifechan',
 		action="store_true",
@@ -144,6 +150,13 @@ if GetOption('without-fifechan'):
 else:
 	env['ENABLE_FIFECHAN'] = True
 	extra_libs['fifechan'] = True
+	
+if GetOption('with-librocket'):
+	env['ENABLE_LIBROCKET'] = True
+	extra_libs['librocket'] = True
+else:
+	env['ENABLE_LIBROCKET'] = False
+	extra_libs['librocket'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0
@@ -436,8 +449,12 @@ env.Clean("distclean",
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan_wrap.cc'),
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan_wrap.h'),
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan.i'),
+		 os.path.join('engine','swigwrappers', 'python', 'librocket_wrap.cc'),
+		 os.path.join('engine','swigwrappers', 'python', 'librocket_wrap.h'),
+		 os.path.join('engine','swigwrappers', 'python', 'librocket.i'),
 		 os.path.join('engine','python', 'fife', 'fife.py'),
-		 os.path.join('engine','python', 'fife', 'fifechan.py')
+		 os.path.join('engine','python', 'fife', 'fifechan.py'),
+		 os.path.join('engine','python', 'fife', 'librocket.py')
 		])
 
 #**************************************************************************

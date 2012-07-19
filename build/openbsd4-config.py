@@ -55,12 +55,17 @@ def getRequiredLibs(reqLibs):
 
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
+	librocket = reqLibs['librocket']
 	
 	if fifechan:
 		libs.append(('fifechan', 'fifechan.hpp'))
 		libs.append(('fifechan_sdl', ''))
 		if opengl:
 			libs.append(('fifechan_opengl', ''))
+
+	if librocket:
+		libs.append(('RocketCore', 'Rocket/Core.h'))
+		libs.append(('RocketControls', 'Rocket/Controls.h'))
 
 	return libs
 

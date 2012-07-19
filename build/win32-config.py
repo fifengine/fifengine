@@ -56,6 +56,7 @@ def addExtras(env, reqLibs):
 
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
+	librocket = reqLibs['librocket']
 	
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
@@ -63,13 +64,16 @@ def addExtras(env, reqLibs):
 		env.Append(LIBS = ['python27'])
 
 	if fifechan:
-		env.Prepend(LIBS = ['libfifechan_sdl', 'libfifechan']) 
+		env.Prepend(LIBS = ['libfifechan_sdl', 'fifechan']) 
 		if opengl:
 			env.Prepend(LIBS = ['libfifechan_opengl'])
 
 	if opengl:
 		env.Append(LIBS = ['opengl32'])
 
+	if librocket:
+		env.Prepend(LIBS = ['RocketCore', 'RocketControls'])
+		
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
 	

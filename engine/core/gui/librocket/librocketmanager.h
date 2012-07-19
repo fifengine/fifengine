@@ -70,7 +70,7 @@ namespace FIFE {
 		 */
 		void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 		
-        /**
+		/**
 		 * @NOTE There is an inconsistency in the naming of this method, it's in
 		 *        upper camelcase and should have been in lower camelcase but it
 		 *        overrides Rocket::Core::SystemInterface::GetElapsedTime.

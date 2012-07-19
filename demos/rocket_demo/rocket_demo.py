@@ -28,6 +28,7 @@ if os.path.isdir(fife_path) and fife_path not in sys.path:
 	sys.path.insert(0,fife_path)
 
 from fife import fife
+from fife import librocket
 print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
 from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
@@ -65,7 +66,7 @@ class RocketDemo(RocketApplicationBase):
 		
 	def _showDocuments(self):
 		for doc in self._documents:
-			doc.Show()
+			doc.show()
 	
 	def _pump(self):
 		"""

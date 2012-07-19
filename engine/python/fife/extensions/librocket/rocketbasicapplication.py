@@ -29,7 +29,6 @@ See the L{ApplicationBase} documentation.
 
 from fife import fife
 from fife.extensions import fifelog
-from fife.extensions.fife_settings import Setting
 from fife.extensions.basicapplication import ApplicationBase
 
 class ExitEventListener(fife.IKeyListener):

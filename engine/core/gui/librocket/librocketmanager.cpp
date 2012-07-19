@@ -31,8 +31,8 @@
 #include "util/time/timemanager.h"
 
 #include "librocketmanager.h"
-#include "librocketinputprocessor.h"
-#include "librocketrenderinterface.h"
+#include "base/librocketinputprocessor.h"
+#include "base/librocketrenderinterface.h"
 
 namespace FIFE {
 	
