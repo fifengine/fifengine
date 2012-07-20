@@ -106,10 +106,10 @@ class LogManager(object):
 		@param fltr: The filter level
 		
 		Valid values:
-			fife.LogManager.LEVEL_DEBUG
-			fife.LogManager.LEVEL_LOG
-			fife.LogManager.LEVEL_WARN
-   			fife.LogManager.LEVEL_ERROR
+			- L{fife.LogManager.LEVEL_DEBUG}
+			- L{fife.LogManager.LEVEL_LOG}
+			- L{fife.LogManager.LEVEL_WARN}
+   			- L{fife.LogManager.LEVEL_ERROR}
 		"""
 		self.lm.setLevelFilter(fltr)
 

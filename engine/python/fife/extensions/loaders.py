@@ -47,9 +47,8 @@ def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
 	@param	callback:	callback for maploading progress
 	@type	debug:		bool
 	@param	debug:		flag to activate / deactivate print statements
-	
-	@type	map:	object
-	@return	map:	FIFE map object
+	@rtype	object
+	@return	FIFE map object
 	"""
 	(filename, extension) = os.path.splitext(path)
 	map_loader = mapFileMapping[extension[1:]](engine, callback, debug, extensions)

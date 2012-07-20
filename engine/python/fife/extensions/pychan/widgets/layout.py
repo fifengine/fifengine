@@ -34,14 +34,14 @@ class LayoutBase(object):
 	the C{expandContent} methods.
 
 	Dynamic Layouting
-	-----------------
+	=================
 
 	The layout is calculated in the L{Widget.show} method. Thus if you modify the layout,
 	by adding or removing child widgets for example, you have to call L{widgets.Widget.adaptLayout}
 	so that the changes ripple through the widget hierachy.
 
 	Internals
-	---------
+	=========
 
 	At the core the layout engine works in two passes:
 
@@ -258,7 +258,7 @@ class Spacer(object):
 	HBox element (Windows implicitly are VBox elements).
 
 	Attributes
-	----------
+	==========
 
 	As with widgets a number of attributes can be set on a spacer (inside the XML definition).
 	

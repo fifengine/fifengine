@@ -288,8 +288,8 @@ class Widget(object):
 		It might be useful to check out L{tools.callbackWithArguments}.
 
 		@param callback: Event callback - may accept keyword arguments event and widget.
-		@paran event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
-		@paran group_name: Event group.
+		@param event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
+		@param group_name: Event group.
 
 		Event groups are used to have different B{channels} which don't interfere with each other.
 		For derived widgets that need to capture events it's advised to use the group_name 'widget'.
@@ -371,7 +371,7 @@ class Widget(object):
 		If you call adaptLayout on the Label the layout from the VBox 2
 		will get recalculated, while the VBox 1 stays untouched.
 
-		@param recurse Pass False here to force the layout to start from
+		@param recurse: Pass False here to force the layout to start from
 		this widget.
 		"""
 		widget = self
@@ -423,7 +423,7 @@ class Widget(object):
 		their name. This will contain only Widgets which have
 		a name different from "__unnamed__" (which is the default).
 		
-		@param include_unnamed Defaults to false. If this is true unnamed widgets are added, too.
+		@param include_unnamed: Defaults to false. If this is true unnamed widgets are added, too.
 		
 		The values are lists of widgets, so not only unique names
 		are handled correctly.
