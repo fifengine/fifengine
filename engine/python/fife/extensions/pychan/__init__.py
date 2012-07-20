@@ -460,7 +460,7 @@ def setUnicodePolicy(*policy):
 	 - 'replace' all errors are replaced by the next argument.
 
 	For further information look at the python documentation,
-	especially L{codecs.register_error}.
+	especially C{codecs.register_error}.
 
 	Example::
 		pychan.setUnicodePolicy('replace','?')

@@ -97,8 +97,8 @@ def reverse_root_subfile(masterfile, subfile):
 
 def norm_path(path):
 	"""
-	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
-  routines will default to os.path.sep.
+	Makes the path use '/' delimited separators. FIFE always uses these delimiters,
+	but some os-related routines will default to os.path.sep.
 	"""
 	if os.path.sep == '/':
 		return path
