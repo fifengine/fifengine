@@ -98,7 +98,9 @@ namespace FIFE {
 		m_swToHwCCBlistAccel(false),
 		m_swToHwAlphaBlitAccel(false),
 		m_BlitFillAccel(false),
-		m_videoMem(0) {
+		m_videoMem(0),
+		m_desktopWidth(0),
+		m_desktopHeight(0) {
 
 		fillAvailableDrivers();
 	}
@@ -120,6 +122,8 @@ namespace FIFE {
 		m_swToHwAlphaBlitAccel = false;
 		m_BlitFillAccel = false;
 		m_videoMem = 0;
+		m_desktopWidth = 0;
+		m_desktopHeight = 0;
 	}
 
 
@@ -266,6 +270,8 @@ namespace FIFE {
 		m_swToHwAlphaBlitAccel = vInfo->blit_sw_A;
 		m_BlitFillAccel = vInfo->blit_fill;
 		m_videoMem = vInfo->video_mem;
+		m_desktopWidth = vInfo->current_w;
+		m_desktopHeight = vInfo->current_h;
 	}
 
 	ScreenMode DeviceCaps::getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const {
@@ -340,4 +346,11 @@ namespace FIFE {
 		return mode;
 	}
 
+	int32_t DeviceCaps::getDesktopWidth() const {
+		return m_desktopWidth;
+	}
+
+	int32_t DeviceCaps::getDesktopHeight() const {
+		return m_desktopHeight;
+	}
 } //FIFE

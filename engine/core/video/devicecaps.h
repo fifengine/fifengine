@@ -185,6 +185,14 @@ namespace FIFE {
 		 */
 		uint32_t getVideoMemory() const { return m_videoMem; };
 
+		/** Returns the width of the desktop resolution.
+		 */
+		int32_t getDesktopWidth() const;
+
+		/** Returns the height of the desktop resolution.
+		 */
+		int32_t getDesktopHeight() const;
+
 	private:
 		std::vector<ScreenMode> m_screenModes;
 		std::string m_driverName;
@@ -201,6 +209,8 @@ namespace FIFE {
 		bool m_BlitFillAccel;
 
 		uint32_t m_videoMem;
+		int32_t m_desktopWidth;
+		int32_t m_desktopHeight;
 
 		/** Called in the constructor.  No need for anyone to call this
 		 */
