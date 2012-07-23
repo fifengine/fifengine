@@ -448,35 +448,6 @@ class Setting(object):
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
 
-	def applySettings(self):
-		"""
-		Writes the settings file.  If a change requires a restart of the engine
-		it notifies you with a small dialog box.
-		"""
-		for module in self._entries.itervalues():
-			for entry in module.itervalues():
-				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
-				data = widget.getData()
-				
-				# If the data is a list we need to get the correct selected data
-				# from the list. This is needed for e.g. dropdowns or listboxs
-				if type(entry.initialdata) is list:
-					data = entry.initialdata[data]
-
-				# only take action if something really changed
-				if data != self.get(entry.module, entry.name):
-					self.set(entry.module, entry.name, data)
-					entry.onApply(data)
-
-					if entry.requiresrestart:
-						self.changesRequireRestart = True
-
-		self.saveSettings()
-
-		self.OptionsDlg.hide()
-		
-		return self.changesRequireRestart
-
 	def setAvailableScreenResolutions(self, reslist):
 		"""
 		A list of valid default screen resolutions.   This should be called once

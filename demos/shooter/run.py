@@ -42,8 +42,7 @@ from fife.extensions.pychan import widgets
 from fife.extensions.fife_settings import Setting
 
 TDS = Setting(app_name="shooter", 
-              settings_file="./settings.xml", 
-              settings_gui_xml="")
+              settings_file="./settings.xml")
               
 TDS.setAvailableScreenResolutions(["1024x768"])
 

@@ -38,6 +38,7 @@ from scripts import world
 from scripts.common import eventlistenerbase
 from fife.extensions import pychan
 from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 from fife.extensions.pychan import widgets
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_settings import Setting
@@ -52,6 +53,8 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.world = world
 		engine.getEventManager().setNonConsumableKeys([
 			fife.Key.ESCAPE,])
+			
+		self._pychanWidgetSettings = FifePychanSettings(TDS)
 
 		self.quit = False
 		self.aboutWindow = None
@@ -60,7 +63,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.rootpanel.mapEvents({ 
 			'quitButton' : self.onQuitButtonPress,
 			'aboutButton' : self.onAboutButtonPress,
-			'optionsButton' : TDS.onOptionsPress
+			'optionsButton' : self._pychanWidgetSettings.showSettingsDialog
 		})
 		self.rootpanel.show()
 

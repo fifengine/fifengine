@@ -28,7 +28,7 @@ import scripts.plugin as plugin
 from scripts.events import *
 from scripts.gui.action import Action, ActionGroup
 import fife
-from fife.fife import Color
+from fife.fifechan import Color
 from scripts import undomanager
 import scripts.gui
 from scripts.gui.panel import Panel

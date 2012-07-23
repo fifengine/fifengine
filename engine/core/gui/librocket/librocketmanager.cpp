@@ -79,6 +79,7 @@ namespace FIFE {
 	}
 	
 	void LibRocketManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		m_context->SetDimensions(Rocket::Core::Vector2i(width, height));
 	}
 	
 	Rocket::Core::ElementDocument* LibRocketManager::loadDocument(const std::string& documentPath) {

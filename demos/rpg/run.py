@@ -37,8 +37,8 @@ from scripts.rpg import RPGApplication
 
 
 TDS = Setting(app_name="rpg",
-              settings_file="./settings.xml", 
-              settings_gui_xml="")
+              settings_file="./settings.xml")
+
 
 def main():
 	app = RPGApplication(TDS)
