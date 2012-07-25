@@ -3,7 +3,7 @@
 		<style>
 			body
 				{
-				font-family: Delicious;
+				font-family: FreeSans;
 				font-weight: normal;
 				font-style: normal;
 				font-size: 15;
@@ -29,8 +29,9 @@
 	<body>
 		<handle move_target="#document" style="position: absolute;  right: 0px; top: 0px;"></handle>
 		<p>HELLO FIFE!</p>
+		<br />
 		<form>
-			<!--<textarea cols=20 rows=5>NEED TO IMPLEMENT TEXT MANIPULATION! :)</textarea>-->
+			<textarea cols=20 rows=5>Edit me</textarea>
 			<br />
 			<select name="graphics">
 				<option value="bad">Bad</option>

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 #include <Rocket/Core/Context.h>
@@ -176,8 +177,14 @@ namespace FIFE {
 	
 	bool LibRocketInputProcessor::processKeyInput(SDL_Event& event) {
 		
+		uint16_t key = event.key.keysym.unicode;
+		
 		if(event.type == SDL_KEYDOWN) {
-			m_context->ProcessKeyDown(m_keyMap[event.key.keysym.sym], m_keyModState);
+			if(isCharacter(key) || key > 255) {
+				m_context->ProcessTextInput(key);
+			} else {
+				m_context->ProcessKeyDown(m_keyMap[event.key.keysym.sym], m_keyModState);
+			}
 		} else {
 			m_context->ProcessKeyUp(m_keyMap[event.key.keysym.sym], m_keyModState);
 		}
@@ -297,5 +304,11 @@ namespace FIFE {
 		m_keyMap[SDLK_RALT] = Rocket::Core::Input::KI_RMENU;
 		m_keyMap[SDLK_LMETA] = Rocket::Core::Input::KI_LMETA;
 		m_keyMap[SDLK_RMETA] = Rocket::Core::Input::KI_RMETA;
+	}
+	
+	bool LibRocketInputProcessor::isCharacter(uint16_t key) {
+        return (key >= 32 && key <= 126)
+            || (key >= 162 && key <= 255)
+            || (key == 9);
 	}
 };

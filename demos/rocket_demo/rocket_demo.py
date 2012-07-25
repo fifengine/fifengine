@@ -46,10 +46,7 @@ class RocketDemo(RocketApplicationBase):
 		font_dir = 'fonts/'
 		
 		fonts = [
-					'Delicious-Bold.otf',
-					'Delicious-BoldItalic.otf',
-					'Delicious-Italic.otf',
-					'Delicious-Roman.otf'
+					'FreeSans.ttf'
 				]
 				
 		for font in fonts:

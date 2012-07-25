@@ -96,6 +96,11 @@ namespace FIFE {
 		 */
 		void populateKeyMap();
 		
+		/**
+		 * @return If a key is a character or not.
+		 */
+		bool isCharacter(uint16_t key);
+		
 		/** Reference to librocket's context.
 		 */
 		Rocket::Core::Context* m_context;
