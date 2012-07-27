@@ -16,8 +16,6 @@ namespace FIFE {
 		virtual ~LibRocketManager();
 		
 		void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
-		Rocket::Core::ElementDocument* loadDocument(const std::string&);
-		void unloadDocument(Rocket::Core::ElementDocument* document);
 		void loadFont(const std::string& filepath);
 	};
 }

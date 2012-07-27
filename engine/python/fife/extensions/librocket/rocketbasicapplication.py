@@ -31,7 +31,9 @@ from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.basicapplication import ApplicationBase
 
-class ExitEventListener(fife.IKeyListener):
+import rocket
+
+class ExitEventListener(fife.IKeyListener, fife.ICommandListener):
 	"""
 	Default, rudimentary event listener.
 
@@ -44,6 +46,8 @@ class ExitEventListener(fife.IKeyListener):
 		#eventmanager.setNonConsumableKeys([fife.Key.ESCAPE])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
+		fife.ICommandListener.__init__(self)
+		eventmanager.addCommandListener(self)
 		self.quitRequested = False
 
 	def keyPressed(self, evt):
@@ -54,6 +58,11 @@ class ExitEventListener(fife.IKeyListener):
 	def keyReleased(self, evt):
 		pass
 
+	def onCommand(self, command):
+		self.quitRequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
+		if self.quitRequested:
+			command.consume()
+			
 class RocketApplicationBase(ApplicationBase):
 	"""
 	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
@@ -68,12 +77,22 @@ class RocketApplicationBase(ApplicationBase):
 		#make engine own the gui manager
 		guimanager.thisown = 0
 		
+		#initialize gui manager and set it as the engine's active gui manager
 		guimanager.init(settings.getRenderBackend(), settings.getScreenWidth(), settings.getScreenHeight())
 		self.engine.setGuiManager(guimanager)
 		self.guimanager = guimanager
 		self.engine.getEventManager().addSdlEventListener(guimanager)
 		
+		#get reference to the active rocket context
+		self.rocketcontext = rocket.contexts['default']
+		
 	def createListener(self):
 		self._listener = ExitEventListener(self)
 		return self._listener
-
+		
+	def quit(self):
+		#release reference to context
+		self.rocketcontext = None
+		
+		#call parent's quit
+		super(RocketApplicationBase, self).quit()

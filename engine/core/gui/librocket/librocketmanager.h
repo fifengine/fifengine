@@ -137,7 +137,7 @@ namespace FIFE {
 		/** A set of all open documents.
 		 */
 		std::set<Rocket::Core::ElementDocument*> m_openDocuments;
-		
+
 	};
 };
 

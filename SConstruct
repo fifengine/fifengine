@@ -449,12 +449,8 @@ env.Clean("distclean",
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan_wrap.cc'),
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan_wrap.h'),
 		 os.path.join('engine','swigwrappers', 'python', 'fifechan.i'),
-		 os.path.join('engine','swigwrappers', 'python', 'librocket_wrap.cc'),
-		 os.path.join('engine','swigwrappers', 'python', 'librocket_wrap.h'),
-		 os.path.join('engine','swigwrappers', 'python', 'librocket.i'),
 		 os.path.join('engine','python', 'fife', 'fife.py'),
-		 os.path.join('engine','python', 'fife', 'fifechan.py'),
-		 os.path.join('engine','python', 'fife', 'librocket.py')
+		 os.path.join('engine','python', 'fife', 'fifechan.py')
 		])
 
 #**************************************************************************
