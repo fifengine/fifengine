@@ -41,7 +41,13 @@ class RocketDemo(RocketApplicationBase):
 		self._loadFonts()
 		self._loadDocuments()
 		self._showDocuments()
-	
+		
+		def _onClick():
+			print 'Clicked!'
+			
+		element = self._documents[0].getElementById('x')
+
+		
 	def _loadFonts(self):
 		font_dir = 'fonts/'
 		
@@ -59,7 +65,7 @@ class RocketDemo(RocketApplicationBase):
 					'simple.rml'
 				]
 				
-		self._documents = [self.guimanager.loadDocument(doc_dir + doc) for doc in docs if doc]
+		self._documents = [for x in [self.guimanager.loadDocument(doc_dir + doc) for doc in docs] if x]
 		
 	def _showDocuments(self):
 		for doc in self._documents:
