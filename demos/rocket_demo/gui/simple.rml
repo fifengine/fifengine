@@ -46,7 +46,7 @@
 			</select>
 		</form>
 		<br />
-		<button id='x' value="Press me!" onclick="print 'HelloWorld!'">Press Me!</button>
+		<button id='x' value="Press me!">Press Me!</button>
 		<handle size_target="#document" style="position: absolute; bottom: 0px; right: 0px;"></handle>
 	</body>
 </rml>

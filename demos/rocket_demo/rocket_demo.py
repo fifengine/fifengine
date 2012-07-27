@@ -28,7 +28,8 @@ if os.path.isdir(fife_path) and fife_path not in sys.path:
 	sys.path.insert(0,fife_path)
 
 from fife import fife
-from fife import librocket
+import rocket
+
 print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
 from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
@@ -37,7 +38,7 @@ class RocketDemo(RocketApplicationBase):
 	
 	def __init__(self):
 		super(RocketDemo, self).__init__()
-	
+		
 		self._loadFonts()
 		self._loadDocuments()
 		self._showDocuments()
@@ -45,9 +46,8 @@ class RocketDemo(RocketApplicationBase):
 		def _onClick():
 			print 'Clicked!'
 			
-		element = self._documents[0].getElementById('x')
+		element = self._documents[0].GetElementById('x')
 
-		
 	def _loadFonts(self):
 		font_dir = 'fonts/'
 		
@@ -65,18 +65,19 @@ class RocketDemo(RocketApplicationBase):
 					'simple.rml'
 				]
 				
-		self._documents = [for x in [self.guimanager.loadDocument(doc_dir + doc) for doc in docs] if x]
+		self._documents = [x for x in [self.rocketcontext.LoadDocument(doc_dir + doc) for doc in docs] if x]
 		
 	def _showDocuments(self):
 		for doc in self._documents:
-			doc.show()
+			doc.Show()
 	
 	def _pump(self):
 		"""
 		Overloaded this function to check for quit message.  Quit if message
 		is received.
 		"""
-		pass
+		if self._listener.quitRequested:
+			self.quit()
 
 if __name__ == '__main__':
 	app = RocketDemo()
