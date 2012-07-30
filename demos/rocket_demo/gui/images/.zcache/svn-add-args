@@ -1,0 +1,1 @@
+args=( '--targets:arg:' '(--non-recursive)-N' '(-N)--non-recursive' '--depth:arg:' '(--quiet)-q' '(-q)--quiet' '--force' '--no-ignore' '--auto-props' '--no-auto-props' '--parents' '--username:arg:' '--password:arg:' '--no-auth-cache' '--non-interactive' '--trust-server-cert' '--config-dir:arg:' '--config-option:arg:' )

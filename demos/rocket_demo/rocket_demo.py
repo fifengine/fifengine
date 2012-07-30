@@ -44,6 +44,7 @@ class RocketDemo(RocketApplicationBase):
 	def __init__(self):
 		super(RocketDemo, self).__init__()
 		
+		self.guimanager.showDebugger()
 		self._loadFonts()
 		self._loadDocuments()
 		self._showDocuments()

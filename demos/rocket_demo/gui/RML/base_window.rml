@@ -13,7 +13,7 @@ def onLoadWindow(element):
 		</handle>
 	</div>
 	<div id="window">
-		<div id="contents">
+		<div id="content">
 		</div>
 	</div>
 </body>

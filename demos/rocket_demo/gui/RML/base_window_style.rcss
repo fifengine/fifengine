@@ -16,8 +16,6 @@ body.window
 	
 	background-decorator: image;
 	background-image: ../images/title_bar.png;
-	
-	padding: 10px 15px;
 }
 
 div
@@ -31,8 +29,8 @@ div#title_bar
 	top: -2px;
 	left: -2px;
 
-	min-width: 100%;
-	min-height: 5%;
+	width: 100%;
+	height: 5%;
 	
 	border-width: 2px; 
 	
@@ -40,6 +38,23 @@ div#title_bar
 	
 	background-decorator: image;
 	background-image: ../images/title_bar.png;
+}
+
+div#window
+{
+	position: relative;
+	top: 5%;
+	
+	width: 100%;
+	height: 95%;
+}
+
+div#content
+{
+	display: inline-block;
+
+	width: 100%;
+	height: 100%;
 }
 
 div#title_bar span
