@@ -1,0 +1,10 @@
+<rml>
+	<head>
+		<title>Buttons Demonstration</title>
+		<link type="text/template" href="base_window.rml"/>
+		<style>
+		</style>
+	</head>
+	<body template="window">
+	</body>
+</rml>

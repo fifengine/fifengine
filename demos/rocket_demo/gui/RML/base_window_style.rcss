@@ -1,0 +1,19 @@
+body
+{
+	font-family: FreeSans;
+	font-size: 16;
+	color: white;
+}
+
+body.window 
+{
+	background-color: red;
+	width: 400;
+	height: 600;
+}
+
+div#title_bar
+{
+	color: white;
+	background-color: black;
+}

@@ -28,7 +28,6 @@ See the L{ApplicationBase} documentation.
 """
 
 from fife import fife
-from fife.extensions import fifelog
 from fife.extensions.basicapplication import ApplicationBase
 
 import rocket
@@ -66,7 +65,8 @@ class ExitEventListener(fife.IKeyListener, fife.ICommandListener):
 class RocketApplicationBase(ApplicationBase):
 	"""
 	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	This class should be extended if you 've build fife with librocket support.
+	This class should be extended if you 've built fife with librocket support and want to create a game
+	using it.
 	"""
 	def __init__(self, setting=None):
 		super(RocketApplicationBase, self).__init__()
@@ -91,7 +91,7 @@ class RocketApplicationBase(ApplicationBase):
 		return self._listener
 		
 	def quit(self):
-		#release reference to context
+		#release reference to rocket context
 		self.rocketcontext = None
 		
 		#call parent's quit

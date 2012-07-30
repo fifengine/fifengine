@@ -1,0 +1,17 @@
+<template name="window" content="content">
+<head>
+	<link type="text/rcss" href="base_window_style.rcss"/>
+	<script>
+def onLoadWindow(element):
+	print self.title
+	self.owner_document.GetElementById('title').inner_rml = self.title
+	</script>
+</head>
+<body class="window" onload="onLoadWindow(self)">
+	<div id="title_bar">
+		<handle move_target="#document">
+			<span id="title">Dummy Title</span>
+		</handle>
+	</div>
+</body>
+</template>

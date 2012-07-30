@@ -59,10 +59,10 @@ class RocketDemo(RocketApplicationBase):
 			self.guimanager.loadFont(font_dir + font)
 	
 	def _loadDocuments(self):
-		doc_dir = 'gui/'
+		doc_dir = 'gui/RML/'
 		
 		docs =  [
-					'simple.rml'
+					'buttons.rml'
 				]
 				
 		self._documents = [x for x in [self.rocketcontext.LoadDocument(doc_dir + doc) for doc in docs] if x]
