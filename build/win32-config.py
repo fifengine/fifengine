@@ -43,6 +43,9 @@ def initEnvironment(env):
 	if env['ENABLE_FIFECHAN']:
 		env.Append(CPPPATH = [includepath + '\\libfifechan'])
 	
+	if env['ENABLE_LIBROCKET']:
+		env.Append(CPPPATH = [includepath + '\\Rocket'])
+	
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
 	env.Tool('swig')
@@ -72,7 +75,11 @@ def addExtras(env, reqLibs):
 		env.Append(LIBS = ['opengl32'])
 
 	if librocket:
-		env.Prepend(LIBS = ['RocketCore', 'RocketControls'])
+		rocket_libs = ['RocketCore', 'RocketControls']
+		if env['FIFE_DEBUG']:
+			rocket_libs.append('RocketDebugger')
+		
+		env.Prepend(LIBS = rocket_libs)
 		
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])

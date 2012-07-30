@@ -17,5 +17,8 @@ namespace FIFE {
 		
 		void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 		void loadFont(const std::string& filepath);
+		
+		void showDebugger() const;
+		void hideDebugger() const;
 	};
 }

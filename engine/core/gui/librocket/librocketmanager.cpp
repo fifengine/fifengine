@@ -23,6 +23,10 @@
 #include <Rocket/Core.h>
 #include <Rocket/Controls.h>
 
+#ifdef _DEBUG
+#include <Rocket/Debugger.h>
+#endif
+
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
@@ -58,6 +62,10 @@ namespace FIFE {
 	void LibRocketManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
 		
 		m_context = Rocket::Core::CreateContext("default", Rocket::Core::Vector2i(screenWidth, screenHeight));
+		
+#ifdef _DEBUG
+		Rocket::Debugger::Initialise(m_context);
+#endif
 		
 		m_inputProcessor = new LibRocketInputProcessor(m_context);
 	}
@@ -115,6 +123,22 @@ namespace FIFE {
 	bool LibRocketManager::onSdlEvent(SDL_Event& evt) {
 		return (m_inputProcessor != NULL) ? m_inputProcessor->onSdlEvent(evt)
 		                                   : false;
+	}
+	
+	void LibRocketManager::showDebugger() const {
+#ifdef _DEBUG
+		if(!Rocket::Debugger::IsVisible()) {
+			Rocket::Debugger::SetVisible(true);
+		}
+#endif
+	}
+	
+	void LibRocketManager::hideDebugger() const {
+#ifdef _DEBUG
+		if(Rocket::Debugger::IsVisible()) {
+			Rocket::Debugger::SetVisible(false);
+		}
+#endif
 	}
 	
 	void LibRocketManager::unloadDocuments() {

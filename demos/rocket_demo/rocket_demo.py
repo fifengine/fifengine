@@ -33,7 +33,12 @@ import rocket
 print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
 from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
+from fife.extensions.librocket.rocketbasicapplication import RocketEventListener
 
+class RocketDemoEventListener(RocketEventListener):
+	def __init__(self, app):
+		super(RocketDemoEventListener, self).__init__(app)
+		
 class RocketDemo(RocketApplicationBase):
 	
 	def __init__(self):
@@ -42,11 +47,6 @@ class RocketDemo(RocketApplicationBase):
 		self._loadFonts()
 		self._loadDocuments()
 		self._showDocuments()
-		
-		def _onClick():
-			print 'Clicked!'
-			
-		element = self._documents[0].GetElementById('x')
 
 	def _loadFonts(self):
 		font_dir = 'fonts/'
@@ -65,7 +65,8 @@ class RocketDemo(RocketApplicationBase):
 					'buttons.rml'
 				]
 				
-		self._documents = [x for x in [self.rocketcontext.LoadDocument(doc_dir + doc) for doc in docs] if x]
+		for doc in docs:
+			self._documents = [self.rocketcontext.LoadDocument(doc_dir + doc) for doc in docs]
 		
 	def _showDocuments(self):
 		for doc in self._documents:
@@ -76,9 +77,20 @@ class RocketDemo(RocketApplicationBase):
 		Overloaded this function to check for quit message.  Quit if message
 		is received.
 		"""
-		if self._listener.quitRequested:
+		if self._listener.quitrequested:
 			self.quit()
 
+	def quit(self):
+		for doc in self._documents:
+			self.rocketcontext.UnloadDocument(doc)
+		self._documents = []
+		
+		super(RocketDemo, self).quit()
+			
+	def createListener(self):
+		self._listener = RocketDemoEventListener(self)
+		return self._listener
+			
 if __name__ == '__main__':
 	app = RocketDemo()
 	app.run()

@@ -10,10 +10,43 @@ body.window
 	background-color: red;
 	width: 400;
 	height: 600;
+	
+	border-width: 2px;
+	border-color: black;
+	
+	background-decorator: image;
+	background-image: ../images/title_bar.png;
+	
+	padding: 10px 15px;
+}
+
+div
+{
+	display: block;
 }
 
 div#title_bar
+{	
+	position: absolute;
+	top: -2px;
+	left: -2px;
+
+	min-width: 100%;
+	min-height: 5%;
+	
+	border-width: 2px; 
+	
+	text-align: center;
+	
+	background-decorator: image;
+	background-image: ../images/title_bar.png;
+}
+
+div#title_bar span
 {
-	color: white;
-	background-color: black;
+	text-shadow: 2px 2px black;
+
+	outline-font-effect: outline;
+	outline-width: 1px;
+	outline-color: black;
 }

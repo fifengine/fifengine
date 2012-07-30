@@ -3,8 +3,27 @@
 		<title>Buttons Demonstration</title>
 		<link type="text/template" href="base_window.rml"/>
 		<style>
+			body
+			{
+				margin: auto;
+			}
+		
+			button.simple 
+			{
+				display: inline-block;
+				
+				width: 100px;
+				height: 50px;
+				background-color: red;
+			}
 		</style>
 	</head>
-	<body template="window">
+	<body id="buttons_demo" template="window">
+		<div id="simple_buttons">
+			<button class="simple">New Game</button><br/>
+			<button class="simple">Load Game</button><br/>
+			<button class="simple">Preferences</button><br/>
+			<button class="simple">Quit</button><br/>
+		</div>
 	</body>
 </rml>

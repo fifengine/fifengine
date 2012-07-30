@@ -51,7 +51,7 @@ def initEnvironment(env):
 
 def addExtras(env, opengl):
 	env.Append(LIBS = pythonversion)
-
+	
 	if opengl:
 		env.Append(LIBS = ['stdc++', 'GL',])
 		env.Append(LIBPATH = os.path.join('/', 'usr', 'X11R6', 'lib'))
@@ -98,6 +98,9 @@ def getRequiredLibs(reqLibs):
 	if librocket:
 		libs.append(('RocketCore', 'Rocket/Core.h'))
 		libs.append(('RocketControls', 'Rocket/Controls.h'))
+		librocket_debug = reqLibs['librocket-debug']
+		if librocket_debug:
+			libs.append(('RocketDebugger', 'Rocket/Debugger.h'))
 	
 	return libs
 

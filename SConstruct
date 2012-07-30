@@ -154,9 +154,14 @@ else:
 if GetOption('with-librocket'):
 	env['ENABLE_LIBROCKET'] = True
 	extra_libs['librocket'] = True
+	if debug:
+		extra_libs['librocket-debug'] = True
+	else:
+		extra_libs['librocket-debug'] = False
 else:
 	env['ENABLE_LIBROCKET'] = False
 	extra_libs['librocket'] = False
+	extra_libs['librocket-debug'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0

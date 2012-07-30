@@ -66,6 +66,9 @@ def getRequiredLibs(reqLibs):
 	if librocket:
 		libs.append(('RocketCore', 'Rocket/Core.h'))
 		libs.append(('RocketControls', 'Rocket/Controls.h'))
+		librocket_debug = reqLibs['librocket-debug']
+		if librocket_debug:
+			libs.append(('RocketDebugger', 'Rocket/Debugger.h'))
 
 	return libs
 

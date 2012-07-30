@@ -32,7 +32,7 @@ from fife.extensions.basicapplication import ApplicationBase
 
 import rocket
 
-class ExitEventListener(fife.IKeyListener, fife.ICommandListener):
+class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
 	"""
 	Default, rudimentary event listener.
 
@@ -47,19 +47,29 @@ class ExitEventListener(fife.IKeyListener, fife.ICommandListener):
 		eventmanager.addKeyListener(self)
 		fife.ICommandListener.__init__(self)
 		eventmanager.addCommandListener(self)
-		self.quitRequested = False
-
+		self.quitrequested = False
+		self.debuggeractive = False
+		
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
+		
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
 
 	def keyReleased(self, evt):
-		pass
+		keyval = evt.getKey().getValue()
+		
+		if keyval == fife.Key.F12:
+			if not self.debuggeractive:
+				self.app.guimanager.showDebugger()
+				self.debuggeractive = True
+			else:
+				self.app.guimanager.hideDebugger()
+				self.debuggeractive = False
 
 	def onCommand(self, command):
-		self.quitRequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quitRequested:
+		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
+		if self.quitrequested:
 			command.consume()
 			
 class RocketApplicationBase(ApplicationBase):
@@ -87,10 +97,13 @@ class RocketApplicationBase(ApplicationBase):
 		self.rocketcontext = rocket.contexts['default']
 		
 	def createListener(self):
-		self._listener = ExitEventListener(self)
+		self._listener = RocketEventListener(self)
 		return self._listener
 		
 	def quit(self):
+		self.rocketcontext.UnloadAllDocuments()
+		self.rocketcontext.UnloadAllMouseCursors()
+
 		#release reference to rocket context
 		self.rocketcontext = None
 		

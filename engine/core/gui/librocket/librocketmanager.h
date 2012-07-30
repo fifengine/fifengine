@@ -115,6 +115,15 @@ namespace FIFE {
 		 */
 		virtual bool onSdlEvent(SDL_Event& evt);
 		
+		/** Shows the librocket debugger.
+		 */
+		void showDebugger() const;
+		
+		/**
+		 * Hides the librocket debugger.
+		 */
+		void hideDebugger() const;
+		
 	private:
 		
 		/**
