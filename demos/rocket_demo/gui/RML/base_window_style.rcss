@@ -13,9 +13,8 @@ body.window
 	
 	border-width: 2px;
 	border-color: black;
-	
-	background-decorator: image;
-	background-image: ../images/title_bar.png;
+
+	background-color: #587186ff;
 }
 
 div
@@ -36,8 +35,7 @@ div#title_bar
 	
 	text-align: center;
 	
-	background-decorator: image;
-	background-image: ../images/title_bar.png;
+	background-color: #3a4d58ff;
 }
 
 div#window
@@ -54,7 +52,14 @@ div#content
 	display: inline-block;
 
 	width: 100%;
-	height: 100%;
+	height: 90%;
+}
+
+div#arrows
+{
+	display: inline-block;
+	width: 100%;
+	height: 10%;
 }
 
 div#title_bar span

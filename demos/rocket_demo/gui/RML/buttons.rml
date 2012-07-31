@@ -21,11 +21,9 @@
 			div#simple_buttons
 			{
 				display: block;
-				
+
 				width: 50%;
 				height: 100%;
-				
-				border-right: 2px;
 			}
 			
 			div#image_buttons
@@ -49,6 +47,7 @@
 				width: 100px;
 				height: 50px;
 				background-color: gray;
+				color:  white;
 				
 				border-width: 1px;
 				border-color: black;
@@ -66,7 +65,7 @@
 			
 			button.simple:active
 			{
-				background-color: black;
+				background-color: #081c27ff;
 			
 				font-weight: bold;
 				shadow-font-effect: shadow;
@@ -88,7 +87,7 @@
 				background-decorator: image;
 				background-image: ../images/button.png 0px 0px 100px 50px;
 				
-				color: black;
+				color: #272727ff;
 				
 				text-align: center;
 			}
@@ -106,7 +105,7 @@
 				background-image: ../images/button_p.png;
 			}
 			
-			button.image span.btnText
+			span.btnText
 			{
 				display: block;
 			
@@ -120,10 +119,10 @@
 	<body id="buttons_demo" template="window">
 		<div id="simple_buttons">
 			<div class="desc">Rendered using the GPU</div>
-			<button class="simple">New Game</button><br/>
-			<button class="simple">Load Game</button><br/>
-			<button class="simple">Preferences</button><br/>
-			<button class="simple">Quit</button><br/>
+			<button class="simple"><span class="btnText">New Game</span></button><br/>
+			<button class="simple"><span class="btnText">Load Game</span></button><br/>
+			<button class="simple"><span class="btnText">Preferences</span></button><br/>
+			<button class="simple"><span class="btnText">Quit</span></button><br/>
 		</div>
 		<div id="image_buttons">
 			<div class="desc">Pre-rendered images</div>

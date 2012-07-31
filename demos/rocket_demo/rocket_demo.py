@@ -38,6 +38,7 @@ from fife.extensions.librocket.rocketbasicapplication import RocketEventListener
 class RocketDemoEventListener(RocketEventListener):
 	def __init__(self, app):
 		super(RocketDemoEventListener, self).__init__(app)
+		self.debuggeractive = True
 		
 class RocketDemo(RocketApplicationBase):
 	

@@ -1,6 +1,47 @@
 <template name="window" content="content">
 <head>
 	<link type="text/rcss" href="base_window_style.rcss"/>
+	<style>
+		div#empty_space
+		{
+			display: block;
+			
+			width: 100%;
+			height:  5%;
+			
+			background-color: black;
+			z-index: 2;
+		}
+	
+		button#next_arrow
+		{
+			display: block;
+		
+			position: relative;
+			left: 80%;
+			top: -65%;
+		
+			width: 70px;
+			height: 35px;
+		
+			background-decorator: image;
+			background-image: ../images/arrows.png 210px 190px 0px 0px;
+		}
+		
+		button#prev_arrow
+		{
+			display: block;
+
+			position: relative;
+			left: 10px;
+
+			width: 70px;
+			height: 35px;
+			
+			background-decorator: image;
+			background-image: ../images/arrows.png 0px 0px 200px 180px;
+		}
+	</style>
 	<script>
 def onLoadWindow(element):
 	self.owner_document.GetElementById('title').inner_rml = self.title
@@ -12,8 +53,13 @@ def onLoadWindow(element):
 			<span id="title"></span>
 		</handle>
 	</div>
+	<div id="empty_area"/>
 	<div id="window">
 		<div id="content">
+		</div>
+		<div id="arrows">
+			<button id="prev_arrow" />
+			<button id="next_arrow" />
 		</div>
 	</div>
 </body>
