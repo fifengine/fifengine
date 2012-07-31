@@ -293,12 +293,22 @@ namespace FIFE {
 	}
 
 	void Cell::addVisitorInstance(Instance* instance) {
+		if (m_visitors.empty()) {
+			m_visitors.push_back(instance);
+			return;
+		}
+		std::vector<Instance*>::iterator it = m_visitors.begin();
+		for (; it != m_visitors.end(); ++it) {
+			if (*it == instance) {
+				return;			
+			}
+		}
 		m_visitors.push_back(instance);
 	}
 
 	void Cell::removeVisitorInstance(Instance* instance) {
 		std::vector<Instance*>::iterator it = m_visitors.begin();
-		for (; it != m_visitors.end();) {
+		for (; it != m_visitors.end(); ++it) {
 			if (*it == instance) {
 				m_visitors.erase(it);
 				break;			
