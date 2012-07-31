@@ -261,7 +261,7 @@ namespace FIFE {
 						std::vector<Instance*> blocker = currentNode.getLayer()->getBlockingInstances(*nco_it);
 						std::vector<Instance*>::iterator block_it = blocker.begin();
 						for (; block_it != blocker.end(); ++block_it) {
-							std::set<Object*>::iterator obj_it = std::find(parts.begin(), parts.end(), (*block_it)->getObject());
+							std::set<Object*>::const_iterator obj_it = std::find(parts.begin(), parts.end(), (*block_it)->getObject());
 							if (obj_it != parts.end() || route->getObject() == (*block_it)->getObject()) {
 								continue;
 							}
