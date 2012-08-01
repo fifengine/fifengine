@@ -34,7 +34,33 @@ print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__
 
 from fife.extensions.librocket.rocketbasicapplication import RocketApplicationBase
 from fife.extensions.librocket.rocketbasicapplication import RocketEventListener
+from fife.extensions.fife_timer import init;
 
+class RocketScriptMediator(object):
+	def __init__(self):
+		self.timers = []
+		
+	def initialize(self, application):
+		self.application = application
+		
+		#init timing capabilites
+		init(self.application.engine.getTimeManager())
+		
+	def releaseDeadTimers(self):
+		dead_timers = []
+		
+		for timer in self.timers:
+			if not timer.active:
+				dead_timers.append(timer)
+		
+		for timer in dead_timers:
+			self.timers.remove(timer)
+			
+	def addTimer(self, timer):
+		self.timers.append(timer)
+
+rocketscriptmediator = RocketScriptMediator()
+		
 class RocketDemoEventListener(RocketEventListener):
 	def __init__(self, app):
 		super(RocketDemoEventListener, self).__init__(app)
@@ -45,11 +71,13 @@ class RocketDemo(RocketApplicationBase):
 	def __init__(self):
 		super(RocketDemo, self).__init__()
 		
+		rocketscriptmediator.initialize(self)
+		
 		self.guimanager.showDebugger()
 		self._loadFonts()
 		self._loadDocuments()
-		self._showDocuments()
-
+		
+	
 	def _loadFonts(self):
 		font_dir = 'fonts/'
 		
@@ -64,28 +92,35 @@ class RocketDemo(RocketApplicationBase):
 		doc_dir = 'gui/RML/'
 		
 		docs =  [
-					'buttons.rml'
+					'buttons.rml',
 				]
 				
 		for doc in docs:
 			self._documents = [self.rocketcontext.LoadDocument(doc_dir + doc) for doc in docs]
-		
-	def _showDocuments(self):
-		for doc in self._documents:
-			doc.Show()
 	
 	def _pump(self):
 		"""
 		Overloaded this function to check for quit message.  Quit if message
 		is received.
 		"""
+		rocketscriptmediator.releaseDeadTimers()
+		
 		if self._listener.quitrequested:
 			self.quit()
+			
+	def run(self):
+		#use the id of a document to locate it. This is defined in the body tag of the document using the id attribute.
+		self.rocketcontext.documents['buttons_demo'].Show()
+		
+		super(RocketDemo, self).run()
 
 	def quit(self):
 		for doc in self._documents:
 			self.rocketcontext.UnloadDocument(doc)
 		self._documents = []
+		
+		#unload documents that may have been loaded using scripts in RML.
+		self.rocketcontext.UnloadAllDocuments()
 		
 		super(RocketDemo, self).quit()
 			

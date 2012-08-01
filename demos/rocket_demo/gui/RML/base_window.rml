@@ -13,6 +13,20 @@
 			z-index: 2;
 		}
 	
+		button#prev_arrow
+		{
+			display: block;
+
+			position: relative;
+			left: 10px;
+
+			width: 60px;
+			height: 35px;
+			
+			background-decorator: image;
+			background-image: ../images/arrows.png 0px 0px 200px 180px;
+		}
+	
 		button#next_arrow
 		{
 			display: block;
@@ -21,33 +35,42 @@
 			left: 80%;
 			top: -65%;
 		
-			width: 70px;
+			width: 60px;
 			height: 35px;
 		
 			background-decorator: image;
-			background-image: ../images/arrows.png 210px 190px 0px 0px;
+			background-image: ../images/arrows.png 208px 190px 0px 0px;
 		}
-		
-		button#prev_arrow
-		{
-			display: block;
-
-			position: relative;
-			left: 10px;
-
-			width: 70px;
-			height: 35px;
-			
-			background-decorator: image;
-			background-image: ../images/arrows.png 0px 0px 200px 180px;
-		}
+	
 	</style>
+	<script src="../scripts/base_window.py" />
 	<script>
-def onLoadWindow(element):
-	self.owner_document.GetElementById('title').inner_rml = self.title
+def onLoadWindow():
+	document.GetElementById("title").inner_rml = document.title
+	
+def loadDocument(doc):
+	'''
+	Used by setNextPrev as a callback for buttons when they are clicked.
+	
+	This delays the unloading of the current document by 100ms.
+	'''
+	doc = document.context.LoadDocument("gui/RML/" + doc)
+	if doc:
+		rocketscriptmediator.addTimer(delayCall(100, cbwa(document.context.UnloadDocument, document)))
+		doc.Show()
+	
+def setNextPrev(next = None, prev = None):
+	if next: 
+		next_btn = document.GetElementById("next_arrow")
+		next_btn.AddEventListener("click", "loadDocument('" + next + "')")
+	
+	if prev:
+		prev_btn = document.GetElementById("prev_arrow")
+		prev_btn.AddEventListener("click", "loadDocument('" + prev + "')")
+	
 	</script>
 </head>
-<body class="window" onload="onLoadWindow(self)">
+<body class="window" onload="onLoadWindow()">
 	<div id="title_bar">
 		<handle move_target="#document">
 			<span id="title"></span>

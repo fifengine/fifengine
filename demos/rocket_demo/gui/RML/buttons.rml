@@ -3,11 +3,6 @@
 		<title>Buttons Demonstration</title>
 		<link type="text/template" href="base_window.rml"/>
 		<style>
-			body
-			{
-				margin: auto;
-			}
-			
 			div.desc
 			{
 				display: block;
@@ -115,8 +110,11 @@
 				text-align: center;
 			}
 		</style>
+		<script>
+
+		</script>
 	</head>
-	<body id="buttons_demo" template="window">
+	<body id="buttons_demo" template="window" onload="onLoadWindow(); setNextPrev('form.rml');">
 		<div id="simple_buttons">
 			<div class="desc">Rendered using the GPU</div>
 			<button class="simple"><span class="btnText">New Game</span></button><br/>
