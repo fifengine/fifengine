@@ -100,15 +100,6 @@
 				background-image: ../images/button_p.png;
 			}
 			
-			span.btnText
-			{
-				display: block;
-			
-				position: relative;
-				top: 25%;
-			
-				text-align: center;
-			}
 		</style>
 		<script>
 

@@ -5,7 +5,7 @@
 		<style>
 			form#main_form
 			{
-				display: block;
+				display: inline-block;
 				
 				width: 80%;
 				height: 70%;
@@ -15,13 +15,17 @@
 				border-width: 2px;
 			}
 			
-			div #radio_buttons
+			div#radio_buttons
 			{
 				width: 50%;
 			}
 			
-			div #checkboxes
+			div#checkboxes
 			{
+				position: relative;
+				left: 50%;
+				top: -22%;
+			
 				width: 50%;
 			}
 			
@@ -46,6 +50,8 @@
 				width: 15px;
 				height: 15px;
 				
+				left: 50%;
+				
 				icon-decorator: image;
 				icon-image: ../images/rbutton_checkbox.png 0 50% 50% 100%;
 			}
@@ -54,11 +60,14 @@
 			input.checkbox:checked,
 			{
 				icon-decorator: image;
-				icon-image: ../images/rbutton_checkbox.png 50% 50% 100% 100%;
+				icon-image: ../images/rbutton_checkbox.png 52% 50% 100% 100%;
 			}
 			
 			input.textarea 
 			{
+				position: relative;
+				
+				top: -50px;
 				
 				width: 100%;
 				height: 20%;
@@ -68,12 +77,47 @@
 				
 				border-width: 1px;
 				
-				word-wrap: true;
+				wrap: pre-wrap;
+			}
+			
+			input.submit 
+			{
+				display: inline-block;
+				
+				margin: 20px 110px;
+				
+				width: 100px;
+				height: 50px;
+				background-color: gray;
+				color:  white;
+				
+				border-width: 1px;
+				border-color: black;
+				
+				text-align: center;
+			}
+			
+			input.submit:hover
+			{
+				font-weight: bold;
+				shadow-font-effect: shadow;
+				shadow-offset: 1px 1px;
+				shadow-color: black;
+			}
+			
+			input.submit:active
+			{
+				background-color: #081c27ff;
+			
+				font-weight: bold;
+				shadow-font-effect: shadow;
+				shadow-offset: 1px 1px;
+				shadow-color: black;
 			}
 			
 		</style>
 </head>
-<body id="form_demo" template="window" onload="onLoadWindow(); setNextPrev(self, prev='buttons.rml')">
+<body id="form_demo" template="window" onload="onLoadWindow(); setNextPrev(self, prev='buttons.rml', next='slider.rml')">
 	<form id="main_form">
 		<div id="radio_buttons">
 			<input type="radio" name="group1"> Option1 </input><br/>
@@ -86,6 +130,8 @@
 			<input type="checkbox"> Enable 3 </input><br/>
 		</div>
 		<input type="textarea" numrows="10" numcolumns="20" value="Edit me!" />
+		<input type="range" min="0" max="100" step="5" />
+		<input type="submit"><span class="btnText"> Submit! </span></input>
 	</form>
 </body>
 </rml>
