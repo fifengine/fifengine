@@ -114,7 +114,7 @@
 
 		</script>
 	</head>
-	<body id="buttons_demo" template="window" onload="onLoadWindow(); setNextPrev('form.rml');">
+	<body id="buttons_demo" template="window" onload="onLoadWindow(); setNextPrev(self, next='form.rml');">
 		<div id="simple_buttons">
 			<div class="desc">Rendered using the GPU</div>
 			<button class="simple"><span class="btnText">New Game</span></button><br/>

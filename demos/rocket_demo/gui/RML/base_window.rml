@@ -23,6 +23,8 @@
 			width: 60px;
 			height: 35px;
 			
+			visibility: hidden;
+			
 			background-decorator: image;
 			background-image: ../images/arrows.png 0px 0px 200px 180px;
 		}
@@ -37,6 +39,8 @@
 		
 			width: 60px;
 			height: 35px;
+			
+			visibility: hidden;
 		
 			background-decorator: image;
 			background-image: ../images/arrows.png 208px 190px 0px 0px;
@@ -56,17 +60,29 @@ def loadDocument(doc):
 	'''
 	doc = document.context.LoadDocument("gui/RML/" + doc)
 	if doc:
-		rocketscriptmediator.addTimer(delayCall(100, cbwa(document.context.UnloadDocument, document)))
+		document.Hide()
+		rocketscriptmediator.closeDocument(document)
 		doc.Show()
 	
-def setNextPrev(next = None, prev = None):
+def setNextPrev(doc, next = None, prev = None):
+	'''
+	Sets the next and the previous document of doc
+	'''
 	if next: 
-		next_btn = document.GetElementById("next_arrow")
-		next_btn.AddEventListener("click", "loadDocument('" + next + "')")
+		next_btn = doc.GetElementById("next_arrow")
+		next_btn.SetAttribute("link", next)
+		next_btn.style.visibility = "visible"
 	
 	if prev:
-		prev_btn = document.GetElementById("prev_arrow")
-		prev_btn.AddEventListener("click", "loadDocument('" + prev + "')")
+		prev_btn = doc.GetElementById("prev_arrow")
+		prev_btn.SetAttribute("link", prev)
+		prev_btn.style.visibility = "visible"
+		
+	
+def buttonClicked(btn):
+	link = btn.GetAttribute("link")
+	if link:
+		loadDocument(link)
 	
 	</script>
 </head>
@@ -81,8 +97,8 @@ def setNextPrev(next = None, prev = None):
 		<div id="content">
 		</div>
 		<div id="arrows">
-			<button id="prev_arrow" />
-			<button id="next_arrow" />
+			<button id="prev_arrow" onclick="buttonClicked(self)" />
+			<button id="next_arrow" onclick="buttonClicked(self)" />
 		</div>
 	</div>
 </body>

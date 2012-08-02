@@ -24,6 +24,14 @@ div
 	display: block;
 }
 
+handle
+{
+	display: block;
+	
+	width: 100%;
+	height: 100%;
+}
+
 div#title_bar
 {	
 	position: absolute;

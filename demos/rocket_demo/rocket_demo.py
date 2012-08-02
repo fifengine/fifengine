@@ -38,26 +38,22 @@ from fife.extensions.fife_timer import init;
 
 class RocketScriptMediator(object):
 	def __init__(self):
-		self.timers = []
+		self.docs_to_close = []
 		
 	def initialize(self, application):
 		self.application = application
 		
-		#init timing capabilites
-		init(self.application.engine.getTimeManager())
+	def closeDocument(self, doc):
+		self.docs_to_close.append(doc)
 		
-	def releaseDeadTimers(self):
-		dead_timers = []
 		
-		for timer in self.timers:
-			if not timer.active:
-				dead_timers.append(timer)
-		
-		for timer in dead_timers:
-			self.timers.remove(timer)
+	def closeDocuments(self):
+		for doc in self.docs_to_close:
+			doc.Hide()
+			self.application.rocketcontext.UnloadDocument
 			
-	def addTimer(self, timer):
-		self.timers.append(timer)
+		self.docs_to_close = []
+		
 
 rocketscriptmediator = RocketScriptMediator()
 		
@@ -103,7 +99,7 @@ class RocketDemo(RocketApplicationBase):
 		Overloaded this function to check for quit message.  Quit if message
 		is received.
 		"""
-		rocketscriptmediator.releaseDeadTimers()
+		rocketscriptmediator.closeDocuments()
 		
 		if self._listener.quitrequested:
 			self.quit()
