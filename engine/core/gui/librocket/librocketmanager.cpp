@@ -113,6 +113,7 @@ namespace FIFE {
 		
 		for(; currDoc != endDocs;) {
 			if(currDoc->second == document) {
+				m_context->UnloadDocument(currDoc->second);
 				m_openDocuments.erase(currDoc);
 				break;
 			} else {
@@ -166,7 +167,7 @@ namespace FIFE {
 		std::map<std::string, Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
 		
 		for(; currDoc != endDocs; ++currDoc) {
-			unloadDocument(currDoc->second);
+			m_context->UnloadDocument(currDoc->second);
 		}
 		
 		m_openDocuments.clear();
