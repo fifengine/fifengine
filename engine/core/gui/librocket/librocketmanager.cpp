@@ -90,23 +90,42 @@ namespace FIFE {
 		m_context->SetDimensions(Rocket::Core::Vector2i(width, height));
 	}
 	
-	Rocket::Core::ElementDocument* LibRocketManager::loadDocument(const std::string& documentPath) {
+	Rocket::Core::ElementDocument* LibRocketManager::loadDocument(const std::string& id, const std::string& documentPath) {
+		
+		if(m_openDocuments.find(id) != m_openDocuments.end()) {
+			throw GuiException("Id: " + id + " already used!");
+		}
+		
 		Rocket::Core::String rocketDocumentPath(documentPath.c_str());
 		
 		Rocket::Core::ElementDocument* document = m_context->LoadDocument(rocketDocumentPath);
 		
 		if(document != NULL) {
-			m_openDocuments.insert(document);
+			m_openDocuments[id] = document;
 		}
 		
 		return document;
 	}
 	
 	void LibRocketManager::unloadDocument(Rocket::Core::ElementDocument* document) {
-		std::set<Rocket::Core::ElementDocument*>::iterator doc(m_openDocuments.find(document));
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator currDoc(m_openDocuments.begin());
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
+		
+		for(; currDoc != endDocs;) {
+			if(currDoc->second == document) {
+				m_openDocuments.erase(currDoc);
+				break;
+			} else {
+				++currDoc;
+			}
+		}
+	}
+	
+	void LibRocketManager::unloadDocument(const std::string& id) {
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator doc(m_openDocuments.find(id));
 		
 		if(doc != m_openDocuments.end()) {
-			document->GetContext()->UnloadDocument(document);
+			unloadDocument(doc->second);
 			m_openDocuments.erase(doc);
 		}
 	}
@@ -143,11 +162,11 @@ namespace FIFE {
 	
 	void LibRocketManager::unloadDocuments() {
 		
-		std::set<Rocket::Core::ElementDocument*>::iterator currDoc(m_openDocuments.begin());
-		std::set<Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator currDoc(m_openDocuments.begin());
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
 		
 		for(; currDoc != endDocs; ++currDoc) {
-			unloadDocument(*currDoc);
+			unloadDocument(currDoc->second);
 		}
 		
 		m_openDocuments.clear();

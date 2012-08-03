@@ -94,14 +94,23 @@ namespace FIFE {
 		
 		/** Loads a rocket .rml file and shows it.
 		 * 
+		 * @param id Id of the document chosen by the user.
 		 * @param documentPath Path to the file.
 		 * @return A document if the .rml file exists, NULL otherwise.
 		 */
-		virtual Rocket::Core::ElementDocument* loadDocument(const std::string& documentPath);
+		virtual Rocket::Core::ElementDocument* loadDocument(const std::string& id, const std::string& documentPath);
+		
+		/** @return Document with id.
+		 */
+		virtual Rocket::Core::ElementDocument* getDocument(const std::string& id);
 		
 		/** Unloads a rocket document.
 		 */
 		virtual void unloadDocument(Rocket::Core::ElementDocument* document);
+		
+		/** Unloads a rocket document with given id.
+		 */
+		virtual void unloadDocument(const std::string& id);
 		
 		/**
 		 * Loads a font to be used by librocket.
@@ -145,7 +154,7 @@ namespace FIFE {
 		
 		/** A set of all open documents.
 		 */
-		std::set<Rocket::Core::ElementDocument*> m_openDocuments;
+		std::map<std::string, Rocket::Core::ElementDocument*> m_openDocuments;
 
 	};
 };
