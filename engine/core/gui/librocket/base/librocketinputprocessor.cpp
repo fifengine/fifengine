@@ -177,13 +177,20 @@ namespace FIFE {
 	
 	bool LibRocketInputProcessor::processKeyInput(SDL_Event& event) {
 		
-		uint16_t key = event.key.keysym.unicode;
+		uint16_t unicode = event.key.keysym.unicode;
+		
+		Rocket::Core::Input::KeyIdentifier key = m_keyMap[event.key.keysym.sym];
 		
 		if(event.type == SDL_KEYDOWN) {
-			if(isCharacter(key) || key > 255) {
-				m_context->ProcessTextInput(key);
-			} else {
-				m_context->ProcessKeyDown(m_keyMap[event.key.keysym.sym], m_keyModState);
+			
+			m_context->ProcessKeyDown(key, m_keyModState);
+			
+			if(unicode >= 32) {
+				m_context->ProcessTextInput(unicode);
+			} 
+			
+			if(key == Rocket::Core::Input::KI_RETURN) {
+				m_context->ProcessTextInput((Rocket::Core::word) '\n');
 			}
 		} else {
 			m_context->ProcessKeyUp(m_keyMap[event.key.keysym.sym], m_keyModState);

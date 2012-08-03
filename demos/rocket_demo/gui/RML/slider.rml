@@ -63,8 +63,8 @@
 			position: relative;
 			top: -2px;
 		
-			width: 20px;
-			height: 20px;
+			width: 15px;
+			height: 17px;
 		
 			background-decorator: image;
 			background-image: ../images/slider_arrow.png;
@@ -85,10 +85,10 @@ def sliderDragged(slider):
 	value_element.inner_rml = "Value {0}%".format(slider.value[:slider.value.find('.')])
 		</script>
 </head>
-<body id="slider_demo" template="window" onload="onLoadWindow(); setNextPrev(self, prev='form.rml')">
+<body id="slider_demo" template="window" onload="onLoadWindow(); setNextPrev(self, prev='form.rml', next='textblock.rml')">
 	<span id="value1" class="slider_value">Value: 0%</span>
 	<input id="slider1" type="range" min="0" max="100" step="5" ondrag="sliderDragged(self)" />
 	<span id="value2" class="slider_value">Value: 0%</span>
-	<input id="slider2" type="range" min="0" max="100" step="5" ondrag="sliderDragged(self)" />
+	<input id="slider2" type="range" min="0" max="100" step="1" ondrag="sliderDragged(self)" />
 </body>
 </rml>

@@ -87,11 +87,11 @@ def buttonClicked(btn):
 	</script>
 </head>
 <body class="window" onload="onLoadWindow()">
-	<div id="title_bar">
 		<handle move_target="#document">
+	<div id="title_bar">
 			<span id="title"></span>
-		</handle>
 	</div>
+	</handle>
 	<div id="empty_area"/>
 	<div id="window">
 		<div id="content">
