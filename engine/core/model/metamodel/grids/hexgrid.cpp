@@ -42,7 +42,7 @@ namespace FIFE {
 	static const double HEX_EDGE_HALF = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
 	static const double VERTICAL_MULTIP = Mathd::Sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
-	static const double HEX_EDGE_GRADIENT = Mathd::Sqrt(3);
+	static const double HEX_EDGE_GRADIENT = 1 / Mathd::Sqrt(3);
 
 	HexGrid::HexGrid():
 		CellGrid() {
@@ -139,12 +139,16 @@ namespace FIFE {
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
 
+		// approximate conversion using squares instead of hexes
+		if( static_cast<int32_t>(round(elc.y)) & 1 )
+			elc.x -= 0.5;
 		ExactModelCoordinate lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
 
 		int32_t x = static_cast<int32_t>(lc.x);
 		int32_t y = static_cast<int32_t>(lc.y);
 		int32_t z = static_cast<int32_t>(lc.z);
 
+		// distance of given point from our approximation
 		// If y uneven dx=-dx and dy=-dy
 		double dx,dy;
 		if (y & 1) {
@@ -155,13 +159,13 @@ namespace FIFE {
 			dy = lc.y - elc.y;
 		}
 
-		//1-sqrt(3)*x describes the upper right edge of the Hexagon
-		if (ABS(dy) > (1.0 - HEX_EDGE_GRADIENT * ABS(dx))) {
+		// adjustment for cases where our approximation lies beyond the hex edge
+		if (ABS(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * ABS(dx)) * VERTICAL_MULTIP_INV)) {
 			int8_t ddx, ddy;
-			if (dx<0) ddx = -1;
-			else ddx = 1;
+			if (dx>0) ddx = -1;
+			else ddx = 0;
 
-			if (dy<0) ddy = -1;
+			if (dy>0) ddy = -1;
 			else ddy = 1;
 
 			if (y & 1) {

@@ -181,6 +181,7 @@ class CellView(plugin.Plugin):
 		self.previous = None
 		
 		self.__cell = None
+		self._location = None
 		
 		if self._help_dialog:
 			self._help_dialog.hide()
@@ -822,12 +823,12 @@ class CellView(plugin.Plugin):
 	
 	def update(self):
 		""" redraws dynamic widgets; interprets self._instances """
-		if not self._instances and not self.__cell: return
+		if not self._location and not self.__cell: return
 
 		if self.__cell:
 			coords = self.__cell.getLayerCoordinates()
 		else:
-			coords = self._instances[0].getLocation().getLayerCoordinates()
+			coords = self._location.getLayerCoordinates()
 			
 		x, y = round(coords.x, 2), round(coords.y, 2)
 		wdgt = self.container.findChild(name="cell_coords")
@@ -924,9 +925,9 @@ class CellView(plugin.Plugin):
 		self._renderer = fife.InstanceRenderer.getInstance(self._camera)
 
 		self._instances = []
-		first = locations[0]
-		layer = first.getLayer()
-		fcoords = first.getLayerCoordinates()
+		self._location = locations[0]
+		layer = self._location.getLayer()
+		fcoords = self._location.getLayerCoordinates()
 		
 		# decide wether we allow cell manipulation or not
 		# no cell cache, no cell manipulation
@@ -935,16 +936,22 @@ class CellView(plugin.Plugin):
 			self.__cell = None
 			self.set_mode('cell_view')
 			# get instances from layer
-			self._instances = layer.getInstancesAt(first)
+			self._instances = layer.getInstancesAt(self._location)
 		else:
 			self.__cell = cellcache.getCell(fcoords)
-			wdgt = self.container.findChild(name="expert_mode")
-			if wdgt.marked:
-				self.set_mode('cell_edit_expert')
+			if self.__cell is None:
+				self.__cell = None
+				self.set_mode('cell_view')
+				# get instances from layer
+				self._instances = layer.getInstancesAt(self._location)
 			else:
-				self.set_mode('cell_edit')
-			# get instances from cell
-			self._instances = self.__cell.getInstances()
+				wdgt = self.container.findChild(name="expert_mode")
+				if wdgt.marked:
+					self.set_mode('cell_edit_expert')
+				else:
+					self.set_mode('cell_edit')
+				# get instances from cell
+				self._instances = self.__cell.getInstances()
 
 		self.update()
 

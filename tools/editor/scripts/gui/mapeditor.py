@@ -415,8 +415,8 @@ class MapEditor:
 				
 			elif self._mode == MapEditor.MOVING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-					position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
-					self._last_drag_pos_exact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+					self._last_drag_pos = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])
+					self._last_drag_cell = self._controller._layer.getCellGrid().toLayerCoordinates(self._last_drag_pos)
 					
 					if self._controller._single_instance:
 						self._selected_instances = self._controller.getInstance()
@@ -473,16 +473,23 @@ class MapEditor:
 				
 			elif self._mode == MapEditor.MOVING:
 				position = self._controller.screenToMapCoordinates(realCoords[0], realCoords[1])				
-				positionExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+				cell = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 
-				res = self._controller.moveInstances(
-					self._selected_instances,
-					positionExact-self._last_drag_pos_exact,
-					exact=self._eventlistener.shiftPressed)
+				if self._eventlistener.shiftPressed:
+					res = self._controller.moveInstances(
+						self._selected_instances,
+						position - self._last_drag_pos,
+						exact = True)
+				else:
+					res = self._controller.moveInstances(
+						self._selected_instances,
+						self._controller._layer.getCellGrid().toMapCoordinates(cell) - self._controller._layer.getCellGrid().toMapCoordinates(self._last_drag_cell),
+						exact = False)
 
 				# update only if the instances moved
 				if res:
-					self._last_drag_pos_exact = positionExact
+					self._last_drag_pos = position
+					self._last_drag_cell = cell
 				
 				# Update selection
 				self._controller.deselectSelection()
