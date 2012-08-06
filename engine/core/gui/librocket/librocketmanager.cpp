@@ -107,6 +107,14 @@ namespace FIFE {
 		return document;
 	}
 	
+	Rocket::Core::ElementDocument* LibRocketManager::getDocument(const std::string& id) {
+		std::map<std::string, Rocket::Core::ElementDocument*>::iterator doc(m_openDocuments.find(id));
+		if(doc == m_openDocuments.end()) {
+			throw GuiException("Rocket document with id " + id + " doesn't exist!");
+		}
+		return doc->second;
+	}
+	
 	void LibRocketManager::unloadDocument(Rocket::Core::ElementDocument* document) {
 		std::map<std::string, Rocket::Core::ElementDocument*>::iterator currDoc(m_openDocuments.begin());
 		std::map<std::string, Rocket::Core::ElementDocument*>::iterator endDocs(m_openDocuments.end());
@@ -116,9 +124,9 @@ namespace FIFE {
 				m_context->UnloadDocument(currDoc->second);
 				m_openDocuments.erase(currDoc);
 				break;
-			} else {
-				++currDoc;
-			}
+			} 
+			
+			++currDoc;
 		}
 	}
 	
