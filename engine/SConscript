@@ -36,11 +36,12 @@ extensionpath = upath(os.path.join(opts['SRC'], 'python', 'fife', 'extensions'))
 
 fifechan = env['ENABLE_FIFECHAN']
 librocket = env['ENABLE_LIBROCKET']
+cegui = env['ENABLE_CEGUI']
 
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
-dirfilters = ['swigwrappers', 'fifechan', 'librocket']
+dirfilters = ['swigwrappers', 'fifechan', 'librocket', 'cegui']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -95,6 +96,17 @@ rocket_glue_swigfiles = utils.include_by_dir(['librocket'], swigfiles)
 if librocket:
 	headerfiles = headerfiles + rocket_glue_headerfiles
 	compilefiles = compilefiles + rocket_glue_implfiles
+
+#**************************************************************************
+#Complite the list of cegui glue code
+#**************************************************************************
+cegui_glue_headerfiles = utils.include_by_dir(['cegui'], headerfiles)
+cegui_glue_implfiles = utils.include_by_dir(['cegui'], implfiles)
+cegui_glue_swigfiles = utils.include_by_dir(['cegui'], swigfiles)
+
+if cegui:
+	headerfiles = headerfiles + cegui_glue_headerfiles
+	compilefiles = compilefiles + cegui_glue_implfiles
 #**************************************************************************
 #define the FIFE revision number
 #**************************************************************************

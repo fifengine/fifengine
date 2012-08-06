@@ -23,7 +23,7 @@
 #define FIFE_GUI_LIBROCKETMANAGER_H
 
 // Standard C++ library includes
-#include <set>
+#include <map>
 #include <string>
 
 // 3rd party library includes

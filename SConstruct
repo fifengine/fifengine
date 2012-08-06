@@ -55,6 +55,12 @@ AddOption('--with-librocket',
 		action='store_true',
 		help='Enable librocket gui sybsystem',
 		default=False)
+
+AddOption('--with-cegui',
+		dest='with-cegui',
+		action='store_true',
+		help='Enable Craze Eddie\'s gui subsystem',
+		default=False)
 		
 AddOption('--without-fifechan',
 		dest='without-fifechan',
@@ -162,6 +168,13 @@ else:
 	env['ENABLE_LIBROCKET'] = False
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
+
+if GetOption('with-cegui'):
+	env['ENABLE_CEGUI'] = True
+	extra_libs['cegui'] = True
+else:
+	env['ENABLE_CEGUI'] = False
+	extra_libs['cegui'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0

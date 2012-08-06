@@ -45,6 +45,9 @@ def initEnvironment(env):
 	
 	if env['ENABLE_LIBROCKET']:
 		env.Append(CPPPATH = [includepath + '\\Rocket'])
+		
+	if env['ENABLE_CEGUI']
+		env.Append(CPPPATH = [includepath + '\\CEGUI'])
 	
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
@@ -53,13 +56,13 @@ def initEnvironment(env):
 	
 	return env
 	
-	
 def addExtras(env, reqLibs):
 	env.Append(LIBS = ['mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
 
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
+	cegui = reqLibs['cegui']
 	
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
@@ -75,11 +78,15 @@ def addExtras(env, reqLibs):
 		env.Append(LIBS = ['opengl32'])
 
 	if librocket:
-		rocket_libs = ['RocketCore', 'RocketControls']
+		rocket_libs = ['libRocketCore', 'libRocketControls']
 		if env['FIFE_DEBUG']:
-			rocket_libs.append('RocketDebugger')
+			rocket_libs.append('libRocketDebugger')
 		
 		env.Prepend(LIBS = rocket_libs)
+		
+	if cegui:
+		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
+		env.Prepend(LIBS = cegui_libs)
 		
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
