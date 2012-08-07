@@ -15,6 +15,7 @@ Keybindings:
 - 3,4 = Change light source intensity
 - CTRL + MouseWheelUp = Zoom in
 - CTRL + MouseWheelDown = Zoom out
+- CTRL + 0, CTRL + Num0 = Reset zoom
 
 Have fun,
 The FIFE team
