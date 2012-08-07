@@ -351,6 +351,9 @@ class World(EventListenerBase):
 			self.lightSourceIntensity(25)
 		elif keystr == '4':
 			self.lightSourceIntensity(-25)
+		elif keystr == '0' or keystr == fife.Key.NUM_0:
+			if self.ctrldown:
+				self.cameras['main'].setZoom(1.0)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.ctrldown = True
 
