@@ -13,6 +13,8 @@ Keybindings:
 - O = Rotate main camera
 - 1,2 = Change global light intensity
 - 3,4 = Change light source intensity
+- CTRL + MouseWheelUp = Zoom in
+- CTRL + MouseWheelDown = Zoom out
 
 Have fun,
 The FIFE team
