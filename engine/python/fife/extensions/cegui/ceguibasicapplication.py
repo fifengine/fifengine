@@ -30,9 +30,9 @@ See the L{ApplicationBase} documentation.
 from fife import fife
 from fife.extensions.basicapplication import ApplicationBase
 
-import rocket
+import PyCEGUI
 
-class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
+class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
 	"""
 	Default, rudimentary event listener.
 
@@ -55,57 +55,75 @@ class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
 		
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-
+			
 	def keyReleased(self, evt):
-		keyval = evt.getKey().getValue()
-		
-		if keyval == fife.Key.F12:
-			if not self.debuggeractive:
-				self.app.guimanager.showDebugger()
-				self.debuggeractive = True
-			else:
-				self.app.guimanager.hideDebugger()
-				self.debuggeractive = False
+		pass
 
 	def onCommand(self, command):
 		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
 		if self.quitrequested:
 			command.consume()
 			
-class RocketApplicationBase(ApplicationBase):
-	"""
-	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	This class should be extended if you 've built fife with librocket support and want to create a game
-	using it.
-	"""
+DEFAULT_GUI_DIR = "gui/"
+			
+class CEGUIApplicationBase(ApplicationBase):
 	def __init__(self, setting=None):
-		super(RocketApplicationBase, self).__init__(setting)
+		super(CEGUIApplicationBase, self).__init__(setting)
 		
+		self._initGuiManager()
+		self._loadCEGuiSettings()
+
+	def _initGuiManager(self):
 		settings = self.engine.getSettings()
-		guimanager = fife.LibRocketManager()
+		
+		guimanager = fife.CEGuiManager(settings.getScreenWidth(), settings.getScreenHeight())
 		
 		#transfer ownership to the engine
 		guimanager.thisown = 0
 		
-		#initialize gui manager and set it as the engine's active gui manager
-		guimanager.init(settings.getRenderBackend(), settings.getScreenWidth(), settings.getScreenHeight())
-		self.engine.setGuiManager(guimanager)
 		self.guimanager = guimanager
-		self.engine.getEventManager().addSdlEventListener(guimanager)
+		self.engine.setGuiManager(self.guimanager)
+		self.engine.getEventManager().addSdlEventListener(self.guimanager)
 		
-		#get reference to the active rocket context
-		self.rocketcontext = rocket.contexts['default']
+	def _loadCEGuiSettings(self):
+		self._loadResourcePaths()
+		
+	def _loadResourcePaths(self):
+
+		resourceprovider = PyCEGUI.System.getSingleton().getResourceProvider()
+		
+		resourcetypemap = { "schemes" : PyCEGUI.Scheme, 
+						    "imagesets" : PyCEGUI.Imageset,
+						    "fonts" : PyCEGUI.Font,
+						    "layouts" : PyCEGUI.WindowManager,
+						    "looksnfeels" : PyCEGUI.WidgetLookManager }
+		
+		if not self._setting:
+			for restype, resnamespace in resourcetypemap.iteritems():
+				resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
+				resnamespace.setDefaultResourceGroup(restype)
+		else:
+			for restype, resnamespace in resourcetypemap.iteritems():
+				path = self._setting.get("CEGUI", restype)
+				if path:
+					resourceprovider.setResourceGroupDirectory(restype, path)
+					resnamespace.setDefaultResourceGroup(restype)
+				else:
+					#set default path
+					resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
+					resnamespace.setDefaultResourceGroup(restype)
+		        
+		parser = PyCEGUI.System.getSingleton().getXMLParser()
+		if parser.isPropertyPresent("SchemaDefaultResourceGroup"):
+			path = self._setting.get("CEGUI", "schemas")
+			if path:
+				rp.setResourceGroupDirectory("schemas", path)
+			else:
+				rp.setResourceGroupDirectory("schemas", DEFAULT_GUI_DIR + "schemas")
+				
+			parser.setProperty("SchemaDefaultResourceGroup", "schemas") 
+		
 		
 	def createListener(self):
-		self._listener = RocketEventListener(self)
+		self._listener = CEGUIEventListener(self)
 		return self._listener
-		
-	def quit(self):
-		self.rocketcontext.UnloadAllDocuments()
-		self.rocketcontext.UnloadAllMouseCursors()
-
-		#release reference to rocket context
-		self.rocketcontext = None
-		
-		#call parent's quit
-		super(RocketApplicationBase, self).quit()

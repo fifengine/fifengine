@@ -34,6 +34,10 @@
 
 #include "gui/guimanager.h"
 
+namespace CEGUI {
+	class Window;
+}
+
 namespace FIFE {
 	
 	class CEGuiInputProcessor;
@@ -66,6 +70,14 @@ namespace FIFE {
 		 * to librocket.
 		 */
 		virtual bool onSdlEvent(SDL_Event& event);
+		
+		/** Sets the root window of the gui system.
+		 */
+		void setRootWindow(CEGUI::Window* setRootWindow);
+		
+		/** @return The root window of the gui system.
+		 */
+		CEGUI::Window* getRootWindow();
 
 	private:
 		
@@ -80,6 +92,10 @@ namespace FIFE {
 		/** Last time pulse injected to CEGUI.
 		 */
 		double m_lastTimePulse;
+		
+		/** Our root gui window.
+		 */
+		CEGUI::Window* m_guiRoot; 
 	};
 }
 

@@ -134,6 +134,9 @@ if fifechan:
 if librocket:
 	intfiles = intfiles + rocket_glue_swigfiles
 	
+if cegui:
+	intfiles = intfiles + cegui_glue_swigfiles
+	
 #generate swig interface file for fife module
 utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fife.i.templ'), 
 										intfiles,

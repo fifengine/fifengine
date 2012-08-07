@@ -86,7 +86,7 @@ namespace FIFE {
 	
 	bool CEGuiInputProcessor::processMouseInput(SDL_Event& event) {
 		switch(event.type) {
-			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
 						CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
@@ -113,7 +113,7 @@ namespace FIFE {
 				}
 				break;
 				
-			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
 						CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);

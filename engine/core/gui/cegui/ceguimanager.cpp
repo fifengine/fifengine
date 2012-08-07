@@ -45,10 +45,13 @@ namespace FIFE {
 		m_inputProcessor = new CEGuiInputProcessor();
 		
 		m_lastTimePulse = TimeManager::instance()->getTime() / 1000.0;
+
 	}
 	
 	CEGuiManager::~CEGuiManager() {
 		delete m_inputProcessor;
+		
+		CEGUI::OpenGLRenderer::destroySystem();
 	}
 	
 	void CEGuiManager::turn() {
@@ -62,6 +65,15 @@ namespace FIFE {
 	
 	bool CEGuiManager::onSdlEvent(SDL_Event &event) {
 		return m_inputProcessor->onSdlEvent(event);
+	}
+	
+	void CEGuiManager::setRootWindow(CEGUI::Window* root) {
+		m_guiRoot = root;
+		CEGUI::System::getSingleton().setGUISheet(m_guiRoot);
+	}
+	
+	CEGUI::Window* CEGuiManager::getRootWindow() {
+		return m_guiRoot;
 	}
 	
 	void CEGuiManager::injectTimePulse() {
