@@ -93,13 +93,15 @@ namespace FIFE {
 		 */
 		virtual void ReleaseTexture(Rocket::Core::TextureHandle texture_handle);
 		
-		/** Frees all textures that are no longer needed by librocket.
+		/**
+		 * Renders librocket gui.
+		 */
+		void render();
+		
+		/**
+		 * Frees all textures that are no longer needed by librocket.
 		 */
 		void freeTextures();
-		
-		/** Resets the render interface.
-		 */
-		void reset();
 		
 	private:
 		
@@ -107,7 +109,33 @@ namespace FIFE {
 		
 		ImageManager* m_imageManager;
 		
-		bool m_pushedClipArea;
+		class GeometryCallData {
+		public:
+			std::vector<GuiVertex> vertices;
+			std::vector<int> indices;
+			ResourceHandle textureHandle;
+			DoublePoint translation;
+		};
+		
+		typedef std::queue<GeometryCallData> GeometryCallDataChain;
+		
+		class GeometryCall {
+		public:
+			
+			GeometryCall() 
+			: 
+			enableScissorTest(false),
+			hasScissorArea(false)
+		    {
+			}
+			
+			GeometryCallDataChain callChain;
+			Rect scissorArea;
+			bool enableScissorTest;
+			bool hasScissorArea;
+		};
+		
+		std::queue<GeometryCall> m_geometryCalls;
 		
 		std::list<ResourceHandle> m_freedTextures;
 	};

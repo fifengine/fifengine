@@ -45,13 +45,17 @@ class CEGUIDemo(CEGUIApplicationBase):
 		self._loadSchemes()
 		
 		root = myRoot = PyCEGUI.WindowManager.getSingleton().createWindow( "DefaultWindow", "_MasterRoot" )
-		PyCEGUI.System.getSingleton().setGUISheet( myRoot )
+		PyCEGUI.System.getSingleton().setGUISheet(myRoot)
 		
 		newWindow = PyCEGUI.WindowManager.getSingleton().loadWindowLayout("MyConsole.layout","second_")
 		root.addChildWindow(newWindow)
 		
 	def _loadSchemes(self):
 		PyCEGUI.SchemeManager.getSingleton().create("TaharezLook.scheme")
+	
+	def _pump(self):
+		if self._listener.quitrequested:
+			self.quit()
 	
 if __name__ == '__main__':
 	app = CEGUIDemo(DemoSettings)

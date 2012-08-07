@@ -312,10 +312,4 @@ namespace FIFE {
 		m_keyMap[SDLK_LMETA] = Rocket::Core::Input::KI_LMETA;
 		m_keyMap[SDLK_RMETA] = Rocket::Core::Input::KI_RMETA;
 	}
-	
-	bool LibRocketInputProcessor::isCharacter(uint16_t key) {
-        return (key >= 32 && key <= 126)
-            || (key >= 162 && key <= 255)
-            || (key == 9);
-	}
 };

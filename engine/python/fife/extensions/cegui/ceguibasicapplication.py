@@ -76,7 +76,7 @@ class CEGUIApplicationBase(ApplicationBase):
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
 		
-		guimanager = fife.CEGuiManager(settings.getScreenWidth(), settings.getScreenHeight())
+		guimanager = fife.CEGuiManager()
 		
 		#transfer ownership to the engine
 		guimanager.thisown = 0

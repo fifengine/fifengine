@@ -37,8 +37,7 @@ namespace FIFE {
 	LibRocketRenderInterface::LibRocketRenderInterface()
 	:
 	m_renderBackend(RenderBackend::instance()),
-	m_imageManager(ImageManager::instance()),
-	m_pushedClipArea(false) {
+	m_imageManager(ImageManager::instance()) {
 	}
 	
 	LibRocketRenderInterface::~LibRocketRenderInterface() {
@@ -47,7 +46,9 @@ namespace FIFE {
 	
 	void LibRocketRenderInterface::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation) {
 		
-		std::vector<GuiVertex> vecVertices;
+		GeometryCallData geometryCallData;
+		
+		geometryCallData.vertices.reserve(num_vertices);
 		for(int i = 0; i < num_vertices; i++) {
 			GuiVertex vertex;
 			
@@ -55,19 +56,27 @@ namespace FIFE {
 			vertex.color.set(vertices[i].colour.red, vertices[i].colour.green, vertices[i].colour.blue, vertices[i].colour.alpha);
 			vertex.texCoords.set(vertices[i].tex_coord.x, vertices[i].tex_coord.y);
 			
-			vecVertices.push_back(vertex);
+			geometryCallData.vertices.push_back(vertex);
 		}
 		
-		std::vector<int> vecIndices;
+		geometryCallData.indices.reserve(num_indices);
 		for(int i = 0; i < num_indices; i++) {
-			vecIndices.push_back(indices[i]);
+			geometryCallData.indices.push_back(indices[i]);
 		}
 		
-		DoublePoint translationPoint(translation.x, translation.y);
+		geometryCallData.textureHandle = texture;
+		geometryCallData.translation.set(translation.x, translation.y);
 		
-		ImagePtr img = m_imageManager->get(texture);
-		
-		m_renderBackend->renderGuiGeometry(vecVertices, vecIndices, translationPoint, img);
+		if(m_geometryCalls.empty()) {
+			GeometryCall geometryCall;
+			
+			geometryCall.callChain.push(geometryCallData);
+			m_geometryCalls.push(geometryCall);
+		} else {
+			GeometryCall& geometryCall = m_geometryCalls.back();
+			
+			geometryCall.callChain.push(geometryCallData);
+		}
 	}
 	
 	Rocket::Core::CompiledGeometryHandle LibRocketRenderInterface::CompileGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture) {
@@ -81,19 +90,37 @@ namespace FIFE {
 	}
 	
 	void LibRocketRenderInterface::EnableScissorRegion(bool enable) {
-		if(enable)
-			m_renderBackend->enableScissorTest();
-		else
-			m_renderBackend->disableScissorTest();
+		GeometryCall gc;
+		
+		gc.enableScissorTest = enable;
+		
+		//check if there is a previous call and has a clip area enabled
+		if(!m_geometryCalls.empty()) {
+			GeometryCall& prevgc = m_geometryCalls.back();
+			
+			if(prevgc.hasScissorArea) {
+				gc.hasScissorArea = true;
+				gc.scissorArea = prevgc.scissorArea;
+			}
+		}
+		
+		m_geometryCalls.push(gc);
 	}
 	
 	void LibRocketRenderInterface::SetScissorRegion(int x, int y, int width, int height) {
-		if(m_pushedClipArea)
-			m_renderBackend->popClipArea();
+		GeometryCall gc;
 		
-		m_renderBackend->pushClipArea(Rect(x, y, width, height), false);
+		gc.hasScissorArea = true;
+		gc.scissorArea = Rect(x, y, width, height);
 		
-		m_pushedClipArea = true;
+		//check if there is a previous call and has scissors enabled
+		if(!m_geometryCalls.empty()) {
+			GeometryCall& prevgc = m_geometryCalls.back();
+			
+			gc.enableScissorTest = prevgc.enableScissorTest;
+		}
+		
+		m_geometryCalls.push(gc);
 	}
 	
 	bool LibRocketRenderInterface::LoadTexture(Rocket::Core::TextureHandle& texture_handle, Rocket::Core::Vector2i& texture_dimensions, const Rocket::Core::String& source) {
@@ -128,7 +155,40 @@ namespace FIFE {
 		ResourceHandle rh = static_cast<ResourceHandle>(texture_handle);
 		m_freedTextures.push_back(rh);
 	}
+	
+	void LibRocketRenderInterface::render() {
+		
+		while(!m_geometryCalls.empty()) {
+			GeometryCall& geometryCall = m_geometryCalls.front();
+			
+			if(geometryCall.hasScissorArea) {
+				m_renderBackend->pushClipArea(geometryCall.scissorArea, false);
+			}
+			
+			if(geometryCall.enableScissorTest) {
+				m_renderBackend->enableScissorTest();
+			} else {
+				m_renderBackend->disableScissorTest();
+			}
+			
+			while(!geometryCall.callChain.empty()) {
+				GeometryCallData& geometryCallData = geometryCall.callChain.front();
+				
+				ImagePtr img = m_imageManager->get(geometryCallData.textureHandle);
+				
+				m_renderBackend->renderGuiGeometry(geometryCallData.vertices, geometryCallData.indices, geometryCallData.translation, img);
+				
+				geometryCall.callChain.pop();
+			}
+			
+			if(geometryCall.hasScissorArea) {
+				m_renderBackend->popClipArea();
+			}
 
+			m_geometryCalls.pop();
+		}
+	}
+	
 	void LibRocketRenderInterface::freeTextures() {
 		std::list<ResourceHandle>::iterator it(m_freedTextures.begin());
 		std::list<ResourceHandle>::iterator end(m_freedTextures.end());
@@ -141,9 +201,5 @@ namespace FIFE {
 		
 		std::list<ResourceHandle> temp;
 		m_freedTextures.swap(temp);
-	}
-	
-	void LibRocketRenderInterface::reset() {
-		m_pushedClipArea = false;
 	}
 };

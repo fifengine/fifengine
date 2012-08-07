@@ -11,7 +11,7 @@ namespace FIFE {
 	%feature("notabstract") CEGuiManager;
 	class CEGuiManager : public IGUIManager {
 	public:
-		CEGuiManager(uint32_t screenWidth, uint32_t screenHeight);
+		CEGuiManager();
 		virtual ~CEGuiManager();
 	};
 }

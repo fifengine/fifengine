@@ -49,7 +49,7 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		 */
-		CEGuiManager(uint32_t screenWidth, uint32_t screenHeight);
+		CEGuiManager();
 		
 		virtual ~CEGuiManager();
 		

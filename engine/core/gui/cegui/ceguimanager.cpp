@@ -36,7 +36,7 @@
 
 namespace FIFE {
 	
-	CEGuiManager::CEGuiManager(uint32_t screenWidth, uint32_t screenHeight) {
+	CEGuiManager::CEGuiManager() {
 #ifdef HAVE_OPENGL
 		CEGUI::OpenGLRenderer::bootstrapSystem();
 #else
@@ -78,7 +78,7 @@ namespace FIFE {
 	
 	void CEGuiManager::injectTimePulse() {
 		
-		double timeNow = TimeManager::instance()->getTime() / 1000;
+		double timeNow = TimeManager::instance()->getTime() / 1000.0;
 		
 		CEGUI::System::getSingleton().injectTimePulse(float(timeNow - m_lastTimePulse));
 		
