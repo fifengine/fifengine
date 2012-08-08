@@ -44,7 +44,7 @@ from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_settings import Setting
 from fife.extensions.fife_utils import getUserDataDirectory
 
-TDS = Setting(app_name="rio_de_hola")
+TDS = FifePychanSettings(app_name="rio_de_hola")
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
@@ -53,8 +53,6 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.world = world
 		engine.getEventManager().setNonConsumableKeys([
 			fife.Key.ESCAPE,])
-			
-		self._pychanWidgetSettings = FifePychanSettings(TDS)
 
 		self.quit = False
 		self.aboutWindow = None
@@ -63,7 +61,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.rootpanel.mapEvents({ 
 			'quitButton' : self.onQuitButtonPress,
 			'aboutButton' : self.onAboutButtonPress,
-			'optionsButton' : self._pychanWidgetSettings.showSettingsDialog
+			'optionsButton' : TDS.showSettingsDialog
 		})
 		self.rootpanel.show()
 

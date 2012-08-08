@@ -39,9 +39,9 @@ from scripts.common import eventlistenerbase
 from fife.extensions import pychan
 from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from fife.extensions.pychan import widgets
-from fife.extensions.fife_settings import Setting
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 
-TDS = Setting(app_name="shooter", 
+TDS = FifePychanSettings(app_name="shooter", 
               settings_file="./settings.xml")
               
 TDS.setAvailableScreenResolutions(["1024x768"])

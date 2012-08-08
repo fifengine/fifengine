@@ -36,7 +36,6 @@ class MainMenu(object):
 		self._world = world
 		self._setting = setting
 		self._widget = pychan.loadXML('gui/mainmenu.xml')
-		self._fifepychansettings = FifePychanSettings(self._setting)
 		
 		self._continue = self._widget.findChild(name="continue")
 		self._newgame = self._widget.findChild(name="new_game")
@@ -49,7 +48,7 @@ class MainMenu(object):
 		eventMap = {
 			'continue': self._world.continueGame,
 			'new_game': self._world.newGame,
-			'settings': self._fifepychansettings.showSettingsDialog,
+			'settings': self._setting.showSettingsDialog,
 			'credits': self._world.showCredits,
 			'high_scores': self._world.showHighScores,
 			'quit': self._world.quit,

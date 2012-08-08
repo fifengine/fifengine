@@ -35,7 +35,6 @@ class Window(object):
 		self._guicontroller = gamecontroller.guicontroller
 		self._gamecontroller = gamecontroller
 		self._settings = gamecontroller.settings
-		self._fifepychansettings = FifePychanSettings(self._settings)
 		
 		self._widget = None
 		
@@ -57,7 +56,7 @@ class MainMenu(Window):
 
 		eventMap = {
 			'new_game': self._gamecontroller.newGame,
-			'settings': self._fifepychansettings.showSettingsDialog,
+			'settings': self._settings.showSettingsDialog,
 			'credits': self._guicontroller.showCredits,
 			'quit': self._gamecontroller.quit,
 		}

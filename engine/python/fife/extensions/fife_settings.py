@@ -553,4 +553,3 @@ class SettingEntry(object):
 		return "SettingEntry: " +  self.name + " Module: " + self.module +  \
 		        " requiresrestart: " + str(self.requiresrestart) + \
 		        " initialdata: " + str(self.initialdata)
-

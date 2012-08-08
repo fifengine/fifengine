@@ -192,6 +192,7 @@ namespace FIFE {
 			if(key == Rocket::Core::Input::KI_RETURN) {
 				m_context->ProcessTextInput((Rocket::Core::word) '\n');
 			}
+				
 		} else {
 			m_context->ProcessKeyUp(m_keyMap[event.key.keysym.sym], m_keyModState);
 		}

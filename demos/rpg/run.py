@@ -32,11 +32,11 @@ if os.path.isdir(fife_path) and fife_path not in sys.path:
 from fife import fife
 print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
 
-from fife.extensions.fife_settings import Setting
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 from scripts.rpg import RPGApplication
 
 
-TDS = Setting(app_name="rpg",
+TDS = FifePychanSettings(app_name="rpg",
               settings_file="./settings.xml")
 
 

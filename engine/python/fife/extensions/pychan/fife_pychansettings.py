@@ -32,7 +32,8 @@ pychan.
 import os
 from StringIO import StringIO
 
-from fife.extensions import fife_settings
+from fife.extensions.fife_settings import Setting
+from fife.extensions.fife_settings import SettingEntry
 from fife.extensions import pychan
 
 SETTINGS_GUI_XML="""\
@@ -73,9 +74,11 @@ CHANGES_REQUIRE_RESTART="""\
 
 FIFE_MODULE = "FIFE"
 
-class FifePychanSettings(object):
-	def __init__(self, fife_settings, settings_gui_xml = "", changes_gui_xml = ""):
-		self.fife_settings = fife_settings
+class FifePychanSettings(Setting):
+	def __init__(self, app_name="", settings_file="", default_settings_file= "settings-dist.xml", settings_gui_xml="", changes_gui_xml="", copy_dist=True, serializer=None):
+		
+		super(FifePychanSettings, self).__init__(app_name, settings_file, default_settings_file, copy_dist, serializer)
+		
 		self._optionsDialog = None
 		self._gui_style = "default"
 		self.changesRequireRestart = False
@@ -89,34 +92,52 @@ class FifePychanSettings(object):
 			self._changes_gui_xml = CHANGES_REQUIRE_RESTART
 		else:
 			self._changes_gui_xml = changes_gui_xml
-			
-		self.mapped_entries = { }
-		self._setDefaultWidgetNames()
-	
-	def _setDefaultWidgetNames(self):
-		self.mapWidgetToEntry(FIFE_MODULE, "PlaySounds", "enable_sound")
-		self.mapWidgetToEntry(FIFE_MODULE, "FullScreen", "enable_fullscreen")
-		self.mapWidgetToEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution")
-		self.mapWidgetToEntry(FIFE_MODULE, "RenderBackend", "render_backend")
-		self.mapWidgetToEntry(FIFE_MODULE, "Lighting", "lighting_model")
-		#print self.mapped_entries
 		
-	def mapWidgetToEntry(self, module, entry, widget_name):
+	def createAndAddEntry(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+		""""
+		@param module: The Setting module this Entry belongs to
+		@type module: C{String}
+		@param name: The Setting's name
+		@type name: C{String}
+		@param widgetname: The name of the widget that is used to change this
+		setting
+		@type widgetname: C{String}
+		@param applyfunction: function that makes the changes when the Setting is
+		saved
+		@type applyfunction: C{function}
+		@param initialdata: If the widget supports the setInitialData() function
+		this can be used to set the initial data
+		@type initialdata: C{String} or C{Boolean}
+		@param requiresrestart: Whether or not the changing of this setting
+		requires a restart
+		@type requiresrestart: C{Boolean}
 		"""
-		Maps a setting entry to a widget name
-		@param module: Module of the setting
-		@type module: C{string}
-		@param entry: Entry of the setting
-		@type entry: C{string}
-		@param widget_name: Name of the setting's widget
-		@type widget_name: C{string}
-		"""
-		#print 'Entry: ', entry, ' Module: ' , module, ' Exists: ', entry in self.fife_settings.entries[module]
-		if entry in self.fife_settings.entries[module]:
-			if module not in self.mapped_entries:
-				self.mapped_entries[module] = { }
-			self.mapped_entries[module][entry] = widget_name
+		entry = PychanSettingEntry(module, name, widgetname, applyfunction, initialdata, requiresrestart)
+		self.addEntry(entry)
+		
 
+	def _initDefaultSettingEntries(self):
+		"""Initializes the default fife setting entries. Not to be called from
+		outside this class."""
+		self.createAndAddEntry(FIFE_MODULE, "PlaySounds", "enable_sound",
+		              requiresrestart=True)
+		self.createAndAddEntry(FIFE_MODULE, "FullScreen", "enable_fullscreen",
+		              requiresrestart=True)
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		              requiresrestart=True)
+		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
+		              requiresrestart=True)
+		self.createAndAddEntry(FIFE_MODULE, "Lighting", "lighting_model", initialdata = self._lightingmodels,
+		              requiresrestart=True)
+		
+	# sets valid resolution options in the settings->Resolution
+	def setValidResolutions(self, options):
+		if options:
+			self._resolutions = options
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		              requiresrestart=True)
+
+		              
 	def setGuiStyle(self, style):
 		""" 
 		Set a custom gui style used for the option dialog.
@@ -134,7 +155,7 @@ class FifePychanSettings(object):
 		if not self._optionsDialog:
 			self._loadSettingsDialog()
 		
-		self._fillWidgets()
+		self.fillWidgets()
 		self._optionsDialog.show()
 		
 	def _loadSettingsDialog(self):
@@ -146,7 +167,7 @@ class FifePychanSettings(object):
 		self._optionsDialog.mapEvents({
 			'okButton' : self._applySettings,
 			'cancelButton': self._optionsDialog.hide,
-			'defaultButton': self._setDefaults
+			'defaultButton': self.setDefaults
 		})
 		return self._optionsDialog
 		
@@ -159,73 +180,98 @@ class FifePychanSettings(object):
 		else:
 			return pychan.loadXML(StringIO(widget))
 
-	def _fillWidgets(self):
-		for module, entries in self.fife_settings.entries.items():
-			for entry in entries.itervalues():
-				if entry.name in self.mapped_entries[module]:
-					widget = self._optionsDialog.findChildByName(self.mapped_entries[module][entry.name])
-					"""
-					little change to prevent crash from no settings
-					in settings.xml file
-					"""
-					"""
-					The checking of value for None is specially for the clients who use settings
-					with different names under modules other than "FIFE" for which we have no
-					default value to set. This will prevent the settings widget from crash
-					"""
-					value = self.fife_settings.get(entry.module, entry.name)
-					#print entry.name, entry.initialdata
-					if type(entry.initialdata) is list:
-						try:
-							value = entry.initialdata.index(value)
-						except ValueError:
-							raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+	def fillWidgets(self):
+		for module in self._entries.itervalues():
+			for entry in module.itervalues():
+				widget = self._optionsDialog.findChildByName(entry.settingwidgetname)
 				
-					if entry.initialdata is not None:
-						widget.setInitialData(entry.initialdata)
-					widget.setData(value)
+				"""
+				little change to prevent crash from no settings
+				in settings.xml file
+				"""
+				"""
+				The checking of value for None is specially for the clients who use settings
+				with different names under modules other than "FIFE" for which we have no
+				default value to set. This will prevent the settings widget from crash
+				"""
+				value = super(FifePychanSettings, self).get(entry.module, entry.name)
+				
+				if type(entry.initialdata) is list:
+					try:
+						value = entry.initialdata.index(value)
+					except ValueError:
+						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+				entry.initializeWidget(widget, value)
 	
 	def _applySettings(self):
 		"""
 		Writes the settings file.  If a change requires a restart of the engine
 		it notifies you with a small dialog box.
 		"""
-		for module, entries in self.fife_settings.entries.items():
-			for entry in entries.itervalues():
-				if entry.name in self.mapped_entries[module]:
-					widget = self._optionsDialog.findChildByName(self.mapped_entries[module][entry.name])
-					data = widget.getData()
+		for module in self._entries.itervalues():
+			for entry in module.itervalues():
+				widget = self._optionsDialog.findChildByName(entry.settingwidgetname)
+				data = widget.getData()
 				
-					# If the data is a list we need to get the correct selected data
-					# from the list. This is needed for e.g. dropdowns or listboxs
-					if type(entry.initialdata) is list:
-						data = entry.initialdata[data]
+				# If the data is a list we need to get the correct selected data
+				# from the list. This is needed for e.g. dropdowns or listboxs
+				if type(entry.initialdata) is list:
+					data = entry.initialdata[data]
 
-					# only take action if something really changed
-					if data != self.fife_settings.get(entry.module, entry.name):
-						self.fife_settings.set(entry.module, entry.name, data)
-						entry.onApply(data)
-						if entry.requiresrestart:
-							self.changesRequireRestart = True
+				# only take action if something really changed
+				if data != self.get(entry.module, entry.name):
+					self.set(entry.module, entry.name, data)
+					entry.onApply(data)
 
-		self.fife_settings.saveSettings()
+					if entry.requiresrestart:
+						self.changesRequireRestart = True
+
+		super(FifePychanSettings, self).saveSettings()
 
 		self._optionsDialog.hide()
 		if self.changesRequireRestart:
 			self._showChangeRequireRestartDialog()
 			
 	def _showChangeRequireRestartDialog(self):
-		"""Shows a dialog that informes the user that a restart is required
+		"""Shows a dialog that informes the user that a restart is required ότι
 		to perform the changes."""
 		RestartDlg = self._loadWidget(self._changes_gui_xml)
 		RestartDlg.stylize(self._gui_style)
 		RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
 		RestartDlg.show()
 		
-	def _setDefaults(self):
-		self.fife_settings.setDefaults()
+	def setDefaults(self):
+		super(PychanSettings, self).setDefaults()
 		
 		#On startup the settings dialog is not yet initialized.  We dont
 		#fill the widgets with data in that case.
 		if self._optionsDialog:
-			self._fillWidgets()
+			self.fillWidgets()
+			
+class PychanSettingEntry(SettingEntry):
+	
+	def __init__(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+		super(PychanSettingEntry, self).__init__(module, name, applyfunction, initialdata, requiresrestart)
+		
+		self._settingwidgetname = widgetname
+		
+	def initializeWidget(self, widget, currentValue):
+		"""Initialize the widget with needed data"""
+		if self._initialdata is not None:
+			widget.setInitialData(self._initialdata)
+		widget.setData(currentValue)
+	
+	def _getSettingWidgetName(self):
+		return self._settingwidgetname
+
+	def _setSettingWidgetName(self, settingwidgetname):
+		self._settingwidgetname = settingwidgetname
+		
+	settingwidgetname = property(_getSettingWidgetName, _setSettingWidgetName)
+	
+	def __str__(self):
+		return "SettingEntry: " +  self.name + " Module: " + self.module + " Widget: " + \
+		       self.settingwidgetname + " requiresrestart: " + str(self.requiresrestart) + \
+		       " initialdata: " + str(self.initialdata)
+
+	
