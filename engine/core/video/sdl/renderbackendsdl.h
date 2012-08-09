@@ -67,7 +67,7 @@ namespace FIFE {
 		virtual Image* createImage(const std::string& name, SDL_Surface* surface);
 
 		virtual void renderVertexArrays();
-		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height);

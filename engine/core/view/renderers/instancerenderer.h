@@ -64,7 +64,7 @@ namespace FIFE {
 
 		/** Marks given instance to be colored with given parameters
 		 */
-		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
+		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a = 128);
 
 		/** Marks given instance to have an transparent area with given paramters
 		 */
@@ -182,6 +182,7 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
+			uint8_t a;
 			bool dirty;
 			ImagePtr overlay;
 			Image* curimg;

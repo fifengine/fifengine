@@ -68,7 +68,7 @@ namespace FIFE {
 		GLenum stencil_op;
 		GLenum stencil_func;
 		bool multitextured;
-		uint8_t rgb[3];
+		uint8_t rgba[4];
 	};
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
@@ -97,6 +97,7 @@ namespace FIFE {
 		m_state.env_color[0] = 0;
 		m_state.env_color[1] = 0;
 		m_state.env_color[2] = 0;
+		m_state.env_color[3] = 0;
 		m_state.blend_src = GL_SRC_ALPHA;
 		m_state.blend_dst = GL_ONE_MINUS_SRC_ALPHA;
 		m_state.alpha_enabled = false;
@@ -476,21 +477,22 @@ namespace FIFE {
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
-	void RenderBackendOpenGL::setEnvironmentalColor(const uint8_t* rgb) {
-		if (memcmp(m_state.env_color, rgb, sizeof(uint8_t) * 3)) {
+	void RenderBackendOpenGL::setEnvironmentalColor(const uint8_t* rgba) {
+		if (memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4)) {
 
-			memcpy(m_state.env_color, rgb, sizeof(uint8_t) * 3);
-			GLfloat rgbf[4] = {
+			memcpy(m_state.env_color, rgba, sizeof(uint8_t) * 4);
+			GLfloat rgbaf[4] = {
 				static_cast<float>(m_state.env_color[0]) / 255.0f,
 				static_cast<float>(m_state.env_color[1]) / 255.0f,
-				static_cast<float>(m_state.env_color[2]) / 255.0f, 0.0f};
+				static_cast<float>(m_state.env_color[2]) / 255.0f,
+				static_cast<float>(m_state.env_color[3]) / 255.0f};
 
 			if(m_state.active_tex != 1) {
 				m_state.active_tex = 1;
 				glActiveTexture(GL_TEXTURE1);
 			}
 
-			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbf);
+			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbaf);
 		}
 	}
 
@@ -627,7 +629,7 @@ namespace FIFE {
 			int32_t dst = 5;
 
 			bool multitextured = false;
-			uint8_t color[3] = {0};
+			uint8_t color[4] = {0};
 
 			int32_t index2T = 0;
 			uint32_t elements2T = 0;
@@ -669,7 +671,7 @@ namespace FIFE {
 					}
 				}
 				if (ro.multitextured != multitextured ||
- 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(uint8_t) * 3))) {
+ 				   (ro.multitextured == true && memcmp(color, ro.rgba, sizeof(uint8_t) * 4))) {
 					mt = true;
 					render = true;
 				}
@@ -690,7 +692,7 @@ namespace FIFE {
 					if(mt) {
 						if(ro.multitextured) {
 							enableTextures(1); // or bindTexture(1, maskForOverlays); if we change it somewhere
-							setEnvironmentalColor(ro.rgb);
+							setEnvironmentalColor(ro.rgba);
 							enableTextures(0);
 
 							// set pointers
@@ -699,7 +701,7 @@ namespace FIFE {
 							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
-							memcpy(color, ro.rgb, sizeof(uint8_t) * 3);
+							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
 							multitextured = true;
 							currentElements = &elements2T;
 							currentIndex = &index2T;
@@ -974,8 +976,8 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
-		if (!rgb) {
+	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgba) {
+		if (!rgba) {
 			renderData rd;
 			rd.vertex[0] = static_cast<float>(rect.x);
 			rd.vertex[1] = static_cast<float>(rect.y);
@@ -1038,9 +1040,10 @@ namespace FIFE {
 
 			RenderObject ro(GL_QUADS, 4, id);
 			ro.multitextured = true;
-			ro.rgb[0] = rgb[0];
-			ro.rgb[1] = rgb[1];
-			ro.rgb[2] = rgb[2];
+			ro.rgba[0] = rgba[0];
+			ro.rgba[1] = rgba[1];
+			ro.rgba[2] = rgba[2];
+			ro.rgba[3] = rgba[3];
 			m_render_objects.push_back(ro);
 		}
 	}
@@ -1086,8 +1089,9 @@ namespace FIFE {
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
 
 		// Arg2
-		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_TEXTURE1);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_COLOR);
+		// uses alpha part of environmental color as interpolation factor
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_CONSTANT);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_ALPHA);
 
 		// Return to normal sampling mode
 		glActiveTexture(GL_TEXTURE1);
