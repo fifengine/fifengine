@@ -187,7 +187,7 @@ namespace FIFE {
 
 		/** Add the Image data to the array
 		 */
-		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb) = 0;
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba) = 0;
 
 		/** Dirty helper function to change the render infos
 		 */

@@ -190,7 +190,7 @@ namespace FIFE {
 	void RenderBackendSDL::renderVertexArrays() {
 	}
 
-	void RenderBackendSDL::addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb) {
+	void RenderBackendSDL::addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba) {
 	}
 
 	void RenderBackendSDL::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
