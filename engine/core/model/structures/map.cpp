@@ -184,21 +184,22 @@ namespace FIFE {
 			}
 			m_transferInstances.clear();
 		}
-		
+		std::vector<CellCache*> cellCaches;
 		std::list<Layer*>::iterator it = m_layers.begin();
-		// first reset CellCache update status
-		for(; it != m_layers.end(); ++it) {
-			CellCache* cache = (*it)->getCellCache();
-			if (cache) {
-				cache->setUpdated(false);
-			}
-		}
-		// then update Layers
-		it = m_layers.begin();
+		// update Layers
 		for(; it != m_layers.end(); ++it) {
 			if ((*it)->update()) {
 				m_changedLayers.push_back(*it);
 			}
+			CellCache* cache = (*it)->getCellCache();
+			if (cache) {
+				cellCaches.push_back(cache);
+			}
+		}
+		// loop over Caches and update
+		for (std::vector<CellCache*>::iterator cacheIt = cellCaches.begin();
+			cacheIt != cellCaches.end(); ++cacheIt) {
+			(*cacheIt)->update();
 		}
 		if (!m_changedLayers.empty()) {
 			std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();

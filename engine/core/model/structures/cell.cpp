@@ -73,97 +73,162 @@ namespace FIFE {
 	}
 
 	void Cell::addInstances(const std::list<Instance*>& instances) {
+		CellCache* cache = m_layer->getCellCache();
 		for (std::list<Instance*>::const_iterator it = instances.begin(); it != instances.end(); ++it) {
-			if ((*it)->isVisitor()) {
-				addVisitorInstance(*it);
-				uint16_t visitor_radius = (*it)->getVisitorRadius();
-				CellCache* cache = m_layer->getCellCache();
-				Rect size(getLayerCoordinates().x-visitor_radius, getLayerCoordinates().y-visitor_radius, visitor_radius*2, visitor_radius*2);
-				for (int32_t y = size.y; y <= size.y+size.h; ++y) {
-					for (int32_t x = size.x; x <= size.x+size.w; ++x) {
-						ModelCoordinate mc(x,y);
-						Cell* cell = cache->getCell(mc);
-						if (!cell) {
-							continue;
+			std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(*it);
+			if (ret.second) {
+				if ((*it)->isVisitor()) {
+					uint16_t visitorRadius = (*it)->getVisitorRadius();
+					std::vector<Cell*> cells;
+					std::vector<Cell*> cellsExt;
+					switch((*it)->getVisitorShape()) {
+						case ITYPE_QUAD_SHAPE: {
+							Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+								(visitorRadius*2)+1, (visitorRadius*2)+1);
+							cells = cache->getCellsInRect(size);
+							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
+							cellsExt = cache->getCellsInRect(sizeExt);
 						}
-						cell->addVisitorInstance(*it);
-						cell->setFoWType(CELLV_REVEALED);
+							break;
+
+						case ITYPE_CIRCLE_SHAPE: {
+							cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
+							cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+						}
+							break;
+
+						default: continue;
 					}
+					for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
+						bool found = false;
+						for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
+							if (*sit == *szit) {
+								found = true;
+								(*szit)->addVisitorInstance(*it);
+								(*szit)->setFoWType(CELLV_REVEALED);
+								break;
+							}
+						}
+						if (!found) {
+							const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
+							if (cv.empty()) {
+								(*szit)->setFoWType(CELLV_MASKED);
+							}
+						}
+					}
+					cache->setFowUpdate(true);
 				}
+				if ((*it)->isSpecialCost()) {
+					cache->registerCost((*it)->getCostId(), (*it)->getCost());
+					cache->addCellToCost((*it)->getCostId(), this);
+				}
+				callOnInstanceEntered(*it);
 			}
-			m_instances.insert(*it);
-			if ((*it)->isSpecialCost()) {
-				m_layer->getCellCache()->registerCost((*it)->getCostId(), (*it)->getCost());
-				m_layer->getCellCache()->addCellToCost((*it)->getCostId(), this);
-			}
-			callOnInstanceEntered(*it);
 		}
-		updateCellInfo();
+		updateCellBlockingInfo();
+		//updateCellInfo();
 	}
 
-	bool Cell::addInstance(Instance* instance) {
+	void Cell::addInstance(Instance* instance) {
 		std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
 		if (ret.second) {
+			CellCache* cache = m_layer->getCellCache();
 			if (instance->isVisitor()) {
-				addVisitorInstance(instance);
-				uint16_t visitor_radius = instance->getVisitorRadius();
-				CellCache* cache = m_layer->getCellCache();
-				Rect size(getLayerCoordinates().x-visitor_radius, getLayerCoordinates().y-visitor_radius, visitor_radius*2, visitor_radius*2);
-				for (int32_t y = size.y; y <= size.y+size.h; ++y) {
-					for (int32_t x = size.x; x <= size.x+size.w; ++x) {
-						ModelCoordinate mc(x,y);
-						Cell* cell = cache->getCell(mc);
-						if (!cell) {
-							continue;
+				uint16_t visitorRadius = instance->getVisitorRadius();
+				std::vector<Cell*> cells;
+				std::vector<Cell*> cellsExt;
+				switch(instance->getVisitorShape()) {
+					case ITYPE_QUAD_SHAPE: {
+						Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+							(visitorRadius*2)+1, (visitorRadius*2)+1);
+						cells = cache->getCellsInRect(size);
+						Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
+						cellsExt = cache->getCellsInRect(sizeExt);
+					}
+						break;
+
+					case ITYPE_CIRCLE_SHAPE: {
+						cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
+						cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+					}
+						break;
+
+					default: break;
+				}
+				for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
+					bool found = false;
+					for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
+						if (*sit == *szit) {
+							found = true;
+							(*szit)->addVisitorInstance(instance);
+							(*szit)->setFoWType(CELLV_REVEALED);
+							break;
 						}
-						cell->addVisitorInstance(instance);
-						cell->setFoWType(CELLV_REVEALED);
+					}
+					if (!found) {
+						const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
+						if (cv.empty()) {
+							(*szit)->setFoWType(CELLV_MASKED);
+						}
 					}
 				}
+				cache->setFowUpdate(true);
 			}
 			if (instance->isSpecialCost()) {
-				m_layer->getCellCache()->registerCost(instance->getCostId(), instance->getCost());
-				m_layer->getCellCache()->addCellToCost(instance->getCostId(), this);
+				cache->registerCost(instance->getCostId(), instance->getCost());
+				cache->addCellToCost(instance->getCostId(), this);
 			}
 			callOnInstanceEntered(instance);
-			return updateCellInfo();
+			updateCellBlockingInfo();
+			//updateCellInfo();
 		}
-		return false;
 	}
 
-	bool Cell::changeInstance(Instance* instance) {
-		return updateCellInfo();
+	void Cell::changeInstance(Instance* instance) {
+		updateCellBlockingInfo();
+		//updateCellInfo();
 	}
 
-	bool Cell::removeInstance(Instance* instance) {
+	void Cell::removeInstance(Instance* instance) {
+		if (m_instances.erase(instance) != 1) {
+			return;
+		}
+		CellCache* cache = m_layer->getCellCache();
 		if (instance->isVisitor()) {
-			uint16_t visitor_radius = instance->getVisitorRadius();
-			CellCache* cache = m_layer->getCellCache();
-			Rect size(getLayerCoordinates().x-visitor_radius, getLayerCoordinates().y-visitor_radius, visitor_radius*2, visitor_radius*2);
-			for (int32_t y = size.y; y <= size.y+size.h; ++y) {
-				for (int32_t x = size.x; x <= size.x+size.w; ++x) {
-					ModelCoordinate mc(x,y);
-					Cell* cell = cache->getCell(mc);
-					if (!cell) {
-						continue;
-					}
-					cell->removeVisitorInstance(instance);
-					const std::vector<Instance*>& cv = cell->getVisitorInstances();
-					if (!cv.empty()) {
-						cell->setFoWType(CELLV_REVEALED);
-					} else {
-						cell->setFoWType(CELLV_MASKED);
-					}
+			uint16_t visitorRadius = instance->getVisitorRadius();
+			std::vector<Cell*> cells;
+			switch(instance->getVisitorShape()) {
+				case ITYPE_QUAD_SHAPE: {
+					Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+						(visitorRadius*2)+1, (visitorRadius*2)+1);
+					cells = cache->getCellsInRect(size);
+				}
+					break;
+
+				case ITYPE_CIRCLE_SHAPE: {
+					cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
+				}
+					break;
+
+				default: break;
+			}
+			for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
+				(*it)->removeVisitorInstance(instance);
+				const std::vector<Instance*>& cv = (*it)->getVisitorInstances();
+				if (!cv.empty()) {
+					(*it)->setFoWType(CELLV_REVEALED);
+				} else {
+					(*it)->setFoWType(CELLV_MASKED);
 				}
 			}
-			removeVisitorInstance(instance);
+			cache->setFowUpdate(true);
 		}
 		if (instance->isSpecialCost()) {
-			m_layer->getCellCache()->removeCellFromCost(instance->getCostId(), this);
+			cache->removeCellFromCost(instance->getCostId(), this);
 		}
-		m_instances.erase(instance);
 		callOnInstanceExited(instance);
-		return updateCellInfo();
+		updateCellBlockingInfo();
+		//updateCellInfo();
 	}
 
 	bool Cell::isNeighbor(Cell* cell) {
@@ -176,22 +241,13 @@ namespace FIFE {
 		return false;
 	}
 
-	bool Cell::updateCellInfo() {
+	void Cell::updateCellBlockingInfo() {
 		CellTypeInfo old_type = m_type;
-		bool update = false;
 		if (!m_instances.empty()) {
 			int32_t pos = -1;
-			Instance* visitor = NULL;
-			uint16_t visitor_radius = 0;
 			bool cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
 
 			for (std::set<Instance*>::iterator it = m_instances.begin(); it != m_instances.end(); ++it) {
-				if ((*it)->isVisitor()) {
-					if (visitor_radius <= (*it)->getVisitorRadius()) {
-						visitor = *it;
-						visitor_radius = (*it)->getVisitorRadius();
-					}
-				}
 				if (cellblock) {
 					continue;
 				}
@@ -199,7 +255,6 @@ namespace FIFE {
 				if (stackpos < pos) {
 					continue;
 				}
-				update = true;
 
 				if ((*it)->getCellStackPosition() > pos) {
 					pos = (*it)->getCellStackPosition();
@@ -223,52 +278,78 @@ namespace FIFE {
 					}
 				}
 			}
-
-			if (visitor) {
-				CellCache* cache = m_layer->getCellCache();
-				ModelCoordinate current = getLayerCoordinates();
-				Rect size(current.x-visitor_radius, current.y-visitor_radius, visitor_radius*2, visitor_radius*2);
-				Rect extsize(size.x-1, size.y-1, size.w+2, size.h+2);
-				for (int32_t y = extsize.y; y <= extsize.y+extsize.h; ++y) {
-					for (int32_t x = extsize.x; x <= extsize.x+extsize.w; ++x) {
-						ModelCoordinate mc(x,y);
-						Cell* cell = cache->getCell(mc);
-						if (!cell) {
-							continue;
-						}
-						if (x <= size.x || x >= size.x + size.w ||
-							y <= size.y || y >= size.y + size.h) {
-							cell->removeVisitorInstance(visitor);
-						} else {
-							cell->addVisitorInstance(visitor);
-						}
-
-						const std::vector<Instance*>& cv = cell->getVisitorInstances();
-						if (!cv.empty()) {
-							cell->setFoWType(CELLV_REVEALED);
-						} else {
-							cell->setFoWType(CELLV_MASKED);
-						}
-					}
-				}
-			}
 		} else {
 			if (m_type == CTYPE_STATIC_BLOCKER || m_type == CTYPE_DYNAMIC_BLOCKER) {
 				m_type = CTYPE_NO_BLOCKER;
-				update = true;
 			}
 		}
 
 		if (old_type != m_type) {
 			bool block = (m_type == CTYPE_STATIC_BLOCKER ||
 				m_type == CTYPE_DYNAMIC_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
+			m_layer->getCellCache()->setBlockingUpdate(true);
 			callOnBlockingChanged(block);
 		}
+	}
 
-		if (m_visitors.empty() && m_fowType == CELLV_REVEALED) {
-			m_fowType = CELLV_MASKED;
-			update = true;
+	void Cell::updateCellFowInfo() {
+		bool visitors = !m_visitors.empty();
+		bool instances = !m_instances.empty();
+		if (!visitors && !instances && m_fowType == CELLV_REVEALED) {
+			m_fowType == CELLV_MASKED;
+		} else if (visitors && instances) {
+			CellCache* cache = m_layer->getCellCache();
+			std::vector<Instance*>::iterator visit = m_visitors.begin();
+			for (; visit != m_visitors.end(); ++visit) {
+				std::set<Instance*>::iterator insfind = m_instances.find(*visit);
+				if (insfind != m_instances.end()) {
+					uint16_t visitorRadius = (*visit)->getVisitorRadius();
+					std::vector<Cell*> cells;
+					std::vector<Cell*> cellsExt;
+					switch((*visit)->getVisitorShape()) {
+						case ITYPE_QUAD_SHAPE: {
+							Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+								(visitorRadius*2)+1, (visitorRadius*2)+1);
+							cells = cache->getCellsInRect(size);
+							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
+							cellsExt = cache->getCellsInRect(sizeExt);
+						}
+							break;
+
+						case ITYPE_CIRCLE_SHAPE: {
+							cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
+							cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+						}
+							break;
+
+						default: continue;
+					}
+
+					for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
+						bool found = false;
+						for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
+							if (*sit == *szit) {
+								found = true;
+								(*szit)->addVisitorInstance(*visit);
+								(*szit)->setFoWType(CELLV_REVEALED);
+								break;
+							}
+						}
+						if (!found) {
+							const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
+							if (cv.empty()) {
+								(*szit)->setFoWType(CELLV_MASKED);
+							}
+						}
+					}
+				}
+			}
 		}
+	}
+
+	void Cell::updateCellInfo() {
+		updateCellBlockingInfo();
+		updateCellFowInfo();
 
 		if (!m_deleteListeners.empty()) {
 			m_deleteListeners.erase(
@@ -280,8 +361,6 @@ namespace FIFE {
 				std::remove(m_changeListeners.begin(), m_changeListeners.end(),
 				(CellChangeListener*)NULL),	m_changeListeners.end());
 		}
-
-		return update;
 	}
 
 	void Cell::setFoWType(CellVisualEffect type) {

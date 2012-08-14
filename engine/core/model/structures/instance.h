@@ -81,6 +81,13 @@ namespace FIFE {
 		virtual void onInstanceDeleted(Instance* instance) =0;
 	};
 
+	enum VisitorShapeType {
+		ITYPE_NO_SHAPE = 0,
+		ITYPE_QUAD_SHAPE,
+		ITYPE_CIRCLE_SHAPE
+	};
+	typedef uint8_t VisitorShapeInfo;
+
 	/** An Instance is an "instantiation" of an Object at a Location.
 	 *
 	 */
@@ -362,6 +369,14 @@ namespace FIFE {
 		 */
 		bool isVisitor();
 
+		/** Sets the shape type for a visitor.
+		*/
+		void setVisitorShape(VisitorShapeInfo info);
+
+		/** Gets the shape type for a visitor.
+		*/
+		VisitorShapeInfo getVisitorShape();
+
 		/** Sets the range for a visitor.
 		*/
 		void setVisitorRadius(uint16_t radius);
@@ -488,6 +503,8 @@ namespace FIFE {
 		bool m_overrideBlocking;
 		//! is instance a visitor (FoW)
 		bool m_isVisitor;
+		//! visitor shape type
+		VisitorShapeInfo m_visitorShape;
 		//! visitor radius (FoW)
 		uint16_t m_visitorRadius;
 		//! position on cell stack

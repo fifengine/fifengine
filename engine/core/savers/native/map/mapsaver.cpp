@@ -189,6 +189,13 @@ namespace FIFE {
 
 				if ((*iter)->isVisitor()) {
 					instanceElement->SetAttribute("visitor_radius", (*iter)->getVisitorRadius());
+					std::string shape("none");
+					if ((*iter)->getVisitorShape() == ITYPE_QUAD_SHAPE) {
+						shape = "quad";
+					} else if ((*iter)->getVisitorShape() == ITYPE_CIRCLE_SHAPE) {
+						shape = "circle";
+					}
+					instanceElement->SetAttribute("visitor_shape", shape);
 				}
 
 				if ((*iter)->isSpecialCost()) {

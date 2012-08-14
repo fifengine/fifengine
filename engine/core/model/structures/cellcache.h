@@ -165,6 +165,11 @@ namespace FIFE {
 			 */
 			void removeCell(Cell* cell);
 
+			/** Adds a interact layer to the CellCache on runtime and sets all needed layer properties.
+			 * @param interact A pointer to the interact layer.
+			 */
+			void addInteractOnRuntime(Layer* interact);
+
 			/** Returns change listener.
 			 * @return A pointer to the change listener.
 			 */
@@ -544,6 +549,10 @@ namespace FIFE {
 			 */
 			std::vector<Cell*> getAreaCells(const std::string& id);
 
+			void setBlockingUpdate(bool update);
+			void setFowUpdate(bool update);
+			void setSizeUpdate(bool update);
+			void update();
 		private:
 			typedef std::multimap<std::string, Cell*> StringCellMultimap;
 			typedef StringCellMultimap::iterator StringCellIterator;
@@ -578,6 +587,10 @@ namespace FIFE {
 
 			//! cache height
 			uint32_t m_height;
+
+			bool m_blockingUpdate;
+			bool m_fowUpdate;
+			bool m_sizeUpdate;
 
 			//! need update
 			bool m_updated;

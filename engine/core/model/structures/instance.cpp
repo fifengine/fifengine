@@ -201,6 +201,7 @@ namespace FIFE {
 		m_blocking(object->isBlocking()),
 		m_overrideBlocking(false),
 		m_isVisitor(false),
+		m_visitorShape(ITYPE_CIRCLE_SHAPE),
 		m_visitorRadius(0),
 		m_cellStackPos(object->getCellStackPosition()),
 		m_specialCost(object->isSpecialCost()),
@@ -541,6 +542,14 @@ namespace FIFE {
 
 	bool Instance::isVisitor() {
 		return m_isVisitor;
+	}
+
+	void Instance::setVisitorShape(VisitorShapeInfo info) {
+		m_visitorShape = info;
+	}
+
+	VisitorShapeInfo Instance::getVisitorShape() {
+		return m_visitorShape;
 	}
 
 	void Instance::setVisitorRadius(uint16_t radius) {

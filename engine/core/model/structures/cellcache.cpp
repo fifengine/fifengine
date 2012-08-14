@@ -101,9 +101,7 @@ namespace FIFE {
 							for (; mcit != coordinates.end(); ++mcit) {
 								Cell* cell = m_layer->getCellCache()->getCell(*mcit);
 								if (cell) {
-									if (cell->removeInstance(*it)) {
-										m_layer->getCellCache()->setUpdated(true);
-									}
+									cell->removeInstance(*it);
 								}
 							}
 							// add
@@ -112,9 +110,7 @@ namespace FIFE {
 							for (; mcit != coordinates.end(); ++mcit) {
 								Cell* cell = m_layer->getCellCache()->getCell(*mcit);
 								if (cell) {
-									if (cell->addInstance(*it)) {
-										m_layer->getCellCache()->setUpdated(true);
-									}
+									cell->addInstance(*it);
 								}
 							}
 						}
@@ -124,14 +120,10 @@ namespace FIFE {
 							Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 							Cell* newcell = m_layer->getCellCache()->getCell(newmc);
 							if (oldcell) {
-								if (oldcell->removeInstance(*i)) {
-									m_layer->getCellCache()->setUpdated(true);
-								}
+								oldcell->removeInstance(*i);
 							}
 							if (newcell) {
-								if (newcell->addInstance(*i)) {
-									m_layer->getCellCache()->setUpdated(true);
-								}
+								newcell->addInstance(*i);
 							}
 						}
 					}
@@ -150,9 +142,7 @@ namespace FIFE {
 					}
 					Cell* cell = m_layer->getCellCache()->getCell(mc);
 					if (cell) {
-						if (cell->changeInstance(*i)) {
-							m_layer->getCellCache()->setUpdated(true);
-						}
+						cell->changeInstance(*i);
 					}
 				}
 				if (((*i)->getChangeInfo() & ICHANGE_CELL) == ICHANGE_CELL) {
@@ -171,14 +161,10 @@ namespace FIFE {
 					Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 					Cell* newcell = m_layer->getCellCache()->getCell(newmc);
 					if (oldcell) {
-						if (oldcell->removeInstance(*i)) {
-							m_layer->getCellCache()->setUpdated(true);
-						}
+						oldcell->removeInstance(*i);
 					}
 					if (newcell) {
-						if (newcell->addInstance(*i)) {
-							m_layer->getCellCache()->setUpdated(true);
-						}
+						newcell->addInstance(*i);
 					}
 				}
 			}
@@ -215,18 +201,14 @@ namespace FIFE {
 						}
 						Cell* cell = cache->getCell(*mcit);
 						if (cell) {
-							if (cell->addInstance(*it)) {
-								cache->setUpdated(true);
-							}
+							cell->addInstance(*it);
 						}
 					}
 				}
 			}
 			Cell* cell = cache->getCell(mc);
 			if (cell) {
-				if (cell->addInstance(instance)) {
-					cache->setUpdated(true);
-				}
+				cell->addInstance(instance);
 			}
 		}
 
@@ -252,22 +234,17 @@ namespace FIFE {
 					for (; mcit != coordinates.end(); ++mcit) {
 						Cell* cell = cache->getCell(*mcit);
 						if (cell) {
-							if (cell->removeInstance(*it)) {
-								cache->setUpdated(true);
-							}
+							cell->removeInstance(*it);
 						}
 					}
 				}
 			}
 			Cell* cell = cache->getCell(mc);
 			if (cell) {
-				if (cell->removeInstance(instance)) {
-					cache->setUpdated(true);
-				}
+				cell->removeInstance(instance);
 			}
-			// ToDo: this is not quite right,
-			// find a way to update the size correct (not on the next delete)
-			cache->resize();
+			// updates size on the next cache update (happens on same pump)
+			cache->setSizeUpdate(true);
 		}
 
 	private:
@@ -389,6 +366,9 @@ namespace FIFE {
 		m_layer(layer),
 		m_defaultCostMulti(1.0),
 		m_defaultSpeedMulti(1.0),
+		m_blockingUpdate(false),
+		m_fowUpdate(false),
+		m_sizeUpdate(false),
 		m_updated(false),
 		m_searchNarrow(true) {
 		// create cell change listener
@@ -729,6 +709,26 @@ namespace FIFE {
 		}
 		if (!m_cellAreas.empty()) {
 			removeCellFromArea(cell);
+		}
+	}
+
+	void CellCache::addInteractOnRuntime(Layer* interact) {
+		interact->setInteract(true, m_layer->getId());
+		m_layer->addInteractLayer(interact);
+		interact->addChangeListener(m_cellListener);
+		Rect newsize = calculateCurrentSize();
+		if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
+			resize();
+		} else {
+			CellGrid* cg = m_layer->getCellGrid();
+			const std::vector<Instance*>& instances = interact->getInstances();
+			std::vector<Instance*>::const_iterator it = instances.begin();
+			for (; it != instances.end(); ++it) {
+				Cell* cell = getCell(cg->toLayerCoordinates((*it)->getLocationRef().getMapCoordinates()));
+				if (cell) {
+					cell->addInstance(*it);
+				}
+			}
 		}
 	}
 
@@ -1409,5 +1409,27 @@ namespace FIFE {
 			}
 		}
 		return newsize;
+	}
+
+	void CellCache::setBlockingUpdate(bool update) {
+		m_blockingUpdate = update;
+	}
+
+	void CellCache::setFowUpdate(bool update) {
+		m_fowUpdate = update;
+	}
+
+	void CellCache::setSizeUpdate(bool update) {
+		m_sizeUpdate = update;
+	}
+
+	void CellCache::update() {
+		m_updated = m_fowUpdate;
+		m_fowUpdate = false;
+		if (m_sizeUpdate) {
+			resize();
+			m_sizeUpdate = false;
+		}
+		m_blockingUpdate = false;
 	}
 } // FIFE

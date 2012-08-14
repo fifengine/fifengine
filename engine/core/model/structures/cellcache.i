@@ -39,7 +39,7 @@ namespace FIFE {
 			void addCell(Cell* cell);
 			Cell* createCell(const ModelCoordinate& mc);
 			Cell* getCell(const ModelCoordinate& mc);
-
+			void addInteractOnRuntime(Layer* interact);
 			const Rect& getSize();
 			void setSize(const Rect& rec);
 			uint32_t getWidth();
