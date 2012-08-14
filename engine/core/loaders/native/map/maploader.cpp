@@ -348,6 +348,15 @@ namespace FIFE {
 											int stackRetVal = instance->QueryValueAttribute("stackpos", &stackpos);
 											int cellStackRetVal = instance->QueryValueAttribute("cellstack", &cellStack);
 											int visitorRetVal = instance->QueryValueAttribute("visitor_radius", &visitorRadius);
+											const std::string* shapeType = instance->Attribute(std::string("visitor_shape"));
+											VisitorShapeInfo visitorShape = ITYPE_NO_SHAPE;
+											if (shapeType) {
+												if ("quad" == *shapeType) {
+													visitorShape = ITYPE_QUAD_SHAPE;
+												} else if ("circle" == *shapeType) {
+													visitorShape = ITYPE_CIRCLE_SHAPE;
+												}
+											}
 
 											if (objectId) {
 												if (namespaceId) {
@@ -390,6 +399,7 @@ namespace FIFE {
 														if  (visitorRetVal == TIXML_SUCCESS) {
 															inst->setVisitor(true);
 															inst->setVisitorRadius(visitorRadius);
+															inst->setVisitorShape(visitorShape);
 														}
 
 														if (costId) {

@@ -61,13 +61,13 @@ namespace FIFE {
 			~Cell();
 
 			void addInstances(const std::list<Instance*>& instances);
-			bool addInstance(Instance* instance);
-			bool changeInstance(Instance* instance);
-			bool removeInstance(Instance* instance);
+			void addInstance(Instance* instance);
+			void changeInstance(Instance* instance);
+			void removeInstance(Instance* instance);
 
 			bool isNeighbor(Cell* cell);
 			std::vector<Cell*> getNeighbors();
-			bool updateCellInfo();
+			void updateCellInfo();
 			int32_t getCellId();
 			const ModelCoordinate getLayerCoordinates() const;
 			bool defaultCost();

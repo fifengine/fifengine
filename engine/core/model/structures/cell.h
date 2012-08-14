@@ -152,17 +152,17 @@ namespace FIFE {
 			/** Adds a instance to this cell.
 			 * @param instance A pointer to the instance.
 			 */
-			bool addInstance(Instance* instance);
+			void addInstance(Instance* instance);
 
 			/** Changes a instance on this cell.
 			 * @param instance A pointer to the instance.
 			 */
-			bool changeInstance(Instance* instance);
+			void changeInstance(Instance* instance);
 
 			/** Removes a instance from this cell.
 			 * @param instance A pointer to the instance.
 			 */
-			bool removeInstance(Instance* instance);
+			void removeInstance(Instance* instance);
 
 			/** Called to check if given cell is a neighbor.
 			 * @param cell A pointer to cell.
@@ -173,7 +173,7 @@ namespace FIFE {
 			/** Called to update cell data.
 			 * @return True if cell was changed since the last update, false otherwise.
 			 */
-			bool updateCellInfo();
+			void updateCellInfo();
 
 			/** Returns if cell use default cost.
 			 * @return True if the cell use the default cost, otherwise false.
@@ -386,6 +386,10 @@ namespace FIFE {
 			void callOnBlockingChanged(bool blocks);
 
 		private:
+
+			void updateCellBlockingInfo();
+			void updateCellFowInfo();
+
 			//! holds coordinate as a unique integer id
 			int32_t m_coordId;
 			
