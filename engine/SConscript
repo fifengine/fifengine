@@ -26,7 +26,7 @@ import utils.scons.scons_utils as utils
 from utils.util_scripts.path import path as upath
 import utils.scons.scons_builders as builders
 
-Import('env', 'opts')
+Import('env', 'fifechan_env', 'opts')
 
 _sep = os.path.sep
 src_path = upath(opts['SRC'])
@@ -166,6 +166,7 @@ env.Append(BUILDERS = {'CodeblocksProjectLinux': codeblocks_project_builder_linu
 
 python_extensions_builder = Builder(action = "$SWIG -o $TARGET ${_SWIGOUTDIR} ${_SWIGINCFLAGS} $SWIGFLAGS $SOURCES")
 env.Append(BUILDERS = {'PythonExtensions': python_extensions_builder})
+fifechan_env.Append(BUILDERS = { 'PythonExtensions': python_extensions_builder})
 
 
 #**************************************************************************
@@ -246,7 +247,7 @@ copy_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.cc'),
 				[Copy('$TARGET', '$SOURCE')])
 
 if fifechan:
-	fifechan_lib_env = env.Clone(LIBS = ['python2.7', 'SDL', 'SDL_image', 'fifechan'])
+	fifechan_lib_env = fifechan_env
 
 	fifechan_pythonlib = fifechan_lib_env.SharedLibrary(target = 'fifechan',
 												source = fifechan_pyfiles,
@@ -254,7 +255,7 @@ if fifechan:
 												SHLIBPREFIX='_',
 												SHLIBSUFFIX=dest_suffix,
 												SHLIBEMITTER = '')
-
+												
 	fifechan_pythonext = fifechan_lib_env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fifechan_wrap.cc'),
 																	os.path.join('swigwrappers', 'python' ,'fifechan_wrap.h'),
 																	os.path.join('python', 'fife', 'fifechan.py')],

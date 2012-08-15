@@ -101,6 +101,11 @@ def getRequiredLibs(reqLibs):
 			
 	return libs
 
+def createFifechanEnv(standard_env):
+	fifechan_lib_env = standard_env.Clone(LIBS = ['SDL', 'SDL_image', 'fifechan'])
+		
+	return fifechan_lib_env
+	
 def getOptionalLibs(opengl):
 	libs = [('tinyxml', 'tinyxml.h')]
 	

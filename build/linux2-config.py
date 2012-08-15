@@ -108,6 +108,11 @@ def getRequiredLibs(reqLibs):
 		libs.append(('CEGUIOpenGLRenderer', 'CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h'))
 	
 	return libs
+	
+def createFifechanEnv(standard_env):
+	fifechan_lib_env = standard_env.Clone(LIBS = ['python2.7', 'SDL', 'SDL_image', 'fifechan'])
+		
+	return fifechan_lib_env
 
 def getOptionalLibs(opengl):
 	libs = [('tinyxml', 'tinyxml.h')]

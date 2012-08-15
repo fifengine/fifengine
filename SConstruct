@@ -435,6 +435,10 @@ else:
 #**************************************************************************
 Export('env')
 
+if env['ENABLE_FIFECHAN']:
+	fifechan_env = platformConfig.createFifechanEnv(env)
+	Export('fifechan_env')
+
 #build the engine
 env.SConscript('engine/SConscript', variant_dir=engine_var_dir, duplicate=0, exports='opts')
 

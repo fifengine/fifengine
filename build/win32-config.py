@@ -92,6 +92,15 @@ def addExtras(env, reqLibs):
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
 	
 	return env
+	
+def createFifechanEnv(standard_env):
+	fifechan_lib_env = standard_env.Clone(LIBS = ['SDL', 'fifechan'])
+	if standard_env['FIFE_DEBUG']:
+		fifechan_lib_env.Append(LIBS = ['python27_d'])
+	else:
+		fifechan_lib_env.Append(LIBS = ['python27'])
+		
+	return fifechan_lib_env
 
 
 def getRequiredHeaders(opengl):
