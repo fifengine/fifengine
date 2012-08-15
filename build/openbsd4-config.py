@@ -78,7 +78,7 @@ def getRequiredLibs(reqLibs):
 	return libs
 	
 def createFifechanEnv(standard_env):
-	fifechan_lib_env = standard_env.Clone(LIBS = ['python2.7', 'SDL', 'SDL_image', 'fifechan'])
+	fifechan_lib_env = standard_env.Clone(LIBS = ['python2.7', 'fifechan'])
 		
 	return fifechan_lib_env
 

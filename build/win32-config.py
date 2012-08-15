@@ -70,7 +70,7 @@ def addExtras(env, reqLibs):
 		env.Append(LIBS = ['python27'])
 
 	if fifechan:
-		env.Prepend(LIBS = ['libfifechan_sdl', 'fifechan']) 
+		env.Prepend(LIBS = ['libfifechan_sdl', 'libfifechan']) 
 		if opengl:
 			env.Prepend(LIBS = ['libfifechan_opengl'])
 
@@ -94,7 +94,7 @@ def addExtras(env, reqLibs):
 	return env
 	
 def createFifechanEnv(standard_env):
-	fifechan_lib_env = standard_env.Clone(LIBS = ['SDL', 'fifechan'])
+	fifechan_lib_env = standard_env.Clone(LIBS = ['libfifechan'])
 	if standard_env['FIFE_DEBUG']:
 		fifechan_lib_env.Append(LIBS = ['python27_d'])
 	else:
