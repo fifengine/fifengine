@@ -246,7 +246,7 @@ copy_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.cc'),
 				[Copy('$TARGET', '$SOURCE')])
 
 if fifechan:
-	fifechan_lib_env = env.Clone(LIBS = ['SDL', 'SDL_image', 'fifechan'])
+	fifechan_lib_env = env.Clone(LIBS = ['python2.7', 'SDL', 'SDL_image', 'fifechan'])
 
 	fifechan_pythonlib = fifechan_lib_env.SharedLibrary(target = 'fifechan',
 												source = fifechan_pyfiles,
