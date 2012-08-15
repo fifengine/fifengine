@@ -84,9 +84,9 @@ namespace FIFE {
 		 * @param point A ModelCoordinate representing the upper left part of the search area.
 		 * @param w The width of the search area in Model Units.
 		 * @param h The height of the search area in Model Units.
-		 * @param lst vector reference that will be filled with all instances within that space.
+		 * @param list vector reference that will be filled with all instances within that space.
 		 */
-		void findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceList& lst);
+		void findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceList& list);
 
 		/** See QuadNode::apply_visitor
 		 */

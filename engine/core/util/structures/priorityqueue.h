@@ -30,7 +30,7 @@ namespace FIFE {
 	/** A pq which stores index-value pairs for elements.
 	 *
 	 * This acts as a normal PQ but stores some extra information about the
-	 * elements that it's storing, namely a special unique index. 
+	 * elements that it's storing, namely a special unique index.
 	 */
 	template<typename index_type, typename priority_type>
 	class PriorityQueue {
@@ -42,9 +42,9 @@ namespace FIFE {
 			Ascending, //!< lowest priority first.
 			Descending //!< highest priority first.
 		};
-		
+
 		typedef std::pair<index_type, priority_type> value_type;
-		
+
 		/** Constructor
 		 *
 		 */
@@ -59,14 +59,14 @@ namespace FIFE {
 		}
 
 		/** Pushes a new element onto the queue.
-		 * 
-		 * The element is pushed onto the queue and then moved up the queue until it's 
+		 *
+		 * The element is pushed onto the queue and then moved up the queue until it's
 		 * in the correct position by priority.
 		 *
 		 * @param element Of type value_type which contains both the index and the priority of the element.
 		 */
 		void pushElement(const value_type& element);
-		
+
 		/** Pops the element with the highest priority from the queue.
 		 *
 		 * Removes and deletes the highest priority element.
@@ -88,16 +88,16 @@ namespace FIFE {
 		 *
 		 */
 		void clear(void);
-		
+
 		/** Retrieves the element with the highest priority.
 		 *
-		 * This function will generate an assertion error if the pq is 
+		 * This function will generate an assertion error if the pq is
 		 * empty.
 		 *
 		 * @return A const reference to the highest priority element.
 		 */
 		const value_type getPriorityElement(void) const {
-				
+
 			assert(!empty());
 
 			return m_elements.front();
@@ -123,7 +123,7 @@ namespace FIFE {
 		typedef typename ElementList::iterator ElementListIt;
 		typedef typename ElementList::const_iterator ElementListConstIt;
 
-		//A list of valuetype pairs that represents the pq. 
+		//A list of valuetype pairs that represents the pq.
 		ElementList m_elements;
 
 		//The order to use when sorting the pq.
@@ -137,21 +137,21 @@ namespace FIFE {
 		/** Orders a PQ element up the list.
 		 *
 		 * @param entry A const reference to a value_type which represents the element to be added to the
-		 * pq. 
+		 * pq.
 		 */
 		void orderUp(const value_type& entry);
 
 		/** Orders a PQ element down the list.
 		 *
-		 * @param An iterator representing the element in the PQ to order down.
+		 * @param i An iterator representing the element in the PQ to order down.
 		 */
 		void orderDown(ElementListIt i);
 
 		/** Retrieves the iterator to the element with the given index.
-		 * 
+		 *
 		 * @param index A const reference to the index to find.
 		 */
-		ElementListIt getElementIterator(const index_type& index) { 
+		ElementListIt getElementIterator(const index_type& index) {
 
 			for(ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i) {
 				if(i->first == index) {
@@ -162,7 +162,7 @@ namespace FIFE {
 			return m_elements.end();
 
 		}
-	
+
 		/** The comparison function, used to compare two elements.
 		 *
 		 * @param a The l-operand of the comparison operation.
@@ -186,7 +186,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::pushElement(const value_typ
 
 template<typename index_type, typename priority_type>
 void FIFE::PriorityQueue<index_type, priority_type>::popElement(void) {
-	
+
 	if(!empty()) {
 		m_elements.pop_front();
 	}
@@ -195,7 +195,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::popElement(void) {
 
 template<typename index_type, typename priority_type>
 bool FIFE::PriorityQueue<index_type, priority_type>::changeElementPriority(const index_type& index, const priority_type& newPriority) {
-	
+
 	ElementListIt i = getElementIterator(index);
 
 	if(i == m_elements.end()) {
@@ -235,7 +235,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderUp(ElementListIt i) {
 	while(i != m_elements.end()) {
 
 		if(compare(vt, (*i)) > 0) {
-			
+
 			m_elements.insert(i, vt);
 
 			return;
@@ -287,9 +287,9 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderDown(ElementListIt i) 
 
 	while(i != m_elements.begin()) {
 		if(compare(vt, (*i)) < 0) {
-			
+
 			m_elements.insert(j, vt);
-			
+
 			return;
 		}
 
@@ -301,8 +301,8 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderDown(ElementListIt i) 
 }
 
 template<typename index_type, typename priority_type>
-int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a, const value_type& b) { 
-	
+int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a, const value_type& b) {
+
 	if(m_ordering == Descending) {
 
 		if(a.second > b.second) {

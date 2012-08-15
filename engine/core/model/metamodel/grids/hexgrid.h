@@ -37,18 +37,20 @@
 namespace FIFE {
 	class HexGrid: public CellGrid {
 	public:
-		HexGrid(bool allow_diagonals=false);
+		HexGrid();
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		const std::string& getType() const;
 		const std::string& getName() const;
 		double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		uint32_t getCellSideCount() const { return 6; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
+		std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
 		CellGrid* clone();
 
 	private:

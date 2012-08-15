@@ -37,6 +37,9 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIDEO);
 
 	class RenderBackendOpenGL::RenderObject {
@@ -65,7 +68,7 @@ namespace FIFE {
 		GLenum stencil_op;
 		GLenum stencil_func;
 		bool multitextured;
-		uint8_t rgb[3];
+		uint8_t rgba[4];
 	};
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey)
@@ -94,6 +97,7 @@ namespace FIFE {
 		m_state.env_color[0] = 0;
 		m_state.env_color[1] = 0;
 		m_state.env_color[2] = 0;
+		m_state.env_color[3] = 0;
 		m_state.blend_src = GL_SRC_ALPHA;
 		m_state.blend_dst = GL_ONE_MINUS_SRC_ALPHA;
 		m_state.alpha_enabled = false;
@@ -138,7 +142,7 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-		
+
 		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
 	}
@@ -302,7 +306,7 @@ namespace FIFE {
 		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
 		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(name, conv);
-		
+
 		SDL_FreeSurface(surface);
 		return image;
 	}
@@ -326,7 +330,7 @@ namespace FIFE {
 				glColorMaterial(GL_FRONT, GL_DIFFUSE);
 				glEnable(GL_COLOR_MATERIAL);
 			}
-			m_state.lightmodel = lighting;			
+			m_state.lightmodel = lighting;
 		}
 	}
 
@@ -473,21 +477,22 @@ namespace FIFE {
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
-	void RenderBackendOpenGL::setEnvironmentalColor(const uint8_t* rgb) {
-		if (memcmp(m_state.env_color, rgb, sizeof(uint8_t) * 3)) {
+	void RenderBackendOpenGL::setEnvironmentalColor(const uint8_t* rgba) {
+		if (memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4)) {
 
-			memcpy(m_state.env_color, rgb, sizeof(uint8_t) * 3);
-			GLfloat rgbf[4] = {
+			memcpy(m_state.env_color, rgba, sizeof(uint8_t) * 4);
+			GLfloat rgbaf[4] = {
 				static_cast<float>(m_state.env_color[0]) / 255.0f,
 				static_cast<float>(m_state.env_color[1]) / 255.0f,
-				static_cast<float>(m_state.env_color[2]) / 255.0f, 0.0f};
+				static_cast<float>(m_state.env_color[2]) / 255.0f,
+				static_cast<float>(m_state.env_color[3]) / 255.0f};
 
 			if(m_state.active_tex != 1) {
 				m_state.active_tex = 1;
 				glActiveTexture(GL_TEXTURE1);
 			}
 
-			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbf);
+			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbaf);
 		}
 	}
 
@@ -598,7 +603,7 @@ namespace FIFE {
 			bool stencil = false;
 			bool render = false;
 			bool mt = false;
-			
+
 			//stride
 			const uint32_t stride = sizeof(renderData);
 			const uint32_t stride2T = sizeof(renderData2T);
@@ -624,7 +629,7 @@ namespace FIFE {
 			int32_t dst = 5;
 
 			bool multitextured = false;
-			uint8_t color[3] = {0};
+			uint8_t color[4] = {0};
 
 			int32_t index2T = 0;
 			uint32_t elements2T = 0;
@@ -657,8 +662,8 @@ namespace FIFE {
 						stencil = true;
 						render = true;
 					} else if (ro.stencil_test) {
-						if (ro.stencil_ref != m_state.sten_ref || 
-							ro.stencil_op != m_state.sten_op || 
+						if (ro.stencil_ref != m_state.sten_ref ||
+							ro.stencil_op != m_state.sten_op ||
 							ro.stencil_func != m_state.sten_func) {
 							stencil = true;
 							render = true;
@@ -666,7 +671,7 @@ namespace FIFE {
 					}
 				}
 				if (ro.multitextured != multitextured ||
- 				   (ro.multitextured == true && memcmp(color, ro.rgb, sizeof(uint8_t) * 3))) {
+ 				   (ro.multitextured == true && memcmp(color, ro.rgba, sizeof(uint8_t) * 4))) {
 					mt = true;
 					render = true;
 				}
@@ -687,7 +692,7 @@ namespace FIFE {
 					if(mt) {
 						if(ro.multitextured) {
 							enableTextures(1); // or bindTexture(1, maskForOverlays); if we change it somewhere
-							setEnvironmentalColor(ro.rgb);
+							setEnvironmentalColor(ro.rgba);
 							enableTextures(0);
 
 							// set pointers
@@ -696,7 +701,7 @@ namespace FIFE {
 							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
-							memcpy(color, ro.rgb, sizeof(uint8_t) * 3);
+							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
 							multitextured = true;
 							currentElements = &elements2T;
 							currentIndex = &index2T;
@@ -817,7 +822,7 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
-		
+
 		rd.vertex[0] = static_cast<float>(p2.x);
 		rd.vertex[1] = static_cast<float>(p2.y);
 		m_render_datas.push_back(rd);
@@ -858,10 +863,10 @@ namespace FIFE {
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 		rd.vertex[0] = static_cast<float>(p.x+w);
-		
+
 		m_render_datas.push_back(rd);
 		rd.vertex[1] = static_cast<float>(p.y+h);
-		
+
 		m_render_datas.push_back(rd);
 		rd.vertex[0] = static_cast<float>(p.x);
 		m_render_datas.push_back(rd);
@@ -965,14 +970,14 @@ namespace FIFE {
 			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
 			m_render_datas.push_back(rd);
-			
+
 			RenderObject ro(GL_TRIANGLES, 3);
 			m_render_objects.push_back(ro);
 		}
 	}
 
-	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgb) {
-		if (!rgb) {
+	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgba) {
+		if (!rgba) {
 			renderData rd;
 			rd.vertex[0] = static_cast<float>(rect.x);
 			rd.vertex[1] = static_cast<float>(rect.y);
@@ -1035,9 +1040,10 @@ namespace FIFE {
 
 			RenderObject ro(GL_QUADS, 4, id);
 			ro.multitextured = true;
-			ro.rgb[0] = rgb[0];
-			ro.rgb[1] = rgb[1];
-			ro.rgb[2] = rgb[2];
+			ro.rgba[0] = rgba[0];
+			ro.rgba[1] = rgba[1];
+			ro.rgba[2] = rgba[2];
+			ro.rgba[3] = rgba[3];
 			m_render_objects.push_back(ro);
 		}
 	}
@@ -1066,15 +1072,15 @@ namespace FIFE {
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE); 
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
 
 		// Arg0
 		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE0);
 		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE0);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);	
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 
-		// The alpha component is taken only from 0th tex unit which is 
+		// The alpha component is taken only from 0th tex unit which is
 		// Arg0 in our case, therefore we doesn't need to set operands
 		// and sources for the rest of arguments
 
@@ -1083,8 +1089,9 @@ namespace FIFE {
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
 
 		// Arg2
-		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_TEXTURE1);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_COLOR);
+		// uses alpha part of environmental color as interpolation factor
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_CONSTANT);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_ALPHA);
 
 		// Return to normal sampling mode
 		glActiveTexture(GL_TEXTURE1);
@@ -1124,11 +1131,11 @@ namespace FIFE {
 
 		SDL_UnlockSurface(surface);
 		Image::saveAsPng(filename, *surface);
-		
+
 		SDL_FreeSurface(surface);
 		delete[] pixels;
 	}
-	
+
 	void RenderBackendOpenGL::captureScreen(const std::string& filename, uint32_t width, uint32_t height) {
 		const uint32_t swidth = getWidth();
 		const uint32_t sheight = getHeight();
@@ -1255,6 +1262,9 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::attachRenderTarget(ImagePtr& img, bool discard) {
+		// flush down what we batched for the old target
+		renderVertexArrays();
+
 		m_img_target = img;
 		m_target_discard = discard;
 
@@ -1290,7 +1300,7 @@ namespace FIFE {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		// invert top with bottom
-		glOrtho(0, w, 0, h, -1, 1); 
+		glOrtho(0, w, 0, h, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
 		// because of inversion 2 lines above we need to also invert culling faces
 		glCullFace(GL_FRONT);
@@ -1299,7 +1309,7 @@ namespace FIFE {
 			glClear(GL_COLOR_BUFFER_BIT);
 		} else if (!m_target_discard && (!GLEE_EXT_framebuffer_object || !m_useframebuffer)) {
 			// if we wanna just add something to render target, we need to first render previous contents
-			addImageToArray(targetid, m_img_target->getArea(), 
+			addImageToArray(targetid, m_img_target->getArea(),
 				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
 		}
 	}
@@ -1314,7 +1324,7 @@ namespace FIFE {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		} else {
 			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());
-			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
 				m_img_target->getWidth(), m_img_target->getHeight(), 0);
 		}
 
@@ -1324,7 +1334,7 @@ namespace FIFE {
 		glLoadIdentity();
 		glOrtho(0, m_screen->w, m_screen->h, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
-		glCullFace(GL_BACK); 
+		glCullFace(GL_BACK);
 	}
 
 	void RenderBackendOpenGL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {

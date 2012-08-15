@@ -32,15 +32,14 @@
 namespace FIFE {
 
 	class Map;
-	class Selection;
 	class Instance;
 	class Object;
 	class CellGrid;
+	class CellCache;
 	
 	enum PathingStrategy {
 		CELL_EDGES_ONLY,
-		CELL_EDGES_AND_DIAGONALS,
-		FREEFORM
+		CELL_EDGES_AND_DIAGONALS
 	};	
 
 	%feature("director") LayerChangeListener;
@@ -82,11 +81,25 @@ namespace FIFE {
 			uint8_t getLayerTransparency();
 			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
+			std::vector<Instance*> getBlockingInstances(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 
 			void setPathingStrategy(PathingStrategy strategy);
 			PathingStrategy getPathingStrategy();
+			
+			void setWalkable(bool walkable);
+			bool isWalkable();
+			
+			void setInteract(bool interact, const std::string& id);
+			bool isInteract();
+			const std::string& getWalkableId();
+			
+			void addInteractLayer(Layer* layer);
+			void removeInteractLayer(Layer* layer);
+
+			void createCellCache();
+			CellCache* getCellCache();
 			
 			void addChangeListener(LayerChangeListener* listener);
 			void removeChangeListener(LayerChangeListener* listener);

@@ -30,15 +30,14 @@ pythonic interface to FIFE.
 Currently it implements the following
 conveniences:
 
-* FIFE Exceptions print their message.
-* Automatic property generation for:
-  * fife.Engine
-  * fife.Instance
-  * fife.Image
-  * fife.Animation
-  * fife.Point
-  * fife.Rect
-
+  - FIFE Exceptions print their message.
+  - Automatic property generation for:
+    - fife.Engine
+    - fife.Instance
+    - fife.Image
+    - fife.Animation
+    - fife.Point
+    - fife.Rect
 """
 
 from fife import fife

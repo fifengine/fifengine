@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -38,6 +38,8 @@
 
 #include "map.h"
 #include "layer.h"
+#include "cellcache.h"
+#include "instance.h"
 
 namespace FIFE {
 
@@ -45,10 +47,10 @@ namespace FIFE {
 			const std::vector<RendererBase*>& renderers, TimeProvider* tp_master):
 		m_id(identifier),
 		m_filename(""),
-		m_timeprovider(tp_master),
-		m_changelisteners(),
-		m_changedlayers(),
-		m_renderbackend(renderBackend),
+		m_timeProvider(tp_master),
+		m_changeListeners(),
+		m_changedLayers(),
+		m_renderBackend(renderBackend),
 		m_renderers(renderers),
 		m_changed(false){
 	}
@@ -70,8 +72,7 @@ namespace FIFE {
 			if((*it)->getId() == id)
 				return *it;
 		}
-
-		throw NotFound(id);
+		return NULL;
 	}
 
 	uint32_t Map::getLayerCount() const {
@@ -88,8 +89,8 @@ namespace FIFE {
 		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
 		m_changed = true;
-		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			(*i)->onLayerCreate(this, layer);
 			++i;
 		}
@@ -101,8 +102,8 @@ namespace FIFE {
 		std::list<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it) == layer) {
-				std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
-				while (i != m_changelisteners.end()) {
+				std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+				while (i != m_changeListeners.end()) {
 					(*i)->onLayerDelete(this, layer);
 					++i;
 				}
@@ -115,21 +116,29 @@ namespace FIFE {
 	}
 
 	void Map::deleteLayers() {
-		std::list<Layer*>::iterator it = m_layers.begin();
-		for(; it != m_layers.end(); ++it) {
-			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
-			while (i != m_changelisteners.end()) {
-				(*i)->onLayerDelete(this, *it);
+		std::list<Layer*> temp_layers = m_layers;
+		std::list<Layer*>::iterator temp_it = temp_layers.begin();
+		for(; temp_it != temp_layers.end(); ++temp_it) {
+			std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+			while (i != m_changeListeners.end()) {
+				(*i)->onLayerDelete(this, *temp_it);
 				++i;
 			}
+			std::list<Layer*>::iterator it = m_layers.begin();
+			for(; it != m_layers.end(); ++it) {
+				if(*it == *temp_it) {
+					delete *it;
+					m_layers.erase(it);
+					break;
+				}
+			}
 		}
-		purge(m_layers);
-		m_layers.clear();
 	}
 
 	void Map::getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max) {
-		Location lmin;
-		Location lmax;
+		if (m_layers.empty()) {
+			return;
+		}
 		std::list<Layer*>::iterator it = m_layers.begin();
 		Layer* layer = *it;
 		for (; it != m_layers.end(); ++it) {
@@ -149,8 +158,8 @@ namespace FIFE {
 				max.y = newMax.y;
 			}
 		}
-		lmin.setLayer(layer);
-		lmax.setLayer(layer);
+		Location lmin(layer);
+		Location lmax(layer);
 		lmin.setExactLayerCoordinates(min);
 		lmax.setExactLayerCoordinates(max);
 
@@ -159,17 +168,43 @@ namespace FIFE {
 	}
 
 	bool Map::update() {
-		m_changedlayers.clear();
+		m_changedLayers.clear();
+		// transfer instances from one layer to another
+		if (!m_transferInstances.empty()) {
+			std::map<Instance*, Location>::iterator it = m_transferInstances.begin();
+			for (; it != m_transferInstances.end(); ++it) {
+				Instance* inst = (*it).first;
+				Location target_loc = (*it).second;
+				Layer* source = inst->getOldLocationRef().getLayer();
+				Layer* target = target_loc.getLayer();
+				if (source != target) {
+					source->removeInstance(inst);
+					target->addInstance(inst, target_loc.getExactLayerCoordinates());
+				}
+			}
+			m_transferInstances.clear();
+		}
+		std::vector<CellCache*> cellCaches;
 		std::list<Layer*>::iterator it = m_layers.begin();
+		// update Layers
 		for(; it != m_layers.end(); ++it) {
 			if ((*it)->update()) {
-				m_changedlayers.push_back(*it);
+				m_changedLayers.push_back(*it);
+			}
+			CellCache* cache = (*it)->getCellCache();
+			if (cache) {
+				cellCaches.push_back(cache);
 			}
 		}
-		if (!m_changedlayers.empty()) {
-			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
-			while (i != m_changelisteners.end()) {
-				(*i)->onMapChanged(this, m_changedlayers);
+		// loop over Caches and update
+		for (std::vector<CellCache*>::iterator cacheIt = cellCaches.begin();
+			cacheIt != cellCaches.end(); ++cacheIt) {
+			(*cacheIt)->update();
+		}
+		if (!m_changedLayers.empty()) {
+			std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+			while (i != m_changeListeners.end()) {
+				(*i)->onMapChanged(this, m_changedLayers);
 				++i;
 			}
 		}
@@ -189,14 +224,14 @@ namespace FIFE {
 	}
 
 	void Map::addChangeListener(MapChangeListener* listener) {
-		m_changelisteners.push_back(listener);
+		m_changeListeners.push_back(listener);
 	}
 
 	void Map::removeChangeListener(MapChangeListener* listener) {
-		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
+		std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+		while (i != m_changeListeners.end()) {
 			if ((*i) == listener) {
-				m_changelisteners.erase(i);
+				m_changeListeners.erase(i);
 				return;
 			}
 			++i;
@@ -214,7 +249,7 @@ namespace FIFE {
 		}
 
 		// create new camera and add to list of cameras
-		Camera* camera = new Camera(id, layer, viewport, m_renderbackend);
+		Camera* camera = new Camera(id, layer, viewport, m_renderBackend);
 		m_cameras.push_back(camera);
 
 		std::vector<RendererBase*>::iterator iter = m_renderers.begin();
@@ -257,5 +292,56 @@ namespace FIFE {
 		return m_cameras;
 	}
 
+	void Map::addInstanceForTransfer(Instance* instance, const Location& target) {
+		std::pair<std::map<Instance*, Location>::iterator, bool> insertiter = m_transferInstances.insert(std::make_pair(instance, target));
+		if (insertiter.second == false) {
+			Location& loc = insertiter.first->second;
+			loc.setLayer(target.getLayer());
+			loc.setExactLayerCoordinates(target.getExactLayerCoordinates());
+		}
+	}
+
+	void Map::removeInstanceForTransfer(Instance* instance) {
+		std::map<Instance*, Location>::iterator it = m_transferInstances.find(instance);
+		if (it != m_transferInstances.end()) {
+			m_transferInstances.erase(it);
+		}
+	}
+
+	void Map::initializeCellCaches() {
+		if (m_layers.empty()) {
+			return;
+		}
+
+		std::list<Layer*>::iterator layit = m_layers.begin();
+		// first add interacts to walkables
+		for (; layit != m_layers.end(); ++layit) {
+			if ((*layit)->isInteract()) {
+				Layer* temp = getLayer((*layit)->getWalkableId());
+				if (temp) {
+					temp->addInteractLayer(*layit);
+				}
+			}
+		}
+		// then create CellCaches for walkables
+		layit = m_layers.begin();
+		for (; layit != m_layers.end(); ++layit) {
+			if ((*layit)->isWalkable()) {
+				(*layit)->createCellCache();
+			}
+		}
+	}
+
+	void Map::finalizeCellCaches() {
+		// create Cells and generate neighbours
+		std::list<Layer*>::iterator layit = m_layers.begin();
+		for (; layit != m_layers.end(); ++layit) {
+			CellCache* cache = (*layit)->getCellCache();
+			if (cache) {
+				cache->createCells();
+				cache->forceUpdate();
+			}
+		}
+	}
 } //FIFE
 

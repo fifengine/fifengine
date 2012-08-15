@@ -42,7 +42,6 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
-		 * @param font font used to render the coordinates
 		 */
 		CoordinateRenderer(RenderBackend* renderbackend, int32_t position);
 
@@ -59,7 +58,9 @@ namespace FIFE {
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 		/** Changes default font in the renderer
-		 * Note that this does not change the font ownership
+		 * @note that this does not change the font ownership
+		 *
+		 * @param font Pointer to the font
 		 */
 		void setFont(IFont* font) { m_font = font; }
 

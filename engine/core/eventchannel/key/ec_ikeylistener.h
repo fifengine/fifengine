@@ -38,19 +38,19 @@ namespace FIFE {
 	class KeyEvent;
 
 	/**  Listener of key events.
-	 * To be able to listen for key events you must make a class which inherits 
+	 * To be able to listen for key events you must make a class which inherits
 	 * from this class and implements its functions.
 	 */
 	class IKeyListener {
 	public:
 		/** Called if a key is pressed
 		 * If a key is held down the multiple key presses are generated.
-		 * @param keyevent discribes the event.
+		 * @param evt KeyEvent that describes the event.
 		 */
 		virtual void keyPressed(KeyEvent& evt) = 0;
 
 		/** Called if a key is released
-		 * @param keyevent discribes the event.
+		 * @param evt KeyEvent that describes the event.
 		 */
 		virtual void keyReleased(KeyEvent& evt) = 0;
 

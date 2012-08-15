@@ -70,6 +70,9 @@ namespace FIFE {
 
 			// current instance z
 			double instance_z;
+
+			// current frame index (e.g. needed for action frame)
+			int32_t current_frame;
 		private:
 			int32_t m_cached_static_img_id;
 			int32_t m_cached_static_img_angle;

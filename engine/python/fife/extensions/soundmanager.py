@@ -61,8 +61,8 @@ class SoundEmitter(object):
 		"""
 		@param soundmanager: A reference to the SoundManager
 		@type soundmanager: L{SoundManager}
-		@param clipid: The FIFE sound clip ID from the sound clip pool
-		@type clipid: C{int}
+		@param clip: The FIFE sound clip ID from the sound clip pool
+		@type clip: C{int}
 		@param soundname: The filename of the sound
 		@type soundname: C{string}
 		@param emitter: A reference to the L{fife.SoundEmitter} associated with this clip
@@ -217,7 +217,7 @@ class SoundManager(object):
 		Returns a valid SoundEmitter instance.
 
 		@param filename: The relative path and filename of the sound file
-		@type clip: C{string}
+		@type filename: C{string}
 		@param forceUnique: This forces a new L{fife.SoundEmitter} to be created.
 		This is useful if you want more than one instance of the same sound
 		to be played at the same time.

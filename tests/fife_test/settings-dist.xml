@@ -27,5 +27,6 @@
 		<Setting name="MapLoadTest" type="bool">True</Setting>
 		<Setting name="SelectionTest" type="bool">True</Setting>
 		<Setting name="PychanWidgetEventsTest" type="bool">True</Setting>
+    <Setting name="PathfinderTest" type="bool">True</Setting>
 	</Module>
 </Settings>

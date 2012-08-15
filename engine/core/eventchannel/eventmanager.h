@@ -119,11 +119,13 @@ namespace FIFE {
 		 * if mouse acceleration is enabled,
 		 * then the mouse sensitivity is used as speed max.
 		 */
-		void setMouseAcceleration(bool acceleration);
+		void setMouseAccelerationEnabled(bool acceleration);
 
-		/** Gets mouse acceleration
+		/** Returns if mouse acceleration is enabled or not.
+		 *
+		 *  @return True if mouse acceleration is enabled, false if not.
 		 */
-		bool getMouseAcceleration() const;
+		bool isMouseAccelerationEnabled() const;
 
 	private:
 		// Helpers for processEvents

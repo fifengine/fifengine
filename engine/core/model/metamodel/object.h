@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006-2011 by the FIFE team                              *
+ *   Copyright (C) 2006-2012 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -75,6 +75,7 @@ namespace FIFE {
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
 		 *  Action instances are managed by object
+		 * @param identifier An identifier or name to give the action.
 		 * @param is_default if true, becomes default action for this object
 		 * 	default objects are used e.g. when showing them on editor.
 		 *      if multiple default actions are created, last one remains.
@@ -91,9 +92,13 @@ namespace FIFE {
 		 */
 		std::list<std::string> getActionIds() const;
 
+		/** Sets default action assigned to this object. If not available, then default action is not changed.
+		 */
+		void setDefaultAction(const std::string& identifier);
+
 		/** Gets default action assigned to this object. If none available, returns NULL
 		 */
-		Action* getDefaultAction() const { return m_defaultaction; }
+		Action* getDefaultAction() const { return m_defaultAction; }
 
 		/** Sets pather used by instances created out of this object
 		 */
@@ -132,23 +137,224 @@ namespace FIFE {
 		 */
 		bool isStatic() const;
 
-		void setFilename(const std::string& file) { m_filename = file; }
-		const std::string& getFilename() const { return m_filename; }
+		void setFilename(const std::string& file);
+		const std::string& getFilename() const;
 
+		/** Sets the cell stack position.
+		 *  Is used to determine which Instance is on top of a cell.
+		 * @param position The stack position on a cell, range 0-255.
+		 */
+		void setCellStackPosition(uint8_t position);
+
+		/** Returns cell stack position.
+		 * @return The stack position on a cell, range 0-255.
+		 */
+		uint8_t getCellStackPosition();
+
+		/** Gets if object uses special cost.
+		 * @return A boolean, true if the object uses special cost, otherwise false.
+		 */
+		bool isSpecialCost();
+
+		/** Sets the cost id.
+		 * @param cost A const reference to a string which contains the identifier.
+		 */
+		void setCostId(const std::string& cost);
+
+		/** Returns the cost id.
+		 * @return A const reference to a string which contains the identifier.
+		 */
+		const std::string& getCostId() const;
+
+		/** Sets the cost.
+		 * @param cost A double which value is used as cost.
+		 */
+		void setCost(double cost);
+
+		/** Returns the cost.
+		 * @return A double which value is used as cost.
+		 */
+		double getCost() const;
+
+		/** Gets if object uses special cost.
+		 * @return A boolean, true if the object uses special cost, otherwise false.
+		 */
+		bool isMultiObject();
+
+		/** Adds a multi part identifier.
+		 * @param partId A const reference to a string that holds the identifier.
+		 */
+		void addMultiPartId(const std::string& partId);
+
+		/** Returns all multi part identifiers.
+		 * @return A const reference to a list that holds the identifiers.
+		 */
+		const std::list<std::string>& getMultiPartIds();
+
+		/** Removes a multi part identifier.
+		 * @param partId A const reference to a string that holds the identifier.
+		 */
+		void removeMultiPartId(const std::string& partId);
+
+		/** Removes all multi part identifiers.
+		 */
+		void removeAllMultiPartIds();
+
+		/** Gets if object is a part of a multi object.
+		 * @return A boolean, true if the object is a part of a multi object, otherwise false.
+		 */
+		bool isMultiPart();
+
+		/** Sets the object as a part of a multi object.
+		 * @param part A boolean, true if the object is a part of a multi object, otherwise false.
+		 */
+		void setMultiPart(bool part);
+
+		/** Adds a object as a part of a multi object.
+		 * @param obj A pointer to the multi part object.
+		 */
+		void addMultiPart(Object* obj);
+
+		/** Returns all multi part objects.
+		 * @return A const reference to a set that holds the objects.
+		 */
+		const std::set<Object*>& getMultiParts();
+
+		/** Removes a multi part object.
+		 * @param obj A pointer to the part object.
+		 */
+		void removeMultiPart(Object* obj);
+
+		/** Removes all multi part objects.
+		 */
+		void removeMultiParts();
+
+		/** Adds rotationally dependent coordinates for this object part.
+		 * @param rotation A integer value for the angle.
+		 * @param coord A ModelCoordinate as relative coordinate, 0,0 is always the multi object center.
+		 */
+		void addMultiPartCoordinate(int32_t rotation, ModelCoordinate coord);
+
+		/** Returns all rotationally dependent coordinates from this object part.
+		 * @return A const reference to a multimap which contains the coordinates per rotation.
+		 */
+		const std::multimap<int32_t, ModelCoordinate>& getMultiPartCoordinates();
+
+		/** Returns all object part coordinates for the given rotation.
+		 * @param rotation A integer value for the angle.
+		 * @return A vector which contains the coordinates.
+		 */
+		std::vector<ModelCoordinate> getMultiPartCoordinates(int32_t rotation);
+
+		/** Returns all multi object coordinates for the given rotation.
+		 * @param rotation A integer value for the angle.
+		 * @return A vector which contains the coordinates.
+		 */
+		std::vector<ModelCoordinate> getMultiObjectCoordinates(int32_t rotation);
+
+		/** Sets the rotation anchor for this multi object.
+		 * Is used to rotate the images from multi part objects around this relative point,
+		 * default is 0.0, 0.0 the center of the multi object.
+		 * @param anchor A const reference to a ExactModelCoordinate that holds the anchor coordinate.
+		 */
+		void setRotationAnchor(const ExactModelCoordinate& anchor);
+		
+		/** Returns the rotation anchor for this multi object.
+		 * @return A const reference to a ExactModelCoordinate that holds the anchor coordinate.
+		 */
+		const ExactModelCoordinate& getRotationAnchor();
+
+		/** Sets the rotation to restricted.
+		 * If this is enabled the multi object uses only rotation values are which based on multi coordinates.
+		 * @param restrict A boolean, if true the rotation will be restricted, false for free rotation.
+		 */
+		void setRestrictedRotation(bool restrict);
+
+		/** Gets if object uses restricted rotations.
+		 * @return A boolean, true if the object uses restricted rotations, otherwise false.
+		 */
+		bool isRestrictedRotation();
+
+		/** Returns the most obvious rotation, based on multi coordinates.
+		 * @param rotation A integer value for the original angle.
+		 * @return A integer value for the obvious rotation.
+		 */
+		int32_t getRestrictedRotation(int32_t rotation);
+
+		/** Compares equality of two objects
+		 */
 		bool operator==(const Object& obj) const;
+
+		/** Compares unequality of two objects
+		 */
 		bool operator!=(const Object& obj) const;
 
 	private:
+		//! identifier
 		std::string m_id;
+
+		//! namespace
 		std::string m_namespace;
+
+		//! filename
 		std::string m_filename;
+
+		//! pointer to inherited object
 		Object* m_inherited;
+
+		//! holds action ids and assigned actions
 		std::map<std::string, Action*>* m_actions;
+
+		//! indicates if object blocks
 		bool m_blocking;
+
+		//! indicates if object is static
 		bool m_static;
+
+		//! pointer to pathfinder
 		IPather* m_pather;
+
+		//! pointer to object visual
 		IVisual* m_visual;
-		Action* m_defaultaction;
+
+		//! pointer to default action
+		Action* m_defaultAction;
+
+		//! position on cellstack
+		uint8_t m_cellStack;
+
+		//! cost identifier
+		std::string m_costId;
+
+		//! cost value, default 1.0
+		double m_cost;
+
+		//! indicates if object is part of multi object
+		bool m_multiPart;
+
+		//! indicates if object uses only restricted rotations
+		bool m_restrictedRotation;
+
+		//! list with part identifiers
+		std::list<std::string> m_multiPartIds;
+
+		//! rotation anchor
+		ExactModelCoordinate m_rotationAnchor;
+
+		//! set with part objects
+		std::set<Object*> m_multiParts;
+
+		//! part object angles
+		type_angle2id m_partAngleMap;
+
+		//! multi object angles
+		type_angle2id m_multiAngleMap;
+
+		//! part object coordinates
+		std::multimap<int32_t, ModelCoordinate> m_multiPartCoordinates;
+
+		//! multi object coordinates
+		std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
 	};
 
 } //FIFE

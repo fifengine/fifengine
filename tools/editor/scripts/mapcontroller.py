@@ -169,8 +169,8 @@ class MapController(object):
 			return
 
 		loc = fife.Location(self._layer)
-		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
-		
+		loc.setLayerCoordinates(self._layer.getCellGrid().toLayerCoordinates(self.screenToMapCoordinates(screenx, screeny)))
+
 		for i in self._selection:
 			if loc.getLayerCoordinates() == i.getLayerCoordinates(): return
 			
@@ -187,7 +187,7 @@ class MapController(object):
 			return
 
 		loc = fife.Location(self._layer)
-		loc.setMapCoordinates(self.screenToMapCoordinates(screenx, screeny))
+		loc.setLayerCoordinates(self._layer.getCellGrid().toLayerCoordinates(self.screenToMapCoordinates(screenx, screeny)))
 		
 		for i in self._selection[:]:
 			if loc.getLayerCoordinates() == i.getLayerCoordinates():
@@ -195,6 +195,10 @@ class MapController(object):
 				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(i)
 				return
 
+	def getLocationsFromSelection(self):
+		""" Returns all locations in the selected cells """
+		return self._selection
+	
 	def getInstance(self):
 		""" Returns a single instance packed into a list (compat to API) """
 		if self._instance:
@@ -365,19 +369,19 @@ class MapController(object):
 			f = i.getFacingLocation()
 			
 			nloc = fife.Location(self._layer)
-			nloc.setExactLayerCoordinates(loc.getExactLayerCoordinates() + moveBy)
+			nloc.setMapCoordinates(loc.getMapCoordinates() + moveBy)
 			
 			if loc.getLayerCoordinates() == nloc.getLayerCoordinates() and not exact:
 				result = False
 				break
 			
 			if exact:
-				loc.setExactLayerCoordinates(nloc.getExactLayerCoordinates())
-				f.setExactLayerCoordinates(loc.getExactLayerCoordinates())
+				loc.setMapCoordinates(nloc.getMapCoordinates())
+				f.setMapCoordinates(loc.getMapCoordinates())
 			else:	
 				loc.setLayerCoordinates(nloc.getLayerCoordinates())
 				f.setLayerCoordinates(loc.getLayerCoordinates())
-				
+
 			if not self._undo:
 				undocall = cbwa(self.moveInstances, [i], moveBy, exact, i.getLocation(), i.getFacingLocation())
 				redocall = cbwa(self.moveInstances, [i], moveBy, exact, i.getLocation(), i.getFacingLocation())

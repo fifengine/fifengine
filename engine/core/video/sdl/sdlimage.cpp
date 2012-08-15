@@ -39,6 +39,9 @@
 #include "sdlimage.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIDEO);
 
 	SDLImage::SDLImage(IResourceLoader* loader):
@@ -409,6 +412,13 @@ namespace FIFE {
 	void SDLImage::finalize() {
 		if( m_finalized ) {
 			return;
+		}
+		// ultimate possibility to load the image
+		// is used e.g. in case a cursor or gui image is freed even if there is a reference 
+		if (!m_surface) {
+			if (m_state == IResource::RES_NOT_LOADED) {
+				load();
+			}
 		}
 		m_finalized = true;
 		SDL_Surface *old_surface = m_surface;

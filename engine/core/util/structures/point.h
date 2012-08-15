@@ -265,13 +265,14 @@ namespace FIFE {
 		/** Equality comparision
 		 */
 		bool operator==(const PointType3D<T>& p) const {
-			return x == p.x && y == p.y && z == p.z;
+			/*return x == p.x && y == p.y && z == p.z;*/
+			return Mathd::Equal(x, p.x) && Mathd::Equal(y, p.y) && Mathd::Equal(z, p.z);
 		}
 
 		/** Equality comparision
 		 */
 		bool operator!=(const PointType3D<T>& p) const {
-			return !(x == p.x && y == p.y && z == p.z);
+			return !(Mathd::Equal(x, p.x) && Mathd::Equal(y, p.y) && Mathd::Equal(z, p.z));
 		}
 
 		/** Return length

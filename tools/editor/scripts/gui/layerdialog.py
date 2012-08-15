@@ -29,7 +29,7 @@ class LayerDialog(object):
 	""" 
 	The B{LayerDialog} provides a gui dialog for creating and editing layers.
 	
-		FIXME:
+	@todo:
 			- gridtypes can only be square for now
 			- pathing strategy 
 	"""
@@ -62,7 +62,8 @@ class LayerDialog(object):
 				"xOffsetBox" : unicode(cg.getXShift()),
 				"yOffsetBox" : unicode(cg.getYShift()),
 				"zOffsetBox" : unicode(cg.getZShift()),
-				"transBox" : unicode(layer.getLayerTransparency())
+				"transBox" : unicode(layer.getLayerTransparency()),
+				'checkWalkable': bool(layer.isWalkable())
 			})
 			
 			self._widget.findChild(name="pathingBox").selected = int(layer.getPathingStrategy())
@@ -119,7 +120,6 @@ class LayerDialog(object):
 			dialogs.message(message=unicode("Please enter an integer value in the range of 0-255 for transparency."), caption=unicode("Error"))
 			return
 			
-		
 		#Clamp the transparency value between 0 and 255
 		if transparency < 0:
 			transparency = 0
@@ -128,6 +128,7 @@ class LayerDialog(object):
 		
 		grid_type = int(self._widget.collectData('gridBox'))
 		pathing = int(self._widget.collectData('pathingBox'))
+		walkable = bool(self._widget.collectData('checkWalkable'))
 
 		if grid_type == 0:
 			grid_type = "square"
@@ -168,6 +169,7 @@ class LayerDialog(object):
 		
 		layer.setPathingStrategy(pathing)
 		layer.setLayerTransparency(transparency)
+		layer.setWalkable(walkable)
 		
 		for cam in self.map.getCameras():
 			cam.resetRenderers()

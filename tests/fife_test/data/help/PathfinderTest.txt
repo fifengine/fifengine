@@ -1,0 +1,5 @@
+PathfinderTest
+-------------- 
+The purpose of this test is to test the Pathfinder.
+You can walk on different Layers and it shows how speed and cost multiplier could be used.
+ 

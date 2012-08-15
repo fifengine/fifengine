@@ -152,7 +152,13 @@ namespace FIFE {
 			validateShared();
 			return;
 		}
-
+		// ultimate possibility to load the image
+		// is used e.g. in case a cursor or gui image is freed even if there is a reference 
+		if (!m_surface) {
+			if (m_state == IResource::RES_NOT_LOADED) {
+				load();
+			}
+		}
 		const uint32_t width = m_surface->w;
 		const uint32_t height = m_surface->h;
 

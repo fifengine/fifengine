@@ -38,7 +38,9 @@
 
 
 namespace FIFE {
-
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEW);
 
 	Visual2DGfx::Visual2DGfx(): m_transparency(0), m_visible(true) {

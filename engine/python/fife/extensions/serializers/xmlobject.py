@@ -31,7 +31,7 @@ from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class XMLObjectSaver(object):
 	""" The B{XMLObjectSaver} serializes a fife.Object instance by saving
-		it back to it's XML file
+	it back to its XML file
 		
 	@note:
 		- this code does NOT allow the creation of a new xml file
@@ -68,12 +68,12 @@ class XMLObjectSaver(object):
 		self.change = False
 		
 	def save(self, object):
-		""" saves the data of a fife.Object to it's xml file
+		""" saves the data of a fife.Object to its xml file
 		
 		@type	object:	fife.Object
 		@param	object:	the object which should be saved
-		@rtype	result:	bool
-		@return	result:	flag wether the saving was successful or not
+		@rtype	bool
+		@return	flag whether the saving was successful or not
 		"""
 		self.change = False
 		result = False

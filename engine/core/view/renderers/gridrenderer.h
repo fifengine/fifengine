@@ -39,11 +39,12 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
 		 */
 		GridRenderer(RenderBackend* renderbackend, int32_t position);
-		
+
 		GridRenderer(const GridRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.

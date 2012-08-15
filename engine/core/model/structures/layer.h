@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -44,21 +44,19 @@
 namespace FIFE {
 
 	class Map;
-	class Selection;
 	class CellGrid;
 	class Object;
 	class InstanceTree;
+	class CellCache;
 
 	/** Defines how pathing can be performed on this layer
 	 *
 	 * CELL_EDGES_ONLY allows pather to use only cell edges when moving instances from cell to cell on map
 	 * CELL_EDGES_AND_DIAGONALS allows pather to use both cell edges and diagonals when moving instances from cell to cell on map
-	 * FREEFORM allows pather to find shortest route regardless of cellgrid used on the layer
 	 */
 	enum PathingStrategy {
 		CELL_EDGES_ONLY,
-		CELL_EDGES_AND_DIAGONALS,
-		FREEFORM
+		CELL_EDGES_AND_DIAGONALS
 	};
 
 	/** Listener interface for changes happening on a layer
@@ -105,29 +103,29 @@ namespace FIFE {
 
 			/** Get the id of this layer.
 			 */
-			const std::string& getId() const { return m_id; }
+			const std::string& getId() const;
 
 			/** Sets the identifier for this layer.
 			 */
-			void setId(const std::string& id) { m_id = id; }
+			void setId(const std::string& id);
 
 			/** Get the map this layer is contained in
 			 */
-			Map* getMap() const { return m_map; }
+			Map* getMap() const;
 
 			/** Get the Cellgrid
 			 * @return pointer to a valid cellgrid
 			 */
-			CellGrid* getCellGrid() const { return m_grid; }
+			CellGrid* getCellGrid() const;
 
 			/** Set the Cellgrid
 			 */
-			void setCellGrid(CellGrid* grid) { m_grid = grid; }
+			void setCellGrid(CellGrid* grid);
 
 			/** Get the instance tree.
 			 * @return this layers instance tree.
 			 */
-			InstanceTree* getInstanceTree(void) const { return m_instanceTree; }
+			InstanceTree* getInstanceTree(void) const;
 
 			/** Check existance of objects on this layer
 			 * @return True, if objects exist.
@@ -146,14 +144,18 @@ namespace FIFE {
 			later so that we can ensure that each Instance only lives in one layer.
 			 */
 			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
-
+			
 			/** Remove an instance from the layer
 			 */
-			void deleteInstance(Instance* object);
+			void removeInstance(Instance* instance);
+			
+			/** Remove an instance from the layer and delete it
+			 */
+			void deleteInstance(Instance* instance);
 
 			/** Get the list of instances on this layer
 			 */
-			const std::vector<Instance*>& getInstances() const { return m_instances; }
+			const std::vector<Instance*>& getInstances() const;
 
 			/** Get the list of instances on this layer with the given identifier.
 			 */
@@ -179,7 +181,7 @@ namespace FIFE {
 			void setInstancesVisible(bool vis);
 
 			/** Sets the transparency of all instances on the layer.  0=opaque, 255=transparent
-			 * @parm transparency Transparency value from 0-255.
+			 * @param transparency Transparency value from 0-255.
 			*/
 			void setLayerTransparency(uint8_t transparency);
 
@@ -201,6 +203,13 @@ namespace FIFE {
 			 */
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 
+			/** Returns instances that blocks on given cell
+			 *
+			 * @param cellCoordinate A const reference to a model coordinate of the cell in question.
+			 * @return A vector that contains instances.
+			 */
+			std::vector<Instance*> getBlockingInstances(const ModelCoordinate& cellCoordinate);
+
 			/** Toggle object visibility
 			 * @see setObjectsVisible
 			 */
@@ -209,7 +218,7 @@ namespace FIFE {
 			/** Check object visibility
 			 * @see setObjectsVisible
 			 */
-			bool areInstancesVisible() const { return m_instances_visibility; }
+			bool areInstancesVisible() const;
 
 			/** Called periodically to update events on layer
 			 * @returns true if layer was changed since the last update, false otherwise
@@ -219,12 +228,64 @@ namespace FIFE {
 			/** Sets pathing strategy for the layer
 			 * @see PathingStrategy
 			 */
-			void setPathingStrategy(PathingStrategy strategy) { m_pathingstrategy = strategy; }
+			void setPathingStrategy(PathingStrategy strategy);
 
 			/** Gets pathing strategy for the layer
 			 * @see PathingStrategy
 			 */
-			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
+			PathingStrategy getPathingStrategy() const;
+
+			/** Sets walkable for the layer. Only a walkable layer, can create a CellCache and
+			 *  only on a walkable, instances can move. Also interact layer can only be added to walkables.
+			 * @param walkable A boolean that mark a layer as walkable.
+			 */
+			void setWalkable(bool walkable);
+			
+			/** Returns if a layer is walkable.
+			 * @return A boolean, true if the layer is walkable otherwise false.
+			 */
+			bool isWalkable();
+			
+			/** Sets interact for the layer. The data(size, instances) from all interact layers
+			 *  and the walkable layer will merged into one CellCache.
+			 * @param interact A boolean that mark a layer as interact.
+			 * @param id A const reference to a string that should refer to the id of the walkable layer.
+			 */
+			void setInteract(bool interact, const std::string& id);
+			
+			/** Returns if a layer is interact.
+			 * @return A boolean, true if the layer is interact otherwise false.
+			 */
+			bool isInteract();
+
+			/** Returns the id of the walkable layer if this is a interact layer otherwise the string is empty.
+			 * @return A const reference to a string that refer to the id of the walkable layer.
+			 */
+			const std::string& getWalkableId();
+
+			/** Adds a interact layer to the walkable layer.
+			 * @param layer A pointer to the interact layer that should be added.
+			 */
+			void addInteractLayer(Layer* layer);
+
+			/** Returns all assigned interact layer.
+			 * @return A const reference to a vector with pointers to interact layers.
+			 */
+			const std::vector<Layer*>& getInteractLayers();
+
+			/** Removes a interact layer from the walkable layer.
+			 * @param layer A pointer to the interact layer that should be removed.
+			 */
+			void removeInteractLayer(Layer* layer);
+
+			/** Called from Map to create a CellCache. Only walkable layers can create one CellCache.
+			 */
+			void createCellCache();
+
+			/** Returns the CellCache of this layer. In case there is no it returns NULL.
+			 * @return A pointer to the CellCache.
+			 */
+			CellCache* getCellCache();
 
 			/** Adds new change listener
 			* @param listener to add
@@ -238,46 +299,53 @@ namespace FIFE {
 
 			/** Returns true, if layer information was changed during previous update round
 			*/
-			bool isChanged() { return m_changed; }
+			bool isChanged();
 
 			/** Returns instances that were changed during previous update round.
 			 * @note does not contain created or deleted instances
 			 */
-			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
+			std::vector<Instance*>& getChangedInstances();
 
+			/** Sets the activity status for given instance on this layer.
+			 * @param instance A pointer to the Instance whose activity is to be changed.
+			 * @param active A boolean, true if the instance should be set active otherwise false.
+			 */
 			void setInstanceActivityStatus(Instance* instance, bool active);
 
 		protected:
+			//! string identifier
 			std::string m_id;
-
+			//! pointer to map
 			Map* m_map;
-
-			bool m_instances_visibility;
-
+			//! if true the instances are visibility otherwise they are skipped during rendering
+			bool m_instancesVisibility;
+			//! transparency, value 0 means total visible, 128 semi-transparent and 255 invisibility
 			uint8_t m_transparency;
-
-			// all the instances on this layer
+			//! all the instances on this layer
 			std::vector<Instance*> m_instances;
-
-			// all the active instances on this layer
-			std::set<Instance*> m_active_instances;
-
-			//The instance tree
+			//! all the active instances on this layer
+			std::set<Instance*> m_activeInstances;
+			//! The instance tree
 			InstanceTree* m_instanceTree;
-
-			// layer's cellgrid
+			//! layer's cellgrid
 			CellGrid* m_grid;
-
-			// pathing strategy for the layer
-			PathingStrategy m_pathingstrategy;
-
-			// listeners for layer changes
-			std::vector<LayerChangeListener*> m_changelisteners;
-
-			// holds changed instances after each update
-			std::vector<Instance*> m_changedinstances;
-
-			// true if layer (or it's instance) information was changed during previous update round
+			//! pathing strategy for the layer
+			PathingStrategy m_pathingStrategy;
+			//! is walkable true/false
+			bool m_walkable;
+			//! is interact true/false
+			bool m_interact;
+			//! walkable id
+			std::string m_walkableId;
+			//! all assigned interact layers
+			std::vector<Layer*> m_interacts;
+			//! pointer to cellcache
+			CellCache* m_cellCache;
+			//! listeners for layer changes
+			std::vector<LayerChangeListener*> m_changeListeners;
+			//! holds changed instances after each update
+			std::vector<Instance*> m_changedInstances;
+			//! true if layer (or it's instance) information was changed during previous update round
 			bool m_changed;
 	};
 

@@ -87,6 +87,8 @@ namespace FIFE {
 			m_location(),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
+			m_mapViewPort(),
+			m_mapViewPortUpdated(false),
 			m_screen_cell_width(1),
 			m_screen_cell_height(1),
 			m_reference_scale(1),
@@ -97,6 +99,7 @@ namespace FIFE {
 			m_renderers(),
 			m_pipeline(),
 			m_updated(false),
+			m_need_update(false),
 			m_renderbackend(renderbackend),
 			m_layer_to_instances(),
 			m_lighting(false),
@@ -130,7 +133,6 @@ namespace FIFE {
 			m_tilt = tilt;
 			updateReferenceScale();
 			updateMatrices();
-			m_iswarped = true;
 		}
 	}
 
@@ -141,9 +143,7 @@ namespace FIFE {
 	void Camera::setRotation(double rotation) {
 		if (!Mathd::Equal(m_rotation, rotation)) {
 			m_rotation = rotation;
-			updateReferenceScale();
 			updateMatrices();
-			m_iswarped = true;
 		}
 	}
 
@@ -158,7 +158,6 @@ namespace FIFE {
 				m_zoom = 0.001;
 			}
 			updateMatrices();
-			m_updated = false;
 		}
 	}
 
@@ -171,7 +170,6 @@ namespace FIFE {
 		m_screen_cell_height = height;
 		updateReferenceScale();
 		updateMatrices();
-		m_iswarped = true;
 	}
 
 	void Camera::setLocation(const Location& location) {
@@ -202,7 +200,7 @@ namespace FIFE {
 		// which depend on m_location.
 		updateMap(m_location.getMap());
 
-		m_updated = false;
+		m_need_update = true;
 	}
 
 	void Camera::updateMap(Map* map) {
@@ -264,6 +262,55 @@ namespace FIFE {
 		return m_viewport;
 	}
 
+	const Rect& Camera::getMapViewPort() {
+		if (!m_mapViewPortUpdated) {
+			ScreenPoint sp1(m_viewport.x, m_viewport.y);
+			ScreenPoint sp2(m_viewport.x, m_viewport.y + m_viewport.h);
+			ScreenPoint sp3(m_viewport.x + m_viewport.w, m_viewport.y);
+			ScreenPoint sp4(m_viewport.x + m_viewport.w, m_viewport.y + m_viewport.h);
+
+			std::vector<ExactModelCoordinate> coords;
+			coords.push_back(toMapCoordinates(sp2, false));
+			coords.push_back(toMapCoordinates(sp3, false));
+			coords.push_back(toMapCoordinates(sp4, false));
+		
+			ExactModelCoordinate emc = toMapCoordinates(sp1, false);
+			ModelCoordinate min(static_cast<int32_t>(emc.x), static_cast<int32_t>(emc.y));
+			ModelCoordinate max(static_cast<int32_t>(emc.x+0.5), static_cast<int32_t>(emc.y+0.5));
+			std::vector<ExactModelCoordinate>::iterator it = coords.begin();
+			for (; it != coords.end(); ++it) {
+				min.x = std::min(min.x, static_cast<int32_t>((*it).x));
+				min.y = std::min(min.y, static_cast<int32_t>((*it).y));
+				max.x = std::max(max.x, static_cast<int32_t>((*it).x+0.5));
+				max.y = std::max(max.y, static_cast<int32_t>((*it).y+0.5));
+			}
+			// makes the viewport a bit larger
+			m_mapViewPort.x = min.x - 1;
+			m_mapViewPort.y = min.y - 1;
+			m_mapViewPort.w = ABS(max.x - min.x) + 2;
+			m_mapViewPort.h = ABS(max.y - min.y) + 2;
+			m_mapViewPortUpdated = true;
+		}
+
+		return m_mapViewPort;
+	}
+
+	Rect Camera::getLayerViewPort(Layer* layer) {
+		Rect mapView = getMapViewPort();
+		Location loc(layer);
+		ExactModelCoordinate emc(mapView.x, mapView.y);
+		loc.setMapCoordinates(emc);
+		emc.x = mapView.x+mapView.w;
+		emc.y = mapView.y+mapView.h;
+		mapView.x = loc.getLayerCoordinates().x;
+		mapView.y = loc.getLayerCoordinates().y;
+		loc.setMapCoordinates(emc);
+		mapView.w = ABS(loc.getLayerCoordinates().x - mapView.x);
+		mapView.h = ABS(loc.getLayerCoordinates().y - mapView.y);
+
+		return mapView;
+	}
+
 	void Camera::setEnabled(bool enabled) {
 		m_enabled = enabled;
 	}
@@ -311,7 +358,8 @@ namespace FIFE {
 		}
 		m_vscreen_2_screen[2*N + 2] = 1;
 		m_screen_2_vscreen = m_vscreen_2_screen.inverse();
-
+		m_iswarped = true;
+		m_mapViewPortUpdated = false;
 		// FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
 	}
@@ -441,7 +489,7 @@ namespace FIFE {
 			return;
 		}
 		// if camera need update, we update all caches
-		if (m_iswarped || !m_updated) {
+		if (m_iswarped || m_need_update) {
 			updateRenderLists();
 		} else {
 			LayerCache* cache = m_cache[layer];
@@ -587,12 +635,15 @@ namespace FIFE {
 	}
 
 	void Camera::update() {
-		if( !m_attachedto ) {
+		if (!m_attachedto) {
 			return;
 		}
-		Location loc(m_location);
-		loc.setExactLayerCoordinates( m_attachedto->getLocationRef().getExactLayerCoordinates(m_location.getLayer()) );
-		setLocation(loc);
+		ExactModelCoordinate& old_emc = m_location.getExactLayerCoordinatesRef();
+		ExactModelCoordinate new_emc = m_attachedto->getLocationRef().getExactLayerCoordinates(m_location.getLayer());
+		if (Mathd::Equal(old_emc.x, new_emc.x) && Mathd::Equal(old_emc.y, new_emc.y)) {
+			return;
+		}
+		old_emc = new_emc;
 		updateMatrices();
 	}
 
@@ -602,8 +653,13 @@ namespace FIFE {
 	}
 
 	void Camera::resetUpdates() {
+		if (m_iswarped || m_need_update) {
+			m_updated = true;
+		} else {
+			m_updated = false;
+		}
 		m_iswarped = false;
-		m_updated = true;
+		m_need_update = false;
 	}
 
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
@@ -817,7 +873,7 @@ namespace FIFE {
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			if (m_iswarped || !m_updated || cache->needUpdate()) {
+			if (m_iswarped || m_need_update || cache->needUpdate()) {
 				cache->update(transform, instances_to_render);
 			}
 		}

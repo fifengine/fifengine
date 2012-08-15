@@ -44,6 +44,10 @@
 		FIFE_SUBMINOR_VERSION \
 	)
 
+/** All FIFE related code is in this namespace.
+ *  We currently only use one namespace for all our code with the exception of
+ *  the gcn namespace which is used for our custom widgets.
+ */
 namespace FIFE {
 	inline const char* getVersion() {
 		return FIFE_XSTR(FIFE_VERSION_STRING);

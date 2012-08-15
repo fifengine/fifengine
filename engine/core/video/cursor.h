@@ -114,12 +114,16 @@ namespace FIFE {
 
 		/** Sets the current drag image cursor
 		 * @param image ImagePtr to a image used for the drag
+		 * @param drag_offset_x X Offset to display image when dragging.
+		 * @param drag_offset_y Y Offset to display image when dragging.
 		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
 		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 
 		/** Sets the current drag animated cursor
 		 * @param anim AnimationPtr to a loaded animation used for the drag
+		 * @param drag_offset_x X Offset to display animation when dragging.
+		 * @param drag_offset_y Y Offset to display animation when dragging.
 		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
 		 */
 		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
@@ -184,7 +188,7 @@ namespace FIFE {
 		  * returns the resource ID specific to the running platform.
 		  * If no match is found, cursor_id is returned.
 		  *
-		  * @param One of the values in NativeCursor
+		  * @param cursor_id One of the values in NativeCursor
 		  */
 		uint32_t getNativeId(uint32_t cursor_id);
 

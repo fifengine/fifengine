@@ -106,12 +106,28 @@ class LogManager(object):
 		@param fltr: The filter level
 		
 		Valid values:
-			fife.LogManager.LEVEL_DEBUG
-			fife.LogManager.LEVEL_LOG
-			fife.LogManager.LEVEL_WARN
-   			fife.LogManager.LEVEL_ERROR
+			- L{fife.LogManager.LEVEL_DEBUG}
+			- L{fife.LogManager.LEVEL_LOG}
+			- L{fife.LogManager.LEVEL_WARN}
+   			- L{fife.LogManager.LEVEL_ERROR}
 		"""
 		self.lm.setLevelFilter(fltr)
+
+	def setLogToPrompt(self, promptlog):
+		return self.lm.setLogToPrompt(promptlog)
+		
+	def getLogToPrompt(self):
+		return self.lm.isLogToPrompt()
+	
+	logToPrompt = property(getLogToPrompt, setLogToPrompt)
+
+	def setLogToFile(self, filelog):
+		return self.lm.setLogToFile(filelog)
+
+	def getLogToFile(self):
+		return self.lm.isLogToFile()
+
+	logToFile = property(getLogToFile, setLogToFile)
 		
 	def log_debug(self, message):
 		self.lm.log(0, self.name2mod["script"], message)

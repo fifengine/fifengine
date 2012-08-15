@@ -42,8 +42,10 @@ namespace FIFE {
 	static const double HEX_EDGE_HALF = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
 	static const double VERTICAL_MULTIP = Mathd::Sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
+	static const double HEX_EDGE_GRADIENT = 1 / Mathd::Sqrt(3);
 
-	HexGrid::HexGrid(bool allow_diagonals): CellGrid(allow_diagonals) {
+	HexGrid::HexGrid():
+		CellGrid() {
 		FL_DBG(_log, "Constructing new HexGrid");
 		FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);
 		FL_DBG(_log, LMsg("HEX_TO_EDGE ") << HEX_TO_EDGE);
@@ -53,13 +55,14 @@ namespace FIFE {
 	}
 
 	CellGrid* HexGrid::clone() {
-		HexGrid* nGrid = new HexGrid(m_allow_diagonals);
+		HexGrid* nGrid = new HexGrid();
 		nGrid->setRotation(m_rotation);
 		nGrid->setXScale(m_xscale);
 		nGrid->setYScale(m_yscale);
 		nGrid->setXShift(m_xshift);
 		nGrid->setYShift(m_yshift);
 		nGrid->setZShift(m_zshift);
+		nGrid->setAllowDiagonals(m_allow_diagonals);
 
 		return nGrid;
 	}
@@ -68,78 +71,28 @@ namespace FIFE {
 	}
 
 	bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		if (curpos == target) {
-			return true;
-		}
+		int32_t x = target.x-curpos.x;
+		int32_t y = target.y-curpos.y;
 
-		if(curpos.y % 2) {
-
-			if((curpos.x == target.x) && (curpos.y - 1 == target.y)) {
+		if (ABS(x) <= 1 && ABS(y) <= 1) {
+			if (y == 0) {
 				return true;
-			}
-
-			if((curpos.x + 1 == target.x) && (curpos.y - 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x + 1 == target.x) && (curpos.y == target.y)) {
-				return true;
-			}
-
-			if((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x == target.x) && (curpos.y + 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x - 1 == target.x) && (curpos.y == target.y)) {
-				return true;
-			}
-
-		} else {
-
-			if((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x == target.x) && (curpos.y - 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x + 1 == target.x) && (curpos.y == target.y)) {
-				return true;
-			}
-
-			if((curpos.x  == target.x) && (curpos.y + 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y)) {
-				return true;
-			}
-
-			if((curpos.x - 1 == target.x) && (curpos.y == target.y)) {
-				return true;
-			}
-		}
-
+			} else if (curpos.y & 1) {
+				if (x >= 0) return true;
+			} else if (x <= 0) return true;
+        }
 		return false;
-
 	}
 
 	double HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		assert(isAccessible(curpos, target));
 		if (curpos == target) {
-			return 0;
-		} else if (curpos.y == target.y) {
-			return m_xscale;
-		} else {
-			double a = VERTICAL_MULTIP * m_yscale;
-			double b = HEX_TO_EDGE * m_xscale;
-			return Mathd::Sqrt((a * a) + (b * b));
+			return 0.0;
 		}
+		return 1.0;
+	}
+
+	double HexGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+		return static_cast<double>(ABS(target.x - curpos.x) + ABS(target.y - curpos.y));
 	}
 
 	const std::string& HexGrid::getType() const {
@@ -185,116 +138,46 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
-		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y), floor(elc.z));
-		double dx = elc.x - lc.x;
-		double dy = elc.y - lc.y;
-		double dz = elc.z - lc.z;
+
+		// approximate conversion using squares instead of hexes
+		if( static_cast<int32_t>(round(elc.y)) & 1 )
+			elc.x -= 0.5;
+		ExactModelCoordinate lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
+
 		int32_t x = static_cast<int32_t>(lc.x);
 		int32_t y = static_cast<int32_t>(lc.y);
 		int32_t z = static_cast<int32_t>(lc.z);
-//		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
-//		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
-		ModelCoordinate result;
 
-		if ((y % 2) == 0) {
-//			FL_DBG(_log, "In even row");
-			if ((1 - dy) < HEX_EDGE_HALF) {
-				FL_DBG(_log, "In lower rect area");
-				result = ModelCoordinate(x, y+1, z);
-			}
-			else if (dy < HEX_EDGE_HALF) {
-//				FL_DBG(_log, "In upper rect area");
-				if (dx > 0.5) {
-//					FL_DBG(_log, "...on right");
-					result = ModelCoordinate(x+1, y, z);
-				}
-				else {
-//					FL_DBG(_log, "...on left");
-					result = ModelCoordinate(x, y, z);
-				}
-			}
-			// in middle triangle area
-			else {
-//				FL_DBG(_log, "In middle triangle area");
-				if (dx < 0.5) {
-//					FL_DBG(_log, "In left triangles");
-					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
-					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
-					                 )) {
-//						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y, z);
-					} else {
-//						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1, z);
-					}
-				} else {
-//					FL_DBG(_log, "In right triangles");
-					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
-					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
-					                 )) {
-//						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x+1, y, z);
-					} else {
-//						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1, z);
-					}
-				}
-			}
+		// distance of given point from our approximation
+		// If y uneven dx=-dx and dy=-dy
+		double dx,dy;
+		if (y & 1) {
+			dx = elc.x - lc.x;
+			dy = elc.y - lc.y;
+		} else {
+			dx = lc.x - elc.x;
+			dy = lc.y - elc.y;
 		}
-		else {
-//			FL_DBG(_log, "In uneven row");
-			if (dy < HEX_EDGE_HALF) {
-//				FL_DBG(_log, "In upper rect area");
-				result = ModelCoordinate(x, y, z);
+
+		// adjustment for cases where our approximation lies beyond the hex edge
+		if (ABS(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * ABS(dx)) * VERTICAL_MULTIP_INV)) {
+			int8_t ddx, ddy;
+			if (dx>0) ddx = -1;
+			else ddx = 0;
+
+			if (dy>0) ddy = -1;
+			else ddy = 1;
+
+			if (y & 1) {
+				ddx = -ddx;
+				ddy = -ddy;
 			}
-			else if ((1 - dy) < HEX_EDGE_HALF) {
-//				FL_DBG(_log, "In lower rect area");
-				if (dx > 0.5) {
-//					FL_DBG(_log, "...on right");
-					result = ModelCoordinate(x+1, y+1, z);
-				}
-				else {
-//					FL_DBG(_log, "...on left");
-					result = ModelCoordinate(x, y+1, z);
-				}
-			}
-			else {
-//				FL_DBG(_log, "In middle triangle area");
-				if (dx < 0.5) {
-//					FL_DBG(_log, "In left triangles");
-					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
-					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
-					                 )) {
-//						FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x, y+1, z);
-					} else {
-//						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y, z);
-					}
-				} else {
-//					FL_DBG(_log, "In right triangles");
-					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
-					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
-					                 )) {
-//					        FL_DBG(_log, "..lower part");
-						result = ModelCoordinate(x+1, y+1, z);
-					} else {
-//						FL_DBG(_log, "..upper part");
-						result = ModelCoordinate(x, y, z);
-					}
-				}
-			}
+
+			x += ddx;
+			y += ddy;
 		}
-//		FL_DBG(_log, LMsg("  result = ") << result);
-		return result;
+
+		return ModelCoordinate(x,y,z);
 	}
 
 	void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) {
@@ -334,5 +217,42 @@ namespace FIFE {
 		ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
+	}
+
+	std::vector<ModelCoordinate> HexGrid::toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse) {
+		std::vector<ModelCoordinate> coords;
+		std::vector<ModelCoordinate>::const_iterator it = orig.begin();
+		if (reverse) {
+			for (; it != orig.end(); ++it) {
+				ModelCoordinate mc = position;
+				if (mc.y % 2 != 0) {
+					mc.x -= (*it).x;
+					mc.y -= (*it).y;
+					if (mc.y % 2 == 0) {
+						mc.x -= 1;
+					}
+				} else {
+					mc.x -= (*it).x;
+					mc.y -= (*it).y;
+				}
+				coords.push_back(mc);
+			}
+		} else {
+			for (; it != orig.end(); ++it) {
+				ModelCoordinate mc = position;
+				if (mc.y % 2 != 0) {
+					mc.x += (*it).x;
+					mc.y += (*it).y;
+					if (mc.y % 2 == 0) {
+						mc.x += 1;
+					}
+				} else {
+					mc.x += (*it).x;
+					mc.y += (*it).y;
+				}
+				coords.push_back(mc);
+			}
+		}
+		return coords;
 	}
 }

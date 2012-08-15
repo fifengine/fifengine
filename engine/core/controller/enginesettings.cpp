@@ -36,6 +36,9 @@
 #include "enginesettings.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_CONTROLLER);
 
 	const float MAXIMUM_VOLUME = 10.0;
@@ -251,11 +254,11 @@ namespace FIFE {
 		return m_mousesensitivity;
 	}
 
-	void EngineSettings::setMouseAcceleration(bool acceleration) {
+	void EngineSettings::setMouseAccelerationEnabled(bool acceleration) {
 		m_mouseacceleration = acceleration;
 	}
 
-	bool EngineSettings::getMouseAcceleration() const {
+	bool EngineSettings::isMouseAccelerationEnabled() const {
 		return m_mouseacceleration;
 	}
 }

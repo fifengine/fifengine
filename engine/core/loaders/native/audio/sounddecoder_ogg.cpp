@@ -35,6 +35,9 @@
 #include "sounddecoder_ogg.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_AUDIO);
 
 	/* OggVorbis Callback functions

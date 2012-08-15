@@ -282,6 +282,8 @@ namespace FIFE {
 		bool isBlitFillAccel() const;
 		
 		uint32_t getVideoMemory() const;
+		int32_t getDesktopWidth() const;
+		int32_t getDesktopHeight() const;
 	};
 	
 	class AtlasBlock {

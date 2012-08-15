@@ -100,7 +100,7 @@ namespace FIFE {
 	class RenderBackend: public DynamicSingleton<RenderBackend> {
 	public:
 		/** Constructor.
-		 * @param name The name of the new renderbackend.
+		 * @param colorkey The colorkey to use.
 		 */
 		RenderBackend(const SDL_Color& colorkey);
 
@@ -159,7 +159,7 @@ namespace FIFE {
 
 		/** Creates the mainscreen (the display window).
 		 * @param mode The ScreenMode to use.  @see FIFE::ScreenMode.
-		 * @param tite The window title to use.
+		 * @param title The window title to use.
 		 * @param icon The window icon to use.
 		 */
 		virtual void createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon) = 0;
@@ -195,7 +195,7 @@ namespace FIFE {
 
 		/** Add the Image data to the array
 		 */
-		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb) = 0;
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba) = 0;
 
 		/** Dirty helper function to change the render infos
 		 */
@@ -204,7 +204,7 @@ namespace FIFE {
 		/** Creates a Screenshot and saves it to a file.
 		 */
 		virtual void captureScreen(const std::string& filename) = 0;
-		
+
 		/** Creates a Screenshot with the given size(w,h) and saves it to a file.
 		 */
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height) = 0;
@@ -263,7 +263,7 @@ namespace FIFE {
 		/** Draws a quad that represents a vertex with given RGBA
 		 */
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		
+
 		/** Draws a light primitive that based on a triangle fan
 		 */
 		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
@@ -278,7 +278,7 @@ namespace FIFE {
 
 		/** Enable or disable the alpha 'optimizing' code
 		 *
-		 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
+		 * @param enabled Optimize whether the image shall be analysed for 'fake' alpha images.
 		 * Only implemented by and useful for the SDL backend at the moment.
 		 */
 		void setAlphaOptimizerEnabled(bool enabled){ m_isalphaoptimized = enabled; }
@@ -287,7 +287,7 @@ namespace FIFE {
 		 */
 		bool isAlphaOptimizerEnabled() const { return m_isalphaoptimized; }
 
-		/** Enables or disable compressing images by video driver. 
+		/** Enables or disable compressing images by video driver.
 		 * @remarks This is relevant for in OpenGL renderbackend
 		 */
 		void setImageCompressingEnabled(bool enabled) { m_compressimages = enabled; }
@@ -335,7 +335,7 @@ namespace FIFE {
 		/** Reset the background color to black
 		 */
 		void resetBackgroundColor();
-		
+
 		/** Gets the current screen rgba format
 		*/
 		const SDL_PixelFormat& getPixelFormat() const;
@@ -343,7 +343,7 @@ namespace FIFE {
 		/** Sets whether to use the frame limiter
 		 */
 		void setFrameLimitEnabled(bool limited);
-		
+
 		/** Gets whether the frame limiter is in use
 		 */
 		bool isFrameLimitEnabled() const;

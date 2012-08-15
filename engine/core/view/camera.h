@@ -69,10 +69,7 @@ namespace FIFE {
 		 *   * camera's scaling is done based on cell image dimensions. Cell image is layer based (@see setCellImageDimensions)
 		 *   * camera could be bound to a pather, which operates on layer
 		 * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
-		 * @param emc coordinate, where camera is focused on given layer
 		 * @param renderbackend to use with rendering
-		 * @param ipool to use with rendering
-		 * @param apool to use with rendering
 		 */
 		Camera(const std::string& id,
 			Layer* layer,
@@ -148,7 +145,7 @@ namespace FIFE {
 
 		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
 		 * @return Point3D Point3D containing x, y, z
-		 */ 
+		 */
 		Point3D getZOffset(Layer* layer);
 
 		/** Sets the location for camera
@@ -193,10 +190,21 @@ namespace FIFE {
 		 */
 		void setViewPort(const Rect& viewport);
 
-		/** Gets the viewport for camera
+		/** Gets the viewport for camera in pixel coordinates
 		 * @return camera viewport
 		 */
 		const Rect& getViewPort() const;
+
+		/** Gets the viewport for camera in map coordinates
+		 * @return camera viewport
+		 */
+		const Rect& getMapViewPort();
+
+		/** Gets the viewport for camera in layer coordinates
+		 * @param layer A pointer to the layer whose geometry is used for the conversion
+		 * @return camera viewport
+		 */
+		Rect getLayerViewPort(Layer* layer);
 
 		/** Transforms given point from screen coordinates to map coordinates
 		 * @param screen_coords screen coordinates to transform
@@ -230,6 +238,9 @@ namespace FIFE {
 		 * @param screen_coords screen coordinates to be used for hit search
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
+		 * @param alpha the alpha to use to filter the matching instances.  Pixels
+		 *        that have an alpha value higher than what is specified here are
+		 *        considered a hit.
 		 */
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
@@ -237,7 +248,9 @@ namespace FIFE {
 		 * @param screen_rect rect that contains screen coordinates to be used for search
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
-		 * @param accurate should be true if the search should be exactly but its also much slower
+		 * @param alpha the alpha to use to filter the matching instances.  Pixels
+		 *        that have an alpha value higher than what is specified here are
+		 *        considered a hit.
 		 */
 		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
@@ -268,6 +281,10 @@ namespace FIFE {
 		/** Resets temporary values from last update round, like warped flag
 		 */
 		void resetUpdates();
+
+		/** Returns true if camera view has been updated, otherwise false
+		 */
+		bool isUpdated() { return m_updated; }
 
 		/** Adds new renderer on the view. Ownership is transferred to the camera.
 		 */
@@ -401,6 +418,8 @@ namespace FIFE {
 		Location m_location;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
+		Rect m_mapViewPort;
+		bool m_mapViewPortUpdated;
 		bool m_view_updated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;
@@ -414,7 +433,9 @@ namespace FIFE {
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
-		bool m_updated; // false, if view has not been updated
+		// false, if view has not been updated
+		bool m_updated;
+		bool m_need_update;
 
 		RenderBackend* m_renderbackend;
 

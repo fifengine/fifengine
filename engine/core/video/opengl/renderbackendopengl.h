@@ -67,7 +67,7 @@ namespace FIFE {
 		virtual Image* createImage(const std::string& name, SDL_Surface* surface);
 
 		virtual void renderVertexArrays();
-		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgb);
+		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba);
 		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
 		virtual void captureScreen(const std::string& filename);
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
@@ -106,7 +106,7 @@ namespace FIFE {
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
-		void setEnvironmentalColor(const uint8_t* rgb);
+		void setEnvironmentalColor(const uint8_t* rgba);
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
@@ -156,7 +156,7 @@ namespace FIFE {
 			bool light_enabled;
 
 			// The rest
-			uint8_t env_color[3];
+			uint8_t env_color[4];
 			GLenum blend_src;
 			GLenum blend_dst;
 			bool alpha_enabled;

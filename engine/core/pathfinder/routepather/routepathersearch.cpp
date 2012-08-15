@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -30,103 +30,52 @@
 // Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
-#include "model/structures/instancetree.h"
-#include "model/metamodel/object.h"
-#include "pathfinder/searchspace.h"
-#include "pathfinder/heuristic.h"
+#include "model/structures/cellcache.h"
+#include "model/structures/cell.h"
+#include "pathfinder/route.h"
 #include "util/math/fife_math.h"
 
 #include "routepathersearch.h"
 
 namespace FIFE {
-	RoutePatherSearch::RoutePatherSearch(const int32_t session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-		: m_to(to), 
-		  m_from(from), 
-		  m_sessionId(session_id), 
-		  m_searchspace(searchSpace), 
-		  m_status(search_status_incomplete), 
-		  m_startCoordInt(searchSpace->convertCoordToInt(from.getLayerCoordinates())),
-		  m_destCoordInt(searchSpace->convertCoordToInt(to.getLayerCoordinates())),
-		  m_next(0),
-		  m_heuristic(Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType())) 
-	{
-		m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));
-		int32_t max_index = m_searchspace->getMaxIndex();
-		m_spt.resize(max_index + 1, -1);
-		m_sf.resize(max_index + 1, -1);
-		m_gCosts.resize(max_index + 1, 0.0f);;
-	}
+	RoutePatherSearch::RoutePatherSearch(Route* route, const int32_t sessionId):
+		m_route(route),
+		m_multicell(route->isMultiCell()),
+		m_sessionId(sessionId),
+		m_status(search_status_incomplete) {
 
-
-	void RoutePatherSearch::updateSearch() {
-		if(m_sortedfrontier.empty()) {
-			setSearchStatus(search_status_failed);
-			return;
-		}
-		PriorityQueue<int32_t, double>::value_type topvalue = m_sortedfrontier.getPriorityElement();
-		m_sortedfrontier.popElement();
-		m_next = topvalue.first;
-		m_spt[m_next] = m_sf[m_next];
-		ModelCoordinate destCoord = m_to.getLayerCoordinates();
-		if(m_destCoordInt == m_next) {
-			setSearchStatus(search_status_complete);
-			return;
-		}
-		//use destination layer for getting the cell coordinates for now, this should be moved
-		//into search space.
-		ModelCoordinate nextCoord = m_searchspace->convertIntToCoord(m_next);
-		std::vector<ModelCoordinate> adjacents;
-		m_searchspace->getLayer()->getCellGrid()->getAccessibleCoordinates(nextCoord, adjacents);
-		for(std::vector<ModelCoordinate>::iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
-			//first determine if coordinate is in search space.
-			Location loc;
-			loc.setLayer(m_searchspace->getLayer());
-			loc.setLayerCoordinates((*i));
-			int32_t adjacentInt = m_searchspace->convertCoordToInt((*i));
-			if(m_searchspace->isInSearchSpace(loc)) {
-				if((adjacentInt == m_next || loc.getLayer()->cellContainsBlockingInstance(loc.getLayerCoordinates())) &&
-					adjacentInt != m_destCoordInt) {
-					continue;
+		m_route->setRouteStatus(ROUTE_SEARCHING);
+		m_specialCost = route->getCostId() != "";
+		if (m_multicell) {
+			Location loc = route->getStartNode();
+			std::vector<Cell*> cells;
+			std::vector<ModelCoordinate> coords = route->getOccupiedArea();
+			std::vector<ModelCoordinate>::const_iterator co_it = coords.begin();
+			for (; co_it != coords.end(); ++co_it) {
+				Cell* cell = loc.getLayer()->getCellCache()->getCell(*co_it);
+				if (cell) {
+					m_ignoredBlockers.push_back(cell);
 				}
-                                	double hCost = m_heuristic->calculate((*i), destCoord);
-				//float hCost = Heuristic::getHeuristic(m_searchspace->getLayer()->getCellGrid()->getType())->calculate((*i), destCoord);
-				double gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
-				if(m_sf[adjacentInt] == -1) {
-					m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-					m_gCosts[adjacentInt] = gCost;
-					m_sf[adjacentInt] = m_next;
-				}
-				else if(gCost < m_gCosts[adjacentInt] && m_spt[adjacentInt] == -1) {
-					m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
-					m_gCosts[adjacentInt] = gCost;
-					m_sf[adjacentInt] = m_next;
-				}
-			} 
+			}
 		}
 	}
 
-	RoutePatherSearch::Path RoutePatherSearch::calcPath() {
-		int32_t current = m_destCoordInt;
-		int32_t end = m_startCoordInt;
-		Path path;
-		//This assures that the agent always steps into the center of the cell.
-		Location to(m_to);
-		to.setExactLayerCoordinates(FIFE::intPt2doublePt(to.getLayerCoordinates()));
-		path.push_back(to);
-		while(current != end) {
-                        if(m_spt[current] < 0 ) {
-                             // This is when the size of m_spt can not handle the distance of the location
-                             setSearchStatus(search_status_failed);
-                             break;
-                        }
-                        current = m_spt[current];
-			Location newnode;
-			newnode.setLayer(m_searchspace->getLayer());
-			ModelCoordinate currentCoord = m_searchspace->convertIntToCoord(current);
-			newnode.setLayerCoordinates(currentCoord);
-			path.push_front(newnode);
-                }
-		path.front().setExactLayerCoordinates(m_from.getExactLayerCoordinates());
-		return path;
+	RoutePatherSearch::~RoutePatherSearch() {
+	}
+
+	int32_t RoutePatherSearch::getSessionId() const {
+		return m_sessionId;
+	}
+
+	int32_t RoutePatherSearch::getSearchStatus() const {
+		return m_status;
+	}
+
+	Route* RoutePatherSearch::getRoute() {
+		return m_route;
+	}
+
+	void RoutePatherSearch::setSearchStatus(const SearchStatus status) {
+		m_status = status;
 	}
 }

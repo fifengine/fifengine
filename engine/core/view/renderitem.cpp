@@ -41,6 +41,7 @@ namespace FIFE {
 		screenpoint(),
 		dimensions(),
 		instance_z(0.0),
+		current_frame(-1),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cached_static_img_angle(0) {
 	}

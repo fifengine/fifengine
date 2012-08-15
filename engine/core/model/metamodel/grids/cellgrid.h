@@ -40,9 +40,8 @@ namespace FIFE {
 	class CellGrid: public FifeClass {
 	public:
 		/** Constructor
-		 *  @param allow_diagonals if true, cellgrid allows diagonal access
 		 */
- 		CellGrid(bool allow_diagonals=false);
+ 		CellGrid();
 
 		/** Destructor
 		 */
@@ -51,7 +50,7 @@ namespace FIFE {
 		/** Gets the coordinates that are accesible from given point
 		 *  only cells adjacent to given cell are considered in the evaluation
 		 *  @param curpos position (coordinates) to evaluate
-		 *  @param coordinate accessible coordinates
+		 *  @param coordinates accessible coordinates
 		 */
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 
@@ -78,6 +77,13 @@ namespace FIFE {
 		 *  @return distance cost from curpos to target
 		 */
 		virtual double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+
+		/** Returns *distance* const from curpos to target point
+		 *  @param curpos position (coordinates) to evaluate
+		 *  @param target target coordinate to check
+		 *  @return distance cost from curpos to target
+		 */
+		virtual double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
@@ -110,8 +116,16 @@ namespace FIFE {
 		 */
 		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
 
+		/** Returns point vector with coordinates for a multi object
+		 *  @param position The center position
+		 *  @param orig The vector with the original coordinates from object
+		 *  @param reverse If true the orig coordinates are subtracted otherwise they are added
+		 */
+		virtual std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position,
+			const std::vector<ModelCoordinate>& orig, bool reverse = false) = 0;
+
 		/** Set the cellgrid x shift
-		 *  @param shift The shift in map coords
+		 *  @param xshift The shift in map coords
 		 */
 		void setXShift(const double& xshift) {
 			m_xshift = xshift;
@@ -124,7 +138,7 @@ namespace FIFE {
 		const double getXShift() const { return m_xshift; }
 
 		/** Set the cellgrid y shift
-		 *  @param shift The shift in map coords
+		 *  @param yshift The shift in map coords
 		 */
 		void setYShift(const double yshift) {
 			m_yshift = yshift;
@@ -137,7 +151,7 @@ namespace FIFE {
 		const double getYShift() const { return m_yshift; }
 
 		/** Set the cellgrid z shift
-		 *  @param shift The shift in map coords
+		 *  @param zshift The shift in map coords
 		 */
 		void setZShift(const double zshift) {
 			m_zshift = zshift;

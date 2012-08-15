@@ -41,7 +41,6 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
-		 * @param font default font used to render the texts
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position);
 

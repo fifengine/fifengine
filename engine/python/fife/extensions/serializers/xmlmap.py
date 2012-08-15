@@ -99,8 +99,8 @@ class XMLMapLoader(object):
 		
 		@type	location:	object
 		@param	location:	path to a map file as a fife.ResourceLocation
-		@type	map:	object
-		@return	map:	FIFE map object
+		@return	FIFE map object
+		@rtype	object
 		"""
 		start_time = time.time()
 		self.source = location
@@ -115,13 +115,13 @@ class XMLMapLoader(object):
 
 	def parse_map(self, mapelt):
 		""" start parsing the xml structure and
-		    call submethods for turning found tags
-		    into FIFE objects and create the map
+		call submethods for turning found tags
+		into FIFE objects and create the map
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
-		@type	map:	object
-		@return	map:	FIFE map object		
+		@return	FIFE map object
+		@rtype	object
 		"""
 		if not mapelt:
 			self._err('No <map> element found at top level of map file definition.')
@@ -160,8 +160,8 @@ class XMLMapLoader(object):
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
-		@type	map:	object
-		@map	map:	FIFE map object			
+		@return	FIFE map object			
+		@rtype	object
 		"""
 		parsedImports = {}
 
@@ -203,7 +203,7 @@ class XMLMapLoader(object):
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@map	map:	FIFE map object			
+		@param	map:	FIFE map object			
 		"""		
 		if self.callback is not None:		
 			tmplist = mapelt.findall('layer')
@@ -224,6 +224,9 @@ class XMLMapLoader(object):
 			z_offset = layer.get('z_offset')
 			pathing = layer.get('pathing')
 			transparency = layer.get('transparency')
+			
+			layer_type = layer.get('layer_type')
+			layer_type_id = layer.get('layer_type_id')
 			
 			if not x_scale: x_scale = 1.0
 			if not y_scale: y_scale = 1.0
@@ -246,7 +249,6 @@ class XMLMapLoader(object):
 			cellgrid.setXShift(float(x_offset))
 			cellgrid.setYShift(float(y_offset))
 			cellgrid.setZShift(float(z_offset))
-			cellgrid.setAllowDiagonals(pathing != "cell_edges_only");
 
 			layer_obj = None
 			try:
@@ -260,11 +262,15 @@ class XMLMapLoader(object):
 			strgy = fife.CELL_EDGES_ONLY
 			if pathing == "cell_edges_and_diagonals":
 				strgy = fife.CELL_EDGES_AND_DIAGONALS
-			if pathing == "freeform":
-				strgy = fife.FREEFORM
 
 			layer_obj.setPathingStrategy(strgy)
 			layer_obj.setLayerTransparency(transparency)
+
+			if layer_type:
+				if layer_type == 'walkable':
+					layer_obj.setWalkable(True)
+				elif layer_type == 'interact' and layer_type_id:
+					layer_obj.setInteract(True, layer_type_id)
 
 			self.parse_instances(layer, layer_obj)
 			
@@ -277,6 +283,18 @@ class XMLMapLoader(object):
 				i += 1
 				self.callback(self.msg['layer'] % str(_id), float( i / float(len(tmplist)) * 0.25 + 0.5 ) )
 
+
+		layers = map.getLayers()
+		for l in layers:
+			if l.isInteract():
+				walk_layer = map.getLayer(l.getWalkableId())
+				if walk_layer:
+					walk_layer.addInteractLayer(l);
+				
+		for l in layers:
+			if l.isWalkable():
+				l.createCellCache()
+
 		# cleanup
 		if self.callback is not None:
 			del tmplist
@@ -288,7 +306,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""
 		_LIGHT_DEFAULT_BLENDING_SRC = -1
 		_LIGHT_DEFAULT_BLENDING_DST = -1
@@ -423,7 +441,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""	
 		# to be continued		
 		pass
@@ -434,7 +452,7 @@ class XMLMapLoader(object):
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
-		@map	layer:	FIFE layer object
+		@param	layer:	FIFE layer object
 		"""			
 		instelt = layerelt.find('instances')
 
@@ -519,15 +537,15 @@ class XMLMapLoader(object):
 	def parse_cameras(self, mapelt, map):
 		""" create all cameras and activate them
 		
-			FIXME:
-				- should the cameras really be enabled here?
-				  IMO that's part of the setup within a client
-				  (we just _load_ things here)
+		FIXME:
+			- should the cameras really be enabled here?
+			  IMO that's part of the setup within a client
+			  (we just _load_ things here)
 		
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@map	map:	FIFE map object			
+		@param	map:	FIFE map object			
 		"""				
 		if self.callback:		
 			tmplist = mapelt.findall('camera')
@@ -581,7 +599,7 @@ class XMLMapLoader(object):
 				
 	def create_light_nodes(self, map):
 		""" loop through all preloaded lights and create them
-			according to their data
+		according to their data
 		
 		@type	map:	object
 		@param	map:	FIFE map object

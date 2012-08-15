@@ -105,9 +105,9 @@ namespace FIFE {
 			 */
 			template<typename U>
 			explicit RectType(const RectType<U>& r)
-				: x(static_cast<T>(r.x)), 
-				y(static_cast<T>(r.y)), 
-				w(static_cast<T>(r.w)), 
+				: x(static_cast<T>(r.x)),
+				y(static_cast<T>(r.y)),
+				w(static_cast<T>(r.w)),
 				h(static_cast<T>(r.h)) {
 			}
 
@@ -128,7 +128,7 @@ namespace FIFE {
 
 			/** Checks whether a rectangle contains a Point.
 			 *
-			 * @param p The point that is checked.
+			 * @param point The point that is checked.
 			 * @return True if the point lies inside the rectangle or on one of its borders.
 			 */
 			bool contains( const PointType2D<T>& point ) const;

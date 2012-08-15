@@ -33,6 +33,8 @@
 #include "model/model.h"
 #include "model/structures/layer.h"
 #include "model/structures/instance.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/action.h"
@@ -58,6 +60,9 @@
 #include "objectloader.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
     static Logger _log(LM_NATIVE_LOADERS);
 
 	MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend)
@@ -193,6 +198,26 @@ namespace FIFE {
                             loadImportFile(fullFilePath.string(), fullDirPath.string());
                         }
 					}
+					// converts multiobject part id to object pointer
+					std::list<std::string> namespaces = m_model->getNamespaces();
+					std::list<std::string>::iterator name_it = namespaces.begin();
+					for (; name_it != namespaces.end(); ++name_it) {
+						std::list<Object*> objects = m_model->getObjects(*name_it);
+						std::list<Object*>::iterator object_it = objects.begin();
+						for (; object_it != objects.end(); ++object_it) {
+							if ((*object_it)->isMultiObject()) {
+								const std::list<std::string>& multiParts = (*object_it)->getMultiPartIds();
+								std::list<std::string>::const_iterator multi_it = multiParts.begin();
+								for (; multi_it != multiParts.end(); ++multi_it) {
+									Object* partObj = m_model->getObject(*multi_it, *name_it);
+									if (partObj) {
+										partObj->setMultiPart(true);
+										(*object_it)->addMultiPart(partObj);
+									}
+								}
+							}
+						}
+					}
 
 					// iterate over elements looking for layers
 					for (const TiXmlElement* layerElement = root->FirstChildElement("layer"); layerElement; layerElement = layerElement->NextSiblingElement("layer")) {
@@ -214,6 +239,8 @@ namespace FIFE {
 						const std::string* layerName = layerElement->Attribute(std::string("id"));
 						const std::string* pathing = layerElement->Attribute(std::string("pathing"));
 						const std::string* gridType = layerElement->Attribute(std::string("grid_type"));
+						const std::string* layerType = layerElement->Attribute(std::string("layer_type"));
+						const std::string* layerTypeName = layerElement->Attribute(std::string("layer_type_id"));
 
 						if (xOffsetRetVal == TIXML_SUCCESS &&
 							yOffsetRetVal == TIXML_SUCCESS &&
@@ -223,13 +250,10 @@ namespace FIFE {
 							layerName &&
 							pathing &&
 							gridType) {
+							
 							PathingStrategy pathStrategy = CELL_EDGES_ONLY;
-
 							if ("cell_edges_and_diagonals" == *pathing) {
 								pathStrategy = CELL_EDGES_AND_DIAGONALS;
-							}
-							else if ("freeform" == *pathing) {
-								pathStrategy = FREEFORM;
 							}
 
 							CellGrid* grid = NULL;
@@ -247,7 +271,6 @@ namespace FIFE {
 								grid->setYScale(yScale);
 								grid->setZShift(zOffset);
 								grid->setRotation(rotation);
-								grid->setAllowDiagonals(pathStrategy != CELL_EDGES_ONLY);
 
 								Layer *layer = NULL;
 								try {
@@ -260,6 +283,13 @@ namespace FIFE {
 
 								if (layer) {
 									layer->setPathingStrategy(pathStrategy);
+									if (layerType) {
+										if (*layerType == "walkable") {
+											layer->setWalkable(true);
+										} else if (*layerType == "interact") {
+											layer->setInteract(true, *layerTypeName);
+										}
+									}
 
 									double curr_x = 0;
 									double curr_y = 0;
@@ -271,9 +301,12 @@ namespace FIFE {
 											double z = 0;
 											int r = 0;
 											int stackpos = 0;
+											int cellStack = 0;
+											int visitorRadius = 0;
 
 											const std::string* instanceId = instance->Attribute(std::string("id"));
 											const std::string* objectId = instance->Attribute(std::string("o"));
+											const std::string* costId = instance->Attribute(std::string("cost_id"));
 
 											if (!objectId) {
 												objectId = instance->Attribute(std::string("object"));
@@ -313,6 +346,17 @@ namespace FIFE {
 											}
 
 											int stackRetVal = instance->QueryValueAttribute("stackpos", &stackpos);
+											int cellStackRetVal = instance->QueryValueAttribute("cellstack", &cellStack);
+											int visitorRetVal = instance->QueryValueAttribute("visitor_radius", &visitorRadius);
+											const std::string* shapeType = instance->Attribute(std::string("visitor_shape"));
+											VisitorShapeInfo visitorShape = ITYPE_NO_SHAPE;
+											if (shapeType) {
+												if ("quad" == *shapeType) {
+													visitorShape = ITYPE_QUAD_SHAPE;
+												} else if ("circle" == *shapeType) {
+													visitorShape = ITYPE_CIRCLE_SHAPE;
+												}
+											}
 
 											if (objectId) {
 												if (namespaceId) {
@@ -348,6 +392,24 @@ namespace FIFE {
 															instVisual->setStackPosition(stackpos);
 														}
 
+														if  (cellStackRetVal == TIXML_SUCCESS) {
+															inst->setCellStackPosition(cellStack);
+														}
+
+														if  (visitorRetVal == TIXML_SUCCESS) {
+															inst->setVisitor(true);
+															inst->setVisitorRadius(visitorRadius);
+															inst->setVisitorShape(visitorShape);
+														}
+
+														if (costId) {
+															double cost = 0;
+															int costRetVal = instance->QueryValueAttribute("cost", &cost);
+															if (costRetVal == TIXML_SUCCESS) {
+																inst->setCost(*costId, cost);
+															}
+														}
+
 														if (object->getAction("default")) {
 															Location target(layer);
 
@@ -377,6 +439,145 @@ namespace FIFE {
 
 						// increment % done counter
 						m_percentDoneListener.incrementCount();
+					}
+					
+					// init CellCaches
+					map->initializeCellCaches();
+					// add Cells from xml File
+					for (const TiXmlElement* cacheElements = root->FirstChildElement("cellcaches"); cacheElements; cacheElements = cacheElements->NextSiblingElement("cellcaches")) {
+						for (const TiXmlElement* cacheElement = cacheElements->FirstChildElement("cellcache"); cacheElement; cacheElement = cacheElement->NextSiblingElement("cellcache")) {
+							double cacheCost = 1.0;
+							double cacheSpeed = 1.0;
+							const std::string* layerId = cacheElement->Attribute(std::string("id"));
+
+							if (layerId) {
+								cacheElement->QueryDoubleAttribute("default_cost", &cacheCost);
+								cacheElement->QueryDoubleAttribute("default_speed", &cacheSpeed);
+
+								Layer* layer = map->getLayer(*layerId);
+								if (layer) {
+									CellCache* cache = layer->getCellCache();
+									if (cache) {
+										int searchNarrow = 0;
+										cacheElement->QueryIntAttribute("search_narrow", &searchNarrow);
+										cache->setSearchNarrowCells(searchNarrow != 0);
+										
+										cache->setDefaultCostMultiplier(cacheCost);
+										cache->setDefaultSpeedMultiplier(cacheSpeed);
+										for (const TiXmlElement* cellElement = cacheElement->FirstChildElement("cell"); cellElement; cellElement = cellElement->NextSiblingElement("cell")) {
+											int cellX = 0;
+											int cellY = 0;
+											int success = cellElement->QueryIntAttribute("x", &cellX);
+											success &= cellElement->QueryIntAttribute("y", &cellY);
+											if (success == TIXML_SUCCESS) {
+												ModelCoordinate mc(cellX, cellY);
+												Cell* cell = cache->createCell(mc);
+
+												const std::string* cellVisual = cellElement->Attribute(std::string("state"));
+												if (cellVisual) {
+													CellVisualEffect cve = CELLV_REVEALED;
+													if (*cellVisual == "concealed") {
+														cve = CELLV_CONCEALED;
+													} else if (*cellVisual == "masked") {
+														cve = CELLV_MASKED;
+													}
+													cell->setFoWType(cve);
+												}
+
+												const std::string* cellBlocker = cellElement->Attribute(std::string("blocker_type"));
+												if (cellBlocker) {
+													if (*cellBlocker == "no_blocker") {
+														CellTypeInfo cti = CTYPE_CELL_NO_BLOCKER;
+														cell->setCellType(cti);
+													} else if (*cellBlocker == "blocker") {
+														CellTypeInfo cti = CTYPE_CELL_BLOCKER;
+														cell->setCellType(cti);
+													}
+												}
+
+												double cellCost = 1.0;
+												double cellSpeed = 1.0;
+												success = cellElement->QueryDoubleAttribute("default_cost", &cellCost);
+												if (success == TIXML_SUCCESS) {
+													cell->setCostMultiplier(cellCost);
+												}
+												success = cellElement->QueryDoubleAttribute("default_speed", &cellSpeed);
+												if (success == TIXML_SUCCESS) {
+													cell->setSpeedMultiplier(cellSpeed);
+
+												}
+
+												int isNarrow = 0;
+												cellElement->QueryIntAttribute("narrow", &isNarrow);
+												if (isNarrow != 0) {
+													cache->addNarrowCell(cell);
+												}
+												
+												for (const TiXmlElement* costElement = cellElement->FirstChildElement("cost"); costElement; costElement = costElement->NextSiblingElement("cost")) {
+													const std::string* costId = costElement->Attribute(std::string("id"));
+													double cost = 1.0;
+													success = costElement->QueryDoubleAttribute("value", &cost);
+													if (costId && success == TIXML_SUCCESS) {
+														cache->registerCost(*costId, cost);
+														cache->addCellToCost(*costId, cell);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					// finalize CellCaches
+					map->finalizeCellCaches();
+					// add Transistions
+					for (const TiXmlElement* cacheElements = root->FirstChildElement("cellcaches"); cacheElements; cacheElements = cacheElements->NextSiblingElement("cellcaches")) {
+						for (const TiXmlElement* cacheElement = cacheElements->FirstChildElement("cellcache"); cacheElement; cacheElement = cacheElement->NextSiblingElement("cellcache")) {
+							const std::string* layerId = cacheElement->Attribute(std::string("id"));
+							if (layerId) {
+								Layer* layer = map->getLayer(*layerId);
+								if (layer) {
+									CellCache* cache = layer->getCellCache();
+									if (cache) {
+										for (const TiXmlElement* cellElement = cacheElement->FirstChildElement("cell"); cellElement; cellElement = cellElement->NextSiblingElement("cell")) {
+											int cellX = 0;
+											int cellY = 0;
+											int success = cellElement->QueryIntAttribute("x", &cellX);
+											success &= cellElement->QueryIntAttribute("y", &cellY);
+											if (success == TIXML_SUCCESS) {
+												ModelCoordinate mc(cellX, cellY);
+												Cell* cell = cache->getCell(mc);
+												if (!cell) {
+													continue;
+												}
+												for (const TiXmlElement* transitionElement = cellElement->FirstChildElement("transition"); transitionElement; transitionElement = transitionElement->NextSiblingElement("transition")) {
+													int targetX = 0;
+													int targetY = 0;
+													success = transitionElement->QueryIntAttribute("x", &targetX);
+													success &= transitionElement->QueryIntAttribute("y", &targetY);
+													if (success == TIXML_SUCCESS) {
+														ModelCoordinate mc(targetX, targetY);
+														Layer* targetLayer = NULL;
+														const std::string* targetLayerId = transitionElement->Attribute(std::string("id"));
+														if (targetLayerId) {
+															targetLayer = map->getLayer(*targetLayerId);
+														}
+														if (!targetLayer) {
+															targetLayer = layer;
+														}
+
+														int immediate = 0;
+														transitionElement->QueryIntAttribute("immediate", &immediate);
+														cell->createTransition(targetLayer, mc, immediate != 0);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
 					}
 
 					for (const TiXmlElement* cameraElement = root->FirstChildElement("camera"); cameraElement; cameraElement = cameraElement->NextSiblingElement("camera")) {

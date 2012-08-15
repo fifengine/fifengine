@@ -167,7 +167,7 @@ class Manager(object):
 		"""
 		Releases a font from memory.  Expects a fifechan.GuiFont. 
 		
-		@todo This needs to be tested.  Also should add a way to release
+		@todo: This needs to be tested.  Also should add a way to release
 		a font by name (fonts.Font).
 		"""
 		if not isinstance(font,fifechan.GuiFont):
@@ -179,10 +179,10 @@ class Manager(object):
 		B{deprecated}
 
 		Add a font to the font registry. It's not necessary to call this directly.
-		But it expects a L{Font} instance and throws an L{InitializationError}
+		But it expects a L{fonts.Font} instance and throws an L{InitializationError}
 		otherwise.
 
-		@param font: A L{Font} instance.
+		@param font: A L{fonts.Font} instance.
 		"""
 		if not isinstance(font,fonts.Font):
 			raise InitializationError("PyChan Manager expected a fonts.Font instance, not %s." % repr(font))

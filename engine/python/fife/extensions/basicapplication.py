@@ -150,7 +150,7 @@ class ApplicationBase(object):
 			pass
 
 		try:
-			engineSetting.setMouseAcceleration(self._finalSetting['MouseAcceleration'])
+			engineSetting.setMouseAccelerationEnabled(self._finalSetting['MouseAcceleration'])
 		except:
 			pass
 		

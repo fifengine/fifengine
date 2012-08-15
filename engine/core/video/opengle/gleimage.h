@@ -44,7 +44,7 @@ namespace FIFE {
 	/** Implements an Image using experimental OpenGL.
 	 *
 	 * This class contains a texture handle bound to the data given to the constructor;
-	 * it draws a textured @i Quad to the screen.
+	 * it draws a textured Quad to the screen.
 	 *
 	 * @see Image
 	 * @note Width and height are not limited to powers of two; non-power of two images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).

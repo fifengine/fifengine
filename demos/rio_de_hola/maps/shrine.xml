@@ -9,7 +9,7 @@
 	<import file="../objects/items1.xml"/>
 	<import file="../objects/items2.xml"/>
 	<import file="../objects/nature.xml"/>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" transparency="0" x_scale="1.0" y_scale="1.0" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" transparency="0" x_scale="1.0" y_scale="1.0" rotation="0.0" layer_type="interact" layer_type_id="TechdemoMapGroundObjectLayer">
 		<instances>
 			<i x="-1.0" o="sands:01" y="1.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
 			<i x="0.0" o="sands:01" z="0.0" y="1.0" r="0"></i>
@@ -4689,7 +4689,7 @@
 			<i x="7.0" o="sands:01" z="0.0" y="-24.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="GroundLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="GroundLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0" layer_type="interact" layer_type_id="TechdemoMapGroundObjectLayer">
 		<instances>
 			<i x="9.0" o="sands:02" z="0.0" y="9.0" r="0"></i>
 			<i x="-2.0" o="sands:02" z="0.0" y="0.0" r="0"></i>
@@ -4833,30 +4833,30 @@
 			<i x="-17.0" o="sands:02" z="0.0" y="34.0" r="0"></i>
 			<i x="-17.0" o="sands:02" z="0.0" y="36.0" r="0"></i>
 			<i x="-17.0" o="sands:02" z="0.0" y="38.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="40.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="39.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="42.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="41.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="43.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="44.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="45.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="46.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="47.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="48.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="49.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="50.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="51.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="52.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="53.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="54.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="55.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="56.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="57.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="58.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="58.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="59.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="59.0" r="0"></i>
-			<i x="-16.75" o="quays:07" z="0.0" y="60.0" r="0"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="40.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="39.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="42.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="41.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="43.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="44.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="45.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="46.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="47.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="48.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="49.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="50.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="51.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="52.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="53.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="54.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="55.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="56.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="57.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="58.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="58.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="59.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="59.0" r="0" stackpos="1"></i>
+			<i x="-16.75" o="quays:07" z="0.0" y="60.0" r="0" stackpos="1"></i>
 			<i x="9.0" o="sands:02" z="0.0" y="32.0" r="0"></i>
 			<i x="7.0" o="sands:02" z="0.0" y="32.0" r="0"></i>
 			<i x="5.0" o="sands:02" z="0.0" y="32.0" r="0"></i>
@@ -5116,16 +5116,16 @@
 			<i x="-43.0" o="sands:02" z="0.0" y="-35.0" r="0"></i>
 			<i x="-43.0" o="sands:02" z="0.0" y="-33.0" r="0"></i>
 			<i x="-43.0" o="sands:02" z="0.0" y="-31.0" r="0"></i>
-			<i x="-42.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-42.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
-			<i x="-41.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-41.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
-			<i x="-40.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-40.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
+			<i x="-42.0" o="quays:03" z="0.0" y="-10.0" r="0" stackpos="1"></i>
+			<i x="-42.0" o="quays:03" z="0.0" y="-11.0" r="0" stackpos="1"></i>
+			<i x="-41.0" o="quays:03" z="0.0" y="-10.0" r="0" stackpos="1"></i>
+			<i x="-41.0" o="quays:03" z="0.0" y="-11.0" r="0" stackpos="1"></i>
+			<i x="-40.0" o="quays:03" z="0.0" y="-10.0" r="0" stackpos="1"></i>
+			<i x="-40.0" o="quays:03" z="0.0" y="-11.0" r="0" stackpos="1"></i>
 			<i x="-34.0" o="sands:02" z="0.0" y="-27.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0" layer_type="walkable">
 		<instances>
 			<i x="8.0" o="shrine" z="0.0" y="-1.0" r="180"></i>
 			<i x="11.0" o="shrine" z="0.0" y="-1.0" r="0"></i>
@@ -6054,7 +6054,7 @@
 			<i x="-41.0" o="beebox" z="0.0" y="-34.0" r="90"></i>
 			<i x="-40.0" o="beekeeper" z="0.0" y="-31.0" r="180"></i>
 			<i x="43.0" o="hippie_priest" z="0.0" y="19.0" r="180"></i>
-			<i x="5.0" o="boy" y="4.0" r="0" id="PC" z="0.0"></i>
+			<i x="5.0" o="boy" y="4.0" r="0" id="PC" z="0.0" visitor_radius="3" visitor_shape="circle"></i>
 			<i x="8.0" o="girl" y="2.0" r="0" id="NPC:girl" z="0.0"></i>
 			<i x="-19.0" o="beach_bar" z="0.0" y="2.0" r="180"></i>
 		</instances>

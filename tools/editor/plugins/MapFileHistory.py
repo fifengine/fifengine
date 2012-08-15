@@ -93,6 +93,7 @@ class MapFileHistory(plugin.Plugin):
 	def enable(self):
 		""" enables the plugin and connects to the editor """
 		if self._enabled: return
+		
 		self._enabled = True
 			
 		# Fifedit plugin data
@@ -101,9 +102,9 @@ class MapFileHistory(plugin.Plugin):
 		self._editor._tools_menu.addAction(self._action_show)
 
 		self.load_map_history()
-		self.create()
-		self.toggle()		
-
+		self.create()		
+		self.toggle()
+		
 		onOpenMapFile.connect(self.update)
 		
 		if self.settings['docked']:

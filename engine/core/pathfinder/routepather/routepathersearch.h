@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,104 +34,88 @@
 
 namespace FIFE {
 
-	class Map;
-	class SearchSpace;
-	class Heuristic;
+	class CellCache;
+	class Route;
 
 	/** RoutePatherSearch using A*
 	 *
-	 * For now this class uses offline A*, however eventually this will be switched over to RTA*.
 	 */
 	class RoutePatherSearch {
 	public:
-		RoutePatherSearch(const int32_t session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
+		/** Constructor
+		 *
+		 * @param route A pointer to the route for which a path should be searched.
+		 * @param sessionId A integer containing the session id for this search.
+		 */
+		RoutePatherSearch(Route* route, const int32_t sessionId);
 
-                typedef std::list<Location> Path;
-                /** An enumeration of the different status the search can be in.
-                 *
-                 */
-                enum SearchStatus {
-                        search_status_failed,
-                        search_status_complete,
-                        search_status_incomplete
-                };
+		virtual ~RoutePatherSearch();
 
-		virtual void updateSearch();
+		/** An enumeration of the different status the search can be in.
+		 *
+		 */
+		enum SearchStatus {
+			search_status_failed,
+			search_status_complete,
+			search_status_incomplete
+		};
 
-		virtual Path calcPath();
+		/** Updates the search.
+		 *
+		 * Each update checks all neighbors of the last checked coordinate and selects the most favorable.
+		 */
+		virtual void updateSearch() = 0;
 
-                /** Retrieves the session id.
-                 *
-                 * @return The searches session id in the pather.
-                 */
-                int32_t getSessionId() const {
-                        return m_sessionId;
-                }
+		/** Calculates final path.
+		 *
+		 * If the search is successful then a path is created.
+		 */
+		virtual void calcPath() = 0;
 
-                /** Retrieves the pather.
-                 *
-                 * @return A pointer to the abstract pather which
-                 */
-                SearchSpace* getSearchSpace() const {
-                        return m_searchspace;
-                }
+		/** Retrieves the session id.
+		 *
+		 * @return The searches session id in the pather.
+		 */
+		int32_t getSessionId() const;
 
-                /** A small function which returns the current status of the search.
-                 *
-                 * @return An integer value representing the status, which is enumerated by this class.
-                 */
-                int32_t getSearchStatus() const {
-                        return m_status;
-                }
+		/** A small function which returns the current status of the search.
+		 *
+		 * @return An integer value representing the status, which is enumerated by this class.
+		 */
+		int32_t getSearchStatus() const;
 
-         protected:
-                /** Sets the current status of the search.
-                 *
-                 * @param status The status to set.
-                 */
-                void setSearchStatus(const SearchStatus status) {
-                        m_status = status;
-                }
+		/** Returns the associated route for this search.
+		 *
+		 * @return A pointer to the route.
+		 */
+		Route* getRoute();
 
-         private:
-                //A location object representing where the search started.
-                Location                m_to;
+	protected:
+		/** Sets the current status of the search.
+		 *
+		 * @param status The status to set.
+		 * @see SearchStatus
+		 */
+		void setSearchStatus(const SearchStatus status);
 
-                //A location object representing where the search ended.
-                Location                m_from;
+		//! Pointer to route
+		Route* m_route;
 
-                //An integer containing the session id for this search.
-                int32_t                             m_sessionId;
+		//! Indicates if the search should use special costs.
+		bool m_specialCost;
 
-                //A pointer to the pather that owns this search.
-                SearchSpace*    m_searchspace;
+		//! Indicates if the route is for a multi cell object.
+		bool m_multicell;
 
-                //An enumeration of the searches current status.
-                SearchStatus    m_status;
-                
-                //The start coordinate as an int32_t.
-                int32_t             m_startCoordInt;
-                
-                //The destination coordinate as an int32_t.
-                int32_t             m_destCoordInt;
-                
-                //The next coordinate to check out.
-                int32_t             m_next;
+		//! Blockers from a multi cell object which should be ignored.
+		std::vector<Cell*> m_ignoredBlockers;
 
-                //The class to use to calculate the heuristic value.
-                Heuristic*                m_heuristic;
+	private:
+		//! An integer containing the session id for this search.
+		int32_t m_sessionId;
 
-		//The shortest path tree.
-		std::vector<int32_t>          m_spt;
-
-		//The search frontier.
-		std::vector<int32_t>	      m_sf;
-
-		//A table to hold the costs.
-		std::vector<double>		  m_gCosts;
-
-		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int32_t, double> m_sortedfrontier;
+		//! An enumeration of the searches current status.
+		SearchStatus m_status;
 	};
 }
 #endif

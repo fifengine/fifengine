@@ -37,6 +37,9 @@
 #include "soundemitter.h"
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_AUDIO);
 
 	SoundManager::SoundManager() : m_context(0),

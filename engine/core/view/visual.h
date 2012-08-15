@@ -55,7 +55,7 @@ namespace FIFE {
 		virtual ~Visual2DGfx();
 
 		/** Sets transparency value for object to be visualized
-		 *  @param stackposition new stack position
+		 *  @param transparency set the transparency
 		 */
 		void setTransparency(uint8_t transparency) { m_transparency = transparency; }
 

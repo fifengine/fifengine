@@ -57,7 +57,7 @@ namespace FIFE {
         uint32_t offset;
     };
 
-    // convenience typedef 
+    // convenience typedef
     class ZipNode;
     typedef std::vector<ZipNode*> ZipNodeContainer;
 
@@ -65,7 +65,7 @@ namespace FIFE {
     public:
         /** constructor for creating a node
          *  @param name the name of the node
-         *  @param the parent of this node, defaults to NULL
+         *  @param parent the parent of this node, defaults to NULL
          */
         ZipNode(const std::string& name, ZipNode* parent=0);
 
@@ -104,12 +104,12 @@ namespace FIFE {
          *  @param contentType optional for filtering on the type of node to return
          *  @return the ZipNode pointer matching the child (NULL if not found)
          */
-        ZipNode* getChild(const std::string& name, 
+        ZipNode* getChild(const std::string& name,
                           ZipContentType::Enum contentType=ZipContentType::All) const;
 
         /** allows adding a child node to this node
          *  @note this should only be used internally by the FIFE zip classes
-         *  @param node the name to add as a child node
+         *  @param child the name to add as a child node
          *  @return the newly created child ZipNode
          */
         ZipNode* addChild(const std::string& child);

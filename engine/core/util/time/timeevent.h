@@ -60,7 +60,7 @@ namespace FIFE {
 
 		/** Update function to be overridden by client.
 		 *
-		 * @param time_delta Time.
+		 * @param time Time delta.
 		 */
 		virtual void updateEvent(uint32_t time) = 0;
 
@@ -90,9 +90,9 @@ namespace FIFE {
 
 		/** Set the last time the event was updated.
 		 *
-		 * @param Time of last update.
+		 * @param ms Time of last update.
 		 */
-		void setLastUpdateTime(uint32_t);
+		void setLastUpdateTime(uint32_t ms);
 
     private:
 		// The period of the event. See the class description.

@@ -51,7 +51,7 @@ class Hero(Agent):
 
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('stand', self.agent.getFacingLocation())
+		self.agent.act('stand')
 
 	def run(self, location):
 		self.state = _STATE_RUN

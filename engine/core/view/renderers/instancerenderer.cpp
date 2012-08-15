@@ -42,10 +42,13 @@
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 #include "model/structures/map.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
 #include "video/opengl/fife_opengl.h"
 
 #include "view/camera.h"
 #include "view/visual.h"
+#include "cellrenderer.h"
 #include "instancerenderer.h"
 
 #include "video/opengle/gleimage.h"
@@ -58,6 +61,9 @@ namespace {
 }
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
 
 	class InstanceRendererDeleteListener : public InstanceDeleteListener {
@@ -88,6 +94,7 @@ namespace FIFE {
 		r(0),
 		g(0),
 		b(0),
+		a(128),
 		dirty(false),
 		curimg(NULL),
 		renderer(r) {
@@ -260,8 +267,8 @@ namespace FIFE {
 					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 					const bool coloring = coloring_it != m_instance_colorings.end();
 					if (coloring) {
-						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
-						vc.image->renderZ(vc.dimensions, vertexZ, 255, false, rgb);
+						uint8_t rgba[4] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b, coloring_it->second.a };
+						vc.image->renderZ(vc.dimensions, vertexZ, 255, false, rgba);
 					}
 
 					if (outline || coloring) {
@@ -360,12 +367,25 @@ namespace FIFE {
 				}
 			}
 		}
+		// Fixme
+		CellRenderer* cr = dynamic_cast<CellRenderer*>(cam->getRenderer("CellRenderer"));
+		Layer* fow_layer = cr->getFowLayer();
+		bool check_fow = (fow_layer == layer && cr->isEnabledFogOfWar());
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 //			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
+
+			if (check_fow) {
+				Cell* cell = layer->getCellCache()->getCell(instance->getLocationRef().getLayerCoordinates());
+				if (cell) {
+					if (cell->getFoWType() != CELLV_REVEALED) {
+						continue;
+					}
+				}
+			}
 
 			if(m_area_layer) {
 				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();
@@ -421,8 +441,8 @@ namespace FIFE {
 						bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
 					} else {
-						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
-						vc.image->render(vc.dimensions, vc.transparency, rgb);
+						uint8_t rgba[4] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b, coloring_it->second.a };
+						vc.image->render(vc.dimensions, vc.transparency, rgba);
 						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
 					}
 				}
@@ -496,7 +516,7 @@ namespace FIFE {
 		bool found = false;
 		// create name
 		std::stringstream sts;
-		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," <<
 			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b) << "," << info.width;
 		// search image
 		if (ImageManager::instance()->exists(sts.str())) {
@@ -510,7 +530,7 @@ namespace FIFE {
 			found = true;
 		}
 
-			
+
 		// With lazy loading we can come upon a situation where we need to generate outline from
 		// uninitialised shared image
 		if(vc.image->isSharedImage()) {
@@ -602,8 +622,8 @@ namespace FIFE {
 		bool found = false;
 		// create name
 		std::stringstream sts;
-		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," << 
-			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b);
+		sts << vc.image.get()->getName() << "," << static_cast<uint32_t>(info.r) << "," <<
+			static_cast<uint32_t>(info.g) << "," << static_cast<uint32_t>(info.b) << "," << static_cast<uint32_t>(info.a);
 		// search image
 		if (ImageManager::instance()->exists(sts.str())) {
 			info.overlay = ImageManager::instance()->getPtr(sts.str());
@@ -630,12 +650,12 @@ namespace FIFE {
 			RMASK, GMASK, BMASK, AMASK);
 
 		uint8_t r, g, b, a = 0;
-
+		float alphaFactor = static_cast<float>(info.a/255.0);
 		for (int32_t x = 0; x < overlay_surface->w; x ++) {
 			for (int32_t y = 0; y < overlay_surface->h; y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if (a > 0) {
-					Image::putPixel(overlay_surface, x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1, a);
+					Image::putPixel(overlay_surface, x, y, info.r*(1.0-alphaFactor) + r*alphaFactor, info.g*(1.0-alphaFactor) + g*alphaFactor, info.b*(1.0-alphaFactor) + b*alphaFactor, a);
 				}
 			}
 		}
@@ -656,7 +676,7 @@ namespace FIFE {
 		}
 		// mark overlay as not dirty since we created/recreated it here
 		info.dirty = false;
-		
+
 		return info.overlay.get();
 	}
 
@@ -703,11 +723,12 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b) {
+	void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a) {
 		ColoringInfo newinfo(this);
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
+		newinfo.a = a;
 		newinfo.dirty = true;
 
 		// attempts to insert the element into the coloring map
@@ -721,11 +742,12 @@ namespace FIFE {
 			// already exists in the map so lets just update its coloring info
 			ColoringInfo& info = insertiter.first->second;
 
-			if (info.r != r || info.g != g || info.b != b) {
+			if (info.r != r || info.g != g || info.b != b || info.a != a) {
 				// only update the coloring info if its changed since the last call
 				info.r = r;
 				info.b = b;
 				info.g = g;
+				info.a = a;
 				info.dirty = true;
 			}
 		} else {
@@ -928,7 +950,7 @@ namespace FIFE {
 			ImagesToCheck_t::iterator it = m_check_images.begin();
 			for (; it != m_check_images.end(); ++it) {
 				if (it->image.get()->getName() == image.get()->getName()) {
-					return;					
+					return;
 				}
 			}
 			s_image_entry entry;

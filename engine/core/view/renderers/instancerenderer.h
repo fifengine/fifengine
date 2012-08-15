@@ -44,8 +44,7 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
-		 * @param imagepool image pool where from fetch images
-		 * @param animpool animation pool where from fetch images
+		 * @param position position for this renderer in rendering pipeline
 		 */
 		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 
@@ -65,7 +64,7 @@ namespace FIFE {
 
 		/** Marks given instance to be colored with given parameters
 		 */
-		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
+		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a = 128);
 
 		/** Marks given instance to have an transparent area with given paramters
 		 */
@@ -123,11 +122,11 @@ namespace FIFE {
 		/** Sets the interval in seconds (default is 60).
 		 */
 		void setRemoveInterval(uint32_t interval);
-		
+
 		/** Gets the interval in seconds (default is 60).
 		 */
 		uint32_t getRemoveInterval() const;
-		
+
 		/** Add properly old ImagePtr into a check list.
 		  * If it is still not used after a time(interval) then it is freed.
 		 */
@@ -183,6 +182,7 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
+			uint8_t a;
 			bool dirty;
 			ImagePtr overlay;
 			Image* curimg;
@@ -220,7 +220,7 @@ namespace FIFE {
 		ImagesToCheck_t m_check_images;
 		// timer
 		Timer m_timer;
-		
+
 		// InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
 		InstanceDeleteListener* m_delete_listener;
 		typedef std::map<Instance*, Effect> InstanceToEffects_t;

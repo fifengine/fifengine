@@ -31,6 +31,8 @@
 #include "model/structures/map.h"
 #include "model/structures/layer.h"
 #include "model/structures/instance.h"
+#include "model/structures/cell.h"
+#include "model/structures/cellcache.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "util/structures/point.h"
@@ -119,11 +121,6 @@ namespace FIFE {
                     pathingStrategy = "cell_edges_and_diagonals";
                 }
                 break;
-                case FREEFORM:
-                {
-                    pathingStrategy = "freeform";
-                }
-                break;
                 default:
                 {
                     pathingStrategy = "cell_edges_only";
@@ -132,6 +129,13 @@ namespace FIFE {
             }
             layerElement->SetAttribute("pathing", pathingStrategy);
             
+			if ((*iter)->isWalkable()) {
+				layerElement->SetAttribute("layer_type", "walkable");
+			} else if ((*iter)->isInteract()) {
+				layerElement->SetAttribute("layer_type", "interact");
+				layerElement->SetAttribute("layer_type_id", (*iter)->getWalkableId());
+			}
+
             // add layer to document
             mapElement->LinkEndChild(layerElement);
             
@@ -144,10 +148,15 @@ namespace FIFE {
             InstancesContainer instances = (*iter)->getInstances();
             for (InstancesContainer::iterator iter = instances.begin(); iter != instances.end(); ++iter)
             {
-                // create instance element
+				Object* obj = (*iter)->getObject();
+                // don't save part instances
+				if (obj->isMultiPart()) {
+					continue;
+				}
+
+				// create instance element
                 TiXmlElement* instanceElement = new TiXmlElement("i");
 
-                Object* obj = (*iter)->getObject();
                 if (!obj->getNamespace().empty() && currentNamespace != obj->getNamespace())
                 {
                     instanceElement->SetAttribute("ns", obj->getNamespace());
@@ -174,13 +183,140 @@ namespace FIFE {
                     instanceElement->SetAttribute("blocking", (*iter)->isBlocking());    
                 }
 
+				if ((*iter)->getCellStackPosition() != obj->getCellStackPosition()) {
+					instanceElement->SetAttribute("cellstack", (*iter)->getCellStackPosition());
+				}
+
+				if ((*iter)->isVisitor()) {
+					instanceElement->SetAttribute("visitor_radius", (*iter)->getVisitorRadius());
+					std::string shape("none");
+					if ((*iter)->getVisitorShape() == ITYPE_QUAD_SHAPE) {
+						shape = "quad";
+					} else if ((*iter)->getVisitorShape() == ITYPE_CIRCLE_SHAPE) {
+						shape = "circle";
+					}
+					instanceElement->SetAttribute("visitor_shape", shape);
+				}
+
+				if ((*iter)->isSpecialCost()) {
+					if (!obj->isSpecialCost()) {
+						instanceElement->SetAttribute("cost_id", (*iter)->getCostId());
+						instanceElement->SetDoubleAttribute("cost", (*iter)->getCost());
+					} else if ((*iter)->getCostId() != obj->getCostId() ||
+						!Mathd::Equal((*iter)->getCost(), obj->getCost())) {
+						instanceElement->SetAttribute("cost_id", (*iter)->getCostId());
+						instanceElement->SetDoubleAttribute("cost", (*iter)->getCost());
+					}
+				}
+
                 InstanceVisual* instanceVisual = (*iter)->getVisual<InstanceVisual>();
                 instanceElement->SetAttribute("stackpos", instanceVisual->getStackPosition());
 
                 instancesElement->LinkEndChild(instanceElement);
             }
         }
+		// add cellcaches tag to document
+		TiXmlElement* cellcachesElement = new TiXmlElement("cellcaches");
+		mapElement->LinkEndChild(cellcachesElement);
+		for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
+			CellCache* cache = (*iter)->getCellCache();
+			if (!cache) {
+				continue;
+			}
+			// add cellcache tag to document
+			TiXmlElement* cellcacheElement = new TiXmlElement("cellcache");
+			cellcacheElement->SetAttribute("id", (*iter)->getId());
+			cellcacheElement->SetDoubleAttribute("default_cost", cache->getDefaultCostMultiplier());
+			cellcacheElement->SetDoubleAttribute("default_speed", cache->getDefaultSpeedMultiplier());
+			cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
 
+			const std::set<Cell*>& narrowCells = cache->getNarrowCells();
+			bool saveNarrows = !cache->isSearchNarrowCells() && !narrowCells.empty();
+
+			const std::vector<std::vector<Cell*> >& cells = cache->getCells();
+			std::vector<std::vector<Cell*> >::const_iterator it = cells.begin();
+			for (; it != cells.end(); ++it) {
+				std::vector<Cell*>::const_iterator cit = (*it).begin();
+				for (; cit != (*it).end(); ++cit) {
+					Cell* cell = *cit;
+					std::list<std::string> costIds = cache->getCosts();
+					bool costsEmpty = costIds.empty();
+					bool defaultCost = cell->defaultCost();
+					bool defaultSpeed = cell->defaultSpeed();
+					CellVisualEffect cve = cell->getFoWType();
+					bool cellVisual = cve == CELLV_CONCEALED;
+					CellTypeInfo cti = cell->getCellType();
+					bool cellBlocker = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
+					TransitionInfo* transition = cell->getTransition();
+					bool isNarrow = false;
+					if (saveNarrows) {
+						std::set<Cell*>::const_iterator narrow_it = narrowCells.find(cell);
+						if (narrow_it != narrowCells.end()) {
+							isNarrow = true;
+						}
+					}
+					if (costsEmpty && defaultCost && defaultSpeed &&
+						cellVisual && cellBlocker && !transition && !isNarrow) {
+						continue;
+					}
+					// add cell tag to document
+					ModelCoordinate cellCoord = cell->getLayerCoordinates();
+					TiXmlElement* cellElement = new TiXmlElement("cell");
+					cellElement->SetAttribute("x", cellCoord.x);
+					cellElement->SetAttribute("y", cellCoord.y);
+					if (!defaultCost) {
+						cellElement->SetDoubleAttribute("default_cost", cell->getCostMultiplier());
+					}
+					if (!defaultSpeed) {
+						cellElement->SetDoubleAttribute("default_speed", cell->getSpeedMultiplier());
+					}
+					if (!cellVisual) {
+						if (cve == CELLV_REVEALED) {
+							cellElement->SetAttribute("state", "revealed");
+						} else {
+							cellElement->SetAttribute("state", "masked");
+						}
+					}
+					if (!cellBlocker) {
+						if (cti == CTYPE_CELL_NO_BLOCKER) {
+							cellElement->SetAttribute("blocker_type", "no_blocker");
+						} else {
+							cellElement->SetAttribute("blocker_type", "blocker");
+						}
+					}
+					if (isNarrow) {
+						cellElement->SetAttribute("narrow", true);
+					}
+					// add cost tag
+					if (!costsEmpty) {
+						std::list<std::string>::iterator cost_it = costIds.begin();
+						for (; cost_it != costIds.end(); ++cost_it) {
+							if (cache->existsCostForCell(*cost_it, cell)) {
+								TiXmlElement* costElement = new TiXmlElement("cost");
+								costElement->SetAttribute("id", *cost_it);
+								costElement->SetDoubleAttribute("value", cache->getCost(*cost_it));
+								cellElement->LinkEndChild(costElement);
+							}
+						}
+					}
+					// add transition tag
+					if (transition) {
+						TiXmlElement* transitionElement = new TiXmlElement("transition");
+						transitionElement->SetAttribute("id", transition->m_layer->getId());
+						transitionElement->SetAttribute("x", transition->m_mc.x);
+						transitionElement->SetAttribute("y", transition->m_mc.y);
+						if (transition->m_immediate) {
+							transitionElement->SetAttribute("immediate", true);
+						} else {
+							transitionElement->SetAttribute("immediate", false);
+						}
+						cellElement->LinkEndChild(transitionElement);
+					}
+					cellcacheElement->LinkEndChild(cellElement);
+				}
+			}
+			cellcachesElement->LinkEndChild(cellcacheElement);
+        }
         typedef std::vector<Camera*> CameraContainer;
         CameraContainer cameras = map.getCameras();
         for (CameraContainer::iterator iter = cameras.begin(); iter != cameras.end(); ++iter)

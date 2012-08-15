@@ -31,7 +31,7 @@ _exc_re = re.compile(r'_\[(\w+)\]_')
 
 def is_fife_exc(type, original_exc):
 	""" Checks if an exception is of given type.
-	Example:
+	Example::
 		try:
 			obj = self.model.createObject(str(id), str(nspace), parent)
 		except RuntimeError, e:

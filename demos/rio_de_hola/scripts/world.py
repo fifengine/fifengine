@@ -206,6 +206,12 @@ class World(EventListenerBase):
 		self.instance_to_agent[self.girl.agent.getFifeId()] = self.girl
 		self.girl.start()
 
+		# Fog of War stuff
+		#self.hero.agent.setVisitor(True)
+		#self.hero.agent.setVisitorRadius(2)
+		#self.girl.agent.setVisitor(True)
+		#self.girl.agent.setVisitorRadius(1)
+
 		self.beekeepers = create_anonymous_agents(TDS, self.model, 'beekeeper', self.agentlayer, Beekeeper)
 		for beekeeper in self.beekeepers:
 			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
@@ -278,7 +284,20 @@ class World(EventListenerBase):
 			renderer.setEnabled(True)
 			renderer.clearActiveLayers()
 			renderer.addActiveLayer(self.map.getLayer('TechdemoMapGroundObjectLayer'))
-			
+
+		# Fog of War stuff
+		renderer = fife.CellRenderer.getInstance(self.cameras['main'])
+		renderer.setEnabled(True)
+		renderer.clearActiveLayers()
+		renderer.addActiveLayer(self.map.getLayer('TechdemoMapGroundObjectLayer'))
+		concimg = self.engine.getImageManager().load("misc/black_cell.png")
+		maskimg = self.engine.getImageManager().load("misc/mask_cell.png")
+		renderer.setConcealImage(concimg)
+		renderer.setMaskImage(maskimg)
+		renderer.setFogOfWarLayer(self.map.getLayer('TechdemoMapGroundObjectLayer'))
+		renderer.setEnabledFogOfWar(True)
+		#renderer.setEnabledBlocking(True)
+
 		# Set up the second camera
 		# NOTE: We need to explicitly call setLocation, there's a bit of a messup in the Camera code.
 		self.cameras['small'].setLocation(self.hero.agent.getLocation())
@@ -332,6 +351,9 @@ class World(EventListenerBase):
 			self.lightSourceIntensity(25)
 		elif keystr == '4':
 			self.lightSourceIntensity(-25)
+		elif keystr == '0' or keystr == fife.Key.NUM_0:
+			if self.ctrldown:
+				self.cameras['main'].setZoom(1.0)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.ctrldown = True
 

@@ -60,6 +60,7 @@ namespace FIFE {
 		uint32_t getMapCount() const;
 		void deleteMaps();
 
+		void adoptPather(IPather* pather);
 		IPather* getPather(const std::string& pathername);
 		CellGrid* getCellGrid(const std::string& gridtype);
 		

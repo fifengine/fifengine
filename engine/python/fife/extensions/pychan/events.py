@@ -36,7 +36,7 @@ Event callbacks
 ---------------
 
 You can either write callbacks yourself or
-use L{tools.callBackWithArguments} or L{tools.attrSetCallback}
+use L{tools.callbackWithArguments} or L{tools.attrSetCallback}
 to generate suitable callbacks.
 
 Here's an example callback::

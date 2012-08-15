@@ -42,8 +42,10 @@
 
 
 namespace FIFE {
+	/** Logger to use for this source file.
+	 *  @relates Logger
+	 */
 	static Logger _log(LM_VIEWVIEW);
-
 
 	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),

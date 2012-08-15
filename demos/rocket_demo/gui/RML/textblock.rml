@@ -1,6 +1,6 @@
 <rml>
 	<head>
-		<title>Buttons Demonstration</title>
+		<title>Textblock Demonstration</title>
 		<link type="text/template" href="base_window.rml"/>
 		<style>	
 			div#text_area
