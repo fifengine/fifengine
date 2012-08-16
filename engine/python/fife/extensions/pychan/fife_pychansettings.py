@@ -241,7 +241,7 @@ class FifePychanSettings(Setting):
 		RestartDlg.show()
 		
 	def setDefaults(self):
-		super(PychanSettings, self).setDefaults()
+		super(FifePychanSettings, self).setDefaults()
 		
 		#On startup the settings dialog is not yet initialized.  We dont
 		#fill the widgets with data in that case.
