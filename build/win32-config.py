@@ -46,7 +46,7 @@ def initEnvironment(env):
 	if env['ENABLE_LIBROCKET']:
 		env.Append(CPPPATH = [includepath + '\\Rocket'])
 		
-	if env['ENABLE_CEGUI']
+	if env['ENABLE_CEGUI']:
 		env.Append(CPPPATH = [includepath + '\\CEGUI'])
 	
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
