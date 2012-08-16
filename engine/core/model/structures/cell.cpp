@@ -126,7 +126,6 @@ namespace FIFE {
 			}
 		}
 		updateCellBlockingInfo();
-		//updateCellInfo();
 	}
 
 	void Cell::addInstance(Instance* instance) {
@@ -180,13 +179,11 @@ namespace FIFE {
 			}
 			callOnInstanceEntered(instance);
 			updateCellBlockingInfo();
-			//updateCellInfo();
 		}
 	}
 
 	void Cell::changeInstance(Instance* instance) {
 		updateCellBlockingInfo();
-		//updateCellInfo();
 	}
 
 	void Cell::removeInstance(Instance* instance) {
@@ -228,7 +225,6 @@ namespace FIFE {
 		}
 		callOnInstanceExited(instance);
 		updateCellBlockingInfo();
-		//updateCellInfo();
 	}
 
 	bool Cell::isNeighbor(Cell* cell) {
