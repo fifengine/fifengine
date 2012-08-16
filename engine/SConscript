@@ -26,7 +26,7 @@ import utils.scons.scons_utils as utils
 from utils.util_scripts.path import path as upath
 import utils.scons.scons_builders as builders
 
-Import('env', 'fifechan_env', 'opts')
+Import('env', 'opts')
 
 _sep = os.path.sep
 src_path = upath(opts['SRC'])
@@ -37,6 +37,9 @@ extensionpath = upath(os.path.join(opts['SRC'], 'python', 'fife', 'extensions'))
 fifechan = env['ENABLE_FIFECHAN']
 librocket = env['ENABLE_LIBROCKET']
 cegui = env['ENABLE_CEGUI']
+
+if fifechan:
+	Import('fifechan_env')
 
 #**************************************************************************
 #Compile the list of source code to be used
@@ -166,7 +169,8 @@ env.Append(BUILDERS = {'CodeblocksProjectLinux': codeblocks_project_builder_linu
 
 python_extensions_builder = Builder(action = "$SWIG -o $TARGET ${_SWIGOUTDIR} ${_SWIGINCFLAGS} $SWIGFLAGS $SOURCES")
 env.Append(BUILDERS = {'PythonExtensions': python_extensions_builder})
-fifechan_env.Append(BUILDERS = { 'PythonExtensions': python_extensions_builder})
+if fifechan:
+	fifechan_env.Append(BUILDERS = { 'PythonExtensions': python_extensions_builder})
 
 
 #**************************************************************************
