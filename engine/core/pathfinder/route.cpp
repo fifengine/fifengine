@@ -109,12 +109,9 @@ namespace FIFE {
 		}
 		if (m_current != m_path.begin()) {
 			--m_current;
-			if (m_current != m_path.begin()) {
-				const Location& loc = *m_current;
-				++m_current;
-				return loc;
-			}
+			const Location& loc = *m_current;
 			++m_current;
+			return loc;
 		}
 		return *m_current;
 	}
