@@ -103,6 +103,8 @@ namespace FIFE {
 		
 		if(document != NULL) {
 			m_openDocuments[id] = document;
+		} else {
+			throw GuiException("Could not load document " + documentPath + "!");
 		}
 		
 		return document;
