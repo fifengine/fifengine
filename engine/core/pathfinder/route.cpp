@@ -43,6 +43,7 @@ namespace FIFE {
 		m_endNode(end),
 		m_walked(0),
 		m_sessionId(-1),
+		m_rotation(0),
 		m_replanned(false),
 		m_costId(""),
 		m_object(NULL) {
@@ -224,6 +225,14 @@ namespace FIFE {
 
 	int32_t Route::getSessionId() {
 		return m_sessionId;
+	}
+
+	void Route::setRotation(int32_t rotation) {
+		m_rotation = rotation;
+	}
+
+	int32_t Route::getRotation() {
+		return m_rotation;
 	}
 
 	void Route::setCostId(const std::string& cost) {

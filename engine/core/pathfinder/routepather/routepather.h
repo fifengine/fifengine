@@ -73,11 +73,10 @@ namespace FIFE {
 		 * @param current A const reference to the current location.
 		 * @param route A pointer to the route which should be followed.
 		 * @param speed A double which holds the speed.
-		 * @param nextLocation A reference to the next location returned by the pather.
-		 * @param rotation A reference to the facing location returned by the pather.
+		 * @param nextLocation A pointer to the next location returned by the pather.
 		 * @return A boolean, if true the route could be followed, otherwise false.
 		 */
-		bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation);
+		bool followRoute(const Location& current, Route* route, double speed, Location* nextLocation);
 		
 		/** Updates the route pather.
 		 *

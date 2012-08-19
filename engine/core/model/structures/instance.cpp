@@ -655,53 +655,56 @@ namespace FIFE {
 			// how far we can travel
 			double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
 			// location for this movement
-			Location nextLocation = m_location;
-			int32_t rotation = m_rotation;
-			bool can_follow = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation, rotation);
+			Location* nextLocation = new Location(m_location);
+			bool can_follow = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation);
 			if (can_follow) {
-				setRotation(rotation);
+				setRotation(route->getRotation());
 				// move to another layer
-				if (m_location.getLayer() != nextLocation.getLayer()) {
-					m_location.getLayer()->getMap()->addInstanceForTransfer(this, nextLocation);
+				if (m_location.getLayer() != nextLocation->getLayer()) {
+					m_location.getLayer()->getMap()->addInstanceForTransfer(this, *nextLocation);
 					if (!m_multiInstances.empty()) {
 						std::vector<Instance*>::iterator it = m_multiInstances.begin();
 						for (; it != m_multiInstances.end(); ++it) {
-							Location newloc = nextLocation;
+							Location newloc = *nextLocation;
 							std::vector<ModelCoordinate> tmpcoords = m_location.getLayer()->getCellGrid()->
-								toMultiCoordinates(nextLocation.getLayerCoordinates(), (*it)->getObject()->getMultiPartCoordinates(m_rotation));
+								toMultiCoordinates(nextLocation->getLayerCoordinates(), (*it)->getObject()->getMultiPartCoordinates(m_rotation));
 							newloc.setLayerCoordinates(tmpcoords.front());
 							m_location.getLayer()->getMap()->addInstanceForTransfer(*it, newloc);
 						}
 					}
+					delete nextLocation;
 					return false;
 				}
 				// move to another cell
-				if (m_location.getLayerCoordinates() != nextLocation.getLayerCoordinates()) {
+				if (m_location.getLayerCoordinates() != nextLocation->getLayerCoordinates()) {
 					m_location.getLayer()->getInstanceTree()->removeInstance(this);
-					m_location = nextLocation;
+					m_location = *nextLocation;
 					m_location.getLayer()->getInstanceTree()->addInstance(this);
 				} else {
 					// move on this cell
-					m_location = nextLocation;
+					m_location = *nextLocation;
 				}
+				delete nextLocation;
 				return false;
 			}
 			// move to another layer
-			if (m_location.getLayer() != nextLocation.getLayer()) {
-				m_location.getLayer()->getMap()->addInstanceForTransfer(this, nextLocation);
+			if (m_location.getLayer() != nextLocation->getLayer()) {
+				m_location.getLayer()->getMap()->addInstanceForTransfer(this, *nextLocation);
 				if (!m_multiInstances.empty()) {
 					std::vector<Instance*>::iterator it = m_multiInstances.begin();
 					for (; it != m_multiInstances.end(); ++it) {
-						Location newloc = nextLocation;
+						Location newloc = *nextLocation;
 						std::vector<ModelCoordinate> tmpcoords = m_location.getLayer()->getCellGrid()->
-							toMultiCoordinates(nextLocation.getLayerCoordinates(), (*it)->getObject()->getMultiPartCoordinates(m_rotation));
+							toMultiCoordinates(nextLocation->getLayerCoordinates(), (*it)->getObject()->getMultiPartCoordinates(m_rotation));
 						newloc.setLayerCoordinates(tmpcoords.front());
 						m_location.getLayer()->getMap()->addInstanceForTransfer(*it, newloc);
 					}
 				}
+				delete nextLocation;
 				return true;
 			}
-			m_location = nextLocation;
+			m_location = *nextLocation;
+			delete nextLocation;
 			// need new route?
 			if (route->getEndNode().getLayerCoordinates() != m_location.getLayerCoordinates()) {
 				if (m_location.getLayerDistanceTo(target) > 1.5) {

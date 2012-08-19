@@ -236,7 +236,7 @@ namespace FIFE {
 		return true;
 	}
 
-	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation) {
+	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location* nextLocation) {
 		Path path = route->getPath();
 		if (path.empty()) {
 			return false;
@@ -250,9 +250,9 @@ namespace FIFE {
 		if (!locationsEqual(current, currentNode)) {
 			// special blocker check for multicell
 			if (multiCell) {
-				rotation = getAngleBetween(current, currentNode);
+				route->setRotation(getAngleBetween(current, currentNode));
 				std::vector<ModelCoordinate> newCoords = currentNode.getLayer()->getCellGrid()->
-					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(rotation));
+					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
 				newCoords.push_back(currentNode.getLayerCoordinates());
 				const std::set<Object*>& parts = route->getObject()->getMultiParts();
 				std::vector<ModelCoordinate>::const_iterator nco_it = newCoords.begin();
@@ -274,7 +274,7 @@ namespace FIFE {
 					}
 				}
 			} else {
-				rotation = getAngleBetween(current, currentNode);
+				route->setRotation(getAngleBetween(current, currentNode));
 				if (currentNode.getLayer()->cellContainsBlockingInstance(currentNode.getLayerCoordinates())) {
 					nextBlocker = true;
 				}
@@ -284,7 +284,7 @@ namespace FIFE {
 		ExactModelCoordinate instancePos = current.getMapCoordinates();
 		// if next node is blocker
 		if (nextBlocker) {
-			nextLocation.setLayerCoordinates(FIFE::doublePt2intPt(current.getExactLayerCoordinates()));
+			nextLocation->setLayerCoordinates(FIFE::doublePt2intPt(current.getExactLayerCoordinates()));
 			return false;
 		}
 		// calculate distance
@@ -316,32 +316,32 @@ namespace FIFE {
 		}
 		// pop to next node
 		if (pop) {
-			nextLocation.setMapCoordinates(targetPos);
+			nextLocation->setMapCoordinates(targetPos);
 			// if cw is false we have reached the end
 			bool cw = route->walkToNextNode();
 			// check transistion
-			CellCache* cache = nextLocation.getLayer()->getCellCache();
+			CellCache* cache = nextLocation->getLayer()->getCellCache();
 			if (cache) {
-				Cell* cell = cache->getCell(nextLocation.getLayerCoordinates());
+				Cell* cell = cache->getCell(nextLocation->getLayerCoordinates());
 				if (cell) {
 					TransitionInfo* ti = cell->getTransition();
 					if (ti) {
 						// "beam" if it is a part of path
 						if (cw &&
-							!cell->getLayer()->getCellGrid()->isAccessible(nextLocation.getLayerCoordinates(),
+							!cell->getLayer()->getCellGrid()->isAccessible(nextLocation->getLayerCoordinates(),
 							route->getCurrentNode().getLayerCoordinates())) {
 							if (ti->m_difflayer) {
-								nextLocation.setLayer(ti->m_layer);
+								nextLocation->setLayer(ti->m_layer);
 							}
-							nextLocation.setLayerCoordinates(ti->m_mc);
+							nextLocation->setLayerCoordinates(ti->m_mc);
 							return cw;
 						// immediate "beam"
 						} else if (ti->m_immediate) {
 							if (ti->m_difflayer) {
-								nextLocation.setLayer(ti->m_layer);
+								nextLocation->setLayer(ti->m_layer);
 							}
-							nextLocation.setLayerCoordinates(ti->m_mc);
-							route->setEndNode(nextLocation);
+							nextLocation->setLayerCoordinates(ti->m_mc);
+							route->setEndNode(*nextLocation);
 							return false;
 						}
 					}
@@ -351,13 +351,13 @@ namespace FIFE {
 				currentNode.getLayer()->cellContainsBlockingInstance(route->getCurrentNode().getLayerCoordinates())) {
 				//set facing to end blocker
 				Location facing = route->getCurrentNode();
-				rotation = getAngleBetween(current, facing);
+				route->setRotation(getAngleBetween(current, facing));
 
 				return false;
 			}
 			return cw;
 		}
-		nextLocation.setMapCoordinates(instancePos);
+		nextLocation->setMapCoordinates(instancePos);
 
 		return true;
 	}
