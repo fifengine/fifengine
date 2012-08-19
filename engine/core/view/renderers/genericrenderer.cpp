@@ -202,11 +202,12 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text):
+	GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text, bool zoomed):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_font(font),
-		m_text(text) {
+		m_text(text),
+		m_zoomed(zoomed) {
 	}
 	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
@@ -214,10 +215,18 @@ namespace FIFE {
 			Image* img = m_font->getAsImageMultiline(m_text);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-img->getWidth()/2;
-			r.y = p.y-img->getHeight()/2;
-			r.w = img->getWidth();
-			r.h = img->getHeight();
+			uint32_t width, height;
+			if(m_zoomed) {
+				width = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+				height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+			} else {
+				width = img->getWidth();
+				height = img->getHeight();
+			}
+			r.x = p.x-width/2;
+			r.y = p.y-height/2;
+			r.w = width;
+			r.h = height;
 			if(r.intersects(viewport)) {
 				img->render(r);
 				if (renderbackend->getLightingModel() > 0) {
@@ -300,8 +309,8 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addText(const std::string &group, RendererNode n, IFont* font, const std::string &text) {
-		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
+	void GenericRenderer::addText(const std::string &group, RendererNode n, IFont* font, const std::string &text, bool zoomed) {
+		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text, zoomed);
 		m_groups[group].push_back(info);
 	}
 	void GenericRenderer::addImage(const std::string &group, RendererNode n, ImagePtr image, bool zoomed) {
