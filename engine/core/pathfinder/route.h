@@ -175,6 +175,16 @@ namespace FIFE {
 		 */
 		int32_t getSessionId();
 
+		/** Sets the current rotation.
+		 * @param rotation The rotation as integer.
+		 */
+		void setRotation(int32_t rotation);
+
+		/** Returns the current rotation.
+		 * @return The rotation as integer.
+		 */
+		int32_t getRotation();
+
 		/** Sets cost identifier which should be used for pathfinding.
 		 * @param cost A const reference to the string that contains the identifier.
 		 */
@@ -240,6 +250,9 @@ namespace FIFE {
 
 		//! session id of the search
 		int32_t m_sessionId;
+
+		//! current rotation
+		int32_t m_rotation;
 
 		//! is path replanned
 		bool m_replanned;
