@@ -210,7 +210,7 @@ namespace FIFE {
 		m_zoomed(zoomed) {
 	}
 	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
 		if(m_anchor.getLayer() == layer) {
 			Image* img = m_font->getAsImageMultiline(m_text);
 			Rect r;
