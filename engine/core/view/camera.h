@@ -121,6 +121,33 @@ namespace FIFE {
 		 */
 		double getZoom() const;
 
+		/** Gets original zToY transformation value.
+		 * @return zToY value of the camera.
+		 */
+		double getOriginalZToY() const;
+
+		/** Sets zToY value for the camera and enables their use.
+		 * This means the factor which influenced the z to y transformation,
+		 * so if you set zToY=32 then 1z corresponds to 32 pixels in y direction.
+		 * @param zToY influenced the z to y transformation of the camera.
+		 */
+		void setZToY(double zToY);
+
+		/** Gets zToY value.
+		 * @return zToY value of the camera.
+		 */
+		double getZToY() const;
+
+		/** Sets z to y manipulation enabled / disabled.
+		 * @param enabled If true then the zToY value is used instead of the original matrix value.
+		 */
+		void setZToYEnabled(bool enabled);
+
+		/** Gets if z to y manipulation is enabled / disabled.
+		 * @return true if z to y manipulation is enabled, otherwise false.
+		 */
+		bool isZToYEnabled() const;
+
 		/** Sets screen cell image dimensions.
 		 * Cell image dimension is basically width and height of a bitmap, that covers
 		 * one cell in the layer where camera is bind
@@ -415,6 +442,8 @@ namespace FIFE {
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
+		double m_zToY;
+		bool m_enabledZToY;
 		Location m_location;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;

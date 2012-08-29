@@ -285,7 +285,7 @@ namespace FIFE {
 		zone->resetCells();
 	}
 
-	const std::set<Cell*>& Zone::getCells() {
+	const std::set<Cell*>& Zone::getCells() const {
 		return m_cells;
 	}
 
@@ -293,11 +293,11 @@ namespace FIFE {
 		m_cells.clear();
 	}
 
-	uint32_t Zone::getId() {
+	uint32_t Zone::getId() const {
 		return m_id;
 	}
 
-	uint32_t Zone::getCellCount() {
+	uint32_t Zone::getCellCount() const {
 		return static_cast<uint32_t>(m_cells.size());
 	}
 
@@ -366,6 +366,7 @@ namespace FIFE {
 		m_layer(layer),
 		m_defaultCostMulti(1.0),
 		m_defaultSpeedMulti(1.0),
+		m_neighborZ(-1),
 		m_blockingUpdate(false),
 		m_fowUpdate(false),
 		m_sizeUpdate(false),
@@ -540,17 +541,24 @@ namespace FIFE {
 			m_width = w;
 			m_height = h;
 
+			bool zCheck = m_neighborZ != -1;
 			// fill neighbors into cells
 			it = m_cells.begin();
 			for (; it != m_cells.end(); ++it) {
 				std::vector<Cell*>::iterator cit = (*it).begin();
 				for (; cit != (*it).end(); ++cit) {
+					int32_t cellZ = (*cit)->getLayerCoordinates().z;
 					std::vector<ModelCoordinate> coordinates;
 					m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
 					for (std::vector<ModelCoordinate>::iterator mi = coordinates.begin(); mi != coordinates.end(); ++mi) {
 						Cell* c = getCell(*mi);
 						if (*cit == c || !c) {
 							continue;
+						}
+						if (zCheck) {
+							if (ABS(c->getLayerCoordinates().z - cellZ) > m_neighborZ) {
+								continue;
+							}
 						}
 						(*cit)->addNeighbor(c);
 					}
@@ -782,6 +790,14 @@ namespace FIFE {
 	int32_t CellCache::getMaxIndex() const {
 		int32_t max_index = m_width*m_height;
 		return max_index;
+	}
+
+	void CellCache::setMaxNeighborZ(int32_t z) {
+		m_neighborZ = z;
+	}
+
+	int32_t CellCache::getMaxNeighborZ() {
+		return m_neighborZ;
 	}
 
 	void CellCache::setUpdated(bool updated) {

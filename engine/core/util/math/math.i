@@ -21,6 +21,7 @@
 %module fife
 
 %{
+#include "util/math/angles.h"
 #include "util/math/fife_math.h"
 %}
 
@@ -70,6 +71,9 @@ namespace FIFE {
 		static T Sqrt(T _val);
 		static T Tan(T _val);
 	};
+
+	int32_t getAngleBetween(const Location& loc1, const Location& loc2);
+	Location getFacing(const Location& loc, const int32_t angle);
 
 	typedef Math<float> Mathf;
 	typedef Math<double> Mathd;

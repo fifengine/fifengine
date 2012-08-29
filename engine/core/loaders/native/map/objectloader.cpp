@@ -275,6 +275,12 @@ namespace FIFE {
                 root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
                 obj->setRestrictedRotation(isRestrictedRotation!=0);
 
+				int zStep = 0;
+				zRetVal = root->QueryIntAttribute("z_step_limit", &zStep);
+				if (zRetVal == TIXML_SUCCESS) {
+					obj->setZStepRange(zStep);
+				}
+
 				// loop over all multi parts
                 for (TiXmlElement* multiElement = root->FirstChildElement("multipart"); multiElement; multiElement = multiElement->NextSiblingElement("multipart")) {
                     const std::string* partId = multiElement->Attribute(std::string("id"));

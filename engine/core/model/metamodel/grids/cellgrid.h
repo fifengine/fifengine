@@ -179,6 +179,14 @@ namespace FIFE {
 			updateMatrices();
 		}
 
+		/** Set the cellgrid z-scaling
+		 *  @param scale The z-scale of cellgrid
+		 */
+		void setZScale(const double scale) {
+			m_zscale = scale;
+			updateMatrices();
+		}
+
 		/** Get the cellgrid x-scaling
 		 *  @return The x-scale of cellgrid
 		 */
@@ -188,6 +196,11 @@ namespace FIFE {
 		 *  @return The y-scale of cellgrid
 		 */
 		const double getYScale() const { return m_yscale; }
+
+		/** Get the cellgrid z-scaling
+		 *  @return The z-scale of cellgrid
+		 */
+		const double getZScale() const { return m_zscale; }
 
 		/** Set the cellgrid rotation
 		 *  @param rotation The rotation of the cellgrid
@@ -229,6 +242,7 @@ namespace FIFE {
 		double m_zshift;
 		double m_xscale;
 		double m_yscale;
+		double m_zscale;
 		double m_rotation;
 		bool m_allow_diagonals;
 

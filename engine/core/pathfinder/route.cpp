@@ -49,7 +49,6 @@ namespace FIFE {
 		m_object(NULL) {
 	}
 
-
 	Route::~Route() {
 	}
 
@@ -264,6 +263,13 @@ namespace FIFE {
 		}
 		std::vector<ModelCoordinate> coords;
 		return coords;
+	}
+
+	int32_t Route::getZStepRange() {
+		if (!m_object) {
+			return -1;
+		}
+		return m_object->getZStepRange();
 	}
 
 	void Route::setObject(Object* obj) {

@@ -68,9 +68,6 @@ namespace FIFE {
 			// current transparency
 			uint8_t transparency;
 
-			// current instance z
-			double instance_z;
-
 			// current frame index (e.g. needed for action frame)
 			int32_t current_frame;
 		private:

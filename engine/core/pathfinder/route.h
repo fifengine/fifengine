@@ -216,13 +216,18 @@ namespace FIFE {
 		 */
 		std::vector<ModelCoordinate> getOccupiedCells(int32_t rotation);
 
-		/** Sets the multi cell object.
-		 * @param obj A pointer to the multi cell object.
+		/** Returns z-step range from object. In case it is not limited -1 is returned.
+		 * @return The z-step range as int.
+		 */
+		int32_t getZStepRange();
+
+		/** Sets the object, needed for multi cell and z-step range.
+		 * @param obj A pointer to the object.
 		 */
 		void setObject(Object* obj);
 
-		/** Returns the multi cell object.
-		 * @param obj A pointer to the multi cell object.
+		/** Returns the object, needed for multi cell and z-step range.
+		 * @return A pointer to the object.
 		 */
 		Object* getObject();
 

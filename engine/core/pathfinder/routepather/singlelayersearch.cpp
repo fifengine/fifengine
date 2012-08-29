@@ -79,6 +79,9 @@ namespace FIFE {
 		ModelCoordinate nextCoord = m_cellCache->convertIntToCoord(m_next);
 		CellGrid* grid = m_cellCache->getLayer()->getCellGrid();
 		Cell* nextCell = m_cellCache->getCell(nextCoord);
+		int32_t cellZ = nextCell->getLayerCoordinates().z;
+		int32_t maxZ = m_route->getZStepRange();
+		bool zLimited = maxZ != -1;
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
 			if ((*i)->getLayer()->getCellCache() != m_cellCache) {
@@ -86,6 +89,9 @@ namespace FIFE {
 			}
 			int32_t adjacentInt = (*i)->getCellId();
 			if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
+				continue;
+			}
+			if (zLimited && ABS(cellZ-(*i)->getLayerCoordinates().z) > maxZ) {
 				continue;
 			}
 			bool blocker = (*i)->getCellType() != CTYPE_NO_BLOCKER;

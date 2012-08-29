@@ -172,7 +172,6 @@ namespace FIFE {
 
 		ExactModelCoordinate map_coords = instance->getLocationRef().getMapCoordinates();
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(map_coords);
-		render_item.instance_z = instance->getLocationRef().getExactLayerCoordinates().z;
 
 		render_item.facing_angle = instance->getRotation();
 		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + render_item.facing_angle;
@@ -288,14 +287,27 @@ namespace FIFE {
 
 	class InstanceDistanceSort {
 	public:
-		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
-			if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
-				InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
-				InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
-				return liv->getStackPosition() < riv->getStackPosition();
-			}
-			return lhs->screenpoint.z < rhs->screenpoint.z;
+		InstanceDistanceSort(double rotation) {
+			m_xSign = (Mathd::Sin(rotation*Mathd::pi()/180) < 0) - (Mathd::Sin(rotation*Mathd::pi()/180) > 0);
+			m_ySign = (Mathd::Cos(rotation*Mathd::pi()/180) > 0) - (Mathd::Cos(rotation*Mathd::pi()/180) < 0);
 		}
+
+		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
+			const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
+			const ExactModelCoordinate& rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
+			if (ceil(m_xSign*lpos.x) + ceil(m_ySign*lpos.y) == ceil(m_xSign*rpos.x) + ceil(m_ySign*rpos.y)) {
+				if (Mathd::Equal(lpos.z, rpos.z)) {
+					InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
+					InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+					return liv->getStackPosition() < riv->getStackPosition();
+				}
+				return lpos.z < rpos.z;
+			}
+			return ceil(m_xSign*lpos.x) + ceil(m_ySign*lpos.y) < ceil(m_xSign*rpos.x) + ceil(m_ySign*rpos.y);
+		}
+	private:
+		int8_t m_xSign;
+		int8_t m_ySign;
 	};
 
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
@@ -400,7 +412,7 @@ namespace FIFE {
 		}
 
 		if (m_need_sorting) {
-			InstanceDistanceSort ids;
+			InstanceDistanceSort ids(m_camera->getRotation());
 			std::stable_sort(renderlist.begin(), renderlist.end(), ids);
 		} else {
 			zmin -= 0.5;

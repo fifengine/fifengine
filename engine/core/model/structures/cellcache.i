@@ -45,6 +45,8 @@ namespace FIFE {
 			uint32_t getWidth();
 			uint32_t getHeight();
 			int32_t getMaxIndex() const;
+			void setMaxNeighborZ(int32_t z);
+			int32_t getMaxNeighborZ();
 
 			bool isInCellCache(const Location& location) const;
 
