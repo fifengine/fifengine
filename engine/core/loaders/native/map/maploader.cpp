@@ -227,6 +227,7 @@ namespace FIFE {
 						double zOffset = 0.0;
 						double xScale = 1.0;
 						double yScale = 1.0;
+						double zScale = 1.0;
 						double rotation = 0.0;
 
 						int xOffsetRetVal = layerElement->QueryValueAttribute("x_offset", &xOffset);
@@ -234,6 +235,7 @@ namespace FIFE {
 						int zOffsetRetVal = layerElement->QueryValueAttribute("z_offset", &zOffset);
 						int xScaleRetVal = layerElement->QueryValueAttribute("x_scale", &xScale);
 						int yScaleRetVal = layerElement->QueryValueAttribute("y_scale", &yScale);
+						int zScaleRetVal = layerElement->QueryValueAttribute("z_scale", &zScale);
 						int rotationRetVal = layerElement->QueryValueAttribute("rotation", &rotation);
 
 						const std::string* layerName = layerElement->Attribute(std::string("id"));
@@ -270,6 +272,7 @@ namespace FIFE {
 								grid->setYShift(yOffset);
 								grid->setYScale(yScale);
 								grid->setZShift(zOffset);
+								grid->setZScale(zScale);
 								grid->setRotation(rotation);
 
 								Layer *layer = NULL;
@@ -554,10 +557,12 @@ namespace FIFE {
 												for (const TiXmlElement* transitionElement = cellElement->FirstChildElement("transition"); transitionElement; transitionElement = transitionElement->NextSiblingElement("transition")) {
 													int targetX = 0;
 													int targetY = 0;
+													int targetZ = 0;
 													success = transitionElement->QueryIntAttribute("x", &targetX);
 													success &= transitionElement->QueryIntAttribute("y", &targetY);
+													transitionElement->QueryIntAttribute("z", &targetZ);
 													if (success == TIXML_SUCCESS) {
-														ModelCoordinate mc(targetX, targetY);
+														ModelCoordinate mc(targetX, targetY, targetZ);
 														Layer* targetLayer = NULL;
 														const std::string* targetLayerId = transitionElement->Attribute(std::string("id"));
 														if (targetLayerId) {
@@ -593,9 +598,11 @@ namespace FIFE {
 							double tilt = 0.0;
 							double zoom = 1.0;
 							double rotation = 0.0;
+							double zToY = 0.0;
 							cameraElement->QueryDoubleAttribute("tilt", &tilt);
 							cameraElement->QueryDoubleAttribute("zoom", &zoom);
 							cameraElement->QueryDoubleAttribute("rotation", &rotation);
+							success = cameraElement->QueryDoubleAttribute("ztoy", &zToY);
 
 							const std::string* viewport = cameraElement->Attribute(std::string("viewport"));
 
@@ -646,6 +653,9 @@ namespace FIFE {
 								cam->setRotation(rotation);
 								cam->setTilt(tilt);
 								cam->setZoom(zoom);
+								if (success == TIXML_SUCCESS) {
+									cam->setZToY(zToY);
+								}
 
                                 // active instance renderer for camera
                                 InstanceRenderer* instanceRenderer = InstanceRenderer::getInstance(cam);

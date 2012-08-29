@@ -76,7 +76,7 @@ namespace FIFE {
 		/** Returns all cells of this zone.
 		 * @return A const reference to a set that contains all cells of this zone.
 		 */
-		const std::set<Cell*>& getCells();
+		const std::set<Cell*>& getCells() const;
 
 		/** Remove all cells from zone but does not alter the cells.
 		 */
@@ -85,12 +85,12 @@ namespace FIFE {
 		/** Returns the zone identifier.
 		 * @return A unsigned integer with the identifier.
 		 */
-		uint32_t getId();
+		uint32_t getId() const;
 
 		/** Returns the number of cells.
 		 * @return A unsigned integer with the number of cells.
 		 */
-		uint32_t getCellCount();
+		uint32_t getCellCount() const;
 
 		/** Returns transistion cells of this zone.
 		 * @param layer A pointer to the layer which should be the target of the transition. If NULL all transistions be returned.
@@ -223,6 +223,16 @@ namespace FIFE {
 			 * @return A integer value, the number of cells.
 			 */
 			int32_t getMaxIndex() const;
+
+			/** Sets maximal z range for neighbors.
+			 * @param z The maximal z range as int.
+			 */
+			void setMaxNeighborZ(int32_t z);
+
+			/** Gets maximal z range for neighbors. By default disabled with the value -1.
+			 * @return The maximal z range as int.
+			 */
+			int32_t getMaxNeighborZ();
 
 			/** Sets whether the CellCache need to be updated.
 			 * @param updated A boolean, true means no update is needed, false indicates a update.
@@ -588,8 +598,16 @@ namespace FIFE {
 			//! cache height
 			uint32_t m_height;
 
+			//! max z value for neighbors
+			int32_t m_neighborZ;
+
+			//! indicates blocking update
 			bool m_blockingUpdate;
+
+			//! indicates fow update
 			bool m_fowUpdate;
+
+			//! indicates size update
 			bool m_sizeUpdate;
 
 			//! need update

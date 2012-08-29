@@ -76,7 +76,7 @@ namespace FIFE {
 		 * @param nextLocation A reference to the next location returned by the pather.
 		 * @return A boolean, if true the route could be followed, otherwise false.
 		 */
-		virtual bool followRoute(const Location& current, Route* route, double speed, Location* nextLocation) = 0;
+		virtual bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation) = 0;
 
 		/** Updates the pather (should it need updating).
 		 *

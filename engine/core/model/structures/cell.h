@@ -45,6 +45,8 @@ namespace FIFE {
 	class Cell;
 	class Zone;
 
+	static const double MIN_CELL_Z = -9999999;
+
 	/** Defines different blocker types.
 	 *
 	 * CTYPE_NO_BLOCKER means there is no blocker.
@@ -393,6 +395,9 @@ namespace FIFE {
 			//! holds coordinate as a unique integer id
 			int32_t m_coordId;
 			
+			//! holds coordinate
+			ModelCoordinate m_coordinate;
+
 			//! parent layer
 			Layer* m_layer;
 

@@ -49,7 +49,8 @@ namespace FIFE {
 		m_costId(""),
 		m_cost(1.0),
 		m_multiPart(false),
-		m_restrictedRotation(false) {
+		m_restrictedRotation(false),
+		m_zRange(-1){
 	}
 
 	Object::~Object() {
@@ -168,11 +169,11 @@ namespace FIFE {
 		m_cellStack = position;
 	}
 
-	uint8_t Object::getCellStackPosition() {
+	uint8_t Object::getCellStackPosition() const {
 		return m_cellStack;
 	}
 
-	bool Object::isSpecialCost() {
+	bool Object::isSpecialCost() const {
 		return m_costId != "";
 	}
 
@@ -192,7 +193,7 @@ namespace FIFE {
 		return m_cost;
 	}
 
-	bool Object::isMultiObject() {
+	bool Object::isMultiObject() const {
 		return !m_multiPartIds.empty();
 	}
 
@@ -200,7 +201,7 @@ namespace FIFE {
 		m_multiPartIds.push_back(partId);
 	}
 
-	const std::list<std::string>& Object::getMultiPartIds() {
+	const std::list<std::string>& Object::getMultiPartIds() const {
 		return m_multiPartIds;
 	}
 
@@ -218,7 +219,7 @@ namespace FIFE {
 		m_multiPartIds.clear();
 	}
 
-	bool Object::isMultiPart() {
+	bool Object::isMultiPart() const {
 		return m_multiPart;
 	}
 
@@ -230,7 +231,7 @@ namespace FIFE {
 		m_multiParts.insert(obj);
 	}
 
-	const std::set<Object*>& Object::getMultiParts() {
+	const std::set<Object*>& Object::getMultiParts() const {
 		return m_multiParts;
 	}
 
@@ -248,7 +249,7 @@ namespace FIFE {
 		m_partAngleMap[rotation] = rotation;
 	}
 
-	const std::multimap<int32_t, ModelCoordinate>& Object::getMultiPartCoordinates() {
+	const std::multimap<int32_t, ModelCoordinate>& Object::getMultiPartCoordinates() const {
 		return m_multiPartCoordinates;
 	}
 
@@ -295,7 +296,7 @@ namespace FIFE {
 		m_rotationAnchor = anchor;
 	}
 
-	const ExactModelCoordinate& Object::getRotationAnchor() {
+	const ExactModelCoordinate& Object::getRotationAnchor() const {
 		return m_rotationAnchor;
 	}
 	
@@ -303,7 +304,7 @@ namespace FIFE {
 		m_restrictedRotation = restrict;
 	}
 
-	bool Object::isRestrictedRotation() {
+	bool Object::isRestrictedRotation() const {
 		return m_restrictedRotation;
 	}
 
@@ -315,6 +316,14 @@ namespace FIFE {
 			int32_t index = getIndexByAngle(rotation, m_partAngleMap, closest);
 		}
 		return closest;
+	}
+
+	void Object::setZStepRange(int32_t zRange) {
+		m_zRange = zRange;
+	}
+
+	int32_t Object::getZStepRange() const {
+		return m_zRange;
 	}
 
 	bool Object::operator==(const Object& obj) const {

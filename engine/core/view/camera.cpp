@@ -84,6 +84,8 @@ namespace FIFE {
 			m_tilt(0),
 			m_rotation(0),
 			m_zoom(1),
+			m_zToY(0),
+			m_enabledZToY(false),
 			m_location(),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
@@ -163,6 +165,41 @@ namespace FIFE {
 
 	double Camera::getZoom() const {
 		return m_zoom;
+	}
+
+	double Camera::getOriginalZToY() const {
+		DoubleMatrix matrix;
+		matrix.loadScale(m_reference_scale, m_reference_scale, m_reference_scale);
+		if (m_location.getLayer()) {
+			CellGrid* cg = m_location.getLayer()->getCellGrid();
+			if (cg) {
+				ExactModelCoordinate pt = m_location.getMapCoordinates();
+				matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
+			}
+		}
+		matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
+		matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		return matrix.m9;
+	}
+
+	void Camera::setZToY(double zToY) {
+		m_enabledZToY = true;
+		if (!Mathd::Equal(m_zToY, zToY)) {
+			m_zToY = zToY;
+			updateMatrices();
+		}
+	}
+
+	double Camera::getZToY() const {
+		return m_zToY;
+	}
+
+	void Camera::setZToYEnabled(bool enabled) {
+		m_enabledZToY = enabled;
+	}
+
+	bool Camera::isZToYEnabled() const {
+		return m_enabledZToY;
 	}
 
 	void Camera::setCellImageDimensions(uint32_t width, uint32_t height) {
@@ -331,18 +368,24 @@ namespace FIFE {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
 				ExactModelCoordinate pt = m_location.getMapCoordinates();
-				m_matrix.applyTranslate( -pt.x *m_reference_scale,-pt.y *m_reference_scale, -pt.z*m_reference_scale);
+				m_matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
 			}
+		}
+		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		if (m_enabledZToY) {
+			m_matrix.m9 = -m_zToY; // z -> y height in pixels
 		}
 		scale = m_zoom;
 		m_matrix.applyScale(scale, scale, scale);
-		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
-		m_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
 		m_matrix.applyTranslate(+m_viewport.x+m_viewport.w/2, +m_viewport.y+m_viewport.h/2, 0);
 		m_inverse_matrix = m_matrix.inverse();
 
 		m_vs_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
 		m_vs_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		if (m_enabledZToY) {
+			m_vs_matrix.m9 = -m_zToY; // z -> y height in pixels
+		}
 		m_vs_inverse_matrix = m_vs_matrix.inverse();
 
 		// calculate the screen<->virtual screen transformation
@@ -373,7 +416,7 @@ namespace FIFE {
 		if (!z_calculated) {
 			calculateZValue(screen_coords);
 		}
-		return m_inverse_matrix  * intPt2doublePt(screen_coords);
+		return m_inverse_matrix * intPt2doublePt(screen_coords);
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords) {

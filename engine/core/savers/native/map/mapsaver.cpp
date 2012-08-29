@@ -305,6 +305,9 @@ namespace FIFE {
 						transitionElement->SetAttribute("id", transition->m_layer->getId());
 						transitionElement->SetAttribute("x", transition->m_mc.x);
 						transitionElement->SetAttribute("y", transition->m_mc.y);
+						if (transition->m_mc.z != 0) {
+							transitionElement->SetAttribute("z", transition->m_mc.z);
+						}
 						if (transition->m_immediate) {
 							transitionElement->SetAttribute("immediate", true);
 						} else {
@@ -330,6 +333,9 @@ namespace FIFE {
                 cameraElement->SetDoubleAttribute("zoom", (*iter)->getZoom());
                 cameraElement->SetDoubleAttribute("tilt", (*iter)->getTilt());
                 cameraElement->SetDoubleAttribute("rotation", (*iter)->getRotation());
+				if ((*iter)->isZToYEnabled()) {
+					cameraElement->SetDoubleAttribute("ztoy", (*iter)->getZToY());
+				}
                 
                 Rect viewport = (*iter)->getViewPort();
                 std::ostringstream viewportString;

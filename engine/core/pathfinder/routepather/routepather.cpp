@@ -51,7 +51,7 @@ namespace FIFE {
 		const ModelCoordinate a_coord = a.getLayerCoordinates();
 		const ModelCoordinate b_coord = b.getLayerCoordinates();
 
-		return (a_coord == b_coord) && sameLayer;
+		return (a_coord.x == b_coord.x) && (a_coord.y == b_coord.y) && sameLayer;
 	}
 
 	void RoutePather::update() {
@@ -236,7 +236,7 @@ namespace FIFE {
 		return true;
 	}
 
-	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location* nextLocation) {
+	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation) {
 		Path path = route->getPath();
 		if (path.empty()) {
 			return false;
@@ -248,9 +248,9 @@ namespace FIFE {
 		Location currentNode = route->getCurrentNode();
 		bool multiCell = route->isMultiCell();
 		if (!locationsEqual(current, currentNode)) {
+			route->setRotation(getAngleBetween(current, currentNode));
 			// special blocker check for multicell
 			if (multiCell) {
-				route->setRotation(getAngleBetween(current, currentNode));
 				std::vector<ModelCoordinate> newCoords = currentNode.getLayer()->getCellGrid()->
 					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
 				newCoords.push_back(currentNode.getLayerCoordinates());
@@ -274,7 +274,6 @@ namespace FIFE {
 					}
 				}
 			} else {
-				route->setRotation(getAngleBetween(current, currentNode));
 				if (currentNode.getLayer()->cellContainsBlockingInstance(currentNode.getLayerCoordinates())) {
 					nextBlocker = true;
 				}
@@ -284,31 +283,52 @@ namespace FIFE {
 		ExactModelCoordinate instancePos = current.getMapCoordinates();
 		// if next node is blocker
 		if (nextBlocker) {
-			nextLocation->setLayerCoordinates(FIFE::doublePt2intPt(current.getExactLayerCoordinates()));
+			nextLocation.setLayerCoordinates(FIFE::doublePt2intPt(current.getExactLayerCoordinates()));
 			return false;
 		}
 		// calculate distance
+		CellCache* nodeCache = currentNode.getLayer()->getCellCache();
+		CellGrid* nodeGrid = currentNode.getLayer()->getCellGrid();
 		ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
-		CellGrid* grid = current.getLayer()->getCellGrid();
-		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
-		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
+		targetPos.z = nodeCache->getCell(currentNode.getLayerCoordinates())->getLayerCoordinates().z + nodeGrid->getZShift();		
+		double dx = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
+		double dy = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
 		double distance = Mathd::Sqrt(dx * dx + dy * dy);
-
 		// cell speed multi
 		double multi;
-		CellCache* cache = current.getLayer()->getCellCache();
-		if (cache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
+		if (nodeCache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
 			speed *= multi;
 		} else {
-			speed *= cache->getDefaultSpeedMultiplier();
+			speed *= nodeCache->getDefaultSpeedMultiplier();
 		}
 		bool pop = false;
 		if (speed > distance) {
 			speed = distance;
 			pop = true;
 		}
-
 		if (!Mathd::Equal(distance, 0.0) && !pop) {
+			Location prevNode = route->getPreviousNode();
+			CellCache* prevCache = prevNode.getLayer()->getCellCache();
+			CellGrid* prevGrid = prevNode.getLayer()->getCellGrid();
+			ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
+			prevPos.z = prevCache->getCell(prevNode.getLayerCoordinates())->getLayerCoordinates().z + prevGrid->getZShift();
+			double cell_dz = (targetPos.z - prevPos.z);
+			if (!Mathd::Equal(cell_dz, 0.0)) {
+				double cell_dx = (targetPos.x - prevPos.x);
+				double cell_dy = (targetPos.y - prevPos.y);
+				double cell_distance = Mathd::Sqrt(cell_dx * cell_dx + cell_dy * cell_dy);
+				if (cell_dz > 0) {
+					if (locationsEqual(current, currentNode)) {
+						instancePos.z = targetPos.z;
+					} else {
+						instancePos.z = prevPos.z + cell_dz - 4*(0.5-distance/cell_distance)*(0.5-distance/cell_distance) * cell_dz;
+					}
+				} else if (cell_dz < 0) {
+					if (locationsEqual(current, currentNode)) {
+						instancePos.z = prevPos.z + 4*(0.5-distance/cell_distance)*(0.5-distance/cell_distance) * cell_dz;
+					}
+				}
+			}
 			instancePos.x += (dx / distance) * speed;
 			instancePos.y += (dy / distance) * speed;
 		} else {
@@ -316,32 +336,32 @@ namespace FIFE {
 		}
 		// pop to next node
 		if (pop) {
-			nextLocation->setMapCoordinates(targetPos);
+			nextLocation.setMapCoordinates(targetPos);
 			// if cw is false we have reached the end
 			bool cw = route->walkToNextNode();
 			// check transistion
-			CellCache* cache = nextLocation->getLayer()->getCellCache();
+			CellCache* cache = nextLocation.getLayer()->getCellCache();
 			if (cache) {
-				Cell* cell = cache->getCell(nextLocation->getLayerCoordinates());
+				Cell* cell = cache->getCell(nextLocation.getLayerCoordinates());
 				if (cell) {
 					TransitionInfo* ti = cell->getTransition();
 					if (ti) {
 						// "beam" if it is a part of path
 						if (cw &&
-							!cell->getLayer()->getCellGrid()->isAccessible(nextLocation->getLayerCoordinates(),
+							!cell->getLayer()->getCellGrid()->isAccessible(nextLocation.getLayerCoordinates(),
 							route->getCurrentNode().getLayerCoordinates())) {
 							if (ti->m_difflayer) {
-								nextLocation->setLayer(ti->m_layer);
+								nextLocation.setLayer(ti->m_layer);
 							}
-							nextLocation->setLayerCoordinates(ti->m_mc);
+							nextLocation.setLayerCoordinates(ti->m_mc);
 							return cw;
 						// immediate "beam"
 						} else if (ti->m_immediate) {
 							if (ti->m_difflayer) {
-								nextLocation->setLayer(ti->m_layer);
+								nextLocation.setLayer(ti->m_layer);
 							}
-							nextLocation->setLayerCoordinates(ti->m_mc);
-							route->setEndNode(*nextLocation);
+							nextLocation.setLayerCoordinates(ti->m_mc);
+							route->setEndNode(nextLocation);
 							return false;
 						}
 					}
@@ -357,7 +377,7 @@ namespace FIFE {
 			}
 			return cw;
 		}
-		nextLocation->setMapCoordinates(instancePos);
+		nextLocation.setMapCoordinates(instancePos);
 
 		return true;
 	}

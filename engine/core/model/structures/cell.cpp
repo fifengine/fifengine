@@ -41,6 +41,7 @@ namespace FIFE {
 
 	Cell::Cell(int32_t coordint, ModelCoordinate coordinate, Layer* layer):
 		m_coordId(coordint),
+		m_coordinate(coordinate),
 		m_layer(layer),
 		m_zone(NULL),
 		m_transition(NULL),
@@ -83,7 +84,7 @@ namespace FIFE {
 					std::vector<Cell*> cellsExt;
 					switch((*it)->getVisitorShape()) {
 						case ITYPE_QUAD_SHAPE: {
-							Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+							Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
 								(visitorRadius*2)+1, (visitorRadius*2)+1);
 							cells = cache->getCellsInRect(size);
 							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
@@ -92,8 +93,8 @@ namespace FIFE {
 							break;
 
 						case ITYPE_CIRCLE_SHAPE: {
-							cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
-							cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+							cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
+							cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
 						}
 							break;
 
@@ -138,7 +139,7 @@ namespace FIFE {
 				std::vector<Cell*> cellsExt;
 				switch(instance->getVisitorShape()) {
 					case ITYPE_QUAD_SHAPE: {
-						Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+						Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
 							(visitorRadius*2)+1, (visitorRadius*2)+1);
 						cells = cache->getCellsInRect(size);
 						Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
@@ -147,8 +148,8 @@ namespace FIFE {
 						break;
 
 					case ITYPE_CIRCLE_SHAPE: {
-						cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
-						cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+						cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
+						cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
 					}
 						break;
 
@@ -196,14 +197,14 @@ namespace FIFE {
 			std::vector<Cell*> cells;
 			switch(instance->getVisitorShape()) {
 				case ITYPE_QUAD_SHAPE: {
-					Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+					Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
 						(visitorRadius*2)+1, (visitorRadius*2)+1);
 					cells = cache->getCellsInRect(size);
 				}
 					break;
 
 				case ITYPE_CIRCLE_SHAPE: {
-					cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
+					cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
 				}
 					break;
 
@@ -239,10 +240,10 @@ namespace FIFE {
 
 	void Cell::updateCellBlockingInfo() {
 		CellTypeInfo old_type = m_type;
+		m_coordinate.z = MIN_CELL_Z;
 		if (!m_instances.empty()) {
 			int32_t pos = -1;
 			bool cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
-
 			for (std::set<Instance*>::iterator it = m_instances.begin(); it != m_instances.end(); ++it) {
 				if (cellblock) {
 					continue;
@@ -251,7 +252,10 @@ namespace FIFE {
 				if (stackpos < pos) {
 					continue;
 				}
-
+				// update cell z
+				if (m_coordinate.z < (*it)->getLocationRef().getLayerCoordinates().z && (*it)->getObject()->isStatic()) {
+					m_coordinate.z = (*it)->getLocationRef().getLayerCoordinates().z;
+				}
 				if ((*it)->getCellStackPosition() > pos) {
 					pos = (*it)->getCellStackPosition();
 					if ((*it)->isBlocking()) {
@@ -279,6 +283,9 @@ namespace FIFE {
 				m_type = CTYPE_NO_BLOCKER;
 			}
 		}
+		if (Mathd::Equal(m_coordinate.z, MIN_CELL_Z)) {
+			m_coordinate.z = 0;
+		}
 
 		if (old_type != m_type) {
 			bool block = (m_type == CTYPE_STATIC_BLOCKER ||
@@ -304,7 +311,7 @@ namespace FIFE {
 					std::vector<Cell*> cellsExt;
 					switch((*visit)->getVisitorShape()) {
 						case ITYPE_QUAD_SHAPE: {
-							Rect size(getLayerCoordinates().x-visitorRadius, getLayerCoordinates().y-visitorRadius,
+							Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
 								(visitorRadius*2)+1, (visitorRadius*2)+1);
 							cells = cache->getCellsInRect(size);
 							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
@@ -313,8 +320,8 @@ namespace FIFE {
 							break;
 
 						case ITYPE_CIRCLE_SHAPE: {
-							cells = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius);
-							cellsExt = cache->getCellsInCircle(this->getLayerCoordinates(), visitorRadius+1);
+							cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
+							cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
 						}
 							break;
 
@@ -477,7 +484,7 @@ namespace FIFE {
 	}
 
 	const ModelCoordinate Cell::getLayerCoordinates() const {
-		return m_layer->getCellCache()->convertIntToCoord(m_coordId);
+		return m_coordinate;
 	}
 
 	void Cell::addNeighbor(Cell* cell) {
