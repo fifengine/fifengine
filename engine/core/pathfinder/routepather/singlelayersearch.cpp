@@ -79,11 +79,17 @@ namespace FIFE {
 		ModelCoordinate nextCoord = m_cellCache->convertIntToCoord(m_next);
 		CellGrid* grid = m_cellCache->getLayer()->getCellGrid();
 		Cell* nextCell = m_cellCache->getCell(nextCoord);
+		if (!nextCell) {
+			return;
+		}
 		int32_t cellZ = nextCell->getLayerCoordinates().z;
 		int32_t maxZ = m_route->getZStepRange();
 		bool zLimited = maxZ != -1;
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
+			if (*i == NULL) {
+				continue;
+			}
 			if ((*i)->getLayer()->getCellCache() != m_cellCache) {
 				continue;
 			}
