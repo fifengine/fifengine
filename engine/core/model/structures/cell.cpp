@@ -188,7 +188,8 @@ namespace FIFE {
 	}
 
 	void Cell::removeInstance(Instance* instance) {
-		if (m_instances.erase(instance) != 1) {
+		if (m_instances.erase(instance) == 0) {
+			FL_ERR(_log, "Tried to remove an instance from cell, but given instance could not be found.");
 			return;
 		}
 		CellCache* cache = m_layer->getCellCache();

@@ -154,6 +154,15 @@ namespace FIFE {
 		item.node = 0;
 		item.instance_index = -1;
 		m_instance_map.erase(instance);
+
+		// removes instance from cameras RenderList
+		RenderList& renderList = m_camera->getRenderListRef(m_layer);
+		for (RenderList::iterator it = renderList.begin(); it != renderList.end(); ++it) {
+			if ((*it)->instance == instance) {
+				renderList.erase(it);
+				break;
+			}
+		}
 		m_needupdate = true;
 	}
 

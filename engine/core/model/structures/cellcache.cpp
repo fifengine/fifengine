@@ -119,6 +119,9 @@ namespace FIFE {
 							// leader instance
 							Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 							Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+							if (oldcell == newcell) {
+								continue;
+							}
 							if (oldcell) {
 								oldcell->removeInstance(*i);
 							}
@@ -160,6 +163,9 @@ namespace FIFE {
 
 					Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 					Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+					if (oldcell == newcell) {
+						continue;
+					}
 					if (oldcell) {
 						oldcell->removeInstance(*i);
 					}

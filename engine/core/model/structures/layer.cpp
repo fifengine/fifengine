@@ -181,6 +181,22 @@ namespace FIFE {
 	}
 
 	void Layer::deleteInstance(Instance* instance) {
+		// If the instance is changed and deleted on the same pump,
+		// it can happen that the instance can not cleanly be removed,
+		// to avoid this we have to update the instance first and send
+		// the result to the LayerChangeListeners.
+		if (instance->isActive()) {
+			if (instance->update() != ICHANGE_NO_CHANGES) {
+				std::vector<Instance*> updateInstances;
+				updateInstances.push_back(instance);
+				std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+				while (i != m_changeListeners.end()) {
+					(*i)->onLayerChanged(this, updateInstances);
+					++i;
+				}
+			}
+		}
+
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
