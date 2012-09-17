@@ -290,7 +290,10 @@ namespace FIFE {
 		CellCache* nodeCache = currentNode.getLayer()->getCellCache();
 		CellGrid* nodeGrid = currentNode.getLayer()->getCellGrid();
 		ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
-		targetPos.z = nodeCache->getCell(currentNode.getLayerCoordinates())->getLayerCoordinates().z + nodeGrid->getZShift();		
+		Cell* tmpCell = nodeCache->getCell(currentNode.getLayerCoordinates());
+		if (tmpCell) {
+			targetPos.z = tmpCell->getLayerCoordinates().z + nodeGrid->getZShift();
+		}
 		double dx = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
 		double dy = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
 		double distance = Mathd::Sqrt(dx * dx + dy * dy);
@@ -311,7 +314,10 @@ namespace FIFE {
 			CellCache* prevCache = prevNode.getLayer()->getCellCache();
 			CellGrid* prevGrid = prevNode.getLayer()->getCellGrid();
 			ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
-			prevPos.z = prevCache->getCell(prevNode.getLayerCoordinates())->getLayerCoordinates().z + prevGrid->getZShift();
+			tmpCell = prevCache->getCell(prevNode.getLayerCoordinates());
+			if (tmpCell) {
+				prevPos.z = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
+			}
 			double cell_dz = (targetPos.z - prevPos.z);
 			if (!Mathd::Equal(cell_dz, 0.0)) {
 				double cell_dx = (targetPos.x - prevPos.x);
