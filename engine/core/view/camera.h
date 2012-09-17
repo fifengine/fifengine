@@ -261,6 +261,10 @@ namespace FIFE {
 		 */
 		bool isEnabled();
 
+		/** Returns reference to RenderList.
+		 */
+		RenderList& getRenderListRef(Layer* layer);
+
 		/** Returns instances that match given screen coordinate
 		 * @param screen_coords screen coordinates to be used for hit search
 		 * @param layer layer to use for search
@@ -414,10 +418,6 @@ namespace FIFE {
 		/** Updates camera RenderLists
 		 */
 		void updateRenderLists();
-
-		/** Updates LayerCache if necessary
-		 */
-		void cacheUpdate(Layer* layer);
 
 		/** Gets logical cell image dimensions for given layer
 		 */

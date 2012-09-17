@@ -525,39 +525,15 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
-	void Camera::cacheUpdate(Layer* layer) {
-		Map* map = m_location.getMap();
-		if (!map) {
-			FL_ERR(_log, "No map for camera found");
-			return;
-		}
-		// if camera need update, we update all caches
-		if (m_iswarped || m_need_update) {
-			updateRenderLists();
-		} else {
-			LayerCache* cache = m_cache[layer];
-			if(!cache) {
-				addLayer(layer);
-				cache = m_cache[layer];
-				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << layer->getId());
-			}
-			// only this cache need an update, e.g. a instance is added/removed
-			if (cache->needUpdate()) {
-				Transform transform = NormalTransform;
-				if (m_iswarped) {
-					transform = WarpedTransform;
-				}
-				RenderList& instances_to_render = m_layer_to_instances[layer];
-				cache->update(transform, instances_to_render);
-			}
-		}
+	RenderList& Camera::getRenderListRef(Layer* layer) {
+		return m_layer_to_instances[layer];
 	}
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
-		cacheUpdate(&layer);
+
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -595,7 +571,6 @@ namespace FIFE {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
-		cacheUpdate(&layer);
 
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
@@ -646,7 +621,6 @@ namespace FIFE {
 			return;
 		}
 
-		cacheUpdate(layer);
 		const RenderList& layer_instances = m_layer_to_instances[layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
