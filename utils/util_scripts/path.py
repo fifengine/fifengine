@@ -480,7 +480,7 @@ class path(_base):
         for child in childList:
             try:
                 isfile = child.isfile()
-                isdir = not isfile and child.isdir()
+                isdir = not isfile and os.path.isdir(child)
             except:
                 if errors == 'ignore':
                     continue
