@@ -569,7 +569,31 @@ class MapEditor:
 
 		elif keyval == fife.Key.DELETE:
 			self._controller.clearSelection()
-			
+
+		elif keyval == fife.Key.PAGE_UP:
+			if self._eventlistener.controlPressed:
+				if self._controller._single_instance:
+					self._selected_instances = self._controller.getInstance()
+				elif self._controller.getInstancesFromSelection():
+					self._selected_instances = self._controller.getInstancesFromSelection()
+				elif self._controller.getAllInstances():
+					self._selected_instances = self._controller.getAllInstances()
+
+				if self._selected_instances:
+					self._controller.moveInstances(self._selected_instances, fife.ExactModelCoordinate(0, 0, 1), exact=False)
+
+		elif keyval == fife.Key.PAGE_DOWN:
+			if self._eventlistener.controlPressed:
+				if self._controller._single_instance:
+					self._selected_instances = self._controller.getInstance()
+				elif self._controller.getInstancesFromSelection():
+					self._selected_instances = self._controller.getInstancesFromSelection()
+				elif self._controller.getAllInstances():
+					self._selected_instances = self._controller.getAllInstances()
+
+				if self._selected_instances:
+					self._controller.moveInstances(self._selected_instances, fife.ExactModelCoordinate(0, 0, -1), exact=False)
+
 		elif keyval == fife.Key.F7:
 			self.captureScreen()
 			

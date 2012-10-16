@@ -50,7 +50,8 @@ namespace FIFE {
 		m_cost(1.0),
 		m_multiPart(false),
 		m_restrictedRotation(false),
-		m_zRange(-1){
+		m_zRange(-1),
+		m_area("") {
 	}
 
 	Object::~Object() {
@@ -324,6 +325,28 @@ namespace FIFE {
 
 	int32_t Object::getZStepRange() const {
 		return m_zRange;
+	}
+
+	void Object::setArea(const std::string& id) {
+		m_area = id;
+	}
+
+	const std::string& Object::getArea() const {
+		return m_area;
+	}
+
+	void Object::addWalkableArea(const std::string& id) {
+		m_walkableAreas.push_back(id);
+		m_walkableAreas.sort();
+		m_walkableAreas.unique();
+	}
+
+	void Object::removeWalkableArea(const std::string& id) {
+		m_walkableAreas.remove(id);
+	}
+
+	const std::list<std::string>& Object::getWalkableAreas() const {
+		return m_walkableAreas;
 	}
 
 	bool Object::operator==(const Object& obj) const {

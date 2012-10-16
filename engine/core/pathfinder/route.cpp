@@ -272,6 +272,23 @@ namespace FIFE {
 		return m_object->getZStepRange();
 	}
 
+	bool Route::isAreaLimited() {
+		if (m_object) {
+			if (!m_object->getWalkableAreas().empty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	const std::list<std::string> Route::getLimitedAreas() {
+		std::list<std::string> areas;
+		if (m_object) {
+			areas = m_object->getWalkableAreas();
+		}
+		return areas;
+	}
+
 	void Route::setObject(Object* obj) {
 		m_object = obj;
 	}

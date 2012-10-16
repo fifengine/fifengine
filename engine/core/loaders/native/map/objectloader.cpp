@@ -256,6 +256,19 @@ namespace FIFE {
 					}
 				}
 				
+				const std::string* areaId = root->Attribute(std::string("area_id"));
+				if (areaId) {
+					obj->setArea(*areaId);
+				}
+
+				// loop over all walkable areas
+                for (TiXmlElement* walkableElement = root->FirstChildElement("walkable_area"); walkableElement; walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
+                    const std::string* walkableId = walkableElement->Attribute(std::string("id"));
+					if (walkableId) {
+						obj->addWalkableArea(*walkableId);
+					}
+				}
+
 				int cellStack = 0;
 				root->QueryIntAttribute("cellstack", &cellStack);
 				obj->setCellStackPosition(cellStack);

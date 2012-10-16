@@ -515,7 +515,7 @@ namespace FIFE {
 												if (isNarrow != 0) {
 													cache->addNarrowCell(cell);
 												}
-												
+												// add cost with given id to cell
 												for (const TiXmlElement* costElement = cellElement->FirstChildElement("cost"); costElement; costElement = costElement->NextSiblingElement("cost")) {
 													const std::string* costId = costElement->Attribute(std::string("id"));
 													double cost = 1.0;
@@ -523,6 +523,13 @@ namespace FIFE {
 													if (costId && success == TIXML_SUCCESS) {
 														cache->registerCost(*costId, cost);
 														cache->addCellToCost(*costId, cell);
+													}
+												}
+												// add area to cell
+												for (const TiXmlElement* areaElement = cellElement->FirstChildElement("area"); areaElement; areaElement = areaElement->NextSiblingElement("area")) {
+													const std::string* areaId = areaElement->Attribute(std::string("id"));
+													if (areaId) {
+														cache->addCellToArea(*areaId, cell);
 													}
 												}
 											}

@@ -63,18 +63,9 @@ namespace FIFE {
 
 	Layer::~Layer() {
 		// if this is a walkable layer
-		if (m_walkable) {
-			if (!m_interacts.empty()) {
-				std::vector<Layer*>::iterator it = m_interacts.begin();
-				for (; it != m_interacts.end(); ++it) {
-					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
-					(*it)->setInteract(false, "");
-				}
-			}
-			m_interacts.clear();
-			delete m_cellCache;
+		destroyCellCache();
 		// if this is a interact layer
-		} else if (m_interact) {
+		if (m_interact) {
 			Layer* temp = m_map->getLayer(m_walkableId);
 			if (temp) {
 				temp->removeInteractLayer(this);
@@ -422,6 +413,23 @@ namespace FIFE {
 	
 	CellCache* Layer::getCellCache() {
 		return m_cellCache;
+	}
+
+	void Layer::destroyCellCache() {
+		if (m_walkable) {
+			removeChangeListener(m_cellCache->getCellCacheChangeListener());
+			if (!m_interacts.empty()) {
+				std::vector<Layer*>::iterator it = m_interacts.begin();
+				for (; it != m_interacts.end(); ++it) {
+					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+					(*it)->setInteract(false, "");
+				}
+				m_interacts.clear();
+			}
+			delete m_cellCache;
+			m_cellCache = NULL;
+			m_walkable = false;
+		}
 	}
 
 	bool Layer::update() {

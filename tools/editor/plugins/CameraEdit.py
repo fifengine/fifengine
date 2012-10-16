@@ -160,7 +160,7 @@ class CameraEdit(plugin.Plugin):
 		except ValueError:
 			print 'Please enter positive integer values for rotation and tilt.'
 			return
-	
+			
 		self._camera = self._editor.getActiveMapView().getCamera()
 		self._camera.setId(str(id))
 		self._camera.getLocation().setLayer(layer)
@@ -168,7 +168,11 @@ class CameraEdit(plugin.Plugin):
 		self._camera.setCellImageDimensions(refw, refh)
 		self._camera.setRotation(rot)
 		self._camera.setTilt(tilt)
-		
+
+		ztoy = int(self._container.collectData('ztoyNBox'))
+		if ztoy is not 0 and ztoy is not self._camera.getOriginalZToY():
+			self._camera.setZToY(ztoy)
+			
 		self.toggle()
 
 	def loadSettings(self):
@@ -196,6 +200,9 @@ class CameraEdit(plugin.Plugin):
 			self._container.findChild(name="idBox").text = unicode(str(self._camera.getId()))
 			self._container.findChild(name="rotBox").text = unicode(str(int(self._camera.getRotation())))
 			self._container.findChild(name="tiltBox").text = unicode(str(int(self._camera.getTilt())))
+
+			self._container.findChild(name="ztoyOBox").text = unicode(str(float(self._camera.getOriginalZToY())))
+			self._container.findChild(name="ztoyNBox").text = unicode(str(float(self._camera.getZToY())))
 
 	def _createGui(self):
 		""" Create the basic gui container """

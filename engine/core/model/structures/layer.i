@@ -96,10 +96,12 @@ namespace FIFE {
 			const std::string& getWalkableId();
 			
 			void addInteractLayer(Layer* layer);
+			const std::vector<Layer*>& getInteractLayers();
 			void removeInteractLayer(Layer* layer);
 
 			void createCellCache();
 			CellCache* getCellCache();
+			void destroyCellCache();
 			
 			void addChangeListener(LayerChangeListener* listener);
 			void removeChangeListener(LayerChangeListener* listener);

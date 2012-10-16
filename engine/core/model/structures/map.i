@@ -33,12 +33,12 @@ namespace FIFE {
 
 namespace std {
   %template(LayerList) list<FIFE::Layer*>;
-  %template(CameraVector) std::vector<FIFE::Camera*>;
+  %template(LayerVector) vector<FIFE::Layer*>;
+  %template(CameraVector) vector<FIFE::Camera*>;
 }
 
 namespace FIFE {
 
-	class Layer;
 	class Map;
 	class Rect;
 

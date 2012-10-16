@@ -123,6 +123,9 @@ namespace FIFE {
 					cache->registerCost((*it)->getCostId(), (*it)->getCost());
 					cache->addCellToCost((*it)->getCostId(), this);
 				}
+				if ((*it)->getObject()->getArea() != "") {
+					cache->addCellToArea((*it)->getObject()->getArea(), this);
+				}
 				callOnInstanceEntered(*it);
 			}
 		}
@@ -178,6 +181,9 @@ namespace FIFE {
 				cache->registerCost(instance->getCostId(), instance->getCost());
 				cache->addCellToCost(instance->getCostId(), this);
 			}
+			if (instance->getObject()->getArea() != "") {
+				cache->addCellToArea(instance->getObject()->getArea(), this);
+			}
 			callOnInstanceEntered(instance);
 			updateCellBlockingInfo();
 		}
@@ -224,6 +230,9 @@ namespace FIFE {
 		}
 		if (instance->isSpecialCost()) {
 			cache->removeCellFromCost(instance->getCostId(), this);
+		}
+		if (instance->getObject()->getArea() != "") {
+			cache->removeCellFromArea(instance->getObject()->getArea(), this);
 		}
 		callOnInstanceExited(instance);
 		updateCellBlockingInfo();
