@@ -85,5 +85,7 @@ namespace FIFE {
 			std::vector<std::string> getCellAreas(Cell* cell);
 			std::vector<Cell*> getAreaCells(const std::string& id);
 			bool isCellInArea(const std::string& id, Cell* cell);
+			void setStaticSize(bool staticSize);
+			bool isStaticSize();
 	};
 }
