@@ -377,7 +377,8 @@ namespace FIFE {
 		m_fowUpdate(false),
 		m_sizeUpdate(false),
 		m_updated(false),
-		m_searchNarrow(true) {
+		m_searchNarrow(true),
+		m_staticSize(false) {
 		// create cell change listener
 		m_cellZoneListener = new ZoneCellChangeListener(this);
 		// set base size
@@ -472,6 +473,9 @@ namespace FIFE {
 	}
 
 	void CellCache::resize() {
+		if (m_staticSize) {
+			return;
+		}
 		// get new size and check if it has changed
 		Rect newsize = calculateCurrentSize();
 		resize(newsize);
@@ -1511,6 +1515,14 @@ namespace FIFE {
 			}
 		}
 		return newsize;
+	}
+
+	void CellCache::setStaticSize(bool staticSize) {
+		m_staticSize = staticSize;
+	}
+
+	bool CellCache::isStaticSize() {
+		return m_staticSize;
 	}
 
 	void CellCache::setBlockingUpdate(bool update) {

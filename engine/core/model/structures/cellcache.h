@@ -588,6 +588,16 @@ namespace FIFE {
 			*/
 			bool isCellInArea(const std::string& id, Cell* cell);
 
+			/** Sets the cache size to static so that automatic resize is disabled.
+			 * @param A boolean, true if the cache size is static, otherwise false.
+			 */
+			void setStaticSize(bool staticSize);
+
+			/** Returns if the cache size is static.
+			 * @return A boolean, true if the cache size is static, otherwise false.
+			 */
+			bool isStaticSize();
+
 			void setBlockingUpdate(bool update);
 			void setFowUpdate(bool update);
 			void setSizeUpdate(bool update);
@@ -644,6 +654,9 @@ namespace FIFE {
 
 			//! is automatic seach enabled
 			bool m_searchNarrow;
+
+			//! is automatic size update enabled/disabled
+			bool m_staticSize;
 
 			//! cells with transitions
 			std::vector<Cell*> m_transitions;
