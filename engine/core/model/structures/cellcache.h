@@ -128,6 +128,12 @@ namespace FIFE {
 			 */
 			void resize();
 
+			/** Checks the given size and if the size is different with current size then
+				the cache is adjusted.
+			 * @param rec A rect that contains the new size in layer coordinates.
+			 */
+			void resize(const Rect& rec);
+
 			/** Creates cells for this CellCache based on the size of the assigned layer.
 			 */
 			void createCells();
@@ -169,6 +175,11 @@ namespace FIFE {
 			 * @param interact A pointer to the interact layer.
 			 */
 			void addInteractOnRuntime(Layer* interact);
+
+			/** Removes a interact layer from the CellCache on runtime and sets all needed layer properties.
+			 * @param interact A pointer to the interact layer.
+			 */
+			void removeInteractOnRuntime(Layer* interact);
 
 			/** Returns change listener.
 			 * @return A pointer to the change listener.
@@ -553,11 +564,29 @@ namespace FIFE {
 			 */
 			bool existsArea(const std::string& id);
 
+			/** Returns all area ids.
+			 * @return A vector that contains the area ids.
+			 */
+			std::vector<std::string> getAreas();
+
+			/** Returns all areas of a cell.
+			 * @param A pointer to the cell.
+			 * @return A vector that contains the area ids.
+			 */
+			std::vector<std::string> getCellAreas(Cell* cell);
+
 			/** Returns all cells of an area.
 			 * @param A const reference to string that contains the area id.
 			 * @return A vector that contains the cells from the area.
 			 */
 			std::vector<Cell*> getAreaCells(const std::string& id);
+
+			/** Returns true if cell is part of the area, otherwise false.
+			 * @param A const reference to string that contains the area id.
+			 * @param A pointer to the cell which is used for the check.
+			 * @return A boolean, true if the cell is part of the area, otherwise false.
+			*/
+			bool isCellInArea(const std::string& id, Cell* cell);
 
 			void setBlockingUpdate(bool update);
 			void setFowUpdate(bool update);

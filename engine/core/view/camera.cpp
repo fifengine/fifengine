@@ -179,7 +179,7 @@ namespace FIFE {
 		}
 		matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
 		matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
-		return matrix.m9;
+		return matrix.m9 * -1.0;
 	}
 
 	void Camera::setZToY(double zToY) {

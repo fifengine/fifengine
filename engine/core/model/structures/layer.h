@@ -287,6 +287,10 @@ namespace FIFE {
 			 */
 			CellCache* getCellCache();
 
+			/** Destroys the CellCache of this layer.
+			 */
+			void destroyCellCache();
+
 			/** Adds new change listener
 			* @param listener to add
 			*/

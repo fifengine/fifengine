@@ -292,6 +292,32 @@ namespace FIFE {
 		 */
 		int32_t getZStepRange() const;
 
+		/** Sets the area id that the instances of this object adds to their cells.
+		 * @param id The area id, default is "".
+		 */
+		void setArea(const std::string& id);
+
+		/** Gets the area id that the instances of this object adds to their cells.
+		 * @return The area id, default is "".
+		 */
+		const std::string& getArea() const;
+
+		/** Adds an area id to walkable area. The instances of this object
+		 *  can only walk on cells that part of the given areas.
+		 * @param id The area id.
+		 */
+		void addWalkableArea(const std::string& id);
+
+		/** Removes an area id from walkable areas.
+		 * @param id The area id.
+		 */
+		void removeWalkableArea(const std::string& id);
+
+		/** Returns a list that contains all walkable area ids.
+		 * @return A list that contains all walkable area ids as strings.
+		 */
+		const std::list<std::string>& getWalkableAreas() const;
+
 		/** Compares equality of two objects
 		 */
 		bool operator==(const Object& obj) const;
@@ -369,6 +395,10 @@ namespace FIFE {
 
 		//! multi object coordinates
 		std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
+
+		std::string m_area;
+
+		std::list<std::string> m_walkableAreas;
 	};
 
 } //FIFE

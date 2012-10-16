@@ -202,6 +202,38 @@ namespace FIFE {
 				}
 			}
 		}
+		
+		if (route->isAreaLimited()) {
+			// check if target or neighbors are on one of the areas
+			bool sameAreas = false;
+			const std::list<std::string> areas = route->getLimitedAreas();
+			std::list<std::string>::const_iterator area_it = areas.begin();
+			for (; area_it != areas.end(); ++area_it) {
+				if (endCache->isCellInArea(*area_it, endCell)) {
+					sameAreas = true;
+					break;
+				}
+			}
+			if (!sameAreas) {
+				const std::vector<Cell*>& neighbors = endCell->getNeighbors();
+				if (neighbors.empty()) {
+					return false;
+				}
+				area_it = areas.begin();
+				for (; area_it != areas.end(); ++area_it) {
+					std::vector<Cell*>::const_iterator neigh_it = neighbors.begin();
+					for (; neigh_it != neighbors.end(); ++neigh_it) {
+						if (endCache->isCellInArea(*area_it, *neigh_it)) {
+							sameAreas = true;
+							break;
+						}
+					}
+				}
+			}
+			if (!sameAreas) {
+				return false;
+			}
+		}
 
 		int32_t sessionId = route->getSessionId();
 		if (sessionId == -1) {

@@ -243,6 +243,34 @@ namespace FIFE {
 					bool costsEmpty = costIds.empty();
 					bool defaultCost = cell->defaultCost();
 					bool defaultSpeed = cell->defaultSpeed();
+
+					// check if area is part of the cell or object
+					std::vector<std::string> areaIds = cache->getCellAreas(cell);
+					std::vector<std::string> cellAreaIds;
+					bool areasEmpty = areaIds.empty();
+					if (!areasEmpty) {
+						const std::set<Instance*>& cellInstances = cell->getInstances();
+						if (!cellInstances.empty()) {
+							std::vector<std::string>::iterator area_it = areaIds.begin();
+							for (; area_it != areaIds.end(); ++area_it) {
+								bool objectArea = false;
+								std::set<Instance*>::const_iterator instance_it = cellInstances.begin();
+								for (; instance_it != cellInstances.end(); ++instance_it) {
+									if ((*instance_it)->getObject()->getArea() == *area_it) {
+										objectArea = true;
+										break;
+									}
+								}
+								if (!objectArea) {
+									cellAreaIds.push_back(*area_it);
+								}
+							}
+						} else {
+							cellAreaIds = areaIds;
+						}
+						areasEmpty = cellAreaIds.empty();
+					}
+
 					CellVisualEffect cve = cell->getFoWType();
 					bool cellVisual = cve == CELLV_CONCEALED;
 					CellTypeInfo cti = cell->getCellType();
@@ -255,7 +283,7 @@ namespace FIFE {
 							isNarrow = true;
 						}
 					}
-					if (costsEmpty && defaultCost && defaultSpeed &&
+					if (costsEmpty && defaultCost && defaultSpeed && areasEmpty &&
 						cellVisual && cellBlocker && !transition && !isNarrow) {
 						continue;
 					}
@@ -297,6 +325,15 @@ namespace FIFE {
 								costElement->SetDoubleAttribute("value", cache->getCost(*cost_it));
 								cellElement->LinkEndChild(costElement);
 							}
+						}
+					}
+					// add area tag
+					if (!areasEmpty) {
+						std::vector<std::string>::iterator area_it = cellAreaIds.begin();
+						for (; area_it != cellAreaIds.end(); ++area_it) {
+							TiXmlElement* areaElement = new TiXmlElement("area");
+							areaElement->SetAttribute("id", *area_it);
+							areaElement->LinkEndChild(areaElement);
 						}
 					}
 					// add transition tag

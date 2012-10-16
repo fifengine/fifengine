@@ -467,7 +467,7 @@ namespace FIFE {
 				route->setObject(m_object);
 				route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 					toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
-			} else if (m_object->getZStepRange() != -1) {
+			} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
 				route->setObject(m_object);
 			}
 			m_activity->m_actionInfo->m_route = route;
@@ -512,7 +512,7 @@ namespace FIFE {
 			route->setObject(m_object);
 			route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 				toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
-		} else if (m_object->getZStepRange() != -1) {
+		} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
 			route->setObject(m_object);
 		}
 		FL_DBG(_log, LMsg("starting action ") <<  actionName << " from" << m_location << " to " << *m_activity->m_actionInfo->m_target << " with speed " << speed);
@@ -631,7 +631,7 @@ namespace FIFE {
 				route->setObject(m_object);
 				route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 					toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
-			} else if (m_object->getZStepRange() != -1) {
+			} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
 				route->setObject(m_object);
 			}
 			if (!info->m_pather->solveRoute(route)) {

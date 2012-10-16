@@ -221,6 +221,9 @@ namespace FIFE {
 		 */
 		int32_t getZStepRange();
 
+		bool isAreaLimited();
+		const std::list<std::string> getLimitedAreas();
+
 		/** Sets the object, needed for multi cell and z-step range.
 		 * @param obj A pointer to the object.
 		 */

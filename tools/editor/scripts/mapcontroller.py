@@ -243,6 +243,10 @@ class MapController(object):
 
 		return instances
 
+	def getAllInstances(self):
+		""" Returns all instances """
+		return self._layer.getInstances()
+
 	def getUndoManager(self):
 		""" Returns undo manager """
 		return self._undomanager

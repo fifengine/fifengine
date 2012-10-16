@@ -137,6 +137,22 @@ namespace FIFE {
 				}
 			}
 
+			if (m_route->isAreaLimited()) {
+				// check if cell is on one of the areas
+				bool sameAreas = false;
+				const std::list<std::string> areas = m_route->getLimitedAreas();
+				std::list<std::string>::const_iterator area_it = areas.begin();
+				for (; area_it != areas.end(); ++area_it) {
+					if (m_cellCache->isCellInArea(*area_it, *i)) {
+						sameAreas = true;
+						break;
+					}
+				}
+				if (!sameAreas) {
+					continue;
+				}
+			}
+
 			double gCost = m_gCosts[m_next];
 			if (m_specialCost) {
 				gCost += m_cellCache->getAdjacentCost(adjacentCoord ,nextCoord, m_route->getCostId());

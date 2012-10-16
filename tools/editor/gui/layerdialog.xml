@@ -7,7 +7,7 @@
 		<Label name="pathingLabel" text="Pathfinding strategy:"/>
 		<DropDown name="pathingBox"/>
 
-		<Spacer fixed_size="10" />
+		<Spacer />
 		
 		<Label name="gridLabel" text="Grid type:" />
 		<DropDown name="gridBox"/>
@@ -21,6 +21,8 @@
 			<TextField name="xScaleBox" text="1.0"  min_size="45,10" />
 			<Label name="yScaleLabel" text="Y:" hexpand="0"/>
 			<TextField name="yScaleBox" text="1.0"  min_size="45,10" />
+      <Label name="zScaleLabel" text="Z:" hexpand="0"/>
+      <TextField name="zScaleBox" text="1.0"  min_size="45,10" />
 		</HBox>
 		<HBox>
 			<Label name="offsetLabel" text="Offset:" />
@@ -36,7 +38,29 @@
 			<TextField name="transBox" text="0" min_size="45,10" />
 		</HBox>
 
-		<CheckBox name="checkWalkable" text="Walkable" />
+    <Spacer />
+    
+    <Label name="cellcache_section" text="CellCache:"/>
+		<CheckBox name="is_walkable" text="is Walkable" />
+    <CheckBox name="is_interact" text="is Interact" />
+    <Spacer />
+    <VBox name="interact_wrapper">
+      <Label name="interact_layer_label" text="Interact Layers:" />
+      <Spacer />
+      <ScrollArea min_size="150,50" horizontal_scrollbar="0">
+        <VBox name="layers_wrapper">
+          <!-- Content is added dynamically here -->
+        </VBox>
+      </ScrollArea>
+      <Button name="interact_add" text="Add" helptext="Adds interact Layer" min_size="20,20" />
+      <Button name="interact_remove" text="Remove" helptext="Removes interact Layer" min_size="20,20" />
+    </VBox>
+    <VBox name="default_value_wrapper" padding="4">
+      <Label name="cache_cost_label" text="default cost multiplier:" hexpand="0" />
+      <TextField name="cache_cost_box" text="1.0" min_size="45,10" />
+      <Label name="cache_speed_label" text="default speed multiplier:" hexpand="0" />
+      <TextField name="cache_speed_box" text="1.0" min_size="45,10" />
+    </VBox>
 
 	</VBox>
 	
