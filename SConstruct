@@ -42,7 +42,7 @@ env = Environment(variables = vars,
 			ENV = os.environ,
 			DESTDIR = '${DESTDIR}')
 
-env.EnsureSConsVersion(1,2)
+env.EnsureSConsVersion(2,0)
 
 AddOption('--enable-debug',
 		dest='enable-debug',
