@@ -305,6 +305,9 @@ if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
 #set variables based on command line and environment options
 #**************************************************************************
 
+if os.environ.has_key('CXX'):
+	env['CXX'] = os.environ['CXX']
+
 if os.environ.has_key('SWIG'):
 	env['SWIG'] = os.environ['SWIG']
 
