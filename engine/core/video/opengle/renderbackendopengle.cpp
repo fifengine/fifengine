@@ -156,7 +156,6 @@ namespace FIFE {
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
-		bool fs = mode.isFullScreen();
 		uint32_t flags = mode.getSDLFlags();
 
 		if (bitsPerPixel != 0) {
@@ -715,8 +714,6 @@ namespace FIFE {
 			GLsizei elements = 0;
 			// texture id
 			uint32_t texture_id = 0;
-			// color of overlay
-			GLfloat rgba[4] = {0};
 
 			std::vector<RenderObject>::iterator iter = m_render_trans_objects.begin();
 			for( ; iter != m_render_trans_objects.end(); ++iter) {

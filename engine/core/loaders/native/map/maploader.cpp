@@ -145,7 +145,7 @@ namespace FIFE {
 			}
 
 			int numElements = 0;
-			int numElementsRetVal = root->QueryValueAttribute("elements", &numElements);
+			root->QueryValueAttribute("elements", &numElements);
 			m_percentDoneListener.setTotalNumberOfElements(numElements);
 
 			const std::string* mapName = root->Attribute(std::string("id"));
@@ -232,10 +232,10 @@ namespace FIFE {
 
 						int xOffsetRetVal = layerElement->QueryValueAttribute("x_offset", &xOffset);
 						int yOffsetRetVal = layerElement->QueryValueAttribute("y_offset", &yOffset);
-						int zOffsetRetVal = layerElement->QueryValueAttribute("z_offset", &zOffset);
+						layerElement->QueryValueAttribute("z_offset", &zOffset);
 						int xScaleRetVal = layerElement->QueryValueAttribute("x_scale", &xScale);
 						int yScaleRetVal = layerElement->QueryValueAttribute("y_scale", &yScale);
-						int zScaleRetVal = layerElement->QueryValueAttribute("z_scale", &zScale);
+						layerElement->QueryValueAttribute("z_scale", &zScale);
 						int rotationRetVal = layerElement->QueryValueAttribute("rotation", &rotation);
 
 						const std::string* layerName = layerElement->Attribute(std::string("id"));
@@ -327,7 +327,7 @@ namespace FIFE {
 
 											int xRetVal = instance->QueryValueAttribute("x", &x);
 											int yRetVal = instance->QueryValueAttribute("y", &y);
-											int zRetVal = instance->QueryValueAttribute("z", &z);
+											instance->QueryValueAttribute("z", &z);
 											int rRetVal = instance->QueryValueAttribute("r", &r);
 
 											if (xRetVal == TIXML_SUCCESS) {

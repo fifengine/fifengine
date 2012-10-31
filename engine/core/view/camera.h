@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -57,10 +57,15 @@ namespace FIFE {
 	 */
 	class Camera: public IRendererListener, public IRendererContainer {
 	public:
-		enum Transform {
-			NormalTransform = 0,
-			WarpedTransform = 1
+		enum TransformType {
+			NoneTransform = 0x00,
+			TiltTransform = 0x01,
+			RotationTransform = 0x02,
+			ZoomTransform = 0x04,
+			PositionTransform = 0x08,
+			ZTransform = 0x10
 		};
+		typedef uint32_t Transform;
 
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
@@ -431,6 +436,10 @@ namespace FIFE {
 		 */
 		void renderOverlay();
 
+		/** Renders the layer part that is on screen as one image.
+		 */
+		void renderStaticLayer(Layer* layer, bool update);
+
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
 
@@ -449,7 +458,6 @@ namespace FIFE {
 		Rect m_viewport;
 		Rect m_mapViewPort;
 		bool m_mapViewPortUpdated;
-		bool m_view_updated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;
 		double m_reference_scale;
@@ -457,14 +465,14 @@ namespace FIFE {
 		Instance* m_attachedto;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
-		bool m_iswarped; // true, if the geometry had changed
+		// contains the geometry changes
+		Transform m_transform;
 
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
 		// false, if view has not been updated
 		bool m_updated;
-		bool m_need_update;
 
 		RenderBackend* m_renderbackend;
 

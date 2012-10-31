@@ -279,17 +279,16 @@ namespace FIFE {
 
 				int xRetVal = root->QueryValueAttribute("anchor_x", &ax);
 				int yRetVal = root->QueryValueAttribute("anchor_y", &ay);
-				int zRetVal = root->QueryValueAttribute("anchor_z", &az);
 				if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
 					obj->setRotationAnchor(ExactModelCoordinate(ax, ay, az));
 				}
 
 				int isRestrictedRotation = 0;
-                root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
-                obj->setRestrictedRotation(isRestrictedRotation!=0);
+				root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
+				obj->setRestrictedRotation(isRestrictedRotation!=0);
 
 				int zStep = 0;
-				zRetVal = root->QueryIntAttribute("z_step_limit", &zStep);
+				int zRetVal = root->QueryIntAttribute("z_step_limit", &zStep);
 				if (zRetVal == TIXML_SUCCESS) {
 					obj->setZStepRange(zStep);
 				}
@@ -496,7 +495,7 @@ namespace FIFE {
                                     }
 
                                     int direction = 0;
-                                    int success = animElement->QueryIntAttribute("direction", &direction);
+                                    animElement->QueryIntAttribute("direction", &direction);
 
                                     if (action && animation) {
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();

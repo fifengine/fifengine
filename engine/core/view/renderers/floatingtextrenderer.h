@@ -38,22 +38,39 @@ namespace FIFE {
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
+		/** Constructor.
+		 *
+		 * @param renderbackend The renderbackend to use.
+		 * @param position The position for this renderer in rendering pipeline.
+		 * @ see setPipelinePosition
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position);
 
+		/** Copy Constructor.
+		 */
 		FloatingTextRenderer(const FloatingTextRenderer& old);
 
+		/** Makes copy of this renderer.
+		 */
 		RendererBase* clone();
 
 		/** Destructor.
 		 */
 		virtual ~FloatingTextRenderer();
 
+		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		 * given parameters.
+		 *
+		 * @param cam Camera view to draw
+		 * @param layer Current layer to be rendered
+		 * @param instances Instances on the current layer
+		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 
+		/** Returns the renderer name.
+		 *
+		 * @return The name as string.
+		 */
 		std::string getName() { return "FloatingTextRenderer"; }
 
 		/** Changes default font in the renderer
@@ -84,7 +101,7 @@ namespace FIFE {
 		 */
 		void resetBorder();
 
-		/** returns instance used in given view
+		/** Gets instance for interface access.
 		 */
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 

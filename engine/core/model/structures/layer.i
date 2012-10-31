@@ -107,5 +107,8 @@ namespace FIFE {
 			void removeChangeListener(LayerChangeListener* listener);
 			bool isChanged();
 			std::vector<Instance*>& getChangedInstances();
+
+			void setStatic(bool stati);
+			bool isStatic();
 	};
 }

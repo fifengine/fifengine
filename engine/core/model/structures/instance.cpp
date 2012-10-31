@@ -127,7 +127,8 @@ namespace FIFE {
 		m_actionInfo(NULL),
 		m_sayInfo(NULL),
 		m_timeProvider(NULL),
-		m_blocking(source.m_blocking) {
+		m_blocking(source.m_blocking),
+		m_additional(ICHANGE_NO_CHANGES) {
 	}
 
 	Instance::InstanceActivity::~InstanceActivity() {
@@ -138,6 +139,10 @@ namespace FIFE {
 
 	void Instance::InstanceActivity::update(Instance& source) {
 		source.m_changeInfo = ICHANGE_NO_CHANGES;
+		if (m_additional != ICHANGE_NO_CHANGES) {
+			source.m_changeInfo = m_additional;
+			m_additional = ICHANGE_NO_CHANGES;
+		}
 		if (m_location != source.m_location) {
 			source.m_changeInfo |= ICHANGE_LOC;
 			if (m_location.getLayerCoordinates() != source.m_location.getLayerCoordinates()) {
@@ -225,7 +230,7 @@ namespace FIFE {
 					std::ostringstream counter;
 					counter << count;
 					Instance* instance = layer->createInstance(*it, tmp_emc, identifier+counter.str());
-					InstanceVisual* instVisual = InstanceVisual::create(instance);
+					InstanceVisual::create(instance);
 					m_multiInstances.push_back(instance);
 					instance->addDeleteListener(this);
 				}
@@ -884,6 +889,40 @@ namespace FIFE {
 	void Instance::refresh() {
 		initializeChanges();
 		bindTimeProvider();
+	}
+
+	InstanceChangeInfo Instance::getChangeInfo() {
+		if (m_activity) {
+			return m_changeInfo;
+		}
+		return ICHANGE_NO_CHANGES;
+	}
+
+	void Instance::callOnTransparencyChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_TRANSPARENCY;
+	}
+
+	void Instance::callOnVisibleChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_VISIBLE;
+	}
+
+	void Instance::callOnStackPositionChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_STACKPOS;
 	}
 
 	void Instance::setTimeMultiplier(float multip) {

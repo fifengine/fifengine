@@ -416,9 +416,9 @@ namespace FIFE {
 		// ultimate possibility to load the image
 		// is used e.g. in case a cursor or gui image is freed even if there is a reference 
 		if (!m_surface) {
-			if (m_state == IResource::RES_NOT_LOADED) {
-				load();
-			}
+			assert(m_state == IResource::RES_NOT_LOADED);
+			load();
+			assert(m_surface);
 		}
 		m_finalized = true;
 		SDL_Surface *old_surface = m_surface;
@@ -555,7 +555,7 @@ namespace FIFE {
 			return SDL_DisplayFormatAlpha(src);
 		}
 
-		SDL_Surface *dst = SDL_CreateRGBSurface(src->flags & ~(SDL_SRCALPHA) | SDL_SWSURFACE,
+		SDL_Surface *dst = SDL_CreateRGBSurface((src->flags & ~(SDL_SRCALPHA)) | SDL_SWSURFACE,
 		                                        src->w, src->h,
 		                                        src->format->BitsPerPixel,
 		                                        src->format->Rmask,  src->format->Gmask,

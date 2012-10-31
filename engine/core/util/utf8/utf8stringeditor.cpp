@@ -95,15 +95,13 @@ namespace gcn {
 
 	int UTF8StringEditor::getOffset(const std::string & text, int charIndex)
 	{
-		std::string::const_iterator cur, end;
-		int bytes = 0, i;
-
 		if (charIndex < 0) return 0;
 
+		std::string::const_iterator cur, end;
 		cur = text.begin();
 		end = text.end();
 
-		for(i = 0; i < charIndex && cur != end; i++) {
+		for(int i = 0; i < charIndex && cur != end; i++) {
 			utf8::next(cur, end);
 		}
 

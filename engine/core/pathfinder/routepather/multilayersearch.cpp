@@ -172,7 +172,6 @@ namespace FIFE {
 			return;
 		}
 
-		ModelCoordinate targCoord = m_currentCache->convertIntToCoord(m_lastStartCoordInt);
 		ModelCoordinate destCoord = m_currentCache->convertIntToCoord(m_lastDestCoordInt);
 		ModelCoordinate nextCoord = m_currentCache->convertIntToCoord(m_next);
 		CellGrid* grid = m_currentCache->getLayer()->getCellGrid();

@@ -257,7 +257,7 @@ namespace FIFE {
 	std::vector<ModelCoordinate> Object::getMultiPartCoordinates(int32_t rotation) {
 		std::vector<ModelCoordinate> coordinates;
 		int32_t closest = 0;
-		int32_t index = getIndexByAngle(rotation, m_partAngleMap, closest);
+		getIndexByAngle(rotation, m_partAngleMap, closest);
 		std::pair<std::multimap<int32_t, ModelCoordinate>::iterator,
 			std::multimap<int32_t, ModelCoordinate>::iterator> result = m_multiPartCoordinates.equal_range(closest);
 		std::multimap<int32_t, ModelCoordinate>::iterator it = result.first;
@@ -280,7 +280,7 @@ namespace FIFE {
 			}
 		}
 		int32_t closest = 0;
-		int32_t index = getIndexByAngle(rotation, m_multiAngleMap, closest);
+		getIndexByAngle(rotation, m_multiAngleMap, closest);
 		std::vector<ModelCoordinate> coordinates;
 		std::pair<std::multimap<int32_t, ModelCoordinate>::iterator,
 			std::multimap<int32_t, ModelCoordinate>::iterator> result = m_multiObjectCoordinates.equal_range(closest);
@@ -312,9 +312,9 @@ namespace FIFE {
 	int32_t Object::getRestrictedRotation(int32_t rotation) {
 		int32_t closest = 0;
 		if (!m_multiAngleMap.empty()) {
-			int32_t index = getIndexByAngle(rotation, m_multiAngleMap, closest);
+			getIndexByAngle(rotation, m_multiAngleMap, closest);
 		} else if (!m_partAngleMap.empty()) {
-			int32_t index = getIndexByAngle(rotation, m_partAngleMap, closest);
+			getIndexByAngle(rotation, m_partAngleMap, closest);
 		}
 		return closest;
 	}

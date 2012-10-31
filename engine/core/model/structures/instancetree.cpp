@@ -58,7 +58,6 @@ namespace FIFE {
 	}
 
 	void InstanceTree::removeInstance(Instance* instance) {
-		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_reverse[instance];
 		if( !node ) {
 			FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");

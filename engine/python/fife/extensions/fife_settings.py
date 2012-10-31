@@ -553,11 +553,16 @@ class Setting(object):
 				"""
 				value = self.get(entry.module, entry.name)
 				
-				if type(entry.initialdata) is list:
+				if isinstance(entry.initialdata, list):
 					try:
 						value = entry.initialdata.index(value)
 					except ValueError:
 						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+				elif isinstance(entry.initialdata, dict):
+					try:
+						value = entry.initialdata.keys().index(value)
+					except ValueError:
+						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata.keys()))
 				entry.initializeWidget(widget, value)
 
 	def applySettings(self):
@@ -572,8 +577,10 @@ class Setting(object):
 				
 				# If the data is a list we need to get the correct selected data
 				# from the list. This is needed for e.g. dropdowns or listboxs
-				if type(entry.initialdata) is list:
+				if isinstance(entry.initialdata, list):
 					data = entry.initialdata[data]
+				elif isinstance(entry.initialdata, dict):
+					data = entry.initialdata.keys()[data]
 
 				# only take action if something really changed
 				if data != self.get(entry.module, entry.name):
@@ -667,11 +674,13 @@ class SettingEntry(object):
 	def initializeWidget(self, widget, currentValue):
 		"""Initialize the widget with needed data"""
 		if self._initialdata is not None:
-			widget.setInitialData(self._initialdata)
+			if isinstance(self._initialdata, dict):
+				widget.setInitialData(self._initialdata.values())
+			else:
+				widget.setInitialData(self._initialdata)
 		widget.setData(currentValue)
 
-	def onApply(self, data):
-		"""Implement actions that need to be taken when the setting is changed
+	def onApply(self, data):		"""Implement actions that need to be taken when the setting is changed
 		here.
 		"""
 		if self._applyfunction is not None:
