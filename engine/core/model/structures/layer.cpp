@@ -58,7 +58,8 @@ namespace FIFE {
 		m_cellCache(NULL),
 		m_changeListeners(),
 		m_changedInstances(),
-		m_changed(false) {
+		m_changed(false),
+		m_static(false) {
 	}
 
 	Layer::~Layer() {
@@ -154,6 +155,22 @@ namespace FIFE {
 	}
 
 	void Layer::removeInstance(Instance* instance) {
+		// If the instance is changed and removed on the same pump,
+		// it can happen that the instance can not cleanly be removed,
+		// to avoid this we have to update the instance first and send
+		// the result to the LayerChangeListeners.
+		if (instance->isActive()) {
+			if (instance->update() != ICHANGE_NO_CHANGES) {
+				std::vector<Instance*> updateInstances;
+				updateInstances.push_back(instance);
+				std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+				while (i != m_changeListeners.end()) {
+					(*i)->onLayerChanged(this, updateInstances);
+					++i;
+				}
+			}
+		}
+			
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -203,6 +220,7 @@ namespace FIFE {
 				break;
 			}
 		}
+
 		m_changed = true;
 	}
 
@@ -289,11 +307,23 @@ namespace FIFE {
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
-		m_instancesVisibility = vis;
+		if (m_instancesVisibility != vis) {
+			m_instancesVisibility = vis;
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for (; it != m_instances.end(); ++it) {
+				(*it)->callOnVisibleChange();
+			}
+		}
 	}
 
 	void Layer::setLayerTransparency(uint8_t transparency) {
-		m_transparency = transparency;
+		if (m_transparency != transparency) {
+			m_transparency = transparency;
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for (; it != m_instances.end(); ++it) {
+				(*it)->callOnTransparencyChange();
+			}
+		}
 	}
 
 	uint8_t Layer::getLayerTransparency() {
@@ -301,7 +331,7 @@ namespace FIFE {
 	}
 
 	void Layer::toggleInstancesVisible() {
-		m_instancesVisibility = !m_instancesVisibility;
+		setInstancesVisible(!m_instancesVisibility);
 	}
 
 	bool Layer::areInstancesVisible() const {
@@ -487,5 +517,13 @@ namespace FIFE {
 
 	std::vector<Instance*>& Layer::getChangedInstances() {
 		return m_changedInstances;
+	}
+
+	void Layer::setStatic(bool stati) {
+		m_static = stati;
+	}
+
+	bool Layer::isStatic() {
+		return m_static;
 	}
 } // FIFE

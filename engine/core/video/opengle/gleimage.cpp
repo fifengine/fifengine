@@ -275,7 +275,6 @@ namespace FIFE {
 						uint8_t r = oglbuffer[gid + 0];
 						uint8_t g = oglbuffer[gid + 1];
 						uint8_t b = oglbuffer[gid + 2];
-						uint8_t a = oglbuffer[gid + 3];
 
 						// set alpha to zero
 						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {

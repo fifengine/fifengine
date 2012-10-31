@@ -316,6 +316,17 @@ namespace FIFE {
 			 */
 			void setInstanceActivityStatus(Instance* instance, bool active);
 
+			/** Marks this layer as visual static. The result is that everything is rendered as one texture.
+			 *  If you have instances with actions/animations on this layer then they are not displayed correctly.
+			 * Note: Works currently only for OpenGL backend. SDL backend is restricted to the lowest layer.
+			 * @param stati A boolean, true if the layer should be static.
+			 */
+			void setStatic(bool stati);
+
+			/** Returns true, if layer is static.
+			 * @return A boolean, true if the layer is static, otherwise false.
+			*/
+			bool isStatic();
 		protected:
 			//! string identifier
 			std::string m_id;
@@ -351,6 +362,8 @@ namespace FIFE {
 			std::vector<Instance*> m_changedInstances;
 			//! true if layer (or it's instance) information was changed during previous update round
 			bool m_changed;
+			//! true if layer is static
+			bool m_static;
 	};
 
 } // FIFE

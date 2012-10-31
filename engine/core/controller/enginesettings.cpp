@@ -218,7 +218,7 @@ namespace FIFE {
 		return m_videodriver;
 	}
 	void EngineSettings::setLightingModel(uint32_t lighting) {
-		if (lighting <= 2 && lighting >=0) {
+		if (lighting <= 2) {
 			m_lighting = lighting;
 			return;
 		}

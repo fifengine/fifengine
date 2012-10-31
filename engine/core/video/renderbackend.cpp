@@ -107,12 +107,14 @@ namespace FIFE {
 			setClipArea(getArea(), false);
 		} else {
 			ClipInfo ci = m_clipstack.top();
-			setClipArea(ci.r, ci.clearing);
+			// instead of using ci.clearing, we set it to false
+			// to avoid double clearing
+			setClipArea(ci.r, false);
 		}
 	}
 
 	const Rect& RenderBackend::getClipArea() const {
-		if (m_clipstack.empty()) {
+		if (!m_clipstack.empty()) {
 			return m_clipstack.top().r;
 		} else {
 			return getArea();

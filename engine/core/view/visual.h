@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -54,34 +54,10 @@ namespace FIFE {
 		 */
 		virtual ~Visual2DGfx();
 
-		/** Sets transparency value for object to be visualized
-		 *  @param transparency set the transparency
-		 */
-		void setTransparency(uint8_t transparency) { m_transparency = transparency; }
-
-		/** Gets current transparency value (0-255)
-		 *  @return current transparency value
-		 */
-		uint32_t getTransparency() { return m_transparency; }
-
-		/** Sets visibility value for object to be visualized
-		 *  @param visible is object visible or not
-		 */
-		void setVisible(bool visible) { m_visible = visible; }
-
-		/** Is instance visible or not
-		 *  @return is instance visible or not
-		 */
-		uint32_t isVisible() { return m_visible; }
-
 	protected:
 		/** Constructor
 		 */
 		Visual2DGfx();
-
-		uint8_t m_transparency;
-		uint8_t m_visible;
-
 	};
 
 	/** Object visual contains data that is needed for visualizing objects
@@ -142,23 +118,46 @@ namespace FIFE {
 		 */
 		virtual ~InstanceVisual();
 
+		/** Sets transparency value for object to be visualized
+		 *  @param transparency set the transparency
+		 */
+		void setTransparency(uint8_t transparency);
+
+		/** Gets current transparency value (0-255)
+		 *  @return current transparency value
+		 */
+		uint8_t getTransparency();
+
+		/** Sets visibility value for object to be visualized
+		 *  @param visible is object visible or not
+		 */
+		void setVisible(bool visible);
+
+		/** Is instance visible or not
+		 *  @return is instance visible or not
+		 */
+		bool isVisible();
+
 		/** Sets stack position of the instance
 		 *  Stack position is used to define the order in which instances residing
 		 *  in the same location are drawn
 		 *  @param stackposition new stack position
 		 */
-		void setStackPosition(int32_t stackposition) { m_stackposition = stackposition; }
+		void setStackPosition(int32_t stackposition);
 
 		/** Gets current stack position of instance
 		 *  @return current stack position
 		 */
-		int32_t getStackPosition() { return m_stackposition; }
+		int32_t getStackPosition();
 
 	private:
 		/** Constructor
 		 */
 		InstanceVisual();
+		uint8_t m_transparency;
+		bool m_visible;
 		int32_t m_stackposition;
+		Instance* m_instance;
 	};
 
 	/** Action visual contains data that is needed to visualize different actions on screen

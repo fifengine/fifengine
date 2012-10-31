@@ -309,7 +309,7 @@ namespace FIFE {
 		bool visitors = !m_visitors.empty();
 		bool instances = !m_instances.empty();
 		if (!visitors && !instances && m_fowType == CELLV_REVEALED) {
-			m_fowType == CELLV_MASKED;
+			m_fowType = CELLV_MASKED;
 		} else if (visitors && instances) {
 			CellCache* cache = m_layer->getCellCache();
 			std::vector<Instance*>::iterator visit = m_visitors.begin();

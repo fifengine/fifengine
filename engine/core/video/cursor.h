@@ -194,7 +194,6 @@ namespace FIFE {
 
 	private:
 		uint32_t m_cursor_id;
-		uint32_t m_drag_id;
 		MouseCursorType m_cursor_type;
 		MouseCursorType m_drag_type;
 

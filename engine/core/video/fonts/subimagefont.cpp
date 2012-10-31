@@ -53,9 +53,7 @@ namespace FIFE {
 
 		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
 
-//prock - 504
 		ImagePtr img = ImageManager::instance()->load(filename);
-		int32_t image_id = img->getHandle();
 		SDL_Surface* surface = img->getSurface();
 		m_colorkey = RenderBackend::instance()->getColorKey();
 
@@ -75,8 +73,7 @@ namespace FIFE {
 		// Prepare the data for extracting the glyphs.
 		uint32_t *pixels = reinterpret_cast<uint32_t*>(surface->pixels);
 
-		int32_t x, w;
-		x = 0; w=0;
+		int32_t x = 0;
 
 		SDL_Rect src;
 
@@ -108,7 +105,7 @@ namespace FIFE {
 		// Finally extract all glyphs
 		std::string::const_iterator text_it = glyphs.begin();
 		while(text_it != glyphs.end()) {
-			w=0;
+			int32_t w = 0;
 			while(x < surface->w && pixels[x] == separator)
 				++x;
 			if( x == surface->w )

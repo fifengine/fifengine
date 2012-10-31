@@ -68,7 +68,7 @@ namespace FIFE {
 
 		virtual void consume() { Event::consume(); }
 		virtual bool isConsumed() const { return Event::isConsumed(); }
-		virtual IEventSource* getSource() { return Event::getSource(); }
+		virtual IEventSource* getSource() const { return Event::getSource(); }
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
 		virtual int32_t getTimeStamp() const { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int32_t timestamp ) { Event::setTimeStamp(timestamp); }
@@ -83,8 +83,6 @@ namespace FIFE {
 	private:
 		CommandType m_commandtype;
 		int32_t m_code;
-		void* m_data1;
-		void* m_data2;
 	};
 } //FIFE
 

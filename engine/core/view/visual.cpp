@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -43,7 +43,7 @@ namespace FIFE {
 	 */
 	static Logger _log(LM_VIEW);
 
-	Visual2DGfx::Visual2DGfx(): m_transparency(0), m_visible(true) {
+	Visual2DGfx::Visual2DGfx() {
 	}
 
 	Visual2DGfx::~Visual2DGfx() {
@@ -89,7 +89,10 @@ namespace FIFE {
 	}
 
 	InstanceVisual::InstanceVisual():
-		m_stackposition(0) {
+		m_transparency(0),
+		m_visible(true),
+		m_stackposition(0),
+		m_instance(NULL) {
 	}
 
 	InstanceVisual* InstanceVisual::create(Instance* instance) {
@@ -98,10 +101,44 @@ namespace FIFE {
 		}
 		InstanceVisual* v = new InstanceVisual();
 		instance->setVisual(v);
+		v->m_instance = instance;
 		return v;
 	}
 
 	InstanceVisual::~InstanceVisual() {
+	}
+
+	void InstanceVisual::setTransparency(uint8_t transparency) {
+		if (m_transparency != transparency) {
+			m_transparency = transparency;
+			m_instance->callOnTransparencyChange();
+		}
+	}
+
+	uint8_t InstanceVisual::getTransparency() {
+		return m_transparency;
+	}
+
+	void InstanceVisual::setVisible(bool visible) {
+		if (m_visible != visible) {
+			m_visible = visible;
+			m_instance->callOnVisibleChange();
+		}
+	}
+
+	bool InstanceVisual::isVisible() {
+		return m_visible;
+	}
+
+	void InstanceVisual::setStackPosition(int32_t stackposition) {
+		if (m_stackposition != stackposition) {
+			m_stackposition = stackposition;
+			m_instance->callOnStackPositionChange();
+		}
+	}
+
+	int32_t InstanceVisual::getStackPosition() {
+		return m_stackposition;
 	}
 
 	ActionVisual::ActionVisual(): m_animation_map(), m_map() {

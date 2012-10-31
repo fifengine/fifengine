@@ -37,27 +37,55 @@ namespace FIFE {
 
 	class BlockingInfoRenderer: public RendererBase {
 	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
+		/** Constructor.
+		 *
+		 * @param renderbackend The renderbackend to use.
+		 * @param position The position for this renderer in rendering pipeline.
+		 * @ see setPipelinePosition
 		 */
 		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
 
+		/** Copy Constructor.
+		 */
 		BlockingInfoRenderer(const BlockingInfoRenderer& old);
 
+		/** Makes copy of this renderer.
+		 */
 		RendererBase* clone();
 
 		/** Destructor.
 		 */
 		virtual ~BlockingInfoRenderer();
 
+		/** Returns the renderer name.
+		 *
+		 * @return The name as string.
+		 */
 		std::string getName() { return "BlockingInfoRenderer"; }
+
+		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		 * given parameters.
+		 *
+		 * @param cam Camera view to draw
+		 * @param layer Current layer to be rendered
+		 * @param instances Instances on the current layer
+		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
+
+		/** Changes the used color.
+		 *
+		 * @param r The value for red, range 0-255.
+		 * @param g The value for green, range 0-255.
+		 * @param b The value for blue, range 0-255.
+		 */
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
+		/** Gets instance for interface access.
+		 */
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
+		//! currently used color
 		SDL_Color m_color;
 	};
 }

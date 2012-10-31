@@ -39,22 +39,47 @@ namespace FIFE {
 
 	class CoordinateRenderer: public RendererBase {
 	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
+		/** Constructor.
+		 *
+		 * @param renderbackend The renderbackend to use.
+		 * @param position The position for this renderer in rendering pipeline.
+		 * @ see setPipelinePosition
 		 */
 		CoordinateRenderer(RenderBackend* renderbackend, int32_t position);
 
+		/** Copy Constructor.
+		 */
 		CoordinateRenderer(const CoordinateRenderer& old);
 
+		/** Makes copy of this renderer.
+		 */
 		RendererBase* clone();
 
 		/** Destructor.
 		 */
 		virtual ~CoordinateRenderer();
 
+		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		 * given parameters.
+		 *
+		 * @param cam Camera view to draw
+		 * @param layer Current layer to be rendered
+		 * @param instances Instances on the current layer
+		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
+
+		/** Returns the renderer name.
+		 *
+		 * @return The name as string.
+		 */
 		std::string getName() { return "CoordinateRenderer"; }
+
+		/** Changes the used color.
+		 *
+		 * @param r The value for red, range 0-255.
+		 * @param g The value for green, range 0-255.
+		 * @param b The value for blue, range 0-255.
+		 */
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 		/** Changes default font in the renderer
@@ -68,6 +93,8 @@ namespace FIFE {
 		 */
 		void setZoom(bool enable) { m_zoom = enable; }
 
+		/** Gets instance for interface access.
+		 */
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
