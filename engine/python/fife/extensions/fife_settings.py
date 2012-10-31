@@ -680,9 +680,8 @@ class SettingEntry(object):
 				widget.setInitialData(self._initialdata)
 		widget.setData(currentValue)
 
-	def onApply(self, data):		"""Implement actions that need to be taken when the setting is changed
-		here.
-		"""
+	def onApply(self, data):
+		"""Implement actions that need to be taken when the setting is changed here. """
 		if self._applyfunction is not None:
 			self._applyfunction(data)
 
