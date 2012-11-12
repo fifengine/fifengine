@@ -221,7 +221,7 @@ class Manager(object):
 
 			if type(class_) == type(widgets.Widget) and issubclass(class_,widgets.Widget):
 				return class_
-			if not widgets.WIDGETS.has_key(str(class_)):
+			if str(class_) not in widgets.WIDGETS:
 				raise InitializationError("Can't resolve %s to a widget class." % repr(class_))
 			return widgets.WIDGETS[str(class_)]
 
