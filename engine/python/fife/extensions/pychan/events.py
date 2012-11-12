@@ -314,10 +314,10 @@ class EventMapper(object):
 		self_ref = weakref.ref(self)
 
 		# Set up callback dictionary. This should fix some GC issues
-		if not self.callbacks.has_key(group_name):
+		if group_name not in self.callbacks:
 			self.callbacks[group_name] = {}
 			
-		if not self.callbacks[group_name].has_key(event_name):
+		if event_name not in self.callbacks[group_name]:
 			self.callbacks[group_name][event_name] = {}
 			
 		self.callbacks[group_name][event_name] = callback

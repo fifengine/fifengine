@@ -229,7 +229,7 @@ class SoundManager(object):
 		@return: Returns a new L{SoundEmitter} instance.
 		@rtype: L{SoundEmitter}
 		"""
-		if not self._loadedclips.has_key(filename):
+		if filename not in self._loadedclips:
 			soundclipptr = self._fifesoundclipmanager.get(filename)
 			fifeemitter = self._fifesoundmanager.createEmitter()
 			fifeemitter.thisown = 0
