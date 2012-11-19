@@ -129,6 +129,31 @@ namespace FIFE {
             }
             layerElement->SetAttribute("pathing", pathingStrategy);
             
+			std::string sortingStrategy;
+			switch ((*iter)->getSortingStrategy()) {
+				case SORTING_CAMERA:
+				{
+					sortingStrategy = "camera";
+				}
+				break;
+				case SORTING_LOCATION:
+				{
+					sortingStrategy = "location";
+				}
+				break;
+				case SORTING_CAMERA_AND_LOCATION:
+				{
+					sortingStrategy = "camera_and_location";
+				}
+				break;
+                default:
+				{
+					sortingStrategy = "camera";
+				}
+				break;
+            }
+            layerElement->SetAttribute("sorting", sortingStrategy);
+
 			if ((*iter)->isWalkable()) {
 				layerElement->SetAttribute("layer_type", "walkable");
 			} else if ((*iter)->isInteract()) {

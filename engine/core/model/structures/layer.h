@@ -59,6 +59,12 @@ namespace FIFE {
 		CELL_EDGES_AND_DIAGONALS
 	};
 
+	enum SortingStrategy {
+		SORTING_CAMERA,
+		SORTING_LOCATION,
+		SORTING_CAMERA_AND_LOCATION
+	};
+
 	/** Listener interface for changes happening on a layer
 	 */
 	class LayerChangeListener {
@@ -235,6 +241,16 @@ namespace FIFE {
 			 */
 			PathingStrategy getPathingStrategy() const;
 
+			/** Sets sorting strategy for the layer
+			 * @see SortingStrategy
+			 */
+			void setSortingStrategy(SortingStrategy strategy);
+
+			/** Gets sorting strategy for the layer
+			 * @see SortingStrategy
+			 */
+			SortingStrategy getSortingStrategy() const;
+
 			/** Sets walkable for the layer. Only a walkable layer, can create a CellCache and
 			 *  only on a walkable, instances can move. Also interact layer can only be added to walkables.
 			 * @param walkable A boolean that mark a layer as walkable.
@@ -346,6 +362,8 @@ namespace FIFE {
 			CellGrid* m_grid;
 			//! pathing strategy for the layer
 			PathingStrategy m_pathingStrategy;
+			//! sorting strategy for rendering
+			SortingStrategy m_sortingStrategy;
 			//! is walkable true/false
 			bool m_walkable;
 			//! is interact true/false

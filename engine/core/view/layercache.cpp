@@ -53,7 +53,8 @@ namespace FIFE {
 	 *  @relates Logger
 	 */
 	static Logger _log(LM_CAMERA);
-
+	
+	// Due to image alignment, there is additional additions on image dimensions.
 	const double OVERDRAW = 1.5;
 
 	class CacheLayerChangeListener : public LayerChangeListener {
@@ -81,17 +82,87 @@ namespace FIFE {
 		LayerCache* m_cache;
 	};
 
-	class InstanceDistanceSort {
+	/** Comparison functions for sorting
+	*/
+	// used screenpoint z for sorting, calculated from camera
+	class InstanceDistanceSortCamera {
 	public:
-		InstanceDistanceSort(double rotation) {
-			m_xSign = (Mathd::Sin(rotation*Mathd::pi()/180) < 0) - (Mathd::Sin(rotation*Mathd::pi()/180) > 0);
-			m_ySign = (Mathd::Cos(rotation*Mathd::pi()/180) > 0) - (Mathd::Cos(rotation*Mathd::pi()/180) < 0);
+		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
+			if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
+				InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
+				InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+				return liv->getStackPosition() < riv->getStackPosition();
+			}
+			return lhs->screenpoint.z < rhs->screenpoint.z;
+		}
+	};
+	// used instance location and camera rotation for sorting
+	class InstanceDistanceSortLocation {
+	public:
+		InstanceDistanceSortLocation(double rotation) {
+			if ((rotation >= 0) && (rotation <= 60)) { // 30 deg
+				xtox = 0;
+				xtoy = -1;
+				ytox = 1;
+				ytoy = 0.5;
+			} else if ((rotation >= 60) && (rotation <= 120)) { // 90 deg
+				xtox = -1;
+				xtoy = -1;
+				ytox = 0.5;
+				ytoy = -0.5;
+			} else if ((rotation >= 120) && (rotation <= 180)) { // 150 deg
+				xtox = 0;
+				xtoy = -1;
+				ytox = -1;
+				ytoy = -0.5;
+			} else if ((rotation >= 180) && (rotation <= 240)) { // 210 deg
+				xtox = 0;
+				xtoy = 1;
+				ytox = -1;
+				ytoy = -0.5;
+			} else if ((rotation >= 240) && (rotation <= 300)) { // 270 deg
+				xtox = 1;
+				xtoy = 1;
+				ytox = -0.5;
+				ytoy = 0.5;
+			} else if ((rotation >= 300) && (rotation <= 360)) { // 330 deg
+				xtox = 0;
+				xtoy = 1;
+				ytox = 1;
+				ytoy = 0.5;
+			}
 		}
 
 		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
-			const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
-			const ExactModelCoordinate& rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
-			if (ceil(m_xSign*lpos.x) + ceil(m_ySign*lpos.y) == ceil(m_xSign*rpos.x) + ceil(m_ySign*rpos.y)) {
+			ExactModelCoordinate lpos = lhs->instance->getLocationRef().getExactLayerCoordinates();
+			ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
+			lpos.x += lpos.y / 2;
+			rpos.x += rpos.y / 2;
+			InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
+			InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+			int32_t lvc = ceil(xtox*lpos.x + ytox*lpos.y) + ceil(xtoy*lpos.x + ytoy*lpos.y) + liv->getStackPosition();
+			int32_t rvc = ceil(xtox*rpos.x + ytox*rpos.y) + ceil(xtoy*rpos.x + ytoy*rpos.y) + riv->getStackPosition();
+			if (lvc == rvc) {
+				if (Mathd::Equal(lpos.z, rpos.z)) {
+					return liv->getStackPosition() < riv->getStackPosition();
+				}
+				return lpos.z < rpos.z;
+			}
+			return lvc < rvc;
+		}
+	private:
+		double xtox;
+		double xtoy;
+		double ytox;
+		double ytoy;
+	};
+	// used screenpoint z for sorting and as fallback first the instance location z and then the stack position
+	class InstanceDistanceSortCameraAndLocation {
+	public:
+		inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) {
+			if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
+				const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
+				const ExactModelCoordinate& rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
 				if (Mathd::Equal(lpos.z, rpos.z)) {
 					InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
 					InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
@@ -99,11 +170,8 @@ namespace FIFE {
 				}
 				return lpos.z < rpos.z;
 			}
-			return ceil(m_xSign*lpos.x) + ceil(m_ySign*lpos.y) < ceil(m_xSign*rpos.x) + ceil(m_ySign*rpos.y);
+			return lhs->screenpoint.z < rhs->screenpoint.z;
 		}
-	private:
-		int8_t m_xSign;
-		int8_t m_ySign;
 	};
 
 	LayerCache::LayerCache(Camera* camera) {
@@ -243,6 +311,7 @@ namespace FIFE {
 			}
 		}
 		item->instance = 0;
+		item->image.reset();
 		
 		// adds free entry
 		m_freeEntries.push_back(entry->entry_index);
@@ -448,7 +517,7 @@ namespace FIFE {
 		Instance* instance = item->instance;
 		InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 		item->facing_angle = instance->getRotation();
-		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + item->facing_angle;
+		int32_t angle = static_cast<int32_t>(m_camera->getRotation() + item->facing_angle);
 		Action* action = instance->getCurrentAction();
 		ImagePtr image;
 
@@ -507,16 +576,7 @@ namespace FIFE {
 
 		bool newPosition = false;
 		if (image != item->image) {
-			if (image) {
-				if (!item->image) {
-					newPosition = true;
-				} else {
-					if (image->getWidth() != item->image->getWidth() ||
-						image->getHeight() != item->image->getHeight()) {
-						newPosition = true;
-					}
-				}
-			}
+			newPosition = true;
 			item->image = image;
 		}
 		return newPosition;
@@ -617,8 +677,17 @@ namespace FIFE {
 				}
 			}
 		} else {
-			InstanceDistanceSort ids(m_camera->getRotation());
-			std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+			SortingStrategy strat = m_layer->getSortingStrategy();
+			if (strat == SORTING_CAMERA) {
+				InstanceDistanceSortCamera ids;
+				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+			} else if (strat == SORTING_LOCATION) {
+				InstanceDistanceSortLocation ids(m_camera->getRotation());
+				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+			} else {
+				InstanceDistanceSortCameraAndLocation ids;
+				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+			}
 		}
 	}
 

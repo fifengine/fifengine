@@ -52,6 +52,7 @@ namespace FIFE {
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),
 		m_pathingStrategy(CELL_EDGES_ONLY),
+		m_sortingStrategy(SORTING_CAMERA),
 		m_walkable(false),
 		m_interact(false),
 		m_walkableId(""),
@@ -389,6 +390,14 @@ namespace FIFE {
 
 	PathingStrategy Layer::getPathingStrategy() const {
 		return m_pathingStrategy;
+	}
+
+	void Layer::setSortingStrategy(SortingStrategy strategy) {
+		m_sortingStrategy = strategy;
+	}
+
+	SortingStrategy Layer::getSortingStrategy() const {
+		return m_sortingStrategy;
 	}
 
 	void Layer::setWalkable(bool walkable) {

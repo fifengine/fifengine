@@ -115,9 +115,6 @@ namespace FIFE {
 		double m_zoom;
 		bool m_zoomed;
 		bool m_straightZoom;
-
-		
 	};
-
 }
 #endif

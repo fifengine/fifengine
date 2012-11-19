@@ -869,6 +869,7 @@ namespace FIFE {
 		if (!cacheImage.get()) {
 			// the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
 			cacheImage = ImageManager::instance()->loadBlank(m_id+"_virtual_layer_image_"+layer->getId(), m_viewport.w, m_viewport.h);
+			cache->setCacheImage(cacheImage);
 			update = true;
 		}
 		if (update) {
@@ -891,7 +892,6 @@ namespace FIFE {
 			}
 			m_renderbackend->detachRenderTarget();
 			m_renderbackend->popClipArea();
-			cache->setCacheImage(cacheImage);
 		}
 		// render cacheImage
 		cacheImage.get()->render(m_viewport);
