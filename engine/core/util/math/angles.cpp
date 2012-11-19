@@ -28,6 +28,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/layer.h"
+
 #include "angles.h"
 
 namespace FIFE {
@@ -90,5 +93,51 @@ namespace FIFE {
 		}
 		closestMatchingAngle = lcm;
 		return li;
+	}
+
+	int32_t getAngleBetween(const Location& loc1, const Location& loc2) {
+		ExactModelCoordinate c1 = loc1.getMapCoordinates();
+		ExactModelCoordinate c2 = loc2.getMapCoordinates();
+
+		double dy = (c2.y - c1.y);
+		double dx = (c2.x - c1.x);
+		// add grid rotation to angle, to guarantee uniform angles (not grid based)
+		int32_t angle = round(Mathd::ATan2(-dy,dx)*(180.0/Mathd::pi()) + loc1.getLayer()->getCellGrid()->getRotation());
+		if (angle < 0) {
+			angle += 360;
+		}
+		angle %= 360;
+		return angle;
+	}
+	
+	Location getFacing(const Location& loc, const int32_t angle) {
+		Location facing(loc);
+		ExactModelCoordinate emc = facing.getMapCoordinates();
+		// remove grid rotation from angle, to guarantee uniform angles (not grid based)
+		double tmpAngle = static_cast<double>(angle) - loc.getLayer()->getCellGrid()->getRotation();
+		emc.x += Mathd::Cos(tmpAngle * (Mathd::pi()/180.0));
+		emc.y -= Mathd::Sin(tmpAngle * (Mathd::pi()/180.0));
+		facing.setMapCoordinates(emc);
+
+		return facing;
+	}
+
+	int32_t getAngleBetween(const ExactModelCoordinate& emc1, const ExactModelCoordinate& emc2) {
+		double dy = (emc2.y - emc1.y);
+		double dx = (emc2.x - emc1.x);
+
+		int32_t angle = round(Mathd::ATan2(-dy,dx)*(180.0/Mathd::pi()));
+		if (angle < 0) {
+			angle += 360;
+		}
+		angle %= 360;
+		return angle;
+	}
+	
+	ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, const int32_t angle) {
+		ExactModelCoordinate result = emc;
+		result.x += Mathd::Cos(static_cast<double>(angle) * (Mathd::pi()/180.0));
+		result.y -= Mathd::Sin(static_cast<double>(angle) * (Mathd::pi()/180.0));
+		return result;
 	}
 }

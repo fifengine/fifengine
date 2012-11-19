@@ -45,33 +45,23 @@ namespace FIFE {
 	 *  @return angle in polar coordinates between the line
 	 *  defined by the two locations and the horizontal axis (East <-> West)
 	 */
-	inline int32_t getAngleBetween(const Location& loc1, const Location& loc2) {
-		ExactModelCoordinate c1 = loc1.getMapCoordinates();
-		ExactModelCoordinate c2 = loc2.getMapCoordinates();
-
-		double dy = (c2.y - c1.y);
-		double dx = (c2.x - c1.x);
-
-		int32_t angle = static_cast<int32_t>(Mathd::ATan2(-dy,dx)*(180.0/Mathd::pi()));
-		if (angle < 0) {
-			angle += 360;
-		}
-		angle %= 360;
-		return angle;
-	}
+	int32_t getAngleBetween(const Location& loc1, const Location& loc2);
 	
 	/** Gets facing location defined by given angle and location
 	 *  @return facing location
 	 */
-	inline Location getFacing(const Location& loc, const int32_t angle) {
-		Location facing(loc);
-		ExactModelCoordinate emc = facing.getMapCoordinates();
-		emc.x += Mathd::Cos(double(angle) * (Mathd::pi()/180.0));
-		emc.y -= Mathd::Sin(double(angle) * (Mathd::pi()/180.0));
-		facing.setMapCoordinates(emc);
+	Location getFacing(const Location& loc, const int32_t angle);
 
-		return facing;
-	}
+	/** Gets angle of vector defined by given map coordinates
+	 *  @return angle in polar coordinates between the line
+	 *  defined by the two map coordinates and the horizontal axis (East <-> West)
+	 */
+	int32_t getAngleBetween(const ExactModelCoordinate& emc1, const ExactModelCoordinate& emc2);
+	
+	/** Gets facing map coordinate defined by given angle and map coordinate
+	 *  @return facing map coordinate
+	 */
+	ExactModelCoordinate getFacing(const ExactModelCoordinate& emc, const int32_t angle);
 }
 
 #endif

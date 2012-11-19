@@ -240,6 +240,7 @@ namespace FIFE {
 
 						const std::string* layerName = layerElement->Attribute(std::string("id"));
 						const std::string* pathing = layerElement->Attribute(std::string("pathing"));
+						const std::string* sorting = layerElement->Attribute(std::string("sorting"));
 						const std::string* gridType = layerElement->Attribute(std::string("grid_type"));
 						const std::string* layerType = layerElement->Attribute(std::string("layer_type"));
 						const std::string* layerTypeName = layerElement->Attribute(std::string("layer_type_id"));
@@ -256,6 +257,15 @@ namespace FIFE {
 							PathingStrategy pathStrategy = CELL_EDGES_ONLY;
 							if ("cell_edges_and_diagonals" == *pathing) {
 								pathStrategy = CELL_EDGES_AND_DIAGONALS;
+							}
+
+							SortingStrategy sortStrategy = SORTING_CAMERA;
+							if (sorting) {
+								if (*sorting == "location") {
+									sortStrategy = SORTING_LOCATION;
+								} else if (*sorting == "camera_and_location") {
+									sortStrategy = SORTING_CAMERA_AND_LOCATION;
+								}
 							}
 
 							CellGrid* grid = NULL;
@@ -286,6 +296,7 @@ namespace FIFE {
 
 								if (layer) {
 									layer->setPathingStrategy(pathStrategy);
+									layer->setSortingStrategy(sortStrategy);
 									if (layerType) {
 										if (*layerType == "walkable") {
 											layer->setWalkable(true);
