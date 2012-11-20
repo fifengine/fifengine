@@ -77,11 +77,11 @@ namespace FIFE {
 			// Node in m_tree;
 			CacheTree::Node* node;
 			// Index in m_renderItems;
-			int32_t instance_index;
+			int32_t instanceIndex;
 			// Index in m_entries;
-			int32_t entry_index;
+			int32_t entryIndex;
 			// Force update for entries with animation
-			bool force_update;
+			bool forceUpdate;
 			// Is visible
 			bool visible;
 			// Update info

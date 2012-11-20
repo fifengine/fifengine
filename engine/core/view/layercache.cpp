@@ -232,6 +232,7 @@ namespace FIFE {
 		m_instance_map.clear();
 		m_entriesToUpdate.clear();
 		m_freeEntries.clear();
+		m_cacheImage.reset();
 
 		delete m_tree;
 		m_tree = new CacheTree;
@@ -249,57 +250,53 @@ namespace FIFE {
 		Entry* entry;
 		if (m_freeEntries.empty()) {
 			// creates new RenderItem
-			item = new RenderItem();
+			item = new RenderItem(instance);
 			m_renderItems.push_back(item);
 			m_instance_map[instance] = m_renderItems.size() - 1;
 			// creates new Entry
 			entry = new Entry();
 			m_entries.push_back(entry);
-			entry->instance_index = m_renderItems.size() - 1;
-			entry->entry_index = m_entries.size() - 1;
+			entry->instanceIndex = m_renderItems.size() - 1;
+			entry->entryIndex = m_entries.size() - 1;
 		} else {
-			// uses free/unused RenderItem and Entry
+			// uses free/unused RenderItem
 			int32_t index = m_freeEntries.front();
 			m_freeEntries.pop_front();
 			item = m_renderItems[index];
-			// reset dimension needed because of the on screen check
-			item->dimensions = Rect();
+			item->instance = instance;
 			m_instance_map[instance] = index;
-			
+			// uses free/unused Entry
 			entry = m_entries[index];
-			entry->instance_index = index;
-			entry->entry_index = index;
+			entry->instanceIndex = index;
+			entry->entryIndex = index;
 		}
 
-		item->instance = instance;
-		item->transparency = 255;
-
 		entry->node = 0;
-		entry->force_update = true;
+		entry->forceUpdate = true;
 		entry->visible = true;
 		entry->updateInfo = EntryFullUpdate;
 
-		m_entriesToUpdate.insert(entry->entry_index);
+		m_entriesToUpdate.insert(entry->entryIndex);
 	}
 
 	void LayerCache::removeInstance(Instance* instance) {
 		assert(m_instance_map.find(instance) != m_instance_map.end());
 
 		Entry* entry = m_entries[m_instance_map[instance]];
-		assert(entry->instance_index == m_instance_map[instance]);
-		RenderItem* item = m_renderItems[entry->instance_index];
+		assert(entry->instanceIndex == m_instance_map[instance]);
+		RenderItem* item = m_renderItems[entry->instanceIndex];
 		// removes entry from updates
-		std::set<int32_t>::iterator it = m_entriesToUpdate.find(entry->entry_index);
+		std::set<int32_t>::iterator it = m_entriesToUpdate.find(entry->entryIndex);
 		if (it != m_entriesToUpdate.end()) {
 			m_entriesToUpdate.erase(it);
 		}
-		// removes entrie from CacheTree
+		// removes entry from CacheTree
 		if (entry->node) {
-			entry->node->data().erase(entry->entry_index);
+			entry->node->data().erase(entry->entryIndex);
 			entry->node = 0;
 		}
-		entry->instance_index = -1;
-		entry->force_update = false;
+		entry->instanceIndex = -1;
+		entry->forceUpdate = false;
 		m_instance_map.erase(instance);
 
 		// removes instance from RenderList
@@ -310,16 +307,15 @@ namespace FIFE {
 				break;
 			}
 		}
-		item->instance = 0;
-		item->image.reset();
-		
+		// resets RenderItem
+		item->reset();
 		// adds free entry
-		m_freeEntries.push_back(entry->entry_index);
+		m_freeEntries.push_back(entry->entryIndex);
 	}
 
 	void LayerCache::updateInstance(Instance* instance) {
 		Entry* entry = m_entries[m_instance_map[instance]];
-		if (entry->instance_index == -1) {
+		if (entry->instanceIndex == -1) {
 			return;
 		}
 		bool inserted = (entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate;
@@ -336,8 +332,8 @@ namespace FIFE {
 		}
 
 		if (!inserted && entry->updateInfo != EntryNoneUpdate) {
-			entry->force_update = true;
-			m_entriesToUpdate.insert(entry->entry_index);
+			entry->forceUpdate = true;
+			m_entriesToUpdate.insert(entry->entryIndex);
 		}
 	}
 
@@ -400,7 +396,7 @@ namespace FIFE {
 
 			// create viewport coordinates to collect entries
 			Rect viewport = m_camera->getViewPort();
-			Rect screen_viewport = viewport;
+			Rect screenViewport = viewport;
 			DoublePoint3D viewport_a = m_camera->screenToVirtualScreen(Point3D(viewport.x, viewport.y));
 			DoublePoint3D viewport_b = m_camera->screenToVirtualScreen(Point3D(viewport.right(), viewport.bottom()));
 			viewport.x = static_cast<int32_t>(std::min(viewport_a.x, viewport_b.x));
@@ -416,12 +412,12 @@ namespace FIFE {
 			// fill renderlist
 			for (uint32_t i = 0; i != index_list.size(); ++i) {
 				Entry* entry = m_entries[index_list[i]];
-				RenderItem* item = m_renderItems[entry->instance_index];
+				RenderItem* item = m_renderItems[entry->instanceIndex];
 				if (!item->image || !entry->visible) {
 					continue;
 				}
 
-				if(item->dimensions.intersects(screen_viewport)) {
+				if (item->dimensions.intersects(screenViewport)) {
 					renderlist.push_back(item);
 					if (!m_needSorting) {
 						m_zMin = std::min(m_zMin, item->screenpoint.z);
@@ -444,8 +440,8 @@ namespace FIFE {
 		bool rotationChange = (transform & Camera::RotationTransform) == Camera::RotationTransform;
 		for (uint32_t i = 0; i != m_entries.size(); ++i) {
 			Entry* entry = m_entries[i];
-			if (entry->instance_index != -1) {
-				if (rotationChange || entry->force_update) {
+			if (entry->instanceIndex != -1) {
+				if (rotationChange || entry->forceUpdate) {
 					updateVisual(entry);
 				}
 				updatePosition(entry);
@@ -459,15 +455,14 @@ namespace FIFE {
 		std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
 		for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
 			Entry* entry = m_entries[*entry_it];
-			entry->force_update = false;
-			if (entry->instance_index == -1) {
+			entry->forceUpdate = false;
+			if (entry->instanceIndex == -1) {
 				entry->updateInfo = EntryNoneUpdate;
 				removes.insert(*entry_it);
 				continue;
 			}
-			RenderItem* item = m_renderItems[entry->instance_index];
+			RenderItem* item = m_renderItems[entry->instanceIndex];
 			bool positionUpdate = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
-
 			if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
 				positionUpdate |= updateVisual(entry);
 			}
@@ -495,7 +490,7 @@ namespace FIFE {
 					needSorting.push_back(item);
 				}
 			}
-			if (!entry->force_update || !entry->visible) {
+			if (!entry->forceUpdate || !entry->visible) {
 				entry->updateInfo = EntryNoneUpdate;
 				removes.insert(*entry_it);
 			} else {
@@ -513,30 +508,30 @@ namespace FIFE {
 	}
 
 	bool LayerCache::updateVisual(Entry* entry) {
-		RenderItem* item = m_renderItems[entry->instance_index];
+		RenderItem* item = m_renderItems[entry->instanceIndex];
 		Instance* instance = item->instance;
 		InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-		item->facing_angle = instance->getRotation();
-		int32_t angle = static_cast<int32_t>(m_camera->getRotation() + item->facing_angle);
+		item->facingAngle = instance->getRotation();
+		int32_t angle = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
 		Action* action = instance->getCurrentAction();
 		ImagePtr image;
 
 		if (visual) {
-			uint8_t layer_trans = m_layer->getLayerTransparency();
-			uint8_t instance_trans = visual->getTransparency();
-			if(layer_trans != 0) {
-				if(instance_trans != 0) {
-					uint8_t calc_trans = layer_trans - instance_trans;
-					if(calc_trans >= 0) {
-						instance_trans = calc_trans;
+			uint8_t layerTrans = m_layer->getLayerTransparency();
+			uint8_t instanceTrans = visual->getTransparency();
+			if (layerTrans != 0) {
+				if (instanceTrans != 0) {
+					uint8_t calcTrans = layerTrans - instanceTrans;
+					if (calcTrans >= 0) {
+						instanceTrans = calcTrans;
 					} else {
-						instance_trans = 0;
+						instanceTrans = 0;
 					}
 				} else {
-					instance_trans = layer_trans;
+					instanceTrans = layerTrans;
 				}
 			}
-			item->transparency = 255 - instance_trans;
+			item->transparency = 255 - instanceTrans;
 			// only visible if visual is visible and item is not totally transparent
 			entry->visible = (visual->isVisible() && item->transparency != 0);
 		}
@@ -552,57 +547,64 @@ namespace FIFE {
 				image = ImageManager::instance()->get(image_id);
 			}
 		}
-		entry->force_update = (action != 0);
+		entry->forceUpdate = (action != 0);
 
 		if (action) {
 			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
-			unsigned animation_time = instance->getActionRuntime() % animation->getDuration();
-			image = animation->getFrameByTimestamp(animation_time);
+			uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
+			image = animation->getFrameByTimestamp(animationTime);
 
-			int32_t action_frame = animation->getActionFrame();
-			if (action_frame != -1) {
+			int32_t actionFrame = animation->getActionFrame();
+			if (actionFrame != -1) {
 				if (item->image != image) {
-					int32_t new_frame = animation->getFrameIndex(animation_time);
-					if (action_frame == new_frame) {
-						instance->callOnActionFrame(action, action_frame);
+					int32_t new_frame = animation->getFrameIndex(animationTime);
+					if (actionFrame == new_frame) {
+						instance->callOnActionFrame(action, actionFrame);
 					// if action frame was skipped
-					} else if (new_frame > action_frame && item->current_frame < action_frame) {
-						instance->callOnActionFrame(action, action_frame);
+					} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
+						instance->callOnActionFrame(action, actionFrame);
 					}
-					item->current_frame = new_frame;
+					item->currentFrame = new_frame;
 				}
 			}
 		}
 
 		bool newPosition = false;
 		if (image != item->image) {
-			newPosition = true;
+			if (!item->image || !image) {
+				newPosition = true;
+			} else if (image->getWidth() != item->image->getWidth() ||
+						image->getHeight() != item->image->getHeight() ||
+						image->getXShift() != item->image->getXShift() ||
+						image->getYShift() != item->image->getYShift()) {
+							newPosition = true;
+			}
 			item->image = image;
 		}
 		return newPosition;
 	}
 
 	void LayerCache::updatePosition(Entry* entry) {
-		RenderItem* item = m_renderItems[entry->instance_index];
+		RenderItem* item = m_renderItems[entry->instanceIndex];
 		Instance* instance = item->instance;
-		ExactModelCoordinate map_coords = instance->getLocationRef().getMapCoordinates();
-		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(map_coords);
+		ExactModelCoordinate mapCoords = instance->getLocationRef().getMapCoordinates();
+		DoublePoint3D screenPosition = m_camera->toVirtualScreenCoordinates(mapCoords);
 		ImagePtr image = item->image;
 
 		if (image) {
 			int32_t w = image->getWidth();
 			int32_t h = image->getHeight();
-			screen_position.x = (screen_position.x - w / 2.0) + image->getXShift();
-			screen_position.y = (screen_position.y - h / 2.0) + image->getYShift();
+			screenPosition.x = (screenPosition.x - w / 2.0) + image->getXShift();
+			screenPosition.y = (screenPosition.y - h / 2.0) + image->getYShift();
 			item->bbox.w = w;
 			item->bbox.h = h;
 		} else {
 			item->bbox.w = 0;
 			item->bbox.h = 0;
 		}
-		item->screenpoint = screen_position;
-		item->bbox.x = static_cast<int32_t>(screen_position.x);
-		item->bbox.y = static_cast<int32_t>(screen_position.y);
+		item->screenpoint = screenPosition;
+		item->bbox.x = static_cast<int32_t>(screenPosition.x);
+		item->bbox.y = static_cast<int32_t>(screenPosition.y);
 
 		// seems wrong but these rounds fix the "wobbling" and gaps between tiles
 		// in case the zoom is 1.0
@@ -610,14 +612,14 @@ namespace FIFE {
 			item->screenpoint.x = round(item->screenpoint.x);
 			item->screenpoint.y = round(item->screenpoint.y);
 		}
-		Point3D screen_point = m_camera->virtualScreenToScreen(item->screenpoint);
+		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
 		// NOTE:
 		// One would expect this to be necessary here,
 		// however it works the same without, sofar
-		// m_camera->calculateZValue(screen_point);
-		// item->screenpoint.z = -screen_point.z;
-		item->dimensions.x = screen_point.x;
-		item->dimensions.y = screen_point.y;
+		// m_camera->calculateZValue(screenPoint);
+		// item->screenpoint.z = -screenPoint.z;
+		item->dimensions.x = screenPoint.x;
+		item->dimensions.y = screenPoint.y;
 
 		if (m_zoomed) {
 			// NOTE: Due to image alignment, there is additional additions on image dimensions
@@ -625,11 +627,11 @@ namespace FIFE {
 			//       In case additions are removed, gaps appear between tiles.
 			//       This is only needed if the zoom is a non-integer value.
 			if (!m_straightZoom) {
-				item->dimensions.w = round(double(item->bbox.w) * m_zoom + OVERDRAW);
-				item->dimensions.h = round(double(item->bbox.h) * m_zoom + OVERDRAW);
+				item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom + OVERDRAW);
+				item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom + OVERDRAW);
 			} else {
-				item->dimensions.w = round(double(item->bbox.w) * m_zoom);
-				item->dimensions.h = round(double(item->bbox.h) * m_zoom);
+				item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
+				item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
 			}
 		} else {
 			item->dimensions.w = item->bbox.w;
@@ -640,10 +642,10 @@ namespace FIFE {
 		if (node) {
 			if (node != entry->node) {
 				if (entry->node) {
-					entry->node->data().erase(entry->entry_index);
+					entry->node->data().erase(entry->entryIndex);
 				}
 				entry->node = node;
-				node->data().insert(entry->entry_index);
+				node->data().insert(entry->entryIndex);
 			}
 		}
 	}
@@ -678,15 +680,23 @@ namespace FIFE {
 			}
 		} else {
 			SortingStrategy strat = m_layer->getSortingStrategy();
-			if (strat == SORTING_CAMERA) {
-				InstanceDistanceSortCamera ids;
-				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
-			} else if (strat == SORTING_LOCATION) {
-				InstanceDistanceSortLocation ids(m_camera->getRotation());
-				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
-			} else {
-				InstanceDistanceSortCameraAndLocation ids;
-				std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+			switch (strat) {
+				case SORTING_CAMERA: {
+					InstanceDistanceSortCamera ids;
+					std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+				} break;
+				case SORTING_LOCATION: {
+					InstanceDistanceSortLocation ids(m_camera->getRotation());
+					std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+				} break;
+				case SORTING_CAMERA_AND_LOCATION: {
+					InstanceDistanceSortCameraAndLocation ids;
+					std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+				} break;
+				default: {
+					InstanceDistanceSortCamera ids;
+					std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+				} break;
 			}
 		}
 	}

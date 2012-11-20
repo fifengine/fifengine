@@ -37,27 +37,38 @@
 namespace FIFE {
 	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -2;
 
-	RenderItem::RenderItem():
+	RenderItem::RenderItem(Instance* parent):
+		instance(parent),
 		screenpoint(),
 		dimensions(),
-		current_frame(-1),
-		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cached_static_img_angle(0) {
+		transparency(255),
+		currentFrame(-1),
+		m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
+		m_cachedStaticImgAngle(0) {
 	}
 
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
-		if (static_cast<int32_t>(angle) != m_cached_static_img_angle) {
-			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
+		if (static_cast<int32_t>(angle) != m_cachedStaticImgAngle) {
+			m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
 		}
-		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
-			return m_cached_static_img_id;
+		if (m_cachedStaticImgId != STATIC_IMAGE_NOT_INITIALIZED) {
+			return m_cachedStaticImgId;
 		}
 		if(!instance->getObject()->getVisual<ObjectVisual>()) {
 			return -1;
 		}
 
-		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
-		m_cached_static_img_angle = angle;
-		return m_cached_static_img_id;
+		m_cachedStaticImgId = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
+		m_cachedStaticImgAngle = angle;
+		return m_cachedStaticImgId;
+	}
+
+	void RenderItem::reset() {
+		instance = 0;
+		dimensions = Rect();
+		image.reset();
+		transparency = 255;
+		currentFrame = -1;
+		m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
 	}
 }
