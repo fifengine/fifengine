@@ -70,6 +70,8 @@ class LayerDialog(object):
 		# TODO: Ditto for pather?
 		self._widget.findChild(name="pathingBox").items = ['cell_edges_only', 'cell_edges_and_diagonals']
 
+		self._widget.findChild(name="sortingBox").items = ['camera', 'location', 'camera_and_location']
+
 		if layer:
 			cg = layer.getCellGrid()
 			cgtype = 0
@@ -91,6 +93,7 @@ class LayerDialog(object):
 			})
 
 			self._widget.findChild(name="pathingBox").selected = int(layer.getPathingStrategy())
+			self._widget.findChild(name="sortingBox").selected = int(layer.getSortingStrategy())
 			self._widget.findChild(name="gridBox").selected = int(cgtype)
 
 			# fill layer list
@@ -142,6 +145,7 @@ class LayerDialog(object):
 			wdgt.capture(self.updateCheckBox, 'mousePressed')
 		else:
 			self._widget.findChild(name="pathingBox").selected = 0
+			self._widget.findChild(name="sortingBox").selected = 0
 			self._widget.findChild(name="gridBox").selected = 0
 
 		self._widget.mapEvents({
@@ -269,6 +273,7 @@ class LayerDialog(object):
 		
 		grid_type = int(self._widget.collectData('gridBox'))
 		pathing = int(self._widget.collectData('pathingBox'))
+		sorting = int(self._widget.collectData('sortingBox'))
 		walkable = bool(self._widget.collectData('is_walkable'))
 		interact = bool(self._widget.collectData('is_interact'))
 
@@ -311,6 +316,7 @@ class LayerDialog(object):
 				return
 		
 		layer.setPathingStrategy(pathing)
+		layer.setSortingStrategy(sorting)
 		layer.setLayerTransparency(transparency)
 
 		# destroy CellCache

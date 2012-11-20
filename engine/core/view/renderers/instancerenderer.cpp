@@ -404,6 +404,10 @@ namespace FIFE {
 							rec.h = infoa.h;
 							if(infoa.instance != instance && vc.dimensions.intersects(rec)) {
 								vc.transparency = 255 - infoa.trans;
+								// dirty hack to reset the transparency on next pump
+								InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+								visual->setVisible(!visual->isVisible());
+								visual->setVisible(!visual->isVisible());
 							}
 						}
 					}

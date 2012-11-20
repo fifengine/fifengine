@@ -6,6 +6,9 @@
 		</HBox>
 		<Label name="pathingLabel" text="Pathfinding strategy:"/>
 		<DropDown name="pathingBox"/>
+    <Spacer />
+    <Label name="sortingLabel" text="Sorting strategy:"/>
+    <DropDown name="sortingBox"/>
 
 		<Spacer />
 		

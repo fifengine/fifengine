@@ -146,7 +146,7 @@ namespace FIFE {
 					sortingStrategy = "camera_and_location";
 				}
 				break;
-                default:
+				default:
 				{
 					sortingStrategy = "camera";
 				}
