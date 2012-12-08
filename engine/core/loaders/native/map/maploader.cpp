@@ -145,7 +145,7 @@ namespace FIFE {
 			}
 
 			int numElements = 0;
-			int numElementsRetVal = root->QueryValueAttribute("elements", &numElements);
+			root->QueryValueAttribute("elements", &numElements);
 			m_percentDoneListener.setTotalNumberOfElements(numElements);
 
 			const std::string* mapName = root->Attribute(std::string("id"));
@@ -227,17 +227,20 @@ namespace FIFE {
 						double zOffset = 0.0;
 						double xScale = 1.0;
 						double yScale = 1.0;
+						double zScale = 1.0;
 						double rotation = 0.0;
 
 						int xOffsetRetVal = layerElement->QueryValueAttribute("x_offset", &xOffset);
 						int yOffsetRetVal = layerElement->QueryValueAttribute("y_offset", &yOffset);
-						int zOffsetRetVal = layerElement->QueryValueAttribute("z_offset", &zOffset);
+						layerElement->QueryValueAttribute("z_offset", &zOffset);
 						int xScaleRetVal = layerElement->QueryValueAttribute("x_scale", &xScale);
 						int yScaleRetVal = layerElement->QueryValueAttribute("y_scale", &yScale);
+						layerElement->QueryValueAttribute("z_scale", &zScale);
 						int rotationRetVal = layerElement->QueryValueAttribute("rotation", &rotation);
 
 						const std::string* layerName = layerElement->Attribute(std::string("id"));
 						const std::string* pathing = layerElement->Attribute(std::string("pathing"));
+						const std::string* sorting = layerElement->Attribute(std::string("sorting"));
 						const std::string* gridType = layerElement->Attribute(std::string("grid_type"));
 						const std::string* layerType = layerElement->Attribute(std::string("layer_type"));
 						const std::string* layerTypeName = layerElement->Attribute(std::string("layer_type_id"));
@@ -256,6 +259,15 @@ namespace FIFE {
 								pathStrategy = CELL_EDGES_AND_DIAGONALS;
 							}
 
+							SortingStrategy sortStrategy = SORTING_CAMERA;
+							if (sorting) {
+								if (*sorting == "location") {
+									sortStrategy = SORTING_LOCATION;
+								} else if (*sorting == "camera_and_location") {
+									sortStrategy = SORTING_CAMERA_AND_LOCATION;
+								}
+							}
+
 							CellGrid* grid = NULL;
 							if (gridType) {
 								grid = m_model->getCellGrid(*gridType);
@@ -270,6 +282,7 @@ namespace FIFE {
 								grid->setYShift(yOffset);
 								grid->setYScale(yScale);
 								grid->setZShift(zOffset);
+								grid->setZScale(zScale);
 								grid->setRotation(rotation);
 
 								Layer *layer = NULL;
@@ -283,6 +296,7 @@ namespace FIFE {
 
 								if (layer) {
 									layer->setPathingStrategy(pathStrategy);
+									layer->setSortingStrategy(sortStrategy);
 									if (layerType) {
 										if (*layerType == "walkable") {
 											layer->setWalkable(true);
@@ -324,7 +338,7 @@ namespace FIFE {
 
 											int xRetVal = instance->QueryValueAttribute("x", &x);
 											int yRetVal = instance->QueryValueAttribute("y", &y);
-											int zRetVal = instance->QueryValueAttribute("z", &z);
+											instance->QueryValueAttribute("z", &z);
 											int rRetVal = instance->QueryValueAttribute("r", &r);
 
 											if (xRetVal == TIXML_SUCCESS) {
@@ -512,7 +526,7 @@ namespace FIFE {
 												if (isNarrow != 0) {
 													cache->addNarrowCell(cell);
 												}
-												
+												// add cost with given id to cell
 												for (const TiXmlElement* costElement = cellElement->FirstChildElement("cost"); costElement; costElement = costElement->NextSiblingElement("cost")) {
 													const std::string* costId = costElement->Attribute(std::string("id"));
 													double cost = 1.0;
@@ -520,6 +534,13 @@ namespace FIFE {
 													if (costId && success == TIXML_SUCCESS) {
 														cache->registerCost(*costId, cost);
 														cache->addCellToCost(*costId, cell);
+													}
+												}
+												// add area to cell
+												for (const TiXmlElement* areaElement = cellElement->FirstChildElement("area"); areaElement; areaElement = areaElement->NextSiblingElement("area")) {
+													const std::string* areaId = areaElement->Attribute(std::string("id"));
+													if (areaId) {
+														cache->addCellToArea(*areaId, cell);
 													}
 												}
 											}
@@ -554,10 +575,12 @@ namespace FIFE {
 												for (const TiXmlElement* transitionElement = cellElement->FirstChildElement("transition"); transitionElement; transitionElement = transitionElement->NextSiblingElement("transition")) {
 													int targetX = 0;
 													int targetY = 0;
+													int targetZ = 0;
 													success = transitionElement->QueryIntAttribute("x", &targetX);
 													success &= transitionElement->QueryIntAttribute("y", &targetY);
+													transitionElement->QueryIntAttribute("z", &targetZ);
 													if (success == TIXML_SUCCESS) {
-														ModelCoordinate mc(targetX, targetY);
+														ModelCoordinate mc(targetX, targetY, targetZ);
 														Layer* targetLayer = NULL;
 														const std::string* targetLayerId = transitionElement->Attribute(std::string("id"));
 														if (targetLayerId) {
@@ -593,9 +616,11 @@ namespace FIFE {
 							double tilt = 0.0;
 							double zoom = 1.0;
 							double rotation = 0.0;
+							double zToY = 0.0;
 							cameraElement->QueryDoubleAttribute("tilt", &tilt);
 							cameraElement->QueryDoubleAttribute("zoom", &zoom);
 							cameraElement->QueryDoubleAttribute("rotation", &rotation);
+							success = cameraElement->QueryDoubleAttribute("ztoy", &zToY);
 
 							const std::string* viewport = cameraElement->Attribute(std::string("viewport"));
 
@@ -646,6 +671,9 @@ namespace FIFE {
 								cam->setRotation(rotation);
 								cam->setTilt(tilt);
 								cam->setZoom(zoom);
+								if (success == TIXML_SUCCESS) {
+									cam->setZToY(zToY);
+								}
 
                                 // active instance renderer for camera
                                 InstanceRenderer* instanceRenderer = InstanceRenderer::getInstance(cam);

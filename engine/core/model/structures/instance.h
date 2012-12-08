@@ -65,7 +65,10 @@ namespace FIFE {
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
 		ICHANGE_BLOCK = 0x0040,
-		ICHANGE_CELL = 0x0080
+		ICHANGE_CELL = 0x0080,
+		ICHANGE_TRANSPARENCY = 0x0100,
+		ICHANGE_VISIBLE = 0x0200,
+		ICHANGE_STACKPOS = 0x0400
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -327,6 +330,10 @@ namespace FIFE {
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 
+		void callOnTransparencyChange();
+		void callOnVisibleChange();
+		void callOnStackPositionChange();
+
 		/** Sets speed for the map. See Model::setTimeMultiplier.
 		*/
 		void setTimeMultiplier(float multip);
@@ -349,9 +356,9 @@ namespace FIFE {
 		 */
 		void refresh();
 
-		/** Returns a bitmask of changes since previous update
+		/** Returns a bitmask of changes of the last update.
 		 */
-		inline InstanceChangeInfo getChangeInfo();
+		InstanceChangeInfo getChangeInfo();
 
 		/** callback so other instances we depend on can notify us if they go away
 		*/
@@ -484,6 +491,8 @@ namespace FIFE {
 			TimeProvider* m_timeProvider;
 			//! blocking status on previous round
 			bool m_blocking;
+			//! additional change info, used for visual class (transparency, visible, stackpos)
+			InstanceChangeInfo m_additional;
 		};
 		InstanceActivity* m_activity;
 		//! bitmask stating current changes
@@ -534,13 +543,6 @@ namespace FIFE {
 		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
 	};
-
-	inline InstanceChangeInfo Instance::getChangeInfo() {
-		if (m_activity) {
-			return m_changeInfo;
-		}
-		return ICHANGE_NO_CHANGES;
-	}
 } // FIFE
 
 #endif

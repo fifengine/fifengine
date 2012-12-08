@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -28,10 +28,6 @@ namespace FIFE {
 	class Visual2DGfx {
 	public:
 		virtual ~Visual2DGfx();
-		void setTransparency(uint8_t transparency);
-		uint8_t getTransparency();
-		void setVisible(bool visible);
-		uint32_t isVisible();
 	private:
 		Visual2DGfx();
 	};
@@ -55,6 +51,10 @@ namespace FIFE {
 	public:
 		static InstanceVisual* create(Instance* instance);
 		virtual ~InstanceVisual();
+		void setTransparency(uint8_t transparency);
+		uint8_t getTransparency();
+		void setVisible(bool visible);
+		bool isVisible();
 		void setStackPosition(int32_t stackposition);
 		int32_t getStackPosition();
 	private:

@@ -149,12 +149,12 @@ namespace FIFE {
 		/** Returns cell stack position.
 		 * @return The stack position on a cell, range 0-255.
 		 */
-		uint8_t getCellStackPosition();
+		uint8_t getCellStackPosition() const;
 
 		/** Gets if object uses special cost.
 		 * @return A boolean, true if the object uses special cost, otherwise false.
 		 */
-		bool isSpecialCost();
+		bool isSpecialCost() const;
 
 		/** Sets the cost id.
 		 * @param cost A const reference to a string which contains the identifier.
@@ -179,7 +179,7 @@ namespace FIFE {
 		/** Gets if object uses special cost.
 		 * @return A boolean, true if the object uses special cost, otherwise false.
 		 */
-		bool isMultiObject();
+		bool isMultiObject() const;
 
 		/** Adds a multi part identifier.
 		 * @param partId A const reference to a string that holds the identifier.
@@ -189,7 +189,7 @@ namespace FIFE {
 		/** Returns all multi part identifiers.
 		 * @return A const reference to a list that holds the identifiers.
 		 */
-		const std::list<std::string>& getMultiPartIds();
+		const std::list<std::string>& getMultiPartIds() const;
 
 		/** Removes a multi part identifier.
 		 * @param partId A const reference to a string that holds the identifier.
@@ -203,7 +203,7 @@ namespace FIFE {
 		/** Gets if object is a part of a multi object.
 		 * @return A boolean, true if the object is a part of a multi object, otherwise false.
 		 */
-		bool isMultiPart();
+		bool isMultiPart() const;
 
 		/** Sets the object as a part of a multi object.
 		 * @param part A boolean, true if the object is a part of a multi object, otherwise false.
@@ -218,7 +218,7 @@ namespace FIFE {
 		/** Returns all multi part objects.
 		 * @return A const reference to a set that holds the objects.
 		 */
-		const std::set<Object*>& getMultiParts();
+		const std::set<Object*>& getMultiParts() const;
 
 		/** Removes a multi part object.
 		 * @param obj A pointer to the part object.
@@ -238,7 +238,7 @@ namespace FIFE {
 		/** Returns all rotationally dependent coordinates from this object part.
 		 * @return A const reference to a multimap which contains the coordinates per rotation.
 		 */
-		const std::multimap<int32_t, ModelCoordinate>& getMultiPartCoordinates();
+		const std::multimap<int32_t, ModelCoordinate>& getMultiPartCoordinates() const;
 
 		/** Returns all object part coordinates for the given rotation.
 		 * @param rotation A integer value for the angle.
@@ -262,7 +262,7 @@ namespace FIFE {
 		/** Returns the rotation anchor for this multi object.
 		 * @return A const reference to a ExactModelCoordinate that holds the anchor coordinate.
 		 */
-		const ExactModelCoordinate& getRotationAnchor();
+		const ExactModelCoordinate& getRotationAnchor() const;
 
 		/** Sets the rotation to restricted.
 		 * If this is enabled the multi object uses only rotation values are which based on multi coordinates.
@@ -273,13 +273,50 @@ namespace FIFE {
 		/** Gets if object uses restricted rotations.
 		 * @return A boolean, true if the object uses restricted rotations, otherwise false.
 		 */
-		bool isRestrictedRotation();
+		bool isRestrictedRotation() const;
 
 		/** Returns the most obvious rotation, based on multi coordinates.
 		 * @param rotation A integer value for the original angle.
 		 * @return A integer value for the obvious rotation.
 		 */
 		int32_t getRestrictedRotation(int32_t rotation);
+
+		/** Sets z-step range for object.
+		 *  0 means it can not climb, with a value of 1 it can climb a z-height of 1 and so on.
+		 * @param zRange The z-step range as int.
+		 */
+		void setZStepRange(int32_t zRange);
+
+		/** Returns z-step range from object. In case it is not limited -1 is returned.
+		 * @return The z-step range as int.
+		 */
+		int32_t getZStepRange() const;
+
+		/** Sets the area id that the instances of this object adds to their cells.
+		 * @param id The area id, default is "".
+		 */
+		void setArea(const std::string& id);
+
+		/** Gets the area id that the instances of this object adds to their cells.
+		 * @return The area id, default is "".
+		 */
+		const std::string& getArea() const;
+
+		/** Adds an area id to walkable area. The instances of this object
+		 *  can only walk on cells that part of the given areas.
+		 * @param id The area id.
+		 */
+		void addWalkableArea(const std::string& id);
+
+		/** Removes an area id from walkable areas.
+		 * @param id The area id.
+		 */
+		void removeWalkableArea(const std::string& id);
+
+		/** Returns a list that contains all walkable area ids.
+		 * @return A list that contains all walkable area ids as strings.
+		 */
+		const std::list<std::string>& getWalkableAreas() const;
 
 		/** Compares equality of two objects
 		 */
@@ -335,6 +372,9 @@ namespace FIFE {
 		//! indicates if object uses only restricted rotations
 		bool m_restrictedRotation;
 
+		//! z range value
+		int32_t m_zRange;
+
 		//! list with part identifiers
 		std::list<std::string> m_multiPartIds;
 
@@ -355,6 +395,10 @@ namespace FIFE {
 
 		//! multi object coordinates
 		std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
+
+		std::string m_area;
+
+		std::list<std::string> m_walkableAreas;
 	};
 
 } //FIFE

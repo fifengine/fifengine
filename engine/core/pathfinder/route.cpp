@@ -43,11 +43,11 @@ namespace FIFE {
 		m_endNode(end),
 		m_walked(0),
 		m_sessionId(-1),
+		m_rotation(0),
 		m_replanned(false),
 		m_costId(""),
 		m_object(NULL) {
 	}
-
 
 	Route::~Route() {
 	}
@@ -109,12 +109,9 @@ namespace FIFE {
 		}
 		if (m_current != m_path.begin()) {
 			--m_current;
-			if (m_current != m_path.begin()) {
-				const Location& loc = *m_current;
-				++m_current;
-				return loc;
-			}
+			const Location& loc = *m_current;
 			++m_current;
+			return loc;
 		}
 		return *m_current;
 	}
@@ -229,6 +226,14 @@ namespace FIFE {
 		return m_sessionId;
 	}
 
+	void Route::setRotation(int32_t rotation) {
+		m_rotation = rotation;
+	}
+
+	int32_t Route::getRotation() {
+		return m_rotation;
+	}
+
 	void Route::setCostId(const std::string& cost) {
 		m_costId = cost;
 	}
@@ -258,6 +263,30 @@ namespace FIFE {
 		}
 		std::vector<ModelCoordinate> coords;
 		return coords;
+	}
+
+	int32_t Route::getZStepRange() {
+		if (!m_object) {
+			return -1;
+		}
+		return m_object->getZStepRange();
+	}
+
+	bool Route::isAreaLimited() {
+		if (m_object) {
+			if (!m_object->getWalkableAreas().empty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	const std::list<std::string> Route::getLimitedAreas() {
+		std::list<std::string> areas;
+		if (m_object) {
+			areas = m_object->getWalkableAreas();
+		}
+		return areas;
 	}
 
 	void Route::setObject(Object* obj) {

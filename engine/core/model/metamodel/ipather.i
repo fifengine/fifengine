@@ -40,7 +40,7 @@ namespace FIFE {
 		virtual ~IPather();
 		virtual Route* createRoute(const Location& start, const Location& end, bool immediate = false, const std::string& cost_id = "") = 0;
 		virtual bool solveRoute(Route* route, int32_t priority = MEDIUM_PRIORITY, bool immediate = false) = 0;
-		virtual bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation) = 0;
+		virtual bool followRoute(const Location& current, Route* route, double speed, Location& nextLocation) = 0;
 		virtual void update() = 0;
 		virtual bool cancelSession(const int32_t sessionId) = 0;
 		virtual void setMaxTicks(int32_t ticks) = 0;

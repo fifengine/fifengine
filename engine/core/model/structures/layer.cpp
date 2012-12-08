@@ -52,29 +52,22 @@ namespace FIFE {
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),
 		m_pathingStrategy(CELL_EDGES_ONLY),
+		m_sortingStrategy(SORTING_CAMERA),
 		m_walkable(false),
 		m_interact(false),
 		m_walkableId(""),
 		m_cellCache(NULL),
 		m_changeListeners(),
 		m_changedInstances(),
-		m_changed(false) {
+		m_changed(false),
+		m_static(false) {
 	}
 
 	Layer::~Layer() {
 		// if this is a walkable layer
-		if (m_walkable) {
-			if (!m_interacts.empty()) {
-				std::vector<Layer*>::iterator it = m_interacts.begin();
-				for (; it != m_interacts.end(); ++it) {
-					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
-					(*it)->setInteract(false, "");
-				}
-			}
-			m_interacts.clear();
-			delete m_cellCache;
+		destroyCellCache();
 		// if this is a interact layer
-		} else if (m_interact) {
+		if (m_interact) {
 			Layer* temp = m_map->getLayer(m_walkableId);
 			if (temp) {
 				temp->removeInteractLayer(this);
@@ -163,6 +156,22 @@ namespace FIFE {
 	}
 
 	void Layer::removeInstance(Instance* instance) {
+		// If the instance is changed and removed on the same pump,
+		// it can happen that the instance can not cleanly be removed,
+		// to avoid this we have to update the instance first and send
+		// the result to the LayerChangeListeners.
+		if (instance->isActive()) {
+			if (instance->update() != ICHANGE_NO_CHANGES) {
+				std::vector<Instance*> updateInstances;
+				updateInstances.push_back(instance);
+				std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+				while (i != m_changeListeners.end()) {
+					(*i)->onLayerChanged(this, updateInstances);
+					++i;
+				}
+			}
+		}
+			
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -181,6 +190,22 @@ namespace FIFE {
 	}
 
 	void Layer::deleteInstance(Instance* instance) {
+		// If the instance is changed and deleted on the same pump,
+		// it can happen that the instance can not cleanly be removed,
+		// to avoid this we have to update the instance first and send
+		// the result to the LayerChangeListeners.
+		if (instance->isActive()) {
+			if (instance->update() != ICHANGE_NO_CHANGES) {
+				std::vector<Instance*> updateInstances;
+				updateInstances.push_back(instance);
+				std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+				while (i != m_changeListeners.end()) {
+					(*i)->onLayerChanged(this, updateInstances);
+					++i;
+				}
+			}
+		}
+
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -196,6 +221,7 @@ namespace FIFE {
 				break;
 			}
 		}
+
 		m_changed = true;
 	}
 
@@ -282,11 +308,23 @@ namespace FIFE {
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
-		m_instancesVisibility = vis;
+		if (m_instancesVisibility != vis) {
+			m_instancesVisibility = vis;
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for (; it != m_instances.end(); ++it) {
+				(*it)->callOnVisibleChange();
+			}
+		}
 	}
 
 	void Layer::setLayerTransparency(uint8_t transparency) {
-		m_transparency = transparency;
+		if (m_transparency != transparency) {
+			m_transparency = transparency;
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for (; it != m_instances.end(); ++it) {
+				(*it)->callOnTransparencyChange();
+			}
+		}
 	}
 
 	uint8_t Layer::getLayerTransparency() {
@@ -294,7 +332,7 @@ namespace FIFE {
 	}
 
 	void Layer::toggleInstancesVisible() {
-		m_instancesVisibility = !m_instancesVisibility;
+		setInstancesVisible(!m_instancesVisibility);
 	}
 
 	bool Layer::areInstancesVisible() const {
@@ -354,6 +392,14 @@ namespace FIFE {
 		return m_pathingStrategy;
 	}
 
+	void Layer::setSortingStrategy(SortingStrategy strategy) {
+		m_sortingStrategy = strategy;
+	}
+
+	SortingStrategy Layer::getSortingStrategy() const {
+		return m_sortingStrategy;
+	}
+
 	void Layer::setWalkable(bool walkable) {
 		m_walkable = walkable;
 	}
@@ -406,6 +452,23 @@ namespace FIFE {
 	
 	CellCache* Layer::getCellCache() {
 		return m_cellCache;
+	}
+
+	void Layer::destroyCellCache() {
+		if (m_walkable) {
+			removeChangeListener(m_cellCache->getCellCacheChangeListener());
+			if (!m_interacts.empty()) {
+				std::vector<Layer*>::iterator it = m_interacts.begin();
+				for (; it != m_interacts.end(); ++it) {
+					(*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
+					(*it)->setInteract(false, "");
+				}
+				m_interacts.clear();
+			}
+			delete m_cellCache;
+			m_cellCache = NULL;
+			m_walkable = false;
+		}
 	}
 
 	bool Layer::update() {
@@ -463,5 +526,13 @@ namespace FIFE {
 
 	std::vector<Instance*>& Layer::getChangedInstances() {
 		return m_changedInstances;
+	}
+
+	void Layer::setStatic(bool stati) {
+		m_static = stati;
+	}
+
+	bool Layer::isStatic() {
+		return m_static;
 	}
 } // FIFE

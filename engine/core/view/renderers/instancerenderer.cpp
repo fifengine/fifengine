@@ -54,12 +54,6 @@
 #include "video/opengle/gleimage.h"
 
 
-namespace {
-	uint32_t scale(uint32_t val, double factor) {
-		return static_cast<uint32_t>(ceil(static_cast<double>(val) * factor));
-	}
-}
-
 namespace FIFE {
 	/** Logger to use for this source file.
 	 *  @relates Logger
@@ -220,10 +214,10 @@ namespace FIFE {
 			}
 		}
 
-		// This values comes from glOrtho settings
-		static const double global_z_min = -100.0;
+		// These values come from glOrtho settings
 		static const double global_z_max = 100.0;
 #if 0
+		static const double global_z_min = -100.0;
 		static const double depth_range = fabs(global_z_min - global_z_max);
 
 		// This is how much depth we can sacrifice for given layer
@@ -410,6 +404,10 @@ namespace FIFE {
 							rec.h = infoa.h;
 							if(infoa.instance != instance && vc.dimensions.intersects(rec)) {
 								vc.transparency = 255 - infoa.trans;
+								// dirty hack to reset the transparency on next pump
+								InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+								visual->setVisible(!visual->isVisible());
+								visual->setVisible(!visual->isVisible());
 							}
 						}
 					}
@@ -537,7 +535,6 @@ namespace FIFE {
 			vc.image->forceLoadInternal();
 		}
 
-		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
 			vc.image->getWidth(), vc.image->getHeight(), 32,
 			RMASK, GMASK, BMASK, AMASK);
@@ -644,7 +641,6 @@ namespace FIFE {
 		}
 
 		// not found so we create it
-		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
 			vc.image->getWidth(), vc.image->getHeight(), 32,
 			RMASK, GMASK, BMASK, AMASK);
@@ -784,6 +780,11 @@ namespace FIFE {
 			// the insertion did not happen because the instance
 			// already exists in the map so lets just update its area info
 			AreaInfo& info = insertiter.first->second;
+			info.groups = groups;
+			info.w = w;
+			info.h = h;
+			info.trans = trans;
+			info.front = front;
 		} else {
 			std::pair<InstanceToEffects_t::iterator, bool> iter = m_assigned_instances.insert(std::make_pair(instance, AREA));
 			if (iter.second) {

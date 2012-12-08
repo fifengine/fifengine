@@ -78,7 +78,6 @@ namespace FIFE {
 
 	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
-		m_drag_id(0),
 		m_cursor_type(CURSOR_NATIVE),
 		m_drag_type(CURSOR_NONE),
 		m_native_cursor(NULL),

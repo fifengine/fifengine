@@ -59,6 +59,12 @@ namespace FIFE {
 		CELL_EDGES_AND_DIAGONALS
 	};
 
+	enum SortingStrategy {
+		SORTING_CAMERA,
+		SORTING_LOCATION,
+		SORTING_CAMERA_AND_LOCATION
+	};
+
 	/** Listener interface for changes happening on a layer
 	 */
 	class LayerChangeListener {
@@ -235,6 +241,16 @@ namespace FIFE {
 			 */
 			PathingStrategy getPathingStrategy() const;
 
+			/** Sets sorting strategy for the layer
+			 * @see SortingStrategy
+			 */
+			void setSortingStrategy(SortingStrategy strategy);
+
+			/** Gets sorting strategy for the layer
+			 * @see SortingStrategy
+			 */
+			SortingStrategy getSortingStrategy() const;
+
 			/** Sets walkable for the layer. Only a walkable layer, can create a CellCache and
 			 *  only on a walkable, instances can move. Also interact layer can only be added to walkables.
 			 * @param walkable A boolean that mark a layer as walkable.
@@ -287,6 +303,10 @@ namespace FIFE {
 			 */
 			CellCache* getCellCache();
 
+			/** Destroys the CellCache of this layer.
+			 */
+			void destroyCellCache();
+
 			/** Adds new change listener
 			* @param listener to add
 			*/
@@ -312,6 +332,17 @@ namespace FIFE {
 			 */
 			void setInstanceActivityStatus(Instance* instance, bool active);
 
+			/** Marks this layer as visual static. The result is that everything is rendered as one texture.
+			 *  If you have instances with actions/animations on this layer then they are not displayed correctly.
+			 * Note: Works currently only for OpenGL backend. SDL backend is restricted to the lowest layer.
+			 * @param stati A boolean, true if the layer should be static.
+			 */
+			void setStatic(bool stati);
+
+			/** Returns true, if layer is static.
+			 * @return A boolean, true if the layer is static, otherwise false.
+			*/
+			bool isStatic();
 		protected:
 			//! string identifier
 			std::string m_id;
@@ -331,6 +362,8 @@ namespace FIFE {
 			CellGrid* m_grid;
 			//! pathing strategy for the layer
 			PathingStrategy m_pathingStrategy;
+			//! sorting strategy for rendering
+			SortingStrategy m_sortingStrategy;
 			//! is walkable true/false
 			bool m_walkable;
 			//! is interact true/false
@@ -347,6 +380,8 @@ namespace FIFE {
 			std::vector<Instance*> m_changedInstances;
 			//! true if layer (or it's instance) information was changed during previous update round
 			bool m_changed;
+			//! true if layer is static
+			bool m_static;
 	};
 
 } // FIFE

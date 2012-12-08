@@ -51,7 +51,7 @@ namespace FIFE {
 		const ModelCoordinate a_coord = a.getLayerCoordinates();
 		const ModelCoordinate b_coord = b.getLayerCoordinates();
 
-		return (a_coord == b_coord) && sameLayer;
+		return (a_coord.x == b_coord.x) && (a_coord.y == b_coord.y) && sameLayer;
 	}
 
 	void RoutePather::update() {
@@ -202,6 +202,38 @@ namespace FIFE {
 				}
 			}
 		}
+		
+		if (route->isAreaLimited()) {
+			// check if target or neighbors are on one of the areas
+			bool sameAreas = false;
+			const std::list<std::string> areas = route->getLimitedAreas();
+			std::list<std::string>::const_iterator area_it = areas.begin();
+			for (; area_it != areas.end(); ++area_it) {
+				if (endCache->isCellInArea(*area_it, endCell)) {
+					sameAreas = true;
+					break;
+				}
+			}
+			if (!sameAreas) {
+				const std::vector<Cell*>& neighbors = endCell->getNeighbors();
+				if (neighbors.empty()) {
+					return false;
+				}
+				area_it = areas.begin();
+				for (; area_it != areas.end(); ++area_it) {
+					std::vector<Cell*>::const_iterator neigh_it = neighbors.begin();
+					for (; neigh_it != neighbors.end(); ++neigh_it) {
+						if (endCache->isCellInArea(*area_it, *neigh_it)) {
+							sameAreas = true;
+							break;
+						}
+					}
+				}
+			}
+			if (!sameAreas) {
+				return false;
+			}
+		}
 
 		int32_t sessionId = route->getSessionId();
 		if (sessionId == -1) {
@@ -236,7 +268,7 @@ namespace FIFE {
 		return true;
 	}
 
-	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation, int32_t& rotation) {
+	bool RoutePather::followRoute(const Location& current, Route* route, double speed, Location& nextLocation) {
 		Path path = route->getPath();
 		if (path.empty()) {
 			return false;
@@ -248,11 +280,11 @@ namespace FIFE {
 		Location currentNode = route->getCurrentNode();
 		bool multiCell = route->isMultiCell();
 		if (!locationsEqual(current, currentNode)) {
+			route->setRotation(getAngleBetween(current, currentNode));
 			// special blocker check for multicell
 			if (multiCell) {
-				rotation = getAngleBetween(current, currentNode);
 				std::vector<ModelCoordinate> newCoords = currentNode.getLayer()->getCellGrid()->
-					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(rotation));
+					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
 				newCoords.push_back(currentNode.getLayerCoordinates());
 				const std::set<Object*>& parts = route->getObject()->getMultiParts();
 				std::vector<ModelCoordinate>::const_iterator nco_it = newCoords.begin();
@@ -274,7 +306,6 @@ namespace FIFE {
 					}
 				}
 			} else {
-				rotation = getAngleBetween(current, currentNode);
 				if (currentNode.getLayer()->cellContainsBlockingInstance(currentNode.getLayerCoordinates())) {
 					nextBlocker = true;
 				}
@@ -288,27 +319,54 @@ namespace FIFE {
 			return false;
 		}
 		// calculate distance
+		CellCache* nodeCache = currentNode.getLayer()->getCellCache();
+		CellGrid* nodeGrid = currentNode.getLayer()->getCellGrid();
 		ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
-		CellGrid* grid = current.getLayer()->getCellGrid();
-		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
-		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
+		Cell* tmpCell = nodeCache->getCell(currentNode.getLayerCoordinates());
+		if (tmpCell) {
+			targetPos.z = tmpCell->getLayerCoordinates().z + nodeGrid->getZShift();
+		}
+		double dx = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
+		double dy = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
 		double distance = Mathd::Sqrt(dx * dx + dy * dy);
-
 		// cell speed multi
 		double multi;
-		CellCache* cache = current.getLayer()->getCellCache();
-		if (cache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
+		if (nodeCache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
 			speed *= multi;
 		} else {
-			speed *= cache->getDefaultSpeedMultiplier();
+			speed *= nodeCache->getDefaultSpeedMultiplier();
 		}
 		bool pop = false;
 		if (speed > distance) {
 			speed = distance;
 			pop = true;
 		}
-
 		if (!Mathd::Equal(distance, 0.0) && !pop) {
+			Location prevNode = route->getPreviousNode();
+			CellCache* prevCache = prevNode.getLayer()->getCellCache();
+			CellGrid* prevGrid = prevNode.getLayer()->getCellGrid();
+			ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
+			tmpCell = prevCache->getCell(prevNode.getLayerCoordinates());
+			if (tmpCell) {
+				prevPos.z = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
+			}
+			double cell_dz = (targetPos.z - prevPos.z);
+			if (!Mathd::Equal(cell_dz, 0.0)) {
+				double cell_dx = (targetPos.x - prevPos.x);
+				double cell_dy = (targetPos.y - prevPos.y);
+				double cell_distance = Mathd::Sqrt(cell_dx * cell_dx + cell_dy * cell_dy);
+				if (cell_dz > 0) {
+					if (locationsEqual(current, currentNode)) {
+						instancePos.z = targetPos.z;
+					} else {
+						instancePos.z = prevPos.z + cell_dz - 4*(0.5-distance/cell_distance)*(0.5-distance/cell_distance) * cell_dz;
+					}
+				} else if (cell_dz < 0) {
+					if (locationsEqual(current, currentNode)) {
+						instancePos.z = prevPos.z + 4*(0.5-distance/cell_distance)*(0.5-distance/cell_distance) * cell_dz;
+					}
+				}
+			}
 			instancePos.x += (dx / distance) * speed;
 			instancePos.y += (dy / distance) * speed;
 		} else {
@@ -351,7 +409,7 @@ namespace FIFE {
 				currentNode.getLayer()->cellContainsBlockingInstance(route->getCurrentNode().getLayerCoordinates())) {
 				//set facing to end blocker
 				Location facing = route->getCurrentNode();
-				rotation = getAngleBetween(current, facing);
+				route->setRotation(getAngleBetween(current, facing));
 
 				return false;
 			}

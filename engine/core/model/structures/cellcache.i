@@ -40,11 +40,14 @@ namespace FIFE {
 			Cell* createCell(const ModelCoordinate& mc);
 			Cell* getCell(const ModelCoordinate& mc);
 			void addInteractOnRuntime(Layer* interact);
+			void removeInteractOnRuntime(Layer* interact);
 			const Rect& getSize();
 			void setSize(const Rect& rec);
 			uint32_t getWidth();
 			uint32_t getHeight();
 			int32_t getMaxIndex() const;
+			void setMaxNeighborZ(int32_t z);
+			int32_t getMaxNeighborZ();
 
 			bool isInCellCache(const Location& location) const;
 
@@ -78,6 +81,11 @@ namespace FIFE {
 			void removeCellsFromArea(const std::string& id, const std::vector<Cell*>& cells);
 			void removeArea(const std::string& id);
 			bool existsArea(const std::string& id);
+			std::vector<std::string> getAreas();
+			std::vector<std::string> getCellAreas(Cell* cell);
 			std::vector<Cell*> getAreaCells(const std::string& id);
+			bool isCellInArea(const std::string& id, Cell* cell);
+			void setStaticSize(bool staticSize);
+			bool isStaticSize();
 	};
 }

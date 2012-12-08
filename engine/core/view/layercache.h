@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -55,48 +55,66 @@ namespace FIFE {
 
 		void setLayer(Layer* layer);
 
-		bool needUpdate() { return m_needupdate; }
 		void update(Camera::Transform transform, RenderList& renderlist);
 
 		void addInstance(Instance* instance);
 		void removeInstance(Instance* instance);
-
 		void updateInstance(Instance* instance);
-
+		
+		ImagePtr getCacheImage();
+		void setCacheImage(ImagePtr image);
 
 	private:
-		void collect(const Rect& viewport, std::vector<int32_t>& indices);
-		void reset();
-		void fullUpdate();
+		enum RenderEntryUpdateType {
+			EntryNoneUpdate = 0x00,
+			EntryVisualUpdate = 0x01,
+			EntryPositionUpdate = 0x02,
+			EntryFullUpdate = 0x03
+		};
+		typedef uint8_t RenderEntryUpdate;
 
 		struct Entry {
-			/// Node in m_tree;
+			// Node in m_tree;
 			CacheTree::Node* node;
-
-			/// Index in m_instances;
-			signed instance_index;
-
-			/// Index in m_entries;
-			signed entry_index;
-			/// Force update for entries with animation
-			bool force_update;
+			// Index in m_renderItems;
+			int32_t instanceIndex;
+			// Index in m_entries;
+			int32_t entryIndex;
+			// Force update for entries with animation
+			bool forceUpdate;
+			// Is visible
+			bool visible;
+			// Update info
+			RenderEntryUpdate updateInfo;
 		};
+
+		void collect(const Rect& viewport, std::vector<int32_t>& indices);
+		void reset();
+		void fullUpdate(Camera::Transform transform);
+		void updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
+		bool updateVisual(Entry* entry);
+		void updatePosition(Entry* entry);
+		void sortRenderList(RenderList& renderlist);
 
 		Camera* m_camera;
 		Layer* m_layer;
-		CacheLayerChangeListener* m_layer_observer;
-
-		void updateEntry(Entry& item);
-
-		std::map<Instance*,int32_t> m_instance_map;
-		std::vector<Entry> m_entries;
-
+		CacheLayerChangeListener* m_layerObserver;
 		CacheTree* m_tree;
-		std::vector<RenderItem> m_instances;
+		ImagePtr m_cacheImage;
 
-		bool m_needupdate;
-		bool m_need_sorting;
+		std::map<Instance*, int32_t> m_instance_map;
+		std::vector<Entry*> m_entries;
+		std::vector<RenderItem*> m_renderItems;
+		std::set<int32_t> m_entriesToUpdate;
+		std::deque<int32_t> m_freeEntries;
+
+		bool m_needSorting;
+		double m_zMin;
+		double m_zMax;
+
+		double m_zoom;
+		bool m_zoomed;
+		bool m_straightZoom;
 	};
-
 }
 #endif

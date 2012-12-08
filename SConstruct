@@ -42,7 +42,7 @@ env = Environment(variables = vars,
 			ENV = os.environ,
 			DESTDIR = '${DESTDIR}')
 
-env.EnsureSConsVersion(1,2)
+env.EnsureSConsVersion(2,0)
 
 AddOption('--enable-debug',
 		dest='enable-debug',
@@ -352,6 +352,9 @@ if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
 #set variables based on command line and environment options
 #**************************************************************************
 
+if os.environ.has_key('CXX'):
+	env['CXX'] = os.environ['CXX']
+
 if os.environ.has_key('SWIG'):
 	env['SWIG'] = os.environ['SWIG']
 
@@ -421,7 +424,7 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
 
 opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
-opts['FIFE_REVISION'] = utils.get_fife_revision()
+opts['FIFE_REVISION'] = utils.get_fife_revision(os.getcwd())
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')

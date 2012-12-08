@@ -256,6 +256,19 @@ namespace FIFE {
 					}
 				}
 				
+				const std::string* areaId = root->Attribute(std::string("area_id"));
+				if (areaId) {
+					obj->setArea(*areaId);
+				}
+
+				// loop over all walkable areas
+                for (TiXmlElement* walkableElement = root->FirstChildElement("walkable_area"); walkableElement; walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
+                    const std::string* walkableId = walkableElement->Attribute(std::string("id"));
+					if (walkableId) {
+						obj->addWalkableArea(*walkableId);
+					}
+				}
+
 				int cellStack = 0;
 				root->QueryIntAttribute("cellstack", &cellStack);
 				obj->setCellStackPosition(cellStack);
@@ -266,14 +279,19 @@ namespace FIFE {
 
 				int xRetVal = root->QueryValueAttribute("anchor_x", &ax);
 				int yRetVal = root->QueryValueAttribute("anchor_y", &ay);
-				int zRetVal = root->QueryValueAttribute("anchor_z", &az);
 				if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
 					obj->setRotationAnchor(ExactModelCoordinate(ax, ay, az));
 				}
 
 				int isRestrictedRotation = 0;
-                root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
-                obj->setRestrictedRotation(isRestrictedRotation!=0);
+				root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
+				obj->setRestrictedRotation(isRestrictedRotation!=0);
+
+				int zStep = 0;
+				int zRetVal = root->QueryIntAttribute("z_step_limit", &zStep);
+				if (zRetVal == TIXML_SUCCESS) {
+					obj->setZStepRange(zStep);
+				}
 
 				// loop over all multi parts
                 for (TiXmlElement* multiElement = root->FirstChildElement("multipart"); multiElement; multiElement = multiElement->NextSiblingElement("multipart")) {
@@ -477,7 +495,7 @@ namespace FIFE {
                                     }
 
                                     int direction = 0;
-                                    int success = animElement->QueryIntAttribute("direction", &direction);
+                                    animElement->QueryIntAttribute("direction", &direction);
 
                                     if (action && animation) {
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();

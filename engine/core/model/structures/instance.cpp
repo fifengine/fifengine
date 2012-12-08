@@ -127,7 +127,8 @@ namespace FIFE {
 		m_actionInfo(NULL),
 		m_sayInfo(NULL),
 		m_timeProvider(NULL),
-		m_blocking(source.m_blocking) {
+		m_blocking(source.m_blocking),
+		m_additional(ICHANGE_NO_CHANGES) {
 	}
 
 	Instance::InstanceActivity::~InstanceActivity() {
@@ -138,6 +139,10 @@ namespace FIFE {
 
 	void Instance::InstanceActivity::update(Instance& source) {
 		source.m_changeInfo = ICHANGE_NO_CHANGES;
+		if (m_additional != ICHANGE_NO_CHANGES) {
+			source.m_changeInfo = m_additional;
+			m_additional = ICHANGE_NO_CHANGES;
+		}
 		if (m_location != source.m_location) {
 			source.m_changeInfo |= ICHANGE_LOC;
 			if (m_location.getLayerCoordinates() != source.m_location.getLayerCoordinates()) {
@@ -225,7 +230,7 @@ namespace FIFE {
 					std::ostringstream counter;
 					counter << count;
 					Instance* instance = layer->createInstance(*it, tmp_emc, identifier+counter.str());
-					InstanceVisual* instVisual = InstanceVisual::create(instance);
+					InstanceVisual::create(instance);
 					m_multiInstances.push_back(instance);
 					instance->addDeleteListener(this);
 				}
@@ -281,22 +286,16 @@ namespace FIFE {
 		if(m_location != loc) {
 			if(isActive()) {
 				refresh();
-				if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
-					m_location.getLayer()->getInstanceTree()->removeInstance(this);
-					m_location = loc;
-					m_location.getLayer()->getInstanceTree()->addInstance(this);
-				} else {
-					m_location = loc;
-				}
 			} else {
 				initializeChanges();
-				if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
-					m_location.getLayer()->getInstanceTree()->removeInstance(this);
-					m_location = loc;
-					m_location.getLayer()->getInstanceTree()->addInstance(this);
-				} else {
-					m_location = loc;
-				}
+			}
+
+			if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
+				m_location.getLayer()->getInstanceTree()->removeInstance(this);
+				m_location = loc;
+				m_location.getLayer()->getInstanceTree()->addInstance(this);
+			} else {
+				m_location = loc;
 			}
 		}
 	}
@@ -339,6 +338,11 @@ namespace FIFE {
 
 	void Instance::setBlocking(bool blocking) {
 		if (m_overrideBlocking) {
+			if(isActive()) {
+				refresh();
+			} else {
+				initializeChanges();
+			}
 			m_blocking = blocking;
 		}
 	}
@@ -408,6 +412,7 @@ namespace FIFE {
 		}
 		FL_WARN(_log, "Cannot remove unknown listener");
 	}
+
 	void Instance::initializeAction(const std::string& actionName) {
 		assert(m_object);
 
@@ -467,6 +472,8 @@ namespace FIFE {
 				route->setObject(m_object);
 				route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 					toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
+			} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
+				route->setObject(m_object);
 			}
 			m_activity->m_actionInfo->m_route = route;
 			if (!m_activity->m_actionInfo->m_pather->solveRoute(route)) {
@@ -510,6 +517,8 @@ namespace FIFE {
 			route->setObject(m_object);
 			route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 				toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
+		} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
+			route->setObject(m_object);
 		}
 		FL_DBG(_log, LMsg("starting action ") <<  actionName << " from" << m_location << " to " << *m_activity->m_actionInfo->m_target << " with speed " << speed);
 	}
@@ -627,6 +636,8 @@ namespace FIFE {
 				route->setObject(m_object);
 				route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 					toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
+			} else if (m_object->getZStepRange() != -1 || !m_object->getWalkableAreas().empty()) {
+				route->setObject(m_object);
 			}
 			if (!info->m_pather->solveRoute(route)) {
 				return true;
@@ -656,10 +667,9 @@ namespace FIFE {
 			double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
 			// location for this movement
 			Location nextLocation = m_location;
-			int32_t rotation = m_rotation;
-			bool can_follow = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation, rotation);
+			bool can_follow = info->m_pather->followRoute(m_location, route, distance_to_travel, nextLocation);
 			if (can_follow) {
-				setRotation(rotation);
+				setRotation(route->getRotation());
 				// move to another layer
 				if (m_location.getLayer() != nextLocation.getLayer()) {
 					m_location.getLayer()->getMap()->addInstanceForTransfer(this, nextLocation);
@@ -675,15 +685,7 @@ namespace FIFE {
 					}
 					return false;
 				}
-				// move to another cell
-				if (m_location.getLayerCoordinates() != nextLocation.getLayerCoordinates()) {
-					m_location.getLayer()->getInstanceTree()->removeInstance(this);
-					m_location = nextLocation;
-					m_location.getLayer()->getInstanceTree()->addInstance(this);
-				} else {
-					// move on this cell
-					m_location = nextLocation;
-				}
+				setLocation(nextLocation);
 				return false;
 			}
 			// move to another layer
@@ -701,7 +703,7 @@ namespace FIFE {
 				}
 				return true;
 			}
-			m_location = nextLocation;
+			setLocation(nextLocation);
 			// need new route?
 			if (route->getEndNode().getLayerCoordinates() != m_location.getLayerCoordinates()) {
 				if (m_location.getLayerDistanceTo(target) > 1.5) {
@@ -726,7 +728,7 @@ namespace FIFE {
 		// remove DeleteListeners
 		m_deleteListeners.erase(std::remove(m_deleteListeners.begin(),m_deleteListeners.end(),
 				(InstanceDeleteListener*)NULL),	m_deleteListeners.end());
-		m_activity->update(*this);
+
 		if (!m_activity->m_timeProvider) {
 			bindTimeProvider();
 		}
@@ -759,6 +761,7 @@ namespace FIFE {
 				m_activity->m_actionInfo->m_prev_call_time = m_activity->m_timeProvider->getGameTime();
 			}
 		}
+		m_activity->update(*this);
 		if (m_activity->m_sayInfo) {
 			if (m_activity->m_sayInfo->m_duration > 0) {
 				if (m_activity->m_timeProvider->getGameTime() >= m_activity->m_sayInfo->m_start_time + m_activity->m_sayInfo->m_duration) {
@@ -886,6 +889,40 @@ namespace FIFE {
 	void Instance::refresh() {
 		initializeChanges();
 		bindTimeProvider();
+	}
+
+	InstanceChangeInfo Instance::getChangeInfo() {
+		if (m_activity) {
+			return m_changeInfo;
+		}
+		return ICHANGE_NO_CHANGES;
+	}
+
+	void Instance::callOnTransparencyChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_TRANSPARENCY;
+	}
+
+	void Instance::callOnVisibleChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_VISIBLE;
+	}
+
+	void Instance::callOnStackPositionChange() {
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+		m_activity->m_additional |= ICHANGE_STACKPOS;
 	}
 
 	void Instance::setTimeMultiplier(float multip) {

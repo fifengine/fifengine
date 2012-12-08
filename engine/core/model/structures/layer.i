@@ -42,6 +42,12 @@ namespace FIFE {
 		CELL_EDGES_AND_DIAGONALS
 	};	
 
+	enum SortingStrategy {
+		SORTING_CAMERA,
+		SORTING_LOCATION,
+		SORTING_CAMERA_AND_LOCATION
+	};
+
 	%feature("director") LayerChangeListener;
 	class LayerChangeListener {
 	public:
@@ -88,6 +94,9 @@ namespace FIFE {
 			void setPathingStrategy(PathingStrategy strategy);
 			PathingStrategy getPathingStrategy();
 			
+			void setSortingStrategy(SortingStrategy strategy);
+			SortingStrategy getSortingStrategy() const;
+
 			void setWalkable(bool walkable);
 			bool isWalkable();
 			
@@ -96,14 +105,19 @@ namespace FIFE {
 			const std::string& getWalkableId();
 			
 			void addInteractLayer(Layer* layer);
+			const std::vector<Layer*>& getInteractLayers();
 			void removeInteractLayer(Layer* layer);
 
 			void createCellCache();
 			CellCache* getCellCache();
+			void destroyCellCache();
 			
 			void addChangeListener(LayerChangeListener* listener);
 			void removeChangeListener(LayerChangeListener* listener);
 			bool isChanged();
 			std::vector<Instance*>& getChangedInstances();
+
+			void setStatic(bool stati);
+			bool isStatic();
 	};
 }

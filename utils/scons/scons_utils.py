@@ -137,21 +137,22 @@ def get_fife_version(srcpath):
             
     return '.'.join(versionInfo)
 
-def get_fife_revision():
-	svnversion = which("svnversion")
-	if not svnversion:
-		return "0" # could not find svnverion
-	
-	p = subprocess.Popen(svnversion, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	retval, errors = p.communicate()
+def get_fife_revision(path):
+	svnversion_output = get_program_output('svnversion', [])
+	if svnversion_output is not None:
+		fiferev = svnversion_output.lstrip().rstrip().rstrip('MSP')
+		if fiferev.isdigit():
+			return fiferev
 
-	fiferev = retval.lstrip().rstrip().rstrip('MSP')
-	
-	if not fiferev.isdigit():
-		return "0" #somethine went wrong (could mean a mixed revision)
-	
-	return fiferev
-	
+	subwcrev_output = get_program_output('SubWCRev.exe', [path, '-fm', ])
+	if subwcrev_output is not None:
+		for line in subwcrev_output.split('\n'):
+			if line.startswith('Last committed at revision'):
+				fiferev = line.strip().split(' ')[-1]
+				if fiferev.isdigit():
+					return fiferev
+
+	return "0"
 
 #checks the users PATH environment variable for a executable program and 
 #returns the full path
@@ -170,3 +171,16 @@ def which(program):
                 return exe_file
 
     return None
+
+#Return the data written to stdout if the process succeeds or None if it crashes
+def get_program_output(program, args):
+	program_path = which(program)
+	if not program_path:
+		return None
+
+	process = subprocess.Popen([program_path] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	process.wait()
+
+	if process.returncode != 0:
+		return None
+	return process.stdout.read()

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -57,10 +57,15 @@ namespace FIFE {
 	 */
 	class Camera: public IRendererListener, public IRendererContainer {
 	public:
-		enum Transform {
-			NormalTransform = 0,
-			WarpedTransform = 1
+		enum TransformType {
+			NoneTransform = 0x00,
+			TiltTransform = 0x01,
+			RotationTransform = 0x02,
+			ZoomTransform = 0x04,
+			PositionTransform = 0x08,
+			ZTransform = 0x10
 		};
+		typedef uint32_t Transform;
 
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
@@ -120,6 +125,33 @@ namespace FIFE {
 		 * @return zoom of the camera
 		 */
 		double getZoom() const;
+
+		/** Gets original zToY transformation value.
+		 * @return zToY value of the camera.
+		 */
+		double getOriginalZToY() const;
+
+		/** Sets zToY value for the camera and enables their use.
+		 * This means the factor which influenced the z to y transformation,
+		 * so if you set zToY=32 then 1z corresponds to 32 pixels in y direction.
+		 * @param zToY influenced the z to y transformation of the camera.
+		 */
+		void setZToY(double zToY);
+
+		/** Gets zToY value.
+		 * @return zToY value of the camera.
+		 */
+		double getZToY() const;
+
+		/** Sets z to y manipulation enabled / disabled.
+		 * @param enabled If true then the zToY value is used instead of the original matrix value.
+		 */
+		void setZToYEnabled(bool enabled);
+
+		/** Gets if z to y manipulation is enabled / disabled.
+		 * @return true if z to y manipulation is enabled, otherwise false.
+		 */
+		bool isZToYEnabled() const;
 
 		/** Sets screen cell image dimensions.
 		 * Cell image dimension is basically width and height of a bitmap, that covers
@@ -233,6 +265,10 @@ namespace FIFE {
 		/** Gets if camera is enabled / disabled
 		 */
 		bool isEnabled();
+
+		/** Returns reference to RenderList.
+		 */
+		RenderList& getRenderListRef(Layer* layer);
 
 		/** Returns instances that match given screen coordinate
 		 * @param screen_coords screen coordinates to be used for hit search
@@ -388,10 +424,6 @@ namespace FIFE {
 		 */
 		void updateRenderLists();
 
-		/** Updates LayerCache if necessary
-		 */
-		void cacheUpdate(Layer* layer);
-
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
@@ -404,6 +436,10 @@ namespace FIFE {
 		 */
 		void renderOverlay();
 
+		/** Renders the layer part that is on screen as one image.
+		 */
+		void renderStaticLayer(Layer* layer, bool update);
+
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
 
@@ -415,12 +451,13 @@ namespace FIFE {
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
+		double m_zToY;
+		bool m_enabledZToY;
 		Location m_location;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
 		Rect m_mapViewPort;
 		bool m_mapViewPortUpdated;
-		bool m_view_updated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;
 		double m_reference_scale;
@@ -428,14 +465,14 @@ namespace FIFE {
 		Instance* m_attachedto;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
-		bool m_iswarped; // true, if the geometry had changed
+		// contains the geometry changes
+		Transform m_transform;
 
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
 		// false, if view has not been updated
 		bool m_updated;
-		bool m_need_update;
 
 		RenderBackend* m_renderbackend;
 

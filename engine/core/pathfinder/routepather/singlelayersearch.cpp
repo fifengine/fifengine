@@ -79,13 +79,25 @@ namespace FIFE {
 		ModelCoordinate nextCoord = m_cellCache->convertIntToCoord(m_next);
 		CellGrid* grid = m_cellCache->getLayer()->getCellGrid();
 		Cell* nextCell = m_cellCache->getCell(nextCoord);
+		if (!nextCell) {
+			return;
+		}
+		int32_t cellZ = nextCell->getLayerCoordinates().z;
+		int32_t maxZ = m_route->getZStepRange();
+		bool zLimited = maxZ != -1;
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
+			if (*i == NULL) {
+				continue;
+			}
 			if ((*i)->getLayer()->getCellCache() != m_cellCache) {
 				continue;
 			}
 			int32_t adjacentInt = (*i)->getCellId();
 			if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
+				continue;
+			}
+			if (zLimited && ABS(cellZ-(*i)->getLayerCoordinates().z) > maxZ) {
 				continue;
 			}
 			bool blocker = (*i)->getCellType() != CTYPE_NO_BLOCKER;
@@ -121,6 +133,22 @@ namespace FIFE {
 					}
 				}
 				if (blocker) {
+					continue;
+				}
+			}
+
+			if (m_route->isAreaLimited()) {
+				// check if cell is on one of the areas
+				bool sameAreas = false;
+				const std::list<std::string> areas = m_route->getLimitedAreas();
+				std::list<std::string>::const_iterator area_it = areas.begin();
+				for (; area_it != areas.end(); ++area_it) {
+					if (m_cellCache->isCellInArea(*area_it, *i)) {
+						sameAreas = true;
+						break;
+					}
+				}
+				if (!sameAreas) {
 					continue;
 				}
 			}

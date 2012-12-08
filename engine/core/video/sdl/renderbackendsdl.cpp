@@ -98,7 +98,6 @@ namespace FIFE {
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
-		bool fs = mode.isFullScreen();
 		uint32_t flags = mode.getSDLFlags();
 
 		if (bitsPerPixel != 0) {
@@ -486,9 +485,7 @@ namespace FIFE {
 
 	void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard) {
 		m_target = img->getSurface();
-		if (discard) {
-			setClipArea(img->getArea(), true);
-		}
+		setClipArea(img->getArea(), discard);
 	}
 
 	void RenderBackendSDL::detachRenderTarget(){

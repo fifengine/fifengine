@@ -119,6 +119,9 @@ namespace FIFE {
 							// leader instance
 							Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 							Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+							if (oldcell == newcell) {
+								continue;
+							}
 							if (oldcell) {
 								oldcell->removeInstance(*i);
 							}
@@ -160,6 +163,9 @@ namespace FIFE {
 
 					Cell* oldcell = m_layer->getCellCache()->getCell(oldmc);
 					Cell* newcell = m_layer->getCellCache()->getCell(newmc);
+					if (oldcell == newcell) {
+						continue;
+					}
 					if (oldcell) {
 						oldcell->removeInstance(*i);
 					}
@@ -285,7 +291,7 @@ namespace FIFE {
 		zone->resetCells();
 	}
 
-	const std::set<Cell*>& Zone::getCells() {
+	const std::set<Cell*>& Zone::getCells() const {
 		return m_cells;
 	}
 
@@ -293,11 +299,11 @@ namespace FIFE {
 		m_cells.clear();
 	}
 
-	uint32_t Zone::getId() {
+	uint32_t Zone::getId() const {
 		return m_id;
 	}
 
-	uint32_t Zone::getCellCount() {
+	uint32_t Zone::getCellCount() const {
 		return static_cast<uint32_t>(m_cells.size());
 	}
 
@@ -366,11 +372,13 @@ namespace FIFE {
 		m_layer(layer),
 		m_defaultCostMulti(1.0),
 		m_defaultSpeedMulti(1.0),
+		m_neighborZ(-1),
 		m_blockingUpdate(false),
 		m_fowUpdate(false),
 		m_sizeUpdate(false),
 		m_updated(false),
-		m_searchNarrow(true) {
+		m_searchNarrow(true),
+		m_staticSize(false) {
 		// create cell change listener
 		m_cellZoneListener = new ZoneCellChangeListener(this);
 		// set base size
@@ -465,8 +473,17 @@ namespace FIFE {
 	}
 
 	void CellCache::resize() {
+		if (m_staticSize) {
+			return;
+		}
 		// get new size and check if it has changed
 		Rect newsize = calculateCurrentSize();
+		resize(newsize);
+	}
+
+	void CellCache::resize(const Rect& rec) {
+		// check if size has changed
+		Rect newsize = rec;
 		if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
 			uint32_t w = ABS(newsize.w - newsize.x) + 1;
 			uint32_t h = ABS(newsize.h - newsize.y) + 1;
@@ -540,17 +557,24 @@ namespace FIFE {
 			m_width = w;
 			m_height = h;
 
+			bool zCheck = m_neighborZ != -1;
 			// fill neighbors into cells
 			it = m_cells.begin();
 			for (; it != m_cells.end(); ++it) {
 				std::vector<Cell*>::iterator cit = (*it).begin();
 				for (; cit != (*it).end(); ++cit) {
+					int32_t cellZ = (*cit)->getLayerCoordinates().z;
 					std::vector<ModelCoordinate> coordinates;
 					m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
 					for (std::vector<ModelCoordinate>::iterator mi = coordinates.begin(); mi != coordinates.end(); ++mi) {
 						Cell* c = getCell(*mi);
 						if (*cit == c || !c) {
 							continue;
+						}
+						if (zCheck) {
+							if (ABS(c->getLayerCoordinates().z - cellZ) > m_neighborZ) {
+								continue;
+							}
 						}
 						(*cit)->addNeighbor(c);
 					}
@@ -614,7 +638,7 @@ namespace FIFE {
 					}
 					(*cit)->addNeighbor(c);
 				}
-				// add cell to narrow cells and add listenr for zone change
+				// add cell to narrow cells and add listener for zone change
 				if (m_searchNarrow && !selfblocker && accessible < 3) {
 					addNarrowCell(*cit);
 				}
@@ -719,14 +743,53 @@ namespace FIFE {
 		Rect newsize = calculateCurrentSize();
 		if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
 			resize();
-		} else {
-			CellGrid* cg = m_layer->getCellGrid();
-			const std::vector<Instance*>& instances = interact->getInstances();
-			std::vector<Instance*>::const_iterator it = instances.begin();
-			for (; it != instances.end(); ++it) {
-				Cell* cell = getCell(cg->toLayerCoordinates((*it)->getLocationRef().getMapCoordinates()));
+		}
+		// not optimal but needed if the grids have different geometry
+		for(uint32_t y = 0; y < m_height; ++y) {
+			for(uint32_t x = 0; x < m_width; ++x) {
+				ModelCoordinate mc(m_size.x+x, m_size.y+y);
+				Cell* cell = getCell(mc);
 				if (cell) {
-					cell->addInstance(*it);
+					// convert coordinates
+					ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
+					ModelCoordinate inter_mc = interact->getCellGrid()->toLayerCoordinates(m_layer->getCellGrid()->toMapCoordinates(emc));
+					// check interact layer for instances
+					std::list<Instance*> interact_instances;
+					interact->getInstanceTree()->findInstances(inter_mc, 0, 0, interact_instances);
+					if (!interact_instances.empty()) {
+						// fill interact Instances into Cell
+						cell->addInstances(interact_instances);
+					}
+				}
+			}
+		}
+	}
+
+	void CellCache::removeInteractOnRuntime(Layer* interact) {
+		interact->setInteract(false, "");
+		m_layer->removeInteractLayer(interact);
+		Rect newsize = calculateCurrentSize();
+		if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
+			resize();
+		}
+		// not optimal but needed if the grids have different geometry
+		for(uint32_t y = 0; y < m_height; ++y) {
+			for(uint32_t x = 0; x < m_width; ++x) {
+				ModelCoordinate mc(m_size.x+x, m_size.y+y);
+				Cell* cell = getCell(mc);
+				if (cell) {
+					// convert coordinates
+					ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
+					ModelCoordinate inter_mc = interact->getCellGrid()->toLayerCoordinates(m_layer->getCellGrid()->toMapCoordinates(emc));
+					// check interact layer for instances
+					std::list<Instance*> interact_instances;
+					interact->getInstanceTree()->findInstances(inter_mc, 0, 0, interact_instances);
+					if (!interact_instances.empty()) {
+						// remove interact Instances from Cell
+						for (std::list<Instance*>::iterator it = interact_instances.begin(); it != interact_instances.end(); ++it) {
+							cell->removeInstance(*it);
+						}
+					}
 				}
 			}
 		}
@@ -745,7 +808,7 @@ namespace FIFE {
 	}
 
 	void CellCache::setSize(const Rect& rec) {
-		m_size = rec;
+		resize(rec);
 	}
 
 	uint32_t CellCache::getWidth() {
@@ -782,6 +845,14 @@ namespace FIFE {
 	int32_t CellCache::getMaxIndex() const {
 		int32_t max_index = m_width*m_height;
 		return max_index;
+	}
+
+	void CellCache::setMaxNeighborZ(int32_t z) {
+		m_neighborZ = z;
+	}
+
+	int32_t CellCache::getMaxNeighborZ() {
+		return m_neighborZ;
 	}
 
 	void CellCache::setUpdated(bool updated) {
@@ -1380,6 +1451,30 @@ namespace FIFE {
 		return true;
 	}
 
+	std::vector<std::string> CellCache::getAreas() {
+		std::vector<std::string> areas;
+		std::string last("");
+		StringCellIterator it = m_cellAreas.begin();
+		for (; it != m_cellAreas.end(); ++it) {
+			if (last != (*it).first) {
+				last = (*it).first;
+				areas.push_back(last);
+			}
+		}
+		return areas;
+	}
+
+	std::vector<std::string> CellCache::getCellAreas(Cell* cell) {
+		std::vector<std::string> areas;
+		StringCellIterator it = m_cellAreas.begin();
+		for (; it != m_cellAreas.end(); ++it) {
+			if ((*it).second == cell) {
+				areas.push_back((*it).first);
+			}
+		}
+		return areas;
+	}
+
 	std::vector<Cell*> CellCache::getAreaCells(const std::string& id) {
 		std::vector<Cell*> cells;
 		StringCellPair result = m_cellAreas.equal_range(id);
@@ -1388,6 +1483,17 @@ namespace FIFE {
 			cells.push_back((*it).second);
 		}
 		return cells;
+	}
+
+	bool CellCache::isCellInArea(const std::string& id, Cell* cell) {
+		StringCellPair result = m_cellAreas.equal_range(id);
+		StringCellIterator it = result.first;
+		for (; it != result.second; ++it) {
+			if ((*it).second == cell) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	Rect CellCache::calculateCurrentSize() {
@@ -1409,6 +1515,14 @@ namespace FIFE {
 			}
 		}
 		return newsize;
+	}
+
+	void CellCache::setStaticSize(bool staticSize) {
+		m_staticSize = staticSize;
+	}
+
+	bool CellCache::isStaticSize() {
+		return m_staticSize;
 	}
 
 	void CellCache::setBlockingUpdate(bool update) {

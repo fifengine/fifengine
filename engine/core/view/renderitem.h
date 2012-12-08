@@ -40,7 +40,7 @@ namespace FIFE {
 
 	class RenderItem {
 		public:
-			RenderItem();
+			RenderItem(Instance* parent);
 
 			Instance* instance;
 
@@ -49,6 +49,10 @@ namespace FIFE {
 			* @see ObjectVisual::getStaticImageIndexByAngle
 			*/
 			int32_t getStaticImageIndexByAngle(uint32_t angle, Instance* instance);
+
+			/** Resets the important values.
+			*/
+			void reset();
 
 			// point where instance was drawn during the previous render
 			DoublePoint3D screenpoint;
@@ -63,19 +67,16 @@ namespace FIFE {
 			ImagePtr image;
 
 			// current facing angle
-			int32_t facing_angle;
+			int32_t facingAngle;
 
 			// current transparency
 			uint8_t transparency;
 
-			// current instance z
-			double instance_z;
-
 			// current frame index (e.g. needed for action frame)
-			int32_t current_frame;
+			int32_t currentFrame;
 		private:
-			int32_t m_cached_static_img_id;
-			int32_t m_cached_static_img_angle;
+			int32_t m_cachedStaticImgId;
+			int32_t m_cachedStaticImgAngle;
 	};
 
 	typedef std::vector<RenderItem*> RenderList;

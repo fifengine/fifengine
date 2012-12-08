@@ -175,6 +175,16 @@ namespace FIFE {
 		 */
 		int32_t getSessionId();
 
+		/** Sets the current rotation.
+		 * @param rotation The rotation as integer.
+		 */
+		void setRotation(int32_t rotation);
+
+		/** Returns the current rotation.
+		 * @return The rotation as integer.
+		 */
+		int32_t getRotation();
+
 		/** Sets cost identifier which should be used for pathfinding.
 		 * @param cost A const reference to the string that contains the identifier.
 		 */
@@ -206,13 +216,21 @@ namespace FIFE {
 		 */
 		std::vector<ModelCoordinate> getOccupiedCells(int32_t rotation);
 
-		/** Sets the multi cell object.
-		 * @param obj A pointer to the multi cell object.
+		/** Returns z-step range from object. In case it is not limited -1 is returned.
+		 * @return The z-step range as int.
+		 */
+		int32_t getZStepRange();
+
+		bool isAreaLimited();
+		const std::list<std::string> getLimitedAreas();
+
+		/** Sets the object, needed for multi cell and z-step range.
+		 * @param obj A pointer to the object.
 		 */
 		void setObject(Object* obj);
 
-		/** Returns the multi cell object.
-		 * @param obj A pointer to the multi cell object.
+		/** Returns the object, needed for multi cell and z-step range.
+		 * @return A pointer to the object.
 		 */
 		Object* getObject();
 
@@ -240,6 +258,9 @@ namespace FIFE {
 
 		//! session id of the search
 		int32_t m_sessionId;
+
+		//! current rotation
+		int32_t m_rotation;
 
 		//! is path replanned
 		bool m_replanned;

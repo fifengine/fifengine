@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -84,6 +84,8 @@ namespace FIFE {
 			m_tilt(0),
 			m_rotation(0),
 			m_zoom(1),
+			m_zToY(0),
+			m_enabledZToY(false),
 			m_location(),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
@@ -95,11 +97,10 @@ namespace FIFE {
 			m_enabled(true),
 			m_attachedto(NULL),
 			m_image_dimensions(),
-			m_iswarped(false),
+			m_transform(NoneTransform),
 			m_renderers(),
 			m_pipeline(),
 			m_updated(false),
-			m_need_update(false),
 			m_renderbackend(renderbackend),
 			m_layer_to_instances(),
 			m_lighting(false),
@@ -130,6 +131,7 @@ namespace FIFE {
 
 	void Camera::setTilt(double tilt) {
 		if (!Mathd::Equal(m_tilt, tilt)) {
+			m_transform |= TiltTransform;
 			m_tilt = tilt;
 			updateReferenceScale();
 			updateMatrices();
@@ -142,6 +144,7 @@ namespace FIFE {
 
 	void Camera::setRotation(double rotation) {
 		if (!Mathd::Equal(m_rotation, rotation)) {
+			m_transform |= RotationTransform;
 			m_rotation = rotation;
 			updateMatrices();
 		}
@@ -153,6 +156,7 @@ namespace FIFE {
 
 	void Camera::setZoom(double zoom) {
 		if (!Mathd::Equal(m_zoom, zoom)) {
+			m_transform |= ZoomTransform;
 			m_zoom = zoom;
 			if (m_zoom < 0.001) {
 				m_zoom = 0.001;
@@ -165,11 +169,48 @@ namespace FIFE {
 		return m_zoom;
 	}
 
+	double Camera::getOriginalZToY() const {
+		DoubleMatrix matrix;
+		matrix.loadScale(m_reference_scale, m_reference_scale, m_reference_scale);
+		if (m_location.getLayer()) {
+			CellGrid* cg = m_location.getLayer()->getCellGrid();
+			if (cg) {
+				ExactModelCoordinate pt = m_location.getMapCoordinates();
+				matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
+			}
+		}
+		matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
+		matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		return matrix.m9 * -1.0;
+	}
+
+	void Camera::setZToY(double zToY) {
+		m_enabledZToY = true;
+		if (!Mathd::Equal(m_zToY, zToY)) {
+			m_transform |= ZTransform;
+			m_zToY = zToY;
+			updateMatrices();
+		}
+	}
+
+	double Camera::getZToY() const {
+		return m_zToY;
+	}
+
+	void Camera::setZToYEnabled(bool enabled) {
+		m_enabledZToY = enabled;
+	}
+
+	bool Camera::isZToYEnabled() const {
+		return m_enabledZToY;
+	}
+
 	void Camera::setCellImageDimensions(uint32_t width, uint32_t height) {
 		m_screen_cell_width = width;
 		m_screen_cell_height = height;
 		updateReferenceScale();
 		updateMatrices();
+		m_transform |= PositionTransform;
 	}
 
 	void Camera::setLocation(const Location& location) {
@@ -186,7 +227,8 @@ namespace FIFE {
 		if (!cell_grid) {
 			throw Exception("Camera layer has no cellgrid specified");
 		}
-
+		
+		m_transform |= PositionTransform;
 		m_location = location;
 		updateMatrices();
 
@@ -199,8 +241,6 @@ namespace FIFE {
 		// need to calculate screen-coordinates
 		// which depend on m_location.
 		updateMap(m_location.getMap());
-
-		m_need_update = true;
 	}
 
 	void Camera::updateMap(Map* map) {
@@ -237,8 +277,6 @@ namespace FIFE {
 			return it->second;
 		}
 		Point p;
-		CellGrid* cg = layer->getCellGrid();
-		assert(cg);
 		DoublePoint dimensions = getLogicalCellDimensions(layer);
 		p.x = static_cast<int32_t>(round(m_reference_scale * dimensions.x));
 		p.y = static_cast<int32_t>(round(m_reference_scale * dimensions.y));
@@ -331,18 +369,24 @@ namespace FIFE {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
 				ExactModelCoordinate pt = m_location.getMapCoordinates();
-				m_matrix.applyTranslate( -pt.x *m_reference_scale,-pt.y *m_reference_scale, -pt.z*m_reference_scale);
+				m_matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
 			}
+		}
+		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		if (m_enabledZToY) {
+			m_matrix.m9 = -m_zToY; // z -> y height in pixels
 		}
 		scale = m_zoom;
 		m_matrix.applyScale(scale, scale, scale);
-		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
-		m_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
 		m_matrix.applyTranslate(+m_viewport.x+m_viewport.w/2, +m_viewport.y+m_viewport.h/2, 0);
 		m_inverse_matrix = m_matrix.inverse();
 
 		m_vs_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
 		m_vs_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
+		if (m_enabledZToY) {
+			m_vs_matrix.m9 = -m_zToY; // z -> y height in pixels
+		}
 		m_vs_inverse_matrix = m_vs_matrix.inverse();
 
 		// calculate the screen<->virtual screen transformation
@@ -358,7 +402,7 @@ namespace FIFE {
 		}
 		m_vscreen_2_screen[2*N + 2] = 1;
 		m_screen_2_vscreen = m_vscreen_2_screen.inverse();
-		m_iswarped = true;
+
 		m_mapViewPortUpdated = false;
 		// FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
@@ -373,7 +417,7 @@ namespace FIFE {
 		if (!z_calculated) {
 			calculateZValue(screen_coords);
 		}
-		return m_inverse_matrix  * intPt2doublePt(screen_coords);
+		return m_inverse_matrix * intPt2doublePt(screen_coords);
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
@@ -395,10 +439,8 @@ namespace FIFE {
 	}
 
 	DoublePoint Camera::getLogicalCellDimensions(Layer* layer) {
-		CellGrid* cg = NULL;
-		if (layer) {
-			cg = layer->getCellGrid();
-		}
+		assert(layer);
+		CellGrid* cg = layer->getCellGrid();
 		assert(cg);
 
 		ModelCoordinate cell(0,0);
@@ -431,11 +473,7 @@ namespace FIFE {
 	}
 
 	Point Camera::getRealCellDimensions(Layer* layer) {
-		CellGrid* cg = NULL;
-		if (layer) {
-			cg = layer->getCellGrid();
-		}
-		assert(cg);
+		assert(layer && layer->getCellGrid());
 
 		Location loc(layer);
 		ModelCoordinate cell(0,0);
@@ -456,11 +494,7 @@ namespace FIFE {
 	}
 
 	Point3D Camera::getZOffset(Layer* layer) {
-		CellGrid* cg = NULL;
-		if (layer) {
-			cg = layer->getCellGrid();
-		}
-		assert(cg);
+		assert(layer && layer->getCellGrid());
 
 		Location loc(layer);
 		ModelCoordinate cell(0,0,0);
@@ -482,39 +516,15 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
-	void Camera::cacheUpdate(Layer* layer) {
-		Map* map = m_location.getMap();
-		if (!map) {
-			FL_ERR(_log, "No map for camera found");
-			return;
-		}
-		// if camera need update, we update all caches
-		if (m_iswarped || m_need_update) {
-			updateRenderLists();
-		} else {
-			LayerCache* cache = m_cache[layer];
-			if(!cache) {
-				addLayer(layer);
-				cache = m_cache[layer];
-				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << layer->getId());
-			}
-			// only this cache need an update, e.g. a instance is added/removed
-			if (cache->needUpdate()) {
-				Transform transform = NormalTransform;
-				if (m_iswarped) {
-					transform = WarpedTransform;
-				}
-				RenderList& instances_to_render = m_layer_to_instances[layer];
-				cache->update(transform, instances_to_render);
-			}
-		}
+	RenderList& Camera::getRenderListRef(Layer* layer) {
+		return m_layer_to_instances[layer];
 	}
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
-		cacheUpdate(&layer);
+
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -552,7 +562,6 @@ namespace FIFE {
 		instances.clear();
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
-		cacheUpdate(&layer);
 
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
@@ -603,7 +612,6 @@ namespace FIFE {
 			return;
 		}
 
-		cacheUpdate(layer);
 		const RenderList& layer_instances = m_layer_to_instances[layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -643,23 +651,23 @@ namespace FIFE {
 		if (Mathd::Equal(old_emc.x, new_emc.x) && Mathd::Equal(old_emc.y, new_emc.y)) {
 			return;
 		}
+		m_transform |= PositionTransform;
 		old_emc = new_emc;
 		updateMatrices();
 	}
 
 	void Camera::refresh() {
 		updateMatrices();
-		m_iswarped = true;
+		m_transform |= PositionTransform;
 	}
 
 	void Camera::resetUpdates() {
-		if (m_iswarped || m_need_update) {
-			m_updated = true;
-		} else {
+		if (m_transform == NoneTransform) {
 			m_updated = false;
+		} else {
+			m_updated = true;
 		}
-		m_iswarped = false;
-		m_need_update = false;
+		m_transform = NoneTransform;
 	}
 
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
@@ -852,6 +860,43 @@ namespace FIFE {
 		}
 	}
 
+	void Camera::renderStaticLayer(Layer* layer, bool update) {
+		// ToDo: Remove this function from the camera class to something like engine pre-render.
+		// ToDo: Check if partial rendering of only updated RenderItems to existing FBO is possible/faster in our case.
+		// ToDo: Add and fix support for SDL and OpenGLe backends, for SDL it works only on the lowest layer(alpha/transparent bug).
+		LayerCache* cache = m_cache[layer];
+		ImagePtr cacheImage = cache->getCacheImage();
+		if (!cacheImage.get()) {
+			// the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
+			cacheImage = ImageManager::instance()->loadBlank(m_id+"_virtual_layer_image_"+layer->getId(), m_viewport.w, m_viewport.h);
+			cache->setCacheImage(cacheImage);
+			update = true;
+		}
+		if (update) {
+			// for the case that the viewport size is not the same as the screen size,
+			// we have to change the values for OpenGL and OpenGLe backends
+			Rect rec(0, m_renderbackend->getHeight()-m_viewport.h, m_viewport.w, m_viewport.h);
+			if (m_renderbackend->getName() == "SDL") {
+				rec = m_viewport;
+			}
+			m_renderbackend->attachRenderTarget(cacheImage, true);
+			// here we use the new viewport size
+			m_renderbackend->pushClipArea(rec, false);
+			// render stuff to texture
+			RenderList& instances_to_render = m_layer_to_instances[layer];
+			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+			for (; r_it != m_pipeline.end(); ++r_it) {
+				if ((*r_it)->isActivedLayer(layer)) {
+					(*r_it)->render(this, layer, instances_to_render);
+				}
+			}
+			m_renderbackend->detachRenderTarget();
+			m_renderbackend->popClipArea();
+		}
+		// render cacheImage
+		cacheImage.get()->render(m_viewport);
+	}
+
 	void Camera::updateRenderLists() {
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -859,10 +904,6 @@ namespace FIFE {
 			return;
 		}
 
-		Transform transform = NormalTransform;
-		if (m_iswarped) {
-			transform = WarpedTransform;
-		}
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -873,15 +914,17 @@ namespace FIFE {
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			if (m_iswarped || m_need_update || cache->needUpdate()) {
-				cache->update(transform, instances_to_render);
+			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
+				continue;
 			}
+			cache->update(m_transform, instances_to_render);
 		}
 		resetUpdates();
 	}
 
 	void Camera::render() {
 		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
+
 		updateRenderLists();
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -901,6 +944,11 @@ namespace FIFE {
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for ( ; layer_it != layers.end(); ++layer_it) {
+			// layer with static flag will rendered as one texture
+			if ((*layer_it)->isStatic()) {
+				renderStaticLayer(*layer_it, m_updated);
+				continue;
+			}
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
 			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 			for (; r_it != m_pipeline.end(); ++r_it) {

@@ -49,7 +49,9 @@ namespace FIFE {
 		m_costId(""),
 		m_cost(1.0),
 		m_multiPart(false),
-		m_restrictedRotation(false) {
+		m_restrictedRotation(false),
+		m_zRange(-1),
+		m_area("") {
 	}
 
 	Object::~Object() {
@@ -168,11 +170,11 @@ namespace FIFE {
 		m_cellStack = position;
 	}
 
-	uint8_t Object::getCellStackPosition() {
+	uint8_t Object::getCellStackPosition() const {
 		return m_cellStack;
 	}
 
-	bool Object::isSpecialCost() {
+	bool Object::isSpecialCost() const {
 		return m_costId != "";
 	}
 
@@ -192,7 +194,7 @@ namespace FIFE {
 		return m_cost;
 	}
 
-	bool Object::isMultiObject() {
+	bool Object::isMultiObject() const {
 		return !m_multiPartIds.empty();
 	}
 
@@ -200,7 +202,7 @@ namespace FIFE {
 		m_multiPartIds.push_back(partId);
 	}
 
-	const std::list<std::string>& Object::getMultiPartIds() {
+	const std::list<std::string>& Object::getMultiPartIds() const {
 		return m_multiPartIds;
 	}
 
@@ -218,7 +220,7 @@ namespace FIFE {
 		m_multiPartIds.clear();
 	}
 
-	bool Object::isMultiPart() {
+	bool Object::isMultiPart() const {
 		return m_multiPart;
 	}
 
@@ -230,7 +232,7 @@ namespace FIFE {
 		m_multiParts.insert(obj);
 	}
 
-	const std::set<Object*>& Object::getMultiParts() {
+	const std::set<Object*>& Object::getMultiParts() const {
 		return m_multiParts;
 	}
 
@@ -248,14 +250,14 @@ namespace FIFE {
 		m_partAngleMap[rotation] = rotation;
 	}
 
-	const std::multimap<int32_t, ModelCoordinate>& Object::getMultiPartCoordinates() {
+	const std::multimap<int32_t, ModelCoordinate>& Object::getMultiPartCoordinates() const {
 		return m_multiPartCoordinates;
 	}
 
 	std::vector<ModelCoordinate> Object::getMultiPartCoordinates(int32_t rotation) {
 		std::vector<ModelCoordinate> coordinates;
 		int32_t closest = 0;
-		int32_t index = getIndexByAngle(rotation, m_partAngleMap, closest);
+		getIndexByAngle(rotation, m_partAngleMap, closest);
 		std::pair<std::multimap<int32_t, ModelCoordinate>::iterator,
 			std::multimap<int32_t, ModelCoordinate>::iterator> result = m_multiPartCoordinates.equal_range(closest);
 		std::multimap<int32_t, ModelCoordinate>::iterator it = result.first;
@@ -278,7 +280,7 @@ namespace FIFE {
 			}
 		}
 		int32_t closest = 0;
-		int32_t index = getIndexByAngle(rotation, m_multiAngleMap, closest);
+		getIndexByAngle(rotation, m_multiAngleMap, closest);
 		std::vector<ModelCoordinate> coordinates;
 		std::pair<std::multimap<int32_t, ModelCoordinate>::iterator,
 			std::multimap<int32_t, ModelCoordinate>::iterator> result = m_multiObjectCoordinates.equal_range(closest);
@@ -295,7 +297,7 @@ namespace FIFE {
 		m_rotationAnchor = anchor;
 	}
 
-	const ExactModelCoordinate& Object::getRotationAnchor() {
+	const ExactModelCoordinate& Object::getRotationAnchor() const {
 		return m_rotationAnchor;
 	}
 	
@@ -303,18 +305,48 @@ namespace FIFE {
 		m_restrictedRotation = restrict;
 	}
 
-	bool Object::isRestrictedRotation() {
+	bool Object::isRestrictedRotation() const {
 		return m_restrictedRotation;
 	}
 
 	int32_t Object::getRestrictedRotation(int32_t rotation) {
 		int32_t closest = 0;
 		if (!m_multiAngleMap.empty()) {
-			int32_t index = getIndexByAngle(rotation, m_multiAngleMap, closest);
+			getIndexByAngle(rotation, m_multiAngleMap, closest);
 		} else if (!m_partAngleMap.empty()) {
-			int32_t index = getIndexByAngle(rotation, m_partAngleMap, closest);
+			getIndexByAngle(rotation, m_partAngleMap, closest);
 		}
 		return closest;
+	}
+
+	void Object::setZStepRange(int32_t zRange) {
+		m_zRange = zRange;
+	}
+
+	int32_t Object::getZStepRange() const {
+		return m_zRange;
+	}
+
+	void Object::setArea(const std::string& id) {
+		m_area = id;
+	}
+
+	const std::string& Object::getArea() const {
+		return m_area;
+	}
+
+	void Object::addWalkableArea(const std::string& id) {
+		m_walkableAreas.push_back(id);
+		m_walkableAreas.sort();
+		m_walkableAreas.unique();
+	}
+
+	void Object::removeWalkableArea(const std::string& id) {
+		m_walkableAreas.remove(id);
+	}
+
+	const std::list<std::string>& Object::getWalkableAreas() const {
+		return m_walkableAreas;
 	}
 
 	bool Object::operator==(const Object& obj) const {

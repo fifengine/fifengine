@@ -132,8 +132,7 @@ namespace FIFE {
 			if (m_betweenTargets.empty()) {
 				TransitionInfo* trans = m_currentCache->getCell(m_currentCache->convertIntToCoord(m_lastDestCoordInt))->getTransition();
 				if (trans) {
-					ModelCoordinate mc = trans->m_mc;
-					m_lastStartCoordInt = m_endCache->convertCoordToInt(mc);
+					m_lastStartCoordInt = m_endCache->convertCoordToInt(trans->m_mc);
 				}
 				m_currentCache = m_endCache;
 				m_lastDestCoordInt = m_currentCache->getCell(m_to.getLayerCoordinates())->getCellId();
@@ -142,7 +141,6 @@ namespace FIFE {
 					TransitionInfo* trans = m_currentCache->getCell(m_currentCache->convertIntToCoord(m_lastDestCoordInt))->getTransition();
 					if (trans) {
 						m_lastStartCoordInt = trans->m_layer->getCellCache()->convertCoordToInt(trans->m_mc);
-					} else {
 					}
 				}
 				m_currentCache = m_betweenTargets.front()->getLayer()->getCellCache();
@@ -174,21 +172,32 @@ namespace FIFE {
 			return;
 		}
 
-		ModelCoordinate targCoord = m_currentCache->convertIntToCoord(m_lastStartCoordInt);
 		ModelCoordinate destCoord = m_currentCache->convertIntToCoord(m_lastDestCoordInt);
 		ModelCoordinate nextCoord = m_currentCache->convertIntToCoord(m_next);
 		CellGrid* grid = m_currentCache->getLayer()->getCellGrid();
 		Cell* nextCell = m_currentCache->getCell(nextCoord);
+		if (!nextCell) {
+			return;
+		}
+		int32_t cellZ = nextCell->getLayerCoordinates().z;
+		int32_t maxZ = m_route->getZStepRange();
+		bool zLimited = maxZ != -1;
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		if (adjacents.empty()) {
 			return;
 		}
 		for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
+			if (*i == NULL) {
+				continue;
+			}
 			if ((*i)->getLayer()->getCellCache() != m_currentCache) {
 				continue;
 			}
 			int32_t adjacentInt = (*i)->getCellId();
 			if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
+				continue;
+			}
+			if (zLimited && ABS(cellZ-(*i)->getLayerCoordinates().z) > maxZ) {
 				continue;
 			}
 			bool blocker = (*i)->getCellType() != CTYPE_NO_BLOCKER;
@@ -227,6 +236,22 @@ namespace FIFE {
 					}
 				}
 				if (blocker) {
+					continue;
+				}
+			}
+
+			if (m_route->isAreaLimited()) {
+				// check if cell is on one of the areas
+				bool sameAreas = false;
+				const std::list<std::string> areas = m_route->getLimitedAreas();
+				std::list<std::string>::const_iterator area_it = areas.begin();
+				for (; area_it != areas.end(); ++area_it) {
+					if (m_currentCache->isCellInArea(*area_it, *i)) {
+						sameAreas = true;
+						break;
+					}
+				}
+				if (!sameAreas) {
 					continue;
 				}
 			}
@@ -282,7 +307,8 @@ namespace FIFE {
 		Location newnode(m_currentCache->getLayer());
 		Path path;
 		// This assures that the agent always steps into the center of the target cell.
-		newnode.setLayerCoordinates(m_currentCache->convertIntToCoord(current));
+		newnode.setLayerCoordinates(
+			m_currentCache->getCell(m_currentCache->convertIntToCoord(current))->getLayerCoordinates());
 		path.push_back(newnode);
 		while(current != end) {
 			if (m_spt[current] < 0 ) {

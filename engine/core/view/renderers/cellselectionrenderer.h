@@ -40,49 +40,80 @@ namespace FIFE {
 	 */
 	class CellSelectionRenderer: public RendererBase {
 	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
+		/** Constructor.
+		 *
+		 * @param renderbackend The renderbackend to use.
+		 * @param position The position for this renderer in rendering pipeline.
+		 * @ see setPipelinePosition
 		 */
 		CellSelectionRenderer(RenderBackend* renderbackend, int32_t position);
 
+		/** Copy Constructor.
+		 */
 		CellSelectionRenderer(const CellSelectionRenderer& old);
 
+		/** Makes copy of this renderer.
+		 */
 		RendererBase* clone();
 
 		/** Destructor.
 		 */
 		virtual ~CellSelectionRenderer();
 
+		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		 * given parameters.
+		 *
+		 * @param cam Camera view to draw
+		 * @param layer Current layer to be rendered
+		 * @param instances Instances on the current layer
+		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 
-		/** Returns the renderer name */
+		/** Returns the renderer name.
+		 *
+		 * @return The name as string.
+		 */
 		std::string getName() { return "CellSelectionRenderer"; }
 
-		/** returns instance used in given view
+		/** Gets instance for interface access.
 		 */
 		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
 
-		/** Deselects all locations */
+		/** Deselects all locations.
+		 */
 		void reset();
 
-		/** Selects given location on map
+		/** Selects given location on map.
+		 *
+		 * @param loc The location.
 		 */
 		void selectLocation(const Location* loc);
 
-		/** Deselects given location on map
+		/** Deselects given location on map.
+		 *
+		 * @param loc The location.
 		 */
 		void deselectLocation(const Location* loc);
 
-		/** Returns selected locations
+		/** Returns selected locations.
+		 *
+		 * @return A vector that contains all selected locations.
 		 */
 		const std::vector<Location> getLocations() const { return m_locations; }
 
+		/** Changes the used color.
+		 *
+		 * @param r The value for red, range 0-255.
+		 * @param g The value for green, range 0-255.
+		 * @param b The value for blue, range 0-255.
+		 */
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 	private:
-		// selected locations
+		//! selected locations
 		std::vector<Location> m_locations;
+
+		//! currently used color
 		SDL_Color m_color;
 	};
 

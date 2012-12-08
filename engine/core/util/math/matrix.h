@@ -364,6 +364,7 @@ namespace FIFE {
 				return cofactor_maker(m0,m5,m10, m1,m6,m8, m2,m4,m9);
 			}
 
+		public:
 			union {
 				T m[16];
 				struct {

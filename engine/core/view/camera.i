@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -43,6 +43,11 @@ namespace FIFE {
 		double getRotation() const;
 		void setZoom(double zoom);
 		double getZoom() const;
+		double getOriginalZToY() const;
+		void setZToY(double zToY);
+		double getZToY() const;
+		void setZToYEnabled(bool enabled);
+		bool isZToYEnabled() const;
 		void setLocation(Location location);
 		Location getLocation() const;
 		Location& getLocationRef();

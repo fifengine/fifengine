@@ -76,7 +76,7 @@ namespace FIFE {
 		/** Returns all cells of this zone.
 		 * @return A const reference to a set that contains all cells of this zone.
 		 */
-		const std::set<Cell*>& getCells();
+		const std::set<Cell*>& getCells() const;
 
 		/** Remove all cells from zone but does not alter the cells.
 		 */
@@ -85,12 +85,12 @@ namespace FIFE {
 		/** Returns the zone identifier.
 		 * @return A unsigned integer with the identifier.
 		 */
-		uint32_t getId();
+		uint32_t getId() const;
 
 		/** Returns the number of cells.
 		 * @return A unsigned integer with the number of cells.
 		 */
-		uint32_t getCellCount();
+		uint32_t getCellCount() const;
 
 		/** Returns transistion cells of this zone.
 		 * @param layer A pointer to the layer which should be the target of the transition. If NULL all transistions be returned.
@@ -127,6 +127,12 @@ namespace FIFE {
 				the cache size is adjusted.
 			 */
 			void resize();
+
+			/** Checks the given size and if the size is different with current size then
+				the cache is adjusted.
+			 * @param rec A rect that contains the new size in layer coordinates.
+			 */
+			void resize(const Rect& rec);
 
 			/** Creates cells for this CellCache based on the size of the assigned layer.
 			 */
@@ -169,6 +175,11 @@ namespace FIFE {
 			 * @param interact A pointer to the interact layer.
 			 */
 			void addInteractOnRuntime(Layer* interact);
+
+			/** Removes a interact layer from the CellCache on runtime and sets all needed layer properties.
+			 * @param interact A pointer to the interact layer.
+			 */
+			void removeInteractOnRuntime(Layer* interact);
 
 			/** Returns change listener.
 			 * @return A pointer to the change listener.
@@ -223,6 +234,16 @@ namespace FIFE {
 			 * @return A integer value, the number of cells.
 			 */
 			int32_t getMaxIndex() const;
+
+			/** Sets maximal z range for neighbors.
+			 * @param z The maximal z range as int.
+			 */
+			void setMaxNeighborZ(int32_t z);
+
+			/** Gets maximal z range for neighbors. By default disabled with the value -1.
+			 * @return The maximal z range as int.
+			 */
+			int32_t getMaxNeighborZ();
 
 			/** Sets whether the CellCache need to be updated.
 			 * @param updated A boolean, true means no update is needed, false indicates a update.
@@ -543,11 +564,39 @@ namespace FIFE {
 			 */
 			bool existsArea(const std::string& id);
 
+			/** Returns all area ids.
+			 * @return A vector that contains the area ids.
+			 */
+			std::vector<std::string> getAreas();
+
+			/** Returns all areas of a cell.
+			 * @param A pointer to the cell.
+			 * @return A vector that contains the area ids.
+			 */
+			std::vector<std::string> getCellAreas(Cell* cell);
+
 			/** Returns all cells of an area.
 			 * @param A const reference to string that contains the area id.
 			 * @return A vector that contains the cells from the area.
 			 */
 			std::vector<Cell*> getAreaCells(const std::string& id);
+
+			/** Returns true if cell is part of the area, otherwise false.
+			 * @param A const reference to string that contains the area id.
+			 * @param A pointer to the cell which is used for the check.
+			 * @return A boolean, true if the cell is part of the area, otherwise false.
+			*/
+			bool isCellInArea(const std::string& id, Cell* cell);
+
+			/** Sets the cache size to static so that automatic resize is disabled.
+			 * @param A boolean, true if the cache size is static, otherwise false.
+			 */
+			void setStaticSize(bool staticSize);
+
+			/** Returns if the cache size is static.
+			 * @return A boolean, true if the cache size is static, otherwise false.
+			 */
+			bool isStaticSize();
 
 			void setBlockingUpdate(bool update);
 			void setFowUpdate(bool update);
@@ -588,8 +637,16 @@ namespace FIFE {
 			//! cache height
 			uint32_t m_height;
 
+			//! max z value for neighbors
+			int32_t m_neighborZ;
+
+			//! indicates blocking update
 			bool m_blockingUpdate;
+
+			//! indicates fow update
 			bool m_fowUpdate;
+
+			//! indicates size update
 			bool m_sizeUpdate;
 
 			//! need update
@@ -597,6 +654,9 @@ namespace FIFE {
 
 			//! is automatic seach enabled
 			bool m_searchNarrow;
+
+			//! is automatic size update enabled/disabled
+			bool m_staticSize;
 
 			//! cells with transitions
 			std::vector<Cell*> m_transitions;
