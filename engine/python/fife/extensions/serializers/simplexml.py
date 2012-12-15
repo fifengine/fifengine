@@ -229,6 +229,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 		moduleTree = self._getModuleTree(module)
 		e_type = "str"
 
+		print "Setting name: " + name + " value: " + str(value)
+
 		if isinstance(value, bool): # This must be before int
 			e_type = "bool"
 			value = str(value)

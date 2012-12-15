@@ -77,7 +77,6 @@ class Setting(object):
 		self._app_name = app_name
 		self._settings_file = settings_file
 		self._default_settings_file = default_settings_file
-		self.OptionsDlg = None
 
 		# Holds SettingEntries
 		self._entries = {}

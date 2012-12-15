@@ -194,13 +194,18 @@ class FifePychanSettings(Setting):
 				with different names under modules other than "FIFE" for which we have no
 				default value to set. This will prevent the settings widget from crash
 				"""
-				value = super(FifePychanSettings, self).get(entry.module, entry.name)
+				value = self.get(entry.module, entry.name)
 				
-				if type(entry.initialdata) is list:
+				if isinstance(entry.initialdata, list):
 					try:
 						value = entry.initialdata.index(value)
 					except ValueError:
 						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+				elif isinstance(entry.initialdata, dict):
+					try:
+						value = entry.initialdata.keys().index(value)
+					except ValueError:
+						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata.keys()))
 				entry.initializeWidget(widget, value)
 	
 	def _applySettings(self):
@@ -217,6 +222,8 @@ class FifePychanSettings(Setting):
 				# from the list. This is needed for e.g. dropdowns or listboxs
 				if type(entry.initialdata) is list:
 					data = entry.initialdata[data]
+				elif isinstance(entry.initialdata, dict):
+					data = entry.initialdata.keys()[data]
 
 				# only take action if something really changed
 				if data != self.get(entry.module, entry.name):
