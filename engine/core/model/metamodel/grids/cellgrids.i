@@ -30,9 +30,11 @@
 
 namespace std {
 	%template(ModelCoordinateVector) vector<FIFE::ModelCoordinate>;
+	%template(ExactModelCoordinateVector) vector<FIFE::ExactModelCoordinate>;
 }
 
 namespace FIFE {
+	%apply std::vector<ExactModelCoordinate> &OUTPUT { std::vector<ExactModelCoordinate>& vtx };
 	class CellGrid {
 	public:
 		CellGrid();
