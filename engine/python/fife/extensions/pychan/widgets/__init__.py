@@ -79,9 +79,12 @@ WIDGETS = {
 def registerWidget(cls):
 	"""
 	Register a new Widget class for pychan.
+	
+	If the widget class name is already used you will overwrite the existing
+	definition.  There is no warning to tell you if this has happened.  Be sure
+	to understand what you are doing here!
 	"""
 	global WIDGETS
 	name = cls.__name__
-	if name in WIDGETS:
-		raise InitializationError("Widget class name '%s' already registered." % name)
+
 	WIDGETS[name] = cls
