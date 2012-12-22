@@ -90,8 +90,8 @@ namespace FIFE {
 			}
 		}
 
-		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
+		setScreenMode(mode);
 	}
 
 	void RenderBackendSDL::setScreenMode(const ScreenMode& mode) {
