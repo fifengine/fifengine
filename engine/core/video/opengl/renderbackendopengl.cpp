@@ -142,9 +142,9 @@ namespace FIFE {
 				SDL_FreeSurface(img);
 			}
 		}
-
-		setScreenMode(mode);
+		
 		SDL_WM_SetCaption(title.c_str(), 0);
+		setScreenMode(mode);
 	}
 
 	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {

@@ -148,8 +148,8 @@ namespace FIFE {
 			}
 		}
 
-		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
+		setScreenMode(mode);
 	}
 
 	void RenderBackendOpenGLe::setScreenMode(const ScreenMode& mode) {
