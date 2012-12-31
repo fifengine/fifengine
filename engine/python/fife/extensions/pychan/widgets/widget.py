@@ -222,7 +222,7 @@ class Widget(object):
 		raise RuntimeError("No implementation of clone method for %s" % self.__class__)
 			      
 
-	def execute(self,bind):
+	def execute(self, bind, focus=None):
 		"""
 		Execute a dialog synchronously.
 
@@ -233,6 +233,8 @@ class Widget(object):
 		This function will not return until such an event occurs.
 		The widget will be shown before execution and hidden afterwards.
 		You can only execute root widgets.
+
+		@param focus: name of child widget which should have focus. Defaults to main widget.
 
 		Note: This feature is not tested well, and the API will probably
 		change. Otherwise have fun::
@@ -251,8 +253,12 @@ class Widget(object):
 				self.hide()
 			self.findChild(name=name).capture( _quitThisDialog , group_name = "__execute__" )
 		self.show()
-		self.is_focusable = True
-		self.requestFocus()
+		if focus and self.findChild(name=focus):
+			self.findChild(name=focus).is_focusable = True
+			self.findChild(name=focus).requestFocus()
+		else:
+			self.is_focusable = True
+			self.requestFocus()
 		return get_manager().mainLoop()
 
 	def requestFocus(self):
