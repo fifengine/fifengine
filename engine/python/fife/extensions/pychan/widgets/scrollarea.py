@@ -38,7 +38,9 @@ class ScrollArea(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),
-									   BoolAttr("horizontal_scrollbar") 
+									   BoolAttr("horizontal_scrollbar"),
+									   IntAttr("vertical_scroll_amount"),
+									   IntAttr("horizontal_scroll_amount")
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
@@ -65,7 +67,10 @@ class ScrollArea(Widget):
 				 comment = None,
 				 content = None,
 				 vertical_scrollbar = None,
-				 horizontal_scrollbar = None):
+				 horizontal_scrollbar = None,
+				 vertical_scroll_amount = None,
+				 horizontal_scroll_amount = None
+				 ):
 				 
 		self.real_widget = fife.ScrollArea()
 		self._content = None
@@ -83,6 +88,8 @@ class ScrollArea(Widget):
 		if content is not None: self.content = content
 		if vertical_scrollbar is not None: self.vertical_scrollbar = vertical_scrollbar
 		if horizontal_scrollbar is not None: self.horizontal_scrollbar = horizontal_scrollbar
+		if vertical_scroll_amount is not None: self.vertical_scroll_amount = vertical_scroll_amount
+		if horizontal_scroll_amount is not None: self.horizontal_scroll_amount = horizontal_scroll_amount
 
 	def clone(self, prefix):
 		scrollareaClone = ScrollArea(None, 
@@ -106,7 +113,9 @@ class ScrollArea(Widget):
 						self.comment,
 						None, #NOTE since content is a widget hierarchy it should be cloned too
 						self.vertical_scrollbar,
-						self.horizontal_scrollbar)
+						self.horizontal_scrollbar,
+						self.vertical_scroll_amount,
+						self.horizontal_scroll_amount)
 	
 		scrollareaClone.content = self.content.clone(prefix)
 
