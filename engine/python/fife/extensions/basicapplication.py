@@ -215,6 +215,9 @@ class ApplicationBase(object):
 				self.engine.pump()
 			except RuntimeError, e:
 				print str(e)
+				self.quitRequested = True
+			except:
+				self.quitRequested = True
 
 			self._pump()
 
