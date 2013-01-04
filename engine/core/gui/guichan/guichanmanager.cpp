@@ -79,6 +79,7 @@ namespace FIFE {
 		m_gcn_topcontainer->setFocusable(false);
 		m_had_mouse = false;
 		m_had_widget = false;
+		m_isPressed = false;
 	}
 
 	GUIChanManager::~GUIChanManager() {
@@ -105,14 +106,29 @@ namespace FIFE {
 
 		switch(evt.type) {
 			case SDL_MOUSEBUTTONDOWN:
+				m_isPressed = true;
 				m_had_widget = overWidget;
-			case SDL_MOUSEBUTTONUP:
 				// Always send the button up/down events to guichan
 				m_input->pushInput(evt);
+				// Button was pressed over a widget so we mark the event as processed.
+				if (m_had_widget) {
+					return true;
+				}
 
+				// Button wasn't pressed over a widget so we want to release focus
+				// no matter what.
+				m_focushandler->focusNone();
+				// Don't mark it as processed here so the
+				// other listeners have a chance to process the event.
+				return false;
+
+			case SDL_MOUSEBUTTONUP:
+				m_isPressed = false;
+				// Always send the button up/down events to guichan
+				m_input->pushInput(evt);
 				// Button was pressed over a widget and still is over a widget
 				// so we mark the event as processed.
-				if( m_had_widget && overWidget ) {
+				if (m_had_widget && overWidget) {
 					return true;
 				}
 
@@ -121,25 +137,28 @@ namespace FIFE {
 				if (!m_had_widget) {
 					m_focushandler->focusNone();
 				}
-
 				// Button up was processed by guichan but there was no widget under
 				// the mouse at the time.  Don't mark it as processed here so the
 				// other listeners have a chance to process the event.
 				return false;
 
 			case SDL_MOUSEMOTION:
-				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
+				// If the mouse is over a widget and not dragging.
+				if (overWidget && !m_isPressed) {
 					m_had_mouse = true;
 					m_input->pushInput(evt);
 					return true;
 				}
-				if( m_had_mouse ) {
+				// If the mouse "dragging" a widget.
+				if (m_had_mouse && m_had_widget && m_isPressed) {
 					// We only keep the mouse if a widget/window has requested
 					// dragging.
 					m_had_mouse = m_focushandler->getDraggedWidget() != 0;
 					m_input->pushInput(evt);
 					return true;
 				}
+				// Mouse is already dragging or not over a widget.
+				// Let other listeners have a chance to process the event.
 				return false;
 
 			case SDL_KEYDOWN:

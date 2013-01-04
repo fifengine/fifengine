@@ -176,6 +176,7 @@ namespace FIFE {
 			// Used to accept mouse motion events that leave widget space
 			bool m_had_mouse;
 			bool m_had_widget;
+			bool m_isPressed;
 
 			// default font settings
 			std::string m_fontpath;
