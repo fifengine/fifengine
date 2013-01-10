@@ -121,4 +121,4 @@ class FloatAttr(Attr):
 		try:
 			return float(value)
 		except:
-			raise ParseError("Expected a float.")
+			raise ParserError("Expected a float.")
