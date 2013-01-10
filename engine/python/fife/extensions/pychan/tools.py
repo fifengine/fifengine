@@ -113,7 +113,7 @@ def attrSetCallback(**kwargs):
 	In fact any key starting with C{do__} results in such a method call. The order
 	of execution of such calls is undefined.
 
-	Keys starting with an underscore raise a L{execptions.PrivateFunctionalityError}.
+	Keys starting with an underscore raise a L{exceptions.PrivateFunctionalityError}.
 	"""
 	do_calls = []
 
