@@ -97,12 +97,12 @@ static void handleDirectorException() {
 		char buf[1024];
 		sprintf (buf, "\n\
 import traceback\n\
-s = \"\"\n\
+s = 'Traceback (most recent call last):\\n'\n\
 for filename, line, function, text in traceback.extract_tb(exc_traceback):\n\
-	s = s + ' File \"%%s\", line %%d, in %%s\\n    %%s' %% (filename, line, function, text)\n\
+	s = s + '  File \"%%s\", line %%d, in %%s\\n    %%s' %% (filename, line, function, text)\n\
 	if s[-1] != '\\n': s = s + '\\n'\n\
 for l in traceback.format_exception_only(exc_type, exc_value):\n\
-	s = s + ' ' + l\n\
+	s = s + l\n\
 	if s[-1] != '\\n': s = s + '\\n'\n\
 print s\n\
 ");
