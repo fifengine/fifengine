@@ -318,7 +318,7 @@ namespace FIFE {
 		if (entry->instanceIndex == -1) {
 			return;
 		}
-		bool inserted = (entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate;
+
 		// convert necessary instance update flags to entry update flags
 		const InstanceChangeInfo ici = instance->getChangeInfo();
 		if ((ici & ICHANGE_LOC) == ICHANGE_LOC) {
@@ -331,7 +331,8 @@ namespace FIFE {
 			entry->updateInfo |= EntryVisualUpdate;
 		}
 
-		if (!inserted && entry->updateInfo != EntryNoneUpdate) {
+		// if entry is not already inserted
+		if (!entry->forceUpdate && entry->updateInfo != EntryNoneUpdate) {
 			entry->forceUpdate = true;
 			m_entriesToUpdate.insert(entry->entryIndex);
 		}
