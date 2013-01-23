@@ -143,6 +143,13 @@ def get_fife_revision(path):
 				if fiferev.isdigit():
 					return fiferev
 
+	git_svn_output = get_program_output('git', ['svn', 'info']) or ''
+	for line in git_svn_output.split('\n'):
+		if line.startswith('Revision:'):
+			fiferev = line.strip().split(' ')[-1]
+			if fiferev.isdigit():
+				return fiferev
+
 	return "0"
 
 #checks the users PATH environment variable for a executable program and 
