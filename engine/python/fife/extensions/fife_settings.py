@@ -221,7 +221,7 @@ class Setting(object):
 
 	# set all Settings in either validSetting or defaultSetting
 	def setAllSettings(self,module,settings,validSetting = True):
-		if validSettings:
+		if validSetting:
 			self._validSetting[module] = settings
 		else:
 			self._defaultSetting[module] = settings
