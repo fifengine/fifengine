@@ -40,27 +40,30 @@ from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
 SETTINGS_GUI_XML="""\
 <Window name="Settings" title="Settings">
-	<Label text="Settings menu!" />
-	<HBox>
-		<VBox>
-			<Label text="Resolution:" />
-			<Label text="Renderer:" />
-			<Label text="Light Model:" />
-		</VBox>
-		<VBox min_size="120,60">
-			<DropDown name="screen_resolution" min_size="120,0" />
-			<DropDown name="render_backend" min_size="120,0" />
-			<DropDown name="lighting_model" min_size="120,0" />
-		</VBox>
-	</HBox>
-	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
-	<CheckBox name="enable_sound" text="Enable sound" />
-	<HBox>
+	<VBox>
 		<Spacer />
-		<Button name="cancelButton" text="Cancel" />
-		<Button name="okButton" text="Ok" />
-		<Button name="defaultButton" text="Defaults" />
-	</HBox>
+		<VBox>
+			<HBox>
+				<Label text="Resolution:" />
+				<ListBox name="screen_resolution" min_size="120,0" />
+			</HBox>
+			<HBox>
+				<Label text="Renderer:" />
+				<ListBox name="render_backend" min_size="120,0" />
+			</HBox>
+			<HBox>
+				<Label text="Light Model:" />
+				<ListBox name="lighting_model" min_size="120,0" />
+			</HBox>
+		</VBox>
+		<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
+		<CheckBox name="enable_sound" text="Enable sound" />
+		<HBox>
+			<Button name="cancelButton" text="Cancel" />
+			<Button name="okButton" text="Ok" />
+			<Button name="defaultButton" text="Defaults" />
+		</HBox>
+	</VBox>
 </Window>
 """
 
