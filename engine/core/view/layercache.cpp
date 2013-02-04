@@ -492,6 +492,7 @@ namespace FIFE {
 				}
 			}
 			if (!entry->forceUpdate || !entry->visible) {
+				entry->forceUpdate = false;
 				entry->updateInfo = EntryNoneUpdate;
 				removes.insert(*entry_it);
 			} else {
