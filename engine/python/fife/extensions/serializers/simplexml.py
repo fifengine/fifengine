@@ -260,7 +260,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			attrs = {"name":name, "type":e_type}
 			for k in extra_attrs:
 				if k not in attrs:
-					attrs[k] = extra_args[k]
+					attrs[k] = extra_attrs[k]
 			elm = ET.SubElement(moduleTree, "Setting", attrs)
 			elm.text = value
 
