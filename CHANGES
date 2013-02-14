@@ -10,6 +10,111 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
+== 0.3.4  (2013)                                                              ==
+================================================================================
+
+=== Engine ===
+* Fixed a couple of compiler errors when SDL renderer is chosen (i.e. 
+  HAVE_OPENGL macro is not defined). [t:693]
+* Changed the way instance rotation works. Instead of using a facing location 
+  the instance now use only a rotation value. But the possibility to get and 
+  set facing locations is still available. In case you set a facing location, 
+  internally it is converted to a angle or in case of get, the angle is 
+  converted to a location. [t:647]
+* Fixed grid scaling by camera rotation. [t:695]
+* Optimized camera update() function. Old caused two matrix updates.
+* Changed the angle/rotation functions to use MapCoordinates instead of 
+  ExactLayerCoordinates.
+* Added a virtual destructor to the IResourceManager interface. [t:709]
+* Fixed a problem with the usage of the size_t type. [t:702]
+* Addressed some API inconsistencies. Renamed LogManager::isLoggingToPrompt() 
+  to isLogToPrompt() and LogManager::isLoggingToFile() to isLogToFile(). This 
+  shouldn't affect python clients as the appropriate changes have been made 
+  to the python extension. [t:711]
+* Addressed more API inconsistencies. Renamed (in serveral places) 
+  setMouseAcceleration() to setMouseAccelerationEnabled() and 
+  getMouseAcceleration() to isMouseAccelerationEnabled(). This shouldn't 
+  affect python clients as the appropriate changes have been made to the 
+  python extensions. [t:711]
+* Fixed some problems when zooming at 200% or 300%.. etc etc. Images were not 
+  exactly 2x2 or 3x3. [t:719]
+* Added getMapViewPort() and getLayerViewPort() functions to camera class. 
+  These functions return the position and size of the camera in map or layer 
+  coordinates. CellRenderer make use of it to speed up rendering, especially 
+  when many cells exist in the cache. [t:647]
+* Added Fog of War support.
+* Pathfinder has been completely re-written.
+* Added getDesktopHeight() and getDesktopWidth() to DeviceCaps. [t:669]
+* Enhanced Instance coloring. The new alpha component is used as interpolation
+  factor. [t:729]
+* Ensure SCons version is 2.0+. [t:735]
+* Added the staticLayer feature so that layers can be rendered as one texture.
+  [t:742]
+* Client can now select, per Layer, between three sorting algorithm.
+
+=== Extensions ===
+* Fix event groups in pychan; only the last group's callback used to be 
+  considered.  [t:23]
+* Added the getter and setter functions to the fifelog extension. [t:711]
+* Replace 'dct.has_key(k)' with 'k in dct'. [t:631]
+* You can now overwrite existing widget types without pychan "trying" to throw
+  an exception. There is no feedback if you do overwrite an existing widget, 
+  it will silently allow you to do so. fixes[t:748]
+* Allow client to set focus to a child widget when using widget.execute(). 
+  [t:750]
+* Fixed a bug in the slider widget which caused it to ignore the step length. 
+  [t:754]
+* Unknown exceptions are now caught by BasicApplication and the engine is 
+  exited gracefully. This prevents an endless output of exceptions from being 
+  printed to the console window. [t:755]
+* Added the ability to set the horizontal_scroll_amount and 
+  vertical_scroll_amount via XML for scroll areas. [t:692]
+* Modified the default settings dialog box to no longer use drop downs. This 
+  prevents the dropdown segfault from happening. [t:756]
+* Fix typo in xml serializer.  This was leading to a crash when extra_attrs 
+  were passed. [t:760]
+
+=== Misc ===
+* Added some excludes to the fife.iss file so it doesn't include some files 
+  that it shouldn't when building the windows installer. [t:601]
+* Changed the python executable back to python.exe from pythonw.exe in the 
+  windows installer. pythonw.exe crashes with some version of python when you 
+  output something to the console screen. [t:601]
+* Added PathfinderTest to fife tests. It demonstrates multilayer movement and 
+  how speed and cost multiplier could be used. [t:647]
+* Updated the header file location for fifechan when building with mingw on 
+  windows. [t:698]
+* Update to allow FIFE to find fifechan when it is installed in the libpath. 
+  Tested this on archlinux. [t:698]
+* Allow for parallel builds. fixes[t:696]
+* Removed unused file - freebsd8-config-dist.py. [t:716]
+* Updated the COPYING file to be the current copy of the LGPL 2.1 text. It 
+  seemed to contain an older version of LGPL. fixes[t:718]
+* Modifying code/comments/file headers that apply to this branch to conform to
+  the new coding standard. Also applied the correct eol-style svn property for
+  some of the new files. [t:647]
+* Applying patch provided by gscai. This allows for custom command line 
+  parameters to be passed to the windows build batch files. [t:737]
+* Applying patch provided by gscai. This allows the use of the CXX environment
+  variable to change the path to the desired C++ compiler. [t:738]
+* Fixed a bug where the shooter demo would crash after a few seconds after 
+  starting a new game. This also prevents the player ship from being lost off 
+  the left side of the screen. [t:747]
+
+=== Docs ===
+* Updated the doxygen configuration file to be current with the latest doxygen
+  version.
+* Added a process on the web host to generate doxygen documentation as well as
+  epydocs for the python modules.
+* Doxygen docs now include the FIFE revision number they were generated from.
+* Updated a comment in quadtreerenderer.cpp that was being mistaken by doxygen
+  for the FIFE namespace docs.
+* Added FIFE namespace documentation to version.h
+* Fixed a bunch of doxygen warning/error messages (now that we are able to see
+  them). [t:550]
+* Epydoc formatting fixes for xml loader files. [t:724]
+
+================================================================================
 == 0.3.3r3 (April 17th, 2012)                                                  ==
 ================================================================================
 

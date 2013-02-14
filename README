@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
         
 == Introduction ==
-Welcome to the FIFE v0.3.3r3 README. This snapshot is based on SVN revision 3920
+Welcome to the FIFE v0.3.4 README. This snapshot is based on SVN revision XXXX
 
 == Table of contents ==
 1 Features
@@ -25,7 +25,7 @@ Welcome to the FIFE v0.3.3r3 README. This snapshot is based on SVN revision 3920
 == 1) Features ==
 A complete list of the features that FIFE offers can be found at the project 
 wiki:
- * http://wiki.fifengine.de/index.php?title=Engine_features
+ * http://wiki.fifengine.net/index.php?title=Engine_features
 
 
 == 2) License ==
@@ -80,15 +80,14 @@ Documentation
  * Atlas Creator needs to be documented (#559)
 
 Engine
- * Fallback solution for special characters (Fontsupport) (#302)
- * cameras must be attached to layers (#305)
+ * No fallback solution for special characters (#302)
+ * Cameras must be attached to layers (#305)
  * Loaders have a circular import (#478)
  * Unit-tests are broken (#423)
  * Mouse gets stuck in top left corner after alt+tab in fullscreen modes (#593)
- * Segfault in TimeEvent::managerUpdateEvent (#606)
 
 Guichan/Pychan
- * Fix UTF8 support using vanilla guichan source (#432)
+ * No UTF8 support using vanilla guichan source (#432)
  * Pychan dropdown menus crash FIFE-based client on win32 (#508)
  * Button doesn't react to click when drawn below mouse pointer (#387)
  * Pychan dropdowns refuse to open if there is no space below (#445)
@@ -106,20 +105,18 @@ Build
  * Improve build system shared library support on linux (#575)
  * Cannot build a usable debug version of _fife_d.pyd with mingw
  * _fife.so linked with absurd rpath (#620)
- * Swig interfaces are built each time which can lead to long build times (#670)
+ * Unable to make distclean (#622)
 
 Editor
- * Clean up editor code to match python coding standards (#371)
- * Map editor shouldn't clobber custom attributes (#379)
+ * Editor code does not match coding standards (#371)
+ * Map editor clobbers custom attributes (#379)
  * History bugs (#452)
  * Placing an instance on top of another then undoing resets the original 
    instances properties (#459)
  * Should be able to set the default zoom level for a camera (#467)
- * Editor should allow you to add additional import statements (#468)
  * Misc FIFE Editor crashes (user input validation/exception handling missing) 
    (#537)
  * Editor file dialog uses botched relative paths (#616)
- * Keyerror while saving a new map (#646)
 
 == 5) Troubleshooting ==
 
@@ -142,8 +139,8 @@ We appreciate every kind of feedback concerning the release, the project in
 general and the bundled techdemo. Feedback is a great way to help us to improve 
 FIFE. If you would like to get in contact with us and provide feedback you can 
 either visit our IRC channel or our forums:
- * http://wiki.fifengine.de/index.php?title=IRC
- * http://forums.fifengine.de/index.php?board=5.0
+ * http://wiki.fifengine.net/index.php?title=IRC
+ * http://forums.fifengine.net/index.php?board=5.0
 
 
 == 7) Closing Notes ==
