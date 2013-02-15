@@ -295,7 +295,10 @@ class World(EventListenerBase):
 		renderer.setConcealImage(concimg)
 		renderer.setMaskImage(maskimg)
 		renderer.setFogOfWarLayer(self.map.getLayer('TechdemoMapGroundObjectLayer'))
-		renderer.setEnabledFogOfWar(True)
+		
+		#disable FoW by default.  Users can turn it on with the 'f' key.
+		renderer.setEnabledFogOfWar(False)
+		
 		#renderer.setEnabledBlocking(True)
 
 		# Set up the second camera
@@ -341,6 +344,10 @@ class World(EventListenerBase):
 		elif keystr == 'r':
 			self.model.deleteMaps()
 			self.load(self.filename)
+		elif keystr == 'f':
+			renderer = fife.CellRenderer.getInstance(self.cameras['main'])
+			renderer.setEnabledFogOfWar(not renderer.isEnabledFogOfWar())
+			self.cameras['main'].refresh()
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360
 		elif keystr == '2':

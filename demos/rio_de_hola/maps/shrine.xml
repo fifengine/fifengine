@@ -6054,7 +6054,7 @@
 			<i x="-41.0" o="beebox" z="0.0" y="-34.0" r="90"></i>
 			<i x="-40.0" o="beekeeper" z="0.0" y="-31.0" r="180"></i>
 			<i x="43.0" o="hippie_priest" z="0.0" y="19.0" r="180"></i>
-			<i x="5.0" o="boy" y="4.0" r="0" id="PC" z="0.0" visitor_radius="3" visitor_shape="circle"></i>
+			<i x="5.0" o="boy" y="4.0" r="0" id="PC" z="0.0" visitor_radius="6" visitor_shape="circle"></i>
 			<i x="8.0" o="girl" y="2.0" r="0" id="NPC:girl" z="0.0"></i>
 			<i x="-19.0" o="beach_bar" z="0.0" y="2.0" r="180"></i>
 		</instances>
