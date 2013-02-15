@@ -6,8 +6,8 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8A27DF0C-689B-4B76-8BFC-AFCDD90C1A31}
-AppName=FIFE 0.3.3r3
-AppVerName=FIFE 0.3.3r3
+AppName=FIFE 0.3.4rc1
+AppVerName=FIFE 0.3.4rc1
 AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.net/
 AppSupportURL=http://www.fifengine.net/
@@ -20,7 +20,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_0.3.3r3_installer_win32
+OutputBaseFilename=FIFE_0.3.4rc1_installer_win32
 OutputDir=.
 DisableReadyPage=yes
 
@@ -48,7 +48,7 @@ Source: "..\..\..\CHANGES"; DestDir: "{app}\doc\"; DestName:"Changes.txt"
 Source: "..\..\..\README"; DestDir:"{app}"; DestName: "README.txt"; Flags: isreadme
 
 ; demos
-Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: "rpg,.svn,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: "settings.xml,*.7z,rpg,.svn,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; tools
 Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn,atlas,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -64,7 +64,7 @@ Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\engine\fife-0.3.3r3.win32.exe";
+Filename: "{app}\engine\fife-0.3.4rc1.win32.exe";
 
 
 
