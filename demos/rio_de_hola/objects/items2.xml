@@ -1,5 +1,5 @@
 <?fife type="atlas"?>
-<atlas name="items2.png" namespace="http://www.fifengine.de/xml/rio_de_hola" width="1020" height="863">
+<atlas name="items2.png" namespace="http://www.fifengine.net/xml/rio_de_hola" width="1020" height="863">
 	<image source="shrine/000.png" xpos="0" ypos="0" width="192" height="192"/>
 	<image source="shrine/045.png" xpos="192" ypos="0" width="192" height="192"/>
 	<image source="shrine/090.png" xpos="384" ypos="0" width="192" height="192"/>
@@ -46,7 +46,7 @@
 	<image source="resort/life_belts/red/315.png" xpos="102" ypos="761" width="102" height="102"/>
 </atlas>
 
-<object id="shrine" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="shrine" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="shrine/000.png" direction="0" />
 	<image source="shrine/045.png" direction="45" />
 	<image source="shrine/090.png" direction="90" />
@@ -56,7 +56,7 @@
 	<image source="shrine/270.png" direction="270" />
 	<image source="shrine/315.png" direction="315" />
 </object>
-<object id="pool" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="pool" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/pool/180.png" direction="0" />
 	<image source="resort/pool/045.png" direction="45" />
 	<image source="resort/pool/090.png" direction="90" />
@@ -66,7 +66,7 @@
 	<image source="resort/pool/090.png" direction="270" />
 	<image source="resort/pool/135.png" direction="315" />
 </object>
-<object id="skull_pole" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="skull_pole" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="sanctuary/skull_pole/000.png" direction="0" />
 	<image source="sanctuary/skull_pole/045.png" direction="45" />
 	<image source="sanctuary/skull_pole/090.png" direction="90" />
@@ -76,7 +76,7 @@
 	<image source="sanctuary/skull_pole/270.png" direction="270" />
 	<image source="sanctuary/skull_pole/315.png" direction="315" />
 </object>
-<object id="blue_belt" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="blue_belt" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/life_belts/blue/000.png" direction="0" />
 	<image source="resort/life_belts/blue/045.png" direction="45" />
 	<image source="resort/life_belts/blue/090.png" direction="90" />
@@ -86,7 +86,7 @@
 	<image source="resort/life_belts/blue/270.png" direction="270" />
 	<image source="resort/life_belts/blue/315.png" direction="315" />
 </object>
-<object id="green_belt" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="green_belt" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/life_belts/green/000.png" direction="0" />
 	<image source="resort/life_belts/green/045.png" direction="45" />
 	<image source="resort/life_belts/green/090.png" direction="90" />
@@ -96,7 +96,7 @@
 	<image source="resort/life_belts/green/270.png" direction="270" />
 	<image source="resort/life_belts/green/315.png" direction="315" />
 </object>
-<object id="red_belt" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="red_belt" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/life_belts/red/000.png" direction="0" />
 	<image source="resort/life_belts/red/045.png" direction="45" />
 	<image source="resort/life_belts/red/090.png" direction="90" />

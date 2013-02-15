@@ -1,5 +1,5 @@
 <?fife type="object"?>
-<object id="saucer2" namespace="http://www.fifengine.de/xml/tutorial" blocking="0" static="0">
+<object id="saucer2" namespace="http://www.fifengine.net/xml/tutorial" blocking="0" static="0">
 	<action id="fly">
 		<animation source="fly/animation.xml" direction="0" />
 	</action>

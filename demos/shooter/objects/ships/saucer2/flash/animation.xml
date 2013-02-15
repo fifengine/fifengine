@@ -1,4 +1,4 @@
-<animation delay="50" namespace="http://www.fifengine.de/xml/tutorial" id="saucer2:flash" x_offset="0" y_offset="0">
+<animation delay="50" namespace="http://www.fifengine.net/xml/tutorial" id="saucer2:flash" x_offset="0" y_offset="0">
 	<frame source="saucer2_0.png" />
 	<frame source="saucer2_1.png" />
 </animation>

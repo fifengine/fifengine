@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2013 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import os, sys
 
 DIRNAME = 'clients/rio_de_hola/objects/items/common/crates/empty_lid/open'
 DELAY = 130
-NAMESPACE = 'http://www.fifengine.de/xml/rio_de_hola'
+NAMESPACE = 'http://www.fifengine.net/xml/rio_de_hola'
 ACTIONFRAME = -1
 X_OFFSET = 0
 Y_OFFSET = 0
