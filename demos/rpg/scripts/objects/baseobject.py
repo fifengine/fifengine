@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -190,7 +190,7 @@ class BaseGameObject(Serializer):
 		Should not be called directly.  Use the constructor!
 		"""
 		mapmodel = self._gamecontroller.engine.getModel()
-		self._fifeobject = mapmodel.getObject(self._name, self._gamecontroller.settings.get("RPG", "ObjectNamespace", "http://www.fifengine.de/xml/rpg"))
+		self._fifeobject = mapmodel.getObject(self._name, self._gamecontroller.settings.get("RPG", "ObjectNamespace", "http://www.fifengine.net/xml/rpg"))
 		
 		self._instance = layer.createInstance(self._fifeobject, fife.ExactModelCoordinate(self._position.x,self._position.y), self._id)
 		fife.InstanceVisual.create(self._instance)

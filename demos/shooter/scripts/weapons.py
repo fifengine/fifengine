@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -47,7 +47,7 @@ class Projectile(SpaceObject):
 		"""
 		super(Projectile, self).__init__(scene, projectileName, False)
 
-		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
+		self._obj = self._model.getObject(self._name, "http://www.fifengine.net/xml/tutorial")
 	
 		self._type = SHTR_PROJECTILE
 	

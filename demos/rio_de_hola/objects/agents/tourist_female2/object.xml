@@ -1,5 +1,5 @@
 <?fife type="object"?>
-<object blocking="1" id="tourist_female2" namespace="http://www.fifengine.de/xml/rio_de_hola" static="0">
+<object blocking="1" id="tourist_female2" namespace="http://www.fifengine.net/xml/rio_de_hola" static="0">
 	<action id="stand">
 		<animation atlas="stand.png" height="96" width="96">
 			<direction delay="2000" dir="0" frames="1"/>
