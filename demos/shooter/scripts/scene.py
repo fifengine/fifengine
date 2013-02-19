@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -461,7 +461,7 @@ class Scene(object):
 		worldlist = self.getObjectsInRange(0, self._maxnodes)
 		
 		for obj in worldlist:
-			if obj.scenenodeid < leftnode:
+			if obj.scenenodeid < leftnode and obj.type != SHTR_PLAYER:
 				self.queueObjectForRemoval(obj)
 			if obj.type == SHTR_PROJECTILE and obj.scenenodeid > rightnode:
 				self.queueObjectForRemoval(obj)

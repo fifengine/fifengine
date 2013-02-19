@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -151,6 +151,13 @@ def get_fife_revision(path):
 				fiferev = line.strip().split(' ')[-1]
 				if fiferev.isdigit():
 					return fiferev
+
+	git_svn_output = get_program_output('git', ['svn', 'info']) or ''
+	for line in git_svn_output.split('\n'):
+		if line.startswith('Revision:'):
+			fiferev = line.strip().split(' ')[-1]
+			if fiferev.isdigit():
+				return fiferev
 
 	return "0"
 

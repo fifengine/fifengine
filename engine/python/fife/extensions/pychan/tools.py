@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2013 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -113,7 +113,7 @@ def attrSetCallback(**kwargs):
 	In fact any key starting with C{do__} results in such a method call. The order
 	of execution of such calls is undefined.
 
-	Keys starting with an underscore raise a L{execptions.PrivateFunctionalityError}.
+	Keys starting with an underscore raise a L{exceptions.PrivateFunctionalityError}.
 	"""
 	do_calls = []
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2011 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -117,7 +117,7 @@ class Slider(Widget):
 		if orientation is not None: self.orientation = orientation
 		if scale_start is not None: self.scale_start = scale_start
 		if scale_end is not None: self.scale_end = scale_end
-		if step_length is not None: self.step_lenght = step_length
+		if step_length is not None: self.step_length = step_length
 		if marker_length is not None: self.marker_length = marker_length
 		
 		self.accepts_data = True

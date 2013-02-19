@@ -11,7 +11,7 @@
 	<import file="../objects/nature.xml"/>
 	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
-			<i x="-24.0" o="water" y="30.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
+			<i x="-24.0" o="water" y="30.0" r="0" z="0.0" ns="http://www.fifengine.net/xml/rio_de_hola"></i>
 			<i x="-23.0" o="water" z="0.0" y="30.0" r="0"></i>
 			<i x="-22.0" o="water" z="0.0" y="30.0" r="0"></i>
 			<i x="-21.0" o="water" z="0.0" y="30.0" r="0"></i>

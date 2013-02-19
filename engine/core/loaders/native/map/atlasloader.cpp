@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -346,6 +346,76 @@ namespace FIFE {
 				obj->setPather(m_model->getPather("RoutePather"));
 			}
 
+			const std::string* costId = root->Attribute(std::string("cost_id"));
+			if (costId) {
+				obj->setCostId(*costId);
+				double cost = 1.0;
+				int success = root->QueryDoubleAttribute("cost", &cost);
+				if (success == TIXML_SUCCESS) {
+					obj->setCost(cost);
+				}
+			}
+				
+			const std::string* areaId = root->Attribute(std::string("area_id"));
+			if (areaId) {
+				obj->setArea(*areaId);
+			}
+
+			// loop over all walkable areas
+            for (TiXmlElement* walkableElement = root->FirstChildElement("walkable_area"); walkableElement; walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
+                const std::string* walkableId = walkableElement->Attribute(std::string("id"));
+				if (walkableId) {
+					obj->addWalkableArea(*walkableId);
+				}
+			}
+
+			int cellStack = 0;
+			root->QueryIntAttribute("cellstack", &cellStack);
+			obj->setCellStackPosition(cellStack);
+				
+			double ax = 0;
+			double ay = 0;
+			double az = 0;
+
+			int xRetVal = root->QueryValueAttribute("anchor_x", &ax);
+			int yRetVal = root->QueryValueAttribute("anchor_y", &ay);
+			if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+				obj->setRotationAnchor(ExactModelCoordinate(ax, ay, az));
+			}
+
+			int isRestrictedRotation = 0;
+			root->QueryIntAttribute("restricted_rotation", &isRestrictedRotation);
+			obj->setRestrictedRotation(isRestrictedRotation!=0);
+
+			int zStep = 0;
+			int zRetVal = root->QueryIntAttribute("z_step_limit", &zStep);
+			if (zRetVal == TIXML_SUCCESS) {
+				obj->setZStepRange(zStep);
+			}
+
+			// loop over all multi parts
+            for (TiXmlElement* multiElement = root->FirstChildElement("multipart"); multiElement; multiElement = multiElement->NextSiblingElement("multipart")) {
+                const std::string* partId = multiElement->Attribute(std::string("id"));
+				if (partId) {
+					obj->addMultiPartId(*partId);
+				}
+				for (TiXmlElement* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation; multiRotation = multiRotation->NextSiblingElement("rotation")) {
+					int rotation = 0;
+					multiRotation->QueryIntAttribute("rot", &rotation);
+					// relative coordinates which are used to position the object
+					for (TiXmlElement* multiCoordinate = multiRotation->FirstChildElement("occupied_coord"); multiCoordinate; multiCoordinate = multiCoordinate->NextSiblingElement("occupied_coord")) {
+						int x = 0;
+						int y = 0;
+						xRetVal = multiCoordinate->QueryValueAttribute("x", &x);
+						yRetVal = multiCoordinate->QueryValueAttribute("y", &y);
+						if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+							int z = 0;
+							multiCoordinate->QueryIntAttribute("z", &z);
+							obj->addMultiPartCoordinate(rotation, ModelCoordinate(x, y, z));
+						}
+					}
+				}
+			}
 			// loop over all image tags
 			for (TiXmlElement* imageElement = root->FirstChildElement("image"); imageElement; imageElement = imageElement->NextSiblingElement("image")) {
 				const std::string* sourceId = imageElement->Attribute(std::string("source"));

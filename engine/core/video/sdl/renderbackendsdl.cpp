@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -90,8 +90,8 @@ namespace FIFE {
 			}
 		}
 
-		setScreenMode(mode);
 		SDL_WM_SetCaption(title.c_str(), 0);
+		setScreenMode(mode);
 	}
 
 	void RenderBackendSDL::setScreenMode(const ScreenMode& mode) {

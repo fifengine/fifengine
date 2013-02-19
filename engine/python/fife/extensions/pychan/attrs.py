@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2011 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -121,4 +121,4 @@ class FloatAttr(Attr):
 		try:
 			return float(value)
 		except:
-			raise ParseError("Expected a float.")
+			raise ParserError("Expected a float.")

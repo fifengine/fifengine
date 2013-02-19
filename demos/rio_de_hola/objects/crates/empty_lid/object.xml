@@ -1,5 +1,5 @@
 <?fife type="object"?>
-<object blocking="1" id="empty_lid" namespace="http://www.fifengine.de/xml/rio_de_hola" static="1">
+<object blocking="1" id="empty_lid" namespace="http://www.fifengine.net/xml/rio_de_hola" static="1">
 	<image source="045.png" direction="0" />
 	<image source="045.png" direction="45" />
 	<image source="090.png" direction="90" />

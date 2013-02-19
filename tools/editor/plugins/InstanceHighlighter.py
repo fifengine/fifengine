@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2013 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or

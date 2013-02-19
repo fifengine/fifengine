@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -318,7 +318,7 @@ namespace FIFE {
 		if (entry->instanceIndex == -1) {
 			return;
 		}
-		bool inserted = (entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate;
+
 		// convert necessary instance update flags to entry update flags
 		const InstanceChangeInfo ici = instance->getChangeInfo();
 		if ((ici & ICHANGE_LOC) == ICHANGE_LOC) {
@@ -331,7 +331,8 @@ namespace FIFE {
 			entry->updateInfo |= EntryVisualUpdate;
 		}
 
-		if (!inserted && entry->updateInfo != EntryNoneUpdate) {
+		// if entry is not already inserted
+		if (!entry->forceUpdate && entry->updateInfo != EntryNoneUpdate) {
 			entry->forceUpdate = true;
 			m_entriesToUpdate.insert(entry->entryIndex);
 		}
@@ -491,6 +492,7 @@ namespace FIFE {
 				}
 			}
 			if (!entry->forceUpdate || !entry->visible) {
+				entry->forceUpdate = false;
 				entry->updateInfo = EntryNoneUpdate;
 				removes.insert(*entry_it);
 			} else {

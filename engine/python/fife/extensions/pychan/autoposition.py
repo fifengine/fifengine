@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2013 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 Automatic widget positioning
 ============================
 
-You can use the C{position_techinque} attribute
+You can use the C{position_technique} attribute
 on top level widgets which can also be set from xml.
 
 For direct use call L{placeWidget}.
@@ -93,11 +93,11 @@ def placeWidget(widget,position):
         C{explicit} means that the widgets x or y position will not be touched. The rest should be
         self explanatory.
 
-	C{<x_delta>} and C{<y_delta>} must be of the form: +pixel_number or -pixel_number. Or comletely
+	C{<x_delta>} and C{<y_delta>} must be of the form: +pixel_number or -pixel_number. Or completely
         omitted. Note that the sign has to be there for for positive deltas, too.
 
 	For brevity two shortcuts exist:
-          - "explict" -> "explict:explict"
+          - "explicit" -> "explicit:explicit"
           - "automatic" -> "center:center"
         
 	A few examples::

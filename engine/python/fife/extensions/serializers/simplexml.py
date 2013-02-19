@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -260,7 +260,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			attrs = {"name":name, "type":e_type}
 			for k in extra_attrs:
 				if k not in attrs:
-					attrs[k] = extra_args[k]
+					attrs[k] = extra_attrs[k]
 			elm = ET.SubElement(moduleTree, "Setting", attrs)
 			elm.text = value
 

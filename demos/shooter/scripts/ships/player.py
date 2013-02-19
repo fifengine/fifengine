@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2010 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -183,6 +183,8 @@ class Player(Ship):
 		
 		pos = oldpos.getExactLayerCoordinates()
 		
+		newpos = oldpos
+		
 		if not self._boundingBox.intersects(camrect):
 			if (self._boundingBox.x + self._boundingBox.w) < camrect.x:
 				if self._velocity.x < 0:
@@ -192,7 +194,7 @@ class Player(Ship):
 				if not ((self._boundingBox.y + self._boundingBox.h) < camrect.y) and not (self._boundingBox.y > (camrect.y + camrect.h)):
 					pos.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
 					
-				oldpos.setExactLayerCoordinates(pos)
+				newpos.setExactLayerCoordinates(pos)
 			if self._boundingBox.x > ( camrect.x + camrect.w ):
 				self._velocity.x = 0
 
@@ -200,14 +202,20 @@ class Player(Ship):
 				if self._velocity.y < 0:
 					self._velocity.y = 0
 				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
-				oldpos.setExactLayerCoordinates(pos)			
+				newpos.setExactLayerCoordinates(pos)			
 			if self._boundingBox.y > (camrect.y + camrect.h):
 				if self._velocity.y > 0:
 					self._velocity.y = 0
 				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
-				oldpos.setExactLayerCoordinates(pos)
+				newpos.setExactLayerCoordinates(pos)
 
-			self.location = oldpos
+			self.location = newpos
+			
+		if oldpos != self.location:
+			self._changedPosition = True
+		else:
+			self._changedPosition = False
+			
 
 	def _getLives(self):
 		return self._lives

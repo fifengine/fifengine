@@ -1,5 +1,5 @@
 <?fife type="atlas"?>
-<atlas name="items1.png" namespace="http://www.fifengine.de/xml/rio_de_hola" width="1024" height="982">
+<atlas name="items1.png" namespace="http://www.fifengine.net/xml/rio_de_hola" width="1024" height="982">
 	<image source="signs/sign2/000.png" xpos="0" ypos="0" width="128" height="128"/>
 	<image source="signs/sign2/045.png" xpos="128" ypos="0" width="128" height="128"/>
 	<image source="signs/sign2/090.png" xpos="256" ypos="0" width="128" height="128"/>
@@ -156,7 +156,7 @@
 	<image source="matchbox/315.png" xpos="516" ypos="428" width="16" height="16"/>
 </atlas>
 
-<object id="beebox" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="beebox" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="beebox/000.png" direction="0" />
 	<image source="beebox/045.png" direction="45" />
 	<image source="beebox/090.png" direction="90" />
@@ -166,7 +166,7 @@
 	<image source="beebox/270.png" direction="270" />
 	<image source="beebox/315.png" direction="315" />
 </object>
-<object id="coins_map" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="coins_map" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="coins/000.png" direction="0" />
 	<image source="coins/045.png" direction="45" />
 	<image source="coins/090.png" direction="90" />
@@ -176,7 +176,7 @@
 	<image source="coins/270.png" direction="270" />
 	<image source="coins/315.png" direction="315" />
 </object>
-<object id="coins_inventory" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="coins_inventory" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="coins/inventory/000.png" direction="0" />
 	<image source="coins/inventory/045.png" direction="45" />
 	<image source="coins/inventory/090.png" direction="90" />
@@ -186,7 +186,7 @@
 	<image source="coins/inventory/270.png" direction="270" />
 	<image source="coins/inventory/315.png" direction="315" />
 </object>
-<object id="dynamites_lid_broken" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="dynamites_lid_broken" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="common/crates/dynamites_lid_broken/045.png" direction="0" />
 	<image source="common/crates/dynamites_lid_broken/045.png" direction="45" />
 	<image source="common/crates/dynamites_lid_broken/090.png" direction="90" />
@@ -196,7 +196,7 @@
 	<image source="common/crates/dynamites_lid_broken/090.png" direction="270" />
 	<image source="common/crates/dynamites_lid_broken/135.png" direction="315" />
 </object>
-<object id="dynamites_no_lid" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="dynamites_no_lid" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="common/crates/dynamites_no_lid/045.png" direction="0" />
 	<image source="common/crates/dynamites_no_lid/045.png" direction="45" />
 	<image source="common/crates/dynamites_no_lid/090.png" direction="90" />
@@ -206,7 +206,7 @@
 	<image source="common/crates/dynamites_no_lid/090.png" direction="270" />
 	<image source="common/crates/dynamites_no_lid/135.png" direction="315" />
 </object>
-<object id="empty_lid_broken" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="empty_lid_broken" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="common/crates/empty_lid_broken/045.png" direction="0" />
 	<image source="common/crates/empty_lid_broken/045.png" direction="45" />
 	<image source="common/crates/empty_lid_broken/090.png" direction="90" />
@@ -216,7 +216,7 @@
 	<image source="common/crates/empty_lid_broken/090.png" direction="270" />
 	<image source="common/crates/empty_lid_broken/135.png" direction="315" />
 </object>
-<object id="empty_no_lid" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="empty_no_lid" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="common/crates/empty_no_lid/045.png" direction="0" />
 	<image source="common/crates/empty_no_lid/045.png" direction="45" />
 	<image source="common/crates/empty_no_lid/090.png" direction="90" />
@@ -226,7 +226,7 @@
 	<image source="common/crates/empty_no_lid/090.png" direction="270" />
 	<image source="common/crates/empty_no_lid/135.png" direction="315" />
 </object>
-<object id="flask_map" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="flask_map" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="flask/000.png" direction="0" />
 	<image source="flask/045.png" direction="45" />
 	<image source="flask/090.png" direction="90" />
@@ -236,7 +236,7 @@
 	<image source="flask/270.png" direction="270" />
 	<image source="flask/315.png" direction="315" />
 </object>
-<object id="flask_inventory" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="flask_inventory" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="flask/inventory/000.png" direction="0" />
 	<image source="flask/inventory/045.png" direction="45" />
 	<image source="flask/inventory/090.png" direction="90" />
@@ -246,7 +246,7 @@
 	<image source="flask/inventory/270.png" direction="270" />
 	<image source="flask/inventory/315.png" direction="315" />
 </object>
-<object id="matchbox_map" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="matchbox_map" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="matchbox/000.png" direction="0" />
 	<image source="matchbox/045.png" direction="45" />
 	<image source="matchbox/090.png" direction="90" />
@@ -256,7 +256,7 @@
 	<image source="matchbox/270.png" direction="270" />
 	<image source="matchbox/315.png" direction="315" />
 </object>
-<object id="matchbox_inventory" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="matchbox_inventory" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="matchbox/inventory/000.png" direction="0" />
 	<image source="matchbox/inventory/045.png" direction="45" />
 	<image source="matchbox/inventory/090.png" direction="90" />
@@ -266,7 +266,7 @@
 	<image source="matchbox/inventory/270.png" direction="270" />
 	<image source="matchbox/inventory/315.png" direction="315" />
 </object>
-<object id="sign:000" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="sign:000" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="signs/sign1/000.png" direction="0" />
 	<image source="signs/sign1/045.png" direction="45" />
 	<image source="signs/sign1/090.png" direction="90" />
@@ -276,7 +276,7 @@
 	<image source="signs/sign1/270.png" direction="270" />
 	<image source="signs/sign1/315.png" direction="315" />
 </object>
-<object id="sign:001" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="sign:001" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="signs/sign2/000.png" direction="0" />
 	<image source="signs/sign2/045.png" direction="45" />
 	<image source="signs/sign2/090.png" direction="90" />
@@ -286,7 +286,7 @@
 	<image source="signs/sign2/270.png" direction="270" />
 	<image source="signs/sign2/315.png" direction="315" />
 </object>
-<object id="blue_ball" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="blue_ball" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/balls/blue/000.png" direction="0" />
 	<image source="resort/balls/blue/045.png" direction="45" />
 	<image source="resort/balls/blue/090.png" direction="90" />
@@ -296,7 +296,7 @@
 	<image source="resort/balls/blue/270.png" direction="270" />
 	<image source="resort/balls/blue/315.png" direction="315" />
 </object>
-<object id="green_ball" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="green_ball" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/balls/green/000.png" direction="0" />
 	<image source="resort/balls/green/045.png" direction="45" />
 	<image source="resort/balls/green/090.png" direction="90" />
@@ -306,7 +306,7 @@
 	<image source="resort/balls/green/270.png" direction="270" />
 	<image source="resort/balls/green/315.png" direction="315" />
 </object>
-<object id="red_ball" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="red_ball" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/balls/red/000.png" direction="0" />
 	<image source="resort/balls/red/045.png" direction="45" />
 	<image source="resort/balls/red/090.png" direction="90" />
@@ -316,7 +316,7 @@
 	<image source="resort/balls/red/270.png" direction="270" />
 	<image source="resort/balls/red/315.png" direction="315" />
 </object>
-<object id="blue_chair" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="blue_chair" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/deck_chairs/blue/000.png" direction="0" />
 	<image source="resort/deck_chairs/blue/045.png" direction="45" />
 	<image source="resort/deck_chairs/blue/090.png" direction="90" />
@@ -326,7 +326,7 @@
 	<image source="resort/deck_chairs/blue/270.png" direction="270" />
 	<image source="resort/deck_chairs/blue/315.png" direction="315" />
 </object>
-<object id="green_chair" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="green_chair" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/deck_chairs/green/000.png" direction="0" />
 	<image source="resort/deck_chairs/green/045.png" direction="45" />
 	<image source="resort/deck_chairs/green/090.png" direction="90" />
@@ -336,7 +336,7 @@
 	<image source="resort/deck_chairs/green/270.png" direction="270" />
 	<image source="resort/deck_chairs/green/315.png" direction="315" />
 </object>
-<object id="red_chair" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="red_chair" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/deck_chairs/red/000.png" direction="0" />
 	<image source="resort/deck_chairs/red/045.png" direction="45" />
 	<image source="resort/deck_chairs/red/090.png" direction="90" />
@@ -346,7 +346,7 @@
 	<image source="resort/deck_chairs/red/270.png" direction="270" />
 	<image source="resort/deck_chairs/red/315.png" direction="315" />
 </object>
-<object id="large" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="large" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/dispensers/large/045.png" direction="0" />
 	<image source="resort/dispensers/large/045.png" direction="45" />
 	<image source="resort/dispensers/large/090.png" direction="90" />
@@ -356,7 +356,7 @@
 	<image source="resort/dispensers/large/090.png" direction="270" />
 	<image source="resort/dispensers/large/135.png" direction="315" />
 </object>
-<object id="medium" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="medium" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/dispensers/medium/045.png" direction="0" />
 	<image source="resort/dispensers/medium/045.png" direction="45" />
 	<image source="resort/dispensers/medium/090.png" direction="90" />
@@ -366,7 +366,7 @@
 	<image source="resort/dispensers/medium/090.png" direction="270" />
 	<image source="resort/dispensers/medium/135.png" direction="315" />
 </object>
-<object id="small" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="small" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/dispensers/small/045.png" direction="0" />
 	<image source="resort/dispensers/small/045.png" direction="45" />
 	<image source="resort/dispensers/small/090.png" direction="90" />
@@ -376,7 +376,7 @@
 	<image source="resort/dispensers/small/090.png" direction="270" />
 	<image source="resort/dispensers/small/135.png" direction="315" />
 </object>
-<object id="extinguisher" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="extinguisher" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/extinguisher/045.png" direction="0" />
 	<image source="resort/extinguisher/045.png" direction="45" />
 	<image source="resort/extinguisher/090.png" direction="90" />
@@ -386,7 +386,7 @@
 	<image source="resort/extinguisher/090.png" direction="270" />
 	<image source="resort/extinguisher/135.png" direction="315" />
 </object>
-<object id="lunchbox" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="lunchbox" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/lunchbox/045.png" direction="0" />
 	<image source="resort/lunchbox/045.png" direction="45" />
 	<image source="resort/lunchbox/090.png" direction="90" />
@@ -396,10 +396,10 @@
 	<image source="resort/lunchbox/090.png" direction="270" />
 	<image source="resort/lunchbox/135.png" direction="315" />
 </object>
-<object id="blue_sunshade" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="blue_sunshade" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/sunshades/blue/000.png" direction="0" />
 </object>
-<object id="leaf" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="leaf" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/sunshades/leaf/000.png" direction="0" />
 	<image source="resort/sunshades/leaf/000.png" direction="45" />
 	<image source="resort/sunshades/leaf/090.png" direction="90" />
@@ -409,9 +409,9 @@
 	<image source="resort/sunshades/leaf/270.png" direction="270" />
 	<image source="resort/sunshades/leaf/270.png" direction="315" />
 </object>
-<object id="red_sunshade" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="red_sunshade" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="resort/sunshades/red/000.png" direction="0" />
 </object>
-<object id="blocker_visible" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="blocker_visible" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="helpers/blocker_visible/000.png" direction="0" />
 </object>

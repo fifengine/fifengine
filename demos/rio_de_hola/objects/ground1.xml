@@ -1,5 +1,5 @@
 <?fife type="atlas"?>
-<atlas name="ground1.png" namespace="http://www.fifengine.de/xml/rio_de_hola" width="1008" height="480">
+<atlas name="ground1.png" namespace="http://www.fifengine.net/xml/rio_de_hola" width="1008" height="480">
 	<image source="beach/06/135.png" xpos="0" ypos="0" width="127" height="96"/>
 	<image source="beach/01/045.png" xpos="127" ypos="0" width="126" height="96"/>
 	<image source="beach/01/135.png" xpos="253" ypos="0" width="126" height="96"/>
@@ -38,37 +38,37 @@
 		beach
 -->
 
-<object id="beach:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:01" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/01/045.png" direction="45" />
 	<image source="beach/01/135.png" direction="135" />
 	<image source="beach/01/225.png" direction="225" />
 	<image source="beach/01/315.png" direction="315" />
 </object>
-<object id="beach:02" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:02" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/02/045.png" direction="45" />
 	<image source="beach/02/135.png" direction="135" />
 	<image source="beach/02/225.png" direction="225" />
 	<image source="beach/02/315.png" direction="315" />
 </object>
-<object id="beach:03" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:03" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/03/045.png" direction="45" />
 	<image source="beach/03/135.png" direction="135" />
 	<image source="beach/03/225.png" direction="225" />
 	<image source="beach/03/315.png" direction="315" />
 </object>
-<object id="beach:04" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:04" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/04/045.png" direction="45" />
 	<image source="beach/04/135.png" direction="135" />
 	<image source="beach/04/225.png" direction="225" />
 	<image source="beach/04/315.png" direction="315" />
 </object>
-<object id="beach:05" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:05" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/05/045.png" direction="45" />
 	<image source="beach/05/135.png" direction="135" />
 	<image source="beach/05/225.png" direction="225" />
 	<image source="beach/05/315.png" direction="315" />
 </object>
-<object id="beach:06" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="beach:06" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="beach/06/045.png" direction="45" />
 	<image source="beach/06/135.png" direction="135" />
 	<image source="beach/06/225.png" direction="225" />
@@ -79,19 +79,19 @@
 		other
 -->
 
-<object id="other:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="other:01" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="other/01/000.png" direction="0" />
 </object>
-<object id="other:02" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="other:02" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="other/02/000.png" direction="0" />
 </object>
-<object id="other:03" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="other:03" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="other/03/000.png" direction="0" />
 </object>
-<object id="other:04" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="other:04" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="other/04/000.png" direction="0" />
 </object>
-<object id="other:05" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="other:05" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="other/05/000.png" direction="0" />
 </object>
 
@@ -99,10 +99,10 @@
 		sands
 -->
 
-<object id="sands:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="sands:01" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="sands/01/000.png" direction="0" />
 </object>
-<object id="sands:02" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+<object id="sands:02" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="0" static="1">
 	<image source="sands/02/000.png" direction="0" />
 </object>
 
@@ -110,6 +110,6 @@
 		water
 -->
 
-<object id="water" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+<object id="water" namespace="http://www.fifengine.net/xml/rio_de_hola" blocking="1" static="1">
 	<image source="water/000.png" direction="0" />
 </object>
