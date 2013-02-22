@@ -26,7 +26,7 @@
 // as part of the release process for FIFE.
 #define FIFE_MAJOR_VERSION 0
 #define FIFE_MINOR_VERSION 3
-#define FIFE_SUBMINOR_VERSION 3
+#define FIFE_SUBMINOR_VERSION 4
 
 // -------------------------------------------------------------------------
 //  Do not update anything below this line!
