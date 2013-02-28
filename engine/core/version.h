@@ -69,7 +69,7 @@ namespace FIFE {
 #ifdef FIFE_REVISION
 		return FIFE_REVISION;
 #else
-		return 0;
+		return 4103;
 #endif
 	}
 } //FIFE
