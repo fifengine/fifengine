@@ -1,399 +1,87 @@
+# Install dir for external libs
+/ext/install
 
-# /
-/Doxyfile
-/fife.log
-/svn-commit.tmp
-/fife_engine
-/.sconsign
-/fife.config
-/*.pyc
-/FIFE.kdevelop.filelist
-/tags
-/trunk
-/FIFE.kdevelop.pcs
-/.sconsign.dblite
-/fife.kdevelop.filelist
-/ignore.txt
-/color.pal
-/FIFE.bat
-/guichan.dll
-/guichan_opengl.dll
-/guichan_sdl.dll
-/jpeg.dll
-/libogg.dll
-/libpng12.dll
-/libpng13.dll
-/libtiff.dll
-/libvorbis.dll
-/libvorbisfile.dll
-/ogg.dll
-/OpenAL32.dll
-/OpenALwEAX.exe
-/pyFIFE.bat
-/SDL.dll
-/SDL_image.dll
-/SDL_ttf.dll
-/zlib1.dll
-/fife_flow.log
-/output.txt
-/libfreetype-6.dll
-/libpng12-0.dll
-/libtiff-3.dll
-/physfs.dll
-/zlib.dll
+# Swig wrappers
+/engine/swigwrappers/python/fife.i
+/engine/swigwrappers/python/fife_wrap.cc
+/engine/swigwrappers/python/fife_wrap.h
 
-# /build/
-/build/*.pyc
-/build/.sconf_temp
-/build/config.log
-
-# /build/linux/KDevelop/
+# Project files
 /build/linux/KDevelop/FIFE.kdevses
-
-# /build/linux/code_blocks/
 /build/linux/code_blocks/fife_engine.cbp
+/build/win32/build_environments/code_blocks/fife_engine.cbp
+/build/win32/build_environments/code_blocks/.objs
+/build/win32/build_environments/code_blocks/fife_engine.layout
+/build/win32/build_environments/scons/engine_build_log.txt
+/build/win32/build_environments/visual_studio_8/fife.vcproj
+/build/win32/build_environments/visual_studio_9/fife.vcproj
 
-# /build/win32/
+# Ignore the dev kit
 /build/win32/applications
-/build/win32/doxygen_log.txt
 /build/win32/binaries
 /build/win32/includes
 /build/win32/static_libs
 
-# /build/win32/build_environments/code_blocks/
-/build/win32/build_environments/code_blocks/fife_engine.cbp
-/build/win32/build_environments/code_blocks/.objs
-/build/win32/build_environments/code_blocks/fife_engine.layout
-
-# /build/win32/build_environments/scons/
-/build/win32/build_environments/scons/engine_build_log.txt
-
-# /build/win32/build_environments/visual_studio_8/
-/build/win32/build_environments/visual_studio_8/fife.vcproj
-
-# /build/win32/build_environments/visual_studio_9/
-/build/win32/build_environments/visual_studio_9/fife.vcproj
-
-# /demos/pychan_demo/
-/demos/pychan_demo/*.pyc
-/demos/pychan_demo/*.log
-/demos/pychan_demo/guichan.dll
-/demos/pychan_demo/guichan_opengl.dll
-/demos/pychan_demo/guichan_sdl.dll
-/demos/pychan_demo/jpeg.dll
-/demos/pychan_demo/libfreetype-6.dll
-/demos/pychan_demo/libogg.dll
-/demos/pychan_demo/libpng12-0.dll
-/demos/pychan_demo/libtiff-3.dll
-/demos/pychan_demo/libvorbis.dll
-/demos/pychan_demo/libvorbisfile.dll
-/demos/pychan_demo/OpenAL32.dll
-/demos/pychan_demo/SDL.dll
-/demos/pychan_demo/SDL_image.dll
-/demos/pychan_demo/SDL_ttf.dll
-/demos/pychan_demo/zlib.dll
-/demos/pychan_demo/*.dll
-
-# /demos/rio_de_hola/
-/demos/rio_de_hola/*.pyc
-/demos/rio_de_hola/*.log
-/demos/rio_de_hola/guichan.dll
-/demos/rio_de_hola/guichan_opengl.dll
-/demos/rio_de_hola/guichan_sdl.dll
-/demos/rio_de_hola/jpeg.dll
-/demos/rio_de_hola/libfreetype-6.dll
-/demos/rio_de_hola/libogg.dll
-/demos/rio_de_hola/libpng12-0.dll
-/demos/rio_de_hola/libtiff-3.dll
-/demos/rio_de_hola/libvorbis.dll
-/demos/rio_de_hola/libvorbisfile.dll
-/demos/rio_de_hola/OpenAL32.dll
-/demos/rio_de_hola/SDL.dll
-/demos/rio_de_hola/SDL_image.dll
-/demos/rio_de_hola/SDL_ttf.dll
-/demos/rio_de_hola/zlib.dll
-/demos/rio_de_hola/island_demo.bmp
-/demos/rio_de_hola/Thumbs.db
-/demos/rio_de_hola/*.dll
-/demos/rio_de_hola/screenshot.png
-/demos/rio_de_hola/settings.xml
-
-# /demos/rio_de_hola/maps/
+# Demos
 /demos/rio_de_hola/maps/savefile.xml
+settings.xml
 
-# /demos/rio_de_hola/scripts/
-/demos/rio_de_hola/scripts/*.pyc
+# All log files
+*.log
 
-# /demos/rio_de_hola/scripts/agents/
-/demos/rio_de_hola/scripts/agents/*.pyc
-
-# /demos/rio_de_hola/scripts/common/
-/demos/rio_de_hola/scripts/common/*.pyc
-
-# /doc/doxygen/
+# Doxygen
 /doc/doxygen/html
+/build/win32/doxygen_log.txt
 
-# /engine/
-/engine/fife_wrap.h
-/engine/fife.log
-/engine/fife.py
-/engine/fife_wrap.cxx
-/engine/fife.pyc
-/engine/fife.config
-/engine/*.so
-/engine/*.os
-/engine/*.sconsign
-/engine/*.pyc
-/engine/fife.def
-/engine/fife.dll
-/engine/libfife.a
+# scons
+*.sconsign
+.sconsign.dblite
+/build/.sconf_temp
+/build/config.log
+/build/bdist.win32
+/build/engine
+/build/lib
 
-# /engine/core/audio/
-/engine/core/audio/*.so
-/engine/core/audio/*.os
-/engine/core/audio/*.sconsign
+# Python
+*.py[cod]
+/dist
 
-# /engine/core/controller/
-/engine/core/controller/*.so
-/engine/core/controller/*.os
-/engine/core/controller/*.sconsign
+# Compiled Object files
+*.slo
+*.lo
+*.o
 
-# /engine/core/eventchannel/
-/engine/core/eventchannel/*.so
-/engine/core/eventchannel/*.os
-/engine/core/eventchannel/*.sconsign
+# Compiled Dynamic libraries
+*.dll
+*.so
+*.dylib
 
-# /engine/core/eventchannel/base/
-/engine/core/eventchannel/base/*.so
-/engine/core/eventchannel/base/*.os
-/engine/core/eventchannel/base/*.sconsign
+# Compiled Static libraries
+*.lib
+*.lai
+*.la
+*.a
 
-# /engine/core/eventchannel/command/
-/engine/core/eventchannel/command/*.so
-/engine/core/eventchannel/command/*.os
-/engine/core/eventchannel/command/*.sconsign
+# Executables
+OpenALwEAX.exe
 
-# /engine/core/eventchannel/key/
-/engine/core/eventchannel/key/*.so
-/engine/core/eventchannel/key/*.os
-/engine/core/eventchannel/key/*.sconsign
+# Automake and Autoconf
+Makefile.in
+autom4te.cache
+aclocal.m4
+compile
+configure
+depcomp
+install-sh
+missing
 
-# /engine/core/eventchannel/mouse/
-/engine/core/eventchannel/mouse/*.so
-/engine/core/eventchannel/mouse/*.os
-/engine/core/eventchannel/mouse/*.sconsign
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
 
-# /engine/core/eventchannel/sdl/
-/engine/core/eventchannel/sdl/*.so
-/engine/core/eventchannel/sdl/*.os
-/engine/core/eventchannel/sdl/*.sconsign
-
-# /engine/core/eventchannel/source/
-/engine/core/eventchannel/source/*.so
-/engine/core/eventchannel/source/*.os
-/engine/core/eventchannel/source/*.sconsign
-
-# /engine/core/gui/
-/engine/core/gui/*.so
-/engine/core/gui/*.os
-/engine/core/gui/*.sconsign
-
-# /engine/core/loaders/
-/engine/core/loaders/*.so
-/engine/core/loaders/*.os
-/engine/core/loaders/*.sconsign
-
-# /engine/core/loaders/native/
-/engine/core/loaders/native/*.so
-/engine/core/loaders/native/*.os
-/engine/core/loaders/native/*.sconsign
-
-# /engine/core/loaders/native/audio/
-/engine/core/loaders/native/audio/*.so
-/engine/core/loaders/native/audio/*.os
-/engine/core/loaders/native/audio/*.sconsign
-
-# /engine/core/loaders/native/video/
-/engine/core/loaders/native/video/*.so
-/engine/core/loaders/native/video/*.os
-/engine/core/loaders/native/video/*.sconsign
-
-# /engine/core/model/
-/engine/core/model/*.so
-/engine/core/model/*.os
-/engine/core/model/*.sconsign
-
-# /engine/core/model/metamodel/
-/engine/core/model/metamodel/*.so
-/engine/core/model/metamodel/*.os
-/engine/core/model/metamodel/*.sconsign
-
-# /engine/core/model/metamodel/grids/
-/engine/core/model/metamodel/grids/*.so
-/engine/core/model/metamodel/grids/*.os
-/engine/core/model/metamodel/grids/*.sconsign
-
-# /engine/core/model/structures/
-/engine/core/model/structures/*.so
-/engine/core/model/structures/*.os
-/engine/core/model/structures/*.sconsign
-
-# /engine/core/pathfinder/
-/engine/core/pathfinder/*.so
-/engine/core/pathfinder/*.os
-/engine/core/pathfinder/*.sconsign
-
-# /engine/core/pathfinder/routepather/
-/engine/core/pathfinder/routepather/*.so
-/engine/core/pathfinder/routepather/*.os
-/engine/core/pathfinder/routepather/*.sconsign
-
-# /engine/core/util/
-/engine/core/util/*.so
-/engine/core/util/*.os
-/engine/core/util/*.sconsign
-
-# /engine/core/util/base/
-/engine/core/util/base/*.so
-/engine/core/util/base/*.os
-/engine/core/util/base/*.sconsign
-
-# /engine/core/util/log/
-/engine/core/util/log/*.so
-/engine/core/util/log/*.os
-/engine/core/util/log/*.sconsign
-
-# /engine/core/util/math/
-/engine/core/util/math/*.so
-/engine/core/util/math/*.os
-/engine/core/util/math/*.sconsign
-
-# /engine/core/util/resource/
-/engine/core/util/resource/*.so
-/engine/core/util/resource/*.os
-/engine/core/util/resource/*.sconsign
-
-# /engine/core/util/structures/
-/engine/core/util/structures/*.so
-/engine/core/util/structures/*.os
-/engine/core/util/structures/*.sconsign
-
-# /engine/core/util/time/
-/engine/core/util/time/*.so
-/engine/core/util/time/*.os
-/engine/core/util/time/*.sconsign
-
-# /engine/core/vfs/
-/engine/core/vfs/*.so
-/engine/core/vfs/*.os
-/engine/core/vfs/*.sconsign
-
-# /engine/core/vfs/dat/
-/engine/core/vfs/dat/*.so
-/engine/core/vfs/dat/*.os
-/engine/core/vfs/dat/*.sconsign
-
-# /engine/core/vfs/raw/
-/engine/core/vfs/raw/*.so
-/engine/core/vfs/raw/*.os
-/engine/core/vfs/raw/*.sconsign
-
-# /engine/core/vfs/zip/
-/engine/core/vfs/zip/*.so
-/engine/core/vfs/zip/*.os
-/engine/core/vfs/zip/*.sconsign
-
-# /engine/core/video/
-/engine/core/video/*.so
-/engine/core/video/*.os
-/engine/core/video/*.sconsign
-
-# /engine/core/video/fonts/
-/engine/core/video/fonts/*.so
-/engine/core/video/fonts/*.os
-/engine/core/video/fonts/*.sconsign
-
-# /engine/core/video/opengl/
-/engine/core/video/opengl/*.so
-/engine/core/video/opengl/*.os
-/engine/core/video/opengl/*.sconsign
-
-# /engine/core/video/sdl/
-/engine/core/video/sdl/*.so
-/engine/core/video/sdl/*.os
-/engine/core/video/sdl/*.sconsign
-
-# /engine/core/view/
-/engine/core/view/*.so
-/engine/core/view/*.os
-/engine/core/view/*.sconsign
-
-# /engine/core/view/renderers/
-/engine/core/view/renderers/*.so
-/engine/core/view/renderers/*.os
-/engine/core/view/renderers/*.sconsign
-
-# /engine/swigwrappers/
-/engine/swigwrappers/*
-
-# /engine/swigwrappers/python/
-/engine/swigwrappers/python/*
-
-# /ext/install/
-/ext/install/lib
-/ext/install/share
-/ext/install/bin
-
-# /ext/install/include/
-/ext/install/include/*
-
-# /tests/
-/tests/*.pyc
-
-# /tests/analyzers/
-/tests/analyzers/*.pyc
-
-# /tests/core_tests/
-/tests/core_tests/*.pyc
-/tests/core_tests/fife.log
-/tests/core_tests/testprog_*
-/tests/core_tests/fife_flow.log
-/tests/core_tests/fifetestdir
-
-# /tests/extension_tests/
-/tests/extension_tests/*.pyc
-
-# /tests/swig_tests/
-/tests/swig_tests/*.pyc
-
-# /tools/editor/
-/tools/editor/*.pyc
-/tools/editor/*.log
-/tools/editor/guichan.dll
-/tools/editor/guichan_opengl.dll
-/tools/editor/guichan_sdl.dll
-/tools/editor/jpeg.dll
-/tools/editor/libfreetype-6.dll
-/tools/editor/libogg.dll
-/tools/editor/libpng12-0.dll
-/tools/editor/libtiff-3.dll
-/tools/editor/libvorbis.dll
-/tools/editor/libvorbisfile.dll
-/tools/editor/OpenAL32.dll
-/tools/editor/SDL.dll
-/tools/editor/SDL_image.dll
-/tools/editor/SDL_ttf.dll
-/tools/editor/zlib.dll
-/tools/editor/island_demo.bmp
-/tools/editor/Thumbs.db
-/tools/editor/*.dll
-
-# /tools/editor/plugins/
-/tools/editor/plugins/*.pyc
-
-# /utils/
-/utils/__init__.pyc
-
-# /utils/util_scripts/
-/utils/util_scripts/__init__.pyc
-/utils/util_scripts/path.pyc
