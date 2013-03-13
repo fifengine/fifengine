@@ -1,50 +1,50 @@
 # Install dir for external libs
-/ext/install
+ext/install
 
 # Swig wrappers
-/engine/swigwrappers/python/fife.i
-/engine/swigwrappers/python/fife_wrap.cc
-/engine/swigwrappers/python/fife_wrap.h
+engine/swigwrappers/python/fife.i
+engine/swigwrappers/python/fife_wrap.cc
+engine/swigwrappers/python/fife_wrap.h
 
 # Project files
-/build/linux/KDevelop/FIFE.kdevses
-/build/linux/code_blocks/fife_engine.cbp
-/build/win32/build_environments/code_blocks/fife_engine.cbp
-/build/win32/build_environments/code_blocks/.objs
-/build/win32/build_environments/code_blocks/fife_engine.layout
-/build/win32/build_environments/scons/engine_build_log.txt
-/build/win32/build_environments/visual_studio_8/fife.vcproj
-/build/win32/build_environments/visual_studio_9/fife.vcproj
+build/linux/KDevelop/FIFE.kdevses
+build/linux/code_blocks/fife_engine.cbp
+build/win32/build_environments/code_blocks/fife_engine.cbp
+build/win32/build_environments/code_blocks/.objs
+build/win32/build_environments/code_blocks/fife_engine.layout
+build/win32/build_environments/scons/engine_build_log.txt
+build/win32/build_environments/visual_studio_8/fife.vcproj
+build/win32/build_environments/visual_studio_9/fife.vcproj
 
 # Ignore the dev kit
-/build/win32/applications
-/build/win32/binaries
-/build/win32/includes
-/build/win32/static_libs
+build/win32/applications
+build/win32/binaries
+build/win32/includes
+build/win32/static_libs
 
 # Demos
-/demos/rio_de_hola/maps/savefile.xml
+demos/rio_de_hola/maps/savefile.xml
 settings.xml
 
 # All log files
 *.log
 
 # Doxygen
-/doc/doxygen/html
-/build/win32/doxygen_log.txt
+doc/doxygen/html
+build/win32/doxygen_log.txt
 
 # scons
 *.sconsign
 .sconsign.dblite
-/build/.sconf_temp
-/build/config.log
-/build/bdist.win32
-/build/engine
-/build/lib
+build/.sconf_temp
+build/config.log
+build/bdist.win32
+build/engine
+build/lib
 
 # Python
 *.py[cod]
-/dist
+dist
 
 # Compiled Object files
 *.slo
