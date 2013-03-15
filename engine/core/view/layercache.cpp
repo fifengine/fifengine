@@ -551,22 +551,53 @@ namespace FIFE {
 		}
 		entry->forceUpdate = (action != 0);
 
+		if (item->overlayImages) {
+			delete item->overlayImages;
+			item->overlayImages = 0;
+		}
 		if (action) {
-			AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
-			uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
-			image = animation->getFrameByTimestamp(animationTime);
-
-			int32_t actionFrame = animation->getActionFrame();
-			if (actionFrame != -1) {
-				if (item->image != image) {
-					int32_t new_frame = animation->getFrameIndex(animationTime);
-					if (actionFrame == new_frame) {
-						instance->callOnActionFrame(action, actionFrame);
-					// if action frame was skipped
-					} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
-						instance->callOnActionFrame(action, actionFrame);
+			if (action->getVisual<ActionVisual>()->isOverlay()) {
+				std::map<int32_t, AnimationPtr> animations = action->getVisual<ActionVisual>()->getAnimationOverlayByAngle(angle);
+				std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
+				for (; it != animations.end(); ++it) {
+					if (!item->overlayImages) {
+						item->overlayImages = new std::vector<ImagePtr>();
 					}
-					item->currentFrame = new_frame;
+					uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
+					image = it->second->getFrameByTimestamp(animationTime);
+					item->overlayImages->push_back(image);
+
+					//int32_t actionFrame = it->second->getActionFrame();
+					//if (actionFrame != -1) {
+					//	if (item->image != image) {
+					//		int32_t new_frame = animation->getFrameIndex(animationTime);
+					//		if (actionFrame == new_frame) {
+					//			instance->callOnActionFrame(action, actionFrame);
+					//		// if action frame was skipped
+					//		} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
+					//			instance->callOnActionFrame(action, actionFrame);
+					//		}
+					//		item->currentFrame = new_frame;
+					//	}
+					//}
+				}
+			} else {
+				AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
+				uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
+				image = animation->getFrameByTimestamp(animationTime);
+
+				int32_t actionFrame = animation->getActionFrame();
+				if (actionFrame != -1) {
+					if (item->image != image) {
+						int32_t new_frame = animation->getFrameIndex(animationTime);
+						if (actionFrame == new_frame) {
+							instance->callOnActionFrame(action, actionFrame);
+						// if action frame was skipped
+						} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
+							instance->callOnActionFrame(action, actionFrame);
+						}
+						item->currentFrame = new_frame;
+					}
 				}
 			}
 		}

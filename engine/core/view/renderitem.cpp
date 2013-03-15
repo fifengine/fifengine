@@ -44,7 +44,12 @@ namespace FIFE {
 		transparency(255),
 		currentFrame(-1),
 		m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cachedStaticImgAngle(0) {
+		m_cachedStaticImgAngle(0),
+		overlayImages(0) {
+	}
+	
+	RenderItem::~RenderItem() {
+		delete overlayImages;
 	}
 
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
@@ -70,5 +75,7 @@ namespace FIFE {
 		transparency = 255;
 		currentFrame = -1;
 		m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
+		delete overlayImages;
+		overlayImages = 0;
 	}
 }

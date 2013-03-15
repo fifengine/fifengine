@@ -69,6 +69,9 @@ namespace FIFE {
 		virtual ~ActionVisual();
 		void addAnimation(uint32_t angle, AnimationPtr animationptr);
 		AnimationPtr getAnimationByAngle(int32_t angle);
+		void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr);
+		void removeAnimationOverlay(uint32_t angle, int32_t order);
+		std::map<int32_t, AnimationPtr> getAnimationOverlayByAngle(int32_t angle);
 		void getActionImageAngles(std::vector<int32_t>& angles);
 	private:
 		ActionVisual();

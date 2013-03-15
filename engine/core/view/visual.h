@@ -25,6 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL_video.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +42,21 @@ namespace FIFE {
 	class Instance;
 	class Action;
 	class Image;
-	class Camera;
+
+	class OverlayColors {
+	public:
+		/** Constructor
+		 */
+		OverlayColors();
+		/** Destructor
+		 */
+		~OverlayColors();
+
+		void changeColor(uint8_t sr, uint8_t sg, uint8_t sb, uint8_t tr, uint8_t tg, uint8_t tb);
+		const std::map<SDL_Color, SDL_Color>& getColors();
+	private:
+		std::map<SDL_Color, SDL_Color> m_colorMap;
+	};
 
 	/** Base class for all 2 dimensional visual classes
 	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
@@ -181,9 +196,24 @@ namespace FIFE {
 		 */
 		AnimationPtr getAnimationByAngle(int32_t angle);
 
+		/** Adds new animation overlay with given angle (degrees) and order
+		 */
+		void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr);
+
+		/** Removes animation overlay with given angle (degrees) and order
+		 */
+		void removeAnimationOverlay(uint32_t angle, int32_t order);
+
+		/** Gets map with animations closest to given angle
+		 * @return animation map
+		 */
+		std::map<int32_t, AnimationPtr> getAnimationOverlayByAngle(int32_t angle);
+
 		/** Returns list of available angles for this Action
 		 */
 		void getActionImageAngles(std::vector<int32_t>& angles);
+
+		bool isOverlay() { return !m_animationOverlayMap.empty(); }
 
 	private:
 		/** Constructor
@@ -194,8 +224,10 @@ namespace FIFE {
 		typedef std::map<uint32_t, AnimationPtr> AngleAnimationMap;
 		AngleAnimationMap m_animation_map;
 
-		//@fixme need this map to use the getIndexByAngle() function in angles.h
-		//should fix this
+		typedef std::map<uint32_t, std::map<int32_t, AnimationPtr> > AngleAnimationOverlayMap;
+		AngleAnimationOverlayMap m_animationOverlayMap;
+
+		//need this map to use the getIndexByAngle() function in angles.h
 		type_angle2id m_map;
 	};
 

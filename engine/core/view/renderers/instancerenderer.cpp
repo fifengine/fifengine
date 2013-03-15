@@ -469,6 +469,12 @@ namespace FIFE {
 					continue;
 				}
 			}
+			if (vc.overlayImages) {
+				for (std::vector<ImagePtr>::iterator it = vc.overlayImages->begin(); it != vc.overlayImages->end(); ++it) {
+					(*it)->render(vc.dimensions, vc.transparency);
+				}
+				continue;
+			}
 			vc.image->render(vc.dimensions, vc.transparency);
 
 		}

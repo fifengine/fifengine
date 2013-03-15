@@ -166,10 +166,27 @@ namespace FIFE {
 		return m_animation_map[getIndexByAngle(angle, m_map, closestMatch)];
 	}
 
+	void ActionVisual::addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr) {
+		std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[angle % 360];
+		m_map[angle % 360] = angle % 360;
+		orderMap.insert(std::pair<int32_t, AnimationPtr>(order, animationptr));
+	}
+
+	void ActionVisual::removeAnimationOverlay(uint32_t angle, int32_t order) {
+		std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[angle % 360];
+		std::map<int32_t, AnimationPtr>::iterator it = orderMap.begin();
+		orderMap.erase(order);
+	}
+	
+	std::map<int32_t, AnimationPtr> ActionVisual::getAnimationOverlayByAngle(int32_t angle) {
+		int32_t closestMatch = 0;
+		return m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+	}
+
 	void ActionVisual::getActionImageAngles(std::vector<int32_t>& angles) {
 		angles.clear();
-		AngleAnimationMap::const_iterator i(m_animation_map.begin());
-		while (i != m_animation_map.end()) {
+		type_angle2id::const_iterator i(m_map.begin());
+		while (i != m_map.end()) {
 			angles.push_back(i->first);
 			++i;
 		}
