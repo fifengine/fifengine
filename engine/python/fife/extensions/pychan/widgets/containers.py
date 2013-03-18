@@ -80,7 +80,7 @@ class Container(Widget):
 				 margins = None,
 				 _real_widget = None):
 				 
-		self.real_widget = _real_widget or fife.Container()
+		self.real_widget = _real_widget or fifechan.Container()
 		self.children = []
 		self.children_position_cache = []
 		self.hidden_children = []
@@ -286,12 +286,12 @@ class Container(Widget):
 
 		# Now tile the background over the widget
 		self._background = []
-		icon = fife.Icon(image)
+		icon = fifechan.Icon(image)
 		x, w = 0, image_w
 		while x < back_w:
 			y, h = 0, image_h
 			while y < self.height:
-				icon = fife.Icon(image)
+				icon = fifechan.Icon(image)
 				icon.setPosition(x,y)
 				self._background.append(icon)
 				y += h
@@ -324,10 +324,7 @@ class Container(Widget):
 		"""
 		Clones each child and return the clones in a list.
 		"""
-		cloneList = []
-		
-		for child in self.children:
-			cloneList.append(child.clone(prefix))
+		cloneList = [ child.clone(prefix) for child in self.children ]
 		
 		return cloneList
 
@@ -587,7 +584,7 @@ class Window(VBoxLayoutMixin,Container):
 								    background_image=background_image,
 								    opaque=opaque,
 								    margins=margins,
-								    _real_widget= fife.Window())
+								    _real_widget= fifechan.Window())
 
 		if titlebar_height is not None:
 			if titlebar_height == 0:

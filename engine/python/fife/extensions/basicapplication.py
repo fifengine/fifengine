@@ -29,7 +29,6 @@ See the L{ApplicationBase} documentation.
 
 from fife import fife
 from fife.extensions import fifelog
-from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting
 
 class ExitEventListener(fife.IKeyListener):
@@ -51,9 +50,6 @@ class ExitEventListener(fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-		elif keyval == fife.Key.F10:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
-			evt.consume()
 
 	def keyReleased(self, evt):
 		pass
@@ -61,6 +57,7 @@ class ExitEventListener(fife.IKeyListener):
 class ApplicationBase(object):
 	"""
 	ApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
+	This kind of application base does not offer GUI support.
 
 	The unextended application reads in and initializes engine settings, sets up a simple event
 	listener, and pumps the engine while listening for a quit message. Specialized applications can
@@ -73,12 +70,12 @@ class ApplicationBase(object):
 		if setting:
 			self._setting = setting
 		else:
-			self._setting =  Setting(app_name="", settings_file="./settings.xml", settings_gui_xml="")
+			self._setting =  Setting(app_name="", settings_file="./settings.xml")
 
 		self.engine = fife.Engine()
 		
 		self.initLogging()
-		self.loadSettings()	
+		self.loadSettings()
 		
 		self.engine.init()
 		
@@ -91,9 +88,6 @@ class ApplicationBase(object):
 		
 		resolutions = ["{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]] 
 		self._setting.setValidResolutions(resolutions)
-
-		pychan.init(self.engine, debug = self._finalSetting['PychanDebug'])
-		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 
 		self.quitRequested = False
 		self.breakRequested = False

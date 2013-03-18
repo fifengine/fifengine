@@ -66,7 +66,7 @@ class TextField(Widget):
 				 margins = None,
 				 text = None):
 				 
-		self.real_widget = fife.TextField()
+		self.real_widget = fifechan.TextField()
 		self.text = text or self.DEFAULT_TEXT
 		super(TextField,self).__init__(parent=parent, 
 									   name=name, 
@@ -86,30 +86,30 @@ class TextField(Widget):
 		self._realSetData = self._setText
 		self._realGetData = self._getText
 
-		def clone(self, prefix):
-			textfieldClone = TextField(None,  
-					self._createNameWithPrefix(prefix),
-					self.size,
-					self.min_size, 
-					self.max_size, 
-					self.helptext, 
-					self.position, 
-					self.style, 
-					self.hexpand,
-					self.vexpand,
-					self.font,
-					self.base_color,
-					self.background_color,
-					self.foreground_color,
-					self.selection_color,
-					self.border_size,
-					self.position_technique,
-					self.is_focusable,
-					self.comment,
-					self.margins,
-					self.text)
-			return textfieldClone
-		
+	def clone(self, prefix):
+		textfieldClone = TextField(None,  
+				self._createNameWithPrefix(prefix),
+				self.size,
+				self.min_size, 
+				self.max_size, 
+				self.helptext, 
+				self.position, 
+				self.style, 
+				self.hexpand,
+				self.vexpand,
+				self.font,
+				self.base_color,
+				self.background_color,
+				self.foreground_color,
+				self.selection_color,
+				self.border_size,
+				self.position_technique,
+				self.is_focusable,
+				self.comment,
+				self.margins,
+				self.text)
+		return textfieldClone
+	
 		
 	def resizeToContent(self,recurse=True):
 		max_w = self.real_font.getWidth(text2gui(self.text))

@@ -24,7 +24,7 @@
 import os, math, traceback, sys
 from fife import fife
 from fife.extensions import pychan
-from fife.extensions import filebrowser
+from fife.extensions.pychan.dialog import filebrowser
 from fife.extensions import loaders, savers
 from fife.extensions.serializers.xmlobject import XMLObjectLoader
 from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir, loadImportDirRec

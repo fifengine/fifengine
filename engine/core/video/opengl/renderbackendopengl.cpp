@@ -1335,4 +1335,35 @@ namespace FIFE {
 		glMatrixMode(GL_MODELVIEW);
 		glCullFace(GL_BACK);
 	}
+
+	void RenderBackendOpenGL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {
+	
+		glPushMatrix();
+		glTranslatef(translation.x, translation.y, 0);
+		
+		glVertexPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices[0].position);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(GuiVertex), &vertices[0].color);
+		
+		GLuint texId = 0;
+
+		GLImage* glImage = dynamic_cast<GLImage*>(texture.get());
+		if(glImage) {
+			glImage->forceLoadInternal();
+			texId = glImage->getTexId();
+		}
+		
+		if(texId == 0) {
+			glDisable(GL_TEXTURE_2D);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		} else {
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, texId);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices[0].texCoords);
+		}
+		
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, &indices[0]);
+		
+		glPopMatrix();
+	}
 }

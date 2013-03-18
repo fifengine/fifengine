@@ -23,7 +23,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
+from fife import fife, fifechan
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 from fife.extensions.fife_timer import Timer
@@ -39,9 +39,9 @@ STYLES= {
 	'default' : {
 		'border_size': 2,
 		'margins': (0,0),
-		'base_color' : fife.Color(128,128,128),
-		'foreground_color' : fife.Color(255,255,255),
-		'background_color' : fife.Color(55,55,55),
+		'base_color' : fifechan.Color(128,128,128),
+		'foreground_color' : fifechan.Color(255,255,255),
+		'background_color' : fifechan.Color(55,55,55),
 		'font' : 'samanata_small'
 	},
 	'Button' : {
@@ -52,11 +52,11 @@ STYLES= {
 	},
 	'CheckBox' : {
 		'border_size': 0,
-		'background_color' : fife.Color(0,0,0,0),
+		'background_color' : fifechan.Color(0,0,0,0),
 	},
 	'RadioButton' : {
 		'border_size': 0,
-		'background_color' : fife.Color(0,0,0,0),
+		'background_color' : fifechan.Color(0,0,0,0),
 	},
 	'Label' : {
 		'border_size': 0,
@@ -85,8 +85,8 @@ STYLES= {
 	},
 	'greenzone' : { 
 		'default' : {
-			'base_color': fife.Color(80,200,80) ,
-			'background_color': fife.Color(200,250,200),
+			'base_color': fifechan.Color(80,200,80) ,
+			'background_color': fifechan.Color(200,250,200),
 			},
 		'Window' : {
 			'titlebar_height' : 30,
@@ -296,7 +296,7 @@ class SliderExample(PyChanExample):
 		Update Icon position from the sliders.
 		"""
 		icon = self.widget.findChild(name="icon")
-		# sliders have floats, guichan is picky and wants ints
+		# sliders have floats, fifechan is picky and wants ints
 		# so we convert here.
 		icon.position = map(int, self.widget.collectData('xslider','yslider'))
 		# we distribute to the labels with the x,y value.
@@ -313,7 +313,7 @@ class SliderExample(PyChanExample):
 		pbar.value = int(pbarslider.value)
 
 class ColorExample(PyChanExample):
-	""" a small app (^^) to show how guichan uses colors on various widgets 
+	""" a small app (^^) to show how fifechan uses colors on various widgets 
 	
 	"""
 	def __init__(self):

@@ -81,9 +81,14 @@ namespace FIFE {
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 
+		virtual void enableScissorTest();
+		virtual void disableScissorTest();
+		
 		virtual void attachRenderTarget(ImagePtr& img, bool discard);
 		virtual void detachRenderTarget();
-
+		
+		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
+		
 		void enableTextures(uint32_t texUnit);
 		void disableTextures(uint32_t texUnit);
 		void bindTexture(uint32_t texUnit, GLuint texId);
@@ -109,8 +114,6 @@ namespace FIFE {
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
-		void enableScissorTest();
-		void disableScissorTest();
 
 		void renderWithZ();
 		void renderWithoutZ();

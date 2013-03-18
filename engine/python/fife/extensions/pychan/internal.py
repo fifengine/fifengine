@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from compat import guichan, in_fife
+from compat import fifechan, fife, in_fife
 import widgets
 from fife.extensions import fife_timer as timer
 import fonts
@@ -149,9 +149,9 @@ class Manager(object):
 		"""
 		if in_fife:
 			font = self.fonts.get(name)
-			if isinstance(font,guichan.GuiFont):
+			if isinstance(font,fife.GuiFont):
 				return font
-			if hasattr(font,"font") and isinstance(getattr(font,"font"),guichan.GuiFont):
+			if hasattr(font,"font") and isinstance(getattr(font,"font"),fife.GuiFont):
 				return font.font
 			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
 		else:
@@ -165,13 +165,13 @@ class Manager(object):
 
 	def releaseFont(self, font):
 		"""
-		Releases a font from memory.  Expects a guichan.GuiFont. 
+		Releases a font from memory.  Expects a fifechan.GuiFont. 
 		
 		@todo: This needs to be tested.  Also should add a way to release
 		a font by name (fonts.Font).
 		"""
-		if not isinstance(font,guichan.GuiFont):
-			raise InitializationError("PyChan Manager expected a guichan.GuiFont instance, not %s." % repr(font))
+		if not isinstance(font,fifechan.GuiFont):
+			raise InitializationError("PyChan Manager expected a fifechan.GuiFont instance, not %s." % repr(font))
 		self.hook.release_font(font)
 
 	def addFont(self,font):
@@ -245,10 +245,10 @@ DEFAULT_STYLE = {
 	'default' : {
 		'border_size': 0,
 		'margins': (0,0),
-		'base_color' : guichan.Color(28,28,28),
-		'foreground_color' : guichan.Color(255,255,255),
-		'background_color' : guichan.Color(50,50,50),
-		'selection_color' : guichan.Color(80,80,80),
+		'base_color' : fifechan.Color(28,28,28),
+		'foreground_color' : fifechan.Color(255,255,255),
+		'background_color' : fifechan.Color(50,50,50),
+		'selection_color' : fifechan.Color(80,80,80),
 		'font' : 'default'
 	},
 	'Button' : {
@@ -261,11 +261,11 @@ DEFAULT_STYLE = {
 	},
 	'RadioButton' : {
 		'border_size': 0,
-		'background_color' : guichan.Color(0,0,0),
+		'background_color' : fifechan.Color(0,0,0),
 	},
 	'Label' : {
 		'border_size': 0,
-		'background_color' : guichan.Color(50,50,50,0)
+		'background_color' : fifechan.Color(50,50,50,0)
 	},
 	'ListBox' : {
 		'border_size': 0,

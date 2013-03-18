@@ -1,0 +1,8 @@
+<VBox min_size="200, 100">
+    <Button name="controlBtn" text="Show Window" min_size="200, 100" />
+    <ScrollArea min_size="200, 200">
+        <VBox name="outputBox" border_size="1">
+            <Label text="Output:" />
+        </VBox>
+    </ScrollArea>
+</VBox>

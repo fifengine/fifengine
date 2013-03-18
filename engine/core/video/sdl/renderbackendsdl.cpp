@@ -200,7 +200,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		// Draw a line with Bresenham, imitated from guichan
+		// Draw a line with Bresenham, imitated from fifechan 
 		int32_t x1 = p1.x;
 		int32_t x2 = p2.x;
 		int32_t y1 = p1.y;
@@ -344,6 +344,12 @@ namespace FIFE {
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 	}
+	
+	void RenderBackendSDL::enableScissorTest() {
+	}
+	
+	void RenderBackendSDL::disableScissorTest() {
+	}
 
 	void RenderBackendSDL::captureScreen(const std::string& filename) {
 		if(m_screen) {
@@ -484,5 +490,9 @@ namespace FIFE {
 
 	void RenderBackendSDL::detachRenderTarget(){
 		m_target = m_screen;
+	}
+	
+	void RenderBackendSDL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {
+		
 	}
 }

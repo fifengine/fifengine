@@ -7,7 +7,6 @@ __all__ = [
 	'fife_utils',
 	'fife_settings',
 	'fifelog',
-	'filebrowser',
 	'pythonize',
 	'savers',
 	'loaders',

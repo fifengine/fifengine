@@ -52,7 +52,7 @@ class Button(BasicTextWidget):
 				 margins = None,
 				 text = None):
 				 
-		self.real_widget = fife.Button("")
+		self.real_widget = fifechan.Button("")
 		super(Button,self).__init__(parent=parent, 
 									name=name, 
 									size=size, 
@@ -154,7 +154,7 @@ class ImageButton(BasicTextWidget):
 				 real_widget=None):
 
 		if real_widget is None:
-			self.real_widget = fife.TwoButton()
+			self.real_widget = fifechan.TwoButton()
 		else:
 			self.real_widget = real_widget
 		
@@ -338,7 +338,7 @@ class ToggleButton(ImageButton):
 										  down_image=down_image,
 										  hover_image=hover_image,
 										  offset=offset,
-										  real_widget=fife.ToggleButton())
+										  real_widget=fifechan.ToggleButton())
 										  
 		if group is not None: self.group = group
 		if toggled: self.toggled = toggled

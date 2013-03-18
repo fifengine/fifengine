@@ -72,7 +72,7 @@ class ScrollArea(Widget):
 				 horizontal_scroll_amount = None
 				 ):
 				 
-		self.real_widget = fife.ScrollArea()
+		self.real_widget = fifechan.ScrollArea()
 		self._content = None
 		super(ScrollArea,self).__init__(parent=parent, 
 										name=name, 
@@ -155,11 +155,11 @@ class ScrollArea(Widget):
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
-			return fife.ScrollArea.SHOW_AUTO
-		return fife.ScrollArea.SHOW_NEVER
+			return fifechan.ScrollArea.ShowAuto
+		return fifechan.ScrollArea.ShowNever
 
 	def _scrollPolicyToVisibility(self,policy):
-		if policy == fife.ScrollArea.SHOW_NEVER:
+		if policy == fifechan.ScrollArea.ShowNever:
 			return False
 		return True
 

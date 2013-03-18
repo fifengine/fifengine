@@ -28,7 +28,7 @@ from dockarea import DockArea
 import toolbar
 from toolbar import ToolBar
 from statusbar import StatusBar
-from fife import fife
+from fife import fife, fifechan
 
 DOCKAREA = {
 	'left'	: 'left',
@@ -223,7 +223,7 @@ class MainWindow(object):
 	def getToolbarAreaAt(self, x, y, mark=False):
 		if self.dockareamarker is None:
 			self.dockareamarker = pychan.widgets.Container()
-			self.dockareamarker.base_color = fife.Color(200, 0, 0, 100)
+			self.dockareamarker.base_color = fifechan.Color(200, 0, 0, 100)
 		if mark is False:
 			self.dockareamarker.hide()
 	
@@ -281,7 +281,7 @@ class MainWindow(object):
 		
 		if self.dockareamarker is None:
 			self.dockareamarker = pychan.widgets.Container()
-			self.dockareamarker.base_color = fife.Color(200, 0, 0, 100)
+			self.dockareamarker.base_color = fifechan.Color(200, 0, 0, 100)
 		if mark is False:
 			self.dockareamarker.hide()
 	
