@@ -10,6 +10,8 @@
 %}
 
 %module(directors="1") fife
+$imports
+
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_pair.i"
@@ -99,7 +101,7 @@ static void handleDirectorException() {
 import traceback\n\
 s = 'Traceback (most recent call last):\\n'\n\
 for filename, line, function, text in traceback.extract_tb(exc_traceback):\n\
-	s = s + '  File \"%%s\", line %%d, in %%s\\n    %%s' %% (filename, line, function, text)\n\
+	s = s + ' File \"%%s\", line %%d, in %%s\\n    %%s' %% (filename, line, function, text)\n\
 	if s[-1] != '\\n': s = s + '\\n'\n\
 for l in traceback.format_exception_only(exc_type, exc_value):\n\
 	s = s + l\n\
@@ -124,14 +126,6 @@ print s\n\
 		SWIG_exception(_converted_type, _e.what()); \
 	}
 
-#define _GCN_EXC_HANDLER() \
-	catch (gcn::Exception& _e) { \
-		PyErr_Clear(); \
-		char _err_line[12]; \
-		sprintf(_err_line, ":%u", _e.getLine()); \
-		std::string _err_msg = "Caught a gcn exception thrown in " + _e.getFilename() + _err_line + " in function " + _e.getFunction() + ": " + _e.getMessage(); \
-		SWIG_exception(SWIG_RuntimeError, _err_msg.c_str()); \
-	}
 
 #define _FIFE_DIRECTOR_EXC_HANDLER() \
 	catch (Swig::DirectorException &) { \
@@ -152,7 +146,6 @@ print s\n\
 		$$action
 	}
 	_FIFE_DIRECTOR_EXC_HANDLER()
-	_GCN_EXC_HANDLER()
 	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
 }
 

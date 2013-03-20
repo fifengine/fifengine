@@ -2,9 +2,14 @@
 ext/install
 
 # Swig wrappers
+engine/python/fife/fife.py
+engine/python/fife/fifechan.py
 engine/swigwrappers/python/fife.i
 engine/swigwrappers/python/fife_wrap.cc
 engine/swigwrappers/python/fife_wrap.h
+engine/swigwrappers/python/fifechan.i
+engine/swigwrappers/python/fifechan_wrap.cc
+engine/swigwrappers/python/fifechan_wrap.h
 
 # Project files
 build/linux/KDevelop/FIFE.kdevses
@@ -24,6 +29,7 @@ build/win32/static_libs
 
 # Demos
 demos/rio_de_hola/maps/savefile.xml
+demos/shooter/gui/highscores.xml
 settings.xml
 
 # All log files

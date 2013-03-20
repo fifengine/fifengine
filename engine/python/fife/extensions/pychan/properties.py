@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
+from fife import fife, fifechan
 from exceptions import RuntimeError
 
 def get_manager():
@@ -49,7 +49,7 @@ class WrappedProperty(object):
 
 class ColorProperty(WrappedProperty):
 	"""
-	A color property. Fakes a color attribute of a guichan widget.
+	A color property. Fakes a color attribute of a fifechan widget.
 	This accepts either tuples of the colors (r,g,b)
 	or L{fife.Color} objects.
 
@@ -59,14 +59,14 @@ class ColorProperty(WrappedProperty):
 		super(ColorProperty, self).__init__(name)
 	def __set__(self, obj, color):
 		if isinstance(color, tuple):
-			color = fife.Color(*color)
+			color = fifechan.Color(*color)
 		else:
 			# Force a copy to get value semantics
-			color = fife.Color(color.r,color.g,color.b,color.a)
+			color = fifechan.Color(color.r,color.g,color.b,color.a)
 		self._getSetter(obj)(color)
 	def __get__(self, obj, objtype = None):
 		color = self._getGetter(obj)()
-		return fife.Color(color.r,color.g,color.b,color.a)
+		return fifechan.Color(color.r,color.g,color.b,color.a)
 
 class ImageProperty(WrappedProperty):
 	"""

@@ -28,6 +28,7 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 
 class Window(object):
 	def __init__(self, gamecontroller):
@@ -55,7 +56,7 @@ class MainMenu(Window):
 
 		eventMap = {
 			'new_game': self._gamecontroller.newGame,
-			'settings': self._settings.onOptionsPress,
+			'settings': self._settings.showSettingsDialog,
 			'credits': self._guicontroller.showCredits,
 			'quit': self._gamecontroller.quit,
 		}

@@ -42,8 +42,8 @@ class Slider(Widget):
 		- update docstrings
 	"""
 
-	HORIZONTAL = fife.Slider.HORIZONTAL
-	VERTICAL = fife.Slider.VERTICAL
+	HORIZONTAL = fifechan.Slider.Horizontal
+	VERTICAL = fifechan.Slider.Vertical
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
 									   FloatAttr('scale_start'), 
@@ -89,7 +89,7 @@ class Slider(Widget):
 				 marker_length = None,
 				 orientation = None):
 				 
-		self.real_widget = fife.Slider(scale_start or self.DEFAULT_SCALE_START, scale_end or self.DEFAULT_SCALE_END)
+		self.real_widget = fifechan.Slider(scale_start or self.DEFAULT_SCALE_START, scale_end or self.DEFAULT_SCALE_END)
 		self.orientation = self.DEFAULT_ORIENTATION
 		self.step_length = self.DEFAULT_STEP_LENGTH
 		self.marker_length = self.DEFAULT_MARKER_LENGTH

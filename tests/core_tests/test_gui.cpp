@@ -28,7 +28,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <SDL.h>
-#include <guichan.hpp>
+#include <fifechan.hpp>
 
 #include "vfs/vfs.h"
 #include "util/structures/rect.h"
@@ -64,7 +64,7 @@ struct environment {
 		}
 };
 
-void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool) {
+void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics, ImagePool& pool) {
 		boost::scoped_ptr<VFS> vfs(new VFS());
 		vfs->addSource(new VFSDirectory(vfs.get()));
 
@@ -72,18 +72,18 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 		pool.addResourceLoader(new ImageLoader(vfs.get()));
 
 		GuiImageLoader imageloader(pool);
-		gcn::Image::setImageLoader(&imageloader);	
+		fcn::Image::setImageLoader(&imageloader);	
 
 
-		gcn::Container* top = new gcn::Container();
-		top->setDimension(gcn::Rectangle(0, 0, 200, 300));
-		gcn::Gui* gui = new gcn::Gui();
+		fcn::Container* top = new fcn::Container();
+		top->setDimension(fcn::Rectangle(0, 0, 200, 300));
+		fcn::Gui* gui = new fcn::Gui();
 		gui->setGraphics(&graphics);
 		gui->setTop(top);
-		gcn::Label* label = new gcn::Label("Label");
+		fcn::Label* label = new fcn::Label("Label");
 
-		gcn::Image* guiimage = gcn::Image::load(IMAGE_FILE);
-		gcn::Icon* icon = new gcn::Icon(guiimage);
+		fcn::Image* guiimage = fcn::Image::load(IMAGE_FILE);
+		fcn::Icon* icon = new fcn::Icon(guiimage);
 	 
 		top->add(label, 10, 10);
 		top->add(icon, 10, 30);

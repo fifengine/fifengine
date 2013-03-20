@@ -31,7 +31,7 @@ def initEnvironment(env):
 		        '/usr/local/include',
 			'/usr/X11/include',
 			'/opt/local/include/SDL',
-			'/opt/local/include/guichan',
+			'/opt/local/include/fifechan',
 			'/opt/local/include/boost',
 			'/System/Library/Frameworks/OpenAL.framework/Headers',
 			'/opt/local/include/vorbis/',
@@ -65,25 +65,47 @@ def getRequiredHeaders(opengl):
 	return ['SDL/SDL_image.h',
 			'SDL/SDL_ttf.h']
 
-def getRequiredLibs(opengl):
+def getRequiredLibs(reqLibs):
 	libs = [('objc', ''),
 		('png', ''),
 		('SDL', ''),
 		('SDL_image', ''),
 		('SDL_ttf', ''),
 		('vorbisfile', 'vorbisfile.h'),
-		('guichan', ''),
-		('guichan_sdl', ''),
 		('z', 'zlib.h'),
 		('boost_filesystem-mt', ''),
 		('boost_system-mt', ''),
 		('boost_regex-mt', '')]
 	
-	if opengl:
-		libs.append(('guichan_opengl', ''))
+	opengl = reqLibs['opengl']
+	fifechan = reqLibs['fifechan']
+	librocket = reqLibs['librocket']
+	cegui = reqLibs['cegui']
+	
+	if fifechan:
+		libs.append(('fifechan', ''))
+		libs.append(('fifechan_sdl', ''))
+		if opengl:
+			libs.append(('fifechan_opengl', ''))
 		
+	if librocket:
+		libs.append(('RocketCore', 'Rocket/Core.h'))
+		libs.append(('RocketControls', 'Rocket/Controls.h'))
+		librocket_debug = reqLibs['librocket-debug']
+		if librocket_debug:
+			libs.append(('RocketDebugger', 'Rocket/Debugger.h'))
+
+	if cegui:
+		libs.append(('CEGUIBase', ''))
+		libs.append(('CEGUIOpenGLRenderer', 'CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h'))
+			
 	return libs
 
+def createFifechanEnv(standard_env):
+	fifechan_lib_env = standard_env.Clone(LIBS = ['fifechan'])
+		
+	return fifechan_lib_env
+	
 def getOptionalLibs(opengl):
 	libs = [('tinyxml', 'tinyxml.h')]
 	

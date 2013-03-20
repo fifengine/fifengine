@@ -39,7 +39,7 @@
 namespace FIFE {
 
 	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
-	 *  guichan imagefontcollection (google for it)
+	 *  fifechan imagefontcollection (google for it)
 	 */
 	class SubImageFont: public ImageFontBase {
 		public:

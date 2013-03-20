@@ -36,14 +36,13 @@ print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__
 from fife.extensions import *
 from scripts import world
 from scripts.common import eventlistenerbase
-from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
+from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from fife.extensions.pychan import widgets
-from fife.extensions.fife_settings import Setting
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 
-TDS = Setting(app_name="shooter", 
-              settings_file="./settings.xml", 
-              settings_gui_xml="")
+TDS = FifePychanSettings(app_name="shooter", 
+              settings_file="./settings.xml")
               
 TDS.setAvailableScreenResolutions(["1024x768"])
 
@@ -67,7 +66,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		if self._quit:
 			command.consume()
 
-class Shooter(ApplicationBase):
+class Shooter(PychanApplicationBase):
 	def __init__(self):
 		super(Shooter,self).__init__(TDS)
 		

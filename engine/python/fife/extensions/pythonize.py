@@ -41,6 +41,7 @@ conveniences:
 """
 
 from fife import fife
+from fife import fifechan
 import re
 
 __all__ = ()
@@ -48,10 +49,10 @@ __all__ = ()
 fife.Exception.__str__ = fife.Exception.what
 def _Color2Str(c):
 	return 'Color(%s)' % ','.join(map(str,(c.r,c.g,c.b,c.a)))
-fife.Color.__str__ = _Color2Str
+fifechan.Color.__str__ = _Color2Str
 
 classes = [ fife.Engine, fife.Instance, fife.Point, fife.Rect, fife.Image, fife.Animation,
- fife.RenderBackend, fife.Event, fife.Command, fife.Container ]
+ fife.RenderBackend, fife.Event, fife.Command, fifechan.Container ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.

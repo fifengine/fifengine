@@ -823,7 +823,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed an input problem when a dropdown box is clicked on (#337)
   * Fixed pychan event_map to support callable objects (#374)
   * Fixed the pychan demo (#363)
-  * Fixed a pychan problem where unkown characters were displayed when holding 
+  * Fixed a pychan problem where unknown characters were displayed when holding 
     the shift key (#383)
   * Lots of bug fixes
   

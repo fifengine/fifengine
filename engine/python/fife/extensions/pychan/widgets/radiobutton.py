@@ -69,7 +69,7 @@ class RadioButton(BasicTextWidget):
 				 text = None, 
 				 group = None):
 				 
-		self.real_widget = fife.RadioButton()
+		self.real_widget = fifechan.RadioButton()
 		self.group = self.DEFAULT_GROUP
 		
 		super(RadioButton,self).__init__(parent=parent, 

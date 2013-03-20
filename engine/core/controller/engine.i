@@ -21,7 +21,6 @@
 %module fife
 %{
 #include "controller/engine.h"
-#include "gui/guichan/guichanmanager.h"
 %}
 
 

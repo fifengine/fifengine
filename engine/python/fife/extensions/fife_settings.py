@@ -34,48 +34,8 @@ import os
 from StringIO import StringIO
 
 from fife.extensions import fifelog
-from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
-
-SETTINGS_GUI_XML="""\
-<Window name="Settings" title="Settings">
-	<VBox>
-		<Spacer />
-		<VBox>
-			<HBox>
-				<Label text="Resolution:" />
-				<ListBox name="screen_resolution" min_size="120,0" />
-			</HBox>
-			<HBox>
-				<Label text="Renderer:" />
-				<ListBox name="render_backend" min_size="120,0" />
-			</HBox>
-			<HBox>
-				<Label text="Light Model:" />
-				<ListBox name="lighting_model" min_size="120,0" />
-			</HBox>
-		</VBox>
-		<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
-		<CheckBox name="enable_sound" text="Enable sound" />
-		<HBox>
-			<Button name="cancelButton" text="Cancel" />
-			<Button name="okButton" text="Ok" />
-			<Button name="defaultButton" text="Defaults" />
-		</HBox>
-	</VBox>
-</Window>
-"""
-
-CHANGES_REQUIRE_RESTART="""\
-<Window title="Changes require restart">
-	<Label text="Some of your changes require you to restart." />
-	<HBox>
-		<Spacer />
-		<Button name="closeButton" text="Ok" />
-	</HBox>
-</Window>
-"""
 
 FIFE_MODULE = "FIFE"
 
@@ -90,7 +50,7 @@ class Setting(object):
 		screen_height = settings.get("FIFE", "ScreenHeight", 768)
 	"""
 
-	def __init__(self, app_name="", settings_file="", default_settings_file= "settings-dist.xml", settings_gui_xml="", changes_gui_xml="", copy_dist=True, serializer=None):
+	def __init__(self, app_name="", settings_file="", default_settings_file= "settings-dist.xml", copy_dist=True, serializer=None):
 		"""
 		Initializes the Setting object.
 
@@ -117,9 +77,6 @@ class Setting(object):
 		self._app_name = app_name
 		self._settings_file = settings_file
 		self._default_settings_file = default_settings_file
-		self._settings_gui_xml = settings_gui_xml
-		self._changes_gui_xml = changes_gui_xml
-		self.OptionsDlg = None
 
 		# Holds SettingEntries
 		self._entries = {}
@@ -130,14 +87,6 @@ class Setting(object):
 		else:
 			self._appdata = os.path.dirname(self._settings_file)
 			self._settings_file = os.path.basename(self._settings_file)
-
-
-		if self._settings_gui_xml == "":
-			self._settings_gui_xml = SETTINGS_GUI_XML
-
-		if self._changes_gui_xml == "":
-			self._changes_gui_xml = CHANGES_REQUIRE_RESTART
-
 
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
 			if os.path.exists(self._default_settings_file) and copy_dist:
@@ -251,7 +200,7 @@ class Setting(object):
 	def setValidResolutions(self, options):
 		if options:
 			self._resolutions = options
-		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", initialdata = self._resolutions,
 		              requiresrestart=True)
 
 	def initSerializer(self):
@@ -260,26 +209,22 @@ class Setting(object):
 	def _initDefaultSettingEntries(self):
 		"""Initializes the default fife setting entries. Not to be called from
 		outside this class."""
-		self.createAndAddEntry(FIFE_MODULE, "PlaySounds", "enable_sound",
-		              requiresrestart=True)
-		self.createAndAddEntry(FIFE_MODULE, "FullScreen", "enable_fullscreen",
-		              requiresrestart=True)
-		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
-		              requiresrestart=True)
-		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
-		              requiresrestart=True)
-		self.createAndAddEntry(FIFE_MODULE, "Lighting", "lighting_model", initialdata = self._lightingmodels,
-		              requiresrestart=True)
+		self.createAndAddEntry(FIFE_MODULE, "PlaySounds", requiresrestart=True)
+		
+		self.createAndAddEntry(FIFE_MODULE, "FullScreen", requiresrestart=True)
+		
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", initialdata = self._resolutions, requiresrestart=True)
+		
+		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", initialdata = self._renderbackends, requiresrestart=True)
+		
+		self.createAndAddEntry(FIFE_MODULE, "Lighting", initialdata = self._lightingmodels, requiresrestart=True)
 
-	def createAndAddEntry(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+	def createAndAddEntry(self, module, name, applyfunction=None, initialdata=None, requiresrestart=False):
 		""""
 		@param module: The Setting module this Entry belongs to
 		@type module: C{String}
 		@param name: The Setting's name
 		@type name: C{String}
-		@param widgetname: The name of the widget that is used to change this
-		setting
-		@type widgetname: C{String}
 		@param applyfunction: function that makes the changes when the Setting is
 		saved
 		@type applyfunction: C{function}
@@ -290,7 +235,7 @@ class Setting(object):
 		requires a restart
 		@type requiresrestart: C{Boolean}
 		"""
-		entry = SettingEntry(module, name, widgetname, applyfunction, initialdata, requiresrestart)
+		entry = SettingEntry(module, name, applyfunction, initialdata, requiresrestart)
 		self.addEntry(entry)
 
 	def addEntry(self, entry):
@@ -376,7 +321,7 @@ class Setting(object):
 							self._settingsFromFile[module][name]=e_value
 						else:
 							if self._logger:
-								self._logger.log_log("Invalid Screen Resolution value. We expect two integer seperted by x")
+								self._logger.log_log("Invalid Screen Resolution value. We expect two integer separated by x")
 						
 					elif len(self._validSetting[module][name]) == 0:
 						self._settingsFromFile[module][name] = e_value
@@ -502,113 +447,6 @@ class Setting(object):
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
 
-	def setGuiStyle(self, style):
-		""" Set a custom gui style used for the option dialog.
-		@param style: Pychan style to be used
-		@type style: C{string}
-		"""
-		self._gui_style = style
-		
-	def onOptionsPress(self):
-		"""
-		Opens the options dialog box.  Usually you would bind this to a button.
-		"""
-		self.changesRequireRestart = False
-		self.isSetToDefault = False
-		if not self.OptionsDlg:
-			self.loadSettingsDialog()
-		self.fillWidgets()
-		self.OptionsDlg.show()
-
-	def loadSettingsDialog(self):
-		"""
-		Load up the settings xml and return the widget.
-		"""
-		self.OptionsDlg = self._loadWidget(self._settings_gui_xml)
-		self.OptionsDlg.stylize(self._gui_style)
-		self.OptionsDlg.mapEvents({
-			'okButton' : self.applySettings,
-			'cancelButton' : self.OptionsDlg.hide,
-			'defaultButton' : self.setDefaults
-		})
-		return self.OptionsDlg
-
-	def _loadWidget(self, dialog):
-		"""Loads a widget. Can load both files and pure xml strings"""
-		if os.path.isfile(self._settings_gui_xml):
-			return pychan.loadXML(dialog)
-		else:
-			return pychan.loadXML(StringIO(dialog))
-
-	def fillWidgets(self):
-		for module in self._entries.itervalues():
-			for entry in module.itervalues():
-				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
-				
-				"""
-				little change to prevent crash from no settings
-				in settings.xml file
-				"""
-				"""
-				The checking of value for None is specially for the clients who use settings
-				with different names under modules other than "FIFE" for which we have no
-				default value to set. This will prevent the settings widget from crash
-				"""
-				value = self.get(entry.module, entry.name)
-				
-				if isinstance(entry.initialdata, list):
-					try:
-						value = entry.initialdata.index(value)
-					except ValueError:
-						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
-				elif isinstance(entry.initialdata, dict):
-					try:
-						value = entry.initialdata.keys().index(value)
-					except ValueError:
-						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata.keys()))
-				entry.initializeWidget(widget, value)
-
-	def applySettings(self):
-		"""
-		Writes the settings file.  If a change requires a restart of the engine
-		it notifies you with a small dialog box.
-		"""
-		for module in self._entries.itervalues():
-			for entry in module.itervalues():
-				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
-				data = widget.getData()
-				
-				# If the data is a list we need to get the correct selected data
-				# from the list. This is needed for e.g. dropdowns or listboxs
-				if isinstance(entry.initialdata, list):
-					data = entry.initialdata[data]
-				elif isinstance(entry.initialdata, dict):
-					data = entry.initialdata.keys()[data]
-
-				# only take action if something really changed
-				if data != self.get(entry.module, entry.name):
-					self.set(entry.module, entry.name, data)
-					entry.onApply(data)
-
-					if entry.requiresrestart:
-						self.changesRequireRestart = True
-
-		self.saveSettings()
-
-		self.OptionsDlg.hide()
-		if self.changesRequireRestart:
-			self._showChangeRequireRestartDialog()
-
-
-	def _showChangeRequireRestartDialog(self):
-		"""Shows a dialog that informes the user that a restart is required
-		to perform the changes."""
-		RestartDlg = self._loadWidget(self._changes_gui_xml)
-		RestartDlg.stylize(self._gui_style)
-		RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
-		RestartDlg.show()
-
-
 	def setAvailableScreenResolutions(self, reslist):
 		"""
 		A list of valid default screen resolutions.   This should be called once
@@ -628,11 +466,6 @@ class Setting(object):
 		shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
 		self.initSerializer()
-		
-		#On startup the settings dialog is not yet initialized.  We dont
-		#fill the widgets with data in that case.
-		if self.OptionsDlg:
-			self.fillWidgets()
 
 	def _getEntries(self):
 		return self._entries
@@ -648,7 +481,7 @@ class Setting(object):
 
 class SettingEntry(object):
 
-	def __init__(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+	def __init__(self, module, name, applyfunction=None, initialdata=None, requiresrestart=False):
 		"""
 		@param module: The Setting module this Entry belongs to
 		@type module: C{String}
@@ -656,7 +489,6 @@ class SettingEntry(object):
 		@type name: C{String}
 		@param widgetname: The name of the widget that is used to change this
 		setting
-		@type widgetname: C{String}
 		@param applyfunction: function that makes the changes when the Setting is
 		saved
 		@type applyfunction: C{function}
@@ -669,22 +501,14 @@ class SettingEntry(object):
 		"""
 		self._module = module
 		self._name = name
-		self._settingwidgetname = widgetname
 		self._requiresrestart = requiresrestart
 		self._initialdata = initialdata
 		self._applyfunction = applyfunction
 
-	def initializeWidget(self, widget, currentValue):
-		"""Initialize the widget with needed data"""
-		if self._initialdata is not None:
-			if isinstance(self._initialdata, dict):
-				widget.setInitialData(self._initialdata.values())
-			else:
-				widget.setInitialData(self._initialdata)
-		widget.setData(currentValue)
-
 	def onApply(self, data):
-		"""Implement actions that need to be taken when the setting is changed here. """
+		"""Implement actions that need to be taken when the setting is changed
+		here.
+		"""
 		if self._applyfunction is not None:
 			self._applyfunction(data)
 
@@ -699,12 +523,6 @@ class SettingEntry(object):
 
 	def _setName(self, name):
 		self._name = name
-
-	def _getSettingWidgetName(self):
-		return self._settingwidgetname
-
-	def _setSettingWidgetName(self, settingwidgetname):
-		self._settingwidgetname = settingwidgetname
 
 	def _getRequiresRestart(self):
 		return self._requiresrestart
@@ -726,13 +544,11 @@ class SettingEntry(object):
 
 	module = property(_getModule, _setModule)
 	name = property(_getName, _setName)
-	settingwidgetname = property(_getSettingWidgetName, _setSettingWidgetName)
 	requiresrestart = property(_getRequiresRestart, _setRequiresRestart)
 	initialdata = property(_getInitialData, _setInitialData)
 	applyfunction = property(_getApplyFunction, _setApplyFunction)
 
 	def __str__(self):
-		return "SettingEntry: " +  self.name + " Module: " + self.module + " Widget: " + \
-		       self.settingwidgetname + " requiresrestart: " + str(self.requiresrestart) + \
-		       " initialdata: " + str(self.initialdata)
-
+		return "SettingEntry: " +  self.name + " Module: " + self.module +  \
+		        " requiresrestart: " + str(self.requiresrestart) + \
+		        " initialdata: " + str(self.initialdata)

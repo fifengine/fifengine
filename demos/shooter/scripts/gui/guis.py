@@ -26,6 +26,7 @@ import os
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.pychan.fife_pychansettings import FifePychanSettings
 
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
@@ -35,7 +36,7 @@ class MainMenu(object):
 		self._world = world
 		self._setting = setting
 		self._widget = pychan.loadXML('gui/mainmenu.xml')
-
+		
 		self._continue = self._widget.findChild(name="continue")
 		self._newgame = self._widget.findChild(name="new_game")
 		self._credits = self._widget.findChild(name="credits")
@@ -47,7 +48,7 @@ class MainMenu(object):
 		eventMap = {
 			'continue': self._world.continueGame,
 			'new_game': self._world.newGame,
-			'settings': self._setting.onOptionsPress,
+			'settings': self._setting.showSettingsDialog,
 			'credits': self._world.showCredits,
 			'high_scores': self._world.showHighScores,
 			'quit': self._world.quit,

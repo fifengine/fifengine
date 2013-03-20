@@ -167,7 +167,7 @@ class Panel(widgets.Window, ResizableBase):
 		ResizableBase.mousePressed(self, event)
 		if self._rLeft or self._rRight or self._rTop or self._rBottom:
 			self._movable = self.real_widget.isMovable()
-			self.real_widget.setMovable(False) # Don't let guichan move window while we resize
+			self.real_widget.setMovable(False) # Don't let fifechan move window while we resize
 			
 	def mouseDragged(self, event):
 		self._dragging = True

@@ -26,7 +26,7 @@
 // as part of the release process for FIFE.
 #define FIFE_MAJOR_VERSION 0
 #define FIFE_MINOR_VERSION 3
-#define FIFE_SUBMINOR_VERSION 4
+#define FIFE_SUBMINOR_VERSION 3
 
 // -------------------------------------------------------------------------
 //  Do not update anything below this line!
@@ -69,7 +69,7 @@ namespace FIFE {
 #ifdef FIFE_REVISION
 		return FIFE_REVISION;
 #else
-		return 4103;
+		return 0;
 #endif
 	}
 } //FIFE

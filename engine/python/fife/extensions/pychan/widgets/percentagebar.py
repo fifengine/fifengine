@@ -35,8 +35,8 @@ class PercentageBar(Widget):
 
 	"""
 
-	HORIZONTAL = fife.PercentageBar.HORIZONTAL
-	VERTICAL = fife.PercentageBar.VERTICAL
+	HORIZONTAL = fifechan.PercentageBar.HORIZONTAL
+	VERTICAL = fifechan.PercentageBar.VERTICAL
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
 									   IntAttr('value')
@@ -45,7 +45,7 @@ class PercentageBar(Widget):
 	DEFAULT_VEXPAND = 0
 	DEFAULT_MIN_SIZE = 10,10
 	DEFAULT_VALUE = 0
-	DEFAULT_ORIENTATION = HORIZONTAL
+	DEFAULT_ORIENTATION = HORIZONTAL	
 	
 	def __init__(self,
 				 parent = None, 
@@ -70,7 +70,7 @@ class PercentageBar(Widget):
 				 value = None, 
 				 orientation = None):
 				 
-		self.real_widget = fife.PercentageBar()
+		self.real_widget = fifechan.PercentageBar()
 		self.orientation = self.DEFAULT_ORIENTATION
 		self.value = self.DEFAULT_VALUE
 		

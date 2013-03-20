@@ -37,8 +37,7 @@ from scripts.fife_test import FifeTestApplication
 
 
 TDS = Setting(app_name="fife_test",
-              settings_file="./settings.xml", 
-              settings_gui_xml="")
+              settings_file="./settings.xml")
 
 def main():
 	app = FifeTestApplication(TDS)

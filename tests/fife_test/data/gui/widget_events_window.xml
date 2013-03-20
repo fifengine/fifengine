@@ -1,0 +1,5 @@
+<Window name="testWindow" title="Test Window" min_size="100, 300">
+    <Button name="testButtonHide" text="Notifying when hidden"/>
+    <Button name="testButtonShow" text="Notifying when shown"/>
+    <Button name="testButtonMove" text="Notifying when window(ancestor) is moved!"/>
+</Window>
