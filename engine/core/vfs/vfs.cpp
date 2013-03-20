@@ -89,7 +89,7 @@ namespace FIFE {
 				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.what() << ")");
 				continue;
 			} catch (...) {
-				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (unkown exception)");
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (unknown exception)");
 				continue;
 			}
 		}
