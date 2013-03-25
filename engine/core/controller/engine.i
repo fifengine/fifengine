@@ -42,6 +42,7 @@ namespace FIFE {
 	class ScreenMode;
 	class Image;
 	class ImageManager;
+	class AnimationManager;
 	class SoundClipManager;
 	class OffRenderer;
 	class TargetRenderer;
@@ -132,6 +133,7 @@ namespace FIFE {
 		void setGuiManager(IGUIManager* guimanager);
 		IGUIManager* getGuiManager();
 		ImageManager* getImageManager();
+		AnimationManager* getAnimationManager();
 		SoundClipManager* getSoundClipManager();
 		RenderBackend* getRenderBackend();
 		Model* getModel();

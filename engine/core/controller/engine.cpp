@@ -44,6 +44,7 @@
 #endif
 #include "eventchannel/eventmanager.h"
 #include "video/imagemanager.h"
+#include "video/animationmanager.h"
 #include "audio/soundclipmanager.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
@@ -96,6 +97,7 @@ namespace FIFE {
 		m_soundmanager(0),
 		m_timemanager(0),
 		m_imagemanager(0),
+		m_animationmanager(0),
 		m_soundclipmanager(0),
 		m_vfs(0),
 		m_model(0),
@@ -186,6 +188,7 @@ namespace FIFE {
 		FL_LOG(_log, "Creating resource managers");
 
 		m_imagemanager = new ImageManager();
+		m_animationmanager = new AnimationManager();
 		m_soundclipmanager = new SoundClipManager();
 
 		FL_LOG(_log, "Creating render backend");
@@ -305,6 +308,7 @@ namespace FIFE {
 		delete m_soundmanager;
 		delete m_guimanager;
 
+		delete m_animationmanager;
 		delete m_imagemanager;
 		delete m_soundclipmanager;
 //		delete m_eventmanager;

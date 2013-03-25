@@ -47,6 +47,11 @@ namespace FIFE {
          * returns a shared pointer to an animation resource
         */
         virtual AnimationPtr load(const std::string& filename) = 0;
+
+		/** responsible for loading all animations
+         * returns a vector of shared pointer to an animation resource
+        */
+		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
     };
 
     typedef SharedPtr<IAnimationLoader> AnimationLoaderPtr;

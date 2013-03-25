@@ -25,6 +25,7 @@
 #include "video/cursor.h"
 #include "video/animation.h"
 #include "video/imagemanager.h"
+#include "video/animationmanager.h"
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
 #include "video/atlasbook.h"
@@ -122,9 +123,8 @@ namespace FIFE {
 		virtual void invalidateAll();
 	};
 	
-	class Animation: public FifeClass {
+	class Animation: public IResource {
 	public:
-		explicit Animation();
 		~Animation();
 		void addFrame(ImagePtr image, uint32_t duration);
 		int32_t getFrameIndex(uint32_t timestamp);
@@ -142,12 +142,46 @@ namespace FIFE {
 	typedef SharedPtr<Animation> AnimationPtr;	
 	%template(SharedAnimationPointer) SharedPtr<Animation>;
 
-	%extend Animation {
-		static SharedPtr<Animation> createAnimation() {
-			FIFE::SharedPtr<FIFE::Animation> ani(new FIFE::Animation());
-			return ani;
-		}
-	}
+	class AnimationManager : public IResourceManager {
+	public:
+		virtual ~AnimationManager();
+		
+		virtual size_t getMemoryUsed() const;
+		virtual size_t getTotalResourcesCreated() const;
+		virtual size_t getTotalResourcesLoaded() const;
+		virtual size_t getTotalResources() const;
+
+		virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = 0);	
+		virtual AnimationPtr add(Animation* res);
+
+		virtual bool exists(const std::string& name);
+		virtual bool exists(ResourceHandle handle);
+
+		virtual void reload(const std::string& name);
+		virtual void reload(ResourceHandle handle);
+		virtual void reloadAll();
+		virtual void loadUnreferenced();
+
+		virtual void free(const std::string& name);
+		virtual void free(ResourceHandle handle);
+		virtual void freeAll();
+		virtual void freeUnreferenced();
+
+		virtual void remove(ImagePtr& resource);
+		virtual void remove(const std::string& name);
+		virtual void remove(ResourceHandle handle);
+		virtual void removeAll();
+		virtual void removeUnreferenced();
+
+		virtual AnimationPtr get(const std::string& name);
+		virtual AnimationPtr get(ResourceHandle handle);
+
+		virtual ResourceHandle getResourceHandle(const std::string& name);
+
+		virtual void invalidate(const std::string& name);
+		virtual void invalidate(ResourceHandle handle);
+		virtual void invalidateAll();
+	};
 
 	class RenderBackend {
 	public:
