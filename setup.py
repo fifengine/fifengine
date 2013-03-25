@@ -39,7 +39,7 @@ setup(name='fife',
       packages = ['fife', 'fife.extensions', 'fife.extensions.pychan', 'fife.extensions.librocket', 'fife.extensions.cegui', 'fife.extensions.pychan.widgets', 'fife.extensions.pychan.dialog', 'fife.extensions.pychan.widgets.ext', 'fife.extensions.serializers' ],
       package_dir = { '': os.path.join('engine','python') },
       package_data = pkg_data,
-      data_files = [(os.path.join('lib','site-packages', 'fife'),['AUTHORS','CHANGES', 'COPYING' ,'README'])],
+      data_files = [(os.path.join('lib','site-packages', 'fife'),['AUTHORS','CHANGES', 'LICENSE.md' ,'README.md'])],
       license = 'GNU Lesser General Public License, version 2.1'
       )
 
