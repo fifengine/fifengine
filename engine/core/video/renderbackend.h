@@ -89,6 +89,13 @@ namespace FIFE {
 	};
 #endif
 	
+	enum OverlayType {
+		OVERLAY_TYPE_NONE = 0,
+		OVERLAY_TYPE_COLOR = 1,
+		OVERLAY_TYPE_COLOR_AND_TEXTURE = 2,
+		OVERLAY_TYPE_TEXTURES_AND_FACTOR = 3
+	};
+
 	class GuiVertex {
 	public:
 		DoublePoint position;
@@ -197,9 +204,11 @@ namespace FIFE {
 		 */
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba) = 0;
 
+		virtual void addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba) = 0;
+
 		/** Dirty helper function to change the render infos
 		 */
-		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) = 0;
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype = OVERLAY_TYPE_NONE) = 0;
 
 		/** Creates a Screenshot and saves it to a file.
 		 */

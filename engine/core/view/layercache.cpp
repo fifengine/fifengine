@@ -393,7 +393,13 @@ namespace FIFE {
 			// clear old renderlist
 			renderlist.clear();
 			// update all entries
-			fullUpdate(transform);
+			if ((transform & Camera::RotationTransform) == Camera::RotationTransform ||
+				(transform & Camera::TiltTransform) == Camera::TiltTransform ||
+				(transform & Camera::ZTransform) == Camera::ZTransform) {
+				fullUpdate(transform);
+			} else {
+				fullCoordinateUpdate(transform);
+			}
 
 			// create viewport coordinates to collect entries
 			Rect viewport = m_camera->getViewPort();
@@ -446,6 +452,21 @@ namespace FIFE {
 					updateVisual(entry);
 				}
 				updatePosition(entry);
+			}
+		}
+	}
+
+	void LayerCache::fullCoordinateUpdate(Camera::Transform transform) {
+		bool zoomChange = (transform & Camera::ZoomTransform) == Camera::ZoomTransform;
+		for (uint32_t i = 0; i != m_entries.size(); ++i) {
+			Entry* entry = m_entries[i];
+			if (entry->instanceIndex != -1) {
+				if (entry->forceUpdate) {
+					updateVisual(entry);
+					updatePosition(entry);
+					continue;
+				}
+				updateScreenCoordinate(m_renderItems[entry->instanceIndex], zoomChange);
 			}
 		}
 	}
@@ -537,6 +558,16 @@ namespace FIFE {
 			// only visible if visual is visible and item is not totally transparent
 			entry->visible = (visual->isVisible() && item->transparency != 0);
 		}
+		// delete old animation overlay
+		if (item->animationOverlayImages) {
+			delete item->animationOverlayImages;
+			item->animationOverlayImages = 0;
+		}
+		// delete old color overlay
+		if (item->animationOverlayImages) {
+			delete item->animationOverlayImages;
+			item->animationOverlayImages = 0;
+		}
 
 		if (!action) {
 			// Try static images then default action.
@@ -547,39 +578,41 @@ namespace FIFE {
 				}
 			} else {
 				image = ImageManager::instance()->get(image_id);
+				//ObjectVisual* objVis = instance->getObject()->getVisual<ObjectVisual>();
+				//if (objVis->isColorOverlay()) {
+					//int32_t overlayId = objVis->getStaticColorOverlayIndexByAngle(angle);
+					//item->animationOverlayImages = new std::vector<ImagePtr>(1, ImageManager::instance()->get(overlayId));
+				//}
 			}
 		}
 		entry->forceUpdate = (action != 0);
 
-		if (item->overlayImages) {
-			delete item->overlayImages;
-			item->overlayImages = 0;
-		}
 		if (action) {
-			if (action->getVisual<ActionVisual>()->isOverlay()) {
+			if (action->getVisual<ActionVisual>()->isAnimationOverlay()) {
 				std::map<int32_t, AnimationPtr> animations = action->getVisual<ActionVisual>()->getAnimationOverlayByAngle(angle);
 				std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
 				for (; it != animations.end(); ++it) {
-					if (!item->overlayImages) {
-						item->overlayImages = new std::vector<ImagePtr>();
+					if (!item->animationOverlayImages) {
+						item->animationOverlayImages = new std::vector<ImagePtr>();
 					}
 					uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
 					image = it->second->getFrameByTimestamp(animationTime);
-					item->overlayImages->push_back(image);
-
-					//int32_t actionFrame = it->second->getActionFrame();
-					//if (actionFrame != -1) {
-					//	if (item->image != image) {
-					//		int32_t new_frame = animation->getFrameIndex(animationTime);
-					//		if (actionFrame == new_frame) {
-					//			instance->callOnActionFrame(action, actionFrame);
-					//		// if action frame was skipped
-					//		} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
-					//			instance->callOnActionFrame(action, actionFrame);
-					//		}
-					//		item->currentFrame = new_frame;
-					//	}
-					//}
+					item->animationOverlayImages->push_back(image);
+					
+					// works only for one animation
+					int32_t actionFrame = it->second->getActionFrame();
+					if (actionFrame != -1) {
+						int32_t newFrame = it->second->getFrameIndex(animationTime);
+						if (item->currentFrame != newFrame) {
+							if (actionFrame == newFrame) {
+								instance->callOnActionFrame(action, actionFrame);
+							// if action frame was skipped
+							} else if (newFrame > actionFrame && item->currentFrame < actionFrame) {
+								instance->callOnActionFrame(action, actionFrame);
+							}
+							item->currentFrame = newFrame;
+						}
+					}
 				}
 			} else {
 				AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
@@ -589,14 +622,14 @@ namespace FIFE {
 				int32_t actionFrame = animation->getActionFrame();
 				if (actionFrame != -1) {
 					if (item->image != image) {
-						int32_t new_frame = animation->getFrameIndex(animationTime);
-						if (actionFrame == new_frame) {
+						int32_t newFrame = animation->getFrameIndex(animationTime);
+						if (actionFrame == newFrame) {
 							instance->callOnActionFrame(action, actionFrame);
 						// if action frame was skipped
-						} else if (new_frame > actionFrame && item->currentFrame < actionFrame) {
+						} else if (newFrame > actionFrame && item->currentFrame < actionFrame) {
 							instance->callOnActionFrame(action, actionFrame);
 						}
-						item->currentFrame = new_frame;
+						item->currentFrame = newFrame;
 					}
 				}
 			}
@@ -627,49 +660,25 @@ namespace FIFE {
 		if (image) {
 			int32_t w = image->getWidth();
 			int32_t h = image->getHeight();
-			screenPosition.x = (screenPosition.x - w / 2.0) + image->getXShift();
-			screenPosition.y = (screenPosition.y - h / 2.0) + image->getYShift();
+			screenPosition.x = (screenPosition.x - w / 2) + image->getXShift();
+			screenPosition.y = (screenPosition.y - h / 2) + image->getYShift();
 			item->bbox.w = w;
 			item->bbox.h = h;
 		} else {
 			item->bbox.w = 0;
 			item->bbox.h = 0;
 		}
+		// seems wrong but these rounds fix the "wobbling" and gaps between tiles
+		// in case the zoom is straight (1.0, 2.0, 3.0,...)
+		if (m_straightZoom) {
+			screenPosition.x = round(screenPosition.x);
+			screenPosition.y = round(screenPosition.y);
+		}
 		item->screenpoint = screenPosition;
 		item->bbox.x = static_cast<int32_t>(screenPosition.x);
 		item->bbox.y = static_cast<int32_t>(screenPosition.y);
 
-		// seems wrong but these rounds fix the "wobbling" and gaps between tiles
-		// in case the zoom is 1.0
-		if (m_straightZoom) {
-			item->screenpoint.x = round(item->screenpoint.x);
-			item->screenpoint.y = round(item->screenpoint.y);
-		}
-		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
-		// NOTE:
-		// One would expect this to be necessary here,
-		// however it works the same without, sofar
-		// m_camera->calculateZValue(screenPoint);
-		// item->screenpoint.z = -screenPoint.z;
-		item->dimensions.x = screenPoint.x;
-		item->dimensions.y = screenPoint.y;
-
-		if (m_zoomed) {
-			// NOTE: Due to image alignment, there is additional additions on image dimensions
-			//       There's probabaly some better solution for this, but works "good enough" for now.
-			//       In case additions are removed, gaps appear between tiles.
-			//       This is only needed if the zoom is a non-integer value.
-			if (!m_straightZoom) {
-				item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom + OVERDRAW);
-				item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom + OVERDRAW);
-			} else {
-				item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
-				item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
-			}
-		} else {
-			item->dimensions.w = item->bbox.w;
-			item->dimensions.h = item->bbox.h;
-		}
+		updateScreenCoordinate(item);
 
 		CacheTree::Node* node = m_tree->find_container(item->bbox);
 		if (node) {
@@ -679,6 +688,37 @@ namespace FIFE {
 				}
 				entry->node = node;
 				node->data().insert(entry->entryIndex);
+			}
+		}
+	}
+
+	inline void LayerCache::updateScreenCoordinate(RenderItem* item, bool changedZoom) {
+		
+		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
+		// NOTE:
+		// One would expect this to be necessary here,
+		// however it works the same without, sofar
+		// m_camera->calculateZValue(screenPoint);
+		// item->screenpoint.z = -screenPoint.z;
+		item->dimensions.x = screenPoint.x;
+		item->dimensions.y = screenPoint.y;
+
+		if (changedZoom) {
+			if (m_zoomed) {
+				// NOTE: Due to image alignment, there is additional additions on image dimensions
+				//       There's probabaly some better solution for this, but works "good enough" for now.
+				//       In case additions are removed, gaps appear between tiles.
+				//       This is only needed if the zoom is a non-integer value.
+				if (!m_straightZoom) {
+					item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom + OVERDRAW);
+					item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom + OVERDRAW);
+				} else {
+					item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
+					item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
+				}
+			} else {
+				item->dimensions.w = item->bbox.w;
+				item->dimensions.h = item->bbox.h;
 			}
 		}
 	}

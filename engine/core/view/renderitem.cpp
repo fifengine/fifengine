@@ -43,13 +43,17 @@ namespace FIFE {
 		dimensions(),
 		transparency(255),
 		currentFrame(-1),
+		animationOverlayImages(0),
+		colorOverlayImages(0),
+		colorOverlay(0),
 		m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cachedStaticImgAngle(0),
-		overlayImages(0) {
+		m_cachedStaticImgAngle(0) {
 	}
 	
 	RenderItem::~RenderItem() {
-		delete overlayImages;
+		delete animationOverlayImages;
+		delete colorOverlayImages;
+		// don't delete colorOverlay here
 	}
 
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
@@ -59,12 +63,17 @@ namespace FIFE {
 		if (m_cachedStaticImgId != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cachedStaticImgId;
 		}
+		colorOverlay = 0;
 		if(!instance->getObject()->getVisual<ObjectVisual>()) {
 			return -1;
 		}
 
-		m_cachedStaticImgId = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
+		ObjectVisual* objVis = instance->getObject()->getVisual<ObjectVisual>();
+		m_cachedStaticImgId = objVis->getStaticImageIndexByAngle(angle);
 		m_cachedStaticImgAngle = angle;
+		if (objVis->isColorOverlay()) {
+			colorOverlay = objVis->getStaticColorOverlayIndexByAngle(angle);
+		}
 		return m_cachedStaticImgId;
 	}
 
@@ -75,7 +84,14 @@ namespace FIFE {
 		transparency = 255;
 		currentFrame = -1;
 		m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
-		delete overlayImages;
-		overlayImages = 0;
+		if (animationOverlayImages) {
+			delete animationOverlayImages;
+			animationOverlayImages = 0;
+		}
+		if (colorOverlayImages) {
+			delete colorOverlayImages;
+			colorOverlayImages = 0;
+		}
+		colorOverlay = 0;
 	}
 }

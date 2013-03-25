@@ -25,6 +25,17 @@
 %}
 
 namespace FIFE {
+	class OverlayColors {
+	public:
+		OverlayColors();
+		OverlayColors(ImagePtr image);
+		~OverlayColors();
+		void setColorOverlayImage(ImagePtr image);
+		ImagePtr getColorOverlayImage();
+		void changeColor(const Color& source, const Color& target);
+		const std::map<Color, Color>& getColors();
+	};
+
 	class Visual2DGfx {
 	public:
 		virtual ~Visual2DGfx();
@@ -39,6 +50,8 @@ namespace FIFE {
 		virtual ~ObjectVisual();
 		void addStaticImage(uint32_t angle, int32_t image_index);
 		int32_t getStaticImageIndexByAngle(int32_t angle);
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getStaticColorOverlayIndexByAngle(int32_t angle);
 		int32_t getClosestMatchingAngle(int32_t angle);
 		void getStaticImageAngles(std::vector<int32_t>& angles);
 	private:

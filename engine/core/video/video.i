@@ -28,6 +28,7 @@
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
 #include "video/atlasbook.h"
+#include "video/color.h"
 #include "util/base/sharedptr.h"
 #include "util/base/exception.h"
 %}
@@ -319,5 +320,22 @@ namespace FIFE {
 		uint32_t getPageHeight(uint32_t index) {
 			return $self->getPage(index).getHeight();
 		}
-	}		
+	}
+	
+	class Color {
+	public:
+		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
+		~Color();
+
+		void set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha);
+		void setR(uint8_t r);
+		void setG(uint8_t g);
+		void setB(uint8_t b);
+		void setAlpha(uint8_t alpha);
+
+		uint8_t getR() const;
+		uint8_t getG() const;
+		uint8_t getB() const;
+		uint8_t getAlpha() const;
+	};	
 }

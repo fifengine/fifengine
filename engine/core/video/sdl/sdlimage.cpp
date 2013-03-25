@@ -409,6 +409,9 @@ namespace FIFE {
 		}
 	}
 
+	void SDLImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
+	}
+
 	void SDLImage::finalize() {
 		if( m_finalized ) {
 			return;

@@ -53,6 +53,31 @@ namespace FIFE {
 		 */
 		~Color();
 		
+		/** Compares equality of two colors
+		 */
+		inline bool operator==(const Color& color) const {
+			return (m_r == color.m_r && m_g == color.m_g && m_b == color.m_b && m_a == color.m_a);
+		}
+		
+		/** Compares unequality of two colors
+		 */
+		inline bool operator!=(const Color& color) const {
+			return !(*this == color);
+		}
+
+		/** Overload less operator
+		 */
+		inline bool operator<(const Color& rhs) const {
+			if (m_r != rhs.m_r) {
+				return m_r < rhs.m_r;
+			} else if (m_g != rhs.m_g) {
+				return m_g < rhs.m_g;
+			} else if (m_b != rhs.m_b) {
+				return m_b < rhs.m_b;
+			}
+			return m_a < rhs.m_a;
+		}
+
 		/** Set all color channel values.
 		 * 
 		 * @param r Red channel value.

@@ -25,7 +25,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL_video.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,6 +34,7 @@
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
 #include "video/animation.h"
+#include "video/color.h"
 
 
 namespace FIFE {
@@ -48,14 +48,22 @@ namespace FIFE {
 		/** Constructor
 		 */
 		OverlayColors();
+		OverlayColors(ImagePtr image);
+
 		/** Destructor
 		 */
 		~OverlayColors();
 
-		void changeColor(uint8_t sr, uint8_t sg, uint8_t sb, uint8_t tr, uint8_t tg, uint8_t tb);
-		const std::map<SDL_Color, SDL_Color>& getColors();
+		//OverlayColors& operator=(const OverlayColors& rhs);
+
+		void setColorOverlayImage(ImagePtr image);
+		ImagePtr getColorOverlayImage();
+		void changeColor(const Color& source, const Color& target);
+		const std::map<Color, Color>& getColors();
+
 	private:
-		std::map<SDL_Color, SDL_Color> m_colorMap;
+		std::map<Color, Color> m_colorMap;
+		ImagePtr m_image;
 	};
 
 	/** Base class for all 2 dimensional visual classes
@@ -103,6 +111,9 @@ namespace FIFE {
 		 */
 		int32_t getStaticImageIndexByAngle(int32_t angle);
 
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getStaticColorOverlayIndexByAngle(int32_t angle);
+
 		/** Returns closest matching image angle for given angle
 		 * @return closest matching angle
 		 */
@@ -112,12 +123,20 @@ namespace FIFE {
 		 */
 		void getStaticImageAngles(std::vector<int32_t>& angles);
 
+		bool isColorOverlay() { return !m_colorOverlayMap.empty(); }
+
 	private:
 		/** Constructor
 		 */
 		ObjectVisual();
 
 		type_angle2id m_angle2img;
+		
+		//typedef std::map<uint32_t, std::map<int32_t, int32_t> > AngleColorOverlayMap;
+		//AngleColorOverlayMap m_colorOverlayMap;
+		typedef std::map<uint32_t, OverlayColors> AngleColorOverlayMap;
+		AngleColorOverlayMap m_colorOverlayMap;
+		type_angle2id m_map;
 	};
 
 
@@ -213,7 +232,7 @@ namespace FIFE {
 		 */
 		void getActionImageAngles(std::vector<int32_t>& angles);
 
-		bool isOverlay() { return !m_animationOverlayMap.empty(); }
+		bool isAnimationOverlay() { return !m_animationOverlayMap.empty(); }
 
 	private:
 		/** Constructor
@@ -226,6 +245,9 @@ namespace FIFE {
 
 		typedef std::map<uint32_t, std::map<int32_t, AnimationPtr> > AngleAnimationOverlayMap;
 		AngleAnimationOverlayMap m_animationOverlayMap;
+
+		//typedef std::map<uint32_t, std::map<int32_t, AnimationPtr> > AngleColorOverlayMap;
+		//AngleColorOverlayMap m_animationOverlayMap;
 
 		//need this map to use the getIndexByAngle() function in angles.h
 		type_angle2id m_map;

@@ -437,11 +437,11 @@ namespace FIFE {
 				if (coloring) {
 					if(m_need_bind_coloring) {
 						bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
+						//m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
 					} else {
 						uint8_t rgba[4] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b, coloring_it->second.a };
 						vc.image->render(vc.dimensions, vc.transparency, rgba);
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
+						//m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS);
 					}
 				}
 
@@ -469,10 +469,29 @@ namespace FIFE {
 					continue;
 				}
 			}
-			if (vc.overlayImages) {
-				for (std::vector<ImagePtr>::iterator it = vc.overlayImages->begin(); it != vc.overlayImages->end(); ++it) {
+			// ToDo: Find a way to combine animation and color overlays
+			if (vc.animationOverlayImages) {
+				for (std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin(); it != vc.animationOverlayImages->end(); ++it) {
 					(*it)->render(vc.dimensions, vc.transparency);
 				}
+				continue;
+			}
+			if (vc.colorOverlay) {
+				if (vc.colorOverlay->getColors().size() > 1) {
+					// multi color overlay
+					ImagePtr colorOverlay = getMultiColorOverlay(vc);
+					std::map<Color, Color>::const_iterator it = vc.colorOverlay->getColors().begin();
+					uint8_t rgba[4] = { 0, 0, 0, it->second.getAlpha() };
+					vc.image->render(vc.dimensions, vc.transparency);
+					vc.image->render(vc.dimensions, colorOverlay, vc.transparency, rgba);
+					continue;
+				}
+				// single color overlay
+				std::map<Color, Color>::const_iterator color_it = vc.colorOverlay->getColors().begin();
+				uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), color_it->second.getAlpha() };
+				vc.image->render(vc.dimensions, vc.transparency);
+				vc.colorOverlay->getColorOverlayImage()->render(vc.dimensions, vc.image, vc.transparency, rgba);
+				m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
 				continue;
 			}
 			vc.image->render(vc.dimensions, vc.transparency);
@@ -680,6 +699,74 @@ namespace FIFE {
 		info.dirty = false;
 
 		return info.overlay.get();
+	}
+
+	ImagePtr InstanceRenderer::getMultiColorOverlay(const RenderItem& vc) {
+		// multi color overlay
+		const std::map<Color, Color>& colorMap = vc.colorOverlay->getColors();
+		std::map<Color, Color>::const_iterator it = colorMap.begin();
+		ImagePtr colorOverlayImage = vc.colorOverlay->getColorOverlayImage();
+		ImagePtr colorOverlay;
+
+		// create name
+		std::stringstream sts;
+		sts << vc.image.get()->getName();
+		for (; it != colorMap.end(); ++it) {
+			sts << "," << static_cast<uint32_t>(it->second.getR() | (it->second.getG() << 8) | (it->second.getB() << 16) | (it->second.getAlpha()<<24));
+		}
+		bool exist = false;
+		bool found = false;
+		if (ImageManager::instance()->exists(sts.str())) {
+			exist = true;
+			colorOverlay = ImageManager::instance()->getPtr(sts.str());
+			if (isValidImage(colorOverlay)) {
+				removeFromCheck(colorOverlay);
+				found = true;
+			}
+		}
+		if (!exist || !found) {
+			// With lazy loading we can come upon a situation where we need to generate color overlay from
+			// uninitialised shared image
+			if (colorOverlayImage->isSharedImage()) {
+				colorOverlayImage->forceLoadInternal();
+			}
+
+			// not found so we create it
+			SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+				colorOverlayImage->getWidth(), colorOverlayImage->getHeight(), 32,
+				RMASK, GMASK, BMASK, AMASK);
+
+			uint8_t r, g, b, a = 0;
+			for (int32_t x = 0; x < overlay_surface->w; x++) {
+				for (int32_t y = 0; y < overlay_surface->h; y++) {
+					colorOverlayImage->getPixelRGBA(x, y, &r, &g, &b, &a);
+					Color c(r, g, b, a);
+					it = colorMap.find(c);
+					if (it != colorMap.end()) {
+						Image::putPixel(overlay_surface, x, y, it->second.getR(), it->second.getG(), it->second.getB(), a);
+					} else {
+						Image::putPixel(overlay_surface, x, y, r, g, b, a);
+					}
+				}
+			}
+
+			// In case of OpenGL backend, SDLImage needs to be converted
+			Image* img = m_renderbackend->createImage(sts.str(), overlay_surface);
+
+			if (exist) {
+				// image exists but is not "loaded"
+				removeFromCheck(colorOverlay);
+				ImagePtr temp(img);
+				colorOverlay.get()->setSurface(img->detachSurface());
+				colorOverlay.get()->setState(IResource::RES_LOADED);
+			} else {
+				// add image
+				img->setState(IResource::RES_LOADED);
+				colorOverlay = ImageManager::instance()->add(img);
+			}
+		}
+		addToCheck(colorOverlay);
+		return colorOverlay;
 	}
 
 	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold) {

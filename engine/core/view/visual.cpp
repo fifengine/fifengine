@@ -43,6 +43,44 @@ namespace FIFE {
 	 */
 	static Logger _log(LM_VIEW);
 
+	OverlayColors::OverlayColors() {
+	}
+
+	OverlayColors::OverlayColors(ImagePtr image):
+		m_image(image) {
+	}
+
+	OverlayColors::~OverlayColors() {
+	}
+
+	/*OverlayColors& OverlayColors::operator=(const OverlayColors& rhs) {
+		if (this != &rhs) {
+			this->m_colorMap = rhs.m_colorMap;
+			this->m_image = rhs.m_image;
+		}
+		return *this;
+	}*/
+
+	void OverlayColors::setColorOverlayImage(ImagePtr image) {
+		m_image = image;
+	}
+
+	ImagePtr OverlayColors::getColorOverlayImage() {
+		return m_image;
+	}
+
+	void OverlayColors::changeColor(const Color& source, const Color& target) {
+		std::pair<std::map<Color, Color>::iterator, bool> inserter = m_colorMap.insert(std::make_pair(source, target));
+		if (!inserter.second) {
+			Color& c = inserter.first->second;
+			c.set(target.getR(), target.getG(), target.getB(), target.getAlpha());
+		}
+	}
+
+	const std::map<Color, Color>& OverlayColors::getColors() {
+		return m_colorMap;
+	}
+
 	Visual2DGfx::Visual2DGfx() {
 	}
 
@@ -71,6 +109,47 @@ namespace FIFE {
 	int32_t ObjectVisual::getStaticImageIndexByAngle(int32_t angle) {
 		int32_t closestMatch = 0;
 		return getIndexByAngle(angle, m_angle2img, closestMatch);
+	}
+
+	void ObjectVisual::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors) {
+		OverlayColors t = colors;
+		if (t.getColorOverlayImage()) {
+			std::cout << "addStaticColorOverlay have valid image \n";
+		}
+		m_map[angle % 360] = angle % 360;
+		std::pair<AngleColorOverlayMap::iterator, bool> inserter = m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));
+		if (!inserter.second) {
+			OverlayColors tmp = colors;
+			OverlayColors& c = inserter.first->second;
+			c.setColorOverlayImage(tmp.getColorOverlayImage());
+			
+			const std::map<Color, Color>& colorMap = tmp.getColors();
+			std::map<Color, Color>::const_iterator it = colorMap.begin();
+			for (; it != colorMap.end(); ++it) {
+				c.changeColor(it->first, it->second);
+			}
+		}
+	}
+
+	OverlayColors* ObjectVisual::getStaticColorOverlayIndexByAngle(int32_t angle) {
+		//return &m_colorOverlayMap[angle % 360];
+		/*AngleColorOverlayMap::iterator it = m_colorOverlayMap.find(angle % 360);
+		if (it != m_colorOverlayMap.end()) {
+			return &it->second;
+		} else {
+			int32_t tmpAngle = getClosestMatchingAngle(angle % 360);
+			it = m_colorOverlayMap.find(tmpAngle);
+			if (it != m_colorOverlayMap.end()) {
+				return &it->second;
+			}
+		}
+		return 0;*/
+		if (m_colorOverlayMap.empty()) {
+			return 0;
+		}
+		//return m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+		int32_t closestMatch = 0;
+		return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
 	}
 
 	int32_t ObjectVisual::getClosestMatchingAngle(int32_t angle) {

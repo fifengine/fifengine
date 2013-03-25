@@ -75,8 +75,11 @@ namespace FIFE {
 			// current frame index (e.g. needed for action frame)
 			int32_t currentFrame;
 
-			// pointer to vector that holds action overlay images
-			std::vector<ImagePtr>* overlayImages;
+			// pointer to vector that holds animation overlay images
+			std::vector<ImagePtr>* animationOverlayImages;
+			// pointer to vector that holds color overlay images
+			std::vector<ImagePtr>* colorOverlayImages;
+			OverlayColors* colorOverlay;
 		private:
 			int32_t m_cachedStaticImgId;
 			int32_t m_cachedStaticImgAngle;
