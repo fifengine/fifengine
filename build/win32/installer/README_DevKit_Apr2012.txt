@@ -37,8 +37,8 @@ Changes:
 
 Installation / build process
 ===============================
-1. Check out the latest engine sources from SVN or update your SVN checkout in case you have already checked out from SVN before:
-Repository URL: http://fife.svn.cvsdude.com/engine/trunk
+1. Check out the latest engine sources from GitHub:
+Repository URL: https://github.com/fifengine/fifengine
 
 2. Get ActivePython 2.7 (x86 version) and install it to a location of your choice:
 http://downloads.activestate.com/ActivePython/releases/2.7.0.2/ActivePython-2.7.0.2-win32-x86.msi
@@ -53,7 +53,7 @@ http://downloads.activestate.com/ActivePython/releases/2.7.0.2/ActivePython-2.7.
 
 
 5.1 Run <FIFE>\trunk\build\win32\update_project_files.bat.
-5.2 Build files for each supported IDE can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, scons, visual_studio_8, visual_studio_9). See http://wiki.fifengine.de/Guides_%26_tutorials#Win32 for more information.
+5.2 Build files for each supported IDE can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, scons, visual_studio_8, visual_studio_9). See https://github.com/fifengine/fifengine/wiki/Building-on-windows for more information.
 
 6. The final dynamic library (_fife.pyd) is automatically moved to:
 <FIFE>\engine\python\fife
