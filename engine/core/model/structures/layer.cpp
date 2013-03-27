@@ -78,7 +78,7 @@ namespace FIFE {
 		delete m_instanceTree;
 	}
 
-	const std::string& Layer::getId() const { 
+	const std::string& Layer::getId() const {
 		return m_id;
 	}
 
@@ -172,7 +172,7 @@ namespace FIFE {
 				}
 			}
 		}
-			
+
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -547,7 +547,7 @@ namespace FIFE {
 			m_cellCache = new CellCache(this);
 		}
 	}
-	
+
 	CellCache* Layer::getCellCache() {
 		return m_cellCache;
 	}
@@ -634,24 +634,4 @@ namespace FIFE {
 		return m_static;
 	}
 
-	Trigger& Layer::addTrigger(const std::string& name) {
-		std::map< std::string, Trigger* >::iterator it = m_triggerMap.find(name);
-
-		if (it == m_triggerMap.end()) {
-			Trigger* trigger = new Trigger(name);
-			m_triggerMap.insert( std::pair<std::string, Trigger*>(name,trigger));
-			return *trigger;
-		}
-
-		return *it->second;
-	}
-
-	Trigger& Layer::getTrigger(const std::string& name) {
-		std::map< std::string, Trigger* >::iterator it = m_triggerMap.find(name);
-
-		if (it != m_triggerMap.end()) {
-			return *it->second;
-		}
-		return addTrigger(name);
-	}
 } // FIFE

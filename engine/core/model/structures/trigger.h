@@ -32,6 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fifeclass.h"
 
 namespace FIFE {
 
@@ -44,17 +45,17 @@ namespace FIFE {
 
 	// FORWARD REFERENCES
 
-	/**  Trigger get triggered when a specific set of criteria are met.  
+	/**  Trigger get triggered when a specific set of criteria are met.
 	 *
 	 * Currently these can be added directly to Layers.  In order to extend
 	 * their use we might consider abstracting them from the Layer and adding
 	 * a trigger manager of some sort which will then add the appropriate
-	 * listeners to the layer and any other object that might need to 
+	 * listeners to the layer and any other object that might need to
 	 * trip a trigger.
 	 *
 	 * @see Layer
 	 */
-	class Trigger {
+	class Trigger : public FifeClass {
 	public:
 
 	// LIFECYCLE
@@ -63,7 +64,8 @@ namespace FIFE {
 		 *
 		 * @fixme I'm not sure if I actually want to be able to call
 		 * the default constructor.  Triggers should always be given
-		 * a name.  Layers should manage the uniqueness of trigger names.
+		 * a name.  The maps trigger controller should guarantee the
+		 * uniqueness of the name.
 		 */
 		Trigger();
 
@@ -71,13 +73,13 @@ namespace FIFE {
 		 *
 		 * Triggers should be created with a name as that is how they will
 		 * be referred to in the map file.
-		 * 
+		 *
 		 */
 		Trigger(const std::string& name) { m_name = name; };
 
 		/** Destructor.
 		 */
-		~Trigger();
+		virtual ~Trigger();
 
 	// OPERATORS
 
@@ -102,7 +104,7 @@ namespace FIFE {
 		 * NOT free the listener so you must be sure to do this.
 		 */
 		void removeTriggerListener(ITriggerListener* listener);
-		
+
 		/** Reset trigger
 		 *
 		 * Resets the status of the trigger so it can be triggered again.

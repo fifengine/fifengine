@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <vector>
 
 // 3rd party library includes
 
@@ -28,29 +27,49 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/metamodel/modelcoords.h"
+#include "util/log/logger.h"
 
+#include "triggercontroller.h"
 #include "trigger.h"
+#include "map.h"
 
 namespace FIFE {
-	Trigger::Trigger() {
+
+	static Logger _log(LM_STRUCTURES);
+
+	TriggerController::TriggerController(Map* map) :
+		m_map(map){
+
 	}
 
-	Trigger::~Trigger() {
+	TriggerController::~TriggerController() {
+
 	}
 
-	void Trigger::addTriggerListener(ITriggerListener* listener) {
-		m_triggerListeners.push_back(listener);
-	}
+	Trigger* TriggerController::addCellTriggerToLayer(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt1) {
+		assert(layer);
+		assert(!exists(triggerName));
 
-	void Trigger::removeTriggerListener(ITriggerListener* listener) {
-		std::vector<ITriggerListener*>::iterator i = m_triggerListeners.begin();
+		Trigger* trigger = new Trigger(triggerName);
 
-		while (i != m_triggerListeners.end()) {
-			if ((*i) == listener) {
-				m_triggerListeners.erase(i);
-				return;
-			}
-			++i;
+		std::pair<TriggerNameMapIterator, bool> returnValue;
+		returnValue = m_triggerNameMap.insert ( TriggerNameMapPair(triggerName, trigger));
+
+		if (!returnValue.second) {
+			FL_WARN(_log, LMsg("TriggerController::addCellTriggerToLayer() - ") << "Trigger " << triggerName << " already exists.... ignoring.");
 		}
+
+		return returnValue.first->second;
 	}
-}
+
+	bool TriggerController::exists(const std::string& name) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(name);
+		if (it != m_triggerNameMap.end()) {
+			return true;
+		}
+
+		return false;
+	}
+
+} //FIFE

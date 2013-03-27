@@ -40,6 +40,7 @@
 #include "layer.h"
 #include "cellcache.h"
 #include "instance.h"
+#include "triggercontroller.h"
 
 namespace FIFE {
 
@@ -52,7 +53,9 @@ namespace FIFE {
 		m_changedLayers(),
 		m_renderBackend(renderBackend),
 		m_renderers(renderers),
-		m_changed(false){
+		m_changed(false) {
+
+		m_triggerController = new TriggerController(this);
 	}
 
 	Map::~Map() {
