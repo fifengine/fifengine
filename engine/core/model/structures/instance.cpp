@@ -459,12 +459,12 @@ namespace FIFE {
 		initializeAction(actionName);
 		m_activity->m_actionInfo->m_target = new Location(target);
 		m_activity->m_actionInfo->m_speed = speed;
-		setFacingLocation(target);
 		FL_DBG(_log, LMsg("starting action ") <<  actionName << " from" << m_location << " to " << target << " with speed " << speed);
 
 		Route* route = m_activity->m_actionInfo->m_route;
 		if (!route) {
 			route = new Route(m_location, *m_activity->m_actionInfo->m_target);
+			route->setRotation(getRotation());
 			if (costId != "") {
 				route->setCostId(costId);
 			}
@@ -477,6 +477,7 @@ namespace FIFE {
 			}
 			m_activity->m_actionInfo->m_route = route;
 			if (!m_activity->m_actionInfo->m_pather->solveRoute(route)) {
+				setFacingLocation(target);
 				finalizeAction();
 			}
 		}
@@ -488,7 +489,6 @@ namespace FIFE {
 		m_activity->m_actionInfo->m_speed = speed;
 		m_activity->m_actionInfo->m_leader = leader;
 		leader->addDeleteListener(this);
-		setFacingLocation(*m_activity->m_actionInfo->m_target);
 		FL_DBG(_log, LMsg("starting action ") <<  actionName << " from" << m_location << " to " << *m_activity->m_actionInfo->m_target << " with speed " << speed);
 	}
 
@@ -512,7 +512,6 @@ namespace FIFE {
 		m_activity->m_actionInfo->m_speed = speed;
 		m_activity->m_actionInfo->m_route = route;
 		m_activity->m_actionInfo->m_delete_route = false;
-		setFacingLocation(*m_activity->m_actionInfo->m_target);
 		if (isMultiCell()) {
 			route->setObject(m_object);
 			route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
@@ -631,6 +630,7 @@ namespace FIFE {
 		}
 		if (!route) {
 			route = new Route(m_location, *info->m_target);
+			route->setRotation(getRotation());
 			info->m_route = route;
 			if (isMultiCell()) {
 				route->setObject(m_object);
@@ -640,6 +640,7 @@ namespace FIFE {
 				route->setObject(m_object);
 			}
 			if (!info->m_pather->solveRoute(route)) {
+				setFacingLocation(target);
 				return true;
 			}
 		// update target if needed
@@ -652,9 +653,14 @@ namespace FIFE {
 						toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
 				}
 			} else {
-				route->setStartNode(m_location);
+				if (route->getPathLength() == 0) {
+					route->setStartNode(m_location);
+				} else {
+					route->setStartNode(route->getCurrentNode());
+				}
 				route->setEndNode(target);
 				if (!info->m_pather->solveRoute(route)) {
+					setFacingLocation(target);
 					return true;
 				}
 			}
@@ -707,12 +713,17 @@ namespace FIFE {
 			// need new route?
 			if (route->getEndNode().getLayerCoordinates() != m_location.getLayerCoordinates()) {
 				if (m_location.getLayerDistanceTo(target) > 1.5) {
-					route->setStartNode(m_location);
+					if (route->getPathLength() == 0) {
+						route->setStartNode(m_location);
+					} else {
+						route->setStartNode(route->getPreviousNode());
+					}
 					route->setEndNode(target);
 					route->setOccupiedArea(m_location.getLayer()->getCellGrid()->
 						toMultiCoordinates(m_location.getLayerCoordinates(), m_object->getMultiObjectCoordinates(m_rotation)));
 					return !info->m_pather->solveRoute(route);
 				}
+				setFacingLocation(target);
 			}
 			return true;
 		} else if (route->getRouteStatus() == ROUTE_FAILED) {
