@@ -3,7 +3,7 @@
 
 # ####################################################################
 #  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
