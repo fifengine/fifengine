@@ -39,24 +39,40 @@ namespace FIFE {
 	public:
 		virtual ~ITriggerListener() {};
 
-		virtual void onTriggerTriggered() = 0;
+		virtual void onTriggered() = 0;
 	};
 
 	// FORWARD REFERENCES
 
-	/**  A one line description of the class.  
+	/**  Trigger get triggered when a specific set of criteria are met.  
 	 *
-	 * A longer description.
+	 * Currently these can be added directly to Layers.  In order to extend
+	 * their use we might consider abstracting them from the Layer and adding
+	 * a trigger manager of some sort which will then add the appropriate
+	 * listeners to the layer and any other object that might need to 
+	 * trip a trigger.
 	 *
-	 * @see something
+	 * @see Layer
 	 */
 	class Trigger {
 	public:
 
-		// LIFECYCLE
+	// LIFECYCLE
+
 		/** Default constructor.
+		 *
+		 * @fixme I'm not sure if I actually want to be able to call
+		 * the default constructor.  Triggers should always be given
+		 * a name.  Layers should manage the uniqueness of trigger names.
 		 */
 		Trigger();
+
+		/** Constructor with name
+		 *
+		 * Triggers should be created with a name as that is how they will
+		 * be referred to in the map file.
+		 * 
+		 */
 		Trigger(const std::string& name) { m_name = name; };
 
 		/** Destructor.
@@ -66,7 +82,25 @@ namespace FIFE {
 	// OPERATORS
 
 	// OPERATIONS
+
+		/** Add a listener to the trigger.
+		 *
+		 * When a trigger gets triggered it will call the onTriggered()
+		 * function of the listener.
+		 *
+		 * The Trigger does NOT take ownership of the listener so clients
+		 * must be sure to free their memory after the trigger has been
+		 * deleted.
+		 *
+		 * @see ITriggerListener
+		 */
 		void addTriggerListener(ITriggerListener* listener);
+
+		/** Removes a listener from the trigger.
+		 *
+		 * This listener will no longer get called.  The Trigger does
+		 * NOT free the listener so you must be sure to do this.
+		 */
 		void removeTriggerListener(ITriggerListener* listener);
 		
 		/** Reset trigger
@@ -78,6 +112,13 @@ namespace FIFE {
 
 	// ACCESS
 
+		/** Gets the name of the trigger.
+		 *
+		 * @return name of the trigger.
+		 */
+		const std::string& getName() const { return m_name; };
+
+	// INQUIRY
 		/** Returns if the trigger has been triggered
 		 *
 		 *  Triggers will only trigger once unless they are reset.
@@ -86,17 +127,15 @@ namespace FIFE {
 		 */
 		bool isTriggered() { return m_triggered; };
 
-		const std::string& getName() const { return m_name; };
-
-	// INQUIRY
-
 	protected:
 	private:
+		//! name of the trigger.  This should be unique per Layer.
 		std::string m_name;
 
 		//! true if this trigger has been triggered
 		bool m_triggered;
 
+		//! Vector of the listeners that get called
 		std::vector<ITriggerListener*> m_triggerListeners;
 	};
 
