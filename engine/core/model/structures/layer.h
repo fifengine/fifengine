@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 
 // 3rd party library includes
 
@@ -48,6 +49,7 @@ namespace FIFE {
 	class Object;
 	class InstanceTree;
 	class CellCache;
+	class Trigger;
 
 	/** Defines how pathing can be performed on this layer
 	 *
@@ -366,6 +368,24 @@ namespace FIFE {
 			 * @return A boolean, true if the layer is static, otherwise false.
 			*/
 			bool isStatic();
+
+			/** Adds a trigger to the layer
+			 *
+			 * @param name The name of the trigger.  Must be unique for
+			 * the layer.
+			 *
+			 * @return A reference to the Trigger.
+			 */
+			Trigger& addTrigger(const std::string& name);
+			
+			/** Retrive a trigger by name
+			 *
+			 * @param name The name of the trigger you want to retrieve.
+			 *
+			 * @return A reference to the Trigger
+			 */
+			Trigger& getTrigger(const std::string& name);
+
 		protected:
 			//! string identifier
 			std::string m_id;
@@ -405,6 +425,8 @@ namespace FIFE {
 			bool m_changed;
 			//! true if layer is static
 			bool m_static;
+			//! all triggers for the layer
+			std::map< std::string, Trigger* > m_triggerMap;
 	};
 
 } // FIFE

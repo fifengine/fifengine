@@ -37,6 +37,7 @@
 #include "instancetree.h"
 #include "cell.h"
 #include "cellcache.h"
+#include "trigger.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -631,5 +632,26 @@ namespace FIFE {
 
 	bool Layer::isStatic() {
 		return m_static;
+	}
+
+	Trigger& Layer::addTrigger(const std::string& name) {
+		std::map< std::string, Trigger* >::iterator it = m_triggerMap.find(name);
+
+		if (it == m_triggerMap.end()) {
+			Trigger* trigger = new Trigger(name);
+			m_triggerMap.insert( std::pair<std::string, Trigger*>(name,trigger));
+			return *trigger;
+		}
+
+		return *it->second;
+	}
+
+	Trigger& Layer::getTrigger(const std::string& name) {
+		std::map< std::string, Trigger* >::iterator it = m_triggerMap.find(name);
+
+		if (it != m_triggerMap.end()) {
+			return *it->second;
+		}
+		return addTrigger(name);
 	}
 } // FIFE
