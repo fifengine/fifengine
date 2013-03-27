@@ -96,21 +96,9 @@ class XMLObjectSaver(object):
 		blocking = object.isBlocking()
 		static = object.isStatic()
 		
-		# @todo:
-		# compat layer - remove as soon as cell_pathfinding branch
-		# is merged back to trunk/
-		if hasattr(object, 'getCostId'):
-			cost_id = object.getCostId()
-		else:
-			cost_id = ''
-		if hasattr(object, 'getCost'):
-			cost = object.getCost()
-		else:
-			cost = 0.0
-		if hasattr(object, 'getCellStackPosition'):
-			cellstack_pos = object.getCellStackPosition()
-		else:
-			cellstack_pos = 0
+		cost_id = object.getCostId()
+		cost = object.getCost()
+		cellstack_pos = object.getCellStackPosition()
 
 		if self.debug:
 			print "XML tree dump: (pre-save)"
@@ -140,22 +128,21 @@ class XMLObjectSaver(object):
 					print "...ommitting object %s " % _id			
 				continue
 			
-			if 'blocking' not in obj.attrib or int(obj.attrib['blocking']) != int(blocking):
+			if int(obj.attrib['blocking']) != int(blocking):
 				self.change = True
-			if 'static' not in obj.attrib or int(obj.attrib['static']) != int(static):
+			if int(obj.attrib['static']) != int(static):
 				self.change = True
-			if 'cost_id' not in obj.attrib or str(obj.attrib['cost_id']) != str(cost_id):
+			if str(obj.attrib['cost_id']) != str(cost_id):
 				self.change = True
-			if 'cost' not in obj.attrib or float(obj.attrib['cost']) != float(cost):
+			if float(obj.attrib['cost']) != float(cost):
 				self.change = True
-			if 'cellstack_position'  not in obj.attrib or int(obj.attrib['cellstack_position']) != int(cellstack_pos):
+			if int(obj.attrib['cellstack_position']) != int(cellstack_pos):
 				self.change = True
 
 			obj.attrib['blocking'] = str(int(blocking))
 			obj.attrib['static'] = str(int(static))
-			if cost_id and cost:
-				obj.attrib['cost_id'] = str(cost_id)
-				obj.attrib['cost'] = str(cost)
+			obj.attrib['cost_id'] = str(cost_id)
+			obj.attrib['cost'] = str(cost)
 			obj.attrib['cellstack_position'] = str(cellstack_pos)
 			
 			if self.debug and self.change:
