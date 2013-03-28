@@ -1,4 +1,3 @@
-
 __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_        
  _\/\\\///////////___\/////\\\///___\/\\\///////////___\/\\\///////////__       
   _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________      
@@ -20,7 +19,7 @@ targets work as advertized.
 === Dependencies ===
 A list of all dependencies (including accurate version numbers) that you'll need
 to obtain to build FIFE on your platform can be found at the project wiki:
- * http://wiki.fifengine.net/index.php?title=Build_dependencies
+ * https://github.com/fifengine/fifengine/wiki/dependencies
 
 
 === SCons Build System Notes ===
@@ -64,7 +63,7 @@ Build options:
 === Linux ===
 Detailed information how to build FIFE on Linux-based distributions can be found
 at the project wiki:
- * http://wiki.fifengine.net/index.php?title=Building:Linux:SCons
+ * https://github.com/fifengine/fifengine/wiki/Building-on-linux
 
 After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
 directory and run: 'python run.py'
@@ -72,7 +71,7 @@ directory and run: 'python run.py'
 === OS X ===
 Detailed information how to build FIFE on OS X systems can be found at the 
 project wiki:
- * http://wiki.fifengine.net/index.php?title=Building:Mac:Scons
+ * https://github.com/fifengine/fifengine/wiki/Building-on-osx
 
 After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
 directory and run: 'python run.py'
@@ -80,8 +79,8 @@ directory and run: 'python run.py'
 
 === Win32 ===
 The Win32 package ships with precompiled binaries. Simply unpack the package to
-location of your choice. After that you'll need to install ActivePython 2.7:
- * http://downloads.activestate.com/ActivePython/releases/2.7.0.2/ActivePython-2.7.0.2-win32-x86.msi
+location of your choice. After that you'll need to install the 32bit version of
+ActivePython 2.7.
 
 Move into the <FIFE>\demos\rio_de_hola directory and start the run.py script. 
 You can simply double-click with your mouse on it. It should be automatically 
