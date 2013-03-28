@@ -50,9 +50,9 @@ class XMLDialog(object):
 
 		screen_w, screen_h = screen_width(), screen_height()
 		if self.max_size is None:
-			self.max_size = screen_w/2, screen_h/3
+			self.max_size = screen_w // 2, screen_h // 3
 		if self.min_size is None:
-			self.min_size = screen_w/2, screen_h/4
+			self.min_size = screen_w // 2, screen_h // 4
 		self.gui.max_size = self.max_size
 		self.gui.min_size = self.min_size
 
@@ -164,7 +164,7 @@ def _make_text(message):
 def message(message="",caption="Message"):
 	text = _make_text(message)
 	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
 
@@ -173,7 +173,7 @@ def message(message="",caption="Message"):
 def yesNo(message="",caption="Message"):
 	text = _make_text(message)
 	dialog = XMLDialog(StringIO(YESNO_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
 
@@ -182,7 +182,7 @@ def yesNo(message="",caption="Message"):
 def yesNoCancel(message="",caption="Message"):
 	text = _make_text(message)
 	dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
 
@@ -191,8 +191,8 @@ def yesNoCancel(message="",caption="Message"):
 def select(message="",options=[],caption="Message"):
 	text = _make_text(message)
 	dialog = XMLDialog(StringIO(SELECT_BOX_XML))
-	dialog.size = screen_width()/3, 2*screen_height()/3
-	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.size = screen_width() // 3, (2 * screen_height()) // 3
+	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
 	
@@ -215,8 +215,8 @@ def trace(f):
 			
 			tb = traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
 			dialog.gui.findChild(name="traceback").text = "".join(tb)
-			dialog.min_size = screen_width()/2,3*screen_height()/4
-			dialog.max_size = screen_width()/2,3*screen_height()/4
+			dialog.min_size = screen_width() // 2, (3 * screen_height()) // 4
+			dialog.max_size = screen_width() // 2, (3 * screen_height()) // 4
 			result = dialog.execute()
 			if result == YES:
 				return new_f(*args,**kwargs)
