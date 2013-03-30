@@ -110,4 +110,6 @@ def getRequiredLibs(opengl):
 	return None
 
 def getOptionalLibs(opengl):
-	return None
+	libs = [('tinyxml', 'tinyxml.h')]
+	
+	return libs

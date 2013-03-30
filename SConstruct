@@ -215,10 +215,8 @@ else:
 	assert_release = 0
 	
 if GetOption('local-tinyxml'):
-	local_tinyxml = 1
 	env['LOCAL_TINYXML'] = True
 else:
-	local_tinyxml = 0
 	env['LOCAL_TINYXML'] = False
 
 #**************************************************************************
@@ -281,12 +279,6 @@ def checkForLib(lib, header='', language='c++'):
 def checkForLibs(env, liblist, required=1, language='c++'):
 	ret = 0
 	for lib, header in liblist:
-		# special case for the user overriding on the scons build line to
-		# force using the local tinyxml version that ships with fife
-		#if not isinstance(lib, tuple) and lib == 'tinyxml' and env['LOCAL_TINYXML'] == True:
-			#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
-			#continue\
-			
 		if (isinstance(lib, tuple)):
 			for item in lib:
 				ret = checkForLib(item, header, language)
@@ -306,6 +298,12 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						# and store the lib in the lib list
 						env.AppendUnique(CPPDEFINES = ['USE_SYSTEM_TINY_XML'])
 						env.AppendUnique(LIBS = [lib])
+					else:
+						# system version not found, lets issue message and fall
+						# back to local version
+						print 'Warning: System version of tinyxml not found,' \
+							  ' using local version as fallback'
+						env['LOCAL_TINYXML'] = True
 			else:	
 				ret = checkForLib(lib, header, language)
 				if ret:
@@ -318,13 +316,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 			else:
 				print 'Required lib %s not found!' %lib
 			Exit(1)
-		#elif not required and not ret:
-			# special handling for libs that are not required
-			# and were not added
-			#if not isinstance(lib, tuple) and lib == 'tinyxml':
-				# we will use our own included version if
-				# the system version was not found
-				#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
 				
 	return env
 				
