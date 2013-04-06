@@ -48,6 +48,7 @@ namespace FIFE {
 	class SayInfo;
 	class TimeProvider;
 	class Route;
+	class OverlayColors;
 
 	class InstanceActionListener {
 	public:
@@ -420,7 +421,7 @@ namespace FIFE {
 
 		/** Returns cost id. In case there is no it returns the object cost id.
 		 */
-		const std::string& getCostId();
+		std::string getCostId();
 
 		/** Returns true if it is multi cell otherwise false
 		 */
@@ -438,6 +439,22 @@ namespace FIFE {
 		 */
 		const std::vector<Instance*>& getMultiInstances();
 
+		/** Adds new static color overlay with given angle (degrees).
+		 */
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching static color overlay for given angle
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+
+		/** Removes a static color overlay with given angle (degrees).
+		 */
+		void removeStaticColorOverlay(int32_t angle);
+
+		/** Indicates if there exists a static color overlay.
+		 */
+		bool isStaticColorOverlay();
 	private:
 		std::string m_id;
 
@@ -502,6 +519,8 @@ namespace FIFE {
 
 		//! object where instantiated from
 		Object* m_object;
+		//! indicates if m_object is customized
+		bool m_ownObject;
 		//! current location
 		Location m_location;
 		//! instance visualization
@@ -542,6 +561,8 @@ namespace FIFE {
 		void bindTimeProvider();
 		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
+
+		void createOwnObject();
 	};
 } // FIFE
 

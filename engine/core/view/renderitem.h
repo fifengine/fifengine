@@ -78,7 +78,7 @@ namespace FIFE {
 			// pointer to vector that holds animation overlay images
 			std::vector<ImagePtr>* animationOverlayImages;
 			// pointer to vector that holds color overlay images
-			std::vector<ImagePtr>* colorOverlayImages;
+			std::vector<OverlayColors*>* colorOverlays;
 			OverlayColors* colorOverlay;
 		private:
 			int32_t m_cachedStaticImgId;

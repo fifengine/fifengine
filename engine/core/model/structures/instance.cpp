@@ -201,6 +201,7 @@ namespace FIFE {
 		m_activity(NULL),
 		m_changeInfo(ICHANGE_NO_CHANGES),
 		m_object(object),
+		m_ownObject(false),
 		m_location(location),
 		m_visual(NULL),
 		m_blocking(object->isBlocking()),
@@ -262,6 +263,9 @@ namespace FIFE {
 
 		delete m_activity;
 		delete m_visual;
+		if (m_ownObject) {
+			delete m_object;
+		}
 	}
 
 	void Instance::initializeChanges() {
@@ -985,7 +989,7 @@ namespace FIFE {
 		return m_object->getCost();
 	}
 
-	const std::string& Instance::getCostId() {
+	std::string Instance::getCostId() {
 		if (m_specialCost) {
 			return m_costId;
 		}
@@ -1029,6 +1033,45 @@ namespace FIFE {
 				(*it)->setRotation(rot);
 			}
 		}
+	}
+
+	void Instance::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors) {
+		if (!m_ownObject) {
+			createOwnObject();
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		objVis->addStaticColorOverlay(angle, colors);
+	}
+
+	OverlayColors* Instance::getStaticColorOverlay(int32_t angle) {
+		if (!m_ownObject) {
+			return 0;
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		return objVis->getStaticColorOverlay(angle);
+	}
+
+	void Instance::removeStaticColorOverlay(int32_t angle) {
+		if (m_ownObject) {
+			ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+			objVis->removeStaticColorOverlay(angle);
+		}
+	}
+	
+	bool Instance::isStaticColorOverlay() {
+		if (!m_ownObject) {
+			return false;
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		return objVis->isColorOverlay();
+	}
+
+	void Instance::createOwnObject() {
+		m_ownObject = true;
+		ObjectVisual* ov = m_object->getVisual<ObjectVisual>();
+		m_object = new Object(m_object->getId(), m_object->getNamespace(), m_object);
+		ObjectVisual* nov = new ObjectVisual(*ov);
+		m_object->adoptVisual(nov);
 	}
 
 	void Instance::addDeleteListener(InstanceDeleteListener *listener) {

@@ -49,17 +49,13 @@ namespace FIFE {
 	OverlayColors::OverlayColors(ImagePtr image):
 		m_image(image) {
 	}
+	
+	OverlayColors::OverlayColors(AnimationPtr animation):
+		m_animation(animation) {
+	}
 
 	OverlayColors::~OverlayColors() {
 	}
-
-	/*OverlayColors& OverlayColors::operator=(const OverlayColors& rhs) {
-		if (this != &rhs) {
-			this->m_colorMap = rhs.m_colorMap;
-			this->m_image = rhs.m_image;
-		}
-		return *this;
-	}*/
 
 	void OverlayColors::setColorOverlayImage(ImagePtr image) {
 		m_image = image;
@@ -67,6 +63,14 @@ namespace FIFE {
 
 	ImagePtr OverlayColors::getColorOverlayImage() {
 		return m_image;
+	}
+
+	void OverlayColors::setColorOverlayAnimation(AnimationPtr animation) {
+		m_animation = animation;
+	}
+
+	AnimationPtr OverlayColors::getColorOverlayAnimation() {
+		return m_animation;
 	}
 
 	void OverlayColors::changeColor(const Color& source, const Color& target) {
@@ -79,6 +83,10 @@ namespace FIFE {
 
 	const std::map<Color, Color>& OverlayColors::getColors() {
 		return m_colorMap;
+	}
+
+	void OverlayColors::resetColors() {
+		m_colorMap.clear();
 	}
 
 	Visual2DGfx::Visual2DGfx() {
@@ -113,9 +121,6 @@ namespace FIFE {
 
 	void ObjectVisual::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors) {
 		OverlayColors t = colors;
-		if (t.getColorOverlayImage()) {
-			std::cout << "addStaticColorOverlay have valid image \n";
-		}
 		m_map[angle % 360] = angle % 360;
 		std::pair<AngleColorOverlayMap::iterator, bool> inserter = m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));
 		if (!inserter.second) {
@@ -131,25 +136,22 @@ namespace FIFE {
 		}
 	}
 
-	OverlayColors* ObjectVisual::getStaticColorOverlayIndexByAngle(int32_t angle) {
-		//return &m_colorOverlayMap[angle % 360];
-		/*AngleColorOverlayMap::iterator it = m_colorOverlayMap.find(angle % 360);
-		if (it != m_colorOverlayMap.end()) {
-			return &it->second;
-		} else {
-			int32_t tmpAngle = getClosestMatchingAngle(angle % 360);
-			it = m_colorOverlayMap.find(tmpAngle);
-			if (it != m_colorOverlayMap.end()) {
-				return &it->second;
-			}
-		}
-		return 0;*/
+	OverlayColors* ObjectVisual::getStaticColorOverlay(int32_t angle) {
 		if (m_colorOverlayMap.empty()) {
 			return 0;
 		}
-		//return m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
 		int32_t closestMatch = 0;
 		return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+	}
+
+	void ObjectVisual::removeStaticColorOverlay(int32_t angle) {
+		if (m_colorOverlayMap.empty()) {
+			return;
+		}
+		int32_t closestMatch = 0;
+		int32_t index = getIndexByAngle(angle, m_map, closestMatch);
+		m_colorOverlayMap.erase(index);
+		m_map.erase(index);
 	}
 
 	int32_t ObjectVisual::getClosestMatchingAngle(int32_t angle) {
@@ -251,15 +253,99 @@ namespace FIFE {
 		orderMap.insert(std::pair<int32_t, AnimationPtr>(order, animationptr));
 	}
 
+	std::map<int32_t, AnimationPtr> ActionVisual::getAnimationOverlay(int32_t angle) {
+		int32_t closestMatch = 0;
+		return m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+	}
+
 	void ActionVisual::removeAnimationOverlay(uint32_t angle, int32_t order) {
-		std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[angle % 360];
+		int32_t closestMatch = 0;
+		std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
 		std::map<int32_t, AnimationPtr>::iterator it = orderMap.begin();
 		orderMap.erase(order);
 	}
 	
-	std::map<int32_t, AnimationPtr> ActionVisual::getAnimationOverlayByAngle(int32_t angle) {
+	void ActionVisual::addColorOverlay(uint32_t angle, const OverlayColors& colors) {
+		m_map[angle % 360] = angle % 360;
+		std::pair<AngleColorOverlayMap::iterator, bool> inserter = m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));
+		if (!inserter.second) {
+			OverlayColors tmp = colors;
+			OverlayColors& c = inserter.first->second;
+			c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
+			
+			const std::map<Color, Color>& colorMap = tmp.getColors();
+			std::map<Color, Color>::const_iterator it = colorMap.begin();
+			for (; it != colorMap.end(); ++it) {
+				c.changeColor(it->first, it->second);
+			}
+		}
+	}
+
+	OverlayColors* ActionVisual::getColorOverlay(int32_t angle) {
+		if (m_colorOverlayMap.empty()) {
+			return 0;
+		}
 		int32_t closestMatch = 0;
-		return m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+		int32_t index = getIndexByAngle(angle, m_map, closestMatch);
+		if (m_colorOverlayMap.find(index) == m_colorOverlayMap.end()) {
+			return 0;
+		}
+		return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
+	}
+
+	void ActionVisual::removeColorOverlay(int32_t angle) {
+		if (m_colorOverlayMap.empty()) {
+			return;
+		}
+		int32_t closestMatch = 0;
+		int32_t index = getIndexByAngle(angle, m_map, closestMatch);
+		m_colorOverlayMap.erase(index);
+		//m_map.erase(index);
+	}
+
+	void ActionVisual::addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors) {
+		std::map<int32_t, OverlayColors>& orderMap = m_colorAnimationOverlayMap[angle % 360];
+		m_map[angle % 360] = angle % 360;
+		std::pair<std::map<int32_t, OverlayColors>::iterator, bool> inserter = orderMap.insert(std::make_pair(order, colors));
+		if (!inserter.second) {
+			OverlayColors tmp = colors;
+			OverlayColors& c = inserter.first->second;
+			c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
+			
+			const std::map<Color, Color>& colorMap = tmp.getColors();
+			std::map<Color, Color>::const_iterator it = colorMap.begin();
+			for (; it != colorMap.end(); ++it) {
+				c.changeColor(it->first, it->second);
+			}
+		}
+	}
+
+	OverlayColors* ActionVisual::getColorOverlay(int32_t angle, int32_t order) {
+		if (m_colorAnimationOverlayMap.empty()) {
+			return 0;
+		}
+
+		int32_t closestMatch = 0;
+		AngleColorAnimationOverlayMap::iterator it = m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+		if (it != m_colorAnimationOverlayMap.end()) {
+			std::map<int32_t, OverlayColors>::iterator sit = it->second.find(order);
+			if (sit != it->second.end()) {
+				return &it->second[order];
+			}
+		}
+		return 0;
+	}
+
+	void ActionVisual::removeColorOverlay(int32_t angle, int32_t order) {
+		if (m_colorAnimationOverlayMap.empty()) {
+			return;
+		}
+
+		int32_t closestMatch = 0;
+		AngleColorAnimationOverlayMap::iterator it = m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+		if (it != m_colorAnimationOverlayMap.end()) {
+			it->second.erase(order);
+		}
 	}
 
 	void ActionVisual::getActionImageAngles(std::vector<int32_t>& angles) {

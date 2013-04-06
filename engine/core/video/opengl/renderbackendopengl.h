@@ -168,7 +168,7 @@ namespace FIFE {
 		ImagePtr m_img_target;
 		bool m_target_discard;
 		// default texture coordinates
-		float tex_coord_array[8];
+		float m_texCoordArray[8];
 	};
 
 }

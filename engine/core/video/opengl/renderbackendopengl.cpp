@@ -111,14 +111,14 @@ namespace FIFE {
 		m_state.alpha_enabled = false;
 		m_state.scissor_test = true;
 
-		tex_coord_array[0] = 0.0;
-		tex_coord_array[1] = 0.0;
-		tex_coord_array[2] = 0.0;
-		tex_coord_array[3] = 1.0;
-		tex_coord_array[4] = 1.0;
-		tex_coord_array[5] = 1.0;
-		tex_coord_array[6] = 1.0;
-		tex_coord_array[7] = 0.0;
+		m_texCoordArray[0] = 0.0;
+		m_texCoordArray[1] = 0.0;
+		m_texCoordArray[2] = 0.0;
+		m_texCoordArray[3] = 1.0;
+		m_texCoordArray[4] = 1.0;
+		m_texCoordArray[5] = 1.0;
+		m_texCoordArray[6] = 1.0;
+		m_texCoordArray[7] = 0.0;
 	}
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
@@ -359,6 +359,8 @@ namespace FIFE {
 			if(m_state.active_tex != texUnit) {
 				m_state.active_tex = texUnit;
 				glActiveTexture(GL_TEXTURE0 + texUnit);
+			}
+			if (m_state.active_client_tex != texUnit) {
 				m_state.active_client_tex = texUnit;
 				glClientActiveTexture(GL_TEXTURE0 + texUnit);
 			}
@@ -374,6 +376,8 @@ namespace FIFE {
 			if(m_state.active_tex != texUnit) {
 				m_state.active_tex = texUnit;
 				glActiveTexture(GL_TEXTURE0 + texUnit);
+			}
+			if (m_state.active_client_tex != texUnit) {
 				m_state.active_client_tex = texUnit;
 				glClientActiveTexture(GL_TEXTURE0 + texUnit);
 			}
@@ -391,6 +395,10 @@ namespace FIFE {
 			if(m_state.active_tex != texUnit) {
 				m_state.active_tex = texUnit;
 				glActiveTexture(GL_TEXTURE0 + texUnit);
+			}
+			if (m_state.active_client_tex != texUnit) {
+				m_state.active_client_tex = texUnit;
+				glClientActiveTexture(GL_TEXTURE0 + texUnit);
 			}
 			m_state.texture[texUnit] = texId;
 			glBindTexture(GL_TEXTURE_2D, texId);
@@ -529,9 +537,11 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr) {
 		if(m_state.tex_pointer[texUnit] != ptr) {
-			if(m_state.active_client_tex != texUnit) {
+			if(m_state.active_tex != texUnit) {
 				m_state.active_tex = texUnit;
 				glActiveTexture(GL_TEXTURE0 + texUnit);
+			}
+			if (m_state.active_client_tex != texUnit) {
 				m_state.active_client_tex = texUnit;
 				glClientActiveTexture(GL_TEXTURE0 + texUnit);
 			}
@@ -709,7 +719,7 @@ namespace FIFE {
 						mode = ro.mode;
 						type = false;
 					}
-
+					// multitexturing
 					if(mt) {
 						switch (ro.overlay_type) {
 						case OVERLAY_TYPE_NONE:
@@ -736,7 +746,7 @@ namespace FIFE {
 							// set pointers
 							setVertexPointer(stride, &m_render_datas[0].vertex);
 							setColorPointer(stride, &m_render_datas[0].color);
-							setTexCoordPointer(1, 0, &tex_coord_array[0]);
+							setTexCoordPointer(1, sizeof(float), &m_texCoordArray[0]);
 							setTexCoordPointer(0, stride, &m_render_datas[0].texel);
 
 							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
@@ -754,7 +764,7 @@ namespace FIFE {
 							setVertexPointer(stride2T, &m_render_datas2T[0].vertex);
 							setColorPointer(stride2T, &m_render_datas2T[0].color);
 							setTexCoordPointer(2, stride2T, &m_render_datas2T[0].texel2);
-							setTexCoordPointer(1, 0, &tex_coord_array[0]);
+							setTexCoordPointer(1, sizeof(float), &m_texCoordArray[0]);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
 							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
@@ -1114,7 +1124,6 @@ namespace FIFE {
 
 			RenderObject ro(GL_QUADS, 4, id1, id2);
 			ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
-			//ro.overlay_type = OVERLAY_TYPE_COLOR_AND_TEXTURE;
 			ro.rgba[0] = rgba[0];
 			ro.rgba[1] = rgba[1];
 			ro.rgba[2] = rgba[2];

@@ -230,16 +230,6 @@ namespace FIFE {
 	}
 
 	void Object::setStatic(bool stat) {
-		/*if (stat) {
-			if (m_moveProperty) {
-				delete m_moveProperty;
-				m_moveProperty = NULL;
-			}
-			if (m_multiProperty) {
-				delete m_multiProperty;
-				m_multiProperty = NULL;
-			}
-		}*/
 		if (!m_basicProperty) {
 			m_basicProperty = new BasicObjectProperty();
 		}
@@ -247,13 +237,6 @@ namespace FIFE {
 	}
 
 	bool Object::isStatic() const {
-		/*if (m_moveProperty || m_multiProperty) {
-			return false;
-		}
-		if (m_inherited) {
-			return m_inherited->isStatic();
-		}
-		return true;*/
 		if (!m_basicProperty) {
 			if (m_inherited) {
 				return m_inherited->isStatic();

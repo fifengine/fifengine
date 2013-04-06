@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ascii" ?>
 <map id="level1" format="1.0">
     <import file="../tilesets/grassland_tiles.xml" />
+    <import file="../tilesets/skel_overlay_tiles.xml" />
     <import file="../objects/actors/player/skel/object.xml" />
     <layer id="water_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_only">
         <instances>

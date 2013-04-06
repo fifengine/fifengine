@@ -37,6 +37,7 @@ namespace FIFE {
 	class Object;
 	class Instance;
 	class Route;
+	class OverlayColors;
 
 	%feature("director") InstanceActionListener;
 	class InstanceActionListener {
@@ -134,9 +135,14 @@ namespace FIFE {
 		void setCost(const std::string& id, double cost);
 		void resetCost();
 		double getCost();
-		const std::string& getCostId();
+		std::string getCostId();
 
 		bool isMultiCell();
+
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+		void removeStaticColorOverlay(int32_t angle);
+		bool isStaticColorOverlay();
 	};
 }
 
