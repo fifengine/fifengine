@@ -463,34 +463,37 @@ namespace FIFE {
 				continue;
 			}
 			RenderItem* item = m_renderItems[entry->instanceIndex];
+			bool onScreenA = entry->visible && item->image;
 			bool positionUpdate = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
 			if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
 				positionUpdate |= updateVisual(entry);
 			}
-
+			bool onScreenB = entry->visible && item->image;
 			if (positionUpdate) {
-				bool onScreenA = item->dimensions.intersects(viewport);
+				onScreenA = onScreenA && item->dimensions.intersects(viewport);
 				updatePosition(entry);
-				bool onScreenB = item->dimensions.intersects(viewport);
-				if (onScreenA != onScreenB) {
-					if (!onScreenA && entry->visible && item->image) {
-						// add to renderlist and sort
-						renderlist.push_back(item);
-						needSorting.push_back(item);
-					} else {
-						// remove from renderlist
-						for (RenderList::iterator it = renderlist.begin(); it != renderlist.end(); ++it) {
-							if ((*it)->instance == item->instance) {
-								renderlist.erase(it);
-								break;
-							}
+				onScreenB = onScreenB && item->dimensions.intersects(viewport);
+			}
+			
+			if (onScreenA != onScreenB) {
+				if (!onScreenA) {
+					// add to renderlist and sort
+					renderlist.push_back(item);
+					needSorting.push_back(item);
+				} else {
+					// remove from renderlist
+					for (RenderList::iterator it = renderlist.begin(); it != renderlist.end(); ++it) {
+						if ((*it)->instance == item->instance) {
+							renderlist.erase(it);
+							break;
 						}
 					}
-				} else if (onScreenA && onScreenB) {
-					// sort
-					needSorting.push_back(item);
 				}
+			} else if (onScreenA && onScreenB && positionUpdate) {
+				// sort
+				needSorting.push_back(item);
 			}
+
 			if (!entry->forceUpdate || !entry->visible) {
 				entry->forceUpdate = false;
 				entry->updateInfo = EntryNoneUpdate;
