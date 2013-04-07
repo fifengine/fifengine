@@ -493,20 +493,6 @@ namespace FIFE {
 	}
 
 	void Instance::follow(const std::string& actionName, Route* route, const double speed) {
-		// if new follow is identical with the old then return
-		if (m_activity) {
-			if (m_activity->m_actionInfo) {
-				if (m_activity->m_actionInfo->m_target) {
-					if (m_activity->m_actionInfo->m_target->getLayerCoordinates() == route->getEndNode().getLayerCoordinates() &&
-						Mathd::Equal(speed, m_activity->m_actionInfo->m_speed) &&
-						m_activity->m_actionInfo->m_action == m_object->getAction(actionName) &&
-						route->getCostId() == m_activity->m_actionInfo->m_route->getCostId()) {
-
-						return;
-					}
-				}
-			}
-		}
 		initializeAction(actionName);
 		m_activity->m_actionInfo->m_target = new Location(route->getEndNode());
 		m_activity->m_actionInfo->m_speed = speed;
