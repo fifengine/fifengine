@@ -81,7 +81,7 @@ class PasswordField(Widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.accepts_inital_data = True
+		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
 		self._realGetData = self._getText

@@ -294,7 +294,7 @@ namespace FIFE {
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 
 		/** Performs given named action to the instance. While performing the action
-		 *  follows given route with given speed. Note: In this case route isn't delete at the end.
+		 *  follows given route with given speed. Note: In this case route isn't deleted at the end.
 		 *  @param actionName name of the action
 		 *  @param route followed route
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
@@ -302,7 +302,7 @@ namespace FIFE {
 		void follow(const std::string& actionName, Route* route, const double speed);
 
 		/** Cancel movement after a given length.
-		 *  If no lenght is set then 1 is used. This mean that the instance
+		 *  If no length is set then 1 is used. This means that the instance
 		 *  stops at the center of the next cell (can be the same as the current).
 		 */
 		void cancelMovement(uint32_t length = 1);
