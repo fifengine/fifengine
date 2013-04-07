@@ -28,6 +28,20 @@ from distutils.sysconfig import get_python_lib
 _sep = os.path.sep
 
 #**************************************************************************
+# version information
+#**************************************************************************
+major_version = 0
+minor_version = 3
+patch_version = 4
+
+# 0 = none
+# 1 = alpha
+# 2 = beta
+# 3 = rc
+pre_release_type = 0
+pre_release_version = 0
+
+#**************************************************************************
 #add any command line options here
 #**************************************************************************
 
@@ -351,6 +365,14 @@ if not GetOption('clean'):
 #**************************************************************************
 #set variables based on command line and environment options
 #**************************************************************************
+
+env.AppendUnique(CXXFLAGS=[ '-DFIFE_MAJOR_VERSION='+str(major_version), 
+							'-DFIFE_MINOR_VERSION='+str(minor_version),
+							'-DFIFE_PATCH_VERSION='+str(patch_version),
+							'-DFIFE_PRERELEASE_TYPE='+str(pre_release_type),
+							'-DFIFE_PRERELEASE_VERSION='+str(pre_release_version)
+							])
+
 
 if os.environ.has_key('CXX'):
 	env['CXX'] = os.environ['CXX']
