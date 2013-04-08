@@ -28,10 +28,10 @@
 	#define FIFE_MAJOR_VERSION 0
 #endif
 #ifndef FIFE_MINOR_VERSION
-	#define FIFE_MINOR_VERSION 3
+	#define FIFE_MINOR_VERSION 0
 #endif
 #ifndef FIFE_PATCH_VERSION
-	#define FIFE_PATCH_VERSION 4
+	#define FIFE_PATCH_VERSION 0
 #endif
 
 #ifndef FIFE_PRERELEASE_TYPE
@@ -48,21 +48,21 @@
 #define FIFE_STR(s)			# s
 #define FIFE_XSTR(s)		FIFE_STR(s)
 
-#define FIFE_DOT(a,b)		a ## . ## b
+#define FIFE_DOT(a,b)		a.b
 #define FIFE_XDOT(a,b)		FIFE_DOT(a,b)
 
-#define FIFE_PLUS(a,b)		a ## + ## b
+#define FIFE_PLUS(a,b)		a+b
 #define FIFE_XPLUS(a,b)		FIFE_PLUS(a,b)
 
-#define FIFE_MINUS(a,b)		a ## - ## b
+#define FIFE_MINUS(a,b)		a-b
 #define FIFE_XMINUS(a,b)	FIFE_MINUS(a,b)
 
-#if FIFE_PRERELASE_TYPE=1
-	#define FIFE_PRERELEASE "alpha"
-#elif FIFE_PRERELEASE_TYPE=2
- 	#define FIFE_PRERELEASE "beta"
-#elif FIFE_PRERELEASE_TYPE=3
-	#define FIFE_PRERELEASE "rc"
+#if FIFE_PRERELEASE_TYPE==1
+	#define FIFE_PRERELEASE alpha
+#elif FIFE_PRERELEASE_TYPE==2
+ 	#define FIFE_PRERELEASE beta
+#elif FIFE_PRERELEASE_TYPE==3
+	#define FIFE_PRERELEASE rc
 #endif
 
 #if FIFE_PRERELEASE_VERSION>0
@@ -71,6 +71,8 @@
 			FIFE_PRERELEASE, \
 			FIFE_PRERELEASE_VERSION \
 		)
+#else
+	#define FIFE_PRERELEASE_STR FIFE_PRERELEASE
 #endif
 
 #define FIFE_VERSION \
@@ -79,7 +81,7 @@
 		FIFE_PATCH_VERSION \
 	)
 
-#ifdef FIFE_PRERELASE_STR
+#ifdef FIFE_PRERELEASE_STR
 	#define FIFE_VERSION_STRING \
 		FIFE_XMINUS( \
 			FIFE_VERSION, \

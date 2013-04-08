@@ -38,8 +38,8 @@ patch_version = 4
 # 1 = alpha
 # 2 = beta
 # 3 = rc
-pre_release_type = 0
-pre_release_version = 0
+pre_release_type = 2
+pre_release_version = 5
 
 #**************************************************************************
 #add any command line options here
