@@ -22,28 +22,35 @@
 #ifndef FIFE_VERSION_H
 #define FIFE_VERSION_H
 
-// These version numbers should be checked and updated
-// as part of the release process for FIFE.
+/** These version numbers should be checked and updated
+ * as part of the release process for FIFE.
+ */
 #ifndef FIFE_MAJOR_VERSION
 	#define FIFE_MAJOR_VERSION 0
 #endif
 #ifndef FIFE_MINOR_VERSION
-	#define FIFE_MINOR_VERSION 0
+	#define FIFE_MINOR_VERSION 3
 #endif
 #ifndef FIFE_PATCH_VERSION
-	#define FIFE_PATCH_VERSION 0
+	#define FIFE_PATCH_VERSION 4
 #endif
 
+/** Types
+ *  0 = none (pre-release info is not appended to the version in this case)
+ *  1 = alpha
+ *  2 = beta
+ *  3 = rc
+ */
 #ifndef FIFE_PRERELEASE_TYPE
-	#define FIFE_PRERELEASE_TYPE 0
+	#define FIFE_PRERELEASE_TYPE 1
 #endif
 #ifndef FIFE_PRERELEASE_VERSION
 	#define FIFE_PRERELEASE_VERSION 0
 #endif
 
-// -------------------------------------------------------------------------
-//  Do not update anything below this line!
-// -------------------------------------------------------------------------
+/***************************************************************************
+ * Do not update anything below this line!
+ ***************************************************************************/
 
 #define FIFE_STR(s)			# s
 #define FIFE_XSTR(s)		FIFE_STR(s)
@@ -66,13 +73,13 @@
 #endif
 
 #if FIFE_PRERELEASE_VERSION>0
-	#define FIFE_PRERELEASE_STR \
-		FIFE_XDOT( \
-			FIFE_PRERELEASE, \
-			FIFE_PRERELEASE_VERSION \
-		)
-#else
-	#define FIFE_PRERELEASE_STR FIFE_PRERELEASE
+	#ifdef FIFE_PRERELEASE
+		#define FIFE_PRERELEASE_STR \
+			FIFE_XDOT( \
+				FIFE_PRERELEASE, \
+				FIFE_PRERELEASE_VERSION \
+			)
+	#endif
 #endif
 
 #define FIFE_VERSION \
@@ -96,16 +103,28 @@
 				FIFE_GIT_HASH \
 			)
 	#else
-		#define FIFE_VERSION_STRING \
-			FIFE_XMINUS( \
-				FIFE_VERSION, \
+		#undef FIFE_VERSION_STRING
+		#ifdef FIFE_PRERELEASE_STR
+			#define FIFE_VERSION_STRING \
+				FIFE_XMINUS( \
+					FIFE_VERSION, \
+					FIFE_XPLUS( \
+						FIFE_PRERELEASE_STR, \
+						FIFE_GIT_HASH \
+					) \
+				)
+		#else
+			#define FIFE_VERSION_STRING \
 				FIFE_XPLUS( \
-					FIFE_PRERELEASE_STR, \
+					FIFE_VERSION, \
 					FIFE_GIT_HASH \
-				) \
-			)
+				)
+		#endif
 	#endif
+#else
+	#define FIFE_GIT_HASH ""
 #endif
+
 
 // This is an actual release
 #ifndef FIFE_VERSION_STRING
@@ -134,11 +153,7 @@ namespace FIFE {
 	}
 
 	inline const char* getHash() {
-#ifdef FIFE_GIT_HASH
-		return FIFE_GIT_HASH;
-#else
-		return "";
-#endif
+		return FIFE_XSTR(FIFE_GIT_HASH);
 	}
 } //FIFE
 

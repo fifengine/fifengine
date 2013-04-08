@@ -28,20 +28,6 @@ from distutils.sysconfig import get_python_lib
 _sep = os.path.sep
 
 #**************************************************************************
-# version information
-#**************************************************************************
-major_version = 0
-minor_version = 3
-patch_version = 4
-
-# 0 = none
-# 1 = alpha
-# 2 = beta
-# 3 = rc
-pre_release_type = 2
-pre_release_version = 5
-
-#**************************************************************************
 #add any command line options here
 #**************************************************************************
 
@@ -151,6 +137,12 @@ AddOption('--lib-dir',
 		metavar='DIR',
 		help='Shared Library install location') 
 		
+AddOption('--without-githash',
+		dest='without-githash',
+		action='store_true',
+		help='Do not attempt to determine the git hash for the current commit',
+		default=False)
+		
 
 #**************************************************************************
 #save command line options here
@@ -234,6 +226,11 @@ if GetOption('local-tinyxml'):
 else:
 	local_tinyxml = 0
 	env['LOCAL_TINYXML'] = False
+	
+if GetOption('without-githash'):
+	get_githash = False
+else:
+	get_githash = True
 
 #**************************************************************************
 #set the installation directories.
@@ -366,14 +363,6 @@ if not GetOption('clean'):
 #set variables based on command line and environment options
 #**************************************************************************
 
-env.AppendUnique(CXXFLAGS=[ '-DFIFE_MAJOR_VERSION='+str(major_version), 
-							'-DFIFE_MINOR_VERSION='+str(minor_version),
-							'-DFIFE_PATCH_VERSION='+str(patch_version),
-							'-DFIFE_PRERELEASE_TYPE='+str(pre_release_type),
-							'-DFIFE_PRERELEASE_VERSION='+str(pre_release_version)
-							])
-
-
 if os.environ.has_key('CXX'):
 	env['CXX'] = os.environ['CXX']
 
@@ -446,7 +435,9 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
 
 opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
-opts['FIFE_REVISION'] = utils.get_fife_revision(os.getcwd())
+
+if get_githash:
+	opts['FIFE_GIT_HASH'] = utils.get_fife_git_hash(os.getcwd())
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
