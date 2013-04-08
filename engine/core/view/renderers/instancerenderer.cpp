@@ -759,19 +759,19 @@ namespace FIFE {
 		it = animationOverlays->begin();
 		for (; it != animationOverlays->end(); ++it) {
 			// vertical sweep
-			for (int32_t x = 0; x < (*it)->getWidth(); x++) {
+			for (uint32_t x = 0; x < (*it)->getWidth(); x++) {
 				int32_t prev_a = 0;
-				for (int32_t y = 0; y < (*it)->getHeight(); y++) {
+				for (uint32_t y = 0; y < (*it)->getHeight(); y++) {
 					(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
 					if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
 						if (a < prev_a) {
-							for (int32_t yy = y; yy < y + info.width; yy++) {
+							for (uint32_t yy = y; yy < y + info.width; yy++) {
 								int32_t tx = x + (mw/2 - (*it)->getWidth()/2);
 								int32_t ty = yy + (mh/2 - (*it)->getHeight()/2);
 								Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
 							}
 						} else {
-							for (int32_t yy = y - info.width; yy < y; yy++) {
+							for (uint32_t yy = y - info.width; yy < y; yy++) {
 								int32_t tx = x + (mw/2 - (*it)->getWidth()/2);
 								int32_t ty = yy + (mh/2 - (*it)->getHeight()/2);
 								Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
@@ -783,19 +783,19 @@ namespace FIFE {
 			}
 
 			// horizontal sweep
-			for (int32_t y = 0; y < (*it)->getHeight(); y++) {
+			for (uint32_t y = 0; y < (*it)->getHeight(); y++) {
 				int32_t prev_a = 0;
-				for (int32_t x = 0; x < (*it)->getWidth(); x++) {
+				for (uint32_t x = 0; x < (*it)->getWidth(); x++) {
 					(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
 					if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
 						if (a < prev_a) {
-							for (int32_t xx = x; xx < x + info.width; xx++) {
+							for (uint32_t xx = x; xx < x + info.width; xx++) {
 								int32_t tx = xx + (mw/2 - (*it)->getWidth()/2);
 								int32_t ty = y + (mh/2 - (*it)->getHeight()/2);
 								Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
 							}
 						} else {
-							for (int32_t xx = x - info.width; xx < x; xx++) {
+							for (uint32_t xx = x - info.width; xx < x; xx++) {
 								int32_t tx = xx + (mw/2 - (*it)->getWidth()/2);
 								int32_t ty = y + (mh/2 - (*it)->getHeight()/2);
 								Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);

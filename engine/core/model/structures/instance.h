@@ -35,6 +35,7 @@
 
 #include "model/metamodel/object.h"
 #include "model/metamodel/ivisual.h"
+#include "view/visual.h"
 
 #include "location.h"
 
@@ -48,7 +49,6 @@ namespace FIFE {
 	class SayInfo;
 	class TimeProvider;
 	class Route;
-	class OverlayColors;
 
 	class InstanceActionListener {
 	public:
@@ -455,6 +455,54 @@ namespace FIFE {
 		/** Indicates if there exists a static color overlay.
 		 */
 		bool isStaticColorOverlay();
+
+		/** Adds new color overlay with given angle (degrees) to given action.
+		 */
+		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle and action.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
+
+		/** Removes a color overlay with given angle (degrees) from given action.
+		 */
+		void removeColorOverlay(const std::string actionName, int32_t angle);
+
+		/** Adds new animation overlay with given angle (degrees) and order to given action.
+		 */
+		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+
+		/** Gets map with animations closest to given angle.
+		 * @return ordered animation map
+		 */
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
+
+		/** Removes animation overlay with given angle (degrees) and order from action.
+		 */
+		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		/** Adds new color overlay with given angle (degrees) and order to given action animation overlay.
+		 */
+		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle, order and action animation overlay.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		/** Removes a color overlay with given angle (degrees), order from given action animation overlay.
+		 */
+		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+
+		/** Indicates if there exists a animation overlay for given action.
+		 */
+		bool isAnimationOverlay(const std::string actionName);
+
+		/** Indicates if there exists a color overlay for given action or animation overlay.
+		 */
+		bool isColorOverlay(const std::string actionName);
+		
 	private:
 		std::string m_id;
 
@@ -563,6 +611,7 @@ namespace FIFE {
 		void initializeChanges();
 
 		void createOwnObject();
+		ActionVisual* getActionVisual(const std::string actionName, bool create);
 	};
 } // FIFE
 

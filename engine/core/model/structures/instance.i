@@ -38,6 +38,7 @@ namespace FIFE {
 	class Instance;
 	class Route;
 	class OverlayColors;
+	class AnimationPtr;
 
 	%feature("director") InstanceActionListener;
 	class InstanceActionListener {
@@ -143,11 +144,27 @@ namespace FIFE {
 		OverlayColors* getStaticColorOverlay(int32_t angle);
 		void removeStaticColorOverlay(int32_t angle);
 		bool isStaticColorOverlay();
+
+		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
+		void removeColorOverlay(const std::string actionName, int32_t angle);
+
+		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
+		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
+		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+		
+		bool isAnimationOverlay(const std::string actionName);
+		bool isColorOverlay(const std::string actionName);
 	};
 }
 
 namespace std {
 	%template(InstanceVector) vector<FIFE::Instance*>;
-	%template(InstanceList) list<FIFE::Instance*>;	
+	%template(InstanceList) list<FIFE::Instance*>;
+	%template(AnimationOverlayMap) map<int32_t, FIFE::AnimationPtr>;
 }
 

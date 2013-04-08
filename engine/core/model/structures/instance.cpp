@@ -1066,12 +1066,119 @@ namespace FIFE {
 		return objVis->isColorOverlay();
 	}
 
+	void Instance::addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addColorOverlay(angle, colors);
+		}
+	}
+
+	OverlayColors* Instance::getColorOverlay(const std::string actionName, uint32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getColorOverlay(angle);
+		}
+		return NULL;
+	}
+
+	void Instance::removeColorOverlay(const std::string actionName, int32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			visual->removeColorOverlay(angle);
+		}
+	}
+	
+	void Instance::addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addAnimationOverlay(angle, order, animationptr);
+		}
+	}
+
+	std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(const std::string actionName, int32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getAnimationOverlay(angle);
+		}
+		return std::map<int32_t, AnimationPtr>();
+	}
+
+	void Instance::removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->removeAnimationOverlay(angle, order);
+		}
+	}
+
+	void Instance::addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addColorOverlay(angle, order, colors);
+		}
+	}
+
+	OverlayColors* Instance::getColorOverlay(const std::string actionName, uint32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getColorOverlay(angle, order);
+		}
+		return NULL;
+	}
+
+	void Instance::removeColorOverlay(const std::string actionName, int32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			visual->removeColorOverlay(angle, order);
+		}
+	}
+
+	bool Instance::isAnimationOverlay(const std::string actionName) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->isAnimationOverlay();
+		}
+		return false;
+	}
+
+	bool Instance::isColorOverlay(const std::string actionName) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->isColorOverlay();
+		}
+		return false;
+	}
+
 	void Instance::createOwnObject() {
-		m_ownObject = true;
-		ObjectVisual* ov = m_object->getVisual<ObjectVisual>();
-		m_object = new Object(m_object->getId(), m_object->getNamespace(), m_object);
-		ObjectVisual* nov = new ObjectVisual(*ov);
-		m_object->adoptVisual(nov);
+		if (!m_ownObject) {
+			m_ownObject = true;
+			ObjectVisual* ov = m_object->getVisual<ObjectVisual>();
+			m_object = new Object(m_object->getId(), m_object->getNamespace(), m_object);
+			ObjectVisual* nov = new ObjectVisual(*ov);
+			m_object->adoptVisual(nov);
+		}
+	}
+
+	ActionVisual* Instance::getActionVisual(const std::string actionName, bool create) {
+		ActionVisual* nav = NULL;
+		if (!m_ownObject) {
+			createOwnObject();
+		}
+		Action* action = m_object->getAction(actionName, false);
+		if (!action) {
+			action = m_object->getAction(actionName);
+			if (!action) {
+				throw NotFound(std::string("action ") + actionName + " not found");
+			} else if (create) {
+				ActionVisual* av = action->getVisual<ActionVisual>();
+				bool defaultAction = m_object->getDefaultAction() == action;
+				action = m_object->createAction(actionName, defaultAction);
+				nav = new ActionVisual(*av);
+				action->adoptVisual(nav);
+			}
+		} else {
+			nav = action->getVisual<ActionVisual>();
+		}
+		return nav;
 	}
 
 	void Instance::addDeleteListener(InstanceDeleteListener *listener) {

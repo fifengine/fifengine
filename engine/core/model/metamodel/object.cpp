@@ -106,7 +106,7 @@ namespace FIFE {
 			}
 		}
 
-		Action* a = getAction(identifier);
+		Action* a = getAction(identifier, false);
 		if (!a) {
 			a = new Action(identifier);
 			(*actions)[identifier] = a;
@@ -117,7 +117,7 @@ namespace FIFE {
 		return a;
 	}
 
-	Action* Object::getAction(const std::string& identifier) const {
+	Action* Object::getAction(const std::string& identifier, bool deepsearch) const {
 		std::map<std::string, Action*>* actions = NULL;
 		if (m_basicProperty) {
 			actions = m_basicProperty->m_actions;
@@ -128,7 +128,7 @@ namespace FIFE {
 			i = actions->find(identifier);
 		}
 		if ((!actions) || (i == actions->end())) {
-			if (m_inherited) {
+			if (m_inherited && deepsearch) {
 				return m_inherited->getAction(identifier);
 			}
 			return NULL;

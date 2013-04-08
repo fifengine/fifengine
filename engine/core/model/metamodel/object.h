@@ -86,7 +86,7 @@ namespace FIFE {
 
 		/** Gets action with given id. If not found, returns NULL
 		 */
-		Action* getAction(const std::string& identifier) const;
+		Action* getAction(const std::string& identifier, bool deepsearch = true) const;
 
 		/** Gets all available action ids of the object and packs them into a list
 		 */
