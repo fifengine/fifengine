@@ -22,8 +22,6 @@
 # ####################################################################
 
 # Font handling
-from fife.extensions.serializers.simplexml import SimpleXMLSerializer
-from xml.sax import parse
 from exceptions import *
 from fontfileparser import FontFileParser
 
