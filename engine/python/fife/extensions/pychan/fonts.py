@@ -23,7 +23,9 @@
 
 # Font handling
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+from xml.sax import parse
 from exceptions import *
+from fontfileparser import FontFileParser
 
 
 class Font(object):
@@ -62,11 +64,11 @@ class Font(object):
 		@param name: (Optional) The name of the font being loaded. If the file definition contains another name, the name from the file definition is used instead.
 		@return A new Font object
 		"""
-		fontXmlFile = SimpleXMLSerializer(filename)
-		fontNames = fontXmlFile.getModuleName()
+		fontXMLFile = FontFileParser()
+		fontXMLFile.parse(filename, fontXMLFile)
 		fonts = []
-		for font in fontNames:
-			fonts.append(Font(font, lambda key, default=None: fontXmlFile.get(font, key, default)))
+		for font in fontXMLFile.fonts():
+			fonts.append(Font(font, lambda key, default=None: fontXMLFile.get(font, key, default)))
 		return fonts
 
 	def __str__(self):
