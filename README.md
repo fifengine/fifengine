@@ -10,9 +10,13 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 ```
         
-Introduction
+FIFE v0.3.4 - [![Build Status](https://travis-ci.org/fifengine/fifengine.png?branch=master)](https://travis-ci.org/fifengine/fifengine)
 ------------
-Welcome to the FIFE v0.3.4 README. This is based on SVN revision 4103
+Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
+written in C++. It comes with python bindings allowing users to create games 
+using python as well as C++. The engine is designed to be flexible to allow you
+to extend it and add any feature you can imagine to your project.
+
 
 Table of contents
 -----------------
@@ -28,11 +32,7 @@ Table of contents
 
 1) About
 -----------
-Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
-written in C++.  It comes with python bindings allowing users to create games 
-using python as well as C++.  The engine is designed to be flexible to allow you
-to extend it and add any feature you can imagine to your project.
-
+We switched to Git on SVN revision 4103.
 
 2) Features
 -----------
