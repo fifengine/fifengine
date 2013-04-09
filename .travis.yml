@@ -13,5 +13,5 @@ script:
  # - python ./tests/fife_test/run.py
 
 notifications:
-  #irc: "irc.freenode.org#fife"
+  irc: "irc.freenode.org#fife"
   email: false
