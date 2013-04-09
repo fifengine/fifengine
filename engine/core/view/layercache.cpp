@@ -327,7 +327,8 @@ namespace FIFE {
 		if ((ici & ICHANGE_ROTATION) == ICHANGE_ROTATION ||
 			(ici & ICHANGE_ACTION) == ICHANGE_ACTION ||
 			(ici & ICHANGE_TRANSPARENCY) == ICHANGE_TRANSPARENCY ||
-			(ici & ICHANGE_VISIBLE) == ICHANGE_VISIBLE) {
+			(ici & ICHANGE_VISIBLE) == ICHANGE_VISIBLE ||
+			(ici & ICHANGE_VISUAL) == ICHANGE_VISUAL) {
 			entry->updateInfo |= EntryVisualUpdate;
 		}
 

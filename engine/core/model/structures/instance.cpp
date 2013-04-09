@@ -277,6 +277,14 @@ namespace FIFE {
 		}
 	}
 
+	void Instance::prepareForUpdate() {
+		if (isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
+	}
+
 	bool Instance::isActive() const {
 		return (m_activity != 0);
 	}
@@ -288,11 +296,7 @@ namespace FIFE {
 	void Instance::setLocation(const Location& loc) {
 		// ToDo: Handle the case when the layers are different
 		if(m_location != loc) {
-			if(isActive()) {
-				refresh();
-			} else {
-				initializeChanges();
-			}
+			prepareForUpdate();
 
 			if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
 				m_location.getLayer()->getInstanceTree()->removeInstance(this);
@@ -318,13 +322,8 @@ namespace FIFE {
 		}
 		rotation %= 360;
 		if(m_rotation != rotation) {
-			if(isActive()) {
-				refresh();
-				m_rotation = rotation;
-			} else {
-				initializeChanges();
-				m_rotation = rotation;
-			}
+			prepareForUpdate();
+			m_rotation = rotation;
 		}
 	}
 
@@ -342,11 +341,7 @@ namespace FIFE {
 
 	void Instance::setBlocking(bool blocking) {
 		if (m_overrideBlocking) {
-			if(isActive()) {
-				refresh();
-			} else {
-				initializeChanges();
-			}
+			prepareForUpdate();
 			m_blocking = blocking;
 		}
 	}
@@ -900,29 +895,17 @@ namespace FIFE {
 	}
 
 	void Instance::callOnTransparencyChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_TRANSPARENCY;
 	}
 
 	void Instance::callOnVisibleChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_VISIBLE;
 	}
 
 	void Instance::callOnStackPositionChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_STACKPOS;
 	}
 
@@ -1038,6 +1021,8 @@ namespace FIFE {
 		}
 		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
 		objVis->addStaticColorOverlay(angle, colors);
+		prepareForUpdate();
+		m_activity->m_additional |= ICHANGE_VISUAL;
 	}
 
 	OverlayColors* Instance::getStaticColorOverlay(int32_t angle) {
@@ -1052,6 +1037,8 @@ namespace FIFE {
 		if (m_ownObject) {
 			ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
 			objVis->removeStaticColorOverlay(angle);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 	
@@ -1067,6 +1054,8 @@ namespace FIFE {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addColorOverlay(angle, colors);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 
@@ -1082,6 +1071,8 @@ namespace FIFE {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			visual->removeColorOverlay(angle);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 	
@@ -1089,6 +1080,8 @@ namespace FIFE {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addAnimationOverlay(angle, order, animationptr);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 
@@ -1103,7 +1096,9 @@ namespace FIFE {
 	void Instance::removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
-			return visual->removeAnimationOverlay(angle, order);
+			visual->removeAnimationOverlay(angle, order);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 
@@ -1111,6 +1106,8 @@ namespace FIFE {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addColorOverlay(angle, order, colors);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 
@@ -1126,6 +1123,8 @@ namespace FIFE {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			visual->removeColorOverlay(angle, order);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
 		}
 	}
 

@@ -69,7 +69,8 @@ namespace FIFE {
 		ICHANGE_CELL = 0x0080,
 		ICHANGE_TRANSPARENCY = 0x0100,
 		ICHANGE_VISIBLE = 0x0200,
-		ICHANGE_STACKPOS = 0x0400
+		ICHANGE_STACKPOS = 0x0400,
+		ICHANGE_VISUAL = 0x0800
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -609,8 +610,12 @@ namespace FIFE {
 		void bindTimeProvider();
 		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
+		//! called to prepare the instance for an update
+		void prepareForUpdate();
 
+		//! Creates an own object for the instance to allow visual customization.
 		void createOwnObject();
+		//! Returns pointer to action visual, can also create it.
 		ActionVisual* getActionVisual(const std::string actionName, bool create);
 	};
 } // FIFE
