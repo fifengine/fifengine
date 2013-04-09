@@ -163,8 +163,8 @@ namespace FIFE {
 		if (!m_path.empty()) {
 			m_status = ROUTE_SOLVED;
 			m_current = m_path.begin();
-			m_startNode = path.front();
-			m_endNode = path.back();
+			m_startNode = m_path.front();
+			m_endNode = m_path.back();
 		}
 		if (!isMultiCell()) {
 			m_replanned = false;

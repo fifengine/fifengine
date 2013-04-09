@@ -75,7 +75,7 @@ How to use
 ==========
 
 At its core you only need a few functions.
-After setting up FIFE you need to initalize
+After setting up FIFE you need to initialize
 pychan. After that you can load a GUI from an
 XML file. Please see the documentation of L{loadXML}
 for the details of the XML format

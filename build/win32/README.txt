@@ -4,12 +4,13 @@ FIFE Win32 compile guide for building the 2009.0 release version
 
 Installation / build process
 ==========================
-1. Check out the latest engine sources from SVN:
-Repository URL: http://fife.svn.cvsdude.com/engine/trunk
+1. Check out the latest engine sources from GitHub:
+Repository URL: https://github.com/fifengine/fifengine
 
-2.1 Get the latest compile SDK for Win32 from the FIFE wiki:
-http://wiki.fifengine.de/index.php?title=Download_section#Compile_SDKs
-2.2 Get ActivePython 2.5 and install it to a location of your choice:
+2. Get all the required packages
+2.1 Latest compile SDK for Win32 from the FIFE wiki:
+https://github.com/fifengine/fifengine/wiki/Downloads#fife-development-kit
+2.2 ActivePython 2.5 and install it to a location of your choice:
 http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-win32-x86.msi
 
 3. Extraction process

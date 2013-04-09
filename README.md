@@ -38,7 +38,7 @@ to extend it and add any feature you can imagine to your project.
 -----------
 A complete list of the features that FIFE offers can be found at the project 
 wiki:
- * http://wiki.fifengine.net/index.php?title=Engine_features
+ * https://github.com/fifengine/fifengine/wiki/Features
 
 
 3) License
@@ -86,8 +86,8 @@ root directories.
 
 NOTE that the `settings.xml` file is auto generated and wont be there until you
 run the demos for the first time.  FIFE automatically fills the settings file
-with default values.  For more information on FIFE settings please see the wiki
-page here: http://wiki.fifengine.net/Engine_Extensions#Engine_Settings
+with default values.  For more information on FIFE settings please see the 
+wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 
 5) Known issues
 ---------------
@@ -158,7 +158,7 @@ We appreciate every kind of feedback concerning the release, the project in
 general and the bundled techdemo. Feedback is a great way to help us to improve 
 FIFE. If you would like to get in contact with us and provide feedback you can 
 either visit our IRC channel or our forums:
- * http://wiki.fifengine.net/index.php?title=IRC
+ * #fife on freenode.net
  * http://forums.fifengine.net/index.php?board=5.0
 
 

@@ -744,8 +744,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added function to fife_utils: getUserDataDirectory. Returns the proper path 
     to save setting and data files depending on OS. 
   * Removed UnitTest++ from ext (#421)
-  * Changed the way the fife python module is imported ( see 
-    http://wiki.fifengine.de/Importing_Python_Module )
+  * Changed the way the fife python module is imported
   * The serializers will use LogManager instead of printing directly to the 
     console
 
@@ -952,8 +951,7 @@ Bugs:
  * More assets:
   * Graphics, sounds, music...
   * Two new maps matching the storyline.
-  * Rio de hola now conforms to package structure: 
-    http://wiki.fifengine.de/Fife_Package_Specification
+  * Rio de hola now conforms to package structure
   * Popup menu integration, demonstration of actions (kick, talk).
 
 === Pychan improvements ===

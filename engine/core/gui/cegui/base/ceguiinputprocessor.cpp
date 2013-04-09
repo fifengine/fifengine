@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -65,47 +65,51 @@ namespace FIFE {
 	}
 	
 	bool CEGuiInputProcessor::processKeyInput(SDL_Event& event) {
+                bool consumed = false;
+
 		switch(event.type) {
 			case SDL_KEYDOWN:
 				if((event.key.keysym.unicode & 0xFF80) == 0)
 				{
-					CEGUI::System::getSingleton().injectChar(event.key.keysym.unicode & 0x7F);
+					consumed = CEGUI::System::getSingleton().injectChar(event.key.keysym.unicode & 0x7F);
 				}
 				break;
 				
 			case SDL_KEYUP:
-				CEGUI::System::getSingleton().injectKeyUp(event.key.keysym.scancode);
+				consumed = CEGUI::System::getSingleton().injectKeyUp(event.key.keysym.scancode);
 				break;
 				
 			default:
 				;
 		}
 		
-		return false;
+		return consumed;
 	}
 	
 	bool CEGuiInputProcessor::processMouseInput(SDL_Event& event) {
+                bool consumed = false;
+
 		switch(event.type) {
 			case SDL_MOUSEBUTTONDOWN:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
-						CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
+						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
 						break;
 						
 					case SDL_BUTTON_RIGHT:
-						CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::RightButton);
+						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::RightButton);
 						break;
 						
 					case SDL_BUTTON_MIDDLE:
-						CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MiddleButton) ;
+						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MiddleButton) ;
 						break;
 						
 					case SDL_BUTTON_WHEELDOWN:
-						CEGUI::System::getSingleton().injectMouseWheelChange(-1);
+						consumed = CEGUI::System::getSingleton().injectMouseWheelChange(-1);
 						break;
 						
 					case SDL_BUTTON_WHEELUP:
-						CEGUI::System::getSingleton().injectMouseWheelChange(1);
+						consumed = CEGUI::System::getSingleton().injectMouseWheelChange(1);
 						break;
 						
 					default:
@@ -116,15 +120,15 @@ namespace FIFE {
 			case SDL_MOUSEBUTTONUP:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
-						CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
+						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
 						break;
 						
 					case SDL_BUTTON_RIGHT:
-						CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::RightButton);
+						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::RightButton);
 						break;
 						
 					case SDL_BUTTON_MIDDLE:
-						CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::MiddleButton) ;
+						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::MiddleButton) ;
 						break;
 						
 					case SDL_BUTTON_WHEELDOWN:
@@ -142,12 +146,10 @@ namespace FIFE {
 				;
 		}
 		
-		return false;
+		return consumed;
 	}
 	
 	bool CEGuiInputProcessor::processMouseMotion(SDL_Event& event) {
-		CEGUI::System::getSingleton().injectMousePosition(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
-		
-		return false;
+	    return CEGUI::System::getSingleton().injectMousePosition(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
 	}
 }

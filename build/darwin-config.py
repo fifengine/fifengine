@@ -27,17 +27,17 @@ from distutils.sysconfig import get_python_inc
 def initEnvironment(env):
 
 		
-	include_dirs = ['/opt/local/include',
+	include_dirs = ['/usr/local/include',
 		        '/usr/local/include',
 			'/usr/X11/include',
-			'/opt/local/include/SDL',
-			'/opt/local/include/fifechan',
-			'/opt/local/include/boost',
+			'/usr/local/include/SDL',
+			'/usr/local/include/fifechan',
+			'/usr/local/include/boost',
 			'/System/Library/Frameworks/OpenAL.framework/Headers',
-			'/opt/local/include/vorbis/',
+			'/usr/local/include/vorbis/',
 			get_python_inc()]
 
-	lib_dirs = ['/System/Library', '/opt/local/lib', '/usr/X11/lib']
+	lib_dirs = ['/System/Library', '/usr/local/lib', '/usr/X11/lib']
 
 	env.Append(CPPPATH = include_dirs)
 	env.Append(LIBPATH = lib_dirs)
@@ -45,7 +45,6 @@ def initEnvironment(env):
 	return env
 	
 def addExtras(env, opengl):
-	env.Append(SHLINKFLAGS='-F/opt/local/Library/Frameworks')
 	env.Append(SHLINKFLAGS='-framework OpenAL')
 	env.Append(SHLINKFLAGS='-framework Cocoa')
 	env.Append(SHLINKFLAGS='-framework CoreFoundation')
@@ -73,9 +72,9 @@ def getRequiredLibs(reqLibs):
 		('SDL_ttf', ''),
 		('vorbisfile', 'vorbisfile.h'),
 		('z', 'zlib.h'),
-		('boost_filesystem-mt', ''),
-		('boost_system-mt', ''),
-		('boost_regex-mt', '')]
+		('boost_filesystem', ''),
+		('boost_system', ''),
+		('boost_regex', '')]
 	
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']

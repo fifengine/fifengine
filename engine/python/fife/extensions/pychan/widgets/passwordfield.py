@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2011 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -81,7 +81,7 @@ class PasswordField(Widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.accepts_inital_data = True
+		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
 		self._realGetData = self._getText

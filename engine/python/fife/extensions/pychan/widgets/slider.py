@@ -195,7 +195,7 @@ class Slider(Widget):
 	def _setMarkerLength(self, length):
 		"""setMarkerLength(self, int length)"""
 		if type(length) != int:
-			raise RuntimeError("Slider only accepts int for Marker lenght")
+			raise RuntimeError("Slider only accepts int for Marker length")
 		self.real_widget.setMarkerLength(length)
 
 	def _getMarkerLength(self):

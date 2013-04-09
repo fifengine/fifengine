@@ -78,4 +78,4 @@ Misc:
 - C   = shows / hides coordinates
 
 
-http://www.fifengine.de
+http://www.fifengine.net

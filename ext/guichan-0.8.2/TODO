@@ -1,4 +1,0 @@
-* Graphics and input objects for DirectX.
-
-* Add an image of each widget to the documentation
-* Make gcn::TabbedArea resize the contents to the area inside the tab

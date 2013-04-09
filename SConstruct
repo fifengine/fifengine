@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -339,7 +339,7 @@ required_headers = platformConfig.getRequiredHeaders(opengl)
 
 # do not run the check for dependencies if you are running
 # a clean or building the external dependencies
-if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
+if not GetOption('clean'):
 	if required_libs:
 		env = checkForLibs(env, required_libs, required = 1)
 	if optional_libs:
@@ -447,9 +447,6 @@ env.SConscript('engine/SConscript', variant_dir=engine_var_dir, duplicate=0, exp
 
 #build the engine tests
 env.SConscript('tests/core_tests/SConscript', variant_dir=tests_var_dir, duplicate=0, exports='opts')
-
-#build the external dependencies
-env.SConscript('ext/SConscript')
 
 #**************************************************************************
 #documentation target
