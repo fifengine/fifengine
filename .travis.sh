@@ -46,8 +46,8 @@ function install_fifechan() {
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     cd fifechan
     cmake .
-    pmake
-    pmake install
+    make
+    make install
     cd ..
 
     echo -e "\e[1;32m> Done.\e[0m"
