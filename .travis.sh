@@ -47,7 +47,7 @@ function install_fifechan() {
     cd fifechan
     cmake .
     make
-    make install
+    sudo make install
     cd ..
 
     echo -e "\e[1;32m> Done.\e[0m"
