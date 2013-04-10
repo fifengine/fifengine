@@ -110,11 +110,15 @@ cegui_glue_swigfiles = utils.include_by_dir(['cegui'], swigfiles)
 if cegui:
 	headerfiles = headerfiles + cegui_glue_headerfiles
 	compilefiles = compilefiles + cegui_glue_implfiles
+	
 #**************************************************************************
-#define the FIFE revision number
+#define the FIFE git hash number
+#
+#only define this if a valid hash was detected
 #**************************************************************************
-if opts['FIFE_REVISION'] is not "0":
-	env.AppendUnique(CPPDEFINES = ['FIFE_REVISION=' + opts['FIFE_REVISION']])	
+if opts['FIFE_GIT_HASH']:
+	if opts['FIFE_GIT_HASH'] is not "":
+		env.AppendUnique(CPPDEFINES = ['FIFE_GIT_HASH=' + opts['FIFE_GIT_HASH']])	
 
 #**************************************************************************
 #python
@@ -230,8 +234,8 @@ pythonlib = env.SharedLibrary(target = fife_tgt,
 							  SHLIBEMITTER = '')
 
 pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fife_wrap.cc'),
-                                           os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
-                                           os.path.join('python', 'fife', 'fife.py')],
+										   os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
+										   os.path.join('python', 'fife', 'fife.py')],
 							  source = os.path.join('swigwrappers', 'python' ,'fife.i'),
 							  SWIGFLAGS=['-python','-c++','-w511'],
 							  SWIGPATH='core',
