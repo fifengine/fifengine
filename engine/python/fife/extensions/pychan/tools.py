@@ -67,7 +67,7 @@ def callbackWithArguments(callback,*args,**kwargs):
 	If you don't know what this means, don't worry.
 	It is designed for the case where you need
 	different buttons to execute basically the same code
-	with different argumnets.
+	with different arguments.
 
 	Usage::
 	  # The target callback

@@ -27,6 +27,6 @@ namespace FIFE {
 	inline const char* getVersion();
 	inline int getMajor();
 	inline int getMinor();
-	inline int getSubMinor();
-	inline int getRevision();
+	inline int getPatch();
+	inline const char* getHash();
 } //FIFE

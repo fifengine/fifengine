@@ -137,6 +137,12 @@ AddOption('--lib-dir',
 		metavar='DIR',
 		help='Shared Library install location') 
 		
+AddOption('--without-githash',
+		dest='without-githash',
+		action='store_true',
+		help='Do not attempt to determine the git hash for the current commit',
+		default=False)
+		
 
 #**************************************************************************
 #save command line options here
@@ -220,6 +226,11 @@ if GetOption('local-tinyxml'):
 else:
 	local_tinyxml = 0
 	env['LOCAL_TINYXML'] = False
+	
+if GetOption('without-githash'):
+	get_githash = False
+else:
+	get_githash = True
 
 #**************************************************************************
 #set the installation directories.
@@ -424,7 +435,9 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
 
 opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
-opts['FIFE_REVISION'] = utils.get_fife_revision(os.getcwd())
+
+if get_githash:
+	opts['FIFE_GIT_HASH'] = utils.get_fife_git_hash(os.getcwd())
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
