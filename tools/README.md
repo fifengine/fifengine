@@ -44,59 +44,44 @@ the camera settings you should use when creating a new map.
 Outdated/Deprecated
 -------------------
 
-### animation_generator.py
-
-**Removed after 0.3.4**
+### animation_generator.py - removed after 0.3.4
 
 This script requires you to set up some global variables.  It takes a list of
 files and generates an animation.xml based on the global variables and file 
 list.
 
 
-### animpacker.py
-
-**Removed after 0.3.4**
+### animpacker.py - removed after 0.3.4
 
 Saves animations for an already loaded map.  The actual use of this file is
 unknown at the time of writing this readme.  It looks like it would be used
 to convert an old file format to a new one.
 
 
-### object_editor.py
-
-**Removed after 0.3.4**
+### object_editor.py - removed after 0.3.4
 
 An interactive object file editor.  File formats it uses are outdated.
 
 
-### object_generator.py
-
-**Removed after 0.3.4**
+### object_generator.py - removed after 0.3.4
 
 This script requires you to set up some global variables before using.  It
 takes a list of files and generates object files based on the global variables
 and file list.
 
 
-### object_header.sh
-
-**Removed after 0.3.4**
+### object_header.sh - removed after 0.3.4
 
 Adds an xml preprocessor directive to files named object.xml that indicates to
 fife that these are object files. Call with the root directory to convert 
-under as an argument such as:
-      ./object_header my_client/objects
+under as an argument such as: `./object_header my_client/objects`
 
 
-### pack_anim.py
-
-**Removed after 0.3.4**
+### pack_anim.py - removed after 0.3.4
 
 Uses animpacker.py to convert animations to a new format.
 
 
-### ruleset_tester.py
-
-**Removed after 0.3.4**
+### ruleset_tester.py - removed after 0.3.4
 
 Never actually used so removing.
