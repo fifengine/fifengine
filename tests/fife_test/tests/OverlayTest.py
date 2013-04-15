@@ -41,9 +41,27 @@ class KeyListener(fife.IKeyListener):
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
-		if keystr == 't':
+		if keystr == "t":
 			r = self._test._camera.getRenderer('GridRenderer')
 			r.setEnabled(not r.isEnabled())
+		elif keystr == "a":
+			self._test.toggleArmor()
+		elif keystr == "h":
+			self._test.toggleHead()
+		elif keystr == "0":
+			self._test.disarm()
+		elif keystr == "1":
+			self._test.equipDagger()
+		elif keystr == "2":
+			self._test.equipShortsword()
+		elif keystr == "3":
+			self._test.equipLongsword()
+		elif keystr == "4":
+			self._test.equipGreatsword()
+		elif keystr == "8":
+			self._test.equipBuckler()
+		elif keystr =="9":
+			self._test.equipShield()
 		
 	def keyReleased(self, evt):
 		pass
@@ -68,7 +86,7 @@ class MouseListener(fife.IMouseListener):
 		pass
 
 	def mouseMoved(self, event):
-		pass
+		self._test.mouseMoved(event)
 		
 	def mouseEntered(self, event):
 		pass
@@ -80,10 +98,10 @@ class MouseListener(fife.IMouseListener):
 		pass
 	
 	def mouseWheelMovedUp(self, event):
-		pass	
+		self._test.setZoom(-0.1)	
 		
 	def mouseWheelMovedDown(self, event):
-		pass
+		self._test.setZoom(0.1)
 		
 	def mouseDragged(self, event):
 		pass
@@ -101,6 +119,10 @@ class OverlayTest(test.Test):
 									self._engine.getRenderBackend())
 
 		self._eventmanager = self._engine.getEventManager()
+		self._imagemanager = self._engine.getImageManager()
+
+		self._armor = "clothes"
+		self._head = "head1"
 
 	def destroy(self):
 		#any left over cleanup here
@@ -175,18 +197,23 @@ class OverlayTest(test.Test):
 		self._player = self._actorlayer.getInstance("player")
 		self._camera.setLocation(self._player.getLocation())
 		self._camera.attach(self._player)
+		self._instance_renderer = fife.InstanceRenderer.getInstance(self._camera)
 		gridrenderer = self._camera.getRenderer('GridRenderer')
 		gridrenderer.activateAllLayers(self._map)
 
-		manager = self._engine.getImageManager()
-		img = manager.load("data/tilesets/toilett_singecolor_overlay.png")
+		self.createStaticColorOverlays()
+		self.createDefaultPlayer()
+		self.createColoringAndOutlines()
+
+	def createStaticColorOverlays(self):
+		img = self._imagemanager.load("data/tilesets/toilett_singecolor_overlay.png")
 		overlay = fife.OverlayColors(img)
 		overlay.changeColor(fife.Color(255,255,255), fife.Color(0,0,255,128))
 		self._actorlayer.getInstance("toilett1").addStaticColorOverlay(0, overlay)
 		self._actorlayer.getInstance("toilett5").addStaticColorOverlay(0, overlay)
 		self._actorlayer.getInstance("toilett9").addStaticColorOverlay(0, overlay)
 
-		img = manager.load("data/tilesets/toilett_multicolor_overlay.png")
+		img = self._imagemanager.load("data/tilesets/toilett_multicolor_overlay.png")
 		overlay = fife.OverlayColors(img)
 		overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,80))
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,80))
@@ -202,94 +229,119 @@ class OverlayTest(test.Test):
 		self._actorlayer.getInstance("toilett7").addStaticColorOverlay(0, overlay)
 		self._actorlayer.getInstance("toilett11").addStaticColorOverlay(0, overlay)
 
-		obj = self._player.getObject()
-		stand_action = obj.getAction("stand")
-		action_visual = stand_action.get2dGfxVisual()
-		angles = action_visual.getActionImageAngles()
-		for angle in angles:
-			#print "angle: ", angle
-			animation = action_visual.getAnimationByAngle(angle)
-			action_visual.addAnimationOverlay(angle, 0, animation)
-		delay = 200
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_180_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_180_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_180_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_180_3.png"), delay)
-		action_visual.addAnimationOverlay(180, 1, anim)
-		#overlay = fife.OverlayColors(anim)
-		#overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,80))
-		#overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,80))
-		#action_visual.addColorOverlay(180, overlay)
+	def addAnimationOverlay(self, action, name, count, order, delay):
+		dir = 0
+		while dir < 360:
+			anim = fife.Animation.createAnimation()
+			c = 0
+			while count > c:
+				anim.addFrame(self._imagemanager.get(name+str(dir)+"_0"+str(c)+".png"), delay)
+				c += 1
 
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_0_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_0_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_0_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_0_3.png"), delay)
-		action_visual.addAnimationOverlay(0, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(0, overlay)
+			self._player.addAnimationOverlay(action, dir, order, anim)
+			dir += 45
 
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_45_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_45_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_45_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_45_3.png"), delay)
-		action_visual.addAnimationOverlay(45, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(45, overlay)
-
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_90_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_90_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_90_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_90_3.png"), delay)
-		action_visual.addAnimationOverlay(90, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(90, overlay)
-
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_135_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_135_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_135_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_135_3.png"), delay)
-		action_visual.addAnimationOverlay(135, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(135, overlay)
-
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_225_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_225_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_225_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_225_3.png"), delay)
-		action_visual.addAnimationOverlay(225, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(225, overlay)
-
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_270_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_270_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_270_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_270_3.png"), delay)
-		action_visual.addAnimationOverlay(270, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(270, overlay)
-
-		anim = fife.Animation.createAnimation()
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_315_0.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_315_1.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_315_2.png"), delay)
-		anim.addFrame(manager.get("skel_stand_overlay.png:overlay_stand_315_3.png"), delay)
-		action_visual.addAnimationOverlay(315, 1, anim)
-		#overlay.setColorOverlayAnimation(anim)
-		#action_visual.addColorOverlay(315, overlay)
-
-		self.createColoringAndOutlines()
+	def removeAnimationOverlay(self, action, order):
+		dir = 0
+		while dir < 360:
+			self._player.removeAnimationOverlay(action, dir, order)
+			dir += 45
 		
+	def createDefaultPlayer(self):
+		self.addAnimationOverlay("stand", "clothes.png:clothes_stance_", 4, 10, 200)
+		self.addAnimationOverlay("stand", "male_head1.png:male_head1_stance_", 4, 20, 200)
 
+		self.addAnimationOverlay("walk", "clothes.png:clothes_run_", 8, 10, 100)
+		self.addAnimationOverlay("walk", "male_head1.png:male_head1_run_", 8, 20, 100)
+
+	def toggleArmor(self):
+		self.removeAnimationOverlay("stand", 10)
+		self.removeAnimationOverlay("walk", 10)
+		id = ""
+		if self._armor == "clothes":
+			self._armor = "leather"
+			id = "leather_armor.png:leather_armor_"
+		elif self._armor == "leather":
+			self._armor = "steel"
+			id = "steel_armor.png:steel_armor_"
+		elif self._armor == "steel":
+			self._armor = "clothes"
+			id = "clothes.png:clothes_"
+		else:
+			print "invalid armor"
+
+		self.addAnimationOverlay("stand", id+"stance_", 4, 10, 200)
+		self.addAnimationOverlay("walk", id+"run_", 8, 10, 100)		
+			
+	def toggleHead(self):
+		self.removeAnimationOverlay("stand", 20)
+		self.removeAnimationOverlay("walk", 20)
+		id = ""
+		if self._head == "head1":
+			self._head = "head2"
+			id = "male_head2.png:male_head2_"
+		elif self._head == "head2":
+			self._head = "head3"
+			id = "male_head3.png:male_head3_"
+		elif self._head == "head3":
+			self._head = "head1"
+			id = "male_head1.png:male_head1_"
+		else:
+			print "invalid head"
+
+		self.addAnimationOverlay("stand", id+"stance_", 4, 20, 200)
+		self.addAnimationOverlay("walk", id+"run_", 8, 20, 100)
+		
+	def disarm(self):
+		self.removeAnimationOverlay("stand", 40)
+		self.removeAnimationOverlay("walk", 40)
+
+		self.removeAnimationOverlay("stand", 30)
+		self.removeAnimationOverlay("walk", 30)
+
+	def equipDagger(self):
+		self.removeAnimationOverlay("stand", 40)
+		self.removeAnimationOverlay("walk", 40)
+		
+		self.addAnimationOverlay("stand", "dagger.png:dagger_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "dagger.png:dagger_run_", 8, 40, 100)
+
+	def equipShortsword(self):
+		self.removeAnimationOverlay("stand", 40)
+		self.removeAnimationOverlay("walk", 40)
+		
+		self.addAnimationOverlay("stand", "shortsword.png:shortsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "shortsword.png:shortsword_run_", 8, 40, 100)
+		
+	def equipLongsword(self):
+		self.removeAnimationOverlay("stand", 40)
+		self.removeAnimationOverlay("walk", 40)
+
+		self.addAnimationOverlay("stand", "longsword.png:longsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "longsword.png:longsword_run_", 8, 40, 100)
+
+	def equipGreatsword(self):
+		self.removeAnimationOverlay("stand", 40)
+		self.removeAnimationOverlay("walk", 40)
+		
+		self.addAnimationOverlay("stand", "greatsword.png:greatsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "greatsword.png:greatsword_run_", 8, 40, 100)
+
+	def equipBuckler(self):
+		self.removeAnimationOverlay("stand", 30)
+		self.removeAnimationOverlay("walk", 30)
+		
+		self.addAnimationOverlay("stand", "buckler.png:buckler_stance_", 4, 30, 200)
+		self.addAnimationOverlay("walk", "buckler.png:buckler_run_", 8, 30, 100)
+
+	def equipShield(self):
+		self.removeAnimationOverlay("stand", 30)
+		self.removeAnimationOverlay("walk", 30)
+		
+		self.addAnimationOverlay("stand", "shield.png:shield_stance_", 4, 30, 200)
+		self.addAnimationOverlay("walk", "shield.png:shield_run_", 8, 30, 100)
+		
 	def createColoringAndOutlines(self):
-		renderer = fife.InstanceRenderer.getInstance(self._camera)
 		instances = list()
 		instances.append(self._actorlayer.getInstance("toilett4"))
 		instances.append(self._actorlayer.getInstance("toilett5"))
@@ -303,9 +355,22 @@ class OverlayTest(test.Test):
 		for i in instances:
 			count += 1
 			if count < 5:
-				renderer.addOutlined(i, 173, 255, 47, 2)
+				self._instance_renderer.addOutlined(i, 173, 255, 47, 2)
 			elif count > 4:
-				renderer.addColored(i, 255, 0, 0, 60)
+				self._instance_renderer.addColored(i, 255, 0, 0, 60)
+
+	def mouseMoved(self, event):
+		self._instance_renderer.removeOutlined(self._player)
+
+		pt = fife.ScreenPoint(event.getX(), event.getY())
+		instances = self._camera.getMatchingInstances(pt, self._actorlayer)
+		for i in instances:
+			if i.getId() == "player":
+				self._instance_renderer.addOutlined(i, 173, 255, 47, 2)
+				break
+
+	def setZoom(self, zoom):
+		self._camera.setZoom(self._camera.getZoom() + zoom)
 		
 	def getLocationAt(self, screenpoint):
 		"""

@@ -551,12 +551,28 @@ namespace FIFE {
 					x = static_cast<int32_t>(round(fx / fsw * fow));
 					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				// instance is hit with mouse if not totally transparent
-				if (a == 0 || (special_alpha && a < alpha)) {
-					continue;
+				if (vc.animationOverlayImages) {
+					std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
+					for (; it != vc.animationOverlayImages->end(); ++it) {
+						if ((*it)->isSharedImage()) {
+							(*it)->forceLoadInternal();
+						}
+						(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+						// instance is hit with mouse if not totally transparent
+						if (a == 0 || (special_alpha && a < alpha)) {
+							continue;
+						}
+						instances.push_back(i);
+						break;
+					}
+				} else {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					// instance is hit with mouse if not totally transparent
+					if (a == 0 || (special_alpha && a < alpha)) {
+						continue;
+					}
+					instances.push_back(i);
 				}
-				instances.push_back(i);
 			}
 		}
 	}
@@ -592,14 +608,29 @@ namespace FIFE {
 								x = static_cast<int32_t>(round(fx / fsw * fow));
 								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
-							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-							// instance is hit with mouse if not totally transparent
-							if (a == 0 || (special_alpha && a < alpha)) {
-								continue;
+							if (vc.animationOverlayImages) {
+								std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
+								for (; it != vc.animationOverlayImages->end(); ++it) {
+									if ((*it)->isSharedImage()) {
+										(*it)->forceLoadInternal();
+									}
+									(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+									// instance is hit with mouse if not totally transparent
+									if (a == 0 || (special_alpha && a < alpha)) {
+										continue;
+									}
+									instances.push_back(i);
+									goto found_non_transparent_pixel;
+								}
+							} else {
+								vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+								// instance is hit with mouse if not totally transparent
+								if (a == 0 || (special_alpha && a < alpha)) {
+									continue;
+								}
+								instances.push_back(i);
+								goto found_non_transparent_pixel;
 							}
-
-							instances.push_back(i);
-							goto found_non_transparent_pixel;
 						}
 					}
 				}
