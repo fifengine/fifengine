@@ -35,7 +35,7 @@ class PasswordField(Widget):
 
 	New Attributes
 	==============
-	
+
 	  - text: The text in the TextBox.
 
 	Data

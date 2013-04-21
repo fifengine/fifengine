@@ -42,24 +42,24 @@ class PercentageBar(Widget):
 	HORIZONTAL = fifechan.PercentageBar.HORIZONTAL
 	VERTICAL = fifechan.PercentageBar.VERTICAL
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'),
 									   IntAttr('value')
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 	DEFAULT_MIN_SIZE = 10,10
 	DEFAULT_VALUE = 0
-	DEFAULT_ORIENTATION = HORIZONTAL	
-	
+	DEFAULT_ORIENTATION = HORIZONTAL
+
 	def __init__(self,
-				 parent = None, 
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -71,22 +71,22 @@ class PercentageBar(Widget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 value = None, 
+				 value = None,
 				 orientation = None):
-				 
+
 		self.real_widget = fifechan.PercentageBar()
 		self.orientation = self.DEFAULT_ORIENTATION
 		self.value = self.DEFAULT_VALUE
-		
-		super(PercentageBar, self).__init__(parent=parent, 
-											name=name, 
-											size=size, 
-											min_size=min_size, 
+
+		super(PercentageBar, self).__init__(parent=parent,
+											name=name,
+											size=size,
+											min_size=min_size,
 											max_size=max_size,
-											helptext=helptext, 
+											helptext=helptext,
 											position=position,
-											style=style, 
-											hexpand=hexpand, 
+											style=style,
+											hexpand=hexpand,
 											vexpand=vexpand,
 											font=font,
 											base_color=base_color,
@@ -106,14 +106,14 @@ class PercentageBar(Widget):
 		self._realGetData = self._getValue
 
 	def clone(self, prefix):
-		pbarClone = PercentageBar(None, 
+		pbarClone = PercentageBar(None,
 						self._createNameWithPrefix(prefix),
 						self.size,
-						self.min_size, 
-						self.max_size, 
-						self.helptext, 
-						self.position, 
-						self.style, 
+						self.min_size,
+						self.max_size,
+						self.helptext,
+						self.position,
+						self.style,
 						self.hexpand,
 						self.vexpand,
 						self.font,
@@ -125,10 +125,10 @@ class PercentageBar(Widget):
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
-						self.value, 
+						self.value,
 						self.orientation)
 		return pbarClone
-		
+
 	def _getValue(self):
 		"""getValue(self) -> int"""
 		return self.real_widget.getValue()
@@ -148,3 +148,4 @@ class PercentageBar(Widget):
 		"""getOrientation(self) -> int"""
 		return self.real_widget.getOrientation()
 	orientation = property(_getOrientation, _setOrientation)
+

@@ -52,15 +52,15 @@ class TextBox(Widget):
 	DEFAULT_TEXT = u""
 	DEFAULT_FILENAME = ""
 
-	def __init__(self, 
-				 parent = None, 
+	def __init__(self,
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -75,19 +75,19 @@ class TextBox(Widget):
 				 margins = None,
 				 text = None,
 				 filename = None):
-				 
+
 		self.real_widget = fifechan.TextBox()
 		self.text = text or self.DEFAULT_TEXT
 		self.filename = filename or self.DEFAULT_FILENAME
-		super(TextBox,self).__init__(parent=parent, 
-									 name=name, 
-									 size=size, 
-									 min_size=min_size, 
+		super(TextBox,self).__init__(parent=parent,
+									 name=name,
+									 size=size,
+									 min_size=min_size,
 									 max_size=max_size,
-									 helptext=helptext, 
+									 helptext=helptext,
 									 position=position,
-									 style=style, 
-									 hexpand=hexpand, 
+									 style=style,
+									 hexpand=hexpand,
 									 vexpand=vexpand,
 									 font=font,
 									 base_color=base_color,
@@ -107,14 +107,14 @@ class TextBox(Widget):
 		self._realGetData = self._getText
 
 	def clone(self, prefix):
-		textboxClone = TextBox(None,  
+		textboxClone = TextBox(None,
 					self._createNameWithPrefix(prefix),
 					self.size,
-					self.min_size, 
-					self.max_size, 
-					self.helptext, 
-					self.position, 
-					self.style, 
+					self.min_size,
+					self.max_size,
+					self.helptext,
+					self.position,
+					self.style,
 					self.hexpand,
 					self.vexpand,
 					self.font,
@@ -130,8 +130,8 @@ class TextBox(Widget):
 					self.text,
 					self.filename)
 		return textboxClone
-		
-		
+
+
 	def _getFileName(self): return self._filename
 	def _loadFromFile(self,filename):
 		self._filename = filename
