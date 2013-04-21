@@ -68,7 +68,7 @@ class IconProgressBar(Widget):
 				 opaque = None):
 				 
 		self.real_widget = fifechan.IconProgressBar() 
-		self.opaque = opaque or DEFAULT_OPAQUE
+		self.opaque = opaque or self.DEFAULT_OPAQUE
 		
 		super(IconProgressBar,self).__init__(parent=parent, 
 								  name=name, 
