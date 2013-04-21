@@ -92,7 +92,8 @@ class Label(BasicTextWidget):
 								   margins=margins,
 								   text=text)
 								   
-		if wrap_text is not None: self.wrap_text = wrap_text
+		if wrap_text is not None:
+			self.wrap_text = wrap_text
 		
 	def clone(self, prefix):
 		lblClone = Label(None,
