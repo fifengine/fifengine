@@ -98,7 +98,7 @@ class Button(BasicTextWidget):
 					self.margins,
 					self.text)
 			          
-		return btnClone;
+		return btnClone
 			
 
 class ImageButton(BasicTextWidget):
