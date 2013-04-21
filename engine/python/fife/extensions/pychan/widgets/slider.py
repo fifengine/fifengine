@@ -21,8 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import IntAttr, FloatAttr
+
 from widget import Widget
+
 
 class Slider(Widget):
 	""" A slider widget
