@@ -21,9 +21,15 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fife
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
+
+from common import get_manager, gui2text, text2gui
 from layout import VBoxLayoutMixin, HBoxLayoutMixin
+from widget import Widget
+
 
 class Container(Widget):
 	"""
