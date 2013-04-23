@@ -21,9 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fifechan
+
+from common import text2gui
 from listbox import GenericListmodel
+from widget import Widget
 
 class DropDown(Widget):
 	"""

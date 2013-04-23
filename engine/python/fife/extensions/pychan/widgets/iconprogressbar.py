@@ -21,9 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fifechan
+
 from fife.extensions.pychan.properties import ImageProperty
+from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
+
+from widget import Widget
+
 
 class IconProgressBar(Widget):
 	"""
