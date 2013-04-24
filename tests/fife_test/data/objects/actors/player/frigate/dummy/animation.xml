@@ -1,0 +1,4 @@
+<?fife type="animation"?>
+<animation delay="200">
+  <frame source="0.png" />
+</animation>

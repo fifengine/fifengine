@@ -28,5 +28,6 @@
 		<Setting name="SelectionTest" type="bool">True</Setting>
 		<Setting name="PychanWidgetEventsTest" type="bool">True</Setting>
     <Setting name="PathfinderTest" type="bool">True</Setting>
+    <Setting name="MultiPathfinderTest" type="bool">True</Setting>
 	</Module>
 </Settings>
