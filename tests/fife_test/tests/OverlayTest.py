@@ -120,7 +120,9 @@ class OverlayTest(test.Test):
 
 		self._eventmanager = self._engine.getEventManager()
 		self._imagemanager = self._engine.getImageManager()
+		self._timemanager = self._engine.getTimeManager()
 
+		self._time = self._timemanager.getTime()
 		self._armor = "clothes"
 		self._head = "head1"
 
@@ -171,11 +173,10 @@ class OverlayTest(test.Test):
 		return open( 'data/help/OverlayTest.txt', 'r' ).read()
 		
 	def pump(self):
-		"""
-		This gets called every frame that the test is running.  We have nothing
-		to do here for this test.
-		"""
-		pass
+		time = self._timemanager.getTime()
+		if (time - self._time) >= 1000:
+			self._time = time
+			self.rotateInstances()
 
 	def loadMap(self, filename):
 		"""
@@ -195,6 +196,9 @@ class OverlayTest(test.Test):
 		self._actorlayer = self._map.getLayer("item_layer")
 		self._groundlayer = self._map.getLayer("ground_layer")
 		self._player = self._actorlayer.getInstance("player")
+		self._skel1 = self._actorlayer.getInstance("skel1")
+		self._skel2 = self._actorlayer.getInstance("skel2")
+		
 		self._camera.setLocation(self._player.getLocation())
 		self._camera.attach(self._player)
 		self._instance_renderer = fife.InstanceRenderer.getInstance(self._camera)
@@ -204,6 +208,7 @@ class OverlayTest(test.Test):
 		self.createStaticColorOverlays()
 		self.createDefaultPlayer()
 		self.createColoringAndOutlines()
+		self.createColorOverlay()
 
 	def createStaticColorOverlays(self):
 		img = self._imagemanager.load("data/tilesets/toilett_singecolor_overlay.png")
@@ -228,6 +233,29 @@ class OverlayTest(test.Test):
 		self._actorlayer.getInstance("toilett3").addStaticColorOverlay(0, overlay)
 		self._actorlayer.getInstance("toilett7").addStaticColorOverlay(0, overlay)
 		self._actorlayer.getInstance("toilett11").addStaticColorOverlay(0, overlay)
+
+	def createColorOverlay(self):
+		# create color overlay for skels
+		delay = 200
+		dir = 0
+		while dir < 360:
+			anim = fife.Animation.createAnimation()
+			c = 0
+			while 4 > c:
+				anim.addFrame(self._imagemanager.get("skel_stand_overlay.png:overlay_stand_"+str(dir)+"_"+str(c)+".png"), delay)
+				c += 1
+
+			overlay = fife.OverlayColors(anim)
+			# skel 1
+			overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,80))
+			overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,80))
+			self._skel1.addColorOverlay("stand", dir, overlay)
+			# skel 2
+			overlay.changeColor(fife.Color(255,0,0), fife.Color(0,255,0,128))
+			overlay.changeColor(fife.Color(0,0,255), fife.Color(0,255,0,128))
+			self._skel2.addColorOverlay("stand", dir, overlay)
+			dir += 45
+
 
 	def addAnimationOverlay(self, action, name, count, order, delay):
 		dir = 0
@@ -358,6 +386,10 @@ class OverlayTest(test.Test):
 				self._instance_renderer.addOutlined(i, 173, 255, 47, 2)
 			elif count > 4:
 				self._instance_renderer.addColored(i, 255, 0, 0, 60)
+
+	def rotateInstances(self):
+		self._skel1.setRotation(self._skel1.getRotation()+45)
+		self._skel2.setRotation(self._skel2.getRotation()+45)
 
 	def mouseMoved(self, event):
 		self._instance_renderer.removeOutlined(self._player)

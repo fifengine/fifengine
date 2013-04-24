@@ -1148,9 +1148,14 @@ namespace FIFE {
 		if (!m_ownObject) {
 			m_ownObject = true;
 			ObjectVisual* ov = m_object->getVisual<ObjectVisual>();
+			ObjectVisual* nov = 0;
 			m_object = new Object(m_object->getId(), m_object->getNamespace(), m_object);
-			ObjectVisual* nov = new ObjectVisual(*ov);
-			m_object->adoptVisual(nov);
+			if (!ov) {
+				ObjectVisual::create(m_object);
+			} else {
+				nov = new ObjectVisual(*ov);
+				m_object->adoptVisual(nov);
+			}
 		}
 	}
 
