@@ -140,8 +140,6 @@ class OverlayTest(test.Test):
 		self._eventmanager.addKeyListener(self._keylistener)
 
 		self._font = pychan.internal.get_manager().createFont("data/fonts/rpgfont.png")
-		if self._font is None:
-			raise InitializationError("Could not load font %s" % name)
 
 		self.loadMap("data/maps/overlay_grassland.xml")
 
