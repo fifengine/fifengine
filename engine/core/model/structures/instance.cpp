@@ -1170,11 +1170,17 @@ namespace FIFE {
 			if (!action) {
 				throw NotFound(std::string("action ") + actionName + " not found");
 			} else if (create) {
-				ActionVisual* av = action->getVisual<ActionVisual>();
+				// if we change the current action then we have to replace the pointer
+				bool replace = getCurrentAction() == action;
+				// check if its the default action
 				bool defaultAction = m_object->getDefaultAction() == action;
+				ActionVisual* av = action->getVisual<ActionVisual>();
 				action = m_object->createAction(actionName, defaultAction);
 				nav = new ActionVisual(*av);
 				action->adoptVisual(nav);
+				if (replace) {
+					m_activity->m_actionInfo->m_action = action;
+				}
 			}
 		} else {
 			nav = action->getVisual<ActionVisual>();
