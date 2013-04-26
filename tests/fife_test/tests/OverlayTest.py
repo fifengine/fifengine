@@ -30,6 +30,7 @@ from fife.extensions.fife_timer import Timer
 
 import scripts.test as test
 
+
 class KeyListener(fife.IKeyListener):
 	def __init__(self, test):
 		self._engine = test._engine
@@ -39,7 +40,6 @@ class KeyListener(fife.IKeyListener):
 		fife.IKeyListener.__init__(self)
 
 	def keyPressed(self, evt):
-		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == "t":
 			r = self._test._camera.getRenderer('GridRenderer')
@@ -168,7 +168,7 @@ class OverlayTest(test.Test):
 		return "Use this as a template for more complicated tests."
 
 	def getHelp(self):
-		return open( 'data/help/OverlayTest.txt', 'r' ).read()
+		return open('data/help/OverlayTest.txt', 'r').read()
 		
 	def pump(self):
 		time = self._timemanager.getTime()
@@ -212,66 +212,60 @@ class OverlayTest(test.Test):
 		img = self._imagemanager.load("data/tilesets/toilett_singecolor_overlay.png")
 		overlay = fife.OverlayColors(img)
 		overlay.changeColor(fife.Color(255,255,255), fife.Color(0,0,255,128))
-		self._actorlayer.getInstance("toilett1").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett5").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett9").addStaticColorOverlay(0, overlay)
+		for n in (1, 5, 9):
+			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance.addStaticColorOverlay(0, overlay)
 
 		img = self._imagemanager.load("data/tilesets/toilett_multicolor_overlay.png")
 		overlay = fife.OverlayColors(img)
 		overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,80))
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,80))
 		overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,80))
-		self._actorlayer.getInstance("toilett2").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett6").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett10").addStaticColorOverlay(0, overlay)
+		for n in (2, 6, 10):
+			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance.addStaticColorOverlay(0, overlay)
 		
 		overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,200))
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,200))
 		overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,200))
-		self._actorlayer.getInstance("toilett3").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett7").addStaticColorOverlay(0, overlay)
-		self._actorlayer.getInstance("toilett11").addStaticColorOverlay(0, overlay)
+		for n in (3, 7, 11):
+			instance = self._actorlayer.getInstance("toilett%s" % n)
+			instance.addStaticColorOverlay(0, overlay)
 
 	def createColorOverlay(self):
 		# create color overlay for skels
 		delay = 200
-		dir = 0
-		while dir < 360:
+		for rotation in range(0, 360, 45):
 			anim = fife.Animation.createAnimation()
-			c = 0
-			while 4 > c:
-				anim.addFrame(self._imagemanager.get("skel_stand_overlay.png:overlay_stand_"+str(dir)+"_"+str(c)+".png"), delay)
-				c += 1
+			for frame in range(4):
+				resource = ("skel_stand_overlay.png:overlay_stand_"
+				            + str(rotation) + "_"
+				            + str(frame) + ".png")
+				anim.addFrame(self._imagemanager.get(resource), delay)
 
 			overlay = fife.OverlayColors(anim)
 			# skel 1
 			overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,80))
 			overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,80))
-			self._skel1.addColorOverlay("stand", dir, overlay)
+			self._skel1.addColorOverlay("stand", rotation, overlay)
 			# skel 2
 			overlay.changeColor(fife.Color(255,0,0), fife.Color(0,255,0,128))
 			overlay.changeColor(fife.Color(0,0,255), fife.Color(0,255,0,128))
-			self._skel2.addColorOverlay("stand", dir, overlay)
-			dir += 45
+			self._skel2.addColorOverlay("stand", rotation, overlay)
 
 
 	def addAnimationOverlay(self, action, name, count, order, delay):
-		dir = 0
-		while dir < 360:
+		for rotation in range(0, 360, 45):
 			anim = fife.Animation.createAnimation()
-			c = 0
-			while count > c:
-				anim.addFrame(self._imagemanager.get(name+str(dir)+"_0"+str(c)+".png"), delay)
-				c += 1
+			for frame in range(count):
+				resource = name + str(rotation) + "_0" + str(frame) + ".png"
+				anim.addFrame(self._imagemanager.get(resource), delay)
 
-			self._player.addAnimationOverlay(action, dir, order, anim)
-			dir += 45
+			self._player.addAnimationOverlay(action, rotation, order, anim)
 
 	def removeAnimationOverlay(self, action, order):
-		dir = 0
-		while dir < 360:
-			self._player.removeAnimationOverlay(action, dir, order)
-			dir += 45
+		for rotation in range(0, 360, 45):
+			self._player.removeAnimationOverlay(action, rotation, order)
 		
 	def createDefaultPlayer(self):
 		self.addAnimationOverlay("stand", "clothes.png:clothes_stance_", 4, 10, 200)
@@ -368,18 +362,8 @@ class OverlayTest(test.Test):
 		self.addAnimationOverlay("walk", "shield.png:shield_run_", 8, 30, 100)
 		
 	def createColoringAndOutlines(self):
-		instances = list()
-		instances.append(self._actorlayer.getInstance("toilett4"))
-		instances.append(self._actorlayer.getInstance("toilett5"))
-		instances.append(self._actorlayer.getInstance("toilett6"))
-		instances.append(self._actorlayer.getInstance("toilett7"))
-		instances.append(self._actorlayer.getInstance("toilett8"))
-		instances.append(self._actorlayer.getInstance("toilett9"))
-		instances.append(self._actorlayer.getInstance("toilett10"))
-		instances.append(self._actorlayer.getInstance("toilett11"))
-		count = 0
-		for i in instances:
-			count += 1
+		instances = [self._actorlayer.getInstance("toilett%s" % n) for n in range(4, 12)]
+		for count, i in enumerate(instances, start=1):
 			if count < 5:
 				self._instance_renderer.addOutlined(i, 173, 255, 47, 2)
 			elif count > 4:
