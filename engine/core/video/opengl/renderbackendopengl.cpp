@@ -746,7 +746,7 @@ namespace FIFE {
 							// set pointers
 							setVertexPointer(stride, &m_render_datas[0].vertex);
 							setColorPointer(stride, &m_render_datas[0].color);
-							setTexCoordPointer(1, sizeof(float), &m_texCoordArray[0]);
+							setTexCoordPointer(1, stride, &m_render_datas[0].texel);
 							setTexCoordPointer(0, stride, &m_render_datas[0].texel);
 
 							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
@@ -764,7 +764,7 @@ namespace FIFE {
 							setVertexPointer(stride2T, &m_render_datas2T[0].vertex);
 							setColorPointer(stride2T, &m_render_datas2T[0].color);
 							setTexCoordPointer(2, stride2T, &m_render_datas2T[0].texel2);
-							setTexCoordPointer(1, sizeof(float), &m_texCoordArray[0]);
+							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
 							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);

@@ -59,14 +59,12 @@ namespace FIFE {
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
 		ObjectVisual* objVis = instance->getObject()->getVisual<ObjectVisual>();
 		if (!objVis) {
-			colorOverlay = 0;
 			return STATIC_IMAGE_NOT_INITIALIZED;
 		}
 		if (static_cast<int32_t>(angle) != m_cachedStaticImgAngle) {
 			m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
-			colorOverlay = 0;
 		}
-		if (objVis->isColorOverlay() && !colorOverlay) {
+		if (objVis->isColorOverlay()) {
 			colorOverlay = objVis->getStaticColorOverlay(angle);
 		}
 		if (m_cachedStaticImgId != STATIC_IMAGE_NOT_INITIALIZED) {
