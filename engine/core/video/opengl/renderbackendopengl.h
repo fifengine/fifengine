@@ -167,8 +167,6 @@ namespace FIFE {
 		GLuint m_fbo_id;
 		ImagePtr m_img_target;
 		bool m_target_discard;
-		// default texture coordinates
-		float m_texCoordArray[8];
 	};
 
 }

@@ -1144,6 +1144,11 @@ namespace FIFE {
 		return false;
 	}
 
+	void Instance::convertToOverlays(const std::string actionName, bool color) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		visual->convertToOverlays(color);
+	}
+
 	void Instance::createOwnObject() {
 		if (!m_ownObject) {
 			m_ownObject = true;

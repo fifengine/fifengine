@@ -356,4 +356,19 @@ namespace FIFE {
 			++i;
 		}
 	}
+
+	void ActionVisual::convertToOverlays(bool color) {
+		bool colorOverlay = color && !m_colorOverlayMap.empty();
+		type_angle2id::const_iterator it = m_map.begin();
+		for (; it != m_map.end(); ++it) {
+			addAnimationOverlay(it->first, 0, getAnimationByAngle(it->first));
+			if (colorOverlay) {
+				OverlayColors* oldC = getColorOverlay(it->first);
+				if (oldC) {
+					OverlayColors c = OverlayColors(*oldC);
+					addColorOverlay(it->first, 0, c);
+				}
+			}
+		}
+	}
 }

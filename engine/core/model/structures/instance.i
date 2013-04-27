@@ -157,6 +157,7 @@ namespace FIFE {
 		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
 		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
 		
+		void convertToOverlays(const std::string actionName, bool color);
 		bool isAnimationOverlay(const std::string actionName);
 		bool isColorOverlay(const std::string actionName);
 	};

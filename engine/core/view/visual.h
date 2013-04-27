@@ -253,6 +253,8 @@ namespace FIFE {
 		 */
 		void getActionImageAngles(std::vector<int32_t>& angles);
 
+		void convertToOverlays(bool color);
+
 		bool isAnimationOverlay() { return !m_animationOverlayMap.empty(); }
 		bool isColorOverlay() { return !m_colorOverlayMap.empty() || !m_colorAnimationOverlayMap.empty(); }
 

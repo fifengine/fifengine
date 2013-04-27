@@ -496,6 +496,10 @@ namespace FIFE {
 		 */
 		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
 
+		/** If the action have base animation and optional color overlay it gets converted to animation overlay.
+		 */
+		void convertToOverlays(const std::string actionName, bool color);
+
 		/** Indicates if there exists a animation overlay for given action.
 		 */
 		bool isAnimationOverlay(const std::string actionName);

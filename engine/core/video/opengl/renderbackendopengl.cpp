@@ -110,15 +110,6 @@ namespace FIFE {
 		m_state.blend_dst = GL_ONE_MINUS_SRC_ALPHA;
 		m_state.alpha_enabled = false;
 		m_state.scissor_test = true;
-
-		m_texCoordArray[0] = 0.0;
-		m_texCoordArray[1] = 0.0;
-		m_texCoordArray[2] = 0.0;
-		m_texCoordArray[3] = 1.0;
-		m_texCoordArray[4] = 1.0;
-		m_texCoordArray[5] = 1.0;
-		m_texCoordArray[6] = 1.0;
-		m_texCoordArray[7] = 0.0;
 	}
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {

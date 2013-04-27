@@ -97,6 +97,9 @@ namespace FIFE {
 		OverlayColors* getColorOverlay(int32_t angle, int32_t order);
 		void removeColorOverlay(int32_t angle, int32_t order);
 		void getActionImageAngles(std::vector<int32_t>& angles);
+		void convertToOverlays(bool color);
+		bool isAnimationOverlay();
+		bool isColorOverlay();
 	private:
 		ActionVisual();
 	};
