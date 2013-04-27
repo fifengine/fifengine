@@ -25,8 +25,6 @@
 
 from fife import fife
 from fife.extensions import pychan
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-from fife.extensions.fife_timer import Timer
 
 import scripts.test as test
 
