@@ -34,7 +34,7 @@ class KeyListener(fife.IKeyListener):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IKeyListener.__init__(self)
 
 	def keyPressed(self, evt):
@@ -60,18 +60,19 @@ class KeyListener(fife.IKeyListener):
 			self._test.equipBuckler()
 		elif keystr =="9":
 			self._test.equipShield()
-		
+
 	def keyReleased(self, evt):
 		pass
+
 
 class MouseListener(fife.IMouseListener):
 	def __init__(self, test):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IMouseListener.__init__(self)
-		
+
 	def mousePressed(self, event):
 		if event.isConsumedByWidgets():
 			return
@@ -79,30 +80,31 @@ class MouseListener(fife.IMouseListener):
 		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
 
 		self._test.movePlayer(clickpoint)
-				
+
 	def mouseReleased(self, event):
 		pass
 
 	def mouseMoved(self, event):
 		self._test.mouseMoved(event)
-		
+
 	def mouseEntered(self, event):
 		pass
-		
+
 	def mouseExited(self, event):
 		pass
-		
+
 	def mouseClicked(self, event):
 		pass
-	
+
 	def mouseWheelMovedUp(self, event):
-		self._test.setZoom(-0.1)	
-		
+		self._test.setZoom(-0.1)
+
 	def mouseWheelMovedDown(self, event):
 		self._test.setZoom(0.1)
-		
+
 	def mouseDragged(self, event):
 		pass
+
 
 class OverlayTest(test.Test):
 
@@ -111,9 +113,9 @@ class OverlayTest(test.Test):
 		self._engine = engine
 		self._running = False
 
-		self._loader = fife.MapLoader(self._engine.getModel(), 
-									self._engine.getVFS(), 
-									self._engine.getImageManager(), 
+		self._loader = fife.MapLoader(self._engine.getModel(),
+									self._engine.getVFS(),
+									self._engine.getImageManager(),
 									self._engine.getRenderBackend())
 
 		self._eventmanager = self._engine.getEventManager()
@@ -127,13 +129,13 @@ class OverlayTest(test.Test):
 	def destroy(self):
 		#any left over cleanup here
 		pass
-		
+
 	def run(self):
 		self._running = True
-		
+
 		self._mouselistener = MouseListener(self)
 		self._eventmanager.addMouseListener(self._mouselistener)
-		
+
 		self._keylistener = KeyListener(self)
 		self._eventmanager.addKeyListener(self._keylistener)
 
@@ -143,22 +145,22 @@ class OverlayTest(test.Test):
 
 	def stop(self):
 		self._running = False
-		
+
 		self._engine.getModel().deleteMap(self._map)
 		self._engine.getModel().deleteObjects()
-		
+
 		self._eventmanager.removeMouseListener(self._mouselistener)
 		self._eventmanager.removeKeyListener(self._keylistener)
-		
+
 		del self._mouselistener
 		del self._keylistener
-		
+
 	def isRunning(self):
 		return self._running
 
 	def getName(self):
 		return "OverlayTest"
-		
+
 	def getAuthor(self):
 		return "helios"
 
@@ -167,7 +169,7 @@ class OverlayTest(test.Test):
 
 	def getHelp(self):
 		return open('data/help/OverlayTest.txt', 'r').read()
-		
+
 	def pump(self):
 		time = self._timemanager.getTime()
 		if (time - self._time) >= 1000:
@@ -176,14 +178,14 @@ class OverlayTest(test.Test):
 
 	def loadMap(self, filename):
 		"""
-		Simple function to load and display a map file. We could of course 
+		Simple function to load and display a map file. We could of course
 		have passed in the map filename but I'll leave that up to you.
-		
+
 		@param filename The filename.
 		"""
-	
+
 		self._mapfilename = filename
-		
+
 		if self._loader.isLoadable(self._mapfilename):
 			self._map = self._loader.load(self._mapfilename)
 			self._mapLoaded = True
@@ -194,7 +196,7 @@ class OverlayTest(test.Test):
 		self._player = self._actorlayer.getInstance("player")
 		self._skel1 = self._actorlayer.getInstance("skel1")
 		self._skel2 = self._actorlayer.getInstance("skel2")
-		
+
 		self._camera.setLocation(self._player.getLocation())
 		self._camera.attach(self._player)
 		self._instance_renderer = fife.InstanceRenderer.getInstance(self._camera)
@@ -222,7 +224,7 @@ class OverlayTest(test.Test):
 		for n in (2, 6, 10):
 			instance = self._actorlayer.getInstance("toilett%s" % n)
 			instance.addStaticColorOverlay(0, overlay)
-		
+
 		overlay.changeColor(fife.Color(255,0,0), fife.Color(255,0,0,200))
 		overlay.changeColor(fife.Color(0,255,0), fife.Color(0,255,0,200))
 		overlay.changeColor(fife.Color(0,0,255), fife.Color(0,0,255,200))
@@ -251,7 +253,6 @@ class OverlayTest(test.Test):
 			overlay.changeColor(fife.Color(0,0,255), fife.Color(0,255,0,128))
 			self._skel2.addColorOverlay("stand", rotation, overlay)
 
-
 	def addAnimationOverlay(self, action, name, count, order, delay):
 		for rotation in range(0, 360, 45):
 			anim = fife.Animation.createAnimation()
@@ -264,7 +265,7 @@ class OverlayTest(test.Test):
 	def removeAnimationOverlay(self, action, order):
 		for rotation in range(0, 360, 45):
 			self._player.removeAnimationOverlay(action, rotation, order)
-		
+
 	def createDefaultPlayer(self):
 		self.addAnimationOverlay("stand", "clothes.png:clothes_stance_", 4, 10, 200)
 		self.addAnimationOverlay("stand", "male_head1.png:male_head1_stance_", 4, 20, 200)
@@ -289,8 +290,8 @@ class OverlayTest(test.Test):
 			print "invalid armor"
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 10, 200)
-		self.addAnimationOverlay("walk", id+"run_", 8, 10, 100)		
-			
+		self.addAnimationOverlay("walk", id+"run_", 8, 10, 100)
+
 	def toggleHead(self):
 		self.removeAnimationOverlay("stand", 20)
 		self.removeAnimationOverlay("walk", 20)
@@ -309,7 +310,7 @@ class OverlayTest(test.Test):
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 20, 200)
 		self.addAnimationOverlay("walk", id+"run_", 8, 20, 100)
-		
+
 	def disarm(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
@@ -320,17 +321,17 @@ class OverlayTest(test.Test):
 	def equipDagger(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
-		
+
 		self.addAnimationOverlay("stand", "dagger.png:dagger_stance_", 4, 40, 200)
 		self.addAnimationOverlay("walk", "dagger.png:dagger_run_", 8, 40, 100)
 
 	def equipShortsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
-		
+
 		self.addAnimationOverlay("stand", "shortsword.png:shortsword_stance_", 4, 40, 200)
 		self.addAnimationOverlay("walk", "shortsword.png:shortsword_run_", 8, 40, 100)
-		
+
 	def equipLongsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
@@ -341,24 +342,24 @@ class OverlayTest(test.Test):
 	def equipGreatsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
-		
+
 		self.addAnimationOverlay("stand", "greatsword.png:greatsword_stance_", 4, 40, 200)
 		self.addAnimationOverlay("walk", "greatsword.png:greatsword_run_", 8, 40, 100)
 
 	def equipBuckler(self):
 		self.removeAnimationOverlay("stand", 30)
 		self.removeAnimationOverlay("walk", 30)
-		
+
 		self.addAnimationOverlay("stand", "buckler.png:buckler_stance_", 4, 30, 200)
 		self.addAnimationOverlay("walk", "buckler.png:buckler_run_", 8, 30, 100)
 
 	def equipShield(self):
 		self.removeAnimationOverlay("stand", 30)
 		self.removeAnimationOverlay("walk", 30)
-		
+
 		self.addAnimationOverlay("stand", "shield.png:shield_stance_", 4, 30, 200)
 		self.addAnimationOverlay("walk", "shield.png:shield_run_", 8, 30, 100)
-		
+
 	def createColoringAndOutlines(self):
 		instances = [self._actorlayer.getInstance("toilett%s" % n) for n in range(4, 12)]
 		for count, i in enumerate(instances, start=1):
@@ -383,15 +384,15 @@ class OverlayTest(test.Test):
 
 	def setZoom(self, zoom):
 		self._camera.setZoom(self._camera.getZoom() + zoom)
-		
+
 	def getLocationAt(self, screenpoint):
 		"""
 		Query the main camera for the Map location (on the actor layer)
 		that a screen point refers to.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
 		target_mapcoord.z = 0
 		location = fife.Location(self._actorlayer)
@@ -401,8 +402,8 @@ class OverlayTest(test.Test):
 	def movePlayer(self, screenpoint):
 		"""
 		Simple function that moves the player instance to the given screenpoint.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		self._player.move('walk', self.getLocationAt(screenpoint), 4.0)
