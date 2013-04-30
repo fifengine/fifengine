@@ -9,6 +9,8 @@
 *.hpp text
 *.xml text
 *.py text
+*.yml text
+*.md text
 
 # Declare files that will always have CRLF endings
 *.sln text eol=crlf

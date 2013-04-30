@@ -21,9 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fifechan
+
 from fife.extensions.pychan.properties import ImageProperty
+from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
+
+from widget import Widget
+
 
 class IconProgressBar(Widget):
 	"""
@@ -68,7 +72,7 @@ class IconProgressBar(Widget):
 				 opaque = None):
 				 
 		self.real_widget = fifechan.IconProgressBar() 
-		self.opaque = opaque or DEFAULT_OPAQUE
+		self.opaque = opaque or self.DEFAULT_OPAQUE
 		
 		super(IconProgressBar,self).__init__(parent=parent, 
 								  name=name, 

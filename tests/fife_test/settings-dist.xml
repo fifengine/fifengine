@@ -18,6 +18,7 @@
 		<Setting name="PychanDebug" type="bool"> False </Setting>
 		<Setting name="LogToPrompt" type="int"> 1 </Setting>
 		<Setting name="UsePsyco" type="bool"> False </Setting>
+		<Setting name="UsePsyco" type="bool"> False </Setting>
 		<Setting name="ProfilingOn" type="bool"> False </Setting>
 		<Setting name="LogToFile" type="int"> 0 </Setting>
 		<Setting name="Lighting" type="int"> 0 </Setting>
@@ -28,6 +29,7 @@
 		<Setting name="SelectionTest" type="bool">True</Setting>
 		<Setting name="PychanWidgetEventsTest" type="bool">True</Setting>
 		<Setting name="PathfinderTest" type="bool">True</Setting>
+		<Setting name="MultiPathfinderTest" type="bool">True</Setting>
 		<Setting name="OverlayTest" type="bool">True</Setting>
 	</Module>
 </Settings>

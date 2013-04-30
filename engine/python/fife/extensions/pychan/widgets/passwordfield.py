@@ -21,8 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import UnicodeAttr
+
+from common import gui2text, text2gui
 from widget import Widget
+
 
 class PasswordField(Widget):
 	"""
@@ -30,7 +35,7 @@ class PasswordField(Widget):
 
 	New Attributes
 	==============
-	
+
 	  - text: The text in the TextBox.
 
 	Data

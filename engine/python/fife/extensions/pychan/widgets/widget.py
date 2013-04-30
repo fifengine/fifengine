@@ -21,7 +21,17 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife.extensions.pychan.widgets.common import *
+from fife import fife
+
+from fife.extensions.pychan import events
+from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
+                                          ColorAttr, BoolAttr, IntAttr)
+from fife.extensions.pychan.exceptions import StopTreeWalking
+from fife.extensions.pychan.properties import ColorProperty
+
+from common import get_manager
+from layout import isLayouted
+
 
 class Widget(object):
 	"""

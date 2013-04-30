@@ -23,7 +23,9 @@
 
 from fife.extensions.pychan.attrs import IntAttr
 
+
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
+
 def isLayouted(widget):
 	return isinstance(widget,LayoutBase)
 

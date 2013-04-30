@@ -21,7 +21,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from common import gui2str, text2gui
 from widget import Widget
 
 class GenericListmodel(fifechan.ListModel,list):

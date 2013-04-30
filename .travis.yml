@@ -1,0 +1,17 @@
+language: cpp
+compiler: gcc
+
+git:
+  depth: 1 # (shallow clone) this decreases the time it takes to clone the repository
+
+before_install:
+  - chmod -R 777 ./.travis.sh
+  - ./.travis.sh
+
+script:
+   - exit 0
+ # - python ./tests/fife_test/run.py
+
+notifications:
+  irc: "irc.freenode.org#fife"
+  email: false

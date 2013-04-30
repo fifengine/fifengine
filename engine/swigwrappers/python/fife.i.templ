@@ -134,6 +134,8 @@ print s\n\
 	}
 %}
 
+%exceptionclass FIFE::Exception;
+
 %feature("director:except") {
 	if ($$error != NULL) {
 		handleDirectorException();
