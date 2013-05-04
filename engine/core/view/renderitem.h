@@ -41,7 +41,7 @@ namespace FIFE {
 	class RenderItem {
 		public:
 			RenderItem(Instance* parent);
-
+			~RenderItem();
 			Instance* instance;
 
 			/** Returns closest matching static image for given angle
@@ -74,6 +74,12 @@ namespace FIFE {
 
 			// current frame index (e.g. needed for action frame)
 			int32_t currentFrame;
+
+			// pointer to vector that holds animation overlay images
+			std::vector<ImagePtr>* animationOverlayImages;
+			// pointer to vector that holds color overlay images
+			std::vector<OverlayColors*>* colorOverlays;
+			OverlayColors* colorOverlay;
 		private:
 			int32_t m_cachedStaticImgId;
 			int32_t m_cachedStaticImgAngle;

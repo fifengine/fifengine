@@ -477,7 +477,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
-		t_layer_to_instances m_layer_to_instances;
+		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
 		MapObserver* m_map_observer;

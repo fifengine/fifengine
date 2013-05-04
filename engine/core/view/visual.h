@@ -34,6 +34,7 @@
 #include "util/math/angles.h"
 #include "util/structures/rect.h"
 #include "video/animation.h"
+#include "video/color.h"
 
 
 namespace FIFE {
@@ -41,7 +42,32 @@ namespace FIFE {
 	class Instance;
 	class Action;
 	class Image;
-	class Camera;
+
+	class OverlayColors {
+	public:
+		/** Constructors
+		 */
+		OverlayColors();
+		OverlayColors(ImagePtr image);
+		OverlayColors(AnimationPtr animation);
+
+		/** Destructor
+		 */
+		~OverlayColors();
+
+		void setColorOverlayImage(ImagePtr image);
+		ImagePtr getColorOverlayImage();
+		void setColorOverlayAnimation(AnimationPtr animation);
+		AnimationPtr getColorOverlayAnimation();
+		void changeColor(const Color& source, const Color& target);
+		const std::map<Color, Color>& getColors();
+		void resetColors();
+
+	private:
+		std::map<Color, Color> m_colorMap;
+		ImagePtr m_image;
+		AnimationPtr m_animation;
+	};
 
 	/** Base class for all 2 dimensional visual classes
 	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
@@ -88,6 +114,19 @@ namespace FIFE {
 		 */
 		int32_t getStaticImageIndexByAngle(int32_t angle);
 
+		/** Adds new static color overlay with given angle (degrees).
+		 */
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching static color overlay for given angle
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+
+		/** Removes a static color overlay with given angle (degrees).
+		 */
+		void removeStaticColorOverlay(int32_t angle);
+
 		/** Returns closest matching image angle for given angle
 		 * @return closest matching angle
 		 */
@@ -97,12 +136,20 @@ namespace FIFE {
 		 */
 		void getStaticImageAngles(std::vector<int32_t>& angles);
 
+		/** Indicates if there exists a color overlay.
+		 */
+		bool isColorOverlay() { return !m_colorOverlayMap.empty(); }
+
 	private:
 		/** Constructor
 		 */
 		ObjectVisual();
 
 		type_angle2id m_angle2img;
+		
+		typedef std::map<uint32_t, OverlayColors> AngleColorOverlayMap;
+		AngleColorOverlayMap m_colorOverlayMap;
+		type_angle2id m_map;
 	};
 
 
@@ -181,9 +228,35 @@ namespace FIFE {
 		 */
 		AnimationPtr getAnimationByAngle(int32_t angle);
 
+		/** Adds new animation overlay with given angle (degrees) and order
+		 */
+		void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr);
+
+		/** Gets map with animations closest to given angle
+		 * @return animation map
+		 */
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(int32_t angle);
+
+		/** Removes animation overlay with given angle (degrees) and order
+		 */
+		void removeAnimationOverlay(uint32_t angle, int32_t order);
+
+		void addColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(int32_t angle);
+		void removeColorOverlay(int32_t angle);
+
+		void addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(int32_t angle, int32_t order);
+		void removeColorOverlay(int32_t angle, int32_t order);
+
 		/** Returns list of available angles for this Action
 		 */
 		void getActionImageAngles(std::vector<int32_t>& angles);
+
+		void convertToOverlays(bool color);
+
+		bool isAnimationOverlay() { return !m_animationOverlayMap.empty(); }
+		bool isColorOverlay() { return !m_colorOverlayMap.empty() || !m_colorAnimationOverlayMap.empty(); }
 
 	private:
 		/** Constructor
@@ -194,8 +267,15 @@ namespace FIFE {
 		typedef std::map<uint32_t, AnimationPtr> AngleAnimationMap;
 		AngleAnimationMap m_animation_map;
 
-		//@fixme need this map to use the getIndexByAngle() function in angles.h
-		//should fix this
+		typedef std::map<uint32_t, std::map<int32_t, AnimationPtr> > AngleAnimationOverlayMap;
+		AngleAnimationOverlayMap m_animationOverlayMap;
+
+		typedef std::map<uint32_t, OverlayColors> AngleColorOverlayMap;
+		AngleColorOverlayMap m_colorOverlayMap;
+
+		typedef std::map<uint32_t, std::map<int32_t, OverlayColors> > AngleColorAnimationOverlayMap;
+		AngleColorAnimationOverlayMap m_colorAnimationOverlayMap;
+		//need this map to use the getIndexByAngle() function in angles.h
 		type_angle2id m_map;
 	};
 

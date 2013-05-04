@@ -91,9 +91,11 @@ namespace FIFE {
 		void collect(const Rect& viewport, std::vector<int32_t>& indices);
 		void reset();
 		void fullUpdate(Camera::Transform transform);
+		void fullCoordinateUpdate(Camera::Transform transform);
 		void updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
 		bool updateVisual(Entry* entry);
 		void updatePosition(Entry* entry);
+		void updateScreenCoordinate(RenderItem* item, bool changedZoom = true);
 		void sortRenderList(RenderList& renderlist);
 
 		Camera* m_camera;

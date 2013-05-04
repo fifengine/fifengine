@@ -35,6 +35,7 @@
 
 #include "model/metamodel/object.h"
 #include "model/metamodel/ivisual.h"
+#include "view/visual.h"
 
 #include "location.h"
 
@@ -68,7 +69,8 @@ namespace FIFE {
 		ICHANGE_CELL = 0x0080,
 		ICHANGE_TRANSPARENCY = 0x0100,
 		ICHANGE_VISIBLE = 0x0200,
-		ICHANGE_STACKPOS = 0x0400
+		ICHANGE_STACKPOS = 0x0400,
+		ICHANGE_VISUAL = 0x0800
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -420,7 +422,7 @@ namespace FIFE {
 
 		/** Returns cost id. In case there is no it returns the object cost id.
 		 */
-		const std::string& getCostId();
+		std::string getCostId();
 
 		/** Returns true if it is multi cell otherwise false
 		 */
@@ -438,6 +440,74 @@ namespace FIFE {
 		 */
 		const std::vector<Instance*>& getMultiInstances();
 
+		/** Adds new static color overlay with given angle (degrees).
+		 */
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching static color overlay for given angle
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+
+		/** Removes a static color overlay with given angle (degrees).
+		 */
+		void removeStaticColorOverlay(int32_t angle);
+
+		/** Indicates if there exists a static color overlay.
+		 */
+		bool isStaticColorOverlay();
+
+		/** Adds new color overlay with given angle (degrees) to given action.
+		 */
+		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle and action.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
+
+		/** Removes a color overlay with given angle (degrees) from given action.
+		 */
+		void removeColorOverlay(const std::string actionName, int32_t angle);
+
+		/** Adds new animation overlay with given angle (degrees) and order to given action.
+		 */
+		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+
+		/** Gets map with animations closest to given angle.
+		 * @return ordered animation map
+		 */
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
+
+		/** Removes animation overlay with given angle (degrees) and order from action.
+		 */
+		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		/** Adds new color overlay with given angle (degrees) and order to given action animation overlay.
+		 */
+		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle, order and action animation overlay.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		/** Removes a color overlay with given angle (degrees), order from given action animation overlay.
+		 */
+		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+
+		/** If the action have base animation and optional color overlay it gets converted to animation overlay.
+		 */
+		void convertToOverlays(const std::string actionName, bool color);
+
+		/** Indicates if there exists a animation overlay for given action.
+		 */
+		bool isAnimationOverlay(const std::string actionName);
+
+		/** Indicates if there exists a color overlay for given action or animation overlay.
+		 */
+		bool isColorOverlay(const std::string actionName);
+		
 	private:
 		std::string m_id;
 
@@ -502,6 +572,8 @@ namespace FIFE {
 
 		//! object where instantiated from
 		Object* m_object;
+		//! indicates if m_object is customized
+		bool m_ownObject;
 		//! current location
 		Location m_location;
 		//! instance visualization
@@ -542,6 +614,13 @@ namespace FIFE {
 		void bindTimeProvider();
 		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
+		//! called to prepare the instance for an update
+		void prepareForUpdate();
+
+		//! Creates an own object for the instance to allow visual customization.
+		void createOwnObject();
+		//! Returns pointer to action visual, can also create it.
+		ActionVisual* getActionVisual(const std::string actionName, bool create);
 	};
 } // FIFE
 

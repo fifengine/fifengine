@@ -53,6 +53,9 @@
 namespace FIFE {
 	static Logger _log(LM_CAMERA);
 
+	// to avoid std::bad_alloc errors, we determine the maximum size of batches
+	const uint32_t MAX_BATCH_SIZE = 100000;
+
 	class MapObserver : public MapChangeListener {
 		Camera* m_camera;
 
@@ -102,7 +105,7 @@ namespace FIFE {
 			m_pipeline(),
 			m_updated(false),
 			m_renderbackend(renderbackend),
-			m_layer_to_instances(),
+			m_layerToInstances(),
 			m_lighting(false),
 			m_light_colors(),
 			m_col_overlay(false),
@@ -517,7 +520,7 @@ namespace FIFE {
 	}
 
 	RenderList& Camera::getRenderListRef(Layer* layer) {
-		return m_layer_to_instances[layer];
+		return m_layerToInstances[layer];
 	}
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
@@ -525,7 +528,7 @@ namespace FIFE {
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
 
-		const RenderList& layer_instances = m_layer_to_instances[&layer];
+		const RenderList& layer_instances = m_layerToInstances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -548,12 +551,28 @@ namespace FIFE {
 					x = static_cast<int32_t>(round(fx / fsw * fow));
 					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				// instance is hit with mouse if not totally transparent
-				if (a == 0 || (special_alpha && a < alpha)) {
-					continue;
+				if (vc.animationOverlayImages) {
+					std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
+					for (; it != vc.animationOverlayImages->end(); ++it) {
+						if ((*it)->isSharedImage()) {
+							(*it)->forceLoadInternal();
+						}
+						(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+						// instance is hit with mouse if not totally transparent
+						if (a == 0 || (special_alpha && a < alpha)) {
+							continue;
+						}
+						instances.push_back(i);
+						break;
+					}
+				} else {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					// instance is hit with mouse if not totally transparent
+					if (a == 0 || (special_alpha && a < alpha)) {
+						continue;
+					}
+					instances.push_back(i);
 				}
-				instances.push_back(i);
 			}
 		}
 	}
@@ -563,7 +582,7 @@ namespace FIFE {
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
 
-		const RenderList& layer_instances = m_layer_to_instances[&layer];
+		const RenderList& layer_instances = m_layerToInstances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -589,14 +608,29 @@ namespace FIFE {
 								x = static_cast<int32_t>(round(fx / fsw * fow));
 								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
-							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-							// instance is hit with mouse if not totally transparent
-							if (a == 0 || (special_alpha && a < alpha)) {
-								continue;
+							if (vc.animationOverlayImages) {
+								std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
+								for (; it != vc.animationOverlayImages->end(); ++it) {
+									if ((*it)->isSharedImage()) {
+										(*it)->forceLoadInternal();
+									}
+									(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+									// instance is hit with mouse if not totally transparent
+									if (a == 0 || (special_alpha && a < alpha)) {
+										continue;
+									}
+									instances.push_back(i);
+									goto found_non_transparent_pixel;
+								}
+							} else {
+								vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+								// instance is hit with mouse if not totally transparent
+								if (a == 0 || (special_alpha && a < alpha)) {
+									continue;
+								}
+								instances.push_back(i);
+								goto found_non_transparent_pixel;
 							}
-
-							instances.push_back(i);
-							goto found_non_transparent_pixel;
 						}
 					}
 				}
@@ -612,7 +646,7 @@ namespace FIFE {
 			return;
 		}
 
-		const RenderList& layer_instances = m_layer_to_instances[layer];
+		const RenderList& layer_instances = m_layerToInstances[layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -712,13 +746,13 @@ namespace FIFE {
 	void Camera::addLayer(Layer* layer) {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
-		m_layer_to_instances[layer] = RenderList();
+		m_layerToInstances[layer] = RenderList();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
 		delete m_cache[layer];
 		m_cache.erase(layer);
-		m_layer_to_instances.erase(layer);
+		m_layerToInstances.erase(layer);
 	}
 
 	void Camera::setLightingColor(float red, float green, float blue) {
@@ -883,11 +917,29 @@ namespace FIFE {
 			// here we use the new viewport size
 			m_renderbackend->pushClipArea(rec, false);
 			// render stuff to texture
-			RenderList& instances_to_render = m_layer_to_instances[layer];
-			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-			for (; r_it != m_pipeline.end(); ++r_it) {
-				if ((*r_it)->isActivedLayer(layer)) {
-					(*r_it)->render(this, layer, instances_to_render);
+			RenderList& instancesToRender = m_layerToInstances[layer];
+			// split the RenderList into smaller parts
+			if (instancesToRender.size() > MAX_BATCH_SIZE) {
+				uint8_t batches = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+				uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+				for (uint8_t i = 0; i < batches; ++i) {
+					uint32_t start = i*MAX_BATCH_SIZE;
+					uint32_t end = start + ((i+1 == batches) ? residual : MAX_BATCH_SIZE);
+					RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
+					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+					for (; r_it != m_pipeline.end(); ++r_it) {
+						if ((*r_it)->isActivedLayer(layer)) {
+							(*r_it)->render(this, layer, tempList);
+						}
+					}
+					m_renderbackend->renderVertexArrays();
+				}
+			} else {
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(layer)) {
+						(*r_it)->render(this, layer, instancesToRender);
+					}
 				}
 			}
 			m_renderbackend->detachRenderTarget();
@@ -913,11 +965,11 @@ namespace FIFE {
 				cache = m_cache[*layer_it];
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
-			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
+			RenderList& instancesToRender = m_layerToInstances[*layer_it];
 			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
 				continue;
 			}
-			cache->update(m_transform, instances_to_render);
+			cache->update(m_transform, instancesToRender);
 		}
 		resetUpdates();
 	}
@@ -949,11 +1001,29 @@ namespace FIFE {
 				renderStaticLayer(*layer_it, m_updated);
 				continue;
 			}
-			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-			for (; r_it != m_pipeline.end(); ++r_it) {
-				if ((*r_it)->isActivedLayer(*layer_it)) {
-					(*r_it)->render(this, *layer_it, instances_to_render);
+			RenderList& instancesToRender = m_layerToInstances[*layer_it];
+			// split the RenderList into smaller parts
+			if (instancesToRender.size() > MAX_BATCH_SIZE) {
+				uint8_t batches = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+				uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+				for (uint8_t i = 0; i < batches; ++i) {
+					uint32_t start = i*MAX_BATCH_SIZE;
+					uint32_t end = start + ((i+1 == batches) ? residual : MAX_BATCH_SIZE);
+					RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
+					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+					for (; r_it != m_pipeline.end(); ++r_it) {
+						if ((*r_it)->isActivedLayer(*layer_it)) {
+							(*r_it)->render(this, *layer_it, tempList);
+						}
+					}
+					m_renderbackend->renderVertexArrays();
+				}
+			} else {
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(*layer_it)) {
+						(*r_it)->render(this, *layer_it, instancesToRender);
+					}
 				}
 			}
 			if (renderbackendOpenGLe) {

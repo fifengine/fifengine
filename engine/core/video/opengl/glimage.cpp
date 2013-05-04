@@ -146,6 +146,33 @@ namespace FIFE {
 		rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 	}
 
+	void GLImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
+		// completely transparent so dont bother rendering
+		if (0 == alpha) {
+			return;
+		}
+		RenderBackend* rb = RenderBackend::instance();
+		SDL_Surface* target = rb->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
+		
+		// not on the screen.  dont render
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
+			return;
+		}
+		
+		if (!m_texId) {
+			generateGLTexture();
+		} else if (m_shared) {
+			validateShared();
+		}
+		
+		GLImage* img = static_cast<GLImage*>(overlay.get());
+		img->forceLoadInternal();
+		
+		rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
+	}
+
 	void GLImage::generateGLTexture() {
 		if (m_shared) {
 			// First make sure we loaded big image to opengl
@@ -199,6 +226,8 @@ namespace FIFE {
 		// set filters for texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		GLint internalFormat = GL_RGBA8;
 		if(GLEE_ARB_texture_compression && RenderBackend::instance()->isImageCompressingEnabled()) {
