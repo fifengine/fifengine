@@ -977,6 +977,28 @@ namespace FIFE {
 		return cells;
 	}
 
+	std::vector<Cell*> CellCache::getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle) {
+		std::vector<Cell*> cells;
+		ExactModelCoordinate exactCenter(center.x, center.y);
+		std::vector<Cell*> tmpCells = getCellsInCircle(center, radius);
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		bool greater = (s > e) ? true : false;
+		for (std::vector<Cell*>::iterator it = tmpCells.begin(); it != tmpCells.end(); ++it) {
+			int32_t angle = getAngleBetween(exactCenter, intPt2doublePt((*it)->getLayerCoordinates()));
+			if (greater) {
+				if (angle >= s || angle <= e) {
+					cells.push_back(*it);
+				}
+			} else {
+				if (angle >= s && angle <= e) {
+					cells.push_back(*it);
+				}
+			}
+		}
+		return cells;
+	}
+
 	void CellCache::registerCost(const std::string& costId, double cost) {
 		std::pair<std::map<std::string, double>::iterator, bool> insertiter;
 		insertiter = m_costsTable.insert(std::pair<std::string, double>(costId, cost));
