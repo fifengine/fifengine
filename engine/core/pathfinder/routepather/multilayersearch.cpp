@@ -182,6 +182,7 @@ namespace FIFE {
 		int32_t cellZ = nextCell->getLayerCoordinates().z;
 		int32_t maxZ = m_route->getZStepRange();
 		bool zLimited = maxZ != -1;
+		uint8_t blockerThreshold = m_ignoreDynamicBlockers ? 2 : 1;
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		if (adjacents.empty()) {
 			return;
@@ -200,7 +201,7 @@ namespace FIFE {
 			if (zLimited && ABS(cellZ-(*i)->getLayerCoordinates().z) > maxZ) {
 				continue;
 			}
-			bool blocker = (*i)->getCellType() != CTYPE_NO_BLOCKER;
+			bool blocker = (*i)->getCellType() > blockerThreshold;
 			ModelCoordinate adjacentCoord = (*i)->getLayerCoordinates();
 			if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
 				if (blocker && m_multicell) {
@@ -226,7 +227,7 @@ namespace FIFE {
 				for (; coord_it != coords.end(); ++coord_it) {
 					Cell* cell = m_currentCache->getCell(*coord_it);
 					if (cell) {
-						if (cell->getCellType() != CTYPE_NO_BLOCKER) {
+						if (cell->getCellType() > blockerThreshold) {
 							std::vector<Cell*>::iterator bc_it = std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);
 							if (bc_it == m_ignoredBlockers.end()) {
 								blocker = true;

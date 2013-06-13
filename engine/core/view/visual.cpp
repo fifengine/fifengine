@@ -259,10 +259,17 @@ namespace FIFE {
 	}
 
 	void ActionVisual::removeAnimationOverlay(uint32_t angle, int32_t order) {
+		if (m_animationOverlayMap.empty()) {
+			return;
+		}
 		int32_t closestMatch = 0;
-		std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
-		std::map<int32_t, AnimationPtr>::iterator it = orderMap.begin();
-		orderMap.erase(order);
+		AngleAnimationOverlayMap::iterator it = m_animationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+		if (it != m_animationOverlayMap.end()) {
+			it->second.erase(order);
+			if (it->second.empty()) {
+				m_animationOverlayMap.erase(it);
+			}
+		}
 	}
 	
 	void ActionVisual::addColorOverlay(uint32_t angle, const OverlayColors& colors) {
@@ -300,7 +307,6 @@ namespace FIFE {
 		int32_t closestMatch = 0;
 		int32_t index = getIndexByAngle(angle, m_map, closestMatch);
 		m_colorOverlayMap.erase(index);
-		//m_map.erase(index);
 	}
 
 	void ActionVisual::addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors) {
@@ -345,6 +351,9 @@ namespace FIFE {
 		AngleColorAnimationOverlayMap::iterator it = m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
 		if (it != m_colorAnimationOverlayMap.end()) {
 			it->second.erase(order);
+			if (it->second.empty()) {
+				m_colorAnimationOverlayMap.erase(it);
+			}
 		}
 	}
 

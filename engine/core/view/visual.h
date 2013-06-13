@@ -241,21 +241,50 @@ namespace FIFE {
 		 */
 		void removeAnimationOverlay(uint32_t angle, int32_t order);
 
+		/** Adds new color overlay with given angle (degrees) and colors.
+		 * Note: Works only for single animations not for AnimationOverlays. (order is missing)
+		 */
 		void addColorOverlay(uint32_t angle, const OverlayColors& colors);
+
+		/** Gets OverlayColors for given angle (degrees).
+		 * @return pointer to OverlayColors or Null
+		 */
 		OverlayColors* getColorOverlay(int32_t angle);
+
+		/** Removes color overlay with given angle (degrees).
+		 */
 		void removeColorOverlay(int32_t angle);
 
+		/** Adds new color overlay with given angle (degrees), order and colors.
+		 * Note: Works only for AnimationOverlays.
+		 */
 		void addColorOverlay(uint32_t angle, int32_t order, const OverlayColors& colors);
+
+		/** Gets OverlayColors for given angle (degrees) and order.
+		 * @return pointer to OverlayColors or Null
+		 */
 		OverlayColors* getColorOverlay(int32_t angle, int32_t order);
+
+		/** Removes color overlay with given angle (degrees) and order.
+		 */
 		void removeColorOverlay(int32_t angle, int32_t order);
 
 		/** Returns list of available angles for this Action
 		 */
 		void getActionImageAngles(std::vector<int32_t>& angles);
 
+		/** Convertes animations and optional color overlay to default animation overlay.
+		 * The default order value for both is 0. The old data remain, so if you remove the animation overlay
+		 * the old plain animations and colors be used again.
+		 */
 		void convertToOverlays(bool color);
 
+		/** Returns true if it exists a animation overlay, otherwise false.
+		 */
 		bool isAnimationOverlay() { return !m_animationOverlayMap.empty(); }
+
+		/** Returns true if it exists a color overlay, otherwise false.
+		 */
 		bool isColorOverlay() { return !m_colorOverlayMap.empty() || !m_colorAnimationOverlayMap.empty(); }
 
 	private:
