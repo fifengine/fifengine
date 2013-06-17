@@ -486,16 +486,21 @@ namespace FIFE {
 								if (recoloring) {
 									// create temp OverlayColors
 									OverlayColors* temp = new OverlayColors(oc->getColorOverlayImage());
-									float alphaFactor = static_cast<float>(coloringColor[3] / 255.0);
+									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
 									const std::map<Color, Color>& defaultColors = oc->getColors();
 									for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-										Color c(coloringColor[0]*(1.0-alphaFactor) + c_it->second.getR()*alphaFactor,
-											coloringColor[1]*(1.0-alphaFactor) + c_it->second.getG()*alphaFactor,
-											coloringColor[2]*(1.0-alphaFactor) + c_it->second.getB()*alphaFactor, c_it->second.getAlpha());
+										if (c_it->second.getAlpha() == 0) {
+											continue;
+										}
+										float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+										Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+											coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+											coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
 										temp->changeColor(c_it->first, c);
 									}
 									// create new factor
-									factor[3] = coloringColor[3]*(1.0-alphaFactor) + factor[3]*alphaFactor;
+									factor[3] = 255 - factor[3];
+									factor[3] = std::min(coloringColor[3], factor[3]);
 									// get overlay image with temp colors
 									multiColorOverlay = getMultiColorOverlay(vc, temp);
 									delete temp;
@@ -508,17 +513,23 @@ namespace FIFE {
 							}
 							// single color overlay
 							std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
-							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), color_it->second.getAlpha() };
+							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), 255-color_it->second.getAlpha() };
+							bool noOverlay = rgba[4] == 255;
 							if (recoloring) {
-								float alphaFactor = static_cast<float>(coloringColor[3] / 255.0);
-								rgba[0] = coloringColor[0]*(1.0-alphaFactor) + rgba[0]*alphaFactor;
-								rgba[1] = coloringColor[1]*(1.0-alphaFactor) + rgba[1]*alphaFactor;
-								rgba[2] = coloringColor[2]*(1.0-alphaFactor) + rgba[2]*alphaFactor;
-								rgba[3] = coloringColor[3]*(1.0-alphaFactor) + rgba[3]*alphaFactor;
+								if (!noOverlay) {
+									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+									float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+									rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+									rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+									rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+									rgba[3] = std::min(coloringColor[3], rgba[3]);
+								}
 							}
 							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-							oc->getColorOverlayImage()->render(vc.dimensions, *it, vc.transparency, rgba);
-							m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+							if (!noOverlay) {
+								(*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
+								m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+							}
 						}
 					}
 				} else {
@@ -538,39 +549,51 @@ namespace FIFE {
 					if (recoloring) {
 						// create temp OverlayColors
 						OverlayColors* temp = new OverlayColors(vc.colorOverlay->getColorOverlayImage());
-						float alphaFactor = static_cast<float>(coloringColor[3] / 255.0);
+						float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
 						const std::map<Color, Color>& defaultColors = vc.colorOverlay->getColors();
 						for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-							Color c(coloringColor[0]*(1.0-alphaFactor) + c_it->second.getR()*alphaFactor,
-								coloringColor[1]*(1.0-alphaFactor) + c_it->second.getG()*alphaFactor,
-								coloringColor[2]*(1.0-alphaFactor) + c_it->second.getB()*alphaFactor, c_it->second.getAlpha());
+							if (c_it->second.getAlpha() == 0) {
+								continue;
+							}
+							float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+							Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+								coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+								coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
 							temp->changeColor(c_it->first, c);
 						}
 						// create new factor
-						factor[3] = coloringColor[3]*(1.0-alphaFactor) + factor[3]*alphaFactor;
+						factor[3] = 255 - factor[3];
+						factor[3] = std::min(coloringColor[3], factor[3]);
 						// get overlay image with temp colors
 						multiColorOverlay = getMultiColorOverlay(vc, temp);
 						delete temp;
 					}
 					if (!multiColorOverlay) {
 						multiColorOverlay = getMultiColorOverlay(vc);
+						factor[3] = 0;
 					}
 					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 					vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
 				} else {
 					// single color overlay
 					std::map<Color, Color>::const_iterator color_it = vc.colorOverlay->getColors().begin();
-					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), color_it->second.getAlpha() };
+					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), 255-color_it->second.getAlpha() };
+					bool noOverlay = rgba[4] == 255;
 					if (recoloring) {
-						float alphaFactor = static_cast<float>(coloringColor[3] / 255.0);
-						rgba[0] = coloringColor[0]*(1.0-alphaFactor) + rgba[0]*alphaFactor;
-						rgba[1] = coloringColor[1]*(1.0-alphaFactor) + rgba[1]*alphaFactor;
-						rgba[2] = coloringColor[2]*(1.0-alphaFactor) + rgba[2]*alphaFactor;
-						rgba[3] = coloringColor[3]*(1.0-alphaFactor) + rgba[3]*alphaFactor;
+						if (!noOverlay) {
+							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+							float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+							rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+							rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+							rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+							rgba[3] = std::min(coloringColor[3], rgba[3]);
+						}
 					}
 					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-					vc.colorOverlay->getColorOverlayImage()->render(vc.dimensions, vc.image, vc.transparency, rgba);
-					m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+					if (!noOverlay) {
+						vc.image->render(vc.dimensions, vc.colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+					}
 				}
 			// no overlay
 			} else {
@@ -944,7 +967,7 @@ namespace FIFE {
 					Color c(r, g, b, a);
 					it = colorMap.find(c);
 					if (it != colorMap.end()) {
-						Image::putPixel(overlay_surface, x, y, it->second.getR(), it->second.getG(), it->second.getB(), a);
+						Image::putPixel(overlay_surface, x, y, it->second.getR(), it->second.getG(), it->second.getB(), it->second.getAlpha());
 					} else {
 						Image::putPixel(overlay_surface, x, y, r, g, b, a);
 					}

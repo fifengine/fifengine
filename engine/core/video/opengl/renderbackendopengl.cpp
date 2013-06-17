@@ -746,16 +746,15 @@ namespace FIFE {
 							break;
 						case OVERLAY_TYPE_COLOR_AND_TEXTURE:
 							disableTextures(3);
-							bindTexture(1, m_maskOverlay);
-							setEnvironmentalColor(1, ro.rgba);
+							disableTextures(1);
 							bindTexture(2, ro.overlay_id);
+							setEnvironmentalColor(2, ro.rgba);
 							enableTextures(0);
 
 							// set pointers
 							setVertexPointer(stride2T, &m_render_datas2T[0].vertex);
 							setColorPointer(stride2T, &m_render_datas2T[0].color);
 							setTexCoordPointer(2, stride2T, &m_render_datas2T[0].texel2);
-							setTexCoordPointer(1, stride2T, &m_render_datas2T[0].texel2);
 							setTexCoordPointer(0, stride2T, &m_render_datas2T[0].texel);
 
 							memcpy(color, ro.rgba, sizeof(uint8_t) * 4);
@@ -1177,18 +1176,27 @@ namespace FIFE {
 		glEnable(GL_TEXTURE_2D);
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
 
 		// Arg0
-		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PREVIOUS);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PREVIOUS);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE0);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE2);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 
+		// The alpha component is taken only from 0th tex unit which is
+		// Arg0 in our case, therefore we doesn't need to set operands
+		// and sources for the rest of arguments
+
 		// Arg1
-		glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_TEXTURE2);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+
+		// Arg2
+		// uses alpha part of environmental color as interpolation factor
+		glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_CONSTANT);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_ALPHA);
 
 		glDisable(GL_TEXTURE_2D);
 
