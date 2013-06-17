@@ -506,6 +506,7 @@ namespace FIFE {
 									delete temp;
 								} else {
 									multiColorOverlay = getMultiColorOverlay(vc, oc);
+									factor[3] = 0;
 								}
 								(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 								(*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
