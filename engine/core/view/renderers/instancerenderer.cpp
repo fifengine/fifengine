@@ -499,7 +499,7 @@ namespace FIFE {
 										temp->changeColor(c_it->first, c);
 									}
 									// create new factor
-									factor[3] = 255 - factor[3];
+									factor[3] = static_cast<uint8_t>(255 - factor[3]);
 									factor[3] = std::min(coloringColor[3], factor[3]);
 									// get overlay image with temp colors
 									multiColorOverlay = getMultiColorOverlay(vc, temp);
@@ -513,8 +513,8 @@ namespace FIFE {
 							}
 							// single color overlay
 							std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
-							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), 255-color_it->second.getAlpha() };
-							bool noOverlay = rgba[4] == 255;
+							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+							bool noOverlay = rgba[3] == 255;
 							if (recoloring) {
 								if (!noOverlay) {
 									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
@@ -562,7 +562,7 @@ namespace FIFE {
 							temp->changeColor(c_it->first, c);
 						}
 						// create new factor
-						factor[3] = 255 - factor[3];
+						factor[3] = static_cast<uint8_t>(255 - factor[3]);
 						factor[3] = std::min(coloringColor[3], factor[3]);
 						// get overlay image with temp colors
 						multiColorOverlay = getMultiColorOverlay(vc, temp);
@@ -577,8 +577,8 @@ namespace FIFE {
 				} else {
 					// single color overlay
 					std::map<Color, Color>::const_iterator color_it = vc.colorOverlay->getColors().begin();
-					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), 255-color_it->second.getAlpha() };
-					bool noOverlay = rgba[4] == 255;
+					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+					bool noOverlay = rgba[3] == 255;
 					if (recoloring) {
 						if (!noOverlay) {
 							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
