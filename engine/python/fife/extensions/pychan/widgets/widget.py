@@ -591,7 +591,7 @@ class Widget(object):
 		disable the event completely.
 
 		@param eventMap: A dictionary with widget/event names as keys and callbacks as values.
-		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
+		@param ignoreMissing: Normally this method raises a RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
 
 		The keys in the dictionary are parsed as C{"widgetName/eventName"} with the slash

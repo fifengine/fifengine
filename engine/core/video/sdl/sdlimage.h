@@ -64,7 +64,7 @@ namespace FIFE {
 		/** SDL Alpha Optimizer
 		 * This tries to convert an image with a fake alpha channel
 		 * to an RGB image when the channel can be reasonably be replaced
-		 * by an colorkey.
+		 * by a colorkey.
 		 */
 		SDL_Surface* optimize(SDL_Surface* surface);
 

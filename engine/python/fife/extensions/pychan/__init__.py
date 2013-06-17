@@ -107,7 +107,7 @@ is somewhat limited.
 A dialog without an OK button would be futile - so here's how
 you hook widget events to function calls. Every widget
 has a L{widgets.Widget.capture} method, which will directly call the passed
-function when an widget event occurs. As a convenience a
+function when a widget event occurs. As a convenience a
 L{widgets.Widget.mapEvents} function will batch the L{widgets.Widget.findChild} and
 L{widgets.Widget.capture} calls in an obvious way.
 ::

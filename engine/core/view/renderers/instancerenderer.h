@@ -66,7 +66,7 @@ namespace FIFE {
 		 */
 		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a = 128);
 
-		/** Marks given instance to have an transparent area with given paramters
+		/** Marks given instance to have a transparent area with given parameters
 		 */
 		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front = true);
 

@@ -43,7 +43,7 @@ namespace FIFE {
 	 */
 	class ICommandListener {
 	public:
-		/** Called when an command is received from a command source
+		/** Called when a command is received from a command source
 		 * @param command command coming from command source
 		 */
 		virtual void onCommand(Command& command) = 0;

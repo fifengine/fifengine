@@ -45,7 +45,7 @@ namespace FIFE {
 		 * @param r Red channel value.
 		 * @param g Green channel value.
 		 * @param b Blue channel value.
-		 * @param alhpa Alpha channel value.
+		 * @param alpha Alpha channel value.
 		 */
 		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
 		
