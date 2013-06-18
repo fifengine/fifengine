@@ -450,7 +450,17 @@ namespace FIFE {
 			Entry* entry = m_entries[i];
 			if (entry->instanceIndex != -1) {
 				if (rotationChange || entry->forceUpdate) {
+					bool force = entry->forceUpdate;
 					updateVisual(entry);
+					if (force && !entry->forceUpdate) {
+						// no action
+						entry->updateInfo = EntryNoneUpdate;
+						m_entriesToUpdate.erase(entry->entryIndex);
+					} else if (!force && entry->forceUpdate) {
+						// new action
+						entry->updateInfo |= EntryVisualUpdate;
+						m_entriesToUpdate.insert(entry->entryIndex);
+					}
 				}
 				updatePosition(entry);
 			}
@@ -465,6 +475,11 @@ namespace FIFE {
 				if (entry->forceUpdate) {
 					updateVisual(entry);
 					updatePosition(entry);
+					if (!entry->forceUpdate) {
+						// no action
+						entry->updateInfo = EntryNoneUpdate;
+						m_entriesToUpdate.erase(entry->entryIndex);
+					}
 					continue;
 				}
 				updateScreenCoordinate(m_renderItems[entry->instanceIndex], zoomChange);
@@ -718,7 +733,6 @@ namespace FIFE {
 	}
 
 	inline void LayerCache::updateScreenCoordinate(RenderItem* item, bool changedZoom) {
-		
 		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
 		// NOTE:
 		// One would expect this to be necessary here,
