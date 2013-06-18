@@ -33,6 +33,8 @@
 #include "util/base/exception.h"
 %}
 
+%include <attribute.i>
+
 %include "util/base/utilbase.i"
 %include "util/structures/utilstructures.i"
 %include "util/resource/resource.i"
@@ -44,6 +46,11 @@ namespace FIFE {
 namespace std {
 	%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
 }
+
+%attribute(FIFE::Color, uint8_t, r, getR, setR);
+%attribute(FIFE::Color, uint8_t, g, getG, setG);
+%attribute(FIFE::Color, uint8_t, b, getB, setB);
+%attribute(FIFE::Color, uint8_t, a, getAlpha, setAlpha);
 
 namespace FIFE {
 	class Point;
