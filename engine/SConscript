@@ -237,7 +237,7 @@ pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python'
 										   os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
 										   os.path.join('python', 'fife', 'fife.py')],
 							  source = os.path.join('swigwrappers', 'python' ,'fife.i'),
-							  SWIGFLAGS=['-python','-c++','-w511'],
+							  SWIGFLAGS=['-python','-c++','-w511', '-w473', '-w404'],
 							  SWIGPATH='core',
 							  SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
 
