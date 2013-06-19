@@ -50,20 +50,20 @@ AddOption('--enable-debug',
 		help='Builds the debug version of the binaries',
 		default=False)
 		
-AddOption('--with-librocket',
-		dest='with-librocket',
+AddOption('--enable-librocket',
+		dest='enable-librocket',
 		action='store_true',
 		help='Enable librocket gui sybsystem',
 		default=False)
 
-AddOption('--with-cegui',
-		dest='with-cegui',
+AddOption('--enable-cegui',
+		dest='enable-cegui',
 		action='store_true',
 		help='Enable Craze Eddie\'s gui subsystem',
 		default=False)
 		
-AddOption('--without-fifechan',
-		dest='without-fifechan',
+AddOption('--disable-fifechan',
+		dest='disable-fifechan',
 		action="store_true",
 		help='Disable fifechan gui subsystem',
 		default=False)
@@ -137,8 +137,8 @@ AddOption('--lib-dir',
 		metavar='DIR',
 		help='Shared Library install location') 
 		
-AddOption('--without-githash',
-		dest='without-githash',
+AddOption('--disable-githash',
+		dest='disable-githash',
 		action='store_true',
 		help='Do not attempt to determine the git hash for the current commit',
 		default=False)
@@ -156,14 +156,14 @@ else:
 	debug = 0
 	env['FIFE_DEBUG'] = False
 	
-if GetOption('without-fifechan'):
+if GetOption('disable-fifechan'):
 	env['ENABLE_FIFECHAN'] = False
 	extra_libs['fifechan'] = False
 else:
 	env['ENABLE_FIFECHAN'] = True
 	extra_libs['fifechan'] = True
 	
-if GetOption('with-librocket'):
+if GetOption('enable-librocket'):
 	env['ENABLE_LIBROCKET'] = True
 	extra_libs['librocket'] = True
 	if debug:
@@ -175,7 +175,7 @@ else:
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
 
-if GetOption('with-cegui'):
+if GetOption('enable-cegui'):
 	env['ENABLE_CEGUI'] = True
 	extra_libs['cegui'] = True
 else:
@@ -227,7 +227,7 @@ else:
 	local_tinyxml = 0
 	env['LOCAL_TINYXML'] = False
 	
-if GetOption('without-githash'):
+if GetOption('disable-githash'):
 	get_githash = False
 else:
 	get_githash = True
