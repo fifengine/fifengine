@@ -87,9 +87,9 @@ static void handleDirectorException() {
 	PyErr_Fetch(&exception, &value, &traceback);
 	PyErr_NormalizeException(&exception, &value, &traceback);
 	if (exception) {
-		PySys_SetObject("last_type", exception);
-		PySys_SetObject("last_value", value);
-		PySys_SetObject("last_traceback", traceback);	
+		PySys_SetObject((char*)"last_type", exception);
+		PySys_SetObject((char*)"last_value", value);
+		PySys_SetObject((char*)"last_traceback", traceback);	
 		
 		PyObject* d = PyModule_GetDict (PyImport_AddModule ("__main__"));
 		PyDict_SetItemString(d, "exc_type", exception);
