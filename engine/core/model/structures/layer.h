@@ -178,6 +178,13 @@ namespace FIFE {
 			 */
 			std::list<Instance*> getInstancesIn(Rect& rec);
 
+			/** Returns instances that match given line between pt1 and pt2.
+			 * @param pt1 A const reference to the ModelCoordinate where to start from.
+			 * @param pt2 A const reference to the ModelCoordinate where the end is.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2);
+
 			/** Returns instances that match given center and radius of the circle.
 			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
 			 * @param radius A unsigned integer, radius of the circle.

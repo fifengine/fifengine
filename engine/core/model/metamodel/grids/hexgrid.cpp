@@ -255,4 +255,141 @@ namespace FIFE {
 		}
 		return coords;
 	}
+
+	std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) {
+		std::vector<ModelCoordinate> coords;
+		int32_t doubleDeltaX = 2*(end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
+		int32_t deltaX = (end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
+		int32_t deltaY = end.y - start.y;
+
+		//int8_t signX = (deltaX >= 0) ? 1 : -1;
+		//int8_t signY = (deltaY >= 0) ? 1 : -1;
+		int8_t signX = (start.x < end.x) ? 1 : -1;
+		int8_t signY = (start.y < end.y) ? 1 : -1;
+		ModelCoordinate current(start);
+		coords.push_back(current);
+		int32_t err = 0;
+		if (ABS(deltaY) < ABS(doubleDeltaX)) {
+			int32_t errX = 3 * ABS(doubleDeltaX);
+			int32_t errY = 3 * ABS(deltaY);
+			while (current.x != end.x || current.y != end.y) {
+				err += errY;
+				if (err > ABS(doubleDeltaX)) {
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					err -= errX;
+				} else {
+					if (signX == -1) {
+						// left
+						current.x -= 1;
+					} else {
+						// right
+						current.x += 1;
+					}
+					err += errY;
+				}
+				coords.push_back(current);
+			}
+		} else {
+			int32_t errX = ABS(doubleDeltaX);
+			int32_t errY = ABS(deltaY);
+			while (current.x != end.x || current.y != end.y) {
+				err += errX;
+				if (err > 0) {
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else if (signX == 1) {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					err -= errY;
+				} else {
+					signX = -signX;
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else if (signX == 1) {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					signX = -signX;
+					err += errY;
+				}
+				coords.push_back(current);
+			}
+		}
+		return coords;
+	}
 }
