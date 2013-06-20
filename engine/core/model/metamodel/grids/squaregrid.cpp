@@ -139,4 +139,41 @@ namespace FIFE {
 		}
 		return coords;
 	}
+
+	std::vector<ModelCoordinate> SquareGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) {
+		std::vector<ModelCoordinate> coords;
+		int32_t dx = ABS(end.x - start.x);
+		int32_t dy = ABS(end.y - start.y);
+		int8_t sx = -1;
+		int8_t sy = -1;
+
+		if (start.x < end.x) {
+			sx = 1;
+		}
+		if (start.y < end.y) {
+			sy = 1;
+		}
+
+		int32_t err = dx - dy;
+		int32_t err2 = err*2;
+		ModelCoordinate current(start);
+		bool finished = false;
+		while (!finished) {
+			coords.push_back(current);
+			if (current.x == end.x && current.y == end.y) {
+				finished = true;
+				break;
+			}
+			
+			if (err2 > -dy) {
+				err -= dy;
+				current.x += sx;
+			} else if (err2 < dx) {
+				err += dx;
+				current.y += sy;
+			}
+			err2 = err*2;
+		}
+		return coords;
+	}
 }

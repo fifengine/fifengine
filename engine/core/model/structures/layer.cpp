@@ -284,6 +284,19 @@ namespace FIFE {
 		return matching_instances;
 	}
 
+	std::vector<Instance*> Layer::getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2) {
+		std::vector<Instance*> instances;
+		std::list<Instance*> matchingInstances;
+		std::vector<ModelCoordinate> coords = m_grid->getCoordinatesInLine(pt1, pt2);
+		for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
+			m_instanceTree->findInstances(*it, 0, 0, matchingInstances);
+			if (!matchingInstances.empty()) {
+				instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+			}
+		}
+		return instances;
+	}
+
 	std::vector<Instance*> Layer::getInstancesInCircle(const ModelCoordinate& center, uint16_t radius) {
 		std::vector<Instance*> instances;
 		std::list<Instance*> matchingInstances;
