@@ -44,7 +44,16 @@ Usage::
 from fife import fife
 
 import fife.extensions.fife_timer as fife_timer
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+
+def cbwa(callback,*args,**kwargs):
+	"""
+	This was stolen from pychan.  Defined here to remove the dep
+	on pychan.
+	"""
+	def real_callback():
+		callback(*args,**kwargs)
+	return real_callback
+
 
 class SoundEmitter(object):
 	"""
