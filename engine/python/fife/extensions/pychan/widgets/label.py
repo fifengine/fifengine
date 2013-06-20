@@ -21,8 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import BoolAttr
+
 from basictextwidget import BasicTextWidget
+
 
 class Label(BasicTextWidget):
 	"""
@@ -92,7 +96,8 @@ class Label(BasicTextWidget):
 								   margins=margins,
 								   text=text)
 								   
-		if wrap_text is not None: self.wrap_text = wrap_text
+		if wrap_text is not None:
+			self.wrap_text = wrap_text
 		
 	def clone(self, prefix):
 		lblClone = Label(None,

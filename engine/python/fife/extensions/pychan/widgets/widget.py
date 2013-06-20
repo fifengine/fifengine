@@ -21,7 +21,17 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife.extensions.pychan.widgets.common import *
+from fife import fife
+
+from fife.extensions.pychan import events
+from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
+                                          ColorAttr, BoolAttr, IntAttr)
+from fife.extensions.pychan.exceptions import StopTreeWalking
+from fife.extensions.pychan.properties import ColorProperty
+
+from common import get_manager
+from layout import isLayouted
+
 
 class Widget(object):
 	"""
@@ -581,7 +591,7 @@ class Widget(object):
 		disable the event completely.
 
 		@param eventMap: A dictionary with widget/event names as keys and callbacks as values.
-		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
+		@param ignoreMissing: Normally this method raises a RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
 
 		The keys in the dictionary are parsed as C{"widgetName/eventName"} with the slash

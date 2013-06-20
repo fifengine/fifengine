@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2013 by the FIFE team                              *
- *   http://www.fifengine.net                                               *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -70,7 +70,7 @@ namespace FIFE {
 			return false;
 		}
 
-		//then by screen dimentions
+		//then by screen dimensions
 		if (m_width == rhs.getWidth() && m_height == rhs.getHeight()){
 			if (!(m_SDLFlags & SDL_HWSURFACE) && (rhs.getSDLFlags() & SDL_HWSURFACE)) {
 				//I would like return true so that we prefer hardware surfaces but
@@ -166,7 +166,7 @@ namespace FIFE {
 
 		//OpenGL, windowed, hw accel
 		flags[0] = ScreenMode::HW_WINDOWED_OPENGL;
-		//OpenGL, fullscree, hw accel
+		//OpenGL, fullscreen, hw accel
 		flags[1] = ScreenMode::HW_FULLSCREEN_OPENGL;
 		//SDL, windowed
 		flags[2] = ScreenMode::WINDOWED_SDL;

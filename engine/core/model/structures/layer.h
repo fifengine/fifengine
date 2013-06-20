@@ -178,6 +178,22 @@ namespace FIFE {
 			 */
 			std::list<Instance*> getInstancesIn(Rect& rec);
 
+			/** Returns instances that match given center and radius of the circle.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInCircle(const ModelCoordinate& center, uint16_t radius);
+
+			/** Returns all instances in the circle segment.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @param sangle A interger, start angle of the segment.
+			 * @param eangle A interger, end angle of the segment.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
+
 			/** Get the first instance on this layer with the given identifier.
 			 */
 			Instance* getInstance(const std::string& identifier);

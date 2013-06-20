@@ -21,8 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import Attr, BoolAttr
+
 from basictextwidget import BasicTextWidget
+from common import text2gui
+
 
 class RadioButton(BasicTextWidget):
 	"""
@@ -44,16 +49,16 @@ class RadioButton(BasicTextWidget):
 											    Attr('group')
 											  ]
 	DEFAULT_GROUP = "_no_group_"
-	
-	def __init__(self, 
-				 parent = None, 
+
+	def __init__(self,
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -66,21 +71,21 @@ class RadioButton(BasicTextWidget):
 				 is_focusable = None,
 				 comment = None,
 				 margins = None,
-				 text = None, 
+				 text = None,
 				 group = None):
-				 
+
 		self.real_widget = fifechan.RadioButton()
 		self.group = self.DEFAULT_GROUP
-		
-		super(RadioButton,self).__init__(parent=parent, 
-										 name=name, 
-										 size=size, 
-										 min_size=min_size, 
+
+		super(RadioButton,self).__init__(parent=parent,
+										 name=name,
+										 size=size,
+										 min_size=min_size,
 										 max_size=max_size,
-										 helptext=helptext, 
+										 helptext=helptext,
 										 position=position,
-										 style=style, 
-										 hexpand=hexpand, 
+										 style=style,
+										 hexpand=hexpand,
 										 vexpand=vexpand,
 										 font=font,
 										 base_color=base_color,
@@ -101,16 +106,16 @@ class RadioButton(BasicTextWidget):
 		self._realSetData = self._setMarked
 
 		# Initial data stuff inherited.
-		
+
 	def clone(self, prefix):
 		rbuttonClone = RadioButton(None,
 						self._createNameWithPrefix(prefix),
 						self.size,
-						self.min_size, 
-						self.max_size, 
-						self.helptext, 
-						self.position, 
-						self.style, 
+						self.min_size,
+						self.max_size,
+						self.helptext,
+						self.position,
+						self.style,
 						self.hexpand,
 						self.vexpand,
 						self.font,
@@ -123,12 +128,12 @@ class RadioButton(BasicTextWidget):
 						self.is_focusable,
 						self.comment,
 						self.margins,
-						self.text, 
+						self.text,
 						self.group)
-						
+
 		return rbuttonClone
-						
-		
+
+
 
 	def _isMarked(self): return self.real_widget.isSelected()
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)
@@ -141,3 +146,4 @@ class RadioButton(BasicTextWidget):
 	def resizeToContent(self,recurse=True):
 		self.width = self.real_font.getWidth(text2gui(self.text)) + 35# Size of the Checked box?
 		self.height = self.real_font.getHeight()
+

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2011 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,8 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import UnicodeAttr
+
+from common import gui2text, text2gui
 from widget import Widget
+
 
 class PasswordField(Widget):
 	"""
@@ -30,7 +35,7 @@ class PasswordField(Widget):
 
 	New Attributes
 	==============
-	
+
 	  - text: The text in the TextBox.
 
 	Data
@@ -81,7 +86,7 @@ class PasswordField(Widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.accepts_inital_data = True
+		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
 		self._realGetData = self._getText

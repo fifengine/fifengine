@@ -50,6 +50,7 @@ namespace FIFE {
 		virtual void invalidate() {}; //do nothing for SDL images (for now)
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual size_t getSize();
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
@@ -63,7 +64,7 @@ namespace FIFE {
 		/** SDL Alpha Optimizer
 		 * This tries to convert an image with a fake alpha channel
 		 * to an RGB image when the channel can be reasonably be replaced
-		 * by an colorkey.
+		 * by a colorkey.
 		 */
 		SDL_Surface* optimize(SDL_Surface* surface);
 

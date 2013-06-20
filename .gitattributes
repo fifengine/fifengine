@@ -1,0 +1,31 @@
+# Set default behaviour
+* text=auto
+
+# Explicitly declare text file we always want to be normalized
+*.c text
+*.cpp text
+*.h text
+*.i text
+*.hpp text
+*.xml text
+*.py text
+*.yml text
+*.md text
+
+# Declare files that will always have CRLF endings
+*.sln text eol=crlf
+*.bat text eol=crlf
+*.iss text eol=crlf
+*.user text eol=crlf
+*.vcproj text eol=crlf
+*.sln text eol=crlf
+
+# Denote all files that are truly binary
+*.png binary
+*.gif binary
+*.pdf binary
+*.ai binary
+*.svg binary
+*.rtf binary
+*.dll binary
+*.exe binary

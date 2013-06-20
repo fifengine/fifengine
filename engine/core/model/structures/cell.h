@@ -57,9 +57,9 @@ namespace FIFE {
 	 */
 	enum CellType {
 		CTYPE_NO_BLOCKER = 0,
-		CTYPE_STATIC_BLOCKER = 1,
+		CTYPE_CELL_NO_BLOCKER = 1,
 		CTYPE_DYNAMIC_BLOCKER = 2,
-		CTYPE_CELL_NO_BLOCKER = 3,
+		CTYPE_STATIC_BLOCKER = 3,
 		CTYPE_CELL_BLOCKER = 4
 	};
 	typedef uint8_t CellTypeInfo;

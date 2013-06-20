@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -28,9 +28,12 @@
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
 #include "video/atlasbook.h"
+#include "video/color.h"
 #include "util/base/sharedptr.h"
 #include "util/base/exception.h"
 %}
+
+%include <attribute.i>
 
 %include "util/base/utilbase.i"
 %include "util/structures/utilstructures.i"
@@ -43,6 +46,11 @@ namespace FIFE {
 namespace std {
 	%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
 }
+
+%attribute(FIFE::Color, uint8_t, r, getR, setR);
+%attribute(FIFE::Color, uint8_t, g, getG, setG);
+%attribute(FIFE::Color, uint8_t, b, getB, setB);
+%attribute(FIFE::Color, uint8_t, a, getAlpha, setAlpha);
 
 namespace FIFE {
 	class Point;
@@ -319,5 +327,22 @@ namespace FIFE {
 		uint32_t getPageHeight(uint32_t index) {
 			return $self->getPage(index).getHeight();
 		}
-	}		
+	}
+	
+	class Color {
+	public:
+		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
+		~Color();
+
+		void set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha);
+		void setR(uint8_t r);
+		void setG(uint8_t g);
+		void setB(uint8_t b);
+		void setAlpha(uint8_t alpha);
+
+		uint8_t getR() const;
+		uint8_t getG() const;
+		uint8_t getB() const;
+		uint8_t getAlpha() const;
+	};	
 }

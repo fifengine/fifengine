@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2013 by the FIFE team                              *
- *   http://www.fifengine.net                                               *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -477,7 +477,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
-		t_layer_to_instances m_layer_to_instances;
+		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
 		MapObserver* m_map_observer;

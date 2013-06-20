@@ -66,7 +66,7 @@ namespace FIFE {
 		 */
 		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a = 128);
 
-		/** Marks given instance to have an transparent area with given paramters
+		/** Marks given instance to have a transparent area with given parameters
 		 */
 		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front = true);
 
@@ -229,7 +229,10 @@ namespace FIFE {
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
+		Image* bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
 		Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
+
+		ImagePtr getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors = 0);
 
 		void renderUnsorted(Camera* cam, Layer* layer, RenderList& instances);
 		void renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances);

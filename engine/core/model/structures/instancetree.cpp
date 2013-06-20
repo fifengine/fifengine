@@ -96,6 +96,7 @@ namespace FIFE {
 	}
 
 	void InstanceTree::findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceTree::InstanceList& list) {
+		list.clear();
 		InstanceTreeNode * node = m_tree.find_container(point.x, point.y, w, h);
 		Rect rect(point.x, point.y, w, h);
 		InstanceListCollector collector(list,rect);

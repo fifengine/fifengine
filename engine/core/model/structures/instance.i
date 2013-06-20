@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -37,6 +37,8 @@ namespace FIFE {
 	class Object;
 	class Instance;
 	class Route;
+	class OverlayColors;
+	class AnimationPtr;
 
 	%feature("director") InstanceActionListener;
 	class InstanceActionListener {
@@ -134,14 +136,36 @@ namespace FIFE {
 		void setCost(const std::string& id, double cost);
 		void resetCost();
 		double getCost();
-		const std::string& getCostId();
+		std::string getCostId();
 
 		bool isMultiCell();
+
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+		void removeStaticColorOverlay(int32_t angle);
+		bool isStaticColorOverlay();
+
+		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
+		void removeColorOverlay(const std::string actionName, int32_t angle);
+
+		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
+		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+
+		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
+		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+		
+		void convertToOverlays(const std::string actionName, bool color);
+		bool isAnimationOverlay(const std::string actionName);
+		bool isColorOverlay(const std::string actionName);
 	};
 }
 
 namespace std {
 	%template(InstanceVector) vector<FIFE::Instance*>;
-	%template(InstanceList) list<FIFE::Instance*>;	
+	%template(InstanceList) list<FIFE::Instance*>;
+	%template(AnimationOverlayMap) map<int32_t, FIFE::AnimationPtr>;
 }
 

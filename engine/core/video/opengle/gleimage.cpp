@@ -147,8 +147,11 @@ namespace FIFE {
 	void GLeImage::render(const Rect& rect, uint8_t alpha, uint8_t const* rgb) {
 		if(renderCheck(rect, alpha)) {
 			// rgb only for instances (not available for grid renderer f.e.)
-			RenderBackend::instance()->addImageToArray(m_texId, rect, m_tex_coords, alpha, NULL);
+			RenderBackend::instance()->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 		}
+	}
+
+	void GLeImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
 	}
 
 	void GLeImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, bool forceNewBatch, uint8_t const* rgb) {

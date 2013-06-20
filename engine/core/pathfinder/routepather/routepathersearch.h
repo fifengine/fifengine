@@ -107,6 +107,9 @@ namespace FIFE {
 		//! Indicates if the route is for a multi cell object.
 		bool m_multicell;
 
+		//! Indicates if dynamic blockers should be ignored.
+		bool m_ignoreDynamicBlockers;
+
 		//! Blockers from a multi cell object which should be ignored.
 		std::vector<Cell*> m_ignoredBlockers;
 

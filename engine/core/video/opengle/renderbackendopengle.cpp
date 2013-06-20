@@ -561,7 +561,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGLe::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
-		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) {
+		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype) {
 
 		uint16_t count = 0;
 		uint32_t size = m_render_objects.size();
@@ -1083,6 +1083,9 @@ namespace FIFE {
 
 		RenderObject ro(GL_QUADS, 4, id);
 		m_render_objects.push_back(ro);
+	}
+
+	void RenderBackendOpenGLe::addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba) {
 	}
 
 	RenderBackendOpenGLe::RenderZObject* RenderBackendOpenGLe::getRenderBufferObject(GLuint texture_id, bool forceNewBatch) {

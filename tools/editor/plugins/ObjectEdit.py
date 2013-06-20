@@ -54,14 +54,14 @@ _PLUGIN_SETTINGS = {
 
 class ObjectEdit(plugin.Plugin):
 	""" The B{ObjectEdit} module is a plugin for FIFedit and allows to edit
-		attributes of an selected object
+		attributes of a selected object
 		
 		fife.Objects can be selected via the B{ObjectSelector}. fife.Instances
-		are instances of fife.Objects - so clicking on an "map object" is
+		are instances of fife.Objects - so clicking on a "map object" is
 		actually not selecting an object. Not sure how to handle that - 
 		for now this Plugin only reacts on selections in the ObjectSelector
 		
-		There is a InstanceEdit plugin yet to be written which allows
+		There is an InstanceEdit plugin yet to be written which allows
 		the manipulation of instance data.
 	"""
 	def __init__(self):

@@ -29,7 +29,11 @@ from fife.extensions.pychan.exceptions import *
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
 from fife.extensions.pychan.properties import ColorProperty
 
-AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
+# These used to be defined in here, duplicating the definitions in .layout
+# Retain for backwards compatibility of any code importing them from .common
+from layout import AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter
+from layout import isLayouted
+
 
 def get_manager():
 	from fife.extensions import pychan
@@ -64,8 +68,3 @@ def gui2str(text):
 	except:
 		# String contains non-ascii characters
 		return text.encode("utf-8")
-
-def isLayouted(widget):
-	from layout import LayoutBase
-	return isinstance(widget,LayoutBase)
-

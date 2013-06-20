@@ -1,0 +1,5 @@
+MultiPathfinderTest
+-------------- 
+The purpose of this test is to test the Pathfinder.
+You can sail with one ship, the others use random targets.
+ 
