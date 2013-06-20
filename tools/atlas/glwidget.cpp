@@ -26,6 +26,10 @@
 #include <QMessageBox>
 #include <QTime>
 
+#ifdef( WIN32 )
+#include <gl/GLU.h>
+#endif
+
 const int timerInterval = 20;
 
 GLWidget::GLWidget(QWidget* parent)
@@ -97,7 +101,7 @@ void GLWidget::highlightedChanged(QVector<int> const&  vec)
 }
 
 void GLWidget::initializeGL()
-{	
+{
 	// just basic set up
 	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 	glDisable(GL_DEPTH_TEST);
