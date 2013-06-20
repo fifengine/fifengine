@@ -214,7 +214,7 @@ class Widget(object):
 		if comment is not None: self.comment = comment
 
 		# these are set in the default style
-		#if base_color is not None: self.base_color = base_color
+		if base_color is not None: self.base_color = base_color
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
