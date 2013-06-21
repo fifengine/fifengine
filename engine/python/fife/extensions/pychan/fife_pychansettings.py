@@ -236,7 +236,7 @@ class FifePychanSettings(Setting):
 			self._showChangeRequireRestartDialog()
 			
 	def _showChangeRequireRestartDialog(self):
-		"""Shows a dialog that informes the user that a restart is required ???
+		"""Shows a dialog that informes the user that a restart is required
 		to perform the changes."""
 		RestartDlg = self._loadWidget(self._changes_gui_xml)
 		RestartDlg.stylize(self._gui_style)
