@@ -216,8 +216,6 @@ class Setting(object):
 		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", initialdata = self._resolutions, requiresrestart=True)
 		
 		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", initialdata = self._renderbackends, requiresrestart=True)
-		
-		self.createAndAddEntry(FIFE_MODULE, "Lighting", initialdata = self._lightingmodels, requiresrestart=True)
 
 	def createAndAddEntry(self, module, name, applyfunction=None, initialdata=None, requiresrestart=False):
 		""""
