@@ -27,7 +27,7 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
 from common import get_manager, gui2text, text2gui
-from layout import VBoxLayoutMixin, HBoxLayoutMixin
+from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
 from widget import Widget
 
 
@@ -163,6 +163,10 @@ class Container(Widget):
 		be hidden when you show the container widget you must call child.hide().
 		"""
 		
+		if isinstance(widget, Spacer):
+			self.addSpacer(widget)
+			return
+
 		widget.parent = self
 		widget._visible = self._visible
 		self.children.append(widget)
