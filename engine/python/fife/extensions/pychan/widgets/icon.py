@@ -112,7 +112,9 @@ class Icon(Widget):
 	_image = ImageProperty("Image")
 
 	def _setImage(self,source):
+		size = self.size
 		self._image = source
+		self.size = size
 
 	def _getImage(self):
 		return self._image
