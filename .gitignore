@@ -36,9 +36,13 @@ settings.xml
 # All log files
 *.log
 
-# Doxygen
+# Docs
 doc/doxygen/html
 build/win32/doxygen_log.txt
+doc/dependencies/*.dot~
+doc/dependencies/*.dot
+doc/dependencies/*.ps
+doc/dependencies/*.png
 
 # scons
 *.sconsign

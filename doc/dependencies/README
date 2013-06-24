@@ -1,0 +1,3 @@
+This is a placeholder to git wont remove this directory as this is where
+the tools/analyzers/dep_analyzer.py tool sends all it's output.  See the
+README in tools/analyzers for more information.
