@@ -30,6 +30,7 @@ build/win32/static_libs
 # Demos
 demos/rio_de_hola/maps/savefile.xml
 demos/shooter/gui/highscores.xml
+demos/rpg/saves/*.xml
 settings.xml
 
 # All log files
