@@ -175,7 +175,7 @@ def run_dot(basename,type):
 		dotchanged =  olddot != open(dotname).read()
 		dotchanged = dotchanged or not os.path.exists(outname)
 	except IOError: pass
-	if not dotchanged:
+	if not dotchanged and type != "png":
 		return
 	print "Generating: ",outname
 	cmd = 'dot -T%(type)s %(dotname)s > %(outname)s' % locals()
