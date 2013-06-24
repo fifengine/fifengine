@@ -165,8 +165,8 @@ class ApplicationBase(object):
 
 		#log to both the console and log file
 		self._log = fifelog.LogManager(self.engine,
-									   self._setting.get("FIFE", "LogToPrompt", "0"),
-									   self._setting.get("FIFE", "LogToFile", "0"))
+									   self._setting.get("FIFE", "LogToPrompt", False),
+									   self._setting.get("FIFE", "LogToFile", False))
 
 		self._log.setLevelFilter(self._setting.get("FIFE", "LogLevelFilter", fife.LogManager.LEVEL_DEBUG))
 
