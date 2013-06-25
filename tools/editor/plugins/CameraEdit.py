@@ -150,6 +150,9 @@ class CameraEdit(plugin.Plugin):
 		try:
 			refh = int(self._container.collectData('refhBox'))
 			refw = int(self._container.collectData('refwBox'))
+
+			if refh <= 0 or refw <= 0:
+				raise ValueError
 		except ValueError:
 			print 'Please enter positive integer values for reference width and height.'
 			return
