@@ -229,6 +229,18 @@ namespace FIFE {
 		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
 			glGenFramebuffers(1, &m_fbo_id);
 		}
+		
+		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
+			if (GLEE_EXT_texture_filter_anisotropic) {
+				GLint largest = 0;
+				glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
+				m_maxAnisotropy = static_cast<int32_t>(largest);
+			} else {
+				// if not available use trilinear filter
+				m_maxAnisotropy = 0;
+				m_textureFilter = TEXTURE_FILTER_TRILINEAR;
+			}
+		}
 	}
 
 	void RenderBackendOpenGL::startFrame() {

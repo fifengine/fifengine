@@ -224,10 +224,37 @@ namespace FIFE {
 		// set focus on that texture
 		static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
 		// set filters for texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		bool mipmapping = RenderBackend::instance()->isMipmappingEnabled();
+		if (mipmapping) {
+			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		}
+		// without mipmapping, trilinear and bilinear filters are the same
+		switch (RenderBackend::instance()->getTextureFiltering()) {
+			case TEXTURE_FILTER_NONE:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+				break;
+			case TEXTURE_FILTER_BILINEAR:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+				break;
+			case TEXTURE_FILTER_TRILINEAR:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+				break;
+			case TEXTURE_FILTER_ANISOTROPIC:
+				// currently trilinear anisotropic
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<GLint>(RenderBackend::instance()->getMaxAnisotropy()));
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+				break;
+			default:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmapping ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+				break;
+		}
 
 		GLint internalFormat = GL_RGBA8;
 		if(GLEE_ARB_texture_compression && RenderBackend::instance()->isImageCompressingEnabled()) {

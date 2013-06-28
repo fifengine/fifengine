@@ -96,6 +96,13 @@ namespace FIFE {
 		OVERLAY_TYPE_TEXTURES_AND_FACTOR = 3
 	};
 
+	enum TextureFiltering {
+		TEXTURE_FILTER_NONE = 0,
+		TEXTURE_FILTER_BILINEAR = 1,
+		TEXTURE_FILTER_TRILINEAR = 2,
+		TEXTURE_FILTER_ANISOTROPIC = 3
+	};
+
 	class GuiVertex {
 	public:
 		DoublePoint position;
@@ -321,6 +328,30 @@ namespace FIFE {
 		 */
 		bool isNPOTEnabled() const { return m_usenpot; }
 
+		/** Sets the texture filtering method.
+		 * Supports none, bilinear, trilinear and anisotropic filtering.
+		 * Note! Works only for OpenGL backends.
+		 * @see TextureFiltering
+		 */
+		void setTextureFiltering(TextureFiltering filter);
+
+		/** @see setTextureFiltering
+		 */
+		TextureFiltering getTextureFiltering() const;
+
+		/** Enables or disables the usage of mipmapping.
+		 * Note! Works only for OpenGL backends.
+		 */
+		void setMipmappingEnabled(bool enabled);
+
+		/** @see setMipmappingEnabled
+		 */
+		bool isMipmappingEnabled() const;
+		
+		/** Gets max antisotropy for antisotropic filtering.
+		 */
+		int32_t getMaxAnisotropy() const;
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -401,6 +432,13 @@ namespace FIFE {
 
 		bool m_isbackgroundcolor;
 		SDL_Color m_backgroundcolor;
+
+		// mipmapping
+		bool m_isMipmapping;
+		// texture filter
+		TextureFiltering m_textureFilter;
+		// max anisotropy
+		int32_t m_maxAnisotropy;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea

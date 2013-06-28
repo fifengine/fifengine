@@ -114,6 +114,15 @@ class ApplicationBase(object):
 		engineSetting.setGLCompressImages(self._finalSetting['GLCompressImages'])
 		engineSetting.setGLUseFramebuffer(self._finalSetting['GLUseFramebuffer'])
 		engineSetting.setGLUseNPOT(self._finalSetting['GLUseNPOT'])
+		engineSetting.setGLUseMipmapping(self._finalSetting['GLUseMipmapping'])
+		if self._finalSetting['GLTextureFiltering'] == 'None':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_NONE)
+		elif self._finalSetting['GLTextureFiltering'] == 'Bilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_BILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Trilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_TRILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Anisotropic':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_ANISOTROPIC)
 		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))

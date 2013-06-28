@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "video/renderbackend.h"
 
 namespace FIFE {
 	class NotSupported;
@@ -151,6 +152,22 @@ namespace FIFE {
 		bool isGLUseNPOT() const {
 			return m_oglusenpot;
 		}
+
+		/** Sets texture filtering method for OpenGL renderbackend.
+		 */
+		void setGLTextureFiltering(TextureFiltering filter);
+
+		/** Gets current texture filter which uses OpenGL.
+		 */
+		TextureFiltering getGLTextureFiltering() const;
+
+		/** Sets if OpenGL renderbackend should use mipmapping.
+		 */
+		void setGLUseMipmapping(bool mipmapping);
+
+		/** Tells if OpenGL renderbackend should use mipmapping.
+		 */
+		bool isGLUseMipmapping() const;
 
 		/** Sets screen width (pixels)
 		 */
@@ -321,6 +338,8 @@ namespace FIFE {
 		bool m_oglcompressimages;
 		bool m_ogluseframebuffer;
 		bool m_oglusenpot;
+		bool m_oglMipmapping;
+		TextureFiltering m_oglTextureFilter;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;

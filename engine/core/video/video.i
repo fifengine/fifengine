@@ -157,6 +157,13 @@ namespace FIFE {
 		}
 	}
 
+	enum TextureFiltering {
+		TEXTURE_FILTER_NONE = 0,
+		TEXTURE_FILTER_BILINEAR = 1,
+		TEXTURE_FILTER_TRILINEAR = 2,
+		TEXTURE_FILTER_ANISOTROPIC = 3
+	};
+
 	class RenderBackend {
 	public:
 		virtual ~RenderBackend();
@@ -179,6 +186,10 @@ namespace FIFE {
 		bool isFramebufferEnabled() const;
 		void setNPOTEnabled(bool enabled);
 		bool isNPOTEnabled() const;
+		void setTextureFiltering(TextureFiltering filter);
+		TextureFiltering getTextureFiltering() const;
+		void setMipmappingEnabled(bool enabled);
+		bool isMipmappingEnabled() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
