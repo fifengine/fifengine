@@ -165,21 +165,14 @@ namespace FIFE {
 		 */
 		void createFowMap(Camera* cam, Layer* layer);
 
-		/** Adds conceal image to FoW render target.
+		/** Adds image to FoW render target.
 		 *
 		 * @param cam The used camera.
 		 * @param center The coordinates.
 		 * @param image The used image.
+		 * @param id The id as string.
 		 */
-		void addConcealImageToMap(Camera* cam, Point center, ImagePtr image);
-
-		/** Adds mask/fog image to FoW render target.
-		 *
-		 * @param cam The used camera.
-		 * @param center The coordinates.
-		 * @param image The used image.
-		 */
-		void addMaskImageToMap(Camera* cam, Point center, ImagePtr image);
+		void addImageToMap(Camera* cam, Point center, ImagePtr image, const std::string& id);
 
 		/** Returns the layer that is used for Fog of War visualization.
 		 *
