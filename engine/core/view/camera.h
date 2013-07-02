@@ -173,7 +173,7 @@ namespace FIFE {
 
 		/** Gets reference scale for cell image dimensions
 		 */
-		double getReferenceScale() const { return m_reference_scale; }
+		double getReferenceScale() const { return m_referenceScaleX; }
 
 		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
 		 * @return Point3D Point3D containing x, y, z
@@ -249,6 +249,7 @@ namespace FIFE {
 		 *  @return point in screen coordinates
 		 */
 		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
+		ScreenPoint toScreenCoordinates2(const ExactModelCoordinate& map_coords);
 
 		/** Transforms given point from map coordinates to virtual screen coordinates
 		 *  @return point in screen coordinates
@@ -460,7 +461,8 @@ namespace FIFE {
 		bool m_mapViewPortUpdated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;
-		double m_reference_scale;
+		double m_referenceScaleX;
+		double m_referenceScaleY;
 		bool m_enabled;
 		Instance* m_attachedto;
 		// caches calculated image dimensions for already queried & calculated layers
