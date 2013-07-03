@@ -463,18 +463,15 @@ namespace FIFE {
 				continue;
 			}
 			RenderItem* item = m_renderItems[entry->instanceIndex];
-			bool onScreenA = entry->visible && item->image;
 			bool positionUpdate = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
 			if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
 				positionUpdate |= updateVisual(entry);
 			}
-			bool onScreenB = entry->visible && item->image;
+			bool onScreenA = entry->visible && item->image && item->dimensions.intersects(viewport);
 			if (positionUpdate) {
-				onScreenA = onScreenA && item->dimensions.intersects(viewport);
 				updatePosition(entry);
-				onScreenB = onScreenB && item->dimensions.intersects(viewport);
 			}
-			
+			bool onScreenB = entry->visible && item->image && item->dimensions.intersects(viewport);
 			if (onScreenA != onScreenB) {
 				if (!onScreenA) {
 					// add to renderlist and sort
