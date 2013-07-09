@@ -171,9 +171,13 @@ namespace FIFE {
 		*/
 		Point getCellImageDimensions(Layer* layer);
 
-		/** Gets reference scale for cell image dimensions
+		/** Gets x reference scale for cell image dimensions
 		 */
-		double getReferenceScale() const { return m_referenceScaleX; }
+		double getReferenceScaleX() const { return m_referenceScaleX; }
+
+		/** Gets y reference scale for cell image dimensions
+		 */
+		double getReferenceScaleY() const { return m_referenceScaleY; }
 
 		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
 		 * @return Point3D Point3D containing x, y, z
@@ -249,14 +253,20 @@ namespace FIFE {
 		 *  @return point in screen coordinates
 		 */
 		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
-		ScreenPoint toScreenCoordinates2(const ExactModelCoordinate& map_coords);
 
 		/** Transforms given point from map coordinates to virtual screen coordinates
-		 *  @return point in screen coordinates
+		 *  @return point in virtual screen coordinates
 		 */
 		DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& map_coords);
 
+		/** Transforms given point from virtual screen coordinates to screen coordinates
+		 *  @return point in screen coordinates
+		 */
 		ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
+
+		/** Transforms given point from screen coordinates to virtual screen coordinates
+		 *  @return point in virtual screen coordinates
+		 */
 		DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
 
 		/** Sets camera enabled / disabled

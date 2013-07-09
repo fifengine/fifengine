@@ -2089,5 +2089,5 @@
             </cell>
         </cellcache>
     </cellcaches>
-    <camera id="camera1" ref_layer_id="ground_layer" zoom="1.100000" tilt="-60.000000" rotation="45.000000" viewport="0,0,1024,768" ref_cell_width="64" ref_cell_height="64" />
+    <camera id="camera1" ref_layer_id="ground_layer" zoom="1.125" tilt="-60.000000" rotation="45.000000" viewport="0,0,1024,768" ref_cell_width="64" ref_cell_height="32" />
 </map>

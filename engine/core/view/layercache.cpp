@@ -54,9 +54,6 @@ namespace FIFE {
 	 */
 	static Logger _log(LM_CAMERA);
 	
-	// Due to image alignment, there is additional additions on image dimensions.
-	const double OVERDRAW = 1.5;
-
 	class CacheLayerChangeListener : public LayerChangeListener {
 	public:
 		CacheLayerChangeListener(LayerCache* cache)	{
@@ -705,12 +702,6 @@ namespace FIFE {
 			item->bbox.w = 0;
 			item->bbox.h = 0;
 		}
-		// seems wrong but these rounds fix the "wobbling" and gaps between tiles
-		// in case the zoom is straight (1.0, 2.0, 3.0,...)
-		if (m_straightZoom) {
-			screenPosition.x = round(screenPosition.x);
-			screenPosition.y = round(screenPosition.y);
-		}
 		item->screenpoint = screenPosition;
 		item->bbox.x = static_cast<int32_t>(screenPosition.x);
 		item->bbox.y = static_cast<int32_t>(screenPosition.y);
@@ -741,17 +732,8 @@ namespace FIFE {
 
 		if (changedZoom) {
 			if (m_zoomed) {
-				// NOTE: Due to image alignment, there is additional additions on image dimensions
-				//       There's probabaly some better solution for this, but works "good enough" for now.
-				//       In case additions are removed, gaps appear between tiles.
-				//       This is only needed if the zoom is a non-integer value.
-				if (!m_straightZoom) {
-					item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom + OVERDRAW);
-					item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom + OVERDRAW);
-				} else {
-					item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
-					item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
-				}
+				item->dimensions.w = round(static_cast<double>(item->bbox.w) * m_zoom);
+				item->dimensions.h = round(static_cast<double>(item->bbox.h) * m_zoom);
 			} else {
 				item->dimensions.w = item->bbox.w;
 				item->dimensions.h = item->bbox.h;

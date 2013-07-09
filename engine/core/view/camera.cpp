@@ -428,11 +428,6 @@ namespace FIFE {
 		return pt;
 	}
 
-	ScreenPoint Camera::toScreenCoordinates2(const ExactModelCoordinate& elevation_coords) {
-		ScreenPoint pt = doublePt2intPt(m_matrix * elevation_coords);
-		return pt;
-	}
-
 	DoublePoint3D Camera::toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
 		DoublePoint3D pt = (m_vs_matrix * elevation_coords);
 		return pt;
