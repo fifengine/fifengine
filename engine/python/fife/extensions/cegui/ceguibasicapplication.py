@@ -60,8 +60,8 @@ class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
 		pass
 
 	def onCommand(self, command):
-		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quitrequested:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quitrequested = True
 			command.consume()
 			
 DEFAULT_GUI_DIR = "gui/"

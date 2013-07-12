@@ -102,8 +102,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		pass
 
 	def onCommand(self, command):
-		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quit:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quit = True
 			command.consume()
 
 	def onConsoleCommand(self, command):

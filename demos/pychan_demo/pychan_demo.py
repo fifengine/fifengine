@@ -135,8 +135,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener):
 		pass
 
 	def onCommand(self, command):
-		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quit:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quit = True
 			command.consume()
 
 class DemoApplication(pychanbasicapplication.PychanApplicationBase):
