@@ -323,23 +323,14 @@ namespace FIFE {
 			} else {
 				int32_t w = round(image->getWidth() * zoom);
 				int32_t h = round(image->getHeight() * zoom);
-				if (!straightZoom) {
-					w = round(image->getWidth() * zoom + 0.5);
-					h = round(image->getHeight() * zoom + 0.5);
-				}
 				m_fowTarget->resizeImage(id, center, image, w, h);
 			}
 		} else {
 			int32_t w = image->getWidth();
 			int32_t h = image->getHeight();
 			if (zoomed) {
-				if (straightZoom) {
-					w = round(w * zoom);
-					h = round(h * zoom);
-				} else {
-					w = round(w * zoom + 0.5);
-					h = round(h * zoom + 0.5);
-				}
+				w = round(w * zoom);
+				h = round(h * zoom);
 			}
 			Rect dimensions(center.x, center.y, w, h);
 			image->render(dimensions);

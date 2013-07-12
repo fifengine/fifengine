@@ -157,6 +157,6 @@
 		<instances>
 		</instances>
 	</layer>
-	<camera ref_cell_height="64" zoom="1.0" rotation="45.0" ref_layer_id="ground_layer" ref_cell_width="64" id="camera1" tilt="-60.0">
+	<camera ref_cell_height="32" zoom="1.0" rotation="45.0" ref_layer_id="ground_layer" ref_cell_width="64" id="camera1" tilt="-60.0">
 	</camera>
 </map>

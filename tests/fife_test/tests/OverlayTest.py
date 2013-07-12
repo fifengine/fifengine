@@ -97,10 +97,10 @@ class MouseListener(fife.IMouseListener):
 		pass
 
 	def mouseWheelMovedUp(self, event):
-		self._test.setZoom(-0.1)
+		self._test.setZoom(-0.0625)
 
 	def mouseWheelMovedDown(self, event):
-		self._test.setZoom(0.1)
+		self._test.setZoom(0.0625)
 
 	def mouseDragged(self, event):
 		pass
