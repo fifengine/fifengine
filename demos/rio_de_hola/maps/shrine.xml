@@ -6059,8 +6059,8 @@
 			<i x="-19.0" o="beach_bar" z="0.0" y="2.0" r="180"></i>
 		</instances>
 	</layer>
-	<camera ref_cell_width="64" zoom="1.0" tilt="-42.0" id="main" ref_layer_id="TechdemoMapGroundObjectLayer" ref_cell_height="48" rotation="45.0">
+	<camera ref_cell_width="64" zoom="1.0" tilt="-41.4" id="main" ref_layer_id="TechdemoMapGroundObjectLayer" ref_cell_height="48" rotation="45.0">
 	</camera>
-	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
+	<camera ref_cell_width="128" zoom="1.0" tilt="-41.4" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
 </map>
