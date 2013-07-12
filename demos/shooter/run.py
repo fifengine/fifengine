@@ -62,8 +62,8 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			evt.consume()
 
 	def onCommand(self, command):
-		self._quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self._quit:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self._quit = True
 			command.consume()
 
 class Shooter(PychanApplicationBase):
