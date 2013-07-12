@@ -876,8 +876,8 @@ namespace FIFE {
 			return false;
 		}
 		renderData rd;
-		rd.vertex[0] = static_cast<float>(x);
-		rd.vertex[1] = static_cast<float>(y);
+		rd.vertex[0] = static_cast<float>(x)+0.375;
+		rd.vertex[1] = static_cast<float>(y)+0.375;
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
@@ -892,16 +892,16 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = static_cast<float>(p1.x);
-		rd.vertex[1] = static_cast<float>(p1.y);
+		rd.vertex[0] = static_cast<float>(p1.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p1.y)+0.375;
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(p2.x);
-		rd.vertex[1] = static_cast<float>(p2.y);
+		rd.vertex[0] = static_cast<float>(p2.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p2.y)+0.375;
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_LINES, 2);
