@@ -44,11 +44,23 @@ class CEGUIDemo(CEGUIApplicationBase):
 		
 		self._loadSchemes()
 		
-		root = myRoot = PyCEGUI.WindowManager.getSingleton().createWindow( "DefaultWindow", "_MasterRoot" )
-		PyCEGUI.System.getSingleton().setGUISheet(myRoot)
+		self.chat_messages = []
+
+		root = PyCEGUI.WindowManager.getSingleton().createWindow( "DefaultWindow", "_MasterRoot" )
+		PyCEGUI.System.getSingleton().setGUISheet(root)
 		
-		newWindow = PyCEGUI.WindowManager.getSingleton().loadWindowLayout("MyConsole.layout","second_")
-		root.addChildWindow(newWindow)
+		chatWindow = PyCEGUI.WindowManager.getSingleton().loadWindowLayout("MyConsole.layout","chat_")
+		root.addChildWindow(chatWindow)
+		self.chatEdit = PyCEGUI.WindowManager.getSingleton().getWindow("chat_EditBox")
+		self.chatEdit.subscribeEvent(PyCEGUI.Editbox.EventKeyDown, self, "chatKeyPressed")
+		self.chatBox = PyCEGUI.WindowManager.getSingleton().getWindow("chat_ChatBox")
+		chatSendButton = PyCEGUI.WindowManager.getSingleton().getWindow("chat_SendButton")
+		chatSendButton.subscribeEvent(PyCEGUI.PushButton.EventClicked, self, "chatSend")
+
+		keyTestWindow = PyCEGUI.WindowManager.getSingleton().loadWindowLayout("KeyTest.layout","keytest_")
+		root.addChildWindow(keyTestWindow)
+		keyTestEdit = PyCEGUI.WindowManager.getSingleton().getWindow("keytest_EditBox")
+		keyTestEdit.subscribeEvent(PyCEGUI.Editbox.EventKeyDown, self, "testKeyPressed")
 		
 	def _loadSchemes(self):
 		PyCEGUI.SchemeManager.getSingleton().create("TaharezLook.scheme")
@@ -57,6 +69,20 @@ class CEGUIDemo(CEGUIApplicationBase):
 		if self._listener.quitrequested:
 			self.quit()
 	
+	def chatSend(self, args=None):
+		self.chat_messages.append(PyCEGUI.ListboxTextItem(self.chatEdit.getText()))
+		self.chat_messages[-1].setAutoDeleted(False)
+		self.chatBox.addItem(self.chat_messages[-1])
+		self.chatBox.ensureItemIsVisible(self.chat_messages[-1])
+		self.chatEdit.setText("")
+
+	def chatKeyPressed(self, args):
+		if args.scancode in [args.scancode.Return, args.scancode.NumpadEnter]:
+			self.chatSend()
+
+	def testKeyPressed(self, args):
+		args.window.setText(str(args.scancode))
+
 if __name__ == '__main__':
 	app = CEGUIDemo(DemoSettings)
 	app.run()
