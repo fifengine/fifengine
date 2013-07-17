@@ -114,6 +114,15 @@ class ApplicationBase(object):
 		engineSetting.setGLCompressImages(self._finalSetting['GLCompressImages'])
 		engineSetting.setGLUseFramebuffer(self._finalSetting['GLUseFramebuffer'])
 		engineSetting.setGLUseNPOT(self._finalSetting['GLUseNPOT'])
+		engineSetting.setGLUseMipmapping(self._finalSetting['GLUseMipmapping'])
+		if self._finalSetting['GLTextureFiltering'] == 'None':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_NONE)
+		elif self._finalSetting['GLTextureFiltering'] == 'Bilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_BILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Trilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_TRILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Anisotropic':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_ANISOTROPIC)
 		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))
@@ -165,8 +174,8 @@ class ApplicationBase(object):
 
 		#log to both the console and log file
 		self._log = fifelog.LogManager(self.engine,
-									   self._setting.get("FIFE", "LogToPrompt", "0"),
-									   self._setting.get("FIFE", "LogToFile", "0"))
+									   self._setting.get("FIFE", "LogToPrompt", False),
+									   self._setting.get("FIFE", "LogToFile", False))
 
 		self._log.setLevelFilter(self._setting.get("FIFE", "LogLevelFilter", fife.LogManager.LEVEL_DEBUG))
 

@@ -229,6 +229,18 @@ namespace FIFE {
 		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
 			glGenFramebuffers(1, &m_fbo_id);
 		}
+		
+		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
+			if (GLEE_EXT_texture_filter_anisotropic) {
+				GLint largest = 0;
+				glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
+				m_maxAnisotropy = static_cast<int32_t>(largest);
+			} else {
+				// if not available use trilinear filter
+				m_maxAnisotropy = 0;
+				m_textureFilter = TEXTURE_FILTER_TRILINEAR;
+			}
+		}
 	}
 
 	void RenderBackendOpenGL::startFrame() {
@@ -864,8 +876,8 @@ namespace FIFE {
 			return false;
 		}
 		renderData rd;
-		rd.vertex[0] = static_cast<float>(x);
-		rd.vertex[1] = static_cast<float>(y);
+		rd.vertex[0] = static_cast<float>(x)+0.375;
+		rd.vertex[1] = static_cast<float>(y)+0.375;
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
@@ -880,16 +892,16 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderData rd;
-		rd.vertex[0] = static_cast<float>(p1.x);
-		rd.vertex[1] = static_cast<float>(p1.y);
+		rd.vertex[0] = static_cast<float>(p1.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p1.y)+0.375;
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_render_datas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(p2.x);
-		rd.vertex[1] = static_cast<float>(p2.y);
+		rd.vertex[0] = static_cast<float>(p2.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p2.y)+0.375;
 		m_render_datas.push_back(rd);
 
 		RenderObject ro(GL_LINES, 2);

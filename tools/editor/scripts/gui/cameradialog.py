@@ -90,6 +90,9 @@ class CameraDialog(object):
 		try:
 			refh = int(self._widget.collectData('refhBox'))
 			refw = int(self._widget.collectData('refwBox'))
+
+			if refh <= 0 or refw <= 0:
+				raise ValueError
 		except ValueError:
 			dialogs.message(message=unicode("Please enter positive integer values for reference width and height."), caption=unicode("Error"))
 			return

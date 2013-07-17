@@ -83,6 +83,10 @@ class Icon(Widget):
 								  is_focusable=is_focusable,
 								  comment=comment)
 		self.image = image
+		
+		#if the size parameter is specified set it (again) to override
+		#the icons size.
+		if size is not None: self.size = size
 
 	def clone(self, prefix):
 		iconClone = Icon(None,

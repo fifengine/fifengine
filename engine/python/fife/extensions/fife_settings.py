@@ -96,7 +96,8 @@ class Setting(object):
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
-			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
+			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
+			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'],
 			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
 			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768', 
 								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
@@ -105,8 +106,8 @@ class Setting(object):
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
 			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
-			'PlaySounds':[True,False], 'LogToFile':[0,1],
-			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
+			'PlaySounds':[True,False], 'LogToFile':[True,False],
+			'LogToPrompt':[True,False],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
 			}
@@ -117,13 +118,14 @@ class Setting(object):
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
 			'FullScreen':False, 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':0, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'GLUseMipmapping':False, 'GLTextureFiltering':'None',
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
-			'PlaySounds':True, 'LogToFile':0,
-			'LogToPrompt':0,'UsePsyco':False,'LogLevelFilter':[0],
+			'PlaySounds':True, 'LogToFile':False,
+			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':[0],
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
@@ -216,8 +218,6 @@ class Setting(object):
 		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", initialdata = self._resolutions, requiresrestart=True)
 		
 		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", initialdata = self._renderbackends, requiresrestart=True)
-		
-		self.createAndAddEntry(FIFE_MODULE, "Lighting", initialdata = self._lightingmodels, requiresrestart=True)
 
 	def createAndAddEntry(self, module, name, applyfunction=None, initialdata=None, requiresrestart=False):
 		""""

@@ -68,8 +68,8 @@ class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
 				self.debuggeractive = False
 
 	def onCommand(self, command):
-		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quitrequested:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quitrequested = True
 			command.consume()
 			
 class RocketApplicationBase(ApplicationBase):

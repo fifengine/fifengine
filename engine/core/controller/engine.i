@@ -68,6 +68,10 @@ namespace FIFE {
 		bool isGLUseFramebuffer() const;
 		void setGLUseNPOT(bool oglusenpot);
 		bool isGLUseNPOT() const;
+		void setGLTextureFiltering(FIFE::TextureFiltering filter);
+		FIFE::TextureFiltering getGLTextureFiltering() const;
+		void setGLUseMipmapping(bool mipmapping);
+		bool isGLUseMipmapping() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);

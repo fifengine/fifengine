@@ -52,6 +52,8 @@ namespace FIFE {
 		m_oglcompressimages(false),
 		m_ogluseframebuffer(true),
 		m_oglusenpot(true),
+		m_oglMipmapping(false),
+		m_oglTextureFilter(TEXTURE_FILTER_NONE),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -161,6 +163,22 @@ namespace FIFE {
 
 	void EngineSettings::setGLUseNPOT(bool oglusenpot) {
 		m_oglusenpot = oglusenpot;
+	}
+
+	void EngineSettings::setGLTextureFiltering(TextureFiltering filter) {
+		m_oglTextureFilter = filter;
+	}
+
+	TextureFiltering EngineSettings::getGLTextureFiltering() const {
+		return m_oglTextureFilter;
+	}
+
+	void EngineSettings::setGLUseMipmapping(bool mipmapping) {
+		m_oglMipmapping = mipmapping;
+	}
+
+	bool EngineSettings::isGLUseMipmapping() const {
+		return m_oglMipmapping;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {
