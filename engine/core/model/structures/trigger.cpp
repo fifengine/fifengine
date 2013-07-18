@@ -38,13 +38,23 @@
 
 namespace FIFE {
 
-	class TriggerChangeListener : public CellChangeListener, public InstanceChangeListener {
+	class TriggerChangeListener : public CellChangeListener, public InstanceChangeListener, public InstanceDeleteListener {
 	public:
 		TriggerChangeListener(Trigger* trigger)	{
 			m_trigger = trigger;
 		}
 		virtual ~TriggerChangeListener() {}
 
+		// InstanceDeleteListener callback
+		virtual void onInstanceDeleted(Instance* instance) {
+			const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
+			if (std::find(types.begin(), types.end(), INSTANCE_TRIGGER_DELETE) != types.end()) {
+				m_trigger->setTriggered();
+			}
+			m_trigger->detach();
+		}
+
+		// CellChangeListener callback
 		virtual void onInstanceEnteredCell(Cell* cell, Instance* instance) {
 			const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
 			if (std::find(types.begin(), types.end(), CELL_TRIGGER_ENTER) != types.end()) {
@@ -56,6 +66,7 @@ namespace FIFE {
 			}
 		}
 
+		// CellChangeListener callback
 		virtual void onInstanceExitedCell(Cell* cell, Instance* instance) {
 			const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
 			if (std::find(types.begin(), types.end(), CELL_TRIGGER_EXIT) != types.end()) {
@@ -67,6 +78,7 @@ namespace FIFE {
 			}
 		}
 
+		// CellChangeListener callback
 		virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) {
 			const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
 			if (std::find(types.begin(), types.end(), CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
@@ -74,6 +86,7 @@ namespace FIFE {
 			}
 		}
 
+		// InstanceChangeListener callback
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) {
 			const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
 			if (m_trigger->getAttached() == instance && (info & ICHANGE_CELL) == ICHANGE_CELL) {
@@ -273,11 +286,13 @@ namespace FIFE {
 			detach();
 		}
 		m_attached = instance;
+		m_attached->addDeleteListener(m_changeListener);
 		m_attached->addChangeListener(m_changeListener);
 	}
 
 	void Trigger::detach() {
 		if (m_attached) {
+			m_attached->removeDeleteListener(m_changeListener);
 			m_attached->removeChangeListener(m_changeListener);
 			m_attached = 0;
 		}
