@@ -131,6 +131,7 @@ namespace FIFE {
 	Trigger::Trigger():
 		m_name(""),
 		m_triggered(false),
+		m_enabledAll(false),
 		m_attached(NULL) {
 			m_changeListener = new TriggerChangeListener(this);
 	}
@@ -138,6 +139,7 @@ namespace FIFE {
 	Trigger::Trigger(const std::string& name):
 		m_name(name),
 		m_triggered(false),
+		m_enabledAll(false),
 		m_attached(NULL) {
 			m_changeListener = new TriggerChangeListener(this);
 	}
