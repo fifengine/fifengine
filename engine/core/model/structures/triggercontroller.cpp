@@ -30,26 +30,29 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/log/logger.h"
 
-#include "triggercontroller.h"
-#include "trigger.h"
+#include "cell.h"
+#include "cellcache.h"
 #include "map.h"
+#include "trigger.h"
+#include "triggercontroller.h"
 
 namespace FIFE {
 
 	static Logger _log(LM_STRUCTURES);
 
 	TriggerController::TriggerController(Map* map) :
-		m_map(map){
-
+		m_map(map) {
 	}
 
 	TriggerController::~TriggerController() {
-
+		TriggerNameMapIterator it = m_triggerNameMap.begin();
+		for (; it != m_triggerNameMap.end(); ++it) {
+			delete it->second;
+		}
 	}
 
-	Trigger* TriggerController::addCellTriggerToLayer(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt1) {
-		assert(layer);
-		assert(!exists(triggerName));
+	Trigger* TriggerController::createTrigger(const std::string& triggerName) {
+		//assert(!exists(triggerName));
 
 		Trigger* trigger = new Trigger(triggerName);
 
@@ -57,10 +60,165 @@ namespace FIFE {
 		returnValue = m_triggerNameMap.insert ( TriggerNameMapPair(triggerName, trigger));
 
 		if (!returnValue.second) {
-			FL_WARN(_log, LMsg("TriggerController::addCellTriggerToLayer() - ") << "Trigger " << triggerName << " already exists.... ignoring.");
+			delete trigger;
+			FL_WARN(_log, LMsg("TriggerController::createTrigger() - ") << "Trigger " << triggerName << " already exists.... ignoring.");
 		}
 
 		return returnValue.first->second;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
+		assert(layer);
+
+		Trigger* trigger = createTrigger(triggerName);
+		trigger->assign(layer, pt);
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
+		assert(layer);
+
+		Trigger* trigger = createTrigger(triggerName);
+		for (std::vector<ModelCoordinate>::const_iterator it = coords.begin(); it != coords.end(); ++it) {
+			trigger->assign(layer, *it);
+		}
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const Rect& rec) {
+		assert(layer);
+		assert(layer->getCellCache());
+
+		Trigger* trigger = createTrigger(triggerName);
+		std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
+		for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
+			trigger->assign(*it);
+		}
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, const Location& loc) {
+		assert(loc.getLayer());
+		assert(layer->getCellCache());
+
+		Trigger* trigger = createTrigger(triggerName);
+		trigger->assign(loc.getLayer(), loc.getLayerCoordinates());
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, const std::vector<Location>& locs) {
+		Trigger* trigger = createTrigger(triggerName);
+		for (std::vector<Location>::const_iterator it = locs.begin(); it != locs.end(); ++it) {
+			trigger->assign((*it).getLayer(), (*it).getLayerCoordinates());
+		}
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, Cell* cell) {
+		assert(cell);
+
+		Trigger* trigger = createTrigger(triggerName);
+		trigger->assign(cell);
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, const std::vector<Cell*>& cells) {
+		Trigger* trigger = createTrigger(triggerName);
+		for (std::vector<Cell*>::const_iterator it = cells.begin(); it != cells.end(); ++it) {
+			trigger->assign(*it);
+		}
+		return trigger;
+	}
+
+	Trigger* TriggerController::createTrigger(const std::string& triggerName, Instance* instance) {
+		assert(instance);
+
+		Trigger* trigger = createTrigger(triggerName);
+		trigger->attach(instance);
+		return trigger;
+	}
+
+	Trigger* TriggerController::getTrigger(const std::string& triggerName) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			return it->second;
+		}
+		return NULL;
+	}
+
+	void TriggerController::deleteTrigger(const std::string& triggerName) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			delete it->second;
+			m_triggerNameMap.erase(it);
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			it->second->remove(layer, pt);
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			for (std::vector<ModelCoordinate>::const_iterator cit = coords.begin(); cit != coords.end(); ++cit) {
+				it->second->remove(layer, *cit);
+			}
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const Rect& rec) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
+			for (std::vector<Cell*>::iterator cit = cells.begin(); cit != cells.end(); ++cit) {
+				it->second->remove(*cit);
+			}
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, const Location& loc) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			it->second->remove(loc.getLayer(), loc.getLayerCoordinates());
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, const std::vector<Location>& locs) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			for (std::vector<Location>::const_iterator cit = locs.begin(); cit != locs.end(); ++cit) {
+				it->second->remove((*cit).getLayer(), (*cit).getLayerCoordinates());
+			}
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, Cell* cell) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			it->second->remove(cell);
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, const std::vector<Cell*>& cells) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			for (std::vector<Cell*>::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
+				it->second->remove(*cit);
+			}
+		}
+	}
+
+	void TriggerController::removeTrigger(const std::string& triggerName, Instance* instance) {
+		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+		if (it != m_triggerNameMap.end()) {
+			if (it->second->getAttached() == instance) {
+				it->second->detach();
+			}
+		}
 	}
 
 	bool TriggerController::exists(const std::string& name) {

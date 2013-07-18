@@ -59,6 +59,7 @@ namespace FIFE {
 	}
 
 	Map::~Map() {
+		delete m_triggerController;
         // remove all cameras
         std::vector<Camera*>::iterator iter = m_cameras.begin();
         for ( ; iter != m_cameras.end(); ++iter) {

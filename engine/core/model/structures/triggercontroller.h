@@ -34,6 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fifeclass.h"
+#include "util/structures/rect.h"
 #include "model/metamodel/modelcoords.h"
 
 namespace FIFE {
@@ -42,6 +43,9 @@ namespace FIFE {
 	class Trigger;
 	class Map;
 	class Layer;
+	class Location;
+	class Instance;
+	class Cell;
 
 	/** This class serves as a central place to manage triggers for a Map.
 	 *
@@ -63,23 +67,143 @@ namespace FIFE {
 		 */
 		virtual ~TriggerController();
 
-	// OPERATORS
+		/** Creates a trigger.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 */
+		Trigger* createTrigger(const std::string& triggerName);
 
-	// OPERATIONS
-
-		/** Creates and adds a single cell trigger to the map on the specified layer.
+		/** Creates and adds a trigger to the cell on the specified layer and coordinate.
 		 *
 		 * @param triggerName The name of the trigger.  This must be unique per map.
 		 * @param layer A pointer to the layer in which to add the Trigger to
-		 * @param pt1 The ModelCoordinate where the Trigger should be added.
+		 * @param pt The ModelCoordinate where the Trigger should be added.
 		 */
-		Trigger* addCellTriggerToLayer(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt1);
+		Trigger* createTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt);
 
-	// ACCESS
+		/** Creates and adds a trigger to the cells on the specified layer and coordinates.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param layer A pointer to the layer in which to add the Trigger to
+		 * @param coords Vector with ModelCoordinates where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords);
 
-	// INQUIRY
+		/** Creates and adds a trigger to the cells on the specified layer and rect.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param layer A pointer to the layer in which to add the Trigger to
+		 * @param rec a Rect with ModelCoordinates where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, Layer* layer, const Rect& rec);
 
-	protected:
+		/** Creates and adds a trigger to the cell on the specified location.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param loc The Location where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, const Location& loc);
+
+		/** Creates and adds a trigger to the cell on the specified locations.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param locs Vector with Locations where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, const std::vector<Location>& locs);
+
+		/** Creates and adds a trigger to the specified cell.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param cell The Cell where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, Cell* cell);
+
+		/** Creates and adds a trigger to the specified cells.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param cells Vector with Cell pointers where the Trigger should be added.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, const std::vector<Cell*>& cells);
+
+		/** Creates and attach a trigger to the specified instance. But not to the underlaying cell.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param instance The Instance where the Trigger is attached to.
+		 */
+		Trigger* createTrigger(const std::string& triggerName, Instance* instance);
+
+		/** Returns a pointer to the trigger with the given name.
+		 * Note: Returns Null if the trigger does not exists.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 */
+		Trigger* getTrigger(const std::string& triggerName);
+		
+		/** Deltes trigger with the given name.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 */
+		void deleteTrigger(const std::string& triggerName);
+
+		/** Removes a trigger from the cell on the specified layer and coordinate.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param layer A pointer to the layer in which to remove the Trigger from.
+		 * @param pt The ModelCoordinate where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt);
+
+		/** Removes a trigger from the cell on the specified layer and coordinates.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param layer A pointer to the layer in which to remove the Trigger from.
+		 * @param coords Vector with ModelCoordinates where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords);
+
+		/** Removes a trigger from the cell on the specified layer and coordinates.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param layer A pointer to the layer in which to remove the Trigger from.
+		 * @param rec Rect with ModelCoordinates where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, Layer* layer, const Rect& rec);
+
+		/** Removes a trigger from the cell on the specified location.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param loc Location where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, const Location& loc);
+
+		/** Removes a trigger from the cell on the specified locations.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param locs Vector with Locations where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, const std::vector<Location>& locs);
+
+		/** Removes a trigger from the specified cell.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param cell The Cell pointer where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, Cell* cell);
+
+		/** Removes a trigger from the specified cells.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param cells Vector with Cell pointers where the Trigger should be removed.
+		 */
+		void removeTrigger(const std::string& triggerName, const std::vector<Cell*>& cells);
+
+		/** Detach a trigger from the specified instance.
+		 *
+		 * @param triggerName The name of the trigger.  This must be unique per map.
+		 * @param instance The instance pointer where the Trigger is detached from.
+		 */
+		void removeTrigger(const std::string& triggerName, Instance* instance);
+
 	private:
 		/** Checks to see if the trigger name already exists.
 		 *
@@ -100,13 +224,6 @@ namespace FIFE {
 		//! Trigger name map
 		TriggerNameMap m_triggerNameMap;
 	};
-
-	// INLINE METHODS
-	//
-
-	// EXTERNAL REFERENCES
-	//
-
 } //FIFE
 
 #endif

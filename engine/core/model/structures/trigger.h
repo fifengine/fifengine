@@ -35,12 +35,36 @@
 #include "util/base/fifeclass.h"
 
 namespace FIFE {
+	class Cell;
+	class Layer;
+	class Instance;
+	class TriggerChangeListener;
 
 	class ITriggerListener {
 	public:
 		virtual ~ITriggerListener() {};
 
 		virtual void onTriggered() = 0;
+	};
+
+	enum TriggerCondition {
+		// cell conditions
+		CELL_TRIGGER_ENTER = 0,
+		CELL_TRIGGER_EXIT,
+		CELL_TRIGGER_BLOCKING_CHANGE,
+		// instance conditions
+		INSTANCE_TRIGGER_LOCATION,
+		INSTANCE_TRIGGER_ROTATION,
+		INSTANCE_TRIGGER_SPEED,
+		INSTANCE_TRIGGER_ACTION,
+		INSTANCE_TRIGGER_TIME_MULTIPLIER,
+		INSTANCE_TRIGGER_SAYTEXT,
+		INSTANCE_TRIGGER_BLOCK,
+		INSTANCE_TRIGGER_CELL,
+		INSTANCE_TRIGGER_TRANSPARENCY,
+		INSTANCE_TRIGGER_VISIBLE,
+		INSTANCE_TRIGGER_STACKPOS,
+		INSTANCE_TRIGGER_VISUAL
 	};
 
 	// FORWARD REFERENCES
@@ -75,15 +99,11 @@ namespace FIFE {
 		 * be referred to in the map file.
 		 *
 		 */
-		Trigger(const std::string& name) { m_name = name; };
+		Trigger(const std::string& name);
 
 		/** Destructor.
 		 */
 		virtual ~Trigger();
-
-	// OPERATORS
-
-	// OPERATIONS
 
 		/** Add a listener to the trigger.
 		 *
@@ -112,15 +132,12 @@ namespace FIFE {
 		 */
 		void reset();
 
-	// ACCESS
-
 		/** Gets the name of the trigger.
 		 *
 		 * @return name of the trigger.
 		 */
 		const std::string& getName() const { return m_name; };
 
-	// INQUIRY
 		/** Returns if the trigger has been triggered
 		 *
 		 *  Triggers will only trigger once unless they are reset.
@@ -129,24 +146,134 @@ namespace FIFE {
 		 */
 		bool isTriggered() { return m_triggered; };
 
-	protected:
+		/** Sets the trigger to triggered and calls ITriggerListener->onTriggered()
+		 */
+		void setTriggered();
+
+		/** Adds trigger condition.
+		 *
+		 * @param type The trigger condition.
+		 */
+		void addTriggerCondition(TriggerCondition type);
+
+		/** Returns trigger conditions in an vector.
+		 */
+		const std::vector<TriggerCondition>& getTriggerConditions();
+
+		/** Removes trigger condition.
+		 *
+		 * @param type The trigger condition.
+		 */
+		void removeTriggerCondition(TriggerCondition type);
+
+		/** Enables trigger for given instance.
+		 *
+		 * @param instance The instance which is enabled for the trigger.
+		 */
+		void enableForInstance(Instance* instance);
+
+		/** Returns instance which the trigger is enabled for.
+		 */
+		const std::vector<Instance*>& getEnabledInstances();
+
+		/** Disables trigger for given instance.
+		 *
+		 * @param instance The instance which is disabled for the trigger.
+		 */
+		void disableForInstance(Instance* instance);
+
+		/** Enables trigger for all instances.
+		 */
+		void enableForAllInstances();
+
+		/** Returns if trigger is enabled for all instances.
+		 */
+		bool isEnabledForAllInstances();
+
+		/** Disables trigger for all instances.
+		 */
+		void disableForAllInstances();
+
+		/** Assigns trigger on given layer and position.
+		 *
+		 * @param layer A pointer to the layer in which to add the Trigger to.
+		 * @param pt The ModelCoordinate where the Trigger should be added.
+		 */
+		void assign(Layer* layer, const ModelCoordinate& pt);
+
+		/** Removes trigger from given layer and position.
+		 *
+		 * @param layer A pointer to the layer in which to remove the Trigger from.
+		 * @param pt The ModelCoordinate where the Trigger should be removed.
+		 */
+		void remove(Layer* layer, const ModelCoordinate& pt);
+
+		/** Assigns trigger on given cell.
+		 *
+		 * @param cell A pointer to the cell in which to add the Trigger to.
+		 */
+		void assign(Cell* cell);
+
+		/** Removes trigger from given cell.
+		 *
+		 * @param cell A pointer to the cell in which to remove the Trigger from.
+		 */
+		void remove(Cell* cell);
+
+		/** Attaches the trigger to the given instance. So the trigger moves with the instance.
+		 *
+		 * @param instance A pointer to the instance which the Trigger is attached to.
+		 */
+		void attach(Instance* instance);
+
+		/** Detaches trigger from instance.
+		 */
+		void detach();
+
+		/** Returns pointer to instance where the trigger is attached to.
+		 * Note: Returns Null if no instance is attached.
+		 */
+		Instance* getAttached() { return m_attached; }
+
+		/** Callback for TriggerChangeListener.
+		 */
+		void move();
+
+		/** Moves the trigger from the old position to the new position.
+		 *
+		 * @param newPos The old position as ModelCoordinate.
+		 * @param oldPos The old position as ModelCoordinate.
+		 */
+		void moveTo(const ModelCoordinate& newPos, const ModelCoordinate& oldPos);
+
 	private:
-		//! name of the trigger.  This should be unique per Layer.
+		//! name of the trigger.  This should be unique per Map.
 		std::string m_name;
 
 		//! true if this trigger has been triggered
 		bool m_triggered;
 
+		//! true if the trigger is enabled for all instances
+		bool m_enabledAll;
+
 		//! Vector of the listeners that get called
 		std::vector<ITriggerListener*> m_triggerListeners;
+
+		//! main change listener (cell and instance listener)
+		TriggerChangeListener* m_changeListener;
+		
+		//! cells in which the trigger is assigned
+		std::vector<Cell*> m_assigned;
+
+		//! all trigger conditions
+		std::vector<TriggerCondition> m_triggerConditions;
+
+		//! all enabled instances
+		std::vector<Instance*> m_enabledInstances;
+
+		//! instance where the trigger is attached to
+		Instance* m_attached;
 	};
-
-	// INLINE METHODS
-	//
-
-	// EXTERNAL REFERENCES
-	//
-
 } //FIFE
 
 #endif
