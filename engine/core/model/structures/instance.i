@@ -71,6 +71,13 @@ namespace FIFE {
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
 
+	%feature("director") InstanceDeleteListener;
+	class InstanceDeleteListener {
+	public:
+		virtual ~InstanceDeleteListener() {};
+		virtual void onInstanceDeleted(Instance* instance) = 0;
+	};
+
 	enum VisitorShapeType {
 		ITYPE_NO_SHAPE = 0,
 		ITYPE_QUAD_SHAPE,
@@ -100,6 +107,8 @@ namespace FIFE {
 		void removeActionListener(InstanceActionListener* listener);
 		void addChangeListener(InstanceChangeListener* listener);
 		void removeChangeListener(InstanceChangeListener* listener);
+		void addDeleteListener(InstanceDeleteListener* listener);
+		void removeDeleteListener(InstanceDeleteListener* listener);
 		Action* getCurrentAction() const;
 		double getMovementSpeed() const;
 		void setFacingLocation(const Location& loc);
