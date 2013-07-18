@@ -204,6 +204,14 @@ namespace FIFE {
 		 */
 		void removeTrigger(const std::string& triggerName, Instance* instance);
 
+		/** Returns a vector with all trigger pointers.
+		 */
+		std::vector<Trigger*> getAllTriggers();
+
+		/** Returns a vector with all trigger names.
+		 */
+		std::vector<std::string> getAllTriggerNames();
+
 	private:
 		/** Checks to see if the trigger name already exists.
 		 *

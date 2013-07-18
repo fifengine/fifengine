@@ -90,6 +90,6 @@ namespace FIFE {
 			void initializeCellCaches();
 			void finalizeCellCaches();
 
-			TriggerController* getTriggerController();
+			TriggerController* getTriggerController() const;
 	};
 }

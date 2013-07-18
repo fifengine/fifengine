@@ -279,6 +279,10 @@ namespace FIFE {
 		}
 	}
 
+	const std::vector<Cell*>& Trigger::getAssignedCells() {
+		return m_assigned;
+	}
+
 	void Trigger::attach(Instance* instance) {
 		if (instance == m_attached) {
 			return;

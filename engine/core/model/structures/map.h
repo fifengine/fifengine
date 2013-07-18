@@ -218,7 +218,7 @@ namespace FIFE {
 
 			/**
 			 */
-			TriggerController* getTriggerController() { return m_triggerController; };
+			TriggerController* getTriggerController() const { return m_triggerController; };
 
 		private:
 			std::string m_id;

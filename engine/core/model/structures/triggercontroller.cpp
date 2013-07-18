@@ -221,6 +221,24 @@ namespace FIFE {
 		}
 	}
 
+	std::vector<Trigger*> TriggerController::getAllTriggers() {
+		std::vector<Trigger*> triggers;
+		TriggerNameMapIterator it = m_triggerNameMap.begin();
+		for (; it != m_triggerNameMap.end(); ++it) {
+			triggers.push_back(it->second);
+		}
+		return triggers;
+	}
+
+	std::vector<std::string> TriggerController::getAllTriggerNames() {
+		std::vector<std::string> names;
+		TriggerNameMapIterator it = m_triggerNameMap.begin();
+		for (; it != m_triggerNameMap.end(); ++it) {
+			names.push_back(it->first);
+		}
+		return names;
+	}
+
 	bool TriggerController::exists(const std::string& name) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(name);
 		if (it != m_triggerNameMap.end()) {

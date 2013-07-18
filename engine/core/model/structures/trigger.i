@@ -84,6 +84,7 @@ namespace FIFE {
 		void detach();
 		Instance* getAttached();
 		void moveTo(const ModelCoordinate& newPos, const ModelCoordinate& oldPos);
+		const std::vector<Cell*>& getAssignedCells();
 	private:
 		Trigger();
 		Trigger(const std::string& name);
@@ -112,6 +113,8 @@ namespace FIFE {
 		void removeTrigger(const std::string& triggerName, Cell* cell);
 		void removeTrigger(const std::string& triggerName, const std::vector<Cell*>& cells);
 		void removeTrigger(const std::string& triggerName, Instance* instance);
+		std::vector<Trigger*> getAllTriggers();
+		std::vector<std::string> getAllTriggerNames();
 	private:
 		TriggerController(Map* map);
 	};
@@ -119,4 +122,5 @@ namespace FIFE {
 
 namespace std {
 	%template(TriggerConditionVector) vector<FIFE::TriggerCondition>;
+	%template(TriggerVector) vector<FIFE::Trigger*>;
 }

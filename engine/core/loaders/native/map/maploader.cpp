@@ -35,6 +35,8 @@
 #include "model/structures/instance.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
+#include "model/structures/trigger.h"
+#include "model/structures/triggercontroller.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/action.h"
@@ -602,6 +604,73 @@ namespace FIFE {
 							}
 						}
 					}
+
+					for (const TiXmlElement* triggerElements = root->FirstChildElement("triggers"); triggerElements; triggerElements = triggerElements->NextSiblingElement("triggers")) {
+						TriggerController* triggerController = map->getTriggerController();
+						for (const TiXmlElement* triggerElement = triggerElements->FirstChildElement("trigger"); triggerElement; triggerElement = triggerElement->NextSiblingElement("trigger")) {
+							const std::string* triggerName = triggerElement->Attribute(std::string("name"));
+							int triggered = 0;
+							int allInstances = 0;
+							triggerElement->QueryIntAttribute("triggered", &triggered);
+							triggerElement->QueryIntAttribute("all_instances", &allInstances);
+							
+							Trigger* trigger = triggerController->createTrigger(*triggerName);
+							if (triggered > 0) {
+								trigger->setTriggered();
+							}
+							if (allInstances > 0) {
+								trigger->enableForAllInstances();
+							}
+
+							const std::string* instanceId = triggerElement->Attribute(std::string("attached_instance"));
+							const std::string* layerId = triggerElement->Attribute(std::string("attached_layer"));
+							if (instanceId  && layerId) {
+								Layer* layer = map->getLayer(*layerId);
+								if (layer) {
+									Instance* instance = layer->getInstance(*instanceId);
+									if (instance) {
+										trigger->attach(instance);
+									}
+								}
+							}
+							for (const TiXmlElement* assignElement = triggerElement->FirstChildElement("assign"); assignElement; assignElement = assignElement->NextSiblingElement("assign")) {
+								layerId = assignElement->Attribute(std::string("layer_id"));
+								if (!layerId) {
+									continue;
+								}
+								int x = 0;
+								int y = 0;
+								assignElement->QueryIntAttribute("x", &x);
+								assignElement->QueryIntAttribute("y", &y);
+								Layer* layer = map->getLayer(*layerId);
+								if (layer) {
+									trigger->assign(layer, ModelCoordinate(x, y));
+								}
+							}
+							for (const TiXmlElement* enabledElement = triggerElement->FirstChildElement("enabled"); enabledElement; enabledElement = enabledElement->NextSiblingElement("enabled")) {
+								layerId = enabledElement->Attribute(std::string("layer_id"));
+								instanceId = enabledElement->Attribute(std::string("instance_id"));
+								if (!instanceId || !layerId) {
+									continue;
+								}
+								Layer* layer = map->getLayer(*layerId);
+								if (layer) {
+									Instance* instance = layer->getInstance(*instanceId);
+									if (instance) {
+										trigger->enableForInstance(instance);
+									}
+								}
+							}
+							for (const TiXmlElement* conditionElement = triggerElement->FirstChildElement("condition"); conditionElement; conditionElement = conditionElement->NextSiblingElement("condition")) {
+								int conditionId = -1;
+								conditionElement->QueryIntAttribute("id", &conditionId);
+								if (conditionId != -1) {
+									trigger->addTriggerCondition(static_cast<TriggerCondition>(conditionId));
+								}
+							}
+						}
+					}
+
 
 					for (const TiXmlElement* cameraElement = root->FirstChildElement("camera"); cameraElement; cameraElement = cameraElement->NextSiblingElement("camera")) {
 						const std::string* cameraId = cameraElement->Attribute(std::string("id"));

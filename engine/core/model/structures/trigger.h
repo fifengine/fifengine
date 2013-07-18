@@ -221,6 +221,10 @@ namespace FIFE {
 		 */
 		void remove(Cell* cell);
 
+		/** Returns vector with the cells where the trigger is assigned to.
+		 */
+		const std::vector<Cell*>& getAssignedCells();
+
 		/** Attaches the trigger to the given instance. So the trigger moves with the instance.
 		 *
 		 * @param instance A pointer to the instance which the Trigger is attached to.
