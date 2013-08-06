@@ -44,7 +44,8 @@ namespace FIFE {
 		m_framelimit(60),
 		m_isMipmapping(false),
 		m_textureFilter(TEXTURE_FILTER_NONE),
-		m_maxAnisotropy(0) {
+		m_maxAnisotropy(0),
+		m_monochrome(false) {
 
 		m_isbackgroundcolor = false;
 		m_backgroundcolor.r = 0;
@@ -148,6 +149,14 @@ namespace FIFE {
 		return m_maxAnisotropy;
 	}
 	
+	void RenderBackend::setMonochromeEnabled(bool enabled) {
+		m_monochrome = enabled;
+	}
+
+	bool RenderBackend::isMonochromeEnabled() const {
+		return m_monochrome;
+	}
+
 	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {
 		m_iscolorkeyenabled = colorkeyenable;
 	}

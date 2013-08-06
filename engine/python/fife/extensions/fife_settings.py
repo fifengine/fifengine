@@ -97,7 +97,7 @@ class Setting(object):
 		self._validSetting['FIFE'] = {
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
-			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'],
+			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
 			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
 			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768', 
 								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
@@ -119,7 +119,7 @@ class Setting(object):
 		self._defaultSetting['FIFE'] = {
 			'FullScreen':False, 'PychanDebug':False
 			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
-			'GLUseMipmapping':False, 'GLTextureFiltering':'None',
+			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,

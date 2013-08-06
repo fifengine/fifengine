@@ -190,6 +190,8 @@ namespace FIFE {
 		TextureFiltering getTextureFiltering() const;
 		void setMipmappingEnabled(bool enabled);
 		bool isMipmappingEnabled() const;
+		void setMonochromeEnabled(bool enabled);
+		bool isMonochromeEnabled() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);

@@ -169,6 +169,14 @@ namespace FIFE {
 		 */
 		bool isGLUseMipmapping() const;
 
+		/** Sets if OpenGL renderbackend should render only monochrome.
+		 */
+		void setGLUseMonochrome(bool monochrome);
+		
+		/** Tells if OpenGL renderbackend should render only monochrome.
+		 */
+		bool isGLUseMonochrome() const;
+
 		/** Sets screen width (pixels)
 		 */
 		void setScreenWidth(uint16_t screenwidth);
@@ -339,6 +347,7 @@ namespace FIFE {
 		bool m_ogluseframebuffer;
 		bool m_oglusenpot;
 		bool m_oglMipmapping;
+		bool m_oglMonochrome;
 		TextureFiltering m_oglTextureFilter;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
