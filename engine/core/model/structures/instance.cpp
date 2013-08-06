@@ -418,8 +418,7 @@ namespace FIFE {
 		initializeChanges();
 		const Action *old_action = m_activity->m_actionInfo ? m_activity->m_actionInfo->m_action : NULL;
 		if (m_activity->m_actionInfo) {
-			delete m_activity->m_actionInfo;
-			m_activity->m_actionInfo = NULL;
+			finalizeAction();
 		}
 		m_activity->m_actionInfo = new ActionInfo(m_object->getPather(), m_location);
 		m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
