@@ -53,7 +53,6 @@ namespace FIFE {
 		m_ogluseframebuffer(true),
 		m_oglusenpot(true),
 		m_oglMipmapping(false),
-		m_oglMonochrome(false),
 		m_oglTextureFilter(TEXTURE_FILTER_NONE),
 		m_screenwidth(800),
 		m_screenheight(600),
@@ -180,14 +179,6 @@ namespace FIFE {
 
 	bool EngineSettings::isGLUseMipmapping() const {
 		return m_oglMipmapping;
-	}
-
-	void EngineSettings::setGLUseMonochrome(bool monochrome) {
-		m_oglMonochrome = monochrome;
-	}
-
-	bool EngineSettings::isGLUseMonochrome() const {
-		return m_oglMonochrome;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {

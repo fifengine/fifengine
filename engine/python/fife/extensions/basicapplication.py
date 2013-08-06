@@ -115,7 +115,6 @@ class ApplicationBase(object):
 		engineSetting.setGLUseFramebuffer(self._finalSetting['GLUseFramebuffer'])
 		engineSetting.setGLUseNPOT(self._finalSetting['GLUseNPOT'])
 		engineSetting.setGLUseMipmapping(self._finalSetting['GLUseMipmapping'])
-		engineSetting.setGLUseMonochrome(self._finalSetting['GLUseMonochrome'])
 		if self._finalSetting['GLTextureFiltering'] == 'None':
 			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_NONE)
 		elif self._finalSetting['GLTextureFiltering'] == 'Bilinear':
