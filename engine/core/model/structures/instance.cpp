@@ -568,21 +568,38 @@ namespace FIFE {
 		return m_multiInstances;
 	}
 
-	void Instance::act(const std::string& actionName, const Location& direction, bool repeating) {
+	void Instance::actOnce(const std::string& actionName, const Location& direction) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
 		setFacingLocation(direction);
 	}
 
-	void Instance::act(const std::string& actionName, int32_t rotation, bool repeating) {
+	void Instance::actOnce(const std::string& actionName, int32_t rotation) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
 		setRotation(rotation);
 	}
 
-	void Instance::act(const std::string& actionName, bool repeating) {
+	void Instance::actOnce(const std::string& actionName) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
+	}
+
+	void Instance::actRepeat(const std::string& actionName, const Location& direction) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
+		setFacingLocation(direction);
+	}
+
+	void Instance::actRepeat(const std::string& actionName, int32_t rotation) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
+		setRotation(rotation);
+	}
+
+	void Instance::actRepeat(const std::string& actionName) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
 	}
 
 	void Instance::say(const std::string& text, uint32_t duration) {

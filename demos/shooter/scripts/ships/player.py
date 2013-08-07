@@ -114,7 +114,7 @@ class Player(Ship):
 		
 	def destroy(self):
 		if not self._invulnerable and not self._dead:
-			self._instance.act('explode', self._instance.getFacingLocation())
+			self._instance.actOnce('explode', self._instance.getFacingLocation())
 			self._explodclip.play()
 			self._dead = True
 			self._invulnerable = True

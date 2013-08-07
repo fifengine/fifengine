@@ -427,7 +427,7 @@ namespace FIFE {
 														if (object->getAction("default")) {
 															Location target(layer);
 
-															inst->act("default", target, true);
+															inst->actRepeat("default", target);
 														}
 													}
                                                     else

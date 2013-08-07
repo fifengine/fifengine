@@ -261,25 +261,39 @@ namespace FIFE {
 		 */
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
 
-		/** Performs given named action to the instance. Performs no movement
+		/** Performs given named action to the instance, once only. Performs no movement
 		 *  @param actionName name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, const Location& direction, bool repeating=false);
+		void actOnce(const std::string& actionName, const Location& direction);
 
-		/** Performs given named action to the instance. Performs no movement
+		/** Performs given named action to the instance, once only. Performs no movement
 		 *  @param actionName name of the action
 		 *  @param rotation rotation which the instance use when performing the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, int32_t rotation, bool repeating=false);
+		void actOnce(const std::string& actionName, int32_t rotation);
 
-		/** Performs given named action to the instance. Performs no movement and use current rotation
+		/** Performs given named action to the instance, once only. Performs no movement and use current rotation
 		 *  @param actionName name of the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, bool repeating=false);
+		void actOnce(const std::string& actionName);
+
+		/** Performs given named action to the instance, repeated. Performs no movement
+		 *  @param actionName name of the action
+		 *  @param direction coordinates for cell towards instance is heading to when performing the action
+		 */
+		void actRepeat(const std::string& actionName, const Location& direction);
+
+		/** Performs given named action to the instance, repeated Performs no movement
+		 *  @param actionName name of the action
+		 *  @param rotation rotation which the instance use when performing the action
+		 */
+		void actRepeat(const std::string& actionName, int32_t rotation);
+
+		/** Performs given named action to the instance, repeated. Performs no movement and use current rotation
+		 *  @param actionName name of the action
+		 */
+		void actRepeat(const std::string& actionName);
 
 		/** Causes instance to "say" given text (shown on screen next to the instance)
 		 *  @param text text to say. If "" given, clear the text

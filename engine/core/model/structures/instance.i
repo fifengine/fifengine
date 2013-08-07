@@ -107,9 +107,12 @@ namespace FIFE {
 		uint32_t getActionRuntime();
 		void setActionRuntime(uint32_t time_offset);
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
-		void act(const std::string& actionName, const Location& direction, bool repeating=false);
-		void act(const std::string& actionName, int32_t rotation, bool repeating=false);
-		void act(const std::string& actionName, bool repeating=false);
+		void actOnce(const std::string& actionName, const Location& direction);
+		void actOnce(const std::string& actionName, int32_t rotation);
+		void actOnce(const std::string& actionName);
+		void actRepeat(const std::string& actionName, const Location& direction);
+		void actRepeat(const std::string& actionName, int32_t rotation);
+		void actRepeat(const std::string& actionName);
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 		void follow(const std::string& actionName, Route* route, const double speed);
 		void cancelMovement(uint32_t length = 1);

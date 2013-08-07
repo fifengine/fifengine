@@ -50,7 +50,7 @@ class ShipActionListener(fife.InstanceActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		if action.getId() == 'flash':
 			if self._ship._flashing and self._ship._flashnumber > 0:
-				self._ship.instance.act('flash', self._ship.instance.getFacingLocation())
+				self._ship.instance.actOnce('flash', self._ship.instance.getFacingLocation())
 				self._ship._flashnumber -= 1
 			else:
 				self._ship._flashing = False
@@ -106,7 +106,7 @@ class Ship(SpaceObject):
 		@param number: An integer specifying the number of times to play the flash animation
 		"""
 		if self._running:
-			self._instance.act('flash', self._instance.getFacingLocation())
+			self._instance.actOnce('flash', self._instance.getFacingLocation())
 			self._flashnumber = number
 			self._flashing = True
 
@@ -138,7 +138,7 @@ class Ship(SpaceObject):
 		Plays the explode animation (or action)
 		"""
 		if self._running:
-			self._instance.act('explode', self._instance.getFacingLocation())
+			self._instance.actOnce('explode', self._instance.getFacingLocation())
 			location = self.location.getExactLayerCoordinates()
 			self._explodclip.position = (location.x, location.y)
 			self._explodclip.play()

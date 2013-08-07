@@ -59,12 +59,12 @@ class Cloud(Agent):
 
 	def appear(self):
 		self.state = _STATE_APPEAR
-		self.agent.act('appear', self.loc, False)
+		self.agent.actOnce('appear', self.loc)
 
 	def disappear(self):
 		self.state = _STATE_DISAPPEAR
-		self.agent.act('disappear', self.loc, False)
+		self.agent.actOnce('disappear', self.loc)
 
 	def move(self):
 		self.state = _STATE_FLOATING
-		self.agent.act('default', self.loc, False)
+		self.agent.actOnce('default', self.loc)

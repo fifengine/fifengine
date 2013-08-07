@@ -192,7 +192,7 @@ class Actor(BaseGameObject):
 		
 	def stand(self):
 		self._state = ActorStates["STAND"]
-		self._instance.act('stand', self._instance.getFacingLocation())
+		self._instance.actOnce('stand', self._instance.getFacingLocation())
 		
 	def walk(self, location):
 		self._state = ActorStates["WALK"]

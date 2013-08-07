@@ -410,7 +410,7 @@ class ObjectEdit(plugin.Plugin):
 		
 		if self._instance is not None and action is not None:
 			f_loc = self._instance.getFacingLocation()
-			self._instance.act(action, f_loc)
+			self._instance.actOnce(action, f_loc)
 	
 	def select_rotation(self):
 		""" rotate an instance due to selected angle """
