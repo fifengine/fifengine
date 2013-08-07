@@ -176,6 +176,21 @@ namespace FIFE {
 		 */
 		double getCost() const;
 
+		/** Gets if object uses special speed modifier.
+		 * @return A boolean, true if the object uses special speed, otherwise false.
+		 */
+		bool isSpecialSpeed() const;
+
+		/** Sets the speed modifier.
+		 * @param cost A double which value is used as speed multiplier.
+		 */
+		void setSpeed(double cost);
+
+		/** Returns the speed modifier.
+		 * @return A double which value is used as speed multiplier.
+		 */
+		double getSpeed() const;
+
 		/** Gets if object uses special cost.
 		 * @return A boolean, true if the object uses special cost, otherwise false.
 		 */
@@ -386,6 +401,9 @@ namespace FIFE {
 
 			//! cost value, default 1.0
 			double m_cost;
+
+			//! speed modifier, default 1.0
+			double m_speed;
 
 			//! z range value
 			int32_t m_zRange;

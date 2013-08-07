@@ -1025,6 +1025,14 @@ namespace FIFE {
 		return m_object->getCostId();
 	}
 
+	double Instance::getSpeed() {
+		m_object->getSpeed();
+	}
+
+	bool Instance::isSpecialSpeed() {
+		m_object->isSpecialSpeed();
+	}
+
 	bool Instance::isMultiCell() {
 		return m_object->isMultiObject();
 	}

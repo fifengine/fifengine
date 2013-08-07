@@ -123,6 +123,9 @@ namespace FIFE {
 					cache->registerCost((*it)->getCostId(), (*it)->getCost());
 					cache->addCellToCost((*it)->getCostId(), this);
 				}
+				if ((*it)->isSpecialSpeed()) {
+					cache->setSpeedMultiplier(this, (*it)->getSpeed());
+				}
 				if ((*it)->getObject()->getArea() != "") {
 					cache->addCellToArea((*it)->getObject()->getArea(), this);
 				}
@@ -181,6 +184,9 @@ namespace FIFE {
 				cache->registerCost(instance->getCostId(), instance->getCost());
 				cache->addCellToCost(instance->getCostId(), this);
 			}
+			if (instance->isSpecialSpeed()) {
+				cache->setSpeedMultiplier(this, instance->getSpeed());
+			}
 			if (instance->getObject()->getArea() != "") {
 				cache->addCellToArea(instance->getObject()->getArea(), this);
 			}
@@ -230,6 +236,19 @@ namespace FIFE {
 		}
 		if (instance->isSpecialCost()) {
 			cache->removeCellFromCost(instance->getCostId(), this);
+		}
+		if (instance->isSpecialSpeed()) {
+			cache->resetSpeedMultiplier(this);
+			// try to find other speed value
+			if (!m_instances.empty()) {
+				std::set<Instance*>::iterator it = m_instances.begin();
+				for (; it != m_instances.end(); ++it) {
+					if ((*it)->isSpecialSpeed()) {
+						cache->setSpeedMultiplier(this, (*it)->getSpeed());
+						break;
+					}
+				}
+			}
 		}
 		if (instance->getObject()->getArea() != "") {
 			cache->removeCellFromArea(instance->getObject()->getArea(), this);

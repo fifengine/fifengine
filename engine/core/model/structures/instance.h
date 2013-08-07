@@ -439,6 +439,14 @@ namespace FIFE {
 		 */
 		std::string getCostId();
 
+		/** Returns speed modifier.
+		 */
+		double getSpeed();
+
+		/** Returns true if instance or object have special speed modifier otherwise false.
+		 */
+		bool isSpecialSpeed();
+
 		/** Returns true if it is multi cell otherwise false
 		 */
 		bool isMultiCell();
@@ -611,7 +619,6 @@ namespace FIFE {
 		double m_cost;
 		//! holds cost id
 		std::string m_costId;
-
 		//! vector that holds all multi instances
 		std::vector<Instance*> m_multiInstances;
 

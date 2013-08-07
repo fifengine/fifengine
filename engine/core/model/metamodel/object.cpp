@@ -58,6 +58,7 @@ namespace FIFE {
 		m_pather(NULL),
 		m_costId(""),
 		m_cost(1.0),
+		m_speed(1.0),
 		m_zRange(0) {
 	}
 	Object::MovableObjectProperty::~MovableObjectProperty() {
@@ -311,6 +312,33 @@ namespace FIFE {
 		}
 		if (m_inherited) {
 			return m_inherited->getCost();
+		}
+		return 1.0;
+	}
+
+	bool Object::isSpecialSpeed() const {
+		if (m_moveProperty) {
+			return !Mathd::Equal(m_moveProperty->m_speed, 1.0);
+		}
+		if (m_inherited) {
+			return m_inherited->isSpecialSpeed();
+		}
+		return false;
+	}
+
+	void Object::setSpeed(double speed) {
+		if (!m_moveProperty) {
+			m_moveProperty = new MovableObjectProperty();
+		}
+		m_moveProperty->m_speed = speed;
+	}
+
+	double Object::getSpeed() const {
+		if (m_moveProperty) {
+			return m_moveProperty->m_speed;
+		}
+		if (m_inherited) {
+			return m_inherited->getSpeed();
 		}
 		return 1.0;
 	}

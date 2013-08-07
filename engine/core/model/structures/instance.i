@@ -141,6 +141,8 @@ namespace FIFE {
 		void resetCost();
 		double getCost();
 		std::string getCostId();
+		double getSpeed();
+		bool isSpecialSpeed();
 
 		bool isMultiCell();
 
