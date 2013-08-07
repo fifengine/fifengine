@@ -55,6 +55,13 @@ namespace FIFE {
 		virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) = 0;
 	};
 
+	%feature("director") CellDeleteListener;
+	class CellDeleteListener {
+	public:
+		virtual ~CellDeleteListener() {};
+		virtual void onCellDeleted(Cell* cell) = 0;
+	};
+
 	class Cell : public FifeClass {
 		public:
 			Cell(int32_t coordint, ModelCoordinate coordinate, Layer* layer);
@@ -87,6 +94,11 @@ namespace FIFE {
 			Layer* getLayer();
 			void createTransition(Layer* layer, const ModelCoordinate& mc);
 			void deleteTransition();
+
+			void addChangeListener(CellChangeListener* listener);
+			void removeChangeListener(CellChangeListener* listener);
+			void addDeleteListener(CellDeleteListener* listener);
+			void removeDeleteListener(CellDeleteListener* listener);
 	};
 }
 
