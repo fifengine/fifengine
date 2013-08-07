@@ -50,6 +50,9 @@ class Cloud(Agent):
 			self.agent.getLocationRef().setExactLayerCoordinates(self.initialCoords)
 			self.appear()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def start(self, x_dir, y_dir):
 		self.x_dir = x_dir
 		self.y_dir = y_dir

@@ -59,6 +59,9 @@ class ShipActionListener(fife.InstanceActionListener):
 		if action.getId() == 'explode' and not self._ship.type == SHTR_PLAYER:
 			self._ship.removeFromScene()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 class Ship(SpaceObject):
 	"""
 	Ship

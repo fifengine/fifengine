@@ -36,6 +36,8 @@ class EnemyActionListener(ShipActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		super(EnemyActionListener, self).onInstanceActionFinished(instance, action)
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
 
 class BossActionListener(ShipActionListener):
 	def __init__(self, ship):
@@ -47,6 +49,8 @@ class BossActionListener(ShipActionListener):
 		if action.getId() == 'explode':
 			self.delayed = fife_timer.delayCall(5000,self._ship.endLevel())
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
 				
 class Saucer1(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):

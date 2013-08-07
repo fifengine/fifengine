@@ -35,6 +35,9 @@ class Beekeeper(Agent):
 	def onInstanceActionFinished(self, instance, action):
 		self.talk()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def start(self):
 		self.facingLoc = self.agent.getLocation()
 		c = self.facingLoc.getExactLayerCoordinatesRef()

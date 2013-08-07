@@ -37,6 +37,8 @@ class PlayerActionListener(ShipActionListener):
 		if action.getId() == 'explode':
 			self._ship.respawn()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
 		
 		
 class Player(Ship):

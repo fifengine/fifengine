@@ -105,6 +105,9 @@ class ActorActionListener(ObjectActionListener):
 			self._object.stand()
 			self._object.performNextAction()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+
 class ActorAttributes(Serializer):
 	def __init__(self, strength=0, dexterity=0, intelligence=0, health=0, walkspeed=0):
 		self._str = strength

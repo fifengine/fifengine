@@ -46,6 +46,9 @@ class Hero(Agent):
 			txtindex = random.randint(0, len(heroTexts) - 1)
 			instance.say(heroTexts[txtindex], 2500)
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def start(self):
 		self.idle()
 

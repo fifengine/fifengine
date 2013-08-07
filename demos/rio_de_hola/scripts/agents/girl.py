@@ -49,6 +49,9 @@ class Girl(Agent):
 			else:
 				self.run(self.getNextWaypoint())
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def getNextWaypoint(self):
 		self.waypoint_counter += 1
 		l = fife.Location(self.layer)

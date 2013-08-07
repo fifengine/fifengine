@@ -63,6 +63,9 @@ class ObjectActionListener(fife.InstanceActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		pass
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def onInstanceActionFrame(self, instance, action, frame):
 		pass
 

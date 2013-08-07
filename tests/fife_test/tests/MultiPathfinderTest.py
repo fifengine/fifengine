@@ -99,6 +99,9 @@ class InstanceActionListener(fife.InstanceActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		instance.move('walk', self._test.createRandomTarget(), 4.0)
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+		
 	def onInstanceActionFrame(self, instance, action, frame):
 		pass
 	

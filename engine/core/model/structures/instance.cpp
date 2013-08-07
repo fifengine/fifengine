@@ -418,7 +418,7 @@ namespace FIFE {
 		initializeChanges();
 		const Action *old_action = m_activity->m_actionInfo ? m_activity->m_actionInfo->m_action : NULL;
 		if (m_activity->m_actionInfo) {
-			finalizeAction();
+			cancelAction();
 		}
 		m_activity->m_actionInfo = new ActionInfo(m_object->getPather(), m_location);
 		m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
@@ -818,6 +818,39 @@ namespace FIFE {
 			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
 			for (; multi_it != m_multiInstances.end(); ++multi_it) {
 				(*multi_it)->finalizeAction();
+			}
+		}
+	}
+
+	void Instance::cancelAction() {
+		FL_DBG(_log, "cancel action");
+		assert(m_activity);
+		assert(m_activity->m_actionInfo);
+
+		if( m_activity->m_actionInfo->m_leader ) {
+			m_activity->m_actionInfo->m_leader->removeDeleteListener(this);
+		}
+
+		Action* action = m_activity->m_actionInfo->m_action;
+		delete m_activity->m_actionInfo;
+		m_activity->m_actionInfo = NULL;
+
+		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+		while (i != m_activity->m_actionListeners.end()) {
+			if(*i)
+				(*i)->onInstanceActionCancelled(this, action);
+			++i;
+		}
+		m_activity->m_actionListeners.erase(
+			std::remove(m_activity->m_actionListeners.begin(),
+				m_activity->m_actionListeners.end(),
+				(InstanceActionListener*)NULL),
+			m_activity->m_actionListeners.end());
+
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->cancelAction();
 			}
 		}
 	}

@@ -54,6 +54,7 @@ namespace FIFE {
 	public:
 		virtual ~InstanceActionListener() {};
 		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
+		virtual void onInstanceActionCancelled(Instance* instance, Action* action) = 0;
 		virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
 	};
 
@@ -618,6 +619,8 @@ namespace FIFE {
 		Instance& operator=(const Instance&);
 		//! Finalize current action
 		void finalizeAction();
+		//! Cancel current action
+		void cancelAction();
 		//! Initialize action for use
 		void initializeAction(const std::string& actionName);
 		//! Moves instance. Returns true if finished
