@@ -352,6 +352,15 @@ namespace FIFE {
 		 */
 		int32_t getMaxAnisotropy() const;
 
+		/** Enables or disables monochrome rendering.
+		 * Note! Works only for OpenGL backends.
+		 */
+		void setMonochromeEnabled(bool enabled);
+
+		/** @see setMonochromeEnabled
+		 */
+		bool isMonochromeEnabled() const;
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -439,6 +448,8 @@ namespace FIFE {
 		TextureFiltering m_textureFilter;
 		// max anisotropy
 		int32_t m_maxAnisotropy;
+		// monochrome rendering
+		bool m_monochrome;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea

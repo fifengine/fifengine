@@ -264,6 +264,7 @@ namespace FIFE {
 			m_compressed = false;
 		}
 
+		bool monochrome = RenderBackend::instance()->isMonochromeEnabled();
 		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
 		int32_t bpp_target = target->format->BitsPerPixel;
 		int32_t bpp_source = m_surface->format->BitsPerPixel;
@@ -287,7 +288,13 @@ namespace FIFE {
 							a = 0;
 						}
 					}
-
+					// if monochrome rendering is enabled, then the colors are converted to grayscale
+					if (monochrome) {
+						uint8_t lum = static_cast<uint8_t>(r*0.3 + g*0.59 + b*0.11);
+						r = lum;
+						g = lum;
+						b = lum;
+					}
 					oglbuffer[(y*m_chunk_size_w) + x] = ((r >> 4) << 12) |
 														((g >> 4) << 8) |
 														((b >> 4) << 4) |
@@ -314,7 +321,7 @@ namespace FIFE {
 
 				for (uint32_t y = 0;  y < height; ++y) {
 					for (uint32_t x = 0; x < width * 4; x += 4) {
-						uint32_t gid = x + y * width;
+						uint32_t gid = x + y * pitch;
 
 						uint8_t r = oglbuffer[gid + 0];
 						uint8_t g = oglbuffer[gid + 1];
@@ -324,6 +331,33 @@ namespace FIFE {
 						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
 							oglbuffer[gid + 3] = 0;
 						}
+						// if monochrome rendering is enabled, then the colors are converted to grayscale
+						if (monochrome) {
+							uint8_t lum = static_cast<uint8_t>(r*0.3 + g*0.59 + b*0.11);
+							oglbuffer[gid + 0] = lum;
+							oglbuffer[gid + 1] = lum;
+							oglbuffer[gid + 2] = lum;
+						}
+					}
+				}
+
+				// transfer data from sdl buffer
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_chunk_size_w, m_chunk_size_h,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, oglbuffer);
+
+				delete [] oglbuffer;
+			} else if (monochrome) {
+				uint8_t* oglbuffer = new uint8_t[width * height * 4];
+				memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
+
+				for (uint32_t y = 0;  y < height; ++y) {
+					for (uint32_t x = 0; x < width * 4; x += 4) {
+						uint32_t gid = x + y * pitch;
+						// if monochrome rendering is enabled, then the colors are converted to grayscale
+						uint8_t lum = static_cast<uint8_t>(oglbuffer[gid + 0]*0.3 +	oglbuffer[gid + 1]*0.59 + oglbuffer[gid + 2]*0.11);
+						oglbuffer[gid + 0] = lum;
+						oglbuffer[gid + 1] = lum;
+						oglbuffer[gid + 2] = lum;
 					}
 				}
 
@@ -356,6 +390,13 @@ namespace FIFE {
 						if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
 							a = 0;
 						}
+					}
+					// if monochrome rendering is enabled, then the colors are converted to grayscale
+					if (monochrome) {
+						uint8_t lum = static_cast<uint8_t>(r*0.3 + g*0.59 + b*0.11);
+						r = lum;
+						g = lum;
+						b = lum;
 					}
 
 					oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
