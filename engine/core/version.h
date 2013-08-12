@@ -69,7 +69,9 @@ namespace FIFE {
 #ifdef FIFE_REVISION
 		return FIFE_REVISION;
 #else
-		return 4103;
+		//This is useless since moving to git so we return a bogus number.
+		//The next release will not include this at all.
+		return 9999;
 #endif
 	}
 } //FIFE
