@@ -32,7 +32,7 @@
 	#define FIFE_MINOR_VERSION 3
 #endif
 #ifndef FIFE_PATCH_VERSION
-	#define FIFE_PATCH_VERSION 4
+	#define FIFE_PATCH_VERSION 6
 #endif
 
 /** Types
