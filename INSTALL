@@ -20,7 +20,7 @@ targets work as advertized.
 === Dependencies ===
 A list of all dependencies (including accurate version numbers) that you'll need
 to obtain to build FIFE on your platform can be found at the project wiki:
- * http://wiki.fifengine.net/index.php?title=Build_dependencies
+ * https://github.com/fifengine/fifengine/wiki/dependencies
 
 
 === SCons Build System Notes ===
@@ -64,7 +64,7 @@ Build options:
 === Linux ===
 Detailed information how to build FIFE on Linux-based distributions can be found
 at the project wiki:
- * http://wiki.fifengine.net/index.php?title=Building:Linux:SCons
+ * https://github.com/fifengine/fifengine/wiki/Building-on-linux
 
 After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
 directory and run: 'python run.py'
@@ -72,7 +72,7 @@ directory and run: 'python run.py'
 === OS X ===
 Detailed information how to build FIFE on OS X systems can be found at the 
 project wiki:
- * http://wiki.fifengine.net/index.php?title=Building:Mac:Scons
+ * https://github.com/fifengine/fifengine/wiki/Building-on-osx
 
 After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola 
 directory and run: 'python run.py'
