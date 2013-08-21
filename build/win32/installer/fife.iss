@@ -41,7 +41,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 
 ; engine
-Source: "..\..\..\dist\*.exe"; DestDir: "{app}\engine"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\dist\*.exe"; DestDir: "{app}\engine"; Excludes: ".git,.svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\AUTHORS"; DestDir: "{app}\doc\"; DestName:"Authors.txt"
 Source: "..\..\..\COPYING"; DestDir: "{app}\doc\"; DestName:"Copying.txt"
 Source: "..\..\..\CHANGES"; DestDir: "{app}\doc\"; DestName:"Changes.txt"
@@ -51,7 +51,7 @@ Source: "..\..\..\README"; DestDir:"{app}"; DestName: "README.txt"; Flags: isrea
 Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: "settings.xml,*.7z,rpg,.svn,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; tools
-Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn,atlas,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".git,.svn,atlas,*.pyc,*.patch"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.net/"
