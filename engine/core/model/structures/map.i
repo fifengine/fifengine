@@ -41,6 +41,7 @@ namespace FIFE {
 
 	class Map;
 	class Rect;
+	class TriggerController;
 
 	%feature("director") MapChangeListener;
 	class MapChangeListener {
@@ -88,5 +89,7 @@ namespace FIFE {
 
 			void initializeCellCaches();
 			void finalizeCellCaches();
+
+			TriggerController* getTriggerController() const;
 	};
 }

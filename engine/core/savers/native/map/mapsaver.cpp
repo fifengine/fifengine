@@ -33,6 +33,8 @@
 #include "model/structures/instance.h"
 #include "model/structures/cell.h"
 #include "model/structures/cellcache.h"
+#include "model/structures/trigger.h"
+#include "model/structures/triggercontroller.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "util/structures/point.h"
@@ -382,6 +384,54 @@ namespace FIFE {
 			}
 			cellcachesElement->LinkEndChild(cellcacheElement);
         }
+
+		TriggerController* triggerController = map.getTriggerController();
+		std::vector<Trigger*> triggers = triggerController->getAllTriggers();
+		if (!triggers.empty()) {
+			// add triggers tag to document
+			TiXmlElement* triggersElement = new TiXmlElement("triggers");
+			mapElement->LinkEndChild(triggersElement);
+			for (std::vector<Trigger*>::iterator iter = triggers.begin(); iter != triggers.end(); ++iter) {
+				// add trigger tag to document
+				TiXmlElement* triggerElement = new TiXmlElement("trigger");
+				triggerElement->SetAttribute("name", (*iter)->getName());
+				triggerElement->SetAttribute("triggered", (*iter)->isTriggered());
+				triggerElement->SetAttribute("all_instances", (*iter)->isEnabledForAllInstances());
+				if ((*iter)->getAttached()) {
+					triggerElement->SetAttribute("attached_instance", (*iter)->getAttached()->getId());
+					triggerElement->SetAttribute("attached_layer", (*iter)->getAttached()->getLocationRef().getLayer()->getId());
+				}
+				const std::vector<Cell*>& cells = (*iter)->getAssignedCells();
+				if (!cells.empty()) {
+					for (std::vector<Cell*>::const_iterator citer = cells.begin(); citer != cells.end(); ++citer) {
+						TiXmlElement* cellElement = new TiXmlElement("assign");
+						cellElement->SetAttribute("layer_id", (*citer)->getLayer()->getId());
+						cellElement->SetAttribute("x", (*citer)->getLayerCoordinates().x);
+						cellElement->SetAttribute("y", (*citer)->getLayerCoordinates().y);
+						triggerElement->LinkEndChild(cellElement);
+					}
+				}
+				const std::vector<Instance*>& instances = (*iter)->getEnabledInstances();
+				if (!instances.empty()) {
+					for (std::vector<Instance*>::const_iterator citer = instances.begin(); citer != instances.end(); ++citer) {
+						TiXmlElement* instanceElement = new TiXmlElement("enabled");
+						instanceElement->SetAttribute("layer_id", (*citer)->getLocationRef().getLayer()->getId());
+						instanceElement->SetAttribute("instance_id", (*citer)->getId());
+						triggerElement->LinkEndChild(instanceElement);
+					}
+				}
+				const std::vector<TriggerCondition>& conditions = (*iter)->getTriggerConditions();
+				if (!conditions.empty()) {
+					for (std::vector<TriggerCondition>::const_iterator citer = conditions.begin(); citer != conditions.end(); ++citer) {
+						TiXmlElement* conditionElement = new TiXmlElement("condition");
+						conditionElement->SetAttribute("id", (*citer));
+						triggerElement->LinkEndChild(conditionElement);
+					}
+				}
+				triggersElement->LinkEndChild(triggerElement);
+			}
+		}
+
         typedef std::vector<Camera*> CameraContainer;
         CameraContainer cameras = map.getCameras();
         for (CameraContainer::iterator iter = cameras.begin(); iter != cameras.end(); ++iter)

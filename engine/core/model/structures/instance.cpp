@@ -780,7 +780,7 @@ namespace FIFE {
 					say("");
 				}
 			}
-		} else if (!m_activity->m_actionInfo && m_changeInfo == ICHANGE_NO_CHANGES && m_activity->m_actionListeners.empty()) {
+		} else if (!m_activity->m_actionInfo && m_changeInfo == ICHANGE_NO_CHANGES && m_activity->m_actionListeners.empty() && m_activity->m_changeListeners.empty()) {
 			// delete superfluous activity
 			delete m_activity;
 			m_activity = 0;

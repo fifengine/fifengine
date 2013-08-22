@@ -48,6 +48,7 @@ namespace FIFE {
 	class Object;
 	class InstanceTree;
 	class CellCache;
+	class Trigger;
 
 	/** Defines how pathing can be performed on this layer
 	 *
@@ -150,11 +151,11 @@ namespace FIFE {
 			later so that we can ensure that each Instance only lives in one layer.
 			 */
 			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
-			
+
 			/** Remove an instance from the layer
 			 */
 			void removeInstance(Instance* instance);
-			
+
 			/** Remove an instance from the layer and delete it
 			 */
 			void deleteInstance(Instance* instance);
@@ -279,19 +280,19 @@ namespace FIFE {
 			 * @param walkable A boolean that mark a layer as walkable.
 			 */
 			void setWalkable(bool walkable);
-			
+
 			/** Returns if a layer is walkable.
 			 * @return A boolean, true if the layer is walkable otherwise false.
 			 */
 			bool isWalkable();
-			
+
 			/** Sets interact for the layer. The data(size, instances) from all interact layers
 			 *  and the walkable layer will merged into one CellCache.
 			 * @param interact A boolean that mark a layer as interact.
 			 * @param id A const reference to a string that should refer to the id of the walkable layer.
 			 */
 			void setInteract(bool interact, const std::string& id);
-			
+
 			/** Returns if a layer is interact.
 			 * @return A boolean, true if the layer is interact otherwise false.
 			 */
@@ -366,6 +367,7 @@ namespace FIFE {
 			 * @return A boolean, true if the layer is static, otherwise false.
 			*/
 			bool isStatic();
+
 		protected:
 			//! string identifier
 			std::string m_id;
