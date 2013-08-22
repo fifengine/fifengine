@@ -37,6 +37,7 @@
 #include "instancetree.h"
 #include "cell.h"
 #include "cellcache.h"
+#include "trigger.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -77,7 +78,7 @@ namespace FIFE {
 		delete m_instanceTree;
 	}
 
-	const std::string& Layer::getId() const { 
+	const std::string& Layer::getId() const {
 		return m_id;
 	}
 
@@ -171,7 +172,7 @@ namespace FIFE {
 				}
 			}
 		}
-			
+
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -546,7 +547,7 @@ namespace FIFE {
 			m_cellCache = new CellCache(this);
 		}
 	}
-	
+
 	CellCache* Layer::getCellCache() {
 		return m_cellCache;
 	}
@@ -632,4 +633,5 @@ namespace FIFE {
 	bool Layer::isStatic() {
 		return m_static;
 	}
+
 } // FIFE

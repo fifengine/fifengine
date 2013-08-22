@@ -40,6 +40,7 @@
 #include "layer.h"
 #include "cellcache.h"
 #include "instance.h"
+#include "triggercontroller.h"
 
 namespace FIFE {
 
@@ -52,16 +53,19 @@ namespace FIFE {
 		m_changedLayers(),
 		m_renderBackend(renderBackend),
 		m_renderers(renderers),
-		m_changed(false){
+		m_changed(false) {
+
+		m_triggerController = new TriggerController(this);
 	}
 
 	Map::~Map() {
-        // remove all cameras
-        std::vector<Camera*>::iterator iter = m_cameras.begin();
-        for ( ; iter != m_cameras.end(); ++iter) {
-            delete *iter;
-        }
-        m_cameras.clear();
+		delete m_triggerController;
+		// remove all cameras
+		std::vector<Camera*>::iterator iter = m_cameras.begin();
+		for ( ; iter != m_cameras.end(); ++iter) {
+			delete *iter;
+		}
+		m_cameras.clear();
 
 		deleteLayers();
 	}
