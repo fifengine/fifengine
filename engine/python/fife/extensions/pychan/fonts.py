@@ -23,9 +23,11 @@
 
 # Font handling
 from exceptions import *
+from fontfileparser import FontFileParser
+
 
 class Font(object):
-	def __init__(self,name,get):
+	def __init__(self, name, get):
 		from internal import get_manager
 		self.font = None
 		self.name = name
@@ -37,8 +39,8 @@ class Font(object):
 		if self.typename == "truetype":
 			self.size = int(get("size"))
 			self.antialias = int(get("antialias",1))
-			self.color = map(int,get("color","255,255,255").split(','))
-			self.font = get_manager().createFont(self.source,self.size,"")
+			self.color = map(int,get("color", "255,255,255").split(','))
+			self.font = get_manager().createFont(self.source, self.size, "")
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
@@ -54,23 +56,17 @@ class Font(object):
 	@staticmethod
 	def loadFromFile(filename):
 		"""
-		Static method to load font definitions out of a PyChan config file.
+		Static method to load font definitions out of an xml file.
+
+		@param filename: The file to be loaded
+		@param name: (Optional) The name of the font being loaded. If the file definition contains another name, the name from the file definition is used instead.
+		@return A new Font object
 		"""
-		import ConfigParser
-
-		fontdef = ConfigParser.ConfigParser()
-		fontdef.read(filename)
-
-		sections = [section for section in fontdef.sections() if section.startswith("Font/")]
-
+		fontXMLFile = FontFileParser()
+		fontXMLFile.parse(filename, fontXMLFile)
 		fonts = []
-		for section in sections:
-			name = section[5:]
-			def _get(name,default=None):
-				if fontdef.has_option(section,name):
-					return fontdef.get(section,name)
-				return default
-			fonts.append( Font(name,_get) )
+		for font in fontXMLFile.fonts():
+			fonts.append(Font(font, lambda key, default=None: fontXMLFile.get(font, key, default)))
 		return fonts
 
 	def __str__(self):
@@ -78,6 +74,7 @@ class Font(object):
 
 	def __repr__(self):
 		return "<Font(source='%s') at %x>" % (self.source,id(self))
+
 
 def loadFonts(filename):
 	"""

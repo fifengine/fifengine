@@ -96,3 +96,7 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
+# PyCharm
+.idea
+.iml
+

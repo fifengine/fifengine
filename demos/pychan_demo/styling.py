@@ -98,7 +98,7 @@ class StylingExample(PyChanExample):
 		for name,style in STYLES.items():
 			pychan.manager.addStyle(name,style)
 
-		pychan.loadFonts("fonts/samanata.fontdef")
+		pychan.loadFonts("fonts/samanata.xml")
 
 	def start(self):
 		self.styledCredits = pychan.loadXML('gui/all_widgets.xml')
