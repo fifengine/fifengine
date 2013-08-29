@@ -497,11 +497,11 @@ namespace FIFE {
 				continue;
 			}
 			RenderItem* item = m_renderItems[entry->instanceIndex];
+			bool onScreenA = entry->visible && item->image && item->dimensions.intersects(viewport);
 			bool positionUpdate = (entry->updateInfo & EntryPositionUpdate) == EntryPositionUpdate;
 			if ((entry->updateInfo & EntryVisualUpdate) == EntryVisualUpdate) {
 				positionUpdate |= updateVisual(entry);
 			}
-			bool onScreenA = entry->visible && item->image && item->dimensions.intersects(viewport);
 			if (positionUpdate) {
 				updatePosition(entry);
 			}
@@ -525,7 +525,7 @@ namespace FIFE {
 				needSorting.push_back(item);
 			}
 
-			if (!entry->forceUpdate || !entry->visible) {
+			if (!entry->forceUpdate) {
 				entry->forceUpdate = false;
 				entry->updateInfo = EntryNoneUpdate;
 				removes.insert(*entry_it);
@@ -643,7 +643,11 @@ namespace FIFE {
 				AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
 				uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
 				image = animation->getFrameByTimestamp(animationTime);
-
+				// if the action have an animation with only one frame (idle animation) then
+				// a forced update is not necessary.
+				if (animation->getFrameCount() <= 1) {
+					entry->forceUpdate = false;
+				}
 				if (colorOverlay) {
 					OverlayColors* co = actionVisual->getColorOverlay(angle);
 					if (co) {
