@@ -48,7 +48,7 @@
     <CheckBox name="is_interact" text="is Interact" />
     <Spacer />
     <VBox name="interact_wrapper">
-      <Label name="interact_layer_label" text="Interact Layers:" />
+      <Label name="interact_layer_label" text="Interact Layers are marked green:" />
       <Spacer />
       <ScrollArea min_size="150,50" horizontal_scrollbar="0">
         <VBox name="layers_wrapper">
