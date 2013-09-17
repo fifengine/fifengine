@@ -696,7 +696,7 @@ namespace FIFE {
 
 	void Camera::refresh() {
 		updateMatrices();
-		m_transform |= PositionTransform;
+		m_transform |= RotationTransform;
 	}
 
 	void Camera::resetUpdates() {
