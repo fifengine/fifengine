@@ -10,6 +10,18 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
+== 0.3.5  (August 21st, 2013)                                                 ==
+================================================================================
+
+=== Engine ===
+* Fixed another LayerCache bug.
+* Fixed blocking bug, which has affected multi cell objects.
+* Fixed segmentation fault within pathfinder.
+* Fixed segmentation fault within Instance::follow.
+* Fixed the visible/invisible problem. [t:780]
+* Fixed facing location and a related bug. [t:773]
+
+================================================================================
 == 0.3.4  (February 28th, 2013)                                               ==
 ================================================================================
 
