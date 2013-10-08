@@ -70,7 +70,7 @@ def createProperties():
 		try:
 			argspec = getargspec(func)
 			return (argspec[0] == ['self'] and not any(argspec[2:]))
-		except TypeError, e:
+		except TypeError as e:
 			#print func, e
 			return False
 
@@ -79,24 +79,29 @@ def createProperties():
 			if name.startswith(prefix):
 				new_name = name[len(prefix):]
 				break
-		settername   = 'set' + new_name
+		settername = 'set' + new_name
 		propertyname = new_name[0].lower() + new_name[1:]
 		return settername, propertyname
 
 	getter = re.compile(r"^(get|are|is)[A-Z]")
+	print '%-26s | %-26s | %-26s' % ('getter', 'setter', 'property name')
+	print '%-26s | %-26s | %-26s' % ('-' * 26, '-' * 26, '-' * 26)
 	for class_ in classes:
-		methods = [(name,attr) for name,attr in class_.__dict__.items()
-		                       if isSimpleGetter(attr) ]
-		setmethods = [(name,attr) for name,attr in class_.__dict__.items() if callable(attr)]
+		methods = [(name, attr) for name, attr in class_.__dict__.items()
+		                        if isSimpleGetter(attr) ]
+		setmethods = [(name, attr) for name, attr in class_.__dict__.items() if callable(attr)]
 		getters = []
-		for name,method in methods:
-			if getter.match(name):
-				getters.append((name,method))
-				settername, propertyname = createNames(name)
-				setter = dict(setmethods).get(settername,None)
-				#print name, settername, "--->",propertyname,'(',method,',',setter,')'
-				setattr(class_,propertyname,property(method,setter))
-		if not getters: continue
+		print '%-26s | %-26s | %-26s' % ('', '  **%s**  ' % class_.__name__, '')
+		for name, method in methods:
+			if not getter.match(name):
+				continue
+			getters.append((name, method))
+			settername, propertyname = createNames(name)
+			setter = dict(setmethods).get(settername)
+			print '%-26s | %-26s | %-26s' % (name, settername, propertyname)
+			setattr(class_, propertyname, property(method, setter))
+		if not getters:
+			continue
 
 		# We need to override the swig setattr function
 		# to get properties to work.
