@@ -69,7 +69,7 @@ def createProperties():
 			return False
 		try:
 			argspec = getargspec(func)
-			return not (argspec[0] or [s for s in argspec[2:] if s])
+			return not (argspec[0] or any(argspec[2:]))
 		except TypeError, e:
 			#print func, e
 			return False
