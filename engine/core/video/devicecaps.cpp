@@ -340,7 +340,7 @@ namespace FIFE {
 		}
 
 		if (!foundMode) {
-			throw NotSupported("Could not find a maching screen mode for the values given!");
+			throw NotSupported("Could not find a matching screen mode for the values given!");
 		}
 
 		return mode;
