@@ -247,17 +247,8 @@ namespace FIFE {
 					}
 					loadImportFile(fullFilePath.string(), fullDirPath.string());
 				}
-				
-				double speed = 1.0;
-				int success = root->QueryDoubleAttribute("speed", &speed);
-				if (success == TIXML_SUCCESS) {
-					obj->setSpeed(speed);
-				}
-				
-				const std::string* areaId = root->Attribute(std::string("area_id"));
-				if (areaId) {
-					obj->setArea(*areaId);
-				}
+			}
+		}
 
 		if (root && root->ValueStr() == "assets") {
 			for (TiXmlElement* objectElem = root->FirstChildElement("object"); objectElem; objectElem = objectElem->NextSiblingElement("object")) {
@@ -329,6 +320,12 @@ namespace FIFE {
 					const std::string* areaId = objectElem->Attribute(std::string("area_id"));
 					if (areaId) {
 						obj->setArea(*areaId);
+					}
+
+					double speed = 1.0;
+					int success = root->QueryDoubleAttribute("speed", &speed);
+					if (success == TIXML_SUCCESS) {
+						obj->setSpeed(speed);
 					}
 
 					// loop over all walkable areas
