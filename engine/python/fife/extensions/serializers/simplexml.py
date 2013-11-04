@@ -24,7 +24,8 @@
 import os
 from StringIO import StringIO
 	
-from fife.extensions.serializers import ET, SerializerError, InvalidFormat, NotFound
+from fife.extensions.serializers import ET, SerializerError, InvalidFormat, \
+										NotFound
 
 
 EMPTY_XML_FILE="""\
@@ -36,7 +37,8 @@ EMPTY_XML_FILE="""\
 
 class SimpleSerializer(object):
 	"""
-	Use this as a base class for custom setting loaders/savers to use with the Setting class.
+	Use this as a base class for custom setting loaders/savers to use with the 
+	Setting class.
 	"""
 	
 	def __init__(self, filename=None):
@@ -50,24 +52,25 @@ class SimpleSerializer(object):
 
 	def load(self, filename=None):
 		"""
-		@note: If the filename specified is empty this function MUST initialize an empty settings
-		file in whatever format you need.
+		@note: If the filename specified is empty this function MUST 
+		initialize an empty settings file in whatever format you need.
 		"""
 		pass
 		
 	def save(self, filename=None):
 		pass
 
-	def getModuleName(self):
+	def getModuleNameList(self):
 		"""
-		@note: Returns all the module names that are present in the settings.xml file
-		as a list of strings
+		@note: Returns all the module names that are present in the 
+		settings.xml file as a list of strings
 		"""
 		pass
 	
 	def getAllSettings(self,module):
 		"""
-		@note: Returns all the setting names under the Module name module as a dictionary structure
+		@note: Returns all the setting names and values under the Module name
+		module as a	dictionary structure
 		"""
 		pass
 
@@ -79,7 +82,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 		from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 		serializer = SimpleXMLSerializer(filename="somefile.xml")
 		serializer.set("module_name", "variable_name", "value")
-		somevariable = serializer.get("module_name", "variable_name", "default_value")
+		somevariable = serializer.get("module_name", "variable_name", \
+									  "default_value")
 	"""
 	def __init__(self, filename=None):
 		self._file = filename
@@ -97,13 +101,15 @@ class SimpleXMLSerializer(SimpleSerializer):
 		@param filename: The file to load
 		@type filename: C{str}
 		
-		@note: If the file does not exist it will automatically create a blank file for you.
+		@note: If the file does not exist it will automatically create a blank
+		file for you.
 		"""
 		if filename:
 			self._file = filename
 		
 		if not self._file:
-			raise SerializerError("Cannot load file or create file.  No filename specified!")
+			raise SerializerError("Cannot load file or create file.  No "
+								  "filename specified!")
 		
 		if not os.path.exists(self._file):
 			self._tree = ET.parse(StringIO(EMPTY_XML_FILE))
@@ -147,7 +153,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 			return float(e_value)
 		elif e_type == 'bool':
 			e_value = e_value.lower()
-			if e_value == "" or e_value == "false" or e_value == "no" or e_value == "0":
+			if e_value == "" or e_value == "false" or e_value == "no" \
+			   or e_value == "0":
 				return False
 			else:
 				return True
@@ -166,15 +173,18 @@ class SimpleXMLSerializer(SimpleSerializer):
 
 		@param module: Name of the module to get the variable from
 		@param name: Variable name
-		@param defaultValue: Specifies the default value to return if the variable is not found
-		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+		@param defaultValue: Specifies the default value to return if the 
+		variable is not found
+		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or 
+		C{bool} or C{list} or C{dict}
 		"""
 		if not self._initialized:
 			self.load()
 			self._initialized = True
 		
 		if not isinstance(name, str) and not isinstance(name, unicode):
-			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for "
+								 "name argument.")
 
 		#get the module tree: for example find tree under module FIFE
 		moduleTree = self._getModuleTree(module)
@@ -194,7 +204,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 			return defaultValue
 
 		# Strip value
-		if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
+		if e_strip == "" or e_strip == "false" or e_strip == "no" \
+		   or e_strip == "0":
 			e_strip = False
 		else: e_strip = True
 
@@ -215,7 +226,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 		@param module: Module where the variable should be set
 		@param name: Name of the variable
 		@param value: Value to assign to the variable
-		@type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+		@type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or 
+		C{list} or C{dict}
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
@@ -224,7 +236,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self._initialized = True
 		
 		if not isinstance(name, str) and not isinstance(name, unicode):
-			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for name argument.")
+			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
+								 "name argument.")
 
 		moduleTree = self._getModuleTree(module)
 		e_type = "str"
@@ -267,13 +280,14 @@ class SimpleXMLSerializer(SimpleSerializer):
 	"""
 	returns a list of string, where each string is a module name
 	"""
-	def getModuleName(self):
+	def getModuleNameList(self):
 		self._moduleNames = []
 		for c in self._root_element.getchildren():
 			if c.tag == "Module":
 				name = c.get("name","")
 				if not isinstance(name, str) and not isinstance(name, unicode):
-					raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
+										 "type for name argument.")
 				
 				self._moduleNames.append(name)
 		return self._moduleNames
@@ -298,7 +312,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 	
 				# check the name
 				if not isinstance(name, str) and not isinstance(name, unicode):
-					raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
+					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
+										 "type for name argument.")
 				element = e
 				
 				e_value = element.text
@@ -306,7 +321,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 				e_type	= str(element.get("type", "str")).strip()
 					
 				# Strip value
-				if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
+				if e_strip == "" or e_strip == "false" \
+				   or e_strip == "no" or e_strip == "0":
 					e_strip = False
 				else: e_strip = True
 			
@@ -333,26 +349,34 @@ class SimpleXMLSerializer(SimpleSerializer):
 		"""
 		for c in self._root_element.getchildren():
 			if c.tag != "Module":
-				raise InvalidFormat("Invalid tag in " + self._file + ". Expected Module, got: " + c.tag)
+				raise InvalidFormat("Invalid tag in " + self._file + \
+									". Expected Module, got: " + c.tag)
 			elif c.get("name", "") == "":
-				raise InvalidFormat("Invalid tag in " + self._file + ". Module name is empty.")
+				raise InvalidFormat("Invalid tag in " + self._file + \
+									". Module name is empty.")
 			else:
 				for e in c.getchildren():
 					if e.tag != "Setting":
-						raise InvalidFormat("Invalid tag in " + self._file + " in module: " + c.tag + ". Expected Setting, got: " + e.tag)
+						raise InvalidFormat("Invalid tag in " + self._file + \
+											" in module: " + c.tag + \
+											". Expected Setting, got: " + \
+											e.tag)
 					elif c.get("name", "") == "":
-						raise InvalidFormat("Invalid tag in " + self._file + " in module: " + c.tag + ". Setting name is empty" + e.tag)
+						raise InvalidFormat("Invalid tag in " + self._file + \
+											" in module: " + c.tag + \
+											". Setting name is empty" + e.tag)
 						
 	def _getModuleTree(self, module):
 		"""
-		Returns a module element from the XML tree. If no module with the specified
-		name exists, a new element will be created.
+		Returns a module element from the XML tree. If no module with the 
+		specified name exists, a new element will be created.
 
 		@param module: The module to get from the settings tree
 		@type module: C{string}
 		"""
 		if not isinstance(module, str) and not isinstance(module, unicode):
-			raise AttributeError("Settings:_getModuleTree: Invalid type for module argument.")
+			raise AttributeError("Settings:_getModuleTree: Invalid type for "
+								 "module argument.")
 
 		for c in self._root_element.getchildren():
 			if c.tag == "Module" and c.get("name", "") == module:

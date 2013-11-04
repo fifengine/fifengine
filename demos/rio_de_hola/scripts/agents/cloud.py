@@ -50,6 +50,9 @@ class Cloud(Agent):
 			self.agent.getLocationRef().setExactLayerCoordinates(self.initialCoords)
 			self.appear()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def start(self, x_dir, y_dir):
 		self.x_dir = x_dir
 		self.y_dir = y_dir
@@ -59,12 +62,12 @@ class Cloud(Agent):
 
 	def appear(self):
 		self.state = _STATE_APPEAR
-		self.agent.act('appear', self.loc, False)
+		self.agent.actOnce('appear', self.loc)
 
 	def disappear(self):
 		self.state = _STATE_DISAPPEAR
-		self.agent.act('disappear', self.loc, False)
+		self.agent.actOnce('disappear', self.loc)
 
 	def move(self):
 		self.state = _STATE_FLOATING
-		self.agent.act('default', self.loc, False)
+		self.agent.actOnce('default', self.loc)

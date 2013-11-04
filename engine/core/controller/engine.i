@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -69,6 +69,12 @@ namespace FIFE {
 		bool isGLUseFramebuffer() const;
 		void setGLUseNPOT(bool oglusenpot);
 		bool isGLUseNPOT() const;
+		void setGLTextureFiltering(FIFE::TextureFiltering filter);
+		FIFE::TextureFiltering getGLTextureFiltering() const;
+		void setGLUseMipmapping(bool mipmapping);
+		bool isGLUseMipmapping() const;
+		void setGLUseMonochrome(bool monochrome);
+		bool isGLUseMonochrome() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);

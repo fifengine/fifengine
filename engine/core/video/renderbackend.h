@@ -89,6 +89,20 @@ namespace FIFE {
 	};
 #endif
 	
+	enum OverlayType {
+		OVERLAY_TYPE_NONE = 0,
+		OVERLAY_TYPE_COLOR = 1,
+		OVERLAY_TYPE_COLOR_AND_TEXTURE = 2,
+		OVERLAY_TYPE_TEXTURES_AND_FACTOR = 3
+	};
+
+	enum TextureFiltering {
+		TEXTURE_FILTER_NONE = 0,
+		TEXTURE_FILTER_BILINEAR = 1,
+		TEXTURE_FILTER_TRILINEAR = 2,
+		TEXTURE_FILTER_ANISOTROPIC = 3
+	};
+
 	class GuiVertex {
 	public:
 		DoublePoint position;
@@ -197,9 +211,11 @@ namespace FIFE {
 		 */
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba) = 0;
 
+		virtual void addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba) = 0;
+
 		/** Dirty helper function to change the render infos
 		 */
-		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc) = 0;
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype = OVERLAY_TYPE_NONE) = 0;
 
 		/** Creates a Screenshot and saves it to a file.
 		 */
@@ -312,6 +328,39 @@ namespace FIFE {
 		 */
 		bool isNPOTEnabled() const { return m_usenpot; }
 
+		/** Sets the texture filtering method.
+		 * Supports none, bilinear, trilinear and anisotropic filtering.
+		 * Note! Works only for OpenGL backends.
+		 * @see TextureFiltering
+		 */
+		void setTextureFiltering(TextureFiltering filter);
+
+		/** @see setTextureFiltering
+		 */
+		TextureFiltering getTextureFiltering() const;
+
+		/** Enables or disables the usage of mipmapping.
+		 * Note! Works only for OpenGL backends.
+		 */
+		void setMipmappingEnabled(bool enabled);
+
+		/** @see setMipmappingEnabled
+		 */
+		bool isMipmappingEnabled() const;
+		
+		/** Gets max antisotropy for antisotropic filtering.
+		 */
+		int32_t getMaxAnisotropy() const;
+
+		/** Enables or disables monochrome rendering.
+		 * Note! Works only for OpenGL backends.
+		 */
+		void setMonochromeEnabled(bool enabled);
+
+		/** @see setMonochromeEnabled
+		 */
+		bool isMonochromeEnabled() const;
+
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -392,6 +441,15 @@ namespace FIFE {
 
 		bool m_isbackgroundcolor;
 		SDL_Color m_backgroundcolor;
+
+		// mipmapping
+		bool m_isMipmapping;
+		// texture filter
+		TextureFiltering m_textureFilter;
+		// max anisotropy
+		int32_t m_maxAnisotropy;
+		// monochrome rendering
+		bool m_monochrome;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea

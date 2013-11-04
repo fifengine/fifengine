@@ -41,7 +41,11 @@ namespace FIFE {
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),
 		m_isframelimit(false),
-		m_framelimit(60) {
+		m_framelimit(60),
+		m_isMipmapping(false),
+		m_textureFilter(TEXTURE_FILTER_NONE),
+		m_maxAnisotropy(0),
+		m_monochrome(false) {
 
 		m_isbackgroundcolor = false;
 		m_backgroundcolor.r = 0;
@@ -125,6 +129,33 @@ namespace FIFE {
 		setClipArea(getArea(), true);
 	}
 
+	void RenderBackend::setTextureFiltering(TextureFiltering filter) {
+		m_textureFilter = filter;
+	}
+
+	TextureFiltering RenderBackend::getTextureFiltering() const {
+		return m_textureFilter;
+	}
+
+	void RenderBackend::setMipmappingEnabled(bool enabled) {
+		m_isMipmapping = enabled;
+	}
+
+	bool RenderBackend::isMipmappingEnabled() const {
+		return m_isMipmapping;
+	}
+	
+	int32_t RenderBackend::getMaxAnisotropy() const {
+		return m_maxAnisotropy;
+	}
+	
+	void RenderBackend::setMonochromeEnabled(bool enabled) {
+		m_monochrome = enabled;
+	}
+
+	bool RenderBackend::isMonochromeEnabled() const {
+		return m_monochrome;
+	}
 
 	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {
 		m_iscolorkeyenabled = colorkeyenable;

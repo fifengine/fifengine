@@ -30,7 +30,7 @@ def initEnvironment(env):
 	
 	path = os.getcwd()
 	
-	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-2.0.1')
+	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-2.0.8')
 	mingwbindir = os.path.join(path, 'build', 'win32', 'applications', 'mingw', 'bin')
 	
 	env.PrependENVPath('PATH', swigdir)
@@ -110,4 +110,6 @@ def getRequiredLibs(opengl):
 	return None
 
 def getOptionalLibs(opengl):
-	return None
+	libs = [('tinyxml', 'tinyxml.h')]
+	
+	return libs

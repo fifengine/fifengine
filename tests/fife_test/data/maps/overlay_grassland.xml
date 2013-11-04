@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="ascii" ?>
+<map id="level1" format="1.0">
+    <import file="../tilesets/grassland_tiles.xml" />
+    <import file="../tilesets/toilett.xml" />
+    <import file="../objects/actors/player/skel/object.xml" />
+    <import file="../tilesets/skel_overlay_tiles.xml" />
+    <import file="../objects/actors/player/hero/object.xml" />
+    <import file="../objects/actors/player/hero/clothes_atlas.xml" />
+    <import file="../objects/actors/player/hero/leather_armor_atlas.xml" />
+    <import file="../objects/actors/player/hero/steel_armor_atlas.xml" />
+    <import file="../objects/actors/player/hero/male_head1_atlas.xml" />
+    <import file="../objects/actors/player/hero/male_head2_atlas.xml" />
+    <import file="../objects/actors/player/hero/male_head3_atlas.xml" />
+    <import file="../objects/actors/player/hero/dagger_atlas.xml" />
+    <import file="../objects/actors/player/hero/shortsword_atlas.xml" />
+    <import file="../objects/actors/player/hero/longsword_atlas.xml" />
+    <import file="../objects/actors/player/hero/greatsword_atlas.xml" />
+    <import file="../objects/actors/player/hero/buckler_atlas.xml" />
+    <import file="../objects/actors/player/hero/shield_atlas.xml" />
+    <layer id="ground_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals" sorting="camera" layer_type="interact" layer_type_id="item_layer">
+        <instances>
+            <i ns="grassland_tileset" o="grass1" x="1.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff1" x="-10.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-9.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-8.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-7.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-6.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-5.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-4.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-1.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-3.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-2.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="-11.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="2.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff1" x="0.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff12" x="2.000000" y="12.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff12" x="2.000000" y="12.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff1" x="1.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff9" x="-12.000000" y="12.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="9.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="7.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="6.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="4.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="2.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="0.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="-1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="-2.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="-3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="3.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="10.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-1.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-2.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff17" x="-13.000000" y="12.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff17" x="-12.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="10.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="8.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="11.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-4.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-5.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="-4.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="cliff24" x="2.000000" y="13.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="4.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="3.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="2.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="1.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-1.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-2.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-3.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-4.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-5.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-6.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-7.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-8.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-9.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="-10.000000" y="-7.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="cliff2" x="-13.000000" y="-5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="grass1" x="0.000000" y="-6.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
+            <i o="grass1" x="4.000000" y="9.000000" z="0.000000" r="0" stackpos="0" />
+        </instances>
+    </layer>
+    <layer id="item_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals" sorting="camera" layer_type="walkable">
+        <instances>
+            <i ns="tutorial1objects" id="player" o="hero" x="-5.000000" y="7.000000" z="0.000000" r="0" blocking="1" stackpos="1" />
+            <i id="skel1" o="skel" x="-9.000000" y="7.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i id="skel2" o="skel" x="2.000000" y="7.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i ns="grassland_tileset" o="toilett" id="toilett0" x="-8.000000" y="-5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett1" x="-5.000000" y="-5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett2" x="-2.000000" y="-5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett3" x="1.000000" y="-5.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett4" x="-8.000000" y="-1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett5" x="-5.000000" y="-1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett6" x="-2.000000" y="-1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett7" x="1.000000" y="-1.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett8" x="-8.000000" y="3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett9" x="-5.000000" y="3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett10" x="-2.000000" y="3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+            <i o="toilett" id="toilett11" x="1.000000" y="3.000000" z="0.000000" r="0" blocking="1" stackpos="0" />
+        </instances>
+    </layer>
+    <cellcaches>
+        <cellcache id="item_layer" default_cost="1.000000" default_speed="1.000000" search_narrow="1" />
+    </cellcaches>
+    <camera id="camera1" ref_layer_id="ground_layer" zoom="1.00000" tilt="-60.000000" rotation="45.000000" viewport="0,0,1024,768" ref_cell_width="64" ref_cell_height="32" />
+</map>

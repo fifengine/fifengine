@@ -119,10 +119,10 @@ def placeWidget(widget,position):
 	w,h = widget.size
 
 	if x_pos == CENTER:
-		x = (screen_width()-w)/2 + x_delta
+		x = (screen_width() - w) // 2 + x_delta
 
 	if y_pos == CENTER:
-		y = (screen_height()-h)/2 + y_delta
+		y = (screen_height() - h) // 2 + y_delta
 
 	if x_pos == LEFT:
 		x = x_delta

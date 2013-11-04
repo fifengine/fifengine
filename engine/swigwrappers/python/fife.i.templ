@@ -1,5 +1,13 @@
 %{
 /**
+ * HAVE_SNPRINTF is defined in several places.  This prevents the warning message
+ * from appearing when compiling the swig interface.
+ */
+#ifdef HAVE_SNPRINTF
+#undef HAVE_SNPRINTF
+#endif
+
+/**
  * This is a workaround for a minor swig bug when building on gcc 4.6.1 and above.
  * Prior to gcc 4.6.1 the STL headers like vector, string, etc. used to 
  * automatically pull in the cstddef header but starting with gcc 4.6.1 they no
@@ -87,9 +95,9 @@ static void handleDirectorException() {
 	PyErr_Fetch(&exception, &value, &traceback);
 	PyErr_NormalizeException(&exception, &value, &traceback);
 	if (exception) {
-		PySys_SetObject("last_type", exception);
-		PySys_SetObject("last_value", value);
-		PySys_SetObject("last_traceback", traceback);	
+		PySys_SetObject((char*)"last_type", exception);
+		PySys_SetObject((char*)"last_value", value);
+		PySys_SetObject((char*)"last_traceback", traceback);	
 		
 		PyObject* d = PyModule_GetDict (PyImport_AddModule ("__main__"));
 		PyDict_SetItemString(d, "exc_type", exception);
@@ -133,6 +141,8 @@ print s\n\
 		SWIG_exception(SWIG_RuntimeError, "Caught a director exception"); \
 	}
 %}
+
+%exceptionclass FIFE::Exception;
 
 %feature("director:except") {
 	if ($$error != NULL) {

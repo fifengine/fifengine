@@ -973,7 +973,7 @@ public:
 
 	/** Given an attribute name, Attribute() returns the value
 		for the attribute of that name, or null if none exists.
-		If the attribute exists and can be converted to an double,
+		If the attribute exists and can be converted to a double,
 		the double value will be put in the return 'd', if 'd'
 		is non-null.
 	*/

@@ -21,9 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import Attr
 from fife.extensions.pychan.properties import ImageProperty
+
+from widget import Widget
+
 
 class Icon(Widget):
 	"""
@@ -79,6 +83,10 @@ class Icon(Widget):
 								  is_focusable=is_focusable,
 								  comment=comment)
 		self.image = image
+		
+		#if the size parameter is specified set it (again) to override
+		#the icons size.
+		if size is not None: self.size = size
 
 	def clone(self, prefix):
 		iconClone = Icon(None,

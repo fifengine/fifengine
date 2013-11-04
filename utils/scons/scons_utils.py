@@ -120,64 +120,59 @@ def gen_swig_interface(templatefile, intfiles, outdir, outfile, importfiles = No
 		open(interfacefile, 'w').write(template.substitute(inclusions=inclusions, imports=''))
 
 def get_fife_version(srcpath):
-    MAJOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MAJOR_VERSION\s+(.*)")
-    MINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MINOR_VERSION\s+(.*)")
-    SUBMINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_SUBMINOR_VERSION\s+(.*)")
-    
-    patterns = [MAJOR_VERSION_PATTERN,
-                MINOR_VERSION_PATTERN,
-                SUBMINOR_VERSION_PATTERN]
+	MAJOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MAJOR_VERSION\s+(.*)")
+	MINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MINOR_VERSION\s+(.*)")
+	PATCH_VERSION_PATTERN = re.compile(r"#define\s+FIFE_PATCH_VERSION\s+(.*)")
+	PRERELEASE_TYPE_PATTERN = re.compile(r"#define\s+FIFE_PRERELEASE_TYPE\s+(.*)")
+	PRERELEASE_VERSION_PATTERN = re.compile(r"#define\s+FIFE_PRERELEASE_VERSION\s+(.*)")
+	patterns = [MAJOR_VERSION_PATTERN,
+				MINOR_VERSION_PATTERN,
+				PATCH_VERSION_PATTERN,
+				PRERELEASE_TYPE_PATTERN,
+				PRERELEASE_VERSION_PATTERN]
 	
-    source = open(os.path.join(srcpath, 'version.h'), 'r').read()
-    versionInfo = []
-    for pattern in patterns:
-        match = pattern.search(source)
-        if match:
+	source = open(os.path.join(srcpath, 'version.h'), 'r').read()
+	versionInfo = []
+	for pattern in patterns:
+		match = pattern.search(source)
+		if match:
 			versionInfo.append(match.group(1).strip())
-            
-    return '.'.join(versionInfo)
+			
+	return '.'.join(versionInfo)
 
-def get_fife_revision(path):
-	svnversion_output = get_program_output('svnversion', [])
-	if svnversion_output is not None:
-		fiferev = svnversion_output.lstrip().rstrip().rstrip('MSP')
-		if fiferev.isdigit():
-			return fiferev
+def get_fife_git_hash(path):
+	fifehash = ""
+	githash_output = get_program_output('git', ['rev-parse','--short=8','HEAD'])
+	if githash_output is not None:
+		fifehash = githash_output.strip()
+		return fifehash
 
-	subwcrev_output = get_program_output('SubWCRev.exe', [path, '-fm', ])
-	if subwcrev_output is not None:
-		for line in subwcrev_output.split('\n'):
-			if line.startswith('Last committed at revision'):
-				fiferev = line.strip().split(' ')[-1]
-				if fiferev.isdigit():
-					return fiferev
-
-	git_svn_output = get_program_output('git', ['svn', 'info']) or ''
-	for line in git_svn_output.split('\n'):
-		if line.startswith('Revision:'):
-			fiferev = line.strip().split(' ')[-1]
-			if fiferev.isdigit():
-				return fiferev
-
-	return "0"
+	#when git is not available check the .githash file
+	hashfile = os.path.join(path, '.githash')  
+	if os.path.isfile(hashfile):
+		f = open(hashfile, "r")
+		hashf = f.read()
+		return hashf.strip()
+	
+	return fifehash
 
 #checks the users PATH environment variable for a executable program and 
 #returns the full path
 def which(program):
-    def is_exe(fpath):
-        return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+	def is_exe(fpath):
+		return os.path.exists(fpath) and os.access(fpath, os.X_OK)
 
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
+	fpath, fname = os.path.split(program)
+	if fpath:
+		if is_exe(program):
+			return program
+	else:
+		for path in os.environ["PATH"].split(os.pathsep):
+			exe_file = os.path.join(path, program)
+			if is_exe(exe_file):
+				return exe_file
 
-    return None
+	return None
 
 #Return the data written to stdout if the process succeeds or None if it crashes
 def get_program_output(program, args):

@@ -105,6 +105,9 @@ class ActorActionListener(ObjectActionListener):
 			self._object.stand()
 			self._object.performNextAction()
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+
 class ActorAttributes(Serializer):
 	def __init__(self, strength=0, dexterity=0, intelligence=0, health=0, walkspeed=0):
 		self._str = strength
@@ -192,7 +195,7 @@ class Actor(BaseGameObject):
 		
 	def stand(self):
 		self._state = ActorStates["STAND"]
-		self._instance.act('stand', self._instance.getFacingLocation())
+		self._instance.actOnce('stand', self._instance.getFacingLocation())
 		
 	def walk(self, location):
 		self._state = ActorStates["WALK"]

@@ -532,7 +532,7 @@ class XMLMapLoader(object):
 
 			if (object.getAction('default')):
 				target = fife.Location(layer)
-				inst.act('default', target, True)
+				inst.actRepeat('default', target)
 
 	def parse_cameras(self, mapelt, map):
 		""" create all cameras and activate them

@@ -23,7 +23,9 @@
 
 from fife.extensions.pychan.attrs import IntAttr
 
+
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
+
 def isLayouted(widget):
 	return isinstance(widget,LayoutBase)
 
@@ -107,7 +109,7 @@ class LayoutBase(object):
 		n = len(expandable_items)
 		while used_space < available_space and expandable_items:
 			index = index % n
-			delta = (available_space - used_space) / n
+			delta = (available_space - used_space) // n
 			if delta == 0:
 				delta = 1
 
@@ -145,7 +147,7 @@ class LayoutBase(object):
 		n = len(expandable_items)
 		while used_space < available_space and expandable_items:
 			index = index % n
-			delta = (available_space - used_space) / n
+			delta = (available_space - used_space) // n
 			if delta == 0:
 				delta = 1
 

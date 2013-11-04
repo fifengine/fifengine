@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -43,7 +43,7 @@ namespace fcn {
 		x_downoffset(0),
 		y_downoffset(0) {
 		addWidgetListener(this);
-			
+
 		m_hoverImage = hover_file;
 		setFrameSize(0);
 		adjustSize();
@@ -52,7 +52,7 @@ namespace fcn {
 
 	TwoButton::~TwoButton() {
 	}
-	
+
 	void TwoButton::setDownOffset(int32_t x, int32_t y) {
 		x_downoffset = x;
 		y_downoffset = y;
@@ -76,7 +76,7 @@ namespace fcn {
 		}
 
 		if (img) {
-			graphics->drawImage(img, xoffset, yoffset);
+			graphics->drawImage(img, xoffset, yoffset, 0, 0, getWidth(), getHeight());
 		}
 
 		graphics->setColor(getForegroundColor());
@@ -138,7 +138,7 @@ namespace fcn {
 		m_hoverImage = image;
 		adjustSize();
 	}
-	
+
 	void TwoButton::ancestorHidden(const Event& e) {
 		mHasMouse = false;
 	}

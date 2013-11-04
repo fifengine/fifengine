@@ -86,7 +86,7 @@ namespace FIFE {
 
 		/** Gets action with given id. If not found, returns NULL
 		 */
-		Action* getAction(const std::string& identifier) const;
+		Action* getAction(const std::string& identifier, bool deepsearch = true) const;
 
 		/** Gets all available action ids of the object and packs them into a list
 		 */
@@ -98,7 +98,7 @@ namespace FIFE {
 
 		/** Gets default action assigned to this object. If none available, returns NULL
 		 */
-		Action* getDefaultAction() const { return m_defaultAction; }
+		Action* getDefaultAction() const;
 
 		/** Sets pather used by instances created out of this object
 		 */
@@ -106,16 +106,16 @@ namespace FIFE {
 
 		/** Gets associated pather
 		 */
-		IPather* getPather() const { return m_pather; }
+		IPather* getPather() const;
 
 		/** Gets an object where this object was inherited from
 		 * @see inherited object
 		 */
-		Object* getInherited() const { return m_inherited; }
+		Object* getInherited() const;
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void adoptVisual(IVisual* visual) { m_visual = visual; }
+		void adoptVisual(IVisual* visual);
 
 		/** Gets used visualization
 		 */
@@ -123,7 +123,7 @@ namespace FIFE {
 
 		/** Sets if object blocks movement
 		 */
-		void setBlocking(bool blocking) { m_blocking = blocking; }
+		void setBlocking(bool blocking);
 
 		/** Gets if object blocks movement
 		 */
@@ -131,7 +131,7 @@ namespace FIFE {
 
 		/** Set to true, if object is such that it doesn't move
 		 */
-		void setStatic(bool stat) { m_static = stat; }
+		void setStatic(bool stat);
 
 		/** Gets if object moves
 		 */
@@ -164,7 +164,7 @@ namespace FIFE {
 		/** Returns the cost id.
 		 * @return A const reference to a string which contains the identifier.
 		 */
-		const std::string& getCostId() const;
+		std::string getCostId() const;
 
 		/** Sets the cost.
 		 * @param cost A double which value is used as cost.
@@ -175,6 +175,21 @@ namespace FIFE {
 		 * @return A double which value is used as cost.
 		 */
 		double getCost() const;
+
+		/** Gets if object uses special speed modifier.
+		 * @return A boolean, true if the object uses special speed, otherwise false.
+		 */
+		bool isSpecialSpeed() const;
+
+		/** Sets the speed modifier.
+		 * @param cost A double which value is used as speed multiplier.
+		 */
+		void setSpeed(double cost);
+
+		/** Returns the speed modifier.
+		 * @return A double which value is used as speed multiplier.
+		 */
+		double getSpeed() const;
 
 		/** Gets if object uses special cost.
 		 * @return A boolean, true if the object uses special cost, otherwise false.
@@ -189,7 +204,7 @@ namespace FIFE {
 		/** Returns all multi part identifiers.
 		 * @return A const reference to a list that holds the identifiers.
 		 */
-		const std::list<std::string>& getMultiPartIds() const;
+		std::list<std::string> getMultiPartIds() const;
 
 		/** Removes a multi part identifier.
 		 * @param partId A const reference to a string that holds the identifier.
@@ -218,7 +233,7 @@ namespace FIFE {
 		/** Returns all multi part objects.
 		 * @return A const reference to a set that holds the objects.
 		 */
-		const std::set<Object*>& getMultiParts() const;
+		std::set<Object*> getMultiParts() const;
 
 		/** Removes a multi part object.
 		 * @param obj A pointer to the part object.
@@ -238,19 +253,19 @@ namespace FIFE {
 		/** Returns all rotationally dependent coordinates from this object part.
 		 * @return A const reference to a multimap which contains the coordinates per rotation.
 		 */
-		const std::multimap<int32_t, ModelCoordinate>& getMultiPartCoordinates() const;
+		std::multimap<int32_t, ModelCoordinate> getMultiPartCoordinates() const;
 
 		/** Returns all object part coordinates for the given rotation.
 		 * @param rotation A integer value for the angle.
 		 * @return A vector which contains the coordinates.
 		 */
-		std::vector<ModelCoordinate> getMultiPartCoordinates(int32_t rotation);
+		std::vector<ModelCoordinate> getMultiPartCoordinates(int32_t rotation) const;
 
 		/** Returns all multi object coordinates for the given rotation.
 		 * @param rotation A integer value for the angle.
 		 * @return A vector which contains the coordinates.
 		 */
-		std::vector<ModelCoordinate> getMultiObjectCoordinates(int32_t rotation);
+		std::vector<ModelCoordinate> getMultiObjectCoordinates(int32_t rotation) const;
 
 		/** Sets the rotation anchor for this multi object.
 		 * Is used to rotate the images from multi part objects around this relative point,
@@ -262,7 +277,7 @@ namespace FIFE {
 		/** Returns the rotation anchor for this multi object.
 		 * @return A const reference to a ExactModelCoordinate that holds the anchor coordinate.
 		 */
-		const ExactModelCoordinate& getRotationAnchor() const;
+		ExactModelCoordinate getRotationAnchor() const;
 
 		/** Sets the rotation to restricted.
 		 * If this is enabled the multi object uses only rotation values are which based on multi coordinates.
@@ -300,7 +315,7 @@ namespace FIFE {
 		/** Gets the area id that the instances of this object adds to their cells.
 		 * @return The area id, default is "".
 		 */
-		const std::string& getArea() const;
+		std::string getArea() const;
 
 		/** Adds an area id to walkable area. The instances of this object
 		 *  can only walk on cells that part of the given areas.
@@ -316,7 +331,7 @@ namespace FIFE {
 		/** Returns a list that contains all walkable area ids.
 		 * @return A list that contains all walkable area ids as strings.
 		 */
-		const std::list<std::string>& getWalkableAreas() const;
+		std::list<std::string> getWalkableAreas() const;
 
 		/** Compares equality of two objects
 		 */
@@ -332,73 +347,110 @@ namespace FIFE {
 
 		//! namespace
 		std::string m_namespace;
-
+		
 		//! filename
 		std::string m_filename;
 
 		//! pointer to inherited object
 		Object* m_inherited;
 
-		//! holds action ids and assigned actions
-		std::map<std::string, Action*>* m_actions;
-
-		//! indicates if object blocks
-		bool m_blocking;
-
-		//! indicates if object is static
-		bool m_static;
-
-		//! pointer to pathfinder
-		IPather* m_pather;
-
 		//! pointer to object visual
 		IVisual* m_visual;
 
-		//! pointer to default action
-		Action* m_defaultAction;
+		class BasicObjectProperty {
+		public:
+			//! Constructor
+			BasicObjectProperty();
+		
+			//! Destructor
+			~BasicObjectProperty();
 
-		//! position on cellstack
-		uint8_t m_cellStack;
+			//! area id
+			std::string m_area;
 
-		//! cost identifier
-		std::string m_costId;
+			//! holds action ids and assigned actions
+			std::map<std::string, Action*>* m_actions;
 
-		//! cost value, default 1.0
-		double m_cost;
+			//! pointer to default action
+			Action* m_defaultAction;
 
-		//! indicates if object is part of multi object
-		bool m_multiPart;
+			//! indicates if object blocks
+			bool m_blocking;
 
-		//! indicates if object uses only restricted rotations
-		bool m_restrictedRotation;
+			//remove this with a if (MovableObjectProperty)
+			//! indicates if object is static
+			bool m_static;
 
-		//! z range value
-		int32_t m_zRange;
+			//! position on cellstack
+			uint8_t m_cellStack;
+		};
 
-		//! list with part identifiers
-		std::list<std::string> m_multiPartIds;
+		class MovableObjectProperty {
+		public:
+			//! Constructor
+			MovableObjectProperty();
+		
+			//! Destructor
+			~MovableObjectProperty();
 
-		//! rotation anchor
-		ExactModelCoordinate m_rotationAnchor;
+			//! pointer to pathfinder
+			IPather* m_pather;
 
-		//! set with part objects
-		std::set<Object*> m_multiParts;
+			//! cost identifier
+			std::string m_costId;
 
-		//! part object angles
-		type_angle2id m_partAngleMap;
+			//! cost value, default 1.0
+			double m_cost;
 
-		//! multi object angles
-		type_angle2id m_multiAngleMap;
+			//! speed modifier, default 1.0
+			double m_speed;
 
-		//! part object coordinates
-		std::multimap<int32_t, ModelCoordinate> m_multiPartCoordinates;
+			//! z range value
+			int32_t m_zRange;
+		
+			//! list contains walkable area ids
+			std::list<std::string> m_walkableAreas;
+		};
 
-		//! multi object coordinates
-		std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
+		class MultiObjectProperty {
+		public:
+			//! Constructor
+			MultiObjectProperty();
+		
+			//! Destructor
+			~MultiObjectProperty();
 
-		std::string m_area;
+			//! indicates if object is part of multi object
+			bool m_multiPart;
 
-		std::list<std::string> m_walkableAreas;
+			//! indicates if object uses only restricted rotations
+			bool m_restrictedRotation;
+
+			//! list with part identifiers
+			std::list<std::string> m_multiPartIds;
+
+			//! rotation anchor
+			ExactModelCoordinate m_rotationAnchor;
+
+			//! set contains part objects
+			std::set<Object*> m_multiParts;
+
+			//! part object angles
+			type_angle2id m_partAngleMap;
+
+			//! multi object angles
+			type_angle2id m_multiAngleMap;
+
+			//! part object coordinates
+			std::multimap<int32_t, ModelCoordinate> m_multiPartCoordinates;
+
+			//! multi object coordinates
+			std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
+		};
+
+		BasicObjectProperty* m_basicProperty;
+		MovableObjectProperty* m_moveProperty;
+		MultiObjectProperty* m_multiProperty;
 	};
 
 } //FIFE

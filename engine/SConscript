@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -34,6 +34,7 @@ engine_path = opts['SRC']
 core_path = os.path.join('engine', 'core')
 extensionpath = upath(os.path.join(opts['SRC'], 'python', 'fife', 'extensions'))
 
+local_tinyxml = env['LOCAL_TINYXML']
 fifechan = env['ENABLE_FIFECHAN']
 librocket = env['ENABLE_LIBROCKET']
 cegui = env['ENABLE_CEGUI']
@@ -44,7 +45,7 @@ if fifechan:
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
-dirfilters = ['swigwrappers', 'fifechan', 'librocket', 'cegui']
+dirfilters = ['swigwrappers', 'tinyxml', 'fifechan', 'librocket', 'cegui']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -63,7 +64,7 @@ implfiles = [f for f in allfiles_base if utils.is_implfile(f)]
 swigfiles = [f for f in allfiles_base if utils.is_swigfile(f)]
 intfiles = utils.filter_by_dir(dirfilters, swigfiles)
 compilefiles = utils.filter_by_dir(dirfilters, implfiles)
-headerfiles = utils.filter_by_dir(['fifechan'], headerfiles)
+headerfiles = utils.filter_by_dir(['tinyxml', 'fifechan'], headerfiles)
 fife_imports = []
 
 if sys.platform == 'win32':
@@ -72,6 +73,22 @@ if sys.platform == 'win32':
 	dllfiles = list()
 	for f in dllfilelist:
 		dllfiles.append(utils.relpath(f,opts['DLLPATH']))
+
+#**************************************************************************
+# if --local-tinyxml is defined or the system version is not found then
+# add the local tinyxml header/impl files to the overall compile list
+#**************************************************************************
+if (local_tinyxml):
+	# get all files in ext/tinyxml directory
+	local_tinyxml_files = utils.include_by_dir(['tinyxml'], allfiles_base) 
+	
+	#filter header files and add to overall list
+	local_tinyxml_headerfiles = [f for f in local_tinyxml_files if utils.is_headerfile(f)]
+	headerfiles = headerfiles + local_tinyxml_headerfiles
+	
+	# filter impl files and add to overall list
+	local_tinyxml_implfiles = [f for f in local_tinyxml_files if utils.is_implfile(f)]
+	compilefiles = compilefiles + local_tinyxml_implfiles
 
 #**************************************************************************
 #Compile the list of fifechan glue code
@@ -110,11 +127,15 @@ cegui_glue_swigfiles = utils.include_by_dir(['cegui'], swigfiles)
 if cegui:
 	headerfiles = headerfiles + cegui_glue_headerfiles
 	compilefiles = compilefiles + cegui_glue_implfiles
+	
 #**************************************************************************
-#define the FIFE revision number
+#define the FIFE git hash number
+#
+#only define this if a valid hash was detected
 #**************************************************************************
-if opts['FIFE_REVISION'] is not "0":
-	env.AppendUnique(CPPDEFINES = ['FIFE_REVISION=' + opts['FIFE_REVISION']])	
+if opts['FIFE_GIT_HASH']:
+	if opts['FIFE_GIT_HASH'] is not "":
+		env.AppendUnique(CPPDEFINES = ['FIFE_GIT_HASH=' + opts['FIFE_GIT_HASH']])	
 
 #**************************************************************************
 #python
@@ -230,10 +251,10 @@ pythonlib = env.SharedLibrary(target = fife_tgt,
 							  SHLIBEMITTER = '')
 
 pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fife_wrap.cc'),
-                                           os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
-                                           os.path.join('python', 'fife', 'fife.py')],
+										   os.path.join('swigwrappers', 'python' ,'fife_wrap.h'),
+										   os.path.join('python', 'fife', 'fife.py')],
 							  source = os.path.join('swigwrappers', 'python' ,'fife.i'),
-							  SWIGFLAGS=['-python','-c++','-w511'],
+							  SWIGFLAGS=['-python','-c++','-w511', '-w473', '-w404'],
 							  SWIGPATH='core',
 							  SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
 

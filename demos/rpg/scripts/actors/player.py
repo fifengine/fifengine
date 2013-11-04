@@ -37,7 +37,10 @@ class PlayerActionListener(ActorActionListener):
 		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
 		if action.getId() == 'walk':
 			pass
-
+		
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 class Player(Actor):
 	def __init__(self, gamecontroller, layer, playermodelname):
 		super(Player, self).__init__(gamecontroller, layer, "PLAYER", "player", playermodelname, "player", True)

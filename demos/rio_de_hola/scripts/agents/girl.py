@@ -49,6 +49,9 @@ class Girl(Agent):
 			else:
 				self.run(self.getNextWaypoint())
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def getNextWaypoint(self):
 		self.waypoint_counter += 1
 		l = fife.Location(self.layer)
@@ -60,7 +63,7 @@ class Girl(Agent):
 
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('stand')
+		self.agent.actOnce('stand')
 
 	def follow_hero(self):
 		self.state = _STATE_FOLLOW

@@ -21,9 +21,15 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fife
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
+
+from common import get_manager, gui2text, text2gui
+from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
 from widget import Widget
-from layout import VBoxLayoutMixin, HBoxLayoutMixin
+
 
 class Container(Widget):
 	"""
@@ -157,6 +163,10 @@ class Container(Widget):
 		be hidden when you show the container widget you must call child.hide().
 		"""
 		
+		if isinstance(widget, Spacer):
+			self.addSpacer(widget)
+			return
+
 		widget.parent = self
 		widget._visible = self._visible
 		self.children.append(widget)
@@ -272,6 +282,16 @@ class Container(Widget):
 				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
 	def beforeShow(self):
+
+		# This is required because beforeShow() is NOT called on nested
+		# containers or child widgets.  This ensures that background tiled 
+		# images are shown properly
+		def _resetTilingChildren(widget):
+			tilingMethod = getattr(widget, "_resetTiling", None)
+			if callable(tilingMethod):
+				tilingMethod()
+		self.deepApply(_resetTilingChildren)
+
 		self._resetTiling()
 
 	def _resetTiling(self):
@@ -422,7 +442,6 @@ class VBox(VBoxLayoutMixin,Container):
 		vboxClone.addChildren(self._cloneChildren(prefix))
 					
 		return vboxClone
-		
 
 class HBox(HBoxLayoutMixin,Container):
 	"""

@@ -35,7 +35,7 @@
 #include "renderitem.h"
 
 namespace FIFE {
-	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -2;
+	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -1;
 
 	RenderItem::RenderItem(Instance* parent):
 		instance(parent),
@@ -43,23 +43,37 @@ namespace FIFE {
 		dimensions(),
 		transparency(255),
 		currentFrame(-1),
+		animationOverlayImages(0),
+		colorOverlays(0),
+		colorOverlay(0),
 		m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cachedStaticImgAngle(0) {
 	}
+	
+	RenderItem::~RenderItem() {
+		delete animationOverlayImages;
+		delete colorOverlays;
+		// don't delete colorOverlay here
+	}
 
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
+		ObjectVisual* objVis = instance->getObject()->getVisual<ObjectVisual>();
+		if (!objVis) {
+			return STATIC_IMAGE_NOT_INITIALIZED;
+		}
 		if (static_cast<int32_t>(angle) != m_cachedStaticImgAngle) {
 			m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
+		}
+		if (objVis->isColorOverlay()) {
+			colorOverlay = objVis->getStaticColorOverlay(angle);
 		}
 		if (m_cachedStaticImgId != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cachedStaticImgId;
 		}
-		if(!instance->getObject()->getVisual<ObjectVisual>()) {
-			return -1;
-		}
-
-		m_cachedStaticImgId = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
+		
+		m_cachedStaticImgId = objVis->getStaticImageIndexByAngle(angle);
 		m_cachedStaticImgAngle = angle;
+
 		return m_cachedStaticImgId;
 	}
 
@@ -70,5 +84,14 @@ namespace FIFE {
 		transparency = 255;
 		currentFrame = -1;
 		m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
+		if (animationOverlayImages) {
+			delete animationOverlayImages;
+			animationOverlayImages = 0;
+		}
+		if (colorOverlays) {
+			delete colorOverlays;
+			colorOverlays = 0;
+		}
+		colorOverlay = 0;
 	}
 }

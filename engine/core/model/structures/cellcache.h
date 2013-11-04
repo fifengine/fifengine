@@ -276,6 +276,15 @@ namespace FIFE {
 			 */
 			std::vector<Cell*> getCellsInCircle(const ModelCoordinate& center, uint16_t radius);
 
+			/** Returns all cells in the circle segment.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @param sangle A interger, start angle of the segment.
+			 * @param eangle A interger, end angle of the segment.
+			 * @return A vector that contain the cells.
+			 */
+			std::vector<Cell*> getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
+
 			/** Adds a cost with the given id and value.
 			 * @param costId A const reference to a string that refs to the cost id.
 			 * @param cost A double that contains the cost value. Used as multiplier for default cost.

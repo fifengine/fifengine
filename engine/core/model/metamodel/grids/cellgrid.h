@@ -124,6 +124,13 @@ namespace FIFE {
 		virtual std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position,
 			const std::vector<ModelCoordinate>& orig, bool reverse = false) = 0;
 
+		/** Returns point vector with coordinates for a line from start to end.
+		 * @param start The start position
+		 * @param end The end position
+		 * @return vector with points
+		 */
+		virtual std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) = 0;
+
 		/** Set the cellgrid x shift
 		 *  @param xshift The shift in map coords
 		 */

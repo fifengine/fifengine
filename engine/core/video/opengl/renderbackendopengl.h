@@ -68,7 +68,8 @@ namespace FIFE {
 
 		virtual void renderVertexArrays();
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba);
-		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc);
+		virtual void addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba);
+		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype = OVERLAY_TYPE_NONE);
 		virtual void captureScreen(const std::string& filename);
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
 
@@ -106,12 +107,12 @@ namespace FIFE {
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
-		void setEnvironmentalColor(const uint8_t* rgba);
+		void setEnvironmentalColor(uint32_t texUnit, const uint8_t* rgba);
 		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
 		
-		GLuint m_mask_overlays;
+		GLuint m_maskOverlay;
 		void prepareForOverlays();
 
 		class RenderObject;
@@ -134,14 +135,14 @@ namespace FIFE {
 
 		struct currentState	{
 			// Textures
-			bool tex_enabled[2];
-			GLuint texture[2];
+			bool tex_enabled[4];
+			GLuint texture[4];
 			uint32_t active_tex;
 			uint32_t active_client_tex;
 
 			// Pointers
 			const void* vertex_pointer;
-			const void* tex_pointer[2];
+			const void* tex_pointer[4];
 			const void* color_pointer;
 
 			// Stencil

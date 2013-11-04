@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2012 by the FIFE team
+#  Copyright (C) 2005-2013 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -50,20 +50,20 @@ AddOption('--enable-debug',
 		help='Builds the debug version of the binaries',
 		default=False)
 		
-AddOption('--with-librocket',
-		dest='with-librocket',
+AddOption('--enable-librocket',
+		dest='enable-librocket',
 		action='store_true',
 		help='Enable librocket gui sybsystem',
 		default=False)
 
-AddOption('--with-cegui',
-		dest='with-cegui',
+AddOption('--enable-cegui',
+		dest='enable-cegui',
 		action='store_true',
 		help='Enable Craze Eddie\'s gui subsystem',
 		default=False)
 		
-AddOption('--without-fifechan',
-		dest='without-fifechan',
+AddOption('--disable-fifechan',
+		dest='disable-fifechan',
 		action="store_true",
 		help='Disable fifechan gui subsystem',
 		default=False)
@@ -137,6 +137,12 @@ AddOption('--lib-dir',
 		metavar='DIR',
 		help='Shared Library install location') 
 		
+AddOption('--disable-githash',
+		dest='disable-githash',
+		action='store_true',
+		help='Do not attempt to determine the git hash for the current commit',
+		default=False)
+		
 
 #**************************************************************************
 #save command line options here
@@ -150,14 +156,14 @@ else:
 	debug = 0
 	env['FIFE_DEBUG'] = False
 	
-if GetOption('without-fifechan'):
+if GetOption('disable-fifechan'):
 	env['ENABLE_FIFECHAN'] = False
 	extra_libs['fifechan'] = False
 else:
 	env['ENABLE_FIFECHAN'] = True
 	extra_libs['fifechan'] = True
 	
-if GetOption('with-librocket'):
+if GetOption('enable-librocket'):
 	env['ENABLE_LIBROCKET'] = True
 	extra_libs['librocket'] = True
 	if debug:
@@ -169,7 +175,7 @@ else:
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
 
-if GetOption('with-cegui'):
+if GetOption('enable-cegui'):
 	env['ENABLE_CEGUI'] = True
 	extra_libs['cegui'] = True
 else:
@@ -215,11 +221,14 @@ else:
 	assert_release = 0
 	
 if GetOption('local-tinyxml'):
-	local_tinyxml = 1
 	env['LOCAL_TINYXML'] = True
 else:
-	local_tinyxml = 0
 	env['LOCAL_TINYXML'] = False
+	
+if GetOption('disable-githash'):
+	get_githash = False
+else:
+	get_githash = True
 
 #**************************************************************************
 #set the installation directories.
@@ -281,12 +290,6 @@ def checkForLib(lib, header='', language='c++'):
 def checkForLibs(env, liblist, required=1, language='c++'):
 	ret = 0
 	for lib, header in liblist:
-		# special case for the user overriding on the scons build line to
-		# force using the local tinyxml version that ships with fife
-		#if not isinstance(lib, tuple) and lib == 'tinyxml' and env['LOCAL_TINYXML'] == True:
-			#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
-			#continue\
-			
 		if (isinstance(lib, tuple)):
 			for item in lib:
 				ret = checkForLib(item, header, language)
@@ -306,6 +309,12 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						# and store the lib in the lib list
 						env.AppendUnique(CPPDEFINES = ['USE_SYSTEM_TINY_XML'])
 						env.AppendUnique(LIBS = [lib])
+					else:
+						# system version not found, lets issue message and fall
+						# back to local version
+						print 'Warning: System version of tinyxml not found,' \
+							  ' using local version as fallback'
+						env['LOCAL_TINYXML'] = True
 			else:	
 				ret = checkForLib(lib, header, language)
 				if ret:
@@ -318,13 +327,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 			else:
 				print 'Required lib %s not found!' %lib
 			Exit(1)
-		#elif not required and not ret:
-			# special handling for libs that are not required
-			# and were not added
-			#if not isinstance(lib, tuple) and lib == 'tinyxml':
-				# we will use our own included version if
-				# the system version was not found
-				#env.Append(CPPDEFINES = ['USE_LOCAL_TINY_XML'])
 				
 	return env
 				
@@ -339,7 +341,7 @@ required_headers = platformConfig.getRequiredHeaders(opengl)
 
 # do not run the check for dependencies if you are running
 # a clean or building the external dependencies
-if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
+if not GetOption('clean'):
 	if required_libs:
 		env = checkForLibs(env, required_libs, required = 1)
 	if optional_libs:
@@ -424,7 +426,9 @@ opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
 		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
 
 opts['FIFE_VERSION'] = utils.get_fife_version(os.path.join(opts['SRC'], 'core'));
-opts['FIFE_REVISION'] = utils.get_fife_revision(os.getcwd())
+
+if get_githash:
+	opts['FIFE_GIT_HASH'] = utils.get_fife_git_hash(os.getcwd())
 
 if debug:
 	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
@@ -447,9 +451,6 @@ env.SConscript('engine/SConscript', variant_dir=engine_var_dir, duplicate=0, exp
 
 #build the engine tests
 env.SConscript('tests/core_tests/SConscript', variant_dir=tests_var_dir, duplicate=0, exports='opts')
-
-#build the external dependencies
-env.SConscript('ext/SConscript')
 
 #**************************************************************************
 #documentation target

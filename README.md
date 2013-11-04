@@ -10,38 +10,33 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 ```
         
-Introduction
+FIFE v0.3.4 - [![Build Status](https://travis-ci.org/fifengine/fifengine.png?branch=master)](https://travis-ci.org/fifengine/fifengine)
 ------------
-Welcome to the FIFE v0.3.4 README. This is based on SVN revision 4103
-
-Table of contents
------------------
-1. [About]           (#1-about)
-2. [Features]        (#2-features)
-3. [License]         (#3-license)
-4. [FIFE Clients]    (#4-fife-clients)
-5. [Known Issues]    (#5-known-issues)
-6. [Troubleshooting] (#6-troubleshooting)
-7. [Feedback]        (#7-feedback)
-8. [Closing Notes]   (#8-closing-notes)
-
-
-1) About
------------
 Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
-written in C++.  It comes with python bindings allowing users to create games 
-using python as well as C++.  The engine is designed to be flexible to allow you
+written in C++. It comes with python bindings allowing users to create games 
+using python as well as C++. The engine is designed to be flexible to allow you
 to extend it and add any feature you can imagine to your project.
 
 
-2) Features
+Table of contents
+-----------------
+1. [Features]        (#1-features)
+2. [License]         (#2-license)
+3. [FIFE Clients]    (#3-fife-clients)
+4. [Known Issues]    (#4-known-issues)
+5. [Troubleshooting] (#5-troubleshooting)
+6. [Feedback]        (#6-feedback)
+7. [Closing Notes]   (#7-closing-notes)
+
+
+1) Features
 -----------
 A complete list of the features that FIFE offers can be found at the project 
 wiki:
- * http://wiki.fifengine.net/index.php?title=Engine_features
+ * https://github.com/fifengine/fifengine/wiki/Features
 
 
-3) License
+2) License
 ----------
 The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
  * http://www.gnu.org/licenses/lgpl-2.1.html
@@ -51,7 +46,7 @@ each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
 
 
-4) FIFE Clients
+3) FIFE Clients
 ---------------
 
 ### Editor
@@ -86,10 +81,11 @@ root directories.
 
 NOTE that the `settings.xml` file is auto generated and wont be there until you
 run the demos for the first time.  FIFE automatically fills the settings file
-with default values.  For more information on FIFE settings please see the wiki
-page here: http://wiki.fifengine.net/Engine_Extensions#Engine_Settings
+with default values.  For more information on FIFE settings please see the 
+wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 
-5) Known issues
+
+4) Known issues
 ---------------
 ### Documentation
  * Bug in `dep_analyzer.py` which prevents graphs from being generated (#554)
@@ -134,7 +130,8 @@ page here: http://wiki.fifengine.net/Engine_Extensions#Engine_Settings
    (#537)
  * Editor file dialog uses botched relative paths (#616)
 
-6) Troubleshooting
+
+5) Troubleshooting
 ------------------
 
 ### Video Card/Driver Issues
@@ -152,21 +149,22 @@ Win32 users tend to suffer from problems with the OpenAL drivers. If you don't
 hear sound while running a FIFE client, run `oalinst.exe` that ships with the
 Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
-7) Feedback
+
+6) Feedback
 -----------
 We appreciate every kind of feedback concerning the release, the project in 
 general and the bundled techdemo. Feedback is a great way to help us to improve 
 FIFE. If you would like to get in contact with us and provide feedback you can 
 either visit our IRC channel or our forums:
- * http://wiki.fifengine.net/index.php?title=IRC
+ * #fife on freenode.net
  * http://forums.fifengine.net/index.php?board=5.0
 
 
-8) Closing Notes
+7) Closing Notes
 ----------------
 Have fun with the release and let us know what you think about it!
 -- The FIFE team.
 
 http://www.fifengine.net/
 
-2013/02/28
+2013/04/09

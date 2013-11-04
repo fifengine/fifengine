@@ -865,23 +865,9 @@ namespace FIFE {
 
 	std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker) {
 		std::vector<Cell*> cells;
-		int32_t dx = ABS(pt2.x - pt1.x);
-		int32_t dy = ABS(pt2.y - pt1.y);
-		int8_t sx = -1;
-		int8_t sy = -1;
-
-		if (pt1.x < pt2.x) {
-			sx = 1;
-		}
-		if (pt1.y < pt2.y) {
-			sy = 1;
-		}
-
-		int32_t err = dx - dy;
-		ModelCoordinate current(pt1.x, pt1.y);
-		bool finished = false;
-		while (!finished) {
-			Cell* c = getCell(current);
+		std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
+		for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
+			Cell* c = getCell(*it);
 			if (c) {
 				if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
 					return cells;
@@ -889,20 +875,6 @@ namespace FIFE {
 				cells.push_back(c);
 			} else {
 				return cells;
-			}
-
-			if (current.x == pt2.x && current.y == pt2.y) {
-				finished = true;
-			}
-
-			int32_t err2 = err*2;
-
-			if (err2 > -dy) {
-				err -= dy;
-				current.x += sx;
-			} else if (err2 < dx) {
-				err += dx;
-				current.y += sy;
 			}
 		}
 		return cells;
@@ -973,6 +945,28 @@ namespace FIFE {
 		for (; current.x <= target.x; current.x++) {
 			Cell* c = getCell(current);
 			if (c) cells.push_back(c);
+		}
+		return cells;
+	}
+
+	std::vector<Cell*> CellCache::getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle) {
+		std::vector<Cell*> cells;
+		ExactModelCoordinate exactCenter(center.x, center.y);
+		std::vector<Cell*> tmpCells = getCellsInCircle(center, radius);
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		bool greater = (s > e) ? true : false;
+		for (std::vector<Cell*>::iterator it = tmpCells.begin(); it != tmpCells.end(); ++it) {
+			int32_t angle = getAngleBetween(exactCenter, intPt2doublePt((*it)->getLayerCoordinates()));
+			if (greater) {
+				if (angle >= s || angle <= e) {
+					cells.push_back(*it);
+				}
+			} else {
+				if (angle >= s && angle <= e) {
+					cells.push_back(*it);
+				}
+			}
 		}
 		return cells;
 	}

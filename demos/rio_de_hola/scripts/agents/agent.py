@@ -38,6 +38,9 @@ class Agent(fife.InstanceActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		raise ProgrammingError('No OnActionFinished defined for Agent')
 
+	def onInstanceActionCancelled(self, instance, action):
+		raise ProgrammingError('No OnActionFinished defined for Agent')
+	
 	def onInstanceActionFrame(self, instance, action, frame):
 		raise ProgrammingError('No OnActionFrame defined for Agent')	
 

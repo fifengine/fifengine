@@ -46,12 +46,15 @@ class Hero(Agent):
 			txtindex = random.randint(0, len(heroTexts) - 1)
 			instance.say(heroTexts[txtindex], 2500)
 
+	def onInstanceActionCancelled(self, instance, action):
+		pass
+	
 	def start(self):
 		self.idle()
 
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('stand')
+		self.agent.actOnce('stand')
 
 	def run(self, location):
 		self.state = _STATE_RUN
@@ -59,8 +62,8 @@ class Hero(Agent):
 
 	def kick(self, target):
 		self.state = _STATE_KICK
-		self.agent.act('kick', target)
+		self.agent.actOnce('kick', target)
 
 	def talk(self, target):
 		self.state = _STATE_TALK
-		self.agent.act('talk', target)
+		self.agent.actOnce('talk', target)

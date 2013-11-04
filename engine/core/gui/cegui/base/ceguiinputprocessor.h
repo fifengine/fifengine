@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2012 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -64,6 +64,14 @@ namespace FIFE {
 		/** Process a mouse motion event.
 		 */
 		bool processMouseMotion(SDL_Event& event);
+
+		/** Initialize the key translation map.
+		 */
+		void initializeKeyMap();
+
+		/** Holds translation of key scancodes from SDL to CEGUI.
+		 */
+		std::map<SDLKey, CEGUI::Key::Scan> m_keymap;
 	};
 	
 }
