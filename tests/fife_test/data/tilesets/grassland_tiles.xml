@@ -821,16 +821,16 @@
 </object>
 
 <object id="tree9" namespace="grassland_tileset" blocking="1" static="1">
-	<image source="grassland_14_00.png" y_offset="-60" direction="0"/>
+	<image source="grassland_14_00.png" y_offset="-90" direction="0"/>
 </object>
 <object id="tree10" namespace="grassland_tileset" blocking="1" static="1">
-	<image source="grassland_14_01.png" y_offset="-60" direction="0"/>
+	<image source="grassland_14_01.png" y_offset="-90" direction="0"/>
 </object>
 <object id="tree11" namespace="grassland_tileset" blocking="1" static="1">
-	<image source="grassland_14_02.png" y_offset="-60" direction="0"/>
+	<image source="grassland_14_02.png" y_offset="-90" direction="0"/>
 </object>
 <object id="tree12" namespace="grassland_tileset" blocking="1" static="1">
-	<image source="grassland_14_03.png" y_offset="-60" direction="0"/>
+	<image source="grassland_14_03.png" y_offset="-90" direction="0"/>
 </object>
 <object id="tree13" namespace="grassland_tileset" blocking="1" static="1">
 	<image source="grassland_14_04.png" y_offset="-60" direction="0"/>
