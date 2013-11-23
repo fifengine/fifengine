@@ -32,5 +32,6 @@
 		<Setting name="MultiPathfinderTest" type="bool">True</Setting>
 		<Setting name="OverlayTest" type="bool">True</Setting>
 		<Setting name="TriggerTest" type="bool">True</Setting>
+		<Setting name="BenchmarkTest" type="bool">True</Setting>
 	</Module>
 </Settings>
