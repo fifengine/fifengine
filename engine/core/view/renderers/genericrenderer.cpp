@@ -350,6 +350,13 @@ namespace FIFE {
 	}
 	// Remove all groups
 	void GenericRenderer::removeAll() {
+		std::map<std::string, std::vector<GenericRendererElementInfo*> >::iterator it = m_groups.begin();
+		for (; it != m_groups.end(); ++it) {
+			std::vector<GenericRendererElementInfo*>::const_iterator info_it = it->second.begin();
+			for (;info_it != it->second.end(); ++info_it) {
+				delete *info_it;
+			}
+		}
 		m_groups.clear();
 	}
 	// Clear all groups
