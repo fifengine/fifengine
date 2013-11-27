@@ -245,7 +245,8 @@ namespace FIFE {
 //			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
-			float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
+			//float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
+			float vertexZ = static_cast<float>(vc.screenpoint.z);
 
 			// if the instance is opacous
 			if(vc.transparency == 255) {

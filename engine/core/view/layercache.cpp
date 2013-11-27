@@ -424,18 +424,25 @@ namespace FIFE {
 
 				if (item->dimensions.intersects(screenViewport)) {
 					renderlist.push_back(item);
-					if (!m_needSorting) {
-						m_zMin = std::min(m_zMin, item->screenpoint.z);
-						m_zMax = std::max(m_zMax, item->screenpoint.z);
-					}
 				}
 			}
 
 			if (m_needSorting) {
 				sortRenderList(renderlist);
 			} else {
-				m_zMin -= 0.5;
-				m_zMax += 0.5;
+				// calculates zmin and zmax of the current viewport
+				Rect r = m_camera->getMapViewPort();
+				std::vector<ExactModelCoordinate> coords;
+				coords.push_back(ExactModelCoordinate(r.x, r.y));
+				coords.push_back(ExactModelCoordinate(r.x, r.y+r.h));
+				coords.push_back(ExactModelCoordinate(r.x+r.w, r.y));
+				coords.push_back(ExactModelCoordinate(r.x+r.w, r.y+r.h));
+				for (uint8_t i = 0; i < 4; ++i) {
+					double z = m_camera->toVirtualScreenCoordinates(coords[i]).z;
+					m_zMin = std::min(z, m_zMin);
+					m_zMax = std::max(z, m_zMax);
+				}
+
 				sortRenderList(renderlist);
 			}
 		}
@@ -725,6 +732,13 @@ namespace FIFE {
 	}
 
 	inline void LayerCache::updateScreenCoordinate(RenderItem* item, bool changedZoom) {
+		// FIXME
+		// this is only needed because of the z position.
+		Instance* instance = item->instance;
+		ExactModelCoordinate mapCoords = instance->getLocationRef().getMapCoordinates();
+		DoublePoint3D screenPosition = m_camera->toVirtualScreenCoordinates(mapCoords);
+		item->screenpoint.z = screenPosition.z;
+
 		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
 		// NOTE:
 		// One would expect this to be necessary here,
@@ -749,28 +763,27 @@ namespace FIFE {
 		if (renderlist.empty()) {
 			return;
 		}
-		// We want to put every z value in [-10,10] range.
+		// We want to put every z value in layer z range.
 		// To do it, we simply solve
 		// { y1 = a*x1 + b
 		// { y2 = a*x2 + b
-		// where [y1,y2]' = [-10,10]' is required z range,
+		// where [y1,y2]' = layer z offset min/max is required z range,
 		// and [x1,x2]' is expected min,max z coords.
 		if (!m_needSorting) {
-			double det = m_zMin - m_zMax;
+			float det = m_zMin - m_zMax;
 			if (fabs(det) > FLT_EPSILON) {
-				double det_a = -10.0 - 10.0;
-				double det_b = 10.0 * m_zMin - (-10.0) * m_zMax;
-				double a = static_cast<float>(det_a / det);
-				double b = static_cast<float>(det_b / det);
-				float estimate = sqrtf(static_cast<float>(renderlist.size()));
-				float stack_delta = fabs(-10.0f - 10.0f) / estimate * 0.1f;
-
+				static const float globalrange = 200.0;
+				static const float stackdelta = (FLT_EPSILON * 100.0);
+				int32_t numlayers = m_layer->getLayerCount();
+				float lmin = m_layer->getZOffset();
+				float lmax = lmin + globalrange/numlayers;
+				float a = (lmin - lmax) / det;
+				float b = (lmax * m_zMin - lmin * m_zMax) / det;
 				RenderList::iterator it = renderlist.begin();
 				for ( ; it != renderlist.end(); ++it) {
-					double& z = (*it)->screenpoint.z;
-					z = a * z + b;
 					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
-					z += vis->getStackPosition() * stack_delta;
+					double& z = (*it)->screenpoint.z;
+					z = (a * z + b) + vis->getStackPosition() * stackdelta;					
 				}
 			}
 		} else {

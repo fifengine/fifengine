@@ -751,12 +751,14 @@ namespace FIFE {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layerToInstances[layer] = RenderList();
+		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
+		refresh();
 	}
 
 	void Camera::setLightingColor(float red, float green, float blue) {
