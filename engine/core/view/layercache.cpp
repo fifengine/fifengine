@@ -720,13 +720,6 @@ namespace FIFE {
 	}
 
 	inline void LayerCache::updateScreenCoordinate(RenderItem* item, bool changedZoom) {
-		// FIXME
-		// this is only needed because of the z position.
-		Instance* instance = item->instance;
-		ExactModelCoordinate mapCoords = instance->getLocationRef().getMapCoordinates();
-		DoublePoint3D screenPosition = m_camera->toVirtualScreenCoordinates(mapCoords);
-		item->screenpoint.z = screenPosition.z;
-
 		Point3D screenPoint = m_camera->virtualScreenToScreen(item->screenpoint);
 		// NOTE:
 		// One would expect this to be necessary here,
@@ -770,8 +763,8 @@ namespace FIFE {
 				RenderList::iterator it = renderlist.begin();
 				for ( ; it != renderlist.end(); ++it) {
 					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
-					double& z = (*it)->screenpoint.z;
-					z = (a * z + b) + vis->getStackPosition() * stackdelta;					
+					float& z = (*it)->vertexZ;
+					z = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;					
 				}
 			}
 		} else {

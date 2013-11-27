@@ -105,6 +105,9 @@ namespace FIFE {
 			// dimensions of this visual during the previous render
 			Rect dimensions;
 
+			// z value for sorting or depth buffer rendering
+			float vertexZ;
+
 			// image used during previous render
 			ImagePtr image;
 
