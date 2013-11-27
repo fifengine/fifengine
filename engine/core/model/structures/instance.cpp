@@ -1026,11 +1026,11 @@ namespace FIFE {
 	}
 
 	double Instance::getSpeed() {
-		m_object->getSpeed();
+		return m_object->getSpeed();
 	}
 
 	bool Instance::isSpecialSpeed() {
-		m_object->isSpecialSpeed();
+		return m_object->isSpecialSpeed();
 	}
 
 	bool Instance::isMultiCell() {
