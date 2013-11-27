@@ -578,18 +578,8 @@ namespace FIFE {
 			// only visible if visual is visible and item is not totally transparent
 			entry->visible = (visual->isVisible() && item->transparency != 0);
 		}
-		// delete old animation overlay
-		if (item->animationOverlayImages) {
-			delete item->animationOverlayImages;
-			item->animationOverlayImages = 0;
-		}
-		// delete old color overlay
-		if (item->colorOverlays) {
-			delete item->colorOverlays;
-			item->colorOverlays = 0;
-		}
-		// reset color overlay
-		item->colorOverlay = 0;
+		// delete old overlay
+		item->deleteOverlayData();
 
 		if (!action) {
 			// Try static images then default action.
@@ -611,25 +601,21 @@ namespace FIFE {
 			if (actionVisual->isAnimationOverlay()) {
 				std::map<int32_t, AnimationPtr> animations = actionVisual->getAnimationOverlay(angle);
 				std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
+				std::vector<ImagePtr>* animOverlays = new std::vector<ImagePtr>();
+				std::vector<OverlayColors*>* animationColorOverlays = colorOverlay ? new std::vector<OverlayColors*>() : 0;
 				for (; it != animations.end(); ++it) {
-					if (!item->animationOverlayImages) {
-						item->animationOverlayImages = new std::vector<ImagePtr>();
-					}
 					uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
 					image = it->second->getFrameByTimestamp(animationTime);
-					item->animationOverlayImages->push_back(image);
+					animOverlays->push_back(image);
 					
 					if (colorOverlay) {
-						if (!item->colorOverlays) {
-							item->colorOverlays = new std::vector<OverlayColors*>();
-						}
 						OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
 						if (co) {
 							AnimationPtr ovAnim = co->getColorOverlayAnimation();
 							animationTime = instance->getActionRuntime() % ovAnim->getDuration();
 							co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
 						}
-						item->colorOverlays->push_back(co);
+						animationColorOverlays->push_back(co);
 					}
 					// works only for one animation
 					int32_t actionFrame = it->second->getActionFrame();
@@ -646,6 +632,8 @@ namespace FIFE {
 						}
 					}
 				}
+				// transfer ownership of the vectors to RenderItem
+				item->setAnimationOverlay(animOverlays, animationColorOverlays);
 			} else {
 				AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
 				uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
@@ -661,7 +649,7 @@ namespace FIFE {
 						AnimationPtr ovAnim = co->getColorOverlayAnimation();
 						animationTime = instance->getActionRuntime() % ovAnim->getDuration();
 						co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
-						item->colorOverlay = co;
+						item->setColorOverlay(co);
 					}
 				}
 				int32_t actionFrame = animation->getActionFrame();

@@ -202,41 +202,6 @@ namespace FIFE {
 		const bool unlit = !m_unlit_groups.empty();
 		uint32_t lm = m_renderbackend->getLightingModel();
 
-		// Get layer index (this is needed for tweaking vertexZ for OpenGL renderbackend)
-		Map* parent = layer->getMap();
-		int num_layers = parent->getLayerCount();
-		int this_layer = 1; // we don't need 0 indexed
-		const std::list<Layer*>& layers = parent->getLayers();
-		std::list<Layer*>::const_iterator iter = layers.begin();
-		for (; iter != layers.end(); ++iter, ++this_layer) {
-			if (*iter == layer) {
-				break;
-			}
-		}
-
-		// These values come from glOrtho settings
-		static const double global_z_max = 100.0;
-#if 0
-		static const double global_z_min = -100.0;
-		static const double depth_range = fabs(global_z_min - global_z_max);
-
-		// This is how much depth we can sacrifice for given layer
-		// f.e: We have 200 depth range and 4 layers. That means we can assign
-		// each layer 50 depth range:
-		// 1st layer gets -100..-50
-		// 2nd layer gets  -50..0
-		// 3rd layer gets    0..50
-		// 4th layer gets   50..100
-		double layer_depth_range = depth_range / static_cast<double>(num_layers);
-		// What's left, is to compute z offset for given layer
-		double layer_z_offset = global_z_min +
-			layer_depth_range * static_cast<double>(this_layer) -
-			layer_depth_range * 0.5;
-#else
-
-		// 2nd version, better usage of depth buffer as values closer to near plane in depth buffer have more precise (1/z)
-		double layer_z_offset = global_z_max - (num_layers - (this_layer - 1)) * 20;
-#endif
 		// thanks to multimap, we will have transparent instances already sorted by their z value (key)
 		std::multimap<float, RenderItem*> transparentInstances;
 
@@ -245,7 +210,6 @@ namespace FIFE {
 //			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
-			//float vertexZ = static_cast<float>(layer_z_offset + vc.screenpoint.z);
 			float vertexZ = static_cast<float>(vc.screenpoint.z);
 
 			// if the instance is opacous
@@ -468,13 +432,22 @@ namespace FIFE {
 					continue;
 				}
 			}
-			// animation overlay
-			if (vc.animationOverlayImages) {
-				// color overlay
-				if (vc.colorOverlays) {
-					std::vector<OverlayColors*>::iterator ovit = vc.colorOverlays->begin();
-					std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
-					for (; it != vc.animationOverlayImages->end(); ++it, ++ovit) {
+			if (vc.m_overlay) {
+				// animation overlay
+				std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
+				// animation color overlay
+				std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
+
+				// animation overlay without color overlay
+				if (animationOverlay && !animationColorOverlay) {
+					for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
+						(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+					}
+				// animation overlay with color overlay
+				} else if (animationOverlay && animationColorOverlay) {
+					std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
+					std::vector<ImagePtr>::iterator it = animationOverlay->begin();
+					for (; it != animationOverlay->end(); ++it, ++ovit) {
 						OverlayColors* oc = (*ovit);
 						if (!oc) {
 							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
@@ -535,66 +508,61 @@ namespace FIFE {
 						}
 					}
 				} else {
-					// animation overlay without color overlay
-					for (std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin(); it != vc.animationOverlayImages->end(); ++it) {
-						(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-					}
-				}
-			// color overlay
-			} else if (vc.colorOverlay) {
-				if (vc.colorOverlay->getColors().size() > 1) {
-					// multi color overlay
-					ImagePtr multiColorOverlay;
-					// interpolation factor
-					std::map<Color, Color>::const_iterator it = vc.colorOverlay->getColors().begin();
-					uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
-					if (recoloring) {
-						// create temp OverlayColors
-						OverlayColors* temp = new OverlayColors(vc.colorOverlay->getColorOverlayImage());
-						float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-						const std::map<Color, Color>& defaultColors = vc.colorOverlay->getColors();
-						for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-							if (c_it->second.getAlpha() == 0) {
-								continue;
-							}
-							float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
-							Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
-								coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
-								coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
-							temp->changeColor(c_it->first, c);
-						}
-						// create new factor
-						factor[3] = static_cast<uint8_t>(255 - factor[3]);
-						factor[3] = std::min(coloringColor[3], factor[3]);
-						// get overlay image with temp colors
-						multiColorOverlay = getMultiColorOverlay(vc, temp);
-						delete temp;
-					}
-					if (!multiColorOverlay) {
-						multiColorOverlay = getMultiColorOverlay(vc);
-						factor[3] = 0;
-					}
-					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-					vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
-				} else {
-					// single color overlay
-					std::map<Color, Color>::const_iterator color_it = vc.colorOverlay->getColors().begin();
-					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
-					bool noOverlay = rgba[3] == 255;
-					if (recoloring) {
-						if (!noOverlay) {
+					OverlayColors* colorOverlay = vc.getColorOverlay();
+					if (colorOverlay->getColors().size() > 1) {
+						// multi color overlay
+						ImagePtr multiColorOverlay;
+						// interpolation factor
+						std::map<Color, Color>::const_iterator it = colorOverlay->getColors().begin();
+						uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
+						if (recoloring) {
+							// create temp OverlayColors
+							OverlayColors* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
 							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-							float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
-							rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
-							rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
-							rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
-							rgba[3] = std::min(coloringColor[3], rgba[3]);
+							const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
+							for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
+								if (c_it->second.getAlpha() == 0) {
+									continue;
+								}
+								float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+								Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+									coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+									coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
+								temp->changeColor(c_it->first, c);
+							}
+							// create new factor
+							factor[3] = static_cast<uint8_t>(255 - factor[3]);
+							factor[3] = std::min(coloringColor[3], factor[3]);
+							// get overlay image with temp colors
+							multiColorOverlay = getMultiColorOverlay(vc, temp);
+							delete temp;
 						}
-					}
-					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-					if (!noOverlay) {
-						vc.image->render(vc.dimensions, vc.colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+						if (!multiColorOverlay) {
+							multiColorOverlay = getMultiColorOverlay(vc);
+							factor[3] = 0;
+						}
+						vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+						vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+					} else {
+						// single color overlay
+						std::map<Color, Color>::const_iterator color_it = colorOverlay->getColors().begin();
+						uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+						bool noOverlay = rgba[3] == 255;
+						if (recoloring) {
+							if (!noOverlay) {
+								float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+								float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+								rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+								rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+								rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+								rgba[3] = std::min(coloringColor[3], rgba[3]);
+							}
+						}
+						vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+						if (!noOverlay) {
+							vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+							m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+						}
 					}
 				}
 			// no overlay
@@ -642,7 +610,7 @@ namespace FIFE {
 			addToCheck(info.outline);
 		}
 		// special case for animation overlay
-		if (vc.animationOverlayImages) {
+		if (vc.getAnimationOverlay()) {
 			return bindMultiOutline(info, vc, cam);
 		}
 		// NOTE: Since r3721 outline is just the 'border' so to render everything correctly
@@ -749,7 +717,7 @@ namespace FIFE {
 		std::stringstream sts;
 		uint32_t mw = 0;
 		uint32_t mh = 0;
-		std::vector<ImagePtr>* animationOverlays = vc.animationOverlayImages;
+		std::vector<ImagePtr>* animationOverlays = vc.getAnimationOverlay();
 		std::vector<ImagePtr>::iterator it = animationOverlays->begin();
 		for (; it != animationOverlays->end(); ++it) {
 			// With lazy loading we can come upon a situation where we need to generate outline from
@@ -929,9 +897,9 @@ namespace FIFE {
 
 	ImagePtr InstanceRenderer::getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors) {
 		// multi color overlay
-		const std::map<Color, Color>& colorMap = colors ? colors->getColors() : vc.colorOverlay->getColors();
+		const std::map<Color, Color>& colorMap = colors ? colors->getColors() : vc.getColorOverlay()->getColors();
 		std::map<Color, Color>::const_iterator it = colorMap.begin();
-		ImagePtr colorOverlayImage = colors ? colors->getColorOverlayImage() : vc.colorOverlay->getColorOverlayImage();
+		ImagePtr colorOverlayImage = colors ? colors->getColorOverlayImage() : vc.getColorOverlay()->getColorOverlayImage();
 		ImagePtr colorOverlay;
 
 		// create name

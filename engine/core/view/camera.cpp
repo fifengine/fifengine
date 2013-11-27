@@ -555,9 +555,10 @@ namespace FIFE {
 					x = static_cast<int32_t>(round(fx / fsw * fow));
 					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
-				if (vc.animationOverlayImages) {
-					std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
-					for (; it != vc.animationOverlayImages->end(); ++it) {
+				if (vc.getAnimationOverlay()) {
+					std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+					std::vector<ImagePtr>::iterator it = ao->begin();
+					for (; it != ao->end(); ++it) {
 						if ((*it)->isSharedImage()) {
 							(*it)->forceLoadInternal();
 						}
@@ -612,9 +613,10 @@ namespace FIFE {
 								x = static_cast<int32_t>(round(fx / fsw * fow));
 								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
-							if (vc.animationOverlayImages) {
-								std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
-								for (; it != vc.animationOverlayImages->end(); ++it) {
+							if (vc.getAnimationOverlay()) {
+								std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+								std::vector<ImagePtr>::iterator it = ao->begin();
+								for (; it != ao->end(); ++it) {
 									if ((*it)->isSharedImage()) {
 										(*it)->forceLoadInternal();
 									}
