@@ -682,7 +682,11 @@ namespace FIFE {
 			src_surface->format->Bmask, src_surface->format->Amask);
 
 		SDL_SetAlpha(src_surface, 0, 0);
-		SDL_Rect srcrect = { region.x, region.y, region.w, region.h };
+		SDL_Rect srcrect = {
+			static_cast<Sint16>(region.x),
+			static_cast<Sint16>(region.y),
+			static_cast<Uint16>(region.w),
+			static_cast<Uint16>(region.h) };
 		SDL_BlitSurface(src_surface, &srcrect, surface, NULL);
 		SDL_SetAlpha(src_surface, SDL_SRCALPHA, 0);
 
