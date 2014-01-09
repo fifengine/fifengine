@@ -94,7 +94,7 @@ namespace fcn {
 		virtual void requestMoveToBottom();
 		virtual void setActionEventId(const std::string& actionEventId);
 		virtual const std::string& getActionEventId() const;
-		virtual void getAbsolutePosition(int32_t& x, int32_t& y) const;
+		virtual void getAbsolutePosition(int32_t& OUTPUT, int32_t& OUTPUT) const;
 		Font *getFont() const;
 		static void setGlobalFont(Font* font);
 		virtual void setFont(Font* font);
