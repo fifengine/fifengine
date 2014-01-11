@@ -32,14 +32,14 @@ def u2s(string):
 
 class FileBrowser(object):
 	""" The B{FileBrowser} displays directory and file listings from the vfs.
-	
+
 		B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
 		signature must be fileSelected(path,filename).
-		
+
 		B{If selectdir} is set, fileSelected's filename parameter should be optional.
-		
+
 		B{The savefile} option provides a box for supplying a new filename that doesn't exist yet.
-		
+
 		B{The selectdir} option allows directories to be selected as well as files.
 	"""
 	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
@@ -63,7 +63,7 @@ class FileBrowser(object):
 		self._widget = None
 		self.savefile = savefile
 		self.selectdir = selectdir
-		
+
 		self.guixmlpath = guixmlpath
 
 		self.extensions = extensions
@@ -77,7 +77,7 @@ class FileBrowser(object):
 			self.setDirectory(self.path)
 			self._widget.show()
 			return
-		
+
 		self._widget = pychan.loadXML(self.guixmlpath)
 		self._widget.mapEvents({
 			'dirList'       : self._selectDir,
@@ -85,22 +85,22 @@ class FileBrowser(object):
 			'closeButton'   : self._widget.hide
 		})
 		if self.savefile:
-			self._file_entry = widgets.TextField(name='saveField', text=u'')	
+			self._file_entry = widgets.TextField(name='saveField', text=u'')
 			self._widget.findChild(name="fileColumn").addChild(self._file_entry)
-			
+
 		self.setDirectory(self.path)
 		self._widget.show()
-		
+
 	def setDirectory(self, path):
 		""" sets the current directory according to path """
 		path_copy = self.path
 		self.path = path
 		if not self._widget: return
-		
+
 		def decodeList(list):
 			fs_encoding = sys.getfilesystemencoding()
 			if fs_encoding is None: fs_encoding = "ascii"
-		
+
 			newList = []
 			for i in list:
 				try: newList.append(unicode(i, fs_encoding))
@@ -108,18 +108,19 @@ class FileBrowser(object):
 					newList.append(unicode(i, fs_encoding, 'replace'))
 					print "WARNING: Could not decode item:", i
 			return newList
-	
+
 		dir_list_copy = list(self.dir_list)
 		file_list_copy = list(self.file_list)
 
 		self.dir_list = []
 		self.file_list = []
-		
+
 		try:
-			dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
+			dir_list = filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
 			file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
-			self.dir_list = decodeList(dir_list)
-			self.file_list = decodeList(file_list)
+			self.dir_list = sorted(decodeList(dir_list), key=lambda s: s.lower())
+			self.dir_list.insert(0, "..")
+			self.file_list = sorted(decodeList(file_list), key=lambda s: s.lower())
 		except:
 			self.path = path_copy
 			self.dir_list = list(dir_list_copy)
@@ -130,7 +131,7 @@ class FileBrowser(object):
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list
 		})
-		
+
 		self._widget.adaptLayout()
 
 	def _selectDir(self):
@@ -143,7 +144,7 @@ class FileBrowser(object):
 				lst.pop()
 			else:
 				lst.append(new_dir)
-			 
+
 			path = '/'.join(lst)
 			self.setDirectory(path)
 
@@ -160,7 +161,7 @@ class FileBrowser(object):
 		if selection >= 0 and selection < len(self.file_list):
 			self.fileSelected(self.path, u2s(self.file_list[selection]))
 			return
-		
+
 		if self.selectdir:
 			self.fileSelected(self.path)
 			return
