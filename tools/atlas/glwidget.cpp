@@ -26,7 +26,7 @@
 #include <QMessageBox>
 #include <QTime>
 
-#ifdef( WIN32 )
+#ifdef WIN32
 #include <gl/GLU.h>
 #endif
 
