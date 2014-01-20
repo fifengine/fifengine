@@ -8,7 +8,7 @@ QT       += core gui opengl
 
 TARGET = atlascreator
 TEMPLATE = app
-
+LIBS += -lGLU
 SOURCES += main.cpp\
         mainwindow.cpp \
     glwidget.cpp \

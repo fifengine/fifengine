@@ -674,7 +674,7 @@ void MainWindow::updateSubimage(QImage& dest, int xoffset, int yoffset, const QI
 	{
 		const uint8_t* pSrc = src.scanLine(y);
 		uint8_t* pDst = dest.scanLine(yoffset + y);
-		qMemCopy(pDst + xoffset, pSrc, src.bytesPerLine());
+		memcpy(pDst + xoffset, pSrc, src.bytesPerLine());
 	}
 }
 
@@ -686,7 +686,7 @@ QString getAttrib(rapidxml::xml_node<>* node, QString const& attribName,
 	if(!attr)
 		return defValue;
 
-	return QString::fromAscii(attr->value());
+	return QString::fromLatin1(attr->value());
 }
 
 int getAttribInt(rapidxml::xml_node<>* node, QString const& attribName,
@@ -697,7 +697,7 @@ int getAttribInt(rapidxml::xml_node<>* node, QString const& attribName,
 	if(!attr)
 		return defValue;
 
-	return QString::fromAscii(attr->value()).toInt();
+	return QString::fromLatin1(attr->value()).toInt();
 }
 
 void MainWindow::disassemblePressed()
@@ -732,7 +732,7 @@ void MainWindow::disassemblePressed()
 	}
 	catch(rapidxml::parse_error& error)
 	{
-		QMessageBox::critical(this, "Atlas Creator", QString::fromAscii(error.what()));
+		QMessageBox::critical(this, "Atlas Creator", QString::fromLatin1(error.what()));
 		return;
 	}
 
