@@ -114,6 +114,7 @@ class FileBrowser(object):
 
 		self.dir_list = []
 		self.file_list = []
+		print self.engine.getVFS().listDirectories(self.path)
 
 		try:
 			dir_list = filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
