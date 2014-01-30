@@ -23,15 +23,20 @@
 
 """ a filebrowser implementation for pychan """
 
+import sys
+import os
+
+
 import fife.extensions.pychan.widgets as widgets
 import fife.extensions.pychan as pychan
-import sys
+
 
 def u2s(string):
 	return string.encode(sys.getfilesystemencoding())
 
+
 class FileBrowser(object):
-	""" The B{FileBrowser} displays directory and file listings from the vfs.
+	""" The B{FileBrowser} displays directory and file listings.
 
 		B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
 		signature must be fileSelected(path,filename).
@@ -80,7 +85,7 @@ class FileBrowser(object):
 
 		self._widget = pychan.loadXML(self.guixmlpath)
 		self._widget.mapEvents({
-			'dirList'       : self._selectDir,
+			'dirList'	   : self._selectDir,
 			'selectButton'  : self._selectFile,
 			'closeButton'   : self._widget.hide
 		})
@@ -115,12 +120,17 @@ class FileBrowser(object):
 		self.dir_list = []
 		self.file_list = []
 
+		contents = os.listdir(path)
+		for content in contents:
+			if os.path.isdir(os.path.join(path, content)):
+				self.dir_list.append(content)
+			elif os.path.isfile(os.path.join(path, content)):
+				self.file_list.append(content)
+
 		try:
-			dir_list = filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
-			file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
-			self.dir_list = sorted(decodeList(dir_list), key=lambda s: s.lower())
+			self.dir_list = sorted(decodeList(self.dir_list), key=lambda s: s.lower())
 			self.dir_list.insert(0, "..")
-			self.file_list = sorted(decodeList(file_list), key=lambda s: s.lower())
+			self.file_list = sorted(decodeList(self.file_list), key=lambda s: s.lower())
 		except:
 			self.path = path_copy
 			self.dir_list = list(dir_list_copy)
