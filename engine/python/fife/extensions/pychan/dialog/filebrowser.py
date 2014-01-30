@@ -125,7 +125,9 @@ class FileBrowser(object):
 			if os.path.isdir(os.path.join(path, content)):
 				self.dir_list.append(content)
 			elif os.path.isfile(os.path.join(path, content)):
-				self.file_list.append(content)
+				extension = os.path.splitext(content)[1][1:]
+				if extension in self.extensions:
+					self.file_list.append(content)
 
 		try:
 			self.dir_list = sorted(decodeList(self.dir_list), key=lambda s: s.lower())
