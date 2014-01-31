@@ -26,7 +26,7 @@
 import sys
 import os
 
-
+from fife.fife import Engine
 import fife.extensions.pychan.widgets as widgets
 import fife.extensions.pychan as pychan
 
@@ -47,10 +47,26 @@ class FileBrowser(object):
 
 		B{The selectdir} option allows directories to be selected as well as files.
 	"""
-	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
+
+	def __init__(self, *args, **kwargs):
+		"""Temporary constructor for deprecation"""
+		#TODO: Remove the engine argument
+		display_deprecation = False
+		if isinstance(args[0], Engine):
+			display_deprecation = True
+			args = args[1:]
+		if kwargs.has_key("engine"):
+			display_deprecation = True
+			del kwargs["engine"]
+		if display_deprecation:
+			print("DEPRECATION WARNING:")
+			print("The filebrowser no longer needs an engine instance")
+			print("It will be completely removed in the future")
+
+		self.__real_init__(*args, **kwargs)
+
+	def __real_init__(self, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
 		"""
-		@type	engine:	object
-		@param	engine:	initiated instance of FIFE
 		@type	fileSelected:	function
 		@param	fileSelected:	callback invoked on file selection
 		@type	savefile:	bool
@@ -62,7 +78,6 @@ class FileBrowser(object):
 		@type	guixmlpath:	string
 		@param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
 		"""
-		self.engine = engine
 		self.fileSelected = fileSelected
 
 		self._widget = None
