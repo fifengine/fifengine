@@ -43,7 +43,7 @@ function install_fifechan() {
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     cd fifechan
     cmake .
-    make | exit 1
+    make || exit 1
     sudo make install
     cd ..
 
@@ -53,16 +53,16 @@ function install_fifechan() {
 
 function build() {
     # https://github.com/fifengine/fifengine/wiki/scons
-    scons | exit 1
+    scons || exit 1
 }
 
 function install() {
-    install_dependencies | exit 1
-    install_fifechan | exit 1
-    build | exit 1
+    install_dependencies || exit 1
+    install_fifechan || exit 1
+    build || exit 1
 }
 
-install | exit 1
+install || exit 1
 
 ## Success
 echo
