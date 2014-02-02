@@ -116,7 +116,7 @@ namespace FIFE {
 
 		// Create an autorelease pool, so autoreleased SDL objects don't leak.
 		id NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
-		m_autoreleasePool objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
+		m_autoreleasePool = objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
 #endif
 		m_logmanager = LogManager::instance();
 	}
