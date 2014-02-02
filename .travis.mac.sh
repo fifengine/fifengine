@@ -24,8 +24,10 @@ function install_dependencies() {
     echo -e "\e[1;33mInstalling package dependencies...\e[0m"
     echo
 
+    brew update
     brew install swig sdl_image sdl_mixer sdl_ttf scons boost boost-jam libvorbis libogg
 
+    easy_install pip
     pip install pyrex --allow-all-external --allow-unverified pyrex
     pip install pyyaml cython
 
