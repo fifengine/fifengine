@@ -13,7 +13,7 @@ echo -e "\t----------------------------"
 echo
 
 # how many virtual processors are there?
-export NUMCPUS=`grep ^processor /proc/cpuinfo | wc -l`
+export NUMCPUS=`sysctl -n hw.ncpu`
 
 # parallel make
 alias pmake='time ionice -c3 nice -n 19 make -j$NUMCPUS --load-average=$NUMCPUS'
@@ -24,7 +24,7 @@ function install_dependencies() {
     echo -e "\e[1;33mInstalling package dependencies...\e[0m"
     echo
 
-    brew install swig sdl_image sdl_mixer sdl_ttf scons boost-jam wget git libvorbis libogg
+    brew install swig sdl_image sdl_mixer sdl_ttf scons boost boost-jam libvorbis libogg
 
     pip install pyrex --allow-all-external --allow-unverified pyrex
     pip install pyyaml cython
@@ -58,7 +58,7 @@ function build() {
 
 function install() {
     install_dependencies
-      install_fifechan
+    install_fifechan
     build
 }
 
