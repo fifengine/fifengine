@@ -6,7 +6,7 @@ git:
 
 before_install:
   - chmod -R 777 ./.travis.mac.sh
-  - ./.travis..mac.sh
+  - ./.travis.mac.sh
 
 script:
    - exit 0
