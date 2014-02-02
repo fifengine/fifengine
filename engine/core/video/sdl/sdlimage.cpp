@@ -332,7 +332,7 @@ namespace FIFE {
 		return ABS(a - b) <= 0.00001;
 	}
 
-	void SDLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* /*unused rgb*/) {
+	void SDLImage::render(const Rect& rect, uint8_t alpha, uint8_t const* rgb) {
 		if (alpha == 0) {
 			return;
 		}
@@ -407,9 +407,6 @@ namespace FIFE {
 				}
 			}
 		}
-	}
-
-	void SDLImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
 	}
 
 	void SDLImage::finalize() {

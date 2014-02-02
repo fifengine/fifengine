@@ -119,7 +119,7 @@ namespace FIFE {
 					if (m_backborder) {
 						++elements;
 					}
-					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+					m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
 				}
 			}
 		}

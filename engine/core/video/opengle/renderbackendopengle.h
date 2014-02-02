@@ -67,9 +67,8 @@ namespace FIFE {
 
 		virtual void renderVertexArrays();
 		virtual void addImageToArray(uint32_t id, const Rect& rec, float const* st, uint8_t alpha, uint8_t const* rgba);
-		virtual void addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba);
 		virtual void addImageToArrayZ(uint32_t id, const Rect& rec, float vertexZ, float const* st, uint8_t alpha, bool forceNewBatch, uint8_t const* rgba);
-		virtual void changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype = OVERLAY_TYPE_NONE);
+		virtual void changeRenderInfos(RenderDataType type, uint16_t elements, int32_t src, int32_t dst, bool light, bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype = OVERLAY_TYPE_NONE);
 		virtual void captureScreen(const std::string& filename);
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
 
@@ -152,7 +151,7 @@ namespace FIFE {
 		};
 		class RenderObject;
 
-		RenderZObject* getRenderBufferObject(GLuint texture_id, bool unlit = false);
+		RenderZObject* getRenderBufferObject(GLuint texture_id, bool forceNewBatch = false);
 
 		// main source of vertex data - described by m_renderZ_objects
 		std::vector<RenderZData> m_renderZ_datas;

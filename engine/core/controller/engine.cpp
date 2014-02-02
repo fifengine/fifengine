@@ -220,6 +220,8 @@ namespace FIFE {
 		m_renderbackend->setTextureFiltering(m_settings.getGLTextureFiltering());
 		m_renderbackend->setMipmappingEnabled(m_settings.isGLUseMipmapping());
 		m_renderbackend->setMonochromeEnabled(m_settings.isGLUseMonochrome());
+		m_renderbackend->setDepthBufferEnabled(m_settings.isGLUseDepthBuffer());
+		m_renderbackend->setAlphaTestValue(m_settings.getGLAlphaTestValue());
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);
 			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());

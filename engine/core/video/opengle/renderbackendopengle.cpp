@@ -560,7 +560,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGLe::changeRenderInfos(uint16_t elements, int32_t src, int32_t dst, bool light,
+	void RenderBackendOpenGLe::changeRenderInfos(RenderDataType type, uint16_t elements, int32_t src, int32_t dst, bool light,
 		bool stentest, uint8_t stenref, GLConstants stenop, GLConstants stenfunc, OverlayType otype) {
 
 		uint16_t count = 0;
@@ -607,7 +607,8 @@ namespace FIFE {
 		enableLighting();
 		glDisableClientState(GL_COLOR_ARRAY);
 
-		/* 1) ordinary z-valued quads */ {
+		/* 1) ordinary z-valued quads */
+		if (!m_renderZ_objects.empty()) {
 			static const uint32_t stride = sizeof(RenderZData);
 
 			glVertexPointer(3, GL_FLOAT, stride, &m_renderZ_datas[0].vertex);
@@ -1085,9 +1086,6 @@ namespace FIFE {
 		m_render_objects.push_back(ro);
 	}
 
-	void RenderBackendOpenGLe::addImageToArray(const Rect& rect, uint32_t id1, float const* st1, uint32_t id2, float const* st2, uint8_t alpha, uint8_t const* rgba) {
-	}
-
 	RenderBackendOpenGLe::RenderZObject* RenderBackendOpenGLe::getRenderBufferObject(GLuint texture_id, bool forceNewBatch) {
 		if (!forceNewBatch) {
 			for (std::vector<RenderZObject>::iterator it = m_renderZ_objects.begin(); it != m_renderZ_objects.end(); ++it) {
@@ -1230,7 +1228,6 @@ namespace FIFE {
 
 			RenderObject ro(GL_QUADS, 4, id);
 			if (rgba != NULL) {
-				RenderObject ro(GL_QUADS, 4, id);
 				ro.rgba[0] = rgba[0];
 				ro.rgba[1] = rgba[1];
 				ro.rgba[2] = rgba[2];

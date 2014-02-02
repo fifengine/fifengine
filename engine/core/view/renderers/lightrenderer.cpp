@@ -97,9 +97,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				m_image->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -128,9 +128,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				img->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -157,9 +157,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				m_image->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -186,9 +186,9 @@ namespace FIFE {
 				m_red, m_green, m_blue);
 
 			if (m_stencil) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 			} else if (lm == 1) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 			}
 		}
 	}

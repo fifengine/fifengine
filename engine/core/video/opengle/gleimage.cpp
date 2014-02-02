@@ -151,7 +151,11 @@ namespace FIFE {
 		}
 	}
 
-	void GLeImage::render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
+	void GLeImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, uint8_t const* rgb) {
+		if(renderCheck(rect, alpha)) {
+			static_cast<RenderBackendOpenGLe*>(RenderBackend::instance())->addImageToArrayZ(
+				m_texId, rect, vertexZ, m_tex_coords, alpha, false, rgb);
+		}
 	}
 
 	void GLeImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, bool forceNewBatch, uint8_t const* rgb) {

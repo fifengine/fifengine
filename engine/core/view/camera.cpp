@@ -938,23 +938,22 @@ namespace FIFE {
 					for (; r_it != m_pipeline.end(); ++r_it) {
 						if ((*r_it)->isActivedLayer(layer)) {
 							(*r_it)->render(this, layer, tempList);
+							m_renderbackend->renderVertexArrays();
 						}
 					}
-					m_renderbackend->renderVertexArrays();
 				}
 			} else {
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 				for (; r_it != m_pipeline.end(); ++r_it) {
 					if ((*r_it)->isActivedLayer(layer)) {
 						(*r_it)->render(this, layer, instancesToRender);
+						m_renderbackend->renderVertexArrays();
 					}
 				}
 			}
 			m_renderbackend->detachRenderTarget();
 			m_renderbackend->popClipArea();
 		}
-		// render cacheImage
-		cacheImage.get()->render(m_viewport);
 	}
 
 	void Camera::updateRenderLists() {
@@ -983,8 +982,6 @@ namespace FIFE {
 	}
 
 	void Camera::render() {
-		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
-
 		updateRenderLists();
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -999,14 +996,24 @@ namespace FIFE {
 			}
 		}
 
-		m_renderbackend->pushClipArea(getViewPort());
-
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for ( ; layer_it != layers.end(); ++layer_it) {
 			// layer with static flag will rendered as one texture
 			if ((*layer_it)->isStatic()) {
 				renderStaticLayer(*layer_it, m_updated);
+				continue;
+			}
+		}
+
+		m_renderbackend->pushClipArea(getViewPort());
+
+		layer_it = layers.begin();
+		for ( ; layer_it != layers.end(); ++layer_it) {
+			// layer with static flag will rendered as one texture
+			if ((*layer_it)->isStatic()) {
+				m_cache[*layer_it]->getCacheImage()->render(m_viewport);
+				m_renderbackend->renderVertexArrays();
 				continue;
 			}
 			RenderList& instancesToRender = m_layerToInstances[*layer_it];
@@ -1022,20 +1029,18 @@ namespace FIFE {
 					for (; r_it != m_pipeline.end(); ++r_it) {
 						if ((*r_it)->isActivedLayer(*layer_it)) {
 							(*r_it)->render(this, *layer_it, tempList);
+							m_renderbackend->renderVertexArrays();
 						}
 					}
-					m_renderbackend->renderVertexArrays();
 				}
 			} else {
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 				for (; r_it != m_pipeline.end(); ++r_it) {
 					if ((*r_it)->isActivedLayer(*layer_it)) {
 						(*r_it)->render(this, *layer_it, instancesToRender);
+						m_renderbackend->renderVertexArrays();
 					}
 				}
-			}
-			if (renderbackendOpenGLe) {
-				m_renderbackend->renderVertexArrays();
 			}
 		}
 

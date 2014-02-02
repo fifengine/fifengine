@@ -177,6 +177,22 @@ namespace FIFE {
 		 */
 		bool isGLUseMonochrome() const;
 
+		/** Sets if OpenGL renderbackend should use depth buffer.
+		 */
+		void setGLUseDepthBuffer(bool buffer);
+
+		/** Tells if OpenGL renderbackend should use depth buffer.
+		 */
+		bool isGLUseDepthBuffer() const;
+
+		/** Sets alpha test value for OpenGL renderbackend.
+		 */
+		void setGLAlphaTestValue(float alpha);
+
+		/** Gets current alpha test value which uses OpenGL.
+		 */
+		float getGLAlphaTestValue() const;
+
 		/** Sets screen width (pixels)
 		 */
 		void setScreenWidth(uint16_t screenwidth);
@@ -349,6 +365,8 @@ namespace FIFE {
 		bool m_oglMipmapping;
 		bool m_oglMonochrome;
 		TextureFiltering m_oglTextureFilter;
+		bool m_oglDepthBuffer;
+		float m_alphaTestValue;
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;

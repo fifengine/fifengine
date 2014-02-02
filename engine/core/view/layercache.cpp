@@ -181,7 +181,8 @@ namespace FIFE {
 		m_zoomed = !Mathd::Equal(m_zoom, 1.0);
 		m_straightZoom = Mathd::Equal(fmod(m_zoom, 1.0), 0.0);
 		
-		if(RenderBackend::instance()->getName() == "OpenGLe") {
+		if(RenderBackend::instance()->getName() == "OpenGLe" ||
+			(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled())) {
 			m_needSorting = false;
 		} else {
 			m_needSorting = true;
@@ -750,7 +751,10 @@ namespace FIFE {
 		// { y2 = a*x2 + b
 		// where [y1,y2]' = layer z offset min/max is required z range,
 		// and [x1,x2]' is expected min,max z coords.
-		if (!m_needSorting) {
+
+		// more an workaround, because z values are wrong in case of inverted top with bottom
+		if (!m_needSorting && !m_layer->isStatic()) {
+		//if (!m_needSorting) {
 			float det = m_zMin - m_zMax;
 			if (fabs(det) > FLT_EPSILON) {
 				static const float globalrange = 200.0;
@@ -760,11 +764,12 @@ namespace FIFE {
 				float lmax = lmin + globalrange/numlayers;
 				float a = (lmin - lmax) / det;
 				float b = (lmax * m_zMin - lmin * m_zMax) / det;
+
 				RenderList::iterator it = renderlist.begin();
 				for ( ; it != renderlist.end(); ++it) {
 					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
 					float& z = (*it)->vertexZ;
-					z = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;					
+					z = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
 				}
 			}
 		} else {

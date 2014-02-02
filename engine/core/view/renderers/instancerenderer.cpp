@@ -127,7 +127,8 @@ namespace FIFE {
 		m_interval(60*1000),
 		m_timer_enabled(false) {
 		setEnabled(true);
-		if(m_renderbackend->getName() == "OpenGLe") {
+		if(m_renderbackend->getName() == "OpenGLe" ||
+			(m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled())) {
 			m_need_sorting = false;
 		} else {
 			m_need_sorting = true;
@@ -150,7 +151,8 @@ namespace FIFE {
 		m_interval(old.m_interval),
 		m_timer_enabled(false) {
 		setEnabled(true);
-		if(m_renderbackend->getName() == "OpenGLe") {
+		if(m_renderbackend->getName() == "OpenGLe" ||
+			(m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled())) {
 			m_need_sorting = false;
 		} else {
 			m_need_sorting = true;
@@ -195,15 +197,30 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances)
-	{
-		// TODO transparent area stuff was cut off
+	void InstanceRenderer::renderUnsorted(Camera* cam, Layer* layer, RenderList& instances) {
+		// FIXME: Unlit is currently broken, maybe it would be the best to change Lightsystem
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 		const bool unlit = !m_unlit_groups.empty();
 		uint32_t lm = m_renderbackend->getLightingModel();
 
-		// thanks to multimap, we will have transparent instances already sorted by their z value (key)
-		std::multimap<float, RenderItem*> transparentInstances;
+		m_area_layer = false;
+		if(!m_instance_areas.empty()) {
+			InstanceToAreas_t::iterator area_it = m_instance_areas.begin();
+			for(;area_it != m_instance_areas.end(); area_it++) {
+				AreaInfo& info = area_it->second;
+				if(info.instance->getLocation().getLayer() == layer) {
+					if(info.front) {
+						DoublePoint3D instance_posv = cam->toVirtualScreenCoordinates(info.instance->getLocation().getMapCoordinates());
+						info.z = instance_posv.z;
+					}
+					m_area_layer = true;
+				}
+			}
+		}
+		// Fixme
+		CellRenderer* cr = dynamic_cast<CellRenderer*>(cam->getRenderer("CellRenderer"));
+		Layer* fow_layer = cr->getFowLayer();
+		const bool check_fow = (fow_layer == layer && cr->isEnabledFogOfWar());
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
@@ -212,97 +229,242 @@ namespace FIFE {
 			RenderItem& vc = **instance_it;
 			float vertexZ = vc.vertexZ;
 
-			// if the instance is opacous
-			if(vc.transparency == 255) {
-				if (any_effects) {
-					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
-					const bool outline = outline_it != m_instance_outlines.end();
-					if (outline) {
-						Image* outline = bindOutline(outline_it->second, vc, cam);
-						outline->renderZ(vc.dimensions, vertexZ, 255, lm != 0 ? true : false);
-						vc.image->renderZ(vc.dimensions, vertexZ, 255);
-					}
-
-					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
-					const bool coloring = coloring_it != m_instance_colorings.end();
-					if (coloring) {
-						uint8_t rgba[4] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b, coloring_it->second.a };
-						vc.image->renderZ(vc.dimensions, vertexZ, 255, false, rgba);
-					}
-
-					if (outline || coloring) {
+			if (check_fow) {
+				Cell* cell = layer->getCellCache()->getCell(instance->getLocationRef().getLayerCoordinates());
+				if (cell) {
+					if (cell->getFoWType() != CELLV_REVEALED) {
 						continue;
 					}
 				}
-
-				// if we use lighting and appointed some of the instances as unlit
-				if(lm != 0 && unlit) {
-					bool found = false;
-					std::string lit_name = instance->getObject()->getNamespace();
-					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
-					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
-						if(lit_name.find(*unlit_it) != std::string::npos) {
-							found = true;
-							break;
-						}
-					}
-
-					vc.image->renderZ(vc.dimensions, vertexZ, 255, found ? true : false);
-					continue;
-				}
-
-				vc.image->renderZ(vc.dimensions, vertexZ, 255);
-			} else {
-				transparentInstances.insert(std::pair<float, RenderItem*>(vertexZ, &vc));
 			}
-		}
 
-		// iterate through all (semi) transparent instances
-		if(!transparentInstances.empty()) {
-			std::multimap<float, RenderItem*>::iterator it = transparentInstances.begin();
-			for( ; it != transparentInstances.end(); ++it) {
-				RenderItem& vc = *(it->second);
-				uint8_t alpha = vc.transparency;// or? 255 - vc.transparency;
-				float vertexZ = it->first;
-
-				if (any_effects) {
-					InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(vc.instance);
-					const bool outline = outline_it != m_instance_outlines.end();
-					if (outline) {
-						Image* outline = bindOutline(outline_it->second, vc, cam);
-						outline->renderZ(vc.dimensions, vertexZ, alpha, lm != 0 ? true : false);
-						vc.image->renderZ(vc.dimensions, vertexZ, alpha);
-					}
-
-					InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(vc.instance);
-					const bool coloring = coloring_it != m_instance_colorings.end();
-					if (coloring) {
-						uint8_t rgb[3] = { coloring_it->second.r, coloring_it->second.g, coloring_it->second.b };
-						vc.image->renderZ(vc.dimensions, vertexZ, alpha, false, rgb);
-					}
-
-					if (outline || coloring) {
-						continue;
-					}
-				}
-
-				// if we use lighting and appointed some of the instances as unlit
-				if(lm != 0 && unlit) {
-					bool found = false;
-					std::string lit_name = vc.instance->getObject()->getNamespace();
-					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
-					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
-						if(lit_name.find(*unlit_it) != std::string::npos) {
-							found = true;
-							break;
+			if (m_area_layer) {
+				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();
+				for(;areas_it != m_instance_areas.end(); areas_it++) {
+					AreaInfo& infoa = areas_it->second;
+					if (infoa.front) {
+						if (infoa.z >= vc.screenpoint.z) {
+							continue;
 						}
 					}
 
-					vc.image->renderZ(vc.dimensions, vertexZ, alpha, found ? true : false);
-					continue;
+					std::string str_name = instance->getObject()->getNamespace();
+					std::list<std::string>::iterator group_it = infoa.groups.begin();
+					for (;group_it != infoa.groups.end(); ++group_it) {
+						if (str_name.find((*group_it)) != std::string::npos) {
+							ScreenPoint p;
+							Rect rec;
+							p = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
+							rec.x = p.x - infoa.w / 2;
+							rec.y = p.y - infoa.h / 2;
+							rec.w = infoa.w;
+							rec.h = infoa.h;
+							if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
+								vc.transparency = 255 - infoa.trans;
+								// dirty hack to reset the transparency on next pump
+								InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+								visual->setVisible(!visual->isVisible());
+								visual->setVisible(!visual->isVisible());
+							}
+						}
+					}
 				}
+			}
 
-				vc.image->renderZ(vc.dimensions, vertexZ, alpha);
+			RenderDataType type = vc.transparency == 255 ? RENDER_DATA_TEXTURE_Z : RENDER_DATA_TEXCOLOR_Z;
+
+			uint8_t coloringColor[4] = { 0 };
+			Image* outlineImage = 0;
+			bool recoloring = false;
+			if (any_effects) {
+				// coloring
+				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
+				const bool coloring = coloring_it != m_instance_colorings.end();
+				if (coloring) {
+					coloringColor[0] = coloring_it->second.r;
+					coloringColor[1] = coloring_it->second.g;
+					coloringColor[2] = coloring_it->second.b;
+					coloringColor[3] = coloring_it->second.a;
+					recoloring = true;
+				}
+				// outline
+				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
+				const bool outline = outline_it != m_instance_outlines.end();
+				if (outline) {
+					if (lm != 0) {
+						// first render normal image without stencil and alpha test (0)
+						// so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+						outlineImage = bindOutline(outline_it->second, vc, cam);
+					} else {
+						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+					}
+				}
+			}
+//			if(lm != 0) {
+//				if(unlit) {
+//					bool found = false;
+//					std::string lit_name = instance->getObject()->getNamespace();
+//					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+//					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+//						if(lit_name.find(*unlit_it) != std::string::npos) {
+//							found = true;
+//							break;
+//						}
+//					}
+//					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+//					if (found) {
+//						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+//					} else {
+//						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, ZERO, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+//					}
+//					if (outlineImage) {
+//						outlineImage->render(vc.dimensions, vc.transparency);
+//						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+//					}
+//					continue;
+//				}
+//			}
+			if (vc.m_overlay) {
+				// animation overlay
+				std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
+				// animation color overlay
+				std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
+
+				// animation overlay without color overlay
+				if (animationOverlay && !animationColorOverlay) {
+					for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
+						(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+					}
+				// animation overlay with color overlay
+				} else if (animationOverlay && animationColorOverlay) {
+					std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
+					std::vector<ImagePtr>::iterator it = animationOverlay->begin();
+					for (; it != animationOverlay->end(); ++it, ++ovit) {
+						OverlayColors* oc = (*ovit);
+						if (!oc) {
+							(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+						} else {
+							if (oc->getColors().size() > 1) {
+								std::map<Color, Color>::const_iterator cit = oc->getColors().begin();
+								uint8_t factor[4] = { 0, 0, 0, cit->second.getAlpha() };
+								// multi color overlay
+								ImagePtr multiColorOverlay;
+								if (recoloring) {
+									// create temp OverlayColors
+									OverlayColors* temp = new OverlayColors(oc->getColorOverlayImage());
+									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+									const std::map<Color, Color>& defaultColors = oc->getColors();
+									for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
+										if (c_it->second.getAlpha() == 0) {
+											continue;
+										}
+										float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+										Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+											coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+											coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
+										temp->changeColor(c_it->first, c);
+									}
+									// create new factor
+									factor[3] = static_cast<uint8_t>(255 - factor[3]);
+									factor[3] = std::min(coloringColor[3], factor[3]);
+									// get overlay image with temp colors
+									multiColorOverlay = getMultiColorOverlay(vc, temp);
+									delete temp;
+								} else {
+									multiColorOverlay = getMultiColorOverlay(vc, oc);
+									factor[3] = 0;
+								}
+								(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+								(*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+								continue;
+							}
+							// single color overlay
+							std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
+							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+							bool noOverlay = rgba[3] == 255;
+							if (recoloring) {
+								if (!noOverlay) {
+									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+									float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+									rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+									rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+									rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+									rgba[3] = std::min(coloringColor[3], rgba[3]);
+								}
+							}
+							(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+							if (!noOverlay) {
+								(*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
+								m_renderbackend->changeRenderInfos(RENDER_DATA_MULTITEXTURE_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+							}
+						}
+					}
+				} else {
+					OverlayColors* colorOverlay = vc.getColorOverlay();
+					if (colorOverlay->getColors().size() > 1) {
+						// multi color overlay
+						ImagePtr multiColorOverlay;
+						// interpolation factor
+						std::map<Color, Color>::const_iterator it = colorOverlay->getColors().begin();
+						uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
+						if (recoloring) {
+							// create temp OverlayColors
+							OverlayColors* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
+							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+							const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
+							for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
+								if (c_it->second.getAlpha() == 0) {
+									continue;
+								}
+								float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+								Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+									coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+									coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
+								temp->changeColor(c_it->first, c);
+							}
+							// create new factor
+							factor[3] = static_cast<uint8_t>(255 - factor[3]);
+							factor[3] = std::min(coloringColor[3], factor[3]);
+							// get overlay image with temp colors
+							multiColorOverlay = getMultiColorOverlay(vc, temp);
+							delete temp;
+						}
+						if (!multiColorOverlay) {
+							multiColorOverlay = getMultiColorOverlay(vc);
+							factor[3] = 0;
+						}
+						vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+						vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+					} else {
+						// single color overlay
+						std::map<Color, Color>::const_iterator color_it = colorOverlay->getColors().begin();
+						uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+						bool noOverlay = rgba[3] == 255;
+						if (recoloring) {
+							if (!noOverlay) {
+								float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+								float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+								rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+								rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+								rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+								rgba[3] = std::min(coloringColor[3], rgba[3]);
+							}
+						}
+						vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+						if (!noOverlay) {
+							vc.image->renderZ(vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+							m_renderbackend->changeRenderInfos(RENDER_DATA_MULTITEXTURE_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+						}
+					}
+				}
+			// no overlay
+			} else {
+				vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+			}
+
+			if (outlineImage) {
+				outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+				m_renderbackend->changeRenderInfos(type, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
 			}
 		}
 	}
@@ -421,13 +583,13 @@ namespace FIFE {
 					}
 					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 					if (found) {
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
 					} else {
-						m_renderbackend->changeRenderInfos(1, 4, 5, true, true, 0, ZERO, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, true, 0, ZERO, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
 					}
 					if (outlineImage) {
 						outlineImage->render(vc.dimensions, vc.transparency);
-						m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
 					}
 					continue;
 				}
@@ -503,7 +665,7 @@ namespace FIFE {
 							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 							if (!noOverlay) {
 								(*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
-								m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+								m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
 							}
 						}
 					}
@@ -561,7 +723,7 @@ namespace FIFE {
 						vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 						if (!noOverlay) {
 							vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
-							m_renderbackend->changeRenderInfos(1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+							m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
 						}
 					}
 				}
@@ -572,7 +734,7 @@ namespace FIFE {
 
 			if (outlineImage) {
 				outlineImage->render(vc.dimensions, vc.transparency);
-				m_renderbackend->changeRenderInfos(1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+				m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
 			}
 		}
 	}

@@ -170,7 +170,61 @@ namespace FIFE {
 		GLImage* img = static_cast<GLImage*>(overlay.get());
 		img->forceLoadInternal();
 		
-		rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
+		static_cast<RenderBackendOpenGL*>(rb)->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
+		//rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
+	}
+
+	void GLImage::renderZ(const Rect& rect, float vertexZ, uint8_t alpha, uint8_t const* rgb) {
+		// completely transparent so dont bother rendering
+		if (0 == alpha) {
+			return;
+		}
+		RenderBackend* rb = RenderBackend::instance();
+		SDL_Surface* target = rb->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
+
+		// not on the screen.  dont render
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
+			return;
+		}
+
+		if (!m_texId) {
+			generateGLTexture();
+		} else if (m_shared) {
+			validateShared();
+		}
+
+		static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(m_texId, rect, vertexZ, m_tex_coords, alpha, rgb);
+		//rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
+	}
+
+	void GLImage::renderZ(const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha, uint8_t const* rgb) {
+		// completely transparent so dont bother rendering
+		if (0 == alpha) {
+			return;
+		}
+		RenderBackend* rb = RenderBackend::instance();
+		SDL_Surface* target = rb->getRenderTargetSurface();
+		assert(target != m_surface); // can't draw on the source surface
+		
+		// not on the screen.  dont render
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
+			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
+			return;
+		}
+		
+		if (!m_texId) {
+			generateGLTexture();
+		} else if (m_shared) {
+			validateShared();
+		}
+		
+		GLImage* img = static_cast<GLImage*>(overlay.get());
+		img->forceLoadInternal();
+		
+		static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(rect, vertexZ, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
+		//rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
 	}
 
 	void GLImage::generateGLTexture() {

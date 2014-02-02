@@ -74,6 +74,10 @@ namespace FIFE {
 		bool isGLUseMipmapping() const;
 		void setGLUseMonochrome(bool monochrome);
 		bool isGLUseMonochrome() const;
+		void setGLUseDepthBuffer(bool buffer);
+		bool isGLUseDepthBuffer() const;
+		void setGLAlphaTestValue(float alpha);
+		float getGLAlphaTestValue() const;
 		void setScreenWidth(uint16_t screenwidth);
 		uint16_t getScreenWidth() const;
 		void setScreenHeight(uint16_t screenheight);
