@@ -318,23 +318,34 @@ namespace FIFE {
 		if(this->isSharedImage()) {
 			Rect const& rect = this->getSubImageRect();
 			SDL_Rect dstrect = {
-				rect.x + xoffset, rect.y + yoffset,
+				static_cast<Sint16>(rect.x + xoffset),
+				static_cast<Sint16>(rect.y + yoffset),
 				static_cast<Uint16>(srcimg->getWidth()),
 				static_cast<Uint16>(srcimg->getHeight()) };
 			if(srcimg->isSharedImage()) {
 				Rect const& rect = srcimg->getSubImageRect();
-				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_Rect srcrect = {
+					static_cast<Sint16>(rect.x),
+					static_cast<Sint16>(rect.y),
+					static_cast<Uint16>(rect.w),
+					static_cast<Uint16>(rect.h) };
 				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
 			} else {
 				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
 			}
 		} else {
-			SDL_Rect dstrect = { xoffset, yoffset,
+			SDL_Rect dstrect = {
+				static_cast<Sint16>(xoffset),
+				static_cast<Sint16>(yoffset),
 				static_cast<Uint16>(srcimg->getWidth()),
 				static_cast<Uint16>(srcimg->getHeight()) };
 			if(srcimg->isSharedImage()) {
 				Rect const& rect = srcimg->getSubImageRect();
-				SDL_Rect srcrect = { rect.x, rect.y, rect.w, rect.h };
+				SDL_Rect srcrect = {
+					static_cast<Sint16>(rect.x),
+					static_cast<Sint16>(rect.y),
+					static_cast<Uint16>(rect.w),
+					static_cast<Uint16>(rect.h) };
 				SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
 			} else {
 				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
