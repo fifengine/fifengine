@@ -230,6 +230,7 @@ namespace FIFE {
 			GLuint texture[4];
 			uint32_t active_tex;
 			uint32_t active_client_tex;
+			float alpha_test;
 
 			// Pointers
 			const void* vertex_pointer;

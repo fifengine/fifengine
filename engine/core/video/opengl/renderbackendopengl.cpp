@@ -87,7 +87,7 @@ namespace FIFE {
 		m_state.texture[2] = 0;
 		m_state.texture[3] = 0;
 		m_state.active_tex = 0;
-
+		m_state.alpha_test = 0.0;
 		m_state.color_pointer = 0;
 		m_state.tex_pointer[0] = 0;
 		m_state.tex_pointer[1] = 0;
@@ -520,6 +520,7 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::setAlphaTest(float ref_alpha) {
 		enableAlphaTest();
+		m_state.alpha_test = ref_alpha;
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
@@ -886,8 +887,27 @@ namespace FIFE {
 						disableTextures(3);
 						disableTextures(2);
 						disableTextures(1);
-						enableTextures(0);
-
+						
+						if (ro.texture_id != 0) {
+							enableTextures(0);
+							if (m_state.color_enabled) {
+								setVertexPointer(strideTC, &m_renderTextureColorDatas[0].vertex);
+								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
+								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+								currentElements = &elementsTC;
+								currentIndex = &indexTC;
+							} else {
+								setVertexPointer(strideT, &m_renderTextureDatas[0].vertex);
+								setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+								currentIndex = &indexT;
+								currentElements = &elementsT;
+							}
+						} else {
+							setVertexPointer(strideP, &m_renderPrimitiveDatas[0].vertex);
+							setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+							currentElements = &elementsP;
+							currentIndex = &indexP;
+						}
 						texture_id2 = 0;
 						break;
 					case OVERLAY_TYPE_COLOR:
@@ -1162,6 +1182,8 @@ namespace FIFE {
 		uint32_t* currentElements = &elements;
 
 		enableDepthTest();
+		enableAlphaTest();
+		glAlphaFunc(GL_GREATER, 0.008);
 		enableTextures(0);
 		enableLighting();
 
@@ -1197,6 +1219,8 @@ namespace FIFE {
 		//reset all states
 		disableLighting();
 		disableTextures(0);
+		glAlphaFunc(GL_GREATER, m_state.alpha_test);
+		disableAlphaTest();
 		disableDepthTest();
 
 		m_renderTextureColorDatasZ.clear();
@@ -1239,6 +1263,7 @@ namespace FIFE {
 
 		enableDepthTest();
 		enableAlphaTest();
+		glAlphaFunc(GL_GREATER, 0.008);
 		enableTextures(0);
 		enableLighting();
 
@@ -1338,6 +1363,7 @@ namespace FIFE {
 		}
 		disableTextures(0);
 		disableLighting();
+		glAlphaFunc(GL_GREATER, m_state.alpha_test);
 		disableAlphaTest();
 		disableDepthTest();
 
@@ -1353,11 +1379,11 @@ namespace FIFE {
 		if (!m_renderTextureObjectsZ.empty()) {
 			renderWithZ();
 		}
-		if (!m_renderTextureColorObjectsZ.empty()) {
-			renderWithColorAndZ();
-		}
 		if (!m_renderMultitextureObjectsZ.empty()) {
 			renderWithMultitextureAndZ();
+		}
+		if (!m_renderTextureColorObjectsZ.empty()) {
+			renderWithColorAndZ();
 		}
 
 		// objects without z
