@@ -25,7 +25,7 @@ function install_dependencies() {
     echo
 
     brew update
-    brew install swig sdl_image sdl_mixer sdl_ttf scons boost boost-jam libvorbis libogg
+    brew install swig sdl_image sdl_mixer sdl_ttf scons boost boost-jam libvorbis libogg sdl2
 
     easy_install pip
     pip install pyrex --allow-all-external --allow-unverified pyrex
