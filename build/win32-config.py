@@ -63,7 +63,8 @@ def addExtras(env, reqLibs):
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
-	
+	if cegui:
+		cegui_0 = env['CEGUI_0']
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
 	else:
@@ -85,7 +86,10 @@ def addExtras(env, reqLibs):
 		env.Prepend(LIBS = rocket_libs)
 		
 	if cegui:
-		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
+		if cegui_0:
+			cegui_libs = ['libCEGUIBase-0', 'libCEGUIOpenGLRenderer-0' ]    
+		else:
+			cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
 		env.Prepend(LIBS = cegui_libs)
 		
 	# define for using tinyxml with stl support enabled
