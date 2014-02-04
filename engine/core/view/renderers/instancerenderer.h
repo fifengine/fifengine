@@ -226,6 +226,8 @@ namespace FIFE {
 		typedef std::map<Instance*, Effect> InstanceToEffects_t;
 		InstanceToEffects_t m_assigned_instances;
 
+		void renderOverlay(RenderDataType type, RenderItem* item, uint8_t const* coloringColor, bool recoloring);
+
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);

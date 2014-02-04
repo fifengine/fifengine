@@ -202,6 +202,8 @@ namespace FIFE {
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 		const bool unlit = !m_unlit_groups.empty();
 		uint32_t lm = m_renderbackend->getLightingModel();
+		// thanks to multimap, we will have transparent instances already sorted by their z value (key)
+		std::multimap<float, RenderItem*> transparentInstances;
 
 		m_area_layer = false;
 		if(!m_instance_areas.empty()) {
@@ -271,7 +273,11 @@ namespace FIFE {
 				}
 			}
 
-			RenderDataType type = vc.transparency == 255 ? RENDER_DATA_TEXTURE_Z : RENDER_DATA_TEXCOLOR_Z;
+			// if instance is not opacous
+			if (vc.transparency != 255) {
+				transparentInstances.insert(std::pair<float, RenderItem*>(vertexZ, &vc));
+				continue;
+			}
 
 			uint8_t coloringColor[4] = { 0 };
 			Image* outlineImage = 0;
@@ -324,139 +330,9 @@ namespace FIFE {
 //					continue;
 //				}
 //			}
+			// overlay
 			if (vc.m_overlay) {
-				// animation overlay
-				std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
-				// animation color overlay
-				std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
-
-				// animation overlay without color overlay
-				if (animationOverlay && !animationColorOverlay) {
-					for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
-						(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-					}
-				// animation overlay with color overlay
-				} else if (animationOverlay && animationColorOverlay) {
-					std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
-					std::vector<ImagePtr>::iterator it = animationOverlay->begin();
-					for (; it != animationOverlay->end(); ++it, ++ovit) {
-						OverlayColors* oc = (*ovit);
-						if (!oc) {
-							(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-						} else {
-							if (oc->getColors().size() > 1) {
-								std::map<Color, Color>::const_iterator cit = oc->getColors().begin();
-								uint8_t factor[4] = { 0, 0, 0, cit->second.getAlpha() };
-								// multi color overlay
-								ImagePtr multiColorOverlay;
-								if (recoloring) {
-									// create temp OverlayColors
-									OverlayColors* temp = new OverlayColors(oc->getColorOverlayImage());
-									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-									const std::map<Color, Color>& defaultColors = oc->getColors();
-									for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-										if (c_it->second.getAlpha() == 0) {
-											continue;
-										}
-										float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
-										Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
-											coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
-											coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
-										temp->changeColor(c_it->first, c);
-									}
-									// create new factor
-									factor[3] = static_cast<uint8_t>(255 - factor[3]);
-									factor[3] = std::min(coloringColor[3], factor[3]);
-									// get overlay image with temp colors
-									multiColorOverlay = getMultiColorOverlay(vc, temp);
-									delete temp;
-								} else {
-									multiColorOverlay = getMultiColorOverlay(vc, oc);
-									factor[3] = 0;
-								}
-								(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-								(*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
-								continue;
-							}
-							// single color overlay
-							std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
-							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
-							bool noOverlay = rgba[3] == 255;
-							if (recoloring) {
-								if (!noOverlay) {
-									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-									float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
-									rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
-									rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
-									rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
-									rgba[3] = std::min(coloringColor[3], rgba[3]);
-								}
-							}
-							(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-							if (!noOverlay) {
-								(*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
-								m_renderbackend->changeRenderInfos(RENDER_DATA_MULTITEXTURE_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
-							}
-						}
-					}
-				} else {
-					OverlayColors* colorOverlay = vc.getColorOverlay();
-					if (colorOverlay->getColors().size() > 1) {
-						// multi color overlay
-						ImagePtr multiColorOverlay;
-						// interpolation factor
-						std::map<Color, Color>::const_iterator it = colorOverlay->getColors().begin();
-						uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
-						if (recoloring) {
-							// create temp OverlayColors
-							OverlayColors* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
-							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-							const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
-							for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-								if (c_it->second.getAlpha() == 0) {
-									continue;
-								}
-								float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
-								Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
-									coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
-									coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
-								temp->changeColor(c_it->first, c);
-							}
-							// create new factor
-							factor[3] = static_cast<uint8_t>(255 - factor[3]);
-							factor[3] = std::min(coloringColor[3], factor[3]);
-							// get overlay image with temp colors
-							multiColorOverlay = getMultiColorOverlay(vc, temp);
-							delete temp;
-						}
-						if (!multiColorOverlay) {
-							multiColorOverlay = getMultiColorOverlay(vc);
-							factor[3] = 0;
-						}
-						vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-						vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
-					} else {
-						// single color overlay
-						std::map<Color, Color>::const_iterator color_it = colorOverlay->getColors().begin();
-						uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
-						bool noOverlay = rgba[3] == 255;
-						if (recoloring) {
-							if (!noOverlay) {
-								float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-								float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
-								rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
-								rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
-								rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
-								rgba[3] = std::min(coloringColor[3], rgba[3]);
-							}
-						}
-						vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
-						if (!noOverlay) {
-							vc.image->renderZ(vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
-							m_renderbackend->changeRenderInfos(RENDER_DATA_MULTITEXTURE_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
-						}
-					}
-				}
+				renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
 			// no overlay
 			} else {
 				vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
@@ -464,7 +340,55 @@ namespace FIFE {
 
 			if (outlineImage) {
 				outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
-				m_renderbackend->changeRenderInfos(type, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+				m_renderbackend->changeRenderInfos(RENDER_DATA_TEXTURE_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+			}
+		}
+		// iterate through all (semi) transparent instances
+		std::multimap<float, RenderItem*>::iterator it = transparentInstances.begin();
+		for( ; it != transparentInstances.end(); ++it) {
+			RenderItem& vc = *(it->second);
+			Instance* instance = vc.instance;
+			uint8_t alpha = vc.transparency;
+			float vertexZ = it->first;
+
+			uint8_t coloringColor[4] = { 0 };
+			Image* outlineImage = 0;
+			bool recoloring = false;
+			if (any_effects) {
+				// coloring
+				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
+				const bool coloring = coloring_it != m_instance_colorings.end();
+				if (coloring) {
+					coloringColor[0] = coloring_it->second.r;
+					coloringColor[1] = coloring_it->second.g;
+					coloringColor[2] = coloring_it->second.b;
+					coloringColor[3] = coloring_it->second.a;
+					recoloring = true;
+				}
+				// outline
+				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
+				const bool outline = outline_it != m_instance_outlines.end();
+				if (outline) {
+					if (lm != 0) {
+						// first render normal image without stencil and alpha test (0)
+						// so it wont look aliased and then with alpha test render only outline (its 'binary' image)
+						outlineImage = bindOutline(outline_it->second, vc, cam);
+					} else {
+						bindOutline(outline_it->second, vc, cam)->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+					}
+				}
+			}
+			// overlay
+			if (vc.m_overlay) {
+				renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
+			// no overlay
+			} else {
+				vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+			}
+
+			if (outlineImage) {
+				outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+				m_renderbackend->changeRenderInfos(RENDER_DATA_TEXCOLOR_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
 			}
 		}
 	}
@@ -594,94 +518,66 @@ namespace FIFE {
 					continue;
 				}
 			}
+			// overlay
 			if (vc.m_overlay) {
-				// animation overlay
-				std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
-				// animation color overlay
-				std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
+				renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor, recoloring);
+			// no overlay
+			} else {
+				vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+			}
 
-				// animation overlay without color overlay
-				if (animationOverlay && !animationColorOverlay) {
-					for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
+			if (outlineImage) {
+				outlineImage->render(vc.dimensions, vc.transparency);
+				m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+			}
+		}
+	}
+
+	void InstanceRenderer::renderOverlay(RenderDataType type, RenderItem* item, uint8_t const* coloringColor, bool recoloring) {
+		RenderItem& vc = *item;
+		Instance* instance = vc.instance;
+		bool withZ = type != RENDER_DATA_WITHOUT_Z;
+		float vertexZ = vc.vertexZ;
+
+		// animation overlay
+		std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();
+		// animation color overlay
+		std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
+
+		// animation overlay without color overlay
+		if (animationOverlay && !animationColorOverlay) {
+			if (withZ) {
+				for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
+					(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+				}
+			} else {
+				for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end(); ++it) {
+					(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+				}
+			}
+		// animation overlay with color overlay
+		} else if (animationOverlay && animationColorOverlay) {
+			std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
+			std::vector<ImagePtr>::iterator it = animationOverlay->begin();
+			for (; it != animationOverlay->end(); ++it, ++ovit) {
+				OverlayColors* oc = (*ovit);
+				if (!oc) {
+					if (withZ) {
+						(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+					} else {
 						(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 					}
-				// animation overlay with color overlay
-				} else if (animationOverlay && animationColorOverlay) {
-					std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
-					std::vector<ImagePtr>::iterator it = animationOverlay->begin();
-					for (; it != animationOverlay->end(); ++it, ++ovit) {
-						OverlayColors* oc = (*ovit);
-						if (!oc) {
-							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-						} else {
-							if (oc->getColors().size() > 1) {
-								std::map<Color, Color>::const_iterator cit = oc->getColors().begin();
-								uint8_t factor[4] = { 0, 0, 0, cit->second.getAlpha() };
-								// multi color overlay
-								ImagePtr multiColorOverlay;
-								if (recoloring) {
-									// create temp OverlayColors
-									OverlayColors* temp = new OverlayColors(oc->getColorOverlayImage());
-									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-									const std::map<Color, Color>& defaultColors = oc->getColors();
-									for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
-										if (c_it->second.getAlpha() == 0) {
-											continue;
-										}
-										float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
-										Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
-											coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
-											coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
-										temp->changeColor(c_it->first, c);
-									}
-									// create new factor
-									factor[3] = static_cast<uint8_t>(255 - factor[3]);
-									factor[3] = std::min(coloringColor[3], factor[3]);
-									// get overlay image with temp colors
-									multiColorOverlay = getMultiColorOverlay(vc, temp);
-									delete temp;
-								} else {
-									multiColorOverlay = getMultiColorOverlay(vc, oc);
-									factor[3] = 0;
-								}
-								(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-								(*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
-								continue;
-							}
-							// single color overlay
-							std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
-							uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
-							bool noOverlay = rgba[3] == 255;
-							if (recoloring) {
-								if (!noOverlay) {
-									float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-									float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
-									rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
-									rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
-									rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
-									rgba[3] = std::min(coloringColor[3], rgba[3]);
-								}
-							}
-							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-							if (!noOverlay) {
-								(*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
-								m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
-							}
-						}
-					}
 				} else {
-					OverlayColors* colorOverlay = vc.getColorOverlay();
-					if (colorOverlay->getColors().size() > 1) {
+					if (oc->getColors().size() > 1) {
+						std::map<Color, Color>::const_iterator cit = oc->getColors().begin();
+						uint8_t factor[4] = { 0, 0, 0, cit->second.getAlpha() };
 						// multi color overlay
 						ImagePtr multiColorOverlay;
-						// interpolation factor
-						std::map<Color, Color>::const_iterator it = colorOverlay->getColors().begin();
-						uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
 						if (recoloring) {
 							// create temp OverlayColors
-							OverlayColors* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
+							OverlayColors* temp = new OverlayColors(oc->getColorOverlayImage());
 							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-							const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
+							const std::map<Color, Color>& defaultColors = oc->getColors();
 							for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
 								if (c_it->second.getAlpha() == 0) {
 									continue;
@@ -698,43 +594,117 @@ namespace FIFE {
 							// get overlay image with temp colors
 							multiColorOverlay = getMultiColorOverlay(vc, temp);
 							delete temp;
-						}
-						if (!multiColorOverlay) {
-							multiColorOverlay = getMultiColorOverlay(vc);
+						} else {
+							multiColorOverlay = getMultiColorOverlay(vc, oc);
 							factor[3] = 0;
 						}
-						vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
-						vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
-					} else {
-						// single color overlay
-						std::map<Color, Color>::const_iterator color_it = colorOverlay->getColors().begin();
-						uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
-						bool noOverlay = rgba[3] == 255;
-						if (recoloring) {
-							if (!noOverlay) {
-								float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
-								float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
-								rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
-								rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
-								rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
-								rgba[3] = std::min(coloringColor[3], rgba[3]);
-							}
+						if (withZ) {
+							(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+							(*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+						} else {
+							(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+							(*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
 						}
-						vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+						continue;
+					}
+					// single color overlay
+					std::map<Color, Color>::const_iterator color_it = oc->getColors().begin();
+					uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+					bool noOverlay = rgba[3] == 255;
+					if (recoloring) {
 						if (!noOverlay) {
-							vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
-							m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+							float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+							float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+							rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+							rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+							rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+							rgba[3] = std::min(coloringColor[3], rgba[3]);
+						}
+					}
+					if (withZ) {
+						(*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+						if (!noOverlay) {
+							(*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
+							m_renderbackend->changeRenderInfos(type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+						}
+					} else {
+						(*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+						if (!noOverlay) {
+							(*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
+							m_renderbackend->changeRenderInfos(type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
 						}
 					}
 				}
-			// no overlay
-			} else {
-				vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 			}
-
-			if (outlineImage) {
-				outlineImage->render(vc.dimensions, vc.transparency);
-				m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
+		} else {
+			OverlayColors* colorOverlay = vc.getColorOverlay();
+			if (colorOverlay->getColors().size() > 1) {
+				// multi color overlay
+				ImagePtr multiColorOverlay;
+				// interpolation factor
+				std::map<Color, Color>::const_iterator it = colorOverlay->getColors().begin();
+				uint8_t factor[4] = { 0, 0, 0, it->second.getAlpha() };
+				if (recoloring) {
+					// create temp OverlayColors
+					OverlayColors* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
+					float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+					const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
+					for (std::map<Color, Color>::const_iterator c_it = defaultColors.begin(); c_it != defaultColors.end(); ++c_it) {
+						if (c_it->second.getAlpha() == 0) {
+							continue;
+						}
+						float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
+						Color c(coloringColor[0]*(1.0-alphaFactor1) + (c_it->second.getR()*alphaFactor2)*alphaFactor1,
+							coloringColor[1]*(1.0-alphaFactor1) + (c_it->second.getG()*alphaFactor2)*alphaFactor1,
+							coloringColor[2]*(1.0-alphaFactor1) + (c_it->second.getB()*alphaFactor2)*alphaFactor1, 255);
+						temp->changeColor(c_it->first, c);
+					}
+					// create new factor
+					factor[3] = static_cast<uint8_t>(255 - factor[3]);
+					factor[3] = std::min(coloringColor[3], factor[3]);
+					// get overlay image with temp colors
+					multiColorOverlay = getMultiColorOverlay(vc, temp);
+					delete temp;
+				}
+				if (!multiColorOverlay) {
+					multiColorOverlay = getMultiColorOverlay(vc);
+					factor[3] = 0;
+				}
+				if (withZ) {
+					vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+					vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
+				} else {
+					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+					vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
+				}
+			} else {
+				// single color overlay
+				std::map<Color, Color>::const_iterator color_it = colorOverlay->getColors().begin();
+				uint8_t rgba[4] = { color_it->second.getR(), color_it->second.getG(), color_it->second.getB(), static_cast<uint8_t>(255-color_it->second.getAlpha()) };
+				bool noOverlay = rgba[3] == 255;
+				if (recoloring) {
+					if (!noOverlay) {
+						float alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+						float alphaFactor2 = 1.0-static_cast<float>(rgba[3] / 255.0);
+						rgba[0] = coloringColor[0]*(1.0-alphaFactor1) + (rgba[0]*alphaFactor2)*alphaFactor1;
+						rgba[1] = coloringColor[1]*(1.0-alphaFactor1) + (rgba[1]*alphaFactor2)*alphaFactor1;
+						rgba[2] = coloringColor[2]*(1.0-alphaFactor1) + (rgba[2]*alphaFactor2)*alphaFactor1;
+						rgba[3] = std::min(coloringColor[3], rgba[3]);
+					}
+				}
+				if (withZ) {
+					vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+					if (!noOverlay) {
+						vc.image->renderZ(vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+						m_renderbackend->changeRenderInfos(type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+					}
+				} else {
+					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+					if (!noOverlay) {
+						vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
+						m_renderbackend->changeRenderInfos(type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
+					}
+				}
 			}
 		}
 	}
