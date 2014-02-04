@@ -88,6 +88,7 @@ namespace FIFE {
 		m_state.texture[3] = 0;
 		m_state.active_tex = 0;
 		m_state.alpha_test = 0.0;
+		m_state.vertex_pointer_size = 2;
 		m_state.color_pointer = 0;
 		m_state.tex_pointer[0] = 0;
 		m_state.tex_pointer[1] = 0;
@@ -228,8 +229,7 @@ namespace FIFE {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GREATER, m_alphaValue);
+		setAlphaTest(m_alphaValue);
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -520,8 +520,10 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::setAlphaTest(float ref_alpha) {
 		enableAlphaTest();
-		m_state.alpha_test = ref_alpha;
-		glAlphaFunc(GL_GREATER, ref_alpha);
+		if (!Mathf::Equal(m_state.alpha_test, ref_alpha)) {
+			m_state.alpha_test = ref_alpha;
+			glAlphaFunc(GL_GREATER, ref_alpha);
+		}
 	}
 
 	void RenderBackendOpenGL::enableDepthTest() {
@@ -574,10 +576,11 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::setVertexPointer(GLsizei stride, const GLvoid* ptr) {
-		if(m_state.vertex_pointer != ptr)	{
+	void RenderBackendOpenGL::setVertexPointer(GLint size, GLsizei stride, const GLvoid* ptr) {
+		if(m_state.vertex_pointer != ptr || m_state.vertex_pointer_size != size)	{
 			m_state.vertex_pointer = ptr;
-			glVertexPointer(2, GL_FLOAT, stride, ptr);
+			m_state.vertex_pointer_size = size;
+			glVertexPointer(size, GL_FLOAT, stride, ptr);
 		}
 	}
 
@@ -756,15 +759,12 @@ namespace FIFE {
 		disableAlphaTest();
 		disableDepthTest();
 
-		// hack to reset the pointer
-		setVertexPointer(strideP, 0);
-
 		if (m_renderObjects[0].overlay_type == OVERLAY_TYPE_NONE) {
 			// texture without color/alpha
 			if (!m_renderObjects[0].color) {
 				// set pointer
 				disableColorArray();
-				setVertexPointer(strideT, &m_renderTextureDatas[0].vertex);
+				setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 				setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
 				currentIndex = &indexT;
 				currentElements = &elementsT;
@@ -772,7 +772,7 @@ namespace FIFE {
 			} else if (m_renderObjects[0].texture_id != 0){
 				// set pointer
 				enableColorArray();
-				setVertexPointer(strideTC, &m_renderTextureColorDatas[0].vertex);
+				setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 				setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 				setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
 				currentIndex = &indexTC;
@@ -781,7 +781,7 @@ namespace FIFE {
 			} else {
 				// set pointer
 				enableColorArray();
-				setVertexPointer(strideP, &m_renderPrimitiveDatas[0].vertex);
+				setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 				setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
 				currentIndex = &indexP;
 				currentElements = &elementsP;
@@ -789,7 +789,7 @@ namespace FIFE {
 		// multitexture overlay
 		} else {
 			// set pointer
-			setVertexPointer(stride2TC, &m_renderMultitextureDatas[0].vertex);
+			setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
 			setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 			setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
 			currentIndex = &index2TC;
@@ -857,13 +857,13 @@ namespace FIFE {
 						enableColorArray();
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
 							if (ro.texture_id != 0) {
-								setVertexPointer(strideTC, &m_renderTextureColorDatas[0].vertex);
+								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
-								setVertexPointer(strideP, &m_renderPrimitiveDatas[0].vertex);
+								setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 								setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
 								currentElements = &elementsP;
 								currentIndex = &indexP;
@@ -872,7 +872,7 @@ namespace FIFE {
 					} else if (!ro.color && m_state.color_enabled) {
 						disableColorArray();
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
-							setVertexPointer(strideT, &m_renderTextureDatas[0].vertex);
+							setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 							setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
 							currentElements = &elementsT;
 							currentIndex = &indexT;
@@ -891,19 +891,19 @@ namespace FIFE {
 						if (ro.texture_id != 0) {
 							enableTextures(0);
 							if (m_state.color_enabled) {
-								setVertexPointer(strideTC, &m_renderTextureColorDatas[0].vertex);
+								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
-								setVertexPointer(strideT, &m_renderTextureDatas[0].vertex);
+								setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 								setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
 								currentIndex = &indexT;
 								currentElements = &elementsT;
 							}
 						} else {
-							setVertexPointer(strideP, &m_renderPrimitiveDatas[0].vertex);
+							setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 							setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
 							currentElements = &elementsP;
 							currentIndex = &indexP;
@@ -918,7 +918,7 @@ namespace FIFE {
 						enableTextures(0);
 
 						// set pointer
-						setVertexPointer(stride2TC, &m_renderMultitextureDatas[0].vertex);
+						setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(1, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
@@ -935,7 +935,7 @@ namespace FIFE {
 						enableTextures(0);
 
 						// set pointer
-						setVertexPointer(stride2TC, &m_renderMultitextureDatas[0].vertex);
+						setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(2, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
@@ -952,7 +952,7 @@ namespace FIFE {
 						enableTextures(0);
 
 						// set pointer
-						setVertexPointer(stride2TC, &m_renderMultitextureDatas[0].vertex);
+						setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(3, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
@@ -973,13 +973,13 @@ namespace FIFE {
 						texture_id = ro.texture_id;
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
 							if (m_state.color_enabled) {
-								setVertexPointer(strideTC, &m_renderTextureColorDatas[0].vertex);
+								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
-								setVertexPointer(strideT, &m_renderTextureDatas[0].vertex);
+								setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 								setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
 								currentElements = &elementsT;
 								currentIndex = &indexT;
@@ -989,7 +989,7 @@ namespace FIFE {
 						disableTextures(0);
 						texture_id = 0;
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
-							setVertexPointer(strideP, &m_renderPrimitiveDatas[0].vertex);
+							setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 							setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
 							currentElements = &elementsP;
 							currentIndex = &indexP;
@@ -1068,11 +1068,8 @@ namespace FIFE {
 		// stride
 		const uint32_t stride = sizeof(renderDataZ);
 
-		// hack to reset the pointer
-		setVertexPointer(stride, 0);
-
 		// set pointer
-		glVertexPointer(3, GL_FLOAT, stride, &m_renderTextureDatasZ[0].vertex);
+		setVertexPointer(3, stride, &m_renderTextureDatasZ[0].vertex);
 		setTexCoordPointer(0, stride, &m_renderTextureDatasZ[0].texel);
 
 		// array index
@@ -1136,7 +1133,7 @@ namespace FIFE {
 		const uint32_t stride = sizeof(renderDataZ);
 
 		// set pointer
-		glVertexPointer(3, GL_FLOAT, stride, &m_renderZ_datas[0].vertex);
+		setVertexPointer(3, stride, &m_renderZ_datas[0].vertex);
 		setTexCoordPointer(0, stride, &m_renderZ_datas[0].texel);
 
 		enableAlphaTest();
@@ -1164,10 +1161,8 @@ namespace FIFE {
 		// stride
 		const uint32_t stride = sizeof(renderDataColorZ);
 
-		// hack to reset the pointer
-		setVertexPointer(stride, 0);
 		// set pointer
-		glVertexPointer(3, GL_FLOAT, stride, &m_renderTextureColorDatasZ[0].vertex);
+		setVertexPointer(3, stride, &m_renderTextureColorDatasZ[0].vertex);
 		setTexCoordPointer(0, stride, &m_renderTextureColorDatasZ[0].texel);
 		setColorPointer(stride, &m_renderTextureColorDatasZ[0].color);
 
@@ -1182,8 +1177,8 @@ namespace FIFE {
 		uint32_t* currentElements = &elements;
 
 		enableDepthTest();
-		enableAlphaTest();
-		glAlphaFunc(GL_GREATER, 0.008);
+		//enableAlphaTest();
+		setAlphaTest(0.008);
 		enableTextures(0);
 		enableLighting();
 
@@ -1219,7 +1214,7 @@ namespace FIFE {
 		//reset all states
 		disableLighting();
 		disableTextures(0);
-		glAlphaFunc(GL_GREATER, m_state.alpha_test);
+		setAlphaTest(m_alphaValue);
 		disableAlphaTest();
 		disableDepthTest();
 
@@ -1236,10 +1231,8 @@ namespace FIFE {
 		// stride
 		const uint32_t stride = sizeof(renderData2TCZ);
 
-		// hack to reset the pointer
-		setVertexPointer(stride, 0);
 		// set pointer
-		glVertexPointer(3, GL_FLOAT, stride, &m_renderMultitextureDatasZ[0].vertex);
+		setVertexPointer(3, stride, &m_renderMultitextureDatasZ[0].vertex);
 		setTexCoordPointer(0, stride, &m_renderMultitextureDatasZ[0].texel);
 		setTexCoordPointer(1, stride, &m_renderMultitextureDatasZ[0].texel2);
 		setTexCoordPointer(2, stride, &m_renderMultitextureDatasZ[0].texel2);
@@ -1263,7 +1256,7 @@ namespace FIFE {
 
 		enableDepthTest();
 		enableAlphaTest();
-		glAlphaFunc(GL_GREATER, 0.008);
+		setAlphaTest(0.008);
 		enableTextures(0);
 		enableLighting();
 
@@ -1363,7 +1356,7 @@ namespace FIFE {
 		}
 		disableTextures(0);
 		disableLighting();
-		glAlphaFunc(GL_GREATER, m_state.alpha_test);
+		setAlphaTest(m_alphaValue);
 		disableAlphaTest();
 		disableDepthTest();
 

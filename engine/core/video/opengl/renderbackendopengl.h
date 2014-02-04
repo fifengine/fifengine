@@ -117,7 +117,7 @@ namespace FIFE {
 		void enableColorArray();
 		void disableColorArray();
 		void setEnvironmentalColor(uint32_t texUnit, const uint8_t* rgba);
-		void setVertexPointer(GLsizei stride, const GLvoid* ptr);
+		void setVertexPointer(GLint size, GLsizei stride, const GLvoid* ptr);
 		void setColorPointer(GLsizei stride, const GLvoid* ptr);
 		void setTexCoordPointer(uint32_t texUnit, GLsizei stride, const GLvoid* ptr);
 		
@@ -231,6 +231,7 @@ namespace FIFE {
 			uint32_t active_tex;
 			uint32_t active_client_tex;
 			float alpha_test;
+			GLint vertex_pointer_size;
 
 			// Pointers
 			const void* vertex_pointer;
