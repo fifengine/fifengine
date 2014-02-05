@@ -326,6 +326,9 @@ extdestfilelist = utils.gen_dest_files(pypath, relextensionfiles)
 
 install_python_lib = env.Install(pypath, pythonlib)
 install_python_module = env.Install(pypath, ['#/engine/python/fife/fife.py','#/engine/python/fife/__init__.py'])
+if fifechan:
+	install_python_lib.append(env.Install(pypath, fifechan_pythonlib))
+	install_python_module.append(env.Install(pypath, '#/engine/python/fife/fifechan.py'))
 install_python_extensions = env.InstallAs(extdestfilelist, extensionfiles)
 
 if sys.platform == 'win32':
