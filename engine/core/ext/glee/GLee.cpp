@@ -80,7 +80,7 @@ GLEE_FUNC __GLeeGetProcAddress(const char *extname)
         return NULL;
     }
 
-    function = CFBundleGetFunctionPointerForName(bundle, functionName);
+    function = (GLEE_FUNC)CFBundleGetFunctionPointerForName(bundle, functionName);
 
     CFRelease(bundleURL);
     CFRelease(functionName);
