@@ -131,6 +131,9 @@ namespace FIFE {
 								break;
 							}
 						}
+					} else {
+						blocker = true;
+						break;
 					}
 				}
 				if (blocker) {
