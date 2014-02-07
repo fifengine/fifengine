@@ -50,6 +50,17 @@ Affected files:
 data/objects/actors/player/skel/*.png
 data/tilesets/grassland_tiles.png
 
+Author: Modified by darkrose from an original by Yar
+
+Website: http://opengameart.org/content/modified-isometric-64x64-outside-tileset
+
+License: 
+CC-BY-SA 3.0
+http://creativecommons.org/licenses/by-sa/3.0/
+
+Affected files:
+data/tilesets/terrain1.png
+
 == Fonts ==
 
 === Worldforge ===
