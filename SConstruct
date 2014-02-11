@@ -305,7 +305,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 				ret = checkForLib(item, header, language)
 					
 				if ret:
-					env.AppendUnique(LIBS = [item])
 					break
 		else:
 			# special handling for tinyxml
@@ -318,7 +317,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						# system version found so set the compilation flag
 						# and store the lib in the lib list
 						env.AppendUnique(CPPDEFINES = ['USE_SYSTEM_TINY_XML'])
-						env.AppendUnique(LIBS = [lib])
 					else:
 						# system version not found, lets issue message and fall
 						# back to local version
@@ -327,8 +325,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						env['LOCAL_TINYXML'] = True
 			else:	
 				ret = checkForLib(lib, header, language)
-				if ret:
-					env.AppendUnique(LIBS = [lib])
 	
 		if required and not ret:
 			if (isinstance(lib, tuple)):
