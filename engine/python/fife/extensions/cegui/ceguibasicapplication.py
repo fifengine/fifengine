@@ -75,8 +75,14 @@ class CEGUIApplicationBase(ApplicationBase):
 
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
+		
+		major_v, minor_v = PyCEGUI.Version__.split('.')[:2]
 
-		guimanager = fife.CEGuiManager()
+		#For CEGUI versions lower than 0.8.0 we use the old CEGuiManager
+		if major_v == 0 and minor_v <= 7:
+			guimanager = fife.CEGuiManager()
+		else:
+			guimanager = fife.CEGui_0Manager()
 
 		#transfer ownership to the engine
 		guimanager.thisown = 0

@@ -181,16 +181,20 @@ else:
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
 
-if GetOption('enable-cegui') or GetOption('enable-cegui-0'):
+
+if GetOption('enable-cegui'):
 	env['ENABLE_CEGUI'] = True
-	env['CEGUI_0'] = False
 	extra_libs['cegui'] = True
 else:
 	env['ENABLE_CEGUI'] = False
 	extra_libs['cegui'] = False
 
 if GetOption('enable-cegui-0'):
-	env['CEGUI_0'] = True
+	env['ENABLE_CEGUI_0'] = True
+	extra_libs['cegui-0'] = True
+else:
+	env['ENABLE_CEGUI_0'] = False
+	extra_libs['cegui-0'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0

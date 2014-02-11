@@ -80,8 +80,7 @@ def getRequiredLibs(reqLibs):
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
-	if cegui:
-		cegui_0 = env['CEGUI_0']
+	cegui_0 = reqLibs['cegui-0']
 
 	if fifechan:
 		libs.append(('fifechan', ''))
@@ -97,12 +96,12 @@ def getRequiredLibs(reqLibs):
 			libs.append(('RocketDebugger', 'Rocket/Debugger.h'))
 
 	if cegui:
-		if cegui_0:
-			libs.append(('CEGUIBase-0', ''))
-			libs.append(('CEGUIOpenGLRenderer-0', 'CEGUI/RendererModules/OpenGL/GLRenderer.h'))
-		else:
-			libs.append(('CEGUIBase', ''))
-			libs.append(('CEGUIOpenGLRenderer', 'CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h'))
+		libs.append(('CEGUIBase', ''))
+		libs.append(('CEGUIOpenGLRenderer', 'CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h'))
+
+	if cegui_0:
+		libs.append((('CEGUI-0', 'CEGUIBase-0'), ''))
+		libs.append((('CEGUI-0-OPENGL', 'CEGUIOpenGLRenderer-0'), ''))
 			
 	return libs
 

@@ -22,66 +22,67 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
-#endif
+#include <cegui-0/CEGUI/CEGUI.h>
+#include <cegui-0/CEGUI/RendererModules/OpenGL/GLRenderer.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "base/ceguiinputprocessor.h"
+#include "base/cegui-0inputprocessor.h"
 #include "util/time/timemanager.h"
 
-#include "ceguimanager.h"
+#include "cegui-0manager.h"
 
 namespace FIFE {
 	
-	CEGuiManager::CEGuiManager() {
+	CEGui_0Manager::CEGui_0Manager() {
 #ifdef HAVE_OPENGL
 		CEGUI::OpenGLRenderer::bootstrapSystem();
 #else
 		throw GuiException("CEGUI can be used only if opengl is enabled!");
 #endif
-		m_inputProcessor = new CEGuiInputProcessor();
+		m_inputProcessor = new CEGui_0InputProcessor();
 		
 		m_lastTimePulse = TimeManager::instance()->getTime() / 1000.0;
 
 	}
 	
-	CEGuiManager::~CEGuiManager() {
+	CEGui_0Manager::~CEGui_0Manager() {
 		delete m_inputProcessor;
 		
 		CEGUI::OpenGLRenderer::destroySystem();
 	}
 	
-	void CEGuiManager::turn() {
+	void CEGui_0Manager::turn() {
 		injectTimePulse();
 		
-		CEGUI::System::getSingleton().renderGUI();
+			CEGUI::System::getSingleton().renderAllGUIContexts();
 	}
 	
-	void CEGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	void CEGui_0Manager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	}
 	
-	bool CEGuiManager::onSdlEvent(SDL_Event &event) {
+	bool CEGui_0Manager::onSdlEvent(SDL_Event &event) {
 		return m_inputProcessor->onSdlEvent(event);
 	}
 	
-	void CEGuiManager::setRootWindow(CEGUI::Window* root) {
+	void CEGui_0Manager::setRootWindow(CEGUI::Window* root) {
 		m_guiRoot = root;
-		CEGUI::System::getSingleton().setGUISheet(m_guiRoot);
+		CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(m_guiRoot);
 	}
 	
-	CEGUI::Window* CEGuiManager::getRootWindow() {
+	CEGUI::Window* CEGui_0Manager::getRootWindow() {
 		return m_guiRoot;
 	}
 	
-	void CEGuiManager::injectTimePulse() {
+	void CEGui_0Manager::injectTimePulse() {
 		
 		double timeNow = TimeManager::instance()->getTime() / 1000.0;
-		
-		CEGUI::System::getSingleton().injectTimePulse(float(timeNow - m_lastTimePulse));        
+		float time_pulse = float(timeNow - m_lastTimePulse);	
+
+		CEGUI::System::getSingleton().injectTimePulse(time_pulse);
+		CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(time_pulse);        
 		
 		m_lastTimePulse = timeNow;
 	}
