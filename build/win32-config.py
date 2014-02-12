@@ -51,6 +51,7 @@ def initEnvironment(env):
 	
 	if env['ENABLE_CEGUI_0']:
 		env.Append(CPPPATH = [includepath + '\\CEGUI-0'])
+		env.Append(CPPPATH = [includepath + '\\CEGUI-0\cegui-0'])
 
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
