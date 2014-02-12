@@ -1177,7 +1177,7 @@ namespace FIFE {
 		uint32_t* currentElements = &elements;
 
 		enableDepthTest();
-		//enableAlphaTest();
+		// use own value, other option would be to disable it
 		setAlphaTest(0.008);
 		enableTextures(0);
 		enableLighting();
@@ -1256,7 +1256,6 @@ namespace FIFE {
 
 		enableDepthTest();
 		enableAlphaTest();
-		setAlphaTest(0.008);
 		enableTextures(0);
 		enableLighting();
 
@@ -1356,7 +1355,6 @@ namespace FIFE {
 		}
 		disableTextures(0);
 		disableLighting();
-		setAlphaTest(m_alphaValue);
 		disableAlphaTest();
 		disableDepthTest();
 
