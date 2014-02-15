@@ -905,7 +905,7 @@ namespace FIFE {
 	void Camera::renderStaticLayer(Layer* layer, bool update) {
 		// ToDo: Remove this function from the camera class to something like engine pre-render.
 		// ToDo: Check if partial rendering of only updated RenderItems to existing FBO is possible/faster in our case.
-		// ToDo: Add and fix support for SDL and OpenGLe backends, for SDL it works only on the lowest layer(alpha/transparent bug).
+		// ToDo: Add and fix support for SDL backend, for SDL it works only on the lowest layer(alpha/transparent bug).
 		LayerCache* cache = m_cache[layer];
 		ImagePtr cacheImage = cache->getCacheImage();
 		if (!cacheImage.get()) {
@@ -916,7 +916,7 @@ namespace FIFE {
 		}
 		if (update) {
 			// for the case that the viewport size is not the same as the screen size,
-			// we have to change the values for OpenGL and OpenGLe backends
+			// we have to change the values for OpenGL backend
 			Rect rec(0, m_renderbackend->getHeight()-m_viewport.h, m_viewport.w, m_viewport.h);
 			if (m_renderbackend->getName() == "SDL") {
 				rec = m_viewport;

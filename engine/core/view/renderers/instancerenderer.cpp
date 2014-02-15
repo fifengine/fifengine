@@ -51,8 +51,6 @@
 #include "cellrenderer.h"
 #include "instancerenderer.h"
 
-#include "video/opengle/gleimage.h"
-
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -127,12 +125,12 @@ namespace FIFE {
 		m_interval(60*1000),
 		m_timer_enabled(false) {
 		setEnabled(true);
-		if(m_renderbackend->getName() == "OpenGLe" ||
-			(m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled())) {
+		if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
 			m_need_sorting = false;
+			m_need_bind_coloring = false;
 		} else {
 			m_need_sorting = true;
-			if(m_renderbackend->getName() == "SDL") {
+			if (m_renderbackend->getName() == "SDL") {
 				m_need_bind_coloring = true;
 			} else {
 				m_need_bind_coloring = false;
@@ -151,12 +149,12 @@ namespace FIFE {
 		m_interval(old.m_interval),
 		m_timer_enabled(false) {
 		setEnabled(true);
-		if(m_renderbackend->getName() == "OpenGLe" ||
-			(m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled())) {
+		if (m_renderbackend->getName() == "OpenGL" && m_renderbackend->isDepthBufferEnabled()) {
 			m_need_sorting = false;
+			m_need_bind_coloring = false;
 		} else {
 			m_need_sorting = true;
-			if(m_renderbackend->getName() == "SDL") {
+			if (m_renderbackend->getName() == "SDL") {
 				m_need_bind_coloring = true;
 			} else {
 				m_need_bind_coloring = false;
@@ -474,7 +472,7 @@ namespace FIFE {
 				// coloring
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				const bool coloring = coloring_it != m_instance_colorings.end();
-				if (coloring) {
+				if (coloring && !m_need_bind_coloring) {
 					coloringColor[0] = coloring_it->second.r;
 					coloringColor[1] = coloring_it->second.g;
 					coloringColor[2] = coloring_it->second.b;
@@ -492,6 +490,12 @@ namespace FIFE {
 					} else {
 						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 					}
+				}
+				// coloring for SDL
+				if (coloring && m_need_bind_coloring) {
+					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+					m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, false, 0, KEEP, ALWAYS);
+					continue;
 				}
 			}
 			if(lm != 0) {

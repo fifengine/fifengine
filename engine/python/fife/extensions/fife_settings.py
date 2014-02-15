@@ -99,7 +99,7 @@ class Setting(object):
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
 			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
-			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
+			'RenderBackend':['OpenGL', 'SDL'],
 			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768',
 								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
 								'1600x900', '1600x1200', '1680x1050', '1920x1080', '1920x1200'],
