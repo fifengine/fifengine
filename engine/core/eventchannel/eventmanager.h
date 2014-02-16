@@ -46,6 +46,11 @@
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_key.h"
 
+#include "eventchannel/text/ec_itextcontroller.h"
+#include "eventchannel/text/ec_itextlistener.h"
+#include "eventchannel/text/ec_textevent.h"
+#include "eventchannel/text/ec_text.h"
+
 #include "eventchannel/mouse/ec_imousecontroller.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
@@ -66,6 +71,7 @@ namespace FIFE {
 	class EventManager:
 		public ICommandController,
 		public IKeyController,
+		public ITextController,
 		public IMouseController,
 		public ISdlEventController,
 		public IEventSource {
@@ -87,6 +93,10 @@ namespace FIFE {
 		void addKeyListener(IKeyListener* listener);
 		void addKeyListenerFront(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
+
+		void addTextListener(ITextListener* listener);
+		void addTextListenerFront(ITextListener* listener);
+		void removeTextListener(ITextListener* listener);
 
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
@@ -129,19 +139,22 @@ namespace FIFE {
 
 	private:
 		// Helpers for processEvents
-		void processActiveEvent(SDL_Event event);
+		void processWindowEvent(SDL_Event event);
 		void processKeyEvent(SDL_Event event);
+		void processTextEvent(SDL_Event event);
 		void processMouseEvent(SDL_Event event);
 		bool combineEvents(SDL_Event& event1, const SDL_Event& event2);
 
 		// Events dispatchers - only dispatchSdlevent may reject the event.
 		bool dispatchSdlEvent(SDL_Event& evt);
 		void dispatchKeyEvent(KeyEvent& evt);
+		void dispatchTextEvent(TextEvent& evt);
 		void dispatchMouseEvent(MouseEvent& evt);
 
 		// Translate events
 		void fillModifiers(InputEvent& evt);
 		void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt);
+		void fillTextEvent(const SDL_Event& sdlevt, TextEvent& txtevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
 
 		std::deque<ICommandListener*> m_commandlisteners;
@@ -153,6 +166,11 @@ namespace FIFE {
 		std::deque<IKeyListener*> m_pending_keylisteners;
 		std::deque<IKeyListener*> m_pending_keylisteners_front;
 		std::deque<IKeyListener*> m_pending_kldeletions;
+
+		std::deque<ITextListener*> m_textListeners;
+		std::deque<ITextListener*> m_pendingTextListeners;
+		std::deque<ITextListener*> m_pendingTextListenersFront;
+		std::deque<ITextListener*> m_pendingTlDeletions;
 
 		std::deque<IMouseListener*> m_mouselisteners;
 		std::deque<IMouseListener*> m_pending_mouselisteners;

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2014 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,15 +19,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_ICOMMANDIDS_H
-#define FIFE_EVENTCHANNEL_ICOMMANDIDS_H
+#ifndef FIFE_EVENTCHANNEL_ITEXTLISTENER_H
+#define FIFE_EVENTCHANNEL_ITEXTLISTENER_H
 
 // Standard C++ library includes
 //
 
 // 3rd party library includes
 //
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,17 +35,25 @@
 //
 
 namespace FIFE {
-	/**  Types for different commands
+	class TextEvent;
+
+	/**  Listener of text events.
+	 * To be able to listen for text events you must make a class which inherits
+	 * from this class and implements its functions.
 	 */
-	enum CommandType {
-		CMD_UNKNOWN = -1,
-		CMD_QUIT_GAME = SDL_WINDOWEVENT_CLOSE,
-		CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
-		CMD_MOUSE_FOCUS_LOST = SDL_WINDOWEVENT_LEAVE,
-		CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
-		CMD_INPUT_FOCUS_LOST = SDL_WINDOWEVENT_FOCUS_LOST,
-		CMD_APP_RESTORED = SDL_WINDOWEVENT_SHOWN,
-		CMD_APP_ICONIFIED = SDL_WINDOWEVENT_HIDDEN,
+	class ITextListener {
+	public:
+		/** Called on a text input event.
+		 * @param evt TextEvent that describes the event.
+		 */
+		virtual void textInput(TextEvent& evt) = 0;
+
+		/** Called on a text edit event.
+		 * @param evt TextEvent that describes the event.
+		 */
+		virtual void textEdit(TextEvent& evt) = 0;
+
+		virtual ~ITextListener() {}
 	};
 
 } //FIFE

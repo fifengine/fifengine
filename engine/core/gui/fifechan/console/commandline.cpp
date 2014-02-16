@@ -127,7 +127,7 @@ namespace FIFE {
 		{
 			setCaretPosition(getText().size());
 		}
-		else if (key.isCharacter())
+		else if (key.isCharacter() || static_cast<uint32_t>(key.getValue()) > 255)
 		{
 			TextField::keyPressed(keyEvent);
 		}

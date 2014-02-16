@@ -46,6 +46,7 @@ namespace FIFE {
 	EventManager::EventManager():
 		m_commandlisteners(),
 		m_keylisteners(),
+		m_textListeners(),
 		m_mouselisteners(),
 		m_sdleventlisteners(),
 		m_keystatemap(),
@@ -97,6 +98,18 @@ namespace FIFE {
 
 	void EventManager::removeKeyListener(IKeyListener* listener) {
 		removeListener<IKeyListener*>(m_pending_kldeletions, listener);
+	}
+
+	void EventManager::addTextListener(ITextListener* listener) {
+		addListener<ITextListener*>(m_pendingTextListeners, listener);
+	}
+
+	void EventManager::addTextListenerFront(ITextListener* listener) {
+		addListener<ITextListener*>(m_pendingTextListenersFront, listener);
+	}
+
+	void EventManager::removeTextListener(ITextListener* listener) {
+		removeListener<ITextListener*>(m_pendingTlDeletions, listener);
 	}
 
 	void EventManager::addMouseListener(IMouseListener* listener) {
@@ -211,6 +224,57 @@ namespace FIFE {
 					break;
 				case KeyEvent::RELEASED:
 					(*i)->keyReleased(evt);
+					break;
+				default:
+					break;
+			}
+			++i;
+		}
+	}
+
+	void EventManager::dispatchTextEvent(TextEvent& evt) {
+		if(!m_pendingTextListeners.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTextListeners.begin();
+			while (i != m_pendingTextListeners.end()) {
+				m_textListeners.push_back(*i);
+				++i;
+			}
+			m_pendingTextListeners.clear();
+		}
+
+		if(!m_pendingTextListenersFront.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTextListenersFront.begin();
+			while (i != m_pendingTextListenersFront.end()) {
+				m_textListeners.push_front(*i);
+				++i;
+			}
+			m_pendingTextListenersFront.clear();
+		}
+
+		if (!m_pendingTlDeletions.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTlDeletions.begin();
+			while (i != m_pendingTlDeletions.end()) {
+				std::deque<ITextListener*>::iterator j = m_textListeners.begin();
+				while (j != m_textListeners.end()) {
+					if(*j == *i) {
+						m_textListeners.erase(j);
+						break;
+					}
+					++j;
+				}
+				++i;
+			}
+			m_pendingTlDeletions.clear();
+		}
+
+		std::deque<ITextListener*>::iterator i = m_textListeners.begin();
+		while (i != m_textListeners.end()) {
+			switch (evt.getType()) {
+				case TextEvent::INPUT:
+					(*i)->textInput(evt);
+					break;
+				case TextEvent::EDIT:
+					(*i)->textEdit(evt);
 					break;
 				default:
 					break;
@@ -362,11 +426,12 @@ namespace FIFE {
 		bool has_next_event = (SDL_PollEvent(&event) != 0);
 		while (has_next_event) {
 			has_next_event = (SDL_PollEvent(&next_event) != 0);
-			if(has_next_event && combineEvents(event, next_event))
+			if (has_next_event && combineEvents(event, next_event)) {
 				continue;
-
+			}
 			switch (event.type) {
 				case SDL_QUIT: {
+					std::cout << "SDL_QUIT \n";
 					Command cmd;
 					cmd.setSource(this);
 					cmd.setCommandType(CMD_QUIT_GAME);
@@ -374,67 +439,91 @@ namespace FIFE {
 					}
 					break;
 
-				case SDL_ACTIVEEVENT:
-					processActiveEvent(event);
+				case SDL_WINDOWEVENT:
+					std::cout << "SDL_WINDOW_EVENT \n";
+					processWindowEvent(event);
 					break;
 
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
+					std::cout << "SDL_KEY_EVENT \n";
 					processKeyEvent(event);
 					break;
 
+				case SDL_TEXTEDITING:
+				case SDL_TEXTINPUT:
+					std::cout << "SDL_TEXT_EVENT \n";
+					processTextEvent(event);
+					break;
+
+				case SDL_MOUSEWHEEL:
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN:
+					std::cout << "SDL_MOUSE_EVENT \n";
 					processMouseEvent(event);
 					break;
+
+				case SDL_DROPFILE: {
+					std::string test(SDL_GetClipboardText());
+					std::cout << "Clipboard: " << test << "\n";
+					char* tmp = event.drop.file;
+                    std::string file(tmp);
+					SDL_free(tmp);
+					std::cout << "File: " << file << "\n";
+					break;
+				}
+
 			}
-			if(has_next_event)
+			if (has_next_event) {
 				event = next_event;
+			}
 		}
 	}
 
-	void EventManager::processActiveEvent(SDL_Event event) {
+	void EventManager::processWindowEvent(SDL_Event event) {
 		if (dispatchSdlEvent(event)) {
 			return;
 		}
 
-		SDL_ActiveEvent actevt = event.active;
-		std::vector<Command*> commands;
+		CommandType ct = CMD_UNKNOWN;
+		switch (event.window.event) {
+			case SDL_WINDOWEVENT_CLOSE:
+				ct = CMD_QUIT_GAME;
+				break;
 
-		if (actevt.state & SDL_APPMOUSEFOCUS) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_MOUSE_FOCUS_GAINED);
-				m_enter = true;
-			} else {
-				cmd->setCommandType(CMD_MOUSE_FOCUS_LOST);
-			}
-			commands.push_back(cmd);
-		}
-		if (actevt.state & SDL_APPINPUTFOCUS) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_INPUT_FOCUS_GAINED);
-			} else {
-				cmd->setCommandType(CMD_INPUT_FOCUS_LOST);
-			}
-			commands.push_back(cmd);
-		}
-		if (actevt.state & SDL_APPACTIVE) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_APP_RESTORED);
-			} else {
-				cmd->setCommandType(CMD_APP_ICONIFIED);
-			}
-			commands.push_back(cmd);
-		}
+			case SDL_WINDOWEVENT_ENTER:
+				ct = CMD_MOUSE_FOCUS_GAINED;
+				break;
 
-		std::vector<Command*>::iterator it = commands.begin();
-		for (; it != commands.end(); ++it) {
-			dispatchCommand(**it);
-			delete *it;
+			case SDL_WINDOWEVENT_LEAVE:
+				ct = CMD_MOUSE_FOCUS_LOST;
+				break;
+
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+				ct = CMD_INPUT_FOCUS_GAINED;
+				break;
+
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				ct = CMD_INPUT_FOCUS_LOST;
+				break;
+
+			case SDL_WINDOWEVENT_SHOWN:
+				ct = CMD_APP_RESTORED;
+				break;
+
+			case SDL_WINDOWEVENT_MINIMIZED:
+			case SDL_WINDOWEVENT_HIDDEN:
+				ct = CMD_APP_ICONIFIED;
+				break;
+
+			default:
+				ct = CMD_UNKNOWN;
+		}
+		if (ct != CMD_UNKNOWN) {
+			Command cmd;
+			cmd.setCommandType(ct);
+			dispatchCommand(cmd);
 		}
 	}
 
@@ -455,6 +544,17 @@ namespace FIFE {
 		}
 
 		dispatchKeyEvent(keyevt);
+	}
+
+	void EventManager::processTextEvent(SDL_Event event) {
+		if (dispatchSdlEvent(event)) {
+			return;
+		}
+
+		TextEvent txtevt;
+		txtevt.setSource(this);
+		fillTextEvent(event, txtevt);
+		dispatchTextEvent(txtevt);
 	}
 
 	void EventManager::processMouseEvent(SDL_Event event) {
@@ -513,14 +613,15 @@ namespace FIFE {
 				event.motion.x = tmp_x;
 				event.motion.y = tmp_y;
 				m_warp = true; //don't trigger an event handler when warping
-				SDL_WarpMouse(tmp_x, tmp_y);
+				SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), tmp_x, tmp_y);
 				m_warp = false;
 			}
-
 		}
+
 		if (dispatchSdlEvent(event)) {
 			return;
 		}
+
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -531,12 +632,7 @@ namespace FIFE {
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
-		// fire scrollwheel events only once
-		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
-			if (event.type == SDL_MOUSEBUTTONUP) {
-				return;
-			}
-		}
+
 		dispatchMouseEvent(mouseevt);
 	}
 
@@ -562,29 +658,32 @@ namespace FIFE {
 				case SDL_BUTTON_MIDDLE:
 					mouseevt.setButton(MouseEvent::MIDDLE);
 					break;
+				case SDL_BUTTON_X1:
+					mouseevt.setButton(MouseEvent::X1);
+					break;
+				case SDL_BUTTON_X2:
+					mouseevt.setButton(MouseEvent::X2);
+					break;
 				default:
 					mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
 					break;
 			}
 
-			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
+			if (sdlevt.button.state == SDL_RELEASED) {
 				mouseevt.setType(MouseEvent::RELEASED);
 			} else {
 				mouseevt.setType(MouseEvent::PRESSED);
 			}
-
-			switch (sdlevt.button.button) {
-				case SDL_BUTTON_WHEELDOWN:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
-					break;
-				case SDL_BUTTON_WHEELUP:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-					break;
-				default:
-					break;
+		}
+		if (sdlevt.type == SDL_MOUSEWHEEL) {
+			if (sdlevt.wheel.y > 0 || sdlevt.wheel.x > 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
+			} else if (sdlevt.wheel.y < 0 || sdlevt.wheel.x < 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
 			}
 		}
-		if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+		//if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+		if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {
 			mouseevt.setType(MouseEvent::DRAGGED);
 			mouseevt.setButton(m_mostrecentbtn);
 		}
@@ -600,14 +699,29 @@ namespace FIFE {
 				<< " Invalid key event type of " << sdlevt.type << ".  Ignoring event.");
 			return;
 		}
-		SDL_keysym keysym = sdlevt.key.keysym;
 
+		SDL_Keysym keysym = sdlevt.key.keysym;
 		keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
 		keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
 		keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
-		keyevt.setMetaPressed((keysym.mod & KMOD_META) != 0);
-		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
-		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
+		keyevt.setMetaPressed((keysym.mod & KMOD_GUI) != 0); // currently gui/super keys
+		keyevt.setNumericPad((keysym.mod & KMOD_NUM) != 0);
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym)));
+	}
+
+	void EventManager::fillTextEvent(const SDL_Event& sdlevt, TextEvent& txtevt) {
+		if (sdlevt.type == SDL_TEXTINPUT) {
+			txtevt.setType(TextEvent::INPUT);
+			Text t(sdlevt.text.text);
+			txtevt.setText(t);
+		} else if (sdlevt.type == SDL_TEXTEDITING) {
+			txtevt.setType(TextEvent::EDIT);
+			Text t(sdlevt.edit.text, sdlevt.edit.start, sdlevt.edit.length);
+			txtevt.setText(t);
+		} else {
+			FL_WARN(_log, LMsg("fillTextEvent()")
+				<< " Invalid text event type of " << sdlevt.type << ".  Ignoring event.");
+		}
 	}
 
 	void EventManager::fillModifiers(InputEvent& evt) {
@@ -616,8 +730,6 @@ namespace FIFE {
 			m_keystatemap[Key::RIGHT_ALT]);
 		evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] |
 			m_keystatemap[Key::RIGHT_CONTROL]);
-		evt.setMetaPressed(m_keystatemap[Key::LEFT_META] |
-			m_keystatemap[Key::RIGHT_META]);
 		evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] |
 			m_keystatemap[Key::RIGHT_SHIFT]);
 	}

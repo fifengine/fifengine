@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2014 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,34 +19,72 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_ICOMMANDIDS_H
-#define FIFE_EVENTCHANNEL_ICOMMANDIDS_H
+#ifndef FIFE_EVENTCHANNEL_TEXTEVENT_H
+#define FIFE_EVENTCHANNEL_TEXTEVENT_H
 
 // Standard C++ library includes
 //
 
 // 3rd party library includes
 //
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "eventchannel/base/ec_inputevent.h"
+#include "eventchannel/source/ec_ieventsource.h"
+
+#include "ec_text.h"
 
 namespace FIFE {
-	/**  Types for different commands
+
+	/**  Class for text events
 	 */
-	enum CommandType {
-		CMD_UNKNOWN = -1,
-		CMD_QUIT_GAME = SDL_WINDOWEVENT_CLOSE,
-		CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
-		CMD_MOUSE_FOCUS_LOST = SDL_WINDOWEVENT_LEAVE,
-		CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
-		CMD_INPUT_FOCUS_LOST = SDL_WINDOWEVENT_FOCUS_LOST,
-		CMD_APP_RESTORED = SDL_WINDOWEVENT_SHOWN,
-		CMD_APP_ICONIFIED = SDL_WINDOWEVENT_HIDDEN,
+	class TextEvent: public InputEvent {
+	public:
+		enum TextEventType {
+			UNKNOWN		= 0,
+			INPUT		= 1,
+			EDIT		= 2
+		};
+
+		/** Constructor
+		 */
+		TextEvent():
+			InputEvent(),
+			m_eventType(UNKNOWN),
+			m_text(Text()) {}
+
+		/** Destructor.
+		 */
+		virtual ~TextEvent() {}
+
+		TextEventType getType() const { return m_eventType; }
+		void setType(TextEventType type) { m_eventType = type; }
+
+		const Text& getText() const { return m_text; }
+		void setText(const Text& text) { m_text = text; }
+
+		virtual void consume() { InputEvent::consume(); }
+		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
+		virtual void consumedByWidgets() { InputEvent::consumedByWidgets(); }
+		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
+		virtual IEventSource* getSource() const { return InputEvent::getSource(); }
+		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
+		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
+		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
+
+		virtual const std::string& getName() const {
+			const static std::string eventName("TextEvent");
+			return eventName;
+		}
+		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
+
+	private:
+		TextEventType m_eventType;
+		Text m_text;
 	};
 
 } //FIFE

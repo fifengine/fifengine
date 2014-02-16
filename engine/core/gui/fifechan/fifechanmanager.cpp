@@ -100,6 +100,7 @@ namespace FIFE {
 		bool overWidget = m_fcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) != 0;
 
 		switch(evt.type) {
+			case SDL_MOUSEWHEEL:
 			case SDL_MOUSEBUTTONDOWN:
 				m_had_widget = overWidget;
 			case SDL_MOUSEBUTTONUP:
@@ -146,9 +147,14 @@ namespace FIFE {
 				}
 				return false;
 
-			case SDL_ACTIVEEVENT:
-				// Actually Guichan doesn't care (it should!)
-				// so at least don't swallow mouse_focus events up.
+			case SDL_TEXTINPUT:
+				// don't consume TEXTINPUT
+				m_input->pushInput(evt);
+				return false;
+
+			case SDL_WINDOWEVENT:
+				// don't consume WINDOWEVENTS
+				m_input->pushInput(evt);
 				return false;
 
 			default:
@@ -290,7 +296,7 @@ namespace FIFE {
 		int32_t keyval = fcnevt.getKey().getValue();
 		keyval = convertFifechanKeyToFifeKey(keyval);
 
-		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval)));
 
 		return keyevt;
 	}
@@ -345,6 +351,12 @@ namespace FIFE {
 				break;
 			case fcn::MouseInput::Middle:
 				mouseevt.setButton(MouseEvent::MIDDLE);
+				break;
+			case fcn::MouseInput::X1:
+				mouseevt.setButton(MouseEvent::X1);
+				break;
+			case fcn::MouseInput::X2:
+				mouseevt.setButton(MouseEvent::X2);
 				break;
 			default:
 				mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
@@ -464,12 +476,6 @@ namespace FIFE {
 				break;
 			case fcn::Key::ScrollLock:
 				value = Key::SCROLL_LOCK;
-				break;
-			case fcn::Key::RightMeta:
-				value = Key::RIGHT_META;
-				break;
-			case fcn::Key::LeftMeta:
-				value = Key::LEFT_META;
 				break;
 			case fcn::Key::LeftSuper:
 				value = Key::LEFT_SUPER;

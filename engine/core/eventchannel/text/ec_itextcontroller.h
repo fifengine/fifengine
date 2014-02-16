@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2014 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,15 +19,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_ICOMMANDIDS_H
-#define FIFE_EVENTCHANNEL_ICOMMANDIDS_H
+#ifndef FIFE_EVENTCHANNEL_ITEXT_CONTROLLER_H
+#define FIFE_EVENTCHANNEL_ITEXT_CONTROLLER_H
 
 // Standard C++ library includes
 //
 
 // 3rd party library includes
 //
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,17 +35,33 @@
 //
 
 namespace FIFE {
-	/**  Types for different commands
+	class ITextListener;
+
+	/**  Controller provides a way to receive events from the system
+	 * Using this interface, clients can subscribe themselves to receive events
 	 */
-	enum CommandType {
-		CMD_UNKNOWN = -1,
-		CMD_QUIT_GAME = SDL_WINDOWEVENT_CLOSE,
-		CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
-		CMD_MOUSE_FOCUS_LOST = SDL_WINDOWEVENT_LEAVE,
-		CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
-		CMD_INPUT_FOCUS_LOST = SDL_WINDOWEVENT_FOCUS_LOST,
-		CMD_APP_RESTORED = SDL_WINDOWEVENT_SHOWN,
-		CMD_APP_ICONIFIED = SDL_WINDOWEVENT_HIDDEN,
+	class ITextController {
+	public:
+
+		/** Adds a listener to the back of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
+		 */
+		virtual void addTextListener(ITextListener* listener) = 0;
+
+		/** Adds a listener to the front of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
+		 */
+		virtual void addTextListenerFront(ITextListener* listener) = 0;
+
+		/** Removes an added listener from the controller.
+		 * Listener will not be notified anymore via the corresponding events
+		 * @param listener listener to remove
+		 */
+		virtual void removeTextListener(ITextListener* listener) = 0;
+
+		virtual ~ITextController() {}
 	};
 
 } //FIFE

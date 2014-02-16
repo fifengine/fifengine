@@ -67,7 +67,9 @@ namespace FIFE {
 			LEFT = 1,
 			RIGHT = 2,
 			MIDDLE = 4,
-			UNKNOWN_BUTTON = 8
+			X1 = 8,
+			X2 = 16,
+			UNKNOWN_BUTTON = 32
 		};
 
 
