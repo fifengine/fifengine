@@ -173,8 +173,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		TTF_Init();
 
 		FL_LOG(_log, "Creating event manager");
@@ -257,8 +255,6 @@ namespace FIFE {
 		}
 
 #endif
-		SDL_EnableUNICODE(1);
-
 		FL_LOG(_log, "Creating sound manager");
 		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);

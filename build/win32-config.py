@@ -39,7 +39,7 @@ def initEnvironment(env):
 	includepath = os.path.join(path, 'build', 'win32', 'includes')
 	staticlibpath = os.path.join(path, 'build', 'win32', 'static_libs', 'mingw')
 
-	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\boost_1_47_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python27', includepath + '\\unittest++\\src'])
+	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\boost_1_47_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\python27', includepath + '\\unittest++\\src'])
 	if env['ENABLE_FIFECHAN']:
 		env.Append(CPPPATH = [includepath + '\\libfifechan'])
 	
@@ -48,6 +48,12 @@ def initEnvironment(env):
 		
 	if env['ENABLE_CEGUI']:
 		env.Append(CPPPATH = [includepath + '\\CEGUI'])
+
+	# SDL1
+	#env.Append(CPPPATH = [includepath + '\\sdl_image', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\zlib'])
+
+	# SDL2
+	env.Append(CPPPATH = [includepath + '\\sdl_image2', includepath + '\\sdl_ttf2', includepath + '\\sdl2', includepath + '\\zlib1'])
 	
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
@@ -57,13 +63,18 @@ def initEnvironment(env):
 	return env
 	
 def addExtras(env, reqLibs):
-	env.Append(LIBS = ['mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
+	env.Append(LIBS = ['mingw32', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'libjpeg', 'OpenAL32', 'boost_filesystem', 'boost_regex', 'boost_system'])
 
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
+
+	# SDL1
+	#env.Append(LIBS = ['SDL_image', 'SDLmain', 'SDL.dll', 'SDL_ttf', 'zlib'])
 	
+	# SDL2
+	env.Append(LIBS = ['SDL2_image', 'SDL2main', 'SDL2.dll', 'SDL2_ttf', 'zdll'])
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
 	else:
