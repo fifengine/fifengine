@@ -1,17 +1,17 @@
-#language: cpp
+language: cpp
 # Use this for mac build instead of cpp
-language: objective-c
+#language: objective-c
 compiler: gcc
 
 git:
   depth: 1 # (shallow clone) this decreases the time it takes to clone the repository
 
 before_install:
-  #- chmod -R 777 ./.travis.sh
-  #- ./.travis.sh
+  - chmod -R 777 ./.travis.sh
+  - ./.travis.sh
   # Enable this for the mac build and disable .travis.sh
-  - chmod -R 777 ./.travis.mac.sh
-  - ./.travis.mac.sh
+  # - chmod -R 777 ./.travis.mac.sh
+  #- ./.travis.mac.sh
 
 script:
    - exit 0
