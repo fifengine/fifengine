@@ -30,7 +30,7 @@ def initEnvironment(env):
 	include_dirs = ['/usr/local/include',
 		        '/usr/local/include',
 			'/usr/X11/include',
-			'/usr/local/include/SDL',
+			'/usr/local/include/SDL2',
 			'/usr/local/include/fifechan',
 			'/usr/local/include/boost',
 			'/System/Library/Frameworks/OpenAL.framework/Headers',
@@ -61,15 +61,15 @@ def addExtras(env, opengl):
 	return env
 	
 def getRequiredHeaders(opengl):
-	return ['SDL/SDL_image.h',
-			'SDL/SDL_ttf.h']
+	return ['SDL2/SDL_image.h',
+			'SDL2/SDL_ttf.h']
 
 def getRequiredLibs(reqLibs):
 	libs = [('objc', ''),
 		('png', ''),
-		('SDL', ''),
-		('SDL_image', ''),
-		('SDL_ttf', ''),
+		('SDL2', ''),
+		('SDL2_image', ''),
+		('SDL2_ttf', ''),
 		('vorbisfile', 'vorbisfile.h'),
 		('z', 'zlib.h'),
 		('boost_filesystem', ''),
