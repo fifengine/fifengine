@@ -38,11 +38,15 @@
 namespace FIFE {
 
 	ScreenMode::ScreenMode() :
-		           m_width(0), m_height(0), m_bpp(0), m_SDLFlags(0){
+		           m_width(0), m_height(0), m_bpp(0), m_refreshRate(0), m_SDLFlags(0), m_format(0), m_display(0){
 	}
 
 	ScreenMode::ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags) :
-		           m_width(width), m_height(height), m_bpp(bpp), m_SDLFlags(SDLFlags){
+		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(0), m_SDLFlags(SDLFlags), m_format(0), m_display(0){
+	}
+
+	ScreenMode::ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags) :
+		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(rate), m_SDLFlags(SDLFlags), m_format(0), m_display(0){
 	}
 
 	ScreenMode::ScreenMode(const ScreenMode& rhs){
@@ -50,9 +54,19 @@ namespace FIFE {
 		m_height = rhs.getHeight();
 		m_bpp = rhs.getBPP();
 		m_SDLFlags = rhs.getSDLFlags();
+		m_refreshRate = rhs.getRefreshRate();
+		m_format = rhs.getFormat();
+		m_display = rhs.getDisplay();
 	}
 
 	bool ScreenMode::operator <(const ScreenMode& rhs) const {
+		// first by display
+		if (m_display < rhs.getDisplay()){
+			return true;
+		}
+		else if (m_display > rhs.getDisplay()){
+			return false;
+		}
 
 		//sort by fullscreen first
 		if (!isFullScreen() && rhs.isFullScreen()){
@@ -71,16 +85,13 @@ namespace FIFE {
 		}
 
 		//then by screen dimensions
-		if (m_width == rhs.getWidth() && m_height == rhs.getHeight()){
-			if (!(m_SDLFlags & SDL_HWSURFACE) && (rhs.getSDLFlags() & SDL_HWSURFACE)) {
-				//I would like return true so that we prefer hardware surfaces but
-				//it really slows the engine down in fullscreen.  See the SDL FAQ for an
-				//explanation.
-				return false;
-			}
+		if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
+			return true;
+		} else if (m_width > rhs.getWidth() || m_height > rhs.getHeight()) {
+			return false;
 		}
-
-		else if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
+		//last by refresh rate
+		if (m_refreshRate < rhs.getRefreshRate()) {
 			return true;
 		}
 
@@ -88,21 +99,7 @@ namespace FIFE {
 	}
 
 	DeviceCaps::DeviceCaps() :
-	    m_driverName("Invalid"),
-		m_hwAvailable(false),
-		m_wmAvailable(false),
-		m_hwBlitAccel(false),
-		m_hwCCBlitAccel(false),
-		m_hwToHwAlphaBlitAccel(false),
-		m_swToHwBlitAccel(false),
-		m_swToHwCCBlistAccel(false),
-		m_swToHwAlphaBlitAccel(false),
-		m_BlitFillAccel(false),
-		m_videoMem(0),
-		m_desktopWidth(0),
-		m_desktopHeight(0) {
-
-		fillAvailableDrivers();
+	    m_driverName("Invalid") {
 	}
 
 
@@ -112,83 +109,46 @@ namespace FIFE {
 	void DeviceCaps::reset() {
 		m_screenModes.clear();
 		m_driverName = "Invalid";
-		m_hwAvailable = false;
-		m_wmAvailable = false;
-		m_hwBlitAccel = false;
-		m_hwCCBlitAccel = false;
-		m_hwToHwAlphaBlitAccel = false;
-		m_swToHwBlitAccel = false;
-		m_swToHwCCBlistAccel = false;
-		m_swToHwAlphaBlitAccel = false;
-		m_BlitFillAccel = false;
-		m_videoMem = 0;
-		m_desktopWidth = 0;
-		m_desktopHeight = 0;
+
+		fillAvailableDrivers();
 	}
 
 
 	void DeviceCaps::fillAvailableDrivers() {
 		m_availableDrivers.clear();
-#if defined( __unix__ )
-		m_availableDrivers.push_back("x11");
-		m_availableDrivers.push_back("nanox");
-		m_availableDrivers.push_back("qtopia");
-		m_availableDrivers.push_back("fbcon");
-		m_availableDrivers.push_back("directfb");
-		m_availableDrivers.push_back("svgalib");
-#endif
-
-// Win32
-#if defined( WIN32 )
-		m_availableDrivers.push_back("directx");
-		m_availableDrivers.push_back("windib");
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-		m_availableDrivers.push_back("Quartz");
-		m_availableDrivers.push_back("x11");
-#endif
+		uint8_t driverCount = SDL_GetNumVideoDrivers();
+		for (uint8_t i = 0; i != driverCount; i++) {
+			std::string driver(SDL_GetVideoDriver(i));
+			m_availableDrivers.push_back(driver);
+		}
+		m_driverName = std::string(SDL_GetCurrentVideoDriver());
 	}
 
 	void DeviceCaps::fillDeviceCaps() {
-		//buffer to store driver name
-		const uint32_t bufferSize = 256;
-		char buffer[bufferSize];
-
 		//clear in case this is called twice
 		reset();
-
 		//FLAGS
 #ifdef HAVE_OPENGL
-		const uint32_t numFlags = 6;
+		const uint32_t numFlags = 4;
 		uint32_t flags[numFlags];
 
-		//OpenGL, windowed, hw accel
-		flags[0] = ScreenMode::HW_WINDOWED_OPENGL;
-		//OpenGL, fullscreen, hw accel
-		flags[1] = ScreenMode::HW_FULLSCREEN_OPENGL;
+		//OpenGL, windowed
+		flags[0] = ScreenMode::WINDOWED_OPENGL;
+		//OpenGL, fullscreen
+		flags[1] = ScreenMode::FULLSCREEN_OPENGL;
 		//SDL, windowed
 		flags[2] = ScreenMode::WINDOWED_SDL;
-		//SDL, windowed, hw surface, double buffer
-		flags[3] = ScreenMode::WINDOWED_SDL_DB_HW;
 		//SDL, fullscreen
-		flags[4] = ScreenMode::FULLSCREEN_SDL;
-		//SDL, fullscreen, hw surface, double buffer
-		flags[5] = ScreenMode::FULLSCREEN_SDL_DB_HW;
+		flags[3] = ScreenMode::FULLSCREEN_SDL;
 
 #else
-		const uint32_t numFlags = 4;
+		const uint32_t numFlags = 2;
 		uint32_t flags[numFlags];
 
 		//SDL, windowed
 		flags[0] = ScreenMode::WINDOWED_SDL;
-		//SDL, windowed, hw surface, double buffer
-		flags[1] = ScreenMode::WINDOWED_SDL_DB_HW;
 		//SDL, fullscreen
-		flags[2] = ScreenMode::FULLSCREEN_SDL;
-		//SDL, fullscreen, hw surface, double buffer
-		flags[3] = ScreenMode::FULLSCREEN_SDL_DB_HW;
+		flags[1] = ScreenMode::FULLSCREEN_SDL;
 #endif
 
 		//BITS PER PIXEL
@@ -199,144 +159,72 @@ namespace FIFE {
 		bpps[1] = 24;
 		bpps[2] = 32;
 
-		//COMMON FS RESOLUTIONS
-		const uint32_t numRes = 16;
-		uint16_t resolutions[numRes][2] = {
-			{640, 480},
-			{800, 600},
-			{1024, 600},
-			{1024, 768},
-			{1152, 864},
-			{1280, 768},
-			{1280, 800},
-			{1280, 960},
-			{1280, 1024},
-			{1366, 768},
-			{1440, 900},
-			{1600, 900},
-			{1600, 1200},
-			{1680, 1050},
-			{1920, 1080},
-			{1920, 1200}
-		};
-
-
-		for (uint32_t i = 0; i < numBPP; ++i){
-			for (uint32_t j = 0; j < numFlags; ++j) {
-				for ( uint32_t k = 0; k < numRes; ++k) {
-					uint16_t bpp;
-					if (flags[j] & SDL_FULLSCREEN) {
-						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
-
-						if (bpp > 0) {
-							m_screenModes.push_back(ScreenMode(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]));
+		uint8_t displayCount = SDL_GetNumVideoDisplays();
+		for (uint8_t i = 0; i != displayCount; i++) {
+			SDL_DisplayMode mode;
+			uint8_t displayModes = SDL_GetNumDisplayModes(i);
+			for (uint8_t m = 0; m != displayModes; m++) {
+				if (SDL_GetDisplayMode(i, m, &mode) == 0) {
+					for (uint32_t i = 0; i < numBPP; ++i){
+						for (uint32_t j = 0; j < numFlags; ++j) {
+							//m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format), mode.refresh_rate, flags[j]));
+							ScreenMode m(mode.w, mode.h, bpps[i], mode.refresh_rate, flags[j]);
+							m.setFormat(mode.format);
+							m.setDisplay(i);
+							m_screenModes.push_back(m);
 						}
 					}
-					else {  //windowed mode
-						//check an arbitrary value as we know all resolutions are supported in windowed mode.
-						//we are checking to make sure the bpp is supported here.
-						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
-						if (bpp > 0) {
-							m_screenModes.push_back(ScreenMode(0,0, bpps[i], flags[j]));
-							break; //insert windowed mode once as all resolutions are supported.
-						}
-					}
-
+				} else {
+					throw SDLException(SDL_GetError());
 				}
 			}
 		}
 
 		//sort the list to keep the most preferred modes at the top of the selection process
-		//in getNearestScreenMode()
 		std::sort(m_screenModes.begin(), m_screenModes.end());
 		std::reverse(m_screenModes.begin(), m_screenModes.end());
-
-		if(SDL_VideoDriverName(buffer, bufferSize) != NULL) {
-			m_driverName = std::string(buffer);
-		}
-		else {
-			m_driverName = "Unknown";
-		}
-
-		const SDL_VideoInfo* vInfo = SDL_GetVideoInfo();
-
-		m_hwAvailable = vInfo->hw_available;
-		m_wmAvailable = vInfo->wm_available;
-		m_hwBlitAccel = vInfo->blit_hw;
-		m_hwCCBlitAccel = vInfo->blit_hw_CC;
-		m_hwToHwAlphaBlitAccel = vInfo->blit_hw_A;
-		m_swToHwBlitAccel = vInfo->blit_sw;
-		m_swToHwCCBlistAccel = vInfo->blit_sw_CC;
-		m_swToHwAlphaBlitAccel = vInfo->blit_sw_A;
-		m_BlitFillAccel = vInfo->blit_fill;
-		m_videoMem = vInfo->video_mem;
-		m_desktopWidth = vInfo->current_w;
-		m_desktopHeight = vInfo->current_h;
 	}
 
 	ScreenMode DeviceCaps::getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const {
+		// refresh rate is set to 0 so that desktop setting is used and the first display is used
+		return getNearestScreenMode(width, height, bpp, renderer, fs, 0, 0);
+	}
+
+	ScreenMode DeviceCaps::getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display) const {
 		ScreenMode mode;
+		SDL_DisplayMode target, closest;
 		bool foundMode = false;
 
-		bool widthCheck = false;
-		bool heightCheck = false;
-		bool bppCheck = false;
-		bool rendCheck = false;
-		bool fsCheck = false;
+		// Set the desired resolution, etc.
+		target.w = width;
+		target.h = height;
+		if (bpp == 0) {
+			target.format = 0;  // don't care, should be desktop bpp
+		} else if (bpp == 16) {
+			target.format = SDL_PIXELFORMAT_RGB565;
+		} else {
+			target.format = SDL_PIXELFORMAT_RGB888;
+		}
+		target.refresh_rate = refresh;
+		target.driverdata   = 0; // initialize to 0
 
-
-		for (uint32_t i = 0; i < m_screenModes.size(); i++) {
-			if (m_screenModes[i].getWidth() == width) {
-				widthCheck = true;
+		// only first display
+		if (SDL_GetClosestDisplayMode(display, &target, &closest)) {
+			uint32_t flags = 0;
+			if (renderer == "OpenGL") {
+				if (fs) {
+					flags =	SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+				} else {
+					flags =	SDL_WINDOW_OPENGL;
+				}
+			} else {
+				if (fs) {
+					flags =	SDL_WINDOW_FULLSCREEN;
+				}
 			}
-			if (m_screenModes[i].getHeight() == height) {
-				heightCheck = true;
-			}
-			if (m_screenModes[i].getBPP() == bpp) {
-				bppCheck = true;
-			}
-			if (m_screenModes[i].isFullScreen() == fs) {
-				fsCheck = true;
-			}
-
-			if ((m_screenModes[i].isOpenGL() && renderer == "OpenGL" ) || (!m_screenModes[i].isOpenGL() && renderer == "SDL")){
-				rendCheck = true;
-			}
-
-			//check for exact match
-			if (widthCheck && heightCheck && bppCheck && fsCheck && rendCheck) {
-				mode = m_screenModes[i];
-				foundMode = true;
-				break;
-			}
-
-			//@note When the width and height to 0 that means that all
-			//resolutions are supported
-			if (m_screenModes[i].getWidth() == 0 && m_screenModes[i].getHeight() == 0 && bppCheck && fsCheck && rendCheck) {
-				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
-				foundMode = true;
-				break;
-			}
-
-			//current screen bpp selected
-			if (widthCheck && heightCheck && bpp == 0 && fsCheck && rendCheck) {
-				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
-				foundMode = true;
-				break;
-			}
-
-			if (m_screenModes[i].getWidth() == 0 && m_screenModes[i].getHeight() == 0  && bpp == 0 && fsCheck && rendCheck) {
-				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
-				foundMode = true;
-				break;
-			}
-
-
-			widthCheck = false;
-			heightCheck = false;
-			bppCheck = false;
-			rendCheck = false;
-			fsCheck = false;
+			mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
+			mode.setFormat(closest.format);
+			foundMode = true;
 		}
 
 		if (!foundMode) {
@@ -346,11 +234,60 @@ namespace FIFE {
 		return mode;
 	}
 
-	int32_t DeviceCaps::getDesktopWidth() const {
-		return m_desktopWidth;
+	uint8_t DeviceCaps::getDisplayCount() const {
+		uint8_t displayCount = SDL_GetNumVideoDisplays();
+		return displayCount;
 	}
 
-	int32_t DeviceCaps::getDesktopHeight() const {
-		return m_desktopHeight;
+	std::string DeviceCaps::getDisplayName(uint8_t display) const {
+		if (display >= getDisplayCount()) {
+			throw NotSupported("Could not find a matching display!");
+			return std::string("Invalid");
+		}
+		std::string displayName(SDL_GetDisplayName(display));
+		return displayName;
 	}
+
+	uint32_t DeviceCaps::getDesktopFormat(uint8_t display) const {
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		return mode.format;
+
+	}
+
+	int32_t DeviceCaps::getDesktopRefreshRate(uint8_t display) const {
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		return mode.refresh_rate;
+	}
+
+	int32_t DeviceCaps::getDesktopWidth(uint8_t display) const {
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		return mode.w;
+	}
+
+	int32_t DeviceCaps::getDesktopHeight(uint8_t display) const {
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(display, &mode) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		return mode.h;
+	}
+
+	Rect DeviceCaps::getDisplayBounds(uint8_t display) const {
+		SDL_Rect srec;
+		if (SDL_GetDisplayBounds(display, &srec) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		Rect rec(srec.x, srec.y, srec.w, srec.h);
+		return rec;
+	}
+
 } //FIFE

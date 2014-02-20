@@ -217,20 +217,14 @@ namespace FIFE {
 		NC_IBEAM,
 		NC_WAIT,
 		NC_CROSS,
-		NC_UPARROW,
-		NC_RESIZENW,
-		NC_RESIZESE,
-		NC_RESIZESW,
-		NC_RESIZENE,
-		NC_RESIZEE,
-		NC_RESIZEW,
-		NC_RESIZEN,
-		NC_RESIZES,
+		NC_WAITARROW,
+		NC_RESIZENWSE,
+		NC_RESIZENESW,
+		NC_RESIZEWE,
+		NC_RESIZENS,
 		NC_RESIZEALL,
 		NC_NO,
-		NC_HAND,
-		NC_APPSTARTING,
-		NC_HELP
+		NC_HAND
 	};
 
     %apply int32_t *OUTPUT { int32_t* x, int32_t* y }; 
@@ -268,18 +262,18 @@ namespace FIFE {
 		uint16_t getWidth() const;
 		uint16_t getHeight() const;
 		uint16_t getBPP() const;
+		uint16_t getRefreshRate() const;
 		uint32_t getSDLFlags() const;
 		bool isFullScreen();
 		bool isOpenGL();
 		bool isSDL() const;
-		bool isSDLHardwareSurface() const;
-		
-		static const uint32_t HW_WINDOWED_OPENGL;
-		static const uint32_t HW_FULLSCREEN_OPENGL;
+		void setDisplay(uint8_t display);
+		uint8_t getDisplay() const;
+
+		static const uint32_t WINDOWED_OPENGL;
+		static const uint32_t FULLSCREEN_OPENGL;
 		static const uint32_t WINDOWED_SDL;
-		static const uint32_t WINDOWED_SDL_DB_HW;
 		static const uint32_t FULLSCREEN_SDL;
-		static const uint32_t FULLSCREEN_SDL_DB_HW;
 	};
 
 	class DeviceCaps {
@@ -290,21 +284,17 @@ namespace FIFE {
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
 		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
+		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
 		std::string getDriverName() const;
 		std::vector<string> getAvailableDrivers() const;
-		bool isHwSurfaceAvail() const;
-		bool isWindowManagerAvail() const;
-		bool isHwBlitAccel() const;
-		bool isHwColorkeyBlitAccel() const;
-		bool isHwAlphaBlitAccel() const;
-		bool isSwToHwBlitAccel() const;
-		bool isSwToHwColorkeyBlitAccel() const;
-		bool isSwToHwAlphaBlitAccel() const;
-		bool isBlitFillAccel() const;
-		
-		uint32_t getVideoMemory() const;
-		int32_t getDesktopWidth() const;
-		int32_t getDesktopHeight() const;
+
+		uint8_t getDisplayCount() const;
+		std::string getDisplayName(uint8_t display = 0) const;
+		uint32_t getDesktopFormat(uint8_t display = 0) const;
+		int32_t getDesktopRefreshRate(uint8_t display = 0) const;
+		int32_t getDesktopWidth(uint8_t display = 0) const;
+		int32_t getDesktopHeight(uint8_t display = 0) const;
+		Rect getDisplayBounds(uint8_t display = 0) const;
 	};
 	
 	class AtlasBlock {
