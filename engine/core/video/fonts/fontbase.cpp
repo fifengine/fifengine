@@ -148,7 +148,7 @@ namespace FIFE {
 			} while (it != text.end());
 
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
-			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SDL_Surface* final_surface = SDL_CreateRGBSurface(0,
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
 			if (!final_surface) {
@@ -160,7 +160,7 @@ namespace FIFE {
 				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
 
-				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
+				//SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
 				SDL_BlitSurface(*i,0,final_surface,&dst_rect);
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);

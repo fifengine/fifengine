@@ -79,7 +79,7 @@ namespace FIFE {
 		m_xshift(0),
 		m_yshift(0),
 		m_shared(false){
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
+		SDL_Surface* surface = SDL_CreateRGBSurface(0, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
 
@@ -96,7 +96,7 @@ namespace FIFE {
 		m_xshift(0),
 		m_yshift(0),
 		m_shared(false) {
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
+		SDL_Surface* surface = SDL_CreateRGBSurface(0, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
 
@@ -311,10 +311,10 @@ namespace FIFE {
 		if (!srcimg->m_surface) {
 			return;
 		} else if (!m_surface) {
-			m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, srcimg->getWidth(),
+			m_surface = SDL_CreateRGBSurface(0, srcimg->getWidth(),
 				srcimg->getHeight(), 32, RMASK, GMASK, BMASK ,AMASK);
 		}
-		SDL_SetAlpha(srcimg->m_surface, 0, 0);
+		//SDL_SetAlpha(srcimg->m_surface, 0, 0);
 		if(this->isSharedImage()) {
 			Rect const& rect = this->getSubImageRect();
 			SDL_Rect dstrect = {
@@ -351,7 +351,7 @@ namespace FIFE {
 				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
 			}
 		}
-		SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
+		//SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
 	}
 
 	bool Image::putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

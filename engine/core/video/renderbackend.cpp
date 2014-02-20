@@ -32,6 +32,7 @@
 
 namespace FIFE {
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
+		m_window(NULL),
 		m_screen(NULL),
 		m_target(NULL),
 		m_compressimages(false),
@@ -59,8 +60,6 @@ namespace FIFE {
 	}
 
 	void RenderBackend::deinit() {
-		//delete m_screen;
-		//m_screen = NULL;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 		SDL_Quit();
 	}
@@ -222,6 +221,10 @@ namespace FIFE {
 
 	uint16_t RenderBackend::getFrameLimit() const {
 		return m_framelimit;
+	}
+
+	SDL_Surface* RenderBackend::getScreenSurface() {
+		return m_screen;
 	}
 
 	SDL_Surface* RenderBackend::getRenderTargetSurface() {

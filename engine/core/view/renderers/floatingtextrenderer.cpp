@@ -83,7 +83,7 @@ namespace FIFE {
 		uint32_t lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
 		if(m_font_color) {
-			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.unused);
+			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
 		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -103,11 +103,11 @@ namespace FIFE {
 					Point p = Point(r.x-overdraw, r.y-overdraw);
 
 					if(m_background) {
-						m_renderbackend->fillRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.unused);
+						m_renderbackend->fillRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.a);
 					}
 
 					if(m_backborder) {
-						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
+						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.a);
 					}
 				}
 				img->render(r);
@@ -124,7 +124,7 @@ namespace FIFE {
 			}
 		}
 		if(m_font_color) {
-			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.unused);
+			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.a);
 		}
 	}
 
@@ -132,7 +132,7 @@ namespace FIFE {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
-		m_color.unused = a;
+		m_color.a = a;
 
 		m_font_color = true;
 	}
@@ -141,7 +141,7 @@ namespace FIFE {
 		m_backcolor.r = br;
 		m_backcolor.g = bg;
 		m_backcolor.b = bb;
-		m_backcolor.unused = ba;
+		m_backcolor.a = ba;
 
 		m_background = true;
 	}
@@ -150,7 +150,7 @@ namespace FIFE {
 		m_backbordercolor.r = bbr;
 		m_backbordercolor.g = bbg;
 		m_backbordercolor.b = bbb;
-		m_backbordercolor.unused = bba;
+		m_backbordercolor.a = bba;
 
 		m_backborder = true;
 	}

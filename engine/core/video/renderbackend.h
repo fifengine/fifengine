@@ -230,6 +230,8 @@ namespace FIFE {
 		 */
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height) = 0;
 
+		SDL_Window* getWindow() {return m_window; }
+
 		/** Get current screen mode
 		 * @return The current screen mode
 		 */
@@ -429,6 +431,10 @@ namespace FIFE {
 		 */
 		uint16_t getFrameLimit() const;
 
+		/** Returns screen render surface
+		 */
+		 SDL_Surface* getScreenSurface();
+
 		/** Returns currently attached render surface
 		 */
 		SDL_Surface* getRenderTargetSurface();
@@ -452,6 +458,7 @@ namespace FIFE {
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
 		
+		SDL_Window* m_window;
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
 		bool m_compressimages;

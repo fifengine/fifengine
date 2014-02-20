@@ -49,7 +49,7 @@ namespace FIFE {
 		if (mFont == NULL) {
 			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
-		mColor.r = mColor.g = mColor.b = mColor.unused = 255;
+		mColor.r = mColor.g = mColor.b = mColor.a = 255;
 	}
 
 	TrueTypeFont::~TrueTypeFont() {
@@ -69,7 +69,7 @@ namespace FIFE {
 
 	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
 		if( text.empty() ) {
-			SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SDL_Surface *surface = SDL_CreateRGBSurface(0,
 				1,getHeight(),32,
 				RMASK, GMASK, BMASK ,AMASK);
 			SDL_FillRect(surface,0,0x00000000);
@@ -98,6 +98,6 @@ namespace FIFE {
 		mColor.r = r;
 		mColor.g = g;
 		mColor.b = b;
-		mColor.unused = a;
+		mColor.a = a;
 	}
 }

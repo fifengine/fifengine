@@ -310,7 +310,7 @@ namespace FIFE {
 
 		// If source surface has no alpha channel then convert it
 		if (src->format->Amask == 0) {
-			zoom_src = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w, src->h, 32,
+			zoom_src = SDL_CreateRGBSurface(0, src->w, src->h, 32,
 					RMASK, GMASK,
 					BMASK, AMASK);
 			SDL_BlitSurface(src, NULL, zoom_src, NULL);
@@ -318,7 +318,7 @@ namespace FIFE {
 			zoom_src = src;
 		}
 		// Create destination surface
-		zoom_dst = SDL_CreateRGBSurface(SDL_SWSURFACE, dst_w, dst_h, 32,
+		zoom_dst = SDL_CreateRGBSurface(0, dst_w, dst_h, 32,
 				zoom_src->format->Rmask, zoom_src->format->Gmask,
 				zoom_src->format->Bmask, zoom_src->format->Amask);
 
@@ -371,7 +371,7 @@ namespace FIFE {
 			// Image has no alpha channel. This allows us to use the per-surface alpha.
 			if (m_last_alpha != alpha) {
 				m_last_alpha = alpha;
-				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
+				//SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 			}
 			if (!zoomed) {
 				SDL_BlitSurface(m_surface, 0, target, &r);
@@ -426,25 +426,25 @@ namespace FIFE {
 
 		if (m_surface->format->Amask == 0) {
 			// only use color key if feature is enabled
-			if (RenderBackend::instance()->isColorKeyEnabled()) {
+			/*if (RenderBackend::instance()->isColorKeyEnabled()) {
 				SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
 			}
 
-			m_surface = SDL_DisplayFormat(m_surface);
+			m_surface = SDL_DisplayFormat(m_surface);*/
 		} else {
 			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
 			bool m_isalphaoptimized = be->isAlphaOptimizerEnabled();
 			if( m_isalphaoptimized ) {
 				m_surface = optimize(m_surface);
 			} else  {
-				SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
+				//SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
 
-				// only use color key if feature is enabled
-				if (RenderBackend::instance()->isColorKeyEnabled()) {
-					SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
-				}
+				//// only use color key if feature is enabled
+				//if (RenderBackend::instance()->isColorKeyEnabled()) {
+				//	SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
+				//}
 
-				m_surface = SDL_DisplayFormatAlpha(m_surface);
+				//m_surface = SDL_DisplayFormatAlpha(m_surface);
 			}
 		}
 		SDL_FreeSurface(old_surface);
@@ -530,7 +530,7 @@ namespace FIFE {
 		}
 		alphasquaresum /= (opaque + semitransparent) ? (opaque + semitransparent) : 1;
 		alphavariance = alphasquaresum - avgalpha*avgalpha;
-		if(semitransparent > ((transparent + opaque + semitransparent) / 8)
+		/*if(semitransparent > ((transparent + opaque + semitransparent) / 8)
 		   && alphavariance > 16) {
 			FL_DBG(_log, LMsg("sdlimage")
 				<< "Trying to alpha-optimize image. FAILED: real alpha usage. "
@@ -540,7 +540,7 @@ namespace FIFE {
 				<< "(" << (float(semitransparent)/(transparent + opaque + semitransparent))
 				<< ")");
 			return SDL_DisplayFormatAlpha(src);
-		}
+		}*/
 
 		// check availability of a suitable color as colorkey
 		int32_t keycolor = -1;
@@ -550,12 +550,12 @@ namespace FIFE {
 				break;
 			}
 		}
-		if(keycolor == -1) {
+		/*if(keycolor == -1) {
 			FL_DBG(_log, LMsg("sdlimage") << "Trying to alpha-optimize image. FAILED: no free color");
 			return SDL_DisplayFormatAlpha(src);
-		}
+		}*/
 
-		SDL_Surface *dst = SDL_CreateRGBSurface((src->flags & ~(SDL_SRCALPHA)) | SDL_SWSURFACE,
+		SDL_Surface *dst = SDL_CreateRGBSurface(0,
 		                                        src->w, src->h,
 		                                        src->format->BitsPerPixel,
 		                                        src->format->Rmask,  src->format->Gmask,
@@ -649,12 +649,13 @@ namespace FIFE {
 		// if(avgalpha < 240) {
 		//	SDL_SetAlpha(dst, SDL_SRCALPHA | SDL_RLEACCEL, avgalpha);
 		//}
-		SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
+		/*SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
 		SDL_Surface *convert = SDL_DisplayFormat(dst);
 		SDL_FreeSurface(dst);
 		FL_DBG(_log, LMsg("sdlimage ")
 			<< "Trying to alpha-optimize image. SUCCESS: colorkey is " << key);
-		return convert;
+		return convert;*/
+		return dst;
 	} // end optimize
 
 	size_t SDLImage::getSize() {
@@ -674,18 +675,18 @@ namespace FIFE {
 			shared->load();
 		}
 		SDL_Surface* src_surface = shared->getSurface();
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, region.w, region.h,
+		SDL_Surface* surface = SDL_CreateRGBSurface(0, region.w, region.h,
 			src_surface->format->BitsPerPixel, src_surface->format->Rmask, src_surface->format->Gmask,
 			src_surface->format->Bmask, src_surface->format->Amask);
 
-		SDL_SetAlpha(src_surface, 0, 0);
+		//SDL_SetAlpha(src_surface, 0, 0);
 		SDL_Rect srcrect = {
 			static_cast<Sint16>(region.x),
 			static_cast<Sint16>(region.y),
 			static_cast<Uint16>(region.w),
 			static_cast<Uint16>(region.h) };
 		SDL_BlitSurface(src_surface, &srcrect, surface, NULL);
-		SDL_SetAlpha(src_surface, SDL_SRCALPHA, 0);
+		//SDL_SetAlpha(src_surface, SDL_SRCALPHA, 0);
 
 		setSurface(surface);
 		m_shared = false; // this isn't a mistake

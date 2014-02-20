@@ -777,7 +777,7 @@ namespace FIFE {
 			vc.image->forceLoadInternal();
 		}
 
-		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+		SDL_Surface* outline_surface = SDL_CreateRGBSurface(0,
 			vc.image->getWidth(), vc.image->getHeight(), 32,
 			RMASK, GMASK, BMASK, AMASK);
 
@@ -879,7 +879,7 @@ namespace FIFE {
 			found = true;
 		}
 
-		SDL_Surface* outline_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, mw, mh, 32,
+		SDL_Surface* outline_surface = SDL_CreateRGBSurface(0, mw, mh, 32,
 			RMASK, GMASK, BMASK, AMASK);
 
 		// TODO: optimize...
@@ -996,7 +996,7 @@ namespace FIFE {
 		}
 
 		// not found so we create it
-		SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+		SDL_Surface* overlay_surface = SDL_CreateRGBSurface(0,
 			vc.image->getWidth(), vc.image->getHeight(), 32,
 			RMASK, GMASK, BMASK, AMASK);
 
@@ -1062,7 +1062,7 @@ namespace FIFE {
 			}
 
 			// not found so we create it
-			SDL_Surface* overlay_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+			SDL_Surface* overlay_surface = SDL_CreateRGBSurface(0,
 				colorOverlayImage->getWidth(), colorOverlayImage->getHeight(), 32,
 				RMASK, GMASK, BMASK, AMASK);
 

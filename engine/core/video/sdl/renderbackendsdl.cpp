@@ -36,7 +36,7 @@
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
 #include "SDL_image.h"
-#include "SDL_getenv.h"
+//#include "SDL_getenv.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -59,16 +59,16 @@ namespace FIFE {
 
 	void RenderBackendSDL::init(const std::string& driver) {
 		char* buf;
-		if (driver != "") {
+		/*if (driver != "") {
 			std::string envVar = std::string("SDL_VIDEODRIVER=") + driver;
 			buf = const_cast<char*>(envVar.c_str());
 			putenv(buf);
-		}
+		}*/
 
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
 			throw SDLException(SDL_GetError());
 
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
+		//SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
 
 	void RenderBackendSDL::clearBackBuffer() {
@@ -82,7 +82,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
-		if(icon != "") {
+		/*if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
 				SDL_WM_SetIcon(img, 0);
@@ -90,7 +90,7 @@ namespace FIFE {
 			}
 		}
 
-		SDL_WM_SetCaption(title.c_str(), 0);
+		SDL_WM_SetCaption(title.c_str(), 0);*/
 		setScreenMode(mode);
 	}
 
@@ -100,37 +100,37 @@ namespace FIFE {
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
 
-		if (bitsPerPixel != 0) {
-			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
-			if (!bpp){
-				throw SDLException("Selected video mode not supported!");
-			}
-		}
+		//if (bitsPerPixel != 0) {
+		//	uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
+		//	if (!bpp){
+		//		throw SDLException("Selected video mode not supported!");
+		//	}
+		//}
 
-		if(m_screen) {
-			SDL_FreeSurface(m_screen);
-		}
-		m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-		if( !m_screen ) {
-			throw SDLException("Unable to set video mode selected!");
-		}
-		m_target = m_screen;
+		//if(m_screen) {
+		//	SDL_FreeSurface(m_screen);
+		//}
+		//m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
+		//if( !m_screen ) {
+		//	throw SDLException("Unable to set video mode selected!");
+		//}
+		//m_target = m_screen;
 
-		FL_LOG(_log, LMsg("RenderBackendSDL")
-			<< "Videomode " << width << "x" << height
-			<< " at " << int32_t(m_screen->format->BitsPerPixel) << " bpp");
+		//FL_LOG(_log, LMsg("RenderBackendSDL")
+		//	<< "Videomode " << width << "x" << height
+		//	<< " at " << int32_t(m_screen->format->BitsPerPixel) << " bpp");
 
-		m_rgba_format = *(m_screen->format);
-		m_rgba_format.Rmask = RMASK;
-		m_rgba_format.Gmask = GMASK;
-		m_rgba_format.Bmask = BMASK;
-		m_rgba_format.Amask = AMASK;
+		//m_rgba_format = *(m_screen->format);
+		//m_rgba_format.Rmask = RMASK;
+		//m_rgba_format.Gmask = GMASK;
+		//m_rgba_format.Bmask = BMASK;
+		//m_rgba_format.Amask = AMASK;
 
-		//update the screen mode with the actual flags used
-		m_screenMode = ScreenMode(width,
-		                          height,
-		                          bitsPerPixel,
-		                          m_screen->flags);
+		////update the screen mode with the actual flags used
+		//m_screenMode = ScreenMode(width,
+		//                          height,
+		//                          bitsPerPixel,
+		//                          m_screen->flags);
 	}
 
 	void RenderBackendSDL::startFrame() {
@@ -138,7 +138,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::endFrame() {
-		SDL_Flip(m_screen);
+		//SDL_Flip(m_screen);
 		RenderBackend::endFrame();
 	}
 
@@ -356,7 +356,7 @@ namespace FIFE {
 			const uint32_t swidth = getWidth();
 			const uint32_t sheight = getHeight();
 
-			SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
+			SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24,
 				RMASK, GMASK, BMASK, NULLMASK);
 
 			if(!surface) {
@@ -385,7 +385,7 @@ namespace FIFE {
 				return;
 			}
 			// create source surface
-			SDL_Surface* src = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 32,
+			SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32,
 				RMASK, GMASK, BMASK, AMASK);
 
 			if(!src) {
@@ -394,7 +394,7 @@ namespace FIFE {
 			// copy screen suface to source surface
 			SDL_BlitSurface(m_screen, NULL, src, NULL);
 			// create destination surface
-			SDL_Surface* dst = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32,
+			SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32,
 				RMASK, GMASK, BMASK, AMASK);
 
 			uint32_t* src_pointer = static_cast<uint32_t*>(src->pixels);

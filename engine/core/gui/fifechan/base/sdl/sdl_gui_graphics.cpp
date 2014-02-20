@@ -30,12 +30,13 @@
 #include "gui/fifechan/base/gui_image.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
+#include "video/renderbackend.h"
 
 #include "sdl_gui_graphics.h"
 
 namespace FIFE {
 	SdlGuiGraphics::SdlGuiGraphics() {
-		setTarget(SDL_GetVideoSurface());
+		setTarget(RenderBackend::instance()->getScreenSurface());
 	}
 
 	void SdlGuiGraphics::drawImage(const fcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
