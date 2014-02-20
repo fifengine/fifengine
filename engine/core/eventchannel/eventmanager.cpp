@@ -136,6 +136,18 @@ namespace FIFE {
 		removeListener<ISdlEventListener*>(m_pending_sdldeletions, listener);
 	}
 
+	void EventManager::addDropListener(IDropListener* listener) {
+		addListener<IDropListener*>(m_pendingDropListeners, listener);
+	}
+
+	void EventManager::addDropListenerFront(IDropListener* listener) {
+		addListener<IDropListener*>(m_pendingDropListenersFront, listener);
+	}
+
+	void EventManager::removeDropListener(IDropListener* listener) {
+		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
+	}
+
 	void EventManager::dispatchCommand(Command& command) {
 		if(!m_pending_commandlisteners.empty()) {
 			std::deque<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
@@ -402,6 +414,48 @@ namespace FIFE {
 		return ret;
 	}
 
+	void EventManager::dispatchDropEvent(DropEvent& evt) {
+		if(!m_pendingDropListeners.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDropListeners.begin();
+			while (i != m_pendingDropListeners.end()) {
+				m_dropListeners.push_back(*i);
+				++i;
+			}
+			m_pendingDropListeners.clear();
+		}
+
+		if(!m_pendingDropListenersFront.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDropListenersFront.begin();
+			while (i != m_pendingDropListenersFront.end()) {
+				m_dropListeners.push_front(*i);
+				++i;
+			}
+			m_pendingDropListenersFront.clear();
+		}
+
+		if (!m_pendingDlDeletions.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDlDeletions.begin();
+			while (i != m_pendingDlDeletions.end()) {
+				std::deque<IDropListener*>::iterator j = m_dropListeners.begin();
+				while (j != m_dropListeners.end()) {
+					if(*j == *i) {
+						m_dropListeners.erase(j);
+						break;
+					}
+					++j;
+				}
+				++i;
+			}
+			m_pendingDlDeletions.clear();
+		}
+
+		std::deque<IDropListener*>::iterator i = m_dropListeners.begin();
+		while (i != m_dropListeners.end()) {
+			(*i)->fileDropped(evt);
+			++i;
+		}
+	}
+
 	bool EventManager::combineEvents(SDL_Event& event1, const SDL_Event& event2) {
 		if(event1.type == event2.type) {
 			switch (event1.type) {
@@ -431,7 +485,6 @@ namespace FIFE {
 			}
 			switch (event.type) {
 				case SDL_QUIT: {
-					std::cout << "SDL_QUIT \n";
 					Command cmd;
 					cmd.setSource(this);
 					cmd.setCommandType(CMD_QUIT_GAME);
@@ -440,19 +493,16 @@ namespace FIFE {
 					break;
 
 				case SDL_WINDOWEVENT:
-					std::cout << "SDL_WINDOW_EVENT \n";
 					processWindowEvent(event);
 					break;
 
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
-					std::cout << "SDL_KEY_EVENT \n";
 					processKeyEvent(event);
 					break;
 
-				case SDL_TEXTEDITING:
+				//case SDL_TEXTEDITING: // is buggy with SDL 2.0.1
 				case SDL_TEXTINPUT:
-					std::cout << "SDL_TEXT_EVENT \n";
 					processTextEvent(event);
 					break;
 
@@ -460,17 +510,11 @@ namespace FIFE {
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN:
-					std::cout << "SDL_MOUSE_EVENT \n";
 					processMouseEvent(event);
 					break;
 
 				case SDL_DROPFILE: {
-					std::string test(SDL_GetClipboardText());
-					std::cout << "Clipboard: " << test << "\n";
-					char* tmp = event.drop.file;
-                    std::string file(tmp);
-					SDL_free(tmp);
-					std::cout << "File: " << file << "\n";
+					processDropEvent(event);
 					break;
 				}
 
@@ -636,6 +680,21 @@ namespace FIFE {
 		dispatchMouseEvent(mouseevt);
 	}
 
+	void EventManager::processDropEvent(SDL_Event event) {
+		// only dispatched as DropEvent
+		//if (dispatchSdlEvent(event)) {
+		//	return;
+		//}
+
+		char* tmp = event.drop.file;
+		std::string path(tmp);
+		SDL_free(tmp);
+
+		DropEvent drop;
+		drop.setPath(path);
+		drop.setSource(this);
+		dispatchDropEvent(drop);
+	}
 
 	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
 		if (m_warp) {
@@ -761,5 +820,21 @@ namespace FIFE {
 
 	bool EventManager::isMouseAccelerationEnabled() const {
 		return m_acceleration;
+	}
+
+	bool EventManager::isClipboardText() const {
+		return SDL_HasClipboardText();
+	}
+
+	std::string EventManager::getClipboardText() const {
+		std::string text;
+		if (SDL_HasClipboardText()) {
+			text = std::string(SDL_GetClipboardText());
+		}
+		return text;
+	}
+
+	void EventManager::setClipboardText(const std::string& text) {
+		SDL_SetClipboardText(text.c_str());
 	}
 }

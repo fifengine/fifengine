@@ -26,6 +26,8 @@
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/command/ec_commandids.h"
 #include "eventchannel/command/ec_icommandlistener.h"
+#include "eventchannel/drop/ec_dropevent.h"
+#include "eventchannel/drop/ec_idroplistener.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeylistener.h"
@@ -208,6 +210,21 @@ namespace FIFE {
 		virtual ~IKeyFilter();
 	};
 
+	class DropEvent: public InputEvent  {
+	public:
+		virtual const std::string& getPath() const;
+		virtual ~DropEvent();
+	private:
+		DropEvent();
+	};
+
+	%feature("director") IDropListener;
+	class IDropListener {
+	public:
+		virtual void fileDropped(DropEvent& evt) = 0;
+		virtual ~IDropListener();
+	};
+
 	class EventManager {
 	public:
 		EventManager();
@@ -224,7 +241,10 @@ namespace FIFE {
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
-		
+		void addDropListener(IDropListener* listener);
+		void addDropListenerFront(IDropListener* listener);
+		void removeDropListener(IDropListener* listener);
+
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
@@ -237,5 +257,9 @@ namespace FIFE {
 		float getMouseSensitivity() const;
 		void setMouseAccelerationEnabled(bool acceleration);
 		bool isMouseAccelerationEnabled() const;
+
+		bool isClipboardText() const;
+		std::string getClipboardText() const;
+		void setClipboardText(const std::string& text);
 	};
 };

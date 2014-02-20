@@ -41,6 +41,10 @@
 #include "eventchannel/command/ec_icommandcontroller.h"
 #include "eventchannel/command/ec_icommandlistener.h"
 
+#include "eventchannel/drop/ec_idropcontroller.h"
+#include "eventchannel/drop/ec_idroplistener.h"
+#include "eventchannel/drop/ec_dropevent.h"
+
 #include "eventchannel/key/ec_ikeycontroller.h"
 #include "eventchannel/key/ec_ikeylistener.h"
 #include "eventchannel/key/ec_keyevent.h"
@@ -65,6 +69,7 @@ namespace FIFE {
 	class MouseEvent;
 	class KeyEvent;
 	class IKeyFilter;
+	class DropEvent;
 
 	/**  Event Manager manages all events related to FIFE
 	 */
@@ -74,6 +79,7 @@ namespace FIFE {
 		public ITextController,
 		public IMouseController,
 		public ISdlEventController,
+		public IDropController,
 		public IEventSource {
 	public:
 		/** Constructor.
@@ -106,6 +112,10 @@ namespace FIFE {
 		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
 
+		void addDropListener(IDropListener* listener);
+		void addDropListenerFront(IDropListener* listener);
+		void removeDropListener(IDropListener* listener);
+
 		EventSourceType getEventSourceType();
 
 		/** Process the SDL event queue.
@@ -137,12 +147,32 @@ namespace FIFE {
 		 */
 		bool isMouseAccelerationEnabled() const;
 
+		/** Returns if clipboard have text or not.
+		 *
+		 *  @return True if the clipboard contains text, false if not.
+		 */
+		bool isClipboardText() const;
+
+		/** Returns the clipboard text as UTF-8 string.
+		 *
+		 *  @return UTF-8 string or an empty string if the cliboard have no text.
+		 */
+		std::string getClipboardText() const;
+
+		/** Sets clipboard text.
+		 *
+		 *  @param text The text in UTF-8 format.
+		 */
+		void setClipboardText(const std::string& text);
+
+
 	private:
 		// Helpers for processEvents
 		void processWindowEvent(SDL_Event event);
 		void processKeyEvent(SDL_Event event);
 		void processTextEvent(SDL_Event event);
 		void processMouseEvent(SDL_Event event);
+		void processDropEvent(SDL_Event event);
 		bool combineEvents(SDL_Event& event1, const SDL_Event& event2);
 
 		// Events dispatchers - only dispatchSdlevent may reject the event.
@@ -150,6 +180,7 @@ namespace FIFE {
 		void dispatchKeyEvent(KeyEvent& evt);
 		void dispatchTextEvent(TextEvent& evt);
 		void dispatchMouseEvent(MouseEvent& evt);
+		void dispatchDropEvent(DropEvent& evt);
 
 		// Translate events
 		void fillModifiers(InputEvent& evt);
@@ -181,6 +212,11 @@ namespace FIFE {
 		std::deque<ISdlEventListener*> m_pending_sdleventlisteners;
 		std::deque<ISdlEventListener*> m_pending_sdleventlisteners_front;
 		std::deque<ISdlEventListener*> m_pending_sdldeletions;
+
+		std::deque<IDropListener*> m_dropListeners;
+		std::deque<IDropListener*> m_pendingDropListeners;
+		std::deque<IDropListener*> m_pendingDropListenersFront;
+		std::deque<IDropListener*> m_pendingDlDeletions;
 
 		std::map<int32_t, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
