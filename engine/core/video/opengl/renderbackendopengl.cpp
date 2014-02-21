@@ -186,7 +186,10 @@ namespace FIFE {
 		}
 		// create window
 		uint8_t displayIndex = mode.getDisplay();
-		m_window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
+		SDL_Rect srec;
+		SDL_GetDisplayBounds(displayIndex, &srec);
+		m_window = SDL_CreateWindow("", srec.x+srec.w/2-width/2, srec.y+srec.h/2-height/2, width, height, flags | SDL_WINDOW_SHOWN);
+		//m_window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
 		if (!m_window) {
 			throw SDLException(SDL_GetError());
 		}
