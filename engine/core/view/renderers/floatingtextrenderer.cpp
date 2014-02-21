@@ -96,7 +96,13 @@ namespace FIFE {
 				r.y = ir.y- img->getHeight(); /// make the text rect floating higher than the instance.
 				r.w = img->getWidth();
 				r.h = img->getHeight();
-
+				// Without this check it can happen that changeRenderInfos() call produces an out_of_range error
+				// because the image rendering can be skipped, if it's not on the screen.
+				// The result is that it tried to modify more objects as exist.
+				if (r.right() < 0 || r.x > static_cast<int32_t>(m_renderbackend->getWidth()) || 
+					r.bottom() < 0 || r.y > static_cast<int32_t>(m_renderbackend->getHeight())) {
+					continue;
+				}
 				if(m_background || m_backborder) {
 					const int32_t overdraw = 5;
 
