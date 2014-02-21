@@ -46,6 +46,8 @@ namespace FIFE {
 	EngineSettings::EngineSettings():
 		m_bitsperpixel(0),
 		m_fullscreen(false),
+		m_refreshRate(60),
+		m_displayIndex(0),
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),

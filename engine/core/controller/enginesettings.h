@@ -77,6 +77,30 @@ namespace FIFE {
 			return m_fullscreen;
 		}
 
+		/** Sets refresh rate
+		 */
+		void setRefreshRate(uint16_t rate) {
+			m_refreshRate = rate;
+		}
+
+		/** Gets the refresh rate
+		 */
+		uint16_t getRefreshRate() const {
+			return m_refreshRate;
+		}
+
+		/** Sets display index, starts with 0
+		 */
+		void setDisplay(uint8_t display) {
+			m_displayIndex = display;
+		}
+
+		/** Gets the display index, starts with 0
+		 */
+		uint8_t getDisplay() const {
+			return m_displayIndex;
+		}
+
 		/** Sets initial engine sound volume
 		 *  @see getInitialMaxVolume
 		 */
@@ -356,6 +380,8 @@ namespace FIFE {
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
+		uint16_t m_refreshRate;
+		uint8_t m_displayIndex;
 		float m_initialvolume;
 		std::string m_renderbackend;
 		bool m_sdlremovefakealpha;

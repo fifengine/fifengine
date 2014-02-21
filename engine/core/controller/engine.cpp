@@ -240,7 +240,9 @@ namespace FIFE {
 			m_settings.getScreenHeight(),
 			bpp,
 			rbackend,
-			m_settings.isFullScreen());
+			m_settings.isFullScreen(),
+			m_settings.getRefreshRate(),
+			m_settings.getDisplay());
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(

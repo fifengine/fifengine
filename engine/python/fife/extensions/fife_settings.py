@@ -95,7 +95,7 @@ class Setting(object):
 		# valid values possible for the engineSettings
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
-			'FullScreen':[True,False], 'PychanDebug':[True,False]
+			'FullScreen':[True,False], 'RefreshRate':[0,200], 'Display':[0,9], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
 			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
@@ -118,7 +118,7 @@ class Setting(object):
 		# we at this point assume default values are final values for engineSettings
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
-			'FullScreen':False, 'PychanDebug':False
+			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'PychanDebug':False
 			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
 			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
