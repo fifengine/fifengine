@@ -224,6 +224,7 @@ namespace FIFE {
 			}
 			mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
 			mode.setFormat(closest.format);
+			mode.setDisplay(display);
 			foundMode = true;
 		}
 
