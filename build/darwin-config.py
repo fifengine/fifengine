@@ -22,11 +22,12 @@
 # ####################################################################
 
 import os,sys
+import platform
 from distutils.sysconfig import get_python_inc
 
 def initEnvironment(env):
 
-		
+
 	include_dirs = ['/usr/local/include',
 		        '/usr/local/include',
 			'/usr/X11/include',
@@ -43,23 +44,27 @@ def initEnvironment(env):
 	env.Append(LIBPATH = lib_dirs)
 
 	return env
-	
+
 def addExtras(env, opengl):
 	env.Append(SHLINKFLAGS='-framework OpenAL')
 	env.Append(SHLINKFLAGS='-framework Cocoa')
 	env.Append(SHLINKFLAGS='-framework CoreFoundation')
 	env.Append(SHLINKFLAGS='-framework Python')
-	
+
 	env.Prepend(CXXFLAGS = '-DUSE_COCOA')
-	
+        version = platform.mac_ver()[0]
+        major, minor, patch = [int(v) for v in version.split('.')]
+        if major >= 10 and minor >= 9:
+            env.Prepend(CXXFLAGS = '-DOSX_109')
+
 	if opengl:
 		env.Append(SHLINKFLAGS='-framework OpenGL')
-	
+
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])
-	
+
 	return env
-	
+
 def getRequiredHeaders(opengl):
 	return ['SDL/SDL_image.h',
 			'SDL/SDL_ttf.h']
@@ -75,7 +80,7 @@ def getRequiredLibs(reqLibs):
 		('boost_filesystem', ''),
 		('boost_system', ''),
 		('boost_regex', '')]
-	
+
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
@@ -87,7 +92,7 @@ def getRequiredLibs(reqLibs):
 		libs.append(('fifechan_sdl', ''))
 		if opengl:
 			libs.append(('fifechan_opengl', ''))
-		
+
 	if librocket:
 		libs.append(('RocketCore', 'Rocket/Core.h'))
 		libs.append(('RocketControls', 'Rocket/Controls.h'))
@@ -102,16 +107,16 @@ def getRequiredLibs(reqLibs):
 	if cegui_0:
 		libs.append((('CEGUI-0', 'CEGUIBase-0'), ''))
 		libs.append((('CEGUI-0-OPENGL', 'CEGUIOpenGLRenderer-0'), ''))
-			
+
 	return libs
 
 def createFifechanEnv(standard_env):
 	fifechan_lib_env = standard_env.Clone(LIBS = ['fifechan'])
-		
+
 	return fifechan_lib_env
-	
+
 def getOptionalLibs(opengl):
 	libs = [('tinyxml', 'tinyxml.h')]
-	
+
 	return libs
 

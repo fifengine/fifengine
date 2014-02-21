@@ -181,8 +181,7 @@ namespace FIFE {
 		m_zoomed = !Mathd::Equal(m_zoom, 1.0);
 		m_straightZoom = Mathd::Equal(fmod(m_zoom, 1.0), 0.0);
 		
-		if(RenderBackend::instance()->getName() == "OpenGLe" ||
-			(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled())) {
+		if(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled()) {
 			m_needSorting = false;
 		} else {
 			m_needSorting = true;

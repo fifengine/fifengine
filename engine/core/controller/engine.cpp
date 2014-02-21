@@ -51,7 +51,6 @@
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "video/opengle/renderbackendopengle.h"
 #endif
 #include "video/sdl/renderbackendsdl.h"
 #include "loaders/native/video/imageloader.h"
@@ -115,9 +114,14 @@ namespace FIFE {
 		nsappload();
 
 		// Create an autorelease pool, so autoreleased SDL objects don't leak.
+#ifdef OSX_109
+		Class NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+		m_autoreleasePool = class_createInstance(NSAutoreleasePool, 0);
+#else
 		objc_object *NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
 		m_autoreleasePool =
 			objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
+#endif
 #endif
 		m_logmanager = LogManager::instance();
 	}
@@ -195,14 +199,8 @@ namespace FIFE {
 			FL_LOG(_log, "SDL Render backend created");
 		} else {
 #ifdef HAVE_OPENGL
-			if (rbackend == "OpenGLe") {
-				m_renderbackend = new RenderBackendOpenGLe(m_settings.getColorKey());
-				FL_LOG(_log, "OpenGLe Render backend created");
-				FL_LOG(_log, "This is highly experimental so bear in mind some features may not work/work correctly.");
-			} else {
-				m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
-				FL_LOG(_log, "OpenGL Render backend created");
-			}
+			m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
+			FL_LOG(_log, "OpenGL Render backend created");
 #else
 			m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
 			// Remember  the choice so we pick the right graphics class.
