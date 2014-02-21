@@ -49,6 +49,13 @@ namespace FIFE {
 		if (mFont == NULL) {
 			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
+		// Maybe we should add an setting for that
+		// TTF_HINTING_NORMAL // default
+		// TTF_HINTING_LIGHT
+		// TTF_HINTING_MONO
+		// TTF_HINTING_NONE
+		//TTF_SetFontHinting(mFont, TTF_HINTING_LIGHT);
+
 		mColor.r = mColor.g = mColor.b = mColor.a = 255;
 	}
 

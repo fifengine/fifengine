@@ -127,7 +127,8 @@ namespace FIFE {
 			// Disable alpha blending, so that we use colorkeying
 			//SDL_SetAlpha(tmp,0,255);
 			//SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
-
+			SDL_SetSurfaceBlendMode(tmp, SDL_BLENDMODE_NONE);
+			SDL_SetColorKey(tmp, SDL_TRUE, colorkey);
 
 			uint32_t codepoint = utf8::next(text_it, glyphs.end());
 			m_glyphs[ codepoint ].surface = tmp;

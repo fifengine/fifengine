@@ -160,8 +160,10 @@ namespace FIFE {
 				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
 
+				// Disable alpha blending
 				//SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-				SDL_BlitSurface(*i,0,final_surface,&dst_rect);
+				SDL_SetSurfaceBlendMode(*i, SDL_BLENDMODE_NONE);
+				SDL_BlitSurface(*i, 0, final_surface, &dst_rect);
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}
