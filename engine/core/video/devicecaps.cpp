@@ -165,10 +165,10 @@ namespace FIFE {
 			uint8_t displayModes = SDL_GetNumDisplayModes(i);
 			for (uint8_t m = 0; m != displayModes; m++) {
 				if (SDL_GetDisplayMode(i, m, &mode) == 0) {
-					for (uint32_t i = 0; i < numBPP; ++i){
+					for (uint32_t ii = 0; ii < numBPP; ++ii){
 						for (uint32_t j = 0; j < numFlags; ++j) {
 							//m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format), mode.refresh_rate, flags[j]));
-							ScreenMode m(mode.w, mode.h, bpps[i], mode.refresh_rate, flags[j]);
+							ScreenMode m(mode.w, mode.h, bpps[ii], mode.refresh_rate, flags[j]);
 							m.setFormat(mode.format);
 							m.setDisplay(i);
 							m_screenModes.push_back(m);
