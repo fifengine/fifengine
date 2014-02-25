@@ -199,6 +199,8 @@ namespace FIFE {
 		const SDL_PixelFormat& getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
+		void setVSyncEnabled(bool vsync);
+		bool isVSyncEnabled() const;
 		void setFrameLimitEnabled(bool limited);
 		bool isFrameLimitEnabled() const;
 		void setFrameLimit(uint16_t framelimit);
@@ -267,8 +269,8 @@ namespace FIFE {
 		bool isFullScreen();
 		bool isOpenGL();
 		bool isSDL() const;
-		void setDisplay(uint8_t display);
 		uint8_t getDisplay() const;
+		const std::string& getRenderDriverName() const;
 
 		static const uint32_t WINDOWED_OPENGL;
 		static const uint32_t FULLSCREEN_OPENGL;
@@ -285,8 +287,11 @@ namespace FIFE {
 		std::vector<ScreenMode> getSupportedScreenModes() const;
 		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
 		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
-		std::string getDriverName() const;
-		std::vector<string> getAvailableDrivers() const;
+		std::string getVideoDriverName() const;
+		std::vector<string> getAvailableVideoDrivers() const;
+		std::string getRenderDriverName() const;
+		void setRenderDriverName(const std::string& driver);
+		std::vector<std::string> getAvailableRenderDrivers() const;
 
 		uint8_t getDisplayCount() const;
 		std::string getDisplayName(uint8_t display = 0) const;

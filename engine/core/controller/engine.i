@@ -58,6 +58,10 @@ namespace FIFE {
 		uint16_t getRefreshRate() const;
 		void setDisplay(uint8_t display);
 		uint8_t getDisplay() const;
+		void setVSync(bool vsync);
+		bool isVSync() const;
+		void setSDLDriver(const std::string& driver);
+		const std::string& getSDLDriver() const;
 		void setInitialVolume(float volume);
 		float getInitialVolume() const;
 		float getMaxVolume() const;

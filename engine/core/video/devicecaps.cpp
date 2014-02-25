@@ -38,15 +38,18 @@
 namespace FIFE {
 
 	ScreenMode::ScreenMode() :
-		           m_width(0), m_height(0), m_bpp(0), m_refreshRate(0), m_SDLFlags(0), m_format(0), m_display(0){
+		           m_width(0), m_height(0), m_bpp(0), m_refreshRate(0), m_SDLFlags(0),
+				m_format(0), m_display(0), m_renderDriver(""), m_renderDriverIndex(-1) {
 	}
 
 	ScreenMode::ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags) :
-		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(0), m_SDLFlags(SDLFlags), m_format(0), m_display(0){
+		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(0), m_SDLFlags(SDLFlags),
+				m_format(0), m_display(0), m_renderDriver(""), m_renderDriverIndex(-1){
 	}
 
 	ScreenMode::ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags) :
-		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(rate), m_SDLFlags(SDLFlags), m_format(0), m_display(0){
+		           m_width(width), m_height(height), m_bpp(bpp), m_refreshRate(rate), m_SDLFlags(SDLFlags),
+				m_format(0), m_display(0), m_renderDriver(""), m_renderDriverIndex(-1){
 	}
 
 	ScreenMode::ScreenMode(const ScreenMode& rhs){
@@ -57,14 +60,16 @@ namespace FIFE {
 		m_refreshRate = rhs.getRefreshRate();
 		m_format = rhs.getFormat();
 		m_display = rhs.getDisplay();
+		m_renderDriver = rhs.getRenderDriverName();
+		m_renderDriverIndex = rhs.getRenderDriverIndex();
 	}
 
 	bool ScreenMode::operator <(const ScreenMode& rhs) const {
-		// first by display
-		if (m_display < rhs.getDisplay()){
+		// first by display, from lower to higher
+		if (m_display > rhs.getDisplay()){
 			return true;
 		}
-		else if (m_display > rhs.getDisplay()){
+		else if (m_display < rhs.getDisplay()){
 			return false;
 		}
 
@@ -99,7 +104,9 @@ namespace FIFE {
 	}
 
 	DeviceCaps::DeviceCaps() :
-	    m_driverName("Invalid") {
+	    m_videoDriverName("dummy"),
+		m_renderDriverName(""),
+		m_renderDriverIndex(-1) {
 	}
 
 
@@ -108,25 +115,35 @@ namespace FIFE {
 
 	void DeviceCaps::reset() {
 		m_screenModes.clear();
-		m_driverName = "Invalid";
+		m_renderDriverName = "";
+		m_renderDriverIndex = -1;
 
 		fillAvailableDrivers();
 	}
 
-
 	void DeviceCaps::fillAvailableDrivers() {
-		m_availableDrivers.clear();
+		// video driver section (x11, windows, dummy, ...)
+		m_availableVideoDrivers.clear();
 		uint8_t driverCount = SDL_GetNumVideoDrivers();
 		for (uint8_t i = 0; i != driverCount; i++) {
 			std::string driver(SDL_GetVideoDriver(i));
-			m_availableDrivers.push_back(driver);
+			m_availableVideoDrivers.push_back(driver);
 		}
-		m_driverName = std::string(SDL_GetCurrentVideoDriver());
+		m_videoDriverName = std::string(SDL_GetCurrentVideoDriver());
+
+		// render driver section (opengl, direct3d, software, ...)
+		SDL_RendererInfo info;
+		driverCount = SDL_GetNumRenderDrivers();
+		for (uint8_t i = 0; i != driverCount; i++) {
+			SDL_GetRenderDriverInfo(i, &info);
+			std::string name(info.name);
+			m_availableRenderDrivers.push_back(name);
+		}
 	}
 
 	void DeviceCaps::fillDeviceCaps() {
 		//clear in case this is called twice
-		reset();
+		m_screenModes.clear();
 		//FLAGS
 #ifdef HAVE_OPENGL
 		const uint32_t numFlags = 4;
@@ -159,6 +176,7 @@ namespace FIFE {
 		bpps[1] = 24;
 		bpps[2] = 32;
 
+		bool renderDriver = m_renderDriverIndex != -1;
 		uint8_t displayCount = SDL_GetNumVideoDisplays();
 		for (uint8_t i = 0; i != displayCount; i++) {
 			SDL_DisplayMode mode;
@@ -171,6 +189,10 @@ namespace FIFE {
 							ScreenMode m(mode.w, mode.h, bpps[ii], mode.refresh_rate, flags[j]);
 							m.setFormat(mode.format);
 							m.setDisplay(i);
+							if (renderDriver) {
+								m.setRenderDriverName(m_renderDriverName);
+								m.setRenderDriverIndex(m_renderDriverIndex);
+							}
 							m_screenModes.push_back(m);
 						}
 					}
@@ -225,6 +247,10 @@ namespace FIFE {
 			mode = ScreenMode(closest.w, closest.h, bpp, closest.refresh_rate, flags);
 			mode.setFormat(closest.format);
 			mode.setDisplay(display);
+			if (m_renderDriverIndex != -1) {
+				mode.setRenderDriverName(m_renderDriverName);
+				mode.setRenderDriverIndex(m_renderDriverIndex);
+			}
 			foundMode = true;
 		}
 
@@ -233,6 +259,28 @@ namespace FIFE {
 		}
 
 		return mode;
+	}
+
+	void DeviceCaps::setRenderDriverName(const std::string& driver) {
+		bool found = false;
+		uint8_t driverCount = m_availableRenderDrivers.size();
+		for (uint8_t i = 0; i != driverCount; i++) {
+			if (driver == m_availableRenderDrivers[i]) {
+				m_renderDriverName = driver;
+				m_renderDriverIndex = i;
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			if (driver != "") {
+				throw NotSupported("Could not find a matching render driver!");
+			}
+			m_renderDriverName = "";
+			m_renderDriverIndex = -1;
+		}
+		// refill
+		fillDeviceCaps();
 	}
 
 	uint8_t DeviceCaps::getDisplayCount() const {
@@ -255,7 +303,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 		return mode.format;
-
 	}
 
 	int32_t DeviceCaps::getDesktopRefreshRate(uint8_t display) const {

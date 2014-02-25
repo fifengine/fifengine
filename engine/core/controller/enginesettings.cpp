@@ -48,6 +48,8 @@ namespace FIFE {
 		m_fullscreen(false),
 		m_refreshRate(60),
 		m_displayIndex(0),
+		m_vSync(false),
+		m_renderDriver(""),
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),

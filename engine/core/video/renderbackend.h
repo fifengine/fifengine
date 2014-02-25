@@ -415,6 +415,14 @@ namespace FIFE {
 		*/
 		const SDL_PixelFormat& getPixelFormat() const;
 
+		/** Sets whether to use VSync
+		 */
+		void setVSyncEnabled(bool vsync);
+
+		/** Gets whether VSync is in use
+		 */
+		bool isVSyncEnabled() const;
+
 		/** Sets whether to use the frame limiter
 		 */
 		void setFrameLimitEnabled(bool limited);
@@ -485,6 +493,8 @@ namespace FIFE {
 		bool m_isDepthBuffer;
 		// alpha test value
 		float m_alphaValue;
+		// vsync value
+		bool m_vSync;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea

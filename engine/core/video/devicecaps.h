@@ -106,6 +106,22 @@ namespace FIFE {
 		/** Returns the display index.
 		 */
 		uint8_t getDisplay() const { return m_display; }
+		
+		/** Sets the render driver name.
+		 */
+		void setRenderDriverName(const std::string driver) { m_renderDriver = driver; }
+
+		/** Returns the render driver name. Default is "".
+		 */
+		const std::string& getRenderDriverName() const { return m_renderDriver; }
+
+		/** Sets the index of the render driver used by SDL.
+		 */
+		void setRenderDriverIndex(int8_t index) { m_renderDriverIndex = index; }
+
+		/** Returns the index of the render driver. Default is -1.
+		 */
+		int8_t getRenderDriverIndex() const { return m_renderDriverIndex; }
 
 		//OpenGL, windowed
 		static const uint32_t WINDOWED_OPENGL = SDL_WINDOW_OPENGL;
@@ -124,6 +140,8 @@ namespace FIFE {
 		uint32_t m_SDLFlags;
 		uint32_t m_format;
 		uint8_t m_display;
+		std::string m_renderDriver;
+		int8_t m_renderDriverIndex;
 	};  //ScreenMode
 
 	class DeviceCaps {
@@ -144,9 +162,13 @@ namespace FIFE {
 		 */
 		void reset();
 
-		/** Gets the available graphics drivers for your operating system
+		/** Gets the available video drivers for your operating system
 		 */
-		std::vector<std::string> getAvailableDrivers() const { return m_availableDrivers; };
+		std::vector<std::string> getAvailableVideoDrivers() const { return m_availableVideoDrivers; };
+
+		/** Gets the available render drivers for your operating system
+		 */
+		std::vector<std::string> getAvailableRenderDrivers() const { return m_availableRenderDrivers; };
 
 		/** Returns a vector containing screen modes.
 		 */
@@ -162,7 +184,20 @@ namespace FIFE {
 
 		/** Returns the name of the current video driver.
 		 */
-		std::string getDriverName() const { return m_driverName; };
+		std::string getVideoDriverName() const { return m_videoDriverName; }
+
+		/** Sets the name of the video driver.
+		 */
+		void setVideoDriverName(const std::string& driver) { m_videoDriverName = driver; }
+
+		/** Returns the name of the current render driver or
+		 *  an empty string to initialize the first one supporting the requested flags.
+		 */
+		std::string getRenderDriverName() const { return m_renderDriverName; }
+
+		/** Sets the name of the render driver.
+		 */
+		void setRenderDriverName(const std::string& driver);
 
 		/** Returns the number of displays.
 		 */
@@ -194,8 +229,12 @@ namespace FIFE {
 
 	private:
 		std::vector<ScreenMode> m_screenModes;
-		std::string m_driverName;
-		std::vector<std::string> m_availableDrivers;
+		std::string m_videoDriverName;
+		std::vector<std::string> m_availableVideoDrivers;
+
+		std::string m_renderDriverName;
+		int8_t m_renderDriverIndex;
+		std::vector<std::string> m_availableRenderDrivers;
 
 		/** Called in the constructor.  No need for anyone to call this
 		 */

@@ -47,6 +47,7 @@ namespace FIFE {
 		m_monochrome(false),
 		m_isDepthBuffer(false),
 		m_alphaValue(0.3),
+		m_vSync(false),
 		m_isframelimit(false),
 		m_framelimit(60) {
 
@@ -205,6 +206,14 @@ namespace FIFE {
 	
 	const SDL_PixelFormat& RenderBackend::getPixelFormat() const {
 		return m_rgba_format;
+	}
+
+	void RenderBackend::setVSyncEnabled(bool vsync) {
+		m_vSync = vsync;
+	}
+
+	bool RenderBackend::isVSyncEnabled() const {
+		return m_vSync;
 	}
 
 	void RenderBackend::setFrameLimitEnabled(bool limited) {

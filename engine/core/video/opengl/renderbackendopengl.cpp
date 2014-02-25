@@ -133,10 +133,15 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::init(const std::string& driver) {
-		// note: driver has no affect on the opengl renderer so do nothing with it here.
 		Uint32 flags = SDL_INIT_VIDEO;
-		if (SDL_InitSubSystem(flags) < 0)
+		if (SDL_InitSubSystem(flags) < 0) {
 			throw SDLException(SDL_GetError());
+		}
+		if (driver != "") {
+			if (SDL_VideoInit(driver.c_str()) < 0) {
+				throw SDLException(SDL_GetError());
+			}
+		}
 		// defines buffer sizes
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -149,8 +154,8 @@ namespace FIFE {
 		SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
 		//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
-		// sync swaping with refresh rate
-		SDL_GL_SetSwapInterval(1);
+		// sync swaping with refresh rate if VSync is enabled
+		SDL_GL_SetSwapInterval(static_cast<uint8_t>(isVSyncEnabled()));
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {
