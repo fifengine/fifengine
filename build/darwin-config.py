@@ -71,7 +71,7 @@ def getRequiredHeaders(opengl):
 
 def getRequiredLibs(reqLibs):
 	libs = [('objc', ''),
-		('png', ''),
+		(('libpng', 'png'), ''),
 		('SDL', ''),
 		('SDL_image', ''),
 		('SDL_ttf', ''),

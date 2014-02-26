@@ -82,7 +82,7 @@ def getRequiredLibs(reqLibs):
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
-			('png', 'png.h'),
+			(('libpng', 'png'), 'png.h'),
 			('Xcursor', '')]
 
 	opengl = reqLibs['opengl']
