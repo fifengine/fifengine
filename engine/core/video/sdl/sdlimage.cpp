@@ -29,6 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
 #include "video/imagemanager.h"
@@ -81,18 +82,25 @@ namespace FIFE {
 		m_scale_x = 1.0;
 		m_scale_y = 1.0;
 		m_zoom_surface = NULL;
+		m_texture = NULL;
 	}
 
 	SDLImage::~SDLImage() {
 		if (m_zoom_surface) {
 			SDL_FreeSurface(m_zoom_surface);
 		}
+		if (m_texture) {
+			SDL_DestroyTexture(m_texture);
+		}
 	}
 
 	void SDLImage::setSurface(SDL_Surface* surface) {
 		if (m_zoom_surface) {
 			SDL_FreeSurface(m_zoom_surface);
-			m_zoom_surface = NULL;
+			//m_zoom_surface = NULL;
+		}
+		if (m_texture) {
+			SDL_DestroyTexture(m_texture);
 		}
 		reset(surface);
 		resetSdlimage();
@@ -344,7 +352,7 @@ namespace FIFE {
 			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
-		finalize();
+		//finalize();
 
 		SDL_Rect r;
 		r.x = rect.x;
@@ -366,6 +374,40 @@ namespace FIFE {
 				m_scale_y = scale_y;
 			}
 		}
+
+		Rect tmpRect;
+		if (m_shared) {
+			tmpRect = getSubImageRect();
+		} else {
+			tmpRect = getArea();
+		}
+		SDL_Rect srcRect;
+		srcRect.x = tmpRect.x;
+		srcRect.y = tmpRect.y;
+		srcRect.w = m_surface->w;
+		srcRect.h = m_surface->h;
+		//srcRect.w = tmpRect.w;
+		//srcRect.h = tmpRect.h;
+
+		SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
+
+		// create texture
+		if (!m_texture) {
+			m_texture = SDL_CreateTextureFromSurface(renderer, m_surface);
+		}
+		
+		// set additonal color and alpha mods
+		if (rgb) {
+			SDL_SetTextureColorMod(m_texture, rgb[0], rgb[1], rgb[2]);
+			SDL_SetTextureAlphaMod(m_texture, rgb[3]);
+		}
+		// set render color
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, alpha);
+
+		if (SDL_RenderCopy(renderer, m_texture, &srcRect, &r) != 0) {
+			throw SDLException(SDL_GetError());
+		}
+		return;
 
  		if (m_surface->format->Amask == 0) {
 			// Image has no alpha channel. This allows us to use the per-surface alpha.
@@ -426,11 +468,11 @@ namespace FIFE {
 
 		if (m_surface->format->Amask == 0) {
 			// only use color key if feature is enabled
-			/*if (RenderBackend::instance()->isColorKeyEnabled()) {
-				SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
+			if (RenderBackend::instance()->isColorKeyEnabled()) {
+				SDL_SetColorKey(m_surface, SDL_TRUE, key);
 			}
 
-			m_surface = SDL_DisplayFormat(m_surface);*/
+			//m_surface = SDL_DisplayFormat(m_surface);
 		} else {
 			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
 			bool m_isalphaoptimized = be->isAlphaOptimizerEnabled();
@@ -439,10 +481,10 @@ namespace FIFE {
 			} else  {
 				//SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
 
-				//// only use color key if feature is enabled
-				//if (RenderBackend::instance()->isColorKeyEnabled()) {
-				//	SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
-				//}
+				// only use color key if feature is enabled
+				if (RenderBackend::instance()->isColorKeyEnabled()) {
+					SDL_SetColorKey(m_surface, SDL_TRUE, key);
+				}
 
 				//m_surface = SDL_DisplayFormatAlpha(m_surface);
 			}
@@ -649,6 +691,7 @@ namespace FIFE {
 		// if(avgalpha < 240) {
 		//	SDL_SetAlpha(dst, SDL_SRCALPHA | SDL_RLEACCEL, avgalpha);
 		//}
+		SDL_SetColorKey(dst, SDL_TRUE, key);
 		/*SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
 		SDL_Surface *convert = SDL_DisplayFormat(dst);
 		SDL_FreeSurface(dst);

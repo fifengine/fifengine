@@ -77,6 +77,7 @@ namespace FIFE {
 		SDL_Color m_colorkey;
 		// Surface for zoom
 		SDL_Surface* m_zoom_surface;
+		SDL_Texture* m_texture;
 		float m_scale_x;
 		float m_scale_y;
 		// Holds Atlas ImagePtr if this is a shared image

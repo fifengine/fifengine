@@ -315,6 +315,8 @@ namespace FIFE {
 				srcimg->getHeight(), 32, RMASK, GMASK, BMASK ,AMASK);
 		}
 		//SDL_SetAlpha(srcimg->m_surface, 0, 0);
+		// disable blending
+		SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_NONE);
 		if(this->isSharedImage()) {
 			Rect const& rect = this->getSubImageRect();
 			SDL_Rect dstrect = {
@@ -352,6 +354,8 @@ namespace FIFE {
 			}
 		}
 		//SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
+		// enable blending
+		SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_BLEND);
 	}
 
 	bool Image::putPixel(SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

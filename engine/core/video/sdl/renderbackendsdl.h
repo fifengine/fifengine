@@ -88,9 +88,13 @@ namespace FIFE {
 		virtual void detachRenderTarget();
 
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
+
+		SDL_Renderer* getRenderer() { return m_renderer; }
 		
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);
+
+		SDL_Renderer* m_renderer;
 	};
 
 }

@@ -23,11 +23,13 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#include <fifechan/font.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
 #include "gui/fifechan/base/gui_image.h"
+#include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
@@ -35,8 +37,11 @@
 #include "sdl_gui_graphics.h"
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
+
 	SdlGuiGraphics::SdlGuiGraphics() {
-		setTarget(RenderBackend::instance()->getScreenSurface());
+		m_renderbackend = RenderBackend::instance();
+		setTarget(m_renderbackend->getScreenSurface());
 	}
 
 	void SdlGuiGraphics::drawImage(const fcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
@@ -50,5 +55,104 @@ namespace FIFE {
 		rect.y += clip.yOffset;
 
 		fifeimg->render(rect);
+	}
+
+	void SdlGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,
+			uint32_t alignment) {
+		if (mFont == NULL)
+		{
+			throw GuiException("SdlGuiGraphics::drawText() - No font set!");
+		}
+
+		switch (alignment)
+		{
+			case Left:
+				mFont->drawString(this, text, x, y);
+				break;
+			case Center:
+				mFont->drawString(this, text, x - mFont->getWidth(text) / 2, y);
+				break;
+			case Right:
+				mFont->drawString(this, text, x - mFont->getWidth(text), y);
+				break;
+			default:
+				FL_WARN(_log, LMsg("SdlGuiGraphics::drawText() - ") << "Unknown alignment: " << alignment);
+				mFont->drawString(this, text, x, y);
+		}
+	}
+
+	void SdlGuiGraphics::drawPoint(int32_t x, int32_t y) {
+		const fcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void SdlGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
+		const fcn::ClipRectangle& top = mClipStack.top();
+		x1 += top.xOffset;
+		x2 += top.xOffset;
+		y1 += top.yOffset;
+		y2 += top.yOffset;
+
+		Point pbegin(x1, y1);
+		Point pend(x2, y2);
+
+		m_renderbackend->drawLine(pbegin, pend,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+		m_renderbackend->putPixel(pbegin.x, pbegin.y,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+		m_renderbackend->putPixel(pend.x, pend.y,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void SdlGuiGraphics::drawRectangle(const fcn::Rectangle& rectangle) {
+		const fcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->drawRectangle(
+			Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
+			rectangle.width, rectangle.height,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void SdlGuiGraphics::fillRectangle(const fcn::Rectangle& rectangle) {
+		const fcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->fillRectangle(
+			Point(rectangle.x + top.xOffset, rectangle.y + top.yOffset),
+			rectangle.width, rectangle.height,
+			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void SdlGuiGraphics::_beginDraw() {
+		fcn::Rectangle area(0, 0, mTarget->w, mTarget->h);
+		fcn::Graphics::pushClipArea(area);
+		m_renderbackend->pushClipArea(Rect(0, 0, mTarget->w, mTarget->h), false);
+	}
+
+	void SdlGuiGraphics::_endDraw() {
+		// Cleanup
+		fcn::Graphics::popClipArea();
+		m_renderbackend->popClipArea();
+	}
+
+	bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area) {
+		fcn::Graphics::pushClipArea(area);
+
+		// Due to some odd conception in FifeChan some of area
+		// has xOffset and yOffset > 0. And if it happens we
+		// need to offset our clip area. Or we can use fifechan stack.
+		const fcn::ClipRectangle& top = mClipStack.top();
+
+		m_renderbackend->pushClipArea(
+			Rect(top.x, top.y, top.width, top.height), false);
+
+		return true;
+	}
+
+	void SdlGuiGraphics::popClipArea() {
+		fcn::Graphics::popClipArea();
+		m_renderbackend->popClipArea();
+	}
+
+	void SdlGuiGraphics::setColor(const fcn::Color& color) {
+		mColor = color;
 	}
 }
