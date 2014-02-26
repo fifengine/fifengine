@@ -47,6 +47,8 @@ def initEnvironment(env):
 	
 	env.AppendUnique(CXXFLAGS=["-DPNG_SKIP_SETJMP_CHECK"])
 
+	env.Tool('swig')
+
 	return env
 
 def addExtras(env, opengl):

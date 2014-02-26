@@ -25,6 +25,8 @@ def initEnvironment(env):
 	# OpenBSD specific pthreads option
 	env.Append(LINKFLAGS = ['-pthread'])
 
+	env.Tool('swig')
+
 	return env
 
 def addExtras(env, opengl):

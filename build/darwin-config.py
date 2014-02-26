@@ -43,6 +43,8 @@ def initEnvironment(env):
 	env.Append(CPPPATH = include_dirs)
 	env.Append(LIBPATH = lib_dirs)
 
+	env.Tool('swig')
+
 	return env
 
 def addExtras(env, opengl):
