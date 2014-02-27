@@ -132,6 +132,7 @@ namespace FIFE {
 		m_videoDriverName = std::string(SDL_GetCurrentVideoDriver());
 
 		// render driver section (opengl, direct3d, software, ...)
+		m_availableRenderDrivers.clear();
 		SDL_RendererInfo info;
 		driverCount = SDL_GetNumRenderDrivers();
 		for (uint8_t i = 0; i != driverCount; i++) {
@@ -144,6 +145,7 @@ namespace FIFE {
 	void DeviceCaps::fillDeviceCaps() {
 		//clear in case this is called twice
 		m_screenModes.clear();
+		fillAvailableDrivers();
 		//FLAGS
 #ifdef HAVE_OPENGL
 		const uint32_t numFlags = 4;

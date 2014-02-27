@@ -133,16 +133,19 @@ namespace FIFE {
 		}
 
 		// create renderer with given flags
-		flags = SDL_RENDERER_ACCELERATED;
-		if (isVSyncEnabled()) {
+		flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+		if (m_vSync) {
 			flags |= SDL_RENDERER_PRESENTVSYNC;
-		}
-		if (isFramebufferEnabled()) {
-			flags |= SDL_RENDERER_TARGETTEXTURE;
 		}
 		m_renderer = SDL_CreateRenderer(m_window, mode.getRenderDriverIndex(), flags);
 		if (!m_renderer) {
 			throw SDLException(SDL_GetError());
+		}
+		// set texture filtering
+		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
+		} else if (m_textureFilter != TEXTURE_FILTER_NONE) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 		}
 		// enable alpha blending
 		SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
