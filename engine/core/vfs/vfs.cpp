@@ -69,21 +69,21 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("new provider: ") << provider->getName());
 	}
 
-	VFSSource* VFS::createSource(const std::string& path) const {
-		if ( m_usedfiles.count(path) ) {
+	VFSSource* VFS::createSource(const std::string& path) {
+
+		if (hasSource(path)) {
 			FL_WARN(_log, LMsg(path) << " is already used as VFS source");
 			return 0;
 		}
 
 		type_providers::const_iterator end = m_providers.end();
 		for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
-			const VFSSourceProvider* provider = *i;
+			VFSSourceProvider* provider = *i;
 			if (!provider->isReadable(path))
 				continue;
 
 			try {
 				VFSSource* source = provider->createSource(path);
-				m_usedfiles.insert(path);
 				return source;
 			} catch (const Exception& ex) {
 				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.what() << ")");
@@ -98,13 +98,14 @@ namespace FIFE {
 		return 0;
 	}
 
-	void VFS::addNewSource(const std::string& path) {
+	VFSSource* VFS::addNewSource(const std::string& path) {
 		VFSSource* source = createSource(path);
 		if (source) {
 			addSource(source);
 		} else {
 			FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
 		}
+		return source;
 	}
 
 	void VFS::addSource(VFSSource* source) {
@@ -208,5 +209,20 @@ namespace FIFE {
 			++i;
 		}
 		return results;
+	}
+
+	bool VFS::hasSource(const std::string& path) const {
+		type_providers::const_iterator end = m_providers.end();
+		for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
+			const VFSSourceProvider* provider = *i;
+			if (provider->hasSource(path)) {
+				const VFSSource* source = provider->getSource(path);
+				type_sources::const_iterator i = std::find(m_sources.begin(), m_sources.end(), source);
+				if (i == m_sources.end())
+					return false;
+				return true;
+			}
+		}
+		return false;
 	}
 }

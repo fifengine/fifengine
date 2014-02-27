@@ -23,6 +23,7 @@
 %{
 #include "util/base/exception.h"
 #include "vfs/vfs.h"
+#include "vfs/vfssource.h"
 %}
 
 %include "vfs/raw/rawdata.i"
@@ -35,7 +36,18 @@ namespace std {
 	%template(vectoru) vector<uint8_t>;
 };
 
+
 namespace FIFE {
+	%nodefaultctor VFSSource;
+	%nodefaultdtor VFSSource;
+
+	class VFSSource {
+	public:
+		virtual bool fileExists(const std::string& file) const = 0;
+		virtual std::set<std::string> listFiles(const std::string& path) const = 0;
+		virtual std::set<std::string> listDirectories(const std::string& path) const = 0;
+	};
+
 	class VFS {
 	public:
 
@@ -44,7 +56,8 @@ namespace FIFE {
 
 		void cleanup();
 
-		void addNewSource(const std::string& path);
+		VFSSource* addNewSource(const std::string& path);
+		void removeSource(VFSSource* source);
 
 		bool exists(const std::string& file) const;
 		RawData* open(const std::string& path);
