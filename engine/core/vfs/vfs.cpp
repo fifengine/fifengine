@@ -98,14 +98,13 @@ namespace FIFE {
 		return 0;
 	}
 
-	VFSSource* VFS::addNewSource(const std::string& path) {
+	void VFS::addNewSource(const std::string& path) {
 		VFSSource* source = createSource(path);
 		if (source) {
 			addSource(source);
 		} else {
 			FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
 		}
-		return source;
 	}
 
 	void VFS::addSource(VFSSource* source) {
@@ -116,6 +115,21 @@ namespace FIFE {
 		type_sources::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
 		if (i != m_sources.end())
 			m_sources.erase(i);
+	}
+
+	void VFS::removeSource(const std::string path) {
+		type_providers::iterator end = m_providers.end();
+		for (type_providers::iterator i = m_providers.begin(); i != end; ++i) {
+			VFSSourceProvider* provider = *i;
+			if (provider->hasSource(path)) {
+				VFSSource* source = provider->getSource(path);
+				type_sources::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
+				if (i == m_sources.end()) {
+					removeSource(*i);
+					return;
+				}
+			}
+		}
 	}
 
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {

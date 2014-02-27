@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <set>
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
@@ -84,17 +85,16 @@ namespace FIFE {
 			VFSSource* createSource(const std::string& path);
 
 			/** create a new Source and add it to VFS
-			 * @see VFSSource* createSource(const std::string& file) const
-			 * @return the new VFSSource or 0 if no provider was succesfull or the file was already used as source
+			 * @see VFSSource* createSource(const std::string& file)
 			 */
-			VFSSource* addNewSource(const std::string& path);
-
+			void addNewSource(const std::string& path);
 
 			/** Add a new VFSSource */
 			void addSource(VFSSource* source);
 
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
+			void removeSource(const std::string path);
 
 			/** Check if the given file exists
 			 *
