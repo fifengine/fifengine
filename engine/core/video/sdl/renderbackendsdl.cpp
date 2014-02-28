@@ -77,13 +77,10 @@ namespace FIFE {
 		rect.y = 0;
 		rect.w = getWidth();
 		rect.h = getHeight();
-		//SDL_SetClipRect(m_screen, &rect);
-		//SDL_FillRect(m_screen, 0, 0x00);
 
 		SDL_RenderSetClipRect(m_renderer, &rect);
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
-		//SDL_RenderPresent(m_renderer);
 	}
 
 	void RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
@@ -146,6 +143,8 @@ namespace FIFE {
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 		} else if (m_textureFilter != TEXTURE_FILTER_NONE) {
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+		} else {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 		}
 		// enable alpha blending
 		SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
@@ -185,7 +184,6 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::endFrame() {
-		//SDL_Flip(m_screen);
 		SDL_RenderPresent(m_renderer);
 		RenderBackend::endFrame();
 	}
@@ -245,109 +243,22 @@ namespace FIFE {
 
 	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-		SDL_RenderDrawPoint(m_renderer, x, y);
-		//return Image::putPixel(m_target, x, y, r, g, b, a);
+		if (SDL_RenderDrawPoint(m_renderer, x, y) == 0) {
+			return true;
+		}
+		return false;
 	}
 
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
 		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
-
-		//// Draw a line with Bresenham, imitated from fifechan 
-		//int32_t x1 = p1.x;
-		//int32_t x2 = p2.x;
-		//int32_t y1 = p1.y;
-		//int32_t y2 = p2.y;
-		//int32_t dx = ABS(x2 - x1);
-		//int32_t dy = ABS(y2 - y1);
-
-		//if (dx > dy) {
-		//	if (x1 > x2) {
-		//		// swap x1, x2
-		//		x1 ^= x2;
-		//		x2 ^= x1;
-		//		x1 ^= x2;
-
-		//		// swap y1, y2
-		//		y1 ^= y2;
-		//		y2 ^= y1;
-		//		y1 ^= y2;
-		//	}
-
-		//	if (y1 < y2) {
-		//		int32_t y = y1;
-		//		int32_t p = 0;
-
-		//		for (int32_t x = x1; x <= x2; x++) {
-		//			putPixel(x, y, r, g, b, a);
-		//			p += dy;
-		//			if (p * 2 >= dx) {
-		//				y++;
-		//				p -= dx;
-		//			}
-		//		}
-		//	}
-		//	else {
-		//		int32_t y = y1;
-		//		int32_t p = 0;
-
-		//		for (int32_t x = x1; x <= x2; x++) {
-		//			putPixel(x, y, r, g, b, a);
-
-		//			p += dy;
-		//			if (p * 2 >= dx) {
-		//				y--;
-		//				p -= dx;
-		//			}
-		//		}
-		//	}
-		//}
-		//else {
-		//	if (y1 > y2) {
-		//		// swap y1, y2
-		//		y1 ^= y2;
-		//		y2 ^= y1;
-		//		y1 ^= y2;
-
-		//		// swap x1, x2
-		//		x1 ^= x2;
-		//		x2 ^= x1;
-		//		x1 ^= x2;
-		//	}
-
-		//	if (x1 < x2) {
-		//		int32_t x = x1;
-		//		int32_t p = 0;
-
-		//		for (int32_t y = y1; y <= y2; y++) {
-		//			putPixel(x, y, r, g, b, a);
-		//			p += dx;
-		//			if (p * 2 >= dy) {
-		//				x++;
-		//				p -= dy;
-		//			}
-		//		}
-		//	}
-		//	else {
-		//		int32_t x = x1;
-		//		int32_t p = 0;
-
-		//		for (int32_t y = y1; y <= y2; y++) {
-		//			putPixel(x, y, r, g, b, a);
-		//			p += dx;
-		//			if (p * 2 >= dy) {
-		//				x--;
-		//				p -= dy;
-		//			}
-		//		}
-		//	}
-		//}
 	}
 
 	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p1, r, g, b, a);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+		SDL_RenderDrawLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
+		SDL_RenderDrawLine(m_renderer, p3.x, p1.y, p1.x, p1.y);
 	}
 
 	void RenderBackendSDL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -358,22 +269,6 @@ namespace FIFE {
 		rect.h = h;
 		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
 		SDL_RenderDrawRect(m_renderer, &rect);
-
-		/*Point p1, p2, p3, p4;
-
-		p1.x = p.x;
-		p1.y = p.y;
-		p2.x = p.x+w;
-		p2.y = p.y;
-		p3.x = p.x+w;
-		p3.y = p.y+h;
-		p4.x = p.x;
-		p4.y = p.y+h;
-
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);*/
 	}
 
 	void RenderBackendSDL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -384,15 +279,6 @@ namespace FIFE {
 		rect.h = h;
 		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
 		SDL_RenderFillRect(m_renderer, &rect);
-
-		/*SDL_Rect rect;
-		rect.x = p.x;
-		rect.y = p.y;
-		rect.w = w;
-		rect.h = h;
-
-		Uint32 color = SDL_MapRGBA(m_target->format, r, g, b, a);
-		SDL_FillRect(m_target, &rect, color);*/
 	}
 
 	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -405,10 +291,11 @@ namespace FIFE {
 		Point p3 = Point(p.x+size, p.y-size);
 		Point p4 = Point(p.x-size, p.y-size);
 
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+		SDL_RenderDrawLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
+		SDL_RenderDrawLine(m_renderer, p3.x, p3.y, p4.x, p4.y);
+		SDL_RenderDrawLine(m_renderer, p4.x, p4.y, p1.x, p1.y);
 	}
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
@@ -551,24 +438,24 @@ namespace FIFE {
 			}
 			SDL_RenderClear(m_renderer);
 		}
-
-		/*SDL_SetClipRect(m_target, &rect);
-		if (clear) {
-			uint32_t color = 0;
-			if (m_isbackgroundcolor) {
-				color = SDL_MapRGB(m_target->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
-			}
-			SDL_FillRect(m_target, &rect, color);
-		}*/
 	}
 
 	void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard) {
+		SDLImage* image = static_cast<SDLImage*>(img.get());
 		m_target = img->getSurface();
+		SDL_Texture* texture = image->getTexture();
+		if (!texture) {
+			texture = SDL_CreateTexture(m_renderer, m_rgba_format.format, SDL_TEXTUREACCESS_TARGET, m_target->w, m_target->h);
+			image->setTexture(texture);
+		}
+		SDL_SetRenderTarget(m_renderer, texture);
 		setClipArea(img->getArea(), discard);
 	}
 
 	void RenderBackendSDL::detachRenderTarget(){
+		SDL_RenderPresent(m_renderer);
 		m_target = m_screen;
+		SDL_SetRenderTarget(m_renderer, NULL);
 	}
 	
 	void RenderBackendSDL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {

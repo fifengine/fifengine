@@ -118,8 +118,8 @@ class Setting(object):
 		# we at this point assume default values are final values for engineSettings
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
-			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'VSync':[True,False], 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'VSync':False, 'PychanDebug':False,
+			'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
 			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",

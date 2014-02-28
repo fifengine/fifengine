@@ -47,7 +47,7 @@ namespace FIFE {
 		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
 		virtual ~SDLImage();
-		virtual void invalidate() {}; //do nothing for SDL images (for now)
+		virtual void invalidate() { if (m_surface && !m_shared) { SDL_FreeSurface(m_surface); } m_surface = NULL; }; //do nothing for SDL images (for now)
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual size_t getSize();
@@ -56,30 +56,18 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
+		SDL_Texture* getTexture();
+		void setTexture(SDL_Texture* texture);
+
 	private:
-		// Call this before rendering
-		void finalize();
-
-		/** SDL Alpha Optimizer
-		 * This tries to convert an image with a fake alpha channel
-		 * to an RGB image when the channel can be reasonably be replaced
-		 * by a colorkey.
-		 */
-		SDL_Surface* optimize(SDL_Surface* surface);
-
 		void resetSdlimage();
 		void validateShared();
 
-		// SDLSurface used to create the SDLImage.
-		Uint8 m_last_alpha;
-		// Is the surface already optimized for rendering
-		bool m_finalized;
+		// colorkey for the image
 		SDL_Color m_colorkey;
-		// Surface for zoom
-		SDL_Surface* m_zoom_surface;
+		// texture of image
 		SDL_Texture* m_texture;
-		float m_scale_x;
-		float m_scale_y;
+
 		// Holds Atlas ImagePtr if this is a shared image
 		ImagePtr m_atlas_img;
 		// Holds Atlas Name if this is a shared image

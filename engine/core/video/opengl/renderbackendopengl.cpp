@@ -155,7 +155,7 @@ namespace FIFE {
 		//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
 		// sync swaping with refresh rate if VSync is enabled
-		SDL_GL_SetSwapInterval(static_cast<uint8_t>(isVSyncEnabled()));
+		SDL_GL_SetSwapInterval(static_cast<uint8_t>(m_vSync));
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {

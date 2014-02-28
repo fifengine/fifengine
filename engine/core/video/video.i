@@ -65,7 +65,7 @@ namespace FIFE {
 		SDL_Surface* getSurface();
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		const Rect& getArea();
+		Rect getArea() const;
 		void setXShift(int32_t xshift);
 		inline int32_t getXShift() const;
 		void setYShift(int32_t yshift);

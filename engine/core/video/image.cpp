@@ -168,8 +168,8 @@ namespace FIFE {
 		return m_surface->h * m_surface->pitch;
 	}
 
-	const Rect& Image::getArea() const {
-		static Rect r(0, 0, getWidth(), getHeight());
+	Rect Image::getArea() const {
+		Rect r(0, 0, getWidth(), getHeight());
 		return r;
 	}
 
@@ -314,7 +314,6 @@ namespace FIFE {
 			m_surface = SDL_CreateRGBSurface(0, srcimg->getWidth(),
 				srcimg->getHeight(), 32, RMASK, GMASK, BMASK ,AMASK);
 		}
-		//SDL_SetAlpha(srcimg->m_surface, 0, 0);
 		// disable blending
 		SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_NONE);
 		if(this->isSharedImage()) {
@@ -353,7 +352,6 @@ namespace FIFE {
 				SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
 			}
 		}
-		//SDL_SetAlpha(srcimg->m_surface, SDL_SRCALPHA, 0);
 		// enable blending
 		SDL_SetSurfaceBlendMode(srcimg->m_surface, SDL_BLENDMODE_BLEND);
 	}
