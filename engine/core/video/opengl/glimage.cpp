@@ -524,6 +524,8 @@ namespace FIFE {
 		if (m_shared_img->getState() == IResource::RES_NOT_LOADED) {
 			m_shared_img->load();
 			m_shared_img->generateGLTexture();
+		} else if (!m_shared_img->m_texId) {
+			m_shared_img->generateGLTexture();
 		}
 
 		m_texId = m_shared_img->m_texId;
@@ -552,7 +554,7 @@ namespace FIFE {
 				m_atlas_img = newAtlas;
 				m_shared_img = img;
 			}
-			
+			validateShared();
 			// check if texture ids and surfaces are identical
 			if (m_shared_img->m_surface != m_surface || m_texId != m_shared_img->m_texId) {
 				m_texId = m_shared_img->m_texId;
