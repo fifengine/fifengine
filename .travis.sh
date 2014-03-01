@@ -2,7 +2,7 @@
 shopt -s expand_aliases
 
 #
-# A build script for building Fife Engine on Debian based linux distributions.
+# A build script for building Fife Engine on Debian based linux distributions. 
 #
 # https://github.com/fifengine/fifengine
 #
