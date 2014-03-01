@@ -92,6 +92,10 @@ namespace FIFE {
 		 */
 		bool processKeyInput(SDL_Event& event);
 		
+		/** Process a text input event.
+		 */
+		bool processTextInput(SDL_Event& event);
+
 		/** Creates the key map.
 		 */
 		void populateKeyMap();
