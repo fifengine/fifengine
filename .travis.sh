@@ -25,7 +25,7 @@ function install_dependencies() {
     echo
 
     sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ quantal main universe"
-    sudo apt-add-repository ppa:zoogie/sdl2-snapshots
+    sudo apt-add-repository -y ppa:zoogie/sdl2-snapshots
     sudo apt-get update -y &> /dev/null
     # https://github.com/fifengine/fifengine/wiki/Building-on-linux
     sudo apt-get install build-essential cmake python-dev scons swig \
