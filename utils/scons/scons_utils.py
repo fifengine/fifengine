@@ -81,10 +81,10 @@ def tryConfigCommand(context, cmd):
 
 def checkPKG(context, name):
 	context.Message('Checking for %s (using pkg-config)...' %name)
-	return tryConfigCommand(context, 'pkg-config --libs --cflags \'%s\'' %name.lower())
+	return tryConfigCommand(context, 'pkg-config --libs --cflags \'%s\'' %name)
 
 def checkConf(context, name):
-	binary = '%s-config' % name.lower()
+	binary = '%s-config' % name
 	context.Message('Checking for %s (using %s)... ' % (name, binary))
 	configcall = '%s --libs --cflags' %binary
 	return tryConfigCommand(context, configcall)

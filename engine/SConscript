@@ -38,6 +38,7 @@ local_tinyxml = env['LOCAL_TINYXML']
 fifechan = env['ENABLE_FIFECHAN']
 librocket = env['ENABLE_LIBROCKET']
 cegui = env['ENABLE_CEGUI']
+cegui_0 = env['ENABLE_CEGUI_0']
 
 if fifechan:
 	Import('fifechan_env')
@@ -45,7 +46,7 @@ if fifechan:
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
-dirfilters = ['swigwrappers', 'tinyxml', 'fifechan', 'librocket', 'cegui']
+dirfilters = ['swigwrappers', 'tinyxml', 'fifechan', 'librocket', 'cegui', 'cegui-0']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -128,6 +129,15 @@ if cegui:
 	headerfiles = headerfiles + cegui_glue_headerfiles
 	compilefiles = compilefiles + cegui_glue_implfiles
 	
+
+cegui_0_glue_headerfiles = utils.include_by_dir(['cegui-0'], headerfiles)
+cegui_0_glue_implfiles = utils.include_by_dir(['cegui-0'], implfiles)
+cegui_0_glue_swigfiles = utils.include_by_dir(['cegui-0'], swigfiles)
+
+if cegui_0:
+	headerfiles = headerfiles + cegui_0_glue_headerfiles
+	compilefiles = compilefiles + cegui_0_glue_implfiles
+
 #**************************************************************************
 #define the FIFE git hash number
 #
@@ -160,6 +170,10 @@ if librocket:
 	
 if cegui:
 	intfiles = intfiles + cegui_glue_swigfiles
+
+if cegui_0:
+	intfiles = intfiles + cegui_0_glue_swigfiles
+
 	
 #generate swig interface file for fife module
 utils.gen_swig_interface(os.path.join(engine_path, 'swigwrappers', 'python', 'fife.i.templ'), 

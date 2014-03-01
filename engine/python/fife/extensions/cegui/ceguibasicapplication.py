@@ -49,13 +49,13 @@ class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
 		eventmanager.addCommandListener(self)
 		self.quitrequested = False
 		self.debuggeractive = False
-		
+
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		
+
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-			
+
 	def keyReleased(self, evt):
 		pass
 
@@ -63,56 +63,73 @@ class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
 		if command.getCommandType() == fife.CMD_QUIT_GAME:
 			self.quitrequested = True
 			command.consume()
-			
+
 DEFAULT_GUI_DIR = "gui/"
-			
+
 class CEGUIApplicationBase(ApplicationBase):
 	def __init__(self, setting=None):
 		super(CEGUIApplicationBase, self).__init__(setting)
-		
+
 		self._initGuiManager()
 		self._loadCEGuiSettings()
 
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
 		
-		guimanager = fife.CEGuiManager()
-		
+		major_v, minor_v = PyCEGUI.Version__.split('.')[:2]
+
+		#For CEGUI versions lower than 0.8.0 we use the old CEGuiManager
+		if major_v == 0 and minor_v <= 7:
+			guimanager = fife.CEGuiManager()
+		else:
+			guimanager = fife.CEGui_0Manager()
+
 		#transfer ownership to the engine
 		guimanager.thisown = 0
-		
+
 		self.guimanager = guimanager
 		self.engine.setGuiManager(self.guimanager)
 		self.engine.getEventManager().addSdlEventListener(self.guimanager)
-		
+
 	def _loadCEGuiSettings(self):
 		self._loadResourcePaths()
-		
+
 	def _loadResourcePaths(self):
 
 		resourceprovider = PyCEGUI.System.getSingleton().getResourceProvider()
-		
-		resourcetypemap = { "schemes" : PyCEGUI.Scheme, 
-						    "imagesets" : PyCEGUI.Imageset,
-						    "fonts" : PyCEGUI.Font,
-						    "layouts" : PyCEGUI.WindowManager,
-						    "looksnfeels" : PyCEGUI.WidgetLookManager }
-		
+
+		minor_version = int(PyCEGUI.Version__.split('.')[1])
+		if minor_version <= 7:
+			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
+							    "imagesets" : PyCEGUI.Imageset.setDefaultResourceGroup,
+							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
+							    "layouts" : PyCEGUI.WindowManager.setDefaultResourceGroup,
+							    "looksnfeels" : PyCEGUI.WidgetLookManager.setDefaultResourceGroup,
+							   }
+		elif minor_version >= 8:
+			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
+							    "imagesets" : PyCEGUI.ImageManager.setImagesetDefaultResourceGroup,
+							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
+							    "layouts" : PyCEGUI.WindowManager.setDefaultResourceGroup,
+							    "looksnfeels" : PyCEGUI.WidgetLookManager.setDefaultResourceGroup,
+							   }
+
+
 		if not self._setting:
-			for restype, resnamespace in resourcetypemap.iteritems():
+			for restype, res_setfunc in resourcetypemap.iteritems():
 				resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
-				resnamespace.setDefaultResourceGroup(restype)
+				res_setfunc(restype)
 		else:
-			for restype, resnamespace in resourcetypemap.iteritems():
+			for restype, res_setfunc in resourcetypemap.iteritems():
 				path = self._setting.get("CEGUI", restype)
 				if path:
 					resourceprovider.setResourceGroupDirectory(restype, path)
-					resnamespace.setDefaultResourceGroup(restype)
+					res_setfunc(restype)
 				else:
 					#set default path
 					resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
-					resnamespace.setDefaultResourceGroup(restype)
-		        
+					res_setfunc(restype)
+
 		parser = PyCEGUI.System.getSingleton().getXMLParser()
 		if parser.isPropertyPresent("SchemaDefaultResourceGroup"):
 			path = self._setting.get("CEGUI", "schemas")
@@ -120,10 +137,10 @@ class CEGUIApplicationBase(ApplicationBase):
 				rp.setResourceGroupDirectory("schemas", path)
 			else:
 				rp.setResourceGroupDirectory("schemas", DEFAULT_GUI_DIR + "schemas")
-				
-			parser.setProperty("SchemaDefaultResourceGroup", "schemas") 
-		
-		
+
+			parser.setProperty("SchemaDefaultResourceGroup", "schemas")
+
+
 	def createListener(self):
 		self._listener = CEGUIEventListener(self)
 		return self._listener

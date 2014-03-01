@@ -20,61 +20,70 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
+#include <cegui-0/CEGUI/CEGUI.h>
+#include <cegui-0/CEGUI/RendererModules/OpenGL/GLRenderer.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/exception.h"
-#include "vfs/vfs.h"
+#include "base/cegui-0inputprocessor.h"
+#include "util/time/timemanager.h"
 
-#include "zipprovider.h"
-#include "zipsource.h"
+#include "cegui-0manager.h"
 
 namespace FIFE {
-	bool ZipProvider::isReadable(const std::string& file) const {
-		// File name must have a .zip extension:
-		// TODO: Case sensitive?
-		if (file.find(".zip") == std::string::npos)
-			return false;
+	
+	CEGui_0Manager::CEGui_0Manager() {
+#ifdef HAVE_OPENGL
+		CEGUI::OpenGLRenderer::bootstrapSystem();
+#else
+		throw GuiException("CEGUI can be used only if opengl is enabled!");
+#endif
+		m_inputProcessor = new CEGui_0InputProcessor();
+		
+		m_lastTimePulse = TimeManager::instance()->getTime() / 1000.0;
 
-		// File should exist:
-		if (!getVFS()->exists(file))
-			return false;
-
-		// File should start with the bytes "PK":
-		// TODO: ...
-
-		return true;
 	}
-
-	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) {
-		if (isReadable(file)) {
-			VFSSource* source = NULL;
-			if ( hasSource(file)) {
-				source = m_sources[file];
-			} else {
-				source = new ZipSource(getVFS(), file);
-				m_sources[file] = source;
-			}
-			return source;
-		}
-		else
-			throw Exception("File " + file + " is not readable.");
+	
+	CEGui_0Manager::~CEGui_0Manager() {
+		delete m_inputProcessor;
+		
+		CEGUI::OpenGLRenderer::destroySystem();
 	}
-
-	VFSSource* ZipProvider::getSource(const std::string& path) const {
-		if (hasSource(path)) {
-			return m_sources.at(path);
-		} else {
-			return NULL;
-		}
+	
+	void CEGui_0Manager::turn() {
+		injectTimePulse();
+		
+			CEGUI::System::getSingleton().renderAllGUIContexts();
 	}
+	
+	void CEGui_0Manager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	}
+	
+	bool CEGui_0Manager::onSdlEvent(SDL_Event &event) {
+		return m_inputProcessor->onSdlEvent(event);
+	}
+	
+	void CEGui_0Manager::setRootWindow(CEGUI::Window* root) {
+		m_guiRoot = root;
+		CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(m_guiRoot);
+	}
+	
+	CEGUI::Window* CEGui_0Manager::getRootWindow() {
+		return m_guiRoot;
+	}
+	
+	void CEGui_0Manager::injectTimePulse() {
+		
+		double timeNow = TimeManager::instance()->getTime() / 1000.0;
+		float time_pulse = float(timeNow - m_lastTimePulse);	
 
-	bool ZipProvider::hasSource(const std::string & path) const {
-		return m_sources.count(path) > 0;
+		CEGUI::System::getSingleton().injectTimePulse(time_pulse);
+		CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(time_pulse);        
+		
+		m_lastTimePulse = timeNow;
 	}
 }

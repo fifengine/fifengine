@@ -19,8 +19,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
+#ifndef FIFE_GUI_CEGui_0Manager
+#define FIFE_GUI_CEGui_0Manager
+
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 
@@ -28,53 +30,73 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/exception.h"
-#include "vfs/vfs.h"
+#include "util/base/singleton.h"
 
-#include "zipprovider.h"
-#include "zipsource.h"
+#include "gui/guimanager.h"
+
+namespace CEGUI {
+	class Window;
+}
 
 namespace FIFE {
-	bool ZipProvider::isReadable(const std::string& file) const {
-		// File name must have a .zip extension:
-		// TODO: Case sensitive?
-		if (file.find(".zip") == std::string::npos)
-			return false;
+	
+	class CEGui_0InputProcessor;
+	
+	class CEGui_0Manager : 
+	public IGUIManager,
+	public DynamicSingleton<CEGui_0Manager> {
+	
+	public:
+		/** Constructor.
+		 */
+		CEGui_0Manager();
+		
+		virtual ~CEGui_0Manager();
+		
+		/** Updates and renders the gui.
+		 */
+		virtual void turn();
+		
+		/** Resizes the top container.
+		 * 
+		 * @param x The new starting X coordinate.
+		 * @param y The new starting Y coordinate.
+		 * @param width The new width.
+		 * @param height The new height.
+		 */
+		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+		
+		/** Receives input and converts it to librocket format, then it forwards it
+		 * to librocket.
+		 */
+		virtual bool onSdlEvent(SDL_Event& event);
+		
+		/** Sets the root window of the gui system.
+		 */
+		void setRootWindow(CEGUI::Window* setRootWindow);
+		
+		/** @return The root window of the gui system.
+		 */
+		CEGUI::Window* getRootWindow();
 
-		// File should exist:
-		if (!getVFS()->exists(file))
-			return false;
-
-		// File should start with the bytes "PK":
-		// TODO: ...
-
-		return true;
-	}
-
-	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) {
-		if (isReadable(file)) {
-			VFSSource* source = NULL;
-			if ( hasSource(file)) {
-				source = m_sources[file];
-			} else {
-				source = new ZipSource(getVFS(), file);
-				m_sources[file] = source;
-			}
-			return source;
-		}
-		else
-			throw Exception("File " + file + " is not readable.");
-	}
-
-	VFSSource* ZipProvider::getSource(const std::string& path) const {
-		if (hasSource(path)) {
-			return m_sources.at(path);
-		} else {
-			return NULL;
-		}
-	}
-
-	bool ZipProvider::hasSource(const std::string & path) const {
-		return m_sources.count(path) > 0;
-	}
+	private:
+		
+		/** Inject a time pulse to CEGUI.
+		 */
+		void injectTimePulse();
+		
+		/** Input processor. Converts SDL input to CEGUI input.
+		 */
+		CEGui_0InputProcessor* m_inputProcessor;
+		
+		/** Last time pulse injected to CEGUI.
+		 */
+		double m_lastTimePulse;
+		
+		/** Our root gui window.
+		 */
+		CEGUI::Window* m_guiRoot; 
+	};
 }
+
+#endif //FIFE_GUI_CEGui_0Manager

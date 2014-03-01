@@ -59,9 +59,15 @@ AddOption('--enable-librocket',
 AddOption('--enable-cegui',
 		dest='enable-cegui',
 		action='store_true',
-		help='Enable Craze Eddie\'s gui subsystem',
+		help='Enable Craze Eddie\'s gui subsystem - up to 0.7.9',
 		default=False)
-		
+
+AddOption('--enable-cegui-0',
+		dest='enable-cegui-0',
+		action='store_true',
+		help='Enable Craze Eddie\'s gui subsystem - from v 0.8.0 upwards',
+		default=False)
+
 AddOption('--disable-fifechan',
 		dest='disable-fifechan',
 		action="store_true",
@@ -175,12 +181,20 @@ else:
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
 
+
 if GetOption('enable-cegui'):
 	env['ENABLE_CEGUI'] = True
 	extra_libs['cegui'] = True
 else:
 	env['ENABLE_CEGUI'] = False
 	extra_libs['cegui'] = False
+
+if GetOption('enable-cegui-0'):
+	env['ENABLE_CEGUI_0'] = True
+	extra_libs['cegui-0'] = True
+else:
+	env['ENABLE_CEGUI_0'] = False
+	extra_libs['cegui-0'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0
@@ -295,7 +309,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 				ret = checkForLib(item, header, language)
 					
 				if ret:
-					env.AppendUnique(LIBS = [item])
 					break
 		else:
 			# special handling for tinyxml
@@ -308,7 +321,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						# system version found so set the compilation flag
 						# and store the lib in the lib list
 						env.AppendUnique(CPPDEFINES = ['USE_SYSTEM_TINY_XML'])
-						env.AppendUnique(LIBS = [lib])
 					else:
 						# system version not found, lets issue message and fall
 						# back to local version
@@ -317,8 +329,6 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 						env['LOCAL_TINYXML'] = True
 			else:	
 				ret = checkForLib(lib, header, language)
-				if ret:
-					env.AppendUnique(LIBS = [lib])
 	
 		if required and not ret:
 			if (isinstance(lib, tuple)):

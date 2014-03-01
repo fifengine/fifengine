@@ -23,9 +23,9 @@
 #define FIFE_VFS_VFS_H
 
 // Standard C++ library includes
-#include <set>
 #include <string>
 #include <vector>
+#include <set>
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
@@ -82,19 +82,19 @@ namespace FIFE {
 			 * @param path the archive-file
 			 * @return the new VFSSource or 0 if no provider was succesfull or the file was already used as source
 			 */
-			VFSSource* createSource(const std::string& path) const;
+			VFSSource* createSource(const std::string& path);
 
 			/** create a new Source and add it to VFS
-			 * @see VFSSource* createSource(const std::string& file) const
+			 * @see VFSSource* createSource(const std::string& file)
 			 */
 			void addNewSource(const std::string& path);
-
 
 			/** Add a new VFSSource */
 			void addSource(VFSSource* source);
 
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
+			void removeSource(const std::string path);
 
 			/** Check if the given file exists
 			 *
@@ -151,15 +151,20 @@ namespace FIFE {
 			 */
 			std::set<std::string> listDirectories(const std::string& path, const std::string& filterregex) const;
 
+			/** Checks if a source is already present in a provider
+			 *
+			 * @param path the directory
+			 * @return true if the source is present, false if not
+			 */
+			bool hasSource(const std::string& path) const;
+
+
 		private:
 			typedef std::vector<VFSSourceProvider*> type_providers;
 			type_providers m_providers;
 
 			typedef std::vector<VFSSource*> type_sources;
 			type_sources m_sources;
-
-			typedef std::set<std::string> type_usedfiles;
-			mutable type_usedfiles m_usedfiles;
 
 			std::set<std::string> filterList(const std::set<std::string>& list, const std::string& fregex) const;
 			VFSSource* getSourceForFile(const std::string& file) const;

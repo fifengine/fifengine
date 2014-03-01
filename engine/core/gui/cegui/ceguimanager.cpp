@@ -24,6 +24,7 @@
 // 3rd party library includes
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
+#endif
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -80,7 +81,7 @@ namespace FIFE {
 		
 		double timeNow = TimeManager::instance()->getTime() / 1000.0;
 		
-		CEGUI::System::getSingleton().injectTimePulse(float(timeNow - m_lastTimePulse));
+		CEGUI::System::getSingleton().injectTimePulse(float(timeNow - m_lastTimePulse));        
 		
 		m_lastTimePulse = timeNow;
 	}

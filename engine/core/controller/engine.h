@@ -222,7 +222,7 @@ namespace FIFE {
 		std::vector<IEngineChangeListener*> m_changelisteners;
 
 #ifdef USE_COCOA
-		objc_object *m_autoreleasePool;
+		id m_autoreleasePool;
 #endif
 
 	};

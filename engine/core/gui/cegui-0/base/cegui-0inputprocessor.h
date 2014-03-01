@@ -19,62 +19,61 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
+#ifndef FIFE_GUI_CEGui_0InputProcessor
+#define FIFE_GUI_CEGui_0InputProcessor
+
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
+#include <SDL/SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/exception.h"
-#include "vfs/vfs.h"
-
-#include "zipprovider.h"
-#include "zipsource.h"
 
 namespace FIFE {
-	bool ZipProvider::isReadable(const std::string& file) const {
-		// File name must have a .zip extension:
-		// TODO: Case sensitive?
-		if (file.find(".zip") == std::string::npos)
-			return false;
+	
+	class CEGui_0InputProcessor {
+	public:
+		
+		/** Constructor.
+		 */
+		CEGui_0InputProcessor();
+		
+		/** Destructor.
+		 */
+		~CEGui_0InputProcessor();
+		
+		/** Injects input to the CEGUI system.
+		 * 
+		 * @return A boolean value indicating if the event was consumed or not.
+		 */
+		bool onSdlEvent(SDL_Event& event);
+		
+	private:
+		
+		/** Process a key input event.
+		 */
+		bool processKeyInput(SDL_Event& event);
+		
+		/** Process a mouse input event.
+		 */
+		bool processMouseInput(SDL_Event& event);
+		
+		/** Process a mouse motion event.
+		 */
+		bool processMouseMotion(SDL_Event& event);
 
-		// File should exist:
-		if (!getVFS()->exists(file))
-			return false;
+		/** Initialize the key translation map.
+		 */
+		void initializeKeyMap();
 
-		// File should start with the bytes "PK":
-		// TODO: ...
-
-		return true;
-	}
-
-	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) {
-		if (isReadable(file)) {
-			VFSSource* source = NULL;
-			if ( hasSource(file)) {
-				source = m_sources[file];
-			} else {
-				source = new ZipSource(getVFS(), file);
-				m_sources[file] = source;
-			}
-			return source;
-		}
-		else
-			throw Exception("File " + file + " is not readable.");
-	}
-
-	VFSSource* ZipProvider::getSource(const std::string& path) const {
-		if (hasSource(path)) {
-			return m_sources.at(path);
-		} else {
-			return NULL;
-		}
-	}
-
-	bool ZipProvider::hasSource(const std::string & path) const {
-		return m_sources.count(path) > 0;
-	}
+		/** Holds translation of key scancodes from SDL to CEGUI.
+		 */
+		std::map<SDLKey, CEGUI::Key::Scan> m_keymap;
+	};
+	
 }
+
+#endif //FIFE_GUI_CEGui_0InputProcessor

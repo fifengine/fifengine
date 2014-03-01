@@ -1,4 +1,6 @@
 language: cpp
+# Use this for mac build instead of cpp
+#language: objective-c
 compiler: gcc
 
 git:
@@ -7,6 +9,9 @@ git:
 before_install:
   - chmod -R 777 ./.travis.sh
   - ./.travis.sh
+  # Enable this for the mac build and disable .travis.sh
+  # - chmod -R 777 ./.travis.mac.sh
+  #- ./.travis.mac.sh
 
 script:
    - exit 0
