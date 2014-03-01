@@ -28,7 +28,7 @@ function install_dependencies() {
     sudo apt-get update -y &> /dev/null
     # https://github.com/fifengine/fifengine/wiki/Building-on-linux
     sudo apt-get install build-essential cmake python-dev scons swig \
-                 libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev \
+                 libsdl2.0-dev libsdl2-ttf2.0-dev libsdl2-image1.2-dev \
                  libvorbis-dev libalut-dev libxcursor-dev libopenal-dev libasound2-dev zlib1g-dev \
                  libboost-dev libboost-regex-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev
 
