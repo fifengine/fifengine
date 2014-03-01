@@ -80,15 +80,18 @@ namespace FIFE {
 	}
 
 	SDLImage::~SDLImage() {
+		invalidate();
+	}
+
+	void SDLImage::invalidate() {
 		if (m_texture && !m_shared) {
 			SDL_DestroyTexture(m_texture);
 		}
+		m_texture = NULL;
 	}
 
 	void SDLImage::setSurface(SDL_Surface* surface) {
-		if (m_texture) {
-			SDL_DestroyTexture(m_texture);
-		}
+		invalidate();
 		reset(surface);
 		resetSdlimage();
 	}
@@ -123,6 +126,9 @@ namespace FIFE {
 
 		// create texture
 		if (!m_texture) {
+			if (!m_surface) {
+				load();
+			}
 			m_texture = SDL_CreateTextureFromSurface(renderer, m_surface);
 		}
 		
@@ -163,7 +169,7 @@ namespace FIFE {
 		SDLImage* image = static_cast<SDLImage*>(shared.get());
 		m_texture = image->getTexture();
 		if (!m_texture) {
-			// create texture
+			// create atlas texture
 			SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
 			m_texture = SDL_CreateTextureFromSurface(renderer, surface);
 			image->setTexture(m_texture);
@@ -218,7 +224,7 @@ namespace FIFE {
 		if (m_texture == texture) {
 			return;
 		}
-		if (m_texture) {
+		if (m_texture && !m_shared) {
 			SDL_DestroyTexture(m_texture);
 		}
 		m_texture = texture;

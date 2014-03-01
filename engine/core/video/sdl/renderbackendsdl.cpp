@@ -36,7 +36,6 @@
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
 #include "SDL_image.h"
-//#include "SDL_getenv.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.

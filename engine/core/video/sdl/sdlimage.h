@@ -47,7 +47,7 @@ namespace FIFE {
 		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
 		virtual ~SDLImage();
-		virtual void invalidate() { if (m_surface && !m_shared) { SDL_FreeSurface(m_surface); } m_surface = NULL; }; //do nothing for SDL images (for now)
+		virtual void invalidate();
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual size_t getSize();
