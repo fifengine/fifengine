@@ -109,7 +109,6 @@ namespace FIFE {
 		m_renderDriverIndex(-1) {
 	}
 
-
 	DeviceCaps::~DeviceCaps() {
 	}
 
