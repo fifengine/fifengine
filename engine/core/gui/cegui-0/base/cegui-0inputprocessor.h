@@ -57,6 +57,10 @@ namespace FIFE {
 		 */
 		bool processKeyInput(SDL_Event& event);
 		
+		/** Process a text input event.
+		 */
+		bool processTextInput(SDL_Event& event);
+
 		/** Process a mouse input event.
 		 */
 		bool processMouseInput(SDL_Event& event);
