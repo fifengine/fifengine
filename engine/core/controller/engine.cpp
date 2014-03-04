@@ -346,7 +346,7 @@ namespace FIFE {
 		m_timemanager->update();
 
 		m_targetrenderer->render();
-		if (m_model->getMapCount() == 0) {
+		if (m_model->getActiveCameraCount() == 0) {
 			m_renderbackend->clearBackBuffer();
 			m_offrenderer->render();
 		} else {

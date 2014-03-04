@@ -296,6 +296,17 @@ namespace FIFE {
 		return m_cameras;
 	}
 
+	uint32_t Map::getActiveCameraCount() const {
+		uint32_t count = 0;
+		std::vector<Camera*>::const_iterator it = m_cameras.begin();
+		for ( ; it != m_cameras.end(); ++it) {
+			if ((*it)->isEnabled()) {
+				count += 1;
+			}
+		}
+		return count;
+	}
+
 	void Map::addInstanceForTransfer(Instance* instance, const Location& target) {
 		std::pair<std::map<Instance*, Location>::iterator, bool> insertiter = m_transferInstances.insert(std::make_pair(instance, target));
 		if (insertiter.second == false) {
