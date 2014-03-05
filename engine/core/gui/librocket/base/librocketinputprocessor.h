@@ -28,7 +28,7 @@
 // 3rd party library includes
 #include <Rocket/Core/Input.h>
 #include <Rocket/Core/Types.h>
-#include <SDL/SDL_events.h>
+#include <SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -116,7 +116,7 @@ namespace FIFE {
 		
 		/** Keymap to convert SDL key to Librocket key.
 		 */
-		std::map<SDLKey, Rocket::Core::Input::KeyIdentifier> m_keyMap;
+		std::map<SDL_Keycode, Rocket::Core::Input::KeyIdentifier> m_keyMap;
 	};
 	
 };

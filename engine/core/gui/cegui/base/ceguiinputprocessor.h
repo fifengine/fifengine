@@ -25,7 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL/SDL_events.h>
+#include <SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -75,7 +75,7 @@ namespace FIFE {
 
 		/** Holds translation of key scancodes from SDL to CEGUI.
 		 */
-		std::map<SDLKey, CEGUI::Key::Scan> m_keymap;
+		std::map<SDL_Keycode, CEGUI::Key::Scan> m_keymap;
 	};
 	
 }

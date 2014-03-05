@@ -196,7 +196,8 @@ namespace FIFE {
 	}
 	
 	bool LibRocketInputProcessor::processTextInput(SDL_Event& event) {
-		m_context->ProcessTextInput(event.text.text);
+		Rocket::Core::String text(event.text.text);
+		m_context->ProcessTextInput(text);
 
 		return false;
 	}
