@@ -67,11 +67,11 @@ namespace FIFE {
 	}
 
 	VFSSource* ZipProvider::getSource(const std::string& path) const {
+		VFSSource* source = NULL;
 		if (hasSource(path)) {
-			return m_sources.at(path);
-		} else {
-			return NULL;
+			source = m_sources.find(path)->second;
 		}
+		return source;
 	}
 
 	bool ZipProvider::hasSource(const std::string & path) const {
