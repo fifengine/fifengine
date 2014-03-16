@@ -76,7 +76,7 @@ class CEGUIApplicationBase(ApplicationBase):
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
 		
-		major_v, minor_v = PyCEGUI.Version__.split('.')[:2]
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
 
 		#For CEGUI versions lower than 0.8.0 we use the old CEGuiManager
 		if major_v == 0 and minor_v <= 7:
@@ -98,15 +98,15 @@ class CEGUIApplicationBase(ApplicationBase):
 
 		resourceprovider = PyCEGUI.System.getSingleton().getResourceProvider()
 
-		minor_version = int(PyCEGUI.Version__.split('.')[1])
-		if minor_version <= 7:
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
+		if major_v == 0 and minor_v <= 7:
 			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
 							    "imagesets" : PyCEGUI.Imageset.setDefaultResourceGroup,
 							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
 							    "layouts" : PyCEGUI.WindowManager.setDefaultResourceGroup,
 							    "looksnfeels" : PyCEGUI.WidgetLookManager.setDefaultResourceGroup,
 							   }
-		elif minor_version >= 8:
+		else:
 			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
 							    "imagesets" : PyCEGUI.ImageManager.setImagesetDefaultResourceGroup,
 							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
