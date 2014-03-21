@@ -89,7 +89,6 @@ class Container(Widget):
 		self.real_widget = _real_widget or fifechan.Container()
 		self.children = []
 		self.children_position_cache = []
-		self.hidden_children = []
 		self._background = []
 		self._background_image = None
 		self.background_image = self.DEFAULT_BACKGROUND
@@ -173,19 +172,6 @@ class Container(Widget):
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
 		
-		#update the states of the child widgets.  This does not actually call
-		#the show() or hide() functions of the widget.
-		if self._visible:
-			def _show(shown_widget):
-				shown_widget._visible = True
-				
-			self.deepApply(_show, shown_only=True)
-		else:
-			def _hide(hidden_widget):
-				hidden_widget._visible = False
-				
-			self.deepApply(_hide)
-		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
 			print "insertChild: Warning: Index overflow.",
@@ -210,7 +196,7 @@ class Container(Widget):
 		self.insertChild(widget, self.children.index(before))
 
 	def removeChild(self,widget):
-		if not widget in self.children and not widget in self.hidden_children:
+		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
 
 		if widget in self.children:
@@ -220,40 +206,21 @@ class Container(Widget):
 		if widget in self.children_position_cache:
 			self.children_position_cache.remove(widget)
 
-		if widget in self.hidden_children:
-			self.hidden_children.remove(widget)
-
 		widget.parent = None
 
 	def hideChild(self, child):
-		if not child in self.children:
-			raise RuntimeError("%s does not have %s as direct child widget." % (str(self), str(child)))
-		
-		self.hidden_children.append(child)
-		self.children.remove(child)
-
-		self.real_widget.remove(child.real_widget)
-		child._visible = False
+		if child.isVisible() or child.isSetVisible():
+			#Hide real widget to distribute a widgetHidden event.
+			child.real_widget.setVisible(False)
+			child._visible = False
+			self.adaptLayout()
 		
 	def showChild(self, child):
-		if not child in self.hidden_children:
-			return
-	
-		self.hidden_children.remove(child)
-		
-		children = self.children[:]
-		children_position_cache = self.children_position_cache[:]
-		hidden_children = self.hidden_children[:]
-
-		for widget in children:
-			self.removeChild(widget)
-		
-		for child_widget in children_position_cache:
-			if not child_widget in hidden_children:
-				self.addChild(child_widget)
-		
-		self.children_position_cache = children_position_cache[:]
-		self.hidden_children = hidden_children[:]
+		if not child.isVisible() or not child.isSetVisible():
+			#Show real widget to distribute a widgetShown event.
+			child.real_widget.setVisible(True)
+			child._visible = True
+			self.adaptLayout()
 			
 	def add(self,*widgets):
 		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
@@ -261,18 +228,27 @@ class Container(Widget):
 
 	def getMaxChildrenWidth(self):
 		if not self.children: return 0
-		return max(widget.width for widget in self.children)
+		w = 0
+		for widget in self.children:
+			if not widget.real_widget.isVisible(): continue
+			w = max(widget.width, w)
+		return w
 
 	def getMaxChildrenHeight(self):
 		if not self.children: return 0
-		return max(widget.height for widget in self.children)
+		h = 0
+		for widget in self.children:
+			if not widget.real_widget.isVisible(): continue
+			h = max(widget.height, h)
+		return h
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
-		if not shown_only:
-			children = self.children + self.hidden_children
-		else:
-			children = self.children
-		
+		#if not shown_only:
+		#	children = self.children
+		#else:
+		#	children = filter(lambda w: w.real_widget.isVisible(), self.children))
+		children = self.children
+			
 		if leaves_first:
 			for child in children:
 				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)

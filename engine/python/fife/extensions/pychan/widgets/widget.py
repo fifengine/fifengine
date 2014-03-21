@@ -324,50 +324,29 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self._visible: return
-		
+		if self._visible and self.isSetVisible(): return
+
+		self.beforeShow()
+		self._visible = True
 		if self.parent:
-			self.beforeShow()
 			self.parent.showChild(self)
-			self.parent.adaptLayout()
-			self._visible = True
 		else:
 			self.adaptLayout()
-			self.beforeShow()
 			get_manager().show(self)
-			self._visible = True	
-
-		#show real widget to distribute a widgetShown event.
-		self.real_widget.setVisible(True)	
-						
-		def _show(widget):
-			widget._visible = True
-				
-		self.deepApply(_show, shown_only=True)
 
 	def hide(self):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if not self._visible: return
-		
+		if not self._visible and not self.isSetVisible(): return
+
+		self._visible = False
 		if self.parent:
 			self.parent.hideChild(self)
-			self.parent.adaptLayout()
 		else:
 			get_manager().hide(self)
 
 		self.afterHide()
-		self._visible = False
-		
-	    #Hide real widget to distribute a widgetHidden event.
-		self.real_widget.setVisible(False)		
-				
-		
-		def _hide(widget):
-			widget._visible = False
-			
-		self.deepApply(_hide, shown_only=True)
 
 	def isVisible(self):
 		"""
@@ -377,6 +356,16 @@ class Widget(object):
 
 		return self._visible
 
+	def isSetVisible(self):
+		"""
+		Check the real widget visible flag.
+		It checks not if the widget is currently shown!
+		This is needed e.g. if the parent is already hidden
+		but we want to hide the child too.
+		"""
+		
+		return self.real_widget.isSetVisible()
+	
 	def adaptLayout(self,recurse=True):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
