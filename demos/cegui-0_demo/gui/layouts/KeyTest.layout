@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout version="4">
+    <Window type="TaharezLook/FrameWindow" name="KeyTestRoot" >
+        <Property name="Text" value="Key Tester" />
+        <Property name="TitlebarFont" value="DejaVuSans-10" />
+        <Property name="TitlebarEnabled" value="True" />
+        <Property name="Area" value="{{0,100},{0,500},{0,300},{0,550}}" />
+        <Window type="TaharezLook/Editbox" name="EditBox" >
+            <Property name="MaxTextLength" value="1073741823" />
+            <Property name="Area" value="{{0,5},{0,5},{1,-5},{1,-5}}" />
+            <Property name="TextParsingEnabled" value="False" />
+        </Window>
+    </Window>
+</GUILayout>
