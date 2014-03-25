@@ -23,7 +23,7 @@
 
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import Attr
+from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
 
 from widget import Widget
@@ -38,7 +38,9 @@ class Icon(Widget):
 
 	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
 	"""
-	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image') ]
+	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image'),
+									   BoolAttr('scale')
+									 ]
 
 	def __init__(self, 
 				 parent = None, 
@@ -60,7 +62,8 @@ class Icon(Widget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 image = None):
+				 image = None,
+				 scale = None):
 				 
 		self.real_widget = fifechan.Icon(None)
 		super(Icon,self).__init__(parent=parent, 
@@ -82,6 +85,9 @@ class Icon(Widget):
 								  position_technique=position_technique,
 								  is_focusable=is_focusable,
 								  comment=comment)
+
+		if scale is not None: self.scale = scale
+
 		self.image = image
 		
 		#if the size parameter is specified set it (again) to override
@@ -108,7 +114,8 @@ class Icon(Widget):
 				self.position_technique,
 				self.is_focusable,
 				self.comment,
-				self.image)
+				self.image,
+				self.scale)
 				 
 		
 		return iconClone
@@ -117,7 +124,32 @@ class Icon(Widget):
 
 	def _setImage(self,source):
 		self._image = source
+		self._checkSize()
 
 	def _getImage(self):
 		return self._image
 	image = property(_getImage,_setImage)
+
+	def _setScaling(self, val):
+		self.real_widget.setScaling(val)
+		self._checkSize()
+
+	def _getScaling(self):
+		return self.real_widget.isScaling()
+	scale = property(_getScaling, _setScaling)
+
+	def _checkSize(self):
+		if not self.scale:
+			if self.image is not None:
+				self.min_size = self.image.getWidth(), self.image.getHeight()
+			else:
+				self.min_size = self.real_widget.getWidth(), self.real_widget.getHeight()
+			self.max_size = self.min_size
+			self.size = self.min_size
+		else:
+			if self.parent:
+				self.min_size = self.parent.min_size
+				self.max_size = self.parent.max_size
+			else:
+				self.min_size = Widget.DEFAULT_MIN_SIZE
+				self.max_size = Widget.DEFAULT_MAX_SIZE

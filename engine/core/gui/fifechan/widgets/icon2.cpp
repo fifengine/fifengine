@@ -95,6 +95,7 @@ namespace fcn
     Icon2::Icon2(Image* image)
     {
         mImage = image;
+        mScale = false;
         if( mImage ) {
             setHeight(image->getHeight());
             setWidth(image->getWidth());
@@ -104,8 +105,13 @@ namespace fcn
     void Icon2::draw(Graphics* graphics)
     {
         if ( mImage )
-            graphics->drawImage(mImage, 0, 0, 0, 0, getWidth(), getHeight());
-
+            if (mScale) {
+                // draw with widget size
+                graphics->drawImage(mImage, 0, 0, 0, 0, getWidth(), getHeight());
+            } else {
+                // draw with image size
+                graphics->drawImage(mImage, 0, 0);
+            }
     }
 
     void Icon2::drawFrame(Graphics* graphics)
@@ -140,4 +146,11 @@ namespace fcn
         }
     }
 
+    bool Icon2::isScaling() const {
+        return mScale;
+    }
+
+    void Icon2::setScaling(bool scale) {
+        mScale = scale;
+    }
 }

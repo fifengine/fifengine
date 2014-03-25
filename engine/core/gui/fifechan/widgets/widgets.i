@@ -102,6 +102,8 @@ namespace fcn {
 		Icon2(Image* image);
 		virtual ~Icon2();
 		void setImage(Image* image);
+		bool isScaling() const;
+		void setScaling(bool scale);
 	};
 	
 	%feature("notabstract") PercentageBar;
