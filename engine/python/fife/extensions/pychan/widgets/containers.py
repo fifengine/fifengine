@@ -279,14 +279,12 @@ class Container(Widget):
 			return
 
 		back_w,back_h = self.width, self.height
-		#image_w, image_h = image.getWidth(), image.getHeight()
-
 		map(self.real_widget.remove,self._background)
 
 		# Now tile the background over the widget
 		self._background = []
 		icon = fifechan.Icon(image)
-		icon.setScaling(True)
+		icon.setTiling(True)
 		icon.setSize(back_w,back_h)
 		self._background.append(icon)
 		map(self.real_widget.add,self._background)
