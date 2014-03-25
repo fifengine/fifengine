@@ -174,6 +174,17 @@ class Container(Widget):
 		self.children.append(widget)
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
+
+		#update the states of the child widgets.  This does not actually call
+		#the show() or hide() functions of the widget.
+		if self._visible:
+			def _show(shown_widget):
+				shown_widget._visible = True
+			self.deepApply(_show, shown_only=True)
+		else:
+			def _hide(hidden_widget):
+				hidden_widget._visible = False
+			self.deepApply(_hide)
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):

@@ -333,6 +333,10 @@ class Widget(object):
 		else:
 			self.adaptLayout()
 			get_manager().show(self)
+		#update the states of the child widgets
+		def _show(shown_widget):
+			shown_widget._visible = True
+		self.deepApply(_show, shown_only=True)
 
 	def hide(self):
 		"""
@@ -345,7 +349,11 @@ class Widget(object):
 			self.parent.hideChild(self)
 		else:
 			get_manager().hide(self)
-
+		#update the states of the child widgets
+		def _hide(hidden_widget):
+			hidden_widget._visible = False
+		self.deepApply(_hide)
+		
 		self.afterHide()
 
 	def isVisible(self):
