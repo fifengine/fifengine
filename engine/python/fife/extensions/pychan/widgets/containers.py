@@ -168,6 +168,9 @@ class Container(Widget):
 
 		widget.parent = self
 		widget._visible = self._visible
+		if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
+			widget.max_size = self.max_size
+		
 		self.children.append(widget)
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
