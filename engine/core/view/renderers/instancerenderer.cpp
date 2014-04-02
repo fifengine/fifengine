@@ -511,7 +511,7 @@ namespace FIFE {
 					}
 					vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
 					if (found) {
-						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, true, 255, REPLACE, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
+						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
 					} else {
 						m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, true, true, 0, ZERO, ALWAYS, recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
 					}
