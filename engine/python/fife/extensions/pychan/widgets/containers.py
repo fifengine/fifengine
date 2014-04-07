@@ -167,7 +167,7 @@ class Container(Widget):
 			return
 
 		widget.parent = self
-		widget._visible = self._visible
+
 		if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
 			widget.max_size = self.max_size
 		
@@ -175,16 +175,10 @@ class Container(Widget):
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
 
-		#update the states of the child widgets.  This does not actually call
-		#the show() or hide() functions of the widget.
-		if self._visible:
-			def _show(shown_widget):
-				shown_widget._visible = True
-			self.deepApply(_show, shown_only=True)
+		if self.isVisible():
+			widget.show()
 		else:
-			def _hide(hidden_widget):
-				hidden_widget._visible = False
-			self.deepApply(_hide)
+			widget.hide()
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
@@ -222,19 +216,37 @@ class Container(Widget):
 
 		widget.parent = None
 
-	def hideChild(self, child):
+	def hideChild(self, child, free=False):
+		if child._added:
+			get_manager().removeWidget(child)
+		if child._top_added:
+			get_manager().removeTopWidget(child)
+
 		if child.isVisible() or child.isSetVisible():
-			#Hide real widget to distribute a widgetHidden event.
-			child.real_widget.setVisible(False)
-			child._visible = False
-			self.adaptLayout()
+			def _hide(hidden_widget):
+				# Hide real widget to distribute a widgetHidden event.
+				hidden_widget.real_widget.setVisible(False)
+				get_manager().removeWidget(hidden_widget)
+			child.deepApply(_hide)		
+		if free:
+			self.removeChild(child)
+		self.adaptLayout()
+		self.afterHide()
 		
 	def showChild(self, child):
+		if not child._added:
+			get_manager().addWidget(child)
+		
 		if not child.isVisible() or not child.isSetVisible():
-			#Show real widget to distribute a widgetShown event.
-			child.real_widget.setVisible(True)
-			child._visible = True
-			self.adaptLayout()
+			child.beforeShow()
+			def _show(shown_widget):
+				# Show real widget to distribute a widgetShown event.
+				shown_widget.real_widget.setVisible(True)
+				get_manager().addWidget(shown_widget)
+			child.deepApply(_show, shown_only=False)
+		else:
+			child.beforeShow()
+		self.adaptLayout()
 			
 	def add(self,*widgets):
 		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."

@@ -121,6 +121,8 @@ class DockArea(widgets.VBox, ResizableBase):
 			self.undockChild(child)
 			
 		tab[2].capture(undock, "mouseClicked")
+		self.gui.hide()
+		self.gui.show()
 		self.adaptLayout()
 		
 	def undockChild(self, child, childIsCaller=False):
