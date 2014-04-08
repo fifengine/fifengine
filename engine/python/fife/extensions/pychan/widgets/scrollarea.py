@@ -21,7 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-import weakref
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr
@@ -139,25 +138,21 @@ class ScrollArea(Widget):
 	def _setContent(self,content):
 		if content is None:
 			self.real_widget.setContent(content)
-			self._content = content
 		else:
 			self.real_widget.setContent(content.real_widget)
-			self._content = weakref.ref(content)
-	def _getContent(self):
-		if self._content is not None:
-			return self._content()
-		return None
+		self._content = content
+	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		if leaves_first:
-			if self.content: self.content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 		visitorFunc(self)
 		if not leaves_first:
-			if self.content: self.content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
 	def resizeToContent(self,recurse=True):
-		if self.content is None: return
+		if self._content is None: return
 		if recurse:
 			self.content.resizeToContent(recurse=recurse)
 		self.size = self.min_size
