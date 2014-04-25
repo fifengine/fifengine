@@ -109,12 +109,12 @@ class IntAttr(Attr):
 class BoolAttr(Attr):
 	def parse(self,value):
 		try:
-			value = int(value)
-			if value not in (0,1):
-				raise ParserError("Expected a 0 or 1.")
+			value = bool(value)
+			if value not in (True,False):
+				raise ParserError("Expected False or True.")
 			return value
 		except:
-			raise ParserError("Expected a 0 or 1.")
+			raise ParserError("Expected False or True.")
 
 class FloatAttr(Attr):
 	def parse(self, value):

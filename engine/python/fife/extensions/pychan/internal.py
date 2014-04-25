@@ -283,7 +283,7 @@ DEFAULT_STYLE = {
 	'Window' : {
 		'border_size': 0,
 		'margins': (5,5),
-		'opaque' : 1,
+		'opaque' : True,
 		'padding':2,
 		'titlebar_height' : 12,
 		'background_image' : None,
@@ -294,7 +294,7 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins': (0,0),
 		'padding':2,
-		'opaque' : 1,
+		'opaque' : True,
 		'background_image' : None,
 	}
 }
