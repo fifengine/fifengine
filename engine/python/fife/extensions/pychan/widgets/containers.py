@@ -174,11 +174,10 @@ class Container(Widget):
 		self.children.append(widget)
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
-
-		if self.isVisible():
-			widget.show()
-		else:
-			widget.hide()
+		if not widget._added:
+			get_manager().addWidget(widget)
+		if widget._top_added:
+			get_manager().removeTopWidget(widget)
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
@@ -215,6 +214,10 @@ class Container(Widget):
 			self.children_position_cache.remove(widget)
 
 		widget.parent = None
+		if widget._added:
+			get_manager().removeWidget(widget)
+		if widget._top_added:
+			get_manager().removeTopWidget(widget)
 
 	def hideChild(self, child, free=False):
 		if child._added:
@@ -223,11 +226,11 @@ class Container(Widget):
 			get_manager().removeTopWidget(child)
 
 		if child.isVisible() or child.isSetVisible():
+			# Hide real widget to distribute a widgetHidden event.
+			child.real_widget.setVisible(False)
 			def _hide(hidden_widget):
-				# Hide real widget to distribute a widgetHidden event.
-				hidden_widget.real_widget.setVisible(False)
 				get_manager().removeWidget(hidden_widget)
-			child.deepApply(_hide)		
+			child.deepApply(_hide)
 		if free:
 			self.removeChild(child)
 		self.adaptLayout()
@@ -239,9 +242,9 @@ class Container(Widget):
 		
 		if not child.isVisible() or not child.isSetVisible():
 			child.beforeShow()
+			# Show real widget to distribute a widgetShown event.
+			child.real_widget.setVisible(True)
 			def _show(shown_widget):
-				# Show real widget to distribute a widgetShown event.
-				shown_widget.real_widget.setVisible(True)
 				get_manager().addWidget(shown_widget)
 			child.deepApply(_show, shown_only=False)
 		else:

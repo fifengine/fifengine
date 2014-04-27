@@ -337,18 +337,21 @@ class Widget(object):
 		if self.isVisible() and self.isSetVisible():
 			self.beforeShow()
 			self.adaptLayout()
+			if self.parent is None:
+				get_manager().placeWidget(self, self.position_technique)
 			return
 
 		self.beforeShow()
-		# update the states of the widget and childs
-		# and add them to the manager
+		# Show real widget to distribute a widgetShown event.
+		self.real_widget.setVisible(True)
+		# add the widget and childs to the manager
 		def _show(shown_widget):
-			# Show real widget to distribute a widgetShown event.
-			shown_widget.real_widget.setVisible(True)
 			get_manager().addWidget(shown_widget)
 		self.deepApply(_show, shown_only=False)
-			
+		
 		self.adaptLayout()
+		if self.parent is None:
+			get_manager().placeWidget(self, self.position_technique)
 
 	def hide(self, free=False):
 		"""
@@ -363,12 +366,11 @@ class Widget(object):
 			self.adaptLayout()
 			self.afterHide()
 			return
-		
-		# update the states of the widget and childs
-		# and remove them from the manager
+
+		# Hide real widget to distribute a widgetHidden event.
+		self.real_widget.setVisible(False)
+		# remove the widget and childs from the manager
 		def _hide(hidden_widget):
-			# Hide real widget to distribute a widgetHidden event.
-			hidden_widget.real_widget.setVisible(False)
 			get_manager().removeWidget(hidden_widget)
 		self.deepApply(_hide)
 

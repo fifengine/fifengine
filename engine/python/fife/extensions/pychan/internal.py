@@ -117,7 +117,6 @@ class Manager(object):
 		Used by L{Widget.show} - do not use directly.
 		"""
 		if not widget._top_added:
-			self.placeWidget(widget, widget.position_technique)
 			assert widget not in self.allTopHierachyWidgets
 			widget._top_added = True
 			self.allTopHierachyWidgets[widget] = 1
