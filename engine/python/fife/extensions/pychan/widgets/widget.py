@@ -223,6 +223,7 @@ class Widget(object):
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
+		# add this widget to the manager
 		get_manager().addWidget(self)
 	
 	def clone(self, prefix):
@@ -329,10 +330,15 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
+		# add this widget to the manager
 		if not self._added:
 			get_manager().addWidget(self)
 		if self.parent is None and not self._top_added:
 			get_manager().addTopWidget(self)
+		# add childs of this widget to the manager
+		def _show(shown_widget):
+			get_manager().addWidget(shown_widget)
+		self.deepApply(_show)
 		
 		if self.isVisible() and self.isSetVisible():
 			self.beforeShow()
@@ -344,11 +350,6 @@ class Widget(object):
 		self.beforeShow()
 		# Show real widget to distribute a widgetShown event.
 		self.real_widget.setVisible(True)
-		# add the widget and childs to the manager
-		def _show(shown_widget):
-			get_manager().addWidget(shown_widget)
-		self.deepApply(_show, shown_only=False)
-		
 		self.adaptLayout()
 		if self.parent is None:
 			get_manager().placeWidget(self, self.position_technique)
@@ -357,10 +358,15 @@ class Widget(object):
 		"""
 		Hide the widget and all contained widgets.
 		"""
+		# remove this widget from the manager
 		if self._added:
 			get_manager().removeWidget(self)
 		if self.parent is None and self._top_added:
 			get_manager().removeTopWidget(self)
+		# remove childs of this widget from the manager
+		def _hide(hidden_widget):
+			get_manager().removeWidget(hidden_widget)
+		self.deepApply(_hide)
 		
 		if not self.isVisible() and not self.isSetVisible():
 			self.adaptLayout()
@@ -369,10 +375,6 @@ class Widget(object):
 
 		# Hide real widget to distribute a widgetHidden event.
 		self.real_widget.setVisible(False)
-		# remove the widget and childs from the manager
-		def _hide(hidden_widget):
-			get_manager().removeWidget(hidden_widget)
-		self.deepApply(_hide)
 
 		if free:
 			if self.parent:
