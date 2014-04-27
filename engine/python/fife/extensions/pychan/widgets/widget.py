@@ -938,7 +938,7 @@ class Widget(object):
 			raise RuntimeError("Parent must be subclass of the Widget type.")
 
 		if self.__parent is not None and self.__parent() is not parent:
-			if self.__parent and parent is not None:
+			if self.__parent() is not None and parent is not None:
 				print "Widget containment fumble:", self, self.__parent, parent
 				self.__parent().removeChild(self)
 		if parent is not None:
