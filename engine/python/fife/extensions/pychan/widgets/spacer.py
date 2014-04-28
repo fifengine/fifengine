@@ -23,31 +23,19 @@
 
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import UnicodeAttr
-
-from common import gui2text, text2gui
 from widget import Widget
 
 
-class TextField(Widget):
+class Spacer(Widget):
 	"""
-	An editable B{single line} text edit widget.
+	A spacer represents expandable or fixed 'whitespace' in the GUI.
 
-	New Attributes
-	==============
-	
-	  - text: The text in the TextBox.
-
-	Data
-	====
-	The text can be read and set via L{distributeData} and L{collectData}.
+	In a XML file you can get this by adding a <Spacer /> inside a VBox or
+	HBox element (Windows implicitly are VBox elements).
 	"""
-
-	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
 	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
-	DEFAULT_TEXT = u""
-
+	DEFAULT_VEXPAND = 1
+	
 	def __init__(self, 
 				 parent = None, 
 				 name = None,
@@ -67,32 +55,39 @@ class TextField(Widget):
 				 border_size = None,
 				 position_technique = None,
 				 is_focusable = None,
-				 comment = None,
-				 margins = None,
-				 text = None):
+				 comment = None):
 				 
-		self.real_widget = fifechan.TextField()
-		self.text = text or self.DEFAULT_TEXT
-		super(TextField,self).__init__(parent=parent, 
-									   name=name, 
-									   size=size, 
-									   min_size=min_size, 
-									   max_size=max_size,
-									   helptext=helptext, 
-									   position=position,
-									   style=style, 
-									   hexpand=hexpand, 
-									   vexpand=vexpand)
-
-		# Prepare Data collection framework
-		self.accepts_data = True
-		self.accepts_initial_data = True
-		self._realSetInitialData = self._setText
-		self._realSetData = self._setText
-		self._realGetData = self._getText
+		self.real_widget = fifechan.Spacer()
+		super(Spacer,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment)
+		if hexpand is not None: 
+			self.hexpand = hexpand
+		else:
+			self.hexpand = self.DEFAULT_HEXPAND
+		if vexpand is not None: 
+			self.vexpand = vexpand
+		else:
+			self.vexpand = self.DEFAULT_VEXPAND
 
 	def clone(self, prefix):
-		textfieldClone = TextField(None,  
+		spacerClone = Spacer(None,
 				self._createNameWithPrefix(prefix),
 				self.size,
 				self.min_size, 
@@ -110,15 +105,7 @@ class TextField(Widget):
 				self.border_size,
 				self.position_technique,
 				self.is_focusable,
-				self.comment,
-				self.margins,
-				self.text)
-		return textfieldClone
+				self.comment)
+				 
+		return spacerClone
 	
-	def _getText(self): return gui2text(self.real_widget.getText())
-	def _setText(self,text): self.real_widget.setText(text2gui(text))
-	text = property(_getText,_setText)
-
-	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
-	def _getOpaque(self): return self.real_widget.isOpaque()
-	opaque = property(_getOpaque,_setOpaque)

@@ -58,6 +58,16 @@ namespace fcn {
 		int32_t a;
 	};
 
+	class Size {
+	public:
+		Size(int32_t width = 0, int32_t height = 0); 
+		~Size();
+		int32_t getWidth() const;
+		int32_t getHeight() const;
+		void setWidth(int32_t width);
+		void setHeight(int32_t height);
+	};
+
 	class Widget {
 	public:
 /* 		Widget(); */
@@ -72,8 +82,28 @@ namespace fcn {
 		virtual void setY(int32_t y);
 		virtual int32_t getY() const;
 		virtual void setPosition(int32_t x, int32_t y);
-		virtual void setFrameSize(uint32_t frameSize);
-		virtual uint32_t getFrameSize() const;
+		void setOutlineSize(unsigned int size);
+		unsigned int getOutlineSize() const;
+		void setBorderSize(unsigned int size);
+		unsigned int getBorderSize() const;
+		void setMargin(int margin);
+		void setMarginTop(int margin);
+		int getMarginTop() const;
+		void setMarginRight(int margin);
+		int getMarginRight() const;
+		void setMarginBottom(int margin);
+		int getMarginBottom() const;
+		void setMarginLeft(int margin);
+		int getMarginLeft() const;
+		void setPadding(unsigned int padding);
+		void setPaddingTop(unsigned int padding);
+		unsigned int getPaddingTop() const;
+		void setPaddingRight(unsigned int padding);
+		unsigned int getPaddingRight() const;
+		void setPaddingBottom(unsigned int padding);
+		unsigned int getPaddingBottom() const;
+		void setPaddingLeft(unsigned int padding);
+		unsigned int getPaddingLeft() const;
 		virtual void setFocusable(bool focusable);
 		virtual bool isFocusable() const;
 		virtual bool isFocused() const;
@@ -90,6 +120,26 @@ namespace fcn {
 		virtual const Color& getBackgroundColor() const;
 		virtual void setSelectionColor(const Color& color);
 		virtual const Color& getSelectionColor() const;
+		virtual void setOutlineColor(const Color& color);
+		virtual const Color& getOutlineColor() const;
+		virtual void setBorderColor(const Color& color);
+		virtual const Color& getBorderColor() const;
+		void setMinSize(const Size& size);
+		const Size& getMinSize() const;
+		void setMaxSize(const Size& size);
+		const Size& getMaxSize() const;
+		void setFixedSize(const Size& size);
+		const Size& getFixedSize() const;
+		bool isFixedSize() const;
+		void setVerticalExpand(bool expand);
+		bool isVerticalExpand() const;
+		void setHorizontalExpand(bool expand);
+		bool isHorizontalExpand() const;
+		virtual bool isLayouted();
+		virtual void adaptLayout(bool top=true);
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void adjustSize();
+		virtual void expandContent(bool recursiv=true);
 		virtual void requestFocus();
 		virtual void requestMoveToTop();
 		virtual void requestMoveToBottom();
@@ -126,6 +176,14 @@ namespace fcn {
 		virtual void draw(Graphics* graphics) = 0;
 	};
 	
+	%feature("notabstract") Spacer;
+	class Spacer: public Widget {
+	public:
+		Spacer();
+		virtual ~Spacer();
+		virtual void resizeToContent(bool recursiv=true);
+	};
+
 	%feature("notabstract") Container;
 	class Container: public Widget {
 	public:
@@ -137,6 +195,20 @@ namespace fcn {
 		virtual void add(Widget* widget, int32_t x, int32_t y);
 		virtual void remove(Widget* widget);
 		virtual void clear();
+		enum LayoutPolicy {
+			Absolute,
+			Vertical,
+			Horizontal,
+			Circular
+		};
+		void setLayout(LayoutPolicy policy);
+		LayoutPolicy getLayout() const;
+		virtual void setVerticalSpacing(unsigned int spacing);
+		virtual unsigned int getVerticalSpacing() const;
+		virtual void setHorizontalSpacing(unsigned int spacing);
+		virtual unsigned int getHorizontalSpacing() const;
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
 	};
 	
 	%feature("notabstract") CheckBox;
@@ -304,8 +376,6 @@ namespace fcn {
 		virtual const std::string& getCaption() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
-		virtual void setPadding(uint32_t padding);
-		virtual uint32_t getPadding() const;
 		virtual void setTitleBarHeight(uint32_t height);
 		virtual uint32_t getTitleBarHeight();
 		virtual void setMovable(bool movable);
@@ -315,6 +385,22 @@ namespace fcn {
 		virtual void resizeToContent();
 	};
 
+	%feature("notabstract") AdjustingContainer;
+	class AdjustingContainer: public Container {
+	public:
+		AdjustingContainer();
+		virtual ~AdjustingContainer();
+		
+		virtual void setNumberOfColumns(unsigned int numberOfColumns);
+		virtual void setColumnAlignment(unsigned int column, unsigned int alignment);
+		virtual void adjustContent();
+
+		enum {
+			LEFT = 0,
+			CENTER,
+			RIGHT
+		};
+	};
 
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
@@ -385,6 +471,38 @@ namespace fcn {
 			HORIZONTAL = 0,
 			VERTICAL
 		};
+	};
+
+	%feature("notabstract") Tab;
+	class Tab: public Widget {
+	public:
+		Tab();
+		virtual ~Tab();
+		void setTabbedArea(fcn::TabbedArea* tabbedArea);
+		fcn::TabbedArea* getTabbedArea();
+		void setCaption(const std::string& caption);
+		const std::string& getCaption() const;
+	};
+
+	%feature("notabstract") TabbedArea;
+	class TabbedArea: public Widget {
+		//friend class Tab;
+	public:
+		TabbedArea();
+		virtual ~TabbedArea();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		virtual void addTab(const std::string& caption, Widget* widget);
+		virtual void addTab(fcn::Tab* tab, Widget* widget);
+		virtual void removeTabWithIndex(unsigned int index);
+		virtual void removeTab(fcn::Tab* tab);
+		int getNumberOfTabs() const;
+		virtual bool isTabSelected(unsigned int index) const;
+		virtual bool isTabSelected(fcn::Tab* tab) const;
+		virtual void setSelectedTab(unsigned int index);
+		virtual void setSelectedTab(fcn::Tab* tab);
+		virtual int getSelectedTabIndex() const;
+		fcn::Tab* getSelectedTab() const;
 	};
 }
 

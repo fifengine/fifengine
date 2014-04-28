@@ -247,22 +247,6 @@ class ImageButton(BasicTextWidget):
 		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
 	offset = property(_getOffset,_setOffset)
 
-	def resizeToContent(self, recurse=True):
-		th, tw = 0, 0
-		if self.text:
-			th = self.real_font.getHeight()#+self.real_font.getSpacing()
-			tw = self.real_font.getWidth(text2gui(self.text))#+self.real_font.getSpacing()
-		self.height = max(
-			self._prop_upimage["image"].getHeight(),
-			self._prop_downimage["image"].getHeight(),
-			self._prop_hoverimage["image"].getHeight(),
-			th) + self.margins[1]*2
-		self.width = max(
-			self._prop_upimage["image"].getWidth(),
-			self._prop_downimage["image"].getWidth(),
-			self._prop_hoverimage["image"].getWidth(),
-			tw) + self.margins[0]*2
-
 class ToggleButton(ImageButton):
 	"""
 	A basic push button that can be toggled.
@@ -391,20 +375,3 @@ class ToggleButton(ImageButton):
 	def _isToggled(self):
 		return self.real_widget.isToggled()
 	toggled = property(_isToggled, _setToggled)
-
-	def resizeToContent(self, recurse=True):
-		# NOTE: Figure out how the spacing comes into play
-		tw, th = 0, 0
-		if self.text:
-			th = self.real_font.getHeight() + self.real_widget.getSpacing()
-			tw = self.real_font.getWidth(text2gui(self.text)) + self.real_widget.getSpacing()
-		self.height = max(
-			self._prop_upimage["image"].getHeight(),
-			self._prop_downimage["image"].getHeight(),
-			self._prop_hoverimage["image"].getHeight(),
-			th) + self.margins[1]*2
-		self.width = max(
-			self._prop_upimage["image"].getWidth(),
-			self._prop_downimage["image"].getWidth(),
-			self._prop_hoverimage["image"].getWidth(),
-			tw) + self.margins[0]*2

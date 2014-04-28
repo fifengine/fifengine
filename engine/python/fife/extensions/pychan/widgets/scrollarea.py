@@ -151,12 +151,6 @@ class ScrollArea(Widget):
 		if not leaves_first:
 			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
-	def resizeToContent(self,recurse=True):
-		if self._content is None: return
-		if recurse:
-			self.content.resizeToContent(recurse=recurse)
-		self.size = self.min_size
-
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
 			return fifechan.ScrollArea.ShowAuto
@@ -178,11 +172,6 @@ class ScrollArea(Widget):
 
 	def _getVerticalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
-		
-	def sizeChanged(self):
-		if self.content:
-			self.content.width = max(self.content.width,self.width-5)
-			self.content.height = max(self.content.height,self.height-5)
 
 	def getVerticalMaxScroll(self):
 		return self.real_widget.getVerticalMaxScroll()

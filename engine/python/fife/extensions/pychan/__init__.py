@@ -327,8 +327,6 @@ class _GuiLoader(object, handler.ContentHandler):
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
 		cls = WIDGETS.get(name,None)
-		if cls is None and name == "Spacer":
-			cls = Spacer
 		if cls is None:
 			raise GuiXMLError("Unknown GUI Element: %s" % name)
 		return cls
@@ -352,9 +350,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		if issubclass(cls,Widget):
 			self.stack.append('gui_element')
 			self._createInstance(cls,name,attrs)
-		elif cls == Spacer:
-			self.stack.append('spacer')
-			self._createSpacer(cls,name,attrs)
 		else:
 			self.stack.append('unknown')
 		self.indent += " "*4
@@ -368,21 +363,10 @@ class _GuiLoader(object, handler.ContentHandler):
 			self.root.addChild( obj )
 		self.root = obj
 
-	def _createSpacer(self,cls,name,attrs):
-		obj = cls(parent=self.root)
-		for k,v in attrs.items():
-			self._setAttr(obj,k,v)
-
-		if hasattr(self.root,'add'):
-			self.root.addSpacer(obj)
-		else:
-			raise GuiXMLError("A spacer needs to be added to a container widget!")
-		self.root = obj
-
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
 		if manager.debug: print self.indent + "</%s>" % name
-		if self.stack.pop() in ('gui_element','spacer'):
+		if self.stack.pop() in ('gui_element'):
 			self.root = self.root.parent or self.root
 
 def loadXML(filename_or_stream):

@@ -27,7 +27,6 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
 from common import get_manager, gui2text, text2gui
-from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
 from widget import Widget
 
 
@@ -59,6 +58,7 @@ class Container(Widget):
 	DEFAULT_MARGINS = 5,5
 	DEFAULT_PADDING = 5
 	DEFAULT_BACKGROUND = None
+	DEFAULT_LAYOUT = 'Absolute'
 	
 	def __init__(self, 
 				 parent = None, 
@@ -95,6 +95,7 @@ class Container(Widget):
 		self.margins = self.DEFAULT_MARGINS
 		self.padding = self.DEFAULT_PADDING
 		self.opaque = self.DEFAULT_OPAQUE
+		self.layout = self.DEFAULT_LAYOUT
 
 		super(Container,self).__init__(parent=parent, 
 									   name=name, 
@@ -162,10 +163,6 @@ class Container(Widget):
 		be hidden when you show the container widget you must call child.hide().
 		"""
 		
-		if isinstance(widget, Spacer):
-			self.addSpacer(widget)
-			return
-
 		widget.parent = self
 
 		if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
@@ -314,7 +311,6 @@ class Container(Widget):
 			return
 
 		back_w,back_h = self.width, self.height
-		map(self.real_widget.remove,self._background)
 
 		# Now tile the background over the widget
 		self._background = []
@@ -322,8 +318,7 @@ class Container(Widget):
 		icon.setTiling(True)
 		icon.setSize(back_w,back_h)
 		self._background.append(icon)
-		map(self.real_widget.add,self._background)
-		icon.requestMoveToBottom()
+		self.real_widget.setBackgroundWidget(icon)
 
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)
@@ -344,6 +339,37 @@ class Container(Widget):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
+
+	def _setVerticalSpacing(self, space):
+		self.real_widget.setVerticalSpacing(space)
+	def _getVerticalSpacing(self):
+		return self.real_widget.getVerticalSpacing()
+	vspacing = property(_getVerticalSpacing, _setVerticalSpacing)
+
+	def _setHorizontalSpacing(self, space):
+		self.real_widget.setHorizontalSpacing(space)
+	def _getHorizontalSpacing(self):
+		return self.real_widget.getHorizontalSpacing()
+	hspacing = property(_getHorizontalSpacing, _setHorizontalSpacing)
+
+	def _setLayout(self, layout):
+		if layout == 'vertical' or layout == 'Vertical' or layout == 'VERTICAL':
+			self.real_widget.setLayout(fifechan.Container.Vertical)
+		elif layout == 'horizontal' or layout == 'Horizontal' or layout == 'HORIZONTAL':
+			self.real_widget.setLayout(fifechan.Container.Horizontal)
+		elif layout == 'circular' or layout == 'Circular' or layout == 'CIRCULAR':
+			self.real_widget.setLayout(fifechan.Container.Circular)
+		else:
+			self.real_widget.setLayout(fifechan.Container.Absolute)
+	def _getLayout(self):
+		if self.real_widget.getLayout() == fifechan.Container.Circular:
+			return 'Circular'
+		elif self.real_widget.getLayout() == fifechan.Container.Horizontal:
+			return 'Horizontal'
+		elif self.real_widget.getLayout() == fifechan.Container.Vertical:
+			return 'Vertical'
+		return 'Absolute'
+	layout = property(_getLayout, _setLayout)
 	
 	def _cloneChildren(self, prefix):
 		"""
@@ -353,7 +379,7 @@ class Container(Widget):
 		
 		return cloneList
 
-class VBox(VBoxLayoutMixin,Container):
+class VBox(Container):
 	"""
 	A vertically aligned box - for containement of child widgets.
 
@@ -366,6 +392,7 @@ class VBox(VBoxLayoutMixin,Container):
 	widgets above the spacer are aligned to the top, while widgets below the spacer
 	are aligned to the bottom.
 	"""
+	DEFAULT_LAYOUT = 'Vertical'
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 1
 
@@ -448,12 +475,13 @@ class VBox(VBoxLayoutMixin,Container):
 					
 		return vboxClone
 
-class HBox(HBoxLayoutMixin,Container):
+class HBox(Container):
 	"""
 	A horizontally aligned box - for containement of child widgets.
 
 	Please see L{VBox} for details - just change the directions :-).
 	"""
+	DEFAULT_LAYOUT = 'Horizontal'
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
@@ -537,8 +565,98 @@ class HBox(HBoxLayoutMixin,Container):
 		
 		return hboxClone
 		
-								  
-class Window(VBoxLayoutMixin,Container):
+class CBox(Container):
+	"""
+	A circular box - for containement of child widgets.
+
+	Please see L{VBox} for details - just change the directions :-).
+	"""
+	DEFAULT_LAYOUT = 'Circular'
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 1
+
+	def __init__(self, 
+				 parent = None, 
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
+				 style = None, 
+				 hexpand = None,
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
+				 background_image = None,
+				 opaque = None,
+				 margins = None,
+				 _real_widget = None):
+				 
+		super(CBox,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment,
+								  padding=padding,
+								  background_image=background_image,
+								  opaque=opaque,
+								  margins=margins,
+								  _real_widget=_real_widget)
+
+	def clone(self, prefix):
+		cboxClone = CBox(None,
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.padding,
+					self.background_image,
+					self.opaque,
+					self.margins)
+					
+		cboxClone.addChildren(self._cloneChildren(prefix))
+		
+		return cboxClone
+
+
+class Window(Container):
 	"""
 	A L{VBox} with a draggable title bar aka a window
 
@@ -552,7 +670,7 @@ class Window(VBoxLayoutMixin,Container):
 	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('title'), 
 										  IntAttr('titlebar_height') 
 										]
-
+	DEFAULT_LAYOUT = 'Vertical'
 	DEFAULT_TITLE = u"title"
 	DEFAULT_TITLE_HEIGHT = 0
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
@@ -650,8 +768,8 @@ class Window(VBoxLayoutMixin,Container):
 					None,
 					self.title,
 					self.titlebar_height
-				    )
-				     
+					)
+		
 		windowClone.addChildren(self._cloneChildren(prefix))
 				     
 		return windowClone
@@ -666,10 +784,10 @@ class Window(VBoxLayoutMixin,Container):
 
 	# Hackish way of hiding that title bar height in the perceived height.
 	# Fixes VBox calculation
-	def _setHeight(self,h):
-		h = max(self.min_size[1],h)
-		h = min(self.max_size[1],h)
-		self.real_widget.setHeight(h + self.titlebar_height)
-	def _getHeight(self): return self.real_widget.getHeight() - self.titlebar_height
-	height = property(_getHeight,_setHeight)
+	#def _setHeight(self,h):
+	#	h = max(self.min_size[1],h)
+	#	h = min(self.max_size[1],h)
+	#	self.real_widget.setHeight(h + self.titlebar_height)
+	#def _getHeight(self): return self.real_widget.getHeight() - self.titlebar_height
+	#height = property(_getHeight,_setHeight)
 

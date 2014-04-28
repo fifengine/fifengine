@@ -41,8 +41,9 @@ namespace fcn {
 		public:
 			TwoButton(Image *up_image = 0, Image *down_image = 0, Image *hover_file = 0, const std::string& caption = "");
 			~TwoButton();
-            
+			
 			void draw(Graphics *graphics);
+			void resizeToContent(bool recursiv=true);
 			void adjustSize();
 
 			void setUpImage(Image* image);

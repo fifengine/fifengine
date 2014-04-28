@@ -45,7 +45,7 @@ namespace fcn {
 		addWidgetListener(this);
 
 		m_hoverImage = hover_file;
-		setFrameSize(0);
+		setBorderSize(0);
 		adjustSize();
 		mCaption = caption;
 	}
@@ -108,6 +108,11 @@ namespace fcn {
 				graphics->drawText(getCaption(), textX, textY, getAlignment());
 		}
 	}
+
+	void TwoButton::resizeToContent(bool recursiv) {
+		adjustSize();
+	}
+
 	void TwoButton::adjustSize() {
 		int32_t w = 0;
 		int32_t h = w;
@@ -126,14 +131,17 @@ namespace fcn {
 		setWidth(w);
 		setHeight(h);
 	}
+
 	void TwoButton::setUpImage(Image* image) {
 		m_upImage = image;
 		adjustSize();
 	}
+
 	void TwoButton::setDownImage(Image* image) {
 		m_downImage = image;
 		adjustSize();
 	}
+
 	void TwoButton::setHoverImage(Image* image) {
 		m_hoverImage = image;
 		adjustSize();

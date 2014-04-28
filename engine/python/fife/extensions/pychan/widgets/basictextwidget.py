@@ -106,7 +106,3 @@ class BasicTextWidget(Widget):
 	def _setText(self,text): self.real_widget.setCaption(text2gui(text))
 
 	text = property(_getText,_setText)
-
-	def resizeToContent(self, recurse = True):
-		self.height = self.real_font.getHeight() + self.margins[1]*2
-		self.width = self.real_font.getWidth(text2gui(self.text)) + self.margins[0]*2

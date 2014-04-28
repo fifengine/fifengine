@@ -55,7 +55,7 @@ namespace fcn {
 		m_group(group) {
 
 		m_hoverImage = hover_file;
-		setFrameSize(0);
+		setBorderSize(0);
 		setGroup(m_group);
 		adjustSize();
 		mCaption = caption;
@@ -170,6 +170,10 @@ namespace fcn {
 		setToggled(!m_toggled);
 	}
 
+	void ToggleButton::resizeToContent(bool recursiv) {
+		adjustSize();
+	}
+
 	void ToggleButton::adjustSize() {
 		int32_t w = 0;
 		int32_t h = w;
@@ -187,8 +191,8 @@ namespace fcn {
 		}
 
 		if( mCaption.length() > 0 ) {
-			w = std::max(static_cast<int32_t>(getFont()->getWidth(mCaption)+2*mSpacing), w);
-			h = std::max(static_cast<int32_t>(getFont()->getHeight()+2*mSpacing), h);
+			w = std::max(static_cast<int32_t>(getFont()->getWidth(mCaption)), w);
+			h = std::max(static_cast<int32_t>(getFont()->getHeight()), h);
 		}
 
 		setWidth(w);

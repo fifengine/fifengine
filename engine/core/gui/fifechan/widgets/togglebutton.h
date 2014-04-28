@@ -67,6 +67,8 @@ namespace fcn {
 			 */
 			void draw(Graphics *graphics);
 
+			void resizeToContent(bool recursiv=true);
+
 			/**
 			 * Adjust size to fit image and caption
 			 */

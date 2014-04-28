@@ -125,13 +125,6 @@ class Label(BasicTextWidget):
 		
 		return lblClone;
 
-	def resizeToContent(self, recurse=True):
-		self.real_widget.setWidth( self.max_size[0] )
-		self.real_widget.adjustSize()
-		self.height = self.real_widget.getHeight() + self.margins[1]*2
-		self.width  = self.real_widget.getWidth()  + self.margins[0]*2
-		#print self.width,self.max_size[0]
-
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)

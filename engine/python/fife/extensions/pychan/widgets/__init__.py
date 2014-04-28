@@ -31,13 +31,15 @@ Please look at the documentation of L{Widget} for details.
 
 from widget import Widget
 
-from layout import Spacer
-from containers import Container, VBox, HBox, Window
+from spacer import Spacer
+from adjustingcontainer import AdjustingContainer
+from containers import Container, VBox, HBox, CBox, Window
 from label import Label
 from icon import Icon
 from buttons import Button, ToggleButton, ImageButton
 from checkbox import CheckBox
 from radiobutton import RadioButton
+from tabbedarea import TabbedArea
 from textfield import TextField
 from textbox import TextBox
 from listbox import ListBox
@@ -56,9 +58,13 @@ WIDGETS = {
 	"Window" : Window,
 	"VBox" : VBox,
 	"HBox" : HBox,
+	"CBox" : CBox,
 	"ScrollArea" :ScrollArea,
+	"AdjustingContainer" : AdjustingContainer,
+	"TabbedArea" : TabbedArea,
 
 	# Simple Widgets
+	"Spacer" : Spacer,
 	"Icon" : Icon,
 	"Label" : Label,
 	"PercentageBar" : PercentageBar,

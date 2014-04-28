@@ -24,6 +24,7 @@
 import weakref
 
 from fife import fife
+from fife import fifechan
 
 from fife.extensions.pychan import events
 from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
@@ -408,11 +409,11 @@ class Widget(object):
 		from the top-most layouted widget.
 
 		To make this clear consider this arrangement::
-		      VBox 1
-		      - Container
-			- VBox 2
-			  - HBox
-			    - Label
+			VBox 1
+				- Container
+			VBox 2
+				- HBox
+					- Label
 
 		If you call adaptLayout on the Label the layout from the VBox 2
 		will get recalculated, while the VBox 1 stays untouched.
@@ -420,13 +421,7 @@ class Widget(object):
 		@param recurse: Pass False here to force the layout to start from
 		this widget.
 		"""
-		widget = self
-		while widget.parent and recurse:
-			if not isLayouted(widget.parent):
-				break
-			widget = widget.parent
-		widget._recursiveResizeToContent()
-		widget._recursiveExpandContent()
+		self.real_widget.adaptLayout(recurse)
 
 	def beforeShow(self):
 		"""
@@ -797,33 +792,28 @@ class Widget(object):
 		Try to shrink the widget, so that it fits closely around its content.
 		Do not call directly.
 		"""
+		self.real_widget.resizeToContent(recurse)
 
 	def expandContent(self,recurse = True):
 		"""
 		Try to expand any spacer in the widget within the current size.
 		Do not call directly.
 		"""
-
+		self.real_widget.expandContent(recurse)
 
 	def _recursiveResizeToContent(self):
 		"""
 		Recursively call L{resizeToContent}. Uses L{deepApply}.
 		Do not call directly.
 		"""
-		def _callResizeToContent(widget):
-			#print "RTC:",widget
-			widget.resizeToContent()
-		self.deepApply(_callResizeToContent, shown_only = True)
+		self.real_widget.resizeToContent(True)
 
 	def _recursiveExpandContent(self):
 		"""
 		Recursively call L{expandContent}. Uses L{deepApply}.
 		Do not call directly.
 		"""
-		def _callExpandContent(widget):
-			#print "ETC:",widget
-			widget.expandContent()
-		self.deepApply(_callExpandContent, leaves_first=False, shown_only = True)
+		self.real_widget.expandContent(True)
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		"""
@@ -878,18 +868,16 @@ class Widget(object):
 
 	def _setWidth(self,w):
 		old_width = self.width
-		w = max(self.min_size[0],w)
-		w = min(self.max_size[0],w)
 		self.real_widget.setWidth(w)
+		w = self.real_widget.getWidth()
 		if w != old_width:
 			self.sizeChanged()
 
 	def _getWidth(self): return self.real_widget.getWidth()
 	def _setHeight(self,h):
 		old_height = self.height
-		h = max(self.min_size[1],h)
-		h = min(self.max_size[1],h)
 		self.real_widget.setHeight(h)
+		h = self.real_widget.getHeight()
 		if h != old_height:
 			self.sizeChanged()
 
@@ -908,6 +896,24 @@ class Widget(object):
 	def _setMaxHeight(self,h):
 		self.max_size = self.max_size[0],h
 
+	def _setMinSize(self, size):
+		self.real_widget.setMinSize(fifechan.Size(size[0], size[1]))
+	def _getMinSize(self):
+		size = self.real_widget.getMinSize()
+		return (size.getWidth(), size.getHeight())
+	def _setMaxSize(self, size):
+		self.real_widget.setMaxSize(fifechan.Size(size[0], size[1]))
+	def _getMaxSize(self):
+		size = self.real_widget.getMaxSize()
+		return (size.getWidth(), size.getHeight())
+	def _setFixedSize(self, size):
+		self.real_widget.setFixedSize(fifechan.Size(size[0], size[1]))
+	def _getFixedSize(self):
+		size = self.real_widget.getFixedSize()
+		return (size.getWidth(), size.getHeight())
+	def isFixedSize(self):
+		return self.real_widget.isFixedSize()
+	
 	def _setFont(self, font):
 		self._font = font
 		self.real_font = get_manager().getFont(font)
@@ -915,14 +921,83 @@ class Widget(object):
 	def _getFont(self):
 		return self._font
 
-	def _getBorderSize(self): return self.real_widget.getFrameSize()
-	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
+	def _getOutlineSize(self):
+		return self.real_widget.getOutlineSize()
+	def _setOutlineSize(self, size):
+		self.real_widget.setOutlineSize(size)
+		
+	def _getBorderSize(self):
+		return self.real_widget.getBorderSize()
+	def _setBorderSize(self, size):
+		self.real_widget.setBorderSize(size)
 
+	def _setMargins(self, margin):
+		# Shorthand property
+		if isinstance(margin, tuple):
+			if len(margin) is 4:
+				# 0=top, 1=right, 2=bottom, 3=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[2])
+				self.real_widget.setMarginLeft(margin[3])
+			elif len(margin) is 3:
+				# 0=top, 1=right, 2=bottom, 1=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[2])
+				self.real_widget.setMarginLeft(margin[1])
+			elif len(margin) is 2:
+				# 0=top, 1=right, 0=bottom, 1=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[0])
+				self.real_widget.setMarginLeft(margin[1])
+			elif len(margin) is 1:
+				# 0=top, 0=right, 0=bottom, 0=left
+				self.real_widget.setMargin(margin[0])
+		else:
+			self.real_widget.setMargin(margin)
+	def _getMargins(self):
+		return (self.real_widget.getMarginTop(), self.real_widget.getMarginRight(),
+				self.real_widget.getMarginBottom(), self.real_widget.getMarginLeft())
+	
+	def _setPadding(self, padding):
+		# Shorthand property
+		if isinstance(padding, tuple):
+			if len(padding) is 4:
+				# 0=top, 1=right, 2=bottom, 3=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[2])
+				self.real_widget.setPaddingLeft(padding[3])
+			elif len(padding) is 3:
+				# 0=top, 1=right, 2=bottom, 1=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[2])
+				self.real_widget.setPaddingLeft(padding[1])
+			elif len(padding) is 2:
+				# 0=top, 1=right, 0=bottom, 1=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[0])
+				self.real_widget.setPaddingLeft(padding[1])
+			elif len(padding) is 1:
+				# 0=top, 0=right, 0=bottom, 0=left
+				self.real_widget.setPadding(padding[0])
+		else:
+			self.real_widget.setPadding(padding)
+	def _getPadding(self):
+		return (self.real_widget.getPaddingTop(), self.real_widget.getPaddingRight(),
+				self.real_widget.getPaddingBottom(), self.real_widget.getPaddingLeft())
+	
 	base_color = ColorProperty("BaseColor")
 	background_color = ColorProperty("BackgroundColor")
 	foreground_color = ColorProperty("ForegroundColor")
 	selection_color = ColorProperty("SelectionColor")
-
+	outline_color = ColorProperty("OutlineColor")
+	border_color = ColorProperty("BorderColor")
+	
 	def _getStyle(self): return self._style
 	def _setStyle(self,style):
 		self._style = style
@@ -960,6 +1035,15 @@ class Widget(object):
 	def _isFocusable(self):
 		return self.real_widget.isFocusable()
 
+	def _setHExpand(self, expand):
+		self.real_widget.setHorizontalExpand(expand)
+	def _isHExpand(self):
+		return self.real_widget.isHorizontalExpand()
+	def _setVExpand(self, expand):
+		self.real_widget.setVerticalExpand(expand)
+	def _isVExpand(self):
+		return self.real_widget.isVerticalExpand()
+	
 	def _createNameWithPrefix(self, prefix):
 		
 		if not isinstance(prefix, str):
@@ -984,7 +1068,16 @@ class Widget(object):
 	max_width = property(_getMaxWidth,_setMaxWidth)
 	max_height = property(_getMaxHeight,_setMaxHeight)
 	size = property(_getSize,_setSize)
+	min_size = property(_getMinSize, _setMinSize)
+	max_size = property(_getMaxSize, _setMaxSize)
+	fixed_size = property(_getFixedSize, _setFixedSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
+	outline_size = property(_getOutlineSize,_setOutlineSize)
 	border_size = property(_getBorderSize,_setBorderSize)
-	is_focusable = property(_isFocusable,_setFocusable) 
+	is_focusable = property(_isFocusable,_setFocusable)
+	margins = property(_getMargins, _setMargins)
+	padding = property(_getPadding, _setPadding)
+	is_focusable = property(_isFocusable,_setFocusable)
+	hexpand = property(_isHExpand,_setHExpand)
+	vexpand = property(_isVExpand,_setVExpand)

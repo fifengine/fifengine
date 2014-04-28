@@ -148,23 +148,14 @@ class DropDown(Widget):
 		
 		return dropdownClone
 
-	def resizeToContent(self,recurse=True):
-		# We append a minimum value, so max() does not bail out,
-		# if no items are in the list
-		_item_widths = map(self.real_font.getWidth, map(text2gui, map(unicode, self._items))) + [self.real_font.getHeight()]
-		max_w = max(_item_widths)
-		self.width = max_w
-		self.height = (self.real_font.getHeight() + 2)
-
-	def _getItems(self): return self._items
+	def _getItems(self): return self._items #self.real_widget.getListModel() works too
 	def _setItems(self,items):
-		# Note we cannot use real_widget.setListModel
-		# for some reason ???
-
-		# Also self assignment can kill you
+		# Also self assignment can kill you but
+		# without the GenericListmodel is freed instantly ;-)
 		if id(items) != id(self._items):
 			self._items.clear()
 			self._items.extend(items)
+			self.real_widget.setListModel(self._items)
 	items = property(_getItems,_setItems)
 
 	def _getSelected(self): return self.real_widget.getSelected()

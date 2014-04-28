@@ -51,6 +51,7 @@ namespace fcn {
 
 		virtual void draw(Graphics* graphics);
 
+		virtual void resizeToContent(bool recursiv=true);
 		virtual void adjustSize();
 
 		void setTextWrapping(bool);

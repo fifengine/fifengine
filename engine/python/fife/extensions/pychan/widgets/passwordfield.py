@@ -115,11 +115,6 @@ class PasswordField(Widget):
 				self.text)
 		return passwordFieldClone
 	
-		
-	def resizeToContent(self,recurse=True):
-		max_w = self.real_font.getWidth(text2gui(self.text))
-		self.width = max_w
-		self.height = (self.real_font.getHeight() + 2)
 	def _getText(self): return gui2text(self.real_widget.getText())
 	def _setText(self,text): self.real_widget.setText(text2gui(text))
 	text = property(_getText,_setText)

@@ -143,12 +143,6 @@ class TextBox(Widget):
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
 
-	def resizeToContent(self,recurse=True):
-		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
-		max_w = max(map(self.real_font.getWidth,rows))
-		self.width = max_w
-		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
-
 	def _getText(self): return gui2text(self.real_widget.getText())
 	def _setText(self,text): self.real_widget.setText(text2gui(text))
 	text = property(_getText,_setText)

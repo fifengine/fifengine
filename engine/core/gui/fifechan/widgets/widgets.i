@@ -66,8 +66,6 @@ namespace fcn {
 		virtual const std::string& getCaption() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
-		void setSpacing(uint32_t spacing);
-		uint32_t getSpacing() const;
 		void setUpImage(Image* image);
 		void setDownImage(Image* image);
 		void setHoverImage(Image* image);

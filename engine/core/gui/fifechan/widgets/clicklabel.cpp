@@ -39,7 +39,7 @@ namespace fcn {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 // 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
-		setFrameSize(0);
+		setBorderSize(0);
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
@@ -51,7 +51,7 @@ namespace fcn {
 // 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
 		setCaption(caption);
-		setFrameSize(0);
+		setBorderSize(0);
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
@@ -109,6 +109,10 @@ namespace fcn {
 
 	bool ClickLabel::isTextWrapping() const {
 		return mTextWrapping;
+	}
+
+	void ClickLabel::resizeToContent(bool recursiv) {
+		adjustSize();
 	}
 
 	void  ClickLabel::adjustSize() {
