@@ -24,7 +24,7 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
+from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr, ListAttr
 
 from common import get_manager, gui2text, text2gui
 from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
@@ -352,6 +352,144 @@ class Container(Widget):
 		cloneList = [ child.clone(prefix) for child in self.children ]
 		
 		return cloneList
+
+class AdjustingContainer(Container):
+	"""
+	This is the adjusting container class. It provides space in which child widgets can
+	be position via the position attribute.
+
+	New Attributes
+	==============
+
+	  - colums - Integer: The number of columns to divide the widgets into.
+	"""
+
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('columns'),
+										  ListAttr('alignments'),
+										]
+	DEFAULT_NUMBER_COLUMNS = 3
+	
+	def __init__(self, 
+				 parent = None, 
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
+				 style = None, 
+				 hexpand = None,
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
+				 background_image = None,
+				 opaque = None,
+				 margins = None,
+				 _real_widget = None,
+				 columns = None,
+				 alignments = None):
+
+		super(AdjustingContainer,self).__init__(parent=parent, 
+									   name=name, 
+									   size=size, 
+									   min_size=min_size, 
+									   max_size=max_size,
+									   helptext=helptext, 
+									   position=position,
+									   style=style, 
+									   hexpand=hexpand, 
+									   vexpand=vexpand,
+									   font=font,
+									   base_color=base_color,
+									   background_color=background_color,
+									   foreground_color=foreground_color,
+									   selection_color=selection_color,
+									   border_size=border_size,
+									   position_technique=position_technique,
+									   is_focusable=is_focusable,
+									   comment=comment,
+									   padding=padding,
+									   background_image=background_image,
+									   opaque=opaque,
+									   margins=margins,
+									   _real_widget = fifechan.AdjustingContainer())
+
+		if columns is not None:
+			self.columns = columns
+		else:
+			self.columns = self.DEFAULT_NUMBER_COLUMNS
+				
+	def clone(self, prefix):
+		containerClone = AdjustingContainer(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.padding,
+						self.background_image,
+						self.opaque,
+						self.margins,
+						self.columns)
+			
+		containerClone.addChildren(self._cloneChildren(prefix))	
+		return containerClone
+		
+	def _setNumberColumns(self, number):
+		self.real_widget.setNumberOfColumns(number)
+	def _getNumberColumns(self):
+		self.real_widget.getNumberOfColums()
+	columns = property(_getNumberColumns, _setNumberColumns)
+	
+	def _setColumnAlignment(self, column, alignment):
+		self.real_widget.setColumnAlignment(column, alignment)
+	def _getColumnAlignment(self, column):
+		self.real_widget.getColumAlignment(column)
+	column_alignment = property(_getColumnAlignment, _setColumnAlignment)
+
+	def _setColumnAlignments(self, alignments):
+		i = 0
+		if alignments is not None:
+			for a in alignments:
+				self.real_widget.setColumnAlignment(i, a)
+				i += 1
+		else:
+			cols = columns
+			if cols > 0:
+				while i < cols:
+					self.real_widget.setColumnAlignment(i, 0)
+					i += 1
+	def _getColumnAlignments(self):
+		alignments = []
+		cols = columns
+		if cols > 0:
+			i = 0
+			while i < cols:
+				alignments.append(self.column_alignment(i))
+				i += 1
+		return alignments
+	alignments = property(_getColumnAlignments, _setColumnAlignments)
 
 class VBox(VBoxLayoutMixin,Container):
 	"""
