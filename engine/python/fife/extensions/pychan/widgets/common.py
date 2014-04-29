@@ -26,7 +26,7 @@ from fife import fifechan
 from fife.extensions.pychan import tools
 from fife.extensions.pychan import events
 from fife.extensions.pychan.exceptions import *
-from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
+from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr,ListAttr
 from fife.extensions.pychan.properties import ColorProperty
 
 # These used to be defined in here, duplicating the definitions in .layout

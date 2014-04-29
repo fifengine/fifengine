@@ -182,6 +182,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		# the ListBox on the left with its names.
 		self.examples = {
 			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
+			'Adjusting Container' : PyChanExample('gui/adjustingcontainer.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
 			'Basic Styling' : StylingExample(),
 			'Dynamic Widgets' : DynamicExample(),

@@ -122,3 +122,11 @@ class FloatAttr(Attr):
 			return float(value)
 		except:
 			raise ParserError("Expected a float.")
+
+class ListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(int,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list.")

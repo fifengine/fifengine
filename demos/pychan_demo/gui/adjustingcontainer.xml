@@ -1,0 +1,14 @@
+<Window title="Adjusting Container Example">
+	<AdjustingContainer columns="3" alignments="0, 1, 2" border_size="0">
+		<Label name="1" text="A longer phrase"/>
+		<Label name="2" text="Short"/>
+		<Label name="3" text="Extravagent and wordy text"/>
+		<Label name="4" text="Short"/>
+		<Label name="5" text="Extravagent and wordy text"/>
+		<Label name="6" text="Short"/>
+		<Label name="7" text="Short"/>
+		<Label name="8" text="A longer phrase"/>
+		<Label name="9" text="A longer phrase"/>
+	</AdjustingContainer>
+	<Button name="closeButton" text="Close"/>
+</Window>

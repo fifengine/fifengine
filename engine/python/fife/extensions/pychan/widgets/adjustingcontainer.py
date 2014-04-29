@@ -24,10 +24,9 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import IntAttr
+from fife.extensions.pychan.attrs import IntAttr, ListAttr
 
 from containers import Container
-from widget import Widget
 
 class AdjustingContainer(Container):
 	"""
@@ -40,9 +39,10 @@ class AdjustingContainer(Container):
 	  - colums - Integer: The number of columns to divide the widgets into.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('colums'),
-									 ]
-	DEFAULT_NUMBER_COLUMS = 3
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('columns'),
+										  ListAttr('alignments'),
+										]
+	DEFAULT_NUMBER_COLUMNS = 3
 	
 	def __init__(self, 
 				 parent = None, 
@@ -69,10 +69,8 @@ class AdjustingContainer(Container):
 				 opaque = None,
 				 margins = None,
 				 _real_widget = None,
-				 colums = None):
-
-		self.real_widget = _real_widget or fifechan.AdjustingContainer()
-		self.colums = self.DEFAULT_NUMBER_COLUMS
+				 columns = None,
+				 alignments = None):
 
 		super(AdjustingContainer,self).__init__(parent=parent, 
 									   name=name, 
@@ -92,10 +90,18 @@ class AdjustingContainer(Container):
 									   border_size=border_size,
 									   position_technique=position_technique,
 									   is_focusable=is_focusable,
-									   comment=comment)
+									   comment=comment,
+									   padding=padding,
+									   background_image=background_image,
+									   opaque=opaque,
+									   margins=margins,
+									   _real_widget = fifechan.AdjustingContainer())
 
-		if colums is not None: self.colums = colums
-		
+		if columns is not None:
+			self.columns = columns
+		else:
+			self.columns = self.DEFAULT_NUMBER_COLUMNS
+				
 	def clone(self, prefix):
 		containerClone = AdjustingContainer(None, 
 						self._createNameWithPrefix(prefix),
@@ -120,20 +126,42 @@ class AdjustingContainer(Container):
 						self.background_image,
 						self.opaque,
 						self.margins,
-						self.colums)
+						self.columns)
 			
 		containerClone.addChildren(self._cloneChildren(prefix))	
 		return containerClone
 		
-	def _setNumberColums(self, number):
+	def _setNumberColumns(self, number):
 		self.real_widget.setNumberOfColumns(number)
-	def _getNumberColums(self):
-		self.real_widget.getNumberOfColumns()
-	colums = property(_getNumberColums, _setNumberColums)
+	def _getNumberColumns(self):
+		self.real_widget.getNumberOfColums()
+	columns = property(_getNumberColumns, _setNumberColumns)
 	
-	def setColumAlignment(self, column, alignment):
+	def _setColumnAlignment(self, column, alignment):
 		self.real_widget.setColumnAlignment(column, alignment)
-	def getColumAlignment(self, column):
+	def _getColumnAlignment(self, column):
 		self.real_widget.getColumAlignment(column)
-		
-		
+	column_alignment = property(_getColumnAlignment, _setColumnAlignment)
+
+	def _setColumnAlignments(self, alignments):
+		i = 0
+		if alignments is not None:
+			for a in alignments:
+				self.real_widget.setColumnAlignment(i, a)
+				i += 1
+		else:
+			cols = columns
+			if cols > 0:
+				while i < cols:
+					self.real_widget.setColumnAlignment(i, 0)
+					i += 1
+	def _getColumnAlignments(self):
+		alignments = []
+		cols = columns
+		if cols > 0:
+			i = 0
+			while i < cols:
+				alignments.append(self.column_alignment(i))
+				i += 1
+		return alignments
+	alignments = property(_getColumnAlignments, _setColumnAlignments)
