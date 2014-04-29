@@ -1,0 +1,21 @@
+<Window title="Circular Box Example" min_size="200, 0">
+	<CBox border_size="0">
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+	</CBox>
+	<Button name="closeButton" text="Close"/>
+</Window>

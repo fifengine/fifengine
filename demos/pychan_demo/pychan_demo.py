@@ -185,6 +185,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Adjusting Container' : PyChanExample('gui/adjustingcontainer.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
 			'Basic Styling' : StylingExample(),
+			'Circular Box' : PyChanExample('gui/circularcontainer.xml'),
 			'Dynamic Widgets' : DynamicExample(),
 			'Sliders' : SliderExample(),
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),

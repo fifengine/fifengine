@@ -150,18 +150,16 @@ class AdjustingContainer(Container):
 				self.real_widget.setColumnAlignment(i, a)
 				i += 1
 		else:
-			cols = columns
-			if cols > 0:
-				while i < cols:
-					self.real_widget.setColumnAlignment(i, 0)
-					i += 1
+			cols = self.columns
+			while i < cols:
+				self.real_widget.setColumnAlignment(i, 0)
+				i += 1
 	def _getColumnAlignments(self):
 		alignments = []
-		cols = columns
-		if cols > 0:
-			i = 0
-			while i < cols:
-				alignments.append(self.column_alignment(i))
-				i += 1
+		cols = self.columns
+		i = 0
+		while i < cols:
+			alignments.append(self.column_alignment(i))
+			i += 1
 		return alignments
 	alignments = property(_getColumnAlignments, _setColumnAlignments)
