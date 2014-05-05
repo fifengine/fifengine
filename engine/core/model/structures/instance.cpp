@@ -801,6 +801,9 @@ namespace FIFE {
 		Action* action = m_activity->m_actionInfo->m_action;
 		delete m_activity->m_actionInfo;
 		m_activity->m_actionInfo = NULL;
+		// this is needed in case the new action is set on the same pump and
+		// it is the same action as the finalized action
+		m_activity->m_action = NULL;
 
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
@@ -834,6 +837,9 @@ namespace FIFE {
 		Action* action = m_activity->m_actionInfo->m_action;
 		delete m_activity->m_actionInfo;
 		m_activity->m_actionInfo = NULL;
+		// this is needed in case the new action is set on the same pump and
+		// it is the same action as the canceled action
+		m_activity->m_action = NULL;
 
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
