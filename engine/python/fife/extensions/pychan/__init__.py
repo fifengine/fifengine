@@ -266,7 +266,7 @@ import widgets.ext
 
 # This *import should really be removed!
 from widgets import *
-
+from widgets.tabbedarea import Tab
 from exceptions import *
 
 from fonts import loadFonts
@@ -365,7 +365,13 @@ class _GuiLoader(object, handler.ContentHandler):
 			self._setAttr(obj,k,v)
 
 		if self.root:
-			self.root.addChild( obj )
+			if isinstance(obj,Tab):
+				if hasattr(self.root,'addTabDefinition'):
+					self.root.addTabDefinition(obj)
+				else:
+					raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
+			else:
+				self.root.addChild( obj )
 		self.root = obj
 
 	def _createSpacer(self,cls,name,attrs):

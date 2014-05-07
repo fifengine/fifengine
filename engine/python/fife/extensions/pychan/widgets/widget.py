@@ -162,6 +162,8 @@ class Widget(object):
 		self._top_added = False
 		self._extra_border = (0,0)
 
+		self.tab = None
+		
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
