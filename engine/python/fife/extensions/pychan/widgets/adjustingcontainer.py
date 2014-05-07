@@ -24,7 +24,7 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import IntAttr, ListAttr
+from fife.extensions.pychan.attrs import IntAttr, IntListAttr
 
 from containers import Container
 
@@ -37,10 +37,11 @@ class AdjustingContainer(Container):
 	==============
 
 	  - colums - Integer: The number of columns to divide the widgets into.
+	  - alignments: The alignment per column.
 	"""
 
 	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('columns'),
-										  ListAttr('alignments'),
+										  IntListAttr('alignments'),
 										]
 	DEFAULT_NUMBER_COLUMNS = 3
 	
@@ -72,6 +73,8 @@ class AdjustingContainer(Container):
 				 columns = None,
 				 alignments = None):
 
+		if _real_widget is None: _real_widget = fifechan.AdjustingContainer()
+		
 		super(AdjustingContainer,self).__init__(parent=parent, 
 									   name=name, 
 									   size=size, 
@@ -95,12 +98,15 @@ class AdjustingContainer(Container):
 									   background_image=background_image,
 									   opaque=opaque,
 									   margins=margins,
-									   _real_widget = fifechan.AdjustingContainer())
+									   _real_widget=_real_widget)
 
 		if columns is not None:
 			self.columns = columns
 		else:
 			self.columns = self.DEFAULT_NUMBER_COLUMNS
+
+		if alignments is not None:
+			self.alignments = alignments
 				
 	def clone(self, prefix):
 		containerClone = AdjustingContainer(None, 
@@ -126,7 +132,8 @@ class AdjustingContainer(Container):
 						self.background_image,
 						self.opaque,
 						self.margins,
-						self.columns)
+						self.columns,
+						self.alignments)
 			
 		containerClone.addChildren(self._cloneChildren(prefix))	
 		return containerClone
@@ -134,13 +141,13 @@ class AdjustingContainer(Container):
 	def _setNumberColumns(self, number):
 		self.real_widget.setNumberOfColumns(number)
 	def _getNumberColumns(self):
-		self.real_widget.getNumberOfColums()
+		self.real_widget.getNumberOfColumns()
 	columns = property(_getNumberColumns, _setNumberColumns)
 	
 	def _setColumnAlignment(self, column, alignment):
 		self.real_widget.setColumnAlignment(column, alignment)
 	def _getColumnAlignment(self, column):
-		self.real_widget.getColumAlignment(column)
+		self.real_widget.getColumnAlignment(column)
 	column_alignment = property(_getColumnAlignment, _setColumnAlignment)
 
 	def _setColumnAlignments(self, alignments):
@@ -163,3 +170,4 @@ class AdjustingContainer(Container):
 			i += 1
 		return alignments
 	alignments = property(_getColumnAlignments, _setColumnAlignments)
+

@@ -392,9 +392,9 @@ namespace fcn {
 		virtual ~AdjustingContainer();
 		
 		virtual void setNumberOfColumns(uint32_t numberOfColumns);
-		virtual uint32_t getNumberOfColums() const;
+		virtual uint32_t getNumberOfColumns() const;
 		virtual void setColumnAlignment(uint32_t column, uint32_t alignment);
-		virtual uint32_t getColumAlignment(uint32_t column) const;
+		virtual uint32_t getColumnAlignment(uint32_t column) const;
 		virtual void adjustContent();
 
 		enum {
@@ -476,25 +476,21 @@ namespace fcn {
 	};
 
 	%feature("notabstract") Tab;
-	class Tab: public Widget {
+	class Tab: public Container {
 	public:
 		Tab();
 		virtual ~Tab();
 		void setTabbedArea(fcn::TabbedArea* tabbedArea);
 		fcn::TabbedArea* getTabbedArea();
-		void setCaption(const std::string& caption);
-		const std::string& getCaption() const;
 	};
 
 	%feature("notabstract") TabbedArea;
 	class TabbedArea: public Widget {
-		//friend class Tab;
 	public:
 		TabbedArea();
 		virtual ~TabbedArea();
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
-		virtual void addTab(const std::string& caption, Widget* widget);
 		virtual void addTab(fcn::Tab* tab, Widget* widget);
 		virtual void removeTabWithIndex(uint32_t index);
 		virtual void removeTab(fcn::Tab* tab);
@@ -505,6 +501,11 @@ namespace fcn {
 		virtual void setSelectedTab(fcn::Tab* tab);
 		virtual uint32_t getSelectedTabIndex() const;
 		fcn::Tab* getSelectedTab() const;
+		void setBaseColor(const Color& color);
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
+		void setLayout(Container::LayoutPolicy policy);
+		Container::LayoutPolicy getLayout() const;
 	};
 }
 

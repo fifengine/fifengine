@@ -53,6 +53,7 @@ namespace FIFE {
 
 	class GuiImageLoader;
 	class Console;
+	class Cursor;
 	class KeyEvent;
 	class MouseEvent;
 	class IFont;
@@ -125,6 +126,18 @@ namespace FIFE {
 			 */
 			Console* getConsole() const { return m_console; };
 
+			/** Sets the cursor.
+			 *
+			 * @param cursor The pointer to the cursor class.
+			 */
+			void setCursor(Cursor* cursor) { m_cursor = cursor; }
+
+			/** Gets the cursor.
+			 *
+			 * @return The pointer to the cursor class.
+			 */
+			Cursor* getCursor() const { return m_cursor; }
+
 			/** Set the global font properties.
 			 */
 			GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
@@ -166,6 +179,8 @@ namespace FIFE {
 			fcn::SDLInput *m_input;
 			// The console.
 			Console       *m_console;
+			// Acess to the Cursor class.
+			Cursor* m_cursor;
 			//The default font
 			GuiFont* m_defaultfont;
 			// The fonts used

@@ -1,0 +1,22 @@
+<ResizableWindow title="Resizable Window Example" min_size="10, 10" max_size="400, 400" size="200, 100">
+	<Label text="ResizableContainer" />
+	<CBox border_size="0">
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+	</CBox>
+	<Button name="closeButton" text="Close"/>
+</ResizableWindow>

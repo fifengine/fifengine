@@ -176,6 +176,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		from colortester import ColorExample
 		from poc_gui_animation import PocAnimations
 		from stretching import StretchingExample
+		from tabbedarea import TabbedAreaExample
 
 		# Our list of examples
 		# We keep a dictionary of these and fill
@@ -191,7 +192,9 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
 			'Colortester': ColorExample(),
 			'GuiAnimations' : PocAnimations(),
+			'Tabbed Area' : TabbedAreaExample(),
 			'Image Stretching' : StretchingExample(),
+			'Resizable Window' : PyChanExample('gui/resizable.xml'),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())

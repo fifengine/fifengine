@@ -27,6 +27,7 @@
 #include "gui/fifechan/widgets/clicklabel.h"
 #include "gui/fifechan/widgets/icon2.h"
 #include "gui/fifechan/widgets/percentagebar.h"
+#include "gui/fifechan/widgets/resizablewindow.h"
 %}
 
 namespace fcn {
@@ -122,6 +123,47 @@ namespace fcn {
 			HORIZONTAL = 0,
 			VERTICAL
 		};
+	};
+
+	%feature("notabstract") ResizableWindow;
+	class ResizableWindow : public Window {
+	public:
+		enum CursorDirections {
+			CURSOR_DIRECTION_L = 0,
+			CURSOR_DIRECTION_R = 1,
+			CURSOR_DIRECTION_T = 2,
+			CURSOR_DIRECTION_B = 5,
+			CURSOR_DIRECTION_LT = 3,
+			CURSOR_DIRECTION_RT = 4,
+			CURSOR_DIRECTION_LB = 6,
+			CURSOR_DIRECTION_RB = 7
+		};
+
+		ResizableWindow();
+		ResizableWindow(bool resizable);
+		ResizableWindow(const std::string& caption, bool resizable=true);
+		virtual ~ResizableWindow();
+		void setResizableBorderDistance(int32_t border);
+		int32_t getResizableBorderDistance() const;
+		void setResizable(bool resizable);
+		bool isResizable() const;
+		void setTopResizable(bool resizable);
+		bool isTopResizable() const;
+		void setRightResizable(bool resizable);
+		bool isRightResizable() const;
+		void setBottomResizable(bool resizable);
+		bool isBottomResizable() const;
+		void setLeftResizable(bool resizable);
+		bool isLeftResizable() const;
+		void setShove(bool shove);
+		bool getShove() const;
+		void set(CursorDirections direction, uint32_t cursor_id=0);
+		void set(CursorDirections direction, FIFE::ImagePtr image);
+		void set(CursorDirections direction, FIFE::AnimationPtr anim);
+		FIFE::MouseCursorType getType(CursorDirections direction) const;
+		uint32_t getId(CursorDirections direction) const;
+		FIFE::ImagePtr getImage(CursorDirections direction);
+		FIFE::AnimationPtr getAnimation(CursorDirections direction);
 	};
 }
 

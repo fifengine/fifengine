@@ -27,27 +27,21 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
 from common import get_manager, gui2text, text2gui
+from containers import Container
 from widget import Widget
 
 
-class Tab(Widget):
+class Tab(Container):
 	"""
-	A basic tab.
-
-	New Attributes
-	==============
-
-
-	Data
-	====
-	The marked status can be read and set via L{distributeData} and L{collectData}
+	A tab widget.
+	It can be used as a container.
 	"""
-	
-	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
+
+	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('content_name'),
+										]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 	DEFAULT_MARGINS = 0
-	DEFAULT_TEXT = u""
 	
 	def __init__(self, 
 				 parent = None, 
@@ -69,69 +63,82 @@ class Tab(Widget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
+				 padding = None,
+				 background_image = None,
+				 opaque = None,
 				 margins = None,
-				 text = None):
-				 
-		self.real_widget = fifechan.Tab()
-		self.margins = self.DEFAULT_MARGINS
-		self.text = self.DEFAULT_TEXT
-		super(Tab,self).__init__(parent=parent, 
-									  name=name, 
-									  size=size, 
-									  min_size=min_size, 
-									  max_size=max_size,
-									  helptext=helptext, 
-									  position=position,
-									  style=style, 
-									  hexpand=hexpand, 
-									  vexpand=vexpand,
-									  font=font,
-									  base_color=base_color,
-									  background_color=background_color,
-									  foreground_color=foreground_color,
-									  selection_color=selection_color,
-									  border_size=border_size,
-									  position_technique=position_technique,
-									  is_focusable=is_focusable,
-									  comment=comment,
-									  margins=margins,
-									  text=text)
+				 _real_widget = None):
 
-		# Prepare Data collection framework
-		if margins is not None: self.margins = margins
-		if text is not None: self.text = text
+		if _real_widget is None: _real_widget = fifechan.Tab()
+		# name of the widget that is associated with this tab
+		self.content_name = None
+		
+		super(Tab,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_size=border_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment,
+								  padding=padding,
+								  background_image=background_image,
+								  opaque=opaque,
+								  margins=margins,
+								  _real_widget=_real_widget)
+		
+	def addTabToWidget(self, widget):
+		if widget.tab is self: return
+		if widget.tab is not None:
+			self.removeTabFromWidget(widget)
+		widget.tab = self
+
+	def removeTabFromWidget(self, widget):
+		if widget.tab == self:
+			widget.tab = None
 
 	def clone(self, prefix):
 		tabClone = Tab(None, 
-						self._createNameWithPrefix(prefix),
-						self.size,
-						self.min_size, 
-						self.max_size, 
-						self.helptext, 
-						self.position, 
-						self.style, 
-						self.hexpand,
-						self.vexpand,
-						self.font,
-						self.base_color,
-						self.background_color,
-						self.foreground_color,
-						self.selection_color,
-						self.border_size,
-						self.position_technique,
-						self.is_focusable,
-						self.comment,
-						self.margins,
-						self.text)
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size, 
+					self.max_size, 
+					self.helptext, 
+					self.position, 
+					self.style, 
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.padding,
+					self.background_image,
+					self.opaque,
+					self.margins)
+					
+		tabClone.addChildren(self._cloneChildren(prefix))
+					
 		return tabClone
 
-	def _getText(self): return gui2text(self.real_widget.getCaption())
-	def _setText(self,text): self.real_widget.setCaption(text2gui(text))
 
-	text = property(_getText,_setText)
-
-
-class TabbedArea(Widget):
+class TabbedArea(Container):
 	"""
 	This is the tabbed area class.
 
@@ -140,15 +147,14 @@ class TabbedArea(Widget):
 
 
 	"""
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('select_tab_index'),
+										  UnicodeAttr('select_tab'),
+										]
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'),
-									   BoolAttr('opaque'),
-									   PointAttr('margins') 
-									 ]
-
-	DEFAULT_OPAQUE = True
-	DEFAULT_MARGINS = 5,5
-	DEFAULT_PADDING = 5
+	DEFAULT_OPAQUE = False
+	DEFAULT_MARGINS = 0,0
+	DEFAULT_PADDING = 0
+	DEFAULT_LAYOUT = 'Horizontal'
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
 	
 	def __init__(self, 
@@ -172,46 +178,44 @@ class TabbedArea(Widget):
 				 is_focusable = None,
 				 comment = None,
 				 padding = None,
+				 background_image = None,
 				 opaque = None,
 				 margins = None,
-				 _real_widget = None):
+				 _real_widget = None,
+				 select_tab_index = None,
+				 select_tab = None):
 
+		if _real_widget is None: _real_widget = fifechan.TabbedArea()
+		
+		super(TabbedArea,self).__init__(parent=parent,
+										name=name,
+										size=size,
+										min_size=min_size,
+										max_size=max_size,
+										helptext=helptext,
+										position=position,
+										style=style,
+										hexpand=hexpand,
+										vexpand=vexpand,
+										font=font,
+										base_color=base_color,
+										background_color=background_color,
+										foreground_color=foreground_color,
+										selection_color=selection_color,
+										border_size=border_size,
+										position_technique=position_technique,
+										is_focusable=is_focusable,
+										comment=comment,
+										padding=padding,
+										background_image=background_image,
+										opaque=opaque,
+										margins=margins,
+										_real_widget=_real_widget)
 
-		self.real_widget = _real_widget or fifechan.TabbedArea()
-		self.tabs = []
-		self.opaque = self.DEFAULT_OPAQUE
-
-		super(TabbedArea,self).__init__(parent=parent, 
-									   name=name, 
-									   size=size, 
-									   min_size=min_size, 
-									   max_size=max_size,
-									   helptext=helptext, 
-									   position=position,
-									   style=style, 
-									   hexpand=hexpand, 
-									   vexpand=vexpand,
-									   font=font,
-									   base_color=base_color,
-									   background_color=background_color,
-									   foreground_color=foreground_color,
-									   selection_color=selection_color,
-									   border_size=border_size,
-									   position_technique=position_technique,
-									   is_focusable=is_focusable,
-									   comment=comment)
-
-		if margins is not None:
-			self.margins = margins
-		else:
-			self.margins = self.DEFAULT_MARGINS
-			
-		if padding is not None:
-			self.padding = padding
-		else:
-			self.DEFAULT_PADDING
-		if opaque is not None: self.opaque = opaque
-
+		self.tab_definitions = {}
+		# only use one
+		if select_tab_index is not None: self.select_tab_index = select_tab_index
+		elif select_tab is not None: self.select_tab = select_tab
 		
 	def clone(self, prefix):
 		tabbedareaClone = TabbedArea(None, 
@@ -236,69 +240,96 @@ class TabbedArea(Widget):
 						self.padding,
 						self.background_image,
 						self.opaque,
-						self.margins)
+						self.margins,
+						select_tab_index)
 			
-		#tabbedareaClone.addTabs(self._cloneChildren(prefix))
+		tabbedareaClone.addChilds(self._cloneChildren(prefix))
 			
 		return tabbedareaClone
 		
 
-	def addTab(self, widget, text=""):
+	def addChild(self, widget):
 		"""
 		Adds a child widget to the container.
 		
 		"""
-		
-		widget.parent = self
+
+		# if the widget have no tabwidget, we try to find one
+		if widget.tab is None:
+			tab = self.getTabDefinition(widget)
+			tab.addTabToWidget(widget)
 			
-		self.tabs.append(widget)
-		self.real_widget.addTab(text2gui(text), widget.real_widget)
+		widget.parent = self
 
+		if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
+			widget.max_size = self.max_size
 
-	def removeTab(self, widget):
-		if not widget in self.tabs:
+		self.children.append(widget)
+
+		# add real tab and real widget
+		self.real_widget.addTab(widget.tab.real_widget, widget.real_widget)
+		# add all to the manager
+		def _add(added_widget):
+			if not added_widget._added:
+				get_manager().addWidget(added_widget)
+			if added_widget._top_added:
+				get_manager().removeTopWidget(added_widget)
+		widget.deepApply(_add)
+
+	def removeChild(self, widget):
+		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct tab widget." % (str(self),str(widget)))
 
+		# remove all from the manager
+		def _remove(removed_widget):
+			if removed_widget._added:
+				get_manager().removeWidget(removed_widget)
+			if removed_widget._top_added:
+				get_manager().removeTopWidget(removed_widget)
+		widget.deepApply(_remove)
 
-		i = self.tabs.index(widget)
+		i = self.children.index(widget)
 		self.real_widget.removeTabWithIndex(i)
-		self.tabs.remove(widget)
+		self.children.remove(widget)
 		widget.parent = None
-			
-	def add(self,*widgets):
-		print "PyChan: Deprecation warning: Please use 'addTab' or 'addTabs' instead."
-		self.addTabs(*widgets)
 
-	def addTabs(self,*widgets):
-		if len(widgets) == 1 and not isinstance(widgets[0],Widget):
-			widgets = widgets[0]
-		for widget in widgets:
-			self.addTab(widget)
+	def addTabDefinition(self, widget):
+		# Only needed because of XML loading
+		# The tab have the content_name that should be equal to
+		# the name of the contained widget
+		self.tab_definitions[widget.content_name] = widget
 
-
-	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
-		if not shown_only:
-			children = self.tabs
+	def getTabDefinition(self, widget):
+		# Only needed because of XML loading
+		# Check if we have a tab that is associated with the widget
+		name = widget.name
+		if name in self.tab_definitions:
+			widget = self.tab_definitions[name]
+			del self.tab_definitions[name]
+			return widget
 		else:
-			children = filter(lambda w: w.real_widget.isVisible(), self.tabs)
+			raise RuntimeError("%s does not have %s in the tab definitions." % (str(self),str(name)))
 		
-		if leaves_first:
-			for child in children:
-				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
-		visitorFunc(self)
-		if not leaves_first:
-			for child in children:
-				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
+	def getNumberOfTabs(self):
+		return self.real_widget.getNumberOfTabs()
 
-
-	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
-	def _getOpaque(self): return self.real_widget.isOpaque()
-	opaque = property(_getOpaque,_setOpaque)
-
-	def _cloneChildren(self, prefix):
-		"""
-		Clones each child and return the clones in a list.
-		"""
-		cloneList = [ child.clone(prefix) for child in self.tabs ]
-		
-		return cloneList
+	def isTabSelected(self, widget):
+		i = self.children.index(widget)
+		return self.real_widget.isTabSelected(i)
+	
+	def _setSelectedTab(self, widget):
+		if isinstance(widget, str):
+			widget = self.findChild(name=widget)
+		if widget is not None:
+			i = self.children.index(widget)
+			self.real_widget.setSelectedTab(i)
+	def _getSelectedTab(self):
+		i = self.real_widget.getSelectedTabIndex()
+		return self.children[i]
+	select_tab = property(_getSelectedTab, _setSelectedTab)
+	
+	def _setSelectedTabIndex(self, index):
+		self.real_widget.setSelectedTab(index)
+	def _getSelectedTabIndex(self):
+		return self.real_widget.getSelectedTabIndex()
+	select_tab_index = property(_getSelectedTabIndex, _setSelectedTabIndex)
