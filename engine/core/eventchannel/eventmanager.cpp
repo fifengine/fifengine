@@ -518,9 +518,6 @@ namespace FIFE {
 			}
 
 		}
-		if (dispatchSdlEvent(event)) {
-			return;
-		}
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -530,6 +527,9 @@ namespace FIFE {
 			m_mostrecentbtn = mouseevt.getButton();
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
+		}
+		if (dispatchSdlEvent(event)) {
+			return;
 		}
 		// fire scrollwheel events only once
 		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
