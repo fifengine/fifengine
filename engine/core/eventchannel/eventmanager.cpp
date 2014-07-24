@@ -80,7 +80,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addCommandListenerFront(ICommandListener* listener) {
-		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
+		addListener<ICommandListener*>(m_pending_commandlisteners_front, listener);
 	}
 
 	void EventManager::removeCommandListener(ICommandListener* listener) {
@@ -104,7 +104,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addMouseListenerFront(IMouseListener* listener) {
-		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
+		addListener<IMouseListener*>(m_pending_mouselisteners_front, listener);
 	}
 
 	void EventManager::removeMouseListener(IMouseListener* listener) {
@@ -116,7 +116,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addSdlEventListenerFront(ISdlEventListener* listener) {
-		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
+		addListener<ISdlEventListener*>(m_pending_sdleventlisteners_front, listener);
 	}
 
 	void EventManager::removeSdlEventListener(ISdlEventListener* listener) {
