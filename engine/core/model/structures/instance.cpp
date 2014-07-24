@@ -216,6 +216,7 @@ namespace FIFE {
 		m_mainMultiInstance(NULL) {
 		// create multi object instances
 		if (object->isMultiObject()) {
+			m_mainMultiInstance = this;
 			uint32_t count = 0;
 			Layer* layer = m_location.getLayer();
 			const ExactModelCoordinate& emc = m_location.getExactLayerCoordinatesRef();
