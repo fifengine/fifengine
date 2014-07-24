@@ -212,7 +212,8 @@ namespace FIFE {
 		m_cellStackPos(object->getCellStackPosition()),
 		m_specialCost(object->isSpecialCost()),
 		m_cost(object->getCost()),
-		m_costId(object->getCostId()) {
+		m_costId(object->getCostId()),
+		m_mainMultiInstance(NULL) {
 		// create multi object instances
 		if (object->isMultiObject()) {
 			uint32_t count = 0;
@@ -234,6 +235,7 @@ namespace FIFE {
 					InstanceVisual::create(instance);
 					m_multiInstances.push_back(instance);
 					instance->addDeleteListener(this);
+					instance->setMainMultiInstance(this);
 				}
 			}
 		}
@@ -258,6 +260,7 @@ namespace FIFE {
 			std::vector<Instance*>::iterator it = m_multiInstances.begin();
 			for (; it != m_multiInstances.end(); ++it) {
 				(*it)->removeDeleteListener(this);
+				(*it)->setMainMultiInstance(NULL);
 			}
 		}
 
@@ -566,6 +569,14 @@ namespace FIFE {
 
 	const std::vector<Instance*>& Instance::getMultiInstances() {
 		return m_multiInstances;
+	}
+
+	void Instance::setMainMultiInstance(Instance* main) {
+		m_mainMultiInstance = main;
+	}
+
+	Instance* Instance::getMainMultiInstance() {
+		return m_mainMultiInstance;
 	}
 
 	void Instance::actOnce(const std::string& actionName, const Location& direction) {

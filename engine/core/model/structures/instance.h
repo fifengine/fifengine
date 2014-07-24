@@ -463,6 +463,14 @@ namespace FIFE {
 		 */
 		const std::vector<Instance*>& getMultiInstances();
 
+		/** Sets a instance to the main multi instance of this instance.
+		 */
+		void setMainMultiInstance(Instance* main);
+
+		/** Returns a pointer to the main mulit instance or Null if the instance is not part of a multi instance object.
+		 */
+		Instance* getMainMultiInstance();
+
 		/** Adds new static color overlay with given angle (degrees).
 		 */
 		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
@@ -621,6 +629,8 @@ namespace FIFE {
 		std::string m_costId;
 		//! vector that holds all multi instances
 		std::vector<Instance*> m_multiInstances;
+		//! pointer to the main multi instance
+		Instance* m_mainMultiInstance;
 
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);

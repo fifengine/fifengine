@@ -154,6 +154,9 @@ namespace FIFE {
 		bool isSpecialSpeed();
 
 		bool isMultiCell();
+		bool isMultiObject();
+		const std::vector<Instance*>& getMultiInstances();
+		Instance* getMainMultiInstance();
 
 		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
 		OverlayColors* getStaticColorOverlay(int32_t angle);
