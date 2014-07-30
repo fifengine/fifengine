@@ -366,8 +366,16 @@ namespace FIFE {
 	}
 
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
+		// this is only a bit faster, but works without this block too.
 		if(!m_layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
+			std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
+			for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
+				Entry* entry = m_entries[*entry_it];
+				entry->forceUpdate = false;
+				entry->visible = false;
+			}
+			m_entriesToUpdate.clear();
 			renderlist.clear();
 			return;
 		}
@@ -575,8 +583,8 @@ namespace FIFE {
 				}
 			}
 			item->transparency = 255 - instanceTrans;
-			// only visible if visual is visible and item is not totally transparent
-			entry->visible = (visual->isVisible() && item->transparency != 0);
+			// only visible if visual and layer are visible and item is not totally transparent
+			entry->visible = (visual->isVisible() && item->transparency != 0) && m_layer->areInstancesVisible();
 		}
 		// delete old overlay
 		item->deleteOverlayData();
