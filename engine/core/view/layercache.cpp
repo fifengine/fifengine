@@ -174,6 +174,7 @@ namespace FIFE {
 	LayerCache::LayerCache(Camera* camera) {
 		m_camera = camera;
 		m_layer = 0;
+		m_layerObserver = 0;
 		m_tree = 0;
 		m_zMin = 0.0;
 		m_zMax = 0.0;

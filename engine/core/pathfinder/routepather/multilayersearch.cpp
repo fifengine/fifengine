@@ -435,7 +435,6 @@ namespace FIFE {
 		std::vector<int32_t> sf(max_index, -1);
 		// costs
 		std::vector<double> costs(max_index, 0.0);
-		int32_t next = 0;
 		bool found = false;
 		while (!found) {
 			if (sortedfrontier.empty()) {
@@ -443,7 +442,7 @@ namespace FIFE {
 			}
 			PriorityQueue<int32_t, double>::value_type topvalue = sortedfrontier.getPriorityElement();
 			sortedfrontier.popElement();
-			next = topvalue.first;
+			int32_t next = topvalue.first;
 			spt[next] = sf[next];
 			// found destination zone
 			if (targetZone == next) {

@@ -100,9 +100,11 @@ namespace FIFE {
 		m_model(0),
 		m_logmanager(0),
 		m_cursor(0),
+		m_destroyed(false),
 		m_settings(),
 		m_devcaps(),
 		m_offrenderer(0),
+		m_targetrenderer(0),
 		m_changelisteners() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
