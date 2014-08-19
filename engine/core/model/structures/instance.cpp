@@ -817,6 +817,12 @@ namespace FIFE {
 		// it is the same action as the finalized action
 		m_activity->m_action = NULL;
 
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->finalizeAction();
+			}
+		}
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
 			if(*i)
@@ -828,13 +834,6 @@ namespace FIFE {
 				m_activity->m_actionListeners.end(),
 				(InstanceActionListener*)NULL),
 			m_activity->m_actionListeners.end());
-
-		if (isMultiObject()) {
-			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
-			for (; multi_it != m_multiInstances.end(); ++multi_it) {
-				(*multi_it)->finalizeAction();
-			}
-		}
 	}
 
 	void Instance::cancelAction() {
@@ -853,6 +852,12 @@ namespace FIFE {
 		// it is the same action as the canceled action
 		m_activity->m_action = NULL;
 
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->cancelAction();
+			}
+		}
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
 			if(*i)
@@ -864,13 +869,6 @@ namespace FIFE {
 				m_activity->m_actionListeners.end(),
 				(InstanceActionListener*)NULL),
 			m_activity->m_actionListeners.end());
-
-		if (isMultiObject()) {
-			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
-			for (; multi_it != m_multiInstances.end(); ++multi_it) {
-				(*multi_it)->cancelAction();
-			}
-		}
 	}
 
 	Action* Instance::getCurrentAction() const {
