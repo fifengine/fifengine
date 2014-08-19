@@ -530,11 +530,11 @@ namespace FIFE {
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
-		bool dispatchAsSdl = dispatchSdlEvent(event);
-		if (dispatchAsSdl && m_mousefilter ) {
-			dispatchAsSdl = !m_mousefilter->isFiltered(mouseevt);
+		bool consumed = dispatchSdlEvent(event);
+		if (consumed && m_mousefilter) {
+			consumed = !m_mousefilter->isFiltered(mouseevt);
 		}
-		if (dispatchAsSdl) {
+		if (consumed) {
 			return;
 		}
 		// fire scrollwheel events only once
