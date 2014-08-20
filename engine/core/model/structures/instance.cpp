@@ -64,16 +64,12 @@ namespace FIFE {
 			m_delete_route(true) {}
 
 		~ActionInfo() {
-			if (m_route) {
+			if (m_route && m_delete_route) {
 				int32_t sessionId = m_route->getSessionId();
 				if (sessionId != -1) {
 					m_pather->cancelSession(sessionId);
 				}
-				if (m_delete_route) {
-					delete m_route;
-				} else {
-					m_route->setSessionId(-1);
-				}
+				delete m_route;
 			}
 			delete m_target;
 		}

@@ -311,7 +311,7 @@ namespace FIFE {
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 
 		/** Performs given named action to the instance. While performing the action
-		 *  follows given route with given speed. Note: In this case route isn't deleted at the end.
+		 *  follows given route with given speed. Note: In this case route isn't deleted or resetted at the end.
 		 *  @param actionName name of the action
 		 *  @param route followed route
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
