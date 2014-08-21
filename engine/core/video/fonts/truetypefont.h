@@ -77,13 +77,6 @@ namespace FIFE {
 
 		protected:
 			TTF_Font *mFont;
-
-			int32_t mHeight;
-			int32_t mGlyphSpacing;
-			int32_t mRowSpacing;
-
-			std::string mFilename;
-			bool mAntiAlias;
 	};
 }
 

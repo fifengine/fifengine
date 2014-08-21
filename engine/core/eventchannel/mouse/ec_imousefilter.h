@@ -19,30 +19,37 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
+#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+
 // Standard C++ library includes
+//
 
 // 3rd party library includes
+//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-
+//
+#include "ec_mouseevent.h"
 
 namespace FIFE {
-static Logger _log(LM_EXCEPTION);
+	/**  Controller provides a way to receive events from the system
+	 * Using this interface, clients can subscribe themselves to receive events
+	 */
+	class IMouseFilter {
+	public:
 
-	Exception::Exception(const std::string& msg): std::runtime_error(msg), m_what(msg) {
-	}
+		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
+		 * @param event They mouse event.
+		 */
+		virtual bool isFiltered(const MouseEvent& event) = 0;
 
-	Exception::~Exception() throw() {}
+		virtual ~IMouseFilter() {}
+	};
 
-	const char* Exception::what() const throw() {
-		return m_what.c_str();
-	}
+} //FIFE
 
-	void Exception::update() {
-		m_what = "_[" + getTypeStr() + "]_ , " + getDescription() + " :: " + m_what;
-	}
-}//FIFE
+#endif

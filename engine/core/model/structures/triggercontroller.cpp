@@ -99,7 +99,7 @@ namespace FIFE {
 
 	Trigger* TriggerController::createTrigger(const std::string& triggerName, const Location& loc) {
 		assert(loc.getLayer());
-		assert(layer->getCellCache());
+		assert(loc.getLayer()->getCellCache());
 
 		Trigger* trigger = createTrigger(triggerName);
 		trigger->assign(loc.getLayer(), loc.getLayerCoordinates());

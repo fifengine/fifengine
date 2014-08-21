@@ -49,7 +49,6 @@ namespace FIFE {
 		m_ignoreDynamicBlockers = route->isDynamicBlockerIgnored();
 		if (m_multicell) {
 			Location loc = route->getStartNode();
-			std::vector<Cell*> cells;
 			std::vector<ModelCoordinate> coords = route->getOccupiedArea();
 			std::vector<ModelCoordinate>::const_iterator co_it = coords.begin();
 			for (; co_it != coords.end(); ++co_it) {

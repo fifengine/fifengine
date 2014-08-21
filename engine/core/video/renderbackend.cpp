@@ -47,6 +47,7 @@ namespace FIFE {
 		m_isDepthBuffer(false),
 		m_alphaValue(0.3),
 		m_isframelimit(false),
+		m_frame_start(0),
 		m_framelimit(60) {
 
 		m_isbackgroundcolor = false;

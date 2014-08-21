@@ -78,6 +78,7 @@ namespace FIFE {
 		g(0),
 		b(0),
 		width(1),
+		threshold(1),
 		dirty(false),
 		curimg(NULL),
 		renderer(r) {

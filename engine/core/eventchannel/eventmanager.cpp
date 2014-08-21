@@ -34,6 +34,7 @@
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeyfilter.h"
+#include "eventchannel/mouse/ec_imousefilter.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/command/ec_command.h"
 #include "video/renderbackend.h"
@@ -50,6 +51,7 @@ namespace FIFE {
 		m_sdleventlisteners(),
 		m_keystatemap(),
 		m_keyfilter(0),
+		m_mousefilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY),
 		m_mousesensitivity(0.0),
@@ -80,7 +82,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addCommandListenerFront(ICommandListener* listener) {
-		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
+		addListener<ICommandListener*>(m_pending_commandlisteners_front, listener);
 	}
 
 	void EventManager::removeCommandListener(ICommandListener* listener) {
@@ -104,7 +106,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addMouseListenerFront(IMouseListener* listener) {
-		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
+		addListener<IMouseListener*>(m_pending_mouselisteners_front, listener);
 	}
 
 	void EventManager::removeMouseListener(IMouseListener* listener) {
@@ -116,7 +118,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addSdlEventListenerFront(ISdlEventListener* listener) {
-		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
+		addListener<ISdlEventListener*>(m_pending_sdleventlisteners_front, listener);
 	}
 
 	void EventManager::removeSdlEventListener(ISdlEventListener* listener) {
@@ -518,9 +520,6 @@ namespace FIFE {
 			}
 
 		}
-		if (dispatchSdlEvent(event)) {
-			return;
-		}
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -530,6 +529,13 @@ namespace FIFE {
 			m_mostrecentbtn = mouseevt.getButton();
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
+		}
+		bool consumed = dispatchSdlEvent(event);
+		if (consumed && m_mousefilter) {
+			consumed = !m_mousefilter->isFiltered(mouseevt);
+		}
+		if (consumed) {
+			return;
 		}
 		// fire scrollwheel events only once
 		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
@@ -628,6 +634,10 @@ namespace FIFE {
 
 	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
 		m_keyfilter = keyFilter;
+	}
+
+	void EventManager::setMouseFilter(IMouseFilter* mouseFilter) {
+		m_mousefilter = mouseFilter;
 	}
 
 	void EventManager::setMouseSensitivity(float sensitivity) {
