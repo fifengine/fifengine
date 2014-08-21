@@ -42,7 +42,7 @@ function install_fifechan() {
     echo -e "\e[1;33mInstalling fifechan...\e[0m"
     echo
 
-    git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git -b pychan_port
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     cd fifechan
     cmake .
