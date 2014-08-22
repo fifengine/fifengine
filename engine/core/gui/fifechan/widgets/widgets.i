@@ -28,6 +28,8 @@
 #include "gui/fifechan/widgets/icon2.h"
 #include "gui/fifechan/widgets/percentagebar.h"
 #include "gui/fifechan/widgets/resizablewindow.h"
+#include "gui/fifechan/widgets/dockarea.h"
+#include "gui/fifechan/widgets/panel.h"
 %}
 
 namespace fcn {
@@ -164,6 +166,44 @@ namespace fcn {
 		uint32_t getId(CursorDirections direction) const;
 		FIFE::ImagePtr getImage(CursorDirections direction);
 		FIFE::AnimationPtr getAnimation(CursorDirections direction);
+	};
+
+	%feature("notabstract") DockArea;
+	class DockArea : public ResizableWindow {
+	public:
+		DockArea();
+		DockArea(bool active);
+		virtual ~DockArea();
+
+		void setActiveDockArea(bool active);
+		bool isActiveDockArea() const;
+		void setTopSide(bool side);
+		bool isTopSide() const;
+		void setRightSide(bool side);
+		bool isRightSide() const;
+		void setBottomSide(bool side);
+		bool isBottomSide() const;
+		void setLeftSide(bool side);
+		bool isLeftSide() const;
+		void dockWidget(Widget* widget);
+		void undockWidget(Widget* widget);
+		void setHighlighted(bool highlighted);
+		bool isHighlighted() const;
+		void setHighlightColor(const Color& color);
+		const Color& getHighlightColor() const;
+	};
+
+	%feature("notabstract") Panel;
+	class Panel : public ResizableWindow {
+	public:
+		Panel();
+		Panel(bool dockable);
+		virtual ~Panel();
+        
+		void setDockable(bool dockable);
+		bool isDockable() const;
+		void setDocked(bool docked);
+		bool isDocked() const;
 	};
 }
 

@@ -24,7 +24,7 @@
 from fife import fifechan
 
 from widget import Widget
-
+from fife.extensions.pychan.attrs import PointAttr
 
 class Spacer(Widget):
 	"""
@@ -33,6 +33,10 @@ class Spacer(Widget):
 	In a XML file you can get this by adding a <Spacer /> inside a VBox or
 	HBox element (Windows implicitly are VBox elements).
 	"""
+
+	ATTRIBUTES = Widget.ATTRIBUTES + [ PointAttr('fixed_size'),
+									   ]
+	
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
 	

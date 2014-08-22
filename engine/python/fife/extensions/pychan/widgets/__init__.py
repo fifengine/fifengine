@@ -50,6 +50,8 @@ from percentagebar import PercentageBar
 from passwordfield import PasswordField
 from iconprogressbar import IconProgressBar
 from resizablewindow import ResizableWindow
+from dockarea import DockArea
+from panel import Panel
 
 # Global Widget Class registry
 
@@ -65,6 +67,8 @@ WIDGETS = {
 	"TabbedArea" : TabbedArea,
 	"Tab" : Tab,
 	"ResizableWindow" : ResizableWindow,
+	"DockArea" : DockArea,
+	"Panel" : Panel,
 
 	# Simple Widgets
 	"Spacer" : Spacer,

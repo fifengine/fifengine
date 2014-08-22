@@ -72,6 +72,7 @@ namespace fcn {
 	public:
 /* 		Widget(); */
 /* 		virtual ~Widget(); */
+		virtual Widget* getParent() const;
 		virtual void setWidth(int32_t width);
 		virtual int32_t getWidth() const;
 		virtual void setHeight(int32_t height);
