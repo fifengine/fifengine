@@ -31,6 +31,12 @@ namespace fcn {
 	class MouseListener;
 	class KeyListener;
 
+	inline const char* getVersion();
+	inline int getMajor();
+	inline int getMinor();
+	inline int getPatch();
+	inline const char* getHash();
+
 	%nodefaultctor;
 	class Graphics {
 	public:

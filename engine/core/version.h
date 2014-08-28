@@ -35,6 +35,18 @@
 	#define FIFE_PATCH_VERSION 0
 #endif
 
+/** These version numbers define the required Fifechan.
+ */
+#ifndef FCN_REQUIRED_MAJOR_VERSION
+	#define FCN_REQUIRED_MAJOR_VERSION 0
+#endif
+#ifndef FCN_REQUIRED_MINOR_VERSION
+	#define FCN_REQUIRED_MINOR_VERSION 2
+#endif
+#ifndef FCN_REQUIRED_PATCH_VERSION
+	#define FCN_REQUIRED_PATCH_VERSION 0
+#endif
+
 /** Types
  *  0 = none (pre-release info is not appended to the version in this case)
  *  1 = alpha

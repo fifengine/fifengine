@@ -89,6 +89,43 @@ def checkConf(context, name):
 	configcall = '%s --libs --cflags' %binary
 	return tryConfigCommand(context, configcall)
 
+def checkFifechanVersion(context, version):
+	# ret 2 means equal, 1 is newer, 0 is older
+	ver = version.split('.')
+	# equal version check
+	ret = context.TryCompile("""
+		#include <fifechan.hpp>
+		
+		#ifndef FCN_VERSION_HPP
+		#error "Unsupported Fifechan!"
+		#endif
+		#if FCN_MAJOR_VERSION != %d || FCN_MINOR_VERSION != %d || FCN_PATCH_VERSION != %d
+		#error "Unsupported Fifechan!"
+		#endif
+		
+		int main() {
+			return 0;
+		}
+		""" %(int(ver[0]), int(ver[1]), int(ver[2])), '.cpp')
+	if ret:
+		ret = 2
+	else:
+		# older version check
+		int_version = int(ver[0])*10000 + int(ver[1])*100 + int(ver[2])
+		ret = context.TryCompile("""
+			#include <fifechan.hpp>
+			
+			#if (FCN_MAJOR_VERSION*10000 + FCN_MINOR_VERSION*100 + FCN_PATCH_VERSION) < %d
+			#error "Unsupported Fifechan!"
+			#endif
+			
+			int main() {
+				return 0;
+			}
+			""" %int_version, '.cpp')
+	
+	return ret
+	
 def filter_by_dir(dirfilters, files):
 	result = []
 	for f in files:
@@ -155,6 +192,24 @@ def get_fife_git_hash(path):
 		return hashf.strip()
 	
 	return fifehash
+
+def get_required_fifechan_version(srcpath):
+	MAJOR_VERSION_PATTERN = re.compile(r"#define\s+FCN_REQUIRED_MAJOR_VERSION\s+(.*)")
+	MINOR_VERSION_PATTERN = re.compile(r"#define\s+FCN_REQUIRED_MINOR_VERSION\s+(.*)")
+	PATCH_VERSION_PATTERN = re.compile(r"#define\s+FCN_REQUIRED_PATCH_VERSION\s+(.*)")
+
+	patterns = [MAJOR_VERSION_PATTERN,
+				MINOR_VERSION_PATTERN,
+				PATCH_VERSION_PATTERN]
+	
+	source = open(os.path.join(srcpath, 'version.h'), 'r').read()
+	versionInfo = []
+	for pattern in patterns:
+		match = pattern.search(source)
+		if match:
+			versionInfo.append(match.group(1).strip())
+			
+	return '.'.join(versionInfo)
 
 #checks the users PATH environment variable for a executable program and 
 #returns the full path
