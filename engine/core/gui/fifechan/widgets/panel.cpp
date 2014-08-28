@@ -195,6 +195,15 @@ namespace fcn {
 		}
 	}
 
+	void Panel::expandContent(bool recursiv) {
+		ResizableWindow::resizeToContent(recursiv);
+		if (!m_expanded) {
+			// shrink to titlebar height
+			setHeight(2*getBorderSize() + getTitleBarHeight());
+			setInnerBorderSize(0);
+		}
+	}
+
 	void Panel::mouseEntered(MouseEvent& mouseEvent) {
 		ResizableWindow::mouseEntered(mouseEvent);
 	}

@@ -65,6 +65,7 @@ namespace fcn {
 		// Inherited from ResizableWindow
 
 		virtual void resizeToContent(bool recursiv=true);
+		virtual void expandContent(bool recursiv=true);
 
 		// Inherited from ResizableWindow / FocusListener
 	
