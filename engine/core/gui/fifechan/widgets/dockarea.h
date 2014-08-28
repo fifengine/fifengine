@@ -102,6 +102,7 @@ namespace fcn {
 
 	protected:
 		void repositionDockAreas();
+		void keepInBounds();
 
 		bool m_activeDockArea;
 
@@ -114,7 +115,6 @@ namespace fcn {
 
 		Color m_highlightColor;
 		Color m_savedColor;
-		Rectangle m_oldDimension;
 	};
 }
 

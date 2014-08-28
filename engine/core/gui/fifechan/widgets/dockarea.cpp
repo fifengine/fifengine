@@ -135,31 +135,13 @@ namespace fcn {
 	void DockArea::dockWidget(Widget* widget) {
 		add(widget);
 		repositionWidget(widget);
-		Rectangle oldDimension = getDimension();
 		adaptLayout(false);
-		if (isRightSide()) {
-			int32_t wDiff = oldDimension.width - getWidth();
-			setX(oldDimension.x + wDiff);
-		} else if (isBottomSide()) {
-			int32_t hDiff = oldDimension.height - getHeight();
-			setY(oldDimension.y + hDiff);
-		}
-		repositionDockAreas();
 		requestMoveToTop();
 	}
 
 	void DockArea::undockWidget(Widget* widget) {
 		remove(widget);
-		Rectangle oldDimension = getDimension();
 		adaptLayout(false);
-		if (isRightSide()) {
-			int32_t wDiff = oldDimension.width - getWidth();
-			setX(oldDimension.x + wDiff);
-		} else if (isBottomSide()) {
-			int32_t hDiff = oldDimension.height - getHeight();
-			setY(oldDimension.y + hDiff);
-		}
-		repositionDockAreas();
 	}
 
 	void DockArea::setHighlighted(bool highlighted) {
@@ -262,6 +244,7 @@ namespace fcn {
 				if (!tmp) {
 					continue;
 				}
+				tmp->keepInBounds();
 				if (tmp->isTopSide()) {
 					top = tmp;
 				} else if (tmp->isRightSide()) {
@@ -325,20 +308,81 @@ namespace fcn {
 		}
 	}
 
+	void DockArea::keepInBounds() {
+		Widget* parent = getParent();
+		if (!parent) {
+			return;
+		}
+		Rectangle childArea = parent->getChildrenArea();
+		Rectangle childDim = getDimension();
+		if (childDim.x < 0) {
+			setX(0);
+		}
+		if (childDim.y < 0) {
+			setY(0);
+		}
+		
+		if (m_topSide) {
+			if ((childDim.y + childDim.height) > childArea.height) {
+				setHeight(childArea.height - childDim.y);
+			}
+		} else if (m_rightSide) {
+			if ((childDim.x + childDim.width) > childArea.width) {
+				if (childDim.width > childArea.width) {
+					setX(0);
+					setWidth(childArea.width);
+				} else {
+					setX(childArea.width - childDim.width);
+				}
+			}
+		} else if (m_bottomSide) {
+			if ((childDim.y + childDim.height) > childArea.height) {
+				if (childDim.height > childArea.height) {
+					setY(0);
+					setHeight(childArea.height);
+				} else {
+					setY(childArea.height - childDim.height);
+				}
+			}
+		} else if (m_leftSide) {
+			if ((childDim.x + childDim.width) > childArea.width) {
+				setWidth(childArea.width - childDim.x);
+			}
+		}
+	}
+
 	void DockArea::resizeToContent(bool recursiv) {
+		Rectangle oldDimension = getDimension();
 		if (m_resizing) {
 			ResizableWindow::resizeToContent(recursiv);
 		} else {
 			Window::resizeToContent(recursiv);
 		}
+		if (isRightSide()) {
+			int32_t wDiff = oldDimension.width - getWidth();
+			setX(oldDimension.x + wDiff);
+		} else if (isBottomSide()) {
+			int32_t hDiff = oldDimension.height - getHeight();
+			setY(oldDimension.y + hDiff);
+		}
+		repositionDockAreas();
 	}
 
 	void DockArea::expandContent(bool recursiv) {
+		Rectangle oldDimension = getDimension();
 		if (m_resizing) {
 			ResizableWindow::expandContent(recursiv);
 		} else {
 			Window::expandContent(recursiv);
 		}
+		if (isRightSide()) {
+			int32_t wDiff = oldDimension.width - getWidth();
+			setX(oldDimension.x + wDiff);
+		} else if (isBottomSide()) {
+			int32_t hDiff = oldDimension.height - getHeight();
+			setY(oldDimension.y + hDiff);
+		}
+		repositionDockAreas();
 	}
 
 	void DockArea::mouseEntered(MouseEvent& mouseEvent) {
@@ -350,23 +394,14 @@ namespace fcn {
 	}
 
 	void DockArea::mousePressed(MouseEvent& mouseEvent) {
-		m_oldDimension = getDimension();
 		ResizableWindow::mousePressed(mouseEvent);
 	}
 
 	void DockArea::mouseReleased(MouseEvent& mouseEvent) {
-		if (m_resizing) {
-			if (m_rightSide || m_bottomSide) {
-				ResizableWindow::mouseReleased(mouseEvent);
-				if (m_rightSide) {
-					setX(m_oldDimension.x);
-				} else {
-					setY(m_oldDimension.y);
-				}
-				return;
-			}
-		}
 		ResizableWindow::mouseReleased(mouseEvent);
+		if (m_resizing) {
+			repositionDockAreas();
+		}
 	}
 
 	void DockArea::mouseMoved(MouseEvent& mouseEvent) {
@@ -375,6 +410,9 @@ namespace fcn {
 	
 	void DockArea::mouseDragged(MouseEvent& mouseEvent) {
 		ResizableWindow::mouseDragged(mouseEvent);
+		if (m_resizing) {
+			repositionDockAreas();
+		}
 	}
 
 	void DockArea::focusLost(const Event& event) {

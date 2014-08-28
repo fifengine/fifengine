@@ -319,8 +319,8 @@ namespace fcn {
 
 	void ResizableWindow::mouseReleased(MouseEvent& mouseEvent) {
 		if (m_resizing) {
-			m_resizing = false;
 			adaptLayout();
+			m_resizing = false;
 			if (mouseEvent.getX() <= 0 || mouseEvent.getX() >= getWidth() ||
 				mouseEvent.getY() <= 0 || mouseEvent.getY() >= getHeight()) {
 					mouseExited(mouseEvent);
@@ -332,7 +332,7 @@ namespace fcn {
 	}
 
 	void ResizableWindow::mouseMoved(MouseEvent& mouseEvent) {
-		if (m_resizable) {
+		if (m_resizable && !m_resizing) {
 			// use the CursorDirections directly
 			uint32_t index = 0;
 			index += (m_resizableLeft && mouseEvent.getX() < m_borderDistance) ? 1 : 0;
@@ -371,10 +371,18 @@ namespace fcn {
 			int x = mouseEvent.getX();
 			int y = mouseEvent.getY();
 			if (m_resizeLeft) {
-				int w = getWidth() - x;
-				setWidth(w);
-				if (w == getWidth() || m_shove) {
+				int oldW = getWidth();
+				int newW = oldW - x;
+				if (newW < 0) {
+					newW = 0;
+				}
+				setWidth(newW);
+				if (m_shove) {
 					setX(getX() + x);
+				} else {
+					newW = getWidth();
+					int newX = oldW - newW;
+					setX(getX() + newX);
 				}
 			} else if (m_resizeRight) {
 				setWidth(x);
@@ -384,10 +392,18 @@ namespace fcn {
 			}
 
 			if (m_resizeTop) {
-				int h = getHeight() - y;
-				setHeight(h);
-				if (h == getHeight() || m_shove) {
+				int oldH = getHeight();
+				int newH = oldH - y;
+				if (newH < 0) {
+					newH = 0;
+				}
+				setHeight(newH);
+				if (m_shove) {
 					setY(getY() + y);
+				} else {
+					newH = getHeight();
+					int newY = oldH - newH;
+					setY(getY() + newY);
 				}
 			} else if (m_resizeBottom) {
 				setHeight(y);
