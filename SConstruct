@@ -153,7 +153,9 @@ AddOption('--disable-githash',
 #**************************************************************************
 #save command line options here
 #**************************************************************************
-extra_libs = dict()	
+extra_libs = dict()
+optional_libs = dict()
+required_headers = dict()	
 
 if GetOption('enable-debug'):
 	debug = 1
@@ -348,9 +350,9 @@ def checkForLibs(env, liblist, required=1, language='c++'):
 #check the existence of required libraries and headers
 #**************************************************************************
 required_libs = platformConfig.getRequiredLibs(extra_libs)
-optional_libs = platformConfig.getOptionalLibs(opengl)
+optional_libs = platformConfig.getOptionalLibs(optional_libs)
 
-required_headers = platformConfig.getRequiredHeaders(opengl)
+required_headers = platformConfig.getRequiredHeaders(required_headers)
 
 # do not run the check for dependencies if you are running
 # a clean or building the external dependencies
