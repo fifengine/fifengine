@@ -83,7 +83,6 @@ namespace fcn {
 				m_docked = true;
 				m_dockedArea = m_foundDockArea;
 				m_foundDockArea = NULL;
-				m_docked = docked;
 			} else if (!docked && isDocked()) {
 				// remove from DockArea
 				m_dockedArea->undockWidget(this);
@@ -161,9 +160,30 @@ namespace fcn {
 				if (widgets.size() > 0) {
 					std::list<Widget*>::iterator it = widgets.begin();
 					for (; it != widgets.end(); ++it) {
+						// check if the Widget is a DockArea
 						DockArea* tmp = dynamic_cast<DockArea*>(*it);
 						if (!tmp) {
-							continue;
+							// check if the Widget contains a DockArea
+							std::list<Widget*> deepWidgets = (*it)->getWidgetsIn((*it)->getChildrenArea());
+							if (deepWidgets.size() > 0) {
+								Rectangle dim = getDimension();
+								getAbsolutePosition(dim.x, dim.y);
+								std::list<Widget*>::iterator dit = deepWidgets.begin();
+								for (; dit != deepWidgets.end(); ++dit) {
+									tmp = dynamic_cast<DockArea*>(*dit);
+									if (tmp) {
+										Rectangle tdim = (*dit)->getDimension();
+										(*dit)->getAbsolutePosition(tdim.x, tdim.y);
+										if (dim.isIntersecting(tdim)) {
+											break;
+										}
+										tmp = NULL;
+									}
+								}
+							}
+							if (!tmp) {
+								continue;
+							}
 						}
 						newDockArea = tmp;
 						break;

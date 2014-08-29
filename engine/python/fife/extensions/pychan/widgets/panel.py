@@ -121,6 +121,7 @@ class Panel(ResizableWindow):
 
 		self.capture(self.mouseReleased, "mouseReleased", "Panel")
 		self._docked = False
+		self.old_parent = self.parent
 
 	def clone(self, prefix):
 		windowClone = Panel(None, 
@@ -171,11 +172,17 @@ class Panel(ResizableWindow):
 					self.parent.children.remove(self)
 
 				if self._docked:
-					children = self.parent.children
+					self.old_parent = self.parent
 					real_parent = self.real_widget.getParent()
+					children = []
+					def _fetch(shown_widget):
+						if shown_widget not in children:
+							children.append(shown_widget)
+					self.parent.deepApply(_fetch)
 				else:
-					children = [self.parent.parent,]
-					real_parent = self.parent.real_widget.getParent()
+					# always undock to orig parent
+					children = [self.old_parent, ]
+					real_parent = self.real_widget.getParent()
 					
 				self.parent = None
 				# remove all from the manager
@@ -185,8 +192,9 @@ class Panel(ResizableWindow):
 					if removed_widget._top_added:
 						get_manager().removeTopWidget(removed_widget)
 				self.deepApply(_remove)
-				
+
 				for child in children:
+					# use c++ 'pointer' to find the right python widget
 					if child.real_widget.this == real_parent.this:
 						self.parent = child
 						if self.max_size[0] > child.max_size[0] or self.max_size[1] > child.max_size[1]:
@@ -201,4 +209,7 @@ class Panel(ResizableWindow):
 								get_manager().removeTopWidget(added_widget)
 						self.deepApply(_add)
 						break
+					
+			if self.parent is None:
+				print "DockArea containment fumble:", self, self.old_parent
 
