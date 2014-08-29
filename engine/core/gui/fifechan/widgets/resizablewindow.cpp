@@ -295,7 +295,7 @@ namespace fcn {
 	}
 
 	void ResizableWindow::mouseExited(MouseEvent& mouseEvent) {
-		if (m_resizable && !m_resizing) {
+		if (m_resizable && !m_resizing && m_saved.cursorType != FIFE::CURSOR_NONE) {
 			restoreCursor();
 		} else if (m_resizable && m_resizing) {
 			mouseEvent.consume();
@@ -332,7 +332,7 @@ namespace fcn {
 	}
 
 	void ResizableWindow::mouseMoved(MouseEvent& mouseEvent) {
-		if (m_resizable && !m_resizing) {
+		if (m_resizable && !m_resizing && m_saved.cursorType != FIFE::CURSOR_NONE) {
 			// use the CursorDirections directly
 			uint32_t index = 0;
 			index += (m_resizableLeft && mouseEvent.getX() < m_borderDistance) ? 1 : 0;

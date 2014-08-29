@@ -271,6 +271,7 @@ namespace fcn {
 			// dock it to the founded dock area
 			} else if (!isDocked() && m_foundDockArea) {
 				setDocked(true);
+				restoreCursor();
 			// move it inside the dock area
 			} else if (m_docked && isMovable() && mMoved) {
 				m_dockedArea->repositionWidget(this);
@@ -280,6 +281,7 @@ namespace fcn {
 			// remove it from the dock area and add it back to the old parent
 			if (m_dockedArea) {
 				setDocked(false);
+				restoreCursor();
 				// additional we should change the position, depend on the dockarea typ
 				// and mouse event position
 			// change layout

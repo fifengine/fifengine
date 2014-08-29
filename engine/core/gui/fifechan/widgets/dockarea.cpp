@@ -386,32 +386,44 @@ namespace fcn {
 	}
 
 	void DockArea::mouseEntered(MouseEvent& mouseEvent) {
-		ResizableWindow::mouseEntered(mouseEvent);
+		if (!m_highlighted) {
+			ResizableWindow::mouseEntered(mouseEvent);
+		}
 	}
 
 	void DockArea::mouseExited(MouseEvent& mouseEvent) {
-		ResizableWindow::mouseExited(mouseEvent);
+		if (!m_highlighted) {
+			ResizableWindow::mouseExited(mouseEvent);
+		}
 	}
 
 	void DockArea::mousePressed(MouseEvent& mouseEvent) {
-		ResizableWindow::mousePressed(mouseEvent);
+		if (!m_highlighted) {
+			ResizableWindow::mousePressed(mouseEvent);
+		}
 	}
 
 	void DockArea::mouseReleased(MouseEvent& mouseEvent) {
-		ResizableWindow::mouseReleased(mouseEvent);
-		if (m_resizing) {
-			repositionDockAreas();
+		if (!m_highlighted) {
+			ResizableWindow::mouseReleased(mouseEvent);
+			if (m_resizing) {
+				repositionDockAreas();
+			}
 		}
 	}
 
 	void DockArea::mouseMoved(MouseEvent& mouseEvent) {
-		ResizableWindow::mouseMoved(mouseEvent);
+		if (!m_highlighted) {
+			ResizableWindow::mouseMoved(mouseEvent);
+		}
 	}
 	
 	void DockArea::mouseDragged(MouseEvent& mouseEvent) {
-		ResizableWindow::mouseDragged(mouseEvent);
-		if (m_resizing) {
-			repositionDockAreas();
+		if (!m_highlighted) {
+			ResizableWindow::mouseDragged(mouseEvent);
+			if (m_resizing) {
+				repositionDockAreas();
+			}
 		}
 	}
 
