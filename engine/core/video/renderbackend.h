@@ -285,6 +285,14 @@ namespace FIFE {
 		 */
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
+		/** Draws a circle.
+		 */
+		virtual void drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a filled circle.
+		 */
+		virtual void drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
 		/** Draws a light primitive that based on a triangle fan
 		 */
 		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;

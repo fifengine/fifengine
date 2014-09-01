@@ -1538,6 +1538,47 @@ namespace FIFE {
 		m_renderObjects.push_back(ro);
 	}
 
+	void RenderBackendOpenGL::drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi()/360;
+		float angle = 0;
+
+		renderDataP rd;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		for (uint16_t i = 0; i < 359; ++i) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+			m_renderPrimitiveDatas.push_back(rd);
+			angle += step;
+		}
+		RenderObject ro(GL_LINE_LOOP, 359);
+		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi()/360;
+		float angle = Mathf::twoPi();
+
+		renderDataP rd;
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_renderPrimitiveDatas.push_back(rd);
+		for (uint16_t i = 0; i <= 360; ++i) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+			m_renderPrimitiveDatas.push_back(rd);
+			angle -= step;
+		}
+		RenderObject ro(GL_TRIANGLE_FAN, 362);
+		m_renderObjects.push_back(ro);
+	}
+
 	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		const float step = Mathf::twoPi()/subdivisions;
 		renderDataP rd;

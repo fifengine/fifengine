@@ -342,6 +342,43 @@ namespace FIFE {
 		drawLine(p4, p1, r, g, b, a);
 	}
 
+	void RenderBackendSDL::drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		// Midpoint Circle Algorithm
+		int32_t x = radius;
+		int32_t y = 0;
+		int32_t radiusError = 1-x;
+
+		while(x >= y) {
+			putPixel(x + p.x, y + p.y, r, g, b, a);
+			putPixel(y + p.x, x + p.y, r, g, b, a);
+			putPixel(-x + p.x, y + p.y, r, g, b, a);
+			putPixel(-y + p.x, x + p.y, r, g, b, a);
+			putPixel(-x + p.x, -y + p.y, r, g, b, a);
+			putPixel(-y + p.x, -x + p.y, r, g, b, a);
+			putPixel(x + p.x, -y + p.y, r, g, b, a);
+			putPixel(y + p.x, -x + p.y, r, g, b, a);
+			y++;
+			if (radiusError < 0) {
+				radiusError += 2 * y + 1;
+			} else {
+				x--;
+				radiusError += 2 * (y - x + 1);
+			}
+		}
+	}
+
+	void RenderBackendSDL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		float rad = static_cast<float>(radius);
+		for (float dy = 1; dy <= r; dy += 1.0) {
+			float dx = Mathf::Floor(Mathf::Sqrt((2.0 * rad * dy) - (dy * dy)));
+			int32_t x = p.x - dx;
+			for (; x <= p.x + dx; x++) {
+				putPixel(x, p.y + rad - dy, r, g, b, a);
+				putPixel(x, p.y - rad + dy, r, g, b, a);
+			}
+		}
+	}
+
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 	}
 	
