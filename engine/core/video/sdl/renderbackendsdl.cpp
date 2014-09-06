@@ -291,6 +291,121 @@ namespace FIFE {
 		}
 	}
 
+	void RenderBackendSDL::drawThickLine(const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		float xDiff = p2.x - p1.x;
+		float yDiff = p2.y - p1.y;
+		float halfW = static_cast<float>(width) / 2.0;
+		float angle = Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi()) + 90.0;
+		if (angle < 0.0) {
+			angle += 360.0;
+		} else if (angle > 360.0) {
+			angle -= 360.0;
+		}
+		angle *= Mathf::pi() / 180.0;
+		float cornerX = halfW * Mathf::Cos(angle);
+		float cornerY = halfW * Mathf::Sin(angle);
+		int32_t yMax = p1.y;
+		int32_t yMin = p1.y;
+
+		std::vector<Point> points;
+		Point p(p1.x + cornerX, p1.y + cornerY);
+		yMax = std::max(yMax, p.y);
+		yMin = std::min(yMin, p.y);
+		points.push_back(p);
+		p.x = p2.x + cornerX;
+		p.y = p2.y + cornerY;
+		yMax = std::max(yMax, p.y);
+		yMin = std::min(yMin, p.y);
+		points.push_back(p);
+		p.x = p2.x - cornerX;
+		p.y = p2.y - cornerY;
+		yMax = std::max(yMax, p.y);
+		yMin = std::min(yMin, p.y);
+		points.push_back(p);
+		p.x = p1.x - cornerX;
+		p.y = p1.y - cornerY;
+		yMax = std::max(yMax, p.y);
+		yMin = std::min(yMin, p.y);
+		points.push_back(p);
+
+		// scan-line fill algorithm
+		int32_t y = yMin;
+		int32_t n = points.size();
+		for (; y <= yMax; ++y) {
+			std::vector<int32_t> xs;
+			int32_t j = n - 1;
+			for (int32_t i = 0; i < n; j = i++) {
+				if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
+					int32_t x = static_cast<int32_t>(points[i].x + static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) * static_cast<float>(points[j].x - points[i].x));
+					xs.push_back(x);
+					for (int32_t k = xs.size() - 1; k && xs[k-1] > xs[k]; --k) {
+						std::swap(xs[k-1], xs[k]);
+					}
+				}
+			}
+
+			for (int32_t i = 0; i < xs.size(); i += 2) {
+				int32_t x1 = xs[i];
+				int32_t x2 = xs[i+1];
+				// vertical line
+				while (x1 <= x2) {
+					putPixel(x1, y, r, g, b, a);
+					++x1;
+				}
+			}
+		}
+	}
+
+	void RenderBackendSDL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.empty()) {
+			return;
+		}
+		bool thick = width > 1;
+
+		// ToDo: move distance and line calc to a seperate function
+		float distance = 0;
+		std::vector<Point>::const_iterator it = points.begin();
+		Point old = *it;
+		++it;
+		for (std::vector<Point>::const_iterator it = points.begin(); it != points.end(); ++it) {
+			const Point& next = *it;
+			float rx = old.x - next.x;
+			float ry = old.y - next.y;
+			old = next;
+			distance += Mathf::Sqrt(rx*rx + ry*ry);
+		}
+
+		int32_t elements = points.size();
+		int32_t lines = ceil((distance / elements) / width);
+		int32_t s = lines;
+
+		if (elements < 3 || a < 2) {
+			return;
+		}
+
+		float tstep = 1.0 / static_cast<float>(s);
+		float t = 0.0;
+		old = getBezierPoint(points, t);
+		if (thick) {
+			for (int32_t i = 0; i <= (elements*s); i++) {
+				t += tstep;
+				Point next = getBezierPoint(points, t);
+				drawThickLine(old, next, width, r, g, b, a);
+				drawFillCircle(old, width / 2, r, g, b, a);
+				old = next;
+			}
+			//drawThickLine(old, points.back(), width, r, g, b, a);
+			drawFillCircle(old, width / 2, r, g, b, a);
+		} else {
+			for (int32_t i = 0; i <= (elements*s); i++) {
+				t += tstep;
+				Point next = getBezierPoint(points, t);
+				drawThickLine(old, next, width, r, g, b, a);
+				old = next;
+			}
+		}
+	}
+
 	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);
@@ -375,6 +490,83 @@ namespace FIFE {
 			for (; x <= p.x + dx; x++) {
 				putPixel(x, p.y + rad - dy, r, g, b, a);
 				putPixel(x, p.y - rad + dy, r, g, b, a);
+			}
+		}
+	}
+
+	void RenderBackendSDL::drawCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi() / 360;
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		if (e == 0) {
+			e = 360;
+		}
+		if (s == e) {
+			return;
+		}
+
+		float angle = static_cast<float>(s) * step;
+		Point oldPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+		for (;s <= e; ++s, angle += step) {
+			Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+			drawLine(oldPoint, newPoint, r, g, b, a);
+			oldPoint = newPoint;
+		}
+	}
+
+	void RenderBackendSDL::drawFillCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi() / 360;
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		if (e == 0) {
+			e = 360;
+		}
+		if (s == e) {
+			return;
+		}
+
+		std::vector<Point> points;
+		points.push_back(p);
+		int32_t yMax = p.y;
+		int32_t yMin = p.y;
+		float angle = static_cast<float>(s) * step;
+		for (;s <= e; ++s, angle += step) {
+			Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+			yMax = std::max(yMax, newPoint.y);
+			yMin = std::min(yMin, newPoint.y);
+			points.push_back(newPoint);
+		}
+		// add end point (again)
+		angle = static_cast<float>(e) * step;
+		Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+		points.push_back(newPoint);
+		yMax = std::max(yMax, newPoint.y);
+		yMin = std::min(yMin, newPoint.y);
+
+		// scan-line fill algorithm
+		int32_t y = yMin;
+		int32_t n = points.size();
+		for (; y <= yMax; ++y) {
+			std::vector<int32_t> xs;
+			int32_t j = n - 1;
+			for (int32_t i = 0; i < n; j = i++) {
+				if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
+					int32_t x = static_cast<int32_t>(points[i].x + static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) * static_cast<float>(points[j].x - points[i].x));
+					xs.push_back(x);
+					for (int32_t k = xs.size() - 1; k && xs[k-1] > xs[k]; --k) {
+						std::swap(xs[k-1], xs[k]);
+					}
+				}
+			}
+
+			for (int32_t i = 0; i < xs.size(); i += 2) {
+				int32_t x1 = xs[i];
+				int32_t x2 = xs[i+1];
+				// vertical line
+				while (x1 <= x2) {
+					putPixel(x1, y, r, g, b, a);
+					++x1;
+				}
 			}
 		}
 	}

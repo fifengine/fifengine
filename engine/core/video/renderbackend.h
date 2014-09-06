@@ -265,6 +265,14 @@ namespace FIFE {
 		 */
 		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
+		/** Draws line between given points with given RGBA and width.
+		 */
+		virtual void drawThickLine(const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws bezier curve between given points with given RGBA and width.
+		 */
+		virtual void drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
 		/** Draws triangle between given points with given RGBA
 		 */
 		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
@@ -292,6 +300,16 @@ namespace FIFE {
 		/** Draws a filled circle.
 		 */
 		virtual void drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a circle segment.
+		 * Note: The start angle must be less than the end angle. 0 angle is right side.
+		 */
+		virtual void drawCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a filled circle segment. 0 angle is right side.
+		 * Note: The start angle must be less than the end angle.
+		 */
+		virtual void drawFillCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws a light primitive that based on a triangle fan
 		 */
@@ -460,6 +478,10 @@ namespace FIFE {
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
 		
+		/** Helper that returns an interpolated Point
+		 */
+		Point getBezierPoint(const std::vector<Point>& points, float t);
+
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
 		bool m_compressimages;

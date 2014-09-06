@@ -228,4 +228,44 @@ namespace FIFE {
 	SDL_Surface* RenderBackend::getRenderTargetSurface() {
 		return m_target;
 	}
+
+	Point RenderBackend::getBezierPoint(const std::vector<Point>& points, float t) {
+		if (t < 0.0) {
+			return points[0];
+		} else if (t >= static_cast<float>(points.size())) {
+			return points.back();
+		}
+
+		// Interpolate
+		float px = 0.0;
+		float py = 0.0;
+		int32_t n = points.size() - 1;
+		float muk = 1.0;
+		float mu = t / static_cast<float>(points.size());
+		float munk = Mathf::Pow(1.0 - mu, static_cast<float>(n));
+		for (int32_t i = 0; i <= n; i++) {
+			int32_t tmpn = n;
+			int32_t tmpi = i;
+			int32_t diffn = n - i;
+			float blend = muk * munk;
+			muk *= mu;
+			munk /= 1.0 - mu;
+			while (tmpn) {
+				blend *= static_cast<float>(tmpn);
+				tmpn--;
+				if (tmpi > 1) {
+					blend /= static_cast<float>(tmpi);
+					tmpi--;
+				}
+				if (diffn > 1) {
+					blend /= static_cast<float>(diffn);
+					diffn--;
+				}
+			}
+			px += static_cast<float>(points[i].x) * blend;
+			py += static_cast<float>(points[i].y) * blend;
+		}
+
+		return Point(static_cast<int32_t>(px), static_cast<int32_t>(py));
+	}
 }
