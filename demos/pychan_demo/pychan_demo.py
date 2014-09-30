@@ -196,6 +196,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Image Stretching' : StretchingExample(),
 			'Resizable Window' : PyChanExample('gui/resizable.xml'),
 			'Dock Area' : PyChanExample('gui/dockarea.xml'),
+			'Graph Widgets' : PyChanExample('gui/graphwidgets.xml'),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())
