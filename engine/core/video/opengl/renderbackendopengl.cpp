@@ -803,8 +803,8 @@ namespace FIFE {
 			if (ro.mode != mode) {
 				type = true;
 				render = true;
-			} else if (ro.mode == GL_LINE_LOOP || ro.mode == GL_TRIANGLE_FAN ) {
-				// do not batch line loops or triangle fans to avoid side effects
+			} else if (ro.mode == GL_LINE_STRIP || ro.mode == GL_LINE_LOOP || ro.mode == GL_TRIANGLE_FAN ) {
+				// do not batch line strips, loops or triangle fans to avoid side effects
 				render = true;
 			}
 			if (ro.texture_id != texture_id) {
@@ -1483,45 +1483,19 @@ namespace FIFE {
 		m_renderObjects.push_back(ro);*/
 	}
 
-	void RenderBackendOpenGL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		if (points.empty()) {
+	void RenderBackendOpenGL::drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
 			return;
 		}
-		bool thick = width > 1;
-
-		// ToDo: move distance and line calc to a seperate function
-		float distance = 0;
 		std::vector<Point>::const_iterator it = points.begin();
-		Point old = *it;
-		++it;
-		for (std::vector<Point>::const_iterator it = points.begin(); it != points.end(); ++it) {
-			const Point& next = *it;
-			float rx = old.x - next.x;
-			float ry = old.y - next.y;
-			old = next;
-			distance += Mathf::Sqrt(rx*rx + ry*ry);
-		}
-
-		int32_t elements = points.size();
-		int32_t lines = ceil((distance / elements) / width);
-		int32_t s = lines;
-
-		if (elements < 3 || s < 2) {
-			return;
-		}
-
-		float tstep = 1.0 / static_cast<float>(s);
-		float t = 0.0;
-		old = getBezierPoint(points, t);
-		if (thick) {
-			for (int32_t i = 0; i <= (elements*s); i++) {
-				t += tstep;
-				Point next = getBezierPoint(points, t);
-				drawThickLine(old, next, width, r, g, b, a);
+		if (width > 1) {
+			Point old = *it;
+			++it;
+			for (; it != points.end(); ++it) {
+				drawThickLine(old, *it, width, r, g, b, a);
 				drawFillCircle(old, width / 2, r, g, b, a);
-				old = next;
+				old = *it;
 			}
-			//drawThickLine(old, points.back(), width, r, g, b, a);
 			drawFillCircle(old, width / 2, r, g, b, a);
 		} else {
 			renderDataP rd;
@@ -1529,21 +1503,53 @@ namespace FIFE {
 			rd.color[1] = g;
 			rd.color[2] = b;
 			rd.color[3] = a;
-			int32_t tp = 0;
-			for (int32_t i = 0; i <= (elements*s); i++) {
-				t += tstep;
-				Point next = getBezierPoint(points, t);
+			for (; it != points.end(); ++it) {
+				rd.vertex[0] = static_cast<float>((*it).x);
+				rd.vertex[1] = static_cast<float>((*it).y);
+				m_renderPrimitiveDatas.push_back(rd);
+			}
+			RenderObject ro(GL_LINE_STRIP, points.size());
+			m_renderObjects.push_back(ro);
+		}
+	}
+
+	void RenderBackendOpenGL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
+			return;
+		}
+		int32_t elements = points.size();
+		if (elements < 3 || steps < 2) {
+			return;
+		}
+
+		bool thick = width > 1;
+		float step = 1.0 / static_cast<float>(steps-1);
+		float t = 0.0;
+		Point old = getBezierPoint(points, elements+1, t);
+		if (thick) {
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
+				drawThickLine(old, next, width, r, g, b, a);
+				drawFillCircle(old, width / 2, r, g, b, a);
+				old = next;
+			}
+			drawFillCircle(old, width / 2, r, g, b, a);
+		} else {
+			renderDataP rd;
+			rd.color[0] = r;
+			rd.color[1] = g;
+			rd.color[2] = b;
+			rd.color[3] = a;
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
 				rd.vertex[0] = static_cast<float>(old.x);
 				rd.vertex[1] = static_cast<float>(old.y);
 				m_renderPrimitiveDatas.push_back(rd);
-				++tp;
 				old = next;
 			}
-			//rd.vertex[0] = static_cast<float>(points.back().x);
-			//rd.vertex[1] = static_cast<float>(points.back().y);
-			//m_renderPrimitiveDatas.push_back(rd);
-			//++tp;
-			RenderObject ro(GL_LINE_STRIP, tp);
+			RenderObject ro(GL_LINE_STRIP, (elements*steps)+1);
 			m_renderObjects.push_back(ro);
 		}
 	}
@@ -1668,6 +1674,9 @@ namespace FIFE {
 	void RenderBackendOpenGL::drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		// set side length to 5 and calculate needed divisions
 		int32_t subdivisions = round(Mathf::pi() / ( 5.0 / (2.0 * radius)));
+		if (subdivisions < 8) {
+			subdivisions = 8;
+		}
 		const float step = Mathf::twoPi()/subdivisions;
 		float angle = 0;
 
@@ -1689,6 +1698,9 @@ namespace FIFE {
 	void RenderBackendOpenGL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		// set side length to 5 and calculate needed divisions
 		int32_t subdivisions = round(Mathf::pi() / ( 5.0 / (2.0 * radius)));
+		if (subdivisions < 8) {
+			subdivisions = 8;
+		}
 		const float step = Mathf::twoPi()/subdivisions;
 		float angle = Mathf::twoPi();
 

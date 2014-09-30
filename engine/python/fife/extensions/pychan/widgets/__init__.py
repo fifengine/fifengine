@@ -52,6 +52,12 @@ from iconprogressbar import IconProgressBar
 from resizablewindow import ResizableWindow
 from dockarea import DockArea
 from panel import Panel
+from bargraph import BarGraph
+from curvegraph import CurveGraph
+from linegraph import LineGraph
+from piegraph import PieGraph
+from pointgraph import PointGraph
+
 
 # Global Widget Class registry
 
@@ -76,6 +82,11 @@ WIDGETS = {
 	"Label" : Label,
 	"PercentageBar" : PercentageBar,
 	"IconProgressBar" : IconProgressBar,
+	"BarGraph" : BarGraph,
+	"CurveGraph" : CurveGraph,
+	"LineGraph" : LineGraph,
+	"PieGraph" : PieGraph,
+	"PointGraph" : PointGraph,
 
 	# Button Widgets
 	"Button" : Button,

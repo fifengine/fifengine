@@ -147,7 +147,124 @@ namespace FIFE {
 	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_center.getCalculatedPoint(cam, layer);
 		if(m_center.getLayer() == layer) {
-			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
+			//renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
+			//renderbackend->drawCircle(p, m_size, m_red, m_green, m_blue, m_alpha);
+			//return;
+			//renderbackend->drawCircleSegment(p, m_size, 90, 180, m_red, m_green, m_blue, m_alpha);
+			//return;
+			/*renderbackend->drawFillCircleSegment(p, m_size, 0, 10, 255, 0, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 10, 20, 255, 10, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 20, 30, 255, 20, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 30, 40, 255, 30, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 40, 50, 255, 40, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 50, 60, 255, 50, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 60, 70, 255, 60, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 70, 80, 255, 70, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 80, 90, 255, 80, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 90, 100, 255, 90, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 100, 110, 255, 100, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 110, 120, 255, 110, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 120, 130, 255, 120, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 130, 140, 255, 130, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 140, 150, 255, 140, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 150, 160, 255, 150, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 160, 170, 255, 160, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 170, 180, 255, 170, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 180, 190, 255, 180, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 190, 200, 255, 190, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 200, 210, 255, 200, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 210, 220, 255, 210, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 220, 230, 255, 220, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 230, 240, 255, 230, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 240, 250, 255, 240, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 250, 260, 255, 250, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 260, 270, 255, 250, 10, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 270, 280, 255, 250, 20, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 280, 290, 255, 250, 30, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 290, 300, 255, 250, 40, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 300, 310, 255, 250, 50, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 310, 320, 255, 250, 60, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 320, 330, 255, 250, 70, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 330, 340, 255, 250, 80, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 340, 350, 255, 250, 90, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 350, 360, 255, 250, 100, m_alpha);*/
+
+			/*renderbackend->drawFillCircleSegment(p, m_size, 0, 10, 0, 0, 0, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 10, 20, 7, 7, 7, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 20, 30, 14, 14, 14, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 30, 40, 21, 21, 21, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 40, 50, 28, 28, 28, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 50, 60, 35, 35, 35, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 60, 70, 42, 42, 42, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 70, 80, 49, 49, 49, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 80, 90, 56, 56, 56, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 90, 100, 63, 63, 63, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 100, 110, 70, 70, 70, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 110, 120, 77, 77, 77, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 120, 130, 84, 84, 84, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 130, 140, 91, 91, 91, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 140, 150, 98, 98, 98, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 150, 160, 105, 105, 105, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 160, 170, 112, 112, 112, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 170, 180, 119, 119, 119, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 180, 190, 126, 126, 126, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 190, 200, 133, 133, 133, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 200, 210, 140, 140, 140, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 210, 220, 147, 147, 147, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 220, 230, 154, 154, 154, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 230, 240, 161, 161, 161, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 240, 250, 168, 168, 168, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 250, 260, 175, 175, 175, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 260, 270, 182, 182, 182, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 270, 280, 189, 189, 189, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 280, 290, 196, 196, 196, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 290, 300, 203, 203, 203, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 300, 310, 210, 210, 210, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 310, 320, 217, 217, 217, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 320, 330, 224, 224, 224, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 330, 340, 231, 231, 231, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 340, 350, 238, 238, 238, m_alpha);
+			renderbackend->drawFillCircleSegment(p, m_size, 350, 360, 245, 245, 245, m_alpha);*/
+
+			//renderbackend->drawFillCircleSegment(p, m_size, 0, 90, 255, 0, 0, m_alpha);
+			//renderbackend->drawFillCircleSegment(p, m_size, 90, 180, 0, 255, 0, m_alpha);
+			//renderbackend->drawFillCircleSegment(p, m_size, 180, 270, 0, 0, 255, m_alpha);
+			//renderbackend->drawFillCircleSegment(p, m_size, 270, 360, 255, 0, 255, m_alpha);
+			//renderbackend->drawCircleSegment(p, m_size, 0, 359, 255, 0, 0, m_alpha);
+			Point p2 = p;
+			//p2.x += 100;
+			p2.y -= 100;
+
+			//Point p1line = p;
+			//Point p2line = p;
+			//p2line.x += 100;
+			//p2line.y += 100;
+			//renderbackend->drawThickLine(p1line, p2line, 30, 0, 0, 255, m_alpha);
+
+			//renderbackend->drawLine(p1line, p2line, 0, 255, 0, m_alpha);
+
+			std::vector<Point> points;
+			points.push_back(p);
+			
+			Point p3 = p;
+			p3.x += 100;
+			p3.y -= 100;
+			Point p4 = p;
+			p4.x += 100;
+
+			//p3.y -= 50;
+			//points.push_back(p3);
+			points.push_back(p2);
+			points.push_back(p3);
+			points.push_back(p4);
+			renderbackend->drawBezier(points, 100, 12, 255, 0, 0, m_alpha);
+
+			// draw points
+			/*renderbackend->putPixel(p.x, p.y, 0, 0, 255, m_alpha);
+			renderbackend->putPixel(p2.x, p2.y, 0, 0, 255, m_alpha);
+			renderbackend->putPixel(p3.x, p3.y, 0, 0, 255, m_alpha);
+			renderbackend->putPixel(p4.x, p4.y, 0, 0, 255, m_alpha);*/
+
 			if (renderbackend->getLightingModel() > 0) {
 				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}

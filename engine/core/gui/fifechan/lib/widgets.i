@@ -74,6 +74,29 @@ namespace fcn {
 		void setHeight(int32_t height);
 	};
 
+	class Point {
+	public:
+		int32_t x;
+		int32_t y;
+		explicit Point(int32_t _x = 0, int32_t _y = 0);
+		Point(const Point& rhs);
+		Point operator+(const Point& p) const;
+		Point operator-(const Point& p) const;
+		Point& operator+=(const Point& p);
+		Point& operator-=(const Point& p);
+		Point operator*(const int32_t& i) const;
+		Point operator/(const int32_t& i) const;
+		bool operator==(const Point& p) const;
+		bool operator!=(const Point& p) const;
+		int32_t length() const;
+		void normalize();
+		void rotate(int32_t angle);
+		void rotate(const Point& origin, int32_t angle);
+		void set(int32_t _x, int32_t _y);
+	};
+
+	typedef std::vector<Point> PointVector;
+
 	class Widget {
 	public:
 /* 		Widget(); */
@@ -312,8 +335,8 @@ namespace fcn {
 	class DropDown: public Widget {
 	public:
 		DropDown(ListModel *listModel = NULL,
-		         ScrollArea *scrollArea = NULL,
-		         ListBox *listBox = NULL);
+				 ScrollArea *scrollArea = NULL,
+				 ListBox *listBox = NULL);
 		virtual ~DropDown();
 		virtual int32_t getSelected();
 		virtual void setSelected(int32_t selected);
@@ -449,7 +472,7 @@ namespace fcn {
 		virtual void adjustHeight();
 		virtual void setCaretPosition(uint32_t position);
 		virtual uint32_t getCaretPosition() const;
-    };
+	};
 	
 	%feature("notabstract") PasswordField;
 	class PasswordField : public TextField {
@@ -514,7 +537,109 @@ namespace fcn {
 		void setLayout(Container::LayoutPolicy policy);
 		Container::LayoutPolicy getLayout() const;
 	};
+
+	%feature("notabstract") BarGraph;
+	class BarGraph: public Widget {
+	public:
+		BarGraph();
+		BarGraph(int32_t x, int32_t y, int32_t w, int32_t h);
+		BarGraph(int32_t x, int32_t y, int32_t w, int32_t h, const Color& color);
+		virtual ~BarGraph();
+		void setBarX(int32_t x);
+		int32_t getBarX() const;
+		void setBarY(int32_t y);
+		int32_t getBarY() const;
+		void setBarPosition(int32_t x, int32_t y);
+		void setBarPosition(const Point& pos);
+		void setBarWidth(int32_t w);
+		int32_t getBarWidth() const;
+		void setBarHeight(int32_t h);
+		int32_t getBarHeight() const;
+		void setBarSize(int32_t w, int32_t h);
+		void setColor(const Color& color);
+		const Color& getColor() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") CurveGraph;
+	class CurveGraph: public Widget {
+	public:
+		CurveGraph();
+		CurveGraph(const PointVector& data);
+		CurveGraph(const PointVector& data, const Color& color);
+		virtual ~CurveGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setColor(const Color& color);
+		const Color& getColor() const;
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setAutomaticControllPoints(bool acp);
+		bool isAutomaticControllPoints() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") LineGraph;
+	class LineGraph: public Widget {
+	public:
+		LineGraph();
+		LineGraph(const PointVector& data);
+		LineGraph(const PointVector& data, const Color& color);
+		virtual ~LineGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setColor(const Color& color);
+		const Color& getColor() const;
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") PieGraph;
+	class PieGraph: public Widget {
+	public:
+		PieGraph();
+		PieGraph(const Point& center);
+		virtual ~PieGraph();
+		void setCenterX(int32_t x);
+		void setCenterY(int32_t y);
+		void setCenter(int32_t x, int32_t y);
+		int32_t getCenterX() const;
+		int32_t getCenterY() const;
+		void setCenter(const Point& center);
+		const Point& getCenter() const;
+		void setRadius(int32_t radius);
+		int32_t getRadius() const;
+		void addSegment(int32_t startAngle, int32_t stopAngle, const Color& color);
+		void clearSegments();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") PointGraph;
+	class PointGraph: public Widget {
+	public:
+		PointGraph();
+		PointGraph(const PointVector& data);
+		PointGraph(const PointVector& data, const Color& color);
+		virtual ~PointGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setColor(const Color& color);
+		const Color& getColor() const;
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
 }
-
-
+namespace std {
+	%template(FcnPointVector) vector<fcn::Point>;
+}
 

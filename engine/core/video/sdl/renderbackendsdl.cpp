@@ -356,51 +356,56 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendSDL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		if (points.empty()) {
+	void RenderBackendSDL::drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
 			return;
 		}
-		bool thick = width > 1;
 
-		// ToDo: move distance and line calc to a seperate function
-		float distance = 0;
 		std::vector<Point>::const_iterator it = points.begin();
 		Point old = *it;
 		++it;
-		for (std::vector<Point>::const_iterator it = points.begin(); it != points.end(); ++it) {
-			const Point& next = *it;
-			float rx = old.x - next.x;
-			float ry = old.y - next.y;
-			old = next;
-			distance += Mathf::Sqrt(rx*rx + ry*ry);
+		if (width > 1) {
+			for (; it != points.end(); ++it) {
+				drawThickLine(old, *it, width, r, g, b, a);
+				drawFillCircle(old, width / 2, r, g, b, a);
+				old = *it;
+			}
+			drawFillCircle(old, width / 2, r, g, b, a);
+		} else {
+			for (; it != points.end(); ++it) {
+				drawLine(old, *it, r, g, b, a);
+				old = *it;
+			}
 		}
+	}
 
+	void RenderBackendSDL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
+			return;
+		}
 		int32_t elements = points.size();
-		int32_t lines = ceil((distance / elements) / width);
-		int32_t s = lines;
-
-		if (elements < 3 || a < 2) {
+		if (elements < 3 || steps < 2) {
 			return;
 		}
 
-		float tstep = 1.0 / static_cast<float>(s);
+		bool thick = width > 1;
+		float step = 1.0 / static_cast<float>(steps-1);
 		float t = 0.0;
-		old = getBezierPoint(points, t);
+		Point old = getBezierPoint(points, elements+1, t);
 		if (thick) {
-			for (int32_t i = 0; i <= (elements*s); i++) {
-				t += tstep;
-				Point next = getBezierPoint(points, t);
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
 				drawThickLine(old, next, width, r, g, b, a);
 				drawFillCircle(old, width / 2, r, g, b, a);
 				old = next;
 			}
-			//drawThickLine(old, points.back(), width, r, g, b, a);
 			drawFillCircle(old, width / 2, r, g, b, a);
 		} else {
-			for (int32_t i = 0; i <= (elements*s); i++) {
-				t += tstep;
-				Point next = getBezierPoint(points, t);
-				drawThickLine(old, next, width, r, g, b, a);
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
+				drawLine(old, next, r, g, b, a);
 				old = next;
 			}
 		}

@@ -269,6 +269,10 @@ namespace FIFE {
 		 */
 		virtual void drawThickLine(const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
+		/** Draws lines between given points with given RGBA and width.
+		 */
+		virtual void drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
 		/** Draws bezier curve between given points with given RGBA and width.
 		 */
 		virtual void drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
@@ -471,16 +475,20 @@ namespace FIFE {
 		 */
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) = 0;
 		
+		/** Helper that returns an interpolated Point
+		 */
+		Point getBezierPoint(const std::vector<Point>& points, int32_t elements, float t);
+
+		/** Helper that adds the control points for bezier curves.
+		 */
+		void addControlPoints(const std::vector<Point>& points, std::vector<Point>& newPoints);
+
 	protected:
 		
 		/** Sets given clip area into image
 		 *  @see pushClipArea
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-		
-		/** Helper that returns an interpolated Point
-		 */
-		Point getBezierPoint(const std::vector<Point>& points, float t);
 
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;

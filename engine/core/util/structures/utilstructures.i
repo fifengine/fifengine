@@ -88,7 +88,7 @@ namespace FIFE {
 
 	%template(Point3D) PointType3D<int32_t>;
 	%template(DoublePoint3D) PointType3D<double>;
-	
+
 	template <typename T> class RectType {
 	public:
 		T x;
@@ -114,4 +114,8 @@ namespace FIFE {
 	%template(Rect) RectType<int32_t>;
 	%template(FloatRect) RectType<float>;
 	%template(DoubleRect) RectType<double>;
+}
+
+namespace std {
+	%template(FifePointVector) vector<FIFE::Point>;
 }
