@@ -142,7 +142,7 @@ class PieGraph(Widget):
 	center = property(_getCenter, _setCenter)
 
 	def _setRadius(self, radius): self.real_widget.setRadius(radius)
-	def _getRadius(self): self.real_widget.getRadius()
+	def _getRadius(self): return self.real_widget.getRadius()
 	radius = property(_getRadius, _setRadius)
 
 	def addSegment(self, startAngle, stopAngle, color):

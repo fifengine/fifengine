@@ -151,11 +151,11 @@ class BarGraph(Widget):
 	bar_position = property(_getBarPosition, _setBarPosition)
 
 	def _setBarWidth(self, bar_width): self.real_widget.setBarWidth(bar_width)
-	def _getBarWidth(self): self.real_widget.getBarWidth()
+	def _getBarWidth(self): return self.real_widget.getBarWidth()
 	bar_width = property(_getBarWidth, _setBarWidth)
 	
 	def _setBarHeight(self, bar_height): self.real_widget.setBarHeight(bar_height)
-	def _getBarHeight(self): self.real_widget.getBarHeight()
+	def _getBarHeight(self): return self.real_widget.getBarHeight()
 	bar_height = property(_getBarHeight, _setBarHeight)
 	
 	bar_color = ColorProperty("Color")

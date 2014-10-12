@@ -177,6 +177,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		from poc_gui_animation import PocAnimations
 		from stretching import StretchingExample
 		from tabbedarea import TabbedAreaExample
+		from dynamicgraph import DynamicGraphExample
 
 		# Our list of examples
 		# We keep a dictionary of these and fill
@@ -197,6 +198,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Resizable Window' : PyChanExample('gui/resizable.xml'),
 			'Dock Area' : PyChanExample('gui/dockarea.xml'),
 			'Graph Widgets' : PyChanExample('gui/graphwidgets.xml'),
+			'Dynamic Graph' : DynamicGraphExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())

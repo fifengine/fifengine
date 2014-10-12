@@ -156,7 +156,7 @@ class LineGraph(Widget):
 	coordinates = property(_getCoordinates, _setCoordinates)
 
 	def _setThickness(self, thickness): self.real_widget.setThickness(thickness)
-	def _getThickness(self): self.real_widget.getThickness()
+	def _getThickness(self): return self.real_widget.getThickness()
 	thickness = property(_getThickness, _setThickness)
 	
 	line_color = ColorProperty("Color")

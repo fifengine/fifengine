@@ -161,11 +161,11 @@ class CurveGraph(Widget):
 	coordinates = property(_getCoordinates, _setCoordinates)
 
 	def _setThickness(self, thickness): self.real_widget.setThickness(thickness)
-	def _getThickness(self): self.real_widget.getThickness()
+	def _getThickness(self): return self.real_widget.getThickness()
 	thickness = property(_getThickness, _setThickness)
 	
 	def _setControllPoints(self, controll): self.real_widget.setAutomaticControllPoints(controll)
-	def _getControllPoints(self): self.real_widget.isAutomaticControllPoints()
+	def _getControllPoints(self): return self.real_widget.isAutomaticControllPoints()
 	controll_points = property(_getControllPoints, _setControllPoints)
 	
 	curve_color = ColorProperty("Color")
