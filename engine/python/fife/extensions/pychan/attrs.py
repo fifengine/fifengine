@@ -170,8 +170,8 @@ class FloatListAttr(Attr):
 
 ATTRIBUTE_TYPE = { "Str" : Attr,
 				   "Unicode" : UnicodeAttr,
-				   #"Point" : PointAttr,
-				   #"Color" : ColorAttr,
+				   "Point" : PointAttr,
+				   "Color" : ColorAttr,
 				   "Int" : IntAttr,
 				   "Bool" : BoolAttr,
 				   "Float" : FloatAttr
@@ -180,8 +180,9 @@ class MixedListAttr(Attr):
 	def parse(self, value):
 		try:
 			result = []
-			#maybe we should use '|' or ';' to split, because of point and color attributes
-			tmp_result = map(str,str(value).split(','))
+			# we use ';' to split, because of point and color attributes
+			# example: "Int:5; Color:255,0,255"
+			tmp_result = map(str,str(value).split(';'))
 			for r in tmp_result:
 				type = str(r).split(':')[0].strip()
 				val = str(r).split(':')[1].strip()

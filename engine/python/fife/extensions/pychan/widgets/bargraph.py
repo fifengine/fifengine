@@ -109,7 +109,7 @@ class BarGraph(Widget):
 									 comment=comment)
 
 		if opaque is not None: self.opaque = opaque
-		if bar_positon is not None: self.bar_positon = bar_positon
+		if bar_position is not None: self.bar_position = bar_position
 		if bar_width is not None: self.bar_width = bar_width
 		if bar_height is not None: self.bar_height = bar_height
 		if bar_color is not None: self.bar_color = bar_color

@@ -21,11 +21,44 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import weakref
 from fife import fifechan
-
-from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr
-
+from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr, MixedListAttr
 from widget import Widget
+
+class PieSegment(object):
+	def __init__(self, pie, start, stop, color):
+		self.pie = weakref.ref(pie)
+		self.start = start
+		self.stop = stop
+		self._color = None
+		self.color = color
+
+	def _setStartAngle(self, angle):
+		self.start = angle
+		if self.pie is not None:
+			self.pie().update()
+	def _getStartAngle(self): return self.start
+	start_angle = property(_getStartAngle, _setStartAngle)
+
+	def _setStopAngle(self, angle):
+		self.stop = angle
+		if self.pie is not None:
+			self.pie().update()
+	def _getStopAngle(self): return self.stop
+	stop_angle = property(_getStopAngle, _setStopAngle)
+
+	def _setColor(self, color):
+		if isinstance(color, tuple):
+			self._color = fifechan.Color(*color)
+		else:
+			# Force a copy to get value semantics
+			self._color = fifechan.Color(color.r,color.g,color.b,color.a)
+		if self.pie is not None:
+			self.pie().update()
+	def _getColor(self):
+		return fifechan.Color(self._color.r, self._color.g, self._color.b, self._color.a)
+	color = property(_getColor, _setColor)
 
 
 class PieGraph(Widget):
@@ -42,7 +75,8 @@ class PieGraph(Widget):
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ PointAttr('center'),
 									   IntAttr('radius'),
-									   BoolAttr('opaque')
+									   BoolAttr('opaque'),
+									   MixedListAttr('segments')
 									 ]
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 0
@@ -72,11 +106,13 @@ class PieGraph(Widget):
 				 comment = None,
 				 opaque = None,
 				 center = None,
-				 radius = None):
+				 radius = None,
+				 segments = None):
 
 		self.real_widget = fifechan.PieGraph()
 		self.opaque = self.DEFAULT_OPAQUE
 		self.radius = self.DEFAULT_RADIUS
+		self._segments = []
 
 		super(PieGraph, self).__init__(parent=parent,
 									 name=name,
@@ -101,6 +137,7 @@ class PieGraph(Widget):
 		if opaque is not None: self.opaque = opaque
 		if center is not None: self.center = center
 		if radius is not None: self.radius = radius
+		if segments is not None: self.segments = segments
 
 
 	def clone(self, prefix):
@@ -125,9 +162,15 @@ class PieGraph(Widget):
 					self.comment,
 					self.opaque,
 					self.center,
-					self.radius)
+					self.radius,
+					self.segments)
 		return pieGraphClone
 
+	def update(self):
+		self.real_widget.clearSegments()
+		for s in self._segments:
+			self.real_widget.addSegment(s.start_angle, s.stop_angle, s.color)
+		
 	def _setOpaque(self, opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque, _setOpaque)
@@ -145,9 +188,37 @@ class PieGraph(Widget):
 	def _getRadius(self): return self.real_widget.getRadius()
 	radius = property(_getRadius, _setRadius)
 
-	def addSegment(self, startAngle, stopAngle, color):
-		self.real_widget.addSegment(startAngle, stopAngle, color)
+	def addSegment(self, start, stop, color):
+		segment = PieSegment(self, start, stop, color)
+		self._segments.append(segment)
+		self.real_widget.addSegment(segment.start_angle, segment.stop_angle, segment.color)
+		
+	def removeSegment(self, start, stop, color):
+		tmp_color = color
+		if isinstance(color, tuple):
+			tmp_color = fifechan.Color(*color)
 
+		for s in self._segments:
+			if s.start_angle == start and s.stop_angle == stop and s.color == tmp_color:
+				self._segments.remove(s)
+				self.update()
+				break
+	
 	def clearSegments(self):
+		self._segments = []
 		self.real_widget.clearSegments()
 
+	def _setSegments(self, segments):
+		self._segments = []
+		if segments is None:
+			self.real_widget.clearSegments()
+			return
+		if isinstance(segments[0], PieSegment):
+			self._segments = segments
+		else:
+			for i in range(0, len(segments), 3):
+				segment = PieSegment(self, segments[i], segments[i+1], segments[i+2])
+				self._segments.append(segment)
+		self.update()
+	def _getSegments(self): return self._segments
+	segments = property(_getSegments, _setSegments)

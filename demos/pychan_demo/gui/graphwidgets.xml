@@ -1,9 +1,9 @@
 <Window title="Graph Widgets Example" min_size="200, 250">
 	<Container min_size="200, 200" border_size="0">
-		<LineGraph min_size="200, 200" size="200, 200" thickness="4" line_color="255,0,0" coordinates="10,10, 20,50, 30,10, 40,50, 50,100, 60,190, 150,10"/>
-		<CurveGraph min_size="200, 200" size="200, 200" controll_points="False" thickness="4" curve_color="0,0,255" coordinates="10,10, 20,50, 30,10, 40,50, 50,100, 60,190, 150,10"/>
-		<CurveGraph min_size="200, 200" size="200, 200" thickness="4" curve_color="255,0,255" coordinates="10,10, 20,50, 30,10, 40,50, 50,100, 60,190, 150,10"/>
-		<PointGraph min_size="200, 200" size="200, 200" thickness="4" point_color="0,255,0" coordinates="10,10, 20,50, 30,10, 40,50, 50,100, 60,190, 150,10"/>
+		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,150" bar_width="20" bar_height="50" bar_color="255,0,0"/>
+		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,110" bar_width="20" bar_height="40" bar_color="255,128,0"/>
+		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,80" bar_width="20" bar_height="30" bar_color="128,255,0"/>
+		<PieGraph min_size="200, 200" size="200, 200" center="110, 100" radius="80" segments="Int:0;Int:120;Color:255,0,0; Int:120;Int:240;Color:0,255,0; Int:240;Int:360;Color:0,0,255"/>
 	</Container>
 	<Button name="closeButton" text="Close"/>
 </Window>
