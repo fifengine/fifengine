@@ -50,6 +50,9 @@ class SimpleSerializer(object):
 	def set(self, module, name, value, extra_attrs={}):
 		pass
 
+	def set(self, module, name, value, extra_attrs={}):
+		pass
+
 	def load(self, filename=None):
 		"""
 		@note: If the filename specified is empty this function MUST 
@@ -276,6 +279,28 @@ class SimpleXMLSerializer(SimpleSerializer):
 					attrs[k] = extra_attrs[k]
 			elm = ET.SubElement(moduleTree, "Setting", attrs)
 			elm.text = value
+
+	def remove(self, module, name):
+		"""
+		Removes a variable
+
+		@param module: Module where the variable should be set
+		@param name: Name of the variable
+		"""
+		if not self._initialized:
+			self.load()
+			self._initialized = True
+
+		if not isinstance(name, str) and not isinstance(name, unicode):
+			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
+								 "name argument.")
+
+		moduleTree = self._getModuleTree(module)
+
+		for e in moduleTree.getchildren():
+			if e.tag != "Setting": continue
+			if e.get("name", "") == name:
+				moduleTree.remove(e)
 
 	"""
 	returns a list of string, where each string is a module name
