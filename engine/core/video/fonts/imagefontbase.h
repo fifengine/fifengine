@@ -85,12 +85,7 @@ namespace FIFE {
 			// Should default to '?'
 			s_glyph m_placeholder;
 
-			int32_t mHeight;
-			int32_t mGlyphSpacing;
-			int32_t mRowSpacing;
-
-			std::string mFilename;
-			bool mAntiAlias;
+			int32_t m_height;
 	};
 }
 

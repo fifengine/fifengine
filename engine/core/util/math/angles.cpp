@@ -35,9 +35,7 @@
 
 namespace FIFE {
 	int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle) {
-		int32_t wangle = (360 + angle) % 360;
-
-		if (angle2id.size() == 0) {
+		if (angle2id.empty()) {
 			return -1;
 		}
 		if (angle2id.size() == 1) {
@@ -45,6 +43,7 @@ namespace FIFE {
 			return angle2id.begin()->second;
 		}
 
+		int32_t wangle = (360 + angle) % 360;
 		type_angle2id::const_iterator u(angle2id.upper_bound(wangle));
 		type_angle2id::const_iterator tmp;
 

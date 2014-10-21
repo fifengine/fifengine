@@ -60,6 +60,7 @@ namespace FIFE {
 	class MouseEvent;
 	class KeyEvent;
 	class IKeyFilter;
+	class IMouseFilter;
 
 	/**  Event Manager manages all events related to FIFE
 	 */
@@ -105,6 +106,8 @@ namespace FIFE {
 		void processEvents();
 
 		void setKeyFilter(IKeyFilter* keyFilter);
+
+		void setMouseFilter(IMouseFilter* mouseFilter);
 
 		/** Sets mouse sensitivity
 		 * The sensitivity is limited to the range -0.99 - 10.0.
@@ -166,6 +169,7 @@ namespace FIFE {
 
 		std::map<int32_t, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
+		IMouseFilter* m_mousefilter;
 		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 

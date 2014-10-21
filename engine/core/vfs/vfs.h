@@ -94,7 +94,7 @@ namespace FIFE {
 
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
-			void removeSource(const std::string path);
+			void removeSource(const std::string& path);
 
 			/** Check if the given file exists
 			 *

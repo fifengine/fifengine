@@ -34,6 +34,7 @@
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeyfilter.h"
+#include "eventchannel/mouse/ec_imousefilter.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/command/ec_command.h"
 #include "video/renderbackend.h"
@@ -50,6 +51,7 @@ namespace FIFE {
 		m_sdleventlisteners(),
 		m_keystatemap(),
 		m_keyfilter(0),
+		m_mousefilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY),
 		m_mousesensitivity(0.0),
@@ -528,7 +530,11 @@ namespace FIFE {
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
-		if (dispatchSdlEvent(event)) {
+		bool consumed = dispatchSdlEvent(event);
+		if (consumed && m_mousefilter) {
+			consumed = !m_mousefilter->isFiltered(mouseevt);
+		}
+		if (consumed) {
 			return;
 		}
 		// fire scrollwheel events only once
@@ -628,6 +634,10 @@ namespace FIFE {
 
 	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
 		m_keyfilter = keyFilter;
+	}
+
+	void EventManager::setMouseFilter(IMouseFilter* mouseFilter) {
+		m_mousefilter = mouseFilter;
 	}
 
 	void EventManager::setMouseSensitivity(float sensitivity) {

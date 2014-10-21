@@ -109,6 +109,9 @@ class IntAttr(Attr):
 class BoolAttr(Attr):
 	def parse(self,value):
 		try:
+			# Allow clients to be compatible with old FIFE versions
+			if value in ["0", "1"]:
+				value = int(value)
 			value = bool(value)
 			if value not in (True,False):
 				raise ParserError("Expected False or True.")

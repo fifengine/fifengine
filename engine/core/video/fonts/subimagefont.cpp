@@ -143,7 +143,7 @@ namespace FIFE {
 			m_placeholder.surface = 0;
 		}
 
-		mHeight = surface->h;
+		m_height = surface->h;
 		SDL_FreeSurface(surface);
 	}
 

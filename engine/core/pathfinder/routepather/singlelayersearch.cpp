@@ -86,6 +86,7 @@ namespace FIFE {
 		int32_t maxZ = m_route->getZStepRange();
 		bool zLimited = maxZ != -1;
 		uint8_t blockerThreshold = m_ignoreDynamicBlockers ? 2 : 1;
+		bool limitedArea = m_route->isAreaLimited();
 		const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
 		for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
 			if (*i == NULL) {
@@ -119,7 +120,7 @@ namespace FIFE {
 				adjacentLoc.setLayerCoordinates((*i)->getLayerCoordinates());
 
 				int32_t rotation = getAngleBetween(currentLoc, adjacentLoc);
-				std::vector<ModelCoordinate> coords = grid->	toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
+				std::vector<ModelCoordinate> coords = grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
 				std::vector<ModelCoordinate>::iterator coord_it = coords.begin();
 				for (; coord_it != coords.end(); ++coord_it) {
 					Cell* cell = m_cellCache->getCell(*coord_it);
@@ -127,6 +128,22 @@ namespace FIFE {
 						if (cell->getCellType() > blockerThreshold) {
 							std::vector<Cell*>::iterator bc_it = std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);
 							if (bc_it == m_ignoredBlockers.end()) {
+								blocker = true;
+								break;
+							}
+						}
+						if (limitedArea) {
+							// check if cell is on one of the areas
+							bool sameAreas = false;
+							const std::list<std::string> areas = m_route->getLimitedAreas();
+							std::list<std::string>::const_iterator area_it = areas.begin();
+							for (; area_it != areas.end(); ++area_it) {
+								if (m_cellCache->isCellInArea(*area_it, cell)) {
+									sameAreas = true;
+									break;
+								}
+							}
+							if (!sameAreas) {
 								blocker = true;
 								break;
 							}
@@ -139,9 +156,7 @@ namespace FIFE {
 				if (blocker) {
 					continue;
 				}
-			}
-
-			if (m_route->isAreaLimited()) {
+			} else if (limitedArea) {
 				// check if cell is on one of the areas
 				bool sameAreas = false;
 				const std::list<std::string> areas = m_route->getLimitedAreas();

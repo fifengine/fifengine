@@ -117,7 +117,7 @@ namespace FIFE {
 			m_sources.erase(i);
 	}
 
-	void VFS::removeSource(const std::string path) {
+	void VFS::removeSource(const std::string& path) {
 		type_providers::iterator end = m_providers.end();
 		for (type_providers::iterator i = m_providers.begin(); i != end; ++i) {
 			VFSSourceProvider* provider = *i;
@@ -163,7 +163,7 @@ namespace FIFE {
 					currentpath += *token + "/";
 				}
 			}
-			token++;
+			++token;
 		}
 
 		return true;

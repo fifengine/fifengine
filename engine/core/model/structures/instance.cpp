@@ -64,16 +64,12 @@ namespace FIFE {
 			m_delete_route(true) {}
 
 		~ActionInfo() {
-			if (m_route) {
+			if (m_route && m_delete_route) {
 				int32_t sessionId = m_route->getSessionId();
 				if (sessionId != -1) {
 					m_pather->cancelSession(sessionId);
 				}
-				if (m_delete_route) {
-					delete m_route;
-				} else {
-					m_route->setSessionId(-1);
-				}
+				delete m_route;
 			}
 			delete m_target;
 		}
@@ -817,6 +813,12 @@ namespace FIFE {
 		// it is the same action as the finalized action
 		m_activity->m_action = NULL;
 
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->finalizeAction();
+			}
+		}
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
 			if(*i)
@@ -828,13 +830,6 @@ namespace FIFE {
 				m_activity->m_actionListeners.end(),
 				(InstanceActionListener*)NULL),
 			m_activity->m_actionListeners.end());
-
-		if (isMultiObject()) {
-			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
-			for (; multi_it != m_multiInstances.end(); ++multi_it) {
-				(*multi_it)->finalizeAction();
-			}
-		}
 	}
 
 	void Instance::cancelAction() {
@@ -853,6 +848,12 @@ namespace FIFE {
 		// it is the same action as the canceled action
 		m_activity->m_action = NULL;
 
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->cancelAction();
+			}
+		}
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
 			if(*i)
@@ -864,13 +865,6 @@ namespace FIFE {
 				m_activity->m_actionListeners.end(),
 				(InstanceActionListener*)NULL),
 			m_activity->m_actionListeners.end());
-
-		if (isMultiObject()) {
-			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
-			for (; multi_it != m_multiInstances.end(); ++multi_it) {
-				(*multi_it)->cancelAction();
-			}
-		}
 	}
 
 	Action* Instance::getCurrentAction() const {
@@ -1125,7 +1119,7 @@ namespace FIFE {
 		return objVis->isColorOverlay();
 	}
 
-	void Instance::addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors) {
+	void Instance::addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors) {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addColorOverlay(angle, colors);
@@ -1134,7 +1128,7 @@ namespace FIFE {
 		}
 	}
 
-	OverlayColors* Instance::getColorOverlay(const std::string actionName, uint32_t angle) {
+	OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			return visual->getColorOverlay(angle);
@@ -1142,7 +1136,7 @@ namespace FIFE {
 		return NULL;
 	}
 
-	void Instance::removeColorOverlay(const std::string actionName, int32_t angle) {
+	void Instance::removeColorOverlay(const std::string& actionName, int32_t angle) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			visual->removeColorOverlay(angle);
@@ -1151,7 +1145,7 @@ namespace FIFE {
 		}
 	}
 	
-	void Instance::addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr) {
+	void Instance::addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr) {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addAnimationOverlay(angle, order, animationptr);
@@ -1160,7 +1154,7 @@ namespace FIFE {
 		}
 	}
 
-	std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(const std::string actionName, int32_t angle) {
+	std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(const std::string& actionName, int32_t angle) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			return visual->getAnimationOverlay(angle);
@@ -1168,7 +1162,7 @@ namespace FIFE {
 		return std::map<int32_t, AnimationPtr>();
 	}
 
-	void Instance::removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order) {
+	void Instance::removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			visual->removeAnimationOverlay(angle, order);
@@ -1177,7 +1171,7 @@ namespace FIFE {
 		}
 	}
 
-	void Instance::addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors) {
+	void Instance::addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors) {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		if (visual) {
 			visual->addColorOverlay(angle, order, colors);
@@ -1186,7 +1180,7 @@ namespace FIFE {
 		}
 	}
 
-	OverlayColors* Instance::getColorOverlay(const std::string actionName, uint32_t angle, int32_t order) {
+	OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			return visual->getColorOverlay(angle, order);
@@ -1194,7 +1188,7 @@ namespace FIFE {
 		return NULL;
 	}
 
-	void Instance::removeColorOverlay(const std::string actionName, int32_t angle, int32_t order) {
+	void Instance::removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			visual->removeColorOverlay(angle, order);
@@ -1203,7 +1197,7 @@ namespace FIFE {
 		}
 	}
 
-	bool Instance::isAnimationOverlay(const std::string actionName) {
+	bool Instance::isAnimationOverlay(const std::string& actionName) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			return visual->isAnimationOverlay();
@@ -1211,7 +1205,7 @@ namespace FIFE {
 		return false;
 	}
 
-	bool Instance::isColorOverlay(const std::string actionName) {
+	bool Instance::isColorOverlay(const std::string& actionName) {
 		ActionVisual* visual = getActionVisual(actionName, false);
 		if (visual) {
 			return visual->isColorOverlay();
@@ -1219,7 +1213,7 @@ namespace FIFE {
 		return false;
 	}
 
-	void Instance::convertToOverlays(const std::string actionName, bool color) {
+	void Instance::convertToOverlays(const std::string& actionName, bool color) {
 		ActionVisual* visual = getActionVisual(actionName, true);
 		visual->convertToOverlays(color);
 	}
@@ -1239,7 +1233,7 @@ namespace FIFE {
 		}
 	}
 
-	ActionVisual* Instance::getActionVisual(const std::string actionName, bool create) {
+	ActionVisual* Instance::getActionVisual(const std::string& actionName, bool create) {
 		ActionVisual* nav = NULL;
 		if (!m_ownObject) {
 			createOwnObject();

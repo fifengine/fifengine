@@ -311,7 +311,7 @@ namespace FIFE {
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 
 		/** Performs given named action to the instance. While performing the action
-		 *  follows given route with given speed. Note: In this case route isn't deleted at the end.
+		 *  follows given route with given speed. Note: In this case route isn't deleted or resetted at the end.
 		 *  @param actionName name of the action
 		 *  @param route followed route
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
@@ -490,54 +490,54 @@ namespace FIFE {
 
 		/** Adds new color overlay with given angle (degrees) to given action.
 		 */
-		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
+		void addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors);
 
 		/** Returns closest matching color overlay for given angle and action.
 		 * @return pointer to OverlayColor class
 		 */
-		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle);
 
 		/** Removes a color overlay with given angle (degrees) from given action.
 		 */
-		void removeColorOverlay(const std::string actionName, int32_t angle);
+		void removeColorOverlay(const std::string& actionName, int32_t angle);
 
 		/** Adds new animation overlay with given angle (degrees) and order to given action.
 		 */
-		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+		void addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
 
 		/** Gets map with animations closest to given angle.
 		 * @return ordered animation map
 		 */
-		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string& actionName, int32_t angle);
 
 		/** Removes animation overlay with given angle (degrees) and order from action.
 		 */
-		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+		void removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order);
 
 		/** Adds new color overlay with given angle (degrees) and order to given action animation overlay.
 		 */
-		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+		void addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
 
 		/** Returns closest matching color overlay for given angle, order and action animation overlay.
 		 * @return pointer to OverlayColor class
 		 */
-		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order);
 
 		/** Removes a color overlay with given angle (degrees), order from given action animation overlay.
 		 */
-		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+		void removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order);
 
 		/** If the action have base animation and optional color overlay it gets converted to animation overlay.
 		 */
-		void convertToOverlays(const std::string actionName, bool color);
+		void convertToOverlays(const std::string& actionName, bool color);
 
 		/** Indicates if there exists a animation overlay for given action.
 		 */
-		bool isAnimationOverlay(const std::string actionName);
+		bool isAnimationOverlay(const std::string& actionName);
 
 		/** Indicates if there exists a color overlay for given action or animation overlay.
 		 */
-		bool isColorOverlay(const std::string actionName);
+		bool isColorOverlay(const std::string& actionName);
 		
 	private:
 		std::string m_id;
@@ -654,7 +654,7 @@ namespace FIFE {
 		//! Creates an own object for the instance to allow visual customization.
 		void createOwnObject();
 		//! Returns pointer to action visual, can also create it.
-		ActionVisual* getActionVisual(const std::string actionName, bool create);
+		ActionVisual* getActionVisual(const std::string& actionName, bool create);
 	};
 } // FIFE
 
