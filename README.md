@@ -51,8 +51,13 @@ of the content, the author and the actual license it was published under.
 
 ### Editor
 The editor tool can be found within the `<FIFE>/tools/editor` directory. You
-can launch it by running `run.py`.  It is used to edit map files for the tech
+can launch it by running `run.py`. It is used to edit map files for the tech
 demo (rio do hola).  Other clients extend it and use it to edit their maps.
+
+### Tests
+The test tool can be found within the `<FIFE>/tests/fife_test` directory. You
+can launch it by running `run.py`. Open the console with `F10`. To run a test
+enter `run` and the test name like `PathfinderTest`.
 
 ### Rio De Hola
 Rio de hola is a technology demo showing off many of the FIFE features.  It is 
