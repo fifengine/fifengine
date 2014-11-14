@@ -37,9 +37,14 @@ class IconProgressBar(Widget):
 	==============
 
 	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
+	  - max_icons: Maximal count of icons
+	  - icons: Current count of active icons
+	  - orientation: Horizontal (0) or Vertical (1)
+	  - opaque: True if the widget is opaque, false otherwise.
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image'), 
 									   IntAttr('max_icons'),
+									   IntAttr('icons'),
 									   IntAttr('orientation'),
 									   BoolAttr('opaque')
 									 ]
@@ -72,6 +77,7 @@ class IconProgressBar(Widget):
 				 comment = None,
 				 image = None,
 				 max_icons = None,
+				 icons = None,
 				 orientation = None,
 				 opaque = None):
 				 
@@ -104,6 +110,7 @@ class IconProgressBar(Widget):
 		
 		if image is not None: self.image = image
 		if max_icons is not None: self.max_icons = max_icons
+		if icons is not None: self.icons = icons
 
 	def clone(self, prefix):
 		iconClone = IconProgressBar(None,
@@ -130,7 +137,10 @@ class IconProgressBar(Widget):
 				self.is_focusable,
 				self.comment,
 				self.image,
-				self.max_icons)
+				self.max_icons,
+				self.icons,
+				self.orientation,
+				self.opaque)
 				 
 		
 		return iconClone
@@ -158,6 +168,14 @@ class IconProgressBar(Widget):
 	def _getMaxIcons(self):
 		return self.real_widget.getMaxIcons()
 	max_icons = property(_getMaxIcons, _setMaxIcons)
+
+	def _setIcons(self, icons):
+		if type(icons) != int:
+			raise RuntimeError("IconProgressBar icons should be an integer")
+		self.real_widget.setIconCount(icons)	
+	def _getIcons(self):
+		return self.real_widget.getIconCount()
+	icons = property(_getIcons, _setIcons)
 	
 	def _setOrientation(self, orientation):
 		self.real_widget.setOrientation(orientation)

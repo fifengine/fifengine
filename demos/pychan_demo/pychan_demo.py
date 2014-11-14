@@ -178,6 +178,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		from stretching import StretchingExample
 		from tabbedarea import TabbedAreaExample
 		from dynamicgraph import DynamicGraphExample
+		from iconprogressbar import IconProgressBarExample
 
 		# Our list of examples
 		# We keep a dictionary of these and fill
@@ -199,6 +200,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Dock Area' : PyChanExample('gui/dockarea.xml'),
 			'Graph Widgets' : PyChanExample('gui/graphwidgets.xml'),
 			'Dynamic Graph' : DynamicGraphExample(),
+			'Icon Progress Bar' : IconProgressBarExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())

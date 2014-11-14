@@ -1,0 +1,6 @@
+<Window title="Icon Progress Bar Example">
+	<IconProgressBar min_size="400,40" max_size="400,40" size="400,40" name="bar" max_icons="10" orientation="0" image="gui/icons/bar_icon.png"/>
+	<Button name="advanceButton" text="Advance"/>
+	<Button name="resetButton" text="Reset"/>
+	<Button name="closeButton" text="Close"/>
+</Window>

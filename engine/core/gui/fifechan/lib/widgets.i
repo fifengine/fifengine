@@ -502,6 +502,8 @@ namespace fcn {
 		IconProgressBar::Orientation getOrientation() const;
 		void advance();
 		void reset();
+		void setIconCount(int icons);
+		int getIconCount() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 		
