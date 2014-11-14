@@ -99,6 +99,11 @@ namespace fcn {
 
 	class Widget {
 	public:
+		enum SelectionMode {
+			Selection_None = 0,
+			Selection_Border = 1,
+			Selection_Background = 2
+		};
 /* 		Widget(); */
 /* 		virtual ~Widget(); */
 		virtual Widget* getParent() const;
@@ -154,6 +159,8 @@ namespace fcn {
 		virtual const Color& getOutlineColor() const;
 		virtual void setBorderColor(const Color& color);
 		virtual const Color& getBorderColor() const;
+		void setSelectionMode(SelectionMode mode);
+		SelectionMode getSelectionMode() const;
 		void setMinSize(const Size& size);
 		const Size& getMinSize() const;
 		void setMaxSize(const Size& size);
@@ -543,7 +550,6 @@ namespace fcn {
 	public:
 		BarGraph();
 		BarGraph(int32_t x, int32_t y, int32_t w, int32_t h);
-		BarGraph(int32_t x, int32_t y, int32_t w, int32_t h, const Color& color);
 		virtual ~BarGraph();
 		void setBarX(int32_t x);
 		int32_t getBarX() const;
@@ -556,8 +562,6 @@ namespace fcn {
 		void setBarHeight(int32_t h);
 		int32_t getBarHeight() const;
 		void setBarSize(int32_t w, int32_t h);
-		void setColor(const Color& color);
-		const Color& getColor() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 	};
@@ -567,13 +571,10 @@ namespace fcn {
 	public:
 		CurveGraph();
 		CurveGraph(const PointVector& data);
-		CurveGraph(const PointVector& data, const Color& color);
 		virtual ~CurveGraph();
 		void setPointVector(const PointVector& data);
 		const PointVector& getPointVector() const;
 		void resetPointVector();
-		void setColor(const Color& color);
-		const Color& getColor() const;
 		void setThickness(uint32_t thickness);
 		uint32_t getThickness() const;
 		void setAutomaticControllPoints(bool acp);
@@ -587,13 +588,10 @@ namespace fcn {
 	public:
 		LineGraph();
 		LineGraph(const PointVector& data);
-		LineGraph(const PointVector& data, const Color& color);
 		virtual ~LineGraph();
 		void setPointVector(const PointVector& data);
 		const PointVector& getPointVector() const;
 		void resetPointVector();
-		void setColor(const Color& color);
-		const Color& getColor() const;
 		void setThickness(uint32_t thickness);
 		uint32_t getThickness() const;
 		void setOpaque(bool opaque);
@@ -626,13 +624,10 @@ namespace fcn {
 	public:
 		PointGraph();
 		PointGraph(const PointVector& data);
-		PointGraph(const PointVector& data, const Color& color);
 		virtual ~PointGraph();
 		void setPointVector(const PointVector& data);
 		const PointVector& getPointVector() const;
 		void resetPointVector();
-		void setColor(const Color& color);
-		const Color& getColor() const;
 		void setThickness(uint32_t thickness);
 		uint32_t getThickness() const;
 		void setOpaque(bool opaque);

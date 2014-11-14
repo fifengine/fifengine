@@ -100,13 +100,20 @@ namespace FIFE {
 		y1 += top.yOffset;
 		y2 += top.yOffset;
 
-		Point pbegin(static_cast<int32_t>(ceil(x1 + 0.375f)), static_cast<int32_t>(ceil(y1 + 0.375f)));
-		Point pend(static_cast<int32_t>(ceil(x2 + 0.625f)), static_cast<int32_t>(ceil(y2 + 0.625f)));
+		/*Point pbegin(static_cast<int32_t>(ceil(x1 + 0.375f)), static_cast<int32_t>(ceil(y1 + 0.375f)));
+		Point pend(static_cast<int32_t>(ceil(x2 + 0.625f)), static_cast<int32_t>(ceil(y2 + 0.625f)));*/
+		/*if (x1 == x2) {
+			y2 += 1;
+		} else if (y1 == y2) {
+			x2 += 1;
+		}*/
+		Point pbegin(x1, y1);
+		Point pend(x2, y2);
 
 		m_renderbackend->drawLine(pbegin, pend,
 			mColor.r, mColor.g, mColor.b, mColor.a);
-		m_renderbackend->putPixel(pbegin.x, pbegin.y,
-			mColor.r, mColor.g, mColor.b, mColor.a);
+		//m_renderbackend->putPixel(pbegin.x, pbegin.y,
+		//	mColor.r, mColor.g, mColor.b, mColor.a);
 		m_renderbackend->putPixel(pend.x, pend.y,
 			mColor.r, mColor.g, mColor.b, mColor.a);
 	}

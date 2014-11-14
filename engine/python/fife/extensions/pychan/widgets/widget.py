@@ -62,6 +62,8 @@ class Widget(object):
 	  - background_color: Color
 	  - foreground_color: Color
 	  - selection_color: Color
+	  - border_color: Color
+	  - outline_color: Color
 	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - helptext: Unicode: Text which can be used for e.g. tooltips.
 	  - comment: Unicode: Additional text stored by the widget.  Not used by PyChan directly. Can be used by the client for additional info about the widget.
@@ -97,13 +99,17 @@ class Widget(object):
 				   PointAttr('min_size'), 
 				   PointAttr('size'), 
 				   PointAttr('max_size'),
+				   PointAttr('fixed_size'),
 				   ColorAttr('base_color'),
 				   ColorAttr('background_color'),
 				   ColorAttr('foreground_color'),
 				   ColorAttr('selection_color'),
+				   ColorAttr('border_color'),
+				   ColorAttr('outline_color'),
 				   Attr('style'), 
 				   Attr('font'),
 				   IntAttr('border_size'),
+				   IntAttr('outline_size'),
 				   Attr('position_technique'),
 				   IntAttr('vexpand'),
 				   IntAttr('hexpand'), 
@@ -122,6 +128,7 @@ class Widget(object):
 	DEFAULT_POSITION = 0, 0
 	DEFAULT_FONT = "default"
 	DEFAULT_BORDER_SIZE = 0
+	DEFAULT_OUTLINE_SIZE = 0
 	DEFAULT_POSITION_TECHNIQUE = "explicit"
 	DEFAULT_COMMENT = u""
 
@@ -135,7 +142,8 @@ class Widget(object):
 				 name = None,
 				 size = None,
 				 min_size = None, 
-				 max_size = None, 
+				 max_size = None,
+				 fixed_size = None,
 				 helptext = None, 
 				 position = None, 
 				 style = None, 
@@ -146,7 +154,10 @@ class Widget(object):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None):
@@ -161,7 +172,7 @@ class Widget(object):
 		# Flag to indicate if the Widget is added to
 		# the top Widget list of the Manager
 		self._top_added = False
-		self._extra_border = (0,0)
+		#self._extra_border = (0,0)
 
 		self.tab = None
 		
@@ -185,6 +196,7 @@ class Widget(object):
 		self.max_size = self.DEFAULT_MAX_SIZE
 		self.size = self.DEFAULT_SIZE
 		self.border_size = self.DEFAULT_BORDER_SIZE
+		self.outline_size = self.DEFAULT_OUTLINE_SIZE
 		self.helptext = self.DEFAULT_HELPTEXT
 		self.comment = self.DEFAULT_COMMENT
 		self._usedPrefixes = []
@@ -216,7 +228,9 @@ class Widget(object):
 		if min_size is not None: self.min_size = min_size
 		if max_size is not None: self.max_size = max_size
 		if size is not None: self.size = size
+		if fixed_size is not None: self.fixed_size = fixed_size
 		if border_size is not None: self.border_size = border_size
+		if outline_size is not None: self.outline_size = outline_size
 		
 		if helptext is not None: self.helptext = helptext
 		if comment is not None: self.comment = comment
@@ -226,6 +240,8 @@ class Widget(object):
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
+		if border_color is not None: self.border_color = border_color
+		if outline_color is not None: self.outline_color = outline_color
 		# add this widget to the manager
 		get_manager().addWidget(self)
 	

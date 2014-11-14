@@ -37,13 +37,11 @@ class LineGraph(Widget):
 
 	  - coordinates: int list: x and y coordinates
 	  - thickness': int: Line thickness, default 1
-	  - line_color: color: Line color
 	  - opaque: bool: default False
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntListAttr('coordinates'),
 									   IntAttr('thickness'),
-									   ColorAttr('line_color'),
 									   BoolAttr('opaque')
 									 ]
 	DEFAULT_HEXPAND = 0
@@ -58,6 +56,7 @@ class LineGraph(Widget):
 				 size = None,
 				 min_size = None,
 				 max_size = None,
+				 fixed_size = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -68,45 +67,48 @@ class LineGraph(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
 				 opaque = None,
 				 coordinates = None,
-				 thickness = None,
-				 line_color = None):
+				 thickness = None):
 
 		self.real_widget = fifechan.LineGraph()
 		self.opaque = self.DEFAULT_OPAQUE
 		self.thickness = self.DEFAULT_THICKNESS
 
 		super(LineGraph, self).__init__(parent=parent,
-									 name=name,
-									 size=size,
-									 min_size=min_size,
-									 max_size=max_size,
-									 helptext=helptext,
-									 position=position,
-									 style=style,
-									 hexpand=hexpand,
-									 vexpand=vexpand,
-									 font=font,
-									 base_color=base_color,
-									 background_color=background_color,
-									 foreground_color=foreground_color,
-									 selection_color=selection_color,
-									 border_size=border_size,
-									 position_technique=position_technique,
-									 is_focusable=is_focusable,
-									 comment=comment)
+										name=name,
+										size=size,
+										min_size=min_size,
+										max_size=max_size,
+										fixed_size=fixed_size,
+										helptext=helptext,
+										position=position,
+										style=style,
+										hexpand=hexpand,
+										vexpand=vexpand,
+										font=font,
+										base_color=base_color,
+										background_color=background_color,
+										foreground_color=foreground_color,
+										selection_color=selection_color,
+										border_color=border_color,
+										outline_color=outline_color,
+										border_size=border_size,
+										outline_size=outline_size,
+										position_technique=position_technique,
+										is_focusable=is_focusable,
+										comment=comment)
 
 		if opaque is not None: self.opaque = opaque
-		if coordinates is not None:
-			print "found"
-			self.coordinates = coordinates
+		if coordinates is not None:	self.coordinates = coordinates
 		if thickness is not None: self.thickness = thickness
-		if line_color is not None: self.line_color = line_color
 
 
 	def clone(self, prefix):
@@ -115,6 +117,7 @@ class LineGraph(Widget):
 					self.size,
 					self.min_size,
 					self.max_size,
+					self.fixed_size,
 					self.helptext,
 					self.position,
 					self.style,
@@ -125,14 +128,16 @@ class LineGraph(Widget):
 					self.background_color,
 					self.foreground_color,
 					self.selection_color,
+					self.border_color,
+					self.outline_color,
 					self.border_size,
+					self.outline_size,
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
 					self.opaque,
 					self.coordinates,
-					self.thickness,
-					self.line_color)
+					self.thickness)
 		return lineGraphClone
 
 	def _setOpaque(self, opaque): self.real_widget.setOpaque(opaque)
@@ -158,6 +163,4 @@ class LineGraph(Widget):
 	def _setThickness(self, thickness): self.real_widget.setThickness(thickness)
 	def _getThickness(self): return self.real_widget.getThickness()
 	thickness = property(_getThickness, _setThickness)
-	
-	line_color = ColorProperty("Color")
 

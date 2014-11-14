@@ -37,14 +37,12 @@ class CurveGraph(Widget):
 
 	  - coordinates: int list: x and y coordinates
 	  - thickness': int: Line thickness, default 1
-	  - curve_color: color: Curve color
 	  - controll_points: bool: Adds internal controll points, default True
 	  - opaque: bool: default False
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntListAttr('coordinates'),
 									   IntAttr('thickness'),
-									   ColorAttr('curve_color'),
 									   BoolAttr('controll_points'),
 									   BoolAttr('opaque')
 									 ]
@@ -61,6 +59,7 @@ class CurveGraph(Widget):
 				 size = None,
 				 min_size = None,
 				 max_size = None,
+				 fixed_size = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -71,14 +70,16 @@ class CurveGraph(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
 				 opaque = None,
 				 coordinates = None,
 				 thickness = None,
-				 curve_color = None,
 				 controll_points = None):
 
 		self.real_widget = fifechan.CurveGraph()
@@ -87,29 +88,32 @@ class CurveGraph(Widget):
 		self.controll_points = self.DEFAULT_CONTROLL_POINTS
 
 		super(CurveGraph, self).__init__(parent=parent,
-									 name=name,
-									 size=size,
-									 min_size=min_size,
-									 max_size=max_size,
-									 helptext=helptext,
-									 position=position,
-									 style=style,
-									 hexpand=hexpand,
-									 vexpand=vexpand,
-									 font=font,
-									 base_color=base_color,
-									 background_color=background_color,
-									 foreground_color=foreground_color,
-									 selection_color=selection_color,
-									 border_size=border_size,
-									 position_technique=position_technique,
-									 is_focusable=is_focusable,
-									 comment=comment)
+										 name=name,
+										 size=size,
+										 min_size=min_size,
+										 max_size=max_size,
+										 fixed_size=fixed_size,
+										 helptext=helptext,
+										 position=position,
+										 style=style,
+										 hexpand=hexpand,
+										 vexpand=vexpand,
+										 font=font,
+										 base_color=base_color,
+										 background_color=background_color,
+										 foreground_color=foreground_color,
+										 selection_color=selection_color,
+										 border_color=border_color,
+										 outline_color=outline_color,
+										 border_size=border_size,
+										 outline_size=outline_size,
+										 position_technique=position_technique,
+										 is_focusable=is_focusable,
+										 comment=comment)
 
 		if opaque is not None: self.opaque = opaque
 		if coordinates is not None: self.coordinates = coordinates
 		if thickness is not None: self.thickness = thickness
-		if curve_color is not None: self.curve_color = curve_color
 		if controll_points is not None: self.controll_points = controll_points
 
 
@@ -119,6 +123,7 @@ class CurveGraph(Widget):
 					self.size,
 					self.min_size,
 					self.max_size,
+					self.fixed_size,
 					self.helptext,
 					self.position,
 					self.style,
@@ -129,14 +134,16 @@ class CurveGraph(Widget):
 					self.background_color,
 					self.foreground_color,
 					self.selection_color,
+					self.border_color,
+					self.outline_color,
 					self.border_size,
+					self.outline_size,
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
 					self.opaque,
 					self.coordinates,
 					self.thickness,
-					self.curve_color,
 					self.controll_points)
 		return curveGraphClone
 
@@ -167,6 +174,4 @@ class CurveGraph(Widget):
 	def _setControllPoints(self, controll): self.real_widget.setAutomaticControllPoints(controll)
 	def _getControllPoints(self): return self.real_widget.isAutomaticControllPoints()
 	controll_points = property(_getControllPoints, _setControllPoints)
-	
-	curve_color = ColorProperty("Color")
 
