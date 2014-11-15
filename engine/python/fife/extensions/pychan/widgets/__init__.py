@@ -49,6 +49,7 @@ from slider import Slider
 from percentagebar import PercentageBar
 from passwordfield import PasswordField
 from iconprogressbar import IconProgressBar
+from imageprogressbar import ImageProgressBar
 from resizablewindow import ResizableWindow
 from dockarea import DockArea
 from panel import Panel
@@ -82,6 +83,7 @@ WIDGETS = {
 	"Label" : Label,
 	"PercentageBar" : PercentageBar,
 	"IconProgressBar" : IconProgressBar,
+	"ImageProgressBar" : ImageProgressBar,
 	"BarGraph" : BarGraph,
 	"CurveGraph" : CurveGraph,
 	"LineGraph" : LineGraph,

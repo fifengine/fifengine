@@ -514,6 +514,31 @@ namespace fcn {
 		};
 	};
 
+	%feature("notabstract") ImageProgressBar;
+	class ImageProgressBar : public Widget {
+	public:
+		ImageProgressBar();
+		ImageProgressBar(Image *image, int32_t maxValue);
+		virtual ~ImageProgressBar();
+		void setBarImage(Image* image);
+		const Image* getBarImage() const;
+		void setForegroundImage(Image* image);
+		const Image* getForegroundImage() const;
+		void setMaxValue(int32_t maxValue);
+		int32_t getMaxValue() const;
+		void setValue(int32_t value);
+		int32_t getValue() const;
+		void setOrientation(ImageProgressBar::Orientation orientation);
+		ImageProgressBar::Orientation getOrientation() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		
+		enum Orientation {
+			HORIZONTAL = 0,
+			VERTICAL
+		};
+	};
+
 	%feature("notabstract") Tab;
 	class Tab: public Container {
 	public:

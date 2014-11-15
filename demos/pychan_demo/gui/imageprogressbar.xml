@@ -1,0 +1,6 @@
+<Window title="Image Progress Bar Example">
+	<ImageProgressBar min_size="400,40" max_size="400,40" size="400,40" name="bar" max_value="100" value="50" orientation="0" bar_image="gui/backgrounds/bar_background.png" foreground_image="gui/backgrounds/bar_foreground.png"/>
+	<Button name="increaseButton" text="Increase"/>
+	<Button name="decreaseButton" text="Decrease"/>
+	<Button name="closeButton" text="Close"/>
+</Window>
