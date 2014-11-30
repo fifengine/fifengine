@@ -248,19 +248,6 @@ namespace fcn {
 		Widget* getBackgroundWidget();
 	};
 	
-	%feature("notabstract") CheckBox;
-	class CheckBox: public Widget {
-	public:
-		CheckBox();
-		virtual ~CheckBox();
-		virtual bool isSelected() const;
-		virtual void setSelected(bool marked);
-		virtual const std::string &getCaption() const;
-		virtual void setCaption(const std::string& caption);
-		virtual void adjustSize();
-	};
-
-	
 	%feature("notabstract") Button;
 	class Button: public Widget {
 	public:
@@ -268,12 +255,93 @@ namespace fcn {
 		Button(const std::string& caption);
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
+		void setActive(bool state);
+		bool isActive() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
+		void setDownXOffset(int32_t offset);
+		int32_t getDownXOffset() const;
+		void setDownYOffset(int32_t offset);
+		int32_t getDownYOffset() const;
+		void setDownOffset(int32_t x, int32_t y);
 		virtual void adjustSize();
 		/*virtual bool isPressed() const;*/
 	};
-		
+
+	%feature("notabstract") ImageButton;
+	class ImageButton: public Button {
+	public:
+		ImageButton();
+		ImageButton(const Image* image);
+		virtual ~ImageButton();
+		void setUpImage(const Image* image);
+		const Image* getUpImage() const;
+		void setDownImage(const Image* image);
+		const Image* getDownImage() const;
+		void setHoverImage(const Image* image);
+		const Image* getHoverImage() const;
+		void setInactiveUpImage(const Image* image);
+		const Image* getInactiveUpImage() const;
+		void setInactiveDownImage(const Image* image);
+		const Image* getInactiveDownImage() const;
+		void setInactiveHoverImage(const Image* image);
+		const Image* getInactiveHoverImage() const;
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void adjustSize();
+	};
+
+	%feature("notabstract") ToggleButton;
+	class ToggleButton: public ImageButton {
+	public:
+		ToggleButton();
+		ToggleButton(const std::string &caption, const std::string &group, bool selected = false);
+		~ToggleButton();
+		virtual bool isSelected() const;
+		virtual void setSelected(bool selected);
+		virtual void toggleSelected();
+		void setGroup(const std::string& group);
+		const std::string &getGroup() const;
+	};
+
+	%feature("notabstract") CheckBox;
+	class CheckBox: public ImageButton {
+	public:
+		enum MarkerStyle {
+			Marker_Checkmark = 0,
+			Marker_Cross,
+			Marker_Dot,
+			Marker_Rhombus,
+			Marker_Image
+		};
+		CheckBox();
+		virtual ~CheckBox();
+		virtual bool isSelected() const;
+		virtual void setSelected(bool marked);
+		virtual void toggleSelected();
+		void setBackgroundImage(const std::string& filename);
+		void setBackgroundImage(const Image* image);
+		const Image* getBackgroundImage() const;
+		MarkerStyle getMarkerStyle() const;
+		void setMarkerStyle(MarkerStyle mode);
+		virtual void adjustSize();
+	};
+	
+	%feature("notabstract") Icon;
+	class Icon: public Widget {
+	public:
+		Icon(Image* image);
+		virtual ~Icon();
+		void setImage(Image* image);
+		const Image* getImage() const;
+		bool isScaling() const;
+		void setScaling(bool scale);
+		bool isTiling() const;
+		void setTiling(bool tile);
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		virtual void adjustSize();
+	};
+
 	%feature("notabstract") ScrollArea;
 	class ScrollArea: public Widget {
 	public:
@@ -664,4 +732,3 @@ namespace fcn {
 namespace std {
 	%template(FcnPointVector) vector<fcn::Point>;
 }
-

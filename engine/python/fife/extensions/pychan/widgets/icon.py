@@ -37,11 +37,21 @@ class Icon(Widget):
 	==============
 
 	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
+	  - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
+	  - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
+	  - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('image'),
-									   BoolAttr('scale')
+									   BoolAttr('scale'),
+									   BoolAttr('tile'),
+									   BoolAttr('opaque')
 									 ]
 
+	DEFAULT_IMAGE = ""
+	DEFAULT_SCALE = False
+	DEFAULT_TILE = False
+	DEFAULT_OPAQUE = False
+	
 	def __init__(self, 
 				 parent = None,
 				 name = None,
@@ -67,9 +77,12 @@ class Icon(Widget):
 				 is_focusable = None,
 				 comment = None,
 				 image = None,
-				 scale = None):
+				 scale = None,
+				 tile = None,
+				 opaque = None):
 				 
 		self.real_widget = fifechan.Icon(None)
+		
 		super(Icon,self).__init__(parent=parent,
 								  name=name,
 								  size=size,
@@ -94,12 +107,21 @@ class Icon(Widget):
 								  is_focusable=is_focusable,
 								  comment=comment)
 
+		# set provided attributes or defaults
 		if scale is not None: self.scale = scale
+		else: self.scale = self.DEFAULT_SCALE
 
-		self.image = image
+		if tile is not None: self.tile = tile
+		else: self.tile = self.DEFAULT_TILE
+
+		if opaque is not None: self.opaque = opaque
+		else: self.opaque = self.DEFAULT_OPAQUE
+
+		if image is not None: self.image = image
+		else: self.image = self.DEFAULT_IMAGE
 		
 		#if the size parameter is specified set it (again) to override
-		#the icons size.
+		#the icons size. That works only without layouting.
 		if size is not None: self.size = size
 
 	def clone(self, prefix):
@@ -128,27 +150,22 @@ class Icon(Widget):
 				self.comment,
 				self.image,
 				self.scale)
-				 
-		
+						
 		return iconClone
 		
-	_image = ImageProperty("Image")
+	image = ImageProperty("Image")
 
-	def _setImage(self,source):
-		self._image = source
-		self._checkSize()
-
-	def _getImage(self):
-		return self._image
-	image = property(_getImage,_setImage)
-
-	def _setScaling(self, val):
-		self.real_widget.setScaling(val)
-		self._checkSize()
-
-	def _getScaling(self):
-		return self.real_widget.isScaling()
+	def _setScaling(self, val):	self.real_widget.setScaling(val)
+	def _getScaling(self): return self.real_widget.isScaling()
 	scale = property(_getScaling, _setScaling)
+
+	def _setTiling(self, val):	self.real_widget.setTiling(val)
+	def _getTiling(self): return self.real_widget.isTiling()
+	tile = property(_getTiling, _setTiling)
+
+	def _setOpaque(self, val):	self.real_widget.setOpaque(val)
+	def _getOpaque(self): return self.real_widget.isOpaque()
+	opaque = property(_getOpaque, _setOpaque)
 
 	def _checkSize(self):
 		if not self.scale:
