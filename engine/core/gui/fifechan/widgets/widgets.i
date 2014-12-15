@@ -49,9 +49,12 @@ namespace fcn {
 		virtual ~ClickLabel();
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
+		void setAlignment(Graphics::Alignment alignment);
+		Graphics::Alignment getAlignment() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
 		bool isTextWrapping() const;
 		void setTextWrapping(bool);
-		virtual void setWidth(int32_t width);
 		virtual void adjustSize();
 	};
 	
