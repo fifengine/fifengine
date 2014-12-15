@@ -51,12 +51,14 @@ class Container(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), 
 									   Attr('background_image'), 
 									   BoolAttr('opaque'),
-									   PointAttr('margins') 
+									   PointAttr('margins'),
+									   PointAttr('spacing')
 									 ]
 
 	DEFAULT_OPAQUE = True
 	DEFAULT_MARGINS = 5,5
 	DEFAULT_PADDING = 5
+	DEFAULT_SPACING = 2,2
 	DEFAULT_BACKGROUND = None
 	DEFAULT_LAYOUT = 'Absolute'
 	
@@ -88,6 +90,7 @@ class Container(Widget):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None):
 				 
 		self.real_widget = _real_widget or fifechan.Container()
@@ -128,6 +131,8 @@ class Container(Widget):
 		if padding is not None: self.padding = padding
 		if opaque is not None: self.opaque = opaque
 		if background_image is not None: self.background_image = background_image
+		if spacing is not None: self.spacing = spacing
+		else: self.spacing = self.DEFAULT_SPACING
 		
 	def clone(self, prefix):
 		containerClone = Container(None, 
@@ -156,7 +161,8 @@ class Container(Widget):
 						self.padding,
 						self.background_image,
 						self.opaque,
-						self.margins)
+						self.margins,
+						self.spacing)
 			
 		containerClone.addChildren(self._cloneChildren(prefix))
 			
@@ -360,6 +366,18 @@ class Container(Widget):
 		return self.real_widget.getHorizontalSpacing()
 	hspacing = property(_getHorizontalSpacing, _setHorizontalSpacing)
 
+	def _setSpacing(self, space):
+		# Shorthand property
+		if isinstance(space, tuple):
+			self.real_widget.setVerticalSpacing(space[0])
+			self.real_widget.setHorizontalSpacing(space[1])
+		else:
+			self.real_widget.setVerticalSpacing(space)
+			self.real_widget.setHorizontalSpacing(space)
+	def _getSpacing(self):
+		return (self.real_widget.getVerticalSpacing(), self.real_widget.getHorizontalSpacing())
+	spacing = property(_getSpacing, _setSpacing)
+
 	def _setLayout(self, layout):
 		if layout == 'vertical' or layout == 'Vertical' or layout == 'VERTICAL':
 			self.real_widget.setLayout(fifechan.Container.Vertical)
@@ -432,6 +450,7 @@ class VBox(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None):
 				 
 		super(VBox,self).__init__(parent=parent, 
@@ -461,6 +480,7 @@ class VBox(Container):
 								  background_image=background_image,
 								  opaque=opaque,
 								  margins=margins,
+								  spacing=spacing,
 								  _real_widget=_real_widget)
 	def clone(self, prefix):
 		vboxClone = VBox(None, 
@@ -489,7 +509,8 @@ class VBox(Container):
 					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins)
+					self.margins,
+					self.spacing)
 					
 		vboxClone.addChildren(self._cloneChildren(prefix))
 					
@@ -533,6 +554,7 @@ class HBox(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None):
 				 
 		super(HBox,self).__init__(parent=parent,
@@ -562,6 +584,7 @@ class HBox(Container):
 								  background_image=background_image,
 								  opaque=opaque,
 								  margins=margins,
+								  spacing=spacing,
 								  _real_widget=_real_widget)
 
 	def clone(self, prefix):
@@ -591,7 +614,8 @@ class HBox(Container):
 					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins)
+					self.margins,
+					self.spacing)
 					
 		hboxClone.addChildren(self._cloneChildren(prefix))
 		
@@ -635,6 +659,7 @@ class CBox(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None):
 				 
 		super(CBox,self).__init__(parent=parent, 
@@ -664,6 +689,7 @@ class CBox(Container):
 								  background_image=background_image,
 								  opaque=opaque,
 								  margins=margins,
+								  spacing=spacing,
 								  _real_widget=_real_widget)
 
 	def clone(self, prefix):
@@ -693,7 +719,8 @@ class CBox(Container):
 					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins)
+					self.margins,
+					self.spacing)
 					
 		cboxClone.addChildren(self._cloneChildren(prefix))
 		
@@ -750,6 +777,7 @@ class Window(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None,
 				 title = None,
 				 titlebar_height = None,
@@ -784,6 +812,7 @@ class Window(Container):
 									background_image=background_image,
 									opaque=opaque,
 									margins=margins,
+									spacing=spacing,
 									_real_widget=_real_widget)
 
 		if titlebar_height is not None:
@@ -832,6 +861,7 @@ class Window(Container):
 					self.background_image,
 					self.opaque,
 					self.margins,
+					self.spacing,
 					None,
 					self.title,
 					self.titlebar_height,

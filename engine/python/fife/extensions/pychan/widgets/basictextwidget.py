@@ -46,7 +46,7 @@ class BasicTextWidget(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
-	DEFAULT_MARGINS = 5,5
+	DEFAULT_MARGINS = 0,0
 	DEFAULT_TEXT = u""
 	
 	def __init__(self, 
