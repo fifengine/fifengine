@@ -509,6 +509,24 @@ namespace fcn {
 		};
 	};
 
+	%feature("notabstract") FlowContainer;
+	class FlowContainer: public Container {
+	public:
+		FlowContainer();
+		virtual ~FlowContainer();
+		void setAlignment(FlowContainer::Alignment alignment);
+		FlowContainer::Alignment getAlignment() const;
+		void adjustContent();
+
+		enum Alignment {
+			Left = 0,
+			Right,
+			Top,
+			Bottom,
+			Center
+		};
+	};
+
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
 	public:

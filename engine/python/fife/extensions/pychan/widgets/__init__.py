@@ -34,6 +34,7 @@ from widget import Widget
 from spacer import Spacer
 from adjustingcontainer import AdjustingContainer
 from containers import Container, VBox, HBox, CBox, Window
+from flowcontainer import FlowContainer
 from label import Label
 from icon import Icon
 from buttons import Button, ToggleButton, ImageButton
@@ -71,6 +72,7 @@ WIDGETS = {
 	"CBox" : CBox,
 	"ScrollArea" :ScrollArea,
 	"AdjustingContainer" : AdjustingContainer,
+	"FlowContainer" : FlowContainer,
 	"TabbedArea" : TabbedArea,
 	"Tab" : Tab,
 	"ResizableWindow" : ResizableWindow,
