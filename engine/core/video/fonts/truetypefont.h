@@ -70,13 +70,20 @@ namespace FIFE {
 
 			virtual int32_t getHeight() const;
 
+			virtual void setBoldStyle(bool style);
+			virtual void setItalicStyle(bool style);
+			virtual void setUnderlineStyle(bool style);
+			virtual void setStrikethroughStyle(bool style);
+			virtual int32_t getFontStyleMask() const;
 
 			virtual SDL_Surface *renderString(const std::string& text);
 
-			virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
+			virtual void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255);
 
 		protected:
-			TTF_Font *mFont;
+			TTF_Font* mFont;
+
+			int32_t mFontStyle;
 	};
 }
 

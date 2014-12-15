@@ -43,12 +43,14 @@ namespace FIFE {
 		: FIFE::FontBase() {
 		mFilename = filename;
 		mFont = NULL;
-
+		mFontStyle = TTF_STYLE_NORMAL;
+		
 		mFont = TTF_OpenFont(filename.c_str(), size);
 
 		if (mFont == NULL) {
 			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
+
 		mColor.r = mColor.g = mColor.b = mColor.unused = 255;
 	}
 
@@ -65,6 +67,53 @@ namespace FIFE {
 
 	int32_t TrueTypeFont::getHeight() const {
 		return TTF_FontHeight(mFont) + getRowSpacing();
+	}
+
+	void TrueTypeFont::setBoldStyle(bool style) {
+		if (style != m_boldStyle) {
+			if (style) {
+				mFontStyle |= TTF_STYLE_BOLD;
+			} else {
+				mFontStyle &= ~TTF_STYLE_BOLD;
+			}
+			m_boldStyle = style;
+			TTF_SetFontStyle(mFont, mFontStyle);
+		}
+	}
+
+	void TrueTypeFont::setItalicStyle(bool style) {
+		if (style != m_italicStyle) {
+			if (style) {
+				mFontStyle |= TTF_STYLE_ITALIC;
+			} else {
+				mFontStyle &= ~TTF_STYLE_ITALIC;
+			}
+			m_italicStyle = style;
+			TTF_SetFontStyle(mFont, mFontStyle);
+		}
+	}
+
+	void TrueTypeFont::setUnderlineStyle(bool style) {
+		if (style != m_underlineStyle) {
+			if (style) {
+				mFontStyle |= TTF_STYLE_UNDERLINE;
+			} else {
+				mFontStyle &= ~TTF_STYLE_UNDERLINE;
+			}
+			m_underlineStyle = style;
+			TTF_SetFontStyle(mFont, mFontStyle);
+		}
+	}
+
+	void TrueTypeFont::setStrikethroughStyle(bool style) {
+		// ToDo: It's currently not available.
+		if (style != m_strikeStyle) {
+			m_strikeStyle = style;
+		}
+	}
+
+	int32_t TrueTypeFont::getFontStyleMask() const {
+		return mFontStyle;
 	}
 
 	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
@@ -94,7 +143,7 @@ namespace FIFE {
 		return renderedText;
 	}
 
-	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+	void TrueTypeFont::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
 		mColor.r = r;
 		mColor.g = g;
 		mColor.b = b;

@@ -136,7 +136,7 @@ namespace FIFE {
 		}
 
 		// Set placeholder glyph
-		// This should actually work ith utf8.
+		// This should actually work with utf8.
 		if( m_glyphs.find('?') != m_glyphs.end() ) {
 			m_placeholder = m_glyphs['?'];
 		} else {

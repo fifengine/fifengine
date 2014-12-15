@@ -46,7 +46,12 @@ namespace FIFE {
 			mGlyphSpacing(0),
 			mRowSpacing(0),
 			mFilename(""),
-			m_antiAlias(true) {
+			m_antiAlias(true),
+			m_boldStyle(false),
+			m_italicStyle(false),
+			m_underlineStyle(false),
+			m_strikeStyle(false),
+			m_coloring(false) {
 	}
 
 	void FontBase::invalidate() {
@@ -73,8 +78,48 @@ namespace FIFE {
 		m_antiAlias = antiAlias;
 	}
 
-	bool FontBase::isAntiAlias() {
+	bool FontBase::isAntiAlias() const {
 		return m_antiAlias;
+	}
+
+	void FontBase::setBoldStyle(bool style) {
+		m_boldStyle = style;
+	}
+
+	bool FontBase::isBoldStyle() const {
+		return m_boldStyle;
+	}
+
+	void FontBase::setItalicStyle(bool style) {
+		m_italicStyle = style;
+	}
+
+	bool FontBase::isItalicStyle() const {
+		return m_italicStyle;
+	}
+
+	void FontBase::setUnderlineStyle(bool style) {
+		m_underlineStyle = style;
+	}
+
+	bool FontBase::isUnderlineStyle() const {
+		return m_underlineStyle;
+	}
+
+	void FontBase::setStrikethroughStyle(bool style) {
+		m_strikeStyle = style;
+	}
+
+	bool FontBase::isStrikethroughStyle() const {
+		return m_strikeStyle;
+	}
+
+	void FontBase::setDynamicColoring(bool coloring) {
+		m_coloring = coloring;
+	}
+	
+	bool FontBase::isDynamicColoring() const {
+		return m_coloring;
 	}
 
 	SDL_Color FontBase::getColor() const {
