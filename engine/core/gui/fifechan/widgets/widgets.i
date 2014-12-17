@@ -22,6 +22,7 @@
 %module fife
 %{
 #include <fifechan.hpp>
+#include "gui/fifechan/widgets/animationicon.h"
 #include "gui/fifechan/widgets/clicklabel.h"
 #include "gui/fifechan/widgets/percentagebar.h"
 #include "gui/fifechan/widgets/resizablewindow.h"
@@ -40,6 +41,22 @@ namespace fcn {
 	class Widget;
 
 	
+	%feature("notabstract") AnimationIcon;
+	class AnimationIcon: public Icon {
+	public:
+		AnimationIcon();
+		AnimationIcon(FIFE::AnimationPtr animation);
+		virtual ~AnimationIcon();
+		void setAnimation(FIFE::AnimationPtr animation);
+		FIFE::AnimationPtr getAnimation() const;
+		void setRepeating(bool repeat);
+		bool isRepeating() const;
+		void play();
+		bool isPlaying() const;
+		void pause();
+		void stop();
+	};
+
 	%feature("notabstract") ClickLabel;
 	%rename(Label) ClickLabel;
 	class ClickLabel: public Widget {
@@ -64,10 +81,10 @@ namespace fcn {
 		PercentageBar();
 		virtual ~PercentageBar();
 		virtual void setForegroundImage(Image* image);
-        virtual void setOrientation(PercentageBar::Orientation orientation);
-        virtual PercentageBar::Orientation getOrientation() const;
-        virtual int32_t getValue() const;
-        virtual void setValue(int32_t value);
+		virtual void setOrientation(PercentageBar::Orientation orientation);
+		virtual PercentageBar::Orientation getOrientation() const;
+		virtual int32_t getValue() const;
+		virtual void setValue(int32_t value);
 		
 		enum Orientation
 		{
@@ -148,7 +165,7 @@ namespace fcn {
 		Panel();
 		Panel(bool dockable);
 		virtual ~Panel();
-        
+		
 		void setDockable(bool dockable);
 		bool isDockable() const;
 		void setDocked(bool docked);

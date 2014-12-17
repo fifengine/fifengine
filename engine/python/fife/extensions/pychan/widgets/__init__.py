@@ -37,6 +37,7 @@ from containers import Container, VBox, HBox, CBox, Window
 from flowcontainer import FlowContainer
 from label import Label
 from icon import Icon
+from animationicon import AnimationIcon
 from buttons import Button, ToggleButton, ImageButton
 from checkbox import CheckBox
 from radiobutton import RadioButton
@@ -82,6 +83,7 @@ WIDGETS = {
 	# Simple Widgets
 	"Spacer" : Spacer,
 	"Icon" : Icon,
+	"AnimationIcon" : AnimationIcon,
 	"Label" : Label,
 	"PercentageBar" : PercentageBar,
 	"IconProgressBar" : IconProgressBar,

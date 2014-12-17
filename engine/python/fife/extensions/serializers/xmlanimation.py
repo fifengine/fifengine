@@ -55,7 +55,7 @@ def loadXMLAnimation(engine, filename):
 		path.append(str(atlas))
 		atlas_file = '/'.join(path)
 		if imgMgr.exists(atlas_file):
-			atlas_img = imgMgr.getPtr(str(atlas_file))
+			atlas_img = imgMgr.get(str(atlas_file))
 		else:
 			atlas_img = imgMgr.create(str(atlas_file))
 		# parse atlas animation format 2 (e.g. cursor)
@@ -81,7 +81,7 @@ def loadXMLAnimation(engine, filename):
 			frame_file = atlas,":",frame_file
 
 			if imgMgr.exists(str(frame_file)):
-				frame_img = imgMgr.getPtr(str(frame_file))
+				frame_img = imgMgr.get(str(frame_file))
 			else:
 				frame_img = imgMgr.create(str(frame_file))
 				region = fife.Rect(frame_x_pos, frame_y_pos, frame_width, frame_height)
