@@ -80,7 +80,7 @@ class PointAttr(Attr):
 			x,y = tuple(map(int,str(value).split(',')))
 			return x,y
 		except:
-			raise ParserError("Expected a comma separated list of two integers.")
+			raise ParserError(str(self.name)+" expected a comma separated list of two integers.")
 
 class ColorAttr(Attr):
 	def parse(self,value):
@@ -89,13 +89,13 @@ class ColorAttr(Attr):
 			try:
 				r,g,b,a = tuple(map(int,str(value).split(',')))
 				for c in (r,g,b,a):
-					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
+					if not 0 <= c < 256: raise ParserError(str(self.name)+" expected a color (Failed: 0 <= %d <= 255)" %c)
 			except:
 				r,g,b = tuple(map(int,str(value).split(',')))
 				for c in (r,g,b):
-					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
+					if not 0 <= c < 256: raise ParserError(str(self.name)+" expected a color (Failed: 0 <= %d <= 255)" %c)
 		except:
-			raise ParserError("Expected a color.")
+			raise ParserError(str(self.name)+" expected a color.")
 
 		return r,g,b,a
 
@@ -104,7 +104,7 @@ class IntAttr(Attr):
 		try:
 			return int(value)
 		except:
-			raise ParserError("Expected a single integer.")
+			raise ParserError(str(self.name)+" expected a single integer.")
 
 class BoolAttr(Attr):
 	def parse(self,value):
@@ -114,17 +114,17 @@ class BoolAttr(Attr):
 				value = int(value)
 			value = bool(value)
 			if value not in (True,False):
-				raise ParserError("Expected False or True.")
+				raise ParserError(str(self.name)+" expected False or True.")
 			return value
 		except:
-			raise ParserError("Expected False or True.")
+			raise ParserError(str(self.name)+" expected False or True.")
 
 class FloatAttr(Attr):
 	def parse(self, value):
 		try:
 			return float(value)
 		except:
-			raise ParserError("Expected a float.")
+			raise ParserError(str(self.name)+" expected a float.")
 
 
 class ListAttr(Attr):
@@ -133,7 +133,7 @@ class ListAttr(Attr):
 			result = map(str,str(value).split(','))
 			return result
 		except:
-			raise ParserError("Expected a list with strings.")
+			raise ParserError(str(self.name)+" expected a list with strings.")
 
 class UnicodeListAttr(Attr):
 	def parse(self, value):
@@ -141,7 +141,7 @@ class UnicodeListAttr(Attr):
 			result = map(unicode,str(value).split(','))
 			return result
 		except:
-			raise ParserError("Expected a list with unicode strings.")
+			raise ParserError(str(self.name)+" expected a list with unicode strings.")
 
 class IntListAttr(Attr):
 	def parse(self, value):
@@ -149,7 +149,7 @@ class IntListAttr(Attr):
 			result = map(int,str(value).split(','))
 			return result
 		except:
-			raise ParserError("Expected a list with ints.")
+			raise ParserError(str(self.name)+" expected a list with ints.")
 
 class BoolListAttr(Attr):
 	def parse(self, value):
@@ -157,7 +157,7 @@ class BoolListAttr(Attr):
 			result = map(bool,str(value).split(','))
 			return result
 		except:
-			raise ParserError("Expected a list with bools.")
+			raise ParserError(str(self.name)+" expected a list with bools.")
 
 class FloatListAttr(Attr):
 	def parse(self, value):
@@ -165,7 +165,7 @@ class FloatListAttr(Attr):
 			result = map(float,str(value).split(','))
 			return result
 		except:
-			raise ParserError("Expected a list with floats.")
+			raise ParserError(str(self.name)+" expected a list with floats.")
 
 
 ATTRIBUTE_TYPE = { "Str" : Attr,
@@ -194,4 +194,4 @@ class MixedListAttr(Attr):
 				result.append(method(val))
 			return result
 		except:
-			raise ParserError("Expected a mixed list.")
+			raise ParserError(str(self.name)+" expected a mixed list.")
