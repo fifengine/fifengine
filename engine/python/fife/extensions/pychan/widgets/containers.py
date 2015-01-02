@@ -369,13 +369,13 @@ class Container(Widget):
 	def _setSpacing(self, space):
 		# Shorthand property
 		if isinstance(space, tuple):
-			self.real_widget.setVerticalSpacing(space[0])
-			self.real_widget.setHorizontalSpacing(space[1])
+			vspacing = space[0]
+			hspacing = space[1]
 		else:
-			self.real_widget.setVerticalSpacing(space)
-			self.real_widget.setHorizontalSpacing(space)
+			vspacing = space
+			hspacing = space
 	def _getSpacing(self):
-		return (self.real_widget.getVerticalSpacing(), self.real_widget.getHorizontalSpacing())
+		return (vspacing, hspacing)
 	spacing = property(_getSpacing, _setSpacing)
 
 	def _setLayout(self, layout):

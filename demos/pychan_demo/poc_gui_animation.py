@@ -93,6 +93,17 @@ class PocAnimations(PyChanExample):
 		
 		self.widget.adaptLayout(True)
 		self.widget.show()
+
+	def stop(self):
+		# stop all timers
+		self._move_timer.stop()
+		self._resize_timer.stop()
+		self._color_timer.stop()
+		self._progress_timer.stop()
+		
+		if self.widget:
+			self.widget.hide()
+		self.widget = None
 		
 	def _set_delay_display(self):
 		""" set delay display according to slider value """
