@@ -18,6 +18,14 @@ antialias: 1
 
 color: 255,255,100
 
+[Font/samanata_large_recoloring]
+type: truetype
+source: fonts/samanata.ttf
+size: 20
+antialias: 1
+recoloring: 1
+color: 255,255,100
+
 [Font/samanata_small_pixelated]
 
 type: truetype

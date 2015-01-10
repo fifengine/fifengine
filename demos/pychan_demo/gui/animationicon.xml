@@ -1,0 +1,8 @@
+<Window title="AnimationIcon Example" size="400,200">
+  <HBox max_size="400,100">
+    <Label font="samanata_large" text="Do you see the animation" />
+    <AnimationIcon animation="gui/animations/question_mark/animation.xml" />
+  </HBox>
+  
+  <Button name="closeButton" text="Close"/>
+</Window>

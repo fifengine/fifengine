@@ -357,13 +357,3 @@ class TabbedArea(Container):
 	def _getSelectedTabIndex(self):
 		return self.real_widget.getSelectedTabIndex()
 	select_tab_index = property(_getSelectedTabIndex, _setSelectedTabIndex)
-
-	# not implemented
-	def _setVerticalSpacing(self, space):
-		pass
-	def _getVerticalSpacing(self):
-		return 0
-	def _setHorizontalSpacing(self, space):
-		pass
-	def _getHorizontalSpacing(self):
-		return 0

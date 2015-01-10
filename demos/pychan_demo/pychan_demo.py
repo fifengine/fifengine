@@ -42,7 +42,8 @@ class PyChanExample(object):
 	"""
 	Example class.
 	"""
-	def __init__(self,xmlFile):
+	def __init__(self, xmlFile, application=None):
+		self.application = application
 		self.xmlFile = xmlFile
 		self.widget = None
 
@@ -73,6 +74,8 @@ class PyChanExample(object):
 		if self.widget:
 			self.widget.hide()
 		self.widget = None
+		if self.application:
+			self.application.demoList.requestFocus()
 
 class TextSetter(object):
 	def __init__(self,text):
@@ -185,7 +188,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		# We keep a dictionary of these and fill
 		# the ListBox on the left with its names.
 		self.examples = {
-			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
+			'Absolute Positioning' : PyChanExample('gui/absolute.xml', self),
 			'Adjusting Container' : PyChanExample('gui/adjustingcontainer.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
 			'Basic Styling' : StylingExample(),
@@ -203,6 +206,8 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Dynamic Graph' : DynamicGraphExample(),
 			'Icon Progress Bar' : IconProgressBarExample(),
 			'Image Progress Bar' : ImageProgressBarExample(),
+			'Flow Container' : PyChanExample('gui/flowcontainer.xml'),
+			'Animation Icon' : PyChanExample('gui/animationicon.xml'),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())

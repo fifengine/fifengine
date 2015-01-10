@@ -24,7 +24,7 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import IntAttr
+from fife.extensions.pychan.attrs import IntAttr, UnicodeAttr
 
 from containers import Container
 
@@ -37,7 +37,8 @@ class FlowContainer(Container):
 
 	"""
 
-	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('alignment') ]
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('alignment'),
+										  UnicodeAttr('layout') ]
 
 	DEFAULT_LAYOUT = 'Horizontal'
 	DEFAULT_ALIGNMENT = 'Center'
@@ -70,6 +71,7 @@ class FlowContainer(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 layout = None,
 				 _real_widget = None):
 
 		if _real_widget is None: _real_widget = fifechan.FlowContainer()
@@ -102,6 +104,8 @@ class FlowContainer(Container):
 												opaque=opaque,
 												margins=margins,
 												_real_widget=_real_widget)
+		
+		if layout is not None: self.layout = layout
 
 				
 	def clone(self, prefix):
