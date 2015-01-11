@@ -46,7 +46,7 @@ def getRequiredLibs(reqLibs):
 	libs = [
 			('vorbisfile', 'vorbisfile.h'),
 			('openal', 'AL/al.h'),
-			('SDL', 'SDL.h'),
+			('sdl', 'SDL.h'),
 			('SDL_ttf', 'SDL_ttf.h'),
 			('SDL_image', 'SDL_image.h'),
 			('boost_system', ''),
