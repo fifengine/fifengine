@@ -169,7 +169,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
 		# that's because that would call credits._setText _NOW_ and we want to call
 		# it later.
-		credits.capture(lambda : TextSetter(u"CREDITS"), event_name="mouseEntered")
+		credits.capture(lambda : credits._setText(u"CREDITS"), event_name="mouseEntered")
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
 
 		# import example modules
@@ -239,7 +239,9 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		Callback handler from the credits link/label.
 		"""
 		# We use PyChan's synchronous execution feature here.
-		pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
+		if self.creditsWidget is None:
+			self.creditsWidget = pychan.loadXML('gui/credits.xml')
+		self.creditsWidget.execute({ 'okButton' : "Yay!" })
 		
 	def createListener(self):
 		"""

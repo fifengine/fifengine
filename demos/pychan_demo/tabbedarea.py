@@ -68,9 +68,9 @@ class TabbedAreaExample(PyChanExample):
 		widget.text = unicode('The '+number+' new Tab.')
 		widget.tab = pychan.widgets.Tab()
 		content = pychan.widgets.Label()
-		content.text = 'Tab '+number
+		content.text = unicode('Tab '+number)
 		widget.tab.addChild(content)
-		content = pychan.widgets.Button(text='X', name="close"+number, border_size=0)
+		content = pychan.widgets.Button(text=unicode('X'), name="close"+number, border_size=0)
 		widget.tab.addChild(content)
 		widget.tab.mapEvents({
 			'close'+number: self.closeTab,

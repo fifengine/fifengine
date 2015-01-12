@@ -11,7 +11,7 @@
 				<Button text="XML code"/>
 			</HBox>
 			<ScrollArea>
-				<TextBox name="xmlSource" font="FreeMono" filename="gui/all_widgets.xml"/>
+				<TextBox name="xmlSource" font="FreeMono" filename="gui/demoapp.xml"/>
 			</ScrollArea>
 		</VBox>
 	</HBox>
