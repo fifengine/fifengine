@@ -56,7 +56,7 @@ class Container(Widget):
 									 ]
 
 	DEFAULT_OPAQUE = True
-	DEFAULT_MARGINS = 5,5
+	DEFAULT_MARGINS = 0,0
 	DEFAULT_PADDING = 5
 	DEFAULT_SPACING = 2,2
 	DEFAULT_BACKGROUND = None
@@ -306,7 +306,6 @@ class Container(Widget):
 				child.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
 	def beforeShow(self):
-
 		# This is required because beforeShow() is NOT called on nested
 		# containers or child widgets.  This ensures that background tiled 
 		# images are shown properly
@@ -369,13 +368,13 @@ class Container(Widget):
 	def _setSpacing(self, space):
 		# Shorthand property
 		if isinstance(space, tuple):
-			vspacing = space[0]
-			hspacing = space[1]
+			self.vspacing = space[0]
+			self.hspacing = space[1]
 		else:
-			vspacing = space
-			hspacing = space
+			self.vspacing = space
+			self.hspacing = space
 	def _getSpacing(self):
-		return (vspacing, hspacing)
+		return (self.vspacing, self.hspacing)
 	spacing = property(_getSpacing, _setSpacing)
 
 	def _setLayout(self, layout):

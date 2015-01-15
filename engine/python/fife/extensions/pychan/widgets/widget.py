@@ -172,8 +172,7 @@ class Widget(object):
 		# Flag to indicate if the Widget is added to
 		# the top Widget list of the Manager
 		self._top_added = False
-		#self._extra_border = (0,0)
-
+		# Only needed for tabs
 		self.tab = None
 		
 		# Data distribution & retrieval settings

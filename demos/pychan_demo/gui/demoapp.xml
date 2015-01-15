@@ -4,11 +4,11 @@
 		<ScrollArea>
 			<ListBox name="demoList"/>
 		</ScrollArea>
-		<VBox margins="0,0" hexpand="2">
+		<VBox margins="0,0" hexpand="1" padding="0">
 			<Label text=" Select one example from the listbox."/>
 			<Label text=" You can also execute this script with an Gui XML file as argument."/>
--			<HBox margins="0,0">
-				<Button text="XML code"/>
+			<HBox margins="0,0">
+				<Button name="xmlButton" text="XML code"/>
 			</HBox>
 			<ScrollArea>
 				<TextBox name="xmlSource" font="FreeMono" filename="gui/demoapp.xml"/>
@@ -17,6 +17,7 @@
 	</HBox>
 	<HBox>
 		<Label name="creditsLink" text="Credits"/>
+		<Spacer/>
 		<Button name="closeButton" text="Quit Demo"/>
 	</HBox>
 </VBox>

@@ -96,10 +96,10 @@ class PocAnimations(PyChanExample):
 
 	def stop(self):
 		# stop all timers
-		self._move_timer.stop()
-		self._resize_timer.stop()
-		self._color_timer.stop()
-		self._progress_timer.stop()
+		if self._move_timer: self._move_timer.stop()
+		if self._resize_timer: self._resize_timer.stop()
+		if self._color_timer: self._color_timer.stop()
+		if self._progress_timer: self._progress_timer.stop()
 		
 		if self.widget:
 			self.widget.hide()

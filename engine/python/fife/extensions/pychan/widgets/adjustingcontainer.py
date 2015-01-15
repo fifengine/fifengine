@@ -73,6 +73,7 @@ class AdjustingContainer(Container):
 				 background_image = None,
 				 opaque = None,
 				 margins = None,
+				 spacing = None,
 				 _real_widget = None,
 				 columns = None,
 				 alignments = None):
@@ -106,6 +107,7 @@ class AdjustingContainer(Container):
 												background_image=background_image,
 												opaque=opaque,
 												margins=margins,
+												spacing=spacing,
 												_real_widget=_real_widget)
 
 		if columns is not None:
@@ -144,6 +146,7 @@ class AdjustingContainer(Container):
 						self.background_image,
 						self.opaque,
 						self.margins,
+						self.spacing,
 						self.columns,
 						self.alignments)
 			

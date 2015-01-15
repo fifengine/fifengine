@@ -160,6 +160,7 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'creditsLink'  : self.showCredits,
 			'closeButton'  : self.quit,
 			'demoList' : self.selectExample,
+			'xmlButton' : self.loadRuntimeXML,
 		}
 		self.gui.mapEvents(eventMap)
 
@@ -183,6 +184,8 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		from dynamicgraph import DynamicGraphExample
 		from iconprogressbar import IconProgressBarExample
 		from imageprogressbar import ImageProgressBarExample
+		from modalfocus import ModalFocusExample
+		from showhide import ShowHideExample
 
 		# Our list of examples
 		# We keep a dictionary of these and fill
@@ -208,6 +211,8 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 			'Image Progress Bar' : ImageProgressBarExample(),
 			'Flow Container' : PyChanExample('gui/flowcontainer.xml'),
 			'Animation Icon' : PyChanExample('gui/animationicon.xml'),
+			'Modal Focus' : ModalFocusExample(),
+			'Show and Hide' : ShowHideExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())
@@ -233,6 +238,26 @@ class DemoApplication(pychanbasicapplication.PychanApplicationBase):
 		self.currentExample = self.examples[self.demoList.selected_item]
 		self.gui.findChild(name="xmlSource").text = unicode(open(self.currentExample.xmlFile).read(), 'utf8')
 		self.currentExample.start()
+
+	def loadRuntimeXML(self):
+		"""
+		Callback handler for clicking on the XML button.
+		"""
+		if self.demoList.selected_item is None:
+			return
+		
+		if self.currentExample:
+			self.currentExample.stop()
+
+		# save source to file
+		tmp = open("gui/tmp.xml", "w")
+		tmp.write(self.gui.findChild(name="xmlSource").text.encode("utf-8"))
+		tmp.close()
+		# change the xml path, load it and reset the path
+		xml_orig = self.currentExample.xmlFile
+		self.currentExample.xmlFile = "gui/tmp.xml"
+		self.currentExample.start()
+		self.currentExample.xmlFile = xml_orig
 
 	def showCredits(self):
 		"""
