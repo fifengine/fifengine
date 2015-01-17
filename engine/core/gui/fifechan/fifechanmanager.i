@@ -43,6 +43,8 @@ namespace FIFE {
 		void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
 		
 		Console* getConsole() const;
+		void setConsoleEnabled(bool console);
+		bool isConsoleEnabled() const;
 
 		void setCursor(Cursor* cursor);
 		Cursor* getCursor() const;
@@ -57,6 +59,9 @@ namespace FIFE {
 		
 		KeyEvent translateKeyEvent(const fcn::KeyEvent& evt);
 		MouseEvent translateMouseEvent(const fcn::MouseEvent& evt);
+
+		void setTabbingEnabled(bool tabbing);
+		bool isTabbingEnabled() const;
 	private:
 		virtual void turn();
 		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
