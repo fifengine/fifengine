@@ -151,7 +151,7 @@ general and the bundled techdemo. Feedback is a great way to help us to improve
 FIFE. If you would like to get in contact with us and provide feedback you can 
 either visit our IRC channel or our forums:
  * #fife on freenode.net
- * http://forums.fifengine.net/index.php?board=5.0
+ * http://forums.fifengine.net/
 
 
 7) Closing Notes
