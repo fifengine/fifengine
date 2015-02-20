@@ -62,14 +62,12 @@ namespace fcn {
 		 */
 		bool isDocked() const;
 
+		virtual DockArea* findDockArea();
+
 		// Inherited from ResizableWindow
 
 		virtual void resizeToContent(bool recursiv=true);
 		virtual void expandContent(bool recursiv=true);
-
-		// Inherited from ResizableWindow / FocusListener
-	
-		virtual void focusLost(const Event& event);
 	
 	
 		// Inherited from ResizableWindow / MouseListener
@@ -87,29 +85,12 @@ namespace fcn {
 		virtual void mouseDragged(MouseEvent& mouseEvent);
 
 	protected:
-		void expand(bool expand);
-		void changeLayout();
-		// resets the prepared states
-		void resetPrepared();
-		void findDockArea();
+		DockArea* getDockedArea();
 
 		// is dockable
 		bool m_dockable;
 		// is docked
 		bool m_docked;
-		// is expanded
-		bool m_expanded;
-
-		// indicate the prepared states
-		bool m_preDock;
-		bool m_preUndock;
-		bool m_preExpand;
-		bool m_preLayout;
-		// first Dock Area that was found while the Panel was dragged
-		DockArea* m_foundDockArea;
-		// Dock Area this Panel is docked to
-		DockArea* m_dockedArea;
-		Container* m_origParent;
 
 		struct SavedState	{
 			Rectangle dimension;

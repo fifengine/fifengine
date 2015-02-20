@@ -76,14 +76,16 @@ namespace fcn {
 		
 		void repositionWidget(Widget* widget);
 
+
 		// Inherited from ResizableWindow
 
-		virtual void resizeToContent(bool recursiv=true);
-		virtual void expandContent(bool recursiv=true);
+		virtual void add(Widget* widget);
 
-		// Inherited from ResizableWindow / FocusListener
-	
-		virtual void focusLost(const Event& event);
+		virtual void remove(Widget* widget);
+
+		virtual void resizeToContent(bool recursiv=true);
+
+		virtual void expandContent(bool recursiv=true);
 	
 	
 		// Inherited from ResizableWindow / MouseListener

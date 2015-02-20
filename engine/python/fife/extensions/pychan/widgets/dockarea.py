@@ -180,6 +180,10 @@ class DockArea(ResizableWindow):
 		windowClone.addChildren(self._cloneChildren(prefix))		     
 		return windowClone
 
+	def addChild(self, widget):
+		super(DockArea,self).addChild(widget)
+		widget.docked = True
+		
 	def isTopSide(self):
 		return self.real_widget.isTopSide()
 	

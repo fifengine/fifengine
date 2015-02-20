@@ -38,20 +38,12 @@
 namespace fcn {
 	Panel::Panel():
 		m_dockable(true),
-		m_docked(false),
-		m_expanded(true),
-		m_foundDockArea(NULL),
-		m_dockedArea(NULL),
-		m_origParent(NULL) {
+		m_docked(false) {
 	}
 
 	Panel::Panel(bool dockable):
 		m_dockable(dockable),
-		m_docked(false),
-		m_expanded(true),
-		m_foundDockArea(NULL),
-		m_dockedArea(NULL),
-		m_origParent(NULL) {
+		m_docked(false) {
 	}
 
 	Panel::~Panel() {
@@ -69,37 +61,29 @@ namespace fcn {
 	void Panel::setDocked(bool docked) {
 		if (isDockable()) {
 			if (docked && !isDocked()) {
-				// remove from Parent and save settings
-				//m_state.dimension = getDimension();
+				// save settings
+				m_state.dimension = getDimension();
 				//m_state.innerBorder = getInnerBorderSize();
 				m_state.resizable = isResizable();
 				m_state.movable = isMovable();
 				setResizable(false);
-				m_origParent = static_cast<Container*>(getParent());
-				m_origParent->remove(this);
-				// add to DockArea
-				m_foundDockArea->dockWidget(this);
-				m_foundDockArea->setHighlighted(false);
 				m_docked = true;
-				m_dockedArea = m_foundDockArea;
-				m_foundDockArea = NULL;
+				getDockedArea()->adaptLayout(false);
+				//resizeToContent(true);
+				//expandContent(true);
 			} else if (!docked && isDocked()) {
-				// remove from DockArea
-				m_dockedArea->undockWidget(this);
 				m_docked = false;
-				m_dockedArea = NULL;
-				// add to old Parent and restore settings
-				m_origParent->add(this);
-				m_origParent = NULL;
+				// restore settings
 				//setDimension(m_state.dimension);
+				setSize(m_state.dimension.width, m_state.dimension.height);
 				//setInnerBorderSize(m_state.innerBorder);
+				// center it
 				Rectangle childrenRec = getParent()->getChildrenArea();
 				int32_t x = childrenRec.x + childrenRec.width / 2 - getWidth() / 2;
 				int32_t y = childrenRec.y + childrenRec.height / 2 - getHeight() / 2;
 				setPosition(x, y);
 				setResizable(m_state.resizable);
 				setMovable(m_state.movable);
-				m_foundDockArea = NULL;
 			}
 		}
 	}
@@ -108,52 +92,17 @@ namespace fcn {
 		return m_docked;
 	}
 
-	void Panel::expand(bool expand) {
-		if (m_expanded != expand) {
-			if (m_expanded) {
-				// save old size
-				m_state.dimension = getDimension();
-				m_state.innerBorder = getInnerBorderSize();
-				// shrink to titlebar height
-				setHeight(2*getBorderSize() + getTitleBarHeight());
-				setInnerBorderSize(0);
-				m_expanded = false;
-			} else {
-				// expand to old height
-				//setSize(m_state.dimension.width, m_state.dimension.height);
-				setHeight(m_state.dimension.height);
-				setInnerBorderSize(m_state.innerBorder);
-				m_expanded = true;
-			}
-			if (m_docked) {
-				m_dockedArea->adaptLayout(false);
-			}
+	DockArea* Panel::getDockedArea() {
+		DockArea* dockedArea = NULL;
+		if (isDocked()) {
+			dockedArea = dynamic_cast<DockArea*>(getParent());
 		}
+		return dockedArea;
 	}
 
-	void Panel::changeLayout() {
-		// change Layout if possible
-		if (getLayout() == Container::Vertical) {
-			setLayout(Container::Horizontal);
-			Window::resizeToContent(true);
-			Window::expandContent(true);
-		} else if (getLayout() == Container::Horizontal) {
-			setLayout(Container::Vertical);
-			//adaptLayout();
-			Window::resizeToContent(true);
-			Window::expandContent(true);
-		}
-	}
-
-	void Panel::resetPrepared() {
-		m_preDock = false;
-		m_preUndock = false;
-		m_preExpand = false;
-		m_preLayout = false;
-	}
-
-	void Panel::findDockArea() {
-		if (!isDocked() && isDockable()) {
+	DockArea* Panel::findDockArea() {
+		DockArea* dockArea = NULL;
+		if (!isDocked()) {
 			if (getParent()) {
 				DockArea* newDockArea = NULL;
 				std::list<Widget*> widgets = getParent()->getWidgetsIn(getDimension(), this);
@@ -189,17 +138,10 @@ namespace fcn {
 						break;
 					}
 				}
-				if (newDockArea != m_foundDockArea) {
-					if (m_foundDockArea) {
-						m_foundDockArea->setHighlighted(false);
-					}
-					m_foundDockArea = newDockArea;
-					if (m_foundDockArea) {
-						m_foundDockArea->setHighlighted(true);
-					}
-				}
+				dockArea = newDockArea;
 			}
 		}
+		return dockArea;
 	}
 
 	void Panel::resizeToContent(bool recursiv) {
@@ -208,20 +150,10 @@ namespace fcn {
 		} else {
 			Window::resizeToContent(recursiv);
 		}
-		if (!m_expanded) {
-			// shrink to titlebar height
-			setHeight(2*getBorderSize() + getTitleBarHeight());
-			setInnerBorderSize(0);
-		}
 	}
 
 	void Panel::expandContent(bool recursiv) {
 		ResizableWindow::resizeToContent(recursiv);
-		if (!m_expanded) {
-			// shrink to titlebar height
-			setHeight(2*getBorderSize() + getTitleBarHeight());
-			setInnerBorderSize(0);
-		}
 	}
 
 	void Panel::mouseEntered(MouseEvent& mouseEvent) {
@@ -229,65 +161,31 @@ namespace fcn {
 	}
 
 	void Panel::mouseExited(MouseEvent& mouseEvent) {
-		resetPrepared();
 		ResizableWindow::mouseExited(mouseEvent);
 	}
 
 	void Panel::mousePressed(MouseEvent& mouseEvent) {
-		resetPrepared();
-		//int height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
-		int32_t height = getBorderSize() + getTitleBarHeight();
-		bool barPressed = mouseEvent.getY() <= height && mouseEvent.getY() > getResizableBorderDistance();
-		if (mouseEvent.getButton() == MouseEvent::Left && barPressed) {
-			// prepare move or expand
-			m_preExpand= true;
-		} else if (mouseEvent.getButton() == MouseEvent::Right && barPressed) {
-			if (m_docked) {
-				// prepare undock
-				m_preUndock = true;
-			} else {
-				// prepare change layout
-				m_preLayout = true;
-			}
-		}
-
 		if (!m_docked) {
 			ResizableWindow::mousePressed(mouseEvent);
         } else {
+			int32_t height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
             mDragOffsetX = mouseEvent.getX();
             mDragOffsetY = mouseEvent.getY();
 
-            int height = getBorderSize() + getPaddingTop() + getTitleBarHeight();
             mMoved = mouseEvent.getY() <= height;
         }
 	}
 
 	void Panel::mouseReleased(MouseEvent& mouseEvent) {
 		if (mouseEvent.getButton() == MouseEvent::Left) {
-			// expand or shrink it to titlebar
-			if (m_preExpand) {
-				expand(!m_expanded);
-				m_preExpand = false;
-			// dock it to the founded dock area
-			} else if (!isDocked() && m_foundDockArea) {
-				setDocked(true);
-				restoreCursor();
 			// move it inside the dock area
-			} else if (m_docked && isMovable() && mMoved) {
-				m_dockedArea->repositionWidget(this);
-				m_dockedArea->adaptLayout(false);
+			if (m_docked && isMovable() && mMoved) {
+				getDockedArea()->repositionWidget(this);
+				getDockedArea()->adaptLayout(false);
 			}
 		} else if (mouseEvent.getButton() == MouseEvent::Right) {
-			// remove it from the dock area and add it back to the old parent
-			if (m_dockedArea) {
-				setDocked(false);
+			if (getDockedArea()) {
 				restoreCursor();
-				// additional we should change the position, depend on the dockarea typ
-				// and mouse event position
-			// change layout
-			} else if (m_preLayout) {
-				changeLayout();
-				m_preLayout = false;
 			}
 		}
 		ResizableWindow::mouseReleased(mouseEvent);
@@ -298,15 +196,11 @@ namespace fcn {
 	}
 
 	void Panel::mouseDragged(MouseEvent& mouseEvent) {
-		findDockArea();
-		m_preDock =  m_foundDockArea != NULL;
-		m_preExpand = false;
-		m_preLayout = false;
 		if (m_docked) {
 			if (isMovable() && mMoved) {
-				Rectangle rec = m_dockedArea->getChildrenArea();
-				int x = mouseEvent.getX() - mDragOffsetX + getX();
-				int y = mouseEvent.getY() - mDragOffsetY + getY();
+				Rectangle rec = getDockedArea()->getChildrenArea();
+				int32_t x = mouseEvent.getX() - mDragOffsetX + getX();
+				int32_t y = mouseEvent.getY() - mDragOffsetY + getY();
 				if (x < 0) {
 					x = 0;
 				} else if (x + getWidth() > rec.width) {
@@ -318,9 +212,9 @@ namespace fcn {
 					y = rec.height - getHeight();
 				}
 				setPosition(x, y);
-				m_dockedArea->repositionWidget(this);
+				getDockedArea()->repositionWidget(this);
 				// move to top on dragged instead of pressed
-				m_dockedArea->moveToTop(this);
+				getDockedArea()->moveToTop(this);
 				// restore "old" position, layouting can change it
 				setPosition(x, y);
 			}
@@ -329,9 +223,5 @@ namespace fcn {
 		} else {
 			ResizableWindow::mouseDragged(mouseEvent);
 		}
-	}
-
-	void Panel::focusLost(const Event& event) {
-		resetPrepared();
 	}
 }

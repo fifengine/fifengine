@@ -21,6 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import weakref
 from fife import fife
 from fife import fifechan
 
@@ -28,23 +29,14 @@ from fife.extensions.pychan.attrs import BoolAttr, MixedListAttr
 from common import get_manager
 
 from resizablewindow import ResizableWindow
+from dockarea import DockArea
+from containers import Container
 
 class Panel(ResizableWindow):
 	"""
-	This is a window class that can be resizable.
+	The Panel class can be docked or undocked from Dock Areas.
 
-	New Attributes
-	==============
-
-	  - resizable: Allows resizing with the mouse. If disabled all the side parameters are ignored.
-	  - top_resizable: If true, the window can be resized at the top side.
-	  - right_resizable: If true, the window can be resized at the right side.
-	  - bottom_resizable: If true, the window can be resized at the bottom side.
-	  - left_resizable: If true, the window can be resized at the left side.
-	  - shove: That allows pull and push in case the min/max size is reached.
-	  - cursors: List that contains the cursor definitions. Left, Right, Top, Bottom, LeftTop, RightTop, LeftBottom, RightBottom
 	"""
-
 
 	def __init__(self, 
 				 parent = None, 
@@ -127,12 +119,19 @@ class Panel(ResizableWindow):
 								   shove=shove,
 								   cursors=cursors)
 
+		self._foundDockArea = None
+		
+		self._barPressedLeft = False
+		self._barPressedRight = False
+		self._barReleasedLeft = False
+		self._barReleasedRight = False
+		
+		self.capture(self.mousePressed, "mousePressed", "Panel")
 		self.capture(self.mouseReleased, "mouseReleased", "Panel")
-		self._docked = False
-		self.old_parent = self.parent
+		self.capture(self.mouseDragged, "mouseDragged", "Panel")
 
 	def clone(self, prefix):
-		windowClone = Panel(None, 
+		panelClone = Panel(None, 
 					self._createNameWithPrefix(prefix),
 					self.size,
 					self.min_size, 
@@ -171,57 +170,101 @@ class Panel(ResizableWindow):
 					self.shove,
 					self.cursors)
 		
-		windowClone.addChildren(self._cloneChildren(prefix))		     
-		return windowClone
+		panelClone.addChildren(self._cloneChildren(prefix))		     
+		return panelClone
 
+	def _getDocked(self): return self.real_widget.isDocked()
+	def _setDocked(self, docked): self.real_widget.setDocked(docked)
+	docked = property(_getDocked, _setDocked)
+
+	def getDockArea(self):
+		# try to find dock area
+		# search only includes parent container
+		if not self.docked and self.parent:
+			dim = fife.Rect(0, 0, self.width, self.height)
+			dim.x, dim.y = self.getAbsolutePos()
+			childs = self.parent.children
+			for c in childs:
+				if isinstance(c, DockArea) and c.real_widget.isActiveDockArea():
+					cdim = fife.Rect(0, 0, c.width, c.height)
+					cdim.x, cdim.y = c.getAbsolutePos()
+					if dim.intersects(cdim):
+						return c
+			return None
+		else:
+			return self.parent
+
+	def afterDock(self):
+		""" called after dockTo() process if the panel is docked
+		
+			overwrite this to e.g. keep a record on where the widget
+			was last docked
+		"""
+		pass
+		
+	def afterUndock(self):
+		""" called after undockTo() process if the panel is undocked 
+		
+			overwrite and implement this in your Panel instance
+			to e.g. restore a particular default position
+			(otherwise the panel would re-appear on the center)
+		"""
+		pass
+	
+	def dockTo(self, widget):
+		if not self.docked and widget is not self.parent:
+			widget.real_widget.setHighlighted(False)
+			# map coordinates to new parent
+			self.x = (self.x / (self.parent.width / 100)) * (widget.width / 100)
+			self.y = (self.y / (self.parent.height / 100)) * (widget.height / 100)
+			self.parent.removeChild(self)
+			widget.addChild(self)
+			self.docked = True
+			self.afterDock()
+
+	def undockTo(self, widget):
+		if self.docked and widget is not self.parent:
+			self.parent.removeChild(self)
+			widget.addChild(self)
+			self.docked = False
+			self.afterUndock()
+		
+	def mousePressed(self, event):
+		h = self.real_widget.getBorderSize() + self.real_widget.getPaddingTop() + self.real_widget.getTitleBarHeight()
+		self._barPressedLeft = event.getButton() == 1 and event.getY() <= h and event.getY() > self.real_widget.getResizableBorderDistance()
+		self._barPressedRight = event.getButton() == 2 and event.getY() <= h and event.getY() > self.real_widget.getResizableBorderDistance()
+		self._barReleasedLeft = False
+		self._barReleasedRight = False
 
 	def mouseReleased(self, event):
-		# needed for proper parent
-		if self.real_widget.isDocked() != self._docked:
-			self._docked = self.real_widget.isDocked()
-			if self.parent:
-				if self in self.parent.children:
-					self.parent.children.remove(self)
+		h = self.real_widget.getBorderSize() + self.real_widget.getPaddingTop() + self.real_widget.getTitleBarHeight()
+		self._barReleasedLeft = event.getButton() == 1 and event.getY() <= h and event.getY() > self.real_widget.getResizableBorderDistance()
+		self._barReleasedRight = event.getButton() == 2 and event.getY() <= h and event.getY() > self.real_widget.getResizableBorderDistance()
+		releasedLeft = self._barPressedLeft and self._barReleasedLeft
+		releasedRight = self._barPressedRight and self._barReleasedRight
+		self._barPressedLeft = False
+		self._barPressedRight = False
+		if releasedLeft and self._foundDockArea and not self.docked:
+			self.dockTo(self._foundDockArea())
+		elif releasedRight and self.docked:
+			if self.parent.parent:
+				newParent = self.parent.parent
+				self.undockTo(newParent)
+				#get_manager().addTopWidget(self)
+				#self._top_added = True
 
-				if self._docked:
-					self.old_parent = self.parent
-					real_parent = self.real_widget.getParent()
-					children = []
-					def _fetch(shown_widget):
-						if shown_widget not in children:
-							children.append(shown_widget)
-					self.parent.deepApply(_fetch)
-				else:
-					# always undock to orig parent
-					children = [self.old_parent, ]
-					real_parent = self.real_widget.getParent()
-					
-				self.parent = None
-				# remove all from the manager
-				def _remove(removed_widget):
-					if removed_widget._added:
-						get_manager().removeWidget(removed_widget)
-					if removed_widget._top_added:
-						get_manager().removeTopWidget(removed_widget)
-				self.deepApply(_remove)
+	def mouseDragged(self, event):
+		# disable highlighting
+		if self._foundDockArea is not None:
+			self._foundDockArea().real_widget.setHighlighted(False)
+			self._foundDockArea = None
 
-				for child in children:
-					# use c++ 'pointer' to find the right python widget
-					if child.real_widget.this == real_parent.this:
-						self.parent = child
-						if self.max_size[0] > child.max_size[0] or self.max_size[1] > child.max_size[1]:
-							self.max_size = child.max_size
-							
-						child.children.append(self)
-						# add all to the manager
-						def _add(added_widget):
-							if not added_widget._added:
-								get_manager().addWidget(added_widget)
-							if added_widget._top_added:
-								get_manager().removeTopWidget(added_widget)
-						self.deepApply(_add)
-						break
-					
-			if self.parent is None:
-				print "DockArea containment fumble:", self, self.old_parent
+		if not self.docked and self._barPressedLeft:
+			dock = self.getDockArea()
+			# enable highlighting for dock area
+			if dock is not None and dock.real_widget.isActiveDockArea():
+				self._foundDockArea = weakref.ref(dock)
+				self._foundDockArea().real_widget.setHighlighted(True)
+				
+
 

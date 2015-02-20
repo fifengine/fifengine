@@ -134,14 +134,10 @@ namespace fcn {
 
 	void DockArea::dockWidget(Widget* widget) {
 		add(widget);
-		repositionWidget(widget);
-		adaptLayout(false);
-		requestMoveToTop();
 	}
 
 	void DockArea::undockWidget(Widget* widget) {
 		remove(widget);
-		adaptLayout(false);
 	}
 
 	void DockArea::setHighlighted(bool highlighted) {
@@ -171,7 +167,6 @@ namespace fcn {
 	void DockArea::repositionWidget(Widget* widget) {
 		Widget* placeBefore = NULL;
 		Widget* placeAfter = NULL;
-		//Widget* placeIn = NULL;
 
 		Rectangle dim = widget->getDimension();
 		widget->getAbsolutePosition(dim.x, dim.y);
@@ -315,11 +310,11 @@ namespace fcn {
 		}
 		Rectangle childArea = parent->getChildrenArea();
 		Rectangle childDim = getDimension();
-		if (childDim.x < 0) {
-			setX(0);
+		if (childDim.x < childArea.x) {
+			setX(childArea.x);
 		}
-		if (childDim.y < 0) {
-			setY(0);
+		if (childDim.y < childArea.y) {
+			setY(childArea.y);
 		}
 		
 		if (m_topSide) {
@@ -329,7 +324,7 @@ namespace fcn {
 		} else if (m_rightSide) {
 			if ((childDim.x + childDim.width) > childArea.width) {
 				if (childDim.width > childArea.width) {
-					setX(0);
+					setX(childArea.x);
 					setWidth(childArea.width);
 				} else {
 					setX(childArea.width - childDim.width);
@@ -338,7 +333,7 @@ namespace fcn {
 		} else if (m_bottomSide) {
 			if ((childDim.y + childDim.height) > childArea.height) {
 				if (childDim.height > childArea.height) {
-					setY(0);
+					setY(childArea.y);
 					setHeight(childArea.height);
 				} else {
 					setY(childArea.height - childDim.height);
@@ -349,6 +344,21 @@ namespace fcn {
 				setWidth(childArea.width - childDim.x);
 			}
 		}
+	}
+
+	void DockArea::add(Widget* widget) {
+		ResizableWindow::add(widget);
+		int32_t x = widget->getX();
+		int32_t y = widget->getY();
+		adaptLayout(true);
+		widget->setPosition(x, y);
+		repositionWidget(widget);
+		requestMoveToTop();
+	}
+
+	void DockArea::remove(Widget* widget) {
+		ResizableWindow::remove(widget);
+		adaptLayout(false);
 	}
 
 	void DockArea::resizeToContent(bool recursiv) {
@@ -425,8 +435,5 @@ namespace fcn {
 				repositionDockAreas();
 			}
 		}
-	}
-
-	void DockArea::focusLost(const Event& event) {
 	}
 }
