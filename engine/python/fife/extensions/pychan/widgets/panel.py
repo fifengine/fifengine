@@ -178,18 +178,27 @@ class Panel(ResizableWindow):
 	docked = property(_getDocked, _setDocked)
 
 	def getDockArea(self):
-		# try to find dock area
-		# search only includes parent container
-		if not self.docked and self.parent:
+		if not self.docked:
+			dockAreas = []
+			# all top widgets are used for the search
+			if not self.parent:
+				topWidgets = get_manager().allTopHierachyWidgets
+				for t in topWidgets:
+					dockAreas.extend(t.findChildren(__class__=DockArea))
+			else:
+				# only all childs are used for the search
+				dockAreas = self.parent.findChildren(__class__=DockArea)
+			# reverse order so inner/deeper Areas are preferred
+			dockAreas.reverse()
+			# try to find an intersecting and active DockArea
 			dim = fife.Rect(0, 0, self.width, self.height)
 			dim.x, dim.y = self.getAbsolutePos()
-			childs = self.parent.children
-			for c in childs:
-				if isinstance(c, DockArea) and c.real_widget.isActiveDockArea():
-					cdim = fife.Rect(0, 0, c.width, c.height)
-					cdim.x, cdim.y = c.getAbsolutePos()
-					if dim.intersects(cdim):
-						return c
+			for d in dockAreas:
+				if d.real_widget.isActiveDockArea():
+					ddim = fife.Rect(0, 0, d.width, d.height)
+					ddim.x, ddim.y = d.getAbsolutePos()
+					if dim.intersects(ddim):
+						return d
 			return None
 		else:
 			return self.parent
@@ -214,10 +223,16 @@ class Panel(ResizableWindow):
 	def dockTo(self, widget):
 		if not self.docked and widget is not self.parent:
 			widget.real_widget.setHighlighted(False)
-			# map coordinates to new parent
-			self.x = (self.x / (self.parent.width / 100)) * (widget.width / 100)
-			self.y = (self.y / (self.parent.height / 100)) * (widget.height / 100)
-			self.parent.removeChild(self)
+			# map coordinates to new parent and remove it from old parent
+			if self.parent:
+				self.x = (self.x // (self.parent.width // 100)) * (widget.width // 100)
+				self.y = (self.y // (self.parent.height // 100)) * (widget.height // 100)
+				self.parent.removeChild(self)
+			else:
+				self.x = (self.x // (get_manager().hook.screen_width // 100)) * (widget.width // 100)
+				self.y = (self.y // (get_manager().hook.screen_height // 100)) * (widget.height // 100)
+				get_manager().removeTopWidget(self)
+			# dock it to new parent
 			widget.addChild(self)
 			self.docked = True
 			self.afterDock()
@@ -225,7 +240,11 @@ class Panel(ResizableWindow):
 	def undockTo(self, widget):
 		if self.docked and widget is not self.parent:
 			self.parent.removeChild(self)
-			widget.addChild(self)
+			# undock to main gui
+			if widget is None:
+				get_manager().addTopWidget(self)
+			else:
+				widget.addChild(self)
 			self.docked = False
 			self.afterUndock()
 		
@@ -247,11 +266,12 @@ class Panel(ResizableWindow):
 		if releasedLeft and self._foundDockArea and not self.docked:
 			self.dockTo(self._foundDockArea())
 		elif releasedRight and self.docked:
+			# by default it undocks to the parent of the DockArea
 			if self.parent.parent:
 				newParent = self.parent.parent
 				self.undockTo(newParent)
-				#get_manager().addTopWidget(self)
-				#self._top_added = True
+			else:
+				self.undockTo(None)
 
 	def mouseDragged(self, event):
 		# disable highlighting
@@ -265,6 +285,3 @@ class Panel(ResizableWindow):
 			if dock is not None and dock.real_widget.isActiveDockArea():
 				self._foundDockArea = weakref.ref(dock)
 				self._foundDockArea().real_widget.setHighlighted(True)
-				
-
-
