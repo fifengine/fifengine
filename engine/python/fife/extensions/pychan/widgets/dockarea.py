@@ -24,32 +24,33 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import UnicodeAttr
+from fife.extensions.pychan.attrs import BoolAttr, ColorAttr, UnicodeAttr
+from fife.extensions.pychan.properties import ColorProperty
 from common import get_manager
 
 from resizablewindow import ResizableWindow
 
 class DockArea(ResizableWindow):
 	"""
-	This is a window class that can be resizable.
+	This is a window class that can be resizable and it's possible to dock Panels.
 
 	New Attributes
 	==============
 
-	  - resizable: Allows resizing with the mouse. If disabled all the side parameters are ignored.
-	  - top_resizable: If true, the window can be resized at the top side.
-	  - right_resizable: If true, the window can be resized at the right side.
-	  - bottom_resizable: If true, the window can be resized at the bottom side.
-	  - left_resizable: If true, the window can be resized at the left side.
-	  - shove: That allows pull and push in case the min/max size is reached.
-	  - cursors: List that contains the cursor definitions. Left, Right, Top, Bottom, LeftTop, RightTop, LeftBottom, RightBottom
+	  - active: If true, the DockArea is active and Panels can be docked to it.
+	  - side: Allows to specify the side for expanding.
+	  - highlight_color: Color that is used if a Panel enters the DockArea.
 	"""
 
-	ATTRIBUTES = ResizableWindow.ATTRIBUTES + [ UnicodeAttr('side'),
+	ATTRIBUTES = ResizableWindow.ATTRIBUTES + [ BoolAttr('active'),
+												UnicodeAttr('side'),
+												ColorAttr('highlight_color'),
 												]
 
 	DEFAULT_MARGINS = 0
 	DEFAULT_PADDING = 0
+	DEFAULT_ACTIVE = True
+	DEFAULT_HIGHLIGHT_COLOR = (200, 0, 0)
 
 	def __init__(self, 
 				 parent = None, 
@@ -90,7 +91,9 @@ class DockArea(ResizableWindow):
 				 left_resizable = None,
 				 shove = None,
 				 cursors = None,
-				 side = None):
+				 active = None,
+				 side = None,
+				 highlight_color = None):
 		
 		if _real_widget is None: _real_widget = fifechan.DockArea()
 			
@@ -133,11 +136,16 @@ class DockArea(ResizableWindow):
 									  shove=shove,
 									  cursors=cursors)
 
-		if side is not None:
-			self.side = side
+		if active is not None: self.active = active
+		else: self.active = self.DEFAULT_ACTIVE
+		
+		if side is not None: self.side = side
+
+		if highlight_color is not None: self.highlight_color = highlight_color
+		else: self.highlight_color = self.DEFAULT_HIGHLIGHT_COLOR
 
 	def clone(self, prefix):
-		windowClone = DockArea(None, 
+		dockAreaClone = DockArea(None, 
 					self._createNameWithPrefix(prefix),
 					self.size,
 					self.min_size,
@@ -175,15 +183,21 @@ class DockArea(ResizableWindow):
 					self.left_resizable,
 					self.shove,
 					self.cursors,
-					self.side)
+					self.active,
+					self.side,
+					self.highlight_color)
 		
-		windowClone.addChildren(self._cloneChildren(prefix))		     
-		return windowClone
+		dockAreaClone.addChildren(self._cloneChildren(prefix))		     
+		return dockAreaClone
 
 	def addChild(self, widget):
 		super(DockArea,self).addChild(widget)
 		widget.docked = True
-		
+
+	def _getActiveDockArea(self): return self.real_widget.isActiveDockArea()
+	def _setActiveDockArea(self, active): self.real_widget.setActiveDockArea(active)
+	active = property(_getActiveDockArea, _setActiveDockArea)
+	
 	def isTopSide(self):
 		return self.real_widget.isTopSide()
 	
@@ -232,3 +246,5 @@ class DockArea(ResizableWindow):
 		elif side == 'left':
 			self.setLeftSide(True)
 	side = property(_getSide, _setSide)
+
+	highlight_color = ColorProperty("HighlightColor")

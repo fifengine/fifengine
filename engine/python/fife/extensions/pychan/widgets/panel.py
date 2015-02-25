@@ -25,7 +25,7 @@ import weakref
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import BoolAttr, MixedListAttr
+from fife.extensions.pychan.attrs import BoolAttr
 from common import get_manager
 
 from resizablewindow import ResizableWindow
@@ -35,8 +35,21 @@ from containers import Container
 class Panel(ResizableWindow):
 	"""
 	The Panel class can be docked or undocked from Dock Areas.
+	If the Panel is added to a DockArea e.g. by XML loading, then it will automatically docked.
+	By default undock will add the Panel to the parent of the DockArea, that can also be the top widget.
 
+	New Attributes
+	==============
+
+	  - dockable: If true, the Panel can be docked/undocked to DockAreas.
 	"""
+	
+	ATTRIBUTES = ResizableWindow.ATTRIBUTES + [ BoolAttr('dockable'),
+												]
+
+
+	DEFAULT_DOCKABLE = True
+
 
 	def __init__(self, 
 				 parent = None, 
@@ -76,7 +89,8 @@ class Panel(ResizableWindow):
 				 bottom_resizable = None,
 				 left_resizable = None,
 				 shove = None,
-				 cursors = None):
+				 cursors = None,
+				 dockable = None):
 		
 		if _real_widget is None: _real_widget = fifechan.Panel()
 			
@@ -119,6 +133,9 @@ class Panel(ResizableWindow):
 								   shove=shove,
 								   cursors=cursors)
 
+		if dockable is not None: self.dockable = dockable
+		else: self.dockable = self.DEFAULT_DOCKABLE
+		
 		self._foundDockArea = None
 		
 		self._barPressedLeft = False
@@ -168,7 +185,8 @@ class Panel(ResizableWindow):
 					self.bottom_resizable,
 					self.left_resizable,
 					self.shove,
-					self.cursors)
+					self.cursors,
+					self.dockable)
 		
 		panelClone.addChildren(self._cloneChildren(prefix))		     
 		return panelClone
@@ -177,6 +195,10 @@ class Panel(ResizableWindow):
 	def _setDocked(self, docked): self.real_widget.setDocked(docked)
 	docked = property(_getDocked, _setDocked)
 
+	def _getDockable(self): return self.real_widget.isDockable()
+	def _setDockable(self, dockable): self.real_widget.setDockable(dockable)
+	dockable = property(_getDockable, _setDockable)
+	
 	def getDockArea(self):
 		if not self.docked:
 			dockAreas = []
@@ -221,7 +243,8 @@ class Panel(ResizableWindow):
 		pass
 	
 	def dockTo(self, widget):
-		if not self.docked and widget is not self.parent:
+		# Dock the Panel to the given widget.
+		if not self.docked and widget is not self.parent and self.dockable:
 			widget.real_widget.setHighlighted(False)
 			# map coordinates to new parent and remove it from old parent
 			if self.parent:
@@ -238,7 +261,8 @@ class Panel(ResizableWindow):
 			self.afterDock()
 
 	def undockTo(self, widget):
-		if self.docked and widget is not self.parent:
+		# Undock the Panel to the given widget.
+		if self.docked and widget is not self.parent and self.dockable:
 			self.parent.removeChild(self)
 			# undock to main gui
 			if widget is None:
