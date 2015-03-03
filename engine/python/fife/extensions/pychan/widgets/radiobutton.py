@@ -57,6 +57,8 @@ class RadioButton(BasicTextWidget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -74,7 +76,6 @@ class RadioButton(BasicTextWidget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None,
 				 group = None):
 
@@ -87,6 +88,8 @@ class RadioButton(BasicTextWidget):
 										 min_size=min_size,
 										 max_size=max_size,
 										 fixed_size=fixed_size,
+										 margins=margins,
+										 padding=padding,
 										 helptext=helptext,
 										 position=position,
 										 style=style,
@@ -122,6 +125,8 @@ class RadioButton(BasicTextWidget):
 						self.min_size,
 						self.max_size,
 						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext,
 						self.position,
 						self.style,
@@ -139,7 +144,6 @@ class RadioButton(BasicTextWidget):
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
-						self.margins,
 						self.text,
 						self.group)
 

@@ -37,12 +37,11 @@ class FlowContainer(Container):
 
 	"""
 
-	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('alignment'),
-										  UnicodeAttr('layout') ]
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('alignment'), ]
 
 	DEFAULT_LAYOUT = 'Horizontal'
-	DEFAULT_ALIGNMENT = 'Center'
-	# ToDo: Fix the init paramters
+	DEFAULT_ALIGNMENT = 4 # Center
+
 	def __init__(self, 
 				 parent = None,
 				 name = None,
@@ -50,6 +49,8 @@ class FlowContainer(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -67,45 +68,50 @@ class FlowContainer(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
 				 layout = None,
-				 _real_widget = None):
+				 spacing = None,
+				 uniform_size = None,
+				 _real_widget = None,
+				 alignment = None):
 
 		if _real_widget is None: _real_widget = fifechan.FlowContainer()
 		
 		super(FlowContainer,self).__init__(parent=parent,
-												name=name,
-												size=size,
-												min_size=min_size,
-												max_size=max_size,
-												fixed_size=fixed_size,
-												helptext=helptext,
-												position=position,
-												style=style,
-												hexpand=hexpand,
-												vexpand=vexpand,
-												font=font,
-												base_color=base_color,
-												background_color=background_color,
-												foreground_color=foreground_color,
-												selection_color=selection_color,
-												border_color=border_color,
-												outline_color=outline_color,
-												border_size=border_size,
-												outline_size=outline_size,
-												position_technique=position_technique,
-												is_focusable=is_focusable,
-												comment=comment,
-												padding=padding,
-												background_image=background_image,
-												opaque=opaque,
-												margins=margins,
-												_real_widget=_real_widget)
-		
-		if layout is not None: self.layout = layout
+										   name=name,
+										   size=size,
+										   min_size=min_size,
+										   max_size=max_size,
+										   fixed_size=fixed_size,
+										   margins=margins,
+										   padding=padding,
+										   helptext=helptext,
+										   position=position,
+										   style=style,
+										   hexpand=hexpand,
+										   vexpand=vexpand,
+										   font=font,
+										   base_color=base_color,
+										   background_color=background_color,
+										   foreground_color=foreground_color,
+										   selection_color=selection_color,
+										   border_color=border_color,
+										   outline_color=outline_color,
+										   border_size=border_size,
+										   outline_size=outline_size,
+										   position_technique=position_technique,
+										   is_focusable=is_focusable,
+										   comment=comment,
+										   background_image=background_image,
+										   opaque=opaque,
+										   layout=layout,
+										   spacing=spacing,
+										   uniform_size=uniform_size,
+										   _real_widget=_real_widget)
+
+		if alignment is not None: self.alignment = alignment
+		else: self.alignment = self.DEFAULT_ALIGNMENT
 
 				
 	def clone(self, prefix):
@@ -115,6 +121,8 @@ class FlowContainer(Container):
 						self.min_size,
 						self.max_size,
 						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext,
 						self.position,
 						self.style,
@@ -132,10 +140,13 @@ class FlowContainer(Container):
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
-						self.padding,
 						self.background_image,
 						self.opaque,
-						self.margins)
+						self.layout,
+						self.spacing,
+						self.uniform_size,
+						None,
+						self.alignment)
 			
 		containerClone.addChildren(self._cloneChildren(prefix))	
 		return containerClone

@@ -55,6 +55,8 @@ class Label(BasicTextWidget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -72,7 +74,6 @@ class Label(BasicTextWidget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None,
 				 wrap_text = None):
 				 
@@ -84,6 +85,8 @@ class Label(BasicTextWidget):
 								   min_size=min_size, 
 								   max_size=max_size,
 								   fixed_size=fixed_size,
+								   margins=margins,
+								   padding=padding,
 								   helptext=helptext, 
 								   position=position,
 								   style=style, 
@@ -101,7 +104,6 @@ class Label(BasicTextWidget):
 								   position_technique=position_technique,
 								   is_focusable=is_focusable,
 								   comment=comment,
-								   margins=margins,
 								   text=text)
 								   
 		if wrap_text is not None:
@@ -114,6 +116,8 @@ class Label(BasicTextWidget):
 						 self.min_size,
 						 self.max_size,
 						 self.fixed_size,
+						 self.margins,
+						 self.padding,
 						 self.helptext,
 						 self.position,
 						 self.style,
@@ -131,7 +135,6 @@ class Label(BasicTextWidget):
 						 self.position_technique,
 						 self.is_focusable,
 						 self.comment,
-						 self.margins,
 						 self.text,
 						 self.wrap_text)
 		

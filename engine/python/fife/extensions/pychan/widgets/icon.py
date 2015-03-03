@@ -51,6 +51,9 @@ class Icon(Widget):
 	DEFAULT_SCALE = False
 	DEFAULT_TILE = False
 	DEFAULT_OPAQUE = False
+
+	DEFAULT_MARGINS = 0,0
+	DEFAULT_PADDING = 0
 	
 	def __init__(self, 
 				 parent = None,
@@ -59,6 +62,8 @@ class Icon(Widget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -89,6 +94,8 @@ class Icon(Widget):
 								  min_size=min_size,
 								  max_size=max_size,
 								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
 								  helptext=helptext,
 								  position=position,
 								  style=style,
@@ -131,6 +138,8 @@ class Icon(Widget):
 				self.min_size, 
 				self.max_size,
 				self.fixed_size,
+				self.margins,
+				self.padding,
 				self.helptext, 
 				self.position, 
 				self.style, 

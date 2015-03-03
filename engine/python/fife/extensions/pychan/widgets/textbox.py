@@ -49,6 +49,8 @@ class TextBox(Widget):
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 0
 	DEFAULT_TEXT = u""
 	DEFAULT_FILENAME = ""
 
@@ -59,6 +61,8 @@ class TextBox(Widget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -76,7 +80,6 @@ class TextBox(Widget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None,
 				 filename = None):
 
@@ -89,6 +92,8 @@ class TextBox(Widget):
 									 min_size=min_size,
 									 max_size=max_size,
 									 fixed_size=fixed_size,
+									 margins=margins,
+									 padding=padding,
 									 helptext=helptext,
 									 position=position,
 									 style=style,
@@ -121,6 +126,8 @@ class TextBox(Widget):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
@@ -138,7 +145,6 @@ class TextBox(Widget):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.margins,
 					self.text,
 					self.filename)
 		return textboxClone

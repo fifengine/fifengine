@@ -41,7 +41,8 @@ class Tab(Container):
 										]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
-	DEFAULT_MARGINS = 0
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 0
 	
 	def __init__(self, 
 				 parent = None, 
@@ -50,6 +51,8 @@ class Tab(Container):
 				 min_size = None, 
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None, 
 				 position = None, 
 				 style = None, 
@@ -67,10 +70,8 @@ class Tab(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
 				 _real_widget = None):
 
 		if _real_widget is None: _real_widget = fifechan.Tab()
@@ -83,6 +84,8 @@ class Tab(Container):
 								 min_size=min_size,
 								 max_size=max_size,
 								 fixed_size=fixed_size,
+								 margins=margins,
+								 padding=padding,
 								 helptext=helptext,
 								 position=position,
 								 style=style,
@@ -100,10 +103,8 @@ class Tab(Container):
 								 position_technique=position_technique,
 								 is_focusable=is_focusable,
 								 comment=comment,
-								 padding=padding,
 								 background_image=background_image,
 								 opaque=opaque,
-								 margins=margins,
 								 _real_widget=_real_widget)
 		
 	def addTabToWidget(self, widget):
@@ -123,6 +124,8 @@ class Tab(Container):
 					self.min_size, 
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext, 
 					self.position, 
 					self.style, 
@@ -140,10 +143,8 @@ class Tab(Container):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.padding,
 					self.background_image,
-					self.opaque,
-					self.margins)
+					self.opaque)
 					
 		tabClone.addChildren(self._cloneChildren(prefix))
 					
@@ -164,7 +165,7 @@ class TabbedArea(Container):
 										]
 
 	DEFAULT_OPAQUE = False
-	DEFAULT_MARGINS = 0,0
+	DEFAULT_MARGINS = 0, 0
 	DEFAULT_PADDING = 0
 	DEFAULT_LAYOUT = 'Horizontal'
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
@@ -176,6 +177,8 @@ class TabbedArea(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -193,10 +196,8 @@ class TabbedArea(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
 				 _real_widget = None,
 				 select_tab_index = None,
 				 select_tab = None):
@@ -209,6 +210,8 @@ class TabbedArea(Container):
 										min_size=min_size,
 										max_size=max_size,
 										fixed_size=fixed_size,
+										margins=margins,
+										padding=padding,
 										helptext=helptext,
 										position=position,
 										style=style,
@@ -226,10 +229,8 @@ class TabbedArea(Container):
 										position_technique=position_technique,
 										is_focusable=is_focusable,
 										comment=comment,
-										padding=padding,
 										background_image=background_image,
 										opaque=opaque,
-										margins=margins,
 										_real_widget=_real_widget)
 
 		self.tab_definitions = {}
@@ -244,6 +245,8 @@ class TabbedArea(Container):
 						self.min_size,
 						self.max_size,
 						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext,
 						self.position,
 						self.style,
@@ -261,10 +264,8 @@ class TabbedArea(Container):
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
-						self.padding,
 						self.background_image,
 						self.opaque,
-						self.margins,
 						select_tab_index)
 			
 		tabbedareaClone.addChilds(self._cloneChildren(prefix))

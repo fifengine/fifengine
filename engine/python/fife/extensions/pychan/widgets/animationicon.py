@@ -51,6 +51,8 @@ class AnimationIcon(Widget):
 									   BoolAttr('repeating'),
 									   BoolAttr('play')
 									 ]
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 0
 
 	DEFAULT_ANIMATION = ""
 	DEFAULT_SCALE = False
@@ -66,6 +68,8 @@ class AnimationIcon(Widget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -99,6 +103,8 @@ class AnimationIcon(Widget):
 								  min_size=min_size,
 								  max_size=max_size,
 								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
 								  helptext=helptext,
 								  position=position,
 								  style=style,
@@ -147,6 +153,8 @@ class AnimationIcon(Widget):
 				self.min_size, 
 				self.max_size,
 				self.fixed_size,
+				self.margins,
+				self.padding,
 				self.helptext, 
 				self.position, 
 				self.style, 

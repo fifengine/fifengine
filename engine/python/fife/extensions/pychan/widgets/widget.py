@@ -28,7 +28,7 @@ from fife import fifechan
 
 from fife.extensions.pychan import events
 from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
-                                          ColorAttr, BoolAttr, IntAttr)
+                                          ColorAttr, BoolAttr, IntAttr, IntListAttr)
 from fife.extensions.pychan.exceptions import StopTreeWalking
 from fife.extensions.pychan.properties import ColorProperty
 
@@ -58,6 +58,8 @@ class Widget(object):
 	  of the actual size attribute.
 	  - max_size: Position: The maximal size this widget is allowed to have. This is enforced through the accessor methods
 	  of the actual size attribute.
+	  - margins: Integer list: The margin clears an area around an element (outside the border) and is completely transparent.
+	  - padding: Integer list: The padding clears an area around the content (inside the border) of the element.
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
@@ -100,6 +102,8 @@ class Widget(object):
 				   PointAttr('size'), 
 				   PointAttr('max_size'),
 				   PointAttr('fixed_size'),
+				   IntListAttr('margins'),
+				   IntListAttr('padding'),
 				   ColorAttr('base_color'),
 				   ColorAttr('background_color'),
 				   ColorAttr('foreground_color'),
@@ -124,6 +128,8 @@ class Widget(object):
 	DEFAULT_MAX_SIZE = 500000, 500000
 	DEFAULT_SIZE = -1, -1
 	DEFAULT_MIN_SIZE = 0, 0
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 5
 	DEFAULT_HELPTEXT = u""
 	DEFAULT_POSITION = 0, 0
 	DEFAULT_FONT = "default"
@@ -144,6 +150,8 @@ class Widget(object):
 				 min_size = None, 
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None, 
 				 position = None, 
 				 style = None, 
@@ -194,6 +202,8 @@ class Widget(object):
 		self.min_size = self.DEFAULT_MIN_SIZE
 		self.max_size = self.DEFAULT_MAX_SIZE
 		self.size = self.DEFAULT_SIZE
+		self.margins = self.DEFAULT_MARGINS
+		self.padding = self.DEFAULT_PADDING
 		self.border_size = self.DEFAULT_BORDER_SIZE
 		self.outline_size = self.DEFAULT_OUTLINE_SIZE
 		self.helptext = self.DEFAULT_HELPTEXT
@@ -228,6 +238,8 @@ class Widget(object):
 		if max_size is not None: self.max_size = max_size
 		if size is not None: self.size = size
 		if fixed_size is not None: self.fixed_size = fixed_size
+		if margins is not None: self.margins = margins
+		if padding is not None: self.padding = padding
 		if border_size is not None: self.border_size = border_size
 		if outline_size is not None: self.outline_size = outline_size
 		
@@ -1018,7 +1030,7 @@ class Widget(object):
 
 	def _setMargins(self, margin):
 		# Shorthand property
-		if isinstance(margin, tuple):
+		if isinstance(margin, tuple) or isinstance(margin, list):
 			if len(margin) is 4:
 				# 0=top, 1=right, 2=bottom, 3=left
 				self.real_widget.setMarginTop(margin[0])
@@ -1048,7 +1060,7 @@ class Widget(object):
 	
 	def _setPadding(self, padding):
 		# Shorthand property
-		if isinstance(padding, tuple):
+		if isinstance(padding, tuple) or isinstance(padding, list):
 			if len(padding) is 4:
 				# 0=top, 1=right, 2=bottom, 3=left
 				self.real_widget.setPaddingTop(padding[0])

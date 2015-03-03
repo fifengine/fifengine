@@ -24,7 +24,7 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
+from fife.extensions.pychan.attrs import Attr, UnicodeAttr, PointAttr, BoolAttr, IntAttr
 
 from common import get_manager, gui2text, text2gui
 from widget import Widget
@@ -40,26 +40,28 @@ class Container(Widget):
 	New Attributes
 	==============
 
-	  - padding - Integer: Not used in the Container class istelf, distance between child widgets.
 	  - background_image - Set this to a GuiImage or a resource location (simply a filename).
 	    The image will be tiled over the background area.
 	  - opaque - Boolean: Whether the background should be drawn at all. Set this to False
 	    to make the widget transparent.
-	  - children - Just contains the list of contained child widgets. Do NOT modify.
+	  - spacing - Set the vertical and horizontal spacing between the childs.
+	  - uniform_size - Boolean: If true, the free space is distributed in a way that the size of the
+	    childrens will be equal (if possible), otherwise the free space will evenly distributed.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), 
-									   Attr('background_image'), 
+	ATTRIBUTES = Widget.ATTRIBUTES + [ Attr('background_image'), 
 									   BoolAttr('opaque'),
-									   PointAttr('margins'),
-									   PointAttr('spacing')
+									   UnicodeAttr('layout'),
+									   PointAttr('spacing'),
+									   BoolAttr('uniform_size')
 									 ]
 
-	DEFAULT_OPAQUE = True
-	DEFAULT_MARGINS = 0,0
-	DEFAULT_PADDING = 5
-	DEFAULT_SPACING = 2,2
 	DEFAULT_BACKGROUND = None
+	DEFAULT_OPAQUE = True
+	#DEFAULT_MARGINS = 0,0
+	#DEFAULT_PADDING = 5
+	DEFAULT_SPACING = 2,2
+	DEFAULT_UNIFORM_SIZE = False
 	DEFAULT_LAYOUT = 'Absolute'
 	
 	def __init__(self, 
@@ -69,6 +71,8 @@ class Container(Widget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -86,11 +90,11 @@ class Container(Widget):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
+				 layout = None,
 				 spacing = None,
+				 uniform_size = None,
 				 _real_widget = None):
 				 
 		self.real_widget = _real_widget or fifechan.Container()
@@ -98,10 +102,9 @@ class Container(Widget):
 		self._background = []
 		self._background_image = None
 		self.background_image = self.DEFAULT_BACKGROUND
-		self.margins = self.DEFAULT_MARGINS
-		self.padding = self.DEFAULT_PADDING
+		
 		self.opaque = self.DEFAULT_OPAQUE
-		self.layout = self.DEFAULT_LAYOUT
+		#self.layout = self.DEFAULT_LAYOUT
 
 		super(Container,self).__init__(parent=parent, 
 									   name=name, 
@@ -109,6 +112,8 @@ class Container(Widget):
 									   min_size=min_size, 
 									   max_size=max_size,
 									   fixed_size=fixed_size,
+									   margins=margins,
+									   padding=padding,
 									   helptext=helptext, 
 									   position=position,
 									   style=style, 
@@ -127,12 +132,17 @@ class Container(Widget):
 									   is_focusable=is_focusable,
 									   comment=comment)
 									   
-		if margins is not None: self.margins = margins
-		if padding is not None: self.padding = padding
 		if opaque is not None: self.opaque = opaque
 		if background_image is not None: self.background_image = background_image
+		
+		if layout is not None: self.layout = layout
+		else: self.layout = self.DEFAULT_LAYOUT
+		
 		if spacing is not None: self.spacing = spacing
 		else: self.spacing = self.DEFAULT_SPACING
+
+		if uniform_size is not None: self.uniform_size = uniform_size
+		else: self.uniform_size = self.DEFAULT_UNIFORM_SIZE
 		
 	def clone(self, prefix):
 		containerClone = Container(None, 
@@ -141,6 +151,8 @@ class Container(Widget):
 						self.min_size,
 						self.max_size,
 						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext,
 						self.position,
 						self.style,
@@ -158,16 +170,17 @@ class Container(Widget):
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
-						self.padding,
 						self.background_image,
 						self.opaque,
-						self.margins,
-						self.spacing)
+						self.layout,
+						self.spacing,
+						self.uniform_size,
+						None)
 			
 		containerClone.addChildren(self._cloneChildren(prefix))
 			
 		return containerClone
-		
+
 
 	def addChild(self, widget):
 		"""
@@ -395,6 +408,10 @@ class Container(Widget):
 			return 'Vertical'
 		return 'Absolute'
 	layout = property(_getLayout, _setLayout)
+
+	def _setUniformSize(self, uniform): self.real_widget.setUniformSize(uniform)
+	def _getUniformSize(self): return self.real_widget.isUniformSize()
+	uniform_size = property(_getUniformSize, _setUniformSize)
 	
 	def _cloneChildren(self, prefix):
 		"""
@@ -428,6 +445,8 @@ class VBox(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -445,11 +464,11 @@ class VBox(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
+				 layout = None,
 				 spacing = None,
+				 uniform_size = None,
 				 _real_widget = None):
 				 
 		super(VBox,self).__init__(parent=parent, 
@@ -458,6 +477,8 @@ class VBox(Container):
 								  min_size=min_size, 
 								  max_size=max_size,
 								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
 								  helptext=helptext, 
 								  position=position,
 								  style=style, 
@@ -475,11 +496,11 @@ class VBox(Container):
 								  position_technique=position_technique,
 								  is_focusable=is_focusable,
 								  comment=comment,
-								  padding=padding,
 								  background_image=background_image,
 								  opaque=opaque,
-								  margins=margins,
+								  layout=layout,
 								  spacing=spacing,
+								  uniform_size=uniform_size,
 								  _real_widget=_real_widget)
 	def clone(self, prefix):
 		vboxClone = VBox(None, 
@@ -488,6 +509,8 @@ class VBox(Container):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
@@ -505,11 +528,12 @@ class VBox(Container):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins,
-					self.spacing)
+					self.layout,
+					self.spacing,
+					self.uniform_size,
+					None)
 					
 		vboxClone.addChildren(self._cloneChildren(prefix))
 					
@@ -532,6 +556,8 @@ class HBox(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -549,11 +575,11 @@ class HBox(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
+				 layout = None,
 				 spacing = None,
+				 uniform_size = None,
 				 _real_widget = None):
 				 
 		super(HBox,self).__init__(parent=parent,
@@ -562,6 +588,8 @@ class HBox(Container):
 								  min_size=min_size,
 								  max_size=max_size,
 								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
 								  helptext=helptext,
 								  position=position,
 								  style=style,
@@ -579,11 +607,11 @@ class HBox(Container):
 								  position_technique=position_technique,
 								  is_focusable=is_focusable,
 								  comment=comment,
-								  padding=padding,
 								  background_image=background_image,
 								  opaque=opaque,
-								  margins=margins,
+								  layout=layout,
 								  spacing=spacing,
+								  uniform_size=uniform_size,
 								  _real_widget=_real_widget)
 
 	def clone(self, prefix):
@@ -593,6 +621,8 @@ class HBox(Container):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
@@ -610,11 +640,12 @@ class HBox(Container):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins,
-					self.spacing)
+					self.layout,
+					self.spacing,
+					self.uniform_size,
+					None)
 					
 		hboxClone.addChildren(self._cloneChildren(prefix))
 		
@@ -637,6 +668,8 @@ class CBox(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -654,11 +687,11 @@ class CBox(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
+				 layout = None,
 				 spacing = None,
+				 uniform_size = None,
 				 _real_widget = None):
 				 
 		super(CBox,self).__init__(parent=parent, 
@@ -667,6 +700,8 @@ class CBox(Container):
 								  min_size=min_size,
 								  max_size=max_size,
 								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
 								  helptext=helptext,
 								  position=position,
 								  style=style,
@@ -684,11 +719,11 @@ class CBox(Container):
 								  position_technique=position_technique,
 								  is_focusable=is_focusable,
 								  comment=comment,
-								  padding=padding,
 								  background_image=background_image,
 								  opaque=opaque,
-								  margins=margins,
+								  layout=layout,
 								  spacing=spacing,
+								  uniform_size=uniform_size,
 								  _real_widget=_real_widget)
 
 	def clone(self, prefix):
@@ -698,6 +733,8 @@ class CBox(Container):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
@@ -715,11 +752,12 @@ class CBox(Container):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins,
-					self.spacing)
+					self.layout,
+					self.spacing,
+					self.uniform_size,
+					None)
 					
 		cboxClone.addChildren(self._cloneChildren(prefix))
 		
@@ -755,6 +793,8 @@ class Window(Container):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -772,11 +812,11 @@ class Window(Container):
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 padding = None,
 				 background_image = None,
 				 opaque = None,
-				 margins = None,
+				 layout = None,
 				 spacing = None,
+				 uniform_size = None,
 				 _real_widget = None,
 				 title = None,
 				 titlebar_height = None,
@@ -790,6 +830,8 @@ class Window(Container):
 									min_size=min_size,
 									max_size=max_size,
 									fixed_size=fixed_size,
+									margins=margins,
+									padding=padding,
 									helptext=helptext,
 									position=position,
 									style=style,
@@ -807,11 +849,11 @@ class Window(Container):
 									position_technique=position_technique,
 									is_focusable=is_focusable,
 									comment=comment,
-									padding=padding,
 									background_image=background_image,
 									opaque=opaque,
-									margins=margins,
+									layout=layout,
 									spacing=spacing,
+									uniform_size=uniform_size,
 									_real_widget=_real_widget)
 
 		if titlebar_height is not None:
@@ -839,6 +881,8 @@ class Window(Container):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
@@ -856,11 +900,11 @@ class Window(Container):
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.padding,
 					self.background_image,
 					self.opaque,
-					self.margins,
+					self.layout,
 					self.spacing,
+					self.uniform_size,
 					None,
 					self.title,
 					self.titlebar_height,

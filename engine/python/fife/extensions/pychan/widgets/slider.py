@@ -57,7 +57,7 @@ class Slider(Widget):
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
-
+	
 	DEFAULT_SIZE = 10,10
 	DEFAULT_MIN_SIZE = 10,10
 
@@ -74,6 +74,8 @@ class Slider(Widget):
 				 min_size = None,
 				 max_size = None,
 				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -108,6 +110,8 @@ class Slider(Widget):
 									 min_size=min_size,
 									 max_size=max_size,
 									 fixed_size=fixed_size,
+									 margins=margins,
+									 padding=padding,
 									 helptext=helptext,
 									 position=position,
 									 style=style,
@@ -143,6 +147,8 @@ class Slider(Widget):
 					self.min_size,
 					self.max_size,
 					self.fixed_size,
+					self.margins,
+					self.padding,
 					self.helptext,
 					self.position,
 					self.style,
