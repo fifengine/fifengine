@@ -660,6 +660,8 @@ namespace fcn {
 		Widget* getBackgroundWidget();
 		void setLayout(Container::LayoutPolicy policy);
 		Container::LayoutPolicy getLayout() const;
+		virtual void setUniformSize(bool uniform);
+		virtual bool isUniformSize() const;
 		virtual void setVerticalSpacing(uint32_t spacing);
 		virtual uint32_t getVerticalSpacing() const;
 		virtual void setHorizontalSpacing(uint32_t spacing);
