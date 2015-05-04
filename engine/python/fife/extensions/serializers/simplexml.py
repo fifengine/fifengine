@@ -440,6 +440,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 
 	def _deserializeList(self, string):
 		""" Deserializes a list back into a list object """
+		if not string:
+			return  list()
 		return string.split(" ; ")
 
 	def _serializeDict(self, dict):
@@ -454,6 +456,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 
 	def _deserializeDict(self, serial):
 		""" Deserializes a list back into a dict object """
+		if not serial:
+			return dict()
 		dict = {}
 		items = serial.split(" ; ")
 		for i in items:
