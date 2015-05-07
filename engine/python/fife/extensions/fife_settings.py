@@ -455,6 +455,20 @@ class Setting(object):
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
 
+	def remove(self, module, name):
+		"""
+		Removes a variable
+
+		@param module: Module where the variable should be set
+		@param name: Name of the variable
+		"""
+		#update the setting cache
+		if module in self._settingsFromFile:
+			del self._settingsFromFile[module][name]
+
+		if self._serializer:
+			self._serializer.remove(module, name)
+
 	def setAvailableScreenResolutions(self, reslist):
 		"""
 		A list of valid default screen resolutions.   This should be called once

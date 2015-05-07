@@ -93,21 +93,6 @@ def run_test_modules(modules):
 	result = runner.run(mastersuite)
 	return [e[1] for e in result.errors], [f[1] for f in result.failures]
 		
-def run_analyzers(modules):
-	errors = []
-	imported = get_dynamic_imports(modules)
-	for m in imported:
-		analyzefn = None
-		try:
-			analyzefn = m.__dict__['_ANALYZE_FN_']
-		except (KeyError):
-			pass
-		if analyzefn:
-			error = analyzefn()
-			if error:
-				errors.append(error)
-	return errors
-	
 def run_all(tests):
 	def print_errors(txt, errs):
 		if errs:
@@ -118,7 +103,6 @@ def run_all(tests):
 	core_errors, core_failures = run_core_tests(tests['core'])
 	swig_errors, swig_failures = run_test_modules(tests['swig'])
 	ext_errors, ext_failures = run_test_modules(tests['ext'])
-	analyzer_errors = run_analyzers(tests['analyzer'])
 	
 	print 80 * '='
 	errorsfound = False
@@ -144,12 +128,6 @@ def run_all(tests):
 	else:
 		print 'No Extensions errors found'
 
-	if analyzer_errors:
-		print_errors('Errors in Analyzers', analyzer_errors)
-		errorsfound = True
-	else:
-		print 'No Analyzer errors found'
-	
 	print 80 * '='	
 	if errorsfound:
 		print 'Looks like there are some errors in the code, svn commit is probably not a good idea yet...'
@@ -185,12 +163,7 @@ def run(automatic, selected_cases):
 	tests[index] = ('Extension tests', 'all', extension_tests, run_test_modules)	
 	index += 1
 
-	analyzers = resolve_test_modules(genpath('tests/analyzers'))
-	for t in analyzers:
-		tests[index] = ('Analyzers', t, [t], run_analyzers)
-		index += 1
-	
-	alltests = {'core': core_tests, 'swig': swig_tests, 'ext': extension_tests, 'analyzer': analyzers}
+	alltests = {'core': core_tests, 'swig': swig_tests, 'ext': extension_tests}
 	tests[index] = ('Other', 'Run all tests', alltests, run_all)
 	tests[index+1] = ('Other', 'Cancel and quit', None, quit)
 

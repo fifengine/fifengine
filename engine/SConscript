@@ -240,6 +240,12 @@ if sys.platform == 'win32':
 elif sys.platform == 'darwin':
 	sharedlib = env.SharedLibrary(target = fife_tgt,
 								  source = compilefiles)
+elif sys.platform.startswith('openbsd'):
+	soname = env.subst('$SHLIBPREFIX') + fife_tgt + env.subst('$SHLIBSUFFIX')
+	sharedlib = env.SharedLibrary(target = fife_tgt,
+								  source = compilefiles,
+								  SHLIBSUFFIX = env.subst('$SHLIBSUFFIX'),
+								  LINKFLAGS=['-Wl,-soname,' + str(soname)])
 else:
 	# soname will be libfife.so.major
 	majorVersion = opts['FIFE_VERSION'].split('.')[0]	

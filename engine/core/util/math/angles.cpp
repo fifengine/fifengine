@@ -86,7 +86,8 @@ namespace FIFE {
 		int32_t lcm = u->first;
 		int32_t li = u->second;
 
-		if (ud <= ld) {
+		// if ud and ls is equal then lcm is prefered (next angle)
+		if (ud < ld) {
 			closestMatchingAngle = ucm;
 			return ui;
 		}
