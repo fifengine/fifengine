@@ -126,7 +126,7 @@ class Setting(object):
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
-			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':[0],
+			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
