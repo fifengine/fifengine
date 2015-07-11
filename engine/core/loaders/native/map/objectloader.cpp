@@ -406,13 +406,17 @@ namespace FIFE {
                                 int animYoffset = 0;
                                 int frameWidth = 0;
                                 int frameHeight = 0;
-
+                                int xstart = 0;
+                                int ystart = 0;
+                                
                                 animElement->QueryValueAttribute("width", &frameWidth);
                                 animElement->QueryValueAttribute("height", &frameHeight);
                                 animElement->QueryValueAttribute("frames", &animFrames);
                                 animElement->QueryValueAttribute("delay", &animDelay);
                                 animElement->QueryValueAttribute("x_offset", &animXoffset);
-								animElement->QueryValueAttribute("y_offset", &animYoffset);
+                                animElement->QueryValueAttribute("y_offset", &animYoffset);
+                                animElement->QueryValueAttribute("x_start", &xstart);
+                                animElement->QueryValueAttribute("y_start", &ystart);
                                 int nDir = 0;
 
                                 for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
@@ -464,7 +468,7 @@ namespace FIFE {
                                             if (!m_imageManager->exists(frameId)) {
 												framePtr = m_imageManager->create(frameId);
                                            		Rect region(
-													frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
+													xstart + (frameWidth * iframe), ystart + (frameHeight * nDir), frameWidth, frameHeight
 												);
 												framePtr->useSharedImage(atlasImgPtr, region);
 												framePtr->setXShift(xoffset);
