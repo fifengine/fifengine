@@ -137,6 +137,15 @@ namespace FIFE {
 		m_maps.clear();
 	}
 
+	uint32_t Model::getActiveCameraCount() const {
+		uint32_t count = 0;
+		std::list<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			count += (*it)->getActiveCameraCount();
+		}
+		return count;
+	}
+
 	std::list<std::string> Model::getNamespaces() const {
 		std::list<std::string> namespace_list;
 		std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();

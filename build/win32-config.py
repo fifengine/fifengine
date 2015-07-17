@@ -49,6 +49,10 @@ def initEnvironment(env):
 	if env['ENABLE_CEGUI']:
 		env.Append(CPPPATH = [includepath + '\\CEGUI'])
 	
+	if env['ENABLE_CEGUI_0']:
+		env.Append(CPPPATH = [includepath + '\\CEGUI-0'])
+		env.Append(CPPPATH = [includepath + '\\CEGUI-0\cegui-0'])
+
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
 	env.Tool('swig')
@@ -63,7 +67,7 @@ def addExtras(env, reqLibs):
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
-	
+	cegui_0 = reqLibs['cegui-0']
 	if env['FIFE_DEBUG']:
 		env.Append(LIBS = ['python27_d'])
 	else:
@@ -87,6 +91,9 @@ def addExtras(env, reqLibs):
 	if cegui:
 		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
 		env.Prepend(LIBS = cegui_libs)
+	if cegui_0:
+		cegui_0_libs = ['libCEGUIBase-0', 'libCEGUIOpenGLRenderer-0' ]    
+		env.Prepend(LIBS = cegui_0_libs)
 		
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])

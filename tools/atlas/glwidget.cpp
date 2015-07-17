@@ -25,8 +25,9 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <QTime>
-
-#ifdef( WIN32 )
+//#include <QtOpenGL>
+#include <GL/glut.h>
+#ifdef WIN32
 #include <gl/GLU.h>
 #endif
 

@@ -66,7 +66,7 @@ namespace FIFE {
 		if(m_edge1.getLayer() == layer) {
 			renderbackend->drawLine(p1, p2, m_red, m_green, m_blue, m_alpha);
 			if (renderbackend->getLightingModel() > 0) {
-				renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}
 		}
 	}
@@ -84,7 +84,7 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
 			if (renderbackend->getLightingModel() > 0) {
-				renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}
 		}
 	}
@@ -106,7 +106,7 @@ namespace FIFE {
 		if(m_edge1.getLayer() == layer) {
 			renderbackend->drawTriangle(p1, p2, p3, m_red, m_green, m_blue, m_alpha);
 			if (renderbackend->getLightingModel() > 0) {
-				renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}
 		}
 	}
@@ -130,7 +130,7 @@ namespace FIFE {
 		if(m_edge1.getLayer() == layer) {
 			renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue, m_alpha);
 			if (renderbackend->getLightingModel() > 0) {
-				renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}
 		}
 	}
@@ -149,7 +149,7 @@ namespace FIFE {
 		if(m_center.getLayer() == layer) {
 			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
 			if (renderbackend->getLightingModel() > 0) {
-				renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 			}
 		}
 	}
@@ -245,7 +245,7 @@ namespace FIFE {
 			if(r.intersects(viewport)) {
 				img->render(r);
 				if (renderbackend->getLightingModel() > 0) {
-					renderbackend->changeRenderInfos(1, 4, 5, false, false, 0, KEEP, ALWAYS);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
 				}
 			}
 		}
@@ -350,6 +350,13 @@ namespace FIFE {
 	}
 	// Remove all groups
 	void GenericRenderer::removeAll() {
+		std::map<std::string, std::vector<GenericRendererElementInfo*> >::iterator it = m_groups.begin();
+		for (; it != m_groups.end(); ++it) {
+			std::vector<GenericRendererElementInfo*>::const_iterator info_it = it->second.begin();
+			for (;info_it != it->second.end(); ++info_it) {
+				delete *info_it;
+			}
+		}
 		m_groups.clear();
 	}
 	// Clear all groups

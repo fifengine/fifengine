@@ -81,7 +81,10 @@ namespace FIFE {
 		 * @param rgb The color value of overlay if any.
 		 */
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0) = 0;
-		virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0) = 0;
+		virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0) {}
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const* rgb = 0) {}
+		virtual void renderZ(const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0) {}
+
 		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const* rgb = 0) {}
 
 		/** Removes underlying SDL_Surface from the image (if exists) and returns this

@@ -95,6 +95,8 @@ namespace fcn
     Icon2::Icon2(Image* image)
     {
         mImage = image;
+        mScale = false;
+        mTile = false;
         if( mImage ) {
             setHeight(image->getHeight());
             setWidth(image->getWidth());
@@ -103,9 +105,25 @@ namespace fcn
     
     void Icon2::draw(Graphics* graphics)
     {
-        if ( mImage )
-            graphics->drawImage(mImage, 0, 0, 0, 0, getWidth(), getHeight());
+        if ( mImage ) {
+            // draw with widget or image size
+            int w = mScale ? getWidth() : mImage->getWidth();
+            int h = mScale ? getHeight() : mImage->getHeight();
 
+            if (mTile && !mScale) {
+                Rectangle rect(0, 0, w, h);
+                while (rect.x < getWidth()) {
+                    rect.y = 0;
+                    while (rect.y < getHeight()) {
+                        graphics->drawImage(mImage, rect.x, rect.y, rect.x, rect.y, rect.width, rect.height);
+                        rect.y += rect.height;
+                    }
+                    rect.x += rect.width;
+                }
+            } else {
+                graphics->drawImage(mImage, 0, 0, 0, 0, w, h);
+            }
+        }
     }
 
     void Icon2::drawFrame(Graphics* graphics)
@@ -140,4 +158,19 @@ namespace fcn
         }
     }
 
+    bool Icon2::isScaling() const {
+        return mScale;
+    }
+
+    void Icon2::setScaling(bool scale) {
+        mScale = scale;
+    }
+
+    bool Icon2::isTiling() const {
+        return mTile;
+    }
+
+    void Icon2::setTiling(bool tile) {
+        mTile = tile;
+    }
 }

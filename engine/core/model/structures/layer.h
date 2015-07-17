@@ -226,6 +226,15 @@ namespace FIFE {
 			 */
 			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
 
+			/** Calculates z offset for the layer.
+			 * Is in range [-100,100], see glOrtho settings. Used by LayerCache to calculate z values.
+			 */
+			float getZOffset() const;
+
+			/** Get the overall number of layers.
+			 */
+			uint32_t getLayerCount() const;
+
 			/** Determines if a given cell on the layer contains a blocking instance
 			 *
 			 * @param cellCoordinate A const reference to a model coordinate of the cell in question.

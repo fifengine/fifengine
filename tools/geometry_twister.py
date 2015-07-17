@@ -22,7 +22,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-import Tkinter as TK
+try:
+	import Tkinter as TK
+except ImportError:
+	# Python 3
+	import tkinter as TK
+	xrange = range
 import math, time
 
 LMB = 0x100

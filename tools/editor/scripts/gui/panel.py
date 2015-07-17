@@ -146,7 +146,7 @@ class Panel(widgets.Window, ResizableBase):
 				widgetParent = self.parent
 				widgetParent.removeChild(self)
 				widgetParent.adaptLayout()
-				get_manager().show(self)
+				get_manager().addTopWidget(self)
 
 			self.real_widget.setTitleBarHeight(self._titlebarheight)
 			self.show()

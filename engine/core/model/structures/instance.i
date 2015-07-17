@@ -154,27 +154,30 @@ namespace FIFE {
 		bool isSpecialSpeed();
 
 		bool isMultiCell();
+		bool isMultiObject();
+		const std::vector<Instance*>& getMultiInstances();
+		Instance* getMainMultiInstance();
 
 		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
 		OverlayColors* getStaticColorOverlay(int32_t angle);
 		void removeStaticColorOverlay(int32_t angle);
 		bool isStaticColorOverlay();
 
-		void addColorOverlay(const std::string actionName, uint32_t angle, const OverlayColors& colors);
-		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle);
-		void removeColorOverlay(const std::string actionName, int32_t angle);
+		void addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle);
+		void removeColorOverlay(const std::string& actionName, int32_t angle);
 
-		void addAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
-		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string actionName, int32_t angle);
-		void removeAnimationOverlay(const std::string actionName, uint32_t angle, int32_t order);
+		void addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string& actionName, int32_t angle);
+		void removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order);
 
-		void addColorOverlay(const std::string actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
-		OverlayColors* getColorOverlay(const std::string actionName, uint32_t angle, int32_t order);
-		void removeColorOverlay(const std::string actionName, int32_t angle, int32_t order);
+		void addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order);
+		void removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order);
 		
-		void convertToOverlays(const std::string actionName, bool color);
-		bool isAnimationOverlay(const std::string actionName);
-		bool isColorOverlay(const std::string actionName);
+		void convertToOverlays(const std::string& actionName, bool color);
+		bool isAnimationOverlay(const std::string& actionName);
+		bool isColorOverlay(const std::string& actionName);
 	};
 }
 

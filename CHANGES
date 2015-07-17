@@ -10,6 +10,46 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
+== 0.4.0  (April XXst, 2014) curr: 522f7805154273be8bcf72431bc8cafd5b799b38   ==
+================================================================================
+
+=== Engine ===
+* Get rid of various compiler warnings
+* Add getCellsInCircleSegment() to CellCache and getInstancesInCircle(),
+	getInstancesInCircleSegment() to Layer
+* Add MultiPathfinderTest
+* Add new instance function, prepareForUpdate()
+* Local tinyxml files are now only added to the compile list if either
+	local-tinyxml is defined for SCons or the system version of tinyxml is not found.
+	[t:619]
+* Add animation & color overlays [t:201], fixes [t:762], [t:764] and [t:763]
+** Merge GSOC work done by vdaras.
+** Replaces Guichan dependency by Fifechan
+** Add support for librocket
+** Add support for cegui [t:726]
+*** Fixed keyboard input of control characters for CEGUI by Niektory [t: 796]
+** Make use of Fifechan optional
+* Add overlay test
+
+=== Extensions ===
+* Added the gl/GLU.h header to the atlas creator [t:740]
+* Removing the soundmanagers dep on pychan [t:767]
+* Slightly modified frange() to be more robust and fixed the ceil() call, fixes [t:725]
+* Convince SWIG that Color.r (g, b, a) should be a python property [t:799]
+* Inherit fife.Exception from python's (Base)Exception [t:788]
+* Import cleanup in pychan.widgets [t:787]
+* Fix password- and textfield not accepting initial data 
+* Remove cell_pathfinding compatibility layer [t:775]
+* Fix typo in fife_settings
+
+===Misc===
+* Renamed all --with/--without scons options, fixes [t:797]
+* Add travis configuration by jakoch [t:784]
+* Modifying the versioning scheme [t:783]
+* Darwin config now expects everything to be installed from source
+
+
+================================================================================
 == 0.3.5  (August 21st, 2013)                                                 ==
 ================================================================================
 

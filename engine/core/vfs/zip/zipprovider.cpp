@@ -51,10 +51,30 @@ namespace FIFE {
 		return true;
 	}
 
-	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
-		if (isReadable(file))
-			return new ZipSource(getVFS(), file);
+	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) {
+		if (isReadable(file)) {
+			VFSSource* source = NULL;
+			if ( hasSource(file)) {
+				source = m_sources[file];
+			} else {
+				source = new ZipSource(getVFS(), file);
+				m_sources[file] = source;
+			}
+			return source;
+		}
 		else
 			throw Exception("File " + file + " is not readable.");
+	}
+
+	VFSSource* ZipProvider::getSource(const std::string& path) const {
+		VFSSource* source = NULL;
+		if (hasSource(path)) {
+			source = m_sources.find(path)->second;
+		}
+		return source;
+	}
+
+	bool ZipProvider::hasSource(const std::string & path) const {
+		return m_sources.count(path) > 0;
 	}
 }

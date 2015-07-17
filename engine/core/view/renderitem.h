@@ -38,6 +38,19 @@ namespace FIFE {
 
 	class Instance;
 
+	class OverlayData {
+	public:
+		OverlayData();
+		~OverlayData();
+
+		// pointer to single color overlay
+		OverlayColors* colorOverlay;
+		// pointer to vector that holds animation overlay images
+		std::vector<ImagePtr>* animationOverlayImages;
+		// pointer to vector that holds color overlays for animation overlay
+		std::vector<OverlayColors*>* animationColorOverlays;
+	};
+
 	class RenderItem {
 		public:
 			RenderItem(Instance* parent);
@@ -49,6 +62,35 @@ namespace FIFE {
 			* @see ObjectVisual::getStaticImageIndexByAngle
 			*/
 			int32_t getStaticImageIndexByAngle(uint32_t angle, Instance* instance);
+
+			/** Sets AnimationOverlay and if available AnimationOverlayColors.
+			 * Note: Ownership of the vectors do change.
+			*/
+			void setAnimationOverlay(std::vector<ImagePtr>* ao, std::vector<OverlayColors*>* aco);
+
+			/** Returns pointer to AnimationOverlay vector.
+			 * Returns 0 if no OverlayData or AnimationOverlay exists.
+			*/
+			std::vector<ImagePtr>* getAnimationOverlay() const;
+
+			/** Returns pointer to AnimationColorOverlay vector.
+			 * Returns 0 if no OverlayData or AnimationColorOverlay exists.
+			*/
+			std::vector<OverlayColors*>* getAnimationColorOverlay() const;
+
+			/** Sets single ColorOverlay.
+			 * Note: Ownership does not change.
+			*/
+			void setColorOverlay(OverlayColors* co);
+
+			/** Returns pointer to single ColorOverlay.
+			 * Returns 0 if no OverlayData or ColorOverlay exists.
+			*/
+			OverlayColors* getColorOverlay() const;
+
+			/** Deletes OverlayData.
+			*/
+			void deleteOverlayData();
 
 			/** Resets the important values.
 			*/
@@ -63,6 +105,9 @@ namespace FIFE {
 			// dimensions of this visual during the previous render
 			Rect dimensions;
 
+			// z value for sorting or depth buffer rendering
+			float vertexZ;
+
 			// image used during previous render
 			ImagePtr image;
 
@@ -75,11 +120,8 @@ namespace FIFE {
 			// current frame index (e.g. needed for action frame)
 			int32_t currentFrame;
 
-			// pointer to vector that holds animation overlay images
-			std::vector<ImagePtr>* animationOverlayImages;
-			// pointer to vector that holds color overlay images
-			std::vector<OverlayColors*>* colorOverlays;
-			OverlayColors* colorOverlay;
+			// pointer to overlay data class
+			OverlayData* m_overlay;
 		private:
 			int32_t m_cachedStaticImgId;
 			int32_t m_cachedStaticImgAngle;

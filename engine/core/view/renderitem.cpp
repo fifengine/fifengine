@@ -37,23 +37,33 @@
 namespace FIFE {
 	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -1;
 
+	OverlayData::OverlayData():
+		colorOverlay(0),
+		animationOverlayImages(0),
+		animationColorOverlays(0) {
+	}
+
+	OverlayData::~OverlayData() {
+		delete animationOverlayImages;
+		delete animationColorOverlays;
+		// don't delete colorOverlay here
+	}
+
 	RenderItem::RenderItem(Instance* parent):
 		instance(parent),
 		screenpoint(),
 		dimensions(),
+		vertexZ(0),
+		facingAngle(0),
 		transparency(255),
 		currentFrame(-1),
-		animationOverlayImages(0),
-		colorOverlays(0),
-		colorOverlay(0),
+		m_overlay(0),
 		m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cachedStaticImgAngle(0) {
 	}
 	
 	RenderItem::~RenderItem() {
-		delete animationOverlayImages;
-		delete colorOverlays;
-		// don't delete colorOverlay here
+		delete m_overlay;
 	}
 
 	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
@@ -65,7 +75,10 @@ namespace FIFE {
 			m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
 		}
 		if (objVis->isColorOverlay()) {
-			colorOverlay = objVis->getStaticColorOverlay(angle);
+			if (!m_overlay) {
+				m_overlay = new OverlayData();
+			}
+			m_overlay->colorOverlay = objVis->getStaticColorOverlay(angle);
 		}
 		if (m_cachedStaticImgId != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cachedStaticImgId;
@@ -77,6 +90,49 @@ namespace FIFE {
 		return m_cachedStaticImgId;
 	}
 
+	void RenderItem::setAnimationOverlay(std::vector<ImagePtr>* ao, std::vector<OverlayColors*>* aco) {
+		if (!m_overlay) {
+			m_overlay = new OverlayData();
+		}
+		m_overlay->animationOverlayImages = ao;
+		m_overlay->animationColorOverlays = aco;
+	}
+
+	std::vector<ImagePtr>* RenderItem::getAnimationOverlay() const {
+		if (m_overlay) {
+			return m_overlay->animationOverlayImages;
+		}
+		return NULL;
+	}
+
+	std::vector<OverlayColors*>* RenderItem::getAnimationColorOverlay() const {
+		if (m_overlay) {
+			return m_overlay->animationColorOverlays;
+		}
+		return NULL;
+	}
+
+	void RenderItem::setColorOverlay(OverlayColors* co) {
+		if (!m_overlay) {
+			m_overlay = new OverlayData();
+		}
+		m_overlay->colorOverlay = co;
+	}
+
+	OverlayColors* RenderItem::getColorOverlay() const {
+		if (m_overlay) {
+			return m_overlay->colorOverlay;
+		}
+		return NULL;
+	}
+
+	void RenderItem::deleteOverlayData() {
+		if (m_overlay) {
+			delete m_overlay;
+			m_overlay = 0;
+		}
+	}
+
 	void RenderItem::reset() {
 		instance = 0;
 		dimensions = Rect();
@@ -84,14 +140,6 @@ namespace FIFE {
 		transparency = 255;
 		currentFrame = -1;
 		m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
-		if (animationOverlayImages) {
-			delete animationOverlayImages;
-			animationOverlayImages = 0;
-		}
-		if (colorOverlays) {
-			delete colorOverlays;
-			colorOverlays = 0;
-		}
-		colorOverlay = 0;
+		deleteOverlayData();
 	}
 }

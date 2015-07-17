@@ -23,29 +23,50 @@
 
 """ a filebrowser implementation for pychan """
 
+import sys
+import os
+
+from fife.fife import Engine
 import fife.extensions.pychan.widgets as widgets
 import fife.extensions.pychan as pychan
-import sys
+
 
 def u2s(string):
 	return string.encode(sys.getfilesystemencoding())
 
+
 class FileBrowser(object):
-	""" The B{FileBrowser} displays directory and file listings from the vfs.
-	
+	""" The B{FileBrowser} displays directory and file listings.
+
 		B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
 		signature must be fileSelected(path,filename).
-		
+
 		B{If selectdir} is set, fileSelected's filename parameter should be optional.
-		
+
 		B{The savefile} option provides a box for supplying a new filename that doesn't exist yet.
-		
+
 		B{The selectdir} option allows directories to be selected as well as files.
 	"""
-	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
+
+	def __init__(self, *args, **kwargs):
+		"""Temporary constructor for deprecation"""
+		#TODO: Remove the engine argument
+		display_deprecation = False
+		if isinstance(args[0], Engine):
+			display_deprecation = True
+			args = args[1:]
+		if kwargs.has_key("engine"):
+			display_deprecation = True
+			del kwargs["engine"]
+		if display_deprecation:
+			print("DEPRECATION WARNING:")
+			print("The filebrowser no longer needs an engine instance")
+			print("It will be completely removed in the future")
+
+		self.__real_init__(*args, **kwargs)
+
+	def __real_init__(self, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
 		"""
-		@type	engine:	object
-		@param	engine:	initiated instance of FIFE
 		@type	fileSelected:	function
 		@param	fileSelected:	callback invoked on file selection
 		@type	savefile:	bool
@@ -57,13 +78,12 @@ class FileBrowser(object):
 		@type	guixmlpath:	string
 		@param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
 		"""
-		self.engine = engine
 		self.fileSelected = fileSelected
 
 		self._widget = None
 		self.savefile = savefile
 		self.selectdir = selectdir
-		
+
 		self.guixmlpath = guixmlpath
 
 		self.extensions = extensions
@@ -77,30 +97,30 @@ class FileBrowser(object):
 			self.setDirectory(self.path)
 			self._widget.show()
 			return
-		
+
 		self._widget = pychan.loadXML(self.guixmlpath)
 		self._widget.mapEvents({
-			'dirList'       : self._selectDir,
+			'dirList'	   : self._selectDir,
 			'selectButton'  : self._selectFile,
 			'closeButton'   : self._widget.hide
 		})
 		if self.savefile:
-			self._file_entry = widgets.TextField(name='saveField', text=u'')	
+			self._file_entry = widgets.TextField(name='saveField', text=u'')
 			self._widget.findChild(name="fileColumn").addChild(self._file_entry)
-			
+
 		self.setDirectory(self.path)
 		self._widget.show()
-		
+
 	def setDirectory(self, path):
 		""" sets the current directory according to path """
 		path_copy = self.path
 		self.path = path
 		if not self._widget: return
-		
+
 		def decodeList(list):
 			fs_encoding = sys.getfilesystemencoding()
 			if fs_encoding is None: fs_encoding = "ascii"
-		
+
 			newList = []
 			for i in list:
 				try: newList.append(unicode(i, fs_encoding))
@@ -108,18 +128,26 @@ class FileBrowser(object):
 					newList.append(unicode(i, fs_encoding, 'replace'))
 					print "WARNING: Could not decode item:", i
 			return newList
-	
+
 		dir_list_copy = list(self.dir_list)
 		file_list_copy = list(self.file_list)
 
 		self.dir_list = []
 		self.file_list = []
-		
+
+		contents = os.listdir(path)
+		for content in contents:
+			if os.path.isdir(os.path.join(path, content)):
+				self.dir_list.append(content)
+			elif os.path.isfile(os.path.join(path, content)):
+				extension = os.path.splitext(content)[1][1:]
+				if extension in self.extensions:
+					self.file_list.append(content)
+
 		try:
-			dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
-			file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
-			self.dir_list = decodeList(dir_list)
-			self.file_list = decodeList(file_list)
+			self.dir_list = sorted(decodeList(self.dir_list), key=lambda s: s.lower())
+			self.dir_list.insert(0, "..")
+			self.file_list = sorted(decodeList(self.file_list), key=lambda s: s.lower())
 		except:
 			self.path = path_copy
 			self.dir_list = list(dir_list_copy)
@@ -130,7 +158,7 @@ class FileBrowser(object):
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list
 		})
-		
+
 		self._widget.adaptLayout()
 
 	def _selectDir(self):
@@ -143,7 +171,7 @@ class FileBrowser(object):
 				lst.pop()
 			else:
 				lst.append(new_dir)
-			 
+
 			path = '/'.join(lst)
 			self.setDirectory(path)
 
@@ -160,7 +188,7 @@ class FileBrowser(object):
 		if selection >= 0 and selection < len(self.file_list):
 			self.fileSelected(self.path, u2s(self.file_list[selection]))
 			return
-		
+
 		if self.selectdir:
 			self.fileSelected(self.path)
 			return

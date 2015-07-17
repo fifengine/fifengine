@@ -47,6 +47,8 @@ def initEnvironment(env):
 	
 	env.AppendUnique(CXXFLAGS=["-DPNG_SKIP_SETJMP_CHECK"])
 
+	env.Tool('swig')
+
 	return env
 
 def addExtras(env, opengl):
@@ -82,14 +84,15 @@ def getRequiredLibs(reqLibs):
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
-			('png', 'png.h'),
+			(('libpng', 'png'), 'png.h'),
 			('Xcursor', '')]
 
 	opengl = reqLibs['opengl']
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
-	
+	cegui_0 = reqLibs['cegui-0']
+
 	if fifechan:
 		libs.append(('fifechan', 'fifechan.hpp'))
 		libs.append(('fifechan_sdl', ''))
@@ -106,6 +109,10 @@ def getRequiredLibs(reqLibs):
 	if cegui:
 		libs.append(('CEGUIBase', ''))
 		libs.append(('CEGUIOpenGLRenderer', 'CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h'))
+
+	if cegui_0:
+		libs.append((('CEGUI-0', 'CEGUIBase-0'), ''))
+		libs.append((('CEGUI-0-OPENGL', 'CEGUIOpenGLRenderer-0'), ''))
 	
 	return libs
 	

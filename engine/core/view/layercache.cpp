@@ -174,6 +174,7 @@ namespace FIFE {
 	LayerCache::LayerCache(Camera* camera) {
 		m_camera = camera;
 		m_layer = 0;
+		m_layerObserver = 0;
 		m_tree = 0;
 		m_zMin = 0.0;
 		m_zMax = 0.0;
@@ -181,7 +182,7 @@ namespace FIFE {
 		m_zoomed = !Mathd::Equal(m_zoom, 1.0);
 		m_straightZoom = Mathd::Equal(fmod(m_zoom, 1.0), 0.0);
 		
-		if(RenderBackend::instance()->getName() == "OpenGLe") {
+		if(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled()) {
 			m_needSorting = false;
 		} else {
 			m_needSorting = true;
@@ -366,8 +367,16 @@ namespace FIFE {
 	}
 
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
+		// this is only a bit faster, but works without this block too.
 		if(!m_layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
+			std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
+			for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
+				Entry* entry = m_entries[*entry_it];
+				entry->forceUpdate = false;
+				entry->visible = false;
+			}
+			m_entriesToUpdate.clear();
 			renderlist.clear();
 			return;
 		}
@@ -424,18 +433,25 @@ namespace FIFE {
 
 				if (item->dimensions.intersects(screenViewport)) {
 					renderlist.push_back(item);
-					if (!m_needSorting) {
-						m_zMin = std::min(m_zMin, item->screenpoint.z);
-						m_zMax = std::max(m_zMax, item->screenpoint.z);
-					}
 				}
 			}
 
 			if (m_needSorting) {
 				sortRenderList(renderlist);
 			} else {
-				m_zMin -= 0.5;
-				m_zMax += 0.5;
+				// calculates zmin and zmax of the current viewport
+				Rect r = m_camera->getMapViewPort();
+				std::vector<ExactModelCoordinate> coords;
+				coords.push_back(ExactModelCoordinate(r.x, r.y));
+				coords.push_back(ExactModelCoordinate(r.x, r.y+r.h));
+				coords.push_back(ExactModelCoordinate(r.x+r.w, r.y));
+				coords.push_back(ExactModelCoordinate(r.x+r.w, r.y+r.h));
+				for (uint8_t i = 0; i < 4; ++i) {
+					double z = m_camera->toVirtualScreenCoordinates(coords[i]).z;
+					m_zMin = std::min(z, m_zMin);
+					m_zMax = std::max(z, m_zMax);
+				}
+
 				sortRenderList(renderlist);
 			}
 		}
@@ -568,21 +584,11 @@ namespace FIFE {
 				}
 			}
 			item->transparency = 255 - instanceTrans;
-			// only visible if visual is visible and item is not totally transparent
-			entry->visible = (visual->isVisible() && item->transparency != 0);
+			// only visible if visual and layer are visible and item is not totally transparent
+			entry->visible = (visual->isVisible() && item->transparency != 0) && m_layer->areInstancesVisible();
 		}
-		// delete old animation overlay
-		if (item->animationOverlayImages) {
-			delete item->animationOverlayImages;
-			item->animationOverlayImages = 0;
-		}
-		// delete old color overlay
-		if (item->colorOverlays) {
-			delete item->colorOverlays;
-			item->colorOverlays = 0;
-		}
-		// reset color overlay
-		item->colorOverlay = 0;
+		// delete old overlay
+		item->deleteOverlayData();
 
 		if (!action) {
 			// Try static images then default action.
@@ -604,25 +610,21 @@ namespace FIFE {
 			if (actionVisual->isAnimationOverlay()) {
 				std::map<int32_t, AnimationPtr> animations = actionVisual->getAnimationOverlay(angle);
 				std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
+				std::vector<ImagePtr>* animOverlays = new std::vector<ImagePtr>();
+				std::vector<OverlayColors*>* animationColorOverlays = colorOverlay ? new std::vector<OverlayColors*>() : 0;
 				for (; it != animations.end(); ++it) {
-					if (!item->animationOverlayImages) {
-						item->animationOverlayImages = new std::vector<ImagePtr>();
-					}
 					uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
 					image = it->second->getFrameByTimestamp(animationTime);
-					item->animationOverlayImages->push_back(image);
+					animOverlays->push_back(image);
 					
 					if (colorOverlay) {
-						if (!item->colorOverlays) {
-							item->colorOverlays = new std::vector<OverlayColors*>();
-						}
 						OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
 						if (co) {
 							AnimationPtr ovAnim = co->getColorOverlayAnimation();
 							animationTime = instance->getActionRuntime() % ovAnim->getDuration();
 							co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
 						}
-						item->colorOverlays->push_back(co);
+						animationColorOverlays->push_back(co);
 					}
 					// works only for one animation
 					int32_t actionFrame = it->second->getActionFrame();
@@ -639,6 +641,8 @@ namespace FIFE {
 						}
 					}
 				}
+				// transfer ownership of the vectors to RenderItem
+				item->setAnimationOverlay(animOverlays, animationColorOverlays);
 			} else {
 				AnimationPtr animation = action->getVisual<ActionVisual>()->getAnimationByAngle(angle);
 				uint32_t animationTime = instance->getActionRuntime() % animation->getDuration();
@@ -654,7 +658,7 @@ namespace FIFE {
 						AnimationPtr ovAnim = co->getColorOverlayAnimation();
 						animationTime = instance->getActionRuntime() % ovAnim->getDuration();
 						co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
-						item->colorOverlay = co;
+						item->setColorOverlay(co);
 					}
 				}
 				int32_t actionFrame = animation->getActionFrame();
@@ -749,28 +753,31 @@ namespace FIFE {
 		if (renderlist.empty()) {
 			return;
 		}
-		// We want to put every z value in [-10,10] range.
+		// We want to put every z value in layer z range.
 		// To do it, we simply solve
 		// { y1 = a*x1 + b
 		// { y2 = a*x2 + b
-		// where [y1,y2]' = [-10,10]' is required z range,
+		// where [y1,y2]' = layer z offset min/max is required z range,
 		// and [x1,x2]' is expected min,max z coords.
-		if (!m_needSorting) {
-			double det = m_zMin - m_zMax;
+
+		// more an workaround, because z values are wrong in case of inverted top with bottom
+		if (!m_needSorting && !m_layer->isStatic()) {
+		//if (!m_needSorting) {
+			float det = m_zMin - m_zMax;
 			if (fabs(det) > FLT_EPSILON) {
-				double det_a = -10.0 - 10.0;
-				double det_b = 10.0 * m_zMin - (-10.0) * m_zMax;
-				double a = static_cast<float>(det_a / det);
-				double b = static_cast<float>(det_b / det);
-				float estimate = sqrtf(static_cast<float>(renderlist.size()));
-				float stack_delta = fabs(-10.0f - 10.0f) / estimate * 0.1f;
+				static const float globalrange = 200.0;
+				static const float stackdelta = (FLT_EPSILON * 100.0);
+				int32_t numlayers = m_layer->getLayerCount();
+				float lmin = m_layer->getZOffset();
+				float lmax = lmin + globalrange/numlayers;
+				float a = (lmin - lmax) / det;
+				float b = (lmax * m_zMin - lmin * m_zMax) / det;
 
 				RenderList::iterator it = renderlist.begin();
 				for ( ; it != renderlist.end(); ++it) {
-					double& z = (*it)->screenpoint.z;
-					z = a * z + b;
 					InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
-					z += vis->getStackPosition() * stack_delta;
+					float& z = (*it)->vertexZ;
+					z = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
 				}
 			}
 		} else {

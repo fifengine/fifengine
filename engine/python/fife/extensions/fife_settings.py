@@ -98,7 +98,8 @@ class Setting(object):
 			'FullScreen':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
-			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
+			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
+			'RenderBackend':['OpenGL', 'SDL'],
 			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768',
 								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
 								'1600x900', '1600x1200', '1680x1050', '1920x1080', '1920x1200'],
@@ -119,13 +120,13 @@ class Setting(object):
 		self._defaultSetting['FIFE'] = {
 			'FullScreen':False, 'PychanDebug':False
 			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
-			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False,
+			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
-			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':[0],
+			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
@@ -172,7 +173,7 @@ class Setting(object):
 
 	# set all Settings in either validSetting or defaultSetting
 	def setAllSettings(self,module,settings,validSetting = True):
-		if validSettings:
+		if validSetting:
 			self._validSetting[module] = settings
 		else:
 			self._defaultSetting[module] = settings
@@ -305,6 +306,13 @@ class Setting(object):
 						else:
 							if self._logger:
 								self._logger.log_log("InitalVolume must have a value between 0.0 and 10.0")
+
+					elif name == "GLAlphaTestValue":
+						if e_value >= self._validSetting[module][name][0] and e_value <= self._validSetting[module][name][1]:
+							self._settingsFromFile[module][name] = e_value
+						else:
+							if self._logger:
+								self._logger.log_log("GLAlphaTestValue must have a value between 0.0 and 1.0")
 
 					elif name == "ColorKey":
 						e_value = e_value.split(',')
@@ -446,6 +454,20 @@ class Setting(object):
 
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
+
+	def remove(self, module, name):
+		"""
+		Removes a variable
+
+		@param module: Module where the variable should be set
+		@param name: Name of the variable
+		"""
+		#update the setting cache
+		if module in self._settingsFromFile:
+			del self._settingsFromFile[module][name]
+
+		if self._serializer:
+			self._serializer.remove(module, name)
 
 	def setAvailableScreenResolutions(self, reslist):
 		"""

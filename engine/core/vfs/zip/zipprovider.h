@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 //
+#include <map>
 
 // 3rd party library includes
 //
@@ -44,7 +45,11 @@ namespace FIFE {
 		ZipProvider() : VFSSourceProvider("ZIP") { }
 
 		bool isReadable(const std::string& file) const;
-		VFSSource* createSource(const std::string& file) const;
+		VFSSource* createSource(const std::string& file);
+		VFSSource* getSource(const std::string& path) const;
+		virtual bool hasSource(const std::string & path) const;
+	private:
+		std::map<std::string, VFSSource* > m_sources;
 	};
 } //FIFE
 

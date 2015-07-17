@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <map>
 
 // 3rd party library includes
 
@@ -59,10 +60,24 @@ namespace FIFE {
 			 * @param path the directory to open
 			 * @return the new VFSSource
 			 */
-			virtual VFSSource* createSource(const std::string& path) const;
+			virtual VFSSource* createSource(const std::string& path);
 
+			/** Get the source instance of the path
+			 *
+			 * @param path The source path
+			 * @return A VFSSource or NULL of none is present
+			 */
+			virtual VFSSource* getSource(const std::string& path) const;
+
+			/** Check whether the provider already has created a source with that path
+			*
+			* @param path The path to the source
+                        * @return true if the provider has already created a source with that path, false if not
+                        */
+			virtual bool hasSource(const std::string & path) const;
 		private:
 			std::string m_name;
+			std::map<std::string, VFSSource* > m_sources;
 
 	};
 }

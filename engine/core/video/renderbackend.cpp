@@ -40,12 +40,15 @@ namespace FIFE {
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey),
-		m_isframelimit(false),
-		m_framelimit(60),
 		m_isMipmapping(false),
 		m_textureFilter(TEXTURE_FILTER_NONE),
 		m_maxAnisotropy(0),
-		m_monochrome(false) {
+		m_monochrome(false),
+		m_isDepthBuffer(false),
+		m_alphaValue(0.3),
+		m_isframelimit(false),
+		m_frame_start(0),
+		m_framelimit(60) {
 
 		m_isbackgroundcolor = false;
 		m_backgroundcolor.r = 0;
@@ -155,6 +158,22 @@ namespace FIFE {
 
 	bool RenderBackend::isMonochromeEnabled() const {
 		return m_monochrome;
+	}
+
+	void RenderBackend::setDepthBufferEnabled(bool enabled) {
+		m_isDepthBuffer = enabled;
+	}
+
+	bool RenderBackend::isDepthBufferEnabled() const {
+		return m_isDepthBuffer;
+	}
+
+	void RenderBackend::setAlphaTestValue(float alpha) {
+		m_alphaValue = alpha;
+	}
+
+	float RenderBackend::getAlphaTestValue() const {
+		return m_alphaValue;
 	}
 
 	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {

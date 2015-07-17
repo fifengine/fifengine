@@ -40,7 +40,7 @@
 
 namespace FIFE {
 
-	ImageFontBase::ImageFontBase() : FontBase() {
+	ImageFontBase::ImageFontBase() : FontBase(), m_height(0) {
 	}
 
 	ImageFontBase::~ImageFontBase() {
@@ -71,7 +71,7 @@ namespace FIFE {
 	}
 
 	int32_t ImageFontBase::getHeight() const {
-		return mHeight;
+		return m_height;
 	}
 
 	SDL_Surface *ImageFontBase::renderString(const std::string& text) {

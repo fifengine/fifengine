@@ -555,9 +555,10 @@ namespace FIFE {
 					x = static_cast<int32_t>(round(fx / fsw * fow));
 					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
-				if (vc.animationOverlayImages) {
-					std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
-					for (; it != vc.animationOverlayImages->end(); ++it) {
+				if (vc.getAnimationOverlay()) {
+					std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+					std::vector<ImagePtr>::iterator it = ao->begin();
+					for (; it != ao->end(); ++it) {
 						if ((*it)->isSharedImage()) {
 							(*it)->forceLoadInternal();
 						}
@@ -612,9 +613,10 @@ namespace FIFE {
 								x = static_cast<int32_t>(round(fx / fsw * fow));
 								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
-							if (vc.animationOverlayImages) {
-								std::vector<ImagePtr>::iterator it = vc.animationOverlayImages->begin();
-								for (; it != vc.animationOverlayImages->end(); ++it) {
+							if (vc.getAnimationOverlay()) {
+								std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+								std::vector<ImagePtr>::iterator it = ao->begin();
+								for (; it != ao->end(); ++it) {
 									if ((*it)->isSharedImage()) {
 										(*it)->forceLoadInternal();
 									}
@@ -751,12 +753,14 @@ namespace FIFE {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layerToInstances[layer] = RenderList();
+		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
+		refresh();
 	}
 
 	void Camera::setLightingColor(float red, float green, float blue) {
@@ -901,7 +905,7 @@ namespace FIFE {
 	void Camera::renderStaticLayer(Layer* layer, bool update) {
 		// ToDo: Remove this function from the camera class to something like engine pre-render.
 		// ToDo: Check if partial rendering of only updated RenderItems to existing FBO is possible/faster in our case.
-		// ToDo: Add and fix support for SDL and OpenGLe backends, for SDL it works only on the lowest layer(alpha/transparent bug).
+		// ToDo: Add and fix support for SDL backend, for SDL it works only on the lowest layer(alpha/transparent bug).
 		LayerCache* cache = m_cache[layer];
 		ImagePtr cacheImage = cache->getCacheImage();
 		if (!cacheImage.get()) {
@@ -912,7 +916,7 @@ namespace FIFE {
 		}
 		if (update) {
 			// for the case that the viewport size is not the same as the screen size,
-			// we have to change the values for OpenGL and OpenGLe backends
+			// we have to change the values for OpenGL backend
 			Rect rec(0, m_renderbackend->getHeight()-m_viewport.h, m_viewport.w, m_viewport.h);
 			if (m_renderbackend->getName() == "SDL") {
 				rec = m_viewport;
@@ -934,23 +938,22 @@ namespace FIFE {
 					for (; r_it != m_pipeline.end(); ++r_it) {
 						if ((*r_it)->isActivedLayer(layer)) {
 							(*r_it)->render(this, layer, tempList);
+							m_renderbackend->renderVertexArrays();
 						}
 					}
-					m_renderbackend->renderVertexArrays();
 				}
 			} else {
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 				for (; r_it != m_pipeline.end(); ++r_it) {
 					if ((*r_it)->isActivedLayer(layer)) {
 						(*r_it)->render(this, layer, instancesToRender);
+						m_renderbackend->renderVertexArrays();
 					}
 				}
 			}
 			m_renderbackend->detachRenderTarget();
 			m_renderbackend->popClipArea();
 		}
-		// render cacheImage
-		cacheImage.get()->render(m_viewport);
 	}
 
 	void Camera::updateRenderLists() {
@@ -979,8 +982,6 @@ namespace FIFE {
 	}
 
 	void Camera::render() {
-		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
-
 		updateRenderLists();
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -995,14 +996,24 @@ namespace FIFE {
 			}
 		}
 
-		m_renderbackend->pushClipArea(getViewPort());
-
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for ( ; layer_it != layers.end(); ++layer_it) {
 			// layer with static flag will rendered as one texture
 			if ((*layer_it)->isStatic()) {
 				renderStaticLayer(*layer_it, m_updated);
+				continue;
+			}
+		}
+
+		m_renderbackend->pushClipArea(getViewPort());
+
+		layer_it = layers.begin();
+		for ( ; layer_it != layers.end(); ++layer_it) {
+			// layer with static flag will rendered as one texture
+			if ((*layer_it)->isStatic()) {
+				m_cache[*layer_it]->getCacheImage()->render(m_viewport);
+				m_renderbackend->renderVertexArrays();
 				continue;
 			}
 			RenderList& instancesToRender = m_layerToInstances[*layer_it];
@@ -1018,20 +1029,18 @@ namespace FIFE {
 					for (; r_it != m_pipeline.end(); ++r_it) {
 						if ((*r_it)->isActivedLayer(*layer_it)) {
 							(*r_it)->render(this, *layer_it, tempList);
+							m_renderbackend->renderVertexArrays();
 						}
 					}
-					m_renderbackend->renderVertexArrays();
 				}
 			} else {
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 				for (; r_it != m_pipeline.end(); ++r_it) {
 					if ((*r_it)->isActivedLayer(*layer_it)) {
 						(*r_it)->render(this, *layer_it, instancesToRender);
+						m_renderbackend->renderVertexArrays();
 					}
 				}
-			}
-			if (renderbackendOpenGLe) {
-				m_renderbackend->renderVertexArrays();
 			}
 		}
 

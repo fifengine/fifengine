@@ -162,7 +162,7 @@ class MainWindow(object):
 		# We must hide the widget before adding it to the dockarea,
 		# or we will get a duplicate copy of the widget in the top left corner
 		# of screen.
-		widget.hide() 
+		#widget.hide() 
 		dockareas = self._dockareas
 		
 		# Panel widgets which provide an implementation for set_orientation()

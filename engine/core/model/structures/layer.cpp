@@ -405,6 +405,28 @@ namespace FIFE {
 
 	}
 
+	float Layer::getZOffset() const {
+		static const float globalmax = 100.0;
+		static const float globalrange = 200.0;
+		int32_t numlayers = m_map->getLayerCount();
+		int32_t thislayer = 1; // we don't need 0 indexed
+
+		const std::list<Layer*>& layers = m_map->getLayers();
+		std::list<Layer*>::const_iterator iter = layers.begin();
+		for (; iter != layers.end(); ++iter, ++thislayer) {
+			if (*iter == this) {
+				break;
+			}
+		}
+
+		float offset = globalmax - (numlayers - (thislayer - 1)) * (globalrange/numlayers);
+		return offset;
+	}
+
+	uint32_t Layer::getLayerCount() const {
+		return m_map->getLayerCount();
+	}
+
 	void Layer::setInstancesVisible(bool vis) {
 		if (m_instancesVisibility != vis) {
 			m_instancesVisibility = vis;

@@ -64,6 +64,10 @@ namespace FIFE {
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0);
+
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void renderZ(const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0);
+
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
 		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);

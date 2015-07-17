@@ -81,6 +81,7 @@ namespace fcn {
 		virtual bool isEnabled() const;
 		virtual void setVisible(bool visible);
 		virtual bool isVisible() const;
+		virtual bool isSetVisible() const;
 		virtual void setBaseColor(const Color& color);
 		virtual const Color& getBaseColor() const;
 		virtual void setForegroundColor(const Color& color);
@@ -94,7 +95,7 @@ namespace fcn {
 		virtual void requestMoveToBottom();
 		virtual void setActionEventId(const std::string& actionEventId);
 		virtual const std::string& getActionEventId() const;
-		virtual void getAbsolutePosition(int32_t& x, int32_t& y) const;
+		virtual void getAbsolutePosition(int32_t& OUTPUT, int32_t& OUTPUT) const;
 		Font *getFont() const;
 		static void setGlobalFont(Font* font);
 		virtual void setFont(Font* font);

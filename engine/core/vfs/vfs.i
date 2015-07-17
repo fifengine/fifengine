@@ -35,6 +35,7 @@ namespace std {
 	%template(vectoru) vector<uint8_t>;
 };
 
+
 namespace FIFE {
 	class VFS {
 	public:
@@ -45,6 +46,7 @@ namespace FIFE {
 		void cleanup();
 
 		void addNewSource(const std::string& path);
+		void removeSource(const std::string& path);
 
 		bool exists(const std::string& file) const;
 		RawData* open(const std::string& path);

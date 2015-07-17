@@ -124,10 +124,9 @@ class StylingExample(PyChanExample):
 		super(StylingExample,self).stop()
 		if self.styledCredits:
 			self.styledCredits.hide()
+			self.styledCredits = None
 
 	def testStyle(self):
 		style = self.styles[self.widget.collectData('styleList')]
-		if self.styledCredits:
-			self.styledCredits.hide()
 		self.styledCredits.stylize(style)
 		self.styledCredits.show()

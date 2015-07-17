@@ -50,9 +50,11 @@ namespace FIFE {
 	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
 		m_renderbackend(renderbackend),
-		m_font(0) {
+		m_font(0),
+		m_font_color(false),
+		m_background(false),
+		m_backborder(false) {
 		setEnabled(false);
-		m_font_color = false;
 	}
 
  	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
@@ -60,9 +62,10 @@ namespace FIFE {
 		m_renderbackend(old.m_renderbackend),
 		m_font(old.m_font),
 		m_font_color(old.m_font_color),
-		m_color(old.m_color) {
+		m_color(old.m_color),
+		m_background(old.m_background),
+		m_backborder(old.m_backborder) {
 		setEnabled(false);
-		m_font_color = m_background = m_backborder = false;
 	}
 
 	RendererBase* FloatingTextRenderer::clone() {
@@ -79,7 +82,6 @@ namespace FIFE {
 		}
 
 		RenderList::const_iterator instance_it = instances.begin();
-		const std::string* saytext = NULL;
 		uint32_t lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
 		if(m_font_color) {
@@ -87,7 +89,7 @@ namespace FIFE {
 		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
-			saytext = instance->getSayText();
+			const std::string* saytext = instance->getSayText();
 			if (saytext) {
 				const Rect& ir = (*instance_it)->dimensions;
 				Image* img = m_font->getAsImageMultiline(*saytext);
@@ -96,7 +98,13 @@ namespace FIFE {
 				r.y = ir.y- img->getHeight(); /// make the text rect floating higher than the instance.
 				r.w = img->getWidth();
 				r.h = img->getHeight();
-
+				// Without this check it can happen that changeRenderInfos() call produces an out_of_range error
+				// because the image rendering can be skipped, if it's not on the screen.
+				// The result is that it tried to modify more objects as exist.
+				if (r.right() < 0 || r.x > static_cast<int32_t>(m_renderbackend->getWidth()) || 
+					r.bottom() < 0 || r.y > static_cast<int32_t>(m_renderbackend->getHeight())) {
+					continue;
+				}
 				if(m_background || m_backborder) {
 					const int32_t overdraw = 5;
 
@@ -119,7 +127,7 @@ namespace FIFE {
 					if (m_backborder) {
 						++elements;
 					}
-					m_renderbackend->changeRenderInfos(elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+					m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
 				}
 			}
 		}

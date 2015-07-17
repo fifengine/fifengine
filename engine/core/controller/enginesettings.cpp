@@ -55,6 +55,8 @@ namespace FIFE {
 		m_oglMipmapping(false),
 		m_oglMonochrome(false),
 		m_oglTextureFilter(TEXTURE_FILTER_NONE),
+		m_oglDepthBuffer(false),
+		m_alphaTestValue(0.3),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -146,7 +148,6 @@ namespace FIFE {
 		std::vector<std::string> tmp;
 		tmp.push_back("SDL");
 		tmp.push_back("OpenGL");
-		tmp.push_back("OpenGLe");
 		return tmp;
 	}
 
@@ -188,6 +189,22 @@ namespace FIFE {
 
 	bool EngineSettings::isGLUseMonochrome() const {
 		return m_oglMonochrome;
+	}
+
+	void EngineSettings::setGLUseDepthBuffer(bool buffer) {
+		m_oglDepthBuffer = buffer;
+	}
+
+	bool EngineSettings::isGLUseDepthBuffer() const {
+		return m_oglDepthBuffer;
+	}
+
+	void EngineSettings::setGLAlphaTestValue(float alpha) {
+		m_alphaTestValue = alpha;
+	}
+
+	float EngineSettings::getGLAlphaTestValue() const {
+		return m_alphaTestValue;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {
