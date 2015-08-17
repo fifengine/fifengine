@@ -473,11 +473,11 @@ env.Append(BUILDERS = {'BuildDocs': doc_builder})
 Alias('docs', env.BuildDocs('docs', os.path.join('doc', 'doxygen', 'doxyfile')))
 
 #**************************************************************************
-#Create a distclean target
+# Delete additional files for default target 'fife-python'
 #**************************************************************************
-env.Clean("distclean",
+env.Clean('fife-python',
 		[
-		 '.sconsign.dblite',
+		 '.sconsign.tmp',
 		 os.path.join('build','.sconf_temp'),
 		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.cc'),
 		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.h'),
