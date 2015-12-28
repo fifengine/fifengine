@@ -103,7 +103,6 @@ class MapFileHistory(plugin.Plugin):
 
 		self.load_map_history()
 		self.create()		
-		self.toggle()
 		
 		onOpenMapFile.connect(self.update)
 		
