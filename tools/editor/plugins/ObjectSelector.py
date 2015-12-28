@@ -564,7 +564,6 @@ class ObjectSelector(plugin.Plugin):
 		self.set_mode(self._mode)
 		self.set_orientation(orientation=self._default_orientation)
 		self.container.hide()
-		self.toggle()
 
 		module = self.default_settings['module']
 		self.eds.set(module, 'dockarea', '')
