@@ -363,9 +363,10 @@ class Setting(object):
 						self._settingsFromFile[module][name] = e_value
 
 					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
-						if type(e_value) != bool:
+						if type(e_value) == int:
+							e_value = (False, True)[e_value]
 							self._logger.log_warn("Use of type int for %s is deprecated. Use bool instead!"%name)
-						self._settingsFromFile[module][name] = bool(e_value)
+						self._settingsFromFile[module][name] = e_value
 
 					else:
 
