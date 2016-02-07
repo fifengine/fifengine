@@ -361,6 +361,12 @@ class Setting(object):
 						self._settingsFromFile[module][name] = e_value
 					elif name == "MouseAcceleration":
 						self._settingsFromFile[module][name] = e_value
+
+					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
+						if type(e_value) != bool:
+							self._logger.log_warn("Use of type int for %s is deprecated. Use bool instead!"%name)
+						self._settingsFromFile[module][name] = bool(e_value)
+
 					else:
 
 						if isinstance(self._settingsFromFile[module][name],list) == True or isinstance(self._settingsFromFile[module][name],dict) == True:
