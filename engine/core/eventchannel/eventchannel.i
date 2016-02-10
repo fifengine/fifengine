@@ -224,6 +224,7 @@ namespace FIFE {
 	public:
 		virtual void fileDropped(DropEvent& evt) = 0;
 		virtual ~IDropListener();
+	};
 
 	%feature("director") IMouseFilter;
 	class IMouseFilter {
