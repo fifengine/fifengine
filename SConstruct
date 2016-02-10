@@ -473,10 +473,11 @@ env.Append(BUILDERS = {'BuildDocs': doc_builder})
 Alias('docs', env.BuildDocs('docs', os.path.join('doc', 'doxygen', 'doxyfile')))
 
 #**************************************************************************
-#Create a distclean target
+#distclean target
 #**************************************************************************
 env.Clean("distclean",
 		[
+		 '.sconsign.tmp',
 		 '.sconsign.dblite',
 		 os.path.join('build','.sconf_temp'),
 		 os.path.join('engine','swigwrappers', 'python', 'fife_wrap.cc'),

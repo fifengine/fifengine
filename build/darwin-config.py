@@ -55,7 +55,10 @@ def addExtras(env, opengl):
 
 	env.Prepend(CXXFLAGS = '-DUSE_COCOA')
         version = platform.mac_ver()[0]
-        major, minor, patch = [int(v) for v in version.split('.')]
+        try:
+            major, minor, _ = [int(v) for v in version.split('.')]
+        except ValueError:
+            major, minor = [int(v) for v in version.split('.')]
         if major >= 10 and minor >= 9:
             env.Prepend(CXXFLAGS = '-DOSX_109')
 

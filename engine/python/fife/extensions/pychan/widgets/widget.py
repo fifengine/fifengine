@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import weakref
+
 from fife import fife
 
 from fife.extensions.pychan import events
@@ -127,7 +129,6 @@ class Widget(object):
 		Use 'addChild' or 'removeChild' to add/remove labels for example.
 		"""
 
-
 	def __init__(self,
 				 parent = None, 
 				 name = None,
@@ -151,10 +152,14 @@ class Widget(object):
 		
 		# Make sure the real_widget has been created
 		assert( hasattr(self,'real_widget') )
-		
+
 		self.event_mapper = events.EventMapper(self)
-		
-		self._visible = False
+
+		# Flag to indicate if the Widget is added to the Manager
+		self._added = False
+		# Flag to indicate if the Widget is added to
+		# the top Widget list of the Manager
+		self._top_added = False
 		self._extra_border = (0,0)
 
 		# Data distribution & retrieval settings
@@ -218,7 +223,8 @@ class Widget(object):
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
-		
+		# add this widget to the manager
+		get_manager().addWidget(self)
 	
 	def clone(self, prefix):
 		"""
@@ -324,59 +330,76 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self._visible: return
+		# add this widget to the manager
+		if not self._added:
+			get_manager().addWidget(self)
+		if self.parent is None and not self._top_added:
+			get_manager().addTopWidget(self)
+		# add childs of this widget to the manager
+		def _show(shown_widget):
+			get_manager().addWidget(shown_widget)
+		self.deepApply(_show)
 		
-		if self.parent:
+		if self.isVisible() and self.isSetVisible():
 			self.beforeShow()
-			self.parent.showChild(self)
-			self.parent.adaptLayout()
-			self._visible = True
-		else:
 			self.adaptLayout()
-			self.beforeShow()
-			get_manager().show(self)
-			self._visible = True	
+			if self.parent is None:
+				get_manager().placeWidget(self, self.position_technique)
+			return
 
-		#show real widget to distribute a widgetShown event.
-		self.real_widget.setVisible(True)	
-						
-		def _show(widget):
-			widget._visible = True
-				
-		self.deepApply(_show, shown_only=True)
+		self.beforeShow()
+		# Show real widget to distribute a widgetShown event.
+		self.real_widget.setVisible(True)
+		self.adaptLayout()
+		if self.parent is None:
+			get_manager().placeWidget(self, self.position_technique)
 
-	def hide(self):
+	def hide(self, free=False):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if not self._visible: return
+		# remove this widget from the manager
+		if self._added:
+			get_manager().removeWidget(self)
+		if self.parent is None and self._top_added:
+			get_manager().removeTopWidget(self)
+		# remove childs of this widget from the manager
+		def _hide(hidden_widget):
+			get_manager().removeWidget(hidden_widget)
+		self.deepApply(_hide)
 		
-		if self.parent:
-			self.parent.hideChild(self)
-			self.parent.adaptLayout()
-		else:
-			get_manager().hide(self)
+		if not self.isVisible() and not self.isSetVisible():
+			self.adaptLayout()
+			self.afterHide()
+			return
 
+		# Hide real widget to distribute a widgetHidden event.
+		self.real_widget.setVisible(False)
+
+		if free:
+			if self.parent:
+				self.parent.removeChild(self)
+			self.removeAllChildren()
+
+		self.adaptLayout()
 		self.afterHide()
-		self._visible = False
-		
-	    #Hide real widget to distribute a widgetHidden event.
-		self.real_widget.setVisible(False)		
-				
-		
-		def _hide(widget):
-			widget._visible = False
-			
-		self.deepApply(_hide, shown_only=True)
 
 	def isVisible(self):
 		"""
 		Check whether the widget is currently shown,
 		either directly or as part of a container widget.
 		"""
+		return self.real_widget.isVisible()
 
-		return self._visible
-
+	def isSetVisible(self):
+		"""
+		Check the real widget visible flag.
+		It checks not if the widget is currently shown!
+		This is needed e.g. if the parent is already hidden
+		but we want to hide the child too.
+		"""
+		return self.real_widget.isSetVisible()
+	
 	def adaptLayout(self,recurse=True):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
@@ -906,16 +929,22 @@ class Widget(object):
 		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
 
-	def _getParent(self): return self.__parent
+	def _getParent(self):
+		if self.__parent is not None:
+			return self.__parent()
+		return None
 	def _setParent(self,parent):
 		if parent and not issubclass(type(parent), Widget):
 			raise RuntimeError("Parent must be subclass of the Widget type.")
-	
-		if self.__parent is not parent:
-			if self.__parent and parent is not None:
+
+		if self.__parent is not None and self.__parent() is not parent:
+			if self.__parent() is not None and parent is not None:
 				print "Widget containment fumble:", self, self.__parent, parent
-				self.__parent.removeChild(self)
-		self.__parent = parent
+				self.__parent().removeChild(self)
+		if parent is not None:
+			self.__parent = weakref.ref(parent)
+		else:
+			self.__parent = None
 	parent = property(_getParent,_setParent)
 
 	def _setName(self,name):
@@ -930,7 +959,7 @@ class Widget(object):
 	def _setFocusable(self, b): self.real_widget.setFocusable(b)
 	def _isFocusable(self):
 		return self.real_widget.isFocusable()
-	              
+
 	def _createNameWithPrefix(self, prefix):
 		
 		if not isinstance(prefix, str):

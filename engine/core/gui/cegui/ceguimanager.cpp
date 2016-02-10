@@ -24,7 +24,6 @@
 // 3rd party library includes
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
-#endif
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

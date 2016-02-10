@@ -116,9 +116,21 @@ namespace fcn
 		// added for FIFE
 		void setImage(Image* image);
 
+		// if enabled the image is scaled to widget size
+		bool isScaling() const;
+
+		void setScaling(bool scale);
+
+		// if enabled the image is tiled to widget size
+		bool isTiling() const;
+
+		void setTiling(bool tile);
+
 		// changed from private to allow derived instance access
 	protected:
 		Image* mImage;
+		bool mScale;
+		bool mTile;
 	};
 }
 

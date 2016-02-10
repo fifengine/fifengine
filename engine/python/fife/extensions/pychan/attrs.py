@@ -109,12 +109,16 @@ class IntAttr(Attr):
 class BoolAttr(Attr):
 	def parse(self,value):
 		try:
-			value = int(value)
-			if value not in (0,1):
-				raise ParserError("Expected a 0 or 1.")
+			# Allow clients to be compatible with old FIFE versions
+			if value in ["0", "False", "false"]:
+				value = False
+			elif value in ["1", "True", "true"]:
+				value = True
+			if value not in (True,False):
+				raise ParserError("Expected False or True.")
 			return value
 		except:
-			raise ParserError("Expected a 0 or 1.")
+			raise ParserError("Expected False or True.")
 
 class FloatAttr(Attr):
 	def parse(self, value):

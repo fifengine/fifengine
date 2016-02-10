@@ -51,8 +51,13 @@ of the content, the author and the actual license it was published under.
 
 ### Editor
 The editor tool can be found within the `<FIFE>/tools/editor` directory. You
-can launch it by running `run.py`.  It is used to edit map files for the tech
+can launch it by running `run.py`. It is used to edit map files for the tech
 demo (rio do hola).  Other clients extend it and use it to edit their maps.
+
+### Tests
+The test tool can be found within the `<FIFE>/tests/fife_test` directory. You
+can launch it by running `run.py`. Open the console with `F10`. To run a test
+enter `run` and the test name like `PathfinderTest`.
 
 ### Rio De Hola
 Rio de hola is a technology demo showing off many of the FIFE features.  It is 
@@ -88,20 +93,14 @@ wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 4) Known issues
 ---------------
 ### Documentation
- * Bug in `dep_analyzer.py` which prevents graphs from being generated (#554)
  * Atlas Creator needs to be documented (#559)
 
 ### Engine
- * No fallback solution for special characters (#302)
  * `Camera`s must be attached to layers (#305)
- * Loaders have a circular import (#478)
  * Unit-tests are broken (#423)
- * Mouse gets stuck in top left corner after alt+tab in fullscreen modes (#593)
 
 ### Guichan/Pychan
- * No UTF8 support using vanilla guichan source (#432)
  * Pychan dropdown menus crash FIFE-based client on win32 (#508)
- * `Button` doesn't react to click when drawn below mouse pointer (#387)
  * Pychan dropdowns refuse to open if there is no space below (#445)
  * Borders are not rendered on edges of widgets that touch their parent 
    container's edge. (#522)
@@ -110,14 +109,11 @@ wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
  * `applyOnlySuitable` fails on `functools.partial` (#638)
  * Default style will sometimes override custom style (#656)
  * `adjustSize()` sometimes sets width to invalid values (#666)
- * Guichan adds hardcoded value to user setting of `base_color` attribute (#678)
 
 ### Build
  * Uninstaller doesn't remove `fife` module (#526)
  * Improve build system shared library support on linux (#575)
  * Cannot build a usable debug version of `_fife_d.pyd` with mingw
- * `_fife.so` linked with absurd rpath (#620)
- * Unable to make distclean (#622)
 
 ### Editor
  * Editor code does not match coding standards (#371)
@@ -126,8 +122,6 @@ wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
  * Placing an instance on top of another then undoing resets the original 
    instances properties (#459)
  * Should be able to set the default zoom level for a camera (#467)
- * Misc FIFE Editor crashes (user input validation/exception handling missing) 
-   (#537)
  * Editor file dialog uses botched relative paths (#616)
 
 
@@ -157,7 +151,7 @@ general and the bundled techdemo. Feedback is a great way to help us to improve
 FIFE. If you would like to get in contact with us and provide feedback you can 
 either visit our IRC channel or our forums:
  * #fife on freenode.net
- * http://forums.fifengine.net/index.php?board=5.0
+ * http://forums.fifengine.net/
 
 
 7) Closing Notes

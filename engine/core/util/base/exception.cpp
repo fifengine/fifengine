@@ -39,10 +39,10 @@ static Logger _log(LM_EXCEPTION);
 	Exception::~Exception() throw() {}
 
 	const char* Exception::what() const throw() {
-		std::stringstream str;
+		return m_what.c_str();
+	}
 
-		str << "_[" << getTypeStr() << "]_ , " << getDescription() << " :: " << m_what;
-
-		return str.str().c_str();
+	void Exception::update() {
+		m_what = "_[" + getTypeStr() + "]_ , " + getDescription() + " :: " + m_what;
 	}
 }//FIFE

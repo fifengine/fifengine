@@ -194,6 +194,10 @@ namespace FIFE {
 			*/
 			const std::vector<Camera*>& getCameras() const;
 
+			/** Return the number of enabled cameras in this map.
+			 */
+			uint32_t getActiveCameraCount() const;
+
 			void setFilename(const std::string& file) { m_filename = file; }
 			const std::string& getFilename() const { return m_filename; }
 

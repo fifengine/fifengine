@@ -567,7 +567,12 @@ namespace FIFE {
 	}
 
 	void GLImage::free() {
+		// save the image offsets
+		int32_t xshift = m_xshift;
+		int32_t yshift = m_yshift;
 		setSurface(NULL);
+		m_xshift = xshift;
+		m_yshift = yshift;
 		m_state = IResource::RES_NOT_LOADED;
 	}
 

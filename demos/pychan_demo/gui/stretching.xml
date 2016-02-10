@@ -1,6 +1,6 @@
 <Window title="Stretching Example">
 	<Container size="300,300">
-		<Icon name="icon" image="gui/icons/pychan_logo.png"/>
+		<Icon name="icon" scale="1" image="gui/icons/pychan_logo.png"/>
 	</Container>
 	<Label text="Move the sliders around to stretch the icon."/>
 	<HBox><Label hexpand="0" text="Width:"/><Label name="wvalue"/></HBox>

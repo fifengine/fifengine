@@ -89,7 +89,6 @@ class Container(Widget):
 		self.real_widget = _real_widget or fifechan.Container()
 		self.children = []
 		self.children_position_cache = []
-		self.hidden_children = []
 		self._background = []
 		self._background_image = None
 		self.background_image = self.DEFAULT_BACKGROUND
@@ -168,23 +167,20 @@ class Container(Widget):
 			return
 
 		widget.parent = self
-		widget._visible = self._visible
+
+		if widget.max_size[0] > self.max_size[0] or widget.max_size[1] > self.max_size[1]:
+			widget.max_size = self.max_size
+		
 		self.children.append(widget)
 		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
-		
-		#update the states of the child widgets.  This does not actually call
-		#the show() or hide() functions of the widget.
-		if self._visible:
-			def _show(shown_widget):
-				shown_widget._visible = True
-				
-			self.deepApply(_show, shown_only=True)
-		else:
-			def _hide(hidden_widget):
-				hidden_widget._visible = False
-				
-			self.deepApply(_hide)
+		# add all to the manager
+		def _add(added_widget):
+			if not added_widget._added:
+				get_manager().addWidget(added_widget)
+			if added_widget._top_added:
+				get_manager().removeTopWidget(added_widget)
+		widget.deepApply(_add)
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
@@ -210,7 +206,7 @@ class Container(Widget):
 		self.insertChild(widget, self.children.index(before))
 
 	def removeChild(self,widget):
-		if not widget in self.children and not widget in self.hidden_children:
+		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
 
 		if widget in self.children:
@@ -220,40 +216,50 @@ class Container(Widget):
 		if widget in self.children_position_cache:
 			self.children_position_cache.remove(widget)
 
-		if widget in self.hidden_children:
-			self.hidden_children.remove(widget)
-
 		widget.parent = None
+		# remove all from the manager
+		def _remove(removed_widget):
+			if removed_widget._added:
+				get_manager().removeWidget(removed_widget)
+			if removed_widget._top_added:
+				get_manager().removeTopWidget(removed_widget)
+		widget.deepApply(_remove)
 
-	def hideChild(self, child):
-		if not child in self.children:
-			raise RuntimeError("%s does not have %s as direct child widget." % (str(self), str(child)))
+	def hideChild(self, child, free=False):
+		# remove child from the manager
+		if child._added:
+			get_manager().removeWidget(child)
+		if child._top_added:
+			get_manager().removeTopWidget(child)
+		# remove childs of the child from the manager
+		def _hide(hidden_widget):
+			get_manager().removeWidget(hidden_widget)
+		child.deepApply(_hide)
 		
-		self.hidden_children.append(child)
-		self.children.remove(child)
-
-		self.real_widget.remove(child.real_widget)
-		child._visible = False
+		if child.isVisible() or child.isSetVisible():
+			# Hide real widget to distribute a widgetHidden event.
+			child.real_widget.setVisible(False)
+			
+		if free:
+			self.removeChild(child)
+		self.adaptLayout()
+		self.afterHide()
 		
 	def showChild(self, child):
-		if not child in self.hidden_children:
-			return
-	
-		self.hidden_children.remove(child)
-		
-		children = self.children[:]
-		children_position_cache = self.children_position_cache[:]
-		hidden_children = self.hidden_children[:]
+		# add child to the manager
+		if not child._added:
+			get_manager().addWidget(child)
+		# add childs of child to the manager
+		def _show(shown_widget):
+			get_manager().addWidget(shown_widget)
+		child.deepApply(_show)
 
-		for widget in children:
-			self.removeChild(widget)
-		
-		for child_widget in children_position_cache:
-			if not child_widget in hidden_children:
-				self.addChild(child_widget)
-		
-		self.children_position_cache = children_position_cache[:]
-		self.hidden_children = hidden_children[:]
+		child.beforeShow()
+		if not child.isVisible() or not child.isSetVisible():
+			# Show real widget to distribute a widgetShown event.
+			child.real_widget.setVisible(True)
+
+		self.adaptLayout()
 			
 	def add(self,*widgets):
 		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
@@ -261,17 +267,25 @@ class Container(Widget):
 
 	def getMaxChildrenWidth(self):
 		if not self.children: return 0
-		return max(widget.width for widget in self.children)
+		w = 0
+		for widget in self.children:
+			if not widget.real_widget.isVisible(): continue
+			w = max(widget.width, w)
+		return w
 
 	def getMaxChildrenHeight(self):
 		if not self.children: return 0
-		return max(widget.height for widget in self.children)
+		h = 0
+		for widget in self.children:
+			if not widget.real_widget.isVisible(): continue
+			h = max(widget.height, h)
+		return h
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		if not shown_only:
-			children = self.children + self.hidden_children
-		else:
 			children = self.children
+		else:
+			children = filter(lambda w: w.real_widget.isVisible(), self.children)
 		
 		if leaves_first:
 			for child in children:
@@ -300,25 +314,16 @@ class Container(Widget):
 			return
 
 		back_w,back_h = self.width, self.height
-		image_w, image_h = image.getWidth(), image.getHeight()
-
 		map(self.real_widget.remove,self._background)
 
 		# Now tile the background over the widget
 		self._background = []
 		icon = fifechan.Icon(image)
-		x, w = 0, image_w
-		while x < back_w:
-			y, h = 0, image_h
-			while y < self.height:
-				icon = fifechan.Icon(image)
-				icon.setPosition(x,y)
-				self._background.append(icon)
-				y += h
-			x += w
+		icon.setTiling(True)
+		icon.setSize(back_w,back_h)
+		self._background.append(icon)
 		map(self.real_widget.add,self._background)
-		for tile in self._background:
-			tile.requestMoveToBottom()
+		icon.requestMoveToBottom()
 
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)

@@ -54,6 +54,7 @@ namespace FIFE {
 		screenpoint(),
 		dimensions(),
 		vertexZ(0),
+		facingAngle(0),
 		transparency(255),
 		currentFrame(-1),
 		m_overlay(0),

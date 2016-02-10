@@ -55,11 +55,11 @@ namespace FIFE {
 	}
 
 	VFSSource* DirectoryProvider::getSource(const std::string& path) const {
+		VFSSource* source = NULL;
 		if (hasSource(path)) {
-			return m_sources.at(path);
-		} else {
-			return NULL;
+			source = m_sources.find(path)->second;
 		}
+		return source;
 	}
 
 	bool DirectoryProvider::hasSource(const std::string & path) const {

@@ -126,7 +126,7 @@ class Setting(object):
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
-			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':[0],
+			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
@@ -173,7 +173,7 @@ class Setting(object):
 
 	# set all Settings in either validSetting or defaultSetting
 	def setAllSettings(self,module,settings,validSetting = True):
-		if validSettings:
+		if validSetting:
 			self._validSetting[module] = settings
 		else:
 			self._defaultSetting[module] = settings
@@ -313,7 +313,7 @@ class Setting(object):
 						else:
 							if self._logger:
 								self._logger.log_log("GLAlphaTestValue must have a value between 0.0 and 1.0")
-								
+
 					elif name == "ColorKey":
 						e_value = e_value.split(',')
 						if int(e_value[0]) in range(0,256) and int(e_value[1]) in range(0,256) and int(e_value[2]) in range(0,256):
@@ -454,6 +454,20 @@ class Setting(object):
 
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
+
+	def remove(self, module, name):
+		"""
+		Removes a variable
+
+		@param module: Module where the variable should be set
+		@param name: Name of the variable
+		"""
+		#update the setting cache
+		if module in self._settingsFromFile:
+			del self._settingsFromFile[module][name]
+
+		if self._serializer:
+			self._serializer.remove(module, name)
 
 	def setAvailableScreenResolutions(self, reslist):
 		"""

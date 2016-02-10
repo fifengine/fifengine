@@ -38,6 +38,7 @@
 #include "eventchannel/source/ec_eventsourcetypes.h"
 #include "eventchannel/source/ec_ieventsource.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/mouse/ec_imousefilter.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
 #include "eventchannel/eventmanager.h"
@@ -223,6 +224,12 @@ namespace FIFE {
 	public:
 		virtual void fileDropped(DropEvent& evt) = 0;
 		virtual ~IDropListener();
+
+	%feature("director") IMouseFilter;
+	class IMouseFilter {
+	public:
+		virtual bool isFiltered(const MouseEvent& evt) = 0;
+		virtual ~IMouseFilter();
 	};
 
 	class EventManager {
@@ -252,6 +259,7 @@ namespace FIFE {
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);
+		void setMouseFilter(IMouseFilter* mouseFilter);
 
 		void setMouseSensitivity(float sensitivity);
 		float getMouseSensitivity() const;

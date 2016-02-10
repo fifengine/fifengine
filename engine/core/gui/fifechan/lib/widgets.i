@@ -81,6 +81,7 @@ namespace fcn {
 		virtual bool isEnabled() const;
 		virtual void setVisible(bool visible);
 		virtual bool isVisible() const;
+		virtual bool isSetVisible() const;
 		virtual void setBaseColor(const Color& color);
 		virtual const Color& getBaseColor() const;
 		virtual void setForegroundColor(const Color& color);
