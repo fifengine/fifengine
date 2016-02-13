@@ -262,6 +262,7 @@ namespace FIFE {
 		GLuint m_fbo_id;
 		ImagePtr m_img_target;
 		bool m_target_discard;
+		SDL_GLContext m_context;
 	};
 
 }

@@ -131,7 +131,11 @@ class ApplicationBase(object):
 		engineSetting.setScreenHeight(int(height))
 		engineSetting.setRenderBackend(self._finalSetting['RenderBackend'])
 		engineSetting.setFullScreen(self._finalSetting['FullScreen'])
+		engineSetting.setRefreshRate(self._finalSetting['RefreshRate'])
+		engineSetting.setDisplay(self._finalSetting['Display'])
+		engineSetting.setVSync(self._finalSetting['VSync'])
 		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
+		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
 
 		try:

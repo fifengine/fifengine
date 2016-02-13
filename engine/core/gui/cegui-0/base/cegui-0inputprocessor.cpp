@@ -48,7 +48,12 @@ namespace FIFE {
 			case SDL_KEYDOWN:
 				consumed = processKeyInput(event);
 				break;
-				
+			
+			case SDL_TEXTINPUT:
+				consumed = processTextInput(event);
+				break;
+
+			case SDL_MOUSEWHEEL:
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
 				consumed = processMouseInput(event);
@@ -66,11 +71,10 @@ namespace FIFE {
 	}
 	
 	bool CEGui_0InputProcessor::processKeyInput(SDL_Event& event) {
-                bool consumed = false;
+		bool consumed = false;
 
 		switch(event.type) {
 			case SDL_KEYDOWN:
-				consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(event.key.keysym.unicode);
 				if (m_keymap.find(event.key.keysym.sym) != m_keymap.end())
 					consumed |= CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyDown(m_keymap[event.key.keysym.sym]);
 				break;
@@ -87,6 +91,13 @@ namespace FIFE {
 		return consumed;
 	}
 	
+	bool CEGui_0InputProcessor::processTextInput(SDL_Event& event) {
+		CEGUI::String character(event.text.text);
+		bool consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(character[0]);
+
+		return consumed;
+	}
+
 	bool CEGui_0InputProcessor::processMouseInput(SDL_Event& event) {
 		bool consumed = false;
 
@@ -103,14 +114,6 @@ namespace FIFE {
 						
 					case SDL_BUTTON_MIDDLE:
 						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::MiddleButton) ;
-						break;
-						
-					case SDL_BUTTON_WHEELDOWN:
-						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(-1);
-						break;
-						
-					case SDL_BUTTON_WHEELUP:
-						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(1);
 						break;
 						
 					default:
@@ -132,17 +135,21 @@ namespace FIFE {
 						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::MiddleButton) ;
 						break;
 						
-					case SDL_BUTTON_WHEELDOWN:
-						break;
-						
-					case SDL_BUTTON_WHEELUP:
-						break;
-						
 					default:
 						;
 				}
 				break;
-				
+			
+			case SDL_MOUSEWHEEL:
+				// wheel up
+				if (event.wheel.y > 0) {
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(1);
+				// wheel down
+				} else if (event.wheel.y < 0) {
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(-1);
+				}
+				break;
+
 			default:
 				;
 		}
@@ -215,8 +222,8 @@ namespace FIFE {
 		m_keymap[SDLK_SYSREQ] = CEGUI::Key::SysRq;
 		m_keymap[SDLK_POWER] = CEGUI::Key::Power;
 
-		m_keymap[SDLK_NUMLOCK] = CEGUI::Key::NumLock;
-		m_keymap[SDLK_SCROLLOCK] = CEGUI::Key::ScrollLock;
+		m_keymap[SDLK_NUMLOCKCLEAR] = CEGUI::Key::NumLock;
+		m_keymap[SDLK_SCROLLLOCK] = CEGUI::Key::ScrollLock;
 
 		m_keymap[SDLK_F1] = CEGUI::Key::F1;
 		m_keymap[SDLK_F2] = CEGUI::Key::F2;
@@ -237,23 +244,23 @@ namespace FIFE {
 		m_keymap[SDLK_LCTRL] = CEGUI::Key::LeftControl;
 		m_keymap[SDLK_LALT] = CEGUI::Key::LeftAlt;
 		m_keymap[SDLK_LSHIFT] = CEGUI::Key::LeftShift;
-		m_keymap[SDLK_LSUPER] = CEGUI::Key::LeftWindows;
+		m_keymap[SDLK_LGUI] = CEGUI::Key::LeftWindows;
 		m_keymap[SDLK_RCTRL] = CEGUI::Key::RightControl;
 		m_keymap[SDLK_RALT] = CEGUI::Key::RightAlt;
 		m_keymap[SDLK_RSHIFT] = CEGUI::Key::RightShift;
-		m_keymap[SDLK_RSUPER] = CEGUI::Key::RightWindows;
+		m_keymap[SDLK_RGUI] = CEGUI::Key::RightWindows;
 		m_keymap[SDLK_MENU] = CEGUI::Key::AppMenu;
 
-		m_keymap[SDLK_KP0] = CEGUI::Key::Numpad0;
-		m_keymap[SDLK_KP1] = CEGUI::Key::Numpad1;
-		m_keymap[SDLK_KP2] = CEGUI::Key::Numpad2;
-		m_keymap[SDLK_KP3] = CEGUI::Key::Numpad3;
-		m_keymap[SDLK_KP4] = CEGUI::Key::Numpad4;
-		m_keymap[SDLK_KP5] = CEGUI::Key::Numpad5;
-		m_keymap[SDLK_KP6] = CEGUI::Key::Numpad6;
-		m_keymap[SDLK_KP7] = CEGUI::Key::Numpad7;
-		m_keymap[SDLK_KP8] = CEGUI::Key::Numpad8;
-		m_keymap[SDLK_KP9] = CEGUI::Key::Numpad9;
+		m_keymap[SDLK_KP_0] = CEGUI::Key::Numpad0;
+		m_keymap[SDLK_KP_1] = CEGUI::Key::Numpad1;
+		m_keymap[SDLK_KP_2] = CEGUI::Key::Numpad2;
+		m_keymap[SDLK_KP_3] = CEGUI::Key::Numpad3;
+		m_keymap[SDLK_KP_4] = CEGUI::Key::Numpad4;
+		m_keymap[SDLK_KP_5] = CEGUI::Key::Numpad5;
+		m_keymap[SDLK_KP_6] = CEGUI::Key::Numpad6;
+		m_keymap[SDLK_KP_7] = CEGUI::Key::Numpad7;
+		m_keymap[SDLK_KP_8] = CEGUI::Key::Numpad8;
+		m_keymap[SDLK_KP_9] = CEGUI::Key::Numpad9;
 		m_keymap[SDLK_KP_PERIOD] = CEGUI::Key::Decimal;
 		m_keymap[SDLK_KP_PLUS] = CEGUI::Key::Add;
 		m_keymap[SDLK_KP_MINUS] = CEGUI::Key::Subtract;

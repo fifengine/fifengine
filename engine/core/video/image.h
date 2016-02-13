@@ -113,7 +113,7 @@ namespace FIFE {
 
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		const Rect& getArea() const;
+		Rect getArea() const;
 
 		void setXShift(int32_t xshift) {
 			m_xshift = xshift;

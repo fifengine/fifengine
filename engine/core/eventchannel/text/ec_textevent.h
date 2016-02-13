@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2014 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,61 +19,74 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
-#define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
+#ifndef FIFE_EVENTCHANNEL_TEXTEVENT_H
+#define FIFE_EVENTCHANNEL_TEXTEVENT_H
 
 // Standard C++ library includes
+//
 
 // 3rd party library includes
-#include <SDL_video.h>
+//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image.h"
+//
+#include "eventchannel/base/ec_inputevent.h"
+#include "eventchannel/source/ec_ieventsource.h"
+
+#include "ec_text.h"
 
 namespace FIFE {
 
-	/** The SDL implementation of the @c Image base class.
+	/**  Class for text events
 	 */
-	class SDLImage : public Image {
+	class TextEvent: public InputEvent {
 	public:
-		SDLImage(IResourceLoader* loader = 0);
-		SDLImage(const std::string& name, IResourceLoader* loader = 0);
-		SDLImage(SDL_Surface* surface);
-		SDLImage(const std::string& name, SDL_Surface* surface);
-		SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
-		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+		enum TextEventType {
+			UNKNOWN		= 0,
+			INPUT		= 1,
+			EDIT		= 2
+		};
 
-		virtual ~SDLImage();
-		virtual void invalidate();
-		virtual void setSurface(SDL_Surface* surface);
-		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
-		virtual size_t getSize();
-		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
-		virtual void forceLoadInternal();
-		virtual void load();
-		virtual void free();
+		/** Constructor
+		 */
+		TextEvent():
+			InputEvent(),
+			m_eventType(UNKNOWN),
+			m_text(Text()) {}
 
-		SDL_Texture* getTexture();
-		void setTexture(SDL_Texture* texture);
+		/** Destructor.
+		 */
+		virtual ~TextEvent() {}
+
+		TextEventType getType() const { return m_eventType; }
+		void setType(TextEventType type) { m_eventType = type; }
+
+		const Text& getText() const { return m_text; }
+		void setText(const Text& text) { m_text = text; }
+
+		virtual void consume() { InputEvent::consume(); }
+		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
+		virtual void consumedByWidgets() { InputEvent::consumedByWidgets(); }
+		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
+		virtual IEventSource* getSource() const { return InputEvent::getSource(); }
+		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
+		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
+		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
+
+		virtual const std::string& getName() const {
+			const static std::string eventName("TextEvent");
+			return eventName;
+		}
+		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
 
 	private:
-		void resetSdlimage();
-		void validateShared();
-
-		// colorkey for the image
-		SDL_Color m_colorkey;
-		// texture of image
-		SDL_Texture* m_texture;
-
-		// Holds Atlas ImagePtr if this is a shared image
-		ImagePtr m_atlas_img;
-		// Holds Atlas Name if this is a shared image
-		std::string m_atlas_name;
+		TextEventType m_eventType;
+		Text m_text;
 	};
 
-}
+} //FIFE
 
 #endif

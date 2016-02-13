@@ -180,8 +180,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		TTF_Init();
 
 		FL_LOG(_log, "Creating event manager");
@@ -222,22 +220,34 @@ namespace FIFE {
 		m_renderbackend->setMonochromeEnabled(m_settings.isGLUseMonochrome());
 		m_renderbackend->setDepthBufferEnabled(m_settings.isGLUseDepthBuffer());
 		m_renderbackend->setAlphaTestValue(m_settings.getGLAlphaTestValue());
+		m_renderbackend->setVSyncEnabled(m_settings.isVSync());
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);
 			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
 		}
 
 		std::string driver = m_settings.getVideoDriver();
-		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
-
 		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
 			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
-				FL_WARN(_log, "Selected driver is not supported for your Operating System!  Reverting to default driver.");
+				FL_WARN(_log, "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
 				driver = "";
 			}
+			m_devcaps.setVideoDriverName(driver);
 		}
-
+		// init backend with selected video driver or default
 		m_renderbackend->init(driver);
+
+		// in case of SDL we use this to create the SDL_Renderer
+		driver = m_settings.getSDLDriver();
+		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
+			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
+				FL_WARN(_log, "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
+				driver = "";
+			}
+			m_devcaps.setRenderDriverName(driver);
+		}
 
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
@@ -249,7 +259,9 @@ namespace FIFE {
 			m_settings.getScreenHeight(),
 			bpp,
 			rbackend,
-			m_settings.isFullScreen());
+			m_settings.isFullScreen(),
+			m_settings.getRefreshRate(),
+			m_settings.getDisplay());
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(
@@ -264,8 +276,6 @@ namespace FIFE {
 		}
 
 #endif
-		SDL_EnableUNICODE(1);
-
 		FL_LOG(_log, "Creating sound manager");
 		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);

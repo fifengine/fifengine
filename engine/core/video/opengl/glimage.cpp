@@ -130,13 +130,12 @@ namespace FIFE {
 		RenderBackend* rb = RenderBackend::instance();
 		SDL_Surface* target = rb->getRenderTargetSurface();
 		assert(target != m_surface); // can't draw on the source surface
-
+		
 		// not on the screen.  dont render
 		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
 			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
-
 		if (!m_texId) {
 			generateGLTexture();
 		} else if (m_shared) {
@@ -160,16 +159,15 @@ namespace FIFE {
 			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
-		
 		if (!m_texId) {
 			generateGLTexture();
 		} else if (m_shared) {
 			validateShared();
 		}
-		
+
 		GLImage* img = static_cast<GLImage*>(overlay.get());
 		img->forceLoadInternal();
-		
+
 		static_cast<RenderBackendOpenGL*>(rb)->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
 		//rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
 	}
@@ -182,19 +180,17 @@ namespace FIFE {
 		RenderBackend* rb = RenderBackend::instance();
 		SDL_Surface* target = rb->getRenderTargetSurface();
 		assert(target != m_surface); // can't draw on the source surface
-
+		
 		// not on the screen.  dont render
 		if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || 
 			rect.bottom() < 0 || rect.y > static_cast<int32_t>(target->h)) {
 			return;
 		}
-
 		if (!m_texId) {
 			generateGLTexture();
 		} else if (m_shared) {
 			validateShared();
 		}
-
 		static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(m_texId, rect, vertexZ, m_tex_coords, alpha, rgb);
 		//rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
 	}
@@ -320,7 +316,7 @@ namespace FIFE {
 
 		bool monochrome = RenderBackend::instance()->isMonochromeEnabled();
 		SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
-		int32_t bpp_target = target->format->BitsPerPixel;
+		int32_t bpp_target = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
 		int32_t bpp_source = m_surface->format->BitsPerPixel;
 		// create 16 bit texture, RGBA_4444
 		if (bpp_target == 16 && bpp_source == 32) {

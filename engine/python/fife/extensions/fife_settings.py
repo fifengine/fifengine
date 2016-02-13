@@ -95,7 +95,7 @@ class Setting(object):
 		# valid values possible for the engineSettings
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
-			'FullScreen':[True,False], 'PychanDebug':[True,False]
+			'FullScreen':[True,False], 'RefreshRate':[0,200], 'Display':[0,9], 'VSync':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
 			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
@@ -106,7 +106,7 @@ class Setting(object):
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
-			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
+			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':[True,False], 'LogToFile':[True,False],
 			'LogToPrompt':[True,False],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
@@ -118,13 +118,13 @@ class Setting(object):
 		# we at this point assume default values are final values for engineSettings
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
-			'FullScreen':False, 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'VSync':False, 'PychanDebug':False,
+			'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
 			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
-			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
+			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
 			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],

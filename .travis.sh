@@ -2,7 +2,7 @@
 shopt -s expand_aliases
 
 #
-# A build script for building Fife Engine on Debian based linux distributions.
+# A build script for building Fife Engine on Debian based linux distributions. 
 #
 # https://github.com/fifengine/fifengine
 #
@@ -25,10 +25,11 @@ function install_dependencies() {
     echo
 
     sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ quantal main universe"
+    sudo apt-add-repository -y ppa:zoogie/sdl2-snapshots
     sudo apt-get update -y &> /dev/null
     # https://github.com/fifengine/fifengine/wiki/Building-on-linux
     sudo apt-get install build-essential cmake python-dev scons swig \
-                 libsdl1.2-dev libsdl-ttf2.0-dev libsdl-image1.2-dev \
+                 libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev \
                  libvorbis-dev libalut-dev libxcursor-dev libopenal-dev libasound2-dev zlib1g-dev \
                  libboost-dev libboost-regex-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev
 
@@ -42,7 +43,7 @@ function install_fifechan() {
     echo -e "\e[1;33mInstalling fifechan...\e[0m"
     echo
 
-    git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git -b sdl2_support
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     cd fifechan
     cmake .

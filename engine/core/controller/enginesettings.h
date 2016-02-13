@@ -77,6 +77,59 @@ namespace FIFE {
 			return m_fullscreen;
 		}
 
+		/** Sets refresh rate
+		 */
+		void setRefreshRate(uint16_t rate) {
+			m_refreshRate = rate;
+		}
+
+		/** Gets the refresh rate
+		 */
+		uint16_t getRefreshRate() const {
+			return m_refreshRate;
+		}
+
+		/** Sets display index, starts with 0
+		 */
+		void setDisplay(uint8_t display) {
+			m_displayIndex = display;
+		}
+
+		/** Gets the display index, starts with 0
+		 */
+		uint8_t getDisplay() const {
+			return m_displayIndex;
+		}
+
+		/** Sets Vsync. Synchronized updates with vertical refresh rate.
+		 */
+		void setVSync(bool vsync) {
+			m_vSync = vsync;
+		}
+
+		/** True, if vsync is enable, otherwise false.
+		 */
+		bool isVSync() const {
+			return m_vSync;
+		}
+
+		/** Sets the used SDL render driver. Values depends on platform
+		 * and is useless for the OpenGL backend.
+		 * If none is set, SDL use the first one that supports the requested flags.
+		 * @see DeviceCaps::getAvailableRenderDrivers()
+		 */
+		void setSDLDriver(const std::string& driver) {
+			m_renderDriver = driver;
+		}
+
+		/** Gets the used SDL render driver.
+		 * Default is a empty string, that indicates SDL chooses the driver.
+		 * @see setSDLDriver()
+		 */
+		const std::string& getSDLDriver() const {
+			return m_renderDriver;
+		}
+
 		/** Sets initial engine sound volume
 		 *  @see getInitialMaxVolume
 		 */
@@ -249,7 +302,7 @@ namespace FIFE {
 			return m_defaultfontglyphs;
 		}
 
-				/** Gets current glyphs for default font
+		/** Gets current glyphs for default font
 		 */
 		std::string getDefaultFontGlyphs() {
 			return m_defaultfontglyphs;
@@ -303,8 +356,16 @@ namespace FIFE {
 		 */
 		const SDL_Color& getColorKey() const;
 
+		/** Sets the video driver. Values depends on platform.
+		 * If none is set, SDL chooses it.
+		 * @see DeviceCaps::getAvailableVideoDrivers()
+		 */
 		void setVideoDriver(const std::string& driver);
 
+		/** Gets the video driver.
+		 * Default is a empty string.
+		 * @see setVideoDriver()
+		 */
 		const std::string& getVideoDriver() const;
 
 		/** Sets the light model
@@ -356,6 +417,10 @@ namespace FIFE {
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
+		uint16_t m_refreshRate;
+		uint8_t m_displayIndex;
+		bool m_vSync;
+		std::string m_renderDriver;
 		float m_initialvolume;
 		std::string m_renderbackend;
 		bool m_sdlremovefakealpha;

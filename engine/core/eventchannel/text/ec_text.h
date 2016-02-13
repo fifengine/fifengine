@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2014 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,61 +19,75 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
-#define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
+#ifndef FIFE_EVENTCHANNEL_TEXT_H
+#define FIFE_EVENTCHANNEL_TEXT_H
 
 // Standard C++ library includes
+//
 
 // 3rd party library includes
-#include <SDL_video.h>
+//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image.h"
-
+//
 namespace FIFE {
 
-	/** The SDL implementation of the @c Image base class.
+	/** Represents a text.
 	 */
-	class SDLImage : public Image {
+	class Text {
 	public:
-		SDLImage(IResourceLoader* loader = 0);
-		SDLImage(const std::string& name, IResourceLoader* loader = 0);
-		SDLImage(SDL_Surface* surface);
-		SDLImage(const std::string& name, SDL_Surface* surface);
-		SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
-		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
-		virtual ~SDLImage();
-		virtual void invalidate();
-		virtual void setSurface(SDL_Surface* surface);
-		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
-		virtual size_t getSize();
-		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
-		virtual void forceLoadInternal();
-		virtual void load();
-		virtual void free();
+		/** Constructor
+		 * @param text pointer to the UTF-8 text
+		 * @param start point of the text edit event
+		 * @param length length of the text edit event
+		*/
+		Text(const char* text = 0, int32_t start = 0, int32_t length = 0):
+			m_text(text ? text : ""),
+			m_start(start),
+			m_length(length) {}
 
-		SDL_Texture* getTexture();
-		void setTexture(SDL_Texture* texture);
+		/** Destructor
+		 */
+		virtual ~Text() {}
+
+		/** Tells whether the Text can be represented as a string.
+		 */
+		bool isPrintable() const {
+			if (!m_text.empty()) {
+				return true;
+			}
+			return false;
+		}
+
+		/** Gets the string, encoded as UTF-8.
+		 */
+		std::string getAsString() const {
+			return m_text;
+		}
+
+		/** Gets the start point of the text edit event, cursor position.
+		 */
+		int32_t getStart() const {
+			return m_start;
+		}
+
+		/** Gets the length of the text edit event,
+		 * the number of characters to edit from the start point.
+		 */
+		int32_t getLength() const {
+			return m_length;
+		}
 
 	private:
-		void resetSdlimage();
-		void validateShared();
-
-		// colorkey for the image
-		SDL_Color m_colorkey;
-		// texture of image
-		SDL_Texture* m_texture;
-
-		// Holds Atlas ImagePtr if this is a shared image
-		ImagePtr m_atlas_img;
-		// Holds Atlas Name if this is a shared image
-		std::string m_atlas_name;
+		std::string m_text;
+		int32_t m_start;
+		int32_t m_length;
 	};
 
-}
+} //FIFE
 
 #endif

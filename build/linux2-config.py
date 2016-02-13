@@ -35,7 +35,7 @@ def initEnvironment(env):
 	
 	env.Append(CPPPATH = [os.path.join('/', 'opt', 'include'),
 							os.path.join('/', 'usr', 'include', 'vorbis'),
-							os.path.join('/', 'usr', 'include', 'SDL'),
+							os.path.join('/', 'usr', 'include', 'SDL2'),
 							os.path.join('/', 'usr', 'include', pythonversion),
 							extincludepath])
 
@@ -78,9 +78,9 @@ def getRequiredLibs(reqLibs):
 	libs = [('vorbisfile', 'vorbisfile.h'),
 			(pythonversion, pythonversion + '/Python.h'),
 			('openal', 'AL/al.h'),
-			('SDL', 'SDL.h'),
-			('SDL_ttf', 'SDL_ttf.h'),
-			('SDL_image', 'SDL_image.h'),
+			('SDL2', 'SDL.h'),
+			('SDL2_ttf', 'SDL_ttf.h'),
+			('SDL2_image', 'SDL_image.h'),
 			('boost_system', ''),
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt', 'libboost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt', 'libboost_regex-mt'), 'boost/regex.hpp'),
