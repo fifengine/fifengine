@@ -1,4 +1,0 @@
-<?fife type="object"?>
-<object id="cannonspread5" namespace="http://www.fifengine.net/xml/tutorial" blocking="0" static="1">
-	<image source="cannon_spread.png" direction="0" />
-</object>
