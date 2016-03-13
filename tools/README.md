@@ -24,7 +24,8 @@ Current
 ### Editor (also known as FIFEdit)
 
 This is our main map editor.  It's features are currently evolving quickly so
-there is no real formal documentation for it yet (we need your help!!).
+there is no real formal documentation for it yet (we need your help!!).  It
+currently isn'ts bundled with FIFE and can be found in it's own [repo](https://github.com/fifengine/fifengine-editor).
 
 ### Atlas Creator
 
