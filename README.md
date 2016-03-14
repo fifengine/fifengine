@@ -49,17 +49,17 @@ of the content, the author and the actual license it was published under.
 3) FIFE Clients
 ---------------
 
-### Editor
-The editor tool can be found within the `<FIFE>/tools/editor` directory. You
+### [Editor](https://github.com/fifengine/fifengine-editor)
+The editor tool can be found within the [fifengine-editor repo](https://github.com/fifengine/fifengine-editor). You
 can launch it by running `run.py`. It is used to edit map files for the tech
 demo (rio do hola).  Other clients extend it and use it to edit their maps.
-
+  
 ### Tests
 The test tool can be found within the `<FIFE>/tests/fife_test` directory. You
 can launch it by running `run.py`. Open the console with `F10`. To run a test
 enter `run` and the test name like `PathfinderTest`.
 
-### Rio De Hola
+### [Rio De Hola](https://github.com/fifengine/fifengine-demos/tree/master/rio_de_hola)
 Rio de hola is a technology demo showing off many of the FIFE features.  It is 
 located in the `<FIFE>/demos/rio_de_hola` directory and can be launched by 
 running run.py.  It was at one time meant to be an example game but we have 
@@ -67,12 +67,12 @@ moved away from that idea and it is now more of a technology demo and a
 playground for developers to test their code.  It does serve as a good starting
 point for people wishing to play around with FIFE or base your game off of.
 
-### Shooter Demo
+### [Shooter Demo](https://github.com/fifengine/fifengine-demos/tree/master/shooter)
 The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
 It is a simple side scrolling shooter that has a main menu, one level and an
 end boss.  Try your luck and see if you can defeat the boss!
 
-### PyChan Demo
+### [PyChan Demo](https://github.com/fifengine/fifengine-demos/tree/master/pychan_demo)
 Last but not least there is an example client residing in 
 `<FIFE>/demos/pychan_demo` that shows how the pychan GUI library works.
 Start the GUI demo application by running `pychan_demo.py`.
