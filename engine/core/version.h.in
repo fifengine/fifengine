@@ -26,13 +26,13 @@
  * as part of the release process for FIFE.
  */
 #ifndef FIFE_MAJOR_VERSION
-	#define FIFE_MAJOR_VERSION 0
+	#define FIFE_MAJOR_VERSION @FIFE_MAJOR_VERSION@
 #endif
 #ifndef FIFE_MINOR_VERSION
-	#define FIFE_MINOR_VERSION 4
+	#define FIFE_MINOR_VERSION @FIFE_MINOR_VERSION@
 #endif
 #ifndef FIFE_PATCH_VERSION
-	#define FIFE_PATCH_VERSION 0
+	#define FIFE_PATCH_VERSION @FIFE_PATCH_VERSION@
 #endif
 
 /** Types
@@ -42,10 +42,10 @@
  *  3 = rc
  */
 #ifndef FIFE_PRERELEASE_TYPE
-	#define FIFE_PRERELEASE_TYPE 0
+	#define FIFE_PRERELEASE_TYPE @FIFE_PRERELEASE_TYPE@
 #endif
 #ifndef FIFE_PRERELEASE_VERSION
-	#define FIFE_PRERELEASE_VERSION 0
+	#define FIFE_PRERELEASE_VERSION @FIFE_PRERELEASE_TYPE@
 #endif
 
 /***************************************************************************
