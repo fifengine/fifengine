@@ -18,7 +18,7 @@
 %}
 
 %module(directors="1") fife
-$imports
+@CMAKE_SWIG_IMPORTS@
 
 %include "std_string.i"
 %include "std_vector.i"
@@ -145,7 +145,7 @@ print s\n\
 %exceptionclass FIFE::Exception;
 
 %feature("director:except") {
-	if ($$error != NULL) {
+	if ($error != NULL) {
 		handleDirectorException();
 		throw Swig::DirectorMethodException();
 	}
@@ -153,12 +153,12 @@ print s\n\
 
 %exception {
 	try {
-		$$action
+		$action
 	}
 	_FIFE_DIRECTOR_EXC_HANDLER()
 	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
 }
 
-$inclusions
+@CMAKE_SWIG_INCLUSIONS@
 
 %include engine/swigwrappers/python/extensions.i.templ

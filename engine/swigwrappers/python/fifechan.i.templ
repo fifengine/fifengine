@@ -10,7 +10,7 @@
 %}
 
 %module(directors="1") fifechan
-$imports
+@CMAKE_SWIG_IMPORTS_FCHAN@
 
 %include "std_string.i"
 
@@ -55,5 +55,4 @@ typedef unsigned long long int	uint64_t;
 }
 */
 
-$inclusions
-
+@CMAKE_SWIG_INCLUSIONS_FCHAN@
