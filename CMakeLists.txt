@@ -392,10 +392,9 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 find_package (PythonLibs)
 include_directories (${PYTHON_INCLUDE_PATH})
 
-set (CMAKE_SWIG_FLAGS "")
+set (CMAKE_SWIG_FLAGS -w511 -w473 -w404)
 
 set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
-set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES SWIG_FLAGS "-w511 -w473 -w404")
 
 swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i"  ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
 swig_link_libraries(fife ${PYTHON_LIBRARIES})
@@ -413,7 +412,6 @@ swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
 
 if(fifechan)
   set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
-  set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES SWIG_FLAGS "-w511 -w473 -w404")
   swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
   swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
   swig_link_libraries(fifechan ${FIFECHAN_LIBS})
