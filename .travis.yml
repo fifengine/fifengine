@@ -22,7 +22,6 @@ addons:
     - libsdl2-image-dev
     - libsdl2-ttf-dev
     - libfreetype6-dev
-    - libvorbis-dev libalut-dev
     - libxcursor-dev
     - libopenal-dev
     - libasound2-dev
@@ -34,19 +33,18 @@ addons:
     - libboost-test-dev
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
 
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     - cd fifechan
     - cmake .
-    - make || exit 1
+    - make
     - sudo make install
     - cd ..
 
 before_script:
-  - install_fifechan || exit 1
   - scons
 
 script:
