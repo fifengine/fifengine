@@ -14,44 +14,36 @@ git:
   depth: 1
 
 addons:
-    apt:
-      packages:
-        - mesa-common-dev
-        - swig
-        - libsdl2-dev
-        - libsdl2-image-dev
-        - libsdl2-ttf-dev
-        - libfreetype6-dev
-        - libvorbis-dev libalut-dev
-        - libxcursor-dev
-        - libopenal-dev
-        - libasound2-dev
-        - zlib1g-dev
-        - libboost-dev
-        - libboost-regex-dev
-        - libboost-system-dev
-        - libboost-filesystem-dev
-        - libboost-test-dev
-
-function install_fifechan() {
-    echo
-    echo -e "\e[1;33mInstalling fifechan...\e[0m"
-    echo
-
-    git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
-    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    cd fifechan
-    cmake .
-    make || exit 1
-    sudo make install
-    cd ..
-
-    echo -e "\e[1;32m> Done.\e[0m"
-    echo
-}
+  apt:
+    packages:
+    - mesa-common-dev
+    - swig
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-ttf-dev
+    - libfreetype6-dev
+    - libvorbis-dev libalut-dev
+    - libxcursor-dev
+    - libopenal-dev
+    - libasound2-dev
+    - zlib1g-dev
+    - libboost-dev
+    - libboost-regex-dev
+    - libboost-system-dev
+    - libboost-filesystem-dev
+    - libboost-test-dev
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev; fi
+
+install:
+    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
+    - cd fifechan
+    - cmake .
+    - make || exit 1
+    - sudo make install
+    - cd ..
 
 before_script:
   - install_fifechan || exit 1
