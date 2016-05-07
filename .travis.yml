@@ -6,6 +6,7 @@ compiler:
 
 os:
   - linux
+  - osx
 
 sudo: required
 dist: trusty
@@ -34,6 +35,7 @@ addons:
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft boost; fi
 
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
