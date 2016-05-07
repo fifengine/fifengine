@@ -44,12 +44,8 @@ install:
     - sudo make install
     - cd ..
 
-before_script:
-  - scons
-
 script:
-  - make
-  - sudo make install
+  - sudo scons install-all
 
 notifications:
   irc: "irc.freenode.org#fife"
