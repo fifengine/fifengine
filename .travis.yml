@@ -47,7 +47,7 @@ install:
     - cd ..
 
 script:
-  - sudo scons install-all
+  - sudo scons install-python
 
 notifications:
   irc: "irc.freenode.org#fife"
