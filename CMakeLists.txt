@@ -8,8 +8,7 @@ add_definitions(-DTIXML_USE_STL)
 option(opengl "OpenGL support" ON)
 option(fifechan "fifechan gui subsystem" ON)
 option(librocket "Librocket gui sybsystem" OFF)
-option(cegui "Crazy Eddie's gui subsystem - up to 0.7.9" OFF)
-option(cegui-0 "Crazy Eddie's gui subsystem - from v 0.8.0" OFF)
+option(cegui "Crazy Eddie's gui subsystem" OFF)
 option(local-tinyxml "Forces fife to use the local version of tinyxml that ships with fife" OFF)
 
 # Version
@@ -291,6 +290,38 @@ set (FIFE_LROCKET_SWIG
   gui/librocket/librocketmanager.i
 )
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+find_package(Boost 1.55.0 COMPONENTS system filesystem regex)
+find_package(PNG REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(OpenGL REQUIRED)
+if (cegui)
+  find_package(CEGUI REQUIRED)
+  if(NOT CEGUI_OpenGLRenderer_FOUND)
+    message(FATAL_ERROR "FIFE needs cegui with the OpenGLRenderer enabled")
+  endif(NOT CEGUI_OpenGLRenderer_FOUND)
+  if(NOT opengl)
+    message(FATAL_ERROR "OpenGL cannot be disabled when CEGUI is enabled")
+  endif(NOT opengl)
+  include_directories(${CEGUI_INCLUDE_DIR})
+  if(${CEGUI_VERSION} VERSION_GREATER 0.8.0)
+    message("Using cegui-0 (CEGUI 0.8+)")
+    set(CEGUI-0 TRUE)
+    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI-0_SRC})
+  else (${CEGUI_VERSION} VERSION_GREATER 0.8.0)
+    message("Using old cegui (CEGUI 0.7)")
+    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
+  endif(${CEGUI_VERSION} VERSION_GREATER 0.8.0)  
+  find_package(GLEW REQUIRED)
+  include_directories(${GLEW_INCLUDE_DIRS})
+endif (cegui)
+
+#Setting up SWIG files
+
 set(CMAKE_SWIG_IMPORTS "")
 set(CMAKE_SWIG_INCLUSIONS "")
 set(CMAKE_SWIG_IMPORTS_FCHAN "")
@@ -325,7 +356,21 @@ if(fifechan)
     )
 endif(fifechan)
 
+if(cegui)
+  if(CEGUI-0)
+    foreach(filename ${FIFE_CEGUI-0_SWIG})
+      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+    endforeach(filename ${FIFE_CEGUI-0_SWIG})
+  else(CEGUI-0)
+    foreach(filename ${FIFE_CEGUI_SWIG})
+      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+    endforeach(filename ${FIFE_CEGUI_SWIG})  
+  endif(CEGUI-0)
+  
+endif(cegui)
+
 #TODO: Add the other gui libraries
+
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ"
   "${PROJECT_BINARY_DIR}/fife.i"
@@ -334,16 +379,6 @@ configure_file (
 #Find SWIG and include the use swig file
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
-find_package(Boost 1.55.0 COMPONENTS system filesystem regex)
-find_package(PNG REQUIRED)
-find_package(OpenAL REQUIRED)
-find_package(OpenGL REQUIRED)
 
 if(NOT local-tinyxml)
   find_package(TinyXML)
@@ -419,3 +454,7 @@ if(fifechan)
   swig_link_libraries(fife ${FIFECHAN_LIBS})
 endif(fifechan)
 
+if(cegui)
+  swig_link_libraries(fife ${CEGUI_LIBRARIES})
+  swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+endif(cegui)
