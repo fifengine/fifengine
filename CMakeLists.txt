@@ -10,7 +10,11 @@ option(fifechan "fifechan gui subsystem" ON)
 option(librocket "Librocket gui sybsystem" OFF)
 option(cegui "Crazy Eddie's gui subsystem" OFF)
 option(local-tinyxml "Forces fife to use the local version of tinyxml that ships with fife" OFF)
-
+option(zip "ZIP archive support" ON)
+option(logging "engine logging support" ON)
+option(rend-camzone "Enables camera zone renderer" OFF)
+option(rend-grid "Enables camera grid renderer" OFF)
+option(use-githash "Attempt to determine the git hash for the current commit" ON)
 # Version
 
 set (FIFE_MAJOR_VERSION 0)
@@ -348,6 +352,28 @@ if(fifechan)
     set(FIFECHAN_LIBS ${FIFECHAN_LIBS} fifechan_opengl)
     add_definitions(-DHAVE_OPENGL)
   endif(opengl)
+  if(zip)
+    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_ZIP_SRC})
+    add_definitions(-DHAVE_ZIP)
+  endif(zip)
+  if(logging)
+    add_definitions(-DLOG_ENABLED)
+  endif(logging)
+  if(rend-camzone)
+    add_definitions(-DRENDER_CAMZONES)
+  endif(rend-camzone)
+  if(rend-grid)
+    add_definitions(-DRENDER_GRID)
+  endif(rend-grid)
+  if(use-githash)
+    execute_process(
+      COMMAND git rev-parse --short=8 HEAD
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      OUTPUT_VARIABLE GIT_COMMIT_HASH
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    add_definitions(-DFIFE_GIT_HASH=${GIT_COMMIT_HASH})
+  endif(use-githash)
   include_directories(${FIFECHAN_INCLUDE})
   link_directories(${FIFECHAN_LIBDIR})
   configure_file (
