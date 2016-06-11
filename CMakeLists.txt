@@ -410,6 +410,7 @@ if(NOT local-tinyxml)
   find_package(TinyXML)
 endif(NOT local-tinyxml)
 if(local-tinyxml OR NOT TinyXML_FOUND)
+  message("No user version of TinyXML found or local version forced. Using the local version of TinyXML.")
   set(FIFE_FCHAN_SRC ${FIFE_FCHAN_SRC} ${FIFE_LOCAL_TIXML_SRC})
 endif(local-tinyxml OR NOT TinyXML_FOUND)
 
