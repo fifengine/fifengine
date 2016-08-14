@@ -1,21 +1,53 @@
 language: cpp
-# Use this for mac build instead of cpp
-#language: objective-c
-compiler: gcc
+
+compiler:
+  - clang
+  - gcc
+
+os:
+  - linux
+  - osx
+
+sudo: required
+dist: trusty
 
 git:
-  depth: 1 # (shallow clone) this decreases the time it takes to clone the repository
+  depth: 1
+
+addons:
+  apt:
+    packages:
+    - mesa-common-dev
+    - swig
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-ttf-dev
+    - libfreetype6-dev
+    - libxcursor-dev
+    - libopenal-dev
+    - libasound2-dev
+    - zlib1g-dev
+    - libboost-dev
+    - libboost-regex-dev
+    - libboost-system-dev
+    - libboost-filesystem-dev
+    - libboost-test-dev
 
 before_install:
-  - chmod -R 777 ./.travis.sh
-  - ./.travis.sh
-  # Enable this for the mac build and disable .travis.sh
-  # - chmod -R 777 ./.travis.mac.sh
-  #- ./.travis.mac.sh
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install scons swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft; fi
+
+install:
+    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
+    - cd fifechan
+    - cmake .
+    - make
+    - sudo make install
+    - cd ..
 
 script:
-   - exit 0
- # - python ./tests/fife_test/run.py
+  - sudo scons install-python
 
 notifications:
   irc: "irc.freenode.org#fife"
