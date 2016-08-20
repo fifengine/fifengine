@@ -377,7 +377,7 @@ if(fifechan)
   include_directories(${FIFECHAN_INCLUDE})
   link_directories(${FIFECHAN_LIBDIR})
   configure_file (
-    "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ"
+    "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
     "${PROJECT_BINARY_DIR}/fifechan.i"
     )
 endif(fifechan)
@@ -398,7 +398,7 @@ endif(cegui)
 #TODO: Add the other gui libraries
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ"
+  "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
   "${PROJECT_BINARY_DIR}/fife.i"
   )
 
