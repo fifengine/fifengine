@@ -488,8 +488,10 @@ endif(cegui)
 
 execute_process(COMMAND python -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Cmake would create a warning when using the variable in FILES or DIRECTORY when not doing that.
-STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
+# Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
+if(NOT WIN32)
+  STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
+endif(NOT WIN32)
 
 install(TARGETS _fife DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 install(FILES ${CMAKE_BINARY_DIR}/fife.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
