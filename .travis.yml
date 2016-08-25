@@ -56,7 +56,8 @@ install:
     - cd ..
 
 script:
-  - sudo scons install-python
+  #- sudo scons install-python
+   - mkdir build; cd build; cmake ..
 
 notifications:
   irc: "irc.freenode.org#fife"
