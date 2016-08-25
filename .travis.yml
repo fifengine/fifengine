@@ -60,6 +60,7 @@ script:
    - cd ..
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
+   - make
 
 notifications:
   irc: "irc.freenode.org#fife"
