@@ -57,7 +57,9 @@ install:
 
 script:
   #- sudo scons install-python
-   - mkdir build; cd build; cmake ..
+   - cd ..
+   - mkdir build; cd build; cmake ../fifengine
+   - ls -alh .
 
 notifications:
   irc: "irc.freenode.org#fife"
