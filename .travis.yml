@@ -1,18 +1,27 @@
 language: cpp
 
-compiler:
-  - clang
-  - gcc
+sudo: false
 
-os:
-  - linux
-  - osx
-
-sudo: required
-dist: trusty
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      dist: trusty
+      compiler: clang
+    - os: linux
+      sudo: required
+      dist: trusty
+      compiler: gcc
+    - os: osx
+      compiler: clang
+    - os: osx
+      compiler: gcc
+  allow_failures:
+    - os: linux
+      compiler: clang 
 
 git:
-  depth: 1
+  depth: 5
 
 addons:
   apt:
