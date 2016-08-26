@@ -1,0 +1,39 @@
+os: Visual Studio 2015
+
+version: '{build}'
+
+environment:
+  matrix:
+    - generator: "Visual Studio 14"
+      arch: 32
+    #- generator: "MinGW Makefiles"
+    #  arch: 32
+
+platform:
+  - x86
+
+configuration:
+  - Debug
+  - Release
+
+matrix:
+  fast_finish: true
+
+branches:
+  only:
+  - master
+
+#cache:
+#  - C:\fife-dependencies\downloads
+
+init:
+  - git config --global core.autocrlf true
+
+install:
+  - date /T & time /T
+
+build_script:
+  - dir
+
+#after_build:
+#  -
