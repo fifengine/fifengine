@@ -43,12 +43,18 @@ if(NOT DEPENDENCY_EXTRACT_DIR)
     message("   DEPENDENCY_EXTRACT_DIR not set. Using default.")    
 endif(NOT DEPENDENCY_EXTRACT_DIR)
 
-message(STATUS "== Config Overview")
+#------------------------------------------------------------------------------
+#                                 Display Status                                         
+#------------------------------------------------------------------------------
+
+message("")
+message("== Config Overview")
 message("   CMAKE_BINARY_DIR         |  ${CMAKE_BINARY_DIR}")
 message("   CMAKE_INSTALL_PREFIX     |  ${CMAKE_INSTALL_PREFIX}")
 message("   DEPENDENCY_INSTALL_DIR   |  ${DEPENDENCY_INSTALL_DIR}") 
 message("   DEPENDENCY_DOWNLOAD_DIR  |  ${DEPENDENCY_DOWNLOAD_DIR}") 
 message("   DEPENDENCY_EXTRACT_DIR   |  ${DEPENDENCY_EXTRACT_DIR}") 
+message("")
 
 #------------------------------------------------------------------------------
 #                                Options                                                   
