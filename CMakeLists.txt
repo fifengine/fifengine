@@ -6,9 +6,6 @@ cmake_minimum_required (VERSION 2.6)
 
 project (fifengine)
 
-# defines
-add_definitions(-DTIXML_USE_STL)
-
 #------------------------------------------------------------------------------
 #                                 Options                                          
 #------------------------------------------------------------------------------
@@ -46,6 +43,22 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
   "${PROJECT_BINARY_DIR}/version.h"
 )
+
+#------------------------------------------------------------------------------
+#                                 Configure                                          
+#------------------------------------------------------------------------------
+
+# Create a "Release" build by default.
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+    "Select build type. Options are: 'Debug', 'Release', 'RelWithDebInfo' and 'MinSizeRel'."
+    FORCE
+  )
+  message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
+endif(NOT CMAKE_BUILD_TYPE)
+
+# defines
+add_definitions(-DTIXML_USE_STL)
 
 #------------------------------------------------------------------------------
 #                                 Display Status                                         
