@@ -1,21 +1,32 @@
+#------------------------------------------------------------------------------
+#                                 Fifengine                                          
+#------------------------------------------------------------------------------
+
 cmake_minimum_required (VERSION 2.6)
+
 project (fifengine)
 
-#defines
+# defines
 add_definitions(-DTIXML_USE_STL)
 
-#options
-option(opengl "OpenGL support" ON)
-option(fifechan "fifechan gui subsystem" ON)
-option(librocket "Librocket gui sybsystem" OFF)
-option(cegui "Crazy Eddie's gui subsystem" OFF)
-option(local-tinyxml "Forces fife to use the local version of tinyxml that ships with fife" OFF)
-option(zip "ZIP archive support" ON)
-option(logging "engine logging support" ON)
-option(rend-camzone "Enables camera zone renderer" OFF)
-option(rend-grid "Enables camera grid renderer" OFF)
-option(use-githash "Attempt to determine the git hash for the current commit" ON)
-# Version
+#------------------------------------------------------------------------------
+#                                 Options                                          
+#------------------------------------------------------------------------------
+
+option(opengl           "OpenGL support"                                                        ON)
+option(fifechan         "fifechan gui subsystem"                                                ON)
+option(librocket        "Librocket gui sybsystem"                                               OFF)
+option(cegui            "Crazy Eddie's gui subsystem"                                           OFF)
+option(local-tinyxml    "Forces fife to use the local version of tinyxml that ships with fife"  OFF)
+option(zip              "ZIP archive support"                                                   ON)
+option(logging          "engine logging support"                                                ON)
+option(rend-camzone     "Enables camera zone renderer"                                          OFF)
+option(rend-grid        "Enables camera grid renderer"                                          OFF)
+option(use-githash      "Attempt to determine the git hash for the current commit"              ON)
+
+#------------------------------------------------------------------------------
+#                                 Version                                          
+#------------------------------------------------------------------------------
 
 set (FIFE_MAJOR_VERSION 0)
 set (FIFE_MINOR_VERSION 4)
@@ -37,7 +48,10 @@ configure_file (
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/engine/core")
 include_directories("${PROJECT_SOURCE_DIR}")
-#Source Files
+
+#------------------------------------------------------------------------------
+#                                 Source Files                                         
+#------------------------------------------------------------------------------
 
 #Core
 set (FIFE_CORE_SRC
