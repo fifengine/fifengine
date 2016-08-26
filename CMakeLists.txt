@@ -76,11 +76,13 @@ add_definitions(-DTIXML_USE_STL)
 #                                 Display Status                                         
 #------------------------------------------------------------------------------
 
-message(STATUS "Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
+message("")
+message("== Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
 message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
 message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
 message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-  
+message("")
+
 #------------------------------------------------------------------------------
 #                                 Source Files                                         
 #------------------------------------------------------------------------------
