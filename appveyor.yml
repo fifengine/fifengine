@@ -1,13 +1,17 @@
-os: Visual Studio 2015
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+
+branches:
+  only:
+  - master
+
+clone_depth: 5
 
 version: '{build}'
-
-environment:
-  matrix:
-    - generator: "Visual Studio 14"
-      arch: 32
-    #- generator: "MinGW Makefiles"
-    #  arch: 32
 
 platform:
   - x86
@@ -16,24 +20,35 @@ configuration:
   - Debug
   - Release
 
+environment:
+  matrix:
+    - generator: "Visual Studio 14"
+      arch: 32
+    #- generator: "MinGW Makefiles"
+    #  arch: 32
+
 matrix:
   fast_finish: true
-
-branches:
-  only:
-  - master
 
 #cache:
 #  - C:\fife-dependencies\downloads
 
-init:
-  - git config --global core.autocrlf true
-
 install:
   - date /T & time /T
 
+before_build:
+  - cmake --version
+  # git sh.exe conflicts with MinGW makefiles
+  #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
+
 build_script:
   - dir
+  # create c:\projects\build (out-of-source-tree build)
+  - cd.. 
+  - mkdir build
+  - cd build
+  # generate build scripts
+  - cmake ..\fifengine -G "%generator%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX="c:/fife/install"
 
 #after_build:
 #  -
