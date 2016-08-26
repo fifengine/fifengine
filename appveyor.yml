@@ -31,13 +31,16 @@ matrix:
   fast_finish: true
 
 #cache:
-#  - C:\fife-dependencies\downloads
+#  - C:\projects\fife-dependencies\downloads
+#  - C:\projects\fife-dependencies\includes
 
 install:
   - date /T & time /T
-
-before_build:
   - cmake --version
+  # fetch or build dependencies
+  - cmake dependencies -B../fifengine-dependencies/build
+
+# before_build:
   # git sh.exe conflicts with MinGW makefiles
   #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
 
