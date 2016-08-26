@@ -40,18 +40,30 @@ set (FIFE_PATCH_VERSION 0)
 set (FIFE_PRERELEASE_TYPE 0)
 set (FIFE_PRERELEASE_VERSION 0)
 
+set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
   "${PROJECT_BINARY_DIR}/version.h"
-  )
-  
-include_directories("${PROJECT_BINARY_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}/engine/core")
-include_directories("${PROJECT_SOURCE_DIR}")
+)
 
+#------------------------------------------------------------------------------
+#                                 Display Status                                         
+#------------------------------------------------------------------------------
+
+message(STATUS "Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
+message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
+message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
+message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
+  
 #------------------------------------------------------------------------------
 #                                 Source Files                                         
 #------------------------------------------------------------------------------
+
+# tell compiler to search in the following folders for include files
+include_directories("${PROJECT_BINARY_DIR}")
+include_directories("${PROJECT_SOURCE_DIR}/engine/core")
+include_directories("${PROJECT_SOURCE_DIR}")
 
 #Core
 set (FIFE_CORE_SRC

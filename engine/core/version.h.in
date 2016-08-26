@@ -22,9 +22,13 @@
 #ifndef FIFE_VERSION_H
 #define FIFE_VERSION_H
 
-/** These version numbers should be checked and updated
- * as part of the release process for FIFE.
+/** 
+ * These version numbers are updated as part of the release process for FIFE.
  */
+#ifndef FIFE_VERSION
+	#define FIFE_VERSION @FIFE_VERSION@
+#endif
+
 #ifndef FIFE_MAJOR_VERSION
 	#define FIFE_MAJOR_VERSION @FIFE_MAJOR_VERSION@
 #endif
@@ -81,12 +85,6 @@
 			)
 	#endif
 #endif
-
-#define FIFE_VERSION \
-	FIFE_XDOT( \
-		FIFE_XDOT(FIFE_MAJOR_VERSION, FIFE_MINOR_VERSION), \
-		FIFE_PATCH_VERSION \
-	)
 
 #ifdef FIFE_PRERELEASE_STR
 	#define FIFE_VERSION_STRING \
