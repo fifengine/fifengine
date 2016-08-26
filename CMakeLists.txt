@@ -57,6 +57,18 @@ if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
 endif(NOT CMAKE_BUILD_TYPE)
 
+# Do not allow an in-source-tree build, request an out-of-source-tree build.
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+  message(FATAL_ERROR "#Please build outside of the source tree!\n                        
+                       Make a separate folder for building and run CMake there:\n
+                       mkdir _build; cd _build; cmake ..\n
+                       Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
+endif()
+
+# Disable in-source builds and modifications to the source tree.
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
 # defines
 add_definitions(-DTIXML_USE_STL)
 
