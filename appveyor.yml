@@ -17,8 +17,8 @@ platform:
   - x86
 
 configuration:
-  - Debug
   - Release
+  - Debug
 
 environment:
   matrix:
