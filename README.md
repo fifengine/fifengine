@@ -7,9 +7,10 @@ written in C++. It comes with python bindings allowing users to create games
 using python as well as C++. The engine is designed to be flexible to allow you
 to extend it and add any feature you can imagine to your project.
 
-[![Travis   Build status](https://travis-ci.org/fifengine/fifengine.png?branch=master)](https://travis-ci.org/fifengine/fifengine)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine)
-[![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife)
+|    :ghost:   | Linux | Mac OS X | Windows |
+|:------------:|:-----:|:--------:|:-------:|
+| Build Status | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
+| IRC | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) |
 
 Table of contents
 -----------------
