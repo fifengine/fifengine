@@ -52,7 +52,7 @@ else() # build from source
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${EXTERNAL_ROOT} --with-freetype-prefix=${EXTERNAL_ROOT}
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${EXTERNAL_ROOT}
   )
 
 endif()
