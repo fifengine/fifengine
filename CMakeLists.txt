@@ -84,6 +84,18 @@ message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_
 message("")
 
 #------------------------------------------------------------------------------
+#                                 Find Dependencies - Windows                                        
+#------------------------------------------------------------------------------
+
+# Tell CMake where to search for includes, libs and DLLs on Windows
+if(WIN32)
+  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
+  )
+endif(WIN32)
+
+#------------------------------------------------------------------------------
 #                                 Source Files                                         
 #------------------------------------------------------------------------------
 
