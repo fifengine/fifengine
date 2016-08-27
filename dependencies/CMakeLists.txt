@@ -61,8 +61,8 @@ message("")
 #------------------------------------------------------------------------------
 
 OPTION(FIFE_DEPENDENCY_SDL2          "Download and build dependency: SDL2"       ON)
-OPTION(FIFE_DEPENDENCY_SDL2_image    "Download and build dependency: SDL2_image" ON)
-OPTION(FIFE_DEPENDENCY_SDL2_ttf      "Download and build dependency: SDL2_ttf"   OFF)
+OPTION(FIFE_DEPENDENCY_SDL2_IMAGE    "Download and build dependency: SDL2_IMAGE" ON)
+OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   OFF)
 OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     OFF)
 OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     OFF)
 OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
@@ -72,25 +72,25 @@ OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS" 
 #------------------------------------------------------------------------------
 
 IF(FIFE_DEPENDENCY_SDL2)
-    INCLUDE(get-SDL2)
+    INCLUDE(get-sdl2)
 ENDIF(FIFE_DEPENDENCY_SDL2)
 
 IF(FIFE_DEPENDENCY_SDL2_IMAGE)
-    INCLUDE(get-SDL2_IMAGE)
+    INCLUDE(get-sdl2_image)
 ENDIF(FIFE_DEPENDENCY_SDL2_IMAGE)
 
 IF(FIFE_DEPENDENCY_SDL2_TTF)
-    INCLUDE(get-SDL2_TTF)
+    INCLUDE(get-sdl2_ttf)
 ENDIF(FIFE_DEPENDENCY_SDL2_TTF)
 
 IF(FIFE_DEPENDENCY_OGGVORBIS)
-    INCLUDE(get-OGGVORBIS)
+    INCLUDE(get-oggvorbis)
 ENDIF(FIFE_DEPENDENCY_OGGVORBIS)
 
 IF(FIFE_DEPENDENCY_LIBPNG)
-    INCLUDE(get-LIBPNG)
+    INCLUDE(get-libpng)
 ENDIF(FIFE_DEPENDENCY_LIBPNG)
 
 IF(FIFE_DEPENDENCY_OPENAL)
-    INCLUDE(get-OPENAL)
+    INCLUDE(get-openal)
 ENDIF(FIFE_DEPENDENCY_OPENAL)
