@@ -38,8 +38,9 @@ install:
   - date /T & time /T
   - cmake --version
   # fetch or build dependencies
-  - cmake dependencies -B../fifengine-dependencies/build
-
+  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
+  - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
+  
 # before_build:
   # git sh.exe conflicts with MinGW makefiles
   #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
