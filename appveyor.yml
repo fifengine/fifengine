@@ -30,16 +30,17 @@ environment:
 matrix:
   fast_finish: true
 
-#cache:
-#  - C:\projects\fife-dependencies\downloads
-#  - C:\projects\fife-dependencies\includes
+cache:
+  - C:\projects\fifengine-dependencies\downloads
+#  - C:\projects\fifengine-dependencies\includes
 
 install:
   - date /T & time /T
   - cmake --version
-  # fetch or build dependencies
+  # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
+  # show dependency folders
   - dir ..\fifengine-dependencies
   - dir ..\fifengine-dependencies\downloads
   - dir ..\fifengine-dependencies\includes /s
