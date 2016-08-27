@@ -61,11 +61,11 @@ message("")
 #------------------------------------------------------------------------------
 
 OPTION(FIFE_DEPENDENCY_SDL2          "Download and build dependency: SDL2"       ON)
-OPTION(FIFE_DEPENDENCY_SDL2_image    "Download and build dependency: SDL2_image" ON)
-OPTION(FIFE_DEPENDENCY_SDL2_ttf      "Download and build dependency: SDL2_ttf"   ON)
-OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     ON)
-OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
-OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  ON)
+OPTION(FIFE_DEPENDENCY_SDL2_image    "Download and build dependency: SDL2_image" OFF)
+OPTION(FIFE_DEPENDENCY_SDL2_ttf      "Download and build dependency: SDL2_ttf"   OFF)
+OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     OFF)
+OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     OFF)
+OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
