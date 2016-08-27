@@ -91,7 +91,7 @@ message("")
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
   )
 endif(WIN32)
 
