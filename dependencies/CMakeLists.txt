@@ -62,7 +62,7 @@ message("")
 
 OPTION(FIFE_DEPENDENCY_SDL2          "Download and build dependency: SDL2"       ON)
 OPTION(FIFE_DEPENDENCY_SDL2_IMAGE    "Download and build dependency: SDL2_IMAGE" ON)
-OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   OFF)
+OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   ON)
 OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     OFF)
 OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     OFF)
 OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
