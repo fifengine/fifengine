@@ -5,7 +5,9 @@ image: Visual Studio 2015
 init:
   - date /T & time /T
   - git config --global core.autocrlf input
-  - cmake --version  
+  - cmake --version 
+  # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
+  - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
 
 branches:
   only:
