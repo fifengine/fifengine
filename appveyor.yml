@@ -24,12 +24,8 @@ configuration:
 
 environment:
   matrix:
-    - generator: "Visual Studio 14"
-      arch: 32
-      boost_root: C:\Libraries\boost_1_59_0
-      boost_librarydir: C:\Libraries\boost_1_59_0\lib32-msvc-14.0
+    - generator: "Visual Studio 14"        
     #- generator: "MinGW Makefiles"
-    #  arch: 32
 
 matrix:
   fast_finish: true
@@ -39,6 +35,9 @@ cache:
 #  - C:\projects\fifengine-dependencies\includes
 
 install:
+  # set path to boost according to compiler toolchain
+  - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_59_0)
+  - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_59_0\lib32-msvc-14.0)
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
