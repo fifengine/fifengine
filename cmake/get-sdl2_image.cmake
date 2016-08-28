@@ -48,7 +48,6 @@ else() # build from source
  
   ExternalProject_Add(
     sdl2-image
-    DEPENDS freetype2
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
