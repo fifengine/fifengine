@@ -90,6 +90,9 @@ message("")
 # Tell CMake where to search for includes, libs and DLLs on Windows
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
   )
