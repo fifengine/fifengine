@@ -43,7 +43,7 @@ addons:
     - libboost-test-dev
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libpng16-dev libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft; fi
 
 install:
