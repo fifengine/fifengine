@@ -58,8 +58,14 @@ build_script:
   - cd.. 
   - mkdir build
   - cd build
-  # generate build scripts
-  - cmake ..\fifengine -G "%generator%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_INSTALL_PREFIX="c:/fife/install" -DBOOST_ROOT="%boost_root%" -DBOOST_LIBRARYDIR="%boost_librarydir%" -DBoost_USE_STATIC_LIBS="ON"
+  # generate build script
+  - cmd: >
+    cmake ..\fifengine 
+    -G "%generator%" 
+    -DCMAKE_BUILD_TYPE=%configuration% 
+    -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
+    -DBOOST_ROOT="%boost_root%" 
+    -DBOOST_LIBRARYDIR="%boost_librarydir%" 
 
 #after_build:
 #  -
