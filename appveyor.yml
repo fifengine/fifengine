@@ -41,7 +41,7 @@ install:
   - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_59_0)
   - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_59_0\lib32-msvc-14.0)
   # get dependencies
-  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build -DCMAKE_BUILD_TYPE=%configuration%
+  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 
   # show dependency folders
   - dir ..\fifengine-dependencies
