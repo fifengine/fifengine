@@ -25,16 +25,16 @@ configure_file (
 #                                 Options                                          
 #------------------------------------------------------------------------------
 
-option(opengl           "OpenGL support"                                                        ON)
-option(fifechan         "fifechan gui subsystem"                                                ON)
-option(librocket        "Librocket gui sybsystem"                                               OFF)
-option(cegui            "Crazy Eddie's gui subsystem"                                           OFF)
-option(local-tinyxml    "Forces fife to use the local version of tinyxml that ships with fife"  OFF)
-option(zip              "ZIP archive support"                                                   ON)
-option(logging          "engine logging support"                                                ON)
-option(rend-camzone     "Enables camera zone renderer"                                          OFF)
-option(rend-grid        "Enables camera grid renderer"                                          OFF)
-option(use-githash      "Attempt to determine the git hash for the current commit"              ON)
+option(opengl           "Enable OpenGL support"                                 ON)
+option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
+option(librocket        "Enable Librocket GUI subsystem"                        OFF)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
+option(local-tinyxml    "Use the version of tinyxml that ships with fife"       OFF)
+option(zip              "Enable ZIP archive support"                            ON)
+option(logging          "Enable logging"                                        ON)
+option(rend-camzone     "Enable camera zone renderer"                           OFF)
+option(rend-grid        "Enable camera grid renderer"                           OFF)
+option(use-githash      "Try to determine the git hash for the current commit"  ON)
 
 #------------------------------------------------------------------------------
 #                                 Configure                                          
