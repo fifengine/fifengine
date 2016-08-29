@@ -14,16 +14,24 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "default install path" FORCE )
 endif()
 
-message(STATUS "Welcome!\n== Build System for ${PROJECT_NAME}")
+message(STATUS "\nWelcome!\n== Build System for ${PROJECT_NAME}")
 
 # create a "Release" build by default
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
     "Select build type. Options are: 'Debug', 'Release', 'RelWithDebInfo' and 'MinSizeRel'."
     FORCE
-  )
+  )  
   message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
 endif(NOT CMAKE_BUILD_TYPE)
+
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING
+    "Select build type. Options are: 'Debug', 'Release', 'RelWithDebInfo' and 'MinSizeRel'."
+    FORCE
+  )  
+message(STATUS "Set CMAKE_CONFIGURATION_TYPES to default '${CMAKE_CONFIGURATION_TYPES}'.")
+endif(NOT CMAKE_CONFIGURATION_TYPES)
 
 # set a fallback download folder for dependencies ("dependencies/../../${PROJECT_NAME}/downloads")
 if(NOT DEPENDENCY_DOWNLOAD_DIR)
@@ -49,11 +57,14 @@ endif(NOT DEPENDENCY_EXTRACT_DIR)
 
 message("")
 message("== Config Overview")
-message("   CMAKE_BINARY_DIR         |  ${CMAKE_BINARY_DIR}")
-message("   CMAKE_INSTALL_PREFIX     |  ${CMAKE_INSTALL_PREFIX}")
-message("   DEPENDENCY_INSTALL_DIR   |  ${DEPENDENCY_INSTALL_DIR}") 
-message("   DEPENDENCY_DOWNLOAD_DIR  |  ${DEPENDENCY_DOWNLOAD_DIR}") 
-message("   DEPENDENCY_EXTRACT_DIR   |  ${DEPENDENCY_EXTRACT_DIR}") 
+message("")
+message("   CMAKE_BUILD_TYPE           |  ${CMAKE_BUILD_TYPE}")
+message("   CMAKE_CONFIGURATION_TYPES  |  ${CMAKE_CONFIGURATION_TYPES}")
+message("   CMAKE_BINARY_DIR           |  ${CMAKE_BINARY_DIR}")
+message("   CMAKE_INSTALL_PREFIX       |  ${CMAKE_INSTALL_PREFIX}")
+message("   DEPENDENCY_INSTALL_DIR     |  ${DEPENDENCY_INSTALL_DIR}") 
+message("   DEPENDENCY_DOWNLOAD_DIR    |  ${DEPENDENCY_DOWNLOAD_DIR}") 
+message("   DEPENDENCY_EXTRACT_DIR     |  ${DEPENDENCY_EXTRACT_DIR}") 
 message("")
 
 #------------------------------------------------------------------------------
