@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # External Project:     zlib
 # Downloads:            http://zlib.net/
-# Github:               https://github.com/madler/zlib                                       
+# Github:               https://github.com/madler/zlib                                   
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
@@ -11,7 +11,7 @@ set(ZLIB_VERSION "1.2.8")
 set(ZLIB_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}/zlib
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}
       #-DCMAKE_PREFIX_PATH=${DEPENDENCY_INSTALL_DIR} ${CMAKE_PREFIX_PATH}
       -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
