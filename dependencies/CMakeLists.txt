@@ -76,8 +76,8 @@ OPTION(FIFE_DEPENDENCY_SDL2_IMAGE    "Download and build dependency: SDL2_IMAGE"
 OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   ON)
 # TODO boost
 OPTION(FIFE_DEPENDENCY_ZLIB          "Download and build dependency: ZLIB"       ON)
-OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     ON)
-OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     OFF)
+OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     OFF)
+OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
 OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
 
 #------------------------------------------------------------------------------
