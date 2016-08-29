@@ -17,7 +17,8 @@ if (WIN32)
       DEPENDS sdl2
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-      URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz          
+      URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz  
+      URL_MD5 1        
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -35,6 +36,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-VC.zip
+      URL_MD5 00338534c605262dcbf8ffe90ec2785d
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -51,6 +53,7 @@ else() # build from source
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
+    URL_MD5 1
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
   )
 

@@ -22,7 +22,7 @@ ExternalProject_Add(
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip    
-    #URL_MD5
+    URL_MD5 9b568ed0e7f95311dda39595995570ff
     CMAKE_ARGS ${ZLIB_CMAKE_ARGS}
 )
 

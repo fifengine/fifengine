@@ -17,7 +17,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-mingw.tar.gz
-      #URL_MD5
+      URL_MD5 1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -34,7 +34,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-VC.zip
-      #URL_MD5
+      URL_MD5 3025645afc813bf00b789a34dcc92d42
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -59,7 +59,7 @@ else() # build from source
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL http://libsdl.org/release/SDL2-${SDL2_VERSION}.tar.gz
-    #URL_MD5
+    URL_MD5 1
     #CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
     INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
     CMAKE_ARGS ${SDL2_CMAKE_ARGS}
