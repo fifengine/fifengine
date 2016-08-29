@@ -520,7 +520,7 @@ add_definitions(${PNG_DEFINITIONS})
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 # Find python library and add include path for python headers
-find_package (PythonLibs 2.7 REQUIRED)
+find_package (PythonLibs)
 include_directories (${PYTHON_INCLUDE_PATH})
 
 set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
