@@ -27,6 +27,7 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 
 // FIFE includes
