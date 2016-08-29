@@ -40,7 +40,7 @@ addons:
     - libboost-regex-dev
     - libboost-system-dev
     - libboost-filesystem-dev
-    - libboost-test-dev    
+    - libboost-test-dev  
     - libpython2.7
 
 before_install:
