@@ -54,7 +54,7 @@ install:
 
 build_script:
   - dir
-  # create c:\projects\build (out-of-source-tree build)
+  # create folder for an out-of-source-tree build: "c:\projects\build"
   - cd.. 
   - mkdir build
   - cd build
