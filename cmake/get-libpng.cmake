@@ -37,7 +37,7 @@ ExternalProject_Add(
          -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/zlib/include
          -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/zlib/lib/zlib.lib
          -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}
-  BUILD_COMMAND       devenv libpng.sln /build Release /project png16
-  INSTALL_COMMAND     devenv libpng.sln /build Release /project INSTALL
+  BUILD_COMMAND       msbuild libpng.sln /build Release /project png16
+  INSTALL_COMMAND     msbuild libpng.sln /build Release /project INSTALL
   #CMAKE_ARGS   ${LIBPNG_CMAKE_ARGS}     
 )
