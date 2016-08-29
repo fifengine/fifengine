@@ -25,8 +25,8 @@ if (WIN32)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND 
-            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/openal.dll"
-            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/openal.dll"       
+            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/OpenAL32.dll"
+            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/OpenAL64.dll"       
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/bin     ${DEPENDENCY_INSTALL_DIR}/bin
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/lib     ${DEPENDENCY_INSTALL_DIR}/lib
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/include ${DEPENDENCY_INSTALL_DIR}/include/openal       
@@ -43,6 +43,11 @@ else() # build from source
         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
         -DCMAKE_DEBUG_POSTFIX=d
+        -DALSOFT_CONFIG=OFF
+        -DALSOFT_EXAMPLES=OFF
+        -DALSOFT_NO_CONFIG_UTIL=ON
+        -DALSOFT_UTILS=OFF
+        #-DLIBTYPE=STATIC
     )
 
     ExternalProject_Add(
