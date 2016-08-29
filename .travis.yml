@@ -16,9 +16,6 @@ matrix:
       compiler: clang
     - os: osx
       compiler: gcc
-  allow_failures:
-    - os: linux
-      compiler: clang 
 
 git:
   depth: 5
