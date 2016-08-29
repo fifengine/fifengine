@@ -48,6 +48,9 @@ configure_file (
 #                                 Configure                                          
 #------------------------------------------------------------------------------
 
+# set path to our custom CMAKE scripts
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
 # Create a "Release" build by default.
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
@@ -84,7 +87,7 @@ message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_
 message("")
 
 #------------------------------------------------------------------------------
-#                                 Find Dependencies - Windows                                        
+#                           Find Dependencies - Windows                                        
 #------------------------------------------------------------------------------
 
 # Tell CMake where to search for includes, libs and DLLs on Windows
@@ -107,7 +110,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/engine/core")
 include_directories("${PROJECT_SOURCE_DIR}")
 
-#Core
+# Core
 set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
@@ -209,8 +212,8 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/targetrenderer.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.cpp
 )
-#LOCAL_TINIXML
 
+# LOCAL_TINIXML
 set(FIFE_LOCAL_TIXML_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinystr.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinyxml.cpp
@@ -218,7 +221,7 @@ set(FIFE_LOCAL_TIXML_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinyxmlparser.cpp
 )
 
-#ZIP
+# ZIP
 set (FIFE_ZIP_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.cpp
@@ -227,19 +230,19 @@ set (FIFE_ZIP_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
 )
 
-#CEGUI
+# CEGUI
 set (FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.cpp
 )
 
-#CEGUI-0
+# CEGUI-0
 set (FIFE_CEGUI-0_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/cegui-0manager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/base/cegui-0inputprocessor.cpp
 )
 
-#FIFECHAN
+# FIFECHAN
 set (FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.cpp
@@ -257,16 +260,16 @@ set (FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.cpp
 )
 
-#LIBROCKET
+# LIBROCKET
 set (FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
 )
 
-#SWIG files
+# SWIG files
 
-#Core
+# Core
 set (FIFE_CORE_SWIG
   version.i
   audio/soundclip.i
@@ -333,17 +336,17 @@ set (FIFE_CORE_SWIG
   gui/hybrid/hybridguimanager.i
 )
 
-#CEGUI
+# CEGUI
 set (FIFE_CEGUI_SWIG
   gui/cegui/ceguimanager.i
 )
 
-#CEGUI-0
+# CEGUI-0
 set (FIFE_CEGUI-0_SWIG
   gui/cegui-0/cegui-0manager.i
 )
 
-#FIFECHAN
+# FIFECHAN
 set (FIFE_FCHAN_SWIG_LIB
   gui/fifechan/lib/fifechanlistener.i
   gui/fifechan/lib/widgets.i
@@ -357,12 +360,14 @@ set (FIFE_FCHAN_SWIG
   gui/fifechan/widgets/widgets.i
 )
 
-#LIBROCKET
+# LIBROCKET
 set (FIFE_LROCKET_SWIG
   gui/librocket/librocketmanager.i
 )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+#------------------------------------------------------------------------------
+#                                 Find Packages                                         
+#------------------------------------------------------------------------------
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
@@ -371,7 +376,8 @@ find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
-if (cegui)
+
+if(cegui)
   find_package(CEGUI REQUIRED)
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs cegui with the OpenGLRenderer enabled")
@@ -390,9 +396,9 @@ if (cegui)
   endif(${CEGUI_VERSION} VERSION_GREATER 0.8.0)  
   find_package(GLEW REQUIRED)
   include_directories(${GLEW_INCLUDE_DIRS})
-endif (cegui)
+endif(cegui)
 
-#Setting up SWIG files
+# Setting up SWIG files
 
 set(CMAKE_SWIG_IMPORTS "")
 set(CMAKE_SWIG_INCLUSIONS "")
@@ -412,7 +418,7 @@ if(fifechan)
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach(filename ${FIFE_FCHAN_SWIG})
   set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
-  #TODO Change to search library once its been implemented for fifechan
+  # TODO Change to search library once its been implemented for fifechan
   set(FIFECHAN_INCLUDE CACHE PATH "Fifechan include directory")
   set(FIFECHAN_LIBDIR CACHE PATH "Fifechan library directory")
   set(FIFECHAN_LIBS fifechan fifechan_sdl)
@@ -463,14 +469,14 @@ if(cegui)
   
 endif(cegui)
 
-#TODO: Add the other gui libraries
+# TODO: Add the other gui libraries
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
   "${PROJECT_BINARY_DIR}/fife.i"
-  )
+)
 
-#Find SWIG and include the use swig file
+# Find SWIG and include the use swig file
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
@@ -554,7 +560,9 @@ if(cegui)
   swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
 endif(cegui)
 
-execute_process(COMMAND python -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(
+  COMMAND python -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
 if(NOT WIN32)
