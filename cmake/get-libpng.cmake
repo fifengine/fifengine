@@ -20,8 +20,8 @@ set(LIBPNG_CMAKE_ARGS
       -DPNG_SHARED=on
       -DPNG_STATIC=on
       -DPNG_TESTS=off
-      -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/lib/zlib.lib
-      -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/include    
+      -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/zlib/lib/zlib.lib
+      -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/zlib/include    
 )
     
 #BUILD_COMMAND   "msbuild ${DEPENDENCY_EXTRACT_DIR}/src/libpng/projects/vstudio/vstudio.sln /t:libpng /p:Configuration=Release /p:Platform=Win32 /v:minimal"
