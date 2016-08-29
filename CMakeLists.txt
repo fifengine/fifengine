@@ -7,6 +7,21 @@ cmake_minimum_required (VERSION 2.6)
 project (fifengine)
 
 #------------------------------------------------------------------------------
+#                                 Version                                          
+#------------------------------------------------------------------------------
+
+set (FIFE_MAJOR_VERSION 0)
+set (FIFE_MINOR_VERSION 4)
+set (FIFE_PATCH_VERSION 0)
+
+set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
+  "${PROJECT_BINARY_DIR}/version.h"
+)
+
+#------------------------------------------------------------------------------
 #                                 Options                                          
 #------------------------------------------------------------------------------
 
@@ -20,29 +35,6 @@ option(logging          "engine logging support"                                
 option(rend-camzone     "Enables camera zone renderer"                                          OFF)
 option(rend-grid        "Enables camera grid renderer"                                          OFF)
 option(use-githash      "Attempt to determine the git hash for the current commit"              ON)
-
-#------------------------------------------------------------------------------
-#                                 Version                                          
-#------------------------------------------------------------------------------
-
-set (FIFE_MAJOR_VERSION 0)
-set (FIFE_MINOR_VERSION 4)
-set (FIFE_PATCH_VERSION 0)
-
-# Types
-#  0 = none (pre-release info is not appended to the version in this case)
-#  1 = alpha
-#  2 = beta
-#  3 = rc
-set (FIFE_PRERELEASE_TYPE 0)
-set (FIFE_PRERELEASE_VERSION 0)
-
-set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
-
-configure_file (
-  "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
-  "${PROJECT_BINARY_DIR}/version.h"
-)
 
 #------------------------------------------------------------------------------
 #                                 Configure                                          

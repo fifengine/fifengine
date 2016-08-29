@@ -25,6 +25,10 @@
 /** These version numbers should be checked and updated
  * as part of the release process for FIFE.
  */
+#ifndef FIFE_VERSION
+	#define FIFE_VERSION "0.4.0"
+#endif
+
 #ifndef FIFE_MAJOR_VERSION
 	#define FIFE_MAJOR_VERSION 0
 #endif
@@ -33,19 +37,6 @@
 #endif
 #ifndef FIFE_PATCH_VERSION
 	#define FIFE_PATCH_VERSION 0
-#endif
-
-/** Types
- *  0 = none (pre-release info is not appended to the version in this case)
- *  1 = alpha
- *  2 = beta
- *  3 = rc
- */
-#ifndef FIFE_PRERELEASE_TYPE
-	#define FIFE_PRERELEASE_TYPE 0
-#endif
-#ifndef FIFE_PRERELEASE_VERSION
-	#define FIFE_PRERELEASE_VERSION 0
 #endif
 
 /***************************************************************************
@@ -64,37 +55,13 @@
 #define FIFE_MINUS(a,b)		a-b
 #define FIFE_XMINUS(a,b)	FIFE_MINUS(a,b)
 
-#if FIFE_PRERELEASE_TYPE==1
-	#define FIFE_PRERELEASE alpha
-#elif FIFE_PRERELEASE_TYPE==2
- 	#define FIFE_PRERELEASE beta
-#elif FIFE_PRERELEASE_TYPE==3
-	#define FIFE_PRERELEASE rc
-#endif
-
-#if FIFE_PRERELEASE_VERSION>0
-	#ifdef FIFE_PRERELEASE
-		#define FIFE_PRERELEASE_STR \
-			FIFE_XDOT( \
-				FIFE_PRERELEASE, \
-				FIFE_PRERELEASE_VERSION \
-			)
-	#endif
-#endif
-
 #define FIFE_VERSION \
 	FIFE_XDOT( \
 		FIFE_XDOT(FIFE_MAJOR_VERSION, FIFE_MINOR_VERSION), \
 		FIFE_PATCH_VERSION \
 	)
 
-#ifdef FIFE_PRERELEASE_STR
-	#define FIFE_VERSION_STRING \
-		FIFE_XMINUS( \
-			FIFE_VERSION, \
-			FIFE_PRERELEASE_STR \
-		)
-#endif
+
 #ifdef FIFE_GIT_HASH
 	#ifndef FIFE_VERSION_STRING
 		#define FIFE_VERSION_STRING \
@@ -103,22 +70,12 @@
 				FIFE_GIT_HASH \
 			)
 	#else
-		#undef FIFE_VERSION_STRING
-		#ifdef FIFE_PRERELEASE_STR
-			#define FIFE_VERSION_STRING \
-				FIFE_XMINUS( \
-					FIFE_VERSION, \
-					FIFE_XPLUS( \
-						FIFE_PRERELEASE_STR, \
-						FIFE_GIT_HASH \
-					) \
-				)
-		#else
-			#define FIFE_VERSION_STRING \
-				FIFE_XPLUS( \
-					FIFE_VERSION, \
-					FIFE_GIT_HASH \
-				)
+		#undef FIFE_VERSION_STRING		
+		#define FIFE_VERSION_STRING \
+			FIFE_XPLUS( \
+				FIFE_VERSION, \
+				FIFE_GIT_HASH \
+			)
 		#endif
 	#endif
 #else
@@ -168,8 +125,6 @@ namespace FIFE {
 #undef FIFE_XMINUS
 #undef FIFE_VERSION_STRING
 #undef FIFE_VERSION
-#undef FIFE_PRERELEASE
-#undef FIFE_PRERELEASE_STR
 
 #endif //FIFE_VERSION_H
 
