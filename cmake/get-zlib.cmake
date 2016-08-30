@@ -19,17 +19,10 @@ set(ZLIB_CMAKE_ARGS
 
 ExternalProject_Add(
   zlib
-  PREFIX ${DEPENDENCY_EXTRACT_DIR}
-  DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-  URL https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip    
-  URL_MD5 9b568ed0e7f95311dda39595995570ff
-  CMAKE_ARGS ${ZLIB_CMAKE_ARGS}
-)
-
-# rename "downloads/v1.2.3.zip" to "downloads/zlib-v1.2.3.zip"
-ExternalProject_Add_Step(
-  zlib 
-  RenameDownloadFile
-  COMMAND ${CMAKE_COMMAND} -E rename "${DEPENDENCY_DOWNLOAD_DIR}/v${ZLIB_VERSION}.zip" "${DEPENDENCY_DOWNLOAD_DIR}/zlib-v${ZLIB_VERSION}.zip"
-  DEPENDEES install
+  PREFIX          ${DEPENDENCY_EXTRACT_DIR}
+  DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
+  DOWNLOAD_NAME   zlib-v${ZLIB_VERSION}.zip
+  URL             https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip    
+  URL_MD5         9b568ed0e7f95311dda39595995570ff
+  CMAKE_ARGS      ${ZLIB_CMAKE_ARGS}
 )

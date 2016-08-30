@@ -29,7 +29,8 @@ ExternalProject_Add(
   DEPENDS             zlib
   PREFIX              ${DEPENDENCY_EXTRACT_DIR}  
   DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-  URL                 https://github.com/glennrp/libpng/archive/v1.6.24.zip
+  DOWNLOAD_NAME       libpng-v${LIBPNG_VERSION}.zip
+  URL                 https://github.com/glennrp/libpng/archive/v${LIBPNG_VERSION}.zip
   URL_MD5             8e8d519124c7c6a2b7ec72a23c453fbd
   INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}
   CONFIGURE_COMMAND   ${CMAKE_COMMAND} ${DEPENDENCY_EXTRACT_DIR}/src/libpng 
