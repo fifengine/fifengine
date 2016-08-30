@@ -20,8 +20,8 @@ set(LIBPNG_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
     -DPNG_SHARED=off
     -DPNG_STATIC=on
     -DPNG_TESTS=off
-    -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/zlib/lib/zlib.lib
-    -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/zlib/include    
+    -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/lib/zlib.lib
+    -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/include    
 )
     
 ExternalProject_Add(
@@ -35,8 +35,8 @@ ExternalProject_Add(
   INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}
   CONFIGURE_COMMAND   ${CMAKE_COMMAND} ${DEPENDENCY_EXTRACT_DIR}/src/libpng 
          -G ${CMAKE_GENERATOR} 
-         -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/zlib/include
-         -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/zlib/lib/zlib.lib
+         -DZLIB_INCLUDE_DIR:PATH=${DEPENDENCY_INSTALL_DIR}/include
+         -DZLIB_LIBRARY:FILEPATH=${DEPENDENCY_INSTALL_DIR}/lib/zlib.lib
          -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}
   BUILD_COMMAND       ${CMAKE_COMMAND} --build ${DEPENDENCY_EXTRACT_DIR}/src/libpng-build --config Release --target INSTALL
   #BUILD_COMMAND       msbuild libpng.sln /target:INSTALL /p:Platform=Win32 /p:Configuration=Release
