@@ -25,11 +25,9 @@ if (WIN32)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND 
-            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/OpenAL32.dll"
-            COMMAND ${CMAKE_COMMAND} -E copy "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/soft_oal.dll" "${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win64/OpenAL64.dll"       
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/bin     ${DEPENDENCY_INSTALL_DIR}/bin
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/lib     ${DEPENDENCY_INSTALL_DIR}/lib
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/include ${DEPENDENCY_INSTALL_DIR}/include/openal       
+            COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/openal/bin/Win32/soft_oal.dll  ${DEPENDENCY_INSTALL_DIR}/bin/OpenAL32.dll     
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/libs/Win32    ${DEPENDENCY_INSTALL_DIR}/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openal/include/AL    ${DEPENDENCY_INSTALL_DIR}/include/OpenAL
     )
 
 else() # build from source
