@@ -82,7 +82,7 @@ message("")
 #                           Find Dependencies - Windows                                        
 #------------------------------------------------------------------------------
 
-# Tell CMake where to search for includes, libs and DLLs on Windows
+# Tell CMake where to search for binaries (dlls), includes and libs on Windows
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
