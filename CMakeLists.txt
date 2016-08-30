@@ -88,6 +88,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
   )
