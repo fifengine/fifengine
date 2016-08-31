@@ -25,14 +25,6 @@ if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
 endif(NOT CMAKE_BUILD_TYPE)
 
-if(NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING
-    "Select build type. Options are: 'Debug', 'Release', 'RelWithDebInfo' and 'MinSizeRel'."
-    FORCE
-  )  
-message(STATUS "Set CMAKE_CONFIGURATION_TYPES to default '${CMAKE_CONFIGURATION_TYPES}'.")
-endif(NOT CMAKE_CONFIGURATION_TYPES)
-
 # set a fallback download folder for dependencies ("dependencies/../../${PROJECT_NAME}/downloads")
 if(NOT DEPENDENCY_DOWNLOAD_DIR)
     set(DEPENDENCY_DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../${PROJECT_NAME}/downloads)
@@ -59,7 +51,6 @@ message("")
 message("== Config Overview")
 message("")
 message("   CMAKE_BUILD_TYPE           |  ${CMAKE_BUILD_TYPE}")
-message("   CMAKE_CONFIGURATION_TYPES  |  ${CMAKE_CONFIGURATION_TYPES}")
 message("   CMAKE_BINARY_DIR           |  ${CMAKE_BINARY_DIR}")
 message("   CMAKE_INSTALL_PREFIX       |  ${CMAKE_INSTALL_PREFIX}")
 message("   DEPENDENCY_INSTALL_DIR     |  ${DEPENDENCY_INSTALL_DIR}") 
@@ -78,6 +69,7 @@ OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"  
 OPTION(FIFE_DEPENDENCY_ZLIB          "Download and build dependency: ZLIB"       ON)
 OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     ON)
 OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
+# TODO swig
 OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
 
 #------------------------------------------------------------------------------
