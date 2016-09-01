@@ -70,6 +70,7 @@ OPTION(FIFE_DEPENDENCY_ZLIB          "Download and build dependency: ZLIB"      
 OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     ON)
 OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
 OPTION(FIFE_DEPENDENCY_SWIG          "Download and build dependency: SWIG"       ON)
+OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"    ON)
 OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
 
 #------------------------------------------------------------------------------
@@ -105,6 +106,10 @@ ENDIF(FIFE_DEPENDENCY_OPENAL)
 IF(FIFE_DEPENDENCY_SWIG)
     INCLUDE(get-swig)
 ENDIF(FIFE_DEPENDENCY_SWIG)
+
+IF(FIFE_DEPENDENCY_TINYXML)
+    INCLUDE(get-tinyxml)
+ENDIF(FIFE_DEPENDENCY_TINYXML)
 
 IF(FIFE_DEPENDENCY_OGGVORBIS)
     INCLUDE(get-oggvorbis)
