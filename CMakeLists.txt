@@ -29,7 +29,6 @@ option(opengl           "Enable OpenGL support"                                 
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
-option(local-tinyxml    "Use the version of tinyxml that ships with fife"       OFF)
 option(zip              "Enable ZIP archive support"                            ON)
 option(logging          "Enable logging"                                        ON)
 option(rend-camzone     "Enable camera zone renderer"                           OFF)
@@ -207,14 +206,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.cpp
 )
 
-# LOCAL_TINIXML
-set(FIFE_LOCAL_TIXML_SRC
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinystr.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinyxml.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinyxmlerror.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/tinyxml/tinyxmlparser.cpp
-)
-
 # ZIP
 set (FIFE_ZIP_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
@@ -370,6 +361,7 @@ find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(TinyXML REQUIRED)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
@@ -473,14 +465,6 @@ configure_file (
 # Find SWIG and include the use swig file
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
-
-if(NOT local-tinyxml)
-  find_package(TinyXML)
-endif(NOT local-tinyxml)
-if(local-tinyxml OR NOT TinyXML_FOUND)
-  message("No user version of TinyXML found or local version forced. Using the local version of TinyXML.")
-  set(FIFE_FCHAN_SRC ${FIFE_FCHAN_SRC} ${FIFE_LOCAL_TIXML_SRC})
-endif(local-tinyxml OR NOT TinyXML_FOUND)
 
 # Find ogg dependency
 find_package(PkgConfig QUIET)
