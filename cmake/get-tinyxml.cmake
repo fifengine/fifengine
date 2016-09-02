@@ -17,15 +17,6 @@ set(TINYXML_CMAKE_ARGS
         -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
 )
 
-set(TINYXML_CMAKE_CONFIG_ARGS    
-    -G ${CMAKE_GENERATOR}
-    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-    -DCMAKE_INSTALL_PREFIX:PATH=${DEPENDENCY_INSTALL_DIR}
-    -DCMAKE_CXX_FLAGS:STRING=-DTIXML_USE_STL
-    ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml
-)
-
 ExternalProject_Add(
   tinyxml
   PREFIX                ${DEPENDENCY_EXTRACT_DIR}
@@ -33,6 +24,6 @@ ExternalProject_Add(
   DOWNLOAD_NAME         tinyxml-v${TINYXML_VERSION}.zip
   URL                   https://sourceforge.net/projects/tinyxml/files/tinyxml/2.6.2/tinyxml_2_6_2.zip/download  
   URL_MD5               2a0aaf609c9e670ec9748cd01ed52dae
-  CONFIGURE_COMMAND     ${CMAKE_COMMAND} ${TINYXML_CMAKE_CONFIG_ARGS}
-  #CMAKE_ARGS           ${TINYXML_CMAKE_ARGS}
+  PATCH_COMMAND         ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/tinyxml/CMakeLists.txt ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml
+  #CMAKE_ARGS            ${TINYXML_CMAKE_ARGS}
 )
