@@ -19,7 +19,7 @@ ExternalProject_Add(
   INSTALL_COMMAND 
     COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/Release/tinyxml.dll   ${DEPENDENCY_INSTALL_DIR}/bin/tinyxml.dll    
     COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/Release/tinyxml.lib   ${DEPENDENCY_INSTALL_DIR}/lib/tinyxml.lib    
-    COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinystr.h"                          ${DEPENDENCY_INSTALL_DIR}/include/tinystr.h
-    COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml.h"                          ${DEPENDENCY_INSTALL_DIR}/include/tinyxml.h
+    COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml/tinystr.h"                  ${DEPENDENCY_INSTALL_DIR}/include/tinystr.h
+    COMMAND             ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml/tinyxml.h"                  ${DEPENDENCY_INSTALL_DIR}/include/tinyxml.h
   
 )
