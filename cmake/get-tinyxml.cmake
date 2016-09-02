@@ -13,7 +13,7 @@ ExternalProject_Add(
   PREFIX                ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR          ${DEPENDENCY_DOWNLOAD_DIR}
   DOWNLOAD_NAME         tinyxml-v${TINYXML_VERSION}.zip
-  URL                   https://sourceforge.net/projects/tinyxml/files/tinyxml/2.6.2/tinyxml_2_6_2.zip/download  
+  URL                   http://sourceforge.net/projects/tinyxml/files/tinyxml/2.6.2/tinyxml_2_6_2.zip/download  
   URL_MD5               2a0aaf609c9e670ec9748cd01ed52dae
   PATCH_COMMAND         ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/tinyxml/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml
   INSTALL_COMMAND       ${CMAKE_COMMAND} -E make_directory ${DEPENDENCY_INSTALL_DIR}/include/tinyxml
