@@ -72,7 +72,7 @@ OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"    
 OPTION(FIFE_DEPENDENCY_SWIG          "Download and build dependency: SWIG"       ON)
 OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"    ON)
 OPTION(FIFE_DEPENDENCY_OGG           "Download and build dependency: OGG"        ON)
-OPTION(FIFE_DEPENDENCY_VORBIS        "Download and build dependency: VORBIS"     OFF)
+OPTION(FIFE_DEPENDENCY_VORBIS        "Download and build dependency: VORBIS"     ON)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
