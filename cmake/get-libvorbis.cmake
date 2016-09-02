@@ -18,6 +18,7 @@ set(LIBVORBIS_CMAKE_ARGS
 
 ExternalProject_Add(
     libvorbis
+    DEPENDS         libogg
     PREFIX          ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
     DOWNLOAD_NAME   libvorbis-v${LIBOGG_VERSION}.zip
