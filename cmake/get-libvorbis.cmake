@@ -22,7 +22,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
     DOWNLOAD_NAME   libvorbis-v${LIBOGG_VERSION}.zip
     URL             http://downloads.xiph.org/releases/vorbis/libvorbis-${LIBOGG_VERSION}.zip    
-    URL_MD5         1
+    URL_MD5         c39454ff13e79dc8c89bc3a9295b3298
     PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/libvorbis/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/libvorbis
     CMAKE_ARGS      ${LIBVORBIS_CMAKE_ARGS}
 )
