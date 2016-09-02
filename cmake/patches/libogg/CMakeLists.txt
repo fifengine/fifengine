@@ -41,5 +41,3 @@ install(TARGETS ogg
 )
 
 install(FILES ${LIBOGG_HEADER} DESTINATION include/ogg)
-
-install(FILES FindOgg.cmake DESTINATION lib/cmake)
