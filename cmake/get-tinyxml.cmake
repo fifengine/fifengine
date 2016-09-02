@@ -21,7 +21,7 @@ ExternalProject_Add(
   tinyxml
   PREFIX          ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
-  DOWNLOAD_NAME   tinyxml-v${ZLIB_VERSION}.zip
+  DOWNLOAD_NAME   tinyxml-v${TINYXML_VERSION}.zip
   URL             https://sourceforge.net/projects/tinyxml/files/tinyxml/2.6.2/tinyxml_2_6_2.zip/download  
   URL_MD5         2a0aaf609c9e670ec9748cd01ed52dae
   CMAKE_ARGS      ${TINYXML_CMAKE_ARGS}
