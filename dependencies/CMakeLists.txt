@@ -71,7 +71,8 @@ OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"    
 OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
 OPTION(FIFE_DEPENDENCY_SWIG          "Download and build dependency: SWIG"       ON)
 OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"    ON)
-OPTION(FIFE_DEPENDENCY_OGGVORBIS     "Download and build dependency: OGGVORBIS"  OFF)
+OPTION(FIFE_DEPENDENCY_OGG           "Download and build dependency: OGG"        ON)
+OPTION(FIFE_DEPENDENCY_VORBIS        "Download and build dependency: VORBIS"     OFF)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
@@ -111,6 +112,10 @@ IF(FIFE_DEPENDENCY_TINYXML)
     INCLUDE(get-tinyxml)
 ENDIF(FIFE_DEPENDENCY_TINYXML)
 
-IF(FIFE_DEPENDENCY_OGGVORBIS)
-    INCLUDE(get-oggvorbis)
-ENDIF(FIFE_DEPENDENCY_OGGVORBIS)
+IF(FIFE_DEPENDENCY_LIBOGG)
+    INCLUDE(get-libogg)
+ENDIF(FIFE_DEPENDENCY_LIBOGG)
+
+IF(FIFE_DEPENDENCY_LIBVORBIS)
+    INCLUDE(get-libvorbis)
+ENDIF(FIFE_DEPENDENCY_LIBVORBIS)
