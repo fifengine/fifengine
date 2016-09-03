@@ -2,13 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(LIBVORBIS C)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/../../")
-
 find_package(Ogg REQUIRED)
 
 include_directories(
     ${OGG_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/lib
+    C:/projects/fifengine-dependencies/includes
 )
 
 set(LIBVORBIS_SRC
