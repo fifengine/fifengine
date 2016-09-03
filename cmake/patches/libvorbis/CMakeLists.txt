@@ -6,7 +6,7 @@ message("CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 message("OGG_LIBRARY=${OGG_LIBRARY}")
 message("OGG_INCLUDE_DIR=${OGG_INCLUDE_DIR}")
 
-find_package(Ogg REQUIRED)
+#find_package(Ogg REQUIRED)
 
 include_directories(
     ${OGG_INCLUDE_DIR}
