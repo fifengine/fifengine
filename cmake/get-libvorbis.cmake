@@ -20,6 +20,10 @@ set(LIBVORBIS_CMAKE_ARGS
       -DOGG_INCLUDE_DIR=${DEPENDENCY_INSTALL_DIR}/include    
 )
 
+if(WIN32)
+  add_definitions(-D_USE_MATH_DEFINES)
+endif()
+
 ExternalProject_Add(
     libvorbis
     DEPENDS         libogg
