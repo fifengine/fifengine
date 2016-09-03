@@ -15,7 +15,7 @@ include_directories(
 
 set(LIBVORBIS_SOURCE
     lib/analysis.c
-    lib/barkmel.c
+    #lib/barkmel.c  # unnecessary: bark scale utility
     lib/bitrate.c
     lib/block.c
     lib/codebook.c
