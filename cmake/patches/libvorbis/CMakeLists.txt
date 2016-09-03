@@ -29,13 +29,13 @@ set(LIBVORBIS_SOURCE
     lib/mapping0.c
     lib/mdct.c
     lib/psy.c
-    lib/psytune.c
+    #lib/psytune.c   # dead code
     lib/registry.c
     lib/res0.c
     lib/sharedbook.c
     lib/smallft.c
     lib/synthesis.c
-    lib/tone.c
+    #lib/tone.c      # error: 'M_PI': undeclared identifier
     lib/vorbisenc.c
     lib/window.c
 )
