@@ -2,15 +2,18 @@ cmake_minimum_required(VERSION 2.8)
 
 project(LIBVORBIS C)
 
+message("CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
+message("OGG_LIBRARY=${OGG_LIBRARY}")
+message("OGG_INCLUDE_DIR=${OGG_INCLUDE_DIR}")
+
 find_package(Ogg REQUIRED)
 
 include_directories(
     ${OGG_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/lib
-    C:/projects/fifengine-dependencies/includes
 )
 
-set(LIBVORBIS_SRC
+set(LIBVORBIS_SOURCE
     lib/analysis.c
     lib/barkmel.c
     lib/bitrate.c
@@ -37,12 +40,14 @@ set(LIBVORBIS_SRC
     lib/window.c
 )
 
-set(LIBVORBIS_HEADER
+SET(libvorbis_HEADER
     lib/backends.h
     lib/bitrate.h
     lib/codebook.h
     lib/codec_internal.h
     lib/envelope.h
+    lib/modes/floor_all.h
+    lib/books/floor/floor_books.h
     lib/highlevel.h
     lib/lookup.h
     lib/lookup_data.h
@@ -53,28 +58,46 @@ set(LIBVORBIS_HEADER
     lib/misc.h
     lib/os.h
     lib/psy.h
+    lib/modes/psych_11.h
+    lib/modes/psych_16.h
+    lib/modes/psych_44.h
+    lib/modes/psych_8.h
     lib/registry.h
+    lib/books/coupled/res_books_stereo.h
+    lib/books/uncoupled/res_books_uncoupled.h
+    lib/modes/residue_16.h
+    lib/modes/residue_44.h
+    lib/modes/residue_44u.h
+    lib/modes/residue_8.h
     lib/scales.h
+    lib/modes/setup_11.h
+    lib/modes/setup_16.h
+    lib/modes/setup_22.h
+    lib/modes/setup_32.h
+    lib/modes/setup_44.h
+    lib/modes/setup_44u.h
+    lib/modes/setup_8.h
+    lib/modes/setup_X.h
     lib/smallft.h
     lib/window.h
 )
 
 if(WIN32 AND NOT MINGW)
-    set(vorbis_defs win32/vorbis.def)
+    set(vorbis_defs     win32/vorbis.def)
     set(vorbisfile_defs win32/vorbisfile.def)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(vorbis SHARED ${LIBVORBIS_SRC} ${LIBVORBIS_HEADER} ${vorbis_defs})
-add_library(vorbisfile SHARED lib/vorbisfile.c ${vorbisfile_defs})
-add_library(vorbisfile_static STATIC lib/vorbisfile.c ${vorbisfile_defs})
+add_library(vorbis             SHARED ${LIBVORBIS_SOURCE} ${LIBVORBIS_HEADER} ${vorbis_defs})
+add_library(vorbisfile         SHARED lib/vorbisfile.c ${vorbisfile_defs})
+add_library(vorbisfile_static  STATIC lib/vorbisfile.c ${vorbisfile_defs})
 
 if(UNIX)
     set(PLATFORM_LIBS m)
 endif(UNIX)
 
-target_link_libraries(vorbis ${OGG_LIBRARY} ${PLATFORM_LIBS})
+target_link_libraries(vorbis            ${OGG_LIBRARY} ${PLATFORM_LIBS})
 target_link_libraries(vorbisfile vorbis ${OGG_LIBRARY})
 
 if(NOT WIN32)
