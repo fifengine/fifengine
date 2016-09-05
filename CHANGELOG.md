@@ -1,19 +1,10 @@
+# ChangeLog
 
-__/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_        
- _\/\\\///////////___\/////\\\///___\/\\\///////////___\/\\\///////////__       
-  _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________      
-   _\/\\\\\\\\\\\__________\/\\\______\/\\\\\\\\\\\______\/\\\\\\\\\\\_____     
-    _\/\\\///////___________\/\\\______\/\\\///////_______\/\\\///////______    
-     _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________   
-      _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________  
-       _\/\\\_______________/\\\\\\\\\\\__\/\\\______________\/\\\\\\\\\\\\\\\_ 
-        _\///_______________\///////////___\///_______________\///////////////__
+## [Unreleased]
 
-================================================================================
-== 0.4.0  (April XXst, 2014) curr: 522f7805154273be8bcf72431bc8cafd5b799b38   ==
-================================================================================
+## [0.4.0] - 2014-08-10
 
-=== Engine ===
+### Engine
 * Get rid of various compiler warnings
 * Add getCellsInCircleSegment() to CellCache and getInstancesInCircle(),
 	getInstancesInCircleSegment() to Layer
@@ -31,7 +22,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 ** Make use of Fifechan optional
 * Add overlay test
 
-=== Extensions ===
+### Extensions
 * Added the gl/GLU.h header to the atlas creator [t:740]
 * Removing the soundmanagers dep on pychan [t:767]
 * Slightly modified frange() to be more robust and fixed the ceil() call, fixes [t:725]
@@ -48,12 +39,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Modifying the versioning scheme [t:783]
 * Darwin config now expects everything to be installed from source
 
+## [0.3.5] - 2013-08-21
 
-================================================================================
-== 0.3.5  (August 21st, 2013)                                                 ==
-================================================================================
-
-=== Engine ===
+### Engine
 * Fixed another LayerCache bug.
 * Fixed blocking bug, which has affected multi cell objects.
 * Fixed segmentation fault within pathfinder.
@@ -61,11 +49,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Fixed the visible/invisible problem. [t:780]
 * Fixed facing location and a related bug. [t:773]
 
-================================================================================
-== 0.3.4  (February 28th, 2013)                                               ==
-================================================================================
+## [0.3.4] - 2013-02-28
 
-=== Engine ===
+### Engine
 * Fixed a couple of compiler errors when SDL renderer is chosen (i.e. 
   HAVE_OPENGL macro is not defined). [t:693]
 * Changed the way instance rotation works. Instead of using a facing location 
@@ -104,7 +90,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   [t:742]
 * Client can now select, per Layer, between three sorting algorithm.
 
-=== Extensions ===
+### Extensions
 * Fix event groups in pychan; only the last group's callback used to be 
   considered.  [t:23]
 * Added the getter and setter functions to the fifelog extension. [t:711]
@@ -126,7 +112,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Fix typo in xml serializer.  This was leading to a crash when extra_attrs 
   were passed. [t:760]
 
-=== Misc ===
+### Misc
 * Added some excludes to the fife.iss file so it doesn't include some files 
   that it shouldn't when building the windows installer. [t:601]
 * Changed the python executable back to python.exe from pythonw.exe in the 
@@ -153,7 +139,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   starting a new game. This also prevents the player ship from being lost off 
   the left side of the screen. [t:747]
 
-=== Docs ===
+### Docs
 * Updated the doxygen configuration file to be current with the latest doxygen
   version.
 * Added a process on the web host to generate doxygen documentation as well as
@@ -166,11 +152,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   them). [t:550]
 * Epydoc formatting fixes for xml loader files. [t:724]
 
-================================================================================
-== 0.3.3r3 (April 17th, 2012)                                                 ==
-================================================================================
+## [0.3.3r3] - 2012-04-17
 
-=== Engine ===
+### Engine
 * Implemented C++ map savers which is now being used by the editor. [t:491]
 * Fixed instance Z so it works now as expected.  This should only be used for
   small optical corrections. (r3810)
@@ -216,7 +200,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Removed unneeded command line option -Wl from both release and debug builds 
   as this was breaking builds on gcc 4.7 and above. [t:691]
 
-=== Extensions ===
+### Extensions
 * Fixed the file extensions registration for python plugin map loaders. [t:609]
 * Setting module is more robust on errors concerning non-string parameters. 
   [t:626]
@@ -232,7 +216,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * GUI Icons can now be resized at render time. [t:655]
 * Widgets can now be cloned to make widget templating possible. [t:376]
 
-=== Editor ===
+### Editor
 * Users can now specify an additional plugin directory for the editor. [t:598]
 * Fixed a couple small editor bugs regarding map loading. [t:603] and [t:604]
 * Added a plugin interface to extend the editor with savers. [t:610]
@@ -265,7 +249,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 * Added namespace sorting to ObjectSelector
 * Refactored ObjectEdit
 
-=== Misc ===
+### Misc
 * Removed some unnecessary warning messages from Model. [t:645]
 * Removed non-free icons from the atlas editor and added license file to the
   atlas editor. [t:637]
@@ -277,12 +261,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   underlines. Additional the convert now consumes less RAM, because the 
   ImageManager free images. [t:677]
 
+## [0.3.3r2] - 2011-11-02
 
-================================================================================
-== 0.3.3r2 (November 2nd, 2011)                                               ==
-================================================================================
-
-=== Engine ===
+### Engine
   * Added getVersion(), getMajor(), getMinor(), getSubMinor() functions and 
     exposed them to python. [t:582]
   * Added a new math function to compare floats/doubles. It returns true if the 
@@ -326,7 +307,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed a bug with Image names in TargetRenderer. [t:595]
   * Added 1024x600 as a valid resolution. [t:597]
   
-=== Extensions ===
+### Extensions
   * Fixed a problem where the setting value cache is not updated [t:578]
   * Fixed a problem in fife_settings.py when starting the editor because the 
     editor tried to modify the value of a setting not in the FIFE module. 
@@ -337,7 +318,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed a small bug with basicapplication. It was grabbing a reference to 
     the gui manager incorrectly.
     
-=== Editor ===
+### Editor
   * Fixed a bug in the layertool GUI. It was using the quit.png icon as its 
     delete layer image instead of the delete_layer.png icon. [t:583]
   * Replacing the editor's icon files with free ones. [t:584]
@@ -368,7 +349,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     -> you select your instance, even if the cursor didn't scratch the instance 
     image)
   
-=== Misc ===
+### Misc
   * Fixed the Free Software Foundation address in COPYING as it was outdated.
   * Added some more tiles to the rpg tileset in fife_test.
   * Added a Show Hide test to the PychanTest module in fife_test.
@@ -380,12 +361,10 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Commented out a whole lot of debug statements to make the debug output in 
     FIFE useful again. I left them in the code in case anyone still needed them.
   * Added more tests to the fife_test testing platform. [t:683]   
-    
-================================================================================
-== 0.3.3 (October 6th, 2011)                                                  ==
-================================================================================
+   
+## [0.3.3] - 2011-10-06 
 
-=== Engine ===
+### Engine
   * Many optimizations/improvements to the OpenGL renderer.  Depth testing was 
     modified and now works properly with alpha blending enabled.  Alpha testing
     is used to discard pixels. [t:556]
@@ -538,7 +517,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Reworked the lighting module.  [t:557]
   * The Windows icon is now freed correctly. [t:530]
     
-=== Demos ===
+### Demos
   * Fixed a bug in the shooter demo that caused a crash. [t:495]
   * Updating the rio settings-dist.xml file to include the log level filter 
     setting.
@@ -547,30 +526,27 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     [t:531]
   * Shooter demo now generates a hichscore file if one does not exist.
 
-=== Documentation ===
+### Documentation
   * Documented the shooter World.reset() function.
   * Updating the dependency graphs. [t:554]
   * Documented all valid FIFE settings. [t:527]
 
-=== Extensions ===
+### Extensions
   * Updated basicapplication.py to initialize the logger before settings so 
     that setting messages will be logged.
   * Removed some deprecated functions in pychan.
   * Removed the deprecated ClickLabel widget from pychan. [t:552]
   * Added changeBlending() to python.
 
-=== Tools ===
+### Tools
   * Editor no longer crashes when there are too many instances on the map when
     using the OpenGL renderer. [t:500]
   * Added Atlas Creator tool. Currently it's a standalone application written 
     in Qt. [t:541]  
 
-  
-================================================================================
-== 0.3.2 (November 19th, 2010)                                                ==
-================================================================================
+## [0.3.2] - 2010-11-19
 
-=== Engine ===
+### Engine
   * Removed the Camreazone renderer
   * Added light support (OpenGL only) by merging the light branch.  Speacial
     thanks to Helios for all his hard work in this area (#364)
@@ -662,16 +638,16 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added DeviceCaps::getNearestScreenMode() for the client to request a 
     supported screen mode. (#315)
 
-=== Build System ===
+### Build System
   * Removed libpng from ext (#385)
   * Debug is now automatically enabled when you build with profiling enabled
     (r3292)
 
-=== Editor ===
+### Editor
   * Re-arranged the ObjectEdit gui to avoid misunderstandings
   * Can now place instances (which are visible) on new maps again (r3392)  
   
-=== Extensions ===
+### Extensions
   * Added the SimpleXMLSerializer extension
   * Removed the XML portion out of fife_settings in favor of SimpleXMLSerializer
   * Made the serializer used in fife_settings "pluggable"
@@ -688,31 +664,28 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     A difference between map and object files is now being made! (r3469)
   * Modified the sound manager to better take care of sound clips (r3476)
   
-=== Docs ===
+### Docs
   * Added some documentation to the filebrowser module
   
-=== Pychan ===
+### Pychan
   * Timers are now handled correctly by pychan (#483)
   * Can now modify the step length for sliders (#482)
   * Built in pychan dialogs now work (r3384)
   
-=== Demos ===
+### Demos
   * Renamed <fife>/demos/pychan_demo/pychan_test.py to pychan_demo.py
   * Added a new pychan demo - gui animations
   * Added the Shooter demo
   * Made the dynamic widget test in the pychan_demo work/look a little better 
     (r3484)
   
-=== Misc ===
+### Misc
   * Fixed some compiler warning messages
   * Added license information for the gimp icon
   
+## [0.3.1] - 2010-03-01
 
-================================================================================
-== 0.3.1 (March, 2010)                                                        ==
-================================================================================
-
-=== Engine ===
+### Engine
   * Updated a lot of the python source files to have the correct headers
   * Fixed SWIG wrappers that didn't handle simple output parameters (#340)
   * Added color key support for both OpenGL and SDL renderer (#451, #146)
@@ -733,7 +706,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added ActionVisual::getActionImageAngles()
   * Added Cursor::getX() and Cursor::getY()
 
-=== Build System ===
+### Build System
   * FIFE now builds as expected on win32 using the FIFE dev kit
   * Win32 batch scripts no longer overwrite the users PATH variable (#429)
   * Requied DLLs are now installed as required on win32 (#430)
@@ -741,7 +714,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed a problem with the dependency checks when using pkg-config on linux
   * Added OpenBSD support
 
-=== Editor ===
+### Editor
   * Can now re-load a map (#381)
   * Opening more than one map and then closing them no longer causes a crash 
     (#441)
@@ -756,30 +729,27 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Object offsets can now be manipulated by using the mousewheel
   * Added undo/redo support for the moving of instances
   
-=== Extensions ===
+### Extensions
   * File Browser now refreshes correctly (#391)
   
-=== Docs ===
+### Docs
   * Fixed the Linux:Scons tutorial (#422)
 
-=== Pychan ===
+### Pychan
   * Fixed a couple python import lines (#440)
   * Added Widget.requestFocus()
  
-=== Rio De Hola ===
+### Rio De Hola
   * Fixed the path to the AUTHORS file so the credits are displayed correctly
   
-=== Misc ===
+### Misc
   * Added color tester to pychan demo
   * Demos now look for a local copy of FIFE before importing the installed 
     version of FIFE
 
+## [0.3.0] - 2010-01-20
 
-================================================================================
-== 0.3.0 (January 20th, 2010)                                                 ==
-================================================================================
-
-=== Engine ===
+### Engine
   * Moved to Python 2.6 (#345)
   * Upgraded guichan in ext to 0.8.2 (#420)
 
@@ -812,14 +782,14 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed layer and instance transparency (#378)
   * Fixed a lot of small bugs
 
-=== Rio de hola ===
+### Rio de hola
   * Made rio_de_hola save its settings to the proper OS folder.
   * Added a prefix to cameras in Rio de Hola to avoid name clashes
   * Fixed second camera in rio so multiple Camera.setLocation calls are handled 
     correctly
   * More documentation has been written
   
-=== Editor ===
+### Editor
   * Rewrote editor:
     - Improved GUI:
       - Resizable windows
@@ -847,7 +817,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Filebrowser now refreshes when expected (#391)
   * Fixed a lot of bugs, and made a lot of new ones ;-)
   
-=== PyChan ===
+### PyChan
   * New greedy layout engine: Widgets is now able to expand in addition to 
     shrinking
   * New events: mouseWheelMovedUp and mouseWheelMovedDown
@@ -878,12 +848,12 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     the shift key (#383)
   * Lots of bug fixes
   
-=== Documentation ===
+### Documentation
   * Fixed some doxygen documentation problems (#343)
   * Created python coding standards article (#372)
   * Created "Bug Report" template (#409)
   
-=== Misc ===
+### Misc
   * New versioning scheme (x.y.z) instead of (yyyy.r)
   * Moved extensions and fife.py to <FIFE>/engine/python/fife
   * Moved rio_de_hola and pychan_demo to <FIFE>/demos
@@ -891,13 +861,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Moved the FIFE editor to <FIFE>/editor
   * Added a Win32 installer for FIFE and the win32 SDK
 
+## [2009.0] - 2009-01-07
 
-
-================================================================================
-== 2009.0 (January 7th, 2009)                                                 ==
-================================================================================
-
-=== Engine ===
+### Engine
   * Merged input rework branch
   * Possibility to hide instances/instance visuals
   * Added input and focus events
@@ -936,34 +902,31 @@ Bugs:
   * Fixed: Editors camera doesn't show map after saving (#333)
   * Fixed: FIFE crashes with a segmentation fault (#297)
 
-=== Pychan ===
+### Pychan
   * Modified pychan to accept RGBA colors
   * More documentation for layout system
   * adaptLayout now acts a bit smarter
   * Fix for scrollarea bug
 
-=== Rio de hola === 
+### Rio de hola 
   * Improved some graphics and added some new ones
   * Profiling support
 
-=== Editor ===
+### Editor
   * Scrolling support
   * Added an undo feature to the map-editor
   * Object editor plugin
   * Some bug fixes
 
-=== Documentation ===
+### Documentation
   * Updated the map format article to reflect the datasets changes (#323)
 
-=== Misc ===
+### Misc
   * Removed old testmaps
   
+## [2008.1] - 2008-06-01
 
-================================================================================
-== 2008.1 (July, 2008)                                                        ==
-================================================================================
-
-=== Model improvements & simplifications ===
+### Model improvements & simplifications
  * Elevations removed (Fallout legacy).
  * Support for namespaces:
   * New resource infrastructure migrated into whole engine. This enables:
@@ -981,17 +944,17 @@ Bugs:
   * Objects support default actions.
   * Further model cleanup.
 
-=== XML format changes ===
+### XML format changes
  * All resources are now defined with principle 1 file / 1 resource.
  * Importing of objects can now be done also based on directories where they are 
    contained.
  * Relative paths are now used instead of absolute ones.
 
-=== Loaders ===
+### Loaders
  * All loading happens now from python (tinyxml dependency removed).
  * Improved error reporting.
 
-=== Editor ===
+### Editor
  * Possibility to move instances on map.
  * Possibility to rotate instances on map.
  * Possibility to zoom the map (OpenGL mode only).
@@ -999,19 +962,19 @@ Bugs:
  * Importing of multiple objects based on given directory.
  * Initial map creation wizard (still work in progress).
 
-=== Rio de hola ===
+### Rio de hola
  * More assets:
   * Graphics, sounds, music...
   * Two new maps matching the storyline.
   * Rio de hola now conforms to package structure
   * Popup menu integration, demonstration of actions (kick, talk).
 
-=== Pychan improvements ===
+### Pychan improvements
  * Hiding of scrollbars.
  * Text wrapping.
  * A lot of smaller improvements. 
 
-=== Functionality ===
+### Functionality
  * Pixel perfect instance picking (taking transparency into account).
  * Ability to get list of instances from given screen rectangle.
  * Distance calculations made easy, exposed to scripts.
@@ -1020,7 +983,7 @@ Bugs:
  * Screenshots are now saved in png format (instead of bmp).
  * Stereo sound support in linux (introduced with the help of openal-soft).
 
-=== Video / view improvements ===
+### Video / view improvements
  * Both renderbackend and separate images can now render graphical primitives 
    (e.g. lines, dots..).
  * Each camera now has separate set of renderers. Allows truly adjusting cameras 
@@ -1031,11 +994,11 @@ Bugs:
    with large backgrounds.
  * GenericRenderer adding customised rendering capabilities for scripts.
 
-=== Misc. changes ===
+### Misc. changes
  * Initial package structure defined for FIFE clients.
  * Updated guichan to the latest release 0.8.1.
  * Usage of unittest++ instead of boost unittests.
  * Lots of bug fixes.
 
-=== Non-code related changes ===
+### Non-code related changes
  * Switch from GPL 2.0 to LGPL 2.1 (or newer).
