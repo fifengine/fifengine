@@ -2,10 +2,9 @@
 
 FIFE
 ------------
-Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
-written in C++. It comes with python bindings allowing users to create games 
-using python as well as C++. The engine is designed to be flexible to allow you
-to extend it and add any feature you can imagine to your project.
+Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine written in C++.
+It comes with Python bindings allowing users to create games using Python as well as C++. 
+The engine is extendable and enables you to add any feature you can imagine to your project.
 
 |    :ghost:   | Linux | Mac OS X | Windows |
 |:------------:|:-----:|:--------:|:-------:|
@@ -17,10 +16,8 @@ Table of contents
 1. [Features]        (#1-features)
 2. [License]         (#2-license)
 3. [FIFE Clients]    (#3-fife-clients)
-4. [Known Issues]    (#4-known-issues)
-5. [Troubleshooting] (#5-troubleshooting)
-6. [Feedback]        (#6-feedback)
-7. [Closing Notes]   (#7-closing-notes)
+4. [Troubleshooting] (#5-troubleshooting)
+5. [Feedback]        (#6-feedback)
 
 
 1) Features
@@ -84,42 +81,7 @@ with default values.  For more information on FIFE settings please see the
 wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 
 
-4) Known issues
----------------
-### Documentation
- * Atlas Creator needs to be documented (#559)
-
-### Engine
- * `Camera`s must be attached to layers (#305)
- * Unit-tests are broken (#423)
-
-### Guichan/Pychan
- * Pychan dropdown menus crash FIFE-based client on win32 (#508)
- * Pychan dropdowns refuse to open if there is no space below (#445)
- * Borders are not rendered on edges of widgets that touch their parent 
-   container's edge. (#522)
- * `GuiImage` unable to find loader for JPEG in `ImagePool` (#548)
- * Some strings are cut short in some widgets (#585)
- * `applyOnlySuitable` fails on `functools.partial` (#638)
- * Default style will sometimes override custom style (#656)
- * `adjustSize()` sometimes sets width to invalid values (#666)
-
-### Build
- * Uninstaller doesn't remove `fife` module (#526)
- * Improve build system shared library support on linux (#575)
- * Cannot build a usable debug version of `_fife_d.pyd` with mingw
-
-### Editor
- * Editor code does not match coding standards (#371)
- * Map editor clobbers custom attributes (#379)
- * History bugs (#452)
- * Placing an instance on top of another then undoing resets the original 
-   instances properties (#459)
- * Should be able to set the default zoom level for a camera (#467)
- * Editor file dialog uses botched relative paths (#616)
-
-
-5) Troubleshooting
+4) Troubleshooting
 ------------------
 
 ### Video Card/Driver Issues
@@ -138,7 +100,7 @@ hear sound while running a FIFE client, run `oalinst.exe` that ships with the
 Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
 
-6) Feedback
+5) Feedback
 -----------
 We appreciate every kind of feedback concerning the release, the project in 
 general and the bundled techdemo. Feedback is a great way to help us to improve 
@@ -146,13 +108,3 @@ FIFE. If you would like to get in contact with us and provide feedback you can
 either visit our IRC channel or our forums:
  * #fife on freenode.net
  * http://forums.fifengine.net/
-
-
-7) Closing Notes
-----------------
-Have fun with the release and let us know what you think about it!
--- The FIFE team.
-
-http://www.fifengine.net/
-
-2013/04/09
