@@ -36,7 +36,7 @@ if (WIN32)
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VS.tar.gz
       URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-VS.zip      
-      URL_MD5             1
+      URL_MD5             87ab39fb56fa331aa410ec4139e64fc9
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
