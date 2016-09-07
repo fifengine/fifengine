@@ -5,9 +5,19 @@ image: Visual Studio 2015
 init:
   - date /T & time /T
   - git config --global core.autocrlf input
-  - cmake --version 
+  - cmake --version
   # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
   - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
+  # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
+  - ps: >-
+      if ($env:APPVEYOR_REPO_TAG -eq "true")
+      {
+        Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
+      }
+      else
+      {
+        Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+      }
 
 branches:
   only:
@@ -22,7 +32,7 @@ platform:
 
 configuration:
   - Release
-  - Debug
+  #- Debug
 
 environment:
   matrix:
@@ -71,3 +81,22 @@ build_script:
 
 after_build:
   - dir c:\fife\install /s
+
+artifacts:
+  - path: '\*.zip'
+    name: ReleaseArtifact
+
+# deploy to Github Releases on tag push
+deploy:
+  provider: GitHub
+  release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
+  artifact: ReleaseArtifact
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
+  auth_token:                      # encrypted token from GitHub
+    secure: CAk9K6hUe6pEb6RFG5A49s790UFJibphWpeRsCm2itrxS1KDn1jTmwObE4/cyL/H
