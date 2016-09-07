@@ -6,10 +6,14 @@ Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
 It comes with Python bindings allowing users to create games using Python as well as C++. 
 The engine is extendable and enables you to add any feature you can imagine to your project.
 
-|    :ghost:   | Linux | Mac OS X | Windows |
-|:------------:|:-----:|:--------:|:-------:|
-| Build Status | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
-| IRC | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) |
+| [Website](http://fifengine.net/) | [Forum](http://forums.fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
+|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+
+| Continuous Integration | Linux |   Mac    | Windows |
+|:----------------------:|:-----:|:--------:|:-------:|
+| **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
+| **Development Releases**  |   -    |    -     | [fifengine.zip](https://ci.appveyor.com/api/projects/fifengine/fifengine/artifacts/fifengine.zip?all=successful) |
+
 
 Table of contents
 -----------------
