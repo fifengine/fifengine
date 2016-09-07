@@ -73,6 +73,7 @@ OPTION(FIFE_DEPENDENCY_SWIG          "Download and build dependency: SWIG"      
 OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"    ON)
 OPTION(FIFE_DEPENDENCY_LIBOGG        "Download and build dependency: LIBOGG"     ON)
 OPTION(FIFE_DEPENDENCY_LIBVORBIS     "Download and build dependency: LIBVORBIS"  ON)
+OPTION(FIFE_DEPENDENCY_FIFECHAN      "Download and build dependency: FIFECHAN"   ON)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
@@ -119,3 +120,7 @@ ENDIF(FIFE_DEPENDENCY_LIBOGG)
 IF(FIFE_DEPENDENCY_LIBVORBIS)
     INCLUDE(get-libvorbis)
 ENDIF(FIFE_DEPENDENCY_LIBVORBIS)
+
+IF(FIFE_DEPENDENCY_FIFECHAN)
+    INCLUDE(get-fifechan)
+ENDIF(FIFE_DEPENDENCY_FIFECHAN)
