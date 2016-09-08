@@ -26,6 +26,7 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 // Platform specific includes
 
