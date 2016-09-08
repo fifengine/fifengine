@@ -61,5 +61,5 @@ script:
    - make
 
 notifications:
-  #irc: "irc.freenode.org#fife"
+  irc: "irc.freenode.org#fife"
   email: false
