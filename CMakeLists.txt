@@ -405,10 +405,17 @@ if(fifechan)
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach(filename ${FIFE_FCHAN_SWIG})
   set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
+
   # TODO Change to search library once its been implemented for fifechan
-  set(FIFECHAN_INCLUDE CACHE PATH "Fifechan include directory")
-  set(FIFECHAN_LIBDIR CACHE PATH "Fifechan library directory")
-  set(FIFECHAN_LIBS fifechan fifechan_sdl)
+  # https://github.com/fifengine/fifechan/issues/19
+  set(FIFECHAN_INCLUDE ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/fifechan)
+  set(FIFECHAN_LIBDIR  ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib)
+  set(FIFECHAN_LIBS    fifechan fifechan_sdl)
+
+  message(STATUS "FIFECHAN_INCLUDE = '${FIFECHAN_INCLUDE}'")
+  message(STATUS "FIFECHAN_LIBDIR  = '${FIFECHAN_LIBDIR}'")
+  message(STATUS "FIFECHAN_LIBS    = '${FIFECHAN_LIBS}'")
+
   if(opengl)
     set(FIFECHAN_LIBS ${FIFECHAN_LIBS} fifechan_opengl)
     add_definitions(-DHAVE_OPENGL)
