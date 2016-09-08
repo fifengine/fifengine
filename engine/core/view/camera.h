@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <map>
+#include <algorithm>
 
 // 3rd party library includes
 #include <SDL.h>
