@@ -20,7 +20,8 @@ init:
       }
   # There are multiple pre-installed versions of Python on Appveyor
   # see https://www.appveyor.com/docs/installed-software/#python
-  - "SET PATH=C:\\Python35;C:\\Python35\\Scripts;%PATH%"
+  - "SET PYTHON=C:\\Python35"
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   # Show version and architecture for Python
   - "%PYTHON%\\python.exe --version"
   - "%PYTHON%\\python.exe -c \"import struct; print(struct.calcsize('P') * 8)\""
