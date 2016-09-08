@@ -63,6 +63,32 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
+#------------------------------------------------------------------------------
+#                                 Compiler Options                                         
+#------------------------------------------------------------------------------
+
+if(WIN32)
+
+  if(MSVC)
+
+    # ensure we use minimal "windows.h" lib without the crazy min max macros    
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
+
+    # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
+    SET(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
+    SET(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+    SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+
+    # use static libs - to avoid "LNK1104: cannot open file 'libboost_filesystem-vc140-mt-1_59.lib'"
+    set(Boost_USE_STATIC_LIBS ON)     
+    set(Boost_USE_MULTITHREADED ON)
+
+  endif(MSVC)
+
+endif(WIN32)
+
 # defines
 add_definitions(-DTIXML_USE_STL)
 
@@ -75,6 +101,7 @@ message("== Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUIL
 message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
 message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
 message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
+message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
 message("")
 
 #------------------------------------------------------------------------------
@@ -555,12 +582,14 @@ if(NOT WIN32)
   STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
 endif(NOT WIN32)
 
-install(TARGETS _fife DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(FILES ${CMAKE_BINARY_DIR}/fife.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(FILES ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
+
+install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+install(FILES       ${CMAKE_BINARY_DIR}/fife.py                         DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 
 if(fifechan)
-  install(TARGETS _fifechan DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES ${CMAKE_BINARY_DIR}/fifechan.py DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES     ${CMAKE_BINARY_DIR}/fifechan.py                     DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 endif(fifechan)

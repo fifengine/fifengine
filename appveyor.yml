@@ -89,11 +89,29 @@ build_script:
   - cmake --build . --target ALL_BUILD --config %configuration% 
 
 after_build:
-  - dir c:\fife\install /s
+  - dir C:\projects\build\Release /s
+  - if "%generator%"=="Visual Studio 14" (set COMPILER="VC14")
+  - if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW") 
+
+  # package dependencies artifact
+  - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
+  - cd C:\projects\fifengine-dependencies\includes
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+
+  # package Python Installer artifact
+  - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  - cd %APPVEYOR_BUILD_FOLDER%
+  #- sed -n -i 's/0.4.0/%APPVEYOR_BUILD_VERSION%/' setup.py
+  - python setup.py bdist_wininst
+  - dir %APPVEYOR_BUILD_FOLDER%\dist
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-python-0.4.0.win32.exe"
 
 artifacts:
-  - path: '\*.zip'
-    name: ReleaseArtifact
+  - path: 'dist\libfife-python-0.4.0.win32.exe'
+    name: PythonInstallerReleaseArtifact
+  - path: '\libfife-dependencies-*.zip'
+    name: DependenciesArtifact
 
 # deploy to Github Releases on tag push
 deploy:
@@ -101,7 +119,7 @@ deploy:
   release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
-  artifact: ReleaseArtifact
+  artifact: PythonInstallerReleaseArtifact, DependenciesArtifact
   draft: false
   prerelease: false
   on:
