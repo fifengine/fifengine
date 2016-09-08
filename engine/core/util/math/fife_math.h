@@ -51,7 +51,7 @@ inline double round(const double x) {
 namespace FIFE {
 
 	static const float FLT_STD_EPSILON = std::numeric_limits<float>::epsilon();
-	static const float FLT_STD_MAX = std::numeric_limits<float>::max();
+	static const float FLT_STD_MAX = (std::numeric_limits<float>::max)();
 	static const float FLT_ZERO_TOLERANCE = 1e-06f;
 	static const float FLT_PI = 4.0f*std::atan(1.0f);
 	static const float FLT_TWO_PI = 2.0f*FLT_PI;
@@ -66,7 +66,7 @@ namespace FIFE {
 	static const float FLT_INV_LOG_10 = 1.0f/std::log(10.0f);
 
 	static const double DBL_STD_EPSILON = std::numeric_limits<double>::epsilon();
-	static const double DBL_STD_MAX = std::numeric_limits<double>::max();
+	static const double DBL_STD_MAX = (std::numeric_limits<double>::max)();
 	static const double DBL_ZERO_TOLERANCE = 1e-08;
 	static const double DBL_PI = 4.0*std::atan(1.0);
 	static const double DBL_TWO_PI = 2.0*DBL_PI;
