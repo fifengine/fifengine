@@ -102,7 +102,6 @@ after_build:
   # package Python Installer artifact
   - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  #- sed -n -i 's/0.4.0/%APPVEYOR_BUILD_VERSION%/' setup.py
   - python setup.py bdist_wininst
   - dir %APPVEYOR_BUILD_FOLDER%\dist
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-python-0.4.0.win32.exe"
