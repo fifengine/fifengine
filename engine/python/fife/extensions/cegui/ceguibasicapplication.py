@@ -82,7 +82,7 @@ class CEGUIApplicationBase(ApplicationBase):
 		if major_v == 0 and minor_v <= 7:
 			guimanager = fife.CEGuiManager()
 		else:
-			guimanager = fife.CEGui_0Manager()
+			guimanager = fife.CEGuiManager()
 
 		#transfer ownership to the engine
 		guimanager.thisown = 0

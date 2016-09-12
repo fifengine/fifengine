@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_CEGUIINPUTPROCESSOR
-#define FIFE_GUI_CEGUIINPUTPROCESSOR
+#ifndef FIFE_GUI_CEGuiInputProcessor
+#define FIFE_GUI_CEGuiInputProcessor
 
 // Standard C++ library includes
 
@@ -56,11 +56,11 @@ namespace FIFE {
 		/** Process a key input event.
 		 */
 		bool processKeyInput(SDL_Event& event);
-
+		
 		/** Process a text input event.
 		 */
 		bool processTextInput(SDL_Event& event);
-		
+
 		/** Process a mouse input event.
 		 */
 		bool processMouseInput(SDL_Event& event);
@@ -80,4 +80,4 @@ namespace FIFE {
 	
 }
 
-#endif //FIFE_GUI_CEGUIINPUTPROCESSOR
+#endif //FIFE_GUI_CEGuiInputProcessor

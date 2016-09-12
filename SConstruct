@@ -59,12 +59,6 @@ AddOption('--enable-librocket',
 AddOption('--enable-cegui',
 		dest='enable-cegui',
 		action='store_true',
-		help='Enable Craze Eddie\'s gui subsystem - up to 0.7.9',
-		default=False)
-
-AddOption('--enable-cegui-0',
-		dest='enable-cegui-0',
-		action='store_true',
 		help='Enable Craze Eddie\'s gui subsystem - from v 0.8.0 upwards',
 		default=False)
 
@@ -181,20 +175,12 @@ else:
 	extra_libs['librocket'] = False
 	extra_libs['librocket-debug'] = False
 
-
 if GetOption('enable-cegui'):
 	env['ENABLE_CEGUI'] = True
 	extra_libs['cegui'] = True
 else:
 	env['ENABLE_CEGUI'] = False
 	extra_libs['cegui'] = False
-
-if GetOption('enable-cegui-0'):
-	env['ENABLE_CEGUI_0'] = True
-	extra_libs['cegui-0'] = True
-else:
-	env['ENABLE_CEGUI_0'] = False
-	extra_libs['cegui-0'] = False
 
 if GetOption('disable-opengl'):
 	opengl = 0

@@ -55,9 +55,9 @@ def initEnvironment(env):
 	# SDL2
 	env.Append(CPPPATH = [includepath + '\\sdl_image2', includepath + '\\sdl_ttf2', includepath + '\\sdl2', includepath + '\\zlib1'])
 	
-	if env['ENABLE_CEGUI_0']:
-		env.Append(CPPPATH = [includepath + '\\CEGUI-0'])
-		env.Append(CPPPATH = [includepath + '\\CEGUI-0\cegui-0'])
+	if env['ENABLE_CEGUI']:
+		env.Append(CPPPATH = [includepath + '\\CEGUI'])
+		env.Append(CPPPATH = [includepath + '\\CEGUI\cegui'])
 
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
@@ -73,7 +73,6 @@ def addExtras(env, reqLibs):
 	fifechan = reqLibs['fifechan']
 	librocket = reqLibs['librocket']
 	cegui = reqLibs['cegui']
-	cegui_0 = reqLibs['cegui-0']
 
 	# SDL1
 	#env.Append(LIBS = ['SDL_image', 'SDLmain', 'SDL.dll', 'SDL_ttf', 'zlib'])
@@ -101,11 +100,8 @@ def addExtras(env, reqLibs):
 		env.Prepend(LIBS = rocket_libs)
 		
 	if cegui:
-		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
+		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]    
 		env.Prepend(LIBS = cegui_libs)
-	if cegui_0:
-		cegui_0_libs = ['libCEGUIBase-0', 'libCEGUIOpenGLRenderer-0' ]    
-		env.Prepend(LIBS = cegui_0_libs)
 		
 	# define for using tinyxml with stl support enabled
 	env.AppendUnique(CPPDEFINES = ['TIXML_USE_STL'])

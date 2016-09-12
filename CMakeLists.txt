@@ -243,16 +243,10 @@ set (FIFE_ZIP_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
 )
 
-# CEGUI
+# CEGUI v0.8.0+
 set (FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.cpp
-)
-
-# CEGUI-0
-set (FIFE_CEGUI-0_SRC
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/cegui-0manager.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/base/cegui-0inputprocessor.cpp
 )
 
 # FIFECHAN
@@ -354,11 +348,6 @@ set (FIFE_CEGUI_SWIG
   gui/cegui/ceguimanager.i
 )
 
-# CEGUI-0
-set (FIFE_CEGUI-0_SWIG
-  gui/cegui-0/cegui-0manager.i
-)
-
 # FIFECHAN
 set (FIFE_FCHAN_SWIG_LIB
   gui/fifechan/lib/fifechanlistener.i
@@ -393,21 +382,21 @@ find_package(TinyXML REQUIRED)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
+
   if(NOT CEGUI_OpenGLRenderer_FOUND)
-    message(FATAL_ERROR "FIFE needs cegui with the OpenGLRenderer enabled")
+    message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
   endif(NOT CEGUI_OpenGLRenderer_FOUND)
+
   if(NOT opengl)
-    message(FATAL_ERROR "OpenGL cannot be disabled when CEGUI is enabled")
+    message(FATAL_ERROR "OpenGL cannot be disabled, when CEGUI is enabled.")
   endif(NOT opengl)
+
   include_directories(${CEGUI_INCLUDE_DIR})
-  if(${CEGUI_VERSION} VERSION_GREATER 0.8.0)
-    message("Using cegui-0 (CEGUI 0.8+)")
-    set(CEGUI-0 TRUE)
-    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI-0_SRC})
-  else (${CEGUI_VERSION} VERSION_GREATER 0.8.0)
-    message("Using old cegui (CEGUI 0.7)")
-    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
-  endif(${CEGUI_VERSION} VERSION_GREATER 0.8.0)  
+
+  message("Using CEGUI v0.8+")
+  set(CEGUI TRUE)
+  set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
+
   find_package(GLEW REQUIRED)
   include_directories(${GLEW_INCLUDE_DIRS})
 endif(cegui)
@@ -477,17 +466,10 @@ if(fifechan)
     )
 endif(fifechan)
 
-if(cegui)
-  if(CEGUI-0)
-    foreach(filename ${FIFE_CEGUI-0_SWIG})
-      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-    endforeach(filename ${FIFE_CEGUI-0_SWIG})
-  else(CEGUI-0)
-    foreach(filename ${FIFE_CEGUI_SWIG})
-      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-    endforeach(filename ${FIFE_CEGUI_SWIG})  
-  endif(CEGUI-0)
-  
+if(cegui)  
+  foreach(filename ${FIFE_CEGUI_SWIG})
+    set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+  endforeach(filename ${FIFE_CEGUI_SWIG})    
 endif(cegui)
 
 # TODO: Add the other gui libraries

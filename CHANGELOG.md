@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
-## [0.4.0] - 2014-08-10
+## [0.4.0] - 2016-xx-xx
+
+* rename "cegui-0" (v0.8+) to "cegui"
+* removed cegui compatibility layer for versions below v0.7.9
 
 ### Engine
 * Get rid of various compiler warnings
