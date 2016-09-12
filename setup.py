@@ -32,7 +32,7 @@ else:
 	pkg_data = {'fife': ['*.so'] }
 
 
-setup(name='libfife-python',
+setup(name='libfife',
       version='0.4.0',
       description='Flexible Isometric Free Engine',
       url='www.fifengine.net',
