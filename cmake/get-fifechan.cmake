@@ -34,12 +34,13 @@ if (WIN32)
       fifechan
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-      #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VS.tar.gz
-      URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-VS.zip      
-      URL_MD5             87ab39fb56fa331aa410ec4139e64fc9
+      #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VC14.zip
+      URL                 https://ci.appveyor.com/api/buildjobs/kbycmt20k0g1ah61/artifacts/fifechan-VC14.zip      
+      URL_MD5             c96b3b8451120a729c8cc88277b1d18c
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/bin     ${DEPENDENCY_INSTALL_DIR}/bin
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib     ${DEPENDENCY_INSTALL_DIR}/lib
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
     )
