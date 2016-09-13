@@ -100,6 +100,7 @@ after_build:
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
 
   # package Python Installer artifact
+  - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
@@ -109,6 +110,7 @@ after_build:
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py2.7.exe"
 
   - dir C:\projects\build /s
+  - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
 artifacts:
   - path: 'dist\libfife-0.4.0.win32-py2.7.exe'

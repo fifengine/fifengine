@@ -573,6 +573,9 @@ if(cegui)
   swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
 endif(cegui)
 
+#
+# Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
+#
 execute_process(
   COMMAND python -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
 )
@@ -585,11 +588,11 @@ endif(NOT WIN32)
 message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
 install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(FILES       ${CMAKE_BINARY_DIR}/fife.py                         DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+install(FILES       ${PROJECT_BINARY_DIR}/fife.py                       DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 
 if(fifechan)
   install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES     ${CMAKE_BINARY_DIR}/fifechan.py                     DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 endif(fifechan)

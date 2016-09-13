@@ -27,7 +27,7 @@ from distutils.core import setup
 import os, sys
 
 if sys.platform == 'win32':
-	pkg_data = {'fife': ['*.pyd','*.dll'] }
+	pkg_data = {'fife': ['*.py','*.pyd','*.dll'] }
 else:
 	pkg_data = {'fife': ['*.so'] }
 
