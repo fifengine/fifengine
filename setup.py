@@ -27,19 +27,19 @@ from distutils.core import setup
 import os, sys
 
 if sys.platform == 'win32':
-	pkg_data = {'fife': ['*.pyd','*.dll'] }
+	pkg_data = {'fife': ['*.py','*.pyd','*.dll'] }
 else:
 	pkg_data = {'fife': ['*.so'] }
 
 
-setup(name='fife',
+setup(name='libfife',
       version='0.4.0',
       description='Flexible Isometric Free Engine',
       url='www.fifengine.net',
       packages = ['fife', 'fife.extensions', 'fife.extensions.pychan', 'fife.extensions.librocket', 'fife.extensions.cegui', 'fife.extensions.pychan.widgets', 'fife.extensions.pychan.dialog', 'fife.extensions.pychan.widgets.ext', 'fife.extensions.serializers' ],
       package_dir = { '': os.path.join('engine','python') },
       package_data = pkg_data,
-      data_files = [(os.path.join('lib','site-packages', 'fife'),['AUTHORS','CHANGES', 'LICENSE.md' ,'README.md'])],
+      data_files = [(os.path.join('lib','site-packages', 'fife'),['AUTHORS','CHANGELOG.md', 'LICENSE.md' ,'README.md'])],
       license = 'GNU Lesser General Public License, version 2.1'
       )
 
