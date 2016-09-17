@@ -40,14 +40,14 @@ def _import_fifechan():
 				setattr(fifechan, member[0], member[1])
 		
 		return fife, fifechan
-	except ImportError, e:
+	except ImportError as e:
 		err_fife = str(e)
 	
 	try:
 		import fifechan
 		in_fife = False
 		return None, fifechan
-	except ImportError, e:
+	except ImportError as e:
 		import traceback
 		traceback.print_exc()
 		raise ImportError("Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'" % (err_fife,str(e)))

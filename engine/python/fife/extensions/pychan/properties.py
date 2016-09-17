@@ -22,7 +22,7 @@
 # ####################################################################
 
 from fife import fife, fifechan
-from exceptions import RuntimeError
+from .exceptions import RuntimeError
 
 def get_manager():
 	from fife.extensions import pychan

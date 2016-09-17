@@ -25,7 +25,7 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr
 
-from basictextwidget import BasicTextWidget
+from .basictextwidget import BasicTextWidget
 
 
 class CheckBox(BasicTextWidget):

@@ -31,7 +31,7 @@ It is by no means complete but it does provide a good starting point.
 
 import shutil
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from fife.extensions import fifelog
 from fife.extensions.fife_utils import getUserDataDirectory
@@ -56,7 +56,7 @@ class Setting(object):
 
 		@param app_name: The applications name.  If this parameter is provided
 		alone it will try to read the settings file from the users home directory.
-		In windows this will be	something like:	C:\Documents and Settings\user\Application Data\fife
+		In windows this will be	something like:	C:\Documents and Settings\\user\Application Data\fife
 		@type app_name: C{string}
 		@param settings_file: The name of the settings file.  If this parameter is
 		provided it will look for the setting file as you specify it, first looking

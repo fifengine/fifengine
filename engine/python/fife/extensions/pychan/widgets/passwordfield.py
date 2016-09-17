@@ -25,8 +25,8 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import UnicodeAttr
 
-from common import gui2text, text2gui
-from widget import Widget
+from .common import gui2text, text2gui
+from .widget import Widget
 
 
 class PasswordField(Widget):
@@ -46,7 +46,7 @@ class PasswordField(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
-	DEFAULT_TEXT = u""
+	DEFAULT_TEXT = ""
 
 	def __init__(self, 
 				 parent = None, 

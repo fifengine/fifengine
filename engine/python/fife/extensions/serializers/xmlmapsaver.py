@@ -34,7 +34,7 @@ fileExtensions = ('xml',)
 class XMLMapSaver:
 
 	def __init__(self, filepath, engine, map, importList, state = 0, datastate = 0):
-		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(6)
+		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = list(range(6))
 
 		self.engine = engine
 		self.model = self.engine.getModel()

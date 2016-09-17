@@ -25,7 +25,7 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr
 
-from widget import Widget
+from .widget import Widget
 
 
 class ScrollArea(Widget):

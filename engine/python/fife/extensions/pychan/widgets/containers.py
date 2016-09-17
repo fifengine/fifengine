@@ -26,9 +26,10 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
-from common import get_manager, gui2text, text2gui
-from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
-from widget import Widget
+from .common import get_manager, gui2text, text2gui
+from .layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
+from .widget import Widget
+import collections
 
 
 class Container(Widget):
@@ -184,7 +185,7 @@ class Container(Widget):
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
-			print "insertChild: Warning: Index overflow.",
+			print("insertChild: Warning: Index overflow.", end=' ')
 			if position >= 0:
 				self.addChild(widget)
 			else:
@@ -262,7 +263,7 @@ class Container(Widget):
 		self.adaptLayout()
 			
 	def add(self,*widgets):
-		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
+		print("PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead.")
 		self.addChildren(*widgets)
 
 	def getMaxChildrenWidth(self):
@@ -285,7 +286,7 @@ class Container(Widget):
 		if not shown_only:
 			children = self.children
 		else:
-			children = filter(lambda w: w.real_widget.isVisible(), self.children)
+			children = [w for w in self.children if w.real_widget.isVisible()]
 		
 		if leaves_first:
 			for child in children:
@@ -302,7 +303,7 @@ class Container(Widget):
 		# images are shown properly
 		def _resetTilingChildren(widget):
 			tilingMethod = getattr(widget, "_resetTiling", None)
-			if callable(tilingMethod):
+			if isinstance(tilingMethod, collections.Callable):
 				tilingMethod()
 		self.deepApply(_resetTilingChildren)
 
@@ -314,7 +315,7 @@ class Container(Widget):
 			return
 
 		back_w,back_h = self.width, self.height
-		map(self.real_widget.remove,self._background)
+		list(map(self.real_widget.remove,self._background))
 
 		# Now tile the background over the widget
 		self._background = []
@@ -322,14 +323,14 @@ class Container(Widget):
 		icon.setTiling(True)
 		icon.setSize(back_w,back_h)
 		self._background.append(icon)
-		map(self.real_widget.add,self._background)
+		list(map(self.real_widget.add,self._background))
 		icon.requestMoveToBottom()
 
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)
 		if image is None:
 			self._background_image = None
-			map(self.real_widget.remove,self._background)
+			list(map(self.real_widget.remove,self._background))
 			self._background = []
 			return
 		# Background generation is done in _resetTiling
@@ -553,7 +554,7 @@ class Window(VBoxLayoutMixin,Container):
 										  IntAttr('titlebar_height') 
 										]
 
-	DEFAULT_TITLE = u"title"
+	DEFAULT_TITLE = "title"
 	DEFAULT_TITLE_HEIGHT = 0
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
 

@@ -26,8 +26,8 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, PointAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from common import text2gui
-from basictextwidget import BasicTextWidget
+from .common import text2gui
+from .basictextwidget import BasicTextWidget
 
 
 class Button(BasicTextWidget):
