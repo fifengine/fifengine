@@ -100,7 +100,7 @@ def addExtras(env, reqLibs):
 		env.Prepend(LIBS = rocket_libs)
 		
 	if cegui:
-		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]    
+		cegui_libs = ['libCEGUIBase', 'libCEGUIOpenGLRenderer' ]
 		env.Prepend(LIBS = cegui_libs)
 		
 	# define for using tinyxml with stl support enabled
