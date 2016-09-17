@@ -252,6 +252,10 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import map
+import six
 __all__ = [
 	'loadXML',
 	'loadFonts',
@@ -259,6 +263,7 @@ __all__ = [
 	'manager'
 ]
 
+import sys
 
 # For epydoc
 from . import widgets
@@ -308,7 +313,12 @@ def traced(f):
 			raise
 	return traced_f
 
-class _GuiLoader(object, handler.ContentHandler):
+if sys.version_info[0] >= 3:
+	bases = (handler.ContentHandler,)
+else:
+	bases = (object, handler.ContentHandler)
+
+class _GuiLoader(*bases):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
 		self.root = None
@@ -317,7 +327,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
-		attrstrings = ['%s="%s"' % tuple(map(str,t)) for t in list(attrs.items())]
+		attrstrings = ['%s="%s"' % tuple(map(six.text_type,t)) for t in list(attrs.items())]
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		try:
 			print(self.indent + tag)
@@ -361,7 +371,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createInstance(self,cls,name,attrs):
 		obj = cls(parent=self.root)
-		for k,v in list(attrs.items()):
+		for k,v in attrs.items():
 			self._setAttr(obj,k,v)
 
 		if self.root:
@@ -370,7 +380,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createSpacer(self,cls,name,attrs):
 		obj = cls(parent=self.root)
-		for k,v in list(attrs.items()):
+		for k,v in attrs.items():
 			self._setAttr(obj,k,v)
 
 		if hasattr(self.root,'add'):

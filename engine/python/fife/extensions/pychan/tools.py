@@ -36,7 +36,7 @@ def applyOnlySuitable(func,*args,**kwargs):
 	keyword arguments, these are silently discarded. The result of the application is returned.
 	This is useful to pass information to callbacks without enforcing a particular signature.
 	"""
-	if hasattr(func,'im_func'):
+	if hasattr(func,'__func__'):
 		code = func.__func__.__code__
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
 	elif hasattr(func,'func_code'):
