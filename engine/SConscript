@@ -38,7 +38,6 @@ local_tinyxml = env['LOCAL_TINYXML']
 fifechan = env['ENABLE_FIFECHAN']
 librocket = env['ENABLE_LIBROCKET']
 cegui = env['ENABLE_CEGUI']
-cegui_0 = env['ENABLE_CEGUI_0']
 
 if fifechan:
 	Import('fifechan_env')
@@ -46,7 +45,7 @@ if fifechan:
 #**************************************************************************
 #Compile the list of source code to be used
 #**************************************************************************
-dirfilters = ['swigwrappers', 'tinyxml', 'fifechan', 'librocket', 'cegui', 'cegui-0']
+dirfilters = ['swigwrappers', 'tinyxml', 'fifechan', 'librocket', 'cegui']
 
 allfiles = list(src_path.walkfiles())
 allfiles_base = list()
@@ -92,7 +91,7 @@ if (local_tinyxml):
 	compilefiles = compilefiles + local_tinyxml_implfiles
 
 #**************************************************************************
-#Compile the list of fifechan glue code
+# Compile the list of fifechan glue code
 #**************************************************************************
 fifechan_glue_headerfiles = utils.include_by_dir(['fifechan'], headerfiles)
 fifechan_glue_implfiles = utils.include_by_dir(['fifechan'], implfiles)
@@ -108,7 +107,7 @@ if fifechan:
 	compilefiles = compilefiles + fifechan_glue_implfiles 
 	
 #**************************************************************************
-#Compile the list of rocket glue code
+# Compile the list of rocket glue code
 #**************************************************************************
 rocket_glue_headerfiles = utils.include_by_dir(['librocket'], headerfiles)
 rocket_glue_implfiles = utils.include_by_dir(['librocket'], implfiles)
@@ -119,8 +118,9 @@ if librocket:
 	compilefiles = compilefiles + rocket_glue_implfiles
 
 #**************************************************************************
-#Complite the list of cegui glue code
+# Compile the list of cegui glue code
 #**************************************************************************
+
 cegui_glue_headerfiles = utils.include_by_dir(['cegui'], headerfiles)
 cegui_glue_implfiles = utils.include_by_dir(['cegui'], implfiles)
 cegui_glue_swigfiles = utils.include_by_dir(['cegui'], swigfiles)
@@ -128,27 +128,18 @@ cegui_glue_swigfiles = utils.include_by_dir(['cegui'], swigfiles)
 if cegui:
 	headerfiles = headerfiles + cegui_glue_headerfiles
 	compilefiles = compilefiles + cegui_glue_implfiles
-	
-
-cegui_0_glue_headerfiles = utils.include_by_dir(['cegui-0'], headerfiles)
-cegui_0_glue_implfiles = utils.include_by_dir(['cegui-0'], implfiles)
-cegui_0_glue_swigfiles = utils.include_by_dir(['cegui-0'], swigfiles)
-
-if cegui_0:
-	headerfiles = headerfiles + cegui_0_glue_headerfiles
-	compilefiles = compilefiles + cegui_0_glue_implfiles
 
 #**************************************************************************
-#define the FIFE git hash number
+# define the FIFE git hash number
 #
-#only define this if a valid hash was detected
+# only define this if a valid hash was detected
 #**************************************************************************
 if opts['FIFE_GIT_HASH']:
 	if opts['FIFE_GIT_HASH'] is not "":
 		env.AppendUnique(CPPDEFINES = ['FIFE_GIT_HASH=' + opts['FIFE_GIT_HASH']])	
 
 #**************************************************************************
-#python
+# python
 #**************************************************************************
 
 #if fifechan is enabled 
@@ -170,9 +161,6 @@ if librocket:
 	
 if cegui:
 	intfiles = intfiles + cegui_glue_swigfiles
-
-if cegui_0:
-	intfiles = intfiles + cegui_0_glue_swigfiles
 
 	
 #generate swig interface file for fife module
