@@ -420,7 +420,7 @@ if(fifechan)
   foreach(filename ${FIFE_FCHAN_SWIG})
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach(filename ${FIFE_FCHAN_SWIG})
-  set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
+  set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
 
   # TODO Change to search library once its been implemented for fifechan
   # https://github.com/fifengine/fifechan/issues/19
@@ -527,7 +527,7 @@ set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
 find_package (PythonLibs)
 include_directories (${PYTHON_INCLUDE_PATH})
 
-set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
+set (CMAKE_SWIG_FLAGS -relativeimport -modern -modernargs -w511 -w473 -w404)
 
 set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
