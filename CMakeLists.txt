@@ -527,7 +527,7 @@ set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
 find_package (PythonLibs)
 include_directories (${PYTHON_INCLUDE_PATH})
 
-set (CMAKE_SWIG_FLAGS -relativeimport -modern -modernargs -w511 -w473 -w404)
+set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
 set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
