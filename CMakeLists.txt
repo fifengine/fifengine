@@ -522,6 +522,8 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 # Find python library and add include path for python headers
 find_package (PythonInterp)
+set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
+set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
 find_package (PythonLibs)
 include_directories (${PYTHON_INCLUDE_PATH})
 
