@@ -86,7 +86,7 @@ build_script:
     -DPYTHON_INCLUDE_DIR="C:/Python27/include"
     -DPYTHON_LIBRARY="C:/Python27/libs/python27.lib"
   # build
-  - cmake --build . --target ALL_BUILD --config %configuration% 
+  - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
   - dir C:\projects\build\Release /s
