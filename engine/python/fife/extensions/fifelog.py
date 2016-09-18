@@ -37,6 +37,8 @@ class LogManager(object):
 		@param promptlog: If true, logs to prompt
 		@param filelog: If true, logs to file (fife.log)
 		"""
+		promptlog = bool(promptlog)
+		filelog = bool(filelog)
 		self.engine = engine
 		self.lm = engine.getLogManager()
 		self.lm.setLogToPrompt(promptlog)
