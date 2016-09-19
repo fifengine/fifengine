@@ -42,6 +42,7 @@ configuration:
   #- Debug
 
 environment:
+  MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
     - generator: "Visual Studio 14"    
     #- generator: "MinGW Makefiles"
@@ -88,6 +89,8 @@ build_script:
     -Dbuild-library=ON
   # build
   - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  # install
+  - cmake --build . --target INSTALL --config %configuration%
 
 after_build:
   - dir C:\projects\build\Release /s
@@ -99,6 +102,11 @@ after_build:
   - cd C:\projects\fifengine-dependencies\includes
   - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+
+  # package libfife artifact
+  - cd c:\fife\install
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
 
   # package Python Installer artifact
   - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
@@ -114,6 +122,8 @@ after_build:
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
 artifacts:
+  - path: 'libfife\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip'
+    name: LibfifeReleaseArtifact
   - path: 'dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe'
     name: Python27InstallerReleaseArtifact
   - path: '\libfife-dependencies-*.zip'
