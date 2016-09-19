@@ -741,6 +741,10 @@ include_directories(${OPENGL_INCLUDE_DIR})
 add_definitions(${PNG_DEFINITIONS})
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
+#------------------------------------------------------------------------------
+#                  Build fifengine as a Python extension module                                       
+#------------------------------------------------------------------------------
+
 if(build-python)
   # Find python library and add include path for python headers
   find_package (PythonInterp)
@@ -804,6 +808,10 @@ if(build-python)
     install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
   endif(fifechan)
 endif(build-python)
+
+#------------------------------------------------------------------------------
+#                       Build fifengine as a library                                        
+#------------------------------------------------------------------------------
 
 if(build-library)
   add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
