@@ -34,6 +34,8 @@ option(logging          "Enable logging"                                        
 option(rend-camzone     "Enable camera zone renderer"                           OFF)
 option(rend-grid        "Enable camera grid renderer"                           OFF)
 option(use-githash      "Try to determine the git hash for the current commit"  ON)
+option(build-python     "Build the python extension module"                     ON)
+option(build-library    "Build and install files to directly develop with c++"  OFF)
 
 #------------------------------------------------------------------------------
 #                                 Configure                                          
@@ -50,6 +52,10 @@ if(NOT CMAKE_BUILD_TYPE)
   )
   message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
 endif(NOT CMAKE_BUILD_TYPE)
+
+if(build-library)
+  set(BUILD_SHARED_LIBS ON CACHE BOOL "Build a shared or static library")
+endif(build-library)
 
 # Do not allow an in-source-tree build, request an out-of-source-tree build.
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -274,6 +280,213 @@ set (FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
 )
 
+#Header Fils
+
+#Core
+set (FIFE_CORE_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/export.h
+  ${PROJECT_SOURCE_DIR}/engine/core/modules.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundconfig.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/sounddecoder.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.h
+  ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_event.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_inputevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_command.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_commandids.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_dropevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idropcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idroplistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeycontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeyfilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeylistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_key.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_keyevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousecontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousefilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imouselistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_mouseevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_eventsourcetypes.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_ieventsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/atlasloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/ianimationloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/iatlasloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/imaploader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/iobjectloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/maploader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/model.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/ipather.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/ivisual.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/modelcoords.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/object.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/timeprovider.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/grids/cellgrid.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/grids/hexgrid.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/grids/squaregrid.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/cell.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/cellcache.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/instance.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/instancetree.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/layer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/location.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/map.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/renderernode.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/trigger.h
+  ${PROJECT_SOURCE_DIR}/engine/core/model/structures/triggercontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/route.h
+  ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/multilayersearch.h
+  ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepather.h
+  ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepathersearch.h
+  ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/singlelayersearch.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/ianimationsaver.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/iatlassaver.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/imapsaver.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/iobjectsaver.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/mapsaver.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/exception.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/fifeclass.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/fife_stdint.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/sharedptr.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/singleton.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/base/stringutils.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/log/logger.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/math/angles.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/math/fife_math.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/math/matrix.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/resource/resource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/resource/resourcemanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/structures/point.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/structures/priorityqueue.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/structures/purge.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/structures/quadtree.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/structures/rect.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/time/timeevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/time/timemanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/time/timer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/utf8/utf8.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/utf8/utf8/checked.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/utf8/utf8/core.h
+  ${PROJECT_SOURCE_DIR}/engine/core/util/utf8/utf8/unchecked.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/directoryprovider.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/fife_boost_filesystem.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/vfs.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/vfsdirectory.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/vfssource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/vfssourceprovider.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/dat/dat1.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/dat/dat2.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/dat/lzssdecoder.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/dat/rawdatadat1.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/dat/rawdatadat2.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdata.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatafile.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animation.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/color.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/devicecaps.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/image.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/imagemanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/renderbackend.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/fontbase.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/ifont.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/imagefontbase.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/subimagefont.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/textrenderpool.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/truetypefont.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/fife_opengl.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glimage.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/renderbackendopengl.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/renderbackendsdl.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlblendingfunctions.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlimage.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/camera.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/layercache.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/rendererbase.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderitem.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/visual.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/blockinginforenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/cellrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/cellselectionrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/coordinaterenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/floatingtextrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/genericrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/gridrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/instancerenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/lightrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/offrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/quadtreerenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/view/renderers/targetrenderer.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/guimanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.h
+)
+  
+#CEGUI
+set (FIFE_CEGUI_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.h
+)
+
+#CEGUI-0
+set (FIFE_CEGUI-0_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/cegui-0manager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/base/cegui-0inputprocessor.h
+)
+
+#Fifechan
+set (FIFE_FCHAN_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_image.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_imageloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/opengl/opengl_gui_graphics.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/sdl/sdl_gui_graphics.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/commandline.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/console.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/util/utf8/utf8stringeditor.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/clicklabel.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/icon2.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/percentagebar.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/togglebutton.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.h
+)
+
+#Librocket
+set (FIFE_LROCKET_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
+)
+
 # SWIG files
 
 # Core
@@ -401,27 +614,29 @@ if(cegui)
   include_directories(${GLEW_INCLUDE_DIRS})
 endif(cegui)
 
-# Setting up SWIG files
+if(build-python)
+  # Setting up SWIG files
 
-set(CMAKE_SWIG_IMPORTS "")
-set(CMAKE_SWIG_INCLUSIONS "")
-set(CMAKE_SWIG_IMPORTS_FCHAN "")
-set(CMAKE_SWIG_INCLUSIONS_FCHAN "")
+  set(CMAKE_SWIG_IMPORTS "")
+  set(CMAKE_SWIG_INCLUSIONS "")
+  set(CMAKE_SWIG_IMPORTS_FCHAN "")
+  set(CMAKE_SWIG_INCLUSIONS_FCHAN "")
 
-foreach(filename ${FIFE_CORE_SWIG})
-  set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-endforeach(filename ${FIFE_CORE_SWIG})
+  foreach(filename ${FIFE_CORE_SWIG})
+    set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+  endforeach(filename ${FIFE_CORE_SWIG})
+endif(build-python)
 
 if(fifechan)
-  
-  foreach(filename ${FIFE_FCHAN_SWIG_LIB})
-    set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
-  endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
-  foreach(filename ${FIFE_FCHAN_SWIG})
-    set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-  endforeach(filename ${FIFE_FCHAN_SWIG})
-  set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
-
+  if(build-python)
+    foreach(filename ${FIFE_FCHAN_SWIG_LIB})
+      set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
+    endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
+    foreach(filename ${FIFE_FCHAN_SWIG})
+      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+    endforeach(filename ${FIFE_FCHAN_SWIG})
+    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+  endif(build-python)
   # TODO Change to search library once its been implemented for fifechan
   # https://github.com/fifengine/fifechan/issues/19
   set(FIFECHAN_INCLUDE ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/fifechan)
@@ -460,28 +675,34 @@ if(fifechan)
   endif(use-githash)
   include_directories(${FIFECHAN_INCLUDE})
   link_directories(${FIFECHAN_LIBDIR})
-  configure_file (
-    "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
-    "${PROJECT_BINARY_DIR}/fifechan.i"
-    )
+  if(build-python)
+    configure_file (
+      "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
+      "${PROJECT_BINARY_DIR}/fifechan.i"
+      )
+   endif(build-python)
 endif(fifechan)
 
 if(cegui)  
-  foreach(filename ${FIFE_CEGUI_SWIG})
-    set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-  endforeach(filename ${FIFE_CEGUI_SWIG})    
+  if(build-python)
+    foreach(filename ${FIFE_CEGUI_SWIG})
+      set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
+    endforeach(filename ${FIFE_CEGUI_SWIG})    
+   endif(build-python)
 endif(cegui)
 
 # TODO: Add the other gui libraries
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
-  "${PROJECT_BINARY_DIR}/fife.i"
-)
+if(build-python)
+  configure_file (
+    "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
+    "${PROJECT_BINARY_DIR}/fife.i"
+  )
 
-# Find SWIG and include the use swig file
-find_package(SWIG REQUIRED)
-include(${SWIG_USE_FILE})
+  # Find SWIG and include the use swig file
+  find_package(SWIG REQUIRED)
+  include(${SWIG_USE_FILE})
+endif(build-python)
 
 # Find ogg dependency
 find_package(PkgConfig QUIET)
@@ -520,64 +741,106 @@ include_directories(${OPENGL_INCLUDE_DIR})
 add_definitions(${PNG_DEFINITIONS})
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
-# Find python library and add include path for python headers
-find_package (PythonInterp)
-set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
-set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-find_package (PythonLibs)
-include_directories (${PYTHON_INCLUDE_PATH})
+if(build-python)
+  # Find python library and add include path for python headers
+  find_package (PythonInterp)
+  set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
+  set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
+  find_package (PythonLibs)
+  include_directories (${PYTHON_INCLUDE_PATH})
 
-set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
+  set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
-set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
+  set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
-swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i"  ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
-swig_link_libraries(fife ${PYTHON_LIBRARIES})
-swig_link_libraries(fife ${SDL2_LIBRARY}
-                         ${SDL2_IMAGE_LIBRARIES}
-                         ${SDL2_TTF_LIBRARIES}
-                         ${OPENAL_LIBRARY})
-swig_link_libraries(fife ${Boost_LIBRARIES})
-swig_link_libraries(fife ${PNG_LIBRARIES})
-swig_link_libraries(fife ${VORBISFILE_LIBRARY})
-swig_link_libraries(fife ${VORBIS_LIBRARY})
-swig_link_libraries(fife ${OGG_LIBRARIES})
-swig_link_libraries(fife ${TinyXML_LIBRARIES})
-swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
+  swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i"  ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  swig_link_libraries(fife ${PYTHON_LIBRARIES})
+  swig_link_libraries(fife ${SDL2_LIBRARY}
+                           ${SDL2_IMAGE_LIBRARIES}
+                           ${SDL2_TTF_LIBRARIES}
+                           ${OPENAL_LIBRARY})
+  swig_link_libraries(fife ${Boost_LIBRARIES})
+  swig_link_libraries(fife ${PNG_LIBRARIES})
+  swig_link_libraries(fife ${VORBISFILE_LIBRARY})
+  swig_link_libraries(fife ${VORBIS_LIBRARY})
+  swig_link_libraries(fife ${OGG_LIBRARIES})
+  swig_link_libraries(fife ${TinyXML_LIBRARIES})
+  swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
 
-if(fifechan)
-  set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
-  swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
-  swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
-  swig_link_libraries(fifechan ${FIFECHAN_LIBS})
-  swig_link_libraries(fife ${FIFECHAN_LIBS})
-endif(fifechan)
+  if(fifechan)
+    set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
+    swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
+    swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
+    swig_link_libraries(fifechan ${FIFECHAN_LIBS})
+    swig_link_libraries(fife ${FIFECHAN_LIBS})
+  endif(fifechan)
 
-if(cegui)
-  swig_link_libraries(fife ${CEGUI_LIBRARIES})
-  swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
-endif(cegui)
+  if(cegui)
+    swig_link_libraries(fife ${CEGUI_LIBRARIES})
+    swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+  endif(cegui)
 
-#
-# Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
-#
-execute_process(
-  COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+  #
+  # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
+  #
+  execute_process(
+    COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
-# Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
-if(NOT WIN32)
-  STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
-endif(NOT WIN32)
+  # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
+  if(NOT WIN32)
+    STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
+  endif(NOT WIN32)
 
-message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
+  message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
-install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(FILES       ${PROJECT_BINARY_DIR}/fife.py                       DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${PROJECT_BINARY_DIR}/fife.py                       DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 
-if(fifechan)
-  install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-endif(fifechan)
+  if(fifechan)
+    install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+    install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  endif(fifechan)
+endif(build-python)
+
+if(build-library)
+  add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  set_target_properties(fife PROPERTIES SOVERSION ${FIFE_MAJOR_VERSION})
+  target_link_libraries(fife ${SDL2_LIBRARY}
+                             ${SDL2_IMAGE_LIBRARIES}
+                             ${SDL2_TTF_LIBRARIES}
+                             ${OPENAL_LIBRARY})
+  target_link_libraries(fife ${Boost_LIBRARIES})
+  target_link_libraries(fife ${PNG_LIBRARIES})
+  target_link_libraries(fife ${VORBISFILE_LIBRARY})
+  target_link_libraries(fife ${VORBIS_LIBRARY})
+  target_link_libraries(fife ${OGG_LIBRARIES})
+  target_link_libraries(fife ${TinyXML_LIBRARIES})
+  target_link_libraries(fife ${OPENGL_gl_LIBRARY})
+  target_link_libraries(fife ${FIFECHAN_LIBS})
+  
+  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+  install(FILES ${PROJECT_BINARY_DIR}/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+  MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
+  
+      FOREACH(HEADER ${${HEADER_LIST}})
+          get_filename_component(DIR ${HEADER} DIRECTORY)
+          string(REPLACE ${CMAKE_CURRENT_LIST_DIR}/engine "" DIR ${DIR})
+          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/${DIR})
+      ENDFOREACH(HEADER)
+
+  ENDMACRO(INSTALL_HEADERS_WITH_DIRECTORY)
+  
+  INSTALL_HEADERS_WITH_DIRECTORY(FIFE_CORE_HDR)
+  if(fifechan)
+    INSTALL_HEADERS_WITH_DIRECTORY(FIFE_FCHAN_HDR)
+  endif(fifechan)
+  if(cegui)
+    INSTALL_HEADERS_WITH_DIRECTORY(FIFE_CEGUI_HDR)
+  endif(cegui)
+  if(rocket)
+    INSTALL_HEADERS_WITH_DIRECTORY(FIFE_LROCKET_HDR)
+  endif(rocket)
+endif(build-library)
