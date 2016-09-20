@@ -816,6 +816,7 @@ endif(build-python)
 if(build-library)
   add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
   set_target_properties(fife PROPERTIES SOVERSION ${FIFE_MAJOR_VERSION})
+
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
