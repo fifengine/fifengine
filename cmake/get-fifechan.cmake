@@ -17,7 +17,7 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-MinGW.tar.gz
-      URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-MinGW.tar.gz
+      URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-shared-MinGW.tar.gz
       URL_MD5             1
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
@@ -35,8 +35,8 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VC14.zip
-      URL                 https://ci.appveyor.com/api/buildjobs/kbycmt20k0g1ah61/artifacts/fifechan-VC14.zip      
-      URL_MD5             c96b3b8451120a729c8cc88277b1d18c
+      URL                 https://ci.appveyor.com/api/buildjobs/wkajhh6nkohb29dh/artifacts/fifechan-shared-VC14.zip      
+      URL_MD5             b41cb9c717e5ad499a2ea8dbc85a161c
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
