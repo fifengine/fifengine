@@ -635,7 +635,7 @@ if(fifechan)
     foreach(filename ${FIFE_FCHAN_SWIG})
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
-    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
   endif(build-python)
   # TODO Change to search library once its been implemented for fifechan
   # https://github.com/fifengine/fifechan/issues/19
