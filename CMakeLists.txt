@@ -622,6 +622,12 @@ if(build-python)
   set(CMAKE_SWIG_IMPORTS_FCHAN "")
   set(CMAKE_SWIG_INCLUSIONS_FCHAN "")
 
+  # Find python library and add include path for python headers
+  find_package (PythonInterp)
+  set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
+  set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
+  find_package (PythonLibs)
+  
   foreach(filename ${FIFE_CORE_SWIG})
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach(filename ${FIFE_CORE_SWIG})
@@ -635,7 +641,11 @@ if(fifechan)
     foreach(filename ${FIFE_FCHAN_SWIG})
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
-    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+    if (PYTHON_VERSION_MAJOR LESS 3)
+      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
+    else (PYTHON_VERSION_MAJOR LESS 3)
+      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+    endif (PYTHON_VERSION_MAJOR LESS 3)
   endif(build-python)
   # TODO Change to search library once its been implemented for fifechan
   # https://github.com/fifengine/fifechan/issues/19
@@ -746,13 +756,9 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 #------------------------------------------------------------------------------
 
 if(build-python)
-  # Find python library and add include path for python headers
-  find_package (PythonInterp)
-  set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
-  set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-  find_package (PythonLibs)
   include_directories (${PYTHON_INCLUDE_PATH})
-
+  
+  
   set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
