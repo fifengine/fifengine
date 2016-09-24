@@ -39,15 +39,15 @@ def applyOnlySuitable(func,*args,**kwargs):
 	if hasattr(func,'__func__'):
 		code = func.__func__.__code__
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-	elif hasattr(func,'func_code'):
+	elif hasattr(func,'__code__'):
 		code = func.__code__
 		varnames = code.co_varnames[0:code.co_argcount]
 	elif hasattr(func,'__call__'):
 		func = func.__call__
-		if hasattr(func,'im_func'):
+		if hasattr(func,'__func__'):
 			code = func.__func__.__code__
 			varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-		elif hasattr(func,'func_code'):
+		elif hasattr(func,'__code__'):
 			code = func.__code__
 			varnames = code.co_varnames[0:code.co_argcount]
 
