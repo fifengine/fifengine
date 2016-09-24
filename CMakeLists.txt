@@ -108,6 +108,7 @@ message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
 message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
 message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
 message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
+message(STATUS "    Dependencies folder: '${PROJECT_SOURCE_DIR}/../fifengine-dependencies'.")
 message("")
 
 #------------------------------------------------------------------------------
@@ -122,7 +123,6 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/fifechan"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"    
   )
@@ -280,9 +280,11 @@ set (FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
 )
 
-#Header Fils
+#------------------------------------------------------------------------------
+#                                 Header Files                                         
+#------------------------------------------------------------------------------
 
-#Core
+# Core
 set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
@@ -450,19 +452,13 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.h
 )
   
-#CEGUI
+# CEGUI
 set (FIFE_CEGUI_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.h
 )
 
-#CEGUI-0
-set (FIFE_CEGUI-0_HDR
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/cegui-0manager.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui-0/base/cegui-0inputprocessor.h
-)
-
-#Fifechan
+# Fifechan
 set (FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.h
@@ -480,14 +476,16 @@ set (FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.h
 )
 
-#Librocket
+# Librocket
 set (FIFE_LROCKET_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
 )
 
-# SWIG files
+#------------------------------------------------------------------------------
+#                                 SWIG files                                         
+#------------------------------------------------------------------------------
 
 # Core
 set (FIFE_CORE_SWIG
@@ -628,6 +626,9 @@ if(build-python)
 endif(build-python)
 
 if(fifechan)
+
+  find_package(FifeChan COMPONENTS sdl REQUIRED)
+ 
   if(build-python)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
@@ -637,18 +638,9 @@ if(fifechan)
     endforeach(filename ${FIFE_FCHAN_SWIG})
     set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
   endif(build-python)
-  # TODO Change to search library once its been implemented for fifechan
-  # https://github.com/fifengine/fifechan/issues/19
-  set(FIFECHAN_INCLUDE ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/fifechan)
-  set(FIFECHAN_LIBDIR  ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib)
-  set(FIFECHAN_LIBS    fifechan fifechan_sdl)
-
-  message(STATUS "FIFECHAN_INCLUDE = '${FIFECHAN_INCLUDE}'")
-  message(STATUS "FIFECHAN_LIBDIR  = '${FIFECHAN_LIBDIR}'")
-  message(STATUS "FIFECHAN_LIBS    = '${FIFECHAN_LIBS}'")
 
   if(opengl)
-    set(FIFECHAN_LIBS ${FIFECHAN_LIBS} fifechan_opengl)
+    find_package(FifeChan COMPONENTS opengl REQUIRED)
     add_definitions(-DHAVE_OPENGL)
   endif(opengl)
   if(zip)
@@ -673,8 +665,8 @@ if(fifechan)
     )
     add_definitions(-DFIFE_GIT_HASH=${GIT_COMMIT_HASH})
   endif(use-githash)
-  include_directories(${FIFECHAN_INCLUDE})
-  link_directories(${FIFECHAN_LIBDIR})
+  include_directories(${FIFECHAN_INCLUDE_DIR})
+  link_directories(${FIFECHAN_LIBRARIES})
   if(build-python)
     configure_file (
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
@@ -775,8 +767,8 @@ if(build-python)
     set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
     swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
     swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
-    swig_link_libraries(fifechan ${FIFECHAN_LIBS})
-    swig_link_libraries(fife ${FIFECHAN_LIBS})
+    swig_link_libraries(fifechan ${FIFECHAN_LIBRARIES})
+    swig_link_libraries(fife ${FIFECHAN_LIBRARIES})
   endif(fifechan)
 
   if(cegui)
@@ -828,7 +820,7 @@ if(build-library)
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
   target_link_libraries(fife ${OPENGL_gl_LIBRARY})
-  target_link_libraries(fife ${FIFECHAN_LIBS})
+  target_link_libraries(fife ${FIFECHAN_LIBRARIES})
   
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
   install(FILES ${PROJECT_BINARY_DIR}/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
