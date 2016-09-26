@@ -66,8 +66,6 @@ class Setting(object):
 		does not exist this file will be copied into the place of the settings_file.  This file
 		must exist in the root directory of your project!
 		@type default_settings_file: C{string}
-		@param settings_gui_xml: If you specify this parameter you can customize the look
-		of the settings dialog box.
 		@param copy_dist: Copies the default settings file to the settings_file location.  If
 		this is False it will create a new empty setting file.
 		@param serializer: Overrides the default XML serializer
@@ -520,8 +518,6 @@ class SettingEntry(object):
 		@type module: C{String}
 		@param name: The Setting's name
 		@type name: C{String}
-		@param widgetname: The name of the widget that is used to change this
-		setting
 		@param applyfunction: function that makes the changes when the Setting is
 		saved
 		@type applyfunction: C{function}
