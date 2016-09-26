@@ -1,7 +1,7 @@
 ![FIFE LOGO](https://raw.githubusercontent.com/fifengine/fifengine/master/doc/logo/FIFE_small_c3.png)
 
-FIFE
-------------
+# FIFE
+
 Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine written in C++.
 It comes with Python bindings allowing users to create games using Python as well as C++. 
 The engine is extendable and enables you to add any feature you can imagine to your project.
@@ -12,65 +12,61 @@ The engine is extendable and enables you to add any feature you can imagine to y
 | Continuous Integration | Linux |   Mac    | Windows |
 |:----------------------:|:-----:|:--------:|:-------:|
 | **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
-| **Development Releases**  |   -    |    -     | [fifengine.zip](https://ci.appveyor.com/api/projects/fifengine/fifengine/artifacts/fifengine.zip?all=successful) |
+| **Development Releases**  |   -    |    -     | [All artifacts](https://ci.appveyor.com/project/jakoch/fifengine/build/artifacts) |
 
 
-Table of contents
------------------
-1. [Features]        (#1-features)
-2. [License]         (#2-license)
-3. [FIFE Clients]    (#3-fife-clients)
-4. [Troubleshooting] (#5-troubleshooting)
-5. [Feedback]        (#6-feedback)
+# Table of contents
+1. [Features]         (#1-features)
+2. [License]          (#2-license)
+3. [Tests]            (#3-tests)
+4. [Python Demos]     (#4-python-demos)
+6. [Python Tutorials] (#5-python-tutorials)
+5. [C++ Tutorials]    (#6-c-tutorials)
+7. [Troubleshooting]  (#7-troubleshooting)
+8. [Feedback]         (#8-feedback)
 
+## 1) Features
 
-1) Features
------------
 A complete list of the features that FIFE offers can be found at the project 
 wiki:
  * https://github.com/fifengine/fifengine/wiki/Features
 
 
-2) License
-----------
-The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
- * http://www.gnu.org/licenses/lgpl-2.1.html
+## 2) License
+
+The source code (*.cpp, *.h & *.py) is licensed under [LGPL v2.1 or newer](http://www.gnu.org/licenses/lgpl-2.1.html):
 
 Content was taken from a lot a lot of different 3rd party sources. Therefore 
 each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
 
 
-3) FIFE Clients
----------------
+## 3) Tests
+
+The test tool can be found within the `<FIFE>/tests/fife_test` directory.
+You can launch it by running `run.py`. Open the console with `F10`.
+To run a test enter `run` and the test name like `PathfinderTest`.
+
+## 4) Python Demos
 
 ### [Editor](https://github.com/fifengine/fifengine-editor)
-The editor tool can be found within the [fifengine-editor repo](https://github.com/fifengine/fifengine-editor). You
-can launch it by running `run.py`. It is used to edit map files for the tech
-demo (rio do hola).  Other clients extend it and use it to edit their maps.
+The Python based editor tool can be found within the [fifengine-editor repo](https://github.com/fifengine/fifengine-editor).
+You can launch it by running `run.py`. It is used to edit map files for the [Rio De Hola demo](https://github.com/fifengine/fifengine-demos/tree/master/rio_de_hola). Other clients extend it and use it to edit their maps.
   
-### Tests
-The test tool can be found within the `<FIFE>/tests/fife_test` directory. You
-can launch it by running `run.py`. Open the console with `F10`. To run a test
-enter `run` and the test name like `PathfinderTest`.
-
 ### [Rio De Hola](https://github.com/fifengine/fifengine-demos/tree/master/rio_de_hola)
 Rio de hola is a technology demo showing off many of the FIFE features.  It is 
-located in the `<FIFE>/demos/rio_de_hola` directory and can be launched by 
-running run.py.  It was at one time meant to be an example game but we have 
-moved away from that idea and it is now more of a technology demo and a 
-playground for developers to test their code.  It does serve as a good starting
-point for people wishing to play around with FIFE or base your game off of.
+located in the `rio_de_hola` directory and can be launched by running `run.py`. 
+Once started as an example game, it's now a playground for developers to test their code. 
+It serves as a good starting point for own game developments.
 
-### [Shooter Demo](https://github.com/fifengine/fifengine-demos/tree/master/shooter)
+### [Shooter](https://github.com/fifengine/fifengine-demos/tree/master/shooter)
 The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
-It is a simple side scrolling shooter that has a main menu, one level and an
-end boss.  Try your luck and see if you can defeat the boss!
+It is a simple side scrolling shooter that has a main menu, one level and an end boss.
+Try your luck and see if you can defeat the boss!
 
-### [PyChan Demo](https://github.com/fifengine/fifengine-demos/tree/master/pychan_demo)
-Last but not least there is an example client residing in 
-`<FIFE>/demos/pychan_demo` that shows how the pychan GUI library works.
-Start the GUI demo application by running `pychan_demo.py`.
+### [PyChan](https://github.com/fifengine/fifengine-demos/tree/master/pychan_demo)
+There is an example client residing in `pychan_demo` that shows how the pychan GUI library works.
+You may start the GUI demo application by running `pychan_demo.py`.
 
 ### Configuring the Editor and Demos
 The engine utilizes special settings files for configuring FIFE. This file is 
@@ -85,8 +81,17 @@ with default values.  For more information on FIFE settings please see the
 wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 
 
-4) Troubleshooting
-------------------
+## 5) [Python Tutorials](https://github.com/fifengine/python-tutorials)
+
+Our Python tutorials demonstrate how to use the engine when working with Python.
+
+
+## 6) [C++ Tutorials](https://github.com/fifengine/cpp-tutorials)
+
+There is also a set of C++ tutorials demonstrating the usage of the engine, when working with C++.
+
+
+## 7) Troubleshooting
 
 ### Video Card/Driver Issues
 There are some known driver/card combinations that exhibit some problems with
@@ -104,8 +109,8 @@ hear sound while running a FIFE client, run `oalinst.exe` that ships with the
 Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
 
-5) Feedback
------------
+## 8) Feedback
+
 We appreciate every kind of feedback concerning the release, the project in 
 general and the bundled techdemo. Feedback is a great way to help us to improve 
 FIFE. If you would like to get in contact with us and provide feedback you can 
