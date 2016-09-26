@@ -785,8 +785,7 @@ if(build-python)
   )
 
   # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
-  #STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES})
-  file(TO_NATIVE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
+  file(TO_CMAKE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
