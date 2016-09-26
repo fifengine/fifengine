@@ -41,7 +41,7 @@ addons:
     - libtinyxml-dev
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml; fi
 
 install:
@@ -59,6 +59,9 @@ script:
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
    - make
+
+after_script: 
+   - cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet `git ls-files engine\/core/\*.cpp`
 
 notifications:
   irc: "irc.freenode.org#fife"
