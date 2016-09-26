@@ -61,7 +61,7 @@ script:
    - make
 
 after_script: 
-   - cd fifengine/fifengine
+   - cd /home/travis/build/fifengine/fifengine
    - cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet `git ls-files engine\/core/\*.cpp`
 
 notifications:
