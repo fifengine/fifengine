@@ -739,10 +739,10 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 if(build-python)
   # Find python library and add include path for python headers
-  find_package (PythonInterp)
+  find_package (PythonInterp 2 EXACT)
   set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
   set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-  find_package (PythonLibs)
+  find_package (PythonLibs ${PYTHON_VERSION_STRING} EXACT)
   include_directories (${PYTHON_INCLUDE_PATH})
 
   set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
