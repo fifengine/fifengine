@@ -54,7 +54,6 @@ install:
 
 script:
   #- sudo scons install-python
-   - cd ..
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
    - make
