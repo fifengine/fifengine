@@ -41,14 +41,13 @@ addons:
     - libtinyxml-dev
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml; fi
 
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    - cd fifechan
-    - cmake .
+    - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
     - make
     - sudo make install
     - cd ..
@@ -59,6 +58,10 @@ script:
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
    - make
+
+after_script: 
+   - cd /home/travis/build/fifengine/fifengine
+   - cppcheck  --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core
 
 notifications:
   irc: "irc.freenode.org#fife"

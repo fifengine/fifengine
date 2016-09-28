@@ -636,7 +636,7 @@ if(fifechan)
     foreach(filename ${FIFE_FCHAN_SWIG})
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
-    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
   endif(build-python)
 
   if(opengl)
@@ -739,10 +739,10 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 if(build-python)
   # Find python library and add include path for python headers
-  find_package (PythonInterp)
+  find_package (PythonInterp 2 EXACT)
   set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
   set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-  find_package (PythonLibs)
+  find_package (PythonLibs ${PYTHON_VERSION_STRING} EXACT)
   include_directories (${PYTHON_INCLUDE_PATH})
 
   set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
@@ -780,13 +780,12 @@ if(build-python)
   # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
   #
   execute_process(
-    COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" 
+    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
   # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
-  if(NOT WIN32)
-    STRING(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES} )
-  endif(NOT WIN32)
+  file(TO_CMAKE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 

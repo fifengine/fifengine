@@ -76,7 +76,6 @@
 				FIFE_VERSION, \
 				FIFE_GIT_HASH \
 			)
-		#endif
 	#endif
 #else
 	#define FIFE_GIT_HASH ""

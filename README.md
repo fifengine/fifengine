@@ -16,13 +16,14 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 
 # Table of contents
-1. [Features]        (#1-features)
-2. [License]         (#2-license)
-3. [Tests]           (#3-tests)
-4. [Python Demos]    (#4-python-demos)
-5. [C++ Demos]       (#5-c-demos)
-6. [Troubleshooting] (#6-troubleshooting)
-7. [Feedback]        (#7-feedback)
+1. [Features]         (#1-features)
+2. [License]          (#2-license)
+3. [Tests]            (#3-tests)
+4. [Python Demos]     (#4-python-demos)
+6. [Python Tutorials] (#5-python-tutorials)
+5. [C++ Tutorials]    (#6-c-tutorials)
+7. [Troubleshooting]  (#7-troubleshooting)
+8. [Feedback]         (#8-feedback)
 
 ## 1) Features
 
@@ -80,13 +81,17 @@ with default values.  For more information on FIFE settings please see the
 wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
 
 
-## 5) [C++ Demos](https://github.com/fifengine/cpp-tutorials)
+## 5) [Python Tutorials](https://github.com/fifengine/python-tutorials)
 
-There is also a set of C++ tutorials demonstrating the usage of the engine.
-They can be found in their own [CPP-Tutorials repo](https://github.com/fifengine/cpp-tutorials).
+Our Python tutorials demonstrate how to use the engine when working with Python.
 
 
-## 6) Troubleshooting
+## 6) [C++ Tutorials](https://github.com/fifengine/cpp-tutorials)
+
+There is also a set of C++ tutorials demonstrating the usage of the engine, when working with C++.
+
+
+## 7) Troubleshooting
 
 ### Video Card/Driver Issues
 There are some known driver/card combinations that exhibit some problems with
@@ -104,7 +109,7 @@ hear sound while running a FIFE client, run `oalinst.exe` that ships with the
 Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 
 
-## 7) Feedback
+## 8) Feedback
 
 We appreciate every kind of feedback concerning the release, the project in 
 general and the bundled techdemo. Feedback is a great way to help us to improve 
