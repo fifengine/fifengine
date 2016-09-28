@@ -24,12 +24,12 @@
 #include <vector>
 
 // 3rd party includes
+#include <tinyxml.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "ext/tinyxml/fife_tinyxml.h"
 #include "model/model.h"
 #include "model/structures/layer.h"
 #include "model/structures/instance.h"

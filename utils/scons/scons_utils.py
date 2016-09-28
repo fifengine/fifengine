@@ -120,17 +120,13 @@ def gen_swig_interface(templatefile, intfiles, outdir, outfile, importfiles = No
 		open(interfacefile, 'w').write(template.substitute(inclusions=inclusions, imports=''))
 
 def get_fife_version(srcpath):
+	# TODO one could use FIFE_VERSION here
 	MAJOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MAJOR_VERSION\s+(.*)")
 	MINOR_VERSION_PATTERN = re.compile(r"#define\s+FIFE_MINOR_VERSION\s+(.*)")
-	PATCH_VERSION_PATTERN = re.compile(r"#define\s+FIFE_PATCH_VERSION\s+(.*)")
-	PRERELEASE_TYPE_PATTERN = re.compile(r"#define\s+FIFE_PRERELEASE_TYPE\s+(.*)")
-	PRERELEASE_VERSION_PATTERN = re.compile(r"#define\s+FIFE_PRERELEASE_VERSION\s+(.*)")
-	patterns = [MAJOR_VERSION_PATTERN,
-				MINOR_VERSION_PATTERN,
-				PATCH_VERSION_PATTERN,
-				PRERELEASE_TYPE_PATTERN,
-				PRERELEASE_VERSION_PATTERN]
-	
+	PATCH_VERSION_PATTERN = re.compile(r"#define\s+FIFE_PATCH_VERSION\s+(.*)")	
+
+	patterns = [MAJOR_VERSION_PATTERN, MINOR_VERSION_PATTERN, PATCH_VERSION_PATTERN]
+
 	source = open(os.path.join(srcpath, 'version.h'), 'r').read()
 	versionInfo = []
 	for pattern in patterns:

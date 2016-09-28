@@ -26,6 +26,7 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 
 // 3rd party library includes
 

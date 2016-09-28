@@ -357,9 +357,9 @@ namespace FIFE {
 		m_eventmanager->processEvents();
 		m_timemanager->update();
 
+        m_renderbackend->clearBackBuffer();
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
-			m_renderbackend->clearBackBuffer();
 			m_offrenderer->render();
 		} else {
 			m_model->update();

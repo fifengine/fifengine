@@ -27,7 +27,7 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <vorbisfile.h>
+#include <vorbis/vorbisfile.h>
 #include <boost/scoped_ptr.hpp>
 
 // FIFE includes

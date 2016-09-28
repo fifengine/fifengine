@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_CEGUIMANAGER
-#define FIFE_GUI_CEGUIMANAGER
+#ifndef FIFE_GUI_CEGuiManager
+#define FIFE_GUI_CEGuiManager
 
 // Standard C++ library includes
 
@@ -99,4 +99,4 @@ namespace FIFE {
 	};
 }
 
-#endif //FIFE_GUI_CEGUIMANAGER
+#endif //FIFE_GUI_CEGuiManager

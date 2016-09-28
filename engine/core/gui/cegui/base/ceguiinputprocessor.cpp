@@ -22,7 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <CEGUI/CEGUI.h>
+#include <cegui-0/CEGUI/CEGUI.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -76,12 +76,12 @@ namespace FIFE {
 		switch(event.type) {
 			case SDL_KEYDOWN:
 				if (m_keymap.find(event.key.keysym.sym) != m_keymap.end())
-					consumed = CEGUI::System::getSingleton().injectKeyDown(m_keymap[event.key.keysym.sym]);
+					consumed |= CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyDown(m_keymap[event.key.keysym.sym]);
 				break;
 				
 			case SDL_KEYUP:
 				if (m_keymap.find(event.key.keysym.sym) != m_keymap.end())
-					consumed = CEGUI::System::getSingleton().injectKeyUp(m_keymap[event.key.keysym.sym]);
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyUp(m_keymap[event.key.keysym.sym]);
 				break;
 				
 			default:
@@ -105,15 +105,15 @@ namespace FIFE {
 			case SDL_MOUSEBUTTONDOWN:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::LeftButton);
 						break;
 						
 					case SDL_BUTTON_RIGHT:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::RightButton);
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::RightButton);
 						break;
 						
 					case SDL_BUTTON_MIDDLE:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MiddleButton) ;
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::MiddleButton) ;
 						break;
 						
 					default:
@@ -124,15 +124,15 @@ namespace FIFE {
 			case SDL_MOUSEBUTTONUP:
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::LeftButton);
 						break;
 						
 					case SDL_BUTTON_RIGHT:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::RightButton);
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::RightButton);
 						break;
 						
 					case SDL_BUTTON_MIDDLE:
-						consumed = CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::MiddleButton) ;
+						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::MiddleButton) ;
 						break;
 						
 					default:
@@ -143,12 +143,13 @@ namespace FIFE {
 			case SDL_MOUSEWHEEL:
 				// wheel up
 				if (event.wheel.y > 0) {
-					consumed = CEGUI::System::getSingleton().injectMouseWheelChange(1);
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(1);
 				// wheel down
 				} else if (event.wheel.y < 0) {
-					consumed = CEGUI::System::getSingleton().injectMouseWheelChange(-1);
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(-1);
 				}
 				break;
+
 			default:
 				;
 		}
@@ -157,7 +158,7 @@ namespace FIFE {
 	}
 	
 	bool CEGuiInputProcessor::processMouseMotion(SDL_Event& event) {
-	    return CEGUI::System::getSingleton().injectMousePosition(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+	    return CEGUI::System::getSingleton().getDefaultGUIContext().injectMousePosition(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
 	}
 
 	void CEGuiInputProcessor::initializeKeyMap() {

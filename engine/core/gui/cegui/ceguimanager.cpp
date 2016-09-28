@@ -22,8 +22,8 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
+#include <cegui-0/CEGUI/CEGUI.h>
+#include <cegui-0/CEGUI/RendererModules/OpenGL/GLRenderer.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -57,7 +57,7 @@ namespace FIFE {
 	void CEGuiManager::turn() {
 		injectTimePulse();
 		
-		CEGUI::System::getSingleton().renderGUI();
+			CEGUI::System::getSingleton().renderAllGUIContexts();
 	}
 	
 	void CEGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -69,7 +69,7 @@ namespace FIFE {
 	
 	void CEGuiManager::setRootWindow(CEGUI::Window* root) {
 		m_guiRoot = root;
-		CEGUI::System::getSingleton().setGUISheet(m_guiRoot);
+		CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(m_guiRoot);
 	}
 	
 	CEGUI::Window* CEGuiManager::getRootWindow() {
@@ -79,8 +79,10 @@ namespace FIFE {
 	void CEGuiManager::injectTimePulse() {
 		
 		double timeNow = TimeManager::instance()->getTime() / 1000.0;
-		
-		CEGUI::System::getSingleton().injectTimePulse(float(timeNow - m_lastTimePulse));        
+		float time_pulse = float(timeNow - m_lastTimePulse);	
+
+		CEGUI::System::getSingleton().injectTimePulse(time_pulse);
+		CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(time_pulse);        
 		
 		m_lastTimePulse = timeNow;
 	}
