@@ -700,7 +700,7 @@ if(build-python)
   if("${SWIG_VERSION}" VERSION_EQUAL "3.0.8")
     message(FATAL_ERROR "You are using SWIG v3.0.8.\n 
                          This version doesn't work with fifengine.\n 
-                         Please upgrade you version of SWIG.")
+                         Please upgrade SWIG.")
   endif()
 
   # include the use swig file
