@@ -48,16 +48,16 @@ install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
-    - make
+    - make -j2
     - sudo make install
     - cd ..
 
 script:
-  #- sudo scons install-python
    - cd ..
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
-   - make
+   - make -j2
+   - sudo make install
 
 after_script: 
    - cd /home/travis/build/fifengine/fifengine
