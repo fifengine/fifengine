@@ -4,6 +4,7 @@
 
 ## [0.4.0] - 2016-xx-xx
 
+* removed "scons" build system
 * rename "cegui-0" (v0.8+) to "cegui"
 * removed cegui compatibility layer for versions below v0.7.9
 

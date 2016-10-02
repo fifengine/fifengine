@@ -138,13 +138,13 @@ after_build:
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
-artifacts:
-  - path: 'libfife\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip'
-    name: LibfifeReleaseArtifact
-  - path: 'dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe'
-    name: Python27InstallerReleaseArtifact
-  - path: '\libfife-dependencies-*.zip'
-    name: DependenciesArtifact
+#artifacts:
+#  - path: 'libfife\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip'
+#    name: LibfifeReleaseArtifact
+#  - path: 'dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe'
+#    name: Python27InstallerReleaseArtifact
+#  - path: '\libfife-dependencies-*.zip'
+#    name: DependenciesArtifact
 
 # deploy to Github Releases on tag push
 deploy:
