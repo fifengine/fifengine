@@ -22,11 +22,11 @@ environment:
     # VS 14 + Py2.7
     - generator: "Visual Studio 14"  
       PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.9" 
+      PYTHON_VERSION: "2.7" 
     # VS 14 + Py3.4
     - generator: "Visual Studio 14"  
       PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.3"  
+      PYTHON_VERSION: "3.4"  
     #- generator: "MinGW Makefiles"
 
 matrix:
@@ -134,9 +134,9 @@ after_build:
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=%APPVEYOR_BUILD_VERSION% bdist_wininst --target-version=2.7
+  - python setup.py set_metadata --version=%APPVEYOR_BUILD_VERSION% bdist_wininst --target-version=%PYTHON_VERSION%
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py%PYTHON_VERSION%.exe"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
