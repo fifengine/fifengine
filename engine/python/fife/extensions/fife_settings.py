@@ -106,7 +106,7 @@ class Setting(object):
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
 			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':[True,False], 'LogToFile':[True,False],
-			'LogToPrompt':[True,False],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
+			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
 			}
@@ -124,7 +124,7 @@ class Setting(object):
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
 			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
-			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':0,
+			'LogToPrompt':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,

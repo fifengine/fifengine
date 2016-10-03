@@ -59,15 +59,5 @@ if __name__ == '__main__':
 		stats.strip_dirs()
 		stats.sort_stats('time', 'calls')
 		stats.print_stats(20)
-	else:
-		if TDS.get("FIFE", "UsePsyco"):
-			# Import Psyco if available
-			try:
-				import psyco
-				psyco.full()
-				print "Psyco acceleration in use"
-			except ImportError:
-				print "Psyco acceleration not used"
-		else:
-			print "Psyco acceleration not used"
+	else:		
 		main()

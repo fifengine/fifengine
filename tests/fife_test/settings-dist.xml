@@ -16,8 +16,6 @@
 		<Setting name="LogModules" type="list"> controller ; script </Setting>
 		<Setting name="PychanDebug" type="bool"> False </Setting>
 		<Setting name="LogToPrompt" type="bool"> True </Setting>
-		<Setting name="UsePsyco" type="bool"> False </Setting>
-		<Setting name="UsePsyco" type="bool"> False </Setting>
 		<Setting name="ProfilingOn" type="bool"> False </Setting>
 		<Setting name="LogToFile" type="bool"> True </Setting>
 		<Setting name="Lighting" type="int"> 0 </Setting>
