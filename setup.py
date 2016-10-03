@@ -37,7 +37,7 @@ class SetMetadataCommand(Command):
     def finalize_options(self):
         return
     def run(self):
-        print "setting package version to {}".format(self.version)
+        print("setting package version to {}".format(self.version))
         self.distribution.metadata.version = self.version
 
 
