@@ -96,6 +96,8 @@ if(WIN32)
 endif(WIN32)
 
 # defines
+
+# define for using TinyXML with Standard Template Library (STL) support enabled
 add_definitions(-DTIXML_USE_STL)
 
 #------------------------------------------------------------------------------
@@ -691,9 +693,19 @@ if(build-python)
     "${PROJECT_BINARY_DIR}/fife.i"
   )
 
-  # Find SWIG and include the use swig file
+  # find SWIG 
   find_package(SWIG REQUIRED)
+
+  # protect user from working with Swig v3.0.8, which is broken
+  if("${SWIG_VERSION}" VERSION_EQUAL "3.0.8")
+    message(FATAL_ERROR "You are using SWIG v3.0.8.\n 
+                         This version doesn't work with fifengine.\n 
+                         Please upgrade SWIG.")
+  endif()
+
+  # include the use swig file
   include(${SWIG_USE_FILE})
+
 endif(build-python)
 
 # Find ogg dependency
