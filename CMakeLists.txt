@@ -53,6 +53,8 @@ if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Set CMAKE_BUILD_TYPE to default '${CMAKE_BUILD_TYPE}'.")
 endif(NOT CMAKE_BUILD_TYPE)
 
+# if building a C++ library is enabled, then build a shared library by default
+# if you need a static library, set "-Dbuild-library=ON -DBUILD_SHARED_LIBS=OFF"
 if(build-library)
   set(BUILD_SHARED_LIBS ON CACHE BOOL "Build a shared or static library")
 endif(build-library)
