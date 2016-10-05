@@ -130,9 +130,9 @@ def run_all(tests):
 
 	print 80 * '='	
 	if errorsfound:
-		print 'Looks like there are some errors in the code, svn commit is probably not a good idea yet...'
+		print 'ERROR. One or more tests failed!'
 	else:
-		print 'All tests ran succesfully!'
+		print 'OK. All tests ran succesfully!'
 	print ''
 	
 def quit(dummy):
@@ -205,11 +205,12 @@ def run(automatic, selected_cases):
 
 def main():
 	usage = 'usage: %prog [options] [args]\n' + \
-		'Runs programs that test fife functionality. It is recommended that you run\n' + \
-		'these tests always before svn commit\n' + \
-		'you can give a list of test ids as arguments to the script. This is useful' + \
-		'when running same tests over and over again with little changes. Available test ids' + \
-		'can be seen from interactive menu (run script without any parameters)'
+		'test_fife is a test runner.\n' + \
+		'It enables you to test functionalities of fifengine core, extensions and the generated swig interface.\n' + \
+		'You can give a list of test ids as arguments to the script.\n' + \
+		'This is useful when running a test over and over again with little changes.\n' + \
+		'Available test ids can be seen from interactive menu (run script without any parameters).\n' + \
+		'You can also use "-a" to run all tests from the CLI.'
 	parser = optparse.OptionParser(usage)
 	parser.add_option("-a", "--automatic",
 			action="store_true", dest="automatic", default=False,
