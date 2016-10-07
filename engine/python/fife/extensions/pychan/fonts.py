@@ -38,7 +38,7 @@ class Font(object):
 
 		if self.typename == "truetype":
 			self.size = int(get("size"))
-			self.antialias = int(get("antialias",1))
+			self.antialias = bool(get("antialias",True))
 			self.color = map(int,get("color", "255,255,255").split(','))
 			self.font = get_manager().createFont(self.source, self.size, "")
 
