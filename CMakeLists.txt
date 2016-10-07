@@ -71,6 +71,9 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
+# organize targets into folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 #------------------------------------------------------------------------------
 #                                 Compiler Options                                         
 #------------------------------------------------------------------------------
@@ -283,6 +286,18 @@ set (FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
 )
+
+#------------------------------------------------------------------------------
+#                                 Source Groups                                         
+#------------------------------------------------------------------------------
+
+# define groups for source files in IDE project generation
+
+source_group(fife.core                  FILES ${FIFE_CORE_SRC})
+source_group(fife.core.vfs.zip          FILES ${FIFE_ZIP_SRC})
+source_group(fife.core.gui.cegui        FILES ${FIFE_CEGUI_SRC})
+source_group(fife.core.gui.fifechan     FILES ${FIFE_FCHAN_SRC})
+source_group(fife.core.gui.librocket    FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files                                         
