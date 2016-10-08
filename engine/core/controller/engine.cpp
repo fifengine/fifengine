@@ -305,7 +305,7 @@ namespace FIFE {
 		m_model->adoptCellGrid(new HexGrid());
 
 		m_cursor = new Cursor(m_renderbackend);
-		FL_LOG(_log, "Engine intialized");
+		FL_LOG(_log, "Engine initialized");
 	}
 
 	Engine::~Engine() {
