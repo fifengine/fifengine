@@ -64,7 +64,7 @@ script:
 after_script: 
    - cd /home/travis/build/fifengine/fifengine
    - cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core
-   - pylint --rcfile=.pylintrc ./engine/python/
+   - pylint --rcfile=.pylintrc ./engine/python/fife/
 
 notifications:
   irc: "irc.freenode.org#fife"
