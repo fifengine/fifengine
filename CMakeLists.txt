@@ -288,16 +288,14 @@ set (FIFE_LROCKET_SRC
 )
 
 #------------------------------------------------------------------------------
-#                                 Source Groups                                         
+#                         Source Groups for Source Files                                    
 #------------------------------------------------------------------------------
 
-# define groups for source files in IDE project generation
-
-source_group(fife.core                  FILES ${FIFE_CORE_SRC})
-source_group(fife.core.vfs.zip          FILES ${FIFE_ZIP_SRC})
-source_group(fife.core.gui.cegui        FILES ${FIFE_CEGUI_SRC})
-source_group(fife.core.gui.fifechan     FILES ${FIFE_FCHAN_SRC})
-source_group(fife.core.gui.librocket    FILES ${FIFE_LROCKET_SRC})
+source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
+source_group("sources\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_SRC})
+source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
+source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
+source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files                                         
@@ -470,6 +468,15 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/guimanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.h
 )
+
+# ZIP
+set (FIFE_ZIP_HDR
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
+)
   
 # CEGUI
 set (FIFE_CEGUI_HDR
@@ -501,6 +508,16 @@ set (FIFE_LROCKET_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
 )
+
+#------------------------------------------------------------------------------
+#                      Source Groups for Header Files                                    
+#------------------------------------------------------------------------------
+
+source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
+source_group("headers\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_HDR})
+source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
+source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
+source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
 
 #------------------------------------------------------------------------------
 #                                 SWIG files                                         
@@ -596,6 +613,16 @@ set (FIFE_FCHAN_SWIG
 set (FIFE_LROCKET_SWIG
   gui/librocket/librocketmanager.i
 )
+
+#------------------------------------------------------------------------------
+#                      Source Groups for SWIG Files                                    
+#------------------------------------------------------------------------------
+
+source_group("swig\\fife.core"                FILES ${FIFE_CORE_SWIG})
+source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
+source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG_LIB})
+source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG})
+source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 
 #------------------------------------------------------------------------------
 #                                 Find Packages                                         
