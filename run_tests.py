@@ -205,7 +205,7 @@ def run(automatic, selected_cases):
 
 def main():
 	usage = 'usage: %prog [options] [args]\n' + \
-		'test_fife is a test runner.\n' + \
+		'This is a test runner.\n' + \
 		'It enables you to test functionalities of fifengine core, extensions and the generated swig interface.\n' + \
 		'You can give a list of test ids as arguments to the script.\n' + \
 		'This is useful when running a test over and over again with little changes.\n' + \
