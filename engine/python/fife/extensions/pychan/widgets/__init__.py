@@ -32,6 +32,7 @@ Please look at the documentation of L{Widget} for details.
 from widget import Widget
 
 from layout import Spacer
+from adjustingcontainer import AdjustingContainer
 from containers import Container, VBox, HBox, Window
 from label import Label
 from icon import Icon
@@ -57,6 +58,7 @@ WIDGETS = {
 	"VBox" : VBox,
 	"HBox" : HBox,
 	"ScrollArea" :ScrollArea,
+	"AdjustingContainer" : AdjustingContainer,
 
 	# Simple Widgets
 	"Icon" : Icon,
