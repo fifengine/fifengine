@@ -14,6 +14,9 @@ The engine is extendable and enables you to add any feature you can imagine to y
 | **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
 | **Development Releases**  |   -    |    -     | [All artifacts](https://ci.appveyor.com/project/jakoch/fifengine/build/artifacts) |
 
+| **Documentations** | | | |
+|:----------------------:|:----------------:|:-------:|:----------:|
+| [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.fifengine.net/doxygen) | [Python API](http://www.fifengine.net/epydoc) |
 
 # Table of contents
 1. [Features]         (#1-features)

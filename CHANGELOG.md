@@ -4,6 +4,7 @@
 
 ## [0.4.0] - 2016-xx-xx
 
+* removed Psyco JIT support (by removing "UsePsyco" and the related code)
 * removed "scons" build system
 * rename "cegui-0" (v0.8+) to "cegui"
 * removed cegui compatibility layer for versions below v0.7.9
@@ -37,7 +38,7 @@
 * Remove cell_pathfinding compatibility layer [t:775]
 * Fix typo in fife_settings
 
-===Misc===
+### Misc
 * Renamed all --with/--without scons options, fixes [t:797]
 * Add travis configuration by jakoch [t:784]
 * Modifying the versioning scheme [t:783]

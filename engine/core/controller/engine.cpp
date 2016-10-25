@@ -73,6 +73,7 @@
 #include "view/renderers/cellrenderer.h"
 #include "video/image.h"
 #include "engine.h"
+#include "version.h"
 
 #ifdef USE_COCOA
 
@@ -157,6 +158,7 @@ namespace FIFE {
 	void Engine::init() {
 		m_destroyed = false;
 
+		FL_LOG(_log, LMsg("Fifengine v") << FIFE::getVersion());
 		FL_LOG(_log, "================== Engine initialize start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
@@ -303,7 +305,7 @@ namespace FIFE {
 		m_model->adoptCellGrid(new HexGrid());
 
 		m_cursor = new Cursor(m_renderbackend);
-		FL_LOG(_log, "Engine intialized");
+		FL_LOG(_log, "Engine initialized");
 	}
 
 	Engine::~Engine() {
