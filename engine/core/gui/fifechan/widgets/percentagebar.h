@@ -79,7 +79,7 @@ namespace fcn
         void setOrientation(Orientation orientation);
 
         /**
-         * Gets the orientation of the percentage bar..
+         * Gets the orientation of the percentage bar.
          *
          * @return The orientation of the percentage bar.
          * @see setOrientation

@@ -225,7 +225,7 @@ namespace FIFE {
 			int32_t convertCoordToInt(const ModelCoordinate& coord) const;
 			
 			/** Convertes unique identifier to coordinate.
-			 * @param coord A const reference the integer id which should be converted.
+			 * @param cell A const reference to the integer id which should be converted.
 			 * @return A ModelCoordinate, contain the cell coordinate.
 			 */
 			ModelCoordinate convertIntToCoord(const int32_t cell) const;

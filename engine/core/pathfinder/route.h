@@ -104,17 +104,17 @@ namespace FIFE {
 		const Location& getEndNode();
 
 		/** Returns current location.
-		 * @param A const reference to the currently used location.
+		 * @return A const reference to the currently used location.
 		 */
 		const Location& getCurrentNode();
 
 		/** Returns previous location.
-		 * @param A const reference to the previous location.
+		 * @return A const reference to the previous location.
 		 */
 		const Location& getPreviousNode();
 
 		/** Returns next location.
-		 * @param A const reference to the next location.
+		 * @return A const reference to the next location.
 		 */
 		const Location& getNextNode();
 

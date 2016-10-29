@@ -570,7 +570,7 @@ namespace FIFE {
 			int32_t m_rotation;
 			//! rotation on previous round
 			int32_t m_oldRotation;
-			//! action on previous round. @NOTE: might become invalid, only used for address comparison
+			//! action on previous round. NOTE: might become invalid, only used for address comparison
 			Action* m_action;
 			//! speed on previous round
 			double m_speed;
