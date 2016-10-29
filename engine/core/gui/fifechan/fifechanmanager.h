@@ -92,7 +92,7 @@ namespace FIFE {
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(const std::string& backend, int32_t screenWidth, int32_t	creenHeight);
+			void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 
 			/** Resizes the top container.
 			 *
