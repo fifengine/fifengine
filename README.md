@@ -11,8 +11,8 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 | Continuous Integration | Linux |   Mac    | Windows |
 |:----------------------:|:-----:|:--------:|:-------:|
-| **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7laap81568c93x4p?svg=true)](https://ci.appveyor.com/project/jakoch/fifengine) | 
-| **Development Releases**  |   -    |    -     | [All artifacts](https://ci.appveyor.com/project/jakoch/fifengine/build/artifacts) |
+| **Build Status** | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Travis Build status](https://travis-ci.org/fifengine/fifengine.svg?branch=master)](https://travis-ci.org/fifengine/fifengine) | [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/github/fifengine/fifengine?branch=master&svg=true)](https://ci.appveyor.com/project/LinuxDonald/fifengine) | 
+| **Development Releases**  |   -    |    -     | [All artifacts](https://ci.appveyor.com/project/LinuxDonald/fifengine/build/artifacts) |
 
 | **Documentations** | | | |
 |:----------------------:|:----------------:|:-------:|:----------:|
@@ -30,9 +30,7 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 ## 1) Features
 
-A complete list of the features that FIFE offers can be found at the project 
-wiki:
- * https://github.com/fifengine/fifengine/wiki/Features
+A [complete list of the features](https://fifengine.github.io/fifengine-docs/user-manual/en/#_features) that FIFE offers can be found in the user-manual.
 
 
 ## 2) License
