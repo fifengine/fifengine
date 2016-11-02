@@ -25,12 +25,7 @@ endif(FIFECHAN_INCLUDE_DIR)
 #                       Find FIFECHAN_INCLUDE_DIR                                
 #------------------------------------------------------------------------------
 
-find_path(FIFECHAN_INCLUDE_DIR fifechan/fifechan.hpp)
-
-# append "fifechan" to include_dir, but only if it's not already added
-if(NOT FIFECHAN_INCLUDE_DIR MATCHES "fifechan$")
-    set(FIFECHAN_INCLUDE_DIR ${FIFECHAN_INCLUDE_DIR}/fifechan)
-endif()
+find_path(FIFECHAN_INCLUDE_DIR NAMES fifechan.hpp)
 
 #------------------------------------------------------------------------------
 #                       Find FIFECHAN_LIBRARY                              
