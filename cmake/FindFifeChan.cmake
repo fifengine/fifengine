@@ -25,7 +25,7 @@ endif(FIFECHAN_INCLUDE_DIR)
 #                       Find FIFECHAN_INCLUDE_DIR                                
 #------------------------------------------------------------------------------
 
-find_path(FIFECHAN_INCLUDE_DIR NAMES fifechan.hpp)
+find_path(FIFECHAN_INCLUDE_DIR NAMES fifechan.hpp PATH_SUFFIXES fifechan)
 
 #------------------------------------------------------------------------------
 #                       Find FIFECHAN_LIBRARY                              
