@@ -78,8 +78,8 @@ root directories.
 
 NOTE that the `settings.xml` file is auto generated and wont be there until you
 run the demos for the first time.  FIFE automatically fills the settings file
-with default values.  For more information on FIFE settings please see the 
-wiki page: https://github.com/fifengine/fifengine/wiki/Engine-settings
+with default values.  You find more information on [FIFE settings in the 
+Developer-Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/#_engine_settings).
 
 
 ## 5) [Python Tutorials](https://github.com/fifengine/python-tutorials)
