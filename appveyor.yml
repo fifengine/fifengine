@@ -162,4 +162,4 @@ deploy:
     branch: master                 # release from master branch only
     appveyor_repo_tag: true        # deploy on tag push only
   auth_token:                      # encrypted token from GitHub
-    secure: CAk9K6hUe6pEb6RFG5A49s790UFJibphWpeRsCm2itrxS1KDn1jTmwObE4/cyL/H
+    secure: Bi5esH9G3mPpMdDAyVXsbrvoOhHm9lf38NBI5BR85GDuBg4gE3Gm8nlprBQWhm7jXSZH9qc58MeC48B4YWqA/TjVBRqJ2n+H0dK0jLUZi4yo1kB+bDxkshZP7GtAC62wUSKF81aPY38kH3yj8AR3iUHaYUBRc54BkeWzsvJ3C1g=
