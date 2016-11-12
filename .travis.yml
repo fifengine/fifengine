@@ -66,6 +66,6 @@ deploy:
   provider: releases
   api_key:
     secure: Bi5esH9G3mPpMdDAyVXsbrvoOhHm9lf38NBI5BR85GDuBg4gE3Gm8nlprBQWhm7jXSZH9qc58MeC48B4YWqA/TjVBRqJ2n+H0dK0jLUZi4yo1kB+bDxkshZP7GtAC62wUSKF81aPY38kH3yj8AR3iUHaYUBRc54BkeWzsvJ3C1g=
-  file: Fifengine $(APPVEYOR_REPO_TAG_NAME)
+  file: Fifengine*.tar.gz
   on:
     repo: fifengine/fifengine
