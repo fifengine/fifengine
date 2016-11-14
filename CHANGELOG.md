@@ -1007,3 +1007,15 @@ Bugs:
 
 ### Non-code related changes
  * Switch from GPL 2.0 to LGPL 2.1 (or newer).
+
+[Unreleased]: https://github.com/fifengine/fifengine/compare/0.3.5...HEAD
+[0.3.5]: https://github.com/fifengine/fifengine/compare/0.3.4...0.3.5
+[0.3.4]: https://github.com/fifengine/fifengine/compare/0.3.3r3...0.3.4
+[0.3.3r3]: https://github.com/fifengine/fifengine/compare/0.3.3r2...0.3.3r3
+[0.3.3r2]: https://github.com/fifengine/fifengine/compare/0.3.3...0.3.3r2
+[0.3.3]: https://github.com/fifengine/fifengine/compare/0.3.2...0.3.3
+[0.3.2]: https://github.com/fifengine/fifengine/compare/0.3.1...0.3.2
+[0.3.1]: https://github.com/fifengine/fifengine/compare/0.3.0...0.3.1
+[0.3.0]:  https://github.com/fifengine/fifengine/compare/2009.0...0.3.0
+[2009.0]: https://github.com/fifengine/fifengine/compare/2008.1...2009.0
+[2008.1]: https://github.com/fifengine/fifengine/compare/2008.1
