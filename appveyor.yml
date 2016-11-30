@@ -7,7 +7,7 @@ branches:
 
 clone_depth: 5
 
-version: '{build}'
+version: '0.4.0.{build}'
 
 platform:
   - x86
@@ -120,13 +120,13 @@ after_build:
   # package dependencies artifact
   - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
   - cd C:\projects\fifengine-dependencies\includes
-  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-0.4.0-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-0.4.0-%COMPILER%.zip"
 
   # package libfife artifact
   - cd c:\fife\install
-  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-0.4.0-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-0.4.0-%COMPILER%.zip"
 
   # package Python Installer artifact
   - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
@@ -134,9 +134,9 @@ after_build:
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=%APPVEYOR_BUILD_VERSION% bdist_wininst --target-version="%PYTHON_VERSION%"
+  - python setup.py set_metadata --version=0.4.0 bdist_wininst --target-version="%PYTHON_VERSION%"
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py%PYTHON_VERSION%.exe"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py%PYTHON_VERSION%.exe"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
