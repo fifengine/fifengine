@@ -7,7 +7,7 @@ branches:
 
 clone_depth: 5
 
-version: '0.4.0.{build}'
+version: '{build}'
 
 platform:
   - x86
@@ -120,13 +120,13 @@ after_build:
   # package dependencies artifact
   - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
   - cd C:\projects\fifengine-dependencies\includes
-  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-0.4.0-%COMPILER%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-0.4.0-%COMPILER%.zip"
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
 
   # package libfife artifact
   - cd c:\fife\install
-  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-0.4.0-%COMPILER%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-0.4.0-%COMPILER%.zip"
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip"
 
   # package Python Installer artifact
   - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
