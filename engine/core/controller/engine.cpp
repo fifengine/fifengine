@@ -323,7 +323,7 @@ namespace FIFE {
 
 		delete m_imagemanager;
 		delete m_soundclipmanager;
-//		delete m_eventmanager;
+		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
 		delete m_offrenderer;
