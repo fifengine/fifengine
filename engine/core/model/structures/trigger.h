@@ -87,10 +87,10 @@ namespace FIFE {
 
 		/** Default constructor.
 		 *
-		 * @fixme I'm not sure if I actually want to be able to call
-		 * the default constructor.  Triggers should always be given
-		 * a name.  The maps trigger controller should guarantee the
-		 * uniqueness of the name.
+		 * TODO (fixme)
+         * I'm not sure if I actually want to be able to call the default constructor.
+         * Triggers should always be given a name.
+         * The maps trigger controller should guarantee the uniqueness of the name.
 		 */
 		Trigger();
 

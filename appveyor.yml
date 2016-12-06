@@ -1,6 +1,41 @@
 # Build worker image (VM template)
 image: Visual Studio 2015
 
+branches:
+  only:
+  - master
+
+clone_depth: 5
+
+version: '{build}'
+
+platform:
+  - x86
+
+configuration:
+  - Release
+  #- Debug
+
+environment:
+  MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
+  matrix:
+    # VS 14 + Py2.7
+    - generator: "Visual Studio 14"  
+      PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7" 
+    # VS 14 + Py3.4
+    - generator: "Visual Studio 14"  
+      PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"  
+    #- generator: "MinGW Makefiles"
+
+matrix:
+  fast_finish: true
+
+cache:
+  - C:\projects\fifengine-dependencies\downloads
+#  - C:\projects\fifengine-dependencies\includes
+
 # scripts that are called at very beginning, before repo cloning
 init:
   - date /T & time /T
@@ -20,39 +55,11 @@ init:
       }
   # There are multiple pre-installed versions of Python on Appveyor  
   # see https://www.appveyor.com/docs/installed-software/#python
-  - "SET PYTHON=C:\\Python27"
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - echo %PYTHON% %PYTHON_VERSION%
+  - "SET PATH=%PYTHON%;%PYTHON%\\bin;%PYTHON%\\Scripts;%PATH%"
   # Show version and architecture for Python
   - "%PYTHON%\\python.exe --version"
   - "%PYTHON%\\python.exe -c \"import struct; print(struct.calcsize('P') * 8)\""
-
-branches:
-  only:
-  - master
-
-clone_depth: 5
-
-version: '{build}'
-
-platform:
-  - x86
-
-configuration:
-  - Release
-  #- Debug
-
-environment:
-  MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
-  matrix:
-    - generator: "Visual Studio 14"    
-    #- generator: "MinGW Makefiles"
-
-matrix:
-  fast_finish: true
-
-cache:
-  - C:\projects\fifengine-dependencies\downloads
-#  - C:\projects\fifengine-dependencies\includes
 
 install:
   # set path to boost according to compiler toolchain
@@ -84,8 +91,6 @@ build_script:
     -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
     -DBOOST_ROOT="%boost_root%" 
     -DBOOST_LIBRARYDIR="%boost_librarydir%" 
-    -DPYTHON_INCLUDE_DIR="C:/Python27/include"
-    -DPYTHON_LIBRARY="C:/Python27/libs/python27.lib"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=ON
   # build
@@ -100,8 +105,6 @@ build_script:
     -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
     -DBOOST_ROOT="%boost_root%" 
     -DBOOST_LIBRARYDIR="%boost_librarydir%" 
-    -DPYTHON_INCLUDE_DIR="C:/Python27/include"
-    -DPYTHON_LIBRARY="C:/Python27/libs/python27.lib"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=OFF
   # build
@@ -131,9 +134,9 @@ after_build:
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=%APPVEYOR_BUILD_VERSION% bdist_wininst --target-version=2.7  
+  - python setup.py set_metadata --version=0.4.0 bdist_msi --target-version="%PYTHON_VERSION%"
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py%PYTHON_VERSION%.msi"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
@@ -159,4 +162,4 @@ deploy:
     branch: master                 # release from master branch only
     appveyor_repo_tag: true        # deploy on tag push only
   auth_token:                      # encrypted token from GitHub
-    secure: CAk9K6hUe6pEb6RFG5A49s790UFJibphWpeRsCm2itrxS1KDn1jTmwObE4/cyL/H
+    secure: Bi5esH9G3mPpMdDAyVXsbrvoOhHm9lf38NBI5BR85GDuBg4gE3Gm8nlprBQWhm7jXSZH9qc58MeC48B4YWqA/TjVBRqJ2n+H0dK0jLUZi4yo1kB+bDxkshZP7GtAC62wUSKF81aPY38kH3yj8AR3iUHaYUBRc54BkeWzsvJ3C1g=

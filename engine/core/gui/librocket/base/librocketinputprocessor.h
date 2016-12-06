@@ -57,11 +57,13 @@ namespace FIFE {
 		
 		/** Processes SDL input and converts it to librocket input, then forwards it to
 		 * the librocket context.
+         * 
+		 * NOTE There is no way to get, if an event is consumed by Rocket currently.
+		 *      This is for in case it gets implemented in the future.
 		 * 
 		 * @param evt The SDL input.
 		 * @return A boolean value indicating if the event was consumed by librocket or not.
-		 *          @NOTE There is not a way to get if an event is consumed by rocket currently. This is for
-		 *          in case it gets implemented in the future.
+    
 		 */
 		bool onSdlEvent(SDL_Event &evt);
 		

@@ -1,25 +1,21 @@
 language: cpp
-
 sudo: false
-
 matrix:
   include:
-    - os: linux
-      sudo: required
-      dist: trusty
-      compiler: clang
-    - os: linux
-      sudo: required
-      dist: trusty
-      compiler: gcc
-    - os: osx
-      compiler: clang
-    - os: osx
-      compiler: gcc
-
+  - os: linux
+    sudo: required
+    dist: trusty
+    compiler: clang
+  - os: linux
+    sudo: required
+    dist: trusty
+    compiler: gcc
+  - os: osx
+    compiler: clang
+  - os: osx
+    compiler: gcc
 git:
   depth: 5
-
 addons:
   apt:
     packages:
@@ -37,32 +33,39 @@ addons:
     - libboost-regex-dev
     - libboost-system-dev
     - libboost-filesystem-dev
-    - libboost-test-dev  
+    - libboost-test-dev
     - libtinyxml-dev
-
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml; fi
-
+- if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install
+  -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
+- if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image
+  sdl2_ttf allegro freetype openal-soft tinyxml; fi
+- if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
 install:
-    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
-    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
-    - make -j2
-    - sudo make install
-    - cd ..
-
+- git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+- mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
+- make -j2
+- sudo make install
+- cd ..
 script:
-   - cd ..
-   - mkdir build; cd build; cmake ../fifengine
-   - ls -alh .
-   - make -j2
-   - sudo make install
-
-after_script: 
-   - cd /home/travis/build/fifengine/fifengine
-   - cppcheck  --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core
-
+- cd ..
+- mkdir build; cd build; cmake ../fifengine
+- ls -alh .
+- make -j2
+- sudo make install
+after_script:
+- cd /home/travis/build/fifengine/fifengine
+- if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix
+  --std=c++11 --quiet -iengine/core/ext engine/core; fi
+- if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/;
+  fi
 notifications:
-  irc: "irc.freenode.org#fife"
+  irc: irc.freenode.org#fife
   email: false
+deploy:
+  provider: releases
+  api_key:
+    secure: Bi5esH9G3mPpMdDAyVXsbrvoOhHm9lf38NBI5BR85GDuBg4gE3Gm8nlprBQWhm7jXSZH9qc58MeC48B4YWqA/TjVBRqJ2n+H0dK0jLUZi4yo1kB+bDxkshZP7GtAC62wUSKF81aPY38kH3yj8AR3iUHaYUBRc54BkeWzsvJ3C1g=
+  file: Fifengine*.tar.gz
+  on:
+    repo: fifengine/fifengine

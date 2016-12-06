@@ -258,7 +258,7 @@ namespace FIFE {
 		 *  @param actionName name of the action
 		 *  @param target place where to move this instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
-		 *  @param costid id for special costs which is be used as extra multiplier.
+		 *  @param costId id for special costs which is be used as extra multiplier.
 		 */
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
 
@@ -570,7 +570,7 @@ namespace FIFE {
 			int32_t m_rotation;
 			//! rotation on previous round
 			int32_t m_oldRotation;
-			//! action on previous round. @NOTE: might become invalid, only used for address comparison
+			//! action on previous round. NOTE: might become invalid, only used for address comparison
 			Action* m_action;
 			//! speed on previous round
 			double m_speed;

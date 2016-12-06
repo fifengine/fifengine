@@ -382,7 +382,7 @@ namespace FIFE {
 			void callOnInstanceExited(Instance* instance);
 
 			/** Called when the blocking property of this cell changed.
-			 * @param block A boolean, true mark the cell as blocker.
+			 * @param blocks A boolean, true mark the cell as blocker.
 			 * @see CellChangeListener
 			 */
 			void callOnBlockingChanged(bool blocks);

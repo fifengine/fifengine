@@ -4,6 +4,7 @@
 
 ## [0.4.0] - 2016-xx-xx
 
+* removed Psyco JIT support (by removing "UsePsyco" and the related code)
 * removed "scons" build system
 * rename "cegui-0" (v0.8+) to "cegui"
 * removed cegui compatibility layer for versions below v0.7.9
@@ -37,7 +38,7 @@
 * Remove cell_pathfinding compatibility layer [t:775]
 * Fix typo in fife_settings
 
-===Misc===
+### Misc
 * Renamed all --with/--without scons options, fixes [t:797]
 * Add travis configuration by jakoch [t:784]
 * Modifying the versioning scheme [t:783]
@@ -1006,3 +1007,15 @@ Bugs:
 
 ### Non-code related changes
  * Switch from GPL 2.0 to LGPL 2.1 (or newer).
+
+[Unreleased]: https://github.com/fifengine/fifengine/compare/0.3.5...HEAD
+[0.3.5]: https://github.com/fifengine/fifengine/compare/0.3.4...0.3.5
+[0.3.4]: https://github.com/fifengine/fifengine/compare/0.3.3r3...0.3.4
+[0.3.3r3]: https://github.com/fifengine/fifengine/compare/0.3.3r2...0.3.3r3
+[0.3.3r2]: https://github.com/fifengine/fifengine/compare/0.3.3...0.3.3r2
+[0.3.3]: https://github.com/fifengine/fifengine/compare/0.3.2...0.3.3
+[0.3.2]: https://github.com/fifengine/fifengine/compare/0.3.1...0.3.2
+[0.3.1]: https://github.com/fifengine/fifengine/compare/0.3.0...0.3.1
+[0.3.0]:  https://github.com/fifengine/fifengine/compare/2009.0...0.3.0
+[2009.0]: https://github.com/fifengine/fifengine/compare/2008.1...2009.0
+[2008.1]: https://github.com/fifengine/fifengine/compare/2008.1

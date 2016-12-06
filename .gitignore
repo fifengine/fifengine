@@ -21,6 +21,11 @@ build/win32/build_environments/scons/engine_build_log.txt
 build/win32/build_environments/visual_studio_8/fife.vcproj
 build/win32/build_environments/visual_studio_9/fife.vcproj
 
+#CMAKE stuff
+build/win32/CMakeCache.txt
+build/win32/CMakeFiles
+build/win32/version.h
+
 # Ignore the dev kit
 build/win32/applications
 build/win32/binaries

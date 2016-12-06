@@ -52,13 +52,13 @@ namespace FIFE {
 		
 		/** Adds a gui manager to this hybrid manager.
 		 * 
-		 * @WARNING This object gains ownership of the added gui manager.
+		 * WARNING This object gains ownership of the added gui manager.
 		 */
 		void addGuiManager(IGUIManager* guiManager);
 		
 		/** Removes a gui manager from this hybrid manager.
 		 * 
-		 * @WARNING This object loses owenership of the removed gui manager.
+		 * WARNING This object loses owenership of the removed gui manager.
 		 */
 		void removeGuiManager(IGUIManager* guiManager);
 		
