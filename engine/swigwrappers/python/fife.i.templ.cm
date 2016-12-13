@@ -128,10 +128,21 @@ print s\n\
 	}
 }
 
-#define _FIFE_EXC_HANDLER(_fife_exc_type, _converted_type) \
+#define _FIFE_CONVERTED_EXC_HANDLER(_fife_exc_type, _converted_type) \
 	catch (FIFE::_fife_exc_type& _e) { \
 		PyErr_Clear(); \
 		SWIG_exception(_converted_type, _e.what()); \
+	}
+
+
+#define _FIFE_EXC_HANDLER(_fife_exc_type) \
+	catch (FIFE::_fife_exc_type& _e) { \
+		SWIG_Python_Raise( \
+			SWIG_NewPointerObj( \
+				new FIFE::_fife_exc_type(_e), \
+				SWIGTYPE_p_FIFE__##_fife_exc_type, SWIG_POINTER_OWN), \
+			#_fife_exc_type, SWIGTYPE_p_FIFE__##_fife_exc_type); \
+		SWIG_fail; \
 	}
 
 
@@ -143,6 +154,21 @@ print s\n\
 %}
 
 %exceptionclass FIFE::Exception;
+%exceptionclass FIFE::SDLException;
+%exceptionclass FIFE::NotFound;
+%exceptionclass FIFE::NotSet;
+%exceptionclass FIFE::IndexOverflow;
+%exceptionclass FIFE::InvalidFormat;
+%exceptionclass FIFE::CannotOpenFile;
+%exceptionclass FIFE::InvalidConversion;
+%exceptionclass FIFE::NotSupported;
+%exceptionclass FIFE::NameClash;
+%exceptionclass FIFE::Duplicate;
+%exceptionclass FIFE::ScriptException;
+%exceptionclass FIFE::EventException;
+%exceptionclass FIFE::GuiException;
+%exceptionclass FIFE::InconsistencyDetected;
+%exceptionclass FIFE::OutOfMemory;
 
 %feature("director:except") {
 	if ($error != NULL) {
@@ -156,7 +182,22 @@ print s\n\
 		$action
 	}
 	_FIFE_DIRECTOR_EXC_HANDLER()
-	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
+	_FIFE_EXC_HANDLER(SDLException)
+	_FIFE_EXC_HANDLER(NotFound)
+	_FIFE_EXC_HANDLER(NotSet)
+	_FIFE_EXC_HANDLER(IndexOverflow)
+	_FIFE_EXC_HANDLER(InvalidFormat)
+	_FIFE_EXC_HANDLER(CannotOpenFile)
+	_FIFE_EXC_HANDLER(InvalidConversion)
+	_FIFE_EXC_HANDLER(NotSupported)
+	_FIFE_EXC_HANDLER(NameClash)
+	_FIFE_EXC_HANDLER(Duplicate)
+	_FIFE_EXC_HANDLER(ScriptException)
+	_FIFE_EXC_HANDLER(EventException)
+	_FIFE_EXC_HANDLER(GuiException)
+	_FIFE_EXC_HANDLER(InconsistencyDetected)
+	_FIFE_EXC_HANDLER(OutOfMemory)
+	_FIFE_EXC_HANDLER(Exception)
 }
 
 @CMAKE_SWIG_INCLUSIONS@
