@@ -70,3 +70,7 @@ namespace FIFE {
 	};
 	std::ostream& operator<<(std::ostream& os, const Location& l);
 }
+
+namespace std {
+	%template(LocationVector) vector<FIFE::Location>;
+}
