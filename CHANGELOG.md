@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.4.0] - 2016-xx-xx
+## [0.4.0] - 2017-xx-xx
 
 * removed Psyco JIT support (by removing "UsePsyco" and the related code)
 * removed "scons" build system
