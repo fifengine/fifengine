@@ -67,7 +67,7 @@ namespace FIFE {
 		return returnValue.first->second;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
+	Trigger* TriggerController::createTriggerOnCoordinate(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
 		assert(layer);
 
 		Trigger* trigger = createTrigger(triggerName);
@@ -75,7 +75,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
+	Trigger* TriggerController::createTriggerOnCoordinates(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
 		assert(layer);
 
 		Trigger* trigger = createTrigger(triggerName);
@@ -85,7 +85,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, Layer* layer, const Rect& rec) {
+	Trigger* TriggerController::createTriggerOnRect(const std::string& triggerName, Layer* layer, const Rect& rec) {
 		assert(layer);
 		assert(layer->getCellCache());
 
@@ -97,7 +97,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, const Location& loc) {
+	Trigger* TriggerController::createTriggerOnLocation(const std::string& triggerName, const Location& loc) {
 		assert(loc.getLayer());
 		assert(loc.getLayer()->getCellCache());
 
@@ -106,7 +106,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, const std::vector<Location>& locs) {
+	Trigger* TriggerController::createTriggerOnLocations(const std::string& triggerName, const std::vector<Location>& locs) {
 		Trigger* trigger = createTrigger(triggerName);
 		for (std::vector<Location>::const_iterator it = locs.begin(); it != locs.end(); ++it) {
 			trigger->assign((*it).getLayer(), (*it).getLayerCoordinates());
@@ -114,7 +114,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, Cell* cell) {
+	Trigger* TriggerController::createTriggerOnCell(const std::string& triggerName, Cell* cell) {
 		assert(cell);
 
 		Trigger* trigger = createTrigger(triggerName);
@@ -122,7 +122,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, const std::vector<Cell*>& cells) {
+	Trigger* TriggerController::createTriggerOnCells(const std::string& triggerName, const std::vector<Cell*>& cells) {
 		Trigger* trigger = createTrigger(triggerName);
 		for (std::vector<Cell*>::const_iterator it = cells.begin(); it != cells.end(); ++it) {
 			trigger->assign(*it);
@@ -130,7 +130,7 @@ namespace FIFE {
 		return trigger;
 	}
 
-	Trigger* TriggerController::createTrigger(const std::string& triggerName, Instance* instance) {
+	Trigger* TriggerController::createTriggerOnInstance(const std::string& triggerName, Instance* instance) {
 		assert(instance);
 
 		Trigger* trigger = createTrigger(triggerName);
@@ -154,14 +154,14 @@ namespace FIFE {
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
+	void TriggerController::removeTriggerFromCoordinate(const std::string& triggerName, Layer* layer, const ModelCoordinate& pt) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			it->second->remove(layer, pt);
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
+	void TriggerController::removeTriggerFromCoordinates(const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			for (std::vector<ModelCoordinate>::const_iterator cit = coords.begin(); cit != coords.end(); ++cit) {
@@ -170,7 +170,7 @@ namespace FIFE {
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, Layer* layer, const Rect& rec) {
+	void TriggerController::removeTriggerFromRect(const std::string& triggerName, Layer* layer, const Rect& rec) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
@@ -180,14 +180,14 @@ namespace FIFE {
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, const Location& loc) {
+	void TriggerController::removeTriggerFromLocation(const std::string& triggerName, const Location& loc) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			it->second->remove(loc.getLayer(), loc.getLayerCoordinates());
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, const std::vector<Location>& locs) {
+	void TriggerController::removeTriggerFromLocations(const std::string& triggerName, const std::vector<Location>& locs) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			for (std::vector<Location>::const_iterator cit = locs.begin(); cit != locs.end(); ++cit) {
@@ -196,14 +196,14 @@ namespace FIFE {
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, Cell* cell) {
+	void TriggerController::removeTriggerFromCell(const std::string& triggerName, Cell* cell) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			it->second->remove(cell);
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, const std::vector<Cell*>& cells) {
+	void TriggerController::removeTriggerFromCells(const std::string& triggerName, const std::vector<Cell*>& cells) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			for (std::vector<Cell*>::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
@@ -212,7 +212,7 @@ namespace FIFE {
 		}
 	}
 
-	void TriggerController::removeTrigger(const std::string& triggerName, Instance* instance) {
+	void TriggerController::removeTriggerFromInstance(const std::string& triggerName, Instance* instance) {
 		TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
 		if (it != m_triggerNameMap.end()) {
 			if (it->second->getAttached() == instance) {
