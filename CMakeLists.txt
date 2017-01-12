@@ -27,7 +27,6 @@ configure_file (
 
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
-option(librocket        "Enable Librocket GUI subsystem"                        OFF)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
 option(zip              "Enable ZIP archive support"                            ON)
 option(logging          "Enable logging"                                        ON)
@@ -280,13 +279,6 @@ set (FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.cpp
 )
 
-# LIBROCKET
-set (FIFE_LROCKET_SRC
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
-)
-
 #------------------------------------------------------------------------------
 #                         Source Groups for Source Files                                    
 #------------------------------------------------------------------------------
@@ -295,7 +287,6 @@ source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
 source_group("sources\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_SRC})
 source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
 source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
-source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files                                         
@@ -502,13 +493,6 @@ set (FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.h
 )
 
-# Librocket
-set (FIFE_LROCKET_HDR
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
-)
-
 #------------------------------------------------------------------------------
 #                      Source Groups for Header Files                                    
 #------------------------------------------------------------------------------
@@ -517,7 +501,6 @@ source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
 source_group("headers\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_HDR})
 source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
-source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
 
 #------------------------------------------------------------------------------
 #                                 SWIG files                                         
@@ -609,11 +592,6 @@ set (FIFE_FCHAN_SWIG
   gui/fifechan/widgets/widgets.i
 )
 
-# LIBROCKET
-set (FIFE_LROCKET_SWIG
-  gui/librocket/librocketmanager.i
-)
-
 #------------------------------------------------------------------------------
 #                      Source Groups for SWIG Files                                    
 #------------------------------------------------------------------------------
@@ -622,7 +600,6 @@ source_group("swig\\fife.core"                FILES ${FIFE_CORE_SWIG})
 source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG})
-source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 
 #------------------------------------------------------------------------------
 #                                 Find Packages                                         
@@ -898,7 +875,4 @@ if(build-library)
   if(cegui)
     INSTALL_HEADERS_WITH_DIRECTORY(FIFE_CEGUI_HDR)
   endif(cegui)
-  if(rocket)
-    INSTALL_HEADERS_WITH_DIRECTORY(FIFE_LROCKET_HDR)
-  endif(rocket)
 endif(build-library)
