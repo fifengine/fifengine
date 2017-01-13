@@ -10,7 +10,8 @@
 * removed cegui compatibility layer for versions below v0.7.9
 
 ### Engine
-* Get rid of various compiler warnings
+* renamed overloaded createTrigger and removeTrigger methods, issue #947 + PR #950
+* Got rid of various compiler warnings
 * Add getCellsInCircleSegment() to CellCache and getInstancesInCircle(),
 	getInstancesInCircleSegment() to Layer
 * Add MultiPathfinderTest
