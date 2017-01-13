@@ -4,6 +4,7 @@ image: Visual Studio 2015
 branches:
   only:
   - master
+  - python3
 
 clone_depth: 5
 
