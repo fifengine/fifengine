@@ -20,7 +20,7 @@
  ***************************************************************************/
 %module fife
 %{
-#include "version.h"
+#include "version.h.in"
 %}
 
 namespace FIFE {
