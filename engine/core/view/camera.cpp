@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -790,7 +790,7 @@ namespace FIFE {
 		m_overlay_color.r = red;
 		m_overlay_color.g = green;
 		m_overlay_color.b = blue;
-		m_overlay_color.unused = alpha;
+		m_overlay_color.a = alpha;
 	}
 
 	std::vector<uint8_t> Camera::getOverlayColor() {
@@ -799,7 +799,7 @@ namespace FIFE {
 			colors.push_back(m_overlay_color.r);
 			colors.push_back(m_overlay_color.g);
 			colors.push_back(m_overlay_color.b);
-			colors.push_back(m_overlay_color.unused);
+			colors.push_back(m_overlay_color.a);
 		} else {
 			for(uint8_t cc = 0; cc != 4; ++cc) {
 				colors.push_back(255);
@@ -859,7 +859,7 @@ namespace FIFE {
 		// color overlay
 		if (m_col_overlay) {
 			Point p = Point(m_viewport.x, m_viewport.y);
-			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.unused);
+			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.a);
 		}
 		// image overlay
 		if (m_img_overlay) {

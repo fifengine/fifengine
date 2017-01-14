@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -67,7 +67,9 @@ namespace FIFE {
 			LEFT = 1,
 			RIGHT = 2,
 			MIDDLE = 4,
-			UNKNOWN_BUTTON = 8
+			X1 = 8,
+			X2 = 16,
+			UNKNOWN_BUTTON = 32
 		};
 
 

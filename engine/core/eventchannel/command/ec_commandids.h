@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -27,6 +27,7 @@
 
 // 3rd party library includes
 //
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -38,14 +39,14 @@ namespace FIFE {
 	/**  Types for different commands
 	 */
 	enum CommandType {
-		CMD_UNKNOWN	 = -1,
-		CMD_QUIT_GAME    = 402,
-		CMD_MOUSE_FOCUS_GAINED,
-		CMD_MOUSE_FOCUS_LOST,
-		CMD_INPUT_FOCUS_GAINED,
-		CMD_INPUT_FOCUS_LOST,
-		CMD_APP_RESTORED,
-		CMD_APP_ICONIFIED,
+		CMD_UNKNOWN = -1,
+		CMD_QUIT_GAME = SDL_WINDOWEVENT_CLOSE,
+		CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
+		CMD_MOUSE_FOCUS_LOST = SDL_WINDOWEVENT_LEAVE,
+		CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
+		CMD_INPUT_FOCUS_LOST = SDL_WINDOWEVENT_FOCUS_LOST,
+		CMD_APP_RESTORED = SDL_WINDOWEVENT_SHOWN,
+		CMD_APP_ICONIFIED = SDL_WINDOWEVENT_HIDDEN,
 	};
 
 } //FIFE

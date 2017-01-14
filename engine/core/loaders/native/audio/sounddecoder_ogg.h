@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -27,7 +27,7 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <vorbisfile.h>
+#include <vorbis/vorbisfile.h>
 #include <boost/scoped_ptr.hpp>
 
 // FIFE includes

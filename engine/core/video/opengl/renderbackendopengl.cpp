@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -122,6 +122,8 @@ namespace FIFE {
 		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
 			glDeleteFramebuffers(1, &m_fbo_id);
 		}
+		SDL_GL_DeleteContext(m_context);
+		SDL_DestroyWindow(m_window);
 		deinit();
 	}
 
@@ -131,11 +133,18 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::init(const std::string& driver) {
-		// note: driver has no affect on the opengl renderer so do nothing with it here.
 		Uint32 flags = SDL_INIT_VIDEO;
-		if (SDL_InitSubSystem(flags) < 0)
+		if (SDL_InitSubSystem(flags) < 0) {
 			throw SDLException(SDL_GetError());
+		}
+		if (driver != "") {
+			if (SDL_VideoInit(driver.c_str()) < 0) {
+				throw SDLException(SDL_GetError());
+			}
+		}
 		// defines buffer sizes
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -143,8 +152,10 @@ namespace FIFE {
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+		//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
+		// sync swaping with refresh rate if VSync is enabled
+		SDL_GL_SetSwapInterval(static_cast<uint8_t>(m_vSync));
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {
@@ -154,16 +165,17 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
-		if(icon != "") {
-			SDL_Surface *img = IMG_Load(icon.c_str());
-			if(img != NULL) {
-				SDL_WM_SetIcon(img, 0);
-				SDL_FreeSurface(img);
-			}
-		}
-		
-		SDL_WM_SetCaption(title.c_str(), 0);
 		setScreenMode(mode);
+		if (m_window) {
+			if (icon != "") {
+				SDL_Surface *img = IMG_Load(icon.c_str());
+				if (img != NULL) {
+					SDL_SetWindowIcon(m_window, img);
+					SDL_FreeSurface(img);
+				}
+			}
+			SDL_SetWindowTitle(m_window, title.c_str());
+		}
 	}
 
 	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
@@ -171,42 +183,63 @@ namespace FIFE {
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
-
-		if (bitsPerPixel != 0) {
-			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
-			if (!bpp){
-				throw SDLException("Selected video mode not supported!");
-			}
+		// in case of recreating
+		if (m_window) {
+			SDL_GL_DeleteContext(m_context);
+			SDL_DestroyWindow(m_window);
+			m_screen = NULL;
+		}
+		// create window
+		uint8_t displayIndex = mode.getDisplay();
+		if (mode.isFullScreen()) {
+			m_window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex), SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
+		} else {
+			m_window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
 		}
 
-		if(m_screen) {
-			SDL_FreeSurface(m_screen);
+		if (!m_window) {
+			throw SDLException(SDL_GetError());
 		}
-		m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-		if( !m_screen ) {
-			throw SDLException("Unable to set video mode selected!");
+		// make sure the window have the right settings
+		SDL_DisplayMode displayMode;
+		displayMode.format = mode.getFormat();
+		displayMode.w = width;
+		displayMode.h = height;
+		displayMode.refresh_rate = mode.getRefreshRate();
+		if (SDL_SetWindowDisplayMode(m_window, &displayMode) != 0) {
+			throw SDLException(SDL_GetError());
 		}
+
+		// create render context
+		m_context = SDL_GL_CreateContext(m_window);
+		// set the window surface as main surface, not really needed anymore
+		m_screen = SDL_GetWindowSurface(m_window);
 		m_target = m_screen;
+		if (!m_screen) {
+			throw SDLException(SDL_GetError());
+		}
 
 		FL_LOG(_log, LMsg("RenderBackendOpenGL")
 			<< "Videomode " << width << "x" << height
-			<< " at " << int32_t(bitsPerPixel) << " bpp");
-
+			<< " at " << int32_t(bitsPerPixel) << " bpp with " << displayMode.refresh_rate << " Hz");
+		
+		// this is needed, otherwise we would have screen pixel formats which will not work with
+		// our texture generation. 32 bit surfaces to BitsPerPixel texturen.
 		m_rgba_format = *(m_screen->format);
+		if (bitsPerPixel != 16) {
+			m_rgba_format.format = SDL_PIXELFORMAT_RGBA8888;
+			m_rgba_format.BitsPerPixel = 32;
+		} else {
+			m_rgba_format.format = SDL_PIXELFORMAT_RGBA4444;
+			m_rgba_format.BitsPerPixel = 16;
+		}
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
 		m_rgba_format.Amask = AMASK;
 
 		//update the screen mode with the actual flags used
-		m_screenMode = ScreenMode(width,
-		                          height,
-		                          bitsPerPixel,
-		                          m_screen->flags);
-
-		if (!m_screen) {
-			throw SDLException(SDL_GetError());
-		}
+		m_screenMode = mode;
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -259,6 +292,7 @@ namespace FIFE {
 				m_textureFilter = TEXTURE_FILTER_TRILINEAR;
 			}
 		}
+
 		// currently unused, 1000 objects x 400 textures x 4 renderDataZ
 		//m_renderZ_datas.resize(1600000);
 	}
@@ -268,7 +302,9 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::endFrame() {
-		SDL_GL_SwapBuffers();
+		if (m_window) {
+			SDL_GL_SwapWindow(m_window);
+		}
 		RenderBackend::endFrame();
 	}
 
@@ -299,15 +335,14 @@ namespace FIFE {
 			&& m_rgba_format.Rloss == surface->format->Rloss
 			&& m_rgba_format.Gloss == surface->format->Gloss
 			&& m_rgba_format.Bloss == surface->format->Bloss
-			&& m_rgba_format.Aloss == surface->format->Aloss
-			&& surface->flags & SDL_SRCALPHA   ) {
+			&& m_rgba_format.Aloss == surface->format->Aloss) {
 
 			return new GLImage(surface);
 		}
 
 		uint8_t bpp = m_rgba_format.BitsPerPixel;
 		m_rgba_format.BitsPerPixel = 32;
-		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, 0);
 		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(conv);
 
@@ -334,15 +369,14 @@ namespace FIFE {
 			&& m_rgba_format.Rloss == surface->format->Rloss
 			&& m_rgba_format.Gloss == surface->format->Gloss
 			&& m_rgba_format.Bloss == surface->format->Bloss
-			&& m_rgba_format.Aloss == surface->format->Aloss
-			&& surface->flags & SDL_SRCALPHA   ) {
+			&& m_rgba_format.Aloss == surface->format->Aloss) {
 
 			return new GLImage(name, surface);
 		}
 
 		uint8_t bpp = m_rgba_format.BitsPerPixel;
 		m_rgba_format.BitsPerPixel = 32;
-		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, 0);
 		m_rgba_format.BitsPerPixel = bpp;
 		GLImage* image = new GLImage(name, conv);
 
@@ -2291,7 +2325,7 @@ namespace FIFE {
 		const uint32_t sheight = getHeight();
 
 		uint8_t *pixels;
-		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
+		SDL_Surface *surface = SDL_CreateRGBSurface(0, swidth, sheight, 24,
 			RMASK, GMASK, BMASK, NULLMASK);
 
 		if (!surface) {
@@ -2336,7 +2370,7 @@ namespace FIFE {
 
 		uint8_t *pixels;
 		// create source surface
-		SDL_Surface* src = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 32,
+		SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32,
 			RMASK, GMASK, BMASK, AMASK);
 
 		if (!src) {
@@ -2362,7 +2396,7 @@ namespace FIFE {
 		}
 
 		// create destination surface
-		SDL_Surface* dst = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32,
+		SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32,
 			RMASK, GMASK, BMASK, AMASK);
 
 		uint32_t* src_pointer = static_cast<uint32_t*>(src->pixels);

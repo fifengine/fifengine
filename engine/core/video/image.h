@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -27,6 +27,7 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 
 // FIFE includes
@@ -113,7 +114,7 @@ namespace FIFE {
 
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		const Rect& getArea() const;
+		Rect getArea() const;
 
 		void setXShift(int32_t xshift) {
 			m_xshift = xshift;

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -89,11 +89,11 @@ namespace FIFE {
 			virtual void turn();
 
 			/** Inits the Fifechan GUI Manager.
-			 * @param graphics backend specific grapchics object to use
+			 * @param backend The GUI backend object to use
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
+			void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 
 			/** Resizes the top container.
 			 *
@@ -106,13 +106,13 @@ namespace FIFE {
 
 			/** Adds a new widget.
 			 *
-			 * @param A pointer to the widget to add.
+			 * @param widget A pointer to the widget to add.
 			 */
 			void add(fcn::Widget* widget);
 
 			/** Removes a widget.
 			 *
-			 * @param A pointer to the widget to remove.
+			 * @param widget A pointer to the widget to remove.
 			 */
 			void remove(fcn::Widget* widget);
 

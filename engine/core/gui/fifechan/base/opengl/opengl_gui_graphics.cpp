@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -46,11 +46,9 @@ namespace FIFE {
 	static Logger _log(LM_GUI);
 
 	OpenGLGuiGraphics::OpenGLGuiGraphics() {
-		SDL_Surface* target = SDL_GetVideoSurface();
-		assert(target);
-		setTargetPlane(target->w, target->h);
 		mColor = fcn::Color(255, 255, 255, 255);
 		m_renderbackend = static_cast<RenderBackendOpenGL*>(RenderBackend::instance());
+		setTargetPlane(m_renderbackend->getWidth(), m_renderbackend->getHeight());
 	}
 
 	void OpenGLGuiGraphics::drawImage(const fcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {

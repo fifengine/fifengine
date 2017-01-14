@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -95,9 +95,13 @@ namespace FIFE {
 		virtual void detachRenderTarget();
 
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
+
+		SDL_Renderer* getRenderer() { return m_renderer; }
 		
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);
+
+		SDL_Renderer* m_renderer;
 	};
 
 }

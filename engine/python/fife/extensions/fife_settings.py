@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -66,8 +66,6 @@ class Setting(object):
 		does not exist this file will be copied into the place of the settings_file.  This file
 		must exist in the root directory of your project!
 		@type default_settings_file: C{string}
-		@param settings_gui_xml: If you specify this parameter you can customize the look
-		of the settings dialog box.
 		@param copy_dist: Copies the default settings file to the settings_file location.  If
 		this is False it will create a new empty setting file.
 		@param serializer: Overrides the default XML serializer
@@ -95,7 +93,7 @@ class Setting(object):
 		# valid values possible for the engineSettings
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
-			'FullScreen':[True,False], 'PychanDebug':[True,False]
+			'FullScreen':[True,False], 'RefreshRate':[0,200], 'Display':[0,9], 'VSync':[True,False], 'PychanDebug':[True,False]
 			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
 			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
 			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
@@ -106,9 +104,9 @@ class Setting(object):
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
-			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
+			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':[True,False], 'LogToFile':[True,False],
-			'LogToPrompt':[True,False],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
+			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
 			}
@@ -118,15 +116,15 @@ class Setting(object):
 		# we at this point assume default values are final values for engineSettings
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
-			'FullScreen':False, 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'VSync':False, 'PychanDebug':False,
+			'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
 			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
-			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
+			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"", 'RenderDriver':"",
 			'PlaySounds':True, 'LogToFile':False,
-			'LogToPrompt':False,'UsePsyco':False,'LogLevelFilter':[0],
+			'LogToPrompt':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
@@ -361,6 +359,17 @@ class Setting(object):
 						self._settingsFromFile[module][name] = e_value
 					elif name == "MouseAcceleration":
 						self._settingsFromFile[module][name] = e_value
+
+					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
+						if type(e_value) == int:
+							try:
+								e_value = (False, True)[e_value]
+							except IndexError:
+								self._logger.log_warn("Invalid int-value for %s. Defaulted to False!"%name)
+								e_value = False
+							self._logger.log_warn("Use of type int for %s is deprecated. Use bool instead!"%name)
+						self._settingsFromFile[module][name] = e_value
+
 					else:
 
 						if isinstance(self._settingsFromFile[module][name],list) == True or isinstance(self._settingsFromFile[module][name],dict) == True:
@@ -509,8 +518,6 @@ class SettingEntry(object):
 		@type module: C{String}
 		@param name: The Setting's name
 		@type name: C{String}
-		@param widgetname: The name of the widget that is used to change this
-		setting
 		@param applyfunction: function that makes the changes when the Setting is
 		saved
 		@type applyfunction: C{function}

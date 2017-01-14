@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -75,7 +75,7 @@ namespace FIFE {
 	}
 
 	SDL_Surface *ImageFontBase::renderString(const std::string& text) {
-		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+		SDL_Surface *surface = SDL_CreateRGBSurface(0,
 			getWidth(text),getHeight(),32,
 			RMASK, GMASK, BMASK ,AMASK);
 

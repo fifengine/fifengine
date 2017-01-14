@@ -1,5 +1,0 @@
-eval - Evaluate a python expression
-exit, quit - Quit the game
-help - Displays this message
-move - Moves an object
-spawn - Spawns an item or actor

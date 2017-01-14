@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -230,6 +230,8 @@ namespace FIFE {
 		 */
 		virtual void captureScreen(const std::string& filename, uint32_t width, uint32_t height) = 0;
 
+		SDL_Window* getWindow() {return m_window; }
+
 		/** Get current screen mode
 		 * @return The current screen mode
 		 */
@@ -443,6 +445,14 @@ namespace FIFE {
 		*/
 		const SDL_PixelFormat& getPixelFormat() const;
 
+		/** Sets whether to use VSync
+		 */
+		void setVSyncEnabled(bool vsync);
+
+		/** Gets whether VSync is in use
+		 */
+		bool isVSyncEnabled() const;
+
 		/** Sets whether to use the frame limiter
 		 */
 		void setFrameLimitEnabled(bool limited);
@@ -458,6 +468,10 @@ namespace FIFE {
 		/** Gets the frame limit
 		 */
 		uint16_t getFrameLimit() const;
+
+		/** Returns screen render surface
+		 */
+		 SDL_Surface* getScreenSurface();
 
 		/** Returns currently attached render surface
 		 */
@@ -490,6 +504,7 @@ namespace FIFE {
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
 
+		SDL_Window* m_window;
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
 		bool m_compressimages;
@@ -516,6 +531,8 @@ namespace FIFE {
 		bool m_isDepthBuffer;
 		// alpha test value
 		float m_alphaValue;
+		// vsync value
+		bool m_vSync;
 
 		/** Clears any possible clip areas
 		 *  @see pushClipArea

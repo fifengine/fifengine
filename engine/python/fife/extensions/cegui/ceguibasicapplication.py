@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -82,7 +82,7 @@ class CEGUIApplicationBase(ApplicationBase):
 		if major_v == 0 and minor_v <= 7:
 			guimanager = fife.CEGuiManager()
 		else:
-			guimanager = fife.CEGui_0Manager()
+			guimanager = fife.CEGuiManager()
 
 		#transfer ownership to the engine
 		guimanager.thisown = 0

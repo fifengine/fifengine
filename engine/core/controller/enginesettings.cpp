@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -46,6 +46,10 @@ namespace FIFE {
 	EngineSettings::EngineSettings():
 		m_bitsperpixel(0),
 		m_fullscreen(false),
+		m_refreshRate(60),
+		m_displayIndex(0),
+		m_vSync(false),
+		m_renderDriver(""),
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),

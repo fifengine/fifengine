@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -193,7 +193,7 @@ namespace FIFE {
 			} while (it != text.end());
 
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
-			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SDL_Surface* final_surface = SDL_CreateRGBSurface(0,
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
 			if (!final_surface) {
@@ -205,8 +205,10 @@ namespace FIFE {
 				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
 
-				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-				SDL_BlitSurface(*i,0,final_surface,&dst_rect);
+				// Disable alpha blending
+				//SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
+				SDL_SetSurfaceBlendMode(*i, SDL_BLENDMODE_NONE);
+				SDL_BlitSurface(*i, 0, final_surface, &dst_rect);
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}

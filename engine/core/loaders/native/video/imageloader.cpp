@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -80,7 +80,7 @@ namespace FIFE {
 				if (srcbits != 32 || dst_format.Rmask != src_format.Rmask || dst_format.Gmask != src_format.Gmask ||
 					dst_format.Bmask != src_format.Bmask || dst_format.Amask != src_format.Amask) {
 					dst_format.BitsPerPixel = 32;
-					SDL_Surface* conv = SDL_ConvertSurface(surface, &dst_format, SDL_SWSURFACE | SDL_SRCALPHA);
+					SDL_Surface* conv = SDL_ConvertSurface(surface, &dst_format, 0);
 					dst_format.BitsPerPixel = dstbits;
 
 					if (!conv) {

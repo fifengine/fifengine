@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -34,6 +34,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/structures/rect.h"
 
 namespace FIFE {
 
@@ -45,6 +46,7 @@ namespace FIFE {
 		 */
 		ScreenMode();
 		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
+		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags);
 		ScreenMode(const ScreenMode& rhs);
 
 		/** Destructor.
@@ -69,46 +71,77 @@ namespace FIFE {
 		 */
 		uint16_t getBPP() const { return m_bpp; };
 
+		/** Returns the refresh rate in Hz of this mode.
+		 */
+		uint16_t getRefreshRate() const { return m_refreshRate; }
+
 		/** Returns the SDL flags used when testing this mode.
 		 */
 		uint32_t getSDLFlags() const { return m_SDLFlags; };
 
 		/** True if this is a fullscreen mode.  False if it is a windowed mode.
 		 */
-		bool isFullScreen() const { return (m_SDLFlags & SDL_FULLSCREEN) ? true : false;};
+		bool isFullScreen() const { return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) ? true : false;};
 
 		/** True if this mode uses the OpenGL renderer.  False otherwise.
 		 */
-		bool isOpenGL() const { return (m_SDLFlags & SDL_OPENGL) ? true : false; };
+		bool isOpenGL() const { return (m_SDLFlags & SDL_WINDOW_OPENGL) ? true : false; };
 
 		/** Is this screen mode an SDL only screen mode
 		 */
-		bool isSDL() const { return (!(m_SDLFlags & SDL_OPENGL)) ? true : false; };
+		bool isSDL() const { return (!(m_SDLFlags & SDL_WINDOW_OPENGL)) ? true : false; };
 
-		/** Returns true if this is a SDL screen mode with the SDL hardware surface enabled
+		/** Sets the pixel format enum.
 		 */
-		bool isSDLHardwareSurface() const { return (m_SDLFlags & SDL_HWSURFACE) ? true : false; };
+		void setFormat(uint32_t format) { m_format = format;}
 
+		/** Returns the pixel format enum.
+		 */
+		uint32_t getFormat() const { return m_format; }
 
-		//OpenGL, windowed, hw accel
-		static const uint32_t HW_WINDOWED_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
-		//OpenGL, fullscreen, hw accel
-		static const uint32_t HW_FULLSCREEN_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL | SDL_FULLSCREEN;
+		/** Sets the display index.
+		 */
+		void setDisplay(uint8_t display) { m_display = display; }
+
+		/** Returns the display index.
+		 */
+		uint8_t getDisplay() const { return m_display; }
+		
+		/** Sets the render driver name.
+		 */
+		void setRenderDriverName(const std::string driver) { m_renderDriver = driver; }
+
+		/** Returns the render driver name. Default is "".
+		 */
+		const std::string& getRenderDriverName() const { return m_renderDriver; }
+
+		/** Sets the index of the render driver used by SDL.
+		 */
+		void setRenderDriverIndex(int8_t index) { m_renderDriverIndex = index; }
+
+		/** Returns the index of the render driver. Default is -1.
+		 */
+		int8_t getRenderDriverIndex() const { return m_renderDriverIndex; }
+
+		//OpenGL, windowed
+		static const uint32_t WINDOWED_OPENGL = SDL_WINDOW_OPENGL;
+		//OpenGL, fullscreen
+		static const uint32_t FULLSCREEN_OPENGL = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
 		//SDL, windowed
 		static const uint32_t WINDOWED_SDL = 0;
-		//SDL, windowed, HW surface and double buffer
-		static const uint32_t WINDOWED_SDL_DB_HW = SDL_HWSURFACE | SDL_DOUBLEBUF;
 		//SDL, fullscreen
-		static const uint32_t FULLSCREEN_SDL = SDL_FULLSCREEN;
-		//SDL, fullscreen, HW surface and double buffer
-		static const uint32_t FULLSCREEN_SDL_DB_HW = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
+		static const uint32_t FULLSCREEN_SDL = SDL_WINDOW_FULLSCREEN;
 
 	private:
 		uint16_t m_width;
 		uint16_t m_height;
 		uint16_t m_bpp;
+		uint16_t m_refreshRate;
 		uint32_t m_SDLFlags;
-
+		uint32_t m_format;
+		uint8_t m_display;
+		std::string m_renderDriver;
+		int8_t m_renderDriverIndex;
 	};  //ScreenMode
 
 	class DeviceCaps {
@@ -129,9 +162,13 @@ namespace FIFE {
 		 */
 		void reset();
 
-		/** Gets the available graphics drivers for your operating system
+		/** Gets the available video drivers for your operating system
 		 */
-		std::vector<std::string> getAvailableDrivers() const { return m_availableDrivers; };
+		std::vector<std::string> getAvailableVideoDrivers() const { return m_availableVideoDrivers; };
+
+		/** Gets the available render drivers for your operating system
+		 */
+		std::vector<std::string> getAvailableRenderDrivers() const { return m_availableRenderDrivers; };
 
 		/** Returns a vector containing screen modes.
 		 */
@@ -141,76 +178,63 @@ namespace FIFE {
 		 */
 		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
 
+		/** Gets the nearest valid screen mode based on the arguments passed
+		 */
+		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
+
 		/** Returns the name of the current video driver.
 		 */
-		std::string getDriverName() const { return m_driverName; };
+		std::string getVideoDriverName() const { return m_videoDriverName; }
 
-		/** Is it possible to create hardware surfaces ?
+		/** Sets the name of the video driver.
 		 */
-		bool isHwSurfaceAvail() const { return m_hwAvailable; };
+		void setVideoDriverName(const std::string& driver) { m_videoDriverName = driver; }
 
-		/** Is there a window manager available ?
+		/** Returns the name of the current render driver or
+		 *  an empty string to initialize the first one supporting the requested flags.
 		 */
-		bool isWindowManagerAvail() const { return m_wmAvailable;} ;
+		std::string getRenderDriverName() const { return m_renderDriverName; }
 
-		/** Are hardware to hardware blits accelerated ?
+		/** Sets the name of the render driver.
 		 */
-		bool isHwBlitAccel() const { return m_hwBlitAccel; };
+		void setRenderDriverName(const std::string& driver);
 
-		/** Are hardware to hardware colorkey blits accelerated ?
+		/** Returns the number of displays.
 		 */
-		bool isHwColorkeyBlitAccel() const { return m_hwCCBlitAccel; };
+		uint8_t getDisplayCount() const;
 
-		/** Are hardware to hardware alpha blits accelerated ?
+		/** Returns the display name for the given display index.
 		 */
-		bool isHwAlphaBlitAccel() const { return m_hwToHwAlphaBlitAccel; };
+		std::string getDisplayName(uint8_t display = 0) const;
 
-		/** Are software to hardware blits accelerated ?
+		/** Returns the SDL_PixelFormatEnum of the desktop for the given display index.
 		 */
-		bool isSwToHwBlitAccel() const { return m_swToHwBlitAccel; };
+		uint32_t getDesktopFormat(uint8_t display = 0) const;
+		
+		/** Returns the refresh rate in Hz of the desktop for the given display index.
+		 */
+		int32_t getDesktopRefreshRate(uint8_t display = 0) const;
 
-		/** Are software to hardware colorkey blits accelerated ?
+		/** Returns the width of the desktop resolution for the given display index.
 		 */
-		bool isSwToHwColorkeyBlitAccel() const { return m_swToHwCCBlistAccel; };
+		int32_t getDesktopWidth(uint8_t display = 0) const;
 
-		/** Are software to hardware alpha blits accelerated ?
+		/** Returns the height of the desktop resolution for the given display index.
 		 */
-		bool isSwToHwAlphaBlitAccel() const { return m_swToHwAlphaBlitAccel; };
+		int32_t getDesktopHeight(uint8_t display = 0) const;
 
-		/** Are color fills accelerated ?
+		/** Returns the bounding points for the given display index.
 		 */
-		bool isBlitFillAccel() const { return m_BlitFillAccel; };
-
-		/** Total amount of video memory in Kilobytes, only valid if hardware sufaces are available.
-		 */
-		uint32_t getVideoMemory() const { return m_videoMem; };
-
-		/** Returns the width of the desktop resolution.
-		 */
-		int32_t getDesktopWidth() const;
-
-		/** Returns the height of the desktop resolution.
-		 */
-		int32_t getDesktopHeight() const;
+		Rect getDisplayBounds(uint8_t display = 0) const;
 
 	private:
 		std::vector<ScreenMode> m_screenModes;
-		std::string m_driverName;
-		std::vector<std::string> m_availableDrivers;
+		std::string m_videoDriverName;
+		std::vector<std::string> m_availableVideoDrivers;
 
-		bool m_hwAvailable;
-		bool m_wmAvailable;
-		bool m_hwBlitAccel;
-		bool m_hwCCBlitAccel;
-		bool m_hwToHwAlphaBlitAccel;
-		bool m_swToHwBlitAccel;
-		bool m_swToHwCCBlistAccel;
-		bool m_swToHwAlphaBlitAccel;
-		bool m_BlitFillAccel;
-
-		uint32_t m_videoMem;
-		int32_t m_desktopWidth;
-		int32_t m_desktopHeight;
+		std::string m_renderDriverName;
+		int8_t m_renderDriverIndex;
+		std::vector<std::string> m_availableRenderDrivers;
 
 		/** Called in the constructor.  No need for anyone to call this
 		 */

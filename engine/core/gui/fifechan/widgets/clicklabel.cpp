@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -39,7 +39,7 @@ namespace fcn {
 		mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
 		setAlignment(Graphics::Left);
 		setOpaque(true);
-		setTextWrapping(false);
+		mTextWrapping = false;
 		setBorderSize(0);
 		mHasMouse = false,
 		mKeyPressed = false,
@@ -56,7 +56,7 @@ namespace fcn {
 		setCaption(caption);
 		setAlignment(Graphics::Left);
 		setOpaque(true);
-		setTextWrapping(false);
+		mTextWrapping = false;
 		setBorderSize(0);
 		mHasMouse = false,
 		mKeyPressed = false,

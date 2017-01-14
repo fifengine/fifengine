@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -382,7 +382,7 @@ namespace FIFE {
 			void callOnInstanceExited(Instance* instance);
 
 			/** Called when the blocking property of this cell changed.
-			 * @param block A boolean, true mark the cell as blocker.
+			 * @param blocks A boolean, true mark the cell as blocker.
 			 * @see CellChangeListener
 			 */
 			void callOnBlockingChanged(bool blocks);

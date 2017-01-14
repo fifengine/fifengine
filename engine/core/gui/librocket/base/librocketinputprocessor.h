@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -28,7 +28,7 @@
 // 3rd party library includes
 #include <Rocket/Core/Input.h>
 #include <Rocket/Core/Types.h>
-#include <SDL/SDL_events.h>
+#include <SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -57,11 +57,13 @@ namespace FIFE {
 		
 		/** Processes SDL input and converts it to librocket input, then forwards it to
 		 * the librocket context.
+         * 
+		 * NOTE There is no way to get, if an event is consumed by Rocket currently.
+		 *      This is for in case it gets implemented in the future.
 		 * 
 		 * @param evt The SDL input.
 		 * @return A boolean value indicating if the event was consumed by librocket or not.
-		 *          @NOTE There is not a way to get if an event is consumed by rocket currently. This is for
-		 *          in case it gets implemented in the future.
+    
 		 */
 		bool onSdlEvent(SDL_Event &evt);
 		
@@ -92,6 +94,10 @@ namespace FIFE {
 		 */
 		bool processKeyInput(SDL_Event& event);
 		
+		/** Process a text input event.
+		 */
+		bool processTextInput(SDL_Event& event);
+
 		/** Creates the key map.
 		 */
 		void populateKeyMap();
@@ -112,7 +118,7 @@ namespace FIFE {
 		
 		/** Keymap to convert SDL key to Librocket key.
 		 */
-		std::map<SDLKey, Rocket::Core::Input::KeyIdentifier> m_keyMap;
+		std::map<SDL_Keycode, Rocket::Core::Input::KeyIdentifier> m_keyMap;
 	};
 	
 };
