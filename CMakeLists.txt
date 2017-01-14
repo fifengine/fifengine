@@ -880,7 +880,7 @@ if(build-library)
   target_link_libraries(fife ${FIFECHAN_LIBRARIES})
   
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  install(FILES ${PROJECT_BINARY_DIR}/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+  install(FILES ${PROJECT_BINARY_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
