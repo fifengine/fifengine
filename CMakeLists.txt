@@ -18,7 +18,7 @@ set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSIO
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
-  "${PROJECT_BINARY_DIR}/version.h"
+  "${PROJECT_SOURCE_DIR}/engine/core/version.h"
 )
 
 #------------------------------------------------------------------------------
