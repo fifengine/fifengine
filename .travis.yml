@@ -45,7 +45,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
 
 install:
-    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    - git clone -b pychan_port --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
     - make -j2
