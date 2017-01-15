@@ -142,13 +142,13 @@ after_build:
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
-#artifacts:
-#  - path: 'libfife\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%.zip'
-#    name: LibfifeReleaseArtifact
-#  - path: 'dist\libfife-%APPVEYOR_BUILD_VERSION%.win32-py2.7.exe'
-#    name: Python27InstallerReleaseArtifact
-#  - path: '\libfife-dependencies-*.zip'
-#    name: DependenciesArtifact
+artifacts:
+  - path: 'libfife-dependencies-*.zip'
+    name: Dependencies
+  - path: 'libfife-*.zip'
+    name: LibFife
+  - path: 'dist\libfife-*py2.7.msi'
+    name: Python27Installer
 
 # deploy to Github Releases on tag push
 deploy:
@@ -156,8 +156,8 @@ deploy:
   release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
-  artifact: Python27InstallerReleaseArtifact, DependenciesArtifact
-  draft: false
+  artifact: Dependencies, LibFife, Python27Installer 
+  draft: true
   prerelease: false
   on:
     branch: master                 # release from master branch only
