@@ -70,7 +70,7 @@ namespace FIFE {
 			SDL_Color color = getColor();
 			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
 			image = getAsImage(text);
-			setColor(color.r, color.g, color.b, color.unused);
+			setColor(color.r, color.g, color.b, color.a);
 		} else {
 			image = getAsImage(text);
 		}
@@ -91,7 +91,7 @@ namespace FIFE {
 			SDL_Color color = getColor();
 			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
 			image = getAsImageMultiline(text);
-			setColor(color.r, color.g, color.b, color.unused);
+			setColor(color.r, color.g, color.b, color.a);
 		} else {
 			image = getAsImageMultiline(text);
 		}
