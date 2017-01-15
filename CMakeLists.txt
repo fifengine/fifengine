@@ -125,13 +125,32 @@ message("")
 # Tell CMake where to search for binaries (dlls), includes and libs on Windows
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+
+    # help to find dependencies on Appveyor
+
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/build-tools/swig"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"    
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
+
+    # help to find dependencies on your local env (FifeSDK)
+
+    "${PROJECT_SOURCE_DIR}/../swig"
+    "${PROJECT_SOURCE_DIR}/../python"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
+    
   )
 endif(WIN32)
 
