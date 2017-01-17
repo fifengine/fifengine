@@ -157,6 +157,11 @@ class Setting(object):
 
 		self.initSerializer()
 
+		# if there's no FIFE module assume the settings file is broken
+		# and replace with default settings file
+		if "FIFE" not in self._serializer.getModuleNameList():
+			self.setDefaults()
+
 		# Get all modules and initialize reading of them from xml file as false
 		self._allModules = self._serializer.getModuleNameList()
 		# print("All Module Names:",self._allModules)
