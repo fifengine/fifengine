@@ -111,28 +111,28 @@ namespace fcn {
 		m_saved = state;
 		state.cursorType = FIFE::CURSOR_NATIVE;
 		// left
-		state.cursorId = FIFE::NC_RESIZEW;
+		state.cursorId = FIFE::NC_RESIZEWE;
 		m_cursors.push_back(state);
 		// right
-		state.cursorId = FIFE::NC_RESIZEE;
+		state.cursorId = FIFE::NC_RESIZEWE;
 		m_cursors.push_back(state);
 		// top
-		state.cursorId = FIFE::NC_RESIZEN;
+		state.cursorId = FIFE::NC_RESIZENS;
 		m_cursors.push_back(state);
 		// left and top
-		state.cursorId = FIFE::NC_RESIZENW;
+		state.cursorId = FIFE::NC_RESIZENWSE;
 		m_cursors.push_back(state);
 		// right and top
-		state.cursorId = FIFE::NC_RESIZENE;
+		state.cursorId = FIFE::NC_RESIZENESW;
 		m_cursors.push_back(state);
 		// bottom
-		state.cursorId = FIFE::NC_RESIZES;
+		state.cursorId = FIFE::NC_RESIZENS;
 		m_cursors.push_back(state);
 		// left and bottom
-		state.cursorId = FIFE::NC_RESIZESW;
+		state.cursorId = FIFE::NC_RESIZENESW;
 		m_cursors.push_back(state);
 		// right and bottom
-		state.cursorId = FIFE::NC_RESIZESE;
+		state.cursorId = FIFE::NC_RESIZENWSE;
 		m_cursors.push_back(state);
 	}
 

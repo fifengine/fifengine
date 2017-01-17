@@ -307,8 +307,8 @@ namespace FIFE {
 		}
 
 		// calculate x and y values
-		float xrhs[n];
-		float yrhs[n];
+		float* xrhs = new float[n];
+		float* yrhs = new float[n];
 		// first
 		xrhs[0] = points[0].x + 2 * points[1].x;
 		yrhs[0] = points[0].y + 2 * points[1].y;
@@ -321,10 +321,10 @@ namespace FIFE {
 			yrhs[i] = 4 * points[i].y + 2 * points[i + 1].y;
 		}
 
-		float x[n];
-		float y[n];
-		float xtmp[n];
-		float ytmp[n];
+		float* x = new float[n];
+		float* y = new float[n];
+		float* xtmp = new float[n];
+		float* ytmp = new float[n];
 		float xb = 2.0;
 		float yb = 2.0;
 		x[0] = xrhs[0] / xb;
@@ -364,5 +364,12 @@ namespace FIFE {
 		newPoints.push_back(p);
 		// end point
 		newPoints.push_back(points[n]);
+
+		delete[] xrhs;
+		delete[] yrhs;
+		delete[] x;
+		delete[] y;
+		delete[] xtmp;
+		delete[] ytmp;
 	}
 }
