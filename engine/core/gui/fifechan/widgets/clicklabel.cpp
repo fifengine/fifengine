@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -38,7 +38,7 @@ namespace fcn {
 	ClickLabel::ClickLabel()  {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 // 		setAlignment(Graphics::LEFT);
-		setTextWrapping(false);
+		mTextWrapping = false;
 		setFrameSize(0);
 		addMouseListener(this);
 		addKeyListener(this);
@@ -49,7 +49,7 @@ namespace fcn {
 	ClickLabel::ClickLabel(const std::string& caption) {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 // 		setAlignment(Graphics::LEFT);
-		setTextWrapping(false);
+		mTextWrapping = false;
 		setCaption(caption);
 		setFrameSize(0);
 		addMouseListener(this);

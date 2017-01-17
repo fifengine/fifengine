@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -87,10 +87,10 @@ namespace FIFE {
 
 		/** Default constructor.
 		 *
-		 * @fixme I'm not sure if I actually want to be able to call
-		 * the default constructor.  Triggers should always be given
-		 * a name.  The maps trigger controller should guarantee the
-		 * uniqueness of the name.
+		 * TODO (fixme)
+         * I'm not sure if I actually want to be able to call the default constructor.
+         * Triggers should always be given a name.
+         * The maps trigger controller should guarantee the uniqueness of the name.
 		 */
 		Trigger();
 

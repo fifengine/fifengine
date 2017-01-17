@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -79,7 +79,7 @@ namespace fcn
         void setOrientation(Orientation orientation);
 
         /**
-         * Gets the orientation of the percentage bar..
+         * Gets the orientation of the percentage bar.
          *
          * @return The orientation of the percentage bar.
          * @see setOrientation

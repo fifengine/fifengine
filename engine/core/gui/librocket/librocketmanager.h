@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -71,9 +71,10 @@ namespace FIFE {
 		void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 		
 		/**
-		 * @NOTE There is an inconsistency in the naming of this method, it's in
-		 *        upper camelcase and should have been in lower camelcase but it
-		 *        overrides Rocket::Core::SystemInterface::GetElapsedTime.
+		 * NOTE 
+		 * There is an inconsistency in the naming of this method.
+		 * It's in upper camelcase and should have been in lower camelcase,
+		 * but it overrides Rocket::Core::SystemInterface::GetElapsedTime.
 		 * 
 		 * @return The number of seconds elapsed since the start of the application.
 		 */

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -288,6 +288,74 @@ class Widget(object):
 		if self.isVisible():
 			self.real_widget.requestFocus()
 
+	def isModalFocusable(self):
+		"""
+		Checks if a widget is modal focusable.
+		True if no other widget has modal focus, false otherwise.
+		"""
+		return self.real_widget.isModalFocusable()
+
+	def isModalFocused(self):
+		"""
+		Checks if the widget or it's parent has modal focus.
+		"""
+		return self.real_widget.isModalFocused()
+	
+	def requestModalFocus(self):
+		"""
+		Requests modal focus.
+		When a widget has modal focus, only that widget and it's children may recieve input.
+		
+		The widget must be modal focusable in order for this to work. Therefore,
+		no other widget should has modal focus.
+		
+		"""
+		if self.isVisible():
+			if self.isModalFocusable():
+				self.real_widget.requestModalFocus()
+
+	def releaseModalFocus(self):
+		"""
+		Releases modal focus.
+		"""
+		if self.isModalFocused():
+			self.real_widget.releaseModalFocus()
+
+	def isModalMouseInputFocusable(self):
+		"""
+		Checks if a widget is modal mouse input focusable.
+		True if no other widget has modal mouse input focus, false otherwise.
+		"""
+		return self.real_widget.isModalMouseInputFocusable()
+
+	def isModalMouseInputFocused(self):
+		"""
+		Checks if the widget or it's parent has modal mouse input focus.
+		"""
+		return self.real_widget.isModalMouseInputFocused()
+	
+	def requestModalMouseInputFocus(self):
+		"""
+		Requests modal mouse input focus.
+		When a widget has modal input focus that widget will be the only widget
+		receiving input even if the input occurs outside of the widget and
+		no matter what the input is.
+		
+		The widget must be modal mouse input focusable in order for this to work.
+		Therefore, no other widget should has modal input focus.
+		
+		"""
+		if self.isVisible():
+			if self.isModalMouseInputFocusable():
+				self.real_widget.requestModalMouseInputFocus()
+
+	def releaseModalMouseInputFocus(self):
+		"""
+		Releases modal mouse input focus.
+		"""
+		if self.isModalMouseInputFocused():
+			self.real_widget.releaseModalMouseInputFocus()
+			
 	def match(self,**kwargs):
 		"""
 		Matches the widget against a list of key-value pairs.

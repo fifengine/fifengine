@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -32,6 +32,7 @@
 
 namespace FIFE {
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
+		m_window(NULL),
 		m_screen(NULL),
 		m_target(NULL),
 		m_compressimages(false),
@@ -46,6 +47,7 @@ namespace FIFE {
 		m_monochrome(false),
 		m_isDepthBuffer(false),
 		m_alphaValue(0.3),
+		m_vSync(false),
 		m_isframelimit(false),
 		m_frame_start(0),
 		m_framelimit(60) {
@@ -60,8 +62,6 @@ namespace FIFE {
 	}
 
 	void RenderBackend::deinit() {
-		//delete m_screen;
-		//m_screen = NULL;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 		SDL_Quit();
 	}
@@ -209,6 +209,14 @@ namespace FIFE {
 		return m_rgba_format;
 	}
 
+	void RenderBackend::setVSyncEnabled(bool vsync) {
+		m_vSync = vsync;
+	}
+
+	bool RenderBackend::isVSyncEnabled() const {
+		return m_vSync;
+	}
+
 	void RenderBackend::setFrameLimitEnabled(bool limited) {
 		m_isframelimit = limited;
 	}
@@ -223,6 +231,10 @@ namespace FIFE {
 
 	uint16_t RenderBackend::getFrameLimit() const {
 		return m_framelimit;
+	}
+
+	SDL_Surface* RenderBackend::getScreenSurface() {
+		return m_screen;
 	}
 
 	SDL_Surface* RenderBackend::getRenderTargetSurface() {

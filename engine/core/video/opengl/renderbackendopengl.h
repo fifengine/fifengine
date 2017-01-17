@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -262,6 +262,7 @@ namespace FIFE {
 		GLuint m_fbo_id;
 		ImagePtr m_img_target;
 		bool m_target_discard;
+		SDL_GLContext m_context;
 	};
 
 }

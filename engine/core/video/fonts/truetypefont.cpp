@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -49,7 +49,14 @@ namespace FIFE {
 		if (mFont == NULL) {
 			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
-		mColor.r = mColor.g = mColor.b = mColor.unused = 255;
+		// Maybe we should add an setting for that
+		// TTF_HINTING_NORMAL // default
+		// TTF_HINTING_LIGHT
+		// TTF_HINTING_MONO
+		// TTF_HINTING_NONE
+		//TTF_SetFontHinting(mFont, TTF_HINTING_LIGHT);
+
+		mColor.r = mColor.g = mColor.b = mColor.a = 255;
 	}
 
 	TrueTypeFont::~TrueTypeFont() {
@@ -69,7 +76,7 @@ namespace FIFE {
 
 	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
 		if( text.empty() ) {
-			SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SDL_Surface *surface = SDL_CreateRGBSurface(0,
 				1,getHeight(),32,
 				RMASK, GMASK, BMASK ,AMASK);
 			SDL_FillRect(surface,0,0x00000000);
@@ -98,6 +105,6 @@ namespace FIFE {
 		mColor.r = r;
 		mColor.g = g;
 		mColor.b = b;
-		mColor.unused = a;
+		mColor.a = a;
 	}
 }

@@ -1,7 +1,0 @@
-<Container name="YouWin" position="0,0" size="1024,768" border_size="0" base_color="0,0,0" opaque="0">
-
-	<VBox opaque='1' base_color="188, 0, 0" position="412,200" name="you_win">
-		<Label text="Congrats! You are the champion!" min_size="200,0" border_size="5"/>
-	</VBox>
-
-</Container>

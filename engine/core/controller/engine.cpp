@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -74,6 +74,7 @@
 #include "view/renderers/cellrenderer.h"
 #include "video/image.h"
 #include "engine.h"
+#include "version.h"
 
 #ifdef USE_COCOA
 
@@ -159,6 +160,7 @@ namespace FIFE {
 	void Engine::init() {
 		m_destroyed = false;
 
+		FL_LOG(_log, LMsg("Fifengine v") << FIFE::getVersion());
 		FL_LOG(_log, "================== Engine initialize start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
@@ -182,8 +184,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		TTF_Init();
 
 		FL_LOG(_log, "Creating event manager");
@@ -225,22 +225,34 @@ namespace FIFE {
 		m_renderbackend->setMonochromeEnabled(m_settings.isGLUseMonochrome());
 		m_renderbackend->setDepthBufferEnabled(m_settings.isGLUseDepthBuffer());
 		m_renderbackend->setAlphaTestValue(m_settings.getGLAlphaTestValue());
+		m_renderbackend->setVSyncEnabled(m_settings.isVSync());
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);
 			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
 		}
 
 		std::string driver = m_settings.getVideoDriver();
-		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
-
 		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
 			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
-				FL_WARN(_log, "Selected driver is not supported for your Operating System!  Reverting to default driver.");
+				FL_WARN(_log, "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
 				driver = "";
 			}
+			m_devcaps.setVideoDriverName(driver);
 		}
-
+		// init backend with selected video driver or default
 		m_renderbackend->init(driver);
+
+		// in case of SDL we use this to create the SDL_Renderer
+		driver = m_settings.getSDLDriver();
+		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
+			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
+				FL_WARN(_log, "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
+				driver = "";
+			}
+			m_devcaps.setRenderDriverName(driver);
+		}
 
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
@@ -252,7 +264,9 @@ namespace FIFE {
 			m_settings.getScreenHeight(),
 			bpp,
 			rbackend,
-			m_settings.isFullScreen());
+			m_settings.isFullScreen(),
+			m_settings.getRefreshRate(),
+			m_settings.getDisplay());
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(
@@ -267,8 +281,6 @@ namespace FIFE {
 		}
 
 #endif
-		SDL_EnableUNICODE(1);
-
 		FL_LOG(_log, "Creating sound manager");
 		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
@@ -296,7 +308,7 @@ namespace FIFE {
 		m_model->adoptCellGrid(new HexGrid());
 
 		m_cursor = new Cursor(m_renderbackend);
-		FL_LOG(_log, "Engine intialized");
+		FL_LOG(_log, "Engine initialized");
 	}
 
 	Engine::~Engine() {
@@ -315,7 +327,7 @@ namespace FIFE {
 		delete m_animationmanager;
 		delete m_imagemanager;
 		delete m_soundclipmanager;
-//		delete m_eventmanager;
+		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
 		delete m_offrenderer;
@@ -351,9 +363,9 @@ namespace FIFE {
 		m_eventmanager->processEvents();
 		m_timemanager->update();
 
+        m_renderbackend->clearBackBuffer();
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
-			m_renderbackend->clearBackBuffer();
 			m_offrenderer->render();
 		} else {
 			m_model->update();

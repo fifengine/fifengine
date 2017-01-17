@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -201,19 +201,19 @@ class TriggerTest(test.Test):
 	def createTrigger(self):
 		layer = self._player.getLocationRef().getLayer()
 		grasscoords = (fife.ModelCoordinate(-3,-1), fife.ModelCoordinate(-1,6), fife.ModelCoordinate(3,-2))
-		trigger = self._triggercontroller.createTrigger("grass", layer, grasscoords)
+		trigger = self._triggercontroller.createTriggerOnCoordinates("grass", layer, grasscoords)
 		self.grasslistener = TriggerListener(trigger, "Caution! Grass")
 		trigger.addTriggerListener(self.grasslistener)
 		trigger.addTriggerCondition(fife.CELL_TRIGGER_ENTER)
 		trigger.enableForAllInstances()
 
-		trigger = self._triggercontroller.createTrigger("flower", layer, fife.ModelCoordinate(3,1))
+		trigger = self._triggercontroller.createTriggerOnCoordinate("flower", layer, fife.ModelCoordinate(3,1))
 		self.flowerlistener = TriggerListener(trigger, "The poor flower :/")
 		trigger.addTriggerListener(self.flowerlistener)
 		trigger.addTriggerCondition(fife.CELL_TRIGGER_ENTER)
 		trigger.enableForAllInstances()
 		
-		trigger = self._triggercontroller.createTrigger("player", self._player)
+		trigger = self._triggercontroller.createTriggerOnInstance("player", self._player)
 		self.pclistener = TriggerListener(trigger, "You walked into the next cell.")
 		trigger.addTriggerListener(self.pclistener)
 		trigger.addTriggerCondition(fife.INSTANCE_TRIGGER_CELL)

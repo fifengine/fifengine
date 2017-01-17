@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -36,7 +36,6 @@
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
 #include "SDL_image.h"
-#include "SDL_getenv.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -45,10 +44,13 @@ namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) :
-		RenderBackend(colorkey){
+		RenderBackend(colorkey),
+		m_renderer(NULL) {
 	}
 
 	RenderBackendSDL::~RenderBackendSDL() {
+		SDL_DestroyRenderer(m_renderer);
+		SDL_DestroyWindow(m_window);
 		deinit();
 	}
 
@@ -58,17 +60,14 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::init(const std::string& driver) {
-		char* buf;
-		if (driver != "") {
-			std::string envVar = std::string("SDL_VIDEODRIVER=") + driver;
-			buf = const_cast<char*>(envVar.c_str());
-			putenv(buf);
-		}
-
-		if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+		if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
 			throw SDLException(SDL_GetError());
-
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
+		}
+		if (driver != "") {
+			if (SDL_VideoInit(driver.c_str()) < 0) {
+				throw SDLException(SDL_GetError());
+			}
+		}
 	}
 
 	void RenderBackendSDL::clearBackBuffer() {
@@ -77,21 +76,24 @@ namespace FIFE {
 		rect.y = 0;
 		rect.w = getWidth();
 		rect.h = getHeight();
-		SDL_SetClipRect(m_screen, &rect);
-		SDL_FillRect(m_screen, 0, 0x00);
+
+		SDL_RenderSetClipRect(m_renderer, &rect);
+		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+		SDL_RenderClear(m_renderer);
 	}
 
 	void RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
-		if(icon != "") {
-			SDL_Surface *img = IMG_Load(icon.c_str());
-			if(img != NULL) {
-				SDL_WM_SetIcon(img, 0);
-				SDL_FreeSurface(img);
-			}
-		}
-
-		SDL_WM_SetCaption(title.c_str(), 0);
 		setScreenMode(mode);
+		if (m_window) {
+			if (icon != "") {
+				SDL_Surface *img = IMG_Load(icon.c_str());
+				if (img != NULL) {
+					SDL_SetWindowIcon(m_window, img);
+					SDL_FreeSurface(img);
+				}
+			}
+			SDL_SetWindowTitle(m_window, title.c_str());
+		}
 	}
 
 	void RenderBackendSDL::setScreenMode(const ScreenMode& mode) {
@@ -99,38 +101,81 @@ namespace FIFE {
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
-
-		if (bitsPerPixel != 0) {
-			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
-			if (!bpp){
-				throw SDLException("Selected video mode not supported!");
-			}
+		// in case of recreating
+		if (m_window) {
+			SDL_DestroyRenderer(m_renderer);
+			SDL_DestroyWindow(m_window);
+			m_screen = NULL;
+		}
+		// create window
+		uint8_t displayIndex = mode.getDisplay();
+		if (mode.isFullScreen()) {
+			m_window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex), SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
+		} else {
+			m_window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), width, height, flags | SDL_WINDOW_SHOWN);
 		}
 
-		if(m_screen) {
-			SDL_FreeSurface(m_screen);
+		if (!m_window) {
+			throw SDLException(SDL_GetError());
 		}
-		m_screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-		if( !m_screen ) {
-			throw SDLException("Unable to set video mode selected!");
+		// make sure the window have the right settings
+		SDL_DisplayMode displayMode;
+		displayMode.format = mode.getFormat();
+		displayMode.w = width;
+		displayMode.h = height;
+		displayMode.refresh_rate = mode.getRefreshRate();
+		if (SDL_SetWindowDisplayMode(m_window, &displayMode) != 0) {
+			throw SDLException(SDL_GetError());
 		}
+
+		// create renderer with given flags
+		flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+		if (m_vSync) {
+			flags |= SDL_RENDERER_PRESENTVSYNC;
+		}
+		m_renderer = SDL_CreateRenderer(m_window, mode.getRenderDriverIndex(), flags);
+		if (!m_renderer) {
+			throw SDLException(SDL_GetError());
+		}
+		// set texture filtering
+		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
+		} else if (m_textureFilter != TEXTURE_FILTER_NONE) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+		} else {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+		}
+		// enable alpha blending
+		SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
+		// set the window surface as main surface, not really needed anymore
+		m_screen = SDL_GetWindowSurface(m_window);
 		m_target = m_screen;
+		if (!m_screen) {
+			throw SDLException(SDL_GetError());
+		}
 
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
-			<< " at " << int32_t(m_screen->format->BitsPerPixel) << " bpp");
-
+			<< " at " << int32_t(bitsPerPixel) << " bpp with " << displayMode.refresh_rate << " Hz");
+		
+		// this is needed, otherwise we would have screen pixel formats which will not work with
+		// our texture generation. 32 bit surfaces to BitsPerPixel texturen.
 		m_rgba_format = *(m_screen->format);
+		if (bitsPerPixel != 16) {
+			m_rgba_format.format = SDL_PIXELFORMAT_RGBA8888;
+			m_rgba_format.BitsPerPixel = 32;
+		} else {
+			m_rgba_format.format = SDL_PIXELFORMAT_RGBA4444;
+			m_rgba_format.BitsPerPixel = 16;
+		}
 		m_rgba_format.Rmask = RMASK;
 		m_rgba_format.Gmask = GMASK;
 		m_rgba_format.Bmask = BMASK;
 		m_rgba_format.Amask = AMASK;
 
 		//update the screen mode with the actual flags used
-		m_screenMode = ScreenMode(width,
-		                          height,
-		                          bitsPerPixel,
-		                          m_screen->flags);
+		m_screenMode = mode;
 	}
 
 	void RenderBackendSDL::startFrame() {
@@ -138,7 +183,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::endFrame() {
-		SDL_Flip(m_screen);
+		SDL_RenderPresent(m_renderer);
 		RenderBackend::endFrame();
 	}
 
@@ -196,123 +241,33 @@ namespace FIFE {
 	}
 
 	bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		return Image::putPixel(m_target, x, y, r, g, b, a);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		if (SDL_RenderDrawPoint(m_renderer, x, y) == 0) {
+			return true;
+		}
+		return false;
 	}
 
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		// Draw a line with Bresenham, imitated from fifechan 
-		int32_t x1 = p1.x;
-		int32_t x2 = p2.x;
-		int32_t y1 = p1.y;
-		int32_t y2 = p2.y;
-		int32_t dx = ABS(x2 - x1);
-		int32_t dy = ABS(y2 - y1);
-
-		if (dx > dy) {
-			if (x1 > x2) {
-				// swap x1, x2
-				x1 ^= x2;
-				x2 ^= x1;
-				x1 ^= x2;
-
-				// swap y1, y2
-				y1 ^= y2;
-				y2 ^= y1;
-				y1 ^= y2;
-			}
-
-			if (y1 < y2) {
-				int32_t y = y1;
-				int32_t p = 0;
-
-				for (int32_t x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b, a);
-					p += dy;
-					if (p * 2 >= dx) {
-						y++;
-						p -= dx;
-					}
-				}
-			}
-			else {
-				int32_t y = y1;
-				int32_t p = 0;
-
-				for (int32_t x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b, a);
-
-					p += dy;
-					if (p * 2 >= dx) {
-						y--;
-						p -= dx;
-					}
-				}
-			}
-		}
-		else {
-			if (y1 > y2) {
-				// swap y1, y2
-				y1 ^= y2;
-				y2 ^= y1;
-				y1 ^= y2;
-
-				// swap x1, x2
-				x1 ^= x2;
-				x2 ^= x1;
-				x1 ^= x2;
-			}
-
-			if (x1 < x2) {
-				int32_t x = x1;
-				int32_t p = 0;
-
-				for (int32_t y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b, a);
-					p += dx;
-					if (p * 2 >= dy) {
-						x++;
-						p -= dy;
-					}
-				}
-			}
-			else {
-				int32_t x = x1;
-				int32_t p = 0;
-
-				for (int32_t y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b, a);
-					p += dx;
-					if (p * 2 >= dy) {
-						x--;
-						p -= dy;
-					}
-				}
-			}
-		}
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
 	}
 
 	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p1, r, g, b, a);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+		SDL_RenderDrawLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
+		SDL_RenderDrawLine(m_renderer, p3.x, p1.y, p1.x, p1.y);
 	}
 
 	void RenderBackendSDL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-		Point p1, p2, p3, p4;
-
-		p1.x = p.x;
-		p1.y = p.y;
-		p2.x = p.x+w;
-		p2.y = p.y;
-		p3.x = p.x+w;
-		p3.y = p.y+h;
-		p4.x = p.x;
-		p4.y = p.y+h;
-
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
+		SDL_Rect rect;
+		rect.x = p.x;
+		rect.y = p.y;
+		rect.w = w;
+		rect.h = h;
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawRect(m_renderer, &rect);
 	}
 
 	void RenderBackendSDL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -321,9 +276,8 @@ namespace FIFE {
 		rect.y = p.y;
 		rect.w = w;
 		rect.h = h;
-
-		Uint32 color = SDL_MapRGBA(m_target->format, r, g, b, a);
-		SDL_FillRect(m_target, &rect, color);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderFillRect(m_renderer, &rect);
 	}
 
 	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -336,10 +290,11 @@ namespace FIFE {
 		Point p3 = Point(p.x+size, p.y-size);
 		Point p4 = Point(p.x-size, p.y-size);
 
-		drawLine(p1, p2, r, g, b, a);
-		drawLine(p2, p3, r, g, b, a);
-		drawLine(p3, p4, r, g, b, a);
-		drawLine(p4, p1, r, g, b, a);
+		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+		SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+		SDL_RenderDrawLine(m_renderer, p2.x, p2.y, p3.x, p3.y);
+		SDL_RenderDrawLine(m_renderer, p3.x, p3.y, p4.x, p4.y);
+		SDL_RenderDrawLine(m_renderer, p4.x, p4.y, p1.x, p1.y);
 	}
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
@@ -356,7 +311,7 @@ namespace FIFE {
 			const uint32_t swidth = getWidth();
 			const uint32_t sheight = getHeight();
 
-			SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
+			SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24,
 				RMASK, GMASK, BMASK, NULLMASK);
 
 			if(!surface) {
@@ -385,7 +340,7 @@ namespace FIFE {
 				return;
 			}
 			// create source surface
-			SDL_Surface* src = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 32,
+			SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32,
 				RMASK, GMASK, BMASK, AMASK);
 
 			if(!src) {
@@ -394,7 +349,7 @@ namespace FIFE {
 			// copy screen suface to source surface
 			SDL_BlitSurface(m_screen, NULL, src, NULL);
 			// create destination surface
-			SDL_Surface* dst = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32,
+			SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32,
 				RMASK, GMASK, BMASK, AMASK);
 
 			uint32_t* src_pointer = static_cast<uint32_t*>(src->pixels);
@@ -473,23 +428,33 @@ namespace FIFE {
 		rect.y = cliparea.y;
 		rect.w = cliparea.w;
 		rect.h = cliparea.h;
-		SDL_SetClipRect(m_target, &rect);
+		SDL_RenderSetClipRect(m_renderer, &rect);
 		if (clear) {
-			uint32_t color = 0;
 			if (m_isbackgroundcolor) {
-				color = SDL_MapRGB(m_target->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
+				SDL_SetRenderDrawColor(m_renderer, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b, m_backgroundcolor.a);
+			} else {
+				SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 			}
-			SDL_FillRect(m_target, &rect, color);
+			SDL_RenderClear(m_renderer);
 		}
 	}
 
 	void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard) {
+		SDLImage* image = static_cast<SDLImage*>(img.get());
 		m_target = img->getSurface();
+		SDL_Texture* texture = image->getTexture();
+		if (!texture) {
+			texture = SDL_CreateTexture(m_renderer, m_rgba_format.format, SDL_TEXTUREACCESS_TARGET, m_target->w, m_target->h);
+			image->setTexture(texture);
+		}
+		SDL_SetRenderTarget(m_renderer, texture);
 		setClipArea(img->getArea(), discard);
 	}
 
 	void RenderBackendSDL::detachRenderTarget(){
+		SDL_RenderPresent(m_renderer);
 		m_target = m_screen;
+		SDL_SetRenderTarget(m_renderer, NULL);
 	}
 	
 	void RenderBackendSDL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {

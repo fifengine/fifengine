@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -51,7 +51,6 @@ namespace fcn {
 			 *
 			 * @param up_image Image displayed when the button isn't toggled
 			 * @param down_image Image displayed when the button is toggled
-			 * @param hover_file Image displayed when the mouse cursor is over button
 			 * @param caption Text to be displayed on button
 			 * @param group The group the button belongs to
 			 */
@@ -133,8 +132,7 @@ namespace fcn {
 			/**
 			 * Sets the radio button to selected or not.
 			 *
-			 * @param selected True if the radio button should be selected,
-			 *                 false otherwise.
+			 * @param toggled True if the radio button should be selected, false otherwise.
 			 * @see isSelected
 			 */
 			void setToggled(bool toggled);
