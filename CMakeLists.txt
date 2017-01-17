@@ -18,7 +18,7 @@ set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSIO
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
-  "${PROJECT_BINARY_DIR}/version.h"
+  "${PROJECT_SOURCE_DIR}/engine/core/version.h"
 )
 
 #------------------------------------------------------------------------------
@@ -125,13 +125,32 @@ message("")
 # Tell CMake where to search for binaries (dlls), includes and libs on Windows
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+
+    # help to find dependencies on Appveyor
+
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/build-tools/swig"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"    
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
+
+    # help to find dependencies on your local env (FifeSDK)
+
+    "${PROJECT_SOURCE_DIR}/../swig"
+    "${PROJECT_SOURCE_DIR}/../python"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
+    
   )
 endif(WIN32)
 
@@ -875,7 +894,7 @@ endif(build-python)
 
 if(build-library)
   add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
-  set_target_properties(fife PROPERTIES SOVERSION ${FIFE_MAJOR_VERSION})
+  set_target_properties(fife PROPERTIES SOVERSION ${FIFE_VERSION})
 
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
@@ -891,7 +910,7 @@ if(build-library)
   target_link_libraries(fife ${FIFECHAN_LIBRARIES})
   
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  install(FILES ${PROJECT_BINARY_DIR}/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})

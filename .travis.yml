@@ -71,7 +71,10 @@ notifications:
 #deploy:
 #  provider: releases
 #  api_key:
-#    secure: Bi5esH9G3mPpMdDAyVXsbrvoOhHm9lf38NBI5BR85GDuBg4gE3Gm8nlprBQWhm7jXSZH9qc58MeC48B4YWqA/TjVBRqJ2n+H0dK0jLUZi4yo1kB+bDxkshZP7GtAC62wUSKF81aPY38kH3yj8AR3iUHaYUBRc54BkeWzsvJ3C1g=
+#    secure: "TiE1MLzq8DE2vJjiTeWnuhjEM/cH4hQ7yL/SSDkIqTijCY1eiCX6KPE7yDNh9F1SkCfxYyDPTuRc+f1EaAbk073aL56kUTM/bV/4TEcHk4TS40Hcd5aA10gR3XOH3lYwagT2edgXgXLA1cvU1tuwj8stKz1hEnkVlCvFdbvy4qg="
 #  file: Fifengine*.tar.gz
+#  file_glob: true
+#  skip_cleanup: true
+#  overwrite: true
 #  on:
-#    repo: fifengine/fifengine
+#    tags: true
