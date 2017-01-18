@@ -168,7 +168,10 @@ def _make_text(message):
 
 def message(message="",caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML.decode()))
+	try:
+		dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
+	except TypeError:
+		dialog = XMLDialog(StringIO(MESSAGE_BOX_XML.decode()))
 	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
@@ -214,8 +217,10 @@ def trace(f):
 			return pychan.tools.applyOnlySuitable(f,*args,**kwargs)
 
 		except Exception as e:
-			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
-			
+			try:
+				dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
+			except TypeError:
+				dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML.decode()))
 			dialog.gui.findChild(name="message").text = str(e)
 			
 			tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])

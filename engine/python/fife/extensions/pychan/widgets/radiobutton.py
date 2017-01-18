@@ -140,7 +140,7 @@ class RadioButton(BasicTextWidget):
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)
 	marked = property(_isMarked,_setMarked)
 
-	def _setGroup(self,group): self.real_widget.setGroup(group)
+	def _setGroup(self,group): self.real_widget.setGroup(str(group))
 	def _getGroup(self): return self.real_widget.getGroup()
 	group = property(_getGroup,_setGroup)
 

@@ -22,6 +22,8 @@
 # ####################################################################
 
 from __future__ import absolute_import
+# needed since swig won't accept variables of the builtins.str type.
+old_str = str
 from builtins import str
 from builtins import map
 from builtins import object
@@ -167,13 +169,13 @@ class Manager(object):
 				return font.font
 			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
 		else:
-			return self.hook.get_font(name)
+			return self.hook.get_font(old_str(name))
 
 	def createFont(self, path="", size=0, glyphs=""):
 		"""
 		Creates and returns a GuiFont from the GUI Manager
 		"""
-		return self.hook.create_font(path,size,glyphs)
+		return self.hook.create_font(old_str(path),size,glyphs)
 
 	def releaseFont(self, font):
 		"""
