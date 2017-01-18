@@ -185,7 +185,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 		
-		if not isinstance(name, str) and not isinstance(name, unicode):
+		if not isinstance(name, basestring):
 			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for "
 								 "name argument.")
 
@@ -238,7 +238,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 		
-		if not isinstance(name, str) and not isinstance(name, unicode):
+		if not isinstance(name, basestring):
 			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
 								 "name argument.")
 
@@ -291,7 +291,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 
-		if not isinstance(name, str) and not isinstance(name, unicode):
+		if not isinstance(name, basestring):
 			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
 								 "name argument.")
 
@@ -310,7 +310,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		for c in self._root_element.getchildren():
 			if c.tag == "Module":
 				name = c.get("name","")
-				if not isinstance(name, str) and not isinstance(name, unicode):
+				if not isinstance(name, basestring):
 					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
 										 "type for name argument.")
 				
@@ -336,7 +336,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 				name = e.get("name", "")
 	
 				# check the name
-				if not isinstance(name, str) and not isinstance(name, unicode):
+				if not isinstance(name, basestring):
 					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
 										 "type for name argument.")
 				element = e
@@ -399,7 +399,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		@param module: The module to get from the settings tree
 		@type module: C{string}
 		"""
-		if not isinstance(module, str) and not isinstance(module, unicode):
+		if not isinstance(module, basestring):
 			raise AttributeError("Settings:_getModuleTree: Invalid type for "
 								 "module argument.")
 
