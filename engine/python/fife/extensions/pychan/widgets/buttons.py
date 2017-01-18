@@ -22,6 +22,8 @@
 # ####################################################################
 
 from __future__ import absolute_import
+
+from builtins import str as newstr
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, BoolAttr, PointAttr
@@ -174,7 +176,7 @@ class ImageButton(BasicTextWidget):
 										 max_size=max_size,
 										 helptext=helptext, 
 										 position=position,
-										 style=style, 
+										 style=style,
 										 hexpand=hexpand, 
 										 vexpand=vexpand,
 										 font=font,
@@ -379,6 +381,8 @@ class ToggleButton(ImageButton):
 		return toggleButtonClone
 		
 	def _setGroup(self,group):
+		if isinstance(group, newstr):
+			group = str(group)
 		if group is not None and group != "":
 			self.real_widget.setGroup( group )
 
