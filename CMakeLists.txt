@@ -181,6 +181,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/object.cpp
@@ -229,6 +230,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.cpp
@@ -373,6 +375,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/ipather.h
@@ -448,6 +451,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.h
