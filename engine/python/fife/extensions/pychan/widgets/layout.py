@@ -21,10 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from builtins import map
+from builtins import range
+from builtins import object
 from fife.extensions.pychan.attrs import IntAttr
 
 
-AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
+AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = list(range(5))
 
 def isLayouted(widget):
 	return isinstance(widget,LayoutBase)
@@ -70,7 +73,7 @@ class LayoutBase(object):
 
 	def _applyHeight(self, spacers = []):
 		y = self.border_size + self.margins[1]
-		ydelta = map(self.ydelta,self.children)
+		ydelta = list(map(self.ydelta,self.children))
 		for index, child in enumerate(self.children):
 			while spacers and spacers[0].index == index:
 				y += spacers.pop(0).size
@@ -82,7 +85,7 @@ class LayoutBase(object):
 
 	def _applyWidth(self, spacers = []):
 		x = self.border_size + self.margins[0]
-		xdelta = map(self.xdelta,self.children)
+		xdelta = list(map(self.xdelta,self.children))
 		for index, child in enumerate(self.children):
 			while spacers and spacers[0].index == index:
 				x += spacers.pop(0).size
@@ -90,7 +93,7 @@ class LayoutBase(object):
 			x += xdelta.pop(0)
 
 	def _expandWidthSpacer(self):
-		xdelta = map(self.xdelta,self.children)
+		xdelta = list(map(self.xdelta,self.children))
 		xdelta += [spacer.min_size for spacer in self.spacer]
 
 		available_space = self.width - 2*self.margins[0] - 2*self.border_size - self._extra_border[0]
@@ -128,7 +131,7 @@ class LayoutBase(object):
 		self._applyWidth(spacers = self.spacer[:])
 
 	def _expandHeightSpacer(self):
-		ydelta = map(self.ydelta,self.children)
+		ydelta = list(map(self.ydelta,self.children))
 		ydelta += [spacer.min_size for spacer in self.spacer]
 
 		available_space = self.height - 2*self.margins[1] - 2*self.border_size - self._extra_border[1]

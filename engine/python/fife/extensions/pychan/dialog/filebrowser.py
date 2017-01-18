@@ -24,6 +24,8 @@
 """ a filebrowser implementation for pychan """
 from __future__ import print_function
 
+from builtins import str
+from builtins import object
 import sys
 import os
 
@@ -124,9 +126,9 @@ class FileBrowser(object):
 
 			newList = []
 			for i in list:
-				try: newList.append(unicode(i, fs_encoding))
+				try: newList.append(str(i, fs_encoding))
 				except:
-					newList.append(unicode(i, fs_encoding, 'replace'))
+					newList.append(str(i, fs_encoding, 'replace'))
 					print("WARNING: Could not decode item:", i)
 			return newList
 

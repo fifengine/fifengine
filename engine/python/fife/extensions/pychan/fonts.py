@@ -23,6 +23,10 @@
 
 # Font handling
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import map
+from builtins import object
 from .exceptions import *
 
 class Font(object):
@@ -38,7 +42,7 @@ class Font(object):
 		if self.typename == "truetype":
 			self.size = int(get("size"))
 			self.antialias = bool(get("antialias",True))
-			self.color = map(int,get("color","255,255,255").split(','))
+			self.color = list(map(int,get("color","255,255,255").split(',')))
 			self.font = get_manager().createFont(self.source,self.size,"")
 
 			if self.font is None:
@@ -57,9 +61,9 @@ class Font(object):
 		"""
 		Static method to load font definitions out of a PyChan config file.
 		"""
-		import ConfigParser
+		import configparser
 
-		fontdef = ConfigParser.ConfigParser()
+		fontdef = configparser.ConfigParser()
 		fontdef.read(filename)
 
 		sections = [section for section in fontdef.sections() if section.startswith("Font/")]

@@ -41,6 +41,7 @@ conveniences:
 """
 from __future__ import print_function
 
+from builtins import map
 from fife import fife
 from fife import fifechan
 import re
@@ -86,9 +87,9 @@ def createProperties():
 
 	getter = re.compile(r"^(get|are|is)[A-Z]")
 	for class_ in classes:
-		methods = [(name,attr) for name,attr in class_.__dict__.items()
+		methods = [(name,attr) for name,attr in list(class_.__dict__.items())
 		                       if isSimpleGetter(attr) ]
-		setmethods = [(name,attr) for name,attr in class_.__dict__.items() if callable(attr)]
+		setmethods = [(name,attr) for name,attr in list(class_.__dict__.items()) if callable(attr)]
 		getters = []
 		for name,method in methods:
 			if getter.match(name):

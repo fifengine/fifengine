@@ -22,6 +22,9 @@
 # ####################################################################
 
 from __future__ import absolute_import
+from builtins import str
+from builtins import map
+from builtins import range
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, UnicodeAttr
@@ -139,14 +142,14 @@ class TextBox(Widget):
 		if not filename: return
 		try:
 			# FIXME needs encoding detection.
-			self.text = unicode(open(filename).read(),"utf8")
+			self.text = str(open(filename).read(),"utf8")
 		except Exception as e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
 
 	def resizeToContent(self,recurse=True):
 		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
-		max_w = max(map(self.real_font.getWidth,rows))
+		max_w = max(list(map(self.real_font.getWidth,rows)))
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
 

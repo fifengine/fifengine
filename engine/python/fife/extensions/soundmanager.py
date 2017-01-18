@@ -40,7 +40,10 @@ Usage::
   emitter.play()
 
 """
+from __future__ import division
 
+from past.utils import old_div
+from builtins import object
 from fife import fife
 
 import fife.extensions.fife_timer as fife_timer
@@ -295,7 +298,7 @@ class SoundManager(object):
 					repeat = 0
 					def real_callback(clip):
 						clip.fifeemitter.stop()
-						clip.fifeemitter.setGain(float(clip.gain)/255.0)
+						clip.fifeemitter.setGain(old_div(float(clip.gain),255.0))
 						if self.listenerposition and clip.position:
 							# Use 1 as z coordinate, no need to specify it
 							clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
@@ -317,7 +320,7 @@ class SoundManager(object):
 				if clip.looping:
 					def real_callback(clip):
 						clip.fifeemitter.stop()
-						clip.fifeemitter.setGain(float(clip.gain)/255.0)
+						clip.fifeemitter.setGain(old_div(float(clip.gain),255.0))
 						if self.listenerposition and clip.position:
 							# Use 1 as z coordinate, no need to specify it
 							clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
@@ -331,7 +334,7 @@ class SoundManager(object):
 					clip.callback = cbwa(real_callback, clip)
 					clip.timer = fife_timer.Timer(clip.duration, clip.callback, 0)
 
-			clip.fifeemitter.setGain(float(clip.gain)/255.0)
+			clip.fifeemitter.setGain(old_div(float(clip.gain),255.0))
 
 			if self.listenerposition and clip.position:
 				# Use 1 as z coordinate, no need to specify it
@@ -382,7 +385,7 @@ class SoundManager(object):
 		"""
 		self.stopAllSounds()
 
-		for emitterlist in self._loadedclips.values():
+		for emitterlist in list(self._loadedclips.values()):
 			for emitter in emitterlist:
 				self._fifesoundmanager.releaseEmitter(emitter.getId())
 				emitter = None

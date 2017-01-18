@@ -28,6 +28,8 @@ See the L{ApplicationBase} documentation.
 """
 from __future__ import print_function
 
+from builtins import str
+from builtins import object
 from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.fife_settings import Setting

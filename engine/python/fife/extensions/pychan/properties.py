@@ -22,6 +22,7 @@
 # ####################################################################
 
 from __future__ import absolute_import
+from builtins import object
 from fife import fife, fifechan
 from .exceptions import RuntimeError
 

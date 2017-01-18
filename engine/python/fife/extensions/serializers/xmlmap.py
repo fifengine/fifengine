@@ -23,6 +23,8 @@
 """ main xml parser class for xml map loading """
 from __future__ import print_function
 
+from builtins import str
+from builtins import object
 import time
 
 from fife import fife
@@ -424,9 +426,9 @@ class XMLMapLoader(object):
 			
 			self.light_data[cam_id][group].append(node)
 			
-		for camera, groups in self.light_data.iteritems():
+		for camera, groups in self.light_data.items():
 			print("Lights for camera %s" % camera)
-			for group, lights in groups.iteritems():
+			for group, lights in groups.items():
 				print(group, lights)
 			
 	def parse_sounds(self, layerelt, layer):
@@ -740,9 +742,9 @@ class XMLMapLoader(object):
 		
 		def dump_data():
 			""" dump all loaded data """
-			for camera, groups in self.light_data.iteritems():
+			for camera, groups in self.light_data.items():
 				print("Lights for camera %s" % camera)
-				for group, lights in groups.iteritems():
+				for group, lights in groups.items():
 					print(group, lights)		
 		
 		# fetch all renderer instances for available cameras
@@ -751,8 +753,8 @@ class XMLMapLoader(object):
 			renderers[_id] = fife.LightRenderer.getInstance(camera)
 		
 		# parse data and create the lights	
-		for camera, groups in self.light_data.iteritems():
-			for group, lights in groups.iteritems():
+		for camera, groups in self.light_data.items():
+			for group, lights in groups.items():
 				for light in lights:
 					instance = None
 					layer = map.getLayer(light['layer'])

@@ -27,6 +27,7 @@ Functional utilities designed for pychan use cases.
 from __future__ import print_function
 from __future__ import absolute_import
 
+from builtins import range
 from . import exceptions
 
 ### Functools ###
@@ -56,7 +57,7 @@ def applyOnlySuitable(func,*args,**kwargs):
 	#http://docs.python.org/lib/inspect-types.html
 	if code.co_flags & 8:
 		return func(*args,**kwargs)
-	for name,value in kwargs.items():
+	for name,value in list(kwargs.items()):
 		if name not in varnames:
 			del kwargs[name]
 	return func(*args,**kwargs)
@@ -119,7 +120,7 @@ def attrSetCallback(**kwargs):
 	"""
 	do_calls = []
 
-	for name in kwargs.keys():
+	for name in list(kwargs.keys()):
 		if name.startswith("_"):
 			raise exceptions.PrivateFunctionalityError(name)
 		if name.startswith("do__"):
@@ -127,7 +128,7 @@ def attrSetCallback(**kwargs):
 			del kwargs[name]
 
 	def attrSet_callback(widget=None):
-		for name,value in kwargs.items():
+		for name,value in list(kwargs.items()):
 			setattr(widget,name,value)
 		for method_name in do_calls:
 			method = getattr(widget,method_name)
@@ -164,7 +165,7 @@ def repeatALot(n = 1000):
 	"""
 	def wrap_f(f):
 		def new_f(*args,**kwargs):
-			for i in xrange(n):
+			for i in range(n):
 				f(*args,**kwargs)
 			return f(*args,**kwargs)
 		return new_f

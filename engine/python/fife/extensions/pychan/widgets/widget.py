@@ -23,6 +23,8 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import str
+from builtins import object
 import weakref
 
 from fife import fife
@@ -265,7 +267,7 @@ class Widget(object):
 		if self.__parent:
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 
-		for name,returnValue in bind.items():
+		for name,returnValue in list(bind.items()):
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
 				self.hide()
@@ -363,7 +365,7 @@ class Widget(object):
 		Matches the widget against a list of key-value pairs.
 		Only if all keys are attributes and their value is the same it returns True.
 		"""
-		for k,v in kwargs.items():
+		for k,v in list(kwargs.items()):
 			if v != getattr(self,k,None):
 				return False
 		return True
@@ -566,7 +568,7 @@ class Widget(object):
 		Usage::
 		  closeButton = root_widget.findChild(name='close')
 		"""
-		if kwargs.keys() == ["name"]:
+		if list(kwargs.keys()) == ["name"]:
 			return self.findChildByName(kwargs["name"])
 
 		children = self.findChildren(**kwargs)
@@ -703,7 +705,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for descr,func in eventMap.items():
+		for descr,func in list(eventMap.items()):
 			name, event_name, group_name = events.splitEventDescriptor(descr)
 			#print name, event_name, group_name
 			widgets = children.get(name,[])
@@ -757,7 +759,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for name,data in initialDataMap.items():
+		for name,data in list(initialDataMap.items()):
 			widgetList = children.get(name,[])
 			for widget in widgetList:
 				widget.setInitialData(data)
@@ -776,7 +778,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for name,data in dataMap.items():
+		for name,data in list(dataMap.items()):
 			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
 				if get_manager().debug:

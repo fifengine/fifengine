@@ -23,6 +23,8 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import map
+from builtins import str
 from fife import fife
 from fife import fifechan
 
@@ -287,7 +289,7 @@ class Container(Widget):
 		if not shown_only:
 			children = self.children
 		else:
-			children = filter(lambda w: w.real_widget.isVisible(), self.children)
+			children = [w for w in self.children if w.real_widget.isVisible()]
 		
 		if leaves_first:
 			for child in children:
@@ -316,7 +318,7 @@ class Container(Widget):
 			return
 
 		back_w,back_h = self.width, self.height
-		map(self.real_widget.remove,self._background)
+		list(map(self.real_widget.remove,self._background))
 
 		# Now tile the background over the widget
 		self._background = []
@@ -324,14 +326,14 @@ class Container(Widget):
 		icon.setTiling(True)
 		icon.setSize(back_w,back_h)
 		self._background.append(icon)
-		map(self.real_widget.add,self._background)
+		list(map(self.real_widget.add,self._background))
 		icon.requestMoveToBottom()
 
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)
 		if image is None:
 			self._background_image = None
-			map(self.real_widget.remove,self._background)
+			list(map(self.real_widget.remove,self._background))
 			self._background = []
 			return
 		# Background generation is done in _resetTiling

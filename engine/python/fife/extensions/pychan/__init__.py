@@ -253,7 +253,9 @@ has to be invoked I{after} the subclass specific construction has taken place.
 """
 from __future__ import print_function
 from __future__ import absolute_import
+import sys
 
+from builtins import map
 __all__ = [
 	'loadXML',
 	'loadFonts',
@@ -305,7 +307,14 @@ def traced(f):
 			raise
 	return traced_f
 
-class _GuiLoader(object, handler.ContentHandler):
+if sys.version_info < (3, ):
+    class __GuiLoaderBase(object, handler.ContentHandler):
+        pass
+else:
+    class __GuiLoaderBase(handler.ContentHandler):
+        pass
+    
+class _GuiLoader(__GuiLoaderBase):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
 		self.root = None
@@ -314,7 +323,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
-		attrstrings = map(lambda t: '%s="%s"' % tuple(map(unicode,t)),attrs.items())
+		attrstrings = ['%s="%s"' % tuple(map(str,t)) for t in list(attrs.items())]
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		try:
 			print(self.indent + tag)
@@ -358,7 +367,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createInstance(self,cls,name,attrs):
 		obj = cls(parent=self.root)
-		for k,v in attrs.items():
+		for k,v in list(attrs.items()):
 			self._setAttr(obj,k,v)
 
 		if self.root:
@@ -367,7 +376,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createSpacer(self,cls,name,attrs):
 		obj = cls(parent=self.root)
-		for k,v in attrs.items():
+		for k,v in list(attrs.items()):
 			self._setAttr(obj,k,v)
 
 		if hasattr(self.root,'add'):

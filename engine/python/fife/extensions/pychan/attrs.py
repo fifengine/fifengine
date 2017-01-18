@@ -42,6 +42,9 @@ accepted attributes in classes and is used by pychan internally.
 """
 from __future__ import absolute_import
 
+from builtins import map
+from builtins import str
+from builtins import object
 from .exceptions import ParserError
 
 class Attr(object):
@@ -72,7 +75,7 @@ class UnicodeAttr(Attr):
 		Parses a value and checks for errors.
 		Override with specialiced behaviour.
 		"""
-		return unicode(value)
+		return str(value)
 
 
 class PointAttr(Attr):

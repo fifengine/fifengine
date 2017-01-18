@@ -61,6 +61,9 @@ Available Events
 from __future__ import print_function
 from __future__ import absolute_import
 
+from builtins import str
+from builtins import range
+from builtins import object
 from .compat import fifechan
 
 from . import exceptions
@@ -101,7 +104,7 @@ __doc__ += "".join([" - %s\n" % event for event in EVENTS])
 try: del event
 except:pass
 
-MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = range(4)
+MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 def getEventType(name):
 	if "mouse" in name:
 		return MOUSE_EVENT
@@ -168,7 +171,7 @@ class EventListenerBase(object):
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
 				if self.debug: print("-"*self.indent, name)
-				for f in self.events[name].itervalues():
+				for f in self.events[name].values():
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
@@ -284,11 +287,11 @@ class EventMapper(object):
 		return "EventMapper(%s)" % repr(self.widget_ref())
 
 	def attach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.attach()
 
 	def detach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.detach()
 			
 
@@ -309,9 +312,9 @@ class EventMapper(object):
 
 	def getCapturedEvents(self):
 		events = []
-		for event_type, listener in self.listener.items():
-			for event_name, group in listener.events.items():
-				for group_name in group.keys():
+		for event_type, listener in list(self.listener.items()):
+			for event_name, group in list(listener.events.items()):
+				for group_name in list(group.keys()):
 					events.append( "%s/%s" % (event_name, group_name) )
 		return events
 

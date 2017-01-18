@@ -21,8 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 import os
-from StringIO import StringIO
+from io import StringIO
 	
 from fife.extensions.serializers import ET, SerializerError, InvalidFormat, \
 										NotFound
@@ -164,7 +169,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		elif e_type == 'str' or e_type == 'string':
 			return str(e_value)
 		elif e_type == 'unicode':
-			return unicode(e_value)
+			return str(e_value)
 		elif e_type == 'list':
 			return self._deserializeList(e_value)
 		elif e_type == 'dict':
@@ -254,9 +259,9 @@ class SimpleXMLSerializer(SimpleSerializer):
 		elif isinstance(value, float):
 			e_type = "float"
 			value = str(value)
-		elif isinstance(value, unicode):
+		elif isinstance(value, str):
 			e_type = "unicode"
-			value = unicode(value)
+			value = str(value)
 		elif isinstance(value, list):
 			e_type = "list"
 			value = self._serializeList(value)

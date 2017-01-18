@@ -29,8 +29,11 @@ This module provides gui window that sets basic fife settings through
 pychan.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from fife.extensions.fife_settings import Setting
 from fife.extensions.fife_settings import SettingEntry
@@ -177,8 +180,8 @@ class FifePychanSettings(Setting):
 			return pychan.loadXML(StringIO(widget))
 
 	def fillWidgets(self):
-		for module in self._entries.itervalues():
-			for entry in module.itervalues():
+		for module in self._entries.values():
+			for entry in module.values():
 				widget = self._optionsDialog.findChildByName(entry.settingwidgetname)
 				
 				"""
@@ -199,9 +202,9 @@ class FifePychanSettings(Setting):
 						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
 				elif isinstance(entry.initialdata, dict):
 					try:
-						value = entry.initialdata.keys().index(value)
+						value = list(entry.initialdata.keys()).index(value)
 					except ValueError:
-						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata.keys()))
+						raise ValueError("\"" + str(value) + "\" is not a valid value for " + entry.name + ". Valid options: " + str(list(entry.initialdata.keys())))
 				entry.initializeWidget(widget, value)
 	
 	def _applySettings(self):
@@ -209,8 +212,8 @@ class FifePychanSettings(Setting):
 		Writes the settings file.  If a change requires a restart of the engine
 		it notifies you with a small dialog box.
 		"""
-		for module in self._entries.itervalues():
-			for entry in module.itervalues():
+		for module in self._entries.values():
+			for entry in module.values():
 				widget = self._optionsDialog.findChildByName(entry.settingwidgetname)
 				data = widget.getData()
 				
@@ -219,7 +222,7 @@ class FifePychanSettings(Setting):
 				if type(entry.initialdata) is list:
 					data = entry.initialdata[data]
 				elif isinstance(entry.initialdata, dict):
-					data = entry.initialdata.keys()[data]
+					data = list(entry.initialdata.keys())[data]
 
 				# only take action if something really changed
 				if data != self.get(entry.module, entry.name):

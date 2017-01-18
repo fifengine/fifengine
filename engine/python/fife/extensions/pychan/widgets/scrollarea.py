@@ -22,6 +22,7 @@
 # ####################################################################
 
 from __future__ import absolute_import
+from builtins import str
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr

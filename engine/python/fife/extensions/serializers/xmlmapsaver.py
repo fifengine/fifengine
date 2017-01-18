@@ -21,6 +21,10 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import os
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
@@ -31,10 +35,10 @@ from fife import fife
 MAPFORMAT = '1.0'
 
 fileExtensions = ('xml',)
-class XMLMapSaver:
+class XMLMapSaver(object):
 
 	def __init__(self, filepath, engine, map, importList, state = 0, datastate = 0):
-		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(6)
+		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = list(range(6))
 
 		self.engine = engine
 		self.model = self.engine.getModel()
