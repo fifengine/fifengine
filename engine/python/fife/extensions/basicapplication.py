@@ -28,6 +28,8 @@ See the L{ApplicationBase} documentation.
 """
 from __future__ import print_function
 
+orig_str = str
+
 from builtins import str
 from builtins import object
 from fife import fife
@@ -108,8 +110,8 @@ class ApplicationBase(object):
 		
 		engineSetting = self.engine.getSettings()
 		
-		engineSetting.setDefaultFontGlyphs(self._finalSetting['FontGlyphs'])
-		engineSetting.setDefaultFontPath(self._finalSetting['Font'])
+		engineSetting.setDefaultFontGlyphs(orig_str(self._finalSetting['FontGlyphs']))
+		engineSetting.setDefaultFontPath(orig_str(self._finalSetting['Font']))
 		engineSetting.setDefaultFontSize(self._finalSetting['DefaultFontSize'])
 		engineSetting.setBitsPerPixel(self._finalSetting['BitsPerPixel'])
 		engineSetting.setInitialVolume(self._finalSetting['InitialVolume'])
@@ -132,13 +134,13 @@ class ApplicationBase(object):
 		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))
-		engineSetting.setRenderBackend(self._finalSetting['RenderBackend'])
+		engineSetting.setRenderBackend(orig_str(self._finalSetting['RenderBackend']))
 		engineSetting.setFullScreen(self._finalSetting['FullScreen'])
 		engineSetting.setRefreshRate(self._finalSetting['RefreshRate'])
 		engineSetting.setDisplay(self._finalSetting['Display'])
 		engineSetting.setVSync(self._finalSetting['VSync'])
-		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
-		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
+		engineSetting.setVideoDriver(orig_str(self._finalSetting['VideoDriver']))
+		engineSetting.setSDLDriver(orig_str(self._finalSetting['RenderDriver']))
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
 
 		try:
@@ -152,8 +154,8 @@ class ApplicationBase(object):
 			pass
 
 		try:
-			engineSetting.setWindowTitle(self._finalSetting['WindowTitle'])
-			engineSetting.setWindowIcon(self._finalSetting['WindowIcon'])
+			engineSetting.setWindowTitle(orig_str(self._finalSetting['WindowTitle']))
+			engineSetting.setWindowIcon(orig_str(self._finalSetting['WindowIcon']))
 		except:
 			pass
 			

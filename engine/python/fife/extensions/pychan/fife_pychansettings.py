@@ -177,7 +177,10 @@ class FifePychanSettings(Setting):
 		if os.path.isfile(self._settings_gui_xml):
 			return pychan.loadXML(widget)
 		else:
-			return pychan.loadXML(StringIO(widget))
+			try:
+				return pychan.loadXML(StringIO(widget))
+			except TypeError:
+				return pychan.loadXML(StringIO(widget.decode()))
 
 	def fillWidgets(self):
 		for module in self._entries.values():
