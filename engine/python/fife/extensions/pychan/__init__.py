@@ -259,11 +259,6 @@ __all__ = [
 	'manager'
 ]
 
-
-# For epydoc
-import widgets
-import widgets.ext
-
 # This *import should really be removed!
 from widgets import *
 

@@ -24,7 +24,6 @@
 from fife.extensions import pychan
 from fife.extensions.pychan import loadXML
 import fife.extensions.pychan.tools as tools
-import widgets
 from internal import get_manager, screen_width, screen_height
 from StringIO import StringIO
 

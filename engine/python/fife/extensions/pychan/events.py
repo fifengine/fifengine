@@ -60,7 +60,6 @@ Available Events
 """
 
 from compat import fifechan
-import widgets
 
 import exceptions
 from internal import get_manager

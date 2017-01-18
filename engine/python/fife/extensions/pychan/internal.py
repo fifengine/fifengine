@@ -22,7 +22,6 @@
 # ####################################################################
 
 from compat import fifechan, fife, in_fife
-import widgets
 from fife.extensions import fife_timer as timer
 import fonts
 from exceptions import *
@@ -225,6 +224,7 @@ class Manager(object):
 		"""
 		# Remap class names, create copy:
 		def _toClass(class_):
+			import widgets
 			if class_ == "default":
 				return class_
 
