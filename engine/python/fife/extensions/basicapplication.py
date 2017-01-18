@@ -28,7 +28,8 @@ See the L{ApplicationBase} documentation.
 """
 from __future__ import print_function
 
-orig_str = str
+# needed since swig won't accept variables of the builtins.str type.
+orig_str = str 
 
 from builtins import str
 from builtins import object
