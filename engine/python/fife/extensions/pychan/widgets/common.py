@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 from fife import fife
 from fife import fifechan
 from fife.extensions.pychan import tools
@@ -31,8 +33,8 @@ from fife.extensions.pychan.properties import ColorProperty
 
 # These used to be defined in here, duplicating the definitions in .layout
 # Retain for backwards compatibility of any code importing them from .common
-from layout import AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter
-from layout import isLayouted
+from .layout import AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter
+from .layout import isLayouted
 
 
 def get_manager():
@@ -46,7 +48,7 @@ def text2gui(text):
 	It assumes the text to be a unicode object.
 	"""
 	if not isinstance(text,unicode):
-		print "Widget text needs to be set from an unicode object. Got: '%s'" % repr(text)
+		print("Widget text needs to be set from an unicode object. Got: '%s'" % repr(text))
 		text = unicode(text,"utf8")
 	return text.encode("utf8",*get_manager().unicodePolicy).replace("\t"," "*4).replace("[br]","\n")
 

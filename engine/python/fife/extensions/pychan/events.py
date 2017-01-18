@@ -58,12 +58,14 @@ Available Events
 ----------------
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-from compat import fifechan
+from .compat import fifechan
 
-import exceptions
-from internal import get_manager
-import tools
+from . import exceptions
+from .internal import get_manager
+from . import tools
 import traceback
 import weakref
 from fife.extensions.fife_timer import Timer
@@ -145,7 +147,7 @@ class EventListenerBase(object):
 			return
 		if not self.events:
 			return
-		if self.debug: print "Attach:",self
+		if self.debug: print("Attach:",self)
 		self.doAttach(widget.real_widget)
 		self.widget_ref = weakref.ref(widget)
 		self.is_attached = True
@@ -157,7 +159,7 @@ class EventListenerBase(object):
 		"""
 		if not self.is_attached:
 			return
-		if self.debug: print "Detach:",self
+		if self.debug: print("Detach:",self)
 		self.is_attached = False
 
 	def _redirectEvent(self,name,event):
@@ -165,7 +167,7 @@ class EventListenerBase(object):
 		try:
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
-				if self.debug: print "-"*self.indent, name
+				if self.debug: print("-"*self.indent, name)
 				for f in self.events[name].itervalues():
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
@@ -186,7 +188,7 @@ class EventListenerBase(object):
 					self._timers.append(timer)
 
 		except:
-			print name, repr(event)
+			print(name, repr(event))
 			traceback.print_exc()
 			raise
 
@@ -298,7 +300,7 @@ class EventMapper(object):
 			if self.isCaptured(event_name,group_name):
 				self.removeEvent(event_name,group_name)
 			elif self.debug:
-				print CALLBACK_NONE_MESSAGE % str(self.widget_ref())
+				print(CALLBACK_NONE_MESSAGE % str(self.widget_ref()))
 			return
 		self.addEvent(event_name,callback,group_name)
 

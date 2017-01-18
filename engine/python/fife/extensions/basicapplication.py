@@ -26,6 +26,7 @@ The basic application and main loop.
 
 See the L{ApplicationBase} documentation.
 """
+from __future__ import print_function
 
 from fife import fife
 from fife.extensions import fifelog
@@ -223,8 +224,8 @@ class ApplicationBase(object):
 		while not self.quitRequested:
 			try:
 				self.engine.pump()
-			except RuntimeError, e:
-				print str(e)
+			except RuntimeError as e:
+				print(str(e))
 				self.quitRequested = True
 			except:
 				self.quitRequested = True

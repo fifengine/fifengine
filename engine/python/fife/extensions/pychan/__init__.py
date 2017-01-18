@@ -251,6 +251,8 @@ This leads to a reversed construction sequence as the super classes constructor
 has to be invoked I{after} the subclass specific construction has taken place.
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 __all__ = [
 	'loadXML',
@@ -260,11 +262,11 @@ __all__ = [
 ]
 
 # This *import should really be removed!
-from widgets import *
+from .widgets import *
 
-from exceptions import *
+from .exceptions import *
 
-from fonts import loadFonts
+from .fonts import loadFonts
 
 ### Initialisation ###
 
@@ -278,8 +280,8 @@ def init(engine,debug=False, compat_layout=False):
 	@param debug: bool - Enables and disables debugging output. Default is False.
 	@param compat_layout: bool - Enables and disables compat layout. Default is False.
 	"""
-	from compat import _munge_engine_hook
-	from internal import Manager
+	from .compat import _munge_engine_hook
+	from .internal import Manager
 	global manager
 
 	manager = Manager(_munge_engine_hook(engine),debug,compat_layout)
@@ -315,9 +317,9 @@ class _GuiLoader(object, handler.ContentHandler):
 		attrstrings = map(lambda t: '%s="%s"' % tuple(map(unicode,t)),attrs.items())
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		try:
-			print self.indent + tag
-		except UnicodeEncodeError, e:
-			print self.indent + tag.encode('ascii', 'backslashreplace')
+			print(self.indent + tag)
+		except UnicodeEncodeError as e:
+			print(self.indent + tag.encode('ascii', 'backslashreplace'))
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
@@ -337,7 +339,7 @@ class _GuiLoader(object, handler.ContentHandler):
 				if attr.name == name:
 					attr.set(obj,value)
 					return
-		except GuiXMLError, e:
+		except GuiXMLError as e:
 			raise GuiXMLError("Error parsing attr '%s'='%s' for '%s': '%s'" % (name,value,obj,e))
 		raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name,repr(obj)))
 
@@ -376,7 +378,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
-		if manager.debug: print self.indent + "</%s>" % name
+		if manager.debug: print(self.indent + "</%s>" % name)
 		if self.stack.pop() in ('gui_element','spacer'):
 			self.root = self.root.parent or self.root
 

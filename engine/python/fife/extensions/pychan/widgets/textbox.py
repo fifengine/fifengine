@@ -21,12 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, UnicodeAttr
 
-from common import text2gui, gui2text
-from widget import Widget
+from .common import text2gui, gui2text
+from .widget import Widget
 
 
 class TextBox(Widget):
@@ -139,7 +140,7 @@ class TextBox(Widget):
 		try:
 			# FIXME needs encoding detection.
 			self.text = unicode(open(filename).read(),"utf8")
-		except Exception, e:
+		except Exception as e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
 

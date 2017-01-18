@@ -24,8 +24,10 @@
 """
 Functional utilities designed for pychan use cases.
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-import exceptions
+from . import exceptions
 
 ### Functools ###
 
@@ -37,18 +39,18 @@ def applyOnlySuitable(func,*args,**kwargs):
 	This is useful to pass information to callbacks without enforcing a particular signature.
 	"""
 	if hasattr(func,'im_func'):
-		code = func.im_func.func_code
+		code = func.__func__.__code__
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
 	elif hasattr(func,'func_code'):
-		code = func.func_code
+		code = func.__code__
 		varnames = code.co_varnames[0:code.co_argcount]
 	elif hasattr(func,'__call__'):
 		func = func.__call__
 		if hasattr(func,'im_func'):
-			code = func.im_func.func_code
+			code = func.__func__.__code__
 			varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
 		elif hasattr(func,'func_code'):
-			code = func.func_code
+			code = func.__code__
 			varnames = code.co_varnames[0:code.co_argcount]
 
 	#http://docs.python.org/lib/inspect-types.html
@@ -172,6 +174,6 @@ def this_is_deprecated(func,message=None):
 	if message is None:
 		message = repr(func)
 	def wrapped_func(*args,**kwargs):
-		print "PyChan: You are using the DEPRECATED functionality: %s" % message
+		print("PyChan: You are using the DEPRECATED functionality: %s" % message)
 		return func(*args,**kwargs)
 	return wrapped_func

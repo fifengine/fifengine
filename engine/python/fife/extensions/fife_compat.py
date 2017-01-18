@@ -36,14 +36,15 @@ run code that wasn't adapted to API changes in FIFE.
  - EventManager.setNonConsumableKeys is superseeded by EventManager.setKeyFilter
 
 """
+from __future__ import print_function
 
 from fife import fife
 
 # Utility functions
 
 def deprecated(revision,message):
-	print "fife_compat: Deprecation warning - See revision %d " % revision
-	print " - ",message
+	print("fife_compat: Deprecation warning - See revision %d " % revision)
+	print(" - ",message)
 
 def this_is_deprecated(func,revision=0,message=None):
 	if message is None:

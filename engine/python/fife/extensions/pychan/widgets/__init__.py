@@ -28,25 +28,26 @@ Widget wrappers.
 
 Please look at the documentation of L{Widget} for details.
 """
+from __future__ import absolute_import
 
-from widget import Widget
+from .widget import Widget
 
-from layout import Spacer
-from containers import Container, VBox, HBox, Window
-from label import Label
-from icon import Icon
-from buttons import Button, ToggleButton, ImageButton
-from checkbox import CheckBox
-from radiobutton import RadioButton
-from textfield import TextField
-from textbox import TextBox
-from listbox import ListBox
-from dropdown import DropDown
-from scrollarea import ScrollArea
-from slider import Slider
-from percentagebar import PercentageBar
-from passwordfield import PasswordField
-from iconprogressbar import IconProgressBar
+from .layout import Spacer
+from .containers import Container, VBox, HBox, Window
+from .label import Label
+from .icon import Icon
+from .buttons import Button, ToggleButton, ImageButton
+from .checkbox import CheckBox
+from .radiobutton import RadioButton
+from .textfield import TextField
+from .textbox import TextBox
+from .listbox import ListBox
+from .dropdown import DropDown
+from .scrollarea import ScrollArea
+from .slider import Slider
+from .percentagebar import PercentageBar
+from .passwordfield import PasswordField
+from .iconprogressbar import IconProgressBar
 
 # Global Widget Class registry
 

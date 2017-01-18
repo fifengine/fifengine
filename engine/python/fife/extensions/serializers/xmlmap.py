@@ -21,6 +21,7 @@
 # ####################################################################
 
 """ main xml parser class for xml map loading """
+from __future__ import print_function
 
 import time
 
@@ -134,9 +135,9 @@ class XMLMapLoader(object):
 		try:
 			self.map = self.model.createMap(str(_id))
 			self.map.setFilename(self.source)
-		except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
-			print e.getMessage()
-			print ''.join(['File: ', self.source, '. The map ', str(_id), ' already exists! Ignoring map definition.'])
+		except fife.Exception as e: # NameClash appears as general fife.Exception; any ideas?
+			print(e.getMessage())
+			print(''.join(['File: ', self.source, '. The map ', str(_id), ' already exists! Ignoring map definition.']))
 			return map
 
 		# xml-specific directory imports. This is used by xml savers.
@@ -179,7 +180,7 @@ class XMLMapLoader(object):
 				
 			# Don't parse duplicate imports
 			if (_dir,_file) in parsedImports:
-				if self.debug: print "Duplicate import:" ,(_dir, _file)
+				if self.debug: print("Duplicate import:" ,(_dir, _file))
 				continue
 			parsedImports[(_dir,_file)] = 1
 
@@ -191,7 +192,7 @@ class XMLMapLoader(object):
 				loadImportDirRec(self.obj_loader, _dir, self.engine, self.debug)
 				map.importDirs.append(_dir)
 			else:
-				if self.debug: print 'Empty import statement?'
+				if self.debug: print('Empty import statement?')
 				
 			if self.callback:
 				i += 1				
@@ -253,9 +254,9 @@ class XMLMapLoader(object):
 			layer_obj = None
 			try:
 				layer_obj = map.createLayer(str(_id), cellgrid)
-			except fife.Exception, e:
-				print e.getMessage()
-				print 'The layer ' + str(_id) + ' already exists! Ignoring this layer.'
+			except fife.Exception as e:
+				print(e.getMessage())
+				print('The layer ' + str(_id) + ' already exists! Ignoring this layer.')
 
 				continue
 
@@ -315,10 +316,10 @@ class XMLMapLoader(object):
 		_LIGHT_DEFAULT_INTENSITY = 128
 		_LIGHT_DEFAULT_RADIUS = 10.0
 		
-		print "Processing lights ... "		
+		print("Processing lights ... ")		
 		lightelt = layerelt.find('lights')
 		if not lightelt: 
-			print "\tno lights found on layer %s" % layer.getId()
+			print("\tno lights found on layer %s" % layer.getId())
 			return		
 		
 		lights = []
@@ -328,7 +329,7 @@ class XMLMapLoader(object):
 		for light in lights:
 			group = light.get('group')
 			if not group:
-				print "Light has no group. Omitting..."
+				print("Light has no group. Omitting...")
 				continue
 				
 			blending_src = light.get('src')
@@ -369,7 +370,7 @@ class XMLMapLoader(object):
 				if type == 'image':
 					image = light.get('image')					
 					if not image:
-						print "Light has no image. Omitting..."
+						print("Light has no image. Omitting...")
 						continue
 					node['type'] = 'image'
 					image = reverse_root_subfile(self.source, image)
@@ -378,7 +379,7 @@ class XMLMapLoader(object):
 				elif type == 'animation':
 					animation = light.get('animation')					
 					if not animation:
-						print "Light has no animation. Omitting..."
+						print("Light has no animation. Omitting...")
 						continue
 					node['type'] = 'animation'
 					animation = reverse_root_subfile(self.source, animation)
@@ -424,9 +425,9 @@ class XMLMapLoader(object):
 			self.light_data[cam_id][group].append(node)
 			
 		for camera, groups in self.light_data.iteritems():
-			print "Lights for camera %s" % camera
+			print("Lights for camera %s" % camera)
 			for group, lights in groups.iteritems():
-				print group, lights
+				print(group, lights)
 			
 	def parse_sounds(self, layerelt, layer):
 		""" create sound emitter
@@ -486,7 +487,7 @@ class XMLMapLoader(object):
 			# check if there is an object for this instance available, if not -> skip this one
 			object = self.model.getObject(objectID, nspace)
 			if not object:
-				print "Object with id=%s, ns=%s could not be found. Omitting..." % (objectID, nspace)
+				print("Object with id=%s, ns=%s could not be found. Omitting..." % (objectID, nspace))
 				continue
 
 			x = instance.get('x')
@@ -581,8 +582,8 @@ class XMLMapLoader(object):
 				renderer = fife.InstanceRenderer.getInstance(cam)
 				renderer.activateAllLayers(map)
 				
-			except fife.Exception, e:
-				print e.getMessage()
+			except fife.Exception as e:
+				print(e.getMessage())
 
 			if light_color: cam.setLightingColor(*[float(c) for c in light_color.split(',')])			
 			cam.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
@@ -740,9 +741,9 @@ class XMLMapLoader(object):
 		def dump_data():
 			""" dump all loaded data """
 			for camera, groups in self.light_data.iteritems():
-				print "Lights for camera %s" % camera
+				print("Lights for camera %s" % camera)
 				for group, lights in groups.iteritems():
-					print group, lights		
+					print(group, lights)		
 		
 		# fetch all renderer instances for available cameras
 		for _id in cameras:

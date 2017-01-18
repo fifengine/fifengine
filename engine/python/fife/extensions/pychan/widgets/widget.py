@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 import weakref
 
 from fife import fife
@@ -31,8 +33,8 @@ from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
 from fife.extensions.pychan.exceptions import StopTreeWalking
 from fife.extensions.pychan.properties import ColorProperty
 
-from common import get_manager
-from layout import isLayouted
+from .common import get_manager
+from .layout import isLayouted
 
 
 class Widget(object):
@@ -847,9 +849,9 @@ class Widget(object):
 		"""
 		def _printNamedWidget(widget):
 			if widget.name != Widget.DEFAULT_NAME:
-				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent)
-		print "Named child widgets of ",repr(self)
-		print "name".ljust(20),"widget".ljust(50),"parent"
+				print(widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent))
+		print("Named child widgets of ",repr(self))
+		print("name".ljust(20),"widget".ljust(50),"parent")
 		self.deepApply(_printNamedWidget)
 
 	def stylize(self,style,**kwargs):
@@ -1007,7 +1009,7 @@ class Widget(object):
 
 		if self.__parent is not None and self.__parent() is not parent:
 			if self.__parent() is not None and parent is not None:
-				print "Widget containment fumble:", self, self.__parent, parent
+				print("Widget containment fumble:", self, self.__parent, parent)
 				self.__parent().removeChild(self)
 		if parent is not None:
 			self.__parent = weakref.ref(parent)

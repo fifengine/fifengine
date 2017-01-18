@@ -21,11 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import IntAttr
 
-from widget import Widget
+from .widget import Widget
 
 
 class PercentageBar(Widget):

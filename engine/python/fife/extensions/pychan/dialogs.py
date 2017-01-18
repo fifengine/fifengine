@@ -21,16 +21,18 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 from fife.extensions import pychan
 from fife.extensions.pychan import loadXML
 import fife.extensions.pychan.tools as tools
-from internal import get_manager, screen_width, screen_height
+from .internal import get_manager, screen_width, screen_height
 from StringIO import StringIO
 
 OK,YES,NO,CANCEL = True,True,False,None
 
 def print_event(**kwargs):
-	print kwargs
+	print(kwargs)
 
 class XMLDialog(object):
 	def __init__(self, xml, ok_field = None, cancel_field = None,initial_data={},data={}):
@@ -207,12 +209,12 @@ def trace(f):
 		try:
 			return pychan.tools.applyOnlySuitable(f,*args,**kwargs)
 
-		except Exception, e:
+		except Exception as e:
 			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
 			
 			dialog.gui.findChild(name="message").text = str(e)
 			
-			tb = traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
+			tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
 			dialog.gui.findChild(name="traceback").text = "".join(tb)
 			dialog.min_size = screen_width() // 2, (3 * screen_height()) // 4
 			dialog.max_size = screen_width() // 2, (3 * screen_height()) // 4

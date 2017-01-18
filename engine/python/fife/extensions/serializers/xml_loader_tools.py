@@ -21,6 +21,7 @@
 # ####################################################################
 
 """ utilities for xml maploading process """
+from __future__ import print_function
 
 import os
 import math
@@ -34,7 +35,7 @@ def loadImportFile(loader, path, engine, debug=False):
 	@param	debug:	flag to activate / deactivate print statements
 	"""
 	loader.loadResource(path)
-	if debug: print 'imported object file ' + path
+	if debug: print('imported object file ' + path)
 
 def loadImportDir(loader, path, engine, debug=False):
 	""" helper function to call loadImportFile on a directory

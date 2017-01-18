@@ -21,8 +21,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 from fife import fife, fifechan
-from exceptions import RuntimeError
+from .exceptions import RuntimeError
 
 def get_manager():
 	from fife.extensions import pychan

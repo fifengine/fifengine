@@ -20,6 +20,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
 import fife, sys, os
 from traceback import print_exc
 
@@ -46,7 +47,7 @@ class NotFound(SerializerError):
 	pass
 
 def warn(self, msg):
-	print 'Warning (%s): %s' % (self.filename, msg)
+	print('Warning (%s): %s' % (self.filename, msg))
 
 def root_subfile(masterfile, subfile):
 	"""
@@ -114,7 +115,7 @@ def loadImportFile(loader, path, engine, debug=False):
 	@param	debug:	flag to activate / deactivate print statements
 	"""
 	loader.loadResource(fife.ResourceLocation(path))
-	if debug: print 'imported object file ' + path
+	if debug: print('imported object file ' + path)
 
 def loadImportDir(loader, path, engine, debug=False):
 	""" helper function to call loadImportFile on a directory

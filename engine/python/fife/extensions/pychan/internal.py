@@ -21,10 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from compat import fifechan, fife, in_fife
+from __future__ import absolute_import
+from .compat import fifechan, fife, in_fife
 from fife.extensions import fife_timer as timer
-import fonts
-from exceptions import *
+from . import fonts
+from .exceptions import *
 from traceback import print_exc
 
 def get_manager():
@@ -79,7 +80,7 @@ class Manager(object):
 		self.allWidgets = set()
 
 		# Autopos
-		from autoposition import placeWidget
+		from .autoposition import placeWidget
 		self.placeWidget = placeWidget
 
 	def addWidget(self, widget):
@@ -224,7 +225,7 @@ class Manager(object):
 		"""
 		# Remap class names, create copy:
 		def _toClass(class_):
-			import widgets
+			from . import widgets
 			if class_ == "default":
 				return class_
 

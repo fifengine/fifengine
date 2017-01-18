@@ -21,6 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
 from fife import fife
 
 class LogManager(object):
@@ -63,7 +64,7 @@ class LogManager(object):
 				try:
 					self.lm.addVisibleModule(self.name2mod[m])
 				except KeyError:
-					print 'Tried to enable non-existing log module "%s"' % m
+					print('Tried to enable non-existing log module "%s"' % m)
 
 	def removeVisibleModules(self, *names):
 		"""

@@ -30,9 +30,10 @@ on top level widgets which can also be set from xml.
 
 For direct use call L{placeWidget}.
 """
+from __future__ import absolute_import
 
-from internal import screen_width, screen_height
-from exceptions import PyChanException
+from .internal import screen_width, screen_height
+from .exceptions import PyChanException
 
 EXPLICIT = "explicit"
 AUTOMATIC = "automatic"

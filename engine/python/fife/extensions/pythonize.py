@@ -39,6 +39,7 @@ conveniences:
     - fife.Point
     - fife.Rect
 """
+from __future__ import print_function
 
 from fife import fife
 from fife import fifechan
@@ -61,7 +62,7 @@ def createProperties():
 		import inspect
 		getargspec = inspect.getargspec
 	except ImportError:
-		print "Pythonize: inspect not available - properties are generated with dummy argspec."
+		print("Pythonize: inspect not available - properties are generated with dummy argspec.")
 		getargspec = lambda func : ([],'args',None,None)
 
 	def isSimpleGetter(func):
@@ -70,7 +71,7 @@ def createProperties():
 		try:
 			argspec = getargspec(func)
 			return not (argspec[0] or [s for s in argspec[2:] if s])
-		except TypeError, e:
+		except TypeError as e:
 			#print func, e
 			return False
 

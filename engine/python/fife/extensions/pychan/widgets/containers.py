@@ -21,14 +21,16 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 from fife import fife
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
-from common import get_manager, gui2text, text2gui
-from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
-from widget import Widget
+from .common import get_manager, gui2text, text2gui
+from .layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
+from .widget import Widget
 
 
 class Container(Widget):
@@ -184,7 +186,7 @@ class Container(Widget):
 		
 	def insertChild(self, widget, position):
 		if position > len(self.children) or 0-position > len(self.children):
-			print "insertChild: Warning: Index overflow.",
+			print("insertChild: Warning: Index overflow.", end=' ')
 			if position >= 0:
 				self.addChild(widget)
 			else:
@@ -262,7 +264,7 @@ class Container(Widget):
 		self.adaptLayout()
 			
 	def add(self,*widgets):
-		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
+		print("PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead.")
 		self.addChildren(*widgets)
 
 	def getMaxChildrenWidth(self):
