@@ -262,13 +262,12 @@ namespace FIFE {
 			// End-user could create the same atlas for the second time.
 			// Since we don't hold any data for Atlases like ImageManager we need to recreate
 			// atlas parameters (to return proper AtlasPtr) but don't reload pixel data (they are held by ImageManager).
-
 			if (!m_imageManager->exists(atlas->getName())) {
 				atlas->setPackedImage(m_imageManager->create(atlas->getName()));
 			} else {
 				atlas->setPackedImage(m_imageManager->getPtr(atlas->getName()));
 			}
-
+			// Create subimages with given id and individual position and size
 			if (atlasElem->FirstChildElement("subimage")) {
 				for (TiXmlElement* imageElem = atlasElem->FirstChildElement("subimage");
 					imageElem != 0; imageElem = imageElem->NextSiblingElement("subimage")) {
@@ -302,6 +301,7 @@ namespace FIFE {
 					}
 				}
 			} else {
+				// Create subimages with automatic id and same size
 				int frame = 0;
 				int atlasWidth = 0;
 				int atlasHeight = 0;
@@ -327,8 +327,10 @@ namespace FIFE {
 						for (int x = 0; x < x_rows; ++x) {
 							region.x = x * subimageWidth;
 
+							static char tmp[64];
+							snprintf(tmp, 64, "%04d", frame);
 							std::ostringstream finalname;
-							finalname << *atlasId << ":" << frame << extension;
+							finalname << *atlasId << ":" << std::string(tmp) << extension;
 
 							ImagePtr subImage;
 							if (!m_imageManager->exists(finalname.str())) {

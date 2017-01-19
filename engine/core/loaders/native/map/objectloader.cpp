@@ -448,8 +448,8 @@ namespace FIFE {
 							ActionVisual::create(action);
 
 							for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement; animElement = animElement->NextSiblingElement("animation")) {
+								// Fetch already created animation
 								const std::string* animationId = animElement->Attribute(std::string("animation_id"));
-
 								if (animationId) {
 									AnimationPtr animation = m_animationManager->getPtr(*animationId);
 									if (animation) {
@@ -461,117 +461,110 @@ namespace FIFE {
 										}
 									}
 								}
-								// temp workaround
+
+								// Create animated spritesheet
 								const std::string* sourceId = animElement->Attribute(std::string("atlas"));
-								//if (sourceId) {
-								//	bfs::path atlasPath(filename);
+								if (sourceId) {
+									bfs::path atlasPath(filename);
 
-								//	if (HasParentPath(atlasPath)) {
-								//		atlasPath = GetParentPath(atlasPath) / *sourceId;
-								//	} else {
-								//		atlasPath = bfs::path(*sourceId);
-								//	}
+									if (HasParentPath(atlasPath)) {
+										atlasPath = GetParentPath(atlasPath) / *sourceId;
+									} else {
+										atlasPath = bfs::path(*sourceId);
+									}
 
-								//	ImagePtr atlasImgPtr;
-								//	// we need to load this since its shared image
-								//	if (!m_imageManager->exists(atlasPath.string())) {
-								//		atlasImgPtr = m_imageManager->create(atlasPath.string());
-								//	} else {
-								//		atlasImgPtr = m_imageManager->getPtr(atlasPath.string());
-								//	}
+									ImagePtr atlasImgPtr;
+									// we need to load this since its shared image
+									if (!m_imageManager->exists(atlasPath.string())) {
+										atlasImgPtr = m_imageManager->create(atlasPath.string());
+									} else {
+										atlasImgPtr = m_imageManager->getPtr(atlasPath.string());
+									}
 
-								//	int animFrames = 0;
-								//	int animDelay = 0;
-								//	int animXoffset = 0;
-								//	int animYoffset = 0;
-								//	int frameWidth = 0;
-								//	int frameHeight = 0;
+									int animFrames = 0;
+									int animDelay = 0;
+									int animXoffset = 0;
+									int animYoffset = 0;
+									int frameWidth = 0;
+									int frameHeight = 0;
 
-								//	animElement->QueryValueAttribute("width", &frameWidth);
-								//	animElement->QueryValueAttribute("height", &frameHeight);
-								//	animElement->QueryValueAttribute("frames", &animFrames);
-								//	animElement->QueryValueAttribute("delay", &animDelay);
-								//	animElement->QueryValueAttribute("x_offset", &animXoffset);
-								//	animElement->QueryValueAttribute("y_offset", &animYoffset);
-								//	int nDir = 0;
+									animElement->QueryValueAttribute("width", &frameWidth);
+									animElement->QueryValueAttribute("height", &frameHeight);
+									animElement->QueryValueAttribute("frames", &animFrames);
+									animElement->QueryValueAttribute("delay", &animDelay);
+									animElement->QueryValueAttribute("x_offset", &animXoffset);
+									animElement->QueryValueAttribute("y_offset", &animYoffset);
+									int nDir = 0;
 
-								//	for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
-								//		dirElement; dirElement = dirElement->NextSiblingElement("direction")) {
-								//			//AnimationPtr animation(new Animation);
-								//			int dir;
-								//			dirElement->QueryIntAttribute("dir", &dir);
+									for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
+										dirElement; dirElement = dirElement->NextSiblingElement("direction")) {
+											int dir;
+											dirElement->QueryIntAttribute("dir", &dir);
 
-								//			static char tmp[64];
-								//			sprintf(tmp, "%03d", dir);
-								//			std::string aniId = *objectId + ":" + *actionId + ":" + std::string(tmp);
-								//			AnimationPtr animation = m_animationManager->get(aniId);
+											static char tmp[64];
+											snprintf(tmp, 64, "%03d", dir);
+											std::string aniId = *objectId + ":" + *actionId + ":" + std::string(tmp);
+											AnimationPtr animation = m_animationManager->get(aniId);
 
-								//			int frames;
+											int frames;
+											int success = dirElement->QueryValueAttribute("frames", &frames);
+											if(success != TIXML_SUCCESS) {
+												frames = animFrames;
+											}
 
-								//			int success = dirElement->QueryValueAttribute("frames", &frames);
-								//			if(success != TIXML_SUCCESS) {
-								//				frames = animFrames;
-								//			}
+											int delay;
+											success = dirElement->QueryValueAttribute("delay", &delay);
+											if(success != TIXML_SUCCESS) {
+												delay = animDelay;
+											}
 
-								//			int delay;
-								//			success = dirElement->QueryValueAttribute("delay", &delay);
-								//			if(success != TIXML_SUCCESS) {
-								//				delay = animDelay;
-								//			}
+											int xoffset;
+											success = dirElement->QueryValueAttribute("x_offset", &xoffset);
+											if(success != TIXML_SUCCESS) {
+												xoffset = animXoffset;
+											}
 
-								//			int xoffset;
-								//			success = dirElement->QueryValueAttribute("x_offset", &xoffset);
-								//			if(success != TIXML_SUCCESS) {
-								//				xoffset = animXoffset;
-								//			}
+											int yoffset;
+											success = dirElement->QueryValueAttribute("y_offset", &yoffset);
+											if(success != TIXML_SUCCESS) {
+												yoffset = animYoffset;
+											}
 
-								//			int yoffset;
-								//			success = dirElement->QueryValueAttribute("y_offset", &yoffset);
-								//			if(success != TIXML_SUCCESS) {
-								//				yoffset = animYoffset;
-								//			}
+											int action_frame;
+											success = dirElement->QueryValueAttribute("action_frame", &action_frame);
+											if(success == TIXML_SUCCESS) {
+												animation->setActionFrame(action_frame);
+											}
 
-								//			int action_frame;
-								//			success = dirElement->QueryValueAttribute("action_frame", &action_frame);
-								//			if(success == TIXML_SUCCESS) {
-								//				animation->setActionFrame(action_frame);
-								//			}
+											for (int iframe = 0; iframe < frames; ++iframe) {
+												static char tmpBuf[64];
+												snprintf(tmpBuf, 64, "%03d:%04d", dir, iframe);
 
-								//			for (int iframe = 0; iframe < frames; ++iframe) {
-								//				static char tmpBuf[64];
-								//				sprintf(tmpBuf, "%03d:%04d", dir, iframe);
+												std::string frameId = *objectId + ":" + *actionId + ":" + std::string(tmpBuf);
+												Rect region(frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight);
+												ImagePtr framePtr;
+												if (!m_imageManager->exists(frameId)) {
+													framePtr = m_imageManager->create(frameId);
+													framePtr->useSharedImage(atlasImgPtr, region);
+													framePtr->setXShift(xoffset);
+													framePtr->setYShift(yoffset);
+												} else {
+													framePtr = m_imageManager->getPtr(frameId);
+												}
+												animation->addFrame(framePtr, delay);
+											}
 
-								//				std::string frameId = *objectId + ":" + *actionId + ":" + std::string(tmpBuf);
-								//				Rect region(
-								//						frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
-								//					);
-								//				ImagePtr framePtr;
-								//				if (!m_imageManager->exists(frameId)) {
-								//					framePtr = m_imageManager->create(frameId);
-								//				/*	Rect region(
-								//						frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight
-								//					);*/
-								//					framePtr->useSharedImage(atlasImgPtr, region);
-								//					framePtr->setXShift(xoffset);
-								//					framePtr->setYShift(yoffset);
-								//				} else {
-								//					framePtr = m_imageManager->getPtr(frameId);
-								//				}
-								//				std::cout << "frameimage: " << frameId << " " << region << "\n";
-								//				animation->addFrame(framePtr, delay);
-								//			}
+											ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+											if(actionVisual) {
+												actionVisual->addAnimation(dir, animation);
+												action->setDuration(animation->getDuration());
+											}
+											++nDir;
+									}
+									continue;
+								}
 
-								//			ActionVisual* actionVisual = action->getVisual<ActionVisual>();
-								//			if(actionVisual) {
-								//				actionVisual->addAnimation(dir, animation);
-								//				action->setDuration(animation->getDuration());
-								//			}
-								//			++nDir;
-								//	}
-								//	continue;
-								//}
-								
-								//const std::string* sourceId = animElement->Attribute(std::string("source"));
+								// Load animation.xml with frames
 								sourceId = animElement->Attribute(std::string("source"));
 								if (sourceId) {
 									bfs::path animPath(filename);
