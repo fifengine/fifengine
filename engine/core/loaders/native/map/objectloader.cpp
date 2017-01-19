@@ -567,6 +567,9 @@ namespace FIFE {
 								// Load animation.xml with frames
 								sourceId = animElement->Attribute(std::string("source"));
 								if (sourceId) {
+									int direction = 0;
+									int success = animElement->QueryValueAttribute("direction", &direction);
+									
 									bfs::path animPath(filename);
 
 									if (HasParentPath(animPath)) {
@@ -581,9 +584,12 @@ namespace FIFE {
 									}
 
 									if (action && animation) {
+										if (success != TIXML_SUCCESS) {
+											direction = animation->getDirection();
+										}
 										ActionVisual* actionVisual = action->getVisual<ActionVisual>();
 										if (actionVisual) {
-											actionVisual->addAnimation(animation->getDirection(), animation);
+											actionVisual->addAnimation(direction, animation);
 											action->setDuration(animation->getDuration());
 										}
 									}
