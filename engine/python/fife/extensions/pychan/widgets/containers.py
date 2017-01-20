@@ -345,7 +345,7 @@ class Container(Widget):
 	def getBackgroundImage(self): return self._background_image
 	background_image = property(getBackgroundImage,setBackgroundImage)
 
-	def _setOpaque(self,opaque): self.real_widget.setOpaque(bool(opaque))
+	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
 	

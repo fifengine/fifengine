@@ -21,9 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-# needed since swig won't accept variables of the builtins.str type.
-old_str = str
-
 from builtins import str
 from builtins import object
 import inspect
@@ -90,7 +87,7 @@ def _munge_engine_hook(engine):
 	engine.getEventManager().addSdlEventListener(guimanager)
 
 	def _fife_load_image(filename):
-		img = engine.getImageManager().load(old_str(filename))
+		img = engine.getImageManager().load(filename)
 		return fife.GuiImage(img)
 		# use below line instead of above ones to let fifechan 
 		# use its image loader that supports creating/using atlases
