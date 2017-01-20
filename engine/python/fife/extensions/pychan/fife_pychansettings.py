@@ -33,7 +33,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import str
 import os
-from io import StringIO
+from io import BytesIO
 
 from fife.extensions.fife_settings import Setting
 from fife.extensions.fife_settings import SettingEntry
@@ -177,7 +177,7 @@ class FifePychanSettings(Setting):
 		if os.path.isfile(self._settings_gui_xml):
 			return pychan.loadXML(widget)
 		else:
-			return pychan.loadXML(StringIO(widget))
+			return pychan.loadXML(BytesIO(widget))
 
 	def fillWidgets(self):
 		for module in self._entries.values():

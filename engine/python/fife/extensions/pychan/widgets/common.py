@@ -48,9 +48,6 @@ def text2gui(text):
 	It replaces tabs by four spaces.
 	It assumes the text to be a unicode object.
 	"""
-	if not isinstance(text,str):
-		print("Widget text needs to be set from an unicode object. Got: '%s'" % repr(text))
-		text = str(text,"utf8")
 	try:    
 		return text.encode("utf8",*get_manager().unicodePolicy).replace("\t"," "*4).replace("[br]","\n")
 	except TypeError:

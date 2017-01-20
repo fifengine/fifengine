@@ -142,7 +142,7 @@ SELECT_BOX_XML = """\
 </Window>
 """
 
-EXCEPTION_CATCHER_XML="""\
+EXCEPTION_CATCHER_XML= """\
 <Window name="window" title="An exception occurred - what now?">
   <VBox hexpand="1">
     <Label wrap_text="1" max_size="400,90000" text="$MESSAGE" name="message"/>
@@ -215,7 +215,6 @@ def trace(f):
 
 		except Exception as e:
 			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
-			
 			dialog.gui.findChild(name="message").text = str(e)
 			
 			tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
