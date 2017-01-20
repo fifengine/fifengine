@@ -168,7 +168,7 @@ def _make_text(message):
 
 def message(message="",caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML.decode()))
+	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
 	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
 	dialog.gui.findChild(name="message").text = text
 	dialog.gui.findChild(name="window").title = caption
