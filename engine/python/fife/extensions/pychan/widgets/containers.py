@@ -435,8 +435,8 @@ class VBox(Container):
 	are aligned to the bottom.
 	"""
 	DEFAULT_LAYOUT = 'Vertical'
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = True
 
 	def __init__(self, 
 				 parent = None,
@@ -546,8 +546,8 @@ class HBox(Container):
 	Please see L{VBox} for details - just change the directions :-).
 	"""
 	DEFAULT_LAYOUT = 'Horizontal'
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
 
 	def __init__(self, 
 				 parent = None,
@@ -658,8 +658,8 @@ class CBox(Container):
 	Please see L{VBox} for details - just change the directions :-).
 	"""
 	DEFAULT_LAYOUT = 'Circular'
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
 
 	def __init__(self, 
 				 parent = None,
@@ -782,7 +782,7 @@ class Window(Container):
 										]
 	DEFAULT_LAYOUT = 'Vertical'
 	DEFAULT_TITLE = u"title"
-	DEFAULT_TITLE_HEIGHT = 0
+	DEFAULT_TITLE_HEIGHT = 16
 	DEFAULT_MOVABLE = True
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
 

@@ -46,8 +46,8 @@ class ScrollArea(Widget):
 									   IntAttr("vertical_scroll_amount"),
 									   IntAttr("horizontal_scroll_amount")
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
 
 	def __init__(self,
 				 parent = None,

@@ -47,8 +47,8 @@ class TextBox(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text'),
 									   Attr('filename')
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
 	DEFAULT_MARGINS = 0, 0
 	DEFAULT_PADDING = 0
 	DEFAULT_TEXT = u""

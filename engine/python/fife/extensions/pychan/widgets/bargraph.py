@@ -46,8 +46,8 @@ class BarGraph(Widget):
 									   IntAttr('bar_height'),
 									   BoolAttr('opaque')
 									 ]
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
 
 	DEFAULT_OPAQUE = False
 	DEFAULT_BAR_POSITION = 0,0

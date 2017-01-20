@@ -392,7 +392,7 @@ def loadXML(filename_or_stream):
 	    of integers.
 	  - foreground_color,base_color,background_color - These are assumed to be triples or quadruples of comma
 	    separated integers. (triples: r,g,b; quadruples: r,g,b,a)
-	  - opaque,border_size,padding - These are assumed to be simple integers.
+	  - border_size,padding - These are assumed to be simple integers.
 
 	All other attributes are set verbatim as strings on the generated instance.
 	In case a Widget does not accept an attribute to be set or the attribute can not be parsed

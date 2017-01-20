@@ -47,8 +47,8 @@ class TextField(Widget):
 
 	DEFAULT_MARGINS = 0, 0
 	DEFAULT_PADDING = 0
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
 	DEFAULT_TEXT = u""
 
 	def __init__(self, 

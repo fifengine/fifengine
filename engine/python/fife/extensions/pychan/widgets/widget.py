@@ -73,8 +73,8 @@ class Widget(object):
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
 	  If it is set to "explicit" the position attribute will not be touched.
-	  - vexpand: Integer: >= 0. Proportion to expand this widget vertically.
-	  - hexpand: Integer: >= 0. Proportion to expand this widget horizontally.
+	  - vexpand: Bool: True. Proportion to expand this widget vertically.
+	  - hexpand: Bool: True. Proportion to expand this widget horizontally.
 
 	Convenience Attributes
 	======================
@@ -115,16 +115,16 @@ class Widget(object):
 				   IntAttr('border_size'),
 				   IntAttr('outline_size'),
 				   Attr('position_technique'),
-				   IntAttr('vexpand'),
-				   IntAttr('hexpand'), 
+				   BoolAttr('vexpand'),
+				   BoolAttr('hexpand'), 
 				   UnicodeAttr('helptext'),
 				   BoolAttr('is_focusable'), 
 				   UnicodeAttr('comment')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
 	DEFAULT_MAX_SIZE = 500000, 500000
 	DEFAULT_SIZE = -1, -1
 	DEFAULT_MIN_SIZE = 0, 0

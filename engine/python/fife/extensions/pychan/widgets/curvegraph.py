@@ -46,8 +46,8 @@ class CurveGraph(Widget):
 									   BoolAttr('controll_points'),
 									   BoolAttr('opaque')
 									 ]
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
 
 	DEFAULT_THICKNESS = 1
 	DEFAULT_CONTROLL_POINTS = True

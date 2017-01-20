@@ -63,8 +63,8 @@ class ListBox(Widget):
 	The selected attribute can be read and set via L{distributeData} and L{collectData}.
 	The list items can be set via L{distributeInitialData}.
 	"""
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
 	DEFAULT_ITEMS = []
 	
 	def __init__(self, 

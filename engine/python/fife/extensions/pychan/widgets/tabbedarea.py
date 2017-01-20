@@ -39,8 +39,8 @@ class Tab(Container):
 
 	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('content_name'),
 										]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
 	DEFAULT_MARGINS = 0, 0
 	DEFAULT_PADDING = 0
 	

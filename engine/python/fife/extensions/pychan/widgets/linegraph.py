@@ -44,8 +44,8 @@ class LineGraph(Widget):
 									   IntAttr('thickness'),
 									   BoolAttr('opaque')
 									 ]
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
 
 	DEFAULT_THICKNESS = 1
 	DEFAULT_OPAQUE = False

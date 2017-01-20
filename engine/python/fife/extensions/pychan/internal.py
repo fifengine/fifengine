@@ -284,7 +284,7 @@ DEFAULT_STYLE = {
 		'margins': (5,5),
 		'opaque' : True,
 		'padding':2,
-		'titlebar_height' : 12,
+		'titlebar_height' : 25,
 		'background_image' : None,
 	},
 	'TextBox' : {

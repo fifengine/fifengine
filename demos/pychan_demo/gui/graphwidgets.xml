@@ -1,9 +1,0 @@
-<Window title="Graph Widgets Example" min_size="200, 250">
-	<Container min_size="200, 200" border_size="0">
-		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,150" bar_width="20" bar_height="50" base_color="255,0,0"/>
-		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,110" bar_width="20" bar_height="40" base_color="255,128,0"/>
-		<BarGraph min_size="200, 200" size="200, 200" bar_position="0,80" bar_width="20" bar_height="30" base_color="128,255,0"/>
-		<PieGraph min_size="200, 200" size="200, 200" center="110, 100" radius="80" segments="Int:0;Int:120;Color:255,0,0; Int:120;Int:240;Color:0,255,0; Int:240;Int:360;Color:0,0,255"/>
-	</Container>
-	<Button name="closeButton" text="Close"/>
-</Window>
