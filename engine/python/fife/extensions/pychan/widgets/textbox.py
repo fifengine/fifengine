@@ -141,8 +141,10 @@ class TextBox(Widget):
 		self._filename = filename
 		if not filename: return
 		try:
-			# FIXME needs encoding detection.
-			self.text = str(open(filename).read(),"utf8")
+			try:
+				self.text = str(open(filename).read(),"utf8")
+			except TypeError:
+				self.text = open(filename).read()
 		except Exception as e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)

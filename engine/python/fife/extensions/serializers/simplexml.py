@@ -27,7 +27,7 @@ from builtins import str
 from past.builtins import basestring
 from builtins import object
 import os
-from io import BytesIO
+from io import BytesIO, StringIO
 	
 from fife.extensions.serializers import ET, SerializerError, InvalidFormat, \
 										NotFound
@@ -120,7 +120,10 @@ class SimpleXMLSerializer(SimpleSerializer):
 								  "filename specified!")
 		
 		if not os.path.exists(self._file):
-			self._tree = ET.parse(BytesIO(EMPTY_XML_FILE))
+			try:
+				self._tree = ET.parse(BytesIO(EMPTY_XML_FILE))
+			except TypeError:
+				self._tree = ET.parse(StringIO(EMPTY_XML_FILE))
 			self._tree.write(self._file, 'UTF-8')			
 		else:
 			self._tree = ET.parse(self._file)
