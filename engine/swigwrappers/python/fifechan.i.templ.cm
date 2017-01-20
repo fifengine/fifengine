@@ -8,8 +8,12 @@
  */
 #include <cstddef>
 %}
-
 %module(directors="1") fifechan
+%begin %{
+#define SWIG_PYTHON_2_UNICODE
+%}
+
+
 @CMAKE_SWIG_IMPORTS_FCHAN@
 
 %include "std_string.i"

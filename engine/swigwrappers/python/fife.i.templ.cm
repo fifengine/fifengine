@@ -18,6 +18,12 @@
 %}
 
 %module(directors="1") fife
+
+%begin %{
+#define SWIG_PYTHON_2_UNICODE
+%}
+
+
 @CMAKE_SWIG_IMPORTS@
 
 %include "std_string.i"
