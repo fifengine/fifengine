@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2017 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_IANIMATION_LOADER_H
-#define FIFE_IANIMATION_LOADER_H
+#ifndef FIFE_VIDEO_LOADERS_ANIMATION_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_ANIMATION_PROVIDER_H
 
 // Standard C++ library includes
 
@@ -30,31 +30,15 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/animation.h"
+#include "util/resource/resource.h"
 
 namespace FIFE {
-
-    class IAnimationLoader {
-    public:
-        virtual ~IAnimationLoader() { };
-
-        /** determines whether the resource is in
-        *	the correct format for this loader
-        */
-        virtual bool isLoadable(const std::string& filename) = 0;
-
-        /** responsible for loading the animation
-         * returns a shared pointer to an animation resource
-        */
-        virtual AnimationPtr load(const std::string& filename) = 0;
-
-		/** responsible for loading all animations
-         * returns a vector of shared pointer to an animation resource
-        */
-		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
-    };
-
-    typedef SharedPtr<IAnimationLoader> AnimationLoaderPtr;
+	/** ResourceAnimationLoader.
+	 */
+	class ResourceAnimationLoader : public IResourceLoader {
+	public:
+		ResourceAnimationLoader() {}
+		virtual void load(IResource* res);
+	};
 }
-
 #endif
