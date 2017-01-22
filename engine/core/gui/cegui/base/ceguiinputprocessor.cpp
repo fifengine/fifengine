@@ -144,9 +144,9 @@ namespace FIFE {
 				// mousewheel up or down
 				int32_t wheelChange = event.wheel.y;
 				if (wheelChange != 0) {
-					if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
+					/*if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
 						wheelChange *= -1;
-					}
+					}*/
 					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(wheelChange);
 				}
 				break;
