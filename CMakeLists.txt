@@ -67,6 +67,17 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
+# Do not allow the build directory to be in the source directory for older
+# versions of cmake.
+if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "# Please chose a different build directory.\n
+    In cmake versions < 3 SWIG does not work well when the build directory is
+    placed inside the source directory.
+    Use something like this:\n
+        mkdir ../_build; cd ../_build; cmake ../fifengine\n
+    You can remove your current build folder.")
+endif()
+
 # Disable in-source builds and modifications to the source tree.
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
