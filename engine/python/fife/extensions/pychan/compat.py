@@ -21,9 +21,16 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 import inspect
 in_fife = None
 fifechan = None
+
+def safe_isclass(member):
+	try:
+		return inspect.isclass(member)
+	except NameError:
+		return False
 
 def _import_fifechan():
 	global in_fife
@@ -35,19 +42,19 @@ def _import_fifechan():
 		in_fife = True
 				
 		#move fife custom widgets to fifechan module
-		for member in inspect.getmembers(fife, inspect.isclass):
+		for member in inspect.getmembers(fife, safe_isclass):
 			if issubclass(member[1], fifechan.Widget):
 				setattr(fifechan, member[0], member[1])
 		
 		return fife, fifechan
-	except ImportError, e:
+	except ImportError as e:
 		err_fife = str(e)
 	
 	try:
 		import fifechan
 		in_fife = False
 		return None, fifechan
-	except ImportError, e:
+	except ImportError as e:
 		import traceback
 		traceback.print_exc()
 		raise ImportError("Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'" % (err_fife,str(e)))

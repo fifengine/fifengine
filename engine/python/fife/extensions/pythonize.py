@@ -43,6 +43,7 @@ conveniences:
 from fife import fife
 from fife import fifechan
 import re
+import collections
 
 __all__ = ()
 
@@ -61,16 +62,16 @@ def createProperties():
 		import inspect
 		getargspec = inspect.getargspec
 	except ImportError:
-		print "Pythonize: inspect not available - properties are generated with dummy argspec."
+		print("Pythonize: inspect not available - properties are generated with dummy argspec.")
 		getargspec = lambda func : ([],'args',None,None)
 
 	def isSimpleGetter(func):
-		if not callable(func):
+		if not isinstance(func, collections.Callable):
 			return False
 		try:
 			argspec = getargspec(func)
 			return not (argspec[0] or [s for s in argspec[2:] if s])
-		except TypeError, e:
+		except TypeError as e:
 			#print func, e
 			return False
 
@@ -85,9 +86,9 @@ def createProperties():
 
 	getter = re.compile(r"^(get|are|is)[A-Z]")
 	for class_ in classes:
-		methods = [(name,attr) for name,attr in class_.__dict__.items()
+		methods = [(name,attr) for name,attr in list(class_.__dict__.items())
 		                       if isSimpleGetter(attr) ]
-		setmethods = [(name,attr) for name,attr in class_.__dict__.items() if callable(attr)]
+		setmethods = [(name,attr) for name,attr in list(class_.__dict__.items()) if isinstance(attr, collections.Callable)]
 		getters = []
 		for name,method in methods:
 			if getter.match(name):

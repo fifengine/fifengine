@@ -223,8 +223,8 @@ class ApplicationBase(object):
 		while not self.quitRequested:
 			try:
 				self.engine.pump()
-			except RuntimeError, e:
-				print str(e)
+			except RuntimeError as e:
+				print((str(e)))
 				self.quitRequested = True
 			except:
 				self.quitRequested = True

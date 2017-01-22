@@ -26,7 +26,7 @@ from fife import fifechan
 from fife.extensions.pychan.properties import ImageProperty
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 
-from widget import Widget
+from .widget import Widget
 
 
 class IconProgressBar(Widget):

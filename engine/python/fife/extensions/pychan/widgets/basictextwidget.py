@@ -23,8 +23,8 @@
 
 from fife.extensions.pychan.attrs import UnicodeAttr
 
-from common import gui2text, text2gui
-from widget import Widget
+from .common import gui2text, text2gui
+from .widget import Widget
 
 
 class BasicTextWidget(Widget):
@@ -47,7 +47,7 @@ class BasicTextWidget(Widget):
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 	DEFAULT_MARGINS = 5,5
-	DEFAULT_TEXT = u""
+	DEFAULT_TEXT = ""
 	
 	def __init__(self, 
 				 parent = None, 

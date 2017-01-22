@@ -48,7 +48,7 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
 	map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
 		
 	map_saver.saveResource()
-	if debug: print "--- Saved Map."
+	if debug: print("--- Saved Map.")
 	return map
 
 def addMapSaver(fileExtension, saverClass):

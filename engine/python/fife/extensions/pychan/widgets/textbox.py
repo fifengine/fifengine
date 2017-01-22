@@ -25,8 +25,8 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, UnicodeAttr
 
-from common import text2gui, gui2text
-from widget import Widget
+from .common import text2gui, gui2text
+from .widget import Widget
 
 
 class TextBox(Widget):
@@ -49,7 +49,7 @@ class TextBox(Widget):
 									 ]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 1
-	DEFAULT_TEXT = u""
+	DEFAULT_TEXT = ""
 	DEFAULT_FILENAME = ""
 
 	def __init__(self,
@@ -138,14 +138,14 @@ class TextBox(Widget):
 		if not filename: return
 		try:
 			# FIXME needs encoding detection.
-			self.text = unicode(open(filename).read(),"utf8")
-		except Exception, e:
+			self.text = str(open(filename).read(),"utf8")
+		except Exception as e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
 
 	def resizeToContent(self,recurse=True):
 		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
-		max_w = max(map(self.real_font.getWidth,rows))
+		max_w = max(list(map(self.real_font.getWidth,rows)))
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
 

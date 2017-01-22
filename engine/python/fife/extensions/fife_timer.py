@@ -44,6 +44,7 @@ Usage::
 """
 
 from fife import fife
+import collections
 
 #global time manager
 _manager = None
@@ -121,7 +122,7 @@ class Timer(fife.TimeEvent):
 			if self._executed >= self._repeat:
 				self.stop()
 
-		if callable(self._callback):
+		if isinstance(self._callback, collections.Callable):
 			self._callback()
 
 	def _setDelay(self, delay):

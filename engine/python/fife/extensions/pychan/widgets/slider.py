@@ -25,7 +25,7 @@ from fife import fifechan
 
 from fife.extensions.pychan.attrs import IntAttr, FloatAttr
 
-from widget import Widget
+from .widget import Widget
 
 
 class Slider(Widget):

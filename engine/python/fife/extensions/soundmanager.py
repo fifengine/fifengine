@@ -382,13 +382,14 @@ class SoundManager(object):
 		"""
 		self.stopAllSounds()
 
-		for emitterlist in self._loadedclips.values():
+		for emitterlist in list(self._loadedclips.values()):
 			for emitter in emitterlist:
 				self._fifesoundmanager.releaseEmitter(emitter.getId())
 				emitter = None
 
 		self._loadedclips.clear()
-	def _getRolloff(self):
+
+	def _getRolloff(self):
 		return self._rolloff
 
 	def _setRolloff(self, rolloff):

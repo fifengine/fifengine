@@ -22,11 +22,11 @@
 # ####################################################################
 
 # Font handling
-from exceptions import *
+from .exceptions import *
 
 class Font(object):
 	def __init__(self,name,get):
-		from internal import get_manager
+		from .internal import get_manager
 		self.font = None
 		self.name = name
 		self.typename = get("type")
@@ -37,7 +37,7 @@ class Font(object):
 		if self.typename == "truetype":
 			self.size = int(get("size"))
 			self.antialias = bool(get("antialias",True))
-			self.color = map(int,get("color","255,255,255").split(','))
+			self.color = list(map(int,get("color","255,255,255").split(',')))
 			self.font = get_manager().createFont(self.source,self.size,"")
 
 			if self.font is None:
@@ -56,9 +56,9 @@ class Font(object):
 		"""
 		Static method to load font definitions out of a PyChan config file.
 		"""
-		import ConfigParser
+		import configparser
 
-		fontdef = ConfigParser.ConfigParser()
+		fontdef = configparser.ConfigParser()
 		fontdef.read(filename)
 
 		sections = [section for section in fontdef.sections() if section.startswith("Font/")]
@@ -83,7 +83,7 @@ def loadFonts(filename):
 	"""
 	Load fonts from a config file. These are then available via their name.
 	"""
-	from internal import get_manager
+	from .internal import get_manager
 
 	for font in Font.loadFromFile(filename):
 		get_manager().addFont(font)
