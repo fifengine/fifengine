@@ -741,9 +741,9 @@ namespace FIFE {
 			}
 		}
 		if (sdlevt.type == SDL_MOUSEWHEEL) {
-			if (sdlevt.wheel.y > 0 || sdlevt.wheel.x > 0) {
+			if (sdlevt.wheel.y > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y < 0)) {
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-			} else if (sdlevt.wheel.y < 0 || sdlevt.wheel.x < 0) {
+			} else if (sdlevt.wheel.y < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y > 0)) {
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
 			}
 		}
