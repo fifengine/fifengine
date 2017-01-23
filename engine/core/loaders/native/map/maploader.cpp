@@ -49,6 +49,7 @@
 #include "util/resource/resource.h"
 #include "util/structures/rect.h"
 #include "video/imagemanager.h"
+#include "video/animationmanager.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "view/visual.h"
@@ -65,21 +66,21 @@ namespace FIFE {
 	/** Logger to use for this source file.
 	 *  @relates Logger
 	 */
-    static Logger _log(LM_NATIVE_LOADERS);
+	static Logger _log(LM_NATIVE_LOADERS);
 
 	MapLoader::MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend)
-	: m_model(model), m_vfs(vfs), m_imageManager(imageManager), m_renderBackend(renderBackend),
+	: m_model(model), m_vfs(vfs), m_imageManager(imageManager), m_animationManager(AnimationManager::instance()), m_renderBackend(renderBackend),
 	  m_loaderName("fife"), m_mapDirectory("") {
-        AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager));
-        m_objectLoader.reset(new ObjectLoader(m_model, m_vfs, m_imageManager, animationLoader));
-        m_atlasLoader.reset(new AtlasLoader(m_model, m_vfs, m_imageManager));
+		AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
+		AtlasLoaderPtr atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
+		m_objectLoader.reset(new ObjectLoader(m_model, m_vfs, m_imageManager, m_animationManager, animationLoader, atlasLoader));
 	}
 
-    MapLoader::~MapLoader() {
+	MapLoader::~MapLoader() {
 
-    }
+	}
 
-    Map* MapLoader::load(const std::string& filename) {
+	Map* MapLoader::load(const std::string& filename) {
 		Map* map = NULL;
 
 		// reset percent done listener just in case
@@ -89,54 +90,54 @@ namespace FIFE {
 		bfs::path mapPath(filename);
 
 		if (HasParentPath(mapPath)) {
-            if (GetParentPath(mapPath).string() != m_mapDirectory) {
-			    // save the directory where the map file is located
-			    m_mapDirectory = GetParentPath(mapPath).string();
-            }
+			if (GetParentPath(mapPath).string() != m_mapDirectory) {
+				// save the directory where the map file is located
+				m_mapDirectory = GetParentPath(mapPath).string();
+			}
 		}
 
 		TiXmlDocument mapFile;
 
-        std::string mapFilename = mapPath.string();
+		std::string mapFilename = mapPath.string();
 
-        try {
-            RawData* data = m_vfs->open(mapFilename);
+		try {
+			RawData* data = m_vfs->open(mapFilename);
 
-            if (data) {
-                if (data->getDataLength() != 0) {
-                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
+			if (data) {
+				if (data->getDataLength() != 0) {
+					mapFile.Parse(data->readString(data->getDataLength()).c_str());
 
-                    if (mapFile.Error()) {
-                        std::ostringstream oss;
-                        oss << " Failed to load"
-                            << mapFilename
-                            << " : " << __FILE__
-                            << " [" << __LINE__ << "]"
-                            << std::endl;
-                        FL_ERR(_log, oss.str());
+					if (mapFile.Error()) {
+						std::ostringstream oss;
+						oss << " Failed to load"
+							<< mapFilename
+							<< " : " << __FILE__
+							<< " [" << __LINE__ << "]"
+							<< std::endl;
+						FL_ERR(_log, oss.str());
 
-                        return map;
-                    }
-                }
+						return map;
+					}
+				}
 
-                // done with data delete resource
-                delete data;
-                data = 0;
-            }
-        }
-        catch (NotFound& e)
-        {
-            FL_ERR(_log, e.what());
+				// done with data delete resource
+				delete data;
+				data = 0;
+			}
+		}
+		catch (NotFound& e)
+		{
+			FL_ERR(_log, e.what());
 
-            // TODO - should we abort here
-            //        or rethrow the exception
-            //        or just keep going
+			// TODO - should we abort here
+			//        or rethrow the exception
+			//        or just keep going
 
-            return map;
-        }
+			return map;
+		}
 
-        // if we get here then everything loaded properly
-        // so we can just parse out the contents
+		// if we get here then everything loaded properly
+		// so we can just parse out the contents
 		const TiXmlElement* root = mapFile.RootElement();
 
 		if (root) {
@@ -159,46 +160,46 @@ namespace FIFE {
 				catch (NameClash& e) {
 					FL_ERR(_log, e.what());
 
-                    // just rethrow to client
-                    throw;
+					// just rethrow to client
+					throw;
 				}
 
 				if (map) {
-                    map->setFilename(mapFilename);
+					map->setFilename(mapFilename);
 
 					std::string ns = "";
 					for (const TiXmlElement *importElement = root->FirstChildElement("import"); importElement; importElement = importElement->NextSiblingElement("import")) {
 						const std::string* importDir = importElement->Attribute(std::string("dir"));
 						const std::string* importFile = importElement->Attribute(std::string("file"));
 
-                        std::string directory = "";
-                        if (importDir) {
-                            directory = *importDir;
-                        }
+						std::string directory = "";
+						if (importDir) {
+							directory = *importDir;
+						}
 
-                        std::string file = "";
-                        if (importFile) {
-                            file = *importFile;
-                        }
+						std::string file = "";
+						if (importFile) {
+							file = *importFile;
+						}
 
-                        if (importDir && !importFile) {
-                            bfs::path fullPath(m_mapDirectory);
-                            fullPath /= directory;
-                            loadImportDirectory(fullPath.string());
-                        }
-                        else if (importFile) {
-                            bfs::path fullFilePath(file);
-                            bfs::path fullDirPath(directory);
-                            if (importDir) {
-                                fullDirPath = bfs::path(m_mapDirectory);
-                                fullDirPath /= directory;
-                            }
-                            else {
-                                fullFilePath = bfs::path(m_mapDirectory);
-                                fullFilePath /= file;
-                            }
-                            loadImportFile(fullFilePath.string(), fullDirPath.string());
-                        }
+						if (importDir && !importFile) {
+							bfs::path fullPath(m_mapDirectory);
+							fullPath /= directory;
+							loadImportDirectory(fullPath.string());
+						}
+						else if (importFile) {
+							bfs::path fullFilePath(file);
+							bfs::path fullDirPath(directory);
+							if (importDir) {
+								fullDirPath = bfs::path(m_mapDirectory);
+								fullDirPath /= directory;
+							}
+							else {
+								fullFilePath = bfs::path(m_mapDirectory);
+								fullFilePath /= file;
+							}
+							loadImportFile(fullFilePath.string(), fullDirPath.string());
+						}
 					}
 					// converts multiobject part id to object pointer
 					std::list<std::string> namespaces = m_model->getNamespaces();
@@ -432,16 +433,16 @@ namespace FIFE {
 															inst->actRepeat("default", target);
 														}
 													}
-                                                    else
-                                                    {
-                                                        std::ostringstream oss;
-                                                        oss << " Failed to create instance of object "
-                                                            << *objectId
-                                                            << " : " << __FILE__
-                                                            << " [" << __LINE__ << "]"
-                                                            << std::endl;
-                                                        FL_ERR(_log, oss.str());
-                                                    }
+													else
+													{
+														std::ostringstream oss;
+														oss << " Failed to create instance of object "
+															<< *objectId
+															<< " : " << __FILE__
+															<< " [" << __LINE__ << "]"
+															<< std::endl;
+														FL_ERR(_log, oss.str());
+													}
 												}
 											}
 
@@ -744,12 +745,12 @@ namespace FIFE {
 									cam->setZToY(zToY);
 								}
 
-                                // active instance renderer for camera
-                                InstanceRenderer* instanceRenderer = InstanceRenderer::getInstance(cam);
-                                if (instanceRenderer)
-                                {
-                                    instanceRenderer->activateAllLayers(map);
-                                }
+								// active instance renderer for camera
+								InstanceRenderer* instanceRenderer = InstanceRenderer::getInstance(cam);
+								if (instanceRenderer)
+								{
+									instanceRenderer->activateAllLayers(map);
+								}
 							}
 						}
 
@@ -763,118 +764,138 @@ namespace FIFE {
 		return map;
 	}
 
-    void MapLoader::setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader) {
-        assert(objectLoader);
+	void MapLoader::setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader) {
+		assert(objectLoader);
 
-        m_objectLoader = objectLoader;
-    }
+		m_objectLoader = objectLoader;
+	}
 
+	FIFE::ObjectLoaderPtr MapLoader::getObjectLoader() {
+		return m_objectLoader;
+	}
 
-    void MapLoader::setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader) {
-        assert(animationLoader);
+	void MapLoader::setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader) {
+		assert(animationLoader);
 
-        m_objectLoader->setAnimationLoader(animationLoader);
-    }
+		m_objectLoader->setAnimationLoader(animationLoader);
+	}
 
-    void MapLoader::setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader) {
-        assert(atlasLoader);
+	FIFE::AnimationLoaderPtr MapLoader::getAnimationLoader() {
+		if (m_objectLoader) {
+			return m_objectLoader->getAnimationLoader();
+		}
+		return FIFE::AnimationLoaderPtr();
+	}
 
-        m_atlasLoader = atlasLoader;
-    }
+	void MapLoader::setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader) {
+		assert(atlasLoader);
 
-    bool MapLoader::isLoadable(const std::string& filename) const {
+		m_objectLoader->setAtlasLoader(atlasLoader);
+	}
+
+	FIFE::AtlasLoaderPtr MapLoader::getAtlasLoader() {
+		if (m_objectLoader) {
+			return m_objectLoader->getAtlasLoader();
+		}
+		return FIFE::AtlasLoaderPtr();
+	}
+
+	bool MapLoader::isLoadable(const std::string& filename) const {
 		bfs::path mapPath(filename);
 
 		TiXmlDocument mapFile;
 
-        std::string mapFilename = mapPath.string();
+		std::string mapFilename = mapPath.string();
 
-        try {
-            RawData* data = m_vfs->open(mapFilename);
+		try {
+			RawData* data = m_vfs->open(mapFilename);
 
-            if (data) {
-                if (data->getDataLength() != 0) {
-                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
+			if (data) {
+				if (data->getDataLength() != 0) {
+					mapFile.Parse(data->readString(data->getDataLength()).c_str());
 
-                    if (mapFile.Error()) {
-                        return false;
-                    }
+					if (mapFile.Error()) {
+						return false;
+					}
 
-                    const TiXmlElement* root = mapFile.RootElement();
+					const TiXmlElement* root = mapFile.RootElement();
 
-                    if (root) {
-                        const std::string* loaderName = root->Attribute(std::string("loader"));
+					if (root) {
+						const std::string* loaderName = root->Attribute(std::string("loader"));
 
-                        // if the file does not specify a loader but was opened and parsed
-                        // correctly then we know we have a compatible extension so we will
-                        // attempt to load it, if it does specify a loader then the loader
-                        // name will be checked
-                        if (!loaderName || (loaderName && *loaderName == getLoaderName())) {
-                            return true;
-                        }
-                    }
-                }
+						// if the file does not specify a loader but was opened and parsed
+						// correctly then we know we have a compatible extension so we will
+						// attempt to load it, if it does specify a loader then the loader
+						// name will be checked
+						if (!loaderName || (loaderName && *loaderName == getLoaderName())) {
+							return true;
+						}
+					}
+				}
 
-                // done with file delete the resource
-                delete data;
-                data = 0;
-            }
-        }
-        catch (NotFound& e) {
-            FL_ERR(_log, e.what());
+				// done with file delete the resource
+				delete data;
+				data = 0;
+			}
+		}
+		catch (NotFound& e) {
+			FL_ERR(_log, e.what());
 
-            return false;
-        }
+			return false;
+		}
 
-        return false;
+		return false;
 	}
 
-    void MapLoader::loadImportFile(const std::string& file, const std::string& directory) {
-        if (!file.empty()) {
-            bfs::path importFilePath(directory);
-            importFilePath /= file;
+	void MapLoader::loadImportFile(const std::string& file, const std::string& directory) {
+		if (!file.empty()) {
+			bfs::path importFilePath(directory);
+			importFilePath /= file;
 
-            std::string importFileString = importFilePath.string();
-            if (m_objectLoader && m_objectLoader->isLoadable(importFileString)) {
-                m_objectLoader->load(importFileString);
-            }
-            else if (m_atlasLoader && m_atlasLoader->isLoadable(importFileString)) {
-                m_atlasLoader->load(importFileString);
-            }
-        }
-    }
+			std::string importFileString = importFilePath.string();
+			if (m_objectLoader && m_objectLoader->getAtlasLoader() && m_objectLoader->getAtlasLoader()->isLoadable(importFileString)) {
+				m_objectLoader->getAtlasLoader()->loadMultiple(importFileString);
+			}
+			if (m_objectLoader && m_objectLoader->getAnimationLoader() && m_objectLoader->getAnimationLoader()->isLoadable(importFileString)) {
+				m_objectLoader->getAnimationLoader()->loadMultiple(importFileString);
+			}
+			if (m_objectLoader && m_objectLoader->isLoadable(importFileString)) {
+				m_objectLoader->load(importFileString);
+			}
+		}
+	}
 
-    void MapLoader::loadImportDirectory(const std::string& directory) {
-        if (!directory.empty()) {
-            bfs::path importDirectory(directory);
-            std::string importDirectoryString = importDirectory.string();
+	void MapLoader::loadImportDirectory(const std::string& directory) {
+		if (!directory.empty()) {
+			bfs::path importDirectory(directory);
+			std::string importDirectoryString = importDirectory.string();
 
-            std::set<std::string> files = m_vfs->listFiles(importDirectoryString);
+			std::set<std::string> files = m_vfs->listFiles(importDirectoryString);
 
-            // load all xml files in the directory
-            std::set<std::string>::iterator iter;
-            for (iter = files.begin(); iter != files.end(); ++iter) {
-                // TODO - vtchill - may need a way to allow clients to load things other
-                // than .xml and .zip files
-                std::string ext = bfs::extension(*iter);
-                if (ext == ".xml" || ext == ".zip") {
-                    loadImportFile(*iter, importDirectoryString);
-                }
-            }
+			// load all xml files in the directory
+			std::set<std::string>::iterator iter;
+			for (iter = files.begin(); iter != files.end(); ++iter) {
+				// TODO - vtchill - may need a way to allow clients to load things other
+				// than .xml and .zip files
+				std::string ext = bfs::extension(*iter);
+				if (ext == ".xml" || ext == ".zip") {
+					loadImportFile(*iter, importDirectoryString);
+				}
+			}
 
-            std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
-            for (iter  = nestedDirectories.begin(); iter != nestedDirectories.end(); ++iter) {
-                // do not attempt to load anything from a .svn directory
-                if ((*iter).find(".svn") == std::string::npos) {
-                    loadImportDirectory(importDirectoryString + "/" + *iter);
-                }
-            }
-        }
-    }
+			std::set<std::string> nestedDirectories = m_vfs->listDirectories(importDirectoryString);
+			for (iter  = nestedDirectories.begin(); iter != nestedDirectories.end(); ++iter) {
+				// do not attempt to load anything from a .svn directory
+				if ((*iter).find(".svn") == std::string::npos) {
+					loadImportDirectory(importDirectoryString + "/" + *iter);
+				}
+			}
+		}
+	}
 
-    void MapLoader::addPercentDoneListener(PercentDoneListener* listener) {
-        m_percentDoneListener.addListener(listener);
-    }
+	void MapLoader::addPercentDoneListener(PercentDoneListener* listener) {
+		m_percentDoneListener.addListener(listener);
+	}
 
 	const std::string& MapLoader::getLoaderName() const {
 		return m_loaderName;

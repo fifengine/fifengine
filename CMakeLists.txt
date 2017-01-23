@@ -67,6 +67,17 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
+# Do not allow the build directory to be in the source directory for older
+# versions of cmake.
+if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "# Please chose a different build directory.\n
+    In cmake versions < 3 SWIG does not work well when the build directory is
+    placed inside the source directory.
+    Use something like this:\n
+        mkdir ../_build; cd ../_build; cmake ../fifengine\n
+    You can remove your current build folder.")
+endif()
+
 # Disable in-source builds and modifications to the source tree.
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -181,6 +192,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/object.cpp
@@ -229,6 +241,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.cpp
@@ -373,6 +386,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/ipather.h
@@ -448,6 +462,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.h

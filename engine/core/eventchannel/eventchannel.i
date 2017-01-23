@@ -165,6 +165,8 @@ namespace FIFE {
 			RELEASED,
 			WHEEL_MOVED_DOWN,
 			WHEEL_MOVED_UP,
+			WHEEL_MOVED_RIGHT,
+			WHEEL_MOVED_LEFT,
 			CLICKED,
 			ENTERED,
 			EXITED,
@@ -199,6 +201,8 @@ namespace FIFE {
 		virtual void mouseClicked(MouseEvent& evt) = 0;
 		virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
 		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedRight(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
 		virtual void mouseMoved(MouseEvent& evt) = 0;
 		virtual void mouseDragged(MouseEvent& evt) = 0;
 		virtual ~IMouseListener();

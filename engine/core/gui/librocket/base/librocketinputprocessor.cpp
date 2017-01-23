@@ -153,6 +153,7 @@ namespace FIFE {
 	
 	bool LibRocketInputProcessor::processMouseWheelMotion(SDL_Event& event) {
 		// mousewheel up
+		//if (event.wheel.y > 0 || (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && event.wheel.y < 0)) {
 		if (event.wheel.y > 0) {
 			if(m_wheelCounter <= 0) {
 				m_wheelCounter--;
@@ -163,6 +164,7 @@ namespace FIFE {
 			}
 		}
 		// mousewheel down
+		//else if (event.wheel.y < 0 || (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && event.wheel.y > 0)) {
 		else if (event.wheel.y < 0) {
 			if(m_wheelCounter >= 0) {
 				m_wheelCounter++;

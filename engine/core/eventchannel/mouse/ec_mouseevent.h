@@ -52,6 +52,8 @@ namespace FIFE {
 			RELEASED,
 			WHEEL_MOVED_DOWN,
 			WHEEL_MOVED_UP,
+			WHEEL_MOVED_RIGHT,
+			WHEEL_MOVED_LEFT,
 			CLICKED,
 			ENTERED,
 			EXITED,
@@ -169,6 +171,12 @@ namespace FIFE {
 				case MouseEvent::WHEEL_MOVED_UP:
 					s = "wheel_moved_up";
 					break;
+				case MouseEvent::WHEEL_MOVED_RIGHT:
+					s = "wheel_moved_right";
+					break;
+				case MouseEvent::WHEEL_MOVED_LEFT:
+					s = "wheel_moved_left";
+					break;
 				case MouseEvent::CLICKED:
 					s = "clicked";
 					break;
@@ -203,6 +211,15 @@ namespace FIFE {
 					break;
 				case MouseEvent::MIDDLE:
 					s = "middle";
+					break;
+				case MouseEvent::X1:
+					s = "x1";
+					break;
+				case MouseEvent::X2:
+					s = "x2";
+					break;
+				case MouseEvent::UNKNOWN_BUTTON:
+					s = "unknown button";
 					break;
 				default:
 					break;

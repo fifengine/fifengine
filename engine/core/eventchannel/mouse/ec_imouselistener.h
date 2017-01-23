@@ -89,6 +89,18 @@ namespace FIFE {
 		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
 
 		/**
+		 * Called when the mouse wheel has moved right on the event source area.
+		 * @param evt describes the event.
+		 */
+		virtual void mouseWheelMovedRight(MouseEvent& evt) = 0;
+
+		/**
+		 * Called when the mouse wheel has moved left on the event source area.
+		 * @param evt MouseEvent that describes the event.
+		 */
+		virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
+
+		/**
 		 * Called when the mouse has moved in the event source area and no mouse button
 		 * has been pressed
 		 * @param evt describes the event.

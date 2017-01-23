@@ -226,10 +226,8 @@ class ApplicationBase(object):
 		while not self.quitRequested:
 			try:
 				self.engine.pump()
-			except RuntimeError as e:
+			except fife.Exception as e:
 				print(str(e))
-				self.quitRequested = True
-			except:
 				self.quitRequested = True
 
 			self._pump()
