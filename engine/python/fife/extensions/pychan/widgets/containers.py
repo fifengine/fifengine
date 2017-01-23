@@ -24,7 +24,7 @@
 from fife import fife
 from fife import fifechan
 
-from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
+from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr, IntListAttr
 
 from common import get_manager, gui2text, text2gui
 from layout import VBoxLayoutMixin, HBoxLayoutMixin, Spacer
@@ -88,7 +88,6 @@ class Container(Widget):
 				 
 		self.real_widget = _real_widget or fifechan.Container()
 		self.children = []
-		self.children_position_cache = []
 		self._background = []
 		self._background_image = None
 		self.background_image = self.DEFAULT_BACKGROUND
@@ -172,7 +171,6 @@ class Container(Widget):
 			widget.max_size = self.max_size
 		
 		self.children.append(widget)
-		self.children_position_cache.append(widget)
 		self.real_widget.add(widget.real_widget)
 		# add all to the manager
 		def _add(added_widget):
@@ -212,9 +210,6 @@ class Container(Widget):
 		if widget in self.children:
 			self.children.remove(widget)
 			self.real_widget.remove(widget.real_widget)
-
-		if widget in self.children_position_cache:
-			self.children_position_cache.remove(widget)
 
 		widget.parent = None
 		# remove all from the manager
@@ -326,10 +321,11 @@ class Container(Widget):
 		icon.requestMoveToBottom()
 
 	def setBackgroundImage(self,image):
-		self._background = getattr(self,'_background',None)
+		#self._background = getattr(self,'_background',None)
 		if image is None:
 			self._background_image = None
-			map(self.real_widget.remove,self._background)
+			if len(self._background) > 0:
+				self.real_widget.setBackgroundWidget(None)
 			self._background = []
 			return
 		# Background generation is done in _resetTiling
@@ -352,6 +348,149 @@ class Container(Widget):
 		cloneList = [ child.clone(prefix) for child in self.children ]
 		
 		return cloneList
+
+class AdjustingContainer(Container):
+	"""
+	This is the adjusting container class. It provides space in which child widgets can
+	be position via the position attribute.
+
+	New Attributes
+	==============
+
+	  - colums - Integer: The number of columns to divide the widgets into.
+	  - alignments: The alignment per column.
+	"""
+
+	ATTRIBUTES = Container.ATTRIBUTES + [ IntAttr('columns'),
+										  IntListAttr('alignments'),
+										]
+	DEFAULT_NUMBER_COLUMNS = 3
+	
+	def __init__(self, 
+				 parent = None, 
+				 name = None,
+				 size = None,
+				 min_size = None, 
+				 max_size = None, 
+				 helptext = None, 
+				 position = None, 
+				 style = None, 
+				 hexpand = None,
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 padding = None,
+				 background_image = None,
+				 opaque = None,
+				 margins = None,
+				 _real_widget = None,
+				 columns = None,
+				 alignments = None):
+
+		if _real_widget is None: _real_widget = fifechan.AdjustingContainer()
+		
+		super(AdjustingContainer,self).__init__(parent=parent, 
+									   name=name, 
+									   size=size, 
+									   min_size=min_size, 
+									   max_size=max_size,
+									   helptext=helptext, 
+									   position=position,
+									   style=style, 
+									   hexpand=hexpand, 
+									   vexpand=vexpand,
+									   font=font,
+									   base_color=base_color,
+									   background_color=background_color,
+									   foreground_color=foreground_color,
+									   selection_color=selection_color,
+									   border_size=border_size,
+									   position_technique=position_technique,
+									   is_focusable=is_focusable,
+									   comment=comment,
+									   padding=padding,
+									   background_image=background_image,
+									   opaque=opaque,
+									   margins=margins,
+									   _real_widget=_real_widget)
+
+		if columns is not None:
+			self.columns = columns
+		else:
+			self.columns = self.DEFAULT_NUMBER_COLUMNS
+
+		if alignments is not None:
+			self.alignments = alignments
+				
+	def clone(self, prefix):
+		containerClone = AdjustingContainer(None, 
+						self._createNameWithPrefix(prefix),
+						self.size,
+						self.min_size, 
+						self.max_size, 
+						self.helptext, 
+						self.position, 
+						self.style, 
+						self.hexpand,
+						self.vexpand,
+						self.font,
+						self.base_color,
+						self.background_color,
+						self.foreground_color,
+						self.selection_color,
+						self.border_size,
+						self.position_technique,
+						self.is_focusable,
+						self.comment,
+						self.padding,
+						self.background_image,
+						self.opaque,
+						self.margins,
+						self.columns,
+						self.alignments)
+			
+		containerClone.addChildren(self._cloneChildren(prefix))	
+		return containerClone
+		
+	def _setNumberColumns(self, number):
+		self.real_widget.setNumberOfColumns(number)
+	def _getNumberColumns(self):
+		self.real_widget.getNumberOfColumns()
+	columns = property(_getNumberColumns, _setNumberColumns)
+	
+	def _setColumnAlignment(self, column, alignment):
+		self.real_widget.setColumnAlignment(column, alignment)
+	def _getColumnAlignment(self, column):
+		self.real_widget.getColumnAlignment(column)
+	column_alignment = property(_getColumnAlignment, _setColumnAlignment)
+
+	def _setColumnAlignments(self, alignments):
+		i = 0
+		if alignments is not None:
+			for a in alignments:
+				self.real_widget.setColumnAlignment(i, a)
+				i += 1
+		else:
+			cols = self.columns
+			while i < cols:
+				self.real_widget.setColumnAlignment(i, 0)
+				i += 1
+	def _getColumnAlignments(self):
+		alignments = []
+		cols = self.columns
+		i = 0
+		while i < cols:
+			alignments.append(self.column_alignment(i))
+			i += 1
+		return alignments
+	alignments = property(_getColumnAlignments, _setColumnAlignments)
 
 class VBox(VBoxLayoutMixin,Container):
 	"""
@@ -547,14 +686,17 @@ class Window(VBoxLayoutMixin,Container):
 
 	  - title: The Caption of the window
 	  - titlebar_height: The height of the window title bar
+	  - movable: Can the Window be moved with the mouse
 	"""
 
 	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('title'), 
-										  IntAttr('titlebar_height') 
+										  IntAttr('titlebar_height'),
+										  BoolAttr('movable')
 										]
 
 	DEFAULT_TITLE = u"title"
 	DEFAULT_TITLE_HEIGHT = 0
+	DEFAULT_MOVABLE = True
 	DEFAULT_POSITION_TECHNIQUE = "automatic"
 
 	def __init__(self, 
@@ -583,7 +725,10 @@ class Window(VBoxLayoutMixin,Container):
 				 margins = None,
 				 _real_widget = None,
 				 title = None,
-				 titlebar_height = None):
+				 titlebar_height = None,
+				 movable = None):
+
+		if _real_widget is None: _real_widget = fifechan.Window()
 		
 		super(Window,self).__init__(parent=parent, 
 								    name=name, 
@@ -608,7 +753,7 @@ class Window(VBoxLayoutMixin,Container):
 								    background_image=background_image,
 								    opaque=opaque,
 								    margins=margins,
-								    _real_widget= fifechan.Window())
+								    _real_widget=_real_widget)
 
 		if titlebar_height is not None:
 			if titlebar_height == 0:
@@ -621,6 +766,11 @@ class Window(VBoxLayoutMixin,Container):
 			self.title = title
 		else:
 			self.title = self.DEFAULT_TITLE
+
+		if movable is not None: 
+			self.movable = movable
+		else:
+			self.movable = self.DEFAULT_MOVABLE
 
 	def clone(self, prefix):
 		
@@ -649,9 +799,15 @@ class Window(VBoxLayoutMixin,Container):
 					self.margins,
 					None,
 					self.title,
+<<<<<<< HEAD
 					self.titlebar_height
 				    )
 				     
+=======
+					self.titlebar_height,
+					self.movable)
+		
+>>>>>>> 9d2d295... Added a bunch of new ListAttributes. refs #761
 		windowClone.addChildren(self._cloneChildren(prefix))
 				     
 		return windowClone
@@ -664,6 +820,10 @@ class Window(VBoxLayoutMixin,Container):
 	def _setTitleBarHeight(self,h): self.real_widget.setTitleBarHeight(h)
 	titlebar_height = property(_getTitleBarHeight,_setTitleBarHeight)
 
+	def _getMovable(self): return self.real_widget.isMovable()
+	def _setMovable(self, move): self.real_widget.setMovable(move)
+	movable = property(_getMovable, _setMovable)
+	
 	# Hackish way of hiding that title bar height in the perceived height.
 	# Fixes VBox calculation
 	def _setHeight(self,h):

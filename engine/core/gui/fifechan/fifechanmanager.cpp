@@ -61,6 +61,7 @@ namespace FIFE {
 		m_imgloader(new GuiImageLoader()) ,
 		m_input(new fcn::SDLInput()),
 		m_console(0),
+		m_cursor(0),
 		m_defaultfont(0),
 		m_fonts(),
 		m_logic_executed(false) {

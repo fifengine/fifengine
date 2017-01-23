@@ -126,3 +126,72 @@ class FloatAttr(Attr):
 			return float(value)
 		except:
 			raise ParserError("Expected a float.")
+
+
+class ListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(str,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list with strings.")
+
+class UnicodeListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(unicode,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list with unicode strings.")
+
+class IntListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(int,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list with ints.")
+
+class BoolListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(bool,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list with bools.")
+
+class FloatListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(float,str(value).split(','))
+			return result
+		except:
+			raise ParserError("Expected a list with floats.")
+
+
+ATTRIBUTE_TYPE = { "Str" : Attr,
+				   "Unicode" : UnicodeAttr,
+				   #"Point" : PointAttr,
+				   #"Color" : ColorAttr,
+				   "Int" : IntAttr,
+				   "Bool" : BoolAttr,
+				   "Float" : FloatAttr
+				 }	
+class MixedListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = []
+			#maybe we should use '|' or ';' to split, because of point and color attributes
+			tmp_result = map(str,str(value).split(','))
+			for r in tmp_result:
+				type = str(r).split(':')[0].strip()
+				val = str(r).split(':')[1].strip()
+
+				m = ATTRIBUTE_TYPE.get(type)
+				if m is None:
+					raise ParserError("Unknown attribute type "+type+".")
+				method = getattr(m(self), 'parse')
+				result.append(method(val))
+			return result
+		except:
+			raise ParserError("Expected a mixed list.")

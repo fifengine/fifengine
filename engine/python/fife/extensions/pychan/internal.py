@@ -243,10 +243,10 @@ class Manager(object):
 			style_copy[new_k] = v
 		return style_copy
 
-	def loadImage(self,filename):
+	def loadImage(self,filename,gui=True):
 		if not filename:
 			  raise InitializationError("Empty Image file.")
-		return self.hook.load_image(filename)
+		return self.hook.load_image(filename,gui)
 
 # Default Widget style.
 

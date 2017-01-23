@@ -33,6 +33,7 @@ namespace fcn {
 }
 namespace FIFE {
 	class Console;
+	class Cursor;
 	
 	class FifechanManager : public IGUIManager {
 	public:
@@ -42,7 +43,10 @@ namespace FIFE {
 		void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
 		
 		Console* getConsole() const;
-		
+
+		void setCursor(Cursor* cursor);
+		Cursor* getCursor() const;
+
 		void add(fcn::Widget* widget);
 		void remove(fcn::Widget* widget);
 		

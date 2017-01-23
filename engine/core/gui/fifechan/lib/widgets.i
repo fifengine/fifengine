@@ -74,6 +74,28 @@ namespace fcn {
 		virtual void setPosition(int32_t x, int32_t y);
 		virtual void setFrameSize(uint32_t frameSize);
 		virtual uint32_t getFrameSize() const;
+		void setOutlineSize(uint32_t size);
+		uint32_t getOutlineSize() const;
+		void setBorderSize(uint32_t size);
+		uint32_t getBorderSize() const;
+		void setMargin(int32_t margin);
+		void setMarginTop(int32_t margin);
+		int32_t getMarginTop() const;
+		void setMarginRight(int32_t margin);
+		int32_t getMarginRight() const;
+		void setMarginBottom(int32_t margin);
+		int32_t getMarginBottom() const;
+		void setMarginLeft(int32_t margin);
+		int32_t getMarginLeft() const;
+		void setPadding(uint32_t padding);
+		void setPaddingTop(uint32_t padding);
+		uint32_t getPaddingTop() const;
+		void setPaddingRight(uint32_t padding);
+		uint32_t getPaddingRight() const;
+		void setPaddingBottom(uint32_t padding);
+		uint32_t getPaddingBottom() const;
+		void setPaddingLeft(uint32_t padding);
+		uint32_t getPaddingLeft() const;
 		virtual void setFocusable(bool focusable);
 		virtual bool isFocusable() const;
 		virtual bool isFocused() const;
@@ -139,6 +161,20 @@ namespace fcn {
 		virtual void add(Widget* widget, int32_t x, int32_t y);
 		virtual void remove(Widget* widget);
 		virtual void clear();
+		enum LayoutPolicy {
+			Absolute,
+			Vertical,
+			Horizontal,
+			Circular
+		};
+		void setLayout(LayoutPolicy policy);
+		LayoutPolicy getLayout() const;
+		virtual void setVerticalSpacing(uint32_t spacing);
+		virtual uint32_t getVerticalSpacing() const;
+		virtual void setHorizontalSpacing(uint32_t spacing);
+		virtual uint32_t getHorizontalSpacing() const;
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
 	};
 	
 	%feature("notabstract") CheckBox;
@@ -318,6 +354,25 @@ namespace fcn {
 	};
 
 
+	%feature("notabstract") AdjustingContainer;
+	class AdjustingContainer: public Container {
+	public:
+		AdjustingContainer();
+		virtual ~AdjustingContainer();
+		
+		virtual void setNumberOfColumns(uint32_t numberOfColumns);
+		virtual uint32_t getNumberOfColumns() const;
+		virtual void setColumnAlignment(uint32_t column, uint32_t alignment);
+		virtual uint32_t getColumnAlignment(uint32_t column) const;
+		virtual void adjustContent();
+
+		enum {
+			LEFT = 0,
+			CENTER,
+			RIGHT
+		};
+	};
+
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
 	public:
@@ -325,16 +380,16 @@ namespace fcn {
 		TextBox(const std::string& text);
 		virtual void setText(const std::string& text);
 		virtual std::string getText() const;
-		virtual std::string getTextRow(int row) const;
-		virtual void setTextRow(int row, const std::string& text);
-		virtual int getNumberOfRows() const;
-		virtual int getCaretPosition() const;
-		virtual void setCaretPosition(int position);
-		virtual int getCaretRow() const;
-		virtual void setCaretRow(int row);
-		virtual int getCaretColumn() const;
-		virtual void setCaretColumn(int column);
-		virtual void setCaretRowColumn(int row, int column);
+		virtual std::string getTextRow(int32_t row) const;
+		virtual void setTextRow(int32_t row, const std::string& text);
+		virtual int32_t getNumberOfRows() const;
+		virtual int32_t getCaretPosition() const;
+		virtual void setCaretPosition(int32_t position);
+		virtual int32_t getCaretRow() const;
+		virtual void setCaretRow(int32_t row);
+		virtual int32_t getCaretColumn() const;
+		virtual void setCaretColumn(int32_t column);
+		virtual void setCaretRowColumn(int32_t row, int32_t column);
 		virtual void scrollToCaret();
 		virtual bool isEditable() const;
 		virtual void setEditable(bool editable);
@@ -369,7 +424,7 @@ namespace fcn {
 	class IconProgressBar : public Widget {
 	public:
 		IconProgressBar();
-		IconProgressBar(Image *image, int maxIcons);
+		IconProgressBar(Image *image, int32_t maxIcons);
 		virtual ~IconProgressBar();
 		void setImage(Image* image);
 		const Image* getImage() const;
@@ -387,6 +442,39 @@ namespace fcn {
 			HORIZONTAL = 0,
 			VERTICAL
 		};
+	};
+
+	%feature("notabstract") Tab;
+	class Tab: public Container {
+	public:
+		Tab();
+		virtual ~Tab();
+		void setTabbedArea(fcn::TabbedArea* tabbedArea);
+		fcn::TabbedArea* getTabbedArea();
+	};
+
+	%feature("notabstract") TabbedArea;
+	class TabbedArea: public Widget {
+	public:
+		TabbedArea();
+		virtual ~TabbedArea();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		virtual void addTab(fcn::Tab* tab, Widget* widget);
+		virtual void removeTabWithIndex(uint32_t index);
+		virtual void removeTab(fcn::Tab* tab);
+		uint32_t getNumberOfTabs() const;
+		virtual bool isTabSelected(uint32_t index) const;
+		virtual bool isTabSelected(fcn::Tab* tab) const;
+		virtual void setSelectedTab(uint32_t index);
+		virtual void setSelectedTab(fcn::Tab* tab);
+		virtual uint32_t getSelectedTabIndex() const;
+		fcn::Tab* getSelectedTab() const;
+		void setBaseColor(const Color& color);
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
+		void setLayout(Container::LayoutPolicy policy);
+		Container::LayoutPolicy getLayout() const;
 	};
 }
 

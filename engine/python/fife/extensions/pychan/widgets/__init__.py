@@ -38,6 +38,7 @@ from icon import Icon
 from buttons import Button, ToggleButton, ImageButton
 from checkbox import CheckBox
 from radiobutton import RadioButton
+from tabbedarea import TabbedArea, Tab
 from textfield import TextField
 from textbox import TextBox
 from listbox import ListBox
@@ -47,6 +48,7 @@ from slider import Slider
 from percentagebar import PercentageBar
 from passwordfield import PasswordField
 from iconprogressbar import IconProgressBar
+from resizablewindow import ResizableWindow
 
 # Global Widget Class registry
 
@@ -57,6 +59,10 @@ WIDGETS = {
 	"VBox" : VBox,
 	"HBox" : HBox,
 	"ScrollArea" :ScrollArea,
+	"AdjustingContainer" : AdjustingContainer,
+	"TabbedArea" : TabbedArea,
+	"Tab" : Tab,
+	"ResizableWindow" : ResizableWindow,
 
 	# Simple Widgets
 	"Icon" : Icon,
