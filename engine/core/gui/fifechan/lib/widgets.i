@@ -317,6 +317,22 @@ namespace fcn {
 		virtual void resizeToContent();
 	};
 
+	%feature("notabstract") AdjustingContainer;
+	class AdjustingContainer: public Container {
+	public:
+		AdjustingContainer();
+		virtual ~AdjustingContainer();
+		
+		virtual void setNumberOfColumns(unsigned int numberOfColumns);
+		virtual void setColumnAlignment(unsigned int column, unsigned int alignment);
+		virtual void adjustContent();
+		
+		enum {
+				LEFT = 0,
+				CENTER,
+				RIGHT
+		};
+	};
 
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
