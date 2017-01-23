@@ -84,8 +84,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self.quit = False
 		
 		# Init Pychan
-		pychan.loadFonts("data/fonts/freefont.fontdef")
-		pychan.loadFonts("data/fonts/samanata.fontdef")
+		pychan.loadFonts("data/fonts/freefont.xml")
+		pychan.loadFonts("data/fonts/samanata.xml")
 		pychan.manager.setDefaultFont("FreeSans")
 		pychan.setupModalExecution(self._application.mainLoop, self._application.breakFromMainLoop)
 
