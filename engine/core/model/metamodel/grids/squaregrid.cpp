@@ -104,8 +104,11 @@ namespace FIFE {
 
 	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
 		ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
-		ModelCoordinate result(round(dblpt.x), round(dblpt.y), round(dblpt.z));
+		return toLayerCoordinatesFromExactLayerCoordinates(dblpt);
+	}
 
+	ModelCoordinate SquareGrid::toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) {
+		ModelCoordinate result(round(exact_layer_coords.x), round(exact_layer_coords.y), round(exact_layer_coords.z));
 		return result;
 	}
 
