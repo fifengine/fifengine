@@ -23,6 +23,7 @@
 #define FIFE_IATLAS_LOADER_H
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 
@@ -49,6 +50,11 @@ namespace FIFE {
 		 * returns a shared pointer to an image resource
 		*/
 		virtual AtlasPtr load(const std::string& filename) = 0;
+
+		/** responsible for loading the all atlases
+		 * returns a vector of shared pointer to an image resource
+		*/
+		virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
 	};
 
 	typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr; 

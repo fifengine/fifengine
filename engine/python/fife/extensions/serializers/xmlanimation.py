@@ -29,19 +29,26 @@ def loadXMLAnimation(engine, filename):
 	f.thisown = 1
 
 	imgMgr = engine.getImageManager()
+	aniMgr = engine.getAnimationManager()
 	
 	tree = ET.parse(f)
 	node = tree.getroot()
 
-	animation = fife.Animation.createAnimation()
+	ani_id = node.get('id')
+	if not ani_id:
+		ani_id = filename
 
+	if aniMgr.exists(ani_id):
+		animation = aniMgr.getPtr(str(ani_id))
+	else:
+		animation = aniMgr.create(str(ani_id))
+	
 	common_width = int(node.get('width', 0))
 	common_height = int(node.get('height', 0))
-	common_y_offset = int(node.get('y_offset', 0))
 	common_frame_delay = int(node.get('delay', 0))
 	common_x_offset = int(node.get('x_offset', 0))
 	common_y_offset = int(node.get('y_offset', 0))
-	animation.setActionFrame(int(node.get('action', 0)))
+	animation.setActionFrame(int(node.get('action_frame', 0)))
 
 	frames = node.findall('frame')
 	if not frames:

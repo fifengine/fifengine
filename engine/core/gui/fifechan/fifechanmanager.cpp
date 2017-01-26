@@ -77,6 +77,8 @@ namespace FIFE {
 		m_fcn_topcontainer->setFocusable(false);
 		m_had_mouse = false;
 		m_had_widget = false;
+		m_lastMotionX = 0;
+		m_lastMotionY = 0;
 	}
 
 	FifechanManager::~FifechanManager() {
@@ -99,7 +101,7 @@ namespace FIFE {
 			return false;
 		}
 
-		bool overWidget = m_fcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) != 0;
+		bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != 0;
 
 		switch(evt.type) {
 			case SDL_MOUSEWHEEL:
@@ -127,7 +129,9 @@ namespace FIFE {
 				return false;
 
 			case SDL_MOUSEMOTION:
-				if( m_fcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
+				m_lastMotionX = evt.motion.x;
+				m_lastMotionY = evt.motion.y;
+				if (m_fcn_topcontainer->getWidgetAt(evt.motion.x,evt.motion.y)) {
 					m_had_mouse = true;
 					m_input->pushInput(evt);
 					return true;

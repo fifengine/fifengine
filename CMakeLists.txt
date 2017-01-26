@@ -67,6 +67,17 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
+# Do not allow the build directory to be in the source directory for older
+# versions of cmake.
+if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "# Please chose a different build directory.\n
+    In cmake versions < 3 SWIG does not work well when the build directory is
+    placed inside the source directory.
+    Use something like this:\n
+        mkdir ../_build; cd ../_build; cmake ../fifengine\n
+    You can remove your current build folder.")
+endif()
+
 # Disable in-source builds and modifications to the source tree.
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -125,13 +136,32 @@ message("")
 # Tell CMake where to search for binaries (dlls), includes and libs on Windows
 if(WIN32)
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+
+    # help to find dependencies on Appveyor
+
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/build-tools/swig"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"    
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
+
+    # help to find dependencies on your local env (FifeSDK)
+
+    "${PROJECT_SOURCE_DIR}/../swig"
+    "${PROJECT_SOURCE_DIR}/../python"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
+    
   )
 endif(WIN32)
 
@@ -162,6 +192,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/object.cpp
@@ -210,6 +241,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.cpp
@@ -355,6 +387,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/objectloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/percentdonelistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/imageloader.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/video/resourceanimationloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/model.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/action.h
   ${PROJECT_SOURCE_DIR}/engine/core/model/metamodel/ipather.h
@@ -430,6 +463,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/color.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/cursor.h
@@ -662,13 +696,14 @@ endif(cegui)
 
 if(build-python)
   # Setting up SWIG files
-
+  set(SWIG_MODULE_fife_EXTRA_DEPS)
   set(CMAKE_SWIG_IMPORTS "")
   set(CMAKE_SWIG_INCLUSIONS "")
   set(CMAKE_SWIG_IMPORTS_FCHAN "")
   set(CMAKE_SWIG_INCLUSIONS_FCHAN "")
 
   foreach(filename ${FIFE_CORE_SWIG})
+    list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
   endforeach(filename ${FIFE_CORE_SWIG})
 endif(build-python)
@@ -678,10 +713,15 @@ if(fifechan)
   find_package(FifeChan COMPONENTS sdl REQUIRED)
  
   if(build-python)
+    set(SWIG_MODULE_fifechan_EXTRA_DEPS)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
+      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
+      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
     foreach(filename ${FIFE_FCHAN_SWIG})
+      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
+      list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
     set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
@@ -726,6 +766,7 @@ endif(fifechan)
 if(cegui)  
   if(build-python)
     foreach(filename ${FIFE_CEGUI_SWIG})
+      list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_CEGUI_SWIG})    
    endif(build-python)

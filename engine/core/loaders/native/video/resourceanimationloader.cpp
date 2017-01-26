@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2017 by the FIFE team                              *
+ *   Copyright (C) 2005-2013 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,9 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_IANIMATION_LOADER_H
-#define FIFE_IANIMATION_LOADER_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -30,31 +27,22 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 #include "video/animation.h"
+
+#include "resourceanimationloader.h"
 
 namespace FIFE {
 
-    class IAnimationLoader {
-    public:
-        virtual ~IAnimationLoader() { };
-
-        /** determines whether the resource is in
-        *	the correct format for this loader
-        */
-        virtual bool isLoadable(const std::string& filename) = 0;
-
-        /** responsible for loading the animation
-         * returns a shared pointer to an animation resource
-        */
-        virtual AnimationPtr load(const std::string& filename) = 0;
-
-		/** responsible for loading all animations
-         * returns a vector of shared pointer to an animation resource
-        */
-		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
-    };
-
-    typedef SharedPtr<IAnimationLoader> AnimationLoaderPtr;
-}
-
-#endif
+	void ResourceAnimationLoader::load(IResource* res) {
+		Animation* anim = dynamic_cast<Animation*>(res);
+		if (anim) {
+			std::vector<ImagePtr> frames = anim->getFrames();
+			for (std::vector<ImagePtr>::iterator it = frames.begin(); it != frames.end(); ++it) {
+				if ((*it)->getState() != IResource::RES_LOADED) {
+					(*it)->load();
+				}
+			}
+		}
+	}
+}  //FIFE

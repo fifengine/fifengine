@@ -350,6 +350,12 @@ namespace FIFE {
 				case MouseEvent::WHEEL_MOVED_UP:
 					(*i)->mouseWheelMovedUp(evt);
 					break;
+				case MouseEvent::WHEEL_MOVED_RIGHT:
+					(*i)->mouseWheelMovedRight(evt);
+					break;
+				case MouseEvent::WHEEL_MOVED_LEFT:
+					(*i)->mouseWheelMovedLeft(evt);
+					break;
 				case MouseEvent::CLICKED:
 					(*i)->mouseClicked(evt);
 					break;
@@ -741,13 +747,22 @@ namespace FIFE {
 			}
 		}
 		if (sdlevt.type == SDL_MOUSEWHEEL) {
-			if (sdlevt.wheel.y > 0 || sdlevt.wheel.x > 0) {
+			//if (sdlevt.wheel.y > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y < 0)) {
+			if (sdlevt.wheel.y > 0) {
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-			} else if (sdlevt.wheel.y < 0 || sdlevt.wheel.x < 0) {
+			//} else if (sdlevt.wheel.y < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y > 0)) {
+			} else if (sdlevt.wheel.y < 0) {
 				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
 			}
+			//if (sdlevt.wheel.x > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x < 0)) {
+			if (sdlevt.wheel.x > 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
+			//} else if (sdlevt.wheel.x < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x > 0)) {
+			} else if (sdlevt.wheel.x < 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
+			}
 		}
-		//if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+
 		if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {
 			mouseevt.setType(MouseEvent::DRAGGED);
 			mouseevt.setButton(m_mostrecentbtn);

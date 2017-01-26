@@ -41,6 +41,8 @@ namespace fcn {
 		virtual void mouseClicked(fcn::MouseEvent& mouseEvent);
 		virtual void mouseWheelMovedUp(fcn::MouseEvent& mouseEvent);
 		virtual void mouseWheelMovedDown(fcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedRight(fcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedLeft(fcn::MouseEvent& mouseEvent);
 		virtual void mouseMoved(fcn::MouseEvent& mouseEvent);
 		virtual void mouseDragged(fcn::MouseEvent& mouseEvent);
 	protected:

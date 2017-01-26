@@ -103,6 +103,7 @@ namespace FIFE {
 
 		switch(event.type) {
 			case SDL_MOUSEBUTTONDOWN:
+			{
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
 						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(CEGUI::LeftButton);
@@ -120,8 +121,10 @@ namespace FIFE {
 						;
 				}
 				break;
+			}
 				
 			case SDL_MOUSEBUTTONUP:
+			{
 				switch(event.button.button) {
 					case SDL_BUTTON_LEFT:
 						consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(CEGUI::LeftButton);
@@ -139,16 +142,20 @@ namespace FIFE {
 						;
 				}
 				break;
+			}
 			
 			case SDL_MOUSEWHEEL:
-				// wheel up
-				if (event.wheel.y > 0) {
-					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(1);
-				// wheel down
-				} else if (event.wheel.y < 0) {
-					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(-1);
+			{
+				// mousewheel up or down
+				int32_t wheelChange = event.wheel.y;
+				if (wheelChange != 0) {
+					/*if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
+						wheelChange *= -1;
+					}*/
+					consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseWheelChange(wheelChange);
 				}
 				break;
+			}
 
 			default:
 				;
