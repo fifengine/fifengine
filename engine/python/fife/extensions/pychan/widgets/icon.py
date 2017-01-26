@@ -124,8 +124,7 @@ class Icon(Widget):
 		if opaque is not None: self.opaque = opaque
 		else: self.opaque = self.DEFAULT_OPAQUE
 
-		if image is not None: self.image = image
-		else: self.image = self.DEFAULT_IMAGE
+		self.image = image if image is not None else self.DEFAULT_IMAGE
 		
 		#if the size parameter is specified set it (again) to override
 		#the icons size. That works only without layouting.
