@@ -6,7 +6,7 @@
 
 include(ExternalProject)
 
-set(ZLIB_VERSION "1.2.8")
+set(ZLIB_VERSION "1.2.11")
 
 set(ZLIB_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
