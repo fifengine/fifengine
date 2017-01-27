@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(SDL2_VERSION "2.0.4")
+set(SDL2_VERSION "2.0.5")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if (WIN32)
