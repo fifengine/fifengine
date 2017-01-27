@@ -184,6 +184,9 @@ namespace FIFE {
 		virtual AnimationPtr get(const std::string& name);
 		virtual AnimationPtr get(ResourceHandle handle);
 
+		virtual AnimationPtr getPtr(const std::string& name);
+		virtual AnimationPtr getPtr(ResourceHandle handle);
+
 		virtual ResourceHandle getResourceHandle(const std::string& name);
 
 		virtual void invalidate(const std::string& name);
