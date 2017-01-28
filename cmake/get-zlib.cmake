@@ -23,6 +23,6 @@ ExternalProject_Add(
   DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
   DOWNLOAD_NAME   zlib-v${ZLIB_VERSION}.zip
   URL             https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip    
-  URL_MD5         9b568ed0e7f95311dda39595995570ff
+  URL_MD5         9d6a627693163bbbf3f26403a3a0b0b1
   CMAKE_ARGS      ${ZLIB_CMAKE_ARGS}
 )

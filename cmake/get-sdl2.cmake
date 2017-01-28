@@ -17,7 +17,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-mingw.tar.gz
-      URL_MD5 1
+      URL_MD5 ecf8fb614d57e7d284086a36dae6878f
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -34,7 +34,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-VC.zip
-      URL_MD5 3025645afc813bf00b789a34dcc92d42
+      URL_MD5 b771f36bb640c173e53fa8259cdd3835
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
