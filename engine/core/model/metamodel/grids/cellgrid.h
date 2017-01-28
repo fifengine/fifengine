@@ -110,6 +110,11 @@ namespace FIFE {
 		 */
 		virtual ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord) = 0;
 
+		/** Transforms given point from exact layer coordinates to cell precision layer coordinates
+		 *  @return point in layer coordinates
+		 */
+		virtual ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) = 0;
+
 		/** Fills given point vector with vertices from selected cell
 		 *  @param vtx vertices for given cell
 		 *  @param cell cell to get vertices from
