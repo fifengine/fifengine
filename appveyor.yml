@@ -5,6 +5,7 @@ branches:
   only:
   - master
   - python3
+  - 64-appveyor
 
 clone_depth: 5
 
