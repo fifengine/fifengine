@@ -170,6 +170,12 @@ print s\n\
 %exceptionclass FIFE::InconsistencyDetected;
 %exceptionclass FIFE::OutOfMemory;
 
+%extend FIFE::Exception {
+	const char *__str__() {
+		return self->what();
+	}
+};
+
 %feature("director:except") {
 	if ($error != NULL) {
 		handleDirectorException();
