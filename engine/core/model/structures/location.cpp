@@ -111,7 +111,7 @@ namespace FIFE {
 	}
 	
 	ModelCoordinate Location::getLayerCoordinates() const {
-		return ModelCoordinate(doublePt2intPt(m_exact_layer_coords));
+		return m_layer->getCellGrid()->toLayerCoordinatesFromExactLayerCoordinates(m_exact_layer_coords);
 	}
 	
 	ExactModelCoordinate Location::getMapCoordinates() const {

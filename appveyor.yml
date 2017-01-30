@@ -5,6 +5,7 @@ branches:
   only:
   - master
   - python3
+  - 64-appveyor
 
 clone_depth: 5
 
@@ -35,7 +36,7 @@ matrix:
   fast_finish: true
 
 cache:
-  - C:\projects\fifengine-dependencies\downloads
+#  - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
@@ -65,8 +66,8 @@ init:
 
 install:
   # set path to boost according to compiler toolchain
-  - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_59_0)
-  - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_59_0\lib32-msvc-14.0)
+  - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_63_0)
+  - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_63_0\lib32-msvc-14.0)
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 

@@ -41,6 +41,8 @@ namespace fcn {
 		virtual void mouseClicked(fcn::MouseEvent& mouseEvent);
 		virtual void mouseWheelMovedUp(fcn::MouseEvent& mouseEvent);
 		virtual void mouseWheelMovedDown(fcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedRight(fcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedLeft(fcn::MouseEvent& mouseEvent);
 		virtual void mouseMoved(fcn::MouseEvent& mouseEvent);
 		virtual void mouseDragged(fcn::MouseEvent& mouseEvent);
 	protected:
@@ -69,18 +71,18 @@ namespace fcn {
 	%feature("director") WidgetListener;
 	class WidgetListener {
 	public:
-	    virtual ~WidgetListener() { }
-	    
-	    virtual void widgetResized(const fcn::Event& event);
-	    virtual void widgetMoved(const fcn::Event& event);
-	    virtual void widgetHidden(const fcn::Event& event);
-	    virtual void widgetShown(const fcn::Event& event);
-            virtual void ancestorMoved(const fcn::Event& event);
-            virtual void ancestorHidden(const fcn::Event& event);
-            virtual void ancestorShown(const fcn::Event& event);
-	    
+		virtual ~WidgetListener() { }
+		
+		virtual void widgetResized(const fcn::Event& event);
+		virtual void widgetMoved(const fcn::Event& event);
+		virtual void widgetHidden(const fcn::Event& event);
+		virtual void widgetShown(const fcn::Event& event);
+		virtual void ancestorMoved(const fcn::Event& event);
+		virtual void ancestorHidden(const fcn::Event& event);
+		virtual void ancestorShown(const fcn::Event& event);
+		
 	protected:
-	    WidgetListener() { }
+		WidgetListener() { }
 	};
 }
 

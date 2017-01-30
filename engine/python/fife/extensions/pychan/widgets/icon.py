@@ -27,8 +27,8 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
 
+from common import get_manager
 from .widget import Widget
-
 
 class Icon(Widget):
 	"""
@@ -89,7 +89,11 @@ class Icon(Widget):
 
 		if scale is not None: self.scale = scale
 
-		self.image = image
+		try:
+			self.image = image
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
 		
 		#if the size parameter is specified set it (again) to override
 		#the icons size.

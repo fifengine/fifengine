@@ -1,8 +1,8 @@
 #------------------------------------------------------------------------------
-# External Project:       OpenAL
+# External Project:       OpenAL-Soft
 #
-# Website:                https://www.openal.org/
-# Downloads:              https://www.openal.org/downloads/
+# Website:                http://kcat.strangesoft.net/openal.html
+# Downloads:              http://kcat.strangesoft.net/openal.html#download
 #
 # Alternative Downloads:  http://kcat.strangesoft.net/openal-binaries/  
 #                         http://kcat.strangesoft.net/openal-releases/                                          

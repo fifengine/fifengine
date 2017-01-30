@@ -5,28 +5,28 @@
 
 include(ExternalProject)
 
-set(FIFECHAN_VERSION "0.2.0")
+set(FIFECHAN_VERSION "0.1.3")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if (WIN32)
 
-  if(MINGW) # download pre-compiled dev package for MinGW 32/64-bit
+  #if(MINGW) # download pre-compiled dev package for MinGW 32/64-bit
     
-    ExternalProject_Add(
-      fifechan
-      PREFIX              ${DEPENDENCY_EXTRACT_DIR}
-      DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
+    #ExternalProject_Add(
+      #fifechan
+      #PREFIX              ${DEPENDENCY_EXTRACT_DIR}
+      #DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-MinGW.tar.gz
-      URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-shared-MinGW.tar.gz
-      URL_MD5             1
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ""
-      INSTALL_COMMAND 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib     ${DEPENDENCY_INSTALL_DIR}/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
-    )
+      #URL                 https://ci.appveyor.com/api/projects/jakoch/fifechan/artifacts/fifechan-shared-MinGW.tar.gz
+      #URL_MD5             1
+      #CONFIGURE_COMMAND   ""
+      #BUILD_COMMAND       ""
+      #INSTALL_COMMAND 
+        #COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib     ${DEPENDENCY_INSTALL_DIR}/lib
+        #COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
+    #)
 
-  endif(MINGW)
+  #endif(MINGW)
 
   if(MSVC) # download pre-compiled dev package for Visual C++ 32/64-bit
 
@@ -35,8 +35,8 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VC14.zip
-      URL                 https://ci.appveyor.com/api/buildjobs/lel0aaieaa4cgnmv/artifacts/fifechan-shared-VC14.zip    
-      URL_MD5             3bc2c39b9c0842b4bcc6eaddf84d4525
+      URL                 https://ci.appveyor.com/api/buildjobs/bucj5vdy8bx4wnr2/artifacts/fifechan-shared-VC14-x86.zip
+      URL_MD5             9cc0c3210f2b20d995f19d39341be55e
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
