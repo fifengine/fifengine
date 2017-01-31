@@ -5,7 +5,6 @@ branches:
   only:
   - master
   - python3
-  - 64-appveyor
 
 clone_depth: 5
 
@@ -13,7 +12,6 @@ version: '{build}'
 
 platform:
   - x86
- # - x64
 
 configuration:
   - Release
