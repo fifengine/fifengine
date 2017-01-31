@@ -5,7 +5,6 @@ branches:
   only:
   - master
   - python3
-  - 64-appveyor
 
 clone_depth: 5
 
@@ -13,7 +12,6 @@ version: '{build}'
 
 platform:
   - x86
-  - x64
 
 configuration:
   - Release
@@ -36,7 +34,7 @@ matrix:
   fast_finish: true
 
 cache:
-#  - C:\projects\fifengine-dependencies\downloads
+  - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
@@ -137,19 +135,19 @@ after_build:
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=0.4.0 bdist_msi --target-version="%PYTHON_VERSION%-%platform%"
+  - python setup.py set_metadata --version=0.4.0 bdist_msi --target-version="%PYTHON_VERSION%-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%"
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py%PYTHON_VERSION%-%platform%.msi"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py%PYTHON_VERSION%-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.msi"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
 artifacts:
-  - path: 'libfife-dependencies-*.zip'
+  - path: 'libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip'
     name: Dependencies
-  - path: 'libfife-*.zip'
+  - path: 'libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip'
     name: LibFife
-  - path: 'dist\libfife-*py2.7.msi'
+  - path: 'dist\libfife-0.4.0.win32-py%PYTHON_VERSION%-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.msi'
     name: Python27Installer
 
 # deploy to Github Releases on tag push
