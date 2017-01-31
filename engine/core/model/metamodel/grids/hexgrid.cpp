@@ -138,6 +138,19 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
+		return toLayerCoordinatesHelper(elc);
+	}
+
+	ModelCoordinate HexGrid::toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) {
+		ExactModelCoordinate elc = exact_layer_coords;
+		elc.x += getXZigzagOffset(elc.y);
+		return toLayerCoordinatesHelper(elc);
+	}
+
+	ModelCoordinate HexGrid::toLayerCoordinatesHelper(const ExactModelCoordinate& coords) {
+		// this helper method takes exact layer coordinates with zigzag removed
+		// and converts them to layer coordinates
+		ExactModelCoordinate elc = coords;
 
 		// approximate conversion using squares instead of hexes
 		if( static_cast<int32_t>(round(elc.y)) & 1 )

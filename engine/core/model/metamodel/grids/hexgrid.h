@@ -49,6 +49,7 @@ namespace FIFE {
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
+		ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 		std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
 		std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end);
@@ -56,6 +57,7 @@ namespace FIFE {
 
 	private:
 		double getXZigzagOffset(double y);
+		ModelCoordinate toLayerCoordinatesHelper(const ExactModelCoordinate& coords);
 	};
 }
 

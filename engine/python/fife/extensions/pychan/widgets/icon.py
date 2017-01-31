@@ -26,6 +26,7 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
 
+from common import get_manager
 from widget import Widget
 
 
@@ -47,7 +48,6 @@ class Icon(Widget):
 									   BoolAttr('opaque')
 									 ]
 
-	DEFAULT_IMAGE = ""
 	DEFAULT_SCALE = False
 	DEFAULT_TILE = False
 	DEFAULT_OPAQUE = False
@@ -124,7 +124,13 @@ class Icon(Widget):
 		if opaque is not None: self.opaque = opaque
 		else: self.opaque = self.DEFAULT_OPAQUE
 
-		self.image = image if image is not None else self.DEFAULT_IMAGE
+		# for the case that image can not be found, e.g. invalid path
+		# the Icon is removed from the manager
+		try:
+			self.image = image
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
 		
 		#if the size parameter is specified set it (again) to override
 		#the icons size. That works only without layouting.
