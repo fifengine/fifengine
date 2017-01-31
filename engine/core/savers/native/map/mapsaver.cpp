@@ -493,7 +493,14 @@ namespace FIFE {
             }
         }
 
+        FILE* fp = 0;
+        #if defined(_MSC_VER) && (_MSC_VER >= 1400 )
+            fp = _fsopen( filename.c_str(), "w", _SH_DENYNO );
+        #else
+            fp = fopen( filename.c_str(), "w" );
+        #endif
         // save the map xml file
-        doc.SaveFile(filename);
+        doc.SaveFile(fp);
+        fclose(fp);
     }
 }
