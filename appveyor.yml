@@ -1,11 +1,6 @@
 # Build worker image (VM template)
 image: Visual Studio 2015
 
-branches:
-  only:
-  - master
-  - python3
-
 clone_depth: 5
 
 version: '{build}'
