@@ -32,8 +32,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timeevent.h"
-
 #include "soundclip.h"
 
 namespace FIFE {
@@ -64,7 +62,7 @@ namespace FIFE {
 
 	/** The class for playing audio files
 	 */
-	class SoundEmitter : private TimeEvent {
+	class SoundEmitter {
 	public:
 
 		SoundEmitter(SoundManager* manager, uint32_t uid);
@@ -183,10 +181,6 @@ namespace FIFE {
 		SoundStateType getState();
 
 	private:
-		/** Implementation of the pure virtual function from TimeEvent to update streaming
-		 */
-		virtual void updateEvent(uint32_t time);
-
 		/** Internal function to attach a SoundClip to the source
 		 */
 		void attachSoundClip();

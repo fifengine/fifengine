@@ -30,7 +30,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log/logger.h"
-#include "util/time/timemanager.h"
 #include "util/base/exception.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
@@ -52,8 +51,6 @@ namespace FIFE {
 			return;
 		}
 
-		TimeManager::instance()->registerEvent(this);
-		setPeriod(-1);
 		alGenSources(1, &m_source);
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source")
 	}
@@ -63,8 +60,6 @@ namespace FIFE {
 			return;
 		}
 
-		setPeriod(-1);
-		TimeManager::instance()->unregisterEvent(this);
 		reset();
 		alDeleteSources(1, &m_source);
 	}
@@ -90,7 +85,6 @@ namespace FIFE {
 					// check if the playback has been finished
 					alGetSourcei(m_source, AL_BUFFERS_QUEUED, &bufs);
 					if (bufs == 0) {
-						setPeriod(-1);
 						alSourceStop(m_source);
 						//if (m_callback) {
 						//	m_callback();
@@ -119,8 +113,6 @@ namespace FIFE {
 
 	void SoundEmitter::reset(bool defaultall) {
 		if (m_soundClip) {
-
-			setPeriod(-1);
 			alSourceStop(m_source);
 
 			// Release all buffers
@@ -180,10 +172,6 @@ namespace FIFE {
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error attaching sound clip")
 	}
 
-	void SoundEmitter::updateEvent(uint32_t time) {
-
-	}
-
 	void SoundEmitter::setLooping(bool loop) {
 		if (m_soundClip) {
 			if (!m_soundClip->isStream()) {
@@ -199,7 +187,7 @@ namespace FIFE {
 		if (m_soundClip) {
 			alSourcePlay(m_source);
 			if (m_soundClip->isStream()) {
-				setPeriod(5000);
+				//setPeriod(5000);
 			}
 		}
 	}
@@ -209,7 +197,6 @@ namespace FIFE {
 			alSourceStop(m_source);
 
 			if (m_soundClip->isStream()) {
-				setPeriod(-1);
 				setCursor(SD_BYTE_POS, 0);
 			} else {
 				alSourceRewind(m_source);
@@ -299,7 +286,6 @@ namespace FIFE {
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
 
 			if (state == AL_PLAYING || AL_PAUSED) {
-				setPeriod(-1);
 				alSourceStop(m_source);
 			}
 
@@ -313,7 +299,6 @@ namespace FIFE {
 			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundClip->getBuffers(m_streamId));
 
 			if (state == AL_PLAYING) {
-				setPeriod(5000);
 				alSourcePlay(m_source);
 			}
 
