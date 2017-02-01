@@ -214,10 +214,13 @@ namespace FIFE {
 		m_keymap[SDLK_MINUS] = CEGUI::Key::Minus;
 		m_keymap[SDLK_EQUALS] = CEGUI::Key::Equals;
 		m_keymap[SDLK_SEMICOLON] = CEGUI::Key::Semicolon;
+		m_keymap[SDLK_COLON] = CEGUI::Key::Colon;
 		m_keymap[SDLK_LEFTBRACKET] = CEGUI::Key::LeftBracket;
 		m_keymap[SDLK_RIGHTBRACKET] = CEGUI::Key::RightBracket;
 		m_keymap[SDLK_QUOTE] = CEGUI::Key::Apostrophe;
 		m_keymap[SDLK_BACKQUOTE] = CEGUI::Key::Grave;
+		m_keymap[SDLK_AT] = CEGUI::Key::At;
+		m_keymap[SDLK_UNDERSCORE] = CEGUI::Key::Underline;
 
 		m_keymap[SDLK_RETURN] = CEGUI::Key::Return;
 		m_keymap[SDLK_SPACE] = CEGUI::Key::Space;
@@ -228,9 +231,33 @@ namespace FIFE {
 		m_keymap[SDLK_PAUSE] = CEGUI::Key::Pause;
 		m_keymap[SDLK_SYSREQ] = CEGUI::Key::SysRq;
 		m_keymap[SDLK_POWER] = CEGUI::Key::Power;
+		m_keymap[SDLK_SLEEP] = CEGUI::Key::Sleep;
+
+		m_keymap[SDLK_CALCULATOR] = CEGUI::Key::Calculator;
+		m_keymap[SDLK_MAIL] = CEGUI::Key::Mail;
+		m_keymap[SDLK_COMPUTER] = CEGUI::Key::MyComputer;
+		m_keymap[SDLK_MEDIASELECT] = CEGUI::Key::MediaSelect;
+		m_keymap[SDLK_AC_STOP] = CEGUI::Key::Stop;
+
+		m_keymap[SDLK_AUDIOPLAY] = CEGUI::Key::PlayPause;
+		m_keymap[SDLK_AUDIOSTOP] = CEGUI::Key::MediaStop;
+		m_keymap[SDLK_AUDIOPREV] = CEGUI::Key::PrevTrack;
+		m_keymap[SDLK_AUDIONEXT] = CEGUI::Key::NextTrack;
+		m_keymap[SDLK_AUDIOMUTE] = CEGUI::Key::Mute;
+		m_keymap[SDLK_VOLUMEUP] = CEGUI::Key::VolumeUp;
+		m_keymap[SDLK_VOLUMEDOWN] = CEGUI::Key::VolumeDown;
+
+		m_keymap[SDLK_AC_BACK] = CEGUI::Key::WebBack;
+		m_keymap[SDLK_AC_FORWARD] = CEGUI::Key::WebForward;
+		m_keymap[SDLK_AC_HOME] = CEGUI::Key::WebHome;
+		m_keymap[SDLK_AC_BOOKMARKS] = CEGUI::Key::WebFavorites;
+		m_keymap[SDLK_AC_SEARCH] = CEGUI::Key::WebSearch;
+		m_keymap[SDLK_AC_REFRESH] = CEGUI::Key::WebRefresh;
+		m_keymap[SDLK_AC_STOP] = CEGUI::Key::WebStop;
 
 		m_keymap[SDLK_NUMLOCKCLEAR] = CEGUI::Key::NumLock;
 		m_keymap[SDLK_SCROLLLOCK] = CEGUI::Key::ScrollLock;
+		m_keymap[SDLK_CAPSLOCK] = CEGUI::Key::Capital;
 
 		m_keymap[SDLK_F1] = CEGUI::Key::F1;
 		m_keymap[SDLK_F2] = CEGUI::Key::F2;
@@ -274,6 +301,8 @@ namespace FIFE {
 		m_keymap[SDLK_KP_MULTIPLY] = CEGUI::Key::Multiply;
 		m_keymap[SDLK_KP_DIVIDE] = CEGUI::Key::Divide;
 		m_keymap[SDLK_KP_ENTER] = CEGUI::Key::NumpadEnter;
+		m_keymap[SDLK_KP_COMMA] = CEGUI::Key::NumpadComma;
+		m_keymap[SDLK_KP_EQUALS] = CEGUI::Key::NumpadEquals;
 
 		m_keymap[SDLK_UP] = CEGUI::Key::ArrowUp;
 		m_keymap[SDLK_LEFT] = CEGUI::Key::ArrowLeft;
