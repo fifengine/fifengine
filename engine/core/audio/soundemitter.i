@@ -32,6 +32,13 @@ namespace FIFE {
 		SD_BYTE_POS
 	};
 
+	enum SoundStateType {
+		SD_UNKNOWN_STATE,
+		SD_INITIAL_STATE,
+		SD_PLAYING_STATE,
+		SD_PAUSED_STATE,
+		SD_STOPPED_STATE
+	};
 
 	class SoundDecoder;
 	class SoundManager;
@@ -69,6 +76,7 @@ namespace FIFE {
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);
 
+		SoundStateType getState();
 	};
 }
 

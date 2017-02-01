@@ -102,13 +102,33 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_volume);
 	}
 
+	void SoundManager::update() {
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(), it_end = m_emitterVec.end(); it != it_end;  ++it) {
+			if ((*it) != NULL) {
+				(*it)->update();
+			}
+		}
+	}
+
 	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const{
 		return m_emitterVec.at(emitterId);
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
-		m_emitterVec.push_back(ptr);
+		SoundEmitter* ptr = NULL;
+		for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
+			if (m_emitterVec.at(i) == NULL) {
+				ptr = new SoundEmitter(this, i);
+				m_emitterVec.at(i) = ptr;
+				break;
+			}
+		}
+		if (!ptr) {
+			ptr = new SoundEmitter(this, m_emitterVec.size());
+			m_emitterVec.push_back(ptr);
+		}
+		//SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
+		//m_emitterVec.push_back(ptr);
 		return ptr;
 	}
 

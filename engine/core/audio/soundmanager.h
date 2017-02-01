@@ -48,6 +48,10 @@ namespace FIFE {
 		 */
 		void init();
 
+		/** Called once a frame and updates the sound objects.
+		 */
+		void update();
+
 		/** Returns a pointer to an emitter-instance given by emitterId
 		 *
 		 * @param emitterId The id of the Emitter

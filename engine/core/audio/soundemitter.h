@@ -39,6 +39,27 @@
 
 namespace FIFE {
 
+	/** State of the audio file
+	 */
+	enum SoundStateType {
+		SD_UNKNOWN_STATE,
+		SD_INITIAL_STATE,
+		SD_PLAYING_STATE,
+		SD_PAUSED_STATE,
+		SD_STOPPED_STATE
+	};
+
+	/** Listener interface for Emitter.
+	 */
+	class SoundEmitterListener {
+	public:
+		virtual ~SoundEmitterListener() {};
+		
+		/** Called when a sound finished playing.
+		 * @param id of emitter.
+		 */
+		virtual void onSoundFinished(uint32_t id) = 0;
+	};
 
 	class SoundManager;
 
@@ -50,6 +71,10 @@ namespace FIFE {
 
 		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
+
+		/** Called once a frame from the SoundManager.
+		 */
+		void update();
 
 		/** Returns the emitter-id
 		 */
@@ -161,6 +186,10 @@ namespace FIFE {
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
 		void setVelocity(float x, float y, float z);
+
+		/** Returns the state of the audio file
+		 */
+		SoundStateType getState();
 
 	private:
 		/** Implementation of the pure virtual function from TimeEvent to update streaming
