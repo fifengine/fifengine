@@ -27,7 +27,6 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <boost/function.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -67,7 +66,6 @@ namespace FIFE {
 	 */
 	class SoundEmitter : private TimeEvent {
 	public:
-		typedef boost::function0<void> type_callback;
 
 		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
@@ -103,13 +101,6 @@ namespace FIFE {
 		 *  @return A SoundClipPtr of the sound clip.
 		 */
 		SoundClipPtr getSoundClip();
-
-		/** Sets the callback to use when the STREAM has finished being played.
-		 *  NOTE: This only works with streaming audio.
-		 *
-		 * @param cb function callback
-		 */
-		void setCallback(const type_callback& cb);
 
 		/** Reset the emitter, free all internal buffers
 		 *
@@ -214,7 +205,6 @@ namespace FIFE {
 		uint32_t m_emitterId;
 		// Loop?
 		bool m_loop;
-		type_callback m_callback;
 	};
 }
 

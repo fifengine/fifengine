@@ -92,9 +92,9 @@ namespace FIFE {
 					if (bufs == 0) {
 						setPeriod(-1);
 						alSourceStop(m_source);
-						if (m_callback) {
-							m_callback();
-						}
+						//if (m_callback) {
+						//	m_callback();
+						//}
 					}
 					continue;
 				}
@@ -161,10 +161,6 @@ namespace FIFE {
 		return m_soundClip;
 	}
 
-	void SoundEmitter::setCallback(const type_callback& cb) {
-		m_callback = cb;
-	}
-
 	void SoundEmitter::attachSoundClip() {
 		if (!m_soundClip->isStream()) {
 			// non-streaming
@@ -185,39 +181,7 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::updateEvent(uint32_t time) {
-		//ALint procs;
-		//ALint bufs;
-		//ALuint buffer;
 
-		//alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &procs);
-
-		//while (procs--) {
-		//	alSourceUnqueueBuffers(m_source, 1, &buffer);
-
-		//	if (m_soundClip->getStream(m_streamId, buffer)) {
-		//		// EOF!
-		//		if (m_loop) {
-		//			// play again from the beginning
-		//			m_soundClip->setStreamPos(m_streamId, SD_BYTE_POS, 0);
-		//			m_soundClip->getStream(m_streamId, buffer);
-		//		} else {
-
-		//			// check if the playback has been finished
-		//			alGetSourcei(m_source, AL_BUFFERS_QUEUED, &bufs);
-		//			if (bufs == 0) {
-		//				setPeriod(-1);
-		//				alSourceStop(m_source);
-		//				if(m_callback) {
-		//					m_callback();
-		//				}
-		//			}
-		//			continue;
-		//		}
-		//	}
-		//	alSourceQueueBuffers(m_source, 1, &buffer);
-		//}
-
-		//CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error while streaming")
 	}
 
 	void SoundEmitter::setLooping(bool loop) {
