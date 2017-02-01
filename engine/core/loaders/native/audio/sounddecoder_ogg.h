@@ -70,7 +70,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		void *getBuffer() const{
+		void* getBuffer() const{
 			return m_data;
 		}
 
@@ -90,11 +90,11 @@ namespace FIFE {
 		}
 
 	private:
-		boost::scoped_ptr<RawData> 	m_file;
-		uint64_t		m_declength;
-		uint64_t		m_datasize;
-		char*						m_data;
-		OggVorbis_File 	m_ovf;
+		boost::scoped_ptr<RawData> m_file;
+		uint64_t m_declength;
+		uint64_t m_datasize;
+		char* m_data;
+		OggVorbis_File m_ovf;
 	};
 }
 

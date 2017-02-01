@@ -32,6 +32,7 @@ namespace FIFE {
 		SD_BYTE_POS
 	};
 
+
 	class SoundDecoder;
 	class SoundManager;
 
@@ -42,7 +43,7 @@ namespace FIFE {
 
 		uint32_t getId() const;
 
-		void setSoundClip(SoundClipPtr soundclip);
+		void setSoundClip(SoundClipPtr soundClip);
 		SoundClipPtr getSoundClip();
 		void reset(bool defaultall = false);
 		void release();
@@ -67,6 +68,7 @@ namespace FIFE {
 
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);
+
 	};
 }
 

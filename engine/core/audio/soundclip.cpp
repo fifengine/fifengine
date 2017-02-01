@@ -41,18 +41,27 @@ namespace FIFE {
 
 	SoundClip::SoundClip(IResourceLoader* loader) :
 		IResource(createUniqueClipName(), loader),
-		m_isstream(false),
+		m_isStream(false),
 		m_decoder(NULL),
-		m_deletedecoder(false) {
+		m_deleteDecoder(false) {
 
 	}
 
 	SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
 		IResource(name, loader),
-		m_isstream(false),
+		m_isStream(false),
 		m_decoder(NULL),
-		m_deletedecoder(false) {
+		m_deleteDecoder(false) {
 
+	}
+
+	SoundClip::~SoundClip() {
+		free();
+
+		// delete decoder
+		if (m_deleteDecoder && m_decoder != NULL) {
+			delete m_decoder;
+		}
 	}
 
 	void SoundClip::load(){
@@ -71,9 +80,9 @@ namespace FIFE {
 
 		assert(m_decoder);  //should be set by now
 
-		m_isstream = m_decoder->needsStreaming();
+		m_isStream = m_decoder->needsStreaming();
 
-		if (!m_isstream) {
+		if (!m_isStream) {
 
 			// only for non-streaming buffers
 			SoundBufferEntry* ptr = new SoundBufferEntry();
@@ -109,7 +118,7 @@ namespace FIFE {
 
 	void SoundClip::free(){
 		if (m_state == IResource::RES_LOADED) {
-			if (m_isstream) {
+			if (m_isStream) {
 				// erase all elements from the list
 				std::vector<SoundBufferEntry*>::iterator it;
 
@@ -131,6 +140,18 @@ namespace FIFE {
 			}
 		}
 		m_state = IResource::RES_NOT_LOADED;
+	}
+
+	bool SoundClip::isStream() const {
+		return m_isStream;
+	}
+
+	uint32_t SoundClip::countBuffers() const {
+		return m_buffervec.at(0)->usedbufs;
+	}
+
+	ALuint* SoundClip::getBuffers(uint32_t streamid) const {
+		return m_buffervec.at(streamid)->buffers;
 	}
 
 	uint32_t SoundClip::beginStreaming() {
@@ -231,26 +252,35 @@ namespace FIFE {
 		ptr->buffers[0] = 0;
 	}
 
-	SoundClip::~SoundClip() {
-		free();
+	void SoundClip::adobtDecoder(SoundDecoder* decoder) {
+		m_decoder = decoder;
+		m_deleteDecoder = true;
+	}
 
-		// delete decoder
-		if (m_deletedecoder && m_decoder != NULL) {
-			delete m_decoder;
-		}
+	void SoundClip::setDecoder(SoundDecoder* decoder) {
+		m_decoder = decoder;
+		m_deleteDecoder = false;
+	}
+
+	SoundDecoder* SoundClip::getDecoder() const {
+		return m_decoder;
+	}
+
+	size_t SoundClip::getSize() {
+		return 0;
 	}
 
 	std::string SoundClip::createUniqueClipName() {
-	        // automated counting for name generation, in case the user doesn't provide a name
-	        static uint32_t uniqueNumber = 0;
-	        static std::string baseName = "soundclip";
+		// automated counting for name generation, in case the user doesn't provide a name
+		static uint32_t uniqueNumber = 0;
+		static std::string baseName = "soundclip";
 
-	        std::ostringstream oss;
-	        oss << uniqueNumber << "_" << baseName;
+		std::ostringstream oss;
+		oss << uniqueNumber << "_" << baseName;
 
-	        const std::string name = oss.str();
-	        ++uniqueNumber;
+		const std::string name = oss.str();
+		++uniqueNumber;
 
-	        return name;
+		return name;
 	}
 }

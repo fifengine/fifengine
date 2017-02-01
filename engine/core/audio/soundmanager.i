@@ -37,8 +37,8 @@ namespace FIFE {
 			void init();
 			
 			SoundEmitter* createEmitter();
-			SoundEmitter* getEmitter(uint32_t emitterid);
-			void releaseEmitter(uint32_t emitterid);
+			SoundEmitter* getEmitter(uint32_t emitterId);
+			void releaseEmitter(uint32_t emitterId);
 			
 			ALCcontext* getContext();
 			

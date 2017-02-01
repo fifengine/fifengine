@@ -39,6 +39,7 @@
 
 namespace FIFE {
 
+
 	class SoundManager;
 
 	/** The class for playing audio files
@@ -52,9 +53,7 @@ namespace FIFE {
 
 		/** Returns the emitter-id
 		 */
-		uint32_t getId() const{
-			return m_emitterid;
-		}
+		uint32_t getId() const;
 
 		/** Sets Positioning-Type
 		 * Default is false
@@ -62,27 +61,23 @@ namespace FIFE {
 		 * @param relative If set to true, the emitters position will be interpreted relative to the listener object
 		 *
 		 */
-		void setPositioning(bool relative) {
-			alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
-		}
+		void setPositioning(bool relative);
 
 		/** Sets the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
 		 *
 		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs.
 		 */
-		void setRolloff(float rolloff) {
-			alSourcef (m_source, AL_ROLLOFF_FACTOR,  rolloff);
-		}
+		void setRolloff(float rolloff);
 
 		/** Sets the sound clip to be used by this emitter.
-		 * @param soundclip SoundClipPtr of the sound to be used.
+		 * @param soundClip SoundClipPtr of the sound to be used.
 		 */
-		void setSoundClip(SoundClipPtr soundclip);
+		void setSoundClip(SoundClipPtr soundClip);
 
 		/** Get the current sound clip used by this emitter.
 		 *  @return A SoundClipPtr of the sound clip.
 		 */
-		SoundClipPtr getSoundClip() { return m_soundclip; };
+		SoundClipPtr getSoundClip();
 
 		/** Sets the callback to use when the STREAM has finished being played.
 		 *  NOTE: This only works with streaming audio.
@@ -115,83 +110,41 @@ namespace FIFE {
 
 		/** Pauses playing the audio file
 		 */
-		void pause() {
-			if (m_soundclip) {
-				alSourcePause(m_source);
-			}
-		}
+		void pause();
 
 		/** Sets the gain of the emitter
 		 *
 		 * @param gain The gain value. 0=silence ... 1.0=normal loudness.
 		 */
-		void setGain(float gain) {
-			alSourcef(m_source, AL_GAIN, gain);
-		}
+		void setGain(float gain);
 
 		/** Returns the gain of the emitter
 		 *
 		 * @return The gain value. 0=silence ... 1.0=normal loudness.
 		 */
-		float getGain() {
-			float tmp;
-			alGetSourcef(m_source, AL_GAIN, &tmp);
-			return tmp;
-		}
+		float getGain();
 
 		/** Tests if the audio data is stereo data or mono.
 		 *
 		 * @return Returns true if the audio data is stereo, false if mono.
 		 */
-		bool isStereo() {
-			if (m_soundclip) {
-				return m_soundclip->getDecoder()->isStereo();
-			}
-			return false;
-		}
+		bool isStereo();
 
 		/** Returns the bit resolution
 		 */
-		int16_t getBitResolution() {
-			if (m_soundclip) {
-				return m_soundclip->getDecoder()->getBitResolution();
-			}
-			return 0;
-		}
+		int16_t getBitResolution();
 
 		/** Returns the sample rate
 		 */
-		uint64_t getSampleRate() {
-			if (m_soundclip) {
-				return m_soundclip->getDecoder()->getSampleRate();
-			}
-			return 0;
-		}
+		uint64_t getSampleRate();
 
 		/** Returns the length of the decoded length in bytes
 		 */
-		uint64_t getDecodedLength() {
-			if (m_soundclip) {
-				return m_soundclip->getDecoder()->getDecodedLength();
-
-			}
-			return 0;
-		}
+		uint64_t getDecodedLength();
 
 		/** Returns the duration of the sound clip in milliseconds
 		 */
-		uint64_t getDuration() {
-			if (m_soundclip) {
-				double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
-				double bitres = static_cast<double>(getBitResolution());
-				double size = static_cast<double>(getDecodedLength()) * 8.0;  //convert to bits
-				double stereo = (isStereo() ? 2.0 : 1.0);
-				double time = ( size / (samplerate * bitres) ) / stereo;
-
-				return static_cast<uint64_t>(time);
-			}
-			return 0;
-		 }
+		uint64_t getDuration();
 
 		/** Sets the cursor position in the audio file
 		 */
@@ -203,33 +156,36 @@ namespace FIFE {
 
 		/** Sets the position of the SoundEmitter in the virtual audio space.
 		 */
-		void setPosition(float x, float y, float z) {
-			alSource3f(m_source, AL_POSITION, x, y, z);
-		}
+		void setPosition(float x, float y, float z);
 
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		void setVelocity(float x, float y, float z) {
-			alSource3f(m_source, AL_VELOCITY, x, y, z);
-		}
+		void setVelocity(float x, float y, float z);
 
 	private:
 		/** Implementation of the pure virtual function from TimeEvent to update streaming
 		 */
 		virtual void updateEvent(uint32_t time);
 
-		/** Internal function to attach a soundclip to the source
+		/** Internal function to attach a SoundClip to the source
 		 */
 		void attachSoundClip();
 
-		SoundManager*	m_manager;
-		ALuint			m_source;			// The openAL-source
-		SoundClipPtr	m_soundclip;	// the attached soundclip
-		uint32_t	m_soundclipid;// id of the attached soundclip
-		uint32_t	m_streamid;		// the id of the stream
-		uint32_t	m_emitterid;	// the emitter-id
-		bool			m_loop;				// loop?
-		type_callback 	m_callback;
+		// Access to the SoundManager
+		SoundManager* m_manager;
+		// The openAL-source
+		ALuint m_source;
+		// The attached sound clip
+		SoundClipPtr m_soundClip;
+		// Id of the attached sound clip
+		uint32_t m_soundClipId;
+		// The id of the stream
+		uint32_t m_streamId;
+		// The emitter-id
+		uint32_t m_emitterId;
+		// Loop?
+		bool m_loop;
+		type_callback m_callback;
 	};
 }
 

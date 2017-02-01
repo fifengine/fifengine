@@ -42,23 +42,22 @@ namespace FIFE {
 	 */
 	static Logger _log(LM_AUDIO);
 
-	SoundManager::SoundManager() : m_context(0),
-				       m_device(0),
-				       m_mutevol(0),
-					   m_volume(1.0) {
+	SoundManager::SoundManager() :
+		m_context(0),
+		m_device(0),
+		m_muteVol(0),
+		m_volume(1.0) {
 	}
 
 	SoundManager::~SoundManager() {
-
 		// free all soundemitters
-
-		for (std::vector<SoundEmitter*>::iterator it = m_emittervec.begin(), it_end = m_emittervec.end(); it != it_end;  ++it) {
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(), it_end = m_emitterVec.end(); it != it_end;  ++it) {
 			if ((*it) != NULL) {
 				delete (*it);
 			}
 		}
 
-		m_emittervec.clear();
+		m_emitterVec.clear();
 
 		if (m_device) {
 			alcDestroyContext(m_context);
@@ -103,19 +102,60 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_volume);
 	}
 
-	SoundEmitter* SoundManager::getEmitter(uint32_t emitterid) const{
-		return m_emittervec.at(emitterid);
+	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const{
+		return m_emitterVec.at(emitterId);
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(this, m_emittervec.size());
-		m_emittervec.push_back(ptr);
+		SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
+		m_emitterVec.push_back(ptr);
 		return ptr;
 	}
 
-	void SoundManager::releaseEmitter(uint32_t emitterid) {
-		SoundEmitter** ptr = &m_emittervec.at(emitterid);
+	void SoundManager::releaseEmitter(uint32_t emitterId) {
+		SoundEmitter** ptr = &m_emitterVec.at(emitterId);
 		delete *ptr;
 		*ptr = NULL;
+	}
+
+	ALCcontext* SoundManager::getContext() const {
+		return m_context;
+	}
+
+	void SoundManager::setVolume(float vol) {
+		if (m_device == NULL) {
+			m_volume = vol;
+		}
+		alListenerf(AL_GAIN, vol);
+	}
+
+	float SoundManager::getVolume() const {
+		return m_volume;
+	}
+
+	void SoundManager::mute() {
+		alGetListenerf(AL_GAIN, &m_muteVol);
+		alListenerf(AL_GAIN, 0);
+	}
+
+	void SoundManager::unmute() {
+		alListenerf(AL_GAIN, m_muteVol);
+	}
+
+	void SoundManager::setListenerPosition(float x, float y, float z) {
+		alListener3f(AL_POSITION, x, y, z);
+	}
+
+	void SoundManager::setListenerOrientation(float x, float y, float z) {
+		ALfloat vec[6] = { x, y, z, 0.0, 0.0, 1.0};
+		alListenerfv(AL_ORIENTATION, vec);
+	}
+
+	void SoundManager::setListenerVelocity(float x, float y, float z) {
+		alListener3f(AL_VELOCITY, x, y, z);
+	}
+
+	bool SoundManager::isActive() const {
+		return m_device != NULL;
 	}
 } //FIFE

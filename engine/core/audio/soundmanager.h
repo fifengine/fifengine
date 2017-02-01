@@ -48,12 +48,12 @@ namespace FIFE {
 		 */
 		void init();
 
-		/** Returns a pointer to an emitter-instance given by emitterid
+		/** Returns a pointer to an emitter-instance given by emitterId
 		 *
-		 * @param emitterid The id of the Emitter
+		 * @param emitterId The id of the Emitter
 		 *
 		 */
-		SoundEmitter* getEmitter(uint32_t emitterid) const;
+		SoundEmitter* getEmitter(uint32_t emitterId) const;
 
 		/** Returns a pointer to an allocated emitter-instance
 		 */
@@ -61,56 +61,37 @@ namespace FIFE {
 
 		/** Release an emitter-instance given by emitter-id
 		 */
-		void releaseEmitter(uint32_t emitterid);
+		void releaseEmitter(uint32_t emitterId);
 
 		/** Returns an openAL context
 		 */
-		ALCcontext* getContext() const {
-			return m_context;
-		}
+		ALCcontext* getContext() const;
 
 		/** Sets the Master Volume
 		 *
 		 * @param vol The volume value. 0=silence ... 1.0=normal loudness.
 		 */
-		void setVolume(float vol) {
-			if (m_device == NULL) {
-				m_volume = vol;
-			}
-			alListenerf(AL_GAIN, vol);
-		}
+		void setVolume(float vol);
 
 		/** Return the Master Volume
 		*/
-		float getVolume() const{
-			return m_volume;
-		}
+		float getVolume() const;
 
 		/** Mute
 		 */
-		void mute() {
-			alGetListenerf(AL_GAIN, &m_mutevol);
-			alListenerf(AL_GAIN, 0);
-		}
+		void mute();
 
 		/** Unmutes to volume before mute() was called.
 		 */
-		void unmute() {
-			alListenerf(AL_GAIN, m_mutevol);
-		}
+		void unmute();
 
 		/** Sets the position of the listener (alter ego).
 		 */
-		void setListenerPosition(float x, float y, float z) {
-			alListener3f(AL_POSITION, x, y, z);
-		}
+		void setListenerPosition(float x, float y, float z);
 
 		/** Sets the orientation of the listener (alter ego).
 		 */
-		void setListenerOrientation(float x, float y, float z) {
-			ALfloat vec[6] = { x, y, z, 0.0, 0.0, 1.0};
-			alListenerfv(AL_ORIENTATION, vec);
-		}
+		void setListenerOrientation(float x, float y, float z);
 
 		/** Sets the velocity of the listener (alter ego).
 		 */
@@ -118,17 +99,19 @@ namespace FIFE {
 
 		/** Returns true if audio module is active
 		 */
-		bool isActive() const{
-			return m_device != NULL;
-		}
+		bool isActive() const;
 
 	private:
-
-		std::vector<SoundEmitter*> m_emittervec;	// emitter-vector
-		ALCcontext*						m_context; 		// OpenAL context
-		ALCdevice*						m_device; 		// OpenAL device
-		float								m_mutevol;		// volume before mute() was called
-		float								m_volume;		// volume to support setVolume-calls before initialization
+		// emitter-vector
+		std::vector<SoundEmitter*> m_emitterVec;
+		// OpenAL context
+		ALCcontext* m_context;
+		// OpenAL device
+		ALCdevice* m_device;
+		// volume before mute() was called
+		float m_muteVol;
+		// volume to support setVolume-calls before initialization
+		float m_volume;
 	};
 }
 #endif

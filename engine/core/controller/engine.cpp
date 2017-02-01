@@ -362,6 +362,7 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_eventmanager->processEvents();
 		m_timemanager->update();
+		m_soundmanager->update();
 
         m_renderbackend->clearBackBuffer();
 		m_targetrenderer->render();

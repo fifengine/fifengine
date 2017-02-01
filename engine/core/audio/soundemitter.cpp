@@ -39,8 +39,15 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) : m_manager(manager), m_source(0), m_soundclip(), m_soundclipid(0), m_streamid(0),
-															m_emitterid(uid), m_loop(false) {
+	SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) :
+		m_manager(manager),
+		m_source(0),
+		m_soundClip(),
+		m_soundClipId(0),
+		m_streamId(0),
+		m_emitterId(uid),
+		m_loop(false) {
+
 		if (!m_manager->isActive()) {
 			return;
 		}
@@ -62,8 +69,20 @@ namespace FIFE {
 		alDeleteSources(1, &m_source);
 	}
 
+	uint32_t SoundEmitter::getId() const {
+			return m_emitterId;
+	}
+
+	void SoundEmitter::setPositioning(bool relative) {
+		alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
+	}
+
+	void SoundEmitter::setRolloff(float rolloff) {
+		alSourcef(m_source, AL_ROLLOFF_FACTOR,  rolloff);
+	}
+
 	void SoundEmitter::reset(bool defaultall) {
-		if (m_soundclip) {
+		if (m_soundClip) {
 
 			setPeriod(-1);
 			alSourceStop(m_source);
@@ -72,13 +91,13 @@ namespace FIFE {
 			alSourcei(m_source, AL_BUFFER, AL_NONE);
 			alGetError();
 
-			if (m_soundclip->isStream()) {
-				m_soundclip->quitStreaming(m_streamid);
+			if (m_soundClip->isStream()) {
+				m_soundClip->quitStreaming(m_streamId);
 			}
 
-			// release the soundclip
-			//SoundClipManager::instance()->free(m_soundclipid);
-			m_soundclip.reset();
+			// release the soundClip
+			//soundClipManager::instance()->free(m_soundClipId);
+			m_soundClip.reset();
 
 			// default source properties
 			if (defaultall) {
@@ -92,14 +111,18 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::release() {
-		m_manager->releaseEmitter(m_emitterid);
+		m_manager->releaseEmitter(m_emitterId);
 	}
 
-	void SoundEmitter::setSoundClip(SoundClipPtr soundclip) {
-		m_soundclipid = soundclip->getHandle();
-		m_soundclip = soundclip;
+	void SoundEmitter::setSoundClip(SoundClipPtr soundClip) {
+		m_soundClipId = soundClip->getHandle();
+		m_soundClip = soundClip;
 
 		attachSoundClip();
+	}
+
+	SoundClipPtr SoundEmitter::getSoundClip() {
+		return m_soundClip;
 	}
 
 	void SoundEmitter::setCallback(const type_callback& cb) {
@@ -107,18 +130,18 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::attachSoundClip() {
-		if (!m_soundclip->isStream()) {
+		if (!m_soundClip->isStream()) {
 			// non-streaming
-			alSourceQueueBuffers(m_source, m_soundclip->countBuffers(), m_soundclip->getBuffers());
+			alSourceQueueBuffers(m_source, m_soundClip->countBuffers(), m_soundClip->getBuffers());
 			alSourcei(m_source, AL_LOOPING, m_loop ? AL_TRUE : AL_FALSE);
 
 		} else {
 			// streaming
-			m_streamid = m_soundclip->beginStreaming();
-			m_soundclip->acquireStream(m_streamid);
+			m_streamId = m_soundClip->beginStreaming();
+			m_soundClip->acquireStream(m_streamId);
 
 			// queue initial buffers
-			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundclip->getBuffers(m_streamid));
+			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundClip->getBuffers(m_streamId));
 			alSourcei(m_source, AL_LOOPING, AL_FALSE);
 		}
 
@@ -135,12 +158,12 @@ namespace FIFE {
 		while (procs--) {
 			alSourceUnqueueBuffers(m_source, 1, &buffer);
 
-			if (m_soundclip->getStream(m_streamid, buffer)) {
+			if (m_soundClip->getStream(m_streamId, buffer)) {
 				// EOF!
 				if (m_loop) {
 					// play again from the beginning
-					m_soundclip->setStreamPos(m_streamid, SD_BYTE_POS, 0);
-					m_soundclip->getStream(m_streamid, buffer);
+					m_soundClip->setStreamPos(m_streamId, SD_BYTE_POS, 0);
+					m_soundClip->getStream(m_streamId, buffer);
 				} else {
 
 					// check if the playback has been finished
@@ -162,8 +185,8 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::setLooping(bool loop) {
-		if (m_soundclip) {
-			if (!m_soundclip->isStream()) {
+		if (m_soundClip) {
+			if (!m_soundClip->isStream()) {
 				alSourcei(m_source, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
 			} else {
 				alSourcei(m_source, AL_LOOPING, AL_FALSE);
@@ -173,19 +196,19 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::play() {
-		if (m_soundclip) {
+		if (m_soundClip) {
 			alSourcePlay(m_source);
-			if (m_soundclip->isStream()) {
+			if (m_soundClip->isStream()) {
 				setPeriod(5000);
 			}
 		}
 	}
 
 	void SoundEmitter::stop() {
-		if (m_soundclip) {
+		if (m_soundClip) {
 			alSourceStop(m_source);
 
-			if (m_soundclip->isStream()) {
+			if (m_soundClip->isStream()) {
 				setPeriod(-1);
 				setCursor(SD_BYTE_POS, 0);
 			} else {
@@ -194,14 +217,71 @@ namespace FIFE {
 		}
 	}
 
+	void SoundEmitter::pause() {
+		if (m_soundClip) {
+			alSourcePause(m_source);
+		}
+	}
+
+	void SoundEmitter::setGain(float gain) {
+		alSourcef(m_source, AL_GAIN, gain);
+	}
+
+	float SoundEmitter::getGain() {
+		float tmp;
+		alGetSourcef(m_source, AL_GAIN, &tmp);
+		return tmp;
+	}
+
+	bool SoundEmitter::isStereo() {
+		if (m_soundClip) {
+			return m_soundClip->getDecoder()->isStereo();
+		}
+		return false;
+	}
+
+	int16_t SoundEmitter::getBitResolution() {
+		if (m_soundClip) {
+			return m_soundClip->getDecoder()->getBitResolution();
+		}
+		return 0;
+	}
+
+	uint64_t SoundEmitter::getSampleRate() {
+		if (m_soundClip) {
+			return m_soundClip->getDecoder()->getSampleRate();
+		}
+		return 0;
+	}
+
+	uint64_t SoundEmitter::getDecodedLength() {
+		if (m_soundClip) {
+			return m_soundClip->getDecoder()->getDecodedLength();
+		}
+		return 0;
+	}
+
+	uint64_t SoundEmitter::getDuration() {
+		if (m_soundClip) {
+			double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
+			double bitres = static_cast<double>(getBitResolution());
+			double size = static_cast<double>(getDecodedLength()) * 8.0;  //convert to bits
+			double stereo = (isStereo() ? 2.0 : 1.0);
+			double time = ( size / (samplerate * bitres) ) / stereo;
+			
+			return static_cast<uint64_t>(time);
+		}
+		return 0;
+	}
+
 	void SoundEmitter::setCursor(SoundPositionType type, float value) {
-		if (!m_soundclip) {
+		if (!m_soundClip) {
 			return;
 		}
 
 		ALint state = 0;
 
-		if (!m_soundclip->isStream()) {
+		if (!m_soundClip->isStream()) {
 			switch(type) {
 			case SD_BYTE_POS:
 				alSourcef(m_source, AL_BYTE_OFFSET, value);
@@ -215,8 +295,7 @@ namespace FIFE {
 			}
 
 			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting cursor position")
-		}
-		else {
+		} else {
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
 
 			if (state == AL_PLAYING || AL_PAUSED) {
@@ -224,14 +303,14 @@ namespace FIFE {
 				alSourceStop(m_source);
 			}
 
-			m_soundclip->setStreamPos(m_streamid, type, value);
+			m_soundClip->setStreamPos(m_streamId, type, value);
 
 			// detach all buffers
 			alSourcei(m_source, AL_BUFFER, 0);
 
 			// queue the buffers with new data
-			m_soundclip->acquireStream(m_streamid);
-			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundclip->getBuffers(m_streamid));
+			m_soundClip->acquireStream(m_streamId);
+			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundClip->getBuffers(m_streamId));
 
 			if (state == AL_PLAYING) {
 				setPeriod(5000);
@@ -243,7 +322,7 @@ namespace FIFE {
 	}
 
 	float SoundEmitter::getCursor(SoundPositionType type) {
-		if (!m_soundclip) {
+		if (!m_soundClip) {
 			return 0.0f;
 		}
 
@@ -261,12 +340,21 @@ namespace FIFE {
 				break;
 		}
 
-		if (m_soundclip->isStream()) {
-			pos += m_soundclip->getStreamPos(m_streamid, type);
+		if (m_soundClip->isStream()) {
+			pos += m_soundClip->getStreamPos(m_streamId, type);
 		}
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error getting cursor")
 
 		return pos;
 	}
+
+	void SoundEmitter::setPosition(float x, float y, float z) {
+		alSource3f(m_source, AL_POSITION, x, y, z);
+	}
+
+	void SoundEmitter::setVelocity(float x, float y, float z) {
+		alSource3f(m_source, AL_VELOCITY, x, y, z);
+	}
+
 }

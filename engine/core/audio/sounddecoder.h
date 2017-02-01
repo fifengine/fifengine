@@ -75,7 +75,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		virtual void *getBuffer() const = 0;
+		virtual void* getBuffer() const = 0;
 
 		/** Returns the byte-size of the buffer returned by getBuffer().
 		 */
@@ -116,9 +116,9 @@ namespace FIFE {
 		}
 
 	protected:
-		bool					m_isstereo;
-		bool					m_is8bit;
-		uint64_t	m_samplerate;
+		bool m_isstereo;
+		bool m_is8bit;
+		uint64_t m_samplerate;
 	};
 }
 
