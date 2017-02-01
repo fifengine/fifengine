@@ -7,7 +7,7 @@
 
 INCLUDE(ExternalProject)
 
-set(SWIG_VERSION "3.0.11")
+set(SWIG_VERSION "3.0.12")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if(WIN32)
