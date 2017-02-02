@@ -26,6 +26,13 @@
 
 namespace FIFE {
 
+	%feature("director") SoundEmitterListener;
+	class SoundEmitterListener {
+	public:
+		virtual ~SoundEmitterListener() {};
+		virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
+	};
+
 	enum SoundPositionType {
 		SD_SAMPLE_POS,
 		SD_TIME_POS,
@@ -77,6 +84,9 @@ namespace FIFE {
 		float getCursor(SoundPositionType type);
 
 		SoundStateType getState();
+
+		void addListener(SoundEmitterListener* listener);
+		void removeListener(SoundEmitterListener* listener);
 	};
 }
 

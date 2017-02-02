@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <algorithm>
 
 // Platform specific includes
 
@@ -81,17 +82,16 @@ namespace FIFE {
 					m_soundClip->setStreamPos(m_streamId, SD_BYTE_POS, 0);
 					m_soundClip->getStream(m_streamId, buffer);
 				} else {
-
 					// check if the playback has been finished
 					alGetSourcei(m_source, AL_BUFFERS_QUEUED, &bufs);
 					if (bufs == 0) {
 						alSourceStop(m_source);
-						//if (m_callback) {
-						//	m_callback();
-						//}
+						callOnSoundFinished();
 					}
-					continue;
+					//continue;
 				}
+			} else {
+				callOnSoundFinished();
 			}
 			alSourceQueueBuffers(m_source, 1, &buffer);
 		}
@@ -186,9 +186,6 @@ namespace FIFE {
 	void SoundEmitter::play() {
 		if (m_soundClip) {
 			alSourcePlay(m_source);
-			if (m_soundClip->isStream()) {
-				//setPeriod(5000);
-			}
 		}
 	}
 
@@ -250,9 +247,11 @@ namespace FIFE {
 
 	uint64_t SoundEmitter::getDuration() {
 		if (m_soundClip) {
-			double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
+			//convert to milliseconds
+			double samplerate = static_cast<double>(getSampleRate()) / 1000.0;
 			double bitres = static_cast<double>(getBitResolution());
-			double size = static_cast<double>(getDecodedLength()) * 8.0;  //convert to bits
+			// convert to bits
+			double size = static_cast<double>(getDecodedLength()) * 8.0;
 			double stereo = (isStereo() ? 2.0 : 1.0);
 			double time = ( size / (samplerate * bitres) ) / stereo;
 			
@@ -362,5 +361,32 @@ namespace FIFE {
 				return SD_UNKNOWN_STATE;
 				break;
 		}
+	}
+
+	void SoundEmitter::addListener(SoundEmitterListener* listener) {
+		m_listeners.push_back(listener);
+	}
+
+	void SoundEmitter::removeListener(SoundEmitterListener* listener) {
+		std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
+		while (i != m_listeners.end()) {
+			if ((*i) == listener) {
+				*i = NULL;
+				return;
+			}
+			++i;
+		}
+
+		FL_WARN(_log, "Cannot remove unknown listener");
+	}
+
+	void SoundEmitter::callOnSoundFinished() {
+		std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
+		for (; i != m_listeners.end(); ++i) {
+			if (*i) {
+				(*i)->onSoundFinished(m_emitterId, m_soundClipId);
+			}
+		}
+		m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), (SoundEmitterListener*)NULL), m_listeners.end());
 	}
 }

@@ -55,7 +55,7 @@ namespace FIFE {
 		/** Called when a sound finished playing.
 		 * @param id of emitter.
 		 */
-		virtual void onSoundFinished(uint32_t id) = 0;
+		virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
 	};
 
 	class SoundManager;
@@ -180,25 +180,41 @@ namespace FIFE {
 		 */
 		SoundStateType getState();
 
+		/** Adds new SoundEmitter listener
+		 * @param listener to add
+		 */
+		void addListener(SoundEmitterListener* listener);
+
+		/** Removes associated SoundEmitter listener
+		 * @param listener to remove
+		 */
+		void removeListener(SoundEmitterListener* listener);
+
 	private:
 		/** Internal function to attach a SoundClip to the source
 		 */
 		void attachSoundClip();
 
-		// Access to the SoundManager
+		/** Calls the Listeners if a sound finished
+		 */
+		void callOnSoundFinished();
+
+		//! Access to the SoundManager
 		SoundManager* m_manager;
-		// The openAL-source
+		//! The openAL-source
 		ALuint m_source;
-		// The attached sound clip
+		//! The attached sound clip
 		SoundClipPtr m_soundClip;
-		// Id of the attached sound clip
+		//! Id of the attached sound clip
 		uint32_t m_soundClipId;
-		// The id of the stream
+		//! The id of the stream
 		uint32_t m_streamId;
-		// The emitter-id
+		//! The emitter-id
 		uint32_t m_emitterId;
-		// Loop?
+		//! Loop?
 		bool m_loop;
+		//! listeners for sound related events
+		std::vector<SoundEmitterListener*> m_listeners;
 	};
 }
 
