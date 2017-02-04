@@ -33,6 +33,7 @@
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 
+#include "soundclipmanager.h"
 #include "soundmanager.h"
 #include "soundemitter.h"
 
@@ -46,7 +47,8 @@ namespace FIFE {
 		m_context(0),
 		m_device(0),
 		m_muteVol(0),
-		m_volume(1.0) {
+		m_volume(1.0),
+		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED) {
 	}
 
 	SoundManager::~SoundManager() {
@@ -110,7 +112,7 @@ namespace FIFE {
 		}
 	}
 
-	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const{
+	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const {
 		return m_emitterVec.at(emitterId);
 	}
 
@@ -130,6 +132,12 @@ namespace FIFE {
 		//SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
 		//m_emitterVec.push_back(ptr);
 		return ptr;
+	}
+
+	SoundEmitter* SoundManager::createEmitter(const std::string& name) {
+		SoundEmitter* emitter = createEmitter();
+		emitter->setSoundClip(SoundClipManager::instance()->get(name));
+		return emitter;
 	}
 
 	void SoundManager::releaseEmitter(uint32_t emitterId) {
@@ -162,17 +170,80 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_muteVol);
 	}
 
-	void SoundManager::setListenerPosition(float x, float y, float z) {
-		alListener3f(AL_POSITION, x, y, z);
+	void SoundManager::setDistanceModel(SoundDistanceModelType model) {
+		m_distanceModel = model;
+
+		switch(m_distanceModel) {
+		case SD_DISTANCE_NONE:
+			alDistanceModel(AL_NONE);
+			break;
+		case SD_DISTANCE_INVERSE:
+			alDistanceModel(AL_INVERSE_DISTANCE);
+			break;
+		case SD_DISTANCE_INVERSE_CLAMPED:
+			alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+			break;
+		case SD_DISTANCE_LINEAR:
+			alDistanceModel(AL_LINEAR_DISTANCE);
+			break;
+		case SD_DISTANCE_LINEAR_CLAMPED:
+			alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+			break;
+		case SD_DISTANCE_EXPONENT:
+			alDistanceModel(AL_EXPONENT_DISTANCE);
+			break;
+		case SD_DISTANCE_EXPONENT_CLAMPED:
+			alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
+			break;
+		default:
+			break;
+		}
 	}
 
-	void SoundManager::setListenerOrientation(float x, float y, float z) {
-		ALfloat vec[6] = { x, y, z, 0.0, 0.0, 1.0};
+	SoundDistanceModelType SoundManager::getDistanceModel() const {
+		return m_distanceModel;
+	}
+
+	void SoundManager::setListenerPosition(const ExactModelCoordinate& position) {
+		alListener3f(AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
+	}
+
+	ExactModelCoordinate SoundManager::getListenerPosition() const {
+		ALfloat vec[3];
+		alGetListenerfv(AL_POSITION, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundManager::setListenerOrientation(const ExactModelCoordinate& orientation) {
+		ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
+			0.0, 0.0, 1.0};
 		alListenerfv(AL_ORIENTATION, vec);
 	}
 
-	void SoundManager::setListenerVelocity(float x, float y, float z) {
-		alListener3f(AL_VELOCITY, x, y, z);
+	ExactModelCoordinate SoundManager::getListenerOrientation() const {
+		ALfloat vec[6];
+		alGetListenerfv(AL_ORIENTATION, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundManager::setListenerVelocity(const ExactModelCoordinate& velocity) {
+		alListener3f(AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+	}
+
+	ExactModelCoordinate SoundManager::getListenerVelocity() const {
+		ALfloat vec[3];
+		alGetListenerfv(AL_VELOCITY, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundManager::setDopplerFactor(float factor) {
+		if (factor >= 0.0) {
+			alDopplerFactor(factor);
+		}
+	}
+
+	float SoundManager::getDopplerFactor() const {
+		return alGetFloat(AL_DOPPLER_FACTOR);
 	}
 
 	bool SoundManager::isActive() const {

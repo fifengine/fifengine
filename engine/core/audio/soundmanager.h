@@ -32,9 +32,24 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/metamodel/modelcoords.h"
+
 #include "fife_openal.h"
 
 namespace FIFE {
+
+	/** Distance model from OpenAL
+	 */
+	enum SoundDistanceModelType {
+		SD_DISTANCE_NONE,
+		SD_DISTANCE_INVERSE,
+		SD_DISTANCE_INVERSE_CLAMPED,
+		SD_DISTANCE_LINEAR,
+		SD_DISTANCE_LINEAR_CLAMPED,
+		SD_DISTANCE_EXPONENT,
+		SD_DISTANCE_EXPONENT_CLAMPED
+	};
+
 	class SoundEmitter;
 
 	class SoundManager {
@@ -63,7 +78,15 @@ namespace FIFE {
 		 */
 		SoundEmitter* createEmitter();
 
+		/** Returns a pointer to an allocated emitter-instance
+		 *
+		 * @param name The name of the SoundClip.
+		 */
+		SoundEmitter* createEmitter(const std::string& name);
+
 		/** Release an emitter-instance given by emitter-id
+		 *
+		 * @param emitterId The id of the Emitter.
 		 */
 		void releaseEmitter(uint32_t emitterId);
 
@@ -89,33 +112,65 @@ namespace FIFE {
 		 */
 		void unmute();
 
+		/** Sets the distance model.
+		 */
+		void setDistanceModel(SoundDistanceModelType model);
+
+		/** Return the distance mode.
+		 */
+		SoundDistanceModelType getDistanceModel() const;
+
 		/** Sets the position of the listener (alter ego).
 		 */
-		void setListenerPosition(float x, float y, float z);
+		void setListenerPosition(const ExactModelCoordinate& position);
+
+		/** Return the position of the listener (alter ego).
+		 */
+		ExactModelCoordinate getListenerPosition() const;
 
 		/** Sets the orientation of the listener (alter ego).
 		 */
-		void setListenerOrientation(float x, float y, float z);
+		void setListenerOrientation(const ExactModelCoordinate& orientation);
+
+		/** Return the orientation of the listener (alter ego).
+		 */
+		ExactModelCoordinate getListenerOrientation() const;
 
 		/** Sets the velocity of the listener (alter ego).
 		 */
-		void setListenerVelocity(float x, float y, float z);
+		void setListenerVelocity(const ExactModelCoordinate& velocity);
+
+		/** Return the velocity of the listener (alter ego).
+		 */
+		ExactModelCoordinate getListenerVelocity() const;
+
+		/** Sets factor for doppler effect.
+		 */
+		void setDopplerFactor(float factor);
+
+		/** Return factor for doppler effect.
+		 */
+		float getDopplerFactor() const;
 
 		/** Returns true if audio module is active
 		 */
 		bool isActive() const;
 
 	private:
-		// emitter-vector
+		//! emitter-vector
 		std::vector<SoundEmitter*> m_emitterVec;
-		// OpenAL context
+		//! OpenAL context
 		ALCcontext* m_context;
-		// OpenAL device
+		//! OpenAL device
 		ALCdevice* m_device;
-		// volume before mute() was called
+		//! volume before mute() was called
 		float m_muteVol;
-		// volume to support setVolume-calls before initialization
+		//! volume to support setVolume-calls before initialization
 		float m_volume;
+		//! Selected distance model
+		SoundDistanceModelType m_distanceModel;
+		//! A map that holds the groups together with the appended emitters.
+		std::map<std::string, std::vector<SoundEmitter*> > m_groups;
 	};
 }
 #endif

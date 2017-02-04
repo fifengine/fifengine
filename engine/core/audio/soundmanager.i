@@ -27,7 +27,19 @@
 %include "util/resource/resource.i"
 
 namespace FIFE {
+
+	enum SoundDistanceModelType {
+		SD_DISTANCE_NONE,
+		SD_DISTANCE_INVERSE,
+		SD_DISTANCE_INVERSE_CLAMPED,
+		SD_DISTANCE_LINEAR,
+		SD_DISTANCE_LINEAR_CLAMPED,
+		SD_DISTANCE_EXPONENT,
+		SD_DISTANCE_EXPONENT_CLAMPED
+	};
+
 	class SoundClip;
+	class ExactModelCoordinate;
 
 	class SoundManager {
 		public:
@@ -37,6 +49,7 @@ namespace FIFE {
 			void init();
 			
 			SoundEmitter* createEmitter();
+			SoundEmitter* createEmitter(const std::string& name);
 			SoundEmitter* getEmitter(uint32_t emitterId);
 			void releaseEmitter(uint32_t emitterId);
 			
@@ -47,7 +60,16 @@ namespace FIFE {
 			void mute();
 			void unmute();
 			
-			void setListenerPosition(float x, float y, float z);
-			void setListenerOrientation(float x, float y, float z);
+			void setDistanceModel(SoundDistanceModelType model);
+			SoundDistanceModelType getDistanceModel() const;
+
+			void setListenerPosition(const ExactModelCoordinate& position);
+			ExactModelCoordinate getListenerPosition() const;
+			void setListenerOrientation(const ExactModelCoordinate& orientation);
+			ExactModelCoordinate getListenerOrientation() const;
+			void setListenerVelocity(const ExactModelCoordinate& velocity);
+			ExactModelCoordinate getListenerVelocity() const;
+			void setDopplerFactor(float factor);
+			float getDopplerFactor() const;
 	};
 }
