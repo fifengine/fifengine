@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     expat
-# Downloads:            http://www.libexpat.org/
+# Homepage:             http://www.libexpat.org/
 # Github:               https://sourceforge.net/projects/expat/files/expat/
 #------------------------------------------------------------------------------
 

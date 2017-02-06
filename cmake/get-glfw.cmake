@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     glfw
-# Downloads:            http://www.glfw.org/
+# Homepage:             http://www.glfw.org/
 # Github:               https://github.com/glfw/glfw
 #------------------------------------------------------------------------------
 

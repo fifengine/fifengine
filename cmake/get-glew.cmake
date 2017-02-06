@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # External Project:     glew
-# Downloads:            http://glew.sourceforge.net/
-# Github:               https://sourceforge.net/projects/glew/files/glew/
+# Homepage:             http://glew.sourceforge.net/
+# Sourceforge:          https://sourceforge.net/projects/glew/files/glew/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)

@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     glm
-# Downloads:            http://glm.g-truc.net/0.9.8/index.html
+# Homepage:             http://glm.g-truc.net/0.9.8/index.html
 # Github:               https://github.com/g-truc/glm/tags
 #------------------------------------------------------------------------------
 
