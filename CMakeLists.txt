@@ -28,7 +28,7 @@ configure_file (
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
-option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                    ON)
 option(zip              "Enable ZIP archive support"                            ON)
 option(logging          "Enable logging"                                        ON)
 option(rend-camzone     "Enable camera zone renderer"                           OFF)
