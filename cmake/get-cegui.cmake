@@ -44,7 +44,7 @@ if (WIN32)
         #COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
     #)
 
-  endif(MSVC)
+  #endif(MSVC)
 
 else() # build from source
 
@@ -90,8 +90,8 @@ else() # build from source
     cegui
     PREFIX              ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-    URL                 https://downloads.sourceforge.net/project/crayzedsgui/CEGUI%20Mk-2/0.8/cegui-0.8.7.zip?r=http%3A%2F%2Fcegui.org.uk%2Fdownload&ts=1486380450&use_mirror=freefr
-    URL_MD5             1
+    URL                 https://downloads.sourceforge.net/project/crayzedsgui/CEGUI%20Mk-2/0.8/cegui-0.8.7.tar.bz2?r=http%3A%2F%2Fcegui.org.uk%2Fdownload%2Fcegui-087&ts=1486382058&use_mirror=kent
+    #URL_MD5             1
     #CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
     INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}
     CMAKE_ARGS          ${CEGUI_CMAKE_ARGS}
