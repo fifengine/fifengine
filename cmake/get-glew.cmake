@@ -1,14 +1,14 @@
 #------------------------------------------------------------------------------
-# External Project:     zlib
-# Downloads:            http://zlib.net/
-# Github:               https://github.com/madler/zlib
+# External Project:     glew
+# Downloads:            http://glew.sourceforge.net/
+# Github:               https://sourceforge.net/projects/glew/files/glew/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
 
-set(ZLIB_VERSION "1.2.11")
+set(GLEW_VERSION "2.0.0")
 
-set(ZLIB_CMAKE_ARGS
+set(GLEW_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
       -G ${CMAKE_GENERATOR}
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -18,11 +18,11 @@ set(ZLIB_CMAKE_ARGS
 )
 
 ExternalProject_Add(
-  zlib
+  glew
   PREFIX          ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
-  DOWNLOAD_NAME   zlib-v${ZLIB_VERSION}.zip
-  URL             https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip
-  URL_MD5         9d6a627693163bbbf3f26403a3a0b0b1
-  CMAKE_ARGS      ${ZLIB_CMAKE_ARGS}
+  DOWNLOAD_NAME   glew-${GLEW_VERSION}.tgz
+  URL             https://sourceforge.net/projects/glew/files/glew/${GLEW_VERSION}/glew-${GLEW_VERSION}.tgz/download
+  URL_MD5         2a2cd7c98f13854d2fcddae0d2b20411
+  CMAKE_ARGS      ${GLEW_CMAKE_ARGS}
 )

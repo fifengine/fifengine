@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     CeGUI
-# Downloads:            http://cegui.org.uk/download                                          
+# Downloads:            http://cegui.org.uk/download
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
@@ -47,6 +47,7 @@ set(CEGUI_CMAKE_ARGS
 
 ExternalProject_Add(
   cegui
+  DEPENDS             libpng expat glew glfw glm pcre sdl2
   PREFIX              ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
   URL                 https://sourceforge.net/projects/crayzedsgui/files/CEGUI%20Mk-2/0.8/cegui-0.8.7.tar.bz2/download

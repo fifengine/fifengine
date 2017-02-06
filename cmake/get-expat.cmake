@@ -1,14 +1,14 @@
 #------------------------------------------------------------------------------
-# External Project:     zlib
-# Downloads:            http://zlib.net/
-# Github:               https://github.com/madler/zlib
+# External Project:     expat
+# Downloads:            http://www.libexpat.org/
+# Github:               https://sourceforge.net/projects/expat/files/expat/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
 
-set(ZLIB_VERSION "1.2.11")
+set(EXPAT_VERSION "2.2.0")
 
-set(ZLIB_CMAKE_ARGS
+set(EXPAT_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
       -G ${CMAKE_GENERATOR}
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -18,11 +18,11 @@ set(ZLIB_CMAKE_ARGS
 )
 
 ExternalProject_Add(
-  zlib
+  expat
   PREFIX          ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
-  DOWNLOAD_NAME   zlib-v${ZLIB_VERSION}.zip
-  URL             https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip
-  URL_MD5         9d6a627693163bbbf3f26403a3a0b0b1
-  CMAKE_ARGS      ${ZLIB_CMAKE_ARGS}
+  DOWNLOAD_NAME   expat-${EXPAT_VERSION}.tar.bz2
+  URL             https://sourceforge.net/projects/expat/files/expat/${EXPAT_VERSION}/expat-${EXPAT_VERSION}.tar.bz2/download    
+  URL_MD5         2f47841c829facb346eb6e3fab5212e2
+  CMAKE_ARGS      ${EXPAT_CMAKE_ARGS}
 )
