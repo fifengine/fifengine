@@ -32,6 +32,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/metamodel/modelcoords.h"
+
 #include "soundclip.h"
 
 namespace FIFE {
@@ -53,7 +55,8 @@ namespace FIFE {
 		virtual ~SoundEmitterListener() {};
 		
 		/** Called when a sound finished playing.
-		 * @param id of emitter.
+		 * @param emitterId The id of emitter.
+		 * @param soundClipId The id of sound clip aka ResourceHandle.
 		 */
 		virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
 	};
@@ -83,12 +86,20 @@ namespace FIFE {
 		 *
 		 */
 		void setPositioning(bool relative);
+		bool isPositioning() const;
+
+		void setReferenceDistance(float distance);
+		float getReferenceDistance() const;
+
+		void setMaxDistance(float distance);
+		float getMaxDistance() const;
 
 		/** Sets the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
 		 *
 		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs.
 		 */
 		void setRolloff(float rolloff);
+		float getRolloff() const;
 
 		/** Sets the sound clip to be used by this emitter.
 		 * @param soundClip SoundClipPtr of the sound to be used.
@@ -113,6 +124,7 @@ namespace FIFE {
 		/** Sets the playing mode
 		 */
 		void setLooping(bool loop);
+		bool isLooping() const;
 
 		/** Plays the associated audio file.
 		 */
@@ -136,7 +148,13 @@ namespace FIFE {
 		 *
 		 * @return The gain value. 0=silence ... 1.0=normal loudness.
 		 */
-		float getGain();
+		float getGain() const;
+
+		void setMaxGain(float gain);
+		float getMaxGain() const;
+
+		void setMinGain(float gain);
+		float getMinGain() const;
 
 		/** Tests if the audio data is stereo data or mono.
 		 *
@@ -170,11 +188,26 @@ namespace FIFE {
 
 		/** Sets the position of the SoundEmitter in the virtual audio space.
 		 */
-		void setPosition(float x, float y, float z);
+		void setPosition(const ExactModelCoordinate& position);
+		ExactModelCoordinate getPosition() const;
+
+		void setOrientation(const ExactModelCoordinate& orientation);
+		ExactModelCoordinate getOrientation() const;
+
+		void setPitch(float pitch);
+		float getPitch() const;
 
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		void setVelocity(float x, float y, float z);
+		void setVelocity(const ExactModelCoordinate& velocity);
+		ExactModelCoordinate getVelocity() const;
+
+		void setConeInnerAngle(float inner);
+		float getConeInnerAngle() const;
+		void setConeOuterAngle(float outer);
+		float getConeOuterAngle() const;
+		void setConeOuterGain(float gain);
+		float getConeOuterGain() const;
 
 		/** Returns the state of the audio file
 		 */

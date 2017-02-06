@@ -34,7 +34,7 @@
 #include "util/base/exception.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
-#include "soundclipmanager.h"
+//#include "soundclipmanager.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
@@ -53,7 +53,7 @@ namespace FIFE {
 		}
 
 		alGenSources(1, &m_source);
-		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source")
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source");
 	}
 
 	SoundEmitter::~SoundEmitter() {
@@ -88,7 +88,7 @@ namespace FIFE {
 						alSourceStop(m_source);
 						callOnSoundFinished();
 					}
-					//continue;
+					continue;
 				}
 			} else {
 				callOnSoundFinished();
@@ -107,8 +107,44 @@ namespace FIFE {
 		alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
 	}
 
+	bool SoundEmitter::isPositioning() const {
+		ALint tmp;
+		alGetSourcei(m_source, AL_SOURCE_RELATIVE, &tmp);
+		return (tmp == AL_TRUE);
+	}
+
+	void SoundEmitter::setOrientation(const ExactModelCoordinate& orientation) {
+		ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
+			0.0, 0.0, 1.0};
+		alSourcefv(m_source, AL_ORIENTATION, vec);
+	}
+
+	ExactModelCoordinate SoundEmitter::getOrientation() const {
+		ALfloat vec[6];
+		alGetSourcefv(m_source, AL_ORIENTATION, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundEmitter::setPitch(float pitch) {
+		if (pitch > 0.0) {
+			alSourcef(m_source, AL_PITCH, pitch);
+		}
+	}
+
+	float SoundEmitter::getPitch() const {
+		float tmp;
+		alGetSourcef(m_source, AL_PITCH, &tmp);
+		return tmp;
+	}
+
 	void SoundEmitter::setRolloff(float rolloff) {
 		alSourcef(m_source, AL_ROLLOFF_FACTOR,  rolloff);
+	}
+
+	float SoundEmitter::getRolloff() const {
+		float tmp;
+		alGetSourcef(m_source, AL_ROLLOFF_FACTOR, &tmp);
+		return tmp;
 	}
 
 	void SoundEmitter::reset(bool defaultall) {
@@ -124,16 +160,19 @@ namespace FIFE {
 			}
 
 			// release the soundClip
-			//soundClipManager::instance()->free(m_soundClipId);
+			//SoundClipManager::instance()->free(m_soundClipId);
 			m_soundClip.reset();
 
 			// default source properties
 			if (defaultall) {
-				setPosition(0.0f, 0.0f, 0.0f);
-				setVelocity(0.0f, 0.0f, 0.0f);
+				ExactModelCoordinate emc(0.0, 0.0, 0.0);
+				setPosition(emc);
+				setVelocity(emc);
 				setGain(1.0f);
 				setPositioning(false);
+				setRolloff(1.0);
 				alSourcei(m_source, AL_LOOPING, AL_FALSE);
+				m_loop = false;
 			}
 		}
 	}
@@ -183,6 +222,10 @@ namespace FIFE {
 		m_loop = loop;
 	}
 
+	bool SoundEmitter::isLooping() const {
+		return m_loop;
+	}
+
 	void SoundEmitter::play() {
 		if (m_soundClip) {
 			alSourcePlay(m_source);
@@ -211,9 +254,29 @@ namespace FIFE {
 		alSourcef(m_source, AL_GAIN, gain);
 	}
 
-	float SoundEmitter::getGain() {
+	float SoundEmitter::getGain() const {
 		float tmp;
 		alGetSourcef(m_source, AL_GAIN, &tmp);
+		return tmp;
+	}
+
+	void SoundEmitter::setMaxGain(float gain) {
+		alSourcef(m_source, AL_MAX_GAIN, gain);
+	}
+
+	float SoundEmitter::getMaxGain() const {
+		float tmp;
+		alGetSourcef(m_source, AL_MAX_GAIN, &tmp);
+		return tmp;
+	}
+
+	void SoundEmitter::setMinGain(float gain) {
+		alSourcef(m_source, AL_MIN_GAIN, gain);
+	}
+
+	float SoundEmitter::getMinGain() const {
+		float tmp;
+		alGetSourcef(m_source, AL_MIN_GAIN, &tmp);
 		return tmp;
 	}
 
@@ -333,12 +396,74 @@ namespace FIFE {
 		return pos;
 	}
 
-	void SoundEmitter::setPosition(float x, float y, float z) {
-		alSource3f(m_source, AL_POSITION, x, y, z);
+	void SoundEmitter::setPosition(const ExactModelCoordinate& position) {
+		alSource3f(m_source, AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
 	}
 
-	void SoundEmitter::setVelocity(float x, float y, float z) {
-		alSource3f(m_source, AL_VELOCITY, x, y, z);
+	ExactModelCoordinate SoundEmitter::getPosition() const {
+		ALfloat vec[3];
+		alGetSourcefv(m_source, AL_POSITION, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundEmitter::setReferenceDistance(float distance) {
+		alSourcef(m_source, AL_REFERENCE_DISTANCE, distance);
+	}
+
+	float SoundEmitter::getReferenceDistance() const {
+		float distance;
+		alGetSourcef(m_source, AL_REFERENCE_DISTANCE, &distance);
+		return distance;
+	}
+
+	void SoundEmitter::setMaxDistance(float distance) {
+		alSourcef(m_source, AL_MAX_DISTANCE, distance);
+	}
+
+	float SoundEmitter::getMaxDistance() const {
+		float distance;
+		alGetSourcef(m_source, AL_MAX_DISTANCE, &distance);
+		return distance;
+	}
+
+	void SoundEmitter::setVelocity(const ExactModelCoordinate& velocity) {
+		alSource3f(m_source, AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+	}
+
+	ExactModelCoordinate SoundEmitter::getVelocity() const {
+		ALfloat vec[3];
+		alGetSourcefv(m_source, AL_VELOCITY, vec);
+		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	}
+
+	void SoundEmitter::setConeInnerAngle(float inner) {
+		alSourcef(m_source, AL_CONE_INNER_ANGLE, inner);
+	}
+
+	float SoundEmitter::getConeInnerAngle() const {
+		float inner;
+		alGetSourcef(m_source, AL_CONE_INNER_ANGLE, &inner);
+		return inner;
+	}
+
+	void SoundEmitter::setConeOuterAngle(float outer) {
+		alSourcef(m_source, AL_CONE_OUTER_ANGLE, outer);
+	}
+
+	float SoundEmitter::getConeOuterAngle() const {
+		float outer;
+		alGetSourcef(m_source, AL_CONE_OUTER_ANGLE, &outer);
+		return outer;
+	}
+
+	void SoundEmitter::setConeOuterGain(float gain) {
+		alSourcef(m_source, AL_CONE_OUTER_GAIN, gain);
+	}
+
+	float SoundEmitter::getConeOuterGain() const {
+		float gain;
+		alGetSourcef(m_source, AL_CONE_OUTER_GAIN, &gain);
+		return gain;
 	}
 
 	SoundStateType SoundEmitter::getState() {

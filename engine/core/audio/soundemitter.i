@@ -24,6 +24,8 @@
 #include "audio/soundemitter.h"
 %}
 
+%include "model/metamodel/modelcoords.i"
+
 namespace FIFE {
 
 	%feature("director") SoundEmitterListener;
@@ -66,13 +68,38 @@ namespace FIFE {
 		void pause();
 		void stop();
 
-		void setLooping(bool loop);
-		void setRolloff(float rolloff);
-		void setPositioning(bool relative);
-		void setPosition(float x, float y, float z);
-		void setVelocity(float x, float y, float z);
 		void setGain(float gain);
-		float getGain();
+		float getGain() const;
+		void setMaxGain(float gain);
+		float getMaxGain() const;
+		void setMinGain(float gain);
+		float getMinGain() const;
+
+		void setLooping(bool loop);
+		bool isLooping() const;
+		void setRolloff(float rolloff);
+		float getRolloff() const;
+		void setPositioning(bool relative);
+		bool isPositioning() const;
+		void setPosition(const ExactModelCoordinate& position);
+		ExactModelCoordinate getPosition() const;
+		void setReferenceDistance(float distance);
+		float getReferenceDistance() const;
+		void setMaxDistance(float distance);
+		float getMaxDistance() const;
+		void setOrientation(const ExactModelCoordinate& orientation);
+		ExactModelCoordinate getOrientation() const;
+		void setVelocity(const ExactModelCoordinate& velocity);
+		ExactModelCoordinate getVelocity() const;
+		void setPitch(float pitch);
+		float getPitch() const;
+
+		void setConeInnerAngle(float inner);
+		float getConeInnerAngle() const;
+		void setConeOuterAngle(float outer);
+		float getConeOuterAngle() const;
+		void setConeOuterGain(float gain);
+		float getConeOuterGain() const;
 
 		bool isStereo();
 		int16_t getBitResolution();
