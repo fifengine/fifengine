@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
+include(get-cegui-deps)
 
 set(CEGUI_VERSION "0.8.7")
 
@@ -21,8 +22,8 @@ set(CEGUI_CMAKE_ARGS
     -DCEGUI_BUILD_IMAGECODEC_DEVIL:BOOL=OFF
     -DCEGUI_BUILD_IMAGECODEC_FREEIMAGE:BOOL=OFF
     -DCEGUI_BUILD_IMAGECODEC_PVR:BOOL=OFF
-    -DCEGUI_BUILD_IMAGECODEC_SDL2:BOOL=ON
-    -DCEGUI_BUILD_IMAGECODEC_SILLY:BOOL=OFF
+    -DCEGUI_BUILD_IMAGECODEC_SDL2:BOOL=OFF
+    -DCEGUI_BUILD_IMAGECODEC_SILLY:BOOL=ON
     -DCEGUI_BUILD_IMAGECODEC_STB:BOOL=OFF
     -DCEGUI_BUILD_IMAGECODEC_TGA:BOOL=OFF
     -DCEGUI_BUILD_LUA_GENERATOR:BOOL=OFF
@@ -43,12 +44,11 @@ set(CEGUI_CMAKE_ARGS
     -DCEGUI_BUILD_XMLPARSER_RAPIDXML:BOOL=OFF
     -DCEGUI_BUILD_XMLPARSER_TINYXML:BOOL=OFF
     -DCEGUI_BUILD_XMLPARSER_XERCES:BOOL=OFF
-    -DCEGUI_OPTION_DEFAULT_IMAGECODEC="SDL2ImageCodec"
 )
 
 ExternalProject_Add(
   cegui
-  DEPENDS             libpng expat glew glfw glm pcre sdl2 sdl2-image
+  DEPENDS             cegui_deps
   PREFIX              ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
   URL                 https://sourceforge.net/projects/crayzedsgui/files/CEGUI%20Mk-2/0.8/cegui-0.8.7.tar.bz2/download
