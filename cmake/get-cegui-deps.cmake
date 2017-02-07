@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
-# External Project:     FifeChan / FifeGUI
-# Downloads:            https://github.com/fifengine/fifechan/releases                                            
+# External Project:     cegui-dependencies
+# Downloads:            https://bitbucket.org/cegui/cegui-dependencies/downloads                                         
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
