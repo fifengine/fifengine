@@ -51,8 +51,10 @@ ExternalProject_Add(
   DEPENDS             cegui_deps
   PREFIX              ${DEPENDENCY_EXTRACT_DIR}
   DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-  URL                 https://sourceforge.net/projects/crayzedsgui/files/CEGUI%20Mk-2/0.8/cegui-0.8.7.tar.bz2/download
-  URL_MD5             cebcc95e205b9ad353db0d65b9b2d505
+  HG_REPOSITORY       https://bitbucket.org/cegui/cegui
+  HG_TAG              v0-8
+  #URL                 https://sourceforge.net/projects/crayzedsgui/files/CEGUI%20Mk-2/0.8/cegui-0.8.7.tar.bz2/download
+  #URL_MD5             cebcc95e205b9ad353db0d65b9b2d505
   #CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
   INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}
   CMAKE_ARGS          ${CEGUI_CMAKE_ARGS}
