@@ -29,6 +29,7 @@ matrix:
   fast_finish: true
 
 cache:
+  - C:\projects\fifengine-dependencies
 #  - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
@@ -163,3 +164,4 @@ deploy:
     appveyor_repo_tag: true        # deploy on tag push only
   auth_token:                      # encrypted token from GitHub
     secure: 4QuwNtXXqe6cIFwL3YCCn/47V7LdKBNbJVGjBSGDzJyUefOER3b7OrMrXm2FQYy3
+
