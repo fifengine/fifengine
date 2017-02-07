@@ -46,8 +46,15 @@ namespace FIFE {
 		virtual void drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment);
 		virtual void drawPoint(int32_t x, int32_t y);
 		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
+		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width);
+		virtual void drawPolyLine(const fcn::PointVector& points, uint32_t width);
+		virtual void drawBezier(const fcn::PointVector& points, int32_t steps, uint32_t width);
 		virtual void drawRectangle(const fcn::Rectangle& rectangle);
 		virtual void fillRectangle(const fcn::Rectangle& rectangle);
+		virtual void drawCircle(const fcn::Point& p, uint32_t radius);
+		virtual void drawFillCircle(const fcn::Point& p, uint32_t radius);
+		virtual void drawCircleSegment(const fcn::Point& p, uint32_t radius, int32_t sangle, int32_t eangle);
+		virtual void drawFillCircleSegment(const fcn::Point& p, uint32_t radius, int32_t sangle, int32_t eangle);
 
 		virtual void _beginDraw();
 		virtual void _endDraw();

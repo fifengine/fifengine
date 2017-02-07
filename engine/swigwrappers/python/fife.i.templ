@@ -15,11 +15,8 @@
  * explicitly include cstddef so the swig generated file will compile.
  */
 #include <cstddef>
+
 %}
-
-%module(directors="1") fife
-$imports
-
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_pair.i"
@@ -28,6 +25,9 @@ $imports
 %include "std_set.i"
 %include "typemaps.i"
 %include "exception.i"
+
+%module(directors="1") fife
+$imports
 
 /**
  * Some materials to understand exception handling:

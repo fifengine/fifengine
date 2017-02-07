@@ -101,7 +101,7 @@ namespace FIFE {
 
 		setSize(w, h);
 		setPosition((RenderBackend::instance()->getScreenWidth() - w) / 2,-h);
-		setFrameSize(0);
+		setBorderSize(0);
 
 		setForegroundColor(white);
 		setBackgroundColor(black);

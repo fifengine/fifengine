@@ -10,9 +10,11 @@
 %}
 
 %module(directors="1") fifechan
-@CMAKE_SWIG_IMPORTS_FCHAN@
 
 %include "std_string.i"
+%include "std_vector.i"
+
+@CMAKE_SWIG_IMPORTS_FCHAN@
 
 /* Signed.  */
 typedef signed char		int8_t;
