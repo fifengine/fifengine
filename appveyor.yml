@@ -1,5 +1,5 @@
 # Build worker image (VM template)
-image: Previous Visual Studio 2015
+image: Visual Studio 2015 Update 2
 
 clone_depth: 5
 
