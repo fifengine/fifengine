@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(FIFECHAN_VERSION "0.1.3")
+set(FIFECHAN_VERSION "0.1.4")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -35,8 +35,8 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VC14.zip
-      URL                 https://ci.appveyor.com/api/buildjobs/bucj5vdy8bx4wnr2/artifacts/fifechan-shared-VC14-x86.zip
-      URL_MD5             9cc0c3210f2b20d995f19d39341be55e
+      URL                 https://ci.appveyor.com/api/buildjobs/k6gfl3mdxnkhy9mn/artifacts/fifechan-shared-0.1.4-VC14-x86.zip
+      URL_MD5             4925a3d07994b1e360e034ed0475dc37
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
