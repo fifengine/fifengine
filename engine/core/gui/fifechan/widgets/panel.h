@@ -19,11 +19,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_FIFECHAN_ADDON_TWOBUTTON_H
-#define FIFE_FIFECHAN_ADDON_TWOBUTTON_H
+#ifndef FIFE_GUI_WIDGETS_PANEL_H
+#define FIFE_GUI_WIDGETS_PANEL_H
 
 // Standard C++ library includes
-#include <string>
 
 // 3rd party library includes
 #include <fifechan.hpp>
@@ -32,37 +31,75 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "resizablewindow.h"
 
 namespace fcn {
+	class DockArea;
+	class Panel : public ResizableWindow {
+	public:
+		Panel();
+		Panel(bool dockable);
 
-	class TwoButton;
+		virtual ~Panel();
+        
+		/** Sets if the widget is dockable.
+		 * @param dockable True if the widget should be dockable, otherwise false.
+		 */
+		void setDockable(bool dockable);
 
-	class TwoButton : public Button, public WidgetListener {
-		public:
-			TwoButton(Image *up_image = 0, Image *down_image = 0, Image *hover_file = 0, const std::string& caption = "");
-			~TwoButton();
-            
-			void draw(Graphics *graphics);
-			void adjustSize();
+		/** Gets if the widget is dockable.
+		 * @return True if the widget should be dockable, otherwise false.
+		 */
+		bool isDockable() const;
 
-			void setUpImage(Image* image);
-			void setDownImage(Image* image);
-			void setHoverImage(Image* image);
-			
-			void setDownOffset(int32_t x, int32_t y);
-			int32_t getDownXOffset() { return x_downoffset; }
-			int32_t getDownYOffset() { return y_downoffset; }
-			
-			virtual void ancestorHidden(const Event& e);
-			
-		private:
-			Image *m_upImage;
-			Image *m_downImage;
-			Image *m_hoverImage;
-			int32_t x_downoffset;
-			int32_t y_downoffset;
+		/** Sets if the widget is docked.
+		 * @param docked True if the widget is docked, otherwise false.
+		 */
+		void setDocked(bool docked);
+
+		/** Gets if the widget is docked.
+		 * @return True if the widget is docked, otherwise false.
+		 */
+		bool isDocked() const;
+
+		virtual DockArea* findDockArea();
+
+		// Inherited from ResizableWindow
+
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void expandContent(bool recursiv=true);
+	
+	
+		// Inherited from ResizableWindow / MouseListener
+
+		virtual void mouseEntered(MouseEvent& mouseEvent);
+
+		virtual void mouseExited(MouseEvent& mouseEvent);
+
+		virtual void mousePressed(MouseEvent& mouseEvent);
+
+		virtual void mouseReleased(MouseEvent& mouseEvent);
+
+		virtual void mouseMoved(MouseEvent& mouseEvent);
+	
+		virtual void mouseDragged(MouseEvent& mouseEvent);
+
+	protected:
+		DockArea* getDockedArea();
+
+		// is dockable
+		bool m_dockable;
+		// is docked
+		bool m_docked;
+
+		struct SavedState	{
+			Rectangle dimension;
+			uint32_t innerBorder;
+			bool resizable;
+			bool movable;
+		};
+		SavedState m_state;
 	};
-
 }
 
 #endif

@@ -243,10 +243,10 @@ class Manager(object):
 			style_copy[new_k] = v
 		return style_copy
 
-	def loadImage(self,filename):
+	def loadImage(self,filename,gui=True):
 		if not filename:
 			  raise InitializationError("Empty Image file.")
-		return self.hook.load_image(filename)
+		return self.hook.load_image(filename,gui)
 
 # Default Widget style.
 
@@ -284,7 +284,7 @@ DEFAULT_STYLE = {
 		'margins': (5,5),
 		'opaque' : True,
 		'padding':2,
-		'titlebar_height' : 12,
+		'titlebar_height' : 25,
 		'background_image' : None,
 	},
 	'TextBox' : {
