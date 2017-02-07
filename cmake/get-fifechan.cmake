@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(FIFECHAN_VERSION "0.1.3")
+set(FIFECHAN_VERSION "0.1.4")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if (WIN32)
