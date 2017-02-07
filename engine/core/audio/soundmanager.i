@@ -24,6 +24,7 @@
 #include "audio/soundmanager.h"
 %}
 
+%include "model/metamodel/modelcoords.i"
 %include "util/resource/resource.i"
 
 namespace FIFE {
@@ -39,7 +40,6 @@ namespace FIFE {
 	};
 
 	class SoundClip;
-	class ExactModelCoordinate;
 
 	class SoundManager {
 		public:

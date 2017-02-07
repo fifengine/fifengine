@@ -71,6 +71,10 @@ namespace FIFE {
 		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
 
+		void setSource(ALuint source);
+		ALuint getSource() const;
+		bool isActive() const;
+
 		/** Called once a frame from the SoundManager.
 		 */
 		void update();
@@ -86,12 +90,27 @@ namespace FIFE {
 		 *
 		 */
 		void setPositioning(bool relative);
+
+		/** Return Positioning-Type
+		 */
 		bool isPositioning() const;
 
+		/** Sets the distance under which the volume for the SoundEmitter would normally drop by half (before
+		 *  being influenced by rolloff factor or max distance. 
+		 */
 		void setReferenceDistance(float distance);
+
+		/** Return the reference distance.
+		 */
 		float getReferenceDistance() const;
 
+		/** Sets the max distance used with the Inverse Clamped Distance Model to set the distance where
+		 *  there will no longer be any attenuation of the source.
+		 */
 		void setMaxDistance(float distance);
+
+		/** Return the max distance.
+		 */
 		float getMaxDistance() const;
 
 		/** Sets the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
@@ -99,6 +118,9 @@ namespace FIFE {
 		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs.
 		 */
 		void setRolloff(float rolloff);
+
+		/** Return the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
+		 */
 		float getRolloff() const;
 
 		/** Sets the sound clip to be used by this emitter.
@@ -124,6 +146,9 @@ namespace FIFE {
 		/** Sets the playing mode
 		 */
 		void setLooping(bool loop);
+
+		/** Return playing mode
+		 */
 		bool isLooping() const;
 
 		/** Plays the associated audio file.
@@ -150,10 +175,28 @@ namespace FIFE {
 		 */
 		float getGain() const;
 
+		/** Sets the max. gain of the emitter
+		 *
+		 * @param gain The gain value. 0=silence ... 1.0=normal loudness.
+		 */
 		void setMaxGain(float gain);
+
+		/** Returns the max. gain of the emitter
+		 *
+		 * @return The gain value. 0=silence ... 1.0=normal loudness.
+		 */
 		float getMaxGain() const;
 
+		/** Sets the min. gain of the emitter
+		 *
+		 * @param gain The gain value. 0=silence ... 1.0=normal loudness.
+		 */
 		void setMinGain(float gain);
+
+		/** Returns the min. gain of the emitter
+		 *
+		 * @return The gain value. 0=silence ... 1.0=normal loudness.
+		 */
 		float getMinGain() const;
 
 		/** Tests if the audio data is stereo data or mono.
@@ -189,24 +232,57 @@ namespace FIFE {
 		/** Sets the position of the SoundEmitter in the virtual audio space.
 		 */
 		void setPosition(const ExactModelCoordinate& position);
+
+		/** Return the position of the SoundEmitter in the virtual audio space.
+		 */
 		ExactModelCoordinate getPosition() const;
 
+		/** Sets the direction of the SoundEmitter in the virtual audio space.
+		 */
 		void setOrientation(const ExactModelCoordinate& orientation);
+
+		/** Return the direction of the SoundEmitter in the virtual audio space.
+		 */
 		ExactModelCoordinate getOrientation() const;
 
+		/** Sets pitch multiplier. Can only be positiv.
+		 */
 		void setPitch(float pitch);
+
+		/** Return pitch multiplier. Can only be positiv.
+		 */
 		float getPitch() const;
 
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
 		void setVelocity(const ExactModelCoordinate& velocity);
+
+		/** Return the velocity of the SoundEmitter in the virtual audio space.
+		 */
 		ExactModelCoordinate getVelocity() const;
 
+		/** Sets inner angle of the sound cone, in degrees. Default 360
+		 */
 		void setConeInnerAngle(float inner);
+
+		/** Return inner angle of the sound cone, in degrees.
+		 */
 		float getConeInnerAngle() const;
+
+		/** Sets outer angle of the sound cone, in degrees. Default 360
+		 */
 		void setConeOuterAngle(float outer);
+
+		/** Return outer angle of the sound cone, in degrees.
+		 */
 		float getConeOuterAngle() const;
+
+		/** Sets the gain when outside the oriented cone.
+		 */
 		void setConeOuterGain(float gain);
+
+		/** Return the gain when outside the oriented cone.
+		 */
 		float getConeOuterGain() const;
 
 		/** Returns the state of the audio file

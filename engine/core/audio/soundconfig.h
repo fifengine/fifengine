@@ -45,6 +45,8 @@ namespace FIFE {
 	// The length of one buffer. (bytes)
 	const uint32_t BUFFER_LEN = 1048576;
 
+	// The max. number of OpenAL sources
+	const uint16_t MAX_SOURCES = 64;
 }
 
 #endif

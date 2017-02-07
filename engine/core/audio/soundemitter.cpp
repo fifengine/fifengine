@@ -46,13 +46,14 @@ namespace FIFE {
 		m_soundClipId(0),
 		m_streamId(0),
 		m_emitterId(uid),
-		m_loop(false) {
+		m_loop(false),
+		m_active(false) {
 
 		if (!m_manager->isActive()) {
 			return;
 		}
 
-		alGenSources(1, &m_source);
+		//alGenSources(1, &m_source);
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source");
 	}
 
@@ -62,7 +63,24 @@ namespace FIFE {
 		}
 
 		reset();
-		alDeleteSources(1, &m_source);
+		//alDeleteSources(1, &m_source);
+	}
+
+	void SoundEmitter::setSource(ALuint source) {
+		m_source = source;
+		if (m_source > 0) {
+			m_active = true;
+		} else {
+			m_active = false;
+		}
+	}
+
+	ALuint SoundEmitter::getSource() const {
+		return m_source;
+	}
+
+	bool SoundEmitter::isActive() const {
+		return m_active;
 	}
 
 	void SoundEmitter::update() {

@@ -48,7 +48,10 @@ namespace FIFE {
 		m_device(0),
 		m_muteVol(0),
 		m_volume(1.0),
-		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED) {
+		m_cutDistance(100.0),
+		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
+		m_sources(),
+		m_createdSources(0) {
 	}
 
 	SoundManager::~SoundManager() {
@@ -60,6 +63,8 @@ namespace FIFE {
 		}
 
 		m_emitterVec.clear();
+
+		alDeleteSources(m_createdSources, m_sources);
 
 		if (m_device) {
 			alcDestroyContext(m_context);
@@ -102,6 +107,18 @@ namespace FIFE {
 
 		// set volume
 		alListenerf(AL_GAIN, m_volume);
+
+		for (uint16_t i = 0; i < MAX_SOURCES; i++) {
+			alGenSources(1, &m_sources[i]);
+			if (alGetError() != AL_NO_ERROR) {
+				break;
+			}
+			
+			m_freeSources.push(m_sources[i]);
+			m_createdSources++;
+		}
+
+		std::cout << "createdSources " << m_createdSources << "\n";
 	}
 
 	void SoundManager::update() {
@@ -244,6 +261,14 @@ namespace FIFE {
 
 	float SoundManager::getDopplerFactor() const {
 		return alGetFloat(AL_DOPPLER_FACTOR);
+	}
+
+	void SoundManager::setCutDistance(float distance) {
+		m_cutDistance = distance;
+	}
+
+	float SoundManager::getCutDistance() const {
+		return m_cutDistance;
 	}
 
 	bool SoundManager::isActive() const {

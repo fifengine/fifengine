@@ -23,6 +23,7 @@
 #define FIFE_SOUNDMANAGER_H
 
 // Standard C++ library includes
+#include <queue>
 
 // Platform specific includes
 
@@ -35,6 +36,7 @@
 #include "model/metamodel/modelcoords.h"
 
 #include "fife_openal.h"
+#include "soundconfig.h"
 
 namespace FIFE {
 
@@ -152,6 +154,15 @@ namespace FIFE {
 		 */
 		float getDopplerFactor() const;
 
+		/** Sets the cut distance.
+		 *  If it is larger the emitter turns off, or on if it is smaller.
+		 */
+		void setCutDistance(float distance);
+
+		/** Return cut distance.
+		 */
+		float getCutDistance() const;
+
 		/** Returns true if audio module is active
 		 */
 		bool isActive() const;
@@ -167,8 +178,23 @@ namespace FIFE {
 		float m_muteVol;
 		//! volume to support setVolume-calls before initialization
 		float m_volume;
+		//! distance that removes a active Emitter
+		float m_cutDistance;
 		//! Selected distance model
 		SoundDistanceModelType m_distanceModel;
+
+		//! Holds handles for sources
+		ALuint m_sources[MAX_SOURCES];
+		//! Maximal created sources, can be different to MAX_SOURCES
+		uint16_t m_createdSources;
+		//! Holds free handles for sources
+		std::queue<ALuint> m_freeSources;
+		//! Map that holds active Emitters together with the used source handle
+		std::map<SoundEmitter*, ALuint> m_activeEmitters;
+		//! Vector that holds Emitters in the queue
+		std::vector<SoundEmitter*> m_waitingEmitters;
+
+
 		//! A map that holds the groups together with the appended emitters.
 		std::map<std::string, std::vector<SoundEmitter*> > m_groups;
 	};
