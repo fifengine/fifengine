@@ -880,8 +880,8 @@ if(build-python)
     # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
     #
     execute_process(
-      COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" 
-      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+      COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
+      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
 
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
