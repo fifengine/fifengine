@@ -88,7 +88,7 @@ namespace FIFE {
 		}
 
 
-		vorbis_info *vi = ov_info(&m_ovf, -1);
+		vorbis_info* vi = ov_info(&m_ovf, -1);
 		if (!vi) {
 			throw InvalidFormat("Error fetching OggVorbis info");
 		}
@@ -105,6 +105,11 @@ namespace FIFE {
 		m_data = NULL;
 	}
 
+	SoundDecoderOgg::~SoundDecoderOgg() {
+		releaseBuffer();
+		ov_clear(&m_ovf);
+	}
+
 	bool SoundDecoderOgg::decode(uint64_t length) {
 		int32_t stream = 0;
 		int32_t ret = 0;
@@ -115,23 +120,32 @@ namespace FIFE {
 
 		// decode the stream
 		m_datasize = 0;
-		do {
-			ret = ov_read(&m_ovf, m_data + m_datasize,
-			              length-m_datasize, 0, 2, 1, &stream);
+
+		while (length-m_datasize > 0) {
+			ret = ov_read(&m_ovf, m_data + m_datasize, length-m_datasize, 0, 2, 1, &stream);
 			if (ret > 0) {
 				m_datasize += ret;
+			} else if (ret == OV_HOLE) {
+				continue;
+			} else if (ret == 0 || ret <= OV_EREAD) {
+				break;
 			}
-
-		} while (length-m_datasize > 0 && ret > 0);
+		}
 
 		return m_datasize == 0;
 	}
 
 	bool SoundDecoderOgg::setCursor(uint64_t pos) {
-
 		if (ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0) {
 			return true;
 		}
 		return false;
+	}
+
+	void SoundDecoderOgg::releaseBuffer() {
+		if (m_data != NULL) {
+			delete[] m_data;
+			m_data = NULL;
+		}
 	}
 }
