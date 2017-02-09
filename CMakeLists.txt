@@ -2,9 +2,10 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.5)
 
-project (fifengine)
+project (fifengine CXX)
+
 
 #------------------------------------------------------------------------------
 #                                 Version                                          
@@ -921,15 +922,16 @@ if(build-library)
   target_link_libraries(fife ${TinyXML_LIBRARIES})
   target_link_libraries(fife ${OPENGL_gl_LIBRARY})
   target_link_libraries(fife ${FIFECHAN_LIBRARIES})
-  
-  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+
+  include(GNUInstallDirs)
+  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
           get_filename_component(DIR ${HEADER} DIRECTORY)
           string(REPLACE ${CMAKE_CURRENT_LIST_DIR}/engine "" DIR ${DIR})
-          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/${DIR})
+          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/${DIR})
       ENDFOREACH(HEADER)
 
   ENDMACRO(INSTALL_HEADERS_WITH_DIRECTORY)
