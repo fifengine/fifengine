@@ -28,6 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "audio/actionaudio.h"
 #include "util/base/exception.h"
 
 #include "action.h"
@@ -36,10 +37,12 @@ namespace FIFE {
 	Action::Action(const std::string& identifier)
 		: m_id(identifier),
 		m_duration(0),
-		m_visual(NULL) {
+		m_visual(NULL),
+		m_audio(NULL) {
 	}
 
 	Action::~Action() {
 		delete m_visual;
+		delete m_audio;
 	}
 }

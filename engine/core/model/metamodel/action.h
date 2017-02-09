@@ -39,6 +39,7 @@
 #include "ivisual.h"
 
 namespace FIFE {
+	class ActionAudio;
 
 	class Action : public FifeClass {
 	public:
@@ -72,6 +73,13 @@ namespace FIFE {
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 
+		/** Sets audio to be used. Transfers ownership.
+		 */
+		void adoptAudio(ActionAudio* audio) { m_audio = audio; }
+
+		/** Gets used audio
+		 */
+		ActionAudio* getAudio() const { return m_audio; }
 
 	private:
 		std::string m_id;
@@ -80,6 +88,8 @@ namespace FIFE {
 		uint32_t m_duration;
 		// visualization for action
 		IVisual* m_visual;
+		// audio for action
+		ActionAudio* m_audio;
 	};
 
 }

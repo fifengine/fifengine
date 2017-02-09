@@ -176,6 +176,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 # Core
 set (FIFE_CORE_SRC
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
@@ -338,6 +339,7 @@ source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.h
