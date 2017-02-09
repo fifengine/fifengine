@@ -1,11 +1,6 @@
 # Build worker image (VM template)
 image: Visual Studio 2015
 
-branches:
-  only:
-  - master
-  - python3
-
 clone_depth: 5
 
 version: '{build}'
@@ -135,20 +130,24 @@ after_build:
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=0.4.0 bdist_msi --target-version="%PYTHON_VERSION%-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%"
+  - python setup.py set_metadata --version=0.4.1 bdist_msi --target-version="%PYTHON_VERSION%"
+  - python setup.py set_metadata --version=0.4.1 bdist_dumb --format=zip
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.0.win32-py%PYTHON_VERSION%.msi"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32-py%PYTHON_VERSION%.msi"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32.zip"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
 artifacts:
-  - path: 'libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip'
+  - path: 'libfife-dependencies-*.zip'
     name: Dependencies
-  - path: 'libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip'
+  - path: 'libfife-*.zip'
     name: LibFife
-  - path: 'dist\libfife-0.4.0.win32-py%PYTHON_VERSION%.msi'
+  - path: 'dist\libfife-*py2.7.msi'
     name: Python27Installer
+  - path: 'dist\libfife-0.4.1.win32.zip'
+    name: Python27-zip
 
 # deploy to Github Releases on tag push
 deploy:
@@ -156,9 +155,10 @@ deploy:
   release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
-  artifact: Dependencies, LibFife, Python27Installer 
+  artifact: Dependencies, LibFife, Python27Installer, Python27-zip
   draft: false
   prerelease: false
+  force_update: true               # overwrite files of existing release on GitHub
   on:
     branch: master                 # release from master branch only
     appveyor_repo_tag: true        # deploy on tag push only

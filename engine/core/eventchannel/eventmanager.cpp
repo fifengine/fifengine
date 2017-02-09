@@ -585,7 +585,7 @@ namespace FIFE {
 		fillKeyEvent(event, keyevt);
 		m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
 		// if event is not filtered it gets dispatched, even it is a function key
-		if (!m_keyfilter->isFiltered(keyevt)) {
+		if (!m_keyfilter || !m_keyfilter->isFiltered(keyevt)) {
 			if (dispatchSdlEvent(event))
 				return;
 		}

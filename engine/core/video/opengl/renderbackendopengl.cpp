@@ -837,6 +837,9 @@ namespace FIFE {
 			if (ro.mode != mode) {
 				type = true;
 				render = true;
+			} else if (ro.mode == GL_LINE_STRIP || ro.mode == GL_LINE_LOOP || ro.mode == GL_TRIANGLE_FAN ) {
+				// do not batch line strips, loops or triangle fans to avoid side effects
+				render = true;
 			}
 			if (ro.texture_id != texture_id) {
 				texture = true;
@@ -1439,20 +1442,150 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		renderDataP rd;
-		rd.vertex[0] = static_cast<float>(p1.x)-0.375;
-		rd.vertex[1] = static_cast<float>(p1.y)-0.375;
+		rd.vertex[0] = static_cast<float>(p1.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p1.y)+0.375;
 		rd.color[0] = r;
 		rd.color[1] = g;
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
 
-		rd.vertex[0] = static_cast<float>(p2.x)-0.375;
-		rd.vertex[1] = static_cast<float>(p2.y)-0.375;
+		rd.vertex[0] = static_cast<float>(p2.x)+0.375;
+		rd.vertex[1] = static_cast<float>(p2.y)+0.375;
 		m_renderPrimitiveDatas.push_back(rd);
 
 		RenderObject ro(GL_LINES, 2);
 		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawThickLine(const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		float xDiff = p2.x - p1.x;
+		float yDiff = p2.y - p1.y;
+		float halfW = static_cast<float>(width) / 2.0;
+		float angle = Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi()) + 90.0;
+		if (angle < 0.0) {
+			angle += 360.0;
+		} else if (angle > 360.0) {
+			angle -= 360.0;
+		}
+		angle *= Mathf::pi() / 180.0;
+		float cornerX = halfW * Mathf::Cos(angle);
+		float cornerY = halfW * Mathf::Sin(angle);
+
+		renderDataP rd;
+		rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
+		rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p2.x) + cornerX;
+		rd.vertex[1] = static_cast<float>(p2.y) + cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p2.x) - cornerX;
+		rd.vertex[1] = static_cast<float>(p2.y) - cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p1.x) - cornerX;
+		rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+
+		RenderObject ro(GL_TRIANGLE_FAN, 4);
+		m_renderObjects.push_back(ro);
+
+		/*rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
+		rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p2.x) + cornerX;
+		rd.vertex[1] = static_cast<float>(p2.y) + cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p2.x) - cornerX;
+		rd.vertex[1] = static_cast<float>(p2.y) - cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p1.x) - cornerX;
+		rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+		rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
+		rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
+		m_renderPrimitiveDatas.push_back(rd);
+
+		RenderObject ro(GL_TRIANGLE_STRIP, 5);
+		m_renderObjects.push_back(ro);*/
+	}
+
+	void RenderBackendOpenGL::drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
+			return;
+		}
+		std::vector<Point>::const_iterator it = points.begin();
+		if (width > 1) {
+			Point old = *it;
+			++it;
+			for (; it != points.end(); ++it) {
+				drawThickLine(old, *it, width, r, g, b, a);
+				drawFillCircle(old, width / 2, r, g, b, a);
+				old = *it;
+			}
+			drawFillCircle(old, width / 2, r, g, b, a);
+		} else {
+			renderDataP rd;
+			rd.color[0] = r;
+			rd.color[1] = g;
+			rd.color[2] = b;
+			rd.color[3] = a;
+			for (; it != points.end(); ++it) {
+				rd.vertex[0] = static_cast<float>((*it).x);
+				rd.vertex[1] = static_cast<float>((*it).y);
+				m_renderPrimitiveDatas.push_back(rd);
+			}
+			RenderObject ro(GL_LINE_STRIP, points.size());
+			m_renderObjects.push_back(ro);
+		}
+	}
+
+	void RenderBackendOpenGL::drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		if (points.size() < 2) {
+			return;
+		}
+		int32_t elements = points.size();
+		if (elements < 3 || steps < 2) {
+			return;
+		}
+
+		bool thick = width > 1;
+		float step = 1.0 / static_cast<float>(steps-1);
+		float t = 0.0;
+		Point old = getBezierPoint(points, elements+1, t);
+		if (thick) {
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
+				drawThickLine(old, next, width, r, g, b, a);
+				drawFillCircle(old, width / 2, r, g, b, a);
+				old = next;
+			}
+			drawFillCircle(old, width / 2, r, g, b, a);
+		} else {
+			renderDataP rd;
+			rd.color[0] = r;
+			rd.color[1] = g;
+			rd.color[2] = b;
+			rd.color[3] = a;
+			for (int32_t i = 0; i <= (elements*steps); ++i) {
+				t += step;
+				Point next = getBezierPoint(points, elements, t);
+				rd.vertex[0] = static_cast<float>(old.x);
+				rd.vertex[1] = static_cast<float>(old.y);
+				m_renderPrimitiveDatas.push_back(rd);
+				old = next;
+			}
+			RenderObject ro(GL_LINE_STRIP, (elements*steps)+1);
+			m_renderObjects.push_back(ro);
+		}
 	}
 
 	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -1569,6 +1702,121 @@ namespace FIFE {
 		m_renderPrimitiveDatas.push_back(rd);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
+		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		// set side length to 5 and calculate needed divisions
+		int32_t subdivisions = round(Mathf::pi() / ( 5.0 / (2.0 * radius)));
+		if (subdivisions < 12) {
+			subdivisions = 12;
+		}
+		const float step = Mathf::twoPi()/subdivisions;
+		float angle = 0;
+
+		renderDataP rd;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		for (uint16_t i = 0; i < subdivisions-1; ++i) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+			m_renderPrimitiveDatas.push_back(rd);
+			angle += step;
+		}
+		RenderObject ro(GL_LINE_LOOP, subdivisions-1);
+		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		// set side length to 5 and calculate needed divisions
+		int32_t subdivisions = round(Mathf::pi() / ( 5.0 / (2.0 * radius)));
+		if (subdivisions < 12) {
+			subdivisions = 12;
+		}
+		const float step = Mathf::twoPi()/subdivisions;
+		float angle = Mathf::twoPi();
+
+		renderDataP rd;
+		// center
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_renderPrimitiveDatas.push_back(rd);
+		// reversed because of culling faces
+		for (uint16_t i = 0; i <= subdivisions; ++i) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+			m_renderPrimitiveDatas.push_back(rd);
+			angle -= step;
+		}
+		RenderObject ro(GL_TRIANGLE_FAN, subdivisions+2);
+		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi()/360;
+		int32_t elements = 0;
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		if (e == 0) {
+			e = 360;
+		}
+		if (s == e) {
+			return;
+		}
+
+		renderDataP rd;
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		float angle = static_cast<float>(s) * step;
+		for (;s <= e; ++s, angle += step, ++elements) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+			m_renderPrimitiveDatas.push_back(rd);
+		}
+
+		RenderObject ro(GL_LINE_STRIP, elements);
+		m_renderObjects.push_back(ro);
+	}
+
+	void RenderBackendOpenGL::drawFillCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const float step = Mathf::twoPi() / 360;
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		if (e == 0) {
+			e = 360;
+		}
+		if (s == e) {
+			return;
+		}
+			
+		renderDataP rd;
+		// center
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
+		rd.color[0] = r;
+		rd.color[1] = g;
+		rd.color[2] = b;
+		rd.color[3] = a;
+		m_renderPrimitiveDatas.push_back(rd);
+		int32_t elements = 1;
+		// reversed because of culling faces
+		float angle = static_cast<float>(e) * step;
+		for (;s <= e; ++s, angle -= step, ++elements) {
+			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
+			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
+
+			m_renderPrimitiveDatas.push_back(rd);
+		}
+
+		RenderObject ro(GL_TRIANGLE_FAN, elements);
 		m_renderObjects.push_back(ro);
 	}
 

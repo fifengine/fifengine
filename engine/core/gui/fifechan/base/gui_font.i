@@ -57,6 +57,16 @@ namespace FIFE {
 		int32_t getGlyphSpacing() const;
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
+		void setBoldStyle(bool style);
+		bool isBoldStyle() const;
+		void setItalicStyle(bool style);
+		bool isItalicStyle() const;
+		void setUnderlineStyle(bool style);
+		bool isUnderlineStyle() const;
+		void setStrikethroughStyle(bool style);
+		bool isStrikethroughStyle() const;
+		void setDynamicColoring(bool coloring);
+		bool isDynamicColoring() const;
 		Image* getAsImage(const std::string& text);
 		void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255);
 		SDL_Color getColor() const;

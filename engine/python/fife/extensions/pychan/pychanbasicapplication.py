@@ -53,8 +53,9 @@ class ExitEventListener(fife.IKeyListener):
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
 		elif keyval == fife.Key.F10:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
-			evt.consume()
+			if pychan.manager.hook.guimanager.isConsoleEnabled():
+				pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+				evt.consume()
 
 	def keyReleased(self, evt):
 		pass

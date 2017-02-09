@@ -267,6 +267,18 @@ namespace FIFE {
 		 */
 		virtual void drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
+		/** Draws line between given points with given RGBA and width.
+		 */
+		virtual void drawThickLine(const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws lines between given points with given RGBA and width.
+		 */
+		virtual void drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws bezier curve between given points with given RGBA and width.
+		 */
+		virtual void drawBezier(const std::vector<Point>& points, int32_t steps, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
 		/** Draws triangle between given points with given RGBA
 		 */
 		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
@@ -286,6 +298,24 @@ namespace FIFE {
 		/** Draws a quad that represents a vertex with given RGBA
 		 */
 		virtual void drawVertex(const Point& p, const uint8_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a circle.
+		 */
+		virtual void drawCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a filled circle.
+		 */
+		virtual void drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a circle segment.
+		 * Note: The start angle must be less than the end angle. 0 angle is right side.
+		 */
+		virtual void drawCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a filled circle segment. 0 angle is right side.
+		 * Note: The start angle must be less than the end angle.
+		 */
+		virtual void drawFillCircleSegment(const Point& p, uint32_t radius, int32_t sangle, int32_t eangle, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 
 		/** Draws a light primitive that based on a triangle fan
 		 */
@@ -459,13 +489,21 @@ namespace FIFE {
 		 */
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) = 0;
 		
+		/** Helper that returns an interpolated Point
+		 */
+		Point getBezierPoint(const std::vector<Point>& points, int32_t elements, float t);
+
+		/** Helper that adds the control points for bezier curves.
+		 */
+		void addControlPoints(const std::vector<Point>& points, std::vector<Point>& newPoints);
+
 	protected:
 		
 		/** Sets given clip area into image
 		 *  @see pushClipArea
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-		
+
 		SDL_Window* m_window;
 		SDL_Surface* m_screen;
 		SDL_Surface* m_target;
