@@ -113,9 +113,16 @@ class ImageProgressBar(Widget):
 											 position_technique=position_technique,
 											 is_focusable=is_focusable,
 											 comment=comment)
-		
-		if bar_image is not None: self.bar_image = bar_image
-		if foreground_image is not None: self.foreground_image = foreground_image
+
+		# for the case that image can not be found, e.g. invalid path
+		# the Widget is removed from the manager
+		try:
+			self.bar_image = bar_image
+			self.foreground_image = foreground_image
+		except Exception:
+			get_manager().removeWidget(self)
+			raise		
+
 		if max_value is not None: self.max_value = max_value
 		if value is not None: self.value = value
 

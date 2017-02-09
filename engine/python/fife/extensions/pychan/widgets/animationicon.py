@@ -26,7 +26,6 @@ from fife import fifechan
 
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.pychan.attrs import Attr, BoolAttr
-#from fife.extensions.pychan.properties import ImageProperty
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 from widget import Widget
@@ -132,7 +131,13 @@ class AnimationIcon(Widget):
 		if opaque is not None: self.opaque = opaque
 		else: self.opaque = self.DEFAULT_OPAQUE
 
-		if animation is not None: self.animation = animation
+		# for the case that animation can not be found, e.g. invalid path
+		# the AnimationIcon is removed from the manager
+		try:
+			self.animation = animation
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
 
 		if repeating is not None: self.repeating = repeating
 		else: self.repeating = self.DEFAULT_REPEATING
@@ -180,13 +185,14 @@ class AnimationIcon(Widget):
 		return iconClone
 
 	def _setAnimation(self, anim):
-		if isinstance(anim, fife.Animation):
-			self._anim = anim
-		else:
-			if anim is not "":
-				# use xml loader
-				self._anim = loadXMLAnimation(get_manager().hook.engine, anim)
-		self.real_widget.setAnimation(self._anim)
+		if anim is not None:
+			if isinstance(anim, fife.Animation):
+				self._anim = anim
+			else:
+				if anim is not "":
+					# use xml loader
+					self._anim = loadXMLAnimation(get_manager().hook.engine, anim)
+			self.real_widget.setAnimation(self._anim)
 	def _getAnimation(self):
 		return self._anim
 	animation = property(_getAnimation, _setAnimation)
