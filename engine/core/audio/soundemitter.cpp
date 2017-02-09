@@ -84,6 +84,15 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::update() {
+		// non streaming
+		if (!m_soundClip->isStream()) {
+			if (getState() == SD_STOPPED_STATE) {
+				stop();
+				callOnSoundFinished();
+			}
+			return;
+		}
+
 		ALint procs;
 		ALint bufs;
 		ALuint buffer;
@@ -103,7 +112,8 @@ namespace FIFE {
 					// check if the playback has been finished
 					alGetSourcei(m_source, AL_BUFFERS_QUEUED, &bufs);
 					if (bufs == 0) {
-						alSourceStop(m_source);
+						//alSourceStop(m_source);
+						stop();
 						callOnSoundFinished();
 					}
 					continue;
@@ -118,7 +128,7 @@ namespace FIFE {
 	}
 
 	uint32_t SoundEmitter::getId() const {
-			return m_emitterId;
+		return m_emitterId;
 	}
 
 	void SoundEmitter::setPositioning(bool relative) {

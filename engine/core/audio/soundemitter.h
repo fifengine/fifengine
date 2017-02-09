@@ -56,7 +56,7 @@ namespace FIFE {
 		
 		/** Called when a sound finished playing.
 		 * @param emitterId The id of emitter.
-		 * @param soundClipId The id of sound clip aka ResourceHandle.
+		 * @param SoundClipId The id of sound clip aka ResourceHandle.
 		 */
 		virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
 	};
@@ -322,6 +322,8 @@ namespace FIFE {
 		uint32_t m_emitterId;
 		//! Loop?
 		bool m_loop;
+		//! is active
+		bool m_active;
 		//! listeners for sound related events
 		std::vector<SoundEmitterListener*> m_listeners;
 	};
