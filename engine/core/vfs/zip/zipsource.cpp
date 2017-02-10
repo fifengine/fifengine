@@ -110,6 +110,7 @@ namespace FIFE {
 			    m_zipfile->readInto(data, entryData.size_real);
 		    } else {
 			    FL_ERR(_log, LMsg("unsupported compression"));
+				delete[] data;
 			    return 0;
 		    }
 
