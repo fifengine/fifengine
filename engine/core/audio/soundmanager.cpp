@@ -146,6 +146,10 @@ namespace FIFE {
 			ptr = new SoundEmitter(this, m_emitterVec.size());
 			m_emitterVec.push_back(ptr);
 		}
+		if (!ptr->isActive() && !m_freeSources.empty()) {
+			ptr->setSource(m_freeSources.front());
+			m_freeSources.pop();
+		}
 		//SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
 		//m_emitterVec.push_back(ptr);
 		return ptr;

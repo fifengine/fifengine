@@ -34,6 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
+#include "util/base/singleton.h"
 
 #include "fife_openal.h"
 #include "soundconfig.h"
@@ -54,7 +55,7 @@ namespace FIFE {
 
 	class SoundEmitter;
 
-	class SoundManager {
+	class SoundManager : public DynamicSingleton<SoundManager> {
 	public:
 
 		SoundManager();
