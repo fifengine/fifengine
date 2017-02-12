@@ -113,6 +113,10 @@ namespace FIFE {
 		 */
 		void quitStreaming(uint32_t streamid);
 
+		/** Ends streaming, invalidate also the stream id.
+		 */
+		void endStreaming(uint32_t streamid);
+
 		/** Adopts a decoder to use so DONT delete it
 		 */
 		void adobtDecoder(SoundDecoder* decoder);

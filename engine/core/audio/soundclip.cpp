@@ -121,23 +121,21 @@ namespace FIFE {
 			if (m_isStream) {
 				// erase all elements from the list
 				std::vector<SoundBufferEntry*>::iterator it;
-
 				for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
-					if ((*it)->buffers[0] != 0) {
+					if ((*it) && (*it)->buffers[0] != 0) {
 						alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
 					}
 					delete (*it);
 				}
-				m_buffervec.clear();
-			}
-			else {
+			} else {
 				// for non-streaming soundclips
 				SoundBufferEntry* ptr = m_buffervec.at(0);
-
 				for(uint32_t i = 0; i < ptr->usedbufs; i++) {
 					alDeleteBuffers(1, &ptr->buffers[i]);
 				}
+				delete ptr;
 			}
+			m_buffervec.clear();
 		}
 		m_state = IResource::RES_NOT_LOADED;
 	}
@@ -155,21 +153,37 @@ namespace FIFE {
 	}
 
 	uint32_t SoundClip::beginStreaming() {
+		SoundBufferEntry* ptr = NULL;
+		uint32_t id = 0;
+		for (uint32_t i = 0; i < m_buffervec.size(); i++) {
+			if (m_buffervec.at(i) == NULL) {
+				ptr = new SoundBufferEntry();
+				m_buffervec.at(i) = ptr;
+				id = i;
+				break;
+			}
+		}
+		if (!ptr) {
+			ptr = new SoundBufferEntry();
+			m_buffervec.push_back(ptr);
+			id = m_buffervec.size() -1 ;
+		}
+
 		// create new sound buffer entry
-		SoundBufferEntry* ptr = new SoundBufferEntry();
+		//SoundBufferEntry* ptr = new SoundBufferEntry();
 		ptr->usedbufs=0;
 		alGenBuffers(BUFFER_NUM, ptr->buffers);
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 
-		m_buffervec.push_back(ptr);
+		//m_buffervec.push_back(ptr);
 
-		return m_buffervec.size()-1;
+		//return m_buffervec.size()-1;
+		return id;
 	}
 
 	bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value) {
 		uint64_t pos = 0;
-
 		// convert position to bytes
 		switch (type) {
 			case SD_BYTE_POS:
@@ -206,25 +220,26 @@ namespace FIFE {
 	}
 
 	void SoundClip::acquireStream(uint32_t streamid) {
-
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-
 		for (int32_t i = 0; i < BUFFER_NUM; i++) {
-			getStream(streamid, ptr->buffers[i]);
+			if (getStream(streamid, ptr->buffers[i])) {
+				break;
+			}
 		}
 	}
 
 	bool SoundClip::getStream(uint32_t streamid, ALuint buffer) {
-
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
 		if (ptr->deccursor >= m_decoder->getDecodedLength()) {
 			// EOF!
 			return true;
 		}
-
+		
 		// set cursor of decoder
-		m_decoder->setCursor(ptr->deccursor);
+		if (!m_decoder->setCursor(ptr->deccursor)) {
+			return true;
+		}
 
 		// Error while decoding file?
 		if (m_decoder->decode(BUFFER_LEN)) {
@@ -250,6 +265,12 @@ namespace FIFE {
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 		alDeleteBuffers(BUFFER_NUM, ptr->buffers);
 		ptr->buffers[0] = 0;
+	}
+
+	void SoundClip::endStreaming(uint32_t streamid) {
+		SoundBufferEntry** ptr = &m_buffervec.at(streamid);
+		delete *ptr;
+		*ptr = NULL;
 	}
 
 	void SoundClip::adobtDecoder(SoundDecoder* decoder) {
