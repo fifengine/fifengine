@@ -34,7 +34,7 @@
 #include "util/base/exception.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
-//#include "soundclipmanager.h"
+#include "soundclipmanager.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
@@ -218,6 +218,11 @@ namespace FIFE {
 
 	SoundClipPtr SoundEmitter::getSoundClip() {
 		return m_soundClip;
+	}
+
+	void SoundEmitter::setSoundClip(const std::string& name) {
+		SoundClipPtr clip = SoundClipManager::instance()->get(name);
+		setSoundClip(clip);
 	}
 
 	void SoundEmitter::attachSoundClip() {

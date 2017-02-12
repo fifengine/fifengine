@@ -133,6 +133,8 @@ namespace FIFE {
 		 */
 		SoundClipPtr getSoundClip();
 
+		void setSoundClip(const std::string& name);
+
 		/** Reset the emitter, free all internal buffers
 		 *
 		 * @param defaultall If set to true, emitter position, velocity, gain and type will be set to the default values
