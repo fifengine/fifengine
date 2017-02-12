@@ -181,6 +181,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
@@ -347,6 +348,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/audio/sounddecoder.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
