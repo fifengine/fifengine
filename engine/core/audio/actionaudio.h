@@ -148,14 +148,6 @@ namespace FIFE {
 		 */
 		float getConeOuterGain() const;
 
-		/** Sets the direction of the SoundEmitter in the virtual audio space.
-		 */
-		void setOrientation(const ExactModelCoordinate& orientation);
-
-		/** Return the direction of the SoundEmitter in the virtual audio space.
-		 */
-		const ExactModelCoordinate& getOrientation() const;
-
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
 		void setVelocity(const ExactModelCoordinate& velocity);
@@ -184,6 +176,13 @@ namespace FIFE {
 		 */
 		bool isPositioning() const;
 
+		/** Sets if the sound should use the instance direction
+		 */
+		void setDirection(bool direction);
+
+		/** Return true if the Instance direction is used, false for undirected
+		 */
+		bool isDirection() const;
 	
 	private:
 		std::string m_name;
@@ -197,10 +196,10 @@ namespace FIFE {
 		float m_coneInnerAngle;
 		float m_coneOuterAngle;
 		float m_coneOuterGain;
-		ExactModelCoordinate m_direction;
 		ExactModelCoordinate m_velocity;
 		bool m_looping;
 		bool m_positioning;
+		bool m_direction;
 
 	};
 }

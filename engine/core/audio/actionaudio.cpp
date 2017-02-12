@@ -47,12 +47,12 @@ namespace FIFE {
 		m_rolloff(1.0),
 		m_pitch(1.0),
 		m_coneInnerAngle(360.0),
-		m_coneOuterAngle(360.),
+		m_coneOuterAngle(360.0),
 		m_coneOuterGain(0.0),
 		m_looping(false),
-		m_positioning(false) {
+		m_positioning(false),
+		m_direction(false) {
 
-		m_direction = ExactModelCoordinate(0.0, 0.0, 0.0);
 		m_velocity = ExactModelCoordinate(0.0, 0.0, 0.0);
 
 	}
@@ -148,14 +148,6 @@ namespace FIFE {
 		return m_coneOuterGain;
 	}
 
-	void ActionAudio::setOrientation(const ExactModelCoordinate& orientation) {
-		m_direction = orientation;
-	}
-
-	const ExactModelCoordinate& ActionAudio::getOrientation() const {
-		return m_direction;
-	}
-
 	void ActionAudio::setVelocity(const ExactModelCoordinate& velocity) {
 		m_velocity = velocity;
 	}
@@ -178,5 +170,13 @@ namespace FIFE {
 
 	bool ActionAudio::isPositioning() const {
 		return m_positioning;
+	}
+
+	void ActionAudio::setDirection(bool direction) {
+		m_direction = direction;
+	}
+
+	bool ActionAudio::isDirection() const {
+		return m_direction;
 	}
 }
