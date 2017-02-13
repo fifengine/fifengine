@@ -341,6 +341,8 @@ class Container(Widget):
 		self._background = []
 		icon = fifechan.Icon(image)
 		icon.setTiling(True)
+		# Skips background rendering
+		icon.setOpaque(False)
 		icon.setSize(back_w,back_h)
 		self._background.append(icon)
 		self.real_widget.setBackgroundWidget(icon)
