@@ -305,7 +305,8 @@ namespace FIFE {
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
-		m_model->adoptCellGrid(new HexGrid());
+		m_model->adoptCellGrid(new HexGrid(false));
+		m_model->adoptCellGrid(new HexGrid(true));
 
 		m_cursor = new Cursor(m_renderbackend);
 		FL_LOG(_log, "Engine initialized");
