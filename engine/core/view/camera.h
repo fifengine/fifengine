@@ -348,7 +348,7 @@ namespace FIFE {
 
 		/** calculates z-value for given screenpoint
 		 */
-		void calculateZValue(ScreenPoint& screen_coords);
+		void calculateZValue(DoublePoint3D& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 
