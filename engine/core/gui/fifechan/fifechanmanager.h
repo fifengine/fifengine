@@ -53,6 +53,7 @@ namespace FIFE {
 
 	class GuiImageLoader;
 	class Console;
+	class Cursor;
 	class KeyEvent;
 	class MouseEvent;
 	class IFont;
@@ -108,11 +109,13 @@ namespace FIFE {
 			 * @param widget A pointer to the widget to add.
 			 */
 			void add(fcn::Widget* widget);
+
 			/** Removes a widget.
 			 *
 			 * @param widget A pointer to the widget to remove.
 			 */
 			void remove(fcn::Widget* widget);
+
 			/** Gets the top container.
 			 *
 			 * @return The top container.
@@ -124,6 +127,32 @@ namespace FIFE {
 			 * @return The console.
 			 */
 			Console* getConsole() const { return m_console; };
+
+			/** Enables the console, or not.
+			 *
+			 * @param console True if the console should be enabled, false otherwise.
+			 * @see isConsoleEnabled, getConsole
+			 */
+			void setConsoleEnabled(bool console);
+
+			/** Checks if the console is enabled, or not.
+			 *
+			 * @return True if the console is enabled, false otherwise.
+			 * @see setConsoleEnabled, getConsole
+			 */
+			bool isConsoleEnabled() const;
+
+			/** Sets the cursor.
+			 *
+			 * @param cursor The pointer to the cursor class.
+			 */
+			void setCursor(Cursor* cursor) { m_cursor = cursor; }
+
+			/** Gets the cursor.
+			 *
+			 * @return The pointer to the cursor class.
+			 */
+			Cursor* getCursor() const { return m_cursor; }
 
 			/** Set the global font properties.
 			 */
@@ -148,6 +177,23 @@ namespace FIFE {
 			KeyEvent translateKeyEvent(const fcn::KeyEvent& evt);
 			MouseEvent translateMouseEvent(const fcn::MouseEvent& evt);
 
+			/**
+			 * Sets tabbing enabled, or not. Tabbing is the usage of
+			 * changing focus by utilising the tab key.
+			 *
+			 * @param tabbing True if tabbing should be enabled, false otherwise.
+			 * @see isTabbingEnabled
+			 */
+			void setTabbingEnabled(bool tabbing);
+
+			/**
+			 * Checks if tabbing is enabled.
+			 *
+			 * @return True if tabbing is enabled, false otherwise.
+			 * @see setTabbingEnabled
+			 */
+			bool isTabbingEnabled() const;
+
 		protected:
 			static int32_t convertFifechanKeyToFifeKey(int32_t value);
 
@@ -165,7 +211,9 @@ namespace FIFE {
 			// The input controller.
 			fcn::SDLInput *m_input;
 			// The console.
-			Console       *m_console;
+			Console* m_console;
+			// Acess to the Cursor class.
+			Cursor* m_cursor;
 			//The default font
 			GuiFont* m_defaultfont;
 			// The fonts used
@@ -187,6 +235,8 @@ namespace FIFE {
 
 			// true, if fifechan logic has already been executed for this round
 			bool m_logic_executed;
+			// True if the console should be created
+			bool m_enabled_console;
 	};
 
 }

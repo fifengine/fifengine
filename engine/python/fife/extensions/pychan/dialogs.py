@@ -92,7 +92,7 @@ class XMLDialog(object):
 MESSAGE_BOX_XML = """\
 <Window name="window" title="Message">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="True"/>
 </ScrollArea>
 <HBox>
 <Spacer/><Button min_size="50,0" name="okButton" text="OK"/>
@@ -103,7 +103,7 @@ MESSAGE_BOX_XML = """\
 YESNO_BOX_XML = """\
 <Window name="window" title="Question">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="True"/>
 </ScrollArea>
 <HBox>
 <Spacer/>
@@ -116,7 +116,7 @@ YESNO_BOX_XML = """\
 YESNOCANCEL_BOX_XML = """\
 <Window name="window" title="Question">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="True"/>
 </ScrollArea>
 <HBox>
 <Spacer/>
@@ -144,7 +144,7 @@ SELECT_BOX_XML = """\
 
 EXCEPTION_CATCHER_XML= """\
 <Window name="window" title="An exception occurred - what now?">
-  <VBox hexpand="1">
+  <VBox hexpand="True">
     <Label wrap_text="1" max_size="400,90000" text="$MESSAGE" name="message"/>
     <ScrollArea>
     <Label text="$MESSAGE" name="traceback"/>

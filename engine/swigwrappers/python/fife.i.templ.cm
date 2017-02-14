@@ -23,9 +23,6 @@
 #define SWIG_PYTHON_2_UNICODE
 %}
 
-
-@CMAKE_SWIG_IMPORTS@
-
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_pair.i"
@@ -34,6 +31,8 @@
 %include "std_set.i"
 %include "typemaps.i"
 %include "exception.i"
+
+@CMAKE_SWIG_IMPORTS@
 
 /**
  * Some materials to understand exception handling:

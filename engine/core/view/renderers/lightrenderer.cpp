@@ -80,7 +80,7 @@ namespace FIFE {
 		m_image(image){
 	}
 	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
@@ -109,7 +109,7 @@ namespace FIFE {
 		m_time_scale(1.0){
 	}
 	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
 			ImagePtr img = m_animation->getFrameByTimestamp(animtime);
@@ -140,7 +140,7 @@ namespace FIFE {
 		m_height(height) {
 	}
 	void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
@@ -174,7 +174,7 @@ namespace FIFE {
 		m_blue(b){
 	}
 	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
 

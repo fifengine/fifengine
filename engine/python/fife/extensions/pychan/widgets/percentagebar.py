@@ -46,8 +46,8 @@ class PercentageBar(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'),
 									   IntAttr('value')
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
 	DEFAULT_MIN_SIZE = 10,10
 	DEFAULT_VALUE = 0
 	DEFAULT_ORIENTATION = HORIZONTAL
@@ -58,6 +58,9 @@ class PercentageBar(Widget):
 				 size = None,
 				 min_size = None,
 				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None,
 				 position = None,
 				 style = None,
@@ -68,7 +71,10 @@ class PercentageBar(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
@@ -84,6 +90,9 @@ class PercentageBar(Widget):
 											size=size,
 											min_size=min_size,
 											max_size=max_size,
+											fixed_size=fixed_size,
+											margins=margins,
+											padding=padding,
 											helptext=helptext,
 											position=position,
 											style=style,
@@ -94,7 +103,10 @@ class PercentageBar(Widget):
 											background_color=background_color,
 											foreground_color=foreground_color,
 											selection_color=selection_color,
+											border_color=border_color,
+											outline_color=outline_color,
 											border_size=border_size,
+											outline_size=outline_size,
 											position_technique=position_technique,
 											is_focusable=is_focusable,
 											comment=comment)
@@ -112,6 +124,9 @@ class PercentageBar(Widget):
 						self.size,
 						self.min_size,
 						self.max_size,
+						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext,
 						self.position,
 						self.style,
@@ -122,7 +137,10 @@ class PercentageBar(Widget):
 						self.background_color,
 						self.foreground_color,
 						self.selection_color,
+						self.border_color,
+						self.outline_color,
 						self.border_size,
+						self.outline_size,
 						self.position_technique,
 						self.is_focusable,
 						self.comment,

@@ -50,14 +50,17 @@ class Label(BasicTextWidget):
 	DEFAULT_WRAP_TEXT = False
 
 	def __init__(self, 
-				 parent = None, 
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -65,11 +68,13 @@ class Label(BasicTextWidget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None,
 				 wrap_text = None):
 				 
@@ -80,6 +85,9 @@ class Label(BasicTextWidget):
 								   size=size, 
 								   min_size=min_size, 
 								   max_size=max_size,
+								   fixed_size=fixed_size,
+								   margins=margins,
+								   padding=padding,
 								   helptext=helptext, 
 								   position=position,
 								   style=style, 
@@ -90,11 +98,13 @@ class Label(BasicTextWidget):
 								   background_color=background_color,
 								   foreground_color=foreground_color,
 								   selection_color=selection_color,
+								   border_color=border_color,
+								   outline_color=outline_color,
 								   border_size=border_size,
+								   outline_size=outline_size,
 								   position_technique=position_technique,
 								   is_focusable=is_focusable,
 								   comment=comment,
-								   margins=margins,
 								   text=text)
 								   
 		if wrap_text is not None:
@@ -102,36 +112,34 @@ class Label(BasicTextWidget):
 		
 	def clone(self, prefix):
 		lblClone = Label(None,
-				 self._createNameWithPrefix(prefix),
-				 self.size, 
-				 self.min_size,
-				 self.max_size, 
-				 self.helptext, 
-				 self.position, 
-				 self.style, 
-				 self.hexpand,
-				 self.vexpand,
-				 self.font,
-				 self.base_color,
-				 self.background_color,
-				 self.foreground_color,
-				 self.selection_color,
-				 self.border_size,
-				 self.position_technique,
-				 self.is_focusable,
-				 self.comment,
-				 self.margins,
-				 self.text,
-				 self.wrap_text)
+						 self._createNameWithPrefix(prefix),
+						 self.size,
+						 self.min_size,
+						 self.max_size,
+						 self.fixed_size,
+						 self.margins,
+						 self.padding,
+						 self.helptext,
+						 self.position,
+						 self.style,
+						 self.hexpand,
+						 self.vexpand,
+						 self.font,
+						 self.base_color,
+						 self.background_color,
+						 self.foreground_color,
+						 self.selection_color,
+						 self.border_color,
+						 self.outline_color,
+						 self.border_size,
+						 self.outline_size,
+						 self.position_technique,
+						 self.is_focusable,
+						 self.comment,
+						 self.text,
+						 self.wrap_text)
 		
 		return lblClone;
-
-	def resizeToContent(self, recurse=True):
-		self.real_widget.setWidth( self.max_size[0] )
-		self.real_widget.adjustSize()
-		self.height = self.real_widget.getHeight() + self.margins[1]*2
-		self.width  = self.real_widget.getWidth()  + self.margins[0]*2
-		#print self.width,self.max_size[0]
 
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()

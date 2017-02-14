@@ -84,11 +84,15 @@ def _munge_engine_hook(engine):
 		engine.getRenderBackend().getScreenHeight()
 	)
 
+	guimanager.setCursor(engine.getCursor())
+	
 	engine.getEventManager().addSdlEventListener(guimanager)
 
-	def _fife_load_image(filename):
+	def _fife_load_image(filename, gui=True):
 		img = engine.getImageManager().load(filename)
-		return fife.GuiImage(img)
+		if gui:
+			return fife.GuiImage(img)
+		return img
 		# use below line instead of above ones to let fifechan 
 		# use its image loader that supports creating/using atlases
 		# return fifechan.GuiImage().load(filename)

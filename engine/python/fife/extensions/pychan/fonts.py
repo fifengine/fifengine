@@ -42,13 +42,21 @@ class Font(object):
 		if self.typename == "truetype":
 			self.size = int(get("size"))
 			self.antialias = bool(get("antialias",True))
-			self.color = list(map(int,get("color","255,255,255").split(',')))
+			self.bold = bool(get("bold",False))
+			self.italic = bool(get("italic",False))
+			self.underline = bool(get("underline",False))
+			self.recoloring = bool(get("recoloring",False))
+			self.color = map(int,get("color","255,255,255").split(','))
 			self.font = get_manager().createFont(self.source,self.size,"")
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
 
 			self.font.setAntiAlias(self.antialias)
+			self.font.setBoldStyle(self.bold)
+			self.font.setItalicStyle(self.italic)
+			self.font.setUnderlineStyle(self.underline)
+			self.font.setDynamicColoring(self.recoloring)
 			self.font.setColor(*self.color)
 		else:
 			raise InitializationError("Unsupported font type %s" % self.typename)

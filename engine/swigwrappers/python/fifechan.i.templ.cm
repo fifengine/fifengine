@@ -13,10 +13,10 @@
 #define SWIG_PYTHON_2_UNICODE
 %}
 
+%include "std_string.i"
+%include "std_vector.i"
 
 @CMAKE_SWIG_IMPORTS_FCHAN@
-
-%include "std_string.i"
 
 /* Signed.  */
 typedef signed char		int8_t;
