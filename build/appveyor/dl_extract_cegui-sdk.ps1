@@ -1,7 +1,9 @@
 #based on https://www.appveyor.com/docs/api/samples/download-artifacts-ps/
 
 $apiUrl = 'https://ci.appveyor.com/api'
-$downloadLocation = 'c:\projects\cegui-sdk'
+$downloadLocation = 'C:\projects\fifengine-dependencies\downloads'
+$extractLocation = 'C:\projects\fifengine-dependencies\extracted'
+$installLocation = 'C:\projects\fifengine-dependencies\includes'
 $accountName = 'cegui-ci'
 $projectSlug = 'cegui'
 $branch = "v0-8"
@@ -29,8 +31,8 @@ Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobId/artifacts/$artifact
 -OutFile $localArtifactPath
 
 $folder_name = [System.IO.Path]::GetFileNameWithoutExtension("$artifactFileName")
-$extract_dir = "$downloadLocation"
-7z x $localArtifactPath -o"$extract_dir"
-move $downloadLocation/$folder_name/bin/* ./bin
-move $downloadLocation/$folder_name/lib/* ./lib
-move $downloadLocation/$folder_name/include/* ./include
+$extract_dir = "$extractLocation"
+7z x $localArtifactPath -o"$extract_dir" -y
+copy-item $extractLocation/$folder_name/bin/* $installLocation\bin -force -recurse -Confirm:$False -Exclude "tinyxml*.*"
+copy-item $extractLocation/$folder_name/lib/* $installLocation\lib -force -recurse -Confirm:$False -Exclude "tinyxml*.*"
+copy-item $extractLocation/$folder_name/include/* $installLocation\include -force -recurse -Confirm:$False -Exclude ("tinyxml.h", "tinystr.h")
