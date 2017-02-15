@@ -61,9 +61,11 @@ namespace FIFE {
 		m_imgloader(new GuiImageLoader()) ,
 		m_input(new fcn::SDLInput()),
 		m_console(0),
+		m_cursor(0),
 		m_defaultfont(0),
 		m_fonts(),
-		m_logic_executed(false) {
+		m_logic_executed(false),
+		m_enabled_console(true) {
 
 		m_fcn_gui->setInput(m_input);
 		fcn::Image::setImageLoader(m_imgloader);
@@ -168,8 +170,10 @@ namespace FIFE {
 
 	void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 		m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
-		this->invalidateFonts();
-		this->m_console->reLayout();
+		invalidateFonts();
+		if (m_console) {
+			m_console->reLayout();
+		}
 	}
 
 	fcn::Gui* FifechanManager::getFifechanGUI() const {
@@ -190,6 +194,14 @@ namespace FIFE {
 		}
 	}
 
+	void FifechanManager::setConsoleEnabled(bool console) {
+		m_enabled_console = console;
+	}
+
+	bool FifechanManager::isConsoleEnabled() const {
+		return m_enabled_console;
+	}
+
 	void FifechanManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
 		if( backend == "SDL" ) {
 			m_gui_graphics = new SdlGuiGraphics();
@@ -205,7 +217,9 @@ namespace FIFE {
 		}
 
 		m_fcn_gui->setGraphics(m_gui_graphics);
-		m_console = new Console();
+		if (m_enabled_console) {
+			m_console = new Console();
+		}
 
 		resizeTopContainer(0, 0, screenWidth, screenHeight);
 	}
@@ -369,6 +383,13 @@ namespace FIFE {
 		return mouseevt;
 	}
 
+	void FifechanManager::setTabbingEnabled(bool tabbing) {
+		m_fcn_gui->setTabbingEnabled(tabbing);
+	}
+	
+	bool FifechanManager::isTabbingEnabled() const {
+		return m_fcn_gui->isTabbingEnabled();
+	}
 
 	int32_t FifechanManager::convertFifechanKeyToFifeKey(int32_t value) {
 

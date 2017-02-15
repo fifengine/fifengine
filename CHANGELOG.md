@@ -1,5 +1,26 @@
 # ChangeLog
 
+## [0.4.1] - 2017-02-07
+
+### Engine
+* Corrected wrong postion handling for events.
+* Added AnimationManager, issue #675
+* Enhanced XML formats, issue #963
+* Added events for mouse wheel left and right, issue #967
+* Fixed Location::getLayerCoordinates() on hex grids, issue #970
+* Removed special treatment of function keys, issue #976 
+* Fixed tinyxml issue, was not being able to overwrite existing file, issue #978
+* Map more SDL keys to CEGUI keys, issue #980
+
+### Extensions
+* Load default settings if settings file has no FIFE module, issue #959
+* Update exception handler in ApplicationBase, issue #969
+* Remove Icon from manager on source load failure, issue #972
+
+### Misc
+* Ensure that FIFE exception message is printed in Python, issue #974
+* Several build fixes and improvements
+
 ## [0.4.0] - 2017-01-16
 
 * removed Psyco JIT support (by removing "UsePsyco" and the related code)
@@ -18,12 +39,12 @@
 	local-tinyxml is defined for SCons or the system version of tinyxml is not found.
 	[t:619]
 * Add animation & color overlays [t:201], fixes [t:762], [t:764] and [t:763]
-** Merge GSOC work done by vdaras.
-** Replaces Guichan dependency by Fifechan
-** Add support for librocket
-** Add support for cegui [t:726]
-*** Fixed keyboard input of control characters for CEGUI by Niektory [t: 796]
-** Make use of Fifechan optional
+* Merge GSOC work done by vdaras.
+* Replaces Guichan dependency by Fifechan
+* Add support for librocket
+* Add support for cegui [t:726]
+* Fixed keyboard input of control characters for CEGUI by Niektory [t: 796]
+* Make use of Fifechan optional
 * Add overlay test
 
 ### Extensions

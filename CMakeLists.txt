@@ -2,9 +2,10 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.5)
 
-project (fifengine)
+project (fifengine C CXX)
+
 
 #------------------------------------------------------------------------------
 #                                 Version                                          
@@ -12,7 +13,7 @@ project (fifengine)
 
 set (FIFE_MAJOR_VERSION 0)
 set (FIFE_MINOR_VERSION 4)
-set (FIFE_PATCH_VERSION 0)
+set (FIFE_PATCH_VERSION 1)
 
 set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
@@ -305,11 +306,12 @@ set (FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/commandline.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/console.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/util/utf8/utf8stringeditor.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/animationicon.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/clicklabel.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/icon2.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/dockarea.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/panel.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/percentagebar.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/togglebutton.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/resizablewindow.cpp
 )
 
 # LIBROCKET
@@ -529,11 +531,12 @@ set (FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/commandline.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/console/console.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/util/utf8/utf8stringeditor.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/animationicon.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/clicklabel.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/icon2.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/dockarea.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/panel.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/percentagebar.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/togglebutton.h
-  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/twobutton.h
+  ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/widgets/resizablewindow.h
 )
 
 # Librocket
@@ -878,8 +881,8 @@ if(build-python)
     # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
     #
     execute_process(
-      COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" 
-      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+      COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
+      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
 
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
@@ -918,16 +921,23 @@ if(build-library)
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
   target_link_libraries(fife ${OPENGL_gl_LIBRARY})
-  target_link_libraries(fife ${FIFECHAN_LIBRARIES})
-  
-  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+  if(fifechan)
+    target_link_libraries(fife ${FIFECHAN_LIBRARIES})
+  endif(fifechan)
+  if(cegui)
+    target_link_libraries(fife ${CEGUI_LIBRARIES})
+    target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+  endif(cegui)
+
+  include(GNUInstallDirs)
+  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
           get_filename_component(DIR ${HEADER} DIRECTORY)
           string(REPLACE ${CMAKE_CURRENT_LIST_DIR}/engine "" DIR ${DIR})
-          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/${DIR})
+          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/${DIR})
       ENDFOREACH(HEADER)
 
   ENDMACRO(INSTALL_HEADERS_WITH_DIRECTORY)

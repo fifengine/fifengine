@@ -240,4 +240,136 @@ namespace FIFE {
 	SDL_Surface* RenderBackend::getRenderTargetSurface() {
 		return m_target;
 	}
+
+	Point RenderBackend::getBezierPoint(const std::vector<Point>& points, int32_t elements, float t) {
+		if (t < 0.0) {
+			return points[0];
+		} else if (t >= static_cast<double>(elements)) {
+			return points.back();
+		}
+
+		// Interpolate
+		double px = 0.0;
+		double py = 0.0;
+		int32_t n = elements - 1;
+		double muk = 1.0;
+		double mu = static_cast<double>(t) / static_cast<double>(elements);
+		double munk = Mathd::Pow(1.0 - mu, static_cast<double>(n));
+		for (int32_t i = 0; i <= n; ++i) {
+			int32_t tmpn = n;
+			int32_t tmpi = i;
+			int32_t diffn = n - i;
+			double blend = muk * munk;
+			muk *= mu;
+			munk /= 1.0 - mu;
+			while (tmpn) {
+				blend *= static_cast<double>(tmpn);
+				tmpn--;
+				if (tmpi > 1) {
+					blend /= static_cast<double>(tmpi);
+					tmpi--;
+				}
+				if (diffn > 1) {
+					blend /= static_cast<double>(diffn);
+					diffn--;
+				}
+			}
+			px += static_cast<double>(points[i].x) * blend;
+			py += static_cast<double>(points[i].y) * blend;
+		}
+
+		return Point(static_cast<int32_t>(px), static_cast<int32_t>(py));
+	}
+
+	void RenderBackend::addControlPoints(const std::vector<Point>& points, std::vector<Point>& newPoints) {
+		if (points.empty()) {
+			return;
+		}
+
+		int32_t n = points.size() - 1;
+		// min 2 points
+		if (n < 1) {
+			return;
+		}
+
+		Point p;
+		// straight line
+		if (n == 1) {
+			newPoints.push_back(points[0]);
+			p.x = (2 * points[0].x + points[1].x) / 3;
+			p.y = (2 * points[0].y + points[1].y) / 3;
+			newPoints.push_back(p);
+			p.x = 2 * p.x - points[0].x;
+			p.y = 2 * p.y - points[0].y;
+			newPoints.push_back(p);
+			newPoints.push_back(points[1]);
+			return;
+		}
+
+		// calculate x and y values
+		float* xrhs = new float[n];
+		float* yrhs = new float[n];
+		// first
+		xrhs[0] = points[0].x + 2 * points[1].x;
+		yrhs[0] = points[0].y + 2 * points[1].y;
+		// last
+		xrhs[n - 1] = (8 * points[n - 1].x + points[n].x) / 2.0;
+		yrhs[n - 1] = (8 * points[n - 1].y + points[n].y) / 2.0;
+		// rest
+		for (int32_t i = 1; i < n - 1; ++i) {
+			xrhs[i] = 4 * points[i].x + 2 * points[i + 1].x;
+			yrhs[i] = 4 * points[i].y + 2 * points[i + 1].y;
+		}
+
+		float* x = new float[n];
+		float* y = new float[n];
+		float* xtmp = new float[n];
+		float* ytmp = new float[n];
+		float xb = 2.0;
+		float yb = 2.0;
+		x[0] = xrhs[0] / xb;
+		y[0] = yrhs[0] / yb;
+		// Decomposition and forward substitution.
+		for (int32_t i = 1; i < n; i++) {
+			xtmp[i] = 1 / xb;
+			ytmp[i] = 1 / yb;
+			xb = (i < n - 1 ? 4.0 : 3.5) - xtmp[i];
+			yb = (i < n - 1 ? 4.0 : 3.5) - ytmp[i];
+			x[i] = (xrhs[i] - x[i - 1]) / xb;
+			y[i] = (yrhs[i] - y[i - 1]) / yb;
+		}
+		// Backward substitution
+		for (int32_t i = 1; i < n; i++) {
+			x[n - i - 1] -= xtmp[n - i] * x[n - i];
+			y[n - i - 1] -= ytmp[n - i] * y[n - i];
+		}
+
+		// start point
+		newPoints.push_back(points[0]);
+		for (int32_t i = 0; i < n - 1; ++i) {
+			p.x = x[i];
+			p.y = y[i];
+			newPoints.push_back(p);
+			p.x = 2 * points[i + 1].x - x[i + 1];
+			p.y = 2 * points[i + 1].y - y[i + 1];
+			newPoints.push_back(p);
+
+			newPoints.push_back(points[i+1]);
+		}
+		p.x = x[n - 1];
+		p.y = y[n - 1];
+		newPoints.push_back(p);
+		p.x = (points[n].x + x[n - 1]) / 2;
+		p.y = (points[n].y + y[n - 1]) / 2;
+		newPoints.push_back(p);
+		// end point
+		newPoints.push_back(points[n]);
+
+		delete[] xrhs;
+		delete[] yrhs;
+		delete[] x;
+		delete[] y;
+		delete[] xtmp;
+		delete[] ytmp;
+	}
 }

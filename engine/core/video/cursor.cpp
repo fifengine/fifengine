@@ -20,16 +20,9 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#if defined( WIN32 )
-#include <windows.h>
-#include <SDL.h>
-#endif
-
-#if defined( __unix__ )
-#include <X11/Xcursor/Xcursor.h>
-#endif
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,31 +37,6 @@
 #include "image.h"
 #include "renderbackend.h"
 #include "cursor.h"
-
-#if defined( WIN32 )
-
-// From SDL_sysmouse.c
-struct WMcursor {
-	HCURSOR curs;
-#ifndef _WIN32_WCE
-	Uint8 *ands;
-	Uint8 *xors;
-#endif
-};
-
-#endif
-
-#if defined( __unix__ )
-
-// Stops the compiler from confusing it with FIFE:Cursor
-typedef Cursor XCursor;
-
-// From SDL_x11mouse.c
-struct WMcursor {
-	Cursor x_cursor;
-};
-
-#endif
 
 namespace FIFE {
 	/** Logger to use for this source file.
