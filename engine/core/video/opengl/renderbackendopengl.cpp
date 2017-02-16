@@ -179,6 +179,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
+		bool recreate = m_window != NULL;
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
@@ -210,7 +211,7 @@ namespace FIFE {
 		}
 
 		// create render context or use the old with new window
-		if (m_context) {
+		if (recreate) {
 			if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
 				throw SDLException(SDL_GetError());
 			}
