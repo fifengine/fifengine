@@ -118,8 +118,8 @@ namespace FIFE {
 					}
 					continue;
 				}
-			} else {
-				callOnSoundFinished();
+			//} else {
+			//	callOnSoundFinished();
 			}
 			alSourceQueueBuffers(m_source, 1, &buffer);
 		}
@@ -210,6 +210,9 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::setSoundClip(SoundClipPtr soundClip) {
+		if (m_soundClipId == soundClip->getHandle()) {
+			return;
+		}
 		m_soundClipId = soundClip->getHandle();
 		m_soundClip = soundClip;
 
