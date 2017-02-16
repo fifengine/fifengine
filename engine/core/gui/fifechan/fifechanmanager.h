@@ -237,6 +237,8 @@ namespace FIFE {
 			bool m_logic_executed;
 			// True if the console should be created
 			bool m_enabled_console;
+
+			std::string m_backend;
 	};
 
 }
