@@ -144,7 +144,8 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 
-		m_renderbackend->setScreenMode(mode);
+		// recreate main screen
+		m_renderbackend->createMainScreen(mode,	m_settings.getWindowTitle(), m_settings.getWindowIcon());
 
 		if (m_guimanager) {
 			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());

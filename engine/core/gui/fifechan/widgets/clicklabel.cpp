@@ -138,11 +138,12 @@ namespace fcn {
 					w = getParent()->getChildrenArea().width;
 				}
 				int32_t textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+				int32_t maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
 				if (textW < 1) {
-					w = getMaxSize().getWidth();
+					w = maxW;
 					textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
-				} else if (w > getMaxSize().getWidth()) {
-					w = std::min(w, getMaxSize().getWidth());
+				} else if (w > maxW) {
+					w = std::min(w, maxW);
 					textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
 				}
 				mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);

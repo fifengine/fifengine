@@ -179,13 +179,13 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
+		bool recreate = m_window != NULL;
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
 		// in case of recreating
 		if (m_window) {
-			SDL_GL_DeleteContext(m_context);
 			SDL_DestroyWindow(m_window);
 			m_screen = NULL;
 		}
@@ -210,8 +210,14 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		// create render context
-		m_context = SDL_GL_CreateContext(m_window);
+		// create render context or use the old with new window
+		if (recreate) {
+			if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
+				throw SDLException(SDL_GetError());
+			}
+		} else {
+			m_context = SDL_GL_CreateContext(m_window);
+		}
 		// set the window surface as main surface, not really needed anymore
 		m_screen = SDL_GetWindowSurface(m_window);
 		m_target = m_screen;
