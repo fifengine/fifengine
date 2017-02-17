@@ -185,9 +185,17 @@ namespace FIFE {
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
 		// in case of recreating
-		if (m_window) {
+		if (recreate) {
 			SDL_DestroyWindow(m_window);
+			m_window = NULL;
 			m_screen = NULL;
+			
+			glDeleteTextures(1, &m_maskOverlay);
+			m_maskOverlay = 0;
+
+			if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+				glDeleteFramebuffers(1, &m_fbo_id);
+			}
 		}
 		// create window
 		uint8_t displayIndex = mode.getDisplay();
@@ -261,9 +269,12 @@ namespace FIFE {
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearDepth(1.0f);
-		glClearStencil(0);
+		// dont reset
+		if (!recreate) {
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClearDepth(1.0f);
+			glClearStencil(0);
+		}
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
