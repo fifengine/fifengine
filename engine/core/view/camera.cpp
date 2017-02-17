@@ -298,6 +298,7 @@ namespace FIFE {
 
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
+		refresh();
 	}
 
 	const Rect& Camera::getViewPort() const {
