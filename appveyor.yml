@@ -134,10 +134,12 @@ after_build:
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
 
   # package Python Installer artifact
-  - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  #PyCEGUI installs its dlls itself
+  - ps: $dll_excludes=$env:cegui_dlls
+  - ps: copy-item "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" -force -recurse -Confirm:$False
+  - ps: copy-item "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" -force -recurse -Confirm:$False
+  - ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $dll_excludes
+  - ps: copy-item "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" -force -recurse -Confirm:$False
   - cd %APPVEYOR_BUILD_FOLDER%
   - python setup.py set_metadata --version=0.4.1 bdist_msi --target-version="%PYTHON_VERSION%"
   - python setup.py set_metadata --version=0.4.1 bdist_dumb --format=zip
