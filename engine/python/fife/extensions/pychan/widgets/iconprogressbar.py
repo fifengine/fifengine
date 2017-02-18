@@ -112,7 +112,14 @@ class IconProgressBar(Widget):
 											 is_focusable=is_focusable,
 											 comment=comment)
 		
-		if image is not None: self.image = image
+		# for the case that image can not be found, e.g. invalid path
+		# the IconProgressbar is removed from the manager
+		try:
+			self.image = image
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
+
 		if max_icons is not None: self.max_icons = max_icons
 		if icons is not None: self.icons = icons
 

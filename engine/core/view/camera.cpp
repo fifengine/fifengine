@@ -298,6 +298,7 @@ namespace FIFE {
 
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
+		refresh();
 	}
 
 	const Rect& Camera::getViewPort() const {
@@ -411,16 +412,17 @@ namespace FIFE {
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
 	}
 
-	void Camera::calculateZValue(ScreenPoint& screen_coords) {
+	void Camera::calculateZValue(DoublePoint3D& screen_coords) {
 		int32_t dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
-		screen_coords.z = static_cast<int32_t>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
+		screen_coords.z = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
 	}
 
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
+		DoublePoint3D double_screen_coords = intPt2doublePt(screen_coords);
 		if (!z_calculated) {
-			calculateZValue(screen_coords);
+			calculateZValue(double_screen_coords);
 		}
-		return m_inverse_matrix * intPt2doublePt(screen_coords);
+		return m_inverse_matrix * double_screen_coords;
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
@@ -699,6 +701,7 @@ namespace FIFE {
 	void Camera::refresh() {
 		updateMatrices();
 		m_transform |= RotationTransform;
+		m_cur_origo = toScreenCoordinates(m_location.getMapCoordinates());
 	}
 
 	void Camera::resetUpdates() {

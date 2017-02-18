@@ -144,7 +144,8 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 
-		m_renderbackend->setScreenMode(mode);
+		// recreate main screen
+		m_renderbackend->createMainScreen(mode,	m_settings.getWindowTitle(), m_settings.getWindowIcon());
 
 		if (m_guimanager) {
 			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
@@ -305,7 +306,8 @@ namespace FIFE {
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
-		m_model->adoptCellGrid(new HexGrid());
+		m_model->adoptCellGrid(new HexGrid(false));
+		m_model->adoptCellGrid(new HexGrid(true));
 
 		m_cursor = new Cursor(m_renderbackend);
 		FL_LOG(_log, "Engine initialized");
@@ -364,9 +366,14 @@ namespace FIFE {
 		m_timemanager->update();
 		m_soundmanager->update();
 
-        m_renderbackend->clearBackBuffer();
+#ifdef HAVE_CEGUI
+		m_renderbackend->clearBackBuffer();
+#endif
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
+#ifndef HAVE_CEGUI
+			m_renderbackend->clearBackBuffer();
+#endif
 			m_offrenderer->render();
 		} else {
 			m_model->update();

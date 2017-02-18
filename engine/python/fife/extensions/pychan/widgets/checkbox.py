@@ -52,7 +52,6 @@ class CheckBox(ImageButton):
 	DEFAULT_MARKED = False
 	# 0=Checkmark, 1=Cross, 2=Dot, 3=Rhombus, 4=Image
 	DEFAULT_MARKER_STYLE = 0
-	DEFAULT_BACKGROUND_IMAGE = ""
 	DEFAULT_OFFSET = 0,0
 
 	def __init__(self, 
@@ -96,7 +95,7 @@ class CheckBox(ImageButton):
 				 background_image = None):
 				 
 		self.real_widget = fifechan.CheckBox()
-		#self.marked = self.DEFAULT_MARKED
+
 		super(CheckBox,self).__init__(parent=parent,
 									  name=name,
 									  size=size,
@@ -141,8 +140,13 @@ class CheckBox(ImageButton):
 		if marker_style is not None: self.marker_style = marker_style
 		else: self.marker_style = self.DEFAULT_MARKER_STYLE
 
-		if background_image is not None: self.background_image = background_image
-		else: self.background_image = self.DEFAULT_BACKGROUND_IMAGE
+		# for the case that image can not be found, e.g. invalid path
+		# the Checkbox is removed from the manager
+		try:
+			self.background_image = background_image
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
 
 		# Prepare Data collection framework
 		self.accepts_data = True

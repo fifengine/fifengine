@@ -205,12 +205,6 @@ class ImageButton(Button):
 									   Attr('in_hover_image')
 									]
 
-	DEFAULT_UPIMAGE = ""
-	DEFAULT_DOWNIMAGE = ""
-	DEFAULT_HOVERIMAGE = ""
-	DEFAULT_INACTIVE_UPIMAGE = ""
-	DEFAULT_INACTIVE_DOWNIMAGE = ""
-	DEFAULT_INACTIVE_HOVERIMAGE = ""
 	#DEFAULT_OFFSET = 0,0
 	
 	def __init__(self, 
@@ -289,35 +283,19 @@ class ImageButton(Button):
 										 offset=offset,
 										 real_widget=self.real_widget)
 		
-		if up_image is not None: 
-			self.up_image = up_image
-		else:
-			self.up_image = self.DEFAULT_UPIMAGE
-			
-		if down_image is not None: 
-			self.down_image = down_image
-		else:
-			self.down_image = self.DEFAULT_DOWNIMAGE
-			
-		if hover_image is not None: 
-			self.hover_image = hover_image
-		else:
-			self.hover_image = self.DEFAULT_HOVERIMAGE
 
-		if in_up_image is not None: 
+		# for the case that image can not be found, e.g. invalid path
+		# the ImageButton is removed from the manager
+		try:
+			self.up_image = up_image
+			self.down_image = down_image
+			self.hover_image = hover_image
 			self.in_up_image = in_up_image
-		else:
-			self.in_up_image = self.DEFAULT_INACTIVE_UPIMAGE
-			
-		if in_down_image is not None: 
 			self.in_down_image = in_down_image
-		else:
-			self.in_down_image = self.DEFAULT_INACTIVE_DOWNIMAGE
-			
-		if in_hover_image is not None: 
 			self.in_hover_image = in_hover_image
-		else:
-			self.in_hover_image = self.DEFAULT_INACTIVE_HOVERIMAGE
+		except Exception:
+			get_manager().removeWidget(self)
+			raise
 		
 		# Override anything set when stylize was called
 		#if offset is not None: self.offset = offset

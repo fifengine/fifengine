@@ -2,9 +2,10 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.5)
 
-project (fifengine)
+project (fifengine C CXX)
+
 
 #------------------------------------------------------------------------------
 #                                 Version                                          
@@ -679,6 +680,7 @@ find_package(TinyXML REQUIRED)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
+  add_definitions(-DHAVE_CEGUI)
 
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
@@ -884,8 +886,8 @@ if(build-python)
     # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
     #
     execute_process(
-      COMMAND  ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())" 
-      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+      COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
+      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
 
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
@@ -924,16 +926,23 @@ if(build-library)
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
   target_link_libraries(fife ${OPENGL_gl_LIBRARY})
-  target_link_libraries(fife ${FIFECHAN_LIBRARIES})
-  
-  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/core/)
+  if(fifechan)
+    target_link_libraries(fife ${FIFECHAN_LIBRARIES})
+  endif(fifechan)
+  if(cegui)
+    target_link_libraries(fife ${CEGUI_LIBRARIES})
+    target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+  endif(cegui)
+
+  include(GNUInstallDirs)
+  install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
           get_filename_component(DIR ${HEADER} DIRECTORY)
           string(REPLACE ${CMAKE_CURRENT_LIST_DIR}/engine "" DIR ${DIR})
-          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fife/${DIR})
+          INSTALL(FILES ${HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/${DIR})
       ENDFOREACH(HEADER)
 
   ENDMACRO(INSTALL_HEADERS_WITH_DIRECTORY)

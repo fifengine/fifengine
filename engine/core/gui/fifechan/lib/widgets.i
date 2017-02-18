@@ -236,6 +236,7 @@ namespace fcn {
 		virtual void clear();
 		enum LayoutPolicy {
 			Absolute,
+			AutoSize,
 			Vertical,
 			Horizontal,
 			Circular
