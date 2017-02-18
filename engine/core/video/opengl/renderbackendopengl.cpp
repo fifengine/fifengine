@@ -190,9 +190,6 @@ namespace FIFE {
 			m_window = NULL;
 			m_screen = NULL;
 			
-			glDeleteTextures(1, &m_maskOverlay);
-			m_maskOverlay = 0;
-
 			if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
 				glDeleteFramebuffers(1, &m_fbo_id);
 			}
