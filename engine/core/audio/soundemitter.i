@@ -81,16 +81,16 @@ namespace FIFE {
 		float getRolloff() const;
 		void setPositioning(bool relative);
 		bool isPositioning() const;
-		void setPosition(const ExactModelCoordinate& position);
-		ExactModelCoordinate getPosition() const;
+		void setPosition(const AudioSpaceCoordinate& position);
+		AudioSpaceCoordinate getPosition() const;
 		void setReferenceDistance(float distance);
 		float getReferenceDistance() const;
 		void setMaxDistance(float distance);
 		float getMaxDistance() const;
-		void setOrientation(const ExactModelCoordinate& orientation);
-		ExactModelCoordinate getOrientation() const;
-		void setVelocity(const ExactModelCoordinate& velocity);
-		ExactModelCoordinate getVelocity() const;
+		void setDirection(const AudioSpaceCoordinate& direction);
+		AudioSpaceCoordinate getDirection() const;
+		void setVelocity(const AudioSpaceCoordinate& velocity);
+		AudioSpaceCoordinate getVelocity() const;
 		void setPitch(float pitch);
 		float getPitch() const;
 

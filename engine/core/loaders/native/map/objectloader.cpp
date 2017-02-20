@@ -504,7 +504,7 @@ namespace FIFE {
 									double vz = 0;
 									if (soundElement->QueryValueAttribute("x_velocity", &vx) == TIXML_SUCCESS && soundElement->QueryValueAttribute("y_velocity", &vy) == TIXML_SUCCESS) {
 										soundElement->QueryValueAttribute("z_velocity", &vz);
-										audio->setVelocity(ExactModelCoordinate(vx, vy, vz));
+										audio->setVelocity(AudioSpaceCoordinate(vx, vy, vz));
 									}
 								}
 							}

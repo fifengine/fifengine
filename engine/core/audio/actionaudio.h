@@ -150,11 +150,11 @@ namespace FIFE {
 
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		void setVelocity(const ExactModelCoordinate& velocity);
+		void setVelocity(const AudioSpaceCoordinate& velocity);
 
 		/** Return the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		const ExactModelCoordinate& getVelocity() const;
+		const AudioSpaceCoordinate& getVelocity() const;
 
 		/** Sets the playing mode
 		 */
@@ -196,7 +196,7 @@ namespace FIFE {
 		float m_coneInnerAngle;
 		float m_coneOuterAngle;
 		float m_coneOuterGain;
-		ExactModelCoordinate m_velocity;
+		AudioSpaceCoordinate m_velocity;
 		bool m_looping;
 		bool m_positioning;
 		bool m_direction;

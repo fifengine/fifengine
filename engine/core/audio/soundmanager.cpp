@@ -48,7 +48,7 @@ namespace FIFE {
 		m_device(0),
 		m_muteVol(0),
 		m_volume(1.0),
-		m_cutDistance(100.0),
+		m_maxDistance(10.0),
 		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
 		m_sources(),
 		m_createdSources(0) {
@@ -117,16 +117,72 @@ namespace FIFE {
 			m_freeSources.push(m_sources[i]);
 			m_createdSources++;
 		}
+	}
 
-		std::cout << "createdSources " << m_createdSources << "\n";
+	bool SoundManager::isActive() const {
+		return m_device != NULL;
 	}
 
 	void SoundManager::update() {
+		ALfloat vec[3];
+		alGetListenerfv(AL_POSITION, vec);
+		AudioSpaceCoordinate listenerPos = AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		double maxDistance = static_cast<double>(m_maxDistance);
+
+		// first try to remove
 		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(), it_end = m_emitterVec.end(); it != it_end;  ++it) {
-			if ((*it) != NULL) {
-				(*it)->update();
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+
+			bool active = emitter->isActive();
+			// remove active without clip
+			if (!emitter->getSoundClip() && active) {
+				releaseSource(emitter);
+				continue;
+			}
+
+			bool inRange = true;
+			if (emitter->isPosition()) {
+				AudioSpaceCoordinate emitterPos = emitter->getPosition();
+				double rx = listenerPos.x - emitterPos.x;
+				double ry = listenerPos.y - emitterPos.y;
+				double rz = listenerPos.z - emitterPos.z;
+				inRange = maxDistance >= Mathd::Sqrt(rx*rx + ry*ry + rz*rz);
+			}
+			if (emitter->getSoundClip()) {
+				// remove active not in range
+				if (active && !inRange) {
+					releaseSource(emitter);
+				// remove active with stopped sound
+				} else if (active && emitter->getState() == SD_STOPPED_STATE) {
+					releaseSource(emitter);
+				// emitter that came into range
+				} else if (!active && inRange && emitter->getState() == SD_PLAYING_STATE) {
+					if (emitter->isLooping() || !emitter->isEndTimestamp()) {
+						m_waitingEmitters.push_back(emitter);
+					}
+				}
 			}
 		}
+
+		m_waitingEmitters.sort();
+		m_waitingEmitters.unique();
+		if (!m_freeSources.empty() && !m_waitingEmitters.empty()) {
+			std::list<SoundEmitter*>::iterator it = m_waitingEmitters.begin();
+			while (it != m_waitingEmitters.end()) {
+				if (m_freeSources.empty()) {
+					break;
+				}
+				requestSource(*it);
+				m_waitingEmitters.erase(it++);
+			}
+		}
+		for (std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.begin(); it != m_activeEmitters.end(); ++it) {
+			it->first->update();
+		}
+
 	}
 
 	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const {
@@ -146,23 +202,22 @@ namespace FIFE {
 			ptr = new SoundEmitter(this, m_emitterVec.size());
 			m_emitterVec.push_back(ptr);
 		}
-		if (!ptr->isActive() && !m_freeSources.empty()) {
-			ptr->setSource(m_freeSources.front());
-			m_freeSources.pop();
-		}
-		//SoundEmitter* ptr = new SoundEmitter(this, m_emitterVec.size());
-		//m_emitterVec.push_back(ptr);
 		return ptr;
 	}
 
 	SoundEmitter* SoundManager::createEmitter(const std::string& name) {
 		SoundEmitter* emitter = createEmitter();
+		// instant request to play the sound
+		requestSource(emitter);
 		emitter->setSoundClip(SoundClipManager::instance()->get(name));
 		return emitter;
 	}
 
 	void SoundManager::releaseEmitter(uint32_t emitterId) {
 		SoundEmitter** ptr = &m_emitterVec.at(emitterId);
+		if ((*ptr)->isActive()) {
+			releaseSource(*ptr);
+		}
 		delete *ptr;
 		*ptr = NULL;
 	}
@@ -225,36 +280,36 @@ namespace FIFE {
 		return m_distanceModel;
 	}
 
-	void SoundManager::setListenerPosition(const ExactModelCoordinate& position) {
+	void SoundManager::setListenerPosition(const AudioSpaceCoordinate& position) {
 		alListener3f(AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
 	}
 
-	ExactModelCoordinate SoundManager::getListenerPosition() const {
+	AudioSpaceCoordinate SoundManager::getListenerPosition() const {
 		ALfloat vec[3];
 		alGetListenerfv(AL_POSITION, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
 	}
 
-	void SoundManager::setListenerOrientation(const ExactModelCoordinate& orientation) {
+	void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation) {
 		ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
 			0.0, 0.0, 1.0};
 		alListenerfv(AL_ORIENTATION, vec);
 	}
 
-	ExactModelCoordinate SoundManager::getListenerOrientation() const {
+	AudioSpaceCoordinate SoundManager::getListenerOrientation() const {
 		ALfloat vec[6];
 		alGetListenerfv(AL_ORIENTATION, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
 	}
 
-	void SoundManager::setListenerVelocity(const ExactModelCoordinate& velocity) {
+	void SoundManager::setListenerVelocity(const AudioSpaceCoordinate& velocity) {
 		alListener3f(AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
 	}
 
-	ExactModelCoordinate SoundManager::getListenerVelocity() const {
+	AudioSpaceCoordinate SoundManager::getListenerVelocity() const {
 		ALfloat vec[3];
 		alGetListenerfv(AL_VELOCITY, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
 	}
 
 	void SoundManager::setDopplerFactor(float factor) {
@@ -267,15 +322,55 @@ namespace FIFE {
 		return alGetFloat(AL_DOPPLER_FACTOR);
 	}
 
-	void SoundManager::setCutDistance(float distance) {
-		m_cutDistance = distance;
+	void SoundManager::setListenerMaxDistance(float distance) {
+		m_maxDistance = distance;
 	}
 
-	float SoundManager::getCutDistance() const {
-		return m_cutDistance;
+	float SoundManager::getListenerMaxDistance() const {
+		return m_maxDistance;
 	}
 
-	bool SoundManager::isActive() const {
-		return m_device != NULL;
+	void SoundManager::requestSource(SoundEmitter* emitter) {
+		if (!emitter->isActive() && !m_freeSources.empty()) {
+			std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
+			ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
+			if (ret.second == false) {
+				FL_ERR(_log, LMsg() << "SoundEmitter already have an source handler");
+			}
+			emitter->setSource(m_freeSources.front());
+			m_freeSources.pop();
+			return;
+		}
+		m_waitingEmitters.push_back(emitter);
 	}
+
+	void SoundManager::releaseSource(SoundEmitter* emitter) {
+		if (emitter->isActive()) {
+			std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.find(emitter);
+			if (it != m_activeEmitters.end()) {
+				m_activeEmitters.erase(it);
+				m_freeSources.push(emitter->getSource());
+				emitter->setSource(0);
+			} else {
+				FL_ERR(_log, LMsg() << "SoundEmitter can not release source handler");
+			}
+		}
+	}
+
+	bool SoundManager::isInRange(SoundEmitter* emitter) const {
+		ALfloat vec[3];
+		alGetListenerfv(AL_POSITION, vec);
+
+		AudioSpaceCoordinate listenerPos = AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		AudioSpaceCoordinate emitterPos = emitter->getPosition();
+
+		double maxDistance = static_cast<double>(m_maxDistance);
+
+		double rx = listenerPos.x - emitterPos.x;
+		double ry = listenerPos.y - emitterPos.y;
+		double rz = listenerPos.z - emitterPos.z;
+
+		return (maxDistance >= Mathd::Sqrt(rx*rx + ry*ry + rz*rz));
+	}
+
 } //FIFE

@@ -53,8 +53,6 @@ namespace FIFE {
 				m_source->setPosition();
 			} else if ((info & ICHANGE_ROTATION) == ICHANGE_ROTATION) {
 				m_source->setDirection();
-			//} else if ((info & ICHANGE_ACTION) == ICHANGE_ACTION) {
-			//	m_source->changeAction();
 			}
 		}
 
@@ -82,15 +80,22 @@ namespace FIFE {
 	}
 
 	void SoundSource::setActionAudio(ActionAudio* audio) {
-		//if (audio != m_audio) {
+		if (audio != m_audio) {
+			if (m_audio) {
+				m_emitter->stop();
+			}
+
 			m_audio = audio;
 			if (m_audio) {
 				updateSoundEmitter();
 				m_emitter->play();
 			} else {
-				m_emitter->stop();
+				m_emitter->reset();
 			}
-		//}
+		} else if (audio && !m_emitter->isLooping()) {
+			m_emitter->rewind();
+			m_emitter->play();
+		}
 	}
 
 	ActionAudio* SoundSource::getActionAudio() const {
@@ -98,12 +103,14 @@ namespace FIFE {
 	}
 
 	void SoundSource::setPosition() {
-		m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
+		if (m_audio) {
+			m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
+		}
 	}
 
 	void SoundSource::setDirection() {
 		if (m_audio && m_audio->isDirection()) {
-			m_emitter->setOrientation(m_instance->getFacingLocation().getMapCoordinates());
+			m_emitter->setDirection(m_instance->getFacingLocation().getMapCoordinates());
 		}
 	}
 
@@ -122,6 +129,7 @@ namespace FIFE {
 		m_emitter->setVelocity(m_audio->getVelocity());
 		m_emitter->setLooping(m_audio->isLooping());
 		m_emitter->setPositioning(m_audio->isPositioning());
+		m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
 	}
 
 }

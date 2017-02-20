@@ -63,12 +63,12 @@ namespace FIFE {
 			void setDistanceModel(SoundDistanceModelType model);
 			SoundDistanceModelType getDistanceModel() const;
 
-			void setListenerPosition(const ExactModelCoordinate& position);
-			ExactModelCoordinate getListenerPosition() const;
-			void setListenerOrientation(const ExactModelCoordinate& orientation);
-			ExactModelCoordinate getListenerOrientation() const;
-			void setListenerVelocity(const ExactModelCoordinate& velocity);
-			ExactModelCoordinate getListenerVelocity() const;
+			void setListenerPosition(const AudioSpaceCoordinate& position);
+			AudioSpaceCoordinate getListenerPosition() const;
+			void setListenerOrientation(const AudioSpaceCoordinate& orientation);
+			AudioSpaceCoordinate getListenerOrientation() const;
+			void setListenerVelocity(const AudioSpaceCoordinate& velocity);
+			AudioSpaceCoordinate getListenerVelocity() const;
 			void setDopplerFactor(float factor);
 			float getDopplerFactor() const;
 	};

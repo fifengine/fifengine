@@ -440,6 +440,8 @@ namespace FIFE {
 				m_activity->m_soundSource = new SoundSource(this);
 			}
 			m_activity->m_soundSource->setActionAudio(m_activity->m_actionInfo->m_action->getAudio());
+		} else if (old_action && old_action->getAudio()) {
+			m_activity->m_soundSource->setActionAudio(NULL);
 		}
 
 		if (isMultiObject()) {
@@ -863,11 +865,6 @@ namespace FIFE {
 		// this is needed in case the new action is set on the same pump and
 		// it is the same action as the canceled action
 		m_activity->m_action = NULL;
-
-		// stop audio
-		if (action->getAudio() && m_activity->m_soundSource) {
-			m_activity->m_soundSource->setActionAudio(NULL);
-		}
 
 		if (isMultiObject()) {
 			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();

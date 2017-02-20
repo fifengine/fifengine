@@ -165,6 +165,10 @@ namespace FIFE {
 		 */
 		void pause();
 
+		/** Rewinds the associated audio file.
+		 */
+		void rewind();
+
 		/** Sets the gain of the emitter
 		 *
 		 * @param gain The gain value. 0=silence ... 1.0=normal loudness.
@@ -223,6 +227,14 @@ namespace FIFE {
 		 */
 		uint64_t getDuration();
 
+		/** Returns timestamp of the last play start in milliseconds
+		 */
+		uint32_t getPlayTimestamp();
+
+		/** Returns true if end timestamp is reached.
+		 */
+		bool isEndTimestamp();
+
 		/** Sets the cursor position in the audio file
 		 */
 		void setCursor(SoundPositionType type, float value);
@@ -233,19 +245,23 @@ namespace FIFE {
 
 		/** Sets the position of the SoundEmitter in the virtual audio space.
 		 */
-		void setPosition(const ExactModelCoordinate& position);
+		void setPosition(const AudioSpaceCoordinate& position);
 
 		/** Return the position of the SoundEmitter in the virtual audio space.
 		 */
-		ExactModelCoordinate getPosition() const;
+		AudioSpaceCoordinate getPosition() const;
+
+		/** Return if it is a positional SoundEmitter.
+		 */
+		bool isPosition() const;
 
 		/** Sets the direction of the SoundEmitter in the virtual audio space.
 		 */
-		void setOrientation(const ExactModelCoordinate& orientation);
+		void setDirection(const AudioSpaceCoordinate& direction);
 
 		/** Return the direction of the SoundEmitter in the virtual audio space.
 		 */
-		ExactModelCoordinate getOrientation() const;
+		AudioSpaceCoordinate getDirection() const;
 
 		/** Sets pitch multiplier. Can only be positiv.
 		 */
@@ -257,11 +273,11 @@ namespace FIFE {
 
 		/** Sets the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		void setVelocity(const ExactModelCoordinate& velocity);
+		void setVelocity(const AudioSpaceCoordinate& velocity);
 
 		/** Return the velocity of the SoundEmitter in the virtual audio space.
 		 */
-		ExactModelCoordinate getVelocity() const;
+		AudioSpaceCoordinate getVelocity() const;
 
 		/** Sets inner angle of the sound cone, in degrees. Default 360
 		 */
@@ -306,6 +322,18 @@ namespace FIFE {
 		 */
 		void attachSoundClip();
 
+		/** Internal function to detach a SoundClip from the source
+		 */
+		void detachSoundClip();
+
+		/** Updates OpenAL with collected data.
+		 */
+		void syncData();
+
+		/** Resets collected data to defaults.
+		 */
+		void resetInternData();
+
 		/** Calls the Listeners if a sound finished
 		 */
 		void callOnSoundFinished();
@@ -322,8 +350,30 @@ namespace FIFE {
 		uint32_t m_streamId;
 		//! The emitter-id
 		uint32_t m_emitterId;
-		//! Loop?
-		bool m_loop;
+
+		//! buffers data
+		struct internData {
+			float volume;
+			float maxVolume;
+			float minVolume;
+			float refDistance;
+			float maxDistance;
+			float rolloff;
+			float pitch;
+			float coneInnerAngle;
+			float coneOuterAngle;
+			float coneOuterGain;
+			AudioSpaceCoordinate position;
+			AudioSpaceCoordinate direction;
+			AudioSpaceCoordinate velocity;
+			uint32_t playTimestamp;
+			SoundStateType soundState;
+			bool loop;
+			bool relative;
+		} m_internData;
+		//! vector that indicates updates in internData
+		//std::vector<bool> m_updateData;
+
 		//! is active
 		bool m_active;
 		//! listeners for sound related events

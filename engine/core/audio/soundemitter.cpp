@@ -32,6 +32,8 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/base/exception.h"
+#include "util/time/timemanager.h"
+
 #include "soundemitter.h"
 #include "soundmanager.h"
 #include "soundclipmanager.h"
@@ -46,15 +48,14 @@ namespace FIFE {
 		m_soundClipId(0),
 		m_streamId(0),
 		m_emitterId(uid),
-		m_loop(false),
 		m_active(false) {
 
 		if (!m_manager->isActive()) {
 			return;
 		}
 
-		//alGenSources(1, &m_source);
-		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source");
+		//m_updateData.resize(17, false);
+		resetInternData();
 	}
 
 	SoundEmitter::~SoundEmitter() {
@@ -63,13 +64,20 @@ namespace FIFE {
 		}
 
 		reset();
-		//alDeleteSources(1, &m_source);
 	}
 
 	void SoundEmitter::setSource(ALuint source) {
+		if (!source && m_source) {
+			alSourceStop(m_source);
+
+			// Release all buffers
+			alSourcei(m_source, AL_BUFFER, AL_NONE);
+			alGetError();
+		}
 		m_source = source;
 		if (m_source > 0) {
 			m_active = true;
+			syncData();
 		} else {
 			m_active = false;
 		}
@@ -84,6 +92,9 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::update() {
+		if (!m_soundClip) {
+			return;
+		}
 		// non streaming
 		if (!m_soundClip->isStream()) {
 			if (getState() == SD_STOPPED_STATE) {
@@ -104,7 +115,7 @@ namespace FIFE {
 
 			if (m_soundClip->getStream(m_streamId, buffer)) {
 				// EOF!
-				if (m_loop) {
+				if (m_internData.loop) {
 					// play again from the beginning
 					m_soundClip->setStreamPos(m_streamId, SD_BYTE_POS, 0);
 					m_soundClip->getStream(m_streamId, buffer);
@@ -112,14 +123,11 @@ namespace FIFE {
 					// check if the playback has been finished
 					alGetSourcei(m_source, AL_BUFFERS_QUEUED, &bufs);
 					if (bufs == 0) {
-						//alSourceStop(m_source);
 						stop();
 						callOnSoundFinished();
 					}
 					continue;
 				}
-			//} else {
-			//	callOnSoundFinished();
 			}
 			alSourceQueueBuffers(m_source, 1, &buffer);
 		}
@@ -132,75 +140,79 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::setPositioning(bool relative) {
-		alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
+		if (isActive()) {
+			alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
+		}
+		m_internData.relative = relative;
 	}
 
 	bool SoundEmitter::isPositioning() const {
-		ALint tmp;
-		alGetSourcei(m_source, AL_SOURCE_RELATIVE, &tmp);
-		return (tmp == AL_TRUE);
+		return m_internData.relative;
 	}
 
-	void SoundEmitter::setOrientation(const ExactModelCoordinate& orientation) {
-		ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
-			0.0, 0.0, 1.0};
-		alSourcefv(m_source, AL_ORIENTATION, vec);
+	void SoundEmitter::setDirection(const AudioSpaceCoordinate& direction) {
+		if (isActive()) {
+			ALfloat vec[3] = { static_cast<ALfloat>(direction.x), static_cast<ALfloat>(direction.y), static_cast<ALfloat>(direction.z) };
+			alSourcefv(m_source, AL_DIRECTION, vec);
+		}
+		m_internData.direction = direction;
 	}
 
-	ExactModelCoordinate SoundEmitter::getOrientation() const {
-		ALfloat vec[6];
-		alGetSourcefv(m_source, AL_ORIENTATION, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	AudioSpaceCoordinate SoundEmitter::getDirection() const {
+		return m_internData.direction;
 	}
 
 	void SoundEmitter::setPitch(float pitch) {
 		if (pitch > 0.0) {
-			alSourcef(m_source, AL_PITCH, pitch);
+			if (isActive()) {
+				alSourcef(m_source, AL_PITCH, pitch);
+			}
+			m_internData.pitch = pitch;
 		}
 	}
 
 	float SoundEmitter::getPitch() const {
-		float tmp;
-		alGetSourcef(m_source, AL_PITCH, &tmp);
-		return tmp;
+		return m_internData.pitch;
 	}
 
 	void SoundEmitter::setRolloff(float rolloff) {
-		alSourcef(m_source, AL_ROLLOFF_FACTOR,  rolloff);
+		if (isActive()) {
+			alSourcef(m_source, AL_ROLLOFF_FACTOR, rolloff);
+		}
+		m_internData.rolloff = rolloff;
 	}
 
 	float SoundEmitter::getRolloff() const {
-		float tmp;
-		alGetSourcef(m_source, AL_ROLLOFF_FACTOR, &tmp);
-		return tmp;
+		return m_internData.rolloff;
 	}
 
 	void SoundEmitter::reset(bool defaultall) {
 		if (m_soundClip) {
-			alSourceStop(m_source);
-
-			// Release all buffers
-			alSourcei(m_source, AL_BUFFER, AL_NONE);
-			alGetError();
-
-			if (m_soundClip->isStream()) {
-				m_soundClip->quitStreaming(m_streamId);
+			stop();
+			if (isActive()) {
+				alSourceStop(m_source);
+				alSourcei(m_source, AL_BUFFER, AL_NONE);
+				alGetError();
+				m_manager->releaseSource(this);
 			}
 
-			// release the soundClip
-			//SoundClipManager::instance()->free(m_soundClipId);
-			m_soundClip.reset();
+			if (m_soundClip) {
+				if (m_soundClip->isStream()) {
+					m_soundClip->quitStreaming(m_streamId);
+					m_streamId = 0;
+				}
+				m_soundClipId = 0;
+				// release the soundClip
+				//SoundClipManager::instance()->free(m_soundClipId);
+				m_soundClip.reset();
+			}
 
 			// default source properties
 			if (defaultall) {
-				ExactModelCoordinate emc(0.0, 0.0, 0.0);
-				setPosition(emc);
-				setVelocity(emc);
-				setGain(1.0f);
-				setPositioning(false);
-				setRolloff(1.0);
-				alSourcei(m_source, AL_LOOPING, AL_FALSE);
-				m_loop = false;
+				resetInternData();
+				if (isActive()) {
+					syncData();
+				}
 			}
 		}
 	}
@@ -210,9 +222,14 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::setSoundClip(SoundClipPtr soundClip) {
+		// equal clip
 		if (m_soundClipId == soundClip->getHandle()) {
 			return;
 		}
+		if (!isActive()) {
+			m_manager->requestSource(this);
+		}
+		detachSoundClip();
 		m_soundClipId = soundClip->getHandle();
 		m_soundClip = soundClip;
 
@@ -230,15 +247,20 @@ namespace FIFE {
 
 	void SoundEmitter::attachSoundClip() {
 		if (!m_soundClip->isStream()) {
+			if (!isActive()) {
+				return;
+			}
 			// non-streaming
 			alSourceQueueBuffers(m_source, m_soundClip->countBuffers(), m_soundClip->getBuffers());
-			alSourcei(m_source, AL_LOOPING, m_loop ? AL_TRUE : AL_FALSE);
+			alSourcei(m_source, AL_LOOPING, m_internData.loop ? AL_TRUE : AL_FALSE);
 
 		} else {
 			// streaming
 			m_streamId = m_soundClip->beginStreaming();
 			m_soundClip->acquireStream(m_streamId);
-
+			if (!isActive()) {
+				return;
+			}
 			// queue initial buffers
 			alSourceQueueBuffers(m_source, BUFFER_NUM, m_soundClip->getBuffers(m_streamId));
 			alSourcei(m_source, AL_LOOPING, AL_FALSE);
@@ -247,73 +269,110 @@ namespace FIFE {
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error attaching sound clip")
 	}
 
+	void SoundEmitter::detachSoundClip() {
+		if (!m_soundClip) {
+			return;
+		}
+		SoundStateType state = getState();
+		if (state == SD_PLAYING_STATE || state == SD_PAUSED_STATE) {
+			stop();
+		}
+		if (m_soundClip->isStream()) {
+			m_soundClip->quitStreaming(m_streamId);
+			m_streamId = 0;
+		}
+		if (isActive()) {
+			// detach all buffers
+			alSourcei(m_source, AL_BUFFER, AL_NONE);
+			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error detaching sound clip");
+		}
+
+		m_soundClipId = 0;
+		m_soundClip.reset();
+	}
+
 	void SoundEmitter::setLooping(bool loop) {
-		if (m_soundClip) {
+		if (m_soundClip && isActive()) {
 			if (!m_soundClip->isStream()) {
 				alSourcei(m_source, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
 			} else {
 				alSourcei(m_source, AL_LOOPING, AL_FALSE);
 			}
 		}
-		m_loop = loop;
+		m_internData.loop = loop;
 	}
 
 	bool SoundEmitter::isLooping() const {
-		return m_loop;
+		return m_internData.loop;
 	}
 
 	void SoundEmitter::play() {
-		if (m_soundClip) {
+		if (m_soundClip && isActive()) {
 			alSourcePlay(m_source);
 		}
+		m_internData.soundState = SD_PLAYING_STATE;
+		m_internData.playTimestamp = TimeManager::instance()->getTime();
 	}
 
 	void SoundEmitter::stop() {
-		if (m_soundClip) {
+		if (m_soundClip && isActive()) {
 			alSourceStop(m_source);
-
-			if (m_soundClip->isStream()) {
-				setCursor(SD_BYTE_POS, 0);
-			} else {
-				alSourceRewind(m_source);
-			}
+			rewind();
 		}
+		m_internData.soundState = SD_STOPPED_STATE;
+		m_internData.playTimestamp = 0;
 	}
 
 	void SoundEmitter::pause() {
-		if (m_soundClip) {
+		if (m_soundClip && isActive()) {
 			alSourcePause(m_source);
+		}
+		m_internData.soundState = SD_PAUSED_STATE;
+	}
+
+	void SoundEmitter::rewind() {
+		m_internData.playTimestamp = 0;
+		if (!isActive()) {
+			return;
+		}
+		if (m_soundClip->isStream()) {
+			setCursor(SD_BYTE_POS, 0);
+		} else {
+			alSourceRewind(m_source);
 		}
 	}
 
 	void SoundEmitter::setGain(float gain) {
-		alSourcef(m_source, AL_GAIN, gain);
+		if (isActive()) {
+			alSourcef(m_source, AL_GAIN, gain);
+		}
+		m_internData.volume = gain;
 	}
 
 	float SoundEmitter::getGain() const {
-		float tmp;
-		alGetSourcef(m_source, AL_GAIN, &tmp);
-		return tmp;
+		return m_internData.volume;
 	}
 
 	void SoundEmitter::setMaxGain(float gain) {
-		alSourcef(m_source, AL_MAX_GAIN, gain);
+		if (isActive()) {
+			alSourcef(m_source, AL_MAX_GAIN, gain);
+		}
+		m_internData.maxVolume = gain;
 	}
 
 	float SoundEmitter::getMaxGain() const {
-		float tmp;
-		alGetSourcef(m_source, AL_MAX_GAIN, &tmp);
-		return tmp;
+		return m_internData.maxVolume;
 	}
 
 	void SoundEmitter::setMinGain(float gain) {
-		alSourcef(m_source, AL_MIN_GAIN, gain);
+		if (isActive()) {
+			alSourcef(m_source, AL_MIN_GAIN, gain);
+		}
+		m_internData.minVolume = gain;
 	}
 
 	float SoundEmitter::getMinGain() const {
-		float tmp;
-		alGetSourcef(m_source, AL_MIN_GAIN, &tmp);
-		return tmp;
+		return m_internData.minVolume;
 	}
 
 	bool SoundEmitter::isStereo() {
@@ -359,8 +418,16 @@ namespace FIFE {
 		return 0;
 	}
 
+	uint32_t SoundEmitter::getPlayTimestamp() {
+		return m_internData.playTimestamp;
+	}
+
+	bool SoundEmitter::isEndTimestamp() {
+		return (m_internData.playTimestamp + static_cast<uint32_t>(getDuration())) <= TimeManager::instance()->getTime();
+	}
+
 	void SoundEmitter::setCursor(SoundPositionType type, float value) {
-		if (!m_soundClip) {
+		if (!m_soundClip || !isActive()) {
 			return;
 		}
 
@@ -405,7 +472,7 @@ namespace FIFE {
 	}
 
 	float SoundEmitter::getCursor(SoundPositionType type) {
-		if (!m_soundClip) {
+		if (!m_soundClip || !isActive()) {
 			return 0.0f;
 		}
 
@@ -432,77 +499,92 @@ namespace FIFE {
 		return pos;
 	}
 
-	void SoundEmitter::setPosition(const ExactModelCoordinate& position) {
-		alSource3f(m_source, AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
+	void SoundEmitter::setPosition(const AudioSpaceCoordinate& position) {
+		if (isActive()) {
+			alSource3f(m_source, AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
+		}
+		m_internData.position = position;
 	}
 
-	ExactModelCoordinate SoundEmitter::getPosition() const {
-		ALfloat vec[3];
-		alGetSourcefv(m_source, AL_POSITION, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	AudioSpaceCoordinate SoundEmitter::getPosition() const {
+		return m_internData.position;
+	}
+
+	bool SoundEmitter::isPosition() const {
+		double zero = 0;
+		return !(Mathd::Equal(zero, m_internData.position.x) && Mathd::Equal(zero, m_internData.position.y) && Mathd::Equal(zero, m_internData.position.z));
 	}
 
 	void SoundEmitter::setReferenceDistance(float distance) {
-		alSourcef(m_source, AL_REFERENCE_DISTANCE, distance);
+		if (isActive()) {
+			alSourcef(m_source, AL_REFERENCE_DISTANCE, distance);
+		}
+		m_internData.refDistance = distance;
 	}
 
 	float SoundEmitter::getReferenceDistance() const {
-		float distance;
-		alGetSourcef(m_source, AL_REFERENCE_DISTANCE, &distance);
-		return distance;
+		return m_internData.refDistance;
 	}
 
 	void SoundEmitter::setMaxDistance(float distance) {
-		alSourcef(m_source, AL_MAX_DISTANCE, distance);
+		if (isActive()) {
+			alSourcef(m_source, AL_MAX_DISTANCE, distance);
+		}
+		m_internData.maxDistance = distance;
 	}
 
 	float SoundEmitter::getMaxDistance() const {
-		float distance;
-		alGetSourcef(m_source, AL_MAX_DISTANCE, &distance);
-		return distance;
+		return m_internData.maxDistance;
 	}
 
-	void SoundEmitter::setVelocity(const ExactModelCoordinate& velocity) {
-		alSource3f(m_source, AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+	void SoundEmitter::setVelocity(const AudioSpaceCoordinate& velocity) {
+		if (isActive()) {
+			alSource3f(m_source, AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+		}
+		m_internData.velocity = velocity;
 	}
 
-	ExactModelCoordinate SoundEmitter::getVelocity() const {
-		ALfloat vec[3];
-		alGetSourcefv(m_source, AL_VELOCITY, vec);
-		return ExactModelCoordinate(vec[0], vec[1], vec[2]);
+	AudioSpaceCoordinate SoundEmitter::getVelocity() const {
+		return m_internData.velocity;
 	}
 
 	void SoundEmitter::setConeInnerAngle(float inner) {
-		alSourcef(m_source, AL_CONE_INNER_ANGLE, inner);
+		if (isActive()) {
+			alSourcef(m_source, AL_CONE_INNER_ANGLE, inner);
+		}
+		m_internData.coneInnerAngle = inner;
 	}
 
 	float SoundEmitter::getConeInnerAngle() const {
-		float inner;
-		alGetSourcef(m_source, AL_CONE_INNER_ANGLE, &inner);
-		return inner;
+		return m_internData.coneInnerAngle;
 	}
 
 	void SoundEmitter::setConeOuterAngle(float outer) {
-		alSourcef(m_source, AL_CONE_OUTER_ANGLE, outer);
+		if (isActive()) {
+			alSourcef(m_source, AL_CONE_OUTER_ANGLE, outer);
+		}
+		m_internData.coneOuterAngle = outer;
 	}
 
 	float SoundEmitter::getConeOuterAngle() const {
-		float outer;
-		alGetSourcef(m_source, AL_CONE_OUTER_ANGLE, &outer);
-		return outer;
+		return m_internData.coneOuterAngle;
 	}
 
 	void SoundEmitter::setConeOuterGain(float gain) {
-		alSourcef(m_source, AL_CONE_OUTER_GAIN, gain);
+		if (isActive()) {
+			alSourcef(m_source, AL_CONE_OUTER_GAIN, gain);
+		}
+		m_internData.coneOuterGain = gain;
 	}
 
 	float SoundEmitter::getConeOuterGain() const {
-		float gain;
-		alGetSourcef(m_source, AL_CONE_OUTER_GAIN, &gain);
-		return gain;
+		return m_internData.coneOuterGain;
 	}
 
 	SoundStateType SoundEmitter::getState() {
+		if (!isActive()) {
+			return m_internData.soundState;
+		}
 		ALint state;
 		alGetSourcei(m_source, AL_SOURCE_STATE, &state);
 		switch(state) {
@@ -522,6 +604,57 @@ namespace FIFE {
 				return SD_UNKNOWN_STATE;
 				break;
 		}
+	}
+
+	void SoundEmitter::syncData() {
+		setGain(m_internData.volume);
+		setMaxGain(m_internData.maxVolume);
+		setMinGain(m_internData.minVolume);
+		setReferenceDistance(m_internData.refDistance);
+		setMaxDistance(m_internData.maxDistance);
+		setRolloff(m_internData.rolloff);
+		setPitch(m_internData.pitch);
+		setConeInnerAngle(m_internData.coneInnerAngle);
+		setConeOuterAngle(m_internData.coneOuterAngle);
+		setConeOuterGain(m_internData.coneOuterGain);
+		setPosition(m_internData.position);
+		setDirection(m_internData.direction);
+		setVelocity(m_internData.velocity);
+		// sound state and timestamp?
+		setLooping(m_internData.loop);
+		setPositioning(m_internData.relative);
+		if (m_internData.soundState == SD_PLAYING_STATE) {
+			uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp;
+			if (m_internData.loop) {
+				timediff = timediff % getDuration();
+			}
+			float time = static_cast<float>(timediff) / 1000.0;
+			attachSoundClip();
+			setCursor(SD_TIME_POS, time);
+			if (m_soundClip && isActive()) {
+				alSourcePlay(m_source);
+			}
+		}
+	}
+
+	void SoundEmitter::resetInternData() {
+		m_internData.volume = 1.0;
+		m_internData.maxVolume = 1.0;
+		m_internData.minVolume = 0.0;
+		m_internData.refDistance = 1.0;
+		m_internData.maxDistance = 1000000.0;
+		m_internData.rolloff = 1.0;
+		m_internData.pitch = 1.0;
+		m_internData.coneInnerAngle = 360.0;
+		m_internData.coneOuterAngle = 360.0;
+		m_internData.coneOuterGain = 0.0;
+		m_internData.position = AudioSpaceCoordinate(0.0, 0.0, 0.0);
+		m_internData.direction = AudioSpaceCoordinate(0.0, 0.0, 0.0);
+		m_internData.velocity = AudioSpaceCoordinate(0.0, 0.0, 0.0);
+		m_internData.playTimestamp = 0;
+		m_internData.soundState = SD_UNKNOWN_STATE;
+		m_internData.loop = false;
+		m_internData.relative = false;
 	}
 
 	void SoundEmitter::addListener(SoundEmitterListener* listener) {

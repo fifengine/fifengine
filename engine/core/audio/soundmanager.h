@@ -66,6 +66,10 @@ namespace FIFE {
 		 */
 		void init();
 
+		/** Returns true if audio module is active
+		*/
+		bool isActive() const;
+
 		/** Called once a frame and updates the sound objects.
 		 */
 		void update();
@@ -125,27 +129,27 @@ namespace FIFE {
 
 		/** Sets the position of the listener (alter ego).
 		 */
-		void setListenerPosition(const ExactModelCoordinate& position);
+		void setListenerPosition(const AudioSpaceCoordinate& position);
 
 		/** Return the position of the listener (alter ego).
 		 */
-		ExactModelCoordinate getListenerPosition() const;
+		AudioSpaceCoordinate getListenerPosition() const;
 
 		/** Sets the orientation of the listener (alter ego).
 		 */
-		void setListenerOrientation(const ExactModelCoordinate& orientation);
+		void setListenerOrientation(const AudioSpaceCoordinate& orientation);
 
 		/** Return the orientation of the listener (alter ego).
 		 */
-		ExactModelCoordinate getListenerOrientation() const;
+		AudioSpaceCoordinate getListenerOrientation() const;
 
 		/** Sets the velocity of the listener (alter ego).
 		 */
-		void setListenerVelocity(const ExactModelCoordinate& velocity);
+		void setListenerVelocity(const AudioSpaceCoordinate& velocity);
 
 		/** Return the velocity of the listener (alter ego).
 		 */
-		ExactModelCoordinate getListenerVelocity() const;
+		AudioSpaceCoordinate getListenerVelocity() const;
 
 		/** Sets factor for doppler effect.
 		 */
@@ -155,21 +159,22 @@ namespace FIFE {
 		 */
 		float getDopplerFactor() const;
 
-		/** Sets the cut distance.
+		/** Sets the maximal listener distance.
 		 *  If it is larger the emitter turns off, or on if it is smaller.
 		 */
-		void setCutDistance(float distance);
+		void setListenerMaxDistance(float distance);
 
-		/** Return cut distance.
+		/** Return the maximal listener distance.
 		 */
-		float getCutDistance() const;
+		float getListenerMaxDistance() const;
 
-		/** Returns true if audio module is active
-		 */
-		bool isActive() const;
+		void requestSource(SoundEmitter* emitter);
+		void releaseSource(SoundEmitter* emitter);
 
 	private:
-		//! emitter-vector
+		bool isInRange(SoundEmitter* emitter) const;
+
+		//! emitter-vector, holds all emitters
 		std::vector<SoundEmitter*> m_emitterVec;
 		//! OpenAL context
 		ALCcontext* m_context;
@@ -180,7 +185,7 @@ namespace FIFE {
 		//! volume to support setVolume-calls before initialization
 		float m_volume;
 		//! distance that removes a active Emitter
-		float m_cutDistance;
+		float m_maxDistance;
 		//! Selected distance model
 		SoundDistanceModelType m_distanceModel;
 
@@ -192,9 +197,8 @@ namespace FIFE {
 		std::queue<ALuint> m_freeSources;
 		//! Map that holds active Emitters together with the used source handle
 		std::map<SoundEmitter*, ALuint> m_activeEmitters;
-		//! Vector that holds Emitters in the queue
-		std::vector<SoundEmitter*> m_waitingEmitters;
-
+		//! List that holds Emitters in the queue
+		std::list<SoundEmitter*> m_waitingEmitters;
 
 		//! A map that holds the groups together with the appended emitters.
 		std::map<std::string, std::vector<SoundEmitter*> > m_groups;

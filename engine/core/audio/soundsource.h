@@ -52,7 +52,6 @@ namespace FIFE {
 		ActionAudio* getActionAudio() const;
 		void setPosition();
 		void setDirection();
-
 	
 	private:
 		void updateSoundEmitter();

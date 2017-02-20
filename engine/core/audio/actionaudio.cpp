@@ -53,7 +53,7 @@ namespace FIFE {
 		m_positioning(false),
 		m_direction(false) {
 
-		m_velocity = ExactModelCoordinate(0.0, 0.0, 0.0);
+		m_velocity = AudioSpaceCoordinate(0.0, 0.0, 0.0);
 
 	}
 
@@ -148,11 +148,11 @@ namespace FIFE {
 		return m_coneOuterGain;
 	}
 
-	void ActionAudio::setVelocity(const ExactModelCoordinate& velocity) {
+	void ActionAudio::setVelocity(const AudioSpaceCoordinate& velocity) {
 		m_velocity = velocity;
 	}
 
-	const ExactModelCoordinate& ActionAudio::getVelocity() const {
+	const AudioSpaceCoordinate& ActionAudio::getVelocity() const {
 		return m_velocity;
 	}
 
