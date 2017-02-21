@@ -298,6 +298,7 @@ namespace FIFE {
 
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
+		refresh();
 	}
 
 	const Rect& Camera::getViewPort() const {
@@ -700,6 +701,7 @@ namespace FIFE {
 	void Camera::refresh() {
 		updateMatrices();
 		m_transform |= RotationTransform;
+		m_cur_origo = toScreenCoordinates(m_location.getMapCoordinates());
 	}
 
 	void Camera::resetUpdates() {

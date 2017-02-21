@@ -676,6 +676,7 @@ find_package(TinyXML REQUIRED)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
+  add_definitions(-DHAVE_CEGUI)
 
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
