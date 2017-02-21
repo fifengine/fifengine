@@ -7,9 +7,10 @@ $installLocation = 'C:\projects\fifengine-dependencies\includes'
 $accountName = 'cegui-ci'
 $projectSlug = 'cegui'
 $branch = "v0-8"
-$env:cegui_dlls = ("CEGUIBase-0.dll", "freetype.dll", "pcre.dll", "minizip.dll","zlib.dll", "CEGUIOpenGLRenderer-0.dll", "glew.dll", `
-"CEGUICommonDialogs-0.dll", "CEGUICoreWindowRendererSet.dll", "CEGUISillyImageCodec.dll", "silly.dll", "libpng.dll", "jpeg.dll", "CEGUIExpatParser.dll", "libexpat.dll")
 
+$cegui_dlls = ("CEGUIBase-0.dll", "freetype.dll", "pcre.dll", "minizip.dll","zlib.dll", "CEGUIOpenGLRenderer-0.dll", "glew.dll", `
+"CEGUICommonDialogs-0.dll", "CEGUICoreWindowRendererSet.dll", "CEGUISillyImageCodec.dll", "silly.dll", "libpng.dll", "jpeg.dll", "CEGUIExpatParser.dll", "libexpat.dll")
+$global:dll_excludes = $global:dll_excludes + $cegui_dlls
 # get project with last build details
 $project = Invoke-RestMethod -Method Get -Uri "$apiUrl/projects/$accountName/$projectSlug/branch/$branch"
 
@@ -35,6 +36,6 @@ Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobId/artifacts/$artifact
 $folder_name = [System.IO.Path]::GetFileNameWithoutExtension("$artifactFileName")
 $extract_dir = "$extractLocation"
 7z x $localArtifactPath -o"$extract_dir" -y
-copy-item $extractLocation/$folder_name/bin/* $installLocation\bin -force -recurse -Confirm:$False -Include $env:cegui_dlls
+copy-item $extractLocation/$folder_name/bin/* $installLocation\bin -force -recurse -Confirm:$False -Include $cegui_dlls
 copy-item $extractLocation/$folder_name/lib/* $installLocation\lib -force -recurse -Confirm:$False -Exclude "tinyxml*.*"
 copy-item $extractLocation/$folder_name/include/* $installLocation\include -force -recurse -Confirm:$False -Exclude ("tinyxml.h", "tinystr.h")
