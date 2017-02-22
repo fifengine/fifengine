@@ -184,7 +184,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.cpp
@@ -375,7 +374,6 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
