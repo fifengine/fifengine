@@ -14,8 +14,30 @@ project (fifengine C CXX)
 set (FIFE_MAJOR_VERSION 0)
 set (FIFE_MINOR_VERSION 4)
 set (FIFE_PATCH_VERSION 1)
+set (FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
-set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+# get git commit hash, if source folder is a git repository
+find_file(GITDIR NAMES .git PATHS ${CMAKE_SOURCE_DIR} NO_DEFAULT_PATH)
+if(GITDIR)
+  execute_process(
+    COMMAND git rev-parse --short=7 HEAD
+    WORKING_DIRECTORY "@CMAKE_SOURCE_DIR@/.."
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(FIFE_GIT_HASH ${GIT_COMMIT_HASH})
+else()
+  # not a git repo, possibly a source download
+  set(FIFE_GIT_HASH "")
+endif()
+
+if(GIT_COMMIT_HASH)
+  set(FIFE_VERSION ${FIFE_VERSION_SHORT}+build.${FIFE_GIT_HASH})
+else()
+  set(FIFE_VERSION ${FIFE_VERSION_SHORT})
+endif()
+
+message("Updating version.h with version information and git meta data.")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
@@ -68,8 +90,7 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
-# Do not allow the build directory to be in the source directory for older
-# versions of cmake.
+# Do not allow the build directory to be in the source directory for older versions of cmake.
 if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
   message(FATAL_ERROR "# Please chose a different build directory.\n
     In cmake versions < 3 SWIG does not work well when the build directory is
@@ -746,15 +767,6 @@ if(fifechan)
   if(rend-grid)
     add_definitions(-DRENDER_GRID)
   endif(rend-grid)
-  if(use-githash)
-    execute_process(
-      COMMAND git rev-parse --short=8 HEAD
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      OUTPUT_VARIABLE GIT_COMMIT_HASH
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    add_definitions(-DFIFE_GIT_HASH=${GIT_COMMIT_HASH})
-  endif(use-githash)
   include_directories(${FIFECHAN_INCLUDE_DIR})
   link_directories(${FIFECHAN_LIBRARIES})
   if(build-python)
@@ -933,6 +945,7 @@ if(build-library)
   include(GNUInstallDirs)
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
+  
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
