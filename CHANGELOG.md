@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Unreleased
+
+* replaced GLEE with GLEW
+
 ## [0.4.1] - 2017-02-07
 
 ### Engine
