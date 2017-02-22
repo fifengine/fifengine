@@ -30,7 +30,12 @@
 // On Windows:
 //   when building a static library or executable: GLEW_STATIC
 //   when building a dll: GLEW_BUILD
-#define GLEW_STATIC
+#ifdef BUILD_SHARED_LIBS
+  #define GLEW_BUILD
+else
+  #define GLEW_STATIC
+#endif
+    
 #include "GL/glew.h"
 
 // FIFE includes
