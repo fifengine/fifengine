@@ -24,11 +24,11 @@
 %}
 
 namespace FIFE {
-	inline const char* getVersion();
+    inline const char* getVersion();
     inline const char* getVersionShort();
-	inline int getMajor();
-	inline int getMinor();
-	inline int getPatch();
-	inline const char* getHash();
+    inline int getMajor();
+    inline int getMinor();
+    inline int getPatch();
+    inline const char* getHash();
     inline const int getVersionId();
 } //FIFE
