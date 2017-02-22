@@ -47,7 +47,9 @@ namespace FIFE {
 	 * it draws a textured Quad to the screen.
 	 *
 	 * @see Image
-	 * @note Width and height are not limited to powers of two; non-power of two images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).
+	 * @note Width and height are not limited to powers of two;
+     *       non-power of two images will be converted internally,
+	 *       if they are not supported by the hardware (ARB_texture_non_power_of_two).
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
