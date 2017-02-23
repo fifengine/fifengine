@@ -35,10 +35,9 @@ A [complete list of the features](https://fifengine.github.io/fifengine-docs/use
 
 ## 2) License
 
-The source code (*.cpp, *.h & *.py) is licensed under [LGPL v2.1 or newer](http://www.gnu.org/licenses/lgpl-2.1.html):
-Files in /engine/core/ext/glee/ are under BSD license
-Files in /engine/core/util/utf8/ are under BSL license
-Content was taken from a lot a lot of different 3rd party sources. Therefore 
+- The source code (*.cpp, *.h & *.py) is licensed under [LGPL v2.1 or newer](http://www.gnu.org/licenses/lgpl-2.1.html).
+- Files in /engine/core/util/utf8/ are under BSL license
+- Content was taken from a lot a lot of different 3rd party sources. Therefore 
 each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
 

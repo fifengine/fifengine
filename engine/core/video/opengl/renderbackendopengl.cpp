@@ -119,7 +119,7 @@ namespace FIFE {
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
 		glDeleteTextures(1, &m_maskOverlay);
-		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if(GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glDeleteFramebuffers(1, &m_fbo_id);
 		}
 		SDL_GL_DeleteContext(m_context);
@@ -190,7 +190,7 @@ namespace FIFE {
 			m_window = NULL;
 			m_screen = NULL;
 			
-			if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+			if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
 				glDeleteFramebuffers(1, &m_fbo_id);
 			}
 		}
@@ -291,12 +291,12 @@ namespace FIFE {
 		glPointSize(1.0);
 		glLineWidth(1.0);
 
-		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if(GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glGenFramebuffers(1, &m_fbo_id);
 		}
 		
 		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
-			if (GLEE_EXT_texture_filter_anisotropic) {
+			if (GLEW_EXT_texture_filter_anisotropic) {
 				GLint largest = 0;
 				glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
 				m_maxAnisotropy = static_cast<int32_t>(largest);
@@ -2522,7 +2522,7 @@ namespace FIFE {
 		}
 
 		// can we use fbo?
-		if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo_id);
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
 				GL_TEXTURE_2D, targetid, 0);
@@ -2545,7 +2545,7 @@ namespace FIFE {
 
 		if (m_target_discard) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		} else if (!m_target_discard && (!GLEE_EXT_framebuffer_object || !m_useframebuffer)) {
+		} else if (!m_target_discard && (!GLEW_EXT_framebuffer_object || !m_useframebuffer)) {
 			// if we wanna just add something to render target, we need to first render previous contents
 			addImageToArray(targetid, m_img_target->getArea(),
 				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
@@ -2558,7 +2558,7 @@ namespace FIFE {
 		// flush down what we batched
 		renderVertexArrays();
 
-		if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		} else {
 			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());

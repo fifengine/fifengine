@@ -207,7 +207,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.cpp
@@ -398,7 +397,6 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
@@ -691,6 +689,7 @@ source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
@@ -831,6 +830,7 @@ find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VOR
 include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_IMAGE_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
+include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${OPENAL_INCLUDE_DIR})
@@ -864,6 +864,7 @@ if(build-python)
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
                            ${OPENAL_LIBRARY})
+  swig_link_libraries(fife ${GLEW_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -923,6 +924,7 @@ if(build-library)
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
                              ${OPENAL_LIBRARY})
+  target_link_libraries(fife ${GLEW_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
