@@ -16,12 +16,17 @@ set (FIFE_MINOR_VERSION 4)
 set (FIFE_PATCH_VERSION 1)
 set (FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
+# check if "git" is installed
+find_program(GIT_TOOL git DOC "Git version control")
+mark_as_advanced(GIT_TOOL)
+
 # get git commit hash, if source folder is a git repository
-find_file(GITDIR NAMES .git PATHS ${CMAKE_SOURCE_DIR} NO_DEFAULT_PATH)
-if(GITDIR)
+find_file(GIT_DIR NAMES .git PATHS ${CMAKE_SOURCE_DIR} NO_DEFAULT_PATH)
+
+if(GIT_TOOL AND GIT_DIR)
   execute_process(
     COMMAND git rev-parse --short=7 HEAD
-    WORKING_DIRECTORY "@CMAKE_SOURCE_DIR@/.."
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE GIT_COMMIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
