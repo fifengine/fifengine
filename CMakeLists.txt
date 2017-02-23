@@ -2,19 +2,18 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.5)
 
-project (fifengine C CXX)
-
+project(fifengine C CXX)
 
 #------------------------------------------------------------------------------
 #                                 Version                                          
 #------------------------------------------------------------------------------
 
-set (FIFE_MAJOR_VERSION 0)
-set (FIFE_MINOR_VERSION 4)
-set (FIFE_PATCH_VERSION 1)
-set (FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+set(FIFE_MAJOR_VERSION 0)
+set(FIFE_MINOR_VERSION 4)
+set(FIFE_PATCH_VERSION 1)
+set(FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
 # check if "git" is installed
 find_program(GIT_TOOL git DOC "Git version control")
@@ -136,10 +135,20 @@ if(WIN32)
 
 endif(WIN32)
 
-# defines
+#------------------------------------------------------------------------------
+#                                 Defines                                        
+#------------------------------------------------------------------------------
 
 # define for using TinyXML with Standard Template Library (STL) support enabled
 add_definitions(-DTIXML_USE_STL)
+
+if(logging)
+  add_definitions(-DLOG_ENABLED)
+endif(logging)
+
+if(opengl)  
+  add_definitions(-DHAVE_OPENGL)
+endif(opengl)
 
 #------------------------------------------------------------------------------
 #                                 Display Status                                         
@@ -721,38 +730,38 @@ endif(build-python)
 if(fifechan)
 
   find_package(FifeChan COMPONENTS sdl REQUIRED)
+
+  if(opengl)
+    find_package(FifeChan COMPONENTS opengl REQUIRED)
+  endif(opengl)
  
   if(build-python)
+    
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
+    
     foreach(filename ${FIFE_FCHAN_SWIG})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
     set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
-  endif(build-python)
 
-  if(opengl)
-    find_package(FifeChan COMPONENTS opengl REQUIRED)
-    add_definitions(-DHAVE_OPENGL)
-  endif(opengl)
-
-  if(logging)
-    add_definitions(-DLOG_ENABLED)
-  endif(logging)
-  include_directories(${FIFECHAN_INCLUDE_DIR})
-  link_directories(${FIFECHAN_LIBRARIES})
-  if(build-python)
-    configure_file (
+    configure_file(
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
       "${PROJECT_BINARY_DIR}/fifechan.i"
-      )
-   endif(build-python)
+    )
+    
+  endif(build-python)
+
+  include_directories(${FIFECHAN_INCLUDE_DIR})
+
+  link_directories(${FIFECHAN_LIBRARIES})
+
 endif(fifechan)
 
 if(cegui)  
@@ -764,10 +773,9 @@ if(cegui)
    endif(build-python)
 endif(cegui)
 
-# TODO: Add the other gui libraries
-
 if(build-python)
-  configure_file (
+
+  configure_file(
     "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
     "${PROJECT_BINARY_DIR}/fife.i"
   )
@@ -880,7 +888,7 @@ if(build-python)
 
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
     file(TO_CMAKE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
- endif(NOT DEFINED PYTHON_SITE_PACKAGES)
+  endif(NOT DEFINED PYTHON_SITE_PACKAGES)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
