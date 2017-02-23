@@ -57,7 +57,6 @@ option(opengl           "Enable OpenGL support"                                 
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
-option(zip              "Enable ZIP archive support"                            ON)
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with c++"  OFF)
@@ -263,6 +262,11 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatafile.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.cpp
@@ -302,15 +306,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.cpp
 )
 
-# ZIP
-set (FIFE_ZIP_SRC
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
-)
-
 # CEGUI v0.8.0+
 set (FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
@@ -348,7 +343,6 @@ set (FIFE_LROCKET_SRC
 #------------------------------------------------------------------------------
 
 source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("sources\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_SRC})
 source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
 source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
@@ -526,15 +520,6 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.h
 )
 
-# ZIP
-set (FIFE_ZIP_HDR
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
-)
-  
 # CEGUI
 set (FIFE_CEGUI_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
@@ -572,7 +557,6 @@ set (FIFE_LROCKET_HDR
 #------------------------------------------------------------------------------
 
 source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("headers\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_HDR})
 source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
 source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
@@ -755,10 +739,7 @@ if(fifechan)
     find_package(FifeChan COMPONENTS opengl REQUIRED)
     add_definitions(-DHAVE_OPENGL)
   endif(opengl)
-  if(zip)
-    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_ZIP_SRC})
-    add_definitions(-DHAVE_ZIP)
-  endif(zip)
+
   if(logging)
     add_definitions(-DLOG_ENABLED)
   endif(logging)
