@@ -39,6 +39,7 @@ namespace FIFE {
 
 	ActionAudio::ActionAudio() :
 		m_name(""),
+		m_group(""),
 		m_volume(1.0),
 		m_maxVolume(1.0),
 		m_minVolume(0.0),
@@ -66,6 +67,14 @@ namespace FIFE {
 
 	const std::string& ActionAudio::getSoundFileName() const {
 		return m_name;
+	}
+
+	void ActionAudio::setGroupName(const std::string& name) {
+		m_group = name;
+	}
+
+	const std::string& ActionAudio::getGroupName() const {
+		return m_group;
 	}
 
 	void ActionAudio::setGain(float gain) {

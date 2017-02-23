@@ -50,20 +50,20 @@ namespace FIFE {
 		m_volume(1.0),
 		m_maxDistance(10.0),
 		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
+		m_state(SM_STATE_INACTIV),
 		m_sources(),
 		m_createdSources(0) {
 	}
 
 	SoundManager::~SoundManager() {
-		// free all soundemitters
-		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(), it_end = m_emitterVec.end(); it != it_end;  ++it) {
+		// delete all soundemitters
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end();  ++it) {
 			if ((*it) != NULL) {
 				delete (*it);
 			}
 		}
-
 		m_emitterVec.clear();
-
+		// delete all sources
 		alDeleteSources(m_createdSources, m_sources);
 
 		if (m_device) {
@@ -117,109 +117,11 @@ namespace FIFE {
 			m_freeSources.push(m_sources[i]);
 			m_createdSources++;
 		}
+		m_state = SM_STATE_PLAY;
 	}
 
 	bool SoundManager::isActive() const {
-		return m_device != NULL;
-	}
-
-	void SoundManager::update() {
-		ALfloat vec[3];
-		alGetListenerfv(AL_POSITION, vec);
-		AudioSpaceCoordinate listenerPos = AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
-		double maxDistance = static_cast<double>(m_maxDistance);
-
-		// first try to remove
-		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(), it_end = m_emitterVec.end(); it != it_end;  ++it) {
-			SoundEmitter* emitter = (*it);
-			if (!emitter) {
-				continue;
-			}
-
-			bool active = emitter->isActive();
-			// remove active without clip
-			if (!emitter->getSoundClip() && active) {
-				releaseSource(emitter);
-				continue;
-			}
-
-			bool inRange = true;
-			if (emitter->isPosition()) {
-				AudioSpaceCoordinate emitterPos = emitter->getPosition();
-				double rx = listenerPos.x - emitterPos.x;
-				double ry = listenerPos.y - emitterPos.y;
-				double rz = listenerPos.z - emitterPos.z;
-				inRange = maxDistance >= Mathd::Sqrt(rx*rx + ry*ry + rz*rz);
-			}
-			if (emitter->getSoundClip()) {
-				// remove active not in range
-				if (active && !inRange) {
-					releaseSource(emitter);
-				// remove active with stopped sound
-				} else if (active && emitter->getState() == SD_STOPPED_STATE) {
-					releaseSource(emitter);
-				// emitter that came into range
-				} else if (!active && inRange && emitter->getState() == SD_PLAYING_STATE) {
-					if (emitter->isLooping() || !emitter->isEndTimestamp()) {
-						m_waitingEmitters.push_back(emitter);
-					}
-				}
-			}
-		}
-
-		m_waitingEmitters.sort();
-		m_waitingEmitters.unique();
-		if (!m_freeSources.empty() && !m_waitingEmitters.empty()) {
-			std::list<SoundEmitter*>::iterator it = m_waitingEmitters.begin();
-			while (it != m_waitingEmitters.end()) {
-				if (m_freeSources.empty()) {
-					break;
-				}
-				requestSource(*it);
-				m_waitingEmitters.erase(it++);
-			}
-		}
-		for (std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.begin(); it != m_activeEmitters.end(); ++it) {
-			it->first->update();
-		}
-
-	}
-
-	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const {
-		return m_emitterVec.at(emitterId);
-	}
-
-	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = NULL;
-		for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
-			if (m_emitterVec.at(i) == NULL) {
-				ptr = new SoundEmitter(this, i);
-				m_emitterVec.at(i) = ptr;
-				break;
-			}
-		}
-		if (!ptr) {
-			ptr = new SoundEmitter(this, m_emitterVec.size());
-			m_emitterVec.push_back(ptr);
-		}
-		return ptr;
-	}
-
-	SoundEmitter* SoundManager::createEmitter(const std::string& name) {
-		SoundEmitter* emitter = createEmitter();
-		// instant request to play the sound
-		requestSource(emitter);
-		emitter->setSoundClip(SoundClipManager::instance()->get(name));
-		return emitter;
-	}
-
-	void SoundManager::releaseEmitter(uint32_t emitterId) {
-		SoundEmitter** ptr = &m_emitterVec.at(emitterId);
-		if ((*ptr)->isActive()) {
-			releaseSource(*ptr);
-		}
-		delete *ptr;
-		*ptr = NULL;
+		return m_state != SM_STATE_INACTIV;
 	}
 
 	ALCcontext* SoundManager::getContext() const {
@@ -227,10 +129,11 @@ namespace FIFE {
 	}
 
 	void SoundManager::setVolume(float vol) {
-		if (m_device == NULL) {
-			m_volume = vol;
+		m_volume = vol;
+		m_muteVol = vol;
+		if (isActive()) {
+			alListenerf(AL_GAIN, vol);
 		}
-		alListenerf(AL_GAIN, vol);
 	}
 
 	float SoundManager::getVolume() const {
@@ -238,18 +141,68 @@ namespace FIFE {
 	}
 
 	void SoundManager::mute() {
-		alGetListenerf(AL_GAIN, &m_muteVol);
-		alListenerf(AL_GAIN, 0);
+		if (isActive()) {
+			alGetListenerf(AL_GAIN, &m_muteVol);
+			alListenerf(AL_GAIN, 0);
+		}
 	}
 
 	void SoundManager::unmute() {
-		alListenerf(AL_GAIN, m_muteVol);
+		if (isActive()) {
+			alListenerf(AL_GAIN, m_muteVol);
+		}
+	}
+
+	void SoundManager::play() {
+		m_state = SM_STATE_PLAY;
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+			emitter->play();
+		}
+	}
+
+	void SoundManager::pause() {
+		m_state = SM_STATE_PAUSE;
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+			emitter->pause();
+		}
+	}
+
+	void SoundManager::stop() {
+		m_state = SM_STATE_STOP;
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+			emitter->stop();
+		}
+	}
+
+	void SoundManager::rewind() {
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+			emitter->rewind();
+		}
 	}
 
 	void SoundManager::setDistanceModel(SoundDistanceModelType model) {
 		m_distanceModel = model;
+		if (!isActive()) {
+			return;
+		}
 
-		switch(m_distanceModel) {
+		switch (m_distanceModel) {
 		case SD_DISTANCE_NONE:
 			alDistanceModel(AL_NONE);
 			break;
@@ -281,45 +234,65 @@ namespace FIFE {
 	}
 
 	void SoundManager::setListenerPosition(const AudioSpaceCoordinate& position) {
-		alListener3f(AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
+		if (isActive()) {
+			alListener3f(AL_POSITION, static_cast<ALfloat>(position.x), static_cast<ALfloat>(position.y), static_cast<ALfloat>(position.z));
+		}
 	}
 
 	AudioSpaceCoordinate SoundManager::getListenerPosition() const {
-		ALfloat vec[3];
-		alGetListenerfv(AL_POSITION, vec);
-		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		if (isActive()) {
+			ALfloat vec[3];
+			alGetListenerfv(AL_POSITION, vec);
+			return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		}
+		return AudioSpaceCoordinate();
 	}
 
 	void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation) {
-		ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
-			0.0, 0.0, 1.0};
-		alListenerfv(AL_ORIENTATION, vec);
+		if (isActive()) {
+			ALfloat vec[6] = { static_cast<ALfloat>(orientation.x), static_cast<ALfloat>(orientation.y), static_cast<ALfloat>(orientation.z),
+				0.0, 0.0, 1.0 };
+			alListenerfv(AL_ORIENTATION, vec);
+		}
 	}
 
 	AudioSpaceCoordinate SoundManager::getListenerOrientation() const {
-		ALfloat vec[6];
-		alGetListenerfv(AL_ORIENTATION, vec);
-		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		if (isActive()) {
+			ALfloat vec[6];
+			alGetListenerfv(AL_ORIENTATION, vec);
+			return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		}
+		return AudioSpaceCoordinate();
 	}
 
 	void SoundManager::setListenerVelocity(const AudioSpaceCoordinate& velocity) {
-		alListener3f(AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+		if (isActive()) {
+			alListener3f(AL_VELOCITY, static_cast<ALfloat>(velocity.x), static_cast<ALfloat>(velocity.y), static_cast<ALfloat>(velocity.z));
+		}
 	}
 
 	AudioSpaceCoordinate SoundManager::getListenerVelocity() const {
-		ALfloat vec[3];
-		alGetListenerfv(AL_VELOCITY, vec);
-		return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		if (isActive()) {
+			ALfloat vec[3];
+			alGetListenerfv(AL_VELOCITY, vec);
+			return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
+		}
+		return AudioSpaceCoordinate();
 	}
 
 	void SoundManager::setDopplerFactor(float factor) {
-		if (factor >= 0.0) {
-			alDopplerFactor(factor);
+		if (isActive()) {
+			if (factor >= 0.0) {
+				alDopplerFactor(factor);
+			}
 		}
 	}
 
 	float SoundManager::getDopplerFactor() const {
-		return alGetFloat(AL_DOPPLER_FACTOR);
+		if (isActive()) {
+			return alGetFloat(AL_DOPPLER_FACTOR);
+		}
+		return 0.0;
 	}
 
 	void SoundManager::setListenerMaxDistance(float distance) {
@@ -330,26 +303,113 @@ namespace FIFE {
 		return m_maxDistance;
 	}
 
-	void SoundManager::requestSource(SoundEmitter* emitter) {
-		if (!emitter->isActive() && !m_freeSources.empty()) {
-			std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
-			ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
-			if (ret.second == false) {
-				FL_ERR(_log, LMsg() << "SoundEmitter already have an source handler");
-			}
-			emitter->setSource(m_freeSources.front());
-			m_freeSources.pop();
+	void SoundManager::update() {
+		if (m_state != SM_STATE_PLAY) {
 			return;
 		}
-		m_waitingEmitters.push_back(emitter);
+		AudioSpaceCoordinate listenerPos = getListenerPosition();
+		double maxDistance = static_cast<double>(m_maxDistance);
+
+		// first check emitters
+		for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
+			SoundEmitter* emitter = (*it);
+			if (!emitter) {
+				continue;
+			}
+
+			bool active = emitter->isActive();
+			bool clip = emitter->getSoundClip();
+			// if emitter is in playing state and it's looping or have not reached the end
+			bool plays = (emitter->getState() == SD_PLAYING_STATE) ? (emitter->isLooping() || !emitter->isEndTimestamp()) : false;
+
+			// remove active without clip or stopped
+			if (!clip || !plays) {
+				if (active) {
+					releaseSource(emitter);
+				}
+				continue;
+			}
+
+			bool inRange = true;
+			if (emitter->isPosition()) {
+				AudioSpaceCoordinate emitterPos = emitter->getPosition();
+				double rx = listenerPos.x - emitterPos.x;
+				double ry = listenerPos.y - emitterPos.y;
+				double rz = listenerPos.z - emitterPos.z;
+				inRange = maxDistance >= Mathd::Sqrt(rx*rx + ry*ry + rz*rz);
+			}
+			// remove active not in range
+			if (!inRange) {
+				if (active) {
+					releaseSource(emitter);
+				}
+				continue;
+			}
+			if (!active && !m_freeSources.empty()) {
+				setEmitterSource(emitter);
+			}
+		}
+		// then update active
+		for (std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.begin(); it != m_activeEmitters.end(); ++it) {
+			it->first->update();
+		}
+	}
+
+	SoundEmitter* SoundManager::getEmitter(uint32_t emitterId) const {
+		return m_emitterVec.at(emitterId);
+	}
+
+	SoundEmitter* SoundManager::createEmitter() {
+		SoundEmitter* ptr = NULL;
+		for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
+			if (m_emitterVec.at(i) == NULL) {
+				ptr = new SoundEmitter(this, i);
+				m_emitterVec.at(i) = ptr;
+				break;
+			}
+		}
+		if (!ptr) {
+			ptr = new SoundEmitter(this, m_emitterVec.size());
+			m_emitterVec.push_back(ptr);
+		}
+		return ptr;
+	}
+
+	SoundEmitter* SoundManager::createEmitter(const std::string& name) {
+		SoundEmitter* emitter = createEmitter();
+		emitter->setSoundClip(SoundClipManager::instance()->get(name));
+		return emitter;
+	}
+
+	void SoundManager::releaseEmitter(uint32_t emitterId) {
+		SoundEmitter** ptr = &m_emitterVec.at(emitterId);
+		if ((*ptr)->isActive()) {
+			releaseSource(*ptr);
+		}
+		delete *ptr;
+		*ptr = NULL;
+	}
+
+	void SoundManager::deleteEmitter(SoundEmitter* emitter) {
+		releaseEmitter(emitter->getId());
+	}
+
+	void SoundManager::setEmitterSource(SoundEmitter* emitter) {
+		std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
+		ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
+		if (ret.second == false) {
+			FL_ERR(_log, LMsg() << "SoundEmitter already have an source handler");
+		}
+		emitter->setSource(m_freeSources.front());
+		m_freeSources.pop();
 	}
 
 	void SoundManager::releaseSource(SoundEmitter* emitter) {
 		if (emitter->isActive()) {
 			std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.find(emitter);
 			if (it != m_activeEmitters.end()) {
+				m_freeSources.push(it->second);
 				m_activeEmitters.erase(it);
-				m_freeSources.push(emitter->getSource());
 				emitter->setSource(0);
 			} else {
 				FL_ERR(_log, LMsg() << "SoundEmitter can not release source handler");
@@ -357,20 +417,147 @@ namespace FIFE {
 		}
 	}
 
-	bool SoundManager::isInRange(SoundEmitter* emitter) const {
-		ALfloat vec[3];
-		alGetListenerfv(AL_POSITION, vec);
+	void SoundManager::addToGroup(SoundEmitter* emitter) {
+		if (emitter->getGroup() != "") {
+			m_groups[emitter->getGroup()].push_back(emitter);
+		}
+	}
 
-		AudioSpaceCoordinate listenerPos = AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
-		AudioSpaceCoordinate emitterPos = emitter->getPosition();
+	void SoundManager::removeFromGroup(SoundEmitter* emitter) {
+		std::string group = emitter->getGroup();
+		if (group == "") {
+			return;
+		}
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "SoundEmitter can not removed from unknown group");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		bool found = false;
+		while (emitterIt != groupIt->second.end()) {
+			if ((*emitterIt) == emitter) {
+				groupIt->second.erase(emitterIt++);
+				found = true;
+			} else {
+				++emitterIt;
+			}
+		}
+		if (!found) {
+			FL_ERR(_log, LMsg() << "SoundEmitter could not be found in the given group.");
+			return;
+		}
+	}
 
-		double maxDistance = static_cast<double>(m_maxDistance);
+	void SoundManager::removeGroup(const std::string& group) {
+		if (group == "") {
+			return;
+		}
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "SoundEmitter can not remove unknown group");
+			return;
+		}
+		std::vector<SoundEmitter*> emitters = groupIt->second;
+		for (std::vector<SoundEmitter*>::iterator it = emitters.begin(); it != emitters.end(); ++it) {
+			(*it)->setGroup("");
+		}
+		m_groups.erase(group);
+	}
 
-		double rx = listenerPos.x - emitterPos.x;
-		double ry = listenerPos.y - emitterPos.y;
-		double rz = listenerPos.z - emitterPos.z;
+	void SoundManager::removeAllGroups() {
+		std::vector<std::string> groups;
+		for (std::map<std::string, std::vector<SoundEmitter*>>::iterator it = m_groups.begin(); it != m_groups.end(); ++it) {
+			groups.push_back(it->first);
+		}
+		for (std::vector<std::string>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			removeGroup(*it);
+		}
+		m_groups.clear();
+	}
 
-		return (maxDistance >= Mathd::Sqrt(rx*rx + ry*ry + rz*rz));
+	void SoundManager::play(const std::string& group) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not played");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->play();
+		}
+	}
+
+	void SoundManager::pause(const std::string& group) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not paused");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->pause();
+		}
+	}
+
+	void SoundManager::stop(const std::string& group) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not stopped");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->stop();
+		}
+	}
+
+	void SoundManager::rewind(const std::string& group) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not rewinded");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->rewind();
+		}
+	}
+
+	void SoundManager::setGain(const std::string& group, float gain) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not set gain");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->setGain(gain);
+		}
+	}
+
+	void SoundManager::setMaxGain(const std::string& group, float gain) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not set max gain");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->setMaxGain(gain);
+		}
+	}
+
+	void SoundManager::setMinGain(const std::string& group, float gain) {
+		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		if (groupIt == m_groups.end()) {
+			FL_ERR(_log, LMsg() << "Unknown group can not set min gain");
+			return;
+		}
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		for (; emitterIt != groupIt->second.end(); ++emitterIt) {
+			(*emitterIt)->setMinGain(gain);
+		}
 	}
 
 } //FIFE

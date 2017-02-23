@@ -115,7 +115,6 @@ namespace FIFE {
 	}
 
 	void SoundSource::updateSoundEmitter() {
-		m_emitter->setSoundClip(m_audio->getSoundFileName());
 		m_emitter->setGain(m_audio->getGain());
 		m_emitter->setMaxGain(m_audio->getMaxGain());
 		m_emitter->setMinGain(m_audio->getMinGain());
@@ -130,6 +129,8 @@ namespace FIFE {
 		m_emitter->setLooping(m_audio->isLooping());
 		m_emitter->setPositioning(m_audio->isPositioning());
 		m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
+		m_emitter->setSoundClip(m_audio->getSoundFileName());
+		m_emitter->setGroup(m_audio->getGroupName());
 	}
 
 }

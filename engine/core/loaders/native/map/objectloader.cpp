@@ -456,6 +456,11 @@ namespace FIFE {
 									action->adoptAudio(audio);
 									audio->setSoundFileName(*clip);
 
+									const std::string* group = soundElement->Attribute(std::string("group"));
+									if (group) {
+										audio->setGroupName(*group);
+									}
+
 									float value = 0;
 									int success = soundElement->QueryValueAttribute("volume", &value);
 									if (success == TIXML_SUCCESS)

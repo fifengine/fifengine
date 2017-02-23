@@ -52,6 +52,14 @@ namespace FIFE {
 		 */
 		const std::string& getSoundFileName() const;
 
+		/** Sets the name of the group to which the emitter is added.
+		 */
+		void setGroupName(const std::string& name);
+
+		/** Return the name of the group to which the emitter is added.
+		 */
+		const std::string& getGroupName() const;
+
 		/** Sets the gain of the emitter
 		 *
 		 * @param gain The gain value. 0=silence ... 1.0=normal loudness.
@@ -186,6 +194,7 @@ namespace FIFE {
 	
 	private:
 		std::string m_name;
+		std::string m_group;
 		float m_volume;
 		float m_maxVolume;
 		float m_minVolume;

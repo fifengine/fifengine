@@ -53,6 +53,13 @@ namespace FIFE {
 		SD_DISTANCE_EXPONENT_CLAMPED
 	};
 
+	enum SoundManagerState {
+		SM_STATE_INACTIV,
+		SM_STATE_PLAY,
+		SM_STATE_PAUSE,
+		SM_STATE_STOP
+	};
+
 	class SoundEmitter;
 
 	class SoundManager : public DynamicSingleton<SoundManager> {
@@ -67,35 +74,8 @@ namespace FIFE {
 		void init();
 
 		/** Returns true if audio module is active
-		*/
+		 */
 		bool isActive() const;
-
-		/** Called once a frame and updates the sound objects.
-		 */
-		void update();
-
-		/** Returns a pointer to an emitter-instance given by emitterId
-		 *
-		 * @param emitterId The id of the Emitter
-		 *
-		 */
-		SoundEmitter* getEmitter(uint32_t emitterId) const;
-
-		/** Returns a pointer to an allocated emitter-instance
-		 */
-		SoundEmitter* createEmitter();
-
-		/** Returns a pointer to an allocated emitter-instance
-		 *
-		 * @param name The name of the SoundClip.
-		 */
-		SoundEmitter* createEmitter(const std::string& name);
-
-		/** Release an emitter-instance given by emitter-id
-		 *
-		 * @param emitterId The id of the Emitter.
-		 */
-		void releaseEmitter(uint32_t emitterId);
 
 		/** Returns an openAL context
 		 */
@@ -108,7 +88,7 @@ namespace FIFE {
 		void setVolume(float vol);
 
 		/** Return the Master Volume
-		*/
+		 */
 		float getVolume() const;
 
 		/** Mute
@@ -118,6 +98,22 @@ namespace FIFE {
 		/** Unmutes to volume before mute() was called.
 		 */
 		void unmute();
+
+		/** Plays all SoundEmitters.
+		 */
+		void play();
+
+		/** Pauses all SoundEmitters.
+		 */
+		void pause();
+
+		/** Stops all SoundEmitters.
+		 */
+		void stop();
+
+		/** Rewinds all SoundEmitters.
+		 */
+		void rewind();
 
 		/** Sets the distance model.
 		 */
@@ -168,11 +164,120 @@ namespace FIFE {
 		 */
 		float getListenerMaxDistance() const;
 
-		void requestSource(SoundEmitter* emitter);
+		/** Called once a frame and updates the sound objects.
+		 */
+		void update();
+
+		/** Returns a pointer to an emitter-instance given by emitterId
+		 *
+		 * @param emitterId The id of the Emitter
+		 *
+		 */
+		SoundEmitter* getEmitter(uint32_t emitterId) const;
+
+		/** Returns a pointer to an allocated emitter-instance
+		 */
+		SoundEmitter* createEmitter();
+
+		/** Returns a pointer to an allocated emitter-instance
+		 *
+		 * @param name The name of the SoundClip.
+		 */
+		SoundEmitter* createEmitter(const std::string& name);
+
+		/** Release an emitter-instance given by emitter-id
+		 *
+		 * @param emitterId The id of the Emitter.
+		 */
+		void releaseEmitter(uint32_t emitterId);
+
+		/** Release given emitter
+		 *
+		 * @param emitter The emitter-instance to destroy.
+		 */
+		void deleteEmitter(SoundEmitter* emitter);
+
+		/** Release the source handle
+		 *
+		 * @param emitter The emitter-instance.
+		 */
 		void releaseSource(SoundEmitter* emitter);
 
+		/** Adds the emitter to group.
+		 *  Called from the emitter after a setGroup() call.
+		 *
+		 * @param emitter The emitter-instance.
+		 */
+		void addToGroup(SoundEmitter* emitter);
+		
+		/** Removes the emitter from group.
+		 *  Called from the emitter if new group is different as the old.
+		 *
+		 * @param emitter The emitter-instance.
+		 */
+		void removeFromGroup(SoundEmitter* emitter);
+
+		/** Remove group and resets the group for the affected emitters.
+		 *
+		 * @param group The group name.
+		 */
+		void removeGroup(const std::string& group);
+
+		/** Remove all groups and resets the group of affected emitters.
+		 */
+		void removeAllGroups();
+
+		/** Plays all emitters of the group.
+		 *
+		 * @param group The group name.
+		 */
+		void play(const std::string& group);
+
+		/** Pauses all emitters of the group.
+		 *
+		 * @param group The group name.
+		 */
+		void pause(const std::string& group);
+
+		/** Stops all emitters of the group.
+		 *
+		 * @param group The group name.
+		 */
+		void stop(const std::string& group);
+
+		/** Rewinds all emitters of the group.
+		 *
+		 * @param group The group name.
+		 */
+		void rewind(const std::string& group);
+
+		/** Sets gain for all emitters of the group.
+		 *
+		 * @param group The group name.
+		 * @param gain The gain value.
+		 */
+		void setGain(const std::string& group, float gain);
+
+		/** Sets max gain for all emitters of the group.
+		 *
+		 * @param group The group name.
+		 * @param gain The max gain value.
+		 */
+		void setMaxGain(const std::string& group, float gain);
+
+		/** Sets min gain for all emitters of the group.
+		 *
+		 * @param group The group name.
+		 * @param gain The min gain value.
+		 */
+		void setMinGain(const std::string& group, float gain);
+
 	private:
-		bool isInRange(SoundEmitter* emitter) const;
+		/** Sets the source handle
+		 *
+		 * @param emitter The Emitter pointer.
+		 */
+		void setEmitterSource(SoundEmitter* emitter);
 
 		//! emitter-vector, holds all emitters
 		std::vector<SoundEmitter*> m_emitterVec;
@@ -188,6 +293,8 @@ namespace FIFE {
 		float m_maxDistance;
 		//! Selected distance model
 		SoundDistanceModelType m_distanceModel;
+		//! State of the SoundManager
+		SoundManagerState m_state;
 
 		//! Holds handles for sources
 		ALuint m_sources[MAX_SOURCES];
@@ -197,11 +304,9 @@ namespace FIFE {
 		std::queue<ALuint> m_freeSources;
 		//! Map that holds active Emitters together with the used source handle
 		std::map<SoundEmitter*, ALuint> m_activeEmitters;
-		//! List that holds Emitters in the queue
-		std::list<SoundEmitter*> m_waitingEmitters;
 
 		//! A map that holds the groups together with the appended emitters.
-		std::map<std::string, std::vector<SoundEmitter*> > m_groups;
+		std::map<std::string, std::vector<SoundEmitter*>> m_groups;
 	};
 }
 #endif

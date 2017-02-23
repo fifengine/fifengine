@@ -48,6 +48,7 @@ namespace FIFE {
 		m_soundClipId(0),
 		m_streamId(0),
 		m_emitterId(uid),
+		m_group(""),
 		m_active(false) {
 
 		if (!m_manager->isActive()) {
@@ -187,33 +188,36 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::reset(bool defaultall) {
+		stop();
+		if (isActive()) {
+			alSourceStop(m_source);
+			alSourcei(m_source, AL_BUFFER, AL_NONE);
+			alGetError();
+			m_manager->releaseSource(this);
+		}
+
 		if (m_soundClip) {
-			stop();
+			if (m_soundClip->isStream()) {
+				m_soundClip->quitStreaming(m_streamId);
+				m_streamId = 0;
+			}
+			m_soundClipId = 0;
+			// release the soundClip
+			//SoundClipManager::instance()->free(m_soundClipId);
+			m_soundClip.reset();
+		}
+
+		// default source properties
+		if (defaultall) {
+			resetInternData();
 			if (isActive()) {
-				alSourceStop(m_source);
-				alSourcei(m_source, AL_BUFFER, AL_NONE);
-				alGetError();
-				m_manager->releaseSource(this);
+				syncData();
 			}
+		}
 
-			if (m_soundClip) {
-				if (m_soundClip->isStream()) {
-					m_soundClip->quitStreaming(m_streamId);
-					m_streamId = 0;
-				}
-				m_soundClipId = 0;
-				// release the soundClip
-				//SoundClipManager::instance()->free(m_soundClipId);
-				m_soundClip.reset();
-			}
-
-			// default source properties
-			if (defaultall) {
-				resetInternData();
-				if (isActive()) {
-					syncData();
-				}
-			}
+		if (m_group != "") {
+			m_manager->removeFromGroup(this);
+			m_group = "";
 		}
 	}
 
@@ -226,9 +230,7 @@ namespace FIFE {
 		if (m_soundClipId == soundClip->getHandle()) {
 			return;
 		}
-		if (!isActive()) {
-			m_manager->requestSource(this);
-		}
+
 		detachSoundClip();
 		m_soundClipId = soundClip->getHandle();
 		m_soundClip = soundClip;
@@ -310,8 +312,12 @@ namespace FIFE {
 		if (m_soundClip && isActive()) {
 			alSourcePlay(m_source);
 		}
-		m_internData.soundState = SD_PLAYING_STATE;
 		m_internData.playTimestamp = TimeManager::instance()->getTime();
+		// resume
+		if (m_internData.soundState == SD_PAUSED_STATE) {
+			m_internData.playTimestamp -= static_cast<uint32_t>(getCursor(SD_TIME_POS) * 1000);
+		}
+		m_internData.soundState = SD_PLAYING_STATE;
 	}
 
 	void SoundEmitter::stop() {
@@ -332,7 +338,7 @@ namespace FIFE {
 
 	void SoundEmitter::rewind() {
 		m_internData.playTimestamp = 0;
-		if (!isActive()) {
+		if (!isActive() || !m_soundClip) {
 			return;
 		}
 		if (m_soundClip->isStream()) {
@@ -606,6 +612,22 @@ namespace FIFE {
 		}
 	}
 
+	void SoundEmitter::setGroup(const std::string& group) {
+		if (group != m_group) {
+			if (m_group != "") {
+				m_manager->removeFromGroup(this);
+			}
+			m_group = group;
+			if (m_group != "") {
+				m_manager->addToGroup(this);
+			}
+		}
+	}
+
+	const std::string& SoundEmitter::getGroup() {
+		return m_group;
+	}
+
 	void SoundEmitter::syncData() {
 		setGain(m_internData.volume);
 		setMaxGain(m_internData.maxVolume);
@@ -620,7 +642,6 @@ namespace FIFE {
 		setPosition(m_internData.position);
 		setDirection(m_internData.direction);
 		setVelocity(m_internData.velocity);
-		// sound state and timestamp?
 		setLooping(m_internData.loop);
 		setPositioning(m_internData.relative);
 		if (m_internData.soundState == SD_PLAYING_STATE) {

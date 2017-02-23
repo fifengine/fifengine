@@ -133,6 +133,9 @@ namespace FIFE {
 		 */
 		SoundClipPtr getSoundClip();
 
+		/** Sets the sound clip to be used by this emitter.
+		 * @param name The name of the sound to be used.
+		 */
 		void setSoundClip(const std::string& name);
 
 		/** Reset the emitter, free all internal buffers
@@ -307,6 +310,14 @@ namespace FIFE {
 		 */
 		SoundStateType getState();
 
+		/** Sets the group name.
+		 */
+		void setGroup(const std::string& group);
+
+		/** Return the group name.
+		 */
+		const std::string& getGroup();
+
 		/** Adds new SoundEmitter listener
 		 * @param listener to add
 		 */
@@ -374,6 +385,8 @@ namespace FIFE {
 		//! vector that indicates updates in internData
 		//std::vector<bool> m_updateData;
 
+		//! the group name
+		std::string m_group;
 		//! is active
 		bool m_active;
 		//! listeners for sound related events
