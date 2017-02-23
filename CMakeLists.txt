@@ -920,8 +920,11 @@ if(build-library)
     target_link_libraries(fife ${CEGUI_LIBRARIES})
     target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
-
+  
+  # include support for GNU / multiarch path names
+  # https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
   include(GNUInstallDirs)
+  
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
   
