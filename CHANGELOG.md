@@ -1,5 +1,11 @@
 # ChangeLog
 
+## Unreleased
+
+### Misc
+* remove build options `rend-camzones`, `rend-grid`, `use-githash`
+* version infos incl. git hash are inserted into version.h from CMakeLists, PR #997
+
 ## [0.4.1] - 2017-02-07
 
 ### Engine
