@@ -183,4 +183,3 @@ namespace FIFE {
 		m_direction = direction % 360;
 	}
 }
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
