@@ -30,6 +30,7 @@ if(GIT_TOOL AND GIT_DIR)
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   set(FIFE_GIT_HASH ${GIT_COMMIT_HASH})
+  unset(GIT_DIR)
 else()
   # not a git repo, possibly a source download
   set(FIFE_GIT_HASH "")
@@ -149,6 +150,10 @@ endif(logging)
 if(opengl)  
   add_definitions(-DHAVE_OPENGL)
 endif(opengl)
+
+if(cegui)
+  add_definitions(-DHAVE_CEGUI)
+endif(cegui)
 
 #------------------------------------------------------------------------------
 #                                 Display Status                                         
@@ -684,16 +689,22 @@ source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(TinyXML REQUIRED)
+find_package(OGG REQUIRED)
+find_package(VORBIS REQUIRED)
+
+if(opengl)
+  find_package(OpenGL REQUIRED)
+  include_directories(${OPENGL_INCLUDE_DIR})  
+  find_package(GLEW REQUIRED)
+  include_directories(${GLEW_INCLUDE_DIR})  
+endif(opengl)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
-  add_definitions(-DHAVE_CEGUI)
 
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
@@ -708,9 +719,6 @@ if(cegui)
   message("Using CEGUI v0.8+")
   set(CEGUI TRUE)
   set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
-
-  find_package(GLEW REQUIRED)
-  include_directories(${GLEW_INCLUDE_DIRS})
 endif(cegui)
 
 if(build-python)
@@ -730,13 +738,11 @@ endif(build-python)
 if(fifechan)
 
   find_package(FifeChan COMPONENTS sdl REQUIRED)
-
   if(opengl)
     find_package(FifeChan COMPONENTS opengl REQUIRED)
   endif(opengl)
  
-  if(build-python)
-    
+  if(build-python)    
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
@@ -755,11 +761,9 @@ if(fifechan)
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
       "${PROJECT_BINARY_DIR}/fifechan.i"
     )
-    
   endif(build-python)
 
   include_directories(${FIFECHAN_INCLUDE_DIR})
-
   link_directories(${FIFECHAN_LIBRARIES})
 
 endif(fifechan)
@@ -795,40 +799,15 @@ if(build-python)
 
 endif(build-python)
 
-# Find ogg dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_OGG QUIET ogg)
-find_path(OGG_INCLUDE_DIRS NAMES ogg/ogg.h HINTS ${PC_OGG_INCLUDE_DIRS} PATH_SUFFIXES ogg)
-find_library(OGG_LIBRARIES NAMES ogg HINTS ${PC_OGG_LIBRARY_DIRS})
-
-# Find vorbis dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_VORBISFILE QUIET vorbisfile)
-find_path(VORBIS_INCLUDE_DIRS NAMES vorbis/vorbisfile.h HINTS ${PC_VORBIS_INCLUDE_DIRS} PATH_SUFFIXES vorbis)
-find_library(VORBIS_LIBRARY NAMES vorbis HINTS ${PC_VORBIS_LIBRARY_DIRS})
-
-# Find vorbisfile dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_VORBISFILE QUIET vorbisfile)
-find_library(VORBISFILE_LIBRARY NAMES vorbisfile HINTS ${PC_VORBIS_LIBRARY_DIRS})
-
-include(FindPackageHandleStandardArgs)
-
-find_package_handle_standard_args(OGG DEFAULT_MSG OGG_INCLUDE_DIRS OGG_LIBRARIES)
-find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VORBIS_LIBRARY)
-find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VORBISFILE_LIBRARY)
-
 include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_IMAGE_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
-include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIRS})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
-include_directories(${OPENGL_INCLUDE_DIR})
 
 add_definitions(${PNG_DEFINITIONS})
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -855,14 +834,17 @@ if(build-python)
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
                            ${OPENAL_LIBRARY})
-  swig_link_libraries(fife ${GLEW_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
   swig_link_libraries(fife ${VORBIS_LIBRARY})
   swig_link_libraries(fife ${OGG_LIBRARIES})
   swig_link_libraries(fife ${TinyXML_LIBRARIES})
-  swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
+
+  if(opengl)
+    swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
+    swig_link_libraries(fife ${GLEW_LIBRARY})    
+  endif(opengl)
 
   if(fifechan)
     set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
@@ -915,14 +897,16 @@ if(build-library)
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
                              ${OPENAL_LIBRARY})
-  target_link_libraries(fife ${GLEW_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
   target_link_libraries(fife ${VORBIS_LIBRARY})
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
-  target_link_libraries(fife ${OPENGL_gl_LIBRARY})
+  if(opengl)
+    target_link_libraries(fife ${OPENGL_gl_LIBRARY})
+    target_link_libraries(fife ${GLEW_LIBRARY})   
+  endif(opengl)  
   if(fifechan)
     target_link_libraries(fife ${FIFECHAN_LIBRARIES})
   endif(fifechan)
