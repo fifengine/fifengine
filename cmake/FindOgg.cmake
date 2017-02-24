@@ -1,21 +1,28 @@
-cmake_minimum_required(VERSION 2.8)
+# - Try to find OGG
+# and define
+#
+#  OGG_FOUND        - System has OGG
+#  OGG_INCLUDE_DIRS - The include directories
+#  OGG_LIBRARY      - The libraries
 
-find_path(OGG_INCLUDE_DIR ogg/ogg.h)
+# try to find package and provide a hint
+find_package(PkgConfig QUIET)
+pkg_check_modules(PC_OGG QUIET ogg)
 
-set(OGG_NAMES ${OGG_NAMES} ogg libogg)
+find_path(OGG_INCLUDE_DIR 
+    NAMES ogg/ogg.h 
+    HINTS ${PC_OGG_INCLUDE_DIRS} 
+    PATH_SUFFIXES ogg
+)
 
-find_library(OGG_LIBRARY NAMES ${OGG_NAMES} PATH)
+find_library(OGG_LIBRARY 
+    NAMES ogg libogg
+    HINTS ${PC_OGG_LIBRARY_DIRS}
+    PATH ${OGG_INCLUDE_DIR}/../lib lib
+)
 
-if(OGG_INCLUDE_DIR AND OGG_LIBRARY)
-    set(OGG_FOUND TRUE)
-endif()
+include(FindPackageHandleStandardArgs)
 
-if(OGG_FOUND)
-    if(NOT OGG_FIND_QUIETLY)
-        message(STATUS "Found Ogg: ${OGG_LIBRARY}")
-    endif()
-else(OGG_FOUND)
-    if(OGG_FIND_REQUIRED)
-        message(FATAL_ERROR "Could not find ogg")
-    endif()
-endif()
+find_package_handle_standard_args(OGG DEFAULT_MSG OGG_LIBRARY OGG_INCLUDE_DIR)
+
+mark_as_advanced(OGG_LIBRARY OGG_INCLUDE_DIR)
