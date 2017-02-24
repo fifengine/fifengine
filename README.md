@@ -18,6 +18,12 @@ The engine is extendable and enables you to add any feature you can imagine to y
 |:----------------------:|:----------------:|:-------:|:----------:|
 | [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.fifengine.net/doxygen) | [Python API](http://www.fifengine.net/epydoc) |
 
+Fifengine is also already available from the following package repositories:
+
+<a href="https://repology.org/metapackage/fifengine"><img src="https://repology.org/badge/vertical-allrepos/fifengine.svg" alt="Packaging status" align="right"></a>
+
+* [SlackBuilds](https://slackbuilds.org/repository/14.2/games/fifengine/)
+
 # Table of contents
 1. [Features]         (#1-features)
 2. [License]          (#2-license)
