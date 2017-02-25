@@ -142,9 +142,13 @@ namespace FIFE {
 				throw SDLException(SDL_GetError());
 			}
 		}
+
+		// setup OpenGL
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 		// defines buffer sizes
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -228,6 +232,13 @@ namespace FIFE {
 		m_target = m_screen;
 		if (!m_screen) {
 			throw SDLException(SDL_GetError());
+		}
+
+		// initialize GLEW
+		glewExperimental = GL_TRUE;
+		GLenum glewError = glewInit();
+		if (glewError != GLEW_OK) {
+			FL_LOG(_log, LMsg("RenderBackendOpenGL") << "Error initializing GLEW!" << glewGetErrorString(glewError));
 		}
 
 		FL_LOG(_log, LMsg("RenderBackendOpenGL")
