@@ -45,7 +45,7 @@
 #if defined( __APPLE_CC__ )
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-#include <OpenAL/alext.h>
+#include <OpenAL/MacOSX_OALExtensions.h>
 #endif
 
 // 3rd party library includes
