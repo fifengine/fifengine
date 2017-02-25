@@ -436,7 +436,7 @@ namespace FIFE {
 		if (group == "") {
 			return;
 		}
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "SoundEmitter can not removed from unknown group");
 			return;
@@ -461,7 +461,7 @@ namespace FIFE {
 		if (group == "") {
 			return;
 		}
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "SoundEmitter can not remove unknown group");
 			return;
@@ -475,7 +475,7 @@ namespace FIFE {
 
 	void SoundManager::removeAllGroups() {
 		std::vector<std::string> groups;
-		for (std::map<std::string, std::vector<SoundEmitter*>>::iterator it = m_groups.begin(); it != m_groups.end(); ++it) {
+		for (EmitterGroupsIterator it = m_groups.begin(); it != m_groups.end(); ++it) {
 			groups.push_back(it->first);
 		}
 		for (std::vector<std::string>::iterator it = groups.begin(); it != groups.end(); ++it) {
@@ -485,7 +485,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::play(const std::string& group) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not played");
 			return;
@@ -497,7 +497,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::pause(const std::string& group) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not paused");
 			return;
@@ -509,7 +509,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::stop(const std::string& group) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not stopped");
 			return;
@@ -521,7 +521,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::rewind(const std::string& group) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not rewinded");
 			return;
@@ -533,7 +533,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::setGain(const std::string& group, float gain) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not set gain");
 			return;
@@ -545,7 +545,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::setMaxGain(const std::string& group, float gain) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not set max gain");
 			return;
@@ -557,7 +557,7 @@ namespace FIFE {
 	}
 
 	void SoundManager::setMinGain(const std::string& group, float gain) {
-		std::map<std::string, std::vector<SoundEmitter*>>::iterator groupIt = m_groups.find(group);
+		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
 			FL_ERR(_log, LMsg() << "Unknown group can not set min gain");
 			return;
