@@ -115,6 +115,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(WIN32)
 
   if(MSVC)
+    # build on all cores
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
     # ensure we use minimal "windows.h" lib without the crazy min max macros    
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
