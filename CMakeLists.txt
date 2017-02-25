@@ -2,7 +2,7 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 3.2.2)
 
 project(fifengine C CXX)
 
@@ -86,19 +86,9 @@ endif(build-library)
 # Do not allow an in-source-tree build, request an out-of-source-tree build.
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "#Please build outside of the source tree!\n                        
-                       Make a separate folder for building and run CMake there:\n
-                       mkdir _build; cd _build; cmake ..\n
+                       Make an out-of-source-tree folder for building and run CMake there:\n
+                       mkdir ../_build; cd ../_build; cmake ../fifengine\n
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
-endif()
-
-# Do not allow the build directory to be in the source directory for older versions of cmake.
-if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
-  message(FATAL_ERROR "# Please chose a different build directory.\n
-    In cmake versions < 3 SWIG does not work well when the build directory is
-    placed inside the source directory.
-    Use something like this:\n
-        mkdir ../_build; cd ../_build; cmake ../fifengine\n
-    You can remove your current build folder.")
 endif()
 
 # Disable in-source builds and modifications to the source tree.
