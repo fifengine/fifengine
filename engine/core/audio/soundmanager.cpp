@@ -34,8 +34,9 @@
 #include "util/base/exception.h"
 
 #include "soundclipmanager.h"
-#include "soundmanager.h"
+#include "soundeffectmanager.h"
 #include "soundemitter.h"
+#include "soundmanager.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -52,7 +53,8 @@ namespace FIFE {
 		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
 		m_state(SM_STATE_INACTIV),
 		m_sources(),
-		m_createdSources(0) {
+		m_createdSources(0),
+		m_effectManager(NULL) {
 	}
 
 	SoundManager::~SoundManager() {
@@ -65,6 +67,8 @@ namespace FIFE {
 		m_emitterVec.clear();
 		// delete all sources
 		alDeleteSources(m_createdSources, m_sources);
+		// delete effect manager
+		delete m_effectManager;
 
 		if (m_device) {
 			alcDestroyContext(m_context);
@@ -99,6 +103,9 @@ namespace FIFE {
 			m_device = NULL;
 			return;
 		}
+		// create and initialize the effect manager
+		m_effectManager = new SoundEffectManager();
+		m_effectManager->init(m_device);
 
 		// set listener position
 		alListener3f(AL_POSITION, 0.0, 0.0, 0.0);
@@ -108,6 +115,7 @@ namespace FIFE {
 		// set volume
 		alListenerf(AL_GAIN, m_volume);
 
+		// create max sources
 		for (uint16_t i = 0; i < MAX_SOURCES; i++) {
 			alGenSources(1, &m_sources[i]);
 			if (alGetError() != AL_NO_ERROR) {

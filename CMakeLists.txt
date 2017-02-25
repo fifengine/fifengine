@@ -180,6 +180,7 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundeffectmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.cpp
@@ -347,6 +348,7 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundconfig.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/sounddecoder.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundeffectmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.h

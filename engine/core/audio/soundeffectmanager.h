@@ -19,10 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_AUDIO_CONFIG_H
-#define FIFE_AUDIO_CONFIG_H
+#ifndef FIFE_SOUNDEFFECTMANAGER_H
+#define FIFE_SOUNDEFFECTMANAGER_H
 
 // Standard C++ library includes
+#include <queue>
+
+// Platform specific includes
 
 // 3rd party library includes
 
@@ -31,25 +34,45 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+#include "fife_openal.h"
+#include "soundconfig.h"
+
 namespace FIFE {
 
-	/* The max. length of a decoded audio data
-	 * for which streaming is not used. (bytes)
-	 * Has to be <= than BUFFERLEN * 3.
-	 */
-	const uint32_t MAX_KEEP_IN_MEM = 3145728;
 
-	// The number of buffers used for streaming.
-	const int16_t BUFFER_NUM = 3;
+	class SoundEffectManager {
+	public:
 
-	// The length of one buffer. (bytes)
-	const uint32_t BUFFER_LEN = 1048576;
+		SoundEffectManager();
 
-	// The max. number of OpenAL sources.
-	const uint16_t MAX_SOURCES = 64;
+		~SoundEffectManager();
 
-	// The max. number of OpenAL effect slots.
-	const uint16_t MAX_EFFECT_SLOTS = 128;
+		/** Initializes the effect system
+		 */
+		void init(ALCdevice* device);
+
+		/** Returns true if sound effect module is active
+		 */
+		bool isActive() const;
+
+	private:
+		//! OpenAL device
+		ALCdevice* m_device;
+
+		//! If sound effect module is active
+		bool m_active;
+
+		//! Holds handles for effects
+		ALuint m_effectSlots[MAX_EFFECT_SLOTS];
+		//! Maximal created effect slots, can be different to MAX_EFFECT_SLOTS
+		uint16_t m_createdSlots;
+		//! Holds free handles for effect slots
+		std::queue<ALuint> m_freeSlots;
+		//! Maximal effect slots per Source
+		ALint m_maxSlots;
+
+		ALuint uiEffectSlot;
+		ALuint uiEffect;
+	};
 }
-
 #endif

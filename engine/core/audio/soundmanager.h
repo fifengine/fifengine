@@ -60,6 +60,7 @@ namespace FIFE {
 		SM_STATE_STOP
 	};
 
+	class SoundEffectManager;
 	class SoundEmitter;
 
 	class SoundManager : public DynamicSingleton<SoundManager> {
@@ -305,8 +306,10 @@ namespace FIFE {
 		//! Map that holds active Emitters together with the used source handle
 		std::map<SoundEmitter*, ALuint> m_activeEmitters;
 
+		SoundEffectManager* m_effectManager;
+
 		//! A map that holds the groups together with the appended emitters.
-		std::map<std::string, std::vector<SoundEmitter*>> m_groups;
+		std::map<std::string, std::vector<SoundEmitter*> > m_groups;
 	};
 }
 #endif

@@ -23,18 +23,20 @@
 #define FIFE_FIFE_OPENAL_H
 
 // Standard C++ library includes
-
+#define AL_ALEXT_PROTOTYPES
 // Platform specific includes
 // Linux
 #if defined( __unix__ )
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <AL/alext.h>
 #endif
 
 // Win32
 #if defined( WIN32 )
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
+#include <OpenAL/alext.h>
 #endif
 
 // Macintosh
