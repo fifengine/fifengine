@@ -43,9 +43,9 @@
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include <al.h>
-#include <alc.h>
-#include <MacOSX_OALExtensions.h>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
 #endif
 
 // 3rd party library includes
