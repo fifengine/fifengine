@@ -22,8 +22,10 @@
 #ifndef FIFE_FIFE_OPENAL_H
 #define FIFE_FIFE_OPENAL_H
 
-// Standard C++ library includes
 #define AL_ALEXT_PROTOTYPES
+
+// Standard C++ library includes
+
 // Platform specific includes
 // Linux
 #if defined( __unix__ )
@@ -43,6 +45,7 @@
 #if defined( __APPLE_CC__ )
 #include <al.h>
 #include <alc.h>
+#include <MacOSX_OALExtensions.h>
 #endif
 
 // 3rd party library includes
