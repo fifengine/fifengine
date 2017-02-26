@@ -42,7 +42,7 @@ else()
   set(FIFE_VERSION ${FIFE_VERSION_SHORT})
 endif()
 
-message("Updating version.h with version information and git meta data.")
+message("== Updating version.h with version information and git meta data.")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
@@ -84,7 +84,7 @@ if(build-library)
 endif(build-library)
 
 # Do not allow an in-source-tree build, request an out-of-source-tree build.
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "#Please build outside of the source tree!\n                        
                        Make an out-of-source-tree folder for building and run CMake there:\n
                        mkdir ../_build; cd ../_build; cmake ../fifengine\n
@@ -204,7 +204,7 @@ include_directories("${PROJECT_SOURCE_DIR}/engine/core")
 include_directories("${PROJECT_SOURCE_DIR}")
 
 # Core
-set (FIFE_CORE_SRC
+set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
@@ -313,13 +313,13 @@ set (FIFE_CORE_SRC
 )
 
 # CEGUI v0.8.0+
-set (FIFE_CEGUI_SRC
+set(FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.cpp
 )
 
 # FIFECHAN
-set (FIFE_FCHAN_SRC
+set(FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_image.cpp
@@ -338,7 +338,7 @@ set (FIFE_FCHAN_SRC
 )
 
 # LIBROCKET
-set (FIFE_LROCKET_SRC
+set(FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
@@ -358,7 +358,7 @@ source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 #------------------------------------------------------------------------------
 
 # Core
-set (FIFE_CORE_HDR
+set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
@@ -527,13 +527,13 @@ set (FIFE_CORE_HDR
 )
 
 # CEGUI
-set (FIFE_CEGUI_HDR
+set(FIFE_CEGUI_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.h
 )
 
 # Fifechan
-set (FIFE_FCHAN_HDR
+set(FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_image.h
@@ -552,7 +552,7 @@ set (FIFE_FCHAN_HDR
 )
 
 # Librocket
-set (FIFE_LROCKET_HDR
+set(FIFE_LROCKET_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
@@ -568,11 +568,11 @@ source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
 source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
 
 #------------------------------------------------------------------------------
-#                                 SWIG files                                         
+#                                 SWIG Files                                         
 #------------------------------------------------------------------------------
 
 # Core
-set (FIFE_CORE_SWIG
+set(FIFE_CORE_SWIG
   version.i
   audio/soundclip.i
   audio/soundclipmanager.i
@@ -639,17 +639,17 @@ set (FIFE_CORE_SWIG
 )
 
 # CEGUI
-set (FIFE_CEGUI_SWIG
+set(FIFE_CEGUI_SWIG
   gui/cegui/ceguimanager.i
 )
 
 # FIFECHAN
-set (FIFE_FCHAN_SWIG_LIB
+set(FIFE_FCHAN_SWIG_LIB
   gui/fifechan/lib/fifechanlistener.i
   gui/fifechan/lib/widgets.i
 )
 
-set (FIFE_FCHAN_SWIG
+set(FIFE_FCHAN_SWIG
   gui/fifechan/base/gui_font.i
   gui/fifechan/base/gui_image.i
   gui/fifechan/console/console.i
@@ -658,7 +658,7 @@ set (FIFE_FCHAN_SWIG
 )
 
 # LIBROCKET
-set (FIFE_LROCKET_SWIG
+set(FIFE_LROCKET_SWIG
   gui/librocket/librocketmanager.i
 )
 
@@ -808,13 +808,13 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 if(build-python)
   # Find python library and add include path for python headers
-  find_package (PythonInterp 2 EXACT)
+  find_package(PythonInterp 2 EXACT)
   set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
   set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-  find_package (PythonLibs ${PYTHON_VERSION_STRING} EXACT)
-  include_directories (${PYTHON_INCLUDE_PATH})
+  find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
+  include_directories(${PYTHON_INCLUDE_PATH})
 
-  set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
+  set(CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
