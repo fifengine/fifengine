@@ -923,14 +923,37 @@ if(build-python)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
-  install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES       ${PROJECT_BINARY_DIR}/fife.py                       DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  # install pythonized fife
+  install(TARGETS     _fife															DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${PROJECT_BINARY_DIR}/fife.py									DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py			DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  
+  # copy all files/folders from the extension folder
+  # but exclude extension folders of the optional dependencies: cegui, librocket, pychan
+  install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/			DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions
+	PATTERN "extensions/cegui"	   EXCLUDE
+	PATTERN "extensions/librocket" EXCLUDE
+	PATTERN "extensions/pychan"    EXCLUDE
+    PATTERN "extensions/*"	
+  )  
+
+  if(cegui) 
+    # install fife's extension for cegui   
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/cegui/		DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/cegui)
+  endif(cegui)
+
+  if(librocket)
+    # install fife's extension for librocket
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/librocket/	DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/librocket)
+  endif(librocket)
 
   if(fifechan)
-    install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-    install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+    # install pychan - fife's extension for fifechan 
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/pychan/		DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/pychan)
+
+    # install pythonized fifechan
+    install(TARGETS   _fifechan                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+    install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
   endif(fifechan)
 endif(build-python)
 
