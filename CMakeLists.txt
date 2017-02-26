@@ -154,8 +154,11 @@ message("== Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUIL
 message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
 message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
 message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
 message(STATUS "    Dependencies folder: '${PROJECT_SOURCE_DIR}/../fifengine-dependencies'.")
+message("")
+message(STATUS "    CMake version is '${CMAKE_VERSION}'.")
+message(STATUS "    CXX Compiler ID: '${CMAKE_CXX_COMPILER_ID}'.")
+message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
 message("")
 
 #------------------------------------------------------------------------------
