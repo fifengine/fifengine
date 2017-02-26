@@ -864,7 +864,13 @@ if(build-python)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
-  swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i"  ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
+  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+
   swig_link_libraries(fife ${PYTHON_LIBRARIES})
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
@@ -884,7 +890,14 @@ if(build-python)
 
   if(fifechan)
     set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
-    swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
+
+    # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
+    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+      swig_add_library(fifechan LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
+    else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+      swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
+    endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+
     swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
     swig_link_libraries(fifechan ${FIFECHAN_LIBRARIES})
     swig_link_libraries(fife ${FIFECHAN_LIBRARIES})
