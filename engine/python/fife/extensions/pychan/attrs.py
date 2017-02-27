@@ -135,7 +135,7 @@ class FloatAttr(Attr):
 class ListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = map(str,str(value).split(','))
+			result = list(map(str,str(value).split(',')))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with strings.")
@@ -143,7 +143,7 @@ class ListAttr(Attr):
 class UnicodeListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = map(unicode,str(value).split(','))
+			result = list(map(unicode,str(value).split(',')))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with unicode strings.")
@@ -151,7 +151,7 @@ class UnicodeListAttr(Attr):
 class IntListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = map(int,str(value).split(','))
+			result = list(map(int,str(value).split(',')))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with ints.")
@@ -159,7 +159,7 @@ class IntListAttr(Attr):
 class BoolListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = map(bool,str(value).split(','))
+			result = list(map(bool,str(value).split(',')))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with bools.")
@@ -167,7 +167,7 @@ class BoolListAttr(Attr):
 class FloatListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = map(float,str(value).split(','))
+			result = list(map(float,str(value).split(',')))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with floats.")

@@ -27,7 +27,7 @@ from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from common import get_manager
+from .common import get_manager
 from .widget import Widget
 
 class Icon(Widget):
