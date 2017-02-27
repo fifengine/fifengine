@@ -10,7 +10,7 @@ set(BUILD_SHARED_LIBS OFF)
 #------------------------------------------------------------------------------
 # create_test:
 # is a helper function to create a test executable, 
-# linked it against gtest, then install and run it.
+# link it against fife and gtest, then install and run it.
 #------------------------------------------------------------------------------
 function(create_test test)
 
@@ -35,7 +35,6 @@ endfunction()
 #------------------------------------------------------------------------------
 #               Collect all test files and create test executables
 #------------------------------------------------------------------------------
-
 
 file(GLOB_RECURSE TESTS ${PROJECT_SOURCE_DIR}/tests/core_tests/*.cpp)
 

@@ -951,3 +951,11 @@ if(build-library)
     INSTALL_HEADERS_WITH_DIRECTORY(FIFE_LROCKET_HDR)
   endif(librocket)
 endif(build-library)
+
+#------------------------------------------------------------------------------
+#								Build Tests                                     
+#------------------------------------------------------------------------------
+
+enable_testing()
+
+add_subdirectory(tests/core_tests)
