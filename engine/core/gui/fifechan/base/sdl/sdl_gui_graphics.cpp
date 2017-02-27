@@ -44,6 +44,10 @@ namespace FIFE {
 		setTarget(m_renderbackend->getScreenSurface());
 	}
 
+	void SdlGuiGraphics::updateTarget() {
+		setTarget(m_renderbackend->getScreenSurface());
+	}
+
 	void SdlGuiGraphics::drawImage(const fcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);

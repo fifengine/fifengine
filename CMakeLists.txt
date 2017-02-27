@@ -14,8 +14,35 @@ project (fifengine C CXX)
 set (FIFE_MAJOR_VERSION 0)
 set (FIFE_MINOR_VERSION 4)
 set (FIFE_PATCH_VERSION 1)
+set (FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
-set(FIFE_VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+# check if "git" is installed
+find_program(GIT_TOOL git DOC "Git version control")
+mark_as_advanced(GIT_TOOL)
+
+# get git commit hash, if source folder is a git repository
+find_file(GIT_DIR NAMES .git PATHS ${CMAKE_SOURCE_DIR} NO_DEFAULT_PATH)
+
+if(GIT_TOOL AND GIT_DIR)
+  execute_process(
+    COMMAND git rev-parse --short=7 HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(FIFE_GIT_HASH ${GIT_COMMIT_HASH})
+else()
+  # not a git repo, possibly a source download
+  set(FIFE_GIT_HASH "")
+endif()
+
+if(GIT_COMMIT_HASH)
+  set(FIFE_VERSION ${FIFE_VERSION_SHORT}+build.${FIFE_GIT_HASH})
+else()
+  set(FIFE_VERSION ${FIFE_VERSION_SHORT})
+endif()
+
+message("Updating version.h with version information and git meta data.")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
@@ -30,11 +57,7 @@ option(opengl           "Enable OpenGL support"                                 
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
-option(zip              "Enable ZIP archive support"                            ON)
 option(logging          "Enable logging"                                        ON)
-option(rend-camzone     "Enable camera zone renderer"                           OFF)
-option(rend-grid        "Enable camera grid renderer"                           OFF)
-option(use-githash      "Try to determine the git hash for the current commit"  ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with c++"  OFF)
 
@@ -68,8 +91,7 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
-# Do not allow the build directory to be in the source directory for older
-# versions of cmake.
+# Do not allow the build directory to be in the source directory for older versions of cmake.
 if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
   message(FATAL_ERROR "# Please chose a different build directory.\n
     In cmake versions < 3 SWIG does not work well when the build directory is
@@ -93,6 +115,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(WIN32)
 
   if(MSVC)
+    # build on all cores
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
     # ensure we use minimal "windows.h" lib without the crazy min max macros    
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
@@ -184,7 +208,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.cpp
@@ -241,6 +264,11 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatafile.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatamemsource.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/vfs/raw/rawdatasource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animation.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/animationmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/atlasbook.cpp
@@ -280,15 +308,6 @@ set (FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.cpp
 )
 
-# ZIP
-set (FIFE_ZIP_SRC
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.cpp
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.cpp
-)
-
 # CEGUI v0.8.0+
 set (FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
@@ -326,7 +345,6 @@ set (FIFE_LROCKET_SRC
 #------------------------------------------------------------------------------
 
 source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("sources\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_SRC})
 source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
 source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
 source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
@@ -375,7 +393,6 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/ext/glee/GLee.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
@@ -505,15 +522,6 @@ set (FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/hybrid/hybridguimanager.h
 )
 
-# ZIP
-set (FIFE_ZIP_HDR
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipfilesource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipnode.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipprovider.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/zipsource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/vfs/zip/ziptree.h
-)
-  
 # CEGUI
 set (FIFE_CEGUI_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
@@ -551,7 +559,6 @@ set (FIFE_LROCKET_HDR
 #------------------------------------------------------------------------------
 
 source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("headers\\fife.core.vfs.zip"        FILES ${FIFE_ZIP_HDR})
 source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
 source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
@@ -668,6 +675,7 @@ source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
@@ -676,6 +684,7 @@ find_package(TinyXML REQUIRED)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
+  add_definitions(-DHAVE_CEGUI)
 
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
@@ -742,28 +751,10 @@ if(fifechan)
     find_package(FifeChan COMPONENTS opengl REQUIRED)
     add_definitions(-DHAVE_OPENGL)
   endif(opengl)
-  if(zip)
-    set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_ZIP_SRC})
-    add_definitions(-DHAVE_ZIP)
-  endif(zip)
+
   if(logging)
     add_definitions(-DLOG_ENABLED)
   endif(logging)
-  if(rend-camzone)
-    add_definitions(-DRENDER_CAMZONES)
-  endif(rend-camzone)
-  if(rend-grid)
-    add_definitions(-DRENDER_GRID)
-  endif(rend-grid)
-  if(use-githash)
-    execute_process(
-      COMMAND git rev-parse --short=8 HEAD
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-      OUTPUT_VARIABLE GIT_COMMIT_HASH
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    add_definitions(-DFIFE_GIT_HASH=${GIT_COMMIT_HASH})
-  endif(use-githash)
   include_directories(${FIFECHAN_INCLUDE_DIR})
   link_directories(${FIFECHAN_LIBRARIES})
   if(build-python)
@@ -832,6 +823,7 @@ find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VOR
 include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_IMAGE_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
+include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${OPENAL_INCLUDE_DIR})
@@ -866,6 +858,7 @@ if(build-python)
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
                            ${OPENAL_LIBRARY})
+  swig_link_libraries(fife ${GLEW_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -925,6 +918,7 @@ if(build-library)
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
                              ${OPENAL_LIBRARY})
+  target_link_libraries(fife ${GLEW_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -932,11 +926,21 @@ if(build-library)
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
   target_link_libraries(fife ${OPENGL_gl_LIBRARY})
-  target_link_libraries(fife ${FIFECHAN_LIBRARIES})
-
+  if(fifechan)
+    target_link_libraries(fife ${FIFECHAN_LIBRARIES})
+  endif(fifechan)
+  if(cegui)
+    target_link_libraries(fife ${CEGUI_LIBRARIES})
+    target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+  endif(cegui)
+  
+  # include support for GNU / multiarch path names
+  # https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
   include(GNUInstallDirs)
+  
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES ${PROJECT_SOURCE_DIR}/engine/core/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)
+  
   MACRO(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
   
       FOREACH(HEADER ${${HEADER_LIST}})
@@ -954,7 +958,7 @@ if(build-library)
   if(cegui)
     INSTALL_HEADERS_WITH_DIRECTORY(FIFE_CEGUI_HDR)
   endif(cegui)
-  if(rocket)
+  if(librocket)
     INSTALL_HEADERS_WITH_DIRECTORY(FIFE_LROCKET_HDR)
-  endif(rocket)
+  endif(librocket)
 endif(build-library)

@@ -21,16 +21,17 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 import weakref
 from fife import fife
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr
-from common import get_manager
+from .common import get_manager
 
-from resizablewindow import ResizableWindow
-from dockarea import DockArea
-from containers import Container
+from .resizablewindow import ResizableWindow
+from .dockarea import DockArea
+from .containers import Container
 
 class Panel(ResizableWindow):
 	"""

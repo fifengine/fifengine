@@ -38,10 +38,11 @@ addons:
     - libboost-test-dev
     - libtinyxml-dev
     - libc6
+    - libglew-dev
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml glew; fi
   # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
 

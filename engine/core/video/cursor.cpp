@@ -160,7 +160,7 @@ namespace FIFE {
 
 	void Cursor::draw() {
 		if (m_invalidated) {
-			if (m_cursor_type != CURSOR_ANIMATION || m_cursor_type == CURSOR_IMAGE ) {
+			if (m_cursor_type == CURSOR_NATIVE ) {
 				set(m_cursor_id);
 			}
 

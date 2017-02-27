@@ -258,7 +258,6 @@ namespace FIFE {
 			TriggerController* m_triggerController;
 	};
 
-} //FIFE
+}
 
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

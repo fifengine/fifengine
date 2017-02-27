@@ -34,7 +34,7 @@ from .widget import Widget
 
 from .spacer import Spacer
 from .adjustingcontainer import AdjustingContainer
-from .containers import Container, VBox, HBox, CBox, Window
+from .containers import Container, ABox, VBox, HBox, CBox, Window
 from .flowcontainer import FlowContainer
 from .label import Label
 from .icon import Icon
@@ -62,12 +62,14 @@ from .linegraph import LineGraph
 from .piegraph import PieGraph
 from .pointgraph import PointGraph
 
+
 # Global Widget Class registry
 
 WIDGETS = {
 	# Containers
 	"Container" : Container,
 	"Window" : Window,
+	"ABox" : ABox,
 	"VBox" : VBox,
 	"HBox" : HBox,
 	"CBox" : CBox,

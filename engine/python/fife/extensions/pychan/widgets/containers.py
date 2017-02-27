@@ -403,6 +403,8 @@ class Container(Widget):
 			self.real_widget.setLayout(fifechan.Container.Horizontal)
 		elif layout == 'circular' or layout == 'Circular' or layout == 'CIRCULAR':
 			self.real_widget.setLayout(fifechan.Container.Circular)
+		elif layout == 'autosize' or layout == 'AutoSize' or layout == 'AUTOSIZE':
+			self.real_widget.setLayout(fifechan.Container.AutoSize)
 		else:
 			self.real_widget.setLayout(fifechan.Container.Absolute)
 	def _getLayout(self):
@@ -412,6 +414,8 @@ class Container(Widget):
 			return 'Horizontal'
 		elif self.real_widget.getLayout() == fifechan.Container.Vertical:
 			return 'Vertical'
+		elif self.real_widget.getLayout() == fifechan.Container.AutoSize:
+			return 'AutoSize'
 		return 'Absolute'
 	layout = property(_getLayout, _setLayout)
 
@@ -427,6 +431,121 @@ class Container(Widget):
 		
 		return cloneList
 
+class ABox(Container):
+	"""
+	A automatic box - for containement of child widgets.
+
+	Widgets added to this container widget, need position attribute.
+	The only difference to a default Container is that the size will be automatically set.
+
+	No alignment or layouting is used. The size of the box depends on the child
+	widgets positions and sizes.
+	"""
+	DEFAULT_LAYOUT = 'AutoSize'
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
+
+	def __init__(self, 
+				 parent = None,
+				 name = None,
+				 size = None,
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
+				 hexpand = None,
+				 vexpand = None,
+				 font = None,
+				 base_color = None,
+				 background_color = None,
+				 foreground_color = None,
+				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
+				 border_size = None,
+				 outline_size = None,
+				 position_technique = None,
+				 is_focusable = None,
+				 comment = None,
+				 background_image = None,
+				 opaque = None,
+				 layout = None,
+				 spacing = None,
+				 uniform_size = None,
+				 _real_widget = None):
+				 
+		super(ABox,self).__init__(parent=parent, 
+								  name=name, 
+								  size=size, 
+								  min_size=min_size, 
+								  max_size=max_size,
+								  fixed_size=fixed_size,
+								  margins=margins,
+								  padding=padding,
+								  helptext=helptext, 
+								  position=position,
+								  style=style, 
+								  hexpand=hexpand, 
+								  vexpand=vexpand,
+								  font=font,
+								  base_color=base_color,
+								  background_color=background_color,
+								  foreground_color=foreground_color,
+								  selection_color=selection_color,
+								  border_color=border_color,
+								  outline_color=outline_color,
+								  border_size=border_size,
+								  outline_size=outline_size,
+								  position_technique=position_technique,
+								  is_focusable=is_focusable,
+								  comment=comment,
+								  background_image=background_image,
+								  opaque=opaque,
+								  layout=layout,
+								  spacing=spacing,
+								  uniform_size=uniform_size,
+								  _real_widget=_real_widget)
+	def clone(self, prefix):
+		aboxClone = ABox(None, 
+					self._createNameWithPrefix(prefix),
+					self.size,
+					self.min_size,
+					self.max_size,
+					self.fixed_size,
+					self.margins,
+					self.padding,
+					self.helptext,
+					self.position,
+					self.style,
+					self.hexpand,
+					self.vexpand,
+					self.font,
+					self.base_color,
+					self.background_color,
+					self.foreground_color,
+					self.selection_color,
+					self.border_color,
+					self.outline_color,
+					self.border_size,
+					self.outline_size,
+					self.position_technique,
+					self.is_focusable,
+					self.comment,
+					self.background_image,
+					self.opaque,
+					self.layout,
+					self.spacing,
+					self.uniform_size,
+					None)
+					
+		aboxClone.addChildren(self._cloneChildren(prefix))
+					
+		return aboxClone
+	
 class VBox(Container):
 	"""
 	A vertically aligned box - for containement of child widgets.

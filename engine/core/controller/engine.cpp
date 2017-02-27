@@ -39,9 +39,7 @@
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/directoryprovider.h"
-#ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
-#endif
 #include "eventchannel/eventmanager.h"
 #include "video/imagemanager.h"
 #include "video/animationmanager.h"
@@ -144,7 +142,8 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 
-		m_renderbackend->setScreenMode(mode);
+		// recreate main screen
+		m_renderbackend->createMainScreen(mode,	m_settings.getWindowTitle(), m_settings.getWindowIcon());
 
 		if (m_guimanager) {
 			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
@@ -171,10 +170,10 @@ namespace FIFE {
 		FL_LOG(_log, "Adding root directory to VFS");
 		m_vfs->addSource( new VFSDirectory(m_vfs) );
 		m_vfs->addProvider( new DirectoryProvider() );
-#ifdef HAVE_ZIP
+
 		FL_LOG(_log, "Adding zip provider to VFS");
 		m_vfs->addProvider( new ZipProvider() );
-#endif
+
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
@@ -364,9 +363,14 @@ namespace FIFE {
 		m_eventmanager->processEvents();
 		m_timemanager->update();
 
-        m_renderbackend->clearBackBuffer();
+#ifdef HAVE_CEGUI
+		m_renderbackend->clearBackBuffer();
+#endif
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
+#ifndef HAVE_CEGUI
+			m_renderbackend->clearBackBuffer();
+#endif
 			m_offrenderer->render();
 		} else {
 			m_model->update();
@@ -398,6 +402,4 @@ namespace FIFE {
 			++i;
 		}
 	}
-}//FIFE
-
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+}

@@ -22,8 +22,8 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <cegui-0/CEGUI/CEGUI.h>
-#include <cegui-0/CEGUI/RendererModules/OpenGL/GLRenderer.h>
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/OpenGL/GLRenderer.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -39,6 +39,8 @@ namespace FIFE {
 	CEGuiManager::CEGuiManager() {
 #ifdef HAVE_OPENGL
 		CEGUI::OpenGLRenderer::bootstrapSystem();
+		dynamic_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingleton().getRenderer())->
+			enableExtraStateSettings(true);
 #else
 		throw GuiException("CEGUI can be used only if opengl is enabled!");
 #endif
@@ -61,6 +63,7 @@ namespace FIFE {
 	}
 	
 	void CEGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		CEGUI::System::getSingleton().notifyDisplaySizeChanged(CEGUI::Sizef(width, height));
 	}
 	
 	bool CEGuiManager::onSdlEvent(SDL_Event &event) {

@@ -65,7 +65,8 @@ namespace FIFE {
 		m_defaultfont(0),
 		m_fonts(),
 		m_logic_executed(false),
-		m_enabled_console(true) {
+		m_enabled_console(true),
+		m_backend("") {
 
 		m_fcn_gui->setInput(m_input);
 		fcn::Image::setImageLoader(m_imgloader);
@@ -169,6 +170,11 @@ namespace FIFE {
 	}
 
 	void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		if (m_backend == "SDL") {
+			static_cast<SdlGuiGraphics*>(m_gui_graphics)->updateTarget();
+		} else {
+			static_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
+		}
 		m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
 		invalidateFonts();
 		if (m_console) {
@@ -215,6 +221,7 @@ namespace FIFE {
 			//should never get here
 			assert(0);
 		}
+		m_backend = backend;
 
 		m_fcn_gui->setGraphics(m_gui_graphics);
 		if (m_enabled_console) {

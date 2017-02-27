@@ -119,7 +119,7 @@ namespace FIFE {
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
 		glDeleteTextures(1, &m_maskOverlay);
-		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if(GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glDeleteFramebuffers(1, &m_fbo_id);
 		}
 		SDL_GL_DeleteContext(m_context);
@@ -142,9 +142,12 @@ namespace FIFE {
 				throw SDLException(SDL_GetError());
 			}
 		}
-		// defines buffer sizes
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+
+		// setup OpenGL
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+		// defines buffer sizes
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -179,15 +182,20 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode) {
+		bool recreate = m_window != NULL;
 		uint16_t width = mode.getWidth();
 		uint16_t height = mode.getHeight();
 		uint16_t bitsPerPixel = mode.getBPP();
 		uint32_t flags = mode.getSDLFlags();
 		// in case of recreating
-		if (m_window) {
-			SDL_GL_DeleteContext(m_context);
+		if (recreate) {
 			SDL_DestroyWindow(m_window);
+			m_window = NULL;
 			m_screen = NULL;
+			
+			if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
+				glDeleteFramebuffers(1, &m_fbo_id);
+			}
 		}
 		// create window
 		uint8_t displayIndex = mode.getDisplay();
@@ -210,13 +218,26 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		// create render context
-		m_context = SDL_GL_CreateContext(m_window);
+		// create render context or use the old with new window
+		if (recreate) {
+			if (SDL_GL_MakeCurrent(m_window, m_context) < 0) {
+				throw SDLException(SDL_GetError());
+			}
+		} else {
+			m_context = SDL_GL_CreateContext(m_window);
+		}
 		// set the window surface as main surface, not really needed anymore
 		m_screen = SDL_GetWindowSurface(m_window);
 		m_target = m_screen;
 		if (!m_screen) {
 			throw SDLException(SDL_GetError());
+		}
+
+		// initialize GLEW
+		glewExperimental = GL_TRUE;
+		GLenum glewError = glewInit();
+		if (glewError != GLEW_OK) {
+			FL_LOG(_log, LMsg("RenderBackendOpenGL") << "Error initializing GLEW!" << glewGetErrorString(glewError));
 		}
 
 		FL_LOG(_log, LMsg("RenderBackendOpenGL")
@@ -255,9 +276,12 @@ namespace FIFE {
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearDepth(1.0f);
-		glClearStencil(0);
+		// dont reset
+		if (!recreate) {
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClearDepth(1.0f);
+			glClearStencil(0);
+		}
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -277,12 +301,12 @@ namespace FIFE {
 		glPointSize(1.0);
 		glLineWidth(1.0);
 
-		if(GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if(GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glGenFramebuffers(1, &m_fbo_id);
 		}
 		
 		if (m_textureFilter == TEXTURE_FILTER_ANISOTROPIC) {
-			if (GLEE_EXT_texture_filter_anisotropic) {
+			if (GLEW_EXT_texture_filter_anisotropic) {
 				GLint largest = 0;
 				glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
 				m_maxAnisotropy = static_cast<int32_t>(largest);
@@ -2508,7 +2532,7 @@ namespace FIFE {
 		}
 
 		// can we use fbo?
-		if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo_id);
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
 				GL_TEXTURE_2D, targetid, 0);
@@ -2531,7 +2555,7 @@ namespace FIFE {
 
 		if (m_target_discard) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		} else if (!m_target_discard && (!GLEE_EXT_framebuffer_object || !m_useframebuffer)) {
+		} else if (!m_target_discard && (!GLEW_EXT_framebuffer_object || !m_useframebuffer)) {
 			// if we wanna just add something to render target, we need to first render previous contents
 			addImageToArray(targetid, m_img_target->getArea(),
 				static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
@@ -2544,7 +2568,7 @@ namespace FIFE {
 		// flush down what we batched
 		renderVertexArrays();
 
-		if (GLEE_EXT_framebuffer_object && m_useframebuffer) {
+		if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		} else {
 			bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());

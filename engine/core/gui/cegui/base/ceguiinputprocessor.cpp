@@ -22,7 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <cegui-0/CEGUI/CEGUI.h>
+#include <CEGUI/CEGUI.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
