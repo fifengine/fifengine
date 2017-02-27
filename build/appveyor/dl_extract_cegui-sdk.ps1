@@ -10,7 +10,8 @@ $branch = "v0-8"
 
 $cegui_dlls = ("CEGUIBase-0.dll", "freetype.dll", "pcre.dll", "minizip.dll","zlib.dll", "CEGUIOpenGLRenderer-0.dll", "glew.dll", `
 "CEGUICommonDialogs-0.dll", "CEGUICoreWindowRendererSet.dll", "CEGUISillyImageCodec.dll", "silly.dll", "libpng.dll", "jpeg.dll", "CEGUIExpatParser.dll", "libexpat.dll")
-$global:dll_excludes = $global:dll_excludes + $cegui_dlls
+$global:dll_excludes = $global:dll_excludes + ("zlib.dll", "CEGUICommonDialogs-0.dll", "CEGUICoreWindowRendererSet.dll", "CEGUISillyImageCodec.dll", "silly.dll",`
+"jpeg.dll", "CEGUIExpatParser.dll", "libexpat.dll")
 # get project with last build details
 $project = Invoke-RestMethod -Method Get -Uri "$apiUrl/projects/$accountName/$projectSlug/branch/$branch"
 
