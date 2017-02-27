@@ -20,6 +20,7 @@ set(GOOGLETEST_CMAKE_ARGS
   # configure
   # -DBUILD_GTEST=ON note: GMOCK builds GTEST already
   -DBUILD_GMOCK=ON
+  -DBUILD_SHARED_LIBS=1
 )
 
 ExternalProject_Add(
