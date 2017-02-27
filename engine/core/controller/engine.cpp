@@ -39,9 +39,7 @@
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/directoryprovider.h"
-#ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
-#endif
 #include "eventchannel/eventmanager.h"
 #include "video/imagemanager.h"
 #include "video/animationmanager.h"
@@ -172,10 +170,10 @@ namespace FIFE {
 		FL_LOG(_log, "Adding root directory to VFS");
 		m_vfs->addSource( new VFSDirectory(m_vfs) );
 		m_vfs->addProvider( new DirectoryProvider() );
-#ifdef HAVE_ZIP
+
 		FL_LOG(_log, "Adding zip provider to VFS");
 		m_vfs->addProvider( new ZipProvider() );
-#endif
+
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
@@ -404,6 +402,4 @@ namespace FIFE {
 			++i;
 		}
 	}
-}//FIFE
-
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+}

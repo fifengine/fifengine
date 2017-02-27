@@ -80,5 +80,5 @@ namespace FIFE {
 			Timer m_suppressBlinkTimer;
 	};
 }
+
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
