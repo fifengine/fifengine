@@ -22,32 +22,6 @@
 #ifndef FIFE_FIFE_UNITTEST_H
 #define FIFE_FIFE_UNITTEST_H
 
-// Standard C++ library includes
-
-// Platform specific includes
-// Linux
-#if defined( __unix__ )
-#include <unittest++/UnitTest++.h>
-#include <unittest++/TestReporterStdout.h>
-#endif
-
-// Win32
-#if defined( WIN32 )
-#include <UnitTest++.h>
-#include <TestReporterStdout.h>
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-#include <unittest++/UnitTest++.h>
-#include <unittest++/TestReporterStdout.h>
-#endif
-
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "gtest/gtest.h"
 
 #endif
