@@ -22,9 +22,12 @@ set(GOOGLETEST_CMAKE_ARGS
   -DBUILD_GMOCK=ON
 )
 
-ExternalProject_Add(googletest
+ExternalProject_Add(
+  googletest
   PREFIX           ${DEPENDENCY_EXTRACT_DIR}
-  GIT_REPOSITORY   git@github.com:google/googletest.git
-  GIT_TAG          release-${GOOGLETEST_VERSION}  
+  DOWNLOAD_DIR     ${DEPENDENCY_DOWNLOAD_DIR}
+  DOWNLOAD_NAME    googletest-v${GOOGLETEST_VERSION}.zip
+  URL              https://github.com/google/googletest/archive/release-${GOOGLETEST_VERSION}.tar.gz
+  URL_MD5          16877098823401d1bf2ed7891d7dce36
   CMAKE_ARGS       ${GOOGLETEST_CMAKE_ARGS}
 )
