@@ -102,29 +102,45 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #                                 Compiler Options                                         
 #------------------------------------------------------------------------------
 
-if(WIN32)
+# MSVC compiler options
+if(WIN32 AND MSVC)
+  # build on all cores
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /nologo")
 
-  if(MSVC)
-    # build on all cores
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0 /O2")   
+  else()
+    # warning level: /W<level 0 to 4> or /Wall
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /Od")   
+  endif()
+  
+  # ensure we use minimal "windows.h" lib without the crazy min max macros    
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
 
-    # ensure we use minimal "windows.h" lib without the crazy min max macros    
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
+  # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
+  set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 
-    # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
-    SET(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
-    SET(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
-    SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+  # use static libs - to avoid "LNK1104: cannot open file 'libboost_filesystem-vc140-mt-1_59.lib'"
+  set(Boost_USE_STATIC_LIBS ON)     
+  set(Boost_USE_MULTITHREADED ON)
 
-    # use static libs - to avoid "LNK1104: cannot open file 'libboost_filesystem-vc140-mt-1_59.lib'"
-    set(Boost_USE_STATIC_LIBS ON)     
-    set(Boost_USE_MULTITHREADED ON)
+  # Note: c++11 is implicitly enabled on MSVC >=2013
+endif()
 
-  endif(MSVC)
+# GCC and Clang compiler options
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_CXX_FLAGS}")  
 
-endif(WIN32)
+  if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")    
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2 -Wall -Wextra -Wunused")
+  endif()
+endif()
 
 #------------------------------------------------------------------------------
 #                                 Defines                                        
@@ -351,10 +367,10 @@ set(FIFE_LROCKET_SRC
 #                         Source Groups for Source Files                                    
 #------------------------------------------------------------------------------
 
-source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
-source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
-source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
+source_group("fife.core"                FILES ${FIFE_CORE_SRC})
+source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
+source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
+source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files                                         
@@ -565,10 +581,12 @@ set(FIFE_LROCKET_HDR
 #                      Source Groups for Header Files                                    
 #------------------------------------------------------------------------------
 
-source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
-source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
-source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
+source_group("fife.core"                FILES ${FIFE_CORE_HDR})
+source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
+source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
+source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
+
+add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE_FCHAN_HDR} ${FIFE_LROCKET_HDR})
 
 #------------------------------------------------------------------------------
 #                                 SWIG Files                                         
@@ -669,11 +687,36 @@ set(FIFE_LROCKET_SWIG
 #                      Source Groups for SWIG Files                                    
 #------------------------------------------------------------------------------
 
-source_group("swig\\fife.core"                FILES ${FIFE_CORE_SWIG})
-source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SWIG})
-source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG_LIB})
-source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG})
-source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
+source_group("fife.core"                    FILES ${FIFE_CORE_SWIG})
+source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
+source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
+source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
+source_group("fife.core.gui.librocket"      FILES ${FIFE_LROCKET_SWIG})
+
+# TODO some files for this source_group are not found
+#add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG} ${FIFE_LROCKET_SWIG})
+
+#------------------------------------------------------------------------------
+#                                 SWIG WRAPPER Files                                         
+#------------------------------------------------------------------------------
+
+# SWIG WRAPPERS FOR PYTHON
+SET(FIFE_SWIGWRAPPERS_PYTHON
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/extensions.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/librocket.i.templ
+)
+
+#------------------------------------------------------------------------------
+#                      Source Groups for SWIG WRAPPER Files                                    
+#------------------------------------------------------------------------------
+
+source_group("fife.swigwrappers.python" FILES ${FIFE_SWIGWRAPPERS_PYTHON})
+
+add_custom_target(fife.swig-wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 
 #------------------------------------------------------------------------------
 #                                 Find Packages                                         
