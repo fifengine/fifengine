@@ -63,5 +63,8 @@ ENDFOREACH(TEST)
 #)
 
 file(COPY ${PROJECT_SOURCE_DIR}/tests/data DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
-file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/gtest.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
-file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin/zlib.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests/zlib.dll)
+
+if(WIN32)
+  file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/gtest.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
+  file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin/zlib.dll  DESTINATION ${CMAKE_INSTALL_PREFIX}/tests/zlib.dll)
+endif(WIN32)
