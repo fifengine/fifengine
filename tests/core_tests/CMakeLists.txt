@@ -64,4 +64,4 @@ ENDFOREACH(TEST)
 
 file(COPY ${PROJECT_SOURCE_DIR}/tests/data DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
 file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/gtest.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests)
-file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86/zlib1.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests/zlib.dll)
+file(COPY ${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin/zlib.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/tests/zlib.dll)
