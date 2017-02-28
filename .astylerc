@@ -1,0 +1,58 @@
+#--------------------------------------------------
+# AStyle Configuration
+# 
+# Docs: http://astyle.sourceforge.net/astyle.html
+#--------------------------------------------------
+
+# use Kernighan & Ritchie style
+style=kr
+
+indent=spaces=4
+
+#--------------------------------------------------
+# Bracket Options
+#--------------------------------------------------
+
+#--------------------------------------------------
+# Indentation Options
+#--------------------------------------------------
+
+indent-namespaces
+
+indent-switches
+
+indent-preproc-block
+
+#--------------------------------------------------
+# Padding Options
+#--------------------------------------------------
+
+#--------------------------------------------------
+# Formatting options
+#--------------------------------------------------
+
+align-pointer=type
+
+align-reference=type
+
+# convert tabs into spaces
+convert-tabs
+
+# break line, if the code exceed 120 columns.
+max-code-length=120
+
+break-after-logical
+
+mode=c
+
+lineend=linux
+
+#--------------------------------------------------
+# Processing
+#--------------------------------------------------
+
+# travel through dirs
+recursive
+
+# show only formatted files
+formatted
