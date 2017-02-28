@@ -849,15 +849,15 @@ if(build-python)
     swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
 
-  if(NOT DEFINED PYTHON_SITE_PACKAGES)
-    #
-    # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
-    #
+   #---------------------------------------------------------------------------------
+   # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife" #---------------------------------------------------------------------------------
+ 
+   if(NOT DEFINED PYTHON_SITE_PACKAGES)  
+    # get path to your local python site packages folder 
     execute_process(
       COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
       OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
-
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
     file(TO_CMAKE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
   endif(NOT DEFINED PYTHON_SITE_PACKAGES)
