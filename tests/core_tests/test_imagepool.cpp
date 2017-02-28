@@ -80,22 +80,22 @@ TEST_FIXTURE(environment, test_image_pool)
 	pool.addResourceLoader(new SubImageLoader());
 	pool.addResourceLoader(new ImageLoader(vfs.get()));
 
-	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_NON_LOADED));
 
 	ImageLocation location(IMAGE_FILE);
 	pool.addResourceFromLocation(&location);
-	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(1, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(1, pool.getResourceCount(RES_NON_LOADED));
 
 	location = ImageLocation(SUBIMAGE_FILE);
 	ImageLoader imgprovider(vfs.get());
 	int fullImgInd = pool.addResourceFromLocation(&location);
-	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(2, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(2, pool.getResourceCount(RES_NON_LOADED));
 	Image& img = pool.getImage(fullImgInd);
-	CHECK_EQUAL(1, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(1, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(1, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(1, pool.getResourceCount(RES_NON_LOADED));
 
 	location.setParentSource(&img);
 	int W = img.getWidth();
@@ -104,13 +104,13 @@ TEST_FIXTURE(environment, test_image_pool)
 	int h = H / 12;
 	location.setWidth(w);
 	location.setHeight(h);
-	CHECK(w != 0 && h !=0);
+	ASSERT_TRUE(w != 0 && h !=0);
 
 	int subImgInd = pool.addResourceFromLocation(&location);
-	CHECK(fullImgInd != subImgInd);
+	ASSERT_TRUE(fullImgInd != subImgInd);
 
-	CHECK_EQUAL(1, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(2, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(1, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(2, pool.getResourceCount(RES_NON_LOADED));
 
 	for (int k = 0; k < 3; k++) {
 		for (int j = 0, s = pool.getResourceCount(RES_LOADED | RES_NON_LOADED); j < s; j++) {
@@ -125,19 +125,19 @@ TEST_FIXTURE(environment, test_image_pool)
 				TimeManager::instance()->update();
 			}
 		}
-		CHECK_EQUAL(3, pool.getResourceCount(RES_LOADED));
-		CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
+		ASSERT_EQ(3, pool.getResourceCount(RES_LOADED));
+		ASSERT_EQ(0, pool.getResourceCount(RES_NON_LOADED));
 	}
-	CHECK_EQUAL(3, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(3, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_NON_LOADED));
 
-	CHECK_EQUAL(3, pool.purgeLoadedResources() );
+	ASSERT_EQ(3, pool.purgeLoadedResources() );
 
-	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(3, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(3, pool.getResourceCount(RES_NON_LOADED));
 	pool.reset();
-	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
-	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_LOADED));
+	ASSERT_EQ(0, pool.getResourceCount(RES_NON_LOADED));
 }
 
 // need this here because SDL redefines 

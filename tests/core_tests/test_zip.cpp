@@ -60,36 +60,36 @@ TEST(test_decoder) {
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSDirectory(vfs.get()));
 	
-	CHECK(vfs->exists(COMPRESSED_FILE));
+	ASSERT_TRUE(vfs->exists(COMPRESSED_FILE));
 	vfs->addSource(new ZipSource(vfs.get(), COMPRESSED_FILE));
 	
-	CHECK_THROW(vfs->open("does-not-exist"), NotFound);
+	ASSERT_THROW(vfs->open("does-not-exist"), NotFound);
 	std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
 
-	CHECK(dirlist.size() == 4);
-	CHECK(std::find(dirlist.begin(), dirlist.end(), "maps") != dirlist.end());
-	CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir1") != dirlist.end());
-	CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir2") != dirlist.end());
-	CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir3") != dirlist.end());
+	ASSERT_EQ(dirlist.size(), 4);
+	ASSERT_TRUE(std::find(dirlist.begin(), dirlist.end(), "maps") != dirlist.end());
+	ASSERT_TRUE(std::find(dirlist.begin(), dirlist.end(), "testdir1") != dirlist.end());
+	ASSERT_TRUE(std::find(dirlist.begin(), dirlist.end(), "testdir2") != dirlist.end());
+	ASSERT_TRUE(std::find(dirlist.begin(), dirlist.end(), "testdir3") != dirlist.end());
 
 	std::set<std::string> filelist = vfs->listFiles("ziptest_content");
-	CHECK(filelist.size() == 0);
+	ASSERT_EQ(filelist.size(), 0);
 	filelist = vfs->listFiles("ziptest_content/testdir1");
 
-	CHECK(filelist.size() == 4);
-	CHECK(std::find(filelist.begin(), filelist.end(), "file") != filelist.end());
-	CHECK(std::find(filelist.begin(), filelist.end(), "file-a") != filelist.end());
-	CHECK(std::find(filelist.begin(), filelist.end(), "file-b") != filelist.end());
-	CHECK(std::find(filelist.begin(), filelist.end(), "file-c") != filelist.end());
+	ASSERT_EQ(filelist.size(), 4);
+	ASSERT_TRUE(std::find(filelist.begin(), filelist.end(), "file") != filelist.end());
+	ASSERT_TRUE(std::find(filelist.begin(), filelist.end(), "file-a") != filelist.end());
+	ASSERT_TRUE(std::find(filelist.begin(), filelist.end(), "file-b") != filelist.end());
+	ASSERT_TRUE(std::find(filelist.begin(), filelist.end(), "file-c") != filelist.end());
 
-	CHECK(vfs->listFiles("ziptest_content/testdir3").size() == 0);
-	CHECK(vfs->listDirectories("ziptest_content/testdir1").size() == 0);
+	ASSERT_EQ(vfs->listFiles("ziptest_content/testdir3").size(), 0);
+	ASSERT_EQ(vfs->listDirectories("ziptest_content/testdir1").size(), 0);
 
-	CHECK(vfs->exists(RAW_FILE) && vfs->exists("ziptest_content/maps/test.map"));
+	ASSERT_TRUE(vfs->exists(RAW_FILE) && vfs->exists("ziptest_content/maps/test.map"));
 	RawData* fraw = vfs->open(RAW_FILE);
 	RawData* fcomp = vfs->open("ziptest_content/maps/test.map");
 
-	CHECK(fraw->getDataLength() == fcomp->getDataLength());
+	ASSERT_EQ(fraw->getDataLength(), fcomp->getDataLength());
 	std::cout << "9" << std::endl;
 	unsigned int smaller_len = fraw->getDataLength();
 	if (fcomp->getDataLength() < smaller_len) {
@@ -105,7 +105,7 @@ TEST(test_decoder) {
 	for (unsigned int i = 0; i < smaller_len; i++) {
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
-		CHECK(rawc == compc);
+		ASSERT_EQ(rawc, compc);
 		
 	}
 	std::cout << "scanning finished" << std::endl;
@@ -115,6 +115,8 @@ TEST(test_decoder) {
 	delete fcomp;
 }
 
-int main() {
-	return UnitTest::RunAllTests();
+int main(int argc, char** argv)
+{
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

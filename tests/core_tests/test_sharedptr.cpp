@@ -72,19 +72,19 @@ TEST(case1) {
 	SharedPtr<Data> shptr(new Data(5,10));
 
 	SharedPtr<Data> copy = shptr;
-	CHECK(shptr.useCount() == 2);
+	ASSERT_EQ(shptr.useCount(), 2);
 
 	shptr.reset();
-	CHECK(!shptr);
+	ASSERT_FALSE(shptr);
 
-	CHECK(copy.useCount() == 1);
-	CHECK(copy.unique());
+	ASSERT_EQ(copy.useCount(), 1);
+	ASSERT_TRUE(copy.unique());
 
-	CHECK(copy->x == 5);
-	CHECK(copy->y == 10);
+	ASSERT_EQ(copy->x, 5);
+	ASSERT_EQ(copy->y, 10);
 
 	copy.reset();
-	CHECK(!copy);
+	ASSERT_FALSE(copy);
 }
 
 /**
@@ -98,19 +98,19 @@ TEST(case2) {
 	SharedPtr<Data> shptr(new Data(5,10));
 
 	SharedPtr<Data> copy(shptr);
-	CHECK(shptr.useCount() == 2);
+	ASSERT_EQ(shptr.useCount(), 2);
 
 	shptr.reset();
-	CHECK(!shptr);
+	ASSERT_FALSE(shptr);
 
-	CHECK(copy.useCount() == 1);
-	CHECK(copy.unique());
+	ASSERT_EQ(copy.useCount(), 1);
+	ASSERT_TRUE(copy.unique());
 
-	CHECK(copy->x == 5);
-	CHECK(copy->y == 10);
+	ASSERT_EQ(copy->x, 5);
+	ASSERT_EQ(copy->y, 10);
 
 	copy.reset();
-	CHECK(!copy);
+	ASSERT_FALSE(copy);
 }
 
 /**
@@ -126,21 +126,21 @@ TEST(case3) {
 	shptr->y = 10;
 
 	SharedPtr<Data> copy(shptr);
-	CHECK(shptr.useCount() == 2);
+	ASSERT_EQ(shptr.useCount(), 2);
 
 	shptr.reset();
-	CHECK(!shptr);
+	ASSERT_FALSE(shptr);
 
 	Data d = *copy;
 
-	CHECK(copy.useCount() == 1);
-	CHECK(copy.unique());
+	ASSERT_EQ(copy.useCount(), 1);
+	ASSERT_TRUE(copy.unique());
 
-	CHECK(d.x == 5);
-	CHECK(d.y == 10);
+	ASSERT_EQ(d.x, 5);
+	ASSERT_EQ(d.y == 10);
 
 	copy.reset();
-	CHECK(!copy);
+	ASSERT_FALSE(copy);
 }
 
 /**
@@ -151,12 +151,12 @@ TEST(case3) {
 */
 TEST(case4) {
 	SharedPtr<Data> shptr(new Data());
-	CHECK(shptr.unique());
+	ASSERT_TRUE(shptr.unique());
 
 	SharedPtr<Data> copy(shptr);
 
-	CHECK(!shptr.unique());
-	CHECK(!copy.unique());
+	ASSERT_FALSE(shptr.unique());
+	ASSERT_FALSE(copy.unique());
 }
 
 /**
@@ -166,7 +166,7 @@ TEST(case4) {
 TEST(case5) {
 	SharedPtr<Data> shptr;
 
-	CHECK(shptr == 0);
+	ASSERT_TRUE(shptr == 0);
 }
 
 /**
@@ -176,7 +176,7 @@ TEST(case5) {
 TEST(case6) {
 	SharedPtr<Data> shptr(new SubData(2,4,6));
 
-	CHECK(shptr->total() == 12);
+	ASSERT_EQ(shptr->total(), 12);
 }
 
 /**
@@ -191,8 +191,8 @@ TEST(case7) {
 	SharedPtr<Data> copy(shptr);
 	SharedPtr<Data> shptr2(new Data(4,8));
 
-	CHECK(shptr == copy);
-	CHECK(shptr != shptr2);
+	ASSERT_EQ(shptr, copy);
+	ASSERT_NE(shptr, shptr2);
 }
 
 /**
@@ -206,21 +206,23 @@ TEST(case8) {
 	SharedPtr<Data> shptr(new Data(2,4));
 	SharedPtr<Data> copy(shptr);
 
-	CHECK(copy.useCount() == 2);
+	ASSERT_EQ(copy.useCount(), 2);
 	shptr.reset(new Data(6,8));
-	CHECK(copy.useCount() == 1);
+	ASSERT_EQ(copy.useCount(), 1);
 
 	//shptr holding values we expect?
-	CHECK(shptr->x == 6);
-	CHECK(shptr->y == 8);
+	ASSERT_EQ(shptr->x, 6);
+	ASSERT_EQ(shptr->y, 8);
 
-	CHECK(copy->x == 2);
-	CHECK(copy->y == 4);
+	ASSERT_EQ(copy->x, 2);
+	ASSERT_EQ(copy->y, 4);
 
 	shptr.reset();
-	CHECK(!shptr);
+	ASSERT_FALSE(shptr);
 }
 
-int32_t main() {
-	return UnitTest::RunAllTests();
+int main(int argc, char** argv)
+{
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

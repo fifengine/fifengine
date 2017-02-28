@@ -59,8 +59,8 @@ TEST(rectangle_interesection)
 	ADD_RECT(-5,-5,30,30);
 
 	for(size_t i=0; i<do_intersect.size(); ++i) {
-		CHECK(a.intersects(do_intersect[i]));
-		CHECK(do_intersect[i].intersects(a));
+		ASSERT_TRUE(a.intersects(do_intersect[i]));
+		ASSERT_TRUE(do_intersect[i].intersects(a));
 	}	
 
 	std::vector<Rect> dont_intersect;
@@ -78,8 +78,8 @@ TEST(rectangle_interesection)
 	ADD_RECT(15,15,4,40);
 
 	for(size_t i=0; i<dont_intersect.size(); ++i) {
-		CHECK(!a.intersects(dont_intersect[i]));
-		CHECK(!dont_intersect[i].intersects(a));
+		ASSERT_FALSE(a.intersects(dont_intersect[i]));
+		ASSERT_FALSE(dont_intersect[i].intersects(a));
 	}	
 }
 

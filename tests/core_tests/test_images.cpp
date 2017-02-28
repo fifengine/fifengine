@@ -163,8 +163,8 @@ TEST(test_sdl_alphaoptimize)
 		renderbackend.endFrame();
 	}
 	
-	CHECK(img->getSurface()->format->Amask == 0);
-	CHECK(alpha_img->getSurface()->format->Amask != 0);
+	ASSERT_EQ(img->getSurface()->format->Amask, 0);
+	ASSERT_NE(alpha_img->getSurface()->format->Amask, 0);
 }
 
 TEST(test_sdl_image)
@@ -185,7 +185,7 @@ TEST(test_sdl_subimage)
 {
 	environment env;
 	RenderBackendSDL renderbackend;
-	CHECK(env.vfs.get()->exists(IMAGE_FILE));
+	ASSERT_TRUE(env.vfs.get()->exists(IMAGE_FILE));
 	test_subimage(env.vfs.get(), renderbackend);
 }
 
@@ -202,7 +202,8 @@ TEST(test_ogl_subimage)
 #undef main
 #endif
 
-int main()
+int main(int argc, char** argv)
 {
-	return UnitTest::RunAllTests();
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

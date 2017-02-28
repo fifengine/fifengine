@@ -56,18 +56,20 @@ TEST(test_is_directory)
 	if(boost::filesystem::exists(FIFE_TEST_DIR)) {
 		boost::filesystem::remove(FIFE_TEST_DIR);
 	}
-	CHECK(vfs->isDirectory(""));
-	CHECK(vfs->isDirectory("/"));
+	ASSERT_TRUE(vfs->isDirectory(""));
+	ASSERT_TRUE(vfs->isDirectory("/"));
 
-	CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
+	ASSERT_FALSE(vfs->isDirectory(FIFE_TEST_DIR));
 	boost::filesystem::create_directory(FIFE_TEST_DIR);
-	CHECK(vfs->isDirectory(FIFE_TEST_DIR));
-	CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+	ASSERT_TRUE(vfs->isDirectory(FIFE_TEST_DIR));
+	ASSERT_FALSE(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
 	boost::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-	CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+	ASSERT_TRUE(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
 
 }
 
-int main() {
-	return UnitTest::RunAllTests();
+int main(int argc, char** argv)
+{
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

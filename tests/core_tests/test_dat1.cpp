@@ -48,18 +48,18 @@ TEST(DAT1_test){
 	
 	boost::shared_ptr<FIFE::VFS> vfs(new FIFE::VFS());
 	vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
-	CHECK(vfs->exists(COMPRESSED_FILE));
+	ASSERT_TRUE(vfs->exists(COMPRESSED_FILE));
 	
 
 	vfs->addSource(new FIFE::DAT1(vfs.get(), COMPRESSED_FILE));
 	
-	CHECK(vfs->exists(RAW_FILE));
-	CHECK(vfs->exists("dat1vfstest.map"));
+	ASSERT_TRUE(vfs->exists(RAW_FILE));
+	ASSERT_TRUE(vfs->exists("dat1vfstest.map"));
 	
 	FIFE::RawData* fraw = vfs->open(RAW_FILE);
 	FIFE::RawData* fcomp = vfs->open("dat1vfstest.map");
 
-	CHECK_EQUAL(fraw->getDataLength(), fcomp->getDataLength());
+	ASSERT_EQ(fraw->getDataLength(), fcomp->getDataLength());
 	//std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
 
 	unsigned int smaller_len = fraw->getDataLength();
@@ -75,7 +75,7 @@ TEST(DAT1_test){
 	for (unsigned int i = 0; i < smaller_len; i++) {
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
-		CHECK_EQUAL(compc, rawc);
+		ASSERT_EQ(compc, rawc);
 		//std::cout 
 		//	<< "raw: " << std::setbase(16) << rawc 
 		//	<< " comp: " << std::setbase(16) << compc << std::endl;
@@ -91,6 +91,8 @@ TEST(DAT1_test){
 	delete fcomp;
 }
 
-int main() {
-	return UnitTest::RunAllTests();
+int main(int argc, char** argv)
+{
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
