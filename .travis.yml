@@ -39,6 +39,7 @@ addons:
     - libtinyxml-dev
     - libc6
     - libglew-dev
+    - libgtest-dev
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
