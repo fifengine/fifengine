@@ -667,7 +667,7 @@ set (FIFE_LROCKET_SWIG
 #------------------------------------------------------------------------------
 
 source_group("swig\\fife.core"                FILES ${FIFE_CORE_SWIG})
-source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
+source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SWIG})
 source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG})
 source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
