@@ -137,7 +137,7 @@ TEST(case3) {
 	ASSERT_TRUE(copy.unique());
 
 	ASSERT_EQ(d.x, 5);
-	ASSERT_EQ(d.y == 10);
+	ASSERT_EQ(d.y, 10);
 
 	copy.reset();
 	ASSERT_FALSE(copy);
