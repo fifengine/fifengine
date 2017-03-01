@@ -29,12 +29,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "audio/effects/soundeffectmanager.h"
 #include "vfs/vfs.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 
 #include "soundclipmanager.h"
-#include "soundeffectmanager.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
 
@@ -406,7 +406,7 @@ namespace FIFE {
 		std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
 		ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
 		if (ret.second == false) {
-			FL_ERR(_log, LMsg() << "SoundEmitter already have an source handler");
+			FL_WARN(_log, LMsg() << "SoundEmitter already have an source handler");
 		}
 		emitter->setSource(m_freeSources.front());
 		m_freeSources.pop();
@@ -420,9 +420,73 @@ namespace FIFE {
 				m_activeEmitters.erase(it);
 				emitter->setSource(0);
 			} else {
-				FL_ERR(_log, LMsg() << "SoundEmitter can not release source handler");
+				FL_WARN(_log, LMsg() << "SoundEmitter can not release source handler");
 			}
 		}
+	}
+
+	SoundEffect* SoundManager::createSoundEffect(SoundEffectType type) {
+		return m_effectManager->createSoundEffect(type);
+	}
+
+	void SoundManager::deleteSoundEffect(SoundEffect* effect) {
+		m_effectManager->deleteSoundEffect(effect);
+	}
+
+	void SoundManager::enableSoundEffect(SoundEffect* effect) {
+		m_effectManager->enableSoundEffect(effect);
+	}
+
+	void SoundManager::disableSoundEffect(SoundEffect* effect) {
+		m_effectManager->disableSoundEffect(effect);
+	}
+
+	void SoundManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter) {
+		m_effectManager->addEmitterToSoundEffect(effect, emitter);
+	}
+
+	void SoundManager::removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter) {
+		m_effectManager->removeEmitterFromSoundEffect(effect, emitter);
+	}
+
+	void SoundManager::activateEffect(SoundEffect* effect, SoundEmitter* emitter) {
+		m_effectManager->activateEffect(effect, emitter);
+	}
+
+	void SoundManager::deactivateEffect(SoundEffect* effect, SoundEmitter* emitter) {
+		m_effectManager->deactivateEffect(effect, emitter);
+	}
+
+	SoundFilter* SoundManager::createSoundFilter(SoundFilterType type) {
+		return m_effectManager->createSoundFilter(type);
+	}
+
+	void SoundManager::deleteSoundFilter(SoundFilter* filter) {
+		m_effectManager->deleteSoundFilter(filter);
+	}
+
+	void SoundManager::enableSoundFilter(SoundFilter* filter) {
+		m_effectManager->enableSoundFilter(filter);
+	}
+
+	void SoundManager::disableSoundFilter(SoundFilter* filter) {
+		m_effectManager->disableSoundFilter(filter);
+	}
+
+	void SoundManager::addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->addEmitterToSoundFilter(filter, emitter);
+	}
+
+	void SoundManager::removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->removeEmitterFromSoundFilter(filter, emitter);
+	}
+
+	void SoundManager::activateFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->activateFilter(filter, emitter);
+	}
+
+	void SoundManager::deactivateFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->deactivateFilter(filter, emitter);
 	}
 
 	void SoundManager::addToGroup(SoundEmitter* emitter) {
@@ -438,7 +502,7 @@ namespace FIFE {
 		}
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "SoundEmitter can not removed from unknown group");
+			FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown group");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -452,7 +516,7 @@ namespace FIFE {
 			}
 		}
 		if (!found) {
-			FL_ERR(_log, LMsg() << "SoundEmitter could not be found in the given group.");
+			FL_WARN(_log, LMsg() << "SoundEmitter could not be found in the given group.");
 			return;
 		}
 	}
@@ -463,7 +527,7 @@ namespace FIFE {
 		}
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "SoundEmitter can not remove unknown group");
+			FL_WARN(_log, LMsg() << "SoundEmitter can not remove unknown group");
 			return;
 		}
 		std::vector<SoundEmitter*> emitters = groupIt->second;
@@ -487,7 +551,7 @@ namespace FIFE {
 	void SoundManager::play(const std::string& group) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not played");
+			FL_WARN(_log, LMsg() << "Unknown group can not played");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -499,7 +563,7 @@ namespace FIFE {
 	void SoundManager::pause(const std::string& group) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not paused");
+			FL_WARN(_log, LMsg() << "Unknown group can not paused");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -511,7 +575,7 @@ namespace FIFE {
 	void SoundManager::stop(const std::string& group) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not stopped");
+			FL_WARN(_log, LMsg() << "Unknown group can not stopped");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -523,7 +587,7 @@ namespace FIFE {
 	void SoundManager::rewind(const std::string& group) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not rewinded");
+			FL_WARN(_log, LMsg() << "Unknown group can not rewinded");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -535,7 +599,7 @@ namespace FIFE {
 	void SoundManager::setGain(const std::string& group, float gain) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not set gain");
+			FL_WARN(_log, LMsg() << "Unknown group can not set gain");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -547,7 +611,7 @@ namespace FIFE {
 	void SoundManager::setMaxGain(const std::string& group, float gain) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not set max gain");
+			FL_WARN(_log, LMsg() << "Unknown group can not set max gain");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
@@ -559,7 +623,7 @@ namespace FIFE {
 	void SoundManager::setMinGain(const std::string& group, float gain) {
 		EmitterGroupsIterator groupIt = m_groups.find(group);
 		if (groupIt == m_groups.end()) {
-			FL_ERR(_log, LMsg() << "Unknown group can not set min gain");
+			FL_WARN(_log, LMsg() << "Unknown group can not set min gain");
 			return;
 		}
 		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();

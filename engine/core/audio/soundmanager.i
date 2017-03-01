@@ -22,6 +22,7 @@
 %module soundmanager
 %{
 #include "audio/soundmanager.h"
+#include "audio/fife_openal.h"
 %}
 
 %include "model/metamodel/modelcoords.i"
@@ -39,7 +40,35 @@ namespace FIFE {
 		SD_DISTANCE_EXPONENT_CLAMPED
 	};
 
+	enum SoundFilterType {
+		SF_FILTER_NULL,
+		SF_FILTER_LOWPASS,
+		SF_FILTER_HIGHPASS,
+		SF_FILTER_BANDPASS
+	};
+	
+	enum SoundEffectType {
+		SE_EFFECT_NULL,
+		SE_EFFECT_REVERB,
+		SE_EFFECT_CHORUS,
+		SE_EFFECT_DISTORTION,
+		SE_EFFECT_ECHO,
+		SE_EFFECT_FLANGER,
+		SE_EFFECT_FREQUENCY_SHIFTER,
+		SE_EFFECT_VOCAL_MORPHER,
+		SE_EFFECT_PITCH_SHIFTER,
+		SE_EFFECT_RING_MODULATOR,
+		SE_EFFECT_AUTOWAH,
+		SE_EFFECT_COMPRESSOR,
+		SE_EFFECT_EQUALIZER,
+		SE_EFFECT_EAXREVERB,
+		SE_EFFECT_FADE_IN,
+		SE_EFFECT_FADE_OUT
+	};
+
 	class SoundClip;
+	class SoundEffect;
+	class SoundFilter;
 
 	class SoundManager {
 		public:
@@ -71,5 +100,19 @@ namespace FIFE {
 			AudioSpaceCoordinate getListenerVelocity() const;
 			void setDopplerFactor(float factor);
 			float getDopplerFactor() const;
+
+			SoundEffect* createSoundEffect(SoundEffectType  type);
+			void deleteSoundEffect(SoundEffect* effect);
+			void enableSoundEffect(SoundEffect* effect);
+			void disableSoundEffect(SoundEffect* effect);
+			void addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+			void removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+
+			SoundFilter* createSoundFilter(SoundFilterType type);
+			void deleteSoundFilter(SoundFilter* filter);
+			void enableSoundFilter(SoundFilter* filter);
+			void disableSoundFilter(SoundFilter* filter);
+			void addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
+			void removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
 	};
 }

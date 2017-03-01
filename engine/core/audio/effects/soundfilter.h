@@ -19,11 +19,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_SOUNDEFFECTMANAGER_H
-#define FIFE_SOUNDEFFECTMANAGER_H
+#ifndef FIFE_SOUNDFILTER_H
+#define FIFE_SOUNDFILTER_H
 
 // Standard C++ library includes
-#include <queue>
 
 // Platform specific includes
 
@@ -33,46 +32,51 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-#include "fife_openal.h"
-#include "soundconfig.h"
+#include "audio/fife_openal.h"
+#include "audio/soundconfig.h"
 
 namespace FIFE {
 
-
-	class SoundEffectManager {
+	class SoundFilter {
 	public:
-
-		SoundEffectManager();
-
-		~SoundEffectManager();
-
-		/** Initializes the effect system
+		/** Constructor
 		 */
-		void init(ALCdevice* device);
+		SoundFilter(SoundFilterType type);
 
-		/** Returns true if sound effect module is active
+		/** Destructor
 		 */
-		bool isActive() const;
+		~SoundFilter();
+
+		ALuint getFilterId() const;
+
+		void setFilterType(SoundFilterType type);
+		SoundFilterType getFilterType() const;
+
+		void setEnabled(bool enabled);
+		bool isEnabled() const;
+
+		void setGain(float gain);
+		float getGain() const;
+
+		void setGainHF(float gain);
+		float getGainHF() const;
+
+		void setGainLF(float gain);
+		float getGainLF() const;
 
 	private:
-		//! OpenAL device
-		ALCdevice* m_device;
-
-		//! If sound effect module is active
-		bool m_active;
-
-		//! Holds handles for effects
-		ALuint m_effectSlots[MAX_EFFECT_SLOTS];
-		//! Maximal created effect slots, can be different to MAX_EFFECT_SLOTS
-		uint16_t m_createdSlots;
-		//! Holds free handles for effect slots
-		std::queue<ALuint> m_freeSlots;
-		//! Maximal effect slots per Source
-		ALint m_maxSlots;
-
-		ALuint uiEffectSlot;
-		ALuint uiEffect;
+		//! Filter object id
+		ALuint m_filter;
+		//! Filter type
+		SoundFilterType m_type;
+		//! Filter enabled
+		bool m_enabled;
+		//! Gain
+		float m_gain;
+		//! High frequence gain
+		float m_hGain;
+		//! Low frequence gain
+		float m_lGain;
 	};
 }
 #endif

@@ -61,6 +61,8 @@ namespace FIFE {
 		virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
 	};
 
+	class SoundEffect;
+	class SoundFilter;
 	class SoundManager;
 
 	/** The class for playing audio files
@@ -74,6 +76,17 @@ namespace FIFE {
 		void setSource(ALuint source);
 		ALuint getSource() const;
 		bool isActive() const;
+
+		void addEffect(SoundEffect* effect);
+		void removeEffect(SoundEffect* effect);
+		uint8_t getEffectCount();
+		uint8_t getEffectNumber(SoundEffect* effect);
+
+		void setDirectFilter(SoundFilter* filter);
+		SoundFilter* getDirectFilter();
+
+		void activateEffects();
+		void deactivateEffects();
 
 		/** Called once a frame from the SoundManager.
 		 */
@@ -353,6 +366,8 @@ namespace FIFE {
 		SoundManager* m_manager;
 		//! The openAL-source
 		ALuint m_source;
+		//! Applied direct sound filter
+		SoundFilter* m_directFilter;
 		//! The attached sound clip
 		SoundClipPtr m_soundClip;
 		//! Id of the attached sound clip
@@ -389,6 +404,8 @@ namespace FIFE {
 		std::string m_group;
 		//! is active
 		bool m_active;
+		//! holds pointer to applied SoundEffects
+		std::vector<SoundEffect*> m_effects;
 		//! listeners for sound related events
 		std::vector<SoundEmitterListener*> m_listeners;
 	};

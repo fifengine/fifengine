@@ -33,6 +33,37 @@
 
 namespace FIFE {
 
+	/** Sound filter type
+	 */
+	enum SoundFilterType {
+		SF_FILTER_NULL,
+		SF_FILTER_LOWPASS,
+		SF_FILTER_HIGHPASS,
+		SF_FILTER_BANDPASS
+	};
+
+	/** Sound effect type
+	 */
+	enum SoundEffectType {
+		SE_EFFECT_NULL,
+		SE_EFFECT_REVERB,
+		SE_EFFECT_CHORUS,
+		SE_EFFECT_DISTORTION,
+		SE_EFFECT_ECHO,
+		SE_EFFECT_FLANGER,
+		SE_EFFECT_FREQUENCY_SHIFTER,
+		SE_EFFECT_VOCAL_MORPHER,
+		SE_EFFECT_PITCH_SHIFTER,
+		SE_EFFECT_RING_MODULATOR,
+		SE_EFFECT_AUTOWAH,
+		SE_EFFECT_COMPRESSOR,
+		SE_EFFECT_EQUALIZER,
+		SE_EFFECT_EAXREVERB,
+		SE_EFFECT_FADE,
+		SE_EFFECT_FADE_IN,
+		SE_EFFECT_FADE_OUT
+	};
+
 	/* The max. length of a decoded audio data
 	 * for which streaming is not used. (bytes)
 	 * Has to be <= than BUFFERLEN * 3.
@@ -49,7 +80,7 @@ namespace FIFE {
 	const uint16_t MAX_SOURCES = 64;
 
 	// The max. number of OpenAL effect slots.
-	const uint16_t MAX_EFFECT_SLOTS = 128;
+	const uint16_t MAX_EFFECT_SLOTS = 32;
 }
 
 #endif

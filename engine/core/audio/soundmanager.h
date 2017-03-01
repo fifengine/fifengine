@@ -53,6 +53,8 @@ namespace FIFE {
 		SD_DISTANCE_EXPONENT_CLAMPED
 	};
 
+	/** SoundManager state
+	 */
 	enum SoundManagerState {
 		SM_STATE_INACTIV,
 		SM_STATE_PLAY,
@@ -61,6 +63,8 @@ namespace FIFE {
 	};
 
 	class SoundEffectManager;
+	class SoundEffect;
+	class SoundFilter;
 	class SoundEmitter;
 
 	class SoundManager : public DynamicSingleton<SoundManager> {
@@ -203,6 +207,24 @@ namespace FIFE {
 		 * @param emitter The emitter-instance.
 		 */
 		void releaseSource(SoundEmitter* emitter);
+
+		SoundEffect* createSoundEffect(SoundEffectType  type);
+		void deleteSoundEffect(SoundEffect* effect);
+		void enableSoundEffect(SoundEffect* effect);
+		void disableSoundEffect(SoundEffect* effect);
+		void addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+		void removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+		void activateEffect(SoundEffect* effect, SoundEmitter* emitter);
+		void deactivateEffect(SoundEffect* effect, SoundEmitter* emitter);
+
+		SoundFilter* createSoundFilter(SoundFilterType type);
+		void deleteSoundFilter(SoundFilter* filter);
+		void enableSoundFilter(SoundFilter* filter);
+		void disableSoundFilter(SoundFilter* filter);
+		void addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
+		void removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
+		void activateFilter(SoundFilter* filter, SoundEmitter* emitter);
+		void deactivateFilter(SoundFilter* filter, SoundEmitter* emitter);
 
 		/** Adds the emitter to group.
 		 *  Called from the emitter after a setGroup() call.
