@@ -50,7 +50,12 @@ namespace FIFE {
 		m_streamId(0),
 		m_emitterId(uid),
 		m_group(""),
-		m_active(false) {
+		m_active(false),
+		m_fadeIn(false),
+		m_fadeOut(false),
+		m_origGain(0.0f),
+		m_fadeStartTimestamp(0),
+		m_fadeEndTimestamp(0) {
 
 		if (!m_manager->isActive()) {
 			return;
@@ -173,6 +178,9 @@ namespace FIFE {
 	void SoundEmitter::update() {
 		if (!m_soundClip) {
 			return;
+		}
+		if (m_fadeIn || m_fadeOut) {
+			checkFade();
 		}
 		// non streaming
 		if (!m_soundClip->isStream()) {
@@ -409,6 +417,15 @@ namespace FIFE {
 		m_internData.soundState = SD_PLAYING_STATE;
 	}
 
+	void SoundEmitter::playWithFadeIn(float time) {
+		m_fadeIn = true;
+		m_origGain = m_internData.volume;
+		setGain(0.0f);
+		play();
+		m_fadeStartTimestamp = m_internData.playTimestamp;
+		m_fadeEndTimestamp = m_fadeStartTimestamp + static_cast<uint32_t>(time * 1000.0f);
+	}
+
 	void SoundEmitter::stop() {
 		if (m_soundClip && isActive()) {
 			alSourceStop(m_source);
@@ -416,6 +433,13 @@ namespace FIFE {
 		}
 		m_internData.soundState = SD_STOPPED_STATE;
 		m_internData.playTimestamp = 0;
+	}
+
+	void SoundEmitter::stopWithFadeOut(float time) {
+		m_fadeOut = true;
+		m_origGain = m_internData.volume;
+		m_fadeStartTimestamp = TimeManager::instance()->getTime();
+		m_fadeEndTimestamp = m_fadeStartTimestamp + static_cast<uint32_t>(time * 1000.0f);
 	}
 
 	void SoundEmitter::pause() {
@@ -765,6 +789,31 @@ namespace FIFE {
 		m_internData.soundState = SD_UNKNOWN_STATE;
 		m_internData.loop = false;
 		m_internData.relative = false;
+	}
+
+	void SoundEmitter::checkFade() {
+		uint32_t timestamp = TimeManager::instance()->getTime();
+		float delta = m_origGain / static_cast<float>(m_fadeEndTimestamp - m_fadeStartTimestamp);
+		if (m_fadeIn) {
+			if (timestamp >= m_fadeEndTimestamp) {
+				m_fadeIn = false;
+				setGain(m_origGain);
+			} else {
+				float gain = delta * static_cast<float>(timestamp - m_fadeStartTimestamp);
+				gain = std::min(gain, m_origGain);
+				setGain(gain);
+			}
+		} else if (m_fadeOut) {
+			if (timestamp >= m_fadeEndTimestamp) {
+				m_fadeOut = false;
+				stop();
+				setGain(m_origGain);
+			} else {
+				float gain = delta * static_cast<float>(m_fadeEndTimestamp - timestamp);
+				gain = std::max(gain, 0.0f);
+				setGain(gain);
+			}
+		}
 	}
 
 	void SoundEmitter::addListener(SoundEmitterListener* listener) {

@@ -173,11 +173,19 @@ namespace FIFE {
 		 */
 		void play();
 
-		/** Stops playing the audio file and rewinds to the beginning
+		/** Plays and fade in the associated audio file.
+		 */
+		void playWithFadeIn(float time);
+
+		/** Stops playing the audio file and rewinds to the beginning.
 		 */
 		void stop();
 
-		/** Pauses playing the audio file
+		/** Stops playing the audio file and fade out.
+		 */
+		void stopWithFadeOut(float time);
+
+		/** Pauses playing the audio file.
 		 */
 		void pause();
 
@@ -354,6 +362,10 @@ namespace FIFE {
 		 */
 		void syncData();
 
+		/** Updates fade in and out.
+		 */
+		void checkFade();
+
 		/** Resets collected data to defaults.
 		 */
 		void resetInternData();
@@ -404,6 +416,12 @@ namespace FIFE {
 		std::string m_group;
 		//! is active
 		bool m_active;
+
+		bool m_fadeIn;
+		bool m_fadeOut;
+		float m_origGain;
+		uint32_t m_fadeStartTimestamp;
+		uint32_t m_fadeEndTimestamp;
 		//! holds pointer to applied SoundEffects
 		std::vector<SoundEffect*> m_effects;
 		//! listeners for sound related events
