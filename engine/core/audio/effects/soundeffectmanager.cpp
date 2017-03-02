@@ -229,6 +229,8 @@ namespace FIFE {
 			return NULL;
 		}
 		SoundEffect* effect = new EaxReverb();
+		m_effects.push_back(effect);
+
 		EaxReverb* reverb = static_cast<EaxReverb*>(effect);
 		reverb->loadPreset(it->second);
 		return effect;
@@ -463,7 +465,7 @@ namespace FIFE {
 	}
 
 	void SoundEffectManager::createPresets() {
-		//m_presets[]
+		EFXEAXREVERBPROPERTIES test = EFX_REVERB_PRESET_GENERIC;
 		m_presets[SE_PRESET_GENERIC] = EFX_REVERB_PRESET_GENERIC;
 		m_presets[SE_PRESET_PADDEDCELL] = EFX_REVERB_PRESET_PADDEDCELL;
 		m_presets[SE_PRESET_ROOM] = EFX_REVERB_PRESET_ROOM;

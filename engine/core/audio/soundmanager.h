@@ -209,6 +209,7 @@ namespace FIFE {
 		void releaseSource(SoundEmitter* emitter);
 
 		SoundEffect* createSoundEffect(SoundEffectType  type);
+		SoundEffect* createSoundEffectPreset(SoundEffectPreset type);
 		void deleteSoundEffect(SoundEffect* effect);
 		void enableSoundEffect(SoundEffect* effect);
 		void disableSoundEffect(SoundEffect* effect);

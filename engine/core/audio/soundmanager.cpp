@@ -429,6 +429,10 @@ namespace FIFE {
 		return m_effectManager->createSoundEffect(type);
 	}
 
+	SoundEffect* SoundManager::createSoundEffectPreset(SoundEffectPreset type) {
+		return m_effectManager->createSoundEffectPreset(type);
+	}
+
 	void SoundManager::deleteSoundEffect(SoundEffect* effect) {
 		m_effectManager->deleteSoundEffect(effect);
 	}

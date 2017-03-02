@@ -65,8 +65,11 @@ namespace FIFE {
 		void release();
 
 		void play();
+		void playWithFadeIn(float time);
 		void pause();
 		void stop();
+		void stopWithFadeOut(float time);
+		void rewind();
 
 		void setGain(float gain);
 		float getGain() const;
