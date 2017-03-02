@@ -509,9 +509,10 @@ namespace FIFE {
 			FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown group");
 			return;
 		}
-		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
 		bool found = false;
-		while (emitterIt != groupIt->second.end()) {
+		std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+		std::vector<SoundEmitter*>::iterator emitterEnd = groupIt->second.end();
+		while (emitterIt != emitterEnd) {
 			if ((*emitterIt) == emitter) {
 				groupIt->second.erase(emitterIt++);
 				found = true;
