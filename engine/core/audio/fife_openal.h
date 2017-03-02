@@ -32,6 +32,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>
+#include <AL/efx-presets.h>
 #endif
 
 // Win32
@@ -39,13 +40,16 @@
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #include <OpenAL/alext.h>
+#include <OpenAL/efx-presets.h>
 #endif
 
 // Macintosh
 #if defined( __APPLE_CC__ )
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-#include <OpenAL/MacOSX_OALExtensions.h>
+//#include <OpenAL/MacOSX_OALExtensions.h>
+#include <OpenAL/alext.h>
+#include <OpenAL/efx-presets.h>
 #endif
 
 // 3rd party library includes

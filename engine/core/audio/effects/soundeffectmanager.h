@@ -60,10 +60,8 @@ namespace FIFE {
 
 		uint16_t getFreeSlots();
 
-		//SoundEffect* createSoundEffect();
-		//void enableSoundEffect(SoundEffect* effect);
-		//void disableSoundEffect(SoundEffect* effect);
 		SoundEffect* createSoundEffect(SoundEffectType type);
+		SoundEffect* createSoundEffectPreset(SoundEffectPreset type);
 		void deleteSoundEffect(SoundEffect* effect);
 		void enableSoundEffect(SoundEffect* effect);
 		void disableSoundEffect(SoundEffect* effect);
@@ -82,6 +80,7 @@ namespace FIFE {
 		void deactivateFilter(SoundFilter* filter, SoundEmitter* emitter);
 
 	private:
+		void createPresets();
 		//! OpenAL device
 		ALCdevice* m_device;
 
@@ -101,6 +100,8 @@ namespace FIFE {
 		std::map<SoundEffect*, std::vector<SoundEmitter*> > m_effectEmitters;
 		std::vector<SoundFilter*> m_filters;
 		std::map<SoundFilter*, std::vector<SoundEmitter*> > m_filterdEmitters;
+
+		std::map<SoundEffectPreset, EFXEAXREVERBPROPERTIES> m_presets;
 	};
 }
 #endif

@@ -51,7 +51,6 @@ namespace FIFE {
 		void setSlotId(ALuint slot);
 		ALuint getSlotId();
 
-		void setEffectType(SoundEffectType type); // ???
 		SoundEffectType getEffectType() const;
 
 		void setEnabled(bool enabled);
@@ -76,7 +75,6 @@ namespace FIFE {
 	class Reverb : public SoundEffect {
 	public:
 		Reverb();
-		virtual ~Reverb();
 
 		void setDensity(float value);
 		float getDensity() const;
@@ -124,7 +122,6 @@ namespace FIFE {
 	class Chorus : public SoundEffect {
 	public:
 		Chorus();
-		virtual ~Chorus();
 
 		void setWaveformTriangle(bool value);
 		bool isWaveformTriangle() const;
@@ -151,7 +148,6 @@ namespace FIFE {
 	class Distortion : public SoundEffect {
 	public:
 		Distortion();
-		virtual ~Distortion();
 
 		void setEdge(float value);
 		float getEdge() const;
@@ -175,7 +171,6 @@ namespace FIFE {
 	class Echo : public SoundEffect {
 	public:
 		Echo();
-		virtual ~Echo();
 
 		void setDelay(float value);
 		float getDelay() const;
@@ -199,7 +194,6 @@ namespace FIFE {
 	class Flanger : public SoundEffect {
 	public:
 		Flanger();
-		virtual ~Flanger();
 
 		void setWaveformTriangle(bool value);
 		bool isWaveformTriangle() const;
@@ -226,7 +220,6 @@ namespace FIFE {
 	class FrequencyShifter : public SoundEffect {
 	public:
 		FrequencyShifter();
-		virtual ~FrequencyShifter();
 
 		void setFrequency(float value);
 		float getFrequency() const;
@@ -244,7 +237,6 @@ namespace FIFE {
 	class VocalMorpher : public SoundEffect {
 	public:
 		VocalMorpher();
-		virtual ~VocalMorpher();
 
 		void setPhonemeA(uint16_t value);
 		uint16_t getPhonemeA() const;
@@ -271,7 +263,6 @@ namespace FIFE {
 	class PitchShifter : public SoundEffect {
 	public:
 		PitchShifter();
-		virtual ~PitchShifter();
 
 		void setCoarseTune(int16_t value);
 		int16_t getCoarseTune() const;
@@ -286,7 +277,6 @@ namespace FIFE {
 	class RingModulator : public SoundEffect {
 	public:
 		RingModulator();
-		virtual ~RingModulator();
 
 		void setFrequency(float value);
 		float getFrequency() const;
@@ -304,7 +294,6 @@ namespace FIFE {
 	class Autowah : public SoundEffect {
 	public:
 		Autowah();
-		virtual ~Autowah();
 
 		void setAttackTime(float value);
 		float getAttackTime() const;
@@ -325,7 +314,6 @@ namespace FIFE {
 	class Compressor : public SoundEffect {
 	public:
 		Compressor();
-		virtual ~Compressor();
 
 		void setCompressor(bool value);
 		bool isCompressor() const;
@@ -337,7 +325,6 @@ namespace FIFE {
 	class Equalizer : public SoundEffect {
 	public:
 		Equalizer();
-		virtual ~Equalizer();
 
 		void setLowGain(float value);
 		float getLowGain() const;
@@ -377,7 +364,6 @@ namespace FIFE {
 	class EaxReverb : public SoundEffect {
 	public:
 		EaxReverb();
-		virtual ~EaxReverb();
 
 		void setDensity(float value);
 		float getDensity() const;
@@ -426,6 +412,7 @@ namespace FIFE {
 		void setDecayHfLimit(bool value);
 		bool isDecayHfLimit() const;
 
+		void loadPreset(const EFXEAXREVERBPROPERTIES& prop);
 	private:
 		float m_density;
 		float m_diffusion;
@@ -451,29 +438,5 @@ namespace FIFE {
 		float m_roomRolloffFactor;
 		bool m_decayHfLimit;
 	};
-
-	
-	class Fade : public SoundEffect {
-	public:
-		Fade();
-		virtual ~Fade();
-
-		void setFadeIn(bool value);
-		bool isFadeIn() const;
-		void setFadeInTime(uint32_t value);
-		uint32_t getFadeInTime() const;
-
-		void setFadeOut(bool value);
-		bool isFadeOut() const;
-		void setFadeOutTime(uint32_t value);
-		uint32_t getFadeOutTime() const;
-
-	private:
-		bool m_fadeIn;
-		bool m_fadeOut;
-		uint32_t m_fadeInTime;
-		uint32_t m_fadeOutTime;
-	};
-
 }
 #endif

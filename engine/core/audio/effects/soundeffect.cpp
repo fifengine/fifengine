@@ -68,10 +68,6 @@ namespace FIFE {
 		return m_slot;
 	}
 
-	void SoundEffect::setEffectType(SoundEffectType type) {
-		m_effectType = type;
-	}
-
 	SoundEffectType SoundEffect::getEffectType() const {
 		return m_effectType;
 	}
@@ -93,7 +89,6 @@ namespace FIFE {
 	}
 
 
-
 	Reverb::Reverb() :
 		m_density(1.0f),
 		m_diffusion(1.0f),
@@ -112,8 +107,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_REVERB;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
 	}
-
-	Reverb::~Reverb() {}
 
 	void Reverb::setDensity(float value) {
 		value = std::min(value, 1.0f);
@@ -257,7 +250,6 @@ namespace FIFE {
 	}
 
 
-
 	Chorus::Chorus() :
 		m_waveformTriangle(true),
 		m_phase(90),
@@ -268,8 +260,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_CHORUS;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_CHORUS);
 	}
-
-	Chorus::~Chorus() {}
 
 	void Chorus::setWaveformTriangle(bool value) {
 		m_waveformTriangle = value;
@@ -340,7 +330,6 @@ namespace FIFE {
 	}
 
 
-
 	Distortion::Distortion() :
 		m_edge(0.2f),
 		m_gain(0.05f),
@@ -350,8 +339,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_DISTORTION;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_DISTORTION);
 	}
-
-	Distortion::~Distortion() {}
 
 	void Distortion::setEdge(float value) {
 		value = std::min(value, 1.0f);
@@ -409,7 +396,6 @@ namespace FIFE {
 	}
 
 
-
 	Echo::Echo() :
 		m_delay(0.1f),
 		m_lrDelay(0.1f),
@@ -419,8 +405,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_ECHO;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_ECHO);
 	}
-
-	Echo::~Echo() {}
 
 	void Echo::setDelay(float value) {
 		value = std::min(value, 0.207f);
@@ -478,7 +462,6 @@ namespace FIFE {
 	}
 
 
-
 	Flanger::Flanger() :
 		m_waveformTriangle(true),
 		m_phase(0),
@@ -489,8 +472,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_FLANGER;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_FLANGER);
 	}
-
-	Flanger::~Flanger() {}
 
 	void Flanger::setWaveformTriangle(bool value) {
 		m_waveformTriangle = value;
@@ -561,7 +542,6 @@ namespace FIFE {
 	}
 
 
-
 	FrequencyShifter::FrequencyShifter() :
 		m_frequency(0.0f),
 		m_leftDirection(0),
@@ -569,8 +549,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_FREQUENCY_SHIFTER;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_FREQUENCY_SHIFTER);
 	}
-
-	FrequencyShifter::~FrequencyShifter() {}
 
 	void FrequencyShifter::setFrequency(float value) {
 		value = std::min(value, 24000.0f);
@@ -606,7 +584,6 @@ namespace FIFE {
 	}
 
 
-
 	VocalMorpher::VocalMorpher() :
 		m_phonemeA(0),
 		m_phonemeB(10),
@@ -617,8 +594,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_VOCAL_MORPHER;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_VOCAL_MORPHER);
 	}
-
-	VocalMorpher::~VocalMorpher() {}
 
 	void VocalMorpher::setPhonemeA(uint16_t value) {
 		value = std::min(value, uint16_t(29));
@@ -687,15 +662,12 @@ namespace FIFE {
 	}
 
 
-
 	PitchShifter::PitchShifter() :
 		m_coarseTune(12),
 		m_fineTune(0) {
 		m_effectType = SE_EFFECT_PITCH_SHIFTER;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_PITCH_SHIFTER);
 	}
-
-	PitchShifter::~PitchShifter() {}
 
 	void PitchShifter::setCoarseTune(int16_t value) {
 		value = std::min(value, int16_t(12));
@@ -720,7 +692,6 @@ namespace FIFE {
 	}
 
 
-
 	RingModulator::RingModulator() :
 		m_frequency(440.0f),
 		m_highpassCutoff(800.0f),
@@ -728,8 +699,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_RING_MODULATOR;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_RING_MODULATOR);
 	}
-
-	RingModulator::~RingModulator() {}
 
 	void RingModulator::setFrequency(float value) {
 		value = std::min(value, 8000.0f);
@@ -765,7 +734,6 @@ namespace FIFE {
 	}
 
 
-
 	Autowah::Autowah() :
 		m_attackTime(0.06f),
 		m_releaseTime(0.06f),
@@ -774,8 +742,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_AUTOWAH;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_AUTOWAH);
 	}
-
-	Autowah::~Autowah() {}
 
 	void Autowah::setAttackTime(float value) {
 		value = std::min(value, 1.0f);
@@ -822,14 +788,11 @@ namespace FIFE {
 	}
 
 
-
 	Compressor::Compressor() :
 		m_active(true) {
 		m_effectType = SE_EFFECT_COMPRESSOR;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_COMPRESSOR);
 	}
-
-	Compressor::~Compressor() {}
 
 	void Compressor::setCompressor(bool value) {
 		m_active = value;
@@ -840,7 +803,6 @@ namespace FIFE {
 		return m_active;
 	}
 
-	
 
 	Equalizer::Equalizer() :
 		m_lowGain(1.0f),
@@ -856,8 +818,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_EQUALIZER;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_EQUALIZER);
 	}
-
-	Equalizer::~Equalizer() {}
 
 	void Equalizer::setLowGain(float value) {
 		value = std::min(value, 7.943f);
@@ -970,7 +930,6 @@ namespace FIFE {
 	}
 
 
-
 	EaxReverb::EaxReverb() :
 		m_density(1.0f),
 		m_diffusion(1.0f),
@@ -999,8 +958,6 @@ namespace FIFE {
 		m_effectType = SE_EFFECT_EAXREVERB;
 		alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
 	}
-
-	EaxReverb::~EaxReverb() {}
 
 	void EaxReverb::setDensity(float value) {
 		value = std::min(value, 1.0f);
@@ -1265,49 +1222,29 @@ namespace FIFE {
 		return m_decayHfLimit;
 	}
 
-
-
-	Fade::Fade() :
-		m_fadeIn(true),
-		m_fadeOut(true),
-		m_fadeInTime(3000),
-		m_fadeOutTime(3000) {
-		m_effectType = SE_EFFECT_FADE;
+	void EaxReverb::loadPreset(const EFXEAXREVERBPROPERTIES& prop) {
+		// reflections and reverb pans are always 0 vectors, skip it
+		setDensity(prop.flDensity);
+		setDiffusion(prop.flDiffusion);
+		setGain(prop.flGain);
+		setGainHf(prop.flGainHF);
+		setGainLf(prop.flGainLF);
+		setDecayTime(prop.flDecayTime);
+		setDecayHfRatio(prop.flDecayHFRatio);
+		setDecayLfRatio(prop.flDecayLFRatio);
+		setReflectionsGain(prop.flReflectionsGain);
+		setReflectionsDelay(prop.flReflectionsDelay);
+		setLateReverbGain(prop.flLateReverbGain);
+		setLateReverbDelay(prop.flLateReverbDelay);
+		setEchoTime(prop.flEchoTime);
+		setEchoDepth(prop.flEchoDepth);
+		setModulationTime(prop.flModulationTime);
+		setModulationDepth(prop.flModulationDepth);
+		setAirAbsorptionGainHf(prop.flAirAbsorptionGainHF);
+		setHfReference(prop.flHFReference);
+		setLfReference(prop.flLFReference);
+		setRoomRolloffFactor(prop.flRoomRolloffFactor);
+		setDecayHfLimit(prop.iDecayHFLimit ? true : false);
 	}
-
-	Fade::~Fade() {}
-
-	void Fade::setFadeIn(bool value) {
-		m_fadeIn = value;
-	}
-
-	bool Fade::isFadeIn() const {
-		return m_fadeIn;
-	}
-
-	void Fade::setFadeInTime(uint32_t value) {
-		m_fadeInTime = value;
-	}
-
-	uint32_t Fade::getFadeInTime() const {
-		return m_fadeInTime;
-	}
-
-	void Fade::setFadeOut(bool value) {
-		m_fadeOut = value;
-	}
-
-	bool Fade::isFadeOut() const {
-		return m_fadeOut;
-	}
-
-	void Fade::setFadeOutTime(uint32_t value) {
-		m_fadeOutTime = value;
-	}
-
-	uint32_t Fade::getFadeOutTime() const {
-		return m_fadeOutTime;
-	}
-
 
 } //FIFE
