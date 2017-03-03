@@ -863,12 +863,15 @@ if(build-python)
   set(CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
-
+  set(FIFE_SOURCES ${FIFE_CORE_SRC})
+  if(fifechan)
+    set(FIFE_SOURCES ${FIFE_SOURCES} ${FIFE_FCHAN_SRC})
+  endif(fifechan)
   # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
   if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
-    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
   else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
-    swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+    swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
   endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
 
   swig_link_libraries(fife ${PYTHON_LIBRARIES})
@@ -939,7 +942,12 @@ endif(build-python)
 #------------------------------------------------------------------------------
 
 if(build-library)
-  add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  set(FIFE_SOURCES ${FIFE_CORE_SRC})
+  if(fifechan)
+    set(FIFE_SOURCES ${FIFE_SOURCES} ${FIFE_FCHAN_SRC})
+  endif(fifechan)
+
+  add_library(fife ${FIFE_SOURCES})
   set_target_properties(fife PROPERTIES SOVERSION ${FIFE_VERSION})
 
   target_link_libraries(fife ${SDL2_LIBRARY}
