@@ -80,6 +80,7 @@ namespace FIFE {
 		void deactivateFilter(SoundFilter* filter, SoundEmitter* emitter);
 
 	private:
+		EFXEAXREVERBPROPERTIES presetCreater(EFXEAXREVERBPROPERTIES prop);
 		void createPresets();
 		//! OpenAL device
 		ALCdevice* m_device;
