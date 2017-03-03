@@ -37,9 +37,13 @@
 
 namespace FIFE {
 
+	/** The class defines filters. Lowpass, Highpass and Bandpass filters are possible.
+	 * Note: On Lowpass filter setGainLf have no effect, same with Highpass and setGainHf.
+	 */
 	class SoundFilter {
 	public:
 		/** Constructor
+		 * @param type The filter type.
 		 */
 		SoundFilter(SoundFilterType type);
 
@@ -47,22 +51,55 @@ namespace FIFE {
 		 */
 		~SoundFilter();
 
+		/** Return the OpenAL filter handle.
+		 */
 		ALuint getFilterId() const;
 
+		/** Sets the filter type.
+		 * @see SoundFilterType
+		 */
 		void setFilterType(SoundFilterType type);
+
+		/** Return the filter type
+		 * @see SoundFilterType
+		 */
 		SoundFilterType getFilterType() const;
 
+		/** Enables or disables the filter.
+		 * @param enabled A bool to indicate if the filter should be enabled or disabled.
+		 */
 		void setEnabled(bool enabled);
+
+		/** Return true if the filter is enabled, false otherwise.
+		 */
 		bool isEnabled() const;
 
+		/** Sets filter gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
 		void setGain(float gain);
+
+		/** Return filter gain. Default is 1.0.
+		 */
 		float getGain() const;
 
-		void setGainHF(float gain);
-		float getGainHF() const;
+		/** Sets filter high frequency gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
+		void setGainHf(float gain);
 
-		void setGainLF(float gain);
-		float getGainLF() const;
+		/** Return filter high frequency gain. Default is 1.0.
+		 */
+		float getGainHf() const;
+
+		/** Sets filter low frequency gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
+		void setGainLf(float gain);
+
+		/** Return filter low frequency gain. Default is 1.0.
+		 */
+		float getGainLf() const;
 
 	private:
 		//! Filter object id
@@ -73,9 +110,9 @@ namespace FIFE {
 		bool m_enabled;
 		//! Gain
 		float m_gain;
-		//! High frequence gain
+		//! High frequency gain
 		float m_hGain;
-		//! Low frequence gain
+		//! Low frequency gain
 		float m_lGain;
 	};
 }

@@ -76,6 +76,7 @@ namespace FIFE {
 		} else if (m_type == SF_FILTER_BANDPASS) {
 			alFilteri(m_filter, AL_FILTER_TYPE, AL_FILTER_BANDPASS);
 		}
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting filter");
 	}
 
 	SoundFilterType SoundFilter::getFilterType() const {
@@ -108,7 +109,7 @@ namespace FIFE {
 		return m_gain;
 	}
 
-	void SoundFilter::setGainHF(float gain) {
+	void SoundFilter::setGainHf(float gain) {
 		gain = std::min(gain, 1.0f);
 		gain = std::max(gain, 0.0f);
 		m_hGain = gain;
@@ -120,11 +121,11 @@ namespace FIFE {
 		}
 	}
 
-	float SoundFilter::getGainHF() const {
+	float SoundFilter::getGainHf() const {
 		return m_hGain;
 	}
 
-	void SoundFilter::setGainLF(float gain) {
+	void SoundFilter::setGainLf(float gain) {
 		gain = std::min(gain, 1.0f);
 		gain = std::max(gain, 0.0f);
 		m_lGain = gain;
@@ -137,7 +138,7 @@ namespace FIFE {
 		}
 	}
 
-	float SoundFilter::getGainLF() const {
+	float SoundFilter::getGainLf() const {
 		return m_lGain;
 	}
 
