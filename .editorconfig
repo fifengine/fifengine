@@ -1,0 +1,31 @@
+;
+; Global Editor Config for Fifengine
+;
+; See http://editorconfig.org/ for more information on this file.
+;------------------------------------------------------------------------------
+
+; Top level editor config.
+root = true
+
+; use Unix style new lines with new line ending and trim whitespace
+[*]
+charset = utf-8
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+
+[*.{cpp,h}]
+indent_size = 4
+max_line_length = 80
+
+; Python: PEP8 defines 4 spaces for indentation
+[*.py]
+indent_size = 4
+
+[*.{cmake,json,sh,yaml,yml},CMakeLists.txt]
+indent_size = 2
+
+; do not remove spaces in docs
+[*.{md, asciidoc, asc}]
+trim_trailing_whitespace = false

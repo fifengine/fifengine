@@ -45,6 +45,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml glew; fi
   # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
+  - cmake --version
 
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git

@@ -2,19 +2,18 @@
 #                                 Fifengine                                          
 #------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.8.5)
+cmake_minimum_required(VERSION 3.2.2)
 
-project (fifengine C CXX)
-
+project(fifengine C CXX)
 
 #------------------------------------------------------------------------------
 #                                 Version                                          
 #------------------------------------------------------------------------------
 
-set (FIFE_MAJOR_VERSION 0)
-set (FIFE_MINOR_VERSION 4)
-set (FIFE_PATCH_VERSION 1)
-set (FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
+set(FIFE_MAJOR_VERSION 0)
+set(FIFE_MINOR_VERSION 4)
+set(FIFE_PATCH_VERSION 1)
+set(FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
 
 # check if "git" is installed
 find_program(GIT_TOOL git DOC "Git version control")
@@ -31,6 +30,7 @@ if(GIT_TOOL AND GIT_DIR)
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   set(FIFE_GIT_HASH ${GIT_COMMIT_HASH})
+  unset(GIT_DIR)
 else()
   # not a git repo, possibly a source download
   set(FIFE_GIT_HASH "")
@@ -42,7 +42,7 @@ else()
   set(FIFE_VERSION ${FIFE_VERSION_SHORT})
 endif()
 
-message("Updating version.h with version information and git meta data.")
+message("== Updating version.h with version information and git meta data.")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/engine/core/version.h.in"
@@ -84,21 +84,11 @@ if(build-library)
 endif(build-library)
 
 # Do not allow an in-source-tree build, request an out-of-source-tree build.
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "#Please build outside of the source tree!\n                        
-                       Make a separate folder for building and run CMake there:\n
-                       mkdir _build; cd _build; cmake ..\n
+                       Make an out-of-source-tree folder for building and run CMake there:\n
+                       mkdir ../_build; cd ../_build; cmake ../fifengine\n
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
-endif()
-
-# Do not allow the build directory to be in the source directory for older versions of cmake.
-if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_BINARY_DIR} MATCHES "^${CMAKE_SOURCE_DIR}")
-  message(FATAL_ERROR "# Please chose a different build directory.\n
-    In cmake versions < 3 SWIG does not work well when the build directory is
-    placed inside the source directory.
-    Use something like this:\n
-        mkdir ../_build; cd ../_build; cmake ../fifengine\n
-    You can remove your current build folder.")
 endif()
 
 # Disable in-source builds and modifications to the source tree.
@@ -112,34 +102,64 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #                                 Compiler Options                                         
 #------------------------------------------------------------------------------
 
-if(WIN32)
+# MSVC compiler options
+if(WIN32 AND MSVC)
+  # build on all cores
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /nologo")
 
-  if(MSVC)
-    # build on all cores
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0 /O2")   
+  else()
+    # warning level: /W<level 0 to 4> or /Wall
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /Od")   
+  endif()
+  
+  # ensure we use minimal "windows.h" lib without the crazy min max macros    
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
 
-    # ensure we use minimal "windows.h" lib without the crazy min max macros    
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
+  # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
+  set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 
-    # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
-    SET(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
-    SET(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
-    SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+  # use static libs - to avoid "LNK1104: cannot open file 'libboost_filesystem-vc140-mt-1_59.lib'"
+  set(Boost_USE_STATIC_LIBS ON)     
+  set(Boost_USE_MULTITHREADED ON)
 
-    # use static libs - to avoid "LNK1104: cannot open file 'libboost_filesystem-vc140-mt-1_59.lib'"
-    set(Boost_USE_STATIC_LIBS ON)     
-    set(Boost_USE_MULTITHREADED ON)
+  # Note: c++11 is implicitly enabled on MSVC >=2013
+endif()
 
-  endif(MSVC)
+# GCC and Clang compiler options
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC ${CMAKE_CXX_FLAGS}")  
 
-endif(WIN32)
+  if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")    
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2 -Wall -Wextra -Wunused")
+  endif()
+endif()
 
-# defines
+#------------------------------------------------------------------------------
+#                                 Defines                                        
+#------------------------------------------------------------------------------
 
 # define for using TinyXML with Standard Template Library (STL) support enabled
 add_definitions(-DTIXML_USE_STL)
+
+if(logging)
+  add_definitions(-DLOG_ENABLED)
+endif(logging)
+
+if(opengl)  
+  add_definitions(-DHAVE_OPENGL)
+endif(opengl)
+
+if(cegui)
+  add_definitions(-DHAVE_CEGUI)
+endif(cegui)
 
 #------------------------------------------------------------------------------
 #                                 Display Status                                         
@@ -150,8 +170,11 @@ message("== Building FIFE version ${FIFE_VERSION} using build type '${CMAKE_BUIL
 message(STATUS "    Source directory is '${PROJECT_SOURCE_DIR}'.")
 message(STATUS "    Build  directory is '${PROJECT_BINARY_DIR}'.")
 message(STATUS "    Installation path is '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
 message(STATUS "    Dependencies folder: '${PROJECT_SOURCE_DIR}/../fifengine-dependencies'.")
+message("")
+message(STATUS "    CMake version is '${CMAKE_VERSION}'.")
+message(STATUS "    CXX Compiler ID: '${CMAKE_CXX_COMPILER_ID}'.")
+message(STATUS "    CXX Compiler Flags: '${CMAKE_CXX_FLAGS}'.")
 message("")
 
 #------------------------------------------------------------------------------
@@ -200,7 +223,7 @@ include_directories("${PROJECT_SOURCE_DIR}/engine/core")
 include_directories("${PROJECT_SOURCE_DIR}")
 
 # Core
-set (FIFE_CORE_SRC
+set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
@@ -309,13 +332,13 @@ set (FIFE_CORE_SRC
 )
 
 # CEGUI v0.8.0+
-set (FIFE_CEGUI_SRC
+set(FIFE_CEGUI_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.cpp
 )
 
 # FIFECHAN
-set (FIFE_FCHAN_SRC
+set(FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_image.cpp
@@ -334,7 +357,7 @@ set (FIFE_FCHAN_SRC
 )
 
 # LIBROCKET
-set (FIFE_LROCKET_SRC
+set(FIFE_LROCKET_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.cpp
@@ -344,17 +367,17 @@ set (FIFE_LROCKET_SRC
 #                         Source Groups for Source Files                                    
 #------------------------------------------------------------------------------
 
-source_group("sources\\fife.core"                FILES ${FIFE_CORE_SRC})
-source_group("sources\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
-source_group("sources\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
-source_group("sources\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
+source_group("fife.core"                FILES ${FIFE_CORE_SRC})
+source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
+source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
+source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files                                         
 #------------------------------------------------------------------------------
 
 # Core
-set (FIFE_CORE_HDR
+set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
@@ -523,13 +546,13 @@ set (FIFE_CORE_HDR
 )
 
 # CEGUI
-set (FIFE_CEGUI_HDR
+set(FIFE_CEGUI_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/ceguimanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/cegui/base/ceguiinputprocessor.h
 )
 
 # Fifechan
-set (FIFE_FCHAN_HDR
+set(FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/fifechanmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_font.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/fifechan/base/gui_image.h
@@ -548,7 +571,7 @@ set (FIFE_FCHAN_HDR
 )
 
 # Librocket
-set (FIFE_LROCKET_HDR
+set(FIFE_LROCKET_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/librocketmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketinputprocessor.h
   ${PROJECT_SOURCE_DIR}/engine/core/gui/librocket/base/librocketrenderinterface.h
@@ -558,17 +581,19 @@ set (FIFE_LROCKET_HDR
 #                      Source Groups for Header Files                                    
 #------------------------------------------------------------------------------
 
-source_group("headers\\fife.core"                FILES ${FIFE_CORE_HDR})
-source_group("headers\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
-source_group("headers\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
-source_group("headers\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
+source_group("fife.core"                FILES ${FIFE_CORE_HDR})
+source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
+source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
+source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
+
+add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE_FCHAN_HDR} ${FIFE_LROCKET_HDR})
 
 #------------------------------------------------------------------------------
-#                                 SWIG files                                         
+#                                 SWIG Files                                         
 #------------------------------------------------------------------------------
 
 # Core
-set (FIFE_CORE_SWIG
+set(FIFE_CORE_SWIG
   version.i
   audio/soundclip.i
   audio/soundclipmanager.i
@@ -635,17 +660,17 @@ set (FIFE_CORE_SWIG
 )
 
 # CEGUI
-set (FIFE_CEGUI_SWIG
+set(FIFE_CEGUI_SWIG
   gui/cegui/ceguimanager.i
 )
 
 # FIFECHAN
-set (FIFE_FCHAN_SWIG_LIB
+set(FIFE_FCHAN_SWIG_LIB
   gui/fifechan/lib/fifechanlistener.i
   gui/fifechan/lib/widgets.i
 )
 
-set (FIFE_FCHAN_SWIG
+set(FIFE_FCHAN_SWIG
   gui/fifechan/base/gui_font.i
   gui/fifechan/base/gui_image.i
   gui/fifechan/console/console.i
@@ -654,7 +679,7 @@ set (FIFE_FCHAN_SWIG
 )
 
 # LIBROCKET
-set (FIFE_LROCKET_SWIG
+set(FIFE_LROCKET_SWIG
   gui/librocket/librocketmanager.i
 )
 
@@ -662,11 +687,36 @@ set (FIFE_LROCKET_SWIG
 #                      Source Groups for SWIG Files                                    
 #------------------------------------------------------------------------------
 
-source_group("swig\\fife.core"                FILES ${FIFE_CORE_SWIG})
-source_group("swig\\fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
-source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG_LIB})
-source_group("swig\\fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SWIG})
-source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
+source_group("fife.core"                    FILES ${FIFE_CORE_SWIG})
+source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
+source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
+source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
+source_group("fife.core.gui.librocket"      FILES ${FIFE_LROCKET_SWIG})
+
+# TODO some files for this source_group are not found
+#add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG} ${FIFE_LROCKET_SWIG})
+
+#------------------------------------------------------------------------------
+#                                 SWIG WRAPPER Files                                         
+#------------------------------------------------------------------------------
+
+# SWIG WRAPPERS FOR PYTHON
+SET(FIFE_SWIGWRAPPERS_PYTHON
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/extensions.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm
+  ${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/librocket.i.templ
+)
+
+#------------------------------------------------------------------------------
+#                      Source Groups for SWIG WRAPPER Files                                    
+#------------------------------------------------------------------------------
+
+source_group("fife.swigwrappers.python" FILES ${FIFE_SWIGWRAPPERS_PYTHON})
+
+add_custom_target(fife.swig-wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 
 #------------------------------------------------------------------------------
 #                                 Find Packages                                         
@@ -675,16 +725,22 @@ source_group("swig\\fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SWIG})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
 find_package(OpenAL REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(TinyXML REQUIRED)
+find_package(OGG REQUIRED)
+find_package(VORBIS REQUIRED)
+
+if(opengl)
+  find_package(OpenGL REQUIRED)
+  include_directories(${OPENGL_INCLUDE_DIR})  
+  find_package(GLEW REQUIRED)
+  include_directories(${GLEW_INCLUDE_DIR})  
+endif(opengl)
 
 if(cegui)
   find_package(CEGUI REQUIRED)
-  add_definitions(-DHAVE_CEGUI)
 
   if(NOT CEGUI_OpenGLRenderer_FOUND)
     message(FATAL_ERROR "FIFE needs CEGUI with the OpenGLRenderer enabled.")
@@ -699,9 +755,6 @@ if(cegui)
   message("Using CEGUI v0.8+")
   set(CEGUI TRUE)
   set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
-
-  find_package(GLEW REQUIRED)
-  include_directories(${GLEW_INCLUDE_DIRS})
 endif(cegui)
 
 if(build-python)
@@ -727,14 +780,18 @@ endif(build-python)
 if(fifechan)
 
   find_package(FifeChan COMPONENTS sdl REQUIRED)
+  if(opengl)
+    find_package(FifeChan COMPONENTS opengl REQUIRED)
+  endif(opengl)
  
-  if(build-python)
+  if(build-python)    
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
+    
     foreach(filename ${FIFE_FCHAN_SWIG})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
@@ -747,22 +804,15 @@ if(fifechan)
     endif (PYTHON_VERSION_MAJOR LESS 3)
   endif(build-python)
 
-  if(opengl)
-    find_package(FifeChan COMPONENTS opengl REQUIRED)
-    add_definitions(-DHAVE_OPENGL)
-  endif(opengl)
-
-  if(logging)
-    add_definitions(-DLOG_ENABLED)
-  endif(logging)
-  include_directories(${FIFECHAN_INCLUDE_DIR})
-  link_directories(${FIFECHAN_LIBRARIES})
-  if(build-python)
-    configure_file (
+    configure_file(
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
       "${PROJECT_BINARY_DIR}/fifechan.i"
-      )
-   endif(build-python)
+    )
+  endif(build-python)
+
+  include_directories(${FIFECHAN_INCLUDE_DIR})
+  link_directories(${FIFECHAN_LIBRARIES})
+
 endif(fifechan)
 
 if(cegui)  
@@ -774,10 +824,9 @@ if(cegui)
    endif(build-python)
 endif(cegui)
 
-# TODO: Add the other gui libraries
-
 if(build-python)
-  configure_file (
+
+  configure_file(
     "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fife.i.templ.cm"
     "${PROJECT_BINARY_DIR}/fife.i"
   )
@@ -797,40 +846,15 @@ if(build-python)
 
 endif(build-python)
 
-# Find ogg dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_OGG QUIET ogg)
-find_path(OGG_INCLUDE_DIRS NAMES ogg/ogg.h HINTS ${PC_OGG_INCLUDE_DIRS} PATH_SUFFIXES ogg)
-find_library(OGG_LIBRARIES NAMES ogg HINTS ${PC_OGG_LIBRARY_DIRS})
-
-# Find vorbis dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_VORBISFILE QUIET vorbisfile)
-find_path(VORBIS_INCLUDE_DIRS NAMES vorbis/vorbisfile.h HINTS ${PC_VORBIS_INCLUDE_DIRS} PATH_SUFFIXES vorbis)
-find_library(VORBIS_LIBRARY NAMES vorbis HINTS ${PC_VORBIS_LIBRARY_DIRS})
-
-# Find vorbisfile dependency
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_VORBISFILE QUIET vorbisfile)
-find_library(VORBISFILE_LIBRARY NAMES vorbisfile HINTS ${PC_VORBIS_LIBRARY_DIRS})
-
-include(FindPackageHandleStandardArgs)
-
-find_package_handle_standard_args(OGG DEFAULT_MSG OGG_INCLUDE_DIRS OGG_LIBRARIES)
-find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VORBIS_LIBRARY)
-find_package_handle_standard_args(vorbisfile DEFAULT_MSG VORBIS_INCLUDE_DIRS VORBISFILE_LIBRARY)
-
 include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_IMAGE_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
-include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIRS})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
-include_directories(${OPENGL_INCLUDE_DIR})
 
 add_definitions(${PNG_DEFINITIONS})
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -850,26 +874,46 @@ if(build-python)
   
   set (CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
 
-  set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
 
-  swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i"  ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
+  set(FIFE_SOURCES ${FIFE_CORE_SRC})
+  if(fifechan)
+    set(FIFE_SOURCES ${FIFE_SOURCES} ${FIFE_FCHAN_SRC})
+  endif(fifechan)
+  # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
+  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
+  else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
+  endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+
   swig_link_libraries(fife ${PYTHON_LIBRARIES})
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
                            ${OPENAL_LIBRARY})
-  swig_link_libraries(fife ${GLEW_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
   swig_link_libraries(fife ${VORBIS_LIBRARY})
   swig_link_libraries(fife ${OGG_LIBRARIES})
   swig_link_libraries(fife ${TinyXML_LIBRARIES})
-  swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
+
+  if(opengl)
+    swig_link_libraries(fife ${OPENGL_gl_LIBRARY})
+    swig_link_libraries(fife ${GLEW_LIBRARY})    
+  endif(opengl)
 
   if(fifechan)
     set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
-    swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
+
+    # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
+    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+      swig_add_library(fifechan LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
+    else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+      swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
+    endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+
     swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
     swig_link_libraries(fifechan ${FIFECHAN_LIBRARIES})
     swig_link_libraries(fife ${FIFECHAN_LIBRARIES})
@@ -880,18 +924,18 @@ if(build-python)
     swig_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
 
-  if(NOT DEFINED PYTHON_SITE_PACKAGES)
-    #
-    # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
-    #
+   #---------------------------------------------------------------------------------
+   # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife" #---------------------------------------------------------------------------------
+ 
+   if(NOT DEFINED PYTHON_SITE_PACKAGES)  
+    # get path to your local python site packages folder 
     execute_process(
       COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
       OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
-
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
     file(TO_CMAKE_PATH ${PYTHON_SITE_PACKAGES} PYTHON_SITE_PACKAGES)
- endif(NOT DEFINED PYTHON_SITE_PACKAGES)
+  endif(NOT DEFINED PYTHON_SITE_PACKAGES)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
@@ -911,21 +955,28 @@ endif(build-python)
 #------------------------------------------------------------------------------
 
 if(build-library)
-  add_library(fife ${FIFE_CORE_SRC} ${FIFE_FCHAN_SRC})
+  set(FIFE_SOURCES ${FIFE_CORE_SRC})
+  if(fifechan)
+    set(FIFE_SOURCES ${FIFE_SOURCES} ${FIFE_FCHAN_SRC})
+  endif(fifechan)
+
+  add_library(fife ${FIFE_SOURCES})
   set_target_properties(fife PROPERTIES SOVERSION ${FIFE_VERSION})
 
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
                              ${OPENAL_LIBRARY})
-  target_link_libraries(fife ${GLEW_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
   target_link_libraries(fife ${VORBIS_LIBRARY})
   target_link_libraries(fife ${OGG_LIBRARIES})
   target_link_libraries(fife ${TinyXML_LIBRARIES})
-  target_link_libraries(fife ${OPENGL_gl_LIBRARY})
+  if(opengl)
+    target_link_libraries(fife ${OPENGL_gl_LIBRARY})
+    target_link_libraries(fife ${GLEW_LIBRARY})   
+  endif(opengl)  
   if(fifechan)
     target_link_libraries(fife ${FIFECHAN_LIBRARIES})
   endif(fifechan)
