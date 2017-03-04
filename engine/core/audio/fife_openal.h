@@ -33,8 +33,8 @@
 
 // Win32
 #if defined( WIN32 )
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#include <OpenALSoft/al.h>
+#include <OpenALSoft/alc.h>
 #endif
 
 // Macintosh
