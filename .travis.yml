@@ -6,10 +6,25 @@ matrix:
       sudo: required
       dist: trusty
       compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - clang-3.9
+      env: COMPILER=clang-3.9
     - os: linux
       sudo: required
       dist: trusty
       compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+      env: COMPILER=gcc-5
     - os: osx
       compiler: clang
     - os: osx
@@ -20,7 +35,14 @@ git:
 
 addons:
   apt:
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty-3.9
     packages:
+    - gcc-5
+    - g++-5
+    - clang-3.9
     - mesa-common-dev
     - libsdl2-dev
     - libsdl2-image-dev
