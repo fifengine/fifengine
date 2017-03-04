@@ -55,6 +55,8 @@ before_install:
   - sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.9 20
   - sudo update-alternatives --config gcc
   - sudo update-alternatives --config g++
+  - sudo rm -f /usr/local/clang-3.5.0/bin/clang
+  - sudo rm -f /usr/local/clang-3.5.0/bin/clang++
   - sudo update-alternatives --config clang
   - sudo update-alternatives --config clang++
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
