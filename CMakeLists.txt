@@ -840,7 +840,7 @@ include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
-include_directories(${OPENALSOFT_INCLUDE_DIR})
+include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIRS})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
@@ -878,7 +878,7 @@ if(build-python)
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
-                           ${OPENALSOFT_LIBRARY})
+                           ${OPENAL_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -953,7 +953,7 @@ if(build-library)
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
-                             ${OPENALSOFT_LIBRARY})
+                             ${OPENAL_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
