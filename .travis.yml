@@ -22,7 +22,6 @@ addons:
   apt:
     packages:
     - mesa-common-dev
-    - swig
     - libsdl2-dev
     - libsdl2-image-dev
     - libsdl2-ttf-dev
@@ -42,9 +41,10 @@ addons:
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml glew; fi
-  # install newer version of pylint, the one fetched with apt-get is broken
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
+    # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml glew; fi
   - cmake --version
 
 install:
