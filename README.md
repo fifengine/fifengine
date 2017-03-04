@@ -20,9 +20,9 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 Fifengine is also already available from the following package repositories:
 
-<a href="https://repology.org/metapackage/fife"><img src="https://repology.org/badge/vertical-allrepos/fife.svg" alt="Packaging status" align="right"></a>
-
 * [SlackBuilds](https://slackbuilds.org/repository/14.2/games/fifengine/)
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg)](https://repology.org/metapackage/fife)
 
 # Table of contents
 1. [Features]         (#1-features)
