@@ -22,7 +22,7 @@ find_path(OPENALSOFT_INCLUDE_DIR
 
 find_library(OPENALSOFT_LIBRARY 
   NAMES libopenal openal libOpenAL32 OpenAL32 OpenAL32.dll soft_oal.dll
-  PATH_SUFFIXES lib64 lib libs64 libs ${_OpenAL_ARCH_DIR}
+  PATH_SUFFIXES lib64 lib libs64 libs
   PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib 
     lib
