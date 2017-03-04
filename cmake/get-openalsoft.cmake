@@ -27,7 +27,7 @@ if (WIN32)
         INSTALL_COMMAND 
             COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/openalsoft/bin/Win32/soft_oal.dll  ${DEPENDENCY_INSTALL_DIR}/bin/OpenAL32.dll     
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openalsoft/libs/Win32    ${DEPENDENCY_INSTALL_DIR}/lib
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openalsoft/include/AL    ${DEPENDENCY_INSTALL_DIR}/include/OpenAL
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/openalsoft/include/AL    ${DEPENDENCY_INSTALL_DIR}/include/OpenALSoft
     )
 
 else() # build from source
