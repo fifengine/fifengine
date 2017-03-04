@@ -191,7 +191,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenALSoft"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
 
@@ -206,7 +206,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenALSoft"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
     
@@ -727,7 +727,7 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
 find_package(PNG REQUIRED)
-find_package(OpenAL REQUIRED)
+find_package(OpenALSoft REQUIRED)
 find_package(TinyXML REQUIRED)
 find_package(OGG REQUIRED)
 find_package(VORBIS REQUIRED)
@@ -840,7 +840,7 @@ include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
-include_directories(${OPENAL_INCLUDE_DIR})
+include_directories(${OPENALSOFT_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIRS})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
@@ -878,7 +878,7 @@ if(build-python)
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
-                           ${OPENAL_LIBRARY})
+                           ${OPENALSOFT_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -953,7 +953,7 @@ if(build-library)
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
-                             ${OPENAL_LIBRARY})
+                             ${OPENALSOFT_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})
