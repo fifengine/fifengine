@@ -40,30 +40,6 @@ namespace FIFE {
 		SD_DISTANCE_EXPONENT_CLAMPED
 	};
 
-	enum SoundFilterType {
-		SF_FILTER_NULL,
-		SF_FILTER_LOWPASS,
-		SF_FILTER_HIGHPASS,
-		SF_FILTER_BANDPASS
-	};
-	
-	enum SoundEffectType {
-		SE_EFFECT_NULL,
-		SE_EFFECT_REVERB,
-		SE_EFFECT_CHORUS,
-		SE_EFFECT_DISTORTION,
-		SE_EFFECT_ECHO,
-		SE_EFFECT_FLANGER,
-		SE_EFFECT_FREQUENCY_SHIFTER,
-		SE_EFFECT_VOCAL_MORPHER,
-		SE_EFFECT_PITCH_SHIFTER,
-		SE_EFFECT_RING_MODULATOR,
-		SE_EFFECT_AUTOWAH,
-		SE_EFFECT_COMPRESSOR,
-		SE_EFFECT_EQUALIZER,
-		SE_EFFECT_EAXREVERB
-	};
-
 	enum SoundEffectPreset {
 		SE_PRESET_GENERIC,
 		SE_PRESET_PADDEDCELL,
@@ -185,66 +161,64 @@ namespace FIFE {
 	class SoundFilter;
 
 	class SoundManager {
-		public:
-			SoundManager();
-			~SoundManager();
-	
-			void init();
+	public:
+		void init();
+		bool isActive() const;
 			
-			SoundEmitter* createEmitter();
-			SoundEmitter* createEmitter(const std::string& name);
-			SoundEmitter* getEmitter(uint32_t emitterId);
-			void releaseEmitter(uint32_t emitterId);
+		SoundEmitter* createEmitter();
+		SoundEmitter* createEmitter(const std::string& name);
+		void deleteEmitter(SoundEmitter* emitter);
+		SoundEmitter* getEmitter(uint32_t emitterId);
+		void releaseEmitter(uint32_t emitterId);
 			
-			ALCcontext* getContext();
+		ALCcontext* getContext();
 			
-			void setVolume(float vol);
-			float getVolume() const;
-			void mute();
-			void unmute();
+		void setVolume(float vol);
+		float getVolume() const;
+		void mute();
+		void unmute();
 
-			void play();
-			void pause();
-			void stop();
-			void rewind();
+		void play();
+		void pause();
+		void stop();
+		void rewind();
 			
-			void setDistanceModel(SoundDistanceModelType model);
-			SoundDistanceModelType getDistanceModel() const;
+		void setDistanceModel(SoundDistanceModelType model);
+		SoundDistanceModelType getDistanceModel() const;
+		void setListenerPosition(const AudioSpaceCoordinate& position);
+		AudioSpaceCoordinate getListenerPosition() const;
+		void setListenerOrientation(const AudioSpaceCoordinate& orientation);
+		AudioSpaceCoordinate getListenerOrientation() const;
+		void setListenerVelocity(const AudioSpaceCoordinate& velocity);
+		AudioSpaceCoordinate getListenerVelocity() const;
+		void setDopplerFactor(float factor);
+		float getDopplerFactor() const;
 
-			void setListenerPosition(const AudioSpaceCoordinate& position);
-			AudioSpaceCoordinate getListenerPosition() const;
-			void setListenerOrientation(const AudioSpaceCoordinate& orientation);
-			AudioSpaceCoordinate getListenerOrientation() const;
-			void setListenerVelocity(const AudioSpaceCoordinate& velocity);
-			AudioSpaceCoordinate getListenerVelocity() const;
-			void setDopplerFactor(float factor);
-			float getDopplerFactor() const;
+		SoundEffect* createSoundEffect(SoundEffectType  type);
+		SoundEffect* createSoundEffectPreset(SoundEffectPreset type);
+		void deleteSoundEffect(SoundEffect* effect);
+		void enableSoundEffect(SoundEffect* effect);
+		void disableSoundEffect(SoundEffect* effect);
+		void addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+		void removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+		void addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter);
+		void removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter);
 
-			SoundEffect* createSoundEffect(SoundEffectType  type);
-			SoundEffect* createSoundEffectPreset(SoundEffectPreset type);
-			void deleteSoundEffect(SoundEffect* effect);
-			void enableSoundEffect(SoundEffect* effect);
-			void disableSoundEffect(SoundEffect* effect);
-			void addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
-			void removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter);
+		SoundFilter* createSoundFilter(SoundFilterType type);
+		void deleteSoundFilter(SoundFilter* filter);
+		void enableDirectSoundFilter(SoundFilter* filter);
+		void disableDirectSoundFilter(SoundFilter* filter);
+		void addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
+		void removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
 
-			SoundFilter* createSoundFilter(SoundFilterType type);
-			void deleteSoundFilter(SoundFilter* filter);
-			void enableSoundFilter(SoundFilter* filter);
-			void disableSoundFilter(SoundFilter* filter);
-			void addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
-			void removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter);
-
-			void addToGroup(SoundEmitter* emitter);
-			void removeFromGroup(SoundEmitter* emitter);
-			void removeGroup(const std::string& group);
-			void removeAllGroups();
-			void play(const std::string& group);
-			void pause(const std::string& group);
-			void stop(const std::string& group);
-			void rewind(const std::string& group);
-			void setGain(const std::string& group, float gain);
-			void setMaxGain(const std::string& group, float gain);
-			void setMinGain(const std::string& group, float gain);
+		void removeGroup(const std::string& group);
+		void removeAllGroups();
+		void play(const std::string& group);
+		void pause(const std::string& group);
+		void stop(const std::string& group);
+		void rewind(const std::string& group);
+		void setGain(const std::string& group, float gain);
+		void setMaxGain(const std::string& group, float gain);
+		void setMinGain(const std::string& group, float gain);
 	};
 }

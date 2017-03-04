@@ -178,9 +178,9 @@ namespace FIFE {
 			m_freeSlots.push(m_effectSlots[i]);
 			m_createdSlots++;
 		}
-
+		// fetch maximal slots per source
 		alcGetIntegerv(m_device, ALC_MAX_AUXILIARY_SENDS, 1, &m_maxSlots);
-
+		// prepares the presets
 		createPresets();
 	}
 
@@ -238,6 +238,9 @@ namespace FIFE {
 
 	void SoundEffectManager::deleteSoundEffect(SoundEffect* effect) {
 		disableSoundEffect(effect);
+		if (effect->getFilter()) {
+			removeSoundFilterFromSoundEffect(effect, effect->getFilter());
+		}
 		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
 			if (effect == *it) {
 				std::map<SoundEffect*, std::vector<SoundEmitter*> >::iterator effectIt = m_effectEmitters.find(effect);
@@ -338,6 +341,48 @@ namespace FIFE {
 		}
 	}
 
+	void SoundEffectManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter) {
+		if (effect->getFilter()) {
+			FL_WARN(_log, LMsg() << "SoundEffect already has a filter");
+			return;
+		}
+		effect->setFilter(filter);
+		m_filterdEffects[filter].push_back(effect);
+		if (effect->isEnabled()) {
+			disableSoundEffect(effect);
+			enableSoundEffect(effect);
+		}
+	}
+
+	void SoundEffectManager::removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter) {
+		std::map<SoundFilter*, std::vector<SoundEffect*> >::iterator filterIt = m_filterdEffects.find(filter);
+		if (filterIt == m_filterdEffects.end()) {
+			FL_WARN(_log, LMsg() << "SoundEffect can not removed from unknown filter");
+			return;
+		}
+		bool found = false;
+		std::vector<SoundEffect*>::iterator effectIt = filterIt->second.begin();
+		std::vector<SoundEffect*>::iterator effectEnd = filterIt->second.end();
+		while (effectIt != effectEnd) {
+			if ((*effectIt) == effect) {
+				effect->setFilter(NULL);
+				if (effect->isEnabled()) {
+					disableSoundEffect(effect);
+					enableSoundEffect(effect);
+				}
+				filterIt->second.erase(effectIt++);
+				found = true;
+			}
+			else {
+				++effectIt;
+			}
+		}
+		if (!found) {
+			FL_WARN(_log, LMsg() << "SoundEffect could not be found for the given filter.");
+			return;
+		}
+	}
+
 	void SoundEffectManager::activateEffect(SoundEffect* effect, SoundEmitter* emitter) {
 		if (!effect->isEnabled()) {
 			return;
@@ -362,7 +407,7 @@ namespace FIFE {
 	}
 
 	void SoundEffectManager::deleteSoundFilter(SoundFilter* filter) {
-		disableSoundFilter(filter);
+		disableDirectSoundFilter(filter);
 		for (std::vector<SoundFilter*>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
 			if (filter == *it) {
 				std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
@@ -373,6 +418,18 @@ namespace FIFE {
 					}
 				}
 				m_filterdEmitters.erase(filterIt);
+				std::map<SoundFilter*, std::vector<SoundEffect*> >::iterator filterItt = m_filterdEffects.find(filter);
+				if (filterItt != m_filterdEffects.end()) {
+					std::vector<SoundEffect*>::iterator effectIt = filterItt->second.begin();
+					for (; effectIt != filterItt->second.end(); ++effectIt) {
+						(*effectIt)->setFilter(NULL);
+						if ((*effectIt)->isEnabled()) {
+							disableSoundEffect(*effectIt);
+							enableSoundEffect(*effectIt);
+						}
+					}
+				}
+				m_filterdEffects.erase(filterItt);
 				delete *it;
 				m_filters.erase(it);
 				break;
@@ -380,7 +437,7 @@ namespace FIFE {
 		}
 	}
 
-	void SoundEffectManager::enableSoundFilter(SoundFilter* filter) {
+	void SoundEffectManager::enableDirectSoundFilter(SoundFilter* filter) {
 		if (filter->isEnabled()) {
 			return;
 		}
@@ -396,7 +453,7 @@ namespace FIFE {
 		}
 	}
 
-	void SoundEffectManager::disableSoundFilter(SoundFilter* filter) {
+	void SoundEffectManager::disableDirectSoundFilter(SoundFilter* filter) {
 		if (!filter->isEnabled()) {
 			return;
 		}
@@ -412,7 +469,7 @@ namespace FIFE {
 		filter->setEnabled(false);
 	}
 
-	void SoundEffectManager::addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+	void SoundEffectManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
 		if (emitter->getDirectFilter()) {
 			FL_WARN(_log, LMsg() << "SoundEmitter already has a direct filter");
 			return;
@@ -424,7 +481,7 @@ namespace FIFE {
 		}
 	}
 
-	void SoundEffectManager::removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+	void SoundEffectManager::removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
 		std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
 		if (filterIt == m_filterdEmitters.end()) {
 			FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown filter");
@@ -435,7 +492,7 @@ namespace FIFE {
 		std::vector<SoundEmitter*>::iterator emitterEnd = filterIt->second.end();
 		while (emitterIt != emitterEnd) {
 			if ((*emitterIt) == emitter) {
-				if (emitter-isActive()) {
+				if (emitter->isActive()) {
 					deactivateFilter(filter, emitter);
 				}
 				emitter->setDirectFilter(NULL);

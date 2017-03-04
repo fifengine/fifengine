@@ -453,6 +453,14 @@ namespace FIFE {
 		m_effectManager->removeEmitterFromSoundEffect(effect, emitter);
 	}
 
+	void SoundManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter) {
+		m_effectManager->addSoundFilterToSoundEffect(effect, filter);
+	}
+
+	void SoundManager::removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter) {
+		m_effectManager->removeSoundFilterFromSoundEffect(effect, filter);
+	}
+
 	void SoundManager::activateEffect(SoundEffect* effect, SoundEmitter* emitter) {
 		m_effectManager->activateEffect(effect, emitter);
 	}
@@ -469,20 +477,20 @@ namespace FIFE {
 		m_effectManager->deleteSoundFilter(filter);
 	}
 
-	void SoundManager::enableSoundFilter(SoundFilter* filter) {
-		m_effectManager->enableSoundFilter(filter);
+	void SoundManager::enableDirectSoundFilter(SoundFilter* filter) {
+		m_effectManager->enableDirectSoundFilter(filter);
 	}
 
-	void SoundManager::disableSoundFilter(SoundFilter* filter) {
-		m_effectManager->disableSoundFilter(filter);
+	void SoundManager::disableDirectSoundFilter(SoundFilter* filter) {
+		m_effectManager->disableDirectSoundFilter(filter);
 	}
 
-	void SoundManager::addEmitterToSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
-		m_effectManager->addEmitterToSoundFilter(filter, emitter);
+	void SoundManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->addEmitterToDirectSoundFilter(filter, emitter);
 	}
 
-	void SoundManager::removeEmitterFromSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
-		m_effectManager->removeEmitterFromSoundFilter(filter, emitter);
+	void SoundManager::removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
+		m_effectManager->removeEmitterFromDirectSoundFilter(filter, emitter);
 	}
 
 	void SoundManager::activateFilter(SoundFilter* filter, SoundEmitter* emitter) {

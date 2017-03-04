@@ -605,6 +605,8 @@ add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE
 # Core
 set(FIFE_CORE_SWIG
   version.i
+  audio/effects/soundeffect.i
+  audio/effects/soundfilter.i
   audio/soundclip.i
   audio/soundclipmanager.i
   audio/soundemitter.i

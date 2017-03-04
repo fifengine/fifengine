@@ -49,15 +49,13 @@ namespace FIFE {
 		SD_STOPPED_STATE
 	};
 
-	class SoundDecoder;
 	class SoundManager;
 
 	class SoundEmitter {
 	public:
-		SoundEmitter(SoundManager* manager, uint32_t uid);
-		~SoundEmitter();
-
 		uint32_t getId() const;
+		bool isActive() const;
+		uint8_t getEffectCount();
 
 		void setSoundClip(SoundClipPtr soundClip);
 		SoundClipPtr getSoundClip();
@@ -96,7 +94,6 @@ namespace FIFE {
 		AudioSpaceCoordinate getVelocity() const;
 		void setPitch(float pitch);
 		float getPitch() const;
-
 		void setConeInnerAngle(float inner);
 		float getConeInnerAngle() const;
 		void setConeOuterAngle(float outer);
@@ -109,14 +106,18 @@ namespace FIFE {
 		uint64_t getSampleRate();
 		uint64_t getDecodedLength();
 		uint64_t getDuration();
-
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);
-
 		SoundStateType getState();
+
+		void setGroup(const std::string& group);
+		const std::string& getGroup();
 
 		void addListener(SoundEmitterListener* listener);
 		void removeListener(SoundEmitterListener* listener);
+	
+	private:
+		SoundEmitter(SoundManager* manager, uint32_t uid);
 	};
 }
 
