@@ -16,13 +16,17 @@ find_path(OPENALSOFT_INCLUDE_DIR
     /opt
     # Travis CI - MAC OSX
     /usr/local/opt/openal-soft/
+    # Linux Include PATH
+    /usr/include/AL/
 )
 
 find_library(OPENALSOFT_LIBRARY 
   NAMES libopenal openal libOpenAL32 OpenAL32 OpenAL32.dll soft_oal.dll
-  PATHS 
+  PATH_SUFFIXES lib64 lib libs64 libs ${_OpenAL_ARCH_DIR}
+  PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib 
     lib
+    /usr/lib
 )
 
 include(FindPackageHandleStandardArgs)
