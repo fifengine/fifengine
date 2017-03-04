@@ -6,25 +6,10 @@ matrix:
       sudo: required
       dist: trusty
       compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.9
-          packages:
-            - clang-3.9
-      env: COMPILER=clang-3.9
     - os: linux
       sudo: required
       dist: trusty
       compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-5
-      env: COMPILER=gcc-5
     - os: osx
       compiler: clang
     - os: osx
