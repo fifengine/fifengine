@@ -5,7 +5,7 @@
 #  OPENALSOFT_INCLUDE_DIR    - The OpenAL-Soft include directories
 #  OPENALSOFT_LIBRARY        - The OpenAL-Soft libraries
 
-find_path(OPENALSOFT_INCLUDE_DIR 
+find_path(OPENALSOFT_INCLUDE_DIR
   NAMES al.h
   PATHS
     ~/Library/Frameworks
@@ -20,11 +20,11 @@ find_path(OPENALSOFT_INCLUDE_DIR
     /usr/include/AL/
 )
 
-find_library(OPENALSOFT_LIBRARY 
+find_library(OPENALSOFT_LIBRARY
   NAMES libopenal openal libOpenAL32 OpenAL32 OpenAL32.dll soft_oal.dll
   PATH_SUFFIXES lib64 lib libs64 libs
   PATHS
-    ${OPENALSOFT_INCLUDE_DIR}/../lib 
+    ${OPENALSOFT_INCLUDE_DIR}/../lib
     lib
     /usr/lib
 )
