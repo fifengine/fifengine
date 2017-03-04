@@ -28,6 +28,8 @@ addons:
     - gcc-5
     - g++-5
     - clang-3.9
+    - llvm-3.9-dev
+    - libclang-3.9-dev
     - mesa-common-dev
     - libsdl2-dev
     - libsdl2-image-dev
@@ -49,8 +51,12 @@ addons:
 before_install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20
+  - sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.9 20
+  - sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.9 20
   - sudo update-alternatives --config gcc
   - sudo update-alternatives --config g++
+  - sudo update-alternatives --config clang
+  - sudo update-alternatives --config clang++
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
     # install newer version of pylint, the one fetched with apt-get is broken
