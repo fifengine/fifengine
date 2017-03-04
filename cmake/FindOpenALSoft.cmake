@@ -19,8 +19,7 @@ find_path(OPENALSOFT_INCLUDE_DIR
     # Linux Include PATH
     /usr/include/AL/
     # Windows SDK Include PATH
-    /include/OpenAL
-    /include/
+    /include/OpenALSoft
 )
 
 find_library(OPENALSOFT_LIBRARY
