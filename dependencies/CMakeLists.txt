@@ -69,7 +69,7 @@ OPTION(FIFE_DEPENDENCY_GLEW          "Download and build dependency: GLEW"      
 # TODO boost
 OPTION(FIFE_DEPENDENCY_ZLIB          "Download and build dependency: ZLIB"       ON)
 OPTION(FIFE_DEPENDENCY_LIBPNG        "Download and build dependency: LIBPNG"     ON)
-OPTION(FIFE_DEPENDENCY_OPENAL        "Download and build dependency: OPENAL"     ON)
+OPTION(FIFE_DEPENDENCY_OPENALSOFT    "Download and build dependency: OPENALSOFT" ON)
 OPTION(FIFE_DEPENDENCY_SWIG          "Download and build dependency: SWIG"       ON)
 OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"    ON)
 OPTION(FIFE_DEPENDENCY_LIBOGG        "Download and build dependency: LIBOGG"     ON)
@@ -106,9 +106,9 @@ IF(FIFE_DEPENDENCY_LIBPNG)
     INCLUDE(get-libpng)
 ENDIF(FIFE_DEPENDENCY_LIBPNG)
 
-IF(FIFE_DEPENDENCY_OPENAL)
-    INCLUDE(get-openal)
-ENDIF(FIFE_DEPENDENCY_OPENAL)
+IF(FIFE_DEPENDENCY_OPENALSOFT)
+    INCLUDE(get-openalsoft)
+ENDIF(FIFE_DEPENDENCY_OPENALSOFT)
 
 IF(FIFE_DEPENDENCY_SWIG)
     INCLUDE(get-swig)
