@@ -802,7 +802,7 @@ if(fifechan)
     else (PYTHON_VERSION_MAJOR LESS 3)
       set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
     endif (PYTHON_VERSION_MAJOR LESS 3)
-  endif(build-python)
+
 
     configure_file(
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
