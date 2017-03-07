@@ -48,17 +48,34 @@ namespace FIFE {
 		SoundSource(Instance* instance);
 		~SoundSource();
 
+		/** Sets the ActionAudio. Owned by Object.
+		 */
 		void setActionAudio(ActionAudio* audio);
+
+		/** Return ActionAudio. Owned by Object.
+		 */
 		ActionAudio* getActionAudio() const;
+
+		/** Sets the positon of the SoundEmitter, called from Instance.
+		 */
 		void setPosition();
+
+		/** Sets the direction of the SoundEmitter, called from Instance.
+		 */
 		void setDirection();
 	
 	private:
+		/** Moves data from ActionAudio to SoundEmitter.
+		 */
 		void updateSoundEmitter();
-
+		
+		//! Associated Instance
 		Instance* m_instance;
+		//! Actual ActionAudio
 		ActionAudio* m_audio;
+		//! Related SoundEmitter
 		SoundEmitter* m_emitter;
+		//! InstanceChangeListener for position and direction
 		SoundChangeListener* m_listener;
 
 

@@ -162,17 +162,17 @@ namespace FIFE {
 		 */
 		void play();
 
-		/** Plays and fade in the associated audio file.
+		/** Plays the associated audio file with fade in and / or out.
 		 */
-		void playWithFadeIn(float time);
+		void play(float inTime, float outTime);
 
 		/** Stops playing the audio file and rewinds to the beginning.
 		 */
 		void stop();
 
-		/** Stops playing the audio file and fade out.
+		/** Stops playing the audio file after time with fade out.
 		 */
-		void stopWithFadeOut(float time);
+		void stop(float time);
 
 		/** Pauses playing the audio file.
 		 */
@@ -446,8 +446,10 @@ namespace FIFE {
 		//! original gain
 		float m_origGain;
 		
-		uint32_t m_fadeStartTimestamp;
-		uint32_t m_fadeEndTimestamp;
+		uint32_t m_fadeInStartTimestamp;
+		uint32_t m_fadeInEndTimestamp;
+		uint32_t m_fadeOutStartTimestamp;
+		uint32_t m_fadeOutEndTimestamp;
 		//! holds pointer to applied SoundEffects
 		std::vector<SoundEffect*> m_effects;
 		//! listeners for sound related events
