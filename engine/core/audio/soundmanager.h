@@ -363,7 +363,7 @@ namespace FIFE {
 
 	private:
 		typedef std::map<std::string, std::vector<SoundEmitter*> > EmitterGroups;
-		typedef std::map<std::string, std::vector<SoundEmitter*> >::iterator EmitterGroupsIterator;
+		typedef EmitterGroups::iterator EmitterGroupsIterator;
 
 		/** Sets the source handle
 		 *

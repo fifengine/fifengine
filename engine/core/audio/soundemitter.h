@@ -48,13 +48,13 @@ namespace FIFE {
 		SD_STOPPED_STATE
 	};
 
-	/** Listener interface for Emitter.
+	/** Listener interface for SoundEmitter.
 	 */
 	class SoundEmitterListener {
 	public:
 		virtual ~SoundEmitterListener() {};
 		
-		/** Called when a sound finished playing.
+		/** Called when a sound finished playing. Or stop() was called.
 		 * @param emitterId The id of emitter.
 		 * @param SoundClipId The id of sound clip aka ResourceHandle.
 		 */
@@ -73,8 +73,16 @@ namespace FIFE {
 		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
 
+		/** Sets openAl-source.
+		 */
 		void setSource(ALuint source);
+
+		/** Return openAl-source.
+		 */
 		ALuint getSource() const;
+
+		/** Return if the Emitter is active / have an openAl-source.
+		 */
 		bool isActive() const;
 
 		/** Called once a frame from the SoundManager.
@@ -98,7 +106,7 @@ namespace FIFE {
 		bool isRelativePositioning() const;
 
 		/** Sets the distance under which the volume for the SoundEmitter would normally drop by half (before
-		 *  being influenced by rolloff factor or max distance. 
+		 *  being influenced by rolloff factor or max distance. Default 1.0
 		 */
 		void setReferenceDistance(float distance);
 
@@ -117,7 +125,7 @@ namespace FIFE {
 
 		/** Sets the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
 		 *
-		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs.
+		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs. Default 1.0
 		 */
 		void setRolloff(float rolloff);
 
@@ -320,7 +328,7 @@ namespace FIFE {
 		 */
 		SoundStateType getState();
 
-		/** Sets the group name.
+		/** Sets the group name. Adds the emitter automatically to the group.
 		 */
 		void setGroup(const std::string& group);
 
@@ -430,8 +438,6 @@ namespace FIFE {
 			bool loop;
 			bool relative;
 		} m_internData;
-		//! vector that indicates updates in internData
-		//std::vector<bool> m_updateData;
 
 		//! the group name
 		std::string m_group;
@@ -445,10 +451,13 @@ namespace FIFE {
 		bool m_fadeOut;
 		//! original gain
 		float m_origGain;
-		
+		//! fade in start time
 		uint32_t m_fadeInStartTimestamp;
+		//! fade in end time
 		uint32_t m_fadeInEndTimestamp;
+		//! fade out start time
 		uint32_t m_fadeOutStartTimestamp;
+		//! fade out end time
 		uint32_t m_fadeOutEndTimestamp;
 		//! holds pointer to applied SoundEffects
 		std::vector<SoundEffect*> m_effects;

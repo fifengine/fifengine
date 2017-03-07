@@ -64,7 +64,6 @@ namespace FIFE {
 			return;
 		}
 
-		//m_updateData.resize(17, false);
 		resetInternData();
 	}
 
@@ -355,7 +354,7 @@ namespace FIFE {
 	void SoundEmitter::play(float inTime, float outTime) {
 		float zero = 0;
 		m_origGain = m_internData.volume;
-		if (!Mathd::Equal(zero, inTime)) {
+		if (!Mathf::Equal(zero, inTime)) {
 			m_fadeIn = true;
 			setGain(0.0f);
 			play();
@@ -365,7 +364,7 @@ namespace FIFE {
 		if (getState() != SD_PLAYING_STATE) {
 			play();
 		}
-		if (!Mathd::Equal(zero, outTime)) {
+		if (!Mathf::Equal(zero, outTime)) {
 			m_fadeOut = true;
 			setGain(0.0f);
 			m_fadeOutEndTimestamp = m_internData.playTimestamp + getDuration();

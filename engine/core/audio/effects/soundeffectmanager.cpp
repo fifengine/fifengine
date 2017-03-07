@@ -243,7 +243,7 @@ namespace FIFE {
 		}
 		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
 			if (effect == *it) {
-				std::map<SoundEffect*, std::vector<SoundEmitter*> >::iterator effectIt = m_effectEmitters.find(effect);
+				SoundEffectEmitterMap::iterator effectIt = m_effectEmitters.find(effect);
 				if (effectIt != m_effectEmitters.end()) {
 					std::vector<SoundEmitter*>::iterator emitterIt = effectIt->second.begin();
 					for (; emitterIt != effectIt->second.end(); ++emitterIt) {
@@ -272,7 +272,7 @@ namespace FIFE {
 		alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect->getEffectId());
 		effect->setSlotId(slot);
 		effect->setEnabled(true);
-		std::map<SoundEffect*, std::vector<SoundEmitter*> >::iterator effectIt = m_effectEmitters.find(effect);
+		SoundEffectEmitterMap::iterator effectIt = m_effectEmitters.find(effect);
 		if (effectIt != m_effectEmitters.end()) {
 			std::vector<SoundEmitter*>::iterator emitterIt = effectIt->second.begin();
 			for (; emitterIt != effectIt->second.end(); ++emitterIt) {
@@ -292,7 +292,7 @@ namespace FIFE {
 		m_freeSlots.push(effect->getSlotId());
 		effect->setSlotId(0);
 
-		std::map<SoundEffect*, std::vector<SoundEmitter*> >::iterator effectIt = m_effectEmitters.find(effect);
+		SoundEffectEmitterMap::iterator effectIt = m_effectEmitters.find(effect);
 		if (effectIt != m_effectEmitters.end()) {
 			std::vector<SoundEmitter*>::iterator emitterIt = effectIt->second.begin();
 			for (; emitterIt != effectIt->second.end(); ++emitterIt) {
@@ -315,7 +315,7 @@ namespace FIFE {
 	}
 
 	void SoundEffectManager::removeEmitterFromSoundEffect(SoundEffect* effect, SoundEmitter* emitter) {
-		std::map<SoundEffect*, std::vector<SoundEmitter*> >::iterator effectIt = m_effectEmitters.find(effect);
+		SoundEffectEmitterMap::iterator effectIt = m_effectEmitters.find(effect);
 		if (effectIt == m_effectEmitters.end()) {
 			FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown effect");
 			return;
@@ -355,7 +355,7 @@ namespace FIFE {
 	}
 
 	void SoundEffectManager::removeSoundFilterFromSoundEffect(SoundEffect* effect, SoundFilter* filter) {
-		std::map<SoundFilter*, std::vector<SoundEffect*> >::iterator filterIt = m_filterdEffects.find(filter);
+		SoundFilterEffectMap::iterator filterIt = m_filterdEffects.find(filter);
 		if (filterIt == m_filterdEffects.end()) {
 			FL_WARN(_log, LMsg() << "SoundEffect can not removed from unknown filter");
 			return;
@@ -410,7 +410,7 @@ namespace FIFE {
 		disableDirectSoundFilter(filter);
 		for (std::vector<SoundFilter*>::iterator it = m_filters.begin(); it != m_filters.end(); ++it) {
 			if (filter == *it) {
-				std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
+				SoundFilterEmitterMap::iterator filterIt = m_filterdEmitters.find(filter);
 				if (filterIt != m_filterdEmitters.end()) {
 					std::vector<SoundEmitter*>::iterator emitterIt = filterIt->second.begin();
 					for (; emitterIt != filterIt->second.end(); ++emitterIt) {
@@ -418,7 +418,7 @@ namespace FIFE {
 					}
 				}
 				m_filterdEmitters.erase(filterIt);
-				std::map<SoundFilter*, std::vector<SoundEffect*> >::iterator filterItt = m_filterdEffects.find(filter);
+				SoundFilterEffectMap::iterator filterItt = m_filterdEffects.find(filter);
 				if (filterItt != m_filterdEffects.end()) {
 					std::vector<SoundEffect*>::iterator effectIt = filterItt->second.begin();
 					for (; effectIt != filterItt->second.end(); ++effectIt) {
@@ -442,7 +442,7 @@ namespace FIFE {
 			return;
 		}
 		filter->setEnabled(true);
-		std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
+		SoundFilterEmitterMap::iterator filterIt = m_filterdEmitters.find(filter);
 		if (filterIt != m_filterdEmitters.end()) {
 			std::vector<SoundEmitter*>::iterator emitterIt = filterIt->second.begin();
 			for (; emitterIt != filterIt->second.end(); ++emitterIt) {
@@ -457,7 +457,7 @@ namespace FIFE {
 		if (!filter->isEnabled()) {
 			return;
 		}
-		std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
+		SoundFilterEmitterMap::iterator filterIt = m_filterdEmitters.find(filter);
 		if (filterIt != m_filterdEmitters.end()) {
 			std::vector<SoundEmitter*>::iterator emitterIt = filterIt->second.begin();
 			for (; emitterIt != filterIt->second.end(); ++emitterIt) {
@@ -482,7 +482,7 @@ namespace FIFE {
 	}
 
 	void SoundEffectManager::removeEmitterFromDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter) {
-		std::map<SoundFilter*, std::vector<SoundEmitter*> >::iterator filterIt = m_filterdEmitters.find(filter);
+		SoundFilterEmitterMap::iterator filterIt = m_filterdEmitters.find(filter);
 		if (filterIt == m_filterdEmitters.end()) {
 			FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown filter");
 			return;

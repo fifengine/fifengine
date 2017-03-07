@@ -327,10 +327,7 @@ namespace FIFE {
 
 			bool active = emitter->isActive();
 			bool clip = emitter->getSoundClip();
-			// if emitter is in playing state and it's looping or have not reached the end
-			//bool plays = (emitter->getState() == SD_PLAYING_STATE) ? (emitter->isLooping() || !emitter->isEndTimestamp()) : false;
 			bool plays = !emitter->isFinished();
-
 			// remove active without clip or stopped
 			if (!clip || !plays) {
 				if (active) {
