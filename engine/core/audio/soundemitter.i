@@ -80,8 +80,8 @@ namespace FIFE {
 		bool isLooping() const;
 		void setRolloff(float rolloff);
 		float getRolloff() const;
-		void setPositioning(bool relative);
-		bool isPositioning() const;
+		void setRelativePositioning(bool relative);
+		bool isRelativePositioning() const;
 		void setPosition(const AudioSpaceCoordinate& position);
 		AudioSpaceCoordinate getPosition() const;
 		void setReferenceDistance(float distance);

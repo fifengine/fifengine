@@ -83,7 +83,6 @@ namespace FIFE {
 		m_isStream = m_decoder->needsStreaming();
 
 		if (!m_isStream) {
-
 			// only for non-streaming buffers
 			SoundBufferEntry* ptr = new SoundBufferEntry();
 
@@ -163,22 +162,19 @@ namespace FIFE {
 				break;
 			}
 		}
+		// create new sound buffer entry
 		if (!ptr) {
 			ptr = new SoundBufferEntry();
 			m_buffervec.push_back(ptr);
 			id = m_buffervec.size() -1 ;
 		}
 
-		// create new sound buffer entry
-		//SoundBufferEntry* ptr = new SoundBufferEntry();
 		ptr->usedbufs=0;
+		ptr->deccursor = 0;
 		alGenBuffers(BUFFER_NUM, ptr->buffers);
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 
-		//m_buffervec.push_back(ptr);
-
-		//return m_buffervec.size()-1;
 		return id;
 	}
 
@@ -190,7 +186,7 @@ namespace FIFE {
 				pos = static_cast<uint64_t>(value);
 				break;
 			case SD_TIME_POS:
-				value *= m_decoder->getSampleRate();
+				value /= static_cast<float>(m_decoder->getSampleRate());
 			case SD_SAMPLE_POS:
 				pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
 				break;
@@ -198,6 +194,7 @@ namespace FIFE {
 
 		if (pos > m_decoder->getDecodedLength()) {
 			// EOF!
+			m_buffervec.at(streamid)->deccursor = m_decoder->getDecodedLength();
 			return true;
 		}
 
@@ -250,10 +247,10 @@ namespace FIFE {
 		alBufferData(buffer, m_decoder->getALFormat(),
 			m_decoder->getBuffer(), m_decoder->getBufferSize(), m_decoder->getSampleRate());
 
-		m_decoder->releaseBuffer();
-
 		// update cursor
-		ptr->deccursor += BUFFER_LEN;
+		ptr->deccursor += m_decoder->getBufferSize();
+
+		m_decoder->releaseBuffer();
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
 

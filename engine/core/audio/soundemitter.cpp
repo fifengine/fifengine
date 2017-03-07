@@ -50,6 +50,7 @@ namespace FIFE {
 		m_streamId(0),
 		m_emitterId(uid),
 		m_group(""),
+		m_samplesOffset(0.0f),
 		m_active(false),
 		m_fadeIn(false),
 		m_fadeOut(false),
@@ -101,82 +102,8 @@ namespace FIFE {
 		return m_active;
 	}
 
-	void SoundEmitter::addEffect(SoundEffect* effect) {
-		bool added = false;
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (!(*it)) {
-				(*it) = effect;
-				added = true;
-				break;
-			}
-		}
-		if (!added) {
-			m_effects.push_back(effect);
-		}
-	}
-
-	void SoundEmitter::removeEffect(SoundEffect* effect) {
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (effect == *it) {
-				(*it) = NULL;
-				break;
-			}
-		}
-	}
-
-	uint8_t SoundEmitter::getEffectCount() {
-		uint8_t counter = 0;
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (*it) {
-				++counter;
-			}
-		}
-		return counter;
-	}
-
-	uint8_t SoundEmitter::getEffectNumber(SoundEffect* effect) {
-		uint8_t number = 0;
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (effect == *it) {
-				break;
-			}
-			++number;
-		}
-		return number;
-	}
-
-	void SoundEmitter::setDirectFilter(SoundFilter* filter) {
-		m_directFilter = filter;
-	}
-
-	SoundFilter* SoundEmitter::getDirectFilter() {
-		return m_directFilter;
-	}
-
-	void SoundEmitter::activateEffects() {
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (*it) {
-				m_manager->activateEffect(*it, this);
-			}
-		}
-		if (m_directFilter) {
-			m_manager->activateFilter(m_directFilter, this);
-		}
-	}
-
-	void SoundEmitter::deactivateEffects() {
-		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-			if (*it) {
-				m_manager->deactivateEffect(*it, this);
-			}
-		}
-		if (m_directFilter) {
-			m_manager->deactivateFilter(m_directFilter, this);
-		}
-	}
-
 	void SoundEmitter::update() {
-		if (!m_soundClip) {
+		if (!m_soundClip || m_internData.soundState == SD_STOPPED_STATE) {
 			return;
 		}
 		if (m_fadeIn || m_fadeOut) {
@@ -194,11 +121,17 @@ namespace FIFE {
 		ALint procs;
 		ALint bufs;
 		ALuint buffer;
-
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &procs);
 
 		while (procs--) {
+			// needed for correct cursor position
+			float samplesOffset, newOffset;
+			alGetSourcef(m_source, AL_SAMPLE_OFFSET, &samplesOffset);
+
 			alSourceUnqueueBuffers(m_source, 1, &buffer);
+
+			alGetSourcef(m_source, AL_SAMPLE_OFFSET, &newOffset);
+			m_samplesOffset += (samplesOffset - newOffset);
 
 			if (m_soundClip->getStream(m_streamId, buffer)) {
 				// EOF!
@@ -226,14 +159,14 @@ namespace FIFE {
 		return m_emitterId;
 	}
 
-	void SoundEmitter::setPositioning(bool relative) {
+	void SoundEmitter::setRelativePositioning(bool relative) {
 		if (isActive()) {
 			alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
 		}
 		m_internData.relative = relative;
 	}
 
-	bool SoundEmitter::isPositioning() const {
+	bool SoundEmitter::isRelativePositioning() const {
 		return m_internData.relative;
 	}
 
@@ -376,16 +309,15 @@ namespace FIFE {
 		if (state == SD_PLAYING_STATE || state == SD_PAUSED_STATE) {
 			stop();
 		}
-		if (m_soundClip->isStream()) {
-			m_soundClip->quitStreaming(m_streamId);
-			m_streamId = 0;
-		}
 		if (isActive()) {
 			// detach all buffers
 			alSourcei(m_source, AL_BUFFER, AL_NONE);
 			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error detaching sound clip");
 		}
-
+		if (m_soundClip->isStream()) {
+			m_soundClip->quitStreaming(m_streamId);
+			m_streamId = 0;
+		}
 		m_soundClipId = 0;
 		m_soundClip.reset();
 	}
@@ -451,6 +383,7 @@ namespace FIFE {
 
 	void SoundEmitter::rewind() {
 		m_internData.playTimestamp = 0;
+		m_samplesOffset = 0;
 		if (!isActive() || !m_soundClip) {
 			return;
 		}
@@ -531,7 +464,7 @@ namespace FIFE {
 			double size = static_cast<double>(getDecodedLength()) * 8.0;
 			double stereo = (isStereo() ? 2.0 : 1.0);
 			double time = ( size / (samplerate * bitres) ) / stereo;
-			
+
 			return static_cast<uint64_t>(time);
 		}
 		return 0;
@@ -541,7 +474,17 @@ namespace FIFE {
 		return m_internData.playTimestamp;
 	}
 
-	bool SoundEmitter::isEndTimestamp() {
+	bool SoundEmitter::isFinished() {
+		if (isLooping()) {
+			return false;
+		}
+		if (isActive()) {
+			return getState() == SD_STOPPED_STATE;
+		}
+		if (getState() == SD_STOPPED_STATE) {
+			return true;
+		}
+		// roughly check, in the case the clip do not plays (is not active)
 		return (m_internData.playTimestamp + static_cast<uint32_t>(getDuration())) <= TimeManager::instance()->getTime();
 	}
 
@@ -567,8 +510,18 @@ namespace FIFE {
 
 			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting cursor position")
 		} else {
+			switch (type) {
+			case SD_BYTE_POS:
+				m_samplesOffset = value / (getBitResolution() / 8 * (isStereo() ? 2 : 1));
+				break;
+			case SD_SAMPLE_POS:
+				m_samplesOffset = value;
+				break;
+			case SD_TIME_POS:
+				m_samplesOffset = value * getSampleRate();
+				break;
+			}
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-
 			if (state == AL_PLAYING || AL_PAUSED) {
 				alSourceStop(m_source);
 			}
@@ -608,9 +561,19 @@ namespace FIFE {
 				alGetSourcef(m_source, AL_SEC_OFFSET, &pos);
 				break;
 		}
-
+		
 		if (m_soundClip->isStream()) {
-			pos += m_soundClip->getStreamPos(m_streamId, type);
+			switch (type) {
+			case SD_BYTE_POS:
+				pos += m_samplesOffset * (getBitResolution() / 8 * (isStereo() ? 2 : 1));
+				break;
+			case SD_SAMPLE_POS:
+				pos += m_samplesOffset;
+				break;
+			case SD_TIME_POS:
+				pos += m_samplesOffset / getSampleRate();
+				break;
+			}
 		}
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error getting cursor")
@@ -756,7 +719,7 @@ namespace FIFE {
 		setDirection(m_internData.direction);
 		setVelocity(m_internData.velocity);
 		setLooping(m_internData.loop);
-		setPositioning(m_internData.relative);
+		setRelativePositioning(m_internData.relative);
 		if (m_internData.soundState == SD_PLAYING_STATE) {
 			uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp;
 			if (m_internData.loop) {
@@ -766,6 +729,7 @@ namespace FIFE {
 			attachSoundClip();
 			setCursor(SD_TIME_POS, time);
 			if (m_soundClip && isActive()) {
+				m_internData.playTimestamp = TimeManager::instance()->getTime() - timediff;
 				alSourcePlay(m_source);
 			}
 		}
@@ -813,6 +777,80 @@ namespace FIFE {
 				gain = std::max(gain, 0.0f);
 				setGain(gain);
 			}
+		}
+	}
+
+	void SoundEmitter::addEffect(SoundEffect* effect) {
+		bool added = false;
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (!(*it)) {
+				(*it) = effect;
+				added = true;
+				break;
+			}
+		}
+		if (!added) {
+			m_effects.push_back(effect);
+		}
+	}
+
+	void SoundEmitter::removeEffect(SoundEffect* effect) {
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (effect == *it) {
+				(*it) = NULL;
+				break;
+			}
+		}
+	}
+
+	uint8_t SoundEmitter::getEffectCount() {
+		uint8_t counter = 0;
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (*it) {
+				++counter;
+			}
+		}
+		return counter;
+	}
+
+	uint8_t SoundEmitter::getEffectNumber(SoundEffect* effect) {
+		uint8_t number = 0;
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (effect == *it) {
+				break;
+			}
+			++number;
+		}
+		return number;
+	}
+
+	void SoundEmitter::setDirectFilter(SoundFilter* filter) {
+		m_directFilter = filter;
+	}
+
+	SoundFilter* SoundEmitter::getDirectFilter() {
+		return m_directFilter;
+	}
+
+	void SoundEmitter::activateEffects() {
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (*it) {
+				m_manager->activateEffect(*it, this);
+			}
+		}
+		if (m_directFilter) {
+			m_manager->activateFilter(m_directFilter, this);
+		}
+	}
+
+	void SoundEmitter::deactivateEffects() {
+		for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
+			if (*it) {
+				m_manager->deactivateEffect(*it, this);
+			}
+		}
+		if (m_directFilter) {
+			m_manager->deactivateFilter(m_directFilter, this);
 		}
 	}
 

@@ -173,11 +173,11 @@ namespace FIFE {
 		return m_looping;
 	}
 
-	void ActionAudio::setPositioning(bool relative) {
+	void ActionAudio::setRelativePositioning(bool relative) {
 		m_positioning = relative;
 	}
 
-	bool ActionAudio::isPositioning() const {
+	bool ActionAudio::isRelativePositioning() const {
 		return m_positioning;
 	}
 

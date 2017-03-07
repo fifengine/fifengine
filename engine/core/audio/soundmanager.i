@@ -193,6 +193,8 @@ namespace FIFE {
 		AudioSpaceCoordinate getListenerVelocity() const;
 		void setDopplerFactor(float factor);
 		float getDopplerFactor() const;
+		void setListenerMaxDistance(float distance);
+		float getListenerMaxDistance() const;
 
 		SoundEffect* createSoundEffect(SoundEffectType  type);
 		SoundEffect* createSoundEffectPreset(SoundEffectPreset type);

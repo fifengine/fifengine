@@ -77,17 +77,6 @@ namespace FIFE {
 		ALuint getSource() const;
 		bool isActive() const;
 
-		void addEffect(SoundEffect* effect);
-		void removeEffect(SoundEffect* effect);
-		uint8_t getEffectCount();
-		uint8_t getEffectNumber(SoundEffect* effect);
-
-		void setDirectFilter(SoundFilter* filter);
-		SoundFilter* getDirectFilter();
-
-		void activateEffects();
-		void deactivateEffects();
-
 		/** Called once a frame from the SoundManager.
 		 */
 		void update();
@@ -102,11 +91,11 @@ namespace FIFE {
 		 * @param relative If set to true, the emitters position will be interpreted relative to the listener object
 		 *
 		 */
-		void setPositioning(bool relative);
+		void setRelativePositioning(bool relative);
 
 		/** Return Positioning-Type
 		 */
-		bool isPositioning() const;
+		bool isRelativePositioning() const;
 
 		/** Sets the distance under which the volume for the SoundEmitter would normally drop by half (before
 		 *  being influenced by rolloff factor or max distance. 
@@ -255,9 +244,9 @@ namespace FIFE {
 		 */
 		uint32_t getPlayTimestamp();
 
-		/** Returns true if end timestamp is reached.
+		/** Returns true if clip is finished.
 		 */
-		bool isEndTimestamp();
+		bool isFinished();
 
 		/** Sets the cursor position in the audio file
 		 */
@@ -339,6 +328,38 @@ namespace FIFE {
 		 */
 		const std::string& getGroup();
 
+		/** Adds effect. Used from SoundEffectManager.
+		 */
+		void addEffect(SoundEffect* effect);
+
+		/** Removes effect. Used from SoundEffectManager.
+		 */
+		void removeEffect(SoundEffect* effect);
+
+		/** Return the number of effects. Used from SoundEffectManager.
+		 */
+		uint8_t getEffectCount();
+
+		/** Return the number of the given effect. Used from SoundEffectManager.
+		 */
+		uint8_t getEffectNumber(SoundEffect* effect);
+
+		/** Sets the direct filter. Used from SoundEffectManager.
+		 */
+		void setDirectFilter(SoundFilter* filter);
+
+		/** Return the direct filter. Used from SoundEffectManager.
+		 */
+		SoundFilter* getDirectFilter();
+
+		/** Activates effects if the Emitter got the openAL-source.
+		 */
+		void activateEffects();
+
+		/** Deactivates effects if the Emitter loses the openAL-source.
+		*/
+		void deactivateEffects();
+
 		/** Adds new SoundEmitter listener
 		 * @param listener to add
 		 */
@@ -389,7 +410,7 @@ namespace FIFE {
 		//! The emitter-id
 		uint32_t m_emitterId;
 
-		//! buffers data
+		//! buffers OpenAL data
 		struct internData {
 			float volume;
 			float maxVolume;
@@ -414,12 +435,17 @@ namespace FIFE {
 
 		//! the group name
 		std::string m_group;
+		//! saves sample offset for played stream parts
+		float m_samplesOffset;
 		//! is active
 		bool m_active;
-
+		//! fade in clip
 		bool m_fadeIn;
+		//! fade out clip
 		bool m_fadeOut;
+		//! original gain
 		float m_origGain;
+		
 		uint32_t m_fadeStartTimestamp;
 		uint32_t m_fadeEndTimestamp;
 		//! holds pointer to applied SoundEffects

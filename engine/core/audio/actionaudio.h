@@ -178,11 +178,11 @@ namespace FIFE {
 		 * @param relative If set to true, the emitters position will be interpreted relative to the listener object
 		 *
 		 */
-		void setPositioning(bool relative);
+		void setRelativePositioning(bool relative);
 
 		/** Return Positioning-Type
 		 */
-		bool isPositioning() const;
+		bool isRelativePositioning() const;
 
 		/** Sets if the sound should use the instance direction
 		 */

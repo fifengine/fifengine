@@ -127,7 +127,7 @@ namespace FIFE {
 		m_emitter->setConeOuterGain(m_audio->getConeOuterGain());
 		m_emitter->setVelocity(m_audio->getVelocity());
 		m_emitter->setLooping(m_audio->isLooping());
-		m_emitter->setPositioning(m_audio->isPositioning());
+		m_emitter->setRelativePositioning(m_audio->isRelativePositioning());
 		m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
 		m_emitter->setSoundClip(m_audio->getSoundFileName());
 		m_emitter->setGroup(m_audio->getGroupName());

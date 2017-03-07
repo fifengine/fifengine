@@ -497,9 +497,9 @@ namespace FIFE {
 									success = soundElement->QueryIntAttribute("looping", &boolValue);
 									if (success == TIXML_SUCCESS)
 										audio->setLooping(boolValue != 0);
-									success = soundElement->QueryIntAttribute("positioning", &boolValue);
+									success = soundElement->QueryIntAttribute("relative_position", &boolValue);
 									if (success == TIXML_SUCCESS)
-										audio->setPositioning(boolValue != 0);
+										audio->setRelativePositioning(boolValue != 0);
 									success = soundElement->QueryIntAttribute("direction", &boolValue);
 									if (success == TIXML_SUCCESS)
 										audio->setDirection(boolValue != 0);

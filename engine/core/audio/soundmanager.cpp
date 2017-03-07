@@ -49,7 +49,7 @@ namespace FIFE {
 		m_device(0),
 		m_muteVol(0),
 		m_volume(1.0),
-		m_maxDistance(10.0),
+		m_maxDistance(50.0),
 		m_distanceModel(SD_DISTANCE_INVERSE_CLAMPED),
 		m_state(SM_STATE_INACTIV),
 		m_sources(),
@@ -328,11 +328,13 @@ namespace FIFE {
 			bool active = emitter->isActive();
 			bool clip = emitter->getSoundClip();
 			// if emitter is in playing state and it's looping or have not reached the end
-			bool plays = (emitter->getState() == SD_PLAYING_STATE) ? (emitter->isLooping() || !emitter->isEndTimestamp()) : false;
+			//bool plays = (emitter->getState() == SD_PLAYING_STATE) ? (emitter->isLooping() || !emitter->isEndTimestamp()) : false;
+			bool plays = !emitter->isFinished();
 
 			// remove active without clip or stopped
 			if (!clip || !plays) {
 				if (active) {
+					emitter->update();
 					releaseSource(emitter);
 				}
 				continue;
