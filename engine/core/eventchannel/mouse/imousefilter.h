@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IKEYFILTER_H
-#define FIFE_EVENTCHANNEL_IKEYFILTER_H
+#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
 
 // Standard C++ library includes
 //
@@ -33,21 +33,21 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_keyevent.h"
+#include "mouseevent.h"
 
 namespace FIFE {
 	/**  Controller provides a way to receive events from the system
 	 * Using this interface, clients can subscribe themselves to receive events
 	 */
-	class IKeyFilter {
+	class IMouseFilter {
 	public:
 
-		/** Check whether a keyevent should be filtered out.
-		 * @param event They key event.
+		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
+		 * @param event They mouse event.
 		 */
-		virtual bool isFiltered(const KeyEvent& event) = 0;
+		virtual bool isFiltered(const MouseEvent& event) = 0;
 
-		virtual ~IKeyFilter() {}
+		virtual ~IMouseFilter() {}
 	};
 
 } //FIFE

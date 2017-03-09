@@ -390,32 +390,32 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_event.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_inputevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_command.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_commandids.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_dropevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idropcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idroplistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeycontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeyfilter.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeylistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_key.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_keyevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousecontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousefilter.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imouselistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_mouseevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_eventsourcetypes.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_ieventsource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/event.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/inputevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/command.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/commandids.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/icommandcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/icommandlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/dropevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idropcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idroplistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeycontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeyfilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeylistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/key.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/keyevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousecontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousefilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imouselistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/mouseevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/eventsourcetypes.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ieventsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/itextcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/itextlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/text.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/textevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h

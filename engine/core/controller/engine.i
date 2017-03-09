@@ -30,7 +30,6 @@ namespace FIFE {
 	class EventManager;
 	class TimeManager;
 	class IGUIManager;
-	class GUIChanManager;
 	class RenderBackend;
 	class Model;
 	class LogManager;

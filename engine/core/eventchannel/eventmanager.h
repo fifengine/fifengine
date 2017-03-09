@@ -37,30 +37,30 @@
 // Second block: files included from the same folder
 //
 #include "util/base/fife_stdint.h"
-#include "eventchannel/command/ec_command.h"
-#include "eventchannel/command/ec_icommandcontroller.h"
-#include "eventchannel/command/ec_icommandlistener.h"
+#include "eventchannel/command/command.h"
+#include "eventchannel/command/icommandcontroller.h"
+#include "eventchannel/command/icommandlistener.h"
 
-#include "eventchannel/drop/ec_idropcontroller.h"
-#include "eventchannel/drop/ec_idroplistener.h"
-#include "eventchannel/drop/ec_dropevent.h"
+#include "eventchannel/drop/idropcontroller.h"
+#include "eventchannel/drop/idroplistener.h"
+#include "eventchannel/drop/dropevent.h"
 
-#include "eventchannel/key/ec_ikeycontroller.h"
-#include "eventchannel/key/ec_ikeylistener.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ikeycontroller.h"
+#include "eventchannel/key/ikeylistener.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/key/key.h"
 
-#include "eventchannel/text/ec_itextcontroller.h"
-#include "eventchannel/text/ec_itextlistener.h"
-#include "eventchannel/text/ec_textevent.h"
-#include "eventchannel/text/ec_text.h"
+#include "eventchannel/text/itextcontroller.h"
+#include "eventchannel/text/itextlistener.h"
+#include "eventchannel/text/textevent.h"
+#include "eventchannel/text/text.h"
 
-#include "eventchannel/mouse/ec_imousecontroller.h"
-#include "eventchannel/mouse/ec_imouselistener.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/mouse/imousecontroller.h"
+#include "eventchannel/mouse/imouselistener.h"
+#include "eventchannel/mouse/mouseevent.h"
 
-#include "eventchannel/sdl/ec_isdleventcontroller.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/sdl/isdleventcontroller.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 
 namespace FIFE {
 
@@ -227,17 +227,17 @@ namespace FIFE {
 		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 
-		// m_mousesensitivity is the mouse speed factor - 1, so a value of 0 won't
+		// m_mouseSensitivity is the mouse speed factor - 1, so a value of 0 won't
 		// influence mouse speed, a value of 1 would double the speed and
 		// -.5 would make it half the speed
-		float m_mousesensitivity;
+		float m_mouseSensitivity;
 		bool m_acceleration;
 		bool m_warp;
 		bool m_enter;
-		uint16_t m_oldx;
-		uint16_t m_oldy;
-		uint32_t m_lastticks;
-		float m_oldvelocity;
+		uint16_t m_oldX;
+		uint16_t m_oldY;
+		uint32_t m_lastTicks;
+		float m_oldVelocity;
 
 	};
 } //FIFE
