@@ -12,8 +12,6 @@ find_path(OPENALSOFT_INCLUDE_DIR
     /opt/local # DarwinPorts
     /opt/csw # Blastwave
     /opt
-    # Travis CI - MAC OSX
-    /usr/local/opt/openal-soft/include/
     # Linux Include PATH
     /usr/include/AL/
     # Windows SDK Include PATH
@@ -22,13 +20,26 @@ find_path(OPENALSOFT_INCLUDE_DIR
 
 find_library(OPENALSOFT_LIBRARY
   NAMES libopenal openal libOpenAL32 OpenAL32 OpenAL32.dll soft_oal.dll
-  PATH_SUFFIXES lib64 lib libs64 libs
   PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib
     /usr/local/opt/openal-soft/lib
     lib
     /usr/lib
 )
+
+IF (APPLE)
+  find_path(OPENALSOFT_INCLUDE_DIR
+  NAMES al.h
+  PATHS
+    /usr/local/opt/openal-soft/include/
+  )
+  find_library(OPENALSOFT_LIBRARY
+  NAMES libopenal openal libOpenAL32 OpenAL32
+  PATHS
+    ${OPENALSOFT_INCLUDE_DIR}/../lib
+    /usr/local/opt/openal-soft/lib
+  )
+ENDIF (APPLE)
 
 include(FindPackageHandleStandardArgs)
 
