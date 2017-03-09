@@ -8,14 +8,12 @@
 find_path(OPENALSOFT_INCLUDE_DIR
   NAMES al.h
   PATHS
-    ~/Library/Frameworks
-    /Library/Frameworks
     /sw # Fink
     /opt/local # DarwinPorts
     /opt/csw # Blastwave
     /opt
     # Travis CI - MAC OSX
-    /usr/local/opt/openal-soft/
+    /usr/local/opt/openal-soft/include/
     # Linux Include PATH
     /usr/include/AL/
     # Windows SDK Include PATH
@@ -27,6 +25,7 @@ find_library(OPENALSOFT_LIBRARY
   PATH_SUFFIXES lib64 lib libs64 libs
   PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib
+    /usr/local/opt/openal-soft/lib
     lib
     /usr/lib
 )
