@@ -19,37 +19,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_FIFE_OPENAL_H
-#define FIFE_FIFE_OPENAL_H
-
-#define AL_ALEXT_PROTOTYPES
+#ifndef FIFE_SOUNDSOURCE_H
+#define FIFE_SOUNDSOURCE_H
 
 // Standard C++ library includes
 
 // Platform specific includes
-// Linux
-#if defined( __unix__ )
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-#include <AL/efx-presets.h>
-#endif
-
-// Win32
-#if defined( WIN32 )
-#include <OpenALSoft/al.h>
-#include <OpenALSoft/alc.h>
-#include <OpenALSoft/alext.h>
-#include <OpenALSoft/efx-presets.h>
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-#include <AL/efx-presets.h>
-#endif
 
 // 3rd party library includes
 
@@ -58,19 +33,53 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-#ifdef LOG_ENABLED
+namespace FIFE {
 
-#define CHECK_OPENAL_LOG(logger, level, msg) if (AL_NO_ERROR != alGetError()) { logger.log(level, msg);}
+	class ActionAudio;
+	class Instance;
+	class SoundChangeListener;
+	class SoundEmitter;
 
-#define CHECK_OPENAL_LOG_DETAIL(logger, level, msg) {ALenum error; error = alGetError(); if (AL_NO_ERROR != error) { logger.log(level, LMsg() << msg << ", Error#: " << error);}}
+	/** Interface class between Instance / ActionAudio and SoundEmitter.
+	 */
+	class SoundSource {
+	public:
 
-#else
+		SoundSource(Instance* instance);
+		~SoundSource();
 
-#define CHECK_OPENAL_LOG(logger, level, msg)
-#define CHECK_OPENAL_LOG_DETAIL(logger, level, msg)
+		/** Sets the ActionAudio. Owned by Object.
+		 */
+		void setActionAudio(ActionAudio* audio);
 
-#endif
+		/** Return ActionAudio. Owned by Object.
+		 */
+		ActionAudio* getActionAudio() const;
 
-#define CHECK_OPENAL_EXCEPTION(msg) if (AL_NO_ERROR != alGetError()) { throw Exception(msg); }
+		/** Sets the positon of the SoundEmitter, called from Instance.
+		 */
+		void setPosition();
+
+		/** Sets the direction of the SoundEmitter, called from Instance.
+		 */
+		void setDirection();
+	
+	private:
+		/** Moves data from ActionAudio to SoundEmitter.
+		 */
+		void updateSoundEmitter();
+		
+		//! Associated Instance
+		Instance* m_instance;
+		//! Actual ActionAudio
+		ActionAudio* m_audio;
+		//! Related SoundEmitter
+		SoundEmitter* m_emitter;
+		//! InstanceChangeListener for position and direction
+		SoundChangeListener* m_listener;
+
+
+	};
+}
 
 #endif

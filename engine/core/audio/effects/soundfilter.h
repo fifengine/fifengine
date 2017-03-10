@@ -19,76 +19,101 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_SOUNDDECODER_OGG_H
-#define FIFE_SOUNDDECODER_OGG_H
+#ifndef FIFE_SOUNDFILTER_H
+#define FIFE_SOUNDFILTER_H
 
 // Standard C++ library includes
 
 // Platform specific includes
 
 // 3rd party library includes
-#include <vorbis/vorbisfile.h>
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
-#include "audio/sounddecoder.h"
+#include "audio/fife_openal.h"
+#include "audio/soundconfig.h"
 
 namespace FIFE {
-	class SoundDecoderOgg : public SoundDecoder {
+
+	/** The class defines filters. Lowpass, Highpass and Bandpass filters are possible.
+	 * Note: On Lowpass filter setGainLf have no effect, same with Highpass and setGainHf.
+	 */
+	class SoundFilter {
 	public:
-
-		SoundDecoderOgg(RawData* ptr);
-
-		~SoundDecoderOgg();
-
-		/** Returns the decoded length of the file in bytes
+		/** Constructor
+		 * @param type The filter type.
 		 */
-		uint64_t getDecodedLength() const{
-			return m_declength;
-		}
+		SoundFilter(SoundFilterType type);
 
-		/** Sets the current position in the file (in bytes)
-		 *
-		 * @return True, if the positioning was successful
+		/** Destructor
 		 */
-		bool setCursor(uint64_t pos);
+		~SoundFilter();
 
-		/** Request the decoding of the next part of the stream.
-		 *
-		 * @param length The length of the decoded part
-		 * @return 0 (False), if decoding was successful
+		/** Return the OpenAL filter handle.
 		 */
-		bool decode(uint64_t length);
+		ALuint getFilterId() const;
 
-		/** Returns the next decoded buffer.
-		 *
-		 * The length of the buffer is returned by getBufferSize().
+		/** Sets the filter type.
+		 * @see SoundFilterType
 		 */
-		void* getBuffer() const{
-			return m_data;
-		}
+		void setFilterType(SoundFilterType type);
 
-		/** Returns the byte-size of the buffer returned by getBuffer().
+		/** Return the filter type
+		 * @see SoundFilterType
 		 */
-		uint64_t getBufferSize() {
-			return m_datasize;
-		}
+		SoundFilterType getFilterType() const;
 
-		/** Releases the buffer returned by getBuffer()
+		/** Enables or disables the filter.
+		 * @param enabled A bool to indicate if the filter should be enabled or disabled.
 		 */
-		void releaseBuffer();
+		void setEnabled(bool enabled);
+
+		/** Return true if the filter is enabled, false otherwise.
+		 */
+		bool isEnabled() const;
+
+		/** Sets filter gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
+		void setGain(float gain);
+
+		/** Return filter gain. Default is 1.0.
+		 */
+		float getGain() const;
+
+		/** Sets filter high frequency gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
+		void setGainHf(float gain);
+
+		/** Return filter high frequency gain. Default is 1.0.
+		 */
+		float getGainHf() const;
+
+		/** Sets filter low frequency gain.
+		 * @param gain The gain as float, range 0.0 - 1.0.
+		 */
+		void setGainLf(float gain);
+
+		/** Return filter low frequency gain. Default is 1.0.
+		 */
+		float getGainLf() const;
 
 	private:
-		boost::scoped_ptr<RawData> m_file;
-		uint64_t m_declength;
-		uint64_t m_datasize;
-		char* m_data;
-		OggVorbis_File m_ovf;
+		//! Filter object id
+		ALuint m_filter;
+		//! Filter type
+		SoundFilterType m_type;
+		//! Filter enabled
+		bool m_enabled;
+		//! Gain
+		float m_gain;
+		//! High frequency gain
+		float m_hGain;
+		//! Low frequency gain
+		float m_lGain;
 	};
 }
-
 #endif

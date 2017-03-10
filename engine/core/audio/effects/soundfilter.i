@@ -19,58 +19,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_FIFE_OPENAL_H
-#define FIFE_FIFE_OPENAL_H
+%module soundfilter
+%{
+#include "audio/effects/soundfilter.h"
+%}
 
-#define AL_ALEXT_PROTOTYPES
+namespace FIFE {
 
-// Standard C++ library includes
+	enum SoundFilterType {
+		SF_FILTER_NULL,
+		SF_FILTER_LOWPASS,
+		SF_FILTER_HIGHPASS,
+		SF_FILTER_BANDPASS
+	};
 
-// Platform specific includes
-// Linux
-#if defined( __unix__ )
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-#include <AL/efx-presets.h>
-#endif
+	class SoundFilter {
+	public:
+		SoundFilterType getFilterType() const;
+		bool isEnabled() const;
+		void setGain(float gain);
+		float getGain() const;
+		void setGainHf(float gain);
+		float getGainHf() const;
+		void setGainLf(float gain);
+		float getGainLf() const;
+	
+	private:
+		SoundFilter(SoundFilterType type);
+	};
+}
 
-// Win32
-#if defined( WIN32 )
-#include <OpenALSoft/al.h>
-#include <OpenALSoft/alc.h>
-#include <OpenALSoft/alext.h>
-#include <OpenALSoft/efx-presets.h>
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-#include <AL/efx-presets.h>
-#endif
-
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
-#ifdef LOG_ENABLED
-
-#define CHECK_OPENAL_LOG(logger, level, msg) if (AL_NO_ERROR != alGetError()) { logger.log(level, msg);}
-
-#define CHECK_OPENAL_LOG_DETAIL(logger, level, msg) {ALenum error; error = alGetError(); if (AL_NO_ERROR != error) { logger.log(level, LMsg() << msg << ", Error#: " << error);}}
-
-#else
-
-#define CHECK_OPENAL_LOG(logger, level, msg)
-#define CHECK_OPENAL_LOG_DETAIL(logger, level, msg)
-
-#endif
-
-#define CHECK_OPENAL_EXCEPTION(msg) if (AL_NO_ERROR != alGetError()) { throw Exception(msg); }
-
-#endif

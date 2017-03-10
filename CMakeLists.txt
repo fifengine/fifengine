@@ -224,10 +224,15 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 # Core
 set(FIFE_CORE_SRC
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffect.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffectmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundfilter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
@@ -380,6 +385,7 @@ source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.h
@@ -387,6 +393,10 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/audio/sounddecoder.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffect.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffectmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundfilter.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
@@ -595,6 +605,8 @@ add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE
 # Core
 set(FIFE_CORE_SWIG
   version.i
+  audio/effects/soundeffect.i
+  audio/effects/soundfilter.i
   audio/soundclip.i
   audio/soundclipmanager.i
   audio/soundemitter.i
