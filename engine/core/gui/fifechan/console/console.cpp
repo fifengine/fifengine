@@ -25,7 +25,6 @@
 // 3rd party library includes
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
 
 // FIFE includes

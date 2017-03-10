@@ -144,7 +144,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		if not savefile:
 			raise SerializerError("Cannot save file.  No filename specified!")
 	
-		""" Writes the settings to file """
+		# Writes the settings to file
 		self._indent(self._root_element)
 		self._tree.write(savefile, 'UTF-8')
 
@@ -302,24 +302,29 @@ class SimpleXMLSerializer(SimpleSerializer):
 			if e.get("name", "") == name:
 				moduleTree.remove(e)
 
-	"""
-	returns a list of string, where each string is a module name
-	"""
 	def getModuleNameList(self):
-		self._moduleNames = []
+		"""
+		@return A list of the names of the modules in the XML file as strings.
+		"""
+		
+		# Make sure the file has been loaded, if not load it.
+		if not self._initialized:
+			self.load()
+			self._initialized = True
+
+		moduleNames = []
 		for c in self._root_element.getchildren():
 			if c.tag == "Module":
-				name = c.get("name","")
+				name = c.get("name", "")
 				if not isinstance(name, str) and not isinstance(name, unicode):
 					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
 										 "type for name argument.")
 				
-				self._moduleNames.append(name)
-		return self._moduleNames
+				moduleNames.append(name)
+		return moduleNames
 		
-	
-	def getAllSettings(self,module):
-		self._settingsFromFile = {}
+	def getAllSettings(self, module):
+		settingsFromFile = {}
 		
 		# if file has not been loaded, load the file
 		if not self._initialized:
@@ -360,11 +365,9 @@ class SimpleXMLSerializer(SimpleSerializer):
 					
 				# get the value
 				e_value = self.getValue(e_type,e_value)
-				self._settingsFromFile[name] = e_value;
+				settingsFromFile[name] = e_value
 		
-		return self._settingsFromFile				
-
-
+		return settingsFromFile				
 
 	def _validateTree(self):
 		""" 
