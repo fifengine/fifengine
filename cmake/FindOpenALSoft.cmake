@@ -23,7 +23,7 @@ find_library(OPENALSOFT_LIBRARY
   PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib
     /usr/local/opt/openal-soft/lib
-    lib
+    /lib
     /usr/lib
 )
 
@@ -34,7 +34,7 @@ IF (APPLE)
     /usr/local/opt/openal-soft/include/
   )
   find_library(OPENALSOFT_LIBRARY
-  NAMES libopenal openal libOpenAL32 OpenAL32
+  NAMES libopenal.dylib openal.dylib
   PATHS
     ${OPENALSOFT_INCLUDE_DIR}/../lib
     /usr/local/opt/openal-soft/lib
