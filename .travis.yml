@@ -1,17 +1,99 @@
 language: cpp
-compiler: gcc
+sudo: false
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      dist: trusty
+      compiler: clang
+    - os: linux
+      sudo: required
+      dist: trusty
+      compiler: gcc
+    - os: osx
+      compiler: clang
+    - os: osx
+      compiler: gcc
 
 git:
-  depth: 1 # (shallow clone) this decreases the time it takes to clone the repository
+  depth: 5
+
+addons:
+  apt:
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty-3.9
+    packages:
+    - gcc-5
+    - g++-5
+    - clang-3.9
+    - llvm-3.9-dev
+    - libclang-3.9-dev
+    - mesa-common-dev
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-ttf-dev
+    - libfreetype6-dev
+    - libxcursor-dev
+    - libopenal-dev
+    - libasound2-dev
+    - zlib1g-dev
+    - libboost-dev
+    - libboost-regex-dev
+    - libboost-system-dev
+    - libboost-filesystem-dev
+    - libboost-test-dev
+    - libtinyxml-dev
+    - libc6
+    - libglew-dev
 
 before_install:
-  - chmod -R 777 ./.travis.sh
-  - ./.travis.sh
+    # change gcc to version 5
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 20; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
+    # change clang to version 3.9
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.9 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.9 20; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-3.5.0/bin/clang; sudo rm -f /usr/local/clang-3.5.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev liballegro5-dev libvorbis-dev libalut-dev cppcheck; fi
+    # update swig to version 3.x
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
+    # install newer version of pylint, the one fetched with apt-get is broken
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf allegro freetype openal-soft tinyxml glew; fi
+  - cmake --version
+
+install:
+    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
+    - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
+    - make -j2
+    - sudo make install
+    - cd ..
 
 script:
-   - exit 0
- # - python ./tests/fife_test/run.py
+   - cd ..
+   - mkdir build; cd build; cmake ../fifengine
+   - ls -alh .
+   - make -j2
+   - sudo make install
+
+after_script: 
+   - cd /home/travis/build/fifengine/fifengine
+   - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
+   - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
 
 notifications:
-  irc: "irc.freenode.org#fife"
+  irc: irc.freenode.org#fife
   email: false
+
+#deploy:
+#  provider: releases
+#  api_key:
+#    secure: "TiE1MLzq8DE2vJjiTeWnuhjEM/cH4hQ7yL/SSDkIqTijCY1eiCX6KPE7yDNh9F1SkCfxYyDPTuRc+f1EaAbk073aL56kUTM/bV/4TEcHk4TS40Hcd5aA10gR3XOH3lYwagT2edgXgXLA1cvU1tuwj8stKz1hEnkVlCvFdbvy4qg="
+#  file: Fifengine*.tar.gz
+#  file_glob: true
+#  skip_cleanup: true
+#  overwrite: true
+#  on:
+#    tags: true

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -41,6 +41,7 @@ class TiXmlElement;
 namespace FIFE {
 	class VFS;
 	class ImageManager;
+	class AnimationManager;
 
 	struct AtlasData {
 		Rect rect;
@@ -93,7 +94,7 @@ namespace FIFE {
 
 	class AtlasLoader : public IAtlasLoader {
 	public:
-		AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager);
+		AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 
 		virtual ~AtlasLoader();
 
@@ -107,20 +108,25 @@ namespace FIFE {
 		*/
 		virtual AtlasPtr load(const std::string& filename);
 
+		/** 
+		* @see IAtlasLoader::loadMultiple
+		*/
+		virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename);
+
 	private:
+		AtlasPtr loadAtlas(const std::string& filename, TiXmlElement* atlasElem);
+
 		Model* m_model;
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
-        std::string m_atlasFilename;
-
-		void parseObject(Atlas* atlas, TiXmlElement* root, bool exists);
+		AnimationManager* m_animationManager;
 	};
 
 	/** convenience function for creating the default fife atlas loader
 	 *  deleting the object returned from this function is the
 	 *  responsibility of the caller
 	 */
-	AtlasLoader* createDefaultAtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager);
+	AtlasLoader* createDefaultAtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 }
 
 #endif

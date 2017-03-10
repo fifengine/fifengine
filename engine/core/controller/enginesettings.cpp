@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -46,12 +46,21 @@ namespace FIFE {
 	EngineSettings::EngineSettings():
 		m_bitsperpixel(0),
 		m_fullscreen(false),
+		m_refreshRate(60),
+		m_displayIndex(0),
+		m_vSync(false),
+		m_renderDriver(""),
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
 		m_sdlremovefakealpha(false),
 		m_oglcompressimages(false),
 		m_ogluseframebuffer(true),
 		m_oglusenpot(true),
+		m_oglMipmapping(false),
+		m_oglMonochrome(false),
+		m_oglTextureFilter(TEXTURE_FILTER_NONE),
+		m_oglDepthBuffer(false),
+		m_alphaTestValue(0.3),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -143,7 +152,6 @@ namespace FIFE {
 		std::vector<std::string> tmp;
 		tmp.push_back("SDL");
 		tmp.push_back("OpenGL");
-		tmp.push_back("OpenGLe");
 		return tmp;
 	}
 
@@ -161,6 +169,46 @@ namespace FIFE {
 
 	void EngineSettings::setGLUseNPOT(bool oglusenpot) {
 		m_oglusenpot = oglusenpot;
+	}
+
+	void EngineSettings::setGLTextureFiltering(TextureFiltering filter) {
+		m_oglTextureFilter = filter;
+	}
+
+	TextureFiltering EngineSettings::getGLTextureFiltering() const {
+		return m_oglTextureFilter;
+	}
+
+	void EngineSettings::setGLUseMipmapping(bool mipmapping) {
+		m_oglMipmapping = mipmapping;
+	}
+
+	bool EngineSettings::isGLUseMipmapping() const {
+		return m_oglMipmapping;
+	}
+
+	void EngineSettings::setGLUseMonochrome(bool monochrome) {
+		m_oglMonochrome = monochrome;
+	}
+
+	bool EngineSettings::isGLUseMonochrome() const {
+		return m_oglMonochrome;
+	}
+
+	void EngineSettings::setGLUseDepthBuffer(bool buffer) {
+		m_oglDepthBuffer = buffer;
+	}
+
+	bool EngineSettings::isGLUseDepthBuffer() const {
+		return m_oglDepthBuffer;
+	}
+
+	void EngineSettings::setGLAlphaTestValue(float alpha) {
+		m_alphaTestValue = alpha;
+	}
+
+	float EngineSettings::getGLAlphaTestValue() const {
+		return m_alphaTestValue;
 	}
 
 	void EngineSettings::setScreenWidth(uint16_t screenwidth) {

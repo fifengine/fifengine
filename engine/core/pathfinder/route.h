@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -104,17 +104,17 @@ namespace FIFE {
 		const Location& getEndNode();
 
 		/** Returns current location.
-		 * @param A const reference to the currently used location.
+		 * @return A const reference to the currently used location.
 		 */
 		const Location& getCurrentNode();
 
 		/** Returns previous location.
-		 * @param A const reference to the previous location.
+		 * @return A const reference to the previous location.
 		 */
 		const Location& getPreviousNode();
 
 		/** Returns next location.
-		 * @param A const reference to the next location.
+		 * @return A const reference to the next location.
 		 */
 		const Location& getNextNode();
 
@@ -224,6 +224,22 @@ namespace FIFE {
 		bool isAreaLimited();
 		const std::list<std::string> getLimitedAreas();
 
+		/** Sets the route to ignore dynamic blocker.
+		 * @param ignore A boolean that indicates if true the route ignores blocker, otherwise false.
+		 */
+		void setDynamicBlockerIgnored(bool ignore);
+
+		/** Gets if the route ignores dynamic blocker.
+		 * @return A boolean, if true the route ignores blocker, otherwise false.
+		 */
+		bool isDynamicBlockerIgnored();
+
+		/** Returns the blocking locations of the path.
+		 * Only useful in case the blocking ignore flag is set.
+		 * @return A location list that contains all blocking locations of the path.
+		 */
+		Path getBlockingPathLocations();
+
 		/** Sets the object, needed for multi cell and z-step range.
 		 * @param obj A pointer to the object.
 		 */
@@ -264,6 +280,9 @@ namespace FIFE {
 
 		//! is path replanned
 		bool m_replanned;
+
+		//! ignores dynamic blocker
+		bool m_ignoresBlocker;
 
 		//! used cost identifier
 		std::string m_costId;

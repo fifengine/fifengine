@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -73,7 +73,7 @@ namespace FIFE {
 			/** Divide this matrix by a scalar
 			 */
 			inline Matrix& operator/= (T val) {
-				for (register unsigned i = 0; i < 16; ++i)
+				for (unsigned i = 0; i < 16; ++i)
 					m[i] /= val;
 				return *this;
 			}
@@ -111,9 +111,9 @@ namespace FIFE {
 			 */
 
 			inline Matrix& loadRotate(T angle, T x, T y, T z) {
-				register T magSqr = x*x + y*y + z*z;
+				T magSqr = x*x + y*y + z*z;
 				if (magSqr != 1.0) {
-					register T mag = Math<T>::Sqrt(magSqr);
+					T mag = Math<T>::Sqrt(magSqr);
 					x/=mag;
 					y/=mag;
 					z/=mag;

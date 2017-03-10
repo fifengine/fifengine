@@ -21,6 +21,11 @@ build/win32/build_environments/scons/engine_build_log.txt
 build/win32/build_environments/visual_studio_8/fife.vcproj
 build/win32/build_environments/visual_studio_9/fife.vcproj
 
+#CMAKE stuff
+build/win32/CMakeCache.txt
+build/win32/CMakeFiles
+build/win32/version.h
+
 # Ignore the dev kit
 build/win32/applications
 build/win32/binaries
@@ -30,17 +35,23 @@ build/win32/static_libs
 # Demos
 demos/rio_de_hola/maps/savefile.xml
 demos/shooter/gui/highscores.xml
+demos/rpg/saves/*.xml
 settings.xml
 
 # All log files
 *.log
 
-# Doxygen
+# Docs
 doc/doxygen/html
 build/win32/doxygen_log.txt
+doc/dependencies/*.dot~
+doc/dependencies/*.dot
+doc/dependencies/*.ps
+doc/dependencies/*.png
 
 # scons
 *.sconsign
+.sconsign.tmp
 .sconsign.dblite
 build/.sconf_temp
 build/config.log
@@ -90,8 +101,4 @@ missing
 Icon?
 ehthumbs.db
 Thumbs.db
-
-# PyCharm
-.idea
-.iml
-
+.*.swp

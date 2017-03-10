@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -135,6 +135,15 @@ namespace FIFE {
 	void Model::deleteMaps() {
 		purge(m_maps);
 		m_maps.clear();
+	}
+
+	uint32_t Model::getActiveCameraCount() const {
+		uint32_t count = 0;
+		std::list<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			count += (*it)->getActiveCameraCount();
+		}
+		return count;
 	}
 
 	std::list<std::string> Model::getNamespaces() const {

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -49,70 +49,87 @@ class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
 		eventmanager.addCommandListener(self)
 		self.quitrequested = False
 		self.debuggeractive = False
-		
+
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		
+
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-			
+
 	def keyReleased(self, evt):
 		pass
 
 	def onCommand(self, command):
-		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quitrequested:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quitrequested = True
 			command.consume()
-			
+
 DEFAULT_GUI_DIR = "gui/"
-			
+
 class CEGUIApplicationBase(ApplicationBase):
 	def __init__(self, setting=None):
 		super(CEGUIApplicationBase, self).__init__(setting)
-		
+
 		self._initGuiManager()
 		self._loadCEGuiSettings()
 
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
 		
-		guimanager = fife.CEGuiManager()
-		
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
+
+		#For CEGUI versions lower than 0.8.0 we use the old CEGuiManager
+		if major_v == 0 and minor_v <= 7:
+			guimanager = fife.CEGuiManager()
+		else:
+			guimanager = fife.CEGuiManager()
+
 		#transfer ownership to the engine
 		guimanager.thisown = 0
-		
+
 		self.guimanager = guimanager
 		self.engine.setGuiManager(self.guimanager)
 		self.engine.getEventManager().addSdlEventListener(self.guimanager)
-		
+
 	def _loadCEGuiSettings(self):
 		self._loadResourcePaths()
-		
+
 	def _loadResourcePaths(self):
 
 		resourceprovider = PyCEGUI.System.getSingleton().getResourceProvider()
-		
-		resourcetypemap = { "schemes" : PyCEGUI.Scheme, 
-						    "imagesets" : PyCEGUI.Imageset,
-						    "fonts" : PyCEGUI.Font,
-						    "layouts" : PyCEGUI.WindowManager,
-						    "looksnfeels" : PyCEGUI.WidgetLookManager }
-		
-		if not self._setting:
-			for restype, resnamespace in resourcetypemap.iteritems():
-				resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
-				resnamespace.setDefaultResourceGroup(restype)
+
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
+		if major_v == 0 and minor_v <= 7:
+			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
+							    "imagesets" : PyCEGUI.Imageset.setDefaultResourceGroup,
+							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
+							    "layouts" : PyCEGUI.WindowManager.setDefaultResourceGroup,
+							    "looksnfeels" : PyCEGUI.WidgetLookManager.setDefaultResourceGroup,
+							   }
 		else:
-			for restype, resnamespace in resourcetypemap.iteritems():
+			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
+							    "imagesets" : PyCEGUI.ImageManager.setImagesetDefaultResourceGroup,
+							    "fonts" : PyCEGUI.Font.setDefaultResourceGroup,
+							    "layouts" : PyCEGUI.WindowManager.setDefaultResourceGroup,
+							    "looksnfeels" : PyCEGUI.WidgetLookManager.setDefaultResourceGroup,
+							   }
+
+
+		if not self._setting:
+			for restype, res_setfunc in resourcetypemap.iteritems():
+				resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
+				res_setfunc(restype)
+		else:
+			for restype, res_setfunc in resourcetypemap.iteritems():
 				path = self._setting.get("CEGUI", restype)
 				if path:
 					resourceprovider.setResourceGroupDirectory(restype, path)
-					resnamespace.setDefaultResourceGroup(restype)
+					res_setfunc(restype)
 				else:
 					#set default path
 					resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
-					resnamespace.setDefaultResourceGroup(restype)
-		        
+					res_setfunc(restype)
+
 		parser = PyCEGUI.System.getSingleton().getXMLParser()
 		if parser.isPropertyPresent("SchemaDefaultResourceGroup"):
 			path = self._setting.get("CEGUI", "schemas")
@@ -120,10 +137,10 @@ class CEGUIApplicationBase(ApplicationBase):
 				rp.setResourceGroupDirectory("schemas", path)
 			else:
 				rp.setResourceGroupDirectory("schemas", DEFAULT_GUI_DIR + "schemas")
-				
-			parser.setProperty("SchemaDefaultResourceGroup", "schemas") 
-		
-		
+
+			parser.setProperty("SchemaDefaultResourceGroup", "schemas")
+
+
 	def createListener(self):
 		self._listener = CEGUIEventListener(self)
 		return self._listener

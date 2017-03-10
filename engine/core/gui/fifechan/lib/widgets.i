@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -31,6 +31,12 @@ namespace fcn {
 	class MouseListener;
 	class KeyListener;
 
+	inline const char* getVersion();
+	inline int getMajor();
+	inline int getMinor();
+	inline int getPatch();
+	inline const char* getHash();
+
 	%nodefaultctor;
 	class Graphics {
 	public:
@@ -58,10 +64,49 @@ namespace fcn {
 		int32_t a;
 	};
 
+	class Size {
+	public:
+		Size(int32_t width = 0, int32_t height = 0); 
+		~Size();
+		int32_t getWidth() const;
+		int32_t getHeight() const;
+		void setWidth(int32_t width);
+		void setHeight(int32_t height);
+	};
+
+	class Point {
+	public:
+		int32_t x;
+		int32_t y;
+		explicit Point(int32_t _x = 0, int32_t _y = 0);
+		Point(const Point& rhs);
+		Point operator+(const Point& p) const;
+		Point operator-(const Point& p) const;
+		Point& operator+=(const Point& p);
+		Point& operator-=(const Point& p);
+		Point operator*(const int32_t& i) const;
+		Point operator/(const int32_t& i) const;
+		bool operator==(const Point& p) const;
+		bool operator!=(const Point& p) const;
+		int32_t length() const;
+		void normalize();
+		void rotate(int32_t angle);
+		void rotate(const Point& origin, int32_t angle);
+		void set(int32_t _x, int32_t _y);
+	};
+
+	typedef std::vector<Point> PointVector;
+
 	class Widget {
 	public:
+		enum SelectionMode {
+			Selection_None = 0,
+			Selection_Border = 1,
+			Selection_Background = 2
+		};
 /* 		Widget(); */
 /* 		virtual ~Widget(); */
+		virtual Widget* getParent() const;
 		virtual void setWidth(int32_t width);
 		virtual int32_t getWidth() const;
 		virtual void setHeight(int32_t height);
@@ -72,8 +117,28 @@ namespace fcn {
 		virtual void setY(int32_t y);
 		virtual int32_t getY() const;
 		virtual void setPosition(int32_t x, int32_t y);
-		virtual void setFrameSize(uint32_t frameSize);
-		virtual uint32_t getFrameSize() const;
+		void setOutlineSize(uint32_t size);
+		uint32_t getOutlineSize() const;
+		void setBorderSize(uint32_t size);
+		uint32_t getBorderSize() const;
+		void setMargin(int32_t margin);
+		void setMarginTop(int32_t margin);
+		int32_t getMarginTop() const;
+		void setMarginRight(int32_t margin);
+		int32_t getMarginRight() const;
+		void setMarginBottom(int32_t margin);
+		int32_t getMarginBottom() const;
+		void setMarginLeft(int32_t margin);
+		int32_t getMarginLeft() const;
+		void setPadding(uint32_t padding);
+		void setPaddingTop(uint32_t padding);
+		uint32_t getPaddingTop() const;
+		void setPaddingRight(uint32_t padding);
+		uint32_t getPaddingRight() const;
+		void setPaddingBottom(uint32_t padding);
+		uint32_t getPaddingBottom() const;
+		void setPaddingLeft(uint32_t padding);
+		uint32_t getPaddingLeft() const;
 		virtual void setFocusable(bool focusable);
 		virtual bool isFocusable() const;
 		virtual bool isFocused() const;
@@ -81,6 +146,7 @@ namespace fcn {
 		virtual bool isEnabled() const;
 		virtual void setVisible(bool visible);
 		virtual bool isVisible() const;
+		virtual bool isSetVisible() const;
 		virtual void setBaseColor(const Color& color);
 		virtual const Color& getBaseColor() const;
 		virtual void setForegroundColor(const Color& color);
@@ -89,12 +155,34 @@ namespace fcn {
 		virtual const Color& getBackgroundColor() const;
 		virtual void setSelectionColor(const Color& color);
 		virtual const Color& getSelectionColor() const;
+		virtual void setOutlineColor(const Color& color);
+		virtual const Color& getOutlineColor() const;
+		virtual void setBorderColor(const Color& color);
+		virtual const Color& getBorderColor() const;
+		void setSelectionMode(SelectionMode mode);
+		SelectionMode getSelectionMode() const;
+		void setMinSize(const Size& size);
+		const Size& getMinSize() const;
+		void setMaxSize(const Size& size);
+		const Size& getMaxSize() const;
+		void setFixedSize(const Size& size);
+		const Size& getFixedSize() const;
+		bool isFixedSize() const;
+		void setVerticalExpand(bool expand);
+		bool isVerticalExpand() const;
+		void setHorizontalExpand(bool expand);
+		bool isHorizontalExpand() const;
+		virtual bool isLayouted();
+		virtual void adaptLayout(bool top=true);
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void adjustSize();
+		virtual void expandContent(bool recursiv=true);
 		virtual void requestFocus();
 		virtual void requestMoveToTop();
 		virtual void requestMoveToBottom();
 		virtual void setActionEventId(const std::string& actionEventId);
 		virtual const std::string& getActionEventId() const;
-		virtual void getAbsolutePosition(int32_t& x, int32_t& y) const;
+		virtual void getAbsolutePosition(int32_t& OUTPUT, int32_t& OUTPUT) const;
 		Font *getFont() const;
 		static void setGlobalFont(Font* font);
 		virtual void setFont(Font* font);
@@ -102,6 +190,8 @@ namespace fcn {
 		virtual void setTabInEnabled(bool enabled);
 		virtual bool isTabOutEnabled() const;
 		virtual void setTabOutEnabled(bool enabled);
+		virtual bool isModalFocusable() const;
+		virtual bool isModalMouseInputFocusable() const;
 		virtual void requestModalFocus();
 		virtual void requestModalMouseInputFocus();
 		virtual void releaseModalFocus();
@@ -125,6 +215,14 @@ namespace fcn {
 		virtual void draw(Graphics* graphics) = 0;
 	};
 	
+	%feature("notabstract") Spacer;
+	class Spacer: public Widget {
+	public:
+		Spacer();
+		virtual ~Spacer();
+		virtual void resizeToContent(bool recursiv=true);
+	};
+
 	%feature("notabstract") Container;
 	class Container: public Widget {
 	public:
@@ -136,20 +234,24 @@ namespace fcn {
 		virtual void add(Widget* widget, int32_t x, int32_t y);
 		virtual void remove(Widget* widget);
 		virtual void clear();
+		enum LayoutPolicy {
+			Absolute,
+			AutoSize,
+			Vertical,
+			Horizontal,
+			Circular
+		};
+		void setLayout(LayoutPolicy policy);
+		LayoutPolicy getLayout() const;
+		virtual void setUniformSize(bool uniform);
+		virtual bool isUniformSize() const;
+		virtual void setVerticalSpacing(uint32_t spacing);
+		virtual uint32_t getVerticalSpacing() const;
+		virtual void setHorizontalSpacing(uint32_t spacing);
+		virtual uint32_t getHorizontalSpacing() const;
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
 	};
-	
-	%feature("notabstract") CheckBox;
-	class CheckBox: public Widget {
-	public:
-		CheckBox();
-		virtual ~CheckBox();
-		virtual bool isSelected() const;
-		virtual void setSelected(bool marked);
-		virtual const std::string &getCaption() const;
-		virtual void setCaption(const std::string& caption);
-		virtual void adjustSize();
-	};
-
 	
 	%feature("notabstract") Button;
 	class Button: public Widget {
@@ -158,12 +260,93 @@ namespace fcn {
 		Button(const std::string& caption);
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
+		void setActive(bool state);
+		bool isActive() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
+		void setDownXOffset(int32_t offset);
+		int32_t getDownXOffset() const;
+		void setDownYOffset(int32_t offset);
+		int32_t getDownYOffset() const;
+		void setDownOffset(int32_t x, int32_t y);
 		virtual void adjustSize();
 		/*virtual bool isPressed() const;*/
 	};
-		
+
+	%feature("notabstract") ImageButton;
+	class ImageButton: public Button {
+	public:
+		ImageButton();
+		ImageButton(const Image* image);
+		virtual ~ImageButton();
+		void setUpImage(const Image* image);
+		const Image* getUpImage() const;
+		void setDownImage(const Image* image);
+		const Image* getDownImage() const;
+		void setHoverImage(const Image* image);
+		const Image* getHoverImage() const;
+		void setInactiveUpImage(const Image* image);
+		const Image* getInactiveUpImage() const;
+		void setInactiveDownImage(const Image* image);
+		const Image* getInactiveDownImage() const;
+		void setInactiveHoverImage(const Image* image);
+		const Image* getInactiveHoverImage() const;
+		virtual void resizeToContent(bool recursiv=true);
+		virtual void adjustSize();
+	};
+
+	%feature("notabstract") ToggleButton;
+	class ToggleButton: public ImageButton {
+	public:
+		ToggleButton();
+		ToggleButton(const std::string &caption, const std::string &group, bool selected = false);
+		~ToggleButton();
+		virtual bool isSelected() const;
+		virtual void setSelected(bool selected);
+		virtual void toggleSelected();
+		void setGroup(const std::string& group);
+		const std::string &getGroup() const;
+	};
+
+	%feature("notabstract") CheckBox;
+	class CheckBox: public ImageButton {
+	public:
+		enum MarkerStyle {
+			Marker_Checkmark = 0,
+			Marker_Cross,
+			Marker_Dot,
+			Marker_Rhombus,
+			Marker_Image
+		};
+		CheckBox();
+		virtual ~CheckBox();
+		virtual bool isSelected() const;
+		virtual void setSelected(bool marked);
+		virtual void toggleSelected();
+		void setBackgroundImage(const std::string& filename);
+		void setBackgroundImage(const Image* image);
+		const Image* getBackgroundImage() const;
+		MarkerStyle getMarkerStyle() const;
+		void setMarkerStyle(MarkerStyle mode);
+		virtual void adjustSize();
+	};
+	
+	%feature("notabstract") Icon;
+	class Icon: public Widget {
+	public:
+		Icon(Image* image);
+		virtual ~Icon();
+		void setImage(Image* image);
+		const Image* getImage() const;
+		bool isScaling() const;
+		void setScaling(bool scale);
+		bool isTiling() const;
+		void setTiling(bool tile);
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		virtual void adjustSize();
+	};
+
 	%feature("notabstract") ScrollArea;
 	class ScrollArea: public Widget {
 	public:
@@ -232,8 +415,8 @@ namespace fcn {
 	class DropDown: public Widget {
 	public:
 		DropDown(ListModel *listModel = NULL,
-		         ScrollArea *scrollArea = NULL,
-		         ListBox *listBox = NULL);
+				 ScrollArea *scrollArea = NULL,
+				 ListBox *listBox = NULL);
 		virtual ~DropDown();
 		virtual int32_t getSelected();
 		virtual void setSelected(int32_t selected);
@@ -303,8 +486,6 @@ namespace fcn {
 		virtual const std::string& getCaption() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
-		virtual void setPadding(uint32_t padding);
-		virtual uint32_t getPadding() const;
 		virtual void setTitleBarHeight(uint32_t height);
 		virtual uint32_t getTitleBarHeight();
 		virtual void setMovable(bool movable);
@@ -314,6 +495,42 @@ namespace fcn {
 		virtual void resizeToContent();
 	};
 
+	%feature("notabstract") AdjustingContainer;
+	class AdjustingContainer: public Container {
+	public:
+		AdjustingContainer();
+		virtual ~AdjustingContainer();
+		
+		virtual void setNumberOfColumns(uint32_t numberOfColumns);
+		virtual uint32_t getNumberOfColumns() const;
+		virtual void setColumnAlignment(uint32_t column, uint32_t alignment);
+		virtual uint32_t getColumnAlignment(uint32_t column) const;
+		virtual void adjustContent();
+
+		enum {
+			LEFT = 0,
+			CENTER,
+			RIGHT
+		};
+	};
+
+	%feature("notabstract") FlowContainer;
+	class FlowContainer: public Container {
+	public:
+		FlowContainer();
+		virtual ~FlowContainer();
+		void setAlignment(FlowContainer::Alignment alignment);
+		FlowContainer::Alignment getAlignment() const;
+		void adjustContent();
+
+		enum Alignment {
+			Left = 0,
+			Right,
+			Top,
+			Bottom,
+			Center
+		};
+	};
 
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
@@ -322,16 +539,16 @@ namespace fcn {
 		TextBox(const std::string& text);
 		virtual void setText(const std::string& text);
 		virtual std::string getText() const;
-		virtual std::string getTextRow(int row) const;
-		virtual void setTextRow(int row, const std::string& text);
-		virtual int getNumberOfRows() const;
-		virtual int getCaretPosition() const;
-		virtual void setCaretPosition(int position);
-		virtual int getCaretRow() const;
-		virtual void setCaretRow(int row);
-		virtual int getCaretColumn() const;
-		virtual void setCaretColumn(int column);
-		virtual void setCaretRowColumn(int row, int column);
+		virtual std::string getTextRow(int32_t row) const;
+		virtual void setTextRow(int32_t row, const std::string& text);
+		virtual int32_t getNumberOfRows() const;
+		virtual int32_t getCaretPosition() const;
+		virtual void setCaretPosition(int32_t position);
+		virtual int32_t getCaretRow() const;
+		virtual void setCaretRow(int32_t row);
+		virtual int32_t getCaretColumn() const;
+		virtual void setCaretColumn(int32_t column);
+		virtual void setCaretRowColumn(int32_t row, int32_t column);
 		virtual void scrollToCaret();
 		virtual bool isEditable() const;
 		virtual void setEditable(bool editable);
@@ -353,7 +570,7 @@ namespace fcn {
 		virtual void adjustHeight();
 		virtual void setCaretPosition(uint32_t position);
 		virtual uint32_t getCaretPosition() const;
-    };
+	};
 	
 	%feature("notabstract") PasswordField;
 	class PasswordField : public TextField {
@@ -366,7 +583,7 @@ namespace fcn {
 	class IconProgressBar : public Widget {
 	public:
 		IconProgressBar();
-		IconProgressBar(Image *image, int maxIcons);
+		IconProgressBar(Image *image, int32_t maxIcons);
 		virtual ~IconProgressBar();
 		void setImage(Image* image);
 		const Image* getImage() const;
@@ -376,6 +593,8 @@ namespace fcn {
 		IconProgressBar::Orientation getOrientation() const;
 		void advance();
 		void reset();
+		void setIconCount(int icons);
+		int getIconCount() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 		
@@ -385,7 +604,160 @@ namespace fcn {
 			VERTICAL
 		};
 	};
+
+	%feature("notabstract") ImageProgressBar;
+	class ImageProgressBar : public Widget {
+	public:
+		ImageProgressBar();
+		ImageProgressBar(Image *image, int32_t maxValue);
+		virtual ~ImageProgressBar();
+		void setBarImage(Image* image);
+		const Image* getBarImage() const;
+		void setForegroundImage(Image* image);
+		const Image* getForegroundImage() const;
+		void setMaxValue(int32_t maxValue);
+		int32_t getMaxValue() const;
+		void setValue(int32_t value);
+		int32_t getValue() const;
+		void setOrientation(ImageProgressBar::Orientation orientation);
+		ImageProgressBar::Orientation getOrientation() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		
+		enum Orientation {
+			HORIZONTAL = 0,
+			VERTICAL
+		};
+	};
+
+	%feature("notabstract") Tab;
+	class Tab: public Container {
+	public:
+		Tab();
+		virtual ~Tab();
+		void setTabbedArea(fcn::TabbedArea* tabbedArea);
+		fcn::TabbedArea* getTabbedArea();
+	};
+
+	%feature("notabstract") TabbedArea;
+	class TabbedArea: public Widget {
+	public:
+		TabbedArea();
+		virtual ~TabbedArea();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+		virtual void addTab(fcn::Tab* tab, Widget* widget);
+		virtual void removeTabWithIndex(uint32_t index);
+		virtual void removeTab(fcn::Tab* tab);
+		uint32_t getNumberOfTabs() const;
+		virtual bool isTabSelected(uint32_t index) const;
+		virtual bool isTabSelected(fcn::Tab* tab) const;
+		virtual void setSelectedTab(uint32_t index);
+		virtual void setSelectedTab(fcn::Tab* tab);
+		virtual uint32_t getSelectedTabIndex() const;
+		fcn::Tab* getSelectedTab() const;
+		void setBaseColor(const Color& color);
+		void setBackgroundWidget(Widget* widget);
+		Widget* getBackgroundWidget();
+		void setLayout(Container::LayoutPolicy policy);
+		Container::LayoutPolicy getLayout() const;
+		virtual void setUniformSize(bool uniform);
+		virtual bool isUniformSize() const;
+		virtual void setVerticalSpacing(uint32_t spacing);
+		virtual uint32_t getVerticalSpacing() const;
+		virtual void setHorizontalSpacing(uint32_t spacing);
+		virtual uint32_t getHorizontalSpacing() const;
+	};
+
+	%feature("notabstract") BarGraph;
+	class BarGraph: public Widget {
+	public:
+		BarGraph();
+		BarGraph(int32_t x, int32_t y, int32_t w, int32_t h);
+		virtual ~BarGraph();
+		void setBarX(int32_t x);
+		int32_t getBarX() const;
+		void setBarY(int32_t y);
+		int32_t getBarY() const;
+		void setBarPosition(int32_t x, int32_t y);
+		void setBarPosition(const Point& pos);
+		void setBarWidth(int32_t w);
+		int32_t getBarWidth() const;
+		void setBarHeight(int32_t h);
+		int32_t getBarHeight() const;
+		void setBarSize(int32_t w, int32_t h);
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") CurveGraph;
+	class CurveGraph: public Widget {
+	public:
+		CurveGraph();
+		CurveGraph(const PointVector& data);
+		virtual ~CurveGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setAutomaticControllPoints(bool acp);
+		bool isAutomaticControllPoints() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") LineGraph;
+	class LineGraph: public Widget {
+	public:
+		LineGraph();
+		LineGraph(const PointVector& data);
+		virtual ~LineGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") PieGraph;
+	class PieGraph: public Widget {
+	public:
+		PieGraph();
+		PieGraph(const Point& center);
+		virtual ~PieGraph();
+		void setCenterX(int32_t x);
+		void setCenterY(int32_t y);
+		void setCenter(int32_t x, int32_t y);
+		int32_t getCenterX() const;
+		int32_t getCenterY() const;
+		void setCenter(const Point& center);
+		const Point& getCenter() const;
+		void setRadius(int32_t radius);
+		int32_t getRadius() const;
+		void addSegment(int32_t startAngle, int32_t stopAngle, const Color& color);
+		void clearSegments();
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
+
+	%feature("notabstract") PointGraph;
+	class PointGraph: public Widget {
+	public:
+		PointGraph();
+		PointGraph(const PointVector& data);
+		virtual ~PointGraph();
+		void setPointVector(const PointVector& data);
+		const PointVector& getPointVector() const;
+		void resetPointVector();
+		void setThickness(uint32_t thickness);
+		uint32_t getThickness() const;
+		void setOpaque(bool opaque);
+		bool isOpaque() const;
+	};
 }
-
-
-
+namespace std {
+	%template(FcnPointVector) vector<fcn::Point>;
+}

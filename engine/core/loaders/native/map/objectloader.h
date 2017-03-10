@@ -1,5 +1,5 @@
 /**************************************************************************
-*   Copyright (C) 2005-2013 by the FIFE team                              *
+*   Copyright (C) 2005-2017 by the FIFE team                              *
 *   http://www.fifengine.net                                              *
 *   This file is part of FIFE.                                            *
 *                                                                         *
@@ -35,40 +35,68 @@
 
 #include "iobjectloader.h"
 #include "ianimationloader.h"
+#include "iatlasloader.h"
 
 namespace FIFE {
 
-    class Model;
-    class VFS;
-    class ImageManager;
+	class Model;
+	class VFS;
+	class ImageManager;
+	class AnimationManager;
 
-    class ObjectLoader : public IObjectLoader {
-    public:
-        ObjectLoader(Model* model, VFS* vfs, ImageManager* imageManager, const AnimationLoaderPtr& animationLoader=AnimationLoaderPtr());
+	class ObjectLoader : public IObjectLoader {
+	public:
+		ObjectLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager, const AnimationLoaderPtr& animationLoader=AnimationLoaderPtr(), const AtlasLoaderPtr& atlasLoader=AtlasLoaderPtr());
 
-        ~ObjectLoader();
+		~ObjectLoader();
 
-        /** 
-        * @see IObjectLoader::setAnimationLoader
-        */
-        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader);
+		/** 
+		* @see IObjectLoader::setAnimationLoader
+		*/
+		virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader);
 
-        /** 
-        * @see IObjectLoader::isLoadable
-        */
-        virtual bool isLoadable(const std::string& filename) const;
+		/** 
+		* @see IObjectLoader::getAnimationLoader
+		*/
+		virtual AnimationLoaderPtr getAnimationLoader();
 
-        /** 
-        * @see IObjectLoader::load
-        */
-        virtual void load(const std::string& filename);
+		/** 
+		* @see IObjectLoader::setAtlasLoader
+		*/
+		virtual void setAtlasLoader(const AtlasLoaderPtr& atlasLoader);
 
-    private:
-        Model* m_model;
-        VFS* m_vfs;
-        ImageManager* m_imageManager;
-        AnimationLoaderPtr m_animationLoader;
-    };
+		/** 
+		* @see IObjectLoader::getAtlasLoader
+		*/
+		virtual AtlasLoaderPtr getAtlasLoader();
+
+		/** 
+		* @see IObjectLoader::isLoadable
+		*/
+		virtual bool isLoadable(const std::string& filename) const;
+
+		/** 
+		* @see IObjectLoader::load
+		*/
+		virtual void load(const std::string& filename);
+
+		/** used to load an object, atlas or animation file
+		* if directory is provided then file is assumed relative to directory
+		*/
+		void loadImportFile(const std::string& file, const std::string& directory="");
+
+		/** used to load a directory of object, atlas or animation  files recursively
+		*/
+		void loadImportDirectory(const std::string& directory);
+
+	private:
+		Model* m_model;
+		VFS* m_vfs;
+		ImageManager* m_imageManager;
+		AnimationManager* m_animationManager;
+		AnimationLoaderPtr m_animationLoader;
+		AtlasLoaderPtr m_atlasLoader;
+	};
 }
 
 #endif

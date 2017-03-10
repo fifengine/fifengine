@@ -1,5 +1,0 @@
-<animation delay="200" namespace="http://www.fifengine.net/xml/rpg" id="warrior:walk" x_offset="0" y_offset="0">
-	<frame source="000.png" />
-	<frame source="045.png" />
-</animation>
-

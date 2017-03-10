@@ -1,0 +1,5 @@
+TriggerTest
+-------------- 
+The purpose of this test is to test the trigger system.
+It prints some output in the console.
+ 

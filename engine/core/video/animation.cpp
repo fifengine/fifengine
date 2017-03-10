@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -23,7 +23,6 @@
 #include <string>
 
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -31,22 +30,75 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/time/timemanager.h"
+#include "loaders/native/video/resourceanimationloader.h"
 
 #include "animation.h"
 #include "image.h"
-#include "util/structures/rect.h"
 
 namespace FIFE {
 
-	Animation::Animation():
+	Animation::Animation(IResourceLoader* loader):
+		IResource(createUniqueAnimationName(), loader),
 		m_action_frame(-1),
 		m_animation_endtime(-1),
 		m_direction(0) {
-		}
+	}
+
+	Animation::Animation(const std::string& name, IResourceLoader* loader):
+		IResource(name, loader),
+		m_action_frame(-1),
+		m_animation_endtime(-1),
+		m_direction(0) {
+	}
 
 	Animation::~Animation() {
 		// note: we don't need to free the images, as they are handled via
 		// smart references.
+	}
+
+	size_t Animation::getSize() {
+		return 0;
+	}
+
+	void Animation::load() {
+		if (m_loader){
+			m_loader->load(this);
+		} else {
+			ResourceAnimationLoader loader;
+			loader.load(this);
+		}
+		m_state = IResource::RES_LOADED;
+	}
+
+	void Animation::free() {
+		std::vector<FrameInfo>::iterator it = m_frames.begin();
+		for (; it != m_frames.end(); ++it) {
+			(*it).image->free();
+		}
+		m_state = IResource::RES_NOT_LOADED;
+	}
+
+	void Animation::invalidate() {
+		free();
+		m_framemap.clear();
+		m_frames.clear();
+		m_action_frame = -1;
+		m_animation_endtime = -1;
+		m_direction = 0;
+	}
+
+	std::string Animation::createUniqueAnimationName() {
+		// automated counting for name generation, in case the user doesn't provide a name
+		static uint32_t uniqueNumber = 0;
+		static std::string baseName = "animation";
+
+		std::ostringstream oss;
+		oss << uniqueNumber << "_" << baseName;
+
+		const std::string name = oss.str();
+		++uniqueNumber;
+
+		return name;
 	}
 
 	void Animation::addFrame(ImagePtr image, uint32_t duration) {
@@ -85,15 +137,14 @@ namespace FIFE {
 	}
 
 	ImagePtr Animation::getFrame(int32_t index) {
+		ImagePtr image;
 		if (isValidIndex(index)) {
-			ImagePtr image =  m_frames[index].image;
-			if(image->getState() == IResource::RES_NOT_LOADED) {
+			image =  m_frames[index].image;
+			if (image->getState() == IResource::RES_NOT_LOADED) {
 				image->load();
 			}
-			return image;
-		} else {
-			return ImagePtr();  //return an invalid image .
 		}
+		return image;
 	}
 
 	ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp) {
@@ -109,12 +160,19 @@ namespace FIFE {
 		return val;
 	}
 
+	std::vector<ImagePtr> Animation::getFrames() {
+		std::vector<ImagePtr> frames;
+		for (std::vector<FrameInfo>::iterator it = m_frames.begin(); it != m_frames.end(); ++it) {
+			frames.push_back((*it).image);
+		}
+		return frames;
+	}
+
 	int32_t Animation::getFrameDuration(int32_t index) const{
 		if (isValidIndex(index)) {
 			return m_frames[index].duration;
-		} else {
-			return -1;
 		}
+		return -1;
 	}
 
 	uint32_t Animation::getFrameCount() const {
@@ -122,7 +180,6 @@ namespace FIFE {
 	}
 
 	void Animation::setDirection(uint32_t direction) {
-		m_direction %= 360;
+		m_direction = direction % 360;
 	}
 }
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -1,5 +1,13 @@
 %{
 /**
+ * HAVE_SNPRINTF is defined in several places.  This prevents the warning message
+ * from appearing when compiling the swig interface.
+ */
+#ifdef HAVE_SNPRINTF
+#undef HAVE_SNPRINTF
+#endif
+
+/**
  * This is a workaround for a minor swig bug when building on gcc 4.6.1 and above.
  * Prior to gcc 4.6.1 the STL headers like vector, string, etc. used to 
  * automatically pull in the cstddef header but starting with gcc 4.6.1 they no
@@ -7,11 +15,8 @@
  * explicitly include cstddef so the swig generated file will compile.
  */
 #include <cstddef>
+
 %}
-
-%module(directors="1") fife
-$imports
-
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_pair.i"
@@ -20,6 +25,9 @@ $imports
 %include "std_set.i"
 %include "typemaps.i"
 %include "exception.i"
+
+%module(directors="1") fife
+$imports
 
 /**
  * Some materials to understand exception handling:
@@ -87,9 +95,9 @@ static void handleDirectorException() {
 	PyErr_Fetch(&exception, &value, &traceback);
 	PyErr_NormalizeException(&exception, &value, &traceback);
 	if (exception) {
-		PySys_SetObject("last_type", exception);
-		PySys_SetObject("last_value", value);
-		PySys_SetObject("last_traceback", traceback);	
+		PySys_SetObject((char*)"last_type", exception);
+		PySys_SetObject((char*)"last_value", value);
+		PySys_SetObject((char*)"last_traceback", traceback);	
 		
 		PyObject* d = PyModule_GetDict (PyImport_AddModule ("__main__"));
 		PyDict_SetItemString(d, "exc_type", exception);
@@ -120,10 +128,21 @@ print s\n\
 	}
 }
 
-#define _FIFE_EXC_HANDLER(_fife_exc_type, _converted_type) \
+#define _FIFE_CONVERTED_EXC_HANDLER(_fife_exc_type, _converted_type) \
 	catch (FIFE::_fife_exc_type& _e) { \
 		PyErr_Clear(); \
 		SWIG_exception(_converted_type, _e.what()); \
+	}
+
+
+#define _FIFE_EXC_HANDLER(_fife_exc_type) \
+	catch (FIFE::_fife_exc_type& _e) { \
+		SWIG_Python_Raise( \
+			SWIG_NewPointerObj( \
+				new FIFE::_fife_exc_type(_e), \
+				SWIGTYPE_p_FIFE__##_fife_exc_type, SWIG_POINTER_OWN), \
+			#_fife_exc_type, SWIGTYPE_p_FIFE__##_fife_exc_type); \
+		SWIG_fail; \
 	}
 
 
@@ -133,6 +152,29 @@ print s\n\
 		SWIG_exception(SWIG_RuntimeError, "Caught a director exception"); \
 	}
 %}
+
+%exceptionclass FIFE::Exception;
+%exceptionclass FIFE::SDLException;
+%exceptionclass FIFE::NotFound;
+%exceptionclass FIFE::NotSet;
+%exceptionclass FIFE::IndexOverflow;
+%exceptionclass FIFE::InvalidFormat;
+%exceptionclass FIFE::CannotOpenFile;
+%exceptionclass FIFE::InvalidConversion;
+%exceptionclass FIFE::NotSupported;
+%exceptionclass FIFE::NameClash;
+%exceptionclass FIFE::Duplicate;
+%exceptionclass FIFE::ScriptException;
+%exceptionclass FIFE::EventException;
+%exceptionclass FIFE::GuiException;
+%exceptionclass FIFE::InconsistencyDetected;
+%exceptionclass FIFE::OutOfMemory;
+
+%extend FIFE::Exception {
+	const char *__str__() {
+		return self->what();
+	}
+};
 
 %feature("director:except") {
 	if ($$error != NULL) {
@@ -146,7 +188,22 @@ print s\n\
 		$$action
 	}
 	_FIFE_DIRECTOR_EXC_HANDLER()
-	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
+	_FIFE_EXC_HANDLER(SDLException)
+	_FIFE_EXC_HANDLER(NotFound)
+	_FIFE_EXC_HANDLER(NotSet)
+	_FIFE_EXC_HANDLER(IndexOverflow)
+	_FIFE_EXC_HANDLER(InvalidFormat)
+	_FIFE_EXC_HANDLER(CannotOpenFile)
+	_FIFE_EXC_HANDLER(InvalidConversion)
+	_FIFE_EXC_HANDLER(NotSupported)
+	_FIFE_EXC_HANDLER(NameClash)
+	_FIFE_EXC_HANDLER(Duplicate)
+	_FIFE_EXC_HANDLER(ScriptException)
+	_FIFE_EXC_HANDLER(EventException)
+	_FIFE_EXC_HANDLER(GuiException)
+	_FIFE_EXC_HANDLER(InconsistencyDetected)
+	_FIFE_EXC_HANDLER(OutOfMemory)
+	_FIFE_EXC_HANDLER(Exception)
 }
 
 $inclusions

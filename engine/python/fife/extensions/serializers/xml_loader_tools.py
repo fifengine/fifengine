@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -22,9 +22,7 @@
 
 """ utilities for xml maploading process """
 
-import sys, os
-
-from fife import fife
+import os
 import math
 
 def loadImportFile(loader, path, engine, debug=False):
@@ -112,33 +110,43 @@ def reverse_root_subfile(masterfile, subfile):
 def norm_path(path):
 	"""
 	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
-  routines will default to os.path.sep.
+	routines will default to os.path.sep.
 	"""
 	if os.path.sep == '/':
 		return path
 
 	return '/'.join(path.split(os.path.sep))
-	
+
 
 def frange(limit1, limit2 = None, increment = 1.):
-  """ source:
-      http://code.activestate.com/recipes/66472-frange-a-range-function-with-float-increments/
-    
-	  Range function that accepts floats (and integers).
+	"""Range function that accepts floats (and integers).
+	If only one limit is specified, assumes 0 as lower limit.
 
-	  Usage:
-	  frange(-2, 2, 0.1)
-	  frange(10)
-	  frange(10, increment = 0.5)
+	Usage:
+	frange(-2, 2, 0.1)
+	frange(10)
+	frange(10, increment = 0.5)
 
-	  The returned value is an iterator.  Use list(frange) for a list.
-  """
+	The returned value is an iterator.  Use list(frange) for a list.
 
-  if limit2 is None:
-    limit2, limit1 = limit1, 0.
-  else:
-    limit1 = float(limit1)
+	source: U{http://code.activestate.com/recipes/
+	66472-frange-a-range-function-with-float-increments/}
+ 
+	@type	limit1:	float
+	@param	limit1:	lower range limit
+	@type	limit2:	float
+	@param	limit2:	upper range limit
+	@type	increment:	float
+	@param	increment:	length of each step
+	@rtype	generator
+	@return	iterable over (limit2 - limit1) / increment steps
+	"""
 
-  count = int(math.ceil(limit2 - limit1)/increment)
-  return (limit1 + n*increment for n in range(count))
+	if limit2 is None:
+		limit2, limit1 = float(limit1), 0.
+	else:
+		limit1 = float(limit1)
+
+	count = int(math.ceil((limit2 - limit1)/increment))
+	return (limit1 + n*increment for n in xrange(count))
 	

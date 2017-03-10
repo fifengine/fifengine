@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -113,8 +113,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		pass
 
 	def onCommand(self, command):
-		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quit:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quit = True
 			command.consume()
 
 	def onConsoleCommand(self, command):

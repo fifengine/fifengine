@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,8 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import Attr, UnicodeAttr
+
+from common import text2gui, gui2text
 from widget import Widget
+
 
 class TextBox(Widget):
 	"""
@@ -42,20 +47,25 @@ class TextBox(Widget):
 	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text'),
 									   Attr('filename')
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 0
 	DEFAULT_TEXT = u""
 	DEFAULT_FILENAME = ""
 
-	def __init__(self, 
-				 parent = None, 
+	def __init__(self,
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -63,33 +73,41 @@ class TextBox(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None,
 				 filename = None):
-				 
+
 		self.real_widget = fifechan.TextBox()
 		self.text = text or self.DEFAULT_TEXT
 		self.filename = filename or self.DEFAULT_FILENAME
-		super(TextBox,self).__init__(parent=parent, 
-									 name=name, 
-									 size=size, 
-									 min_size=min_size, 
+		super(TextBox,self).__init__(parent=parent,
+									 name=name,
+									 size=size,
+									 min_size=min_size,
 									 max_size=max_size,
-									 helptext=helptext, 
+									 fixed_size=fixed_size,
+									 margins=margins,
+									 padding=padding,
+									 helptext=helptext,
 									 position=position,
-									 style=style, 
-									 hexpand=hexpand, 
+									 style=style,
+									 hexpand=hexpand,
 									 vexpand=vexpand,
 									 font=font,
 									 base_color=base_color,
 									 background_color=background_color,
 									 foreground_color=foreground_color,
 									 selection_color=selection_color,
+									 border_color=border_color,
+									 outline_color=outline_color,
 									 border_size=border_size,
+									 outline_size=outline_size,
 									 position_technique=position_technique,
 									 is_focusable=is_focusable,
 									 comment=comment)
@@ -102,14 +120,17 @@ class TextBox(Widget):
 		self._realGetData = self._getText
 
 	def clone(self, prefix):
-		textboxClone = TextBox(None,  
+		textboxClone = TextBox(None,
 					self._createNameWithPrefix(prefix),
 					self.size,
-					self.min_size, 
-					self.max_size, 
-					self.helptext, 
-					self.position, 
-					self.style, 
+					self.min_size,
+					self.max_size,
+					self.fixed_size,
+					self.margins,
+					self.padding,
+					self.helptext,
+					self.position,
+					self.style,
 					self.hexpand,
 					self.vexpand,
 					self.font,
@@ -117,16 +138,18 @@ class TextBox(Widget):
 					self.background_color,
 					self.foreground_color,
 					self.selection_color,
+					self.border_color,
+					self.outline_color,
 					self.border_size,
+					self.outline_size,
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.margins,
 					self.text,
 					self.filename)
 		return textboxClone
-		
-		
+
+
 	def _getFileName(self): return self._filename
 	def _loadFromFile(self,filename):
 		self._filename = filename
@@ -137,12 +160,6 @@ class TextBox(Widget):
 		except Exception, e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
-
-	def resizeToContent(self,recurse=True):
-		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
-		max_w = max(map(self.real_font.getWidth,rows))
-		self.width = max_w
-		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
 
 	def _getText(self): return gui2text(self.real_widget.getText())
 	def _setText(self,text): self.real_widget.setText(text2gui(text))

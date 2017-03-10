@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -79,6 +79,8 @@ EVENTS = [
 	"mouseMoved",
 	"mouseWheelMovedUp",
 	"mouseWheelMovedDown",
+	"mouseWheelMovedRight",
+	"mouseWheelMovedLeft",
 	"mouseDragged",
 	"action",
 	"keyPressed",
@@ -221,6 +223,8 @@ class _MouseEventListener(EventListenerBase,fifechan.MouseListener):
 	def mouseMoved(self,e): self._redirectEvent("mouseMoved",e)
 	def mouseWheelMovedUp(self,e): self._redirectEvent("mouseWheelMovedUp",e)
 	def mouseWheelMovedDown(self,e): self._redirectEvent("mouseWheelMovedDown",e)
+	def mouseWheelMovedRight(self,e): self._redirectEvent("mouseWheelMovedRight",e)
+	def mouseWheelMovedLeft(self,e): self._redirectEvent("mouseWheelMovedLeft",e)
 	def mouseDragged(self,e): self._redirectEvent("mouseDragged",e)
 
 class _KeyEventListener(EventListenerBase,fifechan.KeyListener):

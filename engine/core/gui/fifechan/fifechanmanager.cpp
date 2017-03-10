@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -33,7 +33,6 @@
 // Second block: files included from the same folder
 #ifdef HAVE_OPENGL
 #include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
-#include "gui/fifechan/base/opengle/opengle_gui_graphics.h"
 #endif
 #include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
 #include "util/base/exception.h"
@@ -45,9 +44,9 @@
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
-#include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/key/key.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/mouse/mouseevent.h"
 #include "vfs/fife_boost_filesystem.h"
 
 #include "fifechanmanager.h"
@@ -62,9 +61,12 @@ namespace FIFE {
 		m_imgloader(new GuiImageLoader()) ,
 		m_input(new fcn::SDLInput()),
 		m_console(0),
+		m_cursor(0),
 		m_defaultfont(0),
 		m_fonts(),
-		m_logic_executed(false) {
+		m_logic_executed(false),
+		m_enabled_console(true),
+		m_backend("") {
 
 		m_fcn_gui->setInput(m_input);
 		fcn::Image::setImageLoader(m_imgloader);
@@ -76,6 +78,8 @@ namespace FIFE {
 		m_fcn_topcontainer->setFocusable(false);
 		m_had_mouse = false;
 		m_had_widget = false;
+		m_lastMotionX = 0;
+		m_lastMotionY = 0;
 	}
 
 	FifechanManager::~FifechanManager() {
@@ -98,9 +102,10 @@ namespace FIFE {
 			return false;
 		}
 
-		bool overWidget = m_fcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) != 0;
+		bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != 0;
 
 		switch(evt.type) {
+			case SDL_MOUSEWHEEL:
 			case SDL_MOUSEBUTTONDOWN:
 				m_had_widget = overWidget;
 			case SDL_MOUSEBUTTONUP:
@@ -125,7 +130,9 @@ namespace FIFE {
 				return false;
 
 			case SDL_MOUSEMOTION:
-				if( m_fcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
+				m_lastMotionX = evt.motion.x;
+				m_lastMotionY = evt.motion.y;
+				if (m_fcn_topcontainer->getWidgetAt(evt.motion.x,evt.motion.y)) {
 					m_had_mouse = true;
 					m_input->pushInput(evt);
 					return true;
@@ -147,9 +154,14 @@ namespace FIFE {
 				}
 				return false;
 
-			case SDL_ACTIVEEVENT:
-				// Actually Guichan doesn't care (it should!)
-				// so at least don't swallow mouse_focus events up.
+			case SDL_TEXTINPUT:
+				// don't consume TEXTINPUT
+				m_input->pushInput(evt);
+				return false;
+
+			case SDL_WINDOWEVENT:
+				// don't consume WINDOWEVENTS
+				m_input->pushInput(evt);
 				return false;
 
 			default:
@@ -158,9 +170,16 @@ namespace FIFE {
 	}
 
 	void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+		if (m_backend == "SDL") {
+			static_cast<SdlGuiGraphics*>(m_gui_graphics)->updateTarget();
+		} else {
+			static_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
+		}
 		m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
-		this->invalidateFonts();
-		this->m_console->reLayout();
+		invalidateFonts();
+		if (m_console) {
+			m_console->reLayout();
+		}
 	}
 
 	fcn::Gui* FifechanManager::getFifechanGUI() const {
@@ -181,6 +200,14 @@ namespace FIFE {
 		}
 	}
 
+	void FifechanManager::setConsoleEnabled(bool console) {
+		m_enabled_console = console;
+	}
+
+	bool FifechanManager::isConsoleEnabled() const {
+		return m_enabled_console;
+	}
+
 	void FifechanManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight) {
 		if( backend == "SDL" ) {
 			m_gui_graphics = new SdlGuiGraphics();
@@ -189,17 +216,17 @@ namespace FIFE {
 		else if (backend == "OpenGL") {
 			m_gui_graphics = new OpenGLGuiGraphics();
 		}
-		else if (backend == "OpenGLe") {
-			m_gui_graphics = new OpenGLeGuiGraphics();
-		} 
 #endif
         else {
 			//should never get here
 			assert(0);
 		}
+		m_backend = backend;
 
 		m_fcn_gui->setGraphics(m_gui_graphics);
-		m_console = new Console();
+		if (m_enabled_console) {
+			m_console = new Console();
+		}
 
 		resizeTopContainer(0, 0, screenWidth, screenHeight);
 	}
@@ -294,7 +321,7 @@ namespace FIFE {
 		int32_t keyval = fcnevt.getKey().getValue();
 		keyval = convertFifechanKeyToFifeKey(keyval);
 
-		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval)));
 
 		return keyevt;
 	}
@@ -350,6 +377,12 @@ namespace FIFE {
 			case fcn::MouseInput::Middle:
 				mouseevt.setButton(MouseEvent::MIDDLE);
 				break;
+			case fcn::MouseInput::X1:
+				mouseevt.setButton(MouseEvent::X1);
+				break;
+			case fcn::MouseInput::X2:
+				mouseevt.setButton(MouseEvent::X2);
+				break;
 			default:
 				mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
 				break;
@@ -357,6 +390,13 @@ namespace FIFE {
 		return mouseevt;
 	}
 
+	void FifechanManager::setTabbingEnabled(bool tabbing) {
+		m_fcn_gui->setTabbingEnabled(tabbing);
+	}
+	
+	bool FifechanManager::isTabbingEnabled() const {
+		return m_fcn_gui->isTabbingEnabled();
+	}
 
 	int32_t FifechanManager::convertFifechanKeyToFifeKey(int32_t value) {
 
@@ -468,12 +508,6 @@ namespace FIFE {
 				break;
 			case fcn::Key::ScrollLock:
 				value = Key::SCROLL_LOCK;
-				break;
-			case fcn::Key::RightMeta:
-				value = Key::RIGHT_META;
-				break;
-			case fcn::Key::LeftMeta:
-				value = Key::LEFT_META;
 				break;
 			case fcn::Key::LeftSuper:
 				value = Key::LEFT_SUPER;

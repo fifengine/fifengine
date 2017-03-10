@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -499,10 +499,10 @@ namespace FIFE {
 					// transfer cells
 					ModelCoordinate mc(newsize.x+x, newsize.y+y);
 					Cell* cell = NULL;
-					uint32_t old_x = mc.x - m_size.x;
-					uint32_t old_y = mc.y - m_size.y;
+					int32_t old_x = mc.x - m_size.x;
+					int32_t old_y = mc.y - m_size.y;
 					// out of range in the old size, so we create a new cell
-					if (old_x < 0 || old_x >= m_width || old_y < 0 || old_y >= m_height) {
+					if (old_x < 0 || old_x >= static_cast<int32_t>(m_width) || old_y < 0 || old_y >= static_cast<int32_t>(m_height)) {
 						int32_t coordId = x + y * w;
 						cell = new Cell(coordId, mc, m_layer);
 						cells[x][y] = cell;
@@ -531,8 +531,8 @@ namespace FIFE {
 						}
 					// transfer ownership
 					} else {
-						cell = m_cells[old_x][old_y];
-						m_cells[old_x][old_y] = NULL;
+						cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
+						m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = NULL;
 						cells[x][y] = cell;
 						int32_t coordId = x + y * w;
 						cell->setCellId(coordId);
@@ -704,14 +704,14 @@ namespace FIFE {
 	}
 
 	Cell* CellCache::getCell(const ModelCoordinate& mc) {
-		uint32_t x = mc.x - m_size.x;
-		uint32_t y = mc.y - m_size.y;
+		int32_t x = mc.x - m_size.x;
+		int32_t y = mc.y - m_size.y;
 
-		if (x < 0 || x >= m_width || y < 0 || y >= m_height) {
+		if (x < 0 || x >= static_cast<int32_t>(m_width) || y < 0 || y >= static_cast<int32_t>(m_height)) {
 			return NULL;
 		}
 
-		return m_cells[x][y];
+		return m_cells[static_cast<uint32_t>(x)][static_cast<uint32_t>(y)];
 	}
 
 	const std::vector<std::vector<Cell*> >& CellCache::getCells() {
@@ -823,10 +823,10 @@ namespace FIFE {
 		if (m_layer != location.getLayer()) {
 			return false;
 		}
-		uint32_t x = location.getLayerCoordinates().x - m_size.x;
-		uint32_t y = location.getLayerCoordinates().y - m_size.y;
+		int32_t x = location.getLayerCoordinates().x - m_size.x;
+		int32_t y = location.getLayerCoordinates().y - m_size.y;
 
-		if (x < 0 || x >= m_width || y < 0 || y >= m_height) {
+		if (x < 0 || x >= static_cast<int32_t>(m_width) || y < 0 || y >= static_cast<int32_t>(m_height)) {
 			return false;
 		}
 		return true;
@@ -865,23 +865,9 @@ namespace FIFE {
 
 	std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker) {
 		std::vector<Cell*> cells;
-		int32_t dx = ABS(pt2.x - pt1.x);
-		int32_t dy = ABS(pt2.y - pt1.y);
-		int8_t sx = -1;
-		int8_t sy = -1;
-
-		if (pt1.x < pt2.x) {
-			sx = 1;
-		}
-		if (pt1.y < pt2.y) {
-			sy = 1;
-		}
-
-		int32_t err = dx - dy;
-		ModelCoordinate current(pt1.x, pt1.y);
-		bool finished = false;
-		while (!finished) {
-			Cell* c = getCell(current);
+		std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
+		for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
+			Cell* c = getCell(*it);
 			if (c) {
 				if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
 					return cells;
@@ -889,20 +875,6 @@ namespace FIFE {
 				cells.push_back(c);
 			} else {
 				return cells;
-			}
-
-			if (current.x == pt2.x && current.y == pt2.y) {
-				finished = true;
-			}
-
-			int32_t err2 = err*2;
-
-			if (err2 > -dy) {
-				err -= dy;
-				current.x += sx;
-			} else if (err2 < dx) {
-				err += dx;
-				current.y += sy;
 			}
 		}
 		return cells;
@@ -973,6 +945,28 @@ namespace FIFE {
 		for (; current.x <= target.x; current.x++) {
 			Cell* c = getCell(current);
 			if (c) cells.push_back(c);
+		}
+		return cells;
+	}
+
+	std::vector<Cell*> CellCache::getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle) {
+		std::vector<Cell*> cells;
+		ExactModelCoordinate exactCenter(center.x, center.y);
+		std::vector<Cell*> tmpCells = getCellsInCircle(center, radius);
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		bool greater = (s > e) ? true : false;
+		for (std::vector<Cell*>::iterator it = tmpCells.begin(); it != tmpCells.end(); ++it) {
+			int32_t angle = getAngleBetween(exactCenter, intPt2doublePt((*it)->getLayerCoordinates()));
+			if (greater) {
+				if (angle >= s || angle <= e) {
+					cells.push_back(*it);
+				}
+			} else {
+				if (angle >= s && angle <= e) {
+					cells.push_back(*it);
+				}
+			}
 		}
 		return cells;
 	}

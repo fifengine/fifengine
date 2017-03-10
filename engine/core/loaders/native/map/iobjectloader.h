@@ -1,5 +1,5 @@
 /**************************************************************************
-*   Copyright (C) 2005-2013 by the FIFE team                              *
+*   Copyright (C) 2005-2017 by the FIFE team                              *
 *   http://www.fifengine.net                                              *
 *   This file is part of FIFE.                                            *
 *                                                                         *
@@ -34,33 +34,42 @@
 #include "util/base/sharedptr.h"
 
 #include "ianimationloader.h"
+#include "iatlasloader.h"
 
 namespace FIFE {
 
-    /** Interface class that all object loaders should derive from
-    */
-    class IObjectLoader {
-    public:
-        virtual ~IObjectLoader() { };
+	/** Interface class that all object loaders should derive from
+	*/
+	class IObjectLoader {
+	public:
+		virtual ~IObjectLoader() { };
 
-        /** allows setting which animation loader will be
-        * used to load animation files
-        */
-        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader) = 0;
+		/** allows setting which animation loader will be
+		* used to load animation files
+		*/
+		virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader) = 0;
 
-        /** determines whether the resource is in
-        *	the correct format for this loader
-        */
-        virtual bool isLoadable(const std::string& filename) const = 0;
+		virtual AnimationLoaderPtr getAnimationLoader() = 0;
 
-        /** responsible for loading the object resource
-        *	and populating the engine
-        */
-        virtual void load(const std::string& filename) = 0;
+		/** allows setting which atlas loader will be
+		* used to load atlas files
+		*/
+		virtual void setAtlasLoader(const AtlasLoaderPtr& atlasLoader) = 0;
 
-    };
+		virtual AtlasLoaderPtr getAtlasLoader() = 0;
 
-    typedef SharedPtr<FIFE::IObjectLoader> ObjectLoaderPtr;
+		/** determines whether the resource is in
+		*	the correct format for this loader
+		*/
+		virtual bool isLoadable(const std::string& filename) const = 0;
+
+		/** responsible for loading the object resource
+		*	and populating the engine
+		*/
+		virtual void load(const std::string& filename) = 0;
+	};
+
+	typedef SharedPtr<FIFE::IObjectLoader> ObjectLoaderPtr;
 }
 
 #endif

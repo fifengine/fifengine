@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -104,8 +104,11 @@ namespace FIFE {
 
 	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
 		ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
-		ModelCoordinate result(round(dblpt.x), round(dblpt.y), round(dblpt.z));
+		return toLayerCoordinatesFromExactLayerCoordinates(dblpt);
+	}
 
+	ModelCoordinate SquareGrid::toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) {
+		ModelCoordinate result(round(exact_layer_coords.x), round(exact_layer_coords.y), round(exact_layer_coords.z));
 		return result;
 	}
 
@@ -136,6 +139,43 @@ namespace FIFE {
 				mc.y += (*it).y;
 				coords.push_back(mc);
 			}
+		}
+		return coords;
+	}
+
+	std::vector<ModelCoordinate> SquareGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) {
+		std::vector<ModelCoordinate> coords;
+		int32_t dx = ABS(end.x - start.x);
+		int32_t dy = ABS(end.y - start.y);
+		int8_t sx = -1;
+		int8_t sy = -1;
+
+		if (start.x < end.x) {
+			sx = 1;
+		}
+		if (start.y < end.y) {
+			sy = 1;
+		}
+
+		int32_t err = dx - dy;
+		int32_t err2 = err*2;
+		ModelCoordinate current(start);
+		bool finished = false;
+		while (!finished) {
+			coords.push_back(current);
+			if (current.x == end.x && current.y == end.y) {
+				finished = true;
+				break;
+			}
+			
+			if (err2 > -dy) {
+				err -= dy;
+				current.x += sx;
+			} else if (err2 < dx) {
+				err += dx;
+				current.y += sy;
+			}
+			err2 = err*2;
 		}
 		return coords;
 	}

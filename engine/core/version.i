@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -24,9 +24,11 @@
 %}
 
 namespace FIFE {
-	inline const char* getVersion();
-	inline int getMajor();
-	inline int getMinor();
-	inline int getPatch();
-	inline const char* getHash();
+    inline const char* getVersion();
+    inline const char* getVersionShort();
+    inline int getMajor();
+    inline int getMinor();
+    inline int getPatch();
+    inline const char* getHash();
+    inline const int getVersionId();
 } //FIFE

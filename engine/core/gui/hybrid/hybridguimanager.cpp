@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -32,72 +32,76 @@
 #include "hybridguimanager.h"
 
 namespace FIFE {
-	
+
 	static Logger _log(LM_GUI);
-	
+
 	HybridGuiManager::HybridGuiManager() {
 	}
-	
+
 	HybridGuiManager::~HybridGuiManager() {
 		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
 		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
-		
+
 		for(; currManager != endManager; ++currManager) {
 			delete (*currManager);
 		}
-		
+
 		m_guiManagers.clear();
 	}
-	
+
 	void HybridGuiManager::addGuiManager(IGUIManager* guiManager) {
 		m_guiManagers.push_back(guiManager);
 	}
-	
+
 	void HybridGuiManager::removeGuiManager(IGUIManager* guiManager) {
 		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
 		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
-		
+
 		for(; currManager != endManager;) {
 			if((*currManager) == guiManager) {
 				m_guiManagers.erase(currManager);
 				return;
 			}
-			
+
 			++currManager;
 		}
-		
+
 		FL_WARN(_log, LMsg() << "Tyring to remove a non-existing gui manager from a hybrid gui manager.");
 	}
-	
+
 	void HybridGuiManager::turn() {
 		//call turn in reverse order because we want prior gui managers to draw on top
 		//of latter ones.
 		std::vector<IGUIManager*>::reverse_iterator currManager(m_guiManagers.rbegin());
 		std::vector<IGUIManager*>::reverse_iterator endManager(m_guiManagers.rend());
-		
+
 		for(; currManager != endManager; ++currManager) {
 			(*currManager)->turn();
 		}
 	}
-	
+
 	bool HybridGuiManager::onSdlEvent(SDL_Event& event) {
-		
+
 		bool consumed = false;
-		
+
 		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
 		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
-		
+
 		for(; currManager != endManager; ++currManager) {
 			consumed = (*currManager)->onSdlEvent(event);
+
+			if (consumed) {
+				return true;
+			}
 		}
-		
-		return consumed;
+
+		return false;
 	}
-	
+
 	void HybridGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
 		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
-		
+
 		for(; currManager != endManager; ++currManager) {
 			(*currManager)->resizeTopContainer(x, y, width, height);
 		}

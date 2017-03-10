@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -40,6 +40,7 @@
 #include "layer.h"
 #include "cellcache.h"
 #include "instance.h"
+#include "triggercontroller.h"
 
 namespace FIFE {
 
@@ -52,16 +53,19 @@ namespace FIFE {
 		m_changedLayers(),
 		m_renderBackend(renderBackend),
 		m_renderers(renderers),
-		m_changed(false){
+		m_changed(false) {
+
+		m_triggerController = new TriggerController(this);
 	}
 
 	Map::~Map() {
-        // remove all cameras
-        std::vector<Camera*>::iterator iter = m_cameras.begin();
-        for ( ; iter != m_cameras.end(); ++iter) {
-            delete *iter;
-        }
-        m_cameras.clear();
+		delete m_triggerController;
+		// remove all cameras
+		std::vector<Camera*>::iterator iter = m_cameras.begin();
+		for ( ; iter != m_cameras.end(); ++iter) {
+			delete *iter;
+		}
+		m_cameras.clear();
 
 		deleteLayers();
 	}
@@ -290,6 +294,17 @@ namespace FIFE {
 
 	const std::vector<Camera*>& Map::getCameras() const {
 		return m_cameras;
+	}
+
+	uint32_t Map::getActiveCameraCount() const {
+		uint32_t count = 0;
+		std::vector<Camera*>::const_iterator it = m_cameras.begin();
+		for ( ; it != m_cameras.end(); ++it) {
+			if ((*it)->isEnabled()) {
+				count += 1;
+			}
+		}
+		return count;
 	}
 
 	void Map::addInstanceForTransfer(Instance* instance, const Location& target) {

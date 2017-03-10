@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -37,12 +37,15 @@ namespace FIFE {
 	class Object;
 	class Instance;
 	class Route;
+	class OverlayColors;
+	class AnimationPtr;
 
 	%feature("director") InstanceActionListener;
 	class InstanceActionListener {
 	public:
 		virtual ~InstanceActionListener() {};
 		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
+		virtual void onInstanceActionCancelled(Instance* instance, Action* action) = 0;
 		virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
 	};
 
@@ -67,6 +70,13 @@ namespace FIFE {
 	public:
 		virtual ~InstanceChangeListener() {};
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
+	};
+
+	%feature("director") InstanceDeleteListener;
+	class InstanceDeleteListener {
+	public:
+		virtual ~InstanceDeleteListener() {};
+		virtual void onInstanceDeleted(Instance* instance) = 0;
 	};
 
 	enum VisitorShapeType {
@@ -98,6 +108,8 @@ namespace FIFE {
 		void removeActionListener(InstanceActionListener* listener);
 		void addChangeListener(InstanceChangeListener* listener);
 		void removeChangeListener(InstanceChangeListener* listener);
+		void addDeleteListener(InstanceDeleteListener* listener);
+		void removeDeleteListener(InstanceDeleteListener* listener);
 		Action* getCurrentAction() const;
 		double getMovementSpeed() const;
 		void setFacingLocation(const Location& loc);
@@ -105,9 +117,12 @@ namespace FIFE {
 		uint32_t getActionRuntime();
 		void setActionRuntime(uint32_t time_offset);
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
-		void act(const std::string& actionName, const Location& direction, bool repeating=false);
-		void act(const std::string& actionName, int32_t rotation, bool repeating=false);
-		void act(const std::string& actionName, bool repeating=false);
+		void actOnce(const std::string& actionName, const Location& direction);
+		void actOnce(const std::string& actionName, int32_t rotation);
+		void actOnce(const std::string& actionName);
+		void actRepeat(const std::string& actionName, const Location& direction);
+		void actRepeat(const std::string& actionName, int32_t rotation);
+		void actRepeat(const std::string& actionName);
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 		void follow(const std::string& actionName, Route* route, const double speed);
 		void cancelMovement(uint32_t length = 1);
@@ -134,14 +149,41 @@ namespace FIFE {
 		void setCost(const std::string& id, double cost);
 		void resetCost();
 		double getCost();
-		const std::string& getCostId();
+		std::string getCostId();
+		double getSpeed();
+		bool isSpecialSpeed();
 
 		bool isMultiCell();
+		bool isMultiObject();
+		const std::vector<Instance*>& getMultiInstances();
+		Instance* getMainMultiInstance();
+
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+		void removeStaticColorOverlay(int32_t angle);
+		bool isStaticColorOverlay();
+
+		void addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle);
+		void removeColorOverlay(const std::string& actionName, int32_t angle);
+
+		void addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string& actionName, int32_t angle);
+		void removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order);
+
+		void addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order);
+		void removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order);
+		
+		void convertToOverlays(const std::string& actionName, bool color);
+		bool isAnimationOverlay(const std::string& actionName);
+		bool isColorOverlay(const std::string& actionName);
 	};
 }
 
 namespace std {
 	%template(InstanceVector) vector<FIFE::Instance*>;
-	%template(InstanceList) list<FIFE::Instance*>;	
+	%template(InstanceList) list<FIFE::Instance*>;
+	%template(AnimationOverlayMap) map<int32_t, FIFE::AnimationPtr>;
 }
 

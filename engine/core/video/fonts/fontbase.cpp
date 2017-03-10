@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -46,7 +46,12 @@ namespace FIFE {
 			mGlyphSpacing(0),
 			mRowSpacing(0),
 			mFilename(""),
-			m_antiAlias(true) {
+			m_antiAlias(true),
+			m_boldStyle(false),
+			m_italicStyle(false),
+			m_underlineStyle(false),
+			m_strikeStyle(false),
+			m_coloring(false) {
 	}
 
 	void FontBase::invalidate() {
@@ -73,8 +78,48 @@ namespace FIFE {
 		m_antiAlias = antiAlias;
 	}
 
-	bool FontBase::isAntiAlias() {
+	bool FontBase::isAntiAlias() const {
 		return m_antiAlias;
+	}
+
+	void FontBase::setBoldStyle(bool style) {
+		m_boldStyle = style;
+	}
+
+	bool FontBase::isBoldStyle() const {
+		return m_boldStyle;
+	}
+
+	void FontBase::setItalicStyle(bool style) {
+		m_italicStyle = style;
+	}
+
+	bool FontBase::isItalicStyle() const {
+		return m_italicStyle;
+	}
+
+	void FontBase::setUnderlineStyle(bool style) {
+		m_underlineStyle = style;
+	}
+
+	bool FontBase::isUnderlineStyle() const {
+		return m_underlineStyle;
+	}
+
+	void FontBase::setStrikethroughStyle(bool style) {
+		m_strikeStyle = style;
+	}
+
+	bool FontBase::isStrikethroughStyle() const {
+		return m_strikeStyle;
+	}
+
+	void FontBase::setDynamicColoring(bool coloring) {
+		m_coloring = coloring;
+	}
+	
+	bool FontBase::isDynamicColoring() const {
+		return m_coloring;
 	}
 
 	SDL_Color FontBase::getColor() const {
@@ -148,7 +193,7 @@ namespace FIFE {
 			} while (it != text.end());
 
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
-			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SDL_Surface* final_surface = SDL_CreateRGBSurface(0,
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
 			if (!final_surface) {
@@ -160,8 +205,10 @@ namespace FIFE {
 				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
 
-				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-				SDL_BlitSurface(*i,0,final_surface,&dst_rect);
+				// Disable alpha blending
+				//SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
+				SDL_SetSurfaceBlendMode(*i, SDL_BLENDMODE_NONE);
+				SDL_BlitSurface(*i, 0, final_surface, &dst_rect);
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}

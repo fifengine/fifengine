@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -86,7 +86,67 @@ namespace FIFE {
 		 *
 		 * @return true if anti aliasing is used.
 		 */
-		virtual bool isAntiAlias() = 0;
+		virtual bool isAntiAlias() const = 0;
+
+		/**
+		 * Sets the use of bold style.
+		 *
+		 * @param stlye True for use of bold style.
+		 */
+		virtual void setBoldStyle(bool style) = 0;
+
+		/**
+		 * Checks if bold style is used.
+		 *
+		 * @return true if bold style is used.
+		 */
+		virtual bool isBoldStyle() const = 0;
+
+		/**
+		 * Sets the use of italic style.
+		 *
+		 * @param stlye True for use of italic style.
+		 */
+		virtual void setItalicStyle(bool style) = 0;
+
+		/**
+		 * Checks if italic style is used.
+		 *
+		 * @return true if italic style is used.
+		 */
+		virtual bool isItalicStyle() const = 0;
+
+		/**
+		 * Sets the use of underline style.
+		 *
+		 * @param stlye True for use of underline style.
+		 */
+		virtual void setUnderlineStyle(bool style) = 0;
+
+		/**
+		 * Checks if underline style is used.
+		 *
+		 * @return true if underline style is used.
+		 */
+		virtual bool isUnderlineStyle() const = 0;
+
+		/**
+		 * Sets the use of strikethrough style.
+		 *
+		 * @param stlye True for use of strikethrough style.
+		 */
+		virtual void setStrikethroughStyle(bool style) = 0;
+
+		/**
+		 * Checks if strikethrough style is used.
+		 *
+		 * @return true if strikethrough style is used.
+		 */
+		virtual bool isStrikethroughStyle() const = 0;
+
+		virtual void setDynamicColoring(bool coloring) = 0;
+
+		virtual bool isDynamicColoring() const = 0;
 
 		virtual int32_t getStringIndexAt(const std::string &text, int32_t x) const = 0;
 

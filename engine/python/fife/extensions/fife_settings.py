@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -66,8 +66,6 @@ class Setting(object):
 		does not exist this file will be copied into the place of the settings_file.  This file
 		must exist in the root directory of your project!
 		@type default_settings_file: C{string}
-		@param settings_gui_xml: If you specify this parameter you can customize the look
-		of the settings dialog box.
 		@param copy_dist: Copies the default settings file to the settings_file location.  If
 		this is False it will create a new empty setting file.
 		@param serializer: Overrides the default XML serializer
@@ -80,7 +78,7 @@ class Setting(object):
 
 		# Holds SettingEntries
 		self._entries = {}
-		
+
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
 			self._appdata = getUserDataDirectory("fife", self._app_name)
@@ -95,47 +93,50 @@ class Setting(object):
 		# valid values possible for the engineSettings
 		self._validSetting = {}
 		self._validSetting['FIFE'] = {
-			'FullScreen':[True,False], 'PychanDebug':[True,False]
-			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[0,1], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
-			'RenderBackend':['OpenGL','SDL', 'OpenGLe'],
-			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768', 
+			'FullScreen':[True,False], 'RefreshRate':[0,200], 'Display':[0,9], 'VSync':[True,False], 'PychanDebug':[True,False]
+			, 'ProfilingOn':[True,False], 'SDLRemoveFakeAlpha':[True,False], 'GLCompressImages':[False,True], 'GLUseFramebuffer':[False,True], 'GLUseNPOT':[False,True],
+			'GLUseMipmapping':[False,True], 'GLTextureFiltering':['None', 'Bilinear', 'Trilinear', 'Anisotropic'], 'GLUseMonochrome':[False,True],
+			'GLUseDepthBuffer':[False,True], 'GLAlphaTestValue':[0.0,1.0],
+			'RenderBackend':['OpenGL', 'SDL'],
+			'ScreenResolution':['640x480', '800x600', '1024x600', '1024x768', '1280x768',
 								'1280x800', '1280x960', '1280x1024', '1366x768', '1440x900',
 								'1600x900', '1600x1200', '1680x1050', '1920x1080', '1920x1200'],
 			'BitsPerPixel':[0,16,24,32],
 			'InitialVolume':[0.0,10.0], 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':"", 'DefaultFontSize':"", 'Lighting':[0,1],
-			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"",
-			'PlaySounds':[True,False], 'LogToFile':[0,1],
-			'LogToPrompt':[0,1],'UsePsyco':[True,False], 'LogLevelFilter':[0,1,2,3],
+			'ColorKeyEnabled':[True,False], 'ColorKey':['a','b','c'], 'VideoDriver':"", 'RenderDriver':"",
+			'PlaySounds':[True,False], 'LogToFile':[True,False],
+			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
 			}
-	
+
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
-		
+
 		# we at this point assume default values are final values for engineSettings
 		self._defaultSetting = {}
 		self._defaultSetting['FIFE'] = {
-			'FullScreen':False, 'PychanDebug':False
-			, 'ProfilingOn':False, 'SDLRemoveFakeAlpha':0, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'FullScreen':False, 'RefreshRate':60, 'Display':0, 'VSync':False, 'PychanDebug':False,
+			'ProfilingOn':False, 'SDLRemoveFakeAlpha':False, 'GLCompressImages':False, 'GLUseFramebuffer':True, 'GLUseNPOT':True,
+			'GLUseMipmapping':False, 'GLTextureFiltering':'None', 'GLUseMonochrome':False, 'GLUseDepthBuffer':False, 'GLAlphaTestValue':0.3,
 			'RenderBackend':'OpenGL', 'ScreenResolution':"1024x768", 'BitsPerPixel':0,
 			'InitialVolume':5.0, 'WindowTitle':"", 'WindowIcon':"", 'Font':"",
 			'FontGlyphs':glyphDft, 'DefaultFontSize':12, 'Lighting':0,
-			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"",
-			'PlaySounds':True, 'LogToFile':0,
-			'LogToPrompt':0,'UsePsyco':False,'LogLevelFilter':[0],
+			'ColorKeyEnabled':False, 'ColorKey':[255,0,255], 'VideoDriver':"", 'RenderDriver':"",
+			'PlaySounds':True, 'LogToFile':False,
+			'LogToPrompt':False,'LogLevelFilter':0,
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
 			'MouseAcceleration':False
 			}
-		
+
 		# has the settings file been read
 		self._readSettingsCompleted = {}
-		
+
 		# the global dictionary from which we will read after self._readSettingsCompleted is True
 		self._settingsFromFile = {}
-		
+
 		# the logger needed to write in log file. It will be initialized in this file when self.getSettings()
 		# method is called by logger
 		self._logger = None
@@ -144,7 +145,7 @@ class Setting(object):
 		self._resolutions = self._validSetting['FIFE']['ScreenResolution']
 		self._renderbackends = self._validSetting['FIFE']['RenderBackend']
 		self._lightingmodels = self._validSetting['FIFE']['Lighting']
-		
+
 		#Used to stylize the options gui
 		self._gui_style = "default"
 
@@ -153,28 +154,33 @@ class Setting(object):
 			self._serializer = serializer
 		else:
 			self._serializer = SimpleXMLSerializer()
-		
+
 		self.initSerializer()
-		
+
+		# if there's no FIFE module assume the settings file is broken
+		# and replace with default settings file
+		if "FIFE" not in self._serializer.getModuleNameList():
+			self.setDefaults()
+
 		# Get all modules and initialize reading of them from xml file as false
-		self._allModules = self._serializer.getModuleName()
+		self._allModules = self._serializer.getModuleNameList()
 		# print("All Module Names:",self._allModules)
 		for module in self._allModules:
 			self._readSettingsCompleted[module] = False
-				
+
 		self._initDefaultSettingEntries()
-		
+
 		#self.setOneSetting('FIFE','Font','fonts/FreeSans.ttf',False)
-		
+
 		#print self.getSettingsFromFile('unknownhorizons')
 
 	# set all Settings in either validSetting or defaultSetting
 	def setAllSettings(self,module,settings,validSetting = True):
-		if validSettings:
+		if validSetting:
 			self._validSetting[module] = settings
 		else:
 			self._defaultSetting[module] = settings
-	
+
 	# set an entry in the validSetting or defaultSetting dictionary
 	def setOneSetting(self,module,name,value,validSetting = True):
 		if validSetting:
@@ -188,7 +194,7 @@ class Setting(object):
 			return self._validSetting[module]
 		else:
 			return self._defaultSetting[module]
-	
+
 	# get an entry from either validSetting or defaultSetting
 	def getOneSetting(self,module,name,validSetting = True):
 		if validSetting:
@@ -205,19 +211,17 @@ class Setting(object):
 
 	def initSerializer(self):
 		self._serializer.load(os.path.join(self._appdata, self._settings_file))
-		
+
 	def _initDefaultSettingEntries(self):
 		"""Initializes the default fife setting entries. Not to be called from
 		outside this class."""
 		self.createAndAddEntry(FIFE_MODULE, "PlaySounds", requiresrestart=True)
-		
+
 		self.createAndAddEntry(FIFE_MODULE, "FullScreen", requiresrestart=True)
-		
+
 		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", initialdata = self._resolutions, requiresrestart=True)
-		
+
 		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", initialdata = self._renderbackends, requiresrestart=True)
-		
-		self.createAndAddEntry(FIFE_MODULE, "Lighting", initialdata = self._lightingmodels, requiresrestart=True)
 
 	def createAndAddEntry(self, module, name, applyfunction=None, initialdata=None, requiresrestart=False):
 		""""
@@ -252,15 +256,15 @@ class Setting(object):
 		if self.get(entry.module, entry.name) is None:
 			print "Updating", self._settings_file, "to the default, it is missing the entry:"\
 			      , entry.name ,"for module", entry.module
-			
+
 			#self.setDefaults()
 		if self.get(entry.module, entry.name) is None:
 			print "WARNING:", entry.module, ":", entry.name, "still not found!"
 		"""
 
 	def saveSettings(self, filename=""):
-		""" Writes the settings to the settings file 
-		
+		""" Writes the settings to the settings file
+
 		@param filename: Specifies the file to save the settings to.  If it is not specified
 		the original settings file is used.
 		@type filename: C{string}
@@ -274,9 +278,9 @@ class Setting(object):
 	# get all the settings of a module name module
 	def getSettingsFromFile(self, module, logger=None):
 		if self._serializer:
-			
-			self._logger = logger			
-			modules = self._serializer.getModuleName()			
+
+			self._logger = logger
+			modules = self._serializer.getModuleNameList()
 			self._settingsFromFile[module] = self._serializer.getAllSettings(module)
 
 			if self._logger:
@@ -284,37 +288,44 @@ class Setting(object):
 
 			if self._settingsFromFile[module] is not None:
 				self._readSettingsCompleted[module] = True
-				
+
 			# we need validation for the module FIFE only
 			if module is not "FIFE":
 				return self._settingsFromFile[module]
 			"""
 			Now we have all the settings we needed. We have to validate the settings. Applicable for module
 			FIFE only
-			"""			
+			"""
 			for name in self._settingsFromFile[module]:
 				# if the setting name is known, so that it is
 				# both in self._settingsFromFile and validSetting
 				if name in self._validSetting[module]:
-					
+
 					e_value = self._settingsFromFile[module][name]
-	
+
 					if name == "InitialVolume":
 						if e_value >= self._validSetting[module][name][0] and e_value <= self._validSetting[module][name][1]:
 							self._settingsFromFile[module][name] = e_value
 						else:
 							if self._logger:
 								self._logger.log_log("InitalVolume must have a value between 0.0 and 10.0")
-								
+
+					elif name == "GLAlphaTestValue":
+						if e_value >= self._validSetting[module][name][0] and e_value <= self._validSetting[module][name][1]:
+							self._settingsFromFile[module][name] = e_value
+						else:
+							if self._logger:
+								self._logger.log_log("GLAlphaTestValue must have a value between 0.0 and 1.0")
+
 					elif name == "ColorKey":
 						e_value = e_value.split(',')
 						if int(e_value[0]) in range(0,256) and int(e_value[1]) in range(0,256) and int(e_value[2]) in range(0,256):
 							self._settingsFromFile[name] = [int(e_value[0]),int(e_value[1]),int(e_value[2])];
-							
+
 						else:
 							if self._logger:
 								self._logger.log_log("ColorKey values must be within 0 and 255. Setting to Default Value.")
-	
+
 					elif name == "ScreenResolution":
 						temp = e_value.split('x')
 						if len(temp) == 2:
@@ -322,16 +333,16 @@ class Setting(object):
 						else:
 							if self._logger:
 								self._logger.log_log("Invalid Screen Resolution value. We expect two integer separated by x")
-						
+
 					elif len(self._validSetting[module][name]) == 0:
 						self._settingsFromFile[module][name] = e_value
-					
+
 					elif name == "LogModules":
 						for checking_element in e_value:
 							module_valid = False
 							for base_element in self._validSetting[module][name]:
 								# checking_element is valid
-									
+
 								if checking_element == base_element:
 									module_valid = True
 									already_in = False
@@ -353,8 +364,19 @@ class Setting(object):
 						self._settingsFromFile[module][name] = e_value
 					elif name == "MouseAcceleration":
 						self._settingsFromFile[module][name] = e_value
+
+					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
+						if type(e_value) == int:
+							try:
+								e_value = (False, True)[e_value]
+							except IndexError:
+								self._logger.log_warn("Invalid int-value for %s. Defaulted to False!"%name)
+								e_value = False
+							self._logger.log_warn("Use of type int for %s is deprecated. Use bool instead!"%name)
+						self._settingsFromFile[module][name] = e_value
+
 					else:
-							
+
 						if isinstance(self._settingsFromFile[module][name],list) == True or isinstance(self._settingsFromFile[module][name],dict) == True:
 							valid = False
 							for value in self._validSetting[module][name]:
@@ -364,27 +386,27 @@ class Setting(object):
 							if valid == False:
 								if self._logger:
 									self._logger.log_log("Setting " + name + " got invalid value. Setting to Default.")
-						else: self._settingsFromFile[module][name] = e_value	
-							
+						else: self._settingsFromFile[module][name] = e_value
+
 				# name is unknown
 				else:
 					if self._logger:
 						self._logger.log_log("Setting "+ name + " is unknown")
-					
+
 			if self._logger:
 				self._logger.log_log("Settings Loaded ...")
 
 			"""
-			Upto this point we have validated all the settings that are in settings.xml file. But, what if a setting is valid and still it is 
+			Upto this point we have validated all the settings that are in settings.xml file. But, what if a setting is valid and still it is
 			not present in the settings.xml file. For this, we should give them the default Values that are in defaultSetting.
 			"""
 
 			for name in self._defaultSetting[module]:
 				if name not in self._settingsFromFile[module]:
 					self._settingsFromFile[module][name] = self._defaultSetting[module][name]
-	
+
 			return self._settingsFromFile[module]
-	
+
 		else:
 			return None
 
@@ -402,7 +424,7 @@ class Setting(object):
 				# check whether getAllSettings has been called already
 				if self._readSettingsCompleted[module] is not True:
 					value = self._serializer.get(module, name, defaultValue)
-					
+
 					if value is not None:
 						return value
 					else:
@@ -425,7 +447,7 @@ class Setting(object):
 				return self._defaultSetting[module][name]
 			else:
 				raise Exception(str(name) + ' is neither in settings.xml nor it has a default value set')
-	
+
 	def set(self, module, name, value, extra_attrs={}):
 		"""
 		Sets a setting to specified value.
@@ -437,15 +459,29 @@ class Setting(object):
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
-		
+
 		#update the setting cache
 		if module in self._settingsFromFile:
 			self._settingsFromFile[module][name] = value
 		else:
 			self._settingsFromFile[module] = { name: value }
-					
+
 		if self._serializer:
 			self._serializer.set(module, name, value, extra_attrs)
+
+	def remove(self, module, name):
+		"""
+		Removes a variable
+
+		@param module: Module where the variable should be set
+		@param name: Name of the variable
+		"""
+		#update the setting cache
+		if module in self._settingsFromFile:
+			del self._settingsFromFile[module][name]
+
+		if self._serializer:
+			self._serializer.remove(module, name)
 
 	def setAvailableScreenResolutions(self, reslist):
 		"""
@@ -472,7 +508,7 @@ class Setting(object):
 
 	def _setEntries(self, entries):
 		self._entries = entries
-		
+
 	def _getSerializer(self):
 		return self._serializer
 
@@ -487,8 +523,6 @@ class SettingEntry(object):
 		@type module: C{String}
 		@param name: The Setting's name
 		@type name: C{String}
-		@param widgetname: The name of the widget that is used to change this
-		setting
 		@param applyfunction: function that makes the changes when the Setting is
 		saved
 		@type applyfunction: C{function}

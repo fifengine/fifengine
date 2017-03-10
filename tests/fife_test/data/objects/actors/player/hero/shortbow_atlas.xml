@@ -1,0 +1,117 @@
+<?fife type="atlas"?>
+<assets>
+	<atlas source="shortbow.png" width="4096" height="1024">
+		<subimage id="shortbow_stance_180_00.png" xpos="0" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_stance_180_01.png" xpos="128" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_stance_180_02.png" xpos="256" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_stance_180_03.png" xpos="384" ypos="0" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_135_00.png" xpos="0" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_stance_135_01.png" xpos="128" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_stance_135_02.png" xpos="256" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_stance_135_03.png" xpos="384" ypos="128" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_90_00.png" xpos="0" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_stance_90_01.png" xpos="128" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_stance_90_02.png" xpos="256" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_stance_90_03.png" xpos="384" ypos="256" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_45_00.png" xpos="0" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_stance_45_01.png" xpos="128" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_stance_45_02.png" xpos="256" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_stance_45_03.png" xpos="384" ypos="384" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_0_00.png" xpos="0" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_stance_0_01.png" xpos="128" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_stance_0_02.png" xpos="256" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_stance_0_03.png" xpos="384" ypos="512" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_315_00.png" xpos="0" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_stance_315_01.png" xpos="128" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_stance_315_02.png" xpos="256" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_stance_315_03.png" xpos="384" ypos="640" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_270_00.png" xpos="0" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_stance_270_01.png" xpos="128" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_stance_270_02.png" xpos="256" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_stance_270_03.png" xpos="384" ypos="768" width="128" height="128"/>
+
+		<subimage id="shortbow_stance_225_00.png" xpos="0" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_stance_225_01.png" xpos="128" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_stance_225_02.png" xpos="256" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_stance_225_03.png" xpos="384" ypos="896" width="128" height="128"/>
+
+
+		<subimage id="shortbow_run_180_00.png" xpos="512" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_01.png" xpos="640" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_02.png" xpos="768" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_03.png" xpos="896" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_04.png" xpos="1024" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_05.png" xpos="1152" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_06.png" xpos="1280" ypos="0" width="128" height="128"/>
+		<subimage id="shortbow_run_180_07.png" xpos="1408" ypos="0" width="128" height="128"/>
+
+		<subimage id="shortbow_run_135_00.png" xpos="512" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_01.png" xpos="640" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_02.png" xpos="768" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_03.png" xpos="896" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_04.png" xpos="1024" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_05.png" xpos="1152" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_06.png" xpos="1280" ypos="128" width="128" height="128"/>
+		<subimage id="shortbow_run_135_07.png" xpos="1408" ypos="128" width="128" height="128"/>
+
+		<subimage id="shortbow_run_90_00.png" xpos="512" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_01.png" xpos="640" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_02.png" xpos="768" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_03.png" xpos="896" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_04.png" xpos="1024" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_05.png" xpos="1152" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_06.png" xpos="1280" ypos="256" width="128" height="128"/>
+		<subimage id="shortbow_run_90_07.png" xpos="1408" ypos="256" width="128" height="128"/>
+
+		<subimage id="shortbow_run_45_00.png" xpos="512" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_01.png" xpos="640" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_02.png" xpos="768" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_03.png" xpos="896" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_04.png" xpos="1024" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_05.png" xpos="1152" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_06.png" xpos="1280" ypos="384" width="128" height="128"/>
+		<subimage id="shortbow_run_45_07.png" xpos="1408" ypos="384" width="128" height="128"/>
+
+		<subimage id="shortbow_run_0_00.png" xpos="512" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_01.png" xpos="640" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_02.png" xpos="768" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_03.png" xpos="896" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_04.png" xpos="1024" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_05.png" xpos="1152" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_06.png" xpos="1280" ypos="512" width="128" height="128"/>
+		<subimage id="shortbow_run_0_07.png" xpos="1408" ypos="512" width="128" height="128"/>
+
+		<subimage id="shortbow_run_315_00.png" xpos="512" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_01.png" xpos="640" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_02.png" xpos="768" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_03.png" xpos="896" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_04.png" xpos="1024" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_05.png" xpos="1152" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_06.png" xpos="1280" ypos="640" width="128" height="128"/>
+		<subimage id="shortbow_run_315_07.png" xpos="1408" ypos="640" width="128" height="128"/>
+
+		<subimage id="shortbow_run_270_00.png" xpos="512" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_01.png" xpos="640" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_02.png" xpos="768" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_03.png" xpos="896" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_04.png" xpos="1024" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_05.png" xpos="1152" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_06.png" xpos="1280" ypos="768" width="128" height="128"/>
+		<subimage id="shortbow_run_270_07.png" xpos="1408" ypos="768" width="128" height="128"/>
+
+		<subimage id="shortbow_run_225_00.png" xpos="512" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_01.png" xpos="640" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_02.png" xpos="768" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_03.png" xpos="896" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_04.png" xpos="1024" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_05.png" xpos="1152" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_06.png" xpos="1280" ypos="896" width="128" height="128"/>
+		<subimage id="shortbow_run_225_07.png" xpos="1408" ypos="896" width="128" height="128"/>
+	</atlas>
+</assets>

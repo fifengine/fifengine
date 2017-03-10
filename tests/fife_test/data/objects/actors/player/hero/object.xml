@@ -1,0 +1,9 @@
+<?fife type="object"?>
+<assets>
+	<object id="hero" namespace="tutorial1objects" blocking="1" static="0">
+		<action id="stand">
+		</action>
+		<action id="walk">
+		</action>
+	</object>
+</assets>

@@ -1,0 +1,27 @@
+<?fife type="object"?>
+<assets>
+	<object id="frigate" namespace="tutorial1objects" blocking="1" static="0">
+		<multipart id="frigatefront"/>
+		<multipart id="frigateback"/>
+		<action id="stand">
+			<animation source="/move/0/animation.xml" direction="0" />
+			<animation source="/move/45/animation.xml" direction="45" />
+			<animation source="/move/90/animation.xml" direction="90" />
+			<animation source="/move/135/animation.xml" direction="135" />
+			<animation source="/move/180/animation.xml" direction="180" />
+			<animation source="/move/225/animation.xml" direction="225" />
+			<animation source="/move/270/animation.xml" direction="270" />
+			<animation source="/move/315/animation.xml" direction="315" />
+		</action>
+		<action id="walk">
+			<animation source="/move/0/animation.xml" direction="0" />
+			<animation source="/move/45/animation.xml" direction="45" />
+			<animation source="/move/90/animation.xml" direction="90" />
+			<animation source="/move/135/animation.xml" direction="135" />
+			<animation source="/move/180/animation.xml" direction="180" />
+			<animation source="/move/225/animation.xml" direction="225" />
+			<animation source="/move/270/animation.xml" direction="270" />
+			<animation source="/move/315/animation.xml" direction="315" />
+		</action>
+	</object>
+</assets>

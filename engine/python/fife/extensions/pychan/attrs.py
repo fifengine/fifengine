@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -80,7 +80,7 @@ class PointAttr(Attr):
 			x,y = tuple(map(int,str(value).split(',')))
 			return x,y
 		except:
-			raise ParserError("Expected a comma separated list of two integers.")
+			raise ParserError(str(self.name)+" expected a comma separated list of two integers.")
 
 class ColorAttr(Attr):
 	def parse(self,value):
@@ -89,13 +89,13 @@ class ColorAttr(Attr):
 			try:
 				r,g,b,a = tuple(map(int,str(value).split(',')))
 				for c in (r,g,b,a):
-					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
+					if not 0 <= c < 256: raise ParserError(str(self.name)+" expected a color (Failed: 0 <= %d <= 255)" %c)
 			except:
 				r,g,b = tuple(map(int,str(value).split(',')))
 				for c in (r,g,b):
-					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
+					if not 0 <= c < 256: raise ParserError(str(self.name)+" expected a color (Failed: 0 <= %d <= 255)" %c)
 		except:
-			raise ParserError("Expected a color.")
+			raise ParserError(str(self.name)+" expected a color.")
 
 		return r,g,b,a
 
@@ -104,21 +104,95 @@ class IntAttr(Attr):
 		try:
 			return int(value)
 		except:
-			raise ParserError("Expected a single integer.")
+			raise ParserError(str(self.name)+" expected a single integer.")
 
 class BoolAttr(Attr):
 	def parse(self,value):
 		try:
-			value = int(value)
-			if value not in (0,1):
-				raise ParserError("Expected a 0 or 1.")
+			# Allow clients to be compatible with old FIFE versions
+			if value in ["0", "False", "false"]:
+				value = False
+			elif value in ["1", "True", "true"]:
+				value = True
+			if value not in (True,False):
+				raise ParserError(str(self.name)+" expected False or True.")
 			return value
 		except:
-			raise ParserError("Expected a 0 or 1.")
+			raise ParserError(str(self.name)+" expected False or True.")
 
 class FloatAttr(Attr):
 	def parse(self, value):
 		try:
 			return float(value)
 		except:
-			raise ParserError("Expected a float.")
+			raise ParserError(str(self.name)+" expected a float.")
+
+
+class ListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(str,str(value).split(','))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a list with strings.")
+
+class UnicodeListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(unicode,str(value).split(','))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a list with unicode strings.")
+
+class IntListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(int,str(value).split(','))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a list with ints.")
+
+class BoolListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(bool,str(value).split(','))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a list with bools.")
+
+class FloatListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = map(float,str(value).split(','))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a list with floats.")
+
+
+ATTRIBUTE_TYPE = { "Str" : Attr,
+				   "Unicode" : UnicodeAttr,
+				   "Point" : PointAttr,
+				   "Color" : ColorAttr,
+				   "Int" : IntAttr,
+				   "Bool" : BoolAttr,
+				   "Float" : FloatAttr
+				 }	
+class MixedListAttr(Attr):
+	def parse(self, value):
+		try:
+			result = []
+			# we use ';' to split, because of point and color attributes
+			# example: "Int:5; Color:255,0,255"
+			tmp_result = map(str,str(value).split(';'))
+			for r in tmp_result:
+				type = str(r).split(':')[0].strip()
+				val = str(r).split(':')[1].strip()
+
+				m = ATTRIBUTE_TYPE.get(type)
+				if m is None:
+					raise ParserError("Unknown attribute type "+type+".")
+				method = getattr(m(self), 'parse')
+				result.append(method(val))
+			return result
+		except:
+			raise ParserError(str(self.name)+" expected a mixed list.")

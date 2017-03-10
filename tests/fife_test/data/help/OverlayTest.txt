@@ -1,0 +1,5 @@
+OverlayTest
+-------------- 
+This test shows color overlays and image overlays in action.
+
+To change the characters weapon use the # keys 1-4.

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,7 +21,20 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife.extensions.pychan.widgets.common import *
+import weakref
+
+from fife import fife
+from fife import fifechan
+
+from fife.extensions.pychan import events
+from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
+                                          ColorAttr, BoolAttr, IntAttr, IntListAttr)
+from fife.extensions.pychan.exceptions import StopTreeWalking
+from fife.extensions.pychan.properties import ColorProperty
+
+from common import get_manager
+from layout import isLayouted
+
 
 class Widget(object):
 	"""
@@ -45,10 +58,14 @@ class Widget(object):
 	  of the actual size attribute.
 	  - max_size: Position: The maximal size this widget is allowed to have. This is enforced through the accessor methods
 	  of the actual size attribute.
+	  - margins: Integer list: The margin clears an area around an element (outside the border) and is completely transparent.
+	  - padding: Integer list: The padding clears an area around the content (inside the border) of the element.
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
 	  - selection_color: Color
+	  - border_color: Color
+	  - outline_color: Color
 	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - helptext: Unicode: Text which can be used for e.g. tooltips.
 	  - comment: Unicode: Additional text stored by the widget.  Not used by PyChan directly. Can be used by the client for additional info about the widget.
@@ -56,8 +73,8 @@ class Widget(object):
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
 	  If it is set to "explicit" the position attribute will not be touched.
-	  - vexpand: Integer: >= 0. Proportion to expand this widget vertically.
-	  - hexpand: Integer: >= 0. Proportion to expand this widget horizontally.
+	  - vexpand: Bool: True. Proportion to expand this widget vertically.
+	  - hexpand: Bool: True. Proportion to expand this widget horizontally.
 
 	Convenience Attributes
 	======================
@@ -84,31 +101,40 @@ class Widget(object):
 				   PointAttr('min_size'), 
 				   PointAttr('size'), 
 				   PointAttr('max_size'),
+				   PointAttr('fixed_size'),
+				   IntListAttr('margins'),
+				   IntListAttr('padding'),
 				   ColorAttr('base_color'),
 				   ColorAttr('background_color'),
 				   ColorAttr('foreground_color'),
 				   ColorAttr('selection_color'),
+				   ColorAttr('border_color'),
+				   ColorAttr('outline_color'),
 				   Attr('style'), 
 				   Attr('font'),
 				   IntAttr('border_size'),
+				   IntAttr('outline_size'),
 				   Attr('position_technique'),
-				   IntAttr('vexpand'),
-				   IntAttr('hexpand'), 
+				   BoolAttr('vexpand'),
+				   BoolAttr('hexpand'), 
 				   UnicodeAttr('helptext'),
 				   BoolAttr('is_focusable'), 
 				   UnicodeAttr('comment')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
-	DEFAULT_HEXPAND = 0
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = False
+	DEFAULT_VEXPAND = False
 	DEFAULT_MAX_SIZE = 500000, 500000
 	DEFAULT_SIZE = -1, -1
 	DEFAULT_MIN_SIZE = 0, 0
+	DEFAULT_MARGINS = 0, 0
+	DEFAULT_PADDING = 0
 	DEFAULT_HELPTEXT = u""
 	DEFAULT_POSITION = 0, 0
 	DEFAULT_FONT = "default"
 	DEFAULT_BORDER_SIZE = 0
+	DEFAULT_OUTLINE_SIZE = 0
 	DEFAULT_POSITION_TECHNIQUE = "explicit"
 	DEFAULT_COMMENT = u""
 
@@ -117,13 +143,15 @@ class Widget(object):
 		Use 'addChild' or 'removeChild' to add/remove labels for example.
 		"""
 
-
 	def __init__(self,
 				 parent = None, 
 				 name = None,
 				 size = None,
 				 min_size = None, 
-				 max_size = None, 
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
 				 helptext = None, 
 				 position = None, 
 				 style = None, 
@@ -134,19 +162,27 @@ class Widget(object):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None):
 		
 		# Make sure the real_widget has been created
 		assert( hasattr(self,'real_widget') )
-		
-		self.event_mapper = events.EventMapper(self)
-		
-		self._visible = False
-		self._extra_border = (0,0)
 
+		self.event_mapper = events.EventMapper(self)
+
+		# Flag to indicate if the Widget is added to the Manager
+		self._added = False
+		# Flag to indicate if the Widget is added to
+		# the top Widget list of the Manager
+		self._top_added = False
+		# Only needed for tabs
+		self.tab = None
+		
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
@@ -166,7 +202,10 @@ class Widget(object):
 		self.min_size = self.DEFAULT_MIN_SIZE
 		self.max_size = self.DEFAULT_MAX_SIZE
 		self.size = self.DEFAULT_SIZE
+		self.margins = self.DEFAULT_MARGINS
+		self.padding = self.DEFAULT_PADDING
 		self.border_size = self.DEFAULT_BORDER_SIZE
+		self.outline_size = self.DEFAULT_OUTLINE_SIZE
 		self.helptext = self.DEFAULT_HELPTEXT
 		self.comment = self.DEFAULT_COMMENT
 		self._usedPrefixes = []
@@ -198,17 +237,24 @@ class Widget(object):
 		if min_size is not None: self.min_size = min_size
 		if max_size is not None: self.max_size = max_size
 		if size is not None: self.size = size
+		if fixed_size is not None: self.fixed_size = fixed_size
+		if margins is not None: self.margins = margins
+		if padding is not None: self.padding = padding
 		if border_size is not None: self.border_size = border_size
+		if outline_size is not None: self.outline_size = outline_size
 		
 		if helptext is not None: self.helptext = helptext
 		if comment is not None: self.comment = comment
 
 		# these are set in the default style
-		#if base_color is not None: self.base_color = base_color
+		if base_color is not None: self.base_color = base_color
 		if background_color is not None: self.background_color = background_color
 		if foreground_color is not None: self.foreground_color = foreground_color
 		if selection_color is not None: self.selection_color = selection_color
-		
+		if border_color is not None: self.border_color = border_color
+		if outline_color is not None: self.outline_color = outline_color
+		# add this widget to the manager
+		get_manager().addWidget(self)
 	
 	def clone(self, prefix):
 		"""
@@ -272,6 +318,74 @@ class Widget(object):
 		if self.isVisible():
 			self.real_widget.requestFocus()
 
+	def isModalFocusable(self):
+		"""
+		Checks if a widget is modal focusable.
+		True if no other widget has modal focus, false otherwise.
+		"""
+		return self.real_widget.isModalFocusable()
+
+	def isModalFocused(self):
+		"""
+		Checks if the widget or it's parent has modal focus.
+		"""
+		return self.real_widget.isModalFocused()
+	
+	def requestModalFocus(self):
+		"""
+		Requests modal focus.
+		When a widget has modal focus, only that widget and it's children may recieve input.
+		
+		The widget must be modal focusable in order for this to work. Therefore,
+		no other widget should has modal focus.
+		
+		"""
+		if self.isVisible():
+			if self.isModalFocusable():
+				self.real_widget.requestModalFocus()
+
+	def releaseModalFocus(self):
+		"""
+		Releases modal focus.
+		"""
+		if self.isModalFocused():
+			self.real_widget.releaseModalFocus()
+
+	def isModalMouseInputFocusable(self):
+		"""
+		Checks if a widget is modal mouse input focusable.
+		True if no other widget has modal mouse input focus, false otherwise.
+		"""
+		return self.real_widget.isModalMouseInputFocusable()
+
+	def isModalMouseInputFocused(self):
+		"""
+		Checks if the widget or it's parent has modal mouse input focus.
+		"""
+		return self.real_widget.isModalMouseInputFocused()
+	
+	def requestModalMouseInputFocus(self):
+		"""
+		Requests modal mouse input focus.
+		When a widget has modal input focus that widget will be the only widget
+		receiving input even if the input occurs outside of the widget and
+		no matter what the input is.
+		
+		The widget must be modal mouse input focusable in order for this to work.
+		Therefore, no other widget should has modal input focus.
+		
+		"""
+		if self.isVisible():
+			if self.isModalMouseInputFocusable():
+				self.real_widget.requestModalMouseInputFocus()
+
+	def releaseModalMouseInputFocus(self):
+		"""
+		Releases modal mouse input focus.
+		"""
+		if self.isModalMouseInputFocused():
+			self.real_widget.releaseModalMouseInputFocus()
+			
 	def match(self,**kwargs):
 		"""
 		Matches the widget against a list of key-value pairs.
@@ -314,59 +428,76 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self._visible: return
+		# add this widget to the manager
+		if not self._added:
+			get_manager().addWidget(self)
+		if self.parent is None and not self._top_added:
+			get_manager().addTopWidget(self)
+		# add childs of this widget to the manager
+		def _show(shown_widget):
+			get_manager().addWidget(shown_widget)
+		self.deepApply(_show)
 		
-		if self.parent:
+		if self.isVisible() and self.isSetVisible():
 			self.beforeShow()
-			self.parent.showChild(self)
-			self.parent.adaptLayout()
-			self._visible = True
-		else:
 			self.adaptLayout()
-			self.beforeShow()
-			get_manager().show(self)
-			self._visible = True	
+			if self.parent is None:
+				get_manager().placeWidget(self, self.position_technique)
+			return
 
-		#show real widget to distribute a widgetShown event.
-		self.real_widget.setVisible(True)	
-						
-		def _show(widget):
-			widget._visible = True
-				
-		self.deepApply(_show, shown_only=True)
+		self.beforeShow()
+		# Show real widget to distribute a widgetShown event.
+		self.real_widget.setVisible(True)
+		self.adaptLayout()
+		if self.parent is None:
+			get_manager().placeWidget(self, self.position_technique)
 
-	def hide(self):
+	def hide(self, free=False):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if not self._visible: return
+		# remove this widget from the manager
+		if self._added:
+			get_manager().removeWidget(self)
+		if self.parent is None and self._top_added:
+			get_manager().removeTopWidget(self)
+		# remove childs of this widget from the manager
+		def _hide(hidden_widget):
+			get_manager().removeWidget(hidden_widget)
+		self.deepApply(_hide)
 		
-		if self.parent:
-			self.parent.hideChild(self)
-			self.parent.adaptLayout()
-		else:
-			get_manager().hide(self)
+		if not self.isVisible() and not self.isSetVisible():
+			self.adaptLayout()
+			self.afterHide()
+			return
 
+		# Hide real widget to distribute a widgetHidden event.
+		self.real_widget.setVisible(False)
+
+		if free:
+			if self.parent:
+				self.parent.removeChild(self)
+			self.removeAllChildren()
+
+		self.adaptLayout()
 		self.afterHide()
-		self._visible = False
-		
-	    #Hide real widget to distribute a widgetHidden event.
-		self.real_widget.setVisible(False)		
-				
-		
-		def _hide(widget):
-			widget._visible = False
-			
-		self.deepApply(_hide, shown_only=True)
 
 	def isVisible(self):
 		"""
 		Check whether the widget is currently shown,
 		either directly or as part of a container widget.
 		"""
+		return self.real_widget.isVisible()
 
-		return self._visible
-
+	def isSetVisible(self):
+		"""
+		Check the real widget visible flag.
+		It checks not if the widget is currently shown!
+		This is needed e.g. if the parent is already hidden
+		but we want to hide the child too.
+		"""
+		return self.real_widget.isSetVisible()
+	
 	def adaptLayout(self,recurse=True):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
@@ -375,11 +506,11 @@ class Widget(object):
 		from the top-most layouted widget.
 
 		To make this clear consider this arrangement::
-		      VBox 1
-		      - Container
-			- VBox 2
-			  - HBox
-			    - Label
+			VBox 1
+				- Container
+			VBox 2
+				- HBox
+					- Label
 
 		If you call adaptLayout on the Label the layout from the VBox 2
 		will get recalculated, while the VBox 1 stays untouched.
@@ -387,13 +518,7 @@ class Widget(object):
 		@param recurse: Pass False here to force the layout to start from
 		this widget.
 		"""
-		widget = self
-		while widget.parent and recurse:
-			if not isLayouted(widget.parent):
-				break
-			widget = widget.parent
-		widget._recursiveResizeToContent()
-		widget._recursiveExpandContent()
+		self.real_widget.adaptLayout(recurse)
 
 	def beforeShow(self):
 		"""
@@ -581,7 +706,7 @@ class Widget(object):
 		disable the event completely.
 
 		@param eventMap: A dictionary with widget/event names as keys and callbacks as values.
-		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
+		@param ignoreMissing: Normally this method raises a RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
 
 		The keys in the dictionary are parsed as C{"widgetName/eventName"} with the slash
@@ -764,33 +889,28 @@ class Widget(object):
 		Try to shrink the widget, so that it fits closely around its content.
 		Do not call directly.
 		"""
+		self.real_widget.resizeToContent(recurse)
 
 	def expandContent(self,recurse = True):
 		"""
 		Try to expand any spacer in the widget within the current size.
 		Do not call directly.
 		"""
-
+		self.real_widget.expandContent(recurse)
 
 	def _recursiveResizeToContent(self):
 		"""
 		Recursively call L{resizeToContent}. Uses L{deepApply}.
 		Do not call directly.
 		"""
-		def _callResizeToContent(widget):
-			#print "RTC:",widget
-			widget.resizeToContent()
-		self.deepApply(_callResizeToContent, shown_only = True)
+		self.real_widget.resizeToContent(True)
 
 	def _recursiveExpandContent(self):
 		"""
 		Recursively call L{expandContent}. Uses L{deepApply}.
 		Do not call directly.
 		"""
-		def _callExpandContent(widget):
-			#print "ETC:",widget
-			widget.expandContent()
-		self.deepApply(_callExpandContent, leaves_first=False, shown_only = True)
+		self.real_widget.expandContent(True)
 
 	def deepApply(self,visitorFunc, leaves_first = True, shown_only = False):
 		"""
@@ -845,18 +965,16 @@ class Widget(object):
 
 	def _setWidth(self,w):
 		old_width = self.width
-		w = max(self.min_size[0],w)
-		w = min(self.max_size[0],w)
 		self.real_widget.setWidth(w)
+		w = self.real_widget.getWidth()
 		if w != old_width:
 			self.sizeChanged()
 
 	def _getWidth(self): return self.real_widget.getWidth()
 	def _setHeight(self,h):
 		old_height = self.height
-		h = max(self.min_size[1],h)
-		h = min(self.max_size[1],h)
 		self.real_widget.setHeight(h)
+		h = self.real_widget.getHeight()
 		if h != old_height:
 			self.sizeChanged()
 
@@ -875,6 +993,24 @@ class Widget(object):
 	def _setMaxHeight(self,h):
 		self.max_size = self.max_size[0],h
 
+	def _setMinSize(self, size):
+		self.real_widget.setMinSize(fifechan.Size(size[0], size[1]))
+	def _getMinSize(self):
+		size = self.real_widget.getMinSize()
+		return (size.getWidth(), size.getHeight())
+	def _setMaxSize(self, size):
+		self.real_widget.setMaxSize(fifechan.Size(size[0], size[1]))
+	def _getMaxSize(self):
+		size = self.real_widget.getMaxSize()
+		return (size.getWidth(), size.getHeight())
+	def _setFixedSize(self, size):
+		self.real_widget.setFixedSize(fifechan.Size(size[0], size[1]))
+	def _getFixedSize(self):
+		size = self.real_widget.getFixedSize()
+		return (size.getWidth(), size.getHeight())
+	def isFixedSize(self):
+		return self.real_widget.isFixedSize()
+	
 	def _setFont(self, font):
 		self._font = font
 		self.real_font = get_manager().getFont(font)
@@ -882,30 +1018,105 @@ class Widget(object):
 	def _getFont(self):
 		return self._font
 
-	def _getBorderSize(self): return self.real_widget.getFrameSize()
-	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
+	def _getOutlineSize(self):
+		return self.real_widget.getOutlineSize()
+	def _setOutlineSize(self, size):
+		self.real_widget.setOutlineSize(size)
+		
+	def _getBorderSize(self):
+		return self.real_widget.getBorderSize()
+	def _setBorderSize(self, size):
+		self.real_widget.setBorderSize(size)
 
+	def _setMargins(self, margin):
+		# Shorthand property
+		if isinstance(margin, tuple) or isinstance(margin, list):
+			if len(margin) is 4:
+				# 0=top, 1=right, 2=bottom, 3=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[2])
+				self.real_widget.setMarginLeft(margin[3])
+			elif len(margin) is 3:
+				# 0=top, 1=right, 2=bottom, 1=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[2])
+				self.real_widget.setMarginLeft(margin[1])
+			elif len(margin) is 2:
+				# 0=top, 1=right, 0=bottom, 1=left
+				self.real_widget.setMarginTop(margin[0])
+				self.real_widget.setMarginRight(margin[1])
+				self.real_widget.setMarginBottom(margin[0])
+				self.real_widget.setMarginLeft(margin[1])
+			elif len(margin) is 1:
+				# 0=top, 0=right, 0=bottom, 0=left
+				self.real_widget.setMargin(margin[0])
+		else:
+			self.real_widget.setMargin(margin)
+	def _getMargins(self):
+		return (self.real_widget.getMarginTop(), self.real_widget.getMarginRight(),
+				self.real_widget.getMarginBottom(), self.real_widget.getMarginLeft())
+	
+	def _setPadding(self, padding):
+		# Shorthand property
+		if isinstance(padding, tuple) or isinstance(padding, list):
+			if len(padding) is 4:
+				# 0=top, 1=right, 2=bottom, 3=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[2])
+				self.real_widget.setPaddingLeft(padding[3])
+			elif len(padding) is 3:
+				# 0=top, 1=right, 2=bottom, 1=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[2])
+				self.real_widget.setPaddingLeft(padding[1])
+			elif len(padding) is 2:
+				# 0=top, 1=right, 0=bottom, 1=left
+				self.real_widget.setPaddingTop(padding[0])
+				self.real_widget.setPaddingRight(padding[1])
+				self.real_widget.setPaddingBottom(padding[0])
+				self.real_widget.setPaddingLeft(padding[1])
+			elif len(padding) is 1:
+				# 0=top, 0=right, 0=bottom, 0=left
+				self.real_widget.setPadding(padding[0])
+		else:
+			self.real_widget.setPadding(padding)
+	def _getPadding(self):
+		return (self.real_widget.getPaddingTop(), self.real_widget.getPaddingRight(),
+				self.real_widget.getPaddingBottom(), self.real_widget.getPaddingLeft())
+	
 	base_color = ColorProperty("BaseColor")
 	background_color = ColorProperty("BackgroundColor")
 	foreground_color = ColorProperty("ForegroundColor")
 	selection_color = ColorProperty("SelectionColor")
-
+	outline_color = ColorProperty("OutlineColor")
+	border_color = ColorProperty("BorderColor")
+	
 	def _getStyle(self): return self._style
 	def _setStyle(self,style):
 		self._style = style
 		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
 
-	def _getParent(self): return self.__parent
+	def _getParent(self):
+		if self.__parent is not None:
+			return self.__parent()
+		return None
 	def _setParent(self,parent):
 		if parent and not issubclass(type(parent), Widget):
 			raise RuntimeError("Parent must be subclass of the Widget type.")
-	
-		if self.__parent is not parent:
-			if self.__parent and parent is not None:
+
+		if self.__parent is not None and self.__parent() is not parent:
+			if self.__parent() is not None and parent is not None:
 				print "Widget containment fumble:", self, self.__parent, parent
-				self.__parent.removeChild(self)
-		self.__parent = parent
+				self.__parent().removeChild(self)
+		if parent is not None:
+			self.__parent = weakref.ref(parent)
+		else:
+			self.__parent = None
 	parent = property(_getParent,_setParent)
 
 	def _setName(self,name):
@@ -920,7 +1131,16 @@ class Widget(object):
 	def _setFocusable(self, b): self.real_widget.setFocusable(b)
 	def _isFocusable(self):
 		return self.real_widget.isFocusable()
-	              
+
+	def _setHExpand(self, expand):
+		self.real_widget.setHorizontalExpand(expand)
+	def _isHExpand(self):
+		return self.real_widget.isHorizontalExpand()
+	def _setVExpand(self, expand):
+		self.real_widget.setVerticalExpand(expand)
+	def _isVExpand(self):
+		return self.real_widget.isVerticalExpand()
+	
 	def _createNameWithPrefix(self, prefix):
 		
 		if not isinstance(prefix, str):
@@ -945,7 +1165,16 @@ class Widget(object):
 	max_width = property(_getMaxWidth,_setMaxWidth)
 	max_height = property(_getMaxHeight,_setMaxHeight)
 	size = property(_getSize,_setSize)
+	min_size = property(_getMinSize, _setMinSize)
+	max_size = property(_getMaxSize, _setMaxSize)
+	fixed_size = property(_getFixedSize, _setFixedSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
+	outline_size = property(_getOutlineSize,_setOutlineSize)
 	border_size = property(_getBorderSize,_setBorderSize)
-	is_focusable = property(_isFocusable,_setFocusable) 
+	is_focusable = property(_isFocusable,_setFocusable)
+	margins = property(_getMargins, _setMargins)
+	padding = property(_getPadding, _setPadding)
+	is_focusable = property(_isFocusable,_setFocusable)
+	hexpand = property(_isHExpand,_setHExpand)
+	vexpand = property(_isVExpand,_setVExpand)

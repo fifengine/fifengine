@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,8 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import IntAttr, FloatAttr
+
 from widget import Widget
+
 
 class Slider(Widget):
 	""" A slider widget
@@ -45,112 +49,130 @@ class Slider(Widget):
 	HORIZONTAL = fifechan.Slider.Horizontal
 	VERTICAL = fifechan.Slider.Vertical
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'), 
-									   FloatAttr('scale_start'), 
-									   FloatAttr('scale_end'), 
-									   FloatAttr('step_length'), 
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('orientation'),
+									   FloatAttr('scale_start'),
+									   FloatAttr('scale_end'),
+									   FloatAttr('step_length'),
 									   IntAttr('marker_length')
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
 	
 	DEFAULT_SIZE = 10,10
 	DEFAULT_MIN_SIZE = 10,10
-	
+
 	DEFAULT_SCALE_START = 0.0
 	DEFAULT_SCALE_END = 1.0
 	DEFAULT_STEP_LENGTH = 0.1
 	DEFAULT_MARKER_LENGTH = 10
 	DEFAULT_ORIENTATION = HORIZONTAL
 
-	def __init__(self, 
-				 parent = None, 
+	def __init__(self,
+				 parent = None,
 				 name = None,
-				 size = None, 
-				 min_size = None, 
+				 size = None,
+				 min_size = None,
 				 max_size = None,
-				 helptext = None, 
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
 				 position = None,
-				 style = None, 
-				 hexpand = None, 
+				 style = None,
+				 hexpand = None,
 				 vexpand = None,
 				 font = None,
 				 base_color = None,
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 scale_start = None, 
+				 scale_start = None,
 				 scale_end = None,
 				 step_length = None,
 				 marker_length = None,
 				 orientation = None):
-				 
+
 		self.real_widget = fifechan.Slider(scale_start or self.DEFAULT_SCALE_START, scale_end or self.DEFAULT_SCALE_END)
 		self.orientation = self.DEFAULT_ORIENTATION
 		self.step_length = self.DEFAULT_STEP_LENGTH
 		self.marker_length = self.DEFAULT_MARKER_LENGTH
-		
-		super(Slider, self).__init__(parent=parent, 
-									 name=name, 
-									 size=size, 
-									 min_size=min_size, 
+
+		super(Slider, self).__init__(parent=parent,
+									 name=name,
+									 size=size,
+									 min_size=min_size,
 									 max_size=max_size,
-									 helptext=helptext, 
+									 fixed_size=fixed_size,
+									 margins=margins,
+									 padding=padding,
+									 helptext=helptext,
 									 position=position,
-									 style=style, 
-									 hexpand=hexpand, 
+									 style=style,
+									 hexpand=hexpand,
 									 vexpand=vexpand,
 									 font=font,
 									 base_color=base_color,
 									 background_color=background_color,
 									 foreground_color=foreground_color,
 									 selection_color=selection_color,
+									 border_color=border_color,
+									 outline_color=outline_color,
 									 border_size=border_size,
+									 outline_size=outline_size,
 									 position_technique=position_technique,
 									 is_focusable=is_focusable,
 									 comment=comment)
-		
+
 		if orientation is not None: self.orientation = orientation
 		if scale_start is not None: self.scale_start = scale_start
 		if scale_end is not None: self.scale_end = scale_end
 		if step_length is not None: self.step_length = step_length
 		if marker_length is not None: self.marker_length = marker_length
-		
+
 		self.accepts_data = True
 		self._realSetData = self._setValue
 		self._realGetData = self._getValue
 
 	def clone(self, prefix):
-		sliderClone = Slider(None, 
+		sliderClone = Slider(None,
 					self._createNameWithPrefix(prefix),
-					self.size, 
-					self.min_size, 
+					self.size,
+					self.min_size,
 					self.max_size,
-					self.helptext, 
+					self.fixed_size,
+					self.margins,
+					self.padding,
+					self.helptext,
 					self.position,
-					self.style, 
-					self.hexpand, 
+					self.style,
+					self.hexpand,
 					self.vexpand,
 					self.font,
 					self.base_color,
 					self.background_color,
 					self.foreground_color,
 					self.selection_color,
+					self.border_color,
+					self.outline_color,
 					self.border_size,
+					self.outline_size,
 					self.position_technique,
 					self.is_focusable,
 					self.comment,
-					self.scale_start, 
+					self.scale_start,
 					self.scale_end,
 					self.step_length,
 					self.marker_length,
 					self.orientation)
 		return sliderClone
-		
+
 	def _setScale(self, start, end):
 		"""setScale(self, double scaleStart, double scaleEnd)"""
 		if type(start) != float:
@@ -189,7 +211,7 @@ class Slider(Widget):
 		"""setValue(self, double value)"""
 		if type(value) != float:
 			raise RuntimeError("Slider only accepts float values")
-		self.real_widget.setValue(value)		
+		self.real_widget.setValue(value)
 	value = property(_getValue, _setValue)
 
 	def _setMarkerLength(self, length):
@@ -222,3 +244,4 @@ class Slider(Widget):
 		"""getStepLength(self) -> double"""
 		return self.real_widget.getStepLength()
 	step_length = property(_getStepLength, _setStepLength)
+

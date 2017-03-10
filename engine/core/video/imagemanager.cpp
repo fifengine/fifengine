@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -23,12 +23,12 @@
 #include <map>
 
 // 3rd party library includes
+#include <tinyxml.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "ext/tinyxml/fife_tinyxml.h"
 #include "util/log/logger.h"
 #include "util/resource/resourcemanager.h"
 #include "util/resource/resource.h"

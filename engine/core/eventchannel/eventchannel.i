@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -21,26 +21,33 @@
 
 %module fife
 %{
-#include "eventchannel/base/ec_event.h"
-#include "eventchannel/base/ec_inputevent.h"
-#include "eventchannel/command/ec_command.h"
-#include "eventchannel/command/ec_commandids.h"
-#include "eventchannel/command/ec_icommandlistener.h"
-#include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/key/ec_ikeylistener.h"
-#include "eventchannel/key/ec_ikeyfilter.h"
-#include "eventchannel/source/ec_eventsourcetypes.h"
-#include "eventchannel/source/ec_ieventsource.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
-#include "eventchannel/mouse/ec_imouselistener.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/base/event.h"
+#include "eventchannel/base/inputevent.h"
+#include "eventchannel/command/command.h"
+#include "eventchannel/command/commandids.h"
+#include "eventchannel/command/icommandlistener.h"
+#include "eventchannel/drop/dropevent.h"
+#include "eventchannel/drop/idroplistener.h"
+#include "eventchannel/key/key.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/key/ikeylistener.h"
+#include "eventchannel/key/ikeyfilter.h"
+#include "eventchannel/text/text.h"
+#include "eventchannel/text/textevent.h"
+#include "eventchannel/text/itextlistener.h"
+#include "eventchannel/source/eventsourcetypes.h"
+#include "eventchannel/source/ieventsource.h"
+#include "eventchannel/mouse/mouseevent.h"
+#include "eventchannel/mouse/imousefilter.h"
+#include "eventchannel/mouse/imouselistener.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 #include "eventchannel/eventmanager.h"
 %}
 
-%include "eventchannel/key/ec_key.h"
-%include "eventchannel/source/ec_eventsourcetypes.h"
-%include "eventchannel/command/ec_commandids.h"
+%include "eventchannel/key/key.h"
+%include "eventchannel/text/text.h"
+%include "eventchannel/source/eventsourcetypes.h"
+%include "eventchannel/command/commandids.h"
 
 namespace FIFE {
 	%feature("director") IEventSource;
@@ -119,6 +126,28 @@ namespace FIFE {
 		virtual void keyReleased(KeyEvent& evt) = 0;
 		virtual ~IKeyListener();
 	};
+
+	class TextEvent: public InputEvent  {
+	public:
+		enum TextEventType {
+			UNKNOWN = 0,
+			INPUT = 1,
+			EDIT = 2
+		};
+		virtual TextEventType getType() const;
+		virtual const Text& getText() const;
+		virtual ~TextEvent();
+	private:
+		TextEvent();
+	};
+
+	%feature("director") ITextListener;
+	class ITextListener {
+	public:
+		virtual void textInput(TextEvent& evt) = 0;
+		virtual void textEdit(TextEvent& evt) = 0;
+		virtual ~ITextListener();
+	};
 	
 	%feature("director") ISdlEventListener;
 	class ISdlEventListener {
@@ -136,6 +165,8 @@ namespace FIFE {
 			RELEASED,
 			WHEEL_MOVED_DOWN,
 			WHEEL_MOVED_UP,
+			WHEEL_MOVED_RIGHT,
+			WHEEL_MOVED_LEFT,
 			CLICKED,
 			ENTERED,
 			EXITED,
@@ -147,7 +178,9 @@ namespace FIFE {
 			LEFT = 1,
 			RIGHT = 2,
 			MIDDLE = 4,
-			UNKNOWN_BUTTON = 8
+			X1 = 8,
+			X2 = 16,
+			UNKNOWN_BUTTON = 32
 		};
 		virtual int32_t getX() const;
 		virtual int32_t getY() const;
@@ -168,6 +201,8 @@ namespace FIFE {
 		virtual void mouseClicked(MouseEvent& evt) = 0;
 		virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
 		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedRight(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
 		virtual void mouseMoved(MouseEvent& evt) = 0;
 		virtual void mouseDragged(MouseEvent& evt) = 0;
 		virtual ~IMouseListener();
@@ -180,6 +215,28 @@ namespace FIFE {
 		virtual ~IKeyFilter();
 	};
 
+	class DropEvent: public InputEvent  {
+	public:
+		virtual const std::string& getPath() const;
+		virtual ~DropEvent();
+	private:
+		DropEvent();
+	};
+
+	%feature("director") IDropListener;
+	class IDropListener {
+	public:
+		virtual void fileDropped(DropEvent& evt) = 0;
+		virtual ~IDropListener();
+	};
+
+	%feature("director") IMouseFilter;
+	class IMouseFilter {
+	public:
+		virtual bool isFiltered(const MouseEvent& evt) = 0;
+		virtual ~IMouseFilter();
+	};
+
 	class EventManager {
 	public:
 		EventManager();
@@ -190,10 +247,16 @@ namespace FIFE {
 		void addKeyListener(IKeyListener* listener);
 		void addKeyListenerFront(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
+		void addTextListener(ITextListener* listener);
+		void addTextListenerFront(ITextListener* listener);
+		void removeTextListener(ITextListener* listener);
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
-		
+		void addDropListener(IDropListener* listener);
+		void addDropListenerFront(IDropListener* listener);
+		void removeDropListener(IDropListener* listener);
+
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
@@ -201,10 +264,15 @@ namespace FIFE {
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);
+		void setMouseFilter(IMouseFilter* mouseFilter);
 
 		void setMouseSensitivity(float sensitivity);
 		float getMouseSensitivity() const;
 		void setMouseAccelerationEnabled(bool acceleration);
 		bool isMouseAccelerationEnabled() const;
+
+		bool isClipboardText() const;
+		std::string getClipboardText() const;
+		void setClipboardText(const std::string& text);
 	};
 };

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -40,7 +40,7 @@
 
 namespace FIFE {
 
-	ImageFontBase::ImageFontBase() : FontBase() {
+	ImageFontBase::ImageFontBase() : FontBase(), m_height(0) {
 	}
 
 	ImageFontBase::~ImageFontBase() {
@@ -71,11 +71,11 @@ namespace FIFE {
 	}
 
 	int32_t ImageFontBase::getHeight() const {
-		return mHeight;
+		return m_height;
 	}
 
 	SDL_Surface *ImageFontBase::renderString(const std::string& text) {
-		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+		SDL_Surface *surface = SDL_CreateRGBSurface(0,
 			getWidth(text),getHeight(),32,
 			RMASK, GMASK, BMASK ,AMASK);
 
@@ -108,6 +108,6 @@ namespace FIFE {
 		return surface;
 	}
 
-	void ImageFontBase::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+	void ImageFontBase::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
 	}
 }

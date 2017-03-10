@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -64,16 +64,12 @@ namespace FIFE {
 			m_delete_route(true) {}
 
 		~ActionInfo() {
-			if (m_route) {
+			if (m_route && m_delete_route) {
 				int32_t sessionId = m_route->getSessionId();
 				if (sessionId != -1) {
 					m_pather->cancelSession(sessionId);
 				}
-				if (m_delete_route) {
-					delete m_route;
-				} else {
-					m_route->setSessionId(-1);
-				}
+				delete m_route;
 			}
 			delete m_target;
 		}
@@ -201,6 +197,7 @@ namespace FIFE {
 		m_activity(NULL),
 		m_changeInfo(ICHANGE_NO_CHANGES),
 		m_object(object),
+		m_ownObject(false),
 		m_location(location),
 		m_visual(NULL),
 		m_blocking(object->isBlocking()),
@@ -211,9 +208,11 @@ namespace FIFE {
 		m_cellStackPos(object->getCellStackPosition()),
 		m_specialCost(object->isSpecialCost()),
 		m_cost(object->getCost()),
-		m_costId(object->getCostId()) {
+		m_costId(object->getCostId()),
+		m_mainMultiInstance(NULL) {
 		// create multi object instances
 		if (object->isMultiObject()) {
+			m_mainMultiInstance = this;
 			uint32_t count = 0;
 			Layer* layer = m_location.getLayer();
 			const ExactModelCoordinate& emc = m_location.getExactLayerCoordinatesRef();
@@ -233,6 +232,7 @@ namespace FIFE {
 					InstanceVisual::create(instance);
 					m_multiInstances.push_back(instance);
 					instance->addDeleteListener(this);
+					instance->setMainMultiInstance(this);
 				}
 			}
 		}
@@ -257,11 +257,15 @@ namespace FIFE {
 			std::vector<Instance*>::iterator it = m_multiInstances.begin();
 			for (; it != m_multiInstances.end(); ++it) {
 				(*it)->removeDeleteListener(this);
+				(*it)->setMainMultiInstance(NULL);
 			}
 		}
 
 		delete m_activity;
 		delete m_visual;
+		if (m_ownObject) {
+			delete m_object;
+		}
 	}
 
 	void Instance::initializeChanges() {
@@ -270,6 +274,14 @@ namespace FIFE {
 		}
 		if (m_location.getLayer()) {
 			m_location.getLayer()->setInstanceActivityStatus(this, true);
+		}
+	}
+
+	void Instance::prepareForUpdate() {
+		if (isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
 		}
 	}
 
@@ -284,11 +296,7 @@ namespace FIFE {
 	void Instance::setLocation(const Location& loc) {
 		// ToDo: Handle the case when the layers are different
 		if(m_location != loc) {
-			if(isActive()) {
-				refresh();
-			} else {
-				initializeChanges();
-			}
+			prepareForUpdate();
 
 			if (m_location.getLayerCoordinates() != loc.getLayerCoordinates()) {
 				m_location.getLayer()->getInstanceTree()->removeInstance(this);
@@ -314,13 +322,8 @@ namespace FIFE {
 		}
 		rotation %= 360;
 		if(m_rotation != rotation) {
-			if(isActive()) {
-				refresh();
-				m_rotation = rotation;
-			} else {
-				initializeChanges();
-				m_rotation = rotation;
-			}
+			prepareForUpdate();
+			m_rotation = rotation;
 		}
 	}
 
@@ -338,11 +341,7 @@ namespace FIFE {
 
 	void Instance::setBlocking(bool blocking) {
 		if (m_overrideBlocking) {
-			if(isActive()) {
-				refresh();
-			} else {
-				initializeChanges();
-			}
+			prepareForUpdate();
 			m_blocking = blocking;
 		}
 	}
@@ -419,8 +418,7 @@ namespace FIFE {
 		initializeChanges();
 		const Action *old_action = m_activity->m_actionInfo ? m_activity->m_actionInfo->m_action : NULL;
 		if (m_activity->m_actionInfo) {
-			delete m_activity->m_actionInfo;
-			m_activity->m_actionInfo = NULL;
+			cancelAction();
 		}
 		m_activity->m_actionInfo = new ActionInfo(m_object->getPather(), m_location);
 		m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
@@ -570,21 +568,46 @@ namespace FIFE {
 		return m_multiInstances;
 	}
 
-	void Instance::act(const std::string& actionName, const Location& direction, bool repeating) {
+	void Instance::setMainMultiInstance(Instance* main) {
+		m_mainMultiInstance = main;
+	}
+
+	Instance* Instance::getMainMultiInstance() {
+		return m_mainMultiInstance;
+	}
+
+	void Instance::actOnce(const std::string& actionName, const Location& direction) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
 		setFacingLocation(direction);
 	}
 
-	void Instance::act(const std::string& actionName, int32_t rotation, bool repeating) {
+	void Instance::actOnce(const std::string& actionName, int32_t rotation) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
 		setRotation(rotation);
 	}
 
-	void Instance::act(const std::string& actionName, bool repeating) {
+	void Instance::actOnce(const std::string& actionName) {
 		initializeAction(actionName);
-		m_activity->m_actionInfo->m_repeating = repeating;
+		m_activity->m_actionInfo->m_repeating = false;
+	}
+
+	void Instance::actRepeat(const std::string& actionName, const Location& direction) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
+		setFacingLocation(direction);
+	}
+
+	void Instance::actRepeat(const std::string& actionName, int32_t rotation) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
+		setRotation(rotation);
+	}
+
+	void Instance::actRepeat(const std::string& actionName) {
+		initializeAction(actionName);
+		m_activity->m_actionInfo->m_repeating = true;
 	}
 
 	void Instance::say(const std::string& text, uint32_t duration) {
@@ -765,7 +788,7 @@ namespace FIFE {
 					say("");
 				}
 			}
-		} else if (!m_activity->m_actionInfo && m_changeInfo == ICHANGE_NO_CHANGES && m_activity->m_actionListeners.empty()) {
+		} else if (!m_activity->m_actionInfo && m_changeInfo == ICHANGE_NO_CHANGES && m_activity->m_actionListeners.empty() && m_activity->m_changeListeners.empty()) {
 			// delete superfluous activity
 			delete m_activity;
 			m_activity = 0;
@@ -786,7 +809,16 @@ namespace FIFE {
 		Action* action = m_activity->m_actionInfo->m_action;
 		delete m_activity->m_actionInfo;
 		m_activity->m_actionInfo = NULL;
+		// this is needed in case the new action is set on the same pump and
+		// it is the same action as the finalized action
+		m_activity->m_action = NULL;
 
+		if (isMultiObject()) {
+			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+			for (; multi_it != m_multiInstances.end(); ++multi_it) {
+				(*multi_it)->finalizeAction();
+			}
+		}
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
 		while (i != m_activity->m_actionListeners.end()) {
 			if(*i)
@@ -798,13 +830,41 @@ namespace FIFE {
 				m_activity->m_actionListeners.end(),
 				(InstanceActionListener*)NULL),
 			m_activity->m_actionListeners.end());
+	}
+
+	void Instance::cancelAction() {
+		FL_DBG(_log, "cancel action");
+		assert(m_activity);
+		assert(m_activity->m_actionInfo);
+
+		if( m_activity->m_actionInfo->m_leader ) {
+			m_activity->m_actionInfo->m_leader->removeDeleteListener(this);
+		}
+
+		Action* action = m_activity->m_actionInfo->m_action;
+		delete m_activity->m_actionInfo;
+		m_activity->m_actionInfo = NULL;
+		// this is needed in case the new action is set on the same pump and
+		// it is the same action as the canceled action
+		m_activity->m_action = NULL;
 
 		if (isMultiObject()) {
 			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
 			for (; multi_it != m_multiInstances.end(); ++multi_it) {
-				(*multi_it)->finalizeAction();
+				(*multi_it)->cancelAction();
 			}
 		}
+		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+		while (i != m_activity->m_actionListeners.end()) {
+			if(*i)
+				(*i)->onInstanceActionCancelled(this, action);
+			++i;
+		}
+		m_activity->m_actionListeners.erase(
+			std::remove(m_activity->m_actionListeners.begin(),
+				m_activity->m_actionListeners.end(),
+				(InstanceActionListener*)NULL),
+			m_activity->m_actionListeners.end());
 	}
 
 	Action* Instance::getCurrentAction() const {
@@ -896,29 +956,17 @@ namespace FIFE {
 	}
 
 	void Instance::callOnTransparencyChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_TRANSPARENCY;
 	}
 
 	void Instance::callOnVisibleChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_VISIBLE;
 	}
 
 	void Instance::callOnStackPositionChange() {
-		if(isActive()) {
-			refresh();
-		} else {
-			initializeChanges();
-		}
+		prepareForUpdate();
 		m_activity->m_additional |= ICHANGE_STACKPOS;
 	}
 
@@ -982,11 +1030,19 @@ namespace FIFE {
 		return m_object->getCost();
 	}
 
-	const std::string& Instance::getCostId() {
+	std::string Instance::getCostId() {
 		if (m_specialCost) {
 			return m_costId;
 		}
 		return m_object->getCostId();
+	}
+
+	double Instance::getSpeed() {
+		return m_object->getSpeed();
+	}
+
+	bool Instance::isSpecialSpeed() {
+		return m_object->isSpecialSpeed();
 	}
 
 	bool Instance::isMultiCell() {
@@ -1026,6 +1082,184 @@ namespace FIFE {
 				(*it)->setRotation(rot);
 			}
 		}
+	}
+
+	void Instance::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors) {
+		if (!m_ownObject) {
+			createOwnObject();
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		objVis->addStaticColorOverlay(angle, colors);
+		prepareForUpdate();
+		m_activity->m_additional |= ICHANGE_VISUAL;
+	}
+
+	OverlayColors* Instance::getStaticColorOverlay(int32_t angle) {
+		if (!m_ownObject) {
+			return 0;
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		return objVis->getStaticColorOverlay(angle);
+	}
+
+	void Instance::removeStaticColorOverlay(int32_t angle) {
+		if (m_ownObject) {
+			ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+			objVis->removeStaticColorOverlay(angle);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+	
+	bool Instance::isStaticColorOverlay() {
+		if (!m_ownObject) {
+			return false;
+		}
+		ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+		return objVis->isColorOverlay();
+	}
+
+	void Instance::addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addColorOverlay(angle, colors);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+
+	OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getColorOverlay(angle);
+		}
+		return NULL;
+	}
+
+	void Instance::removeColorOverlay(const std::string& actionName, int32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			visual->removeColorOverlay(angle);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+	
+	void Instance::addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addAnimationOverlay(angle, order, animationptr);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+
+	std::map<int32_t, AnimationPtr> Instance::getAnimationOverlay(const std::string& actionName, int32_t angle) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getAnimationOverlay(angle);
+		}
+		return std::map<int32_t, AnimationPtr>();
+	}
+
+	void Instance::removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			visual->removeAnimationOverlay(angle, order);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+
+	void Instance::addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		if (visual) {
+			visual->addColorOverlay(angle, order, colors);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+
+	OverlayColors* Instance::getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->getColorOverlay(angle, order);
+		}
+		return NULL;
+	}
+
+	void Instance::removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			visual->removeColorOverlay(angle, order);
+			prepareForUpdate();
+			m_activity->m_additional |= ICHANGE_VISUAL;
+		}
+	}
+
+	bool Instance::isAnimationOverlay(const std::string& actionName) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->isAnimationOverlay();
+		}
+		return false;
+	}
+
+	bool Instance::isColorOverlay(const std::string& actionName) {
+		ActionVisual* visual = getActionVisual(actionName, false);
+		if (visual) {
+			return visual->isColorOverlay();
+		}
+		return false;
+	}
+
+	void Instance::convertToOverlays(const std::string& actionName, bool color) {
+		ActionVisual* visual = getActionVisual(actionName, true);
+		visual->convertToOverlays(color);
+	}
+
+	void Instance::createOwnObject() {
+		if (!m_ownObject) {
+			m_ownObject = true;
+			ObjectVisual* ov = m_object->getVisual<ObjectVisual>();
+			ObjectVisual* nov = 0;
+			m_object = new Object(m_object->getId(), m_object->getNamespace(), m_object);
+			if (!ov) {
+				ObjectVisual::create(m_object);
+			} else {
+				nov = new ObjectVisual(*ov);
+				m_object->adoptVisual(nov);
+			}
+		}
+	}
+
+	ActionVisual* Instance::getActionVisual(const std::string& actionName, bool create) {
+		ActionVisual* nav = NULL;
+		if (!m_ownObject) {
+			createOwnObject();
+		}
+		Action* action = m_object->getAction(actionName, false);
+		if (!action) {
+			action = m_object->getAction(actionName);
+			if (!action) {
+				throw NotFound(std::string("action ") + actionName + " not found");
+			} else if (create) {
+				// if we change the current action then we have to replace the pointer
+				bool replace = getCurrentAction() == action;
+				// check if its the default action
+				bool defaultAction = m_object->getDefaultAction() == action;
+				ActionVisual* av = action->getVisual<ActionVisual>();
+				action = m_object->createAction(actionName, defaultAction);
+				nav = new ActionVisual(*av);
+				action->adoptVisual(nav);
+				if (replace) {
+					m_activity->m_actionInfo->m_action = action;
+				}
+			}
+		} else {
+			nav = action->getVisual<ActionVisual>();
+		}
+		return nav;
 	}
 
 	void Instance::addDeleteListener(InstanceDeleteListener *listener) {

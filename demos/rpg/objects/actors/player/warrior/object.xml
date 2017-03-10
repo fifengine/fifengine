@@ -1,9 +1,0 @@
-<?fife type="object"?>
-<object id="warrior" namespace="http://www.fifengine.net/xml/rpg" blocking="1" static="0">
-	<action id="stand">
-		<animation source="stand/animation.xml" direction="45" />
-	</action>
-	<action id="walk">
-		<animation source="walk/animation.xml" direction="45" />
-	</action>
-</object>

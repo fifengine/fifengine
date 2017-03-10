@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -75,11 +75,15 @@ namespace FIFE {
 			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
 			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
 			void deleteInstance(Instance* object);
+			void removeInstance(Instance* object);
 
 			const std::vector<Instance*>& getInstances() const;
 			std::vector<Instance*> getInstances(const std::string& identifier);
 			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
 			std::list<Instance*> getInstancesIn(Rect& rec);
+			std::vector<Instance*> getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2);
+			std::vector<Instance*> getInstancesInCircle(const ModelCoordinate& center, uint16_t radius);
+			std::vector<Instance*> getInstancesInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);

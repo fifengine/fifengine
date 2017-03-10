@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -68,8 +68,8 @@ class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
 				self.debuggeractive = False
 
 	def onCommand(self, command):
-		self.quitrequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quitrequested:
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quitrequested = True
 			command.consume()
 			
 class RocketApplicationBase(ApplicationBase):

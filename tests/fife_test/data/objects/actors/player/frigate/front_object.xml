@@ -1,0 +1,53 @@
+<?fife type="object"?>
+<assets>
+	<object id="frigatefront" namespace="tutorial1objects" blocking="1" static="0">
+		<multipart>
+			<rotation rot="0">
+				<occupied_coord x="1" y="0" />
+			</rotation>
+			<rotation rot="45">
+				<occupied_coord x="1" y="-1" />
+			</rotation>
+			<rotation rot="90">
+				<occupied_coord x="0" y="-1" />
+			</rotation>
+			<rotation rot="135">
+				<occupied_coord x="-1" y="-1" />
+				<occupied_coord x="-1" y="0" />
+			</rotation>
+			<rotation rot="180">
+				<occupied_coord x="-1" y="0" />
+			</rotation>
+			<rotation rot="225">
+				<occupied_coord x="-1" y="1" />
+			</rotation>
+			<rotation rot="270">
+				<occupied_coord x="0" y="1" />
+			</rotation>
+			<rotation rot="315">
+				<occupied_coord x="1" y="1" />
+				<occupied_coord x="0" y="1" />
+			</rotation>
+		</multipart>
+		<action id="stand">
+			<animation source="/dummy/animation.xml" direction="0" />
+			<animation source="/dummy/animation.xml" direction="45" />
+			<animation source="/dummy/animation.xml" direction="90" />
+			<animation source="/dummy/animation.xml" direction="135" />
+			<animation source="/dummy/animation.xml" direction="180" />
+			<animation source="/dummy/animation.xml" direction="225" />
+			<animation source="/dummy/animation.xml" direction="270" />
+			<animation source="/dummy/animation.xml" direction="315" />
+		</action>
+		<action id="walk">
+			<animation source="/dummy/animation.xml" direction="0" />
+			<animation source="/dummy/animation.xml" direction="45" />
+			<animation source="/dummy/animation.xml" direction="90" />
+			<animation source="/dummy/animation.xml" direction="135" />
+			<animation source="/dummy/animation.xml" direction="180" />
+			<animation source="/dummy/animation.xml" direction="225" />
+			<animation source="/dummy/animation.xml" direction="270" />
+			<animation source="/dummy/animation.xml" direction="315" />
+		</action>
+	</object>
+</assets>

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -136,7 +136,7 @@ namespace FIFE {
 		rj.discard = false;
 
 		std::pair<RenderJobMap::iterator, bool> ret =
-			m_targets.insert(std::make_pair<std::string, RenderJob>(name, rj));
+			m_targets.insert(std::make_pair(name, rj));
 
 		return ret.first->second.target;
 	}
@@ -149,7 +149,7 @@ namespace FIFE {
 		rj.discard = false;
 
 		std::pair<RenderJobMap::iterator, bool> ret =
-			m_targets.insert(std::make_pair<std::string, RenderJob>(image->getName(), rj));
+			m_targets.insert(std::make_pair(image->getName(), rj));
 
 		return ret.first->second.target;
 	}

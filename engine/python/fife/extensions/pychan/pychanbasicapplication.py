@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -53,8 +53,9 @@ class ExitEventListener(fife.IKeyListener):
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
 		elif keyval == fife.Key.F10:
-			pychan.manager.hook.guimanager.getConsole().toggleShowHide()
-			evt.consume()
+			if pychan.manager.hook.guimanager.isConsoleEnabled():
+				pychan.manager.hook.guimanager.getConsole().toggleShowHide()
+				evt.consume()
 
 	def keyReleased(self, evt):
 		pass

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -47,7 +47,7 @@ namespace FIFE {
 		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
 		virtual ~SDLImage();
-		virtual void invalidate() {}; //do nothing for SDL images (for now)
+		virtual void invalidate();
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
 		virtual size_t getSize();
@@ -56,29 +56,18 @@ namespace FIFE {
 		virtual void load();
 		virtual void free();
 
+		SDL_Texture* getTexture();
+		void setTexture(SDL_Texture* texture);
+
 	private:
-		// Call this before rendering
-		void finalize();
-
-		/** SDL Alpha Optimizer
-		 * This tries to convert an image with a fake alpha channel
-		 * to an RGB image when the channel can be reasonably be replaced
-		 * by an colorkey.
-		 */
-		SDL_Surface* optimize(SDL_Surface* surface);
-
 		void resetSdlimage();
 		void validateShared();
 
-		// SDLSurface used to create the SDLImage.
-		Uint8 m_last_alpha;
-		// Is the surface already optimized for rendering
-		bool m_finalized;
+		// colorkey for the image
 		SDL_Color m_colorkey;
-		// Surface for zoom
-		SDL_Surface* m_zoom_surface;
-		float m_scale_x;
-		float m_scale_y;
+		// texture of image
+		SDL_Texture* m_texture;
+
 		// Holds Atlas ImagePtr if this is a shared image
 		ImagePtr m_atlas_img;
 		// Holds Atlas Name if this is a shared image

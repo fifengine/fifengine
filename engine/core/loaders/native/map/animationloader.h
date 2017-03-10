@@ -1,5 +1,5 @@
 /*************************************************************************** 
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -23,6 +23,7 @@
 #define FIFE_ANIMATION_LOADER_H
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 
@@ -36,27 +37,36 @@
 
 namespace FIFE {
 
-    class VFS;
-    class ImageManager;
+	class VFS;
+	class ImageManager;
+	class AnimationManager;
 
-    class AnimationLoader : public IAnimationLoader {
-    public:
-        AnimationLoader(VFS* vfs, ImageManager* imageManager);
+	class AnimationLoader : public IAnimationLoader {
+	public:
+		AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 
-        /** 
-        * @see IAnimationLoader::isLoadable
-        */
-        virtual bool isLoadable(const std::string& filename);
+		/** 
+		* @see IAnimationLoader::isLoadable
+		*/
+		virtual bool isLoadable(const std::string& filename);
 
-        /** 
-        * @see IAnimationLoader::load
-        */
-        virtual AnimationPtr load(const std::string& filename);
+		/** 
+		* @see IAnimationLoader::load
+		*/
+		virtual AnimationPtr load(const std::string& filename);
 
-    private:
-        VFS* m_vfs;
-        ImageManager* m_imageManager;
-    };
+		/** 
+		* @see IAnimationLoader::loadMultiple
+		*/
+		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename);
+
+	private:
+		AnimationPtr loadAnimation(const std::string& filename, TiXmlElement* animationElem);
+
+		VFS* m_vfs;
+		ImageManager* m_imageManager;
+		AnimationManager* m_animationManager;
+	};
 }
 
 #endif

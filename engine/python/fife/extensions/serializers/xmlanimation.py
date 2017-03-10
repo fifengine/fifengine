@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -29,19 +29,26 @@ def loadXMLAnimation(engine, filename):
 	f.thisown = 1
 
 	imgMgr = engine.getImageManager()
+	aniMgr = engine.getAnimationManager()
 	
 	tree = ET.parse(f)
 	node = tree.getroot()
 
-	animation = fife.Animation.createAnimation()
+	ani_id = node.get('id')
+	if not ani_id:
+		ani_id = filename
 
+	if aniMgr.exists(ani_id):
+		animation = aniMgr.getPtr(str(ani_id))
+	else:
+		animation = aniMgr.create(str(ani_id))
+	
 	common_width = int(node.get('width', 0))
 	common_height = int(node.get('height', 0))
-	common_y_offset = int(node.get('y_offset', 0))
 	common_frame_delay = int(node.get('delay', 0))
 	common_x_offset = int(node.get('x_offset', 0))
 	common_y_offset = int(node.get('y_offset', 0))
-	animation.setActionFrame(int(node.get('action', 0)))
+	animation.setActionFrame(int(node.get('action_frame', 0)))
 
 	frames = node.findall('frame')
 	if not frames:
@@ -55,7 +62,7 @@ def loadXMLAnimation(engine, filename):
 		path.append(str(atlas))
 		atlas_file = '/'.join(path)
 		if imgMgr.exists(atlas_file):
-			atlas_img = imgMgr.getPtr(str(atlas_file))
+			atlas_img = imgMgr.get(str(atlas_file))
 		else:
 			atlas_img = imgMgr.create(str(atlas_file))
 		# parse atlas animation format 2 (e.g. cursor)
@@ -81,7 +88,7 @@ def loadXMLAnimation(engine, filename):
 			frame_file = atlas,":",frame_file
 
 			if imgMgr.exists(str(frame_file)):
-				frame_img = imgMgr.getPtr(str(frame_file))
+				frame_img = imgMgr.get(str(frame_file))
 			else:
 				frame_img = imgMgr.create(str(frame_file))
 				region = fife.Rect(frame_x_pos, frame_y_pos, frame_width, frame_height)

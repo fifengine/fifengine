@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -57,9 +57,9 @@ namespace FIFE {
 	 */
 	enum CellType {
 		CTYPE_NO_BLOCKER = 0,
-		CTYPE_STATIC_BLOCKER = 1,
+		CTYPE_CELL_NO_BLOCKER = 1,
 		CTYPE_DYNAMIC_BLOCKER = 2,
-		CTYPE_CELL_NO_BLOCKER = 3,
+		CTYPE_STATIC_BLOCKER = 3,
 		CTYPE_CELL_BLOCKER = 4
 	};
 	typedef uint8_t CellTypeInfo;
@@ -382,7 +382,7 @@ namespace FIFE {
 			void callOnInstanceExited(Instance* instance);
 
 			/** Called when the blocking property of this cell changed.
-			 * @param block A boolean, true mark the cell as blocker.
+			 * @param blocks A boolean, true mark the cell as blocker.
 			 * @see CellChangeListener
 			 */
 			void callOnBlockingChanged(bool blocks);

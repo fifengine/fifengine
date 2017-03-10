@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -35,9 +35,7 @@
 
 namespace FIFE {
 	int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle) {
-		int32_t wangle = (360 + angle) % 360;
-
-		if (angle2id.size() == 0) {
+		if (angle2id.empty()) {
 			return -1;
 		}
 		if (angle2id.size() == 1) {
@@ -45,6 +43,7 @@ namespace FIFE {
 			return angle2id.begin()->second;
 		}
 
+		int32_t wangle = (360 + angle) % 360;
 		type_angle2id::const_iterator u(angle2id.upper_bound(wangle));
 		type_angle2id::const_iterator tmp;
 
@@ -87,7 +86,8 @@ namespace FIFE {
 		int32_t lcm = u->first;
 		int32_t li = u->second;
 
-		if (ud <= ld) {
+		// if ud and ls is equal then lcm is prefered (next angle)
+		if (ud < ld) {
 			closestMatchingAngle = ucm;
 			return ui;
 		}

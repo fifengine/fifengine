@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -37,7 +37,7 @@
 namespace FIFE {
 	class HexGrid: public CellGrid {
 	public:
-		HexGrid();
+		HexGrid(bool axial = false);
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
@@ -49,12 +49,17 @@ namespace FIFE {
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
+		ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 		std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
+		std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end);
 		CellGrid* clone();
 
 	private:
 		double getXZigzagOffset(double y);
+		ModelCoordinate toLayerCoordinatesHelper(const ExactModelCoordinate& coords);
+
+		bool m_axial;
 	};
 }
 

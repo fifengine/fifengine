@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -107,7 +107,7 @@ is somewhat limited.
 A dialog without an OK button would be futile - so here's how
 you hook widget events to function calls. Every widget
 has a L{widgets.Widget.capture} method, which will directly call the passed
-function when an widget event occurs. As a convenience a
+function when a widget event occurs. As a convenience a
 L{widgets.Widget.mapEvents} function will batch the L{widgets.Widget.findChild} and
 L{widgets.Widget.capture} calls in an obvious way.
 ::
@@ -266,7 +266,7 @@ import widgets.ext
 
 # This *import should really be removed!
 from widgets import *
-
+from widgets.tabbedarea import Tab
 from exceptions import *
 
 from fonts import loadFonts
@@ -327,8 +327,6 @@ class _GuiLoader(object, handler.ContentHandler):
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
 		cls = WIDGETS.get(name,None)
-		if cls is None and name == "Spacer":
-			cls = Spacer
 		if cls is None:
 			raise GuiXMLError("Unknown GUI Element: %s" % name)
 		return cls
@@ -352,9 +350,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		if issubclass(cls,Widget):
 			self.stack.append('gui_element')
 			self._createInstance(cls,name,attrs)
-		elif cls == Spacer:
-			self.stack.append('spacer')
-			self._createSpacer(cls,name,attrs)
 		else:
 			self.stack.append('unknown')
 		self.indent += " "*4
@@ -365,24 +360,19 @@ class _GuiLoader(object, handler.ContentHandler):
 			self._setAttr(obj,k,v)
 
 		if self.root:
-			self.root.addChild( obj )
-		self.root = obj
-
-	def _createSpacer(self,cls,name,attrs):
-		obj = cls(parent=self.root)
-		for k,v in attrs.items():
-			self._setAttr(obj,k,v)
-
-		if hasattr(self.root,'add'):
-			self.root.addSpacer(obj)
-		else:
-			raise GuiXMLError("A spacer needs to be added to a container widget!")
+			if isinstance(obj,Tab):
+				if hasattr(self.root,'addTabDefinition'):
+					self.root.addTabDefinition(obj)
+				else:
+					raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
+			else:
+				self.root.addChild( obj )
 		self.root = obj
 
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
 		if manager.debug: print self.indent + "</%s>" % name
-		if self.stack.pop() in ('gui_element','spacer'):
+		if self.stack.pop() in ('gui_element'):
 			self.root = self.root.parent or self.root
 
 def loadXML(filename_or_stream):
@@ -402,7 +392,7 @@ def loadXML(filename_or_stream):
 	    of integers.
 	  - foreground_color,base_color,background_color - These are assumed to be triples or quadruples of comma
 	    separated integers. (triples: r,g,b; quadruples: r,g,b,a)
-	  - opaque,border_size,padding - These are assumed to be simple integers.
+	  - border_size,padding - These are assumed to be simple integers.
 
 	All other attributes are set verbatim as strings on the generated instance.
 	In case a Widget does not accept an attribute to be set or the attribute can not be parsed

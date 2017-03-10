@@ -90,6 +90,10 @@ namespace FIFE {
 		 */
 		void deleteMaps();
 
+		/** Return the number of enabled cameras in this model.
+		 */
+		uint32_t getActiveCameraCount() const;
+
 		/** Get a list of namespaces currently referenced by objects in the metamodel.
 		 */
 		std::list<std::string> getNamespaces() const;

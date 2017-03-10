@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -73,7 +73,7 @@ namespace FIFE {
 		 * default is NULL.  If this parameter is present the resource
 		 * will use the loader to load instead of the default built in
 		 * functions.
-		 * @return An SoundClipPtr to the newly created SoundClip
+		 * @return A SoundClipPtr to the newly created SoundClip
 		 *
 		 * @see SoundClip
 		 * @see OggLoader
@@ -89,7 +89,7 @@ namespace FIFE {
 		 * default is NULL.  If this parameter is present the resource
 		 * will use the loader to load instead of the default built in
 		 * functions.
-		 * @return An SoundClipPtr to the newly created SoundClip
+		 * @return A SoundClipPtr to the newly created SoundClip
 		 *
 		 * @see SoundClip
 		 * @see OggLoader
@@ -143,7 +143,7 @@ namespace FIFE {
 		 */
 		virtual bool exists(const std::string& name);
 
-		/** Checks to see if an SoundClip exists
+		/** Checks to see if a SoundClip exists
 		 *
 		 * This function will search the manager for SoundClips
 		 * that match the parameter
@@ -267,7 +267,7 @@ namespace FIFE {
 		 */
 		virtual void remove(SoundClipPtr& resource);
 
-		/** Removes an SoundClip from the manager
+		/** Removes a SoundClip from the manager
 		 *
 		 * This removes all references to the SoundClip from the
 		 * manager. It does not however guarantee that the resource's
@@ -323,7 +323,7 @@ namespace FIFE {
 		 * is a filename)
 		 *
 		 * @param name The name of the SoundClip
-		 * @return An SoundClipPtr to the SoundClip
+		 * @return A SoundClipPtr to the SoundClip
 		 *
 		 */
 		virtual SoundClipPtr get(const std::string& name);

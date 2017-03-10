@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -36,27 +36,37 @@
 
 namespace fcn {
 	ClickLabel::ClickLabel()  {
-		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
-// 		setAlignment(Graphics::LEFT);
-		setTextWrapping(false);
-		setFrameSize(0);
+		mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+		setAlignment(Graphics::Left);
+		setOpaque(true);
+		mTextWrapping = false;
+		setBorderSize(0);
+		mHasMouse = false,
+		mKeyPressed = false,
+		mMousePressed = false;
+
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
-
+		addWidgetListener(this);
 	}
 
 	ClickLabel::ClickLabel(const std::string& caption) {
-		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
-// 		setAlignment(Graphics::LEFT);
-		setTextWrapping(false);
+		mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
 		setCaption(caption);
-		setFrameSize(0);
+		setAlignment(Graphics::Left);
+		setOpaque(true);
+		mTextWrapping = false;
+		setBorderSize(0);
+		mHasMouse = false,
+		mKeyPressed = false,
+		mMousePressed = false;
+
+		adjustSize();
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
-
-		wrapText();
+		addWidgetListener(this);
 	}
 
 	ClickLabel::~ClickLabel() {
@@ -64,7 +74,7 @@ namespace fcn {
 	
 	void ClickLabel::setCaption(const std::string& caption) {
 		mCaption = caption;
-		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+		mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
 		wrapText();
 	}
 
@@ -72,31 +82,20 @@ namespace fcn {
 		return mCaption;
 	}
 
-	void ClickLabel::setWidth(int32_t width) {
-		Widget::setWidth(width);
-		wrapText();
+	void ClickLabel::setAlignment(Graphics::Alignment alignment) {
+		mAlignment = alignment;
 	}
 
-	void ClickLabel::draw(Graphics* graphics) {
+	Graphics::Alignment ClickLabel::getAlignment() const {
+		return mAlignment;
+	}
 
-		if (mGuiFont != static_cast<FIFE::GuiFont*> (getFont())) {
-			mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
-			wrapText();
-			adjustSize();
-		}
+	void ClickLabel::setOpaque(bool opaque) {
+		mOpaque = opaque;
+	}
 
-		int32_t textX = 0;
-		int32_t textY = 0;
-
-		graphics->setColor(getBackgroundColor());
-		graphics->fillRectangle(Rectangle(1, 1, getDimension().width-1, getHeight() - 1));
-		if (mGuiFont) {
-			if( isTextWrapping() ) {
-				mGuiFont->drawMultiLineString(graphics, mWrappedText, textX, textY);
-			} else {
-				mGuiFont->drawMultiLineString(graphics, mCaption, textX, textY);
-			}
-		}
+	bool ClickLabel::isOpaque() const {
+		return mOpaque;
 	}
 
 	void ClickLabel::setTextWrapping(bool textWrapping) {
@@ -111,46 +110,123 @@ namespace fcn {
 		return mTextWrapping;
 	}
 
+	void ClickLabel::wrapText() {
+		if (isTextWrapping() && mGuiFont) {
+			int32_t w = getWidth() - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+			mWrappedText = mGuiFont->splitTextToWidth(mCaption, w);
+		}
+	}
+
+	void ClickLabel::setDimension(const Rectangle& dimension) {
+		int32_t w = getWidth();
+		Widget::setDimension(dimension);
+		if (getWidth() != w && isTextWrapping()) {
+			wrapText();
+		}
+	}
+
+	void ClickLabel::resizeToContent(bool recursiv) {
+		adjustSize();
+	}
+
 	void  ClickLabel::adjustSize() {
 		if (mGuiFont) {
-			FIFE::Image* image;
-			if( isTextWrapping() ) {
-				image = mGuiFont->getAsImageMultiline(mWrappedText);
+			int32_t w = getWidth();
+			int32_t h = 0;
+			if (isTextWrapping()) {
+				if (getParent()) {
+					w = getParent()->getChildrenArea().width;
+				}
+				int32_t textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+				int32_t maxW = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
+				if (textW < 1) {
+					w = maxW;
+					textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+				} else if (w > maxW) {
+					w = std::min(w, maxW);
+					textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+				}
+				mWrappedText = mGuiFont->splitTextToWidth(mCaption, textW);
 			} else {
-				image = mGuiFont->getAsImageMultiline(mCaption);
+				FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
+				w = image->getWidth() + 2 * getBorderSize() + getPaddingLeft() + getPaddingRight();
 			}
-			setWidth( image->getWidth() );
-			setHeight( image->getHeight() );
+			const std::string& text = isTextWrapping() ? mWrappedText : mCaption;
+			FIFE::Image* image = mGuiFont->getAsImageMultiline(text);
+			h = 2 * getBorderSize() + getPaddingTop() + getPaddingBottom() + image->getHeight();
+			setSize(w, h);
 		}
 	}
 
-	void ClickLabel::wrapText() {
-		if( isTextWrapping() && mGuiFont ) {
-			mWrappedText = mGuiFont->splitTextToWidth(mCaption,getWidth());
+	void ClickLabel::draw(Graphics* graphics) {
+		bool active = isFocused();
+		Rectangle offsetRec(getBorderSize(), getBorderSize(), 2 * getBorderSize(), 2 * getBorderSize());
+
+		if (isOpaque()) {
+			Color faceColor = getBackgroundColor();
+			if (active && ((getSelectionMode() & Widget::Selection_Background) == Widget::Selection_Background)) {
+				faceColor = getSelectionColor();
+			}
+			graphics->setColor(faceColor);
+			graphics->fillRectangle(offsetRec.x, offsetRec.y, getWidth() - offsetRec.width, getHeight() - offsetRec.height);
+		}
+
+		if (getBorderSize() > 0) {
+			if (active && (getSelectionMode() & Widget::Selection_Border) == Widget::Selection_Border) {
+				drawSelectionFrame(graphics);
+			} else {
+				drawBorder(graphics);
+			}
+		}
+
+		if (mGuiFont) {
+			graphics->setColor(getForegroundColor());
+			const std::string& text = isTextWrapping() ? mWrappedText : mCaption;
+			FIFE::Image* image = mGuiFont->getAsImageMultiline(text);
+
+			int32_t textX = 0;
+			int32_t textY = offsetRec.y + getPaddingTop() + (getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2;
+
+			switch (getAlignment()) {
+			  case Graphics::Left:
+				  textX = offsetRec.x + getPaddingLeft();
+				  break;
+			  case Graphics::Center:
+				  textX = offsetRec.x + getPaddingLeft() + (getWidth() - offsetRec.width - getPaddingLeft() - getPaddingRight() - image->getWidth()) / 2;
+				  break;
+			  case Graphics::Right:
+				  textX = getWidth() - offsetRec.x - getPaddingRight() - image->getWidth();
+				  break;
+			  default:
+				  throw FCN_EXCEPTION("Unknown alignment.");
+			}
+
+			mGuiFont->drawMultiLineString(graphics, text, textX, textY);
 		}
 	}
 
+	void ClickLabel::fontChanged() {
+		mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+		wrapText();
+		adjustSize();
+	}
 
-	void ClickLabel::mousePressed(MouseEvent& mouseEvent)
-	{
+	void ClickLabel::mousePressed(MouseEvent& mouseEvent) {
 		if (mouseEvent.getButton() == MouseEvent::Left) {
 			mMousePressed = true;
 			mouseEvent.consume();
 		}
 	}
 
-	void ClickLabel::mouseExited(MouseEvent& mouseEvent)
-	{
+	void ClickLabel::mouseExited(MouseEvent& mouseEvent) {
 		mHasMouse = false;
 	}
 
-	void ClickLabel::mouseEntered(MouseEvent& mouseEvent)
-	{
+	void ClickLabel::mouseEntered(MouseEvent& mouseEvent) {
 		mHasMouse = true;
 	}
 
-	void ClickLabel::mouseReleased(MouseEvent& mouseEvent)
-	{
+	void ClickLabel::mouseReleased(MouseEvent& mouseEvent) {
 		if (mouseEvent.getButton() == MouseEvent::Left && mMousePressed && mHasMouse) {
 			mMousePressed = false;
 			distributeActionEvent();
@@ -161,13 +237,11 @@ namespace fcn {
 		}
 	}
 
-	void ClickLabel::mouseDragged(MouseEvent& mouseEvent)
-	{
+	void ClickLabel::mouseDragged(MouseEvent& mouseEvent) {
 		mouseEvent.consume();
 	}
 
-	void ClickLabel::keyPressed(KeyEvent& keyEvent)
-	{
+	void ClickLabel::keyPressed(KeyEvent& keyEvent) {
 		Key key = keyEvent.getKey();
 
 		if (key.getValue() == Key::Enter || key.getValue() == Key::Space) {
@@ -176,8 +250,7 @@ namespace fcn {
 		}
 	}
 
-	void ClickLabel::keyReleased(KeyEvent& keyEvent)
-	{
+	void ClickLabel::keyReleased(KeyEvent& keyEvent) {
 		Key key = keyEvent.getKey();
 
 		if ((key.getValue() == Key::Enter || key.getValue() == Key::Space) && mKeyPressed) {
@@ -187,9 +260,15 @@ namespace fcn {
 		}
 	}
 
-	void ClickLabel::focusLost(const Event& event)
-	{
+	void ClickLabel::focusLost(const Event& event) {
 		mMousePressed = false;
 		mKeyPressed = false;
+		mHasMouse = false;
+	}
+
+	void ClickLabel::ancestorHidden(const Event& event) {
+		mMousePressed = false;
+		mKeyPressed = false;
+		mHasMouse = false;
 	}
 }

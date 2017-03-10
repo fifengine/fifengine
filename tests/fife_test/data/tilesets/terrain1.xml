@@ -1,0 +1,248 @@
+<?fife type="atlas"?>
+<assets>
+	<atlas source="terrain1.png" namespace="http://www.fifengine.de/xml/rio_de_hola" width="640" height="1024">
+		<subimage id="terrain001.png" xpos="64" ypos="0" width="64" height="64"/>
+		<subimage id="terrain002.png" xpos="128" ypos="0" width="64" height="64"/>
+		<subimage id="terrain003.png" xpos="192" ypos="0" width="64" height="64"/>
+		<subimage id="terrain004.png" xpos="256" ypos="0" width="64" height="64"/>
+		<subimage id="terrain005.png" xpos="320" ypos="0" width="64" height="64"/>
+		<subimage id="terrain006.png" xpos="384" ypos="0" width="64" height="64"/>
+		<subimage id="terrain007.png" xpos="448" ypos="0" width="64" height="64"/>
+		<subimage id="terrain008.png" xpos="512" ypos="0" width="64" height="64"/>
+		<subimage id="terrain009.png" xpos="576" ypos="0" width="64" height="64"/>
+
+		<subimage id="terrain010.png" xpos="0" ypos="64" width="64" height="64"/>
+		<subimage id="terrain011.png" xpos="64" ypos="64" width="64" height="64"/>
+		<subimage id="terrain012.png" xpos="128" ypos="64" width="64" height="64"/>
+		<subimage id="terrain013.png" xpos="192" ypos="64" width="64" height="64"/>
+		<subimage id="terrain014.png" xpos="256" ypos="64" width="64" height="64"/>
+		<subimage id="terrain015.png" xpos="320" ypos="64" width="64" height="64"/>
+		<subimage id="terrain016.png" xpos="384" ypos="64" width="64" height="64"/>
+		<subimage id="terrain017.png" xpos="448" ypos="64" width="64" height="64"/>
+		<subimage id="terrain018.png" xpos="512" ypos="64" width="64" height="64"/>
+		<subimage id="terrain019.png" xpos="576" ypos="64" width="64" height="64"/>
+
+		<subimage id="terrain020.png" xpos="0" ypos="128" width="64" height="64"/>
+		<subimage id="terrain021.png" xpos="64" ypos="128" width="64" height="64"/>
+		<subimage id="terrain022.png" xpos="128" ypos="128" width="64" height="64"/>
+		<subimage id="terrain023.png" xpos="192" ypos="128" width="64" height="64"/>
+		<subimage id="terrain024.png" xpos="256" ypos="128" width="64" height="64"/>
+		<subimage id="terrain025.png" xpos="320" ypos="128" width="64" height="64"/>
+		<subimage id="terrain026.png" xpos="384" ypos="128" width="64" height="64"/>
+		<subimage id="terrain027.png" xpos="448" ypos="128" width="64" height="64"/>
+		<subimage id="terrain028.png" xpos="512" ypos="128" width="64" height="64"/>
+		<subimage id="terrain029.png" xpos="576" ypos="128" width="64" height="64"/>
+
+		<subimage id="terrain030.png" xpos="0" ypos="192" width="64" height="64"/>
+		<subimage id="terrain031.png" xpos="64" ypos="192" width="64" height="64"/>
+		<subimage id="terrain032.png" xpos="128" ypos="192" width="64" height="64"/>
+		<subimage id="terrain033.png" xpos="192" ypos="192" width="64" height="64"/>
+		<subimage id="terrain034.png" xpos="256" ypos="192" width="64" height="64"/>
+		<subimage id="terrain035.png" xpos="320" ypos="192" width="64" height="64"/>
+		<subimage id="terrain036.png" xpos="384" ypos="192" width="64" height="64"/>
+		<subimage id="terrain037.png" xpos="448" ypos="192" width="64" height="64"/>
+		<subimage id="terrain038.png" xpos="512" ypos="192" width="64" height="64"/>
+		<subimage id="terrain039.png" xpos="576" ypos="192" width="64" height="64"/>
+
+		<subimage id="terrain040.png" xpos="0" ypos="256" width="64" height="64"/>
+		<subimage id="terrain041.png" xpos="64" ypos="256" width="64" height="64"/>
+		<subimage id="terrain042.png" xpos="128" ypos="256" width="64" height="64"/>
+		<subimage id="terrain043.png" xpos="192" ypos="256" width="64" height="64"/>
+		<subimage id="terrain044.png" xpos="256" ypos="256" width="64" height="64"/>
+		<subimage id="terrain045.png" xpos="320" ypos="256" width="64" height="64"/>
+		<subimage id="terrain046.png" xpos="384" ypos="256" width="64" height="64"/>
+		<subimage id="terrain047.png" xpos="448" ypos="256" width="64" height="64"/>
+		<subimage id="terrain048.png" xpos="512" ypos="256" width="64" height="64"/>
+		<subimage id="terrain049.png" xpos="576" ypos="256" width="64" height="64"/>
+
+		<subimage id="terrain050.png" xpos="0" ypos="320" width="64" height="64"/>
+		<subimage id="terrain051.png" xpos="64" ypos="320" width="64" height="64"/>
+		<subimage id="terrain052.png" xpos="128" ypos="320" width="64" height="64"/>
+		<subimage id="terrain053.png" xpos="192" ypos="320" width="64" height="64"/>
+		<subimage id="terrain054.png" xpos="256" ypos="320" width="64" height="64"/>
+		<subimage id="terrain055.png" xpos="320" ypos="320" width="64" height="64"/>
+		<subimage id="terrain056.png" xpos="384" ypos="320" width="64" height="64"/>
+		<subimage id="terrain057.png" xpos="448" ypos="320" width="64" height="64"/>
+		<subimage id="terrain058.png" xpos="512" ypos="320" width="64" height="64"/>
+		<subimage id="terrain059.png" xpos="576" ypos="320" width="64" height="64"/>
+
+		<subimage id="terrain060.png" xpos="0" ypos="384" width="64" height="64"/>
+		<subimage id="terrain061.png" xpos="64" ypos="384" width="64" height="64"/>
+		<subimage id="terrain062.png" xpos="128" ypos="384" width="64" height="64"/>
+		<subimage id="terrain063.png" xpos="192" ypos="384" width="64" height="64"/>
+		<subimage id="terrain064.png" xpos="256" ypos="384" width="64" height="64"/>
+		<subimage id="terrain065.png" xpos="320" ypos="384" width="64" height="64"/>
+		<subimage id="terrain066.png" xpos="384" ypos="384" width="64" height="64"/>
+		<subimage id="terrain067.png" xpos="448" ypos="384" width="64" height="64"/>
+		<subimage id="terrain068.png" xpos="512" ypos="384" width="64" height="64"/>
+		<subimage id="terrain069.png" xpos="576" ypos="384" width="64" height="64"/>
+
+		<subimage id="terrain070.png" xpos="0" ypos="448" width="64" height="64"/>
+		<subimage id="terrain071.png" xpos="64" ypos="448" width="64" height="64"/>
+		<subimage id="terrain072.png" xpos="128" ypos="448" width="64" height="64"/>
+		<subimage id="terrain073.png" xpos="192" ypos="448" width="64" height="64"/>
+		<subimage id="terrain074.png" xpos="256" ypos="448" width="64" height="64"/>
+		<subimage id="terrain075.png" xpos="320" ypos="448" width="64" height="64"/>
+		<subimage id="terrain076.png" xpos="384" ypos="448" width="64" height="64"/>
+		<subimage id="terrain077.png" xpos="448" ypos="448" width="64" height="64"/>
+		<subimage id="terrain078.png" xpos="512" ypos="448" width="64" height="64"/>
+		<subimage id="terrain079.png" xpos="576" ypos="448" width="64" height="64"/>
+	</atlas>
+
+	<!-- 
+		dirt blocks
+-->
+
+	<object id="dirt:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain001.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:02" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain002.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:03" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain003.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:04" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain004.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:05" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain005.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:06" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain006.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:07" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain007.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:08" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain008.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:09" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain009.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:10" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain010.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:11" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain011.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:12" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain012.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:13" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain013.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:14" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain014.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:15" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain015.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:16" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain016.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:17" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain017.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:18" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain018.png" direction="0" y_offset="16" />
+	</object>
+	<object id="dirt:19" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain019.png" direction="0" y_offset="16" />
+	</object>
+
+	<!-- 
+		stone blocks
+-->
+
+	<object id="stone:00" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain050.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain051.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:02" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain052.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:03" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain053.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:04" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain054.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:05" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain055.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:06" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain056.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:07" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain057.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:08" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain058.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:09" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain059.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:10" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain060.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:11" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain061.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:12" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain062.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:13" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain063.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:14" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain064.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:15" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain065.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:16" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain066.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:17" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain067.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:18" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain068.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:19" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain069.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:20" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain070.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:21" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain071.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:22" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain072.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:23" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain073.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:24" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain074.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:25" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain075.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:26" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain076.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:27" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain077.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:28" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain078.png" direction="0" y_offset="16" />
+	</object>
+	<object id="stone:29" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="1">
+		<image source="terrain079.png" direction="0" y_offset="16" />
+	</object>
+</assets>

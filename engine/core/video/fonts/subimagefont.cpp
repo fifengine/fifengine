@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -63,7 +63,7 @@ namespace FIFE {
 
 		// Make sure we get 32bit RGB
 		// and copy the Pixelbuffers surface
-		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,
+		SDL_Surface *tmp = SDL_CreateRGBSurface(0,
 			surface->w,surface->h,32,
 			RMASK, GMASK, BMASK ,NULLMASK);
 
@@ -93,8 +93,8 @@ namespace FIFE {
 		}
 
 		// Disable alpha blending, so that we use color keying
-		SDL_SetAlpha(surface,0,255);
-		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
+		//SDL_SetAlpha(surface,0,255);
+		//SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		FL_DBG(_log, LMsg("image_font")
 			<< " glyph separator is "
@@ -117,7 +117,7 @@ namespace FIFE {
 			src.x = x;
 			src.w = w;
 
-			tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			tmp = SDL_CreateRGBSurface(0,
 					w,surface->h,32,
 					RMASK, GMASK, BMASK ,NULLMASK);
 
@@ -125,9 +125,10 @@ namespace FIFE {
 			SDL_BlitSurface(surface,&src,tmp,0);
 
 			// Disable alpha blending, so that we use colorkeying
-			SDL_SetAlpha(tmp,0,255);
-			SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
-
+			//SDL_SetAlpha(tmp,0,255);
+			//SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
+			SDL_SetSurfaceBlendMode(tmp, SDL_BLENDMODE_NONE);
+			SDL_SetColorKey(tmp, SDL_TRUE, colorkey);
 
 			uint32_t codepoint = utf8::next(text_it, glyphs.end());
 			m_glyphs[ codepoint ].surface = tmp;
@@ -136,14 +137,14 @@ namespace FIFE {
 		}
 
 		// Set placeholder glyph
-		// This should actually work ith utf8.
+		// This should actually work with utf8.
 		if( m_glyphs.find('?') != m_glyphs.end() ) {
 			m_placeholder = m_glyphs['?'];
 		} else {
 			m_placeholder.surface = 0;
 		}
 
-		mHeight = surface->h;
+		m_height = surface->h;
 		SDL_FreeSurface(surface);
 	}
 

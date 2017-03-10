@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <map>
+#include <algorithm>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -171,9 +172,13 @@ namespace FIFE {
 		*/
 		Point getCellImageDimensions(Layer* layer);
 
-		/** Gets reference scale for cell image dimensions
+		/** Gets x reference scale for cell image dimensions
 		 */
-		double getReferenceScale() const { return m_reference_scale; }
+		double getReferenceScaleX() const { return m_referenceScaleX; }
+
+		/** Gets y reference scale for cell image dimensions
+		 */
+		double getReferenceScaleY() const { return m_referenceScaleY; }
 
 		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
 		 * @return Point3D Point3D containing x, y, z
@@ -251,11 +256,18 @@ namespace FIFE {
 		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
 
 		/** Transforms given point from map coordinates to virtual screen coordinates
-		 *  @return point in screen coordinates
+		 *  @return point in virtual screen coordinates
 		 */
 		DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& map_coords);
 
+		/** Transforms given point from virtual screen coordinates to screen coordinates
+		 *  @return point in screen coordinates
+		 */
 		ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
+
+		/** Transforms given point from screen coordinates to virtual screen coordinates
+		 *  @return point in virtual screen coordinates
+		 */
 		DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
 
 		/** Sets camera enabled / disabled
@@ -336,7 +348,7 @@ namespace FIFE {
 
 		/** calculates z-value for given screenpoint
 		 */
-		void calculateZValue(ScreenPoint& screen_coords);
+		void calculateZValue(DoublePoint3D& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 
@@ -460,7 +472,8 @@ namespace FIFE {
 		bool m_mapViewPortUpdated;
 		uint32_t m_screen_cell_width;
 		uint32_t m_screen_cell_height;
-		double m_reference_scale;
+		double m_referenceScaleX;
+		double m_referenceScaleY;
 		bool m_enabled;
 		Instance* m_attachedto;
 		// caches calculated image dimensions for already queried & calculated layers
@@ -477,7 +490,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
-		t_layer_to_instances m_layer_to_instances;
+		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
 		MapObserver* m_map_observer;

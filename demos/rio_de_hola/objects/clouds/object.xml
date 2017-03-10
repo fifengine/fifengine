@@ -1,8 +1,0 @@
-<?fife type="object"?>
-<object blocking="0" id="clouds" namespace="clouds" static="0">
-	<action id="disappear">
-		<animation atlas="disappear.png" height="64" width="128">
-			<direction delay="200" dir="0" frames="6"/>
-		</animation>
-	</action>
-</object>

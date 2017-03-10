@@ -2,7 +2,7 @@
 <map id="level1" format="1.0">
     <import file="../tilesets/grassland_tiles.xml" />
     <import file="../objects/actors/player/skel/object.xml" />
-    <layer id="ground_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals">
+    <layer id="ground_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals" layer_type="interact" layer_type_id="item_layer">
         <instances>
             <i ns="grassland_tileset" o="grass1" x="1.000000" y="8.000000" z="0.000000" r="0" stackpos="0" />
             <i o="grass1" x="1.000000" y="7.000000" z="0.000000" r="0" stackpos="0" />
@@ -245,7 +245,7 @@
             <i o="grass1" x="-4.000000" y="-3.000000" z="0.000000" r="0" stackpos="0" />
         </instances>
     </layer>
-    <layer id="item_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals">
+    <layer id="item_layer" x_offset="0.000000" y_offset="0.000000" z_offset="0.000000" x_scale="1.000000" y_scale="1.000000" rotation="0.000000" grid_type="square" transparency="0" pathing="cell_edges_and_diagonals" layer_type="walkable">
         <instances>
             <i ns="grassland_tileset" o="tent1" x="-8.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
             <i o="tent2" x="-7.000000" y="0.000000" z="0.000000" r="0" stackpos="0" />
@@ -271,5 +271,5 @@
             <i ns="tutorial1objects" id="player" o="skel" x="0.000000" y="1.000000" z="0.000000" r="0" blocking="1" stackpos="1" />
         </instances>
     </layer>
-    <camera id="camera1" ref_layer_id="ground_layer" zoom="1.100000" tilt="-60.000000" rotation="45.000000" viewport="0,0,1024,768" ref_cell_width="64" ref_cell_height="64" />
+    <camera id="camera1" ref_layer_id="ground_layer" zoom="1.125" tilt="-60.000000" rotation="45.000000" viewport="0,0,1024,768" ref_cell_width="64" ref_cell_height="32" />
 </map>

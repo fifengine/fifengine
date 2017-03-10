@@ -1,0 +1,13 @@
+<?fife type="object"?>
+<assets>
+	<object id="toilett" namespace="grassland_tileset" blocking="1" static="1">
+		<image source="toilett.png" direction="0" />
+		<image source="toilett.png" direction="45" />
+		<image source="toilett.png" direction="90" />
+		<image source="toilett.png" direction="135" />
+		<image source="toilett.png" direction="180" />
+		<image source="toilett.png" direction="225" />
+		<image source="toilett.png" direction="270" />
+		<image source="toilett.png" direction="315" />
+	</object>
+</assets>

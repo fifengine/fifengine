@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -79,7 +79,7 @@ namespace FIFE {
 		void setFont(IFont* font) { m_font = font; }
 
 		/** Changes default font color
-		 * Only usefull for .ttf fonts
+		 * Only useful for .ttf fonts
 		 */
 		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,8 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from fife.extensions.pychan.attrs import UnicodeAttr
+
+from common import gui2text, text2gui
 from widget import Widget
-from common import *
+
 
 class BasicTextWidget(Widget):
 	"""
@@ -41,20 +44,26 @@ class BasicTextWidget(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ UnicodeAttr('text') ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 0
-	DEFAULT_MARGINS = 5,5
+
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = False
+	DEFAULT_MARGINS = 0,0
+	DEFAULT_PADDING = 0
+	
 	DEFAULT_TEXT = u""
 	
 	def __init__(self, 
-				 parent = None, 
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -62,31 +71,38 @@ class BasicTextWidget(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
-				 margins = None,
 				 text = None):
 				 
-		self.margins = self.DEFAULT_MARGINS
 		self.text = self.DEFAULT_TEXT
-		super(BasicTextWidget,self).__init__(parent=parent, 
-											 name=name, 
-											 size=size, 
-											 min_size=min_size, 
+		super(BasicTextWidget,self).__init__(parent=parent,
+											 name=name,
+											 size=size,
+											 min_size=min_size,
 											 max_size=max_size,
-											 helptext=helptext, 
+											 fixed_size=fixed_size,
+											 margins=margins,
+											 padding=padding,
+											 helptext=helptext,
 											 position=position,
-											 style=style, 
-											 hexpand=hexpand, 
+											 style=style,
+											 hexpand=hexpand,
 											 vexpand=vexpand,
 											 font=font,
 											 base_color=base_color,
 											 background_color=background_color,
 											 foreground_color=foreground_color,
 											 selection_color=selection_color,
+											 border_color=border_color,
+											 outline_color=outline_color,
 											 border_size=border_size,
+											 outline_size=outline_size,
 											 position_technique=position_technique,
 											 is_focusable=is_focusable,
 											 comment=comment)
@@ -103,7 +119,3 @@ class BasicTextWidget(Widget):
 	def _setText(self,text): self.real_widget.setCaption(text2gui(text))
 
 	text = property(_getText,_setText)
-
-	def resizeToContent(self, recurse = True):
-		self.height = self.real_font.getHeight() + self.margins[1]*2
-		self.width = self.real_font.getWidth(text2gui(self.text)) + self.margins[0]*2

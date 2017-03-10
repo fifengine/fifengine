@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,9 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
-from widget import Widget
+from fife import fifechan
+
+from common import text2gui
 from listbox import GenericListmodel
+from widget import Widget
 
 class DropDown(Widget):
 	"""
@@ -47,14 +49,17 @@ class DropDown(Widget):
 	DEFAULT_ITEMS = []
 	
 	def __init__(self, 
-				 parent = None, 
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -62,7 +67,10 @@ class DropDown(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
@@ -92,6 +100,9 @@ class DropDown(Widget):
 									  size=size, 
 									  min_size=min_size, 
 									  max_size=max_size,
+									  fixed_size=fixed_size,
+									  margins=margins,
+									  padding=padding,
 									  helptext=helptext, 
 									  position=position,
 									  style=style, 
@@ -102,7 +113,10 @@ class DropDown(Widget):
 									  background_color=background_color,
 									  foreground_color=foreground_color,
 									  selection_color=selection_color,
+									  border_color=border_color,
+									  outline_color=outline_color,
 									  border_size=border_size,
+									  outline_size=outline_size,
 									  position_technique=position_technique,
 									  is_focusable=is_focusable,
 									  comment=comment)
@@ -125,11 +139,14 @@ class DropDown(Widget):
 		dropdownClone = DropDown(None,
 						self._createNameWithPrefix(prefix),
 						self.size,
-						self.min_size, 
-						self.max_size, 
-						self.helptext, 
-						self.position, 
-						self.style, 
+						self.min_size,
+						self.max_size,
+						self.fixed_size,
+						self.margins,
+						self.padding,
+						self.helptext,
+						self.position,
+						self.style,
 						self.hexpand,
 						self.vexpand,
 						self.font,
@@ -137,7 +154,10 @@ class DropDown(Widget):
 						self.background_color,
 						self.foreground_color,
 						self.selection_color,
+						self.border_color,
+						self.outline_color,
 						self.border_size,
+						self.outline_size,
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
@@ -146,23 +166,14 @@ class DropDown(Widget):
 		
 		return dropdownClone
 
-	def resizeToContent(self,recurse=True):
-		# We append a minimum value, so max() does not bail out,
-		# if no items are in the list
-		_item_widths = map(self.real_font.getWidth, map(text2gui, map(unicode, self._items))) + [self.real_font.getHeight()]
-		max_w = max(_item_widths)
-		self.width = max_w
-		self.height = (self.real_font.getHeight() + 2)
-
-	def _getItems(self): return self._items
+	def _getItems(self): return self._items #self.real_widget.getListModel() works too
 	def _setItems(self,items):
-		# Note we cannot use real_widget.setListModel
-		# for some reason ???
-
-		# Also self assignment can kill you
+		# Also self assignment can kill you but
+		# without the GenericListmodel is freed instantly ;-)
 		if id(items) != id(self._items):
 			self._items.clear()
 			self._items.extend(items)
+			self.real_widget.setListModel(self._items)
 	items = property(_getItems,_setItems)
 
 	def _getSelected(self): return self.real_widget.getSelected()

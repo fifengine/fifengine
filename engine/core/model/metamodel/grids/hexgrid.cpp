@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -44,8 +44,9 @@ namespace FIFE {
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 	static const double HEX_EDGE_GRADIENT = 1 / Mathd::Sqrt(3);
 
-	HexGrid::HexGrid():
-		CellGrid() {
+	HexGrid::HexGrid(bool axial):
+		CellGrid(),
+		m_axial(axial) {
 		FL_DBG(_log, "Constructing new HexGrid");
 		FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);
 		FL_DBG(_log, LMsg("HEX_TO_EDGE ") << HEX_TO_EDGE);
@@ -55,7 +56,7 @@ namespace FIFE {
 	}
 
 	CellGrid* HexGrid::clone() {
-		HexGrid* nGrid = new HexGrid();
+		HexGrid* nGrid = new HexGrid(m_axial);
 		nGrid->setRotation(m_rotation);
 		nGrid->setXScale(m_xscale);
 		nGrid->setYScale(m_yscale);
@@ -75,11 +76,16 @@ namespace FIFE {
 		int32_t y = target.y-curpos.y;
 
 		if (ABS(x) <= 1 && ABS(y) <= 1) {
-			if (y == 0) {
-				return true;
-			} else if (curpos.y & 1) {
-				if (x >= 0) return true;
-			} else if (x <= 0) return true;
+			if (m_axial) {
+				if (y == 0 || x == 0 || x == -y)
+					return true;
+			} else {
+				if (y == 0) {
+					return true;
+				} else if (curpos.y & 1) {
+					if (x >= 0) return true;
+				} else if (x <= 0) return true;
+			}
         }
 		return false;
 	}
@@ -96,25 +102,39 @@ namespace FIFE {
 	}
 
 	const std::string& HexGrid::getType() const {
-		static std::string type("hexagonal");
-		return type;
+		if (m_axial) {
+			static std::string type("hexagonal_axial");
+			return type;
+		} else {
+			static std::string type("hexagonal");
+			return type;
+		}
 	}
 
 	const std::string& HexGrid::getName() const {
-		static std::string hexGrid("Hex Grid");
-		return hexGrid;
+		if (m_axial) {
+			static std::string hexGrid("Hex Grid (Axial)");
+			return hexGrid;
+		} else {
+			static std::string hexGrid("Hex Grid");
+			return hexGrid;
+		}
 	}
 
 	double HexGrid::getXZigzagOffset(double y) {
-		// each uneven row has shifted coordinate of 0.5 horizontally
-		// shift has to be gradual on vertical axis
-		double ay = ABS(y);
-		int32_t i_layer_y = static_cast<int32_t>(ay);
-		double offset = ay - static_cast<double>(i_layer_y);
-		if ((i_layer_y % 2) == 1) {
-			offset = 1 - offset;
+		if (m_axial) {
+			return HEX_TO_EDGE * y;
+		} else {
+			// each uneven row has shifted coordinate of 0.5 horizontally
+			// shift has to be gradual on vertical axis
+			double ay = ABS(y);
+			int32_t i_layer_y = static_cast<int32_t>(ay);
+			double offset = ay - static_cast<double>(i_layer_y);
+			if ((i_layer_y % 2) == 1) {
+				offset = 1 - offset;
+			}
+			return HEX_TO_EDGE * offset;
 		}
-		return HEX_TO_EDGE * offset;
 	}
 
 	ExactModelCoordinate HexGrid::toMapCoordinates(const ExactModelCoordinate& layer_coords) {
@@ -138,6 +158,19 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
+		return toLayerCoordinatesHelper(elc);
+	}
+
+	ModelCoordinate HexGrid::toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) {
+		ExactModelCoordinate elc = exact_layer_coords;
+		elc.x += getXZigzagOffset(elc.y);
+		return toLayerCoordinatesHelper(elc);
+	}
+
+	ModelCoordinate HexGrid::toLayerCoordinatesHelper(const ExactModelCoordinate& coords) {
+		// this helper method takes exact layer coordinates with zigzag removed
+		// and converts them to layer coordinates
+		ExactModelCoordinate elc = coords;
 
 		// approximate conversion using squares instead of hexes
 		if( static_cast<int32_t>(round(elc.y)) & 1 )
@@ -177,6 +210,13 @@ namespace FIFE {
 			y += ddy;
 		}
 
+		if (m_axial) {
+			if (y >= 0)
+				x -= y / 2;
+			else
+				x -= (y - 1) / 2;
+		}
+
 		return ModelCoordinate(x,y,z);
 	}
 
@@ -185,10 +225,15 @@ namespace FIFE {
 		vtx.clear();
 		double x = static_cast<double>(cell.x);
 		double y = static_cast<double>(cell.y);
-		double horiz_shift = 0;
-		if (cell.y % 2 != 0) {
-			horiz_shift = HEX_TO_EDGE;
-			FL_DBG(_log, "on uneven row");
+		double horiz_shift;
+		if (m_axial) {
+			horiz_shift = HEX_TO_EDGE * cell.y;
+		} else {
+			horiz_shift = 0;
+			if (cell.y % 2 != 0) {
+				horiz_shift = HEX_TO_EDGE;
+				FL_DBG(_log, "on uneven row");
+			}
 		}
 		double tx, ty;
 
@@ -251,6 +296,143 @@ namespace FIFE {
 					mc.y += (*it).y;
 				}
 				coords.push_back(mc);
+			}
+		}
+		return coords;
+	}
+
+	std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) {
+		std::vector<ModelCoordinate> coords;
+		int32_t doubleDeltaX = 2*(end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
+		int32_t deltaX = (end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
+		int32_t deltaY = end.y - start.y;
+
+		//int8_t signX = (deltaX >= 0) ? 1 : -1;
+		//int8_t signY = (deltaY >= 0) ? 1 : -1;
+		int8_t signX = (start.x < end.x) ? 1 : -1;
+		int8_t signY = (start.y < end.y) ? 1 : -1;
+		ModelCoordinate current(start);
+		coords.push_back(current);
+		int32_t err = 0;
+		if (ABS(deltaY) < ABS(doubleDeltaX)) {
+			int32_t errX = 3 * ABS(doubleDeltaX);
+			int32_t errY = 3 * ABS(deltaY);
+			while (current.x != end.x || current.y != end.y) {
+				err += errY;
+				if (err > ABS(doubleDeltaX)) {
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					err -= errX;
+				} else {
+					if (signX == -1) {
+						// left
+						current.x -= 1;
+					} else {
+						// right
+						current.x += 1;
+					}
+					err += errY;
+				}
+				coords.push_back(current);
+			}
+		} else {
+			int32_t errX = ABS(doubleDeltaX);
+			int32_t errY = ABS(deltaY);
+			while (current.x != end.x || current.y != end.y) {
+				err += errX;
+				if (err > 0) {
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else if (signX == 1) {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					err -= errY;
+				} else {
+					signX = -signX;
+					if (signX == -1) {
+						if (signY == -1) {
+							// down left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y -= 1;
+						} else {
+							// up left
+							if (current.y % 2 == 0 && current.x != end.x) {
+								current.x -= 1;
+							}
+							current.y += 1;
+						}
+					} else if (signX == 1) {
+						if (signY == -1) {
+							// down right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y -= 1;
+						} else {
+							// up right
+							if (current.y % 2 != 0 && current.x != end.x) {
+								current.x += 1;
+							}
+							current.y += 1;
+						}
+					}
+					signX = -signX;
+					err += errY;
+				}
+				coords.push_back(current);
 			}
 		}
 		return coords;

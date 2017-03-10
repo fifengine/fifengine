@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -280,32 +280,42 @@ namespace FIFE {
 		Location currentNode = route->getCurrentNode();
 		bool multiCell = route->isMultiCell();
 		if (!locationsEqual(current, currentNode)) {
-			route->setRotation(getAngleBetween(current, currentNode));
 			// special blocker check for multicell
 			if (multiCell) {
+				int32_t oldRotation = route->getRotation();
+				// old coordinates
+				std::vector<ModelCoordinate> oldCoords = current.getLayer()->getCellGrid()->
+					toMultiCoordinates(current.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
+				oldCoords.push_back(current.getLayerCoordinates());
+				route->setRotation(getAngleBetween(current, currentNode));
+				// new coordinates
 				std::vector<ModelCoordinate> newCoords = currentNode.getLayer()->getCellGrid()->
 					toMultiCoordinates(currentNode.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
 				newCoords.push_back(currentNode.getLayerCoordinates());
-				const std::set<Object*>& parts = route->getObject()->getMultiParts();
+
 				std::vector<ModelCoordinate>::const_iterator nco_it = newCoords.begin();
 				for (; nco_it != newCoords.end(); ++nco_it) {
 					if (currentNode.getLayer()->cellContainsBlockingInstance(*nco_it)) {
-						std::vector<Instance*> blocker = currentNode.getLayer()->getBlockingInstances(*nco_it);
-						std::vector<Instance*>::iterator block_it = blocker.begin();
-						for (; block_it != blocker.end(); ++block_it) {
-							std::set<Object*>::const_iterator obj_it = std::find(parts.begin(), parts.end(), (*block_it)->getObject());
-							if (obj_it != parts.end() || route->getObject() == (*block_it)->getObject()) {
-								continue;
+						bool found = false;
+						std::vector<ModelCoordinate>::const_iterator oco_it = oldCoords.begin();
+						for (; oco_it != oldCoords.end(); ++oco_it) {
+							if (*oco_it == *nco_it) {
+								found = true;
+								break;
 							}
+						}
+						// if we have a blocker that is not part of the object
+						if (!found) {
 							nextBlocker = true;
-							break;
 						}
-						if (nextBlocker) {
-							break;
-						}
+					}
+					if (nextBlocker) {
+						route->setRotation(oldRotation);
+						break;
 					}
 				}
 			} else {
+				route->setRotation(getAngleBetween(current, currentNode));
 				if (currentNode.getLayer()->cellContainsBlockingInstance(currentNode.getLayerCoordinates())) {
 					nextBlocker = true;
 				}

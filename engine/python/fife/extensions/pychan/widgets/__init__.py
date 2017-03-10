@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -31,13 +31,17 @@ Please look at the documentation of L{Widget} for details.
 
 from widget import Widget
 
-from layout import Spacer
-from containers import Container, VBox, HBox, Window
+from spacer import Spacer
+from adjustingcontainer import AdjustingContainer
+from containers import Container, ABox, VBox, HBox, CBox, Window
+from flowcontainer import FlowContainer
 from label import Label
 from icon import Icon
+from animationicon import AnimationIcon
 from buttons import Button, ToggleButton, ImageButton
 from checkbox import CheckBox
 from radiobutton import RadioButton
+from tabbedarea import TabbedArea, Tab
 from textfield import TextField
 from textbox import TextBox
 from listbox import ListBox
@@ -47,6 +51,16 @@ from slider import Slider
 from percentagebar import PercentageBar
 from passwordfield import PasswordField
 from iconprogressbar import IconProgressBar
+from imageprogressbar import ImageProgressBar
+from resizablewindow import ResizableWindow
+from dockarea import DockArea
+from panel import Panel
+from bargraph import BarGraph
+from curvegraph import CurveGraph
+from linegraph import LineGraph
+from piegraph import PieGraph
+from pointgraph import PointGraph
+
 
 # Global Widget Class registry
 
@@ -54,15 +68,32 @@ WIDGETS = {
 	# Containers
 	"Container" : Container,
 	"Window" : Window,
+	"ABox" : ABox,
 	"VBox" : VBox,
 	"HBox" : HBox,
+	"CBox" : CBox,
 	"ScrollArea" :ScrollArea,
+	"AdjustingContainer" : AdjustingContainer,
+	"FlowContainer" : FlowContainer,
+	"TabbedArea" : TabbedArea,
+	"Tab" : Tab,
+	"ResizableWindow" : ResizableWindow,
+	"DockArea" : DockArea,
+	"Panel" : Panel,
 
 	# Simple Widgets
+	"Spacer" : Spacer,
 	"Icon" : Icon,
+	"AnimationIcon" : AnimationIcon,
 	"Label" : Label,
 	"PercentageBar" : PercentageBar,
 	"IconProgressBar" : IconProgressBar,
+	"ImageProgressBar" : ImageProgressBar,
+	"BarGraph" : BarGraph,
+	"CurveGraph" : CurveGraph,
+	"LineGraph" : LineGraph,
+	"PieGraph" : PieGraph,
+	"PointGraph" : PointGraph,
 
 	# Button Widgets
 	"Button" : Button,

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -33,8 +33,8 @@
 
 // Win32
 #if defined( WIN32 )
-#include <AL/al.h>
-#include <AL/alc.h>
+#include <OpenALSoft/al.h>
+#include <OpenALSoft/alc.h>
 #endif
 
 // Macintosh

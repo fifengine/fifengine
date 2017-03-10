@@ -7,8 +7,7 @@
 		<Setting name="ScreenResolution" type="str">1024x768</Setting>
 		<Setting name="BitsPerPixel" type="int"> 0 </Setting>
 		<Setting name="InitialVolume" type="float"> 5.0 </Setting>
-		<Setting name="SDLRemoveFakeAlpha" type="int"> 1 </Setting>
-		<Setting name="GLCompressImages" type="int"> 1 </Setting>
+		<Setting name="SDLRemoveFakeAlpha" type="bool"> True </Setting>
 		<Setting name="WindowTitle" type="str"> FIFE - Test </Setting>
 		<Setting name="WindowIcon" type="str"> </Setting>
 		<Setting name="Font" type="str"> data/fonts/FreeSans.ttf </Setting>
@@ -16,17 +15,29 @@
 		<Setting name="DefaultFontSize" type="int"> 16 </Setting>
 		<Setting name="LogModules" type="list"> controller ; script </Setting>
 		<Setting name="PychanDebug" type="bool"> False </Setting>
-		<Setting name="LogToPrompt" type="int"> 1 </Setting>
- 		<Setting name="UsePsyco" type="bool"> False </Setting>
+		<Setting name="LogToPrompt" type="bool"> True </Setting>
 		<Setting name="ProfilingOn" type="bool"> False </Setting>
-		<Setting name="LogToFile" type="int"> 0 </Setting>
+		<Setting name="LogToFile" type="bool"> True </Setting>
 		<Setting name="Lighting" type="int"> 0 </Setting>
+		<Setting name="GLCompressImages" type="bool"> False </Setting>
+		<Setting name="GLUseFramebuffer" type="bool"> True </Setting>
+		<Setting name="GLUseNPOT" type="bool"> True </Setting>
+		<Setting name="GLUseMonochrome" type="bool"> False </Setting>
+		<Setting name="GLUseMipmapping" type="bool"> False </Setting>
+		<Setting name="GLTextureFiltering" type="str"> None </Setting>
+		<Setting name="GLUseDepthBuffer" type="bool"> False </Setting>
+		<Setting name="GLAlphaTestValue" type="float">0.3</Setting>
 	</Module>
 	<Module name="Tests">
 		<Setting name="PychanTest" type="bool">True</Setting>
 		<Setting name="MapLoadTest" type="bool">True</Setting>
 		<Setting name="SelectionTest" type="bool">True</Setting>
 		<Setting name="PychanWidgetEventsTest" type="bool">True</Setting>
-    <Setting name="PathfinderTest" type="bool">True</Setting>
+		<Setting name="PathfinderTest" type="bool">True</Setting>
+		<Setting name="MultiPathfinderTest" type="bool">True</Setting>
+		<Setting name="OverlayTest" type="bool">True</Setting>		
+		<Setting name="BenchmarkTest" type="bool">True</Setting>
+		<Setting name="HeightTest" type="bool">True</Setting>
+		<Setting name="TriggerTest" type="bool">True</Setting>
 	</Module>
 </Settings>

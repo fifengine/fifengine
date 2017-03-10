@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -110,6 +110,11 @@ namespace FIFE {
 		 */
 		virtual ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord) = 0;
 
+		/** Transforms given point from exact layer coordinates to cell precision layer coordinates
+		 *  @return point in layer coordinates
+		 */
+		virtual ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords) = 0;
+
 		/** Fills given point vector with vertices from selected cell
 		 *  @param vtx vertices for given cell
 		 *  @param cell cell to get vertices from
@@ -123,6 +128,13 @@ namespace FIFE {
 		 */
 		virtual std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position,
 			const std::vector<ModelCoordinate>& orig, bool reverse = false) = 0;
+
+		/** Returns point vector with coordinates for a line from start to end.
+		 * @param start The start position
+		 * @param end The end position
+		 * @return vector with points
+		 */
+		virtual std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end) = 0;
 
 		/** Set the cellgrid x shift
 		 *  @param xshift The shift in map coords

@@ -1,0 +1,44 @@
+<?fife type="atlas"?>
+<assets>
+	<atlas source="skel_stand_overlay.png" width="512" height="1024">
+		<subimage id="overlay_stand_180_0.png" xpos="0" ypos="0" width="128" height="128"/>
+		<subimage id="overlay_stand_180_1.png" xpos="128" ypos="0" width="128" height="128"/>
+		<subimage id="overlay_stand_180_2.png" xpos="256" ypos="0" width="128" height="128"/>
+		<subimage id="overlay_stand_180_3.png" xpos="384" ypos="0" width="128" height="128"/>
+
+		<subimage id="overlay_stand_135_0.png" xpos="0" ypos="128" width="128" height="128"/>
+		<subimage id="overlay_stand_135_1.png" xpos="128" ypos="128" width="128" height="128"/>
+		<subimage id="overlay_stand_135_2.png" xpos="256" ypos="128" width="128" height="128"/>
+		<subimage id="overlay_stand_135_3.png" xpos="384" ypos="128" width="128" height="128"/>
+
+		<subimage id="overlay_stand_90_0.png" xpos="0" ypos="256" width="128" height="128"/>
+		<subimage id="overlay_stand_90_1.png" xpos="128" ypos="256" width="128" height="128"/>
+		<subimage id="overlay_stand_90_2.png" xpos="256" ypos="256" width="128" height="128"/>
+		<subimage id="overlay_stand_90_3.png" xpos="384" ypos="256" width="128" height="128"/>
+
+		<subimage id="overlay_stand_45_0.png" xpos="0" ypos="384" width="128" height="128"/>
+		<subimage id="overlay_stand_45_1.png" xpos="128" ypos="384" width="128" height="128"/>
+		<subimage id="overlay_stand_45_2.png" xpos="256" ypos="384" width="128" height="128"/>
+		<subimage id="overlay_stand_45_3.png" xpos="384" ypos="384" width="128" height="128"/>
+
+		<subimage id="overlay_stand_0_0.png" xpos="0" ypos="512" width="128" height="128"/>
+		<subimage id="overlay_stand_0_1.png" xpos="128" ypos="512" width="128" height="128"/>
+		<subimage id="overlay_stand_0_2.png" xpos="256" ypos="512" width="128" height="128"/>
+		<subimage id="overlay_stand_0_3.png" xpos="384" ypos="512" width="128" height="128"/>
+
+		<subimage id="overlay_stand_315_0.png" xpos="0" ypos="640" width="128" height="128"/>
+		<subimage id="overlay_stand_315_1.png" xpos="128" ypos="640" width="128" height="128"/>
+		<subimage id="overlay_stand_315_2.png" xpos="256" ypos="640" width="128" height="128"/>
+		<subimage id="overlay_stand_315_3.png" xpos="384" ypos="640" width="128" height="128"/>
+
+		<subimage id="overlay_stand_270_0.png" xpos="0" ypos="768" width="128" height="128"/>
+		<subimage id="overlay_stand_270_1.png" xpos="128" ypos="768" width="128" height="128"/>
+		<subimage id="overlay_stand_270_2.png" xpos="256" ypos="768" width="128" height="128"/>
+		<subimage id="overlay_stand_270_3.png" xpos="384" ypos="768" width="128" height="128"/>
+
+		<subimage id="overlay_stand_225_0.png" xpos="0" ypos="896" width="128" height="128"/>
+		<subimage id="overlay_stand_225_1.png" xpos="128" ypos="896" width="128" height="128"/>
+		<subimage id="overlay_stand_225_2.png" xpos="256" ypos="896" width="128" height="128"/>
+		<subimage id="overlay_stand_225_3.png" xpos="384" ypos="896" width="128" height="128"/>
+	</atlas>
+</assets>

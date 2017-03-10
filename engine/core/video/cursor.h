@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -52,31 +52,20 @@ namespace FIFE {
 		CURSOR_ANIMATION
 	};
 
-	/** Defines some common native cursors between platforms.
-	  * In addition to these, you can use the values in:
-	  * Windows: http://msdn.microsoft.com/en-us/library/ms648391(VS.85).aspx
-	  * X11: http://fife.pastebin.com/f5b89dd6b
-	  */
 	enum NativeCursor {
-		// Start on 1000000 to avoid id-clashes with X11 and windows
-		NC_ARROW = 1000000, // Standard arrow
+		// Start on 1000000 to avoid id-clashes with SDL
+		NC_ARROW = 1000000,	// Standard arrow
 		NC_IBEAM,			// I-beam for text selection
 		NC_WAIT,			// Hourglass
 		NC_CROSS,			// Crosshair
-		NC_UPARROW,			// Vertical arrow
-		NC_RESIZENW,		// Cursor for resize in northwest corner
-		NC_RESIZESE,		//
-		NC_RESIZESW,		//
-		NC_RESIZENE,		//
-		NC_RESIZEE,			//
-		NC_RESIZEW,			//
-		NC_RESIZEN,			//
-		NC_RESIZES,			//
+		NC_WAITARROW,		// Small wait cursor (or Wait if not available)
+		NC_RESIZENWSE,		// Double arrow pointing northwest and southeast
+		NC_RESIZENESW,		// Double arrow pointing northeast and southwest
+		NC_RESIZEWE,		// Double arrow pointing west and east
+		NC_RESIZENS,		// Double arrow pointing north and south
 		NC_RESIZEALL,		// Four-pointed arrow pointing north, south, east, and west
 		NC_NO,				// Slashed circle
-		NC_HAND,			// Hand. Common for links, etc.
-		NC_APPSTARTING,		// Standard arrow and small hourglass
-		NC_HELP				// Arrow and question mark
+		NC_HAND				// Hand. Common for links, etc.
 	};
 
 	/**  Cursor class manages mouse cursor handling
@@ -179,13 +168,13 @@ namespace FIFE {
 
 	protected:
 		/** Sets the cursor to a native type.
-		  * @param cursor_id Resource id to native cursor, or one of the values in NativeCursor
+		  * @param cursor_id One of the values in NativeCursor
 		  */
 		void setNativeCursor(uint32_t cursor_id);
 
 		/** To get some consistancy between platforms, this function checks
 		  * if cursor_id matches any of the values in NativeCursor, and
-		  * returns the resource ID specific to the running platform.
+		  * returns the SDL_SystemCursor.
 		  * If no match is found, cursor_id is returned.
 		  *
 		  * @param cursor_id One of the values in NativeCursor

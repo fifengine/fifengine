@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -48,6 +48,7 @@ namespace FIFE {
 	class Object;
 	class InstanceTree;
 	class CellCache;
+	class Trigger;
 
 	/** Defines how pathing can be performed on this layer
 	 *
@@ -150,11 +151,11 @@ namespace FIFE {
 			later so that we can ensure that each Instance only lives in one layer.
 			 */
 			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
-			
+
 			/** Remove an instance from the layer
 			 */
 			void removeInstance(Instance* instance);
-			
+
 			/** Remove an instance from the layer and delete it
 			 */
 			void deleteInstance(Instance* instance);
@@ -177,6 +178,29 @@ namespace FIFE {
 			 * @param rec rect where to fetch instances from
 			 */
 			std::list<Instance*> getInstancesIn(Rect& rec);
+
+			/** Returns instances that match given line between pt1 and pt2.
+			 * @param pt1 A const reference to the ModelCoordinate where to start from.
+			 * @param pt2 A const reference to the ModelCoordinate where the end is.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2);
+
+			/** Returns instances that match given center and radius of the circle.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInCircle(const ModelCoordinate& center, uint16_t radius);
+
+			/** Returns all instances in the circle segment.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @param sangle A interger, start angle of the segment.
+			 * @param eangle A interger, end angle of the segment.
+			 * @return A vector that contain the instances.
+			 */
+			std::vector<Instance*> getInstancesInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
 
 			/** Get the first instance on this layer with the given identifier.
 			 */
@@ -201,6 +225,15 @@ namespace FIFE {
 			 * @param layer A pointer to another layer that can be used to cast coordinates bettween layers.
 			 */
 			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
+
+			/** Calculates z offset for the layer.
+			 * Is in range [-100,100], see glOrtho settings. Used by LayerCache to calculate z values.
+			 */
+			float getZOffset() const;
+
+			/** Get the overall number of layers.
+			 */
+			uint32_t getLayerCount() const;
 
 			/** Determines if a given cell on the layer contains a blocking instance
 			 *
@@ -256,19 +289,19 @@ namespace FIFE {
 			 * @param walkable A boolean that mark a layer as walkable.
 			 */
 			void setWalkable(bool walkable);
-			
+
 			/** Returns if a layer is walkable.
 			 * @return A boolean, true if the layer is walkable otherwise false.
 			 */
 			bool isWalkable();
-			
+
 			/** Sets interact for the layer. The data(size, instances) from all interact layers
 			 *  and the walkable layer will merged into one CellCache.
 			 * @param interact A boolean that mark a layer as interact.
 			 * @param id A const reference to a string that should refer to the id of the walkable layer.
 			 */
 			void setInteract(bool interact, const std::string& id);
-			
+
 			/** Returns if a layer is interact.
 			 * @return A boolean, true if the layer is interact otherwise false.
 			 */
@@ -343,6 +376,7 @@ namespace FIFE {
 			 * @return A boolean, true if the layer is static, otherwise false.
 			*/
 			bool isStatic();
+
 		protected:
 			//! string identifier
 			std::string m_id;

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -66,7 +66,7 @@ namespace FIFE {
 		 */
 		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a = 128);
 
-		/** Marks given instance to have an transparent area with given paramters
+		/** Marks given instance to have a transparent area with given parameters
 		 */
 		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front = true);
 
@@ -226,10 +226,15 @@ namespace FIFE {
 		typedef std::map<Instance*, Effect> InstanceToEffects_t;
 		InstanceToEffects_t m_assigned_instances;
 
+		void renderOverlay(RenderDataType type, RenderItem* item, uint8_t const* coloringColor, bool recoloring);
+
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
+		Image* bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
 		Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
+
+		ImagePtr getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors = 0);
 
 		void renderUnsorted(Camera* cam, Layer* layer, RenderList& instances);
 		void renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances);

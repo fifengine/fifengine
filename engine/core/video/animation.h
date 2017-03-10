@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -29,8 +29,7 @@
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
-#include "util/base/fifeclass.h"
-#include "util/base/sharedptr.h"
+#include "util/resource/resource.h"
 
 #include "image.h"
 
@@ -43,8 +42,6 @@
 
 namespace FIFE {
 
-	class Image;
-
 	/** Animation.
 	 *
 	 * A container of Images describing an animation. Animation itself does
@@ -53,15 +50,23 @@ namespace FIFE {
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation : public FifeClass {
+	class Animation : public IResource {
 	public:
 		/** Constructor.
-		 */
-		explicit Animation();
+		*/
+		Animation(IResourceLoader* loader = 0);
+		Animation(const std::string& name, IResourceLoader* loader = 0);
 
 		/** Destructor. Decreases the reference count of all referred images.
 		 */
 		~Animation();
+
+		virtual size_t getSize();
+
+		virtual void load();
+		virtual void free();
+
+		void invalidate();
 
 		/** Adds new frame into animation
 		 * Frames must be added starting from first frame. Increases the reference
@@ -86,6 +91,10 @@ namespace FIFE {
 		/** Gets the frame image that matches the given timestamp.
 		 */
 		ImagePtr getFrameByTimestamp(uint32_t timestamp);
+
+		/** Gets all frame images.
+		 */
+		std::vector<ImagePtr> getFrames();
 
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index
@@ -136,6 +145,8 @@ namespace FIFE {
 			uint32_t duration;
 			ImagePtr image;
 		};
+		
+		std::string createUniqueAnimationName();
 
 		/** Checks for animation frame index overflows
 		 */
@@ -159,4 +170,3 @@ namespace FIFE {
 }
 
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

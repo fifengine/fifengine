@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -49,6 +49,7 @@ namespace FIFE {
 	class Map;
 	class Camera;
 	class Instance;
+	class TriggerController;
 
 	/** Listener interface for changes happening on map
 	 */
@@ -193,9 +194,13 @@ namespace FIFE {
 			*/
 			const std::vector<Camera*>& getCameras() const;
 
+			/** Return the number of enabled cameras in this map.
+			 */
+			uint32_t getActiveCameraCount() const;
+
 			void setFilename(const std::string& file) { m_filename = file; }
 			const std::string& getFilename() const { return m_filename; }
-			
+
 			/** Adds instance that is to be transferred to another layer.
 			* @param instance A pointer to the instance that is to be transferred.
 			* @param target A const reference to the target location.
@@ -214,6 +219,11 @@ namespace FIFE {
 			/** Creates cellcaches for this map. Called from maploader.
 			*/
 			void finalizeCellCaches();
+
+			/**
+			 */
+			TriggerController* getTriggerController() const { return m_triggerController; };
+
 		private:
 			std::string m_id;
 			std::string m_filename;
@@ -232,7 +242,7 @@ namespace FIFE {
 
 			//! holds the cameras attached to this map
 			std::vector<Camera*> m_cameras;
-			
+
 			//! pointer to renderbackend
 			RenderBackend* m_renderBackend;
 
@@ -241,12 +251,13 @@ namespace FIFE {
 
 			//! true, if something was changed on map during previous update (layer change, creation, deletion)
 			bool m_changed;
-			
+
 			//! holds instances which should be transferred on the next update
 			std::map<Instance*, Location> m_transferInstances;
+
+			TriggerController* m_triggerController;
 	};
 
-} //FIFE
+}
 
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -69,4 +69,8 @@ namespace FIFE {
 		double getLayerDistanceTo(const Location& location) const;
 	};
 	std::ostream& operator<<(std::ostream& os, const Location& l);
+}
+
+namespace std {
+	%template(LocationVector) vector<FIFE::Location>;
 }

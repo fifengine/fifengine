@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<Settings>
-  <Module name="objects">
-  	<Setting name="objectlist" type="list"> gstack2 ; townportal ; sign1 </Setting>
-    <Setting name="gstack2" type="dict"> objectname : goldstack ; value : 5000 ; posx : -3.0 ; posy : -3.0 </Setting>
-    <Setting name="townportal" type="dict"> objectname : templeportal ; dest : town ; posx : 3.0 ; posy : 2.0 </Setting>
-    <Setting name="sign1" type="dict"> objectname : signenemy1 ; posx : 1.0 ; posy : 1.0 </Setting>
-  </Module>
-</Settings>

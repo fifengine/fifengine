@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -57,6 +57,7 @@ namespace FIFE {
 	class RendererBase;
 	class Image;
 	class ImageManager;
+	class AnimationManager;
 	class SoundClipManager;
 	class OffRenderer;
 	class TargetRenderer;
@@ -152,6 +153,10 @@ namespace FIFE {
 		 */
 		ImageManager* getImageManager() const { return m_imagemanager; }
 
+		/** Provides access point to the ImageManager
+		 */
+		AnimationManager* getAnimationManager() const { return m_animationmanager; }
+
 		/** Provides access point to the SoundClipManager
 		 */
 		SoundClipManager* getSoundClipManager() const { return m_soundclipmanager; }
@@ -201,6 +206,7 @@ namespace FIFE {
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
 		ImageManager* m_imagemanager;
+		AnimationManager* m_animationmanager;
 		SoundClipManager* m_soundclipmanager;
 
 		VFS* m_vfs;
@@ -222,7 +228,7 @@ namespace FIFE {
 		std::vector<IEngineChangeListener*> m_changelisteners;
 
 #ifdef USE_COCOA
-		objc_object *m_autoreleasePool;
+		id m_autoreleasePool;
 #endif
 
 	};

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -35,6 +35,7 @@
 
 #include "model/metamodel/object.h"
 #include "model/metamodel/ivisual.h"
+#include "view/visual.h"
 
 #include "location.h"
 
@@ -53,6 +54,7 @@ namespace FIFE {
 	public:
 		virtual ~InstanceActionListener() {};
 		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
+		virtual void onInstanceActionCancelled(Instance* instance, Action* action) = 0;
 		virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
 	};
 
@@ -68,7 +70,8 @@ namespace FIFE {
 		ICHANGE_CELL = 0x0080,
 		ICHANGE_TRANSPARENCY = 0x0100,
 		ICHANGE_VISIBLE = 0x0200,
-		ICHANGE_STACKPOS = 0x0400
+		ICHANGE_STACKPOS = 0x0400,
+		ICHANGE_VISUAL = 0x0800
 	};
 	typedef uint32_t InstanceChangeInfo;
 
@@ -255,29 +258,43 @@ namespace FIFE {
 		 *  @param actionName name of the action
 		 *  @param target place where to move this instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
-		 *  @param costid id for special costs which is be used as extra multiplier.
+		 *  @param costId id for special costs which is be used as extra multiplier.
 		 */
 		void move(const std::string& actionName, const Location& target, const double speed, const std::string& costId = "");
 
-		/** Performs given named action to the instance. Performs no movement
+		/** Performs given named action to the instance, once only. Performs no movement
 		 *  @param actionName name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, const Location& direction, bool repeating=false);
+		void actOnce(const std::string& actionName, const Location& direction);
 
-		/** Performs given named action to the instance. Performs no movement
+		/** Performs given named action to the instance, once only. Performs no movement
 		 *  @param actionName name of the action
 		 *  @param rotation rotation which the instance use when performing the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, int32_t rotation, bool repeating=false);
+		void actOnce(const std::string& actionName, int32_t rotation);
 
-		/** Performs given named action to the instance. Performs no movement and use current rotation
+		/** Performs given named action to the instance, once only. Performs no movement and use current rotation
 		 *  @param actionName name of the action
-		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act(const std::string& actionName, bool repeating=false);
+		void actOnce(const std::string& actionName);
+
+		/** Performs given named action to the instance, repeated. Performs no movement
+		 *  @param actionName name of the action
+		 *  @param direction coordinates for cell towards instance is heading to when performing the action
+		 */
+		void actRepeat(const std::string& actionName, const Location& direction);
+
+		/** Performs given named action to the instance, repeated Performs no movement
+		 *  @param actionName name of the action
+		 *  @param rotation rotation which the instance use when performing the action
+		 */
+		void actRepeat(const std::string& actionName, int32_t rotation);
+
+		/** Performs given named action to the instance, repeated. Performs no movement and use current rotation
+		 *  @param actionName name of the action
+		 */
+		void actRepeat(const std::string& actionName);
 
 		/** Causes instance to "say" given text (shown on screen next to the instance)
 		 *  @param text text to say. If "" given, clear the text
@@ -294,7 +311,7 @@ namespace FIFE {
 		void follow(const std::string& actionName, Instance* leader, const double speed);
 
 		/** Performs given named action to the instance. While performing the action
-		 *  follows given route with given speed. Note: In this case route isn't deleted at the end.
+		 *  follows given route with given speed. Note: In this case route isn't deleted or resetted at the end.
 		 *  @param actionName name of the action
 		 *  @param route followed route
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
@@ -420,7 +437,15 @@ namespace FIFE {
 
 		/** Returns cost id. In case there is no it returns the object cost id.
 		 */
-		const std::string& getCostId();
+		std::string getCostId();
+
+		/** Returns speed modifier.
+		 */
+		double getSpeed();
+
+		/** Returns true if instance or object have special speed modifier otherwise false.
+		 */
+		bool isSpecialSpeed();
 
 		/** Returns true if it is multi cell otherwise false
 		 */
@@ -438,6 +463,82 @@ namespace FIFE {
 		 */
 		const std::vector<Instance*>& getMultiInstances();
 
+		/** Sets a instance to the main multi instance of this instance.
+		 */
+		void setMainMultiInstance(Instance* main);
+
+		/** Returns a pointer to the main mulit instance or Null if the instance is not part of a multi instance object.
+		 */
+		Instance* getMainMultiInstance();
+
+		/** Adds new static color overlay with given angle (degrees).
+		 */
+		void addStaticColorOverlay(uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching static color overlay for given angle
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getStaticColorOverlay(int32_t angle);
+
+		/** Removes a static color overlay with given angle (degrees).
+		 */
+		void removeStaticColorOverlay(int32_t angle);
+
+		/** Indicates if there exists a static color overlay.
+		 */
+		bool isStaticColorOverlay();
+
+		/** Adds new color overlay with given angle (degrees) to given action.
+		 */
+		void addColorOverlay(const std::string& actionName, uint32_t angle, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle and action.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle);
+
+		/** Removes a color overlay with given angle (degrees) from given action.
+		 */
+		void removeColorOverlay(const std::string& actionName, int32_t angle);
+
+		/** Adds new animation overlay with given angle (degrees) and order to given action.
+		 */
+		void addAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order, const AnimationPtr& animationptr);
+
+		/** Gets map with animations closest to given angle.
+		 * @return ordered animation map
+		 */
+		std::map<int32_t, AnimationPtr> getAnimationOverlay(const std::string& actionName, int32_t angle);
+
+		/** Removes animation overlay with given angle (degrees) and order from action.
+		 */
+		void removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order);
+
+		/** Adds new color overlay with given angle (degrees) and order to given action animation overlay.
+		 */
+		void addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
+
+		/** Returns closest matching color overlay for given angle, order and action animation overlay.
+		 * @return pointer to OverlayColor class
+		 */
+		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order);
+
+		/** Removes a color overlay with given angle (degrees), order from given action animation overlay.
+		 */
+		void removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order);
+
+		/** If the action have base animation and optional color overlay it gets converted to animation overlay.
+		 */
+		void convertToOverlays(const std::string& actionName, bool color);
+
+		/** Indicates if there exists a animation overlay for given action.
+		 */
+		bool isAnimationOverlay(const std::string& actionName);
+
+		/** Indicates if there exists a color overlay for given action or animation overlay.
+		 */
+		bool isColorOverlay(const std::string& actionName);
+		
 	private:
 		std::string m_id;
 
@@ -469,7 +570,7 @@ namespace FIFE {
 			int32_t m_rotation;
 			//! rotation on previous round
 			int32_t m_oldRotation;
-			//! action on previous round. @NOTE: might become invalid, only used for address comparison
+			//! action on previous round. NOTE: might become invalid, only used for address comparison
 			Action* m_action;
 			//! speed on previous round
 			double m_speed;
@@ -502,6 +603,8 @@ namespace FIFE {
 
 		//! object where instantiated from
 		Object* m_object;
+		//! indicates if m_object is customized
+		bool m_ownObject;
 		//! current location
 		Location m_location;
 		//! instance visualization
@@ -524,14 +627,17 @@ namespace FIFE {
 		double m_cost;
 		//! holds cost id
 		std::string m_costId;
-
 		//! vector that holds all multi instances
 		std::vector<Instance*> m_multiInstances;
+		//! pointer to the main multi instance
+		Instance* m_mainMultiInstance;
 
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
 		//! Finalize current action
 		void finalizeAction();
+		//! Cancel current action
+		void cancelAction();
 		//! Initialize action for use
 		void initializeAction(const std::string& actionName);
 		//! Moves instance. Returns true if finished
@@ -542,6 +648,13 @@ namespace FIFE {
 		void bindTimeProvider();
 		//! called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
+		//! called to prepare the instance for an update
+		void prepareForUpdate();
+
+		//! Creates an own object for the instance to allow visual customization.
+		void createOwnObject();
+		//! Returns pointer to action visual, can also create it.
+		ActionVisual* getActionVisual(const std::string& actionName, bool create);
 	};
 } // FIFE
 

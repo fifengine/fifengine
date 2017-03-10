@@ -1,5 +1,5 @@
 /**************************************************************************
-*   Copyright (C) 2005-2013 by the FIFE team                              *
+*   Copyright (C) 2005-2017 by the FIFE team                              *
 *   http://www.fifengine.net                                              *
 *   This file is part of FIFE.                                            *
 *                                                                         *
@@ -43,71 +43,87 @@ namespace FIFE {
 	class VFS;
 	class Layer;
 	class ImageManager;
+	class AnimationManager;
 	class RenderBackend;
 	class PercentDoneListener;
 
 	class MapLoader : public IMapLoader {
 	public:
 		MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
-        
-        ~MapLoader();
+		
+		~MapLoader();
 
-        /** 
-        * @see IMapLoader::setObjectLoader
-        */
-        void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader);
+		/** 
+		* @see IMapLoader::setObjectLoader
+		*/
+		void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader);
 
-        /** 
-        * @see IMapLoader::setAnimationLoader
-        */
-        void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader);
+		/** 
+		* @see IMapLoader::getObjectLoader
+		*/
+		FIFE::ObjectLoaderPtr getObjectLoader();
 
-        /** 
-        * @see IMapLoader::setAtlasLoader
-        */
-        void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader);
+		/** 
+		* @see IMapLoader::setAnimationLoader
+		*/
+		void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader);
 
-        /** 
-        * @see IMapLoader::isLoadable
-        */
-        bool isLoadable(const std::string& filename) const;
+		/** 
+		* @see IMapLoader::getAnimationLoader
+		*/
+		FIFE::AnimationLoaderPtr getAnimationLoader();
 
-        /** 
-        * @see IMapLoader::load
-        */
-        Map* load(const std::string& filename);
+		/** 
+		* @see IMapLoader::setAtlasLoader
+		*/
+		void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader);
 
-        /** used to load an object file
-        * if directory is provided then file is assumed relative to directory
-        * if relativeToMap is true then the file/directory is assumed to be relative to
-        * location of map file
-        */
-        void loadImportFile(const std::string& file, const std::string& directory="");
+		/** 
+		* @see IMapLoader::getAtlasLoader
+		*/
+		FIFE::AtlasLoaderPtr getAtlasLoader();
 
-        /** used to load a directory of object files recursively
-        * if relativeToMap is true then the directory is assumed to be relative to
-        * location of map file
-        */
-        void loadImportDirectory(const std::string& directory);
+		/** 
+		* @see IMapLoader::isLoadable
+		*/
+		bool isLoadable(const std::string& filename) const;
 
-        /** 
-        * allows adding a listener to the map loader 
-        * for percent completed events
-        */
+		/** 
+		* @see IMapLoader::load
+		*/
+		Map* load(const std::string& filename);
+
+		/** used to load an object file
+		* if directory is provided then file is assumed relative to directory
+		* if relativeToMap is true then the file/directory is assumed to be relative to
+		* location of map file
+		*/
+		void loadImportFile(const std::string& file, const std::string& directory="");
+
+		/** used to load a directory of object files recursively
+		* if relativeToMap is true then the directory is assumed to be relative to
+		* location of map file
+		*/
+		void loadImportDirectory(const std::string& directory);
+
+		/** 
+		* allows adding a listener to the map loader 
+		* for percent completed events
+		*/
 		void addPercentDoneListener(PercentDoneListener* listener);
 
-        /** returns the loader name associated with this
-        * map file loader, this will only be populated
-        * after the load function is called
-        */
-        const std::string& getLoaderName() const;
+		/** returns the loader name associated with this
+		* map file loader, this will only be populated
+		* after the load function is called
+		*/
+		const std::string& getLoaderName() const;
 
 	private:
 		Model* m_model;
 		VFS* m_vfs;
 		ImageManager* m_imageManager;
-        ObjectLoaderPtr m_objectLoader;
-        AtlasLoaderPtr m_atlasLoader;
+		AnimationManager* m_animationManager;
+		ObjectLoaderPtr m_objectLoader;
 		RenderBackend* m_renderBackend;
 		PercentDoneCallback m_percentDoneListener;
 
@@ -117,10 +133,10 @@ namespace FIFE {
 
 	};
 
-    /** convenience function for creating the default fife map loader
-    * deleting the object returned from this function is the
-    * responsibility of the caller
-    */
+	/** convenience function for creating the default fife map loader
+	* deleting the object returned from this function is the
+	* responsibility of the caller
+	*/
 	MapLoader* createDefaultMapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
 }
 

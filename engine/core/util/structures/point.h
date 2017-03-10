@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 // Platform specific includes
 
@@ -193,6 +194,8 @@ namespace FIFE {
 
 	typedef PointType2D<int32_t> Point;
 	typedef PointType2D<double> DoublePoint;
+	typedef std::vector<Point> PointVector;
+	typedef std::vector<DoublePoint> DoublePointVector;
 
 	/** A 3D Point
 	 *
@@ -324,6 +327,8 @@ namespace FIFE {
 
 	typedef PointType3D<int32_t> Point3D;
 	typedef PointType3D<double> DoublePoint3D;
+	typedef std::vector<Point3D> Point3DVector;
+	typedef std::vector<DoublePoint3D> DoublePoint3DVector;
 
 	/** Convert from 2D double point to 2D int32_t point
 	 */

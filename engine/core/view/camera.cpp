@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -53,6 +53,9 @@
 namespace FIFE {
 	static Logger _log(LM_CAMERA);
 
+	// to avoid std::bad_alloc errors, we determine the maximum size of batches
+	const uint32_t MAX_BATCH_SIZE = 100000;
+
 	class MapObserver : public MapChangeListener {
 		Camera* m_camera;
 
@@ -93,7 +96,8 @@ namespace FIFE {
 			m_mapViewPortUpdated(false),
 			m_screen_cell_width(1),
 			m_screen_cell_height(1),
-			m_reference_scale(1),
+			m_referenceScaleX(1),
+			m_referenceScaleY(1),
 			m_enabled(true),
 			m_attachedto(NULL),
 			m_image_dimensions(),
@@ -102,7 +106,7 @@ namespace FIFE {
 			m_pipeline(),
 			m_updated(false),
 			m_renderbackend(renderbackend),
-			m_layer_to_instances(),
+			m_layerToInstances(),
 			m_lighting(false),
 			m_light_colors(),
 			m_col_overlay(false),
@@ -171,12 +175,12 @@ namespace FIFE {
 
 	double Camera::getOriginalZToY() const {
 		DoubleMatrix matrix;
-		matrix.loadScale(m_reference_scale, m_reference_scale, m_reference_scale);
+		matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
 				ExactModelCoordinate pt = m_location.getMapCoordinates();
-				matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
+				matrix.applyTranslate(-pt.x*m_referenceScaleX, -pt.y*m_referenceScaleY, -pt.z*m_referenceScaleX);
 			}
 		}
 		matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
@@ -278,8 +282,8 @@ namespace FIFE {
 		}
 		Point p;
 		DoublePoint dimensions = getLogicalCellDimensions(layer);
-		p.x = static_cast<int32_t>(round(m_reference_scale * dimensions.x));
-		p.y = static_cast<int32_t>(round(m_reference_scale * dimensions.y));
+		p.x = static_cast<int32_t>(round(m_referenceScaleX * dimensions.x));
+		p.y = static_cast<int32_t>(round(m_referenceScaleY * dimensions.y));
 		m_image_dimensions[layer] = p;
 		return p;
 	}
@@ -294,6 +298,7 @@ namespace FIFE {
 
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
+		refresh();
 	}
 
 	const Rect& Camera::getViewPort() const {
@@ -362,14 +367,13 @@ namespace FIFE {
 	}
 
 	void Camera::updateMatrices() {
-		double scale = m_reference_scale;
-		m_matrix.loadScale(scale, scale, scale);
-		m_vs_matrix.loadScale(scale,scale,scale);
+		m_matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
+		m_vs_matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
 				ExactModelCoordinate pt = m_location.getMapCoordinates();
-				m_matrix.applyTranslate(-pt.x*m_reference_scale, -pt.y*m_reference_scale, -pt.z*m_reference_scale);
+				m_matrix.applyTranslate(-pt.x*m_referenceScaleX, -pt.y*m_referenceScaleY, -pt.z*m_referenceScaleX);
 			}
 		}
 		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
@@ -377,7 +381,7 @@ namespace FIFE {
 		if (m_enabledZToY) {
 			m_matrix.m9 = -m_zToY; // z -> y height in pixels
 		}
-		scale = m_zoom;
+		double scale = m_zoom;
 		m_matrix.applyScale(scale, scale, scale);
 		m_matrix.applyTranslate(+m_viewport.x+m_viewport.w/2, +m_viewport.y+m_viewport.h/2, 0);
 		m_inverse_matrix = m_matrix.inverse();
@@ -408,16 +412,17 @@ namespace FIFE {
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
 	}
 
-	void Camera::calculateZValue(ScreenPoint& screen_coords) {
+	void Camera::calculateZValue(DoublePoint3D& screen_coords) {
 		int32_t dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
-		screen_coords.z = static_cast<int32_t>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
+		screen_coords.z = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
 	}
 
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
+		DoublePoint3D double_screen_coords = intPt2doublePt(screen_coords);
 		if (!z_calculated) {
-			calculateZValue(screen_coords);
+			calculateZValue(double_screen_coords);
 		}
-		return m_inverse_matrix * intPt2doublePt(screen_coords);
+		return m_inverse_matrix * double_screen_coords;
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(const ExactModelCoordinate& elevation_coords) {
@@ -509,15 +514,19 @@ namespace FIFE {
 
 	void Camera::updateReferenceScale() {
 		DoublePoint dim = getLogicalCellDimensions(m_location.getLayer());
-		m_reference_scale = static_cast<double>(m_screen_cell_width) / dim.x;
+		m_referenceScaleX = static_cast<double>(m_screen_cell_width) / dim.x;
+		m_referenceScaleY = static_cast<double>(m_screen_cell_height) / dim.y;
 
 		FL_DBG(_log, "Updating reference scale");
 		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
+		FL_DBG(_log, LMsg("   m_screen_cell_height=") << m_screen_cell_height);
+		FL_DBG(_log, LMsg("   m_referenceScaleX=") << m_referenceScaleX);
+		FL_DBG(_log, LMsg("   m_referenceScaleY=") << m_referenceScaleY);
 	}
 
 	RenderList& Camera::getRenderListRef(Layer* layer) {
-		return m_layer_to_instances[layer];
+		return m_layerToInstances[layer];
 	}
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
@@ -525,7 +534,7 @@ namespace FIFE {
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
 
-		const RenderList& layer_instances = m_layer_to_instances[&layer];
+		const RenderList& layer_instances = m_layerToInstances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -548,12 +557,29 @@ namespace FIFE {
 					x = static_cast<int32_t>(round(fx / fsw * fow));
 					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
-				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-				// instance is hit with mouse if not totally transparent
-				if (a == 0 || (special_alpha && a < alpha)) {
-					continue;
+				if (vc.getAnimationOverlay()) {
+					std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+					std::vector<ImagePtr>::iterator it = ao->begin();
+					for (; it != ao->end(); ++it) {
+						if ((*it)->isSharedImage()) {
+							(*it)->forceLoadInternal();
+						}
+						(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+						// instance is hit with mouse if not totally transparent
+						if (a == 0 || (special_alpha && a < alpha)) {
+							continue;
+						}
+						instances.push_back(i);
+						break;
+					}
+				} else {
+					vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+					// instance is hit with mouse if not totally transparent
+					if (a == 0 || (special_alpha && a < alpha)) {
+						continue;
+					}
+					instances.push_back(i);
 				}
-				instances.push_back(i);
 			}
 		}
 	}
@@ -563,7 +589,7 @@ namespace FIFE {
 		bool zoomed = !Mathd::Equal(m_zoom, 1.0);
 		bool special_alpha = alpha != 0;
 
-		const RenderList& layer_instances = m_layer_to_instances[&layer];
+		const RenderList& layer_instances = m_layerToInstances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -589,14 +615,30 @@ namespace FIFE {
 								x = static_cast<int32_t>(round(fx / fsw * fow));
 								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
-							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-							// instance is hit with mouse if not totally transparent
-							if (a == 0 || (special_alpha && a < alpha)) {
-								continue;
+							if (vc.getAnimationOverlay()) {
+								std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+								std::vector<ImagePtr>::iterator it = ao->begin();
+								for (; it != ao->end(); ++it) {
+									if ((*it)->isSharedImage()) {
+										(*it)->forceLoadInternal();
+									}
+									(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
+									// instance is hit with mouse if not totally transparent
+									if (a == 0 || (special_alpha && a < alpha)) {
+										continue;
+									}
+									instances.push_back(i);
+									goto found_non_transparent_pixel;
+								}
+							} else {
+								vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+								// instance is hit with mouse if not totally transparent
+								if (a == 0 || (special_alpha && a < alpha)) {
+									continue;
+								}
+								instances.push_back(i);
+								goto found_non_transparent_pixel;
 							}
-
-							instances.push_back(i);
-							goto found_non_transparent_pixel;
 						}
 					}
 				}
@@ -612,7 +654,7 @@ namespace FIFE {
 			return;
 		}
 
-		const RenderList& layer_instances = m_layer_to_instances[layer];
+		const RenderList& layer_instances = m_layerToInstances[layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
 			--instance_it;
@@ -658,7 +700,8 @@ namespace FIFE {
 
 	void Camera::refresh() {
 		updateMatrices();
-		m_transform |= PositionTransform;
+		m_transform |= RotationTransform;
+		m_cur_origo = toScreenCoordinates(m_location.getMapCoordinates());
 	}
 
 	void Camera::resetUpdates() {
@@ -712,13 +755,15 @@ namespace FIFE {
 	void Camera::addLayer(Layer* layer) {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
-		m_layer_to_instances[layer] = RenderList();
+		m_layerToInstances[layer] = RenderList();
+		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
 		delete m_cache[layer];
 		m_cache.erase(layer);
-		m_layer_to_instances.erase(layer);
+		m_layerToInstances.erase(layer);
+		refresh();
 	}
 
 	void Camera::setLightingColor(float red, float green, float blue) {
@@ -748,7 +793,7 @@ namespace FIFE {
 		m_overlay_color.r = red;
 		m_overlay_color.g = green;
 		m_overlay_color.b = blue;
-		m_overlay_color.unused = alpha;
+		m_overlay_color.a = alpha;
 	}
 
 	std::vector<uint8_t> Camera::getOverlayColor() {
@@ -757,7 +802,7 @@ namespace FIFE {
 			colors.push_back(m_overlay_color.r);
 			colors.push_back(m_overlay_color.g);
 			colors.push_back(m_overlay_color.b);
-			colors.push_back(m_overlay_color.unused);
+			colors.push_back(m_overlay_color.a);
 		} else {
 			for(uint8_t cc = 0; cc != 4; ++cc) {
 				colors.push_back(255);
@@ -817,7 +862,7 @@ namespace FIFE {
 		// color overlay
 		if (m_col_overlay) {
 			Point p = Point(m_viewport.x, m_viewport.y);
-			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.unused);
+			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.a);
 		}
 		// image overlay
 		if (m_img_overlay) {
@@ -863,7 +908,7 @@ namespace FIFE {
 	void Camera::renderStaticLayer(Layer* layer, bool update) {
 		// ToDo: Remove this function from the camera class to something like engine pre-render.
 		// ToDo: Check if partial rendering of only updated RenderItems to existing FBO is possible/faster in our case.
-		// ToDo: Add and fix support for SDL and OpenGLe backends, for SDL it works only on the lowest layer(alpha/transparent bug).
+		// ToDo: Add and fix support for SDL backend, for SDL it works only on the lowest layer(alpha/transparent bug).
 		LayerCache* cache = m_cache[layer];
 		ImagePtr cacheImage = cache->getCacheImage();
 		if (!cacheImage.get()) {
@@ -874,7 +919,7 @@ namespace FIFE {
 		}
 		if (update) {
 			// for the case that the viewport size is not the same as the screen size,
-			// we have to change the values for OpenGL and OpenGLe backends
+			// we have to change the values for OpenGL backend
 			Rect rec(0, m_renderbackend->getHeight()-m_viewport.h, m_viewport.w, m_viewport.h);
 			if (m_renderbackend->getName() == "SDL") {
 				rec = m_viewport;
@@ -883,18 +928,35 @@ namespace FIFE {
 			// here we use the new viewport size
 			m_renderbackend->pushClipArea(rec, false);
 			// render stuff to texture
-			RenderList& instances_to_render = m_layer_to_instances[layer];
-			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-			for (; r_it != m_pipeline.end(); ++r_it) {
-				if ((*r_it)->isActivedLayer(layer)) {
-					(*r_it)->render(this, layer, instances_to_render);
+			RenderList& instancesToRender = m_layerToInstances[layer];
+			// split the RenderList into smaller parts
+			if (instancesToRender.size() > MAX_BATCH_SIZE) {
+				uint8_t batches = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+				uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+				for (uint8_t i = 0; i < batches; ++i) {
+					uint32_t start = i*MAX_BATCH_SIZE;
+					uint32_t end = start + ((i+1 == batches) ? residual : MAX_BATCH_SIZE);
+					RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
+					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+					for (; r_it != m_pipeline.end(); ++r_it) {
+						if ((*r_it)->isActivedLayer(layer)) {
+							(*r_it)->render(this, layer, tempList);
+							m_renderbackend->renderVertexArrays();
+						}
+					}
+				}
+			} else {
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(layer)) {
+						(*r_it)->render(this, layer, instancesToRender);
+						m_renderbackend->renderVertexArrays();
+					}
 				}
 			}
 			m_renderbackend->detachRenderTarget();
 			m_renderbackend->popClipArea();
 		}
-		// render cacheImage
-		cacheImage.get()->render(m_viewport);
 	}
 
 	void Camera::updateRenderLists() {
@@ -913,18 +975,16 @@ namespace FIFE {
 				cache = m_cache[*layer_it];
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
-			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
+			RenderList& instancesToRender = m_layerToInstances[*layer_it];
 			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
 				continue;
 			}
-			cache->update(m_transform, instances_to_render);
+			cache->update(m_transform, instancesToRender);
 		}
 		resetUpdates();
 	}
 
 	void Camera::render() {
-		static bool renderbackendOpenGLe = (m_renderbackend->getName() == "OpenGLe");
-
 		updateRenderLists();
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -939,8 +999,6 @@ namespace FIFE {
 			}
 		}
 
-		m_renderbackend->pushClipArea(getViewPort());
-
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for ( ; layer_it != layers.end(); ++layer_it) {
@@ -949,15 +1007,43 @@ namespace FIFE {
 				renderStaticLayer(*layer_it, m_updated);
 				continue;
 			}
-			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-			for (; r_it != m_pipeline.end(); ++r_it) {
-				if ((*r_it)->isActivedLayer(*layer_it)) {
-					(*r_it)->render(this, *layer_it, instances_to_render);
-				}
-			}
-			if (renderbackendOpenGLe) {
+		}
+
+		m_renderbackend->pushClipArea(getViewPort());
+
+		layer_it = layers.begin();
+		for ( ; layer_it != layers.end(); ++layer_it) {
+			// layer with static flag will rendered as one texture
+			if ((*layer_it)->isStatic()) {
+				m_cache[*layer_it]->getCacheImage()->render(m_viewport);
 				m_renderbackend->renderVertexArrays();
+				continue;
+			}
+			RenderList& instancesToRender = m_layerToInstances[*layer_it];
+			// split the RenderList into smaller parts
+			if (instancesToRender.size() > MAX_BATCH_SIZE) {
+				uint8_t batches = ceil(instancesToRender.size() / static_cast<float>(MAX_BATCH_SIZE));
+				uint32_t residual = instancesToRender.size() % MAX_BATCH_SIZE;
+				for (uint8_t i = 0; i < batches; ++i) {
+					uint32_t start = i*MAX_BATCH_SIZE;
+					uint32_t end = start + ((i+1 == batches) ? residual : MAX_BATCH_SIZE);
+					RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
+					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+					for (; r_it != m_pipeline.end(); ++r_it) {
+						if ((*r_it)->isActivedLayer(*layer_it)) {
+							(*r_it)->render(this, *layer_it, tempList);
+							m_renderbackend->renderVertexArrays();
+						}
+					}
+				}
+			} else {
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for (; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(*layer_it)) {
+						(*r_it)->render(this, *layer_it, instancesToRender);
+						m_renderbackend->renderVertexArrays();
+					}
+				}
 			}
 		}
 

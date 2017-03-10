@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -65,7 +65,15 @@ namespace FIFE {
 			return;
 		}
 
-		Image* image = getAsImage(text);
+		Image* image;
+		if (isDynamicColoring()) {
+			SDL_Color color = getColor();
+			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
+			image = getAsImage(text);
+			setColor(color.r, color.g, color.b, color.a);
+		} else {
+			image = getAsImage(text);
+		}
 		image->render(rect);
 	}
 
@@ -78,7 +86,15 @@ namespace FIFE {
 
 		const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 
-		Image* image = getAsImageMultiline(text);
+		Image* image;
+		if (isDynamicColoring()) {
+			SDL_Color color = getColor();
+			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
+			image = getAsImageMultiline(text);
+			setColor(color.r, color.g, color.b, color.a);
+		} else {
+			image = getAsImageMultiline(text);
+		}
 
 		FIFE::Rect rect;
 		rect.x = x + clip.xOffset;
@@ -111,8 +127,48 @@ namespace FIFE {
 		m_font->setAntiAlias(antiAlias);
 	}
 
-	bool GuiFont::isAntiAlias() {
+	bool GuiFont::isAntiAlias() const {
 		return m_font->isAntiAlias();
+	}
+
+	void GuiFont::setBoldStyle(bool style) {
+		m_font->setBoldStyle(style);
+	}
+
+	bool GuiFont::isBoldStyle() const {
+		return m_font->isBoldStyle();
+	}
+
+	void GuiFont::setItalicStyle(bool style) {
+		m_font->setItalicStyle(style);
+	}
+
+	bool GuiFont::isItalicStyle() const {
+		return m_font->isItalicStyle();
+	}
+
+	void GuiFont::setUnderlineStyle(bool style) {
+		m_font->setUnderlineStyle(style);
+	}
+
+	bool GuiFont::isUnderlineStyle() const {
+		return m_font->isUnderlineStyle();
+	}
+
+	void GuiFont::setStrikethroughStyle(bool style) {
+		m_font->setStrikethroughStyle(style);
+	}
+
+	bool GuiFont::isStrikethroughStyle() const {
+		return m_font->isStrikethroughStyle();
+	}
+
+	void GuiFont::setDynamicColoring(bool coloring) {
+		m_font->setDynamicColoring(coloring);
+	}
+	
+	bool GuiFont::isDynamicColoring() const {
+		return m_font->isDynamicColoring();
 	}
 
 	Image* GuiFont::getAsImage(const std::string& text) {

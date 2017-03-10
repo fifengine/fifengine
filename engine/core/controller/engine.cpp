@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -39,11 +39,10 @@
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/directoryprovider.h"
-#ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
-#endif
 #include "eventchannel/eventmanager.h"
 #include "video/imagemanager.h"
+#include "video/animationmanager.h"
 #include "audio/soundclipmanager.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
@@ -51,7 +50,6 @@
 #ifdef HAVE_OPENGL
 #include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "video/opengle/renderbackendopengle.h"
 #endif
 #include "video/sdl/renderbackendsdl.h"
 #include "loaders/native/video/imageloader.h"
@@ -74,6 +72,7 @@
 #include "view/renderers/cellrenderer.h"
 #include "video/image.h"
 #include "engine.h"
+#include "version.h"
 
 #ifdef USE_COCOA
 
@@ -96,14 +95,17 @@ namespace FIFE {
 		m_soundmanager(0),
 		m_timemanager(0),
 		m_imagemanager(0),
+		m_animationmanager(0),
 		m_soundclipmanager(0),
 		m_vfs(0),
 		m_model(0),
 		m_logmanager(0),
 		m_cursor(0),
+		m_destroyed(false),
 		m_settings(),
 		m_devcaps(),
 		m_offrenderer(0),
+		m_targetrenderer(0),
 		m_changelisteners() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
@@ -115,9 +117,14 @@ namespace FIFE {
 		nsappload();
 
 		// Create an autorelease pool, so autoreleased SDL objects don't leak.
+#ifdef OSX_109
+		Class NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+		m_autoreleasePool = class_createInstance(NSAutoreleasePool, 0);
+#else
 		objc_object *NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
 		m_autoreleasePool =
 			objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
+#endif
 #endif
 		m_logmanager = LogManager::instance();
 	}
@@ -135,7 +142,8 @@ namespace FIFE {
 
 		m_imagemanager->invalidateAll();
 
-		m_renderbackend->setScreenMode(mode);
+		// recreate main screen
+		m_renderbackend->createMainScreen(mode,	m_settings.getWindowTitle(), m_settings.getWindowIcon());
 
 		if (m_guimanager) {
 			m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
@@ -151,6 +159,7 @@ namespace FIFE {
 	void Engine::init() {
 		m_destroyed = false;
 
+		FL_LOG(_log, LMsg("Fifengine v") << FIFE::getVersion());
 		FL_LOG(_log, "================== Engine initialize start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
@@ -161,10 +170,10 @@ namespace FIFE {
 		FL_LOG(_log, "Adding root directory to VFS");
 		m_vfs->addSource( new VFSDirectory(m_vfs) );
 		m_vfs->addProvider( new DirectoryProvider() );
-#ifdef HAVE_ZIP
+
 		FL_LOG(_log, "Adding zip provider to VFS");
 		m_vfs->addProvider( new ZipProvider() );
-#endif
+
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
@@ -174,8 +183,6 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		TTF_Init();
 
 		FL_LOG(_log, "Creating event manager");
@@ -186,6 +193,7 @@ namespace FIFE {
 		FL_LOG(_log, "Creating resource managers");
 
 		m_imagemanager = new ImageManager();
+		m_animationmanager = new AnimationManager();
 		m_soundclipmanager = new SoundClipManager();
 
 		FL_LOG(_log, "Creating render backend");
@@ -195,14 +203,8 @@ namespace FIFE {
 			FL_LOG(_log, "SDL Render backend created");
 		} else {
 #ifdef HAVE_OPENGL
-			if (rbackend == "OpenGLe") {
-				m_renderbackend = new RenderBackendOpenGLe(m_settings.getColorKey());
-				FL_LOG(_log, "OpenGLe Render backend created");
-				FL_LOG(_log, "This is highly experimental so bear in mind some features may not work/work correctly.");
-			} else {
-				m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
-				FL_LOG(_log, "OpenGL Render backend created");
-			}
+			m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
+			FL_LOG(_log, "OpenGL Render backend created");
 #else
 			m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
 			// Remember  the choice so we pick the right graphics class.
@@ -217,23 +219,39 @@ namespace FIFE {
 		m_renderbackend->setImageCompressingEnabled(m_settings.isGLCompressImages());
 		m_renderbackend->setFramebufferEnabled(m_settings.isGLUseFramebuffer());
 		m_renderbackend->setNPOTEnabled(m_settings.isGLUseNPOT());
-
+		m_renderbackend->setTextureFiltering(m_settings.getGLTextureFiltering());
+		m_renderbackend->setMipmappingEnabled(m_settings.isGLUseMipmapping());
+		m_renderbackend->setMonochromeEnabled(m_settings.isGLUseMonochrome());
+		m_renderbackend->setDepthBufferEnabled(m_settings.isGLUseDepthBuffer());
+		m_renderbackend->setAlphaTestValue(m_settings.getGLAlphaTestValue());
+		m_renderbackend->setVSyncEnabled(m_settings.isVSync());
 		if (m_settings.isFrameLimitEnabled()) {
 			m_renderbackend->setFrameLimitEnabled(true);
 			m_renderbackend->setFrameLimit(m_settings.getFrameLimit());
 		}
 
 		std::string driver = m_settings.getVideoDriver();
-		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
-
 		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
 			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
-				FL_WARN(_log, "Selected driver is not supported for your Operating System!  Reverting to default driver.");
+				FL_WARN(_log, "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
 				driver = "";
 			}
+			m_devcaps.setVideoDriverName(driver);
 		}
-
+		// init backend with selected video driver or default
 		m_renderbackend->init(driver);
+
+		// in case of SDL we use this to create the SDL_Renderer
+		driver = m_settings.getSDLDriver();
+		if (driver != ""){
+			std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
+			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
+				FL_WARN(_log, "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
+				driver = "";
+			}
+			m_devcaps.setRenderDriverName(driver);
+		}
 
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
@@ -245,7 +263,9 @@ namespace FIFE {
 			m_settings.getScreenHeight(),
 			bpp,
 			rbackend,
-			m_settings.isFullScreen());
+			m_settings.isFullScreen(),
+			m_settings.getRefreshRate(),
+			m_settings.getDisplay());
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(
@@ -260,8 +280,6 @@ namespace FIFE {
 		}
 
 #endif
-		SDL_EnableUNICODE(1);
-
 		FL_LOG(_log, "Creating sound manager");
 		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
@@ -286,10 +304,11 @@ namespace FIFE {
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
-		m_model->adoptCellGrid(new HexGrid());
+		m_model->adoptCellGrid(new HexGrid(false));
+		m_model->adoptCellGrid(new HexGrid(true));
 
 		m_cursor = new Cursor(m_renderbackend);
-		FL_LOG(_log, "Engine intialized");
+		FL_LOG(_log, "Engine initialized");
 	}
 
 	Engine::~Engine() {
@@ -305,9 +324,10 @@ namespace FIFE {
 		delete m_soundmanager;
 		delete m_guimanager;
 
+		delete m_animationmanager;
 		delete m_imagemanager;
 		delete m_soundclipmanager;
-//		delete m_eventmanager;
+		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
 		delete m_offrenderer;
@@ -343,9 +363,14 @@ namespace FIFE {
 		m_eventmanager->processEvents();
 		m_timemanager->update();
 
+#ifdef HAVE_CEGUI
+		m_renderbackend->clearBackBuffer();
+#endif
 		m_targetrenderer->render();
-		if (m_model->getMapCount() == 0) {
+		if (m_model->getActiveCameraCount() == 0) {
+#ifndef HAVE_CEGUI
 			m_renderbackend->clearBackBuffer();
+#endif
 			m_offrenderer->render();
 		} else {
 			m_model->update();
@@ -377,6 +402,4 @@ namespace FIFE {
 			++i;
 		}
 	}
-}//FIFE
-
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+}

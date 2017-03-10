@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -31,11 +31,12 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-#include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/key/ec_ikeyfilter.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
-#include "eventchannel/command/ec_command.h"
+#include "eventchannel/key/key.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/key/ikeyfilter.h"
+#include "eventchannel/mouse/imousefilter.h"
+#include "eventchannel/mouse/mouseevent.h"
+#include "eventchannel/command/command.h"
 #include "video/renderbackend.h"
 
 #include "eventmanager.h"
@@ -46,20 +47,22 @@ namespace FIFE {
 	EventManager::EventManager():
 		m_commandlisteners(),
 		m_keylisteners(),
+		m_textListeners(),
 		m_mouselisteners(),
 		m_sdleventlisteners(),
 		m_keystatemap(),
 		m_keyfilter(0),
+		m_mousefilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY),
-		m_mousesensitivity(0.0),
+		m_mouseSensitivity(0.0),
 		m_acceleration(false),
 		m_warp(false),
 		m_enter(false),
-		m_oldx(0),
-		m_oldy(0),
-		m_lastticks(0),
-		m_oldvelocity(0.0) {
+		m_oldX(0),
+		m_oldY(0),
+		m_lastTicks(0),
+		m_oldVelocity(0.0) {
 	}
 
 	EventManager::~EventManager() {
@@ -80,7 +83,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addCommandListenerFront(ICommandListener* listener) {
-		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
+		addListener<ICommandListener*>(m_pending_commandlisteners_front, listener);
 	}
 
 	void EventManager::removeCommandListener(ICommandListener* listener) {
@@ -99,12 +102,24 @@ namespace FIFE {
 		removeListener<IKeyListener*>(m_pending_kldeletions, listener);
 	}
 
+	void EventManager::addTextListener(ITextListener* listener) {
+		addListener<ITextListener*>(m_pendingTextListeners, listener);
+	}
+
+	void EventManager::addTextListenerFront(ITextListener* listener) {
+		addListener<ITextListener*>(m_pendingTextListenersFront, listener);
+	}
+
+	void EventManager::removeTextListener(ITextListener* listener) {
+		removeListener<ITextListener*>(m_pendingTlDeletions, listener);
+	}
+
 	void EventManager::addMouseListener(IMouseListener* listener) {
 		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
 	}
 
 	void EventManager::addMouseListenerFront(IMouseListener* listener) {
-		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
+		addListener<IMouseListener*>(m_pending_mouselisteners_front, listener);
 	}
 
 	void EventManager::removeMouseListener(IMouseListener* listener) {
@@ -116,11 +131,23 @@ namespace FIFE {
 	}
 
 	void EventManager::addSdlEventListenerFront(ISdlEventListener* listener) {
-		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
+		addListener<ISdlEventListener*>(m_pending_sdleventlisteners_front, listener);
 	}
 
 	void EventManager::removeSdlEventListener(ISdlEventListener* listener) {
 		removeListener<ISdlEventListener*>(m_pending_sdldeletions, listener);
+	}
+
+	void EventManager::addDropListener(IDropListener* listener) {
+		addListener<IDropListener*>(m_pendingDropListeners, listener);
+	}
+
+	void EventManager::addDropListenerFront(IDropListener* listener) {
+		addListener<IDropListener*>(m_pendingDropListenersFront, listener);
+	}
+
+	void EventManager::removeDropListener(IDropListener* listener) {
+		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
 	}
 
 	void EventManager::dispatchCommand(Command& command) {
@@ -219,6 +246,57 @@ namespace FIFE {
 		}
 	}
 
+	void EventManager::dispatchTextEvent(TextEvent& evt) {
+		if(!m_pendingTextListeners.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTextListeners.begin();
+			while (i != m_pendingTextListeners.end()) {
+				m_textListeners.push_back(*i);
+				++i;
+			}
+			m_pendingTextListeners.clear();
+		}
+
+		if(!m_pendingTextListenersFront.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTextListenersFront.begin();
+			while (i != m_pendingTextListenersFront.end()) {
+				m_textListeners.push_front(*i);
+				++i;
+			}
+			m_pendingTextListenersFront.clear();
+		}
+
+		if (!m_pendingTlDeletions.empty()) {
+			std::deque<ITextListener*>::iterator i = m_pendingTlDeletions.begin();
+			while (i != m_pendingTlDeletions.end()) {
+				std::deque<ITextListener*>::iterator j = m_textListeners.begin();
+				while (j != m_textListeners.end()) {
+					if(*j == *i) {
+						m_textListeners.erase(j);
+						break;
+					}
+					++j;
+				}
+				++i;
+			}
+			m_pendingTlDeletions.clear();
+		}
+
+		std::deque<ITextListener*>::iterator i = m_textListeners.begin();
+		while (i != m_textListeners.end()) {
+			switch (evt.getType()) {
+				case TextEvent::INPUT:
+					(*i)->textInput(evt);
+					break;
+				case TextEvent::EDIT:
+					(*i)->textEdit(evt);
+					break;
+				default:
+					break;
+			}
+			++i;
+		}
+	}
+
 	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
 		if(!m_pending_mouselisteners.empty()) {
 			std::deque<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
@@ -271,6 +349,12 @@ namespace FIFE {
 					break;
 				case MouseEvent::WHEEL_MOVED_UP:
 					(*i)->mouseWheelMovedUp(evt);
+					break;
+				case MouseEvent::WHEEL_MOVED_RIGHT:
+					(*i)->mouseWheelMovedRight(evt);
+					break;
+				case MouseEvent::WHEEL_MOVED_LEFT:
+					(*i)->mouseWheelMovedLeft(evt);
 					break;
 				case MouseEvent::CLICKED:
 					(*i)->mouseClicked(evt);
@@ -338,6 +422,48 @@ namespace FIFE {
 		return ret;
 	}
 
+	void EventManager::dispatchDropEvent(DropEvent& evt) {
+		if(!m_pendingDropListeners.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDropListeners.begin();
+			while (i != m_pendingDropListeners.end()) {
+				m_dropListeners.push_back(*i);
+				++i;
+			}
+			m_pendingDropListeners.clear();
+		}
+
+		if(!m_pendingDropListenersFront.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDropListenersFront.begin();
+			while (i != m_pendingDropListenersFront.end()) {
+				m_dropListeners.push_front(*i);
+				++i;
+			}
+			m_pendingDropListenersFront.clear();
+		}
+
+		if (!m_pendingDlDeletions.empty()) {
+			std::deque<IDropListener*>::iterator i = m_pendingDlDeletions.begin();
+			while (i != m_pendingDlDeletions.end()) {
+				std::deque<IDropListener*>::iterator j = m_dropListeners.begin();
+				while (j != m_dropListeners.end()) {
+					if(*j == *i) {
+						m_dropListeners.erase(j);
+						break;
+					}
+					++j;
+				}
+				++i;
+			}
+			m_pendingDlDeletions.clear();
+		}
+
+		std::deque<IDropListener*>::iterator i = m_dropListeners.begin();
+		while (i != m_dropListeners.end()) {
+			(*i)->fileDropped(evt);
+			++i;
+		}
+	}
+
 	bool EventManager::combineEvents(SDL_Event& event1, const SDL_Event& event2) {
 		if(event1.type == event2.type) {
 			switch (event1.type) {
@@ -362,9 +488,9 @@ namespace FIFE {
 		bool has_next_event = (SDL_PollEvent(&event) != 0);
 		while (has_next_event) {
 			has_next_event = (SDL_PollEvent(&next_event) != 0);
-			if(has_next_event && combineEvents(event, next_event))
+			if (has_next_event && combineEvents(event, next_event)) {
 				continue;
-
+			}
 			switch (event.type) {
 				case SDL_QUIT: {
 					Command cmd;
@@ -374,8 +500,8 @@ namespace FIFE {
 					}
 					break;
 
-				case SDL_ACTIVEEVENT:
-					processActiveEvent(event);
+				case SDL_WINDOWEVENT:
+					processWindowEvent(event);
 					break;
 
 				case SDL_KEYDOWN:
@@ -383,58 +509,73 @@ namespace FIFE {
 					processKeyEvent(event);
 					break;
 
+				//case SDL_TEXTEDITING: // is buggy with SDL 2.0.1
+				case SDL_TEXTINPUT:
+					processTextEvent(event);
+					break;
+
+				case SDL_MOUSEWHEEL:
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN:
 					processMouseEvent(event);
 					break;
+
+				case SDL_DROPFILE: {
+					processDropEvent(event);
+					break;
+				}
+
 			}
-			if(has_next_event)
+			if (has_next_event) {
 				event = next_event;
+			}
 		}
 	}
 
-	void EventManager::processActiveEvent(SDL_Event event) {
+	void EventManager::processWindowEvent(SDL_Event event) {
 		if (dispatchSdlEvent(event)) {
 			return;
 		}
 
-		SDL_ActiveEvent actevt = event.active;
-		std::vector<Command*> commands;
+		CommandType ct = CMD_UNKNOWN;
+		switch (event.window.event) {
+			case SDL_WINDOWEVENT_CLOSE:
+				ct = CMD_QUIT_GAME;
+				break;
 
-		if (actevt.state & SDL_APPMOUSEFOCUS) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_MOUSE_FOCUS_GAINED);
-				m_enter = true;
-			} else {
-				cmd->setCommandType(CMD_MOUSE_FOCUS_LOST);
-			}
-			commands.push_back(cmd);
-		}
-		if (actevt.state & SDL_APPINPUTFOCUS) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_INPUT_FOCUS_GAINED);
-			} else {
-				cmd->setCommandType(CMD_INPUT_FOCUS_LOST);
-			}
-			commands.push_back(cmd);
-		}
-		if (actevt.state & SDL_APPACTIVE) {
-			Command* cmd = new Command();
-			if (actevt.gain) {
-				cmd->setCommandType(CMD_APP_RESTORED);
-			} else {
-				cmd->setCommandType(CMD_APP_ICONIFIED);
-			}
-			commands.push_back(cmd);
-		}
+			case SDL_WINDOWEVENT_ENTER:
+				ct = CMD_MOUSE_FOCUS_GAINED;
+				break;
 
-		std::vector<Command*>::iterator it = commands.begin();
-		for (; it != commands.end(); ++it) {
-			dispatchCommand(**it);
-			delete *it;
+			case SDL_WINDOWEVENT_LEAVE:
+				ct = CMD_MOUSE_FOCUS_LOST;
+				break;
+
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+				ct = CMD_INPUT_FOCUS_GAINED;
+				break;
+
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				ct = CMD_INPUT_FOCUS_LOST;
+				break;
+
+			case SDL_WINDOWEVENT_SHOWN:
+				ct = CMD_APP_RESTORED;
+				break;
+
+			case SDL_WINDOWEVENT_MINIMIZED:
+			case SDL_WINDOWEVENT_HIDDEN:
+				ct = CMD_APP_ICONIFIED;
+				break;
+
+			default:
+				ct = CMD_UNKNOWN;
+		}
+		if (ct != CMD_UNKNOWN) {
+			Command cmd;
+			cmd.setCommandType(ct);
+			dispatchCommand(cmd);
 		}
 	}
 
@@ -443,52 +584,58 @@ namespace FIFE {
 		keyevt.setSource(this);
 		fillKeyEvent(event, keyevt);
 		m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
-
-		bool dispatchAsSdl = !keyevt.getKey().isFunctionKey();
-		if( dispatchAsSdl && m_keyfilter ) {
-			dispatchAsSdl = !m_keyfilter->isFiltered(keyevt);
-		}
-
-		if( dispatchAsSdl ) {
-			if( dispatchSdlEvent(event) )
+		// if event is not filtered it gets dispatched, even it is a function key
+		if (!m_keyfilter || !m_keyfilter->isFiltered(keyevt)) {
+			if (dispatchSdlEvent(event))
 				return;
 		}
 
 		dispatchKeyEvent(keyevt);
 	}
 
+	void EventManager::processTextEvent(SDL_Event event) {
+		if (dispatchSdlEvent(event)) {
+			return;
+		}
+
+		TextEvent txtevt;
+		txtevt.setSource(this);
+		fillTextEvent(event, txtevt);
+		dispatchTextEvent(txtevt);
+	}
+
 	void EventManager::processMouseEvent(SDL_Event event) {
-		if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+		if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
 			uint16_t tmp_x = event.motion.x;
 			uint16_t tmp_y = event.motion.y;
 			if (m_enter) {
-				m_oldx = tmp_x;
-				m_oldy = tmp_y;
-				m_oldvelocity = 0.0;
+				m_oldX = tmp_x;
+				m_oldY = tmp_y;
+				m_oldVelocity = 0.0;
 				m_enter = false;
 			}
 
 			float modifier;
 			if (m_acceleration) {
 				uint32_t ticks = SDL_GetTicks();
-				float difference = static_cast<float>((ticks - m_lastticks) + 1);
-				m_lastticks = ticks;
-				float dx = static_cast<float>(tmp_x - m_oldx);
-				float dy = static_cast<float>(tmp_y - m_oldy);
+				float difference = static_cast<float>((ticks - m_lastTicks) + 1);
+				m_lastTicks = ticks;
+				float dx = static_cast<float>(tmp_x - m_oldX);
+				float dy = static_cast<float>(tmp_y - m_oldY);
 				float distance = Mathf::Sqrt(dx * dx + dy * dy);
 				float acceleration = static_cast<float>((distance / difference) / difference);
-				float velocity = (m_oldvelocity + acceleration * difference)/2;
-				if (velocity > m_mousesensitivity+1) {
-					velocity = m_mousesensitivity+1;
+				float velocity = (m_oldVelocity + acceleration * difference)/2;
+				if (velocity > m_mouseSensitivity+1) {
+					velocity = m_mouseSensitivity+1;
 				}
-				m_oldvelocity = velocity;
+				m_oldVelocity = velocity;
 				modifier = velocity;
 			} else {
-				modifier = m_mousesensitivity;
+				modifier = m_mouseSensitivity;
 			}
 
-			int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldx);
-			int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldy);
+			int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldX);
+			int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldY);
 			if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
 				Rect screen = RenderBackend::instance()->getArea();
 				int16_t x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
@@ -508,19 +655,16 @@ namespace FIFE {
 				} else {
 					tmp_y += y_fact;
 				}
-				m_oldx = tmp_x;
-				m_oldy = tmp_y;
+				m_oldX = tmp_x;
+				m_oldY = tmp_y;
 				event.motion.x = tmp_x;
 				event.motion.y = tmp_y;
 				m_warp = true; //don't trigger an event handler when warping
-				SDL_WarpMouse(tmp_x, tmp_y);
+				SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), tmp_x, tmp_y);
 				m_warp = false;
 			}
+		}
 
-		}
-		if (dispatchSdlEvent(event)) {
-			return;
-		}
 		MouseEvent mouseevt;
 		mouseevt.setSource(this);
 		fillMouseEvent(event, mouseevt);
@@ -531,15 +675,33 @@ namespace FIFE {
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
-		// fire scrollwheel events only once
-		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
-			if (event.type == SDL_MOUSEBUTTONUP) {
-				return;
-			}
+
+		bool consumed = dispatchSdlEvent(event);
+		if (consumed && m_mousefilter) {
+			consumed = !m_mousefilter->isFiltered(mouseevt);
 		}
+		if (consumed) {
+			return;
+		}
+		
 		dispatchMouseEvent(mouseevt);
 	}
 
+	void EventManager::processDropEvent(SDL_Event event) {
+		// only dispatched as DropEvent
+		//if (dispatchSdlEvent(event)) {
+		//	return;
+		//}
+
+		char* tmp = event.drop.file;
+		std::string path(tmp);
+		SDL_free(tmp);
+
+		DropEvent drop;
+		drop.setPath(path);
+		drop.setSource(this);
+		dispatchDropEvent(drop);
+	}
 
 	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
 		if (m_warp) {
@@ -562,29 +724,41 @@ namespace FIFE {
 				case SDL_BUTTON_MIDDLE:
 					mouseevt.setButton(MouseEvent::MIDDLE);
 					break;
+				case SDL_BUTTON_X1:
+					mouseevt.setButton(MouseEvent::X1);
+					break;
+				case SDL_BUTTON_X2:
+					mouseevt.setButton(MouseEvent::X2);
+					break;
 				default:
 					mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
 					break;
 			}
 
-			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
+			if (sdlevt.button.state == SDL_RELEASED) {
 				mouseevt.setType(MouseEvent::RELEASED);
 			} else {
 				mouseevt.setType(MouseEvent::PRESSED);
 			}
-
-			switch (sdlevt.button.button) {
-				case SDL_BUTTON_WHEELDOWN:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
-					break;
-				case SDL_BUTTON_WHEELUP:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-					break;
-				default:
-					break;
+		}
+		if (sdlevt.type == SDL_MOUSEWHEEL) {
+			//if (sdlevt.wheel.y > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y < 0)) {
+			if (sdlevt.wheel.y > 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
+			//} else if (sdlevt.wheel.y < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.y > 0)) {
+			} else if (sdlevt.wheel.y < 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
+			}
+			//if (sdlevt.wheel.x > 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x < 0)) {
+			if (sdlevt.wheel.x > 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
+			//} else if (sdlevt.wheel.x < 0 || (sdlevt.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && sdlevt.wheel.x > 0)) {
+			} else if (sdlevt.wheel.x < 0) {
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
 			}
 		}
-		if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+
+		if ((mouseevt.getType() == MouseEvent::MOVED) && ((m_mousestate & m_mostrecentbtn) != 0)) {
 			mouseevt.setType(MouseEvent::DRAGGED);
 			mouseevt.setButton(m_mostrecentbtn);
 		}
@@ -600,14 +774,29 @@ namespace FIFE {
 				<< " Invalid key event type of " << sdlevt.type << ".  Ignoring event.");
 			return;
 		}
-		SDL_keysym keysym = sdlevt.key.keysym;
 
+		SDL_Keysym keysym = sdlevt.key.keysym;
 		keyevt.setShiftPressed((keysym.mod & KMOD_SHIFT) != 0);
 		keyevt.setControlPressed((keysym.mod & KMOD_CTRL) != 0);
 		keyevt.setAltPressed((keysym.mod & KMOD_ALT) != 0);
-		keyevt.setMetaPressed((keysym.mod & KMOD_META) != 0);
-		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
-		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
+		keyevt.setMetaPressed((keysym.mod & KMOD_GUI) != 0); // currently gui/super keys
+		keyevt.setNumericPad((keysym.mod & KMOD_NUM) != 0);
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym)));
+	}
+
+	void EventManager::fillTextEvent(const SDL_Event& sdlevt, TextEvent& txtevt) {
+		if (sdlevt.type == SDL_TEXTINPUT) {
+			txtevt.setType(TextEvent::INPUT);
+			Text t(sdlevt.text.text);
+			txtevt.setText(t);
+		} else if (sdlevt.type == SDL_TEXTEDITING) {
+			txtevt.setType(TextEvent::EDIT);
+			Text t(sdlevt.edit.text, sdlevt.edit.start, sdlevt.edit.length);
+			txtevt.setText(t);
+		} else {
+			FL_WARN(_log, LMsg("fillTextEvent()")
+				<< " Invalid text event type of " << sdlevt.type << ".  Ignoring event.");
+		}
 	}
 
 	void EventManager::fillModifiers(InputEvent& evt) {
@@ -616,8 +805,6 @@ namespace FIFE {
 			m_keystatemap[Key::RIGHT_ALT]);
 		evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] |
 			m_keystatemap[Key::RIGHT_CONTROL]);
-		evt.setMetaPressed(m_keystatemap[Key::LEFT_META] |
-			m_keystatemap[Key::RIGHT_META]);
 		evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] |
 			m_keystatemap[Key::RIGHT_SHIFT]);
 	}
@@ -630,17 +817,21 @@ namespace FIFE {
 		m_keyfilter = keyFilter;
 	}
 
+	void EventManager::setMouseFilter(IMouseFilter* mouseFilter) {
+		m_mousefilter = mouseFilter;
+	}
+
 	void EventManager::setMouseSensitivity(float sensitivity) {
 		if (sensitivity < -0.99) {
 			sensitivity = -0.99;
 		} else if (sensitivity > 10.0) {
 			sensitivity = 10.0;
 		}
-		m_mousesensitivity = sensitivity;
+		m_mouseSensitivity = sensitivity;
 	}
 
 	float EventManager::getMouseSensitivity() const {
-		return m_mousesensitivity;
+		return m_mouseSensitivity;
 	}
 
 	void EventManager::setMouseAccelerationEnabled(bool acceleration) {
@@ -649,5 +840,21 @@ namespace FIFE {
 
 	bool EventManager::isMouseAccelerationEnabled() const {
 		return m_acceleration;
+	}
+
+	bool EventManager::isClipboardText() const {
+		return SDL_HasClipboardText();
+	}
+
+	std::string EventManager::getClipboardText() const {
+		std::string text;
+		if (SDL_HasClipboardText()) {
+			text = std::string(SDL_GetClipboardText());
+		}
+		return text;
+	}
+
+	void EventManager::setClipboardText(const std::string& text) {
+		SDL_SetClipboardText(text.c_str());
 	}
 }

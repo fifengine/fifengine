@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -45,7 +45,7 @@ namespace FIFE {
 		 * @param r Red channel value.
 		 * @param g Green channel value.
 		 * @param b Blue channel value.
-		 * @param alhpa Alpha channel value.
+		 * @param alpha Alpha channel value.
 		 */
 		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
 		
@@ -53,6 +53,31 @@ namespace FIFE {
 		 */
 		~Color();
 		
+		/** Compares equality of two colors
+		 */
+		inline bool operator==(const Color& color) const {
+			return (m_r == color.m_r && m_g == color.m_g && m_b == color.m_b && m_a == color.m_a);
+		}
+		
+		/** Compares unequality of two colors
+		 */
+		inline bool operator!=(const Color& color) const {
+			return !(*this == color);
+		}
+
+		/** Overload less operator
+		 */
+		inline bool operator<(const Color& rhs) const {
+			if (m_r != rhs.m_r) {
+				return m_r < rhs.m_r;
+			} else if (m_g != rhs.m_g) {
+				return m_g < rhs.m_g;
+			} else if (m_b != rhs.m_b) {
+				return m_b < rhs.m_b;
+			}
+			return m_a < rhs.m_a;
+		}
+
 		/** Set all color channel values.
 		 * 
 		 * @param r Red channel value.

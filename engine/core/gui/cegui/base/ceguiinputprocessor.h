@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,13 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_CEGUIINPUTPROCESSOR
-#define FIFE_GUI_CEGUIINPUTPROCESSOR
+#ifndef FIFE_GUI_CEGuiInputProcessor
+#define FIFE_GUI_CEGuiInputProcessor
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL/SDL_events.h>
+#include <SDL_events.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -57,6 +57,10 @@ namespace FIFE {
 		 */
 		bool processKeyInput(SDL_Event& event);
 		
+		/** Process a text input event.
+		 */
+		bool processTextInput(SDL_Event& event);
+
 		/** Process a mouse input event.
 		 */
 		bool processMouseInput(SDL_Event& event);
@@ -64,8 +68,16 @@ namespace FIFE {
 		/** Process a mouse motion event.
 		 */
 		bool processMouseMotion(SDL_Event& event);
+
+		/** Initialize the key translation map.
+		 */
+		void initializeKeyMap();
+
+		/** Holds translation of key scancodes from SDL to CEGUI.
+		 */
+		std::map<SDL_Keycode, CEGUI::Key::Scan> m_keymap;
 	};
 	
 }
 
-#endif //FIFE_GUI_CEGUIINPUTPROCESSOR
+#endif //FIFE_GUI_CEGuiInputProcessor

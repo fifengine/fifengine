@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -54,6 +54,7 @@ namespace FIFE {
 			std::vector<Cell*> getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker = false);
 			std::vector<Cell*> getCellsInRect(const Rect& rec);
 			std::vector<Cell*> getCellsInCircle(const ModelCoordinate& center, uint16_t radius);
+			std::vector<Cell*> getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
 
 			void registerCost(const std::string& costId, double cost);
 			void unregisterCost(const std::string& costId);

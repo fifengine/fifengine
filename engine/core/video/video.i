@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,12 +25,16 @@
 #include "video/cursor.h"
 #include "video/animation.h"
 #include "video/imagemanager.h"
+#include "video/animationmanager.h"
 #include "video/renderbackend.h"
 #include "video/devicecaps.h"
 #include "video/atlasbook.h"
+#include "video/color.h"
 #include "util/base/sharedptr.h"
 #include "util/base/exception.h"
 %}
+
+%include <attribute.i>
 
 %include "util/base/utilbase.i"
 %include "util/structures/utilstructures.i"
@@ -43,6 +47,11 @@ namespace FIFE {
 namespace std {
 	%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
 }
+
+%attribute(FIFE::Color, uint8_t, r, getR, setR);
+%attribute(FIFE::Color, uint8_t, g, getG, setG);
+%attribute(FIFE::Color, uint8_t, b, getB, setB);
+%attribute(FIFE::Color, uint8_t, a, getAlpha, setAlpha);
 
 namespace FIFE {
 	class Point;
@@ -57,7 +66,7 @@ namespace FIFE {
 		SDL_Surface* getSurface();
 		uint32_t getWidth() const;
 		uint32_t getHeight() const;
-		const Rect& getArea();
+		Rect getArea() const;
 		void setXShift(int32_t xshift);
 		inline int32_t getXShift() const;
 		void setYShift(int32_t yshift);
@@ -122,9 +131,8 @@ namespace FIFE {
 		virtual void invalidateAll();
 	};
 	
-	class Animation: public FifeClass {
+	class Animation: public IResource {
 	public:
-		explicit Animation();
 		~Animation();
 		void addFrame(ImagePtr image, uint32_t duration);
 		int32_t getFrameIndex(uint32_t timestamp);
@@ -142,12 +150,56 @@ namespace FIFE {
 	typedef SharedPtr<Animation> AnimationPtr;	
 	%template(SharedAnimationPointer) SharedPtr<Animation>;
 
-	%extend Animation {
-		static SharedPtr<Animation> createAnimation() {
-			FIFE::SharedPtr<FIFE::Animation> ani(new FIFE::Animation());
-			return ani;
-		}
-	}
+	class AnimationManager : public IResourceManager {
+	public:
+		virtual ~AnimationManager();
+		
+		virtual size_t getMemoryUsed() const;
+		virtual size_t getTotalResourcesCreated() const;
+		virtual size_t getTotalResourcesLoaded() const;
+		virtual size_t getTotalResources() const;
+
+		virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = 0);	
+		virtual AnimationPtr add(Animation* res);
+
+		virtual bool exists(const std::string& name);
+		virtual bool exists(ResourceHandle handle);
+
+		virtual void reload(const std::string& name);
+		virtual void reload(ResourceHandle handle);
+		virtual void reloadAll();
+		virtual void loadUnreferenced();
+
+		virtual void free(const std::string& name);
+		virtual void free(ResourceHandle handle);
+		virtual void freeAll();
+		virtual void freeUnreferenced();
+
+		virtual void remove(ImagePtr& resource);
+		virtual void remove(const std::string& name);
+		virtual void remove(ResourceHandle handle);
+		virtual void removeAll();
+		virtual void removeUnreferenced();
+
+		virtual AnimationPtr get(const std::string& name);
+		virtual AnimationPtr get(ResourceHandle handle);
+
+		virtual AnimationPtr getPtr(const std::string& name);
+		virtual AnimationPtr getPtr(ResourceHandle handle);
+
+		virtual ResourceHandle getResourceHandle(const std::string& name);
+
+		virtual void invalidate(const std::string& name);
+		virtual void invalidate(ResourceHandle handle);
+		virtual void invalidateAll();
+	};
+
+	enum TextureFiltering {
+		TEXTURE_FILTER_NONE = 0,
+		TEXTURE_FILTER_BILINEAR = 1,
+		TEXTURE_FILTER_TRILINEAR = 2,
+		TEXTURE_FILTER_ANISOTROPIC = 3
+	};
 
 	class RenderBackend {
 	public:
@@ -171,6 +223,12 @@ namespace FIFE {
 		bool isFramebufferEnabled() const;
 		void setNPOTEnabled(bool enabled);
 		bool isNPOTEnabled() const;
+		void setTextureFiltering(TextureFiltering filter);
+		TextureFiltering getTextureFiltering() const;
+		void setMipmappingEnabled(bool enabled);
+		bool isMipmappingEnabled() const;
+		void setMonochromeEnabled(bool enabled);
+		bool isMonochromeEnabled() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
@@ -178,6 +236,8 @@ namespace FIFE {
 		const SDL_PixelFormat& getPixelFormat() const;
 		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 		void resetBackgroundColor();
+		void setVSyncEnabled(bool vsync);
+		bool isVSyncEnabled() const;
 		void setFrameLimitEnabled(bool limited);
 		bool isFrameLimitEnabled() const;
 		void setFrameLimit(uint16_t framelimit);
@@ -196,20 +256,14 @@ namespace FIFE {
 		NC_IBEAM,
 		NC_WAIT,
 		NC_CROSS,
-		NC_UPARROW,
-		NC_RESIZENW,
-		NC_RESIZESE,
-		NC_RESIZESW,
-		NC_RESIZENE,
-		NC_RESIZEE,
-		NC_RESIZEW,
-		NC_RESIZEN,
-		NC_RESIZES,
+		NC_WAITARROW,
+		NC_RESIZENWSE,
+		NC_RESIZENESW,
+		NC_RESIZEWE,
+		NC_RESIZENS,
 		NC_RESIZEALL,
 		NC_NO,
-		NC_HAND,
-		NC_APPSTARTING,
-		NC_HELP
+		NC_HAND
 	};
 
     %apply int32_t *OUTPUT { int32_t* x, int32_t* y }; 
@@ -247,18 +301,18 @@ namespace FIFE {
 		uint16_t getWidth() const;
 		uint16_t getHeight() const;
 		uint16_t getBPP() const;
+		uint16_t getRefreshRate() const;
 		uint32_t getSDLFlags() const;
 		bool isFullScreen();
 		bool isOpenGL();
 		bool isSDL() const;
-		bool isSDLHardwareSurface() const;
-		
-		static const uint32_t HW_WINDOWED_OPENGL;
-		static const uint32_t HW_FULLSCREEN_OPENGL;
+		uint8_t getDisplay() const;
+		const std::string& getRenderDriverName() const;
+
+		static const uint32_t WINDOWED_OPENGL;
+		static const uint32_t FULLSCREEN_OPENGL;
 		static const uint32_t WINDOWED_SDL;
-		static const uint32_t WINDOWED_SDL_DB_HW;
 		static const uint32_t FULLSCREEN_SDL;
-		static const uint32_t FULLSCREEN_SDL_DB_HW;
 	};
 
 	class DeviceCaps {
@@ -269,21 +323,20 @@ namespace FIFE {
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
 		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
-		std::string getDriverName() const;
-		std::vector<string> getAvailableDrivers() const;
-		bool isHwSurfaceAvail() const;
-		bool isWindowManagerAvail() const;
-		bool isHwBlitAccel() const;
-		bool isHwColorkeyBlitAccel() const;
-		bool isHwAlphaBlitAccel() const;
-		bool isSwToHwBlitAccel() const;
-		bool isSwToHwColorkeyBlitAccel() const;
-		bool isSwToHwAlphaBlitAccel() const;
-		bool isBlitFillAccel() const;
-		
-		uint32_t getVideoMemory() const;
-		int32_t getDesktopWidth() const;
-		int32_t getDesktopHeight() const;
+		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
+		std::string getVideoDriverName() const;
+		std::vector<string> getAvailableVideoDrivers() const;
+		std::string getRenderDriverName() const;
+		void setRenderDriverName(const std::string& driver);
+		std::vector<std::string> getAvailableRenderDrivers() const;
+
+		uint8_t getDisplayCount() const;
+		std::string getDisplayName(uint8_t display = 0) const;
+		uint32_t getDesktopFormat(uint8_t display = 0) const;
+		int32_t getDesktopRefreshRate(uint8_t display = 0) const;
+		int32_t getDesktopWidth(uint8_t display = 0) const;
+		int32_t getDesktopHeight(uint8_t display = 0) const;
+		Rect getDisplayBounds(uint8_t display = 0) const;
 	};
 	
 	class AtlasBlock {
@@ -319,5 +372,22 @@ namespace FIFE {
 		uint32_t getPageHeight(uint32_t index) {
 			return $self->getPage(index).getHeight();
 		}
-	}		
+	}
+	
+	class Color {
+	public:
+		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
+		~Color();
+
+		void set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha);
+		void setR(uint8_t r);
+		void setG(uint8_t g);
+		void setB(uint8_t b);
+		void setAlpha(uint8_t alpha);
+
+		uint8_t getR() const;
+		uint8_t getG() const;
+		uint8_t getB() const;
+		uint8_t getAlpha() const;
+	};	
 }

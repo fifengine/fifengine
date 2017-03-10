@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -225,7 +225,7 @@ namespace FIFE {
 			int32_t convertCoordToInt(const ModelCoordinate& coord) const;
 			
 			/** Convertes unique identifier to coordinate.
-			 * @param coord A const reference the integer id which should be converted.
+			 * @param cell A const reference to the integer id which should be converted.
 			 * @return A ModelCoordinate, contain the cell coordinate.
 			 */
 			ModelCoordinate convertIntToCoord(const int32_t cell) const;
@@ -275,6 +275,15 @@ namespace FIFE {
 			 * @return A vector that contain the cells.
 			 */
 			std::vector<Cell*> getCellsInCircle(const ModelCoordinate& center, uint16_t radius);
+
+			/** Returns all cells in the circle segment.
+			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
+			 * @param radius A unsigned integer, radius of the circle.
+			 * @param sangle A interger, start angle of the segment.
+			 * @param eangle A interger, end angle of the segment.
+			 * @return A vector that contain the cells.
+			 */
+			std::vector<Cell*> getCellsInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle);
 
 			/** Adds a cost with the given id and value.
 			 * @param costId A const reference to a string that refs to the cost id.
@@ -524,42 +533,42 @@ namespace FIFE {
 
 			/** Adds a cell to a specific area group. With an area you can group cells without the need
 			 *	of checking the underlying instances or similar.
-			 * @param A const reference to string that contains the area id.
-			 * @param A pointer to the cell which should be added.
+			 * @param id A const reference to string that contains the area id.
+			 * @param cell A pointer to the cell which should be added.
 			 */
 			void addCellToArea(const std::string& id, Cell* cell);
 
 			/** Adds few cell to a specific area group. With an area you can group cells without the need
 			 *	of checking the underlying instances or similar.
-			 * @param A const reference to string that contains the area id.
-			 * @param A const reference to vector which contains the cells.
+			 * @param id A const reference to string that contains the area id.
+			 * @param cells A const reference to vector which contains the cells.
 			 */
 			void addCellsToArea(const std::string& id, const std::vector<Cell*>& cells);
 
 			/** Removes the cell from all areas.
-			 * @param A pointer to the cell which should be removed.
+			 * @param cell A pointer to the cell which should be removed.
 			 */
 			void removeCellFromArea(Cell* cell);
 
 			/** Removes the cell from a area.
-			 * @param A const reference to string that contains the area id.
-			 * @param A pointer to the cell which should be removed.
+			 * @param id A const reference to string that contains the area id.
+			 * @param cell A pointer to the cell which should be removed.
 			 */
 			void removeCellFromArea(const std::string& id, Cell* cell);
 
 			/** Removes few cells from a area.
-			 * @param A const reference to string that contains the area id.
-			 * @param A const reference to vector which contains the cells.
+			 * @param id A const reference to string that contains the area id.
+			 * @param cells A const reference to vector which contains the cells.
 			 */
 			void removeCellsFromArea(const std::string& id, const std::vector<Cell*>& cells);
 
 			/** Removes a area.
-			 * @param A const reference to string that contains the area id.
+			 * @param id A const reference to string that contains the area id.
 			 */
 			void removeArea(const std::string& id);
 
 			/** Checks whether the area exists.
-			 * @param A const reference to string that contains the area id.
+			 * @param id A const reference to string that contains the area id.
 			 * @return A boolean, true if the area id exists, otherwise false.
 			 */
 			bool existsArea(const std::string& id);
@@ -570,26 +579,26 @@ namespace FIFE {
 			std::vector<std::string> getAreas();
 
 			/** Returns all areas of a cell.
-			 * @param A pointer to the cell.
+			 * @param cell A pointer to the cell.
 			 * @return A vector that contains the area ids.
 			 */
 			std::vector<std::string> getCellAreas(Cell* cell);
 
 			/** Returns all cells of an area.
-			 * @param A const reference to string that contains the area id.
+			 * @param id A const reference to string that contains the area id.
 			 * @return A vector that contains the cells from the area.
 			 */
 			std::vector<Cell*> getAreaCells(const std::string& id);
 
 			/** Returns true if cell is part of the area, otherwise false.
-			 * @param A const reference to string that contains the area id.
-			 * @param A pointer to the cell which is used for the check.
+			 * @param id A const reference to string that contains the area id.
+			 * @param cell A pointer to the cell which is used for the check.
 			 * @return A boolean, true if the cell is part of the area, otherwise false.
 			*/
 			bool isCellInArea(const std::string& id, Cell* cell);
 
 			/** Sets the cache size to static so that automatic resize is disabled.
-			 * @param A boolean, true if the cache size is static, otherwise false.
+			 * @param staticSize A boolean, true if the cache size is static, otherwise false.
 			 */
 			void setStaticSize(bool staticSize);
 

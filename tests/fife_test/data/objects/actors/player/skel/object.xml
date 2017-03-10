@@ -1,27 +1,29 @@
 <?fife type="object"?>
-<object id="skel" namespace="tutorial1objects" blocking="1" static="0">
-	<action id="stand">
-		<animation atlas="stand.png" width="128" height="128" x_offset="0" y_offset="-32" frames="4" delay="200">
-			<direction dir="180"/>
-			<direction dir="135"/>
-			<direction dir="90"/>
-			<direction dir="45"/>
-			<direction dir="0"/>
-			<direction dir="315"/>
-			<direction dir="270"/>
-			<direction dir="225"/>
-		</animation>
-	</action>
-	<action id="walk">
-		<animation atlas="walk.png" width="128" height="128" x_offset="0" y_offset="-32" frames="8" delay="100">
-			<direction dir="180"/>
-			<direction dir="135"/>
-			<direction dir="90"/>
-			<direction dir="45"/>
-			<direction dir="0"/>
-			<direction dir="315"/>
-			<direction dir="270"/>
-			<direction dir="225"/>
-		</animation>
-	</action>
-</object>
+<assets>
+	<object id="skel" namespace="tutorial1objects" blocking="1" static="0">
+		<action id="stand">
+			<animation atlas="stand.png" width="128" height="128" x_offset="0" y_offset="-32" frames="4" delay="200">
+				<direction dir="180"/>
+				<direction dir="135"/>
+				<direction dir="90"/>
+				<direction dir="45"/>
+				<direction dir="0"/>
+				<direction dir="315"/>
+				<direction dir="270"/>
+				<direction dir="225"/>
+			</animation>
+		</action>
+		<action id="walk">
+			<animation atlas="walk.png" width="128" height="128" x_offset="0" y_offset="-32" frames="8" delay="100">
+				<direction dir="180"/>
+				<direction dir="135"/>
+				<direction dir="90"/>
+				<direction dir="45"/>
+				<direction dir="0"/>
+				<direction dir="315"/>
+				<direction dir="270"/>
+				<direction dir="225"/>
+			</animation>
+		</action>
+	</object>
+</assets>

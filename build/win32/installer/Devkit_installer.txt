@@ -1,3 +1,0 @@
-1. Create the Devkit in build\win32\ as usual
-2. Change the Devkit version in devkit.iss.
-3. Compile the installer

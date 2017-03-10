@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_GUI_GUICHANMANAGER_H
-#define FIFE_VIDEO_GUI_GUICHANMANAGER_H
+#ifndef FIFE_GUI_FIFECHANMANAGER_H
+#define FIFE_GUI_FIFECHANMANAGER_H
 
 // Standard C++ library includes
 #include <set>
@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/base/singleton.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 
 #include "gui/guimanager.h"
 
@@ -53,6 +53,7 @@ namespace FIFE {
 
 	class GuiImageLoader;
 	class Console;
+	class Cursor;
 	class KeyEvent;
 	class MouseEvent;
 	class IFont;
@@ -88,11 +89,11 @@ namespace FIFE {
 			virtual void turn();
 
 			/** Inits the Fifechan GUI Manager.
-			 * @param graphics backend specific grapchics object to use
+			 * @param backend The GUI backend object to use
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(const std::string& backend, int32_t screenWidth, int32_t	screenHeight);
+			void init(const std::string& backend, int32_t screenWidth, int32_t screenHeight);
 
 			/** Resizes the top container.
 			 *
@@ -105,14 +106,16 @@ namespace FIFE {
 
 			/** Adds a new widget.
 			 *
-			 * @param A pointer to the widget to add.
+			 * @param widget A pointer to the widget to add.
 			 */
 			void add(fcn::Widget* widget);
+
 			/** Removes a widget.
 			 *
-			 * @param A pointer to the widget to remove.
+			 * @param widget A pointer to the widget to remove.
 			 */
 			void remove(fcn::Widget* widget);
+
 			/** Gets the top container.
 			 *
 			 * @return The top container.
@@ -124,6 +127,32 @@ namespace FIFE {
 			 * @return The console.
 			 */
 			Console* getConsole() const { return m_console; };
+
+			/** Enables the console, or not.
+			 *
+			 * @param console True if the console should be enabled, false otherwise.
+			 * @see isConsoleEnabled, getConsole
+			 */
+			void setConsoleEnabled(bool console);
+
+			/** Checks if the console is enabled, or not.
+			 *
+			 * @return True if the console is enabled, false otherwise.
+			 * @see setConsoleEnabled, getConsole
+			 */
+			bool isConsoleEnabled() const;
+
+			/** Sets the cursor.
+			 *
+			 * @param cursor The pointer to the cursor class.
+			 */
+			void setCursor(Cursor* cursor) { m_cursor = cursor; }
+
+			/** Gets the cursor.
+			 *
+			 * @return The pointer to the cursor class.
+			 */
+			Cursor* getCursor() const { return m_cursor; }
 
 			/** Set the global font properties.
 			 */
@@ -148,6 +177,23 @@ namespace FIFE {
 			KeyEvent translateKeyEvent(const fcn::KeyEvent& evt);
 			MouseEvent translateMouseEvent(const fcn::MouseEvent& evt);
 
+			/**
+			 * Sets tabbing enabled, or not. Tabbing is the usage of
+			 * changing focus by utilising the tab key.
+			 *
+			 * @param tabbing True if tabbing should be enabled, false otherwise.
+			 * @see isTabbingEnabled
+			 */
+			void setTabbingEnabled(bool tabbing);
+
+			/**
+			 * Checks if tabbing is enabled.
+			 *
+			 * @return True if tabbing is enabled, false otherwise.
+			 * @see setTabbingEnabled
+			 */
+			bool isTabbingEnabled() const;
+
 		protected:
 			static int32_t convertFifechanKeyToFifeKey(int32_t value);
 
@@ -165,7 +211,9 @@ namespace FIFE {
 			// The input controller.
 			fcn::SDLInput *m_input;
 			// The console.
-			Console       *m_console;
+			Console* m_console;
+			// Acess to the Cursor class.
+			Cursor* m_cursor;
 			//The default font
 			GuiFont* m_defaultfont;
 			// The fonts used
@@ -176,6 +224,9 @@ namespace FIFE {
 			// Used to accept mouse motion events that leave widget space
 			bool m_had_mouse;
 			bool m_had_widget;
+			// Track last motion event position
+			int32_t m_lastMotionX;
+			int32_t m_lastMotionY;
 
 			// default font settings
 			std::string m_fontpath;
@@ -184,6 +235,10 @@ namespace FIFE {
 
 			// true, if fifechan logic has already been executed for this round
 			bool m_logic_executed;
+			// True if the console should be created
+			bool m_enabled_console;
+
+			std::string m_backend;
 	};
 
 }

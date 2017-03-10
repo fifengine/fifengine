@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -46,9 +46,9 @@ namespace FIFE {
 
 		m_route->setRouteStatus(ROUTE_SEARCHING);
 		m_specialCost = route->getCostId() != "";
+		m_ignoreDynamicBlockers = route->isDynamicBlockerIgnored();
 		if (m_multicell) {
 			Location loc = route->getStartNode();
-			std::vector<Cell*> cells;
 			std::vector<ModelCoordinate> coords = route->getOccupiedArea();
 			std::vector<ModelCoordinate>::const_iterator co_it = coords.begin();
 			for (; co_it != coords.end(); ++co_it) {

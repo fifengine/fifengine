@@ -1,0 +1,4 @@
+HeightTest
+-------------- 
+The purpose of this test is to test the ability to use height maps. 
+ 

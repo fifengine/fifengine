@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -60,7 +60,7 @@ namespace FIFE {
 		m_blockingEnabled = false;
 		m_fowEnabled = false;
 		m_pathVisualEnabled = false;
-		m_targetRenderer = new TargetRenderer(m_renderbackend);
+		m_targetRenderer = m_renderbackend->isFramebufferEnabled() ? new TargetRenderer(m_renderbackend) : NULL;
 		m_fowLayer = NULL;
 		m_font = NULL;
 
@@ -74,7 +74,7 @@ namespace FIFE {
 		m_blockingEnabled = false;
 		m_fowEnabled = false;
 		m_pathVisualEnabled = false;
-		m_targetRenderer = new TargetRenderer(m_renderbackend);
+		m_targetRenderer = m_renderbackend->isFramebufferEnabled() ? new TargetRenderer(m_renderbackend) : NULL;
 		m_fowLayer = NULL;
 		m_font = NULL;
 	}
@@ -191,17 +191,17 @@ namespace FIFE {
 				}
 			}
 
-			if (fow_update) {
+			if (fow_update || (fow && !m_targetRenderer)) {
 				ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(
 					FIFE::intPt2doublePt((*cit)->getLayerCoordinates())));
 				CellVisualEffect cve = (*cit)->getFoWType();
 				if (cve == CELLV_CONCEALED) {
 					if (m_concealImage.get()) {
-						addConcealImageToMap(cam, Point(sp.x, sp.y), m_concealImage);
+						addImageToMap(cam, Point(sp.x, sp.y), m_concealImage, "c_img");
 					}
 				} else if (cve == CELLV_MASKED) {
 					if (m_maskImage.get()) {
-						addMaskImageToMap(cam, Point(sp.x, sp.y), m_maskImage);
+						addImageToMap(cam, Point(sp.x, sp.y), m_maskImage, "b_img");
 					}
 				}
 			}
@@ -241,7 +241,7 @@ namespace FIFE {
 			}
 		}
 
-		if (fow) {
+		if (fow && m_targetRenderer) {
 			if (fow_update) {
 				updateFowMap();
 			}
@@ -290,6 +290,9 @@ namespace FIFE {
 	}
 
 	void CellRenderer::createFowMap(Camera* cam, Layer* layer) {
+		if (!m_targetRenderer) {
+			return;
+		}
 		Rect view = cam->getViewPort();
 		m_fowImage = ImageManager::instance()->loadBlank("virtual_fow_map", view.w, view.h);
 		m_fowTarget = m_targetRenderer->createRenderTarget(m_fowImage);
@@ -310,23 +313,27 @@ namespace FIFE {
 		m_maskImage = image;
 	}
 
-	void CellRenderer::addConcealImageToMap(Camera* cam, Point center, ImagePtr image) {
-		if (Mathd::Equal(cam->getZoom(), 1.0)) {
-			m_fowTarget->addImage("c_img", center, image);
+	void CellRenderer::addImageToMap(Camera* cam, Point center, ImagePtr image, const std::string& id) {
+		double zoom = cam->getZoom();
+		bool zoomed = !Mathd::Equal(zoom, 1.0);
+		bool straightZoom = Mathd::Equal(fmod(zoom, 1.0), 0.0);
+		if (m_targetRenderer) {
+			if (!zoomed) {
+				m_fowTarget->addImage(id, center, image);
+			} else {
+				int32_t w = round(image->getWidth() * zoom);
+				int32_t h = round(image->getHeight() * zoom);
+				m_fowTarget->resizeImage(id, center, image, w, h);
+			}
 		} else {
-			int32_t w = round(image.get()->getWidth() * cam->getZoom());
-			int32_t h = round(image.get()->getHeight() * cam->getZoom());
-			m_fowTarget->resizeImage("c_img", center, image, w, h);
-		}
-	}
-
-	void CellRenderer::addMaskImageToMap(Camera* cam, Point center, ImagePtr image) {
-		if (Mathd::Equal(cam->getZoom(), 1.0)) {
-			m_fowTarget->addImage("b_img", center, image);
-		} else {
-			int32_t w = round(image.get()->getWidth() * cam->getZoom());
-			int32_t h = round(image.get()->getHeight() * cam->getZoom());
-			m_fowTarget->resizeImage("b_img", center, image, w, h);
+			int32_t w = image->getWidth();
+			int32_t h = image->getHeight();
+			if (zoomed) {
+				w = round(w * zoom);
+				h = round(h * zoom);
+			}
+			Rect dimensions(center.x, center.y, w, h);
+			image->render(dimensions);
 		}
 	}
 	

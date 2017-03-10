@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -21,8 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from common import *
+from fife import fifechan
+
+from fife.extensions.pychan.attrs import BoolAttr, IntAttr
+
 from widget import Widget
+
 
 class ScrollArea(Widget):
 	"""
@@ -42,18 +46,21 @@ class ScrollArea(Widget):
 									   IntAttr("vertical_scroll_amount"),
 									   IntAttr("horizontal_scroll_amount")
 									 ]
-	DEFAULT_HEXPAND = 1
-	DEFAULT_VEXPAND = 1
+	DEFAULT_HEXPAND = True
+	DEFAULT_VEXPAND = True
 
 	def __init__(self,
-				 parent = None, 
+				 parent = None,
 				 name = None,
 				 size = None,
-				 min_size = None, 
-				 max_size = None, 
-				 helptext = None, 
-				 position = None, 
-				 style = None, 
+				 min_size = None,
+				 max_size = None,
+				 fixed_size = None,
+				 margins = None,
+				 padding = None,
+				 helptext = None,
+				 position = None,
+				 style = None,
 				 hexpand = None,
 				 vexpand = None,
 				 font = None,
@@ -61,7 +68,10 @@ class ScrollArea(Widget):
 				 background_color = None,
 				 foreground_color = None,
 				 selection_color = None,
+				 border_color = None,
+				 outline_color = None,
 				 border_size = None,
+				 outline_size = None,
 				 position_technique = None,
 				 is_focusable = None,
 				 comment = None,
@@ -69,21 +79,35 @@ class ScrollArea(Widget):
 				 vertical_scrollbar = None,
 				 horizontal_scrollbar = None,
 				 vertical_scroll_amount = None,
-				 horizontal_scroll_amount = None
-				 ):
+				 horizontal_scroll_amount = None):
 				 
 		self.real_widget = fifechan.ScrollArea()
 		self._content = None
-		super(ScrollArea,self).__init__(parent=parent, 
-										name=name, 
-										size=size, 
-										min_size=min_size, 
+		super(ScrollArea,self).__init__(parent=parent,
+										name=name,
+										size=size,
+										min_size=min_size,
 										max_size=max_size,
-										helptext=helptext, 
+										fixed_size=fixed_size,
+										margins=margins,
+										padding=padding,
+										helptext=helptext,
 										position=position,
-										style=style, 
-										hexpand=hexpand, 
-										vexpand=vexpand)
+										style=style,
+										hexpand=hexpand,
+										vexpand=vexpand,
+										font=font,
+										base_color=base_color,
+										background_color=background_color,
+										foreground_color=foreground_color,
+										selection_color=selection_color,
+										border_color=border_color,
+										outline_color=outline_color,
+										border_size=border_size,
+										outline_size=outline_size,
+										position_technique=position_technique,
+										is_focusable=is_focusable,
+										comment=comment)
 										
 		if content is not None: self.content = content
 		if vertical_scrollbar is not None: self.vertical_scrollbar = vertical_scrollbar
@@ -96,7 +120,10 @@ class ScrollArea(Widget):
 						self._createNameWithPrefix(prefix),
 						self.size,
 						self.min_size, 
-						self.max_size, 
+						self.max_size,
+						self.fixed_size,
+						self.margins,
+						self.padding,
 						self.helptext, 
 						self.position, 
 						self.style, 
@@ -107,7 +134,10 @@ class ScrollArea(Widget):
 						self.background_color,
 						self.foreground_color,
 						self.selection_color,
+						self.border_color,
+						self.outline_color,
 						self.border_size,
+						self.outline_size,
 						self.position_technique,
 						self.is_focusable,
 						self.comment,
@@ -147,12 +177,6 @@ class ScrollArea(Widget):
 		if not leaves_first:
 			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first, shown_only = shown_only)
 
-	def resizeToContent(self,recurse=True):
-		if self._content is None: return
-		if recurse:
-			self.content.resizeToContent(recurse=recurse)
-		self.size = self.min_size
-
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
 			return fifechan.ScrollArea.ShowAuto
@@ -174,11 +198,6 @@ class ScrollArea(Widget):
 
 	def _getVerticalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
-		
-	def sizeChanged(self):
-		if self.content:
-			self.content.width = max(self.content.width,self.width-5)
-			self.content.height = max(self.content.height,self.height-5)
 
 	def getVerticalMaxScroll(self):
 		return self.real_widget.getVerticalMaxScroll()

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "model/metamodel/object.h"
+#include "model/structures/layer.h"
 #include "model/structures/location.h"
 
 #include "route.h"
@@ -45,6 +46,7 @@ namespace FIFE {
 		m_sessionId(-1),
 		m_rotation(0),
 		m_replanned(false),
+		m_ignoresBlocker(false),
 		m_costId(""),
 		m_object(NULL) {
 	}
@@ -287,6 +289,27 @@ namespace FIFE {
 			areas = m_object->getWalkableAreas();
 		}
 		return areas;
+	}
+
+	void Route::setDynamicBlockerIgnored(bool ignore) {
+		m_ignoresBlocker = ignore;
+	}
+
+	bool Route::isDynamicBlockerIgnored() {
+		return m_ignoresBlocker;
+	}
+
+	Path Route::getBlockingPathLocations() {
+		Path p;
+		if (!m_path.empty()) {
+			for (PathIterator it = m_path.begin(); it != m_path.end(); ++it) {
+				Layer* layer = (*it).getLayer();
+				if (layer->cellContainsBlockingInstance((*it).getLayerCoordinates())) {
+					p.push_back(*it);
+				}
+			}
+		}
+		return p;
 	}
 
 	void Route::setObject(Object* obj) {

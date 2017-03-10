@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -34,9 +34,7 @@
 #include "video/imagemanager.h"
 #include "video/image.h"
 #include "video/opengl/glimage.h"
-#include "video/opengle/gleimage.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "video/opengle/renderbackendopengle.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
@@ -82,7 +80,7 @@ namespace FIFE {
 		m_image(image){
 	}
 	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
@@ -97,9 +95,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				m_image->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -111,7 +109,7 @@ namespace FIFE {
 		m_time_scale(1.0){
 	}
 	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
 			ImagePtr img = m_animation->getFrameByTimestamp(animtime);
@@ -128,9 +126,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				img->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -142,7 +140,7 @@ namespace FIFE {
 		m_height(height) {
 	}
 	void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			Rect r;
 			Rect viewport = cam->getViewPort();
@@ -157,9 +155,9 @@ namespace FIFE {
 				uint8_t lm = renderbackend->getLightingModel();
 				m_image->render(r);
 				if (m_stencil) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 				} else if (lm == 1) {
-					renderbackend->changeRenderInfos(1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+					renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 				}
 			}
 		}
@@ -176,7 +174,7 @@ namespace FIFE {
 		m_blue(b){
 	}
 	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, true);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
 
@@ -186,9 +184,9 @@ namespace FIFE {
 				m_red, m_green, m_blue);
 
 			if (m_stencil) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, m_subdivisions, m_src, m_dst, false, true, m_stencil_ref, INCR, GEQUAL);
 			} else if (lm == 1) {
-				renderbackend->changeRenderInfos(m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
+				renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, m_subdivisions, m_src, m_dst, false, true, 255, KEEP, NOTEQUAL);
 			}
 		}
 	}
@@ -283,6 +281,13 @@ namespace FIFE {
 	}
 	// Remove all groups
 	void LightRenderer::removeAll() {
+		std::map<std::string, std::vector<LightRendererElementInfo*> >::iterator it = m_groups.begin();
+		for (; it != m_groups.end(); ++it) {
+			std::vector<LightRendererElementInfo*>::const_iterator info_it = it->second.begin();
+			for (;info_it != it->second.end(); ++info_it) {
+				delete *info_it;
+			}
+		}
 		m_groups.clear();
 	}
 	// Clear all groups

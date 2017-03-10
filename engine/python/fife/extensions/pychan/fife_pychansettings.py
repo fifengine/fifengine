@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -43,12 +43,10 @@ SETTINGS_GUI_XML="""\
 		<VBox>
 			<Label text="Resolution:" />
 			<Label text="Renderer:" />
-			<Label text="Light Model:" />
 		</VBox>
 		<VBox min_size="120,60">
 			<DropDown name="screen_resolution" min_size="120,0" />
 			<DropDown name="render_backend" min_size="120,0" />
-			<DropDown name="lighting_model" min_size="120,0" />
 		</VBox>
 	</HBox>
 	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
@@ -126,8 +124,6 @@ class FifePychanSettings(Setting):
 		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
 		              requiresrestart=True)
 		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
-		              requiresrestart=True)
-		self.createAndAddEntry(FIFE_MODULE, "Lighting", "lighting_model", initialdata = self._lightingmodels,
 		              requiresrestart=True)
 		
 	# sets valid resolution options in the settings->Resolution
@@ -240,7 +236,7 @@ class FifePychanSettings(Setting):
 			self._showChangeRequireRestartDialog()
 			
 	def _showChangeRequireRestartDialog(self):
-		"""Shows a dialog that informes the user that a restart is required ότι
+		"""Shows a dialog that informes the user that a restart is required
 		to perform the changes."""
 		RestartDlg = self._loadWidget(self._changes_gui_xml)
 		RestartDlg.stylize(self._gui_style)

@@ -1,0 +1,6 @@
+<?fife type="animation"?>
+<assets>
+	<animation delay="200">
+		<frame source="0.png" />
+	</animation>
+</assets>

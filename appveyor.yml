@@ -1,0 +1,171 @@
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+clone_depth: 5
+
+version: '{build}'
+
+platform:
+  - x86
+
+configuration:
+  - Release
+  #- Debug
+
+environment:
+  MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
+  matrix:
+    # VS 14 + Py2.7
+    - generator: "Visual Studio 14"  
+      PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7" 
+    # VS 14 + Py3.4
+    - generator: "Visual Studio 14"  
+      PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4"  
+    # VS 14 + Py3.5
+    - generator: "Visual Studio 14"  
+      PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"  
+    #- generator: "MinGW Makefiles"
+
+matrix:
+  fast_finish: true
+
+cache:
+  - C:\projects\fifengine-dependencies\downloads
+#  - C:\projects\fifengine-dependencies\includes
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - date /T & time /T
+  - git config --global core.autocrlf input
+  - cmake --version
+  # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
+  - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
+  # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
+  - ps: >-
+      if ($env:APPVEYOR_REPO_TAG -eq "true")
+      {
+        Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
+      }
+      else
+      {
+        Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+      }
+  # There are multiple pre-installed versions of Python on Appveyor  
+  # see https://www.appveyor.com/docs/installed-software/#python
+  - echo %PYTHON% %PYTHON_VERSION%
+  - "SET PATH=%PYTHON%;%PYTHON%\\bin;%PYTHON%\\Scripts;%PATH%"
+  # Show version and architecture for Python
+  - "%PYTHON%\\python.exe --version"
+  - "%PYTHON%\\python.exe -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+install:
+  # set path to boost according to compiler toolchain
+  - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_63_0)
+  - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_63_0\lib32-msvc-14.0)
+  # get dependencies
+  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
+  - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 
+  # show dependency folders
+  - dir ..\fifengine-dependencies
+  - dir ..\fifengine-dependencies\downloads
+  - dir ..\fifengine-dependencies\includes /s
+  
+#before_build:
+  # git sh.exe conflicts with MinGW makefiles
+  #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
+
+build_script:
+  - dir
+  # create folder for an out-of-source-tree build: "c:\projects\build"
+  - cd.. 
+  - mkdir build
+  - cd build
+  # generate build script - SHARED LIB
+  - >
+    cmake ..\fifengine 
+    -G "%generator%" 
+    -DCMAKE_BUILD_TYPE=%configuration% 
+    -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
+    -DBOOST_ROOT="%boost_root%" 
+    -DBOOST_LIBRARYDIR="%boost_librarydir%" 
+    -Dbuild-library=ON
+    -DBUILD_SHARED_LIBS=ON
+  # build
+  - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  # install
+  - cmake --build . --target INSTALL --config %configuration%
+  # generate build script - STATIC LIB
+  - >
+    cmake ..\fifengine 
+    -G "%generator%" 
+    -DCMAKE_BUILD_TYPE=%configuration% 
+    -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
+    -DBOOST_ROOT="%boost_root%" 
+    -DBOOST_LIBRARYDIR="%boost_librarydir%" 
+    -Dbuild-library=ON
+    -DBUILD_SHARED_LIBS=OFF
+  # build
+  - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  # install
+  - cmake --build . --target INSTALL --config %configuration%
+
+after_build:
+  - dir C:\projects\build\Release /s
+  - if "%generator%"=="Visual Studio 14" (set COMPILER="VC14")
+  - if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW") 
+
+  # package dependencies artifact
+  - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
+  - cd C:\projects\fifengine-dependencies\includes
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+
+  # package libfife artifact
+  - cd c:\fife\install
+  - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+
+  # package Python Installer artifact
+  - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - python setup.py set_metadata --version=0.4.1 bdist_msi --target-version="%PYTHON_VERSION%"
+  - python setup.py set_metadata --version=0.4.1 bdist_dumb --format=zip
+  - dir %APPVEYOR_BUILD_FOLDER%\dist
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32-py%PYTHON_VERSION%.msi"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32.zip"
+
+  - dir C:\projects\build /s
+  - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
+
+artifacts:
+  - path: 'libfife-dependencies-*.zip'
+    name: Dependencies
+  - path: 'libfife-*.zip'
+    name: LibFife
+  - path: 'dist\libfife-*py2.7.msi'
+    name: Python27Installer
+  - path: 'dist\libfife-0.4.1.win32.zip'
+    name: Python27-zip
+
+# deploy to Github Releases on tag push
+deploy:
+  provider: GitHub
+  release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
+  artifact: Dependencies, LibFife, Python27Installer, Python27-zip
+  draft: false
+  prerelease: false
+  force_update: true               # overwrite files of existing release on GitHub
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
+  auth_token:                      # encrypted token from GitHub
+    secure: 4QuwNtXXqe6cIFwL3YCCn/47V7LdKBNbJVGjBSGDzJyUefOER3b7OrMrXm2FQYy3
+

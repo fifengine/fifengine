@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<Settings>
-  <Module name="objects">
-  	<Setting name="objectlist" type="list"> gstack1 ; temple ; Quiller </Setting>
-    <Setting name="gstack1" type="dict"> objectname : goldstack ; value : 5000 ; posx : 3.0 ; posy : 3.0 </Setting>
-    <Setting name="temple" type="dict"> objectname : templeportal ; dest : level1 ; posx : 3.0 ; posy : -2.0 </Setting>
-    <Setting name="Quiller" type="dict"> objectname : quiller ; posx : 1.0 ; posy : 1.0 ; noquest_dialog : I've got nothing for you.  Run along now! </Setting>
-  </Module>
-</Settings>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -532,7 +532,7 @@ class XMLMapLoader(object):
 
 			if (object.getAction('default')):
 				target = fife.Location(layer)
-				inst.act('default', target, True)
+				inst.actRepeat('default', target)
 
 	def parse_cameras(self, mapelt, map):
 		""" create all cameras and activate them

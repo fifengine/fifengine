@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -37,6 +37,7 @@
 #include "instancetree.h"
 #include "cell.h"
 #include "cellcache.h"
+#include "trigger.h"
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -77,7 +78,7 @@ namespace FIFE {
 		delete m_instanceTree;
 	}
 
-	const std::string& Layer::getId() const { 
+	const std::string& Layer::getId() const {
 		return m_id;
 	}
 
@@ -171,7 +172,7 @@ namespace FIFE {
 				}
 			}
 		}
-			
+
 		std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
 		while (i != m_changeListeners.end()) {
 			(*i)->onInstanceDelete(this, instance);
@@ -284,6 +285,103 @@ namespace FIFE {
 		return matching_instances;
 	}
 
+	std::vector<Instance*> Layer::getInstancesInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2) {
+		std::vector<Instance*> instances;
+		std::list<Instance*> matchingInstances;
+		std::vector<ModelCoordinate> coords = m_grid->getCoordinatesInLine(pt1, pt2);
+		for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
+			m_instanceTree->findInstances(*it, 0, 0, matchingInstances);
+			if (!matchingInstances.empty()) {
+				instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+			}
+		}
+		return instances;
+	}
+
+	std::vector<Instance*> Layer::getInstancesInCircle(const ModelCoordinate& center, uint16_t radius) {
+		std::vector<Instance*> instances;
+		std::list<Instance*> matchingInstances;
+		//radius power 2
+		uint16_t radiusp2 = (radius+1) * radius;
+
+		ModelCoordinate current(center.x-radius, center.y-radius);
+		ModelCoordinate target(center.x+radius, center.y+radius);
+		for (; current.y < center.y; current.y++) {
+			current.x = center.x-radius;
+			for (; current.x < center.x; current.x++) {
+				uint16_t dx = center.x - current.x;
+				uint16_t dy = center.y - current.y;
+				uint16_t distance = dx*dx + dy*dy;
+				if (distance <= radiusp2) {
+					m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+					if (!matchingInstances.empty()) {
+						instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+					}
+
+					current.x = center.x + dx;
+					m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+					if (!matchingInstances.empty()) {
+						instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+					}
+
+					current.y = center.y + dy;
+					m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+					if (!matchingInstances.empty()) {
+						instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+					}
+
+					current.x = center.x-dx;
+					m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+					if (!matchingInstances.empty()) {
+						instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+					}
+
+					current.y = center.y-dy;
+				}
+			}
+		}
+		current.x = center.x;
+		current.y = center.y-radius;
+		for (; current.y <= target.y; current.y++) {
+			m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+			if (!matchingInstances.empty()) {
+				instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+			}
+		}
+
+		current.y = center.y;
+		current.x = center.x-radius;
+		for (; current.x <= target.x; current.x++) {
+			m_instanceTree->findInstances(current, 0, 0, matchingInstances);
+			if (!matchingInstances.empty()) {
+				instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
+			}
+		}
+		return instances;
+	}
+
+	std::vector<Instance*> Layer::getInstancesInCircleSegment(const ModelCoordinate& center, uint16_t radius, int32_t sangle, int32_t eangle) {
+		std::vector<Instance*> instances;
+		ExactModelCoordinate exactCenter(center.x, center.y);
+		std::vector<Instance*> tmpInstances = getInstancesInCircle(center, radius);
+		int32_t s = (sangle + 360) % 360;
+		int32_t e = (eangle + 360) % 360;
+		bool greater = (s > e) ? true : false;
+		for (std::vector<Instance*>::iterator it = tmpInstances.begin(); it != tmpInstances.end(); ++it) {
+			int32_t angle = getAngleBetween(exactCenter, intPt2doublePt((*it)->getLocationRef().getLayerCoordinates()));
+			if (greater) {
+				if (angle >= s || angle <= e) {
+					instances.push_back(*it);
+				}
+			} else {
+				if (angle >= s && angle <= e) {
+					instances.push_back(*it);
+				}
+			}
+		}
+		return instances;
+	}
+
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
 		if (!layer) {
 			layer = this;
@@ -305,6 +403,28 @@ namespace FIFE {
 			}
 		}
 
+	}
+
+	float Layer::getZOffset() const {
+		static const float globalmax = 100.0;
+		static const float globalrange = 200.0;
+		int32_t numlayers = m_map->getLayerCount();
+		int32_t thislayer = 1; // we don't need 0 indexed
+
+		const std::list<Layer*>& layers = m_map->getLayers();
+		std::list<Layer*>::const_iterator iter = layers.begin();
+		for (; iter != layers.end(); ++iter, ++thislayer) {
+			if (*iter == this) {
+				break;
+			}
+		}
+
+		float offset = globalmax - (numlayers - (thislayer - 1)) * (globalrange/numlayers);
+		return offset;
+	}
+
+	uint32_t Layer::getLayerCount() const {
+		return m_map->getLayerCount();
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
@@ -449,7 +569,7 @@ namespace FIFE {
 			m_cellCache = new CellCache(this);
 		}
 	}
-	
+
 	CellCache* Layer::getCellCache() {
 		return m_cellCache;
 	}
@@ -535,4 +655,5 @@ namespace FIFE {
 	bool Layer::isStatic() {
 		return m_static;
 	}
+
 } // FIFE

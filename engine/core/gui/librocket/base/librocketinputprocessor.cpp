@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -65,8 +65,8 @@ namespace FIFE {
 			if((modState & KMOD_ALT) == KMOD_ALT) {
 				m_keyModState |= Rocket::Core::Input::KM_ALT;
 			}
-			
-			if((modState & KMOD_META) == KMOD_META) {
+			// KMOD_META is gone so we change it to KMOD_GUI
+			if((modState & KMOD_GUI) == KMOD_GUI) {
 				m_keyModState |= Rocket::Core::Input::KM_META;
 			}
 			
@@ -95,6 +95,11 @@ namespace FIFE {
 				consumed = processKeyInput(event);
 				break;
 				
+			case SDL_TEXTINPUT:
+				consumed = processTextInput(event);
+				break;
+
+			case SDL_MOUSEWHEEL:
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
 				consumed = processMouseInput(event);
@@ -137,23 +142,19 @@ namespace FIFE {
 		
 		if(event.type == SDL_MOUSEBUTTONDOWN) {
 			m_context->ProcessMouseButtonDown(index, m_keyModState);
-		} 
-		else if (event.type == SDL_MOUSEBUTTONUP) {
-			
-			if(event.button.button == SDL_BUTTON_WHEELUP || event.button.button == SDL_BUTTON_WHEELDOWN) {
-				processMouseWheelMotion(event);
-			}
-			else {
-				m_context->ProcessMouseButtonUp(index, m_keyModState);
-			}
-		} 
+		} else if (event.type == SDL_MOUSEBUTTONUP) {
+			m_context->ProcessMouseButtonUp(index, m_keyModState);
+		} else if (event.type == SDL_MOUSEWHEEL) {
+			processMouseWheelMotion(event);
+		}
 		
 		return false;
 	}
 	
 	bool LibRocketInputProcessor::processMouseWheelMotion(SDL_Event& event) {
-		
-		if(event.button.button == SDL_BUTTON_WHEELUP) {
+		// mousewheel up
+		//if (event.wheel.y > 0 || (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && event.wheel.y < 0)) {
+		if (event.wheel.y > 0) {
 			if(m_wheelCounter <= 0) {
 				m_wheelCounter--;
 			} else {
@@ -161,8 +162,10 @@ namespace FIFE {
 				m_context->ProcessMouseWheel(m_wheelCounter, m_keyModState);
 				m_wheelCounter = -1;
 			}
-		} 
-		else if(event.button.button == SDL_BUTTON_WHEELDOWN) {
+		}
+		// mousewheel down
+		//else if (event.wheel.y < 0 || (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED && event.wheel.y > 0)) {
+		else if (event.wheel.y < 0) {
 			if(m_wheelCounter >= 0) {
 				m_wheelCounter++;
 			} else {
@@ -177,17 +180,11 @@ namespace FIFE {
 	
 	bool LibRocketInputProcessor::processKeyInput(SDL_Event& event) {
 		
-		uint16_t unicode = event.key.keysym.unicode;
-		
 		Rocket::Core::Input::KeyIdentifier key = m_keyMap[event.key.keysym.sym];
 		
 		if(event.type == SDL_KEYDOWN) {
 			
 			m_context->ProcessKeyDown(key, m_keyModState);
-			
-			if(unicode >= 32) {
-				m_context->ProcessTextInput(unicode);
-			} 
 			
 			if(key == Rocket::Core::Input::KI_RETURN) {
 				m_context->ProcessTextInput((Rocket::Core::word) '\n');
@@ -200,6 +197,13 @@ namespace FIFE {
 		return false;
 	}
 	
+	bool LibRocketInputProcessor::processTextInput(SDL_Event& event) {
+		Rocket::Core::String text(event.text.text);
+		m_context->ProcessTextInput(text);
+
+		return false;
+	}
+
 	void LibRocketInputProcessor::populateKeyMap() {
 		
 		m_keyMap[SDLK_UNKNOWN] = Rocket::Core::Input::KI_UNKNOWN;
@@ -251,16 +255,16 @@ namespace FIFE {
 		m_keyMap[SDLK_BACKSLASH] = Rocket::Core::Input::KI_OEM_5;
 		m_keyMap[SDLK_RIGHTBRACKET] = Rocket::Core::Input::KI_OEM_6;
 		m_keyMap[SDLK_QUOTEDBL] = Rocket::Core::Input::KI_OEM_7;
-		m_keyMap[SDLK_KP0] = Rocket::Core::Input::KI_NUMPAD0;
-		m_keyMap[SDLK_KP1] = Rocket::Core::Input::KI_NUMPAD1;
-		m_keyMap[SDLK_KP2] = Rocket::Core::Input::KI_NUMPAD2;
-		m_keyMap[SDLK_KP3] = Rocket::Core::Input::KI_NUMPAD3;
-		m_keyMap[SDLK_KP4] = Rocket::Core::Input::KI_NUMPAD4;
-		m_keyMap[SDLK_KP5] = Rocket::Core::Input::KI_NUMPAD5;
-		m_keyMap[SDLK_KP6] = Rocket::Core::Input::KI_NUMPAD6;
-		m_keyMap[SDLK_KP7] = Rocket::Core::Input::KI_NUMPAD7;
-		m_keyMap[SDLK_KP8] = Rocket::Core::Input::KI_NUMPAD8;
-		m_keyMap[SDLK_KP9] = Rocket::Core::Input::KI_NUMPAD9;
+		m_keyMap[SDLK_KP_0] = Rocket::Core::Input::KI_NUMPAD0;
+		m_keyMap[SDLK_KP_1] = Rocket::Core::Input::KI_NUMPAD1;
+		m_keyMap[SDLK_KP_2] = Rocket::Core::Input::KI_NUMPAD2;
+		m_keyMap[SDLK_KP_3] = Rocket::Core::Input::KI_NUMPAD3;
+		m_keyMap[SDLK_KP_4] = Rocket::Core::Input::KI_NUMPAD4;
+		m_keyMap[SDLK_KP_5] = Rocket::Core::Input::KI_NUMPAD5;
+		m_keyMap[SDLK_KP_6] = Rocket::Core::Input::KI_NUMPAD6;
+		m_keyMap[SDLK_KP_7] = Rocket::Core::Input::KI_NUMPAD7;
+		m_keyMap[SDLK_KP_8] = Rocket::Core::Input::KI_NUMPAD8;
+		m_keyMap[SDLK_KP_9] = Rocket::Core::Input::KI_NUMPAD9;
 		m_keyMap[SDLK_KP_ENTER] = Rocket::Core::Input::KI_NUMPADENTER;
 		m_keyMap[SDLK_KP_MULTIPLY] = Rocket::Core::Input::KI_MULTIPLY;
 		m_keyMap[SDLK_KP_PLUS] = Rocket::Core::Input::KI_ADD;
@@ -285,8 +289,8 @@ namespace FIFE {
 		m_keyMap[SDLK_INSERT] = Rocket::Core::Input::KI_INSERT;
 		m_keyMap[SDLK_DELETE] = Rocket::Core::Input::KI_DELETE;
 		m_keyMap[SDLK_HELP] = Rocket::Core::Input::KI_HELP;
-		m_keyMap[SDLK_LSUPER] = Rocket::Core::Input::KI_LWIN;
-		m_keyMap[SDLK_RSUPER] = Rocket::Core::Input::KI_RWIN;
+		m_keyMap[SDLK_LGUI] = Rocket::Core::Input::KI_LWIN;
+		m_keyMap[SDLK_RGUI] = Rocket::Core::Input::KI_RWIN;
 		m_keyMap[SDLK_F1] = Rocket::Core::Input::KI_F1;
 		m_keyMap[SDLK_F2] = Rocket::Core::Input::KI_F2;
 		m_keyMap[SDLK_F3] = Rocket::Core::Input::KI_F3;
@@ -302,15 +306,13 @@ namespace FIFE {
 		m_keyMap[SDLK_F13] = Rocket::Core::Input::KI_F13;
 		m_keyMap[SDLK_F14] = Rocket::Core::Input::KI_F14;
 		m_keyMap[SDLK_F15] = Rocket::Core::Input::KI_F15;
-		m_keyMap[SDLK_NUMLOCK] = Rocket::Core::Input::KI_NUMLOCK;
-		m_keyMap[SDLK_SCROLLOCK] = Rocket::Core::Input::KI_SCROLL;
+		m_keyMap[SDLK_NUMLOCKCLEAR] = Rocket::Core::Input::KI_NUMLOCK;
+		m_keyMap[SDLK_SCROLLLOCK] = Rocket::Core::Input::KI_SCROLL;
 		m_keyMap[SDLK_LSHIFT] = Rocket::Core::Input::KI_LSHIFT;
 		m_keyMap[SDLK_RSHIFT] = Rocket::Core::Input::KI_RSHIFT;
 		m_keyMap[SDLK_LCTRL] = Rocket::Core::Input::KI_LCONTROL;
 		m_keyMap[SDLK_RCTRL] = Rocket::Core::Input::KI_RCONTROL;
 		m_keyMap[SDLK_LALT] = Rocket::Core::Input::KI_LMENU;
 		m_keyMap[SDLK_RALT] = Rocket::Core::Input::KI_RMENU;
-		m_keyMap[SDLK_LMETA] = Rocket::Core::Input::KI_LMETA;
-		m_keyMap[SDLK_RMETA] = Rocket::Core::Input::KI_RMETA;
 	}
 };

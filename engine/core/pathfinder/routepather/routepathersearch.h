@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -106,6 +106,9 @@ namespace FIFE {
 
 		//! Indicates if the route is for a multi cell object.
 		bool m_multicell;
+
+		//! Indicates if dynamic blockers should be ignored.
+		bool m_ignoreDynamicBlockers;
 
 		//! Blockers from a multi cell object which should be ignored.
 		std::vector<Cell*> m_ignoredBlockers;

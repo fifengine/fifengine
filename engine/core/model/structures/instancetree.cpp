@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -96,6 +96,7 @@ namespace FIFE {
 	}
 
 	void InstanceTree::findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceTree::InstanceList& list) {
+		list.clear();
 		InstanceTreeNode * node = m_tree.find_container(point.x, point.y, w, h);
 		Rect rect(point.x, point.y, w, h);
 		InstanceListCollector collector(list,rect);

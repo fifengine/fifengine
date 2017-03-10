@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -47,7 +47,9 @@ namespace FIFE {
 	 * it draws a textured Quad to the screen.
 	 *
 	 * @see Image
-	 * @note Width and height are not limited to powers of two; non-power of two images will be converted internally if they are not supported by the hardware (GLEE_ARB_texture_non_power_of_two).
+	 * @note Width and height are not limited to powers of two;
+     *       non-power of two images will be converted internally,
+	 *       if they are not supported by the hardware (ARB_texture_non_power_of_two).
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
@@ -63,6 +65,11 @@ namespace FIFE {
 		virtual void invalidate();
 		virtual void setSurface(SDL_Surface* surface);
 		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0);
+
+		virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const* rgb = 0);
+		virtual void renderZ(const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const* rgb = 0);
+
 		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
 		virtual void forceLoadInternal();
 		virtual void copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& img);
@@ -126,4 +133,3 @@ namespace FIFE {
 }
 
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2013 by the FIFE team
+#  Copyright (C) 2005-2017 by the FIFE team
 #  http://www.fifengine.net
 #  This file is part of FIFE.
 #
@@ -114,12 +114,28 @@ class ApplicationBase(object):
 		engineSetting.setGLCompressImages(self._finalSetting['GLCompressImages'])
 		engineSetting.setGLUseFramebuffer(self._finalSetting['GLUseFramebuffer'])
 		engineSetting.setGLUseNPOT(self._finalSetting['GLUseNPOT'])
+		engineSetting.setGLUseMipmapping(self._finalSetting['GLUseMipmapping'])
+		engineSetting.setGLUseMonochrome(self._finalSetting['GLUseMonochrome'])
+		engineSetting.setGLUseDepthBuffer(self._finalSetting['GLUseDepthBuffer'])
+		engineSetting.setGLAlphaTestValue(self._finalSetting['GLAlphaTestValue'])
+		if self._finalSetting['GLTextureFiltering'] == 'None':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_NONE)
+		elif self._finalSetting['GLTextureFiltering'] == 'Bilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_BILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Trilinear':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_TRILINEAR)
+		elif self._finalSetting['GLTextureFiltering'] == 'Anisotropic':
+			engineSetting.setGLTextureFiltering(fife.TEXTURE_FILTER_ANISOTROPIC)
 		(width, height) = self._finalSetting['ScreenResolution'].split('x')
 		engineSetting.setScreenWidth(int(width))
 		engineSetting.setScreenHeight(int(height))
 		engineSetting.setRenderBackend(self._finalSetting['RenderBackend'])
 		engineSetting.setFullScreen(self._finalSetting['FullScreen'])
+		engineSetting.setRefreshRate(self._finalSetting['RefreshRate'])
+		engineSetting.setDisplay(self._finalSetting['Display'])
+		engineSetting.setVSync(self._finalSetting['VSync'])
 		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
+		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
 
 		try:
@@ -165,8 +181,8 @@ class ApplicationBase(object):
 
 		#log to both the console and log file
 		self._log = fifelog.LogManager(self.engine,
-									   self._setting.get("FIFE", "LogToPrompt", "0"),
-									   self._setting.get("FIFE", "LogToFile", "0"))
+									   self._setting.get("FIFE", "LogToPrompt", False),
+									   self._setting.get("FIFE", "LogToFile", False))
 
 		self._log.setLevelFilter(self._setting.get("FIFE", "LogLevelFilter", fife.LogManager.LEVEL_DEBUG))
 
@@ -207,10 +223,8 @@ class ApplicationBase(object):
 		while not self.quitRequested:
 			try:
 				self.engine.pump()
-			except RuntimeError, e:
+			except fife.Exception as e:
 				print str(e)
-				self.quitRequested = True
-			except:
 				self.quitRequested = True
 
 			self._pump()

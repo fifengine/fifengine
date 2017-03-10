@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -52,7 +52,7 @@
 using namespace FIFE;
 
 static const std::string IMAGE_FILE = "tests/data/beach_e1.png";
-static const std::string SUBIMAGE_FILE = "ests/data/rpg_tiles_01.png";
+static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
 

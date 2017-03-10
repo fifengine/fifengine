@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2013 by the FIFE team                              *
+ *   Copyright (C) 2005-2017 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -58,6 +58,8 @@ namespace FIFE {
 
 		virtual const std::string& getTypeStr() const { static const std::string s = "Exception"; return s; }
 		virtual const std::string& getDescription() const { static const std::string s = "Generic FIFE exception"; return s; }
+		// little helper to change m_what
+		void update();
 
 	private:
 		std::string m_what;
@@ -66,7 +68,7 @@ namespace FIFE {
 	#define FIFE_EXCEPTION_DECL(_name, _description) \
 	class _name : public Exception { \
 	public: \
-		_name(const std::string& msg) : Exception(msg) { Logger _log(LM_EXCEPTION); FL_ERR(_log, what()); } \
+		_name(const std::string& msg) : Exception(msg) { Logger _log(LM_EXCEPTION); update(); FL_ERR(_log, what()); } \
 		const std::string& getTypeStr() const { static const std::string s = #_name; return s; } \
 		const std::string& getDescription() const { static const std::string s = _description; return s; } \
 	}
