@@ -29,14 +29,13 @@ IF(NOT APPLE)
 ENDIF(NOT APPLE)
 
 IF (APPLE)
-  find_path(OPENALSOFT_INCLUDE_DIR al.h
+  find_path(OPENALSOFT_INCLUDE_DIR al.h alext.h
   PATHS
     /usr/local/opt/openal-soft/include/
   )
   find_library(OPENALSOFT_LIBRARY
   NAMES libopenal.dylib openal.dylib
   PATHS
-    ${OPENALSOFT_INCLUDE_DIR}/../lib
     /usr/local/opt/openal-soft/lib
   )
 ENDIF (APPLE)
