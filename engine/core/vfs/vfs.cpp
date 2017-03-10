@@ -21,10 +21,10 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <regex>
 
 // 3rd party library includes
 #include <boost/functional.hpp>
-#include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 // FIFE includes
@@ -213,11 +213,11 @@ namespace FIFE {
 
 	std::set<std::string> VFS::filterList(const std::set<std::string>& list, const std::string& fregex) const {
 		std::set<std::string> results;
-		boost::regex regex(fregex);
+		std::regex regex(fregex);
 		std::set<std::string>::const_iterator end = list.end();
 		for (std::set<std::string>::const_iterator i = list.begin(); i != end;) {
-			boost::cmatch match;
-			if (boost::regex_match((*i).c_str(), match, regex)) {
+			std::cmatch match;
+			if (std::regex_match((*i).c_str(), match, regex)) {
 				results.insert(*i);
 			}
 			++i;

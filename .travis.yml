@@ -40,7 +40,6 @@ addons:
     - libasound2-dev
     - zlib1g-dev
     - libboost-dev
-    - libboost-regex-dev
     - libboost-system-dev
     - libboost-filesystem-dev
     - libboost-test-dev
