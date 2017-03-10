@@ -57,12 +57,18 @@ def convertFontdefToXML(files, printToConsole=False):
 			xmldef += '\t<font name=\"' + section[5:] + '"'
 			xmldef += ' type="' + get(section, "type") + '"'
 			xmldef += ' source="' + get(section, "source") + '"'
-			xmldef += ' row_spacing="' + get(section, "row_spacing", "0") + '"'
-			xmldef += ' glyph_spacing="' + get(section, "glyph_spacing", "0") + '"'
+			if get(section, "row_spacing"):
+				xmldef += ' row_spacing="' + get(section, "row_spacing") + '"'
+			if get(section, "glyph_spacing"):
+				xmldef += ' glyph_spacing="' + get(section, "glyph_spacing") + '"'
 			if get(section, "type") == "truetype":
 				xmldef += ' size="' + get(section, "size") + '"'
-				xmldef += ' antialias="' + get(section, "antialias", "1") + '"'
-				xmldef += ' color="' + get(section, "color", "255,255,255") + '"'
+				if get(section, "antialias"):
+					xmldef += ' antialias="' + get(section, "antialias") + '"'
+				if get(section, "color"):
+					xmldef += ' color="' + get(section, "color") + '"'
+				if get(section, "recoloring"):
+					xmldef += ' recoloring="' + get(section, "recoloring") + '"'
 			xmldef += "/>\n"
 
 		xmldef += "</fonts>\n"

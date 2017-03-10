@@ -33,7 +33,7 @@ class Font(object):
 		self.font = None
 		self.name = name
 		self.typename = get("type")
-		self.source = get("source")
+		self.source = str(get("source"))
 		self.row_spacing = int(get("row_spacing",0))
 		self.glyph_spacing = int(get("glyph_spacing",0))
 
@@ -45,7 +45,7 @@ class Font(object):
 			self.underline = bool(get("underline",False))
 			self.recoloring = bool(get("recoloring",False))
 			self.color = map(int,get("color", "255,255,255").split(','))
-			self.font = get_manager().createFont(self.source, self.size, "")
+			self.font = get_manager().createFont(self.source, self.size)
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
@@ -72,7 +72,7 @@ class Font(object):
 		@return A new Font object
 		"""
 		extension = os.path.splitext(filename)[1]
-		if extension is ".fontdef":
+		if extension == ".fontdef":
 			raise DeprecatedException(str(filename)+" is not a xml file. Fontdef files are deprecated.")
 		fontXMLFile = FontFileParser()
 		fontXMLFile.parse(filename, fontXMLFile)

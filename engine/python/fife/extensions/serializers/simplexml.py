@@ -280,14 +280,6 @@ class SimpleXMLSerializer(SimpleSerializer):
 			elm = ET.SubElement(moduleTree, "Setting", attrs)
 			elm.text = value
 
-<<<<<<< HEAD
-	def getModuleName(self):
-		"""
-		@return A list of the names of the modules in the XML file as strings.
-		"""
-		
-		# Make sure the file has been loaded, if not load it.
-=======
 	def remove(self, module, name):
 		"""
 		Removes a variable
