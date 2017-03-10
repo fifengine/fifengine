@@ -31,12 +31,12 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
-#include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/key/ec_ikeyfilter.h"
-#include "eventchannel/mouse/ec_imousefilter.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
-#include "eventchannel/command/ec_command.h"
+#include "eventchannel/key/key.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/key/ikeyfilter.h"
+#include "eventchannel/mouse/imousefilter.h"
+#include "eventchannel/mouse/mouseevent.h"
+#include "eventchannel/command/command.h"
 #include "video/renderbackend.h"
 
 #include "eventmanager.h"
@@ -55,14 +55,14 @@ namespace FIFE {
 		m_mousefilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY),
-		m_mousesensitivity(0.0),
+		m_mouseSensitivity(0.0),
 		m_acceleration(false),
 		m_warp(false),
 		m_enter(false),
-		m_oldx(0),
-		m_oldy(0),
-		m_lastticks(0),
-		m_oldvelocity(0.0) {
+		m_oldX(0),
+		m_oldY(0),
+		m_lastTicks(0),
+		m_oldVelocity(0.0) {
 	}
 
 	EventManager::~EventManager() {
@@ -605,37 +605,37 @@ namespace FIFE {
 	}
 
 	void EventManager::processMouseEvent(SDL_Event event) {
-		if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mousesensitivity, 0.0) || m_acceleration)) {
+		if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
 			uint16_t tmp_x = event.motion.x;
 			uint16_t tmp_y = event.motion.y;
 			if (m_enter) {
-				m_oldx = tmp_x;
-				m_oldy = tmp_y;
-				m_oldvelocity = 0.0;
+				m_oldX = tmp_x;
+				m_oldY = tmp_y;
+				m_oldVelocity = 0.0;
 				m_enter = false;
 			}
 
 			float modifier;
 			if (m_acceleration) {
 				uint32_t ticks = SDL_GetTicks();
-				float difference = static_cast<float>((ticks - m_lastticks) + 1);
-				m_lastticks = ticks;
-				float dx = static_cast<float>(tmp_x - m_oldx);
-				float dy = static_cast<float>(tmp_y - m_oldy);
+				float difference = static_cast<float>((ticks - m_lastTicks) + 1);
+				m_lastTicks = ticks;
+				float dx = static_cast<float>(tmp_x - m_oldX);
+				float dy = static_cast<float>(tmp_y - m_oldY);
 				float distance = Mathf::Sqrt(dx * dx + dy * dy);
 				float acceleration = static_cast<float>((distance / difference) / difference);
-				float velocity = (m_oldvelocity + acceleration * difference)/2;
-				if (velocity > m_mousesensitivity+1) {
-					velocity = m_mousesensitivity+1;
+				float velocity = (m_oldVelocity + acceleration * difference)/2;
+				if (velocity > m_mouseSensitivity+1) {
+					velocity = m_mouseSensitivity+1;
 				}
-				m_oldvelocity = velocity;
+				m_oldVelocity = velocity;
 				modifier = velocity;
 			} else {
-				modifier = m_mousesensitivity;
+				modifier = m_mouseSensitivity;
 			}
 
-			int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldx);
-			int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldy);
+			int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldX);
+			int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldY);
 			if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
 				Rect screen = RenderBackend::instance()->getArea();
 				int16_t x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
@@ -655,8 +655,8 @@ namespace FIFE {
 				} else {
 					tmp_y += y_fact;
 				}
-				m_oldx = tmp_x;
-				m_oldy = tmp_y;
+				m_oldX = tmp_x;
+				m_oldY = tmp_y;
 				event.motion.x = tmp_x;
 				event.motion.y = tmp_y;
 				m_warp = true; //don't trigger an event handler when warping
@@ -827,11 +827,11 @@ namespace FIFE {
 		} else if (sensitivity > 10.0) {
 			sensitivity = 10.0;
 		}
-		m_mousesensitivity = sensitivity;
+		m_mouseSensitivity = sensitivity;
 	}
 
 	float EventManager::getMouseSensitivity() const {
-		return m_mousesensitivity;
+		return m_mouseSensitivity;
 	}
 
 	void EventManager::setMouseAccelerationEnabled(bool acceleration) {

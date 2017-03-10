@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_GUI_GUICHANMANAGER_H
-#define FIFE_VIDEO_GUI_GUICHANMANAGER_H
+#ifndef FIFE_GUI_FIFECHANMANAGER_H
+#define FIFE_GUI_FIFECHANMANAGER_H
 
 // Standard C++ library includes
 #include <set>
@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/base/singleton.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 
 #include "gui/guimanager.h"
 

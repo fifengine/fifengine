@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_TEXTEVENT_H
-#define FIFE_EVENTCHANNEL_TEXTEVENT_H
+#ifndef FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
+#define FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
 
 // Standard C++ library includes
 //
@@ -33,58 +33,42 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/base/ec_inputevent.h"
-#include "eventchannel/source/ec_ieventsource.h"
-
-#include "ec_text.h"
+#include "icommandlistener.h"
 
 namespace FIFE {
+	class Command;
 
-	/**  Class for text events
+	/**  Controller provides a way to receive events from the system
+	 * Using this interface, clients can subscribe themselves to receive events
+	 * Also command sending is possible
 	 */
-	class TextEvent: public InputEvent {
+	class ICommandController {
 	public:
-		enum TextEventType {
-			UNKNOWN		= 0,
-			INPUT		= 1,
-			EDIT		= 2
-		};
 
-		/** Constructor
+		/** Adds a listener to the back of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
 		 */
-		TextEvent():
-			InputEvent(),
-			m_eventType(UNKNOWN),
-			m_text(Text()) {}
+		virtual void addCommandListener(ICommandListener* listener) = 0;
 
-		/** Destructor.
+		/** Adds a listener to the front of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
 		 */
-		virtual ~TextEvent() {}
+		virtual void addCommandListenerFront(ICommandListener* listener) = 0;
 
-		TextEventType getType() const { return m_eventType; }
-		void setType(TextEventType type) { m_eventType = type; }
+		/** Removes an added listener from the controller.
+		 * Listener will not be notified anymore via the corresponding events
+		 * @param listener listener to remove
+		 */
+		virtual void removeCommandListener(ICommandListener* listener) = 0;
 
-		const Text& getText() const { return m_text; }
-		void setText(const Text& text) { m_text = text; }
+		/** Use this method to send command to command listeners
+		 * @param command command to dispatch
+		 */
+		virtual void dispatchCommand(Command& command) = 0;
 
-		virtual void consume() { InputEvent::consume(); }
-		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
-		virtual void consumedByWidgets() { InputEvent::consumedByWidgets(); }
-		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
-		virtual IEventSource* getSource() const { return InputEvent::getSource(); }
-		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
-		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
-
-		virtual const std::string& getName() const {
-			const static std::string eventName("TextEvent");
-			return eventName;
-		}
-		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
-
-	private:
-		TextEventType m_eventType;
-		Text m_text;
+		virtual ~ICommandController() {}
 	};
 
 } //FIFE

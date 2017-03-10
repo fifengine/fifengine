@@ -37,19 +37,18 @@
 
 // Win32
 #if defined( WIN32 )
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#include <OpenAL/alext.h>
-#include <OpenAL/efx-presets.h>
+#include <OpenALSoft/al.h>
+#include <OpenALSoft/alc.h>
+#include <OpenALSoft/alext.h>
+#include <OpenALSoft/efx-presets.h>
 #endif
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-//#include <OpenAL/MacOSX_OALExtensions.h>
-#include <OpenAL/alext.h>
-#include <OpenAL/efx-presets.h>
+#include <al.h>
+#include <alc.h>
+#include <alext.h>
+#include <efx-presets.h>
 #endif
 
 // 3rd party library includes

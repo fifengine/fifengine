@@ -156,9 +156,6 @@ namespace FIFE {
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
 		//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
-
-		// sync swaping with refresh rate if VSync is enabled
-		SDL_GL_SetSwapInterval(static_cast<uint8_t>(m_vSync));
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {
@@ -316,6 +313,9 @@ namespace FIFE {
 				m_textureFilter = TEXTURE_FILTER_TRILINEAR;
 			}
 		}
+
+		// sync swaping with refresh rate if VSync is enabled
+		SDL_GL_SetSwapInterval(static_cast<uint8_t>(m_vSync));
 
 		// currently unused, 1000 objects x 400 textures x 4 renderDataZ
 		//m_renderZ_datas.resize(1600000);
