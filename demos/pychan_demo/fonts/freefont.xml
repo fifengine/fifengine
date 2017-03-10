@@ -1,0 +1,4 @@
+<fonts>
+	<font name="FreeMono" type="truetype" source="fonts/freefont/FreeMono.ttf" row_spacing="0" glyph_spacing="0" size="12" antialias="1" color="255,255,255"/>
+	<font name="FreeSans" type="truetype" source="fonts/freefont/FreeSans.ttf" row_spacing="0" glyph_spacing="0" size="12" antialias="1" color="255,255,255"/>
+</fonts>

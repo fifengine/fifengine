@@ -1,0 +1,6 @@
+<fonts>
+	<font name="samanata_large_pixelated" type="truetype" source="fonts/samanata.ttf" row_spacing="0" glyph_spacing="0" size="30" antialias="0" color="255,255,0"/>
+	<font name="samanata_large" type="truetype" source="fonts/samanata.ttf" row_spacing="0" glyph_spacing="0" size="20" antialias="1" color="255,255,100"/>
+	<font name="samanata_small_pixelated" type="truetype" source="fonts/samanata.ttf" row_spacing="50" glyph_spacing="50" size="8" antialias="0" color="255,255,255"/>
+	<font name="samanata_small" type="truetype" source="fonts/samanata.ttf" row_spacing="0" glyph_spacing="0" size="10" antialias="1" color="255,255,100"/>
+</fonts>
