@@ -45,10 +45,10 @@
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include <al.h>
-#include <alc.h>
-#include <alext.h>
-#include <efx-presets.h>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+#include <AL/efx-presets.h>
 #endif
 
 // 3rd party library includes
