@@ -19,7 +19,7 @@ IF(NOT APPLE)
   )
 
   find_library(OPENALSOFT_LIBRARY
-    NAMES libopenal openal soft_oal.dll
+    NAMES libopenal openal libOpenAL32 OpenAL32 soft_oal.dll
     PATHS
       ${OPENALSOFT_INCLUDE_DIR}/../lib
       /usr/local/opt/openal-soft/lib
