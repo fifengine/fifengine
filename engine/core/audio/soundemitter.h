@@ -365,8 +365,12 @@ namespace FIFE {
 		void activateEffects();
 
 		/** Deactivates effects if the Emitter loses the openAL-source.
-		*/
+		 */
 		void deactivateEffects();
+
+		/** Sets the time difference between play and the first check if it's playable.
+		 */
+		void setCheckDifference();
 
 		/** Adds new SoundEmitter listener
 		 * @param listener to add
@@ -459,6 +463,8 @@ namespace FIFE {
 		uint32_t m_fadeOutStartTimestamp;
 		//! fade out end time
 		uint32_t m_fadeOutEndTimestamp;
+		//! time difference between play and first check
+		uint32_t m_playCheckDifference;
 		//! holds pointer to applied SoundEffects
 		std::vector<SoundEffect*> m_effects;
 		//! listeners for sound related events
