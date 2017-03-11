@@ -502,7 +502,7 @@ namespace FIFE {
 			return true;
 		}
 		// roughly check, in the case the clip do not plays (is not active)
-		return (m_internData.playTimestamp - m_playCheckDifference + static_cast<uint32_t>(getDuration())) <= TimeManager::instance()->getTime();
+		return (m_internData.playTimestamp + m_playCheckDifference + static_cast<uint32_t>(getDuration())) <= TimeManager::instance()->getTime();
 	}
 
 	void SoundEmitter::setCursor(SoundPositionType type, float value) {
