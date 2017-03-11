@@ -26,30 +26,10 @@
 
 // Standard C++ library includes
 
-// Platform specific includes
-// Linux
-#if defined( __unix__ )
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>
 #include <AL/efx-presets.h>
-#endif
-
-// Win32
-#if defined( WIN32 )
-#include <OpenALSoft/al.h>
-#include <OpenALSoft/alc.h>
-#include <OpenALSoft/alext.h>
-#include <OpenALSoft/efx-presets.h>
-#endif
-
-// Macintosh
-#if defined( __APPLE_CC__ )
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-#include <AL/efx-presets.h>
-#endif
 
 // 3rd party library includes
 
