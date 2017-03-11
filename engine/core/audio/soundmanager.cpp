@@ -324,6 +324,7 @@ namespace FIFE {
 			if (!emitter) {
 				continue;
 			}
+			emitter->setCheckDifference();
 
 			bool active = emitter->isActive();
 			bool clip = emitter->getSoundClip();

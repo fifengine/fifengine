@@ -58,7 +58,8 @@ namespace FIFE {
 		m_fadeInStartTimestamp(0),
 		m_fadeInEndTimestamp(0),
 		m_fadeOutStartTimestamp(0),
-		m_fadeOutEndTimestamp(0) {
+		m_fadeOutEndTimestamp(0),
+		m_playCheckDifference(0) {
 
 		if (!m_manager->isActive()) {
 			return;
@@ -344,6 +345,7 @@ namespace FIFE {
 			alSourcePlay(m_source);
 		}
 		m_internData.playTimestamp = TimeManager::instance()->getTime();
+		m_playCheckDifference = 0;
 		// resume
 		if (m_internData.soundState == SD_PAUSED_STATE) {
 			m_internData.playTimestamp -= static_cast<uint32_t>(getCursor(SD_TIME_POS) * 1000);
@@ -736,7 +738,7 @@ namespace FIFE {
 		setLooping(m_internData.loop);
 		setRelativePositioning(m_internData.relative);
 		if (m_internData.soundState == SD_PLAYING_STATE) {
-			uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp;
+			uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp - m_playCheckDifference;
 			if (m_internData.loop) {
 				timediff = timediff % getDuration();
 			}
@@ -867,6 +869,12 @@ namespace FIFE {
 		}
 		if (m_directFilter) {
 			m_manager->deactivateFilter(m_directFilter, this);
+		}
+	}
+
+	void SoundEmitter::setCheckDifference() {
+		if (m_playCheckDifference == 0) {
+			m_playCheckDifference = TimeManager::instance()->getTime() - m_internData.playTimestamp;
 		}
 	}
 
