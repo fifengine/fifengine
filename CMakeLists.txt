@@ -209,7 +209,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenALSoft"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
     
