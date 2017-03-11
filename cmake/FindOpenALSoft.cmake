@@ -1,5 +1,5 @@
 # - Try to find OpenAL-Soft
-# and define
+#  and define
 #
 #  OPENALSOFT_FOUND          - System has OpenAL-Soft
 #  OPENALSOFT_INCLUDE_DIR    - The OpenAL-Soft include directories
@@ -19,7 +19,7 @@ IF(NOT APPLE)
   )
 
   find_library(OPENALSOFT_LIBRARY
-    NAMES libopenal openal libOpenAL32 OpenAL32 OpenAL32.dll soft_oal.dll
+    NAMES libopenal openal libOpenAL32 OpenAL32 soft_oal.dll
     PATHS
       ${OPENALSOFT_INCLUDE_DIR}/../lib
       /usr/local/opt/openal-soft/lib
@@ -29,14 +29,14 @@ IF(NOT APPLE)
 ENDIF(NOT APPLE)
 
 IF (APPLE)
-  find_path(OPENALSOFT_INCLUDE_DIR al.h alext.h
-  PATHS
-    /usr/local/opt/openal-soft/include/
-  )
+  SET(OPENALSOFT_INCLUDE_DIR "/usr/local/opt/openal-soft/include/")
   find_library(OPENALSOFT_LIBRARY
   NAMES libopenal.dylib openal.dylib
   PATHS
     /usr/local/opt/openal-soft/lib
+  # for debugging
+  message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
+  message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
   )
 ENDIF (APPLE)
 
@@ -47,5 +47,5 @@ find_package_handle_standard_args(OPENALSOFT REQUIRED_VARS OPENALSOFT_LIBRARY OP
 mark_as_advanced(OPENALSOFT_INCLUDE_DIR OPENALSOFT_LIBRARY)
 
 # for debugging
-message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
-message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
+#message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
+#message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
