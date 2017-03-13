@@ -42,7 +42,7 @@ namespace FIFE {
 	/** Logger to use for this source file.
 	 *  @relates Logger
 	 */
-	static Logger _log(LM_GUI); //@todo We should have a log module for cursor
+	static Logger _log(LM_CURSOR);
 
 	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
@@ -243,7 +243,7 @@ namespace FIFE {
 		cursor_id = getNativeId(cursor_id);
 		SDL_Cursor* cursor = SDL_CreateSystemCursor(static_cast<SDL_SystemCursor>(cursor_id));
 		if (!cursor) {
-			FL_WARN(_log, "Cursor: No cursor matching cursor_id was found.");
+			FL_WARN(_log, "No cursor matching cursor_id was found.");
 			return;
 		}
 		m_native_cursor = cursor;
