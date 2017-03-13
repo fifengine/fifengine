@@ -40,7 +40,7 @@ class TestVideo(unittest.TestCase):
 		self.engine.initializePumping()
 
 		renderer = self.engine.getOffRenderer()
-		renderer.setEnable(True)
+		renderer.setEnabled(True)
 
 		prevPt = fife.Point(*points[1])
 		for pt in points[1:]:

@@ -37,7 +37,7 @@ class TestImgMgr(unittest.TestCase):
 		imgMgr = self.engine.getImageManager()
 		self.assert_(imgMgr)
 		self.assert_(imgMgr.getTotalResources() == 0)
-		img = imgMgr.create('../data/beach_e1.png')
+		img = imgMgr.create('tests/data/beach_e1.png')
 		self.assertEqual(imgMgr.getTotalResourcesLoaded(), 0)
 		self.assertEqual(imgMgr.getTotalResourcesCreated(), 1)
 		img = imgMgr.get(img.getHandle())

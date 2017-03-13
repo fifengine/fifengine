@@ -38,12 +38,12 @@ class TestView(unittest.TestCase):
 
 		self.obj1 = self.model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj1)
-		img1 = self.imgMgr.load('../data/mushroom_007.png')
+		img1 = self.imgMgr.load('tests/data/mushroom_007.png')
 		self.obj1.get2dGfxVisual().addStaticImage(0, img1.getHandle())
 		
 		self.obj2 = self.model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
-		img2 = self.imgMgr.get('../data/earth_1.png')
+		img2 = self.imgMgr.get('tests/data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, img2.getHandle())
 
 		self.screen_cell_w = img2.getWidth()

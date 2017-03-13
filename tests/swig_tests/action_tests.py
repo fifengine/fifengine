@@ -27,18 +27,18 @@ from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
-		template = '../data/wolf_walk/wolf_walk_%s.xml'
+		template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 
 		self.engine = getEngine()
 		
-		_map = self.engine.getModel().createMap("map001")
+		self.map = self.engine.getModel().createMap("map001")
+		self.grid = self.engine.getModel().getCellGrid("square")
 		
-		self.grid = fife.SquareGrid()
-		self.grid.thisown = 0
-		
-		self.layer = _map.createLayer("Layer001", self.grid)
+		self.layer = self.map.createLayer("Layer001", self.grid)
+		self.layer.setWalkable(True)
+		self.layer.createCellCache()
 		
 		self.target = fife.Location(self.layer)
 	
@@ -55,7 +55,7 @@ class ActionTests(unittest.TestCase):
 			self.action.get2dGfxVisual().addAnimation(degree, loadXMLAnimation(self.engine, files[index]))
 
 		self.ground = fife.Object("ground", 'plaa')
-		image = self.engine.getImageManager().load('../data/earth_1.png')
+		image = self.engine.getImageManager().load('tests/data/earth_1.png')
 		fife.ObjectVisual.create(self.ground)
 		self.ground.get2dGfxVisual().addStaticImage(0, image.getHandle())
 		self.ground.img = self.engine.getImageManager().get(image.getHandle())
@@ -97,12 +97,14 @@ class ActionTests(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 		
-		cam = self.engine.getView().addCamera("foo", self.layer, viewport, fife.ExactModelCoordinate(0,0) )
+		cam = self.map.addCamera("foo", self.layer, viewport)
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)
 
-		self.engine.getView().resetRenderers()
+		renderer = fife.InstanceRenderer.getInstance(cam)
+		renderer.activateAllLayers(self.map)
+		
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.ModelCoordinate(2,-2))	
 		self.inst.move('walk', self.target, 0.9)
@@ -121,7 +123,7 @@ class ActionTests(unittest.TestCase):
 				self.engine.pump()
 
 		self.engine.finalizePumping()
-		self.engine.getView().removeCamera(cam)
+		self.map.removeCamera("foo")
 
 		
 

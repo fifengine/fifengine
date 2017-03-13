@@ -364,14 +364,9 @@ namespace FIFE {
 		m_timemanager->update();
 		m_soundmanager->update();
 
-#ifdef HAVE_CEGUI
-		m_renderbackend->clearBackBuffer();
-#endif
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
-#ifndef HAVE_CEGUI
 			m_renderbackend->clearBackBuffer();
-#endif
 			m_offrenderer->render();
 		} else {
 			m_model->update();

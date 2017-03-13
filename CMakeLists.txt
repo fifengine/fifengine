@@ -887,7 +887,7 @@ if(build-python)
   include_directories (${PYTHON_INCLUDE_PATH})
   
   
-  set(CMAKE_SWIG_FLAGS -O -keyword -w511 -w473 -w404)
+  set(CMAKE_SWIG_FLAGS -O -keyword -w511 -w473 -w404 -w314)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
   set(FIFE_SOURCES ${FIFE_CORE_SRC})

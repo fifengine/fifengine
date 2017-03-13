@@ -35,32 +35,30 @@ class TestView(unittest.TestCase):
 		self.grid = self.model.getCellGrid("square")
 		
 		self.imgMgr = self.engine.getImageManager()
+		self.animMgr = self.engine.getAnimationManager()
 
 		frame_delay = 100
 
 		#create the animation... messy I know
-		self.anim = fife.SharedAnimationPointer()
-		anim = fife.Animation()
-		anim.thisown = 0
-		self.anim.reset(anim)		
+		self.anim = self.animMgr.create("crate")
 		
 		imgs = []
-		imgs.append(self.imgMgr.load('../data/crate/full_s_000.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0001.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0002.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0003.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0004.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0005.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0006.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0007.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0008.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_000.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0001.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0002.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0003.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0004.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0005.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0006.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0007.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0008.png'))
 		
 		for img in imgs:
 			self.anim.addFrame(img, frame_delay)		
 		
 		self.obj = self.model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj)
-		img = self.imgMgr.get('../data/earth_1.png')
+		img = self.imgMgr.get('tests/data/earth_1.png')
 		self.obj.get2dGfxVisual().addStaticImage(0, img.getHandle())
 
 		self.screen_cell_w = img.getWidth()
