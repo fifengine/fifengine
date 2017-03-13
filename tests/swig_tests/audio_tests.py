@@ -22,16 +22,18 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+import time
 from swig_test_utils import *
-import time, fifelog
+from fife.extensions import fifelog
 
 class TestAudio(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine(True)
 		self.soundmanager = self.engine.getSoundManager()
+		self.soundclipmanager = self.engine.getSoundClipManager()
 		self.log = fifelog.LogManager(self.engine, promptlog=True, filelog=False)
-		self.log.setVisibleModules('pool', 'audio')
+		self.log.setVisibleModules('resource manager', 'audio')
 		self.soundmanager.init()
 
 	def tearDown(self):
@@ -39,9 +41,7 @@ class TestAudio(unittest.TestCase):
 		del self.log
 	
 	def testLeftRight(self):
-		sound = self.soundmanager.createEmitter()
-		id = self.engine.getSoundClipPool().addResourceFromFile('tests/data/left_right_test.ogg')
-		sound.setSoundClip(id)
+		sound = self.soundmanager.createEmitter('tests/data/left_right_test.ogg')
 		sound.setLooping(True)
 		sound.play()
 		time.sleep(3);
@@ -49,11 +49,11 @@ class TestAudio(unittest.TestCase):
 	def test2Streams(self):
 		em = self.soundmanager.createEmitter()
 		sound = self.soundmanager.createEmitter()
-		id = self.engine.getSoundClipPool().addResourceFromFile('tests/data/left_right_test.ogg')
-		sound.setSoundClip(id)
+		clip = self.soundclipmanager.load('tests/data/left_right_test.ogg')
+		sound.setSoundClip(clip)
 		sound.setLooping(True)
 		sound.setCursor(fife.SD_TIME_POS, 5)
-		em.setSoundClip(id)
+		em.setSoundClip(clip)
 		em.setGain(0.7)
 		em.play()
 		sound.play()

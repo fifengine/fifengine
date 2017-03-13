@@ -23,7 +23,7 @@
 # ####################################################################
 
 from extension_test_utils import *
-from loaders import *
+from fife.extensions import loaders
 import time
 
 class TestModelView(unittest.TestCase):

@@ -39,8 +39,14 @@ class TestController(unittest.TestCase):
 		self.assert_(self.engine.getEventManager())
 		print "Test TimeManager"
 		self.assert_(self.engine.getTimeManager())
-		print "Test GuiManager"
-		self.assert_(self.engine.getGuiManager())
+		print "Test ImageManager"
+		self.assert_(self.engine.getImageManager())
+		print "Test AnimationManager"
+		self.assert_(self.engine.getAnimationManager())
+		print "Test SoundClipManager"
+		self.assert_(self.engine.getSoundClipManager())
+		print "Test LogManager"
+		self.assert_(self.engine.getLogManager())
 		pass
 
 	def testPumping(self):
