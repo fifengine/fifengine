@@ -19,74 +19,67 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_TEXTEVENT_H
-#define FIFE_EVENTCHANNEL_TEXTEVENT_H
+#ifndef FIFE_SOUNDSOURCE_H
+#define FIFE_SOUNDSOURCE_H
 
 // Standard C++ library includes
-//
+
+// Platform specific includes
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "eventchannel/base/ec_inputevent.h"
-#include "eventchannel/source/ec_ieventsource.h"
-
-#include "ec_text.h"
 
 namespace FIFE {
 
-	/**  Class for text events
+	class ActionAudio;
+	class Instance;
+	class SoundChangeListener;
+	class SoundEmitter;
+
+	/** Interface class between Instance / ActionAudio and SoundEmitter.
 	 */
-	class TextEvent: public InputEvent {
+	class SoundSource {
 	public:
-		enum TextEventType {
-			UNKNOWN		= 0,
-			INPUT		= 1,
-			EDIT		= 2
-		};
 
-		/** Constructor
+		SoundSource(Instance* instance);
+		~SoundSource();
+
+		/** Sets the ActionAudio. Owned by Object.
 		 */
-		TextEvent():
-			InputEvent(),
-			m_eventType(UNKNOWN),
-			m_text(Text()) {}
+		void setActionAudio(ActionAudio* audio);
 
-		/** Destructor.
+		/** Return ActionAudio. Owned by Object.
 		 */
-		virtual ~TextEvent() {}
+		ActionAudio* getActionAudio() const;
 
-		TextEventType getType() const { return m_eventType; }
-		void setType(TextEventType type) { m_eventType = type; }
+		/** Sets the positon of the SoundEmitter, called from Instance.
+		 */
+		void setPosition();
 
-		const Text& getText() const { return m_text; }
-		void setText(const Text& text) { m_text = text; }
-
-		virtual void consume() { InputEvent::consume(); }
-		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
-		virtual void consumedByWidgets() { InputEvent::consumedByWidgets(); }
-		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
-		virtual IEventSource* getSource() const { return InputEvent::getSource(); }
-		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
-		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
-
-		virtual const std::string& getName() const {
-			const static std::string eventName("TextEvent");
-			return eventName;
-		}
-		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
-
+		/** Sets the direction of the SoundEmitter, called from Instance.
+		 */
+		void setDirection();
+	
 	private:
-		TextEventType m_eventType;
-		Text m_text;
-	};
+		/** Moves data from ActionAudio to SoundEmitter.
+		 */
+		void updateSoundEmitter();
+		
+		//! Associated Instance
+		Instance* m_instance;
+		//! Actual ActionAudio
+		ActionAudio* m_audio;
+		//! Related SoundEmitter
+		SoundEmitter* m_emitter;
+		//! InstanceChangeListener for position and direction
+		SoundChangeListener* m_listener;
 
-} //FIFE
+
+	};
+}
 
 #endif

@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
-#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#ifndef FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
+#define FIFE_EVENTCHANNEL_ICOMMAND_CONTROLLER_H
 
 // Standard C++ library includes
 //
@@ -33,21 +33,42 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_mouseevent.h"
+#include "icommandlistener.h"
 
 namespace FIFE {
+	class Command;
+
 	/**  Controller provides a way to receive events from the system
 	 * Using this interface, clients can subscribe themselves to receive events
+	 * Also command sending is possible
 	 */
-	class IMouseFilter {
+	class ICommandController {
 	public:
 
-		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
-		 * @param event They mouse event.
+		/** Adds a listener to the back of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
 		 */
-		virtual bool isFiltered(const MouseEvent& event) = 0;
+		virtual void addCommandListener(ICommandListener* listener) = 0;
 
-		virtual ~IMouseFilter() {}
+		/** Adds a listener to the front of the listener deque
+		 * Listener will be notified via the corresponding events
+		 * @param listener listener to add
+		 */
+		virtual void addCommandListenerFront(ICommandListener* listener) = 0;
+
+		/** Removes an added listener from the controller.
+		 * Listener will not be notified anymore via the corresponding events
+		 * @param listener listener to remove
+		 */
+		virtual void removeCommandListener(ICommandListener* listener) = 0;
+
+		/** Use this method to send command to command listeners
+		 * @param command command to dispatch
+		 */
+		virtual void dispatchCommand(Command& command) = 0;
+
+		virtual ~ICommandController() {}
 	};
 
 } //FIFE

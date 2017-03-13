@@ -43,9 +43,7 @@ namespace FIFE {
 
 		SoundDecoderOgg(RawData* ptr);
 
-		~SoundDecoderOgg() {
-			releaseBuffer();
-		}
+		~SoundDecoderOgg();
 
 		/** Returns the decoded length of the file in bytes
 		 */
@@ -55,7 +53,7 @@ namespace FIFE {
 
 		/** Sets the current position in the file (in bytes)
 		 *
-		 * @return 0 (False), if the positioning was successful
+		 * @return True, if the positioning was successful
 		 */
 		bool setCursor(uint64_t pos);
 
@@ -70,7 +68,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		void *getBuffer() const{
+		void* getBuffer() const{
 			return m_data;
 		}
 
@@ -82,19 +80,14 @@ namespace FIFE {
 
 		/** Releases the buffer returned by getBuffer()
 		 */
-		void releaseBuffer() {
-			if (m_data != NULL) {
-				delete[] m_data;
-				m_data = NULL;
-			}
-		}
+		void releaseBuffer();
 
 	private:
-		boost::scoped_ptr<RawData> 	m_file;
-		uint64_t		m_declength;
-		uint64_t		m_datasize;
-		char*						m_data;
-		OggVorbis_File 	m_ovf;
+		boost::scoped_ptr<RawData> m_file;
+		uint64_t m_declength;
+		uint64_t m_datasize;
+		char* m_data;
+		OggVorbis_File m_ovf;
 	};
 }
 

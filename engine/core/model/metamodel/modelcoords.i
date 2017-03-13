@@ -30,4 +30,5 @@
 namespace FIFE {
 	%template(ModelCoordinate) PointType3D<int32_t>;
 	%template(ExactModelCoordinate) PointType3D<double>;
+	%template(AudioSpaceCoordinate) PointType3D<double>;
 }

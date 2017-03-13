@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 #include "util/base/singleton.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 
 
 namespace FIFE {

@@ -362,6 +362,7 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_eventmanager->processEvents();
 		m_timemanager->update();
+		m_soundmanager->update();
 
 #ifdef HAVE_CEGUI
 		m_renderbackend->clearBackBuffer();

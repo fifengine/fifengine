@@ -22,7 +22,7 @@
 %module fife
 %{
 #include "gui/guimanager.h"
-#include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/sdl/isdleventlistener.h"
 %}
 
 namespace FIFE {

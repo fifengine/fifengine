@@ -33,10 +33,10 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/base/ec_inputevent.h"
-#include "eventchannel/source/ec_ieventsource.h"
+#include "eventchannel/base/inputevent.h"
+#include "eventchannel/source/ieventsource.h"
 
-#include "ec_key.h"
+#include "key.h"
 
 namespace FIFE {
 
@@ -54,19 +54,19 @@ namespace FIFE {
 		 */
 		KeyEvent():
 			InputEvent(),
-			m_eventtype(UNKNOWN),
-			m_isnumericpad(false),
+			m_eventType(UNKNOWN),
+			m_isNumericPad(false),
 			m_key(Key()) {}
 
 		/** Destructor.
 		 */
 		virtual ~KeyEvent() {}
 
-		KeyEventType getType() const { return m_eventtype; }
-		void setType(KeyEventType type) { m_eventtype = type; }
+		KeyEventType getType() const { return m_eventType; }
+		void setType(KeyEventType type) { m_eventType = type; }
 
-		bool isNumericPad() const { return m_isnumericpad; }
-		void setNumericPad(bool ispad) { m_isnumericpad = ispad; }
+		bool isNumericPad() const { return m_isNumericPad; }
+		void setNumericPad(bool ispad) { m_isNumericPad = ispad; }
 
 		const Key& getKey() const { return m_key; }
 		void setKey(const Key& key) { m_key = key; }
@@ -96,8 +96,8 @@ namespace FIFE {
 		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
 
 	private:
-		KeyEventType m_eventtype;
-		bool m_isnumericpad;
+		KeyEventType m_eventType;
+		bool m_isNumericPad;
 		Key m_key;
 	};
 
