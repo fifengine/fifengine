@@ -414,8 +414,14 @@ namespace FIFE {
 		 */
 		bool isMouseAccelerationEnabled() const;
 
+		/** Enables or disables native image cursor.
+		 * @see Cursor::setNativeImageCursorEnabled()
+		 */
 		void setNativeImageCursorEnabled(bool nativeimagecursor);
 
+		/** Returns whether cursors set to an image or an animation are drawn natively.
+		 * @see Cursor::setNativeImageCursorEnabled()
+		 */
 		bool isNativeImageCursorEnabled() const;
 
 	private:

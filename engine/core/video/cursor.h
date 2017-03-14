@@ -166,8 +166,17 @@ namespace FIFE {
 		*/
 		void getPosition(int32_t* x, int32_t* y);
 
+		/** Enables or disables the native image cursor feature.
+		 * If enabled, cursors set to an image or an animation will be set using SDL
+		 * and drawn by the native platform; otherwise they will be drawn by FIFE.
+		 * This setting has no effect on NativeCursor types which are always native
+		 * and on the drag cursor which is always drawn by FIFE.
+		 */
 		void setNativeImageCursorEnabled(bool native_image_cursor_enabled);
 
+		/** Returns whether cursors set to an image or an animation are drawn natively.
+		 * @see setNativeImageCursorEnabled()
+		 */
 		bool isNativeImageCursorEnabled() const;
 
 	protected:
@@ -176,6 +185,9 @@ namespace FIFE {
 		  */
 		void setNativeCursor(uint32_t cursor_id);
 
+		/** Sets the SDL cursor to the specified image.
+		 * Falls back to software cursor on failure.
+		 */
 		void setNativeImageCursor(ImagePtr image);
 
 		/** To get some consistancy between platforms, this function checks

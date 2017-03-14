@@ -281,18 +281,25 @@ namespace FIFE {
 
 	void Cursor::setNativeImageCursor(ImagePtr image) {
 		if (image == m_native_cursor_image) {
+			// we're already using this image
 			return;
 		}
 
+		// SDL only accepts whole surfaces here so if this image uses a shared surface
+		// we need to prepare a temporary surface with just the relevant part
 		ImagePtr temp_image = image;
 		if (image->isSharedImage()) {
 			temp_image = ImageManager::instance()->create();
 			temp_image->copySubimage(0, 0, image);
 		}
 
-		SDL_Cursor* cursor = SDL_CreateColorCursor(temp_image->getSurface(), -image->getXShift(), -image->getYShift());
+		SDL_Cursor* cursor = SDL_CreateColorCursor(
+			temp_image->getSurface(),
+			-image->getXShift(),
+			-image->getYShift());
 		if (cursor == NULL) {
-			FL_WARN(_log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() << "\". Falling back to software cursor.");
+			FL_WARN(_log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() <<
+				"\". Falling back to software cursor.");
 			if (image->isSharedImage()) {
 				ImageManager::instance()->remove(temp_image);
 			}
