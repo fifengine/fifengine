@@ -292,10 +292,11 @@ namespace FIFE {
 
 		SDL_Cursor* cursor = SDL_CreateColorCursor(temp_image->getSurface(), -image->getXShift(), -image->getYShift());
 		if (cursor == NULL) {
-			FL_WARN(_log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError();
+			FL_WARN(_log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() << "\". Falling back to software cursor.");
 			if (image->isSharedImage()) {
 				ImageManager::instance()->remove(temp_image);
 			}
+			setNativeImageCursorEnabled(false);
 			return;
 		}
 		SDL_SetCursor(cursor);
