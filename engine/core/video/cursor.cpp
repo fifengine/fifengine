@@ -246,7 +246,10 @@ namespace FIFE {
 			FL_WARN(_log, "No cursor matching cursor_id was found.");
 			return;
 		}
-		m_native_cursor = cursor;
 		SDL_SetCursor(cursor);
+		if (m_native_cursor != NULL) {
+			SDL_FreeCursor(m_native_cursor);
+		}
+		m_native_cursor = cursor;
 	}
 }
