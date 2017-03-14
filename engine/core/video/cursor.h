@@ -166,11 +166,17 @@ namespace FIFE {
 		*/
 		void getPosition(int32_t* x, int32_t* y);
 
+		void setNativeImageCursorEnabled(bool native_image_cursor_enabled);
+
+		bool isNativeImageCursorEnabled() const;
+
 	protected:
 		/** Sets the cursor to a native type.
 		  * @param cursor_id One of the values in NativeCursor
 		  */
 		void setNativeCursor(uint32_t cursor_id);
+
+		void setNativeImageCursor(ImagePtr image);
 
 		/** To get some consistancy between platforms, this function checks
 		  * if cursor_id matches any of the values in NativeCursor, and
@@ -206,6 +212,8 @@ namespace FIFE {
 		TimeManager* m_timemanager;
 
 		bool m_invalidated;
+		bool m_native_image_cursor_enabled;
+		ImagePtr m_native_cursor_image;
 	};
 
 } //FIFE
