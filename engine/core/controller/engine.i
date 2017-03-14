@@ -116,7 +116,9 @@ namespace FIFE {
 		float getMouseSensitivity() const;
 		void setMouseAccelerationEnabled(bool acceleration);
 		bool isMouseAccelerationEnabled() const;
-		
+		void setNativeImageCursorEnabled(bool nativeimagecursor);
+		bool isNativeImageCursorEnabled() const;
+
 	private:
 		EngineSettings();
 	};	

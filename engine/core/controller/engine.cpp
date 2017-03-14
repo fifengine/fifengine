@@ -308,6 +308,7 @@ namespace FIFE {
 		m_model->adoptCellGrid(new HexGrid(true));
 
 		m_cursor = new Cursor(m_renderbackend);
+		m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
 		FL_LOG(_log, "Engine initialized");
 	}
 

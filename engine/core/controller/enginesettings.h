@@ -414,6 +414,10 @@ namespace FIFE {
 		 */
 		bool isMouseAccelerationEnabled() const;
 
+		void setNativeImageCursorEnabled(bool nativeimagecursor);
+
+		bool isNativeImageCursorEnabled() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -449,6 +453,7 @@ namespace FIFE {
 		uint16_t m_framelimit;
 		float m_mousesensitivity;
 		bool m_mouseacceleration;
+		bool m_nativeimagecursor;
 	};
 
 }//FIFE
