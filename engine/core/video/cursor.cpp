@@ -288,6 +288,9 @@ namespace FIFE {
 			// we're already using this image
 			return true;
 		}
+		if (image->getState() == IResource::RES_NOT_LOADED) {
+			image->load();
+		}
 
 		// SDL only accepts whole surfaces here so if this image uses a shared surface
 		// we need to prepare a temporary surface with just the relevant part
