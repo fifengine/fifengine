@@ -187,8 +187,9 @@ namespace FIFE {
 
 		/** Sets the SDL cursor to the specified image.
 		 * Falls back to software cursor on failure.
+		 * @return false on error, true otherwise
 		 */
-		void setNativeImageCursor(ImagePtr image);
+		bool setNativeImageCursor(ImagePtr image);
 
 		/** To get some consistancy between platforms, this function checks
 		  * if cursor_id matches any of the values in NativeCursor, and

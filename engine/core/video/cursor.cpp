@@ -82,7 +82,9 @@ namespace FIFE {
 		m_cursor_type = CURSOR_IMAGE;
 
 		if (m_native_image_cursor_enabled) {
-			setNativeImageCursor(image);
+			if (!setNativeImageCursor(image)) {
+				return;
+			}
 			if (!SDL_ShowCursor(1)) {
 				SDL_PumpEvents();
 			}
@@ -102,7 +104,9 @@ namespace FIFE {
 		m_cursor_type = CURSOR_ANIMATION;
 
 		if (m_native_image_cursor_enabled) {
-			setNativeImageCursor(anim->getFrameByTimestamp(0));
+			if (!setNativeImageCursor(anim->getFrameByTimestamp(0))) {
+				return;
+			}
 			if (!SDL_ShowCursor(1)) {
 				SDL_PumpEvents();
 			}
@@ -279,10 +283,10 @@ namespace FIFE {
 		m_native_cursor = cursor;
 	}
 
-	void Cursor::setNativeImageCursor(ImagePtr image) {
+	bool Cursor::setNativeImageCursor(ImagePtr image) {
 		if (image == m_native_cursor_image) {
 			// we're already using this image
-			return;
+			return true;
 		}
 
 		// SDL only accepts whole surfaces here so if this image uses a shared surface
@@ -304,7 +308,7 @@ namespace FIFE {
 				ImageManager::instance()->remove(temp_image);
 			}
 			setNativeImageCursorEnabled(false);
-			return;
+			return false;
 		}
 		SDL_SetCursor(cursor);
 		m_native_cursor_image = image;
@@ -316,6 +320,7 @@ namespace FIFE {
 			SDL_FreeCursor(m_native_cursor);
 		}
 		m_native_cursor = cursor;
+		return true;
 	}
 
 	void Cursor::setNativeImageCursorEnabled(bool native_image_cursor_enabled) {
