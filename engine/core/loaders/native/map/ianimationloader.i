@@ -21,6 +21,7 @@
 %module fife
 %{
 #include "loaders/native/map/ianimationloader.h"
+#include "loaders/native/map/animationloader.h"
 %}
 
 %include "video/video.i"
@@ -30,4 +31,5 @@ namespace FIFE {
 }
 
 %include "loaders/native/map/ianimationloader.h"
+%include "loaders/native/map/animationloader.h"
 

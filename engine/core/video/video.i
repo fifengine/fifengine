@@ -289,6 +289,8 @@ namespace FIFE {
 		uint32_t getY() const;
 		void setPosition(uint32_t x, uint32_t y);
 		void getPosition(int32_t* x, int32_t* y);
+		void setNativeImageCursorEnabled(bool native_image_cursor_enabled);
+		bool isNativeImageCursorEnabled() const;
 
 	private:
 		Cursor();
