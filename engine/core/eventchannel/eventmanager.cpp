@@ -31,6 +31,7 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "eventchannel/joystick/joystickmanager.h"
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/key/ikeyfilter.h"
@@ -62,10 +63,15 @@ namespace FIFE {
 		m_oldX(0),
 		m_oldY(0),
 		m_lastTicks(0),
-		m_oldVelocity(0.0) {
+		m_oldVelocity(0.0),
+		m_joystickManager(NULL) {
+
+		// ToDo: Add setting
+		m_joystickManager = new JoystickManager();
 	}
 
 	EventManager::~EventManager() {
+		delete m_joystickManager;
 	}
 
 	template<typename T>
@@ -148,6 +154,24 @@ namespace FIFE {
 
 	void EventManager::removeDropListener(IDropListener* listener) {
 		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
+	}
+	
+	void EventManager::addJoystickListener(IJoystickListener* listener) {
+		if (m_joystickManager) {
+			m_joystickManager->addJoystickListener(listener);
+		}
+	}
+
+	void EventManager::addJoystickListenerFront(IJoystickListener* listener) {
+		if (m_joystickManager) {
+			m_joystickManager->addJoystickListenerFront(listener);
+		}
+	}
+
+	void EventManager::removeJoystickListener(IJoystickListener* listener) {
+		if (m_joystickManager) {
+			m_joystickManager->removeJoystickListener(listener);
+		}
 	}
 
 	void EventManager::dispatchCommand(Command& command) {
@@ -521,8 +545,22 @@ namespace FIFE {
 					processMouseEvent(event);
 					break;
 
-				case SDL_DROPFILE: {
+				case SDL_DROPFILE:
 					processDropEvent(event);
+					break;
+
+				case SDL_JOYBUTTONDOWN:
+				case SDL_JOYBUTTONUP:
+				case SDL_JOYAXISMOTION:
+				case SDL_JOYHATMOTION:
+				case SDL_JOYDEVICEADDED:
+				case SDL_JOYDEVICEREMOVED:
+				case SDL_CONTROLLERBUTTONDOWN:
+				case SDL_CONTROLLERBUTTONUP:
+				case SDL_CONTROLLERAXISMOTION: {
+					if (m_joystickManager) {
+						m_joystickManager->processJoystickEvent(event);
+					}
 					break;
 				}
 

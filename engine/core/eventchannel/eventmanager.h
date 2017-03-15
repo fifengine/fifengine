@@ -66,6 +66,8 @@ namespace FIFE {
 
 	class ICommandListener;
 	class InputEvent;
+	class IJoystickListener;
+	class JoystickManager;
 	class MouseEvent;
 	class KeyEvent;
 	class IKeyFilter;
@@ -116,6 +118,10 @@ namespace FIFE {
 		void addDropListener(IDropListener* listener);
 		void addDropListenerFront(IDropListener* listener);
 		void removeDropListener(IDropListener* listener);
+
+		void addJoystickListener(IJoystickListener* listener);
+		void addJoystickListenerFront(IJoystickListener* listener);
+		void removeJoystickListener(IJoystickListener* listener);
 
 		EventSourceType getEventSourceType();
 
@@ -238,6 +244,8 @@ namespace FIFE {
 		uint16_t m_oldY;
 		uint32_t m_lastTicks;
 		float m_oldVelocity;
+
+		JoystickManager* m_joystickManager;
 
 	};
 } //FIFE

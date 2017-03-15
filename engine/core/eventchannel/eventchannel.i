@@ -28,6 +28,8 @@
 #include "eventchannel/command/icommandlistener.h"
 #include "eventchannel/drop/dropevent.h"
 #include "eventchannel/drop/idroplistener.h"
+#include "eventchannel/joystick/joystickevent.h"
+#include "eventchannel/joystick/ijoysticklistener.h"
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/key/ikeylistener.h"
@@ -237,6 +239,45 @@ namespace FIFE {
 		virtual ~IMouseFilter();
 	};
 
+	class JoystickEvent: public InputEvent  {
+	public:
+		enum JoystickEventType {
+			UNKNOWN_EVENT = 0,
+			AXIS_MOTION,
+			BALL_MOTION,
+			HAT_MOTION,
+			BUTTON_PRESSED,
+			BUTTON_RELEASED,
+			DEVICE_ADDED,
+			DEVICE_REMOVED
+		};
+		JoystickEventType getType() const;
+		int32_t getInstanceId() const;
+		int8_t getAxis() const;
+		float getAxisValue() const;
+		int8_t getHat() const;
+		int8_t getHatValue() const;
+		int8_t getButton() const;
+		bool isButtonPressed() const;
+		bool isController() const;
+		virtual ~JoystickEvent();
+	private:
+		JoystickEvent();
+	};
+
+	%feature("director") IJoystickListener;
+	class IJoystickListener {
+	public:
+		virtual void axisMotion(JoystickEvent& evt) = 0;
+		virtual void ballMotion(JoystickEvent& evt) = 0;
+		virtual void hatMotion(JoystickEvent& evt) = 0;
+		virtual void buttonPressed(JoystickEvent& evt) = 0;
+		virtual void buttonReleased(JoystickEvent& evt) = 0;
+		virtual void deviceAdded(JoystickEvent& evt) = 0;
+		virtual void deviceRemoved(JoystickEvent& evt) = 0;
+		virtual ~IJoystickListener();
+	};
+
 	class EventManager {
 	public:
 		EventManager();
@@ -256,6 +297,9 @@ namespace FIFE {
 		void addDropListener(IDropListener* listener);
 		void addDropListenerFront(IDropListener* listener);
 		void removeDropListener(IDropListener* listener);
+		void addJoystickListener(IJoystickListener* listener);
+		void addJoystickListenerFront(IJoystickListener* listener);
+		void removeJoystickListener(IJoystickListener* listener);
 
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
