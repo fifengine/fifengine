@@ -873,7 +873,7 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::setCheckDifference() {
-		if (m_playCheckDifference == 0) {
+		if (m_playCheckDifference == 0 && getState() == SD_PLAYING_STATE) {
 			m_playCheckDifference = TimeManager::instance()->getTime() - m_internData.playTimestamp;
 		}
 	}
