@@ -309,5 +309,13 @@ namespace FIFE {
 	bool EngineSettings::isMouseAccelerationEnabled() const {
 		return m_mouseacceleration;
 	}
+
+	void EngineSettings::setNativeImageCursorEnabled(bool nativeimagecursor) {
+		m_nativeimagecursor = nativeimagecursor;
+	}
+
+	bool EngineSettings::isNativeImageCursorEnabled() const {
+		return m_nativeimagecursor;
+	}
 }
 

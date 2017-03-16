@@ -140,6 +140,7 @@ class ApplicationBase(object):
 		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
 		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
+		engineSetting.setNativeImageCursorEnabled(self._finalSetting['NativeImageCursor'])
 
 		try:
 			engineSetting.setColorKeyEnabled(self._finalSetting['ColorKeyEnabled'])

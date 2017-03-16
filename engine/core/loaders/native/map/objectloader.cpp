@@ -574,7 +574,7 @@ namespace FIFE {
 											static char tmp[64];
 											snprintf(tmp, 64, "%03d", dir);
 											std::string aniId = *objectId + ":" + *actionId + ":" + std::string(tmp);
-											AnimationPtr animation = m_animationManager->get(aniId);
+											AnimationPtr animation = m_animationManager->create(aniId);
 
 											int frames;
 											int success = dirElement->QueryValueAttribute("frames", &frames);

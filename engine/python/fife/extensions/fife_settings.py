@@ -113,7 +113,8 @@ class Setting(object):
 			'PlaySounds':[True,False], 'LogToFile':[True,False],
 			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
-			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
+			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False],
+			'NativeImageCursor':[True,False]
 			}
 
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
@@ -133,7 +134,8 @@ class Setting(object):
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
-			'MouseAcceleration':False
+			'MouseAcceleration':False,
+			'NativeImageCursor':False
 			}
 
 		# has the settings file been read
@@ -368,6 +370,8 @@ class Setting(object):
 					elif name == "MouseSensitivity":
 						self._settingsFromFile[module][name] = e_value
 					elif name == "MouseAcceleration":
+						self._settingsFromFile[module][name] = e_value
+					elif name == "NativeImageCursor":
 						self._settingsFromFile[module][name] = e_value
 
 					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):

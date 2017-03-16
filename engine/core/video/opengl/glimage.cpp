@@ -500,7 +500,7 @@ namespace FIFE {
 			generateGLSharedTexture(img, region);
 		}
 
-		setState(IResource::RES_LOADED);
+		setState(m_shared_img->getState());
 	}
 
 	void GLImage::forceLoadInternal() {
