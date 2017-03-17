@@ -28,6 +28,7 @@
 #include "eventchannel/command/icommandlistener.h"
 #include "eventchannel/drop/dropevent.h"
 #include "eventchannel/drop/idroplistener.h"
+#include "eventchannel/joystick/joystick.h"
 #include "eventchannel/joystick/joystickevent.h"
 #include "eventchannel/joystick/ijoysticklistener.h"
 #include "eventchannel/key/key.h"
@@ -239,12 +240,78 @@ namespace FIFE {
 		virtual ~IMouseFilter();
 	};
 
+	class Joystick {
+	public:
+		enum Hat {
+			HAT_INVALID = -1,
+			HAT_CENTERED = 0,
+			HAT_UP = 1,
+			HAT_RIGHT = 2,
+			HAT_DOWN = 4,
+			HAT_LEFT = 8,
+			HAT_RIGHTUP = 3,
+			HAT_RIGHTDOWN = 6,
+			HAT_LEFTUP = 9,
+			HAT_LEFTDOWN = 12
+		};
+
+		enum ContollerAxis {
+			CONTOLLER_AXIS_INVALID = -1,
+			CONTOLLER_AXIS_LEFTX,
+			CONTOLLER_AXIS_LEFTY,
+			CONTOLLER_AXIS_RIGHTX,
+			CONTOLLER_AXIS_RIGHTY,
+			CONTOLLER_AXIS_TRIGGERLEFT,
+			CONTOLLER_AXIS_TRIGGERRIGHT,
+			CONTOLLER_AXIS_MAX
+		};
+
+		enum ControllerButton {
+			CONTOLLER_BUTTON_INVALID = -1,
+			CONTOLLER_BUTTON_A,
+			CONTOLLER_BUTTON_B,
+			CONTOLLER_BUTTON_X,
+			CONTOLLER_BUTTON_Y,
+			CONTOLLER_BUTTON_BACK,
+			CONTOLLER_BUTTON_GUIDE,
+			CONTOLLER_BUTTON_START,
+			CONTOLLER_BUTTON_LEFTSTICK,
+			CONTOLLER_BUTTON_RIGHTSTICK,
+			CONTOLLER_BUTTON_LEFTSHOULDER,
+			CONTOLLER_BUTTON_RIGHTSHOULDER,
+			CONTOLLER_BUTTON_DPAD_UP,
+			CONTOLLER_BUTTON_DPAD_DOWN,
+			CONTOLLER_BUTTON_DPAD_LEFT,
+			CONTOLLER_BUTTON_DPAD_RIGHT,
+			CONTOLLER_BUTTON_MAX
+		};
+
+		~Joystick();
+
+		int32_t getDeviceIndex() const;
+
+		int32_t getInstanceId() const;
+
+		std::string getGuid();
+		std::string getName();
+
+		void open();
+		void close();
+
+		bool isConnected() const;
+		bool isController() const;
+		void openController();
+		void closeController();
+
+	private:
+		Joystick(int32_t joystickId, int32_t deviceIndex);
+	};
+
 	class JoystickEvent: public InputEvent  {
 	public:
 		enum JoystickEventType {
 			UNKNOWN_EVENT = 0,
 			AXIS_MOTION,
-			BALL_MOTION,
 			HAT_MOTION,
 			BUTTON_PRESSED,
 			BUTTON_RELEASED,
@@ -258,7 +325,6 @@ namespace FIFE {
 		int8_t getHat() const;
 		int8_t getHatValue() const;
 		int8_t getButton() const;
-		bool isButtonPressed() const;
 		bool isController() const;
 		virtual ~JoystickEvent();
 	private:
@@ -269,7 +335,6 @@ namespace FIFE {
 	class IJoystickListener {
 	public:
 		virtual void axisMotion(JoystickEvent& evt) = 0;
-		virtual void ballMotion(JoystickEvent& evt) = 0;
 		virtual void hatMotion(JoystickEvent& evt) = 0;
 		virtual void buttonPressed(JoystickEvent& evt) = 0;
 		virtual void buttonReleased(JoystickEvent& evt) = 0;

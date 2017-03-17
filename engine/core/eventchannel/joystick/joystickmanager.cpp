@@ -49,6 +49,9 @@ namespace FIFE {
 		m_mappingLoader = ControllerMappingLoader();
 		m_mappingSaver = ControllerMappingSaver();
 
+		// ToDo: Remove me
+		m_mappingLoader.load("gamecontrollerdb.txt");
+		// add already inserted joysticks / controllers
 		for (int32_t i = 0; i < SDL_NumJoysticks(); ++i) {
 			addJoystick(i);
 		}
@@ -59,31 +62,43 @@ namespace FIFE {
 	}
 
 	JoystickManager::~JoystickManager() {
-		for (std::list<Joystick*>::iterator it = m_joysticks.begin(); it != m_joysticks.end(); ++it) {
-			//(*it)->close();
+		for (std::vector<Joystick*>::iterator it = m_joysticks.begin(); it != m_joysticks.end(); ++it) {
 			delete *it;
 		}
 
 		SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER);
 	}
 
-	void JoystickManager::addJoystick(int32_t deviceIndex) {
-		Joystick* joystick = new Joystick(deviceIndex, m_joysticks.size());
+	Joystick* JoystickManager::addJoystick(int32_t deviceIndex) {
+		for (std::vector<Joystick*>::iterator it = m_activeJoysticks.begin(); it != m_activeJoysticks.end(); ++it) {
+			if ((*it)->getDeviceIndex() == deviceIndex) {
+				return NULL;
+			}
+		}
+		Joystick* joystick = new Joystick(m_joysticks.size(), deviceIndex);
 		joystick->open();
-		//m_joysticks.push_back(joystick);
+		m_joystickIndices.insert(std::pair<int32_t, uint32_t>(joystick->getInstanceId(), m_joysticks.size()));
+		m_joysticks.push_back(joystick);
 		m_activeJoysticks.push_back(joystick);
+		return joystick;
+	}
+
+	Joystick* JoystickManager::getJoystick(int32_t instanceId) {
+		Joystick* joy = NULL;
+		std::map<int32_t, uint32_t>::iterator it = m_joystickIndices.find(instanceId);
+		if (it != m_joystickIndices.end()) {
+			joy = m_joysticks[it->second];
+		}
+		return joy;
 	}
 
 	void JoystickManager::removeJoystick(Joystick* joystick) {
 		std::vector<Joystick*>::iterator it = std::find(m_activeJoysticks.begin(), m_activeJoysticks.end(), joystick);
 		if (it != m_activeJoysticks.end()) {
+			m_joystickIndices.erase((*it)->getInstanceId());
 			(*it)->close();
 			m_activeJoysticks.erase(it);
 		}
-	}
-
-	Joystick* JoystickManager::getJoystick(int32_t instanceId) {
-		return NULL;
 	}
 
 	uint8_t JoystickManager::getJoystickCount() const {
@@ -91,13 +106,31 @@ namespace FIFE {
 	}
 
 	void JoystickManager::loadMapping(const std::string& path) {
-	
+		m_mappingLoader.load(path);
 	}
 
-	void JoystickManager::saveMapping(const std::string& path) {
-	
+	void JoystickManager::saveMapping(const std::string guid, const std::string& path) {
+		SDL_JoystickGUID realGuid = SDL_JoystickGetGUIDFromString(guid.c_str());
+
+		char* mapping = SDL_GameControllerMappingForGUID(realGuid);
+		if (!mapping) {
+			throw SDLException(SDL_GetError());
+			return;
+		}
+
+		std::string stringMapping(mapping);
+		SDL_free(mapping);
+
+		if (stringMapping.find_last_of(',') != stringMapping.length() - 1)
+			stringMapping += ",";
+
+		stringMapping += "platform:" + std::string(SDL_GetPlatform()) + ",\n";
+		m_mappingSaver.save(stringMapping, path);
 	}
 
+	void JoystickManager::saveMappings(const std::string& path) {
+
+	}
 
 	void JoystickManager::addJoystickListener(IJoystickListener* listener) {
 		m_pendingJoystickListeners.push_back(listener);
@@ -112,24 +145,77 @@ namespace FIFE {
 	}
 
 	void JoystickManager::processJoystickEvent(SDL_Event event) {
-		JoystickEvent joyevent;
-		joyevent.setSource(this);
-		fillJoystickEvent(event, joyevent);
-		dispatchJoystickEvent(joyevent);
-	}
+		bool dispatch = true;
+		JoystickEvent joyevt;
+		joyevt.setSource(this);
 
-	void JoystickManager::fillJoystickEvent(const SDL_Event& sdlevt, JoystickEvent& joyevt) {
-		if (sdlevt.type == SDL_JOYAXISMOTION || sdlevt.type == SDL_CONTROLLERAXISMOTION) {
+		if (event.type == SDL_JOYAXISMOTION) {
 			joyevt.setType(JoystickEvent::AXIS_MOTION);
-			if (sdlevt.type == SDL_JOYAXISMOTION) {
-				joyevt.setAxis(sdlevt.jaxis.axis);
-				joyevt.setAxisValue(sdlevt.jaxis.value / 32768.0f);
+			joyevt.setInstanceId(event.jaxis.which);
+			joyevt.setAxis(event.jaxis.axis);
+			joyevt.setAxisValue(convertRange(event.jaxis.value));
+		} else if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
+			joyevt.setType(event.type == SDL_JOYBUTTONDOWN ? JoystickEvent::BUTTON_PRESSED : JoystickEvent::BUTTON_RELEASED);
+			joyevt.setInstanceId(event.jbutton.which);
+			joyevt.setButton(event.jbutton.button);
+		} else if (event.type == SDL_JOYHATMOTION) {
+			joyevt.setType(JoystickEvent::HAT_MOTION);
+			joyevt.setInstanceId(event.jhat.which);
+			joyevt.setHat(event.jhat.hat);
+			joyevt.setHatValue(event.jhat.value);
+		} else if (event.type == SDL_JOYDEVICEADDED) {
+			joyevt.setType(JoystickEvent::DEVICE_ADDED);
+			// Note: In this case it's the device index, instead of instance id
+			Joystick* joy = addJoystick(event.jdevice.which);
+			if (joy) {
+				joyevt.setInstanceId(joy->getInstanceId());
 			} else {
-				joyevt.setAxis(sdlevt.caxis.axis);
-				joyevt.setAxisValue(sdlevt.caxis.value / 32768.0f);
+				dispatch = false;
 			}
+		} else if (event.type == SDL_JOYDEVICEREMOVED) {
+			joyevt.setType(JoystickEvent::DEVICE_REMOVED);
+			joyevt.setInstanceId(event.jdevice.which);
+		} else {
+			dispatch = false;
+		}
+		// Dispatch only if it's not a controller, SDL sends events twice.
+		// Only exception for added and removed events.
+		Joystick* joy = getJoystick(joyevt.getInstanceId());
+		dispatch = dispatch && (!joy->isController() || (event.type == SDL_JOYDEVICEREMOVED || event.type == SDL_JOYDEVICEADDED));
+		if (dispatch) {
+			joyevt.setController(joy->isController());
+			dispatchJoystickEvent(joyevt);
+		}
+		// Remove it after event dispatch.
+		if (event.type == SDL_JOYDEVICEREMOVED) {
+			removeJoystick(joy);
 		}
 	}
+
+	void JoystickManager::processControllerEvent(SDL_Event event) {
+		bool dispatch = true;
+		JoystickEvent joyevt;
+		joyevt.setSource(this);
+		joyevt.setController(true);
+
+		if (event.type == SDL_CONTROLLERAXISMOTION) {
+			joyevt.setType(JoystickEvent::AXIS_MOTION);
+			joyevt.setInstanceId(event.caxis.which);
+			joyevt.setAxis(event.caxis.axis);
+			joyevt.setAxisValue(convertRange(event.caxis.value));
+		} else if (event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP) {
+			joyevt.setType(event.type == SDL_CONTROLLERBUTTONDOWN ? JoystickEvent::BUTTON_PRESSED : JoystickEvent::BUTTON_RELEASED);
+			joyevt.setInstanceId(event.cbutton.which);
+			joyevt.setButton(event.cbutton.button);
+		} else {
+			dispatch = false;
+		}
+
+		if (dispatch) {
+			dispatchJoystickEvent(joyevt);
+		}
+	}
+
 
 	void JoystickManager::dispatchJoystickEvent(JoystickEvent& evt) {
 		if (!m_pendingJoystickListeners.empty()) {
@@ -172,6 +258,21 @@ namespace FIFE {
 			case JoystickEvent::AXIS_MOTION:
 				(*i)->axisMotion(evt);
 				break;
+			case JoystickEvent::HAT_MOTION:
+				(*i)->hatMotion(evt);
+				break;
+			case JoystickEvent::BUTTON_PRESSED:
+				(*i)->buttonPressed(evt);
+				break;
+			case JoystickEvent::BUTTON_RELEASED:
+				(*i)->buttonReleased(evt);
+				break;
+			case JoystickEvent::DEVICE_ADDED:
+				(*i)->deviceAdded(evt);
+				break;
+			case JoystickEvent::DEVICE_REMOVED:
+				(*i)->deviceRemoved(evt);
+				break;
 			default:
 				break;
 			}
@@ -183,4 +284,16 @@ namespace FIFE {
 		return ES_ENGINE;
 	}
 
+	float JoystickManager::convertRange(int16_t value) {
+		float range = static_cast<float>(value) / 32768.0f;
+		if (Mathf::FAbs(range) < 0.01f) {
+			return 0.0f;
+		}
+		if (range < -0.99f) {
+			return -1.0f;
+		} else if (range > 0.99f) {
+			return 1.0f;
+		}
+		return range;
+	}
 }

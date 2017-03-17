@@ -49,11 +49,6 @@
 
 namespace FIFE {
 
-	//class JoystickEvent;
-	//class ControllerMappingLoader;
-	//class ControllerMappingSaver;
-
-
 	/**  Joystick Manager manages all events related to Joysticks and Gamecontrollers
 	 */
 	class JoystickManager:
@@ -68,13 +63,14 @@ namespace FIFE {
 		 */
 		virtual ~JoystickManager();
 
-		void addJoystick(int32_t deviceIndex);
-		void removeJoystick(Joystick* joystick);
+		Joystick* addJoystick(int32_t deviceIndex);
 		Joystick* getJoystick(int32_t instanceId);
+		void removeJoystick(Joystick* joystick);
 		uint8_t getJoystickCount() const;
 
 		void loadMapping(const std::string& path);
-		void saveMapping(const std::string& path);
+		void saveMapping(const std::string guid, const std::string& path);
+		void saveMappings(const std::string& path);
 
 		// Implementation from IJoystickController
 		void addJoystickListener(IJoystickListener* listener);
@@ -82,11 +78,15 @@ namespace FIFE {
 		void removeJoystickListener(IJoystickListener* listener);
 
 		void processJoystickEvent(SDL_Event event);
-		void fillJoystickEvent(const SDL_Event& sdlevt, JoystickEvent& joyevt);
+		void processControllerEvent(SDL_Event event);
 		void dispatchJoystickEvent(JoystickEvent& evt);
 
 		EventSourceType getEventSourceType();
 	private:
+		/** Converts the int16 in -1.0 to 1.0 range.
+		 */
+		float convertRange(int16_t value);
+
 		ControllerMappingLoader m_mappingLoader;
 		ControllerMappingSaver m_mappingSaver;
 
@@ -94,7 +94,9 @@ namespace FIFE {
 		std::vector<Joystick*> m_activeJoysticks;
 
 		//! All "known" Joysticks. Useful if a user reconnect a Joystick.
-		std::list<Joystick*> m_joysticks;
+		std::vector<Joystick*> m_joysticks;
+
+		std::map<int32_t, uint32_t> m_joystickIndices;
 
 		//! Each sort of gamepad have a GUID from SDL. Indicates if gamepad with given GUID is connected.
 		std::map<std::string, bool> m_gamepadGuids;

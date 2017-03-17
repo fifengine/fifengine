@@ -28,16 +28,18 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
-#include "vfs/vfs.h"
 
 #include "controllermappingsaver.h"
 
 namespace FIFE {
-	void ControllerMappingSaver::save(const std::string id, const std::string& filename) {
-
-	}
-
-	void ControllerMappingSaver::saveAll(const std::string& filename) {
-
+	void ControllerMappingSaver::save(const std::string data, const std::string& filename) {
+		FILE* fp = 0;
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 )
+		fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
+#else
+		fp = fopen(filename.c_str(), "w");
+#endif
+		fputs(data.c_str(), fp);
+		fclose(fp);
 	}
 }  //FIFE

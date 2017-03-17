@@ -54,6 +54,14 @@ namespace FIFE {
 
 	}
 
+	int32_t Joystick::getInstanceId() const {
+		return static_cast<int32_t>(m_instanceId);
+	}
+
+	int32_t Joystick::getJoystickId() const {
+		return m_joystickId;
+	}
+
 	void Joystick::setDeviceIndex(int32_t deviceIndex) {
 		m_deviceIndex = deviceIndex;
 	}
@@ -74,8 +82,8 @@ namespace FIFE {
 		if (m_joystickHandle) {
 			close();
 		}
-		m_joystickHandle = SDL_JoystickOpen(m_deviceIndex);
 
+		m_joystickHandle = SDL_JoystickOpen(m_deviceIndex);
 		if (m_joystickHandle) {
 			m_instanceId = SDL_JoystickInstanceID(m_joystickHandle);
 
@@ -85,17 +93,18 @@ namespace FIFE {
 			m_guidStr = std::string(tmp);
 
 			openController();
-			if (isController()) {
-				m_name = std::string(SDL_GameControllerNameForIndex(m_deviceIndex));
-			} else {
-				m_name = std::string(SDL_JoystickNameForIndex(m_deviceIndex));
+			const char* name = SDL_JoystickNameForIndex(m_deviceIndex);
+			if (isController() && !name) {
+				name = SDL_GameControllerNameForIndex(m_deviceIndex);
 			}
+			m_name = std::string(name);
+		} else {
+			throw SDLException(SDL_GetError());
 		}
 	}
 
 	void Joystick::close() {
 		closeController();
-
 		if (m_joystickHandle) {
 			SDL_JoystickClose(m_joystickHandle);
 			m_joystickHandle = NULL;
@@ -119,6 +128,7 @@ namespace FIFE {
 		if (!SDL_IsGameController(m_deviceIndex)) {
 			return;
 		}
+
 		m_controllerHandle = SDL_GameControllerOpen(m_deviceIndex);
 	}
 

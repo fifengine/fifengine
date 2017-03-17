@@ -40,14 +40,13 @@
 
 namespace FIFE {
 
-	/**  Class for text events
+	/**  Class for Joystick events
 	 */
 	class JoystickEvent: public InputEvent {
 	public:
 		enum JoystickEventType {
 			UNKNOWN_EVENT = 0,
 			AXIS_MOTION,
-			BALL_MOTION,
 			HAT_MOTION,
 			BUTTON_PRESSED,
 			BUTTON_RELEASED,
@@ -66,7 +65,6 @@ namespace FIFE {
 			m_hat(-1),
 			m_hatValue(-1),
 			m_button(-1),
-			m_buttonPressed(false),
 			m_controller(false) {}
 
 		/** Destructor.
@@ -93,9 +91,6 @@ namespace FIFE {
 
 		int8_t getButton() const { return m_button; }
 		void setButton(int8_t button) { m_button = button; }
-
-		bool isButtonPressed() const { return m_buttonPressed; }
-		void setButtonPressed(bool value) { m_buttonPressed = value; }
 
 		bool isController() const { return m_controller; }
 		void setController(bool value) { m_controller = value; }
@@ -130,8 +125,6 @@ namespace FIFE {
 		int8_t m_hatValue;
 		//! Button index
 		int8_t m_button;
-		//! Button state
-		bool m_buttonPressed;
 		//! Is gamecontroller
 		bool m_controller;
 	};

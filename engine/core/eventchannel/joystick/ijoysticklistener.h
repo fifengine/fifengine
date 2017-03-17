@@ -49,11 +49,6 @@ namespace FIFE {
 		 */
 		virtual void axisMotion(JoystickEvent& evt) = 0;
 
-		/** Called on a ball motion event.
-		 * @param evt JoystickEvent that describes the event.
-		 */
-		virtual void ballMotion(JoystickEvent& evt) = 0;
-
 		/** Called on a hat motion event.
 		 * @param evt JoystickEvent that describes the event.
 		 */

@@ -39,6 +39,53 @@ namespace FIFE {
 	class Joystick {
 	public:
 
+		// Hat positions.
+		enum Hat {
+			HAT_INVALID = -1,
+			HAT_CENTERED = 0,
+			HAT_UP = 1,
+			HAT_RIGHT = 2,
+			HAT_DOWN = 4,
+			HAT_LEFT = 8,
+			HAT_RIGHTUP = 3,
+			HAT_RIGHTDOWN = 6,
+			HAT_LEFTUP = 9,
+			HAT_LEFTDOWN = 12
+		};
+
+		// The list of axes available from a controller.
+		enum ContollerAxis {
+			CONTOLLER_AXIS_INVALID = -1,
+			CONTOLLER_AXIS_LEFTX,
+			CONTOLLER_AXIS_LEFTY,
+			CONTOLLER_AXIS_RIGHTX,
+			CONTOLLER_AXIS_RIGHTY,
+			CONTOLLER_AXIS_TRIGGERLEFT,
+			CONTOLLER_AXIS_TRIGGERRIGHT,
+			CONTOLLER_AXIS_MAX
+		};
+
+		// The list of buttons available from a controller.
+		enum ControllerButton {
+			CONTOLLER_BUTTON_INVALID = -1,
+			CONTOLLER_BUTTON_A,
+			CONTOLLER_BUTTON_B,
+			CONTOLLER_BUTTON_X,
+			CONTOLLER_BUTTON_Y,
+			CONTOLLER_BUTTON_BACK,
+			CONTOLLER_BUTTON_GUIDE,
+			CONTOLLER_BUTTON_START,
+			CONTOLLER_BUTTON_LEFTSTICK,
+			CONTOLLER_BUTTON_RIGHTSTICK,
+			CONTOLLER_BUTTON_LEFTSHOULDER,
+			CONTOLLER_BUTTON_RIGHTSHOULDER,
+			CONTOLLER_BUTTON_DPAD_UP,
+			CONTOLLER_BUTTON_DPAD_DOWN,
+			CONTOLLER_BUTTON_DPAD_LEFT,
+			CONTOLLER_BUTTON_DPAD_RIGHT,
+			CONTOLLER_BUTTON_MAX
+		};
+
 		/** Constructor
 		 * @param joystickId The identifier for the Joystick.
 		 * @param deviceIndex The index number from SDL2.
@@ -49,7 +96,12 @@ namespace FIFE {
 		 */
 		~Joystick();
 
+		int32_t getInstanceId() const;
+
+		int32_t getJoystickId() const;
+
 		void setDeviceIndex(int32_t deviceIndex);
+
 		int32_t getDeviceIndex() const;
 
 		std::string getGuid();

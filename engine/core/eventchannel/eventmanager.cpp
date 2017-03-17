@@ -554,12 +554,17 @@ namespace FIFE {
 				case SDL_JOYAXISMOTION:
 				case SDL_JOYHATMOTION:
 				case SDL_JOYDEVICEADDED:
-				case SDL_JOYDEVICEREMOVED:
+				case SDL_JOYDEVICEREMOVED: {
+					if (m_joystickManager) {
+						m_joystickManager->processJoystickEvent(event);
+					}
+					break;
+				}
 				case SDL_CONTROLLERBUTTONDOWN:
 				case SDL_CONTROLLERBUTTONUP:
 				case SDL_CONTROLLERAXISMOTION: {
 					if (m_joystickManager) {
-						m_joystickManager->processJoystickEvent(event);
+						m_joystickManager->processControllerEvent(event);
 					}
 					break;
 				}
