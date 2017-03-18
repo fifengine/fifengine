@@ -39,7 +39,7 @@
 namespace FIFE {
 
 	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
-	 *  fifechan imagefontcollection (google for it)
+	 *  Fifechan imagefontcollection (google for it)
 	 */
 	class SubImageFont: public ImageFontBase {
 		public:
@@ -47,7 +47,7 @@ namespace FIFE {
 			 * Constructor.
 			 *
 			 * @param filename the filename of the Image Font.
-			 * @param glyphs the glyphs for fifechan format.
+			 * @param glyphs the glyphs for Fifechan format.
 			 */
 			SubImageFont(const std::string& filename, const std::string& glyphs);
 			~SubImageFont() {}

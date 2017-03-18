@@ -34,7 +34,7 @@
 namespace FIFE {
 	class RenderBackendOpenGL;
 
-	/** Overrides fifechan Graphics to enable usage of normal fife images & related facilities
+	/** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
 	 */
 	class OpenGLGuiGraphics: public fcn::OpenGLGraphics {
 	public:

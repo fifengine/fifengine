@@ -22,7 +22,7 @@
 # ####################################################################
 
 """\
-Pythonic fifechan Wrapper - PyChan
+Pythonic Fifechan Wrapper - PyChan
 =================================
 
 Pythonic GUI API.
@@ -243,7 +243,7 @@ Wrapping machinery
 
 The wrapping mechanism works be redirecting attribute access to the Widget
 derived classes to a C{real_widget} member variable which in turn is an instance
-of the SWIG wrapped fifechan widget.
+of the SWIG wrapped Fifechan widget.
 
 To ensure the real widget has already been constructed, when the wrapping machinery
 is already in use, this has to be the first attribute to set in the constructors.

@@ -1,6 +1,6 @@
 PychanTest
 -------------- 
-The purpose of this test is to ensure all Pychan/fifechan widgets.
+The purpose of this test is to ensure all Pychan/Fifechan widgets.
  
 -------------- 
 Please perform the following tests:
