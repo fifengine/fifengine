@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 /***************************************************************************
- * Note! FIFE event channel borrows heavily from ideas pf Guichan library  *
+ * Note! FIFE event channel borrows heavily from ideas pf fifechan library  *
  * version 0.6                                                             *
  ***************************************************************************/
 

@@ -47,7 +47,7 @@ namespace FIFE {
 			 * Constructor.
 			 *
 			 * @param filename the filename of the Image Font.
-			 * @param glyphs the glyphs for Guichan format.
+			 * @param glyphs the glyphs for fifechan format.
 			 */
 			SubImageFont(const std::string& filename, const std::string& glyphs);
 			~SubImageFont() {}

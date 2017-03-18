@@ -34,7 +34,7 @@
 namespace FIFE {
 	class RenderBackend;
 
-	/** Overrides Guichan Graphics to enable usage of normal fife images & related facilities
+	/** Overrides fifechan Graphics to enable usage of normal fife images & related facilities
 	 */
 	class SdlGuiGraphics: public fcn::SDLGraphics {
 	public:
