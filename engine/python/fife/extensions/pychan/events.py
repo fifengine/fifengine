@@ -125,7 +125,7 @@ class EventListenerBase(object):
 
 	This class uses the SWIG director feature - overriden
 	virtual methods are called from C++ to - listen to
-	Guichan events.
+	Fifechan events.
 
 	"""
 	def __init__(self):
@@ -134,7 +134,9 @@ class EventListenerBase(object):
 		self.indent = 0
 		self.debug = get_manager().debug
 		self.is_attached = False
-		
+
+		# Disables event redirection to next pump cycle by default
+		self._redirect = False
 		self._timers = []
 		self._deadtimers = []		
 
@@ -163,6 +165,14 @@ class EventListenerBase(object):
 		if self.debug: print "Detach:",self
 		self.is_attached = False
 
+	def setRedirection(self, redirect):
+		"""
+		If enabled, the events are redirected to the next
+		engine pump cycle. Otherwise the exectution is on
+		the same engine cycle.
+		"""
+		self._redirect = redirect
+
 	def _redirectEvent(self,name,event):
 		self.indent += 4
 		try:
@@ -170,6 +180,9 @@ class EventListenerBase(object):
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
+					if not self._redirect:
+						f(event)
+						continue
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
@@ -260,11 +273,11 @@ class EventMapper(object):
 	This instance handles all necessary house-keeping.
 	Such an event mapper can be either C{attached} or
 	C{detached}. In its attached state an L{EventListenerBase}
-	is added to the Guichan widget and will redirect
+	is added to the Fifechan widget and will redirect
 	the events to the callbacks.
 
 	In its detached state no events are received from the
-	real Guichan widget.
+	real Fifechan widget.
 
 	The event mapper starts in the detached state.
 	When a new event is captured the mapper attaches itself
