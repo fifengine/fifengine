@@ -135,8 +135,8 @@ class EventListenerBase(object):
 		self.debug = get_manager().debug
 		self.is_attached = False
 
-		# Disables event redirection to next pump cycle by default
-		self._redirect = False
+		# Enables event redirection to next pump cycle by default
+		self._redirect = True
 		self._timers = []
 		self._deadtimers = []		
 
