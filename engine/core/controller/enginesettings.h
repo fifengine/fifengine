@@ -424,6 +424,14 @@ namespace FIFE {
 		 */
 		bool isNativeImageCursorEnabled() const;
 
+		/** Enables or disables joystick and gamepad support.
+		 */
+		void setJoystickSupport(bool support);
+
+		/** Returns whether joystick and gamepad support is enabled or not.
+		 */
+		bool isJoystickSupport() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -460,6 +468,7 @@ namespace FIFE {
 		float m_mousesensitivity;
 		bool m_mouseacceleration;
 		bool m_nativeimagecursor;
+		bool m_joystickSupport;
 	};
 
 }//FIFE

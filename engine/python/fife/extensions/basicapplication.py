@@ -138,6 +138,7 @@ class ApplicationBase(object):
 		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
 		engineSetting.setNativeImageCursorEnabled(self._finalSetting['NativeImageCursor'])
+		engineSetting.setJoystickSupport(self._finalSetting['JoystickSupport'])
 
 		try:
 			engineSetting.setColorKeyEnabled(self._finalSetting['ColorKeyEnabled'])

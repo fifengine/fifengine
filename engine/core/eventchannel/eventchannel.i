@@ -28,6 +28,9 @@
 #include "eventchannel/command/icommandlistener.h"
 #include "eventchannel/drop/dropevent.h"
 #include "eventchannel/drop/idroplistener.h"
+#include "eventchannel/joystick/joystick.h"
+#include "eventchannel/joystick/joystickevent.h"
+#include "eventchannel/joystick/ijoysticklistener.h"
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/key/ikeylistener.h"
@@ -237,6 +240,109 @@ namespace FIFE {
 		virtual ~IMouseFilter();
 	};
 
+	class Joystick {
+	public:
+		enum Hat {
+			HAT_INVALID = -1,
+			HAT_CENTERED = 0,
+			HAT_UP = 1,
+			HAT_RIGHT = 2,
+			HAT_DOWN = 4,
+			HAT_LEFT = 8,
+			HAT_RIGHTUP = 3,
+			HAT_RIGHTDOWN = 6,
+			HAT_LEFTUP = 9,
+			HAT_LEFTDOWN = 12
+		};
+
+		enum ContollerAxis {
+			CONTOLLER_AXIS_INVALID = -1,
+			CONTOLLER_AXIS_LEFTX,
+			CONTOLLER_AXIS_LEFTY,
+			CONTOLLER_AXIS_RIGHTX,
+			CONTOLLER_AXIS_RIGHTY,
+			CONTOLLER_AXIS_TRIGGERLEFT,
+			CONTOLLER_AXIS_TRIGGERRIGHT,
+			CONTOLLER_AXIS_MAX
+		};
+
+		enum ControllerButton {
+			CONTOLLER_BUTTON_INVALID = -1,
+			CONTOLLER_BUTTON_A,
+			CONTOLLER_BUTTON_B,
+			CONTOLLER_BUTTON_X,
+			CONTOLLER_BUTTON_Y,
+			CONTOLLER_BUTTON_BACK,
+			CONTOLLER_BUTTON_GUIDE,
+			CONTOLLER_BUTTON_START,
+			CONTOLLER_BUTTON_LEFTSTICK,
+			CONTOLLER_BUTTON_RIGHTSTICK,
+			CONTOLLER_BUTTON_LEFTSHOULDER,
+			CONTOLLER_BUTTON_RIGHTSHOULDER,
+			CONTOLLER_BUTTON_DPAD_UP,
+			CONTOLLER_BUTTON_DPAD_DOWN,
+			CONTOLLER_BUTTON_DPAD_LEFT,
+			CONTOLLER_BUTTON_DPAD_RIGHT,
+			CONTOLLER_BUTTON_MAX
+		};
+
+		~Joystick();
+
+		int32_t getDeviceIndex() const;
+		int32_t getInstanceId() const;
+		std::string getGuid();
+		std::string getName();
+
+		bool isConnected() const;
+		bool isController() const;
+
+		uint8_t getNumberOfAxes() const;
+		uint8_t getNumberOfButtons() const;
+		uint8_t getNumberOfHats() const;
+		float getAxisValue(int8_t axis) const;
+		int8_t getHatValue(int8_t hat) const;
+		bool isButtonPressed(int8_t button) const;
+
+	private:
+		Joystick(int32_t joystickId, int32_t deviceIndex);
+	};
+
+	class JoystickEvent: public InputEvent  {
+	public:
+		enum JoystickEventType {
+			UNKNOWN_EVENT = 0,
+			AXIS_MOTION,
+			HAT_MOTION,
+			BUTTON_PRESSED,
+			BUTTON_RELEASED,
+			DEVICE_ADDED,
+			DEVICE_REMOVED
+		};
+		JoystickEventType getType() const;
+		int32_t getInstanceId() const;
+		int8_t getAxis() const;
+		float getAxisValue() const;
+		int8_t getHat() const;
+		int8_t getHatValue() const;
+		int8_t getButton() const;
+		bool isController() const;
+		virtual ~JoystickEvent();
+	private:
+		JoystickEvent();
+	};
+
+	%feature("director") IJoystickListener;
+	class IJoystickListener {
+	public:
+		virtual void axisMotion(JoystickEvent& evt) = 0;
+		virtual void hatMotion(JoystickEvent& evt) = 0;
+		virtual void buttonPressed(JoystickEvent& evt) = 0;
+		virtual void buttonReleased(JoystickEvent& evt) = 0;
+		virtual void deviceAdded(JoystickEvent& evt) = 0;
+		virtual void deviceRemoved(JoystickEvent& evt) = 0;
+		virtual ~IJoystickListener();
+	};
+
 	class EventManager {
 	public:
 		EventManager();
@@ -256,6 +362,9 @@ namespace FIFE {
 		void addDropListener(IDropListener* listener);
 		void addDropListenerFront(IDropListener* listener);
 		void removeDropListener(IDropListener* listener);
+		void addJoystickListener(IJoystickListener* listener);
+		void addJoystickListenerFront(IJoystickListener* listener);
+		void removeJoystickListener(IJoystickListener* listener);
 
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
@@ -274,5 +383,13 @@ namespace FIFE {
 		bool isClipboardText() const;
 		std::string getClipboardText() const;
 		void setClipboardText(const std::string& text);
+
+		Joystick* getJoystick(int32_t instanceId);
+		uint8_t getJoystickCount() const;
+		void loadGamepadMapping(const std::string& file);
+		void saveGamepadMapping(const std::string guid, const std::string& file);
+		void saveGamepadMappings(const std::string& file);
+		std::string getGamepadStringMapping(const std::string& guid);
+		void setGamepadStringMapping(const std::string& mapping);
 	};
 };

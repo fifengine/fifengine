@@ -189,6 +189,7 @@ namespace FIFE {
 		m_eventmanager = new EventManager();
 		m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
 		m_eventmanager->setMouseAccelerationEnabled(m_settings.isMouseAccelerationEnabled());
+		m_eventmanager->setJoystickSupport(m_settings.isJoystickSupport());
 
 		FL_LOG(_log, "Creating resource managers");
 
