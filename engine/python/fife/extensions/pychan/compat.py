@@ -21,8 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from builtins import str
-from builtins import object
 import inspect
 in_fife = None
 fifechan = None
@@ -42,14 +40,14 @@ def _import_fifechan():
 				setattr(fifechan, member[0], member[1])
 		
 		return fife, fifechan
-	except ImportError as e:
+	except ImportError, e:
 		err_fife = str(e)
 	
 	try:
 		import fifechan
 		in_fife = False
 		return None, fifechan
-	except ImportError as e:
+	except ImportError, e:
 		import traceback
 		traceback.print_exc()
 		raise ImportError("Couldn't import neither fife nor fifechan: fife:'%s' fifechan:'%s'" % (err_fife,str(e)))
@@ -97,7 +95,7 @@ def _munge_engine_hook(engine):
 		# use its image loader that supports creating/using atlases
 		# return fifechan.GuiImage().load(filename)
 
-	class hook(object):
+	class hook:
 		pass
 	hook = hook()
 

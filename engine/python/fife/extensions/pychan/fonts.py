@@ -22,18 +22,14 @@
 # ####################################################################
 
 # Font handling
-from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import object
 import os.path
-from .exceptions import *
-from .fontfileparser import FontFileParser
+from exceptions import *
+from fontfileparser import FontFileParser
+
 
 class Font(object):
 	def __init__(self, name, get):
-		from .internal import get_manager
+		from internal import get_manager
 		self.font = None
 		self.name = name
 		self.typename = get("type")
@@ -96,7 +92,7 @@ def loadFonts(filename):
 	"""
 	Load fonts from a config file. These are then available via their name.
 	"""
-	from .internal import get_manager
+	from internal import get_manager
 
 	for font in Font.loadFromFile(filename):
 		get_manager().addFont(font)

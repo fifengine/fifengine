@@ -21,11 +21,7 @@
 # ####################################################################
 
 """ utilities for xml maploading process """
-from __future__ import print_function
-from __future__ import division
 
-from builtins import range
-from past.utils import old_div
 import os
 import math
 
@@ -38,7 +34,7 @@ def loadImportFile(loader, path, engine, debug=False):
 	@param	debug:	flag to activate / deactivate print statements
 	"""
 	loader.loadResource(path)
-	if debug: print('imported object file ' + path)
+	if debug: print 'imported object file ' + path
 
 def loadImportDir(loader, path, engine, debug=False):
 	""" helper function to call loadImportFile on a directory
@@ -48,7 +44,7 @@ def loadImportDir(loader, path, engine, debug=False):
 	@type	debug:	bool
 	@param	debug:	flag to activate / deactivate print statements
 	"""
-	for _file in [f for f in engine.getVFS().listFiles(path) if f.split('.')[-1] == 'xml']:
+	for _file in filter(lambda f: f.split('.')[-1] == 'xml', engine.getVFS().listFiles(path)):
 		loadImportFile(loader, '/'.join([path, _file]), engine, debug)
 
 def loadImportDirRec(loader, path, engine, debug=False):
@@ -61,7 +57,7 @@ def loadImportDirRec(loader, path, engine, debug=False):
 	"""
 	loadImportDir(loader, path, engine, debug)
 
-	for _dir in [d for d in engine.getVFS().listDirectories(path) if not d.startswith('.')]:
+	for _dir in filter(lambda d: not d.startswith('.'), engine.getVFS().listDirectories(path)):
 		loadImportDirRec(loader, '/'.join([path, _dir]), engine, debug)
 		
 def root_subfile(masterfile, subfile):
@@ -82,7 +78,7 @@ def root_subfile(masterfile, subfile):
 	master_leftovers = []
 	sub_leftovers = []
 
-	for i in range(len(master_fragments)):
+	for i in xrange(len(master_fragments)):
 		try:
 			if master_fragments[i] == sub_fragments[i]:
 				master_leftovers = master_fragments[i+1:]
@@ -151,6 +147,6 @@ def frange(limit1, limit2 = None, increment = 1.):
 	else:
 		limit1 = float(limit1)
 
-	count = int(math.ceil(old_div((limit2 - limit1),increment)))
-	return (limit1 + n*increment for n in range(count))
+	count = int(math.ceil((limit2 - limit1)/increment))
+	return (limit1 + n*increment for n in xrange(count))
 	

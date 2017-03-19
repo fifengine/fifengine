@@ -21,14 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import str
-from builtins import map
-from builtins import object
-from .compat import fifechan, fife, in_fife
+from compat import fifechan, fife, in_fife
+import widgets
 from fife.extensions import fife_timer as timer
-from . import fonts
-from .exceptions import *
+import fonts
+from exceptions import *
 from traceback import print_exc
 
 def get_manager():
@@ -83,7 +80,7 @@ class Manager(object):
 		self.allWidgets = set()
 
 		# Autopos
-		from .autoposition import placeWidget
+		from autoposition import placeWidget
 		self.placeWidget = placeWidget
 
 	def addWidget(self, widget):
@@ -203,22 +200,22 @@ class Manager(object):
 	def addStyle(self,name,style):
 		style = self._remapStyleKeys(style)
 
-		for k,v in list(self.styles.get('default',{}).items()):
+		for k,v in self.styles.get('default',{}).items():
 			style[k] = style.get(k,v)
 		self.styles[name] = style
 
 	def stylize(self,widget, style, **kwargs):
 		style = self.styles[style]
-		for k,v in list(style.get('default',{}).items()):
+		for k,v in style.get('default',{}).items():
 			v = kwargs.get(k,v)
 			setattr(widget,k,v)
 
 		cls = widget.__class__
-		for applicable,specstyle in list(style.items()):
+		for applicable,specstyle in style.items():
 			if not isinstance(applicable,tuple):
 				applicable = (applicable,)
 			if cls in applicable:
-				for k,v in list(specstyle.items()):
+				for k,v in specstyle.items():
 					v = kwargs.get(k,v)
 					setattr(widget,k,v)
 
@@ -228,7 +225,6 @@ class Manager(object):
 		"""
 		# Remap class names, create copy:
 		def _toClass(class_):
-			from . import widgets
 			if class_ == "default":
 				return class_
 
@@ -239,7 +235,7 @@ class Manager(object):
 			return widgets.WIDGETS[str(class_)]
 
 		style_copy = {}
-		for k,v in list(style.items()):
+		for k,v in style.items():
 			if isinstance(k,tuple):
 				new_k = tuple(map(_toClass,k))
 			else:

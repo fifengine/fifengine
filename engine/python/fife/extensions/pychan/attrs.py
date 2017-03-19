@@ -40,12 +40,8 @@ This is most useful for error checking parsing and defining
 accepted attributes in classes and is used by pychan internally.
 
 """
-from __future__ import absolute_import
 
-from builtins import map
-from builtins import str
-from builtins import object
-from .exceptions import ParserError
+from exceptions import ParserError
 
 class Attr(object):
 	"""
@@ -75,7 +71,7 @@ class UnicodeAttr(Attr):
 		Parses a value and checks for errors.
 		Override with specialiced behaviour.
 		"""
-		return str(value)
+		return unicode(value)
 
 
 class PointAttr(Attr):
@@ -135,7 +131,7 @@ class FloatAttr(Attr):
 class ListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = list(map(str,str(value).split(',')))
+			result = map(str,str(value).split(','))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with strings.")
@@ -143,7 +139,7 @@ class ListAttr(Attr):
 class UnicodeListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = list(map(unicode,str(value).split(',')))
+			result = map(unicode,str(value).split(','))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with unicode strings.")
@@ -151,7 +147,7 @@ class UnicodeListAttr(Attr):
 class IntListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = list(map(int,str(value).split(',')))
+			result = map(int,str(value).split(','))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with ints.")
@@ -159,7 +155,7 @@ class IntListAttr(Attr):
 class BoolListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = list(map(bool,str(value).split(',')))
+			result = map(bool,str(value).split(','))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with bools.")
@@ -167,7 +163,7 @@ class BoolListAttr(Attr):
 class FloatListAttr(Attr):
 	def parse(self, value):
 		try:
-			result = list(map(float,str(value).split(',')))
+			result = map(float,str(value).split(','))
 			return result
 		except:
 			raise ParserError(str(self.name)+" expected a list with floats.")

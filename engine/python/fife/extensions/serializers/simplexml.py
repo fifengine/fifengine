@@ -21,13 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from past.builtins import basestring
-from builtins import object
 import os
-from io import BytesIO, StringIO
+from StringIO import StringIO
 	
 from fife.extensions.serializers import ET, SerializerError, InvalidFormat, \
 										NotFound
@@ -120,10 +115,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 								  "filename specified!")
 		
 		if not os.path.exists(self._file):
-			try:
-				self._tree = ET.parse(BytesIO(EMPTY_XML_FILE))
-			except TypeError:
-				self._tree = ET.parse(StringIO(EMPTY_XML_FILE))
+			self._tree = ET.parse(StringIO(EMPTY_XML_FILE))
 			self._tree.write(self._file, 'UTF-8')			
 		else:
 			self._tree = ET.parse(self._file)
@@ -172,7 +164,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		elif e_type == 'str' or e_type == 'string':
 			return str(e_value)
 		elif e_type == 'unicode':
-			return str(e_value)
+			return unicode(e_value)
 		elif e_type == 'list':
 			return self._deserializeList(e_value)
 		elif e_type == 'dict':
@@ -193,7 +185,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 		
-		if not isinstance(name, basestring):
+		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for "
 								 "name argument.")
 
@@ -246,7 +238,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 		
-		if not isinstance(name, basestring):
+		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
 								 "name argument.")
 
@@ -262,9 +254,9 @@ class SimpleXMLSerializer(SimpleSerializer):
 		elif isinstance(value, float):
 			e_type = "float"
 			value = str(value)
-		elif isinstance(value, str):
+		elif isinstance(value, unicode):
 			e_type = "unicode"
-			value = str(value)
+			value = unicode(value)
 		elif isinstance(value, list):
 			e_type = "list"
 			value = self._serializeList(value)
@@ -299,7 +291,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self.load()
 			self._initialized = True
 
-		if not isinstance(name, basestring):
+		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for "
 								 "name argument.")
 
@@ -323,8 +315,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 		moduleNames = []
 		for c in self._root_element.getchildren():
 			if c.tag == "Module":
-				name = c.get("name","")
-				if not isinstance(name, basestring):
+				name = c.get("name", "")
+				if not isinstance(name, str) and not isinstance(name, unicode):
 					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
 										 "type for name argument.")
 				
@@ -349,7 +341,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 				name = e.get("name", "")
 	
 				# check the name
-				if not isinstance(name, basestring):
+				if not isinstance(name, str) and not isinstance(name, unicode):
 					raise AttributeError("SimpleXMLSerializer.get(): Invalid "
 										 "type for name argument.")
 				element = e
@@ -410,7 +402,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		@param module: The module to get from the settings tree
 		@type module: C{string}
 		"""
-		if not isinstance(module, basestring):
+		if not isinstance(module, str) and not isinstance(module, unicode):
 			raise AttributeError("Settings:_getModuleTree: Invalid type for "
 								 "module argument.")
 

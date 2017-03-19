@@ -21,16 +21,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import str
 from fife import fife
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr,UnicodeAttr, PointAttr,BoolAttr,IntAttr
 
-from .common import get_manager, gui2text, text2gui
-from .containers import Container
-from .widget import Widget
+from common import get_manager, gui2text, text2gui
+from containers import Container
+from widget import Widget
 
 
 class Tab(Container):

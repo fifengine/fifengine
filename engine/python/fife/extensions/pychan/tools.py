@@ -24,13 +24,8 @@
 """
 Functional utilities designed for pychan use cases.
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
-import sys
-
-from builtins import range
-from . import exceptions
+import exceptions
 
 ### Functools ###
 
@@ -41,31 +36,25 @@ def applyOnlySuitable(func,*args,**kwargs):
 	keyword arguments, these are silently discarded. The result of the application is returned.
 	This is useful to pass information to callbacks without enforcing a particular signature.
 	"""
-	if sys.version_info < (3,):
-		func_name = 'im_func'
-		code_name = 'func_code'
-	else:
-		func_name = '__func__'
-		code_name = '__code__'
-	if hasattr(func, func_name):
-		code = func.__func__.__code__
+	if hasattr(func,'im_func'):
+		code = func.im_func.func_code
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-	elif hasattr(func, code_name):
-		code = func.__code__
+	elif hasattr(func,'func_code'):
+		code = func.func_code
 		varnames = code.co_varnames[0:code.co_argcount]
 	elif hasattr(func,'__call__'):
 		func = func.__call__
-		if hasattr(func, func_name):
-			code = func.__func__.__code__
+		if hasattr(func,'im_func'):
+			code = func.im_func.func_code
 			varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-		elif hasattr(func, code_name):
-			code = func.__code__
+		elif hasattr(func,'func_code'):
+			code = func.func_code
 			varnames = code.co_varnames[0:code.co_argcount]
 
 	#http://docs.python.org/lib/inspect-types.html
 	if code.co_flags & 8:
 		return func(*args,**kwargs)
-	for name,value in list(kwargs.items()):
+	for name,value in kwargs.items():
 		if name not in varnames:
 			del kwargs[name]
 	return func(*args,**kwargs)
@@ -128,7 +117,7 @@ def attrSetCallback(**kwargs):
 	"""
 	do_calls = []
 
-	for name in list(kwargs.keys()):
+	for name in kwargs.keys():
 		if name.startswith("_"):
 			raise exceptions.PrivateFunctionalityError(name)
 		if name.startswith("do__"):
@@ -136,7 +125,7 @@ def attrSetCallback(**kwargs):
 			del kwargs[name]
 
 	def attrSet_callback(widget=None):
-		for name,value in list(kwargs.items()):
+		for name,value in kwargs.items():
 			setattr(widget,name,value)
 		for method_name in do_calls:
 			method = getattr(widget,method_name)
@@ -173,7 +162,7 @@ def repeatALot(n = 1000):
 	"""
 	def wrap_f(f):
 		def new_f(*args,**kwargs):
-			for i in range(n):
+			for i in xrange(n):
 				f(*args,**kwargs)
 			return f(*args,**kwargs)
 		return new_f
@@ -183,6 +172,6 @@ def this_is_deprecated(func,message=None):
 	if message is None:
 		message = repr(func)
 	def wrapped_func(*args,**kwargs):
-		print("PyChan: You are using the DEPRECATED functionality: %s" % message)
+		print "PyChan: You are using the DEPRECATED functionality: %s" % message
 		return func(*args,**kwargs)
 	return wrapped_func

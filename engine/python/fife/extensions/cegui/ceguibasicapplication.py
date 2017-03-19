@@ -27,7 +27,6 @@ The basic application and main loop.
 See the L{ApplicationBase} documentation.
 """
 
-from builtins import map
 from fife import fife
 from fife.extensions.basicapplication import ApplicationBase
 
@@ -77,7 +76,7 @@ class CEGUIApplicationBase(ApplicationBase):
 	def _initGuiManager(self):
 		settings = self.engine.getSettings()
 		
-		major_v, minor_v = list(map(int, PyCEGUI.Version__.split('.')[:2]))
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
 
 		#For CEGUI versions lower than 0.8.0 we use the old CEGuiManager
 		if major_v == 0 and minor_v <= 7:
@@ -99,7 +98,7 @@ class CEGUIApplicationBase(ApplicationBase):
 
 		resourceprovider = PyCEGUI.System.getSingleton().getResourceProvider()
 
-		major_v, minor_v = list(map(int, PyCEGUI.Version__.split('.')[:2]))
+		major_v, minor_v = map(int, PyCEGUI.Version__.split('.')[:2])
 		if major_v == 0 and minor_v <= 7:
 			resourcetypemap = { "schemes" : PyCEGUI.Scheme.setDefaultResourceGroup,
 							    "imagesets" : PyCEGUI.Imageset.setDefaultResourceGroup,
@@ -117,11 +116,11 @@ class CEGUIApplicationBase(ApplicationBase):
 
 
 		if not self._setting:
-			for restype, res_setfunc in resourcetypemap.items():
+			for restype, res_setfunc in resourcetypemap.iteritems():
 				resourceprovider.setResourceGroupDirectory(restype, DEFAULT_GUI_DIR + restype)
 				res_setfunc(restype)
 		else:
-			for restype, res_setfunc in resourcetypemap.items():
+			for restype, res_setfunc in resourcetypemap.iteritems():
 				path = self._setting.get("CEGUI", restype)
 				if path:
 					resourceprovider.setResourceGroupDirectory(restype, path)

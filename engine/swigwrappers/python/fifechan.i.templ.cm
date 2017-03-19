@@ -8,10 +8,8 @@
  */
 #include <cstddef>
 %}
+
 %module(directors="1") fifechan
-%begin %{
-#define SWIG_PYTHON_2_UNICODE
-%}
 
 %include "std_string.i"
 %include "std_vector.i"

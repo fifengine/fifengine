@@ -21,13 +21,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import str
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr
 
-from .widget import Widget
+from widget import Widget
 
 
 class ScrollArea(Widget):

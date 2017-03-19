@@ -21,10 +21,7 @@
 # ####################################################################
 
 """ submodule for xml map parsing """
-from __future__ import print_function
 
-from builtins import str
-from builtins import object
 from fife import fife
 
 from fife.extensions.serializers import ET
@@ -104,14 +101,14 @@ class XMLObjectSaver(object):
 		cellstack_pos = object.getCellStackPosition()
 
 		if self.debug:
-			print("XML tree dump: (pre-save)")
+			print "XML tree dump: (pre-save)"
 			ET.dump(root)
-			print("Object data: ")
-			print("\tid", object_id)
-			print("\tblocking", blocking)
-			print("\tstatic", static)
-			print("\tcost id", cost_id)
-			print("\tcost", cost)
+			print "Object data: "
+			print "\tid", object_id
+			print "\tblocking", blocking
+			print "\tstatic", static
+			print "\tcost id", cost_id
+			print "\tcost", cost
 		
 		# check for compat mode
 		if root.tag != 'assets':
@@ -128,7 +125,7 @@ class XMLObjectSaver(object):
 			_id = obj.get("id")
 			if _id != object_id: 
 				if self.debug:
-					print("...ommitting object %s " % _id)			
+					print "...ommitting object %s " % _id			
 				continue
 			
 			if int(obj.attrib['blocking']) != int(blocking):
@@ -149,19 +146,19 @@ class XMLObjectSaver(object):
 			obj.attrib['cellstack_position'] = str(cellstack_pos)
 			
 			if self.debug and self.change:
-				print("\tSet new data in xml tree: ")
-				print("\t\tblocking: ", obj.attrib['blocking'])
-				print("\t\tstatic: ", obj.attrib['static'])
+				print "\tSet new data in xml tree: "
+				print "\t\tblocking: ", obj.attrib['blocking']
+				print "\t\tstatic: ", obj.attrib['static']
 			
 			images = obj.findall("image")
 			actions = obj.findall("action")
 			
 			if self.debug:
-				print("\tAttempting to save image data: ")
-				print("\t...found these image elements: ")
-				print("\t", images)
-				print("object dump: ")
-				print(ET.dump(obj))
+				print "\tAttempting to save image data: "
+				print "\t...found these image elements: "
+				print "\t", images
+				print "object dump: "
+				print ET.dump(obj)
 			
 			self.save_images(images, object)
 			self.save_actions(actions, object)
@@ -172,7 +169,7 @@ class XMLObjectSaver(object):
 		xmlcontent = ET.tostring(root)
 		
 		if self.debug:
-			print("XML tree dump: (post-manipulation)")
+			print "XML tree dump: (post-manipulation)"
 			ET.dump(root)			
 
 		# save xml data beneath the <?fife type="object"?> definition into the object file
@@ -220,7 +217,7 @@ class XMLObjectSaver(object):
 		visual = object.get2dGfxVisual()			
 		angles = visual.getStaticImageAngles()
 		if self.debug:
-			print("\t\tobject angles: ", angles)
+			print "\t\tobject angles: ", angles
 
 		for element in images:
 			angle = int(element.get("direction"))
@@ -240,9 +237,9 @@ class XMLObjectSaver(object):
 			element.attrib['y_offset'] = str(y_offset)
 
 			if self.debug and self.change:
-				print("\tSet new data in xml tree: (<image>) ")
-				print("\t\tx offset: ", element.attrib['x_offset'])
-				print("\t\ty offset: ", element.attrib['y_offset'])
+				print "\tSet new data in xml tree: (<image>) "
+				print "\t\tx offset: ", element.attrib['x_offset']
+				print "\t\ty offset: ", element.attrib['y_offset']
 
 class XMLObjectLoader(object):
 	"""
@@ -333,7 +330,7 @@ class XMLObjectLoader(object):
 		if not bool(self.model.getObject(_id, nspace)):
 			obj = self.model.createObject(_id, nspace, parent)
 		else:
-			print(NameClash('Tried to create already existing object \n\t...ignoring: %s, %s' % (_id, nspace)))
+			print NameClash('Tried to create already existing object \n\t...ignoring: %s, %s' % (_id, nspace))
 			return
 
 		obj.setFilename(self.source)

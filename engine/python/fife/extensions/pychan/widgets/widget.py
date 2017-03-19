@@ -21,10 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import str
-from builtins import object
 import weakref
 
 from fife import fife
@@ -36,8 +32,8 @@ from fife.extensions.pychan.attrs import (Attr, UnicodeAttr, PointAttr,
 from fife.extensions.pychan.exceptions import StopTreeWalking
 from fife.extensions.pychan.properties import ColorProperty
 
-from .common import get_manager
-from .layout import isLayouted
+from common import get_manager
+from layout import isLayouted
 
 
 class Widget(object):
@@ -297,7 +293,7 @@ class Widget(object):
 		if self.__parent:
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 
-		for name,returnValue in list(bind.items()):
+		for name,returnValue in bind.items():
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
 				self.hide()
@@ -395,7 +391,7 @@ class Widget(object):
 		Matches the widget against a list of key-value pairs.
 		Only if all keys are attributes and their value is the same it returns True.
 		"""
-		for k,v in list(kwargs.items()):
+		for k,v in kwargs.items():
 			if v != getattr(self,k,None):
 				return False
 		return True
@@ -592,7 +588,7 @@ class Widget(object):
 		Usage::
 		  closeButton = root_widget.findChild(name='close')
 		"""
-		if list(kwargs.keys()) == ["name"]:
+		if kwargs.keys() == ["name"]:
 			return self.findChildByName(kwargs["name"])
 
 		children = self.findChildren(**kwargs)
@@ -729,7 +725,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for descr,func in list(eventMap.items()):
+		for descr,func in eventMap.items():
 			name, event_name, group_name = events.splitEventDescriptor(descr)
 			#print name, event_name, group_name
 			widgets = children.get(name,[])
@@ -783,7 +779,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for name,data in list(initialDataMap.items()):
+		for name,data in initialDataMap.items():
 			widgetList = children.get(name,[])
 			for widget in widgetList:
 				widget.setInitialData(data)
@@ -802,7 +798,7 @@ class Widget(object):
 
 		"""
 		children = self.getNamedChildren(include_unnamed=True)
-		for name,data in list(dataMap.items()):
+		for name,data in dataMap.items():
 			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
 				if get_manager().debug:
@@ -875,9 +871,9 @@ class Widget(object):
 		"""
 		def _printNamedWidget(widget):
 			if widget.name != Widget.DEFAULT_NAME:
-				print(widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent))
-		print("Named child widgets of ",repr(self))
-		print("name".ljust(20),"widget".ljust(50),"parent")
+				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent)
+		print "Named child widgets of ",repr(self)
+		print "name".ljust(20),"widget".ljust(50),"parent"
 		self.deepApply(_printNamedWidget)
 
 	def stylize(self,style,**kwargs):
@@ -1115,7 +1111,7 @@ class Widget(object):
 
 		if self.__parent is not None and self.__parent() is not parent:
 			if self.__parent() is not None and parent is not None:
-				print("Widget containment fumble:", self, self.__parent, parent)
+				print "Widget containment fumble:", self, self.__parent, parent
 				self.__parent().removeChild(self)
 		if parent is not None:
 			self.__parent = weakref.ref(parent)

@@ -21,14 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, BoolAttr, PointAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from .common import text2gui
-from .basictextwidget import BasicTextWidget
+from common import text2gui
+from basictextwidget import BasicTextWidget
 
 
 class Button(BasicTextWidget):

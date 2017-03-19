@@ -21,11 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import object
-from builtins import str as new_str
 from fife import fife, fifechan
-from .exceptions import RuntimeError
+from exceptions import RuntimeError
 
 def get_manager():
 	from fife.extensions import pychan
@@ -87,7 +84,7 @@ class ImageProperty(WrappedProperty):
 			image_info["image"]._source = ""
 			self._getSetter(obj)(None)
 
-		elif isinstance(image, (str, new_str)):
+		elif isinstance(image, str):
 			image_info["source"] = image
 			# to catch or not to catch ...
 			# we just let the NotFound exception trickle here.

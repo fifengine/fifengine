@@ -21,14 +21,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from .common import get_manager
-from .widget import Widget
+from common import get_manager
+from widget import Widget
+
 
 class Icon(Widget):
 	"""
