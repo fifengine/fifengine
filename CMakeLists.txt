@@ -883,11 +883,11 @@ if(build-python)
   find_package (PythonInterp)
   set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
   set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-  find_package (PythonLibs ${PYTHON_VERSION_STRING} EXACT)
-  include_directories (${PYTHON_INCLUDE_PATH})
-  
-  
-  set(CMAKE_SWIG_FLAGS -O -keyword -w511 -w473 -w404 -w314)
+
+  find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
+  include_directories(${PYTHON_INCLUDE_PATH})
+
+  set(CMAKE_SWIG_FLAGS -modern -fastdispatch -dirvtable -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone -keyword -w511 -w473 -w404 -w314)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
   set(FIFE_SOURCES ${FIFE_CORE_SRC})
