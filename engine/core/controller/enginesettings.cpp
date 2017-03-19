@@ -73,7 +73,9 @@ namespace FIFE {
 		m_isframelimit(false),
 		m_framelimit(60),
 		m_mousesensitivity(0.0),
-		m_mouseacceleration(false) {
+		m_mouseacceleration(false),
+		m_nativeimagecursor(false),
+		m_joystickSupport(false) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
@@ -316,6 +318,14 @@ namespace FIFE {
 
 	bool EngineSettings::isNativeImageCursorEnabled() const {
 		return m_nativeimagecursor;
+	}
+
+	void EngineSettings::setJoystickSupport(bool support) {
+		m_joystickSupport = support;
+	}
+
+	bool EngineSettings::isJoystickSupport() const {
+		return m_joystickSupport;
 	}
 }
 

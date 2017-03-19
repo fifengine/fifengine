@@ -289,19 +289,19 @@ namespace FIFE {
 		~Joystick();
 
 		int32_t getDeviceIndex() const;
-
 		int32_t getInstanceId() const;
-
 		std::string getGuid();
 		std::string getName();
 
-		void open();
-		void close();
-
 		bool isConnected() const;
 		bool isController() const;
-		void openController();
-		void closeController();
+
+		uint8_t getNumberOfAxes() const;
+		uint8_t getNumberOfButtons() const;
+		uint8_t getNumberOfHats() const;
+		float getAxisValue(int8_t axis) const;
+		int8_t getHatValue(int8_t hat) const;
+		bool isButtonPressed(int8_t button) const;
 
 	private:
 		Joystick(int32_t joystickId, int32_t deviceIndex);
@@ -383,5 +383,13 @@ namespace FIFE {
 		bool isClipboardText() const;
 		std::string getClipboardText() const;
 		void setClipboardText(const std::string& text);
+
+		Joystick* getJoystick(int32_t instanceId);
+		uint8_t getJoystickCount() const;
+		void loadGamepadMapping(const std::string& file);
+		void saveGamepadMapping(const std::string guid, const std::string& file);
+		void saveGamepadMappings(const std::string& file);
+		std::string getGamepadStringMapping(const std::string& guid);
+		void setGamepadStringMapping(const std::string& mapping);
 	};
 };

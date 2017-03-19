@@ -67,6 +67,7 @@ namespace FIFE {
 	class ICommandListener;
 	class InputEvent;
 	class IJoystickListener;
+	class Joystick;
 	class JoystickManager;
 	class MouseEvent;
 	class KeyEvent;
@@ -174,6 +175,37 @@ namespace FIFE {
 		 */
 		void setClipboardText(const std::string& text);
 
+		/** Sets the joystick support to enabled or disabled.
+		 */
+		void setJoystickSupport(bool support);
+
+		/** Return the joystick with the given instance id.
+		 */
+		Joystick* getJoystick(int32_t instanceId);
+
+		/** Return the number of joysticks / gamecontrollers.
+		 */
+		uint8_t getJoystickCount() const;
+
+		/** Loads controller mappings from given file and if possible, it opens the related controllers.
+		 */
+		void loadGamepadMapping(const std::string& file);
+
+		/** Saves controller mapping for given GUID in the specified file.
+		 */
+		void saveGamepadMapping(const std::string guid, const std::string& file);
+
+		/** Saves all controller mappings that were used during the season.
+		 */
+		void saveGamepadMappings(const std::string& file);
+
+		/** Return the controller mapping for given GUID as string.
+		 */
+		std::string getGamepadStringMapping(const std::string& guid);
+
+		/** Sets controller mapping from string and adds or updates the related controllers.
+		 */
+		void setGamepadStringMapping(const std::string& mapping);
 
 	private:
 		// Helpers for processEvents

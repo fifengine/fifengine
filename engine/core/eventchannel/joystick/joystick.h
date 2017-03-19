@@ -34,7 +34,7 @@
 
 namespace FIFE {
 
-	/** Represents a Joystick.
+	/** Represents a Joystick and if available the Gamecontroller.
 	 */
 	class Joystick {
 	public:
@@ -96,34 +96,98 @@ namespace FIFE {
 		 */
 		~Joystick();
 
+		/** Return the instance id of the joystick.
+		 */
 		int32_t getInstanceId() const;
 
+		/** Sets the instance id of the joystick.
+		 */
 		int32_t getJoystickId() const;
 
+		/** Sets the device index of the joystick.
+		 */
 		void setDeviceIndex(int32_t deviceIndex);
 
+		/** Return the device index of the joystick.
+		 */
 		int32_t getDeviceIndex() const;
 
-		std::string getGuid();
-		std::string getName();
+		/** Return the GUID of the joystick / gamecontroller class as string.
+		 */
+		const std::string& getGuid();
 
+		/** Return the name of the joystick.
+		 */
+		const std::string& getName();
+
+		/** Opens / activates the joystick and sets values.
+		 */
 		void open();
+
+		/** Closes / deactivates the joystick.
+		 */
 		void close();
 
+		/** Indicates if the joystick / gamecontroller is connected.
+		 */
 		bool isConnected() const;
+
+		/** Indicates if this a controller.
+		 */
 		bool isController() const;
+
+		/** Opens / activates the gamecontroller, only possible with valid GUID mapping.
+		 */
 		void openController();
+
+		/** Closes / deactivates the gamecontroller.
+		 */
 		void closeController();
 
+		/** Return the number of axes.
+		 */
+		uint8_t getNumberOfAxes() const;
+
+		/** Return the number of buttons.
+		 */
+		uint8_t getNumberOfButtons() const;
+
+		/** Return the number of hats.
+		 */
+		uint8_t getNumberOfHats() const;
+
+		/** Return the current value for given axis.
+		 * @param axis For joysticks the index number, for controller see ContollerAxis.
+		 */
+		float getAxisValue(int8_t axis) const;
+
+		/** Return the hat value (see Hat positions), for given hat index.
+		 */
+		int8_t getHatValue(int8_t hat) const;
+
+		/** Return the current value for given axis.
+		 * @param button For joysticks the index number, for controller see ControllerButton.
+		 */
+		bool isButtonPressed(int8_t button) const;
 
 	private:
+		/** Converts the int16 in -1.0 to 1.0 range.
+		 */
+		float convertRange(int16_t value) const;
+
+		//! SDLs joystick handle
 		SDL_Joystick* m_joystickHandle;
+		//! SDLs controller handle
 		SDL_GameController* m_controllerHandle;
+		//! SDLs joystick id (different from device index)
 		SDL_JoystickID m_instanceId;
-		//SDL_JoystickGUID m_guid;
+		//! Our joystick id
 		int32_t m_joystickId;
+		//! SDLs device index
 		int32_t m_deviceIndex;
+		//! The GUID as string
 		std::string m_guidStr;
+		//! The name of the joystick / controller
 		std::string m_name;
 	};
 

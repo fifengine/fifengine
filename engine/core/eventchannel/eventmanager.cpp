@@ -65,9 +65,6 @@ namespace FIFE {
 		m_lastTicks(0),
 		m_oldVelocity(0.0),
 		m_joystickManager(NULL) {
-
-		// ToDo: Add setting
-		m_joystickManager = new JoystickManager();
 	}
 
 	EventManager::~EventManager() {
@@ -908,5 +905,60 @@ namespace FIFE {
 
 	void EventManager::setClipboardText(const std::string& text) {
 		SDL_SetClipboardText(text.c_str());
+	}
+
+	void EventManager::setJoystickSupport(bool support) {
+		if (support && !m_joystickManager) {
+			m_joystickManager = new JoystickManager();
+		} else if (!support && m_joystickManager) {
+			delete m_joystickManager;
+			m_joystickManager = NULL;
+		}
+	}
+
+	Joystick* EventManager::getJoystick(int32_t instanceId) {
+		if (m_joystickManager) {
+			return m_joystickManager->getJoystick(instanceId);
+		}
+		return NULL;
+	}
+
+	uint8_t EventManager::getJoystickCount() const {
+		if (m_joystickManager) {
+			return m_joystickManager->getJoystickCount();
+		}
+		return 0;
+	}
+
+	void EventManager::loadGamepadMapping(const std::string& file) {
+		if (m_joystickManager) {
+			m_joystickManager->loadMapping(file);
+		}
+	}
+
+	void EventManager::saveGamepadMapping(const std::string guid, const std::string& file) {
+		if (m_joystickManager) {
+			m_joystickManager->saveMapping(guid, file);
+		}
+	}
+
+	void EventManager::saveGamepadMappings(const std::string& file) {
+		if (m_joystickManager) {
+			m_joystickManager->saveMappings(file);
+		}
+	}
+
+	std::string EventManager::getGamepadStringMapping(const std::string& guid) {
+		std::string mapping;
+		if (m_joystickManager) {
+			mapping = m_joystickManager->getStringMapping(guid);
+		}
+		return mapping;
+	}
+
+	void EventManager::setGamepadStringMapping(const std::string& mapping) {
+		if (m_joystickManager) {
+			m_joystickManager->setStringMapping(mapping);
+		}
 	}
 }

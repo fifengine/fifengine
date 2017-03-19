@@ -45,7 +45,7 @@ namespace FIFE {
 		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
 		data->readInto(darray.get(), datalen);
 		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
-		if (SDL_GameControllerAddMappingsFromRW(rwops, 1) == -1) {
+		if (SDL_GameControllerAddMappingsFromRW(rwops, 0) == -1) {
 			throw SDLException(std::string("Error when loading gamecontroller mappings: ") + SDL_GetError());
 		}
 		SDL_FreeRW(rwops);

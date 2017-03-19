@@ -71,28 +71,68 @@ namespace FIFE {
 		 */
 		virtual ~JoystickEvent() {}
 
+		/** Return the event type.
+		 */
 		JoystickEventType getType() const { return m_eventType; }
+
+		/** Sets the event type.
+		 */
 		void setType(JoystickEventType type) { m_eventType = type; }
 
+		/** Return the instance id of the joystick.
+		 */
 		int32_t getInstanceId() const { return m_instanceId; }
+
+		/** Sets the instance id of the joystick.
+		 */
 		void setInstanceId(int32_t id) { m_instanceId = id; }
 
+		/** Return the index number of axis for joystick, or the Joystick::ContollerAxis for controller.
+		 */
 		int8_t getAxis() const { return m_axis; }
+
+		/** Sets the axis index number or the Joystick::ControllerAxis.
+		 */
 		void setAxis(int8_t axis) { m_axis = axis; }
 
+		/** Return the axis value, range is -1.0 to 1.0.
+		 */
 		float getAxisValue() const { return m_axisValue; }
+
+		/** Sets the axis value.
+		 */
 		void setAxisValue(float value) { m_axisValue = value; }
 
+		/** Return the hat index.
+		 */
 		int8_t getHat() const { return m_hat; }
+
+		/** Sets the hat index.
+		 */
 		void setHat(int8_t hat) { m_hat = hat; }
 
+		/** Return the hat value, see Joystick::Hat.
+		 */
 		int8_t getHatValue() const { return m_hatValue; }
+
+		/** Sets the hat value.
+		 */
 		void setHatValue(int8_t value) { m_hatValue = value; }
 
+		/** Return the button index for joystick, or Joystick::ControllerButton for controller.
+		 */
 		int8_t getButton() const { return m_button; }
+
+		/** Sets the button index or Joystick::ControllerButton.
+		 */
 		void setButton(int8_t button) { m_button = button; }
 
+		/** Return true if it is a controller, false if only a joystick.
+		 */
 		bool isController() const { return m_controller; }
+
+		/** Sets to true if the event is for a controller, otherwise false.
+		 */
 		void setController(bool value) { m_controller = value; }
 
 		virtual void consume() { InputEvent::consume(); }

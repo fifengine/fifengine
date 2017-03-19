@@ -63,31 +63,83 @@ namespace FIFE {
 		 */
 		virtual ~JoystickManager();
 
+		/** Adds a joystick with the given device index.
+		 */
 		Joystick* addJoystick(int32_t deviceIndex);
+
+		/** Return the joystick with the given instance id.
+		 */
 		Joystick* getJoystick(int32_t instanceId);
+
+		/** Removes the given joystick, can be reused.
+		 */
 		void removeJoystick(Joystick* joystick);
+
+		/** Return the number of joysticks / gamecontrollers.
+		 */
 		uint8_t getJoystickCount() const;
 
-		void loadMapping(const std::string& path);
-		void saveMapping(const std::string guid, const std::string& path);
-		void saveMappings(const std::string& path);
+		/** Loads controller mappings from given file and if possible, it opens the related controllers.
+		 */
+		void loadMapping(const std::string& file);
 
-		// Implementation from IJoystickController
+		/** Saves controller mapping for given GUID in the specified file.
+		 */
+		void saveMapping(const std::string guid, const std::string& file);
+
+		/** Saves all controller mappings that were used during the season.
+		 */
+		void saveMappings(const std::string& file);
+
+		/** Return the controller mapping for given GUID as string.
+		 */
+		std::string getStringMapping(const std::string& guid);
+
+		/** Sets controller mapping from string and adds or updates the related controllers.
+		 */
+		void setStringMapping(const std::string& mapping);
+
+		// Implementation from IJoystickController.
 		void addJoystickListener(IJoystickListener* listener);
 		void addJoystickListenerFront(IJoystickListener* listener);
 		void removeJoystickListener(IJoystickListener* listener);
 
+		/** Creates and process joystick events.
+		 */
 		void processJoystickEvent(SDL_Event event);
+
+		/** Creates and process gamecontroller events.
+		 */
 		void processControllerEvent(SDL_Event event);
+
+		/** Dispatches joystick / controller events.
+		 */
 		void dispatchJoystickEvent(JoystickEvent& evt);
 
+		// Implementation from IEventSource.
 		EventSourceType getEventSourceType();
+
 	private:
+		/** Return GUID for given device index as string.
+		 */
+		std::string getGuidString(int32_t deviceIndex);
+
 		/** Converts the int16 in -1.0 to 1.0 range.
 		 */
 		float convertRange(int16_t value);
 
+		/** Adds GUID from controller. Needed for saving.
+		 */
+		void addControllerGuid(Joystick* joystick);
+
+		/** Removes / decal controller GUID.
+		 */
+		void removeControllerGuid(Joystick* joystick);
+
+		//! Loader for gamecontroller mapping.
 		ControllerMappingLoader m_mappingLoader;
+
+		//! Saver for gamecontroller mapping.
 		ControllerMappingSaver m_mappingSaver;
 
 		//! All active / connected Joysticks.
@@ -98,8 +150,8 @@ namespace FIFE {
 
 		std::map<int32_t, uint32_t> m_joystickIndices;
 
-		//! Each sort of gamepad have a GUID from SDL. Indicates if gamepad with given GUID is connected.
-		std::map<std::string, bool> m_gamepadGuids;
+		//! Each sort of gamepad have a GUID from SDL. Indicates the number of gamepads with given GUID are connected.
+		std::map<std::string, uint8_t> m_gamepadGuids;
 
 		std::deque<IJoystickListener*> m_joystickListeners;
 		std::deque<IJoystickListener*> m_pendingJoystickListeners;

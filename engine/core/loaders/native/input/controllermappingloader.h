@@ -37,6 +37,9 @@ namespace FIFE {
 	class ControllerMappingLoader {
 	public:
 		ControllerMappingLoader() {};
+
+		/** Loads mapping from file.
+		 */
 		void load(const std::string& filename);
 	};
 }

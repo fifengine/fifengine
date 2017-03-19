@@ -37,6 +37,9 @@ namespace FIFE {
 	class ControllerMappingSaver {
 	public:
 		ControllerMappingSaver() {};
+		
+		/** Saves mapping to file.
+		 */
 		void save(const std::string data, const std::string& filename);
 	};
 }
