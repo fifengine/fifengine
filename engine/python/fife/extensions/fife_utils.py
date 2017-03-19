@@ -23,6 +23,7 @@
 
 """ This file contains some functions that may be useful """
 
+from builtins import str
 import fife, re, sys, os
 
 __all__ = ['is_fife_exc', 'getUserDataDirectory']

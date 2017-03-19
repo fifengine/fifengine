@@ -22,7 +22,10 @@
 # ####################################################################
 
 """ a filebrowser implementation for pychan """
+from __future__ import print_function
 
+from builtins import str
+from builtins import object
 import sys
 import os
 
@@ -55,7 +58,7 @@ class FileBrowser(object):
 		if isinstance(args[0], Engine):
 			display_deprecation = True
 			args = args[1:]
-		if kwargs.has_key("engine"):
+		if "engine" in kwargs:
 			display_deprecation = True
 			del kwargs["engine"]
 		if display_deprecation:
@@ -123,10 +126,10 @@ class FileBrowser(object):
 
 			newList = []
 			for i in list:
-				try: newList.append(unicode(i, fs_encoding))
+				try: newList.append(str(i, fs_encoding))
 				except:
-					newList.append(unicode(i, fs_encoding, 'replace'))
-					print "WARNING: Could not decode item:", i
+					newList.append(str(i, fs_encoding, 'replace'))
+					print("WARNING: Could not decode item:", i)
 			return newList
 
 		dir_list_copy = list(self.dir_list)
@@ -152,7 +155,7 @@ class FileBrowser(object):
 			self.path = path_copy
 			self.dir_list = list(dir_list_copy)
 			self.file_list = list(file_list_copy)
-			print "WARNING: Tried to browse to directory that is not accessible!"
+			print("WARNING: Tried to browse to directory that is not accessible!")
 
 		self._widget.distributeInitialData({
 			'dirList'  : self.dir_list,
@@ -193,4 +196,4 @@ class FileBrowser(object):
 			self.fileSelected(self.path)
 			return
 
-		print 'FileBrowser: error, no selection.'
+		print('FileBrowser: error, no selection.')

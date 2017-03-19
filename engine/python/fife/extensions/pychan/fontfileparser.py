@@ -42,7 +42,7 @@ class FontFileParser(ContentHandler):
 		return self._fonts.get(font, {}).get(attribute, default)
 
 	def fonts(self):
-		return self._fonts.iterkeys()
+		return iter(self._fonts.keys())
 
 	def parse(self, filename, errorHandler=ErrorHandler()):
 		parse(filename, self, errorHandler)

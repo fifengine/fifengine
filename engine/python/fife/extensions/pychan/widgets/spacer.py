@@ -21,9 +21,10 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 from fife import fifechan
 
-from widget import Widget
+from .widget import Widget
 from fife.extensions.pychan.attrs import PointAttr
 
 class Spacer(Widget):

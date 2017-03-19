@@ -28,38 +28,39 @@ Widget wrappers.
 
 Please look at the documentation of L{Widget} for details.
 """
+from __future__ import absolute_import
 
-from widget import Widget
+from .widget import Widget
 
-from spacer import Spacer
-from adjustingcontainer import AdjustingContainer
-from containers import Container, ABox, VBox, HBox, CBox, Window
-from flowcontainer import FlowContainer
-from label import Label
-from icon import Icon
-from animationicon import AnimationIcon
-from buttons import Button, ToggleButton, ImageButton
-from checkbox import CheckBox
-from radiobutton import RadioButton
-from tabbedarea import TabbedArea, Tab
-from textfield import TextField
-from textbox import TextBox
-from listbox import ListBox
-from dropdown import DropDown
-from scrollarea import ScrollArea
-from slider import Slider
-from percentagebar import PercentageBar
-from passwordfield import PasswordField
-from iconprogressbar import IconProgressBar
-from imageprogressbar import ImageProgressBar
-from resizablewindow import ResizableWindow
-from dockarea import DockArea
-from panel import Panel
-from bargraph import BarGraph
-from curvegraph import CurveGraph
-from linegraph import LineGraph
-from piegraph import PieGraph
-from pointgraph import PointGraph
+from .spacer import Spacer
+from .adjustingcontainer import AdjustingContainer
+from .containers import Container, ABox, VBox, HBox, CBox, Window
+from .flowcontainer import FlowContainer
+from .label import Label
+from .icon import Icon
+from .animationicon import AnimationIcon
+from .buttons import Button, ToggleButton, ImageButton
+from .checkbox import CheckBox
+from .radiobutton import RadioButton
+from .tabbedarea import TabbedArea, Tab
+from .textfield import TextField
+from .textbox import TextBox
+from .listbox import ListBox
+from .dropdown import DropDown
+from .scrollarea import ScrollArea
+from .slider import Slider
+from .percentagebar import PercentageBar
+from .passwordfield import PasswordField
+from .iconprogressbar import IconProgressBar
+from .imageprogressbar import ImageProgressBar
+from .resizablewindow import ResizableWindow
+from .dockarea import DockArea
+from .panel import Panel
+from .bargraph import BarGraph
+from .curvegraph import CurveGraph
+from .linegraph import LineGraph
+from .piegraph import PieGraph
+from .pointgraph import PointGraph
 
 
 # Global Widget Class registry
