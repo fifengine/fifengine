@@ -114,7 +114,7 @@ class Setting(object):
 			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
 			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False],
-			'NativeImageCursor':[True,False]
+			'NativeImageCursor':[True,False], 'JoystickSupport':[True, False]
 			}
 
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
@@ -135,7 +135,8 @@ class Setting(object):
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
 			'MouseAcceleration':False,
-			'NativeImageCursor':False
+			'NativeImageCursor':False,
+                        'JoystickSupport':False
 			}
 
 		# has the settings file been read
@@ -372,6 +373,8 @@ class Setting(object):
 					elif name == "MouseAcceleration":
 						self._settingsFromFile[module][name] = e_value
 					elif name == "NativeImageCursor":
+						self._settingsFromFile[module][name] = e_value
+					elif name == "JoystickSupport":
 						self._settingsFromFile[module][name] = e_value
 
 					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):

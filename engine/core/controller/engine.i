@@ -118,6 +118,8 @@ namespace FIFE {
 		bool isMouseAccelerationEnabled() const;
 		void setNativeImageCursorEnabled(bool nativeimagecursor);
 		bool isNativeImageCursorEnabled() const;
+		void setJoystickSupport(bool support);
+		bool isJoystickSupport() const;
 
 	private:
 		EngineSettings();

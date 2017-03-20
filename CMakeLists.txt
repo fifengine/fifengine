@@ -239,8 +239,11 @@ set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystick.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/input/controllermappingloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/atlasloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/maploader.cpp
@@ -270,6 +273,7 @@ set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepather.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepathersearch.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/singlelayersearch.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/input/controllermappingsaver.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/mapsaver.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/util/base/exception.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/util/base/fifeclass.cpp
@@ -412,6 +416,11 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/dropevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idropcontroller.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idroplistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/ijoystickcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/ijoysticklistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystick.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeycontroller.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeyfilter.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeylistener.h
@@ -431,6 +440,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/textevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/input/controllermappingloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/atlasloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/ianimationloader.h
@@ -467,6 +477,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepather.h
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepathersearch.h
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/singlelayersearch.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/input/controllermappingsaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/ianimationsaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/iatlassaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/imapsaver.h
