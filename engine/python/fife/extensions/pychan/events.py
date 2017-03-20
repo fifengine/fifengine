@@ -41,7 +41,7 @@ to generate suitable callbacks.
 
 Here's an example callback::
    def dumpEventInfo(event=0,widget=0):
-      print widget, " received the event ", event
+	  print widget, " received the event ", event
 
 Note the signature - C{event} and C{widget} are keyword
 arguments passed to the callback. If doesn't accept either
@@ -64,6 +64,7 @@ from __future__ import absolute_import
 from builtins import str
 from builtins import range
 from builtins import object
+from builtins import dict
 from .compat import fifechan
 
 from . import exceptions
@@ -134,7 +135,7 @@ class EventListenerBase(object):
 	"""
 	def __init__(self):
 		super(EventListenerBase,self).__init__()
-		self.events = {}
+		self.events = dict()
 		self.indent = 0
 		self.debug = get_manager().debug
 		self.is_attached = False
@@ -142,7 +143,7 @@ class EventListenerBase(object):
 		# Enables event redirection to next pump cycle by default
 		self._redirect = True
 		self._timers = []
-		self._deadtimers = []		
+		self._deadtimers = []
 
 	def attach(self,widget):
 		"""
@@ -182,8 +183,8 @@ class EventListenerBase(object):
 		try:
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
-				if self.debug: print "-"*self.indent, name
-				for f in self.events[name].itervalues():
+				if self.debug: print("-"*self.indent, name)
+				for f in self.events[name].values():
 					if not self._redirect:
 						f(event)
 						continue
@@ -191,19 +192,19 @@ class EventListenerBase(object):
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
-						
+
 						#FIXME: figure out a way to get rid of the dead timer list
 						del self._deadtimers[:]
-						
+
 						if n_timer in self._timers:
 							self._deadtimers.append(n_timer)
 							self._timers.remove(n_timer)
-						
-							
+
+
 					timer = Timer(repeat=1)
 					timer._callback = cbwa(delayed_f, weakref.ref(timer))
 					timer.start()
-					
+
 					self._timers.append(timer)
 
 		except:
@@ -252,12 +253,12 @@ class _KeyEventListener(EventListenerBase,fifechan.KeyListener):
 
 	def keyPressed(self,e): self._redirectEvent("keyPressed",e)
 	def keyReleased(self,e): self._redirectEvent("keyReleased",e)
-	
+
 class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
 	def __init__(self):super(_WidgetEventListener, self).__init__()
 	def doAttach(self,real_widget): real_widget.addWidgetListener(self)
 	def doDetach(self,real_widget): real_widget.removeWidgetListener(self)
-	
+
 	def widgetResized(self, e): self._redirectEvent("widgetResized",e)
 	def widgetMoved(self, e): self._redirectEvent("widgetMoved",e)
 	def widgetHidden(self, e): self._redirectEvent("widgetHidden",e)
@@ -311,7 +312,7 @@ class EventMapper(object):
 	def detach(self):
 		for listener in list(self.listener.values()):
 			listener.detach()
-			
+
 
 	def capture(self,event_name,callback,group_name):
 		if event_name not in EVENTS:
@@ -342,12 +343,12 @@ class EventMapper(object):
 	def removeEvent(self,event_name,group_name):
 		listener = self.getListener(event_name)
 		del listener.events[event_name][group_name]
-		
+
 		if not listener.events[event_name]:
 			del listener.events[event_name]
 		if not listener.events:
 			listener.detach()
-			
+
 		del self.callbacks[group_name][event_name]
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
@@ -362,12 +363,12 @@ class EventMapper(object):
 		# Set up callback dictionary. This should fix some GC issues
 		if group_name not in self.callbacks:
 			self.callbacks[group_name] = {}
-			
+
 		if event_name not in self.callbacks[group_name]:
 			self.callbacks[group_name][event_name] = {}
-			
+
 		self.callbacks[group_name][event_name] = callback
-			
+
 		def captured_f(event):
 			if self_ref() is not None:
 				tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
