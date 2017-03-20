@@ -58,13 +58,17 @@ Available Events
 ----------------
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-from compat import fifechan
-import widgets
+from builtins import str
+from builtins import range
+from builtins import object
+from .compat import fifechan
 
-import exceptions
-from internal import get_manager
-import tools
+from . import exceptions
+from .internal import get_manager
+from . import tools
 import traceback
 import weakref
 from fife.extensions.fife_timer import Timer
@@ -102,7 +106,7 @@ __doc__ += "".join([" - %s\n" % event for event in EVENTS])
 try: del event
 except:pass
 
-MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = range(4)
+MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 def getEventType(name):
 	if "mouse" in name:
 		return MOUSE_EVENT
@@ -150,7 +154,7 @@ class EventListenerBase(object):
 			return
 		if not self.events:
 			return
-		if self.debug: print "Attach:",self
+		if self.debug: print("Attach:",self)
 		self.doAttach(widget.real_widget)
 		self.widget_ref = weakref.ref(widget)
 		self.is_attached = True
@@ -162,7 +166,7 @@ class EventListenerBase(object):
 		"""
 		if not self.is_attached:
 			return
-		if self.debug: print "Detach:",self
+		if self.debug: print("Detach:",self)
 		self.is_attached = False
 
 	def setRedirection(self, redirect):
@@ -183,6 +187,7 @@ class EventListenerBase(object):
 					if not self._redirect:
 						f(event)
 						continue
+
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
@@ -202,7 +207,7 @@ class EventListenerBase(object):
 					self._timers.append(timer)
 
 		except:
-			print name, repr(event)
+			print(name, repr(event))
 			traceback.print_exc()
 			raise
 
@@ -300,11 +305,11 @@ class EventMapper(object):
 		return "EventMapper(%s)" % repr(self.widget_ref())
 
 	def attach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.attach()
 
 	def detach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.detach()
 			
 
@@ -316,7 +321,7 @@ class EventMapper(object):
 			if self.isCaptured(event_name,group_name):
 				self.removeEvent(event_name,group_name)
 			elif self.debug:
-				print CALLBACK_NONE_MESSAGE % str(self.widget_ref())
+				print(CALLBACK_NONE_MESSAGE % str(self.widget_ref()))
 			return
 		self.addEvent(event_name,callback,group_name)
 
@@ -325,9 +330,9 @@ class EventMapper(object):
 
 	def getCapturedEvents(self):
 		events = []
-		for event_type, listener in self.listener.items():
-			for event_name, group in listener.events.items():
-				for group_name in group.keys():
+		for event_type, listener in list(self.listener.items()):
+			for event_name, group in list(listener.events.items()):
+				for group_name in list(group.keys()):
 					events.append( "%s/%s" % (event_name, group_name) )
 		return events
 

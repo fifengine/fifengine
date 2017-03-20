@@ -19,6 +19,10 @@
 
 %module(directors="1") fife
 
+%begin %{
+#define SWIG_PYTHON_2_UNICODE
+%}
+
 %include "std_string.i"
 %include "std_vector.i"
 %include "std_pair.i"
@@ -115,7 +119,7 @@ for filename, line, function, text in traceback.extract_tb(exc_traceback):\n\
 for l in traceback.format_exception_only(exc_type, exc_value):\n\
 	s = s + l\n\
 	if s[-1] != '\\n': s = s + '\\n'\n\
-print s\n\
+print(s)\n\
 ");
 		PyObject* e = PyRun_String(buf, Py_file_input, d, d);
 		if (!e) {
