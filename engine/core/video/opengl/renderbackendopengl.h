@@ -267,6 +267,8 @@ namespace FIFE {
 		} m_state;
 
 		GLuint m_fbo_id;
+		GLuint m_indicebufferId;
+		std::vector<uint32_t> m_indices;
 		ImagePtr m_img_target;
 		bool m_target_discard;
 		SDL_GLContext m_context;

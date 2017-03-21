@@ -319,6 +319,26 @@ namespace FIFE {
 
 		// currently unused, 1000 objects x 400 textures x 4 renderDataZ
 		//m_renderZ_datas.resize(1600000);
+
+		// 6 indices x 100000 objects
+		m_indices.resize(600000);
+		// a rough way to fill the index buffer, result is: 0, 1, 2, 0, 2, 3 | 4, 5, 6, 4, 6, 7
+		uint32_t index = 0;
+		for(std::vector<uint32_t>::size_type i = 0; i != m_indices.size(); i+=6) {
+			m_indices[i] = index;
+			m_indices[i+1] = index+1;
+			m_indices[i+2] = index+2;
+			m_indices[i+3] = index;
+			m_indices[i+4] = index+2;
+			m_indices[i+5] = index+3;
+			index += 4;
+		}
+
+		// currently unused, create buffer and send data
+		//glGenBuffers(1, &m_indicebufferId);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicebufferId);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	void RenderBackendOpenGL::startFrame() {
@@ -1155,7 +1175,7 @@ namespace FIFE {
 			if (ro.texture_id != texture_id) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 
@@ -1168,15 +1188,15 @@ namespace FIFE {
 				}
 
 				// set element to current size
-				*currentElements = 4;
+				*currentElements = 6;
 			} else {
 				// else add the element
-				*currentElements += 4;
+				*currentElements += 6;
 			}
 		}
 
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		disableLighting();
@@ -1249,7 +1269,7 @@ namespace FIFE {
 			if (ro.texture_id != texture_id) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 
@@ -1262,15 +1282,15 @@ namespace FIFE {
 				}
 
 				// set element to current size
-				*currentElements = 4;
+				*currentElements = 6;
 			} else {
 				// else add the element
-				*currentElements += 4;
+				*currentElements += 6;
 			}
 		}
 
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		disableLighting();
@@ -1338,7 +1358,7 @@ namespace FIFE {
 			if (render) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 				// multitexturing
@@ -1406,7 +1426,7 @@ namespace FIFE {
 			}
 		}
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		if (overlay_type != OVERLAY_TYPE_NONE) {
@@ -2138,7 +2158,7 @@ namespace FIFE {
 				rd.texel2[1] = 0.0;
 				m_renderMultitextureDatasZ.push_back(rd);
 
-				RenderObject ro(GL_QUADS, 4, id);
+				RenderObject ro(GL_TRIANGLES, 6, id);
 				ro.color = true;
 				ro.overlay_type = OVERLAY_TYPE_COLOR;
 				ro.rgba[0] = rgba[0];
@@ -2217,7 +2237,7 @@ namespace FIFE {
 			m_renderMultitextureDatasZ.push_back(rd);
 
 			//RenderObject ro(GL_QUADS, 4, id1);
-			RenderObject ro(GL_QUADS, 4, id1, id2);
+			RenderObject ro(GL_TRIANGLES, 6, id1, id2);
 			ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
 			ro.rgba[0] = rgba[0];
 			ro.rgba[1] = rgba[1];
