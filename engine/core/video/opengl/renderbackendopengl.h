@@ -214,6 +214,12 @@ namespace FIFE {
 		std::vector<renderData2TC> m_renderMultitextureDatas;
 		std::vector<RenderObject> m_renderObjects;
 
+		// Dynamic index buffers
+		std::vector<uint32_t> m_pIndices;
+		std::vector<uint32_t> m_tIndices;
+		std::vector<uint32_t> m_tcIndices;
+		std::vector<uint32_t> m_tc2Indices;
+
 		// Now the vertex data that do use the depth buffer / z
 		// vertex data source for textured quads that do use depth buffer but no color/alpha - described by m_renderTextureObjectsZ
 		std::vector<renderDataZ> m_renderTextureDatasZ;
@@ -268,6 +274,7 @@ namespace FIFE {
 
 		GLuint m_fbo_id;
 		GLuint m_indicebufferId;
+		//! static indices for vertex data with z
 		std::vector<uint32_t> m_indices;
 		ImagePtr m_img_target;
 		bool m_target_discard;
