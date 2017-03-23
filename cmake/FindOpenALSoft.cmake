@@ -8,11 +8,16 @@
 IF(NOT APPLE)
   find_path(OPENALSOFT_INCLUDE_DIR al.h
     PATHS
-      /sw # Fink
-      /opt/local # DarwinPorts
-      /opt/csw # Blastwave
+      # Fink
+      /sw
+      # DarwinPorts
+      /opt/local
+      # Blastwave
+      /opt/csw
       /opt
-      # Linux Include PATH
+      # FreeBSD
+      /usr/local/include/AL
+      # Linux
       /usr/include/AL
       # Windows SDK Include PATH
       /include/AL
@@ -25,6 +30,7 @@ IF(NOT APPLE)
       /usr/local/opt/openal-soft/lib
       /lib
       /usr/lib
+      /usr/local/lib
   )
 ENDIF(NOT APPLE)
 

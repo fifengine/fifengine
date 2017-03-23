@@ -319,6 +319,26 @@ namespace FIFE {
 
 		// currently unused, 1000 objects x 400 textures x 4 renderDataZ
 		//m_renderZ_datas.resize(1600000);
+
+		// 6 indices x 100000 objects
+		m_indices.resize(600000);
+		// a rough way to fill the index buffer, result is: 0, 1, 2, 0, 2, 3 | 4, 5, 6, 4, 6, 7
+		uint32_t index = 0;
+		for(std::vector<uint32_t>::size_type i = 0; i != m_indices.size(); i+=6) {
+			m_indices[i] = index;
+			m_indices[i+1] = index+1;
+			m_indices[i+2] = index+2;
+			m_indices[i+3] = index;
+			m_indices[i+4] = index+2;
+			m_indices[i+5] = index+3;
+			index += 4;
+		}
+
+		// currently unused, create buffer and send data
+		//glGenBuffers(1, &m_indicebufferId);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicebufferId);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	void RenderBackendOpenGL::startFrame() {
@@ -780,7 +800,7 @@ namespace FIFE {
 		bool render = false;
 
 		// render mode
-		GLenum mode = GL_QUADS;
+		GLenum mode = GL_TRIANGLES;
 		// texture id
 		uint32_t texture_id = 0;
 		uint32_t texture_id2 = 0;
@@ -807,6 +827,9 @@ namespace FIFE {
 		int32_t* currentIndex = 0;
 		uint32_t* currentElements = 0;
 
+		// index buffer pointer
+		uint32_t* indexBuffer = 0;
+
 		//stride
 		const uint32_t strideP = sizeof(renderDataP);
 		const uint32_t strideT = sizeof(renderDataT);
@@ -824,6 +847,7 @@ namespace FIFE {
 				disableColorArray();
 				setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 				setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+				indexBuffer = &m_tIndices[0];
 				currentIndex = &indexT;
 				currentElements = &elementsT;
 			// texture with color/alpha
@@ -833,6 +857,7 @@ namespace FIFE {
 				setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 				setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 				setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+				indexBuffer = &m_tcIndices[0];
 				currentIndex = &indexTC;
 				currentElements = &elementsTC;
 			// primitive
@@ -841,6 +866,7 @@ namespace FIFE {
 				enableColorArray();
 				setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 				setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+				indexBuffer = &m_pIndices[0];
 				currentIndex = &indexP;
 				currentElements = &elementsP;
 			}
@@ -850,6 +876,7 @@ namespace FIFE {
 			setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
 			setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 			setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+			indexBuffer = &m_tc2Indices[0];
 			currentIndex = &index2TC;
 			currentElements = &elements2TC;
 		}
@@ -904,7 +931,7 @@ namespace FIFE {
 			if (render) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(mode, *currentIndex, *currentElements);
+					glDrawElements(mode, *currentElements, GL_UNSIGNED_INT, indexBuffer + *currentIndex);
 					*currentIndex += *currentElements;
 				}
 				// switch mode
@@ -921,11 +948,13 @@ namespace FIFE {
 								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+								indexBuffer = &m_tcIndices[0];
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
 								setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 								setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+								indexBuffer = &m_pIndices[0];
 								currentElements = &elementsP;
 								currentIndex = &indexP;
 							}
@@ -935,6 +964,7 @@ namespace FIFE {
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
 							setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 							setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+							indexBuffer = &m_tIndices[0];
 							currentElements = &elementsT;
 							currentIndex = &indexT;
 						}
@@ -955,17 +985,20 @@ namespace FIFE {
 								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+								indexBuffer = &m_tcIndices[0];
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
 								setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 								setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+								indexBuffer = &m_tIndices[0];
 								currentIndex = &indexT;
 								currentElements = &elementsT;
 							}
 						} else {
 							setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 							setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+							indexBuffer = &m_pIndices[0];
 							currentElements = &elementsP;
 							currentIndex = &indexP;
 						}
@@ -983,6 +1016,7 @@ namespace FIFE {
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(1, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+						indexBuffer = &m_tc2Indices[0];
 
 						texture_id2 = m_maskOverlay;
 						currentElements = &elements2TC;
@@ -1000,6 +1034,7 @@ namespace FIFE {
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(2, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+						indexBuffer = &m_tc2Indices[0];
 
 						texture_id2 = ro.overlay_id;
 						currentElements = &elements2TC;
@@ -1017,6 +1052,7 @@ namespace FIFE {
 						setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
 						setTexCoordPointer(3, stride2TC, &m_renderMultitextureDatas[0].texel2);
 						setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
+						indexBuffer = &m_tc2Indices[0];
 
 						texture_id2 = ro.overlay_id;
 						currentElements = &elements2TC;
@@ -1037,11 +1073,13 @@ namespace FIFE {
 								setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
 								setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
 								setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
+								indexBuffer = &m_tcIndices[0];
 								currentElements = &elementsTC;
 								currentIndex = &indexTC;
 							} else {
 								setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
 								setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
+								indexBuffer = &m_tIndices[0];
 								currentElements = &elementsT;
 								currentIndex = &indexT;
 							}
@@ -1052,6 +1090,7 @@ namespace FIFE {
 						if (ro.overlay_type == OVERLAY_TYPE_NONE) {
 							setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
 							setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
+							indexBuffer = &m_pIndices[0];
 							currentElements = &elementsP;
 							currentIndex = &indexP;
 						}
@@ -1100,7 +1139,7 @@ namespace FIFE {
 			}
 		}
 		// render
-		glDrawArrays(mode, *currentIndex, *currentElements);
+		glDrawElements(mode, *currentElements, GL_UNSIGNED_INT, indexBuffer + *currentIndex);
 
 		// reset all states
 		if (overlay_type != OVERLAY_TYPE_NONE) {
@@ -1123,6 +1162,11 @@ namespace FIFE {
 		m_renderTextureColorDatas.clear();
 		m_renderMultitextureDatas.clear();
 		m_renderObjects.clear();
+
+		m_pIndices.clear();
+		m_tIndices.clear();
+		m_tcIndices.clear();
+		m_tc2Indices.clear();
 	}
 
 	void RenderBackendOpenGL::renderWithZ() {
@@ -1155,7 +1199,7 @@ namespace FIFE {
 			if (ro.texture_id != texture_id) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 
@@ -1168,15 +1212,15 @@ namespace FIFE {
 				}
 
 				// set element to current size
-				*currentElements = 4;
+				*currentElements = 6;
 			} else {
 				// else add the element
-				*currentElements += 4;
+				*currentElements += 6;
 			}
 		}
 
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		disableLighting();
@@ -1249,7 +1293,7 @@ namespace FIFE {
 			if (ro.texture_id != texture_id) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 
@@ -1262,15 +1306,15 @@ namespace FIFE {
 				}
 
 				// set element to current size
-				*currentElements = 4;
+				*currentElements = 6;
 			} else {
 				// else add the element
-				*currentElements += 4;
+				*currentElements += 6;
 			}
 		}
 
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		disableLighting();
@@ -1338,7 +1382,7 @@ namespace FIFE {
 			if (render) {
 				if (*currentElements > 0) {
 					//render
-					glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+					glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 					*currentIndex += *currentElements;
 				}
 				// multitexturing
@@ -1406,7 +1450,7 @@ namespace FIFE {
 			}
 		}
 		// render
-		glDrawArrays(GL_QUADS, *currentIndex, *currentElements);
+		glDrawElements(GL_TRIANGLES, *currentElements, GL_UNSIGNED_INT, &m_indices[*currentIndex]);
 
 		//reset all states
 		if (overlay_type != OVERLAY_TYPE_NONE) {
@@ -1458,6 +1502,8 @@ namespace FIFE {
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
 
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+
 		RenderObject ro(GL_POINTS, 1);
 		m_renderObjects.push_back(ro);
 
@@ -1477,6 +1523,9 @@ namespace FIFE {
 		rd.vertex[0] = static_cast<float>(p2.x)+0.375;
 		rd.vertex[1] = static_cast<float>(p2.y)+0.375;
 		m_renderPrimitiveDatas.push_back(rd);
+
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
 
 		RenderObject ro(GL_LINES, 2);
 		m_renderObjects.push_back(ro);
@@ -1513,6 +1562,11 @@ namespace FIFE {
 		rd.vertex[0] = static_cast<float>(p1.x) - cornerX;
 		rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
 		m_renderPrimitiveDatas.push_back(rd);
+
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
 
 		RenderObject ro(GL_TRIANGLE_FAN, 4);
 		m_renderObjects.push_back(ro);
@@ -1565,6 +1619,7 @@ namespace FIFE {
 				rd.vertex[0] = static_cast<float>((*it).x);
 				rd.vertex[1] = static_cast<float>((*it).y);
 				m_renderPrimitiveDatas.push_back(rd);
+				m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 			}
 			RenderObject ro(GL_LINE_STRIP, points.size());
 			m_renderObjects.push_back(ro);
@@ -1606,6 +1661,7 @@ namespace FIFE {
 				rd.vertex[1] = static_cast<float>(old.y);
 				m_renderPrimitiveDatas.push_back(rd);
 				old = next;
+				m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 			}
 			RenderObject ro(GL_LINE_STRIP, (elements*steps)+1);
 			m_renderObjects.push_back(ro);
@@ -1630,6 +1686,10 @@ namespace FIFE {
 		rd.vertex[1] = static_cast<float>(p3.y);
 		m_renderPrimitiveDatas.push_back(rd);
 
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+
 		RenderObject ro(GL_TRIANGLES, 3);
 		m_renderObjects.push_back(ro);
 	}
@@ -1652,6 +1712,11 @@ namespace FIFE {
 
 		rd.vertex[0] = static_cast<float>(p.x);
 		m_renderPrimitiveDatas.push_back(rd);
+
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
 		m_renderObjects.push_back(ro);
@@ -1676,7 +1741,11 @@ namespace FIFE {
 		rd.vertex[1] = static_cast<float>(p.y);
 		m_renderPrimitiveDatas.push_back(rd);
 
-		RenderObject ro(GL_QUADS, 4);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
+
+		RenderObject ro(GL_TRIANGLES, 6);
 		m_renderObjects.push_back(ro);
 	}
 
@@ -1702,7 +1771,11 @@ namespace FIFE {
 		rd.vertex[1] = static_cast<float>(p4.y);
 		m_renderPrimitiveDatas.push_back(rd);
 
-		RenderObject ro(GL_QUADS, 4);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
+
+		RenderObject ro(GL_TRIANGLES, 6);
 		m_renderObjects.push_back(ro);
 	}
 
@@ -1724,6 +1797,11 @@ namespace FIFE {
 
 		rd.vertex[0] = static_cast<float>(p.x-size);
 		m_renderPrimitiveDatas.push_back(rd);
+
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
+		m_pIndices.push_back(m_pIndices.back() + 1);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
 		m_renderObjects.push_back(ro);
@@ -1748,6 +1826,7 @@ namespace FIFE {
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
 			angle += step;
+			m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		}
 		RenderObject ro(GL_LINE_LOOP, subdivisions-1);
 		m_renderObjects.push_back(ro);
@@ -1771,12 +1850,14 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		// reversed because of culling faces
 		for (uint16_t i = 0; i <= subdivisions; ++i) {
 			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
 			angle -= step;
+			m_pIndices.push_back(m_pIndices.back() + 1);
 		}
 		RenderObject ro(GL_TRIANGLE_FAN, subdivisions+2);
 		m_renderObjects.push_back(ro);
@@ -1804,6 +1885,7 @@ namespace FIFE {
 			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
+			m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		}
 
 		RenderObject ro(GL_LINE_STRIP, elements);
@@ -1830,6 +1912,7 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
+		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		int32_t elements = 1;
 		// reversed because of culling faces
 		float angle = static_cast<float>(e) * step;
@@ -1838,6 +1921,7 @@ namespace FIFE {
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 
 			m_renderPrimitiveDatas.push_back(rd);
+			m_pIndices.push_back(m_pIndices.back() + 1);
 		}
 
 		RenderObject ro(GL_TRIANGLE_FAN, elements);
@@ -1869,12 +1953,15 @@ namespace FIFE {
 			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
 
+			m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
+			m_pIndices.push_back(m_pIndices.back() + 1);
+			m_pIndices.push_back(m_pIndices.back() + 1);
 			m_renderObjects.push_back(ro);
 		}
 	}
 
 	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgba) {
-		RenderObject ro(GL_QUADS, 4, id);
+		RenderObject ro(GL_TRIANGLES, 6, id);
 		
 		// texture quad without alpha
 		if (alpha == 255 && !rgba) {
@@ -1901,6 +1988,10 @@ namespace FIFE {
 			m_renderTextureDatas.push_back(rd);
 
 			ro.color = false;
+
+			uint32_t index = m_tIndices.empty() ? 0 : m_tIndices.back() + 1;
+			uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+			m_tIndices.insert(m_tIndices.end(), indices, indices + 6);
 		} else {
 			if (rgba) {
 				renderData2TC rd;
@@ -1940,6 +2031,10 @@ namespace FIFE {
 				ro.rgba[1] = rgba[1];
 				ro.rgba[2] = rgba[2];
 				ro.rgba[3] = rgba[3];
+
+				uint32_t index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
+				uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+				m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
 			// texture quad with alpha
 			} else {
 				renderDataTC rd;
@@ -1969,6 +2064,10 @@ namespace FIFE {
 				m_renderTextureColorDatas.push_back(rd);
 
 				ro.color = true;
+
+				uint32_t index = m_tcIndices.empty() ? 0 : m_tcIndices.back() + 1;
+				uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+				m_tcIndices.insert(m_tcIndices.end(), indices, indices + 6);
 			}
 		}
 		m_renderObjects.push_back(ro);
@@ -2007,7 +2106,11 @@ namespace FIFE {
 			rd.texel2[1] = st2[1];
 			m_renderMultitextureDatas.push_back(rd);
 
-			RenderObject ro(GL_QUADS, 4, id1, id2);
+			uint32_t index = m_tc2Indices.empty() ? 0 : m_tc2Indices.back() + 1;
+			uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+			m_tc2Indices.insert(m_tc2Indices.end(), indices, indices + 6);
+
+			RenderObject ro(GL_TRIANGLES, 6, id1, id2);
 			ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
 			ro.rgba[0] = rgba[0];
 			ro.rgba[1] = rgba[1];
@@ -2138,7 +2241,7 @@ namespace FIFE {
 				rd.texel2[1] = 0.0;
 				m_renderMultitextureDatasZ.push_back(rd);
 
-				RenderObject ro(GL_QUADS, 4, id);
+				RenderObject ro(GL_TRIANGLES, 6, id);
 				ro.color = true;
 				ro.overlay_type = OVERLAY_TYPE_COLOR;
 				ro.rgba[0] = rgba[0];
@@ -2216,8 +2319,7 @@ namespace FIFE {
 			rd.texel2[1] = st2[1];
 			m_renderMultitextureDatasZ.push_back(rd);
 
-			//RenderObject ro(GL_QUADS, 4, id1);
-			RenderObject ro(GL_QUADS, 4, id1, id2);
+			RenderObject ro(GL_TRIANGLES, 6, id1, id2);
 			ro.overlay_type = OVERLAY_TYPE_TEXTURES_AND_FACTOR;
 			ro.rgba[0] = rgba[0];
 			ro.rgba[1] = rgba[1];
