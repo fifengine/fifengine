@@ -64,7 +64,7 @@ from __future__ import absolute_import
 from builtins import str
 from builtins import range
 from builtins import object
-from builtins import dict
+from future.utils import itervalues
 from .compat import fifechan
 
 from . import exceptions
@@ -135,7 +135,7 @@ class EventListenerBase(object):
 	"""
 	def __init__(self):
 		super(EventListenerBase,self).__init__()
-		self.events = dict()
+		self.events = {}
 		self.indent = 0
 		self.debug = get_manager().debug
 		self.is_attached = False
@@ -184,7 +184,7 @@ class EventListenerBase(object):
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
 				if self.debug: print("-"*self.indent, name)
-				for f in self.events[name].values():
+				for f in itervalues(self.events[name]):
 					if not self._redirect:
 						f(event)
 						continue
