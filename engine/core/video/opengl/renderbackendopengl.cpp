@@ -888,7 +888,7 @@ namespace FIFE {
 			if (ro.mode != mode) {
 				type = true;
 				render = true;
-			} else if (ro.mode == GL_LINE_STRIP || ro.mode == GL_LINE_LOOP || ro.mode == GL_TRIANGLE_FAN ) {
+			} else if (ro.mode == GL_LINE_STRIP || ro.mode == GL_LINE_LOOP) {
 				// do not batch line strips, loops or triangle fans to avoid side effects
 				render = true;
 			}
@@ -1563,36 +1563,12 @@ namespace FIFE {
 		rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
 		m_renderPrimitiveDatas.push_back(rd);
 
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2, index, index + 2, index + 3 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 6);
 
-		RenderObject ro(GL_TRIANGLE_FAN, 4);
+		RenderObject ro(GL_TRIANGLES, 6);
 		m_renderObjects.push_back(ro);
-
-		/*rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
-		rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
-		rd.color[0] = r;
-		rd.color[1] = g;
-		rd.color[2] = b;
-		rd.color[3] = a;
-		m_renderPrimitiveDatas.push_back(rd);
-		rd.vertex[0] = static_cast<float>(p2.x) + cornerX;
-		rd.vertex[1] = static_cast<float>(p2.y) + cornerY;
-		m_renderPrimitiveDatas.push_back(rd);
-		rd.vertex[0] = static_cast<float>(p2.x) - cornerX;
-		rd.vertex[1] = static_cast<float>(p2.y) - cornerY;
-		m_renderPrimitiveDatas.push_back(rd);
-		rd.vertex[0] = static_cast<float>(p1.x) - cornerX;
-		rd.vertex[1] = static_cast<float>(p1.y) - cornerY;
-		m_renderPrimitiveDatas.push_back(rd);
-		rd.vertex[0] = static_cast<float>(p1.x) + cornerX;
-		rd.vertex[1] = static_cast<float>(p1.y) + cornerY;
-		m_renderPrimitiveDatas.push_back(rd);
-
-		RenderObject ro(GL_TRIANGLE_STRIP, 5);
-		m_renderObjects.push_back(ro);*/
 	}
 
 	void RenderBackendOpenGL::drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -1686,9 +1662,9 @@ namespace FIFE {
 		rd.vertex[1] = static_cast<float>(p3.y);
 		m_renderPrimitiveDatas.push_back(rd);
 
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
 
 		RenderObject ro(GL_TRIANGLES, 3);
 		m_renderObjects.push_back(ro);
@@ -1713,10 +1689,9 @@ namespace FIFE {
 		rd.vertex[0] = static_cast<float>(p.x);
 		m_renderPrimitiveDatas.push_back(rd);
 
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2, index + 3 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
 		m_renderObjects.push_back(ro);
@@ -1798,10 +1773,9 @@ namespace FIFE {
 		rd.vertex[0] = static_cast<float>(p.x-size);
 		m_renderPrimitiveDatas.push_back(rd);
 
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
-		m_pIndices.push_back(m_pIndices.back() + 1);
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t indices[] = { index, index + 1, index + 2, index + 3 };
+		m_pIndices.insert(m_pIndices.end(), indices, indices + 4);
 
 		RenderObject ro(GL_LINE_LOOP, 4);
 		m_renderObjects.push_back(ro);
@@ -1828,6 +1802,7 @@ namespace FIFE {
 			angle += step;
 			m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		}
+
 		RenderObject ro(GL_LINE_LOOP, subdivisions-1);
 		m_renderObjects.push_back(ro);
 	}
@@ -1840,9 +1815,11 @@ namespace FIFE {
 		}
 		const float step = Mathf::twoPi()/subdivisions;
 		float angle = Mathf::twoPi();
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t lastIndex = index;
 
+		// center vertex
 		renderDataP rd;
-		// center
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
@@ -1850,16 +1827,17 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
 		// reversed because of culling faces
 		for (uint16_t i = 0; i <= subdivisions; ++i) {
 			rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
 			angle -= step;
-			m_pIndices.push_back(m_pIndices.back() + 1);
+			// forms triangle with start index, the last and a new one
+			uint32_t indices[] = { index, lastIndex, ++lastIndex };
+			m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
 		}
-		RenderObject ro(GL_TRIANGLE_FAN, subdivisions+2);
+		RenderObject ro(GL_TRIANGLES, (subdivisions+1) * 3);
 		m_renderObjects.push_back(ro);
 	}
 
@@ -1903,8 +1881,10 @@ namespace FIFE {
 			return;
 		}
 			
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t lastIndex = index;
+		// center vertex
 		renderDataP rd;
-		// center
 		rd.vertex[0] = static_cast<float>(p.x);
 		rd.vertex[1] = static_cast<float>(p.y);
 		rd.color[0] = r;
@@ -1912,8 +1892,7 @@ namespace FIFE {
 		rd.color[2] = b;
 		rd.color[3] = a;
 		m_renderPrimitiveDatas.push_back(rd);
-		m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-		int32_t elements = 1;
+		int32_t elements = 0;
 		// reversed because of culling faces
 		float angle = static_cast<float>(e) * step;
 		for (;s <= e; ++s, angle -= step, ++elements) {
@@ -1921,26 +1900,30 @@ namespace FIFE {
 			rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
 
 			m_renderPrimitiveDatas.push_back(rd);
-			m_pIndices.push_back(m_pIndices.back() + 1);
+			// forms triangle with start index, the last and a new one
+			uint32_t indices[] = { index, lastIndex, ++lastIndex };
+			m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
 		}
 
-		RenderObject ro(GL_TRIANGLE_FAN, elements);
+		RenderObject ro(GL_TRIANGLES, elements * 3);
 		m_renderObjects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		const float step = Mathf::twoPi()/subdivisions;
+		uint32_t elements = 0;
+		uint32_t index = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+		uint32_t lastIndex = index;
+		// center vertex
 		renderDataP rd;
-		RenderObject ro(GL_TRIANGLES, 3);
-		for(float angle=0; angle<=Mathf::twoPi(); angle+=step){
-			rd.vertex[0] = static_cast<float>(p.x);
-			rd.vertex[1] = static_cast<float>(p.y);
-			rd.color[0] = red;
-			rd.color[1] = green;
-			rd.color[2] = blue;
-			rd.color[3] = intensity;
-			m_renderPrimitiveDatas.push_back(rd);
-
+		rd.vertex[0] = static_cast<float>(p.x);
+		rd.vertex[1] = static_cast<float>(p.y);
+		rd.color[0] = red;
+		rd.color[1] = green;
+		rd.color[2] = blue;
+		rd.color[3] = intensity;
+		m_renderPrimitiveDatas.push_back(rd);
+		for (float angle = 0; angle <= Mathf::twoPi(); angle += step, elements += 3) {
 			rd.vertex[0] = radius*Mathf::Cos(angle+step)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle+step)*ystretch + p.y;
 			rd.color[0] = 0;
@@ -1952,12 +1935,12 @@ namespace FIFE {
 			rd.vertex[0] = radius*Mathf::Cos(angle)*xstretch + p.x;
 			rd.vertex[1] = radius*Mathf::Sin(angle)*ystretch + p.y;
 			m_renderPrimitiveDatas.push_back(rd);
-
-			m_pIndices.push_back(m_pIndices.empty() ? 0 : m_pIndices.back() + 1);
-			m_pIndices.push_back(m_pIndices.back() + 1);
-			m_pIndices.push_back(m_pIndices.back() + 1);
-			m_renderObjects.push_back(ro);
+			// forms triangle with start index and two new ones
+			uint32_t indices[] = { index, ++lastIndex, ++lastIndex };
+			m_pIndices.insert(m_pIndices.end(), indices, indices + 3);
 		}
+		RenderObject ro(GL_TRIANGLES, elements);
+		m_renderObjects.push_back(ro);
 	}
 
 	void RenderBackendOpenGL::addImageToArray(uint32_t id, const Rect& rect, float const* st, uint8_t alpha, uint8_t const* rgba) {
