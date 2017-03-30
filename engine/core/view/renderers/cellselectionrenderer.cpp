@@ -70,20 +70,50 @@ namespace FIFE {
 		return dynamic_cast<CellSelectionRenderer*>(cnt->getRenderer("CellSelectionRenderer"));
 	}
 
+	void CellSelectionRenderer::setEnabled(bool enabled) {
+		RendererBase::setEnabled(enabled);
+		if (!enabled) {
+			m_bufferMap.clear();
+			m_updates.clear();
+		}
+	}
+
+	void CellSelectionRenderer::removeActiveLayer(Layer* layer) {
+		RendererBase::removeActiveLayer(layer);
+		std::map<Layer*, std::vector<Point> >::iterator it = m_bufferMap.find(layer);
+		if (it != m_bufferMap.end()) {
+			m_bufferMap.erase(it);
+		}
+
+		std::map<Layer*, bool>::iterator uit = m_updates.find(layer);
+		if (uit != m_updates.end()) {
+			m_updates.erase(uit);
+		}
+	}
+
+	void CellSelectionRenderer::clearActiveLayers() {
+		RendererBase::clearActiveLayers();
+		m_bufferMap.clear();
+		m_updates.clear();
+	}
+
 	void CellSelectionRenderer::reset() {
 		m_locations.clear();
+		m_bufferMap.clear();
+		m_updates.clear();
 	}
 
 	void CellSelectionRenderer::selectLocation(const Location* loc) {
 		if (loc) {
 			std::vector<Location>::const_iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
-				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
+				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates() && (*it).getLayer() == loc->getLayer()) {
 					return;
 				}
 			}
 
 			m_locations.push_back(Location(*loc));
+			m_updates[loc->getLayer()] = true;
 		}
 	}
 
@@ -91,8 +121,9 @@ namespace FIFE {
 		if (loc) {
 			std::vector<Location>::iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
-				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
+				if ((*it).getLayerCoordinates() == loc->getLayerCoordinates() && (*it).getLayer() == loc->getLayer()) {
 					m_locations.erase(it);
+					m_updates[loc->getLayer()] = true;
 					break;
 				}
 			}
@@ -104,6 +135,23 @@ namespace FIFE {
 			return;
 		}
 
+		CellGrid* cg = layer->getCellGrid();
+		if (!cg) {
+			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
+			return;
+		}
+
+		// Only render if nothing has changed.
+		if (!cam->isUpdated() && !cam->isLayerCacheUpdated(layer) && !m_updates[layer]) {
+			if (m_bufferMap.find(layer) != m_bufferMap.end()) {
+				renderBuffer(layer);
+				return;
+			}
+		}
+		uint32_t index = 0;
+		std::vector<Point>& data = m_bufferMap[layer];
+		data.clear();
+		// fill buffer
 		std::vector<Location>::const_iterator locit = m_locations.begin();
 		for (; locit != m_locations.end(); locit++) {
 			const Location loc = *locit;
@@ -111,34 +159,53 @@ namespace FIFE {
 				continue;
 			}
 
-			CellGrid* cg = layer->getCellGrid();
-			if (!cg) {
-				FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
-				continue;
-			}
-
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, loc.getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
 			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-			Point pt1(firstpt.x, firstpt.y);
-			Point pt2;
+			Point pt(firstpt.x, firstpt.y);
+			data.push_back(pt);
 			++it;
-			for (; it != vertices.end(); it++) {
+			for (; it != vertices.end(); ++it) {
 				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-				pt2.x = pts.x; pt2.y = pts.y;
-				Point cpt1 = pt1;
-				Point cpt2 = pt2;
-				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
-				pt1 = pt2;
+				pt.x = pts.x;
+				pt.y = pts.y;
+				data.push_back(pt);
 			}
-			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
 		}
+		m_updates[layer] = false;
+		// render
+		renderBuffer(layer);
 	}
 
 	void CellSelectionRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
+	}
+
+	void CellSelectionRenderer::renderBuffer(Layer* layer) {
+		std::vector<Point>& data = m_bufferMap[layer];
+		uint32_t index = 0;
+		uint32_t indexEnd = data.size();
+		if (layer->getCellGrid()->getType() == "square") {
+			while (index != indexEnd) {
+				m_renderbackend->drawLine(data[index], data[index + 1], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 1], data[index + 2], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 2], data[index + 3], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 3], data[index], m_color.r, m_color.g, m_color.b);
+				index += 4;
+			}
+		} else {
+			while (index != indexEnd) {
+				m_renderbackend->drawLine(data[index], data[index + 1], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 1], data[index + 2], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 2], data[index + 3], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 3], data[index + 4], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 4], data[index + 5], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 5], data[index], m_color.r, m_color.g, m_color.b);
+				index += 6;
+			}
+		}
 	}
 }

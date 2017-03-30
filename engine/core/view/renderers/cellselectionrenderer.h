@@ -79,6 +79,20 @@ namespace FIFE {
 		 */
 		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
 
+		/** Enables renderer
+		 */
+		void setEnabled(bool enabled);
+
+		/** Removes active layer from renderer.
+		 *
+		 * @param layer The layer to be removed.
+		 */
+		void removeActiveLayer(Layer* layer);
+
+		/** Clears all active layers from renderer
+		 */
+		void clearActiveLayers();
+
 		/** Deselects all locations.
 		 */
 		void reset();
@@ -110,6 +124,18 @@ namespace FIFE {
 		void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 	private:
+		/** Sends the buffered data to the backend.
+		 *
+		 * @param layer Current layer to be rendered
+		 */
+		void renderBuffer(Layer* layer);
+
+		//! Buffers the lines per Layer.
+		std::map<Layer*, std::vector<Point> > m_bufferMap;
+
+		//! Stores updates
+		std::map<Layer*, bool> m_updates;
+
 		//! selected locations
 		std::vector<Location> m_locations;
 
