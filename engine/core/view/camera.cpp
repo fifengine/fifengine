@@ -756,10 +756,12 @@ namespace FIFE {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layerToInstances[layer] = RenderList();
+		m_cacheUpdates[m_cache[layer]] = true;
 		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
+		m_cacheUpdates.erase(m_cache[layer]);
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
@@ -979,7 +981,8 @@ namespace FIFE {
 			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
 				continue;
 			}
-			cache->update(m_transform, instancesToRender);
+			bool update = cache->update(m_transform, instancesToRender);
+			m_cacheUpdates[cache] = update;
 		}
 		resetUpdates();
 	}
@@ -1053,5 +1056,10 @@ namespace FIFE {
 			m_renderbackend->resetLighting();
 		}
 		m_renderbackend->popClipArea();
+	}
+
+	bool Camera::isLayerCacheUpdated(Layer* layer) {
+		bool update = m_cacheUpdates[m_cache[layer]];
+		return update;
 	}
 }
