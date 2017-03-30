@@ -63,7 +63,7 @@ namespace FIFE {
 		 */
 		std::string getName() { return "BlockingInfoRenderer"; }
 
-		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		/** This method is called by the camera to ask renderer to draw its rendering aspect based on
 		 * given parameters.
 		 *
 		 * @param cam Camera view to draw
@@ -84,7 +84,27 @@ namespace FIFE {
 		 */
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 
+		/** Enables renderer
+		 */
+		void setEnabled(bool enabled);
+
+		/** Removes active layer from renderer.
+		 *
+		 * @param layer The layer to be removed.
+		 */
+		void removeActiveLayer(Layer* layer);
+
+		/** Clears all active layers from renderer
+		 */
+		void clearActiveLayers();
+
 	private:
+		/** Sends the buffered data to the backend.
+		 */
+		void renderBuffer(Layer* layer);
+
+		//! Buffers the lines per Layer.
+		std::map<Layer*, std::vector<Point> > m_bufferMap;
 		//! currently used color
 		SDL_Color m_color;
 	};

@@ -37,27 +37,75 @@ namespace FIFE {
 
 	class GridRenderer: public RendererBase {
 	public:
-		/** constructor.
+		/** Constructor.
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
 		GridRenderer(RenderBackend* renderbackend, int32_t position);
 
+		/** Copy Constructor.
+		 */
 		GridRenderer(const GridRenderer& old);
 
+		/** Makes copy of this renderer.
+		 */
 		RendererBase* clone();
 
 		/** Destructor.
 		 */
 		virtual ~GridRenderer();
 
+		/** This method is called by the camera to ask renderer to draw its rendering aspect based on
+		 * given parameters.
+		 *
+		 * @param cam Camera view to draw
+		 * @param layer Current layer to be rendered
+		 * @param instances Instances on the current layer
+		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
-		std::string getName() { return "GridRenderer"; }
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
 
+		/** Returns the renderer name.
+		 *
+		 * @return The name as string.
+		 */
+		std::string getName() { return "GridRenderer"; }
+
+		/** Changes the used color.
+		 *
+		 * @param r The value for red, range 0-255.
+		 * @param g The value for green, range 0-255.
+		 * @param b The value for blue, range 0-255.
+		 */
+		void setColor(uint8_t r, uint8_t g, uint8_t b);
+
+		/** Gets instance for interface access.
+		 */
 		static GridRenderer* getInstance(IRendererContainer* cnt);
 
+		/** Enables renderer
+		 */
+		void setEnabled(bool enabled);
+
+		/** Removes active layer from renderer.
+		 *
+		 * @param layer The layer to be removed.
+		 */
+		void removeActiveLayer(Layer* layer);
+
+		/** Clears all active layers from renderer
+		 */
+		void clearActiveLayers();
+
 	private:
+		/** Sends the buffered data to the backend.
+		 *
+		 * @param layer Current layer to be rendered
+		 */
+		void renderBuffer(Layer* layer);
+
+		//! Buffers the lines per Layer.
+		std::map<Layer*, std::vector<Point> > m_bufferMap;
+		//! currently used color
 		SDL_Color m_color;
 	};
 }

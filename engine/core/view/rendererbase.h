@@ -141,15 +141,15 @@ namespace FIFE {
 		
 		/** Adds active layer to renderer. Only active layers are rendered
 		 */
-		void addActiveLayer(Layer* layer);
+		virtual void addActiveLayer(Layer* layer);
 		
 		/** Removes active layer from renderer.
 		 */
-		void removeActiveLayer(Layer* layer);
+		virtual void removeActiveLayer(Layer* layer);
 		
 		/** Clears all active layers from renderer
 		 */
-		void clearActiveLayers();
+		virtual void clearActiveLayers();
 		
 		/** Activates all layers from given elevation
 		 */

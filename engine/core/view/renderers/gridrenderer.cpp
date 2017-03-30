@@ -70,127 +70,98 @@ namespace FIFE {
 		return dynamic_cast<GridRenderer*>(cnt->getRenderer("GridRenderer"));
 	}
 
+	void GridRenderer::setEnabled(bool enabled) {
+		RendererBase::setEnabled(enabled);
+		if (!enabled) {
+			m_bufferMap.clear();
+		}
+	}
+
+	void GridRenderer::removeActiveLayer(Layer* layer) {
+		RendererBase::removeActiveLayer(layer);
+		std::map<Layer*, std::vector<Point> >::iterator it = m_bufferMap.find(layer);
+		if (it != m_bufferMap.end()) {
+			m_bufferMap.erase(it);
+		}
+	}
+
+	void GridRenderer::clearActiveLayers() {
+		RendererBase::clearActiveLayers();
+		m_bufferMap.clear();
+	}
+
 	void GridRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
 			return;
 		}
-
-//
-//		//render elev_coord box
-//		//draw front quad
-//		// 1,1,1
-//		//1,-1,1
-//		//-1,-1,1
-//		//-1,1,1
-		//We don't need the elevation box atm
-//		Point a,b,c,d;
-//
-//
-//		ScreenPoint copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
-//		ScreenPoint copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
-//		Point coptt1(copt1.x,copt1.y);
-//		Point coptt2(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-//		a = coptt1;
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-//		b = coptt1;
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-//		c = coptt1;
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 20);
-//		d = coptt1;
-//
-//		m_renderbackend->drawQuad(a,b,c,d,15, 15, 200);
-//
-//
-//		//draw back quad
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-//
-//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
-//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
-//		coptt1 = Point(copt1.x,copt1.y);
-//		coptt2 = Point(copt2.x,copt2.y);
-//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-
-
-		// make the viewport 25% larger
-		Rect cv = cam->getViewPort();
-		int32_t cvx2 = round((cv.x+cv.w) * 1.25);
-		int32_t cvy2 = round((cv.y+cv.h) * 1.25);
-		cv.x -= round((cv.x+cv.w) * 0.125);
-		cv.y -= round((cv.y+cv.h) * 0.125);
+		// Only render if nothing has changed.
+		if (!cam->isUpdated() && !cam->isLayerCacheUpdated(layer)) {
+			if (m_bufferMap.find(layer) != m_bufferMap.end()) {
+				renderBuffer(layer);
+				return;
+			}
+		}
+		uint32_t index = 0;
+		// prepare buffer for square or hexgrid
+		std::vector<Point>& data = m_bufferMap[layer];
+		if (layer->getCellGrid()->getType() == "square") {
+			data.resize(instances.size() * 4);
+		} else {
+			data.resize(instances.size() * 6);
+		}
+		// fill buffer
 		RenderList::const_iterator instance_it = instances.begin();
-		for (;instance_it != instances.end(); ++instance_it) {
+		for (; instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
 			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-			Point pt1(firstpt.x, firstpt.y);
-			Point pt2;
+			Point pt(firstpt.x, firstpt.y);
+			data[index] = pt;
 			++it;
-			for (; it != vertices.end(); it++) {
+			for (; it != vertices.end(); ++it) {
 				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-				pt2.x = pts.x;
-				pt2.y = pts.y;
-				Point cpt1 = pt1;
-				Point cpt2 = pt2;
-
-				if (cpt1.x < cv.x) cpt1.x = cv.x;
-				if (cpt2.x < cv.x) cpt2.x = cv.x;
-				if (cpt1.y < cv.y) cpt1.y = cv.y;
-				if (cpt2.y < cv.y) cpt2.y = cv.y;
-				if (cpt1.x > cvx2) cpt1.x = cvx2;
-				if (cpt2.x > cvx2) cpt2.x = cvx2;
-				if (cpt1.y > cvy2) cpt1.y = cvy2;
-				if (cpt2.y > cvy2) cpt2.y = cvy2;
-
-				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
-				pt1 = pt2;
+				Point& p = data[++index];
+				p.x = pts.x;
+				p.y = pts.y;
 			}
-			if ((pt2.x >= cv.x) && (pt2.x <= cvx2) && (pt2.y >= cv.y) && (pt2.y <= cvy2)) {
-				if ((firstpt.x >= cv.x) && (firstpt.x <= cvx2) && (firstpt.y >= cv.y) && (firstpt.y <= cvy2)) {
-					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-				}
-			}
+			++index;
 		}
+		// render
+		renderBuffer(layer);
 	}
 
-	void GridRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void GridRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
+	}
+
+	void GridRenderer::renderBuffer(Layer* layer) {
+		std::vector<Point>& data = m_bufferMap[layer];
+		uint32_t index = 0;
+		uint32_t indexEnd = data.size();
+		if (layer->getCellGrid()->getType() == "square") {
+			while (index != indexEnd) {
+				m_renderbackend->drawLine(data[index], data[index + 1], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 1], data[index + 2], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 2], data[index + 3], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 3], data[index], m_color.r, m_color.g, m_color.b);
+				index += 4;
+			}
+		} else {
+			while (index != indexEnd) {
+				m_renderbackend->drawLine(data[index], data[index + 1], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 1], data[index + 2], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 2], data[index + 3], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 3], data[index + 4], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 4], data[index + 5], m_color.r, m_color.g, m_color.b);
+				m_renderbackend->drawLine(data[index + 5], data[index], m_color.r, m_color.g, m_color.b);
+				index += 6;
+			}
+		}
 	}
 }
