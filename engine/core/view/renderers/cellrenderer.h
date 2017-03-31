@@ -36,7 +36,6 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class Cell;
 	class IFont;
 
 	class CellRenderer: public RendererBase {
@@ -76,34 +75,6 @@ namespace FIFE {
 		 */
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 
-		/** Sets color that is used to visualize blocker.
-		 *
-		 * @param r The value for red, range 0-255.
-		 * @param g The value for green, range 0-255.
-		 * @param b The value for blue, range 0-255.
-		 */
-		void setBlockerColor(uint8_t r, uint8_t g, uint8_t b);
-
-		/** Sets color that is used to visualize paths.
-		 *
-		 * @param r The value for red, range 0-255.
-		 * @param g The value for green, range 0-255.
-		 * @param b The value for blue, range 0-255.
-		 */
-		void setPathColor(uint8_t r, uint8_t g, uint8_t b);
-		
-		/** Enables blocking visualization.
-		 *
-		 * @param enabled A bool that enables or disables the visualization.
-		 */
-		void setEnabledBlocking(bool enabled);
-
-		/** Gets whether blocking visualization is enabled.
-		 *
-		 * @return A bool, true if visualization is enabled, otherwise false.
-		 */
-		bool isEnabledBlocking();
-
 		/** Enables Fog of War visualization.
 		 *
 		 * @param enabled A bool that enables or disables the visualization.
@@ -115,18 +86,6 @@ namespace FIFE {
 		 * @return A bool, true if visualization is enabled, otherwise false.
 		 */
 		bool isEnabledFogOfWar();
-
-		/** Enables path visualization.
-		 *
-		 * @param enabled A bool that enables or disables the visualization.
-		 */
-		void setEnabledPathVisual(bool enabled);
-
-		/** Gets whether path visualization is enabled.
-		 *
-		 * @return A bool, true if visualization is enabled, otherwise false.
-		 */
-		bool isEnabledPathVisual();
 		
 		/** Sets the layer that is used for Fog of War visualization.
 		 *
@@ -146,18 +105,6 @@ namespace FIFE {
 		 */
 		void setMaskImage(ImagePtr image);
 		
-		/** Adds a instance to path visualization. The current path is automatically rendered.
-		 *
-		 * @param instance The instance's path is visualized.
-		 */
-		void addPathVisual(Instance* instance);
-
-		/** Removes a instance from path visualization.
-		 *
-		 * @param instance The instance's path is visualized.
-		 */
-		void removePathVisual(Instance* instance);
-
 		/** Creates render target for Fog of War.
 		 *
 		 * @param cam The used camera.
@@ -215,12 +162,22 @@ namespace FIFE {
 		static CellRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
-		SDL_Color m_blockerColor;
-		SDL_Color m_pathColor;
-		bool m_blockingEnabled;
-		bool m_fowEnabled;
-		bool m_pathVisualEnabled;
+		/** Updates FoW.
+		 */
+		void updateFoW(Camera* cam, Layer* layer);
+
+		/** Updates cached cell costs.
+		 */
+		void updateCellCosts(Camera* cam, Layer* layer);
+
+		/** Sends the buffered cell cost data to the backend.
+		 *
+		 * @param layer Current layer to be rendered
+		 */
+		void renderBuffer(Layer* layer);
+
 		// FoW stuff
+		bool m_fowEnabled;
 		TargetRenderer* m_targetRenderer;
 		RenderTargetPtr m_fowTarget;
 		Layer* m_fowLayer;
@@ -229,8 +186,16 @@ namespace FIFE {
 		ImagePtr m_fowImage;
 		IFont* m_font;
 		
-		std::vector<Instance*> m_visualPaths;
+		// Visualize cell costs
+		bool m_costsUpdate;
 		std::set<std::string> m_visualCosts;
+
+		struct Data {
+			Rect rect;
+			Image* image;
+		};
+		//! Buffers the cost images per Layer.
+		std::map<Layer*, std::vector<Data> > m_bufferMap;
 	};
 }
 

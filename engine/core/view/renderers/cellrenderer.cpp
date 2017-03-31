@@ -49,17 +49,10 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position):
-		RendererBase(renderbackend, position) {
+		RendererBase(renderbackend, position),
+		m_costsUpdate(false) {
 		setEnabled(false);
-		m_blockerColor.r = 255;
-		m_blockerColor.g = 0;
-		m_blockerColor.b = 0;
-		m_pathColor.r = 0;
-		m_pathColor.g = 0;
-		m_pathColor.b = 255;
-		m_blockingEnabled = false;
 		m_fowEnabled = false;
-		m_pathVisualEnabled = false;
 		m_targetRenderer = m_renderbackend->isFramebufferEnabled() ? new TargetRenderer(m_renderbackend) : NULL;
 		m_fowLayer = NULL;
 		m_font = NULL;
@@ -68,12 +61,9 @@ namespace FIFE {
 
 	CellRenderer::CellRenderer(const CellRenderer& old):
 		RendererBase(old),
-		m_blockerColor(old.m_blockerColor),
-		m_pathColor(old.m_pathColor){
+		m_costsUpdate(false) {
 		setEnabled(false);
-		m_blockingEnabled = false;
 		m_fowEnabled = false;
-		m_pathVisualEnabled = false;
 		m_targetRenderer = m_renderbackend->isFramebufferEnabled() ? new TargetRenderer(m_renderbackend) : NULL;
 		m_fowLayer = NULL;
 		m_font = NULL;
@@ -108,137 +98,21 @@ namespace FIFE {
 		}
 
 		const bool fow = m_fowEnabled && (m_fowLayer == layer);
-		bool fow_update = fow && (cam->isUpdated() || cache->isUpdated());
+		const bool fow_update = fow && (cam->isUpdated() || cache->isUpdated());
 		if (!m_fowImage.get() && fow) {
 			createFowMap(cam, layer);
 		}
-
 		const bool render_costs = (!m_visualCosts.empty() && m_font);
-		const bool zoomed = !Mathd::Equal(1.0, cam->getZoom());
-
-		Rect layerView = cam->getLayerViewPort(layer);
-		std::vector<Cell*> cells = cache->getCellsInRect(layerView);
-		std::vector<Cell*>::iterator cit = cells.begin();
-		for (; cit != cells.end(); ++cit) {
-			if (m_blockingEnabled) {
-				if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
-					std::vector<ExactModelCoordinate> vertices;
-					cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-					std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-					int32_t halfind = vertices.size() / 2;
-					ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-					Point pt1(firstpt.x, firstpt.y);
-					Point pt2;
-					++it;
-					for (; it != vertices.end(); it++) {
-						ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-						pt2.x = pts.x;
-						pt2.y = pts.y;
-						m_renderbackend->drawLine(pt1, pt2, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-						pt1 = pt2;
-					}
-					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-					ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-					Point pt3(spt1.x, spt1.y);
-					ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-					Point pt4(spt2.x, spt2.y);
-					m_renderbackend->drawLine(pt3, pt4, m_blockerColor.r, m_blockerColor.g, m_blockerColor.b);
-				}
+		if (render_costs) {
+			if (cam->isUpdated() || m_costsUpdate) {
+				updateCellCosts(cam, layer);
+				m_costsUpdate = false;
 			}
-				
-			if (render_costs) {
-				bool match = false;
-				double cost;
-				std::set<std::string>::iterator cost_it = m_visualCosts.begin();
-				for (; cost_it != m_visualCosts.end(); ++cost_it) {
-					std::vector<std::string> cell_costs = cache->getCellCosts(*cit);
-					std::vector<std::string>::iterator cc_it = cell_costs.begin();
-					for (; cc_it != cell_costs.end(); ++cc_it) {
-						if (*cc_it == *cost_it) {
-							match = true;
-							cost = cache->getCost(*cost_it);
-							break;
-						}
-					}
-					if (match) {
-						break;
-					}
-				}
-				if (match) {
-					Location loc(layer);
-					loc.setLayerCoordinates((*cit)->getLayerCoordinates());
-					ScreenPoint drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
-
-					std::stringstream stream;
-					stream << cost;
-					Image* img = m_font->getAsImage(stream.str());
-					
-					Rect r;
-					if (zoomed) {
-						double zoom = cam->getZoom();
-						r.x = drawpt.x - (img->getWidth()/2) * zoom;
-						r.y = drawpt.y - (img->getHeight()/2) * zoom;
-						r.w = img->getWidth() * zoom;
-						r.h = img->getHeight() * zoom;
-						img->render(r);
-					} else {
-						r.x = drawpt.x - img->getWidth()/2;
-						r.y = drawpt.y - img->getHeight()/2;
-						r.w = img->getWidth();
-						r.h = img->getHeight();
-						img->render(r);
-					}
-				}
-			}
-
-			if (fow_update || (fow && !m_targetRenderer)) {
-				ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(
-					FIFE::intPt2doublePt((*cit)->getLayerCoordinates())));
-				CellVisualEffect cve = (*cit)->getFoWType();
-				if (cve == CELLV_CONCEALED) {
-					if (m_concealImage.get()) {
-						addImageToMap(cam, Point(sp.x, sp.y), m_concealImage, "c_img");
-					}
-				} else if (cve == CELLV_MASKED) {
-					if (m_maskImage.get()) {
-						addImageToMap(cam, Point(sp.x, sp.y), m_maskImage, "b_img");
-					}
-				}
-			}
+			renderBuffer(layer);
 		}
 
-		if (m_pathVisualEnabled && !m_visualPaths.empty()) {
-			std::vector<Instance*>::iterator it = m_visualPaths.begin();
-			for (; it != m_visualPaths.end(); ++it) {
-				Route* route = (*it)->getRoute();
-				if (route) {
-					Path path = route->getPath();
-					if (!path.empty()) {
-						Path::iterator pit = path.begin();
-						for (; pit != path.end(); ++pit) {
-							if ((*pit).getLayer() != layer) {
-								continue;
-							}
-							std::vector<ExactModelCoordinate> vertices;
-							cg->getVertices(vertices, (*pit).getLayerCoordinates());
-							std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-							int32_t halfind = vertices.size() / 2;
-							ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-							Point pt1(firstpt.x, firstpt.y);
-							Point pt2;
-							++it;
-							for (; it != vertices.end(); it++) {
-								ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-								pt2.x = pts.x;
-								pt2.y = pts.y;
-								m_renderbackend->drawLine(pt1, pt2, m_pathColor.r, m_pathColor.g, m_pathColor.b);
-								pt1 = pt2;
-							}
-							m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_pathColor.r, m_pathColor.g, m_pathColor.b);
-						}
-					}
-				}
-			}
+		if (fow_update || (fow && !m_targetRenderer)) {
+			updateFoW(cam, layer);
 		}
 
 		if (fow && m_targetRenderer) {
@@ -249,28 +123,8 @@ namespace FIFE {
 		}
 	}
 
-	void CellRenderer::setBlockerColor(uint8_t r, uint8_t g, uint8_t b) {
-		m_blockerColor.r = r;
-		m_blockerColor.g = g;
-		m_blockerColor.b = b;
-	}
-
-	void CellRenderer::setPathColor(uint8_t r, uint8_t g, uint8_t b) {
-		m_pathColor.r = r;
-		m_pathColor.g = g;
-		m_pathColor.b = b;
-	}
-
 	void CellRenderer::setFogOfWarLayer(Layer* layer) {
 		m_fowLayer = layer;
-	}
-	
-	void CellRenderer::setEnabledBlocking(bool enabled) {
-		m_blockingEnabled = enabled;
-	}
-	
-	bool CellRenderer::isEnabledBlocking() {
-		return m_blockingEnabled;
 	}
 
 	void CellRenderer::setEnabledFogOfWar(bool enabled) {
@@ -279,14 +133,6 @@ namespace FIFE {
 	
 	bool CellRenderer::isEnabledFogOfWar() {
 		return m_fowEnabled;
-	}
-
-	void CellRenderer::setEnabledPathVisual(bool enabled) {
-		m_pathVisualEnabled = enabled;
-	}
-
-	bool CellRenderer::isEnabledPathVisual() {
-		return m_pathVisualEnabled;
 	}
 
 	void CellRenderer::createFowMap(Camera* cam, Layer* layer) {
@@ -343,6 +189,7 @@ namespace FIFE {
 
 	void CellRenderer::setFont(IFont* font) {
 		m_font = font;
+		m_costsUpdate = true;
 	}
 
 	IFont* CellRenderer::getFont() {
@@ -356,27 +203,13 @@ namespace FIFE {
 		m_fowTarget->removeAll("c_img");
 	}
 
-	void CellRenderer::addPathVisual(Instance* instance) {
-		m_visualPaths.push_back(instance);
-	}
-
-	void CellRenderer::removePathVisual(Instance* instance) {
-		for (std::vector<Instance*>::iterator it = m_visualPaths.begin();
-			it != m_visualPaths.end(); ++it) {
-
-			if (*it == instance) {
-				m_visualPaths.erase(it);
-				break;
-			}
-		}
-	}
-
 	void CellRenderer::setEnabledCost(const std::string& costId, bool enabled) {
 		if (enabled) {
 			m_visualCosts.insert(costId);
 		} else {
 			m_visualCosts.erase(costId);
 		}
+		m_costsUpdate = true;
 	}
 	
 	bool CellRenderer::isEnabledCost(const std::string& costId) {
@@ -385,5 +218,91 @@ namespace FIFE {
 			return true;
 		}
 		return false;
+	}
+
+	void CellRenderer::updateFoW(Camera* cam, Layer* layer) {
+		CellGrid* cg = layer->getCellGrid();
+		CellCache* cache = layer->getCellCache();
+		Rect layerView = cam->getLayerViewPort(layer);
+		std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+		std::vector<Cell*>::iterator cit = cells.begin();
+		for (; cit != cells.end(); ++cit) {
+			ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(
+				FIFE::intPt2doublePt((*cit)->getLayerCoordinates())));
+			CellVisualEffect cve = (*cit)->getFoWType();
+			if (cve == CELLV_CONCEALED) {
+				if (m_concealImage.get()) {
+					addImageToMap(cam, Point(sp.x, sp.y), m_concealImage, "c_img");
+				}
+			} else if (cve == CELLV_MASKED) {
+				if (m_maskImage.get()) {
+					addImageToMap(cam, Point(sp.x, sp.y), m_maskImage, "b_img");
+				}
+			}
+		}
+	}
+
+	void CellRenderer::updateCellCosts(Camera* cam, Layer* layer) {
+		const bool zoomed = !Mathd::Equal(1.0, cam->getZoom());
+		const double zoom = cam->getZoom();
+		// clear old data
+		std::vector<Data>& data = m_bufferMap[layer];
+		data.clear();
+		Data dat;
+
+		Rect layerView = cam->getLayerViewPort(layer);
+		CellCache* cache = layer->getCellCache();
+		std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+		std::vector<Cell*>::iterator cit = cells.begin();
+		for (; cit != cells.end(); ++cit) {
+			bool match = false;
+			double cost;
+			std::set<std::string>::iterator cost_it = m_visualCosts.begin();
+			for (; cost_it != m_visualCosts.end(); ++cost_it) {
+				std::vector<std::string> cell_costs = cache->getCellCosts(*cit);
+				std::vector<std::string>::iterator cc_it = cell_costs.begin();
+				for (; cc_it != cell_costs.end(); ++cc_it) {
+					if (*cc_it == *cost_it) {
+						match = true;
+						cost = cache->getCost(*cost_it);
+						break;
+					}
+				}
+				if (match) {
+					break;
+				}
+			}
+			if (match) {
+				Location loc(layer);
+				loc.setLayerCoordinates((*cit)->getLayerCoordinates());
+				ScreenPoint drawpt = cam->toScreenCoordinates(loc.getMapCoordinates());
+
+				std::stringstream stream;
+				stream << cost;
+				Image* img = m_font->getAsImage(stream.str());
+
+				if (zoomed) {
+					dat.rect.x = drawpt.x - (img->getWidth() / 2) * zoom;
+					dat.rect.y = drawpt.y - (img->getHeight() / 2) * zoom;
+					dat.rect.w = img->getWidth() * zoom;
+					dat.rect.h = img->getHeight() * zoom;
+				} else {
+					dat.rect.x = drawpt.x - img->getWidth() / 2;
+					dat.rect.y = drawpt.y - img->getHeight() / 2;
+					dat.rect.w = img->getWidth();
+					dat.rect.h = img->getHeight();
+				}
+				dat.image = img;
+				data.push_back(dat);
+			}
+		}
+	}
+
+	void CellRenderer::renderBuffer(Layer* layer) {
+		std::vector<Data>& data = m_bufferMap[layer];
+		std::vector<Data>::iterator it = data.begin();
+		for (; it != data.end(); ++it) {
+			(*it).image->render((*it).rect);
+		}
 	}
 }
