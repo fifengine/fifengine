@@ -33,7 +33,6 @@
 #include "view/rendererbase.h"
 
 namespace FIFE {
-	class RenderBackend;
 	class IFont;
 
 	class FloatingTextRenderer: public RendererBase {
@@ -58,6 +57,18 @@ namespace FIFE {
 		 */
 		virtual ~FloatingTextRenderer();
 
+		/** Gets renderer instance for interface access.
+		 */
+		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
+
+		/** Removes active layer from renderer.
+		 */
+		void removeActiveLayer(Layer* layer);
+
+		/** Clears all active layers from renderer
+		 */
+		void clearActiveLayers();
+
 		/** This method is called by the view to ask renderer to draw its rendering aspect based on
 		 * given parameters.
 		 *
@@ -76,7 +87,7 @@ namespace FIFE {
 		/** Changes default font in the renderer
 		 * Note that this does not change the font ownership
 		 */
-		void setFont(IFont* font) { m_font = font; }
+		void setFont(IFont* font);
 
 		/** Changes default font color
 		 * Only useful for .ttf fonts
@@ -86,12 +97,12 @@ namespace FIFE {
 		/** Set default background quad
 		 * r,g,b,a values for background
 		 */
-		void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
+		void setBackground(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
 		/** Set default border
 		 * r,g,b,a values for border
 		 */
-		void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
+		void setBorder(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
 		/** Disable the default background
 		 */
@@ -101,23 +112,29 @@ namespace FIFE {
 		 */
 		void resetBorder();
 
-		/** Gets instance for interface access.
-		 */
-		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
-
-		/** Provides access point to the RenderBackend
-		 */
-		RenderBackend* getRenderBackend() const {return m_renderbackend;}
-
 	private:
-		RenderBackend* m_renderbackend;
+		/** Sends the buffered data to the backend.
+		 *
+		 * @param layer Current layer to be rendered
+		 */
+		void renderBuffer(Layer* layer);
+
 		IFont* m_font;
-		bool m_font_color;
+		bool m_fontColor;
 		SDL_Color m_color;
 		bool m_background;
 		bool m_backborder;
 		SDL_Color m_backcolor;
 		SDL_Color m_backbordercolor;
+
+		// Struct to store data
+		struct Data {
+			Image* image;
+			Rect imageRec;
+			Rect backgroundRec;
+		};
+		//! Buffers the data per Layer.
+		std::map<Layer*, std::map<Instance*, Data> > m_bufferMap;
 	};
 
 }

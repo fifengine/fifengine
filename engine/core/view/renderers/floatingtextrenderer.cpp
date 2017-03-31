@@ -49,9 +49,8 @@ namespace FIFE {
 
 	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
-		m_renderbackend(renderbackend),
 		m_font(0),
-		m_font_color(false),
+		m_fontColor(false),
 		m_background(false),
 		m_backborder(false) {
 		setEnabled(false);
@@ -59,9 +58,8 @@ namespace FIFE {
 
  	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
 		RendererBase(old),
-		m_renderbackend(old.m_renderbackend),
 		m_font(old.m_font),
-		m_font_color(old.m_font_color),
+		m_fontColor(old.m_fontColor),
 		m_color(old.m_color),
 		m_background(old.m_background),
 		m_backborder(old.m_backborder) {
@@ -75,6 +73,23 @@ namespace FIFE {
 	FloatingTextRenderer::~FloatingTextRenderer() {
 	}
 
+	FloatingTextRenderer* FloatingTextRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<FloatingTextRenderer*>(cnt->getRenderer("FloatingTextRenderer"));
+	}
+
+	void FloatingTextRenderer::removeActiveLayer(Layer* layer) {
+		RendererBase::removeActiveLayer(layer);
+		std::map<Layer*, std::map<Instance*, Data> >::iterator it = m_bufferMap.find(layer);
+		if (it != m_bufferMap.end()) {
+			m_bufferMap.erase(it);
+		}
+	}
+
+	void FloatingTextRenderer::clearActiveLayers() {
+		RendererBase::clearActiveLayers();
+		m_bufferMap.clear();
+	}
+
 	void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		if (!m_font) {
 			//no font selected.. nothing to render
@@ -82,11 +97,12 @@ namespace FIFE {
 		}
 
 		RenderList::const_iterator instance_it = instances.begin();
-		uint32_t lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
-		if(m_font_color) {
+		if(m_fontColor) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
 		}
+		std::map<Instance*, Data>& instanceMap = m_bufferMap[layer];
+		instanceMap.clear();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
 			const std::string* saytext = instance->getSayText();
@@ -105,35 +121,30 @@ namespace FIFE {
 					r.bottom() < 0 || r.y > static_cast<int32_t>(m_renderbackend->getHeight())) {
 					continue;
 				}
+
+				Data& data = instanceMap[instance];
+				data.image = img;
+				data.imageRec = r;
+
 				if(m_background || m_backborder) {
 					const int32_t overdraw = 5;
-
 					Point p = Point(r.x-overdraw, r.y-overdraw);
-
-					if(m_background) {
-						m_renderbackend->fillRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.a);
-					}
-
-					if(m_backborder) {
-						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.a);
-					}
-				}
-				img->render(r);
-				if(lm > 0) {
-					uint16_t elements = 1;
-					if (m_background) {
-						++elements;
-					}
-					if (m_backborder) {
-						++elements;
-					}
-					m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+					data.backgroundRec.x = p.x;
+					data.backgroundRec.y = p.y;
+					data.backgroundRec.w = r.w + 2 * overdraw;
+					data.backgroundRec.h = r.h + 2 * overdraw;
 				}
 			}
 		}
-		if(m_font_color) {
+		if(m_fontColor) {
 			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.a);
 		}
+		renderBuffer(layer);
+	}
+
+	void FloatingTextRenderer::setFont(IFont* font) {
+		m_font = font;
+		m_bufferMap.clear();
 	}
 
 	void FloatingTextRenderer::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -141,25 +152,23 @@ namespace FIFE {
 		m_color.g = g;
 		m_color.b = b;
 		m_color.a = a;
-
-		m_font_color = true;
+		m_fontColor = true;
+		m_bufferMap.clear();
 	}
 
-	void FloatingTextRenderer::setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba) {
-		m_backcolor.r = br;
-		m_backcolor.g = bg;
-		m_backcolor.b = bb;
-		m_backcolor.a = ba;
-
+	void FloatingTextRenderer::setBackground(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		m_backcolor.r = r;
+		m_backcolor.g = g;
+		m_backcolor.b = b;
+		m_backcolor.a = a;
 		m_background = true;
 	}
 
-	void FloatingTextRenderer::setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba) {
-		m_backbordercolor.r = bbr;
-		m_backbordercolor.g = bbg;
-		m_backbordercolor.b = bbb;
-		m_backbordercolor.a = bba;
-
+	void FloatingTextRenderer::setBorder(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		m_backbordercolor.r = r;
+		m_backbordercolor.g = g;
+		m_backbordercolor.b = b;
+		m_backbordercolor.a = a;
 		m_backborder = true;
 	}
 
@@ -171,7 +180,28 @@ namespace FIFE {
 		m_backborder = false;
 	}
 
-	FloatingTextRenderer* FloatingTextRenderer::getInstance(IRendererContainer* cnt) {
-		return dynamic_cast<FloatingTextRenderer*>(cnt->getRenderer("FloatingTextRenderer"));
+	void FloatingTextRenderer::renderBuffer(Layer* layer) {
+		std::map<Instance*, Data>& instanceMap = m_bufferMap[layer];
+		std::map<Instance*, Data>::iterator it = instanceMap.begin();
+		uint16_t elements = 0;
+		for (; it != instanceMap.end(); ++it) {
+			Data& data = (*it).second;
+			Rect& rec = data.backgroundRec;
+
+			if (m_background) {
+				m_renderbackend->fillRectangle(Point(rec.x, rec.y), rec.w, rec.h, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.a);
+				++elements;
+			}
+			if (m_backborder) {
+				m_renderbackend->drawRectangle(Point(rec.x, rec.y), rec.w, rec.h, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.a);
+				++elements;
+			}
+			rec = data.imageRec;
+			data.image->render(rec);
+			++elements;
+		}
+		if (m_renderbackend->getLightingModel() > 0) {
+			m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, elements, 4, 5, false, true, 255, REPLACE, ALWAYS);
+		}
 	}
 }

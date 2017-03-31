@@ -153,7 +153,7 @@ namespace FIFE {
 		
 		/** Activates all layers from given elevation
 		 */
-		void activateAllLayers(Map* elevation);
+		virtual void activateAllLayers(Map* elevation);
 		
 		/** Returns if given layer is currently activated
 		 */
