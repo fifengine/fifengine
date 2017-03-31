@@ -148,7 +148,7 @@ namespace FIFE {
 				return;
 			}
 		}
-		uint32_t index = 0;
+
 		std::vector<Point>& data = m_bufferMap[layer];
 		data.clear();
 		// fill buffer

@@ -87,26 +87,54 @@ namespace FIFE {
 		 *
 		 * @param font Pointer to the font
 		 */
-		void setFont(IFont* font) { m_font = font; }
+		void setFont(IFont* font);
 
 		/** Enables / disables zooming for coordinate images, by default it is enabled.
 		 */
-		void setZoom(bool enable) { m_zoom = enable; }
+		void setZoom(bool enable);
 
 		/** Gets instance for interface access.
 		 */
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
+		/** Enables renderer
+		 */
+		void setEnabled(bool enabled);
+
+		/** Removes active layer from renderer.
+		 *
+		 * @param layer The layer to be removed.
+		 */
+		void removeActiveLayer(Layer* layer);
+
+		/** Clears all active layers from renderer
+		 */
+		void clearActiveLayers();
+
 	private:
+		/** Prepares the used area.
+		 */
 		void adjustLayerArea();
 
-		Rect m_layer_area;
+		/** Sends the buffered data to the backend.
+		 *
+		 * @param layer Current layer to be rendered
+		 */
+		void renderBuffer(Layer* layer);
+
+		Rect m_layerArea;
 		Location m_tmploc;
 		ExactModelCoordinate m_c;
 		IFont* m_font;
-		bool m_font_color;
 		SDL_Color m_color;
 		bool m_zoom;
+
+		struct Data {
+			Rect rect;
+			Image* image;
+		};
+		//! Buffers the coordinate images per Layer.
+		std::map<Layer*, std::vector<Data> > m_bufferMap;
 	};
 }
 
