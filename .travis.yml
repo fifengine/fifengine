@@ -6,10 +6,12 @@ matrix:
       sudo: required
       dist: trusty
       compiler: clang
+      python: "3.4"
     - os: linux
       sudo: required
       dist: trusty
       compiler: gcc
+      python: "3.4"
     - os: osx
       compiler: clang
     - os: osx
@@ -72,7 +74,7 @@ install:
 
 script:
    - cd ..
-   - mkdir build; cd build; cmake ../fifengine
+   - mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine
    - ls -alh .
    - make -j2
    - sudo make install
