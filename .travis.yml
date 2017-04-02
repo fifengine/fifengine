@@ -61,7 +61,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
     # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis python3; fi
   - cmake --version
 
 install:
@@ -74,7 +74,8 @@ install:
 
 script:
    - cd ..
-   - mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine
+   - if [ $TRAVIS_OS_NAME == linux ]; mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine
+   - if [ $TRAVIS_OS_NAME == osx ]; mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/local/bin/python3 ../fifengine
    - ls -alh .
    - make -j2
    - sudo make install
