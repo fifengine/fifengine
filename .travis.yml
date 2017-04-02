@@ -67,7 +67,7 @@ before_install:
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
+    - mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan
     - make -j2
     - sudo make install
     - cd ..
