@@ -74,8 +74,8 @@ install:
 
 script:
    - cd ..
-   - if [ $TRAVIS_OS_NAME == linux ]; mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine; fi
-   - if [ $TRAVIS_OS_NAME == osx ]; mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/local/bin/python3 ../fifengine; fi
+   - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine; fi
+   - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/local/bin/python3 ../fifengine; fi
    - ls -alh .
    - make -j2
    - sudo make install
