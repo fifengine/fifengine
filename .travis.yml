@@ -35,7 +35,6 @@ addons:
     - libsdl2-image-dev
     - libsdl2-ttf-dev
     - libfreetype6-dev
-    - libxcursor-dev
     - libopenal-dev
     - libasound2-dev
     - zlib1g-dev
@@ -66,7 +65,7 @@ install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     - mkdir build_fifechan; cd build_fifechan; cmake ../fifechan
-    - make -j2
+    - make -j3
     - sudo make install
     - cd ..
 
@@ -74,7 +73,7 @@ script:
    - cd ..
    - mkdir build; cd build; cmake ../fifengine
    - ls -alh .
-   - make -j2
+   - make -j3
    - sudo make install
 
 after_script: 
