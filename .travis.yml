@@ -37,7 +37,6 @@ addons:
     - libsdl2-image-dev
     - libsdl2-ttf-dev
     - libfreetype6-dev
-    - libxcursor-dev
     - libopenal-dev
     - libasound2-dev
     - zlib1g-dev
@@ -68,7 +67,7 @@ install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
     - mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan
-    - make -j2
+    - make -j3
     - sudo make install
     - cd ..
 
@@ -77,7 +76,7 @@ script:
    - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../fifengine; fi
    - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/local/bin/python3 ../fifengine; fi
    - ls -alh .
-   - make -j2
+   - make -j3
    - sudo make install
 
 after_script: 
