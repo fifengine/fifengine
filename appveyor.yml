@@ -148,10 +148,10 @@ artifacts:
     name: Dependencies
   - path: 'libfife-*.zip'
     name: LibFife
-  - path: 'dist\libfife-*py2.7.msi'
-    name: Python27Installer
+  - path: 'dist\libfife-*py%PYTHON_VERSION%.msi'
+    name: Python%PYTHON_VERSION%Installer
   - path: 'dist\libfife-0.4.1.win32.zip'
-    name: Python27-zip
+    name: Python%PYTHON_VERSION%-zip
 
 # deploy to Github Releases on tag push
 deploy:
@@ -159,7 +159,7 @@ deploy:
   release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
-  artifact: Dependencies, LibFife, Python27Installer, Python27-zip
+  artifact: Dependencies, LibFife, Python%PYTHON_VERSION%Installer, Python%PYTHON_VERSION%-zip
   draft: false
   prerelease: false
   force_update: true               # overwrite files of existing release on GitHub
