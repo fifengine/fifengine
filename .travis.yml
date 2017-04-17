@@ -61,6 +61,7 @@ before_install:
     # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis python3; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then virtualenv env -p python3; source env/bin/activate; fi
   - cmake --version
 
 install:
@@ -75,7 +76,7 @@ install:
 script:
    - cd ..
    - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifengine; fi
-   - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 -DPYTHONLIBS=/usr/local/Cellar/python3 ../fifengine; fi
+   - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 ../fifengine; fi
    - ls -alh .
    - make -j3
    - sudo make install
