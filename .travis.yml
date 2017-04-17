@@ -66,7 +66,8 @@ before_install:
 install:
     - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
     # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    - mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan
+    - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan; fi
+    - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build_fifechan; cd build_fifechan; cmake ../fifechan; fi
     - make -j3
     - sudo make install
     - cd ..
