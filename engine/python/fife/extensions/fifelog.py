@@ -100,13 +100,13 @@ class LogManager(object):
 		"""
 		self.lm.clearVisibleModules()
 		self.addVisibleModules(*names)
-		
+
 	def setLevelFilter(self, fltr):
 		"""
 		Sets the minimum log level to view.
-		
+
 		@param fltr: The filter level
-		
+
 		Valid values:
 			- L{fife.LogManager.LEVEL_DEBUG}
 			- L{fife.LogManager.LEVEL_LOG}
@@ -117,10 +117,10 @@ class LogManager(object):
 
 	def setLogToPrompt(self, promptlog):
 		return self.lm.setLogToPrompt(promptlog)
-		
+
 	def getLogToPrompt(self):
 		return self.lm.isLogToPrompt()
-	
+
 	logToPrompt = property(getLogToPrompt, setLogToPrompt)
 
 	def setLogToFile(self, filelog):
@@ -130,13 +130,13 @@ class LogManager(object):
 		return self.lm.isLogToFile()
 
 	logToFile = property(getLogToFile, setLogToFile)
-		
+
 	def log_debug(self, message):
 		self.lm.log(0, self.name2mod["script"], message)
 
 	def log_log(self, message):
 		self.lm.log(1, self.name2mod["script"], message)
-		
+
 	def log_warn(self, message):
 		self.lm.log(2, self.name2mod["script"], message)
 
