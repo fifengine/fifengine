@@ -83,6 +83,7 @@ script:
 
 after_script: 
    - cd /home/travis/build/fifengine/fifengine
+   - python3 -c 'from fife import fife; print(fife.getVersion())'
    - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
    - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
 
