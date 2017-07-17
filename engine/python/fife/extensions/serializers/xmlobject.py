@@ -28,21 +28,21 @@ from builtins import object
 from fife import fife
 
 from fife.extensions.serializers import ET
-from fife.extensions.serializers import SerializerError, InvalidFormat 
+from fife.extensions.serializers import SerializerError, InvalidFormat
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class XMLObjectSaver(object):
 	""" The B{XMLObjectSaver} serializes a fife.Object instance by saving
 	it back to its XML file
-		
+
 	@note:
 		- this code does NOT allow the creation of a new xml file
 		- this code does NOT touch atlas or animation definitions
 		- this code does NOT allow saving to non-well-formed xml files
 		- this code DOES save blocking & static flag, as well as
 		  image offsets
-		
+
 	@type	engine:	fife
 	@ivar	engine:	pointer to initialized fife engine instance
 	@type	img_manager:	fife.ImageManager
@@ -59,7 +59,7 @@ class XMLObjectSaver(object):
 	PROCESSING_INSTRUCTION = '<?fife type="object"?>'
 	def __init__(self, engine, debug=False, compat=True):
 		"""
-		
+
 		@type	engine:	fife
 		@param	engine:	intialized fife engine
 		"""
@@ -69,10 +69,10 @@ class XMLObjectSaver(object):
 		self.img_manager = engine.getImageManager()
 		self.vfs = self.engine.getVFS()
 		self.change = False
-		
+
 	def save(self, object):
 		""" saves the data of a fife.Object to its xml file
-		
+
 		@type	object:	fife.Object
 		@param	object:	the object which should be saved
 		@rtype	bool
@@ -80,7 +80,7 @@ class XMLObjectSaver(object):
 		"""
 		self.change = False
 		result = False
-		
+
 		file = object.getFilename()
 		if not file:
 			raise SerializerError("Object cannot be saved, no file found %s" % object)
@@ -94,11 +94,11 @@ class XMLObjectSaver(object):
 		file_handle.thisown = 1
 		tree = ET.parse(file_handle)
 		root = tree.getroot()
-		
+
 		object_id = object.getId()
 		blocking = object.isBlocking()
 		static = object.isStatic()
-		
+
 		cost_id = object.getCostId()
 		cost = object.getCost()
 		cellstack_pos = object.getCellStackPosition()
@@ -112,7 +112,7 @@ class XMLObjectSaver(object):
 			print("\tstatic", static)
 			print("\tcost id", cost_id)
 			print("\tcost", cost)
-		
+
 		# check for compat mode
 		if root.tag != 'assets':
 			self.compat = True
@@ -121,16 +121,16 @@ class XMLObjectSaver(object):
 		if self.compat:
 			objects = [root,]
 		# new XML structure has tree root <assets> which groups multiple objects
-		else:		
+		else:
 			objects = root.findall("object")
-		
+
 		for obj in objects:
 			_id = obj.get("id")
-			if _id != object_id: 
+			if _id != object_id:
 				if self.debug:
-					print("...ommitting object %s " % _id)			
+					print("...ommitting object %s " % _id)
 				continue
-			
+
 			if int(obj.attrib['blocking']) != int(blocking):
 				self.change = True
 			if int(obj.attrib['static']) != int(static):
@@ -147,45 +147,45 @@ class XMLObjectSaver(object):
 			obj.attrib['cost_id'] = str(cost_id)
 			obj.attrib['cost'] = str(cost)
 			obj.attrib['cellstack_position'] = str(cellstack_pos)
-			
+
 			if self.debug and self.change:
 				print("\tSet new data in xml tree: ")
 				print("\t\tblocking: ", obj.attrib['blocking'])
 				print("\t\tstatic: ", obj.attrib['static'])
-			
+
 			images = obj.findall("image")
 			actions = obj.findall("action")
-			
+
 			if self.debug:
 				print("\tAttempting to save image data: ")
 				print("\t...found these image elements: ")
 				print("\t", images)
 				print("object dump: ")
 				print(ET.dump(obj))
-			
+
 			self.save_images(images, object)
 			self.save_actions(actions, object)
-			
+
 		if not self.change:
-			return result			
-			
+			return result
+
 		xmlcontent = ET.tostring(root)
-		
+
 		if self.debug:
 			print("XML tree dump: (post-manipulation)")
-			ET.dump(root)			
+			ET.dump(root)
 
 		# save xml data beneath the <?fife type="object"?> definition into the object file
-		file = open(file, 'w')		
+		file = open(file, 'w')
 		file.write(XMLObjectSaver.PROCESSING_INSTRUCTION+'\n')
 		file.write(xmlcontent + "\n")
 		file.close()
-		result = True		
+		result = True
 		return result
-		
+
 	def save_actions(self, actions, object):
-		""" save action definitions 
-		
+		""" save action definitions
+
 		@type	actions:	list
 		@param	actions:	list of <action> elements
 		@type	object:	fife.Object
@@ -195,29 +195,29 @@ class XMLObjectSaver(object):
 			# new xml format uses this, we only save the new format
 			if 'animation_id' not in element.attrib:
 				break
-				
+
 			animation_id = element.attrib['animation_id']
 			self.save_animation(animation_id, object)
-			
+
 	def save_animation(self, animation_id, object):
-		""" save animation definitions for the given id 
-		
+		""" save animation definitions for the given id
+
 		@type	animation_id:	str
 		@param	animation_id:	id of the animation data structure
 		@type	object:	fife.Object
 		@param	object:	the object which should be saved
 		"""
 		pass
-			
+
 	def save_images(self, images, object):
 		"""	save image definitions
-		
+
 		@type	images:	list
 		@param	images:	list of <image> elements
 		@type	object:	fife.Object
 		@param	object:	the object which should be saved
 		"""
-		visual = object.get2dGfxVisual()			
+		visual = object.get2dGfxVisual()
 		angles = visual.getStaticImageAngles()
 		if self.debug:
 			print("\t\tobject angles: ", angles)
@@ -225,17 +225,17 @@ class XMLObjectSaver(object):
 		for element in images:
 			angle = int(element.get("direction"))
 			if angle not in angles: continue
-			
+
 			index = visual.getStaticImageIndexByAngle(angle)
 			image = self.img_manager.get(index)
 			x_offset = image.getXShift()
 			y_offset = image.getYShift()
-			
+
 			if 'x_offset' not in element.attrib or int(element.attrib['x_offset']) != x_offset:
 				self.change = True
 			if 'y_offset' not in element.attrib or int(element.attrib['y_offset']) != y_offset:
 				self.change = True
-			
+
 			element.attrib['x_offset'] = str(x_offset)
 			element.attrib['y_offset'] = str(y_offset)
 
@@ -246,11 +246,11 @@ class XMLObjectSaver(object):
 
 class XMLObjectLoader(object):
 	"""
-	
+
 	"""
 	def __init__(self, engine):
 		"""
-		
+
 		"""
 		self.engine = engine
 		self.imgMgr = engine.getImageManager()
@@ -262,7 +262,7 @@ class XMLObjectLoader(object):
 
 	def loadResource(self, location):
 		"""
-		
+
 		"""
 		self.source = location
 		self.filename = self.source
@@ -280,13 +280,13 @@ class XMLObjectLoader(object):
 				s = f.readString(len(obj_identifier))
 			except fife.IndexOverflow:
 				isobjectfile = False
-				
+
 			if isobjectfile and not s.startswith(obj_identifier):
 				isobjectfile = False
 
 			if not isobjectfile:
 				return
-				
+
 				# this will never be hit currently, if this is put before the return it can provide useful debugging
 				# but animation.xml files will raise this exception because apparently they come through here first
 				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
@@ -295,7 +295,7 @@ class XMLObjectLoader(object):
 
 	def do_load_resource(self, file):
 		"""
-		
+
 		"""
 		if file:
 			tree = ET.parse(file)
@@ -304,7 +304,7 @@ class XMLObjectLoader(object):
 
 	def parse_object(self, object):
 		"""
-		
+
 		"""
 		if self.node.tag != 'object':
 			raise InvalidFormat('Expected <object> tag, but found <%s>.' % self.node.tag)
@@ -349,7 +349,7 @@ class XMLObjectLoader(object):
 
 	def parse_images(self, objelt, object):
 		"""
-		
+
 		"""
 		for image in objelt.findall('image'):
 			source = image.get('source')
@@ -364,12 +364,12 @@ class XMLObjectLoader(object):
 			img = self.imgMgr.create('/'.join(path))
 			img.setXShift(int( image.get('x_offset', 0) ))
 			img.setYShift(int( image.get('y_offset', 0) ))
-			
+
 			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), img.getHandle())
 
 	def parse_actions(self, objelt, object):
 		"""
-		
+
 		"""
 		for action in objelt.findall('action'):
 			id = action.get('id')
@@ -382,7 +382,7 @@ class XMLObjectLoader(object):
 
 	def parse_animations(self, actelt, action):
 		"""
-		
+
 		"""
 		pass
 		for anim in actelt.findall('animation'):

@@ -76,38 +76,38 @@ class ApplicationBase(object):
 			self._setting =  Setting(app_name="", settings_file="./settings.xml")
 
 		self.engine = fife.Engine()
-		
+
 		self.initLogging()
 		self.loadSettings()
-		
+
 		self.engine.init()
-		
+
 		"""
 		we are giving users a valid screen resolution option that is supported
 		"""
-		screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes() 
+		screen_modes = self.engine.getDeviceCaps().getSupportedScreenModes()
 		resolutions = list(set([(mode.getWidth(), mode.getHeight())
 		for mode in screen_modes]))
-		
-		resolutions = ["{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]] 
+
+		resolutions = ["{0}x{1}".format(item[0], item[1]) for item in sorted(resolutions)[1:]]
 		self._setting.setValidResolutions(resolutions)
 
 		self.quitRequested = False
 		self.breakRequested = False
 		self.returnValues = []
-		
+
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.
 		Called in the ApplicationBase constructor.
 		"""
 
-		
+
 		# get finalSetting (from the xml file, or if absent the default value)
 		self._finalSetting = self._setting.getSettingsFromFile("FIFE", self._log)
-		
+
 		engineSetting = self.engine.getSettings()
-		
+
 		engineSetting.setDefaultFontGlyphs(self._finalSetting['FontGlyphs'])
 		engineSetting.setDefaultFontPath(self._finalSetting['Font'])
 		engineSetting.setDefaultFontSize(self._finalSetting['DefaultFontSize'])
@@ -158,7 +158,7 @@ class ApplicationBase(object):
 			engineSetting.setWindowIcon(self._finalSetting['WindowIcon'])
 		except:
 			pass
-			
+
 		try:
 			engineSetting.setFrameLimitEnabled(self._finalSetting['FrameLimitEnabled'])
 			engineSetting.setFrameLimit(self._finalSetting['FrameLimit'])
@@ -174,8 +174,8 @@ class ApplicationBase(object):
 			engineSetting.setMouseAccelerationEnabled(self._finalSetting['MouseAcceleration'])
 		except:
 			pass
-		
-		
+
+
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
