@@ -34,11 +34,11 @@ from traceback import print_exc
 
 def get_manager():
     """
-	Get the manager from inside pychan.
+    Get the manager from inside pychan.
 
-	To avoid cyclic imports write::
-	   from internal import get_manager
-	"""
+    To avoid cyclic imports write::
+       from internal import get_manager
+    """
     return Manager.manager
 
 
@@ -92,37 +92,37 @@ class Manager(object):
 
     def addWidget(self, widget):
         """
-		Adds Widget to the manager. So the manager "owns" the Widget.
-		Note: As long as the wiget is in self.allWidgets the Python
-		GC can not free it.
-		"""
+        Adds Widget to the manager. So the manager "owns" the Widget.
+        Note: As long as the wiget is in self.allWidgets the Python
+        GC can not free it.
+        """
         if not widget._added:
             widget._added = True
             self.allWidgets.add(widget)
 
     def removeWidget(self, widget):
         """
-		Removes Widget from the manager.
-		Note: As long as the wiget is in self.allWidgets the Python
-		GC can not free it.
-		"""
+        Removes Widget from the manager.
+        Note: As long as the wiget is in self.allWidgets the Python
+        GC can not free it.
+        """
         if widget._added:
             widget._added = False
             self.allWidgets.remove(widget)
 
     def setupModalExecution(self, mainLoop, breakFromMainLoop):
         """
-		Setup synchronous execution of dialogs.
-		"""
+        Setup synchronous execution of dialogs.
+        """
         self.mainLoop = mainLoop
         self.breakFromMainLoop = breakFromMainLoop
         self.can_execute = True
 
     def addTopWidget(self, widget):
         """
-		Adds a top hierachy widget to Fifechan and place it on the screen.
-		Used by L{Widget.show} - do not use directly.
-		"""
+        Adds a top hierachy widget to Fifechan and place it on the screen.
+        Used by L{Widget.show} - do not use directly.
+        """
         if not widget._top_added:
             assert widget not in self.allTopHierachyWidgets
             widget._top_added = True
@@ -131,9 +131,9 @@ class Manager(object):
 
     def removeTopWidget(self, widget):
         """
-		Removes a top hierachy widget from Fifechan.
-		Used by L{Widget.hide} - do not use directly.
-		"""
+        Removes a top hierachy widget from Fifechan.
+        Used by L{Widget.hide} - do not use directly.
+        """
         if widget._top_added:
             assert widget in self.allTopHierachyWidgets
             widget._top_added = False
@@ -142,14 +142,14 @@ class Manager(object):
 
     def getConsole(self):
         """
-		Gets a reference to the console
-		"""
+        Gets a reference to the console
+        """
         return self.hook.console
 
     def getDefaultFont(self):
         """
-		Returns the default font
-		"""
+        Returns the default font
+        """
         return self.fonts['default']
 
     def setDefaultFont(self, name):
@@ -157,12 +157,12 @@ class Manager(object):
 
     def getFont(self, name):
         """
-		B{pending deprecation}
+        B{pending deprecation}
 
-		Returns a GuiFont identified by its name.
+        Returns a GuiFont identified by its name.
 
-		@param name: A string identifier from the font definitions in pychans config files.
-		"""
+        @param name: A string identifier from the font definitions in pychans config files.
+        """
         if in_fife:
             font = self.fonts.get(name)
             if isinstance(font, fife.GuiFont):
@@ -178,17 +178,17 @@ class Manager(object):
 
     def createFont(self, path="", size=0, glyphs=""):
         """
-		Creates and returns a GuiFont from the GUI Manager
-		"""
+        Creates and returns a GuiFont from the GUI Manager
+        """
         return self.hook.create_font(path, size, glyphs)
 
     def releaseFont(self, font):
         """
-		Releases a font from memory.  Expects a fifechan.GuiFont. 
-		
-		@todo: This needs to be tested.  Also should add a way to release
-		a font by name (fonts.Font).
-		"""
+        Releases a font from memory.  Expects a fifechan.GuiFont.
+
+        @todo: This needs to be tested.  Also should add a way to release
+        a font by name (fonts.Font).
+        """
         if not isinstance(font, fifechan.GuiFont):
             raise InitializationError(
                 "PyChan Manager expected a fifechan.GuiFont instance, not %s."
@@ -197,14 +197,14 @@ class Manager(object):
 
     def addFont(self, font):
         """
-		B{deprecated}
+        B{deprecated}
 
-		Add a font to the font registry. It's not necessary to call this directly.
-		But it expects a L{fonts.Font} instance and throws an L{InitializationError}
-		otherwise.
+        Add a font to the font registry. It's not necessary to call this directly.
+        But it expects a L{fonts.Font} instance and throws an L{InitializationError}
+        otherwise.
 
-		@param font: A L{fonts.Font} instance.
-		"""
+        @param font: A L{fonts.Font} instance.
+        """
         if not isinstance(font, fonts.Font):
             raise InitializationError(
                 "PyChan Manager expected a fonts.Font instance, not %s." %
@@ -235,8 +235,8 @@ class Manager(object):
 
     def _remapStyleKeys(self, style):
         """
-		Translate style selectors to tuples of widget classes. (internal)
-		"""
+        Translate style selectors to tuples of widget classes. (internal)
+        """
 
         # Remap class names, create copy:
         def _toClass(class_):

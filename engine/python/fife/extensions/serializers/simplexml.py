@@ -42,9 +42,9 @@ EMPTY_XML_FILE = """\
 
 class SimpleSerializer(object):
     """
-	Use this as a base class for custom setting loaders/savers to use with the 
-	Setting class.
-	"""
+    Use this as a base class for custom setting loaders/savers to use with the
+    Setting class.
+    """
 
     def __init__(self, filename=None):
         pass
@@ -60,9 +60,9 @@ class SimpleSerializer(object):
 
     def load(self, filename=None):
         """
-		@note: If the filename specified is empty this function MUST 
-		initialize an empty settings file in whatever format you need.
-		"""
+        @note: If the filename specified is empty this function MUST
+        initialize an empty settings file in whatever format you need.
+        """
         pass
 
     def save(self, filename=None):
@@ -70,30 +70,30 @@ class SimpleSerializer(object):
 
     def getModuleNameList(self):
         """
-		@note: Returns all the module names that are present in the 
-		settings.xml file as a list of strings
-		"""
+        @note: Returns all the module names that are present in the
+        settings.xml file as a list of strings
+        """
         pass
 
     def getAllSettings(self, module):
         """
-		@note: Returns all the setting names and values under the Module name
-		module as a	dictionary structure
-		"""
+        @note: Returns all the setting names and values under the Module name
+        module as a	dictionary structure
+        """
         pass
 
 
 class SimpleXMLSerializer(SimpleSerializer):
     """
-	This class is a simple interface to get and store data in XML files.
+    This class is a simple interface to get and store data in XML files.
 
-	Usage::
-		from fife.extensions.serializers.simplexml import SimpleXMLSerializer
-		serializer = SimpleXMLSerializer(filename="somefile.xml")
-		serializer.set("module_name", "variable_name", "value")
-		somevariable = serializer.get("module_name", "variable_name", \
-									  "default_value")
-	"""
+    Usage::
+        from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+        serializer = SimpleXMLSerializer(filename="somefile.xml")
+        serializer.set("module_name", "variable_name", "value")
+        somevariable = serializer.get("module_name", "variable_name", \
+                                      "default_value")
+    """
 
     def __init__(self, filename=None):
         self._file = filename
@@ -104,16 +104,16 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def load(self, filename=None):
         """
-		Loads the XML file into memory and validates it.
-		
-		Raises a SerializerError exception if the file is not specified.
-		
-		@param filename: The file to load
-		@type filename: C{str}
-		
-		@note: If the file does not exist it will automatically create a blank
-		file for you.
-		"""
+        Loads the XML file into memory and validates it.
+
+        Raises a SerializerError exception if the file is not specified.
+
+        @param filename: The file to load
+        @type filename: C{str}
+
+        @note: If the file does not exist it will automatically create a blank
+        file for you.
+        """
         if filename:
             self._file = filename
 
@@ -135,13 +135,13 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def save(self, filename=None):
         """
-		Saves the XML file.
-		
-		@param filename: The file to save
-		@type filename: C{str}
-		
-		@note: This Overwrites the file if it exists.
-		"""
+        Saves the XML file.
+
+        @param filename: The file to save
+        @type filename: C{str}
+
+        @note: This Overwrites the file if it exists.
+        """
         if not self._initialized:
             self.load()
             self._initialized = True
@@ -182,13 +182,13 @@ class SimpleXMLSerializer(SimpleSerializer):
     def get(self, module, name, defaultValue=None):
         """ Gets the value of a specified variable
 
-		@param module: Name of the module to get the variable from
-		@param name: Variable name
-		@param defaultValue: Specifies the default value to return if the 
-		variable is not found
-		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or 
-		C{bool} or C{list} or C{dict}
-		"""
+        @param module: Name of the module to get the variable from
+        @param name: Variable name
+        @param defaultValue: Specifies the default value to return if the
+        variable is not found
+        @type defaultValue: C{str} or C{unicode} or C{int} or C{float} or
+        C{bool} or C{list} or C{dict}
+        """
         if not self._initialized:
             self.load()
             self._initialized = True
@@ -233,16 +233,16 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def set(self, module, name, value, extra_attrs={}):
         """
-		Sets a variable to specified value.
+        Sets a variable to specified value.
 
-		@param module: Module where the variable should be set
-		@param name: Name of the variable
-		@param value: Value to assign to the variable
-		@type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or 
-		C{list} or C{dict}
-		@param extra_attrs: Extra attributes to be stored in the XML-file
-		@type extra_attrs: C{dict}
-		"""
+        @param module: Module where the variable should be set
+        @param name: Name of the variable
+        @param value: Value to assign to the variable
+        @type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or
+        C{list} or C{dict}
+        @param extra_attrs: Extra attributes to be stored in the XML-file
+        @type extra_attrs: C{dict}
+        """
         if not self._initialized:
             self.load()
             self._initialized = True
@@ -291,11 +291,11 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def remove(self, module, name):
         """
-		Removes a variable
+        Removes a variable
 
-		@param module: Module where the variable should be set
-		@param name: Name of the variable
-		"""
+        @param module: Module where the variable should be set
+        @param name: Name of the variable
+        """
         if not self._initialized:
             self.load()
             self._initialized = True
@@ -313,8 +313,8 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def getModuleNameList(self):
         """
-		@return A list of the names of the modules in the XML file as strings.
-		"""
+        @return A list of the names of the modules in the XML file as strings.
+        """
 
         # Make sure the file has been loaded, if not load it.
         if not self._initialized:
@@ -380,11 +380,11 @@ class SimpleXMLSerializer(SimpleSerializer):
         return settingsFromFile
 
     def _validateTree(self):
-        """ 
-		Iterates the XML tree and prints warning when an invalid tag is found.
-		
-		Raises an InvalidFormat exception if there is a format error.
-		"""
+        """
+        Iterates the XML tree and prints warning when an invalid tag is found.
+
+        Raises an InvalidFormat exception if there is a format error.
+        """
         for c in self._root_element.getchildren():
             if c.tag != "Module":
                 raise InvalidFormat("Invalid tag in " + self._file + \
@@ -406,12 +406,12 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def _getModuleTree(self, module):
         """
-		Returns a module element from the XML tree. If no module with the 
-		specified name exists, a new element will be created.
+        Returns a module element from the XML tree. If no module with the
+        specified name exists, a new element will be created.
 
-		@param module: The module to get from the settings tree
-		@type module: C{string}
-		"""
+        @param module: The module to get from the settings tree
+        @type module: C{string}
+        """
         if not isinstance(module, basestring):
             raise AttributeError("Settings:_getModuleTree: Invalid type for "
                                  "module argument.")
@@ -425,9 +425,9 @@ class SimpleXMLSerializer(SimpleSerializer):
 
     def _indent(self, elem, level=0):
         """
-		Adds whitespace, so the resulting XML-file is properly indented.
-		Shamelessly stolen from http://effbot.org/zone/element-lib.htm
-		"""
+        Adds whitespace, so the resulting XML-file is properly indented.
+        Shamelessly stolen from http://effbot.org/zone/element-lib.htm
+        """
         i = os.linesep + level * "  "
         if len(elem):
             if not elem.text or not elem.text.strip():

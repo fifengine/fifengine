@@ -33,16 +33,16 @@ from .widget import Widget
 
 class Icon(Widget):
     """
-	An image icon.
+    An image icon.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
-	  - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
-	  - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
-	  - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
-	"""
+      - image: String or GuiImage: The source location of the Image or a direct GuiImage
+      - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
+      - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
+      - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
+    """
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr('image'),
         BoolAttr('scale'),

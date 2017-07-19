@@ -65,7 +65,7 @@ classes = [
 
 def createProperties():
     """ Autocreate properties for getXYZ/setXYZ functions.
-	"""
+    """
     try:
         import inspect
         getargspec = inspect.getargspec

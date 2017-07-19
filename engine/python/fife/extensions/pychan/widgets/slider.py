@@ -32,20 +32,20 @@ from .widget import Widget
 class Slider(Widget):
     """ A slider widget
 
-	Use a callback to read out the slider value every time the marker
-	is moved.
+    Use a callback to read out the slider value every time the marker
+    is moved.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - orientation: 1 = horizontal, 0=vertical
-	  - scale_start: float: default 0.0
-	  - scale_end: float: default 1.0
-	  - step_length: float: default scale_end/10
-	  - marker_length: int: default 10
-	FIXME:
-		- update docstrings
-	"""
+      - orientation: 1 = horizontal, 0=vertical
+      - scale_start: float: default 0.0
+      - scale_end: float: default 1.0
+      - step_length: float: default scale_end/10
+      - marker_length: int: default 10
+    FIXME:
+        - update docstrings
+    """
 
     HORIZONTAL = fifechan.Slider.Horizontal
     VERTICAL = fifechan.Slider.Vertical

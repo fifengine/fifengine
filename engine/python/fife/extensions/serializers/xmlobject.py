@@ -34,36 +34,36 @@ from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class XMLObjectSaver(object):
     """ The B{XMLObjectSaver} serializes a fife.Object instance by saving
-	it back to its XML file
+    it back to its XML file
 
-	@note:
-		- this code does NOT allow the creation of a new xml file
-		- this code does NOT touch atlas or animation definitions
-		- this code does NOT allow saving to non-well-formed xml files
-		- this code DOES save blocking & static flag, as well as
-		  image offsets
+    @note:
+        - this code does NOT allow the creation of a new xml file
+        - this code does NOT touch atlas or animation definitions
+        - this code does NOT allow saving to non-well-formed xml files
+        - this code DOES save blocking & static flag, as well as
+          image offsets
 
-	@type	engine:	fife
-	@ivar	engine:	pointer to initialized fife engine instance
-	@type	img_manager:	fife.ImageManager
-	@ivar	img_manager:	pointer to fife image manager
-	@type	compat:	bool
-	@ivar	compat:	flag to either use outdated xml definitions or new approach
-	@type	debug:	bool
-	@ivar	debug:	flag to activate/deactivate debug output
-	@type	vfs:	fife.VFS
-	@ivar	vfs:	pointer to fife vfs
-	@type	change:	bool
-	@ivar	change:	flag if object data differs from file data
-	"""
+    @type	engine:	fife
+    @ivar	engine:	pointer to initialized fife engine instance
+    @type	img_manager:	fife.ImageManager
+    @ivar	img_manager:	pointer to fife image manager
+    @type	compat:	bool
+    @ivar	compat:	flag to either use outdated xml definitions or new approach
+    @type	debug:	bool
+    @ivar	debug:	flag to activate/deactivate debug output
+    @type	vfs:	fife.VFS
+    @ivar	vfs:	pointer to fife vfs
+    @type	change:	bool
+    @ivar	change:	flag if object data differs from file data
+    """
     PROCESSING_INSTRUCTION = '<?fife type="object"?>'
 
     def __init__(self, engine, debug=False, compat=True):
         """
 
-		@type	engine:	fife
-		@param	engine:	intialized fife engine
-		"""
+        @type	engine:	fife
+        @param	engine:	intialized fife engine
+        """
         self.compat = compat
         self.debug = debug
         self.engine = engine
@@ -74,11 +74,11 @@ class XMLObjectSaver(object):
     def save(self, object):
         """ saves the data of a fife.Object to its xml file
 
-		@type	object:	fife.Object
-		@param	object:	the object which should be saved
-		@rtype	bool
-		@return	flag whether the saving was successful or not
-		"""
+        @type	object:	fife.Object
+        @param	object:	the object which should be saved
+        @rtype	bool
+        @return	flag whether the saving was successful or not
+        """
         self.change = False
         result = False
 
@@ -190,11 +190,11 @@ class XMLObjectSaver(object):
     def save_actions(self, actions, object):
         """ save action definitions
 
-		@type	actions:	list
-		@param	actions:	list of <action> elements
-		@type	object:	fife.Object
-		@param	object:	the object which should be saved
-		"""
+        @type	actions:	list
+        @param	actions:	list of <action> elements
+        @type	object:	fife.Object
+        @param	object:	the object which should be saved
+        """
         for element in actions:
             # new xml format uses this, we only save the new format
             if 'animation_id' not in element.attrib:
@@ -206,21 +206,21 @@ class XMLObjectSaver(object):
     def save_animation(self, animation_id, object):
         """ save animation definitions for the given id
 
-		@type	animation_id:	str
-		@param	animation_id:	id of the animation data structure
-		@type	object:	fife.Object
-		@param	object:	the object which should be saved
-		"""
+        @type	animation_id:	str
+        @param	animation_id:	id of the animation data structure
+        @type	object:	fife.Object
+        @param	object:	the object which should be saved
+        """
         pass
 
     def save_images(self, images, object):
         """	save image definitions
 
-		@type	images:	list
-		@param	images:	list of <image> elements
-		@type	object:	fife.Object
-		@param	object:	the object which should be saved
-		"""
+        @type	images:	list
+        @param	images:	list of <image> elements
+        @type	object:	fife.Object
+        @param	object:	the object which should be saved
+        """
         visual = object.get2dGfxVisual()
         angles = visual.getStaticImageAngles()
         if self.debug:
@@ -254,12 +254,12 @@ class XMLObjectSaver(object):
 class XMLObjectLoader(object):
     """
 
-	"""
+    """
 
     def __init__(self, engine):
         """
 
-		"""
+        """
         self.engine = engine
         self.imgMgr = engine.getImageManager()
         self.anim_pool = None
@@ -271,7 +271,7 @@ class XMLObjectLoader(object):
     def loadResource(self, location):
         """
 
-		"""
+        """
         self.source = location
         self.filename = self.source
         self.node = None
@@ -306,7 +306,7 @@ class XMLObjectLoader(object):
     def do_load_resource(self, file):
         """
 
-		"""
+        """
         if file:
             tree = ET.parse(file)
             self.node = tree.getroot()
@@ -315,7 +315,7 @@ class XMLObjectLoader(object):
     def parse_object(self, object):
         """
 
-		"""
+        """
         if self.node.tag != 'object':
             raise InvalidFormat(
                 'Expected <object> tag, but found <%s>.' % self.node.tag)
@@ -367,7 +367,7 @@ class XMLObjectLoader(object):
     def parse_images(self, objelt, object):
         """
 
-		"""
+        """
         for image in objelt.findall('image'):
             source = image.get('source')
             if not source:
@@ -389,7 +389,7 @@ class XMLObjectLoader(object):
     def parse_actions(self, objelt, object):
         """
 
-		"""
+        """
         for action in objelt.findall('action'):
             id = action.get('id')
             if not id:
@@ -403,7 +403,7 @@ class XMLObjectLoader(object):
     def parse_animations(self, actelt, action):
         """
 
-		"""
+        """
         pass
         for anim in actelt.findall('animation'):
             source = anim.get('source')

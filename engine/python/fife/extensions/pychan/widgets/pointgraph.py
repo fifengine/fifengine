@@ -34,13 +34,13 @@ from .widget import Widget
 class PointGraph(Widget):
     """ A point graph widget
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - coordinates: int list: x and y coordinates
-	  - thickness': int: Line thickness, default 1
-	  - opaque: bool: default False
-	"""
+      - coordinates: int list: x and y coordinates
+      - thickness': int: Line thickness, default 1
+      - opaque: bool: default False
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         IntListAttr('coordinates'),

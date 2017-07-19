@@ -179,11 +179,11 @@ class OverlayTest(test.Test):
 
     def loadMap(self, filename):
         """
-		Simple function to load and display a map file. We could of course
-		have passed in the map filename but I'll leave that up to you.
+        Simple function to load and display a map file. We could of course
+        have passed in the map filename but I'll leave that up to you.
 
-		@param filename The filename.
-		"""
+        @param filename The filename.
+        """
 
         self._mapfilename = filename
 
@@ -399,11 +399,11 @@ class OverlayTest(test.Test):
 
     def getLocationAt(self, screenpoint):
         """
-		Query the main camera for the Map location (on the actor layer)
-		that a screen point refers to.
+        Query the main camera for the Map location (on the actor layer)
+        that a screen point refers to.
 
-		@param screenpoint A fife.ScreenPoint
-		"""
+        @param screenpoint A fife.ScreenPoint
+        """
 
         target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
         target_mapcoord.z = 0
@@ -413,9 +413,9 @@ class OverlayTest(test.Test):
 
     def movePlayer(self, screenpoint):
         """
-		Simple function that moves the player instance to the given screenpoint.
+        Simple function that moves the player instance to the given screenpoint.
 
-		@param screenpoint A fife.ScreenPoint
-		"""
+        @param screenpoint A fife.ScreenPoint
+        """
 
         self._player.move('walk', self.getLocationAt(screenpoint), 4.0)

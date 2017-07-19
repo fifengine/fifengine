@@ -32,13 +32,13 @@ from .widget import Widget
 class PercentageBar(Widget):
     """ A percentage bar widget
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - orientation: 1 = horizontal, 0=vertical
-	  - value: int: default 0
+      - orientation: 1 = horizontal, 0=vertical
+      - value: int: default 0
 
-	"""
+    """
 
     HORIZONTAL = fifechan.PercentageBar.HORIZONTAL
     VERTICAL = fifechan.PercentageBar.VERTICAL

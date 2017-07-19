@@ -33,22 +33,22 @@ from .widget import Widget
 
 class DropDown(Widget):
     """
-	A dropdown or combo box widget for selecting lists of strings.
+    A dropdown or combo box widget for selecting lists of strings.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - items: A List of strings. This can be treated like an ordinary python list.
-	    but only strings are allowed.
-	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
-	    A negative value indicates, that no item is selected.
-	  - selected_item: The selected string itself, or C{None} - if no string is selected.
+      - items: A List of strings. This can be treated like an ordinary python list.
+        but only strings are allowed.
+      - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
+        A negative value indicates, that no item is selected.
+      - selected_item: The selected string itself, or C{None} - if no string is selected.
 
-	Data
-	====
-	The selected attribute can be read and set via L{distributeData} and L{collectData}.
-	The list items can be set via L{distributeInitialData}.
-	"""
+    Data
+    ====
+    The selected attribute can be read and set via L{distributeData} and L{collectData}.
+    The list items can be set via L{distributeInitialData}.
+    """
 
     DEFAULT_ITEMS = []
 

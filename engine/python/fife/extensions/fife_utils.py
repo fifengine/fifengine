@@ -32,14 +32,14 @@ _exc_re = re.compile(r'_\[(\w+)\]_')
 
 def is_fife_exc(type, original_exc):
     """ Checks if an exception is of given type.
-	Example::
-		try:
-			obj = self.model.createObject(str(id), str(nspace), parent)
-		except RuntimeError, e:
-			if is_fife_exc(fife.NameClash, e):
-				raise NameClash('Tried to create already existing object, ignoring')
-			raise
-	"""
+    Example::
+        try:
+            obj = self.model.createObject(str(id), str(nspace), parent)
+        except RuntimeError, e:
+            if is_fife_exc(fife.NameClash, e):
+                raise NameClash('Tried to create already existing object, ignoring')
+            raise
+    """
     ret = False
     m = _exc_re.search(str(original_exc))
     if m:
@@ -51,13 +51,13 @@ def is_fife_exc(type, original_exc):
 def getUserDataDirectory(vendor, appname):
     """ Gets the proper location to save configuration and data files, depending on depending on OS.
 
-	Windows: %APPDATA%\vendor\appname
-	Mac: ~/Library/Application Support/vendor/appname
-	Linux/Unix/Other: ~/.vendor/appname
+    Windows: %APPDATA%\vendor\appname
+    Mac: ~/Library/Application Support/vendor/appname
+    Linux/Unix/Other: ~/.vendor/appname
 
-	See:
-	Brian Vanderburg II @ http://mail.python.org/pipermail/python-list/2008-May/660779.html
-	"""
+    See:
+    Brian Vanderburg II @ http://mail.python.org/pipermail/python-list/2008-May/660779.html
+    """
     dir = None
 
     # WINDOWS

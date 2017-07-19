@@ -36,22 +36,22 @@ from .widget import Widget
 
 class Container(Widget):
     """
-	This is the basic container class. It provides space in which child widgets can
-	be position via the position attribute. If you want to use the layout engine,
-	you have to use derived containers with vertical or horizontal orientation
-	(L{VBox} or L{HBox})
+    This is the basic container class. It provides space in which child widgets can
+    be position via the position attribute. If you want to use the layout engine,
+    you have to use derived containers with vertical or horizontal orientation
+    (L{VBox} or L{HBox})
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - background_image - Set this to a GuiImage or a resource location (simply a filename).
-	    The image will be tiled over the background area.
-	  - opaque - Boolean: Whether the background should be drawn at all. Set this to False
-	    to make the widget transparent.
-	  - spacing - Set the vertical and horizontal spacing between the childs.
-	  - uniform_size - Boolean: If true, the free space is distributed in a way that the size of the
-	    childrens will be equal (if possible), otherwise the free space will evenly distributed.
-	"""
+      - background_image - Set this to a GuiImage or a resource location (simply a filename).
+        The image will be tiled over the background area.
+      - opaque - Boolean: Whether the background should be drawn at all. Set this to False
+        to make the widget transparent.
+      - spacing - Set the vertical and horizontal spacing between the childs.
+      - uniform_size - Boolean: If true, the free space is distributed in a way that the size of the
+        childrens will be equal (if possible), otherwise the free space will evenly distributed.
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr('background_image'),
@@ -170,14 +170,14 @@ class Container(Widget):
 
     def addChild(self, widget):
         """
-		Adds a child widget to the container.
-		
-		This makes the childs widgets visible state the same as the containers.
-		i.e. if the containter is visible the child will be as well and if the
-		container widget is hidden so will the child.  The child however WILL
-		be shown when you show the container widget.  If you want the child to 
-		be hidden when you show the container widget you must call child.hide().
-		"""
+        Adds a child widget to the container.
+
+        This makes the childs widgets visible state the same as the containers.
+        i.e. if the containter is visible the child will be as well and if the
+        container widget is hidden so will the child.  The child however WILL
+        be shown when you show the container widget.  If you want the child to
+        be hidden when you show the container widget you must call child.hide().
+        """
 
         widget.parent = self
 
@@ -444,8 +444,8 @@ class Container(Widget):
 
     def _cloneChildren(self, prefix):
         """
-		Clones each child and return the clones in a list.
-		"""
+        Clones each child and return the clones in a list.
+        """
         cloneList = [child.clone(prefix) for child in self.children]
 
         return cloneList
@@ -453,14 +453,14 @@ class Container(Widget):
 
 class ABox(Container):
     """
-	A automatic box - for containement of child widgets.
+    A automatic box - for containement of child widgets.
 
-	Widgets added to this container widget, need position attribute.
-	The only difference to a default Container is that the size will be automatically set.
+    Widgets added to this container widget, need position attribute.
+    The only difference to a default Container is that the size will be automatically set.
 
-	No alignment or layouting is used. The size of the box depends on the child
-	widgets positions and sizes.
-	"""
+    No alignment or layouting is used. The size of the box depends on the child
+    widgets positions and sizes.
+    """
     DEFAULT_LAYOUT = 'AutoSize'
     DEFAULT_HEXPAND = False
     DEFAULT_VEXPAND = False
@@ -551,17 +551,17 @@ class ABox(Container):
 
 class VBox(Container):
     """
-	A vertically aligned box - for containement of child widgets.
+    A vertically aligned box - for containement of child widgets.
 
-	Widgets added to this container widget, will layout on top of each other.
-	Also the minimal width of the container will be the maximum of the minimal
-	widths of the contained widgets.
+    Widgets added to this container widget, will layout on top of each other.
+    Also the minimal width of the container will be the maximum of the minimal
+    widths of the contained widgets.
 
-	The default alignment is to the top. This can be changed by adding a Spacer
-	to the widget at any point (but only one!). The spacer will expand, so that
-	widgets above the spacer are aligned to the top, while widgets below the spacer
-	are aligned to the bottom.
-	"""
+    The default alignment is to the top. This can be changed by adding a Spacer
+    to the widget at any point (but only one!). The spacer will expand, so that
+    widgets above the spacer are aligned to the top, while widgets below the spacer
+    are aligned to the bottom.
+    """
     DEFAULT_LAYOUT = 'Vertical'
     DEFAULT_HEXPAND = False
     DEFAULT_VEXPAND = True
@@ -652,10 +652,10 @@ class VBox(Container):
 
 class HBox(Container):
     """
-	A horizontally aligned box - for containement of child widgets.
+    A horizontally aligned box - for containement of child widgets.
 
-	Please see L{VBox} for details - just change the directions :-).
-	"""
+    Please see L{VBox} for details - just change the directions :-).
+    """
     DEFAULT_LAYOUT = 'Horizontal'
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = False
@@ -746,10 +746,10 @@ class HBox(Container):
 
 class CBox(Container):
     """
-	A circular box - for containement of child widgets.
+    A circular box - for containement of child widgets.
 
-	Please see L{VBox} for details - just change the directions :-).
-	"""
+    Please see L{VBox} for details - just change the directions :-).
+    """
     DEFAULT_LAYOUT = 'Circular'
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = True
@@ -840,15 +840,15 @@ class CBox(Container):
 
 class Window(Container):
     """
-	A L{VBox} with a draggable title bar aka a window
+    A L{VBox} with a draggable title bar aka a window
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - title: The Caption of the window
-	  - titlebar_height: The height of the window title bar
-	  - movable: Can the Window be moved with the mouse
-	"""
+      - title: The Caption of the window
+      - titlebar_height: The height of the window title bar
+      - movable: Can the Window be moved with the mouse
+    """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
         UnicodeAttr('title'),

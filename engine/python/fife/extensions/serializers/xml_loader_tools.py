@@ -31,24 +31,24 @@ import math
 
 def loadImportFile(loader, path, engine, debug=False):
     """ uses XMLObjectLoader to load import files from path
-	
-	@type	path:	string
-	@param	path:	path to import file
-	@type	debug:	bool
-	@param	debug:	flag to activate / deactivate print statements
-	"""
+
+    @type	path:	string
+    @param	path:	path to import file
+    @type	debug:	bool
+    @param	debug:	flag to activate / deactivate print statements
+    """
     loader.loadResource(path)
     if debug: print('imported object file ' + path)
 
 
 def loadImportDir(loader, path, engine, debug=False):
     """ helper function to call loadImportFile on a directory
-	
-	@type	path:	string
-	@param	path:	path to import directory
-	@type	debug:	bool
-	@param	debug:	flag to activate / deactivate print statements
-	"""
+
+    @type	path:	string
+    @param	path:	path to import directory
+    @type	debug:	bool
+    @param	debug:	flag to activate / deactivate print statements
+    """
     for _file in [
             f for f in engine.getVFS().listFiles(path)
             if f.split('.')[-1] == 'xml'
@@ -59,11 +59,11 @@ def loadImportDir(loader, path, engine, debug=False):
 def loadImportDirRec(loader, path, engine, debug=False):
     """ helper function to call loadImportFile recursive on a directory
 
-	@type	path:	string
-	@param	path:	path to import directory
-	@type	debug:	bool
-	@param	debug:	flag to activate / deactivate print statements	
-	"""
+    @type	path:	string
+    @param	path:	path to import directory
+    @type	debug:	bool
+    @param	debug:	flag to activate / deactivate print statements
+    """
     loadImportDir(loader, path, engine, debug)
 
     for _dir in [
@@ -75,11 +75,11 @@ def loadImportDirRec(loader, path, engine, debug=False):
 
 def root_subfile(masterfile, subfile):
     """
-	Returns new path for given subfile (path), which is rooted against masterfile
-	E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
-	returned path is ../foo2/subfoo.xml
-	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
-	"""
+    Returns new path for given subfile (path), which is rooted against masterfile
+    E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
+    returned path is ../foo2/subfoo.xml
+    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    """
     s = '/'
 
     masterfile = norm_path(os.path.abspath(masterfile))
@@ -108,12 +108,12 @@ def root_subfile(masterfile, subfile):
 
 def reverse_root_subfile(masterfile, subfile):
     """
-	does inverse operation to root_subfile. E.g. 
-	E.g. if masterfile is ./../foo/bar.xml and subfile is ../foo2/subfoo.xml,
-	returned path ./../foo2/subfoo.xml
-	Usually this function is used to convert saved paths into engine relative paths
-	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
-	"""
+    does inverse operation to root_subfile. E.g.
+    E.g. if masterfile is ./../foo/bar.xml and subfile is ../foo2/subfoo.xml,
+    returned path ./../foo2/subfoo.xml
+    Usually this function is used to convert saved paths into engine relative paths
+    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+    """
     s = '/'
 
     masterfile = norm_path(os.path.abspath(masterfile)).split(s)[:-1]
@@ -125,9 +125,9 @@ def reverse_root_subfile(masterfile, subfile):
 
 def norm_path(path):
     """
-	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
-	routines will default to os.path.sep.
-	"""
+    Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
+    routines will default to os.path.sep.
+    """
     if os.path.sep == '/':
         return path
 
@@ -136,27 +136,27 @@ def norm_path(path):
 
 def frange(limit1, limit2=None, increment=1.):
     """Range function that accepts floats (and integers).
-	If only one limit is specified, assumes 0 as lower limit.
+    If only one limit is specified, assumes 0 as lower limit.
 
-	Usage:
-	frange(-2, 2, 0.1)
-	frange(10)
-	frange(10, increment = 0.5)
+    Usage:
+    frange(-2, 2, 0.1)
+    frange(10)
+    frange(10, increment = 0.5)
 
-	The returned value is an iterator.  Use list(frange) for a list.
+    The returned value is an iterator.  Use list(frange) for a list.
 
-	source: U{http://code.activestate.com/recipes/
-	66472-frange-a-range-function-with-float-increments/}
- 
-	@type	limit1:	float
-	@param	limit1:	lower range limit
-	@type	limit2:	float
-	@param	limit2:	upper range limit
-	@type	increment:	float
-	@param	increment:	length of each step
-	@rtype	generator
-	@return	iterable over (limit2 - limit1) / increment steps
-	"""
+    source: U{http://code.activestate.com/recipes/
+    66472-frange-a-range-function-with-float-increments/}
+
+    @type	limit1:	float
+    @param	limit1:	lower range limit
+    @type	limit2:	float
+    @param	limit2:	upper range limit
+    @type	increment:	float
+    @param	increment:	length of each step
+    @rtype	generator
+    @return	iterable over (limit2 - limit1) / increment steps
+    """
 
     if limit2 is None:
         limit2, limit1 = float(limit1), 0.

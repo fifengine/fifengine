@@ -45,10 +45,10 @@ def get_manager():
 
 def text2gui(text):
     """
-	This function is applied to all text set on widgets.
-	It replaces tabs by four spaces.
-	It assumes the text to be a unicode object.
-	"""
+    This function is applied to all text set on widgets.
+    It replaces tabs by four spaces.
+    It assumes the text to be a unicode object.
+    """
     try:
         return text.encode("utf8", *get_manager().unicodePolicy).replace(
             "\t", " " * 4).replace("[br]", "\n")
@@ -58,9 +58,9 @@ def text2gui(text):
 
 def gui2text(text):
     """
-	This function is applied to all text get from widgets.
-	Translates the encoded string into a unicode object.
-	"""
+    This function is applied to all text get from widgets.
+    Translates the encoded string into a unicode object.
+    """
     try:
         return str(text, "utf8", *get_manager().unicodePolicy)
     except TypeError:
@@ -69,10 +69,10 @@ def gui2text(text):
 
 def gui2str(text):
     """
-	This function returns an 8-bit representation of the
-	unicode string. This is useful for passing strings
-	to SWIG functions.
-	"""
+    This function returns an 8-bit representation of the
+    unicode string. This is useful for passing strings
+    to SWIG functions.
+    """
     try:
         return text.__str__()
     except:

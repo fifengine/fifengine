@@ -32,12 +32,12 @@ from .containers import Container
 
 class FlowContainer(Container):
     """
-	An implementation of a flow container that can contain other widgets.
-	The widgets can be sorted vertical per row or horizontal per column.
-	If the space in the container is too small to put all the components in one row or column,
-	it uses multiple rows or columns.
+    An implementation of a flow container that can contain other widgets.
+    The widgets can be sorted vertical per row or horizontal per column.
+    If the space in the container is too small to put all the components in one row or column,
+    it uses multiple rows or columns.
 
-	"""
+    """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
         IntAttr('alignment'),

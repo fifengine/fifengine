@@ -32,17 +32,17 @@ from .widget import Widget
 
 class PasswordField(Widget):
     """
-	An editable B{single line} text edit widget.
+    An editable B{single line} text edit widget.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - text: The text in the TextBox.
+      - text: The text in the TextBox.
 
-	Data
-	====
-	The text can be read and set via L{distributeData} and L{collectData}.
-	"""
+    Data
+    ====
+    The text can be read and set via L{distributeData} and L{collectData}.
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
     DEFAULT_HEXPAND = True

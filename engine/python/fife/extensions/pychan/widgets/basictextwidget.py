@@ -30,19 +30,19 @@ from .widget import Widget
 
 class BasicTextWidget(Widget):
     """
-	The base class for widgets which display a string - L{Label},L{Button}, etc.
-	Do not use directly.
+    The base class for widgets which display a string - L{Label},L{Button}, etc.
+    Do not use directly.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - text: The text (depends on actual widget)
+      - text: The text (depends on actual widget)
 
-	Data
-	====
+    Data
+    ====
 
-	The text can be set via the L{distributeInitialData} method.
-	"""
+    The text can be set via the L{distributeInitialData} method.
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
 

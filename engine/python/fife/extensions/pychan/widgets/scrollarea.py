@@ -32,16 +32,16 @@ from .widget import Widget
 
 class ScrollArea(Widget):
     """
-	A wrapper around another (content) widget.
+    A wrapper around another (content) widget.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - content: The wrapped widget.
-	  - vertical_scrollbar: Boolean: Set this to False to hide the Vertical scrollbar
-	  - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
+      - content: The wrapped widget.
+      - vertical_scrollbar: Boolean: Set this to False to hide the Vertical scrollbar
+      - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
 
-	"""
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         BoolAttr("vertical_scrollbar"),

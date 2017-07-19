@@ -35,10 +35,10 @@ from fife.extensions.fife_settings import Setting
 
 class ExitEventListener(fife.IKeyListener):
     """
-	Default, rudimentary event listener.
+    Default, rudimentary event listener.
 
-	Will cause the application to quit on pressing ESC.
-	"""
+    Will cause the application to quit on pressing ESC.
+    """
 
     def __init__(self, app):
         self.app = app
@@ -64,9 +64,9 @@ class ExitEventListener(fife.IKeyListener):
 
 class PychanApplicationBase(ApplicationBase):
     """
-	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	This class should be extended if you 've build fife with fifechan support, in order to use pychan.
-	"""
+    PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
+    This class should be extended if you 've build fife with fifechan support, in order to use pychan.
+    """
 
     def __init__(self, setting=None):
         super(PychanApplicationBase, self).__init__(setting)

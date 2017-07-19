@@ -77,14 +77,14 @@ class PieSegment(object):
 class PieGraph(Widget):
     """ A pie graph widget
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - coordinates: int list: x and y coordinates
-	  - thickness': int: Line thickness, default 1
-	  - pie_color: color: Pie color
-	  - opaque: bool: default False
-	"""
+      - coordinates: int list: x and y coordinates
+      - thickness': int: Line thickness, default 1
+      - pie_color: color: Pie color
+      - opaque: bool: default False
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         PointAttr('center'),

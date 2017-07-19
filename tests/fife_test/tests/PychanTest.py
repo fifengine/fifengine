@@ -108,8 +108,8 @@ DEFAULT_DELAY = 10
 
 class PyChanExample(object):
     """
-	Example class.
-	"""
+    Example class.
+    """
 
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
@@ -117,8 +117,8 @@ class PyChanExample(object):
 
     def start(self):
         """
-		The Example Protocoll: start
-		"""
+        The Example Protocoll: start
+        """
         # For simplicity the most basic examples should define
         # a okButton and/or a closeButton. Those are mapped
         # to the stop handler.
@@ -134,8 +134,8 @@ class PyChanExample(object):
 
     def stop(self):
         """
-		The Example Protocoll: stop
-		"""
+        The Example Protocoll: stop
+        """
         if self.widget:
             self.widget.hide()
         self.widget = None
@@ -291,8 +291,8 @@ class SliderExample(PyChanExample):
 
     def update(self):
         """
-		Update Icon position from the sliders.
-		"""
+        Update Icon position from the sliders.
+        """
         icon = self.widget.findChild(name="icon")
         # sliders have floats, fifechan is picky and wants ints
         # so we convert here.
@@ -312,17 +312,17 @@ class SliderExample(PyChanExample):
 
 
 class ColorExample(PyChanExample):
-    """ a small app (^^) to show how fifechan uses colors on various widgets 
-	
-	"""
+    """ a small app (^^) to show how fifechan uses colors on various widgets
+
+    """
 
     def __init__(self):
         super(ColorExample, self).__init__('data/gui/colortester.xml')
 
     def start(self):
-        """ 
-		load XML file and setup callbacks
-		"""
+        """
+        load XML file and setup callbacks
+        """
         self.widget = pychan.loadXML(self.xmlFile)
         self.widget.mapEvents({
             'base_rslider':
@@ -375,8 +375,8 @@ class ColorExample(PyChanExample):
 
     def update_basecolor(self):
         """
-		Update rgba base colors of all examples and show the values
-		"""
+        Update rgba base colors of all examples and show the values
+        """
         r = int(self.widget.findChild(name="base_rslider").value)
         g = int(self.widget.findChild(name="base_gslider").value)
         b = int(self.widget.findChild(name="base_bslider").value)
@@ -406,8 +406,8 @@ class ColorExample(PyChanExample):
 
     def update_background_color(self):
         """
-		Update rgba background colors of all examples and show the values
-		"""
+        Update rgba background colors of all examples and show the values
+        """
         r = int(self.widget.findChild(name="background_rslider").value)
         g = int(self.widget.findChild(name="background_gslider").value)
         b = int(self.widget.findChild(name="background_bslider").value)
@@ -437,8 +437,8 @@ class ColorExample(PyChanExample):
 
     def update_selection_color(self):
         """
-		Update rgba selection colors of all examples and show the values
-		"""
+        Update rgba selection colors of all examples and show the values
+        """
         r = int(self.widget.findChild(name="selection_rslider").value)
         g = int(self.widget.findChild(name="selection_gslider").value)
         b = int(self.widget.findChild(name="selection_bslider").value)
@@ -468,8 +468,8 @@ class ColorExample(PyChanExample):
 
     def update_foreground_color(self):
         """
-		Update rgba foreground colors of all examples and show the values
-		"""
+        Update rgba foreground colors of all examples and show the values
+        """
         r = int(self.widget.findChild(name="foreground_rslider").value)
         g = int(self.widget.findChild(name="foreground_gslider").value)
         b = int(self.widget.findChild(name="foreground_bslider").value)
@@ -500,8 +500,8 @@ class ColorExample(PyChanExample):
 
 class PocAnimations(PyChanExample):
     """ a small app (^^) to show how gui animations ~could~ be
-		made by using B{fife.TimeEvent}s	
-	"""
+        made by using B{fife.TimeEvent}s
+    """
 
     def __init__(self):
         super(PocAnimations, self).__init__('data/gui/poc_guianimation.xml')
@@ -512,9 +512,9 @@ class PocAnimations(PyChanExample):
         self._progress_timer = None
 
     def start(self):
-        """ 
-		load XML file and setup callbacks
-		"""
+        """
+        load XML file and setup callbacks
+        """
 
         self.widget = pychan.loadXML(self.xmlFile)
 
@@ -727,8 +727,8 @@ class PychanTest(test.Test):
 
     def selectExample(self):
         """
-		Callback handler for clicking on the example list.
-		"""
+        Callback handler for clicking on the example list.
+        """
         if self.demoList.selected_item is None:
             return
         #print "selected",self.demoList.selected_item
@@ -741,8 +741,8 @@ class PychanTest(test.Test):
 
     def showCredits(self):
         """
-		Callback handler from the credits link/label.
-		"""
+        Callback handler from the credits link/label.
+        """
         # We use PyChan's synchronous execution feature here.
         pychan.loadXML('data/gui/credits.xml').execute({'okButton': "Yay!"})
 

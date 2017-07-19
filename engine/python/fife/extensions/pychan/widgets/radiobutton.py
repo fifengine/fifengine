@@ -32,19 +32,19 @@ from .common import text2gui
 
 class RadioButton(BasicTextWidget):
     """
-	A basic radiobutton (an exclusive checkbox).
+    A basic radiobutton (an exclusive checkbox).
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - marked: Boolean: Whether the checkbox is checked or not.
-	  - group: String: All RadioButtons with the same group name
-	  can only be checked exclusively.
+      - marked: Boolean: Whether the checkbox is checked or not.
+      - group: String: All RadioButtons with the same group name
+      can only be checked exclusively.
 
-	Data
-	====
-	The marked status can be read and set via L{distributeData} and L{collectData}
-	"""
+    Data
+    ====
+    The marked status can be read and set via L{distributeData} and L{collectData}
+    """
 
     ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
         BoolAttr('marked'), Attr('group')

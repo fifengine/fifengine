@@ -32,17 +32,17 @@ from .widget import Widget
 
 class TextField(Widget):
     """
-	An editable B{single line} text edit widget.
+    An editable B{single line} text edit widget.
 
-	New Attributes
-	==============
-	
-	  - text: The text in the TextBox.
+    New Attributes
+    ==============
 
-	Data
-	====
-	The text can be read and set via L{distributeData} and L{collectData}.
-	"""
+      - text: The text in the TextBox.
+
+    Data
+    ====
+    The text can be read and set via L{distributeData} and L{collectData}.
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
 

@@ -32,17 +32,17 @@ from .widget import Widget
 
 class IconProgressBar(Widget):
     """
-	An image icon.
+    An image icon.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
-	  - max_icons: Maximal count of icons
-	  - icons: Current count of active icons
-	  - orientation: Horizontal (0) or Vertical (1)
-	  - opaque: True if the widget is opaque, false otherwise.
-	"""
+      - image: String or GuiImage: The source location of the Image or a direct GuiImage
+      - max_icons: Maximal count of icons
+      - icons: Current count of active icons
+      - orientation: Horizontal (0) or Vertical (1)
+      - opaque: True if the widget is opaque, false otherwise.
+    """
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr('image'),
         IntAttr('max_icons'),

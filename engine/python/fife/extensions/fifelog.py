@@ -28,18 +28,18 @@ from fife import fife
 
 class LogManager(object):
     """
-	Log manager provides convenient apis to access engine logging functionality.
-	You can set log targets individually (prompt, file). You can also adjust
-	things like visible modules through log manager.
-	"""
+    Log manager provides convenient apis to access engine logging functionality.
+    You can set log targets individually (prompt, file). You can also adjust
+    things like visible modules through log manager.
+    """
 
     def __init__(self, engine, promptlog=True, filelog=False):
         """
-		Constructs new log manager
-		@param engine: Engine to hook into
-		@param promptlog: If true, logs to prompt
-		@param filelog: If true, logs to file (fife.log)
-		"""
+        Constructs new log manager
+        @param engine: Engine to hook into
+        @param promptlog: If true, logs to prompt
+        @param filelog: If true, logs to file (fife.log)
+        """
         self.engine = engine
         self.lm = engine.getLogManager()
         self.lm.setLogToPrompt(promptlog)
@@ -53,11 +53,11 @@ class LogManager(object):
 
     def addVisibleModules(self, *names):
         """
-		Adds modules that are visible in logs. By default, all modules
-		are disabled. Does not remove previously visible modules
-		@param names: module names to set visible
-		@see: modules.h file for available modules in the engine
-		"""
+        Adds modules that are visible in logs. By default, all modules
+        are disabled. Does not remove previously visible modules
+        @param names: module names to set visible
+        @see: modules.h file for available modules in the engine
+        """
         names = [n.lower() for n in names]
         if 'all' in names:
             for k in list(self.mod2name.keys()):
@@ -71,11 +71,11 @@ class LogManager(object):
 
     def removeVisibleModules(self, *names):
         """
-		Removes modules that are visible in logs. By default, all modules
-		are disabled.
-		@param names: module names to set invisible
-		@see: addVisibleModules
-		"""
+        Removes modules that are visible in logs. By default, all modules
+        are disabled.
+        @param names: module names to set invisible
+        @see: addVisibleModules
+        """
         names = [n.lower() for n in names]
         if 'all' in names:
             for k in list(self.mod2name.keys()):
@@ -86,9 +86,9 @@ class LogManager(object):
 
     def getVisibleModules(self):
         """
-		Gets currently visible modules
-		@see: addVisibleModules
-		"""
+        Gets currently visible modules
+        @see: addVisibleModules
+        """
         mods = []
         for k in list(self.mod2name.keys()):
             if self.lm.isVisible(k):
@@ -96,25 +96,25 @@ class LogManager(object):
 
     def setVisibleModules(self, *names):
         """
-		Sets visible modules. Clears previously set modules.
-		@param names: module names to set visible
-		@see: addVisibleModules
-		"""
+        Sets visible modules. Clears previously set modules.
+        @param names: module names to set visible
+        @see: addVisibleModules
+        """
         self.lm.clearVisibleModules()
         self.addVisibleModules(*names)
 
     def setLevelFilter(self, fltr):
         """
-		Sets the minimum log level to view.
+        Sets the minimum log level to view.
 
-		@param fltr: The filter level
+        @param fltr: The filter level
 
-		Valid values:
-			- L{fife.LogManager.LEVEL_DEBUG}
-			- L{fife.LogManager.LEVEL_LOG}
-			- L{fife.LogManager.LEVEL_WARN}
-   			- L{fife.LogManager.LEVEL_ERROR}
-		"""
+        Valid values:
+            - L{fife.LogManager.LEVEL_DEBUG}
+            - L{fife.LogManager.LEVEL_LOG}
+            - L{fife.LogManager.LEVEL_WARN}
+            - L{fife.LogManager.LEVEL_ERROR}
+        """
         self.lm.setLevelFilter(fltr)
 
     def setLogToPrompt(self, promptlog):

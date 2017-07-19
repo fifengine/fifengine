@@ -46,14 +46,14 @@ FIFE_MODULE = "FIFE"
 
 class Setting(object):
     """
-	This class manages loading and saving of game settings.
+    This class manages loading and saving of game settings.
 
-	Usage::
-		from fife.extensions.fife_settings import Setting
-		settings = Setting(app_name="myapp")
-		screen_width = settings.get("FIFE", "ScreenWidth", 1024)
-		screen_height = settings.get("FIFE", "ScreenHeight", 768)
-	"""
+    Usage::
+        from fife.extensions.fife_settings import Setting
+        settings = Setting(app_name="myapp")
+        screen_width = settings.get("FIFE", "ScreenWidth", 1024)
+        screen_height = settings.get("FIFE", "ScreenHeight", 768)
+    """
 
     def __init__(self,
                  app_name="",
@@ -62,26 +62,26 @@ class Setting(object):
                  copy_dist=True,
                  serializer=None):
         r"""
-		Initializes the Setting object.
+        Initializes the Setting object.
 
-		@param app_name: The applications name.  If this parameter is provided
-		alone it will try to read the settings file from the users home directory.
-		In windows this will be	something like:	C:\Documents and Settings\user\Application Data\fife
-		@type app_name: C{string}
-		@param settings_file: The name of the settings file.  If this parameter is
-		provided it will look for the setting file as you specify it, first looking
-		in the working directory.  It will NOT look in the users home directory.
-		@type settings_file: C{string}
-		@param default_settings_file: The name of the default settings file.  If the settings_file
-		does not exist this file will be copied into the place of the settings_file.  This file
-		must exist in the root directory of your project!
-		@type default_settings_file: C{string}
-		@param copy_dist: Copies the default settings file to the settings_file location.  If
-		this is False it will create a new empty setting file.
-		@param serializer: Overrides the default XML serializer
-		@type serializer: C{SimpleSerializer}
+        @param app_name: The applications name.  If this parameter is provided
+        alone it will try to read the settings file from the users home directory.
+        In windows this will be	something like:	C:\Documents and Settings\user\Application Data\fife
+        @type app_name: C{string}
+        @param settings_file: The name of the settings file.  If this parameter is
+        provided it will look for the setting file as you specify it, first looking
+        in the working directory.  It will NOT look in the users home directory.
+        @type settings_file: C{string}
+        @param default_settings_file: The name of the default settings file.  If the settings_file
+        does not exist this file will be copied into the place of the settings_file.  This file
+        must exist in the root directory of your project!
+        @type default_settings_file: C{string}
+        @param copy_dist: Copies the default settings file to the settings_file location.  If
+        this is False it will create a new empty setting file.
+        @param serializer: Overrides the default XML serializer
+        @type serializer: C{SimpleSerializer}
 
-		"""
+        """
         self._app_name = app_name
         self._settings_file = settings_file
         self._default_settings_file = default_settings_file
@@ -299,7 +299,7 @@ class Setting(object):
 
     def _initDefaultSettingEntries(self):
         """Initializes the default fife setting entries. Not to be called from
-		outside this class."""
+        outside this class."""
         self.createAndAddEntry(FIFE_MODULE, "PlaySounds", requiresrestart=True)
 
         self.createAndAddEntry(FIFE_MODULE, "FullScreen", requiresrestart=True)
@@ -323,50 +323,50 @@ class Setting(object):
                           initialdata=None,
                           requiresrestart=False):
         """"
-		@param module: The Setting module this Entry belongs to
-		@type module: C{String}
-		@param name: The Setting's name
-		@type name: C{String}
-		@param applyfunction: function that makes the changes when the Setting is
-		saved
-		@type applyfunction: C{function}
-		@param initialdata: If the widget supports the setInitialData() function
-		this can be used to set the initial data
-		@type initialdata: C{String} or C{Boolean}
-		@param requiresrestart: Whether or not the changing of this setting
-		requires a restart
-		@type requiresrestart: C{Boolean}
-		"""
+        @param module: The Setting module this Entry belongs to
+        @type module: C{String}
+        @param name: The Setting's name
+        @type name: C{String}
+        @param applyfunction: function that makes the changes when the Setting is
+        saved
+        @type applyfunction: C{function}
+        @param initialdata: If the widget supports the setInitialData() function
+        this can be used to set the initial data
+        @type initialdata: C{String} or C{Boolean}
+        @param requiresrestart: Whether or not the changing of this setting
+        requires a restart
+        @type requiresrestart: C{Boolean}
+        """
         entry = SettingEntry(module, name, applyfunction, initialdata,
                              requiresrestart)
         self.addEntry(entry)
 
     def addEntry(self, entry):
         """Adds a new C{SettingEntry} to the Settting
-		@param entry: A new SettingEntry that is to be added
-		@type entry: C{SettingEntry}
-		"""
+        @param entry: A new SettingEntry that is to be added
+        @type entry: C{SettingEntry}
+        """
         if entry.module not in self._entries:
             self._entries[entry.module] = {}
         self._entries[entry.module][entry.name] = entry
         """
-		# Make sure the new entry is available
-		if self.get(entry.module, entry.name) is None:
-			print "Updating", self._settings_file, "to the default, it is missing the entry:"\
-			      , entry.name ,"for module", entry.module
+        # Make sure the new entry is available
+        if self.get(entry.module, entry.name) is None:
+            print "Updating", self._settings_file, "to the default, it is missing the entry:"\
+                  , entry.name ,"for module", entry.module
 
-			#self.setDefaults()
-		if self.get(entry.module, entry.name) is None:
-			print "WARNING:", entry.module, ":", entry.name, "still not found!"
-		"""
+            #self.setDefaults()
+        if self.get(entry.module, entry.name) is None:
+            print "WARNING:", entry.module, ":", entry.name, "still not found!"
+        """
 
     def saveSettings(self, filename=""):
         """ Writes the settings to the settings file
 
-		@param filename: Specifies the file to save the settings to.  If it is not specified
-		the original settings file is used.
-		@type filename: C{string}
-		"""
+        @param filename: Specifies the file to save the settings to.  If it is not specified
+        the original settings file is used.
+        @type filename: C{string}
+        """
         if self._serializer:
             if filename == "":
                 self._serializer.save(
@@ -393,9 +393,9 @@ class Setting(object):
             if module is not "FIFE":
                 return self._settingsFromFile[module]
             """
-			Now we have all the settings we needed. We have to validate the settings. Applicable for module
-			FIFE only
-			"""
+            Now we have all the settings we needed. We have to validate the settings. Applicable for module
+            FIFE only
+            """
             for name in self._settingsFromFile[module]:
                 # if the setting name is known, so that it is
                 # both in self._settingsFromFile and validSetting
@@ -536,9 +536,9 @@ class Setting(object):
             if self._logger:
                 self._logger.log_log("Settings Loaded ...")
             """
-			Upto this point we have validated all the settings that are in settings.xml file. But, what if a setting is valid and still it is
-			not present in the settings.xml file. For this, we should give them the default Values that are in defaultSetting.
-			"""
+            Upto this point we have validated all the settings that are in settings.xml file. But, what if a setting is valid and still it is
+            not present in the settings.xml file. For this, we should give them the default Values that are in defaultSetting.
+            """
 
             for name in self._defaultSetting[module]:
                 if name not in self._settingsFromFile[module]:
@@ -553,11 +553,11 @@ class Setting(object):
     def get(self, module, name, defaultValue=None):
         """ Gets the value of a specified setting
 
-		@param module: Name of the module to get the setting from
-		@param name: Setting name
-		@param defaultValue: Specifies the default value to return if the setting is not found
-		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
-		"""
+        @param module: Name of the module to get the setting from
+        @param name: Setting name
+        @param defaultValue: Specifies the default value to return if the setting is not found
+        @type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+        """
 
         if self._serializer:
             if module is "FIFE":
@@ -587,8 +587,8 @@ class Setting(object):
                 return self._serializer.get(module, name, defaultValue)
         else:
             """
-			serializer not set, reading from default value
-			"""
+            serializer not set, reading from default value
+            """
             if name in self._defaultSetting:
                 return self._defaultSetting[module][name]
             else:
@@ -599,15 +599,15 @@ class Setting(object):
 
     def set(self, module, name, value, extra_attrs={}):
         """
-		Sets a setting to specified value.
+        Sets a setting to specified value.
 
-		@param module: Module where the setting should be set
-		@param name: Name of setting
-		@param value: Value to assign to setting
-		@type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
-		@param extra_attrs: Extra attributes to be stored in the XML-file
-		@type extra_attrs: C{dict}
-		"""
+        @param module: Module where the setting should be set
+        @param name: Name of setting
+        @param value: Value to assign to setting
+        @type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+        @param extra_attrs: Extra attributes to be stored in the XML-file
+        @type extra_attrs: C{dict}
+        """
 
         #update the setting cache
         if module in self._settingsFromFile:
@@ -620,11 +620,11 @@ class Setting(object):
 
     def remove(self, module, name):
         """
-		Removes a variable
+        Removes a variable
 
-		@param module: Module where the variable should be set
-		@param name: Name of the variable
-		"""
+        @param module: Module where the variable should be set
+        @param name: Name of the variable
+        """
         #update the setting cache
         if module in self._settingsFromFile:
             del self._settingsFromFile[module][name]
@@ -634,20 +634,20 @@ class Setting(object):
 
     def setAvailableScreenResolutions(self, reslist):
         """
-		A list of valid default screen resolutions.   This should be called once
-		right after you instantiate Settings.
+        A list of valid default screen resolutions.   This should be called once
+        right after you instantiate Settings.
 
-		Valid screen resolutions must be strings in the form of: WIDTHxHEIGHT
+        Valid screen resolutions must be strings in the form of: WIDTHxHEIGHT
 
-		Example:
-			settings.setAvailableScreenResolutions(["800x600", "1024x768"])
-		"""
+        Example:
+            settings.setAvailableScreenResolutions(["800x600", "1024x768"])
+        """
         self._resolutions = reslist
 
     def setDefaults(self):
         """
-		Overwrites the setting file with the default settings file.
-		"""
+        Overwrites the setting file with the default settings file.
+        """
         shutil.copyfile(self._default_settings_file,
                         os.path.join(self._appdata, self._settings_file))
         self.changesRequireRestart = True
@@ -674,20 +674,20 @@ class SettingEntry(object):
                  initialdata=None,
                  requiresrestart=False):
         """
-		@param module: The Setting module this Entry belongs to
-		@type module: C{String}
-		@param name: The Setting's name
-		@type name: C{String}
-		@param applyfunction: function that makes the changes when the Setting is
-		saved
-		@type applyfunction: C{function}
-		@param initialdata: If the widget supports the setInitialData() function
-		this can be used to set the initial data
-		@type initialdata: C{String} or C{Boolean}
-		@param requiresrestart: Whether or not the changing of this setting
-		requires a restart
-		@type requiresrestart: C{Boolean}
-		"""
+        @param module: The Setting module this Entry belongs to
+        @type module: C{String}
+        @param name: The Setting's name
+        @type name: C{String}
+        @param applyfunction: function that makes the changes when the Setting is
+        saved
+        @type applyfunction: C{function}
+        @param initialdata: If the widget supports the setInitialData() function
+        this can be used to set the initial data
+        @type initialdata: C{String} or C{Boolean}
+        @param requiresrestart: Whether or not the changing of this setting
+        requires a restart
+        @type requiresrestart: C{Boolean}
+        """
         self._module = module
         self._name = name
         self._requiresrestart = requiresrestart
@@ -696,8 +696,8 @@ class SettingEntry(object):
 
     def onApply(self, data):
         """Implement actions that need to be taken when the setting is changed
-		here.
-		"""
+        here.
+        """
         if self._applyfunction is not None:
             self._applyfunction(data)
 

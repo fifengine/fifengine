@@ -33,19 +33,19 @@ from .containers import Window
 
 class ResizableWindow(Window):
     """
-	This is a window class that can be resizable.
+    This is a window class that can be resizable.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - resizable: Allows resizing with the mouse. If disabled all the side parameters are ignored.
-	  - top_resizable: If true, the window can be resized at the top side.
-	  - right_resizable: If true, the window can be resized at the right side.
-	  - bottom_resizable: If true, the window can be resized at the bottom side.
-	  - left_resizable: If true, the window can be resized at the left side.
-	  - shove: That allows pull and push in case the min/max size is reached.
-	  - cursors: List that contains the cursor definitions. Left, Right, Top, Bottom, LeftTop, RightTop, LeftBottom, RightBottom
-	"""
+      - resizable: Allows resizing with the mouse. If disabled all the side parameters are ignored.
+      - top_resizable: If true, the window can be resized at the top side.
+      - right_resizable: If true, the window can be resized at the right side.
+      - bottom_resizable: If true, the window can be resized at the bottom side.
+      - left_resizable: If true, the window can be resized at the left side.
+      - shove: That allows pull and push in case the min/max size is reached.
+      - cursors: List that contains the cursor definitions. Left, Right, Top, Bottom, LeftTop, RightTop, LeftBottom, RightBottom
+    """
 
     DEFAULT_RESIZABLE = True
     DEFAULT_TOP_RESIZABLE = True

@@ -40,7 +40,7 @@ to generate suitable callbacks.
 
 Here's an example callback::
    def dumpEventInfo(event=0,widget=0):
-	  print widget, " received the event ", event
+      print widget, " received the event ", event
 
 Note the signature - C{event} and C{widget} are keyword
 arguments passed to the callback. If doesn't accept either
@@ -114,14 +114,14 @@ But there was no event mapped. Did you accidently call a function instead of pas
 
 class EventListenerBase(object):
     """
-	Redirector for event callbacks.
-	Use *only* from L{EventMapper}.
+    Redirector for event callbacks.
+    Use *only* from L{EventMapper}.
 
-	This class uses the SWIG director feature - overriden
-	virtual methods are called from C++ to - listen to
-	Fifechan events.
+    This class uses the SWIG director feature - overriden
+    virtual methods are called from C++ to - listen to
+    Fifechan events.
 
-	"""
+    """
 
     def __init__(self):
         super(EventListenerBase, self).__init__()
@@ -137,9 +137,9 @@ class EventListenerBase(object):
 
     def attach(self, widget):
         """
-		Start receiving events.
-		No need to call this manually.
-		"""
+        Start receiving events.
+        No need to call this manually.
+        """
 
         if self.is_attached:
             return
@@ -152,9 +152,9 @@ class EventListenerBase(object):
 
     def detach(self):
         """
-		Stop receiving events.
-		No need to call this manually.
-		"""
+        Stop receiving events.
+        No need to call this manually.
+        """
         if not self.is_attached:
             return
         if self.debug: print("Detach:", self)
@@ -162,10 +162,10 @@ class EventListenerBase(object):
 
     def setRedirection(self, redirect):
         """
-		If enabled, the events are redirected to the next
-		engine pump cycle. Otherwise the exectution is on
-		the same engine cycle.
-		"""
+        If enabled, the events are redirected to the next
+        engine pump cycle. Otherwise the exectution is on
+        the same engine cycle.
+        """
         self._redirect = redirect
 
     def _redirectEvent(self, name, event):
@@ -321,25 +321,25 @@ class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
 
 class EventMapper(object):
     """
-	Handles events and callbacks for L{widgets.Widget}
-	and derived classes.
+    Handles events and callbacks for L{widgets.Widget}
+    and derived classes.
 
-	Every PyChan widget has an L{EventMapper} instance
-	as attribute B{event_mapper}.
+    Every PyChan widget has an L{EventMapper} instance
+    as attribute B{event_mapper}.
 
-	This instance handles all necessary house-keeping.
-	Such an event mapper can be either C{attached} or
-	C{detached}. In its attached state an L{EventListenerBase}
-	is added to the Fifechan widget and will redirect
-	the events to the callbacks.
+    This instance handles all necessary house-keeping.
+    Such an event mapper can be either C{attached} or
+    C{detached}. In its attached state an L{EventListenerBase}
+    is added to the Fifechan widget and will redirect
+    the events to the callbacks.
 
-	In its detached state no events are received from the
-	real Fifechan widget.
+    In its detached state no events are received from the
+    real Fifechan widget.
 
-	The event mapper starts in the detached state.
-	When a new event is captured the mapper attaches itself
-	automatically. The widget doesn't need to handle that.
-	"""
+    The event mapper starts in the detached state.
+    When a new event is captured the mapper attaches itself
+    automatically. The widget doesn't need to handle that.
+    """
 
     def __init__(self, widget):
         super(EventMapper, self).__init__()

@@ -40,35 +40,35 @@ from fife.extensions import pychan
 
 SETTINGS_GUI_XML = """\
 <Window name="Settings" title="Settings">
-	<Label text="Settings menu!" />
-	<HBox>
-		<VBox>
-			<Label text="Resolution:" />
-			<Label text="Renderer:" />
-		</VBox>
-		<VBox min_size="120,60">
-			<DropDown name="screen_resolution" min_size="120,0" />
-			<DropDown name="render_backend" min_size="120,0" />
-		</VBox>
-	</HBox>
-	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
-	<CheckBox name="enable_sound" text="Enable sound" />
-	<HBox>
-		<Spacer />
-		<Button name="cancelButton" text="Cancel" />
-		<Button name="okButton" text="Ok" />
-		<Button name="defaultButton" text="Defaults" />
-	</HBox>
+    <Label text="Settings menu!" />
+    <HBox>
+        <VBox>
+            <Label text="Resolution:" />
+            <Label text="Renderer:" />
+        </VBox>
+        <VBox min_size="120,60">
+            <DropDown name="screen_resolution" min_size="120,0" />
+            <DropDown name="render_backend" min_size="120,0" />
+        </VBox>
+    </HBox>
+    <CheckBox name="enable_fullscreen" text="Use the full screen mode" />
+    <CheckBox name="enable_sound" text="Enable sound" />
+    <HBox>
+        <Spacer />
+        <Button name="cancelButton" text="Cancel" />
+        <Button name="okButton" text="Ok" />
+        <Button name="defaultButton" text="Defaults" />
+    </HBox>
 </Window>
 """
 
 CHANGES_REQUIRE_RESTART = """\
 <Window title="Changes require restart">
-	<Label text="Some of your changes require you to restart." />
-	<HBox>
-		<Spacer />
-		<Button name="closeButton" text="Ok" />
-	</HBox>
+    <Label text="Some of your changes require you to restart." />
+    <HBox>
+        <Spacer />
+        <Button name="closeButton" text="Ok" />
+    </HBox>
 </Window>
 """
 
@@ -111,30 +111,30 @@ class FifePychanSettings(Setting):
                           initialdata=None,
                           requiresrestart=False):
         """"
-		@param module: The Setting module this Entry belongs to
-		@type module: C{String}
-		@param name: The Setting's name
-		@type name: C{String}
-		@param widgetname: The name of the widget that is used to change this
-		setting
-		@type widgetname: C{String}
-		@param applyfunction: function that makes the changes when the Setting is
-		saved
-		@type applyfunction: C{function}
-		@param initialdata: If the widget supports the setInitialData() function
-		this can be used to set the initial data
-		@type initialdata: C{String} or C{Boolean}
-		@param requiresrestart: Whether or not the changing of this setting
-		requires a restart
-		@type requiresrestart: C{Boolean}
-		"""
+        @param module: The Setting module this Entry belongs to
+        @type module: C{String}
+        @param name: The Setting's name
+        @type name: C{String}
+        @param widgetname: The name of the widget that is used to change this
+        setting
+        @type widgetname: C{String}
+        @param applyfunction: function that makes the changes when the Setting is
+        saved
+        @type applyfunction: C{function}
+        @param initialdata: If the widget supports the setInitialData() function
+        this can be used to set the initial data
+        @type initialdata: C{String} or C{Boolean}
+        @param requiresrestart: Whether or not the changing of this setting
+        requires a restart
+        @type requiresrestart: C{Boolean}
+        """
         entry = PychanSettingEntry(module, name, widgetname, applyfunction,
                                    initialdata, requiresrestart)
         self.addEntry(entry)
 
     def _initDefaultSettingEntries(self):
         """Initializes the default fife setting entries. Not to be called from
-		outside this class."""
+        outside this class."""
         self.createAndAddEntry(
             FIFE_MODULE, "PlaySounds", "enable_sound", requiresrestart=True)
         self.createAndAddEntry(
@@ -167,17 +167,17 @@ class FifePychanSettings(Setting):
             requiresrestart=True)
 
     def setGuiStyle(self, style):
-        """ 
-		Set a custom gui style used for the option dialog.
-		@param style: Pychan style to be used
-		@type style: C{string}      
-		"""
+        """
+        Set a custom gui style used for the option dialog.
+        @param style: Pychan style to be used
+        @type style: C{string}
+        """
         self._gui_style = style
 
     def showSettingsDialog(self):
         """
-		Shows the default settings dialog.
-		"""
+        Shows the default settings dialog.
+        """
         self.changesRequireRestart = False
         self.isSetToDefault = False
         if not self._optionsDialog:
@@ -188,8 +188,8 @@ class FifePychanSettings(Setting):
 
     def _loadSettingsDialog(self):
         """
-		Loads up the .xml with the default settings dialog.
-		"""
+        Loads up the .xml with the default settings dialog.
+        """
         self._optionsDialog = self._loadWidget(self._settings_gui_xml)
         self._optionsDialog.stylize(self._gui_style)
         self._optionsDialog.mapEvents({
@@ -204,8 +204,8 @@ class FifePychanSettings(Setting):
 
     def _loadWidget(self, widget):
         """
-		Loads a widget
-		"""
+        Loads a widget
+        """
         if os.path.isfile(self._settings_gui_xml):
             return pychan.loadXML(widget)
         else:
@@ -220,14 +220,14 @@ class FifePychanSettings(Setting):
                 widget = self._optionsDialog.findChildByName(
                     entry.settingwidgetname)
                 """
-				little change to prevent crash from no settings
-				in settings.xml file
-				"""
+                little change to prevent crash from no settings
+                in settings.xml file
                 """
-				The checking of value for None is specially for the clients who use settings
-				with different names under modules other than "FIFE" for which we have no
-				default value to set. This will prevent the settings widget from crash
-				"""
+                """
+                The checking of value for None is specially for the clients who use settings
+                with different names under modules other than "FIFE" for which we have no
+                default value to set. This will prevent the settings widget from crash
+                """
                 value = self.get(entry.module, entry.name)
 
                 if isinstance(entry.initialdata, list):
@@ -250,9 +250,9 @@ class FifePychanSettings(Setting):
 
     def _applySettings(self):
         """
-		Writes the settings file.  If a change requires a restart of the engine
-		it notifies you with a small dialog box.
-		"""
+        Writes the settings file.  If a change requires a restart of the engine
+        it notifies you with a small dialog box.
+        """
         for module in self._entries.values():
             for entry in module.values():
                 widget = self._optionsDialog.findChildByName(
@@ -282,7 +282,7 @@ class FifePychanSettings(Setting):
 
     def _showChangeRequireRestartDialog(self):
         """Shows a dialog that informes the user that a restart is required
-		to perform the changes."""
+        to perform the changes."""
         RestartDlg = self._loadWidget(self._changes_gui_xml)
         RestartDlg.stylize(self._gui_style)
         RestartDlg.mapEvents({'closeButton': RestartDlg.hide})

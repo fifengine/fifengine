@@ -33,9 +33,9 @@ from .widget import Widget
 
 class GenericListmodel(fifechan.ListModel, list):
     """
-	A wrapper for the exported list model to behave more like a Python list.
-	Don't use directly.
-	"""
+    A wrapper for the exported list model to behave more like a Python list.
+    Don't use directly.
+    """
 
     def __init__(self, *args):
         super(GenericListmodel, self).__init__()
@@ -55,23 +55,23 @@ class GenericListmodel(fifechan.ListModel, list):
 
 class ListBox(Widget):
     """
-	A basic list box widget for displaying lists of strings. It makes most sense to wrap
-	this into a L{ScrollArea}.
+    A basic list box widget for displaying lists of strings. It makes most sense to wrap
+    this into a L{ScrollArea}.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - items: A List of strings. This can be treated like an ordinary python list.
-	    but only strings are allowed.
-	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
-	    A negative value indicates, that no item is selected.
-	  - selected_item: The selected string itself, or C{None} - if no string is selected.
+      - items: A List of strings. This can be treated like an ordinary python list.
+        but only strings are allowed.
+      - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
+        A negative value indicates, that no item is selected.
+      - selected_item: The selected string itself, or C{None} - if no string is selected.
 
-	Data
-	====
-	The selected attribute can be read and set via L{distributeData} and L{collectData}.
-	The list items can be set via L{distributeInitialData}.
-	"""
+    Data
+    ====
+    The selected attribute can be read and set via L{distributeData} and L{collectData}.
+    The list items can be set via L{distributeInitialData}.
+    """
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = True
     DEFAULT_ITEMS = []

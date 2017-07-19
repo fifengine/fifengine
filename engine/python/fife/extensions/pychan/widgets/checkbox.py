@@ -32,19 +32,19 @@ from .buttons import ImageButton
 
 class CheckBox(ImageButton):
     """
-	A basic checkbox.
+    A basic checkbox.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - marked: Boolean value, whether the checkbox is checked or not.
-	  - marker_style: Integer: The visual style of the marker.
-	  - background_image: String: Optional image for the background, the size should also include the caption.
+      - marked: Boolean value, whether the checkbox is checked or not.
+      - marker_style: Integer: The visual style of the marker.
+      - background_image: String: Optional image for the background, the size should also include the caption.
 
-	Data
-	====
-	The marked status can be read and set via L{distributeData} and L{collectData}
-	"""
+    Data
+    ====
+    The marked status can be read and set via L{distributeData} and L{collectData}
+    """
 
     ATTRIBUTES = ImageButton.ATTRIBUTES + [
         BoolAttr('marked'),

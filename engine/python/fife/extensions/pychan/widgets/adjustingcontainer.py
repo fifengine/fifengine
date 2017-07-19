@@ -32,15 +32,15 @@ from .containers import Container
 
 class AdjustingContainer(Container):
     """
-	This is the adjusting container class. It provides space in which child widgets can
-	be position via the position attribute.
+    This is the adjusting container class. It provides space in which child widgets can
+    be position via the position attribute.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - colums - Integer: The number of columns to divide the widgets into.
-	  - alignments: The alignment per column.
-	"""
+      - colums - Integer: The number of columns to divide the widgets into.
+      - alignments: The alignment per column.
+    """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
         IntAttr('columns'),

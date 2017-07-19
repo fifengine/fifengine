@@ -40,15 +40,15 @@ def u2s(string):
 class FileBrowser(object):
     """ The B{FileBrowser} displays directory and file listings.
 
-		B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
-		signature must be fileSelected(path,filename).
+        B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
+        signature must be fileSelected(path,filename).
 
-		B{If selectdir} is set, fileSelected's filename parameter should be optional.
+        B{If selectdir} is set, fileSelected's filename parameter should be optional.
 
-		B{The savefile} option provides a box for supplying a new filename that doesn't exist yet.
+        B{The savefile} option provides a box for supplying a new filename that doesn't exist yet.
 
-		B{The selectdir} option allows directories to be selected as well as files.
-	"""
+        B{The selectdir} option allows directories to be selected as well as files.
+    """
 
     def __init__(self, *args, **kwargs):
         """Temporary constructor for deprecation"""
@@ -74,17 +74,17 @@ class FileBrowser(object):
                       extensions=('xml', ),
                       guixmlpath="gui/filebrowser.xml"):
         """
-		@type	fileSelected:	function
-		@param	fileSelected:	callback invoked on file selection
-		@type	savefile:	bool
-		@param	savefile:	flag to provide a gui for an usergiven filename
-		@type	selectdir:	bool
-		@param	selectdir:	flag to fire fileSelected without filename
-		@type	extensions:	tuple
-		@param	extensions:	list of extensions the filebrowser should show (defaults to xml)
-		@type	guixmlpath:	string
-		@param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
-		"""
+        @type	fileSelected:	function
+        @param	fileSelected:	callback invoked on file selection
+        @type	savefile:	bool
+        @param	savefile:	flag to provide a gui for an usergiven filename
+        @type	selectdir:	bool
+        @param	selectdir:	flag to fire fileSelected without filename
+        @type	extensions:	tuple
+        @param	extensions:	list of extensions the filebrowser should show (defaults to xml)
+        @type	guixmlpath:	string
+        @param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
+        """
         self.fileSelected = fileSelected
 
         self._widget = None

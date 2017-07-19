@@ -35,10 +35,10 @@ import PyCEGUI
 
 class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):
     """
-	Default, rudimentary event listener.
+    Default, rudimentary event listener.
 
-	Will cause the application to quit on pressing ESC.
-	"""
+    Will cause the application to quit on pressing ESC.
+    """
 
     def __init__(self, app):
         self.app = app

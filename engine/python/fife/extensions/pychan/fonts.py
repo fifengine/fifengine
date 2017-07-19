@@ -71,12 +71,12 @@ class Font(object):
     @staticmethod
     def loadFromFile(filename):
         """
-		Static method to load font definitions out of an xml file.
+        Static method to load font definitions out of an xml file.
 
-		@param filename: The file to be loaded
-		@param name: (Optional) The name of the font being loaded. If the file definition contains another name, the name from the file definition is used instead.
-		@return A new Font object
-		"""
+        @param filename: The file to be loaded
+        @param name: (Optional) The name of the font being loaded. If the file definition contains another name, the name from the file definition is used instead.
+        @return A new Font object
+        """
         extension = os.path.splitext(filename)[1]
         if extension == ".fontdef":
             raise DeprecatedException(
@@ -98,8 +98,8 @@ class Font(object):
 
 def loadFonts(filename):
     """
-	Load fonts from a config file. These are then available via their name.
-	"""
+    Load fonts from a config file. These are then available via their name.
+    """
     from .internal import get_manager
 
     for font in Font.loadFromFile(filename):

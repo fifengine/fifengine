@@ -34,15 +34,15 @@ from .resizablewindow import ResizableWindow
 
 class DockArea(ResizableWindow):
     """
-	This is a window class that can be resizable and it's possible to dock Panels.
+    This is a window class that can be resizable and it's possible to dock Panels.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - active: If true, the DockArea is active and Panels can be docked to it.
-	  - side: Allows to specify the side for expanding.
-	  - highlight_color: Color that is used if a Panel enters the DockArea.
-	"""
+      - active: If true, the DockArea is active and Panels can be docked to it.
+      - side: Allows to specify the side for expanding.
+      - highlight_color: Color that is used if a Panel enters the DockArea.
+    """
 
     ATTRIBUTES = ResizableWindow.ATTRIBUTES + [
         BoolAttr('active'),

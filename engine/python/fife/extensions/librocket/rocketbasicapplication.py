@@ -34,10 +34,10 @@ import rocket
 
 class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
     """
-	Default, rudimentary event listener.
+    Default, rudimentary event listener.
 
-	Will cause the application to quit on pressing ESC.
-	"""
+    Will cause the application to quit on pressing ESC.
+    """
 
     def __init__(self, app):
         self.app = app
@@ -76,10 +76,10 @@ class RocketEventListener(fife.IKeyListener, fife.ICommandListener):
 
 class RocketApplicationBase(ApplicationBase):
     """
-	PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	This class should be extended if you 've built fife with librocket support and want to create a game
-	using it.
-	"""
+    PychanApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
+    This class should be extended if you 've built fife with librocket support and want to create a game
+    using it.
+    """
 
     def __init__(self, setting=None):
         super(RocketApplicationBase, self).__init__(setting)

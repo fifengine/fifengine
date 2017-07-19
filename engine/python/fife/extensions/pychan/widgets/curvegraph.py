@@ -34,14 +34,14 @@ from .widget import Widget
 class CurveGraph(Widget):
     """ A curve graph widget
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - coordinates: int list: x and y coordinates
-	  - thickness': int: Line thickness, default 1
-	  - controll_points: bool: Adds internal controll points, default True
-	  - opaque: bool: default False
-	"""
+      - coordinates: int list: x and y coordinates
+      - thickness': int: Line thickness, default 1
+      - controll_points: bool: Adds internal controll points, default True
+      - opaque: bool: default False
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         IntListAttr('coordinates'),

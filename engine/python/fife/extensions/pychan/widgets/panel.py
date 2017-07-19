@@ -36,15 +36,15 @@ from .containers import Container
 
 class Panel(ResizableWindow):
     """
-	The Panel class can be docked or undocked from Dock Areas.
-	If the Panel is added to a DockArea e.g. by XML loading, then it will automatically docked.
-	By default undock will add the Panel to the parent of the DockArea, that can also be the top widget.
+    The Panel class can be docked or undocked from Dock Areas.
+    If the Panel is added to a DockArea e.g. by XML loading, then it will automatically docked.
+    By default undock will add the Panel to the parent of the DockArea, that can also be the top widget.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - dockable: If true, the Panel can be docked/undocked to DockAreas.
-	"""
+      - dockable: If true, the Panel can be docked/undocked to DockAreas.
+    """
 
     ATTRIBUTES = ResizableWindow.ATTRIBUTES + [
         BoolAttr('dockable'),
@@ -211,19 +211,19 @@ class Panel(ResizableWindow):
 
     def afterDock(self):
         """ called after dockTo() process if the panel is docked
-		
-			overwrite this to e.g. keep a record on where the widget
-			was last docked
-		"""
+
+            overwrite this to e.g. keep a record on where the widget
+            was last docked
+        """
         pass
 
     def afterUndock(self):
-        """ called after undockTo() process if the panel is undocked 
-		
-			overwrite and implement this in your Panel instance
-			to e.g. restore a particular default position
-			(otherwise the panel would re-appear on the center)
-		"""
+        """ called after undockTo() process if the panel is undocked
+
+            overwrite and implement this in your Panel instance
+            to e.g. restore a particular default position
+            (otherwise the panel would re-appear on the center)
+        """
         pass
 
     def dockTo(self, widget):

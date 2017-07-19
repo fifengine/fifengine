@@ -34,16 +34,16 @@ from .widget import Widget
 
 class AnimationIcon(Widget):
     """
-	An animation icon.
+    An animation icon.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - animation: String : The source location of the Animation xml.
-	  - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
-	  - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
-	  - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
-	"""
+      - animation: String : The source location of the Animation xml.
+      - scale: Boolean: True if the image should be scaled to widget size, false otherwise.
+      - tile: Boolean: True if the image should be tiled to widget size, false otherwise.
+      - opaque: Boolean: True if the background of the icon should be drawn, false otherwise.
+    """
     ATTRIBUTES = Widget.ATTRIBUTES + [
         Attr('animation'),
         BoolAttr('scale'),

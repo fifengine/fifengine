@@ -49,34 +49,34 @@ from .exceptions import ParserError
 
 class Attr(object):
     """
-	A simple text attribute.
-	"""
+    A simple text attribute.
+    """
 
     def __init__(self, name):
         self.name = name
 
     def set(self, obj, value):
         """
-		Parses the given value with the L{parse} method
-		and sets it on the given instance with C{setattr}.
-		"""
+        Parses the given value with the L{parse} method
+        and sets it on the given instance with C{setattr}.
+        """
         value = self.parse(value)
         setattr(obj, self.name, value)
 
     def parse(self, value):
         """
-		Parses a value and checks for errors.
-		Override with specialiced behaviour.
-		"""
+        Parses a value and checks for errors.
+        Override with specialiced behaviour.
+        """
         return str(value)
 
 
 class UnicodeAttr(Attr):
     def parse(self, value):
         """
-		Parses a value and checks for errors.
-		Override with specialiced behaviour.
-		"""
+        Parses a value and checks for errors.
+        Override with specialiced behaviour.
+        """
         return str(value)
 
 

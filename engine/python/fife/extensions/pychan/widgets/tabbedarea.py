@@ -35,9 +35,9 @@ from .widget import Widget
 
 class Tab(Container):
     """
-	A tab widget.
-	It can be used as a container.
-	"""
+    A tab widget.
+    It can be used as a container.
+    """
 
     ATTRIBUTES = Container.ATTRIBUTES + [
         UnicodeAttr('content_name'),
@@ -140,13 +140,13 @@ class Tab(Container):
 
 class TabbedArea(Container):
     """
-	This is the tabbed area class.
+    This is the tabbed area class.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
 
-	"""
+    """
     ATTRIBUTES = Container.ATTRIBUTES + [
         IntAttr('select_tab_index'),
         UnicodeAttr('select_tab'),
@@ -247,9 +247,9 @@ class TabbedArea(Container):
 
     def addChild(self, widget):
         """
-		Adds a child widget to the container.
-		
-		"""
+        Adds a child widget to the container.
+
+        """
 
         # if the widget have no tabwidget, we try to find one
         if widget.tab is None:

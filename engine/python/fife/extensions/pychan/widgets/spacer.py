@@ -30,11 +30,11 @@ from fife.extensions.pychan.attrs import PointAttr
 
 class Spacer(Widget):
     """
-	A spacer represents expandable or fixed 'whitespace' in the GUI.
+    A spacer represents expandable or fixed 'whitespace' in the GUI.
 
-	In a XML file you can get this by adding a <Spacer /> inside a VBox or
-	HBox element (Windows implicitly are VBox elements).
-	"""
+    In a XML file you can get this by adding a <Spacer /> inside a VBox or
+    HBox element (Windows implicitly are VBox elements).
+    """
 
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = False

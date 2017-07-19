@@ -33,17 +33,17 @@ fileExtensions = ('xml', )
 
 def saveMapFile(path, engine, map, importList=[], debug=True):
     """ save map file
-	@type	path:		string
-	@param	path:		The fully qualified path to the file to save
-	@type	engine:		object
-	@param	engine: 	FIFE engine instance
-	@type	map:		object
-	@param	map:		FIFE map object
-	@type	importList:	list
-	@param	importList:	A list of all imports
-	@type 	debug:		boolean
-	@param	debug:		Enables debugging information
-	"""
+    @type	path:		string
+    @param	path:		The fully qualified path to the file to save
+    @type	engine:		object
+    @param	engine: 	FIFE engine instance
+    @type	map:		object
+    @param	map:		FIFE map object
+    @type	importList:	list
+    @param	importList:	A list of all imports
+    @type 	debug:		boolean
+    @param	debug:		Enables debugging information
+    """
     (filename, extension) = os.path.splitext(path)
     map.setFilename(path)
     map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
@@ -55,12 +55,12 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
 
 def addMapSaver(fileExtension, saverClass):
     """Add a new saver for fileextension
-	@type   fileExtension: string
-	@param  fileExtension: The file extension the saver is registered for
-	@type   saverClass:   object
-	@param  saverClass:   A fife.ResourceLoader implementation that saves maps
-	                       from files with the given fileExtension
-	"""
+    @type   fileExtension: string
+    @param  fileExtension: The file extension the saver is registered for
+    @type   saverClass:   object
+    @param  saverClass:   A fife.ResourceLoader implementation that saves maps
+                           from files with the given fileExtension
+    """
     mapFileMapping[fileExtension] = saverClass
     _updateMapFileExtensions()
 

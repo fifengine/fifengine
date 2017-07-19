@@ -58,12 +58,12 @@ class WrappedProperty(object):
 
 class ColorProperty(WrappedProperty):
     """
-	A color property. Fakes a color attribute of a fifechan widget.
-	This accepts either tuples of the colors (r,g,b)
-	or L{fife.Color} objects.
+    A color property. Fakes a color attribute of a fifechan widget.
+    This accepts either tuples of the colors (r,g,b)
+    or L{fife.Color} objects.
 
-	Color objects have value semantics in this case.
-	"""
+    Color objects have value semantics in this case.
+    """
 
     def __init__(self, name):
         super(ColorProperty, self).__init__(name)
@@ -83,9 +83,9 @@ class ColorProperty(WrappedProperty):
 
 class ImageProperty(WrappedProperty):
     """
-	This unifies the way Images and Image attributes are handled
-	inside PyChan.
-	"""
+    This unifies the way Images and Image attributes are handled
+    inside PyChan.
+    """
 
     def __init__(self, name):
         super(ImageProperty, self).__init__(name)

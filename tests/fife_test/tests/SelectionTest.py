@@ -212,18 +212,18 @@ class SelectionTest(test.Test):
 
     def pump(self):
         """
-		This gets called every frame that the test is running.  We have nothing
-		to do here for this test.
-		"""
+        This gets called every frame that the test is running.  We have nothing
+        to do here for this test.
+        """
         pass
 
     def loadMap(self, filename):
         """
-		Simple function to load and display a map file. We could of course 
-		have passed in the map filename but I'll leave that up to you.
-		
-		@param filename The filename.
-		"""
+        Simple function to load and display a map file. We could of course
+        have passed in the map filename but I'll leave that up to you.
+
+        @param filename The filename.
+        """
 
         self._mapfilename = filename
 
@@ -252,13 +252,13 @@ class SelectionTest(test.Test):
         instancerenderer.activateAllLayers(self._map)
 
     def rect_test(self, cursor_x, cursor_y):
-        """ create a rect from ORIGIN to mouse cursor coordinates		
-		
-		@type 	cursor_x:	int
-		@param	cursor_x:	x coordinate of the mouse cursor
-		@type	cursor_y:	int
-		@param	cursor_y:	y coordinate of the mouse cursor
-		"""
+        """ create a rect from ORIGIN to mouse cursor coordinates
+
+        @type 	cursor_x:	int
+        @param	cursor_x:	x coordinate of the mouse cursor
+        @type	cursor_y:	int
+        @param	cursor_y:	y coordinate of the mouse cursor
+        """
         if self._camera is None: return
         if self._actorlayer is None: return
 
@@ -275,11 +275,11 @@ class SelectionTest(test.Test):
 
     def getLocationAt(self, screenpoint):
         """
-		Query the main camera for the Map location (on the actor layer)
-		that a screen point refers to.
-		
-		@param screenpoint A fife.ScreenPoint
-		"""
+        Query the main camera for the Map location (on the actor layer)
+        that a screen point refers to.
+
+        @param screenpoint A fife.ScreenPoint
+        """
 
         target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
         target_mapcoord.z = 0
@@ -289,9 +289,9 @@ class SelectionTest(test.Test):
 
     def movePlayer(self, screenpoint):
         """
-		Simple function that moves the player instance to the given screenpoint.
-		
-		@param screenpoint A fife.ScreenPoint
-		"""
+        Simple function that moves the player instance to the given screenpoint.
+
+        @param screenpoint A fife.ScreenPoint
+        """
 
         self._player.move('walk', self.getLocationAt(screenpoint), 4.0)

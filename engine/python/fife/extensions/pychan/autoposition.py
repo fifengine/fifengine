@@ -77,17 +77,17 @@ def _parsePosition(position):
 
 def placeWidget(widget, position):
     """
-	Place a widget according to a string defining relative coordinates to screen borders.
+    Place a widget according to a string defining relative coordinates to screen borders.
 
-	The position definition has to be of the form: C{"<x_pos><x_delta>:<y_pos><y_delta>"}
+    The position definition has to be of the form: C{"<x_pos><x_delta>:<y_pos><y_delta>"}
 
-	C{<x_pos>} may be one of:
+    C{<x_pos>} may be one of:
           - left
           - right
           - center
           - explicit
 
-	C{<y_pos>} may be one of:
+    C{<y_pos>} may be one of:
           - top
           - bottom
           - center
@@ -96,24 +96,24 @@ def placeWidget(widget, position):
         C{explicit} means that the widgets x or y position will not be touched. The rest should be
         self explanatory.
 
-	C{<x_delta>} and C{<y_delta>} must be of the form: +pixel_number or -pixel_number. Or completely
+    C{<x_delta>} and C{<y_delta>} must be of the form: +pixel_number or -pixel_number. Or completely
         omitted. Note that the sign has to be there for for positive deltas, too.
 
-	For brevity two shortcuts exist:
+    For brevity two shortcuts exist:
           - "explicit" -> "explicit:explicit"
           - "automatic" -> "center:center"
 
-	A few examples::
+    A few examples::
           "right-20:top"
           "center:top+10"
           "center:center"
 
-	@param widget: The PyChan widget.
-	@param position: A position definition.
+    @param widget: The PyChan widget.
+    @param position: A position definition.
 
-	If the position cannot be parsed a L{PyChanException} is thrown.
+    If the position cannot be parsed a L{PyChanException} is thrown.
 
-	"""
+    """
     if position == EXPLICIT:
         return
     x_pos, x_delta, y_pos, y_delta = _parsePosition(position)

@@ -35,18 +35,18 @@ from .widget import Widget
 
 class TextBox(Widget):
     """
-	An editable B{multiline} text edit widget.
+    An editable B{multiline} text edit widget.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - text: The text in the TextBox.
-	  - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
+      - text: The text in the TextBox.
+      - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
 
-	Data
-	====
-	The text can be read and set via L{distributeData} and L{collectData}.
-	"""
+    Data
+    ====
+    The text can be read and set via L{distributeData} and L{collectData}.
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text'), Attr('filename')]
     DEFAULT_HEXPAND = True

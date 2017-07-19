@@ -33,15 +33,15 @@ from .basictextwidget import BasicTextWidget
 
 class Button(BasicTextWidget):
     """
-	A basic push button.
-	
-	New Attributes
-	==============
-	
-	  - active: Bool: If false the button is inactiv then it looks gray.
-	  - alignment: Int: Sets the alignment of the caption. The alignment is relative to the center of the button.
-	  - offset: Point: The offset of the caption when the button is pressed.
-	"""
+    A basic push button.
+
+    New Attributes
+    ==============
+
+      - active: Bool: If false the button is inactiv then it looks gray.
+      - alignment: Int: Sets the alignment of the caption. The alignment is relative to the center of the button.
+      - offset: Point: The offset of the caption when the button is pressed.
+    """
 
     ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
         BoolAttr('active'),
@@ -189,18 +189,18 @@ class Button(BasicTextWidget):
 
 class ImageButton(Button):
     """
-	A basic push button with six different images for the up, down and hover state.
+    A basic push button with six different images for the up, down and hover state.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - up_image: String: The source location of the Image for the B{unpressed} state.
-	  - down_image: String: The source location of the Image for the B{pressed} state.
-	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
-	  - in_up_image: String: The source location of the Image for the B{unpressed} inactive state.
-	  - in_down_image: String: The source location of the Image for the B{pressed} inactive state.
-	  - in_hover_image: String: The source location of the Image for the B{unpressed hovered} inactive state.
-	"""
+      - up_image: String: The source location of the Image for the B{unpressed} state.
+      - down_image: String: The source location of the Image for the B{pressed} state.
+      - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
+      - in_up_image: String: The source location of the Image for the B{unpressed} inactive state.
+      - in_down_image: String: The source location of the Image for the B{pressed} inactive state.
+      - in_hover_image: String: The source location of the Image for the B{unpressed hovered} inactive state.
+    """
 
     ATTRIBUTES = Button.ATTRIBUTES + [
         Attr('up_image'),
@@ -332,18 +332,18 @@ class ImageButton(Button):
 
 class ToggleButton(ImageButton):
     """
-	A basic push button that can be toggled.
+    A basic push button that can be toggled.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - group: String: The group the button belongs to. Only one button in each group will be toggled at one time.
-	  - toggled: Boolean: Whether the button is toggled or not.
+      - group: String: The group the button belongs to. Only one button in each group will be toggled at one time.
+      - toggled: Boolean: Whether the button is toggled or not.
 
-	Data
-	====
-	The toggled status can be read and set via L{distributeData} and L{collectData}
-	"""
+    Data
+    ====
+    The toggled status can be read and set via L{distributeData} and L{collectData}
+    """
 
     ATTRIBUTES = ImageButton.ATTRIBUTES + [Attr('group'), BoolAttr('toggled')]
     DEFAULT_GROUP = ""

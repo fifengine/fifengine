@@ -31,19 +31,19 @@ from .basictextwidget import BasicTextWidget
 
 class Label(BasicTextWidget):
     """
-	A basic label - displaying a string.
+    A basic label - displaying a string.
 
-	Also allows text wrapping and onMouse hover callbacks.
+    Also allows text wrapping and onMouse hover callbacks.
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	 - wrap_text: Boolean: Enable/Disable automatic text wrapping. Disabled by default.
-	 Currently to actually see text wrapping you have to explicitly set a max_size with
-	 the desired width of the text, as the layout engine is not capable of deriving
-	 the maximum width from a parent container.
+     - wrap_text: Boolean: Enable/Disable automatic text wrapping. Disabled by default.
+     Currently to actually see text wrapping you have to explicitly set a max_size with
+     the desired width of the text, as the layout engine is not capable of deriving
+     the maximum width from a parent container.
 
-	"""
+    """
 
     ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
 

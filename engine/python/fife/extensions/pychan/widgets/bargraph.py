@@ -33,14 +33,14 @@ from .widget import Widget
 class BarGraph(Widget):
     """ A bar graph widget
 
-	New Attributes
-	==============
+    New Attributes
+    ==============
 
-	  - bar_position: x and y coordinate
-	  - bar_width': int: default 10
-	  - bar_height: int: default 10
-	  - opaque: bool: default False
-	"""
+      - bar_position: x and y coordinate
+      - bar_width': int: default 10
+      - bar_height: int: default 10
+      - opaque: bool: default False
+    """
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         PointAttr('bar_position'),
