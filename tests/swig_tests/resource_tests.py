@@ -25,30 +25,31 @@
 import sys
 from swig_test_utils import *
 
-class TestImgMgr(unittest.TestCase):
-	
-	def setUp(self):
-		self.engine = getEngine()
-		
-	def tearDown(self):
-		self.engine.destroy()
-			
-	def testImageImgMgr(self):
-		imgMgr = self.engine.getImageManager()
-		self.assert_(imgMgr)
-		self.assert_(imgMgr.getTotalResources() == 0)
-		img = imgMgr.create('tests/data/beach_e1.png')
-		self.assertEqual(imgMgr.getTotalResourcesLoaded(), 0)
-		self.assertEqual(imgMgr.getTotalResourcesCreated(), 1)
-		img = imgMgr.get(img.getHandle())
-		self.assertEqual(imgMgr.getTotalResourcesLoaded(), 1)
-		self.assertEqual(imgMgr.getTotalResourcesCreated(), 0)
 
-	def testImageImgMgrFail(self):
-		imgMgr = self.engine.getImageManager()
+class TestImgMgr(unittest.TestCase):
+    def setUp(self):
+        self.engine = getEngine()
+
+    def tearDown(self):
+        self.engine.destroy()
+
+    def testImageImgMgr(self):
+        imgMgr = self.engine.getImageManager()
+        self.assert_(imgMgr)
+        self.assert_(imgMgr.getTotalResources() == 0)
+        img = imgMgr.create('tests/data/beach_e1.png')
+        self.assertEqual(imgMgr.getTotalResourcesLoaded(), 0)
+        self.assertEqual(imgMgr.getTotalResourcesCreated(), 1)
+        img = imgMgr.get(img.getHandle())
+        self.assertEqual(imgMgr.getTotalResourcesLoaded(), 1)
+        self.assertEqual(imgMgr.getTotalResourcesCreated(), 0)
+
+    def testImageImgMgrFail(self):
+        imgMgr = self.engine.getImageManager()
+
+
 #		TODO: This test fails as imgMgr.load doesn't throw an exception as expected
 #		self.assertRaises(RuntimeError,imgMgr.load,'does_not_exist.png')
-
 
 TEST_CLASSES = [TestImgMgr]
 

@@ -19,7 +19,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-
 """ Savers plugin manager  """
 from __future__ import print_function
 
@@ -28,11 +27,12 @@ import os.path
 from fife import fife
 from fife.extensions.serializers.xmlmapsaver import XMLMapSaver
 
-mapFileMapping = { 'xml' : XMLMapSaver}
-fileExtensions = ('xml',)
+mapFileMapping = {'xml': XMLMapSaver}
+fileExtensions = ('xml', )
+
 
 def saveMapFile(path, engine, map, importList=[], debug=True):
-	""" save map file
+    """ save map file
 	@type	path:		string
 	@param	path:		The fully qualified path to the file to save
 	@type	engine:		object
@@ -44,25 +44,27 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
 	@type 	debug:		boolean
 	@param	debug:		Enables debugging information
 	"""
-	(filename, extension) = os.path.splitext(path)
-	map.setFilename(path)
-	map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
+    (filename, extension) = os.path.splitext(path)
+    map.setFilename(path)
+    map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
 
-	map_saver.saveResource()
-	if debug: print("--- Saved Map.")
-	return map
+    map_saver.saveResource()
+    if debug: print("--- Saved Map.")
+    return map
+
 
 def addMapSaver(fileExtension, saverClass):
-	"""Add a new saver for fileextension
+    """Add a new saver for fileextension
 	@type   fileExtension: string
 	@param  fileExtension: The file extension the saver is registered for
 	@type   saverClass:   object
 	@param  saverClass:   A fife.ResourceLoader implementation that saves maps
 	                       from files with the given fileExtension
 	"""
-	mapFileMapping[fileExtension] = saverClass
-	_updateMapFileExtensions()
+    mapFileMapping[fileExtension] = saverClass
+    _updateMapFileExtensions()
+
 
 def _updateMapFileExtensions():
-	global fileExtensions
-	fileExtensions = set(mapFileMapping.keys())
+    global fileExtensions
+    fileExtensions = set(mapFileMapping.keys())

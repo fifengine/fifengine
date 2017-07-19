@@ -25,107 +25,112 @@
 from swig_test_utils import *
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
+
 class ActionTests(unittest.TestCase):
-	def setUp(self):
-		template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
-		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
-		files = map(lambda dirname: template % dirname, dirnames)
+    def setUp(self):
+        template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
+        dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
+        files = map(lambda dirname: template % dirname, dirnames)
 
-		self.engine = getEngine()
-		
-		self.map = self.engine.getModel().createMap("map001")
-		self.grid = self.engine.getModel().getCellGrid("square")
-		
-		self.layer = self.map.createLayer("Layer001", self.grid)
-		self.layer.setWalkable(True)
-		self.layer.createCellCache()
-		
-		self.target = fife.Location(self.layer)
-	
-		self.obj = fife.Object("object001", 'plaa')
-		fife.ObjectVisual.create(self.obj)
-		self.pather = fife.RoutePather()
-				
-		self.obj.setPather(self.pather)
-		self.action = self.obj.createAction('walk')
-		fife.ActionVisual.create(self.action)
+        self.engine = getEngine()
 
-		for index, direction in enumerate(dirnames):
-			degree = 45 * index
-			self.action.get2dGfxVisual().addAnimation(degree, loadXMLAnimation(self.engine, files[index]))
+        self.map = self.engine.getModel().createMap("map001")
+        self.grid = self.engine.getModel().getCellGrid("square")
 
-		self.ground = fife.Object("ground", 'plaa')
-		image = self.engine.getImageManager().load('tests/data/earth_1.png')
-		fife.ObjectVisual.create(self.ground)
-		self.ground.get2dGfxVisual().addStaticImage(0, image.getHandle())
-		self.ground.img = self.engine.getImageManager().get(image.getHandle())
-		
-		for y in xrange(-2,3):
-			for x in xrange(-2,3):
-				inst = self.layer.createInstance(self.ground, fife.ModelCoordinate(x,y))
-				fife.InstanceVisual.create(inst)
-				
-		self.inst = self.layer.createInstance(self.obj, fife.ModelCoordinate(-2,-2))
-		fife.InstanceVisual.create(self.inst)
-			
-	def tearDown(self):
-		self.engine.destroy()
+        self.layer = self.map.createLayer("Layer001", self.grid)
+        self.layer.setWalkable(True)
+        self.layer.createCellCache()
 
-	def _testWalkingAction(self):
+        self.target = fife.Location(self.layer)
 
-		self.inst.move('walk', self.target, 0.05)
-		self.engine.initializePumping()
-		backend = self.engine.renderBackend
-		for i in xrange(360):
-			self.inst.getLocation().getLayerCoordinates()
-			self.target.getLayerCoordinates()
-			if self.inst.getLocation().getLayerCoordinates() == self.target.getLayerCoordinates():
-				break
-			self.inst.update()
-			action = self.inst.currentAction
-			angle = 0 #self.inst.orientation
-			animation = action.getAnimationByAngle(angle)
-			timestamp = self.inst.actionRuntime % animation.duration
-			image = animation.getFrameByTimestamp( timestamp )
-			if image:
-				image.render(fife.Rect(0,0,image.width,image.height),255)
-			self.engine.pump()
-		self.engine.finalizePumping()
+        self.obj = fife.Object("object001", 'plaa')
+        fife.ObjectVisual.create(self.obj)
+        self.pather = fife.RoutePather()
 
-	def testWalkAround(self):
+        self.obj.setPather(self.pather)
+        self.action = self.obj.createAction('walk')
+        fife.ActionVisual.create(self.action)
 
-		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
-		
-		cam = self.map.addCamera("foo", self.layer, viewport)
-		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
-		cam.setRotation(45)
-		cam.setTilt(40)
+        for index, direction in enumerate(dirnames):
+            degree = 45 * index
+            self.action.get2dGfxVisual().addAnimation(degree,
+                                                      loadXMLAnimation(
+                                                          self.engine,
+                                                          files[index]))
 
-		renderer = fife.InstanceRenderer.getInstance(cam)
-		renderer.activateAllLayers(self.map)
-		
-		self.engine.initializePumping()
-		self.target.setLayerCoordinates(fife.ModelCoordinate(2,-2))	
-		self.inst.move('walk', self.target, 0.9)
-		targets = (
-			(2,0), (2,-1), (2,-2), (1,-2),
-			(0,-2), (-1,-2), (-2,-2), (-2,-1),
-			(-2,0), (-2,1), (-2,2), (-1,2),
-			(0,2), (1,2), (2,2), (2,1))
-		for target in targets:
-			l = self.inst.getLocation()
-			l.setLayerCoordinates(fife.ModelCoordinate(0,0))
-			self.inst.setLocation(l)
-			self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
-			self.inst.move('walk', self.target, 0.9)
-			for i in xrange(10):
-				self.engine.pump()
+        self.ground = fife.Object("ground", 'plaa')
+        image = self.engine.getImageManager().load('tests/data/earth_1.png')
+        fife.ObjectVisual.create(self.ground)
+        self.ground.get2dGfxVisual().addStaticImage(0, image.getHandle())
+        self.ground.img = self.engine.getImageManager().get(image.getHandle())
 
-		self.engine.finalizePumping()
-		self.map.removeCamera("foo")
+        for y in xrange(-2, 3):
+            for x in xrange(-2, 3):
+                inst = self.layer.createInstance(self.ground,
+                                                 fife.ModelCoordinate(x, y))
+                fife.InstanceVisual.create(inst)
 
-		
+        self.inst = self.layer.createInstance(self.obj,
+                                              fife.ModelCoordinate(-2, -2))
+        fife.InstanceVisual.create(self.inst)
+
+    def tearDown(self):
+        self.engine.destroy()
+
+    def _testWalkingAction(self):
+
+        self.inst.move('walk', self.target, 0.05)
+        self.engine.initializePumping()
+        backend = self.engine.renderBackend
+        for i in xrange(360):
+            self.inst.getLocation().getLayerCoordinates()
+            self.target.getLayerCoordinates()
+            if self.inst.getLocation().getLayerCoordinates(
+            ) == self.target.getLayerCoordinates():
+                break
+            self.inst.update()
+            action = self.inst.currentAction
+            angle = 0  #self.inst.orientation
+            animation = action.getAnimationByAngle(angle)
+            timestamp = self.inst.actionRuntime % animation.duration
+            image = animation.getFrameByTimestamp(timestamp)
+            if image:
+                image.render(fife.Rect(0, 0, image.width, image.height), 255)
+            self.engine.pump()
+        self.engine.finalizePumping()
+
+    def testWalkAround(self):
+
+        rb = self.engine.getRenderBackend()
+        viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
+
+        cam = self.map.addCamera("foo", self.layer, viewport)
+        cam.setCellImageDimensions(self.ground.img.getWidth(),
+                                   self.ground.img.getHeight())
+        cam.setRotation(45)
+        cam.setTilt(40)
+
+        renderer = fife.InstanceRenderer.getInstance(cam)
+        renderer.activateAllLayers(self.map)
+
+        self.engine.initializePumping()
+        self.target.setLayerCoordinates(fife.ModelCoordinate(2, -2))
+        self.inst.move('walk', self.target, 0.9)
+        targets = ((2, 0), (2, -1), (2, -2), (1, -2), (0, -2), (-1, -2),
+                   (-2, -2), (-2, -1), (-2, 0), (-2, 1), (-2, 2), (-1, 2),
+                   (0, 2), (1, 2), (2, 2), (2, 1))
+        for target in targets:
+            l = self.inst.getLocation()
+            l.setLayerCoordinates(fife.ModelCoordinate(0, 0))
+            self.inst.setLocation(l)
+            self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
+            self.inst.move('walk', self.target, 0.9)
+            for i in xrange(10):
+                self.engine.pump()
+
+        self.engine.finalizePumping()
+        self.map.removeCamera("foo")
+
 
 TEST_CLASSES = [ActionTests]
 

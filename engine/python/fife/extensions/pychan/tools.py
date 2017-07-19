@@ -20,7 +20,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-
 """
 Functional utilities designed for pychan use cases.
 """
@@ -34,44 +33,47 @@ from . import exceptions
 
 ### Functools ###
 
-def applyOnlySuitable(func,*args,**kwargs):
-	"""
+
+def applyOnlySuitable(func, *args, **kwargs):
+    """
 	This nifty little function takes another function and applies it to a dictionary of
 	keyword arguments. If the supplied function does not expect one or more of the
 	keyword arguments, these are silently discarded. The result of the application is returned.
 	This is useful to pass information to callbacks without enforcing a particular signature.
 	"""
-	if sys.version_info < (3,):
-		func_name = 'im_func'
-		code_name = 'func_code'
-	else:
-		func_name = '__func__'
-		code_name = '__code__'
-	if hasattr(func, func_name):
-		code = func.__func__.__code__
-		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-	elif hasattr(func, code_name):
-		code = func.__code__
-		varnames = code.co_varnames[0:code.co_argcount]
-	elif hasattr(func,'__call__'):
-		func = func.__call__
-		if hasattr(func, func_name):
-			code = func.__func__.__code__
-			varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-		elif hasattr(func, code_name):
-			code = func.__code__
-			varnames = code.co_varnames[0:code.co_argcount]
+    if sys.version_info < (3, ):
+        func_name = 'im_func'
+        code_name = 'func_code'
+    else:
+        func_name = '__func__'
+        code_name = '__code__'
+    if hasattr(func, func_name):
+        code = func.__func__.__code__
+        varnames = code.co_varnames[1:code.co_argcount]  #ditch bound instance
+    elif hasattr(func, code_name):
+        code = func.__code__
+        varnames = code.co_varnames[0:code.co_argcount]
+    elif hasattr(func, '__call__'):
+        func = func.__call__
+        if hasattr(func, func_name):
+            code = func.__func__.__code__
+            varnames = code.co_varnames[
+                1:code.co_argcount]  #ditch bound instance
+        elif hasattr(func, code_name):
+            code = func.__code__
+            varnames = code.co_varnames[0:code.co_argcount]
 
-	#http://docs.python.org/lib/inspect-types.html
-	if code.co_flags & 8:
-		return func(*args,**kwargs)
-	for name,value in list(kwargs.items()):
-		if name not in varnames:
-			del kwargs[name]
-	return func(*args,**kwargs)
+    #http://docs.python.org/lib/inspect-types.html
+    if code.co_flags & 8:
+        return func(*args, **kwargs)
+    for name, value in list(kwargs.items()):
+        if name not in varnames:
+            del kwargs[name]
+    return func(*args, **kwargs)
 
-def callbackWithArguments(callback,*args,**kwargs):
-	"""
+
+def callbackWithArguments(callback, *args, **kwargs):
+    """
 	Curries a function with extra arguments to
 	create a suitable callback.
 
@@ -90,12 +92,15 @@ def callbackWithArguments(callback,*args,**kwargs):
 	      'buttonBye' : callbackWithArguments(printStuff,"Adieu")
 	  })
 	"""
-	def real_callback():
-		callback(*args,**kwargs)
-	return real_callback
+
+    def real_callback():
+        callback(*args, **kwargs)
+
+    return real_callback
+
 
 def attrSetCallback(**kwargs):
-	"""
+    """
 	Generates an event callback that sets attributes on the widget
 	it is called on. This is especially useful for mouseEntered/Exited
 	events - to create hover effects.
@@ -126,25 +131,27 @@ def attrSetCallback(**kwargs):
 
 	Keys starting with an underscore raise a L{exceptions.PrivateFunctionalityError}.
 	"""
-	do_calls = []
+    do_calls = []
 
-	for name in list(kwargs.keys()):
-		if name.startswith("_"):
-			raise exceptions.PrivateFunctionalityError(name)
-		if name.startswith("do__"):
-			do_calls.append(name[4:])
-			del kwargs[name]
+    for name in list(kwargs.keys()):
+        if name.startswith("_"):
+            raise exceptions.PrivateFunctionalityError(name)
+        if name.startswith("do__"):
+            do_calls.append(name[4:])
+            del kwargs[name]
 
-	def attrSet_callback(widget=None):
-		for name,value in list(kwargs.items()):
-			setattr(widget,name,value)
-		for method_name in do_calls:
-			method = getattr(widget,method_name)
-			method()
-	return attrSet_callback
+    def attrSet_callback(widget=None):
+        for name, value in list(kwargs.items()):
+            setattr(widget, name, value)
+        for method_name in do_calls:
+            method = getattr(widget, method_name)
+            method()
+
+    return attrSet_callback
+
 
 def chainCallbacks(*args):
-	"""
+    """
 	Chains callbacks to be called one after the other.
 	
 	Example Usage::
@@ -155,14 +162,17 @@ def chainCallbacks(*args):
             callback = tools.chainCallbacks(doSomethingUseful, print_event, print_widget)
 	    guiElement.capture(callback)
 	"""
-	callbacks = args
-	def chain_callback(event=0,widget=0):
-		for callback in callbacks:
-			applyOnlySuitable(callback, event=event, widget=widget)
-	return chain_callback
+    callbacks = args
 
-def repeatALot(n = 1000):
-	"""
+    def chain_callback(event=0, widget=0):
+        for callback in callbacks:
+            applyOnlySuitable(callback, event=event, widget=widget)
+
+    return chain_callback
+
+
+def repeatALot(n=1000):
+    """
 	Internal decorator used to profile some pychan functions.
 	Only use with functions without side-effect.
 
@@ -171,18 +181,25 @@ def repeatALot(n = 1000):
 		def findChild(self,**kwargs):
 			...
 	"""
-	def wrap_f(f):
-		def new_f(*args,**kwargs):
-			for i in range(n):
-				f(*args,**kwargs)
-			return f(*args,**kwargs)
-		return new_f
-	return wrap_f
 
-def this_is_deprecated(func,message=None):
-	if message is None:
-		message = repr(func)
-	def wrapped_func(*args,**kwargs):
-		print("PyChan: You are using the DEPRECATED functionality: %s" % message)
-		return func(*args,**kwargs)
-	return wrapped_func
+    def wrap_f(f):
+        def new_f(*args, **kwargs):
+            for i in range(n):
+                f(*args, **kwargs)
+            return f(*args, **kwargs)
+
+        return new_f
+
+    return wrap_f
+
+
+def this_is_deprecated(func, message=None):
+    if message is None:
+        message = repr(func)
+
+    def wrapped_func(*args, **kwargs):
+        print(
+            "PyChan: You are using the DEPRECATED functionality: %s" % message)
+        return func(*args, **kwargs)
+
+    return wrapped_func
