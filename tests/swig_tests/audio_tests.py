@@ -26,38 +26,41 @@ import time
 from swig_test_utils import *
 from fife.extensions import fifelog
 
-class TestAudio(unittest.TestCase):
-	
-	def setUp(self):
-		self.engine = getEngine(True)
-		self.soundmanager = self.engine.getSoundManager()
-		self.soundclipmanager = self.engine.getSoundClipManager()
-		self.log = fifelog.LogManager(self.engine, promptlog=True, filelog=False)
-		self.log.setVisibleModules('resource manager', 'audio')
-		self.soundmanager.init()
 
-	def tearDown(self):
-		self.engine.destroy()
-		del self.log
-	
-	def testLeftRight(self):
-		sound = self.soundmanager.createEmitter('tests/data/left_right_test.ogg')
-		sound.setLooping(True)
-		sound.play()
-		time.sleep(3);
-	
-	def test2Streams(self):
-		em = self.soundmanager.createEmitter()
-		sound = self.soundmanager.createEmitter()
-		clip = self.soundclipmanager.load('tests/data/left_right_test.ogg')
-		sound.setSoundClip(clip)
-		sound.setLooping(True)
-		sound.setCursor(fife.SD_TIME_POS, 5)
-		em.setSoundClip(clip)
-		em.setGain(0.7)
-		em.play()
-		sound.play()
-		time.sleep(3);
+class TestAudio(unittest.TestCase):
+    def setUp(self):
+        self.engine = getEngine(True)
+        self.soundmanager = self.engine.getSoundManager()
+        self.soundclipmanager = self.engine.getSoundClipManager()
+        self.log = fifelog.LogManager(
+            self.engine, promptlog=True, filelog=False)
+        self.log.setVisibleModules('resource manager', 'audio')
+        self.soundmanager.init()
+
+    def tearDown(self):
+        self.engine.destroy()
+        del self.log
+
+    def testLeftRight(self):
+        sound = self.soundmanager.createEmitter(
+            'tests/data/left_right_test.ogg')
+        sound.setLooping(True)
+        sound.play()
+        time.sleep(3)
+
+    def test2Streams(self):
+        em = self.soundmanager.createEmitter()
+        sound = self.soundmanager.createEmitter()
+        clip = self.soundclipmanager.load('tests/data/left_right_test.ogg')
+        sound.setSoundClip(clip)
+        sound.setLooping(True)
+        sound.setCursor(fife.SD_TIME_POS, 5)
+        em.setSoundClip(clip)
+        em.setGain(0.7)
+        em.play()
+        sound.play()
+        time.sleep(3)
+
 
 TEST_CLASSES = [TestAudio]
 

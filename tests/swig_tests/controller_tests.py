@@ -24,38 +24,39 @@
 
 from swig_test_utils import *
 
-class TestController(unittest.TestCase):
-	
-	def setUp(self):
-		self.engine = getEngine(True)
-		
-	def tearDown(self):
-		self.engine.destroy()
-		
-	def testInstances(self):
-		print "\nTest SoundManager"
-		self.assert_(self.engine.getSoundManager())
-		print "Test EventManager"
-		self.assert_(self.engine.getEventManager())
-		print "Test TimeManager"
-		self.assert_(self.engine.getTimeManager())
-		print "Test ImageManager"
-		self.assert_(self.engine.getImageManager())
-		print "Test AnimationManager"
-		self.assert_(self.engine.getAnimationManager())
-		print "Test SoundClipManager"
-		self.assert_(self.engine.getSoundClipManager())
-		print "Test LogManager"
-		self.assert_(self.engine.getLogManager())
-		pass
 
-	def testPumping(self):
-		self.engine.initializePumping()
-		for i in xrange(10):
-			self.engine.pump()
-		self.engine.finalizePumping()
+class TestController(unittest.TestCase):
+    def setUp(self):
+        self.engine = getEngine(True)
+
+    def tearDown(self):
+        self.engine.destroy()
+
+    def testInstances(self):
+        print "\nTest SoundManager"
+        self.assert_(self.engine.getSoundManager())
+        print "Test EventManager"
+        self.assert_(self.engine.getEventManager())
+        print "Test TimeManager"
+        self.assert_(self.engine.getTimeManager())
+        print "Test ImageManager"
+        self.assert_(self.engine.getImageManager())
+        print "Test AnimationManager"
+        self.assert_(self.engine.getAnimationManager())
+        print "Test SoundClipManager"
+        self.assert_(self.engine.getSoundClipManager())
+        print "Test LogManager"
+        self.assert_(self.engine.getLogManager())
+        pass
+
+    def testPumping(self):
+        self.engine.initializePumping()
+        for i in xrange(10):
+            self.engine.pump()
+        self.engine.finalizePumping()
+
 
 TEST_CLASSES = [TestController]
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()

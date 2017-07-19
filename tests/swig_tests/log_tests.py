@@ -24,9 +24,11 @@
 
 from swig_test_utils import *
 
+
 class TestLog(unittest.TestCase):
-	def testLog(self):
-		pass
+    def testLog(self):
+        pass
+
 
 TEST_CLASSES = [TestLog]
 

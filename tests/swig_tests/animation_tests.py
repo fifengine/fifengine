@@ -25,97 +25,96 @@
 from swig_test_utils import *
 import time
 
+
 class TestView(unittest.TestCase):
-	
-	def setUp(self):
-		self.engine = getEngine()
-		self.model = self.engine.getModel()
-		self.map = self.model.createMap("map001")
-		
-		self.grid = self.model.getCellGrid("square")
-		
-		self.imgMgr = self.engine.getImageManager()
-		self.animMgr = self.engine.getAnimationManager()
+    def setUp(self):
+        self.engine = getEngine()
+        self.model = self.engine.getModel()
+        self.map = self.model.createMap("map001")
 
-		frame_delay = 100
+        self.grid = self.model.getCellGrid("square")
 
-		#create the animation... messy I know
-		self.anim = self.animMgr.create("crate")
-		
-		imgs = []
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_000.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0001.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0002.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0003.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0004.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0005.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0006.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0007.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0008.png'))
-		
-		for img in imgs:
-			self.anim.addFrame(img, frame_delay)		
-		
-		self.obj = self.model.createObject('0','test_nspace')
-		fife.ObjectVisual.create(self.obj)
-		img = self.imgMgr.get('tests/data/earth_1.png')
-		self.obj.get2dGfxVisual().addStaticImage(0, img.getHandle())
+        self.imgMgr = self.engine.getImageManager()
+        self.animMgr = self.engine.getAnimationManager()
 
-		self.screen_cell_w = img.getWidth()
-		self.screen_cell_h = img.getHeight()
-		
-		self.layer = self.map.createLayer("layer001", self.grid)
+        frame_delay = 100
 
-		self.camcoord = fife.ExactModelCoordinate(2,0)
-		
-	def tearDown(self):
-		self.engine.destroy()
+        #create the animation... messy I know
+        self.anim = self.animMgr.create("crate")
 
-	def testCamera(self):
-		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
+        imgs = []
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_000.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0001.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0002.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0003.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0004.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0005.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0006.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0007.png'))
+        imgs.append(self.imgMgr.load('tests/data/crate/full_s_0008.png'))
 
-		cam = self.map.addCamera("foo", self.layer, viewport )
-		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
-		cam.setRotation(45)
-		cam.setTilt(40)
-		
-		cam.setViewPort(viewport)
-		
-		renderer = fife.InstanceRenderer.getInstance(cam)
-		renderer.activateAllLayers(self.map)
+        for img in imgs:
+            self.anim.addFrame(img, frame_delay)
 
-		genericrenderer = fife.GenericRenderer.getInstance(cam)
-		genericrenderer.addActiveLayer(self.layer)
-		genericrenderer.setEnabled(True)
-		
-		self.engine.initializePumping()
-		
-		for y in xrange(4):
-			for x in xrange(4):
-				i = self.layer.createInstance(self.obj, fife.ModelCoordinate(x,y))
-				fife.InstanceVisual.create(i)
-				self.engine.pump()
-				time.sleep(0.01)
+        self.obj = self.model.createObject('0', 'test_nspace')
+        fife.ObjectVisual.create(self.obj)
+        img = self.imgMgr.get('tests/data/earth_1.png')
+        self.obj.get2dGfxVisual().addStaticImage(0, img.getHandle())
 
-		i = self.layer.createInstance(self.obj, fife.ModelCoordinate(0,0))
-		fife.InstanceVisual.create(i)
-		node = fife.RendererNode(i)
-		genericrenderer.addAnimation("test", node, self.anim)
+        self.screen_cell_w = img.getWidth()
+        self.screen_cell_h = img.getHeight()
 
-		i = self.layer.createInstance(self.obj, fife.ModelCoordinate(2,0))
-		fife.InstanceVisual.create(i)
-		node = fife.RendererNode(i)
-		genericrenderer.addAnimation("test", node, self.anim)
-		
-		for i in xrange(900):
-			self.engine.pump()
-		self.engine.finalizePumping()
-	
-		
+        self.layer = self.map.createLayer("layer001", self.grid)
+
+        self.camcoord = fife.ExactModelCoordinate(2, 0)
+
+    def tearDown(self):
+        self.engine.destroy()
+
+    def testCamera(self):
+        rb = self.engine.getRenderBackend()
+        viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
+
+        cam = self.map.addCamera("foo", self.layer, viewport)
+        cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
+        cam.setRotation(45)
+        cam.setTilt(40)
+
+        cam.setViewPort(viewport)
+
+        renderer = fife.InstanceRenderer.getInstance(cam)
+        renderer.activateAllLayers(self.map)
+
+        genericrenderer = fife.GenericRenderer.getInstance(cam)
+        genericrenderer.addActiveLayer(self.layer)
+        genericrenderer.setEnabled(True)
+
+        self.engine.initializePumping()
+
+        for y in xrange(4):
+            for x in xrange(4):
+                i = self.layer.createInstance(self.obj,
+                                              fife.ModelCoordinate(x, y))
+                fife.InstanceVisual.create(i)
+                self.engine.pump()
+                time.sleep(0.01)
+
+        i = self.layer.createInstance(self.obj, fife.ModelCoordinate(0, 0))
+        fife.InstanceVisual.create(i)
+        node = fife.RendererNode(i)
+        genericrenderer.addAnimation("test", node, self.anim)
+
+        i = self.layer.createInstance(self.obj, fife.ModelCoordinate(2, 0))
+        fife.InstanceVisual.create(i)
+        node = fife.RendererNode(i)
+        genericrenderer.addAnimation("test", node, self.anim)
+
+        for i in xrange(900):
+            self.engine.pump()
+        self.engine.finalizePumping()
+
 
 TEST_CLASSES = [TestView]
 
 if __name__ == '__main__':
     unittest.main()
-
