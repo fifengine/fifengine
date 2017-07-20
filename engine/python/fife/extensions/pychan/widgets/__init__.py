@@ -22,6 +22,7 @@
 # ####################################################################
 
 ### Widget/Container Base Classes ###
+
 """
 Widget wrappers.
 
@@ -61,65 +62,65 @@ from .linegraph import LineGraph
 from .piegraph import PieGraph
 from .pointgraph import PointGraph
 
+
 # Global Widget Class registry
 
 WIDGETS = {
-    # Containers
-    "Container": Container,
-    "Window": Window,
-    "ABox": ABox,
-    "VBox": VBox,
-    "HBox": HBox,
-    "CBox": CBox,
-    "ScrollArea": ScrollArea,
-    "AdjustingContainer": AdjustingContainer,
-    "FlowContainer": FlowContainer,
-    "TabbedArea": TabbedArea,
-    "Tab": Tab,
-    "ResizableWindow": ResizableWindow,
-    "DockArea": DockArea,
-    "Panel": Panel,
+	# Containers
+	"Container" : Container,
+	"Window" : Window,
+	"ABox" : ABox,
+	"VBox" : VBox,
+	"HBox" : HBox,
+	"CBox" : CBox,
+	"ScrollArea" :ScrollArea,
+	"AdjustingContainer" : AdjustingContainer,
+	"FlowContainer" : FlowContainer,
+	"TabbedArea" : TabbedArea,
+	"Tab" : Tab,
+	"ResizableWindow" : ResizableWindow,
+	"DockArea" : DockArea,
+	"Panel" : Panel,
 
-    # Simple Widgets
-    "Spacer": Spacer,
-    "Icon": Icon,
-    "AnimationIcon": AnimationIcon,
-    "Label": Label,
-    "PercentageBar": PercentageBar,
-    "IconProgressBar": IconProgressBar,
-    "ImageProgressBar": ImageProgressBar,
-    "BarGraph": BarGraph,
-    "CurveGraph": CurveGraph,
-    "LineGraph": LineGraph,
-    "PieGraph": PieGraph,
-    "PointGraph": PointGraph,
+	# Simple Widgets
+	"Spacer" : Spacer,
+	"Icon" : Icon,
+	"AnimationIcon" : AnimationIcon,
+	"Label" : Label,
+	"PercentageBar" : PercentageBar,
+	"IconProgressBar" : IconProgressBar,
+	"ImageProgressBar" : ImageProgressBar,
+	"BarGraph" : BarGraph,
+	"CurveGraph" : CurveGraph,
+	"LineGraph" : LineGraph,
+	"PieGraph" : PieGraph,
+	"PointGraph" : PointGraph,
 
-    # Button Widgets
-    "Button": Button,
-    "CheckBox": CheckBox,
-    "RadioButton": RadioButton,
-    "ImageButton": ImageButton,
-    "ToggleButton": ToggleButton,
+	# Button Widgets
+	"Button" : Button,
+	"CheckBox" : CheckBox,
+	"RadioButton" : RadioButton,
+	"ImageButton" : ImageButton,
+	"ToggleButton" : ToggleButton,
 
-    #Complexer Widgets / Text io
-    "TextField": TextField,
-    "TextBox": TextBox,
-    "PasswordField": PasswordField,
-    "ListBox": ListBox,
-    "DropDown": DropDown,
-    "Slider": Slider
+	#Complexer Widgets / Text io
+	"TextField" : TextField,
+	"TextBox" : TextBox,
+	"PasswordField" : PasswordField,
+	"ListBox" : ListBox,
+	"DropDown" : DropDown,
+	"Slider" : Slider
 }
 
-
 def registerWidget(cls):
-    """
+	"""
 	Register a new Widget class for pychan.
 	
 	If the widget class name is already used you will overwrite the existing
 	definition.  There is no warning to tell you if this has happened.  Be sure
 	to understand what you are doing here!
 	"""
-    global WIDGETS
-    name = cls.__name__
+	global WIDGETS
+	name = cls.__name__
 
-    WIDGETS[name] = cls
+	WIDGETS[name] = cls
