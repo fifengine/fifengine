@@ -67,27 +67,26 @@ before_install:
   - cmake --version
 
 install:
-    - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
-    # https://github.com/fifengine/fifechan/blob/master/INSTALL.md
-    - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan; fi
-    - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build_fifechan; cd build_fifechan; cmake ../fifechan; fi
-    - make -j3
-    - sudo make install
-    - cd ..
+  - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
+  - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build_fifechan; cd build_fifechan; cmake ../fifechan; fi
+  - make -j3
+  - sudo make install
+  - cd ..
 
 script:
-   - cd ..
-   - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifengine; fi
-   - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 -DPYTHON_INCLUDE_DIR=/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m -DPYTHON_LIBRARY=/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6 ../fifengine; fi
-   - ls -alh .
-   - make -j3
-   - sudo make install
+  - cd ..
+  - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifengine; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 -DPYTHON_INCLUDE_DIR=/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m -DPYTHON_LIBRARY=/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6 ../fifengine; fi
+  - ls -alh .
+  - make -j3
+  - sudo make install
 
 after_script: 
-   - cd /home/travis/build/fifengine/fifengine
-   - python3 -c 'from fife import fife; print(fife.getVersion())'
-   - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
-   - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
+  -  cd $TRAVIS_BUILD_DIR
+  - python3 -c 'from fife import fife; print(fife.getVersion())'
+  - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
 
 notifications:
   irc: irc.freenode.org#fife
