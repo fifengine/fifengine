@@ -21,12 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from buttons import ImageButton
+from .buttons import ImageButton
 
 
 class CheckBox(ImageButton):

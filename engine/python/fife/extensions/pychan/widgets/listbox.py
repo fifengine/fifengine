@@ -21,10 +21,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
+from builtins import str
+from builtins import map
+from builtins import range
 from fife import fifechan
 
-from common import gui2str, text2gui
-from widget import Widget
+from .common import gui2str, text2gui
+from .widget import Widget
 
 class GenericListmodel(fifechan.ListModel,list):
 	"""
@@ -33,7 +37,7 @@ class GenericListmodel(fifechan.ListModel,list):
 	"""
 	def __init__(self,*args):
 		super(GenericListmodel,self).__init__()
-		map(self.append,args)
+		list(map(self.append,args))
 	def clear(self):
 		while len(self):
 			self.pop()
@@ -42,7 +46,7 @@ class GenericListmodel(fifechan.ListModel,list):
 
 	def getElementAt(self, i):
 		i = max(0,min(i,len(self) - 1))
-		return text2gui(unicode(self[i]))
+		return text2gui(str(self[i]))
 
 class ListBox(Widget):
 	"""

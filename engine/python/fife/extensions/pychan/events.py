@@ -41,7 +41,7 @@ to generate suitable callbacks.
 
 Here's an example callback::
    def dumpEventInfo(event=0,widget=0):
-      print widget, " received the event ", event
+	  print widget, " received the event ", event
 
 Note the signature - C{event} and C{widget} are keyword
 arguments passed to the callback. If doesn't accept either
@@ -58,13 +58,18 @@ Available Events
 ----------------
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-from compat import fifechan
-import widgets
+from builtins import str
+from builtins import range
+from builtins import object
+from future.utils import itervalues
+from .compat import fifechan
 
-import exceptions
-from internal import get_manager
-import tools
+from . import exceptions
+from .internal import get_manager
+from . import tools
 import traceback
 import weakref
 from fife.extensions.fife_timer import Timer
@@ -102,7 +107,7 @@ __doc__ += "".join([" - %s\n" % event for event in EVENTS])
 try: del event
 except:pass
 
-MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = range(4)
+MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 def getEventType(name):
 	if "mouse" in name:
 		return MOUSE_EVENT
@@ -138,7 +143,7 @@ class EventListenerBase(object):
 		# Enables event redirection to next pump cycle by default
 		self._redirect = True
 		self._timers = []
-		self._deadtimers = []		
+		self._deadtimers = []
 
 	def attach(self,widget):
 		"""
@@ -150,7 +155,7 @@ class EventListenerBase(object):
 			return
 		if not self.events:
 			return
-		if self.debug: print "Attach:",self
+		if self.debug: print("Attach:",self)
 		self.doAttach(widget.real_widget)
 		self.widget_ref = weakref.ref(widget)
 		self.is_attached = True
@@ -162,7 +167,7 @@ class EventListenerBase(object):
 		"""
 		if not self.is_attached:
 			return
-		if self.debug: print "Detach:",self
+		if self.debug: print("Detach:",self)
 		self.is_attached = False
 
 	def setRedirection(self, redirect):
@@ -178,31 +183,32 @@ class EventListenerBase(object):
 		try:
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
-				if self.debug: print "-"*self.indent, name
-				for f in self.events[name].itervalues():
+				if self.debug: print("-"*self.indent, name)
+				for f in itervalues(self.events[name]):
 					if not self._redirect:
 						f(event)
 						continue
+
 					def delayed_f(timer, f=f): # bind f during loop
 						n_timer = timer()
 						f( event )
-						
+
 						#FIXME: figure out a way to get rid of the dead timer list
 						del self._deadtimers[:]
-						
+
 						if n_timer in self._timers:
 							self._deadtimers.append(n_timer)
 							self._timers.remove(n_timer)
-						
-							
+
+
 					timer = Timer(repeat=1)
 					timer._callback = cbwa(delayed_f, weakref.ref(timer))
 					timer.start()
-					
+
 					self._timers.append(timer)
 
 		except:
-			print name, repr(event)
+			print(name, repr(event))
 			traceback.print_exc()
 			raise
 
@@ -247,12 +253,12 @@ class _KeyEventListener(EventListenerBase,fifechan.KeyListener):
 
 	def keyPressed(self,e): self._redirectEvent("keyPressed",e)
 	def keyReleased(self,e): self._redirectEvent("keyReleased",e)
-	
+
 class _WidgetEventListener(EventListenerBase, fifechan.WidgetListener):
 	def __init__(self):super(_WidgetEventListener, self).__init__()
 	def doAttach(self,real_widget): real_widget.addWidgetListener(self)
 	def doDetach(self,real_widget): real_widget.removeWidgetListener(self)
-	
+
 	def widgetResized(self, e): self._redirectEvent("widgetResized",e)
 	def widgetMoved(self, e): self._redirectEvent("widgetMoved",e)
 	def widgetHidden(self, e): self._redirectEvent("widgetHidden",e)
@@ -300,13 +306,13 @@ class EventMapper(object):
 		return "EventMapper(%s)" % repr(self.widget_ref())
 
 	def attach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.attach()
 
 	def detach(self):
-		for listener in self.listener.values():
+		for listener in list(self.listener.values()):
 			listener.detach()
-			
+
 
 	def capture(self,event_name,callback,group_name):
 		if event_name not in EVENTS:
@@ -316,7 +322,7 @@ class EventMapper(object):
 			if self.isCaptured(event_name,group_name):
 				self.removeEvent(event_name,group_name)
 			elif self.debug:
-				print CALLBACK_NONE_MESSAGE % str(self.widget_ref())
+				print(CALLBACK_NONE_MESSAGE % str(self.widget_ref()))
 			return
 		self.addEvent(event_name,callback,group_name)
 
@@ -325,9 +331,9 @@ class EventMapper(object):
 
 	def getCapturedEvents(self):
 		events = []
-		for event_type, listener in self.listener.items():
-			for event_name, group in listener.events.items():
-				for group_name in group.keys():
+		for event_type, listener in list(self.listener.items()):
+			for event_name, group in list(listener.events.items()):
+				for group_name in list(group.keys()):
 					events.append( "%s/%s" % (event_name, group_name) )
 		return events
 
@@ -337,12 +343,12 @@ class EventMapper(object):
 	def removeEvent(self,event_name,group_name):
 		listener = self.getListener(event_name)
 		del listener.events[event_name][group_name]
-		
+
 		if not listener.events[event_name]:
 			del listener.events[event_name]
 		if not listener.events:
 			listener.detach()
-			
+
 		del self.callbacks[group_name][event_name]
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
@@ -357,12 +363,12 @@ class EventMapper(object):
 		# Set up callback dictionary. This should fix some GC issues
 		if group_name not in self.callbacks:
 			self.callbacks[group_name] = {}
-			
+
 		if event_name not in self.callbacks[group_name]:
 			self.callbacks[group_name][event_name] = {}
-			
+
 		self.callbacks[group_name][event_name] = callback
-			
+
 		def captured_f(event):
 			if self_ref() is not None:
 				tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())

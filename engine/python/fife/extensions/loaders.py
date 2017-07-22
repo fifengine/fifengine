@@ -21,6 +21,7 @@
 # ####################################################################
 
 """ Loaders plugin manager """
+from __future__ import print_function
 
 import os.path
 
@@ -32,15 +33,15 @@ fileExtensions = set(['xml'])
 
 def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
 	""" load map file and get (an optional) callback if major stuff is done:
-	
+
 		- map creation
 		- parsed imports
-		- parsed layers 
+		- parsed layers
 		- parsed cameras
-		
+
 		the callback will send both a string and a float (which shows
 		the overall process), callback(string, float)
-	
+
 	@type	engine:		object
 	@param	engine: 	FIFE engine instance
 	@type	callback:	function
@@ -53,7 +54,7 @@ def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
 	(filename, extension) = os.path.splitext(path)
 	map_loader = mapFileMapping[extension[1:]](engine, callback, debug, extensions)
 	map = map_loader.loadResource(path)
-	if debug: print "--- Loading map took: ", map_loader.time_to_load, " seconds."
+	if debug: print("--- Loading map took: ", map_loader.time_to_load, " seconds.")
 	return map
 
 def addMapLoader(fileExtension, loaderClass):
