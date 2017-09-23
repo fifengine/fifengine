@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     SDL2
-# Downloads:            https://libsdl.org/release/                                             
+# Downloads:            https://libsdl.org/release/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
