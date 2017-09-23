@@ -16,7 +16,7 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/nigels-com/glew/releases/download/glew-${GLEW_VERSION}/glew-${GLEW_VERSION}-win32.zip Download link is broken
-      URL                 http://downloads.sourceforge.net/project/glew/${GLEW_VERSION}/glew-${GLEW_VERSION}/glew-${GLEW_VERSION}-win32.zip
+      URL                 https://downloads.sourceforge.net/project/glew/glew/${GLEW_VERSION}/glew-${GLEW_VERSION}-win32.zip
       URL_MD5             32a72e6b43367db8dbea6010cd095355
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
