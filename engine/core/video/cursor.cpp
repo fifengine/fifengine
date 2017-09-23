@@ -42,7 +42,7 @@ namespace FIFE {
 	/** Logger to use for this source file.
 	 *  @relates Logger
 	 */
-	static Logger _log(LM_GUI); //@todo We should have a log module for cursor
+	static Logger _log(LM_CURSOR);
 
 	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
@@ -57,7 +57,8 @@ namespace FIFE {
 		m_mx(0),
 		m_my(0),
 		m_timemanager(TimeManager::instance()),
-		m_invalidated(false) {
+		m_invalidated(false),
+		m_native_image_cursor_enabled(false) {
 		assert(m_timemanager);
 		set(m_cursor_id);
 	}
@@ -80,7 +81,15 @@ namespace FIFE {
 		m_cursor_image = image;
 		m_cursor_type = CURSOR_IMAGE;
 
-		if (SDL_ShowCursor(0)) {
+		if (m_native_image_cursor_enabled) {
+			if (!setNativeImageCursor(image)) {
+				return;
+			}
+			if (!SDL_ShowCursor(1)) {
+				SDL_PumpEvents();
+			}
+		}
+		else if (SDL_ShowCursor(0)) {
 			SDL_PumpEvents();
 		}
 
@@ -94,7 +103,15 @@ namespace FIFE {
 		m_cursor_animation = anim;
 		m_cursor_type = CURSOR_ANIMATION;
 
-		if (SDL_ShowCursor(0)) {
+		if (m_native_image_cursor_enabled) {
+			if (!setNativeImageCursor(anim->getFrameByTimestamp(0))) {
+				return;
+			}
+			if (!SDL_ShowCursor(1)) {
+				SDL_PumpEvents();
+			}
+		}
+		else if (SDL_ShowCursor(0)) {
 			SDL_PumpEvents();
 		}
 		m_animtime = m_timemanager->getTime();
@@ -153,6 +170,7 @@ namespace FIFE {
 		if (m_native_cursor != NULL) {
 			SDL_FreeCursor(m_native_cursor);
 			m_native_cursor = NULL;
+			m_native_cursor_image.reset();
 
 			m_invalidated = true;
 		}
@@ -162,6 +180,14 @@ namespace FIFE {
 		if (m_invalidated) {
 			if (m_cursor_type == CURSOR_NATIVE ) {
 				set(m_cursor_id);
+			}
+			else if (m_native_image_cursor_enabled) {
+				if (m_cursor_type == CURSOR_IMAGE ) {
+					set(m_cursor_image);
+				}
+				else if (m_cursor_type == CURSOR_ANIMATION ) {
+					set(m_cursor_animation);
+				}
 			}
 
 			m_invalidated = false;
@@ -201,11 +227,15 @@ namespace FIFE {
 		}
 
 		if (img2 != 0) {
-			Rect area(m_mx + img2->getXShift(), m_my + img2->getYShift(), img2->getWidth(), img2->getHeight());
-			m_renderbackend->pushClipArea(area, false);
-			img2->render(area);
-			m_renderbackend->renderVertexArrays();
-			m_renderbackend->popClipArea();
+			if (m_native_image_cursor_enabled) {
+				setNativeImageCursor(img2);
+			} else {
+				Rect area(m_mx + img2->getXShift(), m_my + img2->getYShift(), img2->getWidth(), img2->getHeight());
+				m_renderbackend->pushClipArea(area, false);
+				img2->render(area);
+				m_renderbackend->renderVertexArrays();
+				m_renderbackend->popClipArea();
+			}
 		}
 	}
 
@@ -243,10 +273,72 @@ namespace FIFE {
 		cursor_id = getNativeId(cursor_id);
 		SDL_Cursor* cursor = SDL_CreateSystemCursor(static_cast<SDL_SystemCursor>(cursor_id));
 		if (!cursor) {
-			FL_WARN(_log, "Cursor: No cursor matching cursor_id was found.");
+			FL_WARN(_log, "No cursor matching cursor_id was found.");
 			return;
 		}
-		m_native_cursor = cursor;
 		SDL_SetCursor(cursor);
+		if (m_native_cursor != NULL) {
+			SDL_FreeCursor(m_native_cursor);
+		}
+		m_native_cursor = cursor;
+	}
+
+	bool Cursor::setNativeImageCursor(ImagePtr image) {
+		if (image == m_native_cursor_image) {
+			// we're already using this image
+			return true;
+		}
+		if (image->getState() == IResource::RES_NOT_LOADED) {
+			image->load();
+		}
+
+		// SDL only accepts whole surfaces here so if this image uses a shared surface
+		// we need to prepare a temporary surface with just the relevant part
+		ImagePtr temp_image = image;
+		if (image->isSharedImage()) {
+			temp_image = ImageManager::instance()->create();
+			temp_image->copySubimage(0, 0, image);
+		}
+
+		SDL_Cursor* cursor = SDL_CreateColorCursor(
+			temp_image->getSurface(),
+			-image->getXShift(),
+			-image->getYShift());
+		if (cursor == NULL) {
+			FL_WARN(_log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() <<
+				"\". Falling back to software cursor.");
+			if (image->isSharedImage()) {
+				ImageManager::instance()->remove(temp_image);
+			}
+			setNativeImageCursorEnabled(false);
+			return false;
+		}
+		SDL_SetCursor(cursor);
+		m_native_cursor_image = image;
+
+		if (image->isSharedImage()) {
+			ImageManager::instance()->remove(temp_image);
+		}
+		if (m_native_cursor != NULL) {
+			SDL_FreeCursor(m_native_cursor);
+		}
+		m_native_cursor = cursor;
+		return true;
+	}
+
+	void Cursor::setNativeImageCursorEnabled(bool native_image_cursor_enabled) {
+		if (m_native_image_cursor_enabled != native_image_cursor_enabled) {
+			m_native_image_cursor_enabled = native_image_cursor_enabled;
+			if (m_cursor_type == CURSOR_IMAGE ) {
+				set(m_cursor_image);
+			}
+			else if (m_cursor_type == CURSOR_ANIMATION ) {
+				set(m_cursor_animation);
+			}
+		}
+	}
+
+	bool Cursor::isNativeImageCursorEnabled() const {
+		return m_native_image_cursor_enabled;
 	}
 }

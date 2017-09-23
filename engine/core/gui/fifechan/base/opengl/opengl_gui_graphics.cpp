@@ -21,7 +21,7 @@
 
 // Standard C++ library includes
 
-// This needs to be here, before fifechan includes gl.h
+// This needs to be here, before Fifechan includes gl.h
 #include "video/opengl/fife_opengl.h"
 
 // 3rd party library includes
@@ -202,7 +202,7 @@ namespace FIFE {
 
 		// Due to some odd conception in guiChan some of area
 		// has xOffset and yOffset > 0. And if it happens we
-		// need to offset our clip area. Or we can use fifechan stack.
+		// need to offset our clip area. Or we can use Fifechan stack.
 		const fcn::ClipRectangle& top = mClipStack.top();
 
 		m_renderbackend->pushClipArea(

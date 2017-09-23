@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 /***************************************************************************
- * Note! FIFE event channel borrows heavily from ideas pf Guichan library  *
+ * Note! FIFE event channel borrows heavily from ideas of Guichan library  *
  * version 0.6                                                             *
  ***************************************************************************/
 
@@ -41,7 +41,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/source/ec_ieventsource.h"
+#include "eventchannel/source/ieventsource.h"
 
 namespace FIFE {
 	/**  Base class for all events
@@ -51,8 +51,8 @@ namespace FIFE {
 		/** Constructor.
 		*/
 		Event():
-			m_isconsumed(false),
-			m_eventsource(NULL),
+			m_isConsumed(false),
+			m_eventSource(NULL),
 			m_timestamp(SDL_GetTicks()) {}
 
 		/** Destructor.
@@ -61,20 +61,20 @@ namespace FIFE {
 
 		/** Marks the event as consumed.
 		 */
-		virtual void consume() { m_isconsumed = true; }
+		virtual void consume() { m_isConsumed = true; }
 
 		/** Checks if the event is consumed.
 		 * @return true if the event is consumed, false otherwise.
 		 */
-		virtual bool isConsumed() const { return m_isconsumed; }
+		virtual bool isConsumed() const { return m_isConsumed; }
 
 		/** Gets the source of the event.
 		 */
-		virtual IEventSource* getSource() const { return m_eventsource; }
+		virtual IEventSource* getSource() const { return m_eventSource; }
 
 		/** Sets the source of the event.
 		 */
-		virtual void setSource(IEventSource* source) { m_eventsource = source; }
+		virtual void setSource(IEventSource* source) { m_eventSource = source; }
 
 		/** Gets the timestamp of the event
 		 */
@@ -95,8 +95,8 @@ namespace FIFE {
 		 */
 		virtual std::string getAttrStr() const {
 			std::stringstream ss;
-			ss << "consumed = " << m_isconsumed << ", ";
-			ss << "src = " << m_eventsource << ", ";
+			ss << "consumed = " << m_isConsumed << ", ";
+			ss << "src = " << m_eventSource << ", ";
 			ss << "timestamp = " << m_timestamp;
 			return ss.str();
 		}
@@ -111,8 +111,11 @@ namespace FIFE {
 		}
 
 	private:
-		bool m_isconsumed;
-		IEventSource* m_eventsource;
+		//! Indicates if the event is consumed.
+		bool m_isConsumed;
+		//! The source of the event.
+		IEventSource* m_eventSource;
+		//! Timestamp of the event.
 		int32_t m_timestamp;
 	};
 

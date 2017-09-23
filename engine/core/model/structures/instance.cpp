@@ -23,12 +23,13 @@
 #include <iostream>
 
 // 3rd party library includes
-#include <SDL.h>
+//#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "audio/soundsource.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 #include "util/math/fife_math.h"
@@ -114,7 +115,8 @@ namespace FIFE {
 		m_oldLocation(source.m_location),
 		m_rotation(source.m_rotation),
 		m_oldRotation(source.m_rotation),
-		m_action(),
+		m_action(NULL),
+		m_soundSource(NULL),
 		m_speed(0),
 		m_timeMultiplier(1.0),
 		m_sayText(""),
@@ -131,6 +133,7 @@ namespace FIFE {
 		delete m_actionInfo;
 		delete m_sayInfo;
 		delete m_timeProvider;
+		delete m_soundSource;
 	}
 
 	void Instance::InstanceActivity::update(Instance& source) {
@@ -431,6 +434,16 @@ namespace FIFE {
 		if (m_activity->m_actionInfo->m_action != old_action) {
 			m_activity->m_actionInfo->m_action_start_time = m_activity->m_actionInfo->m_prev_call_time;
 	    }
+		// start sound
+		if (m_activity->m_actionInfo->m_action->getAudio()) {
+			if (!m_activity->m_soundSource) {
+				m_activity->m_soundSource = new SoundSource(this);
+			}
+			m_activity->m_soundSource->setActionAudio(m_activity->m_actionInfo->m_action->getAudio());
+		} else if (old_action && old_action->getAudio()) {
+			m_activity->m_soundSource->setActionAudio(NULL);
+		}
+
 		if (isMultiObject()) {
 			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
 			for (; multi_it != m_multiInstances.end(); ++multi_it) {
@@ -812,6 +825,11 @@ namespace FIFE {
 		// this is needed in case the new action is set on the same pump and
 		// it is the same action as the finalized action
 		m_activity->m_action = NULL;
+
+		// stop audio
+		if (action->getAudio() && m_activity->m_soundSource) {
+			m_activity->m_soundSource->setActionAudio(NULL);
+		}
 
 		if (isMultiObject()) {
 			std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();

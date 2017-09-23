@@ -19,37 +19,35 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
-#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
-
 // Standard C++ library includes
-//
 
 // 3rd party library includes
-//
+#include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "ec_mouseevent.h"
+#include "util/base/exception.h"
+#include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
+
+#include "controllermappingloader.h"
 
 namespace FIFE {
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class IMouseFilter {
-	public:
+	void ControllerMappingLoader::load(const std::string& filename) {
+		VFS* vfs = VFS::instance();
 
-		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
-		 * @param event They mouse event.
-		 */
-		virtual bool isFiltered(const MouseEvent& event) = 0;
-
-		virtual ~IMouseFilter() {}
-	};
-
-} //FIFE
-
-#endif
+		boost::scoped_ptr<RawData> data (vfs->open(filename));
+		size_t datalen = data->getDataLength();
+		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+		data->readInto(darray.get(), datalen);
+		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
+		if (SDL_GameControllerAddMappingsFromRW(rwops, 0) == -1) {
+			throw SDLException(std::string("Error when loading gamecontroller mappings: ") + SDL_GetError());
+		}
+		SDL_FreeRW(rwops);
+	}
+}  //FIFE

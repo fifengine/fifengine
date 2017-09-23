@@ -167,9 +167,9 @@ namespace FIFE {
 	bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area) {
 		fcn::Graphics::pushClipArea(area);
 
-		// Due to some odd conception in FifeChan some of area
+		// Due to some odd conception in Fifechan some of area
 		// has xOffset and yOffset > 0. And if it happens we
-		// need to offset our clip area. Or we can use fifechan stack.
+		// need to offset our clip area. Or we can use Fifechan stack.
 		const fcn::ClipRectangle& top = mClipStack.top();
 
 		m_renderbackend->pushClipArea(

@@ -58,6 +58,9 @@ namespace FIFE {
 	}
 
 	bool SquareGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+		if (curpos == target) {
+			return true;
+		}
 		uint8_t x = ABS(target.x-curpos.x);
 		uint8_t y = ABS(target.y-curpos.y); 
 		if ((x<=1) && (y<=1)) {

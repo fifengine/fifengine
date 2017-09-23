@@ -28,11 +28,13 @@ import math
 class TestModel(unittest.TestCase):
 	
 	def setUp(self):
-		self.timeManager = fife.TimeManager()
-		self.model = fife.Model()
+                self.engine = getEngine(True)
+		self.timeManager = self.engine.getTimeManager()
+		self.model = self.engine.getModel()
 
 	def tearDown(self):
-		del self.timeManager
+                self.engine.destroy()
+		#del self.timeManager
 
 	def testModel(self):
 		map1 = self.model.createMap("map001")
@@ -47,7 +49,7 @@ class TestModel(unittest.TestCase):
 		query = self.model.getMaps()
 		self.assertEqual(len(query), 2)
 
-		self.assertEqual(len(query), self.model.getNumMaps())
+		self.assertEqual(len(query), self.model.getMapCount())
 
 		self.model.deleteMap(map2)
 
@@ -59,19 +61,19 @@ class TestModel(unittest.TestCase):
 		
 		query = self.model.getMaps()
 		self.assertEqual(len(query), 3)
-		self.assertEqual(self.model.getNumMaps(), 3)
+		self.assertEqual(self.model.getMapCount(), 3)
 		
 		self.model.deleteMaps()
 		query = self.model.getMaps()
 		self.assertEqual(len(query), 0)
-		self.assertEqual(self.model.getNumMaps(), 0)
+		self.assertEqual(self.model.getMapCount(), 0)
 
 	def testMaps(self):
 		map = self.model.createMap("map005")
 
-		self.assertEqual(map.getNumLayers(), 0)
+		self.assertEqual(map.getLayerCount(), 0)
 
-		grid = fife.SquareGrid()
+		grid = self.model.getCellGrid("square")
 
 		layer1 = map.createLayer("layer001", grid)
 		layer2 = map.createLayer("layer002", grid)
@@ -81,16 +83,16 @@ class TestModel(unittest.TestCase):
 
 		self.assertEqual(len(map.getLayers()), 2)
 
-		self.assertEqual(map.getNumLayers(), 2)
+		self.assertEqual(map.getLayerCount(), 2)
 		map.deleteLayer(layer2)
-		self.assertEqual(map.getNumLayers(), 1)
+		self.assertEqual(map.getLayerCount(), 1)
 		map.deleteLayers()
-		self.assertEqual(map.getNumLayers(), 0)
+		self.assertEqual(map.getLayerCount(), 0)
 
 	def testLayers(self):
 		map = self.model.createMap("map006")
 
-		grid = fife.SquareGrid()
+		grid = self.model.getCellGrid("square")
 		obj1 = self.model.createObject("object001","test_nspace")
 		obj2 = self.model.createObject("object002","test_nspace")
 
@@ -126,7 +128,7 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(self.model.deleteObject(obj2),True)
 
 		map = self.model.createMap("map007")
-		grid = fife.SquareGrid()
+		grid = self.model.getCellGrid("square")
 		layer = map.createLayer("layer004",grid)
 
 		inst = layer.createInstance(obj1, fife.ModelCoordinate(4,4))
@@ -138,119 +140,84 @@ class TestModel(unittest.TestCase):
 
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):
+		self.engine = getEngine(True)
+		self.anim0 = self.engine.getAnimationManager().create("0")
+		self.anim1 = self.engine.getAnimationManager().create("1")
+		self.anim2 = self.engine.getAnimationManager().create("2")
+		self.anim3 = self.engine.getAnimationManager().create("3")
 		self.runaction = fife.Action("action001")
 		fife.ActionVisual.create(self.runaction)
-		self.runaction.get2dGfxVisual().addAnimation(90, 1)
-		self.runaction.get2dGfxVisual().addAnimation(0, 0)
-		self.runaction.get2dGfxVisual().addAnimation(270, 3)
-		self.runaction.get2dGfxVisual().addAnimation(180, 2)
+		self.runaction.get2dGfxVisual().addAnimation(90, self.anim1)
+		self.runaction.get2dGfxVisual().addAnimation(0, self.anim0)
+		self.runaction.get2dGfxVisual().addAnimation(270, self.anim3)
+		self.runaction.get2dGfxVisual().addAnimation(180, self.anim2)
 		self.walkaction = fife.Action("action002")
 		fife.ActionVisual.create(self.walkaction)
-		self.walkaction.get2dGfxVisual().addAnimation(70, 1)
-		self.walkaction.get2dGfxVisual().addAnimation(200, 2)
-		self.walkaction.get2dGfxVisual().addAnimation(320, 3)
+		self.walkaction.get2dGfxVisual().addAnimation(70, self.anim1)
+		self.walkaction.get2dGfxVisual().addAnimation(200, self.anim2)
+		self.walkaction.get2dGfxVisual().addAnimation(320, self.anim3)
 
 	def testRunAngle89(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(89), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(89).getHandle(), self.anim1.getHandle())
 	
 	def testRunAngle90(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(90), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(90).getHandle(), self.anim1.getHandle())
 	
 	def testRunAngle91(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(91), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(91).getHandle(), self.anim1.getHandle())
 	
 	def testRunAngle135(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(135), 2)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(135).getHandle(), self.anim1.getHandle())
 	
 	def testRunAngle134(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(134), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(134).getHandle(), self.anim1.getHandle())
 	
 	def testRunAngle136(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(136), 2)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(136).getHandle(), self.anim2.getHandle())
 	
 	def testRunAngle0(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(0), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(0).getHandle(), self.anim0.getHandle())
 	
 	def testRunAngle40(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(40), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(40).getHandle(), self.anim0.getHandle())
 	
 	def testRunAngle45(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(45), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(45).getHandle(), self.anim0.getHandle())
 	
 	def testRunAngle270(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(270), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(270).getHandle(), self.anim3.getHandle())
 
 	def testRunAngle269(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(269), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(269).getHandle(), self.anim3.getHandle())
 	
 	def testRunAngle271(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(271), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(271).getHandle(), self.anim3.getHandle())
 	
 	def testRunAngle314(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(314), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(314).getHandle(), self.anim3.getHandle())
 	
 	def testRunAngle359(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(359), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(359).getHandle(), self.anim0.getHandle())
 	
 	def testRunAngle400(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(400), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(400).getHandle(), self.anim0.getHandle())
 	
 	def testRunAngle451(self):
-		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(451), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationByAngle(451).getHandle(), self.anim1.getHandle())
 	
 	def testWalkAngle0(self):
-		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(0), 3)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationByAngle(0).getHandle(), self.anim3.getHandle())
 
 	def testWalkAngle60(self):
-		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(60), 1)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationByAngle(60).getHandle(), self.anim1.getHandle())
 
 	def testWalkAngle199(self):
-		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(199), 2)
-
-class InstanceListener(fife.InstanceActionListener):
-	def __init__(self):
-		fife.InstanceActionListener.__init__(self)
-		self.finished = False
-
-	def OnActionFinished(self, instance, action):
-		self.finishedInstance = instance
-		self.finishedAction = action
-		self.finished = True
-
-class ActivityTests(unittest.TestCase):
-	def setUp(self):
-		grid = fife.HexGrid()
-		map = fife.Map("map007")
-		self.layer = map.addLayer("layer010", grid)
-		
-		self.target = fife.Location(self.layer)
-		self.target.setPosition(fife.ModelCoordinate(10,10))
-		
-		self.obj = fife.Object("object010", '')
-		self.pather = fife.LinearPather()
-		self.obj.setPather(self.pather)
-		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(4,4))
-		self.action = self.obj.addAction('action010', 'run')
-		self.action.addAnimation(0, 1)
-		self.action.thisown = 0
-		self.listener = InstanceListener()
-		self.inst.addActionListener(self.listener)
-		
-	def testMovingAction(self):
-		self.inst.move('run', self.target, 0.5)
-		for i in xrange(30):
-			self.inst.update()
-		self.assert_(self.listener.finished)
-
-	def testNonMovingAction(self):
-		self.inst.move('run', fife.ModelCoordinate(0,0))
-		self.inst.update()
-		self.assert_(self.listener.finished)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationByAngle(199).getHandle(), self.anim2.getHandle())
 
 class GridTests(unittest.TestCase):
 	def _testgrid(self, grid, curpos, access, cost):
 		for k, v in access.items():
-			print k, v
+			#print(k, v)
 			self.assertEqual(grid.isAccessible(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k)), v)
 		for k, v in cost.items():
 			self.assertEqual(int(10000 * grid.getAdjacentCost(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k))), 
@@ -267,7 +234,9 @@ class GridTests(unittest.TestCase):
 
 	
 	def testHexGrid(self):
-		grid = fife.HexGrid()
+		self.engine = getEngine(True)
+		self.model = self.engine.getModel()
+		grid = self.model.getCellGrid("hexagonal")
 		curpos = (1,1)
 		access = {
 			(0,0): False,
@@ -292,7 +261,10 @@ class GridTests(unittest.TestCase):
 		self._testgrid(grid, curpos, access, cost)
 	
 	def testSquareGrid(self):
-		grid = fife.SquareGrid()
+		self.engine = getEngine(True)
+		self.model = self.engine.getModel()
+		grid = self.model.getCellGrid("square")
+		grid.setAllowDiagonals(False)
 		curpos = (1,1)
 		access = {
 			(0,0): False,
@@ -315,7 +287,10 @@ class GridTests(unittest.TestCase):
 		self._testgrid(grid, curpos, access, cost)
 
 	def testDiagSquareGrid(self):
-		grid = fife.SquareGrid(True)
+		self.engine = getEngine(True)
+		self.model = self.engine.getModel()
+		grid = self.model.getCellGrid("square")
+		grid.setAllowDiagonals(True)
 		curpos = (1,1)
 		access = {
 			(0,0): True,
@@ -329,20 +304,20 @@ class GridTests(unittest.TestCase):
 			(2,2): True,
 		}
 		cost = {
-			(0,0): math.sqrt(2),
+			(0,0): 1.4,
 			(0,1): 1,
-			(0,2): math.sqrt(2),
+			(0,2): 1.4,
 			(1,0): 1,
 			(1,1): 0,
 			(1,2): 1,
-			(2,0): math.sqrt(2),
+			(2,0): 1.4,
 			(2,1): 1,
-			(2,2): math.sqrt(2),
+			(2,2): 1.4,
 		}
 		self._testgrid(grid, curpos, access, cost)
 
 
-TEST_CLASSES = [TestModel, TestActionAngles, GridTests] #ActivityTests
+TEST_CLASSES = [TestModel, TestActionAngles, GridTests]
 
 if __name__ == '__main__':
     unittest.main()

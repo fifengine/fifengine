@@ -22,7 +22,7 @@
 # ####################################################################
 
 """\
-Pythonic Guichan Wrapper - PyChan
+Pythonic Fifechan Wrapper - PyChan
 =================================
 
 Pythonic GUI API.
@@ -243,7 +243,7 @@ Wrapping machinery
 
 The wrapping mechanism works be redirecting attribute access to the Widget
 derived classes to a C{real_widget} member variable which in turn is an instance
-of the SWIG wrapped Guichan widget.
+of the SWIG wrapped Fifechan widget.
 
 To ensure the real widget has already been constructed, when the wrapping machinery
 is already in use, this has to be the first attribute to set in the constructors.
@@ -251,7 +251,11 @@ This leads to a reversed construction sequence as the super classes constructor
 has to be invoked I{after} the subclass specific construction has taken place.
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
+import sys
 
+from builtins import map
 __all__ = [
 	'loadXML',
 	'loadFonts',
@@ -259,17 +263,12 @@ __all__ = [
 	'manager'
 ]
 
-
-# For epydoc
-import widgets
-import widgets.ext
-
 # This *import should really be removed!
-from widgets import *
-from widgets.tabbedarea import Tab
-from exceptions import *
+from .widgets import *
+from .widgets.tabbedarea import Tab
+from .exceptions import *
 
-from fonts import loadFonts
+from .fonts import loadFonts
 
 ### Initialisation ###
 
@@ -283,8 +282,8 @@ def init(engine,debug=False, compat_layout=False):
 	@param debug: bool - Enables and disables debugging output. Default is False.
 	@param compat_layout: bool - Enables and disables compat layout. Default is False.
 	"""
-	from compat import _munge_engine_hook
-	from internal import Manager
+	from .compat import _munge_engine_hook
+	from .internal import Manager
 	global manager
 
 	manager = Manager(_munge_engine_hook(engine),debug,compat_layout)
@@ -308,7 +307,14 @@ def traced(f):
 			raise
 	return traced_f
 
-class _GuiLoader(object, handler.ContentHandler):
+if sys.version_info < (3, ):
+    class __GuiLoaderBase(object, handler.ContentHandler):
+        pass
+else:
+    class __GuiLoaderBase(handler.ContentHandler):
+        pass
+    
+class _GuiLoader(__GuiLoaderBase):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
 		self.root = None
@@ -317,12 +323,12 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
-		attrstrings = map(lambda t: '%s="%s"' % tuple(map(unicode,t)),attrs.items())
+		attrstrings = ['%s="%s"' % tuple(map(str,t)) for t in list(attrs.items())]
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		try:
-			print self.indent + tag
-		except UnicodeEncodeError, e:
-			print self.indent + tag.encode('ascii', 'backslashreplace')
+			print(self.indent + tag)
+		except UnicodeEncodeError as e:
+			print(self.indent + tag.encode('ascii', 'backslashreplace'))
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
@@ -340,7 +346,7 @@ class _GuiLoader(object, handler.ContentHandler):
 				if attr.name == name:
 					attr.set(obj,value)
 					return
-		except GuiXMLError, e:
+		except GuiXMLError as e:
 			raise GuiXMLError("Error parsing attr '%s'='%s' for '%s': '%s'" % (name,value,obj,e))
 		raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name,repr(obj)))
 
@@ -356,7 +362,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createInstance(self,cls,name,attrs):
 		obj = cls(parent=self.root)
-		for k,v in attrs.items():
+		for k,v in list(attrs.items()):
 			self._setAttr(obj,k,v)
 
 		if self.root:
@@ -371,7 +377,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
-		if manager.debug: print self.indent + "</%s>" % name
+		if manager.debug: print(self.indent + "</%s>" % name)
 		if self.stack.pop() in ('gui_element'):
 			self.root = self.root.parent or self.root
 

@@ -64,6 +64,7 @@ enum logmodule_t {
 	LM_XML,
 	LM_EXCEPTION,
 	LM_SCRIPT,
+	LM_CURSOR,
 	LM_MODULE_MAX // sentinel
 };
 
@@ -100,7 +101,8 @@ enum logmodule_t {
 		  {LM_VIEWVIEW, LM_VIEW, "View::View"}, \
 		{LM_XML, LM_CORE, "XML"}, \
 		{LM_EXCEPTION, LM_CORE, "Exception"}, \
-		{LM_SCRIPT, LM_CORE, "Script"} \
+		{LM_SCRIPT, LM_CORE, "Script"}, \
+		{LM_CURSOR, LM_CORE, "Cursor"} \
 	};
 
 #endif

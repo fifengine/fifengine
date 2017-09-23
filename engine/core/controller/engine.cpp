@@ -189,6 +189,7 @@ namespace FIFE {
 		m_eventmanager = new EventManager();
 		m_eventmanager->setMouseSensitivity(m_settings.getMouseSensitivity());
 		m_eventmanager->setMouseAccelerationEnabled(m_settings.isMouseAccelerationEnabled());
+		m_eventmanager->setJoystickSupport(m_settings.isJoystickSupport());
 
 		FL_LOG(_log, "Creating resource managers");
 
@@ -308,6 +309,7 @@ namespace FIFE {
 		m_model->adoptCellGrid(new HexGrid(true));
 
 		m_cursor = new Cursor(m_renderbackend);
+		m_cursor->setNativeImageCursorEnabled(m_settings.isNativeImageCursorEnabled());
 		FL_LOG(_log, "Engine initialized");
 	}
 
@@ -362,15 +364,11 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_eventmanager->processEvents();
 		m_timemanager->update();
+		m_soundmanager->update();
 
-#ifdef HAVE_CEGUI
-		m_renderbackend->clearBackBuffer();
-#endif
 		m_targetrenderer->render();
 		if (m_model->getActiveCameraCount() == 0) {
-#ifndef HAVE_CEGUI
 			m_renderbackend->clearBackBuffer();
-#endif
 			m_offrenderer->render();
 		} else {
 			m_model->update();

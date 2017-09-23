@@ -29,9 +29,14 @@ This module provides a nice framework for loading and saving game settings.
 It is by no means complete but it does provide a good starting point.
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from builtins import object
 import shutil
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from fife.extensions import fifelog
 from fife.extensions.fife_utils import getUserDataDirectory
@@ -51,7 +56,7 @@ class Setting(object):
 	"""
 
 	def __init__(self, app_name="", settings_file="", default_settings_file= "settings-dist.xml", copy_dist=True, serializer=None):
-		"""
+		r"""
 		Initializes the Setting object.
 
 		@param app_name: The applications name.  If this parameter is provided
@@ -108,7 +113,8 @@ class Setting(object):
 			'PlaySounds':[True,False], 'LogToFile':[True,False],
 			'LogToPrompt':[True,False], 'LogLevelFilter':[0,1,2,3],
 			'LogModules':['all', 'controller','script','video','audio','loaders','vfs','pool','view','model','metamodel','event_channel','xml'],
-			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False]
+			'FrameLimitEnabled':[True,False], 'FrameLimit':[0], 'MouseSensitivity':[0.0], 'MouseAcceleration':[True,False],
+			'NativeImageCursor':[True,False], 'JoystickSupport':[True, False]
 			}
 
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
@@ -128,7 +134,9 @@ class Setting(object):
 			'LogModules':['controller','script'],
 			'FrameLimitEnabled':False, 'FrameLimit':60,
 			'MouseSensitivity':0.0,
-			'MouseAcceleration':False
+			'MouseAcceleration':False,
+			'NativeImageCursor':False,
+                        'JoystickSupport':False
 			}
 
 		# has the settings file been read
@@ -363,6 +371,10 @@ class Setting(object):
 					elif name == "MouseSensitivity":
 						self._settingsFromFile[module][name] = e_value
 					elif name == "MouseAcceleration":
+						self._settingsFromFile[module][name] = e_value
+					elif name == "NativeImageCursor":
+						self._settingsFromFile[module][name] = e_value
+					elif name == "JoystickSupport":
 						self._settingsFromFile[module][name] = e_value
 
 					elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):

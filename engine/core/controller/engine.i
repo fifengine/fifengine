@@ -30,7 +30,6 @@ namespace FIFE {
 	class EventManager;
 	class TimeManager;
 	class IGUIManager;
-	class GUIChanManager;
 	class RenderBackend;
 	class Model;
 	class LogManager;
@@ -117,7 +116,11 @@ namespace FIFE {
 		float getMouseSensitivity() const;
 		void setMouseAccelerationEnabled(bool acceleration);
 		bool isMouseAccelerationEnabled() const;
-		
+		void setNativeImageCursorEnabled(bool nativeimagecursor);
+		bool isNativeImageCursorEnabled() const;
+		void setJoystickSupport(bool support);
+		bool isJoystickSupport() const;
+
 	private:
 		EngineSettings();
 	};	

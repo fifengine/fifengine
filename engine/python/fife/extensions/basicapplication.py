@@ -26,7 +26,10 @@ The basic application and main loop.
 
 See the L{ApplicationBase} documentation.
 """
+from __future__ import print_function
 
+from builtins import str
+from builtins import object
 from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.fife_settings import Setting
@@ -137,6 +140,8 @@ class ApplicationBase(object):
 		engineSetting.setVideoDriver(self._finalSetting['VideoDriver'])
 		engineSetting.setSDLDriver(self._finalSetting['RenderDriver'])
 		engineSetting.setLightingModel(self._finalSetting['Lighting'])
+		engineSetting.setNativeImageCursorEnabled(self._finalSetting['NativeImageCursor'])
+		engineSetting.setJoystickSupport(self._finalSetting['JoystickSupport'])
 
 		try:
 			engineSetting.setColorKeyEnabled(self._finalSetting['ColorKeyEnabled'])
@@ -224,7 +229,7 @@ class ApplicationBase(object):
 			try:
 				self.engine.pump()
 			except fife.Exception as e:
-				print str(e)
+				print(str(e))
 				self.quitRequested = True
 
 			self._pump()

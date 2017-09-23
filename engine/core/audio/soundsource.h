@@ -19,71 +19,67 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_COMMAND_H
-#define FIFE_EVENTCHANNEL_COMMAND_H
+#ifndef FIFE_SOUNDSOURCE_H
+#define FIFE_SOUNDSOURCE_H
 
 // Standard C++ library includes
-//
+
+// Platform specific includes
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "eventchannel/base/ec_event.h"
-#include "ec_commandids.h"
 
 namespace FIFE {
 
-	/**  Class for commands
-	 * Commands are arbitrary events e.g. send from one subsystem to another
+	class ActionAudio;
+	class Instance;
+	class SoundChangeListener;
+	class SoundEmitter;
+
+	/** Interface class between Instance / ActionAudio and SoundEmitter.
 	 */
-	class Command: public Event {
+	class SoundSource {
 	public:
-		/** Constructor.
+
+		SoundSource(Instance* instance);
+		~SoundSource();
+
+		/** Sets the ActionAudio. Owned by Object.
 		 */
-		Command():
-			Event(),
-			m_commandtype(CMD_UNKNOWN),
-			m_code(0) {}
+		void setActionAudio(ActionAudio* audio);
 
-		/** Destructor.
+		/** Return ActionAudio. Owned by Object.
 		 */
-		virtual ~Command() {}
+		ActionAudio* getActionAudio() const;
 
-		/** Gets the type of this command
-		 * @return type of this command
+		/** Sets the positon of the SoundEmitter, called from Instance.
 		 */
-		CommandType getCommandType() const { return m_commandtype; }
-		void setCommandType(CommandType type) { m_commandtype = type; }
+		void setPosition();
 
-		/** Gets the code of this command. Meaning of code depends on the command type
-		 * @return code of this command
+		/** Sets the direction of the SoundEmitter, called from Instance.
 		 */
-		int32_t getCode() const { return m_code; }
-		void setCode(int32_t code) { m_code = code; }
-
-		virtual void consume() { Event::consume(); }
-		virtual bool isConsumed() const { return Event::isConsumed(); }
-		virtual IEventSource* getSource() const { return Event::getSource(); }
-		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual int32_t getTimeStamp() const { return Event::getTimeStamp(); }
-		virtual void setTimeStamp(int32_t timestamp ) { Event::setTimeStamp(timestamp); }
-
-		virtual const std::string& getName() const {
-			const static std::string eventName("Command");
-			return eventName;
-		}
-		virtual std::string getDebugString() const { return Event::getDebugString(); }
-
-
+		void setDirection();
+	
 	private:
-		CommandType m_commandtype;
-		int32_t m_code;
+		/** Moves data from ActionAudio to SoundEmitter.
+		 */
+		void updateSoundEmitter();
+		
+		//! Associated Instance
+		Instance* m_instance;
+		//! Actual ActionAudio
+		ActionAudio* m_audio;
+		//! Related SoundEmitter
+		SoundEmitter* m_emitter;
+		//! InstanceChangeListener for position and direction
+		SoundChangeListener* m_listener;
+
+
 	};
-} //FIFE
+}
 
 #endif

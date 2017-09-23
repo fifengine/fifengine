@@ -19,37 +19,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IEVENTSOURCE_H
-#define FIFE_EVENTCHANNEL_IEVENTSOURCE_H
+#ifndef FIFE_INPUT_LOADERS_CONTROLLER_MAPPING_H
+#define FIFE_INPUT_LOADERS_CONTROLLER_MAPPING_H
 
 // Standard C++ library includes
-//
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "ec_eventsourcetypes.h"
 
 namespace FIFE {
-
-	/**  Representation of event source (a thing sending events)
+	/** Gamepad mapping loader.
 	 */
-	class IEventSource {
+	class ControllerMappingLoader {
 	public:
-		/** Gets the source type of this event
-		 * @return source type of this event
+		ControllerMappingLoader() {};
+
+		/** Loads mapping from file.
 		 */
-		virtual EventSourceType getEventSourceType() = 0;
-
-		virtual ~IEventSource() {}
+		void load(const std::string& filename);
 	};
-
-} //FIFE
-
+}
 #endif
-

@@ -33,7 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/base/ec_inputevent.h"
+#include "eventchannel/base/inputevent.h"
 
 namespace FIFE {
 
@@ -79,8 +79,8 @@ namespace FIFE {
 		*/
 		MouseEvent():
 			InputEvent(),
-			m_eventtype(UNKNOWN_EVENT),
-			m_buttontype(UNKNOWN_BUTTON),
+			m_eventType(UNKNOWN_EVENT),
+			m_buttonType(UNKNOWN_BUTTON),
 			m_x(-1),
 			m_y(-1) {}
 
@@ -92,15 +92,15 @@ namespace FIFE {
 		 * Gets the button of the mouse event.
 		 * @return the button of the mouse event.
 		 */
-		MouseButtonType getButton() const { return m_buttontype; }
-		void setButton(MouseButtonType type) { m_buttontype = type; }
+		MouseButtonType getButton() const { return m_buttonType; }
+		void setButton(MouseButtonType type) { m_buttonType = type; }
 
 		/**
 		 * Gets the type of the event.
 		 * @return the type of the event.
 		 */
-		MouseEventType getType() const { return m_eventtype; }
-		void setType(MouseEventType type) { m_eventtype = type; }
+		MouseEventType getType() const { return m_eventType; }
+		void setType(MouseEventType type) { m_eventType = type; }
 
 		/**
 		 * Gets the x coordinate of the mouse event. The coordinate is relative to
@@ -144,8 +144,8 @@ namespace FIFE {
 		virtual std::string getAttrStr() const {
 			std::stringstream ss;
 			ss << InputEvent::getAttrStr() << std::endl;
-			ss << "event = " << mouseEventType2str(m_eventtype) << ", ";
-			ss << "button = " << mouseButtonType2str(m_buttontype) << ", ";
+			ss << "event = " << mouseEventType2str(m_eventType) << ", ";
+			ss << "button = " << mouseButtonType2str(m_buttonType) << ", ";
 			ss << "x = " << m_x << ", ";
 			ss << "y = " << m_y;
 			return  ss.str();
@@ -230,8 +230,8 @@ namespace FIFE {
 
 
 	private:
-		MouseEventType m_eventtype;
-		MouseButtonType m_buttontype;
+		MouseEventType m_eventType;
+		MouseButtonType m_buttonType;
 		int32_t m_x;
  		int32_t m_y;
 

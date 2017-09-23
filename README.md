@@ -6,8 +6,8 @@ Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
 It comes with Python bindings allowing users to create games using Python as well as C++. 
 The engine is extendable and enables you to add any feature you can imagine to your project.
 
-| [Website](http://fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
-|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| [Website](http://fifengine.net/) | [Forum](http://forums.fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
+|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
 
 | Continuous Integration | Linux |   Mac    | Windows |
 |:----------------------:|:-----:|:--------:|:-------:|
@@ -19,8 +19,6 @@ The engine is extendable and enables you to add any feature you can imagine to y
 | [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.fifengine.net/doxygen) | [Python API](http://www.fifengine.net/epydoc) |
 
 Fifengine is also already available from the following package repositories:
-
-* [SlackBuilds](https://slackbuilds.org/repository/14.2/games/fifengine/)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg)](https://repology.org/metapackage/fife)
 
