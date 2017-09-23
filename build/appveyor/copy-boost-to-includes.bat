@@ -14,7 +14,7 @@ copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\boost_filesystem-vc140-mt-1_63.d
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\boost_system-vc140-mt-1_63.dll" "C:\projects\fifengine-dependencies\includes\bin\boost_system-vc140-mt-1_63.dll"
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\boost_regex-vc140-mt-1_63.dll" "C:\projects\fifengine-dependencies\includes\bin\boost_regex-vc140-mt-1_63.dll"
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\boost_python-vc140-mt-1_63.dll" "C:\projects\fifengine-dependencies\includes\bin\boost_regex-vc140-mt-1_63.dll"
-copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\libboost_filesystem-vc140-mt-1_63.lib" "C:\projects\fifengine-dependencies\includes\lib\boost\liLibboost_filesystem-vc140-mt-1_63.lib"
+copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\libboost_filesystem-vc140-mt-1_63.lib" "C:\projects\fifengine-dependencies\includes\lib\boost\libboost_filesystem-vc140-mt-1_63.lib"
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\libboost_system-vc140-mt-1_63.lib" "C:\projects\fifengine-dependencies\includes\lib\boost\libboost_system-vc140-mt-1_63.lib"
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\libboost_regex-vc140-mt-1_63.lib" "C:\projects\fifengine-dependencies\includes\lib\boost\libboost_regex-vc140-mt-1_63.lib"
 copy "C:\Libraries\boost_1_63_0\lib32-msvc-14.0\libboost_python-vc140-mt-1_63.lib" "C:\projects\fifengine-dependencies\includes\lib\boost\libboost_regex-vc140-mt-1_63.lib"
