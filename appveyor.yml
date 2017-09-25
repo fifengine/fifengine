@@ -25,8 +25,8 @@ environment:
       PYTHON_VERSION: "3.4"  
     # VS 14 + Py3.5
     - generator: "Visual Studio 14"  
-      PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5"  
+      PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"  
     #- generator: "MinGW Makefiles"
 
 matrix:
