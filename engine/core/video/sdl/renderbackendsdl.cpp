@@ -71,13 +71,6 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::clearBackBuffer() {
-		SDL_Rect rect;
-		rect.x = 0;
-		rect.y = 0;
-		rect.w = getWidth();
-		rect.h = getHeight();
-
-		SDL_RenderSetClipRect(m_renderer, &rect);
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
 	}
@@ -669,7 +662,7 @@ namespace FIFE {
 			} else {
 				SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 			}
-			SDL_RenderClear(m_renderer);
+			SDL_RenderFillRect(m_renderer, &rect);
 		}
 	}
 
