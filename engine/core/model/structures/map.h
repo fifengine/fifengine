@@ -72,7 +72,7 @@ namespace FIFE {
 		 */
 		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
 
-		/** Called when some instance gets deleted on layer
+		/** Called when some layer gets deleted on map
 		 * @param map where change occurred
 		 * @param layer which will be deleted
 		 * @note right after this call, layer actually gets deleted!
@@ -130,11 +130,6 @@ namespace FIFE {
 			/** Delete all layers from the map
 			 */
 			void deleteLayers();
-
-			/** Maps coordinate from one layer to another
-			 */
-			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer,
-				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Retrieves the minimum/maximum coordinates of instances on the map.
 			 * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.

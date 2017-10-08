@@ -44,6 +44,7 @@ namespace FIFE {
 	class RenderBackend;
 	class RendererBase;
 	class MetaModel;
+	class ModelMapObserver;
 	class IPather;
 	class Object;
 
@@ -141,6 +142,10 @@ namespace FIFE {
 		 */
 		CellGrid* getCellGrid(const std::string& gridtype);
 
+		/** Removes cellgrid from model.
+		 */
+		void removeCellGrid(CellGrid* grid);
+
 		/** Called periodically to update events on model
 		 */
 		void update();
@@ -156,6 +161,8 @@ namespace FIFE {
 		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
 
 	private:
+		// Map observer, currently only used to delete CellGrids from deleted layers
+		ModelMapObserver* m_mapObserver;
 
 		std::list<Map*> m_maps;
 
@@ -164,7 +171,7 @@ namespace FIFE {
 		std::list<namespace_t> m_namespaces;
 
 		/// Used to remember last 'selected' namespace.
-		namespace_t* m_last_namespace;
+		namespace_t* m_lastNamespace;
 
 		/// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
 		namespace_t* selectNamespace(const std::string& name_space);
@@ -173,9 +180,9 @@ namespace FIFE {
 		const namespace_t* selectNamespace(const std::string& name_space) const;
 
 		std::vector<IPather*> m_pathers;
-		std::vector<CellGrid*> m_created_grids;
-		std::vector<CellGrid*> m_adopted_grids;
-		//std::vector<CellGrid*> m_created_grids;
+		std::vector<CellGrid*> m_createdGrids;
+		std::vector<CellGrid*> m_adoptedGrids;
+
 		TimeProvider m_timeprovider;
 
 		RenderBackend* m_renderbackend;

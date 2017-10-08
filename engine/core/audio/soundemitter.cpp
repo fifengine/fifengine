@@ -539,7 +539,7 @@ namespace FIFE {
 				break;
 			}
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-			if (state == AL_PLAYING || AL_PAUSED) {
+			if (state == AL_PLAYING || state == AL_PAUSED) {
 				alSourceStop(m_source);
 			}
 
