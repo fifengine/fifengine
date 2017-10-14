@@ -658,7 +658,7 @@ namespace FIFE {
 		SDL_RenderSetClipRect(m_renderer, &rect);
 		if (clear) {
 			if (m_isbackgroundcolor) {
-				SDL_SetRenderDrawColor(m_renderer, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b, m_backgroundcolor.a);
+				SDL_SetRenderDrawColor(m_renderer, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b, 255);
 			} else {
 				SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 			}
