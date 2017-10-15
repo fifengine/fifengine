@@ -44,21 +44,50 @@
 namespace FIFE {
 	static Logger _log(LM_MODEL);
 
+
+	class ModelMapObserver : public MapChangeListener {
+		Model* m_model;
+
+	public:
+		ModelMapObserver(Model* model) {
+			m_model = model;
+		}
+		virtual ~ModelMapObserver() {}
+
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) {
+		}
+
+		virtual void onLayerCreate(Map* map, Layer* layer) {
+		}
+
+		virtual void onLayerDelete(Map* map, Layer* layer) {
+			m_model->removeCellGrid(layer->getCellGrid());
+		}
+	};
+
 	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers)
 	:	FifeClass(),
-		m_last_namespace(NULL),
+		m_lastNamespace(NULL),
 		m_timeprovider(NULL),
 		m_renderbackend(renderbackend),
 		m_renderers(renderers){
+
+		m_mapObserver = new ModelMapObserver(this);
 	}
 
 	Model::~Model() {
-		purge(m_maps);
+		// first remove the map observer, we delete all grids anyway
+		for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
+			(*it)->removeChangeListener(m_mapObserver);
+			delete *it;
+		}
+		delete m_mapObserver;
+
 		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
 			purge_map(nspace->second);
 		purge(m_pathers);
-		purge(m_created_grids);
-		purge(m_adopted_grids);
+		purge(m_createdGrids);
+		purge(m_adoptedGrids);
 	}
 
 	Map* Model::createMap(const std::string& identifier) {
@@ -70,6 +99,7 @@ namespace FIFE {
 		}
 
 		Map* map = new Map(identifier, m_renderbackend, m_renderers, &m_timeprovider);
+		map->addChangeListener(m_mapObserver);
 		m_maps.push_back(map);
 		return map;
 	}
@@ -90,15 +120,15 @@ namespace FIFE {
 	}
 
 	void Model::adoptCellGrid(CellGrid* grid) {
-		m_adopted_grids.push_back(grid);
+		m_adoptedGrids.push_back(grid);
 	}
 
 	CellGrid* Model::getCellGrid(const std::string& gridtype) {
-		std::vector<CellGrid*>::const_iterator it = m_adopted_grids.begin();
-		for(; it != m_adopted_grids.end(); ++it) {
+		std::vector<CellGrid*>::const_iterator it = m_adoptedGrids.begin();
+		for(; it != m_adoptedGrids.end(); ++it) {
 			if ((*it)->getType() == gridtype) {
 				CellGrid* newcg = (*it)->clone();
-				m_created_grids.push_back(newcg);
+				m_createdGrids.push_back(newcg);
 				return newcg;
 			}
 		}
@@ -106,6 +136,17 @@ namespace FIFE {
 		return NULL;
 	}
 
+	void Model::removeCellGrid(CellGrid* grid) {
+		if (!grid) return;
+
+		for (std::vector<CellGrid*>::iterator it = m_createdGrids.begin(); it != m_createdGrids.end(); ++it) {
+			if (*it == grid) {
+				delete *it;
+				m_createdGrids.erase(it);
+				return;
+			}
+		}
+	}
 
 	Map* Model::getMap(const std::string& identifier) const {
 		std::list<Map*>::const_iterator it = m_maps.begin();
@@ -123,7 +164,7 @@ namespace FIFE {
 			if(*it == map) {
 				delete *it;
 				m_maps.erase(it);
-				return ;
+				return;
 			}
 		}
 	}
@@ -133,8 +174,14 @@ namespace FIFE {
 	}
 
 	void Model::deleteMaps() {
-		purge(m_maps);
+		// first remove the map observer, we delete all grids anyway
+		for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
+			(*it)->removeChangeListener(m_mapObserver);
+			delete *it;
+		}
 		m_maps.clear();
+		purge(m_createdGrids);
+		m_createdGrids.clear();
 	}
 
 	uint32_t Model::getActiveCameraCount() const {
@@ -226,7 +273,7 @@ namespace FIFE {
 			}
 			nspace = m_namespaces.erase(nspace);
 		}
-		m_last_namespace = 0;
+		m_lastNamespace = 0;
 		return true;
 	}
 
@@ -264,16 +311,16 @@ namespace FIFE {
 	}
 
 	Model::namespace_t* Model::selectNamespace(const std::string& name_space) {
-		if( m_last_namespace && m_last_namespace->first == name_space )
-			return m_last_namespace;
+		if( m_lastNamespace && m_lastNamespace->first == name_space )
+			return m_lastNamespace;
 		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
 		for(; nspace != m_namespaces.end(); ++nspace) {
 			if( nspace->first == name_space ) {
-				m_last_namespace = &(*nspace);
-				return m_last_namespace;
+				m_lastNamespace = &(*nspace);
+				return m_lastNamespace;
 			}
 		}
-		m_last_namespace = 0;
+		m_lastNamespace = 0;
 		return NULL;
 	}
 

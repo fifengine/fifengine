@@ -1,13 +1,13 @@
 #------------------------------------------------------------------------------
 # External Project:     libpng
 # Website:              http://www.libpng.org/pub/png/libpng.html
-# Downloads:            https://github.com/glennrp/libpng/archive/v1.6.29.zip
+# Downloads:            https://github.com/glennrp/libpng/archive/v1.6.32.zip
 # Github:               https://github.com/glennrp/libpng
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
 
-set(LIBPNG_VERSION "1.6.29")
+set(LIBPNG_VERSION "1.6.32")
 
 set(LIBPNG_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -31,7 +31,7 @@ ExternalProject_Add(
   DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
   DOWNLOAD_NAME       libpng-v${LIBPNG_VERSION}.zip
   URL                 https://github.com/glennrp/libpng/archive/v${LIBPNG_VERSION}.zip
-  URL_MD5             fc5287dd4082e42eb1da5656f3568cce
+  URL_MD5             72416e3332201a1767333b0aa4f7b794
   INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}
   CONFIGURE_COMMAND   ${CMAKE_COMMAND} ${DEPENDENCY_EXTRACT_DIR}/src/libpng 
          -G ${CMAKE_GENERATOR} 

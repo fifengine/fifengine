@@ -62,11 +62,11 @@ class TestView(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 
-		cam = self.map.addCamera("foo", self.layer, viewport )
+		cam = self.map.addCamera("foo", viewport )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
-		
+		cam.setLocation(fife.Location(self.layer))
 		cam.setViewPort(viewport)
 		
 		renderer = fife.InstanceRenderer.getInstance(cam)

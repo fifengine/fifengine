@@ -675,14 +675,13 @@ namespace FIFE {
 
 					for (const TiXmlElement* cameraElement = root->FirstChildElement("camera"); cameraElement; cameraElement = cameraElement->NextSiblingElement("camera")) {
 						const std::string* cameraId = cameraElement->Attribute(std::string("id"));
-						const std::string* refLayerId = cameraElement->Attribute(std::string("ref_layer_id"));
 
 						int refCellWidth = 0;
 						int refCellHeight = 0;
 						int success = cameraElement->QueryIntAttribute("ref_cell_width", &refCellWidth);
 						success &= cameraElement->QueryIntAttribute("ref_cell_height", &refCellHeight);
 
-						if (cameraId && refLayerId && success == TIXML_SUCCESS) {
+						if (cameraId && success == TIXML_SUCCESS) {
 							double tilt = 0.0;
 							double zoom = 1.0;
 							double rotation = 0.0;
@@ -694,47 +693,37 @@ namespace FIFE {
 
 							const std::string* viewport = cameraElement->Attribute(std::string("viewport"));
 
-							Layer* layer = NULL;
-							try {
-								layer = map->getLayer(*refLayerId);
-							}
-							catch (NotFound&) {
-								// TODO - handle exception
-								assert(false);
-							}
-
 							Camera* cam = NULL;
-							if (layer) {
-								if (viewport) {
-									// parse out the viewport parameters
-									IntVector viewportParameters = tokenize(*viewport, ',');
 
-									// make sure the right number of viewport parameters were parsed
-									if (viewportParameters.size() == 4) {
-										Rect rect(viewportParameters[0], viewportParameters[1],
-													viewportParameters[2], viewportParameters[3]);
+							if (viewport) {
+								// parse out the viewport parameters
+								IntVector viewportParameters = tokenize(*viewport, ',');
 
-										try {
-											cam = map->addCamera(*cameraId, layer, rect);
-										}
-										catch (NameClash&) {
-											// TODO - handle exception
-											assert(false);
-										}
-									}
-								}
-								else {
-									Rect rect(0, 0, m_renderBackend->getScreenWidth(), m_renderBackend->getScreenHeight());
+								// make sure the right number of viewport parameters were parsed
+								if (viewportParameters.size() == 4) {
+									Rect rect(viewportParameters[0], viewportParameters[1],
+												viewportParameters[2], viewportParameters[3]);
 
 									try {
-										cam = map->addCamera(*cameraId, layer, rect);
+										cam = map->addCamera(*cameraId, rect);
 									}
 									catch (NameClash&) {
 										// TODO - handle exception
 										assert(false);
 									}
 								}
+							} else {
+								Rect rect(0, 0, m_renderBackend->getScreenWidth(), m_renderBackend->getScreenHeight());
+
+								try {
+									cam = map->addCamera(*cameraId, rect);
+								}
+								catch (NameClash&) {
+									// TODO - handle exception
+									assert(false);
+								}
 							}
+
 
 							if (cam) {
 								cam->setCellImageDimensions(refCellWidth, refCellHeight);

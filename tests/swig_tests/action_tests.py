@@ -97,7 +97,7 @@ class ActionTests(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 		
-		cam = self.map.addCamera("foo", self.layer, viewport)
+		cam = self.map.addCamera("foo", viewport)
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)

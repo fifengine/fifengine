@@ -72,7 +72,7 @@ namespace FIFE {
 		 */
 		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
 
-		/** Called when some instance gets deleted on layer
+		/** Called when some layer gets deleted on map
 		 * @param map where change occurred
 		 * @param layer which will be deleted
 		 * @note right after this call, layer actually gets deleted!
@@ -131,11 +131,6 @@ namespace FIFE {
 			 */
 			void deleteLayers();
 
-			/** Maps coordinate from one layer to another
-			 */
-			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer,
-				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
-
 			/** Retrieves the minimum/maximum coordinates of instances on the map.
 			 * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.
 			 * @param max A reference to a ExactModelCoordinate that will hold the maximum coordinate.
@@ -180,7 +175,7 @@ namespace FIFE {
 			/** Adds camera to the map. The Map takes ownership of the camera
 				so don't delete it.
 			*/
-			Camera* addCamera(const std::string& id, Layer *layer, const Rect& viewport);
+			Camera* addCamera(const std::string& id, const Rect& viewport);
 
 			/** Removes a camera from the map
 			*/
