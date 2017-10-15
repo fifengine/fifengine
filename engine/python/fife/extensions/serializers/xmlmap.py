@@ -559,7 +559,6 @@ class XMLMapLoader(object):
 			zoom = camera.get('zoom')
 			tilt = camera.get('tilt')
 			rotation = camera.get('rotation')
-			ref_layer_id = camera.get('ref_layer_id')
 			ref_cell_width = camera.get('ref_cell_width')
 			ref_cell_height = camera.get('ref_cell_height')
 			viewport = camera.get('viewport')
@@ -570,16 +569,15 @@ class XMLMapLoader(object):
 			if not rotation: rotation = 0
 
 			if not _id: self._err('Camera declared without an id.')
-			if not ref_layer_id: self._err(''.join(['Camera ', str(_id), ' declared with no reference layer.']))
 			if not (ref_cell_width and ref_cell_height): self._err(''.join(['Camera ', str(_id), ' declared without reference cell dimensions.']))
 
 			try:
 				if viewport:
-					cam = map.addCamera(str(_id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]))
+					cam = map.addCamera(str(_id), fife.Rect(*[int(c) for c in viewport.split(',')]))
 
 				else:
 					screen = self.engine.getRenderBackend()
-					cam = map.addCamera(str(_id), map.getLayer(str(ref_layer_id)),fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()))
+					cam = map.addCamera(str(_id), fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()))
 
 				renderer = fife.InstanceRenderer.getInstance(cam)
 				renderer.activateAllLayers(map)

@@ -348,7 +348,7 @@ class XMLMapSaver(object):
 		cameralist = map.getCameras()
 
 		for cam in cameralist:
-			if cam.getLocationRef().getMap().getId() == map.getId():
+			if cam.getMap().getId() == map.getId():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
 
@@ -357,7 +357,6 @@ class XMLMapSaver(object):
 						(None, 'zoom'): 'zoom',
 						(None, 'tilt'): 'tile',
 						(None, 'rotation'): 'rotation',
-						(None, 'ref_layer_id'): 'ref_layer_id',
 						(None, 'ref_cell_width'): 'ref_cell_width',
 						(None, 'ref_cell_height'): 'ref_cell_height',
 				}
@@ -367,7 +366,6 @@ class XMLMapSaver(object):
 					(None, 'zoom'): str( cam.getZoom()),
 					(None, 'tilt'): str( cam.getTilt()),
 					(None, 'rotation'): str( cam.getRotation()),
-					(None, 'ref_layer_id'): cam.getLocation().getLayer().getId(),
 					(None, 'ref_cell_width'): str( celldimensions.x ),
 					(None, 'ref_cell_height'): str( celldimensions.y ),
 				}

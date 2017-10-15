@@ -71,16 +71,11 @@ namespace FIFE {
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 * @param id identifier for the camera
-		 * @param layer layer where camera is bound. Camera is bound to a layer for two reasons:
-		 *   * camera's scaling is done based on cell image dimensions. Cell image is layer based (@see setCellImageDimensions)
-		 *   * camera could be bound to a pather, which operates on layer
+		 * @param map map where camera is bound
 		 * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
 		 * @param renderbackend to use with rendering
 		 */
-		Camera(const std::string& id,
-			Layer* layer,
-			const Rect& viewport,
-			RenderBackend* renderbackend);
+		Camera(const std::string& id, Map* map, const Rect& viewport, RenderBackend* renderbackend);
 
 		/** Destructor
 		 */
@@ -93,6 +88,11 @@ namespace FIFE {
 		/** Sets the identifier for this camera.
 		 */
 		void setId(const std::string& id) { m_id = id; }
+
+		/** Gets the map where camera is bound.
+		 * @return The associated map for this camera.
+		 */
+		Map* getMap() { return m_map; }
 
 		/** Sets tilt for the camera.
 		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
@@ -168,8 +168,8 @@ namespace FIFE {
 		Point getCellImageDimensions();
 
 		/** Gets screen cell image dimensions for given layer.
-		* @return Point Point containing x=width and y=height
-		*/
+		 * @return Point containing x=width and y=height
+		 */
 		Point getCellImageDimensions(Layer* layer);
 
 		/** Gets x reference scale for cell image dimensions
@@ -179,11 +179,6 @@ namespace FIFE {
 		/** Gets y reference scale for cell image dimensions
 		 */
 		double getReferenceScaleY() const { return m_referenceScaleY; }
-
-		/** Gets a point that contain the visual z(z=1) difference, based on the given layer.
-		 * @return Point3D Point3D containing x, y, z
-		 */
-		Point3D getZOffset(Layer* layer);
 
 		/** Sets the location for camera
 		 * @param location location (center point) to render
@@ -219,7 +214,7 @@ namespace FIFE {
 
 		/** Returns instance where camera is attached. NULL if not attached
 		 */
-		Instance* getAttached() const { return m_attachedto; }
+		Instance* getAttached() const { return m_attachedTo; }
 
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
@@ -412,9 +407,14 @@ namespace FIFE {
 		friend class MapObserver;
 		void addLayer(Layer* layer);
 		void removeLayer(Layer* layer);
-		void updateMap(Map* map);
-		std::string m_id;
 
+		void init();
+		std::string m_id;
+		Map* m_map;
+		Rect m_viewport;
+		RenderBackend* m_renderbackend;
+
+		ExactModelCoordinate m_position;
 
 		/** Updates the camera transformation matrix T with requested values.
 		 * The requests are done using these functions :
@@ -428,7 +428,6 @@ namespace FIFE {
 		 * Reference scale is in a sense an internal zooming factor,
 		 * which adjusts cell dimensions in logical space to ones shown on
 		 * screen. Calculation is based on current camera properties (e.g. rotation)
-		 * + given cell image dimensions for camera's layer
 		 */
 		void updateReferenceScale();
 
@@ -440,9 +439,9 @@ namespace FIFE {
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
 
-		/** Gets real cell image dimensions for given layer
+		/** Gets logical cell image dimensions and ignores the layer and cellgrid
 		 */
-		Point getRealCellDimensions(Layer* layer);
+		DoublePoint getLogicalCellDimensions();
 
 		/** Renders the overlay(color, image, animation) for the camera.
 		 */
@@ -466,18 +465,17 @@ namespace FIFE {
 		double m_zToY;
 		bool m_enabledZToY;
 		Location m_location;
-		ScreenPoint m_cur_origo;
-		Rect m_viewport;
+		ScreenPoint m_curOrigin;
+		
 		Rect m_mapViewPort;
 		bool m_mapViewPortUpdated;
-		uint32_t m_screen_cell_width;
-		uint32_t m_screen_cell_height;
+		uint32_t m_screenCellWidth;
+		uint32_t m_screenCellHeight;
 		double m_referenceScaleX;
 		double m_referenceScaleY;
 		bool m_enabled;
-		Instance* m_attachedto;
-		// caches calculated image dimensions for already queried & calculated layers
-		std::map<Layer*, Point> m_image_dimensions;
+		Instance* m_attachedTo;
+
 		// contains the geometry changes
 		Transform m_transform;
 
@@ -487,14 +485,11 @@ namespace FIFE {
 		// false, if view has not been updated
 		bool m_updated;
 
-		RenderBackend* m_renderbackend;
-
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
 		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
 		MapObserver* m_map_observer;
-		Map* m_map;
 
 		// is lighting enable
 		bool m_lighting;
