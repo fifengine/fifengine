@@ -242,18 +242,14 @@ namespace FIFE {
 		}
 	}
 
-	Camera* Map::addCamera(const std::string &id, Layer *layer, const Rect& viewport) {
-		if (layer == NULL) {
-			throw NotSupported("Must have valid layer for camera");
-		}
-
+	Camera* Map::addCamera(const std::string &id, const Rect& viewport) {
 		if (getCamera(id)) {
 			std::string errorStr = "Camera: " + id + " already exists";
 			throw NameClash(errorStr);
 		}
 
 		// create new camera and add to list of cameras
-		Camera* camera = new Camera(id, layer, viewport, m_renderBackend);
+		Camera* camera = new Camera(id, this, viewport, m_renderBackend);
 		m_cameras.push_back(camera);
 
 		std::vector<RendererBase*>::iterator iter = m_renderers.begin();
