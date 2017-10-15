@@ -185,22 +185,26 @@ namespace FIFE {
 		 */
 		void setLocation(const Location& location);
 
-		/** Gets the location camera is rendering
+		/** Gets the location camera is rendering. If no location was set, the camera creates a location.
+		 * The top layer of the map together with current camera position are used for that.
 		 * @return camera location
 		 */
-		Location getLocation() const;
+		Location getLocation();
 
-		/** Gets screen point for the camera location
+		/** Sets map point for the camera
+		 * @param position The camera position on the map
+		 */
+		void setPosition(const ExactModelCoordinate& position);
+
+		/** Gets map point of the camera
+		 * @return The camera position on the map
+		 */
+		ExactModelCoordinate getPosition() const;
+
+		/** Gets screen point of the camera
 		 * @return camera screen point
 		 */
 		Point3D getOrigin() const;
-
-		/** Gets a reference to the camera location
-		 * @note if you change returned location without calling Camera::setLocation(...),
-		 *       remember to call Camera::refresh() (otherwise camera transforms are not updated)
-		 * @return reference to the camera location
-		 */
-		Location& getLocationRef();
 
 		/** Attaches the camera to an instance.
 		 * @param instance Instance to which the camera shall be attached

@@ -49,9 +49,10 @@ namespace FIFE {
 		void setZToYEnabled(bool enabled);
 		bool isZToYEnabled() const;
 		void setLocation(Location location);
-		Location getLocation() const;
+		Location getLocation();
+		void setPosition(const ExactModelCoordinate& position);
+		ExactModelCoordinate getPosition() const;
 		Point3D getOrigin() const;
-		Location& getLocationRef();
 		void attach(Instance *instance);
 		void detach();
 		Instance* getAttached() const;

@@ -135,12 +135,12 @@ namespace FIFE {
 	}
 
 	void Camera::init() {
-
 		m_transform |= PositionTransform;
 		updateMatrices();
 
 		m_curOrigin = toScreenCoordinates(m_position);
 
+		// Trigger addition of LayerCaches and MapObserver
 		m_map->addChangeListener(m_map_observer);
 		const std::list<Layer*>& layers = m_map->getLayers();
 		for (std::list<Layer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
@@ -251,9 +251,8 @@ namespace FIFE {
 
 		m_transform |= PositionTransform;
 		m_location = location;
-		updateMatrices();
-
 		m_position = m_location.getMapCoordinates();
+		updateMatrices();
 		m_curOrigin = toScreenCoordinates(m_position);
 	}
 
@@ -269,12 +268,17 @@ namespace FIFE {
 		return p;
 	}
 
-	Location Camera::getLocation() const {
-		return m_location;
-	}
-
-	Location& Camera::getLocationRef() {
-		return m_location;
+	Location Camera::getLocation() {
+		if (m_location.getLayer()) {
+			m_location.setMapCoordinates(m_position);
+			return m_location;
+		}
+		Location loc = Location();
+		if (m_map && m_map->getLayerCount() > 0) {
+			loc.setLayer(m_map->getLayers().back());
+			loc.setMapCoordinates(m_position);
+		}
+		return loc;
 	}
 
 	void Camera::setViewPort(const Rect& viewport) {
@@ -341,6 +345,20 @@ namespace FIFE {
 
 	bool Camera::isEnabled() {
 		return m_enabled;
+	}
+
+	void Camera::setPosition(const ExactModelCoordinate& position) {
+		if (Mathd::Equal(m_position.x, position.x) && Mathd::Equal(m_position.y, position.y)) {
+			return;
+		}
+		m_transform |= PositionTransform;
+		m_position = position;
+		updateMatrices();
+		m_curOrigin = toScreenCoordinates(m_position);
+	}
+
+	ExactModelCoordinate Camera::getPosition() const {
+		return m_position;
 	}
 
 	Point3D Camera::getOrigin() const {
@@ -666,6 +684,7 @@ namespace FIFE {
 		m_transform |= PositionTransform;
 		m_position = pos;
 		updateMatrices();
+		m_curOrigin = toScreenCoordinates(m_position);
 	}
 
 	void Camera::refresh() {
@@ -733,6 +752,9 @@ namespace FIFE {
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
+		if (m_location.getLayer() == layer) {
+			m_location.reset();
+		}
 		refresh();
 	}
 
