@@ -21,10 +21,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <memory>
 
 // 3rd party library includes
-#include <boost/scoped_array.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <zlib.h>
 
 // FIFE includes
@@ -42,11 +41,11 @@ namespace FIFE {
 	RawDataDAT2::RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info) :
 		RawDataMemSource(info.unpackedLength) {
 
-		boost::scoped_ptr<RawData> input (vfs->open(datfile));
+		std::unique_ptr<RawData> input (vfs->open(datfile));
 		input->setIndex(info.offset);
 
 		if (info.type == 1) { // compressed
-			boost::scoped_array<uint8_t> compressed(new uint8_t[info.packedLength]);
+			std::unique_ptr<uint8_t[]> compressed(new uint8_t[info.packedLength]);
 			input->readInto(compressed.get(), info.packedLength);
 
 			uLongf dstlen = info.unpackedLength;

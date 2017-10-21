@@ -23,13 +23,13 @@
 #define FIFE_VFS_RAW_RAWDATA_H
 
 // Standard C++ library includes
+#include <memory>
 #include <vector>
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -184,7 +184,7 @@ namespace FIFE {
 
 			static bool littleEndian();
 	};
-	typedef boost::shared_ptr<RawData> RawDataPtr;
+	typedef std::shared_ptr<RawData> RawDataPtr;
 
 	class IndexSaver {
 		public:

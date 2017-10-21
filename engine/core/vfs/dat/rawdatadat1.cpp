@@ -20,9 +20,9 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <memory>
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -39,7 +39,7 @@ namespace FIFE {
 	RawDataDAT1::RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info) : 
 		RawDataMemSource(info.unpackedLength) {
 
-		boost::scoped_ptr<RawData> input (vfs->open(datfile));
+		std::unique_ptr<RawData> input (vfs->open(datfile));
 		input->setIndex(info.offset);
 
 		if (info.type == 0x40) { // compressed

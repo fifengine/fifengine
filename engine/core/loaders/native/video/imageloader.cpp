@@ -20,10 +20,9 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <memory>
 
 // 3rd party library includes
-#include <boost/scoped_array.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -54,9 +53,9 @@ namespace FIFE {
 
 		if(!img->isSharedImage()) {
 			const std::string& filename = img->getName();
-			boost::scoped_ptr<RawData> data (vfs->open(filename));
+			std::unique_ptr<RawData> data(vfs->open(filename));
 			size_t datalen = data->getDataLength();
-			boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+			std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
 			data->readInto(darray.get(), datalen);
 			SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 

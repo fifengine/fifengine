@@ -23,12 +23,12 @@
 #define FIFE_SOUNDDECODER_OGG_H
 
 // Standard C++ library includes
+#include <memory>
 
 // Platform specific includes
 
 // 3rd party library includes
 #include <vorbis/vorbisfile.h>
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -83,7 +83,7 @@ namespace FIFE {
 		void releaseBuffer();
 
 	private:
-		boost::scoped_ptr<RawData> m_file;
+		std::unique_ptr<RawData> m_file;
 		uint64_t m_declength;
 		uint64_t m_datasize;
 		char* m_data;

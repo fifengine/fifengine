@@ -23,8 +23,6 @@
 #include <cassert>
 
 // 3rd party library includes
-#include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
 
 // FIFE includes
@@ -63,18 +61,18 @@ namespace FIFE {
 
 		setOpaque(true);
 
-		m_input->setCallback( std::bind1st( std::mem_fun(&Console::execute), this) );
+		m_input->setCallback(std::bind1st( std::mem_fun(&Console::execute), this) );
 		m_prompt = "-- ";
 
 		m_isAttached = false;
 
 		m_fpsTimer.setInterval(500);
-		m_fpsTimer.setCallback( boost::bind(&Console::updateCaption, this) );
+		m_fpsTimer.setCallback(std::bind(&Console::updateCaption, this) );
 
 		m_hiding = true;
 
 		m_animationTimer.setInterval(20);
-		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
+		m_animationTimer.setCallback(std::bind(&Console::updateAnimation, this) );
 
 		m_toolsbutton->addActionListener(this);
 		m_toolsbutton->setFocusable(false);
@@ -157,7 +155,7 @@ namespace FIFE {
 	void Console::updateCaption() {
 		std::string caption = "FIFE Console - FPS: ";
 		double fps = 1e3/TimeManager::instance()->getAverageFrameTime();
-		caption += boost::lexical_cast<std::string>(fps);
+		caption += std::to_string(fps);
 		m_status->setCaption( caption );
 	}
 
