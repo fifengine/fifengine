@@ -35,6 +35,7 @@
 
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
+#include "sdlrendercache.h"
 #include "SDL_image.h"
 
 namespace FIFE {
@@ -686,5 +687,10 @@ namespace FIFE {
 	
 	void RenderBackendSDL::renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture) {
 		
+	}
+
+	RenderCache* RenderBackendSDL::createRenderCache() {
+		RenderCache* cache = new SDLRenderCache();
+		return cache;
 	}
 }

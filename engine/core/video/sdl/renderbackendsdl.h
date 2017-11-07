@@ -96,6 +96,8 @@ namespace FIFE {
 
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
 
+		virtual RenderCache* createRenderCache();
+
 		SDL_Renderer* getRenderer() { return m_renderer; }
 		
 	protected:

@@ -36,6 +36,7 @@ namespace FIFE {
 	public:
 		~Camera();
 		const std::string& getId() const;
+		Map* getMap();
 		void setId(const std::string& id);
 		void setTilt(double tilt);
 		double getTilt() const;

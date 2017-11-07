@@ -52,6 +52,7 @@
 namespace FIFE {
 
 	class Image;
+	class RenderCache;
 
 #ifdef HAVE_OPENGL
 	enum GLConstants {
@@ -497,6 +498,8 @@ namespace FIFE {
 		 */
 		void addControlPoints(const std::vector<Point>& points, std::vector<Point>& newPoints);
 
+		virtual RenderCache* createRenderCache() = 0;
+
 	protected:
 		
 		/** Sets given clip area into image
@@ -547,6 +550,7 @@ namespace FIFE {
 		std::stack<ClipInfo> m_clipstack;
 
 		ClipInfo m_guiClip;
+
 	private:
 		bool m_isframelimit;
 		uint32_t m_frame_start;

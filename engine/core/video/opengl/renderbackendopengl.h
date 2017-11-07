@@ -102,10 +102,14 @@ namespace FIFE {
 
 		virtual void renderGuiGeometry(const std::vector<GuiVertex>& vertices, const std::vector<int>& indices, const DoublePoint& translation, ImagePtr texture);
 		
+		virtual RenderCache* createRenderCache();
+
 		void enableTextures(uint32_t texUnit);
 		void disableTextures(uint32_t texUnit);
 		void bindTexture(uint32_t texUnit, GLuint texId);
 		void bindTexture(GLuint textId);
+
+		void renderVboBuffers(uint32_t elements, GLuint vbo, GLuint indice);
 
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);

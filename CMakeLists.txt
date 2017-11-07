@@ -318,11 +318,15 @@ set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/subimagefont.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/textrenderpool.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/truetypefont.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glbufferobject.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glimage.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glrendercache.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/renderbackendopengl.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/renderbackendsdl.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlblendingfunctions.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlbufferobject.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlimage.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlrendercache.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/view/camera.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/view/layercache.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/view/rendererbase.cpp
@@ -536,6 +540,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/video/image.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/imagemanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/renderbackend.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/rendercache.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/fontbase.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/ifont.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/imagefontbase.h
@@ -543,11 +548,15 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/textrenderpool.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/fonts/truetypefont.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/fife_opengl.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glbufferobject.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glimage.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/glrendercache.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/opengl/renderbackendopengl.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/renderbackendsdl.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlblendingfunctions.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlbufferobject.h
   ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlimage.h
+  ${PROJECT_SOURCE_DIR}/engine/core/video/sdl/sdlrendercache.h
   ${PROJECT_SOURCE_DIR}/engine/core/view/camera.h
   ${PROJECT_SOURCE_DIR}/engine/core/view/layercache.h
   ${PROJECT_SOURCE_DIR}/engine/core/view/rendererbase.h

@@ -32,9 +32,11 @@
 #include "video/devicecaps.h"
 
 #include "glimage.h"
+#include "glrendercache.h"
 #include "renderbackendopengl.h"
 #include "SDL_image.h"
 
+#define BUFFER_OFFSET(i) ((GLvoid*)(i))
 
 namespace FIFE {
 	/** Logger to use for this source file.
@@ -2699,5 +2701,29 @@ namespace FIFE {
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, &indices[0]);
 		
 		glPopMatrix();
+	}
+
+	RenderCache* RenderBackendOpenGL::createRenderCache() {
+		RenderCache* cache = new GLRenderCache();
+		return cache;
+	}
+
+	void RenderBackendOpenGL::renderVboBuffers(uint32_t elements, GLuint vbo, GLuint indice) {
+		enableColorArray();
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indice);
+		// VBO starting point
+		setVertexPointer(2, sizeof(renderDataP), BUFFER_OFFSET(0));
+		// Color starting point in VBO
+		setColorPointer(sizeof(renderDataP), BUFFER_OFFSET(8));
+		// IBO starting point
+		glDrawElements(GL_LINES, elements, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		
+		// stupid shit :P
+		setVertexPointer(2, 0, 0);
+		setColorPointer(0, 0);
 	}
 }
