@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <list>
+#include <map>
 #include <vector>
 
 // 3rd party library includes
@@ -41,6 +42,7 @@ namespace FIFE {
 	class Map;
 	class Instance;
 	class RenderBackend;
+	class RenderCache;
 	
 	class RendererBase;
 	/** RendererListener allows reaction to changes in renderer
@@ -93,7 +95,7 @@ namespace FIFE {
 		
 		/** Destructor
 		 */
-		virtual ~RendererBase() {};
+		virtual ~RendererBase();
 		
 		/** This method is called by the view to ask renderer to draw its rendering aspect based on
 		 * given parameters. Renderers receive non-clipped instance stack since there is no
@@ -151,9 +153,9 @@ namespace FIFE {
 		 */
 		void clearActiveLayers();
 		
-		/** Activates all layers from given elevation
+		/** Activates all layers for given map
 		 */
-		void activateAllLayers(Map* elevation);
+		void activateAllLayers(Map* map);
 		
 		/** Returns if given layer is currently activated
 		 */
@@ -163,11 +165,19 @@ namespace FIFE {
 		 */
 		std::list<Layer*> getActiveLayers() const {return m_active_layers;}
 		
+		RenderCache* createRenderCache(Layer* layer);
+
+		RenderCache* getRenderCache(Layer* layer);
+
+		void deleteRenderCaches();
+
+		void deleteRenderCache(Layer* layer);
 	
 	protected:
 		RendererBase();
 		
 		std::list<Layer*> m_active_layers;
+		std::map<Layer*, RenderCache*> m_layerCaches;
 		RenderBackend* m_renderbackend;
 	
 	private:

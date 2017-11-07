@@ -55,7 +55,7 @@ namespace FIFE {
 
 		void setLayer(Layer* layer);
 
-		void update(Camera::Transform transform, RenderList& renderlist);
+		bool update(Camera::Transform transform, RenderList& renderlist);
 
 		void addInstance(Instance* instance);
 		void removeInstance(Instance* instance);
@@ -92,7 +92,7 @@ namespace FIFE {
 		void reset();
 		void fullUpdate(Camera::Transform transform);
 		void fullCoordinateUpdate(Camera::Transform transform);
-		void updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
+		bool updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
 		bool updateVisual(Entry* entry);
 		void updatePosition(Entry* entry);
 		void updateScreenCoordinate(RenderItem* item, bool changedZoom = true);

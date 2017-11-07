@@ -745,10 +745,12 @@ namespace FIFE {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layerToInstances[layer] = RenderList();
+		m_cacheUpdates[m_cache[layer]] = true;
 		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
+		m_cacheUpdates.erase(m_cache[layer]);
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
@@ -970,9 +972,19 @@ namespace FIFE {
 			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
 				continue;
 			}
-			cache->update(m_transform, instancesToRender);
+			bool update = cache->update(m_transform, instancesToRender);
+			m_cacheUpdates[cache] = update;
 		}
 		resetUpdates();
+	}
+
+	bool Camera::isLayerCacheUpdated(Layer* layer) {
+		LayerCache* cache = m_cache[layer];
+		if (!cache) {
+			FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << layer->getId());
+			return false;
+		}
+		return m_cacheUpdates[cache];
 	}
 
 	void Camera::render() {

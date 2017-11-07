@@ -30,6 +30,7 @@
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
 #include "util/log/logger.h"
+#include "video/rendercache.h"
 #include "rendererbase.h"
 
 namespace FIFE {
@@ -61,6 +62,10 @@ namespace FIFE {
 		m_listener(NULL) {
 	}
 	
+	RendererBase::~RendererBase() {
+		deleteRenderCaches();
+	}
+
 	void RendererBase::setPipelinePosition(int32_t position) { 
 		if (position !=m_pipeline_position) { 
 			m_pipeline_position = position; 
@@ -76,6 +81,9 @@ namespace FIFE {
 			if (m_listener) {
 				m_listener->onRendererEnabledChanged(this);
 			}
+			if (!enabled) {
+				deleteRenderCaches();
+			}
 		}
 	}
 	
@@ -87,10 +95,12 @@ namespace FIFE {
 	
 	void RendererBase::removeActiveLayer(Layer* layer) {
 		m_active_layers.remove(layer);
+		deleteRenderCache(layer);
 	}
 	
 	void RendererBase::clearActiveLayers() {
 		m_active_layers.clear();
+		deleteRenderCaches();
 	}
 	
 	bool RendererBase::isActivedLayer(Layer* layer) {
@@ -107,4 +117,39 @@ namespace FIFE {
 		}
 	}
 	
+	RenderCache* RendererBase::createRenderCache(Layer* layer) {
+		RenderCache* cache = getRenderCache(layer);
+		if (cache) {
+			FL_WARN(_log, "RenderCache already created! Instead of a new one, the existing is returned");
+		} else {
+			cache = m_renderbackend->createRenderCache();
+			m_layerCaches.insert(std::pair<Layer*, RenderCache*>(layer, cache));
+		}
+		return cache;
+	}
+
+	RenderCache* RendererBase::getRenderCache(Layer* layer) {
+		RenderCache* cache = NULL;
+		std::map<Layer*, RenderCache*>::iterator it = m_layerCaches.find(layer);
+		if (it != m_layerCaches.end()) {
+			cache = it->second;
+		}
+		return cache;
+	}
+
+	void RendererBase::deleteRenderCaches() {
+		std::map<Layer*, RenderCache*>::iterator it = m_layerCaches.begin();
+		for (; it != m_layerCaches.end(); ++it) {
+			delete it->second;
+		}
+		m_layerCaches.clear();
+	}
+
+	void RendererBase::deleteRenderCache(Layer* layer) {
+		std::map<Layer*, RenderCache*>::iterator it = m_layerCaches.find(layer);
+		if (it != m_layerCaches.end()) {
+			delete it->second;
+			m_layerCaches.erase(it);
+		}
+	}
 }

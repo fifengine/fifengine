@@ -407,6 +407,10 @@ namespace FIFE {
 		 */
 		void render();
 
+		/** Returns true if the LayerCache had to be recalculated, otherwise false.
+		 */
+		bool isLayerCacheUpdated(Layer* layer);
+
 	private:
 		friend class MapObserver;
 		void addLayer(Layer* layer);
@@ -493,6 +497,7 @@ namespace FIFE {
 		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
+		std::map<LayerCache*, bool> m_cacheUpdates;
 		MapObserver* m_map_observer;
 
 		// is lighting enable

@@ -366,7 +366,7 @@ namespace FIFE {
 		}
 	}
 
-	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
+	bool LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
 		// this is only a bit faster, but works without this block too.
 		if(!m_layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
@@ -378,13 +378,13 @@ namespace FIFE {
 			}
 			m_entriesToUpdate.clear();
 			renderlist.clear();
-			return;
+			return true;
 		}
 		// if transform is none then we have only to update the instances with an update info.
 		if (transform == Camera::NoneTransform) {
 			if (!m_entriesToUpdate.empty()) {
 				std::set<int32_t> entryToRemove;
-				updateEntries(entryToRemove, renderlist);
+				bool update = updateEntries(entryToRemove, renderlist);
 				//std::cout << "update entries: " << int32_t(m_entriesToUpdate.size()) << " remove entries: " << int32_t(entryToRemove.size()) <<"\n";
 				if (!entryToRemove.empty()) {
 					std::set<int32_t>::iterator entry_it = entryToRemove.begin();
@@ -392,7 +392,9 @@ namespace FIFE {
 						m_entriesToUpdate.erase(*entry_it);
 					}
 				}
+				return update;
 			}
+			return false;
 		} else {
 			m_zoom = m_camera->getZoom();
 			m_zoomed = !Mathd::Equal(m_zoom, 1.0);
@@ -455,6 +457,7 @@ namespace FIFE {
 				sortRenderList(renderlist);
 			}
 		}
+		return true;
 	}
 	
 	void LayerCache::fullUpdate(Camera::Transform transform) {
@@ -500,7 +503,8 @@ namespace FIFE {
 		}
 	}
 
-	void LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist) {
+	bool LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist) {
+		bool update = false;
 		RenderList needSorting;
 		Rect viewport = m_camera->getViewPort();
 		std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
@@ -531,6 +535,7 @@ namespace FIFE {
 					// remove from renderlist
 					for (RenderList::iterator it = renderlist.begin(); it != renderlist.end(); ++it) {
 						if ((*it)->instance == item->instance) {
+							update = true;
 							renderlist.erase(it);
 							break;
 						}
@@ -551,12 +556,14 @@ namespace FIFE {
 		}
 
 		if (!needSorting.empty()) {
+			update = true;
 			if (m_needSorting) {
 				sortRenderList(renderlist);
 			} else {
 				sortRenderList(needSorting);
 			}
 		}
+		return update;
 	}
 
 	bool LayerCache::updateVisual(Entry* entry) {
