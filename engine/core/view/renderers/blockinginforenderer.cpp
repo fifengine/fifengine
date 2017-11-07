@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
+#include "video/rendercache.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -48,7 +49,8 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position):
-		RendererBase(renderbackend, position) {
+		RendererBase(renderbackend, position),
+		m_updated(true) {
 		setEnabled(false);
 		m_color.r = 0;
 		m_color.g = 255;
@@ -57,6 +59,7 @@ namespace FIFE {
 
 	BlockingInfoRenderer::BlockingInfoRenderer(const BlockingInfoRenderer& old):
 		RendererBase(old),
+		m_updated(true),
 		m_color(old.m_color) {
 		setEnabled(false);
 	}
@@ -75,85 +78,121 @@ namespace FIFE {
 	void BlockingInfoRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
-			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+			FL_WARN(_log, "No cellgrid assigned to layer, can not draw blocking info");
 			return;
 		}
 
-		Rect cv = cam->getViewPort();
-		CellCache* cache = layer->getCellCache();
-		if (cache) {
-			const std::vector<std::vector<Cell*> >& cells = cache->getCells();
-			std::vector<std::vector<Cell*> >::const_iterator it = cells.begin();
-			for (; it != cells.end(); ++it) {
-				std::vector<Cell*>::const_iterator cit = (*it).begin();
-				for (; cit != (*it).end(); ++cit) {
-					ExactModelCoordinate emc = FIFE::intPt2doublePt((*cit)->getLayerCoordinates());
-					ScreenPoint sp = cam->toScreenCoordinates(cg->toMapCoordinates(emc));
-					// if it is not in cameras view continue
-					if (sp.x < cv.x || sp.x > cv.x + cv.w ||
-						sp.y < cv.y || sp.y > cv.y + cv.h) {
-						continue;
+		RenderCache* renderCache = getRenderCache(layer);
+		// Only render if nothing has changed.
+		if (renderCache && !cam->isUpdated() && cam->isLayerCacheUpdated(layer)) {
+			bool found = false;
+			// Only test code
+			for (RenderList::iterator it = instances.begin(); it != instances.end(); ++it) {
+				if ((*it)->instance->getId() == "NPC:girl") {
+					std::map<std::size_t, uint32_t>::iterator it2 = m_test.find((*it)->instance->getFifeId());
+					if (it2 == m_test.end()) continue;
+					uint32_t pos = it2->second;
+					uint32_t cellSideCount = cg->getCellSideCount();
+					const uint32_t halfCell = cellSideCount / 2;
+					std::vector<Point> data(cellSideCount + 2);
+					Color color(m_color.r, m_color.g, m_color.b, 255);
+
+					std::vector<ExactModelCoordinate> vertices;
+					cg->getVertices(vertices, (*it)->instance->getLocationRef().getLayerCoordinates());
+					for (uint32_t i = 0; i < cellSideCount; ++i) {
+						ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
+						data[i].x = pts.x;
+						data[i].y = pts.y;
 					}
-					if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
-						std::vector<ExactModelCoordinate> vertices;
-						cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-						std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-						int32_t halfind = vertices.size() / 2;
-						ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-						Point pt1(firstpt.x, firstpt.y);
-						Point pt2;
-						++it;
-						for (; it != vertices.end(); it++) {
-							ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-							pt2.x = pts.x;
-							pt2.y = pts.y;
-							m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
-							pt1 = pt2;
-						}
-						m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-						ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-						Point pt3(spt1.x, spt1.y);
-						ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-						Point pt4(spt2.x, spt2.y);
-						m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
-					}
+					data[cellSideCount] = data[0];
+					data[cellSideCount + 1] = data[halfCell];
+					renderCache->updateLines(pos*6, data, color);
+					found = true;
+					break;
 				}
 			}
+			if (found) {
+				renderCache->render();
+				return;
+			}
+
+		}
+		//if (!cam->isUpdated() && !cam->isLayerCacheUpdated(layer) && !m_updated) {
+		if (!cam->isUpdated() && !m_updated) {
+			if (renderCache) {
+				renderCache->render();
+				return;
+			}
+		}
+
+		if (!renderCache) {
+			renderCache = createRenderCache(layer);
+		}
+		renderCache->clear();
+		m_test.clear();
+		uint32_t pos = 0;
+		uint32_t cellSideCount = cg->getCellSideCount();
+		const uint32_t halfCell = cellSideCount / 2;
+		std::vector<Point> data(cellSideCount + 2);
+		Color color(m_color.r, m_color.g, m_color.b, 255);
+		CellCache* cache = layer->getCellCache();
+		if (cache) {
+			// fill render cache with cell data
+			Rect layerView = cam->getLayerViewPort(layer);
+			std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+			std::vector<Cell*>::iterator cit = cells.begin();
+			for (; cit != cells.end(); ++cit) {
+				if ((*cit)->getCellType() == CTYPE_NO_BLOCKER) {
+					continue;
+				}
+				const std::set<Instance*>& instances2 = (*cit)->getInstances();
+				for (std::set<Instance*>::const_iterator it = instances2.begin(); it != instances2.end(); ++it) {
+					m_test[(*it)->getFifeId()] = pos;
+				}
+				std::vector<ExactModelCoordinate> vertices;
+				cg->getVertices(vertices, (*cit)->getLayerCoordinates());
+				for (uint32_t i = 0; i < cellSideCount; ++i) {
+					ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
+					data[i].x = pts.x;
+					data[i].y = pts.y;
+				}
+				data[cellSideCount] = data[0];
+				data[cellSideCount+1] = data[halfCell];
+				renderCache->addLines(data, color);
+				++pos;
+			}
 		} else {
+			// fill render cache with instance data
 			RenderList::const_iterator instance_it = instances.begin();
-			for (;instance_it != instances.end(); ++instance_it) {
+			for (; instance_it != instances.end(); ++instance_it) {
 				Instance* instance = (*instance_it)->instance;
 				if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
 					continue;
 				}
+				/*if (instance->getId() == "NPC:girl") {
+					std::cout << "found " << instance->getFifeId() << "\n";
+				}*/
 				std::vector<ExactModelCoordinate> vertices;
 				cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-				std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-				int32_t halfind = vertices.size() / 2;
-				ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-				Point pt1(firstpt.x, firstpt.y);
-				Point pt2;
-				++it;
-				for (; it != vertices.end(); it++) {
-					ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-					pt2.x = pts.x;
-					pt2.y = pts.y;
-					m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
-					pt1 = pt2;
+				for (uint32_t i = 0; i < cellSideCount; ++i) {
+					ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
+					data[i].x = pts.x;
+					data[i].y = pts.y;
 				}
-				m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
-				ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-				Point pt3(spt1.x, spt1.y);
-				ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-				Point pt4(spt2.x, spt2.y);
-				m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
+				data[cellSideCount] = data[0];
+				data[cellSideCount + 1] = data[halfCell];
+				renderCache->addLines(data, color);
 			}
 		}
+		m_updated = false;
+		// render
+		renderCache->render();
 	}
 
 	void BlockingInfoRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
+		m_updated = true;
 	}
 }

@@ -35,7 +35,7 @@
 namespace FIFE {
 	class RenderBackend;
 
-	class BlockingInfoRenderer: public RendererBase {
+	class BlockingInfoRenderer : public RendererBase {
 	public:
 		/** Constructor.
 		 *
@@ -63,7 +63,7 @@ namespace FIFE {
 		 */
 		std::string getName() { return "BlockingInfoRenderer"; }
 
-		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		/** This method is called by the camera to ask renderer to draw its rendering aspect based on
 		 * given parameters.
 		 *
 		 * @param cam Camera view to draw
@@ -85,6 +85,11 @@ namespace FIFE {
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
+		std::map<std::size_t, uint32_t> m_test;
+
+		//! indicates updates
+		bool m_updated;
+
 		//! currently used color
 		SDL_Color m_color;
 	};
