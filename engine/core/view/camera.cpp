@@ -745,12 +745,10 @@ namespace FIFE {
 		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layerToInstances[layer] = RenderList();
-		m_cacheUpdates[m_cache[layer]] = true;
 		refresh();
 	}
 
 	void Camera::removeLayer(Layer* layer) {
-		m_cacheUpdates.erase(m_cache[layer]);
 		delete m_cache[layer];
 		m_cache.erase(layer);
 		m_layerToInstances.erase(layer);
@@ -954,11 +952,6 @@ namespace FIFE {
 	}
 
 	void Camera::updateRenderLists() {
-		if (!m_map) {
-			FL_ERR(_log, "No map for camera found");
-			return;
-		}
-
 		const std::list<Layer*>& layers = m_map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -972,8 +965,7 @@ namespace FIFE {
 			if ((*layer_it)->isStatic() && m_transform == NoneTransform) {
 				continue;
 			}
-			bool update = cache->update(m_transform, instancesToRender);
-			m_cacheUpdates[cache] = update;
+			cache->update(m_transform, instancesToRender);
 		}
 		resetUpdates();
 	}
@@ -984,15 +976,28 @@ namespace FIFE {
 			FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << layer->getId());
 			return false;
 		}
-		return m_cacheUpdates[cache];
+		if (!cache->getUpdatedInstances().empty() || !cache->getRemovedInstances().empty()) {
+			return true;
+		}
+		return false;
+	}
+
+	const std::set<Instance*>& Camera::getUpdatedInstances(Layer* layer) {
+		LayerCache* cache = m_cache[layer];
+		return cache->getUpdatedInstances();
+	}
+
+	const std::set<std::size_t>& Camera::getRemovedInstances(Layer* layer) {
+		LayerCache* cache = m_cache[layer];
+		return cache->getRemovedInstances();
 	}
 
 	void Camera::render() {
-		updateRenderLists();
-
 		if (!m_map) {
+			FL_ERR(_log, "No map for camera found");
 			return;
 		}
+		updateRenderLists();
 
 		uint32_t lm = m_renderbackend->getLightingModel();
 		if (lm != 0) {
@@ -1048,6 +1053,7 @@ namespace FIFE {
 					}
 				}
 			}
+			m_cache[*layer_it]->resetCachedInstances();
 		}
 
 		renderOverlay();

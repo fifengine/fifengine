@@ -83,53 +83,26 @@ namespace FIFE {
 		}
 
 		RenderCache* renderCache = getRenderCache(layer);
-		// Only render if nothing has changed.
-		if (renderCache && !cam->isUpdated() && cam->isLayerCacheUpdated(layer)) {
-			bool found = false;
-			// Only test code
-			for (RenderList::iterator it = instances.begin(); it != instances.end(); ++it) {
-				if ((*it)->instance->getId() == "NPC:girl") {
-					std::map<std::size_t, uint32_t>::iterator it2 = m_test.find((*it)->instance->getFifeId());
-					if (it2 == m_test.end()) continue;
-					uint32_t pos = it2->second;
-					uint32_t cellSideCount = cg->getCellSideCount();
-					const uint32_t halfCell = cellSideCount / 2;
-					std::vector<Point> data(cellSideCount + 2);
-					Color color(m_color.r, m_color.g, m_color.b, 255);
-
-					std::vector<ExactModelCoordinate> vertices;
-					cg->getVertices(vertices, (*it)->instance->getLocationRef().getLayerCoordinates());
-					for (uint32_t i = 0; i < cellSideCount; ++i) {
-						ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
-						data[i].x = pts.x;
-						data[i].y = pts.y;
-					}
-					data[cellSideCount] = data[0];
-					data[cellSideCount + 1] = data[halfCell];
-					renderCache->updateLines(pos*6, data, color);
-					found = true;
-					break;
-				}
+		// full update on start, camera change or color change
+		if (!renderCache || cam->isUpdated() || m_updated) {
+			if (!renderCache) {
+				renderCache = createRenderCache(layer);
 			}
-			if (found) {
-				renderCache->render();
-				return;
-			}
-
-		}
-		//if (!cam->isUpdated() && !cam->isLayerCacheUpdated(layer) && !m_updated) {
-		if (!cam->isUpdated() && !m_updated) {
-			if (renderCache) {
-				renderCache->render();
-				return;
-			}
+			fullUpdate(cam, layer, instances, renderCache);
+		} else if (cam->isLayerCacheUpdated(layer)) {
+			// update data on Instance changes
+			update(cam, layer, renderCache);
 		}
 
-		if (!renderCache) {
-			renderCache = createRenderCache(layer);
-		}
+		// render
+		renderCache->render();
+	}
+
+	void BlockingInfoRenderer::fullUpdate(Camera* cam, Layer* layer, RenderList& instances, RenderCache* renderCache) {
+		CellGrid* cg = layer->getCellGrid();
+
 		renderCache->clear();
-		m_test.clear();
+		m_fifeIdToBufferId.clear();
 		uint32_t pos = 0;
 		uint32_t cellSideCount = cg->getCellSideCount();
 		const uint32_t halfCell = cellSideCount / 2;
@@ -139,15 +112,13 @@ namespace FIFE {
 		if (cache) {
 			// fill render cache with cell data
 			Rect layerView = cam->getLayerViewPort(layer);
-			std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+			std::vector<Cell*> cells = cache->getBlockingCellsInRect(layerView);
 			std::vector<Cell*>::iterator cit = cells.begin();
 			for (; cit != cells.end(); ++cit) {
-				if ((*cit)->getCellType() == CTYPE_NO_BLOCKER) {
-					continue;
-				}
+				// get Instances on Cell
 				const std::set<Instance*>& instances2 = (*cit)->getInstances();
 				for (std::set<Instance*>::const_iterator it = instances2.begin(); it != instances2.end(); ++it) {
-					m_test[(*it)->getFifeId()] = pos;
+					m_fifeIdToBufferId[(*it)->getFifeId()] = pos;
 				}
 				std::vector<ExactModelCoordinate> vertices;
 				cg->getVertices(vertices, (*cit)->getLayerCoordinates());
@@ -157,7 +128,7 @@ namespace FIFE {
 					data[i].y = pts.y;
 				}
 				data[cellSideCount] = data[0];
-				data[cellSideCount+1] = data[halfCell];
+				data[cellSideCount + 1] = data[halfCell];
 				renderCache->addLines(data, color);
 				++pos;
 			}
@@ -169,9 +140,7 @@ namespace FIFE {
 				if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
 					continue;
 				}
-				/*if (instance->getId() == "NPC:girl") {
-					std::cout << "found " << instance->getFifeId() << "\n";
-				}*/
+				m_fifeIdToBufferId[instance->getFifeId()] = pos;
 				std::vector<ExactModelCoordinate> vertices;
 				cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 				for (uint32_t i = 0; i < cellSideCount; ++i) {
@@ -182,11 +151,39 @@ namespace FIFE {
 				data[cellSideCount] = data[0];
 				data[cellSideCount + 1] = data[halfCell];
 				renderCache->addLines(data, color);
+				++pos;
 			}
 		}
 		m_updated = false;
-		// render
-		renderCache->render();
+	}
+
+	void BlockingInfoRenderer::update(Camera* cam, Layer* layer, RenderCache* renderCache) {
+		CellGrid* cg = layer->getCellGrid();
+		Color color(m_color.r, m_color.g, m_color.b, 255);
+		uint32_t cellSideCount = cg->getCellSideCount();
+		const uint32_t halfCell = cellSideCount / 2;
+		const uint32_t elements = cellSideCount + 2;
+		std::vector<Point> data(elements);
+		// TODO: Add code for cam->getRemovedInstances(layer)
+		// update Instance data
+		const std::set<Instance*>& updatedInstances = cam->getUpdatedInstances(layer);
+		std::set<Instance*>::const_iterator it = updatedInstances.begin();
+		for (; it != updatedInstances.end(); ++it) {
+			std::map<std::size_t, uint32_t>::iterator it2 = m_fifeIdToBufferId.find((*it)->getFifeId());
+			if (it2 == m_fifeIdToBufferId.end()) continue;
+			uint32_t pos = it2->second;
+
+			std::vector<ExactModelCoordinate> vertices;
+			cg->getVertices(vertices, (*it)->getLocationRef().getLayerCoordinates());
+			for (uint32_t i = 0; i < cellSideCount; ++i) {
+				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
+				data[i].x = pts.x;
+				data[i].y = pts.y;
+			}
+			data[cellSideCount] = data[0];
+			data[cellSideCount + 1] = data[halfCell];
+			renderCache->updateLines(pos * elements, data, color);
+		}
 	}
 
 	void BlockingInfoRenderer::setColor(uint8_t r, uint8_t g, uint8_t b) {

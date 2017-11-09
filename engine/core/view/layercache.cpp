@@ -302,6 +302,7 @@ namespace FIFE {
 		for (RenderList::iterator it = renderList.begin(); it != renderList.end(); ++it) {
 			if ((*it)->instance == instance) {
 				renderList.erase(it);
+				m_removedInstances.insert(instance->getFifeId());
 				break;
 			}
 		}
@@ -366,7 +367,7 @@ namespace FIFE {
 		}
 	}
 
-	bool LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
+	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
 		// this is only a bit faster, but works without this block too.
 		if(!m_layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
@@ -378,13 +379,12 @@ namespace FIFE {
 			}
 			m_entriesToUpdate.clear();
 			renderlist.clear();
-			return true;
 		}
 		// if transform is none then we have only to update the instances with an update info.
 		if (transform == Camera::NoneTransform) {
 			if (!m_entriesToUpdate.empty()) {
 				std::set<int32_t> entryToRemove;
-				bool update = updateEntries(entryToRemove, renderlist);
+				updateEntries(entryToRemove, renderlist);
 				//std::cout << "update entries: " << int32_t(m_entriesToUpdate.size()) << " remove entries: " << int32_t(entryToRemove.size()) <<"\n";
 				if (!entryToRemove.empty()) {
 					std::set<int32_t>::iterator entry_it = entryToRemove.begin();
@@ -392,9 +392,7 @@ namespace FIFE {
 						m_entriesToUpdate.erase(*entry_it);
 					}
 				}
-				return update;
 			}
-			return false;
 		} else {
 			m_zoom = m_camera->getZoom();
 			m_zoomed = !Mathd::Equal(m_zoom, 1.0);
@@ -457,7 +455,6 @@ namespace FIFE {
 				sortRenderList(renderlist);
 			}
 		}
-		return true;
 	}
 	
 	void LayerCache::fullUpdate(Camera::Transform transform) {
@@ -503,8 +500,7 @@ namespace FIFE {
 		}
 	}
 
-	bool LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist) {
-		bool update = false;
+	void LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist) {
 		RenderList needSorting;
 		Rect viewport = m_camera->getViewPort();
 		std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
@@ -531,12 +527,13 @@ namespace FIFE {
 					// add to renderlist and sort
 					renderlist.push_back(item);
 					needSorting.push_back(item);
+					m_updatedInstances.insert(item->instance);
 				} else {
 					// remove from renderlist
 					for (RenderList::iterator it = renderlist.begin(); it != renderlist.end(); ++it) {
 						if ((*it)->instance == item->instance) {
-							update = true;
 							renderlist.erase(it);
+							m_removedInstances.insert(item->instance->getFifeId());
 							break;
 						}
 					}
@@ -544,6 +541,7 @@ namespace FIFE {
 			} else if (onScreenA && onScreenB && positionUpdate) {
 				// sort
 				needSorting.push_back(item);
+				m_updatedInstances.insert(item->instance);
 			}
 
 			if (!entry->forceUpdate) {
@@ -556,14 +554,12 @@ namespace FIFE {
 		}
 
 		if (!needSorting.empty()) {
-			update = true;
 			if (m_needSorting) {
 				sortRenderList(renderlist);
 			} else {
 				sortRenderList(needSorting);
 			}
 		}
-		return update;
 	}
 
 	bool LayerCache::updateVisual(Entry* entry) {
@@ -816,5 +812,18 @@ namespace FIFE {
 
 	void LayerCache::setCacheImage(ImagePtr image) {
 		m_cacheImage = image;
+	}
+
+	void LayerCache::resetCachedInstances() {
+		m_updatedInstances.clear();
+		m_removedInstances.clear();
+	}
+
+	const std::set<Instance*>& LayerCache::getUpdatedInstances() {
+		return m_updatedInstances;
+	}
+
+	const std::set<std::size_t>& LayerCache::getRemovedInstances() {
+		return m_removedInstances;
 	}
 }

@@ -269,6 +269,12 @@ namespace FIFE {
 			 */
 			std::vector<Cell*> getCellsInRect(const Rect& rec);
 
+			/** Returns all blocking cells in the rect.
+			* @param rec A const reference to the Rect which specifies the size.
+			* @return A vector that contain the cells.
+			*/
+			std::vector<Cell*> getBlockingCellsInRect(const Rect& rec);
+
 			/** Returns all cells in the circle.
 			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
 			 * @param radius A unsigned integer, radius of the circle.

@@ -55,7 +55,7 @@ namespace FIFE {
 
 		void setLayer(Layer* layer);
 
-		bool update(Camera::Transform transform, RenderList& renderlist);
+		void update(Camera::Transform transform, RenderList& renderlist);
 
 		void addInstance(Instance* instance);
 		void removeInstance(Instance* instance);
@@ -63,6 +63,10 @@ namespace FIFE {
 		
 		ImagePtr getCacheImage();
 		void setCacheImage(ImagePtr image);
+
+		void resetCachedInstances();
+		const std::set<Instance*>& getUpdatedInstances();
+		const std::set<std::size_t>& getRemovedInstances();
 
 	private:
 		enum RenderEntryUpdateType {
@@ -92,7 +96,7 @@ namespace FIFE {
 		void reset();
 		void fullUpdate(Camera::Transform transform);
 		void fullCoordinateUpdate(Camera::Transform transform);
-		bool updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
+		void updateEntries(std::set<int32_t>& removes, RenderList& renderlist);
 		bool updateVisual(Entry* entry);
 		void updatePosition(Entry* entry);
 		void updateScreenCoordinate(RenderItem* item, bool changedZoom = true);
@@ -109,6 +113,9 @@ namespace FIFE {
 		std::vector<RenderItem*> m_renderItems;
 		std::set<int32_t> m_entriesToUpdate;
 		std::deque<int32_t> m_freeEntries;
+
+		std::set<Instance*> m_updatedInstances;
+		std::set<std::size_t> m_removedInstances;
 
 		bool m_needSorting;
 		double m_zMin;

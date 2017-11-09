@@ -411,6 +411,9 @@ namespace FIFE {
 		 */
 		bool isLayerCacheUpdated(Layer* layer);
 
+		const std::set<Instance*>& getUpdatedInstances(Layer* layer);
+		const std::set<std::size_t>& getRemovedInstances(Layer* layer);
+
 	private:
 		friend class MapObserver;
 		void addLayer(Layer* layer);
@@ -497,7 +500,6 @@ namespace FIFE {
 		t_layer_to_instances m_layerToInstances;
 
 		std::map<Layer*,LayerCache*> m_cache;
-		std::map<LayerCache*, bool> m_cacheUpdates;
 		MapObserver* m_map_observer;
 
 		// is lighting enable

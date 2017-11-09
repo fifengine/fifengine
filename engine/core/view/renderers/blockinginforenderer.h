@@ -85,7 +85,11 @@ namespace FIFE {
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
-		std::map<std::size_t, uint32_t> m_test;
+		void fullUpdate(Camera* cam, Layer* layer, RenderList& instances, RenderCache* renderCache);
+
+		void update(Camera* cam, Layer* layer, RenderCache* renderCache);
+
+		std::map<std::size_t, uint32_t> m_fifeIdToBufferId;
 
 		//! indicates updates
 		bool m_updated;

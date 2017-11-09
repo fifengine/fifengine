@@ -882,6 +882,7 @@ namespace FIFE {
 
 	std::vector<Cell*> CellCache::getCellsInRect(const Rect& rec) {
 		std::vector<Cell*> cells;
+		cells.reserve(rec.w * rec.h);
 
 		ModelCoordinate current(rec.x, rec.y);
 		ModelCoordinate target(rec.x+rec.w, rec.y+rec.h);
@@ -890,6 +891,24 @@ namespace FIFE {
 			for (; current.x < target.x; ++current.x) {
 				Cell* c = getCell(current);
 				if (c) {
+					cells.push_back(c);
+				}
+			}
+		}
+		return cells;
+	}
+
+	std::vector<Cell*> CellCache::getBlockingCellsInRect(const Rect& rec) {
+		std::vector<Cell*> cells;
+		cells.reserve(rec.w * rec.h);
+
+		ModelCoordinate current(rec.x, rec.y);
+		ModelCoordinate target(rec.x + rec.w, rec.y + rec.h);
+		for (; current.y < target.y; ++current.y) {
+			current.x = rec.x;
+			for (; current.x < target.x; ++current.x) {
+				Cell* c = getCell(current);
+				if (c && c->getCellType() != CTYPE_NO_BLOCKER) {
 					cells.push_back(c);
 				}
 			}
