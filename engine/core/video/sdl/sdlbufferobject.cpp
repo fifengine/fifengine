@@ -61,6 +61,20 @@ namespace FIFE {
 		delete[] m_points;
 	}
 
+	void SDLBufferLinesObject::add(const std::vector<Point>& points, const Color& color) {
+		if (m_count != points.size()) {
+			delete[] m_points;
+			m_count = points.size();
+			m_points = new SDL_Point[m_count];
+		}
+		m_color = color;
+		uint32_t index = 0;
+		for (; index < m_count; index++) {
+			m_points[index].x = points[index].x;
+			m_points[index].y = points[index].y;
+		}
+	}
+
 	void SDLBufferLinesObject::render() {
 		SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
 		SDL_SetRenderDrawColor(renderer, m_color.getR(), m_color.getG(), m_color.getB(), m_color.getAlpha());

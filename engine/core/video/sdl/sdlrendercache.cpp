@@ -46,6 +46,7 @@ namespace FIFE {
 			delete *it;
 		}
 		m_objects.clear();
+		m_typeBuffers.clear();
 	}
 
 	void SDLRenderCache::render() {
@@ -58,10 +59,21 @@ namespace FIFE {
 	void SDLRenderCache::addLine(const Point& p1, const Point& p2, const Color& color) {
 		SDLBufferObject* lines = new SDLBufferLineObject(p1, p2, color);
 		m_objects.push_back(lines);
+		std::vector<SDLBufferObject*>& lineBuffers = m_typeBuffers[LineBufferObject];
+		lineBuffers.push_back(lines);
 	}
 
 	void SDLRenderCache::addLines(const std::vector<Point>& points, const Color& color) {
 		SDLBufferObject* lines = new SDLBufferLinesObject(points, color);
 		m_objects.push_back(lines);
+		std::vector<SDLBufferObject*>& linesBuffers = m_typeBuffers[LinesBufferObject];
+		linesBuffers.push_back(lines);
+	}
+
+	void SDLRenderCache::updateLines(uint32_t position, const std::vector<Point>& points, const Color& color) {
+		std::vector<SDLBufferObject*>& linesBuffers = m_typeBuffers[LinesBufferObject];
+		// Position calculation is too hacky
+		SDLBufferLinesObject* object = static_cast<SDLBufferLinesObject*>(linesBuffers[position / points.size()]);
+		object->add(points, color);
 	}
 }

@@ -23,6 +23,7 @@
 #define FIFE_VIDEO_SDL_RENDERCACHE_H
 
 // Standard C++ library includes
+#include <map>
 
 // Platform specific includes
 
@@ -39,6 +40,12 @@ namespace FIFE {
 
 	class SDLRenderCache : public RenderCache {
 	public:
+		enum BufferObjectType {
+			LineBufferObject = 0,
+			LinesBufferObject = 1,
+			TrianglesBufferObject = 2
+		};
+
 		/** Constructor.
 		 */
 		SDLRenderCache();
@@ -58,11 +65,11 @@ namespace FIFE {
 
 		virtual void addLines(const std::vector<Point>& points, const Color& color);
 
-		virtual void updateLines(uint32_t position, const std::vector<Point>& points, const Color& color) {};
+		virtual void updateLines(uint32_t position, const std::vector<Point>& points, const Color& color);
 
 	private:
 		std::vector<SDLBufferObject*> m_objects;
-		
+		std::map<BufferObjectType, std::vector<SDLBufferObject*> > m_typeBuffers;
 	};
 }
 

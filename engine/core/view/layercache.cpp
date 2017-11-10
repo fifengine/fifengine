@@ -379,6 +379,7 @@ namespace FIFE {
 			}
 			m_entriesToUpdate.clear();
 			renderlist.clear();
+			return;
 		}
 		// if transform is none then we have only to update the instances with an update info.
 		if (transform == Camera::NoneTransform) {

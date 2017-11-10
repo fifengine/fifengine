@@ -104,7 +104,7 @@ namespace FIFE {
 		renderCache->clear();
 		m_fifeIdToBufferId.clear();
 		uint32_t pos = 0;
-		uint32_t cellSideCount = cg->getCellSideCount();
+		const uint32_t cellSideCount = cg->getCellSideCount();
 		const uint32_t halfCell = cellSideCount / 2;
 		std::vector<Point> data(cellSideCount + 2);
 		Color color(m_color.r, m_color.g, m_color.b, 255);
@@ -160,7 +160,7 @@ namespace FIFE {
 	void BlockingInfoRenderer::update(Camera* cam, Layer* layer, RenderCache* renderCache) {
 		CellGrid* cg = layer->getCellGrid();
 		Color color(m_color.r, m_color.g, m_color.b, 255);
-		uint32_t cellSideCount = cg->getCellSideCount();
+		const uint32_t cellSideCount = cg->getCellSideCount();
 		const uint32_t halfCell = cellSideCount / 2;
 		const uint32_t elements = cellSideCount + 2;
 		std::vector<Point> data(elements);

@@ -38,6 +38,7 @@ namespace FIFE {
 	/** Abstract interface for all the sdl buffer objects. */
 	class SDLBufferObject {
 	public:
+
 		/** Destructor
 		 */
 		virtual ~SDLBufferObject() {}
@@ -63,6 +64,7 @@ namespace FIFE {
 	public:
 		SDLBufferLinesObject(const std::vector<Point>& points, const Color& color);
 		virtual ~SDLBufferLinesObject();
+		void add(const std::vector<Point>& points, const Color& color);
 		void render();
 	private:
 		SDL_Point* m_points;
