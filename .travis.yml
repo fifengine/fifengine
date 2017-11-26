@@ -7,13 +7,6 @@ matrix:
       dist: trusty
       compiler: clang
       python: "3.6"
-    - os: linux
-      sudo: required
-      dist: trusty
-      compiler: gcc
-      python: "3.4"
-    #- os: osx
-      #compiler: clang
 
 git:
   depth: 5
@@ -25,8 +18,6 @@ addons:
     - ubuntu-toolchain-r-test
     - llvm-toolchain-trusty-5.0
     packages:
-    - gcc-7
-    - g++-7
     - clang-5.0
     - llvm-5.0-dev
     - libclang-5.0-dev
@@ -47,9 +38,6 @@ addons:
     - libglew-dev
 
 before_install:
-    # change gcc to version 5
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 20; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
     # change clang to version 3.9
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-5.0 20; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-3.9.0/bin/clang; sudo rm -f /usr/local/clang-3.9.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
@@ -58,14 +46,11 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
     # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis python3; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then virtualenv env -p python3; source env/bin/activate; fi
   - cmake --version
 
 install:
   - git clone --quiet --depth 1 git://github.com/fifengine/fifechan.git
   - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build_fifechan; cd build_fifechan; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifechan; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build_fifechan; cd build_fifechan; cmake ../fifechan; fi
   - make -j3
   - sudo make install
   - cd ..
@@ -73,31 +58,12 @@ install:
 script:
   - cd ..
   - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifengine; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 -DPYTHON_INCLUDE_DIR=/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m -DPYTHON_LIBRARY=/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6 ../fifengine; fi
   - ls -alh .
   - make -j3
   - sudo make install
   - cd $TRAVIS_BUILD_DIR
-  - dir
   - python3 ./run_tests.py
-
-after_script: 
-  -  cd $TRAVIS_BUILD_DIR
-  - python3 -c 'from fife import fife; print(fife.getVersion())'
-  - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
-#  - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
 
 notifications:
   irc: irc.freenode.org#fife
   email: false
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: "TiE1MLzq8DE2vJjiTeWnuhjEM/cH4hQ7yL/SSDkIqTijCY1eiCX6KPE7yDNh9F1SkCfxYyDPTuRc+f1EaAbk073aL56kUTM/bV/4TEcHk4TS40Hcd5aA10gR3XOH3lYwagT2edgXgXLA1cvU1tuwj8stKz1hEnkVlCvFdbvy4qg="
-#  file: Fifengine*.tar.gz
-#  file_glob: true
-#  skip_cleanup: true
-#  overwrite: true
-#  on:
-#    tags: true
