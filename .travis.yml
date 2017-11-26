@@ -77,8 +77,9 @@ script:
   - ls -alh .
   - make -j3
   - sudo make install
-  - cd ..
-  - python3 run_tests.py
+  - cd $TRAVIS_BUILD_DIR
+  - dir
+  - python3 ./run_tests.py
 
 after_script: 
   -  cd $TRAVIS_BUILD_DIR
