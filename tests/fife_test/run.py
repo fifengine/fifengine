@@ -27,9 +27,9 @@ from __future__ import print_function
 import os
 import sys
 
-#fife_path = os.path.join('..','..','engine','python','fife')
-#if os.path.isdir(fife_path) and fife_path not in sys.path:
-#    sys.path.insert(0,fife_path)
+fife_path = os.path.join('..','..','engine','python','fife')
+if os.path.isdir(fife_path) and fife_path not in sys.path:
+    sys.path.insert(0,fife_path)
 
 from fife import fife
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
