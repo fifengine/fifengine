@@ -23,15 +23,16 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
 import os
 import sys
 
-fife_path = os.path.join('..','..','engine','python','fife')
-if os.path.isdir(fife_path) and fife_path not in sys.path:
-    sys.path.insert(0,fife_path)
+#fife_path = os.path.join('..','..','engine','python','fife')
+#if os.path.isdir(fife_path) and fife_path not in sys.path:
+#    sys.path.insert(0,fife_path)
 
 from fife import fife
-print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
+print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
 from fife.extensions.fife_settings import Setting
 
@@ -48,14 +49,14 @@ if __name__ == '__main__':
 	if TDS.get("FIFE", "ProfilingOn"):
 		import hotshot
 		import hotshot.stats
-		print "Starting profiler"
+		print("Starting profiler")
 		prof = hotshot.Profile("fife.prof")
 		prof.runcall(main)
 		prof.close()
-		print "analysing profiling results"
+		print("analysing profiling results")
 		stats = hotshot.stats.load("fife.prof")
 		stats.strip_dirs()
 		stats.sort_stats('time', 'calls')
 		stats.print_stats(20)
-	else:		
+	else:
 		main()

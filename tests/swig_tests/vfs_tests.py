@@ -22,7 +22,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import print_function
+from __future__ import absolute_import
+from .swig_test_utils import *
 
 import sys
 
@@ -39,7 +41,7 @@ class TestVfs(unittest.TestCase):
 		self.assert_(self.vfs.listFiles('.'))
 	
 	def testListDirs(self):
-		print self.vfs.listDirectories('.')
+		print(self.vfs.listDirectories('.'))
 		self.assert_(self.vfs.listDirectories('.'))
 	
 	def testReadLines(self):

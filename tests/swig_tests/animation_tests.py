@@ -22,7 +22,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 import time
 
 class TestView(unittest.TestCase):
@@ -91,8 +93,8 @@ class TestView(unittest.TestCase):
 		
 		self.engine.initializePumping()
 		
-		for y in xrange(4):
-			for x in xrange(4):
+		for y in range(4):
+			for x in range(4):
 				i = self.layer.createInstance(self.obj, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(i)
 				self.engine.pump()
@@ -108,7 +110,7 @@ class TestView(unittest.TestCase):
 		node = fife.RendererNode(i)
 		genericrenderer.addAnimation("test", node, self.anim)
 		
-		for i in xrange(900):
+		for i in range(900):
 			self.engine.pump()
 		self.engine.finalizePumping()
 	
