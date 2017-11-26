@@ -62,7 +62,7 @@ script:
   - make -j3
   - sudo make install
   - cd $TRAVIS_BUILD_DIR
-  - python3 ./run_tests.py
+  - python3 ./run_tests.py 29
 
 notifications:
   irc: irc.freenode.org#fife
