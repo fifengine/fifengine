@@ -1,5 +1,5 @@
 # Build worker image (VM template)
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 clone_depth: 5
 
@@ -16,15 +16,15 @@ environment:
   MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
     # VS 14 + Py2.7 with cegui
-    - generator: "Visual Studio 14"  
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7" 
     # VS 14 + Py3.4 with cegui
-    - generator: "Visual Studio 14"  
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python34"
       PYTHON_VERSION: "3.4"  
     # VS 14 + Py3.5 with cegui
-    - generator: "Visual Studio 14"  
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6"  
     #- generator: "MinGW Makefiles"
