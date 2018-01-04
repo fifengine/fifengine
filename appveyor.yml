@@ -44,7 +44,7 @@ init:
   - git config --global core.autocrlf input
   - cmake --version
   # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
-  - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
+  #- del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
   # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
   - ps: >-
       if ($env:APPVEYOR_REPO_TAG -eq "true")
@@ -119,7 +119,7 @@ build_script:
 
 after_build:
   - dir C:\projects\build\Release /s
-  - if "%generator%"=="Visual Studio 14" (set COMPILER="VC14")
+  - if "%generator%"=="Visual Studio 15" (set COMPILER="VC15")
   - if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW") 
 
   # package dependencies artifact
