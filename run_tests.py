@@ -22,16 +22,18 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from builtins import input
 import os, re, sys, optparse, unittest
 
 def genpath(somepath):
 	return os.path.sep.join(somepath.split('/'))
 
 def print_header(text):
-	print '\n'
-	print 80 * '='
-	print text
-	print 80 * '-'
+	print('\n')
+	print(80 * '=')
+	print(text)
+	print(80 * '-')
 
 def resolve_test_progs(sconscript_filename):
 	""" Get the names of all test programs by evaluating the SConscript file """
@@ -64,7 +66,7 @@ def run_core_tests(progs):
 	
 	errors, failures = [], []
 	for prog in progs:
-		print '\n===== Running %s =====' % prog
+		print('\n===== Running %s =====' % prog)
 		if os.system(os.sep.join(('build','tests','debug', prog))):
 			errors.append(prog)
 	os.chdir(prevdir)
@@ -96,15 +98,15 @@ def run_test_modules(modules):
 def run_all(tests):
 	def print_errors(txt, errs):
 		if errs:
-			print txt + ':'
+			print(txt + ':')
 			for msg in errs:
-				print '  ' + msg
+				print('  ' + msg)
 		
 	core_errors, core_failures = run_core_tests(tests['core'])
 	swig_errors, swig_failures = run_test_modules(tests['swig'])
 	ext_errors, ext_failures = run_test_modules(tests['ext'])
 	
-	print 80 * '='
+	print(80 * '=')
 	errorsfound = False
 	
 	if core_errors or core_failures:
@@ -112,28 +114,28 @@ def run_all(tests):
 		print_errors('Failures in core tests', core_failures)
 		errorsfound = True
 	else:
-		print 'No Core errors found'
+		print('No Core errors found')
 	
 	if swig_errors or swig_failures:
 		print_errors('Errors in SWIG tests', swig_errors)
 		print_errors('Failures in SWIG tests', swig_failures)
 		errorsfound = True
 	else:
-		print 'No SWIG errors found'
+		print('No SWIG errors found')
 	
 	if swig_errors or swig_failures:
 		print_errors('Errors in extensions tests', ext_errors)
 		print_errors('Failures in extensions tests', ext_failures)
 		errorsfound = True
 	else:
-		print 'No Extensions errors found'
+		print('No Extensions errors found')
 
-	print 80 * '='	
+	print(80 * '=')	
 	if errorsfound:
-		print 'ERROR. One or more tests failed!'
+		print('ERROR. One or more tests failed!')
 	else:
-		print 'OK. All tests ran succesfully!'
-	print ''
+		print('OK. All tests ran succesfully!')
+	print('')
 	
 def quit(dummy):
 	sys.exit(0)
@@ -170,15 +172,15 @@ def run(automatic, selected_cases):
 	if (not automatic) and (not selected_cases):
 		selection = None
 		while True:
-			print 'Select test module to run:'
+			print('Select test module to run:')
 			prevheader = ''
 			for ind in sorted(tests.keys()):
 				header, name, params, fn = tests[ind]
 				if header != prevheader:
-					print header
+					print(header)
 					prevheader = header
-				print '  %d) %s' % (ind, name)
-			selection = raw_input('-> : ')
+				print('  %d) %s' % (ind, name))
+			selection = input('-> : ')
 			
 			try:
 				selection = int(selection)
@@ -186,7 +188,7 @@ def run(automatic, selected_cases):
 					raise ValueError
 				break
 			except ValueError:
-				print 'Please enter number between 0-%d\n' % max(tests.keys())
+				print('Please enter number between 0-%d\n' % max(tests.keys()))
 				continue
 		header, name, params, fn = tests[selection]
 		fn(params)
@@ -199,7 +201,7 @@ def run(automatic, selected_cases):
 				header, name, params, fn = tests[caseid]
 				fn(params)
 			except ValueError:
-				print 'No test case with value %s found' % case
+				print('No test case with value %s found' % case)
 	else:
 		run_all(alltests)
 

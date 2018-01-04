@@ -22,14 +22,16 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
 		template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
-		files = map(lambda dirname: template % dirname, dirnames)
+		files = [template % dirname for dirname in dirnames]
 
 		self.engine = getEngine()
 		
@@ -60,8 +62,8 @@ class ActionTests(unittest.TestCase):
 		self.ground.get2dGfxVisual().addStaticImage(0, image.getHandle())
 		self.ground.img = self.engine.getImageManager().get(image.getHandle())
 		
-		for y in xrange(-2,3):
-			for x in xrange(-2,3):
+		for y in range(-2,3):
+			for x in range(-2,3):
 				inst = self.layer.createInstance(self.ground, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(inst)
 				
@@ -76,7 +78,7 @@ class ActionTests(unittest.TestCase):
 		self.inst.move('walk', self.target, 0.05)
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend
-		for i in xrange(360):
+		for i in range(360):
 			self.inst.getLocation().getLayerCoordinates()
 			self.target.getLayerCoordinates()
 			if self.inst.getLocation().getLayerCoordinates() == self.target.getLayerCoordinates():
@@ -97,7 +99,7 @@ class ActionTests(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 		
-		cam = self.map.addCamera("foo", self.layer, viewport)
+		cam = self.map.addCamera("foo", viewport)
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)
@@ -119,7 +121,7 @@ class ActionTests(unittest.TestCase):
 			self.inst.setLocation(l)
 			self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
 			self.inst.move('walk', self.target, 0.9)
-			for i in xrange(10):
+			for i in range(10):
 				self.engine.pump()
 
 		self.engine.finalizePumping()

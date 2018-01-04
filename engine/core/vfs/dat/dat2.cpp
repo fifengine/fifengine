@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -67,7 +66,7 @@ namespace FIFE {
 		// Do not read the complete file list at startup.
 		// Instead read a chunk each frame.
 		m_timer.setInterval(0);
-		m_timer.setCallback( boost::bind( &DAT2::readFileEntry, this) );
+		m_timer.setCallback(std::bind( &DAT2::readFileEntry, this) );
 		m_timer.start();
 	}
 

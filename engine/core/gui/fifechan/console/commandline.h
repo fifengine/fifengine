@@ -23,11 +23,11 @@
 #define FIFE_FIFECHAN_ADDON_COMMANDLINE_H
 
 // Standard C++ library includes
+#include <functional>
 #include <string>
 #include <vector>
 
 // 3rd party library includes
-#include <boost/function.hpp>
 #include <fifechan.hpp>
 
 // FIFE includes
@@ -42,7 +42,7 @@ namespace FIFE {
 	 */
 	class CommandLine : public fcn::TextField {
 		public:
-			typedef boost::function1<void,std::string> type_callback;
+			typedef std::function<void(std::string)> type_callback;
 
 			/** Constructor
 			 */

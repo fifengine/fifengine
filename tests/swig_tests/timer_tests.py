@@ -22,7 +22,10 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 import time
 
 class MyTimeEvent(fife.TimeEvent):
@@ -31,7 +34,7 @@ class MyTimeEvent(fife.TimeEvent):
 		self.counter = 0
 	
 	def updateEvent(self, curtime):
-		print "testing timer event... %d, %d" % (curtime, self.counter)
+		print("testing timer event... %d, %d" % (curtime, self.counter))
 		self.counter += 1
 
 class TestTimer(unittest.TestCase):
@@ -46,7 +49,7 @@ class TestTimer(unittest.TestCase):
 		e = MyTimeEvent(100)
 		self.timemanager.registerEvent(e)
 
-		for i in xrange(10):
+		for i in range(10):
 			time.sleep(0.1)
 			self.timemanager.update()
 

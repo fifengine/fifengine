@@ -10,7 +10,7 @@
 
 INCLUDE(ExternalProject)
 
-set(OPENALSOFT_VERSION "1.17.2")
+set(OPENALSOFT_VERSION "1.18.1")
 
 # For win32 it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -20,7 +20,7 @@ if (WIN32)
         PREFIX ${DEPENDENCY_EXTRACT_DIR}
         DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
         URL http://kcat.strangesoft.net/openal-binaries/openal-soft-${OPENALSOFT_VERSION}-bin.zip
-        URL_MD5 5f5a0484f8fcc808fead0cd23fd557b4     
+        URL_MD5 2bb29a4f20892cce233546839752a221
         INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
@@ -53,7 +53,7 @@ else() # build from source
         PREFIX ${DEPENDENCY_EXTRACT_DIR}
         DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
         URL http://kcat.strangesoft.net/openal-releases/openal-soft-${OPENALSOFT_VERSION}.tar.bz2
-        URL_MD5 1764e0d8fec499589b47ebc724e0913d     
+        URL_MD5 04796baf3dcf1d30df631e79d9f96dd7
         INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
         CMAKE_ARGS ${OPENALSOFT_CMAKE_ARGS}
     )

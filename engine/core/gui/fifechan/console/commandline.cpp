@@ -23,7 +23,6 @@
 #include <cassert>
 
 // 3rd party library includes
-#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,12 +40,11 @@ namespace FIFE {
 	CommandLine::CommandLine() : fcn::TextField(), m_history_position(0) {
 
 		m_blinkTimer.setInterval(500);
-		m_blinkTimer.setCallback(boost::bind(&CommandLine::toggleCaretVisible,this));
+		m_blinkTimer.setCallback(std::bind(&CommandLine::toggleCaretVisible,this));
 		m_blinkTimer.start();
 
 		m_suppressBlinkTimer.setInterval(2000);
-		m_suppressBlinkTimer
-			.setCallback(boost::bind(&CommandLine::startBlinking,this));
+		m_suppressBlinkTimer.setCallback(std::bind(&CommandLine::startBlinking,this));
 	}
 
 	CommandLine::~CommandLine() {

@@ -22,6 +22,8 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
+from builtins import str
+from builtins import range
 import random
 from fife import fife
 from fife.extensions import pychan
@@ -216,7 +218,7 @@ class BenchmarkTest(test.Test):
 		#pather = self.obj.getPather()
 		#pather.setMaxTicks(1000)
 		self._actionlistener = InstanceActionListener(self)
-		for x in xrange(0, 1000):
+		for x in range(0, 1000):
 			loc = self.createRandomTarget()
 			i = self._actorlayer.createInstance(self.obj, loc.getLayerCoordinates(), name+str(x))
 			fife.InstanceVisual.create(i)

@@ -47,7 +47,7 @@ def saveMapFile(path, engine, map, importList=[], debug=True):
 	(filename, extension) = os.path.splitext(path)
 	map.setFilename(path)
 	map_saver = mapFileMapping[extension[1:]](path, engine, map, importList)
-		
+
 	map_saver.saveResource()
 	if debug: print("--- Saved Map.")
 	return map

@@ -22,10 +22,10 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <list>
+#include <memory>
 
 // 3rd party library includes
 #include "zlib.h"
-#include <boost/scoped_array.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -74,7 +74,7 @@ namespace FIFE {
 			uint8_t* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
 			if (entryData.comp == 8) { // compressed using deflate
 				FL_DBG(_log, LMsg("trying to uncompress file ") <<  path << " (compressed with method " << entryData.comp << ")");
-				boost::scoped_array<uint8_t> compdata(new uint8_t[entryData.size_comp]);
+				std::unique_ptr<uint8_t[]> compdata(new uint8_t[entryData.size_comp]);
 				m_zipfile->readInto(compdata.get(), entryData.size_comp);
 
 				z_stream zstream;

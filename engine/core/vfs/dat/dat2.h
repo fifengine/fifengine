@@ -24,13 +24,13 @@
 
 // Standard C++ library includes
 #include <map>
+#include <memory>
 #include <string>
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -80,7 +80,7 @@ namespace FIFE {
 
 		private:
 			std::string m_datpath;
-			mutable boost::scoped_ptr<RawData> m_data;
+			mutable std::unique_ptr<RawData> m_data;
 			typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
 			mutable type_filelist m_filelist;
 

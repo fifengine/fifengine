@@ -33,15 +33,15 @@ fileExtensions = set(['xml'])
 
 def loadMapFile(path, engine, callback=None, debug=True, extensions={}):
 	""" load map file and get (an optional) callback if major stuff is done:
-	
+
 		- map creation
 		- parsed imports
-		- parsed layers 
+		- parsed layers
 		- parsed cameras
-		
+
 		the callback will send both a string and a float (which shows
 		the overall process), callback(string, float)
-	
+
 	@type	engine:		object
 	@param	engine: 	FIFE engine instance
 	@type	callback:	function

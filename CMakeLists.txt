@@ -912,7 +912,12 @@ if(build-python)
     swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
   endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
 
-  swig_link_libraries(fife ${PYTHON_LIBRARIES})
+  if(APPLE)
+    set(APPLE_DYNAMIC_LOOKUP_FLAG "-undefined dynamic_lookup")
+    swig_link_libraries(fife ${APPLE_DYNAMIC_LOOKUP_FLAG} )
+  else(APPLE)
+    swig_link_libraries(fife ${PYTHON_LIBRARIES})
+  endif(APPLE)
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
@@ -939,7 +944,11 @@ if(build-python)
       swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
     endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
 
-    swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
+    if(APPLE)
+      swig_link_libraries(fifechan ${APPLE_DYNAMIC_LOOKUP_FLAG})
+    else(APPLE)
+      swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
+    endif(APPLE)
     swig_link_libraries(fifechan ${FIFECHAN_LIBRARIES})
     swig_link_libraries(fife ${FIFECHAN_LIBRARIES})
   endif(fifechan)

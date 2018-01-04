@@ -23,14 +23,14 @@ Fifengine is also already available from the following package repositories:
 [![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg)](https://repology.org/metapackage/fife)
 
 # Table of contents
-1. [Features]         (#1-features)
-2. [License]          (#2-license)
-3. [Tests]            (#3-tests)
-4. [Python Demos]     (#4-python-demos)
-6. [Python Tutorials] (#5-python-tutorials)
-5. [C++ Tutorials]    (#6-c-tutorials)
-7. [Troubleshooting]  (#7-troubleshooting)
-8. [Feedback]         (#8-feedback)
+1. [Features](#1-features)
+2. [License](#2-license)
+3. [Tests](#3-tests)
+4. [Python Demos](#4-python-demos)
+6. [Python Tutorials](#5-python-tutorials)
+5. [C++ Tutorials](#6-c-tutorials)
+7. [Troubleshooting](#7-troubleshooting)
+8. [Feedback](#8-feedback)
 
 ## 1) Features
 

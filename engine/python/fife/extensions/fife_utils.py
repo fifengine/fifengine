@@ -49,15 +49,15 @@ def is_fife_exc(type, original_exc):
 
 def getUserDataDirectory(vendor, appname):
 	""" Gets the proper location to save configuration and data files, depending on depending on OS.
-	
+
 	Windows: %APPDATA%\vendor\appname
 	Mac: ~/Library/Application Support/vendor/appname
 	Linux/Unix/Other: ~/.vendor/appname
-	
+
 	See:
 	Brian Vanderburg II @ http://mail.python.org/pipermail/python-list/2008-May/660779.html
 	"""
-	dir = None 
+	dir = None
 
 	# WINDOWS
 	if os.name == "nt":
@@ -78,7 +78,7 @@ def getUserDataDirectory(vendor, appname):
 
 		if (dir is None) or (not os.path.isdir(dir)):
 			dir = os.path.expanduser("~")
-			
+
 		# On windows, add vendor and app name
 		dir = os.path.join(dir, vendor, appname)
 
@@ -92,9 +92,9 @@ def getUserDataDirectory(vendor, appname):
 	if dir is None:
 		dir = os.path.expanduser("~")
 		dir = os.path.join(dir, "."+vendor, appname)
-		
+
 	# Create vendor/appname folder if it doesn't exist
 	if not os.path.isdir(dir):
 		os.makedirs(dir)
-		
+
 	return dir

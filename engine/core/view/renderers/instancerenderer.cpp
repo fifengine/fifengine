@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -139,7 +138,7 @@ namespace FIFE {
 		}
 		// init timer
 		m_timer.setInterval(m_interval);
-		m_timer.setCallback(boost::bind(&InstanceRenderer::check, this));
+		m_timer.setCallback(std::bind(&InstanceRenderer::check, this));
 		// create delete listener
 		m_delete_listener = new InstanceRendererDeleteListener(this);
 	}
@@ -163,7 +162,7 @@ namespace FIFE {
 		}
 		// init timer
 		m_timer.setInterval(m_interval);
-		m_timer.setCallback(boost::bind(&InstanceRenderer::check, this));
+		m_timer.setCallback(std::bind(&InstanceRenderer::check, this));
 		// create delete listener
 		m_delete_listener = new InstanceRendererDeleteListener(this);
 	}

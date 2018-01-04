@@ -30,23 +30,23 @@ import time
 from fife import fife
 
 from fife.extensions.serializers import ET
-from fife.extensions.serializers import SerializerError, InvalidFormat 
+from fife.extensions.serializers import SerializerError, InvalidFormat
 from fife.extensions.serializers import NameClash, NotFound, WrongFileType
 
 from fife.extensions.serializers.xmlobject import XMLObjectLoader
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir
 from fife.extensions.serializers.xml_loader_tools import loadImportDirRec
-from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_root_subfile	
-	
+from fife.extensions.serializers.xml_loader_tools import root_subfile, reverse_root_subfile
+
 
 FORMAT = '1.0'
 
 class XMLMapLoader(object):
-	""" The B{XMLMapLoader} parses the xml map using several section. 
+	""" The B{XMLMapLoader} parses the xml map using several section.
 	Each section fires a callback (if given) which can e. g. be
 	used to show a progress bar.
-	
+
 	The callback sends two values, a string and a float (which shows
 	the overall process): callback(string, float)
 	"""
@@ -62,7 +62,7 @@ class XMLMapLoader(object):
 		@param	extensions:	information package which extension should be activated (lights, sounds)
 		"""
 #		self.thisown = 0
-		
+
 		self.callback = callback
 		self.debug = debug
 
@@ -71,9 +71,9 @@ class XMLMapLoader(object):
 		self.model = self.engine.getModel()
 		self.image_manager = self.engine.getImageManager()
 		self.anim_pool = None
-		
+
 		self.obj_loader = XMLObjectLoader(engine)
-	
+
 		self.map = None
 		self.source = None
 		self.time_to_load = 0
@@ -82,7 +82,7 @@ class XMLMapLoader(object):
 
 		self.msg = {}
 		self.msg['map'] = 'created map'
-		self.msg['imports'] = 'loaded imports'		
+		self.msg['imports'] = 'loaded imports'
 		self.msg['layer'] = 'loaded layer: %s'
 		self.msg['camera'] = 'loaded camera: %s'
 
@@ -90,16 +90,16 @@ class XMLMapLoader(object):
 			extensions['sound'] = False
 		if 'lights' not in extensions:
 			extensions['lights'] = False
-			
+
 		self.light_data = {}
 		self.extensions = extensions
-		
+
 	def _err(self, msg):
 		raise SyntaxError(''.join(['File: ', self.source, ' . ', msg]))
 
 	def loadResource(self, location):
 		""" overwrite of B{fife.ResourceLoader}
-		
+
 		@type	location:	object
 		@param	location:	path to a map file as a fife.ResourceLocation
 		@return	FIFE map object
@@ -111,7 +111,7 @@ class XMLMapLoader(object):
 		f.thisown = 1
 		tree = ET.parse(f)
 		root = tree.getroot()
-			
+
 		map = self.parse_map(root)
 		self.time_to_load = time.time() - start_time
 		return map
@@ -120,7 +120,7 @@ class XMLMapLoader(object):
 		""" start parsing the xml structure and
 		call submethods for turning found tags
 		into FIFE objects and create the map
-		
+
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@return	FIFE map object
@@ -149,29 +149,29 @@ class XMLMapLoader(object):
 			self.callback(self.msg['map'], float(0.25) )
 
 		self.parse_imports(mapelt, self.map)
-		self.parse_layers(mapelt, self.map)	
+		self.parse_layers(mapelt, self.map)
 		self.parse_cameras(mapelt, self.map)
-		
+
 		# create light nodes
 		if self.light_data:
 			self.create_light_nodes(self.map)
-		
+
 		return self.map
 
 	def parse_imports(self, mapelt, map):
 		""" load all objects defined as import into memory
-		
+
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
-		@return	FIFE map object			
+		@return	FIFE map object
 		@rtype	object
 		"""
 		parsedImports = {}
 
-		if self.callback:		
+		if self.callback:
 			tmplist = mapelt.findall('import')
 			i = float(0)
-		
+
 		for item in mapelt.findall('import'):
 			_file = item.get('file')
 			if _file:
@@ -179,7 +179,7 @@ class XMLMapLoader(object):
 			_dir = item.get('dir')
 			if _dir:
 				_dir = reverse_root_subfile(self.source, _dir)
-				
+
 			# Don't parse duplicate imports
 			if (_dir,_file) in parsedImports:
 				if self.debug: print("Duplicate import:" ,(_dir, _file))
@@ -195,20 +195,20 @@ class XMLMapLoader(object):
 				map.importDirs.append(_dir)
 			else:
 				if self.debug: print('Empty import statement?')
-				
+
 			if self.callback:
-				i += 1				
+				i += 1
 				self.callback(self.msg['imports'], float( i / float(len(tmplist)) * 0.25 + 0.25 ) )
 
 	def parse_layers(self, mapelt, map):
 		""" create all layers and their instances
-		
+
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@param	map:	FIFE map object			
-		"""		
-		if self.callback is not None:		
+		@param	map:	FIFE map object
+		"""
+		if self.callback is not None:
 			tmplist = mapelt.findall('layer')
 			i = float(0)
 
@@ -227,10 +227,10 @@ class XMLMapLoader(object):
 			z_offset = layer.get('z_offset')
 			pathing = layer.get('pathing')
 			transparency = layer.get('transparency')
-			
+
 			layer_type = layer.get('layer_type')
 			layer_type_id = layer.get('layer_type_id')
-			
+
 			if not x_scale: x_scale = 1.0
 			if not y_scale: y_scale = 1.0
 			if not rotation: rotation = 0.0
@@ -238,7 +238,7 @@ class XMLMapLoader(object):
 			if not y_offset: y_offset = 0.0
 			if not z_offset: z_offset = 0.0
 			if not pathing: pathing = "cell_edges_only"
-			if not transparency: 
+			if not transparency:
 				transparency = 0
 			else:
 				transparency = int(transparency)
@@ -276,7 +276,7 @@ class XMLMapLoader(object):
 					layer_obj.setInteract(True, layer_type_id)
 
 			self.parse_instances(layer, layer_obj)
-			
+
 			if self.extensions['lights']:
 				self.parse_lights(layer, layer_obj)
 			if self.extensions['sound']:
@@ -293,7 +293,7 @@ class XMLMapLoader(object):
 				walk_layer = map.getLayer(l.getWalkableId())
 				if walk_layer:
 					walk_layer.addInteractLayer(l);
-				
+
 		for l in layers:
 			if l.isWalkable():
 				l.createCellCache()
@@ -305,7 +305,7 @@ class XMLMapLoader(object):
 
 	def parse_lights(self, layerelt, layer):
 		""" create light nodes
-		
+
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
@@ -317,30 +317,30 @@ class XMLMapLoader(object):
 		_LIGHT_DEFAULT_CAM_ID = 'default'
 		_LIGHT_DEFAULT_INTENSITY = 128
 		_LIGHT_DEFAULT_RADIUS = 10.0
-		
-		print("Processing lights ... ")		
+
+		print("Processing lights ... ")
 		lightelt = layerelt.find('lights')
-		if not lightelt: 
+		if not lightelt:
 			print("\tno lights found on layer %s" % layer.getId())
-			return		
-		
+			return
+
 		lights = []
 		for attr in ('l', 'light', 'lgt'):
 			lights.extend(lightelt.findall(attr))
-		
+
 		for light in lights:
 			group = light.get('group')
 			if not group:
 				print("Light has no group. Omitting...")
 				continue
-				
+
 			blending_src = light.get('src')
 			if not blending_src:
 				blending_src = _LIGHT_DEFAULT_BLENDING_SRC
 			blending_dst = light.get('dst')
 			if not blending_dst:
 				blending_dst = _LIGHT_DEFAULT_BLENDING_DST
-				
+
 			_x = light.get('x')
 			if not _x: _x = 0
 			_y = light.get('y')
@@ -348,7 +348,7 @@ class XMLMapLoader(object):
 			_z = light.get('y')
 			if not _z: _z = 0
 
-			node = {}				
+			node = {}
 			node['blending_src'] = int(blending_src)
 			node['blending_dst'] = int(blending_dst)
 			node['layer'] = layer.getId()
@@ -359,7 +359,7 @@ class XMLMapLoader(object):
 			node['instance'] = None
 			if instance_id and layer.getInstance(instance_id):
 				node['instance'] = instance_id
-			
+
 			type = light.get('type')
 			if type:
 				s_ref = light.get('s_ref')
@@ -368,9 +368,9 @@ class XMLMapLoader(object):
 				a_ref = light.get('a_ref')
 				if not a_ref: a_ref = 0.0
 				node['a_ref'] = float(a_ref)
-				
+
 				if type == 'image':
-					image = light.get('image')					
+					image = light.get('image')
 					if not image:
 						print("Light has no image. Omitting...")
 						continue
@@ -379,14 +379,14 @@ class XMLMapLoader(object):
 					img = self.image_manager.create(image)
 					node['image'] = img
 				elif type == 'animation':
-					animation = light.get('animation')					
+					animation = light.get('animation')
 					if not animation:
 						print("Light has no animation. Omitting...")
 						continue
 					node['type'] = 'animation'
 					animation = reverse_root_subfile(self.source, animation)
 					anim = loadXMLAnimation(self.engine, animation)
-					node['animation'] = anim					
+					node['animation'] = anim
 				elif type == 'simple':
 					node['type'] = type
 					radius = light.get('radius')
@@ -394,10 +394,10 @@ class XMLMapLoader(object):
 					node['radius'] = float(radius)
 
 					subdivisions = light.get('subdivisions')
-					if not subdivisions: 
+					if not subdivisions:
 						subdivisions = _LIGHT_DEFAULT_SUBDIVISIONS
 					node['subdivisions'] = int(subdivisions)
-					
+
 					intensity = light.get('intensity')
 					if not intensity:
 						intensity = _LIGHT_DEFAULT_INTENSITY
@@ -415,66 +415,66 @@ class XMLMapLoader(object):
 
 			else:
 				continue
-			
+
 			cam_id = light.get('camera_id')
 			if not cam_id: cam_id = _LIGHT_DEFAULT_CAM_ID
-	
+
 			if not cam_id in self.light_data:
 				self.light_data[cam_id] = {}
 			if group not in self.light_data[cam_id]:
 				self.light_data[cam_id][group] = []
-			
+
 			self.light_data[cam_id][group].append(node)
-			
+
 		for camera, groups in self.light_data.items():
 			print("Lights for camera %s" % camera)
 			for group, lights in groups.items():
 				print(group, lights)
-			
+
 	def parse_sounds(self, layerelt, layer):
 		""" create sound emitter
-		
+
 		FIXME:
 			- FIFE has a hard limit of sound emitters
 			  how should we load emitters here?
 			- my first thought: collect a list of sound
 			  files & data for emitter creation,
-			  then let the client decide what to do with it		  
-		
+			  then let the client decide what to do with it
+
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
 		@param	layer:	FIFE layer object
-		"""	
-		# to be continued		
+		"""
+		# to be continued
 		pass
-		
+
 	def parse_instances(self, layerelt, layer):
 		""" create all layers and their instances
-		
+
 		@type	layerelt:	object
 		@param	layerelt:	ElementTree layer branch
 		@type	layer:	object
 		@param	layer:	FIFE layer object
-		"""			
+		"""
 		instelt = layerelt.find('instances')
 
 		instances = []
 		for attr in ('i', 'inst', 'instance'):
 			instances.extend(instelt.findall(attr))
-		
+
 		for instance in instances:
 			_id = instance.get('id')
 			if not _id:
 				_id = ''
-			
+
 			objectID = ''
 			for attr in ('o', 'object', 'obj'):
 				objectID = instance.get(attr)
 				if objectID: break
 			if not objectID: self._err('<instance> %s does not specify an object attribute.' % str(objectID))
 			objectID = str(objectID)
-			
+
 			nspace = ''
 			for attr in ('namespace', 'ns'):
 				nspace = instance.get(attr)
@@ -528,7 +528,7 @@ class XMLMapLoader(object):
 					inst.setBlocking(bool(int(blocking)))
 
 			fife.InstanceVisual.create(inst)
-			
+
 			stackpos = instance.get('stackpos')
 			if stackpos:
 				inst.get2dGfxVisual().setStackPosition(int(stackpos))
@@ -539,18 +539,18 @@ class XMLMapLoader(object):
 
 	def parse_cameras(self, mapelt, map):
 		""" create all cameras and activate them
-		
+
 		FIXME:
 			- should the cameras really be enabled here?
 			  IMO that's part of the setup within a client
 			  (we just _load_ things here)
-		
+
 		@type	mapelt:	object
 		@param	mapelt:	ElementTree root
 		@type	map:	object
-		@param	map:	FIFE map object			
-		"""				
-		if self.callback:		
+		@param	map:	FIFE map object
+		"""
+		if self.callback:
 			tmplist = mapelt.findall('camera')
 			i = float(0)
 
@@ -559,7 +559,6 @@ class XMLMapLoader(object):
 			zoom = camera.get('zoom')
 			tilt = camera.get('tilt')
 			rotation = camera.get('rotation')
-			ref_layer_id = camera.get('ref_layer_id')
 			ref_cell_width = camera.get('ref_cell_width')
 			ref_cell_height = camera.get('ref_cell_height')
 			viewport = camera.get('viewport')
@@ -570,50 +569,49 @@ class XMLMapLoader(object):
 			if not rotation: rotation = 0
 
 			if not _id: self._err('Camera declared without an id.')
-			if not ref_layer_id: self._err(''.join(['Camera ', str(_id), ' declared with no reference layer.']))
 			if not (ref_cell_width and ref_cell_height): self._err(''.join(['Camera ', str(_id), ' declared without reference cell dimensions.']))
 
 			try:
 				if viewport:
-					cam = map.addCamera(str(_id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]))
+					cam = map.addCamera(str(_id), fife.Rect(*[int(c) for c in viewport.split(',')]))
 
 				else:
 					screen = self.engine.getRenderBackend()
-					cam = map.addCamera(str(_id), map.getLayer(str(ref_layer_id)),fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()))
-				
+					cam = map.addCamera(str(_id), fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()))
+
 				renderer = fife.InstanceRenderer.getInstance(cam)
 				renderer.activateAllLayers(map)
-				
+
 			except fife.Exception as e:
 				print(e.getMessage())
 
-			if light_color: cam.setLightingColor(*[float(c) for c in light_color.split(',')])			
+			if light_color: cam.setLightingColor(*[float(c) for c in light_color.split(',')])
 			cam.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
 			cam.setRotation(float(rotation))
 			cam.setTilt(float(tilt))
 			cam.setZoom(float(zoom))
-			
+
 			renderer = fife.InstanceRenderer.getInstance(cam)
 			renderer.activateAllLayers(map)
-				
+
 			if self.callback:
 				i += 1
 				self.callback(self.msg['camera'] % str(_id), float( i / len(tmplist) * 0.25 + 0.75 ) )
-				
+
 	def create_light_nodes(self, map):
 		""" loop through all preloaded lights and create them
 		according to their data
-		
+
 		@type	map:	object
 		@param	map:	FIFE map object
 		"""
 		cameras = [i.getId() for i in map.getCameras()]
 		renderers = {}
 		default_cam = map.getCameras()[0].getId()
-		
+
 		def add_simple_light(group, renderer, node, data):
-			""" add a node as simple light to the renderer 
-			
+			""" add a node as simple light to the renderer
+
 			@type	group:	string
 			@param	group:	name of the light group
 			@type	renderer:	object
@@ -637,13 +635,13 @@ class XMLMapLoader(object):
 				data['color'][1],
 				data['color'][2],
 				data['blending_src'],
-				data['blending_dst'],												
+				data['blending_dst'],
 			)
 			if data['s_ref'] is not -1:
 				add_stencil_test(group, renderer, data)
 		def add_animated_lightmap(group, renderer, node, data):
-			""" add a node as animated lightmap to the renderer 
-			
+			""" add a node as animated lightmap to the renderer
+
 			@type	group:	string
 			@param	group:	name of the light group
 			@type	renderer:	object
@@ -665,8 +663,8 @@ class XMLMapLoader(object):
 			if data['s_ref'] is not -1:
 				add_stencil_test(group, renderer, data)
 		def add_lightmap(group, renderer, node, data):
-			""" add a node as lightmap to the renderer 
-			
+			""" add a node as lightmap to the renderer
+
 			@type	group:	string
 			@param	group:	name of the light group
 			@type	renderer:	object
@@ -688,8 +686,8 @@ class XMLMapLoader(object):
 			if data['s_ref'] is not -1:
 				add_stencil_test(group, renderer, data)
 		def add_stencil_test(group, renderer, data):
-			""" add a stencil test to a group 
-			
+			""" add a stencil test to a group
+
 			@type	group:	string
 			@param	group:	name of the light group
 			@type	renderer:	object
@@ -703,17 +701,17 @@ class XMLMapLoader(object):
 				data['s_ref'],
 				data['a_ref'],
 			)
-			
+
 		def create_node(instance=None, point=None, layer=None):
 			""" creates a node of one of these types:
-			
+
 				- attached to an instance
 				- attached to an instance with offset
 				- attached to a point
-			
+
 				FIXME:
 					- add location node
-			
+
 			@type:	instance:	object
 			@param	instance:	fife instance object
 			@type	point:		tuple
@@ -723,7 +721,7 @@ class XMLMapLoader(object):
 			"""
 			node = None
 			if not layer: return node
-			
+
 			# node at layer coordinates
 			if point and not instance:
 				point = fife.Point(point[0], point[1])
@@ -737,22 +735,22 @@ class XMLMapLoader(object):
 
 			if node:
 				node.thisown = 0
-				
-			return node			
-		
+
+			return node
+
 		def dump_data():
 			""" dump all loaded data """
 			for camera, groups in self.light_data.items():
 				print("Lights for camera %s" % camera)
 				for group, lights in groups.items():
-					print(group, lights)		
-		
+					print(group, lights)
+
 		# fetch all renderer instances for available cameras
 		for _id in cameras:
 			camera = map.getCamera(_id)
 			renderers[_id] = fife.LightRenderer.getInstance(camera)
-		
-		# parse data and create the lights	
+
+		# parse data and create the lights
 		for camera, groups in self.light_data.items():
 			for group, lights in groups.items():
 				for light in lights:
@@ -762,22 +760,22 @@ class XMLMapLoader(object):
 						instance = layer.getInstance(light['instance'])
 					position = light['position']
 					node = create_node(instance, position, layer)
-					
+
 					# some guards
 					if not node: continue
-					
+
 					if camera == 'default':
 						renderer = renderers[default_cam]
 					else:
 						renderer = renderers[camera]
-						
+
 					if light['type'] == 'simple':
 						add_simple_light(group, renderer, node, light)
 					elif light['type'] == 'image':
 						add_lightmap(group, renderer, node, light)
 					elif light['type'] == 'animation':
 						add_animated_lightmap(group, renderer, node, light)
-				
+
 #		dump_data()
-		
+
 

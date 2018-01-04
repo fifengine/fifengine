@@ -22,7 +22,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from .swig_test_utils import *
 
 class TestLog(unittest.TestCase):
 	def testLog(self):

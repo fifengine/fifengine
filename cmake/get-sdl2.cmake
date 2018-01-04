@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(SDL2_VERSION "2.0.5")
+set(SDL2_VERSION "2.0.6")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -17,7 +17,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-mingw.tar.gz
-      URL_MD5 ecf8fb614d57e7d284086a36dae6878f
+      URL_MD5 742fcd6b03307f46bda2a1075151d328
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -34,7 +34,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL http://libsdl.org/release/SDL2-devel-${SDL2_VERSION}-VC.zip
-      URL_MD5 b771f36bb640c173e53fa8259cdd3835
+      URL_MD5 b5d9ba2c24e21addbc6c84adfbd1b340
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -59,7 +59,7 @@ else() # build from source
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL http://libsdl.org/release/SDL2-${SDL2_VERSION}.tar.gz
-    URL_MD5 d4055424d556b4a908aa76fad63abd3c
+    URL_MD5 4c2d602766b48b8f1b19a6f903ef5ecf
     #CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
     INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
     CMAKE_ARGS ${SDL2_CMAKE_ARGS}

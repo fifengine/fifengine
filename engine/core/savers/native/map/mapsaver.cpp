@@ -436,12 +436,11 @@ namespace FIFE {
         CameraContainer cameras = map.getCameras();
         for (CameraContainer::iterator iter = cameras.begin(); iter != cameras.end(); ++iter)
         {
-            if ((*iter)->getLocationRef().getMap()->getId() == map.getId())
+            if ((*iter)->getMap()->getId() == map.getId())
             {
                 TiXmlElement* cameraElement = new TiXmlElement("camera");
 
                 cameraElement->SetAttribute("id", (*iter)->getId());
-                cameraElement->SetAttribute("ref_layer_id", (*iter)->getLocation().getLayer()->getId());
                 cameraElement->SetDoubleAttribute("zoom", (*iter)->getZoom());
                 cameraElement->SetDoubleAttribute("tilt", (*iter)->getTilt());
                 cameraElement->SetDoubleAttribute("rotation", (*iter)->getRotation());
