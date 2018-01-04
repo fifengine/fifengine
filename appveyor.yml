@@ -15,15 +15,15 @@ configuration:
 environment:
   MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
-    # VS 14 + Py2.7 with cegui
+    # VS 15 + Py2.7 with cegui
     - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7" 
-    # VS 14 + Py3.4 with cegui
+    # VS 15 + Py3.4 with cegui
     - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python34"
       PYTHON_VERSION: "3.4"  
-    # VS 14 + Py3.5 with cegui
+    # VS 15 + Py3.6 with cegui
     - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6"  
@@ -64,8 +64,10 @@ init:
   - "%PYTHON%\\python.exe -c \"import struct; print(struct.calcsize('P') * 8)\""
 
 install:
+  # set path to boost according to compiler toolchain
+  - if "%generator%" == "Visual Studio 15" (SET boost_root=C:\Libraries\boost_1_65_1)
+  - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_65_1\lib32-msvc-14.1)
   # get dependencies
-  - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_boost_python.ps1 $env:PYTHON_VERSION
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 
   - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
