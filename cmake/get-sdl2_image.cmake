@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(SDL2_IMAGE_VERSION "2.0.1")
+set(SDL2_IMAGE_VERSION "2.0.2")
 
 # For win32 it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -18,7 +18,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz  
-      URL_MD5 1        
+      URL_MD5 3be7159e1edc98c7f5ebbabbb5b2c667
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -36,7 +36,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-VC.zip
-      URL_MD5 00338534c605262dcbf8ffe90ec2785d
+      URL_MD5 a731f9ce332f8acc0e4db1421a250ae2
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
