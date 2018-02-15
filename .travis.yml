@@ -72,7 +72,7 @@ install:
 
 script:
   - cd ..
-  - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr ../fifengine; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_INSTALL_PREFIX:PATH=/usr -Dcegui=OFF ../fifengine; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then mkdir build; cd build; cmake -DPYTHON_EXECUTABLE:PATH=/usr/local/bin/python3 -DPYTHON_INCLUDE_DIR=/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m -DPYTHON_LIBRARY=/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6 ../fifengine; fi
   - ls -alh .
   - make -j3

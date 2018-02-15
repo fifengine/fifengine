@@ -56,7 +56,7 @@ configure_file (
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
-option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                    ON)
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with c++"  OFF)

@@ -1,5 +1,5 @@
 # Build worker image (VM template)
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 clone_depth: 5
 
@@ -15,16 +15,16 @@ configuration:
 environment:
   MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
-    # VS 14 + Py2.7
-    - generator: "Visual Studio 14"  
+    # VS 15 + Py2.7 with cegui
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7" 
-    # VS 14 + Py3.4
-    - generator: "Visual Studio 14"  
+    # VS 15 + Py3.4 with cegui
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python34"
       PYTHON_VERSION: "3.4"  
-    # VS 14 + Py3.5
-    - generator: "Visual Studio 14"  
+    # VS 15 + Py3.6 with cegui
+    - generator: "Visual Studio 15"  
       PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6"  
     #- generator: "MinGW Makefiles"
@@ -33,16 +33,18 @@ matrix:
   fast_finish: true
 
 cache:
-  - C:\projects\fifengine-dependencies\downloads
+  - C:\projects\fifengine-dependencies
+#  - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
 init:
+  #- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - date /T & time /T
   - git config --global core.autocrlf input
   - cmake --version
   # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
-  - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
+  #- del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
   # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
   - ps: >-
       if ($env:APPVEYOR_REPO_TAG -eq "true")
@@ -63,11 +65,12 @@ init:
 
 install:
   # set path to boost according to compiler toolchain
-  - if "%generator%" == "Visual Studio 14" (SET boost_root=C:\Libraries\boost_1_63_0)
-  - if "%generator%" == "Visual Studio 14" (SET boost_librarydir=C:\Libraries\boost_1_63_0\lib32-msvc-14.0)
+  - if "%generator%" == "Visual Studio 15" (SET boost_root=C:\Libraries\boost_1_65_1)
+  - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_65_1\lib32-msvc-14.1)
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 
+  - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
   # show dependency folders
   - dir ..\fifengine-dependencies
   - dir ..\fifengine-dependencies\downloads
@@ -93,6 +96,7 @@ build_script:
     -DBOOST_LIBRARYDIR="%boost_librarydir%" 
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=ON
+    -DCEGUI=ON
   # build
   - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   # install
@@ -107,6 +111,7 @@ build_script:
     -DBOOST_LIBRARYDIR="%boost_librarydir%" 
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=OFF
+    -DCEGUI=ON
   # build
   - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   # install
@@ -114,7 +119,7 @@ build_script:
 
 after_build:
   - dir C:\projects\build\Release /s
-  - if "%generator%"=="Visual Studio 14" (set COMPILER="VC14")
+  - if "%generator%"=="Visual Studio 15" (set COMPILER="VC15")
   - if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW") 
 
   # package dependencies artifact
@@ -129,10 +134,11 @@ after_build:
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
 
   # package Python Installer artifact
-  - xcopy /Y /S "C:\projects\build\*.py" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\bin\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
-  - xcopy /Y /S "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\"
+  #PyCEGUI installs its dlls itself
+  - ps: copy-item "C:\projects\build\*.py" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+  - ps: copy-item "C:\projects\build\Release\*.*" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+  - ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
+  - ps: copy-item "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
   - cd %APPVEYOR_BUILD_FOLDER%
   - python setup.py set_metadata --version=0.4.1 bdist_msi --target-version="%PYTHON_VERSION%"
   - python setup.py set_metadata --version=0.4.1 bdist_dumb --format=zip
@@ -168,3 +174,6 @@ deploy:
     appveyor_repo_tag: true        # deploy on tag push only
   auth_token:                      # encrypted token from GitHub
     secure: 4QuwNtXXqe6cIFwL3YCCn/47V7LdKBNbJVGjBSGDzJyUefOER3b7OrMrXm2FQYy3
+
+on_finish:
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
