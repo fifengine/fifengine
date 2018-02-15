@@ -67,25 +67,19 @@ namespace FIFE {
 		 *
 		 * @return Returns true if streaming is required, false if not.
 		 */
-		bool isStream() const {
-			return m_isstream;
-		}
+		bool isStream() const;
 
 		/** Returns the number of buffers used by the SoundClip
 		 * (only for non-streaming sound clips)
 		 *
 		 * @return Returns the number of buffers.
 		 */
-		uint32_t countBuffers() const {
-			return m_buffervec.at(0)->usedbufs;
-		}
+		uint32_t countBuffers() const;
 
 		/** Returns the array of buffers for queuing
 		 *
 		 */
-		ALuint* getBuffers(uint32_t streamid = 0) const {
-			return m_buffervec.at(streamid)->buffers;
-		}
+		ALuint* getBuffers(uint32_t streamid = 0) const;
 
 		/** Starts streaming the soundclip
 		 * @return Returns the streamid
@@ -119,29 +113,34 @@ namespace FIFE {
 		 */
 		void quitStreaming(uint32_t streamid);
 
+		/** Ends streaming, invalidate also the stream id.
+		 */
+		void endStreaming(uint32_t streamid);
+
 		/** Adopts a decoder to use so DONT delete it
 		 */
-		void adobtDecoder(SoundDecoder* decoder) { m_decoder = decoder; m_deletedecoder = true; }
+		void adobtDecoder(SoundDecoder* decoder);
 
 		/** Sets the decoder to use so DONT delete it before this SoundClip is done with it
 		 */
-		void setDecoder(SoundDecoder* decoder) { m_decoder = decoder; m_deletedecoder = false; }
+		void setDecoder(SoundDecoder* decoder);
 
 		/** Returns the attached decoder
 		 */
-		SoundDecoder* getDecoder() const {
-			return m_decoder;
-		}
+		SoundDecoder* getDecoder() const;
 
-		virtual size_t getSize() { return 0; }
+		virtual size_t getSize();
 
 		virtual void load();
 		virtual void free();
 
 	private:
-		bool						m_isstream; 		// is stream?
-		SoundDecoder*		m_decoder;			// attached decoder
-		bool						m_deletedecoder;	// when loadFromDecoder-method is used, decoder shouldn't be deleted
+		// is stream?
+		bool m_isStream;
+		// attached decoder
+		SoundDecoder* m_decoder;
+		// when loadFromDecoder-method is used, decoder shouldn't be deleted
+		bool m_deleteDecoder;
 		std::vector<SoundBufferEntry*> m_buffervec;
 
 		std::string createUniqueClipName();

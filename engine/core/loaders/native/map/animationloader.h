@@ -35,6 +35,8 @@
 
 #include "ianimationloader.h"
 
+class TiXmlElement;
+
 namespace FIFE {
 
 	class VFS;

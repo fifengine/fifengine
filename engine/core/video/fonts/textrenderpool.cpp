@@ -25,7 +25,6 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,7 +43,7 @@ namespace FIFE {
 		m_poolSize = 0;
 
 		m_collectTimer.setInterval( 1000 * 60 );
-		m_collectTimer.setCallback( boost::bind( &TextRenderPool::removeOldEntries, this) );
+		m_collectTimer.setCallback(std::bind( &TextRenderPool::removeOldEntries, this) );
 	}
 
 	TextRenderPool::~TextRenderPool() {

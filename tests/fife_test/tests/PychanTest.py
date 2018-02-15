@@ -23,6 +23,10 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from builtins import map
+from builtins import str
+from builtins import range
+from builtins import object
 from fife import fife, fifechan
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -150,15 +154,15 @@ class StylingExample(PyChanExample):
 	def __init__(self):
 		super(StylingExample,self).__init__('data/gui/styling.xml')
 
-		self.styles = ['default'] + STYLES.keys()
-		for name,style in STYLES.items():
+		self.styles = ['default'] + list(STYLES.keys())
+		for name,style in list(STYLES.items()):
 			pychan.manager.addStyle(name,style)
 
 	def start(self):
 		self.styledCredits = pychan.loadXML('data/gui/all_widgets.xml')
 		self.styledCredits.distributeInitialData({
-			'demoList' : map(lambda x:unicode(x,'utf8'),dir(pychan)),
-			'demoText' : unicode(pychan.__doc__,'utf8')
+			'demoList' : [str(x,'utf8') for x in dir(pychan)],
+			'demoText' : str(pychan.__doc__,'utf8')
 		})
 
 		self.widget = pychan.loadXML(self.xmlFile)
@@ -298,12 +302,12 @@ class SliderExample(PyChanExample):
 		icon = self.widget.findChild(name="icon")
 		# sliders have floats, fifechan is picky and wants ints
 		# so we convert here.
-		icon.position = map(int, self.widget.collectData('xslider','yslider'))
+		icon.position = list(map(int, self.widget.collectData('xslider','yslider')))
 		# we distribute to the labels with the x,y value.
 		# That's user visible 'text' - so pychan wants unicode.
 		self.widget.distributeInitialData({
-			'xvalue' : unicode(icon.x),
-			'yvalue' : unicode(icon.y),
+			'xvalue' : str(icon.x),
+			'yvalue' : str(icon.y),
 		})
 		
 		#quick demo to show the percentage bar in action
@@ -370,10 +374,10 @@ class ColorExample(PyChanExample):
 		a = int(self.widget.findChild(name="base_aslider").value)
 
 		# update slider labels
-		self.widget.findChild(name="base_rvalue").text = unicode(str(r), "utf-8")
-		self.widget.findChild(name="base_gvalue").text = unicode(str(g), "utf-8")
-		self.widget.findChild(name="base_bvalue").text = unicode(str(b), "utf-8")
-		self.widget.findChild(name="base_avalue").text = unicode(str(a), "utf-8")
+		self.widget.findChild(name="base_rvalue").text = str(str(r), "utf-8")
+		self.widget.findChild(name="base_gvalue").text = str(str(g), "utf-8")
+		self.widget.findChild(name="base_bvalue").text = str(str(b), "utf-8")
+		self.widget.findChild(name="base_avalue").text = str(str(a), "utf-8")
 		
 		rgba = (r, g, b, a)
 		
@@ -397,10 +401,10 @@ class ColorExample(PyChanExample):
 		a = int(self.widget.findChild(name="background_aslider").value)
 
 		# update slider labels
-		self.widget.findChild(name="background_rvalue").text = unicode(str(r), "utf-8")
-		self.widget.findChild(name="background_gvalue").text = unicode(str(g), "utf-8")
-		self.widget.findChild(name="background_bvalue").text = unicode(str(b), "utf-8")
-		self.widget.findChild(name="background_avalue").text = unicode(str(a), "utf-8")
+		self.widget.findChild(name="background_rvalue").text = str(str(r), "utf-8")
+		self.widget.findChild(name="background_gvalue").text = str(str(g), "utf-8")
+		self.widget.findChild(name="background_bvalue").text = str(str(b), "utf-8")
+		self.widget.findChild(name="background_avalue").text = str(str(a), "utf-8")
 		
 		rgba = (r, g, b, a)
 		
@@ -424,10 +428,10 @@ class ColorExample(PyChanExample):
 		a = int(self.widget.findChild(name="selection_aslider").value)
 
 		# update slider labels
-		self.widget.findChild(name="selection_rvalue").text = unicode(str(r), "utf-8")
-		self.widget.findChild(name="selection_gvalue").text = unicode(str(g), "utf-8")
-		self.widget.findChild(name="selection_bvalue").text = unicode(str(b), "utf-8")
-		self.widget.findChild(name="selection_avalue").text = unicode(str(a), "utf-8")
+		self.widget.findChild(name="selection_rvalue").text = str(str(r), "utf-8")
+		self.widget.findChild(name="selection_gvalue").text = str(str(g), "utf-8")
+		self.widget.findChild(name="selection_bvalue").text = str(str(b), "utf-8")
+		self.widget.findChild(name="selection_avalue").text = str(str(a), "utf-8")
 		
 		rgba = (r, g, b, a)
 		
@@ -451,10 +455,10 @@ class ColorExample(PyChanExample):
 		a = int(self.widget.findChild(name="foreground_aslider").value)
 
 		# update slider labels
-		self.widget.findChild(name="foreground_rvalue").text = unicode(str(r), "utf-8")
-		self.widget.findChild(name="foreground_gvalue").text = unicode(str(g), "utf-8")
-		self.widget.findChild(name="foreground_bvalue").text = unicode(str(b), "utf-8")
-		self.widget.findChild(name="foreground_avalue").text = unicode(str(a), "utf-8")
+		self.widget.findChild(name="foreground_rvalue").text = str(str(r), "utf-8")
+		self.widget.findChild(name="foreground_gvalue").text = str(str(g), "utf-8")
+		self.widget.findChild(name="foreground_bvalue").text = str(str(b), "utf-8")
+		self.widget.findChild(name="foreground_avalue").text = str(str(a), "utf-8")
 		
 		rgba = (r, g, b, a)
 		
@@ -510,7 +514,7 @@ class PocAnimations(PyChanExample):
 		self.delay_slider.value = float(DEFAULT_DELAY)
 		
 		self.delay_display = self.widget.findChild(name="delay_label")
-		self.delay_display.text = unicode(str(DEFAULT_DELAY))
+		self.delay_display.text = str(str(DEFAULT_DELAY))
 		
 		self.progressbar = self.widget.findChild(name="progressbar")
 #		self.progressbar2 = self.widget.findChild(name="progressbar2")
@@ -528,7 +532,7 @@ class PocAnimations(PyChanExample):
 	def _set_delay_display(self):
 		""" set delay display according to slider value """
 		value = self.delay_slider.value
-		self.delay_display.text = unicode(str(int(value)))		
+		self.delay_display.text = str(str(int(value)))		
 		
 	def _anim_all(self):
 		""" fire all animations """
@@ -693,7 +697,7 @@ class PychanTest(test.Test):
 		if self.currentExample:
 			self.currentExample.stop()
 		self.currentExample = self._examples[self.demoList.selected_item]
-		self.gui.findChild(name="xmlSource").text = unicode(open(self.currentExample.xmlFile).read(), 'utf8')
+		self.gui.findChild(name="xmlSource").text = str(open(self.currentExample.xmlFile).read(), 'utf8')
 		self.currentExample.start()
 
 	def showCredits(self):

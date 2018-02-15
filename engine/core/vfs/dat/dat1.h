@@ -24,7 +24,7 @@
 
 // Standard C++ library includes
 #include <map>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 // 3rd party library includes
 
@@ -69,7 +69,7 @@ namespace FIFE {
 
 		private:
 			std::string m_datpath;
-			boost::scoped_ptr<RawData> m_data;
+			std::unique_ptr<RawData> m_data;
 			typedef std::map<std::string, RawDataDAT1::s_info> type_filelist;
 			type_filelist m_filelist;
 

@@ -22,7 +22,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 
 class TestVideo(unittest.TestCase):
 	
@@ -40,7 +42,7 @@ class TestVideo(unittest.TestCase):
 		self.engine.initializePumping()
 
 		renderer = self.engine.getOffRenderer()
-		renderer.setEnable(True)
+		renderer.setEnabled(True)
 
 		prevPt = fife.Point(*points[1])
 		for pt in points[1:]:
@@ -48,7 +50,7 @@ class TestVideo(unittest.TestCase):
 			renderer.addLine("lines", prevPt, curPt, 255, 255, 255)
 			prevPt = curPt		
 
-		for i in xrange(200):
+		for i in range(200):
 			self.engine.pump()
 
 		renderer.removeAll("lines")

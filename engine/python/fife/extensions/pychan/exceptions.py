@@ -59,3 +59,8 @@ class StopTreeWalking(StopIteration):
 	"""
 	Internal exception used to abort iteration over the widget tree.
 	"""
+
+class DeprecatedException(PyChanException):
+	"""
+	Exception raised if a deprecated function or format is used.
+	"""

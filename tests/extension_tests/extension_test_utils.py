@@ -32,7 +32,8 @@ for p in _paths:
 	if p not in sys.path:
 		sys.path.append(os.path.sep.join(p.split('/')))
 
-import fife, fifelog
+from fife import fife
+from fife.extensions import fifelog
 
 def getEngine(minimized=False):
 	e = fife.Engine()

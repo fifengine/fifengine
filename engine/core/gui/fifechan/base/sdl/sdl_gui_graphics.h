@@ -34,7 +34,7 @@
 namespace FIFE {
 	class RenderBackend;
 
-	/** Overrides Guichan Graphics to enable usage of normal fife images & related facilities
+	/** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
 	 */
 	class SdlGuiGraphics: public fcn::SDLGraphics {
 	public:
@@ -46,6 +46,7 @@ namespace FIFE {
 
 		virtual void drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment);
 		virtual void drawPoint(int32_t x, int32_t y);
+		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width);
 		virtual void drawPolyLine(const fcn::PointVector& points, uint32_t width);
 		virtual void drawBezier(const fcn::PointVector& points, int32_t steps, uint32_t width);

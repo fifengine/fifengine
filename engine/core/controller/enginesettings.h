@@ -414,6 +414,24 @@ namespace FIFE {
 		 */
 		bool isMouseAccelerationEnabled() const;
 
+		/** Enables or disables native image cursor.
+		 * @see Cursor::setNativeImageCursorEnabled()
+		 */
+		void setNativeImageCursorEnabled(bool nativeimagecursor);
+
+		/** Returns whether cursors set to an image or an animation are drawn natively.
+		 * @see Cursor::setNativeImageCursorEnabled()
+		 */
+		bool isNativeImageCursorEnabled() const;
+
+		/** Enables or disables joystick and gamepad support.
+		 */
+		void setJoystickSupport(bool support);
+
+		/** Returns whether joystick and gamepad support is enabled or not.
+		 */
+		bool isJoystickSupport() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -449,6 +467,8 @@ namespace FIFE {
 		uint16_t m_framelimit;
 		float m_mousesensitivity;
 		bool m_mouseacceleration;
+		bool m_nativeimagecursor;
+		bool m_joystickSupport;
 	};
 
 }//FIFE

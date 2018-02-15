@@ -41,18 +41,27 @@ namespace FIFE {
 
 	SoundClip::SoundClip(IResourceLoader* loader) :
 		IResource(createUniqueClipName(), loader),
-		m_isstream(false),
+		m_isStream(false),
 		m_decoder(NULL),
-		m_deletedecoder(false) {
+		m_deleteDecoder(false) {
 
 	}
 
 	SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
 		IResource(name, loader),
-		m_isstream(false),
+		m_isStream(false),
 		m_decoder(NULL),
-		m_deletedecoder(false) {
+		m_deleteDecoder(false) {
 
+	}
+
+	SoundClip::~SoundClip() {
+		free();
+
+		// delete decoder
+		if (m_deleteDecoder && m_decoder != NULL) {
+			delete m_decoder;
+		}
 	}
 
 	void SoundClip::load(){
@@ -71,10 +80,9 @@ namespace FIFE {
 
 		assert(m_decoder);  //should be set by now
 
-		m_isstream = m_decoder->needsStreaming();
+		m_isStream = m_decoder->needsStreaming();
 
-		if (!m_isstream) {
-
+		if (!m_isStream) {
 			// only for non-streaming buffers
 			SoundBufferEntry* ptr = new SoundBufferEntry();
 
@@ -109,53 +117,76 @@ namespace FIFE {
 
 	void SoundClip::free(){
 		if (m_state == IResource::RES_LOADED) {
-			if (m_isstream) {
+			if (m_isStream) {
 				// erase all elements from the list
 				std::vector<SoundBufferEntry*>::iterator it;
-
 				for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
-					if ((*it)->buffers[0] != 0) {
+					if ((*it) && (*it)->buffers[0] != 0) {
 						alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
 					}
 					delete (*it);
 				}
-				m_buffervec.clear();
-			}
-			else {
+			} else {
 				// for non-streaming soundclips
 				SoundBufferEntry* ptr = m_buffervec.at(0);
-
 				for(uint32_t i = 0; i < ptr->usedbufs; i++) {
 					alDeleteBuffers(1, &ptr->buffers[i]);
 				}
+				delete ptr;
 			}
+			m_buffervec.clear();
 		}
 		m_state = IResource::RES_NOT_LOADED;
 	}
 
+	bool SoundClip::isStream() const {
+		return m_isStream;
+	}
+
+	uint32_t SoundClip::countBuffers() const {
+		return m_buffervec.at(0)->usedbufs;
+	}
+
+	ALuint* SoundClip::getBuffers(uint32_t streamid) const {
+		return m_buffervec.at(streamid)->buffers;
+	}
+
 	uint32_t SoundClip::beginStreaming() {
+		SoundBufferEntry* ptr = NULL;
+		uint32_t id = 0;
+		for (uint32_t i = 0; i < m_buffervec.size(); i++) {
+			if (m_buffervec.at(i) == NULL) {
+				ptr = new SoundBufferEntry();
+				m_buffervec.at(i) = ptr;
+				id = i;
+				break;
+			}
+		}
 		// create new sound buffer entry
-		SoundBufferEntry* ptr = new SoundBufferEntry();
+		if (!ptr) {
+			ptr = new SoundBufferEntry();
+			m_buffervec.push_back(ptr);
+			id = m_buffervec.size() -1 ;
+		}
+
 		ptr->usedbufs=0;
+		ptr->deccursor = 0;
 		alGenBuffers(BUFFER_NUM, ptr->buffers);
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 
-		m_buffervec.push_back(ptr);
-
-		return m_buffervec.size()-1;
+		return id;
 	}
 
 	bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value) {
 		uint64_t pos = 0;
-
 		// convert position to bytes
 		switch (type) {
 			case SD_BYTE_POS:
 				pos = static_cast<uint64_t>(value);
 				break;
 			case SD_TIME_POS:
-				value *= m_decoder->getSampleRate();
+				value /= static_cast<float>(m_decoder->getSampleRate());
 			case SD_SAMPLE_POS:
 				pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
 				break;
@@ -163,6 +194,7 @@ namespace FIFE {
 
 		if (pos > m_decoder->getDecodedLength()) {
 			// EOF!
+			m_buffervec.at(streamid)->deccursor = m_decoder->getDecodedLength();
 			return true;
 		}
 
@@ -185,25 +217,26 @@ namespace FIFE {
 	}
 
 	void SoundClip::acquireStream(uint32_t streamid) {
-
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-
 		for (int32_t i = 0; i < BUFFER_NUM; i++) {
-			getStream(streamid, ptr->buffers[i]);
+			if (getStream(streamid, ptr->buffers[i])) {
+				break;
+			}
 		}
 	}
 
 	bool SoundClip::getStream(uint32_t streamid, ALuint buffer) {
-
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
 		if (ptr->deccursor >= m_decoder->getDecodedLength()) {
 			// EOF!
 			return true;
 		}
-
+		
 		// set cursor of decoder
-		m_decoder->setCursor(ptr->deccursor);
+		if (!m_decoder->setCursor(ptr->deccursor)) {
+			return true;
+		}
 
 		// Error while decoding file?
 		if (m_decoder->decode(BUFFER_LEN)) {
@@ -214,10 +247,10 @@ namespace FIFE {
 		alBufferData(buffer, m_decoder->getALFormat(),
 			m_decoder->getBuffer(), m_decoder->getBufferSize(), m_decoder->getSampleRate());
 
-		m_decoder->releaseBuffer();
-
 		// update cursor
-		ptr->deccursor += BUFFER_LEN;
+		ptr->deccursor += m_decoder->getBufferSize();
+
+		m_decoder->releaseBuffer();
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
 
@@ -231,26 +264,41 @@ namespace FIFE {
 		ptr->buffers[0] = 0;
 	}
 
-	SoundClip::~SoundClip() {
-		free();
+	void SoundClip::endStreaming(uint32_t streamid) {
+		SoundBufferEntry** ptr = &m_buffervec.at(streamid);
+		delete *ptr;
+		*ptr = NULL;
+	}
 
-		// delete decoder
-		if (m_deletedecoder && m_decoder != NULL) {
-			delete m_decoder;
-		}
+	void SoundClip::adobtDecoder(SoundDecoder* decoder) {
+		m_decoder = decoder;
+		m_deleteDecoder = true;
+	}
+
+	void SoundClip::setDecoder(SoundDecoder* decoder) {
+		m_decoder = decoder;
+		m_deleteDecoder = false;
+	}
+
+	SoundDecoder* SoundClip::getDecoder() const {
+		return m_decoder;
+	}
+
+	size_t SoundClip::getSize() {
+		return 0;
 	}
 
 	std::string SoundClip::createUniqueClipName() {
-	        // automated counting for name generation, in case the user doesn't provide a name
-	        static uint32_t uniqueNumber = 0;
-	        static std::string baseName = "soundclip";
+		// automated counting for name generation, in case the user doesn't provide a name
+		static uint32_t uniqueNumber = 0;
+		static std::string baseName = "soundclip";
 
-	        std::ostringstream oss;
-	        oss << uniqueNumber << "_" << baseName;
+		std::ostringstream oss;
+		oss << uniqueNumber << "_" << baseName;
 
-	        const std::string name = oss.str();
-	        ++uniqueNumber;
+		const std::string name = oss.str();
+		++uniqueNumber;
 
-	        return name;
+		return name;
 	}
 }

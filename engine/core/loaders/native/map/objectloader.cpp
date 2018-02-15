@@ -28,6 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "audio/actionaudio.h"
 #include "util/log/logger.h"
 #include "model/model.h"
 #include "model/metamodel/object.h"
@@ -445,6 +446,75 @@ namespace FIFE {
 							int isDefault = 0;
 							actionElement->QueryIntAttribute("default", &isDefault);
 							Action* action = obj->createAction(*actionId, (isDefault != 0));
+							
+							// Fetch ActionAudio data
+							TiXmlElement* soundElement = actionElement->FirstChildElement("sound");
+							if (soundElement) {
+								const std::string* clip = soundElement->Attribute(std::string("source"));
+								if (clip) {
+									ActionAudio* audio = new ActionAudio();
+									action->adoptAudio(audio);
+									audio->setSoundFileName(*clip);
+
+									const std::string* group = soundElement->Attribute(std::string("group"));
+									if (group) {
+										audio->setGroupName(*group);
+									}
+
+									float value = 0;
+									int success = soundElement->QueryValueAttribute("volume", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setGain(value);
+									success = soundElement->QueryValueAttribute("max_volume", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setMaxGain(value);
+									success = soundElement->QueryValueAttribute("min_volume", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setMinGain(value);
+									success = soundElement->QueryValueAttribute("ref_distance", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setReferenceDistance(value);
+									success = soundElement->QueryValueAttribute("max_distance", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setMaxDistance(value);
+									success = soundElement->QueryValueAttribute("rolloff", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setRolloff(value);
+									success = soundElement->QueryValueAttribute("pitch", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setPitch(value);
+									success = soundElement->QueryValueAttribute("cone_inner_angle", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setConeInnerAngle(value);
+									success = soundElement->QueryValueAttribute("cone_outer_angle", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setConeOuterAngle(value);
+									success = soundElement->QueryValueAttribute("cone_outer_gain", &value);
+									if (success == TIXML_SUCCESS)
+										audio->setConeOuterGain(value);
+
+									int boolValue = 0;
+									success = soundElement->QueryIntAttribute("looping", &boolValue);
+									if (success == TIXML_SUCCESS)
+										audio->setLooping(boolValue != 0);
+									success = soundElement->QueryIntAttribute("relative_position", &boolValue);
+									if (success == TIXML_SUCCESS)
+										audio->setRelativePositioning(boolValue != 0);
+									success = soundElement->QueryIntAttribute("direction", &boolValue);
+									if (success == TIXML_SUCCESS)
+										audio->setDirection(boolValue != 0);
+
+									double vx = 0;
+									double vy = 0;
+									double vz = 0;
+									if (soundElement->QueryValueAttribute("x_velocity", &vx) == TIXML_SUCCESS && soundElement->QueryValueAttribute("y_velocity", &vy) == TIXML_SUCCESS) {
+										soundElement->QueryValueAttribute("z_velocity", &vz);
+										audio->setVelocity(AudioSpaceCoordinate(vx, vy, vz));
+									}
+								}
+							}
+
+							// Create and fetch ActionVisual
 							ActionVisual::create(action);
 
 							for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement; animElement = animElement->NextSiblingElement("animation")) {
@@ -504,7 +574,7 @@ namespace FIFE {
 											static char tmp[64];
 											snprintf(tmp, 64, "%03d", dir);
 											std::string aniId = *objectId + ":" + *actionId + ":" + std::string(tmp);
-											AnimationPtr animation = m_animationManager->get(aniId);
+											AnimationPtr animation = m_animationManager->create(aniId);
 
 											int frames;
 											int success = dirElement->QueryValueAttribute("frames", &frames);

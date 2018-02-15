@@ -47,6 +47,7 @@ namespace FIFE {
 	class Instance;
 	class ActionInfo;
 	class SayInfo;
+	class SoundSource;
 	class TimeProvider;
 	class Route;
 
@@ -572,6 +573,8 @@ namespace FIFE {
 			int32_t m_oldRotation;
 			//! action on previous round. NOTE: might become invalid, only used for address comparison
 			Action* m_action;
+			//! sound source of action audio on previous round
+			SoundSource* m_soundSource;
 			//! speed on previous round
 			double m_speed;
 			//! time multiplier on previous round

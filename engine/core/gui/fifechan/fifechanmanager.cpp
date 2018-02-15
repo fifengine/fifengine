@@ -44,9 +44,9 @@
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
-#include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_keyevent.h"
-#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/key/key.h"
+#include "eventchannel/key/keyevent.h"
+#include "eventchannel/mouse/mouseevent.h"
 #include "vfs/fife_boost_filesystem.h"
 
 #include "fifechanmanager.h"

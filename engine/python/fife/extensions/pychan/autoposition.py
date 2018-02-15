@@ -30,9 +30,10 @@ on top level widgets which can also be set from xml.
 
 For direct use call L{placeWidget}.
 """
+from __future__ import absolute_import
 
-from internal import screen_width, screen_height
-from exceptions import PyChanException
+from .internal import screen_width, screen_height
+from .exceptions import PyChanException
 
 EXPLICIT = "explicit"
 AUTOMATIC = "automatic"
@@ -65,9 +66,9 @@ def _parsePosition(position):
 		y_pos, y_delta = _splicePosition(y_pos)
 
 		if x_pos not in [EXPLICIT,LEFT,CENTER,RIGHT]:
-			raise 
+			raise ""
 		if y_pos not in [EXPLICIT,TOP,CENTER,BOTTOM]:
-			raise
+			raise ""
 	except:
 		raise PyChanException("Malformed position definition: " + repr(position))
 	return x_pos,x_delta,y_pos,y_delta
@@ -99,7 +100,7 @@ def placeWidget(widget,position):
 	For brevity two shortcuts exist:
           - "explicit" -> "explicit:explicit"
           - "automatic" -> "center:center"
-        
+
 	A few examples::
           "right-20:top"
           "center:top+10"

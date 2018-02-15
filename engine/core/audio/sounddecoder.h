@@ -60,7 +60,7 @@ namespace FIFE {
 
 		/** Sets the current position in the file (in bytes)
 		 *
-		 * @return 0 (False), if the positioning was successful
+		 * @return True, if the positioning was successful
 		 */
 		virtual bool setCursor(uint64_t pos) = 0;
 
@@ -75,7 +75,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		virtual void *getBuffer() const = 0;
+		virtual void* getBuffer() const = 0;
 
 		/** Returns the byte-size of the buffer returned by getBuffer().
 		 */
@@ -116,9 +116,9 @@ namespace FIFE {
 		}
 
 	protected:
-		bool					m_isstereo;
-		bool					m_is8bit;
-		uint64_t	m_samplerate;
+		bool m_isstereo;
+		bool m_is8bit;
+		uint64_t m_samplerate;
 	};
 }
 

@@ -9,6 +9,5 @@ __all__ = [
 	'fifelog',
 	'pythonize',
 	'savers',
-	'loaders',
-	'soundmanager'
+	'loaders'
 ]

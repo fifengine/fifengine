@@ -23,6 +23,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from builtins import str
+from builtins import range
 from fife import fife
 from fife.extensions import pychan
 
@@ -120,6 +123,7 @@ class OverlayTest(test.Test):
 
 		self._eventmanager = self._engine.getEventManager()
 		self._imagemanager = self._engine.getImageManager()
+		self._animationmanager = self._engine.getAnimationManager()
 		self._timemanager = self._engine.getTimeManager()
 
 		self._time = self._timemanager.getTime()
@@ -236,9 +240,9 @@ class OverlayTest(test.Test):
 		# create color overlay for skels
 		delay = 200
 		for rotation in range(0, 360, 45):
-			anim = fife.Animation.createAnimation()
+			anim = self._animationmanager.create("skel_stand_overlay" + str(rotation))
 			for frame in range(4):
-				resource = ("skel_stand_overlay.png:overlay_stand_"
+				resource = ("overlay_stand_"
 				            + str(rotation) + "_"
 				            + str(frame) + ".png")
 				anim.addFrame(self._imagemanager.get(resource), delay)
@@ -255,7 +259,7 @@ class OverlayTest(test.Test):
 
 	def addAnimationOverlay(self, action, name, count, order, delay):
 		for rotation in range(0, 360, 45):
-			anim = fife.Animation.createAnimation()
+			anim = self._animationmanager.create(name + action + str(rotation))
 			for frame in range(count):
 				resource = name + str(rotation) + "_0" + str(frame) + ".png"
 				anim.addFrame(self._imagemanager.get(resource), delay)
@@ -267,11 +271,11 @@ class OverlayTest(test.Test):
 			self._player.removeAnimationOverlay(action, rotation, order)
 
 	def createDefaultPlayer(self):
-		self.addAnimationOverlay("stand", "clothes.png:clothes_stance_", 4, 10, 200)
-		self.addAnimationOverlay("stand", "male_head1.png:male_head1_stance_", 4, 20, 200)
+		self.addAnimationOverlay("stand", "clothes_stance_", 4, 10, 200)
+		self.addAnimationOverlay("stand", "male_head1_stance_", 4, 20, 200)
 
-		self.addAnimationOverlay("walk", "clothes.png:clothes_run_", 8, 10, 100)
-		self.addAnimationOverlay("walk", "male_head1.png:male_head1_run_", 8, 20, 100)
+		self.addAnimationOverlay("walk", "clothes_run_", 8, 10, 100)
+		self.addAnimationOverlay("walk", "male_head1_run_", 8, 20, 100)
 
 	def toggleArmor(self):
 		self.removeAnimationOverlay("stand", 10)
@@ -279,15 +283,15 @@ class OverlayTest(test.Test):
 		id = ""
 		if self._armor == "clothes":
 			self._armor = "leather"
-			id = "leather_armor.png:leather_armor_"
+			id = "leather_armor_"
 		elif self._armor == "leather":
 			self._armor = "steel"
-			id = "steel_armor.png:steel_armor_"
+			id = "steel_armor_"
 		elif self._armor == "steel":
 			self._armor = "clothes"
-			id = "clothes.png:clothes_"
+			id = "clothes_"
 		else:
-			print "invalid armor"
+			print("invalid armor")
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 10, 200)
 		self.addAnimationOverlay("walk", id+"run_", 8, 10, 100)
@@ -298,15 +302,15 @@ class OverlayTest(test.Test):
 		id = ""
 		if self._head == "head1":
 			self._head = "head2"
-			id = "male_head2.png:male_head2_"
+			id = "male_head2_"
 		elif self._head == "head2":
 			self._head = "head3"
-			id = "male_head3.png:male_head3_"
+			id = "male_head3_"
 		elif self._head == "head3":
 			self._head = "head1"
-			id = "male_head1.png:male_head1_"
+			id = "male_head1_"
 		else:
-			print "invalid head"
+			print("invalid head")
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 20, 200)
 		self.addAnimationOverlay("walk", id+"run_", 8, 20, 100)
@@ -322,43 +326,43 @@ class OverlayTest(test.Test):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
 
-		self.addAnimationOverlay("stand", "dagger.png:dagger_stance_", 4, 40, 200)
-		self.addAnimationOverlay("walk", "dagger.png:dagger_run_", 8, 40, 100)
+		self.addAnimationOverlay("stand", "dagger_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "dagger_run_", 8, 40, 100)
 
 	def equipShortsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
 
-		self.addAnimationOverlay("stand", "shortsword.png:shortsword_stance_", 4, 40, 200)
-		self.addAnimationOverlay("walk", "shortsword.png:shortsword_run_", 8, 40, 100)
+		self.addAnimationOverlay("stand", "shortsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "shortsword_run_", 8, 40, 100)
 
 	def equipLongsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
 
-		self.addAnimationOverlay("stand", "longsword.png:longsword_stance_", 4, 40, 200)
-		self.addAnimationOverlay("walk", "longsword.png:longsword_run_", 8, 40, 100)
+		self.addAnimationOverlay("stand", "longsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "longsword_run_", 8, 40, 100)
 
 	def equipGreatsword(self):
 		self.removeAnimationOverlay("stand", 40)
 		self.removeAnimationOverlay("walk", 40)
 
-		self.addAnimationOverlay("stand", "greatsword.png:greatsword_stance_", 4, 40, 200)
-		self.addAnimationOverlay("walk", "greatsword.png:greatsword_run_", 8, 40, 100)
+		self.addAnimationOverlay("stand", "greatsword_stance_", 4, 40, 200)
+		self.addAnimationOverlay("walk", "greatsword_run_", 8, 40, 100)
 
 	def equipBuckler(self):
 		self.removeAnimationOverlay("stand", 30)
 		self.removeAnimationOverlay("walk", 30)
 
-		self.addAnimationOverlay("stand", "buckler.png:buckler_stance_", 4, 30, 200)
-		self.addAnimationOverlay("walk", "buckler.png:buckler_run_", 8, 30, 100)
+		self.addAnimationOverlay("stand", "buckler_stance_", 4, 30, 200)
+		self.addAnimationOverlay("walk", "buckler_run_", 8, 30, 100)
 
 	def equipShield(self):
 		self.removeAnimationOverlay("stand", 30)
 		self.removeAnimationOverlay("walk", 30)
 
-		self.addAnimationOverlay("stand", "shield.png:shield_stance_", 4, 30, 200)
-		self.addAnimationOverlay("walk", "shield.png:shield_run_", 8, 30, 100)
+		self.addAnimationOverlay("stand", "shield_stance_", 4, 30, 200)
+		self.addAnimationOverlay("walk", "shield_run_", 8, 30, 100)
 
 	def createColoringAndOutlines(self):
 		instances = [self._actorlayer.getInstance("toilett%s" % n) for n in range(4, 12)]

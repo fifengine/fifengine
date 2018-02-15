@@ -19,37 +19,67 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
-#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#ifndef FIFE_SOUNDSOURCE_H
+#define FIFE_SOUNDSOURCE_H
 
 // Standard C++ library includes
-//
+
+// Platform specific includes
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "ec_mouseevent.h"
 
 namespace FIFE {
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
+
+	class ActionAudio;
+	class Instance;
+	class SoundChangeListener;
+	class SoundEmitter;
+
+	/** Interface class between Instance / ActionAudio and SoundEmitter.
 	 */
-	class IMouseFilter {
+	class SoundSource {
 	public:
 
-		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
-		 * @param event They mouse event.
+		SoundSource(Instance* instance);
+		~SoundSource();
+
+		/** Sets the ActionAudio. Owned by Object.
 		 */
-		virtual bool isFiltered(const MouseEvent& event) = 0;
+		void setActionAudio(ActionAudio* audio);
 
-		virtual ~IMouseFilter() {}
+		/** Return ActionAudio. Owned by Object.
+		 */
+		ActionAudio* getActionAudio() const;
+
+		/** Sets the positon of the SoundEmitter, called from Instance.
+		 */
+		void setPosition();
+
+		/** Sets the direction of the SoundEmitter, called from Instance.
+		 */
+		void setDirection();
+	
+	private:
+		/** Moves data from ActionAudio to SoundEmitter.
+		 */
+		void updateSoundEmitter();
+		
+		//! Associated Instance
+		Instance* m_instance;
+		//! Actual ActionAudio
+		ActionAudio* m_audio;
+		//! Related SoundEmitter
+		SoundEmitter* m_emitter;
+		//! InstanceChangeListener for position and direction
+		SoundChangeListener* m_listener;
+
+
 	};
-
-} //FIFE
+}
 
 #endif

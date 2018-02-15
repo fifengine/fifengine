@@ -23,6 +23,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys, os, re, math, random, shutil, time
 from datetime import datetime
 
@@ -34,7 +36,7 @@ from fife.extensions.pychan import widgets
 from fife.extensions.pychan.internal import get_manager
 from fife.extensions.fife_utils import getUserDataDirectory
 
-import test
+from . import test
 
 class KeyFilter(fife.IKeyFilter):
 	"""
@@ -84,8 +86,8 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self.quit = False
 		
 		# Init Pychan
-		pychan.loadFonts("data/fonts/freefont.fontdef")
-		pychan.loadFonts("data/fonts/samanata.fontdef")
+		pychan.loadFonts("data/fonts/freefont.xml")
+		pychan.loadFonts("data/fonts/samanata.xml")
 		pychan.manager.setDefaultFont("FreeSans")
 		pychan.setupModalExecution(self._application.mainLoop, self._application.breakFromMainLoop)
 
@@ -207,7 +209,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		return result
 
 	def onToolsClick(self):
-		print "No tools set up yet"
+		print("No tools set up yet")
 
 class FifeTestApplication(PychanApplicationBase):
 	"""

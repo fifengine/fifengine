@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_TEXTEVENT_H
-#define FIFE_EVENTCHANNEL_TEXTEVENT_H
+#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
 
 // Standard C++ library includes
 //
@@ -33,58 +33,21 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/base/ec_inputevent.h"
-#include "eventchannel/source/ec_ieventsource.h"
-
-#include "ec_text.h"
+#include "mouseevent.h"
 
 namespace FIFE {
-
-	/**  Class for text events
+	/**  Controller provides a way to receive events from the system
+	 * Using this interface, clients can subscribe themselves to receive events
 	 */
-	class TextEvent: public InputEvent {
+	class IMouseFilter {
 	public:
-		enum TextEventType {
-			UNKNOWN		= 0,
-			INPUT		= 1,
-			EDIT		= 2
-		};
 
-		/** Constructor
+		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
+		 * @param event They mouse event.
 		 */
-		TextEvent():
-			InputEvent(),
-			m_eventType(UNKNOWN),
-			m_text(Text()) {}
+		virtual bool isFiltered(const MouseEvent& event) = 0;
 
-		/** Destructor.
-		 */
-		virtual ~TextEvent() {}
-
-		TextEventType getType() const { return m_eventType; }
-		void setType(TextEventType type) { m_eventType = type; }
-
-		const Text& getText() const { return m_text; }
-		void setText(const Text& text) { m_text = text; }
-
-		virtual void consume() { InputEvent::consume(); }
-		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
-		virtual void consumedByWidgets() { InputEvent::consumedByWidgets(); }
-		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
-		virtual IEventSource* getSource() const { return InputEvent::getSource(); }
-		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
-		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
-
-		virtual const std::string& getName() const {
-			const static std::string eventName("TextEvent");
-			return eventName;
-		}
-		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
-
-	private:
-		TextEventType m_eventType;
-		Text m_text;
+		virtual ~IMouseFilter() {}
 	};
 
 } //FIFE

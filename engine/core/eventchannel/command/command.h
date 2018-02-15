@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_INPUTEVENT_H
-#define FIFE_EVENTCHANNEL_INPUTEVENT_H
+#ifndef FIFE_EVENTCHANNEL_COMMAND_H
+#define FIFE_EVENTCHANNEL_COMMAND_H
 
 // Standard C++ library includes
 //
@@ -33,83 +33,83 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_event.h"
+#include "eventchannel/base/event.h"
+#include "commandids.h"
 
 namespace FIFE {
 
-	/**  Base class for input events (like mouse and keyboard)
+	/** Class for commands
+	 * Commands are arbitrary events e.g. send from one subsystem to another
 	 */
-	class InputEvent: public Event {
+	class Command: public Event {
 	public:
 		/** Constructor.
-		*/
-		InputEvent():
+		 */
+		Command():
 			Event(),
-			m_consumedbywidgets(false),
-			m_isshiftpressed(false),
-			m_iscontrolpressed(false),
-			m_isaltpressed(false),
-			m_ismetapressed(false) {}
+			m_commandType(CMD_UNKNOWN),
+			m_code(0) {}
 
 		/** Destructor.
-		*/
-		~InputEvent() {}
-
-		/** Checks whether alt is pressed.
 		 */
-		virtual bool isAltPressed() const { return m_isaltpressed; }
-		virtual void setAltPressed(bool pressed) { m_isaltpressed = pressed; }
+		virtual ~Command() {}
 
-		/** Checks whether control is pressed.
+		/** Gets the type of this command
+		 * @return type of this command
 		 */
-		virtual bool isControlPressed() const { return m_iscontrolpressed; }
-		virtual void setControlPressed(bool pressed) { m_iscontrolpressed = pressed; }
+		CommandType getCommandType() const { return m_commandType; }
 
-		/** Checks whether meta is pressed.
+		/** Sets the type of this command
 		 */
-		virtual bool isMetaPressed() const { return m_ismetapressed; }
-		virtual void setMetaPressed(bool pressed) { m_ismetapressed = pressed; }
+		void setCommandType(CommandType type) { m_commandType = type; }
 
-		/** Checks whether shift is pressed.
+		/** Gets the code of this command. Meaning of code depends on the command type
+		 * @return code of this command
 		 */
-		virtual bool isShiftPressed() const { return m_isshiftpressed; }
-		virtual void setShiftPressed(bool pressed) { m_isshiftpressed = pressed; }
+		int32_t getCode() const { return m_code; }
 
-		/** Marks events as consumed by widget library.
+		/** Sets the code of this command. Meaning of code depends on the command type
 		 */
-		virtual void consumedByWidgets() { m_consumedbywidgets = true; }
-		virtual bool isConsumedByWidgets() const { return m_consumedbywidgets; }
+		void setCode(int32_t code) { m_code = code; }
 
+		/** Marks events as consumed.
+		 */
 		virtual void consume() { Event::consume(); }
+		
+		/** Checks whether event is consumed.
+		 */
 		virtual bool isConsumed() const { return Event::isConsumed(); }
+
+		/** Gets the source of the event.
+		 */
 		virtual IEventSource* getSource() const { return Event::getSource(); }
+
+		/** Sets the source of the event.
+		 */
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
+
+		/** Gets the timestamp of the event.
+		 */
 		virtual int32_t getTimeStamp() const { return Event::getTimeStamp(); }
+
+		/** Sets the timestamp of the event.
+		 */
 		virtual void setTimeStamp(int32_t timestamp ) { Event::setTimeStamp(timestamp); }
 
+		/** Gets the name of the event.
+		 */
 		virtual const std::string& getName() const {
-			const static std::string eventName("InputEvent");
+			const static std::string eventName("Command");
 			return eventName;
 		}
+
+		/** Gets the debugstring of the event.
+		 */
 		virtual std::string getDebugString() const { return Event::getDebugString(); }
 
-		virtual std::string getAttrStr() const {
-			std::stringstream ss;
-			ss << Event::getAttrStr() << std::endl;
-			ss << "shift = " << m_isshiftpressed << ", ";
-			ss << "ctrl = " << m_iscontrolpressed << ", ";
-			ss << "alt = " << m_isaltpressed << ", ";
-			ss << "meta = " << m_ismetapressed;
-			return  ss.str();
-		}
-
-
 	private:
-		bool m_consumedbywidgets;
-		bool m_isshiftpressed;
-		bool m_iscontrolpressed;
-		bool m_isaltpressed;
-		bool m_ismetapressed;
+		CommandType m_commandType;
+		int32_t m_code;
 	};
 } //FIFE
 

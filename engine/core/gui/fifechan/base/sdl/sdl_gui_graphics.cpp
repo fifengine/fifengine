@@ -61,8 +61,7 @@ namespace FIFE {
 		fifeimg->render(rect);
 	}
 
-	void SdlGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,
-			uint32_t alignment) {
+	void SdlGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment) {
 		if (mFont == NULL)
 		{
 			throw GuiException("SdlGuiGraphics::drawText() - No font set!");
@@ -89,6 +88,11 @@ namespace FIFE {
 		const fcn::ClipRectangle& top = mClipStack.top();
 		m_renderbackend->putPixel(x + top.xOffset, y + top.yOffset,
 			mColor.r, mColor.g, mColor.b, mColor.a);
+	}
+
+	void SdlGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
+		const fcn::ClipRectangle& top = mClipStack.top();
+		m_renderbackend->drawLine(Point(x1 + top.xOffset, y1 + top.yOffset), Point(x2 + top.xOffset, y2 + top.yOffset), mColor.r, mColor.g, mColor.b, mColor.a);
 	}
 
 	void SdlGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t width) {
@@ -167,9 +171,9 @@ namespace FIFE {
 	bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area) {
 		fcn::Graphics::pushClipArea(area);
 
-		// Due to some odd conception in FifeChan some of area
+		// Due to some odd conception in Fifechan some of area
 		// has xOffset and yOffset > 0. And if it happens we
-		// need to offset our clip area. Or we can use fifechan stack.
+		// need to offset our clip area. Or we can use Fifechan stack.
 		const fcn::ClipRectangle& top = mClipStack.top();
 
 		m_renderbackend->pushClipArea(

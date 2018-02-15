@@ -23,6 +23,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
 from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
@@ -262,7 +263,7 @@ class SelectionTest(test.Test):
 		instances = self._camera.getMatchingInstances(rect, layer, False)
 		
 		for instance in instances:
-			print instance, instance.getId()
+			print(instance, instance.getId())
 
 	def getLocationAt(self, screenpoint):
 		"""

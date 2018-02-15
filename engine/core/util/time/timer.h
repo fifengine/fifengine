@@ -23,9 +23,9 @@
 #define FIFE_TIMER_H
 
 // Standard C++ library includes
+#include <functional>
 
 // 3rd party library includes
-#include <boost/function.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -43,7 +43,7 @@ namespace FIFE {
 	 *
 	 *  @code
 	 *  m_timer.setInterval(1000);
-	 *  m_timer.setCallback( boost::bind(&Class::update, this) );
+	 *  m_timer.setCallback(std::bind(&Class::update, this) );
 	 *  m_timer.start();
 	 *  @endcode
 	 *
@@ -60,7 +60,7 @@ namespace FIFE {
 	 */
 	class Timer : protected TimeEvent {
 	public:
-		typedef boost::function0<void> type_callback;
+		typedef std::function<void()> type_callback;
 
 		/** Default constructor.
 		 *
@@ -98,7 +98,7 @@ namespace FIFE {
 
 		/** Set the callback that will be called
 		 *
-		 *  @param callback A @c boost::function0 returning void
+		 *  @param callback A @c std::function returning void
 		 */
 		void setCallback(const type_callback& callback);
 

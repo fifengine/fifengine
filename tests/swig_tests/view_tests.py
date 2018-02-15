@@ -22,7 +22,11 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from .swig_test_utils import *
 import time
 
 class TestView(unittest.TestCase):
@@ -38,12 +42,12 @@ class TestView(unittest.TestCase):
 
 		self.obj1 = self.model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj1)
-		img1 = self.imgMgr.load('../data/mushroom_007.png')
+		img1 = self.imgMgr.load('tests/data/mushroom_007.png')
 		self.obj1.get2dGfxVisual().addStaticImage(0, img1.getHandle())
 		
 		self.obj2 = self.model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
-		img2 = self.imgMgr.get('../data/earth_1.png')
+		img2 = self.imgMgr.get('tests/data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, img2.getHandle())
 
 		self.screen_cell_w = img2.getWidth()
@@ -53,7 +57,7 @@ class TestView(unittest.TestCase):
 
 		self.camcoord = fife.ExactModelCoordinate(2,0)
 		
-		print "Total Image Memory Used: " + str(self.imgMgr.getMemoryUsed())
+		print("Total Image Memory Used: " + str(self.imgMgr.getMemoryUsed()))
 		
 	def tearDown(self):
 		self.engine.destroy()
@@ -62,11 +66,11 @@ class TestView(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 
-		cam = self.map.addCamera("foo", self.layer, viewport )
+		cam = self.map.addCamera("foo", viewport )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
-		
+		cam.setLocation(fife.Location(self.layer))
 		cam.setViewPort(viewport)
 		
 		renderer = fife.InstanceRenderer.getInstance(cam)
@@ -74,8 +78,8 @@ class TestView(unittest.TestCase):
 		
 		self.engine.initializePumping()
 		
-		for y in xrange(4):
-			for x in xrange(4):
+		for y in range(4):
+			for x in range(4):
 				i = self.layer.createInstance(self.obj2, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(i)
 				self.engine.pump()
@@ -85,7 +89,7 @@ class TestView(unittest.TestCase):
 		i = self.layer.createInstance(self.obj1, fife.ModelCoordinate(2,1))
 		fife.InstanceVisual.create(i)
 		
-		for i in xrange(120):
+		for i in range(120):
 			if i > 20 and i < 30:
 				cam.setRotation(cam.getRotation() + 1)
 			elif i > 30 and i < 40:

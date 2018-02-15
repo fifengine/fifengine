@@ -6,8 +6,8 @@ Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
 It comes with Python bindings allowing users to create games using Python as well as C++. 
 The engine is extendable and enables you to add any feature you can imagine to your project.
 
-| [Website](http://fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
-|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| [Website](http://fifengine.net/) | [Forum](http://forums.fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
+|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
 
 | Continuous Integration | Linux |   Mac    | Windows |
 |:----------------------:|:-----:|:--------:|:-------:|
@@ -20,19 +20,17 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 Fifengine is also already available from the following package repositories:
 
-* [SlackBuilds](https://slackbuilds.org/repository/14.2/games/fifengine/)
-
 [![Packaging status](https://repology.org/badge/vertical-allrepos/fife.svg)](https://repology.org/metapackage/fife)
 
 # Table of contents
-1. [Features]         (#1-features)
-2. [License]          (#2-license)
-3. [Tests]            (#3-tests)
-4. [Python Demos]     (#4-python-demos)
-6. [Python Tutorials] (#5-python-tutorials)
-5. [C++ Tutorials]    (#6-c-tutorials)
-7. [Troubleshooting]  (#7-troubleshooting)
-8. [Feedback]         (#8-feedback)
+1. [Features](#1-features)
+2. [License](#2-license)
+3. [Tests](#3-tests)
+4. [Python Demos](#4-python-demos)
+6. [Python Tutorials](#5-python-tutorials)
+5. [C++ Tutorials](#6-c-tutorials)
+7. [Troubleshooting](#7-troubleshooting)
+8. [Feedback](#8-feedback)
 
 ## 1) Features
 

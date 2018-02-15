@@ -21,12 +21,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import absolute_import
+from builtins import range
 from fife import fifechan
 
 from fife.extensions.pychan.attrs import BoolAttr, ColorAttr, IntAttr, IntListAttr
 from fife.extensions.pychan.properties import ColorProperty
 
-from widget import Widget
+from .widget import Widget
 
 
 class CurveGraph(Widget):
@@ -165,7 +167,7 @@ class CurveGraph(Widget):
 		# int list to point vector
 		if isinstance(coordinates[0], int):
 			coords = fifechan.FcnPointVector()
-			for i in xrange(0, len(coordinates)-1, 2):
+			for i in range(0, len(coordinates)-1, 2):
 				coords.append(fifechan.Point(coordinates[i], coordinates[i+1]))
 			self.real_widget.setPointVector(coords)
 			return

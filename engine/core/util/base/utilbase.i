@@ -36,4 +36,20 @@ namespace FIFE {
 		virtual ~FifeClass();
 		fifeid_t getFifeId();
 	};
+
+	%extend FifeClass {
+		bool __eq__(const PyObject *other) { return false; }
+		bool __ne__(const PyObject *other) { return true; }
+		bool __eq__(FifeClass *other)
+		{
+			if (!other) return false;
+			return $self->getFifeId() == other->getFifeId();
+		}
+		bool __ne__(FifeClass *other)
+		{
+			if (!other) return true;
+			return $self->getFifeId() != other->getFifeId();
+		}
+		fifeid_t __hash__() { return $self->getFifeId(); }
+	}
 }

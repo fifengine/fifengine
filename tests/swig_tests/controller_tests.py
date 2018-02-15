@@ -22,30 +22,39 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 
 class TestController(unittest.TestCase):
-	
+
 	def setUp(self):
 		self.engine = getEngine(True)
-		
+
 	def tearDown(self):
 		self.engine.destroy()
-		
+
 	def testInstances(self):
-		print "\nTest SoundManager"
-		self.assert_(self.engine.getSoundManager())
-		print "Test EventManager"
-		self.assert_(self.engine.getEventManager())
-		print "Test TimeManager"
-		self.assert_(self.engine.getTimeManager())
-		print "Test GuiManager"
-		self.assert_(self.engine.getGuiManager())
+		print("\nTest SoundManager")
+		self.assertTrue(self.engine.getSoundManager())
+		print("Test EventManager")
+		self.assertTrue(self.engine.getEventManager())
+		print("Test TimeManager")
+		self.assertTrue(self.engine.getTimeManager())
+		print("Test ImageManager")
+		self.assertTrue(self.engine.getImageManager())
+		print("Test AnimationManager")
+		self.assertTrue(self.engine.getAnimationManager())
+		print("Test SoundClipManager")
+		self.assertTrue(self.engine.getSoundClipManager())
+		print("Test LogManager")
+		self.assertTrue(self.engine.getLogManager())
 		pass
 
 	def testPumping(self):
 		self.engine.initializePumping()
-		for i in xrange(10):
+		for i in range(10):
 			self.engine.pump()
 		self.engine.finalizePumping()
 

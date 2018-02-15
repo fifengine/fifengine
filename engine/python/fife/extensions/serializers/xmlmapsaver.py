@@ -21,6 +21,10 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import os
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
@@ -31,10 +35,10 @@ from fife import fife
 MAPFORMAT = '1.0'
 
 fileExtensions = ('xml',)
-class XMLMapSaver:
+class XMLMapSaver(object):
 
 	def __init__(self, filepath, engine, map, importList, state = 0, datastate = 0):
-		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(6)
+		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = list(range(6))
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -344,7 +348,7 @@ class XMLMapSaver:
 		cameralist = map.getCameras()
 
 		for cam in cameralist:
-			if cam.getLocationRef().getMap().getId() == map.getId():
+			if cam.getMap().getId() == map.getId():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
 
@@ -353,7 +357,6 @@ class XMLMapSaver:
 						(None, 'zoom'): 'zoom',
 						(None, 'tilt'): 'tile',
 						(None, 'rotation'): 'rotation',
-						(None, 'ref_layer_id'): 'ref_layer_id',
 						(None, 'ref_cell_width'): 'ref_cell_width',
 						(None, 'ref_cell_height'): 'ref_cell_height',
 				}
@@ -363,7 +366,6 @@ class XMLMapSaver:
 					(None, 'zoom'): str( cam.getZoom()),
 					(None, 'tilt'): str( cam.getTilt()),
 					(None, 'rotation'): str( cam.getRotation()),
-					(None, 'ref_layer_id'): cam.getLocation().getLayer().getId(),
 					(None, 'ref_cell_width'): str( celldimensions.x ),
 					(None, 'ref_cell_height'): str( celldimensions.y ),
 				}

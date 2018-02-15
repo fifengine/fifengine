@@ -56,7 +56,7 @@ configure_file (
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
-option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                    ON)
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with c++"  OFF)
@@ -117,6 +117,9 @@ if(WIN32 AND MSVC)
   # ensure we use minimal "windows.h" lib without the crazy min max macros    
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
+
+  # avoid "C1128: number of sections exceeded object file format limit: compile with /bigobj"
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 
   # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
   set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D \"SAFESEH:NO\"")
@@ -191,7 +194,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/AL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
 
@@ -206,7 +209,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/OpenAL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
     
@@ -224,15 +227,23 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 # Core
 set(FIFE_CORE_SRC
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffect.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffectmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundfilter.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystick.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickmanager.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/input/controllermappingloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/atlasloader.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/maploader.cpp
@@ -262,6 +273,7 @@ set(FIFE_CORE_SRC
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepather.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepathersearch.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/singlelayersearch.cpp
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/input/controllermappingsaver.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/mapsaver.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/util/base/exception.cpp
   ${PROJECT_SOURCE_DIR}/engine/core/util/base/fifeclass.cpp
@@ -380,6 +392,7 @@ source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/export.h
   ${PROJECT_SOURCE_DIR}/engine/core/modules.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/actionaudio.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/fife_openal.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclip.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundclipmanager.h
@@ -387,37 +400,47 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/audio/sounddecoder.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundemitter.h
   ${PROJECT_SOURCE_DIR}/engine/core/audio/soundmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/soundsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffect.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundeffectmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/audio/effects/soundfilter.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/engine.h
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_event.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ec_inputevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_command.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_commandids.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/ec_icommandlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_dropevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idropcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/ec_idroplistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeycontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeyfilter.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_ikeylistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_key.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ec_keyevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousecontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imousefilter.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_imouselistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/ec_mouseevent.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/ec_isdleventlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_eventsourcetypes.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ec_ieventsource.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextcontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_itextlistener.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_text.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/ec_textevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/event.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/inputevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/command.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/commandids.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/icommandcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/icommandlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/dropevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idropcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/drop/idroplistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/ijoystickcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/ijoysticklistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystick.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/joystick/joystickmanager.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeycontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeyfilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/ikeylistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/key.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/keyevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousecontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousefilter.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imouselistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/mouseevent.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/eventsourcetypes.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/source/ieventsource.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/itextcontroller.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/itextlistener.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/text.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/text/textevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/ogg_loader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/audio/sounddecoder_ogg.h
+  ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/input/controllermappingloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/animationloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/atlasloader.h
   ${PROJECT_SOURCE_DIR}/engine/core/loaders/native/map/ianimationloader.h
@@ -454,6 +477,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepather.h
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/routepathersearch.h
   ${PROJECT_SOURCE_DIR}/engine/core/pathfinder/routepather/singlelayersearch.h
+  ${PROJECT_SOURCE_DIR}/engine/core/savers/native/input/controllermappingsaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/ianimationsaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/iatlassaver.h
   ${PROJECT_SOURCE_DIR}/engine/core/savers/native/map/imapsaver.h
@@ -595,6 +619,8 @@ add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE
 # Core
 set(FIFE_CORE_SWIG
   version.i
+  audio/effects/soundeffect.i
+  audio/effects/soundfilter.i
   audio/soundclip.i
   audio/soundclipmanager.i
   audio/soundemitter.i
@@ -725,9 +751,9 @@ add_custom_target(fife.swig-wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
-find_package(Boost 1.33.1 COMPONENTS system filesystem regex)
+find_package(Boost 1.33.1 COMPONENTS system filesystem)
 find_package(PNG REQUIRED)
-find_package(OpenAL REQUIRED)
+find_package(OpenALSoft REQUIRED)
 find_package(TinyXML REQUIRED)
 find_package(OGG REQUIRED)
 find_package(VORBIS REQUIRED)
@@ -765,6 +791,12 @@ if(build-python)
   set(CMAKE_SWIG_IMPORTS_FCHAN "")
   set(CMAKE_SWIG_INCLUSIONS_FCHAN "")
 
+  # Find python library and add include path for python headers
+  find_package (PythonInterp)
+  set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
+  set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
+  find_package (PythonLibs)
+  
   foreach(filename ${FIFE_CORE_SWIG})
     list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
@@ -791,7 +823,12 @@ if(fifechan)
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/engine/core/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
-    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
+    if (PYTHON_VERSION_MAJOR LESS 3)
+      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
+    else (PYTHON_VERSION_MAJOR LESS 3)
+      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
+    endif (PYTHON_VERSION_MAJOR LESS 3)
+
 
     configure_file(
       "${PROJECT_SOURCE_DIR}/engine/swigwrappers/python/fifechan.i.templ.cm"
@@ -840,7 +877,7 @@ include_directories(${SDL2_INCLUDE_DIR}
                     ${SDL2_TTF_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PNG_INCLUDE_DIRS})
-include_directories(${OPENAL_INCLUDE_DIR})
+include_directories(${OPENALSOFT_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIRS})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
@@ -854,13 +891,14 @@ add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 if(build-python)
   # Find python library and add include path for python headers
-  find_package(PythonInterp 2 EXACT)
+  find_package (PythonInterp)
   set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
   set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
+
   find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
   include_directories(${PYTHON_INCLUDE_PATH})
 
-  set(CMAKE_SWIG_FLAGS -modern -modernargs -w511 -w473 -w404)
+  set(CMAKE_SWIG_FLAGS -modern -fastdispatch -dirvtable -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone -keyword -w511 -w473 -w404 -w314)
 
   set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
   set(FIFE_SOURCES ${FIFE_CORE_SRC})
@@ -874,11 +912,16 @@ if(build-python)
     swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
   endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
 
-  swig_link_libraries(fife ${PYTHON_LIBRARIES})
+  if(APPLE)
+    set(APPLE_DYNAMIC_LOOKUP_FLAG "-undefined dynamic_lookup")
+    swig_link_libraries(fife ${APPLE_DYNAMIC_LOOKUP_FLAG} )
+  else(APPLE)
+    swig_link_libraries(fife ${PYTHON_LIBRARIES})
+  endif(APPLE)
   swig_link_libraries(fife ${SDL2_LIBRARY}
                            ${SDL2_IMAGE_LIBRARIES}
                            ${SDL2_TTF_LIBRARIES}
-                           ${OPENAL_LIBRARY})
+                           ${OPENALSOFT_LIBRARY})
   swig_link_libraries(fife ${Boost_LIBRARIES})
   swig_link_libraries(fife ${PNG_LIBRARIES})
   swig_link_libraries(fife ${VORBISFILE_LIBRARY})
@@ -901,7 +944,11 @@ if(build-python)
       swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
     endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
 
-    swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
+    if(APPLE)
+      swig_link_libraries(fifechan ${APPLE_DYNAMIC_LOOKUP_FLAG})
+    else(APPLE)
+      swig_link_libraries(fifechan ${PYTHON_LIBRARIES})
+    endif(APPLE)
     swig_link_libraries(fifechan ${FIFECHAN_LIBRARIES})
     swig_link_libraries(fife ${FIFECHAN_LIBRARIES})
   endif(fifechan)
@@ -976,7 +1023,7 @@ if(build-library)
   target_link_libraries(fife ${SDL2_LIBRARY}
                              ${SDL2_IMAGE_LIBRARIES}
                              ${SDL2_TTF_LIBRARIES}
-                             ${OPENAL_LIBRARY})
+                             ${OPENALSOFT_LIBRARY})
   target_link_libraries(fife ${Boost_LIBRARIES})
   target_link_libraries(fife ${PNG_LIBRARIES})
   target_link_libraries(fife ${VORBISFILE_LIBRARY})

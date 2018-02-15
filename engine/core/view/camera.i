@@ -49,9 +49,10 @@ namespace FIFE {
 		void setZToYEnabled(bool enabled);
 		bool isZToYEnabled() const;
 		void setLocation(Location location);
-		Location getLocation() const;
+		Location getLocation();
+		void setPosition(const ExactModelCoordinate& position);
+		ExactModelCoordinate getPosition() const;
 		Point3D getOrigin() const;
-		Location& getLocationRef();
 		void attach(Instance *instance);
 		void detach();
 		Instance* getAttached() const;
@@ -61,7 +62,7 @@ namespace FIFE {
 		Rect getLayerViewPort(Layer* layer);
 		void setCellImageDimensions(uint32_t width, uint32_t height);
 		Point getCellImageDimensions();
-		Point3D getZOffset(Layer* layer);
+		Point getCellImageDimensions(Layer* layer);
 		ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
 		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 		void setEnabled(bool enabled);

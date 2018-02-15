@@ -22,7 +22,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 import time
 
 class TestView(unittest.TestCase):
@@ -32,42 +34,37 @@ class TestView(unittest.TestCase):
 		self.model = self.engine.getModel()
 		
 		self.imgMgr = self.engine.getImageManager()
+		self.animMgr = self.engine.getAnimationManager()
 
 		frame_delay = 100
 
 		#create the animation... messy I know
-		self.cursor_anim = fife.SharedAnimationPointer()
-		anim = fife.Animation()
-		anim.thisown = 0
-		self.cursor_anim.reset(anim)		
+		self.cursor_anim = self.animMgr.create("cursor_anim")
 		
 		imgs = []
-		imgs.append(self.imgMgr.load('../data/crate/full_s_000.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0001.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0002.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0003.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0004.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0005.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0006.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0007.png'))
-		imgs.append(self.imgMgr.load('../data/crate/full_s_0008.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_000.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0001.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0002.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0003.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0004.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0005.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0006.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0007.png'))
+		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0008.png'))
 		
 		for img in imgs:
 			self.cursor_anim.addFrame(img, frame_delay)
 
 
 		#create the drag animation... messy I know
-		self.cursor_drag_anim = fife.SharedAnimationPointer()
-		anim = fife.Animation()
-		anim.thisown = 0
-		self.cursor_drag_anim.reset(anim)	
+		self.cursor_drag_anim = self.animMgr.create("cursor_drag_anim")
 			
 		imgs = []
-		imgs.append(self.imgMgr.load('../data/wolf_walk/gfx/run_e_1.png'))
-		imgs.append(self.imgMgr.load('../data/wolf_walk/gfx/run_e_2.png'))
-		imgs.append(self.imgMgr.load('../data/wolf_walk/gfx/run_e_3.png'))
-		imgs.append(self.imgMgr.load('../data/wolf_walk/gfx/run_e_4.png'))
-		imgs.append(self.imgMgr.load('../data/wolf_walk/gfx/run_e_5.png'))
+		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_1.png'))
+		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_2.png'))
+		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_3.png'))
+		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_4.png'))
+		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_5.png'))
 		
 		for img in imgs:
 			self.cursor_drag_anim.addFrame(img, frame_delay)
@@ -83,7 +80,7 @@ class TestView(unittest.TestCase):
 		self.engine.destroy()
 
 	def testAnimatedCursor(self):
-		for i in xrange(500):
+		for i in range(500):
 			self.engine.pump()
 			
 	
