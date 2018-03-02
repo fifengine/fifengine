@@ -35,8 +35,8 @@ if (WIN32)
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
       #URL                 https://github.com/fifengine/fifechan/releases/tag/${FIFECHAN_VERSION}/fifechan-v${FIFECHAN_VERSION}-VC14.zip
-      URL                 https://ci.appveyor.com/api/buildjobs/7rqrfkugg204sr0v/artifacts/fifechan-shared-dev-16b1149-VC14-x86.zip
-      URL_MD5             5a6b5a4a97c7cba024d47c17294fc4e9
+      URL                 https://ci.appveyor.com/api/buildjobs/a0uhvgruutuwhqho/artifacts/fifechan-shared-dev-46778a3-VC14-x86.zip
+      URL_MD5             350a592d741211ec068e1c6f7792bc76
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
       INSTALL_COMMAND 
