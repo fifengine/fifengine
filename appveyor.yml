@@ -15,25 +15,26 @@ configuration:
 environment:
   MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
-    # VS 15 + Py2.7 with cegui
-    - generator: "Visual Studio 15"  
+    # VS 15 + Py2.7
+    - generator: "Visual Studio 15"
       PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7" 
-    # VS 15 + Py3.4 with cegui
-    - generator: "Visual Studio 15"  
-      PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4"  
-    # VS 15 + Py3.6 with cegui
-    - generator: "Visual Studio 15"  
+      PYTHON_VERSION: "2.7"
+    # VS 15 + Py3.5
+    - generator: "Visual Studio 15"
+      PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+    # VS 15 + Py3.6
+    - generator: "Visual Studio 15"
       PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6"  
+      PYTHON_VERSION: "3.6"
+    # MinGW
     #- generator: "MinGW Makefiles"
 
 matrix:
   fast_finish: true
 
 cache:
-  - C:\projects\fifengine-dependencies
+#  - C:\projects\fifengine-dependencies
 #  - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
@@ -55,7 +56,7 @@ init:
       {
         Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
       }
-  # There are multiple pre-installed versions of Python on Appveyor  
+  # There are multiple pre-installed versions of Python on Appveyor
   # see https://www.appveyor.com/docs/installed-software/#python
   - echo %PYTHON% %PYTHON_VERSION%
   - "SET PATH=%PYTHON%;%PYTHON%\\bin;%PYTHON%\\Scripts;%PATH%"
@@ -69,13 +70,13 @@ install:
   - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_65_1\lib32-msvc-14.1)
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
-  - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration% 
+  - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
   - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
   # show dependency folders
   - dir ..\fifengine-dependencies
   - dir ..\fifengine-dependencies\downloads
   - dir ..\fifengine-dependencies\includes /s
-  
+
 #before_build:
   # git sh.exe conflicts with MinGW makefiles
   #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
@@ -83,17 +84,17 @@ install:
 build_script:
   - dir
   # create folder for an out-of-source-tree build: "c:\projects\build"
-  - cd.. 
+  - cd..
   - mkdir build
   - cd build
   # generate build script - SHARED LIB
   - >
-    cmake ..\fifengine 
-    -G "%generator%" 
-    -DCMAKE_BUILD_TYPE=%configuration% 
-    -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
-    -DBOOST_ROOT="%boost_root%" 
-    -DBOOST_LIBRARYDIR="%boost_librarydir%" 
+    cmake ..\fifengine
+    -G "%generator%"
+    -DCMAKE_BUILD_TYPE=%configuration%
+    -DCMAKE_INSTALL_PREFIX="c:/fife/install"
+    -DBOOST_ROOT="%boost_root%"
+    -DBOOST_LIBRARYDIR="%boost_librarydir%"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=ON
     -DCEGUI=ON
@@ -103,12 +104,12 @@ build_script:
   - cmake --build . --target INSTALL --config %configuration%
   # generate build script - STATIC LIB
   - >
-    cmake ..\fifengine 
-    -G "%generator%" 
-    -DCMAKE_BUILD_TYPE=%configuration% 
-    -DCMAKE_INSTALL_PREFIX="c:/fife/install" 
-    -DBOOST_ROOT="%boost_root%" 
-    -DBOOST_LIBRARYDIR="%boost_librarydir%" 
+    cmake ..\fifengine
+    -G "%generator%"
+    -DCMAKE_BUILD_TYPE=%configuration%
+    -DCMAKE_INSTALL_PREFIX="c:/fife/install"
+    -DBOOST_ROOT="%boost_root%"
+    -DBOOST_LIBRARYDIR="%boost_librarydir%"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=OFF
     -DCEGUI=ON
@@ -120,7 +121,7 @@ build_script:
 after_build:
   - dir C:\projects\build\Release /s
   - if "%generator%"=="Visual Studio 15" (set COMPILER="VC15")
-  - if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW") 
+  #- if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW")
 
   # package dependencies artifact
   - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
