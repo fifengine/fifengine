@@ -60,6 +60,7 @@ namespace FIFE {
 		m_acceleration(false),
 		m_warp(false),
 		m_enter(false),
+		m_lastMouseEventConsumed(true),
 		m_oldX(0),
 		m_oldY(0),
 		m_lastTicks(0),
@@ -152,7 +153,7 @@ namespace FIFE {
 	void EventManager::removeDropListener(IDropListener* listener) {
 		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
 	}
-	
+
 	void EventManager::addJoystickListener(IJoystickListener* listener) {
 		if (m_joystickManager) {
 			m_joystickManager->addJoystickListener(listener);
@@ -721,10 +722,29 @@ namespace FIFE {
 			consumed = !m_mousefilter->isFiltered(mouseevt);
 		}
 		if (consumed) {
-			return;
+			if (!m_lastMouseEventConsumed){
+				//dispatch mouseExited
+				MouseEvent mouseexitevt;
+				mouseexitevt.setSource(this);
+				fillMouseEvent(event, mouseexitevt);
+				fillModifiers(mouseexitevt);
+				mouseexitevt.setType(MouseEvent::EXITED);
+				dispatchMouseEvent(mouseexitevt);
+			}
+		} else {
+			if (m_lastMouseEventConsumed){
+				//dispatch mouseEntered
+				MouseEvent mouseenterevt;
+				mouseenterevt.setSource(this);
+				fillMouseEvent(event, mouseenterevt);
+				fillModifiers(mouseenterevt);
+				mouseenterevt.setType(MouseEvent::ENTERED);
+				dispatchMouseEvent(mouseenterevt);
+			}
+			// dispatch normal event
+			dispatchMouseEvent(mouseevt);
 		}
-		
-		dispatchMouseEvent(mouseevt);
+		m_lastMouseEventConsumed = consumed;
 	}
 
 	void EventManager::processDropEvent(SDL_Event event) {
