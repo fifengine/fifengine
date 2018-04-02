@@ -272,6 +272,7 @@ namespace FIFE {
 		bool m_acceleration;
 		bool m_warp;
 		bool m_enter;
+		bool m_lastMouseEventConsumed;
 		uint16_t m_oldX;
 		uint16_t m_oldY;
 		uint32_t m_lastTicks;
