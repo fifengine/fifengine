@@ -152,7 +152,7 @@ namespace FIFE {
 	void EventManager::removeDropListener(IDropListener* listener) {
 		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
 	}
-	
+
 	void EventManager::addJoystickListener(IJoystickListener* listener) {
 		if (m_joystickManager) {
 			m_joystickManager->addJoystickListener(listener);
@@ -718,12 +718,13 @@ namespace FIFE {
 
 		bool consumed = dispatchSdlEvent(event);
 		if (consumed && m_mousefilter) {
+			mouseevt.consumedByWidgets();
 			consumed = !m_mousefilter->isFiltered(mouseevt);
 		}
 		if (consumed) {
 			return;
 		}
-		
+
 		dispatchMouseEvent(mouseevt);
 	}
 
