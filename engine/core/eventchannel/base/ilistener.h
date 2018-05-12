@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IMOUSEFILTER_H
-#define FIFE_EVENTCHANNEL_IMOUSEFILTER_H
+#ifndef FIFE_EVENTCHANNEL_ILISTENER_H
+#define FIFE_EVENTCHANNEL_ILISTENER_H
 
 // Standard C++ library includes
 //
@@ -33,21 +33,27 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "mouseevent.h"
 
 namespace FIFE {
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
+	/**  Base Listener
 	 */
-	class IMouseFilter {
+	class IListener {
 	public:
-
-		/** Check whether a mouseevent should be filtered out. Those are not consumed by dispatchSdlEvent (guimanagers).
-		 * @param event They mouse event.
+		/** Indicates if the listener is active.
 		 */
-		virtual bool isFiltered(const MouseEvent& event) = 0;
+		virtual bool isActive() { return m_active; }
 
-		virtual ~IMouseFilter() {}
+		/** Changes the listener status.
+		 * @param active The value to change the listener to active / inactive.
+		 */
+		virtual void setActive(bool active) { m_active = active; }
+
+		virtual ~IListener() {}
+
+	protected:
+		IListener() { m_active = false; }
+	private:
+		bool m_active;
 	};
 
 } //FIFE

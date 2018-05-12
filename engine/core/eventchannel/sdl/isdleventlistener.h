@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
+#include "eventchannel/base/ilistener.h"
 
 union SDL_Event;
 
@@ -41,7 +41,7 @@ namespace FIFE {
 	 * To be able to listen for commands you must make a class which inherits 
 	 * from this class and implements the onSdlEvent function.
 	 */
-	class ISdlEventListener {
+	class ISdlEventListener : public IListener {
 	public:
 		/** Called when an SDL event is received from SDL
 		 * @param evt SDL event

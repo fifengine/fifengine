@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
+#include "eventchannel/base/ilistener.h"
 
 namespace FIFE {
 	class TextEvent;
@@ -41,7 +41,7 @@ namespace FIFE {
 	 * To be able to listen for text events you must make a class which inherits
 	 * from this class and implements its functions.
 	 */
-	class ITextListener {
+	class ITextListener : public IListener {
 	public:
 		/** Called on a text input event.
 		 * @param evt TextEvent that describes the event.

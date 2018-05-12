@@ -408,6 +408,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/event.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ilistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/inputevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/command.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/commandids.h
@@ -427,7 +428,6 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/key.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/keyevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousecontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousefilter.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imouselistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/mouseevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventcontroller.h

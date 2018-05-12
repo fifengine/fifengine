@@ -148,15 +148,14 @@ namespace FIFE {
 		//! All "known" Joysticks. Useful if a user reconnect a Joystick.
 		std::vector<Joystick*> m_joysticks;
 
+		//! Map to hold the relation between Joystick InstanceId and JoystickId
 		std::map<int32_t, uint32_t> m_joystickIndices;
 
 		//! Each sort of gamepad have a GUID from SDL. Indicates the number of gamepads with given GUID are connected.
 		std::map<std::string, uint8_t> m_gamepadGuids;
 
+		//! The Joystick listeners.
 		std::deque<IJoystickListener*> m_joystickListeners;
-		std::deque<IJoystickListener*> m_pendingJoystickListeners;
-		std::deque<IJoystickListener*> m_pendingJoystickListenersFront;
-		std::deque<IJoystickListener*> m_pendingJoystickDeletions;
 	};
 } //FIFE
 

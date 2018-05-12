@@ -178,15 +178,23 @@ namespace FIFE {
 	}
 
 	void JoystickManager::addJoystickListener(IJoystickListener* listener) {
-		m_pendingJoystickListeners.push_back(listener);
+		m_joystickListeners.push_back(listener);
 	}
 
 	void JoystickManager::addJoystickListenerFront(IJoystickListener* listener) {
-		m_pendingJoystickListenersFront.push_back(listener);
+		m_joystickListeners.push_front(listener);
 	}
 
 	void JoystickManager::removeJoystickListener(IJoystickListener* listener) {
-		m_pendingJoystickListenersFront.push_back(listener);
+		if (listener->isActive()) {
+			listener->setActive(false);
+			for (std::deque<IJoystickListener*>::iterator it = m_joystickListeners.begin(); it != m_joystickListeners.end(); ++it) {
+				if (*it = listener) {
+					m_joystickListeners.erase(it);
+					break;
+				}
+			}
+		}
 	}
 
 	void JoystickManager::processJoystickEvent(SDL_Event event) {
@@ -263,65 +271,35 @@ namespace FIFE {
 
 
 	void JoystickManager::dispatchJoystickEvent(JoystickEvent& evt) {
-		if (!m_pendingJoystickListeners.empty()) {
-			std::deque<IJoystickListener*>::iterator i = m_pendingJoystickListeners.begin();
-			while (i != m_pendingJoystickListeners.end()) {
-				m_joystickListeners.push_back(*i);
-				++i;
-			}
-			m_pendingJoystickListeners.clear();
-		}
-
-		if (!m_pendingJoystickListenersFront.empty()) {
-			std::deque<IJoystickListener*>::iterator i = m_pendingJoystickListenersFront.begin();
-			while (i != m_pendingJoystickListenersFront.end()) {
-				m_joystickListeners.push_front(*i);
-				++i;
-			}
-			m_pendingJoystickListenersFront.clear();
-		}
-
-		if (!m_pendingJoystickDeletions.empty()) {
-			std::deque<IJoystickListener*>::iterator i = m_pendingJoystickDeletions.begin();
-			while (i != m_pendingJoystickDeletions.end()) {
-				std::deque<IJoystickListener*>::iterator j = m_joystickListeners.begin();
-				while (j != m_joystickListeners.end()) {
-					if (*j == *i) {
-						m_joystickListeners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pendingJoystickDeletions.clear();
-		}
-
-		std::deque<IJoystickListener*>::iterator i = m_joystickListeners.begin();
-		while (i != m_joystickListeners.end()) {
+		std::deque<IJoystickListener*> listeners = m_joystickListeners;
+		std::deque<IJoystickListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive()) continue;
 			switch (evt.getType()) {
-			case JoystickEvent::AXIS_MOTION:
-				(*i)->axisMotion(evt);
-				break;
-			case JoystickEvent::HAT_MOTION:
-				(*i)->hatMotion(evt);
-				break;
-			case JoystickEvent::BUTTON_PRESSED:
-				(*i)->buttonPressed(evt);
-				break;
-			case JoystickEvent::BUTTON_RELEASED:
-				(*i)->buttonReleased(evt);
-				break;
-			case JoystickEvent::DEVICE_ADDED:
-				(*i)->deviceAdded(evt);
-				break;
-			case JoystickEvent::DEVICE_REMOVED:
-				(*i)->deviceRemoved(evt);
-				break;
-			default:
+				case JoystickEvent::AXIS_MOTION:
+					(*i)->axisMotion(evt);
+					break;
+				case JoystickEvent::HAT_MOTION:
+					(*i)->hatMotion(evt);
+					break;
+				case JoystickEvent::BUTTON_PRESSED:
+					(*i)->buttonPressed(evt);
+					break;
+				case JoystickEvent::BUTTON_RELEASED:
+					(*i)->buttonReleased(evt);
+					break;
+				case JoystickEvent::DEVICE_ADDED:
+					(*i)->deviceAdded(evt);
+					break;
+				case JoystickEvent::DEVICE_REMOVED:
+					(*i)->deviceRemoved(evt);
+					break;
+				default:
+					break;
+			}
+			if (evt.isConsumed()) {
 				break;
 			}
-			++i;
 		}
 	}
 
