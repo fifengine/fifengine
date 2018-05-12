@@ -836,9 +836,6 @@ if(fifechan)
     )
   endif(build-python)
 
-  include_directories(${FIFECHAN_INCLUDE_DIR})
-  link_directories(${FIFECHAN_LIBRARIES})
-
 endif(fifechan)
 
 if(cegui)  
