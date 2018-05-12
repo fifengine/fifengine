@@ -189,7 +189,7 @@ namespace FIFE {
 		if (listener->isActive()) {
 			listener->setActive(false);
 			for (std::deque<IJoystickListener*>::iterator it = m_joystickListeners.begin(); it != m_joystickListeners.end(); ++it) {
-				if (*it = listener) {
+				if (*it == listener) {
 					m_joystickListeners.erase(it);
 					break;
 				}
