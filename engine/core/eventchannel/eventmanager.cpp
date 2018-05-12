@@ -89,8 +89,8 @@ namespace FIFE {
 	void removeListener(std::deque<T>& vec, T& listener) {
 		if (listener->isActive()) {
 			listener->setActive(false);
-			for (std::deque<T>::iterator it = vec.begin(); it != vec.end(); ++it) {
-				if (*it = listener) {
+			for (typename std::deque<T>::iterator it = vec.begin(); it != vec.end(); ++it) {
+				if (*it == listener) {
 					vec.erase(it);
 					break;
 				}
