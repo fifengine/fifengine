@@ -75,9 +75,6 @@ class Font(object):
 		@param name: (Optional) The name of the font being loaded. If the file definition contains another name, the name from the file definition is used instead.
 		@return A new Font object
 		"""
-		extension = os.path.splitext(filename)[1]
-		if extension == ".fontdef":
-			raise DeprecatedException(str(filename)+" is not a xml file. Fontdef files are deprecated.")
 		fontXMLFile = FontFileParser()
 		fontXMLFile.parse(filename, fontXMLFile)
 		fonts = []

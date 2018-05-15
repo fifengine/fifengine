@@ -165,7 +165,7 @@ class Manager(object):
 				return font
 			if hasattr(font,"font") and isinstance(getattr(font,"font"),fife.GuiFont):
 				return font.font
-			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
+			raise InitializationError("Couldn't find the font '%s'. Please load the xml file." % str(name))
 		else:
 			return self.hook.get_font(name)
 

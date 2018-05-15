@@ -181,31 +181,9 @@ in a PyChan configuration file. You have to load these by calling
 L{loadFonts} in your startup code::
    import pychan
    pychan.init( fifeEngine )
-   pychan.loadFonts( "content/fonts/console.fontdef" )
+   pychan.loadFonts( "content/fonts/console.xml" )
 
-The font definition files are in the following format::
-	[Font/FIRST_FONT_NAME]
-
-	type: truetype
-	source: path/to/font.ttf
-	# The font size in point
-	size: 30
-
-	[Font/SECOND_FONT_NAME]
-
-	type: truetype
-	source: content/fonts/samanata.ttf
-	size: 8
-
-	# And so on.
-
-I hope the example is clear enough ... Other options you can set:
-
-  - color: A list of comma separated integers from 0 to 255. White (255,255,255) by default.
-  - antialias: Zero or one - enable or disable antialialising. Enabled by default.
-  - row_spacing: Extra height per row. Default is 0.
-  - glyph_spacing: Extra space per glyph. Default is 0. B{Currently buggy in the engine!}
-
+The font definition files are in XML format.
 Unicode and internationalisation
 ================================
 
