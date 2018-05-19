@@ -20,7 +20,7 @@ ExternalProject_Add(
     libogg
     PREFIX          ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
-    DOWNLOAD_NAME   libogg-v${LIBOGG_VERSION}.zip
+    DOWNLOAD_NAME   libogg-${LIBOGG_VERSION}.zip
     URL             http://downloads.xiph.org/releases/ogg/libogg-${LIBOGG_VERSION}.zip 
     URL_MD5         1e1fb35dea32c804cfb13da6a94d0655
     PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/libogg/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/libogg
