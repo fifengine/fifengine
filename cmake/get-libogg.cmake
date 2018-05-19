@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(LIBOGG_VERSION "1.3.2")
+set(LIBOGG_VERSION "1.3.3")
 
 set(LIBOGG_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
@@ -22,7 +22,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
     DOWNLOAD_NAME   libogg-v${LIBOGG_VERSION}.zip
     URL             http://downloads.xiph.org/releases/ogg/libogg-${LIBOGG_VERSION}.zip 
-    URL_MD5         621b890fb8ce1383327df1d5bd000817
+    URL_MD5         1e1fb35dea32c804cfb13da6a94d0655
     PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/libogg/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/libogg
     CMAKE_ARGS      ${LIBOGG_CMAKE_ARGS}
 )
