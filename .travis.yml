@@ -51,7 +51,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
   # change clang to version 6.0
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 20; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-3.9.0/bin/clang; sudo rm -f /usr/local/clang-3.9.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-5.0.0/bin/clang; sudo rm -f /usr/local/clang-5.0.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev libvorbis-dev libalut-dev cppcheck; fi
   # update swig to version 3.x
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
