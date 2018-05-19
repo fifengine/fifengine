@@ -23,6 +23,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from builtins import str
+from builtins import range
 from fife import fife
 from fife.extensions import pychan
 
@@ -288,7 +291,7 @@ class OverlayTest(test.Test):
 			self._armor = "clothes"
 			id = "clothes_"
 		else:
-			print "invalid armor"
+			print("invalid armor")
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 10, 200)
 		self.addAnimationOverlay("walk", id+"run_", 8, 10, 100)
@@ -307,7 +310,7 @@ class OverlayTest(test.Test):
 			self._head = "head1"
 			id = "male_head1_"
 		else:
-			print "invalid head"
+			print("invalid head")
 
 		self.addAnimationOverlay("stand", id+"stance_", 4, 20, 200)
 		self.addAnimationOverlay("walk", id+"run_", 8, 20, 100)

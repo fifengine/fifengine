@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
+#include "eventchannel/base/ilistener.h"
 
 namespace FIFE {
 	class Command;
@@ -41,7 +41,7 @@ namespace FIFE {
 	 * To be able to listen for commands you must make a class which inherits 
 	 * from this class and implements the onCommand function.
 	 */
-	class ICommandListener {
+	class ICommandListener : public IListener {
 	public:
 		/** Called when a command is received from a command source
 		 * @param command command coming from command source

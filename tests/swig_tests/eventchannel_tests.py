@@ -22,14 +22,17 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 
 class MyEventListener(fife.ICommandListener):
 	def __init__(self):
 		fife.ICommandListener.__init__(self)
 	
 	def onCommand(self, command):
-		print "received command with code %d" % command.getCode()		
+		print("received command with code %d" % command.getCode())		
 
 class TestEventChannel(unittest.TestCase):
 	
@@ -45,8 +48,8 @@ class TestEventChannel(unittest.TestCase):
 		self.eventmanager.addCommandListener(l)
 		cmd = fife.Command()
 		cmd.setCode(0)
-		print "Sending commands..."
-		for i in xrange(20):
+		print("Sending commands...")
+		for i in range(20):
 			self.eventmanager.dispatchCommand(cmd)
 			cmd.setCode(i)
 		self.eventmanager.removeCommandListener(l)		

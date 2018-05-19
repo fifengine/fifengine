@@ -22,7 +22,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from swig_test_utils import *
+from __future__ import absolute_import
+from builtins import range
+from .swig_test_utils import *
 import time
 
 class TestView(unittest.TestCase):
@@ -78,7 +80,7 @@ class TestView(unittest.TestCase):
 		self.engine.destroy()
 
 	def testAnimatedCursor(self):
-		for i in xrange(500):
+		for i in range(500):
 			self.engine.pump()
 			
 	

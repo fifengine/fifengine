@@ -41,7 +41,6 @@
 #include "eventchannel/source/eventsourcetypes.h"
 #include "eventchannel/source/ieventsource.h"
 #include "eventchannel/mouse/mouseevent.h"
-#include "eventchannel/mouse/imousefilter.h"
 #include "eventchannel/mouse/imouselistener.h"
 #include "eventchannel/sdl/isdleventlistener.h"
 #include "eventchannel/eventmanager.h"
@@ -127,6 +126,8 @@ namespace FIFE {
 	public:
 		virtual void keyPressed(KeyEvent& evt) = 0;
 		virtual void keyReleased(KeyEvent& evt) = 0;
+		virtual bool isGlobalListener() const;
+		virtual void setGlobalListener(bool global);
 		virtual ~IKeyListener();
 	};
 
@@ -208,6 +209,8 @@ namespace FIFE {
 		virtual void mouseWheelMovedLeft(MouseEvent& evt) = 0;
 		virtual void mouseMoved(MouseEvent& evt) = 0;
 		virtual void mouseDragged(MouseEvent& evt) = 0;
+		virtual bool isGlobalListener() const;
+		virtual void setGlobalListener(bool global);
 		virtual ~IMouseListener();
 	};
 
@@ -231,13 +234,6 @@ namespace FIFE {
 	public:
 		virtual void fileDropped(DropEvent& evt) = 0;
 		virtual ~IDropListener();
-	};
-
-	%feature("director") IMouseFilter;
-	class IMouseFilter {
-	public:
-		virtual bool isFiltered(const MouseEvent& evt) = 0;
-		virtual ~IMouseFilter();
 	};
 
 	class Joystick {
@@ -373,7 +369,6 @@ namespace FIFE {
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);
-		void setMouseFilter(IMouseFilter* mouseFilter);
 
 		void setMouseSensitivity(float sensitivity);
 		float getMouseSensitivity() const;

@@ -14,12 +14,3 @@ Current
 
 Visually test map tilting and rotation values.  This is useful for determining
 the camera settings you should use when creating a new map.
-
-
-### fontdefupgrader.py
-
-Converts old pychan .fontdef files to the new xml based format. Run as follows:
-
-    python fontdefupgrader.py [file1] [file2] ...
-
-It creates new .xml files alongside the old .fontdef files.

@@ -156,6 +156,13 @@ print(s)\n\
 		PyErr_Clear(); \
 		SWIG_exception(SWIG_RuntimeError, "Caught a director exception"); \
 	}
+
+#define _FIFE_DIRECTOR_METHOD_EXC_HANDLER() \
+	catch (Swig::DirectorMethodException &) { \
+		handleDirectorException(); \
+		SWIG_exception(SWIG_RuntimeError, "Caught a director method exception"); \
+		SWIG_fail; \
+	}
 %}
 
 %exceptionclass FIFE::Exception;
@@ -181,18 +188,18 @@ print(s)\n\
 	}
 };
 
-%feature("director:except") {
-	if ($error != NULL) {
-		handleDirectorException();
-		throw Swig::DirectorMethodException();
-	}
-}
+//%feature("director:except") {
+//	if ($error != NULL) {
+//		handleDirectorException();
+//		throw Swig::DirectorMethodException();
+//	}
+//}
 
 %exception {
 	try {
 		$action
 	}
-	_FIFE_DIRECTOR_EXC_HANDLER()
+	_FIFE_DIRECTOR_METHOD_EXC_HANDLER()
 	_FIFE_EXC_HANDLER(SDLException)
 	_FIFE_EXC_HANDLER(NotFound)
 	_FIFE_EXC_HANDLER(NotSet)

@@ -23,6 +23,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from __future__ import print_function
+from builtins import object
 import os
 
 class TestManager(object):
@@ -46,18 +48,18 @@ class TestManager(object):
 			importtest = self._settings.get("Tests", f, False)
 			if importtest:
 				try:
-					print "Importing test plugin: ", f
-					exec "import " + self._testdir + "." + f
+					print("Importing test plugin: ", f)
+					exec("import " + self._testdir + "." + f)
 					test = eval(self._testdir + "." + f + "." + f + "()")
 					if isinstance(test, Test) is False:
-						print f + " is not an instance of Test!"
+						print(f + " is not an instance of Test!")
 					else:
 						self._tests.append(test)
-				except BaseException, error:
-					print "Error: ", error
-					print "Invalid test: ", f
+				except BaseException as error:
+					print("Error: ", error)
+					print("Invalid test: ", f)
 			else:
-				print "Not importing test: ", f
+				print("Not importing test: ", f)
 
 			self._settings.set("Tests", f, importtest)
 
@@ -105,22 +107,22 @@ class Test(object):
 	""" The base calss for all tests.  All tests must override these functions! """
 
 	def create(self, engine, application):
-		raise NotImplementedError, "Test has not implemented the init() function!"
+		raise NotImplementedError("Test has not implemented the init() function!")
 	
 	def destroy(self):
-		raise NotImplementedError, "Test has not implemented the destroy() function!"
+		raise NotImplementedError("Test has not implemented the destroy() function!")
 	
 	def run(self):
-		raise NotImplementedError, "Test has not implemented the run() function!"
+		raise NotImplementedError("Test has not implemented the run() function!")
 
 	def stop(self):
-		raise NotImplementedError, "Test has not implemented the stop() function!"
+		raise NotImplementedError("Test has not implemented the stop() function!")
 
 	def isRunning(self):
-		raise NotImplementedError, "Test has not implemented the isRunning() function!"
+		raise NotImplementedError("Test has not implemented the isRunning() function!")
 
 	def getName(self):
-		raise NotImplementedError, "Test has not implemented the getName() function!"
+		raise NotImplementedError("Test has not implemented the getName() function!")
 
 	def getAuthor(self):
 		return "unknown"

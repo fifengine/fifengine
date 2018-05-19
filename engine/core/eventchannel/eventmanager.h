@@ -73,7 +73,6 @@ namespace FIFE {
 	class KeyEvent;
 	class IKeyFilter;
 	class DropEvent;
-	class IMouseFilter;
 
 	/**  Event Manager manages all events related to FIFE
 	 */
@@ -133,8 +132,6 @@ namespace FIFE {
 		void processEvents();
 
 		void setKeyFilter(IKeyFilter* keyFilter);
-
-		void setMouseFilter(IMouseFilter* mouseFilter);
 
 		/** Sets mouse sensitivity
 		 * The sensitivity is limited to the range -0.99 - 10.0.
@@ -229,39 +226,16 @@ namespace FIFE {
 		void fillTextEvent(const SDL_Event& sdlevt, TextEvent& txtevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
 
-		std::deque<ICommandListener*> m_commandlisteners;
-		std::deque<ICommandListener*> m_pending_commandlisteners;
-		std::deque<ICommandListener*> m_pending_commandlisteners_front;
-		std::deque<ICommandListener*> m_pending_cldeletions;
-
-		std::deque<IKeyListener*> m_keylisteners;
-		std::deque<IKeyListener*> m_pending_keylisteners;
-		std::deque<IKeyListener*> m_pending_keylisteners_front;
-		std::deque<IKeyListener*> m_pending_kldeletions;
-
+		// Listeners
+		std::deque<ICommandListener*> m_commandListeners;
+		std::deque<IKeyListener*> m_keyListeners;
 		std::deque<ITextListener*> m_textListeners;
-		std::deque<ITextListener*> m_pendingTextListeners;
-		std::deque<ITextListener*> m_pendingTextListenersFront;
-		std::deque<ITextListener*> m_pendingTlDeletions;
-
-		std::deque<IMouseListener*> m_mouselisteners;
-		std::deque<IMouseListener*> m_pending_mouselisteners;
-		std::deque<IMouseListener*> m_pending_mouselisteners_front;
-		std::deque<IMouseListener*> m_pending_mldeletions;
-
-		std::deque<ISdlEventListener*> m_sdleventlisteners;
-		std::deque<ISdlEventListener*> m_pending_sdleventlisteners;
-		std::deque<ISdlEventListener*> m_pending_sdleventlisteners_front;
-		std::deque<ISdlEventListener*> m_pending_sdldeletions;
-
+		std::deque<IMouseListener*> m_mouseListeners;
+		std::deque<ISdlEventListener*> m_sdleventListeners;
 		std::deque<IDropListener*> m_dropListeners;
-		std::deque<IDropListener*> m_pendingDropListeners;
-		std::deque<IDropListener*> m_pendingDropListenersFront;
-		std::deque<IDropListener*> m_pendingDlDeletions;
 
 		std::map<int32_t, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
-		IMouseFilter* m_mousefilter;
 		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 

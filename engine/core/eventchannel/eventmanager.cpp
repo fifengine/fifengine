@@ -35,7 +35,6 @@
 #include "eventchannel/key/key.h"
 #include "eventchannel/key/keyevent.h"
 #include "eventchannel/key/ikeyfilter.h"
-#include "eventchannel/mouse/imousefilter.h"
 #include "eventchannel/mouse/mouseevent.h"
 #include "eventchannel/command/command.h"
 #include "video/renderbackend.h"
@@ -46,14 +45,13 @@ namespace FIFE {
 	static Logger _log(LM_EVTCHANNEL);
 
 	EventManager::EventManager():
-		m_commandlisteners(),
-		m_keylisteners(),
+		m_commandListeners(),
+		m_keyListeners(),
 		m_textListeners(),
-		m_mouselisteners(),
-		m_sdleventlisteners(),
+		m_mouseListeners(),
+		m_sdleventListeners(),
 		m_keystatemap(),
 		m_keyfilter(0),
-		m_mousefilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY),
 		m_mouseSensitivity(0.0),
@@ -72,85 +70,104 @@ namespace FIFE {
 	}
 
 	template<typename T>
-	void removeListener(std::deque<T>& vec, T& listener) {
-		vec.push_back(listener);
+	void addListener(std::deque<T>& vec, T& listener) {
+		if (!listener->isActive()) {
+			listener->setActive(true);
+			vec.push_back(listener);
+		}
 	}
 
 	template<typename T>
-	void addListener(std::deque<T>& vec, T& listener) {
-		vec.push_back(listener);
+	void addListenerFront(std::deque<T>& vec, T& listener) {
+		if (!listener->isActive()) {
+			listener->setActive(true);
+			vec.push_front(listener);
+		}
+	}
+
+	template<typename T>
+	void removeListener(std::deque<T>& vec, T& listener) {
+		if (listener->isActive()) {
+			listener->setActive(false);
+			for (typename std::deque<T>::iterator it = vec.begin(); it != vec.end(); ++it) {
+				if (*it == listener) {
+					vec.erase(it);
+					break;
+				}
+			}
+		}
 	}
 
 	void EventManager::addCommandListener(ICommandListener* listener) {
-		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
+		addListener<ICommandListener*>(m_commandListeners, listener);
 	}
 
 	void EventManager::addCommandListenerFront(ICommandListener* listener) {
-		addListener<ICommandListener*>(m_pending_commandlisteners_front, listener);
+		addListenerFront<ICommandListener*>(m_commandListeners, listener);
 	}
 
 	void EventManager::removeCommandListener(ICommandListener* listener) {
-		removeListener<ICommandListener*>(m_pending_cldeletions, listener);
+		removeListener<ICommandListener*>(m_commandListeners, listener);
 	}
 
 	void EventManager::addKeyListener(IKeyListener* listener) {
-		addListener<IKeyListener*>(m_pending_keylisteners, listener);
+		addListener<IKeyListener*>(m_keyListeners, listener);
 	}
 
 	void EventManager::addKeyListenerFront(IKeyListener* listener) {
-		addListener<IKeyListener*>(m_pending_keylisteners_front, listener);
+		addListenerFront<IKeyListener*>(m_keyListeners, listener);
 	}
 
 	void EventManager::removeKeyListener(IKeyListener* listener) {
-		removeListener<IKeyListener*>(m_pending_kldeletions, listener);
+		removeListener<IKeyListener*>(m_keyListeners, listener);
 	}
 
 	void EventManager::addTextListener(ITextListener* listener) {
-		addListener<ITextListener*>(m_pendingTextListeners, listener);
+		addListener<ITextListener*>(m_textListeners, listener);
 	}
 
 	void EventManager::addTextListenerFront(ITextListener* listener) {
-		addListener<ITextListener*>(m_pendingTextListenersFront, listener);
+		addListenerFront<ITextListener*>(m_textListeners, listener);
 	}
 
 	void EventManager::removeTextListener(ITextListener* listener) {
-		removeListener<ITextListener*>(m_pendingTlDeletions, listener);
+		removeListener<ITextListener*>(m_textListeners, listener);
 	}
 
 	void EventManager::addMouseListener(IMouseListener* listener) {
-		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
+		addListener<IMouseListener*>(m_mouseListeners, listener);
 	}
 
 	void EventManager::addMouseListenerFront(IMouseListener* listener) {
-		addListener<IMouseListener*>(m_pending_mouselisteners_front, listener);
+		addListenerFront<IMouseListener*>(m_mouseListeners, listener);
 	}
 
 	void EventManager::removeMouseListener(IMouseListener* listener) {
-		removeListener<IMouseListener*>(m_pending_mldeletions, listener);
+		removeListener<IMouseListener*>(m_mouseListeners, listener);
 	}
 
 	void EventManager::addSdlEventListener(ISdlEventListener* listener) {
-		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
+		addListener<ISdlEventListener*>(m_sdleventListeners, listener);
 	}
 
 	void EventManager::addSdlEventListenerFront(ISdlEventListener* listener) {
-		addListener<ISdlEventListener*>(m_pending_sdleventlisteners_front, listener);
+		addListenerFront<ISdlEventListener*>(m_sdleventListeners, listener);
 	}
 
 	void EventManager::removeSdlEventListener(ISdlEventListener* listener) {
-		removeListener<ISdlEventListener*>(m_pending_sdldeletions, listener);
+		removeListener<ISdlEventListener*>(m_sdleventListeners, listener);
 	}
 
 	void EventManager::addDropListener(IDropListener* listener) {
-		addListener<IDropListener*>(m_pendingDropListeners, listener);
+		addListener<IDropListener*>(m_dropListeners, listener);
 	}
 
 	void EventManager::addDropListenerFront(IDropListener* listener) {
-		addListener<IDropListener*>(m_pendingDropListenersFront, listener);
+		addListenerFront<IDropListener*>(m_dropListeners, listener);
 	}
 
 	void EventManager::removeDropListener(IDropListener* listener) {
-		removeListener<IDropListener*>(m_pendingDlDeletions, listener);
+		removeListener<IDropListener*>(m_dropListeners, listener);
 	}
 	
 	void EventManager::addJoystickListener(IJoystickListener* listener) {
@@ -172,87 +189,22 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchCommand(Command& command) {
-		if(!m_pending_commandlisteners.empty()) {
-			std::deque<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
-			while (i != m_pending_commandlisteners.end()) {
-				m_commandlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_commandlisteners.clear();
-		}
-
-		if(!m_pending_commandlisteners_front.empty()) {
-			std::deque<ICommandListener*>::iterator i = m_pending_commandlisteners_front.begin();
-			while (i != m_pending_commandlisteners_front.end()) {
-				m_commandlisteners.push_front(*i);
-				++i;
-			}
-			m_pending_commandlisteners_front.clear();
-		}
-
-		if (!m_pending_cldeletions.empty()) {
-			std::deque<ICommandListener*>::iterator i = m_pending_cldeletions.begin();
-			while (i != m_pending_cldeletions.end()) {
-				std::deque<ICommandListener*>::iterator j = m_commandlisteners.begin();
-				while (j != m_commandlisteners.end()) {
-					if(*j == *i) {
-						m_commandlisteners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pending_cldeletions.clear();
-		}
-
-		std::deque<ICommandListener*>::iterator i = m_commandlisteners.begin();
-		while (i != m_commandlisteners.end()) {
+		std::deque<ICommandListener*> listeners = m_commandListeners;
+		std::deque<ICommandListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive()) continue;
 			(*i)->onCommand(command);
 			if (command.isConsumed()) {
 				break;
 			}
-			++i;
 		}
 	}
 
 	void EventManager::dispatchKeyEvent(KeyEvent& evt) {
-		if(!m_pending_keylisteners.empty()) {
-			std::deque<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
-			while (i != m_pending_keylisteners.end()) {
-				m_keylisteners.push_back(*i);
-				++i;
-			}
-			m_pending_keylisteners.clear();
-		}
-
-		if(!m_pending_keylisteners_front.empty()) {
-			std::deque<IKeyListener*>::iterator i = m_pending_keylisteners_front.begin();
-			while (i != m_pending_keylisteners_front.end()) {
-				m_keylisteners.push_front(*i);
-				++i;
-			}
-			m_pending_keylisteners_front.clear();
-		}
-
-		if (!m_pending_kldeletions.empty()) {
-			std::deque<IKeyListener*>::iterator i = m_pending_kldeletions.begin();
-			while (i != m_pending_kldeletions.end()) {
-				std::deque<IKeyListener*>::iterator j = m_keylisteners.begin();
-				while (j != m_keylisteners.end()) {
-					if(*j == *i) {
-						m_keylisteners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pending_kldeletions.clear();
-		}
-
-		std::deque<IKeyListener*>::iterator i = m_keylisteners.begin();
-		while (i != m_keylisteners.end()) {
+		std::deque<IKeyListener*> listeners = m_keyListeners;
+		std::deque<IKeyListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) continue;
 			switch (evt.getType()) {
 				case KeyEvent::PRESSED:
 					(*i)->keyPressed(evt);
@@ -263,47 +215,17 @@ namespace FIFE {
 				default:
 					break;
 			}
-			++i;
+			if (evt.isConsumed()) {
+				break;
+			}
 		}
 	}
 
 	void EventManager::dispatchTextEvent(TextEvent& evt) {
-		if(!m_pendingTextListeners.empty()) {
-			std::deque<ITextListener*>::iterator i = m_pendingTextListeners.begin();
-			while (i != m_pendingTextListeners.end()) {
-				m_textListeners.push_back(*i);
-				++i;
-			}
-			m_pendingTextListeners.clear();
-		}
-
-		if(!m_pendingTextListenersFront.empty()) {
-			std::deque<ITextListener*>::iterator i = m_pendingTextListenersFront.begin();
-			while (i != m_pendingTextListenersFront.end()) {
-				m_textListeners.push_front(*i);
-				++i;
-			}
-			m_pendingTextListenersFront.clear();
-		}
-
-		if (!m_pendingTlDeletions.empty()) {
-			std::deque<ITextListener*>::iterator i = m_pendingTlDeletions.begin();
-			while (i != m_pendingTlDeletions.end()) {
-				std::deque<ITextListener*>::iterator j = m_textListeners.begin();
-				while (j != m_textListeners.end()) {
-					if(*j == *i) {
-						m_textListeners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pendingTlDeletions.clear();
-		}
-
-		std::deque<ITextListener*>::iterator i = m_textListeners.begin();
-		while (i != m_textListeners.end()) {
+		std::deque<ITextListener*> listeners = m_textListeners;
+		std::deque<ITextListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive()) continue;
 			switch (evt.getType()) {
 				case TextEvent::INPUT:
 					(*i)->textInput(evt);
@@ -314,47 +236,17 @@ namespace FIFE {
 				default:
 					break;
 			}
-			++i;
+			if (evt.isConsumed()) {
+				break;
+			}
 		}
 	}
 
 	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
-		if(!m_pending_mouselisteners.empty()) {
-			std::deque<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
-			while (i != m_pending_mouselisteners.end()) {
-				m_mouselisteners.push_back(*i);
-				++i;
-			}
-			m_pending_mouselisteners.clear();
-		}
-
-		if(!m_pending_mouselisteners_front.empty()) {
-			std::deque<IMouseListener*>::iterator i = m_pending_mouselisteners_front.begin();
-			while (i != m_pending_mouselisteners_front.end()) {
-				m_mouselisteners.push_front(*i);
-				++i;
-			}
-			m_pending_mouselisteners_front.clear();
-		}
-
-		if (!m_pending_mldeletions.empty()) {
-			std::deque<IMouseListener*>::iterator i = m_pending_mldeletions.begin();
-			while (i != m_pending_mldeletions.end()) {
-				std::deque<IMouseListener*>::iterator j = m_mouselisteners.begin();
-				while (j != m_mouselisteners.end()) {
-					if(*j == *i) {
-						m_mouselisteners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pending_mldeletions.clear();
-		}
-
-		std::deque<IMouseListener*>::iterator i = m_mouselisteners.begin();
-		while (i != m_mouselisteners.end()) {
+		std::deque<IMouseListener*> listeners = m_mouseListeners;
+		std::deque<IMouseListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) continue;
 			switch (evt.getType()) {
 				case MouseEvent::MOVED:
 					(*i)->mouseMoved(evt);
@@ -395,93 +287,29 @@ namespace FIFE {
 			if (evt.isConsumed()) {
 				break;
 			}
-			++i;
 		}
 	}
 
 	bool EventManager::dispatchSdlEvent(SDL_Event& evt) {
 		bool ret = false;
-		if (!m_pending_sdleventlisteners.empty()) {
-			std::deque<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
-			while(i != m_pending_sdleventlisteners.end()) {
-				m_sdleventlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_sdleventlisteners.clear();
-		}
-
-		if (!m_pending_sdleventlisteners_front.empty()) {
-			std::deque<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners_front.begin();
-			while(i != m_pending_sdleventlisteners_front.end()) {
-				m_sdleventlisteners.push_front(*i);
-				++i;
-			}
-			m_pending_sdleventlisteners_front.clear();
-		}
-
-		if (!m_pending_sdldeletions.empty()) {
-			std::deque<ISdlEventListener*>::iterator i = m_pending_sdldeletions.begin();
-			while (i != m_pending_sdldeletions.end()) {
-				std::deque<ISdlEventListener*>::iterator j = m_sdleventlisteners.begin();
-				while (j != m_sdleventlisteners.end()) {
-					if(*j == *i) {
-						m_sdleventlisteners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pending_sdldeletions.clear();
-		}
-
-		std::deque<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
-		while (i != m_sdleventlisteners.end()) {
+		std::deque<ISdlEventListener*> listeners = m_sdleventListeners;
+		std::deque<ISdlEventListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive()) continue;
 			ret = ret || (*i)->onSdlEvent(evt);
-			++i;
 		}
 		return ret;
 	}
 
 	void EventManager::dispatchDropEvent(DropEvent& evt) {
-		if(!m_pendingDropListeners.empty()) {
-			std::deque<IDropListener*>::iterator i = m_pendingDropListeners.begin();
-			while (i != m_pendingDropListeners.end()) {
-				m_dropListeners.push_back(*i);
-				++i;
-			}
-			m_pendingDropListeners.clear();
-		}
-
-		if(!m_pendingDropListenersFront.empty()) {
-			std::deque<IDropListener*>::iterator i = m_pendingDropListenersFront.begin();
-			while (i != m_pendingDropListenersFront.end()) {
-				m_dropListeners.push_front(*i);
-				++i;
-			}
-			m_pendingDropListenersFront.clear();
-		}
-
-		if (!m_pendingDlDeletions.empty()) {
-			std::deque<IDropListener*>::iterator i = m_pendingDlDeletions.begin();
-			while (i != m_pendingDlDeletions.end()) {
-				std::deque<IDropListener*>::iterator j = m_dropListeners.begin();
-				while (j != m_dropListeners.end()) {
-					if(*j == *i) {
-						m_dropListeners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pendingDlDeletions.clear();
-		}
-
-		std::deque<IDropListener*>::iterator i = m_dropListeners.begin();
-		while (i != m_dropListeners.end()) {
+		std::deque<IDropListener*> listeners = m_dropListeners;
+		std::deque<IDropListener*>::iterator i = listeners.begin();
+		for (; i != listeners.end(); ++i) {
+			if (!(*i)->isActive()) continue;
 			(*i)->fileDropped(evt);
-			++i;
+			if (evt.isConsumed()) {
+				break;
+			}
 		}
 	}
 
@@ -627,7 +455,7 @@ namespace FIFE {
 		// if event is not filtered it gets dispatched, even it is a function key
 		if (!m_keyfilter || !m_keyfilter->isFiltered(keyevt)) {
 			if (dispatchSdlEvent(event))
-				return;
+				keyevt.consumedByWidgets();
 		}
 
 		dispatchKeyEvent(keyevt);
@@ -716,13 +544,8 @@ namespace FIFE {
 			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
 
-		bool consumed = dispatchSdlEvent(event);
-		if (consumed && m_mousefilter) {
-			consumed = !m_mousefilter->isFiltered(mouseevt);
-		}
-		if (consumed) {
-			return;
-		}
+		if (dispatchSdlEvent(event))
+			mouseevt.consumedByWidgets();
 		
 		dispatchMouseEvent(mouseevt);
 	}
@@ -864,10 +687,6 @@ namespace FIFE {
 
 	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
 		m_keyfilter = keyFilter;
-	}
-
-	void EventManager::setMouseFilter(IMouseFilter* mouseFilter) {
-		m_mousefilter = mouseFilter;
 	}
 
 	void EventManager::setMouseSensitivity(float sensitivity) {

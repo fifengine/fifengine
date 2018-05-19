@@ -56,7 +56,7 @@ configure_file (
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(librocket        "Enable Librocket GUI subsystem"                        OFF)
-option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                    ON)
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with c++"  OFF)
@@ -412,6 +412,7 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/controller/enginesettings.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/eventmanager.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/event.h
+  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/ilistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/base/inputevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/command.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/command/commandids.h
@@ -431,7 +432,6 @@ set(FIFE_CORE_HDR
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/key.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/key/keyevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousecontroller.h
-  ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imousefilter.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/imouselistener.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/mouse/mouseevent.h
   ${PROJECT_SOURCE_DIR}/engine/core/eventchannel/sdl/isdleventcontroller.h
@@ -846,7 +846,6 @@ if(fifechan)
   endif(build-python)
 
   include_directories(${FIFECHAN_INCLUDE_DIR})
-  link_directories(${FIFECHAN_LIBRARIES})
 
 endif(fifechan)
 
@@ -915,11 +914,11 @@ if(build-python)
     set(FIFE_SOURCES ${FIFE_SOURCES} ${FIFE_FCHAN_SRC})
   endif(fifechan)
   # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
-  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
-    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
-  else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+  if(${CMAKE_VERSION} VERSION_LESS 3.8)
     swig_add_module(fife python "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
-  endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+  else(${CMAKE_VERSION} VERSION_LESS 3.8)
+    swig_add_library(fife LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
+  endif(${CMAKE_VERSION} VERSION_LESS 3.8)
 
   if(APPLE)
     set(APPLE_DYNAMIC_LOOKUP_FLAG "-undefined dynamic_lookup")
@@ -947,11 +946,11 @@ if(build-python)
     set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
 
     # CMake 3.8: swig_add_module is deprecated, use swig_add_library instead.
-    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
-      swig_add_library(fifechan LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
-    else(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    if(${CMAKE_VERSION} VERSION_LESS 3.8)
       swig_add_module(fifechan python "${PROJECT_BINARY_DIR}/fifechan.i")
-    endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.7)
+    else(${CMAKE_VERSION} VERSION_LESS 3.8)
+      swig_add_library(fifechan LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
+    endif(${CMAKE_VERSION} VERSION_LESS 3.8)
 
     if(APPLE)
       swig_link_libraries(fifechan ${APPLE_DYNAMIC_LOOKUP_FLAG})
@@ -982,14 +981,37 @@ if(build-python)
 
   message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
 
-  install(TARGETS     _fife                                               DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES       ${PROJECT_BINARY_DIR}/fife.py                       DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py  DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-  install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  # install pythonized fife
+  install(TARGETS     _fife															DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${PROJECT_BINARY_DIR}/fife.py									DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py			DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+  
+  # copy all files/folders from the extension folder
+  # but exclude extension folders of the optional dependencies: cegui, librocket, pychan
+  install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/			DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions
+	PATTERN "extensions/cegui"	   EXCLUDE
+	PATTERN "extensions/librocket" EXCLUDE
+	PATTERN "extensions/pychan"    EXCLUDE
+    PATTERN "extensions/*"	
+  )  
+
+  if(cegui) 
+    # install fife's extension for cegui   
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/cegui/		DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/cegui)
+  endif(cegui)
+
+  if(librocket)
+    # install fife's extension for librocket
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/librocket/	DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/librocket)
+  endif(librocket)
 
   if(fifechan)
-    install(TARGETS   _fifechan                                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
-    install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py                   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+    # install pychan - fife's extension for fifechan 
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/pychan/		DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/pychan)
+
+    # install pythonized fifechan
+    install(TARGETS   _fifechan                           DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
+    install(FILES     ${PROJECT_BINARY_DIR}/fifechan.py   DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
   endif(fifechan)
 endif(build-python)
 
