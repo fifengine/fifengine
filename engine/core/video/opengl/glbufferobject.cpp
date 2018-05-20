@@ -68,7 +68,6 @@ namespace FIFE {
 			m_data.push_back(rd);
 			m_indices.push_back(indice++);
 			m_indices.push_back(indice);
-			
 		}
 	}
 
@@ -95,7 +94,6 @@ namespace FIFE {
 		if (!m_final) {
 			finalize();
 		} else {
-			//std::cout << "4 \n";
 			glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
 			glBufferSubData(GL_ARRAY_BUFFER, sizeof(renderDataP) * position, sizeof(renderDataP) * elements, &m_data[position].vertex);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -104,20 +102,17 @@ namespace FIFE {
 
 	void OpenGLBufferLinesObject::finalize() {
 		if (m_vboId == 0) {
-			//std::cout << "1 \n";
 			glGenBuffers(1, &m_vboId);
 			glGenBuffers(1, &m_vboIndicesId);
 		}
 
 		if (m_oldFinalSize != m_indices.size()) {
-			//std::cout << "2 \n";
 			glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(renderDataP) * m_data.size(), &m_data[0].vertex, GL_STREAM_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIndicesId);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * m_indices.size(), &m_indices[0], GL_STREAM_DRAW);
 			m_oldFinalSize = m_indices.size();
 		} else {
-			//std::cout << "3 \n";
 			glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(renderDataP) * m_data.size(), NULL, GL_STREAM_DRAW);
 			GLvoid* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);

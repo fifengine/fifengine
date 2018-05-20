@@ -57,6 +57,7 @@ namespace FIFE {
 
 		virtual void addLines(const std::vector<Point>& points, const Color& color);
 		virtual void updateLines(uint32_t position, const std::vector<Point>& points, const Color& color);
+		virtual void removeLines(uint32_t position, uint32_t elements);
 
 	private:
 

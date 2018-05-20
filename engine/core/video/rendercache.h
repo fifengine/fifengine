@@ -39,14 +39,10 @@ namespace FIFE {
 	 /** Abstract interface for all the rendercaches. */
 	class RenderCache {
 	public:
-		/** Constructor.
-		 */
-		RenderCache() {};
-
-		/** Destructor.
-		 */
 		virtual ~RenderCache() {};
 
+		/** Clear
+		 */
 		virtual void clear() = 0;
 
 		/** Render 
@@ -58,6 +54,8 @@ namespace FIFE {
 		virtual void addLines(const std::vector<Point>& points, const Color& color) = 0;
 
 		virtual void updateLines(uint32_t position, const std::vector<Point>& points, const Color& color) = 0;
+
+		virtual void removeLines(uint32_t position, uint32_t elements) = 0;
 	};
 }
 

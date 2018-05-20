@@ -23,6 +23,7 @@
 #define FIFE_BLOCKINGINFORENDERER_H
 
 // Standard C++ library includes
+#include <unordered_map>
 
 // 3rd party library includes
 
@@ -89,7 +90,7 @@ namespace FIFE {
 
 		void update(Camera* cam, Layer* layer, RenderCache* renderCache);
 
-		std::map<std::size_t, uint32_t> m_fifeIdToBufferId;
+		std::unordered_map<std::size_t, uint32_t> m_fifeIdToBufferId;
 
 		//! indicates updates
 		bool m_updated;

@@ -106,7 +106,8 @@ namespace FIFE {
 		uint32_t pos = 0;
 		const uint32_t cellSideCount = cg->getCellSideCount();
 		const uint32_t halfCell = cellSideCount / 2;
-		std::vector<Point> data(cellSideCount + 2);
+		const uint32_t elements = cellSideCount + 2;
+		std::vector<Point> data(elements);
 		Color color(m_color.r, m_color.g, m_color.b, 255);
 		CellCache* cache = layer->getCellCache();
 		if (cache) {
@@ -118,7 +119,7 @@ namespace FIFE {
 				// get Instances on Cell
 				const std::set<Instance*>& instances2 = (*cit)->getInstances();
 				for (std::set<Instance*>::const_iterator it = instances2.begin(); it != instances2.end(); ++it) {
-					m_fifeIdToBufferId[(*it)->getFifeId()] = pos;
+					m_fifeIdToBufferId[(*it)->getFifeId()] = pos * elements;
 				}
 				std::vector<ExactModelCoordinate> vertices;
 				cg->getVertices(vertices, (*cit)->getLayerCoordinates());
@@ -140,7 +141,7 @@ namespace FIFE {
 				if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
 					continue;
 				}
-				m_fifeIdToBufferId[instance->getFifeId()] = pos;
+				m_fifeIdToBufferId[instance->getFifeId()] = pos * elements;
 				std::vector<ExactModelCoordinate> vertices;
 				cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 				for (uint32_t i = 0; i < cellSideCount; ++i) {
@@ -159,30 +160,42 @@ namespace FIFE {
 
 	void BlockingInfoRenderer::update(Camera* cam, Layer* layer, RenderCache* renderCache) {
 		CellGrid* cg = layer->getCellGrid();
-		Color color(m_color.r, m_color.g, m_color.b, 255);
 		const uint32_t cellSideCount = cg->getCellSideCount();
 		const uint32_t halfCell = cellSideCount / 2;
 		const uint32_t elements = cellSideCount + 2;
-		std::vector<Point> data(elements);
-		// TODO: Add code for cam->getRemovedInstances(layer)
+
+		// remove data
+		const std::set<std::size_t>& removedInstances = cam->getRemovedInstances(layer);
+		std::set<std::size_t>::const_iterator rit = removedInstances.begin();
+		for (; rit != removedInstances.end(); ++rit) {
+			std::unordered_map<std::size_t, uint32_t>::iterator rit2 = m_fifeIdToBufferId.find(*rit);
+			if (rit2 == m_fifeIdToBufferId.end()) continue;
+			uint32_t pos = rit2->second;
+			renderCache->removeLines(pos, elements);
+		}
+
 		// update Instance data
 		const std::set<Instance*>& updatedInstances = cam->getUpdatedInstances(layer);
-		std::set<Instance*>::const_iterator it = updatedInstances.begin();
-		for (; it != updatedInstances.end(); ++it) {
-			std::map<std::size_t, uint32_t>::iterator it2 = m_fifeIdToBufferId.find((*it)->getFifeId());
-			if (it2 == m_fifeIdToBufferId.end()) continue;
-			uint32_t pos = it2->second;
+		if (!updatedInstances.empty()) {
+			Color color(m_color.r, m_color.g, m_color.b, 255);
+			std::vector<Point> data(elements);
+			std::set<Instance*>::const_iterator it = updatedInstances.begin();
+			for (; it != updatedInstances.end(); ++it) {
+				std::unordered_map<std::size_t, uint32_t>::iterator it2 = m_fifeIdToBufferId.find((*it)->getFifeId());
+				if (it2 == m_fifeIdToBufferId.end()) continue;
+				uint32_t pos = it2->second;
 
-			std::vector<ExactModelCoordinate> vertices;
-			cg->getVertices(vertices, (*it)->getLocationRef().getLayerCoordinates());
-			for (uint32_t i = 0; i < cellSideCount; ++i) {
-				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
-				data[i].x = pts.x;
-				data[i].y = pts.y;
+				std::vector<ExactModelCoordinate> vertices;
+				cg->getVertices(vertices, (*it)->getLocationRef().getLayerCoordinates());
+				for (uint32_t i = 0; i < cellSideCount; ++i) {
+					ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[i]));
+					data[i].x = pts.x;
+					data[i].y = pts.y;
+				}
+				data[cellSideCount] = data[0];
+				data[cellSideCount + 1] = data[halfCell];
+				renderCache->updateLines(pos, data, color);
 			}
-			data[cellSideCount] = data[0];
-			data[cellSideCount + 1] = data[halfCell];
-			renderCache->updateLines(pos * elements, data, color);
 		}
 	}
 

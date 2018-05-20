@@ -23,7 +23,7 @@
 #define FIFE_VIDEO_SDL_BUFFEROBJECT_H
 
 // Standard C++ library includes
-
+#include <unordered_map>
 // Platform specific includes
 
 // 3rd party library includes
@@ -48,28 +48,34 @@ namespace FIFE {
 		virtual void render() = 0;
 	};
 
-
-	class SDLBufferLineObject : public SDLBufferObject {
-	public:
-		SDLBufferLineObject(const Point& p1, const Point& p2, const Color& color);
-		virtual ~SDLBufferLineObject();
-		void render();
-	private:
-		Point m_p1;
-		Point m_p2;
-		Color m_color;
+	enum RenderType {
+		Render_Point,
+		Render_Points,
+		Render_Line,
+		Render_Lines,
+		Render_Rect,
+		Render_Rects
 	};
 
-	class SDLBufferLinesObject : public SDLBufferObject {
+	struct BufferDescriptor {
+		RenderType type;
+		uint32_t position;
+		uint32_t count;
+		Color color;
+	};
+
+	class SDLBufferPrimitiveObject : public SDLBufferObject {
 	public:
-		SDLBufferLinesObject(const std::vector<Point>& points, const Color& color);
-		virtual ~SDLBufferLinesObject();
-		void add(const std::vector<Point>& points, const Color& color);
+		SDLBufferPrimitiveObject(RenderType type, const std::vector<Point>& points, const Color& color);
+		virtual ~SDLBufferPrimitiveObject();
+		void add(RenderType type, const std::vector<Point>& points, const Color& color);
+		void update(uint32_t position, const std::vector<Point>& points, const Color& color);
+		void remove(uint32_t position, uint32_t elements);
 		void render();
 	private:
-		SDL_Point* m_points;
-		Color m_color;
-		int32_t m_count;
+		std::vector<SDL_Point> m_points;
+		std::vector<BufferDescriptor> m_descriptors;
+		std::unordered_map<uint32_t, uint32_t> m_descriptorPosition;
 	};
 }
 

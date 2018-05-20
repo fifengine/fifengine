@@ -34,9 +34,7 @@
 #define BUFFER_OFFSET(i) ((void*)(i))
 
 namespace FIFE {
-	GLRenderCache::GLRenderCache():
-		RenderCache() {
-
+	GLRenderCache::GLRenderCache() {
 		m_buffer = NULL;
 	}
 
@@ -78,5 +76,9 @@ namespace FIFE {
 			return;
 		}
 		static_cast<OpenGLBufferLinesObject*>(m_buffer)->update(position, points, color);
+	}
+
+	void GLRenderCache::removeLines(uint32_t position, uint32_t elements) {
+
 	}
 }

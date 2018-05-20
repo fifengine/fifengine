@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <unordered_map>
 
 // Platform specific includes
 
@@ -41,9 +42,7 @@ namespace FIFE {
 	class SDLRenderCache : public RenderCache {
 	public:
 		enum BufferObjectType {
-			LineBufferObject = 0,
-			LinesBufferObject = 1,
-			TrianglesBufferObject = 2
+			PrimitiveBufferObject = 0
 		};
 
 		/** Constructor.
@@ -67,9 +66,11 @@ namespace FIFE {
 
 		virtual void updateLines(uint32_t position, const std::vector<Point>& points, const Color& color);
 
+		virtual void removeLines(uint32_t position, uint32_t elements);
+
 	private:
 		std::vector<SDLBufferObject*> m_objects;
-		std::map<BufferObjectType, std::vector<SDLBufferObject*> > m_typeBuffers;
+		std::map<BufferObjectType, SDLBufferObject*> m_typeBuffers;
 	};
 }
 

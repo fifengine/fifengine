@@ -30,54 +30,64 @@
 #include "sdlbufferobject.h"
 
 namespace FIFE {
-	SDLBufferLineObject::SDLBufferLineObject(const Point& p1, const Point& p2, const Color& color) {
-		m_p1 = p1;
-		m_p2 = p2;
-		m_color = color;
+	SDLBufferPrimitiveObject::SDLBufferPrimitiveObject(RenderType type, const std::vector<Point>& points, const Color& color) {
+		add(type, points, color);
 	}
 
-	SDLBufferLineObject::~SDLBufferLineObject() {
+	SDLBufferPrimitiveObject::~SDLBufferPrimitiveObject() {
+
 	}
 
-	void SDLBufferLineObject::render() {
+	void SDLBufferPrimitiveObject::add(RenderType type, const std::vector<Point>& points, const Color& color) {
+		uint32_t index = m_points.size();
+		uint32_t elements = points.size();
+		BufferDescriptor bc = { type, index, elements, color };
+
+		m_points.resize(index + elements);
+		for (uint32_t i = 0; i < elements; ++i) {
+			m_points[index + i].x = points[i].x;
+			m_points[index + i].y = points[i].y;
+		}
+
+		m_descriptors.push_back(bc);
+		m_descriptorPosition[index] = m_descriptors.size() - 1;
+	}
+
+	void SDLBufferPrimitiveObject::update(uint32_t position, const std::vector<Point>& points, const Color& color) {
+		BufferDescriptor& bd = m_descriptors[m_descriptorPosition[position]];
+		bd.color = color;
+		uint32_t index = bd.position;
+		uint32_t elements = points.size();
+		for (uint32_t i = 0; i < elements; ++i) {
+			m_points[index + i].x = points[i].x;
+			m_points[index + i].y = points[i].y;
+		}
+	}
+
+	void SDLBufferPrimitiveObject::remove(uint32_t position, uint32_t elements) {
+		BufferDescriptor& bd = m_descriptors[m_descriptorPosition[position]];
+		bd.count = 0;
+	}
+
+	void SDLBufferPrimitiveObject::render() {
+		if (m_descriptors.empty()) return;
+		SDL_Point* point = NULL;
 		SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
-		SDL_SetRenderDrawColor(renderer, m_color.getR(), m_color.getG(), m_color.getB(), m_color.getAlpha());
-		SDL_RenderDrawLine(renderer, m_p1.x, m_p1.y, m_p2.x, m_p2.y);
-	}
-
-
-	SDLBufferLinesObject::SDLBufferLinesObject(const std::vector<Point>& points, const Color& color) {
-		m_count = points.size();
-		m_color = color;
-		m_points = new SDL_Point[m_count];
-		uint32_t index = 0;
-		for (; index < m_count; index++) {
-			m_points[index].x = points[index].x;
-			m_points[index].y = points[index].y;
+		std::vector<BufferDescriptor>::iterator it = m_descriptors.begin();
+		for (; it != m_descriptors.end(); ++it) {
+			const BufferDescriptor& bd = *it;
+			SDL_SetRenderDrawColor(renderer, bd.color.getR(), bd.color.getG(), bd.color.getB(), bd.color.getAlpha());
+			point = &m_points[bd.position];
+			switch (bd.type) {
+				case Render_Point:
+				case Render_Points:
+					SDL_RenderDrawPoints(renderer, point, bd.count);
+					break;
+				case Render_Line:
+				case Render_Lines:
+					SDL_RenderDrawLines(renderer, point, bd.count);
+					break;
+			}
 		}
-	}
-
-	SDLBufferLinesObject::~SDLBufferLinesObject() {
-		delete[] m_points;
-	}
-
-	void SDLBufferLinesObject::add(const std::vector<Point>& points, const Color& color) {
-		if (m_count != points.size()) {
-			delete[] m_points;
-			m_count = points.size();
-			m_points = new SDL_Point[m_count];
-		}
-		m_color = color;
-		uint32_t index = 0;
-		for (; index < m_count; index++) {
-			m_points[index].x = points[index].x;
-			m_points[index].y = points[index].y;
-		}
-	}
-
-	void SDLBufferLinesObject::render() {
-		SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
-		SDL_SetRenderDrawColor(renderer, m_color.getR(), m_color.getG(), m_color.getB(), m_color.getAlpha());
-		SDL_RenderDrawLines(renderer, m_points, m_count);
 	}
 }
