@@ -21,13 +21,13 @@ addons:
     sources:
     # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
-    #- llvm-toolchain-trusty-5.0
+    - llvm-toolchain-trusty-6.0
     packages:
-    - gcc-7
-    - g++-7
-    #- clang-5.0
-    #- llvm-5.0-dev
-    #- libclang-5.0-dev
+    - gcc-8
+    - g++-8
+    - clang-6.0
+    - llvm-6.0-dev
+    - libclang-6.0-dev
     - mesa-common-dev
     - libsdl2-dev
     - libsdl2-image-dev
@@ -46,12 +46,12 @@ addons:
 
 before_install:
   # Linux Build
-  # change gcc to version 7
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 20; fi
+  # change gcc to version 8
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
-  # change clang to version 5.0
-  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-5.0 20; fi
-  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-3.9.0/bin/clang; sudo rm -f /usr/local/clang-3.9.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
+  # change clang to version 6.0
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 20; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-5.0.0/bin/clang; sudo rm -f /usr/local/clang-5.0.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev libvorbis-dev libalut-dev cppcheck; fi
   # update swig to version 3.x
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi

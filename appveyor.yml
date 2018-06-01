@@ -20,9 +20,9 @@ environment:
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
     # VS 15 + Py3.5
-    - generator: "Visual Studio 15"
-      PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5"
+    #- generator: "Visual Studio 15"
+    #  PYTHON: "C:\\Python35"
+    #  PYTHON_VERSION: "3.5"
     # VS 15 + Py3.6
     - generator: "Visual Studio 15"
       PYTHON: "C:\\Python36"
@@ -66,8 +66,8 @@ init:
 
 install:
   # set path to boost according to compiler toolchain
-  - if "%generator%" == "Visual Studio 15" (SET boost_root=C:\Libraries\boost_1_65_1)
-  - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_65_1\lib32-msvc-14.1)
+  - if "%generator%" == "Visual Studio 15" (SET boost_root=C:\Libraries\boost_1_67_0)
+  - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_67_0\lib32-msvc-14.1)
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%

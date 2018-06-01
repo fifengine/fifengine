@@ -46,9 +46,7 @@ namespace FIFE {
 		m_zone(NULL),
 		m_transition(NULL),
 		m_inserted(false),
-		m_protect(false),
-		m_type(CTYPE_NO_BLOCKER),
-		m_fowType(CELLV_CONCEALED) {
+		m_protect(false) {
 	}
 
 	Cell::~Cell() {
@@ -78,47 +76,6 @@ namespace FIFE {
 		for (std::list<Instance*>::const_iterator it = instances.begin(); it != instances.end(); ++it) {
 			std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(*it);
 			if (ret.second) {
-				if ((*it)->isVisitor()) {
-					uint16_t visitorRadius = (*it)->getVisitorRadius();
-					std::vector<Cell*> cells;
-					std::vector<Cell*> cellsExt;
-					switch((*it)->getVisitorShape()) {
-						case ITYPE_QUAD_SHAPE: {
-							Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
-								(visitorRadius*2)+1, (visitorRadius*2)+1);
-							cells = cache->getCellsInRect(size);
-							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
-							cellsExt = cache->getCellsInRect(sizeExt);
-						}
-							break;
-
-						case ITYPE_CIRCLE_SHAPE: {
-							cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
-							cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
-						}
-							break;
-
-						default: continue;
-					}
-					for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
-						bool found = false;
-						for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
-							if (*sit == *szit) {
-								found = true;
-								(*szit)->addVisitorInstance(*it);
-								(*szit)->setFoWType(CELLV_REVEALED);
-								break;
-							}
-						}
-						if (!found) {
-							const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
-							if (cv.empty()) {
-								(*szit)->setFoWType(CELLV_MASKED);
-							}
-						}
-					}
-					cache->setFowUpdate(true);
-				}
 				if ((*it)->isSpecialCost()) {
 					cache->registerCost((*it)->getCostId(), (*it)->getCost());
 					cache->addCellToCost((*it)->getCostId(), this);
@@ -139,47 +96,6 @@ namespace FIFE {
 		std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
 		if (ret.second) {
 			CellCache* cache = m_layer->getCellCache();
-			if (instance->isVisitor()) {
-				uint16_t visitorRadius = instance->getVisitorRadius();
-				std::vector<Cell*> cells;
-				std::vector<Cell*> cellsExt;
-				switch(instance->getVisitorShape()) {
-					case ITYPE_QUAD_SHAPE: {
-						Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
-							(visitorRadius*2)+1, (visitorRadius*2)+1);
-						cells = cache->getCellsInRect(size);
-						Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
-						cellsExt = cache->getCellsInRect(sizeExt);
-					}
-						break;
-
-					case ITYPE_CIRCLE_SHAPE: {
-						cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
-						cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
-					}
-						break;
-
-					default: break;
-				}
-				for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
-					bool found = false;
-					for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
-						if (*sit == *szit) {
-							found = true;
-							(*szit)->addVisitorInstance(instance);
-							(*szit)->setFoWType(CELLV_REVEALED);
-							break;
-						}
-					}
-					if (!found) {
-						const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
-						if (cv.empty()) {
-							(*szit)->setFoWType(CELLV_MASKED);
-						}
-					}
-				}
-				cache->setFowUpdate(true);
-			}
 			if (instance->isSpecialCost()) {
 				cache->registerCost(instance->getCostId(), instance->getCost());
 				cache->addCellToCost(instance->getCostId(), this);
@@ -205,35 +121,6 @@ namespace FIFE {
 			return;
 		}
 		CellCache* cache = m_layer->getCellCache();
-		if (instance->isVisitor()) {
-			uint16_t visitorRadius = instance->getVisitorRadius();
-			std::vector<Cell*> cells;
-			switch(instance->getVisitorShape()) {
-				case ITYPE_QUAD_SHAPE: {
-					Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
-						(visitorRadius*2)+1, (visitorRadius*2)+1);
-					cells = cache->getCellsInRect(size);
-				}
-					break;
-
-				case ITYPE_CIRCLE_SHAPE: {
-					cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
-				}
-					break;
-
-				default: break;
-			}
-			for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
-				(*it)->removeVisitorInstance(instance);
-				const std::vector<Instance*>& cv = (*it)->getVisitorInstances();
-				if (!cv.empty()) {
-					(*it)->setFoWType(CELLV_REVEALED);
-				} else {
-					(*it)->setFoWType(CELLV_MASKED);
-				}
-			}
-			cache->setFowUpdate(true);
-		}
 		if (instance->isSpecialCost()) {
 			cache->removeCellFromCost(instance->getCostId(), this);
 		}
@@ -324,64 +211,8 @@ namespace FIFE {
 		}
 	}
 
-	void Cell::updateCellFowInfo() {
-		bool visitors = !m_visitors.empty();
-		bool instances = !m_instances.empty();
-		if (!visitors && !instances && m_fowType == CELLV_REVEALED) {
-			m_fowType = CELLV_MASKED;
-		} else if (visitors && instances) {
-			CellCache* cache = m_layer->getCellCache();
-			std::vector<Instance*>::iterator visit = m_visitors.begin();
-			for (; visit != m_visitors.end(); ++visit) {
-				std::set<Instance*>::iterator insfind = m_instances.find(*visit);
-				if (insfind != m_instances.end()) {
-					uint16_t visitorRadius = (*visit)->getVisitorRadius();
-					std::vector<Cell*> cells;
-					std::vector<Cell*> cellsExt;
-					switch((*visit)->getVisitorShape()) {
-						case ITYPE_QUAD_SHAPE: {
-							Rect size(m_coordinate.x-visitorRadius, m_coordinate.y-visitorRadius,
-								(visitorRadius*2)+1, (visitorRadius*2)+1);
-							cells = cache->getCellsInRect(size);
-							Rect sizeExt(size.x-1, size.y-1, size.w+2, size.h+2);
-							cellsExt = cache->getCellsInRect(sizeExt);
-						}
-							break;
-
-						case ITYPE_CIRCLE_SHAPE: {
-							cells = cache->getCellsInCircle(m_coordinate, visitorRadius);
-							cellsExt = cache->getCellsInCircle(m_coordinate, visitorRadius+1);
-						}
-							break;
-
-						default: continue;
-					}
-
-					for (std::vector<Cell*>::iterator szit = cellsExt.begin(); szit != cellsExt.end(); ++szit) {
-						bool found = false;
-						for (std::vector<Cell*>::iterator sit = cells.begin(); sit != cells.end(); ++sit) {
-							if (*sit == *szit) {
-								found = true;
-								(*szit)->addVisitorInstance(*visit);
-								(*szit)->setFoWType(CELLV_REVEALED);
-								break;
-							}
-						}
-						if (!found) {
-							const std::vector<Instance*>& cv = (*szit)->getVisitorInstances();
-							if (cv.empty()) {
-								(*szit)->setFoWType(CELLV_MASKED);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	void Cell::updateCellInfo() {
 		updateCellBlockingInfo();
-		updateCellFowInfo();
 
 		if (!m_deleteListeners.empty()) {
 			m_deleteListeners.erase(
@@ -393,42 +224,6 @@ namespace FIFE {
 				std::remove(m_changeListeners.begin(), m_changeListeners.end(),
 				(CellChangeListener*)NULL),	m_changeListeners.end());
 		}
-	}
-
-	void Cell::setFoWType(CellVisualEffect type) {
-		m_fowType = type;
-	}
-
-	CellVisualEffect Cell::getFoWType() {
-		return m_fowType;
-	}
-
-	void Cell::addVisitorInstance(Instance* instance) {
-		if (m_visitors.empty()) {
-			m_visitors.push_back(instance);
-			return;
-		}
-		std::vector<Instance*>::iterator it = m_visitors.begin();
-		for (; it != m_visitors.end(); ++it) {
-			if (*it == instance) {
-				return;			
-			}
-		}
-		m_visitors.push_back(instance);
-	}
-
-	void Cell::removeVisitorInstance(Instance* instance) {
-		std::vector<Instance*>::iterator it = m_visitors.begin();
-		for (; it != m_visitors.end(); ++it) {
-			if (*it == instance) {
-				m_visitors.erase(it);
-				break;			
-			}
-		}
-	}
-
-	const std::vector<Instance*>& Cell::getVisitorInstances() {
-		return m_visitors;
 	}
 
 	bool Cell::defaultCost() {

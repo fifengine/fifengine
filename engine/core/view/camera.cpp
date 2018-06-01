@@ -301,7 +301,7 @@ namespace FIFE {
 			coords.push_back(toMapCoordinates(sp2, false));
 			coords.push_back(toMapCoordinates(sp3, false));
 			coords.push_back(toMapCoordinates(sp4, false));
-		
+
 			ExactModelCoordinate emc = toMapCoordinates(sp1, false);
 			ModelCoordinate min(static_cast<int32_t>(emc.x), static_cast<int32_t>(emc.y));
 			ModelCoordinate max(static_cast<int32_t>(emc.x+0.5), static_cast<int32_t>(emc.y+0.5));
@@ -368,7 +368,7 @@ namespace FIFE {
 	void Camera::updateMatrices() {
 		m_matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
 		m_vs_matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
-		
+
 		m_matrix.applyTranslate(-m_position.x*m_referenceScaleX, -m_position.y*m_referenceScaleY, -m_position.z*m_referenceScaleX);
 
 		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
@@ -592,38 +592,33 @@ namespace FIFE {
 					vc.image->forceLoadInternal();
 				}
 				uint8_t r, g, b, a = 0;
-				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
-					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
-						if ((vc.dimensions.contains(Point(xx, yy)))) {
-							int32_t x = xx - vc.dimensions.x;
-							int32_t y = yy - vc.dimensions.y;
-							if (zoomed) {
-								double fx = static_cast<double>(x);
-								double fy = static_cast<double>(y);
-								double fow = static_cast<double>(vc.image->getWidth());
-								double foh = static_cast<double>(vc.image->getHeight());
-								double fsw = static_cast<double>(vc.dimensions.w);
-								double fsh = static_cast<double>(vc.dimensions.h);
-								x = static_cast<int32_t>(round(fx / fsw * fow));
-								y = static_cast<int32_t>(round(fy / fsh * foh));
-							}
-							if (vc.getAnimationOverlay()) {
-								std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
-								std::vector<ImagePtr>::iterator it = ao->begin();
-								for (; it != ao->end(); ++it) {
-									if ((*it)->isSharedImage()) {
-										(*it)->forceLoadInternal();
-									}
-									(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
-									// instance is hit with mouse if not totally transparent
-									if (a == 0 || (special_alpha && a < alpha)) {
-										continue;
-									}
-									instances.push_back(i);
-									goto found_non_transparent_pixel;
+				int32_t intersection_left = std::max(screen_rect.x, vc.dimensions.x);
+				int32_t intersection_right = std::min(screen_rect.right(), vc.dimensions.right());
+				int32_t intersection_top = std::max(screen_rect.y, vc.dimensions.y);
+				int32_t intersection_bottom = std::min(screen_rect.bottom(), vc.dimensions.bottom());
+
+				for(int32_t xx = intersection_left; xx < intersection_right; xx++) {
+					for(int32_t yy = intersection_top; yy < intersection_bottom; yy++) {
+						int32_t x = xx - vc.dimensions.x;
+						int32_t y = yy - vc.dimensions.y;
+						if (zoomed) {
+							double fx = static_cast<double>(x);
+							double fy = static_cast<double>(y);
+							double fow = static_cast<double>(vc.image->getWidth());
+							double foh = static_cast<double>(vc.image->getHeight());
+							double fsw = static_cast<double>(vc.dimensions.w);
+							double fsh = static_cast<double>(vc.dimensions.h);
+							x = static_cast<int32_t>(round(fx / fsw * fow));
+							y = static_cast<int32_t>(round(fy / fsh * foh));
+						}
+						if (vc.getAnimationOverlay()) {
+							std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+							std::vector<ImagePtr>::iterator it = ao->begin();
+							for (; it != ao->end(); ++it) {
+								if ((*it)->isSharedImage()) {
+									(*it)->forceLoadInternal();
 								}
-							} else {
-								vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+								(*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
 								// instance is hit with mouse if not totally transparent
 								if (a == 0 || (special_alpha && a < alpha)) {
 									continue;
@@ -631,6 +626,14 @@ namespace FIFE {
 								instances.push_back(i);
 								goto found_non_transparent_pixel;
 							}
+						} else {
+							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+							// instance is hit with mouse if not totally transparent
+							if (a == 0 || (special_alpha && a < alpha)) {
+								continue;
+							}
+							instances.push_back(i);
+							goto found_non_transparent_pixel;
 						}
 					}
 				}

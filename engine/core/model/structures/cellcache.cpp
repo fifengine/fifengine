@@ -374,9 +374,7 @@ namespace FIFE {
 		m_defaultSpeedMulti(1.0),
 		m_neighborZ(-1),
 		m_blockingUpdate(false),
-		m_fowUpdate(false),
 		m_sizeUpdate(false),
-		m_updated(false),
 		m_searchNarrow(true),
 		m_staticSize(false) {
 		// create cell change listener
@@ -853,14 +851,6 @@ namespace FIFE {
 
 	int32_t CellCache::getMaxNeighborZ() {
 		return m_neighborZ;
-	}
-
-	void CellCache::setUpdated(bool updated) {
-		m_updated = updated;
-	}
-
-	bool CellCache::isUpdated() {
-		return m_updated;
 	}
 
 	std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker) {
@@ -1542,17 +1532,11 @@ namespace FIFE {
 		m_blockingUpdate = update;
 	}
 
-	void CellCache::setFowUpdate(bool update) {
-		m_fowUpdate = update;
-	}
-
 	void CellCache::setSizeUpdate(bool update) {
 		m_sizeUpdate = update;
 	}
 
 	void CellCache::update() {
-		m_updated = m_fowUpdate;
-		m_fowUpdate = false;
 		if (m_sizeUpdate) {
 			resize();
 			m_sizeUpdate = false;

@@ -104,18 +104,6 @@ namespace FIFE {
 		 */
 		bool isEnabledBlocking();
 
-		/** Enables Fog of War visualization.
-		 *
-		 * @param enabled A bool that enables or disables the visualization.
-		 */
-		void setEnabledFogOfWar(bool enabled);
-
-		/** Gets whether Fog of War visualization is enabled.
-		 *
-		 * @return A bool, true if visualization is enabled, otherwise false.
-		 */
-		bool isEnabledFogOfWar();
-
 		/** Enables path visualization.
 		 *
 		 * @param enabled A bool that enables or disables the visualization.
@@ -128,24 +116,6 @@ namespace FIFE {
 		 */
 		bool isEnabledPathVisual();
 		
-		/** Sets the layer that is used for Fog of War visualization.
-		 *
-		 * @param layer The layer that is used for visualization.
-		 */
-		void setFogOfWarLayer(Layer* layer);
-
-		/** Sets the image that is used for concealed spaces.
-		 *
-		 * @param image The used image.
-		 */
-		void setConcealImage(ImagePtr image);
-
-		/** Sets the fog image.
-		 *
-		 * @param image The used image.
-		 */
-		void setMaskImage(ImagePtr image);
-		
 		/** Adds a instance to path visualization. The current path is automatically rendered.
 		 *
 		 * @param instance The instance's path is visualized.
@@ -157,28 +127,6 @@ namespace FIFE {
 		 * @param instance The instance's path is visualized.
 		 */
 		void removePathVisual(Instance* instance);
-
-		/** Creates render target for Fog of War.
-		 *
-		 * @param cam The used camera.
-		 * @param layer The used layer.
-		 */
-		void createFowMap(Camera* cam, Layer* layer);
-
-		/** Adds image to FoW render target.
-		 *
-		 * @param cam The used camera.
-		 * @param center The coordinates.
-		 * @param image The used image.
-		 * @param id The id as string.
-		 */
-		void addImageToMap(Camera* cam, Point center, ImagePtr image, const std::string& id);
-
-		/** Returns the layer that is used for Fog of War visualization.
-		 *
-		 * @return The used layer.
-		 */
-		Layer* getFowLayer();
 
 		/** Enables cost visualization.
 		 *
@@ -206,10 +154,6 @@ namespace FIFE {
 		 */
 		IFont* getFont();
 
-		/** Updates render target.
-		 */
-		void updateFowMap();
-
 		/** Gets instance for interface access.
 		 */
 		static CellRenderer* getInstance(IRendererContainer* cnt);
@@ -218,15 +162,7 @@ namespace FIFE {
 		SDL_Color m_blockerColor;
 		SDL_Color m_pathColor;
 		bool m_blockingEnabled;
-		bool m_fowEnabled;
 		bool m_pathVisualEnabled;
-		// FoW stuff
-		TargetRenderer* m_targetRenderer;
-		RenderTargetPtr m_fowTarget;
-		Layer* m_fowLayer;
-		ImagePtr m_concealImage;
-		ImagePtr m_maskImage;
-		ImagePtr m_fowImage;
 		IFont* m_font;
 		
 		std::vector<Instance*> m_visualPaths;

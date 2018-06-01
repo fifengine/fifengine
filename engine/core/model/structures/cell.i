@@ -38,13 +38,6 @@ namespace FIFE {
 		CTYPE_CELL_BLOCKER = 4
 	};
 	typedef uint8_t CellTypeInfo;
-	
-	enum CellVisualType {
-		CELLV_CONCEALED = 0,
-		CELLV_REVEALED,
-		CELLV_MASKED
-	};
-	typedef uint8_t CellVisualEffect;
 
 	%feature("director") CellChangeListener;
 	class CellChangeListener {
@@ -89,8 +82,6 @@ namespace FIFE {
 			const std::set<Instance*>& getInstances();
 			void setCellType(CellTypeInfo type);
 			CellTypeInfo getCellType();
-			void setFoWType(CellVisualEffect type);
-			CellVisualEffect getFoWType();
 			Layer* getLayer();
 			void createTransition(Layer* layer, const ModelCoordinate& mc);
 			void deleteTransition();

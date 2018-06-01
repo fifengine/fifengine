@@ -319,7 +319,6 @@ namespace FIFE {
 											int r = 0;
 											int stackpos = 0;
 											int cellStack = 0;
-											int visitorRadius = 0;
 
 											const std::string* instanceId = instance->Attribute(std::string("id"));
 											const std::string* objectId = instance->Attribute(std::string("o"));
@@ -364,16 +363,6 @@ namespace FIFE {
 
 											int stackRetVal = instance->QueryValueAttribute("stackpos", &stackpos);
 											int cellStackRetVal = instance->QueryValueAttribute("cellstack", &cellStack);
-											int visitorRetVal = instance->QueryValueAttribute("visitor_radius", &visitorRadius);
-											const std::string* shapeType = instance->Attribute(std::string("visitor_shape"));
-											VisitorShapeInfo visitorShape = ITYPE_NO_SHAPE;
-											if (shapeType) {
-												if ("quad" == *shapeType) {
-													visitorShape = ITYPE_QUAD_SHAPE;
-												} else if ("circle" == *shapeType) {
-													visitorShape = ITYPE_CIRCLE_SHAPE;
-												}
-											}
 
 											if (objectId) {
 												if (namespaceId) {
@@ -411,12 +400,6 @@ namespace FIFE {
 
 														if  (cellStackRetVal == TIXML_SUCCESS) {
 															inst->setCellStackPosition(cellStack);
-														}
-
-														if  (visitorRetVal == TIXML_SUCCESS) {
-															inst->setVisitor(true);
-															inst->setVisitorRadius(visitorRadius);
-															inst->setVisitorShape(visitorShape);
 														}
 
 														if (costId) {
@@ -489,17 +472,6 @@ namespace FIFE {
 											if (success == TIXML_SUCCESS) {
 												ModelCoordinate mc(cellX, cellY);
 												Cell* cell = cache->createCell(mc);
-
-												const std::string* cellVisual = cellElement->Attribute(std::string("state"));
-												if (cellVisual) {
-													CellVisualEffect cve = CELLV_REVEALED;
-													if (*cellVisual == "concealed") {
-														cve = CELLV_CONCEALED;
-													} else if (*cellVisual == "masked") {
-														cve = CELLV_MASKED;
-													}
-													cell->setFoWType(cve);
-												}
 
 												const std::string* cellBlocker = cellElement->Attribute(std::string("blocker_type"));
 												if (cellBlocker) {

@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(LIBVORBIS_VERSION "1.3.5")
+set(LIBVORBIS_VERSION "1.3.6")
 
 set(LIBVORBIS_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
@@ -29,9 +29,9 @@ ExternalProject_Add(
     DEPENDS         libogg
     PREFIX          ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
-    DOWNLOAD_NAME   libvorbis-v${LIBOGG_VERSION}.zip
-    URL             http://downloads.xiph.org/releases/vorbis/libvorbis-${LIBOGG_VERSION}.zip    
-    URL_MD5         c39454ff13e79dc8c89bc3a9295b3298
+    DOWNLOAD_NAME   libvorbis-${LIBVORBIS_VERSION}.zip
+    URL             http://downloads.xiph.org/releases/vorbis/libvorbis-${LIBVORBIS_VERSION}.zip
+    URL_MD5         616e425b966604fc9e3bc09df96a3458
     PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/libvorbis/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/libvorbis
     CMAKE_ARGS      ${LIBVORBIS_CMAKE_ARGS}
 )
