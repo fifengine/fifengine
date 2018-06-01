@@ -38,8 +38,6 @@
 #include "model/metamodel/modelcoords.h"
 
 namespace FIFE {
-
-	// FORWARD REFERENCES
 	class Trigger;
 	class Map;
 	class Layer;
@@ -54,8 +52,6 @@ namespace FIFE {
 	 */
 	class TriggerController : public FifeClass {
 	public:
-
-	// LIFECYCLE
 
 		/** Constructor.
 		 *

@@ -47,7 +47,6 @@
 
 #include "view/camera.h"
 #include "view/visual.h"
-#include "cellrenderer.h"
 #include "instancerenderer.h"
 
 
@@ -217,10 +216,6 @@ namespace FIFE {
 				}
 			}
 		}
-		// Fixme
-		CellRenderer* cr = dynamic_cast<CellRenderer*>(cam->getRenderer("CellRenderer"));
-		Layer* fow_layer = cr->getFowLayer();
-		const bool check_fow = (fow_layer == layer && cr->isEnabledFogOfWar());
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
@@ -228,15 +223,6 @@ namespace FIFE {
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
 			float vertexZ = vc.vertexZ;
-
-			if (check_fow) {
-				Cell* cell = layer->getCellCache()->getCell(instance->getLocationRef().getLayerCoordinates());
-				if (cell) {
-					if (cell->getFoWType() != CELLV_REVEALED) {
-						continue;
-					}
-				}
-			}
 
 			if (m_area_layer) {
 				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();
@@ -410,25 +396,12 @@ namespace FIFE {
 				}
 			}
 		}
-		// Fixme
-		CellRenderer* cr = dynamic_cast<CellRenderer*>(cam->getRenderer("CellRenderer"));
-		Layer* fow_layer = cr->getFowLayer();
-		bool check_fow = (fow_layer == layer && cr->isEnabledFogOfWar());
 
 		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 //			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
-
-			if (check_fow) {
-				Cell* cell = layer->getCellCache()->getCell(instance->getLocationRef().getLayerCoordinates());
-				if (cell) {
-					if (cell->getFoWType() != CELLV_REVEALED) {
-						continue;
-					}
-				}
-			}
 
 			if(m_area_layer) {
 				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();

@@ -374,9 +374,7 @@ namespace FIFE {
 		m_defaultSpeedMulti(1.0),
 		m_neighborZ(-1),
 		m_blockingUpdate(false),
-		m_fowUpdate(false),
 		m_sizeUpdate(false),
-		m_updated(false),
 		m_searchNarrow(true),
 		m_staticSize(false) {
 		// create cell change listener
@@ -855,14 +853,6 @@ namespace FIFE {
 		return m_neighborZ;
 	}
 
-	void CellCache::setUpdated(bool updated) {
-		m_updated = updated;
-	}
-
-	bool CellCache::isUpdated() {
-		return m_updated;
-	}
-
 	std::vector<Cell*> CellCache::getCellsInLine(const ModelCoordinate& pt1, const ModelCoordinate& pt2, bool blocker) {
 		std::vector<Cell*> cells;
 		std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
@@ -882,6 +872,7 @@ namespace FIFE {
 
 	std::vector<Cell*> CellCache::getCellsInRect(const Rect& rec) {
 		std::vector<Cell*> cells;
+		cells.reserve(rec.w * rec.h);
 
 		ModelCoordinate current(rec.x, rec.y);
 		ModelCoordinate target(rec.x+rec.w, rec.y+rec.h);
@@ -890,6 +881,24 @@ namespace FIFE {
 			for (; current.x < target.x; ++current.x) {
 				Cell* c = getCell(current);
 				if (c) {
+					cells.push_back(c);
+				}
+			}
+		}
+		return cells;
+	}
+
+	std::vector<Cell*> CellCache::getBlockingCellsInRect(const Rect& rec) {
+		std::vector<Cell*> cells;
+		cells.reserve(rec.w * rec.h);
+
+		ModelCoordinate current(rec.x, rec.y);
+		ModelCoordinate target(rec.x + rec.w, rec.y + rec.h);
+		for (; current.y < target.y; ++current.y) {
+			current.x = rec.x;
+			for (; current.x < target.x; ++current.x) {
+				Cell* c = getCell(current);
+				if (c && c->getCellType() != CTYPE_NO_BLOCKER) {
 					cells.push_back(c);
 				}
 			}
@@ -1523,17 +1532,11 @@ namespace FIFE {
 		m_blockingUpdate = update;
 	}
 
-	void CellCache::setFowUpdate(bool update) {
-		m_fowUpdate = update;
-	}
-
 	void CellCache::setSizeUpdate(bool update) {
 		m_sizeUpdate = update;
 	}
 
 	void CellCache::update() {
-		m_updated = m_fowUpdate;
-		m_fowUpdate = false;
 		if (m_sizeUpdate) {
 			resize();
 			m_sizeUpdate = false;

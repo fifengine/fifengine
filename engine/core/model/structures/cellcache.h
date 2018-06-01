@@ -245,16 +245,6 @@ namespace FIFE {
 			 */
 			int32_t getMaxNeighborZ();
 
-			/** Sets whether the CellCache need to be updated.
-			 * @param updated A boolean, true means no update is needed, false indicates a update.
-			 */
-			void setUpdated(bool updated);
-
-			/** Gets whether the CellCache need to be updated.
-			 * @return A boolean, true means no update is needed, false indicates a update.
-			 */
-			bool isUpdated();
-
 			/** Returns all cells in the line.
 			 * @param pt1 A const reference to the ModelCoordinate where the line begin.
 			 * @param pt2 A const reference to the ModelCoordinate where the line end.
@@ -268,6 +258,12 @@ namespace FIFE {
 			 * @return A vector that contain the cells.
 			 */
 			std::vector<Cell*> getCellsInRect(const Rect& rec);
+
+			/** Returns all blocking cells in the rect.
+			* @param rec A const reference to the Rect which specifies the size.
+			* @return A vector that contain the cells.
+			*/
+			std::vector<Cell*> getBlockingCellsInRect(const Rect& rec);
 
 			/** Returns all cells in the circle.
 			 * @param center A const reference to the ModelCoordinate where the center of the circle is.
@@ -608,7 +604,6 @@ namespace FIFE {
 			bool isStaticSize();
 
 			void setBlockingUpdate(bool update);
-			void setFowUpdate(bool update);
 			void setSizeUpdate(bool update);
 			void update();
 		private:
@@ -652,14 +647,8 @@ namespace FIFE {
 			//! indicates blocking update
 			bool m_blockingUpdate;
 
-			//! indicates fow update
-			bool m_fowUpdate;
-
 			//! indicates size update
 			bool m_sizeUpdate;
-
-			//! need update
-			bool m_updated;
 
 			//! is automatic seach enabled
 			bool m_searchNarrow;

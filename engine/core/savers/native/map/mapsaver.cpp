@@ -214,17 +214,6 @@ namespace FIFE {
 					instanceElement->SetAttribute("cellstack", (*iter)->getCellStackPosition());
 				}
 
-				if ((*iter)->isVisitor()) {
-					instanceElement->SetAttribute("visitor_radius", (*iter)->getVisitorRadius());
-					std::string shape("none");
-					if ((*iter)->getVisitorShape() == ITYPE_QUAD_SHAPE) {
-						shape = "quad";
-					} else if ((*iter)->getVisitorShape() == ITYPE_CIRCLE_SHAPE) {
-						shape = "circle";
-					}
-					instanceElement->SetAttribute("visitor_shape", shape);
-				}
-
 				if ((*iter)->isSpecialCost()) {
 					if (!obj->isSpecialCost()) {
 						instanceElement->SetAttribute("cost_id", (*iter)->getCostId());
@@ -298,8 +287,6 @@ namespace FIFE {
 						areasEmpty = cellAreaIds.empty();
 					}
 
-					CellVisualEffect cve = cell->getFoWType();
-					bool cellVisual = cve == CELLV_CONCEALED;
 					CellTypeInfo cti = cell->getCellType();
 					bool cellBlocker = (cti != CTYPE_CELL_NO_BLOCKER && cti != CTYPE_CELL_BLOCKER);
 					TransitionInfo* transition = cell->getTransition();
@@ -311,7 +298,7 @@ namespace FIFE {
 						}
 					}
 					if (costsEmpty && defaultCost && defaultSpeed && areasEmpty &&
-						cellVisual && cellBlocker && !transition && !isNarrow) {
+						cellBlocker && !transition && !isNarrow) {
 						continue;
 					}
 					// add cell tag to document
@@ -325,13 +312,7 @@ namespace FIFE {
 					if (!defaultSpeed) {
 						cellElement->SetDoubleAttribute("default_speed", cell->getSpeedMultiplier());
 					}
-					if (!cellVisual) {
-						if (cve == CELLV_REVEALED) {
-							cellElement->SetAttribute("state", "revealed");
-						} else {
-							cellElement->SetAttribute("state", "masked");
-						}
-					}
+
 					if (!cellBlocker) {
 						if (cti == CTYPE_CELL_NO_BLOCKER) {
 							cellElement->SetAttribute("blocker_type", "no_blocker");

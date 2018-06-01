@@ -36,13 +36,8 @@ namespace FIFE {
 		void setPathColor(uint8_t r, uint8_t g, uint8_t b);
 		void setEnabledBlocking(bool enabled);
 		bool isEnabledBlocking();
-		void setEnabledFogOfWar(bool enabled);
-		bool isEnabledFogOfWar();
 		void setEnabledPathVisual(bool enabled);
 		bool isEnabledPathVisual();
-		void setFogOfWarLayer(Layer* layer);
-		void setConcealImage(ImagePtr image);
-		void setMaskImage(ImagePtr image);
 		void addPathVisual(Instance* instance);
 		void removePathVisual(Instance* instance);
 		void setEnabledCost(const std::string& costId, bool enabled);

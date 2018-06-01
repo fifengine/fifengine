@@ -64,19 +64,6 @@ namespace FIFE {
 	};
 	typedef uint8_t CellTypeInfo;
 
-	/** Defines different cell visuals which are used for Fog of War.
-	 *
-	 * CELLV_CONCEALED mark the cell as hidden.
-	 * CELLV_REVEALED mark the cell as explored and in visible range.
-	 * CELLV_MASKED mark the cell as explored but currently not in visible range.
-	 */
-	enum CellVisualType {
-		CELLV_CONCEALED = 0,
-		CELLV_REVEALED,
-		CELLV_MASKED
-	};
-	typedef uint8_t CellVisualEffect;
-
 	/** Simple class to hold the data for transistions.
 	 */
 	class TransitionInfo {
@@ -315,31 +302,6 @@ namespace FIFE {
 			 * @return A pointer to the transition.
 			 */
 			TransitionInfo* getTransition();
-			
-			/** Sets the cell visual.
-			 * @see CellVisualType
-			 */
-			void setFoWType(CellVisualEffect type);
-
-			/** Returns the cell visual.
-			 * @see CellVisualType
-			 */
-			CellVisualEffect getFoWType();
-
-			/** Adds a instance as visitor to this cell. Instance visitor radius is then used e.g. for Fog of War.
-			 * @param instance A pointer to the instance.
-			 */
-			void addVisitorInstance(Instance* instance);
-
-			/** Removes the visitor instance from this cell.
-			 * @param instance A pointer to the instance.
-			 */
-			void removeVisitorInstance(Instance* instance);
-
-			/** Returns all visitor instances on this cell.
-			 * @return A const reference to a set of all visitor instances.
-			 */
-			const std::vector<Instance*>& getVisitorInstances();
 
 			/** Adds new cell delete listener.
 			 * @param listener A pointer to the listener.
@@ -390,7 +352,6 @@ namespace FIFE {
 		private:
 
 			void updateCellBlockingInfo();
-			void updateCellFowInfo();
 
 			//! holds coordinate as a unique integer id
 			int32_t m_coordId;
@@ -416,14 +377,8 @@ namespace FIFE {
 			//! CellType
 			CellTypeInfo m_type;
 
-			//! visual cell status
-			CellVisualEffect m_fowType;
-
 			// contained Instances
 			std::set<Instance*> m_instances;
-
-			//! contains visitor instances
-			std::vector<Instance*> m_visitors;
 
 			//! neighbor cells
 			std::vector<Cell*> m_neighbors;

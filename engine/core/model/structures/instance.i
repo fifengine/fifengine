@@ -79,13 +79,6 @@ namespace FIFE {
 		virtual void onInstanceDeleted(Instance* instance) = 0;
 	};
 
-	enum VisitorShapeType {
-		ITYPE_NO_SHAPE = 0,
-		ITYPE_QUAD_SHAPE,
-		ITYPE_CIRCLE_SHAPE
-	};
-	typedef uint8_t VisitorShapeInfo;
-
 	class Instance : public FifeClass {
 	public:
 		Instance(Object* object, const Location& location, const std::string& identifier="");
@@ -137,12 +130,6 @@ namespace FIFE {
 		template<typename T> T* getVisual() const;
 
 		Route* getRoute();
-		void setVisitor(bool visit);
-		bool isVisitor();
-		void setVisitorShape(VisitorShapeInfo info);
-		VisitorShapeInfo getVisitorShape();
-		void setVisitorRadius(uint16_t radius);
-		uint16_t getVisitorRadius();
 		void setCellStackPosition(uint8_t stack);
 		uint8_t getCellStackPosition();
 		bool isSpecialCost();
