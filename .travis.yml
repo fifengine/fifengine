@@ -3,11 +3,11 @@ sudo: required
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
       compiler: clang
       python: "3.6"
     - os: linux
-      dist: trusty
+      dist: xenial
       compiler: gcc
       python: "3.5"
     - os: osx
@@ -21,13 +21,13 @@ addons:
     sources:
     # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-trusty-6.0
+    - llvm-toolchain-xenial-7
     packages:
     - gcc-8
     - g++-8
-    - clang-6.0
-    - llvm-6.0-dev
-    - libclang-6.0-dev
+    #- clang-7.0
+    #- llvm-7.0-dev
+    #- libclang-7.0-dev
     - mesa-common-dev
     - libsdl2-dev
     - libsdl2-image-dev
@@ -49,12 +49,10 @@ before_install:
   # change gcc to version 8
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
-  # change clang to version 6.0
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 20; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-5.0.0/bin/clang; sudo rm -f /usr/local/clang-5.0.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev libvorbis-dev libalut-dev cppcheck; fi
-  # update swig to version 3.x
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list'; sudo apt-get update -qq; sudo apt-get install -yqq swig3.0/trusty-backports; fi
+  # change clang to version 7.0
+  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 20; fi
+  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-5.0.0/bin/clang; sudo rm -f /usr/local/clang-5.0.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
+  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev libvorbis-dev libalut-dev cppcheck; fi
   # install newer version of pylint, the one fetched with apt-get is broken
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
   # MacOS Build
