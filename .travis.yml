@@ -57,7 +57,7 @@ before_install:
   # install newer version of pylint, the one fetched with apt-get is broken
   #- if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
   # Swig
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo add-apt-repository ppa:timsc/swig-3.0.12 -y; sudo apt-get update -q; sudo apt-get install swig
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo add-apt-repository ppa:timsc/swig-3.0.12 -y; sudo apt-get update -q; sudo apt-get install swig; fi
   # MacOS Build
   - if [ $TRAVIS_OS_NAME == osx ]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install boost swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis python3 python || brew upgrade boost swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis python3 python || brew outdated boost swig sdl2 sdl2_image sdl2_ttf freetype openal-soft tinyxml glew libvorbis  python3 python; fi
   - cmake --version
