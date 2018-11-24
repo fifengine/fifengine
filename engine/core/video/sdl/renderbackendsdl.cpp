@@ -262,53 +262,28 @@ namespace FIFE {
 		int32_t yMax = p1.y;
 		int32_t yMin = p1.y;
 
-		std::vector<Point> points;
+		std::array<Point, 4> points;
 		Point p(p1.x + cornerX, p1.y + cornerY);
 		yMax = std::max(yMax, p.y);
 		yMin = std::min(yMin, p.y);
-		points.push_back(p);
+		points[0] = p;
 		p.x = p2.x + cornerX;
 		p.y = p2.y + cornerY;
 		yMax = std::max(yMax, p.y);
 		yMin = std::min(yMin, p.y);
-		points.push_back(p);
+		points[1] = p;
 		p.x = p2.x - cornerX;
 		p.y = p2.y - cornerY;
 		yMax = std::max(yMax, p.y);
 		yMin = std::min(yMin, p.y);
-		points.push_back(p);
+		points[2] = p;
 		p.x = p1.x - cornerX;
 		p.y = p1.y - cornerY;
 		yMax = std::max(yMax, p.y);
 		yMin = std::min(yMin, p.y);
-		points.push_back(p);
+		points[3] = p;
 
-		// scan-line fill algorithm
-		int32_t y = yMin;
-		int32_t n = points.size();
-		for (; y <= yMax; ++y) {
-			std::vector<int32_t> xs;
-			int32_t j = n - 1;
-			for (int32_t i = 0; i < n; j = i++) {
-				if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
-					int32_t x = static_cast<int32_t>(points[i].x + static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) * static_cast<float>(points[j].x - points[i].x));
-					xs.push_back(x);
-					for (int32_t k = xs.size() - 1; k && xs[k-1] > xs[k]; --k) {
-						std::swap(xs[k-1], xs[k]);
-					}
-				}
-			}
-
-			for (int32_t i = 0; i < xs.size(); i += 2) {
-				int32_t x1 = xs[i];
-				int32_t x2 = xs[i+1];
-				// vertical line
-				while (x1 <= x2) {
-					putPixel(x1, y, r, g, b, a);
-					++x1;
-				}
-			}
-		}
+		fillPolygon(points.begin(), points.end(), yMin, yMax, r, g, b, a);
 	}
 
 	void RenderBackendSDL::drawPolyLine(const std::vector<Point>& points, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -479,6 +454,11 @@ namespace FIFE {
 		}
 
 		std::vector<Point> points;
+		size_t expectedPointsCount = 1 + /* first push back */
+                                     (e - s + 1) + /* for-loop's push backs */
+                                     1; /* end point push back */
+        points.reserve(expectedPointsCount);
+
 		points.push_back(p);
 		int32_t yMax = p.y;
 		int32_t yMin = p.y;
@@ -496,32 +476,7 @@ namespace FIFE {
 		yMax = std::max(yMax, newPoint.y);
 		yMin = std::min(yMin, newPoint.y);
 
-		// scan-line fill algorithm
-		int32_t y = yMin;
-		int32_t n = points.size();
-		for (; y <= yMax; ++y) {
-			std::vector<int32_t> xs;
-			int32_t j = n - 1;
-			for (int32_t i = 0; i < n; j = i++) {
-				if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
-					int32_t x = static_cast<int32_t>(points[i].x + static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) * static_cast<float>(points[j].x - points[i].x));
-					xs.push_back(x);
-					for (int32_t k = xs.size() - 1; k && xs[k-1] > xs[k]; --k) {
-						std::swap(xs[k-1], xs[k]);
-					}
-				}
-			}
-
-			for (int32_t i = 0; i < xs.size(); i += 2) {
-				int32_t x1 = xs[i];
-				int32_t x2 = xs[i+1];
-				// vertical line
-				while (x1 <= x2) {
-					putPixel(x1, y, r, g, b, a);
-					++x1;
-				}
-			}
-		}
+        fillPolygon(points.begin(), points.end(), yMin, yMax, r, g, b, a);
 	}
 
 	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
