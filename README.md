@@ -6,8 +6,8 @@ Flexible Isometric Free Engine (FIFE) is a multi-platform isometric game engine 
 It comes with Python bindings allowing users to create games using Python as well as C++. 
 The engine is extendable and enables you to add any feature you can imagine to your project.
 
-| [Website](http://fifengine.net/) | [Forum](http://forums.fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
-|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| [Website](http://fifengine.net/) | [![#fife on Freenode](https://img.shields.io/badge/freenode-%23fife-green.svg)](https://webchat.freenode.net/?channels=fife) | [Changelog](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md) | [Releases](https://github.com/fifengine/fifengine/releases) | [Source Code (zip)](https://github.com/fifengine/fifengine/archive/master.zip) |
+|:--------:|:--------:|:--------:|:--------:|:--------:|
 
 | Continuous Integration | Linux |   Mac    | Windows |
 |:----------------------:|:-----:|:--------:|:-------:|
@@ -101,8 +101,7 @@ There is also a set of C++ tutorials demonstrating the usage of the engine, when
 ### Video Card/Driver Issues
 There are some known driver/card combinations that exhibit some problems with
 FIFE.  Users have reported seeing blank screens or fuzzy images.  If this is
-happening to you please report it on our forums in the Help and troubleshooting
-section here: http://forums.fifengine.net/index.php?board=4.0
+happening to you please report it on our [issue tracker](https://github.com/fifengine/fifengine/issues).
 
 Please include your Card/Driver/OS information in your post.  Currently the fix
 is to modify your `settings.xml` file and set both GLUseFramebuffer and GLUseNPOT
@@ -119,6 +118,4 @@ Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
 We appreciate every kind of feedback concerning the release, the project in 
 general and the bundled techdemo. Feedback is a great way to help us to improve 
 FIFE. If you would like to get in contact with us and provide feedback you can 
-either visit our IRC channel or our forums:
- * #fife on freenode.net
- * http://forums.fifengine.net/
+either visit our IRC channel: #fife on freenode.net.
