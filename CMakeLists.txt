@@ -199,6 +199,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/AL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/cegui"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
 
@@ -214,6 +215,7 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/cegui"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
     
