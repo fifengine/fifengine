@@ -44,8 +44,6 @@ init:
   - date /T & time /T
   - git config --global core.autocrlf input
   - cmake --version
-  # go to hell Xamarin (see http://help.appveyor.com/discussions/problems/4569)
-  #- del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
   # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
   - ps: >-
       if ($env:APPVEYOR_REPO_TAG -eq "true")
