@@ -446,11 +446,22 @@ find_path(CEGUI_INCLUDE_DIR NAMES CEGUI.h HINTS ${CEGUI_INC_SEARCH_PATH} ${CEGUI
 set(CEGUI_INCOMPATIBLE FALSE)
 if (CEGUI_INCLUDE_DIR)
     # determine CEGUI version
-    if(CEGUI_CONFIG_INCLUDE_DIR_PREFIX)
-        file(READ ${CEGUI_INCLUDE_DIR}/CEGUIVersion.h CEGUI_TEMP_VERSION_CONTENT)
+    
+    # Determine version file path
+    set(VERSION_FILE_PATH "")
+    
+    if(EXISTS "${CEGUI_CONFIG_INCLUDE_DIR}/CEGUIVersion.h")
+        set(VERSION_FILE_PATH "${CEGUI_CONFIG_INCLUDE_DIR}/CEGUIVersion.h")
+    elseif(EXISTS "${CEGUI_INCLUDE_DIR}/Version.h")
+        set(VERSION_FILE_PATH "${CEGUI_INCLUDE_DIR}/Version.h")
+    elseif(EXISTS "${CEGUI_CONFIG_INCLUDE_DIR}/CEGUI/Version.h")
+        set(VERSION_FILE_PATH "${CEGUI_CONFIG_INCLUDE_DIR}/CEGUI/Version.h")
     else()
-        file(READ ${CEGUI_INCLUDE_DIR}/Version.h CEGUI_TEMP_VERSION_CONTENT)
+        message(SEND_ERROR "Could not find CEGUI's Version.h file!")
     endif()
+    
+    file(READ ${VERSION_FILE_PATH} CEGUI_TEMP_VERSION_CONTENT)
+        
 
     if (NOT "${CEGUI_TEMP_VERSION_CONTENT}" STREQUAL "")
         get_preprocessor_entry(CEGUI_TEMP_VERSION_CONTENT CEGUI_VERSION_MAJOR CEGUI_VERSION_MAJOR)
