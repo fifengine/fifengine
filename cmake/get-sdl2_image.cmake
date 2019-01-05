@@ -5,7 +5,7 @@
 
 include(ExternalProject)
 
-set(SDL2_IMAGE_VERSION "2.0.3")
+set(SDL2_IMAGE_VERSION "2.0.4")
 
 # For win32 it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -18,7 +18,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz  
-      URL_MD5 c5a462106513b585dfa1a461a6874afc
+      URL_MD5 53fd232ce4d70a3af18909a8a7248094
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -36,7 +36,7 @@ if (WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-VC.zip
-      URL_MD5 1dc577c96e1029bed1df79ecfc80fe67
+      URL_MD5 9435e3ecc2f03eed6a24c7ed2dd96d99
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND 
@@ -53,7 +53,7 @@ else() # build from source
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL https://libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
-    URL_MD5 c6baf6dfa80fa8a66853661a36a6034e
+    URL_MD5 88b9766d5b64a67f82ba511c57e7ce10
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
   )
 
