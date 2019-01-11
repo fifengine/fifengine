@@ -1,11 +1,50 @@
 # ChangeLog
 
-## [Unreleased]
+## [0.4.2] - 2019-01-11
+
+### Engine
+* Remove Fog of War
+* Python 3.x support
+* Joystick and gamepad support
+* Implement hardware image cursor
+* Add more functionality to FIFE::SoundManager and get rid of the SoundManager extension
+* Sound Effects (A Feature to apply a number of sound effects on emitters such as FadeIn/Out. Perhabs also with use of the openAL EFX-extension.)
+* remove boost:regexp - replace with std:regexp
+* Pychan widget events #705
+* New fifechan widgets
+* New pychan attributes: ListAttr, ImageAttr
+* The most Pychan functions should be ported to Fifechan.
 
 ### Misc
 * replaced GLEE with GLEW
 * remove build options `rend-camzones`, `rend-grid`, `use-githash`
 * version infos incl. git hash are inserted into version.h from CMakeLists, PR #997
+* Distinguish filtered mouse events
+* python bindings probably should not install cegui/librocket/etc. unconditionally
+* cameras must be attached to layers
+* Update outdated dependencies analyser & hook it into travis
+* Pychan should load it's font definitions from an XML file
+* Unchecked dependency for Xcursor
+* Copy pychan widgets/container at runtime (gui templates)
+* The Console should be optional when using fifechan
+
+### Bug Fixes
+* MouseScroll Button Pressing can crash fife
+* MacOS ld: warning: -L path '/usr/local/lib/libfifechan.dylib' is not a directory
+* Window width settings are not fully respected when using two screens
+* Build error with CEGUI
+* Investigate possilbe problems with CellGrid
+* Render problems with SDL 2.0.5
+* cegui widgets not cleared correctly with active map.
+* fife soundemitter lets UH hang
+* Soundemitter callback if soundclip was played
+* Box widgets should contain information about the on-screen positioning (not only relative to parent widget)
+* adjustSize() sometimes sets width to invalid values
+* Spacers don't expand to the dedicated maximum space
+* Some strings are cut short
+* Borders are not rendered on edges of widgets that touch their parent container's edge.
+* Pychan dropdown menus crash FIFE-based client on win32
+
 
 ## [0.4.1] - 2017-02-07
 

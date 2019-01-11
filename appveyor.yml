@@ -139,11 +139,11 @@ after_build:
   - ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
   - ps: copy-item "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python setup.py set_metadata --version=0.4.1 bdist_msi --target-version="%PYTHON_VERSION%"
-  - python setup.py set_metadata --version=0.4.1 bdist_dumb --format=zip
+  - python setup.py set_metadata --version=0.4.2 bdist_msi --target-version="%PYTHON_VERSION%"
+  - python setup.py set_metadata --version=0.4.2 bdist_dumb --format=zip
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32-py%PYTHON_VERSION%.msi"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.1.win32.zip"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32-py%PYTHON_VERSION%.msi"
+  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32.zip"
 
   - dir C:\projects\build /s
   - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
@@ -155,7 +155,7 @@ artifacts:
     name: LibFife
   - path: 'dist\libfife-*py%PYTHON_VERSION%.msi'
     name: Python%PYTHON_VERSION%Installer
-  - path: 'dist\libfife-0.4.1.win32.zip'
+  - path: 'dist\libfife-0.4.2.win32.zip'
     name: Python%PYTHON_VERSION%-zip
 
 # deploy to Github Releases on tag push
