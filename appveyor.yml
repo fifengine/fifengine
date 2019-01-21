@@ -29,7 +29,7 @@ matrix:
 
 cache:
 #  - C:\projects\fifengine-dependencies
-#  - C:\projects\fifengine-dependencies\downloads
+  - C:\projects\fifengine-dependencies\downloads -> .appveyor.yml
 #  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
