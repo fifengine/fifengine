@@ -30,7 +30,7 @@ if (WIN32)
       cegui
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-      #URL                https://some.where/cegui/releases/tag/${CEGUICHAN_VERSION}/cegui-sdk-v${CEGUI_VERSION}-VC14-x86.zip
+      #URL                https://some.where/cegui/releases/tag/${CEGUI_VERSION}/cegui-sdk-v${CEGUI_VERSION}-VC14-x86.zip
       URL                 https://github.com/fifengine/fifengine/releases/download/0.4.1/cegui-sdk-VC14-x86.zip
       URL_MD5             79b026e2382622d6f75cbe40a1ab363b
       CONFIGURE_COMMAND   ""
