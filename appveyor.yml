@@ -19,14 +19,10 @@ environment:
     - generator: "Visual Studio 15"
       PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
-    # VS 15 + Py3.5
-    #- generator: "Visual Studio 15"
-    #  PYTHON: "C:\\Python35"
-    #  PYTHON_VERSION: "3.5"
-    # VS 15 + Py3.6
+    # VS 15 + Py3.7
     - generator: "Visual Studio 15"
-      PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6"
+      PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7"
 
 matrix:
   fast_finish: true
