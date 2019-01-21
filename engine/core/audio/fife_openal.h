@@ -22,13 +22,13 @@
 #ifndef FIFE_FIFE_OPENAL_H
 #define FIFE_FIFE_OPENAL_H
 
-#define AL_ALEXT_PROTOTYPES
-
 // Standard C++ library includes
 
 #include <AL/al.h>
 #include <AL/alc.h>
+#define AL_ALEXT_PROTOTYPES
 #include <AL/alext.h>
+#undef AL_ALEXT_PROTOTYPES
 #include <AL/efx-presets.h>
 
 // 3rd party library includes
