@@ -63,7 +63,7 @@ install:
   - if "%generator%" == "Visual Studio 15" (SET boost_root=C:\Libraries\boost_1_67_0)
   - if "%generator%" == "Visual Studio 15" (SET boost_librarydir=C:\Libraries\boost_1_67_0\lib32-msvc-14.1)
   # get dependencies
-  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build -DFIFE_DEPENDENCY_CEGUI=OFF
+  - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
   #- ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
   # show dependency folders
