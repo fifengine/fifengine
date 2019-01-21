@@ -40,18 +40,15 @@ IF (APPLE)
   NAMES libopenal.dylib openal.dylib
   PATHS
     /usr/local/opt/openal-soft/lib
-  # for debugging
-  message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
-  message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
   )
 ENDIF (APPLE)
+
+# for debugging
+message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
+message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
 
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(OPENALSOFT REQUIRED_VARS OPENALSOFT_LIBRARY OPENALSOFT_INCLUDE_DIR)
 
 mark_as_advanced(OPENALSOFT_INCLUDE_DIR OPENALSOFT_LIBRARY)
-
-# for debugging
-#message(STATUS "OPENALSOFT_INCLUDE_DIR  = '${OPENALSOFT_INCLUDE_DIR}'")
-#message(STATUS "OPENALSOFT_LIBRARY      = '${OPENALSOFT_LIBRARY}'")
