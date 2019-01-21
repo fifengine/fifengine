@@ -55,6 +55,8 @@ init:
   # Show version and architecture for Python
   - "%PYTHON%\\python.exe --version"
   - "%PYTHON%\\python.exe -c \"import struct; print(struct.calcsize('P') * 8)\""
+  # remove global vcpkg integration into cmake
+  - vcpkg integrate remove
 
 install:
   # set path to boost according to compiler toolchain
