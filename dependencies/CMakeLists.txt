@@ -75,7 +75,7 @@ OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"   
 OPTION(FIFE_DEPENDENCY_LIBOGG        "Download and build dependency: LIBOGG"     ON)
 OPTION(FIFE_DEPENDENCY_LIBVORBIS     "Download and build dependency: LIBVORBIS"  ON)
 OPTION(FIFE_DEPENDENCY_FIFECHAN      "Download and build dependency: FIFECHAN"   ON)
-OPTION(FIFE_DEPENDENCY_CEGUI         "Download and build dependency: CEGUI"      ON)
+OPTION(FIFE_DEPENDENCY_CEGUI         "Download and build dependency: CEGUI"      OFF)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
