@@ -27,8 +27,6 @@ environment:
     - generator: "Visual Studio 15"
       PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6"
-    # MinGW
-    #- generator: "MinGW Makefiles"
 
 matrix:
   fast_finish: true
@@ -75,10 +73,6 @@ install:
   - dir ..\fifengine-dependencies\downloads
   - dir ..\fifengine-dependencies\includes /s
 
-#before_build:
-  # git sh.exe conflicts with MinGW makefiles
-  #- if "%generator%"=="MinGW Makefiles" (set "PATH=%PATH:C:\Program Files\Git\usr\bin;=%")
-
 build_script:
   - dir
   # create folder for an out-of-source-tree build: "c:\projects\build"
@@ -119,7 +113,6 @@ build_script:
 after_build:
   - dir C:\projects\build\Release /s
   - if "%generator%"=="Visual Studio 15" (set COMPILER="VC15")
-  #- if "%generator%"=="MinGW Makefiles"  (set COMPILER="MinGW")
 
   # package dependencies artifact
   - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
