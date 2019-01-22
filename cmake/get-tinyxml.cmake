@@ -19,8 +19,8 @@ if (WIN32)
     URL_MD5               2a0aaf609c9e670ec9748cd01ed52dae
     PATCH_COMMAND         ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/tinyxml/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml
     INSTALL_COMMAND       ${CMAKE_COMMAND} -E make_directory ${DEPENDENCY_INSTALL_DIR}/include/tinyxml
-      COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/Release/tinyxml.dll  ${DEPENDENCY_INSTALL_DIR}/bin/tinyxml.dll    
-      COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/Release/tinyxml.lib  ${DEPENDENCY_INSTALL_DIR}/lib/tinyxml.lib    
+      COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/${CMAKE_BUILD_TYPE}/tinyxml.dll  ${DEPENDENCY_INSTALL_DIR}/bin/tinyxml.dll    
+      COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml-build/${CMAKE_BUILD_TYPE}/tinyxml.lib  ${DEPENDENCY_INSTALL_DIR}/lib/tinyxml.lib    
       COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml/tinystr.h                  ${DEPENDENCY_INSTALL_DIR}/include/tinyxml/tinystr.h
       COMMAND ${CMAKE_COMMAND} -E copy ${DEPENDENCY_EXTRACT_DIR}/src/tinyxml/tinyxml.h                  ${DEPENDENCY_INSTALL_DIR}/include/tinyxml/tinyxml.h    
   )
