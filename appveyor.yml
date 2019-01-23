@@ -63,6 +63,7 @@ install:
   # get dependencies
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
+  - build\cleanup-includes-x86.bat
   - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
   # show dependency folders
   - dir ..\fifengine-dependencies

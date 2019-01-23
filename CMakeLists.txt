@@ -195,7 +195,6 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/AL"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib/x86"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
 
     # help to find dependencies on your local env (FifeSDK)
@@ -204,14 +203,11 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/../python"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/boost"
+    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
     "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/boost"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib/x86"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib/x86"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/lib"
     
   )
 endif(WIN32)
