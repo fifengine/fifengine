@@ -17,7 +17,7 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "default install path" FORCE )
 endif()
 
-message(STATUS "\nWelcome!\n== Build System for ${PROJECT_NAME}")
+message(STATUS "\n== Build System for ${PROJECT_NAME}\n")
 
 # create a "Release" build by default
 if(NOT CMAKE_BUILD_TYPE)
