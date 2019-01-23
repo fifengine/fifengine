@@ -124,10 +124,7 @@ after_build:
 
   # package Python Installer artifact
   #PyCEGUI installs its dlls itself
-  #- ps: copy-item "C:\projects\build\*.py" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  #- ps: copy-item "C:\projects\build\Release\*.*" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  #- ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
-  - copy C:\projects\fifengine-dependencies\includes\bin\*.dll "%APPVEYOR_BUILD_FOLDER%\engine\python\fife"
+  #- copy C:\projects\fifengine-dependencies\includes\bin\*.dll "%APPVEYOR_BUILD_FOLDER%\engine\python\fife"
   - cd %APPVEYOR_BUILD_FOLDER%
   - python setup.py set_metadata --version=0.4.2 bdist_msi --target-version="%PYTHON_VERSION%"
   - python setup.py set_metadata --version=0.4.2 bdist_dumb --format=zip
@@ -135,8 +132,8 @@ after_build:
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32-py%PYTHON_VERSION%.msi"
   - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32.zip"
 
-  - dir C:\projects\build /s
-  - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
+  #- dir C:\projects\build /s
+  #- dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
 
 artifacts:
   - path: 'libfife-dependencies-*.zip'
