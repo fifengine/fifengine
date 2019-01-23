@@ -29,7 +29,7 @@ matrix:
 
 cache:
 #  - C:\projects\fifengine-dependencies
-#  - C:\projects\fifengine-dependencies\downloads
+   - C:\projects\fifengine-dependencies\downloads
 #  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
@@ -64,7 +64,7 @@ install:
   - cmake dependencies -G "%generator%" -B../fifengine-dependencies/build
   - cmake --build ../fifengine-dependencies/build --target ALL_BUILD --config %configuration%
   - build\cleanup-includes-x86.bat
-  - ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
+  #- ps: .$env:APPVEYOR_BUILD_FOLDER\build\appveyor\dl_extract_cegui-sdk.ps1
   # show dependency folders
   - dir ..\fifengine-dependencies
   - dir ..\fifengine-dependencies\downloads
@@ -86,7 +86,7 @@ build_script:
     -DBOOST_LIBRARYDIR="%boost_librarydir%"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=ON
-    -DCEGUI=ON
+    -DCEGUI=OFF
   # build
   - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   # install
@@ -101,7 +101,7 @@ build_script:
     -DBOOST_LIBRARYDIR="%boost_librarydir%"
     -Dbuild-library=ON
     -DBUILD_SHARED_LIBS=OFF
-    -DCEGUI=ON
+    -DCEGUI=OFF
   # build
   - cmake --build . --target ALL_BUILD --config %configuration% -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   # install
@@ -124,10 +124,10 @@ after_build:
 
   # package Python Installer artifact
   #PyCEGUI installs its dlls itself
-  - ps: copy-item "C:\projects\build\*.py" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  - ps: copy-item "C:\projects\build\Release\*.*" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  - ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
-  - ps: copy-item "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+  #- ps: copy-item "C:\projects\build\*.py" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+  #- ps: copy-item "C:\projects\build\Release\*.*" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+  #- ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
+  - copy C:\projects\fifengine-dependencies\includes\bin\*.dll "%APPVEYOR_BUILD_FOLDER%\engine\python\fife"
   - cd %APPVEYOR_BUILD_FOLDER%
   - python setup.py set_metadata --version=0.4.2 bdist_msi --target-version="%PYTHON_VERSION%"
   - python setup.py set_metadata --version=0.4.2 bdist_dumb --format=zip
