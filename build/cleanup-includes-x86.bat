@@ -2,7 +2,7 @@
 
 :: cleanup the includes folder
 
-pushd ..\..\fifengine-dependencies\includes
+pushd %~dp0..\..\fifengine-dependencies\includes
 rd share /s /q
 move lib\x86\*.dll bin
 move lib\x86\*.lib lib
@@ -11,7 +11,7 @@ mkdir licenses
 move lib\x86\*.txt licenses
 popd
 
-pushd ..\..\fifengine-dependencies\includes\lib
+pushd %~dp0..\..\fifengine-dependencies\includes\lib
 rd x64 /s /q
 rd libpng /s /q
 popd
