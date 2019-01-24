@@ -16,9 +16,9 @@ environment:
   MSBUILD_FLAGS: /verbosity:minimal /maxcpucount
   matrix:
     # VS 15 + Py2.7
-    - generator: "Visual Studio 15"
-      PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7"
+    #- generator: "Visual Studio 15"
+    #  PYTHON: "C:\\Python27"
+    #  PYTHON_VERSION: "2.7"
     # VS 15 + Py3.7
     - generator: "Visual Studio 15"
       PYTHON: "C:\\Python37"
@@ -28,9 +28,7 @@ matrix:
   fast_finish: true
 
 cache:
-#  - C:\projects\fifengine-dependencies
-#  - C:\projects\fifengine-dependencies\downloads
-#  - C:\projects\fifengine-dependencies\includes
+   - C:\projects\fifengine-dependencies\downloads
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -116,37 +114,33 @@ after_build:
   - call %APPVEYOR_BUILD_FOLDER%\build\appveyor\copy-boost-to-includes.bat
   - cd C:\projects\fifengine-dependencies\includes
   - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+  #- appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-dependencies-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
 
   # package libfife artifact
   - cd c:\fife\install
   - 7z a -tzip -mx9 "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
+  #- appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\libfife-%APPVEYOR_BUILD_VERSION%-%COMPILER%-%platform%.zip"
 
-  # package Python Installer artifact
-  #PyCEGUI installs its dlls itself
-  - ps: copy-item "C:\projects\build\*.py" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  - ps: copy-item "C:\projects\build\Release\*.*" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
-  - ps: copy-item "C:\projects\fifengine-dependencies\includes\bin\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False -Exclude $global:dll_excludes
-  - ps: copy-item "C:\projects\fifengine-dependencies\includes\lib\x86\*.dll" "$env:APPVEYOR_BUILD_FOLDER\engine\python\fife\" -force -recurse -Confirm:$False
+    # package Python Installer artifacts (PyCEGUI installs its dlls itself)
+  - copy C:\projects\build\*.py "%APPVEYOR_BUILD_FOLDER%\engine\python\fife" /y
+  - copy C:\projects\build\Release\*.* "%APPVEYOR_BUILD_FOLDER%\engine\python\fife" /y
+  - copy C:\projects\fifengine-dependencies\includes\bin\*.dll "%APPVEYOR_BUILD_FOLDER%\engine\python\fife"
+  - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
   - cd %APPVEYOR_BUILD_FOLDER%
   - python setup.py set_metadata --version=0.4.2 bdist_msi --target-version="%PYTHON_VERSION%"
   - python setup.py set_metadata --version=0.4.2 bdist_dumb --format=zip
   - dir %APPVEYOR_BUILD_FOLDER%\dist
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32-py%PYTHON_VERSION%.msi"
-  - appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32.zip"
-
-  - dir C:\projects\build /s
-  - dir "%APPVEYOR_BUILD_FOLDER%\engine\python\fife\" /s
+  #- appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32-py%PYTHON_VERSION%.msi"
+  #- appveyor PushArtifact "%APPVEYOR_BUILD_FOLDER%\dist\libfife-0.4.2.win32.zip"
 
 artifacts:
   - path: 'libfife-dependencies-*.zip'
     name: Dependencies
   - path: 'libfife-*.zip'
     name: LibFife
-  - path: 'dist\libfife-*py%PYTHON_VERSION%.msi'
-    name: Python%PYTHON_VERSION%Installer
-  - path: 'dist\libfife-0.4.2.win32.zip'
+  - path: 'dist\libfife-*.msi'
+    name: Python%PYTHON_VERSION%-Installer
+  - path: 'dist\libfife-*.zip'
     name: Python%PYTHON_VERSION%-zip
 
 # deploy to Github Releases on tag push
@@ -155,7 +149,7 @@ deploy:
   release: 'Fifengine $(APPVEYOR_REPO_TAG_NAME)'
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: '[**Changelog**](https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md)'
-  artifact: Dependencies, LibFife, Python%PYTHON_VERSION%Installer, Python%PYTHON_VERSION%-zip
+  artifact: Dependencies, LibFife, Python%PYTHON_VERSION%-Installer, Python%PYTHON_VERSION%-zip
   draft: false
   prerelease: false
   force_update: true               # overwrite files of existing release on GitHub
