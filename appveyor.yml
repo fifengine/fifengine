@@ -28,9 +28,7 @@ matrix:
   fast_finish: true
 
 cache:
-#  - C:\projects\fifengine-dependencies
    - C:\projects\fifengine-dependencies\downloads
-#  - C:\projects\fifengine-dependencies\includes
 
 # scripts that are called at very beginning, before repo cloning
 init:
