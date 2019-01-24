@@ -74,9 +74,6 @@ message("")
 #                                Options                                                   
 #------------------------------------------------------------------------------
 
-OPTION(FIFE_DEPENDENCY_SDL2          "Download and build dependency: SDL2"       ON)
-OPTION(FIFE_DEPENDENCY_SDL2_IMAGE    "Download and build dependency: SDL2_IMAGE" ON)
-OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   ON)
 OPTION(FIFE_DEPENDENCY_GLEW          "Download and build dependency: GLEW"       ON)
 # TODO boost
 OPTION(FIFE_DEPENDENCY_ZLIB          "Download and build dependency: ZLIB"       ON)
@@ -87,22 +84,13 @@ OPTION(FIFE_DEPENDENCY_TINYXML       "Download and build dependency: TINYXML"   
 OPTION(FIFE_DEPENDENCY_LIBOGG        "Download and build dependency: LIBOGG"     ON)
 OPTION(FIFE_DEPENDENCY_LIBVORBIS     "Download and build dependency: LIBVORBIS"  ON)
 OPTION(FIFE_DEPENDENCY_FIFECHAN      "Download and build dependency: FIFECHAN"   ON)
+OPTION(FIFE_DEPENDENCY_SDL2          "Download and build dependency: SDL2"       ON)
+OPTION(FIFE_DEPENDENCY_SDL2_TTF      "Download and build dependency: SDL2_TTF"   ON)
+OPTION(FIFE_DEPENDENCY_SDL2_IMAGE    "Download and build dependency: SDL2_IMAGE" ON)
 
 #------------------------------------------------------------------------------
 #                   Check Options + Include external build scripts                                             
 #------------------------------------------------------------------------------
-
-IF(FIFE_DEPENDENCY_SDL2)
-    INCLUDE(get-sdl2)
-ENDIF(FIFE_DEPENDENCY_SDL2)
-
-IF(FIFE_DEPENDENCY_SDL2_IMAGE)
-    INCLUDE(get-sdl2_image)
-ENDIF(FIFE_DEPENDENCY_SDL2_IMAGE)
-
-IF(FIFE_DEPENDENCY_SDL2_TTF)
-    INCLUDE(get-sdl2_ttf)
-ENDIF(FIFE_DEPENDENCY_SDL2_TTF)
 
 IF(FIFE_DEPENDENCY_GLEW)
     INCLUDE(get-glew)
@@ -141,3 +129,15 @@ ENDIF(FIFE_DEPENDENCY_LIBVORBIS)
 IF(FIFE_DEPENDENCY_FIFECHAN)
     INCLUDE(get-fifechan)
 ENDIF(FIFE_DEPENDENCY_FIFECHAN)
+
+IF(FIFE_DEPENDENCY_SDL2)
+    INCLUDE(get-sdl2)
+ENDIF(FIFE_DEPENDENCY_SDL2)
+
+IF(FIFE_DEPENDENCY_SDL2_TTF)
+    INCLUDE(get-sdl2_ttf)
+ENDIF(FIFE_DEPENDENCY_SDL2_TTF)
+
+IF(FIFE_DEPENDENCY_SDL2_IMAGE)
+    INCLUDE(get-sdl2_image)
+ENDIF(FIFE_DEPENDENCY_SDL2_IMAGE)
