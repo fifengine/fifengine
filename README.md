@@ -16,7 +16,7 @@ The engine is extendable and enables you to add any feature you can imagine to y
 
 | **Documentations** | | | |
 |:----------------------:|:----------------:|:-------:|:----------:|
-| [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.fifengine.net/doxygen) | [Python API](http://www.fifengine.net/epydoc) |
+| [Overview](https://fifengine.github.io/fifengine-docs/) | [Developer Manual](https://fifengine.github.io/fifengine-docs/developer-manual/en/) | [C++ API](http://www.ragingreality.com/doxygen/) | [Python API](http://www.ragingreality.com/epydoc) |
 
 Fifengine is also already available from the following package repositories:
 
