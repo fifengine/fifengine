@@ -3,15 +3,13 @@ sudo: required
 matrix:
   include:
     - os: linux
-      dist: xenial
       compiler: clang
       python: "3.6"
     - os: linux
       dist: xenial
       compiler: gcc
-      python: "3.5"
+      python: "3.6"
     - os: osx
-      #compiler: clang
 
 git:
   depth: 5
@@ -25,9 +23,6 @@ addons:
     packages:
     - gcc-8
     - g++-8
-    #- clang-7.0
-    #- llvm-7.0-dev
-    #- libclang-7.0-dev
     - mesa-common-dev
     - libsdl2-dev
     - libsdl2-image-dev
@@ -44,16 +39,13 @@ addons:
     - libc6
     - libglew-dev
     - pylint
+    #- cppcheck
 
 before_install:
   # Linux Build
   # change gcc to version 8
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi
-  # change clang to version 7.0
-  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 20; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 20; fi
-  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo rm -f /usr/local/clang-5.0.0/bin/clang; sudo rm -f /usr/local/clang-5.0.0/bin/clang++; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi
-  #- if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update && sudo apt-get install -y libgle3-dev libvorbis-dev libalut-dev cppcheck; fi
   # install newer version of pylint, the one fetched with apt-get is broken
   #- if [ $TRAVIS_OS_NAME == linux ]; then sudo pip install pylint; fi
   # Swig
