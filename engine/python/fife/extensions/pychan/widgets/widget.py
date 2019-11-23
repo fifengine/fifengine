@@ -1035,25 +1035,25 @@ class Widget(object):
 	def _setMargins(self, margin):
 		# Shorthand property
 		if isinstance(margin, tuple) or isinstance(margin, list):
-			if len(margin) is 4:
+			if len(margin) == 4:
 				# 0=top, 1=right, 2=bottom, 3=left
 				self.real_widget.setMarginTop(margin[0])
 				self.real_widget.setMarginRight(margin[1])
 				self.real_widget.setMarginBottom(margin[2])
 				self.real_widget.setMarginLeft(margin[3])
-			elif len(margin) is 3:
+			elif len(margin) == 3:
 				# 0=top, 1=right, 2=bottom, 1=left
 				self.real_widget.setMarginTop(margin[0])
 				self.real_widget.setMarginRight(margin[1])
 				self.real_widget.setMarginBottom(margin[2])
 				self.real_widget.setMarginLeft(margin[1])
-			elif len(margin) is 2:
+			elif len(margin) == 2:
 				# 0=top, 1=right, 0=bottom, 1=left
 				self.real_widget.setMarginTop(margin[0])
 				self.real_widget.setMarginRight(margin[1])
 				self.real_widget.setMarginBottom(margin[0])
 				self.real_widget.setMarginLeft(margin[1])
-			elif len(margin) is 1:
+			elif len(margin) == 1:
 				# 0=top, 0=right, 0=bottom, 0=left
 				self.real_widget.setMargin(margin[0])
 		else:
@@ -1065,25 +1065,25 @@ class Widget(object):
 	def _setPadding(self, padding):
 		# Shorthand property
 		if isinstance(padding, tuple) or isinstance(padding, list):
-			if len(padding) is 4:
+			if len(padding) == 4:
 				# 0=top, 1=right, 2=bottom, 3=left
 				self.real_widget.setPaddingTop(padding[0])
 				self.real_widget.setPaddingRight(padding[1])
 				self.real_widget.setPaddingBottom(padding[2])
 				self.real_widget.setPaddingLeft(padding[3])
-			elif len(padding) is 3:
+			elif len(padding) == 3:
 				# 0=top, 1=right, 2=bottom, 1=left
 				self.real_widget.setPaddingTop(padding[0])
 				self.real_widget.setPaddingRight(padding[1])
 				self.real_widget.setPaddingBottom(padding[2])
 				self.real_widget.setPaddingLeft(padding[1])
-			elif len(padding) is 2:
+			elif len(padding) == 2:
 				# 0=top, 1=right, 0=bottom, 1=left
 				self.real_widget.setPaddingTop(padding[0])
 				self.real_widget.setPaddingRight(padding[1])
 				self.real_widget.setPaddingBottom(padding[0])
 				self.real_widget.setPaddingLeft(padding[1])
-			elif len(padding) is 1:
+			elif len(padding) == 1:
 				# 0=top, 0=right, 0=bottom, 0=left
 				self.real_widget.setPadding(padding[0])
 		else:

@@ -190,7 +190,7 @@ class AnimationIcon(Widget):
 			if isinstance(anim, fife.Animation):
 				self._anim = anim
 			else:
-				if anim is not "":
+				if anim != "":
 					# use xml loader
 					self._anim = loadXMLAnimation(get_manager().hook.engine, anim)
 			self.real_widget.setAnimation(self._anim)
