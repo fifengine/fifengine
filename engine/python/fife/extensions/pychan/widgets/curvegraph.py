@@ -161,7 +161,7 @@ class CurveGraph(Widget):
 
 	def _setCoordinates(self, coordinates):
 		# reset
-		if coordinates is None or len(coordinates) is 0:
+		if coordinates is None or len(coordinates) == 0:
 			self.real_widget.resetPointVector()
 			return
 		# int list to point vector
