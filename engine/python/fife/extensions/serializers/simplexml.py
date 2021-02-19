@@ -200,7 +200,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		#get the module tree: for example find tree under module FIFE
 		moduleTree = self._getModuleTree(module)
 		element = None
-		for e in moduleTree.getchildren():
+		for e in moduleTree:
 			if e.tag == "Setting" and e.get("name", "") == name:
 				element = e
 				break
@@ -275,7 +275,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			e_type = "str"
 			value = str(value)
 
-		for e in moduleTree.getchildren():
+		for e in moduleTree:
 			if e.tag != "Setting": continue
 			if e.get("name", "") == name:
 				e.text = value
@@ -305,7 +305,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 
 		moduleTree = self._getModuleTree(module)
 
-		for e in moduleTree.getchildren():
+		for e in moduleTree:
 			if e.tag != "Setting": continue
 			if e.get("name", "") == name:
 				moduleTree.remove(e)
@@ -321,7 +321,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			self._initialized = True
 
 		moduleNames = []
-		for c in self._root_element.getchildren():
+		for c in self._root_element:
 			if c.tag == "Module":
 				name = c.get("name","")
 				if not isinstance(name, basestring):
@@ -344,7 +344,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		
 		# now from the tree read every value, and put the necessary values
 		# to the list
-		for e in moduleTree.getchildren():
+		for e in moduleTree:
 			if e.tag == "Setting":
 				name = e.get("name", "")
 	
@@ -383,7 +383,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 		
 		Raises an InvalidFormat exception if there is a format error.
 		"""
-		for c in self._root_element.getchildren():
+		for c in self._root_element:
 			if c.tag != "Module":
 				raise InvalidFormat("Invalid tag in " + self._file + \
 									". Expected Module, got: " + c.tag)
@@ -391,7 +391,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 				raise InvalidFormat("Invalid tag in " + self._file + \
 									". Module name is empty.")
 			else:
-				for e in c.getchildren():
+				for e in c:
 					if e.tag != "Setting":
 						raise InvalidFormat("Invalid tag in " + self._file + \
 											" in module: " + c.tag + \
@@ -414,7 +414,7 @@ class SimpleXMLSerializer(SimpleSerializer):
 			raise AttributeError("Settings:_getModuleTree: Invalid type for "
 								 "module argument.")
 
-		for c in self._root_element.getchildren():
+		for c in self._root_element:
 			if c.tag == "Module" and c.get("name", "") == module:
 				return c
 
