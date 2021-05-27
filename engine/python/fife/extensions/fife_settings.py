@@ -86,7 +86,8 @@ class Setting(object):
 
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
-			self._appdata = getUserDataDirectory("fife", self._app_name)
+			self._appdata = "."
+			#self._appdata = getUserDataDirectory("fife", self._app_name)
 		else:
 			self._appdata = os.path.dirname(self._settings_file)
 			self._settings_file = os.path.basename(self._settings_file)
