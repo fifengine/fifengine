@@ -28,6 +28,7 @@
 #include "vfs/fife_boost_filesystem.h"
 
 #include "zipnode.h"
+#include <algorithm>
 
 namespace {
     /** helper function to find a value in a ZipNodeContainer
