@@ -637,7 +637,7 @@ class XMLMapLoader(object):
 				data['blending_src'],
 				data['blending_dst'],
 			)
-			if data['s_ref'] is not -1:
+			if data['s_ref'] != -1:
 				add_stencil_test(group, renderer, data)
 		def add_animated_lightmap(group, renderer, node, data):
 			""" add a node as animated lightmap to the renderer
@@ -660,7 +660,7 @@ class XMLMapLoader(object):
 				data['blending_src'],
 				data['blending_dst'],
 			)
-			if data['s_ref'] is not -1:
+			if data['s_ref'] != -1:
 				add_stencil_test(group, renderer, data)
 		def add_lightmap(group, renderer, node, data):
 			""" add a node as lightmap to the renderer
@@ -683,7 +683,7 @@ class XMLMapLoader(object):
 				data['blending_src'],
 				data['blending_dst'],
 			)
-			if data['s_ref'] is not -1:
+			if data['s_ref'] != -1:
 				add_stencil_test(group, renderer, data)
 		def add_stencil_test(group, renderer, data):
 			""" add a stencil test to a group

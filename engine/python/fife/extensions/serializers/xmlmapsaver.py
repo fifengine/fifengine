@@ -53,7 +53,7 @@ class XMLMapSaver(object):
 		else:
 			self.state = self.SModel
 
-		self.stack = [ self.SModel ] 
+		self.stack = [ self.SModel ]
 		self.datastack = [ ]
 
 		self.file = open(filepath, 'w')
@@ -63,7 +63,7 @@ class XMLMapSaver(object):
 		self.indent_level = ''
 
 		self.nspace = None
-		
+
 		self.map = map
 		self.importList = importList
 
@@ -108,7 +108,7 @@ class XMLMapSaver(object):
 				file = instance.getObject().getFilename()
 				if not (file in imports):
 					if not self.have_superdir(file, importList):
-						imports.append(file)	
+						imports.append(file)
 						self.write_import(root_subfile(map.getFilename(), file))
 
 	def have_superdir(self, file, importList):
@@ -158,7 +158,7 @@ class XMLMapSaver(object):
 		if layer.isWalkable(): return "walkable"
 		elif layer.isInteract(): return "interact"
 		return ""
-	
+
 	def write_layers(self, map):
 		for layer in map.getLayers():
 			cellgrid = layer.getCellGrid()
@@ -200,7 +200,7 @@ class XMLMapSaver(object):
 
 		for inst in layer.getInstances():
 			position = inst.getLocationRef().getExactLayerCoordinates()
-			
+
 			attr_vals = {
 				(None, 'o'): inst.getObject().getId(),
 				(None, 'x'): str(position.x),
@@ -220,7 +220,7 @@ class XMLMapSaver(object):
 			if visual:
 				attr_vals[(None, 'stackpos')] = str(visual.getStackPosition())
 				attr_names[(None, 'stackpos')] = 'stackpos'
-				
+
 			nspace = inst.getObject().getNamespace()
 			if nspace != self.nspace:
 				attr_vals[(None, 'ns')] = inst.getObject().getNamespace()
@@ -259,8 +259,8 @@ class XMLMapSaver(object):
 				if lay.getId() == layer.getId():
 					hit = True
 
-			if hit == False: continue					
-			
+			if hit == False: continue
+
 			renderer = fife.LightRenderer.getInstance(cam)
 			groups = renderer.getGroups()
 			for group in groups:
@@ -286,7 +286,7 @@ class XMLMapSaver(object):
 						attr_names[(None, 's_ref')] = 's_ref'
 						attr_vals[(None, 'a_ref')] = str(info.getAlpha())
 						attr_names[(None, 'a_ref')] = 'a_ref'
-					
+
 					if type == 'simple':
 						if info.getRadius() > 0:
 							attr_vals[(None, 'radius')] = str(info.getRadius())
@@ -298,7 +298,7 @@ class XMLMapSaver(object):
 							attr_names[(None, 'color')] = 'color'
 							attr_names[(None, 'intensity')] = 'intensity'
 
-						if info.getSubdivisions() is not 32:
+						if info.getSubdivisions() != 32:
 							attr_vals[(None, 'subdivisions')] = str(info.getSubdivisions())
 							attr_names[(None, 'subdivisions')] = 'subdivisions'
 						if info.getXStretch() > 1.001 or info.getXStretch() < 0.999:
@@ -386,6 +386,6 @@ class XMLMapSaver(object):
 	def flush(self):
 		self.xmlout.endDocument()
 		self.file.close()
-		
+
 	def saveResource(self):
 		self.write_map()

@@ -298,7 +298,7 @@ class Setting(object):
 				self._readSettingsCompleted[module] = True
 
 			# we need validation for the module FIFE only
-			if module is not "FIFE":
+			if module != "FIFE":
 				return self._settingsFromFile[module]
 			"""
 			Now we have all the settings we needed. We have to validate the settings. Applicable for module
@@ -432,7 +432,7 @@ class Setting(object):
 		"""
 
 		if self._serializer:
-			if module is "FIFE":
+			if module == "FIFE":
 				# check whether getAllSettings has been called already
 				if self._readSettingsCompleted[module] is not True:
 					value = self._serializer.get(module, name, defaultValue)

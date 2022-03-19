@@ -161,7 +161,7 @@ class CurveGraph(Widget):
 
 	def _setCoordinates(self, coordinates):
 		# reset
-		if coordinates is None or len(coordinates) == 0:
+		if coordinates == None or len(coordinates) == 0:
 			self.real_widget.resetPointVector()
 			return
 		# int list to point vector
@@ -178,7 +178,7 @@ class CurveGraph(Widget):
 	def _setThickness(self, thickness): self.real_widget.setThickness(thickness)
 	def _getThickness(self): return self.real_widget.getThickness()
 	thickness = property(_getThickness, _setThickness)
-	
+
 	def _setControllPoints(self, controll): self.real_widget.setAutomaticControllPoints(controll)
 	def _getControllPoints(self): return self.real_widget.isAutomaticControllPoints()
 	controll_points = property(_getControllPoints, _setControllPoints)
