@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
 # External Project:     SDL2_image
-# Downloads:            https://libsdl.org/projects/SDL_image/                                            
+# Downloads:            https://github.com/libsdl-org/SDL_image
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
 
-set(SDL2_IMAGE_VERSION "2.0.4")
+set(SDL2_IMAGE_VERSION "2.6.0")
 
 # For win32 it's faster to download the pre-compiled development binaries.
 if (WIN32)
@@ -17,11 +17,11 @@ if (WIN32)
       DEPENDS sdl2
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-      URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz  
-      URL_MD5 53fd232ce4d70a3af18909a8a7248094
+      URL https://github.com/libsdl-org/SDL_image/releases/download/release-${SDL2_IMAGE_VERSION}/SDL2_image-devel-${SDL2_IMAGE_VERSION}-mingw.tar.gz
+      URL_MD5 0ad270318a4ad4fe2716eae7261dbeb1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
-      INSTALL_COMMAND 
+      INSTALL_COMMAND
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/sdl2-image/lib     ${DEPENDENCY_INSTALL_DIR}/lib
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/sdl2-image/include ${DEPENDENCY_INSTALL_DIR}/include/SDL2
     )
@@ -35,11 +35,11 @@ if (WIN32)
       DEPENDS sdl2
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-      URL https://libsdl.org/projects/SDL_image/release/SDL2_image-devel-${SDL2_IMAGE_VERSION}-VC.zip
-      URL_MD5 9435e3ecc2f03eed6a24c7ed2dd96d99
+      URL https://github.com/libsdl-org/SDL_image/releases/download/release-${SDL2_IMAGE_VERSION}/SDL2_image-devel-${SDL2_IMAGE_VERSION}-VC.zip
+      URL_MD5 b9458b84c1250fb1c881a812b0d2aad2
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
-      INSTALL_COMMAND 
+      INSTALL_COMMAND
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/sdl2-image/lib     ${DEPENDENCY_INSTALL_DIR}/lib
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/sdl2-image/include ${DEPENDENCY_INSTALL_DIR}/include/SDL2
     )
@@ -47,13 +47,13 @@ if (WIN32)
   endif(MSVC)
 
 else() # build from source
- 
+
   ExternalProject_Add(
     sdl2-image
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-    URL https://libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
-    URL_MD5 88b9766d5b64a67f82ba511c57e7ce10
+    URL https://github.com/libsdl-org/SDL_image/releases/download/release-${SDL2_IMAGE_VERSION}/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz
+    URL_MD5 8e9c23d60d21aa3907737d6fcd8186bf
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${DEPENDENCY_INSTALL_DIR}
   )
 

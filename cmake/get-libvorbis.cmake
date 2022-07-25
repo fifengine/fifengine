@@ -1,23 +1,23 @@
 #------------------------------------------------------------------------------
 # External Project:     libvorbis
-# Downloads:            http://downloads.xiph.org/releases/vorbis/                                
+# Downloads:            http://downloads.xiph.org/releases/vorbis/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
 
-set(LIBVORBIS_VERSION "1.3.6")
+set(LIBVORBIS_VERSION "1.3.7")
 
 set(LIBVORBIS_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
       -G ${CMAKE_GENERATOR}
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}      
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCY_INSTALL_DIR}
       -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       # find libogg
       -DCMAKE_PREFIX_PATH=${DEPENDENCY_INSTALL_DIR} ${CMAKE_PREFIX_PATH}
-      -DOGG_LIBRARY=${DEPENDENCY_INSTALL_DIR}/lib/ogg.lib 
-      -DOGG_INCLUDE_DIR=${DEPENDENCY_INSTALL_DIR}/include    
+      -DOGG_LIBRARY=${DEPENDENCY_INSTALL_DIR}/lib/ogg.lib
+      -DOGG_INCLUDE_DIR=${DEPENDENCY_INSTALL_DIR}/include
 )
 
 if(WIN32)
@@ -31,7 +31,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
     DOWNLOAD_NAME   libvorbis-${LIBVORBIS_VERSION}.zip
     URL             http://downloads.xiph.org/releases/vorbis/libvorbis-${LIBVORBIS_VERSION}.zip
-    URL_MD5         616e425b966604fc9e3bc09df96a3458
+    URL_MD5         dc1e618ee80fa50ab64b7fef21569435
     PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_MODULE_PATH}/patches/libvorbis/CMakeLists.txt  ${DEPENDENCY_EXTRACT_DIR}/src/libvorbis
     CMAKE_ARGS      ${LIBVORBIS_CMAKE_ARGS}
 )

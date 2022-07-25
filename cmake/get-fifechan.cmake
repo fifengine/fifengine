@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # External Project:     FifeChan / FifeGUI
-# Downloads:            https://github.com/fifengine/fifechan/releases                                            
+# Downloads:            https://github.com/fifengine/fifechan/releases
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
@@ -11,7 +11,7 @@ set(FIFECHAN_VERSION "0.1.5")
 if (WIN32)
 
   #if(MINGW) # download pre-compiled dev package for MinGW 32/64-bit
-    
+
     #ExternalProject_Add(
       #fifechan
       #PREFIX              ${DEPENDENCY_EXTRACT_DIR}
@@ -21,7 +21,7 @@ if (WIN32)
       #URL_MD5             1
       #CONFIGURE_COMMAND   ""
       #BUILD_COMMAND       ""
-      #INSTALL_COMMAND 
+      #INSTALL_COMMAND
         #COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib     ${DEPENDENCY_INSTALL_DIR}/lib
         #COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
     #)
@@ -34,12 +34,12 @@ if (WIN32)
       fifechan
       PREFIX              ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR        ${DEPENDENCY_DOWNLOAD_DIR}
-      URL                 https://github.com/fifengine/fifechan/releases/download/0.1.5/fifechan-shared-0.1.5-VC15-x86.zip
+      URL                 https://github.com/fifengine/fifechan/releases/download/0.1.5/fifechan-shared-dev-f848a38-VC15-x86.zip
       #URL                 https://ci.appveyor.com/api/buildjobs/5rg5bi98ta05l6v0/artifacts/fifechan-shared-dev-cf9d15b-VC15-x86.zip
-      URL_MD5             9d561d10409d71a54f18871f1a3181de
+      URL_MD5             4459fb7da09f3b26fa1a4116710ffa1d
       CONFIGURE_COMMAND   ""
       BUILD_COMMAND       ""
-      INSTALL_COMMAND 
+      INSTALL_COMMAND
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/bin     ${DEPENDENCY_INSTALL_DIR}/bin
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib     ${DEPENDENCY_INSTALL_DIR}/lib
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include ${DEPENDENCY_INSTALL_DIR}/include/fifechan
@@ -51,12 +51,12 @@ else() # build from source
 
   set(FIFECHAN_CMAKE_ARGS
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> 
+      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
   )
-   
+
   ExternalProject_Add(
     fifechan
     PREFIX              ${DEPENDENCY_EXTRACT_DIR}

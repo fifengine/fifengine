@@ -6,7 +6,7 @@
 
 include(ExternalProject)
 
-set(ZLIB_VERSION "1.2.11")
+set(ZLIB_VERSION "1.2.12")
 
 set(ZLIB_CMAKE_ARGS
     ${COMMON_CMAKE_ARGS}
@@ -24,6 +24,6 @@ ExternalProject_Add(
   DOWNLOAD_DIR    ${DEPENDENCY_DOWNLOAD_DIR}
   DOWNLOAD_NAME   zlib-v${ZLIB_VERSION}.zip
   URL             https://github.com/madler/zlib/archive/v${ZLIB_VERSION}.zip
-  URL_MD5         9d6a627693163bbbf3f26403a3a0b0b1
+  URL_MD5         50f045c0f544726cf70d1d865bb4d6a4
   CMAKE_ARGS      ${ZLIB_CMAKE_ARGS}
 )
