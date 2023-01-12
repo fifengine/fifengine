@@ -1,4 +1,5 @@
 ![FIFE LOGO](https://raw.githubusercontent.com/fifengine/fifengine/master/doc/logo/FIFE_small_c3.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffifengine%2Ffifengine.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffifengine%2Ffifengine?ref=badge_shield)
 
 # FIFE
 
@@ -45,6 +46,9 @@ A [complete list of the features](https://fifengine.github.io/fifengine-docs/use
 each client directory comes with a separate LICENSE file that states the origin
 of the content, the author and the actual license it was published under.
 
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffifengine%2Ffifengine.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffifengine%2Ffifengine?ref=badge_large)
 
 ## 3) Tests
 
