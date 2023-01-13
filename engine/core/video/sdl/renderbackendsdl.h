@@ -101,9 +101,54 @@ namespace FIFE {
 	protected:
 		virtual void setClipArea(const Rect& cliparea, bool clear);
 
+        template <typename Iterator> void fillPolygon(Iterator pointsBegin, Iterator pointsEnd, 
+                                                      int32_t yMin, int32_t yMax,
+                                                      uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
 		SDL_Renderer* m_renderer;
 	};
 
+
+
+
+
+    template <typename Iterator> 
+    void RenderBackendSDL::fillPolygon(Iterator pointsBegin, Iterator pointsEnd, 
+                                       int32_t yMin, int32_t yMax,
+                                       uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    {
+        static_assert(std::is_same<typename std::iterator_traits<Iterator>::value_type, Point>::value, 
+                      "Needs data of type Point");
+    
+        auto points = pointsBegin;
+        int32_t n = pointsEnd - pointsBegin;
+        int32_t y = yMin;
+        for (; y <= yMax; ++y) {
+            std::vector<int32_t> xs;
+            int32_t j = n - 1;
+            for (int32_t i = 0; i < n; j = i++) {
+                Point pi = points[i];
+                Point pj = points[j];
+                if ((pi.y < y && y <= pj.y) || (pj.y < y && y <= pi.y)) {
+                    int32_t x = static_cast<int32_t>(pi.x + static_cast<float>(y - pi.y) / static_cast<float>(pj.y - pi.y) * static_cast<float>(pj.x - pi.x));
+                    xs.push_back(x);
+                    for (int32_t k = xs.size() - 1; k && xs[k-1] > xs[k]; --k) {
+                        std::swap(xs[k-1], xs[k]);
+                    }
+                }
+            }
+
+            for (int32_t i = 0; i < xs.size(); i += 2) {
+                int32_t x1 = xs[i];
+                int32_t x2 = xs[i+1];
+                // vertical line
+                while (x1 <= x2) {
+                    putPixel(x1, y, r, g, b, a);
+                    ++x1;
+                }
+            }
+        }
+    }
 }
 
 #endif
