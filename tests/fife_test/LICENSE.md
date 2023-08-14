@@ -1,0 +1,63 @@
+== Fonts ==
+
+=== Ubuntu ===
+Author: Samir Karmacharya (sanir@email.com)
+
+License: Public domain
+http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-fonts_0.4.7.4/ttf-devanagari-fonts.copyright
+
+Affected files:
+ - data/fonts/samanata.ttf
+
+=== GNU Free Fonts ===
+Author: various
+
+Download: http://ftp.gnu.org/gnu/freefont/
+
+License: GNU General Public License v3 or later
+
+== Graphics ==
+
+=== Unknown Horizons ===
+
+Author: Unknown Horizons
+Website: www.unknown-horizons.org
+
+License:  CC-BY-SA 3.0
+
+Affected files:
+ - data/objects/actors/player/frigate/*.png
+
+=== Open Game Art ===
+
+Author: Clint Bellanger
+
+Website: www.opengameart.org
+
+License: CC-BY-SA 3.0
+
+Affected files:
+ - data/objects/actors/player/skel/*.png
+ - data/tilesets/grassland_tiles.png
+
+=== Outside Tileset
+
+Author: Modified by darkrose from an original by Yar
+
+Website: http://opengameart.org/content/modified-isometric-64x64-outside-tileset
+
+License: CC-BY-SA 3.0
+
+Affected files: data/tilesets/terrain1.png
+
+== Fonts ==
+
+=== Worldforge ===
+
+Author: Alistair Riddoch (alriddoch@googlemail.com)
+
+Website: http://guichan.sourceforge.net/oldsite/images/rpgfont.png
+
+License: GPL 2.0
+
+Affected files: fonts/rpgfont.png
