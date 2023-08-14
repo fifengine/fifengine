@@ -1,4 +1,10 @@
-# ChangeLog
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased] - tba
+
+- Changed some things.
 
 ## [0.4.2] - 2019-01-11
 
@@ -1074,7 +1080,10 @@ Bugs:
 ### Non-code related changes
  * Switch from GPL 2.0 to LGPL 2.1 (or newer).
 
-[Unreleased]: https://github.com/fifengine/fifengine/compare/0.4.1...HEAD
+<!-- Section for Reference Links -->
+
+[Unreleased]: https://github.com/fifengine/fifengine/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/fifengine/fifengine/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/fifengine/fifengine/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/fifengine/fifengine/compare/0.3.5...0.4.0
 [0.3.5]: https://github.com/fifengine/fifengine/compare/0.3.4...0.3.5
