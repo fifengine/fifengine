@@ -21,9 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import map
-from builtins import range
 from fife import fifechan
 
 from .common import text2gui

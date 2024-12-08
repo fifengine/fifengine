@@ -21,10 +21,6 @@
 # ####################################################################
 
 """ submodule for xml map parsing """
-from __future__ import print_function
-
-from builtins import str
-from builtins import object
 from fife import fife
 
 from fife.extensions.serializers import ET

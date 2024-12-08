@@ -21,8 +21,6 @@
 # ####################################################################
 
 """ Savers plugin manager  """
-from __future__ import print_function
-
 import os.path
 
 from fife import fife

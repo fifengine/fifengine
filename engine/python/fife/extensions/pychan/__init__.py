@@ -229,8 +229,6 @@ This leads to a reversed construction sequence as the super classes constructor
 has to be invoked I{after} the subclass specific construction has taken place.
 
 """
-from __future__ import print_function
-from __future__ import absolute_import
 import sys
 
 from builtins import map

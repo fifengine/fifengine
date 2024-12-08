@@ -58,13 +58,6 @@ Available Events
 ----------------
 
 """
-from __future__ import print_function
-from __future__ import absolute_import
-
-from builtins import str
-from builtins import range
-from builtins import object
-from future.utils import itervalues
 from .compat import fifechan
 
 from . import exceptions
@@ -184,7 +177,7 @@ class EventListenerBase(object):
 			event = self.translateEvent(getEventType(name), event)
 			if name in self.events:
 				if self.debug: print("-"*self.indent, name)
-				for f in itervalues(self.events[name]):
+				for f in self.events[name].values():
 					if not self._redirect:
 						f(event)
 						continue

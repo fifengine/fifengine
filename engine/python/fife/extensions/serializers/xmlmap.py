@@ -21,10 +21,6 @@
 # ####################################################################
 
 """ main xml parser class for xml map loading """
-from __future__ import print_function
-
-from builtins import str
-from builtins import object
 import time
 
 from fife import fife

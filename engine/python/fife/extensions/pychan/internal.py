@@ -21,10 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import str
-from builtins import map
-from builtins import object
 from .compat import fifechan, fife, in_fife
 from fife.extensions import fife_timer as timer
 from . import fonts

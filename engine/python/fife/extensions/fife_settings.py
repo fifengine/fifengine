@@ -29,11 +29,6 @@ This module provides a nice framework for loading and saving game settings.
 It is by no means complete but it does provide a good starting point.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 import shutil
 import os
 from io import StringIO

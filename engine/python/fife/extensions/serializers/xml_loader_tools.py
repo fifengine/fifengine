@@ -21,10 +21,6 @@
 # ####################################################################
 
 """ utilities for xml maploading process """
-from __future__ import print_function
-from __future__ import division
-
-from builtins import range
 from past.utils import old_div
 import os
 import math

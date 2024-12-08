@@ -29,9 +29,6 @@ This module provides gui window that sets basic fife settings through
 pychan.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
 import os
 from io import BytesIO, StringIO, StringIO
 

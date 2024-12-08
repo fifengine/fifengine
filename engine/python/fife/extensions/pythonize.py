@@ -39,9 +39,6 @@ conveniences:
     - fife.Point
     - fife.Rect
 """
-from __future__ import print_function
-
-from builtins import map
 from fife import fife
 from fife import fifechan
 import re
