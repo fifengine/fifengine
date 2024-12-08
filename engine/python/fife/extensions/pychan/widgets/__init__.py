@@ -28,8 +28,6 @@ Widget wrappers.
 
 Please look at the documentation of L{Widget} for details.
 """
-from __future__ import absolute_import
-
 from .widget import Widget
 
 from .spacer import Spacer

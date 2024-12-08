@@ -22,9 +22,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import range
 from .swig_test_utils import *
 import time
 

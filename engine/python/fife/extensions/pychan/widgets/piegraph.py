@@ -21,9 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import absolute_import
-from builtins import range
-from builtins import object
 import weakref
 from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr, MixedListAttr

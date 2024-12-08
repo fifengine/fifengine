@@ -40,11 +40,6 @@ This is most useful for error checking parsing and defining
 accepted attributes in classes and is used by pychan internally.
 
 """
-from __future__ import absolute_import
-
-from builtins import map
-from builtins import str
-from builtins import object
 from .exceptions import ParserError
 
 class Attr(object):
