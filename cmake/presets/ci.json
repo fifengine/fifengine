@@ -197,10 +197,6 @@
     {
       "name": "clang20-x64-linux-rel-ci",
       "configurePreset": "clang20-x64-linux-rel-ci"
-    },
-    {
-      "name": "clang21-x64-linux-rel-ci",
-      "configurePreset": "clang21-x64-linux-rel-ci"
     }
   ]
 }
