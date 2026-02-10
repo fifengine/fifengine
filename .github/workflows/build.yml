@@ -15,17 +15,19 @@ concurrency:
 jobs:
   build:
     name: "Build on ${{ matrix.os }}"
+
+    # https://github.com/actions/runner-images#available-environments
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             preset: clang20-x64-linux-rel
             triplet: x64-linux
             artifact-name: libfife-linux-x64
-          - os: windows-latest
+          - os: windows-2025
             preset: vc17-x64-windows-rel
             triplet: x64-windows
             artifact-name: libfife-windows-x64
@@ -35,22 +37,34 @@ jobs:
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
       - name: 🔽 Set up Python (for vcpkg.sh)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-24.04'
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
       - name: 🔽 Install system dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-24.04'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
+          sudo apt update -qq
+          sudo apt install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
+          echo -e "libxcrypt depends on ltdl development files from the system package manager:"
+          sudo apt install -y libltdl-dev
 
-      #- name: 🔽 Set up vcpkg
-      #  uses: microsoft/setup-vcpkg@v1
-      #  with:
-      #    vcpkg-version: latest
-      #    vcpkg-triplet: ${{ matrix.triplet }}
+      # WARNING
+      # ENV VCPKG_ROOT is redefined by this action
+      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
+      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
+      - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        if: matrix.os == 'windows-2025'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # Default Location is "c:\vcpkg"
+      - name: 🔽 Define VCPKG_ROOT
+        if: matrix.os == 'windows-2025'
+        shell: pwsh
+        run: |
+          $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
+          echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
 
       - name: 🔽 Install dependencies via vcpkg
         run: vcpkg install --triplet ${{ matrix.triplet }}
@@ -67,7 +81,7 @@ jobs:
 
       - name: ❔Verify build output
         run: |
-          if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          if [ "${{ matrix.os }}" == "ubuntu-24.04" ]; then
             ls -la out/install/${{ matrix.preset }}/lib/libfife.so*
           else
             dir out\install\${{ matrix.preset }}\lib\libfife.*
