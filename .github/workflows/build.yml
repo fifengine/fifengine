@@ -2,7 +2,7 @@ name: Build FIFEngine
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, resurge ]
   pull_request:
     branches: [ master, main ]
   workflow_dispatch:
@@ -31,41 +31,41 @@ jobs:
             artifact-name: libfife-windows-x64
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6 # https://github.com/actions/checkout
 
-      - name: Set up Python (for vcpkg.sh)
+      - name: 🔽 Set up Python (for vcpkg.sh)
         if: matrix.os == 'ubuntu-latest'
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install system dependencies (Linux)
+      - name: 🔽 Install system dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
 
-      - name: Set up vcpkg
+      - name: 🔽 Set up vcpkg
         uses: microsoft/setup-vcpkg@v1
         with:
           vcpkg-version: latest
           vcpkg-triplet: ${{ matrix.triplet }}
 
-      - name: Install dependencies via vcpkg
+      - name: 🔽 Install dependencies via vcpkg
         run: vcpkg install --triplet ${{ matrix.triplet }}
 
-      - name: Configure CMake
+      - name: 🛠️ CMake ➔ Configure
         run: |
           cmake --preset ${{ matrix.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
 
-      - name: Build
+      - name: 🙏 CMake ➔ Build
         run: cmake --build out/build/${{ matrix.preset }}
 
-      - name: Install
+      - name: 📦 CMake ➔ Install
         run: cmake --install out/build/${{ matrix.preset }}
 
-      - name: Verify build output
+      - name: ❔Verify build output
         run: |
           if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
             ls -la out/install/${{ matrix.preset }}/lib/libfife.so*
@@ -74,7 +74,7 @@ jobs:
           fi
         shell: bash
 
-      - name: Upload build artifacts
+      - name: 🔼 Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact-name }}
