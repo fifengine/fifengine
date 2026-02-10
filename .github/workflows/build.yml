@@ -2,9 +2,9 @@ name: Build FIFEngine
 
 on:
   push:
-    branches: [ master, main, resurge ]
+    #branches: [ master, main, resurge ]
   pull_request:
-    branches: [ master, main ]
+    #branches: [ master, main ]
   workflow_dispatch:
 
 # Improve CI concurrency by automatically cancelling outdated jobs
@@ -46,11 +46,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
 
-      - name: 🔽 Set up vcpkg
-        uses: microsoft/setup-vcpkg@v1
-        with:
-          vcpkg-version: latest
-          vcpkg-triplet: ${{ matrix.triplet }}
+      #- name: 🔽 Set up vcpkg
+      #  uses: microsoft/setup-vcpkg@v1
+      #  with:
+      #    vcpkg-version: latest
+      #    vcpkg-triplet: ${{ matrix.triplet }}
 
       - name: 🔽 Install dependencies via vcpkg
         run: vcpkg install --triplet ${{ matrix.triplet }}
