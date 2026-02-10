@@ -23,10 +23,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
+        # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
+        # Clang 16
           - os: ubuntu-24.04
-            preset: clang20-x64-linux-rel
+            preset: clang16-x64-linux-rel-ci
             triplet: x64-linux
             artifact-name: libfife-linux-x64
+        # GCC 14
+          - os: ubuntu-24.04
+            preset: gcc14-x64-linux-rel-ci
+            triplet: x64-linux
+            artifact-name: libfife-linux-x64
+        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
           - os: windows-2025
             preset: vc17-x64-windows-rel
             triplet: x64-windows

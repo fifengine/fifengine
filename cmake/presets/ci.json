@@ -95,6 +95,16 @@
       ]
     },
     {
+      "name": "clang16-x64-linux-rel-ci",
+      "displayName": "Clang16 Release CI",
+      "inherits": [
+        "clang16-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
       "name": "clang17-x64-linux-rel-ci",
       "displayName": "Clang17 Release CI",
       "inherits": [
@@ -109,6 +119,26 @@
       "displayName": "Clang18 Release CI",
       "inherits": [
         "clang18-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang19-x64-linux-rel-ci",
+      "displayName": "Clang19 Release CI",
+      "inherits": [
+        "clang19-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang20-x64-linux-rel-ci",
+      "displayName": "Clang20 Release CI",
+      "inherits": [
+        "clang20-x64-linux",
         "build-type-release",
         "build-folders-ci",
         "condition-is-ci"
@@ -149,12 +179,28 @@
       "configurePreset": "clang15-x64-linux-rel-ci"
     },
     {
+      "name": "clang16-x64-linux-rel-ci",
+      "configurePreset": "clang16-x64-linux-rel-ci"
+    },
+    {
       "name": "clang17-x64-linux-rel-ci",
       "configurePreset": "clang17-x64-linux-rel-ci"
     },
     {
       "name": "clang18-x64-linux-rel-ci",
       "configurePreset": "clang18-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang19-x64-linux-rel-ci",
+      "configurePreset": "clang19-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang20-x64-linux-rel-ci",
+      "configurePreset": "clang20-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang21-x64-linux-rel-ci",
+      "configurePreset": "clang21-x64-linux-rel-ci"
     }
   ]
 }

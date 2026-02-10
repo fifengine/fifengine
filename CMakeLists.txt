@@ -1024,14 +1024,16 @@ if(build-library)
 
 if(VCPKG_TARGET_TRIPLET)
     # Add your code here for VCPKG-specific configurations
-    target_link_libraries(fife PRIVATE ${ZLIB_LIBRARIES})
-    target_link_libraries(fife PRIVATE ${PNG_LIBRARIES})
-    target_link_libraries(fife PRIVATE ${GLEW_LIBRARY})
-    target_link_libraries(fife PRIVATE ${OGG_LIBRARIES})
-    target_link_libraries(fife PRIVATE ${VORBIS_LIBRARY})
-    target_link_libraries(fife PRIVATE ${VORBISFILE_LIBRARY})
-    target_link_libraries(fife PRIVATE ${VORBISENC_LIBRARY})
-    target_link_libraries(fife PRIVATE ${OPENALSOFT_LIBRARY})
+    target_link_libraries(fife PRIVATE
+        ${ZLIB_LIBRARIES}
+        ${PNG_LIBRARIES}
+        ${GLEW_LIBRARY}
+        ${OGG_LIBRARIES}
+        ${VORBIS_LIBRARY}
+        ${VORBISFILE_LIBRARY}
+        ${VORBISENC_LIBRARY}
+        ${OPENALSOFT_LIBRARY}
+    )
     target_link_libraries(fife PRIVATE
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
@@ -1045,28 +1047,28 @@ if(VCPKG_TARGET_TRIPLET)
     target_link_libraries(fife PRIVATE ${TinyXML_LIBRARIES})
 else()
 
-target_link_libraries(fife PRIVATE ${SDL2_LIBRARY})
-target_link_libraries(fife PRIVATE ${SDL2_IMAGE_LIBRARIES})
-target_link_libraries(fife PRIVATE ${SDL2_TTF_LIBRARIES})
-target_link_libraries(fife PRIVATE ${OPENALSOFT_LIBRARY})
-target_link_libraries(fife PRIVATE ${PNG_LIBRARIES})
-target_link_libraries(fife PRIVATE ${VORBISFILE_LIBRARY})
-target_link_libraries(fife PRIVATE ${VORBIS_LIBRARY})
-target_link_libraries(fife PRIVATE ${OGG_LIBRARIES})
-target_link_libraries(fife PRIVATE ${TinyXML_LIBRARIES})
+target_link_libraries(fife PRIVATE
+    ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARIES}
+    ${SDL2_TTF_LIBRARIES}
+    ${OPENALSOFT_LIBRARY}
+    ${PNG_LIBRARIES}
+    ${VORBISFILE_LIBRARY}
+    ${VORBIS_LIBRARY}
+    ${OGG_LIBRARIES}
+    ${TinyXML_LIBRARIES}
+)
 
 endif()
 
   if(opengl)
-    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY})
-    target_link_libraries(fife PRIVATE ${GLEW_LIBRARY})
+    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARY})
   endif(opengl)
   if(fifechan)
     target_link_libraries(fife PRIVATE ${FIFECHAN_LIBRARIES})
   endif(fifechan)
   if(cegui)
-    target_link_libraries(fife PRIVATE ${CEGUI_LIBRARIES})
-    target_link_libraries(fife PRIVATE ${CEGUI_OpenGLRenderer_LIBRARIES})
+    target_link_libraries(fife PRIVATE ${CEGUI_LIBRARIES} ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
 
   # include support for GNU / multiarch path names
@@ -1098,4 +1100,12 @@ endif()
   endif(librocket)
 endif(build-library)
 
-feature_summary(WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
+#-------------------------------------------------------------------
+# Display Feature Summary
+#-------------------------------------------------------------------
+
+feature_summary(
+  WHAT ALL
+  DESCRIPTION "[Build Summary]\n"
+  FATAL_ON_MISSING_REQUIRED_PACKAGES
+)
