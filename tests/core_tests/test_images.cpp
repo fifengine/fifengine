@@ -27,8 +27,6 @@
 #include "fife_unittest.h"
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <SDL.h>
 
 // FIFE includes
@@ -57,17 +55,17 @@ static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 
 // Environment
 struct environment {
-	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFS> vfs;
+    std::shared_ptr<TimeManager> timemanager;
+    std::shared_ptr<VFS> vfs;
 
-	environment()
-		: timemanager(new TimeManager()),
-		  vfs(new VFS()) {
-		vfs->addSource(new VFSDirectory(vfs.get()));
-			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
-				throw SDLException(SDL_GetError());
-			}
-		}
+    environment()
+        : timemanager(std::make_shared<TimeManager>()),
+          vfs(std::make_shared<VFS>()) {
+        vfs->addSource(new VFSDirectory(vfs.get()));
+            if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
+                throw SDLException(SDL_GetError());
+            }
+        }
 };
 
 void test_image(VFS* vfs, RenderBackend& renderbackend) {
@@ -75,15 +73,15 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 
 	ImageLoader provider(vfs);
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
-	
+    std::shared_ptr<Image> img = std::make_shared<Image>(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
+
 	int h = img->getHeight();
 	int w = img->getWidth();
 	for (int i = 0; i < 100; i++) {
 		renderbackend.startFrame();
 		img->render(Rect(i, i, w, h));
 		renderbackend.endFrame();
-	}	
+	}
 	for (int j = 0; j < 5; j++) {
 		for (int i = -10; i < 10; i++) {
 			renderbackend.startFrame();
@@ -91,7 +89,7 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 			img->setYShift(i);
 			img->render(Rect(200, 200, w, h));
 			renderbackend.endFrame();
-		}	
+		}
 	}
 }
 
@@ -100,7 +98,7 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 
 	ImageLoader imgprovider(vfs);
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.loadResource(ImageLocation(SUBIMAGE_FILE))));
+    std::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.loadResource(ImageLocation(SUBIMAGE_FILE))));
 
 	ImageLocation location(SUBIMAGE_FILE);
 	location.setParentSource(&*img);
@@ -121,7 +119,7 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 			subimages.push_back(sub);
 		}
 	}
-	
+
 	for (unsigned int i = 0; i < 200; i++) {
 		renderbackend.startFrame();
 		subimages[i / 40]->render(Rect(200, 200, w, h));
@@ -142,16 +140,16 @@ TEST(test_sdl_alphaoptimize)
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	renderbackend.setAlphaOptimizerEnabled(true);
-		
+
 	ImageLoader provider(env.vfs.get());
 	env.vfs.get()->exists(IMAGE_FILE);
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
+    std::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
 	env.vfs.get()->exists(ALPHA_IMAGE_FILE);
-	boost::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(ALPHA_IMAGE_FILE))));
+    std::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(ALPHA_IMAGE_FILE))));
 
 	int h0 = img->getHeight();
 	int w0 = img->getWidth();
-	
+
 	int h1 = alpha_img->getHeight();
 	int w1 = alpha_img->getWidth();
 	for(int i=0; i != 200; ++i) {
@@ -162,7 +160,7 @@ TEST(test_sdl_alphaoptimize)
 		img->render(Rect(i, h0+i, w0, h0));
 		renderbackend.endFrame();
 	}
-	
+
 	CHECK(img->getSurface()->format->Amask == 0);
 	CHECK(alpha_img->getSurface()->format->Amask != 0);
 }
@@ -196,7 +194,7 @@ TEST(test_ogl_subimage)
 	test_subimage(env.vfs.get(), renderbackend);
 }
 
-// need this here because SDL redefines 
+// need this here because SDL redefines
 // main to SDL_main in SDL_main.h
 #ifdef main
 #undef main

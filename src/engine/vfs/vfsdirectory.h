@@ -19,11 +19,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-// Standard C++ library includes
-#include <filesystem>
+#ifndef FIFE_VFS_VFSHOSTSYSTEM_H
+#define FIFE_VFS_VFSHOSTSYSTEM_H
 
-// Platform specific includes
-#include "fife_unittest.h"
+// Standard C++ library includes
 
 // 3rd party library includes
 
@@ -31,41 +30,55 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfs.h"
-#include "util/structures/rect.h"
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "util/base/exception.h"
-#include "vfs/directoryprovider.h"
+#include "vfssource.h"
 
-static const std::string FIFE_TEST_DIR = "fifetestdir";
+namespace FIFE {
 
-using namespace FIFE;
+	/**
+     * The most basic VFSSource for "normal" filesystems.
+	 * For example, '/' or './tests/data'.
+	 */
+	class VFSDirectory : public VFSSource {
+		public:
+			/** Constructor
+			 * Creates the given file system's VFS Source.
+			 */
+			VFSDirectory(VFS* vfs, const std::string& root = "./");
+			/** Destructor
+			 */
+			virtual ~VFSDirectory();
 
-TEST(test_is_directory)
-{
-    std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-    vfs->addSource(new VFSDirectory(vfs.get()));
+			/** Tests whether a file can be opened.
+			 * @param filename The file to test.
+			 * @return True, if the file filename can be opened.
+			 */
+			virtual bool fileExists(const std::string& filename) const;
+			/** Opens a file.
+			 * @param filename The file to open.
+			 */
+			virtual RawData* open(const std::string& filename) const;
 
-    if(std::filesystem::exists(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-    }
+			/** List files in a directory
+			 * @param path The directory to list the files in
+			 * @return A string list of filenames
+			 * Will return an empty list on \b any error
+			 */
+			std::set<std::string> listFiles(const std::string& path) const;
 
-    if(std::filesystem::exists(FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR);
-    }
-    CHECK(vfs->isDirectory(""));
-    CHECK(vfs->isDirectory("/"));
+			/** List directories in a directory
+			 * @param path The directory to list the directories in
+			 * @return A string list of directories
+			 * Will return an empty list on \b any error
+			 */
+			std::set<std::string> listDirectories(const std::string& path) const;
 
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
-    std::filesystem::create_directory(FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR));
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
-    std::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+		private:
+			std::string m_root;
+
+			std::set<std::string> list(const std::string& path, bool directorys) const;
+
+	};
+
 }
 
-int main() {
-	return UnitTest::RunAllTests();
-}
+#endif

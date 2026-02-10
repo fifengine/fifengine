@@ -17,7 +17,7 @@ end_of_line = lf
 
 [*.{cpp,h}]
 indent_size = 4
-max_line_length = 80
+max_line_length = 100
 
 ; Python: PEP8 defines 4 spaces for indentation
 [*.py]

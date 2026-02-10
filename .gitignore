@@ -1,6 +1,10 @@
 # Install dir for external libs
 ext/install
 
+# Build dir
+out/
+vcpkg_installed/
+
 # Swig wrappers
 engine/python/fife/fife.py
 engine/python/fife/fifechan.py

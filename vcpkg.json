@@ -1,0 +1,21 @@
+{
+  "name": "fifengine",
+  "version-string": "0.4.2",
+  "description": "A portable, low latency, retained-mode GUI framework written in C++.",
+  "homepage": "https://github.com/fifengine/fifengine",
+  "license": "LGPL-2.1",
+  "supports": "windows & x86 & x64",
+  "dependencies": [
+    "sdl2",
+    "sdl2-ttf",
+    "sdl2-image",
+    "glew",
+    "libogg",
+    "libpng",
+    "libvorbis",
+    "openal-soft",
+    "tinyxml",
+    "zlib",
+    "doctest"
+  ]
+}

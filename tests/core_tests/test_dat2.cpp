@@ -44,10 +44,10 @@ using namespace FIFE;
 static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
 static const std::string RAW_FILE = "tests/data/test.map";
 TEST(DAT2_test){
-	
-	boost::shared_ptr<TimeManager> timemanager(new TimeManager());
 
-	boost::shared_ptr<VFS> vfs(new VFS());
+    std::shared_ptr<TimeManager> timemanager = std::make_shared<TimeManager>();
+
+    std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
 	vfs->addSource(new VFSDirectory(vfs.get()));
 	CHECK(vfs->exists(COMPRESSED_FILE));
 
@@ -60,10 +60,10 @@ TEST(DAT2_test){
 	{
 		std::cout << e.what() << std::endl;
 	}
-		
+
 	CHECK(vfs->exists(RAW_FILE));
 	CHECK(vfs->exists("dat2vfstest.map"));
-	
+
 	FIFE::RawData* fraw = vfs->open(RAW_FILE);
 	FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
 
@@ -84,15 +84,15 @@ TEST(DAT2_test){
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
 		CHECK_EQUAL(compc, rawc);
-		//std::cout 
-		//	<< "raw: " << std::setbase(16) << rawc 
+		//std::cout
+		//	<< "raw: " << std::setbase(16) << rawc
 		//	<< " comp: " << std::setbase(16) << compc << std::endl;
 		break;
-		
-	
+
+
 	}
 	//std::cout << "scanning finished" << std::endl;
-	
+
 	delete[] d_raw;
 	delete[] d_comp;
 	delete fraw;

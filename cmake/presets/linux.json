@@ -1,0 +1,354 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "include": [
+    "base.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "vcpkg-triplet-x64-linux",
+      "hidden": true,
+      "description": "Set vcpkg target_triplet (shared | dynamic).",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "STRING",
+          "value": "x64-linux"
+        }
+      },
+      "inherits": [
+        "vcpkg-default-config"
+      ]
+    },
+    {
+      "name": "gcc-x64-linux-base",
+      "hidden": true,
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "linux-gcc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-linux",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "build-folders-default",
+        "vcpkg-triplet-x64-linux"
+      ]
+    },
+    {
+      "name": "compiler-gcc9-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-9",
+        "CMAKE_CXX_COMPILER": "g++-9"
+      }
+    },
+    {
+      "name": "compiler-gcc10-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-10",
+        "CMAKE_CXX_COMPILER": "g++-10"
+      }
+    },
+    {
+      "name": "compiler-gcc11-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-11",
+        "CMAKE_CXX_COMPILER": "g++-11"
+      }
+    },
+    {
+      "name": "compiler-gcc12-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-12",
+        "CMAKE_CXX_COMPILER": "g++-12"
+      }
+    },
+    {
+      "name": "compiler-gcc13-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-13",
+        "CMAKE_CXX_COMPILER": "g++-13"
+      }
+    },
+    {
+      "name": "compiler-gcc14-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-14",
+        "CMAKE_CXX_COMPILER": "g++-14"
+      }
+    },
+    {
+      "name": "compiler-gcc15-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-15",
+        "CMAKE_CXX_COMPILER": "g++-15"
+      }
+    },
+    {
+      "name": "gcc9-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc9-linux"
+      ]
+    },
+    {
+      "name": "gcc10-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc10-linux"
+      ]
+    },
+    {
+      "name": "gcc11-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc11-linux"
+      ]
+    },
+    {
+      "name": "gcc12-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc12-linux"
+      ]
+    },
+    {
+      "name": "gcc13-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc13-linux"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc14-linux"
+      ]
+    },
+    {
+      "name": "gcc15-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "gcc-x64-linux-base",
+        "compiler-gcc15-linux"
+      ]
+    },
+    {
+      "name": "clang-x64-linux-base",
+      "hidden": true,
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "linux-gcc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-linux",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "build-folders-default",
+        "vcpkg-triplet-x64-linux",
+        "use-linker-lld"
+      ]
+    },
+    {
+      "name": "compiler-clang10-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-10",
+        "CMAKE_CXX_COMPILER": "clang++-10"
+      }
+    },
+    {
+      "name": "compiler-clang11-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-11",
+        "CMAKE_CXX_COMPILER": "clang++-11"
+      }
+    },
+    {
+      "name": "compiler-clang12-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-12",
+        "CMAKE_CXX_COMPILER": "clang++-12"
+      }
+    },
+    {
+      "name": "compiler-clang13-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-13",
+        "CMAKE_CXX_COMPILER": "clang++-14"
+      }
+    },
+    {
+      "name": "compiler-clang14-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-14",
+        "CMAKE_CXX_COMPILER": "clang++-14"
+      }
+    },
+    {
+      "name": "compiler-clang15-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-15",
+        "CMAKE_CXX_COMPILER": "clang++-15"
+      }
+    },
+    {
+      "name": "compiler-clang16-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-16",
+        "CMAKE_CXX_COMPILER": "clang++-16"
+      }
+    },
+    {
+      "name": "compiler-clang17-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-17",
+        "CMAKE_CXX_COMPILER": "clang++-17"
+      }
+    },
+    {
+      "name": "compiler-clang18-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-18",
+        "CMAKE_CXX_COMPILER": "clang++-18"
+      }
+    },
+    {
+      "name": "compiler-clang19-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-19",
+        "CMAKE_CXX_COMPILER": "clang++-19"
+      }
+    },
+    {
+      "name": "compiler-clang20-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-20",
+        "CMAKE_CXX_COMPILER": "clang++-20"
+      }
+    },
+    {
+      "name": "clang20-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang20-linux"
+      ]
+    },
+    {
+      "name": "clang19-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang19-linux"
+      ]
+    },
+    {
+      "name": "clang18-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang18-linux"
+      ]
+    },
+    {
+      "name": "clang17-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang17-linux"
+      ]
+    },
+    {
+      "name": "clang16-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang16-linux"
+      ]
+    },
+    {
+      "name": "clang15-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang15-linux"
+      ]
+    },
+    {
+      "name": "clang14-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang14-linux"
+      ]
+    },
+    {
+      "name": "clang13-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang13-linux"
+      ]
+    },
+    {
+      "name": "clang12-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang12-linux"
+      ]
+    },
+    {
+      "name": "clang11-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang11-linux"
+      ]
+    },
+    {
+      "name": "clang10-x64-linux",
+      "hidden": true,
+      "inherits": [
+        "clang-x64-linux-base",
+        "compiler-clang10-linux"
+      ]
+    }
+  ]
+}

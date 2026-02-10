@@ -20,11 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
-#include <iomanip>
-
-// Platform specific includes
-#include "fife_unittest.h"
 
 // 3rd party library includes
 
@@ -32,65 +27,42 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "vfs/dat/dat1.h"
-#include "vfs/dat/dat2.h"
-#include "vfs/raw/rawdata.h"
 #include "util/base/exception.h"
 
-using namespace FIFE;
+#include "filesystem.h"
+#include "vfs.h"
+#include "directoryprovider.h"
+#include "vfsdirectory.h"
 
-static const std::string COMPRESSED_FILE = "tests/data/dat1vfstest.dat";
-static const std::string RAW_FILE = "tests/data/test.map";
-
-TEST(DAT1_test){
-
-    std::shared_ptr<FIFE::VFS> vfs = std::make_shared<FIFE::VFS>();
-	vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
-	CHECK(vfs->exists(COMPRESSED_FILE));
-
-
-	vfs->addSource(new FIFE::DAT1(vfs.get(), COMPRESSED_FILE));
-
-	CHECK(vfs->exists(RAW_FILE));
-	CHECK(vfs->exists("dat1vfstest.map"));
-
-	FIFE::RawData* fraw = vfs->open(RAW_FILE);
-	FIFE::RawData* fcomp = vfs->open("dat1vfstest.map");
-
-	CHECK_EQUAL(fraw->getDataLength(), fcomp->getDataLength());
-	//std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
-
-	unsigned int smaller_len = fraw->getDataLength();
-	if (fcomp->getDataLength() < smaller_len) {
-		smaller_len = fcomp->getDataLength();
+namespace FIFE {
+	bool DirectoryProvider::isReadable(const std::string& path) const {
+        return fs::is_directory(fs::path(path));
 	}
 
-	uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
-	uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
-	fraw->readInto(d_raw,fraw->getDataLength());
-	fcomp->readInto(d_comp,fcomp->getDataLength());
-	//std::cout << "scanning data..." << std::endl;
-	for (unsigned int i = 0; i < smaller_len; i++) {
-		uint8_t rawc =  d_raw[i];
-		uint8_t compc = d_comp[i];
-		CHECK_EQUAL(compc, rawc);
-		//std::cout
-		//	<< "raw: " << std::setbase(16) << rawc
-		//	<< " comp: " << std::setbase(16) << compc << std::endl;
-		break;
-
-
+	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) {
+		if (isReadable(path)) {
+			VFSSource* source = NULL;
+			if ( hasSource(path)) {
+				source = m_sources[path];
+			} else {
+				source = new VFSDirectory(getVFS(), path);
+				m_sources[path] = source;
+			}
+			return source;
+		}
+		else
+			throw Exception("Path " + path + " is not readable.");
 	}
-	//std::cout << "scanning finished" << std::endl;
 
-	delete[] d_raw;
-	delete[] d_comp;
-	delete fraw;
-	delete fcomp;
-}
+	VFSSource* DirectoryProvider::getSource(const std::string& path) const {
+		VFSSource* source = NULL;
+		if (hasSource(path)) {
+			source = m_sources.find(path)->second;
+		}
+		return source;
+	}
 
-int main() {
-	return UnitTest::RunAllTests();
+	bool DirectoryProvider::hasSource(const std::string & path) const {
+		return m_sources.count(path) > 0;
+	}
 }

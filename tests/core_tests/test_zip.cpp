@@ -44,10 +44,10 @@ using namespace FIFE;
 
 // Environment
 struct environment {
-	boost::shared_ptr<TimeManager> timemanager;
+    std::shared_ptr<TimeManager> timemanager;
 
-	environment()
-		: timemanager(new TimeManager()) {}
+    environment()
+        : timemanager(std::make_shared<TimeManager>()) {}
 };
 
 using namespace FIFE;
@@ -57,12 +57,12 @@ static const std::string RAW_FILE = "tests/data/test.map";
 
 TEST(test_decoder) {
 	environment env;
-	boost::shared_ptr<VFS> vfs(new VFS());
+	std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
 	vfs->addSource(new VFSDirectory(vfs.get()));
-	
+
 	CHECK(vfs->exists(COMPRESSED_FILE));
 	vfs->addSource(new ZipSource(vfs.get(), COMPRESSED_FILE));
-	
+
 	CHECK_THROW(vfs->open("does-not-exist"), NotFound);
 	std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
 
@@ -106,7 +106,7 @@ TEST(test_decoder) {
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
 		CHECK(rawc == compc);
-		
+
 	}
 	std::cout << "scanning finished" << std::endl;
 	delete[] d_raw;

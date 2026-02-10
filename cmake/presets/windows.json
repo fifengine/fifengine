@@ -1,0 +1,227 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "include": [
+    "base.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "vcpkg-triplet-x64-windows",
+      "hidden": true,
+      "description": "Set vcpkg target_triplet (shared | dynamic).",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "STRING",
+          "value": "x64-windows"
+        }
+      },
+      "inherits": [
+        "vcpkg-default-config"
+      ]
+    },
+    {
+      "name": "vcpkg-triplet-x64-windows-static",
+      "hidden": true,
+      "description": "Set vcpkg target_triplet (non-shared | static).",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "type": "STRING",
+          "value": "x64-windows-static"
+        }
+      },
+      "inherits": [
+        "vcpkg-default-config"
+      ]
+    },
+    {
+      "name": "compiler-msvc-vc16",
+      "hidden": true,
+      "description": "Set VC16 (VS2019) as compiler on Windows.",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "cl"
+        }
+      }
+    },
+    {
+      "name": "compiler-msvc-vc17",
+      "hidden": true,
+      "description": "Set VC17 (VS2022) as compiler on Windows.",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "cl"
+        }
+      }
+    },
+    {
+      "name": "compiler-msvc-clang",
+      "hidden": true,
+      "description": "Set Clang-Cl (from MSVC) as compiler on Windows..",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "clang-cl"
+        }
+      }
+    },
+    {
+      "name": "compiler-llvm-clang",
+      "hidden": true,
+      "description": "Set Clang (native; from LLVM) as compiler on Windows.",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "clang-cl"
+        }
+      }
+    },
+    {
+      "name": "vc16-x64-windows-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "v143,host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "intelliSenseMode": "windows-msvc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-vc16",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows-static"
+      ]
+    },
+    {
+      "name": "vc17-x64-windows",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "v143,host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "intelliSenseMode": "windows-msvc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-vc17",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows"
+      ]
+    },
+    {
+      "name": "vc17-x64-windows-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "v143,host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "intelliSenseMode": "windows-msvc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-vc17",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows-static"
+      ]
+    },
+    {
+      "name": "clangcl-x64-windows-static",
+      "hidden": true,
+      "description": "Use Clang-CL (MSVC) as compiler on Windows.",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "clang-cl"
+        }
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-clang",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows-static"
+      ]
+    },
+    {
+      "name": "clang-x64-windows-static",
+      "hidden": true,
+      "description": "Use Clang (native LLVM) as compiler on Windows.",
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-llvm-clang",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows-static"
+      ]
+    }
+  ]
+}

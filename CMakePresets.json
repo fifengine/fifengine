@@ -1,0 +1,141 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "include": [
+    "cmake/presets/base.json",
+    "cmake/presets/windows.json",
+    "cmake/presets/linux.json",
+    "cmake/presets/ci.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "vc17-x64-windows-rel",
+      "displayName": "VC17 Release",
+      "inherits": "vc17-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "vc17-x64-windows-dbg",
+      "displayName": "VC17 Debug",
+      "inherits": "vc17-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "vc17-x64-windows-rdi",
+      "displayName": "VC17 RelWithDebInfo",
+      "inherits": "vc17-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "vc17-x64-windows-dbg-asan",
+      "hidden": true,
+      "displayName": "VC17 Debug ASAN",
+      "inherits": "vc17-x64-windows-dbg",
+      "cacheVariables": {
+        "X_ENABLE_ASAN": "ON"
+      }
+    },
+    {
+      "name": "vc17-x64-windows-dbg-ana",
+      "displayName": "VC17 Analysis",
+      "inherits": "vc17-x64-windows-dbg",
+      "cacheVariables": {
+        "X_ENABLE_ANALYSIS": "ON"
+      }
+    },
+    {
+      "name": "clangcl-x64-windows-dbg",
+      "displayName": "ClangCL Debug",
+      "inherits": "clangcl-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clangcl-x64-windows-rel",
+      "displayName": "ClangCL Release",
+      "inherits": "clangcl-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "clangcl-x64-windows-rdi",
+      "displayName": "ClangCL RelWithDebInfo",
+      "inherits": "clangcl-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "clang20-x64-linux-rel",
+      "displayName": "Clang20 Release",
+      "inherits": "clang20-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc12-x64-linux-rel",
+      "displayName": "GCC12 Release",
+      "inherits": "gcc12-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vc17-x64-windows-rel",
+      "configurePreset": "vc17-x64-windows-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "vc17-x64-windows-dbg",
+      "configurePreset": "vc17-x64-windows-dbg",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "clangcl-x64-windows-rel",
+      "configurePreset": "clangcl-x64-windows-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "clangcl-x64-windows-dbg",
+      "configurePreset": "clangcl-x64-windows-dbg",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "clang20-x64-linux-rel",
+      "configurePreset": "clang20-x64-linux-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "gcc12-x64-linux-rel",
+      "configurePreset": "gcc12-x64-linux-rel",
+      "targets": [
+        "fife"
+      ]
+    }
+  ]
+}

@@ -27,8 +27,6 @@
 #include "fife_unittest.h"
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <SDL.h>
 
 // FIFE includes
@@ -57,15 +55,15 @@ static const std::string ANIM_FILE = "tests/data/crate_full_001.xml";
 
 // Environment
 struct environment {
-	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFS> vfs;
+    std::shared_ptr<TimeManager> timemanager;
+    std::shared_ptr<VFS> vfs;
 
-	environment()
-		: timemanager(new TimeManager()), vfs(new VFS()) {
-			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
-				throw SDLException(SDL_GetError());
-			}
-		}
+    environment()
+        : timemanager(std::make_shared<TimeManager>()), vfs(std::make_shared<VFS>()) {
+            if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
+                throw SDLException(SDL_GetError());
+            }
+        }
 };
 
 TEST_FIXTURE(environment, test_image_pool)
@@ -140,7 +138,7 @@ TEST_FIXTURE(environment, test_image_pool)
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
 }
 
-// need this here because SDL redefines 
+// need this here because SDL redefines
 // main to SDL_main in SDL_main.h
 #ifdef main
 #undef main

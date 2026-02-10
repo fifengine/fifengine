@@ -70,10 +70,10 @@ script:
   - make -j3
   - sudo make install
 
-after_script: 
+after_script:
   - cd $TRAVIS_BUILD_DIR
   - python3 -c 'from fife import fife; print(fife.getVersion())'
-  - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -iengine/core/ext engine/core; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then cppcheck --verbose --enable=all --std=posix --std=c++11 --quiet -isrc/engine/ext src/engine; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then pylint --rcfile=.pylintrc ./engine/python/fife/; fi
 
 notifications:

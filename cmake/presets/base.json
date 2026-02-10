@@ -1,0 +1,262 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "cmake-default-config",
+      "hidden": true,
+      "description": "CMake Configuration",
+      "cacheVariables": {
+        "CMAKE_COMPILE_WARNING_AS_ERROR": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "CMAKE_EXPORT_COMPILE_COMMANDS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "CMAKE_COLOR_DIAGNOSTICS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "CMAKE_VERBOSE_MAKEFILE": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "cmake-enable-warnings",
+      "hidden": true,
+      "description": "Enables CMake developer warnings for deprecated, uninitalized, unsed variables.",
+      "warnings": {
+        "deprecated": true,
+        "dev": true,
+        "uninitialized": true,
+        "unusedCli": true
+      }
+    },
+    {
+      "name": "build-folders-default",
+      "hidden": true,
+      "description": "Set the build and install directory.",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "FILEPATH",
+          "value": "${sourceDir}/out/install/${presetName}"
+        }
+      }
+    },
+    {
+      "name": "build-folders-ci",
+      "hidden": true,
+      "description": "Set the build and install directory for CI system.",
+      "binaryDir": "build",
+      "installDir": "install",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "FILEPATH",
+          "value": "install"
+        }
+      }
+    },
+    {
+      "name": "condition-is-windows",
+      "hidden": true,
+      "displayName": "Windows-only configuration",
+      "description": "This build is only available on Windows.",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "condition-is-linux",
+      "hidden": true,
+      "displayName": "Linux-only configuration",
+      "description": "This build is only available on Linux.",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "condition-is-ci",
+      "hidden": true,
+      "displayName": "CI-only configuration",
+      "description": "This build is only available on a Continous Integration system.",
+      "condition": {
+        "type": "equals",
+        "lhs": "$env{CI}",
+        "rhs": "true"
+      }
+    },
+    {
+      "name": "generator-ninja-multi",
+      "hidden": true,
+      "description": "Set ninja multi-config as makefile generator.",
+      "generator": "Ninja Multi-Config",
+      "environment": {
+          "NINJA_STATUS": "%e [%f/%t] "
+      },
+      "cacheVariables": {
+        "CMAKE_MAKE_PROGRAM": {
+          "type": "FILEPATH",
+          "value": "ninja"
+        }
+      }
+    },
+    {
+      "name": "generator-ninja",
+      "hidden": true,
+      "description": "Set ninja as makefile generator.",
+      "generator": "Ninja",
+      "environment": {
+          "NINJA_STATUS": "%e [%f/%t] "
+      },
+      "cacheVariables": {
+        "CMAKE_MAKE_PROGRAM": {
+          "type": "FILEPATH",
+          "value": "ninja"
+        }
+      }
+    },
+    {
+      "name": "vcpkg-default-config",
+      "hidden": true,
+      "description": "Setup vcpkg on windows: toolchain, package install dir, verbosity.",
+      "cacheVariables": {
+        "VCPKG_VERBOSE": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "MACRO_EXPANSION_DOESNT_WORK_ON_LOCAL_DEVBOX_WIN11_CMAKE_TOOLCHAIN_FILE": {
+          "type": "FILEPATH",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "VCPKG_INSTALLED_DIR": {
+          "type": "FILEPATH",
+          "value": "${sourceDir}/vcpkg_installed/"
+        },
+        "X_VCPKG_APPLOCAL_DEPS_INSTALL": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "address-sanitizer",
+      "hidden": true,
+      "cacheVariables": {
+        "SANITIZE_ADDRESS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "thread-sanitizer",
+      "hidden": true,
+      "cacheVariables": {
+        "SANITIZE_THREAD": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "undefined-behavior-sanitizer",
+      "hidden": true,
+      "cacheVariables": {
+        "SANITIZE_UB": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "static-analysis",
+      "hidden": true,
+      "cacheVariables": {
+        "STATIC_ANALYSIS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "use-sccache",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER_LAUNCHER": "sccache"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "use-ccache",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "build-type-release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "build-type-rdi",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "build-type-debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "use-linker-lld",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "LLD"
+      }
+    },
+    {
+      "name": "use-linker-mold",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "MOLD"
+      }
+    },
+    {
+      "name": "use-linker-ld",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "LD"
+      }
+    }
+  ]
+}

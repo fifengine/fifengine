@@ -19,53 +19,57 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-// Standard C++ library includes
-#include <filesystem>
+#ifndef FIFE_VERSION_H
+#define FIFE_VERSION_H
 
-// Platform specific includes
-#include "fife_unittest.h"
+/**
+ * These version numbers are updated as part of the release process.
+ *
+ * The file "version.h.in" is a template file with placeholder tokens.
+ * CMake replaces these tokens during the project configuration phase
+ * and creates the file "version.h", see CMakeLists.txt.
+ */
 
-// 3rd party library includes
+#define FIFE_VERSION        "0.4.2+build.1629a9c"
+#define FIFE_VERSION_SHORT  "0.4.2"
+#define FIFE_MAJOR_VERSION  0
+#define FIFE_MINOR_VERSION  4
+#define FIFE_PATCH_VERSION  2
+#define FIFE_GIT_HASH       "1629a9c"
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "vfs/vfs.h"
-#include "util/structures/rect.h"
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "util/base/exception.h"
-#include "vfs/directoryprovider.h"
-
-static const std::string FIFE_TEST_DIR = "fifetestdir";
-
-using namespace FIFE;
-
-TEST(test_is_directory)
-{
-    std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-    vfs->addSource(new VFSDirectory(vfs.get()));
-
-    if(std::filesystem::exists(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
+/**
+ *  All FIFE related code is in the "FIFE" namespace.
+ *  The namespace "fcn" (fifechan) is used for our custom widgets.
+ */
+namespace FIFE {
+    inline const char* getVersion() {
+        return FIFE_VERSION;
     }
 
-    if(std::filesystem::exists(FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR);
+    inline const char* getVersionShort() {
+        return FIFE_VERSION_SHORT;
     }
-    CHECK(vfs->isDirectory(""));
-    CHECK(vfs->isDirectory("/"));
 
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
-    std::filesystem::create_directory(FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR));
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
-    std::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
-}
+    inline int getMajor() {
+        return FIFE_MAJOR_VERSION;
+    }
 
-int main() {
-	return UnitTest::RunAllTests();
-}
+    inline int getMinor() {
+        return FIFE_MINOR_VERSION;
+    }
+
+    inline int getPatch() {
+        return FIFE_PATCH_VERSION;
+    }
+
+    inline const char* getHash() {
+        return FIFE_GIT_HASH;
+    }
+
+    inline const int getVersionId() {
+        return FIFE_MAJOR_VERSION * 10000 + FIFE_MINOR_VERSION * 100 + FIFE_PATCH_VERSION; // 3.2.1 = 30201
+    }
+} //FIFE
+
+#endif //FIFE_VERSION_H
+

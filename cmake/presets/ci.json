@@ -1,0 +1,160 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "include": [
+    "base.json",
+    "linux.json",
+    "windows.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "vc16-x64-windows-static-rel-ci",
+      "displayName": "VC16 Release CI",
+      "inherits": [
+        "vc16-x64-windows-static",
+        "build-type-release",
+        "build-folders-ci",
+        "use-sccache",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "vc17-x64-windows-static-rel-ci",
+      "displayName": "VC17 Release CI",
+      "inherits": [
+        "vc17-x64-windows-static",
+        "build-type-release",
+        "build-folders-ci",
+        "use-sccache",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "vc17-x64-windows-static-rdi-ci",
+      "displayName": "VC17 RelWithDebInfo CI",
+      "inherits": [
+        "vc17-x64-windows-static",
+        "build-type-rdi",
+        "build-folders-ci",
+        "use-sccache",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "gcc9-x64-linux-rel-ci",
+      "displayName": "GCC9 Release CI",
+      "inherits": [
+        "gcc9-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "gcc13-x64-linux-rel-ci",
+      "displayName": "GCC13 Release CI",
+      "inherits": [
+        "gcc13-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-rel-ci",
+      "displayName": "GCC14 Release CI",
+      "inherits": [
+        "gcc14-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang10-x64-linux-rel-ci",
+      "displayName": "Clang10 Release CI",
+      "inherits": [
+        "clang10-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang15-x64-linux-rel-ci",
+      "displayName": "Clang15 Release CI",
+      "inherits": [
+        "clang15-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang17-x64-linux-rel-ci",
+      "displayName": "Clang17 Release CI",
+      "inherits": [
+        "clang17-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    },
+    {
+      "name": "clang18-x64-linux-rel-ci",
+      "displayName": "Clang18 Release CI",
+      "inherits": [
+        "clang18-x64-linux",
+        "build-type-release",
+        "build-folders-ci",
+        "condition-is-ci"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vc16-x64-windows-static-rel-ci",
+      "configurePreset": "vc16-x64-windows-static-rel-ci"
+    },
+    {
+      "name": "vc17-x64-windows-static-rel-ci",
+      "configurePreset": "vc17-x64-windows-static-rel-ci"
+    },
+    {
+      "name": "vc17-x64-windows-static-rdi-ci",
+      "configurePreset": "vc17-x64-windows-static-rdi-ci"
+    },
+    {
+      "name": "gcc9-x64-linux-rel-ci",
+      "configurePreset": "gcc9-x64-linux-rel-ci"
+    },
+    {
+      "name": "gcc13-x64-linux-rel-ci",
+      "configurePreset": "gcc13-x64-linux-rel-ci"
+    },
+    {
+      "name": "gcc14-x64-linux-rel-ci",
+      "configurePreset": "gcc14-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang10-x64-linux-rel-ci",
+      "configurePreset": "clang10-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang15-x64-linux-rel-ci",
+      "configurePreset": "clang15-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang17-x64-linux-rel-ci",
+      "configurePreset": "clang17-x64-linux-rel-ci"
+    },
+    {
+      "name": "clang18-x64-linux-rel-ci",
+      "configurePreset": "clang18-x64-linux-rel-ci"
+    }
+  ]
+}

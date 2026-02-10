@@ -75,6 +75,8 @@ SET(SDL2_SEARCH_PATHS
 	/opt/local # DarwinPorts
 	/opt/csw # Blastwave
 	/opt
+    /vcpkg_installed/x64-windows/
+    /vcpkg_installed/x64-linux/
 	${SDL2_PATH}
 )
 
