@@ -67,7 +67,6 @@ configure_file (
 
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
-option(librocket        "Enable Librocket GUI subsystem"                        OFF)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
@@ -199,34 +198,8 @@ message("")
 #                           Find Dependencies - Windows
 #------------------------------------------------------------------------------
 
-# Tell CMake where to search for binaries (dlls), includes and libs on Windows
-if(WIN32)
-  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
-
-    # help to find dependencies on Appveyor
-
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/build-tools/swig"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/bin"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/include/AL"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes/lib"
-
-    # help to find dependencies on your local env (FifeSDK)
-
-    "${PROJECT_SOURCE_DIR}/../swig"
-    "${PROJECT_SOURCE_DIR}/../python"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/bin"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/AL"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/include/SDL2"
-    "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/lib"
-
-  )
-endif(WIN32)
-
 # Use vcpkg installed packages
-set(CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}")
+list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}")
 message(STATUS "Use CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 #------------------------------------------------------------------------------
@@ -381,13 +354,6 @@ set(FIFE_FCHAN_SRC
   ${PROJECT_SOURCE_DIR}/src/engine/gui/fifechan/widgets/resizablewindow.cpp
 )
 
-# LIBROCKET
-set(FIFE_LROCKET_SRC
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/librocketmanager.cpp
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/base/librocketinputprocessor.cpp
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/base/librocketrenderinterface.cpp
-)
-
 #------------------------------------------------------------------------------
 #                         Source Groups for Source Files
 #------------------------------------------------------------------------------
@@ -395,7 +361,6 @@ set(FIFE_LROCKET_SRC
 source_group("fife.core"                FILES ${FIFE_CORE_SRC})
 source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_SRC})
 source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_SRC})
-source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_SRC})
 
 #------------------------------------------------------------------------------
 #                                 Header Files
@@ -607,13 +572,6 @@ set(FIFE_FCHAN_HDR
   ${PROJECT_SOURCE_DIR}/src/engine/gui/fifechan/widgets/resizablewindow.h
 )
 
-# Librocket
-set(FIFE_LROCKET_HDR
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/librocketmanager.h
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/base/librocketinputprocessor.h
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/librocket/base/librocketrenderinterface.h
-)
-
 #------------------------------------------------------------------------------
 #                      Source Groups for Header Files
 #------------------------------------------------------------------------------
@@ -621,7 +579,6 @@ set(FIFE_LROCKET_HDR
 source_group("fife.core"                FILES ${FIFE_CORE_HDR})
 source_group("fife.core.gui.cegui"      FILES ${FIFE_CEGUI_HDR})
 source_group("fife.core.gui.fifechan"   FILES ${FIFE_FCHAN_HDR})
-source_group("fife.core.gui.librocket"  FILES ${FIFE_LROCKET_HDR})
 
 add_custom_target(fife.headers SOURCES ${FIFE_CORE_HDR} ${FIFE_CEGUI_HDR} ${FIFE_FCHAN_HDR} ${FIFE_LROCKET_HDR})
 
@@ -717,11 +674,6 @@ set(FIFE_FCHAN_SWIG
   gui/fifechan/widgets/widgets.i
 )
 
-# LIBROCKET
-set(FIFE_LROCKET_SWIG
-  gui/librocket/librocketmanager.i
-)
-
 #------------------------------------------------------------------------------
 #                      Source Groups for SWIG Files
 #------------------------------------------------------------------------------
@@ -730,7 +682,6 @@ source_group("fife.core"                    FILES ${FIFE_CORE_SWIG})
 source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
 source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
-source_group("fife.core.gui.librocket"      FILES ${FIFE_LROCKET_SWIG})
 
 # TODO some files for this source_group are not found
 #add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG} ${FIFE_LROCKET_SWIG})
@@ -746,7 +697,6 @@ SET(FIFE_SWIGWRAPPERS_PYTHON
   ${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fife.i.templ.cm
   ${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fifechan.i.templ
   ${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fifechan.i.templ.cm
-  ${PROJECT_SOURCE_DIR}/src/swigwrappers/python/librocket.i.templ
 )
 
 #------------------------------------------------------------------------------
@@ -761,9 +711,9 @@ add_custom_target(fife.swig-wrappers SOURCES ${FIFE_SWIGWRAPPERS_PYTHON})
 #                                 Find Packages
 #------------------------------------------------------------------------------
 
-find_package(SDL2 CONFIG REQUIRED)
-find_package(SDL2_image CONFIG REQUIRED)
-find_package(SDL2_ttf CONFIG REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
@@ -981,10 +931,9 @@ if(build-python)
   install(FILES       ${CMAKE_SOURCE_DIR}/engine/python/fife/__init__.py			DESTINATION ${PYTHON_SITE_PACKAGES}/fife)
 
   # copy all files/folders from the extension folder
-  # but exclude extension folders of the optional dependencies: cegui, librocket, pychan
+  # but exclude extension folders of the optional dependencies: cegui, pychan
   install(DIRECTORY   ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/			DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions
 	PATTERN "extensions/cegui"	   EXCLUDE
-	PATTERN "extensions/librocket" EXCLUDE
 	PATTERN "extensions/pychan"    EXCLUDE
     PATTERN "extensions/*"
   )
@@ -993,11 +942,6 @@ if(build-python)
     # install fife's extension for cegui
 	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/cegui/		DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/cegui)
   endif(cegui)
-
-  if(librocket)
-    # install fife's extension for librocket
-	install(DIRECTORY ${CMAKE_SOURCE_DIR}/engine/python/fife/extensions/librocket/	DESTINATION ${PYTHON_SITE_PACKAGES}/fife/extensions/librocket)
-  endif(librocket)
 
   if(fifechan)
     # install pychan - fife's extension for fifechan
@@ -1095,9 +1039,6 @@ endif()
   if(cegui)
     INSTALL_HEADERS_WITH_DIRECTORY(FIFE_CEGUI_HDR)
   endif(cegui)
-  if(librocket)
-    INSTALL_HEADERS_WITH_DIRECTORY(FIFE_LROCKET_HDR)
-  endif(librocket)
 endif(build-library)
 
 #-------------------------------------------------------------------
