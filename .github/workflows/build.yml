@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "${{ env.VCPKG_ROOT }}"
+          cd "${{ env.VCPKG_INSTALLATION_ROOT }}"
           git fetch --tags
           LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
           git checkout $LATEST_VCPKG_TAG
