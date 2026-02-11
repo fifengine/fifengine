@@ -27,14 +27,14 @@ jobs:
         - {
             job_name: "Linux, Clang 16, Release",
             os: ubuntu-24.04,
-            preset: clang16-x64-linux-rel-ci,
+            preset: clang16-x64-linux-rel,
             triplet: x64-linux,
             artifact-name: libfife-linux-x64
           }
         - {
             job_name: "Linux, GCC 14, Release",
             os: ubuntu-24.04,
-            preset: gcc14-x64-linux-rel-ci,
+            preset: gcc14-x64-linux-rel,
             triplet: x64-linux,
             artifact-name: libfife-linux-x64
           }
@@ -42,7 +42,7 @@ jobs:
         - {
             job_name: "Windows, VC17, Release",
             os: windows-2025,
-            preset: vc17-x64-windows-rel-ci,
+            preset: vc17-x64-windows-rel,
             triplet: x64-windows,
             artifact-name: libfife-windows-x64
           }

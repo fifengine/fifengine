@@ -8,8 +8,7 @@
   "include": [
     "cmake/presets/base.json",
     "cmake/presets/windows.json",
-    "cmake/presets/linux.json",
-    "cmake/presets/ci.json"
+    "cmake/presets/linux.json"
   ],
   "configurePresets": [
     {
@@ -78,6 +77,14 @@
       }
     },
     {
+      "name": "clang16-x64-linux-rel",
+      "displayName": "Clang16 Release",
+      "inherits": "clang16-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "clang20-x64-linux-rel",
       "displayName": "Clang20 Release",
       "inherits": "clang20-x64-linux",
@@ -89,6 +96,14 @@
       "name": "gcc12-x64-linux-rel",
       "displayName": "GCC12 Release",
       "inherits": "gcc12-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "gcc14-x64-linux-rel",
+      "displayName": "GCC14 Release",
+      "inherits": "gcc14-x64-linux",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -131,8 +146,22 @@
       ]
     },
     {
+      "name": "clang16-x64-linux-rel",
+      "configurePreset": "clang16-x64-linux-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
       "name": "gcc12-x64-linux-rel",
       "configurePreset": "gcc12-x64-linux-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "gcc14-x64-linux-rel",
+      "configurePreset": "gcc14-x64-linux-rel",
       "targets": [
         "fife"
       ]
