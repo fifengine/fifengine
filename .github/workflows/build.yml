@@ -13,7 +13,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+
+# ---------------------------------------------------------------------------------------
+
+  build-on-linux:
+
+# ---------------------------------------------------------------------------------------
+
     name: "${{ matrix.config.job_name }}"
 
     # https://github.com/actions/runner-images#available-environments
@@ -29,15 +35,101 @@ jobs:
             os: ubuntu-24.04,
             preset: clang16-x64-linux-rel,
             triplet: x64-linux,
-            artifact-name: libfife-linux-x64
+            artifact-name: libfife-linux-clang16-x64
           }
         - {
             job_name: "Linux, GCC 14, Release",
             os: ubuntu-24.04,
             preset: gcc14-x64-linux-rel,
             triplet: x64-linux,
-            artifact-name: libfife-linux-x64
+            artifact-name: libfife-linux-gcc14-x64
           }
+
+    env:
+      # VCPKG_ROOT is used by SetupVcpkg to automatically load the toolchain.
+      VCPKG_ROOT: /usr/local/share/vcpkg
+      VCPKG_DISABLE_METRICS: 1
+      SOURCE_DIR:  ${{ github.workspace }}
+      BUILD_DIR:   ${{ github.workspace }}/build
+      INSTALL_DIR: ${{ github.workspace }}/install
+
+    steps:
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6 # https://github.com/actions/checkout
+
+      - name: 🔽 Update Build Environment
+        run: |
+          sudo apt update -qq
+          sudo apt install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
+          echo -e "libxcrypt depends on ltdl development files from the system package manager:"
+          sudo apt install -y libltdl-dev
+
+      # Reminder: This step requires that the CMakePresets for CI contain
+      # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
+      - name: 🎯 Setup Build Cache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: build-${{ matrix.config.preset }}-${{ github.ref }}
+          restore-keys: |
+            build-${{ matrix.config.preset }}-${{ github.ref }}
+            build-${{ matrix.config.preset }}
+
+      - name: 🎯 Cache VCPKG
+        id: cache-vcpkg
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
+          path: /home/runner/.cache/vcpkg/archives/
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+          restore-keys: |
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-vcpkg-${{ matrix.config.preset }}
+
+      - name: 🔽 Update VCPKG
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
+          cd ${{ env.VCPKG_ROOT }}
+          git reset --hard
+          git pull --quiet
+          ./bootstrap-vcpkg.sh
+
+      - name: 🛠️ CMake ➔ Configure
+        run: |
+          cmake --preset ${{ matrix.config.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
+
+      - name: 🙏 CMake ➔ Build
+        run: cmake --build ${{ env.BUILD_DIR }}
+
+      - name: 📦 CMake ➔ Install
+        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
+
+      - name: ❔ CHECK important folders, to see if everything is present (after building)
+        run: |
+          ls ${{ env.BUILD_DIR }}
+          ls ${{ env.INSTALL_DIR }}
+
+      - name: 🔼 Upload build artifacts
+        uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
+        with:
+          name: ${{ matrix.config.artifact-name }}
+          path: ${{ env.INSTALL_DIR }}/**/*
+          retention-days: 30
+
+# ---------------------------------------------------------------------------------------
+
+  build-on-windows:
+
+# ---------------------------------------------------------------------------------------
+
+    name: "${{ matrix.config.job_name }}"
+
+    # https://github.com/actions/runner-images#available-environments
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
         - {
             job_name: "Windows, VC17, Release",
@@ -53,55 +145,78 @@ jobs:
       BUILD_DIR:   ${{ github.workspace }}\build
       INSTALL_DIR: ${{ github.workspace }}\install
 
+    defaults:
+      run:
+        shell: cmd
+
     steps:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
-      - name: 🔽 Set up Python (for vcpkg.sh)
-        if: matrix.config.os == 'ubuntu-24.04'
-        uses: actions/setup-python@v6 # https://github.com/actions/setup-python
+      # https://community.chocolatey.org/packages/ninja
+      - name: 🔽 Install Ninja
+        run: choco install ninja --no-progress
+
+      # https://community.chocolatey.org/packages/cmake
+      - name: 🔽 Install CMake
+        run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
+
+      # WARNING
+      # ENV VCPKG_ROOT is redefined by this action
+      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
+      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
+      - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # Default Location is "c:\vcpkg"
+      - name: 🔽 Define VCPKG_ROOT
+        shell: pwsh
+        run: |
+          $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
+          echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
+
+      # Reminder: This step requires that the CMakePresets for CI contain
+      # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
+      - name: 🎯 Setup Build Cache
+        uses: hendrikmuhs/ccache-action@v1
         with:
-          python-version: '3.x'
+          variant: sccache
+          key: build-${{ matrix.config.preset }}-${{ github.ref }}
+          restore-keys: |
+            build-${{ matrix.config.preset }}-${{ github.ref }}
+            build-${{ matrix.config.preset }}
 
-      - name: 🔽 Install system dependencies (Linux)
-        if: matrix.config.os == 'ubuntu-24.04'
-        run: |
-          sudo apt update -qq
-          sudo apt install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
-          echo -e "libxcrypt depends on ltdl development files from the system package manager:"
-          sudo apt install -y libltdl-dev
-
-      # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md#visual-studio-enterprise-2022
-      - name: Setup MSVC Dev Environment
-        if: matrix.config.os == 'windows-2025'
-        shell: cmd
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+      - name: 🎯 Setup VCPKG Cache
+        id: cache-vcpkg
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
+          path: |
+            ${{ env.VCPKG_ROOT }}\packages
+            ~\AppData\Local\vcpkg\archives\
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+          restore-keys: |
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-vcpkg-${{ matrix.config.preset }}
 
       # Default Locations (env var VCPKG_INSTALLATION_ROOT):
       # Windows: "c:\vcpkg"
       # Linux: /usr/local/share/vcpkg
-      - name: 🔽 Update VCPKG
+      - name: 🔽 Update VCPKG to latest TAG
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          if [ -d "$VCPKG_INSTALLATION_ROOT/.git" ]; then
-            cd "$VCPKG_INSTALLATION_ROOT"
-            git reset --hard
-            git pull --quiet
-          else
-            echo "VCPKG is not a git repository, skipping update"
-          fi
+          set -euo pipefail
+          cd "${{ env.VCPKG_ROOT }}"
+          git fetch --tags
+          LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
+          git checkout $LATEST_VCPKG_TAG
 
-      - name: 🔽 Bootstrap VCPKG
-        shell: bash
+      - name: 🔽 Bootstrap + Integrate VCPKG
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
-          cd "$VCPKG_INSTALLATION_ROOT"
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            ./bootstrap-vcpkg.bat
-          else
-            ./bootstrap-vcpkg.sh
-          fi
-          ./vcpkg integrate install
+          bootstrap-vcpkg.bat
+          vcpkg integrate
 
       - name: 🛠️ CMake ➔ Configure
         run: |
