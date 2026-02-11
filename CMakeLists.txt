@@ -80,7 +80,7 @@ option(build-library    "Build and install files to directly develop with c++"  
 # set path to our custom CMAKE scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-include(SetupVCPKG)
+include(SetupVcpkg)
 include(FeatureSummary)
 if(fifechan)
   include(get-fifechan)

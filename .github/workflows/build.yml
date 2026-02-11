@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build:
-    name: "Build on ${{ matrix.os }}"
+    name: "${{ matrix.name }}"
 
     # https://github.com/actions/runner-images#available-environments
     runs-on: ${{ matrix.os }}
@@ -25,18 +25,21 @@ jobs:
         include:
         # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
         # Clang 16
-          - os: ubuntu-24.04
+          - name: "Ubuntu 24, Clang 16, Rel"
+            os: ubuntu-24.04
             preset: clang16-x64-linux-rel-ci
             triplet: x64-linux
             artifact-name: libfife-linux-x64
         # GCC 14
-          - os: ubuntu-24.04
+          - name: "Ubuntu 24, GCC 14, Rel"
+            os: ubuntu-24.04
             preset: gcc14-x64-linux-rel-ci
             triplet: x64-linux
             artifact-name: libfife-linux-x64
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
-          - os: windows-2025
-            preset: vc17-x64-windows-rel
+          - name: "Windows 2025, VC17, Rel"
+            os: windows-2025
+            preset: vc17-x64-windows-rel-ci
             triplet: x64-windows
             artifact-name: libfife-windows-x64
 
@@ -46,7 +49,7 @@ jobs:
 
       - name: 🔽 Set up Python (for vcpkg.sh)
         if: matrix.os == 'ubuntu-24.04'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6 # https://github.com/actions/setup-python
         with:
           python-version: '3.x'
 
@@ -64,9 +67,9 @@ jobs:
       # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
       - name: 🛠️ Setup Visual Studio Developer Command Prompt
         if: matrix.os == 'windows-2025'
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@v1 # http://github.com/ilammy/msvc-dev-cmd
 
-      # Default Location is "c:\vcpkg"
+      # Set Default Locations to "c:\vcpkg"
       - name: 🔽 Define VCPKG_ROOT
         if: matrix.os == 'windows-2025'
         shell: pwsh
@@ -74,8 +77,22 @@ jobs:
           $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
           echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
 
-      - name: 🔽 Install dependencies via vcpkg
-        run: vcpkg install --triplet ${{ matrix.triplet }}
+      # Default Locations (env var VCPKG_INSTALLATION_ROOT):
+      # Windows: "c:\vcpkg"
+      # Linux: /usr/local/share/vcpkg
+      - name: 🔽 Update VCPKG to latest TAG
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${{ env.VCPKG_ROOT }}"
+          git fetch --tags
+          LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
+          git checkout $LATEST_VCPKG_TAG
+
+      - name: 🔽 Integrate VCPKG
+        run: |
+          bootstrap-vcpkg.bat
+          vcpkg integrate
 
       - name: 🛠️ CMake ➔ Configure
         run: |
@@ -87,17 +104,13 @@ jobs:
       - name: 📦 CMake ➔ Install
         run: cmake --install out/build/${{ matrix.preset }}
 
-      - name: ❔Verify build output
+      - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
-          if [ "${{ matrix.os }}" == "ubuntu-24.04" ]; then
-            ls -la out/install/${{ matrix.preset }}/lib/libfife.so*
-          else
-            dir out\install\${{ matrix.preset }}\lib\libfife.*
-          fi
-        shell: bash
+          ls out/build/${{ matrix.config.preset }}
+          ls out/install/${{ matrix.config.preset }}
 
       - name: 🔼 Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
         with:
           name: ${{ matrix.artifact-name }}
           path: out/install/${{ matrix.preset }}/**
