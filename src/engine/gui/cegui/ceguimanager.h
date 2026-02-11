@@ -39,63 +39,65 @@ namespace CEGUI {
 }
 
 namespace FIFE {
-	
+
 	class CEGuiInputProcessor;
-	
-	class CEGuiManager : 
+
+	class CEGuiManager :
 	public IGUIManager,
 	public DynamicSingleton<CEGuiManager> {
-	
+
 	public:
 		/** Constructor.
 		 */
 		CEGuiManager();
-		
+
 		virtual ~CEGuiManager();
-		
+
 		/** Updates and renders the gui.
 		 */
 		virtual void turn();
-		
+
 		/** Resizes the top container.
-		 * 
+		 *
 		 * @param x The new starting X coordinate.
 		 * @param y The new starting Y coordinate.
 		 * @param width The new width.
 		 * @param height The new height.
 		 */
 		virtual void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
-		
-		/** Receives input and converts it to librocket format, then it forwards it
+
+		/**
+         * TODO remove?
+         * Receives input and converts it to librocket format, then it forwards it
 		 * to librocket.
 		 */
 		virtual bool onSdlEvent(SDL_Event& event);
-		
+
 		/** Sets the root window of the gui system.
 		 */
 		void setRootWindow(CEGUI::Window* setRootWindow);
-		
+
 		/** @return The root window of the gui system.
 		 */
 		CEGUI::Window* getRootWindow();
 
 	private:
-		
+
 		/** Inject a time pulse to CEGUI.
 		 */
 		void injectTimePulse();
-		
+
 		/** Input processor. Converts SDL input to CEGUI input.
 		 */
 		CEGuiInputProcessor* m_inputProcessor;
-		
+
 		/** Last time pulse injected to CEGUI.
 		 */
 		double m_lastTimePulse;
-		
+
 		/** Our root gui window.
 		 */
-		CEGUI::Window* m_guiRoot; 
+		CEGUI::Window* m_guiRoot;
 	};
 }
 
