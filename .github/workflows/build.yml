@@ -1,4 +1,4 @@
-name: Build FIFEngine
+name: Build fifengine
 
 on:
   push:
@@ -14,47 +14,57 @@ concurrency:
 
 jobs:
   build:
-    name: "${{ matrix.name }}"
+    name: "${{ matrix.config.job_name }}"
 
     # https://github.com/actions/runner-images#available-environments
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        include:
+        config:
         # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
-        # Clang 16
-          - name: "Linux, Clang 16, Release"
-            os: ubuntu-24.04
-            preset: clang16-x64-linux-rel-ci
-            triplet: x64-linux
+        - {
+            job_name: "Linux, Clang 16, Release",
+            os: ubuntu-24.04,
+            preset: clang16-x64-linux-rel-ci,
+            triplet: x64-linux,
             artifact-name: libfife-linux-x64
-        # GCC 14
-          - name: "Linux, GCC 14, Release"
-            os: ubuntu-24.04
-            preset: gcc14-x64-linux-rel-ci
-            triplet: x64-linux
+          }
+        - {
+            job_name: "Linux, GCC 14, Release",
+            os: ubuntu-24.04,
+            preset: gcc14-x64-linux-rel-ci,
+            triplet: x64-linux,
             artifact-name: libfife-linux-x64
+          }
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
-          - name: "Win, VC17, Release"
-            os: windows-2025
-            preset: vc17-x64-windows-rel-ci
-            triplet: x64-windows
+        - {
+            job_name: "Windows, VC17, Release",
+            os: windows-2025,
+            preset: vc17-x64-windows-rel-ci,
+            triplet: x64-windows,
             artifact-name: libfife-windows-x64
+          }
+
+    env:
+      VCPKG_DISABLE_METRICS: 1
+      SOURCE_DIR:  ${{ github.workspace }}
+      BUILD_DIR:   ${{ github.workspace }}\build
+      INSTALL_DIR: ${{ github.workspace }}\install
 
     steps:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
       - name: 🔽 Set up Python (for vcpkg.sh)
-        if: matrix.os == 'ubuntu-24.04'
+        if: matrix.config.os == 'ubuntu-24.04'
         uses: actions/setup-python@v6 # https://github.com/actions/setup-python
         with:
           python-version: '3.x'
 
       - name: 🔽 Install system dependencies (Linux)
-        if: matrix.os == 'ubuntu-24.04'
+        if: matrix.config.os == 'ubuntu-24.04'
         run: |
           sudo apt update -qq
           sudo apt install -y libglu1-mesa-dev autoconf libtool python3-jinja2 autoconf-archive automake libxmu-dev libxi-dev libgl-dev
@@ -63,7 +73,7 @@ jobs:
 
       # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md#visual-studio-enterprise-2022
       - name: Setup MSVC Dev Environment
-        if: matrix.os == 'windows-2025'
+        if: matrix.config.os == 'windows-2025'
         shell: cmd
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
@@ -72,34 +82,45 @@ jobs:
       # Windows: "c:\vcpkg"
       # Linux: /usr/local/share/vcpkg
       - name: 🔽 Update VCPKG
+        shell: bash
         run: |
-          cd "${{ env.VCPKG_INSTALLATION_ROOT }}"
-          git reset --hard
-          git pull --quiet
+          if [ -d "$VCPKG_INSTALLATION_ROOT/.git" ]; then
+            cd "$VCPKG_INSTALLATION_ROOT"
+            git reset --hard
+            git pull --quiet
+          else
+            echo "VCPKG is not a git repository, skipping update"
+          fi
 
-      - name: 🔽 Integrate VCPKG
+      - name: 🔽 Bootstrap VCPKG
+        shell: bash
         run: |
-          bootstrap-vcpkg.bat
-          vcpkg integrate
+          cd "$VCPKG_INSTALLATION_ROOT"
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ./bootstrap-vcpkg.bat
+          else
+            ./bootstrap-vcpkg.sh
+          fi
+          ./vcpkg integrate install
 
       - name: 🛠️ CMake ➔ Configure
         run: |
-          cmake --preset ${{ matrix.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
+          cmake --preset ${{ matrix.config.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
 
       - name: 🙏 CMake ➔ Build
-        run: cmake --build out/build/${{ matrix.preset }}
+        run: cmake --build ${{ env.BUILD_DIR }}
 
       - name: 📦 CMake ➔ Install
-        run: cmake --install out/build/${{ matrix.preset }}
+        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
-          ls out/build/${{ matrix.config.preset }}
-          ls out/install/${{ matrix.config.preset }}
+          ls ${{ env.BUILD_DIR }}
+          ls ${{ env.INSTALL_DIR }}
 
       - name: 🔼 Upload build artifacts
         uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
         with:
-          name: ${{ matrix.artifact-name }}
-          path: out/install/${{ matrix.preset }}/**
+          name: ${{ matrix.config.artifact-name }}
+          path: ${{ env.INSTALL_DIR }}/**/*
           retention-days: 30
