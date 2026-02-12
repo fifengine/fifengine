@@ -5,9 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased] - tba
 
 - Changed some things.
-- remove dependency on boost
+- removed dependency on boost
   - removed dependencies boost::system, boost::filesystem
   - removed usage of boost::shared_ptr, boost::scoped_ptr, boost::tokenizer, etc.
+- removed dependency on librocket
+  - removed all code related to librocket
+  - removed all pychan code that was related to librocket
+- transition dependencies to vcpkg
+  - removed `get-*.cmake` scripts for dependencies that are now provided by vcpkg
 
 ## [0.4.2] - 2019-01-11
 

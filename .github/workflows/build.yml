@@ -93,9 +93,39 @@ jobs:
           git pull --quiet
           ./bootstrap-vcpkg.sh
 
+      - name: 🧩 Configure dependencies
+        shell: bash
+        run: |
+          cmake \
+            -S dependencies \
+            -B ${{ env.BUILD_DIR }}/dependencies \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}/dependencies/install
+
+      - name: 🏗️ Build dependencies
+        shell: bash
+        run: |
+          cmake --build ${{ env.BUILD_DIR }}/dependencies -- -j
+
+      - name: 🗂️ Collect dependency prefixes
+        shell: bash
+        run: |
+          DEP_PREFIXES=$(find ${{ env.BUILD_DIR }}/dependencies -type d -name install -printf "%p;")
+          if [ -d "${{ env.SOURCE_DIR }}/vcpkg_installed/${{ matrix.config.triplet }}" ]; then
+            DEP_PREFIXES="${DEP_PREFIXES}${{ env.SOURCE_DIR }}/vcpkg_installed/${{ matrix.config.triplet }};"
+          fi
+          # strip trailing semicolon
+          DEP_PREFIXES="${DEP_PREFIXES%';'}"
+          echo "DEP_PREFIXES=${DEP_PREFIXES}" >> $GITHUB_ENV
+
       - name: 🛠️ CMake ➔ Configure
         run: |
-          cmake --preset ${{ matrix.config.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
+          cmake --preset ${{ matrix.config.preset }} \
+            -Dfifechan=OFF \
+            -Dbuild-python=OFF \
+            -Dbuild-library=ON \
+            -DCMAKE_PREFIX_PATH="${{ env.DEP_PREFIXES }}"
 
       - name: 🙏 CMake ➔ Build
         run: cmake --build ${{ env.BUILD_DIR }}
@@ -218,9 +248,34 @@ jobs:
           bootstrap-vcpkg.bat
           vcpkg integrate
 
+      - name: 🧩 Configure dependencies
+        shell: bash
+        run: |
+          cmake \
+            -S dependencies \
+            -B ${{ env.BUILD_DIR }}\dependencies \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}\dependencies\install
+
+      - name: 🏗️ Build dependencies
+        shell: bash
+        run: |
+          cmake --build ${{ env.BUILD_DIR }}\dependencies -- -j
+
+      - name: 🗂️ Collect dependency prefixes
+        shell: bash
+        run: |
+          DEP_PREFIXES=$(find ${{ env.BUILD_DIR }}\dependencies -type d -name install -printf "%p;")
+          if [ -d "${{ env.SOURCE_DIR }}\vcpkg_installed\${{ matrix.config.triplet }}" ]; then
+            DEP_PREFIXES="${DEP_PREFIXES}${{ env.SOURCE_DIR }}\vcpkg_installed\${{ matrix.config.triplet }};"
+          fi
+          DEP_PREFIXES="${DEP_PREFIXES%';'}"
+          echo "DEP_PREFIXES=${DEP_PREFIXES}" >> $GITHUB_ENV
+
       - name: 🛠️ CMake ➔ Configure
         run: |
-          cmake --preset ${{ matrix.config.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON
+          cmake --preset ${{ matrix.config.preset }} -Dfifechan=OFF -Dbuild-python=OFF -Dbuild-library=ON -DCMAKE_PREFIX_PATH="${{ env.DEP_PREFIXES }}"
 
       - name: 🙏 CMake ➔ Build
         run: cmake --build ${{ env.BUILD_DIR }}
