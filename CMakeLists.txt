@@ -741,7 +741,7 @@ find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(TinyXML CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
-find_package(VORBIS CONFIG REQUIRED)
+find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
 find_package(GLEW CONFIG REQUIRED)
 
 if(opengl)
@@ -1012,44 +1012,25 @@ if(build-library)
 
   set_target_properties(fife PROPERTIES SOVERSION ${FIFE_VERSION})
 
-
-
-  if(VCPKG_TARGET_TRIPLET)
-    # Add your code here for VCPKG-specific configurations
-    target_link_libraries(
-      fife
+  target_link_libraries(
+    fife
       PRIVATE
-        ${ZLIB_LIBRARIES}
+        ZLIB::ZLIB
         ${PNG_LIBRARIES}
-        ${GLEW_LIBRARY}
-        ${OGG_LIBRARIES}
-        ${VORBIS_LIBRARY}
-        ${VORBISFILE_LIBRARY}
-        ${VORBISENC_LIBRARY}
-        ${OPENALSOFT_LIBRARY}
-    )
-    target_link_libraries(fife PRIVATE $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main> $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>)
-    target_link_libraries(fife PRIVATE $<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image>)
-    target_link_libraries(fife PRIVATE $<TARGET_NAME_IF_EXISTS:SDL2_ttf::SDL2_ttf>)
-    target_link_libraries(fife PRIVATE ${TinyXML_LIBRARIES})
-  else()
-    target_link_libraries(
-      fife
-      PRIVATE
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES}
-        ${OPENALSOFT_LIBRARY}
-        ${PNG_LIBRARIES}
-        ${VORBISFILE_LIBRARY}
-        ${VORBIS_LIBRARY}
-        ${OGG_LIBRARIES}
-        ${TinyXML_LIBRARIES}
-    )
-  endif()
+        GLEW::GLEW
+        Ogg::ogg
+        Vorbis::vorbis
+        Vorbis::vorbisfile
+        Vorbis::vorbisenc
+        OpenAL::OpenAL
+        unofficial-tinyxml::unofficial-tinyxml
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main> $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
+        $<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image>
+        $<TARGET_NAME_IF_EXISTS:SDL2_ttf::SDL2_ttf>
+  )
 
   if(opengl)
-    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARY})
+    target_link_libraries(fife PRIVATE OpenGL::GL GLEW::GLEW)
   endif(opengl)
   if(fifechan)
     target_link_libraries(fife PRIVATE ${FIFECHAN_LIBRARIES})

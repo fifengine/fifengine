@@ -7,7 +7,7 @@
 
 include(ExternalProject)
 
-set(SWIG_VERSION "4.0.2")
+set(SWIG_VERSION "4.4.1")
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if(WIN32)
@@ -16,7 +16,7 @@ if(WIN32)
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
     DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
     URL http://downloads.sourceforge.net/project/swig/swigwin/swigwin-${SWIG_VERSION}/swigwin-${SWIG_VERSION}.zip
-    URL_MD5 a49524dad2c91ae1920974e7062bfc93
+    URL_MD5 9402fd1f2a961cf2fe4afb7ff80dfa6f
     #INSTALL_DIR         ${DEPENDENCY_INSTALL_DIR}/../build-tools/swig
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

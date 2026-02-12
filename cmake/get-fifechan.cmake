@@ -16,7 +16,6 @@ if(WIN32)
       PREFIX ${DEPENDENCY_EXTRACT_DIR}
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       URL https://github.com/fifengine/fifechan/releases/download/0.1.5/fifechan-shared-dev-f848a38-VC15-x86.zip
-      #URL                 https://ci.appveyor.com/api/buildjobs/5rg5bi98ta05l6v0/artifacts/fifechan-shared-dev-cf9d15b-VC15-x86.zip
       URL_MD5 4459fb7da09f3b26fa1a4116710ffa1d
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
