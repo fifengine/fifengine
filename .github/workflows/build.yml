@@ -106,7 +106,7 @@ jobs:
       - name: 🏗️ Build dependencies
         shell: bash
         run: |
-          cmake --build ${{ env.BUILD_DIR }}/dependencies -- -j
+          cmake --build ${{ env.BUILD_DIR }}/dependencies --parallel
 
       - name: 🗂️ Collect dependency prefixes
         shell: bash
@@ -261,7 +261,7 @@ jobs:
       - name: 🏗️ Build dependencies
         shell: bash
         run: |
-          cmake --build ${{ env.BUILD_DIR }}\dependencies -- -j
+          cmake --build ${{ env.BUILD_DIR }}\dependencies --parallel
 
       - name: 🗂️ Collect dependency prefixes
         shell: bash
