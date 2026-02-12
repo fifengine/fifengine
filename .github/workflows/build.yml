@@ -253,6 +253,7 @@ jobs:
           cmake --build ${{ env.BUILD_DIR }}\dependencies --parallel
 
       - name: 🛠️ CMake ➔ Configure
+        shell: bash
         run: |
           cmake \
           --preset ${{ matrix.config.preset }} \

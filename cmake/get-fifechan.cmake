@@ -7,6 +7,21 @@ include(ExternalProject)
 
 set(FIFECHAN_VERSION "0.1.5")
 
+# Default dependency paths: prefer caller-provided `DEPENDENCY_*` variables
+# but fall back to sensible locations under the build dir. Use a single
+# "fifechan" component directory (not "dependencies/fifechan") to avoid
+# duplicate "dependencies/dependencies" when CMAKE_BINARY_DIR already
+# contains a "dependencies" segment.
+if(NOT DEFINED DEPENDENCY_INSTALL_DIR)
+  set(DEPENDENCY_INSTALL_DIR ${CMAKE_BINARY_DIR}/fifechan/install)
+endif()
+if(NOT DEFINED DEPENDENCY_EXTRACT_DIR)
+  set(DEPENDENCY_EXTRACT_DIR ${CMAKE_BINARY_DIR}/fifechan/extract)
+endif()
+if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
+  set(DEPENDENCY_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/fifechan/download)
+endif()
+
 # For Windows it's faster to download the pre-compiled development binaries.
 if(WIN32)
 
@@ -79,9 +94,15 @@ else() # build from source
     )
   endif()
 
-  set(DEPENDENCY_INSTALL_DIR ${CMAKE_BINARY_DIR}/dependencies/fifechan/install)
-  set(DEPENDENCY_EXTRACT_DIR ${CMAKE_BINARY_DIR}/dependencies/fifechan/extract)
-  set(DEPENDENCY_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/dependencies/fifechan/download)
+  if(NOT DEFINED DEPENDENCY_INSTALL_DIR)
+    set(DEPENDENCY_INSTALL_DIR ${CMAKE_BINARY_DIR}/fifechan/install)
+  endif()
+  if(NOT DEFINED DEPENDENCY_EXTRACT_DIR)
+    set(DEPENDENCY_EXTRACT_DIR ${CMAKE_BINARY_DIR}/fifechan/extract)
+  endif()
+  if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
+    set(DEPENDENCY_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/fifechan/download)
+  endif()
 
   ExternalProject_Add(
     fifechan
