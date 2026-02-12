@@ -82,8 +82,6 @@ include(SetupVcpkg)
 include(FeatureSummary)
 include(GNUInstallDirs)
 
-
-
 # Ensure SWIG python template files are available in the build tree.
 # this allows out-of-source builds and the SWIG invocation to find
 # `engine/swigwrappers/python/extensions.i.templ` without manual copying.
@@ -203,7 +201,7 @@ message(STATUS "CXX Compiler Flags  -> '${CMAKE_CXX_FLAGS}'.")
 message("")
 
 #------------------------------------------------------------------------------
-#                           Find Dependencies - Windows
+#                           Prefix Path for Dependencies
 #------------------------------------------------------------------------------
 
 # Use vcpkg installed packages
@@ -212,7 +210,7 @@ if(DEFINED VCPKG_TARGET_TRIPLET AND NOT "${VCPKG_TARGET_TRIPLET}" STREQUAL "")
 else()
   list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/x64-linux")
 endif()
-message(STATUS "Use CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+message(STATUS "Using CMAKE_PREFIX_PATH  -> '${CMAKE_PREFIX_PATH}'.")
 
 #------------------------------------------------------------------------------
 #                                 Source Files
@@ -704,9 +702,6 @@ source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
 source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
 
-# TODO some files for this source_group are not found
-#add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG} ${FIFE_LROCKET_SWIG})
-
 #------------------------------------------------------------------------------
 #                                 SWIG WRAPPER Files
 #------------------------------------------------------------------------------
@@ -867,9 +862,6 @@ if(build-python)
   message(STATUS "Python3 includes: ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
 
-  #set(PYTHON_LIBRARY "PYTHON_LIBRARY-NOTFOUND")
-  #set(PYTHON_INCLUDE_DIR "PYTHON_INCLUDE_DIR-NOTFOUND")
-
   include_directories(${PYTHON_INCLUDE_PATH})
 
   set(
@@ -907,9 +899,9 @@ if(build-python)
     ${SDL2_TTF_LIBRARIES}
     ${OPENALSOFT_LIBRARY}
     ${PNG_LIBRARIES}
-    ${VORBISFILE_LIBRARY}
-    ${VORBIS_LIBRARY}
-    ${OGG_LIBRARIES}
+    Vorbis::vorbis
+    Vorbis::vorbisfile
+    Ogg::ogg
     ${TinyXML_LIBRARIES}
   )
 
