@@ -750,7 +750,7 @@ find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(TinyXML CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
-find_package(VORBIS CONFIG REQUIRED)
+find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
 find_package(GLEW CONFIG REQUIRED)
 
 if(opengl)
