@@ -131,6 +131,7 @@ jobs:
         run: |
           cmake \
             --preset ${{ matrix.config.preset }} \
+            -B ${{ env.BUILD_DIR }} \
             -Dfifechan=ON \
             -Dbuild-python=ON \
             -Dbuild-library=ON \
@@ -293,6 +294,7 @@ jobs:
         run: |
           cmake ^
             --preset ${{ matrix.config.preset }} ^
+            -B "%BUILD_DIR%" ^
             -Dfifechan=ON ^
             -Dbuild-python=ON ^
             -Dbuild-library=ON ^

@@ -93,32 +93,10 @@ else() # build from source
     )
   endif()
 
-  # Create a stable wrapper target that other targets can depend on.
-  set(_fifechan_stamp "${DEPENDENCY_INSTALL_DIR}/.fifechan_installed")
-  ExternalProject_Add_Step(
-    fifechan
-    touchstamp
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPENDENCY_INSTALL_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E touch "${_fifechan_stamp}"
-    DEPENDEES install
-  )
-
-  # Ensure built library files and headers are copied
-  ExternalProject_Add_Step(
-    fifechan
-    install_files
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPENDENCY_INSTALL_DIR}/lib"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPENDENCY_INSTALL_DIR}/include"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "<BINARY_DIR>/lib" "${DEPENDENCY_INSTALL_DIR}/lib"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "<SOURCE_DIR>/include" "${DEPENDENCY_INSTALL_DIR}/include"
-    DEPENDEES build
-  )
-
+  # Stable wrapper target for callers expecting an install-like target.
   if(NOT TARGET fifechan-install)
-    add_custom_target(fifechan-install DEPENDS "${_fifechan_stamp}")
+    add_custom_target(fifechan-install DEPENDS fifechan)
   endif()
-
-  set(FIFECHAN_INSTALL_STAMP "${_fifechan_stamp}" CACHE FILEPATH "Fifechan install stamp file")
   endif()
 
 # Export expected install locations and create imported targets
