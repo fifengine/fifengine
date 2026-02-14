@@ -93,7 +93,21 @@ jobs:
           git pull --quiet
           ./bootstrap-vcpkg.sh
 
-      - name: 🧩 Configure dependencies
+      - name: 1/4 🔧 Prepare VCPKG (preinstalled)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -x "${VCPKG_ROOT}/vcpkg"
+          test -f "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          echo "VCPKG_ROOT=${VCPKG_ROOT}"
+
+      - name: 2/4 📦 Install VCPKG dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}"
+
+      - name: 3/4 🧩 Configure non-vcpkg dependencies
         shell: bash
         run: |
           cmake \
@@ -101,25 +115,35 @@ jobs:
             -B ${{ env.BUILD_DIR }}/dependencies \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}/dependencies/install
+            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}/dependencies/install \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_ROOT }}/installed \
+            -DDEPENDENCY_CMAKE_PREFIX_PATH=${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }} \
+            -DVCPKG_MANIFEST_MODE=OFF
 
-      - name: 🏗️ Build dependencies
+      - name: 3/4 🏗️ Build non-vcpkg dependencies
         shell: bash
         run: |
           cmake --build ${{ env.BUILD_DIR }}/dependencies --parallel
 
-      - name: 🛠️ CMake ➔ Configure
+      - name: 4/4 🛠️ Configure fifengine
         run: |
           cmake \
             --preset ${{ matrix.config.preset }} \
             -Dfifechan=ON \
             -Dbuild-python=ON \
-            -Dbuild-library=ON
+            -Dbuild-library=ON \
+            -DVCPKG_MANIFEST_MODE=OFF \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_ROOT }}/installed \
+            -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR }}/dependencies/install;${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}
 
-      - name: 🙏 CMake ➔ Build
+      - name: 4/4 🙏 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
 
-      - name: 📦 CMake ➔ Install
+      - name: 4/4 📦 Install fifengine
         run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
@@ -237,34 +261,51 @@ jobs:
           bootstrap-vcpkg.bat
           vcpkg integrate
 
-      - name: 🧩 Configure dependencies
-        shell: bash
+      - name: 1/4 🔧 Prepare VCPKG (preinstalled)
         run: |
-          cmake \
-            -S dependencies \
-            -B ${{ env.BUILD_DIR }}\dependencies \
-            -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}\dependencies\install
+          if not exist "%VCPKG_ROOT%\vcpkg.exe" exit /b 1
+          if not exist "%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" exit /b 1
+          echo VCPKG_ROOT=%VCPKG_ROOT%
 
-      - name: 🏗️ Build dependencies
-        shell: bash
+      - name: 2/4 📦 Install VCPKG dependencies
         run: |
-          cmake --build ${{ env.BUILD_DIR }}\dependencies --parallel
+          "%VCPKG_ROOT%\vcpkg.exe" install --triplet ${{ matrix.config.triplet }}
 
-      - name: 🛠️ CMake ➔ Configure
-        shell: bash
+      - name: 3/4 🧩 Configure non-vcpkg dependencies
         run: |
-          cmake \
-          --preset ${{ matrix.config.preset }} \
-          -Dfifechan=ON \
-          -Dbuild-python=ON \
-          -Dbuild-library=ON
+          cmake ^
+            -S dependencies ^
+            -B "%BUILD_DIR%\dependencies" ^
+            -G Ninja ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DCMAKE_INSTALL_PREFIX="%BUILD_DIR%\dependencies\install" ^
+            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
+            -DVCPKG_INSTALLED_DIR="%VCPKG_ROOT%\installed" ^
+            -DDEPENDENCY_CMAKE_PREFIX_PATH="%VCPKG_ROOT%\installed\${{ matrix.config.triplet }}" ^
+            -DVCPKG_MANIFEST_MODE=OFF
 
-      - name: 🙏 CMake ➔ Build
+      - name: 3/4 🏗️ Build non-vcpkg dependencies
+        run: |
+          cmake --build "%BUILD_DIR%\dependencies" --parallel
+
+      - name: 4/4 🛠️ Configure fifengine
+        run: |
+          cmake ^
+            --preset ${{ matrix.config.preset }} ^
+            -Dfifechan=ON ^
+            -Dbuild-python=ON ^
+            -Dbuild-library=ON ^
+            -DVCPKG_MANIFEST_MODE=OFF ^
+            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
+            -DVCPKG_INSTALLED_DIR="%VCPKG_ROOT%\installed" ^
+            "-DCMAKE_PREFIX_PATH=%BUILD_DIR%\dependencies\install;%VCPKG_ROOT%\installed\${{ matrix.config.triplet }}"
+
+      - name: 4/4 🙏 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
 
-      - name: 📦 CMake ➔ Install
+      - name: 4/4 📦 Install fifengine
         run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)

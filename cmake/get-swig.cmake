@@ -40,3 +40,6 @@ else()
     INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}/../build-tools/swig
   )
 endif()
+
+set(SWIG_BUILT_EXECUTABLE "${DEPENDENCY_INSTALL_DIR}/../build-tools/swig/bin/swig" CACHE FILEPATH "SWIG executable built by get-swig")
+

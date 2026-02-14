@@ -34,7 +34,7 @@ if(DEFINED CMAKE_TOOLCHAIN_FILE)
 elseif(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 else()
-  message(FATAL_ERROR "One of -DCMAKE_TOOLCHAIN_FILE or the VCPKG_ROOT environment variable must be set.")
+  message(WARNING "One of -DCMAKE_TOOLCHAIN_FILE or the VCPKG_ROOT environment variable should be set. To install vcpkg locally run: ./scripts/install-vcpkg.sh --root ./vcpkg --triplet <triplet>")
 endif()
 
 #

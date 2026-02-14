@@ -201,7 +201,7 @@ message(STATUS "CXX Compiler Flags  -> '${CMAKE_CXX_FLAGS}'.")
 message("")
 
 #------------------------------------------------------------------------------
-#                           Prefix Path for Dependencies
+#                           Find Dependencies - Windows
 #------------------------------------------------------------------------------
 
 # Use vcpkg installed packages
@@ -210,7 +210,18 @@ if(DEFINED VCPKG_TARGET_TRIPLET AND NOT "${VCPKG_TARGET_TRIPLET}" STREQUAL "")
 else()
   list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/x64-linux")
 endif()
-message(STATUS "Using CMAKE_PREFIX_PATH  -> '${CMAKE_PREFIX_PATH}'.")
+message(STATUS "Use CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+
+# Also include local dependency install locations used by the two-step build
+# (build `dependencies` first and install into one of these `includes` folders)
+list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/includes")
+if(EXISTS "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes")
+  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes")
+endif()
+if(EXISTS "${PROJECT_SOURCE_DIR}/dependencies/includes")
+  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/dependencies/includes")
+endif()
+message(STATUS "Extended CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 #------------------------------------------------------------------------------
 #                                 Source Files
@@ -702,6 +713,9 @@ source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
 source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
 
+# TODO some files for this source_group are not found
+#add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG} ${FIFE_LROCKET_SWIG})
+
 #------------------------------------------------------------------------------
 #                                 SWIG WRAPPER Files
 #------------------------------------------------------------------------------
@@ -736,7 +750,7 @@ find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(TinyXML CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
-find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
+find_package(VORBIS CONFIG REQUIRED)
 find_package(GLEW CONFIG REQUIRED)
 
 if(opengl)
@@ -899,9 +913,9 @@ if(build-python)
     ${SDL2_TTF_LIBRARIES}
     ${OPENALSOFT_LIBRARY}
     ${PNG_LIBRARIES}
-    Vorbis::vorbis
-    Vorbis::vorbisfile
-    Ogg::ogg
+    ${VORBISFILE_LIBRARY}
+    ${VORBIS_LIBRARY}
+    ${OGG_LIBRARIES}
     ${TinyXML_LIBRARIES}
   )
 
@@ -1022,7 +1036,7 @@ if(build-library)
   )
 
   if(opengl)
-    target_link_libraries(fife PRIVATE OpenGL::GL GLEW::GLEW)
+    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARY})
   endif(opengl)
   if(fifechan)
     target_link_libraries(fife PRIVATE ${FIFECHAN_LIBRARIES})
