@@ -611,7 +611,6 @@ add_custom_target(fife.headers SOURCES
     ${FIFE_CORE_HDR}
     ${FIFE_CEGUI_HDR}
     ${FIFE_FCHAN_HDR}
-    ${FIFE_LROCKET_HDR}
 )
 
 #------------------------------------------------------------------------------
