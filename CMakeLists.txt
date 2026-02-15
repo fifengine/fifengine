@@ -158,7 +158,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHE
   set(CMAKE_CXX_FLAGS "-std=c++17 -fPIC ${CMAKE_CXX_FLAGS}")
 
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error -Wno-dev")
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2 -Wall -Wextra -Wunused")
   endif()
@@ -754,9 +754,7 @@ find_package(GLEW CONFIG REQUIRED)
 
 if(opengl)
   find_package(OpenGL REQUIRED)
-  include_directories(${OPENGL_INCLUDE_DIR})
   find_package(GLEW CONFIG REQUIRED)
-  include_directories(${GLEW_INCLUDE_DIR})
 endif(opengl)
 
 if(cegui)
@@ -770,6 +768,7 @@ if(cegui)
     message(FATAL_ERROR "OpenGL cannot be disabled, when CEGUI is enabled.")
   endif(NOT opengl)
 
+  # TODO remove (when CEGUI provides import target)
   include_directories(${CEGUI_INCLUDE_DIR})
 
   message("Using CEGUI v0.8+")
@@ -787,6 +786,7 @@ if(build-python)
 
   # Find python library and add include path for python headers
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
   message(STATUS "Python3 includes: ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
 
@@ -822,11 +822,8 @@ if(fifechan)
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/src/engine/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
     endforeach(filename ${FIFE_FCHAN_SWIG})
-    if(PYTHON_VERSION_MAJOR LESS 3)
-      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import ${PROJECT_BINARY_DIR}/fifechan.i")
-    else(PYTHON_VERSION_MAJOR LESS 3)
-      set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
-    endif(PYTHON_VERSION_MAJOR LESS 3)
+
+    set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
 
     configure_file(
       "${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fifechan.i.templ.cm"
@@ -834,6 +831,7 @@ if(fifechan)
     )
   endif(build-python)
 
+  # TODO remove (when FIFECHAN provides import target)
   include_directories(${FIFECHAN_INCLUDE_DIR})
 endif(fifechan)
 
@@ -847,23 +845,13 @@ if(cegui)
 endif(cegui)
 
 if(build-python)
-  configure_file("${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fife.i.templ.cm" "${PROJECT_BINARY_DIR}/fife.i")
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/src/swigwrappers/python/fife.i.templ.cm"
+    "${PROJECT_BINARY_DIR}/fife.i"
+  )
   find_package(SWIG 4.0.0 REQUIRED)
   include(${SWIG_USE_FILE})
 endif(build-python)
-
-include_directories(
-  ${SDL2_INCLUDE_DIR}
-  ${SDL2_IMAGE_INCLUDE_DIR}
-  ${SDL2_TTF_INCLUDE_DIR}
-  ${PNG_INCLUDE_DIRS}
-  ${OPENALSOFT_INCLUDE_DIR}
-  ${OGG_INCLUDE_DIRS}
-  ${VORBIS_INCLUDE_DIRS}
-  ${TinyXML_INCLUDE_DIRS}
-)
-
-add_definitions(${PNG_DEFINITIONS})
 
 #------------------------------------------------------------------------------
 #                  Build fifengine as a Python extension module
@@ -907,20 +895,20 @@ if(build-python)
 
   swig_link_libraries(
     fife_swig
-    ${SDL2_LIBRARY}
-    ${SDL2_IMAGE_LIBRARIES}
-    ${SDL2_TTF_LIBRARIES}
-    ${OPENALSOFT_LIBRARY}
-    ${PNG_LIBRARIES}
-    ${VORBISFILE_LIBRARY}
-    ${VORBIS_LIBRARY}
-    ${OGG_LIBRARIES}
-    ${TinyXML_LIBRARIES}
+      SDL2::SDL2
+      $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+      $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+      OpenAL::OpenAL
+      PNG::PNG
+      Vorbis::vorbis
+      Vorbis::vorbisfile
+      Ogg::ogg
+      unofficial-tinyxml::unofficial-tinyxml
   )
 
   if(opengl)
     swig_link_libraries(fife_swig ${OPENGL_gl_LIBRARY})
-    swig_link_libraries(fife_swig ${GLEW_LIBRARY})
+    swig_link_libraries(fife_swig GLEW::GLEW)
   endif(opengl)
 
   if(fifechan)
@@ -949,7 +937,7 @@ if(build-python)
   if(NOT DEFINED PYTHON_SITE_PACKAGES)
     # get path to your local python site packages folder
     execute_process(
-      COMMAND  ${PYTHON_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
+      COMMAND  ${Python3_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
       OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
     # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
@@ -1030,12 +1018,12 @@ if(build-library)
         OpenAL::OpenAL
         unofficial-tinyxml::unofficial-tinyxml
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main> $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
-        $<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image>
+        $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
         $<TARGET_NAME_IF_EXISTS:SDL2_ttf::SDL2_ttf>
   )
 
   if(opengl)
-    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARY})
+    target_link_libraries(fife PRIVATE ${OPENGL_gl_LIBRARY} GLEW::GLEW)
   endif(opengl)
   if(fifechan)
     target_link_libraries(fife PRIVATE ${FIFECHAN_LIBRARIES})
@@ -1070,6 +1058,17 @@ if(build-library)
     install_headers_with_directory(FIFE_CEGUI_HDR)
   endif(cegui)
 endif(build-library)
+
+#------------------------------------------------------------------------------
+#                      Compatibility build target alias
+#------------------------------------------------------------------------------
+
+# Some presets/build tasks request "--target fife" even when build-library is
+# disabled and only the SWIG module target exists. Provide a compatibility
+# target in that case.
+if(NOT TARGET fife AND TARGET fife_swig)
+  add_custom_target(fife DEPENDS fife_swig)
+endif()
 
 #-------------------------------------------------------------------
 # Display Feature Summary
