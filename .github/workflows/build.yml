@@ -49,6 +49,8 @@ jobs:
       # VCPKG_ROOT is used by SetupVcpkg to automatically load the toolchain.
       VCPKG_ROOT: /usr/local/share/vcpkg
       VCPKG_DISABLE_METRICS: 1
+      VCPKG_DEFAULT_BINARY_CACHE: /home/runner/.cache/vcpkg/archives
+      VCPKG_BINARY_SOURCES: clear;files,/home/runner/.cache/vcpkg/archives,readwrite
       SOURCE_DIR:  ${{ github.workspace }}
       BUILD_DIR:   ${{ github.workspace }}/build
       INSTALL_DIR: ${{ github.workspace }}/install
@@ -79,11 +81,13 @@ jobs:
         uses: actions/cache@v5 # https://github.com/actions/cache
         with:
           # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
-          path: /home/runner/.cache/vcpkg/archives/
-          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+          path: |
+            ${{ env.VCPKG_ROOT }}/packages
+            /home/runner/.cache/vcpkg/archives/
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-vcpkg-${{ matrix.config.preset }}
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-vcpkg-${{ matrix.config.preset }}-
 
       - name: 🔽 1/4 Update VCPKG
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -96,12 +100,14 @@ jobs:
           test -x "${{ env.VCPKG_ROOT }}/vcpkg"
           test -f "${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
           echo "VCPKG_ROOT=${{ env.VCPKG_ROOT }}" >> $GITHUB_ENV
-          ls -lahr "${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}/"
 
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
           set -euo pipefail
-          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}"
+          echo "VCPKG_DEFAULT_BINARY_CACHE=${VCPKG_DEFAULT_BINARY_CACHE}"
+          "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}"
+          ls -lahr "${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}/" || true
+          ls -lahr "${{ env.VCPKG_ROOT }}/packages" || true
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         run: |
@@ -212,6 +218,8 @@ jobs:
         run: |
           $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
           echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
+          echo "VCPKG_DEFAULT_BINARY_CACHE=$($env:LOCALAPPDATA)\vcpkg\archives" >> $env:GITHUB_ENV
+          echo "VCPKG_BINARY_SOURCES=clear;files,$($env:LOCALAPPDATA)\vcpkg\archives,readwrite" >> $env:GITHUB_ENV
 
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
@@ -232,10 +240,10 @@ jobs:
           path: |
             ${{ env.VCPKG_ROOT }}\packages
             ~\AppData\Local\vcpkg\archives\
-          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
-            cache-vcpkg-${{ matrix.config.preset }}
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-vcpkg-${{ matrix.config.preset }}-
 
       # Default Locations (env var VCPKG_INSTALLATION_ROOT):
       # Windows: "c:\vcpkg"
@@ -264,7 +272,13 @@ jobs:
 
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
+          echo VCPKG_DEFAULT_BINARY_CACHE=%VCPKG_DEFAULT_BINARY_CACHE%
+          echo VCPKG_BINARY_SOURCES=%VCPKG_BINARY_SOURCES%
+          if exist "%VCPKG_ROOT%\packages" dir "%VCPKG_ROOT%\packages"
+          if exist "%LOCALAPPDATA%\vcpkg\archives" dir "%LOCALAPPDATA%\vcpkg\archives"
           "%VCPKG_ROOT%\vcpkg.exe" install --triplet ${{ matrix.config.triplet }}
+          if exist "%VCPKG_ROOT%\packages" dir "%VCPKG_ROOT%\packages"
+          if exist "%LOCALAPPDATA%\vcpkg\archives" dir "%LOCALAPPDATA%\vcpkg\archives"
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         run: |
