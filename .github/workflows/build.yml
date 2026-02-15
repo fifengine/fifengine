@@ -85,30 +85,25 @@ jobs:
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
             cache-vcpkg-${{ matrix.config.preset }}
 
-      - name: 🔽 Update VCPKG
+      - name: 🔽 1/4 Update VCPKG
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
+          set -euo pipefail
           cd ${{ env.VCPKG_ROOT }}
           git reset --hard
           git pull --quiet
           ./bootstrap-vcpkg.sh
-
-      - name: 1/4 🔧 Prepare VCPKG (preinstalled)
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -x "${VCPKG_ROOT}/vcpkg"
-          test -f "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-          echo "VCPKG_ROOT=${VCPKG_ROOT}"
+          test -x "${{ env.VCPKG_ROOT }}/vcpkg"
+          test -f "${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+          echo "VCPKG_ROOT=${{ env.VCPKG_ROOT }}" >> $GITHUB_ENV
+          ls -lahr "${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}/"
 
       - name: 2/4 📦 Install VCPKG dependencies
-        shell: bash
         run: |
           set -euo pipefail
           "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.config.triplet }}"
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
-        shell: bash
         run: |
           cmake \
             -S dependencies \
@@ -123,7 +118,6 @@ jobs:
             -DVCPKG_MANIFEST_MODE=OFF
 
       - name: 3/4 🏗️ Build non-vcpkg dependencies
-        shell: bash
         run: |
           cmake --build ${{ env.BUILD_DIR }}/dependencies --parallel
 
@@ -139,7 +133,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_ROOT }}/installed \
-            -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR }}/dependencies/install;${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}
+            "-DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR }}/dependencies/install;${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}"
 
       - name: 4/4 🙏 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
@@ -149,8 +143,8 @@ jobs:
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
         run: |
-          ls ${{ env.BUILD_DIR }}
-          ls ${{ env.INSTALL_DIR }}
+          ls -lahr ${{ env.BUILD_DIR }}
+          ls -lahr ${{ env.INSTALL_DIR }}
 
       - name: 🔼 Upload build artifacts
         uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
