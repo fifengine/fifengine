@@ -253,11 +253,11 @@ jobs:
           echo "[VCPKG] Bootstrapping..."
           bootstrap-vcpkg.bat
           echo "[VCPKG] Integrating with the system..."
-          vcpkg integrate
+          vcpkg integrate install
 
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
-          vcpkg.exe install --triplet ${{ matrix.config.triplet }}
+          vcpkg install --triplet ${{ matrix.config.triplet }}
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         run: |
