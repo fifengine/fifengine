@@ -2,9 +2,14 @@
 #                           Fifengine Dependencies
 #------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 project(fifengine-dependencies)
+
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif()
 
 # Legacy fallback for standalone invocation. In the current explicit 4-step
 # flow, callers usually pass explicit DEPENDENCY_* paths.
