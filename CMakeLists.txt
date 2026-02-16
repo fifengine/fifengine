@@ -70,6 +70,7 @@ option(cegui            "Enable Crazy Eddie's GUI subsystem"                    
 option(logging          "Enable logging"                                        ON)
 option(build-python     "Build the python extension module"                     ON)
 option(build-library    "Build and install files to directly develop with C++"  OFF)
+option(build-tests      "Build C++ core tests"                                  OFF)
 
 #------------------------------------------------------------------------------
 #                                 Configure
@@ -1031,6 +1032,11 @@ if(build-library)
   if(cegui)
     target_link_libraries(fife PRIVATE ${CEGUI_LIBRARIES} ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
+
+  if(build-tests)
+    include(CTest)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/tests/core_tests)
+  endif(build-tests)
 
   install(TARGETS fife DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES ${PROJECT_SOURCE_DIR}/src/engine/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife/core/)

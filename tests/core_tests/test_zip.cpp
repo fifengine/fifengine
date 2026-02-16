@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 
@@ -55,7 +56,7 @@ using namespace FIFE;
 static const std::string COMPRESSED_FILE = "tests/data/testmap.zip";
 static const std::string RAW_FILE = "tests/data/test.map";
 
-TEST(test_decoder) {
+TEST_CASE("test_decoder") {
 	environment env;
 	std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
 	vfs->addSource(new VFSDirectory(vfs.get()));
@@ -63,7 +64,7 @@ TEST(test_decoder) {
 	CHECK(vfs->exists(COMPRESSED_FILE));
 	vfs->addSource(new ZipSource(vfs.get(), COMPRESSED_FILE));
 
-	CHECK_THROW(vfs->open("does-not-exist"), NotFound);
+	CHECK_THROWS_AS(vfs->open("does-not-exist"), NotFound);
 	std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
 
 	CHECK(dirlist.size() == 4);
@@ -85,7 +86,8 @@ TEST(test_decoder) {
 	CHECK(vfs->listFiles("ziptest_content/testdir3").size() == 0);
 	CHECK(vfs->listDirectories("ziptest_content/testdir1").size() == 0);
 
-	CHECK(vfs->exists(RAW_FILE) && vfs->exists("ziptest_content/maps/test.map"));
+	CHECK(vfs->exists(RAW_FILE));
+	CHECK(vfs->exists("ziptest_content/maps/test.map"));
 	RawData* fraw = vfs->open(RAW_FILE);
 	RawData* fcomp = vfs->open("ziptest_content/maps/test.map");
 
@@ -113,8 +115,4 @@ TEST(test_decoder) {
 	delete[] d_comp;
 	delete fraw;
 	delete fcomp;
-}
-
-int main() {
-	return UnitTest::RunAllTests();
 }

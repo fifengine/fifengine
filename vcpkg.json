@@ -16,6 +16,6 @@
     "openal-soft",
     "tinyxml",
     "zlib",
-    "doctest"
+    "catch2"
   ]
 }

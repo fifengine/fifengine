@@ -43,7 +43,7 @@ static const std::string FIFE_TEST_DIR = "fifetestdir";
 
 using namespace FIFE;
 
-TEST(test_is_directory)
+TEST_CASE("test_is_directory")
 {
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
     vfs->addSource(new VFSDirectory(vfs.get()));
@@ -64,8 +64,4 @@ TEST(test_is_directory)
     CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
     std::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
     CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
-}
-
-int main() {
-	return UnitTest::RunAllTests();
 }

@@ -133,7 +133,7 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 
 }
 
-TEST(test_sdl_alphaoptimize)
+TEST_CASE("test_sdl_alphaoptimize")
 {
 	environment env;
 	RenderBackendSDL renderbackend;
@@ -165,21 +165,21 @@ TEST(test_sdl_alphaoptimize)
 	CHECK(alpha_img->getSurface()->format->Amask != 0);
 }
 
-TEST(test_sdl_image)
+TEST_CASE("test_sdl_image")
 {
 	environment env;
 	RenderBackendSDL renderbackend;
 	test_image(env.vfs.get(), renderbackend);
 }
 
-TEST(test_ogl_image)
+TEST_CASE("test_ogl_image")
 {
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	test_image(env.vfs.get(), renderbackend);
 }
 
-TEST(test_sdl_subimage)
+TEST_CASE("test_sdl_subimage")
 {
 	environment env;
 	RenderBackendSDL renderbackend;
@@ -187,20 +187,9 @@ TEST(test_sdl_subimage)
 	test_subimage(env.vfs.get(), renderbackend);
 }
 
-TEST(test_ogl_subimage)
+TEST_CASE("test_ogl_subimage")
 {
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	test_subimage(env.vfs.get(), renderbackend);
-}
-
-// need this here because SDL redefines
-// main to SDL_main in SDL_main.h
-#ifdef main
-#undef main
-#endif
-
-int main()
-{
-	return UnitTest::RunAllTests();
 }

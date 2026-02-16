@@ -1,7 +1,5 @@
-# Install dir for external libs
-ext/install
-
 # Build dir
+build/
 out/
 vcpkg_installed/
 

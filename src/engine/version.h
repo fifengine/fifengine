@@ -30,12 +30,12 @@
  * and creates the file "version.h", see CMakeLists.txt.
  */
 
-#define FIFE_VERSION        "0.4.2+build.1629a9c"
+#define FIFE_VERSION        "0.4.2+build.2751941"
 #define FIFE_VERSION_SHORT  "0.4.2"
 #define FIFE_MAJOR_VERSION  0
 #define FIFE_MINOR_VERSION  4
 #define FIFE_PATCH_VERSION  2
-#define FIFE_GIT_HASH       "1629a9c"
+#define FIFE_GIT_HASH       "2751941"
 
 /**
  *  All FIFE related code is in the "FIFE" namespace.

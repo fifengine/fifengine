@@ -1,0 +1,26 @@
+# Clang Tidy - Config
+---
+Checks: '-*
+ bugprone-*,
+ -bugprone-easily-swappable-parameters
+ cert-*,
+ -cert-err33-c
+ cppcoreguidelines-*,
+ -cppcoreguidelines-pro-bounds-pointer-arithmetic
+ -cppcoreguidelines-pro-type-vararg
+ -cppcoreguidelines-avoid-c-arrays
+ -cppcoreguidelines-no-malloc
+ -cppcoreguidelines-owning-memory
+ -cppcoreguidelines-pro-bounds-array-to-pointer-decay
+ misc-*,
+ -misc-include-cleaner
+ modernize-*,
+ -modernize-use-trailing-return-type
+ performance-*,
+ readability-*,
+ -readability-identifier-length
+ -readability-function-cognitive-complexity
+ -readability-static-accessed-through-instance
+ '
+
+WarningsAsErrors: '*'

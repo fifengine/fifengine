@@ -106,7 +106,7 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics, Image
 	}
 
 
-TEST(test_sdl_gui_image)
+TEST_CASE("test_sdl_gui_image")
 {
 	environment env;
 	RenderBackendSDL renderbackend;
@@ -118,7 +118,7 @@ TEST(test_sdl_gui_image)
 	test_gui_image(renderbackend, graphics, pool);
 }
 
-TEST(test_ogl_gui_image)
+TEST_CASE("test_ogl_gui_image")
 {
 	environment env;
 	RenderBackendOpenGL renderbackend;
@@ -127,15 +127,4 @@ TEST(test_ogl_gui_image)
 	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	OpenGLGuiGraphics graphics(pool);
 	test_gui_image(renderbackend, graphics, pool);
-}
-
-// need this here because SDL redefines
-// main to SDL_main in SDL_main.h
-#ifdef main
-#undef main
-#endif
-
-int main()
-{
-	return UnitTest::RunAllTests();
 }

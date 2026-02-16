@@ -43,7 +43,7 @@ using namespace FIFE;
 
 static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
 static const std::string RAW_FILE = "tests/data/test.map";
-TEST(DAT2_test){
+TEST_CASE("DAT2_test") {
 
     std::shared_ptr<TimeManager> timemanager = std::make_shared<TimeManager>();
 
@@ -67,7 +67,7 @@ TEST(DAT2_test){
 	FIFE::RawData* fraw = vfs->open(RAW_FILE);
 	FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
 
-	CHECK_EQUAL(fraw->getDataLength(), fcomp->getDataLength());
+	CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
 	//std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
 
 	unsigned int smaller_len = fraw->getDataLength();
@@ -83,7 +83,7 @@ TEST(DAT2_test){
 	for (unsigned int i = 0; i < smaller_len; i++) {
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
-		CHECK_EQUAL(compc, rawc);
+		CHECK((compc) == (rawc));
 		//std::cout
 		//	<< "raw: " << std::setbase(16) << rawc
 		//	<< " comp: " << std::setbase(16) << compc << std::endl;
@@ -100,6 +100,3 @@ TEST(DAT2_test){
 
 }
 
-int main() {
-	return UnitTest::RunAllTests();
-}

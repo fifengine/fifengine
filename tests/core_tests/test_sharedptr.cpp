@@ -68,7 +68,7 @@ public:
 * 4. Call reset on the second shared pointer and make sure the dynamic memory is deleted
 **/
 
-TEST(case1) {
+TEST_CASE("case1") {
 	SharedPtr<Data> shptr(new Data(5,10));
 
 	SharedPtr<Data> copy = shptr;
@@ -94,7 +94,7 @@ TEST(case1) {
 * 4. Call reset on the second shared pointer and make sure the dynamic memory is deleted
 **/
 
-TEST(case2) {
+TEST_CASE("case2") {
 	SharedPtr<Data> shptr(new Data(5,10));
 
 	SharedPtr<Data> copy(shptr);
@@ -119,7 +119,7 @@ TEST(case2) {
 * 3. Create another shared pointer either using "=" or copy constructor
 * 4. Access underlying dynamic data using the "*" operator and make sure the value is the same as what was set in step 2.
 */
-TEST(case3) {
+TEST_CASE("case3") {
 	SharedPtr<Data> shptr(new Data());
 
 	shptr->x = 5;
@@ -149,7 +149,7 @@ TEST(case3) {
 * 3. Create another shared pointer to same shared data using "=" or copy constructor
 * 4. Make sure unique on both shared pointers return false
 */
-TEST(case4) {
+TEST_CASE("case4") {
 	SharedPtr<Data> shptr(new Data());
 	CHECK(shptr.unique());
 
@@ -163,7 +163,7 @@ TEST(case4) {
 * 1. Create empty shared pointer using default constructor
 * 2. use shared pointer in condition such as an if statement to make sure it evaluates correctly
 */
-TEST(case5) {
+TEST_CASE("case5") {
 	SharedPtr<Data> shptr;
 
 	CHECK(shptr == 0);
@@ -173,7 +173,7 @@ TEST(case5) {
 * 1. Create a shared pointer of type base class to a dynamic object of the child class
 * 2. Call a virtual function using the "->" of the shared pointer and make sure the proper function overload is called.
 */
-TEST(case6) {
+TEST_CASE("case6") {
 	SharedPtr<Data> shptr(new SubData(2,4,6));
 
 	CHECK(shptr->total() == 12);
@@ -186,7 +186,7 @@ TEST(case6) {
 * 4. Check for equality of the first 2 shared pointers.
 * 5. Check for inequality of the first and 3rd shared pointers.
 */
-TEST(case7) {
+TEST_CASE("case7") {
 	SharedPtr<Data> shptr(new Data(2,4));
 	SharedPtr<Data> copy(shptr);
 	SharedPtr<Data> shptr2(new Data(4,8));
@@ -202,7 +202,7 @@ TEST(case7) {
 * 4. Check the data values of the original shared pointer
 * 5. Check the data values of the copied shared pointer
 */
-TEST(case8) {
+TEST_CASE("case8") {
 	SharedPtr<Data> shptr(new Data(2,4));
 	SharedPtr<Data> copy(shptr);
 
@@ -219,8 +219,4 @@ TEST(case8) {
 
 	shptr.reset();
 	CHECK(!shptr);
-}
-
-int32_t main() {
-	return UnitTest::RunAllTests();
 }

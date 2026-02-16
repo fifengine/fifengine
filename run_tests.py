@@ -24,7 +24,7 @@
 
 from __future__ import print_function
 from builtins import input
-import os, re, sys, optparse, unittest
+import os, re, sys, optparse, subprocess, unittest
 
 def genpath(somepath):
 	return os.path.sep.join(somepath.split('/'))
@@ -35,12 +35,18 @@ def print_header(text):
 	print(text)
 	print(80 * '-')
 
-def resolve_test_progs(sconscript_filename):
-	""" Get the names of all test programs by evaluating the SConscript file """
-	reprg = re.compile(r"""^env.Program\(["'](.*?)['"]""")
+def resolve_test_progs(build_dir):
+	"""Get core C++ test names from CTest registrations in a configured build directory."""
+	ctest_cmd = ['ctest', '--test-dir', build_dir, '-N', '-L', 'core']
+	try:
+		result = subprocess.run(ctest_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=False)
+	except OSError:
+		return []
+
+	reprg = re.compile(r"""^\s*Test\s+#\d+:\s+(.*?)\s*$""")
 	progs = []
-	for line in open(sconscript_filename):
-		m = reprg.match(line.strip())
+	for line in result.stdout.splitlines():
+		m = reprg.match(line)
 		if m:
 			progs.append(m.group(1))
 	return progs
@@ -60,16 +66,22 @@ def resolve_test_modules(directory):
 		if not skip:
 			modules.append(modname + p[:-3])
 	return modules
-	
+
 def run_core_tests(progs):
-	prevdir = os.getcwd()
-	
+	build_dir = os.environ.get('FIFE_BUILD_DIR', genpath('build'))
+	if not os.path.isdir(build_dir):
+		return ['Build directory not found: %s' % build_dir], []
+
 	errors, failures = [], []
 	for prog in progs:
 		print('\n===== Running %s =====' % prog)
-		if os.system(os.sep.join(('build','tests','debug', prog))):
+		build_cmd = ['cmake', '--build', build_dir, '--target', prog]
+		if subprocess.call(build_cmd):
 			errors.append(prog)
-	os.chdir(prevdir)
+			continue
+		cmd = ['ctest', '--test-dir', build_dir, '--output-on-failure', '-R', '^%s$' % prog]
+		if subprocess.call(cmd):
+			errors.append(prog)
 	return errors, failures
 
 def get_dynamic_imports(modules):
@@ -80,7 +92,7 @@ def get_dynamic_imports(modules):
 			m = getattr(m, part)
 		imported.append(m)
 	return imported
-		
+
 def run_test_modules(modules):
 	imported = get_dynamic_imports(modules)
 	suites = []
@@ -94,35 +106,35 @@ def run_test_modules(modules):
 	runner = unittest.TextTestRunner(verbosity=2)
 	result = runner.run(mastersuite)
 	return [e[1] for e in result.errors], [f[1] for f in result.failures]
-		
+
 def run_all(tests):
 	def print_errors(txt, errs):
 		if errs:
 			print(txt + ':')
 			for msg in errs:
 				print('  ' + msg)
-		
+
 	core_errors, core_failures = run_core_tests(tests['core'])
 	swig_errors, swig_failures = run_test_modules(tests['swig'])
 	ext_errors, ext_failures = run_test_modules(tests['ext'])
-	
+
 	print(80 * '=')
 	errorsfound = False
-	
+
 	if core_errors or core_failures:
 		print_errors('Errors in core tests', core_errors)
 		print_errors('Failures in core tests', core_failures)
 		errorsfound = True
 	else:
 		print('No Core errors found')
-	
+
 	if swig_errors or swig_failures:
 		print_errors('Errors in SWIG tests', swig_errors)
 		print_errors('Failures in SWIG tests', swig_failures)
 		errorsfound = True
 	else:
 		print('No SWIG errors found')
-	
+
 	if swig_errors or swig_failures:
 		print_errors('Errors in extensions tests', ext_errors)
 		print_errors('Failures in extensions tests', ext_failures)
@@ -130,39 +142,40 @@ def run_all(tests):
 	else:
 		print('No Extensions errors found')
 
-	print(80 * '=')	
+	print(80 * '=')
 	if errorsfound:
 		print('ERROR. One or more tests failed!')
 	else:
 		print('OK. All tests ran succesfully!')
 	print('')
-	
+
 def quit(dummy):
 	sys.exit(0)
 
 def run(automatic, selected_cases):
 	index = 0
 	tests = {}
-	
-	core_tests = resolve_test_progs(genpath('tests/core_tests/SConscript'))
+
+	build_dir = os.environ.get('FIFE_BUILD_DIR', genpath('build'))
+	core_tests = resolve_test_progs(build_dir)
 	for t in core_tests:
 		tests[index] = ('Core tests', t, [t], run_core_tests)
 		index += 1
-	tests[index] = ('Core tests', 'all', core_tests, run_core_tests)	
+	tests[index] = ('Core tests', 'all', core_tests, run_core_tests)
 	index += 1
-	
+
 	swig_tests = resolve_test_modules(genpath('tests/swig_tests'))
 	for t in swig_tests:
 		tests[index] = ('SWIG tests', t, [t], run_test_modules)
 		index += 1
-	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)	
+	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)
 	index += 1
-		
+
 	extension_tests = resolve_test_modules(genpath('tests/extension_tests'))
 	for t in extension_tests:
 		tests[index] = ('Extension tests', t, [t], run_test_modules)
 		index += 1
-	tests[index] = ('Extension tests', 'all', extension_tests, run_test_modules)	
+	tests[index] = ('Extension tests', 'all', extension_tests, run_test_modules)
 	index += 1
 
 	alltests = {'core': core_tests, 'swig': swig_tests, 'ext': extension_tests}
@@ -181,7 +194,7 @@ def run(automatic, selected_cases):
 					prevheader = header
 				print('  %d) %s' % (ind, name))
 			selection = input('-> : ')
-			
+
 			try:
 				selection = int(selection)
 				if (selection < 0) or (selection > max(tests.keys())):
@@ -219,9 +232,9 @@ def main():
 			help="In case selected, runs all the tests automatically")
 	options, args = parser.parse_args()
 	run(options.automatic, args)
-	
-	
-	
-	
+
+
+
+
 if __name__ == '__main__':
 	main()

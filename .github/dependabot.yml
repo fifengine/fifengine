@@ -2,8 +2,7 @@
 #
 # Dependabot updates dependencies automatically to their latest versions.
 #
-# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
+# Docs: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
 version: 2
 
 updates:

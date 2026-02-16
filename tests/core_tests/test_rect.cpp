@@ -21,7 +21,7 @@
 
 // Standard C++ library includes
 #include <ctime>
-#include <vector> 
+#include <vector>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -36,7 +36,7 @@
 
 using namespace FIFE;
 
-TEST(rectangle_interesection)
+TEST_CASE("rectangle_interesection")
 {
 	Rect a(0,0,10,10);
 
@@ -55,13 +55,13 @@ TEST(rectangle_interesection)
 	ADD_RECT(5,-5,1,10);
 
 	ADD_RECT(5,5,3,3);
-	
+
 	ADD_RECT(-5,-5,30,30);
 
 	for(size_t i=0; i<do_intersect.size(); ++i) {
 		CHECK(a.intersects(do_intersect[i]));
 		CHECK(do_intersect[i].intersects(a));
-	}	
+	}
 
 	std::vector<Rect> dont_intersect;
 
@@ -80,10 +80,6 @@ TEST(rectangle_interesection)
 	for(size_t i=0; i<dont_intersect.size(); ++i) {
 		CHECK(!a.intersects(dont_intersect[i]));
 		CHECK(!dont_intersect[i].intersects(a));
-	}	
+	}
 }
 
-
-int main() {
-	return UnitTest::RunAllTests();
-}

@@ -1,0 +1,112 @@
+# A complete list of style options can be found at:
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# Google C++ Style Guide
+# https://google.github.io/styleguide/cppguide.html
+
+# You can disable formatting of a piece of code like so:
+#
+# int formatted_code;
+# // clang-format off
+#     void    unformatted_code  ;
+# // clang-format on
+# void formatted_code_again;
+#
+
+Language: Cpp
+
+# Basic indentation and spacing rules:
+IndentWidth: 4
+ContinuationIndentWidth: 4
+UseCRLF: false
+Standard: c++20
+UseTab: Never
+MaxEmptyLinesToKeep: 1
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: true
+AlignEscapedNewlinesLeft: true
+AlignOperands: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+
+# Configure each individual brace in BraceWrapping
+BraceWrapping:
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: false
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterObjCDeclaration: true
+    AfterStruct: true
+    AfterUnion: true
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
+BreakBeforeBraces: Custom
+
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+ColumnLimit: 120
+CompactNamespaces: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: true
+DeriveLineEnding: true
+ExperimentalAutoDetectBinPacking: true
+FixNamespaceComments: true
+IndentCaseLabels: false
+IndentGotoLabels: false
+IndentPPDirectives: BeforeHash
+IndentFunctionDeclarationAfterType: false
+NamespaceIndentation: All
+ObjCSpaceBeforeProtocolList: false
+PenaltyBreakBeforeFirstCallParameter: 10
+PenaltyBreakComment: 60
+PenaltyBreakFirstLessLess: 20
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 200
+SpaceAfterControlStatementKeyword: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpacesInAngles: false
+SpaceInEmptyBlock: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# int* value instead of int *value
+DerivePointerAlignment: false
+PointerAlignment: Left
+PointerBindsToType: true
+SpaceAroundPointerQualifiers: After
+
+# Prefer "east const", placing `const` after the type: int const instead of const int
+#QualifierAlignment: Right
+
+SortIncludes: true
+#IncludeBlocks: Regroup
+#IncludeCategories:

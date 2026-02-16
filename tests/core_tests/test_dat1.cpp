@@ -44,7 +44,7 @@ using namespace FIFE;
 static const std::string COMPRESSED_FILE = "tests/data/dat1vfstest.dat";
 static const std::string RAW_FILE = "tests/data/test.map";
 
-TEST(DAT1_test){
+TEST_CASE("DAT1_test") {
 
     std::shared_ptr<FIFE::VFS> vfs = std::make_shared<FIFE::VFS>();
 	vfs->addSource(new FIFE::VFSDirectory(vfs.get()));
@@ -59,7 +59,7 @@ TEST(DAT1_test){
 	FIFE::RawData* fraw = vfs->open(RAW_FILE);
 	FIFE::RawData* fcomp = vfs->open("dat1vfstest.map");
 
-	CHECK_EQUAL(fraw->getDataLength(), fcomp->getDataLength());
+	CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
 	//std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
 
 	unsigned int smaller_len = fraw->getDataLength();
@@ -75,7 +75,7 @@ TEST(DAT1_test){
 	for (unsigned int i = 0; i < smaller_len; i++) {
 		uint8_t rawc =  d_raw[i];
 		uint8_t compc = d_comp[i];
-		CHECK_EQUAL(compc, rawc);
+		CHECK((compc) == (rawc));
 		//std::cout
 		//	<< "raw: " << std::setbase(16) << rawc
 		//	<< " comp: " << std::setbase(16) << compc << std::endl;
@@ -91,6 +91,3 @@ TEST(DAT1_test){
 	delete fcomp;
 }
 
-int main() {
-	return UnitTest::RunAllTests();
-}

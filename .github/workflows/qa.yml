@@ -1,0 +1,136 @@
+name: QA
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+# ---------------------------------------------------------------------------------------
+
+  clang-format:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+        continue-on-error: true
+
+      - name: 🔽 Install dos2unix
+        run: sudo apt-get update && sudo apt-get install -y dos2unix
+        continue-on-error: true
+
+      - name: 🔽 Install clang-format-18
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 18
+          sudo apt-get install -y clang-format-18
+        continue-on-error: true
+
+      - name: 🛠️ Check formatting
+        run: |
+          chmod +x build-tools/format.sh
+          ./build-tools/format.sh
+        continue-on-error: true
+
+      - name: 🛠️ Check git
+        run: |
+          git status
+          git diff
+        continue-on-error: true
+
+# ---------------------------------------------------------------------------------------
+
+  cpplint:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔽 Setup Python
+        run: sudo apt-get update && sudo apt-get -y install python3 python3-pip python3-venv grep
+
+      - name: 🛠️ Run lint
+        run: |
+          chmod +x build-tools/cpplint.sh
+          ./build-tools/cpplint.sh
+        continue-on-error: true
+
+# ---------------------------------------------------------------------------------------
+
+  cppcheck:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔽 Install cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+
+      - name: 🛠️ Run cppcheck
+        run: |
+          cppcheck \
+            --enable=warning,style,performance,portability \
+            --std=c++17 \
+            --quiet \
+            --inline-suppr \
+            src/engine
+        continue-on-error: true
+
+# ---------------------------------------------------------------------------------------
+
+  python-quality:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6
+
+      - name: 🔽 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: 🔽 Install Python QA tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install black ruff mypy
+
+      - name: 🛠️ Check formatting (black)
+        run: |
+          black --check python/fife tests/extension_tests tests/swig_tests run_tests.py
+        continue-on-error: true
+
+      - name: 🛠️ Lint (ruff)
+        run: |
+          ruff check python/fife tests/extension_tests tests/swig_tests run_tests.py
+        continue-on-error: true
+
+      - name: 🛠️ Type checking (mypy)
+        run: |
+          mypy python/fife
+        continue-on-error: true
