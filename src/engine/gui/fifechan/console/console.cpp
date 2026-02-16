@@ -61,7 +61,7 @@ namespace FIFE
 
         setOpaque(true);
 
-        m_input->setCallback(std::bind1st(std::mem_fun(&Console::execute), this));
+        m_input->setCallback([this](std::string command) { execute(command); });
         m_prompt = "-- ";
 
         m_isAttached = false;
