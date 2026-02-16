@@ -24,13 +24,13 @@
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import str
-from past.builtins import basestring
-from builtins import object
 import os
+from builtins import object, str
 from io import BytesIO, StringIO
 
-from fife.extensions.serializers import ET, SerializerError, InvalidFormat, NotFound
+from past.builtins import basestring
+
+from fife.extensions.serializers import ET, InvalidFormat, SerializerError
 
 EMPTY_XML_FILE = """\
 <?xml version='1.0' encoding='UTF-8'?>

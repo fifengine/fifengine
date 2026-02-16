@@ -22,12 +22,11 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fife
-from fife import fifechan
 
+from fife import fife, fifechan
 from fife.extensions.pychan.attrs import BoolAttr, MixedListAttr
-from .common import get_manager
 
+from .common import get_manager
 from .containers import Window
 
 

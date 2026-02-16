@@ -22,8 +22,8 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fifechan
 
+from fife import fifechan
 from fife.extensions.pychan.attrs import UnicodeAttr
 
 from .common import gui2text, text2gui

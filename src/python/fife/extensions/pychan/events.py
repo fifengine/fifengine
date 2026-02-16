@@ -59,22 +59,20 @@ Available Events
 
 """
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
-from builtins import str
-from builtins import range
-from builtins import object
-from future.utils import itervalues
-from .compat import fifechan
-
-from . import exceptions
-from .internal import get_manager
-from . import tools
 import traceback
 import weakref
+from builtins import object, range, str
+
+from future.utils import itervalues
+
 from fife.extensions.fife_timer import Timer
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+
+from . import exceptions, tools
+from .compat import fifechan
+from .internal import get_manager
 
 EVENTS = [
     "mouseEntered",

@@ -22,14 +22,14 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import str
-from builtins import map
-from builtins import object
-from .compat import fifechan, fife, in_fife
+
+from builtins import map, object, str
+
 from fife.extensions import fife_timer as timer
+
 from . import fonts
+from .compat import fife, fifechan, in_fife
 from .exceptions import *
-from traceback import print_exc
 
 
 def get_manager():

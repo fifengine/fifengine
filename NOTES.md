@@ -1,14 +1,14 @@
 # Notes
 
+## Run black format
+
+- /tmp/fife-python-venv/bin/black src/python/fife tests/extension_tests tests/swig_tests run_tests.py
+
+## Run ruff fixes
+
+- /tmp/fife-python-venv/bin/ruff --fix src/python/fife tests/extension_tests tests/swig_tests run_tests.py
+
 # Dependencies
-
-2. unittest++
-    - https://github.com/unittest-cpp/unittest-cpp
-    - dead
-    - used in tests/core_testS/fife_unittest.h
-
-
-TODO convert tests to doctest
 
 How to compile on linux-64:
 

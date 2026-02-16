@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from xml.sax import ContentHandler, parse, parseString, ErrorHandler
+from xml.sax import ContentHandler, ErrorHandler, parse, parseString
 
 
 class FontFileParser(ContentHandler):
@@ -34,7 +34,7 @@ class FontFileParser(ContentHandler):
             [(name, rawAttributes.getValue(name)) for name in rawAttributes.getNames()]
         )
         if tag.lower() == "font":
-            if not "name" in attributes:
+            if "name" not in attributes:
                 raise ValueError("Fonts must have a name")
             name = attributes["name"]
             del attributes["name"]

@@ -22,11 +22,10 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fife
-from fife import fifechan
 
-from fife.extensions.pychan.internal import get_manager
+from fife import fife, fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
+from fife.extensions.pychan.internal import get_manager
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 from .widget import Widget

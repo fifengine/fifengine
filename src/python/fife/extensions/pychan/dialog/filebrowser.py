@@ -25,14 +25,13 @@
 
 from __future__ import print_function
 
-from builtins import str
-from builtins import object
-import sys
 import os
+import sys
+from builtins import object, str
 
-from fife.fife import Engine
-import fife.extensions.pychan.widgets as widgets
 import fife.extensions.pychan as pychan
+import fife.extensions.pychan.widgets as widgets
+from fife.fife import Engine
 
 
 def u2s(string):

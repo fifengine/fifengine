@@ -28,10 +28,8 @@ See the L{ApplicationBase} documentation.
 """
 
 from fife import fife
-from fife.extensions import fifelog
-from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
-from fife.extensions.fife_settings import Setting
+from fife.extensions.basicapplication import ApplicationBase
 
 
 class ExitEventListener(fife.IKeyListener):

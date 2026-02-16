@@ -21,10 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from builtins import map
 from builtins import range
-from builtins import object
-from fife.extensions.pychan.attrs import IntAttr
 
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = list(range(5))
 

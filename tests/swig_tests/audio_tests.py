@@ -23,9 +23,12 @@
 # ####################################################################
 
 from __future__ import absolute_import
+
 import time
-from .swig_test_utils import *
+
 from fife.extensions import fifelog
+
+from .swig_test_utils import *
 
 
 class TestAudio(unittest.TestCase):

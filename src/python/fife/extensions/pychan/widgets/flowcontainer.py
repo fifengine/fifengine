@@ -22,10 +22,9 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fife
-from fife import fifechan
 
-from fife.extensions.pychan.attrs import IntAttr, UnicodeAttr
+from fife import fifechan
+from fife.extensions.pychan.attrs import IntAttr
 
 from .containers import Container
 

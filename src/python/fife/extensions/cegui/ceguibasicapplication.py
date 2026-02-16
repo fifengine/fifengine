@@ -28,10 +28,11 @@ See the L{ApplicationBase} documentation.
 """
 
 from builtins import map
-from fife import fife
-from fife.extensions.basicapplication import ApplicationBase
 
 import PyCEGUI
+
+from fife import fife
+from fife.extensions.basicapplication import ApplicationBase
 
 
 class CEGUIEventListener(fife.IKeyListener, fife.ICommandListener):

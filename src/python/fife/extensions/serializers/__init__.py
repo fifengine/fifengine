@@ -21,9 +21,13 @@
 # ####################################################################
 
 from __future__ import print_function
+
+import os
+import sys
 from builtins import range
-import fife, sys, os
 from traceback import print_exc
+
+import fife
 
 __all__ = (
     "ET",

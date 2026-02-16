@@ -23,10 +23,12 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import range
-from .swig_test_utils import *
-import os
+
 import gc
+import os
+from builtins import range
+
+from .swig_test_utils import *
 
 
 class TestView(unittest.TestCase):

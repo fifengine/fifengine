@@ -22,10 +22,10 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fifechan
 
-from fife.extensions.pychan.properties import ImageProperty
+from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
+from fife.extensions.pychan.properties import ImageProperty
 
 from .widget import Widget
 

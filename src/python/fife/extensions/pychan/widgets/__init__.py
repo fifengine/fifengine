@@ -31,37 +31,36 @@ Please look at the documentation of L{Widget} for details.
 
 from __future__ import absolute_import
 
-from .widget import Widget
-
-from .spacer import Spacer
 from .adjustingcontainer import AdjustingContainer
-from .containers import Container, ABox, VBox, HBox, CBox, Window
-from .flowcontainer import FlowContainer
-from .label import Label
-from .icon import Icon
 from .animationicon import AnimationIcon
-from .buttons import Button, ToggleButton, ImageButton
+from .bargraph import BarGraph
+from .buttons import Button, ImageButton, ToggleButton
 from .checkbox import CheckBox
-from .radiobutton import RadioButton
-from .tabbedarea import TabbedArea, Tab
-from .textfield import TextField
-from .textbox import TextBox
-from .listbox import ListBox
+from .containers import ABox, CBox, Container, HBox, VBox, Window
+from .curvegraph import CurveGraph
+from .dockarea import DockArea
 from .dropdown import DropDown
-from .scrollarea import ScrollArea
-from .slider import Slider
-from .percentagebar import PercentageBar
-from .passwordfield import PasswordField
+from .flowcontainer import FlowContainer
+from .icon import Icon
 from .iconprogressbar import IconProgressBar
 from .imageprogressbar import ImageProgressBar
-from .resizablewindow import ResizableWindow
-from .dockarea import DockArea
-from .panel import Panel
-from .bargraph import BarGraph
-from .curvegraph import CurveGraph
+from .label import Label
 from .linegraph import LineGraph
+from .listbox import ListBox
+from .panel import Panel
+from .passwordfield import PasswordField
+from .percentagebar import PercentageBar
 from .piegraph import PieGraph
 from .pointgraph import PointGraph
+from .radiobutton import RadioButton
+from .resizablewindow import ResizableWindow
+from .scrollarea import ScrollArea
+from .slider import Slider
+from .spacer import Spacer
+from .tabbedarea import Tab, TabbedArea
+from .textbox import TextBox
+from .textfield import TextField
+from .widget import Widget
 
 # Global Widget Class registry
 

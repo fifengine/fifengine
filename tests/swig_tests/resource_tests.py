@@ -23,7 +23,7 @@
 # ####################################################################
 
 from __future__ import absolute_import
-import sys
+
 from .swig_test_utils import *
 
 

@@ -24,13 +24,17 @@
 
 from __future__ import print_function
 
-from builtins import str
-from builtins import object
-from fife import fife
+from builtins import object, str
 
-from fife.extensions.serializers import ET
-from fife.extensions.serializers import SerializerError, InvalidFormat
-from fife.extensions.serializers import NameClash, NotFound, WrongFileType
+from fife import fife
+from fife.extensions.serializers import (
+    ET,
+    InvalidFormat,
+    NameClash,
+    NotFound,
+    SerializerError,
+    WrongFileType,
+)
 from fife.extensions.serializers.xmlanimation import loadXMLAnimation
 
 

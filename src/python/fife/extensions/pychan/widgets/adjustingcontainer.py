@@ -22,9 +22,8 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fife
-from fife import fifechan
 
+from fife import fifechan
 from fife.extensions.pychan.attrs import IntAttr, IntListAttr
 
 from .containers import Container

@@ -26,7 +26,6 @@ from __future__ import print_function
 
 import os.path
 
-from fife import fife
 from fife.extensions.serializers.xmlmapsaver import XMLMapSaver
 
 mapFileMapping = {"xml": XMLMapSaver}

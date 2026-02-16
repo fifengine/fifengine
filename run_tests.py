@@ -23,8 +23,14 @@
 # ####################################################################
 
 from __future__ import print_function
+
+import optparse
+import os
+import re
+import shutil
+import subprocess
+import sys
 from builtins import input
-import os, re, sys, optparse, subprocess, unittest, shutil
 
 
 def _env_truthy(value):

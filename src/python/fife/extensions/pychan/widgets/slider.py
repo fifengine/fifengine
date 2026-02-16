@@ -22,9 +22,9 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fifechan
 
-from fife.extensions.pychan.attrs import IntAttr, FloatAttr
+from fife import fifechan
+from fife.extensions.pychan.attrs import FloatAttr, IntAttr
 
 from .widget import Widget
 

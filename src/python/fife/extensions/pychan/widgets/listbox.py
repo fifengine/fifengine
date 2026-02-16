@@ -22,12 +22,12 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import str
-from builtins import map
-from builtins import range
+
+from builtins import map, range, str
+
 from fife import fifechan
 
-from .common import gui2str, text2gui
+from .common import text2gui
 from .widget import Widget
 
 

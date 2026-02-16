@@ -22,13 +22,13 @@
 
 """utilities for xml maploading process"""
 
-from __future__ import print_function
-from __future__ import division
+from __future__ import division, print_function
 
-from builtins import range
-from past.utils import old_div
-import os
 import math
+import os
+from builtins import range
+
+from past.utils import old_div
 
 
 def loadImportFile(loader, path, engine, debug=False):

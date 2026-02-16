@@ -42,10 +42,10 @@ conveniences:
 
 from __future__ import print_function
 
-from builtins import map
-from fife import fife
-from fife import fifechan
 import re
+from builtins import map
+
+from fife import fife, fifechan
 
 __all__ = ()
 
@@ -90,7 +90,7 @@ def createProperties():
         try:
             argspec = getargspec(func)
             return not (argspec[0] or [s for s in argspec[2:] if s])
-        except TypeError as e:
+        except TypeError:
             # print func, e
             return False
 

@@ -22,9 +22,12 @@
 # ####################################################################
 
 from __future__ import absolute_import
+
 from builtins import object
 from builtins import str as new_str
+
 from fife import fife, fifechan
+
 from .exceptions import RuntimeError
 
 

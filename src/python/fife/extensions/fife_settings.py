@@ -32,14 +32,10 @@ It is by no means complete but it does provide a good starting point.
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
-import shutil
 import os
-from io import StringIO
+import shutil
+from builtins import object, range, str
 
-from fife.extensions import fifelog
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 

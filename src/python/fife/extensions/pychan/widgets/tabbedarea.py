@@ -22,15 +22,14 @@
 # ####################################################################
 
 from __future__ import absolute_import
+
 from builtins import str
-from fife import fife
+
 from fife import fifechan
+from fife.extensions.pychan.attrs import IntAttr, UnicodeAttr
 
-from fife.extensions.pychan.attrs import Attr, UnicodeAttr, PointAttr, BoolAttr, IntAttr
-
-from .common import get_manager, gui2text, text2gui
+from .common import get_manager
 from .containers import Container
-from .widget import Widget
 
 
 class Tab(Container):
@@ -325,7 +324,7 @@ class TabbedArea(Container):
         widget.deepApply(_add)
 
     def removeChild(self, widget):
-        if not widget in self.children:
+        if widget not in self.children:
             raise RuntimeError(
                 "%s does not have %s as direct tab widget." % (str(self), str(widget))
             )

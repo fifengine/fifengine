@@ -21,30 +21,26 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import str
-from builtins import object
+from __future__ import absolute_import, print_function
+
 import weakref
+from builtins import object, str
 
-from fife import fife
-from fife import fifechan
-
+from fife import fife, fifechan
 from fife.extensions.pychan import events
 from fife.extensions.pychan.attrs import (
     Attr,
-    UnicodeAttr,
-    PointAttr,
-    ColorAttr,
     BoolAttr,
+    ColorAttr,
     IntAttr,
     IntListAttr,
+    PointAttr,
+    UnicodeAttr,
 )
 from fife.extensions.pychan.exceptions import StopTreeWalking
 from fife.extensions.pychan.properties import ColorProperty
 
 from .common import get_manager
-from .layout import isLayouted
 
 
 class Widget(object):

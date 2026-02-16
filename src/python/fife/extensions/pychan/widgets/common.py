@@ -21,30 +21,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
 from builtins import str
-from fife import fife
-from fife import fifechan
-from fife.extensions.pychan import tools
-from fife.extensions.pychan import events
+
 from fife.extensions.pychan.exceptions import *
-from fife.extensions.pychan.attrs import (
-    Attr,
-    UnicodeAttr,
-    PointAttr,
-    ColorAttr,
-    BoolAttr,
-    IntAttr,
-    FloatAttr,
-    ListAttr,
-)
-from fife.extensions.pychan.properties import ColorProperty
 
 # These used to be defined in here, duplicating the definitions in .layout
 # Retain for backwards compatibility of any code importing them from .common
-from .layout import AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter
-from .layout import isLayouted
 
 
 def get_manager():

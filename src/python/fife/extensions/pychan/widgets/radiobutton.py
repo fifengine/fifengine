@@ -22,12 +22,11 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fifechan
 
+from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, BoolAttr
 
 from .basictextwidget import BasicTextWidget
-from .common import text2gui
 
 
 class RadioButton(BasicTextWidget):

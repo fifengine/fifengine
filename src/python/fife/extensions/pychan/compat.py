@@ -21,9 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from builtins import str
-from builtins import object
 import inspect
+from builtins import object, str
 
 in_fife = None
 fifechan = None
@@ -34,8 +33,7 @@ def _import_fifechan():
 
     err_fife = ""
     try:
-        from fife import fife
-        from fife import fifechan
+        from fife import fife, fifechan
 
         in_fife = True
 

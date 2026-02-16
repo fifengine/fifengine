@@ -22,11 +22,11 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import range
-from fife import fifechan
 
-from fife.extensions.pychan.attrs import BoolAttr, ColorAttr, IntAttr, IntListAttr
-from fife.extensions.pychan.properties import ColorProperty
+from builtins import range
+
+from fife import fifechan
+from fife.extensions.pychan.attrs import BoolAttr, IntAttr, IntListAttr
 
 from .widget import Widget
 

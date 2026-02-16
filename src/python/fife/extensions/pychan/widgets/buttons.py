@@ -22,12 +22,11 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fifechan
 
-from fife.extensions.pychan.attrs import Attr, BoolAttr, PointAttr, IntAttr
+from fife import fifechan
+from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr
 from fife.extensions.pychan.properties import ImageProperty
 
-from .common import text2gui
 from .basictextwidget import BasicTextWidget
 
 

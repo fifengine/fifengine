@@ -21,18 +21,18 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import str
-from builtins import object
+from builtins import object, str
+from io import StringIO
+
 from fife.extensions import pychan
 from fife.extensions.pychan import loadXML
-import fife.extensions.pychan.tools as tools
-from .internal import get_manager, screen_width, screen_height
-from io import StringIO
+
+from .internal import screen_height, screen_width
 
 OK, YES, NO, CANCEL = True, True, False, None
 
@@ -219,7 +219,8 @@ def select(message="", options=[], caption="Message"):
 
 
 def trace(f):
-    import sys, traceback
+    import sys
+    import traceback
 
     def new_f(*args, **kwargs):
         try:

@@ -21,16 +21,13 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from builtins import zip
-from builtins import str
-from builtins import range
-from builtins import object
 import os
+from builtins import object, range, str, zip
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
-from fife.extensions.serializers import *
 
 from fife import fife
+from fife.extensions.serializers import *
 
 MAPFORMAT = "1.0"
 
@@ -115,7 +112,7 @@ class XMLMapSaver(object):
         for layer in map.getLayers():
             for instance in layer.getInstances():
                 file = instance.getObject().getFilename()
-                if not (file in imports):
+                if file not in imports:
                     if not self.have_superdir(file, importList):
                         imports.append(file)
                         self.write_import(root_subfile(map.getFilename(), file))

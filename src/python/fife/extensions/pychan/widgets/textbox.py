@@ -22,14 +22,13 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import str
-from builtins import map
-from builtins import range
-from fife import fifechan
 
+from builtins import str
+
+from fife import fifechan
 from fife.extensions.pychan.attrs import Attr, UnicodeAttr
 
-from .common import text2gui, gui2text
+from .common import gui2text, text2gui
 from .widget import Widget
 
 

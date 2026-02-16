@@ -22,12 +22,10 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from fife import fife
-from fife import fifechan
 
+from fife import fifechan
 from fife.extensions.pychan.attrs import BoolAttr, ColorAttr, UnicodeAttr
 from fife.extensions.pychan.properties import ColorProperty
-from .common import get_manager
 
 from .resizablewindow import ResizableWindow
 

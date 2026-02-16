@@ -23,7 +23,10 @@
 # ####################################################################
 
 from __future__ import print_function
-import os, sys, unittest
+
+import os
+import sys
+import unittest
 
 if not hasattr(unittest.TestCase, "assert_"):
     unittest.TestCase.assert_ = unittest.TestCase.assertTrue

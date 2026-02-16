@@ -21,14 +21,12 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import map
-from builtins import str
-from fife import fife
-from fife import fifechan
+from __future__ import absolute_import, print_function
 
-from fife.extensions.pychan.attrs import Attr, UnicodeAttr, PointAttr, BoolAttr, IntAttr
+from builtins import str
+
+from fife import fife, fifechan
+from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr, UnicodeAttr
 
 from .common import get_manager, gui2text, text2gui
 from .widget import Widget
@@ -255,7 +253,7 @@ class Container(Widget):
         self.insertChild(widget, self.children.index(before))
 
     def removeChild(self, widget):
-        if not widget in self.children:
+        if widget not in self.children:
             raise RuntimeError(
                 "%s does not have %s as direct child widget." % (str(self), str(widget))
             )

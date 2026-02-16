@@ -22,11 +22,13 @@
 # ####################################################################
 
 from __future__ import absolute_import
-from builtins import range
-from builtins import object
+
 import weakref
+from builtins import object, range
+
 from fife import fifechan
-from fife.extensions.pychan.attrs import BoolAttr, IntAttr, PointAttr, MixedListAttr
+from fife.extensions.pychan.attrs import BoolAttr, IntAttr, MixedListAttr, PointAttr
+
 from .widget import Widget
 
 

@@ -230,20 +230,18 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
-from __future__ import print_function
-from __future__ import absolute_import
-import sys
+from __future__ import absolute_import, print_function
 
+import sys
 from builtins import map
 
 __all__ = ["loadXML", "loadFonts", "init", "manager"]
 
 # This *import should really be removed!
+from .exceptions import *
+from .fonts import loadFonts
 from .widgets import *
 from .widgets.tabbedarea import Tab
-from .exceptions import *
-
-from .fonts import loadFonts
 
 ### Initialisation ###
 
@@ -269,8 +267,8 @@ def init(engine, debug=False, compat_layout=False):
 
 # XML Loader
 
-from xml.sax import saxutils, handler
 from traceback import print_exc
+from xml.sax import handler, saxutils
 
 
 def traced(f):
@@ -315,7 +313,7 @@ class _GuiLoader(__GuiLoaderBase):
         tag = "<%s " % name + " ".join(attrstrings) + ">"
         try:
             print(self.indent + tag)
-        except UnicodeEncodeError as e:
+        except UnicodeEncodeError:
             print(self.indent + tag.encode("ascii", "backslashreplace"))
 
     def _resolveTag(self, name):

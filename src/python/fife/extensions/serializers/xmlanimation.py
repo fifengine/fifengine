@@ -22,6 +22,7 @@
 # ####################################################################
 
 from builtins import str
+
 from fife import fife
 from fife.extensions.serializers import ET
 

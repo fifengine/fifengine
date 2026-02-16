@@ -24,24 +24,20 @@
 
 from __future__ import print_function
 
-from builtins import str
-from builtins import object
 import time
+from builtins import object, str
 
 from fife import fife
-
-from fife.extensions.serializers import ET
-from fife.extensions.serializers import SerializerError, InvalidFormat
-from fife.extensions.serializers import NameClash, NotFound, WrongFileType
-
-from fife.extensions.serializers.xmlobject import XMLObjectLoader
-from fife.extensions.serializers.xmlanimation import loadXMLAnimation
-from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir
-from fife.extensions.serializers.xml_loader_tools import loadImportDirRec
+from fife.extensions.serializers import (
+    ET,
+)
 from fife.extensions.serializers.xml_loader_tools import (
-    root_subfile,
+    loadImportDirRec,
+    loadImportFile,
     reverse_root_subfile,
 )
+from fife.extensions.serializers.xmlanimation import loadXMLAnimation
+from fife.extensions.serializers.xmlobject import XMLObjectLoader
 
 FORMAT = "1.0"
 
@@ -475,7 +471,7 @@ class XMLMapLoader(object):
             if not cam_id:
                 cam_id = _LIGHT_DEFAULT_CAM_ID
 
-            if not cam_id in self.light_data:
+            if cam_id not in self.light_data:
                 self.light_data[cam_id] = {}
             if group not in self.light_data[cam_id]:
                 self.light_data[cam_id][group] = []

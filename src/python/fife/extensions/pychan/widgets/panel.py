@@ -22,16 +22,15 @@
 # ####################################################################
 
 from __future__ import absolute_import
+
 import weakref
-from fife import fife
-from fife import fifechan
 
+from fife import fife, fifechan
 from fife.extensions.pychan.attrs import BoolAttr
-from .common import get_manager
 
-from .resizablewindow import ResizableWindow
+from .common import get_manager
 from .dockarea import DockArea
-from .containers import Container
+from .resizablewindow import ResizableWindow
 
 
 class Panel(ResizableWindow):
