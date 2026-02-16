@@ -181,7 +181,7 @@ TEST_CASE("case5")
 {
     SharedPtr<Data> shptr;
 
-    CHECK_EQ(shptr, static_cast<SharedPtr<Data>>(0));
+    CHECK(!shptr);
 }
 
 /**

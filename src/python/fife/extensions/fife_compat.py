@@ -36,45 +36,58 @@ run code that wasn't adapted to API changes in FIFE.
  - EventManager.setNonConsumableKeys is superseeded by EventManager.setKeyFilter
 
 """
+
 from __future__ import print_function
 
 from fife import fife
 
 # Utility functions
 
-def deprecated(revision,message):
-	print("fife_compat: Deprecation warning - See revision %d " % revision)
-	print(" - ",message)
 
-def this_is_deprecated(func,revision=0,message=None):
-	if message is None:
-		message = repr(func) + " is deprecated."
-	def wrapped_func(*args,**kwargs):
-		deprecated(revision,message)
-		return func(*args,**kwargs)
-	return wrapped_func
+def deprecated(revision, message):
+    print("fife_compat: Deprecation warning - See revision %d " % revision)
+    print(" - ", message)
+
+
+def this_is_deprecated(func, revision=0, message=None):
+    if message is None:
+        message = repr(func) + " is deprecated."
+
+    def wrapped_func(*args, **kwargs):
+        deprecated(revision, message)
+        return func(*args, **kwargs)
+
+    return wrapped_func
+
 
 def _compat_NonConsumableKeys():
-	class CompatKeyFilter(fife.IKeyFilter):
-		def __init__(self, keys):
-			fife.IKeyFilter.__init__(self)
-			self.keys = keys
+    class CompatKeyFilter(fife.IKeyFilter):
+        def __init__(self, keys):
+            fife.IKeyFilter.__init__(self)
+            self.keys = keys
 
-		def isFiltered(self, event):
-			return event.getKey().getValue() in self.keys
+        def isFiltered(self, event):
+            return event.getKey().getValue() in self.keys
 
-	def _setNonConsumableKeys(self,keys):
-		deprecated(2636, "Write an IKeyFilter instead of using EventManager.setNonConsumableKeys.\n" +
-				 "You probably don't need it anyway")
-		self.compat_keyfilter = CompatKeyFilter(keys)
-		self.compat_keyfilter.__disown__()
-		self.setKeyFilter(self.compat_keyfilter)
+    def _setNonConsumableKeys(self, keys):
+        deprecated(
+            2636,
+            "Write an IKeyFilter instead of using EventManager.setNonConsumableKeys.\n"
+            + "You probably don't need it anyway",
+        )
+        self.compat_keyfilter = CompatKeyFilter(keys)
+        self.compat_keyfilter.__disown__()
+        self.setKeyFilter(self.compat_keyfilter)
 
-	def _getNonConsumableKeys(self,keys):
-		deprecated(2636, "Write an IKeyFilter instead of using EventManager.getNonConsumableKeys.")
-		return self.compat_keyfilter.keys
+    def _getNonConsumableKeys(self, keys):
+        deprecated(
+            2636,
+            "Write an IKeyFilter instead of using EventManager.getNonConsumableKeys.",
+        )
+        return self.compat_keyfilter.keys
 
-	fife.EventManager.setNonConsumableKeys = _setNonConsumableKeys
-	fife.EventManager.getNonConsumableKeys = _getNonConsumableKeys
+    fife.EventManager.setNonConsumableKeys = _setNonConsumableKeys
+    fife.EventManager.getNonConsumableKeys = _getNonConsumableKeys
+
 
 _compat_NonConsumableKeys()

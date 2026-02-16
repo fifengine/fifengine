@@ -24,4 +24,12 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#ifndef CHECK_EQ
+#define CHECK_EQ(lhs, rhs) CHECK((lhs) == (rhs))
+#endif
+
+#ifndef CHECK_NE
+#define CHECK_NE(lhs, rhs) CHECK((lhs) != (rhs))
+#endif
+
 #endif

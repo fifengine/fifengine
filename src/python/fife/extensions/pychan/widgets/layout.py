@@ -26,8 +26,8 @@ from builtins import range
 from builtins import object
 from fife.extensions.pychan.attrs import IntAttr
 
-
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = list(range(5))
 
+
 def isLayouted(widget):
-	return widget.real_widget.isLayouted()
+    return widget.real_widget.isLayouted()

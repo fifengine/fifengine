@@ -48,8 +48,11 @@ using FIFE::VFSDirectory;
 
 TEST_CASE("test_is_directory")
 {
-    const std::filesystem::path test_dir        = std::filesystem::temp_directory_path() / FIFE_TEST_DIR;
+    const std::filesystem::path test_dir        = std::filesystem::current_path() / FIFE_TEST_DIR;
     const std::filesystem::path nested_test_dir = test_dir / FIFE_TEST_DIR;
+
+    const std::string test_dir_rel        = test_dir.lexically_relative(std::filesystem::current_path()).string();
+    const std::string nested_test_dir_rel = nested_test_dir.lexically_relative(std::filesystem::current_path()).string();
 
     std::error_code ec;
     std::filesystem::remove_all(test_dir, ec);
@@ -60,12 +63,12 @@ TEST_CASE("test_is_directory")
     CHECK(vfs->isDirectory(""));
     CHECK(vfs->isDirectory("/"));
 
-    CHECK(!vfs->isDirectory(test_dir.string()));
+    CHECK(!vfs->isDirectory(test_dir_rel));
     std::filesystem::create_directory(test_dir);
-    CHECK(vfs->isDirectory(test_dir.string()));
-    CHECK(!vfs->isDirectory(nested_test_dir.string()));
+    CHECK(vfs->isDirectory(test_dir_rel));
+    CHECK(!vfs->isDirectory(nested_test_dir_rel));
     std::filesystem::create_directories(nested_test_dir);
-    CHECK(vfs->isDirectory(nested_test_dir.string()));
+    CHECK(vfs->isDirectory(nested_test_dir_rel));
 
     std::filesystem::remove_all(test_dir, ec);
 }

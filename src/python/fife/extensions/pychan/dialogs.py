@@ -24,6 +24,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import str
 from builtins import object
@@ -33,61 +34,65 @@ import fife.extensions.pychan.tools as tools
 from .internal import get_manager, screen_width, screen_height
 from io import StringIO
 
-OK,YES,NO,CANCEL = True,True,False,None
+OK, YES, NO, CANCEL = True, True, False, None
+
 
 def print_event(**kwargs):
-	print(kwargs)
+    print(kwargs)
+
 
 class XMLDialog(object):
-	def __init__(self, xml, ok_field = None, cancel_field = None,initial_data={},data={}):
-		self.gui = loadXML(xml)
-		self.ok_field = ok_field
-		self.cancel_field = cancel_field
-		self.initial_data= initial_data
-		self.data= data
-		self.max_size=None
-		self.min_size=None
-#		self.gui.capture(print_event,"mouseEntered")
+    def __init__(self, xml, ok_field=None, cancel_field=None, initial_data={}, data={}):
+        self.gui = loadXML(xml)
+        self.ok_field = ok_field
+        self.cancel_field = cancel_field
+        self.initial_data = initial_data
+        self.data = data
+        self.max_size = None
+        self.min_size = None
 
-	def execute(self):
-		self.gui.distributeInitialData(self.initial_data)
-		self.gui.distributeData(self.data)
+    # 		self.gui.capture(print_event,"mouseEntered")
 
-		screen_w, screen_h = screen_width(), screen_height()
-		if self.max_size is None:
-			self.max_size = screen_w // 2, screen_h // 3
-		if self.min_size is None:
-			self.min_size = screen_w // 2, screen_h // 4
-		self.gui.max_size = self.max_size
-		self.gui.min_size = self.min_size
+    def execute(self):
+        self.gui.distributeInitialData(self.initial_data)
+        self.gui.distributeData(self.data)
 
-		resultMap = {}
-		if self.gui.findChild(name="okButton"):
-			resultMap["okButton"] = OK
+        screen_w, screen_h = screen_width(), screen_height()
+        if self.max_size is None:
+            self.max_size = screen_w // 2, screen_h // 3
+        if self.min_size is None:
+            self.min_size = screen_w // 2, screen_h // 4
+        self.gui.max_size = self.max_size
+        self.gui.min_size = self.min_size
 
-		if self.gui.findChild(name="cancelButton"):
-			resultMap["cancelButton"] = CANCEL
+        resultMap = {}
+        if self.gui.findChild(name="okButton"):
+            resultMap["okButton"] = OK
 
-		if self.gui.findChild(name="yesButton"):
-			resultMap["noButton"] = NO
+        if self.gui.findChild(name="cancelButton"):
+            resultMap["cancelButton"] = CANCEL
 
-		if self.gui.findChild(name="yesButton"):
-			resultMap["yesButton"] = YES
+        if self.gui.findChild(name="yesButton"):
+            resultMap["noButton"] = NO
 
-		ok = self.gui.execute(resultMap)
-		if ok:
-			return self.getOkResult()
-		return self.getCancelResult()
+        if self.gui.findChild(name="yesButton"):
+            resultMap["yesButton"] = YES
 
-	def getOkResult(self):
-		if self.ok_field:
-			return self.gui.collectData(self.ok_field)
-		return True
+        ok = self.gui.execute(resultMap)
+        if ok:
+            return self.getOkResult()
+        return self.getCancelResult()
 
-	def getCancelResult(self):
-		if self.cancel_field:
-			return self.gui.collectData(self.cancel_field)
-		return False
+    def getOkResult(self):
+        if self.ok_field:
+            return self.gui.collectData(self.ok_field)
+        return True
+
+    def getCancelResult(self):
+        if self.cancel_field:
+            return self.gui.collectData(self.cancel_field)
+        return False
+
 
 MESSAGE_BOX_XML = """\
 <Window name="window" title="Message">
@@ -142,7 +147,7 @@ SELECT_BOX_XML = """\
 </Window>
 """
 
-EXCEPTION_CATCHER_XML= """\
+EXCEPTION_CATCHER_XML = """\
 <Window name="window" title="An exception occurred - what now?">
   <VBox hexpand="True">
     <Label wrap_text="1" max_size="400,90000" text="$MESSAGE" name="message"/>
@@ -159,73 +164,82 @@ EXCEPTION_CATCHER_XML= """\
 </Window>
 """
 
+
 def _make_text(message):
-	if callable(message):
-		message = message()
-	if hasattr(message,"read"):
-		message = message.read()
-	return message
+    if callable(message):
+        message = message()
+    if hasattr(message, "read"):
+        message = message.read()
+    return message
 
-def message(message="",caption="Message"):
-	text = _make_text(message)
-	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
-	dialog.gui.findChild(name="message").text = text
-	dialog.gui.findChild(name="window").title = caption
 
-	dialog.execute()
+def message(message="", caption="Message"):
+    text = _make_text(message)
+    dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
+    dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
+    dialog.gui.findChild(name="message").text = text
+    dialog.gui.findChild(name="window").title = caption
 
-def yesNo(message="",caption="Message"):
-	text = _make_text(message)
-	dialog = XMLDialog(StringIO(YESNO_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
-	dialog.gui.findChild(name="message").text = text
-	dialog.gui.findChild(name="window").title = caption
+    dialog.execute()
 
-	return dialog.execute()
 
-def yesNoCancel(message="",caption="Message"):
-	text = _make_text(message)
-	dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML))
-	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
-	dialog.gui.findChild(name="message").text = text
-	dialog.gui.findChild(name="window").title = caption
+def yesNo(message="", caption="Message"):
+    text = _make_text(message)
+    dialog = XMLDialog(StringIO(YESNO_BOX_XML))
+    dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
+    dialog.gui.findChild(name="message").text = text
+    dialog.gui.findChild(name="window").title = caption
 
-	return dialog.execute()
+    return dialog.execute()
 
-def select(message="",options=[],caption="Message"):
-	text = _make_text(message)
-	dialog = XMLDialog(StringIO(SELECT_BOX_XML))
-	dialog.size = screen_width() // 3, (2 * screen_height()) // 3
-	dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
-	dialog.gui.findChild(name="message").text = text
-	dialog.gui.findChild(name="window").title = caption
-	
-	listbox = dialog.gui.findChild(name="selection")
-	listbox.items = options
-	if dialog.execute():
-		return listbox.selected_item
-	return None
+
+def yesNoCancel(message="", caption="Message"):
+    text = _make_text(message)
+    dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML))
+    dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
+    dialog.gui.findChild(name="message").text = text
+    dialog.gui.findChild(name="window").title = caption
+
+    return dialog.execute()
+
+
+def select(message="", options=[], caption="Message"):
+    text = _make_text(message)
+    dialog = XMLDialog(StringIO(SELECT_BOX_XML))
+    dialog.size = screen_width() // 3, (2 * screen_height()) // 3
+    dialog.gui.findChild(name="message").max_width = screen_width() // 2 - 50
+    dialog.gui.findChild(name="message").text = text
+    dialog.gui.findChild(name="window").title = caption
+
+    listbox = dialog.gui.findChild(name="selection")
+    listbox.items = options
+    if dialog.execute():
+        return listbox.selected_item
+    return None
+
 
 def trace(f):
-	import sys, traceback
-	def new_f(*args,**kwargs):
-		try:
-			return pychan.tools.applyOnlySuitable(f,*args,**kwargs)
+    import sys, traceback
 
-		except Exception as e:
-			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
-			dialog.gui.findChild(name="message").text = str(e)
-			
-			tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
-			dialog.gui.findChild(name="traceback").text = "".join(tb)
-			dialog.min_size = screen_width() // 2, (3 * screen_height()) // 4
-			dialog.max_size = screen_width() // 2, (3 * screen_height()) // 4
-			result = dialog.execute()
-			if result == YES:
-				return new_f(*args,**kwargs)
-			elif result == NO:
-				return
-			raise
-	return new_f
+    def new_f(*args, **kwargs):
+        try:
+            return pychan.tools.applyOnlySuitable(f, *args, **kwargs)
 
+        except Exception as e:
+            dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
+            dialog.gui.findChild(name="message").text = str(e)
+
+            tb = traceback.format_exception(
+                sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2]
+            )
+            dialog.gui.findChild(name="traceback").text = "".join(tb)
+            dialog.min_size = screen_width() // 2, (3 * screen_height()) // 4
+            dialog.max_size = screen_width() // 2, (3 * screen_height()) // 4
+            result = dialog.execute()
+            if result == YES:
+                return new_f(*args, **kwargs)
+            elif result == NO:
+                return
+            raise
+
+    return new_f

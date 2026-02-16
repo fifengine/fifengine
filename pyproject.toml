@@ -1,11 +1,11 @@
 [tool.black]
 line-length = 90
-target-version = ["py310"]
+target-version = ["py311"]
 extend-exclude = "^(build|out|vcpkg_installed|engine/swigwrappers)/"
 
 [tool.ruff]
 line-length = 90
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["build", "out", "vcpkg_installed", "engine/swigwrappers"]
 
 [tool.ruff.lint]
@@ -16,7 +16,7 @@ select = ["E", "F", "W", "I"]
 "tests/extension_tests/*.py" = ["F403", "F405"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 files = ["src/python/fife"]
 ignore_missing_imports = true
 show_error_codes = true

@@ -25,11 +25,13 @@
 from __future__ import absolute_import
 from .swig_test_utils import *
 
+
 class TestLog(unittest.TestCase):
-	def testLog(self):
-		pass
+    def testLog(self):
+        pass
+
 
 TEST_CLASSES = [TestLog]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

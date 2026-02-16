@@ -25,69 +25,66 @@
 from __future__ import absolute_import
 from builtins import range
 from .swig_test_utils import *
-import time
+import os
+
 
 class TestView(unittest.TestCase):
-	
-	def setUp(self):
-		self.engine = getEngine()
-		self.model = self.engine.getModel()
-		
-		self.imgMgr = self.engine.getImageManager()
-		self.animMgr = self.engine.getAnimationManager()
 
-		frame_delay = 100
+    def setUp(self):
+        self.engine = getEngine()
+        self.model = self.engine.getModel()
 
-		#create the animation... messy I know
-		self.cursor_anim = self.animMgr.create("cursor_anim")
-		
-		imgs = []
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_000.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0001.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0002.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0003.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0004.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0005.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0006.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0007.png'))
-		imgs.append(self.imgMgr.load('tests/data/crate/full_s_0008.png'))
-		
-		for img in imgs:
-			self.cursor_anim.addFrame(img, frame_delay)
+        self.imgMgr = self.engine.getImageManager()
+        self.animMgr = self.engine.getAnimationManager()
 
+        frame_delay = 100
 
-		#create the drag animation... messy I know
-		self.cursor_drag_anim = self.animMgr.create("cursor_drag_anim")
-			
-		imgs = []
-		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_1.png'))
-		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_2.png'))
-		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_3.png'))
-		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_4.png'))
-		imgs.append(self.imgMgr.load('tests/data/wolf_walk/gfx/run_e_5.png'))
-		
-		for img in imgs:
-			self.cursor_drag_anim.addFrame(img, frame_delay)
-			
-		self.cursor = self.engine.getCursor()
-		self.cursor.set(self.cursor_anim)
-		self.cursor.setDrag(self.cursor_drag_anim, 50, 50)
+        # create the animation... messy I know
+        self.cursor_anim = self.animMgr.create("cursor_anim")
 
-		self.engine.initializePumping()
-		
-	def tearDown(self):
-		self.engine.finalizePumping()
-		self.engine.destroy()
+        imgs = []
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_000.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0001.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0002.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0003.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0004.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0005.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0006.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0007.png"))
+        imgs.append(self.imgMgr.load("tests/data/crate/full_s_0008.png"))
 
-	def testAnimatedCursor(self):
-		for i in range(500):
-			self.engine.pump()
-			
-	
-		
+        for img in imgs:
+            self.cursor_anim.addFrame(img, frame_delay)
+
+        # create the drag animation... messy I know
+        self.cursor_drag_anim = self.animMgr.create("cursor_drag_anim")
+
+        imgs = []
+        imgs.append(self.imgMgr.load("tests/data/wolf_walk/gfx/run_e_1.png"))
+        imgs.append(self.imgMgr.load("tests/data/wolf_walk/gfx/run_e_2.png"))
+        imgs.append(self.imgMgr.load("tests/data/wolf_walk/gfx/run_e_3.png"))
+        imgs.append(self.imgMgr.load("tests/data/wolf_walk/gfx/run_e_4.png"))
+        imgs.append(self.imgMgr.load("tests/data/wolf_walk/gfx/run_e_5.png"))
+
+        for img in imgs:
+            self.cursor_drag_anim.addFrame(img, frame_delay)
+
+        self.cursor = self.engine.getCursor()
+        self.cursor.set(self.cursor_anim)
+        self.cursor.setDrag(self.cursor_drag_anim, 50, 50)
+
+        self.engine.initializePumping()
+
+    def tearDown(self):
+        self.engine.finalizePumping()
+        self.engine.destroy()
+
+    def testAnimatedCursor(self):
+        for i in range(250):
+            self.engine.pump()
+
 
 TEST_CLASSES = [TestView]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-

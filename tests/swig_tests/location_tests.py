@@ -37,8 +37,9 @@ def is_near(x, y):
 
 
 def pt_is_near(p1, p2):
-    return ((p2.x - NEAR_TRESHOLD) < p1.x < (p2.x + NEAR_TRESHOLD)) and \
-           ((p2.y - NEAR_TRESHOLD) < p1.y < (p2.y + NEAR_TRESHOLD))
+    return ((p2.x - NEAR_TRESHOLD) < p1.x < (p2.x + NEAR_TRESHOLD)) and (
+        (p2.y - NEAR_TRESHOLD) < p1.y < (p2.y + NEAR_TRESHOLD)
+    )
 
 
 class TestLocation(unittest.TestCase):
@@ -109,8 +110,7 @@ class TestHexGrid(unittest.TestCase):
         self.hexgrid1 = self.model.getCellGrid("hexagonal")
         self.squaregrid1 = self.model.getCellGrid("square")
         self.hex_layer1 = self.map.createLayer("hexlayer", self.hexgrid1)
-        self.square_layer1 = self.map.createLayer("squarelayer",
-                                                  self.squaregrid1)
+        self.square_layer1 = self.map.createLayer("squarelayer", self.squaregrid1)
         self.loc1 = fife.Location(self.hex_layer1)
         self.loc2 = fife.Location(self.square_layer1)
         self.log = fifelog.LogManager(self.engine)
@@ -180,5 +180,5 @@ class TestHexGrid(unittest.TestCase):
 
 TEST_CLASSES = [TestHexGrid, TestLocation]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

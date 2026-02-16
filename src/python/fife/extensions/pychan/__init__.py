@@ -229,17 +229,14 @@ This leads to a reversed construction sequence as the super classes constructor
 has to be invoked I{after} the subclass specific construction has taken place.
 
 """
+
 from __future__ import print_function
 from __future__ import absolute_import
 import sys
 
 from builtins import map
-__all__ = [
-	'loadXML',
-	'loadFonts',
-	'init',
-	'manager'
-]
+
+__all__ = ["loadXML", "loadFonts", "init", "manager"]
 
 # This *import should really be removed!
 from .widgets import *
@@ -251,197 +248,216 @@ from .fonts import loadFonts
 ### Initialisation ###
 
 manager = None
-def init(engine,debug=False, compat_layout=False):
-	"""
-	This has to be called before any other pychan methods can be used.
-	It sets up a manager object which is available under pychan.manager.
 
-	@param engine: The FIFE engine object.
-	@param debug: bool - Enables and disables debugging output. Default is False.
-	@param compat_layout: bool - Enables and disables compat layout. Default is False.
-	"""
-	from .compat import _munge_engine_hook
-	from .internal import Manager
-	global manager
 
-	manager = Manager(_munge_engine_hook(engine),debug,compat_layout)
+def init(engine, debug=False, compat_layout=False):
+    """
+    This has to be called before any other pychan methods can be used.
+    It sets up a manager object which is available under pychan.manager.
+
+    @param engine: The FIFE engine object.
+    @param debug: bool - Enables and disables debugging output. Default is False.
+    @param compat_layout: bool - Enables and disables compat layout. Default is False.
+    """
+    from .compat import _munge_engine_hook
+    from .internal import Manager
+
+    global manager
+
+    manager = Manager(_munge_engine_hook(engine), debug, compat_layout)
+
 
 # XML Loader
 
 from xml.sax import saxutils, handler
 from traceback import print_exc
 
-def traced(f):
-	"""
-	Simple decorator that prints tracebacks for any exceptions occuring in a
-	function. Useful to avoid the infamous 'finally pops bad exception'
-	that shadows the real cause of the error ...
-	"""
-	def traced_f(*args,**kwargs):
-		try:
-			return f(*args,**kwargs)
-		except:
-			print_exc()
-			raise
-	return traced_f
 
-if sys.version_info < (3, ):
+def traced(f):
+    """
+    Simple decorator that prints tracebacks for any exceptions occuring in a
+    function. Useful to avoid the infamous 'finally pops bad exception'
+    that shadows the real cause of the error ...
+    """
+
+    def traced_f(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except:
+            print_exc()
+            raise
+
+    return traced_f
+
+
+if sys.version_info < (3,):
+
     class __GuiLoaderBase(object, handler.ContentHandler):
         pass
+
 else:
+
     class __GuiLoaderBase(handler.ContentHandler):
         pass
-    
+
+
 class _GuiLoader(__GuiLoaderBase):
-	def __init__(self):
-		super(_GuiLoader,self).__init__()
-		self.root = None
-		self.indent = ""
-		self.stack = []
+    def __init__(self):
+        super(_GuiLoader, self).__init__()
+        self.root = None
+        self.indent = ""
+        self.stack = []
 
-	def _printTag(self,name,attrs):
-		if not manager.debug: return
-		attrstrings = ['%s="%s"' % tuple(map(str,t)) for t in list(attrs.items())]
-		tag = "<%s " % name + " ".join(attrstrings) + ">"
-		try:
-			print(self.indent + tag)
-		except UnicodeEncodeError as e:
-			print(self.indent + tag.encode('ascii', 'backslashreplace'))
+    def _printTag(self, name, attrs):
+        if not manager.debug:
+            return
+        attrstrings = ['%s="%s"' % tuple(map(str, t)) for t in list(attrs.items())]
+        tag = "<%s " % name + " ".join(attrstrings) + ">"
+        try:
+            print(self.indent + tag)
+        except UnicodeEncodeError as e:
+            print(self.indent + tag.encode("ascii", "backslashreplace"))
 
-	def _resolveTag(self,name):
-		""" Resolve a XML Tag to a PyChan GUI class. """
-		cls = WIDGETS.get(name,None)
-		if cls is None:
-			raise GuiXMLError("Unknown GUI Element: %s" % name)
-		return cls
+    def _resolveTag(self, name):
+        """Resolve a XML Tag to a PyChan GUI class."""
+        cls = WIDGETS.get(name, None)
+        if cls is None:
+            raise GuiXMLError("Unknown GUI Element: %s" % name)
+        return cls
 
-	def _setAttr(self,obj,name,value):
-		if not hasattr(obj.__class__,'ATTRIBUTES'):
-			raise PyChanException("The registered widget/spacer class %s does not supply an 'ATTRIBUTES'."
-								  % repr(obj))
-		try:
-			for attr in obj.ATTRIBUTES:
-				if attr.name == name:
-					attr.set(obj,value)
-					return
-		except GuiXMLError as e:
-			raise GuiXMLError("Error parsing attr '%s'='%s' for '%s': '%s'" % (name,value,obj,e))
-		raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name,repr(obj)))
+    def _setAttr(self, obj, name, value):
+        if not hasattr(obj.__class__, "ATTRIBUTES"):
+            raise PyChanException(
+                "The registered widget/spacer class %s does not supply an 'ATTRIBUTES'."
+                % repr(obj)
+            )
+        try:
+            for attr in obj.ATTRIBUTES:
+                if attr.name == name:
+                    attr.set(obj, value)
+                    return
+        except GuiXMLError as e:
+            raise GuiXMLError(
+                "Error parsing attr '%s'='%s' for '%s': '%s'" % (name, value, obj, e)
+            )
+        raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name, repr(obj)))
 
-	def startElement(self, name, attrs):
-		self._printTag(name,attrs)
-		cls = self._resolveTag(name)
-		if issubclass(cls,Widget):
-			self.stack.append('gui_element')
-			self._createInstance(cls,name,attrs)
-		else:
-			self.stack.append('unknown')
-		self.indent += " "*4
+    def startElement(self, name, attrs):
+        self._printTag(name, attrs)
+        cls = self._resolveTag(name)
+        if issubclass(cls, Widget):
+            self.stack.append("gui_element")
+            self._createInstance(cls, name, attrs)
+        else:
+            self.stack.append("unknown")
+        self.indent += " " * 4
 
-	def _createInstance(self,cls,name,attrs):
-		obj = cls(parent=self.root)
-		for k,v in list(attrs.items()):
-			self._setAttr(obj,k,v)
+    def _createInstance(self, cls, name, attrs):
+        obj = cls(parent=self.root)
+        for k, v in list(attrs.items()):
+            self._setAttr(obj, k, v)
 
-		if self.root:
-			if isinstance(obj,Tab):
-				if hasattr(self.root,'addTabDefinition'):
-					self.root.addTabDefinition(obj)
-				else:
-					raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
-			else:
-				self.root.addChild( obj )
-		self.root = obj
+        if self.root:
+            if isinstance(obj, Tab):
+                if hasattr(self.root, "addTabDefinition"):
+                    self.root.addTabDefinition(obj)
+                else:
+                    raise GuiXMLError("A Tab needs to be added to a TabbedArea widget!")
+            else:
+                self.root.addChild(obj)
+        self.root = obj
 
-	def endElement(self, name):
-		self.indent = self.indent[:-4]
-		if manager.debug: print(self.indent + "</%s>" % name)
-		if self.stack.pop() in ('gui_element'):
-			self.root = self.root.parent or self.root
+    def endElement(self, name):
+        self.indent = self.indent[:-4]
+        if manager.debug:
+            print(self.indent + "</%s>" % name)
+        if self.stack.pop() in ("gui_element"):
+            self.root = self.root.parent or self.root
+
 
 def loadXML(filename_or_stream):
-	"""
-	Loads a PyChan XML file and generates a widget from it.
+    """
+    Loads a PyChan XML file and generates a widget from it.
 
-	@param filename_or_stream: A filename or a file-like object (for example using StringIO).
+    @param filename_or_stream: A filename or a file-like object (for example using StringIO).
 
-	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
-	depend on the PyChan code.
+    The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
+    depend on the PyChan code.
 
-	So when a tag C{Button} is encountered, an instance of class Button will be generated,
-	and added to the parent object.
-	All attributes will then be parsed and then set in the following way:
+    So when a tag C{Button} is encountered, an instance of class Button will be generated,
+    and added to the parent object.
+    All attributes will then be parsed and then set in the following way:
 
-	  - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
-	    of integers.
-	  - foreground_color,base_color,background_color - These are assumed to be triples or quadruples of comma
-	    separated integers. (triples: r,g,b; quadruples: r,g,b,a)
-	  - border_size,padding - These are assumed to be simple integers.
+      - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
+        of integers.
+      - foreground_color,base_color,background_color - These are assumed to be triples or quadruples of comma
+        separated integers. (triples: r,g,b; quadruples: r,g,b,a)
+      - border_size,padding - These are assumed to be simple integers.
 
-	All other attributes are set verbatim as strings on the generated instance.
-	In case a Widget does not accept an attribute to be set or the attribute can not be parsed
-	correctly, the function will raise a GuiXMLError.
+    All other attributes are set verbatim as strings on the generated instance.
+    In case a Widget does not accept an attribute to be set or the attribute can not be parsed
+    correctly, the function will raise a GuiXMLError.
 
-	In short::
-		<VBox>
-			<Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
-		</VBox>
+    In short::
+            <VBox>
+                    <Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
+            </VBox>
 
-	This result in the following code executed::
+    This result in the following code executed::
 
-		vbox = VBox(parent=None)
-		button = Button(parent=vbox)
-		button.text = "X"
-		button.min_size = (20,20)
-		button.base_color = (255,0,0)
-		button.border_size = 2
-		vbox.add( button )
-	"""
-	from xml.sax import parse
-	loader = _GuiLoader()
-	parse(filename_or_stream,loader)
-	return loader.root
+            vbox = VBox(parent=None)
+            button = Button(parent=vbox)
+            button.text = "X"
+            button.min_size = (20,20)
+            button.base_color = (255,0,0)
+            button.border_size = 2
+            vbox.add( button )
+    """
+    from xml.sax import parse
 
-def setupModalExecution(mainLoop,breakFromMainLoop):
-	"""
-	Setup the synchronous dialog execution feature.
+    loader = _GuiLoader()
+    parse(filename_or_stream, loader)
+    return loader.root
 
-	You can enable synchronous dialog execution by
-	passing to functions to this function.
 
-	@param mainLoop: Function - This is regarded as the applications
-	main loop, which should be able to be called recursively.
-	It should not take no arguments and return the argument
-	passed to the second function (breakFromMainLoop).
+def setupModalExecution(mainLoop, breakFromMainLoop):
+    """
+    Setup the synchronous dialog execution feature.
 
-	@param breakFromMainLoop: Function -This function should cause the
-	first function to finish and return the passed argument.
+    You can enable synchronous dialog execution by
+    passing to functions to this function.
 
-	With these to functions dialogs can be executed synchronously.
-	See L{widgets.Widget.execute}.
-	"""
-	if not manager:
-		raise InitializationError("PyChan is not initialized yet.")
-	manager.setupModalExecution(mainLoop,breakFromMainLoop)
+    @param mainLoop: Function - This is regarded as the applications
+    main loop, which should be able to be called recursively.
+    It should not take no arguments and return the argument
+    passed to the second function (breakFromMainLoop).
+
+    @param breakFromMainLoop: Function -This function should cause the
+    first function to finish and return the passed argument.
+
+    With these to functions dialogs can be executed synchronously.
+    See L{widgets.Widget.execute}.
+    """
+    if not manager:
+        raise InitializationError("PyChan is not initialized yet.")
+    manager.setupModalExecution(mainLoop, breakFromMainLoop)
+
 
 def setUnicodePolicy(*policy):
-	"""
-	Set the unicode error handling policy.
-	
-	Possible options are:
-	 - 'strict' meaning that encoding errors raise a UnicodeEncodeError.
-	 - 'ignore' all encoding errors will be silently ignored.
-	 - 'replace' all errors are replaced by the next argument.
+    """
+    Set the unicode error handling policy.
 
-	For further information look at the python documentation,
-	especially C{codecs.register_error}.
+    Possible options are:
+     - 'strict' meaning that encoding errors raise a UnicodeEncodeError.
+     - 'ignore' all encoding errors will be silently ignored.
+     - 'replace' all errors are replaced by the next argument.
 
-	Example::
-		pychan.setUnicodePolicy('replace','?')
-	"""
-	if not manager:
-		raise InitializationError("PyChan is not initialized yet.")
-	manager.unicodePolicy = policy
+    For further information look at the python documentation,
+    especially C{codecs.register_error}.
 
-
-
+    Example::
+            pychan.setUnicodePolicy('replace','?')
+    """
+    if not manager:
+        raise InitializationError("PyChan is not initialized yet.")
+    manager.unicodePolicy = policy
