@@ -24,7 +24,32 @@
 
 from __future__ import print_function
 from builtins import input
-import os, re, sys, optparse, subprocess, unittest
+import os, re, sys, optparse, subprocess, unittest, shutil
+
+def _env_truthy(value):
+	if value is None:
+		return False
+	return str(value).strip().lower() in ('1', 'true', 'yes', 'on')
+
+def resolve_headless_mode(cli_headless):
+	"""Resolve headless behavior.
+
+	Priority:
+	1) Explicit CLI flags (--headless/--windowed)
+	2) FIFE_TEST_HEADLESS env var
+	3) CI env defaults to headless
+	4) default windowed
+	"""
+	if cli_headless is not None:
+		return cli_headless
+
+	if 'FIFE_TEST_HEADLESS' in os.environ:
+		return _env_truthy(os.environ.get('FIFE_TEST_HEADLESS'))
+
+	if _env_truthy(os.environ.get('CI')):
+		return True
+
+	return False
 
 def genpath(somepath):
 	return os.path.sep.join(somepath.split('/'))
@@ -67,6 +92,39 @@ def resolve_test_modules(directory):
 			modules.append(modname + p[:-3])
 	return modules
 
+def prepare_python_bindings(build_dir):
+	"""Prepare a local Python package layout for SWIG tests.
+
+	This mirrors src/python/fife into build/fife and overlays generated
+	SWIG stubs (fife.py, fifechan.py), so imports like `from fife import fife`
+	work without installing the package system-wide.
+	"""
+	project_root = os.path.dirname(os.path.abspath(__file__))
+	src_pkg_dir = os.path.join(project_root, 'src', 'python', 'fife')
+	build_pkg_dir = os.path.join(build_dir, 'fife')
+
+	os.makedirs(build_pkg_dir, exist_ok=True)
+	if os.path.isdir(src_pkg_dir):
+		shutil.copytree(src_pkg_dir, build_pkg_dir, dirs_exist_ok=True)
+
+	for module_name in ('fife.py', 'fifechan.py'):
+		src_module = os.path.join(build_dir, module_name)
+		if os.path.exists(src_module):
+			shutil.copy2(src_module, os.path.join(build_pkg_dir, module_name))
+
+	for extension_name in ('_fife_swig.so', '_fifechan_swig.so'):
+		src_extension = os.path.join(build_dir, extension_name)
+		if os.path.exists(src_extension):
+			shutil.copy2(src_extension, os.path.join(build_pkg_dir, extension_name))
+
+	if build_dir not in sys.path:
+		sys.path.insert(0, build_dir)
+
+	ld_path = os.environ.get('LD_LIBRARY_PATH', '')
+	ld_parts = [p for p in ld_path.split(':') if p]
+	if build_dir not in ld_parts:
+		os.environ['LD_LIBRARY_PATH'] = build_dir + (':' + ld_path if ld_path else '')
+
 def run_core_tests(progs):
 	build_dir = os.environ.get('FIFE_BUILD_DIR', genpath('build'))
 	if not os.path.isdir(build_dir):
@@ -93,21 +151,41 @@ def get_dynamic_imports(modules):
 		imported.append(m)
 	return imported
 
-def run_test_modules(modules):
-	imported = get_dynamic_imports(modules)
-	suites = []
-	for m in imported:
-		try:
-			for c in m.__dict__['TEST_CLASSES']:
-				suites.append(unittest.TestLoader().loadTestsFromTestCase(c))
-		except (AttributeError, KeyError):
-			pass
-	mastersuite = unittest.TestSuite(suites)
-	runner = unittest.TextTestRunner(verbosity=2)
-	result = runner.run(mastersuite)
-	return [e[1] for e in result.errors], [f[1] for f in result.failures]
+def run_test_modules(modules, headless=False):
+	build_dir = os.environ.get('FIFE_BUILD_DIR', genpath('build'))
+	env = os.environ.copy()
+	pythonpath = env.get('PYTHONPATH', '')
+	python_parts = [p for p in [build_dir, os.getcwd(), pythonpath] if p]
+	env['PYTHONPATH'] = os.pathsep.join(python_parts)
+	if headless:
+		env.setdefault('SDL_VIDEODRIVER', 'dummy')
+		env.setdefault('SDL_AUDIODRIVER', 'dummy')
+	module_timeout = int(env.get('FIFE_MODULE_TEST_TIMEOUT', '120'))
 
-def run_all(tests):
+	errors = []
+	failures = []
+	for module in modules:
+		print('\n===== Running %s =====' % module)
+		cmd = [sys.executable, '-m', 'unittest', module]
+		try:
+			proc = subprocess.run(
+				cmd,
+				stdout=subprocess.PIPE,
+				stderr=subprocess.STDOUT,
+				universal_newlines=True,
+				env=env,
+				timeout=module_timeout,
+			)
+			print(proc.stdout)
+			if proc.returncode != 0:
+				errors.append(proc.stdout)
+		except subprocess.TimeoutExpired as exc:
+			timeout_output = (exc.stdout or '') + '\n[timeout] module exceeded %ss\n' % module_timeout
+			print(timeout_output)
+			errors.append(timeout_output)
+	return errors, failures
+
+def run_all(tests, headless=False):
 	def print_errors(txt, errs):
 		if errs:
 			print(txt + ':')
@@ -115,8 +193,8 @@ def run_all(tests):
 				print('  ' + msg)
 
 	core_errors, core_failures = run_core_tests(tests['core'])
-	swig_errors, swig_failures = run_test_modules(tests['swig'])
-	ext_errors, ext_failures = run_test_modules(tests['ext'])
+	swig_errors, swig_failures = run_test_modules(tests['swig'], headless=headless)
+	ext_errors, ext_failures = run_test_modules(tests['ext'], headless=headless)
 
 	print(80 * '=')
 	errorsfound = False
@@ -135,7 +213,7 @@ def run_all(tests):
 	else:
 		print('No SWIG errors found')
 
-	if swig_errors or swig_failures:
+	if ext_errors or ext_failures:
 		print_errors('Errors in extensions tests', ext_errors)
 		print_errors('Failures in extensions tests', ext_failures)
 		errorsfound = True
@@ -152,11 +230,14 @@ def run_all(tests):
 def quit(dummy):
 	sys.exit(0)
 
-def run(automatic, selected_cases):
+def run(automatic, selected_cases, headless=None):
 	index = 0
 	tests = {}
+	headless_mode = resolve_headless_mode(headless)
+	print('SWIG/extension test mode: %s' % ('headless' if headless_mode else 'windowed'))
 
 	build_dir = os.environ.get('FIFE_BUILD_DIR', genpath('build'))
+	prepare_python_bindings(build_dir)
 	core_tests = resolve_test_progs(build_dir)
 	for t in core_tests:
 		tests[index] = ('Core tests', t, [t], run_core_tests)
@@ -166,20 +247,20 @@ def run(automatic, selected_cases):
 
 	swig_tests = resolve_test_modules(genpath('tests/swig_tests'))
 	for t in swig_tests:
-		tests[index] = ('SWIG tests', t, [t], run_test_modules)
+		tests[index] = ('SWIG tests', t, [t], lambda modules, _headless=headless_mode: run_test_modules(modules, headless=_headless))
 		index += 1
-	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)
+	tests[index] = ('SWIG tests', 'all', swig_tests, lambda modules, _headless=headless_mode: run_test_modules(modules, headless=_headless))
 	index += 1
 
 	extension_tests = resolve_test_modules(genpath('tests/extension_tests'))
 	for t in extension_tests:
-		tests[index] = ('Extension tests', t, [t], run_test_modules)
+		tests[index] = ('Extension tests', t, [t], lambda modules, _headless=headless_mode: run_test_modules(modules, headless=_headless))
 		index += 1
-	tests[index] = ('Extension tests', 'all', extension_tests, run_test_modules)
+	tests[index] = ('Extension tests', 'all', extension_tests, lambda modules, _headless=headless_mode: run_test_modules(modules, headless=_headless))
 	index += 1
 
 	alltests = {'core': core_tests, 'swig': swig_tests, 'ext': extension_tests}
-	tests[index] = ('Other', 'Run all tests', alltests, run_all)
+	tests[index] = ('Other', 'Run all tests', alltests, lambda modules, _headless=headless_mode: run_all(modules, headless=_headless))
 	tests[index+1] = ('Other', 'Cancel and quit', None, quit)
 
 	if (not automatic) and (not selected_cases):
@@ -230,8 +311,14 @@ def main():
 	parser.add_option("-a", "--automatic",
 			action="store_true", dest="automatic", default=False,
 			help="In case selected, runs all the tests automatically")
+	parser.add_option("--headless",
+			action="store_true", dest="headless", default=None,
+			help="Run SWIG/extension tests in headless mode (dummy SDL drivers)")
+	parser.add_option("--windowed",
+			action="store_false", dest="headless",
+			help="Run SWIG/extension tests with normal windowing (overrides CI default)")
 	options, args = parser.parse_args()
-	run(options.automatic, args)
+	run(options.automatic, args, options.headless)
 
 
 

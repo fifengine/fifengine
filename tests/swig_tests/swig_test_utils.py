@@ -32,21 +32,37 @@ if os.path.isdir(fife_path) and fife_path not in sys.path:
 from fife import fife
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
+if not hasattr(fife, 'ModelCoordinate') and hasattr(fife, 'Point3D'):
+	fife.ModelCoordinate = fife.Point3D
+
+if not hasattr(fife, 'ExactModelCoordinate') and hasattr(fife, 'DoublePoint3D'):
+	fife.ExactModelCoordinate = fife.DoublePoint3D
+
 from fife.extensions import fifelog
 
 def getEngine(minimized=False):
 	e = fife.Engine()
-	log = fifelog.LogManager(e, promptlog=False, filelog=True)
-	log.setVisibleModules('all')
+	try:
+		log = fifelog.LogManager(e, promptlog=False, filelog=True)
+		if hasattr(log, 'setVisibleModules'):
+			log.setVisibleModules('all')
+	except Exception:
+		pass
 	s = e.getSettings()
-	s.setRenderBackend('OpenGL')
-	s.setDefaultFontPath('../data/FreeMono.ttf')
-	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
-			".,!?-+/:();%`'*#=[]")
+	if hasattr(s, 'setRenderBackend'):
+		s.setRenderBackend('SDL')
+	if hasattr(s, 'setDefaultFontPath'):
+		s.setDefaultFontPath('../data/FreeMono.ttf')
+	if hasattr(s, 'setDefaultFontGlyphs'):
+		s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+				".,!?-+/:();%`'*#=[]")
 	if minimized:
-		s.setScreenWidth(1)
-		s.setScreenHeight(1)
-	s.setDefaultFontSize(12)
+		if hasattr(s, 'setScreenWidth'):
+			s.setScreenWidth(1)
+		if hasattr(s, 'setScreenHeight'):
+			s.setScreenHeight(1)
+	if hasattr(s, 'setDefaultFontSize'):
+		s.setDefaultFontSize(12)
 	e.init()
 	return e
 
