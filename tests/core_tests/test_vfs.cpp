@@ -45,7 +45,7 @@ using namespace FIFE;
 
 TEST_CASE("test_is_directory")
 {
-    const std::filesystem::path test_dir = std::filesystem::temp_directory_path() / FIFE_TEST_DIR;
+    const std::filesystem::path test_dir        = std::filesystem::temp_directory_path() / FIFE_TEST_DIR;
     const std::filesystem::path nested_test_dir = test_dir / FIFE_TEST_DIR;
 
     std::error_code ec;

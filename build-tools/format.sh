@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-CLANG_FORMAT=${CLANG_FORMAT:-clang-format}
+CLANG_FORMAT=${CLANG_FORMAT:-}
 
 check_version() {
   local binary="$1"
@@ -19,12 +19,19 @@ check_version() {
   return 1
 }
 
-if ! CLANG_FORMAT=$(check_version "$CLANG_FORMAT") \
-  && ! CLANG_FORMAT=$(check_version "clang-format-20") \
-  && ! CLANG_FORMAT=$(check_version "clang-format-18") \
-  && ! CLANG_FORMAT=$(check_version "clang-format-17"); then
-  echo "Error: No compatible clang-format version (>=17) found."
-  exit 1
+if [[ -n "$CLANG_FORMAT" ]]; then
+  if ! CLANG_FORMAT=$(check_version "$CLANG_FORMAT"); then
+    echo "Error: Requested clang-format '$CLANG_FORMAT' is unavailable or unsupported (need >=17)."
+    exit 1
+  fi
+else
+  if ! CLANG_FORMAT=$(check_version "clang-format-20") \
+    && ! CLANG_FORMAT=$(check_version "clang-format-18") \
+    && ! CLANG_FORMAT=$(check_version "clang-format-17") \
+    && ! CLANG_FORMAT=$(check_version "clang-format"); then
+    echo "Error: No compatible clang-format version (>=17) found."
+    exit 1
+  fi
 fi
 
 echo "Using $($CLANG_FORMAT --version)"
