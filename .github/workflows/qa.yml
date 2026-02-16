@@ -122,15 +122,15 @@ jobs:
 
       - name: 🛠️ Check formatting (black)
         run: |
-          black --check python/fife tests/extension_tests tests/swig_tests run_tests.py
+          black --check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
         continue-on-error: true
 
       - name: 🛠️ Lint (ruff)
         run: |
-          ruff check python/fife tests/extension_tests tests/swig_tests run_tests.py
+          ruff check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
         continue-on-error: true
 
       - name: 🛠️ Type checking (mypy)
         run: |
-          mypy python/fife
+          mypy src/python/fife
         continue-on-error: true

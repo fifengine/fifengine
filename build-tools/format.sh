@@ -45,7 +45,7 @@ fi
 find src tests -type f \( -name "*.h" -o -name "*.hpp" -o -name "*.cpp" \) -exec "$CLANG_FORMAT" -i -style=file {} \;
 
 if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]]; then
-  if ! git diff --ignore-file-mode --exit-code; then
+  if ! git -c core.fileMode=false diff --exit-code; then
     echo "Error: Code formatting issues detected. Please run ./build-tools/format.sh and commit the changes."
     exit 1
   fi
