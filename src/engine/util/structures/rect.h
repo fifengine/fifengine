@@ -67,199 +67,197 @@
 // Second block: files included from the same folder
 #include "point.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** A Rectangle on screen.
-	 *
-	 * This is a small helper class used for screen coordinate arithmetics.
-	 * The same thoughts reasong using @b int32_t as value type as in Point apply.
-	 *
-	 * @see Point
-	 */
-	template <typename T>
-	class RectType {
-		public:
-			/** The X Coordinate.
-			 */
-			T x;
-			/** The Y Coordinate.
-			 */
-			T y;
-			/** Width of the rectangle.
-			 */
-			T w;
-			/** Height of the rectangle.
-			 */
-			T h;
+    /** A Rectangle on screen.
+     *
+     * This is a small helper class used for screen coordinate arithmetics.
+     * The same thoughts reasong using @b int32_t as value type as in Point apply.
+     *
+     * @see Point
+     */
+    template <typename T>
+    class RectType
+    {
+    public:
+        /** The X Coordinate.
+         */
+        T x;
+        /** The Y Coordinate.
+         */
+        T y;
+        /** Width of the rectangle.
+         */
+        T w;
+        /** Height of the rectangle.
+         */
+        T h;
 
-			/** Constructor.
-			 *
-			 * Creates a new Rect with the values defaulting to 0.
-			 */
-			explicit RectType(T x = 0, T y = 0, T w = 0, T h = 0) : x(x), y(y), w(w), h(h) {
-			}
+        /** Constructor.
+         *
+         * Creates a new Rect with the values defaulting to 0.
+         */
+        explicit RectType(T x = 0, T y = 0, T w = 0, T h = 0) : x(x), y(y), w(w), h(h) { }
 
-			/** Constructor.
-			 *
-			 * Creates a new Rect of type T from the given Rect of type U
-			 */
-			template<typename U>
-			explicit RectType(const RectType<U>& r)
-				: x(static_cast<T>(r.x)),
-				y(static_cast<T>(r.y)),
-				w(static_cast<T>(r.w)),
-				h(static_cast<T>(r.h)) {
-			}
+        /** Constructor.
+         *
+         * Creates a new Rect of type T from the given Rect of type U
+         */
+        template <typename U>
+        explicit RectType(const RectType<U>& r) :
+            x(static_cast<T>(r.x)), y(static_cast<T>(r.y)), w(static_cast<T>(r.w)), h(static_cast<T>(r.h))
+        {
+        }
 
-			/** The X coordinate of the right edge.
-			 */
-			T right() const;
+        /** The X coordinate of the right edge.
+         */
+        T right() const;
 
-			/** The Y coordinate of the bottom edge.
-			 */
-			T bottom() const;
+        /** The Y coordinate of the bottom edge.
+         */
+        T bottom() const;
 
-			/** Equivalence operator.
-			 *
-			 * @param rect The rectangle to which this is compared.
-			 * @return True only if both rectangle values are all equal.
-			 */
-			bool operator==(const RectType<T>& rect ) const;
+        /** Equivalence operator.
+         *
+         * @param rect The rectangle to which this is compared.
+         * @return True only if both rectangle values are all equal.
+         */
+        bool operator==(const RectType<T>& rect) const;
 
-			/** Checks whether a rectangle contains a Point.
-			 *
-			 * @param point The point that is checked.
-			 * @return True if the point lies inside the rectangle or on one of its borders.
-			 */
-			bool contains( const PointType2D<T>& point ) const;
+        /** Checks whether a rectangle contains a Point.
+         *
+         * @param point The point that is checked.
+         * @return True if the point lies inside the rectangle or on one of its borders.
+         */
+        bool contains(const PointType2D<T>& point) const;
 
-			/** Check whether two rectangles share some area.
-			 *
-			 * @param rect The other rectangle that is checked.
-			 * @return True, if and only if both rectangles have some covered area in common.
-			 * This includes edges that cover each other.
-			 * @note This operation is commutative.
-			 */
-			bool intersects( const RectType<T>& rect ) const;
+        /** Check whether two rectangles share some area.
+         *
+         * @param rect The other rectangle that is checked.
+         * @return True, if and only if both rectangles have some covered area in common.
+         * This includes edges that cover each other.
+         * @note This operation is commutative.
+         */
+        bool intersects(const RectType<T>& rect) const;
 
-			/** Calculate rectangle intersection in place
-			 *
-			 * @param rect The other rectangle that is checked.
-			 * @return True, if and only if both rectangles have some covered area in common.
-			 * This includes edges that cover each other.
-			 */
-			bool intersectInplace( const RectType<T>& rect );
-	};
+        /** Calculate rectangle intersection in place
+         *
+         * @param rect The other rectangle that is checked.
+         * @return True, if and only if both rectangles have some covered area in common.
+         * This includes edges that cover each other.
+         */
+        bool intersectInplace(const RectType<T>& rect);
+    };
 
-	/** Stream output operator.
-	 *
-	 * Useful for debugging purposes, this will output the coordinates
-	 * of the rectangle to the stream.
-	 */
-	template<typename T>
-	std::ostream& operator<<(std::ostream& os, const RectType<T>& r) {
-		return
-			os << "("<<r.x<<","<<r.y<<")-("<<r.w<<","<<r.h<<")";
-	}
+    /** Stream output operator.
+     *
+     * Useful for debugging purposes, this will output the coordinates
+     * of the rectangle to the stream.
+     */
+    template <typename T>
+    std::ostream& operator<<(std::ostream& os, const RectType<T>& r)
+    {
+        return os << "(" << r.x << "," << r.y << ")-(" << r.w << "," << r.h << ")";
+    }
 
-	//////////////// INLINE FUNCTIONS /////////////////////////
+    //////////////// INLINE FUNCTIONS /////////////////////////
 
-	template<typename T>
-	inline T RectType<T>::right() const {
-		return x + w;
-	}
+    template <typename T>
+    inline T RectType<T>::right() const
+    {
+        return x + w;
+    }
 
-	template<typename T>
-	inline T RectType<T>::bottom() const {
-		return y + h;
-	}
+    template <typename T>
+    inline T RectType<T>::bottom() const
+    {
+        return y + h;
+    }
 
-	template<typename T>
-	inline bool RectType<T>::operator==(const RectType<T>& rect ) const {
-		return
-			x == rect.x && y == rect.y && w == rect.w && h == rect.h;
-	}
+    template <typename T>
+    inline bool RectType<T>::operator==(const RectType<T>& rect) const
+    {
+        return x == rect.x && y == rect.y && w == rect.w && h == rect.h;
+    }
 
-	template<typename T>
-	inline bool RectType<T>::contains( const PointType2D<T>& point ) const {
-		return
-			(((point.x >= x) && (point.x <= x + w))
-				&& ((point.y >= y) && (point.y <= y + h)));
-	}
+    template <typename T>
+    inline bool RectType<T>::contains(const PointType2D<T>& point) const
+    {
+        return (((point.x >= x) && (point.x <= x + w)) && ((point.y >= y) && (point.y <= y + h)));
+    }
 
+    template <typename T>
+    inline bool RectType<T>::intersectInplace(const RectType<T>& rectangle)
+    {
+        x = x - rectangle.x;
+        y = y - rectangle.y;
 
-	template<typename T>
-	inline bool RectType<T>::intersectInplace( const RectType<T>& rectangle ) {
-		x = x - rectangle.x;
-		y = y - rectangle.y;
+        if (x < 0) {
+            w += x;
+            x = 0;
+        }
 
+        if (y < 0) {
+            h += y;
+            y = 0;
+        }
 
-		if (x < 0) {
-			w += x;
-			x = 0;
-		}
+        if (x + w > rectangle.w) {
+            w = rectangle.w - x;
+        }
 
-		if (y < 0) {
-			h += y;
-			y = 0;
-		}
+        if (y + h > rectangle.h) {
+            h = rectangle.h - y;
+        }
 
-		if (x + w > rectangle.w) {
-			w = rectangle.w - x;
-		}
+        x += rectangle.x;
+        y += rectangle.y;
 
-		if (y + h > rectangle.h) {
-			h = rectangle.h - y;
-		}
+        if (w <= 0 || h <= 0) {
+            h = 0;
+            w = 0;
+            return false;
+        }
+        return true;
+    }
 
-		x += rectangle.x;
-		y += rectangle.y;
+    template <typename T>
+    inline bool RectType<T>::intersects(const RectType<T>& rectangle) const
+    {
+        T _x = x - rectangle.x;
+        T _y = y - rectangle.y;
+        T _w = w;
+        T _h = h;
 
-		if (w <= 0 || h <= 0) {
-			h = 0;
-			w = 0;
-			return false;
-		}
-		return true;
-	}
+        if (_x < 0) {
+            _w += _x;
+            _x = 0;
+        }
 
-	template<typename T>
-	inline bool RectType<T>::intersects( const RectType<T>& rectangle ) const {
-		T _x = x - rectangle.x;
-		T _y = y - rectangle.y;
-		T _w = w;
-		T _h = h;
+        if (_y < 0) {
+            _h += _y;
+            _y = 0;
+        }
 
+        if (_x + _w > rectangle.w) {
+            _w = rectangle.w - _x;
+        }
 
-		if (_x < 0) {
-			_w += _x;
-			_x = 0;
-		}
+        if (_y + _h > rectangle.h) {
+            _h = rectangle.h - _y;
+        }
 
-		if (_y < 0) {
-			_h += _y;
-			_y = 0;
-		}
+        if (_w <= 0 || _h <= 0) {
+            return false;
+        }
+        return true;
+    }
 
-		if (_x + _w > rectangle.w) {
-			_w = rectangle.w - _x;
-		}
+    typedef RectType<int32_t> Rect;
+    typedef RectType<float> FloatRect;
+    typedef RectType<double> DoubleRect;
 
-		if (_y + _h > rectangle.h) {
-			_h = rectangle.h - _y;
-		}
-
-		if (_w <= 0 || _h <= 0) {
-			return false;
-		}
-		return true;
-	}
-
-	typedef RectType<int32_t> Rect;
-	typedef RectType<float> FloatRect;
-	typedef RectType<double> DoubleRect;
-
-
-}
+} // namespace FIFE
 
 #endif

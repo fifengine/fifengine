@@ -30,275 +30,295 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "loaders/native/audio/ogg_loader.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
-#include "loaders/native/audio/ogg_loader.h"
 
 #include "soundclip.h"
 
-namespace FIFE {
-	static Logger _log(LM_AUDIO);
+namespace FIFE
+{
+    static Logger _log(LM_AUDIO);
 
-	SoundClip::SoundClip(IResourceLoader* loader) :
-		IResource(createUniqueClipName(), loader),
-		m_isStream(false),
-		m_decoder(NULL),
-		m_deleteDecoder(false) {
+    SoundClip::SoundClip(IResourceLoader* loader) :
+        IResource(createUniqueClipName(), loader), m_isStream(false), m_decoder(NULL), m_deleteDecoder(false)
+    {
+    }
 
-	}
+    SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
+        IResource(name, loader), m_isStream(false), m_decoder(NULL), m_deleteDecoder(false)
+    {
+    }
 
-	SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
-		IResource(name, loader),
-		m_isStream(false),
-		m_decoder(NULL),
-		m_deleteDecoder(false) {
+    SoundClip::~SoundClip()
+    {
+        free();
 
-	}
+        // delete decoder
+        if (m_deleteDecoder && m_decoder != NULL) {
+            delete m_decoder;
+        }
+    }
 
-	SoundClip::~SoundClip() {
-		free();
+    void SoundClip::load()
+    {
+        if (m_loader) {
+            m_loader->load(this);
+        } else { // no loader specified so find one to use
+            if (m_name.find(".ogg", m_name.size() - 4) != std::string::npos) {
+                OggLoader loader;
+                loader.load(this);
+            } else {
+                FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << m_name << "\"!");
+                throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
+            }
+        }
 
-		// delete decoder
-		if (m_deleteDecoder && m_decoder != NULL) {
-			delete m_decoder;
-		}
-	}
+        assert(m_decoder); // should be set by now
 
-	void SoundClip::load(){
-		if (m_loader){
-			m_loader->load(this);
-		}
-		else {  //no loader specified so find one to use
-			if(m_name.find(".ogg", m_name.size() - 4) != std::string::npos) {
-				OggLoader loader;
-				loader.load(this);
-			} else {
-				FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << m_name << "\"!");
-				throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
-			}
-		}
+        m_isStream = m_decoder->needsStreaming();
 
-		assert(m_decoder);  //should be set by now
+        if (!m_isStream) {
+            // only for non-streaming buffers
+            SoundBufferEntry* ptr = new SoundBufferEntry();
 
-		m_isStream = m_decoder->needsStreaming();
+            // iterate the bufs and fill them with data
+            for (int32_t i = 0; i < BUFFER_NUM; i++) {
 
-		if (!m_isStream) {
-			// only for non-streaming buffers
-			SoundBufferEntry* ptr = new SoundBufferEntry();
+                if (m_decoder->decode(BUFFER_LEN)) {
+                    // EOF or error
+                    break;
+                }
 
-			// iterate the bufs and fill them with data
-			for (int32_t i = 0; i < BUFFER_NUM; i++) {
+                // generate buffer and fill it with data
+                alGenBuffers(1, &ptr->buffers[i]);
 
-				if (m_decoder->decode(BUFFER_LEN)) {
-					// EOF or error
-					break;
-				}
+                alBufferData(
+                    ptr->buffers[i],
+                    m_decoder->getALFormat(),
+                    m_decoder->getBuffer(),
+                    m_decoder->getBufferSize(),
+                    m_decoder->getSampleRate());
 
-				// generate buffer and fill it with data
-				alGenBuffers(1, &ptr->buffers[i]);
+                CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error copying data to buffers")
 
-				alBufferData(ptr->buffers[i], m_decoder->getALFormat(), m_decoder->getBuffer(),
-					m_decoder->getBufferSize(), m_decoder->getSampleRate());
+                ptr->usedbufs++;
+            }
 
-				CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error copying data to buffers")
+            m_decoder->releaseBuffer();
 
-				ptr->usedbufs++;
-			}
+            // push the buffer information to the vector
+            m_buffervec.push_back(ptr);
+        }
 
-			m_decoder->releaseBuffer();
+        m_state = IResource::RES_LOADED;
+    }
 
-			// push the buffer information to the vector
-			m_buffervec.push_back(ptr);
+    void SoundClip::free()
+    {
+        if (m_state == IResource::RES_LOADED) {
+            if (m_isStream) {
+                // erase all elements from the list
+                std::vector<SoundBufferEntry*>::iterator it;
+                for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
+                    if ((*it) && (*it)->buffers[0] != 0) {
+                        alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
+                    }
+                    delete (*it);
+                }
+            } else {
+                // for non-streaming soundclips
+                SoundBufferEntry* ptr = m_buffervec.at(0);
+                for (uint32_t i = 0; i < ptr->usedbufs; i++) {
+                    alDeleteBuffers(1, &ptr->buffers[i]);
+                }
+                delete ptr;
+            }
+            m_buffervec.clear();
+        }
+        m_state = IResource::RES_NOT_LOADED;
+    }
 
-		}
+    bool SoundClip::isStream() const
+    {
+        return m_isStream;
+    }
 
-		m_state = IResource::RES_LOADED;
-	}
+    uint32_t SoundClip::countBuffers() const
+    {
+        return m_buffervec.at(0)->usedbufs;
+    }
 
-	void SoundClip::free(){
-		if (m_state == IResource::RES_LOADED) {
-			if (m_isStream) {
-				// erase all elements from the list
-				std::vector<SoundBufferEntry*>::iterator it;
-				for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
-					if ((*it) && (*it)->buffers[0] != 0) {
-						alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
-					}
-					delete (*it);
-				}
-			} else {
-				// for non-streaming soundclips
-				SoundBufferEntry* ptr = m_buffervec.at(0);
-				for(uint32_t i = 0; i < ptr->usedbufs; i++) {
-					alDeleteBuffers(1, &ptr->buffers[i]);
-				}
-				delete ptr;
-			}
-			m_buffervec.clear();
-		}
-		m_state = IResource::RES_NOT_LOADED;
-	}
+    ALuint* SoundClip::getBuffers(uint32_t streamid) const
+    {
+        return m_buffervec.at(streamid)->buffers;
+    }
 
-	bool SoundClip::isStream() const {
-		return m_isStream;
-	}
+    uint32_t SoundClip::beginStreaming()
+    {
+        SoundBufferEntry* ptr = NULL;
+        uint32_t id           = 0;
+        for (uint32_t i = 0; i < m_buffervec.size(); i++) {
+            if (m_buffervec.at(i) == NULL) {
+                ptr               = new SoundBufferEntry();
+                m_buffervec.at(i) = ptr;
+                id                = i;
+                break;
+            }
+        }
+        // create new sound buffer entry
+        if (!ptr) {
+            ptr = new SoundBufferEntry();
+            m_buffervec.push_back(ptr);
+            id = m_buffervec.size() - 1;
+        }
 
-	uint32_t SoundClip::countBuffers() const {
-		return m_buffervec.at(0)->usedbufs;
-	}
+        ptr->usedbufs  = 0;
+        ptr->deccursor = 0;
+        alGenBuffers(BUFFER_NUM, ptr->buffers);
 
-	ALuint* SoundClip::getBuffers(uint32_t streamid) const {
-		return m_buffervec.at(streamid)->buffers;
-	}
+        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 
-	uint32_t SoundClip::beginStreaming() {
-		SoundBufferEntry* ptr = NULL;
-		uint32_t id = 0;
-		for (uint32_t i = 0; i < m_buffervec.size(); i++) {
-			if (m_buffervec.at(i) == NULL) {
-				ptr = new SoundBufferEntry();
-				m_buffervec.at(i) = ptr;
-				id = i;
-				break;
-			}
-		}
-		// create new sound buffer entry
-		if (!ptr) {
-			ptr = new SoundBufferEntry();
-			m_buffervec.push_back(ptr);
-			id = m_buffervec.size() -1 ;
-		}
+        return id;
+    }
 
-		ptr->usedbufs=0;
-		ptr->deccursor = 0;
-		alGenBuffers(BUFFER_NUM, ptr->buffers);
+    bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value)
+    {
+        uint64_t pos = 0;
+        // convert position to bytes
+        switch (type) {
+        case SD_BYTE_POS:
+            pos = static_cast<uint64_t>(value);
+            break;
+        case SD_TIME_POS:
+            value /= static_cast<float>(m_decoder->getSampleRate());
+        case SD_SAMPLE_POS:
+            pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
+            break;
+        }
 
-		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
+        if (pos > m_decoder->getDecodedLength()) {
+            // EOF!
+            m_buffervec.at(streamid)->deccursor = m_decoder->getDecodedLength();
+            return true;
+        }
 
-		return id;
-	}
+        // set cursor position
+        m_buffervec.at(streamid)->deccursor = pos;
+        return false;
+    }
 
-	bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value) {
-		uint64_t pos = 0;
-		// convert position to bytes
-		switch (type) {
-			case SD_BYTE_POS:
-				pos = static_cast<uint64_t>(value);
-				break;
-			case SD_TIME_POS:
-				value /= static_cast<float>(m_decoder->getSampleRate());
-			case SD_SAMPLE_POS:
-				pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
-				break;
-		}
+    float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const
+    {
+        uint64_t pos = m_buffervec.at(streamid)->deccursor;
+        switch (type) {
+        case SD_BYTE_POS:
+            return pos;
+        case SD_SAMPLE_POS:
+            return pos / (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1));
+        case SD_TIME_POS:
+            return pos /
+                   (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1) * m_decoder->getSampleRate());
+        }
+        return 0.0f;
+    }
 
-		if (pos > m_decoder->getDecodedLength()) {
-			// EOF!
-			m_buffervec.at(streamid)->deccursor = m_decoder->getDecodedLength();
-			return true;
-		}
+    void SoundClip::acquireStream(uint32_t streamid)
+    {
+        SoundBufferEntry* ptr = m_buffervec.at(streamid);
+        for (int32_t i = 0; i < BUFFER_NUM; i++) {
+            if (getStream(streamid, ptr->buffers[i])) {
+                break;
+            }
+        }
+    }
 
-		// set cursor position
-		m_buffervec.at(streamid)->deccursor = pos;
-		return false;
-	}
+    bool SoundClip::getStream(uint32_t streamid, ALuint buffer)
+    {
+        SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
-	float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const{
-		uint64_t pos = m_buffervec.at(streamid)->deccursor;
-		switch(type) {
-			case SD_BYTE_POS:
-				return pos;
-			case SD_SAMPLE_POS:
-				return pos / (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1));
-			case SD_TIME_POS:
-				return pos / (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1) * m_decoder->getSampleRate());
-		}
-		return 0.0f;
-	}
+        if (ptr->deccursor >= m_decoder->getDecodedLength()) {
+            // EOF!
+            return true;
+        }
 
-	void SoundClip::acquireStream(uint32_t streamid) {
-		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-		for (int32_t i = 0; i < BUFFER_NUM; i++) {
-			if (getStream(streamid, ptr->buffers[i])) {
-				break;
-			}
-		}
-	}
+        // set cursor of decoder
+        if (!m_decoder->setCursor(ptr->deccursor)) {
+            return true;
+        }
 
-	bool SoundClip::getStream(uint32_t streamid, ALuint buffer) {
-		SoundBufferEntry* ptr = m_buffervec.at(streamid);
+        // Error while decoding file?
+        if (m_decoder->decode(BUFFER_LEN)) {
+            throw Exception("error while reading from audio file");
+        }
 
-		if (ptr->deccursor >= m_decoder->getDecodedLength()) {
-			// EOF!
-			return true;
-		}
-		
-		// set cursor of decoder
-		if (!m_decoder->setCursor(ptr->deccursor)) {
-			return true;
-		}
+        // fill the buffer with data
+        alBufferData(
+            buffer,
+            m_decoder->getALFormat(),
+            m_decoder->getBuffer(),
+            m_decoder->getBufferSize(),
+            m_decoder->getSampleRate());
 
-		// Error while decoding file?
-		if (m_decoder->decode(BUFFER_LEN)) {
-			throw Exception("error while reading from audio file");
-		}
+        // update cursor
+        ptr->deccursor += m_decoder->getBufferSize();
 
-		// fill the buffer with data
-		alBufferData(buffer, m_decoder->getALFormat(),
-			m_decoder->getBuffer(), m_decoder->getBufferSize(), m_decoder->getSampleRate());
+        m_decoder->releaseBuffer();
 
-		// update cursor
-		ptr->deccursor += m_decoder->getBufferSize();
+        CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
 
-		m_decoder->releaseBuffer();
+        return false;
+    }
 
-		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
+    void SoundClip::quitStreaming(uint32_t streamid)
+    {
+        // release the buffers
+        SoundBufferEntry* ptr = m_buffervec.at(streamid);
+        alDeleteBuffers(BUFFER_NUM, ptr->buffers);
+        ptr->buffers[0] = 0;
+    }
 
-		return false;
-	}
+    void SoundClip::endStreaming(uint32_t streamid)
+    {
+        SoundBufferEntry** ptr = &m_buffervec.at(streamid);
+        delete *ptr;
+        *ptr = NULL;
+    }
 
-	void SoundClip::quitStreaming(uint32_t streamid) {
-		// release the buffers
-		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-		alDeleteBuffers(BUFFER_NUM, ptr->buffers);
-		ptr->buffers[0] = 0;
-	}
+    void SoundClip::adobtDecoder(SoundDecoder* decoder)
+    {
+        m_decoder       = decoder;
+        m_deleteDecoder = true;
+    }
 
-	void SoundClip::endStreaming(uint32_t streamid) {
-		SoundBufferEntry** ptr = &m_buffervec.at(streamid);
-		delete *ptr;
-		*ptr = NULL;
-	}
+    void SoundClip::setDecoder(SoundDecoder* decoder)
+    {
+        m_decoder       = decoder;
+        m_deleteDecoder = false;
+    }
 
-	void SoundClip::adobtDecoder(SoundDecoder* decoder) {
-		m_decoder = decoder;
-		m_deleteDecoder = true;
-	}
+    SoundDecoder* SoundClip::getDecoder() const
+    {
+        return m_decoder;
+    }
 
-	void SoundClip::setDecoder(SoundDecoder* decoder) {
-		m_decoder = decoder;
-		m_deleteDecoder = false;
-	}
+    size_t SoundClip::getSize()
+    {
+        return 0;
+    }
 
-	SoundDecoder* SoundClip::getDecoder() const {
-		return m_decoder;
-	}
+    std::string SoundClip::createUniqueClipName()
+    {
+        // automated counting for name generation, in case the user doesn't provide a name
+        static uint32_t uniqueNumber = 0;
+        static std::string baseName  = "soundclip";
 
-	size_t SoundClip::getSize() {
-		return 0;
-	}
+        std::ostringstream oss;
+        oss << uniqueNumber << "_" << baseName;
 
-	std::string SoundClip::createUniqueClipName() {
-		// automated counting for name generation, in case the user doesn't provide a name
-		static uint32_t uniqueNumber = 0;
-		static std::string baseName = "soundclip";
+        const std::string name = oss.str();
+        ++uniqueNumber;
 
-		std::ostringstream oss;
-		oss << uniqueNumber << "_" << baseName;
-
-		const std::string name = oss.str();
-		++uniqueNumber;
-
-		return name;
-	}
-}
+        return name;
+    }
+} // namespace FIFE

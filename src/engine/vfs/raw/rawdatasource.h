@@ -34,32 +34,33 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** Abstract baseclass - provides data for RawData
-	 *
-	 * RawData uses RawDataSources to access the data - if you want to add support for a new archivetype this is one of
-	 * the classes you need.
-	 */
-	class RawDataSource {
+    /** Abstract baseclass - provides data for RawData
+     *
+     * RawData uses RawDataSources to access the data - if you want to add support for a new archivetype this is one of
+     * the classes you need.
+     */
+    class RawDataSource
+    {
 
-		public:
-			RawDataSource();
-			virtual ~RawDataSource();
+    public:
+        RawDataSource();
+        virtual ~RawDataSource();
 
-			/** get the complete datasize */
-			virtual uint32_t getSize() const = 0;
+        /** get the complete datasize */
+        virtual uint32_t getSize() const = 0;
 
-			/** read data from the source
-			 *
-			 * @param buffer the data will be written into buffer
-			 * @param start the startindex inside the source
-			 * @param length length bytes will be written into buffer
-			 */
-			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
+        /** read data from the source
+         *
+         * @param buffer the data will be written into buffer
+         * @param start the startindex inside the source
+         * @param length length bytes will be written into buffer
+         */
+        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
+    };
 
-	};
-
-}
+} // namespace FIFE
 
 #endif

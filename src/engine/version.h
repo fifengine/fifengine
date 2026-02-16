@@ -30,46 +30,53 @@
  * and creates the file "version.h", see CMakeLists.txt.
  */
 
-#define FIFE_VERSION        "0.4.2+build.2751941"
-#define FIFE_VERSION_SHORT  "0.4.2"
-#define FIFE_MAJOR_VERSION  0
-#define FIFE_MINOR_VERSION  4
-#define FIFE_PATCH_VERSION  2
-#define FIFE_GIT_HASH       "2751941"
+#define FIFE_VERSION       "0.4.2+build.4d3e915"
+#define FIFE_VERSION_SHORT "0.4.2"
+#define FIFE_MAJOR_VERSION 0
+#define FIFE_MINOR_VERSION 4
+#define FIFE_PATCH_VERSION 2
+#define FIFE_GIT_HASH      "4d3e915"
 
 /**
  *  All FIFE related code is in the "FIFE" namespace.
  *  The namespace "fcn" (fifechan) is used for our custom widgets.
  */
-namespace FIFE {
-    inline const char* getVersion() {
+namespace FIFE
+{
+    inline const char* getVersion()
+    {
         return FIFE_VERSION;
     }
 
-    inline const char* getVersionShort() {
+    inline const char* getVersionShort()
+    {
         return FIFE_VERSION_SHORT;
     }
 
-    inline int getMajor() {
+    inline int getMajor()
+    {
         return FIFE_MAJOR_VERSION;
     }
 
-    inline int getMinor() {
+    inline int getMinor()
+    {
         return FIFE_MINOR_VERSION;
     }
 
-    inline int getPatch() {
+    inline int getPatch()
+    {
         return FIFE_PATCH_VERSION;
     }
 
-    inline const char* getHash() {
+    inline const char* getHash()
+    {
         return FIFE_GIT_HASH;
     }
 
-    inline const int getVersionId() {
+    inline const int getVersionId()
+    {
         return FIFE_MAJOR_VERSION * 10000 + FIFE_MINOR_VERSION * 100 + FIFE_PATCH_VERSION; // 3.2.1 = 30201
     }
-} //FIFE
+} // namespace FIFE
 
-#endif //FIFE_VERSION_H
-
+#endif // FIFE_VERSION_H

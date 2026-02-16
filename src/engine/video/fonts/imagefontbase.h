@@ -36,57 +36,59 @@
 
 #include "fontbase.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** ImageFont base class
-	 *
-	 *  Just set the glyphs/placeholder in any derived class and the rendering
-	 *  is handled by this class. Also frees all glyph surfaces on destruction.
-	 */
-	class ImageFontBase: public FontBase {
-		public:
+    /** ImageFont base class
+     *
+     *  Just set the glyphs/placeholder in any derived class and the rendering
+     *  is handled by this class. Also frees all glyph surfaces on destruction.
+     */
+    class ImageFontBase : public FontBase
+    {
+    public:
+        /**
+         * Constructor.
+         */
+        ImageFontBase();
 
-			/**
-			 * Constructor.
-			 */
-			ImageFontBase();
+        /**
+         * Destructor.
+         */
+        virtual ~ImageFontBase();
 
-			/**
-			 * Destructor.
-			 */
-			virtual ~ImageFontBase();
+        /** Get the width in pixels a given text would occupy
+         *  @param text The text that should be measured.
+         */
+        virtual int32_t getWidth(const std::string& text) const;
 
-			/** Get the width in pixels a given text would occupy
-			 *  @param text The text that should be measured.
-			 */
-			virtual int32_t getWidth(const std::string& text) const;
+        /** Get the height in pixels a text line would occupy
+         */
+        virtual int32_t getHeight() const;
 
-			/** Get the height in pixels a text line would occupy
-			 */
-			virtual int32_t getHeight() const;
+        virtual SDL_Surface* renderString(const std::string& text);
+        virtual void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
-			virtual SDL_Surface *renderString(const std::string& text);
-			virtual void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255);
+    protected:
+        // A glyph (visible character)
+        typedef struct
+        {
+            // The offset of the glyph relative to the top-left corner.
+            Point offset;
+            // The glyphs image
+            // should be with SDL_SRCALPHA off, so that it's just copied over.
+            SDL_Surface* surface;
+        } s_glyph;
 
-		protected:
-			// A glyph (visible character) 
-			typedef struct {
-				// The offset of the glyph relative to the top-left corner.
-				Point offset;
-				// The glyphs image 
-				// should be with SDL_SRCALPHA off, so that it's just copied over.
-				SDL_Surface* surface;
-			} s_glyph;
+        typedef std::map<int32_t, s_glyph> type_glyphs;
+        type_glyphs m_glyphs;
 
-			typedef std::map<int32_t,s_glyph> type_glyphs;
-			type_glyphs m_glyphs;
+        // The glyph used, when the real glyph is not found
+        // Should default to '?'
+        s_glyph m_placeholder;
 
-			// The glyph used, when the real glyph is not found
-			// Should default to '?'
-			s_glyph m_placeholder;
-
-			int32_t m_height;
-	};
-}
+        int32_t m_height;
+    };
+} // namespace FIFE
 
 #endif // end GCN_SDLTRUETYPEFONT_HPP

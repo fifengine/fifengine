@@ -29,20 +29,21 @@
 // Second block: files included from the same folder
 #include "exception.h"
 
+namespace FIFE
+{
+    static Logger _log(LM_EXCEPTION);
 
-namespace FIFE {
-static Logger _log(LM_EXCEPTION);
+    Exception::Exception(const std::string& msg) : std::runtime_error(msg), m_what(msg) { }
 
-	Exception::Exception(const std::string& msg): std::runtime_error(msg), m_what(msg) {
-	}
+    Exception::~Exception() throw() { }
 
-	Exception::~Exception() throw() {}
+    const char* Exception::what() const throw()
+    {
+        return m_what.c_str();
+    }
 
-	const char* Exception::what() const throw() {
-		return m_what.c_str();
-	}
-
-	void Exception::update() {
-		m_what = "_[" + getTypeStr() + "]_ , " + getDescription() + " :: " + m_what;
-	}
-}//FIFE
+    void Exception::update()
+    {
+        m_what = "_[" + getTypeStr() + "]_ , " + getDescription() + " :: " + m_what;
+    }
+} // namespace FIFE

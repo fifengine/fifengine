@@ -34,36 +34,37 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	class ITextListener;
+namespace FIFE
+{
+    class ITextListener;
 
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class ITextController {
-	public:
+    /**  Controller provides a way to receive events from the system
+     * Using this interface, clients can subscribe themselves to receive events
+     */
+    class ITextController
+    {
+    public:
+        /** Adds a listener to the back of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addTextListener(ITextListener* listener) = 0;
 
-		/** Adds a listener to the back of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addTextListener(ITextListener* listener) = 0;
+        /** Adds a listener to the front of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addTextListenerFront(ITextListener* listener) = 0;
 
-		/** Adds a listener to the front of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addTextListenerFront(ITextListener* listener) = 0;
+        /** Removes an added listener from the controller.
+         * Listener will not be notified anymore via the corresponding events
+         * @param listener listener to remove
+         */
+        virtual void removeTextListener(ITextListener* listener) = 0;
 
-		/** Removes an added listener from the controller.
-		 * Listener will not be notified anymore via the corresponding events
-		 * @param listener listener to remove
-		 */
-		virtual void removeTextListener(ITextListener* listener) = 0;
+        virtual ~ITextController() { }
+    };
 
-		virtual ~ITextController() {}
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

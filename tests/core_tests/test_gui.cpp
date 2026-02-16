@@ -29,93 +29,93 @@
 #include <SDL.h>
 #include <fifechan.hpp>
 
-#include "vfs/vfs.h"
+#include "gui/fifechan/base/gui_image.h"
+#include "gui/fifechan/base/gui_imageloader.h"
+#include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
+#include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
+#include "util/base/exception.h"
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
+#include "video/devicecaps.h"
 #include "video/image.h"
 #include "video/imagemanager.h"
-#include "video/devicecaps.h"
-#include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "util/base/exception.h"
-#include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
-#include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
-#include "gui/fifechan/base/gui_image.h"
-#include "gui/fifechan/base/gui_imageloader.h"
+#include "video/sdl/renderbackendsdl.h"
 
 using namespace FIFE;
 
-static const std::string IMAGE_FILE = "tests/data/beach_e1.png";
+static const std::string IMAGE_FILE    = "tests/data/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
-struct environment {
+struct environment
+{
     std::shared_ptr<TimeManager> timemanager;
-	std::shared_ptr<VFS> vfs;
-	std::shared_ptr<ImageManager> imageManager;
+    std::shared_ptr<VFS> vfs;
+    std::shared_ptr<ImageManager> imageManager;
 
-    environment()
-		: timemanager(std::make_shared<TimeManager>()),
-		  vfs(std::make_shared<VFS>()),
-		  imageManager(std::make_shared<ImageManager>()) {
-			vfs->addSource(new VFSDirectory(vfs.get()));
-            if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
-                throw SDLException(SDL_GetError());
-            }
+    environment() :
+        timemanager(std::make_shared<TimeManager>()),
+        vfs(std::make_shared<VFS>()),
+        imageManager(std::make_shared<ImageManager>())
+    {
+        vfs->addSource(new VFSDirectory(vfs.get()));
+        if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
+            throw SDLException(SDL_GetError());
         }
+    }
 };
 
-void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics) {
-		GuiImageLoader imageloader;
-		fcn::Image::setImageLoader(&imageloader);
+void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics)
+{
+    GuiImageLoader imageloader;
+    fcn::Image::setImageLoader(&imageloader);
 
+    fcn::Container* top = new fcn::Container();
+    top->setDimension(fcn::Rectangle(0, 0, 200, 300));
+    fcn::Gui* gui = new fcn::Gui();
+    gui->setGraphics(&graphics);
+    gui->setTop(top);
+    fcn::Label* label = new fcn::Label("Label");
 
-		fcn::Container* top = new fcn::Container();
-		top->setDimension(fcn::Rectangle(0, 0, 200, 300));
-		fcn::Gui* gui = new fcn::Gui();
-		gui->setGraphics(&graphics);
-		gui->setTop(top);
-		fcn::Label* label = new fcn::Label("Label");
+    fcn::Image* guiimage = fcn::Image::load(IMAGE_FILE);
+    fcn::Icon* icon      = new fcn::Icon(guiimage);
 
-		fcn::Image* guiimage = fcn::Image::load(IMAGE_FILE);
-		fcn::Icon* icon = new fcn::Icon(guiimage);
+    top->add(label, 10, 10);
+    top->add(icon, 10, 30);
 
-		top->add(label, 10, 10);
-		top->add(icon, 10, 30);
+    ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
+    REQUIRE(img);
 
-		ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
-		REQUIRE(img);
-
-		int h = img->getHeight();
-		int w = img->getWidth();
-		for (int i = 0; i < 100; i+=2) {
-			renderbackend.startFrame();
-			img->render(Rect(i, i, w, h));
-			gui->logic();
-			gui->draw();
-			renderbackend.endFrame();
-		}
-	}
-
+    int h = img->getHeight();
+    int w = img->getWidth();
+    for (int i = 0; i < 100; i += 2) {
+        renderbackend.startFrame();
+        img->render(Rect(i, i, w, h));
+        gui->logic();
+        gui->draw();
+        renderbackend.endFrame();
+    }
+}
 
 TEST_CASE("test_sdl_gui_image")
 {
-	environment env;
-	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
-	renderbackend.init("");
-	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
-	SdlGuiGraphics graphics;
-	graphics.updateTarget();
-	test_gui_image(renderbackend, graphics);
+    environment env;
+    RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+    renderbackend.init("");
+    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+    SdlGuiGraphics graphics;
+    graphics.updateTarget();
+    test_gui_image(renderbackend, graphics);
 }
 
 TEST_CASE("test_ogl_gui_image")
 {
-	environment env;
-	RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
-	renderbackend.init("");
-	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
-	OpenGLGuiGraphics graphics;
-	graphics.updateTarget();
-	test_gui_image(renderbackend, graphics);
+    environment env;
+    RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
+    renderbackend.init("");
+    renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+    OpenGLGuiGraphics graphics;
+    graphics.updateTarget();
+    test_gui_image(renderbackend, graphics);
 }

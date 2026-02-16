@@ -33,73 +33,75 @@
 // Second block: files included from the same folder
 #include "resizablewindow.h"
 
-namespace fcn {
-	class DockArea;
-	class Panel : public ResizableWindow {
-	public:
-		Panel();
-		Panel(bool dockable);
+namespace fcn
+{
+    class DockArea;
+    class Panel : public ResizableWindow
+    {
+    public:
+        Panel();
+        Panel(bool dockable);
 
-		virtual ~Panel();
-        
-		/** Sets if the widget is dockable.
-		 * @param dockable True if the widget should be dockable, otherwise false.
-		 */
-		void setDockable(bool dockable);
+        virtual ~Panel();
 
-		/** Gets if the widget is dockable.
-		 * @return True if the widget should be dockable, otherwise false.
-		 */
-		bool isDockable() const;
+        /** Sets if the widget is dockable.
+         * @param dockable True if the widget should be dockable, otherwise false.
+         */
+        void setDockable(bool dockable);
 
-		/** Sets if the widget is docked.
-		 * @param docked True if the widget is docked, otherwise false.
-		 */
-		void setDocked(bool docked);
+        /** Gets if the widget is dockable.
+         * @return True if the widget should be dockable, otherwise false.
+         */
+        bool isDockable() const;
 
-		/** Gets if the widget is docked.
-		 * @return True if the widget is docked, otherwise false.
-		 */
-		bool isDocked() const;
+        /** Sets if the widget is docked.
+         * @param docked True if the widget is docked, otherwise false.
+         */
+        void setDocked(bool docked);
 
-		virtual DockArea* findDockArea();
+        /** Gets if the widget is docked.
+         * @return True if the widget is docked, otherwise false.
+         */
+        bool isDocked() const;
 
-		// Inherited from ResizableWindow
+        virtual DockArea* findDockArea();
 
-		virtual void resizeToContent(bool recursiv=true);
-		virtual void expandContent(bool recursiv=true);
-	
-	
-		// Inherited from ResizableWindow / MouseListener
+        // Inherited from ResizableWindow
 
-		virtual void mouseEntered(MouseEvent& mouseEvent);
+        virtual void resizeToContent(bool recursiv = true);
+        virtual void expandContent(bool recursiv = true);
 
-		virtual void mouseExited(MouseEvent& mouseEvent);
+        // Inherited from ResizableWindow / MouseListener
 
-		virtual void mousePressed(MouseEvent& mouseEvent);
+        virtual void mouseEntered(MouseEvent& mouseEvent);
 
-		virtual void mouseReleased(MouseEvent& mouseEvent);
+        virtual void mouseExited(MouseEvent& mouseEvent);
 
-		virtual void mouseMoved(MouseEvent& mouseEvent);
-	
-		virtual void mouseDragged(MouseEvent& mouseEvent);
+        virtual void mousePressed(MouseEvent& mouseEvent);
 
-	protected:
-		DockArea* getDockedArea();
+        virtual void mouseReleased(MouseEvent& mouseEvent);
 
-		// is dockable
-		bool m_dockable;
-		// is docked
-		bool m_docked;
+        virtual void mouseMoved(MouseEvent& mouseEvent);
 
-		struct SavedState	{
-			Rectangle dimension;
-			uint32_t innerBorder;
-			bool resizable;
-			bool movable;
-		};
-		SavedState m_state;
-	};
-}
+        virtual void mouseDragged(MouseEvent& mouseEvent);
+
+    protected:
+        DockArea* getDockedArea();
+
+        // is dockable
+        bool m_dockable;
+        // is docked
+        bool m_docked;
+
+        struct SavedState
+        {
+            Rectangle dimension;
+            uint32_t innerBorder;
+            bool resizable;
+            bool movable;
+        };
+        SavedState m_state;
+    };
+} // namespace fcn
 
 #endif

@@ -33,74 +33,78 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class VFSSource;
+    class VFS;
+    class VFSSource;
 
-	/** VFSSourceProvider abstract baseclass
-	 *
-	 * If you add support for a new archive-type (like the fallout1&dat files) you should
-	 * also create a new VFSSourceProvider for your VFSSource - once this is done
-	 * its very easy to load new archives even without knowing their real type.
-	 * @see VFS
-	 * @see VFSSource
-	 * @see VFSSourceFactory
-	 */
-	class VFSSourceProvider{
-		public:
-			VFSSourceProvider(const std::string& name);
-			virtual ~VFSSourceProvider();
+    /** VFSSourceProvider abstract baseclass
+     *
+     * If you add support for a new archive-type (like the fallout1&dat files) you should
+     * also create a new VFSSourceProvider for your VFSSource - once this is done
+     * its very easy to load new archives even without knowing their real type.
+     * @see VFS
+     * @see VFSSource
+     * @see VFSSourceFactory
+     */
+    class VFSSourceProvider
+    {
+    public:
+        VFSSourceProvider(const std::string& name);
+        virtual ~VFSSourceProvider();
 
-			/** Returns the name of this VFSSourceProvider
-			 *
-			 * @return name
-			 */
-			const std::string& getName() const;
+        /** Returns the name of this VFSSourceProvider
+         *
+         * @return name
+         */
+        const std::string& getName() const;
 
-			/** Get the VFS this provider is using. Providers will not be able to locate
-			 * sources before a VFS is set. VFS::addProvider sets this automatically.
-			 */
-			void setVFS(VFS* vfs);
+        /** Get the VFS this provider is using. Providers will not be able to locate
+         * sources before a VFS is set. VFS::addProvider sets this automatically.
+         */
+        void setVFS(VFS* vfs);
 
-			VFS* getVFS() const {
-				if(!m_vfs) throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
-				return m_vfs;
-			}
+        VFS* getVFS() const
+        {
+            if (!m_vfs)
+                throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
+            return m_vfs;
+        }
 
-			/** Check if a given file is readable for this VFSSource
-			 *
-			 *
-			 * @param file the filename to check
-			 * @return true if readable, false otherwise
-			 */
-			virtual bool isReadable(const std::string& file) const = 0;
+        /** Check if a given file is readable for this VFSSource
+         *
+         *
+         * @param file the filename to check
+         * @return true if readable, false otherwise
+         */
+        virtual bool isReadable(const std::string& file) const = 0;
 
-			/** Create a new instance of a VFSSource initialized with the given file
-			 *
-			 * @param file the filename to open (the archive-file)
-			 * @return the new VFSSource
-			 */
-			virtual VFSSource* createSource(const std::string& file) = 0;
+        /** Create a new instance of a VFSSource initialized with the given file
+         *
+         * @param file the filename to open (the archive-file)
+         * @return the new VFSSource
+         */
+        virtual VFSSource* createSource(const std::string& file) = 0;
 
-			/** Get the source instance of the path
-			 *
-			 * @param path The source path
-			 * @return A VFSSource or NULL of none is present
-			 */
-			virtual VFSSource* getSource(const std::string& path) const = 0;
+        /** Get the source instance of the path
+         *
+         * @param path The source path
+         * @return A VFSSource or NULL of none is present
+         */
+        virtual VFSSource* getSource(const std::string& path) const = 0;
 
-			/** Check whether the provider already has created a source with that path
-			*
-			* @param path The path to the source
-                        * @return true if the provider has already created a source with that path, false if not
-                        */
-			virtual bool hasSource(const std::string & path) const = 0;
+        /** Check whether the provider already has created a source with that path
+         *
+         * @param path The path to the source
+         * @return true if the provider has already created a source with that path, false if not
+         */
+        virtual bool hasSource(const std::string& path) const = 0;
 
-		private:
-
-			VFS* m_vfs;
-			std::string m_name;
-	};
-}
+    private:
+        VFS* m_vfs;
+        std::string m_name;
+    };
+} // namespace FIFE
 
 #endif

@@ -34,13 +34,15 @@
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class OggLoader : public IResourceLoader {
-	public:
-		OggLoader() { }
-		virtual void load(IResource* res);
-	};
-}
+    class OggLoader : public IResourceLoader
+    {
+    public:
+        OggLoader() { }
+        virtual void load(IResource* res);
+    };
+} // namespace FIFE
 
 #endif

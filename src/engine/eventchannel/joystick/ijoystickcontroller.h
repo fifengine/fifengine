@@ -34,36 +34,37 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	class IJoystickListener;
+namespace FIFE
+{
+    class IJoystickListener;
 
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class IJoystickController {
-	public:
+    /**  Controller provides a way to receive events from the system
+     * Using this interface, clients can subscribe themselves to receive events
+     */
+    class IJoystickController
+    {
+    public:
+        /** Adds a listener to the back of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addJoystickListener(IJoystickListener* listener) = 0;
 
-		/** Adds a listener to the back of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addJoystickListener(IJoystickListener* listener) = 0;
+        /** Adds a listener to the front of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addJoystickListenerFront(IJoystickListener* listener) = 0;
 
-		/** Adds a listener to the front of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addJoystickListenerFront(IJoystickListener* listener) = 0;
+        /** Removes an added listener from the controller.
+         * Listener will not be notified anymore via the corresponding events
+         * @param listener listener to remove
+         */
+        virtual void removeJoystickListener(IJoystickListener* listener) = 0;
 
-		/** Removes an added listener from the controller.
-		 * Listener will not be notified anymore via the corresponding events
-		 * @param listener listener to remove
-		 */
-		virtual void removeJoystickListener(IJoystickListener* listener) = 0;
+        virtual ~IJoystickController() { }
+    };
 
-		virtual ~IJoystickController() {}
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

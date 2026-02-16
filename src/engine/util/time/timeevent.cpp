@@ -29,45 +29,48 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "timemanager.h"
 #include "timeevent.h"
+#include "timemanager.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	TimeEvent::TimeEvent(int32_t period):
-		m_period(period),
-		m_last_updated(TimeManager::instance()->getTime()) {
-	}
+    TimeEvent::TimeEvent(int32_t period) : m_period(period), m_last_updated(TimeManager::instance()->getTime()) { }
 
-	TimeEvent::~TimeEvent() {
-		return;
-	}
+    TimeEvent::~TimeEvent()
+    {
+        return;
+    }
 
-	void TimeEvent::managerUpdateEvent(uint32_t time) {
-		int32_t time_delta = static_cast<int32_t>(time - m_last_updated);
-		if (m_period < 0) {
-			return;
-		} else if (m_period == 0 || time_delta >= m_period) {
-			updateEvent(time_delta);
-			m_last_updated = time;
-		}
-	}
+    void TimeEvent::managerUpdateEvent(uint32_t time)
+    {
+        int32_t time_delta = static_cast<int32_t>(time - m_last_updated);
+        if (m_period < 0) {
+            return;
+        } else if (m_period == 0 || time_delta >= m_period) {
+            updateEvent(time_delta);
+            m_last_updated = time;
+        }
+    }
 
-	void TimeEvent::setPeriod(int32_t period) {
-		m_period = period;
-	}
+    void TimeEvent::setPeriod(int32_t period)
+    {
+        m_period = period;
+    }
 
-	int32_t TimeEvent::getPeriod() {
-		return m_period;
-	}
+    int32_t TimeEvent::getPeriod()
+    {
+        return m_period;
+    }
 
-	uint32_t TimeEvent::getLastUpdateTime() {
-		return m_last_updated;
-	}
+    uint32_t TimeEvent::getLastUpdateTime()
+    {
+        return m_last_updated;
+    }
 
-	void TimeEvent::setLastUpdateTime(uint32_t ms) {
-		m_last_updated = ms;
-	}
+    void TimeEvent::setLastUpdateTime(uint32_t ms)
+    {
+        m_last_updated = ms;
+    }
 
-
-} //FIFE
+} // namespace FIFE

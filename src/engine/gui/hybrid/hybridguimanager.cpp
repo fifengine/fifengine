@@ -31,79 +31,85 @@
 
 #include "hybridguimanager.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	static Logger _log(LM_GUI);
+    static Logger _log(LM_GUI);
 
-	HybridGuiManager::HybridGuiManager() {
-	}
+    HybridGuiManager::HybridGuiManager() { }
 
-	HybridGuiManager::~HybridGuiManager() {
-		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
-		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
+    HybridGuiManager::~HybridGuiManager()
+    {
+        std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
+        std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
 
-		for(; currManager != endManager; ++currManager) {
-			delete (*currManager);
-		}
+        for (; currManager != endManager; ++currManager) {
+            delete (*currManager);
+        }
 
-		m_guiManagers.clear();
-	}
+        m_guiManagers.clear();
+    }
 
-	void HybridGuiManager::addGuiManager(IGUIManager* guiManager) {
-		m_guiManagers.push_back(guiManager);
-	}
+    void HybridGuiManager::addGuiManager(IGUIManager* guiManager)
+    {
+        m_guiManagers.push_back(guiManager);
+    }
 
-	void HybridGuiManager::removeGuiManager(IGUIManager* guiManager) {
-		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
-		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
+    void HybridGuiManager::removeGuiManager(IGUIManager* guiManager)
+    {
+        std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
+        std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
 
-		for(; currManager != endManager;) {
-			if((*currManager) == guiManager) {
-				m_guiManagers.erase(currManager);
-				return;
-			}
+        for (; currManager != endManager;) {
+            if ((*currManager) == guiManager) {
+                m_guiManagers.erase(currManager);
+                return;
+            }
 
-			++currManager;
-		}
+            ++currManager;
+        }
 
-		FL_WARN(_log, LMsg() << "Tyring to remove a non-existing gui manager from a hybrid gui manager.");
-	}
+        FL_WARN(_log, LMsg() << "Tyring to remove a non-existing gui manager from a hybrid gui manager.");
+    }
 
-	void HybridGuiManager::turn() {
-		//call turn in reverse order because we want prior gui managers to draw on top
-		//of latter ones.
-		std::vector<IGUIManager*>::reverse_iterator currManager(m_guiManagers.rbegin());
-		std::vector<IGUIManager*>::reverse_iterator endManager(m_guiManagers.rend());
+    void HybridGuiManager::turn()
+    {
+        // call turn in reverse order because we want prior gui managers to draw on top
+        // of latter ones.
+        std::vector<IGUIManager*>::reverse_iterator currManager(m_guiManagers.rbegin());
+        std::vector<IGUIManager*>::reverse_iterator endManager(m_guiManagers.rend());
 
-		for(; currManager != endManager; ++currManager) {
-			(*currManager)->turn();
-		}
-	}
+        for (; currManager != endManager; ++currManager) {
+            (*currManager)->turn();
+        }
+    }
 
-	bool HybridGuiManager::onSdlEvent(SDL_Event& event) {
+    bool HybridGuiManager::onSdlEvent(SDL_Event& event)
+    {
 
-		bool consumed = false;
+        bool consumed = false;
 
-		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
-		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
+        std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
+        std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
 
-		for(; currManager != endManager; ++currManager) {
-			consumed = (*currManager)->onSdlEvent(event);
+        for (; currManager != endManager; ++currManager) {
+            consumed = (*currManager)->onSdlEvent(event);
 
-			if (consumed) {
-				return true;
-			}
-		}
+            if (consumed) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	void HybridGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-		std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
-		std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
+    void HybridGuiManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    {
+        std::vector<IGUIManager*>::iterator currManager(m_guiManagers.begin());
+        std::vector<IGUIManager*>::iterator endManager(m_guiManagers.end());
 
-		for(; currManager != endManager; ++currManager) {
-			(*currManager)->resizeTopContainer(x, y, width, height);
-		}
-	}
-}
+        for (; currManager != endManager; ++currManager) {
+            (*currManager)->resizeTopContainer(x, y, width, height);
+        }
+    }
+} // namespace FIFE

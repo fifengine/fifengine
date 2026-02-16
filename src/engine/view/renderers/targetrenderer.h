@@ -32,78 +32,98 @@
 // Second block: files included from the same folder
 #include "view/renderers/offrenderer.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class RenderTarget {
-		friend class TargetRenderer;
-	public:
-		/** Destructor.
-		 */
-		~RenderTarget();
+    class RenderTarget
+    {
+        friend class TargetRenderer;
 
-		void addLine(const std::string &group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addPoint(const std::string &group, Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addTriangle(const std::string &group, Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addQuad(const std::string &group, Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addVertex(const std::string &group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addText(const std::string &group, Point n, IFont* font, const std::string &text);
-		void addImage(const std::string &group, Point n, ImagePtr image);
-		void addAnimation(const std::string &group, Point n, AnimationPtr animation);
-		void resizeImage(const std::string &group, Point n, ImagePtr image, int32_t width, int32_t height);
-		void removeAll(const std::string &group);
-		void removeAll();
-		void render();
+    public:
+        /** Destructor.
+         */
+        ~RenderTarget();
 
-		ImagePtr getTarget() { return m_target; }
-	private:
-		RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height);
-		RenderTarget(RenderBackend* rb, ImagePtr& image);
+        void addLine(const std::string& group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addPoint(const std::string& group, Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addTriangle(
+            const std::string& group, Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addQuad(
+            const std::string& group,
+            Point n1,
+            Point n2,
+            Point n3,
+            Point n4,
+            uint8_t r,
+            uint8_t g,
+            uint8_t b,
+            uint8_t a = 255);
+        void addVertex(
+            const std::string& group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addText(const std::string& group, Point n, IFont* font, const std::string& text);
+        void addImage(const std::string& group, Point n, ImagePtr image);
+        void addAnimation(const std::string& group, Point n, AnimationPtr animation);
+        void resizeImage(const std::string& group, Point n, ImagePtr image, int32_t width, int32_t height);
+        void removeAll(const std::string& group);
+        void removeAll();
+        void render();
 
-		// Non copyable
-		RenderTarget(const RenderTarget& rhs); /* = delete */
-		RenderTarget& operator=(const RenderTarget& rhs); /* = delete */
+        ImagePtr getTarget()
+        {
+            return m_target;
+        }
 
-		std::map<std::string, std::vector<OffRendererElementInfo*> > m_groups;
-		RenderBackend* m_renderbackend;
-		ImagePtr m_target;
-	};
-	typedef SharedPtr<RenderTarget> RenderTargetPtr;
+    private:
+        RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height);
+        RenderTarget(RenderBackend* rb, ImagePtr& image);
 
-	class TargetRenderer {
-	public:
-		/** Constructor.
-		 * @param renderbackend to use
-		 */
-		TargetRenderer(RenderBackend* renderbackend);
+        // Non copyable
+        RenderTarget(const RenderTarget& rhs);            /* = delete */
+        RenderTarget& operator=(const RenderTarget& rhs); /* = delete */
 
-		/** Destructor.
-		 */
-		virtual ~TargetRenderer();
+        std::map<std::string, std::vector<OffRendererElementInfo*>> m_groups;
+        RenderBackend* m_renderbackend;
+        ImagePtr m_target;
+    };
+    typedef SharedPtr<RenderTarget> RenderTargetPtr;
 
-		/** Creates render target
-		 */
-		RenderTargetPtr createRenderTarget(const std::string& name, uint32_t width, uint32_t height);
-		RenderTargetPtr createRenderTarget(ImagePtr& image);
+    class TargetRenderer
+    {
+    public:
+        /** Constructor.
+         * @param renderbackend to use
+         */
+        TargetRenderer(RenderBackend* renderbackend);
 
-		// -1 - dont render
-		// 0 - just for the next frame
-		// 1 - every frame
-		// 2 - every two frames, etc...
-		void setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws = 0);
-		void render();
+        /** Destructor.
+         */
+        virtual ~TargetRenderer();
 
-	private:
-		struct RenderJob {
-			int32_t ndraws;
-			int32_t lasttime_draw;
-			RenderTargetPtr target;
-			bool discard;
-		};
-		typedef std::map<std::string, RenderJob> RenderJobMap;
-		RenderJobMap m_targets;
-		RenderBackend* m_renderbackend;
-	};
+        /** Creates render target
+         */
+        RenderTargetPtr createRenderTarget(const std::string& name, uint32_t width, uint32_t height);
+        RenderTargetPtr createRenderTarget(ImagePtr& image);
 
-}
+        // -1 - dont render
+        // 0 - just for the next frame
+        // 1 - every frame
+        // 2 - every two frames, etc...
+        void setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws = 0);
+        void render();
+
+    private:
+        struct RenderJob
+        {
+            int32_t ndraws;
+            int32_t lasttime_draw;
+            RenderTargetPtr target;
+            bool discard;
+        };
+        typedef std::map<std::string, RenderJob> RenderJobMap;
+        RenderJobMap m_targets;
+        RenderBackend* m_renderbackend;
+    };
+
+} // namespace FIFE
 
 #endif

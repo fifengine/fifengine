@@ -31,13 +31,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfs.h"
+#include "util/base/exception.h"
 #include "util/structures/rect.h"
+#include "vfs/directoryprovider.h"
+#include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "util/base/exception.h"
-#include "vfs/directoryprovider.h"
 
 static const std::string FIFE_TEST_DIR = "fifetestdir";
 
@@ -48,11 +47,11 @@ TEST_CASE("test_is_directory")
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
     vfs->addSource(new VFSDirectory(vfs.get()));
 
-    if(std::filesystem::exists(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
+    if (std::filesystem::exists(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR)) {
+        std::filesystem::remove(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR);
     }
 
-    if(std::filesystem::exists(FIFE_TEST_DIR)) {
+    if (std::filesystem::exists(FIFE_TEST_DIR)) {
         std::filesystem::remove(FIFE_TEST_DIR);
     }
     CHECK(vfs->isDirectory(""));
@@ -61,7 +60,7 @@ TEST_CASE("test_is_directory")
     CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
     std::filesystem::create_directory(FIFE_TEST_DIR);
     CHECK(vfs->isDirectory(FIFE_TEST_DIR));
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
-    std::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+    CHECK(!vfs->isDirectory(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR));
+    std::filesystem::create_directories(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR);
+    CHECK(vfs->isDirectory(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR));
 }

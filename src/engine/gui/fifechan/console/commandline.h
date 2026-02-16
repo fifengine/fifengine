@@ -36,49 +36,52 @@
 // Second block: files included from the same folder
 #include "util/time/timer.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** A Command line widget
-	 */
-	class CommandLine : public fcn::TextField {
-		public:
-			typedef std::function<void(std::string)> type_callback;
+    /** A Command line widget
+     */
+    class CommandLine : public fcn::TextField
+    {
+    public:
+        typedef std::function<void(std::string)> type_callback;
 
-			/** Constructor
-			 */
-			CommandLine();
+        /** Constructor
+         */
+        CommandLine();
 
-			/** Destructor
-			 */
-			~CommandLine();
+        /** Destructor
+         */
+        ~CommandLine();
 
-			void keyPressed(fcn::KeyEvent& keyEvent);
-			virtual void drawCaret(fcn::Graphics * graphics, int32_t x);
+        void keyPressed(fcn::KeyEvent& keyEvent);
+        virtual void drawCaret(fcn::Graphics* graphics, int32_t x);
 
-			/** Set callback on pressing the ENTER key
-			 */
-			void setCallback(const type_callback& cb);
+        /** Set callback on pressing the ENTER key
+         */
+        void setCallback(const type_callback& cb);
 
-			/** Toggle the caret visibility
-			 */
-			void toggleCaretVisible();
+        /** Toggle the caret visibility
+         */
+        void toggleCaretVisible();
 
-			/** Start blinking the caret
-			 */
-			void startBlinking();
+        /** Start blinking the caret
+         */
+        void startBlinking();
 
-			/** Stop blinking the caret for a few seconds
-			 */
-			void stopBlinking();
-		private:
-			type_callback m_callback;
-			std::vector<std::string> m_history;
-			size_t m_history_position;
-			std::string m_cmdline;
-			bool m_caretVisible;
-			Timer m_blinkTimer;
-			Timer m_suppressBlinkTimer;
-	};
-}
+        /** Stop blinking the caret for a few seconds
+         */
+        void stopBlinking();
+
+    private:
+        type_callback m_callback;
+        std::vector<std::string> m_history;
+        size_t m_history_position;
+        std::string m_cmdline;
+        bool m_caretVisible;
+        Timer m_blinkTimer;
+        Timer m_suppressBlinkTimer;
+    };
+} // namespace FIFE
 
 #endif

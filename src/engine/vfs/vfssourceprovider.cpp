@@ -32,27 +32,28 @@
 #include "vfssource.h"
 #include "vfssourceprovider.h"
 
-namespace FIFE {
-	/** Logger to use for this source file.
-	 *  @relates Logger
-	 */
-	static Logger _log(LM_VFS);
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_VFS);
 
-	VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(0), m_name(name) {
-	}
+    VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(0), m_name(name) { }
 
-	VFSSourceProvider::~VFSSourceProvider() {
-	}
+    VFSSourceProvider::~VFSSourceProvider() { }
 
-	void VFSSourceProvider::setVFS(VFS* vfs) {
-		if (m_vfs) {
-			FL_WARN(_log, "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
-			return ;
-		}
-		m_vfs = vfs;
-	}
+    void VFSSourceProvider::setVFS(VFS* vfs)
+    {
+        if (m_vfs) {
+            FL_WARN(_log, "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
+            return;
+        }
+        m_vfs = vfs;
+    }
 
-	const std::string& VFSSourceProvider::getName() const {
-		return m_name;
-	}
-}
+    const std::string& VFSSourceProvider::getName() const
+    {
+        return m_name;
+    }
+} // namespace FIFE

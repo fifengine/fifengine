@@ -32,29 +32,31 @@
 // Second block: files included from the same folder
 #include "video/animation.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-    class IAnimationLoader {
+    class IAnimationLoader
+    {
     public:
         virtual ~IAnimationLoader() { };
 
         /** determines whether the resource is in
-        *	the correct format for this loader
-        */
+         *	the correct format for this loader
+         */
         virtual bool isLoadable(const std::string& filename) = 0;
 
         /** responsible for loading the animation
          * returns a shared pointer to an animation resource
-        */
+         */
         virtual AnimationPtr load(const std::string& filename) = 0;
 
-		/** responsible for loading all animations
+        /** responsible for loading all animations
          * returns a vector of shared pointer to an animation resource
-        */
-		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
+         */
+        virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
     };
 
     typedef SharedPtr<IAnimationLoader> AnimationLoaderPtr;
-}
+} // namespace FIFE
 
 #endif

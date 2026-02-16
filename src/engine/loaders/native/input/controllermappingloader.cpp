@@ -35,18 +35,20 @@
 
 #include "controllermappingloader.h"
 
-namespace FIFE {
-	void ControllerMappingLoader::load(const std::string& filename) {
-		VFS* vfs = VFS::instance();
+namespace FIFE
+{
+    void ControllerMappingLoader::load(const std::string& filename)
+    {
+        VFS* vfs = VFS::instance();
 
-		std::unique_ptr<RawData> data(vfs->open(filename));
-		size_t datalen = data->getDataLength();
-		std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
-		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
-		if (SDL_GameControllerAddMappingsFromRW(rwops, 0) == -1) {
-			throw SDLException(std::string("Error when loading gamecontroller mappings: ") + SDL_GetError());
-		}
-		SDL_FreeRW(rwops);
-	}
-}  //FIFE
+        std::unique_ptr<RawData> data(vfs->open(filename));
+        size_t datalen = data->getDataLength();
+        std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
+        data->readInto(darray.get(), datalen);
+        SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
+        if (SDL_GameControllerAddMappingsFromRW(rwops, 0) == -1) {
+            throw SDLException(std::string("Error when loading gamecontroller mappings: ") + SDL_GetError());
+        }
+        SDL_FreeRW(rwops);
+    }
+} // namespace FIFE

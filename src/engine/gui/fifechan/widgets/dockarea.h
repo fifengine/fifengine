@@ -33,32 +33,33 @@
 // Second block: files included from the same folder
 #include "resizablewindow.h"
 
+namespace fcn
+{
+    class DockArea : public ResizableWindow
+    {
+    public:
+        DockArea();
+        DockArea(bool active);
+        virtual ~DockArea();
 
-namespace fcn {
-	class DockArea : public ResizableWindow {
-	public:
-		DockArea();
-		DockArea(bool active);
-		virtual ~DockArea();
+        void setActiveDockArea(bool active);
+        bool isActiveDockArea() const;
 
-		void setActiveDockArea(bool active);
-		bool isActiveDockArea() const;
+        void setTopSide(bool side);
+        bool isTopSide() const;
+        void setRightSide(bool side);
+        bool isRightSide() const;
+        void setBottomSide(bool side);
+        bool isBottomSide() const;
+        void setLeftSide(bool side);
+        bool isLeftSide() const;
 
-		void setTopSide(bool side);
-		bool isTopSide() const;
-		void setRightSide(bool side);
-		bool isRightSide() const;
-		void setBottomSide(bool side);
-		bool isBottomSide() const;
-		void setLeftSide(bool side);
-		bool isLeftSide() const;
+        void dockWidget(Widget* widget);
+        void undockWidget(Widget* widget);
+        void setHighlighted(bool highlighted);
+        bool isHighlighted() const;
 
-		void dockWidget(Widget* widget);
-		void undockWidget(Widget* widget);
-		void setHighlighted(bool highlighted);
-		bool isHighlighted() const;
-
-		/**
+        /**
          * Sets the highlight color of the widget.
          *
          * @param color The highlight color.
@@ -73,51 +74,49 @@ namespace fcn {
          * @see setHighlightColor
          */
         const Color& getHighlightColor() const;
-		
-		void repositionWidget(Widget* widget);
 
+        void repositionWidget(Widget* widget);
 
-		// Inherited from ResizableWindow
+        // Inherited from ResizableWindow
 
-		virtual void add(Widget* widget);
+        virtual void add(Widget* widget);
 
-		virtual void remove(Widget* widget);
+        virtual void remove(Widget* widget);
 
-		virtual void resizeToContent(bool recursiv=true);
+        virtual void resizeToContent(bool recursiv = true);
 
-		virtual void expandContent(bool recursiv=true);
-	
-	
-		// Inherited from ResizableWindow / MouseListener
+        virtual void expandContent(bool recursiv = true);
 
-		virtual void mouseEntered(MouseEvent& mouseEvent);
+        // Inherited from ResizableWindow / MouseListener
 
-		virtual void mouseExited(MouseEvent& mouseEvent);
+        virtual void mouseEntered(MouseEvent& mouseEvent);
 
-		virtual void mousePressed(MouseEvent& mouseEvent);
+        virtual void mouseExited(MouseEvent& mouseEvent);
 
-		virtual void mouseReleased(MouseEvent& mouseEvent);
+        virtual void mousePressed(MouseEvent& mouseEvent);
 
-		virtual void mouseMoved(MouseEvent& mouseEvent);
-	
-		virtual void mouseDragged(MouseEvent& mouseEvent);
+        virtual void mouseReleased(MouseEvent& mouseEvent);
 
-	protected:
-		void repositionDockAreas();
-		void keepInBounds();
+        virtual void mouseMoved(MouseEvent& mouseEvent);
 
-		bool m_activeDockArea;
+        virtual void mouseDragged(MouseEvent& mouseEvent);
 
-		bool m_topSide;
-		bool m_rightSide;
-		bool m_bottomSide;
-		bool m_leftSide;
+    protected:
+        void repositionDockAreas();
+        void keepInBounds();
 
-		bool m_highlighted;
+        bool m_activeDockArea;
 
-		Color m_highlightColor;
-		Color m_savedColor;
-	};
-}
+        bool m_topSide;
+        bool m_rightSide;
+        bool m_bottomSide;
+        bool m_leftSide;
+
+        bool m_highlighted;
+
+        Color m_highlightColor;
+        Color m_savedColor;
+    };
+} // namespace fcn
 
 #endif

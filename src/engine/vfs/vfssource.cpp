@@ -31,28 +31,29 @@
 #include "vfs.h"
 #include "vfssource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	VFSSource::VFSSource(VFS* vfs) : m_vfs(vfs) {}
+    VFSSource::VFSSource(VFS* vfs) : m_vfs(vfs) { }
 
+    VFSSource::~VFSSource()
+    {
+        m_vfs->removeSource(this);
+    }
 
-	VFSSource::~VFSSource() {
-		m_vfs->removeSource(this);
-	}
-
-}
+} // namespace FIFE
 
 std::string FIFE::VFSSource::fixPath(std::string path) const
 {
-	if (!path.size())
-		return path;
+    if (!path.size())
+        return path;
 
-	size_t pos;
-	while ((pos = path.find('\\')) != std::string::npos)
-		path[pos] = '/';
+    size_t pos;
+    while ((pos = path.find('\\')) != std::string::npos)
+        path[pos] = '/';
 
-	if (path[0] == '/')
-		path = path.substr(1, path.length());
+    if (path[0] == '/')
+        path = path.substr(1, path.length());
 
-	return path;
+    return path;
 }

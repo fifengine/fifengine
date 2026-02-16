@@ -35,21 +35,22 @@
 //
 #include "keyevent.h"
 
-namespace FIFE {
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class IKeyFilter {
-	public:
+namespace FIFE
+{
+    /**  Controller provides a way to receive events from the system
+     * Using this interface, clients can subscribe themselves to receive events
+     */
+    class IKeyFilter
+    {
+    public:
+        /** Check whether a keyevent should be filtered out.
+         * @param event They key event.
+         */
+        virtual bool isFiltered(const KeyEvent& event) = 0;
 
-		/** Check whether a keyevent should be filtered out.
-		 * @param event They key event.
-		 */
-		virtual bool isFiltered(const KeyEvent& event) = 0;
+        virtual ~IKeyFilter() { }
+    };
 
-		virtual ~IKeyFilter() {}
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

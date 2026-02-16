@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "fifeclass.h"
 
-namespace FIFE {
-	fifeid_t FifeClass::m_curid = 0;
-}//FIFE
+namespace FIFE
+{
+    fifeid_t FifeClass::m_curid = 0;
+} // namespace FIFE

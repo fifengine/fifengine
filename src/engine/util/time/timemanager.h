@@ -31,84 +31,86 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/singleton.h"
 #include "util/base/fife_stdint.h"
+#include "util/base/singleton.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class TimeEvent;
+    class TimeEvent;
 
-	/** Time Manager
-	 *
-	 * This class is in charge of storing the current time,
-	 * average frame time, as well as controlling periodic events.
-	 * Users of this class will have to manually register and
-	 * unregister events.
-	 *
-	 * @see TimeEvent
-	 */
-	class TimeManager : public DynamicSingleton<TimeManager> {
-	public:
-		/** Default constructor.
-		 */
-		TimeManager();
+    /** Time Manager
+     *
+     * This class is in charge of storing the current time,
+     * average frame time, as well as controlling periodic events.
+     * Users of this class will have to manually register and
+     * unregister events.
+     *
+     * @see TimeEvent
+     */
+    class TimeManager : public DynamicSingleton<TimeManager>
+    {
+    public:
+        /** Default constructor.
+         */
+        TimeManager();
 
-		/** Destructor.
-		 */
-		virtual ~TimeManager();
+        /** Destructor.
+         */
+        virtual ~TimeManager();
 
-		/** Called once a frame and updates the timer objects and events.
-		 */
-		void update();
+        /** Called once a frame and updates the timer objects and events.
+         */
+        void update();
 
-		/** Adds a TimeEvent.
-		 *
-		 * The event will be updated regularly, depending on its settings.
-		 * @param event The TimeEvent object to be added.
-		 */
-		void registerEvent(TimeEvent* event);
+        /** Adds a TimeEvent.
+         *
+         * The event will be updated regularly, depending on its settings.
+         * @param event The TimeEvent object to be added.
+         */
+        void registerEvent(TimeEvent* event);
 
-		/** Removes a TimeEvent.
-		 *
-		 * Removes an event from the list. It will not be deleted.
-		 * @param event The TimeEvent object to be removed.
-		 */
-		void unregisterEvent(TimeEvent* event);
+        /** Removes a TimeEvent.
+         *
+         * Removes an event from the list. It will not be deleted.
+         * @param event The TimeEvent object to be removed.
+         */
+        void unregisterEvent(TimeEvent* event);
 
-		/** Get the time.
-		 *
-		 * @return The time in milliseconds.
-		 */
-		uint32_t getTime() const;
+        /** Get the time.
+         *
+         * @return The time in milliseconds.
+         */
+        uint32_t getTime() const;
 
-		/** Get the time since the last frame.
-		 *
-		 * @return Time since last frame in milliseconds.
-		 */
-		uint32_t getTimeDelta() const;
+        /** Get the time since the last frame.
+         *
+         * @return Time since last frame in milliseconds.
+         */
+        uint32_t getTimeDelta() const;
 
-		/** Gets average frame time
-		 *
-		 * @return Average frame time in milliseconds.
-		 */
-		double getAverageFrameTime() const;
+        /** Gets average frame time
+         *
+         * @return Average frame time in milliseconds.
+         */
+        double getAverageFrameTime() const;
 
-		/** Prints Timer statistics
-		 */
-		void printStatistics() const;
+        /** Prints Timer statistics
+         */
+        void printStatistics() const;
 
-	private:
-		/// Current time in milliseconds.
-		uint32_t m_current_time;
-		/// Time since last frame in milliseconds.
-		uint32_t m_time_delta;
-		/// Average frame time in milliseconds.
-		double m_average_frame_time;
+    private:
+        /// Current time in milliseconds.
+        uint32_t m_current_time;
+        /// Time since last frame in milliseconds.
+        uint32_t m_time_delta;
+        /// Average frame time in milliseconds.
+        double m_average_frame_time;
 
-		/// List of active TimeEvents.
-		std::vector<TimeEvent*> m_events_list;
-	};
+        /// List of active TimeEvents.
+        std::vector<TimeEvent*> m_events_list;
+    };
 
-}//FIFE
+} // namespace FIFE
 
 #endif

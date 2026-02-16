@@ -34,16 +34,18 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/**  Types for different event sources
-	 */
-	enum EventSourceType {
-		ES_ENGINE = 1,
-		ES_FIFECHAN_WIDGET = 2,
-		ES_CEGUI_WIDGET = 3
-	};
+    /**  Types for different event sources
+     */
+    enum EventSourceType
+    {
+        ES_ENGINE          = 1,
+        ES_FIFECHAN_WIDGET = 2,
+        ES_CEGUI_WIDGET    = 3
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

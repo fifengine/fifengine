@@ -34,28 +34,40 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	/**  Base Listener
-	 */
-	class IListener {
-	public:
-		/** Indicates if the listener is active.
-		 */
-		virtual bool isActive() { return m_active; }
+namespace FIFE
+{
+    /**  Base Listener
+     */
+    class IListener
+    {
+    public:
+        /** Indicates if the listener is active.
+         */
+        virtual bool isActive()
+        {
+            return m_active;
+        }
 
-		/** Changes the listener status.
-		 * @param active The value to change the listener to active / inactive.
-		 */
-		virtual void setActive(bool active) { m_active = active; }
+        /** Changes the listener status.
+         * @param active The value to change the listener to active / inactive.
+         */
+        virtual void setActive(bool active)
+        {
+            m_active = active;
+        }
 
-		virtual ~IListener() {}
+        virtual ~IListener() { }
 
-	protected:
-		IListener() { m_active = false; }
-	private:
-		bool m_active;
-	};
+    protected:
+        IListener()
+        {
+            m_active = false;
+        }
 
-} //FIFE
+    private:
+        bool m_active;
+    };
+
+} // namespace FIFE
 
 #endif

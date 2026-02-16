@@ -31,15 +31,17 @@
 
 #include "controllermappingsaver.h"
 
-namespace FIFE {
-	void ControllerMappingSaver::save(const std::string data, const std::string& filename) {
-		FILE* fp = 0;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400 )
-		fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
+namespace FIFE
+{
+    void ControllerMappingSaver::save(const std::string data, const std::string& filename)
+    {
+        FILE* fp = 0;
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+        fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
 #else
-		fp = fopen(filename.c_str(), "w");
+        fp = fopen(filename.c_str(), "w");
 #endif
-		fputs(data.c_str(), fp);
-		fclose(fp);
-	}
-}  //FIFE
+        fputs(data.c_str(), fp);
+        fclose(fp);
+    }
+} // namespace FIFE

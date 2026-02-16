@@ -29,9 +29,10 @@
 // Second block: files included from the same folder
 #include "rawdatasource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	RawDataSource::RawDataSource() {}
+    RawDataSource::RawDataSource() { }
 
-	RawDataSource::~RawDataSource() {}
-}
+    RawDataSource::~RawDataSource() { }
+} // namespace FIFE

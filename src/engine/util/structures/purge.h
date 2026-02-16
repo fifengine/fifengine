@@ -19,44 +19,49 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-
 // Delete pointers in an STL sequence container
 #ifndef PURGE_H
 #define PURGE_H
 #include <algorithm>
 
-template<class Seq> void purge(Seq& c) {
-	typename Seq::iterator i;
-	for(i = c.begin(); i != c.end(); i++) {
-		delete *i;
-		*i = 0;
-	}
+template <class Seq>
+void purge(Seq& c)
+{
+    typename Seq::iterator i;
+    for (i = c.begin(); i != c.end(); i++) {
+        delete *i;
+        *i = 0;
+    }
 }
 
 // Iterator version:
-template<class InpIt>
-void purge(InpIt begin, InpIt end) {
-	while(begin != end) {
-		delete *begin;
-		*begin = 0;
-		begin++;
-	}
+template <class InpIt>
+void purge(InpIt begin, InpIt end)
+{
+    while (begin != end) {
+        delete *begin;
+        *begin = 0;
+        begin++;
+    }
 }
-template<class Seq> void purge_map(Seq& c) {
-	typename Seq::iterator i;
-	for(i = c.begin(); i != c.end(); i++) {
-		delete i->second;
-		i->second = 0;
-	}
+template <class Seq>
+void purge_map(Seq& c)
+{
+    typename Seq::iterator i;
+    for (i = c.begin(); i != c.end(); i++) {
+        delete i->second;
+        i->second = 0;
+    }
 }
 
 // Iterator version:
-template<class InpIt>
-void purge_map(InpIt begin, InpIt end) {
-	while(begin != end) {
-		delete begin->second;
-		begin->second = 0;
-		begin++;
-	}
+template <class InpIt>
+void purge_map(InpIt begin, InpIt end)
+{
+    while (begin != end) {
+        delete begin->second;
+        begin->second = 0;
+        begin++;
+    }
 }
-#endif // PURGE_H 
+#endif // PURGE_H

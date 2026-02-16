@@ -36,23 +36,29 @@
 #include "video/image.h"
 #include "video/imagemanager.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class GuiImage : public fcn::Image {
-	public:
-		GuiImage();
-		GuiImage(ImagePtr img);
-		~GuiImage();
-		void free();
-		int32_t getWidth() const;
-		int32_t getHeight() const;
-		fcn::Color getPixel(int32_t x, int32_t y);
-		void putPixel(int32_t x, int32_t y, const fcn::Color& color);
-		void convertToDisplayFormat();
-		ImagePtr getFIFEImage() const { return m_imgPtr; }
-	protected:
-		ImagePtr m_imgPtr;
-	};
-}
+    class GuiImage : public fcn::Image
+    {
+    public:
+        GuiImage();
+        GuiImage(ImagePtr img);
+        ~GuiImage();
+        void free();
+        int32_t getWidth() const;
+        int32_t getHeight() const;
+        fcn::Color getPixel(int32_t x, int32_t y);
+        void putPixel(int32_t x, int32_t y, const fcn::Color& color);
+        void convertToDisplayFormat();
+        ImagePtr getFIFEImage() const
+        {
+            return m_imgPtr;
+        }
+
+    protected:
+        ImagePtr m_imgPtr;
+    };
+} // namespace FIFE
 
 #endif

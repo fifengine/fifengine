@@ -33,16 +33,13 @@
 
 #include "action.h"
 
-namespace FIFE {
-	Action::Action(const std::string& identifier)
-		: m_id(identifier),
-		m_duration(0),
-		m_visual(NULL),
-		m_audio(NULL) {
-	}
+namespace FIFE
+{
+    Action::Action(const std::string& identifier) : m_id(identifier), m_duration(0), m_visual(NULL), m_audio(NULL) { }
 
-	Action::~Action() {
-		delete m_visual;
-		delete m_audio;
-	}
-}
+    Action::~Action()
+    {
+        delete m_visual;
+        delete m_audio;
+    }
+} // namespace FIFE

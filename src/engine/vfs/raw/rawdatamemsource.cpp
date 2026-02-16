@@ -30,25 +30,29 @@
 // Second block: files included from the same folder
 #include "rawdatamemsource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len) {
-	}
+    RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len) { }
 
-	RawDataMemSource::~RawDataMemSource() {
-		delete[] m_data;
-	}
+    RawDataMemSource::~RawDataMemSource()
+    {
+        delete[] m_data;
+    }
 
-	uint32_t RawDataMemSource::getSize() const {
-		return m_datalen;
-	}
+    uint32_t RawDataMemSource::getSize() const
+    {
+        return m_datalen;
+    }
 
-	void RawDataMemSource::readInto(uint8_t* buffer, uint32_t start, uint32_t length) {
-		std::copy(m_data + start, m_data + start + length, buffer);
-	}
+    void RawDataMemSource::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
+    {
+        std::copy(m_data + start, m_data + start + length, buffer);
+    }
 
-	uint8_t* RawDataMemSource::getRawData() const {
-		return m_data;
-	}
+    uint8_t* RawDataMemSource::getRawData() const
+    {
+        return m_data;
+    }
 
-}
+} // namespace FIFE

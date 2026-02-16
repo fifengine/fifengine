@@ -34,36 +34,37 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	class ISdlEventListener;
+namespace FIFE
+{
+    class ISdlEventListener;
 
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class ISdlEventController {
-	public:
+    /**  Controller provides a way to receive events from the system
+     * Using this interface, clients can subscribe themselves to receive events
+     */
+    class ISdlEventController
+    {
+    public:
+        /** Adds a listener to the back of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addSdlEventListener(ISdlEventListener* listener) = 0;
 
-		/** Adds a listener to the back of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addSdlEventListener(ISdlEventListener* listener) = 0;
+        /** Adds a listener to the front of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addSdlEventListenerFront(ISdlEventListener* listener) = 0;
 
-		/** Adds a listener to the front of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addSdlEventListenerFront(ISdlEventListener* listener) = 0;
+        /** Removes an added listener from the controller.
+         * Listener will not be notified anymore via the corresponding events
+         * @param listener listener to remove
+         */
+        virtual void removeSdlEventListener(ISdlEventListener* listener) = 0;
 
-		/** Removes an added listener from the controller.
-		 * Listener will not be notified anymore via the corresponding events
-		 * @param listener listener to remove
-		 */
-		virtual void removeSdlEventListener(ISdlEventListener* listener) = 0;
+        virtual ~ISdlEventController() { }
+    };
 
-		virtual ~ISdlEventController() {}
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

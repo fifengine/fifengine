@@ -38,76 +38,76 @@
 
 #include "imagefontbase.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	ImageFontBase::ImageFontBase() : FontBase(), m_height(0) {
-	}
+    ImageFontBase::ImageFontBase() : FontBase(), m_height(0) { }
 
-	ImageFontBase::~ImageFontBase() {
-		type_glyphs::iterator i = m_glyphs.begin();
-		for(; i != m_glyphs.end(); ++i) {
-			SDL_FreeSurface(i->second.surface);
-		}
-		
-	}
+    ImageFontBase::~ImageFontBase()
+    {
+        type_glyphs::iterator i = m_glyphs.begin();
+        for (; i != m_glyphs.end(); ++i) {
+            SDL_FreeSurface(i->second.surface);
+        }
+    }
 
-	int32_t ImageFontBase::getWidth(const std::string& text) const {
-		int32_t w = 0;
-		std::string::const_iterator text_it = text.begin();
-		while(text_it != text.end()) {
-			uint32_t codepoint = utf8::next(text_it,text.end());
-			type_glyphs::const_iterator it = m_glyphs.find( codepoint );
+    int32_t ImageFontBase::getWidth(const std::string& text) const
+    {
+        int32_t w                           = 0;
+        std::string::const_iterator text_it = text.begin();
+        while (text_it != text.end()) {
+            uint32_t codepoint             = utf8::next(text_it, text.end());
+            type_glyphs::const_iterator it = m_glyphs.find(codepoint);
 
-			if( it != m_glyphs.end() ) {
-				w += it->second.surface->w + getGlyphSpacing();
-				continue;
-			}
+            if (it != m_glyphs.end()) {
+                w += it->second.surface->w + getGlyphSpacing();
+                continue;
+            }
 
-			if( m_placeholder.surface ) {
-				w += m_placeholder.surface->w + getGlyphSpacing();
-			}
-		}
-		return w;
-	}
+            if (m_placeholder.surface) {
+                w += m_placeholder.surface->w + getGlyphSpacing();
+            }
+        }
+        return w;
+    }
 
-	int32_t ImageFontBase::getHeight() const {
-		return m_height;
-	}
+    int32_t ImageFontBase::getHeight() const
+    {
+        return m_height;
+    }
 
-	SDL_Surface *ImageFontBase::renderString(const std::string& text) {
-		SDL_Surface *surface = SDL_CreateRGBSurface(0,
-			getWidth(text),getHeight(),32,
-			RMASK, GMASK, BMASK ,AMASK);
+    SDL_Surface* ImageFontBase::renderString(const std::string& text)
+    {
+        SDL_Surface* surface = SDL_CreateRGBSurface(0, getWidth(text), getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
 
-		SDL_FillRect(surface,0,0x00000000);
+        SDL_FillRect(surface, 0, 0x00000000);
 
-		SDL_Rect dst;
-		dst.x = dst.y = 0;
-		s_glyph *glyph = 0;
+        SDL_Rect dst;
+        dst.x = dst.y  = 0;
+        s_glyph* glyph = 0;
 
-		std::string::const_iterator text_it = text.begin();
-		while(text_it != text.end()) {
-			uint32_t codepoint = utf8::next(text_it,text.end());
-			type_glyphs::iterator it = m_glyphs.find( codepoint );
+        std::string::const_iterator text_it = text.begin();
+        while (text_it != text.end()) {
+            uint32_t codepoint       = utf8::next(text_it, text.end());
+            type_glyphs::iterator it = m_glyphs.find(codepoint);
 
-			if( it == m_glyphs.end() ) {
-				if( !m_placeholder.surface ) {
-					continue;
-				}
-				glyph = &m_placeholder;
-			} else {
-				glyph = &(it->second);
-			}
-			dst.y  = glyph->offset.y;
-			dst.x += glyph->offset.x;
+            if (it == m_glyphs.end()) {
+                if (!m_placeholder.surface) {
+                    continue;
+                }
+                glyph = &m_placeholder;
+            } else {
+                glyph = &(it->second);
+            }
+            dst.y = glyph->offset.y;
+            dst.x += glyph->offset.x;
 
-			SDL_BlitSurface(glyph->surface,0,surface,&dst);
-			dst.x += glyph->surface->w + getGlyphSpacing();
-		}
+            SDL_BlitSurface(glyph->surface, 0, surface, &dst);
+            dst.x += glyph->surface->w + getGlyphSpacing();
+        }
 
-		return surface;
-	}
+        return surface;
+    }
 
-	void ImageFontBase::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
-	}
-}
+    void ImageFontBase::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) { }
+} // namespace FIFE

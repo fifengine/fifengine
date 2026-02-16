@@ -38,12 +38,14 @@
 
 #include "ziptree.h"
 
-namespace FIFE {
-	/**  Implements a Zip archive file source.
-	 *
-	 * @see FIFE::VFSSource
-	 */
-	class ZipSource : public VFSSource {
+namespace FIFE
+{
+    /**  Implements a Zip archive file source.
+     *
+     * @see FIFE::VFSSource
+     */
+    class ZipSource : public VFSSource
+    {
     public:
         ZipSource(VFS* vfs, const std::string& zip_file);
         ~ZipSource();
@@ -63,10 +65,9 @@ namespace FIFE {
 
     private:
         ZipTree m_zipTree;
-		RawData* m_zipfile;
+        RawData* m_zipfile;
+    };
 
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

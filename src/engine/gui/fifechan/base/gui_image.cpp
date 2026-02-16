@@ -33,46 +33,49 @@
 
 #include "gui_image.h"
 
-namespace FIFE {
-	static Logger _log(LM_GUI);
+namespace FIFE
+{
+    static Logger _log(LM_GUI);
 
-	GuiImage::GuiImage(): fcn::Image(), m_imgPtr() {
-	}
+    GuiImage::GuiImage() : fcn::Image(), m_imgPtr() { }
 
-	GuiImage::GuiImage(ImagePtr img): fcn::Image(), m_imgPtr(img) {
+    GuiImage::GuiImage(ImagePtr img) : fcn::Image(), m_imgPtr(img) { }
 
-	}
+    GuiImage::~GuiImage() { }
 
-	GuiImage::~GuiImage() {
-	}
+    void GuiImage::free()
+    {
+        ImageManager::instance()->free(m_imgPtr->getHandle());
+    }
 
-	void GuiImage::free() {
-		ImageManager::instance()->free(m_imgPtr->getHandle());
-	}
+    int32_t GuiImage::getWidth() const
+    {
+        if (!m_imgPtr)
+            return 0;
+        return m_imgPtr->getWidth();
+    }
 
-	int32_t GuiImage::getWidth() const {
-		if(!m_imgPtr)
-			return 0;
-		return m_imgPtr->getWidth();
-	}
+    int32_t GuiImage::getHeight() const
+    {
+        if (!m_imgPtr)
+            return 0;
+        return m_imgPtr->getHeight();
+    }
 
-	int32_t GuiImage::getHeight() const {
-		if(!m_imgPtr)
-			return 0;
-		return m_imgPtr->getHeight();
-	}
+    fcn::Color GuiImage::getPixel(int32_t x, int32_t y)
+    {
+        FL_PANIC(_log, "GuiImage::getPixel, not implemented");
+        return fcn::Color();
+    }
 
-	fcn::Color GuiImage::getPixel(int32_t x, int32_t y) {
-		FL_PANIC(_log, "GuiImage::getPixel, not implemented");
-		return fcn::Color();
-	}
+    void GuiImage::putPixel(int32_t x, int32_t y, const fcn::Color& color)
+    {
+        FL_PANIC(_log, "GuiImage::putPixel, not implemented");
+    }
 
-	void GuiImage::putPixel(int32_t x, int32_t y, const fcn::Color& color) {
-		FL_PANIC(_log, "GuiImage::putPixel, not implemented");
-	}
-
-	void GuiImage::convertToDisplayFormat() {
-		// empty on purpose
-		// Since we don't need any conversions - this is just a proxy.
-	}
-}
+    void GuiImage::convertToDisplayFormat()
+    {
+        // empty on purpose
+        // Since we don't need any conversions - this is just a proxy.
+    }
+} // namespace FIFE

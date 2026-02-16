@@ -1,30 +1,30 @@
 /***************************************************************************
-*   Copyright (C) 2005-2019 by the FIFE team                              *
-*   http://www.fifengine.net                                              *
-*   This file is part of FIFE.                                            *
-*                                                                         *
-*   FIFE is free software; you can redistribute it and/or                 *
-*   modify it under the terms of the GNU Lesser General Public            *
-*   License as published by the Free Software Foundation; either          *
-*   version 2.1 of the License, or (at your option) any later version.    *
-*                                                                         *
-*   This library is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
-*   Lesser General Public License for more details.                       *
-*                                                                         *
-*   You should have received a copy of the GNU Lesser General Public      *
-*   License along with this library; if not, write to the                 *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
-***************************************************************************/
+ *   Copyright (C) 2005-2019 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or                 *
+ *   modify it under the terms of the GNU Lesser General Public            *
+ *   License as published by the Free Software Foundation; either          *
+ *   version 2.1 of the License, or (at your option) any later version.    *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
+ *   Lesser General Public License for more details.                       *
+ *                                                                         *
+ *   You should have received a copy of the GNU Lesser General Public      *
+ *   License along with this library; if not, write to the                 *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
+ ***************************************************************************/
 #ifndef FIFE_VFS_ZIP_ZIPNODE_H
 #define FIFE_VFS_ZIP_ZIPNODE_H
 
 // Standard C++ library includes
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
 // 3rd party library includes
 
@@ -34,18 +34,21 @@
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-    struct ZipContentType {
+    struct ZipContentType
+    {
         enum Enum
         {
-            File = 0,       // specifies files as content type
-            Directory,      // specifies directories as content type
-            All             // specifies everything as content type (no filter)
+            File = 0,  // specifies files as content type
+            Directory, // specifies directories as content type
+            All        // specifies everything as content type (no filter)
         };
     };
 
-    struct ZipEntryData {
+    struct ZipEntryData
+    {
         /** constructor
          */
         ZipEntryData();
@@ -61,13 +64,14 @@ namespace FIFE {
     class ZipNode;
     typedef std::vector<ZipNode*> ZipNodeContainer;
 
-    class ZipNode {
+    class ZipNode
+    {
     public:
         /** constructor for creating a node
          *  @param name the name of the node
          *  @param parent the parent of this node, defaults to NULL
          */
-        ZipNode(const std::string& name, ZipNode* parent=0);
+        ZipNode(const std::string& name, ZipNode* parent = 0);
 
         /** destructor
          */
@@ -97,15 +101,14 @@ namespace FIFE {
          *        returned, @see ZipContentType for description
          * @return vector of ZipNode pointers matching the request
          */
-        std::vector<ZipNode*> getChildren(ZipContentType::Enum contentType=ZipContentType::All) const;
+        std::vector<ZipNode*> getChildren(ZipContentType::Enum contentType = ZipContentType::All) const;
 
         /** gives access to retrieving a specific child node by name
          *  @param name the name of the child node to search for
          *  @param contentType optional for filtering on the type of node to return
          *  @return the ZipNode pointer matching the child (NULL if not found)
          */
-        ZipNode* getChild(const std::string& name,
-                          ZipContentType::Enum contentType=ZipContentType::All) const;
+        ZipNode* getChild(const std::string& name, ZipContentType::Enum contentType = ZipContentType::All) const;
 
         /** allows adding a child node to this node
          *  @note this should only be used internally by the FIFE zip classes
@@ -157,7 +160,7 @@ namespace FIFE {
         ZipNodeContainer m_fileChildren;
         ZipNodeContainer m_directoryChildren;
     };
-}
+} // namespace FIFE
 
 /** debug stream for a zip node
  *  useful for debugging

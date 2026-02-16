@@ -34,105 +34,107 @@
 
 #include "routepathersearch.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class CellCache;
-	class Route;
-	class Zone;
+    class CellCache;
+    class Route;
+    class Zone;
 
-	/** MultiLayerSearch using A*
-	 */
-	class MultiLayerSearch: public RoutePatherSearch {
-	public:
-		/** Constructor
-		 *
-		 * @param route A pointer to the route for which a path should be searched.
-		 * @param sessionId A integer containing the session id for this search.
-		 */
-		MultiLayerSearch(Route* route, const int32_t sessionId);
-		
-		/** Destructor
-		 */
-		~MultiLayerSearch();
+    /** MultiLayerSearch using A*
+     */
+    class MultiLayerSearch : public RoutePatherSearch
+    {
+    public:
+        /** Constructor
+         *
+         * @param route A pointer to the route for which a path should be searched.
+         * @param sessionId A integer containing the session id for this search.
+         */
+        MultiLayerSearch(Route* route, const int32_t sessionId);
 
-		/** Updates the search.
-		 *
-		 * Each update checks all neighbors of the last checked coordinate and selects the most favorable.
-		 */
-		void updateSearch();
-		
-		/** Calculates final path.
-		 *
-		 * If the search is successful then a path is created.
-		 */
-		void calcPath();
+        /** Destructor
+         */
+        ~MultiLayerSearch();
 
-	private:
-		/** Creates or resets the SearchFrontier.
-		 *
-		 * @param startInt The start coordinate as integer identifier.
-		 * @param cache A pointer to the start CellCache.
-		 */
-		void createSearchFrontier(int32_t startInt, CellCache* cache);
-		
-		/** Calculates path parts per layer.
-		 *
-		 */
-		void calcPathStep();
+        /** Updates the search.
+         *
+         * Each update checks all neighbors of the last checked coordinate and selects the most favorable.
+         */
+        void updateSearch();
 
-		/** Fetch targets from neighbor layers.
-		 *
-		 */
-		void searchBetweenTargetsNeighbor();
-		
-		/** Fetch targets from map.
-		 *
-		 */
-		void searchBetweenTargetsMap();
+        /** Calculates final path.
+         *
+         * If the search is successful then a path is created.
+         */
+        void calcPath();
 
-		//! A location object representing where the search started.
-		Location m_to;
-		//! A location object representing where the search ended.
-		Location m_from;
+    private:
+        /** Creates or resets the SearchFrontier.
+         *
+         * @param startInt The start coordinate as integer identifier.
+         * @param cache A pointer to the start CellCache.
+         */
+        void createSearchFrontier(int32_t startInt, CellCache* cache);
 
-		//! A pointer to the start CellCache.
-		CellCache* m_startCache;
-		//! A pointer to the end CellCache.
-		CellCache* m_endCache;
-		//! A pointer to the currently used CellCache.
-		CellCache* m_currentCache;
+        /** Calculates path parts per layer.
+         *
+         */
+        void calcPathStep();
 
-		// A pointer to the start Zone.
-		Zone* m_startZone;
-		// A pointer to the end Zone.
-		Zone* m_endZone;
+        /** Fetch targets from neighbor layers.
+         *
+         */
+        void searchBetweenTargetsNeighbor();
 
-		//! The start coordinate as an int32_t.
-		int32_t m_startCoordInt;
-		//! The last used start coordinate as an int32_t.
-		int32_t m_lastStartCoordInt;
-		//! The destination coordinate as an int32_t.
-		int32_t m_destCoordInt;
-		//! The last used destination coordinate as an int32_t.
-		int32_t m_lastDestCoordInt;
-		//! The next coordinate to check out.
-		int32_t m_next;
+        /** Fetch targets from map.
+         *
+         */
+        void searchBetweenTargetsMap();
 
-		//! The shortest path tree.
-		std::vector<int32_t> m_spt;
-		//! The search frontier.
-		std::vector<int32_t> m_sf;
-		//! A table to hold the costs.
-		std::vector<double> m_gCosts;
-		//! Priority queue to hold nodes on the sf in order.
-		PriorityQueue<int32_t, double> m_sortedFrontier;
+        //! A location object representing where the search started.
+        Location m_to;
+        //! A location object representing where the search ended.
+        Location m_from;
 
-		//! List of targets that need to be solved to reach the real target.
-		std::list<Cell*> m_betweenTargets;
-		//! Indicates if last between target could be achieved
-		bool m_foundLast;
-		//! Path to which all steps are added.
-		Path m_path;
-	};
-}
+        //! A pointer to the start CellCache.
+        CellCache* m_startCache;
+        //! A pointer to the end CellCache.
+        CellCache* m_endCache;
+        //! A pointer to the currently used CellCache.
+        CellCache* m_currentCache;
+
+        // A pointer to the start Zone.
+        Zone* m_startZone;
+        // A pointer to the end Zone.
+        Zone* m_endZone;
+
+        //! The start coordinate as an int32_t.
+        int32_t m_startCoordInt;
+        //! The last used start coordinate as an int32_t.
+        int32_t m_lastStartCoordInt;
+        //! The destination coordinate as an int32_t.
+        int32_t m_destCoordInt;
+        //! The last used destination coordinate as an int32_t.
+        int32_t m_lastDestCoordInt;
+        //! The next coordinate to check out.
+        int32_t m_next;
+
+        //! The shortest path tree.
+        std::vector<int32_t> m_spt;
+        //! The search frontier.
+        std::vector<int32_t> m_sf;
+        //! A table to hold the costs.
+        std::vector<double> m_gCosts;
+        //! Priority queue to hold nodes on the sf in order.
+        PriorityQueue<int32_t, double> m_sortedFrontier;
+
+        //! List of targets that need to be solved to reach the real target.
+        std::list<Cell*> m_betweenTargets;
+        //! Indicates if last between target could be achieved
+        bool m_foundLast;
+        //! Path to which all steps are added.
+        Path m_path;
+    };
+} // namespace FIFE
 #endif

@@ -42,68 +42,70 @@
 
 #include "rawdatadat2.h"
 
-namespace FIFE {
-	class RawData;
+namespace FIFE
+{
+    class RawData;
 
-	/** VFSource for the Fallout2 DAT file format
-	 *
-	 *  Implements a kind of lazy initializing, by reading the file list
-	 *  in chunks. Behaviour is the same as if it wouldn't do this,
-	 *  but startup is very fast. But a open/fileExists call with a
-	 *  filename that doesn't exist, does trigger completely loading
-	 *  the file entries.
-	 *
-	 * @see MFFalloutDAT1
-	 * @todo @b maybe merge common DAT1/DAT2 code in a common base class
-	 */
-	class DAT2 : public VFSSource {
+    /** VFSource for the Fallout2 DAT file format
+     *
+     *  Implements a kind of lazy initializing, by reading the file list
+     *  in chunks. Behaviour is the same as if it wouldn't do this,
+     *  but startup is very fast. But a open/fileExists call with a
+     *  filename that doesn't exist, does trigger completely loading
+     *  the file entries.
+     *
+     * @see MFFalloutDAT1
+     * @todo @b maybe merge common DAT1/DAT2 code in a common base class
+     */
+    class DAT2 : public VFSSource
+    {
 
-		public:
-			/** Constructor
-			 * Create a VFSSource for a Fallout2 DAT file.
-			 * @param vfs A pointer to the VFS.
-			 * @param path A Fallout2 DAT file - e.g. master.DAT
-			 */
-			DAT2(VFS* vfs, const std::string& path);
+    public:
+        /** Constructor
+         * Create a VFSSource for a Fallout2 DAT file.
+         * @param vfs A pointer to the VFS.
+         * @param path A Fallout2 DAT file - e.g. master.DAT
+         */
+        DAT2(VFS* vfs, const std::string& path);
 
-			bool fileExists(const std::string& name) const;
-			RawData* open(const std::string& file) const;
+        bool fileExists(const std::string& name) const;
+        RawData* open(const std::string& file) const;
 
-			/** Get Information needed to unpack and extract data
-			 *
-			 * @see MFFalloutDAT1::getInfo
-			 */
-			const RawDataDAT2::s_info& getInfo(const std::string& name) const;
+        /** Get Information needed to unpack and extract data
+         *
+         * @see MFFalloutDAT1::getInfo
+         */
+        const RawDataDAT2::s_info& getInfo(const std::string& name) const;
 
-			std::set<std::string> listFiles(const std::string& pathstr) const;
-			std::set<std::string> listDirectories(const std::string& pathstr) const;
+        std::set<std::string> listFiles(const std::string& pathstr) const;
+        std::set<std::string> listDirectories(const std::string& pathstr) const;
 
-		private:
-			std::string m_datpath;
-			mutable std::unique_ptr<RawData> m_data;
-			typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
-			mutable type_filelist m_filelist;
+    private:
+        std::string m_datpath;
+        mutable std::unique_ptr<RawData> m_data;
+        typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
+        mutable type_filelist m_filelist;
 
-			/// number of file entries to read
-			mutable uint32_t m_filecount;
-			/// current index in file
-			mutable uint32_t m_currentIndex;
-			/// lazy loading timer
-			mutable Timer m_timer;
+        /// number of file entries to read
+        mutable uint32_t m_filecount;
+        /// current index in file
+        mutable uint32_t m_currentIndex;
+        /// lazy loading timer
+        mutable Timer m_timer;
 
-			/// read a bunch of file entries
-			void readFileEntry() const;
+        /// read a bunch of file entries
+        void readFileEntry() const;
 
-			/// find a file entry
-			type_filelist::const_iterator findFileEntry(const std::string& name) const;
+        /// find a file entry
+        type_filelist::const_iterator findFileEntry(const std::string& name) const;
 
-			std::set<std::string> list(const std::string& pathstr, bool dirs) const;
+        std::set<std::string> list(const std::string& pathstr, bool dirs) const;
 
-			// Not copyable
-			DAT2(const DAT2&);
-			DAT2& operator=(const DAT2&);
-	};
+        // Not copyable
+        DAT2(const DAT2&);
+        DAT2& operator=(const DAT2&);
+    };
 
-} // FIFE
+} // namespace FIFE
 
 #endif

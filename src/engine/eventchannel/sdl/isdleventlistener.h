@@ -36,21 +36,23 @@
 
 union SDL_Event;
 
-namespace FIFE {
-	/**  Listener of SDL events.
-	 * To be able to listen for commands you must make a class which inherits 
-	 * from this class and implements the onSdlEvent function.
-	 */
-	class ISdlEventListener : public IListener {
-	public:
-		/** Called when an SDL event is received from SDL
-		 * @param evt SDL event
-		 */
-		virtual bool onSdlEvent(SDL_Event& evt) = 0;
+namespace FIFE
+{
+    /**  Listener of SDL events.
+     * To be able to listen for commands you must make a class which inherits
+     * from this class and implements the onSdlEvent function.
+     */
+    class ISdlEventListener : public IListener
+    {
+    public:
+        /** Called when an SDL event is received from SDL
+         * @param evt SDL event
+         */
+        virtual bool onSdlEvent(SDL_Event& evt) = 0;
 
-		virtual ~ISdlEventListener() {}
-	};
+        virtual ~ISdlEventListener() { }
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

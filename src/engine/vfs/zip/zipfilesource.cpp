@@ -31,21 +31,24 @@
 // Second block: files included from the same folder
 #include "zipfilesource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	ZipFileSource::ZipFileSource(uint8_t* data, uint32_t datalen) : m_data(data), m_datalen(datalen) {
-	}
+    ZipFileSource::ZipFileSource(uint8_t* data, uint32_t datalen) : m_data(data), m_datalen(datalen) { }
 
-	ZipFileSource::~ZipFileSource() {
-		delete[] m_data;
-	}
+    ZipFileSource::~ZipFileSource()
+    {
+        delete[] m_data;
+    }
 
-	uint32_t ZipFileSource::getSize() const {
-		return m_datalen;
-	}
+    uint32_t ZipFileSource::getSize() const
+    {
+        return m_datalen;
+    }
 
-	void ZipFileSource::readInto(uint8_t* target, uint32_t start, uint32_t len) {
-		assert(start + len <= m_datalen);
-		memcpy(target, m_data + start, len);
-	}
-}
+    void ZipFileSource::readInto(uint8_t* target, uint32_t start, uint32_t len)
+    {
+        assert(start + len <= m_datalen);
+        memcpy(target, m_data + start, len);
+    }
+} // namespace FIFE

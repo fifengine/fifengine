@@ -31,16 +31,18 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
-	/** Gamepad mapping saver.
-	 */
-	class ControllerMappingSaver {
-	public:
-		ControllerMappingSaver() {};
-		
-		/** Saves mapping to file.
-		 */
-		void save(const std::string data, const std::string& filename);
-	};
-}
+namespace FIFE
+{
+    /** Gamepad mapping saver.
+     */
+    class ControllerMappingSaver
+    {
+    public:
+        ControllerMappingSaver() { };
+
+        /** Saves mapping to file.
+         */
+        void save(const std::string data, const std::string& filename);
+    };
+} // namespace FIFE
 #endif

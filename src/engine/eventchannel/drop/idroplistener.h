@@ -34,23 +34,25 @@
 // Second block: files included from the same folder
 #include "eventchannel/base/ilistener.h"
 
-namespace FIFE {
-	class DropEvent;
+namespace FIFE
+{
+    class DropEvent;
 
-	/**  Listener of drop events.
-	 * To be able to listen for drop events you must make a class which inherits
-	 * from this class and implements its functions.
-	 */
-	class IDropListener : public IListener {
-	public:
-		/** Called on a file drop event.
-		 * @param evt DropEvent that describes the event.
-		 */
-		virtual void fileDropped(DropEvent& evt) = 0;
+    /**  Listener of drop events.
+     * To be able to listen for drop events you must make a class which inherits
+     * from this class and implements its functions.
+     */
+    class IDropListener : public IListener
+    {
+    public:
+        /** Called on a file drop event.
+         * @param evt DropEvent that describes the event.
+         */
+        virtual void fileDropped(DropEvent& evt) = 0;
 
-		virtual ~IDropListener() {}
-	};
+        virtual ~IDropListener() { }
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

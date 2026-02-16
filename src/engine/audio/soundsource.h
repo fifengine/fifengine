@@ -33,53 +33,52 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class ActionAudio;
-	class Instance;
-	class SoundChangeListener;
-	class SoundEmitter;
+    class ActionAudio;
+    class Instance;
+    class SoundChangeListener;
+    class SoundEmitter;
 
-	/** Interface class between Instance / ActionAudio and SoundEmitter.
-	 */
-	class SoundSource {
-	public:
+    /** Interface class between Instance / ActionAudio and SoundEmitter.
+     */
+    class SoundSource
+    {
+    public:
+        SoundSource(Instance* instance);
+        ~SoundSource();
 
-		SoundSource(Instance* instance);
-		~SoundSource();
+        /** Sets the ActionAudio. Owned by Object.
+         */
+        void setActionAudio(ActionAudio* audio);
 
-		/** Sets the ActionAudio. Owned by Object.
-		 */
-		void setActionAudio(ActionAudio* audio);
+        /** Return ActionAudio. Owned by Object.
+         */
+        ActionAudio* getActionAudio() const;
 
-		/** Return ActionAudio. Owned by Object.
-		 */
-		ActionAudio* getActionAudio() const;
+        /** Sets the positon of the SoundEmitter, called from Instance.
+         */
+        void setPosition();
 
-		/** Sets the positon of the SoundEmitter, called from Instance.
-		 */
-		void setPosition();
+        /** Sets the direction of the SoundEmitter, called from Instance.
+         */
+        void setDirection();
 
-		/** Sets the direction of the SoundEmitter, called from Instance.
-		 */
-		void setDirection();
-	
-	private:
-		/** Moves data from ActionAudio to SoundEmitter.
-		 */
-		void updateSoundEmitter();
-		
-		//! Associated Instance
-		Instance* m_instance;
-		//! Actual ActionAudio
-		ActionAudio* m_audio;
-		//! Related SoundEmitter
-		SoundEmitter* m_emitter;
-		//! InstanceChangeListener for position and direction
-		SoundChangeListener* m_listener;
+    private:
+        /** Moves data from ActionAudio to SoundEmitter.
+         */
+        void updateSoundEmitter();
 
-
-	};
-}
+        //! Associated Instance
+        Instance* m_instance;
+        //! Actual ActionAudio
+        ActionAudio* m_audio;
+        //! Related SoundEmitter
+        SoundEmitter* m_emitter;
+        //! InstanceChangeListener for position and direction
+        SoundChangeListener* m_listener;
+    };
+} // namespace FIFE
 
 #endif

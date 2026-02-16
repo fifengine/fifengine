@@ -20,8 +20,8 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -32,71 +32,66 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfs.h"
-#include "vfs/vfsdirectory.h"
-#include "vfs/dat/dat2.h"
-#include "vfs/raw/rawdata.h"
 #include "util/base/exception.h"
 #include "util/time/timemanager.h"
+#include "vfs/dat/dat2.h"
+#include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
+#include "vfs/vfsdirectory.h"
 
 using namespace FIFE;
 
 static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
-static const std::string RAW_FILE = "tests/data/test.map";
-TEST_CASE("DAT2_test") {
+static const std::string RAW_FILE        = "tests/data/test.map";
+TEST_CASE("DAT2_test")
+{
 
     std::shared_ptr<TimeManager> timemanager = std::make_shared<TimeManager>();
 
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-	vfs->addSource(new VFSDirectory(vfs.get()));
-	CHECK(vfs->exists(COMPRESSED_FILE));
+    vfs->addSource(new VFSDirectory(vfs.get()));
+    CHECK(vfs->exists(COMPRESSED_FILE));
 
-	try {
-		std::cout << "adding Source" << std::endl;
-		vfs->addSource(new DAT2(vfs.get(), COMPRESSED_FILE));
-		std::cout << "added Source" << std::endl;
-	}
-	catch (Exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+    try {
+        std::cout << "adding Source" << std::endl;
+        vfs->addSource(new DAT2(vfs.get(), COMPRESSED_FILE));
+        std::cout << "added Source" << std::endl;
+    } catch (Exception& e) {
+        std::cout << e.what() << std::endl;
+    }
 
-	CHECK(vfs->exists(RAW_FILE));
-	CHECK(vfs->exists("dat2vfstest.map"));
+    CHECK(vfs->exists(RAW_FILE));
+    CHECK(vfs->exists("dat2vfstest.map"));
 
-	FIFE::RawData* fraw = vfs->open(RAW_FILE);
-	FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
+    FIFE::RawData* fraw  = vfs->open(RAW_FILE);
+    FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
 
-	CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
-	//std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
+    CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
+    // std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
 
-	unsigned int smaller_len = fraw->getDataLength();
-	if (fcomp->getDataLength() < smaller_len) {
-		smaller_len = fcomp->getDataLength();
-	}
+    unsigned int smaller_len = fraw->getDataLength();
+    if (fcomp->getDataLength() < smaller_len) {
+        smaller_len = fcomp->getDataLength();
+    }
 
-	uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
-	uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
-	fraw->readInto(d_raw,fraw->getDataLength());
-	fcomp->readInto(d_comp,fcomp->getDataLength());
-	//std::cout << "scanning data..." << std::endl;
-	for (unsigned int i = 0; i < smaller_len; i++) {
-		uint8_t rawc =  d_raw[i];
-		uint8_t compc = d_comp[i];
-		CHECK((compc) == (rawc));
-		//std::cout
-		//	<< "raw: " << std::setbase(16) << rawc
-		//	<< " comp: " << std::setbase(16) << compc << std::endl;
-		break;
+    uint8_t* d_raw  = new uint8_t[fraw->getDataLength()];
+    uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
+    fraw->readInto(d_raw, fraw->getDataLength());
+    fcomp->readInto(d_comp, fcomp->getDataLength());
+    // std::cout << "scanning data..." << std::endl;
+    for (unsigned int i = 0; i < smaller_len; i++) {
+        uint8_t rawc  = d_raw[i];
+        uint8_t compc = d_comp[i];
+        CHECK((compc) == (rawc));
+        // std::cout
+        //	<< "raw: " << std::setbase(16) << rawc
+        //	<< " comp: " << std::setbase(16) << compc << std::endl;
+        break;
+    }
+    // std::cout << "scanning finished" << std::endl;
 
-
-	}
-	//std::cout << "scanning finished" << std::endl;
-
-	delete[] d_raw;
-	delete[] d_comp;
-	delete fraw;
-	delete fcomp;
-
+    delete[] d_raw;
+    delete[] d_comp;
+    delete fraw;
+    delete fcomp;
 }
-

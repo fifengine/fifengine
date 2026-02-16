@@ -36,25 +36,28 @@
 // Second block: files included from the same folder
 #include "imagefontbase.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
-	 *  Fifechan imagefontcollection (google for it)
-	 */
-	class SubImageFont: public ImageFontBase {
-		public:
-			/**
-			 * Constructor.
-			 *
-			 * @param filename the filename of the Image Font.
-			 * @param glyphs the glyphs for Fifechan format.
-			 */
-			SubImageFont(const std::string& filename, const std::string& glyphs);
-			~SubImageFont() {}
-		private:
-			SDL_Color m_colorkey;
-	};
+    /** Imagefont that is able to read glyphs from single image sheet, see e.g.
+     *  Fifechan imagefontcollection (google for it)
+     */
+    class SubImageFont : public ImageFontBase
+    {
+    public:
+        /**
+         * Constructor.
+         *
+         * @param filename the filename of the Image Font.
+         * @param glyphs the glyphs for Fifechan format.
+         */
+        SubImageFont(const std::string& filename, const std::string& glyphs);
+        ~SubImageFont() { }
 
-}
+    private:
+        SDL_Color m_colorkey;
+    };
+
+} // namespace FIFE
 
 #endif

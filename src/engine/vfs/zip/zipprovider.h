@@ -35,22 +35,25 @@
 // Second block: files included from the same folder
 #include "vfs/vfssourceprovider.h"
 
-namespace FIFE {
-	/**  A VFS provider for Zip archives.
-	 *
-	 * @see FIFE::VFSSourceProvider
-	 */
-	class ZipProvider : public VFSSourceProvider {
-	public:
-		ZipProvider() : VFSSourceProvider("ZIP") { }
+namespace FIFE
+{
+    /**  A VFS provider for Zip archives.
+     *
+     * @see FIFE::VFSSourceProvider
+     */
+    class ZipProvider : public VFSSourceProvider
+    {
+    public:
+        ZipProvider() : VFSSourceProvider("ZIP") { }
 
-		bool isReadable(const std::string& file) const;
-		VFSSource* createSource(const std::string& file);
-		VFSSource* getSource(const std::string& path) const;
-		virtual bool hasSource(const std::string & path) const;
-	private:
-		std::map<std::string, VFSSource* > m_sources;
-	};
-} //FIFE
+        bool isReadable(const std::string& file) const;
+        VFSSource* createSource(const std::string& file);
+        VFSSource* getSource(const std::string& path) const;
+        virtual bool hasSource(const std::string& path) const;
+
+    private:
+        std::map<std::string, VFSSource*> m_sources;
+    };
+} // namespace FIFE
 
 #endif

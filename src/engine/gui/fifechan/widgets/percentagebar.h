@@ -37,38 +37,37 @@
 
 namespace fcn
 {
-	/**
-	* A simple percentage bar.
-	*
-	*
-	*/
-	class PercentageBar : public Widget
-	{
-	public:
-
-		enum Orientation
-		{
-			HORIZONTAL = 0,
-			VERTICAL
+    /**
+     * A simple percentage bar.
+     *
+     *
+     */
+    class PercentageBar : public Widget
+    {
+    public:
+        enum Orientation
+        {
+            HORIZONTAL = 0,
+            VERTICAL
         };
 
-		/**
-		* Constructor.
-		*
-		*/
-		PercentageBar();
-		virtual ~PercentageBar() {}
+        /**
+         * Constructor.
+         *
+         */
+        PercentageBar();
+        virtual ~PercentageBar() { }
 
-		// Inherited from Widget
+        // Inherited from Widget
 
-		virtual void draw(Graphics* graphics);
+        virtual void draw(Graphics* graphics);
 
-		/*
-		 * Sets the image that will be displayed above the widget
-		 *
-		 * @param image Image to be displayed
-		 */
-		void setForegroundImage(Image* image);
+        /*
+         * Sets the image that will be displayed above the widget
+         *
+         * @param image Image to be displayed
+         */
+        void setForegroundImage(Image* image);
 
         /**
          * Sets the orientation of the percentage bar.
@@ -100,9 +99,9 @@ namespace fcn
          */
         void setValue(int32_t value);
 
-		// changed from private to allow derived instance access
-	protected:
-		Image* mImage;
+        // changed from private to allow derived instance access
+    protected:
+        Image* mImage;
 
         /**
          * Holds the current value of the percentage bar.
@@ -114,7 +113,7 @@ namespace fcn
          * vertically or horizontally.
          */
         Orientation mOrientation;
-	};
-}
+    };
+} // namespace fcn
 
 #endif // end FCN_PERCENTAGE_BAR_HPP

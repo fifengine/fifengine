@@ -35,200 +35,235 @@
 
 struct SDL_Cursor;
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class RenderBackend;
-	class TimeManager;
+    class RenderBackend;
+    class TimeManager;
 
-	/** Defines the type of shown cursor
-	 * native -> default cursor
-	 * image -> cursor from image pool
-	 * animation -> cursor from animation pool
-	 */
-	enum MouseCursorType {
-		CURSOR_NONE,
-		CURSOR_NATIVE,
-		CURSOR_IMAGE,
-		CURSOR_ANIMATION
-	};
+    /** Defines the type of shown cursor
+     * native -> default cursor
+     * image -> cursor from image pool
+     * animation -> cursor from animation pool
+     */
+    enum MouseCursorType
+    {
+        CURSOR_NONE,
+        CURSOR_NATIVE,
+        CURSOR_IMAGE,
+        CURSOR_ANIMATION
+    };
 
-	enum NativeCursor {
-		// Start on 1000000 to avoid id-clashes with SDL
-		NC_ARROW = 1000000,	// Standard arrow
-		NC_IBEAM,			// I-beam for text selection
-		NC_WAIT,			// Hourglass
-		NC_CROSS,			// Crosshair
-		NC_WAITARROW,		// Small wait cursor (or Wait if not available)
-		NC_RESIZENWSE,		// Double arrow pointing northwest and southeast
-		NC_RESIZENESW,		// Double arrow pointing northeast and southwest
-		NC_RESIZEWE,		// Double arrow pointing west and east
-		NC_RESIZENS,		// Double arrow pointing north and south
-		NC_RESIZEALL,		// Four-pointed arrow pointing north, south, east, and west
-		NC_NO,				// Slashed circle
-		NC_HAND				// Hand. Common for links, etc.
-	};
+    enum NativeCursor
+    {
+        // Start on 1000000 to avoid id-clashes with SDL
+        NC_ARROW = 1000000, // Standard arrow
+        NC_IBEAM,           // I-beam for text selection
+        NC_WAIT,            // Hourglass
+        NC_CROSS,           // Crosshair
+        NC_WAITARROW,       // Small wait cursor (or Wait if not available)
+        NC_RESIZENWSE,      // Double arrow pointing northwest and southeast
+        NC_RESIZENESW,      // Double arrow pointing northeast and southwest
+        NC_RESIZEWE,        // Double arrow pointing west and east
+        NC_RESIZENS,        // Double arrow pointing north and south
+        NC_RESIZEALL,       // Four-pointed arrow pointing north, south, east, and west
+        NC_NO,              // Slashed circle
+        NC_HAND             // Hand. Common for links, etc.
+    };
 
-	/**  Cursor class manages mouse cursor handling
-	 */
-	class Cursor {
-	public:
-		/** Constructor.
-		 */
-		Cursor(RenderBackend* renderbackend);
+    /**  Cursor class manages mouse cursor handling
+     */
+    class Cursor
+    {
+    public:
+        /** Constructor.
+         */
+        Cursor(RenderBackend* renderbackend);
 
-		/** Destructor.
-		 */
-		virtual ~Cursor() { invalidate(); }
+        /** Destructor.
+         */
+        virtual ~Cursor()
+        {
+            invalidate();
+        }
 
-		void invalidate();
+        void invalidate();
 
-		/** draws cursor on screen
-		 */
-		virtual void draw();
+        /** draws cursor on screen
+         */
+        virtual void draw();
 
-		/** Sets the current mouse cursor
-		 * @param cursor_id For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
-		 */
-		void set(uint32_t cursor_id=0);
+        /** Sets the current mouse cursor
+         * @param cursor_id For native cursors, this is the resource id to native cursor, or one of the values in
+         * NativeCursor
+         */
+        void set(uint32_t cursor_id = 0);
 
-		/** Sets the current mouse cursor type to image
-		 * @param image ImagePtr to a image used for the cursor
-		 */
-		void set(ImagePtr image);
+        /** Sets the current mouse cursor type to image
+         * @param image ImagePtr to a image used for the cursor
+         */
+        void set(ImagePtr image);
 
-		/** Sets the current mouse cursor type to animation
-		 * @param anim AnimationPtr to a loaded animation used for the cursor
-		 */
-		void set(AnimationPtr anim);
+        /** Sets the current mouse cursor type to animation
+         * @param anim AnimationPtr to a loaded animation used for the cursor
+         */
+        void set(AnimationPtr anim);
 
-		/** Sets the current drag image cursor
-		 * @param image ImagePtr to a image used for the drag
-		 * @param drag_offset_x X Offset to display image when dragging.
-		 * @param drag_offset_y Y Offset to display image when dragging.
-		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
-		 */
-		void setDrag(ImagePtr image, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+        /** Sets the current drag image cursor
+         * @param image ImagePtr to a image used for the drag
+         * @param drag_offset_x X Offset to display image when dragging.
+         * @param drag_offset_y Y Offset to display image when dragging.
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+         */
+        void setDrag(ImagePtr image, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
 
-		/** Sets the current drag animated cursor
-		 * @param anim AnimationPtr to a loaded animation used for the drag
-		 * @param drag_offset_x X Offset to display animation when dragging.
-		 * @param drag_offset_y Y Offset to display animation when dragging.
-		 * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
-		 */
-		void setDrag(AnimationPtr anim, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
+        /** Sets the current drag animated cursor
+         * @param anim AnimationPtr to a loaded animation used for the drag
+         * @param drag_offset_x X Offset to display animation when dragging.
+         * @param drag_offset_y Y Offset to display animation when dragging.
+         * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
+         */
+        void setDrag(AnimationPtr anim, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
 
-		/** Resets the cursor drag type to CURSOR_NONE
-		 */
-		void resetDrag();
+        /** Resets the cursor drag type to CURSOR_NONE
+         */
+        void resetDrag();
 
-		/** Gets the current mouse cursor type
-		 */
-		MouseCursorType getType() const { return m_cursor_type; }
+        /** Gets the current mouse cursor type
+         */
+        MouseCursorType getType() const
+        {
+            return m_cursor_type;
+        }
 
-		/** Gets the current mouse cursor handle
-		 */
-		uint32_t getId() const { return m_cursor_id; }
+        /** Gets the current mouse cursor handle
+         */
+        uint32_t getId() const
+        {
+            return m_cursor_id;
+        }
 
-		/** Gets the current mouse image
-		 */
-		ImagePtr getImage() { return m_cursor_image; }
+        /** Gets the current mouse image
+         */
+        ImagePtr getImage()
+        {
+            return m_cursor_image;
+        }
 
-		/** Gets the current mouse animation
-		 */
-		AnimationPtr getAnimation() { return m_cursor_animation; }
+        /** Gets the current mouse animation
+         */
+        AnimationPtr getAnimation()
+        {
+            return m_cursor_animation;
+        }
 
-		/** Gets the current mouse cursor type
-		 */
-		MouseCursorType getDragType() const { return m_drag_type; }
+        /** Gets the current mouse cursor type
+         */
+        MouseCursorType getDragType() const
+        {
+            return m_drag_type;
+        }
 
-		/** Gets the current mouse drag image
-		 */
-		ImagePtr getDragImage() { return m_cursor_drag_image; }
+        /** Gets the current mouse drag image
+         */
+        ImagePtr getDragImage()
+        {
+            return m_cursor_drag_image;
+        }
 
-		/** Gets the current mouse drag animation
-		 */
-		AnimationPtr getDragAnimation() { return m_cursor_drag_animation; }
+        /** Gets the current mouse drag animation
+         */
+        AnimationPtr getDragAnimation()
+        {
+            return m_cursor_drag_animation;
+        }
 
-		/** Gets the current mouse x position
-		 */
-		uint32_t getX() const { return m_mx; }
+        /** Gets the current mouse x position
+         */
+        uint32_t getX() const
+        {
+            return m_mx;
+        }
 
-		/** Gets the current mouse y position
-		 */
-		uint32_t getY() const { return m_my; }
+        /** Gets the current mouse y position
+         */
+        uint32_t getY() const
+        {
+            return m_my;
+        }
 
-		/** Set the mouse position
-		 * @param x,y: The new position in screen coordinates
-		 */
-		void setPosition(uint32_t x, uint32_t y);
+        /** Set the mouse position
+         * @param x,y: The new position in screen coordinates
+         */
+        void setPosition(uint32_t x, uint32_t y);
 
-		/** Get the current mouse position
-		*/
-		void getPosition(int32_t* x, int32_t* y);
+        /** Get the current mouse position
+         */
+        void getPosition(int32_t* x, int32_t* y);
 
-		/** Enables or disables the native image cursor feature.
-		 * If enabled, cursors set to an image or an animation will be set using SDL
-		 * and drawn by the native platform; otherwise they will be drawn by FIFE.
-		 * This setting has no effect on NativeCursor types which are always native
-		 * and on the drag cursor which is always drawn by FIFE.
-		 */
-		void setNativeImageCursorEnabled(bool native_image_cursor_enabled);
+        /** Enables or disables the native image cursor feature.
+         * If enabled, cursors set to an image or an animation will be set using SDL
+         * and drawn by the native platform; otherwise they will be drawn by FIFE.
+         * This setting has no effect on NativeCursor types which are always native
+         * and on the drag cursor which is always drawn by FIFE.
+         */
+        void setNativeImageCursorEnabled(bool native_image_cursor_enabled);
 
-		/** Returns whether cursors set to an image or an animation are drawn natively.
-		 * @see setNativeImageCursorEnabled()
-		 */
-		bool isNativeImageCursorEnabled() const;
+        /** Returns whether cursors set to an image or an animation are drawn natively.
+         * @see setNativeImageCursorEnabled()
+         */
+        bool isNativeImageCursorEnabled() const;
 
-	protected:
-		/** Sets the cursor to a native type.
-		  * @param cursor_id One of the values in NativeCursor
-		  */
-		void setNativeCursor(uint32_t cursor_id);
+    protected:
+        /** Sets the cursor to a native type.
+         * @param cursor_id One of the values in NativeCursor
+         */
+        void setNativeCursor(uint32_t cursor_id);
 
-		/** Sets the SDL cursor to the specified image.
-		 * Falls back to software cursor on failure.
-		 * @return false on error, true otherwise
-		 */
-		bool setNativeImageCursor(ImagePtr image);
+        /** Sets the SDL cursor to the specified image.
+         * Falls back to software cursor on failure.
+         * @return false on error, true otherwise
+         */
+        bool setNativeImageCursor(ImagePtr image);
 
-		/** To get some consistancy between platforms, this function checks
-		  * if cursor_id matches any of the values in NativeCursor, and
-		  * returns the SDL_SystemCursor.
-		  * If no match is found, cursor_id is returned.
-		  *
-		  * @param cursor_id One of the values in NativeCursor
-		  */
-		uint32_t getNativeId(uint32_t cursor_id);
+        /** To get some consistancy between platforms, this function checks
+         * if cursor_id matches any of the values in NativeCursor, and
+         * returns the SDL_SystemCursor.
+         * If no match is found, cursor_id is returned.
+         *
+         * @param cursor_id One of the values in NativeCursor
+         */
+        uint32_t getNativeId(uint32_t cursor_id);
 
-	private:
-		uint32_t m_cursor_id;
-		MouseCursorType m_cursor_type;
-		MouseCursorType m_drag_type;
+    private:
+        uint32_t m_cursor_id;
+        MouseCursorType m_cursor_type;
+        MouseCursorType m_drag_type;
 
-		SDL_Cursor* m_native_cursor;
+        SDL_Cursor* m_native_cursor;
 
-		ImagePtr m_cursor_image;
-		ImagePtr m_cursor_drag_image;
+        ImagePtr m_cursor_image;
+        ImagePtr m_cursor_drag_image;
 
-		AnimationPtr m_cursor_animation;
-		AnimationPtr m_cursor_drag_animation;
+        AnimationPtr m_cursor_animation;
+        AnimationPtr m_cursor_drag_animation;
 
-		RenderBackend* m_renderbackend;
+        RenderBackend* m_renderbackend;
 
-		uint32_t m_animtime;
-		uint32_t m_drag_animtime;
+        uint32_t m_animtime;
+        uint32_t m_drag_animtime;
 
-		int32_t m_drag_offset_x;
-		int32_t m_drag_offset_y;
-		int32_t m_mx;
-		int32_t m_my;
-		TimeManager* m_timemanager;
+        int32_t m_drag_offset_x;
+        int32_t m_drag_offset_y;
+        int32_t m_mx;
+        int32_t m_my;
+        TimeManager* m_timemanager;
 
-		bool m_invalidated;
-		bool m_native_image_cursor_enabled;
-		ImagePtr m_native_cursor_image;
-	};
+        bool m_invalidated;
+        bool m_native_image_cursor_enabled;
+        ImagePtr m_native_cursor_image;
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

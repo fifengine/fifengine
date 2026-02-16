@@ -34,28 +34,33 @@
 
 #include "cellgrid.h"
 
-namespace FIFE {
-	class SquareGrid: public CellGrid {
-	public:
-		SquareGrid();
-		virtual ~SquareGrid();
+namespace FIFE
+{
+    class SquareGrid : public CellGrid
+    {
+    public:
+        SquareGrid();
+        virtual ~SquareGrid();
 
-		const std::string& getType() const;
-		const std::string& getName() const;
-		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		uint32_t getCellSideCount() const { return 4; }
-		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
-		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
-		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
-		ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords);
-		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
-		std::vector<ModelCoordinate> toMultiCoordinates(const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
-		std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end);
-		CellGrid* clone();
-
-	};
-}
+        const std::string& getType() const;
+        const std::string& getName() const;
+        bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
+        double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+        double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
+        uint32_t getCellSideCount() const
+        {
+            return 4;
+        }
+        ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
+        ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
+        ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
+        ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords);
+        void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
+        std::vector<ModelCoordinate> toMultiCoordinates(
+            const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
+        std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end);
+        CellGrid* clone();
+    };
+} // namespace FIFE
 
 #endif

@@ -32,13 +32,15 @@
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
 
-namespace FIFE {
-	/** ImageLoader for some basic formats like jpeg, png etc.
-	 */
-	class ImageLoader : public IResourceLoader {
-	public:
-		ImageLoader() {}
-		virtual void load(IResource* res);
-	};
-}
+namespace FIFE
+{
+    /** ImageLoader for some basic formats like jpeg, png etc.
+     */
+    class ImageLoader : public IResourceLoader
+    {
+    public:
+        ImageLoader() { }
+        virtual void load(IResource* res);
+    };
+} // namespace FIFE
 #endif

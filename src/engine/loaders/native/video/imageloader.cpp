@@ -35,68 +35,71 @@
 #include "util/resource/resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "video/renderbackend.h"
 #include "video/image.h"
+#include "video/renderbackend.h"
 
 #include "imageloader.h"
 
-namespace FIFE {
-	void ImageLoader::load(IResource* res) {
-		VFS* vfs = VFS::instance();
+namespace FIFE
+{
+    void ImageLoader::load(IResource* res)
+    {
+        VFS* vfs = VFS::instance();
 
-		Image* img = dynamic_cast<Image*>(res);
+        Image* img = dynamic_cast<Image*>(res);
 
-		//Have to save the images x and y shift or it gets lost when it's
-		//loaded again.
-		int32_t xShiftSave = img->getXShift();
-		int32_t yShiftSave = img->getYShift();
+        // Have to save the images x and y shift or it gets lost when it's
+        // loaded again.
+        int32_t xShiftSave = img->getXShift();
+        int32_t yShiftSave = img->getYShift();
 
-		if(!img->isSharedImage()) {
-			const std::string& filename = img->getName();
-			std::unique_ptr<RawData> data(vfs->open(filename));
-			size_t datalen = data->getDataLength();
-			std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
-			data->readInto(darray.get(), datalen);
-			SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
+        if (!img->isSharedImage()) {
+            const std::string& filename = img->getName();
+            std::unique_ptr<RawData> data(vfs->open(filename));
+            size_t datalen = data->getDataLength();
+            std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
+            data->readInto(darray.get(), datalen);
+            SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
-			SDL_Surface* surface = IMG_Load_RW(rwops, false);
+            SDL_Surface* surface = IMG_Load_RW(rwops, false);
 
-			if (!surface) {
-				throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
-			}
+            if (!surface) {
+                throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
+            }
 
-			RenderBackend* rb = RenderBackend::instance();
-			// in case of SDL we don't need to convert the surface
-			if (rb->getName() == "SDL") {
-				img->setSurface(surface);
-			// in case of OpenGL we need a 32bit surface
-			} else {
-				SDL_PixelFormat dst_format = rb->getPixelFormat();
-				SDL_PixelFormat src_format = *surface->format;
-				uint8_t dstbits = dst_format.BitsPerPixel;
-				uint8_t srcbits = src_format.BitsPerPixel;
+            RenderBackend* rb = RenderBackend::instance();
+            // in case of SDL we don't need to convert the surface
+            if (rb->getName() == "SDL") {
+                img->setSurface(surface);
+                // in case of OpenGL we need a 32bit surface
+            } else {
+                SDL_PixelFormat dst_format = rb->getPixelFormat();
+                SDL_PixelFormat src_format = *surface->format;
+                uint8_t dstbits            = dst_format.BitsPerPixel;
+                uint8_t srcbits            = src_format.BitsPerPixel;
 
-				if (srcbits != 32 || dst_format.Rmask != src_format.Rmask || dst_format.Gmask != src_format.Gmask ||
-					dst_format.Bmask != src_format.Bmask || dst_format.Amask != src_format.Amask) {
-					dst_format.BitsPerPixel = 32;
-					SDL_Surface* conv = SDL_ConvertSurface(surface, &dst_format, 0);
-					dst_format.BitsPerPixel = dstbits;
+                if (srcbits != 32 || dst_format.Rmask != src_format.Rmask || dst_format.Gmask != src_format.Gmask ||
+                    dst_format.Bmask != src_format.Bmask || dst_format.Amask != src_format.Amask) {
+                    dst_format.BitsPerPixel = 32;
+                    SDL_Surface* conv       = SDL_ConvertSurface(surface, &dst_format, 0);
+                    dst_format.BitsPerPixel = dstbits;
 
-					if (!conv) {
-						throw SDLException(std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
-					}
+                    if (!conv) {
+                        throw SDLException(
+                            std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
+                    }
 
-					img->setSurface(conv);
-					SDL_FreeSurface(surface);
-				} else {
-					img->setSurface(surface);
-				}
-			}
+                    img->setSurface(conv);
+                    SDL_FreeSurface(surface);
+                } else {
+                    img->setSurface(surface);
+                }
+            }
 
-			SDL_FreeRW(rwops);
-		}
-		//restore saved x and y shifts
-		img->setXShift(xShiftSave);
-		img->setYShift(yShiftSave);
-	}
-}  //FIFE
+            SDL_FreeRW(rwops);
+        }
+        // restore saved x and y shifts
+        img->setXShift(xShiftSave);
+        img->setYShift(yShiftSave);
+    }
+} // namespace FIFE

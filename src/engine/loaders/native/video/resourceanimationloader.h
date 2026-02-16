@@ -32,13 +32,15 @@
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
 
-namespace FIFE {
-	/** ResourceAnimationLoader.
-	 */
-	class ResourceAnimationLoader : public IResourceLoader {
-	public:
-		ResourceAnimationLoader() {}
-		virtual void load(IResource* res);
-	};
-}
+namespace FIFE
+{
+    /** ResourceAnimationLoader.
+     */
+    class ResourceAnimationLoader : public IResourceLoader
+    {
+    public:
+        ResourceAnimationLoader() { }
+        virtual void load(IResource* res);
+    };
+} // namespace FIFE
 #endif

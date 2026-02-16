@@ -33,60 +33,75 @@
 // Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	typedef std::size_t ResourceHandle;
+    typedef std::size_t ResourceHandle;
 
-	class IResource;
+    class IResource;
 
-	class IResourceLoader {
-	public:
-		IResourceLoader() { }
-		virtual ~IResourceLoader() { }
+    class IResourceLoader
+    {
+    public:
+        IResourceLoader() { }
+        virtual ~IResourceLoader() { }
 
-		virtual void load(IResource* resource) = 0;
-	};
+        virtual void load(IResource* resource) = 0;
+    };
 
-	class IResource {
-	public:
-		enum ResourceState {
-			RES_INVALID = 0,
-			RES_NOT_LOADED,
-			RES_LOADED
-		};
+    class IResource
+    {
+    public:
+        enum ResourceState
+        {
+            RES_INVALID = 0,
+            RES_NOT_LOADED,
+            RES_LOADED
+        };
 
-		IResource(const std::string& name, IResourceLoader* loader = 0)
-		: m_name(name),
-		  m_loader(loader),
-		  m_state(RES_NOT_LOADED),
-		  m_handle(m_curhandle++) { }
+        IResource(const std::string& name, IResourceLoader* loader = 0) :
+            m_name(name), m_loader(loader), m_state(RES_NOT_LOADED), m_handle(m_curhandle++)
+        {
+        }
 
-		virtual ~IResource() { }
+        virtual ~IResource() { }
 
-		virtual const std::string& getName() { return m_name; }
+        virtual const std::string& getName()
+        {
+            return m_name;
+        }
 
-		ResourceHandle getHandle() { return m_handle; }
+        ResourceHandle getHandle()
+        {
+            return m_handle;
+        }
 
-		virtual ResourceState getState() { return m_state; }
-		virtual void setState(const ResourceState& state) { m_state = state; }
+        virtual ResourceState getState()
+        {
+            return m_state;
+        }
+        virtual void setState(const ResourceState& state)
+        {
+            m_state = state;
+        }
 
-		virtual size_t getSize() = 0;
+        virtual size_t getSize() = 0;
 
-		virtual void load() = 0;
-		virtual void free() = 0;
+        virtual void load() = 0;
+        virtual void free() = 0;
 
-	protected:
-		std::string m_name;
-		IResourceLoader* m_loader;
-		ResourceState m_state;
+    protected:
+        std::string m_name;
+        IResourceLoader* m_loader;
+        ResourceState m_state;
 
-	private:
-		ResourceHandle m_handle;
-		static ResourceHandle m_curhandle;
-	};
+    private:
+        ResourceHandle m_handle;
+        static ResourceHandle m_curhandle;
+    };
 
-	typedef SharedPtr<IResource> ResourcePtr;
+    typedef SharedPtr<IResource> ResourcePtr;
 
-} //FIFE
+} // namespace FIFE
 
 #endif

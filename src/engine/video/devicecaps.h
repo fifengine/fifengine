@@ -36,212 +36,287 @@
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class ScreenMode {
-	public:
-		/** Default Constructor
-		 * @note You shouldn't construct these objects yourself.  This default
-		 * constructor was provided because swig complained that was none.
-		 */
-		ScreenMode();
-		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
-		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags);
-		ScreenMode(const ScreenMode& rhs);
+    class ScreenMode
+    {
+    public:
+        /** Default Constructor
+         * @note You shouldn't construct these objects yourself.  This default
+         * constructor was provided because swig complained that was none.
+         */
+        ScreenMode();
+        ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
+        ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags);
+        ScreenMode(const ScreenMode& rhs);
 
-		/** Destructor.
-		 */
-		~ScreenMode() {};
+        /** Destructor.
+         */
+        ~ScreenMode() { };
 
-		bool operator <(const ScreenMode& rhs) const;
+        bool operator<(const ScreenMode& rhs) const;
 
-		/** Returns the width of the screen mode.
-		 * @note If both width and height are 0 it means that ALL modes are available
-		 * for use with the specified flags.  Most likely this is a windowed mode.
-		 */
-		uint16_t getWidth() const { return m_width; };
+        /** Returns the width of the screen mode.
+         * @note If both width and height are 0 it means that ALL modes are available
+         * for use with the specified flags.  Most likely this is a windowed mode.
+         */
+        uint16_t getWidth() const
+        {
+            return m_width;
+        };
 
-		/** Returns the height of the screen mode.
-		 * @note If both width and height are 0 it means that ALL modes are available
-		 * for use with the specified flags.  Most likely this is a windowed mode.
-		 */
-		uint16_t getHeight() const { return m_height; };
+        /** Returns the height of the screen mode.
+         * @note If both width and height are 0 it means that ALL modes are available
+         * for use with the specified flags.  Most likely this is a windowed mode.
+         */
+        uint16_t getHeight() const
+        {
+            return m_height;
+        };
 
-		/** Returns the number of bits per pixel this mode uses.
-		 */
-		uint16_t getBPP() const { return m_bpp; };
+        /** Returns the number of bits per pixel this mode uses.
+         */
+        uint16_t getBPP() const
+        {
+            return m_bpp;
+        };
 
-		/** Returns the refresh rate in Hz of this mode.
-		 */
-		uint16_t getRefreshRate() const { return m_refreshRate; }
+        /** Returns the refresh rate in Hz of this mode.
+         */
+        uint16_t getRefreshRate() const
+        {
+            return m_refreshRate;
+        }
 
-		/** Returns the SDL flags used when testing this mode.
-		 */
-		uint32_t getSDLFlags() const { return m_SDLFlags; };
+        /** Returns the SDL flags used when testing this mode.
+         */
+        uint32_t getSDLFlags() const
+        {
+            return m_SDLFlags;
+        };
 
-		/** True if this is a fullscreen mode.  False if it is a windowed mode.
-		 */
-		bool isFullScreen() const { return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) ? true : false;};
+        /** True if this is a fullscreen mode.  False if it is a windowed mode.
+         */
+        bool isFullScreen() const
+        {
+            return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) ? true : false;
+        };
 
-		/** True if this mode uses the OpenGL renderer.  False otherwise.
-		 */
-		bool isOpenGL() const { return (m_SDLFlags & SDL_WINDOW_OPENGL) ? true : false; };
+        /** True if this mode uses the OpenGL renderer.  False otherwise.
+         */
+        bool isOpenGL() const
+        {
+            return (m_SDLFlags & SDL_WINDOW_OPENGL) ? true : false;
+        };
 
-		/** Is this screen mode an SDL only screen mode
-		 */
-		bool isSDL() const { return (!(m_SDLFlags & SDL_WINDOW_OPENGL)) ? true : false; };
+        /** Is this screen mode an SDL only screen mode
+         */
+        bool isSDL() const
+        {
+            return (!(m_SDLFlags & SDL_WINDOW_OPENGL)) ? true : false;
+        };
 
-		/** Sets the pixel format enum.
-		 */
-		void setFormat(uint32_t format) { m_format = format;}
+        /** Sets the pixel format enum.
+         */
+        void setFormat(uint32_t format)
+        {
+            m_format = format;
+        }
 
-		/** Returns the pixel format enum.
-		 */
-		uint32_t getFormat() const { return m_format; }
+        /** Returns the pixel format enum.
+         */
+        uint32_t getFormat() const
+        {
+            return m_format;
+        }
 
-		/** Sets the display index.
-		 */
-		void setDisplay(uint8_t display) { m_display = display; }
+        /** Sets the display index.
+         */
+        void setDisplay(uint8_t display)
+        {
+            m_display = display;
+        }
 
-		/** Returns the display index.
-		 */
-		uint8_t getDisplay() const { return m_display; }
-		
-		/** Sets the render driver name.
-		 */
-		void setRenderDriverName(const std::string driver) { m_renderDriver = driver; }
+        /** Returns the display index.
+         */
+        uint8_t getDisplay() const
+        {
+            return m_display;
+        }
 
-		/** Returns the render driver name. Default is "".
-		 */
-		const std::string& getRenderDriverName() const { return m_renderDriver; }
+        /** Sets the render driver name.
+         */
+        void setRenderDriverName(const std::string driver)
+        {
+            m_renderDriver = driver;
+        }
 
-		/** Sets the index of the render driver used by SDL.
-		 */
-		void setRenderDriverIndex(int8_t index) { m_renderDriverIndex = index; }
+        /** Returns the render driver name. Default is "".
+         */
+        const std::string& getRenderDriverName() const
+        {
+            return m_renderDriver;
+        }
 
-		/** Returns the index of the render driver. Default is -1.
-		 */
-		int8_t getRenderDriverIndex() const { return m_renderDriverIndex; }
+        /** Sets the index of the render driver used by SDL.
+         */
+        void setRenderDriverIndex(int8_t index)
+        {
+            m_renderDriverIndex = index;
+        }
 
-		//OpenGL, windowed
-		static const uint32_t WINDOWED_OPENGL = SDL_WINDOW_OPENGL;
-		//OpenGL, fullscreen
-		static const uint32_t FULLSCREEN_OPENGL = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
-		//SDL, windowed
-		static const uint32_t WINDOWED_SDL = 0;
-		//SDL, fullscreen
-		static const uint32_t FULLSCREEN_SDL = SDL_WINDOW_FULLSCREEN;
+        /** Returns the index of the render driver. Default is -1.
+         */
+        int8_t getRenderDriverIndex() const
+        {
+            return m_renderDriverIndex;
+        }
 
-	private:
-		uint16_t m_width;
-		uint16_t m_height;
-		uint16_t m_bpp;
-		uint16_t m_refreshRate;
-		uint32_t m_SDLFlags;
-		uint32_t m_format;
-		uint8_t m_display;
-		std::string m_renderDriver;
-		int8_t m_renderDriverIndex;
-	};  //ScreenMode
+        // OpenGL, windowed
+        static const uint32_t WINDOWED_OPENGL = SDL_WINDOW_OPENGL;
+        // OpenGL, fullscreen
+        static const uint32_t FULLSCREEN_OPENGL = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+        // SDL, windowed
+        static const uint32_t WINDOWED_SDL = 0;
+        // SDL, fullscreen
+        static const uint32_t FULLSCREEN_SDL = SDL_WINDOW_FULLSCREEN;
 
-	class DeviceCaps {
-	public:
-		/** Constructor.
-		 */
-		DeviceCaps();
+    private:
+        uint16_t m_width;
+        uint16_t m_height;
+        uint16_t m_bpp;
+        uint16_t m_refreshRate;
+        uint32_t m_SDLFlags;
+        uint32_t m_format;
+        uint8_t m_display;
+        std::string m_renderDriver;
+        int8_t m_renderDriverIndex;
+    }; // ScreenMode
 
-		/** Destructor.
-		 */
-		~DeviceCaps();
+    class DeviceCaps
+    {
+    public:
+        /** Constructor.
+         */
+        DeviceCaps();
 
-		/** Should be called AFTER SDL_Init() has been called
-		 */
-		void fillDeviceCaps();
+        /** Destructor.
+         */
+        ~DeviceCaps();
 
-		/** Clears all information gathered for the device
-		 */
-		void reset();
+        /** Should be called AFTER SDL_Init() has been called
+         */
+        void fillDeviceCaps();
 
-		/** Gets the available video drivers for your operating system
-		 */
-		std::vector<std::string> getAvailableVideoDrivers() const { return m_availableVideoDrivers; };
+        /** Clears all information gathered for the device
+         */
+        void reset();
 
-		/** Gets the available render drivers for your operating system
-		 */
-		std::vector<std::string> getAvailableRenderDrivers() const { return m_availableRenderDrivers; };
+        /** Gets the available video drivers for your operating system
+         */
+        std::vector<std::string> getAvailableVideoDrivers() const
+        {
+            return m_availableVideoDrivers;
+        };
 
-		/** Returns a vector containing screen modes.
-		 */
-		std::vector<ScreenMode> getSupportedScreenModes() const { return m_screenModes; };
+        /** Gets the available render drivers for your operating system
+         */
+        std::vector<std::string> getAvailableRenderDrivers() const
+        {
+            return m_availableRenderDrivers;
+        };
 
-		/** Gets the nearest valid screen mode based on the arguments passed
-		 */
-		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
+        /** Returns a vector containing screen modes.
+         */
+        std::vector<ScreenMode> getSupportedScreenModes() const
+        {
+            return m_screenModes;
+        };
 
-		/** Gets the nearest valid screen mode based on the arguments passed
-		 */
-		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs, uint16_t refresh, uint8_t display = 0) const;
+        /** Gets the nearest valid screen mode based on the arguments passed
+         */
+        ScreenMode getNearestScreenMode(
+            uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
 
-		/** Returns the name of the current video driver.
-		 */
-		std::string getVideoDriverName() const { return m_videoDriverName; }
+        /** Gets the nearest valid screen mode based on the arguments passed
+         */
+        ScreenMode getNearestScreenMode(
+            uint16_t width,
+            uint16_t height,
+            uint16_t bpp,
+            const std::string& renderer,
+            bool fs,
+            uint16_t refresh,
+            uint8_t display = 0) const;
 
-		/** Sets the name of the video driver.
-		 */
-		void setVideoDriverName(const std::string& driver) { m_videoDriverName = driver; }
+        /** Returns the name of the current video driver.
+         */
+        std::string getVideoDriverName() const
+        {
+            return m_videoDriverName;
+        }
 
-		/** Returns the name of the current render driver or
-		 *  an empty string to initialize the first one supporting the requested flags.
-		 */
-		std::string getRenderDriverName() const { return m_renderDriverName; }
+        /** Sets the name of the video driver.
+         */
+        void setVideoDriverName(const std::string& driver)
+        {
+            m_videoDriverName = driver;
+        }
 
-		/** Sets the name of the render driver.
-		 */
-		void setRenderDriverName(const std::string& driver);
+        /** Returns the name of the current render driver or
+         *  an empty string to initialize the first one supporting the requested flags.
+         */
+        std::string getRenderDriverName() const
+        {
+            return m_renderDriverName;
+        }
 
-		/** Returns the number of displays.
-		 */
-		uint8_t getDisplayCount() const;
+        /** Sets the name of the render driver.
+         */
+        void setRenderDriverName(const std::string& driver);
 
-		/** Returns the display name for the given display index.
-		 */
-		std::string getDisplayName(uint8_t display = 0) const;
+        /** Returns the number of displays.
+         */
+        uint8_t getDisplayCount() const;
 
-		/** Returns the SDL_PixelFormatEnum of the desktop for the given display index.
-		 */
-		uint32_t getDesktopFormat(uint8_t display = 0) const;
-		
-		/** Returns the refresh rate in Hz of the desktop for the given display index.
-		 */
-		int32_t getDesktopRefreshRate(uint8_t display = 0) const;
+        /** Returns the display name for the given display index.
+         */
+        std::string getDisplayName(uint8_t display = 0) const;
 
-		/** Returns the width of the desktop resolution for the given display index.
-		 */
-		int32_t getDesktopWidth(uint8_t display = 0) const;
+        /** Returns the SDL_PixelFormatEnum of the desktop for the given display index.
+         */
+        uint32_t getDesktopFormat(uint8_t display = 0) const;
 
-		/** Returns the height of the desktop resolution for the given display index.
-		 */
-		int32_t getDesktopHeight(uint8_t display = 0) const;
+        /** Returns the refresh rate in Hz of the desktop for the given display index.
+         */
+        int32_t getDesktopRefreshRate(uint8_t display = 0) const;
 
-		/** Returns the bounding points for the given display index.
-		 */
-		Rect getDisplayBounds(uint8_t display = 0) const;
+        /** Returns the width of the desktop resolution for the given display index.
+         */
+        int32_t getDesktopWidth(uint8_t display = 0) const;
 
-	private:
-		std::vector<ScreenMode> m_screenModes;
-		std::string m_videoDriverName;
-		std::vector<std::string> m_availableVideoDrivers;
+        /** Returns the height of the desktop resolution for the given display index.
+         */
+        int32_t getDesktopHeight(uint8_t display = 0) const;
 
-		std::string m_renderDriverName;
-		int8_t m_renderDriverIndex;
-		std::vector<std::string> m_availableRenderDrivers;
+        /** Returns the bounding points for the given display index.
+         */
+        Rect getDisplayBounds(uint8_t display = 0) const;
 
-		/** Called in the constructor.  No need for anyone to call this
-		 */
-		void fillAvailableDrivers();
-	}; //DeviceCaps
-} //FIFE
+    private:
+        std::vector<ScreenMode> m_screenModes;
+        std::string m_videoDriverName;
+        std::vector<std::string> m_availableVideoDrivers;
 
+        std::string m_renderDriverName;
+        int8_t m_renderDriverIndex;
+        std::vector<std::string> m_availableRenderDrivers;
 
+        /** Called in the constructor.  No need for anyone to call this
+         */
+        void fillAvailableDrivers();
+    }; // DeviceCaps
+} // namespace FIFE
 
-#endif //FIFE_DEVICECAPS_H
+#endif // FIFE_DEVICECAPS_H

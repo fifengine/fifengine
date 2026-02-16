@@ -32,45 +32,54 @@
 
 #include "timeprovider.h"
 
-namespace FIFE {
-	TimeProvider::TimeProvider(TimeProvider* master): 
-		m_master(master), 
-		m_multiplier(1.0) {
-		m_time_static = m_time_scaled = master ? master->getGameTime() : TimeManager::instance()->getTime();
-	}
-	
-	TimeProvider::~TimeProvider() {}
-	
-	void TimeProvider::setMultiplier(float multiplier) { 
-		if (multiplier < 0.0) {
-			throw NotSupported("Negative time multiplier are not supported");
-		}
-		m_time_static = getPreciseGameTime();
-		m_time_scaled = m_master ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime());
-		m_multiplier = multiplier;
-	}
-	
-	float TimeProvider::getMultiplier() const { 
-		return m_multiplier;
-	}
-	
-	float TimeProvider::getTotalMultiplier() const {
-		if (m_master) {
-			return m_master->getTotalMultiplier() * m_multiplier;
-		} else {
-			return m_multiplier;
-		}
-	}
-	
-	uint32_t TimeProvider::getGameTime() const {
-		return static_cast<uint32_t>(getPreciseGameTime());
-	}
-	
-	double TimeProvider::getPreciseGameTime() const {
-		return m_time_static + m_multiplier * ((m_master ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime())) - m_time_scaled);
-	}
-	
-	uint32_t scaleTime(float multiplier, uint32_t ticks) {
-		return static_cast<uint32_t>(static_cast<float>(ticks) * multiplier);
-	}
-}
+namespace FIFE
+{
+    TimeProvider::TimeProvider(TimeProvider* master) : m_master(master), m_multiplier(1.0)
+    {
+        m_time_static = m_time_scaled = master ? master->getGameTime() : TimeManager::instance()->getTime();
+    }
+
+    TimeProvider::~TimeProvider() { }
+
+    void TimeProvider::setMultiplier(float multiplier)
+    {
+        if (multiplier < 0.0) {
+            throw NotSupported("Negative time multiplier are not supported");
+        }
+        m_time_static = getPreciseGameTime();
+        m_time_scaled =
+            m_master ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime());
+        m_multiplier = multiplier;
+    }
+
+    float TimeProvider::getMultiplier() const
+    {
+        return m_multiplier;
+    }
+
+    float TimeProvider::getTotalMultiplier() const
+    {
+        if (m_master) {
+            return m_master->getTotalMultiplier() * m_multiplier;
+        } else {
+            return m_multiplier;
+        }
+    }
+
+    uint32_t TimeProvider::getGameTime() const
+    {
+        return static_cast<uint32_t>(getPreciseGameTime());
+    }
+
+    double TimeProvider::getPreciseGameTime() const
+    {
+        return m_time_static + m_multiplier * ((m_master ? m_master->getPreciseGameTime() :
+                                                           static_cast<float>(TimeManager::instance()->getTime())) -
+                                               m_time_scaled);
+    }
+
+    uint32_t scaleTime(float multiplier, uint32_t ticks)
+    {
+        return static_cast<uint32_t>(static_cast<float>(ticks) * multiplier);
+    }
+} // namespace FIFE

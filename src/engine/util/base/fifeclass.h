@@ -32,27 +32,32 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-namespace FIFE {
+namespace FIFE
+{
 
-	typedef std::size_t fifeid_t;
+    typedef std::size_t fifeid_t;
 
-	/** Base class for all fife classes
-	 * Used e.g. to track instances over swig conversion
-	 */
-	class FifeClass {
-	public:
-		FifeClass(): m_fifeid(m_curid++) { }
+    /** Base class for all fife classes
+     * Used e.g. to track instances over swig conversion
+     */
+    class FifeClass
+    {
+    public:
+        FifeClass() : m_fifeid(m_curid++) { }
 
-		virtual ~FifeClass() { }
+        virtual ~FifeClass() { }
 
-		/** Gets unique id of this instance inside the engine
-		 */
-		fifeid_t getFifeId() { return m_fifeid; }
+        /** Gets unique id of this instance inside the engine
+         */
+        fifeid_t getFifeId()
+        {
+            return m_fifeid;
+        }
 
-	private:
-		fifeid_t m_fifeid;
-		static fifeid_t m_curid;
-	};
-}
+    private:
+        fifeid_t m_fifeid;
+        static fifeid_t m_curid;
+    };
+} // namespace FIFE
 
 #endif

@@ -35,21 +35,22 @@
 //
 #include "eventsourcetypes.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/**  Representation of event source (a thing sending events)
-	 */
-	class IEventSource {
-	public:
-		/** Gets the source type of this event
-		 * @return source type of this event
-		 */
-		virtual EventSourceType getEventSourceType() = 0;
+    /**  Representation of event source (a thing sending events)
+     */
+    class IEventSource
+    {
+    public:
+        /** Gets the source type of this event
+         * @return source type of this event
+         */
+        virtual EventSourceType getEventSourceType() = 0;
 
-		virtual ~IEventSource() {}
-	};
+        virtual ~IEventSource() { }
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif
-

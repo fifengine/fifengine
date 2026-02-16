@@ -38,30 +38,32 @@
 
 #include "rawdatadat2.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
-	 * @see MFFalloutDAT2
-	 */
-	class RawDataDAT2 : public RawDataMemSource {
-		public:
+    /** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
+     * @see MFFalloutDAT2
+     */
+    class RawDataDAT2 : public RawDataMemSource
+    {
+    public:
+        /** The needed information for the extraction.
+         */
+        struct s_info
+        {
+            std::string name;
+            uint32_t packedLength;
+            uint32_t unpackedLength;
+            uint32_t offset;
+            uint32_t type;
+        };
 
-			/** The needed information for the extraction.
-			 */
-			struct s_info {
-				std::string name;
-				uint32_t packedLength;
-				uint32_t unpackedLength;
-				uint32_t offset;
-				uint32_t type;
-			};
-
-			/** Constructor
-			 * @param vfs The vfs to open with.
-			 * @param datfile The .DAT archive - e.g. master.DAT
-			 * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
-			 */
-			RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info);
-	};
-}
+        /** Constructor
+         * @param vfs The vfs to open with.
+         * @param datfile The .DAT archive - e.g. master.DAT
+         * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
+         */
+        RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info);
+    };
+} // namespace FIFE
 #endif

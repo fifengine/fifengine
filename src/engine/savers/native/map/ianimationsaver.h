@@ -32,18 +32,20 @@
 // Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-    class IAnimationSaver {
+    class IAnimationSaver
+    {
     public:
         virtual ~IAnimationSaver() { };
 
         /** responsible for saving the animation
-        */
+         */
         virtual void save(const std::string& filename) = 0;
     };
 
     typedef SharedPtr<IAnimationSaver> AnimationSaverPtr;
-}
+} // namespace FIFE
 
 #endif

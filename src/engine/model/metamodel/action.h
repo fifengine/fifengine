@@ -23,9 +23,9 @@
 #define FIFE_MODEL_METAMODEL_ACTION_H
 
 // Standard C++ library includes
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
 
 // 3rd party library includes
 
@@ -33,65 +33,89 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/math/angles.h"
 #include "util/base/fifeclass.h"
+#include "util/math/angles.h"
 
 #include "ivisual.h"
 
-namespace FIFE {
-	class ActionAudio;
+namespace FIFE
+{
+    class ActionAudio;
 
-	class Action : public FifeClass {
-	public:
-		/** Constructor
-		 * Actions are created by calling addAction from object, thus
-		 * this method should really be called only by object or test code
-		 */
-		Action(const std::string& identifier);
+    class Action : public FifeClass
+    {
+    public:
+        /** Constructor
+         * Actions are created by calling addAction from object, thus
+         * this method should really be called only by object or test code
+         */
+        Action(const std::string& identifier);
 
-		/** Destructor
-		 */
-		virtual ~Action();
+        /** Destructor
+         */
+        virtual ~Action();
 
-		/** Get the identifier for this action.
-		 */
-		const std::string& getId() { return m_id; }
+        /** Get the identifier for this action.
+         */
+        const std::string& getId()
+        {
+            return m_id;
+        }
 
-		/** Sets the duration for this action
-		 */
-		void setDuration(uint32_t duration) { m_duration = duration; }
+        /** Sets the duration for this action
+         */
+        void setDuration(uint32_t duration)
+        {
+            m_duration = duration;
+        }
 
-		/** Gets the duration of this action
-		 */
-		uint32_t getDuration() { return m_duration; }
+        /** Gets the duration of this action
+         */
+        uint32_t getDuration()
+        {
+            return m_duration;
+        }
 
-		/** Sets visualization to be used. Transfers ownership.
-		 */
-		void adoptVisual(IVisual* visual) { m_visual = visual; }
+        /** Sets visualization to be used. Transfers ownership.
+         */
+        void adoptVisual(IVisual* visual)
+        {
+            m_visual = visual;
+        }
 
-		/** Gets used visualization
-		 */
-		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
+        /** Gets used visualization
+         */
+        template <typename T>
+        T* getVisual() const
+        {
+            return reinterpret_cast<T*>(m_visual);
+        }
 
-		/** Sets audio to be used. Transfers ownership.
-		 */
-		void adoptAudio(ActionAudio* audio) { m_audio = audio; }
+        /** Sets audio to be used. Transfers ownership.
+         */
+        void adoptAudio(ActionAudio* audio)
+        {
+            m_audio = audio;
+        }
 
-		/** Gets used audio
-		 */
-		ActionAudio* getAudio() const { return m_audio; }
+        /** Gets used audio
+         */
+        ActionAudio* getAudio() const
+        {
+            return m_audio;
+        }
 
-	private:
-		std::string m_id;
+    private:
+        std::string m_id;
 
-		// duration of the action
-		uint32_t m_duration;
-		// visualization for action
-		IVisual* m_visual;
-		// audio for action
-		ActionAudio* m_audio;
-	};
+        // duration of the action
+        uint32_t m_duration;
+        // visualization for action
+        IVisual* m_visual;
+        // audio for action
+        ActionAudio* m_audio;
+    };
 
-}
+} // namespace FIFE
 
 #endif

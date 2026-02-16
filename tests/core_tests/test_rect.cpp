@@ -38,48 +38,47 @@ using namespace FIFE;
 
 TEST_CASE("rectangle_interesection")
 {
-	Rect a(0,0,10,10);
+    Rect a(0, 0, 10, 10);
 
-	std::vector<Rect> do_intersect;
-	#define ADD_RECT(x,y,w,h) do_intersect.push_back( Rect(x,y,w,h) )
+    std::vector<Rect> do_intersect;
+#define ADD_RECT(x, y, w, h) do_intersect.push_back(Rect(x, y, w, h))
 
-	ADD_RECT(5,5,10,10);
-	ADD_RECT(-5,5,10,10);
-	ADD_RECT(-5,-5,10,10);
-	ADD_RECT(5,-5,10,10);
+    ADD_RECT(5, 5, 10, 10);
+    ADD_RECT(-5, 5, 10, 10);
+    ADD_RECT(-5, -5, 10, 10);
+    ADD_RECT(5, -5, 10, 10);
 
-	ADD_RECT(-5,5,20,1);
-	ADD_RECT(-5,5,10,1);
+    ADD_RECT(-5, 5, 20, 1);
+    ADD_RECT(-5, 5, 10, 1);
 
-	ADD_RECT(5,-5,1,20);
-	ADD_RECT(5,-5,1,10);
+    ADD_RECT(5, -5, 1, 20);
+    ADD_RECT(5, -5, 1, 10);
 
-	ADD_RECT(5,5,3,3);
+    ADD_RECT(5, 5, 3, 3);
 
-	ADD_RECT(-5,-5,30,30);
+    ADD_RECT(-5, -5, 30, 30);
 
-	for(size_t i=0; i<do_intersect.size(); ++i) {
-		CHECK(a.intersects(do_intersect[i]));
-		CHECK(do_intersect[i].intersects(a));
-	}
+    for (size_t i = 0; i < do_intersect.size(); ++i) {
+        CHECK(a.intersects(do_intersect[i]));
+        CHECK(do_intersect[i].intersects(a));
+    }
 
-	std::vector<Rect> dont_intersect;
+    std::vector<Rect> dont_intersect;
 
-	#undef ADD_RECT
-	#define ADD_RECT(x,y,w,h) dont_intersect.push_back( Rect(x,y,w,h) )
+#undef ADD_RECT
+#define ADD_RECT(x, y, w, h) dont_intersect.push_back(Rect(x, y, w, h))
 
-	ADD_RECT(-5,-5,4,4);
-	ADD_RECT(-5,-5,40,4);
-	ADD_RECT(-5,-5,4,40);
-	ADD_RECT(-5,-5,4,4);
+    ADD_RECT(-5, -5, 4, 4);
+    ADD_RECT(-5, -5, 40, 4);
+    ADD_RECT(-5, -5, 4, 40);
+    ADD_RECT(-5, -5, 4, 4);
 
-	ADD_RECT(15,15,4,4);
-	ADD_RECT(15,15,40,4);
-	ADD_RECT(15,15,4,40);
+    ADD_RECT(15, 15, 4, 4);
+    ADD_RECT(15, 15, 40, 4);
+    ADD_RECT(15, 15, 4, 40);
 
-	for(size_t i=0; i<dont_intersect.size(); ++i) {
-		CHECK(!a.intersects(dont_intersect[i]));
-		CHECK(!dont_intersect[i].intersects(a));
-	}
+    for (size_t i = 0; i < dont_intersect.size(); ++i) {
+        CHECK(!a.intersects(dont_intersect[i]));
+        CHECK(!dont_intersect[i].intersects(a));
+    }
 }
-

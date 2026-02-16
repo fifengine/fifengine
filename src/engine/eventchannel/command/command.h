@@ -33,84 +33,117 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "eventchannel/base/event.h"
 #include "commandids.h"
+#include "eventchannel/base/event.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** Class for commands
-	 * Commands are arbitrary events e.g. send from one subsystem to another
-	 */
-	class Command: public Event {
-	public:
-		/** Constructor.
-		 */
-		Command():
-			Event(),
-			m_commandType(CMD_UNKNOWN),
-			m_code(0) {}
+    /** Class for commands
+     * Commands are arbitrary events e.g. send from one subsystem to another
+     */
+    class Command : public Event
+    {
+    public:
+        /** Constructor.
+         */
+        Command() : Event(), m_commandType(CMD_UNKNOWN), m_code(0) { }
 
-		/** Destructor.
-		 */
-		virtual ~Command() {}
+        /** Destructor.
+         */
+        virtual ~Command() { }
 
-		/** Gets the type of this command
-		 * @return type of this command
-		 */
-		CommandType getCommandType() const { return m_commandType; }
+        /** Gets the type of this command
+         * @return type of this command
+         */
+        CommandType getCommandType() const
+        {
+            return m_commandType;
+        }
 
-		/** Sets the type of this command
-		 */
-		void setCommandType(CommandType type) { m_commandType = type; }
+        /** Sets the type of this command
+         */
+        void setCommandType(CommandType type)
+        {
+            m_commandType = type;
+        }
 
-		/** Gets the code of this command. Meaning of code depends on the command type
-		 * @return code of this command
-		 */
-		int32_t getCode() const { return m_code; }
+        /** Gets the code of this command. Meaning of code depends on the command type
+         * @return code of this command
+         */
+        int32_t getCode() const
+        {
+            return m_code;
+        }
 
-		/** Sets the code of this command. Meaning of code depends on the command type
-		 */
-		void setCode(int32_t code) { m_code = code; }
+        /** Sets the code of this command. Meaning of code depends on the command type
+         */
+        void setCode(int32_t code)
+        {
+            m_code = code;
+        }
 
-		/** Marks events as consumed.
-		 */
-		virtual void consume() { Event::consume(); }
-		
-		/** Checks whether event is consumed.
-		 */
-		virtual bool isConsumed() const { return Event::isConsumed(); }
+        /** Marks events as consumed.
+         */
+        virtual void consume()
+        {
+            Event::consume();
+        }
 
-		/** Gets the source of the event.
-		 */
-		virtual IEventSource* getSource() const { return Event::getSource(); }
+        /** Checks whether event is consumed.
+         */
+        virtual bool isConsumed() const
+        {
+            return Event::isConsumed();
+        }
 
-		/** Sets the source of the event.
-		 */
-		virtual void setSource(IEventSource* source) { Event::setSource(source); }
+        /** Gets the source of the event.
+         */
+        virtual IEventSource* getSource() const
+        {
+            return Event::getSource();
+        }
 
-		/** Gets the timestamp of the event.
-		 */
-		virtual int32_t getTimeStamp() const { return Event::getTimeStamp(); }
+        /** Sets the source of the event.
+         */
+        virtual void setSource(IEventSource* source)
+        {
+            Event::setSource(source);
+        }
 
-		/** Sets the timestamp of the event.
-		 */
-		virtual void setTimeStamp(int32_t timestamp ) { Event::setTimeStamp(timestamp); }
+        /** Gets the timestamp of the event.
+         */
+        virtual int32_t getTimeStamp() const
+        {
+            return Event::getTimeStamp();
+        }
 
-		/** Gets the name of the event.
-		 */
-		virtual const std::string& getName() const {
-			const static std::string eventName("Command");
-			return eventName;
-		}
+        /** Sets the timestamp of the event.
+         */
+        virtual void setTimeStamp(int32_t timestamp)
+        {
+            Event::setTimeStamp(timestamp);
+        }
 
-		/** Gets the debugstring of the event.
-		 */
-		virtual std::string getDebugString() const { return Event::getDebugString(); }
+        /** Gets the name of the event.
+         */
+        virtual const std::string& getName() const
+        {
+            const static std::string eventName("Command");
+            return eventName;
+        }
 
-	private:
-		CommandType m_commandType;
-		int32_t m_code;
-	};
-} //FIFE
+        /** Gets the debugstring of the event.
+         */
+        virtual std::string getDebugString() const
+        {
+            return Event::getDebugString();
+        }
+
+    private:
+        CommandType m_commandType;
+        int32_t m_code;
+    };
+} // namespace FIFE
 
 #endif

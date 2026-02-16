@@ -25,8 +25,8 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <fifechan/imageloader.hpp>
 #include <fifechan/image.hpp>
+#include <fifechan/imageloader.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -34,21 +34,24 @@
 // Second block: files included from the same folder
 #include "gui_image.h"
 
-namespace FIFE {
-	class AtlasBook;
+namespace FIFE
+{
+    class AtlasBook;
 
-	/* Image Loader.
-	 */
-	class GuiImageLoader : public fcn::ImageLoader {
-	public:
-		GuiImageLoader();
-		virtual ~GuiImageLoader();
-      	virtual fcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
-	private:
-		AtlasBook* m_atlasbook;
-		std::vector<ImagePtr> m_atlases;
-	};
+    /* Image Loader.
+     */
+    class GuiImageLoader : public fcn::ImageLoader
+    {
+    public:
+        GuiImageLoader();
+        virtual ~GuiImageLoader();
+        virtual fcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
 
-}
+    private:
+        AtlasBook* m_atlasbook;
+        std::vector<ImagePtr> m_atlases;
+    };
+
+} // namespace FIFE
 
 #endif

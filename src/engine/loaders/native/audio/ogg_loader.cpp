@@ -30,22 +30,24 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "audio/soundclip.h"
-#include "vfs/vfs.h"
-#include "util/log/logger.h"
 #include "util/base/exception.h"
+#include "util/log/logger.h"
+#include "vfs/vfs.h"
 
 #include "ogg_loader.h"
 #include "sounddecoder_ogg.h"
 
-namespace FIFE {
-  static Logger _log(LM_NATIVE_LOADERS);
+namespace FIFE
+{
+    static Logger _log(LM_NATIVE_LOADERS);
 
-	void OggLoader::load(IResource* res) {
-		VFS* vfs = VFS::instance();
+    void OggLoader::load(IResource* res)
+    {
+        VFS* vfs = VFS::instance();
 
-		std::string filename = res->getName();
+        std::string filename = res->getName();
 
-		RawData* rdptr = vfs->open(filename);
-		dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));
-	}
-}
+        RawData* rdptr = vfs->open(filename);
+        dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));
+    }
+} // namespace FIFE

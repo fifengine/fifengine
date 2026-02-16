@@ -31,30 +31,31 @@
 
 #include "rawdatafile.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	RawDataFile::RawDataFile(const std::string& file) : m_file(file), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0) {
-		if (!m_stream)
-			throw CannotOpenFile(m_file);
+    RawDataFile::RawDataFile(const std::string& file) :
+        m_file(file), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0)
+    {
+        if (!m_stream)
+            throw CannotOpenFile(m_file);
 
-		m_stream.seekg(0, std::ios::end);
-		m_filesize = m_stream.tellg();
-		m_stream.seekg(0, std::ios::beg);
-	}
+        m_stream.seekg(0, std::ios::end);
+        m_filesize = m_stream.tellg();
+        m_stream.seekg(0, std::ios::beg);
+    }
 
+    RawDataFile::~RawDataFile() { }
 
-	RawDataFile::~RawDataFile() {
-	}
+    uint32_t RawDataFile::getSize() const
+    {
+        return m_filesize;
+    }
 
+    void RawDataFile::readInto(uint8_t* buffer, uint32_t start, uint32_t length)
+    {
+        m_stream.seekg(start);
+        m_stream.read(reinterpret_cast<char*>(buffer), length);
+    }
 
-	uint32_t RawDataFile::getSize( ) const {
-		return m_filesize;
-	}
-
-	void RawDataFile::readInto(uint8_t* buffer, uint32_t start, uint32_t length) {
-		m_stream.seekg(start);
-		m_stream.read(reinterpret_cast<char*>(buffer), length);
-	}
-
-}
-
+} // namespace FIFE

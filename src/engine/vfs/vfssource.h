@@ -33,61 +33,66 @@
 // Second block: files included from the same folder
 #include "vfs.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class RawData;
-	/** VFSSource abstract baseclass
-	 *
-	 * VFSSources are used to provide transparent access to diffrent archives/filesystems etc.
-	 * Examples are VFSHostSystem
-	 * @see VFS
-	 * @see VFSSourceProvider
-	 */
-	class VFSSource {
-		public:
-			VFSSource(VFS* vfs);
-			virtual ~VFSSource();
+    class RawData;
+    /** VFSSource abstract baseclass
+     *
+     * VFSSources are used to provide transparent access to diffrent archives/filesystems etc.
+     * Examples are VFSHostSystem
+     * @see VFS
+     * @see VFSSourceProvider
+     */
+    class VFSSource
+    {
+    public:
+        VFSSource(VFS* vfs);
+        virtual ~VFSSource();
 
-			/** check if the given file exists
-			 *
-			 * @param file filename to check
-			 * @return true if it exists, false otherwise
-			 */
-			virtual bool fileExists(const std::string& file) const = 0;
+        /** check if the given file exists
+         *
+         * @param file filename to check
+         * @return true if it exists, false otherwise
+         */
+        virtual bool fileExists(const std::string& file) const = 0;
 
-			/** get the VFS this source is associated with.
-			 */
-			VFS* getVFS() const { return m_vfs; }
+        /** get the VFS this source is associated with.
+         */
+        VFS* getVFS() const
+        {
+            return m_vfs;
+        }
 
-			/** open a file inside this source
-			 *
-			 * @param file the file to open
-			 * @return a new RawData*
-			 * @throws CannotOpenFile if the file can't be found
-			 */
-			virtual RawData* open(const std::string& file) const = 0;
+        /** open a file inside this source
+         *
+         * @param file the file to open
+         * @return a new RawData*
+         * @throws CannotOpenFile if the file can't be found
+         */
+        virtual RawData* open(const std::string& file) const = 0;
 
-			/** list all files in a directory of this source
-			 * 
-			 * @param path path to list files in
-			 * Will return an empty list on \b any error
-			 */
-			virtual std::set<std::string> listFiles(const std::string& path) const = 0;
+        /** list all files in a directory of this source
+         *
+         * @param path path to list files in
+         * Will return an empty list on \b any error
+         */
+        virtual std::set<std::string> listFiles(const std::string& path) const = 0;
 
-			/** list all directories in a directory of this source
-			 * 
-			 * @param path path to list directories in
-			 * Will return an empty list on \b any error
-			 */
-			virtual std::set<std::string> listDirectories(const std::string& path) const = 0;
+        /** list all directories in a directory of this source
+         *
+         * @param path path to list directories in
+         * Will return an empty list on \b any error
+         */
+        virtual std::set<std::string> listDirectories(const std::string& path) const = 0;
 
-		protected:
-			std::string fixPath(std::string path) const;
+    protected:
+        std::string fixPath(std::string path) const;
 
-		private:
-			VFS* m_vfs;
-	};
+    private:
+        VFS* m_vfs;
+    };
 
-}
+} // namespace FIFE
 
 #endif

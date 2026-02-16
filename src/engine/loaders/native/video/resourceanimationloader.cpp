@@ -32,17 +32,19 @@
 
 #include "resourceanimationloader.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	void ResourceAnimationLoader::load(IResource* res) {
-		Animation* anim = dynamic_cast<Animation*>(res);
-		if (anim) {
-			std::vector<ImagePtr> frames = anim->getFrames();
-			for (std::vector<ImagePtr>::iterator it = frames.begin(); it != frames.end(); ++it) {
-				if ((*it)->getState() != IResource::RES_LOADED) {
-					(*it)->load();
-				}
-			}
-		}
-	}
-}  //FIFE
+    void ResourceAnimationLoader::load(IResource* res)
+    {
+        Animation* anim = dynamic_cast<Animation*>(res);
+        if (anim) {
+            std::vector<ImagePtr> frames = anim->getFrames();
+            for (std::vector<ImagePtr>::iterator it = frames.begin(); it != frames.end(); ++it) {
+                if ((*it)->getState() != IResource::RES_LOADED) {
+                    (*it)->load();
+                }
+            }
+        }
+    }
+} // namespace FIFE

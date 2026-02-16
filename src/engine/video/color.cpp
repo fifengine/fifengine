@@ -19,7 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-
 // Standard C++ library includes
 
 // Platform specific includes
@@ -34,54 +33,57 @@
 
 #include "color.h"
 
-namespace FIFE {
-	Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
-	:
-	m_r(r),
-	m_g(g),
-	m_b(b),
-	m_a(alpha) {
-	}
-	
-	Color::~Color() {
-	}
-	
-	void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha) {
-		m_r = r;
-		m_g = g;
-		m_b = b;
-		m_a = alpha;
-	}
-	
-	void Color::setR(uint8_t r) {
-		m_r = r;
-	}
-	
-	void Color::setG(uint8_t g) {
-		m_g = g;
-	}
-	
-	void Color::setB(uint8_t b) {
-		m_b = b;
-	}
-	
-	void Color::setAlpha(uint8_t alpha) {
-		m_a = alpha;
-	}
-	
-	uint8_t Color::getR() const {
-		return m_r;
-	}
-	
-	uint8_t Color::getG() const {
-		return m_g;
-	}
-	
-	uint8_t Color::getB() const {
-		return m_b;
-	}
-	
-	uint8_t Color::getAlpha() const { 
-		return m_a;
-	}
-}
+namespace FIFE
+{
+    Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha) : m_r(r), m_g(g), m_b(b), m_a(alpha) { }
+
+    Color::~Color() { }
+
+    void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
+    {
+        m_r = r;
+        m_g = g;
+        m_b = b;
+        m_a = alpha;
+    }
+
+    void Color::setR(uint8_t r)
+    {
+        m_r = r;
+    }
+
+    void Color::setG(uint8_t g)
+    {
+        m_g = g;
+    }
+
+    void Color::setB(uint8_t b)
+    {
+        m_b = b;
+    }
+
+    void Color::setAlpha(uint8_t alpha)
+    {
+        m_a = alpha;
+    }
+
+    uint8_t Color::getR() const
+    {
+        return m_r;
+    }
+
+    uint8_t Color::getG() const
+    {
+        return m_g;
+    }
+
+    uint8_t Color::getB() const
+    {
+        return m_b;
+    }
+
+    uint8_t Color::getAlpha() const
+    {
+        return m_a;
+    }
+} // namespace FIFE

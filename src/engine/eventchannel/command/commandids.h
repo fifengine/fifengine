@@ -35,20 +35,22 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	/**  Types for different commands
-	 */
-	enum CommandType {
-		CMD_UNKNOWN = -1,
-		CMD_QUIT_GAME = SDL_WINDOWEVENT_CLOSE,
-		CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
-		CMD_MOUSE_FOCUS_LOST = SDL_WINDOWEVENT_LEAVE,
-		CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
-		CMD_INPUT_FOCUS_LOST = SDL_WINDOWEVENT_FOCUS_LOST,
-		CMD_APP_RESTORED = SDL_WINDOWEVENT_SHOWN,
-		CMD_APP_ICONIFIED = SDL_WINDOWEVENT_HIDDEN,
-	};
+namespace FIFE
+{
+    /**  Types for different commands
+     */
+    enum CommandType
+    {
+        CMD_UNKNOWN            = -1,
+        CMD_QUIT_GAME          = SDL_WINDOWEVENT_CLOSE,
+        CMD_MOUSE_FOCUS_GAINED = SDL_WINDOWEVENT_ENTER,
+        CMD_MOUSE_FOCUS_LOST   = SDL_WINDOWEVENT_LEAVE,
+        CMD_INPUT_FOCUS_GAINED = SDL_WINDOWEVENT_FOCUS_GAINED,
+        CMD_INPUT_FOCUS_LOST   = SDL_WINDOWEVENT_FOCUS_LOST,
+        CMD_APP_RESTORED       = SDL_WINDOWEVENT_SHOWN,
+        CMD_APP_ICONIFIED      = SDL_WINDOWEVENT_HIDDEN,
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

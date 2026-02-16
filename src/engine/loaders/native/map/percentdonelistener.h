@@ -32,37 +32,40 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
-	class PercentDoneListener {
-	public:
-		virtual ~PercentDoneListener();
-		virtual void OnEvent(unsigned int percentDone) = 0;
-	};
+namespace FIFE
+{
+    class PercentDoneListener
+    {
+    public:
+        virtual ~PercentDoneListener();
+        virtual void OnEvent(unsigned int percentDone) = 0;
+    };
 
-	class PercentDoneCallback {
-	public:
-		PercentDoneCallback();
-		virtual ~PercentDoneCallback();
+    class PercentDoneCallback
+    {
+    public:
+        PercentDoneCallback();
+        virtual ~PercentDoneCallback();
 
-		void setTotalNumberOfElements(unsigned int totalElements);
-		void setPercentDoneInterval(unsigned int percent);
-		void incrementCount();
-		void reset();
-		void addListener(PercentDoneListener* listener);
-		void removeListener(PercentDoneListener* listener);
+        void setTotalNumberOfElements(unsigned int totalElements);
+        void setPercentDoneInterval(unsigned int percent);
+        void incrementCount();
+        void reset();
+        void addListener(PercentDoneListener* listener);
+        void removeListener(PercentDoneListener* listener);
 
-	private:
-		void fireEvent(uint32_t percent);
+    private:
+        void fireEvent(uint32_t percent);
 
-	private:
-		uint32_t m_totalElements;
-		uint32_t m_percent;
-		uint32_t m_numberOfEvents;
-		uint32_t m_count;
+    private:
+        uint32_t m_totalElements;
+        uint32_t m_percent;
+        uint32_t m_numberOfEvents;
+        uint32_t m_count;
 
-		typedef std::vector<PercentDoneListener*> ListenerContainer;
-		ListenerContainer m_listeners;
-	};
-}
+        typedef std::vector<PercentDoneListener*> ListenerContainer;
+        ListenerContainer m_listeners;
+    };
+} // namespace FIFE
 
 #endif

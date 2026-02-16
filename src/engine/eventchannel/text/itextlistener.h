@@ -34,28 +34,30 @@
 // Second block: files included from the same folder
 #include "eventchannel/base/ilistener.h"
 
-namespace FIFE {
-	class TextEvent;
+namespace FIFE
+{
+    class TextEvent;
 
-	/**  Listener of text events.
-	 * To be able to listen for text events you must make a class which inherits
-	 * from this class and implements its functions.
-	 */
-	class ITextListener : public IListener {
-	public:
-		/** Called on a text input event.
-		 * @param evt TextEvent that describes the event.
-		 */
-		virtual void textInput(TextEvent& evt) = 0;
+    /**  Listener of text events.
+     * To be able to listen for text events you must make a class which inherits
+     * from this class and implements its functions.
+     */
+    class ITextListener : public IListener
+    {
+    public:
+        /** Called on a text input event.
+         * @param evt TextEvent that describes the event.
+         */
+        virtual void textInput(TextEvent& evt) = 0;
 
-		/** Called on a text edit event.
-		 * @param evt TextEvent that describes the event.
-		 */
-		virtual void textEdit(TextEvent& evt) = 0;
+        /** Called on a text edit event.
+         * @param evt TextEvent that describes the event.
+         */
+        virtual void textEdit(TextEvent& evt) = 0;
 
-		virtual ~ITextListener() {}
-	};
+        virtual ~ITextListener() { }
+    };
 
-} //FIFE
+} // namespace FIFE
 
 #endif

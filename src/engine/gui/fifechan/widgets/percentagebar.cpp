@@ -26,8 +26,8 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <fifechan/rectangle.hpp>
 #include <fifechan/graphics.hpp>
+#include <fifechan/rectangle.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -40,35 +40,31 @@ namespace fcn
 
     PercentageBar::PercentageBar()
     {
-		mImage = 0;
+        mImage = 0;
 
-		setOrientation(HORIZONTAL);
+        setOrientation(HORIZONTAL);
         setValue(0);
     }
-    
+
     void PercentageBar::draw(Graphics* graphics)
     {
-		graphics->setColor(getForegroundColor());
+        graphics->setColor(getForegroundColor());
 
-        if (getOrientation() == HORIZONTAL)
-        {
-			graphics->fillRectangle(fcn::Rectangle(0,0,getWidth() * mValue/100,getHeight()));
-		}
-		else
-		{
-			graphics->fillRectangle(fcn::Rectangle(0,getHeight()-getHeight() * mValue/100,getWidth(),getHeight() * mValue/100));
-		}
+        if (getOrientation() == HORIZONTAL) {
+            graphics->fillRectangle(fcn::Rectangle(0, 0, getWidth() * mValue / 100, getHeight()));
+        } else {
+            graphics->fillRectangle(
+                fcn::Rectangle(0, getHeight() - getHeight() * mValue / 100, getWidth(), getHeight() * mValue / 100));
+        }
 
-
-        if ( mImage )
+        if (mImage)
             graphics->drawImage(mImage, 0, 0);
-
     }
 
     void PercentageBar::setForegroundImage(Image* image)
     {
         mImage = image;
-        if( mImage ) {
+        if (mImage) {
             setHeight(image->getHeight());
             setWidth(image->getWidth());
         }
@@ -76,14 +72,12 @@ namespace fcn
 
     void PercentageBar::setValue(int32_t value)
     {
-        if (value > 100)
-        {
+        if (value > 100) {
             mValue = 100;
             return;
         }
 
-        if (value < 0)
-        {
+        if (value < 0) {
             mValue = 0;
             return;
         }
@@ -91,18 +85,18 @@ namespace fcn
         mValue = value;
     }
 
-   int32_t PercentageBar::getValue() const
+    int32_t PercentageBar::getValue() const
     {
         return mValue;
     }
 
     void PercentageBar::setOrientation(PercentageBar::Orientation orientation)
-	{
-	    mOrientation = orientation;
-	}
-
-	PercentageBar::Orientation PercentageBar::getOrientation() const
-	{
-	    return mOrientation;
+    {
+        mOrientation = orientation;
     }
-}
+
+    PercentageBar::Orientation PercentageBar::getOrientation() const
+    {
+        return mOrientation;
+    }
+} // namespace fcn

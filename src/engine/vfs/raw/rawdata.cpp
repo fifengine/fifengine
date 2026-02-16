@@ -21,8 +21,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
-#include <vector>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 
@@ -35,20 +35,21 @@
 
 #include "rawdata.h"
 
-namespace FIFE {
-	static Logger _log(LM_VFS);
-	
-	RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0) {
+namespace FIFE
+{
+    static Logger _log(LM_VFS);
 
-	}
+    RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0) { }
 
-	RawData::~RawData() {
-		delete m_datasource;
-	}
+    RawData::~RawData()
+    {
+        delete m_datasource;
+    }
 
-	std::vector<uint8_t> RawData::getDataInBytes() {
+    std::vector<uint8_t> RawData::getDataInBytes()
+    {
         // get the total file size
-		uint32_t size = getDataLength();
+        uint32_t size = getDataLength();
 
         // create output vector
         std::vector<uint8_t> target;
@@ -59,73 +60,85 @@ namespace FIFE {
         // read bytes directly into vector
         readInto(&target[0], target.size());
 
-		return target;
-	}
+        return target;
+    }
 
-	std::vector<std::string> RawData::getDataInLines() {
-		std::vector<std::string> target;
+    std::vector<std::string> RawData::getDataInLines()
+    {
+        std::vector<std::string> target;
 
-		std::string line;
-		while (getLine(line)) {
-			target.push_back(line);
-		}
-		return target;
-	}
+        std::string line;
+        while (getLine(line)) {
+            target.push_back(line);
+        }
+        return target;
+    }
 
-	uint32_t RawData::getDataLength() const {
-		return m_datasource->getSize();
-	}
+    uint32_t RawData::getDataLength() const
+    {
+        return m_datasource->getSize();
+    }
 
-	uint32_t RawData::getCurrentIndex() const {
-		return m_index_current;
-	}
+    uint32_t RawData::getCurrentIndex() const
+    {
+        return m_index_current;
+    }
 
-	void RawData::setIndex(uint32_t index) {
-		if (index > getDataLength())
-			throw IndexOverflow(__FUNCTION__);
+    void RawData::setIndex(uint32_t index)
+    {
+        if (index > getDataLength())
+            throw IndexOverflow(__FUNCTION__);
 
-		m_index_current = index;
-	}
+        m_index_current = index;
+    }
 
-	void RawData::moveIndex(int32_t offset) {
-		setIndex(getCurrentIndex() + offset);
-	}
+    void RawData::moveIndex(int32_t offset)
+    {
+        setIndex(getCurrentIndex() + offset);
+    }
 
-	void RawData::readInto(uint8_t* buffer, size_t len) {
-		if (m_index_current + len > getDataLength()) {
-			FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << len << " : " << getDataLength());
-			throw IndexOverflow(__FUNCTION__);
-		}
+    void RawData::readInto(uint8_t* buffer, size_t len)
+    {
+        if (m_index_current + len > getDataLength()) {
+            FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << len << " : " << getDataLength());
+            throw IndexOverflow(__FUNCTION__);
+        }
 
-		m_datasource->readInto(buffer, m_index_current, len);
-		m_index_current += len;
-	}
+        m_datasource->readInto(buffer, m_index_current, len);
+        m_index_current += len;
+    }
 
-	uint8_t RawData::read8() {
-		return readSingle<uint8_t>();
-	}
+    uint8_t RawData::read8()
+    {
+        return readSingle<uint8_t>();
+    }
 
-	uint16_t RawData::read16Little() {
-		uint16_t val = readSingle<uint16_t>();
-		return littleToHost(val);
-	}
+    uint16_t RawData::read16Little()
+    {
+        uint16_t val = readSingle<uint16_t>();
+        return littleToHost(val);
+    }
 
-	uint32_t RawData::read32Little() {
-		uint32_t val = readSingle<uint32_t>();
-		return littleToHost(val);
-	}
+    uint32_t RawData::read32Little()
+    {
+        uint32_t val = readSingle<uint32_t>();
+        return littleToHost(val);
+    }
 
-	uint16_t RawData::read16Big() {
-		uint16_t val = readSingle<uint16_t>();
-		return bigToHost(val);
-	}
+    uint16_t RawData::read16Big()
+    {
+        uint16_t val = readSingle<uint16_t>();
+        return bigToHost(val);
+    }
 
-	uint32_t RawData::read32Big() {
-		uint32_t val = readSingle<uint32_t>();
-		return bigToHost(val);
-	}
+    uint32_t RawData::read32Big()
+    {
+        uint32_t val = readSingle<uint32_t>();
+        return bigToHost(val);
+    }
 
-	std::string RawData::readString(size_t len) {
+    std::string RawData::readString(size_t len)
+    {
         std::vector<uint8_t> strVector;
         strVector.resize(len);
         readInto(&strVector[0], len);
@@ -133,47 +146,49 @@ namespace FIFE {
         std::string ret(strVector.begin(), strVector.end());
 
         return ret;
-	}
+    }
 
-	void RawData::read(std::string& outbuffer, int32_t size) {
-		if ((size < 0) || ((size + m_index_current) > getDataLength())) {
-			size = getDataLength() - m_index_current;
-		}
-		if (size == 0) {
-			outbuffer = "";
-			return;
-		}
+    void RawData::read(std::string& outbuffer, int32_t size)
+    {
+        if ((size < 0) || ((size + m_index_current) > getDataLength())) {
+            size = getDataLength() - m_index_current;
+        }
+        if (size == 0) {
+            outbuffer = "";
+            return;
+        }
 
         outbuffer.resize(size);
 
         // read directly into string
         readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), size);
-	}
-	
+    }
 
-	bool RawData::getLine(std::string& buffer) {
-		if (getCurrentIndex() >= getDataLength())
-			return false;
+    bool RawData::getLine(std::string& buffer)
+    {
+        if (getCurrentIndex() >= getDataLength())
+            return false;
 
-		buffer = "";
-		char c;
-		while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n')
-			buffer += c;
+        buffer = "";
+        char c;
+        while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n')
+            buffer += c;
 
-		return true;
-	}
+        return true;
+    }
 
-	bool RawData::littleEndian() {
-		static int32_t endian = 2;
-		if (endian == 2) {
-			uint32_t value = 0x01;
-			endian = reinterpret_cast<uint8_t*>(&value)[0];
-			FL_LOG(_log, LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");
-		}
+    bool RawData::littleEndian()
+    {
+        static int32_t endian = 2;
+        if (endian == 2) {
+            uint32_t value = 0x01;
+            endian         = reinterpret_cast<uint8_t*>(&value)[0];
+            FL_LOG(
+                _log,
+                LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");
+        }
 
-		return endian == 1;
-	}
+        return endian == 1;
+    }
 
-
-
-}//FIFE
+} // namespace FIFE

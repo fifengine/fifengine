@@ -31,11 +31,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
-	class IVisual {
-	public:
-		virtual ~IVisual() {};
-	};
-}
+namespace FIFE
+{
+    class IVisual
+    {
+    public:
+        virtual ~IVisual() { };
+    };
+} // namespace FIFE
 
 #endif

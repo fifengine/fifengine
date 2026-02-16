@@ -28,24 +28,26 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
 #include "util/base/exception.h"
+#include "vfs/raw/rawdata.h"
 
 #include "lzssdecoder.h"
 #include "rawdatadat1.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	RawDataDAT1::RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info) : 
-		RawDataMemSource(info.unpackedLength) {
+    RawDataDAT1::RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info) :
+        RawDataMemSource(info.unpackedLength)
+    {
 
-		std::unique_ptr<RawData> input (vfs->open(datfile));
-		input->setIndex(info.offset);
+        std::unique_ptr<RawData> input(vfs->open(datfile));
+        input->setIndex(info.offset);
 
-		if (info.type == 0x40) { // compressed
-			LZSSDecoder decoder;
-			decoder.decode(input.get(), getRawData(), getSize());
-		} else
-			input->readInto(getRawData(), getSize());
-	}
-} // FIFE
+        if (info.type == 0x40) { // compressed
+            LZSSDecoder decoder;
+            decoder.decode(input.get(), getRawData(), getSize());
+        } else
+            input->readInto(getRawData(), getSize());
+    }
+} // namespace FIFE

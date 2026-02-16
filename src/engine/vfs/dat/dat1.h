@@ -37,52 +37,54 @@
 
 #include "rawdatadat1.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** VFSource for the Fallout1 DAT file format.
-	 */
-	class DAT1 : public VFSSource {
-		public:
-			/** Constructor
-			 * Create a VFSSource for a Fallout1 DAT file.
-			 * @param vfs A pointer to the VFS.
-			 * @param file A Fallout1 DAT file - e.g. master.DAT
-			 */
-			DAT1(VFS* vfs, const std::string& file);
+    /** VFSource for the Fallout1 DAT file format.
+     */
+    class DAT1 : public VFSSource
+    {
+    public:
+        /** Constructor
+         * Create a VFSSource for a Fallout1 DAT file.
+         * @param vfs A pointer to the VFS.
+         * @param file A Fallout1 DAT file - e.g. master.DAT
+         */
+        DAT1(VFS* vfs, const std::string& file);
 
-			bool fileExists(const std::string& name) const;
-			RawData* open(const std::string& file) const;
+        bool fileExists(const std::string& name) const;
+        RawData* open(const std::string& file) const;
 
-			/** Get the needed information to unpack and extract a file from the
-			 * DAT file.
-			 * Retrieves the Information needed to extract a specific file, this
-			 * is passed as argument to a mffalloutrawdatadat1 RawMemSource,
-			 * which itself fills its memory content with the unpacked file.
-			 *
-			 *  @throw NotFound
-			 *  @see MFFalloutRawDataDAT1, RawMemSource
-			 */
-			const RawDataDAT1::s_info& getInfo(const std::string& name) const;
+        /** Get the needed information to unpack and extract a file from the
+         * DAT file.
+         * Retrieves the Information needed to extract a specific file, this
+         * is passed as argument to a mffalloutrawdatadat1 RawMemSource,
+         * which itself fills its memory content with the unpacked file.
+         *
+         *  @throw NotFound
+         *  @see MFFalloutRawDataDAT1, RawMemSource
+         */
+        const RawDataDAT1::s_info& getInfo(const std::string& name) const;
 
-			std::set<std::string> listFiles(const std::string& pathstr) const;
-			std::set<std::string> listDirectories(const std::string& pathstr) const;
+        std::set<std::string> listFiles(const std::string& pathstr) const;
+        std::set<std::string> listDirectories(const std::string& pathstr) const;
 
-		private:
-			std::string m_datpath;
-			std::unique_ptr<RawData> m_data;
-			typedef std::map<std::string, RawDataDAT1::s_info> type_filelist;
-			type_filelist m_filelist;
+    private:
+        std::string m_datpath;
+        std::unique_ptr<RawData> m_data;
+        typedef std::map<std::string, RawDataDAT1::s_info> type_filelist;
+        type_filelist m_filelist;
 
-			std::set<std::string> list(const std::string& pathstr, bool dirs) const;
-			std::string readString();
+        std::set<std::string> list(const std::string& pathstr, bool dirs) const;
+        std::string readString();
 
-			void loadFileList(const std::string& dirname);
+        void loadFileList(const std::string& dirname);
 
-			// Not copyable
-			DAT1(const DAT1&);
-			DAT1& operator=(const DAT1&);
-	};
+        // Not copyable
+        DAT1(const DAT1&);
+        DAT1& operator=(const DAT1&);
+    };
 
-} // FIFE
+} // namespace FIFE
 
 #endif

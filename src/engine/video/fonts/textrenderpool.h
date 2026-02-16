@@ -38,64 +38,67 @@
 #include "util/time/timer.h"
 
 struct SDL_Surface;
-namespace FIFE {
-	class FontBase;
-	class Image;
+namespace FIFE
+{
+    class FontBase;
+    class Image;
 
-	/** Generic pool for rendered text
-	 *  Caches a number of Images with text, as rendered by a Font.
-	 *  Makes sure no more than a maximum number of strings is pooled at a time.
-	 *  Automatically removes pooled strings not used for a minute.
-	 *  Doesn't use resources (apart from a minimum) if not used after a while.
-	 *
-	 *  @todo Should probably use a @c std::map instead of a @c std::list
-	 */
-	class TextRenderPool {
-		public:
-			/** Constructor
-			 *  Constructs a pool with a maximum of poolSize entries
-			 */
-			TextRenderPool(size_t poolSize = 200);
+    /** Generic pool for rendered text
+     *  Caches a number of Images with text, as rendered by a Font.
+     *  Makes sure no more than a maximum number of strings is pooled at a time.
+     *  Automatically removes pooled strings not used for a minute.
+     *  Doesn't use resources (apart from a minimum) if not used after a while.
+     *
+     *  @todo Should probably use a @c std::map instead of a @c std::list
+     */
+    class TextRenderPool
+    {
+    public:
+        /** Constructor
+         *  Constructs a pool with a maximum of poolSize entries
+         */
+        TextRenderPool(size_t poolSize = 200);
 
-			/** Destructor
-			 */
-			~TextRenderPool();
+        /** Destructor
+         */
+        ~TextRenderPool();
 
-			/** Invalidates all cached text images
-			 */
-			void invalidateCachedText();
+        /** Invalidates all cached text images
+         */
+        void invalidateCachedText();
 
-			/** Get a string image
-			 */
-			Image* getRenderedText( FontBase* fontbase, const std::string& text);
+        /** Get a string image
+         */
+        Image* getRenderedText(FontBase* fontbase, const std::string& text);
 
-			/** Add a string image
-			 */
-			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
+        /** Add a string image
+         */
+        void addRenderedText(FontBase* fontbase, const std::string& text, Image* image);
 
-			/** Remove entries not used since a minute
-			 *  Is a timer callback.
-			 */
-			void removeOldEntries();
+        /** Remove entries not used since a minute
+         *  Is a timer callback.
+         */
+        void removeOldEntries();
 
-		protected:
-			typedef struct {
-				std::string text;
-				SDL_Color color;
-				bool antialias;
-				int glyph_spacing;
-				int row_spacing;
-				uint32_t timestamp;
+    protected:
+        typedef struct
+        {
+            std::string text;
+            SDL_Color color;
+            bool antialias;
+            int glyph_spacing;
+            int row_spacing;
+            uint32_t timestamp;
 
-				Image* image;
-			} s_pool_entry;
+            Image* image;
+        } s_pool_entry;
 
-			typedef std::list<s_pool_entry> type_pool;
-			type_pool m_pool;
-			size_t m_poolSize;
-			size_t m_poolMaxSize;
+        typedef std::list<s_pool_entry> type_pool;
+        type_pool m_pool;
+        size_t m_poolSize;
+        size_t m_poolMaxSize;
 
-			Timer m_collectTimer;
-	};
-}
+        Timer m_collectTimer;
+    };
+} // namespace FIFE
 #endif

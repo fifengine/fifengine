@@ -33,31 +33,33 @@
 // Second block: files included from the same folder
 #include "video/imagemanager.h"
 
-namespace FIFE {
-	class Atlas;
-	typedef SharedPtr<Atlas> AtlasPtr;
+namespace FIFE
+{
+    class Atlas;
+    typedef SharedPtr<Atlas> AtlasPtr;
 
-	class IAtlasLoader {
-	public:
-		virtual ~IAtlasLoader() { };
+    class IAtlasLoader
+    {
+    public:
+        virtual ~IAtlasLoader() { };
 
-		/** determines whether the resource is in
-		*	the correct format for this loader
-		*/
-		virtual bool isLoadable(const std::string& filename) = 0;
+        /** determines whether the resource is in
+         *	the correct format for this loader
+         */
+        virtual bool isLoadable(const std::string& filename) = 0;
 
-		/** responsible for loading the atlas
-		 * returns a shared pointer to an image resource
-		*/
-		virtual AtlasPtr load(const std::string& filename) = 0;
+        /** responsible for loading the atlas
+         * returns a shared pointer to an image resource
+         */
+        virtual AtlasPtr load(const std::string& filename) = 0;
 
-		/** responsible for loading the all atlases
-		 * returns a vector of shared pointer to an image resource
-		*/
-		virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
-	};
+        /** responsible for loading the all atlases
+         * returns a vector of shared pointer to an image resource
+         */
+        virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
+    };
 
-	typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr; 
-}
+    typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr;
+} // namespace FIFE
 
 #endif

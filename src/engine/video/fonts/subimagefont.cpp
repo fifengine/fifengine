@@ -42,112 +42,106 @@
 
 #include "subimagefont.h"
 
-namespace FIFE {
-	/** Logger to use for this source file.
-	 *  @relates Logger
-	 */
-	static Logger _log(LM_GUI);
+namespace FIFE
+{
+    /** Logger to use for this source file.
+     *  @relates Logger
+     */
+    static Logger _log(LM_GUI);
 
-	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs)
-		: ImageFontBase() {
+    SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs) : ImageFontBase()
+    {
 
-		FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);
+        FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);
 
-		ImagePtr img = ImageManager::instance()->load(filename);
-		SDL_Surface* surface = img->getSurface();
-		m_colorkey = RenderBackend::instance()->getColorKey();
+        ImagePtr img         = ImageManager::instance()->load(filename);
+        SDL_Surface* surface = img->getSurface();
+        m_colorkey           = RenderBackend::instance()->getColorKey();
 
-		if( !surface ) {
-			throw CannotOpenFile(filename);
-		}
+        if (!surface) {
+            throw CannotOpenFile(filename);
+        }
 
-		// Make sure we get 32bit RGB
-		// and copy the Pixelbuffers surface
-		SDL_Surface *tmp = SDL_CreateRGBSurface(0,
-			surface->w,surface->h,32,
-			RMASK, GMASK, BMASK ,NULLMASK);
+        // Make sure we get 32bit RGB
+        // and copy the Pixelbuffers surface
+        SDL_Surface* tmp = SDL_CreateRGBSurface(0, surface->w, surface->h, 32, RMASK, GMASK, BMASK, NULLMASK);
 
-		SDL_BlitSurface(surface,0,tmp,0);
-		surface = tmp;
+        SDL_BlitSurface(surface, 0, tmp, 0);
+        surface = tmp;
 
-		// Prepare the data for extracting the glyphs.
-		uint32_t *pixels = reinterpret_cast<uint32_t*>(surface->pixels);
+        // Prepare the data for extracting the glyphs.
+        uint32_t* pixels = reinterpret_cast<uint32_t*>(surface->pixels);
 
-		int32_t x = 0;
+        int32_t x = 0;
 
-		SDL_Rect src;
+        SDL_Rect src;
 
-		src.h = surface->h;
-		src.y = 0;
+        src.h = surface->h;
+        src.y = 0;
 
-		uint32_t separator = pixels[0];
-		uint32_t colorkey = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
+        uint32_t separator = pixels[0];
+        uint32_t colorkey  = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
-		// if colorkey feature is not enabled then manually find the color key in the font
-		if (!RenderBackend::instance()->isColorKeyEnabled()) {
-			while(x < surface->w && pixels[x] == separator) {
-				++x;
-			}
+        // if colorkey feature is not enabled then manually find the color key in the font
+        if (!RenderBackend::instance()->isColorKeyEnabled()) {
+            while (x < surface->w && pixels[x] == separator) {
+                ++x;
+            }
 
-			colorkey = pixels[x];
-		}
+            colorkey = pixels[x];
+        }
 
-		// Disable alpha blending, so that we use color keying
-		//SDL_SetAlpha(surface,0,255);
-		//SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
+        // Disable alpha blending, so that we use color keying
+        // SDL_SetAlpha(surface,0,255);
+        // SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
-		FL_DBG(_log, LMsg("image_font")
-			<< " glyph separator is "
-			<< pprint(reinterpret_cast<void*>(separator))
-			<< " transparent color is "
-			<< pprint(reinterpret_cast<void*>(colorkey)));
+        FL_DBG(
+            _log,
+            LMsg("image_font") << " glyph separator is " << pprint(reinterpret_cast<void*>(separator))
+                               << " transparent color is " << pprint(reinterpret_cast<void*>(colorkey)));
 
-		// Finally extract all glyphs
-		std::string::const_iterator text_it = glyphs.begin();
-		while(text_it != glyphs.end()) {
-			int32_t w = 0;
-			while(x < surface->w && pixels[x] == separator)
-				++x;
-			if( x == surface->w )
-				break;
+        // Finally extract all glyphs
+        std::string::const_iterator text_it = glyphs.begin();
+        while (text_it != glyphs.end()) {
+            int32_t w = 0;
+            while (x < surface->w && pixels[x] == separator)
+                ++x;
+            if (x == surface->w)
+                break;
 
-			while(x + w < surface->w && pixels[x + w] != separator)
-				++w;
+            while (x + w < surface->w && pixels[x + w] != separator)
+                ++w;
 
-			src.x = x;
-			src.w = w;
+            src.x = x;
+            src.w = w;
 
-			tmp = SDL_CreateRGBSurface(0,
-					w,surface->h,32,
-					RMASK, GMASK, BMASK ,NULLMASK);
+            tmp = SDL_CreateRGBSurface(0, w, surface->h, 32, RMASK, GMASK, BMASK, NULLMASK);
 
-			SDL_FillRect(tmp,0,colorkey);
-			SDL_BlitSurface(surface,&src,tmp,0);
+            SDL_FillRect(tmp, 0, colorkey);
+            SDL_BlitSurface(surface, &src, tmp, 0);
 
-			// Disable alpha blending, so that we use colorkeying
-			//SDL_SetAlpha(tmp,0,255);
-			//SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
-			SDL_SetSurfaceBlendMode(tmp, SDL_BLENDMODE_NONE);
-			SDL_SetColorKey(tmp, SDL_TRUE, colorkey);
+            // Disable alpha blending, so that we use colorkeying
+            // SDL_SetAlpha(tmp,0,255);
+            // SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
+            SDL_SetSurfaceBlendMode(tmp, SDL_BLENDMODE_NONE);
+            SDL_SetColorKey(tmp, SDL_TRUE, colorkey);
 
-			uint32_t codepoint = utf8::next(text_it, glyphs.end());
-			m_glyphs[ codepoint ].surface = tmp;
+            uint32_t codepoint          = utf8::next(text_it, glyphs.end());
+            m_glyphs[codepoint].surface = tmp;
 
-			x += w;
-		}
+            x += w;
+        }
 
-		// Set placeholder glyph
-		// This should actually work with utf8.
-		if( m_glyphs.find('?') != m_glyphs.end() ) {
-			m_placeholder = m_glyphs['?'];
-		} else {
-			m_placeholder.surface = 0;
-		}
+        // Set placeholder glyph
+        // This should actually work with utf8.
+        if (m_glyphs.find('?') != m_glyphs.end()) {
+            m_placeholder = m_glyphs['?'];
+        } else {
+            m_placeholder.surface = 0;
+        }
 
-		m_height = surface->h;
-		SDL_FreeSurface(surface);
-	}
+        m_height = surface->h;
+        SDL_FreeSurface(surface);
+    }
 
-
-}
-
+} // namespace FIFE

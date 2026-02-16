@@ -32,17 +32,19 @@
 // Second block: files included from the same folder
 #include "util/base/sharedptr.h"
 
-namespace FIFE {
-	class IAtlasSaver {
-	public:
-		virtual ~IAtlasSaver() { };
+namespace FIFE
+{
+    class IAtlasSaver
+    {
+    public:
+        virtual ~IAtlasSaver() { };
 
-		/** responsible for saving the atlas
-		*/
-		virtual void save(const std::string& filename) = 0;
-	};
+        /** responsible for saving the atlas
+         */
+        virtual void save(const std::string& filename) = 0;
+    };
 
-	typedef SharedPtr<FIFE::IAtlasSaver> AtlasSaverPtr;
-}
+    typedef SharedPtr<FIFE::IAtlasSaver> AtlasSaverPtr;
+} // namespace FIFE
 
 #endif

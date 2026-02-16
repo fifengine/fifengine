@@ -34,36 +34,37 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
-	class IDropListener;
+namespace FIFE
+{
+    class IDropListener;
 
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class IDropController {
-	public:
+    /**  Controller provides a way to receive events from the system
+     * Using this interface, clients can subscribe themselves to receive events
+     */
+    class IDropController
+    {
+    public:
+        /** Adds a listener to the back of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addDropListener(IDropListener* listener) = 0;
 
-		/** Adds a listener to the back of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addDropListener(IDropListener* listener) = 0;
+        /** Adds a listener to the front of the listener deque
+         * Listener will be notified via the corresponding events
+         * @param listener listener to add
+         */
+        virtual void addDropListenerFront(IDropListener* listener) = 0;
 
-		/** Adds a listener to the front of the listener deque
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addDropListenerFront(IDropListener* listener) = 0;
+        /** Removes an added listener from the controller.
+         * Listener will not be notified anymore via the corresponding events
+         * @param listener listener to remove
+         */
+        virtual void removeDropListener(IDropListener* listener) = 0;
 
-		/** Removes an added listener from the controller.
-		 * Listener will not be notified anymore via the corresponding events
-		 * @param listener listener to remove
-		 */
-		virtual void removeDropListener(IDropListener* listener) = 0;
+        virtual ~IDropController() { }
+    };
 
-		virtual ~IDropController() {}
-	};
-
-} //FIFE
+} // namespace FIFE
 
 #endif

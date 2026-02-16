@@ -32,34 +32,39 @@
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
 
-namespace FIFE {
-	class RenderBackend;
+namespace FIFE
+{
+    class RenderBackend;
 
-	class GridRenderer: public RendererBase {
-	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
-		 */
-		GridRenderer(RenderBackend* renderbackend, int32_t position);
+    class GridRenderer : public RendererBase
+    {
+    public:
+        /** constructor.
+         * @param renderbackend to use
+         * @param position position for this renderer in rendering pipeline
+         */
+        GridRenderer(RenderBackend* renderbackend, int32_t position);
 
-		GridRenderer(const GridRenderer& old);
+        GridRenderer(const GridRenderer& old);
 
-		RendererBase* clone();
+        RendererBase* clone();
 
-		/** Destructor.
-		 */
-		virtual ~GridRenderer();
+        /** Destructor.
+         */
+        virtual ~GridRenderer();
 
-		void render(Camera* cam, Layer* layer, RenderList& instances);
-		std::string getName() { return "GridRenderer"; }
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+        void render(Camera* cam, Layer* layer, RenderList& instances);
+        std::string getName()
+        {
+            return "GridRenderer";
+        }
+        void setColor(Uint8 r, Uint8 g, Uint8 b);
 
-		static GridRenderer* getInstance(IRendererContainer* cnt);
+        static GridRenderer* getInstance(IRendererContainer* cnt);
 
-	private:
-		SDL_Color m_color;
-	};
-}
+    private:
+        SDL_Color m_color;
+    };
+} // namespace FIFE
 
 #endif

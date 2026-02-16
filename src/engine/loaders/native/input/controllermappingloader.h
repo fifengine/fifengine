@@ -31,16 +31,18 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE {
-	/** Gamepad mapping loader.
-	 */
-	class ControllerMappingLoader {
-	public:
-		ControllerMappingLoader() {};
+namespace FIFE
+{
+    /** Gamepad mapping loader.
+     */
+    class ControllerMappingLoader
+    {
+    public:
+        ControllerMappingLoader() { };
 
-		/** Loads mapping from file.
-		 */
-		void load(const std::string& filename);
-	};
-}
+        /** Loads mapping from file.
+         */
+        void load(const std::string& filename);
+    };
+} // namespace FIFE
 #endif

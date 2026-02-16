@@ -35,41 +35,46 @@
 // Second block: files included from the same folder
 #include "rawdatasource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/**
-	 *	Simpe RawDataSource that reads data from raw memory
-	 * 
-	 * @note This Class is @b not incomplete. Use @c getRawData to
-	 * write into the Buffer.
-	 *
-	 * @see RawDataSource
-	 */
-	class RawDataMemSource : public RawDataSource {
-		public:
-			/**
-			 *	Create a new RawDataMemSource that allocates datalen bytes.
-			 * @param datalen the datalen to allocate
-			 */
-			RawDataMemSource(uint32_t datalen);
-			virtual ~RawDataMemSource();
+    /**
+     *	Simpe RawDataSource that reads data from raw memory
+     *
+     * @note This Class is @b not incomplete. Use @c getRawData to
+     * write into the Buffer.
+     *
+     * @see RawDataSource
+     */
+    class RawDataMemSource : public RawDataSource
+    {
+    public:
+        /**
+         *	Create a new RawDataMemSource that allocates datalen bytes.
+         * @param datalen the datalen to allocate
+         */
+        RawDataMemSource(uint32_t datalen);
+        virtual ~RawDataMemSource();
 
-			/** Get a Pointer to the data
-			 * You need to use this function to fill the class with meaningfull data.
-			 */
-			uint8_t* getRawData() const;
+        /** Get a Pointer to the data
+         * You need to use this function to fill the class with meaningfull data.
+         */
+        uint8_t* getRawData() const;
 
-			virtual uint32_t getSize() const;
-			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length);
+        virtual uint32_t getSize() const;
+        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length);
 
-		private:
-			uint8_t* m_data;
-			uint32_t m_datalen;
+    private:
+        uint8_t* m_data;
+        uint32_t m_datalen;
 
-			RawDataMemSource(const RawDataMemSource&) {};
-			RawDataMemSource& operator=(const RawDataMemSource) { return *this; }
-	};
+        RawDataMemSource(const RawDataMemSource&) { };
+        RawDataMemSource& operator=(const RawDataMemSource)
+        {
+            return *this;
+        }
+    };
 
-}
+} // namespace FIFE
 
 #endif

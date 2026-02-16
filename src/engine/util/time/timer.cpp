@@ -27,50 +27,54 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "timemanager.h"
 #include "timer.h"
+#include "timemanager.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	// Remember TimeEvent(-1) means that even a registered event won't be called
-	Timer::Timer()
-		: TimeEvent(-1),
-		m_active(false) {
-	}
+    // Remember TimeEvent(-1) means that even a registered event won't be called
+    Timer::Timer() : TimeEvent(-1), m_active(false) { }
 
-	Timer::~Timer() {
-		stop();
-	}
+    Timer::~Timer()
+    {
+        stop();
+    }
 
-	void Timer::start() {
-		if(m_active)
-			return;
-		setLastUpdateTime( TimeManager::instance()->getTime() );
-		TimeManager::instance()->registerEvent(this);
-		m_active = true;
-	}
+    void Timer::start()
+    {
+        if (m_active)
+            return;
+        setLastUpdateTime(TimeManager::instance()->getTime());
+        TimeManager::instance()->registerEvent(this);
+        m_active = true;
+    }
 
-	void Timer::stop() {
-		if(!m_active)
-			return;
-		TimeManager::instance()->unregisterEvent(this);
-		m_active = false;
-	}
+    void Timer::stop()
+    {
+        if (!m_active)
+            return;
+        TimeManager::instance()->unregisterEvent(this);
+        m_active = false;
+    }
 
-	void Timer::setInterval(int32_t msec) {
-		setPeriod(msec);
-		stop();
-	}
-	void Timer::setCallback(const type_callback& cb) {
-		m_callback = cb;
-	}
+    void Timer::setInterval(int32_t msec)
+    {
+        setPeriod(msec);
+        stop();
+    }
+    void Timer::setCallback(const type_callback& cb)
+    {
+        m_callback = cb;
+    }
 
-	void Timer::updateEvent(uint32_t) {
-		if(!m_active)
-			return;
+    void Timer::updateEvent(uint32_t)
+    {
+        if (!m_active)
+            return;
 
-		if( m_callback ) {
-			m_callback();
-		}
-	}
-}
+        if (m_callback) {
+            m_callback();
+        }
+    }
+} // namespace FIFE

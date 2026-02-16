@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "resource.h"
 
-namespace FIFE {
-	ResourceHandle IResource::m_curhandle = 1;
-}//FIFE
+namespace FIFE
+{
+    ResourceHandle IResource::m_curhandle = 1;
+} // namespace FIFE

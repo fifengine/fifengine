@@ -29,40 +29,44 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 
+#include "directoryprovider.h"
 #include "filesystem.h"
 #include "vfs.h"
-#include "directoryprovider.h"
 #include "vfsdirectory.h"
 
-namespace FIFE {
-	bool DirectoryProvider::isReadable(const std::string& path) const {
+namespace FIFE
+{
+    bool DirectoryProvider::isReadable(const std::string& path) const
+    {
         return fs::is_directory(fs::path(path));
-	}
+    }
 
-	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) {
-		if (isReadable(path)) {
-			VFSSource* source = NULL;
-			if ( hasSource(path)) {
-				source = m_sources[path];
-			} else {
-				source = new VFSDirectory(getVFS(), path);
-				m_sources[path] = source;
-			}
-			return source;
-		}
-		else
-			throw Exception("Path " + path + " is not readable.");
-	}
+    FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path)
+    {
+        if (isReadable(path)) {
+            VFSSource* source = NULL;
+            if (hasSource(path)) {
+                source = m_sources[path];
+            } else {
+                source          = new VFSDirectory(getVFS(), path);
+                m_sources[path] = source;
+            }
+            return source;
+        } else
+            throw Exception("Path " + path + " is not readable.");
+    }
 
-	VFSSource* DirectoryProvider::getSource(const std::string& path) const {
-		VFSSource* source = NULL;
-		if (hasSource(path)) {
-			source = m_sources.find(path)->second;
-		}
-		return source;
-	}
+    VFSSource* DirectoryProvider::getSource(const std::string& path) const
+    {
+        VFSSource* source = NULL;
+        if (hasSource(path)) {
+            source = m_sources.find(path)->second;
+        }
+        return source;
+    }
 
-	bool DirectoryProvider::hasSource(const std::string & path) const {
-		return m_sources.count(path) > 0;
-	}
-}
+    bool DirectoryProvider::hasSource(const std::string& path) const
+    {
+        return m_sources.count(path) > 0;
+    }
+} // namespace FIFE

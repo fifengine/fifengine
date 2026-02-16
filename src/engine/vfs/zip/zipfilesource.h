@@ -23,23 +23,24 @@
 
 #include "vfs/raw/rawdatasource.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class VFS;
-	class ZipFileSource : public RawDataSource {
-		public:
-			ZipFileSource(uint8_t* data, uint32_t datalen);
-			virtual ~ZipFileSource();
+    class VFS;
+    class ZipFileSource : public RawDataSource
+    {
+    public:
+        ZipFileSource(uint8_t* data, uint32_t datalen);
+        virtual ~ZipFileSource();
 
-			virtual uint32_t getSize() const;
-			virtual void readInto(uint8_t* target, uint32_t start, uint32_t len);
+        virtual uint32_t getSize() const;
+        virtual void readInto(uint8_t* target, uint32_t start, uint32_t len);
 
-		private:
-			uint8_t* m_data;
-			uint32_t m_datalen;
+    private:
+        uint8_t* m_data;
+        uint32_t m_datalen;
+    };
 
-	};
-
-}
+} // namespace FIFE
 
 #endif

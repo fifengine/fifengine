@@ -22,7 +22,10 @@
 #ifndef FIFE_SINGLETON_H
 #define FIFE_SINGLETON_H
 
-#define SINGLEFRIEND(classname) friend class FIFE::StaticSingleton<classname>; classname(); virtual ~classname();
+#define SINGLEFRIEND(classname)                    \
+    friend class FIFE::StaticSingleton<classname>; \
+    classname();                                   \
+    virtual ~classname();
 
 // Standard C++ library includes
 #include <cassert>
@@ -35,76 +38,81 @@
 // Second block: files included from the same folder
 #include "fifeclass.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** The "classic" Singleton.
-	 *
-	 * @see DynamicSingleton
-	 */
-	template <typename T> class StaticSingleton {
-		public:
+    /** The "classic" Singleton.
+     *
+     * @see DynamicSingleton
+     */
+    template <typename T>
+    class StaticSingleton
+    {
+    public:
+        static T* instance()
+        {
+            static T inst;
+            return &inst;
+        }
 
-			static T* instance() {
-				static T inst;
-				return &inst;
-			}
+    protected:
+        StaticSingleton() { }
 
-		protected:
+        virtual ~StaticSingleton() { }
 
-			StaticSingleton() {
-			}
+    private:
+        StaticSingleton(const StaticSingleton<T>&) { }
+        StaticSingleton<T>& operator=(const StaticSingleton<T>&)
+        {
+            return this;
+        }
+    };
 
-			virtual ~StaticSingleton() {
-			}
+    /** Another Singleton.
+     *
+     * This implementations needs to be created and destroyed explicitly.
+     * That way the order of construction and destruction is well defined, so we don't
+     * get those nasty static initialization/destruction order problems.
+     *
+     * Engine will create all standard FIFE Singletons when created (just call Engine::instance())
+     * and destroy them on exit.
+     *
+     * Maybe we'll change this one day to use one of those funny NiftyCounter implementations.
+     *
+     * @see StaticSingleton
+     * @see Engine
+     */
+    template <typename T>
+    class DynamicSingleton
+    {
+    public:
+        static T* instance()
+        {
+            assert(m_instance);
+            return m_instance;
+        }
 
-		private:
-			StaticSingleton(const StaticSingleton<T>&) {}
-			StaticSingleton<T>& operator=(const StaticSingleton<T>&) {
-				return this;
-			}
+        DynamicSingleton()
+        {
+            assert(!m_instance);
+            m_instance = static_cast<T*>(this);
+        }
 
-	};
+        virtual ~DynamicSingleton()
+        {
+            m_instance = 0;
+        }
 
-	/** Another Singleton.
-	 *
-	 * This implementations needs to be created and destroyed explicitly.
-	 * That way the order of construction and destruction is well defined, so we don't
-	 * get those nasty static initialization/destruction order problems.
-	 *
-	 * Engine will create all standard FIFE Singletons when created (just call Engine::instance())
-	 * and destroy them on exit.
-	 *
-	 * Maybe we'll change this one day to use one of those funny NiftyCounter implementations.
-	 *
-	 * @see StaticSingleton
-	 * @see Engine
-	 */
-	template <typename T> class DynamicSingleton {
-		public:
-			static T* instance() {
-				assert(m_instance);
-				return m_instance;
-			}
+    private:
+        static T* m_instance;
 
-			DynamicSingleton() {
-				assert(!m_instance);
-				m_instance = static_cast<T*>(this);
-			}
+        DynamicSingleton(const DynamicSingleton<T>&) { };
+        DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) { };
+    };
 
-			virtual ~DynamicSingleton() {
-				m_instance = 0;
-			}
+    template <typename T>
+    T* DynamicSingleton<T>::m_instance = 0;
 
-		private:
-			static T* m_instance;
-
-			DynamicSingleton(const DynamicSingleton<T>&) {};
-			DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) {};
-
-	};
-
-	template <typename T> T* DynamicSingleton<T>::m_instance = 0;
-
-}//FIFE
+} // namespace FIFE
 
 #endif

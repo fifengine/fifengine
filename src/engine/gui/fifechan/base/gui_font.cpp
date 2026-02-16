@@ -34,172 +34,202 @@
 
 #include "gui_font.h"
 
-namespace FIFE {
-	GuiFont::GuiFont(IFont* font): m_font(font) {
-		assert(font);
-	}
+namespace FIFE
+{
+    GuiFont::GuiFont(IFont* font) : m_font(font)
+    {
+        assert(font);
+    }
 
-	GuiFont::~GuiFont() {
-		delete m_font;
-	}
+    GuiFont::~GuiFont()
+    {
+        delete m_font;
+    }
 
-	int32_t GuiFont::getStringIndexAt(const std::string& text, int32_t x) const {
-		return m_font->getStringIndexAt(text, x);
-	}
+    int32_t GuiFont::getStringIndexAt(const std::string& text, int32_t x) const
+    {
+        return m_font->getStringIndexAt(text, x);
+    }
 
-	void GuiFont::drawString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y) {
-		if (text == "") {
-			return;
-		}
+    void GuiFont::drawString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
+    {
+        if (text == "") {
+            return;
+        }
 
-		int32_t yoffset = getRowSpacing() / 2;
+        int32_t yoffset = getRowSpacing() / 2;
 
-		const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
-		FIFE::Rect rect;
-		rect.x = x + clip.xOffset;
-		rect.y = y + clip.yOffset + yoffset;
-		rect.w = getWidth(text);
-		rect.h = getHeight();
+        const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+        FIFE::Rect rect;
+        rect.x = x + clip.xOffset;
+        rect.y = y + clip.yOffset + yoffset;
+        rect.w = getWidth(text);
+        rect.h = getHeight();
 
-		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
-			return;
-		}
+        if (!rect.intersects(Rect(clip.x, clip.y, clip.width, clip.height))) {
+            return;
+        }
 
-		Image* image;
-		if (isDynamicColoring()) {
-			SDL_Color color = getColor();
-			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
-			image = getAsImage(text);
-			setColor(color.r, color.g, color.b, color.a);
-		} else {
-			image = getAsImage(text);
-		}
-		image->render(rect);
-	}
+        Image* image;
+        if (isDynamicColoring()) {
+            SDL_Color color = getColor();
+            setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
+            image = getAsImage(text);
+            setColor(color.r, color.g, color.b, color.a);
+        } else {
+            image = getAsImage(text);
+        }
+        image->render(rect);
+    }
 
-	void GuiFont::drawMultiLineString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y) {
-		if (text == "") {
-			return;
-		}
+    void GuiFont::drawMultiLineString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
+    {
+        if (text == "") {
+            return;
+        }
 
-		int32_t yoffset = getRowSpacing() / 2;
+        int32_t yoffset = getRowSpacing() / 2;
 
-		const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+        const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 
-		Image* image;
-		if (isDynamicColoring()) {
-			SDL_Color color = getColor();
-			setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
-			image = getAsImageMultiline(text);
-			setColor(color.r, color.g, color.b, color.a);
-		} else {
-			image = getAsImageMultiline(text);
-		}
+        Image* image;
+        if (isDynamicColoring()) {
+            SDL_Color color = getColor();
+            setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
+            image = getAsImageMultiline(text);
+            setColor(color.r, color.g, color.b, color.a);
+        } else {
+            image = getAsImageMultiline(text);
+        }
 
-		FIFE::Rect rect;
-		rect.x = x + clip.xOffset;
-		rect.y = y + clip.yOffset + yoffset;
-		rect.w = image->getWidth();
-		rect.h = image->getHeight();
-		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
-			return;
-		}
-		image->render(rect);
-	}
+        FIFE::Rect rect;
+        rect.x = x + clip.xOffset;
+        rect.y = y + clip.yOffset + yoffset;
+        rect.w = image->getWidth();
+        rect.h = image->getHeight();
+        if (!rect.intersects(Rect(clip.x, clip.y, clip.width, clip.height))) {
+            return;
+        }
+        image->render(rect);
+    }
 
-	void GuiFont::setRowSpacing (int32_t spacing) {
-		m_font->setRowSpacing(spacing);
-	}
+    void GuiFont::setRowSpacing(int32_t spacing)
+    {
+        m_font->setRowSpacing(spacing);
+    }
 
-	int32_t GuiFont::getRowSpacing() const {
-		return m_font->getRowSpacing();
-	}
+    int32_t GuiFont::getRowSpacing() const
+    {
+        return m_font->getRowSpacing();
+    }
 
-	void GuiFont::setGlyphSpacing(int32_t spacing) {
-		m_font->setGlyphSpacing(spacing);
-	}
+    void GuiFont::setGlyphSpacing(int32_t spacing)
+    {
+        m_font->setGlyphSpacing(spacing);
+    }
 
-	int32_t GuiFont::getGlyphSpacing() const {
-		return m_font->getGlyphSpacing();
-	}
+    int32_t GuiFont::getGlyphSpacing() const
+    {
+        return m_font->getGlyphSpacing();
+    }
 
-	void GuiFont::setAntiAlias(bool antiAlias) {
-		m_font->setAntiAlias(antiAlias);
-	}
+    void GuiFont::setAntiAlias(bool antiAlias)
+    {
+        m_font->setAntiAlias(antiAlias);
+    }
 
-	bool GuiFont::isAntiAlias() const {
-		return m_font->isAntiAlias();
-	}
+    bool GuiFont::isAntiAlias() const
+    {
+        return m_font->isAntiAlias();
+    }
 
-	void GuiFont::setBoldStyle(bool style) {
-		m_font->setBoldStyle(style);
-	}
+    void GuiFont::setBoldStyle(bool style)
+    {
+        m_font->setBoldStyle(style);
+    }
 
-	bool GuiFont::isBoldStyle() const {
-		return m_font->isBoldStyle();
-	}
+    bool GuiFont::isBoldStyle() const
+    {
+        return m_font->isBoldStyle();
+    }
 
-	void GuiFont::setItalicStyle(bool style) {
-		m_font->setItalicStyle(style);
-	}
+    void GuiFont::setItalicStyle(bool style)
+    {
+        m_font->setItalicStyle(style);
+    }
 
-	bool GuiFont::isItalicStyle() const {
-		return m_font->isItalicStyle();
-	}
+    bool GuiFont::isItalicStyle() const
+    {
+        return m_font->isItalicStyle();
+    }
 
-	void GuiFont::setUnderlineStyle(bool style) {
-		m_font->setUnderlineStyle(style);
-	}
+    void GuiFont::setUnderlineStyle(bool style)
+    {
+        m_font->setUnderlineStyle(style);
+    }
 
-	bool GuiFont::isUnderlineStyle() const {
-		return m_font->isUnderlineStyle();
-	}
+    bool GuiFont::isUnderlineStyle() const
+    {
+        return m_font->isUnderlineStyle();
+    }
 
-	void GuiFont::setStrikethroughStyle(bool style) {
-		m_font->setStrikethroughStyle(style);
-	}
+    void GuiFont::setStrikethroughStyle(bool style)
+    {
+        m_font->setStrikethroughStyle(style);
+    }
 
-	bool GuiFont::isStrikethroughStyle() const {
-		return m_font->isStrikethroughStyle();
-	}
+    bool GuiFont::isStrikethroughStyle() const
+    {
+        return m_font->isStrikethroughStyle();
+    }
 
-	void GuiFont::setDynamicColoring(bool coloring) {
-		m_font->setDynamicColoring(coloring);
-	}
-	
-	bool GuiFont::isDynamicColoring() const {
-		return m_font->isDynamicColoring();
-	}
+    void GuiFont::setDynamicColoring(bool coloring)
+    {
+        m_font->setDynamicColoring(coloring);
+    }
 
-	Image* GuiFont::getAsImage(const std::string& text) {
-		return m_font->getAsImage(text);
-	}
+    bool GuiFont::isDynamicColoring() const
+    {
+        return m_font->isDynamicColoring();
+    }
 
-	Image* GuiFont::getAsImageMultiline(const std::string& text) {
-		return m_font->getAsImageMultiline(text);
-	}
+    Image* GuiFont::getAsImage(const std::string& text)
+    {
+        return m_font->getAsImage(text);
+    }
 
-	std::string GuiFont::splitTextToWidth (const std::string& text, int32_t render_width) {
-		return m_font->splitTextToWidth(text,render_width);
-	}
+    Image* GuiFont::getAsImageMultiline(const std::string& text)
+    {
+        return m_font->getAsImageMultiline(text);
+    }
 
-	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
-		m_font->setColor(r, g, b, a);
-	}
+    std::string GuiFont::splitTextToWidth(const std::string& text, int32_t render_width)
+    {
+        return m_font->splitTextToWidth(text, render_width);
+    }
 
-	SDL_Color GuiFont::getColor() const {
-		return m_font->getColor();
-	}
+    void GuiFont::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    {
+        m_font->setColor(r, g, b, a);
+    }
 
-	int32_t GuiFont::getWidth(const std::string& text) const {
-		return m_font->getWidth(text);
-	}
+    SDL_Color GuiFont::getColor() const
+    {
+        return m_font->getColor();
+    }
 
-	int32_t GuiFont::getHeight() const {
-		return m_font->getHeight();
-	}
+    int32_t GuiFont::getWidth(const std::string& text) const
+    {
+        return m_font->getWidth(text);
+    }
 
-	void GuiFont::invalidate() {
-		m_font->invalidate();
-	}
-}
+    int32_t GuiFont::getHeight() const
+    {
+        return m_font->getHeight();
+    }
+
+    void GuiFont::invalidate()
+    {
+        m_font->invalidate();
+    }
+} // namespace FIFE

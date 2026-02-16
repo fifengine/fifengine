@@ -33,47 +33,49 @@
 // Second block: files included from the same folder
 #include "video/image.h"
 
-namespace FIFE {
+namespace FIFE
+{
 
-	/** The SDL implementation of the @c Image base class.
-	 */
-	class SDLImage : public Image {
-	public:
-		SDLImage(IResourceLoader* loader = 0);
-		SDLImage(const std::string& name, IResourceLoader* loader = 0);
-		SDLImage(SDL_Surface* surface);
-		SDLImage(const std::string& name, SDL_Surface* surface);
-		SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
-		SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
+    /** The SDL implementation of the @c Image base class.
+     */
+    class SDLImage : public Image
+    {
+    public:
+        SDLImage(IResourceLoader* loader = 0);
+        SDLImage(const std::string& name, IResourceLoader* loader = 0);
+        SDLImage(SDL_Surface* surface);
+        SDLImage(const std::string& name, SDL_Surface* surface);
+        SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
+        SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
-		virtual ~SDLImage();
-		virtual void invalidate();
-		virtual void setSurface(SDL_Surface* surface);
-		virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const* rgb = 0);
-		virtual size_t getSize();
-		virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
-		virtual void forceLoadInternal();
-		virtual void load();
-		virtual void free();
+        virtual ~SDLImage();
+        virtual void invalidate();
+        virtual void setSurface(SDL_Surface* surface);
+        virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = 0);
+        virtual size_t getSize();
+        virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
+        virtual void forceLoadInternal();
+        virtual void load();
+        virtual void free();
 
-		SDL_Texture* getTexture();
-		void setTexture(SDL_Texture* texture);
+        SDL_Texture* getTexture();
+        void setTexture(SDL_Texture* texture);
 
-	private:
-		void resetSdlimage();
-		void validateShared();
+    private:
+        void resetSdlimage();
+        void validateShared();
 
-		// colorkey for the image
-		SDL_Color m_colorkey;
-		// texture of image
-		SDL_Texture* m_texture;
+        // colorkey for the image
+        SDL_Color m_colorkey;
+        // texture of image
+        SDL_Texture* m_texture;
 
-		// Holds Atlas ImagePtr if this is a shared image
-		ImagePtr m_atlas_img;
-		// Holds Atlas Name if this is a shared image
-		std::string m_atlas_name;
-	};
+        // Holds Atlas ImagePtr if this is a shared image
+        ImagePtr m_atlas_img;
+        // Holds Atlas Name if this is a shared image
+        std::string m_atlas_name;
+    };
 
-}
+} // namespace FIFE
 
 #endif

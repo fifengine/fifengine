@@ -1,4 +1,4 @@
-/*************************************************************************** 
+/***************************************************************************
  *   Copyright (C) 2005-2019 by the FIFE team                              *
  *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
@@ -37,38 +37,40 @@
 
 class TiXmlElement;
 
-namespace FIFE {
+namespace FIFE
+{
 
-	class VFS;
-	class ImageManager;
-	class AnimationManager;
+    class VFS;
+    class ImageManager;
+    class AnimationManager;
 
-	class AnimationLoader : public IAnimationLoader {
-	public:
-		AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
+    class AnimationLoader : public IAnimationLoader
+    {
+    public:
+        AnimationLoader(VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 
-		/** 
-		* @see IAnimationLoader::isLoadable
-		*/
-		virtual bool isLoadable(const std::string& filename);
+        /**
+         * @see IAnimationLoader::isLoadable
+         */
+        virtual bool isLoadable(const std::string& filename);
 
-		/** 
-		* @see IAnimationLoader::load
-		*/
-		virtual AnimationPtr load(const std::string& filename);
+        /**
+         * @see IAnimationLoader::load
+         */
+        virtual AnimationPtr load(const std::string& filename);
 
-		/** 
-		* @see IAnimationLoader::loadMultiple
-		*/
-		virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename);
+        /**
+         * @see IAnimationLoader::loadMultiple
+         */
+        virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename);
 
-	private:
-		AnimationPtr loadAnimation(const std::string& filename, TiXmlElement* animationElem);
+    private:
+        AnimationPtr loadAnimation(const std::string& filename, TiXmlElement* animationElem);
 
-		VFS* m_vfs;
-		ImageManager* m_imageManager;
-		AnimationManager* m_animationManager;
-	};
-}
+        VFS* m_vfs;
+        ImageManager* m_imageManager;
+        AnimationManager* m_animationManager;
+    };
+} // namespace FIFE
 
 #endif

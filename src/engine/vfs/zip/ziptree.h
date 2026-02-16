@@ -1,30 +1,30 @@
 /***************************************************************************
-*   Copyright (C) 2005-2019 by the FIFE team                              *
-*   http://www.fifengine.net                                              *
-*   This file is part of FIFE.                                            *
-*                                                                         *
-*   FIFE is free software; you can redistribute it and/or                 *
-*   modify it under the terms of the GNU Lesser General Public            *
-*   License as published by the Free Software Foundation; either          *
-*   version 2.1 of the License, or (at your option) any later version.    *
-*                                                                         *
-*   This library is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
-*   Lesser General Public License for more details.                       *
-*                                                                         *
-*   You should have received a copy of the GNU Lesser General Public      *
-*   License along with this library; if not, write to the                 *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
-***************************************************************************/
+ *   Copyright (C) 2005-2019 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or                 *
+ *   modify it under the terms of the GNU Lesser General Public            *
+ *   License as published by the Free Software Foundation; either          *
+ *   version 2.1 of the License, or (at your option) any later version.    *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
+ *   Lesser General Public License for more details.                       *
+ *                                                                         *
+ *   You should have received a copy of the GNU Lesser General Public      *
+ *   License along with this library; if not, write to the                 *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
+ ***************************************************************************/
 #ifndef FIFE_VFS_ZIP_ZIPTREE_H
 #define FIFE_VFS_ZIP_ZIPTREE_H
 
 // Standard C++ library includes
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
 // 3rd party library includes
 
@@ -33,12 +33,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-
-namespace FIFE {
+namespace FIFE
+{
 
     class ZipNode;
 
-    class ZipTree {
+    class ZipTree
+    {
     public:
         /** constructor
          */
@@ -55,7 +56,7 @@ namespace FIFE {
                     (value after the last path separator)
                     or NULL if the path could not be added
          */
-         ZipNode* addNode(const std::string& nodePath);
+        ZipNode* addNode(const std::string& nodePath);
 
         /** accessor for getting a node by name
          *  @param name the name to search for
@@ -68,10 +69,11 @@ namespace FIFE {
          *  @return ZipNode pointer to the root node
          */
         ZipNode* getRootNode() const;
+
     private:
         ZipNode* m_rootNode;
     };
-}
+} // namespace FIFE
 
 /** debug stream for a zip tree
  *  useful for debugging
@@ -80,6 +82,5 @@ namespace FIFE {
  *  @return os output stream to allow for chaining
  */
 std::ostream& operator<<(std::ostream& os, const FIFE::ZipTree& zipTree);
-
 
 #endif
