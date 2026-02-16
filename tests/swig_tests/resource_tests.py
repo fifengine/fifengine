@@ -48,10 +48,7 @@ class TestImgMgr(unittest.TestCase):
 
     def testImageImgMgrFail(self):
         imgMgr = self.engine.getImageManager()
-
-
-# 		TODO: This test fails as imgMgr.load doesn't throw an exception as expected
-# 		self.assertRaises(RuntimeError,imgMgr.load,'does_not_exist.png')
+        self.assertRaises(fife.NotFound, imgMgr.load, "does_not_exist.png")
 
 
 TEST_CLASSES = [TestImgMgr]
