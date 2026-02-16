@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <filesystem>
+#include <system_error>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -44,23 +45,24 @@ using namespace FIFE;
 
 TEST_CASE("test_is_directory")
 {
+    const std::filesystem::path test_dir = std::filesystem::temp_directory_path() / FIFE_TEST_DIR;
+    const std::filesystem::path nested_test_dir = test_dir / FIFE_TEST_DIR;
+
+    std::error_code ec;
+    std::filesystem::remove_all(test_dir, ec);
+
     std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
     vfs->addSource(new VFSDirectory(vfs.get()));
 
-    if (std::filesystem::exists(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR);
-    }
-
-    if (std::filesystem::exists(FIFE_TEST_DIR)) {
-        std::filesystem::remove(FIFE_TEST_DIR);
-    }
     CHECK(vfs->isDirectory(""));
     CHECK(vfs->isDirectory("/"));
 
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
-    std::filesystem::create_directory(FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR));
-    CHECK(!vfs->isDirectory(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR));
-    std::filesystem::create_directories(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR);
-    CHECK(vfs->isDirectory(FIFE_TEST_DIR + "/" + FIFE_TEST_DIR));
+    CHECK(!vfs->isDirectory(test_dir.string()));
+    std::filesystem::create_directory(test_dir);
+    CHECK(vfs->isDirectory(test_dir.string()));
+    CHECK(!vfs->isDirectory(nested_test_dir.string()));
+    std::filesystem::create_directories(nested_test_dir);
+    CHECK(vfs->isDirectory(nested_test_dir.string()));
+
+    std::filesystem::remove_all(test_dir, ec);
 }
