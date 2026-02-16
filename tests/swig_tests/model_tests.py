@@ -114,12 +114,12 @@ class TestModel(unittest.TestCase):
         # self.assertEqual(len(query), 2)
         self.assertEqual(len(layer.getInstances()), 3)
 
-    # self.assertEqual(query[0].get("Name"), "Goon")
-    # p1 = fife.ModelCoordinate(4,4)
-    # print p1.x, p1.y
-    # p2 = inst.getLocation().getLayerCoordinates()
-    # print p2.x, p2.y
-    # self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
+        # self.assertEqual(query[0].get("Name"), "Goon")
+        # p1 = fife.ModelCoordinate(4,4)
+        # print p1.x, p1.y
+        # p2 = inst.getLocation().getLayerCoordinates()
+        # print p2.x, p2.y
+        # self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
 
     def testObjects(self):
         obj1 = self.model.createObject("object003", "test_nspace")

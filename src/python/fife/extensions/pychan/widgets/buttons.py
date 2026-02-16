@@ -28,6 +28,7 @@ from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr, PointAttr
 from fife.extensions.pychan.properties import ImageProperty
 
 from .basictextwidget import BasicTextWidget
+from .common import get_manager
 
 
 class Button(BasicTextWidget):

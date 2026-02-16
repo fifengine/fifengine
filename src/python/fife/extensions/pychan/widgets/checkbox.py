@@ -28,6 +28,7 @@ from fife.extensions.pychan.attrs import Attr, BoolAttr, IntAttr
 from fife.extensions.pychan.properties import ImageProperty
 
 from .buttons import ImageButton
+from .common import get_manager
 
 
 class CheckBox(ImageButton):

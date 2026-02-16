@@ -60,7 +60,7 @@ from .spacer import Spacer
 from .tabbedarea import Tab, TabbedArea
 from .textbox import TextBox
 from .textfield import TextField
-from .widget import Widget
+from .widget import Widget as Widget
 
 # Global Widget Class registry
 

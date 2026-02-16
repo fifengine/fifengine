@@ -161,7 +161,7 @@ class ListAttr(Attr):
 class UnicodeListAttr(Attr):
     def parse(self, value):
         try:
-            result = list(map(unicode, str(value).split(",")))
+            result = list(map(str, str(value).split(",")))
             return result
         except:
             raise ParserError(str(self.name) + " expected a list with unicode strings.")

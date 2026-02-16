@@ -82,15 +82,14 @@ class SimpleSerializer(object):
 
 class SimpleXMLSerializer(SimpleSerializer):
     """
-	This class is a simple interface to get and store data in XML files.
+    This class is a simple interface to get and store data in XML files.
 
-	Usage::
-		from fife.extensions.serializers.simplexml import SimpleXMLSerializer
-		serializer = SimpleXMLSerializer(filename="somefile.xml")
-		serializer.set("module_name", "variable_name", "value")
-		somevariable = serializer.get("module_name", "variable_name", \
-									  "default_value")
-	"""
+    Usage::
+            from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+            serializer = SimpleXMLSerializer(filename="somefile.xml")
+            serializer.set("module_name", "variable_name", "value")
+            somevariable = serializer.get("module_name", "variable_name", "default_value")
+    """
 
     def __init__(self, filename=None):
         self._file = filename
@@ -492,9 +491,9 @@ class SimpleXMLSerializer(SimpleSerializer):
         """Deserializes a list back into a dict object"""
         if not serial:
             return dict()
-        dict = {}
+        result = {}
         items = serial.split(" ; ")
         for i in items:
             kv_pair = i.split(" : ")
-            dict[kv_pair[0]] = kv_pair[1]
-        return dict
+            result[kv_pair[0]] = kv_pair[1]
+        return result

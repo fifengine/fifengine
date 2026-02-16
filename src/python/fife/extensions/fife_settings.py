@@ -365,7 +365,7 @@ class Setting(object):
 		# Make sure the new entry is available
 		if self.get(entry.module, entry.name) is None:
 			print "Updating", self._settings_file, "to the default, it is missing the entry:"\
-			      , entry.name ,"for module", entry.module
+             , entry.name ,"for module", entry.module
 
 			#self.setDefaults()
 		if self.get(entry.module, entry.name) is None:

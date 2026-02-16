@@ -134,11 +134,11 @@ the text of a checkbox or the list of a listBox are good examples. The second is
 data that is mutable by the user and may be read out again - for example the state of a checkbox
 or the selected index in a list. The third and final process is collection of the user-mutable data::
   guiElement.distributeInitialData({
-  	'myListBox' : choices,
-  	'myLabel' : map.name,
+    'myListBox' : choices,
+    'myLabel' : map.name,
   })
   guiElement.distributeData({
-  	'myTextField' : map.description
+    'myTextField' : map.description
   })
   # ... process dialog.
   map.description, choice = guiElement.collectData('myListBox','myTextField')
@@ -239,6 +239,7 @@ __all__ = ["loadXML", "loadFonts", "init", "manager"]
 
 # This *import should really be removed!
 from .exceptions import *
+from .exceptions import InitializationError
 from .fonts import loadFonts
 from .widgets import *
 from .widgets.tabbedarea import Tab

@@ -64,7 +64,8 @@ class TestGui(unittest.TestCase):
         label2.setPosition(0, 100)
         label2.setFont(fonts[1])
         container.add(label2)
-        labels = [label1, label2]
+
+        # labels = [label1, label2]
 
         self.engine.initializePumping()
         for i in range(100):

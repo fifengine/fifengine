@@ -23,9 +23,7 @@
 from __future__ import print_function
 
 import os
-import sys
 from builtins import range
-from traceback import print_exc
 
 import fife
 

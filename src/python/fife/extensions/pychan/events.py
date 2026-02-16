@@ -41,7 +41,7 @@ to generate suitable callbacks.
 
 Here's an example callback::
    def dumpEventInfo(event=0,widget=0):
-	  print widget, " received the event ", event
+      print widget, " received the event ", event
 
 Note the signature - C{event} and C{widget} are keyword
 arguments passed to the callback. If doesn't accept either
