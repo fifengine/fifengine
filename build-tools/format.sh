@@ -20,6 +20,7 @@ check_version() {
 }
 
 if ! CLANG_FORMAT=$(check_version "$CLANG_FORMAT") \
+  && ! CLANG_FORMAT=$(check_version "clang-format-20") \
   && ! CLANG_FORMAT=$(check_version "clang-format-18") \
   && ! CLANG_FORMAT=$(check_version "clang-format-17"); then
   echo "Error: No compatible clang-format version (>=17) found."
