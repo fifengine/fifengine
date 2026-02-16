@@ -21,6 +21,8 @@
 
 // Standard C++ library includes
 #include <filesystem>
+#include <memory>
+#include <string>
 #include <system_error>
 
 // Platform specific includes
@@ -41,7 +43,8 @@
 
 static const std::string FIFE_TEST_DIR = "fifetestdir";
 
-using namespace FIFE;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
 
 TEST_CASE("test_is_directory")
 {

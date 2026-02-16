@@ -20,8 +20,11 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <memory>
+#include <string>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -39,7 +42,12 @@
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 
-using namespace FIFE;
+using FIFE::DAT2;
+using FIFE::Exception;
+using FIFE::RawData;
+using FIFE::TimeManager;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
 
 static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
 static const std::string RAW_FILE        = "tests/data/test.map";

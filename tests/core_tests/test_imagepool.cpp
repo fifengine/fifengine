@@ -20,9 +20,11 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <string>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -45,7 +47,16 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
 
-using namespace FIFE;
+using FIFE::Image;
+using FIFE::ImageManager;
+using FIFE::ImagePtr;
+using FIFE::Rect;
+using FIFE::RenderBackendSDL;
+using FIFE::ScreenMode;
+using FIFE::SDLException;
+using FIFE::TimeManager;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
 
 static const std::string IMAGE_FILE    = "tests/data/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
@@ -92,8 +103,8 @@ TEST_CASE_METHOD(environment, "test_image_pool")
     int w = W / 12;
     int H = atlas->getHeight();
     int h = H / 12;
-    CHECK(w != 0);
-    CHECK(h != 0);
+    CHECK_NE(w, 0);
+    CHECK_NE(h, 0);
 
     ImagePtr subImage = imageManager->create();
     subImage->useSharedImage(atlas, Rect(0, 0, w, h));

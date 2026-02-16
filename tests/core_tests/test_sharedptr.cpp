@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
@@ -35,7 +36,7 @@
 #include "util/base/fife_stdint.h"
 #include "util/base/sharedptr.h"
 
-using namespace FIFE;
+using FIFE::SharedPtr;
 
 class Data
 {
@@ -81,16 +82,16 @@ TEST_CASE("case1")
     SharedPtr<Data> shptr(new Data(5, 10));
 
     SharedPtr<Data> copy = shptr;
-    CHECK(shptr.useCount() == 2);
+    CHECK_EQ(shptr.useCount(), 2);
 
     shptr.reset();
     CHECK(!shptr);
 
-    CHECK(copy.useCount() == 1);
+    CHECK_EQ(copy.useCount(), 1);
     CHECK(copy.unique());
 
-    CHECK(copy->x == 5);
-    CHECK(copy->y == 10);
+    CHECK_EQ(copy->x, 5);
+    CHECK_EQ(copy->y, 10);
 
     copy.reset();
     CHECK(!copy);
@@ -108,16 +109,16 @@ TEST_CASE("case2")
     SharedPtr<Data> shptr(new Data(5, 10));
 
     SharedPtr<Data> copy(shptr);
-    CHECK(shptr.useCount() == 2);
+    CHECK_EQ(shptr.useCount(), 2);
 
     shptr.reset();
     CHECK(!shptr);
 
-    CHECK(copy.useCount() == 1);
+    CHECK_EQ(copy.useCount(), 1);
     CHECK(copy.unique());
 
-    CHECK(copy->x == 5);
-    CHECK(copy->y == 10);
+    CHECK_EQ(copy->x, 5);
+    CHECK_EQ(copy->y, 10);
 
     copy.reset();
     CHECK(!copy);
@@ -138,18 +139,18 @@ TEST_CASE("case3")
     shptr->y = 10;
 
     SharedPtr<Data> copy(shptr);
-    CHECK(shptr.useCount() == 2);
+    CHECK_EQ(shptr.useCount(), 2);
 
     shptr.reset();
     CHECK(!shptr);
 
     Data d = *copy;
 
-    CHECK(copy.useCount() == 1);
+    CHECK_EQ(copy.useCount(), 1);
     CHECK(copy.unique());
 
-    CHECK(d.x == 5);
-    CHECK(d.y == 10);
+    CHECK_EQ(d.x, 5);
+    CHECK_EQ(d.y, 10);
 
     copy.reset();
     CHECK(!copy);
@@ -180,7 +181,7 @@ TEST_CASE("case5")
 {
     SharedPtr<Data> shptr;
 
-    CHECK(shptr == 0);
+    CHECK_EQ(shptr, static_cast<SharedPtr<Data>>(0));
 }
 
 /**
@@ -191,7 +192,7 @@ TEST_CASE("case6")
 {
     SharedPtr<Data> shptr(new SubData(2, 4, 6));
 
-    CHECK(shptr->total() == 12);
+    CHECK_EQ(shptr->total(), 12);
 }
 
 /**
@@ -207,8 +208,8 @@ TEST_CASE("case7")
     SharedPtr<Data> copy(shptr);
     SharedPtr<Data> shptr2(new Data(4, 8));
 
-    CHECK(shptr == copy);
-    CHECK(shptr != shptr2);
+    CHECK_EQ(shptr, copy);
+    CHECK_NE(shptr, shptr2);
 }
 
 /**
@@ -223,16 +224,16 @@ TEST_CASE("case8")
     SharedPtr<Data> shptr(new Data(2, 4));
     SharedPtr<Data> copy(shptr);
 
-    CHECK(copy.useCount() == 2);
+    CHECK_EQ(copy.useCount(), 2);
     shptr.reset(new Data(6, 8));
-    CHECK(copy.useCount() == 1);
+    CHECK_EQ(copy.useCount(), 1);
 
     // shptr holding values we expect?
-    CHECK(shptr->x == 6);
-    CHECK(shptr->y == 8);
+    CHECK_EQ(shptr->x, 6);
+    CHECK_EQ(shptr->y, 8);
 
-    CHECK(copy->x == 2);
-    CHECK(copy->y == 4);
+    CHECK_EQ(copy->x, 2);
+    CHECK_EQ(copy->y, 4);
 
     shptr.reset();
     CHECK(!shptr);

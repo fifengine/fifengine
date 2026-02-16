@@ -21,8 +21,12 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <memory>
+#include <set>
+#include <string>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -40,7 +44,12 @@
 #include "vfs/vfsdirectory.h"
 #include "vfs/zip/zipsource.h"
 
-using namespace FIFE;
+using FIFE::NotFound;
+using FIFE::RawData;
+using FIFE::TimeManager;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
+using FIFE::ZipSource;
 
 // Environment
 struct environment
@@ -50,10 +59,13 @@ struct environment
     environment() : timemanager(std::make_shared<TimeManager>()) { }
 };
 
-using namespace FIFE;
-
 static const std::string COMPRESSED_FILE = "tests/data/testmap.zip";
-static const std::string RAW_FILE        = "tests/data/test.map";
+using FIFE::NotFound;
+using FIFE::RawData;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
+using FIFE::ZipSource;
+static const std::string RAW_FILE = "tests/data/test.map";
 
 TEST_CASE("test_decoder")
 {
@@ -67,31 +79,31 @@ TEST_CASE("test_decoder")
     CHECK_THROWS_AS(vfs->open("does-not-exist"), NotFound);
     std::set<std::string> dirlist = vfs->listDirectories("ziptest_content");
 
-    CHECK(dirlist.size() == 4);
+    CHECK_EQ(dirlist.size(), 4);
     CHECK(std::find(dirlist.begin(), dirlist.end(), "maps") != dirlist.end());
     CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir1") != dirlist.end());
     CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir2") != dirlist.end());
     CHECK(std::find(dirlist.begin(), dirlist.end(), "testdir3") != dirlist.end());
 
     std::set<std::string> filelist = vfs->listFiles("ziptest_content");
-    CHECK(filelist.size() == 0);
+    CHECK_EQ(filelist.size(), 0);
     filelist = vfs->listFiles("ziptest_content/testdir1");
 
-    CHECK(filelist.size() == 4);
+    CHECK_EQ(filelist.size(), 4);
     CHECK(std::find(filelist.begin(), filelist.end(), "file") != filelist.end());
     CHECK(std::find(filelist.begin(), filelist.end(), "file-a") != filelist.end());
     CHECK(std::find(filelist.begin(), filelist.end(), "file-b") != filelist.end());
     CHECK(std::find(filelist.begin(), filelist.end(), "file-c") != filelist.end());
 
-    CHECK(vfs->listFiles("ziptest_content/testdir3").size() == 0);
-    CHECK(vfs->listDirectories("ziptest_content/testdir1").size() == 0);
+    CHECK_EQ(vfs->listFiles("ziptest_content/testdir3").size(), 0);
+    CHECK_EQ(vfs->listDirectories("ziptest_content/testdir1").size(), 0);
 
     CHECK(vfs->exists(RAW_FILE));
     CHECK(vfs->exists("ziptest_content/maps/test.map"));
     RawData* fraw  = vfs->open(RAW_FILE);
     RawData* fcomp = vfs->open("ziptest_content/maps/test.map");
 
-    CHECK(fraw->getDataLength() == fcomp->getDataLength());
+    CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
     std::cout << "9" << std::endl;
     unsigned int smaller_len = fraw->getDataLength();
     if (fcomp->getDataLength() < smaller_len) {
@@ -107,7 +119,7 @@ TEST_CASE("test_decoder")
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t rawc  = d_raw[i];
         uint8_t compc = d_comp[i];
-        CHECK(rawc == compc);
+        CHECK_EQ(rawc, compc);
     }
     std::cout << "scanning finished" << std::endl;
     delete[] d_raw;

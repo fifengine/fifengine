@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
 
-using namespace FIFE;
+using FIFE::Rect;
 
 TEST_CASE("rectangle_interesection")
 {

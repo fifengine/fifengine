@@ -20,7 +20,9 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cstdint>
 #include <memory>
+#include <string>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -44,7 +46,18 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
 
-using namespace FIFE;
+using FIFE::Image;
+using FIFE::ImageManager;
+using FIFE::ImagePtr;
+using FIFE::Rect;
+using FIFE::RenderBackend;
+using FIFE::RenderBackendOpenGL;
+using FIFE::RenderBackendSDL;
+using FIFE::ScreenMode;
+using FIFE::SDLException;
+using FIFE::TimeManager;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
 
 static const std::string IMAGE_FILE    = "tests/data/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";

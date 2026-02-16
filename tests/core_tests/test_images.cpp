@@ -20,9 +20,12 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -45,7 +48,18 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
 
-using namespace FIFE;
+using FIFE::Image;
+using FIFE::ImageManager;
+using FIFE::ImagePtr;
+using FIFE::Rect;
+using FIFE::RenderBackend;
+using FIFE::RenderBackendOpenGL;
+using FIFE::RenderBackendSDL;
+using FIFE::ScreenMode;
+using FIFE::SDLException;
+using FIFE::TimeManager;
+using FIFE::VFS;
+using FIFE::VFSDirectory;
 
 static const std::string IMAGE_FILE       = "tests/data/beach_e1.png";
 static const std::string ALPHA_IMAGE_FILE = "tests/data/alpha_fidgit.png";
@@ -151,8 +165,8 @@ TEST_CASE("test_sdl_alphaoptimize")
         renderbackend.endFrame();
     }
 
-    CHECK(img.get()->getSurface() != nullptr);
-    CHECK(alpha_img.get()->getSurface()->format->Amask != 0);
+    CHECK_NE(img.get()->getSurface(), nullptr);
+    CHECK_NE(alpha_img.get()->getSurface()->format->Amask, 0);
 }
 
 TEST_CASE("test_sdl_image")
