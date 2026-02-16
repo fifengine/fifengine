@@ -34,7 +34,7 @@ else()
     URL http://prdownloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
     CONFIGURE_COMMAND
       ${CMAKE_COMMAND} -E echo "Configuring SWIG..." && ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig sh
-      -c "(./autogen.sh || true) && ./configure --prefix=${DEPENDENCY_INSTALL_DIR}/../build-tools/swig --without-pcre"
+      -c "(./autogen.sh || true) && ./configure --prefix=${DEPENDENCY_INSTALL_DIR}/../build-tools/swig --without-pcre --without-javascript --without-java --without-csharp --without-go --without-lua --without-perl5 --without-php --without-r --without-ruby --without-tcl"
     BUILD_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig sh -c "make"
     INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig sh -c "make install"
     INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}/../build-tools/swig
