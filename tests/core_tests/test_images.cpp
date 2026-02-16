@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <iomanip>
+#include <memory>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -37,14 +38,11 @@
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "video/image_location.h"
 #include "video/image.h"
-#include "video/imagepool.h"
+#include "video/imagemanager.h"
+#include "video/devicecaps.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_loader.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
 #include "util/base/exception.h"
 
 using namespace FIFE;
@@ -56,24 +54,26 @@ static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 // Environment
 struct environment {
     std::shared_ptr<TimeManager> timemanager;
-    std::shared_ptr<VFS> vfs;
+		std::shared_ptr<VFS> vfs;
+		std::shared_ptr<ImageManager> imageManager;
 
     environment()
-        : timemanager(std::make_shared<TimeManager>()),
-          vfs(std::make_shared<VFS>()) {
-        vfs->addSource(new VFSDirectory(vfs.get()));
+		: timemanager(std::make_shared<TimeManager>()),
+		  vfs(std::make_shared<VFS>()),
+		  imageManager(std::make_shared<ImageManager>()) {
+		vfs->addSource(new VFSDirectory(vfs.get()));
             if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
                 throw SDLException(SDL_GetError());
             }
         }
 };
 
-void test_image(VFS* vfs, RenderBackend& renderbackend) {
-	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
+void test_image(RenderBackend& renderbackend, const ScreenMode& mode) {
+	renderbackend.init("");
+	renderbackend.createMainScreen(mode, "FIFE", "");
 
-	ImageLoader provider(vfs);
-    std::shared_ptr<Image> img = std::make_shared<Image>(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
+	ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
+	REQUIRE(img);
 
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -92,43 +92,31 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 		}
 	}
 }
+void test_subimage(RenderBackend& renderbackend, const ScreenMode& mode) {
+	renderbackend.init("");
+	renderbackend.createMainScreen(mode, "FIFE", "");
 
-void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
-	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
+	ImagePtr img = ImageManager::instance()->load(SUBIMAGE_FILE);
+	REQUIRE(img);
 
-	ImageLoader imgprovider(vfs);
-    std::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.loadResource(ImageLocation(SUBIMAGE_FILE))));
-
-	ImageLocation location(SUBIMAGE_FILE);
-	location.setParentSource(&*img);
 	int W = img->getWidth();
 	int w = W / 12;
 	int H = img->getHeight();
 	int h = H / 12;
-	location.setWidth(w);
-	location.setHeight(h);
-	std::vector<Image*> subimages;
+	std::vector<ImagePtr> subimages;
 
-	SubImageLoader subprovider;
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
-			location.setXShift(x);
-			location.setYShift(y);
-			Image* sub = dynamic_cast<Image*>(subprovider.loadResource(location));
+			ImagePtr sub = ImageManager::instance()->create();
+			sub->useSharedImage(img, Rect(x, y, w, h));
 			subimages.push_back(sub);
 		}
 	}
 
 	for (unsigned int i = 0; i < 200; i++) {
 		renderbackend.startFrame();
-		subimages[i / 40]->render(Rect(200, 200, w, h));
+		subimages[i / 40].get()->render(Rect(200, 200, w, h));
 		renderbackend.endFrame();
-	}
-	std::vector<Image*>::iterator i = subimages.begin();
-	while (i != subimages.end()) {
-		delete *i;
-		i++;
 	}
 
 }
@@ -136,16 +124,15 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 TEST_CASE("test_sdl_alphaoptimize")
 {
 	environment env;
-	RenderBackendSDL renderbackend;
-	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
+	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+	renderbackend.init("");
+	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
 	renderbackend.setAlphaOptimizerEnabled(true);
 
-	ImageLoader provider(env.vfs.get());
-	env.vfs.get()->exists(IMAGE_FILE);
-    std::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
-	env.vfs.get()->exists(ALPHA_IMAGE_FILE);
-    std::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(ALPHA_IMAGE_FILE))));
+	ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
+	ImagePtr alpha_img = ImageManager::instance()->load(ALPHA_IMAGE_FILE);
+	REQUIRE(img);
+	REQUIRE(alpha_img);
 
 	int h0 = img->getHeight();
 	int w0 = img->getWidth();
@@ -154,42 +141,41 @@ TEST_CASE("test_sdl_alphaoptimize")
 	int w1 = alpha_img->getWidth();
 	for(int i=0; i != 200; ++i) {
 		renderbackend.startFrame();
-		img->render(Rect(i, i, w0, h0));
-		alpha_img->render(Rect(i, i, w1, h1));
-		alpha_img->render(Rect(i, h0+i, w1, h1));
-		img->render(Rect(i, h0+i, w0, h0));
+		img.get()->render(Rect(i, i, w0, h0));
+		alpha_img.get()->render(Rect(i, i, w1, h1));
+		alpha_img.get()->render(Rect(i, h0+i, w1, h1));
+		img.get()->render(Rect(i, h0+i, w0, h0));
 		renderbackend.endFrame();
 	}
 
-	CHECK(img->getSurface()->format->Amask == 0);
-	CHECK(alpha_img->getSurface()->format->Amask != 0);
+	CHECK(img.get()->getSurface() != nullptr);
+	CHECK(alpha_img.get()->getSurface()->format->Amask != 0);
 }
 
 TEST_CASE("test_sdl_image")
 {
 	environment env;
-	RenderBackendSDL renderbackend;
-	test_image(env.vfs.get(), renderbackend);
+	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+	test_image(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL));
 }
 
 TEST_CASE("test_ogl_image")
 {
 	environment env;
-	RenderBackendOpenGL renderbackend;
-	test_image(env.vfs.get(), renderbackend);
+	RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
+	test_image(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL));
 }
 
 TEST_CASE("test_sdl_subimage")
 {
 	environment env;
-	RenderBackendSDL renderbackend;
-	CHECK(env.vfs.get()->exists(IMAGE_FILE));
-	test_subimage(env.vfs.get(), renderbackend);
+	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+	test_subimage(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL));
 }
 
 TEST_CASE("test_ogl_subimage")
 {
 	environment env;
-	RenderBackendOpenGL renderbackend;
-	test_subimage(env.vfs.get(), renderbackend);
+	RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
+	test_subimage(renderbackend, ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL));
 }

@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <iomanip>
+#include <memory>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -37,14 +38,11 @@
 #include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "video/image_location.h"
 #include "video/image.h"
-#include "video/imagepool.h"
+#include "video/imagemanager.h"
+#include "video/devicecaps.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_loader.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
 #include "util/base/exception.h"
 
 using namespace FIFE;
@@ -56,10 +54,14 @@ static const std::string ANIM_FILE = "tests/data/crate_full_001.xml";
 // Environment
 struct environment {
     std::shared_ptr<TimeManager> timemanager;
-    std::shared_ptr<VFS> vfs;
+	std::shared_ptr<VFS> vfs;
+	std::shared_ptr<ImageManager> imageManager;
 
     environment()
-        : timemanager(std::make_shared<TimeManager>()), vfs(std::make_shared<VFS>()) {
+		: timemanager(std::make_shared<TimeManager>()),
+		  vfs(std::make_shared<VFS>()),
+		  imageManager(std::make_shared<ImageManager>()) {
+			vfs->addSource(new VFSDirectory(vfs.get()));
             if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
                 throw SDLException(SDL_GetError());
             }
@@ -68,74 +70,55 @@ struct environment {
 
 TEST_CASE_METHOD(environment, "test_image_pool")
 {
-	RenderBackendSDL renderbackend;
+	ImageManager* imageManager = ImageManager::instance();
+	imageManager->removeAll();
 
-	vfs->addSource(new VFSDirectory(vfs.get()));
+	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+	renderbackend.init("");
+	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
 
-	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
-	ImagePool pool;
-	pool.addResourceLoader(new SubImageLoader());
-	pool.addResourceLoader(new ImageLoader(vfs.get()));
+	CHECK((0) == (imageManager->getTotalResources()));
+	CHECK((0) == (imageManager->getTotalResourcesLoaded()));
 
-	CHECK((0) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((0) == (pool.getResourceCount(RES_NON_LOADED)));
+	ImagePtr image = imageManager->load(IMAGE_FILE);
+	CHECK((1) == (imageManager->getTotalResourcesLoaded()));
 
-	ImageLocation location(IMAGE_FILE);
-	pool.addResourceFromLocation(&location);
-	CHECK((0) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((1) == (pool.getResourceCount(RES_NON_LOADED)));
+	ImagePtr atlas = imageManager->load(SUBIMAGE_FILE);
+	CHECK((2) == (imageManager->getTotalResourcesLoaded()));
 
-	location = ImageLocation(SUBIMAGE_FILE);
-	ImageLoader imgprovider(vfs.get());
-	int fullImgInd = pool.addResourceFromLocation(&location);
-	CHECK((0) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((2) == (pool.getResourceCount(RES_NON_LOADED)));
-	Image& img = pool.getImage(fullImgInd);
-	CHECK((1) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((1) == (pool.getResourceCount(RES_NON_LOADED)));
-
-	location.setParentSource(&img);
-	int W = img.getWidth();
+	int W = atlas->getWidth();
 	int w = W / 12;
-	int H = img.getHeight();
+	int H = atlas->getHeight();
 	int h = H / 12;
-	location.setWidth(w);
-	location.setHeight(h);
-	CHECK(w != 0 && h !=0);
+	CHECK(w != 0);
+	CHECK(h != 0);
 
-	int subImgInd = pool.addResourceFromLocation(&location);
-	CHECK(fullImgInd != subImgInd);
+	ImagePtr subImage = imageManager->create();
+	subImage->useSharedImage(atlas, Rect(0, 0, w, h));
 
-	CHECK((1) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((2) == (pool.getResourceCount(RES_NON_LOADED)));
+	CHECK((3) == (imageManager->getTotalResourcesLoaded()));
 
 	for (int k = 0; k < 3; k++) {
-		for (int j = 0, s = pool.getResourceCount(RES_LOADED | RES_NON_LOADED); j < s; j++) {
-			std::cout << j << std::endl;
-			Image& r = dynamic_cast<Image&>(pool.get(j));
-			int h = r.getHeight();
-			int w = r.getWidth();
+		for (int j = 0; j < 3; j++) {
+			Image* r = (j == 0) ? image.get() : ((j == 1) ? atlas.get() : subImage.get());
+			int h = r->getHeight();
+			int w = r->getWidth();
 			for (int i = 20; i > 0; i-=2) {
 				renderbackend.startFrame();
-				r.render(Rect(i, i, w, h));
+				r->render(Rect(i, i, w, h));
 				renderbackend.endFrame();
 				TimeManager::instance()->update();
 			}
 		}
-		CHECK((3) == (pool.getResourceCount(RES_LOADED)));
-		CHECK((0) == (pool.getResourceCount(RES_NON_LOADED)));
+		CHECK((3) == (imageManager->getTotalResourcesLoaded()));
 	}
-	CHECK((3) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((0) == (pool.getResourceCount(RES_NON_LOADED)));
+	CHECK((3) == (imageManager->getTotalResourcesLoaded()));
 
-	CHECK((3) == (pool.purgeLoadedResources()));
+	imageManager->freeAll();
+	CHECK((0) == (imageManager->getTotalResourcesLoaded()));
 
-	CHECK((0) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((3) == (pool.getResourceCount(RES_NON_LOADED)));
-	pool.reset();
-	CHECK((0) == (pool.getResourceCount(RES_LOADED)));
-	CHECK((0) == (pool.getResourceCount(RES_NON_LOADED)));
+	imageManager->removeAll();
+	CHECK((0) == (imageManager->getTotalResources()));
 }
 // need this here because SDL redefines
 

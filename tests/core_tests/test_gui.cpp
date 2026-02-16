@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <memory>
 
 // Platform specific includes
 #include "fife_unittest.h"
@@ -33,19 +34,16 @@
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
-#include "vfs/raw/rawdata.h"
-#include "video/image_location.h"
 #include "video/image.h"
-#include "video/imagepool.h"
+#include "video/imagemanager.h"
+#include "video/devicecaps.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_loader.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
 #include "util/base/exception.h"
-#include "gui/base/opengl/opengl_gui_graphics.h"
-#include "gui/base/sdl/sdl_gui_graphics.h"
-#include "gui/base/gui_image.h"
-#include "gui/base/gui_imageloader.h"
+#include "gui/fifechan/base/opengl/opengl_gui_graphics.h"
+#include "gui/fifechan/base/sdl/sdl_gui_graphics.h"
+#include "gui/fifechan/base/gui_image.h"
+#include "gui/fifechan/base/gui_imageloader.h"
 
 using namespace FIFE;
 
@@ -53,23 +51,22 @@ static const std::string IMAGE_FILE = "tests/data/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
 struct environment {
     std::shared_ptr<TimeManager> timemanager;
+	std::shared_ptr<VFS> vfs;
+	std::shared_ptr<ImageManager> imageManager;
 
     environment()
-        : timemanager(std::make_shared<TimeManager>()) {
+		: timemanager(std::make_shared<TimeManager>()),
+		  vfs(std::make_shared<VFS>()),
+		  imageManager(std::make_shared<ImageManager>()) {
+			vfs->addSource(new VFSDirectory(vfs.get()));
             if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
                 throw SDLException(SDL_GetError());
             }
         }
 };
 
-void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics, ImagePool& pool) {
-        std::shared_ptr<VFS> vfs = std::make_shared<VFS>();
-		vfs->addSource(new VFSDirectory(vfs.get()));
-
-		pool.addResourceLoader(new SubImageLoader());
-		pool.addResourceLoader(new ImageLoader(vfs.get()));
-
-		GuiImageLoader imageloader(pool);
+void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics) {
+		GuiImageLoader imageloader;
 		fcn::Image::setImageLoader(&imageloader);
 
 
@@ -86,10 +83,8 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics, Image
 		top->add(label, 10, 10);
 		top->add(icon, 10, 30);
 
-		ImageLoader provider(vfs.get());
-        auto location = ImageLocation(IMAGE_FILE);
-        auto img_resource = provider.loadResource(location);
-        std::shared_ptr<Image> img = std::dynamic_pointer_cast<Image>(img_resource);
+		ImagePtr img = ImageManager::instance()->load(IMAGE_FILE);
+		REQUIRE(img);
 
 		int h = img->getHeight();
 		int w = img->getWidth();
@@ -100,31 +95,27 @@ void test_gui_image(RenderBackend& renderbackend, fcn::Graphics& graphics, Image
 			gui->draw();
 			renderbackend.endFrame();
 		}
-		delete label;
-		delete icon;
-		delete guiimage;
 	}
 
 
 TEST_CASE("test_sdl_gui_image")
 {
 	environment env;
-	RenderBackendSDL renderbackend;
-	renderbackend.init();
-	ImagePool pool;
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
-	SdlGuiGraphics graphics(pool);
-	graphics.setTarget(screen->getSurface());
-	test_gui_image(renderbackend, graphics, pool);
+	RenderBackendSDL renderbackend(SDL_Color{0, 0, 0, 0});
+	renderbackend.init("");
+	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_SDL), "FIFE", "");
+	SdlGuiGraphics graphics;
+	graphics.updateTarget();
+	test_gui_image(renderbackend, graphics);
 }
 
 TEST_CASE("test_ogl_gui_image")
 {
 	environment env;
-	RenderBackendOpenGL renderbackend;
-	renderbackend.init();
-	ImagePool pool;
-	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
-	OpenGLGuiGraphics graphics(pool);
-	test_gui_image(renderbackend, graphics, pool);
+	RenderBackendOpenGL renderbackend(SDL_Color{0, 0, 0, 0});
+	renderbackend.init("");
+	renderbackend.createMainScreen(ScreenMode(800, 600, 32, ScreenMode::WINDOWED_OPENGL), "FIFE", "");
+	OpenGLGuiGraphics graphics;
+	graphics.updateTarget();
+	test_gui_image(renderbackend, graphics);
 }
