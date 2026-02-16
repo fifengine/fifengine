@@ -55,9 +55,6 @@ class SimpleSerializer(object):
     def set(self, module, name, value, extra_attrs={}):
         pass
 
-    def set(self, module, name, value, extra_attrs={}):
-        pass
-
     def load(self, filename=None):
         """
         @note: If the filename specified is empty this function MUST

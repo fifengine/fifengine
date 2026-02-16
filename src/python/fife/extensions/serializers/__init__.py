@@ -67,39 +67,6 @@ def warn(self, msg):
     print("Warning (%s): %s" % (self.filename, msg))
 
 
-def root_subfile(masterfile, subfile):
-    """
-    Returns new path for given subfile (path), which is rooted against masterfile
-    E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
-    returned path is ../foo2/subfoo.xml
-    NOTE: masterfile is expected to be *file*, not directory. subfile can be either
-    """
-    s = "/"
-
-    masterfile = norm_path(os.path.abspath(masterfile))
-    subfile = norm_path(os.path.abspath(subfile))
-
-    master_fragments = masterfile.split(s)
-    sub_fragments = subfile.split(s)
-
-    master_leftovers = []
-    sub_leftovers = []
-
-    for i in range(len(master_fragments)):
-        try:
-            if master_fragments[i] == sub_fragments[i]:
-                master_leftovers = master_fragments[i + 1 :]
-                sub_leftovers = sub_fragments[i + 1 :]
-        except IndexError:
-            break
-
-    pathstr = ""
-    for f in master_leftovers[:-1]:
-        pathstr += ".." + s
-    pathstr += s.join(sub_leftovers)
-    return pathstr
-
-
 def reverse_root_subfile(masterfile, subfile):
     """
     does inverse operation to root_subfile. E.g.
