@@ -133,4 +133,4 @@ jobs:
       - name: 🛠️ Type checking (mypy)
         run: |
           mypy src/python/fife
-        continue-on-error: true
+        #continue-on-error: true
