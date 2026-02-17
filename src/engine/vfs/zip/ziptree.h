@@ -24,7 +24,6 @@
 // Standard C++ library includes
 #include <ostream>
 #include <string>
-#include <vector>
 
 // 3rd party library includes
 

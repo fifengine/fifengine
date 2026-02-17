@@ -22,11 +22,11 @@
 #define FIFE_VFS_ZIP_ZIPFILESOURCE_H
 
 #include "vfs/raw/rawdatasource.h"
+#include <stdint.h>
 
 namespace FIFE
 {
 
-    class VFS;
     class ZipFileSource : public RawDataSource
     {
     public:

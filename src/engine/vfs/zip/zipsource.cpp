@@ -20,9 +20,12 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <algorithm>
-#include <list>
+#include <assert.h>
+#include <filesystem>
 #include <memory>
+#include <set>
+#include <stdint.h>
+#include <vector>
 
 // 3rd party library includes
 #include "zlib.h"
@@ -31,10 +34,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/exception.h"
+#include "modules.h"
 #include "util/log/logger.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
+#include "vfs/zip/ziptree.h"
 
 #include "zipfilesource.h"
 #include "zipnode.h"

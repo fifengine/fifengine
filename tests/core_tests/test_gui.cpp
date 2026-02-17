@@ -46,18 +46,18 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "video/sdl/renderbackendsdl.h"
 
+using FIFE::GuiImageLoader;
 using FIFE::Image;
 using FIFE::ImageManager;
 using FIFE::ImagePtr;
-using FIFE::GuiImageLoader;
 using FIFE::OpenGLGuiGraphics;
 using FIFE::Rect;
 using FIFE::RenderBackend;
 using FIFE::RenderBackendOpenGL;
 using FIFE::RenderBackendSDL;
-using FIFE::SdlGuiGraphics;
 using FIFE::ScreenMode;
 using FIFE::SDLException;
+using FIFE::SdlGuiGraphics;
 using FIFE::TimeManager;
 using FIFE::VFS;
 using FIFE::VFSDirectory;
