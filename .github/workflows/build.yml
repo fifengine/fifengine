@@ -76,7 +76,7 @@ jobs:
             build-${{ matrix.config.preset }}-${{ github.ref }}
             build-${{ matrix.config.preset }}
 
-      - name: 🎯 Cache VCPKG
+      - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
         uses: actions/cache@v5 # https://github.com/actions/cache
         with:
@@ -90,7 +90,7 @@ jobs:
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-vcpkg-${{ matrix.config.preset }}-
 
-      - name: 🎯 Cache Dependencies
+      - name: 🎯 Setup Dependencies Cache
         id: cache-deps
         uses: actions/cache@v5 # https://github.com/actions/cache
         with:
@@ -101,7 +101,7 @@ jobs:
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-deps-${{ matrix.config.preset }}-
 
-      - name: 🔽 1/4 Update VCPKG
+      - name: 🔽 1/4 Setup VCPKG
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
@@ -116,6 +116,17 @@ jobs:
           "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
+
+      # Force a save of the VCPKG packages, until the workflow goes fully green.
+      - name: 💾 Save VCPKG cache
+        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_ROOT }}/packages
+            /home/runner/.cache/vcpkg/archives/
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -254,7 +265,7 @@ jobs:
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-vcpkg-${{ matrix.config.preset }}-
 
-      - name: 🎯 Cache deps
+      - name: 🎯 Setup Dependencies Cache
         id: cache-deps
         uses: actions/cache@v5 # https://github.com/actions/cache
         with:
@@ -286,6 +297,17 @@ jobs:
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
+
+      # Force a save of the VCPKG packages, until the workflow goes fully green.
+      - name: 💾 Save VCPKG cache
+        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_ROOT }}\packages
+            ~\AppData\Local\vcpkg\archives\
+          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
