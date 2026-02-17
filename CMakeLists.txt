@@ -875,14 +875,14 @@ if(build-python)
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
 
   if(APPLE)
-    set(APPLE_DYNAMIC_LOOKUP_FLAG "-undefined dynamic_lookup")
-    swig_link_libraries(fife_swig ${APPLE_DYNAMIC_LOOKUP_FLAG})
+    target_link_options(fife_swig PRIVATE -undefined dynamic_lookup)
   else(APPLE)
-    swig_link_libraries(fife_swig ${PYTHON_LIBRARIES})
+    target_link_libraries(fife_swig PRIVATE ${PYTHON_LIBRARIES})
   endif(APPLE)
 
-  swig_link_libraries(
+  target_link_libraries(
     fife_swig
+    PRIVATE
       SDL2::SDL2
       $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
       $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
@@ -895,8 +895,8 @@ if(build-python)
   )
 
   if(opengl)
-    swig_link_libraries(fife_swig ${OPENGL_gl_LIBRARY})
-    swig_link_libraries(fife_swig GLEW::GLEW)
+    target_link_libraries(fife_swig PRIVATE ${OPENGL_gl_LIBRARY})
+    target_link_libraries(fife_swig PRIVATE GLEW::GLEW)
   endif(opengl)
 
   if(fifechan)
@@ -905,25 +905,25 @@ if(build-python)
     swig_add_library(fifechan_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
 
     if(APPLE)
-      swig_link_libraries(fifechan_swig ${APPLE_DYNAMIC_LOOKUP_FLAG})
+      target_link_options(fifechan_swig PRIVATE -undefined dynamic_lookup)
     else(APPLE)
-      swig_link_libraries(fifechan_swig ${PYTHON_LIBRARIES})
+      target_link_libraries(fifechan_swig PRIVATE ${PYTHON_LIBRARIES})
     endif(APPLE)
-    swig_link_libraries(fifechan_swig ${FIFECHAN_LIBRARIES})
-    swig_link_libraries(fife_swig ${FIFECHAN_LIBRARIES})
+    target_link_libraries(fifechan_swig PRIVATE ${FIFECHAN_LIBRARIES})
+    target_link_libraries(fife_swig PRIVATE ${FIFECHAN_LIBRARIES})
 
     if(TARGET Fifechan::opengl)
-      swig_link_libraries(fife_swig Fifechan::opengl)
-      swig_link_libraries(fifechan_swig Fifechan::opengl)
+      target_link_libraries(fife_swig PRIVATE Fifechan::opengl)
+      target_link_libraries(fifechan_swig PRIVATE Fifechan::opengl)
     elseif(DEFINED FIFECHAN_opengl_LIBRARY AND EXISTS "${FIFECHAN_opengl_LIBRARY}")
-      swig_link_libraries(fife_swig "${FIFECHAN_opengl_LIBRARY}")
-      swig_link_libraries(fifechan_swig "${FIFECHAN_opengl_LIBRARY}")
+      target_link_libraries(fife_swig PRIVATE "${FIFECHAN_opengl_LIBRARY}")
+      target_link_libraries(fifechan_swig PRIVATE "${FIFECHAN_opengl_LIBRARY}")
     endif()
   endif(fifechan)
 
   if(cegui)
-    swig_link_libraries(fife_swig ${CEGUI_LIBRARIES})
-    swig_link_libraries(fife_swig ${CEGUI_OpenGLRenderer_LIBRARIES})
+    target_link_libraries(fife_swig PRIVATE ${CEGUI_LIBRARIES})
+    target_link_libraries(fife_swig PRIVATE ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif(cegui)
 
   #---------------------------------------------------------------------------------
