@@ -80,7 +80,6 @@ option(build-tests      "Build C++ core tests"                                  
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(SetupVcpkg)
-include(ShowBuildTargetProperties)
 include(FeatureSummary)
 include(GNUInstallDirs)
 
