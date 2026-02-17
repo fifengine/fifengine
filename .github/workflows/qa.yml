@@ -123,7 +123,7 @@ jobs:
       - name: 🛠️ Check formatting (black)
         run: |
           black --check src/python/fife tests/extension_tests tests/swig_tests run_tests.py
-        continue-on-error: true
+        #continue-on-error: true
 
       - name: 🛠️ Lint (ruff)
         run: |
