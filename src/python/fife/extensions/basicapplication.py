@@ -170,7 +170,9 @@ class ApplicationBase(object):
 
         engineSetting = self.engine.getSettings()
         if not engineSetting:
-            raise RuntimeError("Engine settings unavailable during logging initialization")
+            raise RuntimeError(
+                "Engine settings unavailable during logging initialization"
+            )
         logmodules = self._setting.get("FIFE", "LogModules", ["controller"])
 
         # log to both the console and log file
