@@ -927,20 +927,20 @@ if(build-python)
   endif(cegui)
 
   #---------------------------------------------------------------------------------
-  # Install Python package locally, e.g. into "C:\Python27\Lib\site-packages\fife"
+  # Install Python package into a prefix-relative site-packages path by default.
+  # This keeps `cmake --install --prefix <dir>` working on CI and local builds.
   #---------------------------------------------------------------------------------
 
   if(NOT DEFINED PYTHON_SITE_PACKAGES)
-    # get path to your local python site packages folder
     execute_process(
-      COMMAND  ${Python3_EXECUTABLE} -c "import sys; from distutils.sysconfig import get_python_lib; sys.stdout.write(get_python_lib(True))"
+      COMMAND ${Python3_EXECUTABLE} -c "import os,sysconfig; p='/__cmake_prefix__'; pure=sysconfig.get_path('purelib', vars={'base': p, 'platbase': p}); print(os.path.relpath(pure, p), end='')"
       OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
     )
-    # Slash-Fix: Cmake would create a warning, when using the variable in FILES or DIRECTORY without changing it.
+    # Slash-Fix: CMake would create a warning when using this variable in FILES or DIRECTORY without changing it.
     file(TO_CMAKE_PATH "${PYTHON_SITE_PACKAGES}" PYTHON_SITE_PACKAGES)
-  endif(NOT DEFINED PYTHON_SITE_PACKAGES)
+  endif()
 
-  message(STATUS "    Python install directory is '${PYTHON_SITE_PACKAGES}/fife'.")
+  message(STATUS "    Python install directory (prefix-relative) is '${PYTHON_SITE_PACKAGES}/fife'.")
 
   # install pythonized fife (only if targets/files exist)
   if(TARGET _fife)
