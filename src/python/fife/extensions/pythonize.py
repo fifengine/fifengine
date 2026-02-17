@@ -82,6 +82,7 @@ def createProperties():
         print(
             "Pythonize: inspect not available - properties are generated with dummy argspec."
         )
+
         def getargspec(_func):
             return ([], "args", None, None)
 

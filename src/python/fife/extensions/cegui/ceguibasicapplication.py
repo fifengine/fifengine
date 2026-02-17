@@ -147,7 +147,9 @@ class CEGUIApplicationBase(ApplicationBase):
             if path:
                 resourceprovider.setResourceGroupDirectory("schemas", path)
             else:
-                resourceprovider.setResourceGroupDirectory("schemas", DEFAULT_GUI_DIR + "schemas")
+                resourceprovider.setResourceGroupDirectory(
+                    "schemas", DEFAULT_GUI_DIR + "schemas"
+                )
 
             parser.setProperty("SchemaDefaultResourceGroup", "schemas")
 
