@@ -29,15 +29,16 @@ This module provides a nice framework for loading and saving game settings.
 It is by no means complete but it does provide a good starting point.
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
 import os
 import shutil
 from builtins import object, range, str
 
+from future import standard_library
+
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+
+standard_library.install_aliases()
 
 FIFE_MODULE = "FIFE"
 
@@ -391,6 +392,13 @@ class Setting(object):
 
             self._logger = logger
             modules = self._serializer.getModuleNameList()
+            if module not in modules:
+                if self._logger:
+                    self._logger.log_log(
+                        "Settings module '%s' was not found in serializer input." % module
+                    )
+                self._settingsFromFile[module] = None
+                return self._settingsFromFile[module]
             self._settingsFromFile[module] = self._serializer.getAllSettings(module)
 
             if self._logger:

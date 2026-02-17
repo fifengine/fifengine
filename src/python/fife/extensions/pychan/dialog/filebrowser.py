@@ -139,7 +139,7 @@ class FileBrowser(object):
             for i in list:
                 try:
                     newList.append(str(i, fs_encoding))
-                except:
+                except (TypeError, UnicodeDecodeError, ValueError):
                     newList.append(str(i, fs_encoding, "replace"))
                     print("WARNING: Could not decode item:", i)
             return newList
@@ -163,7 +163,7 @@ class FileBrowser(object):
             self.dir_list = sorted(decodeList(self.dir_list), key=lambda s: s.lower())
             self.dir_list.insert(0, "..")
             self.file_list = sorted(decodeList(self.file_list), key=lambda s: s.lower())
-        except:
+        except (OSError, TypeError, UnicodeError, ValueError):
             self.path = path_copy
             self.dir_list = list(dir_list_copy)
             self.file_list = list(file_list_copy)

@@ -169,6 +169,8 @@ class ApplicationBase(object):
         """
 
         engineSetting = self.engine.getSettings()
+        if not engineSetting:
+            raise RuntimeError("Engine settings unavailable during logging initialization")
         logmodules = self._setting.get("FIFE", "LogModules", ["controller"])
 
         # log to both the console and log file
@@ -198,7 +200,7 @@ class ApplicationBase(object):
         """
         Initialize the event listener and event loop - and start it.
         """
-        eventlistener = self.createListener()
+        self._eventlistener = self.createListener()
         self.engine.initializePumping()
         retval = self.mainLoop()
         self.engine.finalizePumping()

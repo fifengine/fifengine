@@ -86,7 +86,7 @@ class PointAttr(Attr):
         try:
             x, y = tuple(map(int, str(value).split(",")))
             return x, y
-        except:
+        except (TypeError, ValueError):
             raise ParserError(
                 str(self.name) + " expected a comma separated list of two integers."
             )
@@ -104,7 +104,7 @@ class ColorAttr(Attr):
                             str(self.name)
                             + " expected a color (Failed: 0 <= %d <= 255)" % c
                         )
-            except:
+            except ValueError:
                 r, g, b = tuple(map(int, str(value).split(",")))
                 for c in (r, g, b):
                     if not 0 <= c < 256:
@@ -112,7 +112,7 @@ class ColorAttr(Attr):
                             str(self.name)
                             + " expected a color (Failed: 0 <= %d <= 255)" % c
                         )
-        except:
+        except (TypeError, ValueError, ParserError):
             raise ParserError(str(self.name) + " expected a color.")
 
         return r, g, b, a
@@ -122,30 +122,27 @@ class IntAttr(Attr):
     def parse(self, value):
         try:
             return int(value)
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a single integer.")
 
 
 class BoolAttr(Attr):
     def parse(self, value):
-        try:
-            # Allow clients to be compatible with old FIFE versions
-            if value in ["0", "False", "false"]:
-                value = False
-            elif value in ["1", "True", "true"]:
-                value = True
-            if value not in (True, False):
-                raise ParserError(str(self.name) + " expected False or True.")
-            return value
-        except:
+        # Allow clients to be compatible with old FIFE versions
+        if value in ["0", "False", "false"]:
+            value = False
+        elif value in ["1", "True", "true"]:
+            value = True
+        if value not in (True, False):
             raise ParserError(str(self.name) + " expected False or True.")
+        return value
 
 
 class FloatAttr(Attr):
     def parse(self, value):
         try:
             return float(value)
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a float.")
 
 
@@ -154,7 +151,7 @@ class ListAttr(Attr):
         try:
             result = list(map(str, str(value).split(",")))
             return result
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a list with strings.")
 
 
@@ -163,7 +160,7 @@ class UnicodeListAttr(Attr):
         try:
             result = list(map(str, str(value).split(",")))
             return result
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a list with unicode strings.")
 
 
@@ -172,7 +169,7 @@ class IntListAttr(Attr):
         try:
             result = list(map(int, str(value).split(",")))
             return result
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a list with ints.")
 
 
@@ -181,7 +178,7 @@ class BoolListAttr(Attr):
         try:
             result = list(map(bool, str(value).split(",")))
             return result
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a list with bools.")
 
 
@@ -190,7 +187,7 @@ class FloatListAttr(Attr):
         try:
             result = list(map(float, str(value).split(",")))
             return result
-        except:
+        except (TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a list with floats.")
 
 
@@ -222,5 +219,5 @@ class MixedListAttr(Attr):
                 method = getattr(m(self), "parse")
                 result.append(method(val))
             return result
-        except:
+        except (AttributeError, IndexError, TypeError, ValueError):
             raise ParserError(str(self.name) + " expected a mixed list.")

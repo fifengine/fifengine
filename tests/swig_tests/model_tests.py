@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import
 
-from .swig_test_utils import *
+from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestModel(unittest.TestCase):
@@ -113,6 +113,9 @@ class TestModel(unittest.TestCase):
         # query = layer.getInstances("Name", "Goon")
         # self.assertEqual(len(query), 2)
         self.assertEqual(len(layer.getInstances()), 3)
+        self.assertEqual(
+            inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4, 4)
+        )
 
         # self.assertEqual(query[0].get("Name"), "Goon")
         # p1 = fife.ModelCoordinate(4,4)

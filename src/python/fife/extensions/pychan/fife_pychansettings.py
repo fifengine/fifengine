@@ -29,15 +29,16 @@ This module provides gui window that sets basic fife settings through
 pychan.
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
 import os
 from builtins import str
 from io import BytesIO, StringIO
 
+from future import standard_library
+
 from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting, SettingEntry
+
+standard_library.install_aliases()
 
 SETTINGS_GUI_XML = """\
 <Window name="Settings" title="Settings">

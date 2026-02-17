@@ -24,13 +24,14 @@
 # Font handling
 from __future__ import absolute_import
 
-from future import standard_library
-
-standard_library.install_aliases()
 from builtins import map, object
+
+from future import standard_library
 
 from .exceptions import InitializationError
 from .fontfileparser import FontFileParser
+
+standard_library.install_aliases()
 
 
 class Font(object):

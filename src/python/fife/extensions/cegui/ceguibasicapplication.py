@@ -81,6 +81,8 @@ class CEGUIApplicationBase(ApplicationBase):
 
     def _initGuiManager(self):
         settings = self.engine.getSettings()
+        if not settings:
+            raise RuntimeError("Engine settings unavailable during CEGUI initialization")
 
         major_v, minor_v = list(map(int, PyCEGUI.Version__.split(".")[:2]))
 

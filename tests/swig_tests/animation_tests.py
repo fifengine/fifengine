@@ -28,7 +28,7 @@ import gc
 import os
 from builtins import range
 
-from .swig_test_utils import *
+from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestView(unittest.TestCase):

@@ -12,8 +12,7 @@ extend-exclude = ["build", "out", "vcpkg_installed", "engine/swigwrappers"]
 select = ["E", "F", "W", "I"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/swig_tests/*.py" = ["F403", "F405"]
-"tests/extension_tests/*.py" = ["F403", "F405"]
+"*.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"

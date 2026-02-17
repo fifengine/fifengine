@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, print_function
 
-from .swig_test_utils import *
+from .swig_test_utils import getEngine, unittest
 
 
 class TestVfs(unittest.TestCase):

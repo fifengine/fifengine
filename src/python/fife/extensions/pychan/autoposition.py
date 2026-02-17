@@ -68,10 +68,10 @@ def _parsePosition(position):
         y_pos, y_delta = _splicePosition(y_pos)
 
         if x_pos not in [EXPLICIT, LEFT, CENTER, RIGHT]:
-            raise ""
+            raise ValueError("invalid x position")
         if y_pos not in [EXPLICIT, TOP, CENTER, BOTTOM]:
-            raise ""
-    except:
+            raise ValueError("invalid y position")
+    except (AttributeError, TypeError, ValueError):
         raise PyChanException("Malformed position definition: " + repr(position))
     return x_pos, x_delta, y_pos, y_delta
 

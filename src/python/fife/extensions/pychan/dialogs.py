@@ -23,16 +23,17 @@
 
 from __future__ import absolute_import, print_function
 
-from future import standard_library
-
-standard_library.install_aliases()
 from builtins import object, str
 from io import StringIO
+
+from future import standard_library
 
 from fife.extensions import pychan
 from fife.extensions.pychan import loadXML
 
 from .internal import screen_height, screen_width
+
+standard_library.install_aliases()
 
 OK, YES, NO, CANCEL = True, True, False, None
 

@@ -234,6 +234,8 @@ from __future__ import absolute_import, print_function
 
 import sys
 from builtins import map
+from traceback import print_exc
+from xml.sax import handler
 
 __all__ = ["loadXML", "loadFonts", "init", "manager"]
 
@@ -266,9 +268,6 @@ def init(engine, debug=False, compat_layout=False):
 
 
 # XML Loader
-
-from traceback import print_exc
-from xml.sax import handler
 
 
 def traced(f):

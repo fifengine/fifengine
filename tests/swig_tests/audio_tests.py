@@ -28,7 +28,7 @@ import time
 
 from fife.extensions import fifelog
 
-from .swig_test_utils import *
+from .swig_test_utils import fife, getEngine, unittest
 
 
 class TestAudio(unittest.TestCase):

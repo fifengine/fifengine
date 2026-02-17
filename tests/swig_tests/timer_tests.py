@@ -27,7 +27,7 @@ from __future__ import absolute_import, print_function
 import time
 from builtins import range
 
-from .swig_test_utils import *
+from .swig_test_utils import fife, getEngine, unittest
 
 
 class MyTimeEvent(fife.TimeEvent):

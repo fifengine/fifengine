@@ -21,16 +21,16 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from future import standard_library
-
-standard_library.install_aliases()
 import os
 from builtins import object, str
 from io import BytesIO, StringIO
 
+from future import standard_library
 from past.builtins import basestring
 
 from fife.extensions.serializers import ET, InvalidFormat, SerializerError
+
+standard_library.install_aliases()
 
 EMPTY_XML_FILE = """\
 <?xml version='1.0' encoding='UTF-8'?>

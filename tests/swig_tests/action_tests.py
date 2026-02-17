@@ -26,7 +26,7 @@ from __future__ import absolute_import
 
 from builtins import range
 
-from .swig_test_utils import *
+from .swig_test_utils import fife, getEngine, unittest
 
 
 class ActionTests(unittest.TestCase):
@@ -97,6 +97,7 @@ class ActionTests(unittest.TestCase):
         self.engine.initializePumping()
         self._pumping_initialized = True
         backend = self.engine.renderBackend
+        self.assertTrue(backend)
         for i in range(360):
             self.inst.getLocation().getLayerCoordinates()
             self.target.getLayerCoordinates()

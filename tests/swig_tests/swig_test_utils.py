@@ -35,7 +35,7 @@ fife_path = os.path.join("..", "..", "engine", "python")
 if os.path.isdir(fife_path) and fife_path not in sys.path:
     sys.path.insert(0, fife_path)
 
-from fife import fife
+from fife import fife  # noqa: E402
 
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
@@ -45,7 +45,7 @@ if not hasattr(fife, "ModelCoordinate") and hasattr(fife, "Point3D"):
 if not hasattr(fife, "ExactModelCoordinate") and hasattr(fife, "DoublePoint3D"):
     fife.ExactModelCoordinate = fife.DoublePoint3D
 
-from fife.extensions import fifelog
+from fife.extensions import fifelog  # noqa: E402
 
 
 def getEngine(minimized=False):
