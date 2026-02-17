@@ -75,7 +75,7 @@ class ListBox(Widget):
 
     DEFAULT_HEXPAND = True
     DEFAULT_VEXPAND = True
-    DEFAULT_ITEMS = []
+    DEFAULT_ITEMS: list[str] = []
 
     def __init__(
         self,

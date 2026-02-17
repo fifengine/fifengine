@@ -48,9 +48,9 @@ class DockArea(ResizableWindow):
         ColorAttr("highlight_color"),
     ]
 
-    DEFAULT_MARGINS = 0
+    DEFAULT_MARGINS = (0, 0)
     DEFAULT_PADDING = 0
-    DEFAULT_SPACING = 0
+    DEFAULT_SPACING = (0, 0)
 
     DEFAULT_ACTIVE = True
     DEFAULT_HIGHLIGHT_COLOR = (200, 0, 0)

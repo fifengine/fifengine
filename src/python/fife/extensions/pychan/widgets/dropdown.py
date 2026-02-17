@@ -50,7 +50,7 @@ class DropDown(Widget):
     The list items can be set via L{distributeInitialData}.
     """
 
-    DEFAULT_ITEMS = []
+    DEFAULT_ITEMS: list[str] = []
 
     def __init__(
         self,

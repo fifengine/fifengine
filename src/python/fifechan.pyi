@@ -1,0 +1,1 @@
+from fife.fifechan import *

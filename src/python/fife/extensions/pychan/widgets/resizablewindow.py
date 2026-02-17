@@ -300,7 +300,11 @@ class ResizableWindow(Window):
         elif type is fife.CURSOR_Animation:
             return self.real_widget.getAnimation(direction)
 
-    cursor = property(_getCursor, _setCursor)
+    def setCursor(self, direction, cursor):
+        self._setCursor(direction, cursor)
+
+    def getCursor(self, direction):
+        return self._getCursor(direction)
 
     def _setCursors(self, cursors):
         if cursors is not None:
@@ -315,7 +319,7 @@ class ResizableWindow(Window):
     def _getCursors(self):
         cursors = []
         for d in self.DIRECTION_LIST:
-            cursors.append(self.cursor(d))
+            cursors.append(self.getCursor(d))
         return cursors
 
     cursors = property(_getCursors, _setCursors)

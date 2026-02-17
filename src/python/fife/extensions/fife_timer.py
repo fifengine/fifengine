@@ -168,7 +168,7 @@ class Timer(fife.TimeEvent):
         if not self._active:
             self._repeat = repeat
 
-    def _getRepeat(self, repeat):
+    def _getRepeat(self):
         """
         Returns the number of times the timer will be executed.
 

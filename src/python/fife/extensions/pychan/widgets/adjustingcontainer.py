@@ -173,7 +173,7 @@ class AdjustingContainer(Container):
         self.real_widget.setNumberOfColumns(number)
 
     def _getNumberColumns(self):
-        self.real_widget.getNumberOfColumns()
+        return self.real_widget.getNumberOfColumns()
 
     columns = property(_getNumberColumns, _setNumberColumns)
 
@@ -181,9 +181,13 @@ class AdjustingContainer(Container):
         self.real_widget.setColumnAlignment(column, alignment)
 
     def _getColumnAlignment(self, column):
-        self.real_widget.getColumnAlignment(column)
+        return self.real_widget.getColumnAlignment(column)
 
-    column_alignment = property(_getColumnAlignment, _setColumnAlignment)
+    def setColumnAlignment(self, column, alignment):
+        self._setColumnAlignment(column, alignment)
+
+    def getColumnAlignment(self, column):
+        return self._getColumnAlignment(column)
 
     def _setColumnAlignments(self, alignments):
         i = 0
@@ -202,7 +206,7 @@ class AdjustingContainer(Container):
         cols = self.columns
         i = 0
         while i < cols:
-            alignments.append(self.column_alignment(i))
+            alignments.append(self.getColumnAlignment(i))
             i += 1
         return alignments
 

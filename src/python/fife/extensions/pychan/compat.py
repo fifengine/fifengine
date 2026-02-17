@@ -23,9 +23,11 @@
 
 import inspect
 from builtins import object, str
+from typing import Any
 
 in_fife = None
-fifechan = None
+fife: Any = None
+fifechan: Any = None
 
 
 def _import_fifechan():
