@@ -72,6 +72,6 @@ def gui2str(text):
     """
     try:
         return text.__str__()
-    except:
+    except Exception:
         # String contains non-ascii characters
         return text.encode("utf-8")

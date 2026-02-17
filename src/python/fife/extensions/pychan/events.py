@@ -99,14 +99,7 @@ EVENTS = [
 ]
 
 # Add the EVENTS to the docs.
-__doc__ += "".join([" - %s\n" % event for event in EVENTS])
-
-# The line before seems to leak the variable event into the global namespace ... remove that!
-# This is a python problem, addressed in python3
-try:
-    del event
-except:
-    pass
+__doc__ += "".join(f" - {event}\n" for event in EVENTS)
 
 MOUSE_EVENT, KEY_EVENT, ACTION_EVENT, WIDGET_EVENT = list(range(4))
 

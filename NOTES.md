@@ -8,6 +8,14 @@
 
 - /tmp/fife-python-venv/bin/ruff --fix src/python/fife tests/extension_tests tests/swig_tests run_tests.py
 
+### List all errors types:
+
+- /tmp/fife-python-venv/bin/ruff check src/python/fife tests/extension_tests tests/swig_tests run_tests.py --statistics
+
+### Show all errors of a specific type:
+
+- /tmp/fife-python-venv/bin/ruff check src/python/fife tests/extension_tests tests/swig_tests run_tests.py --select E711
+
 # Dependencies
 
 How to compile on linux-64:

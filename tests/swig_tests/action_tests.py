@@ -155,9 +155,9 @@ class ActionTests(unittest.TestCase):
             (2, 1),
         )
         for target in targets:
-            l = self.inst.getLocation()
-            l.setLayerCoordinates(fife.ModelCoordinate(0, 0))
-            self.inst.setLocation(l)
+            location = self.inst.getLocation()
+            location.setLayerCoordinates(fife.ModelCoordinate(0, 0))
+            self.inst.setLocation(location)
             self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
             self.inst.move("walk", self.target, 0.9)
             for i in range(10):

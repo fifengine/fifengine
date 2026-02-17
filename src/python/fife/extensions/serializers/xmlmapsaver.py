@@ -271,7 +271,7 @@ class XMLMapSaver(object):
                 if lay.getId() == layer.getId():
                     hit = True
 
-            if hit == False:
+            if not hit:
                 continue
 
             renderer = fife.LightRenderer.getInstance(cam)

@@ -47,15 +47,15 @@ class TestEventChannel(unittest.TestCase):
         self.engine.destroy()
 
     def testEvents(self):
-        l = MyEventListener()
-        self.eventmanager.addCommandListener(l)
+        listener = MyEventListener()
+        self.eventmanager.addCommandListener(listener)
         cmd = fife.Command()
         cmd.setCode(0)
         print("Sending commands...")
         for i in range(20):
             self.eventmanager.dispatchCommand(cmd)
             cmd.setCode(i)
-        self.eventmanager.removeCommandListener(l)
+        self.eventmanager.removeCommandListener(listener)
 
 
 TEST_CLASSES = [TestEventChannel]

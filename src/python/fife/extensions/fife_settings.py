@@ -481,11 +481,11 @@ class Setting(object):
                                     for element in self._settingsFromFile[module][name]:
                                         if element == checking_element:
                                             already_in = True
-                                    if already_in == False:
+                                    if not already_in:
                                         self._settingsFromFile[module][name].append(
                                             checking_element
                                         )
-                            if module_valid == False:
+                            if not module_valid:
                                 if self._logger:
                                     self._logger.log_log(
                                         checking_element + " is not a valid logModule"
@@ -525,17 +525,15 @@ class Setting(object):
 
                     else:
 
-                        if (
-                            isinstance(self._settingsFromFile[module][name], list) == True
-                            or isinstance(self._settingsFromFile[module][name], dict)
-                            == True
-                        ):
+                        if isinstance(
+                            self._settingsFromFile[module][name], list
+                        ) or isinstance(self._settingsFromFile[module][name], dict):
                             valid = False
                             for value in self._validSetting[module][name]:
                                 if value == e_value:
                                     valid = True
                                     self._settingsFromFile[module][name] = e_value
-                            if valid == False:
+                            if not valid:
                                 if self._logger:
                                     self._logger.log_log(
                                         "Setting "

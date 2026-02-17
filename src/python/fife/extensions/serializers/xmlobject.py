@@ -300,8 +300,10 @@ class XMLObjectLoader(object):
             if not isobjectfile:
                 return
 
-                # this will never be hit currently, if this is put before the return it can provide useful debugging
-                # but animation.xml files will raise this exception because apparently they come through here first
+                # TODO this will never be hit currently
+                # if this is put before the return it can provide useful debugging
+                # but animation.xml files will raise this exception
+                # because apparently they come through here first
                 raise WrongFileType(
                     "Tried to open non-object file %s with XMLObjectLoader."
                     % self.filename

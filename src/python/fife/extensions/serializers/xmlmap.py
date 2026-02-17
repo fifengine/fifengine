@@ -60,7 +60,7 @@ class XMLMapLoader(object):
         @type	debug:		bool
         @param	debug:		flag to activate / deactivate print statements
         @type	extensions:	dict
-        @param	extensions:	information package which extension should be activated (lights, sounds)
+        @param	extensions:	which extensions should be activated (lights, sounds)
         """
         # 		self.thisown = 0
 
@@ -330,15 +330,15 @@ class XMLMapLoader(object):
                 )
 
         layers = map.getLayers()
-        for l in layers:
-            if l.isInteract():
-                walk_layer = map.getLayer(l.getWalkableId())
+        for layer in layers:
+            if layer.isInteract():
+                walk_layer = map.getLayer(layer.getWalkableId())
                 if walk_layer:
-                    walk_layer.addInteractLayer(l)
+                    walk_layer.addInteractLayer(layer)
 
-        for l in layers:
-            if l.isWalkable():
-                l.createCellCache()
+        for layer in layers:
+            if layer.isWalkable():
+                layer.createCellCache()
 
         # cleanup
         if self.callback is not None:
