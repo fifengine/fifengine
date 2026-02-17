@@ -49,9 +49,11 @@ jobs:
       # VCPKG_ROOT is used by SetupVcpkg to automatically load the toolchain.
       VCPKG_ROOT: /usr/local/share/vcpkg
       VCPKG_DISABLE_METRICS: 1
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       SOURCE_DIR:  ${{ github.workspace }}
       BUILD_DIR:   ${{ github.workspace }}/build
       INSTALL_DIR: ${{ github.workspace }}/install
+      DEPS_DIR:    ${{ github.workspace }}/out/fife-dependencies
 
     steps:
       - name: 🤘 Checkout Code
@@ -80,12 +82,24 @@ jobs:
         with:
           # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
           path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
             ${{ env.VCPKG_ROOT }}/packages
             /home/runner/.cache/vcpkg/archives/
           key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-vcpkg-${{ matrix.config.preset }}-
+
+      - name: 🎯 Cache Dependencies
+        id: cache-deps
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          restore-keys: |
+            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-deps-${{ matrix.config.preset }}-
 
       - name: 🔽 1/4 Update VCPKG
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -99,27 +113,27 @@ jobs:
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
           set -euo pipefail
-          "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}"
+          "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
-          ls -lahr "${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}/" || true
+          ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake \
             -S dependencies \
-            -B ${{ env.BUILD_DIR }}/dependencies \
+            -B ${{ env.DEPS_DIR }}/build \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=${{ env.BUILD_DIR }}/dependencies/install \
+            -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_ROOT }}/installed \
-            -DDEPENDENCY_CMAKE_PREFIX_PATH=${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }} \
-            -DVCPKG_MANIFEST_MODE=OFF
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 3/4 🏗️ Build non-vcpkg dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
-          cmake --build ${{ env.BUILD_DIR }}/dependencies --parallel
+          cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
       - name: 4/4 🛠️ Configure fifengine
         run: |
@@ -132,8 +146,8 @@ jobs:
             -DVCPKG_MANIFEST_MODE=OFF \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_ROOT }}/installed \
-            -DCMAKE_PREFIX_PATH="${{ env.BUILD_DIR }}/dependencies/install;${{ env.VCPKG_ROOT }}/installed/${{ matrix.config.triplet }}"
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
+            -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}"
 
       - name: 4/4 🙏 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
@@ -179,9 +193,11 @@ jobs:
 
     env:
       VCPKG_DISABLE_METRICS: 1
-      SOURCE_DIR:  ${{ github.workspace }}
-      BUILD_DIR:   ${{ github.workspace }}\build
-      INSTALL_DIR: ${{ github.workspace }}\install
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}\vcpkg_installed
+      SOURCE_DIR:          ${{ github.workspace }}
+      BUILD_DIR:           ${{ github.workspace }}\build
+      INSTALL_DIR:         ${{ github.workspace }}\install
+      DEPS_DIR:            ${{ github.workspace }}\out\fife-dependencies
 
     defaults:
       run:
@@ -230,12 +246,24 @@ jobs:
         with:
           # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
           path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
             ${{ env.VCPKG_ROOT }}\packages
             ~\AppData\Local\vcpkg\archives\
           key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-vcpkg-${{ matrix.config.preset }}-
+
+      - name: 🎯 Cache deps
+        id: cache-deps
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          restore-keys: |
+            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-deps-${{ matrix.config.preset }}-
 
       # Default Locations (env var VCPKG_INSTALLATION_ROOT):
       # Windows: "c:\vcpkg"
@@ -257,25 +285,25 @@ jobs:
 
       - name: 2/4 📦 Install VCPKG dependencies
         run: |
-          vcpkg install --triplet ${{ matrix.config.triplet }}
+          vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake ^
             -S dependencies ^
-            -B "%BUILD_DIR%\dependencies" ^
+            -B "%DEPS_DIR%\build" ^
             -G Ninja ^
             -DCMAKE_BUILD_TYPE=Release ^
-            -DCMAKE_INSTALL_PREFIX="%BUILD_DIR%\dependencies\install" ^
+            -DFIFE_DEPENDENCIES_ROOT="%DEPS_DIR%" ^
             -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
-            -DVCPKG_INSTALLED_DIR="%VCPKG_ROOT%\installed" ^
-            -DDEPENDENCY_CMAKE_PREFIX_PATH="%VCPKG_ROOT%\installed\${{ matrix.config.triplet }}" ^
-            -DVCPKG_MANIFEST_MODE=OFF
+            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%"
 
       - name: 3/4 🏗️ Build non-vcpkg dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
-          cmake --build "%BUILD_DIR%\dependencies" --parallel
+          cmake --build "%DEPS_DIR%\build" --parallel
 
       # Notes:
       # - SWIG: the detection uses the CMake FindSWIG module, which looks for SWIG_EXECUTABLE and SWIG_DIR.
@@ -291,13 +319,13 @@ jobs:
             -Dfifechan=ON ^
             -Dbuild-python=ON ^
             -Dbuild-library=ON ^
-            -DCMAKE_PREFIX_PATH="%BUILD_DIR%\dependencies\install;%VCPKG_ROOT%\installed\${{ matrix.config.triplet }}" ^
+            -DCMAKE_PREFIX_PATH="%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}" ^
             -DVCPKG_MANIFEST_MODE=OFF ^
             -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
-            -DVCPKG_INSTALLED_DIR="%VCPKG_ROOT%\installed" ^
-            -DSWIG_EXECUTABLE="%BUILD_DIR%\dependencies\build-tools\swig\swig.exe" ^
-            -DSWIG_DIR="%BUILD_DIR%\dependencies\build-tools\swig\Lib"
+            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
+            -DSWIG_EXECUTABLE="%DEPS_DIR%\build-tools\swig\swig.exe" ^
+            -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
 
       - name: 4/4 🙏 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}

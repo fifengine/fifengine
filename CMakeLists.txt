@@ -80,6 +80,7 @@ option(build-tests      "Build C++ core tests"                                  
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(SetupVcpkg)
+include(ShowBuildTargetProperties)
 include(FeatureSummary)
 include(GNUInstallDirs)
 
@@ -185,44 +186,31 @@ if(cegui)
 endif(cegui)
 
 #------------------------------------------------------------------------------
-#                                 Display Status
-#------------------------------------------------------------------------------
-
-message("")
-message("== Building FIFE v${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
-message("------------------------------------------------------------------------------")
-message(STATUS "Source directory    -> '${PROJECT_SOURCE_DIR}'.")
-message(STATUS "Build  directory    -> '${PROJECT_BINARY_DIR}'.")
-message(STATUS "Installation path   -> '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-message(STATUS "Dependencies folder -> '${PROJECT_SOURCE_DIR}/../fifengine-dependencies'.")
-message("")
-message(STATUS "CMake version       -> '${CMAKE_VERSION}'.")
-message(STATUS "CXX Compiler ID     -> '${CMAKE_CXX_COMPILER_ID}'.")
-message(STATUS "CXX Compiler Flags  -> '${CMAKE_CXX_FLAGS}'.")
-message("")
-
-#------------------------------------------------------------------------------
 #                           Find Dependencies - Windows
 #------------------------------------------------------------------------------
 
-# Use vcpkg installed packages
-if(DEFINED VCPKG_TARGET_TRIPLET AND NOT "${VCPKG_TARGET_TRIPLET}" STREQUAL "")
-  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}")
-else()
-  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/vcpkg_installed/x64-linux")
-endif()
-message(STATUS "Use CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
-
-# Also include local dependency install locations used by the two-step build
-# (build `dependencies` first and install into one of these `includes` folders)
-list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/includes")
-if(EXISTS "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes")
-  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/../fifengine-dependencies/includes")
-endif()
-if(EXISTS "${PROJECT_SOURCE_DIR}/dependencies/includes")
-  list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/dependencies/includes")
-endif()
+# Add the install location of the non-vcpkg dependencies to CMAKE_PREFIX_PATH
+# to allow find_package to find them. This is needed for SWIG and Fifechan.
+list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/install")
 message(STATUS "Extended CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+
+#------------------------------------------------------------------------------
+#                                 Display Status
+#------------------------------------------------------------------------------
+
+message(STATUS "")
+message(STATUS "== Building FIFE v${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
+message(STATUS "------------------------------------------------------------------------------")
+message(STATUS "Source directory    -> '${PROJECT_SOURCE_DIR}'.")
+message(STATUS "Build  directory    -> '${PROJECT_BINARY_DIR}'.")
+message(STATUS "Installation path   -> '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
+message(STATUS "Dependencies folder -> '${PROJECT_SOURCE_DIR}/out/fife-dependencies'.")
+message(STATUS "CMAKE_PREFIX_PATH     -> '${CMAKE_PREFIX_PATH}'.")
+message(STATUS "")
+message(STATUS "CMake version       -> '${CMAKE_VERSION}'.")
+message(STATUS "CXX Compiler ID     -> '${CMAKE_CXX_COMPILER_ID}'.")
+message(STATUS "CXX Compiler Flags  -> '${CMAKE_CXX_FLAGS}'.")
+message(STATUS "")
 
 #------------------------------------------------------------------------------
 #                                 Source Files

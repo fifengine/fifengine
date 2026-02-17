@@ -4,24 +4,26 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(fifengine-dependencies)
+project(fife-dependencies)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
-# Legacy fallback for standalone invocation. In the current explicit 4-step
-# flow, callers usually pass explicit DEPENDENCY_* paths.
-get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../../${PROJECT_NAME}/includes" ABSOLUTE)
+# Canonical output root for dependency artifacts.
+set(
+  FIFE_DEPENDENCIES_ROOT
+  "${CMAKE_CURRENT_SOURCE_DIR}/../out/fife-dependencies"
+  CACHE PATH "Root directory for dependency artifacts (install/downloads/extracted/build-tools)"
+)
+get_filename_component(FIFE_DEPENDENCIES_ROOT "${FIFE_DEPENDENCIES_ROOT}" ABSOLUTE)
 # Keep module includes local to this repository.
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "default install path" FORCE)
+  set(CMAKE_INSTALL_PREFIX "${FIFE_DEPENDENCIES_ROOT}/install" CACHE PATH "default install path" FORCE)
 endif()
-
-message(STATUS "\n== Build System for ${PROJECT_NAME}\n")
 
 # create a "Release" build by default
 if(NOT CMAKE_BUILD_TYPE)
@@ -38,19 +40,19 @@ endif(NOT CMAKE_BUILD_TYPE)
 # Fallback locations used when the caller does not provide DEPENDENCY_*.
 # In the explicit workflow/build.sh flow these are usually passed in.
 if(NOT DEPENDENCY_DOWNLOAD_DIR)
-  get_filename_component(DEPENDENCY_DOWNLOAD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../${PROJECT_NAME}/downloads" ABSOLUTE)
+  set(DEPENDENCY_DOWNLOAD_DIR "${FIFE_DEPENDENCIES_ROOT}/downloads")
   message(STATUS "DEPENDENCY_DOWNLOAD_DIR not set. Using default.")
 endif(NOT DEPENDENCY_DOWNLOAD_DIR)
 
 # ExternalProject installs (SWIG/Fifechan) are driven by DEPENDENCY_INSTALL_DIR.
 if(NOT DEPENDENCY_INSTALL_DIR)
-  get_filename_component(DEPENDENCY_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../${PROJECT_NAME}/includes" ABSOLUTE)
+  set(DEPENDENCY_INSTALL_DIR "${FIFE_DEPENDENCIES_ROOT}/install")
   message(STATUS "DEPENDENCY_INSTALL_DIR not set. Using default.")
 endif(NOT DEPENDENCY_INSTALL_DIR)
 
 # Fallback extraction folder for dependency source archives.
 if(NOT DEPENDENCY_EXTRACT_DIR)
-  get_filename_component(DEPENDENCY_EXTRACT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../${PROJECT_NAME}/extracted" ABSOLUTE)
+  set(DEPENDENCY_EXTRACT_DIR "${FIFE_DEPENDENCIES_ROOT}/extracted")
   message(STATUS "DEPENDENCY_EXTRACT_DIR not set. Using default.")
 endif(NOT DEPENDENCY_EXTRACT_DIR)
 
@@ -58,29 +60,17 @@ endif(NOT DEPENDENCY_EXTRACT_DIR)
 #                                 Display Status
 #------------------------------------------------------------------------------
 
-message("")
-message("== Config Overview")
-message("")
-message("   CMAKE_BUILD_TYPE           |  ${CMAKE_BUILD_TYPE}")
-message("   CMAKE_BINARY_DIR           |  ${CMAKE_BINARY_DIR}")
-message("   CMAKE_INSTALL_PREFIX       |  ${CMAKE_INSTALL_PREFIX}")
-message("   DEPENDENCY_INSTALL_DIR     |  ${DEPENDENCY_INSTALL_DIR}")
-message("   DEPENDENCY_DOWNLOAD_DIR    |  ${DEPENDENCY_DOWNLOAD_DIR}")
-message("   DEPENDENCY_EXTRACT_DIR     |  ${DEPENDENCY_EXTRACT_DIR}")
-message("")
-
-# Forward prefix paths to dependency external projects (e.g. fifechan).
-# In the explicit 4-step flow this is provided by caller args
-# (build.sh / CI workflow); CMAKE_PREFIX_PATH is only a fallback.
-if(NOT DEFINED DEPENDENCY_CMAKE_PREFIX_PATH AND DEFINED CMAKE_PREFIX_PATH)
-  set(DEPENDENCY_CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
-endif()
-
-if(DEFINED DEPENDENCY_CMAKE_PREFIX_PATH AND NOT "${DEPENDENCY_CMAKE_PREFIX_PATH}" STREQUAL "")
-  message(STATUS "DEPENDENCY_CMAKE_PREFIX_PATH -> ${DEPENDENCY_CMAKE_PREFIX_PATH}")
-else()
-  message(STATUS "DEPENDENCY_CMAKE_PREFIX_PATH not set; relying on toolchain defaults")
-endif()
+message(STATUS "== Build System for ${PROJECT_NAME}")
+message(STATUS "")
+message(STATUS "== Config Overview")
+message(STATUS "")
+message(STATUS "   CMAKE_BUILD_TYPE           |  ${CMAKE_BUILD_TYPE}")
+message(STATUS "   CMAKE_BINARY_DIR           |  ${CMAKE_BINARY_DIR}")
+message(STATUS "   CMAKE_INSTALL_PREFIX       |  ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "   DEPENDENCY_INSTALL_DIR     |  ${DEPENDENCY_INSTALL_DIR}")
+message(STATUS "   DEPENDENCY_DOWNLOAD_DIR    |  ${DEPENDENCY_DOWNLOAD_DIR}")
+message(STATUS "   DEPENDENCY_EXTRACT_DIR     |  ${DEPENDENCY_EXTRACT_DIR}")
+message(STATUS "")
 
 #------------------------------------------------------------------------------
 #                                Options

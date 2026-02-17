@@ -7,15 +7,18 @@ include(ExternalProject)
 
 set(FIFECHAN_VERSION "0.1.5")
 
-# Default dependency paths
+# Required dependency paths (provided by dependencies/CMakeLists.txt)
+if(NOT DEFINED FIFE_DEPENDENCIES_ROOT)
+  message(FATAL_ERROR "FIFE_DEPENDENCIES_ROOT must be defined before including get-fifechan.cmake")
+endif()
 if(NOT DEFINED DEPENDENCY_INSTALL_DIR)
-  set(DEPENDENCY_INSTALL_DIR ${CMAKE_BINARY_DIR}/fifechan/install)
+  message(FATAL_ERROR "DEPENDENCY_INSTALL_DIR must be defined before including get-fifechan.cmake")
 endif()
 if(NOT DEFINED DEPENDENCY_EXTRACT_DIR)
-  set(DEPENDENCY_EXTRACT_DIR ${CMAKE_BINARY_DIR}/fifechan/extract)
+  message(FATAL_ERROR "DEPENDENCY_EXTRACT_DIR must be defined before including get-fifechan.cmake")
 endif()
 if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
-  set(DEPENDENCY_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/fifechan/download)
+  message(FATAL_ERROR "DEPENDENCY_DOWNLOAD_DIR must be defined before including get-fifechan.cmake")
 endif()
 
 # For Windows it's faster to download the pre-compiled development binaries.
@@ -49,12 +52,7 @@ else() # build from source
   # Prepare CMAKE_PREFIX_PATH arguments for ExternalProject; pass each entry
   # as its own -DCMAKE_PREFIX_PATH argument.
   set(_FIFECHAN_PREFIX_ARGS)
-  if(DEFINED DEPENDENCY_CMAKE_PREFIX_PATH)
-    foreach(_p ${DEPENDENCY_CMAKE_PREFIX_PATH})
-      list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${_p}")
-    endforeach()
-    message(STATUS "DEPENDENCY_CMAKE_PREFIX_PATH = '${DEPENDENCY_CMAKE_PREFIX_PATH}'")
-  elseif(DEFINED CMAKE_PREFIX_PATH)
+  if(DEFINED CMAKE_PREFIX_PATH)
     foreach(_p ${CMAKE_PREFIX_PATH})
       list(APPEND _FIFECHAN_PREFIX_ARGS "-DCMAKE_PREFIX_PATH:PATH=${_p}")
     endforeach()

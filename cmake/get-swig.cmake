@@ -12,7 +12,17 @@ include(ExternalProject)
 
 set(SWIG_VERSION "4.4.1")
 
-set(_SWIG_INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}/../build-tools/swig)
+if(NOT DEFINED FIFE_DEPENDENCIES_ROOT)
+  message(FATAL_ERROR "FIFE_DEPENDENCIES_ROOT must be defined before including get-swig.cmake")
+endif()
+if(NOT DEFINED DEPENDENCY_EXTRACT_DIR)
+  message(FATAL_ERROR "DEPENDENCY_EXTRACT_DIR must be defined before including get-swig.cmake")
+endif()
+if(NOT DEFINED DEPENDENCY_DOWNLOAD_DIR)
+  message(FATAL_ERROR "DEPENDENCY_DOWNLOAD_DIR must be defined before including get-swig.cmake")
+endif()
+
+set(_SWIG_INSTALL_DIR ${FIFE_DEPENDENCIES_ROOT}/build-tools/swig)
 
 # For Windows it's faster to download the pre-compiled development binaries.
 if(WIN32)
