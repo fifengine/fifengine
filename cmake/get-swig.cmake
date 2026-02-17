@@ -1,8 +1,11 @@
 #------------------------------------------------------------------------------
-# External Project:       SWIG (Simplified Wrapper and Interface Generator)
+# External Project:    SWIG (Simplified Wrapper and Interface Generator)
 #
-# Website:                http://www.swig.org/
-# Downloads:              http://www.swig.org/download.html
+# Website:             http://www.swig.org/
+# Downloads:           http://www.swig.org/download.html
+#
+# Windows:             https://sourceforge.net/projects/swig/files/swigwin/
+# Linux/Mac:           https://sourceforge.net/projects/swig/files/swig/
 #------------------------------------------------------------------------------
 
 include(ExternalProject)
@@ -22,11 +25,12 @@ if(WIN32)
     BUILD_COMMAND ""
     INSTALL_COMMAND
     COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/swig
+      ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/swig/swigwin-${SWIG_VERSION}
       ${DEPENDENCY_INSTALL_DIR}/../build-tools/swig
   )
 else()
   # Use SWIG 4.x which satisfies the minimum required by the project
+  # https://sourceforge.net/projects/swig/files/swig/
   ExternalProject_Add(
     swig
     PREFIX ${DEPENDENCY_EXTRACT_DIR}
