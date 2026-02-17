@@ -186,7 +186,7 @@ class IconProgressBar(Widget):
     image = property(_getImage, _setImage)
 
     def _setMaxIcons(self, maxIcons):
-        if type(maxIcons) != int:
+        if type(maxIcons) is not int:
             raise RuntimeError("IconProgressBar max icons should be an integer")
         self.real_widget.setMaxIcons(maxIcons)
 
@@ -196,7 +196,7 @@ class IconProgressBar(Widget):
     max_icons = property(_getMaxIcons, _setMaxIcons)
 
     def _setIcons(self, icons):
-        if type(icons) != int:
+        if type(icons) is not int:
             raise RuntimeError("IconProgressBar icons should be an integer")
         self.real_widget.setIconCount(icons)
 

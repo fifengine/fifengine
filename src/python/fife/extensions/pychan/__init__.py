@@ -238,10 +238,9 @@ from builtins import map
 __all__ = ["loadXML", "loadFonts", "init", "manager"]
 
 # This *import should really be removed!
-from .exceptions import *
-from .exceptions import InitializationError
+from .exceptions import GuiXMLError, InitializationError, PyChanException
 from .fonts import loadFonts
-from .widgets import *
+from .widgets import WIDGETS, Widget
 from .widgets.tabbedarea import Tab
 
 ### Initialisation ###
@@ -269,7 +268,7 @@ def init(engine, debug=False, compat_layout=False):
 # XML Loader
 
 from traceback import print_exc
-from xml.sax import handler, saxutils
+from xml.sax import handler
 
 
 def traced(f):

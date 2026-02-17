@@ -509,7 +509,7 @@ class Setting(object):
                         self._settingsFromFile[module][name] = e_value
 
                     elif name in ("SDLRemoveFakeAlpha", "LogToPrompt", "LogToFile"):
-                        if type(e_value) == int:
+                        if type(e_value) is int:
                             try:
                                 e_value = (False, True)[e_value]
                             except IndexError:

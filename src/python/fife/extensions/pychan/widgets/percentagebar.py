@@ -160,7 +160,7 @@ class PercentageBar(Widget):
 
     def _setValue(self, value):
         """setValue(self, int value)"""
-        if type(value) != int:
+        if type(value) is not int:
             raise RuntimeError("PercentageBar only accepts integer values")
         self.real_widget.setValue(value)
 

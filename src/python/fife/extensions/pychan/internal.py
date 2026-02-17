@@ -29,7 +29,7 @@ from fife.extensions import fife_timer as timer
 
 from . import fonts
 from .compat import fife, fifechan, in_fife
-from .exceptions import *
+from .exceptions import InitializationError
 
 
 def get_manager():
@@ -247,7 +247,7 @@ class Manager(object):
             if class_ == "default":
                 return class_
 
-            if type(class_) == type(widgets.Widget) and issubclass(
+            if type(class_) is type(widgets.Widget) and issubclass(
                 class_, widgets.Widget
             ):
                 return class_

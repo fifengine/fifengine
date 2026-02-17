@@ -27,7 +27,7 @@ from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
 
 from fife import fife
-from fife.extensions.serializers import *
+from fife.extensions.serializers import root_subfile
 
 MAPFORMAT = "1.0"
 

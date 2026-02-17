@@ -29,7 +29,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import map, object
 
-from .exceptions import *
+from .exceptions import InitializationError
 from .fontfileparser import FontFileParser
 
 

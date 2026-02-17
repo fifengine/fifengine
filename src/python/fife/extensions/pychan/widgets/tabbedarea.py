@@ -286,10 +286,10 @@ class TabbedArea(Container):
             self.comment,
             self.background_image,
             self.opaque,
-            select_tab_index,
+            self.select_tab_index,
         )
 
-        tabbedareaClone.addChilds(self._cloneChildren(prefix))
+        tabbedareaClone.addChildren(self._cloneChildren(prefix))
 
         return tabbedareaClone
 

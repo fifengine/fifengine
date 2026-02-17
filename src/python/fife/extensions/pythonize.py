@@ -82,7 +82,8 @@ def createProperties():
         print(
             "Pythonize: inspect not available - properties are generated with dummy argspec."
         )
-        getargspec = lambda func: ([], "args", None, None)
+        def getargspec(_func):
+            return ([], "args", None, None)
 
     def isSimpleGetter(func):
         if not callable(func):

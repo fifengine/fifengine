@@ -190,9 +190,9 @@ class Slider(Widget):
 
     def _setScale(self, start, end):
         """setScale(self, double scaleStart, double scaleEnd)"""
-        if type(start) != float:
+        if type(start) is not float:
             raise RuntimeError("Slider expects float for start scale")
-        if type(end) != float:
+        if type(end) is not float:
             raise RuntimeError("Slider expects float for end scale")
         self.real_widget.setScale(start, end)
 
@@ -202,7 +202,7 @@ class Slider(Widget):
 
     def _setScaleStart(self, start):
         """setScaleStart(self, double scaleStart)"""
-        if type(start) != float:
+        if type(start) is not float:
             raise RuntimeError("Slider expects float for start scale")
         self.real_widget.setScaleStart(start)
 
@@ -214,7 +214,7 @@ class Slider(Widget):
 
     def _setScaleEnd(self, end):
         """setScaleEnd(self, double scaleEnd)"""
-        if type(end) != float:
+        if type(end) is not float:
             raise RuntimeError("Slider expects float for end scale")
         self.real_widget.setScaleEnd(end)
 
@@ -226,7 +226,7 @@ class Slider(Widget):
 
     def _setValue(self, value):
         """setValue(self, double value)"""
-        if type(value) != float:
+        if type(value) is not float:
             raise RuntimeError("Slider only accepts float values")
         self.real_widget.setValue(value)
 
@@ -234,7 +234,7 @@ class Slider(Widget):
 
     def _setMarkerLength(self, length):
         """setMarkerLength(self, int length)"""
-        if type(length) != int:
+        if type(length) is not int:
             raise RuntimeError("Slider only accepts int for Marker length")
         self.real_widget.setMarkerLength(length)
 
@@ -256,7 +256,7 @@ class Slider(Widget):
 
     def _setStepLength(self, length):
         """setStepLength(self, double length)"""
-        if type(length) != float:
+        if type(length) is not float:
             raise RuntimeError("Slider only accepts floats for step length")
         self.real_widget.setStepLength(length)
 

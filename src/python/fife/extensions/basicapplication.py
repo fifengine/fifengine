@@ -150,43 +150,18 @@ class ApplicationBase(object):
         engineSetting.setNativeImageCursorEnabled(self._finalSetting["NativeImageCursor"])
         engineSetting.setJoystickSupport(self._finalSetting["JoystickSupport"])
 
-        try:
-            engineSetting.setColorKeyEnabled(self._finalSetting["ColorKeyEnabled"])
-        except:
-            pass
-
-        try:
-            engineSetting.setColorKey(
-                self._finalSetting["ColorKey"][0],
-                self._finalSetting["ColorKey"][1],
-                self._finalSetting["ColorKey"][2],
-            )
-        except:
-            pass
-
-        try:
-            engineSetting.setWindowTitle(self._finalSetting["WindowTitle"])
-            engineSetting.setWindowIcon(self._finalSetting["WindowIcon"])
-        except:
-            pass
-
-        try:
-            engineSetting.setFrameLimitEnabled(self._finalSetting["FrameLimitEnabled"])
-            engineSetting.setFrameLimit(self._finalSetting["FrameLimit"])
-        except:
-            pass
-
-        try:
-            engineSetting.setMouseSensitivity(self._finalSetting["MouseSensitivity"])
-        except:
-            pass
-
-        try:
-            engineSetting.setMouseAccelerationEnabled(
-                self._finalSetting["MouseAcceleration"]
-            )
-        except:
-            pass
+        engineSetting.setColorKeyEnabled(self._finalSetting["ColorKeyEnabled"])
+        engineSetting.setColorKey(
+            self._finalSetting["ColorKey"][0],
+            self._finalSetting["ColorKey"][1],
+            self._finalSetting["ColorKey"][2],
+        )
+        engineSetting.setWindowTitle(self._finalSetting["WindowTitle"])
+        engineSetting.setWindowIcon(self._finalSetting["WindowIcon"])
+        engineSetting.setFrameLimitEnabled(self._finalSetting["FrameLimitEnabled"])
+        engineSetting.setFrameLimit(self._finalSetting["FrameLimit"])
+        engineSetting.setMouseSensitivity(self._finalSetting["MouseSensitivity"])
+        engineSetting.setMouseAccelerationEnabled(self._finalSetting["MouseAcceleration"])
 
     def initLogging(self):
         """

@@ -193,7 +193,7 @@ class ImageProgressBar(Widget):
     foreground_image = property(_getForegroundImage, _setForegroundImage)
 
     def _setMaxValue(self, maxValue):
-        if type(maxValue) != int:
+        if type(maxValue) is not int:
             raise RuntimeError("ImageProgressBar max value should be an integer")
         self.real_widget.setMaxValue(maxValue)
 
@@ -203,7 +203,7 @@ class ImageProgressBar(Widget):
     max_value = property(_getMaxValue, _setMaxValue)
 
     def _setValue(self, value):
-        if type(value) != int:
+        if type(value) is not int:
             raise RuntimeError("ImageProgressBar value should be an integer")
         self.real_widget.setValue(value)
 

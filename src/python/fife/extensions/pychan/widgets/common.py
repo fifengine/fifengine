@@ -25,8 +25,6 @@ from __future__ import absolute_import, print_function
 
 from builtins import str
 
-from fife.extensions.pychan.exceptions import *
-
 # These used to be defined in here, duplicating the definitions in .layout
 # Retain for backwards compatibility of any code importing them from .common
 
