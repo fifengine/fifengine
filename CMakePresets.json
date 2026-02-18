@@ -14,15 +14,7 @@
     {
       "name": "vc17-x64-windows-rel",
       "displayName": "VC17 Release",
-      "inherits": "vc17-x64-windows-static",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "vc18-x64-windows-rel",
-      "displayName": "VC18 Release",
-      "inherits": "vc18-x64-windows-static",
+      "inherits": "vc17-x64-windows",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -30,7 +22,7 @@
     {
       "name": "vc17-x64-windows-dbg",
       "displayName": "VC17 Debug",
-      "inherits": "vc17-x64-windows-static",
+      "inherits": "vc17-x64-windows",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -38,7 +30,7 @@
     {
       "name": "vc17-x64-windows-rdi",
       "displayName": "VC17 RelWithDebInfo",
-      "inherits": "vc17-x64-windows-static",
+      "inherits": "vc17-x64-windows",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
@@ -58,6 +50,30 @@
       "inherits": "vc17-x64-windows-dbg",
       "cacheVariables": {
         "X_ENABLE_ANALYSIS": "ON"
+      }
+    },
+    {
+      "name": "vc18-x64-windows-rel",
+      "displayName": "VC18 Release",
+      "inherits": "vc18-x64-windows",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+        {
+      "name": "vc18-x64-windows-dbg",
+      "displayName": "VC18 Debug",
+      "inherits": "vc18-x64-windows",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+        {
+      "name": "vc18-x64-windows-rdi",
+      "displayName": "VC18 RelWithDebInfo",
+      "inherits": "vc18-x64-windows",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
@@ -126,15 +142,15 @@
       ]
     },
     {
-      "name": "vc18-x64-windows-rel",
-      "configurePreset": "vc18-x64-windows-rel",
+      "name": "vc17-x64-windows-dbg",
+      "configurePreset": "vc17-x64-windows-dbg",
       "targets": [
         "fife"
       ]
     },
     {
-      "name": "vc17-x64-windows-dbg",
-      "configurePreset": "vc17-x64-windows-dbg",
+      "name": "vc18-x64-windows-rel",
+      "configurePreset": "vc18-x64-windows-rel",
       "targets": [
         "fife"
       ]

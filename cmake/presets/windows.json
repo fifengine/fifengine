@@ -68,6 +68,17 @@
       }
     },
     {
+      "name": "compiler-msvc-vc18",
+      "hidden": true,
+      "description": "Set VC18 (VS2026) as compiler on Windows.",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "cl"
+        }
+      }
+    },
+    {
       "name": "compiler-msvc-clang",
       "hidden": true,
       "description": "Set Clang-Cl (from MSVC) as compiler on Windows..",
@@ -175,6 +186,66 @@
         "cmake-enable-warnings",
         "generator-ninja",
         "compiler-msvc-vc17",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows-static"
+      ]
+    },
+    {
+      "name": "vc18-x64-windows",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "v145,host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "intelliSenseMode": "windows-msvc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-vc17",
+        "build-folders-default",
+        "vcpkg-triplet-x64-windows"
+      ]
+    },
+    {
+      "name": "vc18-x64-windows-static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "v145,host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "intelliSenseMode": "windows-msvc-x64"
+        }
+      },
+      "inherits": [
+        "condition-is-windows",
+        "cmake-default-config",
+        "cmake-enable-warnings",
+        "generator-ninja",
+        "compiler-msvc-vc18",
         "build-folders-default",
         "vcpkg-triplet-x64-windows-static"
       ]

@@ -2,6 +2,7 @@
 build/
 out/
 vcpkg_installed/
+dependencies/
 
 # Swig wrappers
 engine/python/fife/fife.py

@@ -76,7 +76,7 @@ message(STATUS "")
 #                                Options
 #------------------------------------------------------------------------------
 
-option(FIFE_DEPENDENCY_SWIG "Download and build dependency: SWIG" ON)
+option(FIFE_DEPENDENCY_SWIG     "Download and build dependency: SWIG"     ON)
 option(FIFE_DEPENDENCY_FIFECHAN "Download and build dependency: FIFECHAN" ON)
 
 #------------------------------------------------------------------------------

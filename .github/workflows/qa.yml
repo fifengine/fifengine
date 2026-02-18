@@ -37,13 +37,13 @@ jobs:
           sudo apt-get install -y clang-format-20
         continue-on-error: true
 
-      - name: 🛠️ Check formatting
+      - name: 🛠️ Apply formatting
         run: |
           chmod +x build-tools/format.sh
           ./build-tools/format.sh
         continue-on-error: true
 
-      - name: 🛠️ Check git
+      - name: 🛠️ Check git difference
         run: |
           git status
           git diff
