@@ -126,6 +126,10 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #                                 Compiler Options
 #------------------------------------------------------------------------------
 
+# TODO enforce globally. change this to target_compile_options
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # MSVC compiler options
 if(WIN32 AND MSVC)
   # build on all cores
@@ -151,7 +155,6 @@ if(WIN32 AND MSVC)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 
-  # Note: c++11 is implicitly enabled on MSVC >=2013
 endif()
 
 # GCC and Clang compiler options

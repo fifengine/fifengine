@@ -20,6 +20,14 @@
       }
     },
     {
+      "name": "vc18-x64-windows-rel",
+      "displayName": "VC18 Release",
+      "inherits": "vc18-x64-windows-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "vc17-x64-windows-dbg",
       "displayName": "VC17 Debug",
       "inherits": "vc17-x64-windows-static",
@@ -113,6 +121,13 @@
     {
       "name": "vc17-x64-windows-rel",
       "configurePreset": "vc17-x64-windows-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "vc18-x64-windows-rel",
+      "configurePreset": "vc18-x64-windows-rel",
       "targets": [
         "fife"
       ]
