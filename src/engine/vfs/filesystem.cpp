@@ -57,29 +57,24 @@ namespace FIFE
         return (*pathIter).string();
     }
 
-    fs::path GetAbsolutePath(const std::string& path)
-    {
-        return fs::absolute(fs::path(path));
-    }
-
     fs::path GetAbsolutePath(const fs::path& path)
     {
         return fs::absolute(path);
     }
 
-    bool HasExtension(const std::string& path)
+    fs::path GetAbsolutePath(const std::string& path)
     {
-        return HasExtension(fs::path(path));
-    }
-
-    std::string GetExtension(const std::string& path)
-    {
-        return GetExtension(fs::path(path));
+        return fs::absolute(fs::path(path));
     }
 
     std::string GetExtension(const fs::path& path)
     {
         return path.extension().string();
+    }
+
+    std::string GetExtension(const std::string& path)
+    {
+        return GetExtension(fs::path(path));
     }
 
     bool HasExtension(const fs::path& path)
@@ -88,9 +83,9 @@ namespace FIFE
         return !(extension.empty() || extension == ".");
     }
 
-    std::string GetStem(const std::string& path)
+    bool HasExtension(const std::string& path)
     {
-        return GetStem(fs::path(path));
+        return HasExtension(fs::path(path));
     }
 
     std::string GetStem(const fs::path& path)
@@ -100,4 +95,10 @@ namespace FIFE
         }
         return path.stem().string();
     }
+
+    std::string GetStem(const std::string& path)
+    {
+        return GetStem(fs::path(path));
+    }
+
 } // namespace FIFE
