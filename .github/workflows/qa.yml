@@ -23,11 +23,11 @@ jobs:
 
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6
-        continue-on-error: true
 
       - name: 🔽 Install dos2unix
-        run: sudo apt-get update && sudo apt-get install -y dos2unix
-        continue-on-error: true
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
 
       - name: 🔽 Install clang-format-20
         run: |
@@ -35,7 +35,7 @@ jobs:
           chmod +x ./llvm.sh
           sudo ./llvm.sh 20
           sudo apt-get install -y clang-format-20
-        continue-on-error: true
+          rm llvm.sh
 
       - name: 🛠️ Apply formatting
         run: |
@@ -63,7 +63,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🔽 Setup Python
-        run: sudo apt-get update && sudo apt-get -y install python3 python3-pip python3-venv grep
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install python3 python3-pip python3-venv grep
 
       - name: 🛠️ Run lint
         run: |
@@ -85,7 +87,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🔽 Install cppcheck
-        run: sudo apt-get update && sudo apt-get install -y cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck
 
       - name: 🛠️ Run cppcheck
         run: |
