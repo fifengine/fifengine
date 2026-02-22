@@ -60,15 +60,7 @@
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
-        {
-      "name": "vc18-x64-windows-dbg",
-      "displayName": "VC18 Debug",
-      "inherits": "vc18-x64-windows",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-        {
+    {
       "name": "vc18-x64-windows-rdi",
       "displayName": "VC18 RelWithDebInfo",
       "inherits": "vc18-x64-windows",
@@ -77,24 +69,32 @@
       }
     },
     {
-      "name": "clangcl-x64-windows-dbg",
-      "displayName": "ClangCL Debug",
+      "name": "vc18-x64-windows-dbg",
+      "displayName": "VC18 Debug",
+      "inherits": "vc18-x64-windows",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clangcl-x64-windows-static-dbg",
+      "displayName": "ClangCL Static Debug",
       "inherits": "clangcl-x64-windows-static",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "clangcl-x64-windows-rel",
-      "displayName": "ClangCL Release",
+      "name": "clangcl-x64-windows-static-rel",
+      "displayName": "ClangCL Static Release",
       "inherits": "clangcl-x64-windows-static",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
-      "name": "clangcl-x64-windows-rdi",
-      "displayName": "ClangCL RelWithDebInfo",
+      "name": "clangcl-x64-windows-static-rdi",
+      "displayName": "ClangCL Static RelWithDebInfo",
       "inherits": "clangcl-x64-windows-static",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
@@ -104,6 +104,14 @@
       "name": "clang16-x64-linux-rel",
       "displayName": "Clang16 Release",
       "inherits": "clang16-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "clang18-x64-linux-rel",
+      "displayName": "Clang18 Release",
+      "inherits": "clang18-x64-linux",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -156,15 +164,15 @@
       ]
     },
     {
-      "name": "clangcl-x64-windows-rel",
-      "configurePreset": "clangcl-x64-windows-rel",
+      "name": "clangcl-x64-windows-static-rel",
+      "configurePreset": "clangcl-x64-windows-static-rel",
       "targets": [
         "fife"
       ]
     },
     {
-      "name": "clangcl-x64-windows-dbg",
-      "configurePreset": "clangcl-x64-windows-dbg",
+      "name": "clangcl-x64-windows-static-dbg",
+      "configurePreset": "clangcl-x64-windows-static-dbg",
       "targets": [
         "fife"
       ]
@@ -172,6 +180,13 @@
     {
       "name": "clang20-x64-linux-rel",
       "configurePreset": "clang20-x64-linux-rel",
+      "targets": [
+        "fife"
+      ]
+    },
+    {
+      "name": "clang18-x64-linux-rel",
+      "configurePreset": "clang18-x64-linux-rel",
       "targets": [
         "fife"
       ]
