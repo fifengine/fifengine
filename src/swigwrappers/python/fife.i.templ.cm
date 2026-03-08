@@ -9,7 +9,7 @@
 
 /**
  * This is a workaround for a minor swig bug when building on gcc 4.6.1 and above.
- * Prior to gcc 4.6.1 the STL headers like vector, string, etc. used to 
+ * Prior to gcc 4.6.1 the STL headers like vector, string, etc. used to
  * automatically pull in the cstddef header but starting with gcc 4.6.1 they no
  * longer do. This leads to swig generated a file that does not compile so we
  * explicitly include cstddef so the swig generated file will compile.
@@ -18,10 +18,6 @@
 %}
 
 %module(directors="1") fife
-
-%begin %{
-#define SWIG_PYTHON_2_UNICODE
-%}
 
 %include "std_string.i"
 %include "std_vector.i"
@@ -43,7 +39,7 @@
  * 	http://docs.python.org/api/exceptions.html
  * 	http://docs.python.org/api/exceptionHandling.html
  * SWIG exception handling
- * 	http://www.swig.org/Doc1.3/Customization.html#exception 
+ * 	http://www.swig.org/Doc1.3/Customization.html#exception
  * 	http://www.swig.org/Doc1.3/SWIGPlus.html#SWIGPlus_exception_specifications
  * 	http://www.swig.org/Doc1.3/Python.html#Python_nn36
  */
@@ -102,13 +98,13 @@ static void handleDirectorException() {
 	if (exception) {
 		PySys_SetObject((char*)"last_type", exception);
 		PySys_SetObject((char*)"last_value", value);
-		PySys_SetObject((char*)"last_traceback", traceback);	
-		
+		PySys_SetObject((char*)"last_traceback", traceback);
+
 		PyObject* d = PyModule_GetDict (PyImport_AddModule ("__main__"));
 		PyDict_SetItemString(d, "exc_type", exception);
 		PyDict_SetItemString(d, "exc_value", value);
 		PyDict_SetItemString(d, "exc_traceback", traceback ? traceback : Py_None);
-		
+
 		char buf[1024];
 		sprintf (buf, "\n\
 import traceback\n\
