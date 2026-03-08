@@ -127,7 +127,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #------------------------------------------------------------------------------
 
 # TODO enforce globally. change this to target_compile_options
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # MSVC compiler options
@@ -339,7 +339,6 @@ set(
   ${PROJECT_SOURCE_DIR}/src/engine/view/renderers/offrenderer.cpp
   ${PROJECT_SOURCE_DIR}/src/engine/view/renderers/quadtreerenderer.cpp
   ${PROJECT_SOURCE_DIR}/src/engine/view/renderers/targetrenderer.cpp
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/hybrid/hybridguimanager.cpp
 )
 
 # CEGUI v0.8.0+
@@ -560,7 +559,6 @@ set(
   ${PROJECT_SOURCE_DIR}/src/engine/view/renderers/quadtreerenderer.h
   ${PROJECT_SOURCE_DIR}/src/engine/view/renderers/targetrenderer.h
   ${PROJECT_SOURCE_DIR}/src/engine/gui/guimanager.h
-  ${PROJECT_SOURCE_DIR}/src/engine/gui/hybrid/hybridguimanager.h
 )
 
 # CEGUI
@@ -675,7 +673,6 @@ set(
   view/renderers/offrenderer.i
   view/renderers/targetrenderer.i
   gui/guimanager.i
-  gui/hybrid/hybridguimanager.i
 )
 
 # CEGUI
