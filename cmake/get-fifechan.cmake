@@ -7,7 +7,8 @@ include(ExternalProject)
 
 option(FIFECHAN_BUILD_FROM_SOURCE "Build FifeChan from source instead of using pre-built binaries (Windows)" OFF)
 
-set(FIFECHAN_VERSION "0.1.5" CACHE STRING "The FifeChan version (tag) to fetch")
+#set(FIFECHAN_VERSION "0.1.5" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
+set(FIFECHAN_VERSION "origin/one" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
 set(FIFECHAN_GIT_REPO "https://github.com/fifengine/fifechan.git" CACHE STRING "FifeChan git repository URL")
 
 # Required dependency paths (provided by dependencies/CMakeLists.txt)
@@ -85,6 +86,10 @@ else()
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
     "-DVCPKG_MANIFEST_MODE=OFF"
+    # disabled: we only need the lib
+    "-DFIFEGUI_TESTS=OFF"
+    # disabled: we only need the lib and this requires sdl_mixer
+    "-DFIFEGUI_EXAMPLES=OFF"
     # append lists
     ${_FIFECHAN_VCPKG_ARGS}
     ${_FIFECHAN_PREFIX_ARGS}
