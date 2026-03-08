@@ -337,7 +337,7 @@ namespace fcn
 
     void ResizableWindow::mousePressed(MouseEvent& mouseEvent)
     {
-        if (m_resizable && mouseEvent.getButton() == MouseEvent::Left) {
+        if (m_resizable && mouseEvent.getButton() == MouseEvent::Button::Left) {
             m_resizeLeft   = m_resizableLeft && mouseEvent.getX() < m_borderDistance;
             m_resizeRight  = m_resizableRight && mouseEvent.getX() > getWidth() - m_borderDistance;
             m_resizeTop    = m_resizableTop && mouseEvent.getY() < m_borderDistance;

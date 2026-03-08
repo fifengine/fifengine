@@ -39,7 +39,7 @@ namespace fcn
     ClickLabel::ClickLabel()
     {
         mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
-        setAlignment(Graphics::Left);
+        setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
         mTextWrapping = false;
         setBorderSize(0);
@@ -55,7 +55,7 @@ namespace fcn
     {
         mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
         setCaption(caption);
-        setAlignment(Graphics::Left);
+        setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
         mTextWrapping = false;
         setBorderSize(0);
@@ -175,7 +175,9 @@ namespace fcn
 
         if (isOpaque()) {
             Color faceColor = getBackgroundColor();
-            if (active && ((getSelectionMode() & Widget::Selection_Background) == Widget::Selection_Background)) {
+            const auto selectionMode = static_cast<uint8_t>(getSelectionMode());
+            if (active &&
+                ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Background)) != 0)) {
                 faceColor = getSelectionColor();
             }
             graphics->setColor(faceColor);
@@ -184,7 +186,8 @@ namespace fcn
         }
 
         if (getBorderSize() > 0) {
-            if (active && (getSelectionMode() & Widget::Selection_Border) == Widget::Selection_Border) {
+            const auto selectionMode = static_cast<uint8_t>(getSelectionMode());
+            if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Border)) != 0)) {
                 drawSelectionFrame(graphics);
             } else {
                 drawBorder(graphics);
@@ -202,18 +205,18 @@ namespace fcn
                 (getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2;
 
             switch (getAlignment()) {
-            case Graphics::Left:
+            case Graphics::Alignment::Left:
                 textX = offsetRec.x + getPaddingLeft();
                 break;
-            case Graphics::Center:
+            case Graphics::Alignment::Center:
                 textX = offsetRec.x + getPaddingLeft() +
                         (getWidth() - offsetRec.width - getPaddingLeft() - getPaddingRight() - image->getWidth()) / 2;
                 break;
-            case Graphics::Right:
+            case Graphics::Alignment::Right:
                 textX = getWidth() - offsetRec.x - getPaddingRight() - image->getWidth();
                 break;
             default:
-                throw FCN_EXCEPTION("Unknown alignment.");
+                fcn::throwException("Unknown alignment.");
             }
 
             mGuiFont->drawMultiLineString(graphics, text, textX, textY);
@@ -229,7 +232,7 @@ namespace fcn
 
     void ClickLabel::mousePressed(MouseEvent& mouseEvent)
     {
-        if (mouseEvent.getButton() == MouseEvent::Left) {
+        if (mouseEvent.getButton() == MouseEvent::Button::Left) {
             mMousePressed = true;
             mouseEvent.consume();
         }
@@ -247,11 +250,11 @@ namespace fcn
 
     void ClickLabel::mouseReleased(MouseEvent& mouseEvent)
     {
-        if (mouseEvent.getButton() == MouseEvent::Left && mMousePressed && mHasMouse) {
+        if (mouseEvent.getButton() == MouseEvent::Button::Left && mMousePressed && mHasMouse) {
             mMousePressed = false;
             distributeActionEvent();
             mouseEvent.consume();
-        } else if (mouseEvent.getButton() == MouseEvent::Left) {
+        } else if (mouseEvent.getButton() == MouseEvent::Button::Left) {
             mMousePressed = false;
             mouseEvent.consume();
         }

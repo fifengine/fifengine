@@ -72,14 +72,16 @@ namespace FIFE
             throw GuiException("SdlGuiGraphics::drawText() - No font set!");
         }
 
-        switch (alignment) {
-        case Left:
+        const auto align = static_cast<fcn::Graphics::Alignment>(alignment);
+
+        switch (align) {
+        case fcn::Graphics::Alignment::Left:
             mFont->drawString(this, text, x, y);
             break;
-        case Center:
+        case fcn::Graphics::Alignment::Center:
             mFont->drawString(this, text, x - mFont->getWidth(text) / 2, y);
             break;
-        case Right:
+        case fcn::Graphics::Alignment::Right:
             mFont->drawString(this, text, x - mFont->getWidth(text), y);
             break;
         default:

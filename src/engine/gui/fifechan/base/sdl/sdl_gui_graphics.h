@@ -25,7 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <fifechan/sdl/sdlgraphics.hpp>
+#include <fifechan/backends/sdl2/sdl2graphics.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

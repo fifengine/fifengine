@@ -89,7 +89,7 @@ namespace fcn
         m_topSide = side;
         setBottomResizable(m_topSide);
         if (side) {
-            setLayout(Container::Horizontal);
+            setLayout(Container::LayoutPolicy::Horizontal);
         }
     }
 
@@ -103,7 +103,7 @@ namespace fcn
         m_rightSide = side;
         setLeftResizable(m_rightSide);
         if (side) {
-            setLayout(Container::Vertical);
+            setLayout(Container::LayoutPolicy::Vertical);
         }
     }
 
@@ -117,7 +117,7 @@ namespace fcn
         m_bottomSide = side;
         setTopResizable(m_bottomSide);
         if (side) {
-            setLayout(Container::Horizontal);
+            setLayout(Container::LayoutPolicy::Horizontal);
         }
     }
 
@@ -131,7 +131,7 @@ namespace fcn
         m_leftSide = side;
         setRightResizable(m_leftSide);
         if (side) {
-            setLayout(Container::Vertical);
+            setLayout(Container::LayoutPolicy::Vertical);
         }
     }
 
@@ -194,7 +194,7 @@ namespace fcn
             Rectangle childDim = (*currChild)->getDimension();
             (*currChild)->getAbsolutePosition(childDim.x, childDim.y);
             if (childDim.isIntersecting(dim)) {
-                if (getLayout() == Container::Horizontal) {
+                if (getLayout() == Container::LayoutPolicy::Horizontal) {
                     if (dim.x < childDim.x) {
                         if (dim.x + dim.width <= childDim.x + childDim.width / 2) {
                             placeBefore = *currChild;
@@ -209,7 +209,7 @@ namespace fcn
                         }
                     }
                 }
-                if (getLayout() == Container::Vertical) {
+                if (getLayout() == Container::LayoutPolicy::Vertical) {
                     if (dim.y < childDim.y) {
                         if (dim.y + dim.height <= childDim.y + childDim.height / 2) {
                             placeBefore = *currChild;

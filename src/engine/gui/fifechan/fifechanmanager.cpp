@@ -25,7 +25,7 @@
 #include <fifechan.hpp>
 #include <fifechan/focushandler.hpp>
 #include <fifechan/key.hpp>
-#include <fifechan/sdl.hpp>
+#include <fifechan/backends/sdl2/sdl.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -320,9 +320,9 @@ namespace FIFE
     KeyEvent FifechanManager::translateKeyEvent(const fcn::KeyEvent& fcnevt)
     {
         KeyEvent keyevt;
-        if (fcnevt.getType() == fcn::KeyEvent::Pressed)
+        if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Pressed))
             keyevt.setType(KeyEvent::PRESSED);
-        else if (fcnevt.getType() == fcn::KeyEvent::Released)
+        else if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Released))
             keyevt.setType(KeyEvent::RELEASED);
         else {
             FL_WARN(
@@ -355,31 +355,31 @@ namespace FIFE
         mouseevt.setY(fcnevt.getY());
 
         switch (fcnevt.getType()) {
-        case fcn::MouseEvent::Pressed:
+        case fcn::MouseEvent::Type::Pressed:
             mouseevt.setType(MouseEvent::PRESSED);
             break;
-        case fcn::MouseEvent::Released:
+        case fcn::MouseEvent::Type::Released:
             mouseevt.setType(MouseEvent::RELEASED);
             break;
-        case fcn::MouseEvent::Moved:
+        case fcn::MouseEvent::Type::Moved:
             mouseevt.setType(MouseEvent::MOVED);
             break;
-        case fcn::MouseEvent::Clicked:
+        case fcn::MouseEvent::Type::Clicked:
             mouseevt.setType(MouseEvent::CLICKED);
             break;
-        case fcn::MouseEvent::Entered:
+        case fcn::MouseEvent::Type::Entered:
             mouseevt.setType(MouseEvent::ENTERED);
             break;
-        case fcn::MouseEvent::Exited:
+        case fcn::MouseEvent::Type::Exited:
             mouseevt.setType(MouseEvent::EXITED);
             break;
-        case fcn::MouseEvent::Dragged:
+        case fcn::MouseEvent::Type::Dragged:
             mouseevt.setType(MouseEvent::DRAGGED);
             break;
-        case fcn::MouseEvent::WheelMovedDown:
+        case fcn::MouseEvent::Type::WheelMovedDown:
             mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
             break;
-        case fcn::MouseEvent::WheelMovedUp:
+        case fcn::MouseEvent::Type::WheelMovedUp:
             mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
             break;
         default:
@@ -387,19 +387,19 @@ namespace FIFE
         }
 
         switch (fcnevt.getButton()) {
-        case fcn::MouseInput::Left:
+        case fcn::MouseEvent::Button::Left:
             mouseevt.setButton(MouseEvent::LEFT);
             break;
-        case fcn::MouseInput::Right:
+        case fcn::MouseEvent::Button::Right:
             mouseevt.setButton(MouseEvent::RIGHT);
             break;
-        case fcn::MouseInput::Middle:
+        case fcn::MouseEvent::Button::Middle:
             mouseevt.setButton(MouseEvent::MIDDLE);
             break;
-        case fcn::MouseInput::X1:
+        case fcn::MouseEvent::Button::X1:
             mouseevt.setButton(MouseEvent::X1);
             break;
-        case fcn::MouseInput::X2:
+        case fcn::MouseEvent::Button::X2:
             mouseevt.setButton(MouseEvent::X2);
             break;
         default:

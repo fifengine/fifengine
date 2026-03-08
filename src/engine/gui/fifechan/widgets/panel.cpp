@@ -182,13 +182,13 @@ namespace fcn
 
     void Panel::mouseReleased(MouseEvent& mouseEvent)
     {
-        if (mouseEvent.getButton() == MouseEvent::Left) {
+        if (mouseEvent.getButton() == MouseEvent::Button::Left) {
             // move it inside the dock area
             if (m_docked && isMovable() && mMoved) {
                 getDockedArea()->repositionWidget(this);
                 getDockedArea()->adaptLayout(false);
             }
-        } else if (mouseEvent.getButton() == MouseEvent::Right) {
+        } else if (mouseEvent.getButton() == MouseEvent::Button::Right) {
             if (getDockedArea()) {
                 restoreCursor();
             }

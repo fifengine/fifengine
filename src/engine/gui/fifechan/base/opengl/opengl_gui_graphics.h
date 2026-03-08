@@ -25,7 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <fifechan/opengl/openglgraphics.hpp>
+#include <fifechan/backends/opengl/openglgraphics.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
