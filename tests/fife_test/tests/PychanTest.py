@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -35,8 +34,8 @@ from fife.extensions.fife_timer import Timer
 import scripts.test as test
 
 
-""" 
-For use with the styling example 
+"""
+For use with the styling example
 """
 STYLES= {
 'new default': {
@@ -87,7 +86,7 @@ STYLES= {
 		'opaque' : False
 	}
 	},
-	'greenzone' : { 
+	'greenzone' : {
 		'default' : {
 			'base_color': fifechan.Color(80,200,80) ,
 			'background_color': fifechan.Color(200,250,200),
@@ -102,7 +101,7 @@ STYLES= {
 }
 
 
-""" 
+"""
 Used with the GUI animation test
 """
 import time
@@ -149,7 +148,7 @@ class PyChanExample(object):
 		if self.widget:
 			self.widget.hide()
 		self.widget = None
-		
+
 class StylingExample(PyChanExample):
 	def __init__(self):
 		super(StylingExample,self).__init__('data/gui/styling.xml')
@@ -216,22 +215,22 @@ class ShowHideTest(PyChanExample):
 		}
 
 		self.widget.mapEvents(eventMap)
-		
+
 		self.widget.show()
-		
+
 class ModalTest(PyChanExample):
 		def __init__(self):
 			super(ModalTest,self).__init__('data/gui/showhide.xml')
-		
+
 		def start(self):
 			self.widget = pychan.loadXML(self.xmlFile)
-			
+
 			self.text1widget = self.widget.findChild(name="text1")
 			self.text2widget = self.widget.findChild(name="text2")
 			self.text3widget = self.widget.findChild(name="text3")
 			self.vbox1widget = self.widget.findChild(name="vbox1")
-			
-			
+
+
 			eventMap = {
 				'closeButton':self.stop,
 				'hideText1': self.requestModal,
@@ -239,27 +238,27 @@ class ModalTest(PyChanExample):
 				'hideText2': self.requestMouseModal,
 				'showText2': self.releaseMouseModal,
 			}
-			
+
 			self.widget.mapEvents(eventMap)
-			
+
 			self.widget.show()
-			
+
 		def requestModal(self):
 			self.widget.real_widget.requestModalFocus()
-		
+
 		def releaseModal(self):
 			self.widget.real_widget.releaseModalFocus()
-			
+
 		def requestMouseModal(self):
 			self.widget.real_widget.requestModalMouseInputFocus()
-			
+
 		def releaseMouseModal(self):
 			self.widget.real_widget.releaseModalMouseInputFocus()
 
 class DynamicExample(PyChanExample):
 	def __init__(self):
 		super(DynamicExample,self).__init__('data/gui/dynamic.xml')
-		
+
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
 		self.widget.mapEvents({
@@ -276,7 +275,7 @@ class DynamicExample(PyChanExample):
 		label.capture(self.removeLabel)
 		self.labelBox.addChild( label )
 		self.widget.adaptLayout()
-		
+
 	def removeLabel(self,widget=None):
 		widget.parent.removeChild(widget)
 		self.widget.adaptLayout()
@@ -309,22 +308,22 @@ class SliderExample(PyChanExample):
 			'xvalue' : str(icon.x),
 			'yvalue' : str(icon.y),
 		})
-		
+
 		#quick demo to show the percentage bar in action
 		pbarslider = self.widget.findChild(name="pbarslider")
 		pbar = self.widget.findChild(name="pbar")
-		
+
 		pbar.value = int(pbarslider.value)
 
 class ColorExample(PyChanExample):
-	""" a small app (^^) to show how fifechan uses colors on various widgets 
-	
+	""" a small app (^^) to show how fifechan uses colors on various widgets
+
 	"""
 	def __init__(self):
 		super(ColorExample,self).__init__('data/gui/colortester.xml')
-		
+
 	def start(self):
-		""" 
+		"""
 		load XML file and setup callbacks
 		"""
 		self.widget = pychan.loadXML(self.xmlFile)
@@ -338,16 +337,16 @@ class ColorExample(PyChanExample):
 			'background_gslider': self.update_background_color,
 			'background_bslider': self.update_background_color,
 			'background_aslider': self.update_background_color,
-			
+
 			'foreground_rslider': self.update_foreground_color,
 			'foreground_gslider': self.update_foreground_color,
 			'foreground_bslider': self.update_foreground_color,
 			'foreground_aslider': self.update_foreground_color,
-			
+
 			'selection_rslider': self.update_selection_color,
 			'selection_gslider': self.update_selection_color,
 			'selection_bslider': self.update_selection_color,
-			'selection_aslider': self.update_selection_color,						
+			'selection_aslider': self.update_selection_color,
 
 			'closeButton':self.stop,
 		})
@@ -356,7 +355,7 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="background_aslider").value = float(255)
 		self.widget.findChild(name="foreground_aslider").value = float(255)
 		self.widget.findChild(name="selection_aslider").value = float(255)
-		
+
 		# init stuff
 		self.update_basecolor()
 		self.update_background_color()
@@ -378,9 +377,9 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="base_gvalue").text = str(str(g), "utf-8")
 		self.widget.findChild(name="base_bvalue").text = str(str(b), "utf-8")
 		self.widget.findChild(name="base_avalue").text = str(str(a), "utf-8")
-		
+
 		rgba = (r, g, b, a)
-		
+
 		self.widget.findChild(name="example1").base_color = rgba
 		self.widget.findChild(name="example2").base_color = rgba
 		self.widget.findChild(name="example3").base_color = rgba
@@ -390,7 +389,7 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example7").base_color = rgba
 		self.widget.findChild(name="example8").base_color = rgba
 		self.widget.findChild(name="example9").base_color = rgba
-		
+
 	def update_background_color(self):
 		"""
 		Update rgba background colors of all examples and show the values
@@ -405,9 +404,9 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="background_gvalue").text = str(str(g), "utf-8")
 		self.widget.findChild(name="background_bvalue").text = str(str(b), "utf-8")
 		self.widget.findChild(name="background_avalue").text = str(str(a), "utf-8")
-		
+
 		rgba = (r, g, b, a)
-		
+
 		self.widget.findChild(name="example1").background_color = rgba
 		self.widget.findChild(name="example2").background_color = rgba
 		self.widget.findChild(name="example3").background_color = rgba
@@ -417,7 +416,7 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example7").background_color = rgba
 		self.widget.findChild(name="example8").background_color = rgba
 		self.widget.findChild(name="example9").background_color = rgba
-		
+
 	def update_selection_color(self):
 		"""
 		Update rgba selection colors of all examples and show the values
@@ -432,9 +431,9 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="selection_gvalue").text = str(str(g), "utf-8")
 		self.widget.findChild(name="selection_bvalue").text = str(str(b), "utf-8")
 		self.widget.findChild(name="selection_avalue").text = str(str(a), "utf-8")
-		
+
 		rgba = (r, g, b, a)
-		
+
 		self.widget.findChild(name="example1").selection_color = rgba
 		self.widget.findChild(name="example2").selection_color = rgba
 		self.widget.findChild(name="example3").selection_color = rgba
@@ -444,7 +443,7 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example7").selection_color = rgba
 		self.widget.findChild(name="example8").selection_color = rgba
 		self.widget.findChild(name="example9").selection_color = rgba
-		
+
 	def update_foreground_color(self):
 		"""
 		Update rgba foreground colors of all examples and show the values
@@ -459,9 +458,9 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="foreground_gvalue").text = str(str(g), "utf-8")
 		self.widget.findChild(name="foreground_bvalue").text = str(str(b), "utf-8")
 		self.widget.findChild(name="foreground_avalue").text = str(str(a), "utf-8")
-		
+
 		rgba = (r, g, b, a)
-		
+
 		self.widget.findChild(name="example1").foreground_color = rgba
 		self.widget.findChild(name="example2").foreground_color = rgba
 		self.widget.findChild(name="example3").foreground_color = rgba
@@ -474,71 +473,71 @@ class ColorExample(PyChanExample):
 
 class PocAnimations(PyChanExample):
 	""" a small app (^^) to show how gui animations ~could~ be
-		made by using B{fife.TimeEvent}s	
+		made by using B{fife.TimeEvent}s
 	"""
 	def __init__(self):
 		super(PocAnimations,self).__init__('data/gui/poc_guianimation.xml')
-		
+
 		self._move_timer = None
 		self._resize_timer = None
 		self._color_timer = None
 		self._progress_timer = None
-		
+
 	def start(self):
-		""" 
+		"""
 		load XML file and setup callbacks
 		"""
-		
+
 		self.widget = pychan.loadXML(self.xmlFile)
-		
+
 		self.widget.mapEvents({
 			'closeButton'	:	self.stop,
-			
+
 			'example_move'	:	cbwa(self._start_anim, type=ACTION_MOVE),
 			'example_color'	:	cbwa(self._start_anim, type=ACTION_COLOR),
 			'example_resize':	cbwa(self._start_anim, type=ACTION_RESIZE),
-			'example_all'	: 	self._anim_all,			
+			'example_all'	: 	self._anim_all,
 			'delay'			:	self._set_delay_display,
 		})
-		
+
 		self.move_example_widget = self.widget.findChild(name="move")
 		self.mew = self.move_example_widget
 
 		self.resize_example_widget = self.widget.findChild(name="resize")
-		self.rew = self.resize_example_widget		
+		self.rew = self.resize_example_widget
 
 		self.color_example_widget = self.widget.findChild(name="color")
 		self.cew = self.color_example_widget
-		
+
 		self.delay_slider = self.widget.findChild(name="delay")
 		self.delay_slider.value = float(DEFAULT_DELAY)
-		
+
 		self.delay_display = self.widget.findChild(name="delay_label")
 		self.delay_display.text = str(str(DEFAULT_DELAY))
-		
+
 		self.progressbar = self.widget.findChild(name="progressbar")
 #		self.progressbar2 = self.widget.findChild(name="progressbar2")
-		
+
 		self.little_matrix = []
 		for x in range(1,4):
 			for y in range(1,4):
 				name = "color_%s_%s" % (x, y)
 				widget = self.widget.findChild(name=name)
 				self.little_matrix.append(widget)
-		
+
 		self.widget.adaptLayout(True)
 		self.widget.show()
-		
+
 	def _set_delay_display(self):
 		""" set delay display according to slider value """
 		value = self.delay_slider.value
-		self.delay_display.text = str(str(int(value)))		
-		
+		self.delay_display.text = str(str(int(value)))
+
 	def _anim_all(self):
 		""" fire all animations """
 		for action in ACTIONS:
 			self._start_anim(type=action)
-		
+
 	def _start_anim(self, type=None):
 		""" start the animation of the given type """
 		self._reset_anim(type)
@@ -559,14 +558,14 @@ class PocAnimations(PyChanExample):
 			kwargs['callback'] = self._color
 			self._color_timer = Timer(**kwargs)
 			self._color_timer.start()
-		
+
 		# progressbar
 		kwargs['callback'] = self._update_progress
 		self.progressbar.value = 0
 #		self.progressbar2.value = 0
 		self._progress_timer = Timer(**kwargs)
 		self._progress_timer.start()
-			
+
 	def _reset_anim(self, type=None):
 		""" undo changes made by the animation (but leave alone disco matrix ^^) """
 		if type == ACTION_MOVE:
@@ -586,12 +585,12 @@ class PocAnimations(PyChanExample):
 				self._color_timer.stop()
 			COLOR = 255, 255, 255, 100
 			self.cew.base_color = COLOR
-		
+
 		if self._progress_timer:
 			self._progress_timer.stop()
 			self.progressbar.value = 0
 #			self.progressbar2.value = 0
-							
+
 	def _move(self):
 		""" move the mew widget """
 		position = list(self.mew.position)
@@ -599,8 +598,8 @@ class PocAnimations(PyChanExample):
 			position[0] += 1
 			self.mew.position = position
 		else:
-			self._reset_anim(ACTION_MOVE)	
-		
+			self._reset_anim(ACTION_MOVE)
+
 	def _resize(self):
 		""" resize the rew widget """
 		size = list(self.rew.size)
@@ -612,7 +611,7 @@ class PocAnimations(PyChanExample):
 			self.rew.max_size = size
 		else:
 			self._reset_anim(ACTION_RESIZE)
-			
+
 	def _color(self):
 		""" tint the cew widgets """
 		color = self.cew.base_color
@@ -627,7 +626,7 @@ class PocAnimations(PyChanExample):
 				widget.background_color = color
 		else:
 			self._reset_anim(ACTION_COLOR)
-			
+
 	def _update_progress(self):
 		""" """
 		if self.progressbar.value < self.progressbar.size[0]:
@@ -656,7 +655,7 @@ class PychanTest(test.Test):
 			'demoList'     : self.selectExample,
 		}
 		self.gui.mapEvents(eventMap)
-		
+
 		# A simple hover-effect for the credits label
 		credits = self.gui.findChild(name="creditsLink")
 		# Note that we can't simply write:
@@ -669,7 +668,7 @@ class PychanTest(test.Test):
 		# that's because that would call credits._setText NOW and we want to call
 		# it later.
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
-		
+
 		self._examples = {
 			'Absolute Positioning' : PyChanExample('data/gui/absolute.xml'),
 			'All Widgets' : PyChanExample('data/gui/all_widgets.xml'),
@@ -684,7 +683,7 @@ class PychanTest(test.Test):
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self._examples.keys())
-		
+
 		self.currentExample = None
 
 	def selectExample(self):
@@ -706,29 +705,29 @@ class PychanTest(test.Test):
 		"""
 		# We use PyChan's synchronous execution feature here.
 		pychan.loadXML('data/gui/credits.xml').execute({ 'okButton' : "Yay!" })
-		
+
 	def destroy(self):
 		if self.currentExample:
 			self.currentExample.stop()
-			
+
 		del self.gui
-		
+
 	def run(self):
 		self._running = True
-		
+
 		self.gui.show()
 
 	def stop(self):
 		self._running = False
-		
+
 		self.gui.hide()
-		
+
 	def isRunning(self):
 		return self._running
 
 	def getName(self):
 		return "PychanTest"
-		
+
 	def getAuthor(self):
 		return "prock"
 

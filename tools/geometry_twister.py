@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -33,7 +32,7 @@ import math, time
 LMB = 0x100
 RMB = 0x400
 DBLCLICK_TRESHOLD = 0.3 # secs
-	
+
 class Shape(object):
 	def __init__(self, center_pt, sidecount):
 		assert (sidecount in (4, 6))
@@ -55,7 +54,7 @@ class Shape(object):
 		xmove, ymove = 0.5, (abs(miny) + maxy) / 2
 		self.shape_pts = [(pt[0]-xmove, pt[1]-ymove, 0) for pt in shape_pts]
 		self.reflections = self.create_shape_reflections()
-		
+
 	def create_shape_reflections(self):
 		reflections = []
 		sides = len(self.shape_pts)
@@ -68,28 +67,28 @@ class Shape(object):
 			for x,y in ((2*W,0), (W,1+H), (-W,1+H), (-2*W,0), (-W,-1-H)):
 				reflections.append([(pt[0]+x, pt[1]+y, 0) for pt in self.shape_pts])
 		return reflections
-	
+
 	def tilt(self, degrees):
 		self.tilting += math.radians(degrees)
 		if self.tilting < 0:
 			self.tilting = 0
 		elif self.tilting > math.pi/2 * 0.95:
 			self.tilting = math.pi/2 * 0.95
-	
+
 	def rotate(self, degrees):
 		self.rotation += math.radians(degrees)
 		if self.rotation < 0:
 			self.rotation = 0
 		elif self.rotation > math.pi/2 * 0.95:
 			self.rotation = math.pi/2 * 0.95
-		
+
 	def zoom(self, amount):
 		self.zoomval += amount
 		if self.zoomval < 10:
 			self.zoomval = 10
 		if self.zoomval > 150:
 			self.zoomval = 150
-				
+
 	def transform_pts(self, pts):
 		rotated_pts = []
 		for x, y, z in pts:
@@ -101,32 +100,32 @@ class Shape(object):
 			tilted_pts.append((x,
 			                   y * math.cos(self.tilting) - z * math.sin(self.tilting),
 		                           z * math.sin(self.tilting) + z * math.cos(self.tilting)))
-	
+
 		zoomed_pts = []
 		for x, y, z in tilted_pts:
 			zoomed_pts.append((int(round(self.center_pt[0] + self.zoomval * x)),
 			                   int(round(self.center_pt[1] + self.zoomval * y))))
 		return zoomed_pts
-	
+
 	def get_screen_pts(self):
 		return self.transform_pts(self.shape_pts)
-		
+
 	def get_screen_bounding_box(self, screenpts):
 		x2, y2 = x1, y1 = screenpts[0]
 		for pt in screenpts:
 			x1, y1 = min(x1, pt[0]), min(y1, pt[1])
 			x2, y2 = max(x2, pt[0]), max(y2, pt[1])
 		return (x1, y1), (x2, y2)
-		
+
 	def get_reflections(self):
 		return [self.transform_pts(reflection) for reflection in self.reflections]
-		
+
 	def get_tilting(self):
 		return math.degrees(self.tilting)
-		
+
 	def get_rotation(self):
 		return math.degrees(self.rotation)
-	
+
 class Gui(object):
 	W = 400
 	H = 400
@@ -145,10 +144,10 @@ class Gui(object):
 		self.canvas.pack()
 		self.update_view()
 		self.last_click_time = time.time()
-			
+
 	def on_resize(self, event):
 		pass
-		
+
 	def on_move(self, event):
 		if (event.state & RMB):
 			self.shape.zoom((self.prev_mouse_pt[1] - event.y) / 3)
@@ -158,7 +157,7 @@ class Gui(object):
 			self.shape.tilt((self.prev_mouse_pt[1] - event.y) / 2)
 			self.update_view()
 			self.prev_mouse_pt = (event.x, event.y)
-		
+
 	def on_mb(self, event):
 		self.prev_mouse_pt = (event.x, event.y)
 		if (time.time() - self.last_click_time) < DBLCLICK_TRESHOLD:
@@ -170,7 +169,7 @@ class Gui(object):
 			self.shape = newshape
 			self.update_view()
 		self.last_click_time = time.time()
-	
+
 	def draw_shape(self, shapepts, boundpts=None, fillshape=True):
 		if boundpts:
 			pt1, pt2 = boundpts
@@ -179,7 +178,7 @@ class Gui(object):
 		if not fillshape:
 			fillcolor = ""
 		self.canvas.create_polygon(fill=fillcolor, outline="black", tag="shape", *self.flatten_pts(shapepts))
-	
+
 	def update_texts(self, size, transform):
 		self.canvas.create_text(10, 20, text="Bounding box size x:%d, y:%d" % (size[0], size[1]), tag="size", anchor=TK.NW)
 		self.canvas.create_text(10, 40, text="Transform x:%d, y:%d" % (transform[0], transform[1]), tag="transform", anchor=TK.NW)
@@ -188,10 +187,10 @@ class Gui(object):
 		self.canvas.create_text(10, 330, text="Doubleclick to change shape", anchor=TK.NW)
 		self.canvas.create_text(10, 350, text="Right button + drag = zoom", anchor=TK.NW)
 		self.canvas.create_text(10, 370, text="Left button + drag = tilt/rotate", anchor=TK.NW)
-	
+
 	def flatten_pts(self, pts):
 		return [c for pt in pts for c in pt]
-			
+
 	def update_view(self):
 		self.canvas.delete("all")
 		shapepts = self.shape.get_screen_pts()
@@ -199,19 +198,19 @@ class Gui(object):
 		size = boundpts[1][0] - boundpts[0][0], boundpts[1][1] - boundpts[0][1]
 		reflections = self.shape.get_reflections()
 		transform = (reflections[0][0][0] - shapepts[0][0], -(reflections[0][0][1] - shapepts[0][1]))
-	
+
 		for reflection_pts in reflections[1:]:
 			self.draw_shape(reflection_pts, fillshape=False)
-		
+
 		self.draw_shape(shapepts, boundpts)
 		transform_boundpts = self.shape.get_screen_bounding_box(reflections[0])
 		self.draw_shape(reflections[0], transform_boundpts, fillshape=False)
-	
+
 		self.update_texts(size, transform)
-	
+
 	def run(self):
 		self.root.mainloop()
-	
+
 if __name__ == '__main__':
 	gui = Gui()
 	gui.run()

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -35,7 +34,7 @@ class KeyListener(fife.IKeyListener):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IKeyListener.__init__(self)
 
 	def keyPressed(self, evt):
@@ -47,7 +46,7 @@ class KeyListener(fife.IKeyListener):
 		elif keystr == 'c':
 			r = self._test._camera.getRenderer('CoordinateRenderer')
 			r.setEnabled(not r.isEnabled())
-		
+
 	def keyReleased(self, evt):
 		pass
 
@@ -56,9 +55,9 @@ class MouseListener(fife.IMouseListener):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IMouseListener.__init__(self)
-		
+
 	def mousePressed(self, event):
 		if event.isConsumedByWidgets():
 			return
@@ -66,28 +65,28 @@ class MouseListener(fife.IMouseListener):
 		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
 
 		self._test.movePlayer(clickpoint)
-				
+
 	def mouseReleased(self, event):
 		pass
 
 	def mouseMoved(self, event):
 		pass
-		
+
 	def mouseEntered(self, event):
 		pass
-		
+
 	def mouseExited(self, event):
 		pass
-		
+
 	def mouseClicked(self, event):
 		pass
-	
+
 	def mouseWheelMovedUp(self, event):
-		pass	
-		
+		pass
+
 	def mouseWheelMovedDown(self, event):
 		pass
-		
+
 	def mouseDragged(self, event):
 		pass
 
@@ -98,9 +97,9 @@ class PathfinderTest(test.Test):
 		self._engine = engine
 		self._running = False
 
-		self._loader = fife.MapLoader(self._engine.getModel(), 
-									self._engine.getVFS(), 
-									self._engine.getImageManager(), 
+		self._loader = fife.MapLoader(self._engine.getModel(),
+									self._engine.getVFS(),
+									self._engine.getImageManager(),
 									self._engine.getRenderBackend())
 
 		self._eventmanager = self._engine.getEventManager()
@@ -108,13 +107,13 @@ class PathfinderTest(test.Test):
 	def destroy(self):
 		#any left over cleanup here
 		pass
-		
+
 	def run(self):
 		self._running = True
-		
+
 		self._mouselistener = MouseListener(self)
 		self._eventmanager.addMouseListener(self._mouselistener)
-		
+
 		self._keylistener = KeyListener(self)
 		self._eventmanager.addKeyListener(self._keylistener)
 
@@ -126,22 +125,22 @@ class PathfinderTest(test.Test):
 
 	def stop(self):
 		self._running = False
-		
+
 		self._engine.getModel().deleteMap(self._map)
 		self._engine.getModel().deleteObjects()
-		
+
 		self._eventmanager.removeMouseListener(self._mouselistener)
 		self._eventmanager.removeKeyListener(self._keylistener)
-		
+
 		del self._mouselistener
 		del self._keylistener
-		
+
 	def isRunning(self):
 		return self._running
 
 	def getName(self):
 		return "PathfinderTest"
-		
+
 	def getAuthor(self):
 		return "helios"
 
@@ -150,7 +149,7 @@ class PathfinderTest(test.Test):
 
 	def getHelp(self):
 		return open( 'data/help/PathfinderTest.txt', 'r' ).read()
-		
+
 	def pump(self):
 		"""
 		This gets called every frame that the test is running.  We have nothing
@@ -160,14 +159,14 @@ class PathfinderTest(test.Test):
 
 	def loadMap(self, filename):
 		"""
-		Simple function to load and display a map file. We could of course 
+		Simple function to load and display a map file. We could of course
 		have passed in the map filename but I'll leave that up to you.
-		
+
 		@param filename The filename.
 		"""
-	
+
 		self._mapfilename = filename
-		
+
 		if self._loader.isLoadable(self._mapfilename):
 			self._map = self._loader.load(self._mapfilename)
 			self._mapLoaded = True
@@ -202,10 +201,10 @@ class PathfinderTest(test.Test):
 		"""
 		Query the main camera for the Map location (on the actor layer)
 		that a screen point refers to.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
 		target_mapcoord.z = 0
 		location = fife.Location(self._actorlayer)
@@ -235,8 +234,8 @@ class PathfinderTest(test.Test):
 	def movePlayer(self, screenpoint):
 		"""
 		Simple function that moves the player instance to the given screenpoint.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		self._player.move('walk', self.getLocationAt(screenpoint), 4.0)

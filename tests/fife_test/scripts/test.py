@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -32,7 +31,7 @@ class TestManager(object):
 		self._engine = engine
 		self._application = application
 		self._settings = settings
-		
+
 		self._running = None
 
 		self._testdir = "tests"
@@ -65,53 +64,53 @@ class TestManager(object):
 
 	def _getRunningTest(self):
 		return self._running
-	
+
 	def runTest(self, test):
 		if test in self._tests and not self._running:
 			self._running = test
 			self._running.create(self._engine, self._application)
 			self._running.run()
-	
+
 	def stopTest(self):
 		if self._running:
 			if self._running.isRunning():
 				self._running.stop()
 				self._running.destroy()
-			
-			self._running = None	
+
+			self._running = None
 
 	def resetTest(self):
 		if self._running:
 			if self._running.isRunning():
 				self._running.stop()
-			
+
 			self._running.destroy()
 			self._running.create(self._engine, self._application)
-			self._running.run()				
-		
+			self._running.run()
+
 	def _getTests(self):
 		return self._tests
-			
+
 	def _getTestNameList(self):
 		namelist = []
 		for t in self._tests:
 			namelist.append(t.getName())
-			
+
 		return namelist
-	
+
 	tests = property(_getTests)
 	testnames = property(_getTestNameList)
 	runningtest = property(_getRunningTest)
-	
+
 class Test(object):
 	""" The base calss for all tests.  All tests must override these functions! """
 
 	def create(self, engine, application):
 		raise NotImplementedError("Test has not implemented the init() function!")
-	
+
 	def destroy(self):
 		raise NotImplementedError("Test has not implemented the destroy() function!")
-	
+
 	def run(self):
 		raise NotImplementedError("Test has not implemented the run() function!")
 
@@ -132,11 +131,11 @@ class Test(object):
 
 	def getHelp(self):
 		return "You're on your own for this one!"
-		
+
 	def onConsoleCommand(self, cmd):
 		return cmd[0] + ": not found."
-		
+
 	def pump(self):
 		pass
-	
+
 

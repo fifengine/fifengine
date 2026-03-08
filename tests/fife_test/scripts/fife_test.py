@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -61,10 +60,10 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		Initializes all listeners and registers itself with the eventmanager.
 		"""
 		self._application = application
-			
+
 		self._engine = self._application.engine
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		self._testmanager = testmanager
 
 		fife.IKeyListener.__init__(self)
@@ -74,17 +73,17 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self._eventmanager.addCommandListener(self)
 
 		self._console = get_manager().getConsole()
-		
+
 		fife.ConsoleExecuter.__init__(self)
 		self._console.setConsoleExecuter(self)
 
 		keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.F10, fife.Key.PRINT_SCREEN])
-		keyfilter.__disown__()		
+		keyfilter.__disown__()
 
 		self._eventmanager.setKeyFilter(keyfilter)
 
 		self.quit = False
-		
+
 		# Init Pychan
 		pychan.loadFonts("data/fonts/freefont.xml")
 		pychan.loadFonts("data/fonts/samanata.xml")
@@ -121,15 +120,15 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 
 	def onConsoleCommand(self, command):
 		result = "==OK=="
-		
+
 		args = command.split(" ")
 		cmd = []
-		
+
 		for arg in args:
 			arg = arg.strip()
 			if arg != "":
 				cmd.append(arg)
-				
+
 		if cmd[0].lower() in ('quit', 'exit'):
 			self.quit = True
 			self._testmanager.stopTest()
@@ -145,13 +144,13 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 						break
 				if not found:
 					result = "No help available for: " + cmd[1]
-						
+
 			else:
 				self._console.println( open( 'data/help/fife_test.txt', 'r' ).read() )
-		
+
 		elif cmd[0].lower() in ('clear', 'cls'):
 			self._console.clear()
-			
+
 		elif cmd[0].lower() in ('list', 'ls'):
 			self._console.println( "List of test modules:" )
 			for test in self._testmanager.tests:
@@ -159,11 +158,11 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 
 		elif cmd[0].lower() in ('run', 'r'):
 			runtest = None
-			
+
 			if len(cmd) != 2:
 				result = "Invalid number of arguments!"
 				return result
-			
+
 			if self._testmanager.runningtest:
 				result = self._testmanager.runningtest.getName() + " is currently running.  Please stop the test before running another one!"
 				return result
@@ -171,22 +170,22 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			for test in self._testmanager.tests:
 				if test.getName().lower() == cmd[1].lower():
 					runtest = test
-			
+
 			if runtest:
 				self._console.println( "Running test " + runtest.getName() )
-				self._testmanager.runTest(runtest)	
+				self._testmanager.runTest(runtest)
 				get_manager().getConsole().toggleShowHide()
 			else:
 				result = "Test " + cmd[1] + " was not found!"
-			
-				
+
+
 		elif cmd[0].lower() in ('stop', 'st'):
 			if self._testmanager.runningtest:
 				self._console.println("Stopping running test..")
 				self._testmanager.stopTest()
 			else:
 				result = "Nothing is running!"
-			
+
 		elif cmd[0].lower() in ('reset', 'rst'):
 			if self._testmanager.runningtest:
 				self._console.println("Resetting test " + self._testmanager.runningtest.getName() + "...")
@@ -194,7 +193,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 				get_manager().getConsole().toggleShowHide()
 			else:
 				result = "Nothing is running!"
-			
+
 		elif cmd[0].lower() in ('lsrunning', 'lsrun', 'running'):
 			if self._testmanager.runningtest:
 				self._console.println( "Current running test: " + self._testmanager.runningtest.getName() )
@@ -205,7 +204,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 				result = self._testmanager.runningtest.onConsoleCommand(cmd)
 			else:
 				result = cmd[0] + ": not found."
-			
+
 		return result
 
 	def onToolsClick(self):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
 #  http://www.fifengine.net

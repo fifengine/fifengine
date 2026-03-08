@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# -*- coding: utf-8 -*-
 
 # ####################################################################
 #  Copyright (C) 2005-2019 by the FIFE team
@@ -37,7 +36,7 @@ class KeyListener(fife.IKeyListener):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IKeyListener.__init__(self)
 
 	def keyPressed(self, evt):
@@ -49,7 +48,7 @@ class KeyListener(fife.IKeyListener):
 		elif keystr == 'c':
 			r = self._test._camera.getRenderer('CoordinateRenderer')
 			r.setEnabled(not r.isEnabled())
-		
+
 	def keyReleased(self, evt):
 		pass
 
@@ -58,9 +57,9 @@ class MouseListener(fife.IMouseListener):
 		self._engine = test._engine
 		self._test = test
 		self._eventmanager = self._engine.getEventManager()
-		
+
 		fife.IMouseListener.__init__(self)
-		
+
 	def mousePressed(self, event):
 		if event.isConsumedByWidgets():
 			return
@@ -68,28 +67,28 @@ class MouseListener(fife.IMouseListener):
 		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
 
 		self._test.movePlayer(clickpoint)
-				
+
 	def mouseReleased(self, event):
 		pass
 
 	def mouseMoved(self, event):
 		pass
-		
+
 	def mouseEntered(self, event):
 		pass
-		
+
 	def mouseExited(self, event):
 		pass
-		
+
 	def mouseClicked(self, event):
 		pass
-	
+
 	def mouseWheelMovedUp(self, event):
 		self._test.setZoom(0.0625)
 
 	def mouseWheelMovedDown(self, event):
 		self._test.setZoom(-0.0625)
-		
+
 	def mouseDragged(self, event):
 		pass
 
@@ -97,7 +96,7 @@ class InstanceActionListener(fife.InstanceActionListener):
 	def __init__(self, test):
 		self._engine = test._engine
 		self._test = test
-		
+
 		fife.InstanceActionListener.__init__(self)
 
 	def onInstanceActionFinished(self, instance, action):
@@ -109,10 +108,10 @@ class InstanceActionListener(fife.InstanceActionListener):
 
 	def onInstanceActionCancelled(self, instance, action):
 		pass
-		
+
 	def onInstanceActionFrame(self, instance, action, frame):
 		pass
-	
+
 class BenchmarkTest(test.Test):
 
 	def create(self, engine, application):
@@ -120,9 +119,9 @@ class BenchmarkTest(test.Test):
 		self._engine = engine
 		self._running = False
 
-		self._loader = fife.MapLoader(self._engine.getModel(), 
-									self._engine.getVFS(), 
-									self._engine.getImageManager(), 
+		self._loader = fife.MapLoader(self._engine.getModel(),
+									self._engine.getVFS(),
+									self._engine.getImageManager(),
 									self._engine.getRenderBackend())
 
 		self._eventmanager = self._engine.getEventManager()
@@ -130,13 +129,13 @@ class BenchmarkTest(test.Test):
 	def destroy(self):
 		#any left over cleanup here
 		pass
-		
+
 	def run(self):
 		self._running = True
-		
+
 		self._mouselistener = MouseListener(self)
 		self._eventmanager.addMouseListener(self._mouselistener)
-		
+
 		self._keylistener = KeyListener(self)
 		self._eventmanager.addKeyListener(self._keylistener)
 
@@ -148,22 +147,22 @@ class BenchmarkTest(test.Test):
 
 	def stop(self):
 		self._running = False
-		
+
 		self._engine.getModel().deleteMap(self._map)
 		self._engine.getModel().deleteObjects()
-		
+
 		self._eventmanager.removeMouseListener(self._mouselistener)
 		self._eventmanager.removeKeyListener(self._keylistener)
-		
+
 		del self._mouselistener
 		del self._keylistener
-		
+
 	def isRunning(self):
 		return self._running
 
 	def getName(self):
 		return "BenchmarkTest"
-		
+
 	def getAuthor(self):
 		return "helios"
 
@@ -172,7 +171,7 @@ class BenchmarkTest(test.Test):
 
 	def getHelp(self):
 		return open( 'data/help/BenchmarkTest.txt', 'r' ).read()
-		
+
 	def pump(self):
 		"""
 		This gets called every frame that the test is running.  We have nothing
@@ -182,14 +181,14 @@ class BenchmarkTest(test.Test):
 
 	def loadMap(self, filename):
 		"""
-		Simple function to load and display a map file. We could of course 
+		Simple function to load and display a map file. We could of course
 		have passed in the map filename but I'll leave that up to you.
-		
+
 		@param filename The filename.
 		"""
-	
+
 		self._mapfilename = filename
-		
+
 		if self._loader.isLoadable(self._mapfilename):
 			self._map = self._loader.load(self._mapfilename)
 			self._mapLoaded = True
@@ -200,7 +199,7 @@ class BenchmarkTest(test.Test):
 		# sets ground static
 		self._groundlayer.setStatic(True)
 		self._player = self._actorlayer.getInstance("player")
-		
+
 		gridrenderer = self._camera.getRenderer('GridRenderer')
 		gridrenderer.activateAllLayers(self._map)
 
@@ -230,10 +229,10 @@ class BenchmarkTest(test.Test):
 		"""
 		Query the main camera for the Map location (on the actor layer)
 		that a screen point refers to.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		target_mapcoord = self._camera.toMapCoordinates(screenpoint, False)
 		target_mapcoord.z = 0
 		location = fife.Location(self._actorlayer)
@@ -243,10 +242,10 @@ class BenchmarkTest(test.Test):
 	def movePlayer(self, screenpoint):
 		"""
 		Simple function that moves the player instance to the given screenpoint.
-		
+
 		@param screenpoint A fife.ScreenPoint
 		"""
-		
+
 		self._player.move('walk', self.getLocationAt(screenpoint), 4.0)
 
 	def setZoom(self, zoom):
