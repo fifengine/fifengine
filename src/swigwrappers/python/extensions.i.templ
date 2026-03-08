@@ -1,31 +1,31 @@
 namespace FIFE {
-	
+
 	%extend PointType2D<int32_t> {
 		int32_t getX() { return $self->x; }
 		int32_t getY() { return $self->y; }
 		void setX(int32_t _x) { $self->x = _x; }
 		void setY(int32_t _y) { $self->y = _y; }
-		
+
 		std::string __str__() {
 			std::stringstream str;
 			str << "Point" << *$self;
 			return  str.str();
 		}
 	};
-	
+
 	%extend PointType2D<double> {
 		double getX() { return $self->x; }
 		double getY() { return $self->y; }
 		void setX(double _x) { $self->x = _x; }
 		void setY(double _y) { $self->y = _y; }
-		
+
 		std::string __str__() {
 			std::stringstream str;
 			str << "DoublePoint" << *$self;
 			return  str.str();
 		}
 	};
-	
+
 	%extend PointType3D<int32_t> {
 		std::string __str__() {
 			std::stringstream str;
@@ -33,7 +33,7 @@ namespace FIFE {
 			return  str.str();
 		}
 	};
-	
+
 	%extend PointType3D<double> {
 		std::string __str__() {
 			std::stringstream str;
@@ -41,58 +41,58 @@ namespace FIFE {
 			return  str.str();
 		}
 	};
-		
+
 	%extend RectType<int32_t> {
 		int32_t getX() { return $self->x; }
 		int32_t getY() { return $self->y; }
 		void setX(int32_t _x) { $self->x = _x; }
 		void setY(int32_t _y) { $self->y = _y; }
-	
+
 		int32_t getW() { return $self->w; }
 		int32_t getH() { return $self->h; }
 		void setW(int32_t _w) { $self->w = _w; }
 		void setH(int32_t _h) { $self->h = _h; }
-	
+
 		std::string __str__() {
 			std::stringstream str;
 			str << "Rect" << *$self;
 			return  str.str();
 		}
 	};
-			
+
 	%extend RectType<float> {
 		float getX() { return $self->x; }
 		float getY() { return $self->y; }
 		void setX(float _x) { $self->x = _x; }
 		void setY(float _y) { $self->y = _y; }
-		
+
 		float getW() { return $self->w; }
 		float getH() { return $self->h; }
 		void setW(float _w) { $self->w = _w; }
 		void setH(float _h) { $self->h = _h; }
-		
+
 		std::string __str__() {
 			std::stringstream str;
 			str << "FloatRect" << *$self;
 			return  str.str();
 		}
 	};
-	
+
 	%extend RectType<double> {
 		double getX() { return $self->x; }
 		double getY() { return $self->y; }
 		void setX(double _x) { $self->x = _x; }
 		void setY(double _y) { $self->y = _y; }
-		
+
 		double getW() { return $self->w; }
 		double getH() { return $self->h; }
 		void setW(double _w) { $self->w = _w; }
 		void setH(double _h) { $self->h = _h; }
-		
+
 		std::string __str__() {
 			std::stringstream str;
 			str << "DoubleRect" << *$self;
 			return  str.str();
 		}
 	};
-}	
+}
