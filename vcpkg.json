@@ -6,7 +6,20 @@
   "license": "LGPL-2.1",
   "supports": "windows & x86 & x64",
   "dependencies": [
-    "sdl2",
+    {
+      "name": "sdl2",
+      "default-features": false,
+      "platform": "linux",
+      "features": [
+        "x11"
+      ]
+    },
+    {
+      "name": "sdl2",
+      "default-features": false,
+      "platform": "windows",
+      "features": []
+    },
     "sdl2-ttf",
     "sdl2-image",
     "glew",
@@ -17,5 +30,6 @@
     "tinyxml",
     "zlib",
     "catch2"
-  ]
+  ],
+  "builtin-baseline": "62159a45e18f3a9ac0548628dcaf74fcb60c6ff9"
 }
