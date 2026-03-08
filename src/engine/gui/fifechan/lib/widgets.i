@@ -7,22 +7,28 @@
 %}
 
 namespace fcn {
+	class app_version {
+	public:
+		static const char* get_name();
+		static const char* get_nice_name();
+		static const char* get_license();
+		static const char* get_description();
+		static const char* get_version();
+		static const char* get_homepage();
+		static const char* get_copyright();
+		static const int* get_version_num();
+	};
+
 	class Font;
 	class Image;
 	class ActionListener;
 	class MouseListener;
 	class KeyListener;
 
-	inline const char* getVersion();
-	inline int getMajor();
-	inline int getMinor();
-	inline int getPatch();
-	inline const char* getHash();
-
 	%nodefaultctor;
 	class Graphics {
 	public:
-		enum Alignment {
+		enum class Alignment : uint8_t {
 			Left = 0,
 			Center,
 			Right
@@ -81,10 +87,10 @@ namespace fcn {
 
 	class Widget {
 	public:
-		enum SelectionMode {
-			Selection_None = 0,
-			Selection_Border = 1,
-			Selection_Background = 2
+		enum class SelectionMode : uint8_t {
+			None = 0,
+			Border = 1,
+			Background = 2
 		};
 /* 		Widget(); */
 /* 		virtual ~Widget(); */
@@ -216,7 +222,7 @@ namespace fcn {
 		virtual void add(Widget* widget, int32_t x, int32_t y);
 		virtual void remove(Widget* widget);
 		virtual void clear();
-		enum LayoutPolicy {
+		enum class LayoutPolicy : uint8_t {
 			Absolute,
 			AutoSize,
 			Vertical,
@@ -293,12 +299,12 @@ namespace fcn {
 	%feature("notabstract") CheckBox;
 	class CheckBox: public ImageButton {
 	public:
-		enum MarkerStyle {
-			Marker_Checkmark = 0,
-			Marker_Cross,
-			Marker_Dot,
-			Marker_Rhombus,
-			Marker_Image
+		enum class MarkerStyle : uint8_t {
+			Checkmark = 0,
+			Cross,
+			Dot,
+			Rhombus,
+			Image
 		};
 		CheckBox();
 		virtual ~CheckBox();
@@ -360,9 +366,9 @@ namespace fcn {
 		virtual int32_t getRightButtonScrollAmount();
 		virtual int32_t getUpButtonScrollAmount();
 		virtual int32_t getDownButtonScrollAmount();
-		enum ScrollPolicy
+		enum class ScrollPolicy : uint8_t
 		{
-			ShowAlways,
+			ShowAlways = 0,
 			ShowNever,
 			ShowAuto
 		};
@@ -451,7 +457,7 @@ namespace fcn {
 		virtual Slider::Orientation getOrientation() const;
 		virtual void setStepLength(double length);
 		virtual double getStepLength() const;
-		enum Orientation
+		enum class Orientation : uint8_t
 		{
 			Horizontal = 0,
 			Vertical
@@ -485,15 +491,14 @@ namespace fcn {
 
 		virtual void setNumberOfColumns(uint32_t numberOfColumns);
 		virtual uint32_t getNumberOfColumns() const;
-		virtual void setColumnAlignment(uint32_t column, uint32_t alignment);
-		virtual uint32_t getColumnAlignment(uint32_t column) const;
-		virtual void adjustContent();
-
-		enum {
-			LEFT = 0,
-			CENTER,
-			RIGHT
+		enum class Alignment : uint8_t {
+			Left = 0,
+			Center,
+			Right
 		};
+		virtual void setColumnAlignment(uint32_t column, Alignment alignment);
+		virtual Alignment getColumnAlignment(uint32_t column) const;
+		virtual void adjustContent();
 	};
 
 	%feature("notabstract") FlowContainer;
@@ -505,7 +510,7 @@ namespace fcn {
 		FlowContainer::Alignment getAlignment() const;
 		void adjustContent();
 
-		enum Alignment {
+		enum class Alignment : uint8_t {
 			Left = 0,
 			Right,
 			Top,
@@ -580,10 +585,10 @@ namespace fcn {
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 
-		enum Orientation
+		enum class Orientation : uint8_t
 		{
-			HORIZONTAL = 0,
-			VERTICAL
+			Horizontal = 0,
+			Vertical
 		};
 	};
 
@@ -606,9 +611,9 @@ namespace fcn {
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 
-		enum Orientation {
-			HORIZONTAL = 0,
-			VERTICAL
+		enum class Orientation : uint8_t {
+			Horizontal = 0,
+			Vertical
 		};
 	};
 
@@ -683,8 +688,8 @@ namespace fcn {
 		void resetPointVector();
 		void setThickness(uint32_t thickness);
 		uint32_t getThickness() const;
-		void setAutomaticControllPoints(bool acp);
-		bool isAutomaticControllPoints() const;
+		void setAutomaticControlPoints(bool acp);
+		bool isAutomaticControlPoints() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
 	};
