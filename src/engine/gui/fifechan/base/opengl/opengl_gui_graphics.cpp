@@ -25,8 +25,8 @@
 #include "video/opengl/fife_opengl.h"
 
 // 3rd party library includes
-#include <fifechan/font.hpp>
 #include <fifechan/backends/opengl/opengl.hpp>
+#include <fifechan/font.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

@@ -23,9 +23,9 @@
 
 // 3rd party library includes
 #include <fifechan.hpp>
+#include <fifechan/backends/sdl2/sdl.hpp>
 #include <fifechan/focushandler.hpp>
 #include <fifechan/key.hpp>
-#include <fifechan/backends/sdl2/sdl.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

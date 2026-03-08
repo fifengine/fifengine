@@ -174,10 +174,9 @@ namespace fcn
         Rectangle offsetRec(getBorderSize(), getBorderSize(), 2 * getBorderSize(), 2 * getBorderSize());
 
         if (isOpaque()) {
-            Color faceColor = getBackgroundColor();
+            Color faceColor          = getBackgroundColor();
             const auto selectionMode = static_cast<uint8_t>(getSelectionMode());
-            if (active &&
-                ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Background)) != 0)) {
+            if (active && ((selectionMode & static_cast<uint8_t>(Widget::SelectionMode::Background)) != 0)) {
                 faceColor = getSelectionColor();
             }
             graphics->setColor(faceColor);
