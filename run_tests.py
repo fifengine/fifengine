@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+from glob import glob
 from builtins import input
 
 
@@ -42,6 +43,41 @@ def resolve_headless_mode(cli_headless):
 
 def genpath(somepath):
     return os.path.sep.join(somepath.split("/"))
+
+
+def is_usable_build_dir(build_dir):
+    return os.path.isdir(build_dir) and (
+        os.path.exists(os.path.join(build_dir, "fife.py"))
+        or os.path.exists(os.path.join(build_dir, "_fife_swig.so"))
+        or os.path.exists(os.path.join(build_dir, "CMakeCache.txt"))
+    )
+
+
+def resolve_build_dir():
+    env_build_dir = os.environ.get("FIFE_BUILD_DIR")
+    if env_build_dir:
+        return env_build_dir
+
+    legacy_build_dir = genpath("build")
+    if is_usable_build_dir(legacy_build_dir) and os.path.exists(
+        os.path.join(legacy_build_dir, "fife.py")
+    ):
+        return legacy_build_dir
+
+    preset_candidates = []
+    for candidate in sorted(glob(genpath("out/build/*"))):
+        if os.path.exists(os.path.join(candidate, "fife.py")) and os.path.exists(
+            os.path.join(candidate, "_fife_swig.so")
+        ):
+            preset_candidates.append(candidate)
+
+    if len(preset_candidates) == 1:
+        return preset_candidates[0]
+
+    if preset_candidates:
+        return max(preset_candidates, key=os.path.getmtime)
+
+    return legacy_build_dir
 
 
 def print_header(text):
@@ -84,6 +120,8 @@ def resolve_test_modules(directory):
         for s in skipped_filenames:
             if p.find(s) != -1:
                 skip = True
+        if p.endswith("_utils.py"):
+            skip = True
         if p[0] == "_":
             skip = True
         if not skip:
@@ -106,14 +144,15 @@ def prepare_python_bindings(build_dir):
     if os.path.isdir(src_pkg_dir):
         shutil.copytree(src_pkg_dir, build_pkg_dir, dirs_exist_ok=True)
 
-    for module_name in ("fife.py", "fifechan.py"):
+    generated_modules = {
+        "fife.py": "_fife_swig.so",
+        "fifechan.py": "_fifechan_swig.so",
+    }
+    for module_name, extension_name in generated_modules.items():
         src_module = os.path.join(build_dir, module_name)
-        if os.path.exists(src_module):
-            shutil.copy2(src_module, os.path.join(build_pkg_dir, module_name))
-
-    for extension_name in ("_fife_swig.so", "_fifechan_swig.so"):
         src_extension = os.path.join(build_dir, extension_name)
-        if os.path.exists(src_extension):
+        if os.path.exists(src_module) and os.path.exists(src_extension):
+            shutil.copy2(src_module, os.path.join(build_pkg_dir, module_name))
             shutil.copy2(src_extension, os.path.join(build_pkg_dir, extension_name))
 
     if build_dir not in sys.path:
@@ -126,7 +165,7 @@ def prepare_python_bindings(build_dir):
 
 
 def run_core_tests(progs):
-    build_dir = os.environ.get("FIFE_BUILD_DIR", genpath("build"))
+    build_dir = resolve_build_dir()
     if not os.path.isdir(build_dir):
         return ["Build directory not found: %s" % build_dir], []
 
@@ -161,7 +200,7 @@ def get_dynamic_imports(modules):
 
 
 def run_test_modules(modules, headless=False):
-    build_dir = os.environ.get("FIFE_BUILD_DIR", genpath("build"))
+    build_dir = resolve_build_dir()
     env = os.environ.copy()
     pythonpath = env.get("PYTHONPATH", "")
     python_parts = [p for p in [build_dir, os.getcwd(), pythonpath] if p]
@@ -268,7 +307,7 @@ def run(automatic, selected_cases, headless=None):
     headless_mode = resolve_headless_mode(headless)
     print("SWIG/extension test mode: %s" % ("headless" if headless_mode else "windowed"))
 
-    build_dir = os.environ.get("FIFE_BUILD_DIR", genpath("build"))
+    build_dir = resolve_build_dir()
     prepare_python_bindings(build_dir)
     core_tests = resolve_test_progs(build_dir)
     for t in core_tests:
