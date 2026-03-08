@@ -44,9 +44,7 @@ namespace FIFE {
   class ScreenMode;
 }
 
-namespace std {
-	%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
-}
+%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
 
 %attribute(FIFE::Color, uint8_t, r, getR, setR);
 %attribute(FIFE::Color, uint8_t, g, getG, setG);
@@ -73,25 +71,25 @@ namespace FIFE {
 		inline int32_t getYShift() const;
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		void saveImage(const std::string& filename);
-		
+
 		virtual void useSharedImage(const FIFE::ImagePtr& shared, const Rect& region) = 0;
 		virtual void forceLoadInternal() = 0;
 		bool isSharedImage() const;
 		const Rect& getSubImageRect() const;
-		void copySubimage(uint32_t xoffset, uint32_t yoffset, const FIFE::ImagePtr& img);		
-		
+		void copySubimage(uint32_t xoffset, uint32_t yoffset, const FIFE::ImagePtr& img);
+
 	private:
 		Image(SDL_Surface* surface);
 		Image(const uint8_t* data, uint32_t width, uint32_t height);
 	};
-	
+
 	typedef SharedPtr<Image> ImagePtr;
 	%template(SharedImagePointer) SharedPtr<Image>;
-	
+
 	class ImageManager : public IResourceManager {
 	public:
 		virtual ~ImageManager();
-		
+
 		virtual size_t getMemoryUsed() const;
 		virtual size_t getTotalResourcesCreated() const;
 		virtual size_t getTotalResourcesLoaded() const;
@@ -99,7 +97,7 @@ namespace FIFE {
 
 		virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
 		virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
-		virtual ImagePtr loadBlank(uint32_t width, uint32_t height);		
+		virtual ImagePtr loadBlank(uint32_t width, uint32_t height);
 		virtual ImagePtr add(Image* res);
 
 		virtual bool exists(const std::string& name);
@@ -130,7 +128,7 @@ namespace FIFE {
 		virtual void invalidate(ResourceHandle handle);
 		virtual void invalidateAll();
 	};
-	
+
 	class Animation: public IResource {
 	public:
 		~Animation();
@@ -146,20 +144,20 @@ namespace FIFE {
 		uint32_t getDirection();
 		int32_t getDuration();
 	};
-	
-	typedef SharedPtr<Animation> AnimationPtr;	
+
+	typedef SharedPtr<Animation> AnimationPtr;
 	%template(SharedAnimationPointer) SharedPtr<Animation>;
 
 	class AnimationManager : public IResourceManager {
 	public:
 		virtual ~AnimationManager();
-		
+
 		virtual size_t getMemoryUsed() const;
 		virtual size_t getTotalResourcesCreated() const;
 		virtual size_t getTotalResourcesLoaded() const;
 		virtual size_t getTotalResources() const;
 
-		virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = 0);	
+		virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = 0);
 		virtual AnimationPtr add(Animation* res);
 
 		virtual bool exists(const std::string& name);
@@ -205,7 +203,7 @@ namespace FIFE {
 	public:
 		virtual ~RenderBackend();
 		virtual const std::string& getName() const = 0;
-		
+
 		void captureScreen(const std::string& filename);
 		void captureScreen(const std::string& filename, uint32_t width, uint32_t height);
 		const ScreenMode& getCurrentScreenMode() const;
@@ -243,7 +241,7 @@ namespace FIFE {
 		void setFrameLimit(uint16_t framelimit);
 		uint16_t getFrameLimit() const;
 	};
-	
+
 	enum MouseCursorType {
 		CURSOR_NONE,
 		CURSOR_NATIVE,
@@ -266,8 +264,8 @@ namespace FIFE {
 		NC_HAND
 	};
 
-    %apply int32_t *OUTPUT { int32_t* x, int32_t* y }; 
-	
+    %apply int32_t *OUTPUT { int32_t* x, int32_t* y };
+
 	class Cursor {
 	public:
 		virtual ~Cursor() {}
@@ -295,7 +293,7 @@ namespace FIFE {
 	private:
 		Cursor();
 	};
-	
+
 	class ScreenMode {
 	public:
 		~ScreenMode();
@@ -340,7 +338,7 @@ namespace FIFE {
 		int32_t getDesktopHeight(uint8_t display = 0) const;
 		Rect getDisplayBounds(uint8_t display = 0) const;
 	};
-	
+
 	class AtlasBlock {
 	public:
 		uint32_t page;
@@ -357,8 +355,8 @@ namespace FIFE {
 
 		AtlasBlock intersects(AtlasBlock const& rect) const;
 		void merge(AtlasBlock const& rect);
-	};	
-	
+	};
+
 	class AtlasBook {
 	public:
 		AtlasBook(uint32_t pageWidth, uint32_t pageHeight, uint32_t pixelSize = 4);
@@ -366,7 +364,7 @@ namespace FIFE {
 		AtlasBlock* getBlock(uint32_t width, uint32_t height);
 		void shrink(bool pot);
 	};
-	
+
 	%extend AtlasBook {
 		uint32_t getPageWidth(uint32_t index) {
 			return $self->getPage(index).getWidth();
@@ -375,7 +373,7 @@ namespace FIFE {
 			return $self->getPage(index).getHeight();
 		}
 	}
-	
+
 	class Color {
 	public:
 		Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
@@ -391,5 +389,5 @@ namespace FIFE {
 		uint8_t getG() const;
 		uint8_t getB() const;
 		uint8_t getAlpha() const;
-	};	
+	};
 }

@@ -64,7 +64,7 @@ namespace FIFE {
 		ICHANGE_STACKPOS = 0x0400
 	};
 	typedef uint32_t InstanceChangeInfo;
-	
+
 	%feature("director") InstanceChangeListener;
 	class InstanceChangeListener {
 	public:
@@ -125,7 +125,7 @@ namespace FIFE {
 		uint32_t getRuntime();
 		void refresh();
 		InstanceChangeInfo getChangeInfo();
-		
+
 		void setVisual(IVisual* visual);
 		template<typename T> T* getVisual() const;
 
@@ -161,16 +161,14 @@ namespace FIFE {
 		void addColorOverlay(const std::string& actionName, uint32_t angle, int32_t order, const OverlayColors& colors);
 		OverlayColors* getColorOverlay(const std::string& actionName, uint32_t angle, int32_t order);
 		void removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order);
-		
+
 		void convertToOverlays(const std::string& actionName, bool color);
 		bool isAnimationOverlay(const std::string& actionName);
 		bool isColorOverlay(const std::string& actionName);
 	};
 }
 
-namespace std {
-	%template(InstanceVector) vector<FIFE::Instance*>;
-	%template(InstanceList) list<FIFE::Instance*>;
-	%template(AnimationOverlayMap) map<int32_t, FIFE::AnimationPtr>;
-}
+%template(InstanceVector) std::vector<FIFE::Instance*>;
+%template(InstanceList) std::list<FIFE::Instance*>;
+%template(AnimationOverlayMap) std::map<int32_t, FIFE::AnimationPtr>;
 

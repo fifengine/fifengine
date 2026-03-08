@@ -28,10 +28,8 @@
 
 %include "model/metamodel/modelcoords.i"
 
-namespace std {
-	%template(ModelCoordinateVector) vector<FIFE::ModelCoordinate>;
-	%template(ExactModelCoordinateVector) vector<FIFE::ExactModelCoordinate>;
-}
+%template(ModelCoordinateVector) std::vector<FIFE::ModelCoordinate>;
+%template(ExactModelCoordinateVector) std::vector<FIFE::ExactModelCoordinate>;
 
 namespace FIFE {
 	%apply std::vector<ExactModelCoordinate> &OUTPUT { std::vector<ExactModelCoordinate>& vtx };
@@ -57,7 +55,7 @@ namespace FIFE {
 		const double getXShift() const;
 		void setYShift(const double yshift);
 		const double getYShift() const;
-		void setZShift(const double zshift); 
+		void setZShift(const double zshift);
 		const double getZShift() const;
 		void setXScale(const double scale);
 		void setYScale(const double scale);

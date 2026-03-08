@@ -29,11 +29,9 @@ namespace FIFE {
   class Object;
 }
 
-namespace std {
-  %template(StringList) list<std::string>;
-  %template(ObjectList) list<FIFE::Object*>;
-  %template(MapList) list<FIFE::Map*>;
-}
+%template(StringList) std::list<std::string>;
+%template(ObjectList) std::list<FIFE::Object*>;
+%template(MapList) std::list<FIFE::Map*>;
 
 namespace FIFE {
 	class IPather;
@@ -63,9 +61,9 @@ namespace FIFE {
 		void adoptPather(IPather* pather);
 		IPather* getPather(const std::string& pathername);
 		CellGrid* getCellGrid(const std::string& gridtype);
-		
+
 		void setTimeMultiplier(float multip);
 		double getTimeMultiplier() const;
-		
+
 	};
 }

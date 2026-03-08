@@ -47,7 +47,7 @@ namespace fcn {
 		};
 	};
 	%clearnodefaultctor;
-	
+
 	class Color {
 	public:
 		Color();
@@ -66,7 +66,7 @@ namespace fcn {
 
 	class Size {
 	public:
-		Size(int32_t width = 0, int32_t height = 0); 
+		Size(int32_t width = 0, int32_t height = 0);
 		~Size();
 		int32_t getWidth() const;
 		int32_t getHeight() const;
@@ -214,7 +214,7 @@ namespace fcn {
 /* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
 	};
-	
+
 	%feature("notabstract") Spacer;
 	class Spacer: public Widget {
 	public:
@@ -252,7 +252,7 @@ namespace fcn {
 		void setBackgroundWidget(Widget* widget);
 		Widget* getBackgroundWidget();
 	};
-	
+
 	%feature("notabstract") Button;
 	class Button: public Widget {
 	public:
@@ -330,7 +330,7 @@ namespace fcn {
 		void setMarkerStyle(MarkerStyle mode);
 		virtual void adjustSize();
 	};
-	
+
 	%feature("notabstract") Icon;
 	class Icon: public Widget {
 	public:
@@ -385,7 +385,7 @@ namespace fcn {
 			ShowAuto
 		};
 	};
-	
+
 
 	%feature("director") ListModel;
 	class ListModel
@@ -500,7 +500,7 @@ namespace fcn {
 	public:
 		AdjustingContainer();
 		virtual ~AdjustingContainer();
-		
+
 		virtual void setNumberOfColumns(uint32_t numberOfColumns);
 		virtual uint32_t getNumberOfColumns() const;
 		virtual void setColumnAlignment(uint32_t column, uint32_t alignment);
@@ -556,8 +556,8 @@ namespace fcn {
 		virtual bool isOpaque();
 		virtual void setOpaque(bool opaque);
 	};
-	
-	
+
+
 	%feature("notabstract") TextField;
 	class TextField: public Widget {
 	public:
@@ -571,14 +571,14 @@ namespace fcn {
 		virtual void setCaretPosition(uint32_t position);
 		virtual uint32_t getCaretPosition() const;
 	};
-	
+
 	%feature("notabstract") PasswordField;
 	class PasswordField : public TextField {
 	public:
 		PasswordField(const std::string& text = "");
 		virtual ~PasswordField();
 	};
-	
+
 	%feature("notabstract") IconProgressBar;
 	class IconProgressBar : public Widget {
 	public:
@@ -597,7 +597,7 @@ namespace fcn {
 		int getIconCount() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
-		
+
 		enum Orientation
 		{
 			HORIZONTAL = 0,
@@ -623,7 +623,7 @@ namespace fcn {
 		ImageProgressBar::Orientation getOrientation() const;
 		void setOpaque(bool opaque);
 		bool isOpaque() const;
-		
+
 		enum Orientation {
 			HORIZONTAL = 0,
 			VERTICAL
@@ -758,6 +758,4 @@ namespace fcn {
 		bool isOpaque() const;
 	};
 }
-namespace std {
-	%template(FcnPointVector) vector<fcn::Point>;
-}
+%template(FcnPointVector) std::vector<fcn::Point>;

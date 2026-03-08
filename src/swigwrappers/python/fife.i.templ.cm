@@ -6,6 +6,7 @@
 #ifdef HAVE_SNPRINTF
 #undef HAVE_SNPRINTF
 #endif
+%}
 
 %module(directors="1") fife
 
@@ -65,17 +66,15 @@ typedef unsigned long int	uint64_t;
 typedef unsigned long long int	uint64_t;
 #endif
 
-namespace std {
-	%template(StringVector) vector<std::string>;
-	%template(UintVector) vector<uint32_t>;
-	%template(IntVector) vector<int32_t>;
-	%template(FloatVector) vector<float>;
-	%template(DoubleVector) vector<double>;
-	%template(BoolVector) vector<bool>;
+%template(StringVector) std::vector<std::string>;
+%template(UintVector) std::vector<uint32_t>;
+%template(IntVector) std::vector<int32_t>;
+%template(FloatVector) std::vector<float>;
+%template(DoubleVector) std::vector<double>;
+%template(BoolVector) std::vector<bool>;
 
-	%template(Uint16Uint16Pair) pair<uint16_t, uint16_t>;
-	%template(Uint16Uint16PairVector) vector<std::pair<uint16_t, uint16_t> >;
-};
+%template(Uint16Uint16Pair) std::pair<uint16_t, uint16_t>;
+%template(Uint16Uint16PairVector) std::vector<std::pair<uint16_t, uint16_t> >;
 
 %{
 #include "util/base/exception.h"

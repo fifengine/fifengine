@@ -49,18 +49,18 @@ namespace FIFE {
 	public:
 		LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo();
-		
+
 		ImagePtr getImage();
 	};
-	
+
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
 		LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo();
-		
+
 		AnimationPtr getAnimation();
 	};
-	
+
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
 	public:
 		LightRendererSimpleLightInfo(RendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
@@ -71,15 +71,15 @@ namespace FIFE {
 		float getXStretch();
 		float getYStretch();
 	};
-	
+
 	class LightRendererResizeInfo : public LightRendererElementInfo {
 	public:
 		LightRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo();
-		
+
 		ImagePtr getImage();
 	};
-	
+
 	class LightRenderer: public RendererBase {
 	public:
 		LightRenderer(RenderBackend* renderbackend, int32_t position);
@@ -99,6 +99,4 @@ namespace FIFE {
 	};
 }
 
-namespace std {
-	%template(LightRendererElementInfoVector) vector<FIFE::LightRendererElementInfo*>;	
-}
+%template(LightRendererElementInfoVector) std::vector<FIFE::LightRendererElementInfo*>;

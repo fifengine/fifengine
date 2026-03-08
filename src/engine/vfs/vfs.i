@@ -27,13 +27,8 @@
 
 %include "vfs/raw/rawdata.i"
 
-namespace std{
-	%template(StringSet) set<std::string>;
-}
-
-namespace std {
-	%template(vectoru) vector<uint8_t>;
-};
+%template(StringSet) std::set<std::string>;
+%template(vectoru) std::vector<uint8_t>;
 
 
 namespace FIFE {

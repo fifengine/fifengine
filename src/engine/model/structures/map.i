@@ -31,11 +31,9 @@ namespace FIFE {
   class Camera;
 }
 
-namespace std {
-  %template(LayerList) list<FIFE::Layer*>;
-  %template(LayerVector) vector<FIFE::Layer*>;
-  %template(CameraVector) vector<FIFE::Camera*>;
-}
+%template(LayerList) std::list<FIFE::Layer*>;
+%template(LayerVector) std::vector<FIFE::Layer*>;
+%template(CameraVector) std::vector<FIFE::Camera*>;
 
 namespace FIFE {
 
@@ -74,7 +72,7 @@ namespace FIFE {
 
 			void setTimeMultiplier(float multip);
 			double getTimeMultiplier() const;
-			
+
 			void addChangeListener(MapChangeListener* listener);
 			void removeChangeListener(MapChangeListener* listener);
 			bool isChanged();
@@ -83,7 +81,7 @@ namespace FIFE {
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
 			std::vector<Camera*>& getCameras();
-			
+
 			void setFilename(const std::string& file);
 			const std::string& getFilename() const;
 

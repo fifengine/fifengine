@@ -29,7 +29,7 @@ namespace FIFE {
 	class Instance;
 	class Layer;
 	class Cell;
-	
+
 	enum CellType {
 		CTYPE_NO_BLOCKER = 0,
 		CTYPE_STATIC_BLOCKER = 1,
@@ -78,7 +78,7 @@ namespace FIFE {
 			void setSpeedMultiplier(double multi);
 			double getSpeedMultiplier();
 			void resetSpeedMultiplier();
-			
+
 			const std::set<Instance*>& getInstances();
 			void setCellType(CellTypeInfo type);
 			CellTypeInfo getCellType();
@@ -93,8 +93,6 @@ namespace FIFE {
 	};
 }
 
-namespace std {
-	%template(InstanceSet) set<FIFE::Instance*>;
-	%template(CellSet) set<FIFE::Cell*>;
-	%template(CellVector) vector<FIFE::Cell*>;
-}
+%template(InstanceSet) std::set<FIFE::Instance*>;
+%template(CellSet) std::set<FIFE::Cell*>;
+%template(CellVector) std::vector<FIFE::Cell*>;

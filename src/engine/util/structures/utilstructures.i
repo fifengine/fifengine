@@ -103,19 +103,17 @@ namespace FIFE {
 		bool intersects( const RectType<T>& rect ) const;
 		bool intersectInplace( const RectType<T>& rect );
 	};
-	
+
 	template<typename T>
 	std::ostream& operator<<(std::ostream&, const RectType<T>&);
-	
+
 	typedef RectType<int32_t> Rect;
 	typedef RectType<float> FloatRect;
 	typedef RectType<double> DoubleRect;
-	
+
 	%template(Rect) RectType<int32_t>;
 	%template(FloatRect) RectType<float>;
 	%template(DoubleRect) RectType<double>;
 }
 
-namespace std {
-	%template(FifePointVector) vector<FIFE::Point>;
-}
+%template(FifePointVector) std::vector<FIFE::Point>;

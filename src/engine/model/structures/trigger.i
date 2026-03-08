@@ -120,7 +120,5 @@ namespace FIFE {
 	};
 } //FIFE
 
-namespace std {
-	%template(TriggerConditionVector) vector<FIFE::TriggerCondition>;
-	%template(TriggerVector) vector<FIFE::Trigger*>;
-}
+%template(TriggerConditionVector) std::vector<FIFE::TriggerCondition>;
+%template(TriggerVector) std::vector<FIFE::Trigger*>;
