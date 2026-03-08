@@ -30,14 +30,21 @@ find_library(FIFECHAN_LIBRARY
   NAMES fifechan fifechan_static libfifechan libfifechan_static
 )
 
-# Handle components: sdl, opengl
+# Handle components: sdl2, opengl
 if(FIFECHAN_FIND_COMPONENTS)
   foreach(component IN LISTS FIFECHAN_FIND_COMPONENTS)
     string(TOLOWER "${component}" component_lower)
 
     if(component_lower STREQUAL "sdl")
+      if(DEFINED FIFECHAN_sdl_LIBRARY)
+        get_filename_component(_fifechan_sdl_library_name "${FIFECHAN_sdl_LIBRARY}" NAME)
+        if(_fifechan_sdl_library_name MATCHES "^lib?fifechan(\\..*)?$")
+          unset(FIFECHAN_sdl_LIBRARY CACHE)
+        endif()
+        unset(_fifechan_sdl_library_name)
+      endif()
       find_library(FIFECHAN_sdl_LIBRARY
-        NAMES fifechan_sdl fifechan libfifechan
+        NAMES fifechan_sdl2 libfifechan_sdl2 fifechan libfifechan
       )
     elseif(component_lower STREQUAL "opengl")
       find_library(FIFECHAN_opengl_LIBRARY
