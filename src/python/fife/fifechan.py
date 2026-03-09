@@ -2,15 +2,15 @@
 
 
 class Widget(object):
-	pass
+    pass
 
 
 class Icon(Widget):
-	pass
+    pass
 
 
 class Window(Widget):
-	pass
+    pass
 
 
 __all__ = ["Widget", "Icon", "Window"]

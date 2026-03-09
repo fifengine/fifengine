@@ -1,5 +1,5 @@
-
 import ctypes
+import importlib
 import os
 from glob import glob
 from typing import TYPE_CHECKING, Any, cast
@@ -12,7 +12,9 @@ def _candidate_library_dirs(package_dir):
         parent = os.path.dirname(current)
         if parent == current:
             break
-        candidates.append(os.path.join(parent, "out", "fife-dependencies", "install", "lib"))
+        candidates.append(
+            os.path.join(parent, "out", "fife-dependencies", "install", "lib")
+        )
         current = parent
     return candidates
 
@@ -23,7 +25,9 @@ def _preload_optional_gui_backend():
 
     package_dir = os.path.dirname(__file__)
     for library_dir in _candidate_library_dirs(package_dir):
-        for library_path in sorted(glob(os.path.join(library_dir, "libfifechan_sdl2.so*"))):
+        for library_path in sorted(
+            glob(os.path.join(library_dir, "libfifechan_sdl2.so*"))
+        ):
             try:
                 ctypes.CDLL(library_path, mode=ctypes.RTLD_GLOBAL)
                 return
@@ -33,13 +37,13 @@ def _preload_optional_gui_backend():
 
 _preload_optional_gui_backend()
 
-from . import fife
+fife = importlib.import_module(".fife", __name__)
 
 if TYPE_CHECKING:
     from . import fifechan as _fifechan
 else:
     try:
-        from . import fifechan as _fifechan
+        _fifechan = importlib.import_module(".fifechan", __name__)
     except ImportError:
         _fifechan = None
 

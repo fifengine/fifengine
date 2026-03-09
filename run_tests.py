@@ -10,8 +10,8 @@ import re
 import shutil
 import subprocess
 import sys
-from glob import glob
 from builtins import input
+from glob import glob
 
 
 def _env_truthy(value):
