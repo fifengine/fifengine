@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <assert.h>
+#include <cassert>
 #include <filesystem>
 #include <memory>
 #include <set>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 

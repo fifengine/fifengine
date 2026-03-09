@@ -3,7 +3,7 @@
 
 // Standard C++ library includes
 #include <cassert>
-#include <string.h>
+#include <cstring>
 
 // 3rd party library includes
 
