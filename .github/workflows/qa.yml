@@ -1,13 +1,26 @@
-name: QA
+#
+# .github/workflows/cpp-quality.yml
+#
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2024 Jens A. Koch.
+# This file is part of fifengine/fifechan.
+#
+
+name: "C++ Quality"
 
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
+  - push
+  - pull_request
+  # You can manually run this workflow.
+  - workflow_dispatch
 
+# improve CI concurrency by automatically cancelling outdated jobs
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
 
@@ -41,13 +54,13 @@ jobs:
         run: |
           chmod +x build-tools/format.sh
           ./build-tools/format.sh
-        continue-on-error: true
+        #continue-on-error: true
 
       - name: 🛠️ Check git difference
         run: |
           git status
           git diff
-        continue-on-error: true
+        #continue-on-error: true
 
 # ---------------------------------------------------------------------------------------
 
@@ -71,7 +84,7 @@ jobs:
         run: |
           chmod +x build-tools/cpplint.sh
           ./build-tools/cpplint.sh
-        continue-on-error: true
+        #continue-on-error: true
 
 # ---------------------------------------------------------------------------------------
 
@@ -95,11 +108,11 @@ jobs:
         run: |
           cppcheck \
             --enable=warning,style,performance,portability \
-            --std=c++17 \
+            --std=c++20 \
             --quiet \
             --inline-suppr \
             src/engine
-        continue-on-error: true
+        #continue-on-error: true
 
 # ---------------------------------------------------------------------------------------
 
