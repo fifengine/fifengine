@@ -4,104 +4,10 @@ out/
 vcpkg_installed/
 dependencies/
 
-# Swig wrappers
-engine/python/fife/fife.py
-engine/python/fife/fifechan.py
-engine/swigwrappers/python/fife.i
-engine/swigwrappers/python/fife_wrap.cc
-engine/swigwrappers/python/fife_wrap.h
-engine/swigwrappers/python/fifechan.i
-engine/swigwrappers/python/fifechan_wrap.cc
-engine/swigwrappers/python/fifechan_wrap.h
-
-# Project files
-build/linux/KDevelop/FIFE.kdevses
-build/linux/code_blocks/fife_engine.cbp
-build/win32/build_environments/code_blocks/fife_engine.cbp
-build/win32/build_environments/code_blocks/.objs
-build/win32/build_environments/code_blocks/fife_engine.layout
-build/win32/build_environments/scons/engine_build_log.txt
-build/win32/build_environments/visual_studio_8/fife.vcproj
-build/win32/build_environments/visual_studio_9/fife.vcproj
-
-#CMAKE stuff
-build/win32/CMakeCache.txt
-build/win32/CMakeFiles
-build/win32/version.h
-
-# Ignore the dev kit
-build/win32/applications
-build/win32/binaries
-build/win32/includes
-build/win32/static_libs
-
-# Demos
-demos/rio_de_hola/maps/savefile.xml
-demos/shooter/gui/highscores.xml
-demos/rpg/saves/*.xml
-settings.xml
-
-# All log files
-*.log
-
-# Docs
+# Generated Doxygen files
 doc/doxygen/html
-build/win32/doxygen_log.txt
-doc/dependencies/*.dot~
-doc/dependencies/*.dot
-doc/dependencies/*.ps
-doc/dependencies/*.png
 
-# scons
-*.sconsign
-.sconsign.tmp
-.sconsign.dblite
-build/.sconf_temp
-build/config.log
-build/bdist.win32
-build/engine
-build/lib
-
-# Python
-*.py[cod]
-dist
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.dll
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lib
-*.lai
-*.la
-*.a
-
-# Executables
-OpenALwEAX.exe
-
-# Automake and Autoconf
-Makefile.in
-autom4te.cache
-aclocal.m4
-compile
-configure
-depcomp
-install-sh
-missing
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Icon?
-ehthumbs.db
-Thumbs.db
-.*.swp
+# Folders of Python Tools
+__pycache__/
+.ruff-cache/
+.mypy_cache/
