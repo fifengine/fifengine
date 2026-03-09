@@ -118,17 +118,20 @@ namespace fcn
         bool getShove() const;
 
         /** Sets the mouse cursor for the specified direction.
+         * @param direction The cursor direction to set.
          * @param cursor_id For native cursors, this is the resource id to native cursor, or one of the values in
          * NativeCursor
          */
         void set(CursorDirections direction, uint32_t cursor_id = 0);
 
         /** Sets the mouse cursor type to image for the specified direction.
+         * @param direction The cursor direction to set.
          * @param image ImagePtr to a image used for the cursor
          */
         void set(CursorDirections direction, FIFE::ImagePtr image);
 
         /** Sets the mouse cursor type to animation for the specified direction.
+         * @param direction The cursor direction to set.
          * @param anim AnimationPtr to a loaded animation used for the cursor
          */
         void set(CursorDirections direction, FIFE::AnimationPtr anim);

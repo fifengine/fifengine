@@ -153,7 +153,8 @@ namespace FIFE
         /** Sets screen cell image dimensions.
          * Cell image dimension is basically width and height of a bitmap, that covers
          * one cell in the layer where camera is bind
-         * @return Point Point containing x=width and y=height
+         * @param width The width of the cell image in pixels.
+         * @param height The height of the cell image in pixels.
          */
         void setCellImageDimensions(uint32_t width, uint32_t height);
 

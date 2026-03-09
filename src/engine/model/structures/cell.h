@@ -152,7 +152,7 @@ namespace FIFE
         bool isNeighbor(Cell* cell);
 
         /** Called to update cell data.
-         * @return True if cell was changed since the last update, false otherwise.
+         * This function updates internal cell data and notifies listeners as needed.
          */
         void updateCellInfo();
 

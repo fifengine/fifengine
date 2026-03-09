@@ -75,7 +75,7 @@ namespace FIFE
         /**
          * Sets the use of bold style.
          *
-         * @param stlye True for use of bold style.
+         * @param style True for use of bold style.
          */
         virtual void setBoldStyle(bool style) = 0;
 
@@ -89,7 +89,7 @@ namespace FIFE
         /**
          * Sets the use of italic style.
          *
-         * @param stlye True for use of italic style.
+         * @param style True for use of italic style.
          */
         virtual void setItalicStyle(bool style) = 0;
 
@@ -103,7 +103,7 @@ namespace FIFE
         /**
          * Sets the use of underline style.
          *
-         * @param stlye True for use of underline style.
+         * @param style True for use of underline style.
          */
         virtual void setUnderlineStyle(bool style) = 0;
 
@@ -117,7 +117,7 @@ namespace FIFE
         /**
          * Sets the use of strikethrough style.
          *
-         * @param stlye True for use of strikethrough style.
+         * @param style True for use of strikethrough style.
          */
         virtual void setStrikethroughStyle(bool style) = 0;
 

@@ -73,7 +73,7 @@ namespace fcn
          * Sets the alignment of the caption. The alignment is relative
          * to the center of the label.
          *
-         * @param alignemnt The alignment of the caption of the label.
+         * @param alignment The alignment of the caption of the label.
          * @see getAlignment, Graphics
          */
         virtual void setAlignment(Graphics::Alignment alignment);
@@ -83,7 +83,7 @@ namespace fcn
          * the center of the label.
          *
          * @return The alignment of caption of the label.
-         * @see setAlignmentm Graphics
+         * @see setAlignment, Graphics
          */
         virtual Graphics::Alignment getAlignment() const;
 

@@ -43,7 +43,7 @@ namespace FIFE
 
         /** Called when a sound finished playing. Or stop() was called.
          * @param emitterId The id of emitter.
-         * @param SoundClipId The id of sound clip aka ResourceHandle.
+         * @param soundClipId The id of sound clip aka ResourceHandle.
          */
         virtual void onSoundFinished(uint32_t emitterId, uint32_t soundClipId) = 0;
     };
