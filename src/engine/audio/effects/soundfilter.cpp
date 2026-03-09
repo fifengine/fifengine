@@ -78,8 +78,8 @@ namespace FIFE
 
     void SoundFilter::setGain(float gain)
     {
-        gain   = std::min(gain, 1.0f);
-        gain   = std::max(gain, 0.0f);
+        gain   = std::min(gain, 1.0F);
+        gain   = std::max(gain, 0.0F);
         m_gain = gain;
 
         if (m_type == SF_FILTER_LOWPASS) {
@@ -98,8 +98,8 @@ namespace FIFE
 
     void SoundFilter::setGainHf(float gain)
     {
-        gain    = std::min(gain, 1.0f);
-        gain    = std::max(gain, 0.0f);
+        gain    = std::min(gain, 1.0F);
+        gain    = std::max(gain, 0.0F);
         m_hGain = gain;
 
         if (m_type == SF_FILTER_LOWPASS) {
@@ -116,8 +116,8 @@ namespace FIFE
 
     void SoundFilter::setGainLf(float gain)
     {
-        gain    = std::min(gain, 1.0f);
-        gain    = std::max(gain, 0.0f);
+        gain    = std::min(gain, 1.0F);
+        gain    = std::max(gain, 0.0F);
         m_lGain = gain;
 
         if (m_type == SF_FILTER_HIGHPASS) {

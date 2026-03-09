@@ -821,7 +821,7 @@ found_non_transparent_pixel:;
     {
         if (m_light_colors.empty()) {
             for (int32_t colors = 0; colors != 3; ++colors) {
-                m_light_colors.push_back(1.0f);
+                m_light_colors.push_back(1.0F);
             }
         }
         return m_light_colors;

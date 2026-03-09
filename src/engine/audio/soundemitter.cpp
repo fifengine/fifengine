@@ -39,7 +39,7 @@ namespace FIFE
         m_active(false),
         m_fadeIn(false),
         m_fadeOut(false),
-        m_origGain(0.0f),
+        m_origGain(0.0F),
         m_fadeInStartTimestamp(0),
         m_fadeInEndTimestamp(0),
         m_fadeOutStartTimestamp(0),
@@ -372,19 +372,19 @@ namespace FIFE
         m_origGain = m_internData.volume;
         if (!Mathf::Equal(zero, inTime)) {
             m_fadeIn = true;
-            setGain(0.0f);
+            setGain(0.0F);
             play();
             m_fadeInStartTimestamp = m_internData.playTimestamp;
-            m_fadeInEndTimestamp   = m_fadeInStartTimestamp + static_cast<uint32_t>(inTime * 1000.0f);
+            m_fadeInEndTimestamp   = m_fadeInStartTimestamp + static_cast<uint32_t>(inTime * 1000.0F);
         }
         if (getState() != SD_PLAYING_STATE) {
             play();
         }
         if (!Mathf::Equal(zero, outTime)) {
             m_fadeOut = true;
-            setGain(0.0f);
+            setGain(0.0F);
             m_fadeOutEndTimestamp   = m_internData.playTimestamp + getDuration();
-            m_fadeOutStartTimestamp = m_fadeOutEndTimestamp - static_cast<uint32_t>(outTime * 1000.0f);
+            m_fadeOutStartTimestamp = m_fadeOutEndTimestamp - static_cast<uint32_t>(outTime * 1000.0F);
         }
     }
 
@@ -404,7 +404,7 @@ namespace FIFE
         m_fadeOut               = true;
         m_origGain              = m_internData.volume;
         m_fadeOutStartTimestamp = TimeManager::instance()->getTime();
-        m_fadeOutEndTimestamp   = m_fadeOutStartTimestamp + static_cast<uint32_t>(time * 1000.0f);
+        m_fadeOutEndTimestamp   = m_fadeOutStartTimestamp + static_cast<uint32_t>(time * 1000.0F);
     }
 
     void SoundEmitter::pause()
@@ -859,7 +859,7 @@ namespace FIFE
                 setGain(m_origGain);
             } else {
                 float gain = delta * static_cast<float>(m_fadeOutEndTimestamp - timestamp);
-                gain       = std::max(gain, 0.0f);
+                gain       = std::max(gain, 0.0F);
                 setGain(gain);
             }
         }

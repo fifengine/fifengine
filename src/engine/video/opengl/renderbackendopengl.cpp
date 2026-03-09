@@ -283,8 +283,8 @@ namespace FIFE
 
         // dont reset
         if (!recreate) {
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClearDepth(1.0f);
+            glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+            glClearDepth(1.0F);
             glClearStencil(0);
         }
 

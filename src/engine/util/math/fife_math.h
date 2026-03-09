@@ -37,18 +37,18 @@ namespace FIFE
 
     static const float FLT_STD_EPSILON    = std::numeric_limits<float>::epsilon();
     static const float FLT_STD_MAX        = (std::numeric_limits<float>::max)();
-    static const float FLT_ZERO_TOLERANCE = 1e-06f;
-    static const float FLT_PI             = 4.0f * std::atan(1.0f);
-    static const float FLT_TWO_PI         = 2.0f * FLT_PI;
-    static const float FLT_HALF_PI        = 0.5f * FLT_PI;
-    static const float FLT_INVERSE_PI     = 1.0f / FLT_PI;
-    static const float FLT_INVERSE_TWO_PI = 1.0f / FLT_TWO_PI;
-    static const float FLT_DEG_TO_RAD     = FLT_PI / 180.0f;
-    static const float FLT_RAD_TO_DEG     = 180.0f / FLT_PI;
-    static const float FLT_LOG_2          = std::log(2.0f);
-    static const float FLT_LOG_10         = std::log(10.0f);
-    static const float FLT_INV_LOG_2      = 1.0f / std::log(2.0f);
-    static const float FLT_INV_LOG_10     = 1.0f / std::log(10.0f);
+    static const float FLT_ZERO_TOLERANCE = 1e-06F;
+    static const float FLT_PI             = 4.0F * std::atan(1.0F);
+    static const float FLT_TWO_PI         = 2.0F * FLT_PI;
+    static const float FLT_HALF_PI        = 0.5F * FLT_PI;
+    static const float FLT_INVERSE_PI     = 1.0F / FLT_PI;
+    static const float FLT_INVERSE_TWO_PI = 1.0F / FLT_TWO_PI;
+    static const float FLT_DEG_TO_RAD     = FLT_PI / 180.0F;
+    static const float FLT_RAD_TO_DEG     = 180.0F / FLT_PI;
+    static const float FLT_LOG_2          = std::log(2.0F);
+    static const float FLT_LOG_10         = std::log(10.0F);
+    static const float FLT_INV_LOG_2      = 1.0F / std::log(2.0F);
+    static const float FLT_INV_LOG_10     = 1.0F / std::log(10.0F);
 
     static const double DBL_STD_EPSILON    = std::numeric_limits<double>::epsilon();
     static const double DBL_STD_MAX        = (std::numeric_limits<double>::max)();
