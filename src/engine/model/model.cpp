@@ -62,14 +62,14 @@ namespace FIFE
     Model::~Model()
     {
         // first remove the map observer, we delete all grids anyway
-        for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
-            (*it)->removeChangeListener(m_mapObserver);
-            delete *it;
+        for (auto & m_map : m_maps) {
+            m_map->removeChangeListener(m_mapObserver);
+            delete m_map;
         }
         delete m_mapObserver;
 
-        for (std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace) {
-            purge_map(nspace->second);
+        for (auto & m_namespace : m_namespaces) {
+            purge_map(m_namespace.second);
         }
         purge(m_pathers);
         purge(m_createdGrids);
@@ -78,7 +78,7 @@ namespace FIFE
 
     Map* Model::createMap(const std::string& identifier)
     {
-        std::list<Map*>::const_iterator it = m_maps.begin();
+        auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             if (identifier == (*it)->getId()) {
                 throw NameClash(identifier);
@@ -98,7 +98,7 @@ namespace FIFE
 
     IPather* Model::getPather(const std::string& pathername)
     {
-        std::vector<IPather*>::const_iterator it = m_pathers.begin();
+        auto it = m_pathers.begin();
         for (; it != m_pathers.end(); ++it) {
             if ((*it)->getName() == pathername) {
                 return *it;
@@ -115,7 +115,7 @@ namespace FIFE
 
     CellGrid* Model::getCellGrid(const std::string& gridtype)
     {
-        std::vector<CellGrid*>::const_iterator it = m_adoptedGrids.begin();
+        auto it = m_adoptedGrids.begin();
         for (; it != m_adoptedGrids.end(); ++it) {
             if ((*it)->getType() == gridtype) {
                 CellGrid* newcg = (*it)->clone();
@@ -133,7 +133,7 @@ namespace FIFE
             return;
         }
 
-        for (std::vector<CellGrid*>::iterator it = m_createdGrids.begin(); it != m_createdGrids.end(); ++it) {
+        for (auto it = m_createdGrids.begin(); it != m_createdGrids.end(); ++it) {
             if (*it == grid) {
                 delete *it;
                 m_createdGrids.erase(it);
@@ -144,7 +144,7 @@ namespace FIFE
 
     Map* Model::getMap(const std::string& identifier) const
     {
-        std::list<Map*>::const_iterator it = m_maps.begin();
+        auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             if ((*it)->getId() == identifier) {
                 return *it;
@@ -156,7 +156,7 @@ namespace FIFE
 
     void Model::deleteMap(Map* map)
     {
-        std::list<Map*>::iterator it = m_maps.begin();
+        auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             if (*it == map) {
                 delete *it;
@@ -174,9 +174,9 @@ namespace FIFE
     void Model::deleteMaps()
     {
         // first remove the map observer, we delete all grids anyway
-        for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
-            (*it)->removeChangeListener(m_mapObserver);
-            delete *it;
+        for (auto & m_map : m_maps) {
+            m_map->removeChangeListener(m_mapObserver);
+            delete m_map;
         }
         m_maps.clear();
         purge(m_createdGrids);
@@ -186,7 +186,7 @@ namespace FIFE
     uint32_t Model::getActiveCameraCount() const
     {
         uint32_t count                     = 0;
-        std::list<Map*>::const_iterator it = m_maps.begin();
+        auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             count += (*it)->getActiveCameraCount();
         }
@@ -196,7 +196,7 @@ namespace FIFE
     std::list<std::string> Model::getNamespaces() const
     {
         std::list<std::string> namespace_list;
-        std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
+        auto nspace = m_namespaces.begin();
         for (; nspace != m_namespaces.end(); ++nspace) {
             namespace_list.push_back(nspace->first);
         }
@@ -208,18 +208,18 @@ namespace FIFE
         // Find or create namespace
         namespace_t* nspace = selectNamespace(name_space);
         if (nspace == nullptr) {
-            m_namespaces.push_back(namespace_t(name_space, objectmap_t()));
+            m_namespaces.emplace_back(name_space, objectmap_t());
             nspace = selectNamespace(name_space);
         }
 
         // Check for nameclashes
-        objectmap_t::const_iterator it = nspace->second.find(identifier);
+        auto it = nspace->second.find(identifier);
         if (it != nspace->second.end()) {
             throw NameClash(identifier);
         }
 
         // Finally insert & create
-        Object* object             = new Object(identifier, name_space, parent);
+        auto* object             = new Object(identifier, name_space, parent);
         nspace->second[identifier] = object;
         return object;
     }
@@ -231,8 +231,8 @@ namespace FIFE
         // Check if any instances exist. If yes - bail out.
         std::list<Layer*>::const_iterator jt;
         std::vector<Instance*>::const_iterator kt;
-        for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
-            for (jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
+        for (auto & m_map : m_maps) {
+            for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
                     Object* o = (*kt)->getObject();
                     if (o == object) {
@@ -249,7 +249,7 @@ namespace FIFE
         }
 
         // If yes - delete+erase object.
-        objectmap_t::iterator it = nspace->second.find(object->getId());
+        auto it = nspace->second.find(object->getId());
         if (it != nspace->second.end()) {
             delete it->second;
             nspace->second.erase(it);
@@ -262,8 +262,8 @@ namespace FIFE
     {
         // If we have layers with instances - bail out.
         std::list<Layer*>::const_iterator jt;
-        for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
-            for (jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
+        for (auto & m_map : m_maps) {
+            for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 if ((*jt)->hasInstances()) {
                     return false;
                 }
@@ -271,9 +271,9 @@ namespace FIFE
         }
 
         // Otherwise delete every object in every namespace
-        std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+        auto nspace = m_namespaces.begin();
         while (nspace != m_namespaces.end()) {
-            objectmap_t::iterator it = nspace->second.begin();
+            auto it = nspace->second.begin();
             for (; it != nspace->second.end(); ++it) {
                 delete it->second;
             }
@@ -287,7 +287,7 @@ namespace FIFE
     {
         namespace_t* nspace = selectNamespace(name_space);
         if (nspace != nullptr) {
-            objectmap_t::iterator it = nspace->second.find(id);
+            auto it = nspace->second.find(id);
             if (it != nspace->second.end()) {
                 return it->second;
             }
@@ -300,7 +300,7 @@ namespace FIFE
         std::list<Object*> object_list;
         const namespace_t* nspace = selectNamespace(name_space);
         if (nspace != nullptr) {
-            objectmap_t::const_iterator it = nspace->second.begin();
+            auto it = nspace->second.begin();
             for (; it != nspace->second.end(); ++it) {
                 object_list.push_back(it->second);
             }
@@ -311,7 +311,7 @@ namespace FIFE
 
     const Model::namespace_t* Model::selectNamespace(const std::string& name_space) const
     {
-        std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
+        auto nspace = m_namespaces.begin();
         for (; nspace != m_namespaces.end(); ++nspace) {
             if (nspace->first == name_space) {
                 return &(*nspace);
@@ -326,7 +326,7 @@ namespace FIFE
         if ((m_lastNamespace != nullptr) && m_lastNamespace->first == name_space) {
             return m_lastNamespace;
         }
-        std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+        auto nspace = m_namespaces.begin();
         for (; nspace != m_namespaces.end(); ++nspace) {
             if (nspace->first == name_space) {
                 m_lastNamespace = &(*nspace);
@@ -339,11 +339,11 @@ namespace FIFE
 
     void Model::update()
     {
-        std::list<Map*>::iterator it = m_maps.begin();
+        auto it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             (*it)->update();
         }
-        std::vector<IPather*>::iterator jt = m_pathers.begin();
+        auto jt = m_pathers.begin();
         for (; jt != m_pathers.end(); ++jt) {
             (*jt)->update();
         }

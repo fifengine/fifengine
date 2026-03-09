@@ -28,7 +28,7 @@ namespace FIFE
     {
         size_t totalSize = 0;
 
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         for (; it != itend; ++it) {
             totalSize += it->second->getSize();
@@ -39,7 +39,7 @@ namespace FIFE
 
     size_t SoundClipManager::getTotalResourcesCreated() const
     {
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
         size_t count = 0;
 
         for (; it != itend; ++it) {
@@ -53,7 +53,7 @@ namespace FIFE
 
     size_t SoundClipManager::getTotalResourcesLoaded() const
     {
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
         size_t count = 0;
 
         for (; it != itend; ++it) {
@@ -72,7 +72,7 @@ namespace FIFE
 
     SoundClipPtr SoundClipManager::create(IResourceLoader* loader)
     {
-        SoundClip* ptr = new SoundClip(loader);
+        auto* ptr = new SoundClip(loader);
         return add(ptr);
     }
 
@@ -86,13 +86,13 @@ namespace FIFE
             return get(name);
         }
 
-        SoundClip* ptr = new SoundClip(name, loader);
+        auto* ptr = new SoundClip(name, loader);
         return add(ptr);
     }
 
     SoundClipPtr SoundClipManager::load(const std::string& name, IResourceLoader* loader)
     {
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
 
         if (nit != m_sclipNameMap.end()) {
             if (nit->second->getState() == IResource::RES_NOT_LOADED) {
@@ -142,7 +142,7 @@ namespace FIFE
 
     bool SoundClipManager::exists(const std::string& name)
     {
-        SoundClipNameMapIterator it = m_sclipNameMap.find(name);
+        auto it = m_sclipNameMap.find(name);
         if (it != m_sclipNameMap.end()) {
             return true;
         }
@@ -152,7 +152,7 @@ namespace FIFE
 
     bool SoundClipManager::exists(ResourceHandle handle)
     {
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
         if (it != m_sclipHandleMap.end()) {
             return true;
         }
@@ -162,7 +162,7 @@ namespace FIFE
 
     void SoundClipManager::reload(const std::string& name)
     {
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
 
         if (nit != m_sclipNameMap.end()) {
             if (nit->second->getState() == IResource::RES_LOADED) {
@@ -177,7 +177,7 @@ namespace FIFE
 
     void SoundClipManager::reload(ResourceHandle handle)
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
 
         if (it != m_sclipHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -193,7 +193,7 @@ namespace FIFE
 
     void SoundClipManager::reloadAll()
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -205,7 +205,7 @@ namespace FIFE
 
     void SoundClipManager::loadUnreferenced()
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -220,7 +220,7 @@ namespace FIFE
 
     void SoundClipManager::free(const std::string& name)
     {
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
 
         if (nit != m_sclipNameMap.end()) {
             if (nit->second->getState() == IResource::RES_LOADED) {
@@ -234,7 +234,7 @@ namespace FIFE
 
     void SoundClipManager::free(ResourceHandle handle)
     {
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
         if (it != m_sclipHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
                 it->second->free();
@@ -248,7 +248,7 @@ namespace FIFE
 
     void SoundClipManager::freeAll()
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
 
@@ -264,7 +264,7 @@ namespace FIFE
 
     void SoundClipManager::freeUnreferenced()
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -280,8 +280,8 @@ namespace FIFE
 
     void SoundClipManager::remove(SoundClipPtr& resource)
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.find(resource->getHandle());
-        SoundClipNameMapIterator nit  = m_sclipNameMap.find(resource->getName());
+        auto it = m_sclipHandleMap.find(resource->getHandle());
+        auto nit  = m_sclipNameMap.find(resource->getName());
 
         if (it != m_sclipHandleMap.end()) {
             m_sclipHandleMap.erase(it);
@@ -303,7 +303,7 @@ namespace FIFE
     {
         std::size_t handle;
 
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
         if (nit != m_sclipNameMap.end()) {
             handle = nit->second->getHandle();
             m_sclipNameMap.erase(nit);
@@ -312,7 +312,7 @@ namespace FIFE
             return;
         }
 
-        SoundClipHandleMapIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
         if (it != m_sclipHandleMap.end()) {
             m_sclipHandleMap.erase(it);
             return;
@@ -325,7 +325,7 @@ namespace FIFE
     {
         std::string name;
 
-        SoundClipHandleMapIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
 
         if (it != m_sclipHandleMap.end()) {
             name = it->second->getName();
@@ -338,7 +338,7 @@ namespace FIFE
             return;
         }
 
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
         if (nit != m_sclipNameMap.end()) {
             m_sclipNameMap.erase(nit);
             return;
@@ -362,7 +362,7 @@ namespace FIFE
 
     void SoundClipManager::removeUnreferenced()
     {
-        SoundClipHandleMapIterator it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -379,7 +379,7 @@ namespace FIFE
 
     SoundClipPtr SoundClipManager::get(const std::string& name)
     {
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
 
         if (nit != m_sclipNameMap.end()) {
             if (nit->second->getState() != IResource::RES_LOADED) {
@@ -396,7 +396,7 @@ namespace FIFE
 
     SoundClipPtr SoundClipManager::get(ResourceHandle handle)
     {
-        SoundClipHandleMapConstIterator it = m_sclipHandleMap.find(handle);
+        auto it = m_sclipHandleMap.find(handle);
         if (it != m_sclipHandleMap.end()) {
             if (it->second->getState() != IResource::RES_LOADED) {
                 // resource is not loaded so load it
@@ -408,12 +408,12 @@ namespace FIFE
         FL_WARN(
             _log, LMsg("SoundClipManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
 
-        return SoundClipPtr();
+        return {};
     }
 
     ResourceHandle SoundClipManager::getResourceHandle(const std::string& name)
     {
-        SoundClipNameMapIterator nit = m_sclipNameMap.find(name);
+        auto nit = m_sclipNameMap.find(name);
         if (nit != m_sclipNameMap.end()) {
             return nit->second->getHandle();
         }

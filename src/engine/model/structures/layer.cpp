@@ -6,6 +6,7 @@
 #include <list>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -33,8 +34,8 @@ namespace FIFE
      */
     static Logger _log(LM_STRUCTURES);
 
-    Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid) :
-        m_id(identifier),
+    Layer::Layer(std::string  identifier, Map* map, CellGrid* grid) :
+        m_id(std::move(identifier)),
         m_map(map),
         m_instancesVisibility(true),
         m_transparency(0),
@@ -92,7 +93,7 @@ namespace FIFE
         m_grid = grid;
     }
 
-    InstanceTree* Layer::getInstanceTree(void) const
+    InstanceTree* Layer::getInstanceTree() const
     {
         return m_instanceTree;
     }
@@ -113,14 +114,14 @@ namespace FIFE
         Location location(this);
         location.setExactLayerCoordinates(p);
 
-        Instance* instance = new Instance(object, location, id);
+        auto* instance = new Instance(object, location, id);
         if (instance->isActive()) {
             setInstanceActivityStatus(instance, instance->isActive());
         }
         m_instances.push_back(instance);
         m_instanceTree->addInstance(instance);
 
-        std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onInstanceCreate(this, instance);
             ++i;
@@ -146,7 +147,7 @@ namespace FIFE
             setInstanceActivityStatus(instance, instance->isActive());
         }
 
-        std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onInstanceCreate(this, instance);
             ++i;
@@ -165,7 +166,7 @@ namespace FIFE
             if (instance->update() != ICHANGE_NO_CHANGES) {
                 std::vector<Instance*> updateInstances;
                 updateInstances.push_back(instance);
-                std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+                auto i = m_changeListeners.begin();
                 while (i != m_changeListeners.end()) {
                     (*i)->onLayerChanged(this, updateInstances);
                     ++i;
@@ -173,13 +174,13 @@ namespace FIFE
             }
         }
 
-        std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onInstanceDelete(this, instance);
             ++i;
         }
         setInstanceActivityStatus(instance, false);
-        std::vector<Instance*>::iterator it = m_instances.begin();
+        auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
             if (*it == instance) {
                 m_instanceTree->removeInstance(*it);
@@ -200,7 +201,7 @@ namespace FIFE
             if (instance->update() != ICHANGE_NO_CHANGES) {
                 std::vector<Instance*> updateInstances;
                 updateInstances.push_back(instance);
-                std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+                auto i = m_changeListeners.begin();
                 while (i != m_changeListeners.end()) {
                     (*i)->onLayerChanged(this, updateInstances);
                     ++i;
@@ -208,13 +209,13 @@ namespace FIFE
             }
         }
 
-        std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onInstanceDelete(this, instance);
             ++i;
         }
         setInstanceActivityStatus(instance, false);
-        std::vector<Instance*>::iterator it = m_instances.begin();
+        auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
             if (*it == instance) {
                 m_instanceTree->removeInstance(*it);
@@ -243,7 +244,7 @@ namespace FIFE
 
     Instance* Layer::getInstance(const std::string& id)
     {
-        std::vector<Instance*>::iterator it = m_instances.begin();
+        auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
             if ((*it)->getId() == id) {
                 return *it;
@@ -256,7 +257,7 @@ namespace FIFE
     std::vector<Instance*> Layer::getInstances(const std::string& id)
     {
         std::vector<Instance*> matching_instances;
-        std::vector<Instance*>::iterator it = m_instances.begin();
+        auto it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
             if ((*it)->getId() == id) {
                 matching_instances.push_back(*it);
@@ -268,7 +269,7 @@ namespace FIFE
     std::vector<Instance*> Layer::getInstancesAt(Location& loc, bool use_exactcoordinates)
     {
         std::vector<Instance*> matching_instances;
-        std::vector<Instance*>::iterator it = m_instances.begin();
+        auto it = m_instances.begin();
 
         for (; it != m_instances.end(); ++it) {
             if (use_exactcoordinates) {
@@ -299,8 +300,8 @@ namespace FIFE
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         std::vector<ModelCoordinate> coords = m_grid->getCoordinatesInLine(pt1, pt2);
-        for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
-            m_instanceTree->findInstances(*it, 0, 0, matchingInstances);
+        for (auto & coord : coords) {
+            m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
             if (!matchingInstances.empty()) {
                 instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
             }
@@ -380,15 +381,15 @@ namespace FIFE
         int32_t s                           = (sangle + 360) % 360;
         int32_t e                           = (eangle + 360) % 360;
         bool greater                        = (s > e) ? true : false;
-        for (std::vector<Instance*>::iterator it = tmpInstances.begin(); it != tmpInstances.end(); ++it) {
-            int32_t angle = getAngleBetween(exactCenter, intPt2doublePt((*it)->getLocationRef().getLayerCoordinates()));
+        for (auto & tmpInstance : tmpInstances) {
+            int32_t angle = getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
-                    instances.push_back(*it);
+                    instances.push_back(tmpInstance);
                 }
             } else {
                 if (angle >= s && angle <= e) {
-                    instances.push_back(*it);
+                    instances.push_back(tmpInstance);
                 }
             }
         }
@@ -408,8 +409,8 @@ namespace FIFE
             min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
             max = min;
 
-            for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
-                ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
+            for (auto m_instance : m_instances) {
+                ModelCoordinate coord = m_instance->getLocationRef().getLayerCoordinates(layer);
                 min.x                 = std::min(min.x, coord.x);
                 max.x                 = std::max(max.x, coord.x);
                 min.y                 = std::min(min.y, coord.y);
@@ -426,7 +427,7 @@ namespace FIFE
         int32_t thislayer              = 1; // we don't need 0 indexed
 
         const std::list<Layer*>& layers        = m_map->getLayers();
-        std::list<Layer*>::const_iterator iter = layers.begin();
+        auto iter = layers.begin();
         for (; iter != layers.end(); ++iter, ++thislayer) {
             if (*iter == this) {
                 break;
@@ -446,7 +447,7 @@ namespace FIFE
     {
         if (m_instancesVisibility != vis) {
             m_instancesVisibility               = vis;
-            std::vector<Instance*>::iterator it = m_instances.begin();
+            auto it = m_instances.begin();
             for (; it != m_instances.end(); ++it) {
                 (*it)->callOnVisibleChange();
             }
@@ -457,7 +458,7 @@ namespace FIFE
     {
         if (m_transparency != transparency) {
             m_transparency                      = transparency;
-            std::vector<Instance*>::iterator it = m_instances.begin();
+            auto it = m_instances.begin();
             for (; it != m_instances.end(); ++it) {
                 (*it)->callOnTransparencyChange();
             }
@@ -490,7 +491,7 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end();
+            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end();
                  ++j) {
                 if ((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
                     blockingInstance = true;
@@ -508,16 +509,16 @@ namespace FIFE
             Cell* cell = m_cellCache->getCell(cellCoordinate);
             if (cell != nullptr) {
                 const std::set<Instance*>& blocker = cell->getInstances();
-                for (std::set<Instance*>::const_iterator it = blocker.begin(); it != blocker.end(); ++it) {
-                    if ((*it)->isBlocking()) {
-                        blockingInstances.push_back(*it);
+                for (auto it : blocker) {
+                    if (it->isBlocking()) {
+                        blockingInstances.push_back(it);
                     }
                 }
             }
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end();
+            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end();
                  ++j) {
                 if ((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
                     blockingInstances.push_back(*j);
@@ -589,7 +590,7 @@ namespace FIFE
     void Layer::removeInteractLayer(Layer* layer)
     {
         if (m_walkable) {
-            std::vector<Layer*>::iterator it = m_interacts.begin();
+            auto it = m_interacts.begin();
             for (; it != m_interacts.end(); ++it) {
                 if (*it == layer) {
                     (*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
@@ -617,7 +618,7 @@ namespace FIFE
         if (m_walkable) {
             removeChangeListener(m_cellCache->getCellCacheChangeListener());
             if (!m_interacts.empty()) {
-                std::vector<Layer*>::iterator it = m_interacts.begin();
+                auto it = m_interacts.begin();
                 for (; it != m_interacts.end(); ++it) {
                     (*it)->removeChangeListener(m_cellCache->getCellCacheChangeListener());
                     (*it)->setInteract(false, "");
@@ -634,7 +635,7 @@ namespace FIFE
     {
         m_changedInstances.clear();
         std::vector<Instance*> inactiveInstances;
-        std::set<Instance*>::iterator it = m_activeInstances.begin();
+        auto it = m_activeInstances.begin();
         for (; it != m_activeInstances.end(); ++it) {
             if ((*it)->update() != ICHANGE_NO_CHANGES) {
                 m_changedInstances.push_back(*it);
@@ -644,7 +645,7 @@ namespace FIFE
             }
         }
         if (!m_changedInstances.empty()) {
-            std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+            auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
                 (*i)->onLayerChanged(this, m_changedInstances);
                 ++i;
@@ -653,7 +654,7 @@ namespace FIFE
         }
         // remove inactive instances from m_activeInstances
         if (!inactiveInstances.empty()) {
-            std::vector<Instance*>::iterator i = inactiveInstances.begin();
+            auto i = inactiveInstances.begin();
             while (i != inactiveInstances.end()) {
                 m_activeInstances.erase(*i);
                 ++i;
@@ -672,7 +673,7 @@ namespace FIFE
 
     void Layer::removeChangeListener(LayerChangeListener* listener)
     {
-        std::vector<LayerChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             if ((*i) == listener) {
                 m_changeListeners.erase(i);

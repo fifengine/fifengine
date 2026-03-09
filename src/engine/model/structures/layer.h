@@ -90,7 +90,7 @@ namespace FIFE
          * Layers are created by calling addLayer from map, thus
          * this method should really be called only by map or test code.
          */
-        Layer(const std::string& identifier, Map* map, CellGrid* grid);
+        Layer(std::string  identifier, Map* map, CellGrid* grid);
 
         /** Destructs a Layer instance
          */

@@ -48,9 +48,9 @@ namespace FIFE
     SoundManager::~SoundManager()
     {
         // delete all soundemitters
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            if ((*it) != nullptr) {
-                delete (*it);
+        for (auto & it : m_emitterVec) {
+            if (it != nullptr) {
+                delete it;
             }
         }
         m_emitterVec.clear();
@@ -106,13 +106,13 @@ namespace FIFE
         alListenerf(AL_GAIN, m_volume);
 
         // create max sources
-        for (uint16_t i = 0; i < MAX_SOURCES; i++) {
-            alGenSources(1, &m_sources[i]);
+        for (unsigned int & m_source : m_sources) {
+            alGenSources(1, &m_source);
             if (alGetError() != AL_NO_ERROR) {
                 break;
             }
 
-            m_freeSources.push(m_sources[i]);
+            m_freeSources.push(m_source);
             m_createdSources++;
         }
         m_state = SM_STATE_PLAY;
@@ -160,8 +160,7 @@ namespace FIFE
     void SoundManager::play()
     {
         m_state = SM_STATE_PLAY;
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            SoundEmitter* emitter = (*it);
+        for (auto emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -172,8 +171,7 @@ namespace FIFE
     void SoundManager::pause()
     {
         m_state = SM_STATE_PAUSE;
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            SoundEmitter* emitter = (*it);
+        for (auto emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -184,8 +182,7 @@ namespace FIFE
     void SoundManager::stop()
     {
         m_state = SM_STATE_STOP;
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            SoundEmitter* emitter = (*it);
+        for (auto emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -195,8 +192,7 @@ namespace FIFE
 
     void SoundManager::rewind()
     {
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            SoundEmitter* emitter = (*it);
+        for (auto emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -342,11 +338,10 @@ namespace FIFE
             return;
         }
         AudioSpaceCoordinate listenerPos = getListenerPosition();
-        double maxDistance               = static_cast<double>(m_maxDistance);
+        auto maxDistance               = static_cast<double>(m_maxDistance);
 
         // first check emitters
-        for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            SoundEmitter* emitter = (*it);
+        for (auto emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -384,9 +379,8 @@ namespace FIFE
             }
         }
         // then update active
-        for (std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.begin(); it != m_activeEmitters.end();
-             ++it) {
-            it->first->update();
+        for (auto & m_activeEmitter : m_activeEmitters) {
+            m_activeEmitter.first->update();
         }
     }
 
@@ -448,7 +442,7 @@ namespace FIFE
     void SoundManager::releaseSource(SoundEmitter* emitter)
     {
         if (emitter->isActive()) {
-            std::map<SoundEmitter*, ALuint>::iterator it = m_activeEmitters.find(emitter);
+            auto it = m_activeEmitters.find(emitter);
             if (it != m_activeEmitters.end()) {
                 m_freeSources.push(it->second);
                 m_activeEmitters.erase(it);
@@ -567,14 +561,14 @@ namespace FIFE
         if (group.empty()) {
             return;
         }
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown group");
             return;
         }
         bool found                                      = false;
-        std::vector<SoundEmitter*>::iterator emitterIt  = groupIt->second.begin();
-        std::vector<SoundEmitter*>::iterator emitterEnd = groupIt->second.end();
+        auto emitterIt  = groupIt->second.begin();
+        auto emitterEnd = groupIt->second.end();
         while (emitterIt != emitterEnd) {
             if ((*emitterIt) == emitter) {
                 groupIt->second.erase(emitterIt++);
@@ -594,14 +588,14 @@ namespace FIFE
         if (group.empty()) {
             return;
         }
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "SoundEmitter can not remove unknown group");
             return;
         }
         std::vector<SoundEmitter*> emitters = groupIt->second;
-        for (std::vector<SoundEmitter*>::iterator it = emitters.begin(); it != emitters.end(); ++it) {
-            (*it)->setGroup("");
+        for (auto & emitter : emitters) {
+            emitter->setGroup("");
         }
         m_groups.erase(group);
     }
@@ -609,23 +603,23 @@ namespace FIFE
     void SoundManager::removeAllGroups()
     {
         std::vector<std::string> groups;
-        for (EmitterGroupsIterator it = m_groups.begin(); it != m_groups.end(); ++it) {
-            groups.push_back(it->first);
+        for (auto & m_group : m_groups) {
+            groups.push_back(m_group.first);
         }
-        for (std::vector<std::string>::iterator it = groups.begin(); it != groups.end(); ++it) {
-            removeGroup(*it);
+        for (auto & group : groups) {
+            removeGroup(group);
         }
         m_groups.clear();
     }
 
     void SoundManager::play(const std::string& group)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not played");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->play();
         }
@@ -633,12 +627,12 @@ namespace FIFE
 
     void SoundManager::pause(const std::string& group)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not paused");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->pause();
         }
@@ -646,12 +640,12 @@ namespace FIFE
 
     void SoundManager::stop(const std::string& group)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not stopped");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->stop();
         }
@@ -659,12 +653,12 @@ namespace FIFE
 
     void SoundManager::rewind(const std::string& group)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not rewinded");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->rewind();
         }
@@ -672,12 +666,12 @@ namespace FIFE
 
     void SoundManager::setGain(const std::string& group, float gain)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not set gain");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->setGain(gain);
         }
@@ -685,12 +679,12 @@ namespace FIFE
 
     void SoundManager::setMaxGain(const std::string& group, float gain)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not set max gain");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->setMaxGain(gain);
         }
@@ -698,12 +692,12 @@ namespace FIFE
 
     void SoundManager::setMinGain(const std::string& group, float gain)
     {
-        EmitterGroupsIterator groupIt = m_groups.find(group);
+        auto groupIt = m_groups.find(group);
         if (groupIt == m_groups.end()) {
             FL_WARN(_log, LMsg() << "Unknown group can not set min gain");
             return;
         }
-        std::vector<SoundEmitter*>::iterator emitterIt = groupIt->second.begin();
+        auto emitterIt = groupIt->second.begin();
         for (; emitterIt != groupIt->second.end(); ++emitterIt) {
             (*emitterIt)->setMinGain(gain);
         }

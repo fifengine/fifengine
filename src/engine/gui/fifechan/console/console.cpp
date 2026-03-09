@@ -53,12 +53,12 @@ namespace FIFE
         m_isAttached = false;
 
         m_fpsTimer.setInterval(500);
-        m_fpsTimer.setCallback(std::bind(&Console::updateCaption, this));
+        m_fpsTimer.setCallback([this] { updateCaption(); });
 
         m_hiding = true;
 
         m_animationTimer.setInterval(20);
-        m_animationTimer.setCallback(std::bind(&Console::updateAnimation, this));
+        m_animationTimer.setCallback([this] { updateAnimation(); });
 
         m_toolsbutton->addActionListener(this);
         m_toolsbutton->setFocusable(false);
@@ -269,8 +269,8 @@ namespace FIFE
                 rows_text.push_back(m_output->getTextRow(i));
             }
             m_output->setText("");
-            for (size_t i = 0; i != rows_text.size(); ++i) {
-                m_output->addRow(rows_text[i]);
+            for (const auto & i : rows_text) {
+                m_output->addRow(i);
             }
         }
 

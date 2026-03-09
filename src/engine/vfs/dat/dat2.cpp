@@ -49,7 +49,7 @@ namespace FIFE
         // Do not read the complete file list at startup.
         // Instead read a chunk each frame.
         m_timer.setInterval(0);
-        m_timer.setCallback(std::bind(&DAT2::readFileEntry, this));
+        m_timer.setCallback([this] { readFileEntry(); });
         m_timer.start();
     }
 
@@ -104,7 +104,7 @@ namespace FIFE
 
     const RawDataDAT2::s_info& DAT2::getInfo(const std::string& name) const
     {
-        type_filelist::const_iterator i = findFileEntry(name);
+        auto i = findFileEntry(name);
         if (i == m_filelist.end()) {
             throw NotFound(name);
         }
@@ -121,11 +121,11 @@ namespace FIFE
         std::string name = path;
 
         // Normalize the path
-        if (name.find("./") == 0) {
+        if (name.starts_with("./")) {
             name.erase(0, 2);
         }
 
-        type_filelist::const_iterator i = m_filelist.find(name);
+        auto i = m_filelist.find(name);
 
         // We might have another chance to find the file
         // if the number of file entries not zero.
@@ -165,7 +165,7 @@ namespace FIFE
         }
 
         // Normalize the path
-        if (path.find("./") == 0) {
+        if (path.starts_with("./")) {
             path.erase(0, 2);
         }
 
@@ -174,10 +174,10 @@ namespace FIFE
             path += '/';
         }
 
-        type_filelist::const_iterator end = m_filelist.end();
-        for (type_filelist::const_iterator i = m_filelist.begin(); i != end; ++i) {
+        auto end = m_filelist.end();
+        for (auto i = m_filelist.begin(); i != end; ++i) {
             const std::string& file = i->first;
-            if (file.find(path) == 0) {
+            if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
                 bool isdir = cleanedfile.find('/') != std::string::npos;         // if we still have a / it's a subdir
 

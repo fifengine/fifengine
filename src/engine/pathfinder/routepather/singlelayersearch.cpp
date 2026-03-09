@@ -75,22 +75,22 @@ namespace FIFE
         uint8_t blockerThreshold            = m_ignoreDynamicBlockers ? 2 : 1;
         bool limitedArea                    = m_route->isAreaLimited();
         const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
-        for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
-            if (*i == nullptr) {
+        for (auto adjacent : adjacents) {
+            if (adjacent == nullptr) {
                 continue;
             }
-            if ((*i)->getLayer()->getCellCache() != m_cellCache) {
+            if (adjacent->getLayer()->getCellCache() != m_cellCache) {
                 continue;
             }
-            int32_t adjacentInt = (*i)->getCellId();
+            int32_t adjacentInt = adjacent->getCellId();
             if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
                 continue;
             }
-            if (zLimited && ABS(cellZ - (*i)->getLayerCoordinates().z) > maxZ) {
+            if (zLimited && ABS(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
-            bool blocker                  = (*i)->getCellType() > blockerThreshold;
-            ModelCoordinate adjacentCoord = (*i)->getLayerCoordinates();
+            bool blocker                  = adjacent->getCellType() > blockerThreshold;
+            ModelCoordinate adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (!blocker && m_multicell) {
                     continue;
@@ -103,19 +103,19 @@ namespace FIFE
                 blocker = false;
                 Location currentLoc(nextCell->getLayer());
                 currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
-                Location adjacentLoc((*i)->getLayer());
-                adjacentLoc.setLayerCoordinates((*i)->getLayerCoordinates());
+                Location adjacentLoc(adjacent->getLayer());
+                adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
                 int32_t rotation = getAngleBetween(currentLoc, adjacentLoc);
                 std::vector<ModelCoordinate> coords =
                     grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
-                std::vector<ModelCoordinate>::iterator coord_it = coords.begin();
+                auto coord_it = coords.begin();
                 for (; coord_it != coords.end(); ++coord_it) {
                     Cell* cell = m_cellCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            std::vector<Cell*>::iterator bc_it =
-                                std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);
+                            auto bc_it =
+                                std::ranges::find(m_ignoredBlockers, cell);
                             if (bc_it == m_ignoredBlockers.end()) {
                                 blocker = true;
                                 break;
@@ -125,7 +125,7 @@ namespace FIFE
                             // check if cell is on one of the areas
                             bool sameAreas                                 = false;
                             const std::list<std::string> areas             = m_route->getLimitedAreas();
-                            std::list<std::string>::const_iterator area_it = areas.begin();
+                            auto area_it = areas.begin();
                             for (; area_it != areas.end(); ++area_it) {
                                 if (m_cellCache->isCellInArea(*area_it, cell)) {
                                     sameAreas = true;
@@ -149,9 +149,9 @@ namespace FIFE
                 // check if cell is on one of the areas
                 bool sameAreas                                 = false;
                 const std::list<std::string> areas             = m_route->getLimitedAreas();
-                std::list<std::string>::const_iterator area_it = areas.begin();
+                auto area_it = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
-                    if (m_cellCache->isCellInArea(*area_it, *i)) {
+                    if (m_cellCache->isCellInArea(*area_it, adjacent)) {
                         sameAreas = true;
                         break;
                     }

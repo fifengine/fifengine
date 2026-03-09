@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <cstdio>
 #include <string>
+#include <utility>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,8 +36,8 @@ namespace FIFE
         while (str[curr] != 0) {
             if (str[curr] == group) {
                 curr = static_cast<int>(str.find_first_of(group, curr + 1));
-                if (static_cast<size_t>(curr) == std::string::npos) {
-                    return IntVector();
+                if (std::cmp_equal(curr, std::string::npos)) {
+                    return {};
                 }
 
                 std::string token = str.substr(start + 1, curr - start - 1);

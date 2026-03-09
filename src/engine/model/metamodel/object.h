@@ -45,7 +45,7 @@ namespace FIFE
          * this method should really be called only by Model or test code
          * @see Model in model/model.h for creation of objects.
          */
-        Object(const std::string& identifier, const std::string& name_space, Object* inherited = NULL);
+        Object(std::string  identifier, std::string  name_space, Object* inherited = NULL);
 
         /** Destructor
          */

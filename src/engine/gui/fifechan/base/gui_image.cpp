@@ -49,7 +49,7 @@ namespace FIFE
     fcn::Color GuiImage::getPixel(int32_t x, int32_t y)
     {
         FL_PANIC(_log, "GuiImage::getPixel, not implemented");
-        return fcn::Color();
+        return {};
     }
 
     void GuiImage::putPixel(int32_t x, int32_t y, const fcn::Color& color)

@@ -74,7 +74,7 @@ namespace FIFE
     {
         if (listener->isActive()) {
             listener->setActive(false);
-            for (typename std::deque<T>::iterator it = vec.begin(); it != vec.end(); ++it) {
+            for (auto it = vec.begin(); it != vec.end(); ++it) {
                 if (*it == listener) {
                     vec.erase(it);
                     break;
@@ -197,7 +197,7 @@ namespace FIFE
     void EventManager::dispatchCommand(Command& command)
     {
         std::deque<ICommandListener*> listeners   = m_commandListeners;
-        std::deque<ICommandListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive()) {
                 continue;
@@ -212,7 +212,7 @@ namespace FIFE
     void EventManager::dispatchKeyEvent(KeyEvent& evt)
     {
         std::deque<IKeyListener*> listeners   = m_keyListeners;
-        std::deque<IKeyListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) {
                 continue;
@@ -236,7 +236,7 @@ namespace FIFE
     void EventManager::dispatchTextEvent(TextEvent& evt)
     {
         std::deque<ITextListener*> listeners   = m_textListeners;
-        std::deque<ITextListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive()) {
                 continue;
@@ -260,7 +260,7 @@ namespace FIFE
     void EventManager::dispatchMouseEvent(MouseEvent& evt)
     {
         std::deque<IMouseListener*> listeners   = m_mouseListeners;
-        std::deque<IMouseListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) {
                 continue;
@@ -312,7 +312,7 @@ namespace FIFE
     {
         bool ret                                   = false;
         std::deque<ISdlEventListener*> listeners   = m_sdleventListeners;
-        std::deque<ISdlEventListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive()) {
                 continue;
@@ -325,7 +325,7 @@ namespace FIFE
     void EventManager::dispatchDropEvent(DropEvent& evt)
     {
         std::deque<IDropListener*> listeners   = m_dropListeners;
-        std::deque<IDropListener*>::iterator i = listeners.begin();
+        auto i = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive()) {
                 continue;
@@ -516,12 +516,12 @@ namespace FIFE
             float modifier;
             if (m_acceleration) {
                 uint32_t ticks     = SDL_GetTicks();
-                float difference   = static_cast<float>((ticks - m_lastTicks) + 1);
+                auto difference   = static_cast<float>((ticks - m_lastTicks) + 1);
                 m_lastTicks        = ticks;
-                float dx           = static_cast<float>(tmp_x - m_oldX);
-                float dy           = static_cast<float>(tmp_y - m_oldY);
+                auto dx           = static_cast<float>(tmp_x - m_oldX);
+                auto dy           = static_cast<float>(tmp_y - m_oldY);
                 float distance     = Mathf::Sqrt((dx * dx) + (dy * dy));
-                float acceleration = static_cast<float>((distance / difference) / difference);
+                auto acceleration = static_cast<float>((distance / difference) / difference);
                 float velocity     = (m_oldVelocity + acceleration * difference) / 2;
                 if (velocity > m_mouseSensitivity + 1) {
                     velocity = m_mouseSensitivity + 1;
@@ -532,12 +532,12 @@ namespace FIFE
                 modifier = m_mouseSensitivity;
             }
 
-            int16_t tmp_xrel = static_cast<int16_t>(tmp_x - m_oldX);
-            int16_t tmp_yrel = static_cast<int16_t>(tmp_y - m_oldY);
+            auto tmp_xrel = static_cast<int16_t>(tmp_x - m_oldX);
+            auto tmp_yrel = static_cast<int16_t>(tmp_y - m_oldY);
             if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
                 Rect screen    = RenderBackend::instance()->getArea();
-                int16_t x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
-                int16_t y_fact = static_cast<int16_t>(round(static_cast<float>(tmp_yrel * modifier)));
+                auto x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
+                auto y_fact = static_cast<int16_t>(round(static_cast<float>(tmp_yrel * modifier)));
                 if ((tmp_x + x_fact) > screen.w) {
                     tmp_x = screen.w;
                 } else if ((tmp_x + x_fact) < screen.x) {

@@ -26,7 +26,7 @@ namespace FIFE
 
     CellGrid* SquareGrid::clone()
     {
-        SquareGrid* nGrid = new SquareGrid();
+        auto* nGrid = new SquareGrid();
         nGrid->setRotation(m_rotation);
         nGrid->setXScale(m_xscale);
         nGrid->setYScale(m_yscale);
@@ -111,19 +111,19 @@ namespace FIFE
     void SquareGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell)
     {
         vtx.clear();
-        double x = static_cast<double>(cell.x);
-        double y = static_cast<double>(cell.y);
-        vtx.push_back(ExactModelCoordinate(x - 0.5, y - 0.5));
-        vtx.push_back(ExactModelCoordinate(x + 0.5, y - 0.5));
-        vtx.push_back(ExactModelCoordinate(x + 0.5, y + 0.5));
-        vtx.push_back(ExactModelCoordinate(x - 0.5, y + 0.5));
+        auto x = static_cast<double>(cell.x);
+        auto y = static_cast<double>(cell.y);
+        vtx.emplace_back(x - 0.5, y - 0.5);
+        vtx.emplace_back(x + 0.5, y - 0.5);
+        vtx.emplace_back(x + 0.5, y + 0.5);
+        vtx.emplace_back(x - 0.5, y + 0.5);
     }
 
     std::vector<ModelCoordinate> SquareGrid::toMultiCoordinates(
         const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse)
     {
         std::vector<ModelCoordinate> coords;
-        std::vector<ModelCoordinate>::const_iterator it = orig.begin();
+        auto it = orig.begin();
         if (reverse) {
             for (; it != orig.end(); ++it) {
                 ModelCoordinate mc = position;

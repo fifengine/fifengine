@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <utility>
 
 // 3rd party library includes
 
@@ -22,7 +23,7 @@ namespace FIFE
      */
     static Logger _log(LM_VFS);
 
-    VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(nullptr), m_name(name) { }
+    VFSSourceProvider::VFSSourceProvider(std::string  name) : m_vfs(nullptr), m_name(std::move(name)) { }
 
     VFSSourceProvider::~VFSSourceProvider() = default;
 

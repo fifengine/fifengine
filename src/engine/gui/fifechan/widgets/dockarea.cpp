@@ -230,10 +230,10 @@ namespace fcn
         if ((placeBefore != nullptr) || (placeAfter != nullptr)) {
             mChildren.remove(widget);
             if (placeBefore != nullptr) {
-                std::list<Widget*>::iterator it = std::find(mChildren.begin(), mChildren.end(), placeBefore);
+                auto it = std::ranges::find(mChildren, placeBefore);
                 mChildren.insert(it, widget);
             } else {
-                std::list<Widget*>::iterator it = std::find(mChildren.begin(), mChildren.end(), placeAfter);
+                auto it = std::ranges::find(mChildren, placeAfter);
                 ++it;
                 mChildren.insert(it, widget);
             }
@@ -250,9 +250,9 @@ namespace fcn
             DockArea* bottom                = nullptr;
             DockArea* left                  = nullptr;
             std::list<Widget*> widgets      = parent->getWidgetsIn(parent->getChildrenArea());
-            std::list<Widget*>::iterator it = widgets.begin();
+            auto it = widgets.begin();
             for (; it != widgets.end(); ++it) {
-                DockArea* tmp = dynamic_cast<DockArea*>(*it);
+                auto* tmp = dynamic_cast<DockArea*>(*it);
                 if (tmp == nullptr) {
                     continue;
                 }

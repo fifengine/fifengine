@@ -44,7 +44,7 @@ namespace FIFE
     void OpenGLGuiGraphics::drawImage(
         const fcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height)
     {
-        const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
+        const auto* g_img = dynamic_cast<const GuiImage*>(image);
         assert(g_img);
 
         ImagePtr fifeimg               = g_img->getFIFEImage();
@@ -123,9 +123,9 @@ namespace FIFE
     {
         const fcn::ClipRectangle& top = mClipStack.top();
         std::vector<Point> npoints;
-        fcn::PointVector::const_iterator it = points.begin();
+        auto it = points.begin();
         for (; it != points.end(); ++it) {
-            npoints.push_back(Point((*it).x + top.xOffset, (*it).y + top.yOffset));
+            npoints.emplace_back((*it).x + top.xOffset, (*it).y + top.yOffset);
         }
         m_renderbackend->drawPolyLine(npoints, width, mColor.r, mColor.g, mColor.b, mColor.a);
     }
@@ -134,9 +134,9 @@ namespace FIFE
     {
         const fcn::ClipRectangle& top = mClipStack.top();
         std::vector<Point> npoints;
-        fcn::PointVector::const_iterator it = points.begin();
+        auto it = points.begin();
         for (; it != points.end(); ++it) {
-            npoints.push_back(Point((*it).x + top.xOffset, (*it).y + top.yOffset));
+            npoints.emplace_back((*it).x + top.xOffset, (*it).y + top.yOffset);
         }
         m_renderbackend->drawBezier(npoints, steps, width, mColor.r, mColor.g, mColor.b, mColor.a);
     }

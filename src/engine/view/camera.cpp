@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -67,8 +68,8 @@ namespace FIFE
         }
     };
 
-    Camera::Camera(const std::string& id, Map* map, const Rect& viewport, RenderBackend* renderbackend) :
-        m_id(id),
+    Camera::Camera(std::string  id, Map* map, const Rect& viewport, RenderBackend* renderbackend) :
+        m_id(std::move(id)),
         m_map(map),
         m_viewport(viewport),
         m_renderbackend(renderbackend),
@@ -110,12 +111,12 @@ namespace FIFE
         if (m_map != nullptr) {
             m_map->removeChangeListener(m_map_observer);
             const std::list<Layer*>& layers = m_map->getLayers();
-            for (std::list<Layer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
-                removeLayer(*i);
+            for (auto layer : layers) {
+                removeLayer(layer);
             }
         }
 
-        std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
+        auto r_it = m_renderers.begin();
         for (; r_it != m_renderers.end(); ++r_it) {
             r_it->second->reset();
             delete r_it->second;
@@ -134,8 +135,8 @@ namespace FIFE
         // Trigger addition of LayerCaches and MapObserver
         m_map->addChangeListener(m_map_observer);
         const std::list<Layer*>& layers = m_map->getLayers();
-        for (std::list<Layer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
-            addLayer(*i);
+        for (auto layer : layers) {
+            addLayer(layer);
         }
     }
 
@@ -314,7 +315,7 @@ namespace FIFE
             ExactModelCoordinate emc = toMapCoordinates(sp1, false);
             ModelCoordinate min(static_cast<int32_t>(emc.x), static_cast<int32_t>(emc.y));
             ModelCoordinate max(static_cast<int32_t>(emc.x + 0.5), static_cast<int32_t>(emc.y + 0.5));
-            std::vector<ExactModelCoordinate>::iterator it = coords.begin();
+            auto it = coords.begin();
             for (; it != coords.end(); ++it) {
                 min.x = std::min(min.x, static_cast<int32_t>((*it).x));
                 min.y = std::min(min.y, static_cast<int32_t>((*it).y));
@@ -500,10 +501,10 @@ namespace FIFE
     DoublePoint Camera::getLogicalCellDimensions()
     {
         std::vector<ExactModelCoordinate> vertices;
-        vertices.push_back(ExactModelCoordinate(-0.5, -0.5));
-        vertices.push_back(ExactModelCoordinate(0.5, -0.5));
-        vertices.push_back(ExactModelCoordinate(0.5, 0.5));
-        vertices.push_back(ExactModelCoordinate(-0.5, 0.5));
+        vertices.emplace_back(-0.5, -0.5);
+        vertices.emplace_back(0.5, -0.5);
+        vertices.emplace_back(0.5, 0.5);
+        vertices.emplace_back(-0.5, 0.5);
 
         DoubleMatrix mtx;
         mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
@@ -556,7 +557,7 @@ namespace FIFE
         bool special_alpha = alpha != 0;
 
         const RenderList& layer_instances      = m_layerToInstances[&layer];
-        RenderList::const_iterator instance_it = layer_instances.end();
+        auto instance_it = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i          = (*instance_it)->instance;
@@ -572,18 +573,18 @@ namespace FIFE
                 int32_t x = screen_coords.x - vc.dimensions.x;
                 int32_t y = screen_coords.y - vc.dimensions.y;
                 if (zoomed) {
-                    double fx  = static_cast<double>(x);
-                    double fy  = static_cast<double>(y);
-                    double fow = static_cast<double>(vc.image->getWidth());
-                    double foh = static_cast<double>(vc.image->getHeight());
-                    double fsw = static_cast<double>(vc.dimensions.w);
-                    double fsh = static_cast<double>(vc.dimensions.h);
+                    auto fx  = static_cast<double>(x);
+                    auto fy  = static_cast<double>(y);
+                    auto fow = static_cast<double>(vc.image->getWidth());
+                    auto foh = static_cast<double>(vc.image->getHeight());
+                    auto fsw = static_cast<double>(vc.dimensions.w);
+                    auto fsh = static_cast<double>(vc.dimensions.h);
                     x          = static_cast<int32_t>(round(fx / fsw * fow));
                     y          = static_cast<int32_t>(round(fy / fsh * foh));
                 }
                 if (vc.getAnimationOverlay() != nullptr) {
                     std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
-                    std::vector<ImagePtr>::iterator it = ao->begin();
+                    auto it = ao->begin();
                     for (; it != ao->end(); ++it) {
                         if ((*it)->isSharedImage()) {
                             (*it)->forceLoadInternal();
@@ -615,7 +616,7 @@ namespace FIFE
         bool special_alpha = alpha != 0;
 
         const RenderList& layer_instances      = m_layerToInstances[&layer];
-        RenderList::const_iterator instance_it = layer_instances.end();
+        auto instance_it = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
@@ -639,18 +640,18 @@ namespace FIFE
                         int32_t x = xx - vc.dimensions.x;
                         int32_t y = yy - vc.dimensions.y;
                         if (zoomed) {
-                            double fx  = static_cast<double>(x);
-                            double fy  = static_cast<double>(y);
-                            double fow = static_cast<double>(vc.image->getWidth());
-                            double foh = static_cast<double>(vc.image->getHeight());
-                            double fsw = static_cast<double>(vc.dimensions.w);
-                            double fsh = static_cast<double>(vc.dimensions.h);
+                            auto fx  = static_cast<double>(x);
+                            auto fy  = static_cast<double>(y);
+                            auto fow = static_cast<double>(vc.image->getWidth());
+                            auto foh = static_cast<double>(vc.image->getHeight());
+                            auto fsw = static_cast<double>(vc.dimensions.w);
+                            auto fsh = static_cast<double>(vc.dimensions.h);
                             x          = static_cast<int32_t>(round(fx / fsw * fow));
                             y          = static_cast<int32_t>(round(fy / fsh * foh));
                         }
                         if (vc.getAnimationOverlay() != nullptr) {
                             std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
-                            std::vector<ImagePtr>::iterator it = ao->begin();
+                            auto it = ao->begin();
                             for (; it != ao->end(); ++it) {
                                 if ((*it)->isSharedImage()) {
                                     (*it)->forceLoadInternal();
@@ -688,7 +689,7 @@ found_non_transparent_pixel:;
         }
 
         const RenderList& layer_instances      = m_layerToInstances[layer];
-        RenderList::const_iterator instance_it = layer_instances.end();
+        auto instance_it = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
@@ -787,7 +788,7 @@ found_non_transparent_pixel:;
 
     void Camera::resetRenderers()
     {
-        std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
+        auto r_it = m_renderers.begin();
         for (; r_it != m_renderers.end(); ++r_it) {
             r_it->second->reset();
         }
@@ -1000,7 +1001,7 @@ found_non_transparent_pixel:;
                     uint32_t start = i * MAX_BATCH_SIZE;
                     uint32_t end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
                     RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
-                    std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+                    auto r_it = m_pipeline.begin();
                     for (; r_it != m_pipeline.end(); ++r_it) {
                         if ((*r_it)->isActivedLayer(layer)) {
                             (*r_it)->render(this, layer, tempList);
@@ -1009,7 +1010,7 @@ found_non_transparent_pixel:;
                     }
                 }
             } else {
-                std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+                auto r_it = m_pipeline.begin();
                 for (; r_it != m_pipeline.end(); ++r_it) {
                     if ((*r_it)->isActivedLayer(layer)) {
                         (*r_it)->render(this, layer, instancesToRender);
@@ -1030,7 +1031,7 @@ found_non_transparent_pixel:;
         }
 
         const std::list<Layer*>& layers            = m_map->getLayers();
-        std::list<Layer*>::const_iterator layer_it = layers.begin();
+        auto layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             LayerCache* cache = m_cache[*layer_it];
             if (cache == nullptr) {
@@ -1064,7 +1065,7 @@ found_non_transparent_pixel:;
         }
 
         const std::list<Layer*>& layers            = m_map->getLayers();
-        std::list<Layer*>::const_iterator layer_it = layers.begin();
+        auto layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             // layer with static flag will rendered as one texture
             if ((*layer_it)->isStatic()) {
@@ -1092,7 +1093,7 @@ found_non_transparent_pixel:;
                     uint32_t start = i * MAX_BATCH_SIZE;
                     uint32_t end   = start + ((i + 1 == batches) ? residual : MAX_BATCH_SIZE);
                     RenderList tempList(instancesToRender.begin() + start, instancesToRender.begin() + end);
-                    std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+                    auto r_it = m_pipeline.begin();
                     for (; r_it != m_pipeline.end(); ++r_it) {
                         if ((*r_it)->isActivedLayer(*layer_it)) {
                             (*r_it)->render(this, *layer_it, tempList);
@@ -1101,7 +1102,7 @@ found_non_transparent_pixel:;
                     }
                 }
             } else {
-                std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+                auto r_it = m_pipeline.begin();
                 for (; r_it != m_pipeline.end(); ++r_it) {
                     if ((*r_it)->isActivedLayer(*layer_it)) {
                         (*r_it)->render(this, *layer_it, instancesToRender);

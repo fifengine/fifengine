@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -52,11 +53,11 @@ namespace FIFE
 
     int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance)
     {
-        ObjectVisual* objVis = instance->getObject()->getVisual<ObjectVisual>();
+        auto* objVis = instance->getObject()->getVisual<ObjectVisual>();
         if (objVis == nullptr) {
             return STATIC_IMAGE_NOT_INITIALIZED;
         }
-        if (static_cast<int32_t>(angle) != m_cachedStaticImgAngle) {
+        if (std::cmp_not_equal(angle, m_cachedStaticImgAngle)) {
             m_cachedStaticImgId = STATIC_IMAGE_NOT_INITIALIZED;
         }
         if (objVis->isColorOverlay()) {

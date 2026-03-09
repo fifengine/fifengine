@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <list>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -136,7 +137,7 @@ namespace FIFE
         }
 
         int32_t pos = static_cast<int32_t>(m_walked) + step;
-        if (pos > static_cast<int32_t>(m_path.size()) || pos < 0) {
+        if (pos < 0 || pos >= static_cast<int32_t>(m_path.size())) {
             return false;
         }
         if (step > 0) {
@@ -326,10 +327,10 @@ namespace FIFE
     {
         Path p;
         if (!m_path.empty()) {
-            for (PathIterator it = m_path.begin(); it != m_path.end(); ++it) {
-                Layer* layer = (*it).getLayer();
-                if (layer->cellContainsBlockingInstance((*it).getLayerCoordinates())) {
-                    p.push_back(*it);
+            for (auto & it : m_path) {
+                Layer* layer = it.getLayer();
+                if (layer->cellContainsBlockingInstance(it.getLayerCoordinates())) {
+                    p.push_back(it);
                 }
             }
         }

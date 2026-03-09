@@ -68,20 +68,20 @@ namespace FIFE
         mapElement->SetAttribute("format", "1.0");
         doc.InsertEndChild(mapElement);
 
-        for (std::vector<std::string>::const_iterator iter = importFiles.begin(); iter != importFiles.end(); ++iter) {
+        for (const auto & importFile : importFiles) {
             XML::Element* importElement = doc.NewElement("import");
-            importElement->SetAttribute("file", iter->c_str());
+            importElement->SetAttribute("file", importFile.c_str());
 
             // link to map element
             mapElement->InsertEndChild(importElement);
         }
 
-        typedef std::list<Layer*> LayerList;
+        using LayerList = std::list<Layer*>;
         LayerList layers = map.getLayers();
-        for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
+        for (auto & layer : layers) {
             XML::Element* layerElement = doc.NewElement("layer");
-            CellGrid* grid             = (*iter)->getCellGrid();
-            layerElement->SetAttribute("id", (*iter)->getId().c_str());
+            CellGrid* grid             = layer->getCellGrid();
+            layerElement->SetAttribute("id", layer->getId().c_str());
             layerElement->SetAttribute("x_offset", grid->getXShift());
             layerElement->SetAttribute("y_offset", grid->getYShift());
             layerElement->SetAttribute("z_offset", grid->getZShift());
@@ -89,10 +89,10 @@ namespace FIFE
             layerElement->SetAttribute("y_scale", grid->getYScale());
             layerElement->SetAttribute("rotation", grid->getRotation());
             layerElement->SetAttribute("grid_type", grid->getType().c_str());
-            layerElement->SetAttribute("transparency", (*iter)->getLayerTransparency());
+            layerElement->SetAttribute("transparency", layer->getLayerTransparency());
 
             std::string pathingStrategy;
-            switch ((*iter)->getPathingStrategy()) {
+            switch (layer->getPathingStrategy()) {
             case CELL_EDGES_ONLY: {
                 pathingStrategy = "cell_edges_only";
             } break;
@@ -106,7 +106,7 @@ namespace FIFE
             layerElement->SetAttribute("pathing", pathingStrategy.c_str());
 
             std::string sortingStrategy;
-            switch ((*iter)->getSortingStrategy()) {
+            switch (layer->getSortingStrategy()) {
             case SORTING_CAMERA: {
                 sortingStrategy = "camera";
             } break;
@@ -122,11 +122,11 @@ namespace FIFE
             }
             layerElement->SetAttribute("sorting", sortingStrategy.c_str());
 
-            if ((*iter)->isWalkable()) {
+            if (layer->isWalkable()) {
                 layerElement->SetAttribute("layer_type", "walkable");
-            } else if ((*iter)->isInteract()) {
+            } else if (layer->isInteract()) {
                 layerElement->SetAttribute("layer_type", "interact");
-                layerElement->SetAttribute("layer_type_id", (*iter)->getWalkableId().c_str());
+                layerElement->SetAttribute("layer_type_id", layer->getWalkableId().c_str());
             }
 
             // add layer to document
@@ -137,10 +137,10 @@ namespace FIFE
             layerElement->InsertEndChild(instancesElement);
 
             std::string currentNamespace;
-            typedef std::vector<Instance*> InstancesContainer;
-            InstancesContainer instances = (*iter)->getInstances();
-            for (InstancesContainer::iterator iter = instances.begin(); iter != instances.end(); ++iter) {
-                Object* obj = (*iter)->getObject();
+            using InstancesContainer = std::vector<Instance*>;
+            InstancesContainer instances = layer->getInstances();
+            for (auto & instance : instances) {
+                Object* obj = instance->getObject();
                 // don't save part instances
                 if (obj->isMultiPart()) {
                     continue;
@@ -156,38 +156,38 @@ namespace FIFE
                     currentNamespace = obj->getNamespace();
                 }
 
-                if (!(*iter)->getId().empty()) {
-                    instanceElement->SetAttribute("id", (*iter)->getId().c_str());
+                if (!instance->getId().empty()) {
+                    instanceElement->SetAttribute("id", instance->getId().c_str());
                 }
 
                 instanceElement->SetAttribute("o", obj->getId().c_str());
 
-                ExactModelCoordinate position = (*iter)->getLocationRef().getExactLayerCoordinates();
+                ExactModelCoordinate position = instance->getLocationRef().getExactLayerCoordinates();
                 instanceElement->SetAttribute("x", position.x);
                 instanceElement->SetAttribute("y", position.y);
                 instanceElement->SetAttribute("z", position.z);
-                instanceElement->SetAttribute("r", (*iter)->getRotation());
+                instanceElement->SetAttribute("r", instance->getRotation());
 
-                if ((*iter)->isBlocking()) {
-                    instanceElement->SetAttribute("blocking", (*iter)->isBlocking());
+                if (instance->isBlocking()) {
+                    instanceElement->SetAttribute("blocking", instance->isBlocking());
                 }
 
-                if ((*iter)->getCellStackPosition() != obj->getCellStackPosition()) {
-                    instanceElement->SetAttribute("cellstack", (*iter)->getCellStackPosition());
+                if (instance->getCellStackPosition() != obj->getCellStackPosition()) {
+                    instanceElement->SetAttribute("cellstack", instance->getCellStackPosition());
                 }
 
-                if ((*iter)->isSpecialCost()) {
+                if (instance->isSpecialCost()) {
                     if (!obj->isSpecialCost()) {
-                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId().c_str());
-                        instanceElement->SetAttribute("cost", (*iter)->getCost());
+                        instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
+                        instanceElement->SetAttribute("cost", instance->getCost());
                     } else if (
-                        (*iter)->getCostId() != obj->getCostId() || !Mathd::Equal((*iter)->getCost(), obj->getCost())) {
-                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId().c_str());
-                        instanceElement->SetAttribute("cost", (*iter)->getCost());
+                        instance->getCostId() != obj->getCostId() || !Mathd::Equal(instance->getCost(), obj->getCost())) {
+                        instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
+                        instanceElement->SetAttribute("cost", instance->getCost());
                     }
                 }
 
-                InstanceVisual* instanceVisual = (*iter)->getVisual<InstanceVisual>();
+                auto* instanceVisual = instance->getVisual<InstanceVisual>();
                 instanceElement->SetAttribute("stackpos", instanceVisual->getStackPosition());
 
                 instancesElement->InsertEndChild(instanceElement);
@@ -196,14 +196,14 @@ namespace FIFE
         // add cellcaches tag to document
         XML::Element* cellcachesElement = doc.NewElement("cellcaches");
         mapElement->InsertEndChild(cellcachesElement);
-        for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
-            CellCache* cache = (*iter)->getCellCache();
+        for (auto & layer : layers) {
+            CellCache* cache = layer->getCellCache();
             if (cache == nullptr) {
                 continue;
             }
             // add cellcache tag to document
             XML::Element* cellcacheElement = doc.NewElement("cellcache");
-            cellcacheElement->SetAttribute("id", (*iter)->getId().c_str());
+            cellcacheElement->SetAttribute("id", layer->getId().c_str());
             cellcacheElement->SetAttribute("default_cost", cache->getDefaultCostMultiplier());
             cellcacheElement->SetAttribute("default_speed", cache->getDefaultSpeedMultiplier());
             cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
@@ -212,9 +212,9 @@ namespace FIFE
             bool saveNarrows                   = !cache->isSearchNarrowCells() && !narrowCells.empty();
 
             const std::vector<std::vector<Cell*>>& cells       = cache->getCells();
-            std::vector<std::vector<Cell*>>::const_iterator it = cells.begin();
+            auto it = cells.begin();
             for (; it != cells.end(); ++it) {
-                std::vector<Cell*>::const_iterator cit = (*it).begin();
+                auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
                     Cell* cell                     = *cit;
                     std::list<std::string> costIds = cache->getCosts();
@@ -229,10 +229,10 @@ namespace FIFE
                     if (!areasEmpty) {
                         const std::set<Instance*>& cellInstances = cell->getInstances();
                         if (!cellInstances.empty()) {
-                            std::vector<std::string>::iterator area_it = areaIds.begin();
+                            auto area_it = areaIds.begin();
                             for (; area_it != areaIds.end(); ++area_it) {
                                 bool objectArea                                 = false;
-                                std::set<Instance*>::const_iterator instance_it = cellInstances.begin();
+                                auto instance_it = cellInstances.begin();
                                 for (; instance_it != cellInstances.end(); ++instance_it) {
                                     if ((*instance_it)->getObject()->getArea() == *area_it) {
                                         objectArea = true;
@@ -254,7 +254,7 @@ namespace FIFE
                     TransitionInfo* transition = cell->getTransition();
                     bool isNarrow              = false;
                     if (saveNarrows) {
-                        std::set<Cell*>::const_iterator narrow_it = narrowCells.find(cell);
+                        auto narrow_it = narrowCells.find(cell);
                         if (narrow_it != narrowCells.end()) {
                             isNarrow = true;
                         }
@@ -287,7 +287,7 @@ namespace FIFE
                     }
                     // add cost tag
                     if (!costsEmpty) {
-                        std::list<std::string>::iterator cost_it = costIds.begin();
+                        auto cost_it = costIds.begin();
                         for (; cost_it != costIds.end(); ++cost_it) {
                             if (cache->existsCostForCell(*cost_it, cell)) {
                                 XML::Element* costElement = doc.NewElement("cost");
@@ -299,7 +299,7 @@ namespace FIFE
                     }
                     // add area tag
                     if (!areasEmpty) {
-                        std::vector<std::string>::iterator area_it = cellAreaIds.begin();
+                        auto area_it = cellAreaIds.begin();
                         for (; area_it != cellAreaIds.end(); ++area_it) {
                             XML::Element* areaElement = doc.NewElement("area");
                             areaElement->SetAttribute("id", area_it->c_str());
@@ -334,45 +334,42 @@ namespace FIFE
             // add triggers tag to document
             XML::Element* triggersElement = doc.NewElement("triggers");
             mapElement->InsertEndChild(triggersElement);
-            for (std::vector<Trigger*>::iterator iter = triggers.begin(); iter != triggers.end(); ++iter) {
+            for (auto & trigger : triggers) {
                 // add trigger tag to document
                 XML::Element* triggerElement = doc.NewElement("trigger");
-                triggerElement->SetAttribute("name", (*iter)->getName().c_str());
-                triggerElement->SetAttribute("triggered", (*iter)->isTriggered());
-                triggerElement->SetAttribute("all_instances", (*iter)->isEnabledForAllInstances());
-                if ((*iter)->getAttached() != nullptr) {
-                    triggerElement->SetAttribute("attached_instance", (*iter)->getAttached()->getId().c_str());
+                triggerElement->SetAttribute("name", trigger->getName().c_str());
+                triggerElement->SetAttribute("triggered", trigger->isTriggered());
+                triggerElement->SetAttribute("all_instances", trigger->isEnabledForAllInstances());
+                if (trigger->getAttached() != nullptr) {
+                    triggerElement->SetAttribute("attached_instance", trigger->getAttached()->getId().c_str());
                     triggerElement->SetAttribute(
-                        "attached_layer", (*iter)->getAttached()->getLocationRef().getLayer()->getId().c_str());
+                        "attached_layer", trigger->getAttached()->getLocationRef().getLayer()->getId().c_str());
                 }
-                const std::vector<Cell*>& cells = (*iter)->getAssignedCells();
+                const std::vector<Cell*>& cells = trigger->getAssignedCells();
                 if (!cells.empty()) {
-                    for (std::vector<Cell*>::const_iterator citer = cells.begin(); citer != cells.end(); ++citer) {
+                    for (auto cell : cells) {
                         XML::Element* cellElement = doc.NewElement("assign");
-                        cellElement->SetAttribute("layer_id", (*citer)->getLayer()->getId().c_str());
-                        cellElement->SetAttribute("x", (*citer)->getLayerCoordinates().x);
-                        cellElement->SetAttribute("y", (*citer)->getLayerCoordinates().y);
+                        cellElement->SetAttribute("layer_id", cell->getLayer()->getId().c_str());
+                        cellElement->SetAttribute("x", cell->getLayerCoordinates().x);
+                        cellElement->SetAttribute("y", cell->getLayerCoordinates().y);
                         triggerElement->InsertEndChild(cellElement);
                     }
                 }
-                const std::vector<Instance*>& instances = (*iter)->getEnabledInstances();
+                const std::vector<Instance*>& instances = trigger->getEnabledInstances();
                 if (!instances.empty()) {
-                    for (std::vector<Instance*>::const_iterator citer = instances.begin(); citer != instances.end();
-                         ++citer) {
+                    for (auto instance : instances) {
                         XML::Element* instanceElement = doc.NewElement("enabled");
                         instanceElement->SetAttribute(
-                            "layer_id", (*citer)->getLocationRef().getLayer()->getId().c_str());
-                        instanceElement->SetAttribute("instance_id", (*citer)->getId().c_str());
+                            "layer_id", instance->getLocationRef().getLayer()->getId().c_str());
+                        instanceElement->SetAttribute("instance_id", instance->getId().c_str());
                         triggerElement->InsertEndChild(instanceElement);
                     }
                 }
-                const std::vector<TriggerCondition>& conditions = (*iter)->getTriggerConditions();
+                const std::vector<TriggerCondition>& conditions = trigger->getTriggerConditions();
                 if (!conditions.empty()) {
-                    for (std::vector<TriggerCondition>::const_iterator citer = conditions.begin();
-                         citer != conditions.end();
-                         ++citer) {
+                    for (auto condition : conditions) {
                         XML::Element* conditionElement = doc.NewElement("condition");
-                        conditionElement->SetAttribute("id", (*citer));
+                        conditionElement->SetAttribute("id", condition);
                         triggerElement->InsertEndChild(conditionElement);
                     }
                 }
@@ -380,34 +377,34 @@ namespace FIFE
             }
         }
 
-        typedef std::vector<Camera*> CameraContainer;
+        using CameraContainer = std::vector<Camera*>;
         CameraContainer cameras = map.getCameras();
-        for (CameraContainer::iterator iter = cameras.begin(); iter != cameras.end(); ++iter) {
-            if ((*iter)->getMap()->getId() == map.getId()) {
+        for (auto & camera : cameras) {
+            if (camera->getMap()->getId() == map.getId()) {
                 XML::Element* cameraElement = doc.NewElement("camera");
 
-                cameraElement->SetAttribute("id", (*iter)->getId().c_str());
-                cameraElement->SetAttribute("zoom", (*iter)->getZoom());
-                cameraElement->SetAttribute("tilt", (*iter)->getTilt());
-                cameraElement->SetAttribute("rotation", (*iter)->getRotation());
-                if ((*iter)->isZToYEnabled()) {
-                    cameraElement->SetAttribute("ztoy", (*iter)->getZToY());
+                cameraElement->SetAttribute("id", camera->getId().c_str());
+                cameraElement->SetAttribute("zoom", camera->getZoom());
+                cameraElement->SetAttribute("tilt", camera->getTilt());
+                cameraElement->SetAttribute("rotation", camera->getRotation());
+                if (camera->isZToYEnabled()) {
+                    cameraElement->SetAttribute("ztoy", camera->getZToY());
                 }
 
-                Rect viewport = (*iter)->getViewPort();
+                Rect viewport = camera->getViewPort();
                 std::ostringstream viewportString;
                 viewportString << viewport.x << "," << viewport.y << "," << viewport.w << "," << viewport.h;
 
                 cameraElement->SetAttribute("viewport", viewportString.str().c_str());
 
-                Point p = (*iter)->getCellImageDimensions();
+                Point p = camera->getCellImageDimensions();
                 cameraElement->SetAttribute("ref_cell_width", p.x);
                 cameraElement->SetAttribute("ref_cell_height", p.y);
 
-                std::vector<float> lightingColor = (*iter)->getLightingColor();
+                std::vector<float> lightingColor = camera->getLightingColor();
                 bool writeLightingColor          = false;
-                for (uint32_t i = 0; i < lightingColor.size(); ++i) {
-                    if (lightingColor[i] < 1.0) {
+                for (float i : lightingColor) {
+                    if (i < 1.0) {
                         writeLightingColor = true;
                         break;
                     }

@@ -118,7 +118,7 @@ namespace FIFE
     void LogManager::addVisibleModule(logmodule_t module)
     {
         validateModule(module);
-        int32_t ind    = static_cast<int32_t>(module);
+        auto ind    = static_cast<int32_t>(module);
         m_modules[ind] = true;
         if (moduleInfos[ind].parent != LM_CORE) {
             addVisibleModule(moduleInfos[ind].parent);
@@ -133,8 +133,8 @@ namespace FIFE
 
     void LogManager::clearVisibleModules()
     {
-        for (int32_t i = 0; i < LM_MODULE_MAX; i++) {
-            m_modules[i] = false;
+        for (bool & m_module : m_modules) {
+            m_module = false;
         }
     }
 

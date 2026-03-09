@@ -69,9 +69,9 @@ namespace FIFE
         CellCache* cache = layer->getCellCache();
         if (cache != nullptr) {
             const std::vector<std::vector<Cell*>>& cells       = cache->getCells();
-            std::vector<std::vector<Cell*>>::const_iterator it = cells.begin();
+            auto it = cells.begin();
             for (; it != cells.end(); ++it) {
-                std::vector<Cell*>::const_iterator cit = (*it).begin();
+                auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
                     ExactModelCoordinate emc = FIFE::intPt2doublePt((*cit)->getLayerCoordinates());
                     ScreenPoint sp           = cam->toScreenCoordinates(cg->toMapCoordinates(emc));
@@ -82,7 +82,7 @@ namespace FIFE
                     if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                         std::vector<ExactModelCoordinate> vertices;
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                        std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+                        auto it = vertices.begin();
                         int32_t halfind                                      = vertices.size() / 2;
                         ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                         Point pt1(firstpt.x, firstpt.y);
@@ -105,7 +105,7 @@ namespace FIFE
                 }
             }
         } else {
-            RenderList::const_iterator instance_it = instances.begin();
+            auto instance_it = instances.begin();
             for (; instance_it != instances.end(); ++instance_it) {
                 Instance* instance = (*instance_it)->instance;
                 if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
@@ -113,7 +113,7 @@ namespace FIFE
                 }
                 std::vector<ExactModelCoordinate> vertices;
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-                std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+                auto it = vertices.begin();
                 int32_t halfind                                      = vertices.size() / 2;
                 ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                 Point pt1(firstpt.x, firstpt.y);

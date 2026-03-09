@@ -71,8 +71,8 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             Rect r;
             Rect viewport   = cam->getViewPort();
-            uint32_t width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
-            uint32_t height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+            auto width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+            auto height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
             r.x             = p.x - width / 2;
             r.y             = p.y - height / 2;
             r.w             = width;
@@ -109,8 +109,8 @@ namespace FIFE
             ImagePtr img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
             Rect viewport   = cam->getViewPort();
-            uint32_t width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-            uint32_t height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+            auto width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+            auto height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
             r.x             = p.x - width / 2;
             r.y             = p.y - height / 2;
             r.w             = width;
@@ -140,8 +140,8 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             Rect r;
             Rect viewport   = cam->getViewPort();
-            uint32_t width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-            uint32_t height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+            auto width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+            auto height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
             r.x             = p.x - width / 2;
             r.y             = p.y - height / 2;
             r.w             = width;
@@ -285,7 +285,7 @@ namespace FIFE
     // Enable stencil test for the group
     void LightRenderer::addStencilTest(const std::string& group, uint8_t stencil_ref)
     {
-        std::vector<LightRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             (*info_it)->setStencil(stencil_ref);
         }
@@ -293,7 +293,7 @@ namespace FIFE
     // Disable stencil test for the group
     void LightRenderer::removeStencilTest(const std::string& group)
     {
-        std::vector<LightRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             (*info_it)->removeStencil();
         }
@@ -302,7 +302,7 @@ namespace FIFE
     std::list<std::string> LightRenderer::getGroups()
     {
         std::list<std::string> groups;
-        std::map<std::string, std::vector<LightRendererElementInfo*>>::iterator group_it = m_groups.begin();
+        auto group_it = m_groups.begin();
         for (; group_it != m_groups.end(); ++group_it) {
             groups.push_back(group_it->first);
         }
@@ -314,7 +314,7 @@ namespace FIFE
     std::vector<LightRendererElementInfo*> LightRenderer::getLightInfo(const std::string& group)
     {
         std::vector<LightRendererElementInfo*> info;
-        std::vector<LightRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             info.push_back(*info_it);
         }
@@ -323,7 +323,7 @@ namespace FIFE
     // Remove the group
     void LightRenderer::removeAll(const std::string& group)
     {
-        std::vector<LightRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             delete *info_it;
         }
@@ -333,9 +333,9 @@ namespace FIFE
     // Remove all groups
     void LightRenderer::removeAll()
     {
-        std::map<std::string, std::vector<LightRendererElementInfo*>>::iterator it = m_groups.begin();
+        auto it = m_groups.begin();
         for (; it != m_groups.end(); ++it) {
-            std::vector<LightRendererElementInfo*>::const_iterator info_it = it->second.begin();
+            auto info_it = it->second.begin();
             for (; info_it != it->second.end(); ++info_it) {
                 delete *info_it;
             }
@@ -356,9 +356,9 @@ namespace FIFE
             return;
         }
 
-        std::map<std::string, std::vector<LightRendererElementInfo*>>::iterator group_it = m_groups.begin();
+        auto group_it = m_groups.begin();
         for (; group_it != m_groups.end(); ++group_it) {
-            std::vector<LightRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
+            auto info_it = group_it->second.begin();
             for (; info_it != group_it->second.end(); ++info_it) {
                 if (lm != 0) {
                     if ((*info_it)->getStencil() != -1 && (*info_it)->getStencil() < 255) {

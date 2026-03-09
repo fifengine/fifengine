@@ -28,7 +28,7 @@ namespace FIFE
         }
 
         int32_t wangle = (360 + angle) % 360;
-        type_angle2id::const_iterator u(angle2id.upper_bound(wangle));
+        auto u(angle2id.upper_bound(wangle));
         type_angle2id::const_iterator tmp;
 
         // take care of the forward wrapping case

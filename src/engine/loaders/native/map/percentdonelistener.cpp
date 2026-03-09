@@ -52,7 +52,7 @@ namespace FIFE
                 fireEvent(maxPercent);
             } else {
                 // calculate percent done
-                uint32_t percentDone =
+                auto percentDone =
                     static_cast<uint32_t>((static_cast<float>(m_count) / m_totalElements) * maxPercent);
 
                 if ((percentDone % m_percent) == 0 && (percentDone != m_percent * m_numberOfEvents)) {
@@ -85,7 +85,7 @@ namespace FIFE
 
     void PercentDoneCallback::removeListener(PercentDoneListener* listener)
     {
-        ListenerContainer::iterator iter = m_listeners.begin();
+        auto iter = m_listeners.begin();
         for (; iter != m_listeners.end(); ++iter) {
             if (*iter == listener) {
                 m_listeners.erase(iter);
@@ -96,7 +96,7 @@ namespace FIFE
 
     void PercentDoneCallback::fireEvent(uint32_t percent)
     {
-        ListenerContainer::iterator iter = m_listeners.begin();
+        auto iter = m_listeners.begin();
         for (; iter != m_listeners.end(); ++iter) {
             (*iter)->OnEvent(percent);
         }

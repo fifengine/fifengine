@@ -158,7 +158,7 @@ namespace FIFE
             shared->load();
             surface = shared->getSurface();
         }
-        SDLImage* image = static_cast<SDLImage*>(shared.get());
+        auto* image = static_cast<SDLImage*>(shared.get());
         m_texture       = image->getTexture();
         if (m_texture == nullptr) {
             // create atlas texture

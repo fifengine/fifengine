@@ -48,9 +48,9 @@ namespace FIFE
     Object::MultiObjectProperty::MultiObjectProperty() : m_multiPart(false), m_restrictedRotation(false) { }
     Object::MultiObjectProperty::~MultiObjectProperty() = default;
 
-    Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited) :
-        m_id(identifier),
-        m_namespace(name_space),
+    Object::Object(std::string  identifier, std::string  name_space, Object* inherited) :
+        m_id(std::move(identifier)),
+        m_namespace(std::move(name_space)),
 
         m_inherited(inherited),
         m_visual(nullptr),
@@ -80,7 +80,7 @@ namespace FIFE
         }
         actions = m_basicProperty->m_actions;
 
-        std::map<std::string, Action*>::const_iterator it = actions->begin();
+        auto it = actions->begin();
         for (; it != actions->end(); ++it) {
             if (identifier == it->second->getId()) {
                 throw NameClash(identifier);
@@ -126,7 +126,7 @@ namespace FIFE
         }
         std::list<std::string> action_ids;
         if (actions != nullptr) {
-            std::map<std::string, Action*>::const_iterator actions_it = actions->begin();
+            auto actions_it = actions->begin();
             for (; actions_it != actions->end(); ++actions_it) {
                 action_ids.push_back(actions_it->first);
             }
@@ -374,7 +374,7 @@ namespace FIFE
         if (m_inherited != nullptr) {
             return m_inherited->getMultiPartIds();
         }
-        return std::list<std::string>();
+        return {};
     }
 
     void Object::removeMultiPartId(const std::string& partId)
@@ -382,7 +382,7 @@ namespace FIFE
         if (m_multiProperty == nullptr) {
             return;
         }
-        std::list<std::string>::iterator it = m_multiProperty->m_multiPartIds.begin();
+        auto it = m_multiProperty->m_multiPartIds.begin();
         for (; it != m_multiProperty->m_multiPartIds.end(); ++it) {
             if (*it == partId) {
                 m_multiProperty->m_multiPartIds.erase(it);
@@ -434,7 +434,7 @@ namespace FIFE
         if (m_inherited != nullptr) {
             return m_inherited->getMultiParts();
         }
-        return std::set<Object*>();
+        return {};
     }
 
     void Object::removeMultiPart(Object* obj)
@@ -470,7 +470,7 @@ namespace FIFE
         if (m_inherited != nullptr) {
             return m_inherited->getMultiPartCoordinates();
         }
-        return std::multimap<int32_t, ModelCoordinate>();
+        return {};
     }
 
     std::vector<ModelCoordinate> Object::getMultiPartCoordinates(int32_t rotation) const
@@ -484,7 +484,7 @@ namespace FIFE
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiPartCoordinates.equal_range(closest);
-            std::multimap<int32_t, ModelCoordinate>::iterator it = result.first;
+            auto it = result.first;
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
             }
@@ -499,12 +499,12 @@ namespace FIFE
         std::vector<ModelCoordinate> coordinates;
         if (m_multiProperty != nullptr) {
             if (m_multiProperty->m_multiObjectCoordinates.empty()) {
-                std::set<Object*>::iterator subit = m_multiProperty->m_multiParts.begin();
+                auto subit = m_multiProperty->m_multiParts.begin();
                 for (; subit != m_multiProperty->m_multiParts.end(); ++subit) {
                     const std::multimap<int32_t, ModelCoordinate>& subcoords = (*subit)->getMultiPartCoordinates();
                     m_multiProperty->m_multiObjectCoordinates.insert(subcoords.begin(), subcoords.end());
                 }
-                std::multimap<int32_t, ModelCoordinate>::iterator it =
+                auto it =
                     m_multiProperty->m_multiObjectCoordinates.begin();
                 for (; it != m_multiProperty->m_multiObjectCoordinates.end(); ++it) {
                     m_multiProperty->m_multiAngleMap[(*it).first] = (*it).first;
@@ -516,7 +516,7 @@ namespace FIFE
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiObjectCoordinates.equal_range(closest);
-            std::multimap<int32_t, ModelCoordinate>::iterator it = result.first;
+            auto it = result.first;
             ModelCoordinate parent(0, 0);
             coordinates.push_back(parent);
             for (; it != result.second; ++it) {
@@ -645,7 +645,7 @@ namespace FIFE
         if (m_inherited != nullptr) {
             return m_inherited->getWalkableAreas();
         }
-        return std::list<std::string>();
+        return {};
     }
 
     bool Object::operator==(const Object& obj) const

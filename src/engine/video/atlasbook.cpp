@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <utility>
 
 // 3rd party library includes
 
@@ -42,11 +43,11 @@ namespace FIFE
 
     AtlasBlock* AtlasPage::getBlock(uint32_t width, uint32_t height)
     {
-        if (static_cast<int32_t>(width * height * pixelSize) > freePixels) {
+        if (std::cmp_greater(width * height * pixelSize, freePixels)) {
             return nullptr;
         }
 
-        blocks.push_back(AtlasBlock(Rect(), 0));
+        blocks.emplace_back(Rect(), 0);
         AtlasBlock* newBlock = &blocks[blocks.size() - 1];
 
         for (uint32_t v = 0; (v + 1) * height <= this->height; ++v) {
@@ -146,8 +147,8 @@ namespace FIFE
     void AtlasPage::shrink(bool pot)
     {
         AtlasBlock boundaryBox(Rect(), 0);
-        for (Blocks::iterator block = blocks.begin(); block != blocks.end(); ++block) {
-            boundaryBox.merge(*block);
+        for (auto & block : blocks) {
+            boundaryBox.merge(block);
         }
 
         assert(boundaryBox.left == 0);
@@ -194,8 +195,8 @@ namespace FIFE
 
     AtlasBlock* AtlasBook::getBlock(uint32_t width, uint32_t height)
     {
-        for (Pages::iterator page = pages.begin(); page != pages.end(); ++page) {
-            AtlasBlock* block = page->getBlock(width, height);
+        for (auto & page : pages) {
+            AtlasBlock* block = page.getBlock(width, height);
             if (block != nullptr) {
                 return block;
             }
@@ -212,14 +213,14 @@ namespace FIFE
         assert(minPageWidth <= pageWidth);
         assert(minPageHeight <= pageHeight);
 
-        pages.push_back(AtlasPage(pageWidth, pageHeight, pixelSize, pages.size()));
+        pages.emplace_back(pageWidth, pageHeight, pixelSize, pages.size());
         return &pages[pages.size() - 1];
     }
 
     void AtlasBook::shrink(bool pot)
     {
-        for (Pages::iterator page = pages.begin(); page != pages.end(); ++page) {
-            page->shrink(pot);
+        for (auto & page : pages) {
+            page.shrink(pot);
         }
     }
 } // namespace FIFE

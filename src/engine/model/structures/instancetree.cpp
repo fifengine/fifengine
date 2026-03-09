@@ -46,7 +46,7 @@ namespace FIFE
         }
         m_reverse.erase(instance);
         InstanceList& list = node->data();
-        for (InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
+        for (auto i = list.begin(); i != list.end(); ++i) {
             if ((*i) == instance) {
                 list.erase(i);
                 return;

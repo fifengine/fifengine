@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 
 // 3rd party library includes
@@ -67,7 +68,7 @@ namespace FIFE
 
     void RendererBase::addActiveLayer(Layer* layer)
     {
-        if (std::find(m_active_layers.begin(), m_active_layers.end(), layer) == m_active_layers.end()) {
+        if (std::ranges::find(m_active_layers, layer) == m_active_layers.end()) {
             m_active_layers.push_back(layer);
         }
     }
@@ -84,7 +85,7 @@ namespace FIFE
 
     bool RendererBase::isActivedLayer(Layer* layer)
     {
-        return std::find(m_active_layers.begin(), m_active_layers.end(), layer) != m_active_layers.end();
+        return std::ranges::find(m_active_layers, layer) != m_active_layers.end();
     }
 
     void RendererBase::activateAllLayers(Map* map)
@@ -92,7 +93,7 @@ namespace FIFE
         clearActiveLayers();
 
         const std::list<Layer*>& tmp         = map->getLayers();
-        std::list<Layer*>::const_iterator it = tmp.begin();
+        auto it = tmp.begin();
         for (; it != tmp.end(); ++it) {
             addActiveLayer(*it);
         }

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <set>
 #include <utility>
@@ -41,7 +42,7 @@ namespace FIFE
     {
         // calls CellDeleteListener, e.g. for transition
         if (!m_deleteListeners.empty()) {
-            std::vector<CellDeleteListener*>::iterator it = m_deleteListeners.begin();
+            auto it = m_deleteListeners.begin();
             for (; it != m_deleteListeners.end(); ++it) {
                 if (*it != nullptr) {
                     (*it)->onCellDeleted(this);
@@ -63,20 +64,20 @@ namespace FIFE
     void Cell::addInstances(const std::list<Instance*>& instances)
     {
         CellCache* cache = m_layer->getCellCache();
-        for (std::list<Instance*>::const_iterator it = instances.begin(); it != instances.end(); ++it) {
-            std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(*it);
+        for (auto instance : instances) {
+            std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
             if (ret.second) {
-                if ((*it)->isSpecialCost()) {
-                    cache->registerCost((*it)->getCostId(), (*it)->getCost());
-                    cache->addCellToCost((*it)->getCostId(), this);
+                if (instance->isSpecialCost()) {
+                    cache->registerCost(instance->getCostId(), instance->getCost());
+                    cache->addCellToCost(instance->getCostId(), this);
                 }
-                if ((*it)->isSpecialSpeed()) {
-                    cache->setSpeedMultiplier(this, (*it)->getSpeed());
+                if (instance->isSpecialSpeed()) {
+                    cache->setSpeedMultiplier(this, instance->getSpeed());
                 }
-                if (!(*it)->getObject()->getArea().empty()) {
-                    cache->addCellToArea((*it)->getObject()->getArea(), this);
+                if (!instance->getObject()->getArea().empty()) {
+                    cache->addCellToArea(instance->getObject()->getArea(), this);
                 }
-                callOnInstanceEntered(*it);
+                callOnInstanceEntered(instance);
             }
         }
         updateCellBlockingInfo();
@@ -121,7 +122,7 @@ namespace FIFE
             cache->resetSpeedMultiplier(this);
             // try to find other speed value
             if (!m_instances.empty()) {
-                std::set<Instance*>::iterator it = m_instances.begin();
+                auto it = m_instances.begin();
                 for (; it != m_instances.end(); ++it) {
                     if ((*it)->isSpecialSpeed()) {
                         cache->setSpeedMultiplier(this, (*it)->getSpeed());
@@ -139,7 +140,7 @@ namespace FIFE
 
     bool Cell::isNeighbor(Cell* cell)
     {
-        std::vector<Cell*>::iterator it = m_neighbors.begin();
+        auto it = m_neighbors.begin();
         for (; it != m_neighbors.end(); ++it) {
             if (*it == cell) {
                 return true;
@@ -155,23 +156,23 @@ namespace FIFE
         if (!m_instances.empty()) {
             int32_t pos    = -1;
             bool cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
-            for (std::set<Instance*>::iterator it = m_instances.begin(); it != m_instances.end(); ++it) {
+            for (auto m_instance : m_instances) {
                 if (cellblock) {
                     continue;
                 }
-                uint8_t stackpos = (*it)->getCellStackPosition();
-                if (stackpos < pos) {
+                uint8_t stackpos = m_instance->getCellStackPosition();
+                if (std::cmp_less(stackpos , pos)) {
                     continue;
                 }
                 // update cell z
-                if (m_coordinate.z < (*it)->getLocationRef().getLayerCoordinates().z &&
-                    (*it)->getObject()->isStatic()) {
-                    m_coordinate.z = (*it)->getLocationRef().getLayerCoordinates().z;
+                if (m_coordinate.z < m_instance->getLocationRef().getLayerCoordinates().z &&
+                    m_instance->getObject()->isStatic()) {
+                    m_coordinate.z = m_instance->getLocationRef().getLayerCoordinates().z;
                 }
-                if ((*it)->getCellStackPosition() > pos) {
-                    pos = (*it)->getCellStackPosition();
-                    if ((*it)->isBlocking()) {
-                        if (!(*it)->getObject()->isStatic()) {
+                if (std::cmp_greater(m_instance->getCellStackPosition() , pos)) {
+                    pos = m_instance->getCellStackPosition();
+                    if (m_instance->isBlocking()) {
+                        if (!m_instance->getObject()->isStatic()) {
                             m_type = CTYPE_DYNAMIC_BLOCKER;
                         } else {
                             m_type = CTYPE_STATIC_BLOCKER;
@@ -181,8 +182,8 @@ namespace FIFE
                     }
                 } else {
                     // if positions are equal then static_blockers win
-                    if ((*it)->isBlocking() && m_type != CTYPE_STATIC_BLOCKER) {
-                        if (!(*it)->getObject()->isStatic()) {
+                    if (m_instance->isBlocking() && m_type != CTYPE_STATIC_BLOCKER) {
+                        if (!m_instance->getObject()->isStatic()) {
                             m_type = CTYPE_DYNAMIC_BLOCKER;
                         } else {
                             m_type = CTYPE_STATIC_BLOCKER;
@@ -360,7 +361,7 @@ namespace FIFE
 
     void Cell::createTransition(Layer* layer, const ModelCoordinate& mc, bool immediate)
     {
-        TransitionInfo* trans = new TransitionInfo(layer);
+        auto* trans = new TransitionInfo(layer);
         // if layers are the same then it's a portal
         if (layer != m_layer) {
             trans->m_difflayer = true;
@@ -387,7 +388,7 @@ namespace FIFE
     {
         if (m_transition != nullptr) {
             Cell* oldc                      = m_transition->m_layer->getCellCache()->getCell(m_transition->m_mc);
-            std::vector<Cell*>::iterator it = m_neighbors.begin();
+            auto it = m_neighbors.begin();
             for (; it != m_neighbors.end(); ++it) {
                 if (*it == oldc) {
                     m_neighbors.erase(it);
@@ -413,7 +414,7 @@ namespace FIFE
 
     void Cell::removeDeleteListener(CellDeleteListener* listener)
     {
-        std::vector<CellDeleteListener*>::iterator it = m_deleteListeners.begin();
+        auto it = m_deleteListeners.begin();
         for (; it != m_deleteListeners.end(); ++it) {
             if (*it == listener) {
                 *it = nullptr;
@@ -424,7 +425,7 @@ namespace FIFE
 
     void Cell::onCellDeleted(Cell* cell)
     {
-        std::vector<Cell*>::iterator it = m_neighbors.begin();
+        auto it = m_neighbors.begin();
         for (; it != m_neighbors.end(); ++it) {
             if (*it == cell) {
                 deleteTransition();
@@ -440,7 +441,7 @@ namespace FIFE
 
     void Cell::removeChangeListener(CellChangeListener* listener)
     {
-        std::vector<CellChangeListener*>::iterator it = m_changeListeners.begin();
+        auto it = m_changeListeners.begin();
         for (; it != m_changeListeners.end(); ++it) {
             if (*it == listener) {
                 *it = nullptr;
@@ -455,7 +456,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onInstanceEnteredCell(this, instance);
@@ -470,7 +471,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onInstanceExitedCell(this, instance);
@@ -485,7 +486,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onBlockingChangedCell(this, m_type, blocks);

@@ -330,8 +330,8 @@ namespace FIFE
         }
 
         // calculate x and y values
-        float* xrhs = new float[n];
-        float* yrhs = new float[n];
+        auto* xrhs = new float[n];
+        auto* yrhs = new float[n];
         // first
         xrhs[0] = points[0].x + 2 * points[1].x;
         yrhs[0] = points[0].y + 2 * points[1].y;
@@ -344,10 +344,10 @@ namespace FIFE
             yrhs[i] = 4 * points[i].y + 2 * points[i + 1].y;
         }
 
-        float* x    = new float[n];
-        float* y    = new float[n];
-        float* xtmp = new float[n];
-        float* ytmp = new float[n];
+        auto* x    = new float[n];
+        auto* y    = new float[n];
+        auto* xtmp = new float[n];
+        auto* ytmp = new float[n];
         float xb    = 2.0;
         float yb    = 2.0;
         x[0]        = xrhs[0] / xb;

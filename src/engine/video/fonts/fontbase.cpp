@@ -213,16 +213,16 @@ namespace FIFE
             }
             SDL_FillRect(final_surface, nullptr, 0x00000000);
             int32_t ypos = 0;
-            for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
+            for (auto & line : lines) {
                 SDL_Rect dst_rect = {0, 0, 0, 0};
                 dst_rect.y        = ypos;
 
                 // Disable alpha blending
                 // SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-                SDL_SetSurfaceBlendMode(*i, SDL_BLENDMODE_NONE);
-                SDL_BlitSurface(*i, nullptr, final_surface, &dst_rect);
+                SDL_SetSurfaceBlendMode(line, SDL_BLENDMODE_NONE);
+                SDL_BlitSurface(line, nullptr, final_surface, &dst_rect);
                 ypos += getRowSpacing() + getHeight();
-                SDL_FreeSurface(*i);
+                SDL_FreeSurface(line);
             }
             image = RenderBackend::instance()->createImage(final_surface);
             m_pool.addRenderedText(this, text, image);
@@ -257,7 +257,7 @@ namespace FIFE
             while (getWidth(line) < render_width && pos != text.end()) {
                 uint32_t codepoint = utf8::next(pos, text.end());
                 if (codepoint == whitespace && !line.empty()) {
-                    break_pos.push_back(std::make_pair(line.length(), pos));
+                    break_pos.emplace_back(line.length(), pos);
                 }
 
                 if (codepoint != newline) {

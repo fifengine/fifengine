@@ -23,11 +23,11 @@ namespace FIFE
     {
 
         m_blinkTimer.setInterval(500);
-        m_blinkTimer.setCallback(std::bind(&CommandLine::toggleCaretVisible, this));
+        m_blinkTimer.setCallback([this] { toggleCaretVisible(); });
         m_blinkTimer.start();
 
         m_suppressBlinkTimer.setInterval(2000);
-        m_suppressBlinkTimer.setCallback(std::bind(&CommandLine::startBlinking, this));
+        m_suppressBlinkTimer.setCallback([this] { startBlinking(); });
     }
 
     CommandLine::~CommandLine() = default;

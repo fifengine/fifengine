@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -129,7 +130,7 @@ namespace FIFE
     }
 
     OffRendererTextInfo::OffRendererTextInfo(Point anchor, IFont* font, std::string text) :
-        OffRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(text)
+        OffRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text))
     {
     }
     void OffRendererTextInfo::render(RenderBackend* renderbackend)
@@ -244,7 +245,7 @@ namespace FIFE
     }
     void OffRenderer::removeAll(const std::string& group)
     {
-        std::vector<OffRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             delete *info_it;
         }
@@ -262,9 +263,9 @@ namespace FIFE
             return;
         }
         m_renderbackend->pushClipArea(m_area);
-        std::map<std::string, std::vector<OffRendererElementInfo*>>::iterator group_it = m_groups.begin();
+        auto group_it = m_groups.begin();
         for (; group_it != m_groups.end(); ++group_it) {
-            std::vector<OffRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
+            auto info_it = group_it->second.begin();
             for (; info_it != group_it->second.end(); ++info_it) {
                 (*info_it)->render(m_renderbackend);
             }

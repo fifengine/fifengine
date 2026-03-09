@@ -44,9 +44,9 @@ namespace FIFE
 
     ImagePtr Atlas::getImage(const std::string& id)
     {
-        SubimageMap::iterator iter = m_subimages.find(id);
+        auto iter = m_subimages.find(id);
         if (iter == m_subimages.end()) {
-            return ImagePtr();
+            return {};
         }
         return iter->second.image;
     }
@@ -54,10 +54,10 @@ namespace FIFE
     ImagePtr Atlas::getImage(uint32_t index)
     {
         if (index > getImageCount()) {
-            return ImagePtr();
+            return {};
         }
 
-        SubimageMap::iterator iter = m_subimages.begin();
+        auto iter = m_subimages.begin();
         for (uint32_t i = 0; i < index; ++i, ++iter) {
             ;
         }
@@ -297,7 +297,7 @@ namespace FIFE
                         }
                         subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                        AtlasData atlasData = {region, subImage};
+                        AtlasData atlasData = {.rect=region, .image=subImage};
                         atlas->addImage(finalname, atlasData);
                     }
                 }
@@ -341,7 +341,7 @@ namespace FIFE
                             }
                             subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                            AtlasData atlasData = {region, subImage};
+                            AtlasData atlasData = {.rect=region, .image=subImage};
                             atlas->addImage(finalname.str(), atlasData);
 
                             ++frame;

@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Platform specific includes
@@ -34,16 +35,8 @@ namespace FIFE
             mode(m),
             size(s),
             texture_id(t1),
-            overlay_id(t2),
-            src(4),
-            dst(5),
-            light(true),
-            stencil_test(false),
-            color(true),
-            overlay_type(OVERLAY_TYPE_NONE),
-            stencil_ref(0),
-            stencil_op(0),
-            stencil_func(0)
+            overlay_id(t2)
+            
         {
         }
 
@@ -51,15 +44,15 @@ namespace FIFE
         uint16_t size;
         uint32_t texture_id;
         uint32_t overlay_id;
-        int32_t src;
-        int32_t dst;
-        bool light;
-        bool stencil_test;
-        bool color;
-        OverlayType overlay_type;
-        uint8_t stencil_ref;
-        GLenum stencil_op;
-        GLenum stencil_func;
+        int32_t src{4};
+        int32_t dst{5};
+        bool light{true};
+        bool stencil_test{false};
+        bool color{true};
+        OverlayType overlay_type{OVERLAY_TYPE_NONE};
+        uint8_t stencil_ref{0};
+        GLenum stencil_op{0};
+        GLenum stencil_func{0};
         uint8_t rgba[4];
     };
 
@@ -395,7 +388,7 @@ namespace FIFE
         m_rgba_format.BitsPerPixel = 32;
         SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
         m_rgba_format.BitsPerPixel = bpp;
-        GLImage* image             = new GLImage(conv);
+        auto* image             = new GLImage(conv);
 
         SDL_FreeSurface(surface);
         return image;
@@ -424,7 +417,7 @@ namespace FIFE
         m_rgba_format.BitsPerPixel = 32;
         SDL_Surface* conv          = SDL_ConvertSurface(surface, &m_rgba_format, 0);
         m_rgba_format.BitsPerPixel = bpp;
-        GLImage* image             = new GLImage(name, conv);
+        auto* image             = new GLImage(name, conv);
 
         SDL_FreeSurface(surface);
         return image;
@@ -588,7 +581,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::resetStencilBuffer(uint8_t buffer)
     {
-        if (buffer != m_state.sten_buf) {
+        if (std::cmp_not_equal(buffer , m_state.sten_buf)) {
             m_state.sten_buf = buffer;
             glClearStencil(buffer);
         }
@@ -962,9 +955,7 @@ namespace FIFE
             currentElements = &elements2TC;
         }
 
-        for (std::vector<RenderObject>::iterator ir = m_renderObjects.begin(); ir != m_renderObjects.end(); ++ir) {
-            RenderObject& ro = (*ir);
-
+        for (auto & ro : m_renderObjects) {
             // first we look for changes
             if (ro.mode != mode) {
                 type   = true;
@@ -1275,10 +1266,7 @@ namespace FIFE
         enableLighting();
         disableColorArray();
 
-        for (std::vector<RenderZObject>::iterator ir = m_renderTextureObjectsZ.begin();
-             ir != m_renderTextureObjectsZ.end();
-             ++ir) {
-            RenderZObject& ro = (*ir);
+        for (auto & ro : m_renderTextureObjectsZ) {
             // if changes then we render all previously elements
             if (ro.texture_id != texture_id) {
                 if (*currentElements > 0) {
@@ -1332,7 +1320,7 @@ namespace FIFE
         enableLighting();
         disableColorArray();
 
-        std::vector<RenderZObjectTest>::iterator iter = m_renderZ_objects.begin();
+        auto iter = m_renderZ_objects.begin();
         for (; iter != m_renderZ_objects.end(); ++iter) {
             bindTexture(iter->texture_id);
             glDrawArrays(GL_QUADS, iter->index, iter->elements);
@@ -1373,10 +1361,7 @@ namespace FIFE
         enableTextures(0);
         enableLighting();
 
-        for (std::vector<RenderZObject>::iterator ir = m_renderTextureColorObjectsZ.begin();
-             ir != m_renderTextureColorObjectsZ.end();
-             ++ir) {
-            RenderZObject& ro = (*ir);
+        for (auto & ro : m_renderTextureColorObjectsZ) {
             // if changes then we render all previously elements
             if (ro.texture_id != texture_id) {
                 if (*currentElements > 0) {
@@ -1453,11 +1438,7 @@ namespace FIFE
         enableTextures(0);
         enableLighting();
 
-        for (std::vector<RenderObject>::iterator ir = m_renderMultitextureObjectsZ.begin();
-             ir != m_renderMultitextureObjectsZ.end();
-             ++ir) {
-            RenderObject& ro = (*ir);
-
+        for (auto & ro : m_renderMultitextureObjectsZ) {
             // first we look for changes
             if (ro.texture_id != texture_id) {
                 texture = true;
@@ -1674,7 +1655,7 @@ namespace FIFE
         if (points.size() < 2) {
             return;
         }
-        std::vector<Point>::const_iterator it = points.begin();
+        auto it = points.begin();
         if (width > 1) {
             Point old = *it;
             ++it;
@@ -1941,7 +1922,7 @@ namespace FIFE
         rd.color[3]  = a;
         m_renderPrimitiveDatas.push_back(rd);
         // reversed because of culling faces
-        for (uint16_t i = 0; i <= subdivisions; ++i) {
+        for (uint16_t i = 0; std::cmp_less_equal(i , subdivisions); ++i) {
             rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
             rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
             m_renderPrimitiveDatas.push_back(rd);
@@ -2242,11 +2223,10 @@ namespace FIFE
 
     RenderBackendOpenGL::RenderZObjectTest* RenderBackendOpenGL::getRenderBufferObject(GLuint texture_id)
     {
-        for (std::vector<RenderZObjectTest>::iterator it = m_renderZ_objects.begin(); it != m_renderZ_objects.end();
-             ++it) {
-            if (it->texture_id == texture_id) {
-                if (it->elements < it->max_size - 4) {
-                    return &(*it);
+        for (auto & m_renderZ_object : m_renderZ_objects) {
+            if (m_renderZ_object.texture_id == texture_id) {
+                if (m_renderZ_object.elements < m_renderZ_object.max_size - 4) {
+                    return &m_renderZ_object;
                 }
             }
         }
@@ -2594,7 +2574,7 @@ namespace FIFE
         SDL_LockSurface(surface);
         pixels = new uint8_t[swidth * sheight * 3];
         glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-        uint8_t* imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
+        auto* imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = (sheight - 1); y >= 0; --y) {
             uint8_t* rowbegin = pixels + (y * swidth * 3);
@@ -2642,7 +2622,7 @@ namespace FIFE
         pixels = new uint8_t[swidth * sheight * 4];
         glReadPixels(0, 0, swidth, sheight, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
 
-        uint8_t* imagepixels = reinterpret_cast<uint8_t*>(src->pixels);
+        auto* imagepixels = reinterpret_cast<uint8_t*>(src->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = (sheight - 1); y >= 0; --y) {
             uint8_t* rowbegin = pixels + (y * swidth * 4);
@@ -2657,21 +2637,21 @@ namespace FIFE
         // create destination surface
         SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
 
-        uint32_t* src_pointer      = static_cast<uint32_t*>(src->pixels);
+        auto* src_pointer      = static_cast<uint32_t*>(src->pixels);
         uint32_t* src_help_pointer = src_pointer;
-        uint32_t* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
+        auto* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
 
         int32_t x;
         int32_t y;
         int32_t* sx_ca;
         int32_t* sy_ca;
-        int32_t sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
-        int32_t sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
+        auto sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
+        auto sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
         int32_t sx_c = 0;
         int32_t sy_c = 0;
 
         // Allocates memory and calculates row wide&height
-        int32_t* sx_a = new int32_t[dst->w + 1];
+        auto* sx_a = new int32_t[dst->w + 1];
         sx_ca         = sx_a;
         for (x = 0; x <= dst->w; x++) {
             *sx_ca = sx_c;
@@ -2680,7 +2660,7 @@ namespace FIFE
             sx_c += sx;
         }
 
-        int32_t* sy_a = new int32_t[dst->h + 1];
+        auto* sy_a = new int32_t[dst->h + 1];
         sy_ca         = sy_a;
         for (y = 0; y <= dst->h; y++) {
             *sy_ca = sy_c;
@@ -2732,9 +2712,9 @@ namespace FIFE
         glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
         if (clear) {
             if (m_isbackgroundcolor) {
-                float red   = static_cast<float>(m_backgroundcolor.r / 255.0);
-                float green = static_cast<float>(m_backgroundcolor.g / 255.0);
-                float blue  = static_cast<float>(m_backgroundcolor.b / 255.0);
+                auto red   = static_cast<float>(m_backgroundcolor.r / 255.0);
+                auto green = static_cast<float>(m_backgroundcolor.g / 255.0);
+                auto blue  = static_cast<float>(m_backgroundcolor.b / 255.0);
                 glClearColor(red, green, blue, 0.0);
                 m_isbackgroundcolor = false;
             }
@@ -2754,7 +2734,7 @@ namespace FIFE
         m_img_target->forceLoadInternal();
         m_target = m_img_target->getSurface();
 
-        GLImage* glimage = static_cast<GLImage*>(m_img_target.get());
+        auto* glimage = static_cast<GLImage*>(m_img_target.get());
 
         GLuint targetid = glimage->getTexId();
         uint32_t w      = m_img_target->getWidth();
@@ -2763,7 +2743,7 @@ namespace FIFE
         // quick & dirty hack for attaching compressed texture
         if (glimage->isCompressed()) {
             bindTexture(targetid);
-            GLubyte* pixels = new GLubyte[w * h * 4];
+            auto* pixels = new GLubyte[w * h * 4];
             // here we get decompressed pixels
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -2843,7 +2823,7 @@ namespace FIFE
 
         GLuint texId = 0;
 
-        GLImage* glImage = dynamic_cast<GLImage*>(texture.get());
+        auto* glImage = dynamic_cast<GLImage*>(texture.get());
         if (glImage != nullptr) {
             glImage->forceLoadInternal();
             texId = glImage->getTexId();

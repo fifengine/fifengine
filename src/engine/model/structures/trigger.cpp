@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -38,7 +40,7 @@ namespace FIFE
         void onInstanceDeleted(Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::find(types.begin(), types.end(), INSTANCE_TRIGGER_DELETE) != types.end()) {
+            if (std::ranges::find(types, INSTANCE_TRIGGER_DELETE) != types.end()) {
                 m_trigger->setTriggered();
             }
             m_trigger->detach();
@@ -48,10 +50,10 @@ namespace FIFE
         void onInstanceEnteredCell(Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::find(types.begin(), types.end(), CELL_TRIGGER_ENTER) != types.end()) {
+            if (std::ranges::find(types, CELL_TRIGGER_ENTER) != types.end()) {
                 const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
                 if (m_trigger->isEnabledForAllInstances() ||
-                    std::find(restrict.begin(), restrict.end(), instance) != restrict.end()) {
+                    std::ranges::find(restrict, instance) != restrict.end()) {
                     m_trigger->setTriggered();
                 }
             }
@@ -61,10 +63,10 @@ namespace FIFE
         void onInstanceExitedCell(Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::find(types.begin(), types.end(), CELL_TRIGGER_EXIT) != types.end()) {
+            if (std::ranges::find(types, CELL_TRIGGER_EXIT) != types.end()) {
                 const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
                 if (m_trigger->isEnabledForAllInstances() ||
-                    std::find(restrict.begin(), restrict.end(), instance) != restrict.end()) {
+                    std::ranges::find(restrict, instance) != restrict.end()) {
                     m_trigger->setTriggered();
                 }
             }
@@ -74,7 +76,7 @@ namespace FIFE
         void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
-            if (std::find(types.begin(), types.end(), CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
+            if (std::ranges::find(types, CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
                 m_trigger->setTriggered();
             }
         }
@@ -92,51 +94,51 @@ namespace FIFE
             }
 
             if ((info & ICHANGE_LOC) == ICHANGE_LOC &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_LOCATION) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_LOCATION) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_ROTATION) == ICHANGE_ROTATION &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_ROTATION) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_ROTATION) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_SPEED) == ICHANGE_SPEED &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_SPEED) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_SPEED) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_ACTION) == ICHANGE_ACTION &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_ACTION) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_ACTION) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_TIME_MULTIPLIER) == ICHANGE_TIME_MULTIPLIER &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_TIME_MULTIPLIER) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_TIME_MULTIPLIER) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_SAYTEXT) == ICHANGE_SAYTEXT &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_SAYTEXT) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_SAYTEXT) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_BLOCK) == ICHANGE_BLOCK &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_BLOCK) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_BLOCK) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_CELL) == ICHANGE_CELL &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_CELL) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_CELL) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_TRANSPARENCY) == ICHANGE_TRANSPARENCY &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_TRANSPARENCY) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_TRANSPARENCY) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_VISIBLE) == ICHANGE_VISIBLE &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_VISIBLE) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_VISIBLE) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_STACKPOS) == ICHANGE_STACKPOS &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_STACKPOS) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_STACKPOS) != types.end()) {
                 m_trigger->setTriggered();
             } else if (
                 (info & ICHANGE_VISUAL) == ICHANGE_VISUAL &&
-                std::find(types.begin(), types.end(), INSTANCE_TRIGGER_VISUAL) != types.end()) {
+                std::ranges::find(types, INSTANCE_TRIGGER_VISUAL) != types.end()) {
                 m_trigger->setTriggered();
             }
         }
@@ -150,8 +152,8 @@ namespace FIFE
         m_changeListener = new TriggerChangeListener(this);
     }
 
-    Trigger::Trigger(const std::string& name) :
-        m_name(name), m_triggered(false), m_enabledAll(false), m_attached(nullptr)
+    Trigger::Trigger(std::string  name) :
+        m_name(std::move(name)), m_triggered(false), m_enabledAll(false), m_attached(nullptr)
     {
         m_changeListener = new TriggerChangeListener(this);
     }
@@ -159,7 +161,7 @@ namespace FIFE
     Trigger::~Trigger()
     {
         detach();
-        std::vector<Cell*>::iterator it = m_assigned.begin();
+        auto it = m_assigned.begin();
         for (; it != m_assigned.end(); ++it) {
             (*it)->removeChangeListener(m_changeListener);
         }
@@ -168,8 +170,8 @@ namespace FIFE
 
     void Trigger::addTriggerListener(ITriggerListener* listener)
     {
-        std::vector<ITriggerListener*>::iterator it =
-            std::find(m_triggerListeners.begin(), m_triggerListeners.end(), listener);
+        auto it =
+            std::ranges::find(m_triggerListeners, listener);
         if (it == m_triggerListeners.end()) {
             m_triggerListeners.push_back(listener);
         }
@@ -177,7 +179,7 @@ namespace FIFE
 
     void Trigger::removeTriggerListener(ITriggerListener* listener)
     {
-        std::vector<ITriggerListener*>::iterator i = m_triggerListeners.begin();
+        auto i = m_triggerListeners.begin();
         while (i != m_triggerListeners.end()) {
             if ((*i) == listener) {
                 // set the pointer to null, so it can be removed later
@@ -197,7 +199,7 @@ namespace FIFE
     {
         if (!m_triggered) {
             m_triggered                                = true;
-            std::vector<ITriggerListener*>::iterator i = m_triggerListeners.begin();
+            auto i = m_triggerListeners.begin();
             while (i != m_triggerListeners.end()) {
                 if (*i != nullptr) {
                     (*i)->onTriggered();
@@ -213,8 +215,8 @@ namespace FIFE
 
     void Trigger::addTriggerCondition(TriggerCondition type)
     {
-        std::vector<TriggerCondition>::iterator it =
-            std::find(m_triggerConditions.begin(), m_triggerConditions.end(), type);
+        auto it =
+            std::ranges::find(m_triggerConditions, type);
         if (it == m_triggerConditions.end()) {
             m_triggerConditions.push_back(type);
         }
@@ -227,8 +229,8 @@ namespace FIFE
 
     void Trigger::removeTriggerCondition(TriggerCondition type)
     {
-        std::vector<TriggerCondition>::iterator it =
-            std::find(m_triggerConditions.begin(), m_triggerConditions.end(), type);
+        auto it =
+            std::ranges::find(m_triggerConditions, type);
         if (it != m_triggerConditions.end()) {
             m_triggerConditions.erase(it);
         }
@@ -236,7 +238,7 @@ namespace FIFE
 
     void Trigger::enableForInstance(Instance* instance)
     {
-        std::vector<Instance*>::iterator it = std::find(m_enabledInstances.begin(), m_enabledInstances.end(), instance);
+        auto it = std::ranges::find(m_enabledInstances, instance);
         if (it == m_enabledInstances.end()) {
             m_enabledInstances.push_back(instance);
         }
@@ -249,7 +251,7 @@ namespace FIFE
 
     void Trigger::disableForInstance(Instance* instance)
     {
-        std::vector<Instance*>::iterator it = std::find(m_enabledInstances.begin(), m_enabledInstances.end(), instance);
+        auto it = std::ranges::find(m_enabledInstances, instance);
         if (it != m_enabledInstances.end()) {
             m_enabledInstances.erase(it);
         }
@@ -276,7 +278,7 @@ namespace FIFE
         if (cell == nullptr) {
             return;
         }
-        std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
+        auto it = std::ranges::find(m_assigned, cell);
         if (it == m_assigned.end()) {
             m_assigned.push_back(cell);
             cell->addChangeListener(m_changeListener);
@@ -289,7 +291,7 @@ namespace FIFE
         if (cell == nullptr) {
             return;
         }
-        std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
+        auto it = std::ranges::find(m_assigned, cell);
         if (it != m_assigned.end()) {
             m_assigned.erase(it);
             cell->removeChangeListener(m_changeListener);
@@ -298,7 +300,7 @@ namespace FIFE
 
     void Trigger::assign(Cell* cell)
     {
-        std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
+        auto it = std::ranges::find(m_assigned, cell);
         if (it == m_assigned.end()) {
             m_assigned.push_back(cell);
             cell->addChangeListener(m_changeListener);
@@ -307,7 +309,7 @@ namespace FIFE
 
     void Trigger::remove(Cell* cell)
     {
-        std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
+        auto it = std::ranges::find(m_assigned, cell);
         if (it != m_assigned.end()) {
             m_assigned.erase(it);
             cell->removeChangeListener(m_changeListener);
@@ -358,7 +360,7 @@ namespace FIFE
 
         CellCache* cache = m_attached->getLocationRef().getLayer()->getCellCache();
         std::vector<Cell*> newCells;
-        std::vector<Cell*>::iterator it = m_assigned.begin();
+        auto it = m_assigned.begin();
         for (; it != m_assigned.end(); ++it) {
             ModelCoordinate coord = (*it)->getLayerCoordinates();
             coord.x += mc.x;
@@ -369,7 +371,7 @@ namespace FIFE
             }
         }
         for (it = newCells.begin(); it != newCells.end(); ++it) {
-            std::vector<Cell*>::iterator found = std::find(m_assigned.begin(), m_assigned.end(), *it);
+            auto found = std::ranges::find(m_assigned, *it);
             if (found != m_assigned.end()) {
                 m_assigned.erase(found);
             } else {

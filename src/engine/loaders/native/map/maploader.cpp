@@ -186,14 +186,14 @@ namespace FIFE
                     }
                     // converts multiobject part id to object pointer
                     std::list<std::string> namespaces        = m_model->getNamespaces();
-                    std::list<std::string>::iterator name_it = namespaces.begin();
+                    auto name_it = namespaces.begin();
                     for (; name_it != namespaces.end(); ++name_it) {
                         std::list<Object*> objects             = m_model->getObjects(*name_it);
-                        std::list<Object*>::iterator object_it = objects.begin();
+                        auto object_it = objects.begin();
                         for (; object_it != objects.end(); ++object_it) {
                             if ((*object_it)->isMultiObject()) {
                                 const std::list<std::string>& multiParts        = (*object_it)->getMultiPartIds();
-                                std::list<std::string>::const_iterator multi_it = multiParts.begin();
+                                auto multi_it = multiParts.begin();
                                 for (; multi_it != multiParts.end(); ++multi_it) {
                                     Object* partObj = m_model->getObject(*multi_it, *name_it);
                                     if (partObj != nullptr) {
@@ -364,7 +364,7 @@ namespace FIFE
 
                                                     if (inst != nullptr) {
                                                         if (rRetVal != XML::SUCCESS) {
-                                                            ObjectVisual* objVisual = object->getVisual<ObjectVisual>();
+                                                            auto* objVisual = object->getVisual<ObjectVisual>();
                                                             std::vector<int> angles;
                                                             objVisual->getStaticImageAngles(angles);
                                                             if (!angles.empty()) {
@@ -760,7 +760,7 @@ namespace FIFE
         if (m_objectLoader) {
             return m_objectLoader->getAnimationLoader();
         }
-        return FIFE::AnimationLoaderPtr();
+        return {};
     }
 
     void MapLoader::setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader)
@@ -775,7 +775,7 @@ namespace FIFE
         if (m_objectLoader) {
             return m_objectLoader->getAtlasLoader();
         }
-        return FIFE::AtlasLoaderPtr();
+        return {};
     }
 
     bool MapLoader::isLoadable(const std::string& filename) const

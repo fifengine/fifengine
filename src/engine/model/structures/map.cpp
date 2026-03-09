@@ -31,11 +31,11 @@ namespace FIFE
 {
 
     Map::Map(
-        const std::string& identifier,
+        std::string  identifier,
         RenderBackend* renderBackend,
         const std::vector<RendererBase*>& renderers,
         TimeProvider* tp_master) :
-        m_id(identifier),
+        m_id(std::move(identifier)),
 
         m_timeProvider(tp_master),
 
@@ -51,7 +51,7 @@ namespace FIFE
     {
         delete m_triggerController;
         // remove all cameras
-        std::vector<Camera*>::iterator iter = m_cameras.begin();
+        auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             delete *iter;
         }
@@ -62,7 +62,7 @@ namespace FIFE
 
     Layer* Map::getLayer(const std::string& id)
     {
-        std::list<Layer*>::const_iterator it = m_layers.begin();
+        auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
             if ((*it)->getId() == id) {
                 return *it;
@@ -78,17 +78,17 @@ namespace FIFE
 
     Layer* Map::createLayer(const std::string& identifier, CellGrid* grid)
     {
-        std::list<Layer*>::const_iterator it = m_layers.begin();
+        auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
             if (identifier == (*it)->getId()) {
                 throw NameClash(identifier);
             }
         }
 
-        Layer* layer = new Layer(identifier, this, grid);
+        auto* layer = new Layer(identifier, this, grid);
         m_layers.push_back(layer);
         m_changed                                   = true;
-        std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onLayerCreate(this, layer);
             ++i;
@@ -99,10 +99,10 @@ namespace FIFE
 
     void Map::deleteLayer(Layer* layer)
     {
-        std::list<Layer*>::iterator it = m_layers.begin();
+        auto it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
             if ((*it) == layer) {
-                std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+                auto i = m_changeListeners.begin();
                 while (i != m_changeListeners.end()) {
                     (*i)->onLayerDelete(this, layer);
                     ++i;
@@ -118,14 +118,14 @@ namespace FIFE
     void Map::deleteLayers()
     {
         std::list<Layer*> temp_layers       = m_layers;
-        std::list<Layer*>::iterator temp_it = temp_layers.begin();
+        auto temp_it = temp_layers.begin();
         for (; temp_it != temp_layers.end(); ++temp_it) {
-            std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+            auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
                 (*i)->onLayerDelete(this, *temp_it);
                 ++i;
             }
-            std::list<Layer*>::iterator it = m_layers.begin();
+            auto it = m_layers.begin();
             for (; it != m_layers.end(); ++it) {
                 if (*it == *temp_it) {
                     delete *it;
@@ -141,7 +141,7 @@ namespace FIFE
         if (m_layers.empty()) {
             return;
         }
-        std::list<Layer*>::iterator it = m_layers.begin();
+        auto it = m_layers.begin();
         Layer* layer                   = *it;
         for (; it != m_layers.end(); ++it) {
             ModelCoordinate newMin;
@@ -175,7 +175,7 @@ namespace FIFE
         m_changedLayers.clear();
         // transfer instances from one layer to another
         if (!m_transferInstances.empty()) {
-            std::map<Instance*, Location>::iterator it = m_transferInstances.begin();
+            auto it = m_transferInstances.begin();
             for (; it != m_transferInstances.end(); ++it) {
                 Instance* inst      = (*it).first;
                 Location target_loc = (*it).second;
@@ -189,7 +189,7 @@ namespace FIFE
             m_transferInstances.clear();
         }
         std::vector<CellCache*> cellCaches;
-        std::list<Layer*>::iterator it = m_layers.begin();
+        auto it = m_layers.begin();
         // update Layers
         for (; it != m_layers.end(); ++it) {
             if ((*it)->update()) {
@@ -201,11 +201,11 @@ namespace FIFE
             }
         }
         // loop over Caches and update
-        for (std::vector<CellCache*>::iterator cacheIt = cellCaches.begin(); cacheIt != cellCaches.end(); ++cacheIt) {
-            (*cacheIt)->update();
+        for (auto & cellCache : cellCaches) {
+            cellCache->update();
         }
         if (!m_changedLayers.empty()) {
-            std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+            auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
                 (*i)->onMapChanged(this, m_changedLayers);
                 ++i;
@@ -213,7 +213,7 @@ namespace FIFE
         }
 
         // loop over cameras and update if enabled
-        std::vector<Camera*>::iterator camIter = m_cameras.begin();
+        auto camIter = m_cameras.begin();
         for (; camIter != m_cameras.end(); ++camIter) {
             if ((*camIter)->isEnabled()) {
                 (*camIter)->update();
@@ -233,7 +233,7 @@ namespace FIFE
 
     void Map::removeChangeListener(MapChangeListener* listener)
     {
-        std::vector<MapChangeListener*>::iterator i = m_changeListeners.begin();
+        auto i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             if ((*i) == listener) {
                 m_changeListeners.erase(i);
@@ -251,10 +251,10 @@ namespace FIFE
         }
 
         // create new camera and add to list of cameras
-        Camera* camera = new Camera(id, this, viewport, m_renderBackend);
+        auto* camera = new Camera(id, this, viewport, m_renderBackend);
         m_cameras.push_back(camera);
 
-        std::vector<RendererBase*>::iterator iter = m_renderers.begin();
+        auto iter = m_renderers.begin();
         for (; iter != m_renderers.end(); ++iter) {
             camera->addRenderer((*iter)->clone());
         }
@@ -264,7 +264,7 @@ namespace FIFE
 
     void Map::removeCamera(const std::string& id)
     {
-        std::vector<Camera*>::iterator iter = m_cameras.begin();
+        auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             if ((*iter)->getId() == id) {
                 // camera has been found delete it
@@ -282,7 +282,7 @@ namespace FIFE
 
     Camera* Map::getCamera(const std::string& id)
     {
-        std::vector<Camera*>::iterator iter = m_cameras.begin();
+        auto iter = m_cameras.begin();
         for (; iter != m_cameras.end(); ++iter) {
             if ((*iter)->getId() == id) {
                 return *iter;
@@ -300,7 +300,7 @@ namespace FIFE
     uint32_t Map::getActiveCameraCount() const
     {
         uint32_t count                          = 0;
-        std::vector<Camera*>::const_iterator it = m_cameras.begin();
+        auto it = m_cameras.begin();
         for (; it != m_cameras.end(); ++it) {
             if ((*it)->isEnabled()) {
                 count += 1;
@@ -322,7 +322,7 @@ namespace FIFE
 
     void Map::removeInstanceForTransfer(Instance* instance)
     {
-        std::map<Instance*, Location>::iterator it = m_transferInstances.find(instance);
+        auto it = m_transferInstances.find(instance);
         if (it != m_transferInstances.end()) {
             m_transferInstances.erase(it);
         }
@@ -334,7 +334,7 @@ namespace FIFE
             return;
         }
 
-        std::list<Layer*>::iterator layit = m_layers.begin();
+        auto layit = m_layers.begin();
         // first add interacts to walkables
         for (; layit != m_layers.end(); ++layit) {
             if ((*layit)->isInteract()) {
@@ -356,7 +356,7 @@ namespace FIFE
     void Map::finalizeCellCaches()
     {
         // create Cells and generate neighbours
-        std::list<Layer*>::iterator layit = m_layers.begin();
+        auto layit = m_layers.begin();
         for (; layit != m_layers.end(); ++layit) {
             CellCache* cache = (*layit)->getCellCache();
             if (cache != nullptr) {

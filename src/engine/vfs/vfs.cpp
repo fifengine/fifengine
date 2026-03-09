@@ -38,13 +38,13 @@ namespace FIFE
     void VFS::cleanup()
     {
         type_sources sources             = m_sources;
-        type_sources::const_iterator end = sources.end();
-        for (type_sources::iterator i = sources.begin(); i != end; ++i) {
+        auto end = sources.end();
+        for (auto i = sources.begin(); i != end; ++i) {
             delete *i;
         }
 
-        type_providers::const_iterator end2 = m_providers.end();
-        for (type_providers::iterator j = m_providers.begin(); j != end2; ++j) {
+        auto end2 = m_providers.end();
+        for (auto j = m_providers.begin(); j != end2; ++j) {
             delete *j;
         }
 
@@ -66,8 +66,8 @@ namespace FIFE
             return nullptr;
         }
 
-        type_providers::const_iterator end = m_providers.end();
-        for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
+        auto end = m_providers.end();
+        for (auto i = m_providers.begin(); i != end; ++i) {
             VFSSourceProvider* provider = *i;
             if (!provider->isReadable(path)) {
                 continue;
@@ -112,7 +112,7 @@ namespace FIFE
 
     void VFS::removeSource(VFSSource* source)
     {
-        type_sources::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
+        auto i = std::ranges::find(m_sources, source);
         if (i != m_sources.end()) {
             m_sources.erase(i);
         }
@@ -120,12 +120,12 @@ namespace FIFE
 
     void VFS::removeSource(const std::string& path)
     {
-        type_providers::iterator end = m_providers.end();
-        for (type_providers::iterator i = m_providers.begin(); i != end; ++i) {
+        auto end = m_providers.end();
+        for (auto i = m_providers.begin(); i != end; ++i) {
             VFSSourceProvider* provider = *i;
             if (provider->hasSource(path)) {
                 VFSSource* source        = provider->getSource(path);
-                type_sources::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
+                auto i = std::ranges::find(m_sources, source);
                 if (i == m_sources.end()) {
                     removeSource(*i);
                     return;
@@ -136,9 +136,9 @@ namespace FIFE
 
     VFSSource* VFS::getSourceForFile(const std::string& file) const
     {
-        for (type_sources::const_iterator it = m_sources.begin(); it != m_sources.end(); ++it) {
-            if ((*it)->fileExists(file)) {
-                return *it;
+        for (auto m_source : m_sources) {
+            if (m_source->fileExists(file)) {
+                return m_source;
             }
         }
 
@@ -171,7 +171,7 @@ namespace FIFE
         std::vector<std::string> tokens = split(newpath, '/');
 
         std::string currentpath                        = "/";
-        std::vector<std::string>::const_iterator token = tokens.begin();
+        auto token = tokens.begin();
         while (token != tokens.end()) {
             if (!(*token).empty()) {
                 if (*token != "." && *token != ".." && listDirectories(currentpath, *token).empty()) {
@@ -201,8 +201,8 @@ namespace FIFE
     std::set<std::string> VFS::listFiles(const std::string& pathstr) const
     {
         std::set<std::string> list;
-        type_sources::const_iterator end = m_sources.end();
-        for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
+        auto end = m_sources.end();
+        for (auto i = m_sources.begin(); i != end; ++i) {
             std::set<std::string> sourcelist = (*i)->listFiles(pathstr);
             list.insert(sourcelist.begin(), sourcelist.end());
         }
@@ -219,8 +219,8 @@ namespace FIFE
     std::set<std::string> VFS::listDirectories(const std::string& pathstr) const
     {
         std::set<std::string> list;
-        type_sources::const_iterator end = m_sources.end();
-        for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
+        auto end = m_sources.end();
+        for (auto i = m_sources.begin(); i != end; ++i) {
             std::set<std::string> sourcelist = (*i)->listDirectories(pathstr);
             list.insert(sourcelist.begin(), sourcelist.end());
         }
@@ -238,8 +238,8 @@ namespace FIFE
     {
         std::set<std::string> results;
         std::regex regex(fregex);
-        std::set<std::string>::const_iterator end = list.end();
-        for (std::set<std::string>::const_iterator i = list.begin(); i != end;) {
+        auto end = list.end();
+        for (auto i = list.begin(); i != end;) {
             std::cmatch match;
             if (std::regex_match((*i).c_str(), match, regex)) {
                 results.insert(*i);
@@ -251,12 +251,12 @@ namespace FIFE
 
     bool VFS::hasSource(const std::string& path) const
     {
-        type_providers::const_iterator end = m_providers.end();
-        for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
+        auto end = m_providers.end();
+        for (auto i = m_providers.begin(); i != end; ++i) {
             const VFSSourceProvider* provider = *i;
             if (provider->hasSource(path)) {
                 const VFSSource* source        = provider->getSource(path);
-                type_sources::const_iterator i = std::find(m_sources.begin(), m_sources.end(), source);
+                auto i = std::ranges::find(m_sources, source);
                 if (i == m_sources.end()) {
                     return false;
                 }

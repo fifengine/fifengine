@@ -76,7 +76,7 @@ namespace FIFE
         delete m_input;
         delete m_fcn_gui;
         delete m_gui_graphics;
-        std::vector<GuiFont*>::iterator i = m_fonts.begin();
+        auto i = m_fonts.begin();
         while (i != m_fonts.end()) {
             delete *i;
             ++i;
@@ -263,7 +263,7 @@ namespace FIFE
 
     void FifechanManager::releaseFont(GuiFont* font)
     {
-        std::vector<GuiFont*>::iterator i = m_fonts.begin();
+        auto i = m_fonts.begin();
         while (i != m_fonts.end()) {
             if ((*i) == font) {
                 m_fonts.erase(i);
@@ -276,7 +276,7 @@ namespace FIFE
 
     void FifechanManager::invalidateFonts()
     {
-        std::vector<GuiFont*>::iterator it = m_fonts.begin();
+        auto it = m_fonts.begin();
         while (it != m_fonts.end()) {
             (*it)->invalidate();
             ++it;

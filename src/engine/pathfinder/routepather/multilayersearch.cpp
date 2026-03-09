@@ -47,8 +47,8 @@ namespace FIFE
         if (m_endZone == nullptr) {
             Cell* endcell                       = m_endCache->getCell(m_to.getLayerCoordinates());
             const std::vector<Cell*>& neighbors = endcell->getNeighbors();
-            for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                Zone* tmpzone = (*it)->getZone();
+            for (auto neighbor : neighbors) {
+                Zone* tmpzone = neighbor->getZone();
                 if (tmpzone != nullptr) {
                     m_endZone = tmpzone;
                     if (tmpzone == m_startZone) {
@@ -69,8 +69,8 @@ namespace FIFE
         // if it is a protected cell it can have a second startzone
         if (m_betweenTargets.empty() && startCell->isZoneProtected()) {
             const std::vector<Cell*>& neighbors = startCell->getNeighbors();
-            for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                Zone* tmpzone = (*it)->getZone();
+            for (auto neighbor : neighbors) {
+                Zone* tmpzone = neighbor->getZone();
                 if (tmpzone != nullptr) {
                     if (tmpzone != m_startZone) {
                         m_startZone = tmpzone;
@@ -177,26 +177,26 @@ namespace FIFE
         if (adjacents.empty()) {
             return;
         }
-        for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
-            if (*i == nullptr) {
+        for (auto adjacent : adjacents) {
+            if (adjacent == nullptr) {
                 continue;
             }
-            if ((*i)->getLayer()->getCellCache() != m_currentCache) {
+            if (adjacent->getLayer()->getCellCache() != m_currentCache) {
                 continue;
             }
-            int32_t adjacentInt = (*i)->getCellId();
+            int32_t adjacentInt = adjacent->getCellId();
             if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
                 continue;
             }
-            if (zLimited && ABS(cellZ - (*i)->getLayerCoordinates().z) > maxZ) {
+            if (zLimited && ABS(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
-            bool blocker                  = (*i)->getCellType() > blockerThreshold;
-            ModelCoordinate adjacentCoord = (*i)->getLayerCoordinates();
+            bool blocker                  = adjacent->getCellType() > blockerThreshold;
+            ModelCoordinate adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (blocker && m_multicell) {
-                    std::vector<Cell*>::iterator bc_it =
-                        std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), *i);
+                    auto bc_it =
+                        std::ranges::find(m_ignoredBlockers, adjacent);
                     if (bc_it == m_ignoredBlockers.end()) {
                         continue;
                     }
@@ -209,19 +209,19 @@ namespace FIFE
                 blocker = false;
                 Location currentLoc(nextCell->getLayer());
                 currentLoc.setLayerCoordinates(nextCell->getLayerCoordinates());
-                Location adjacentLoc((*i)->getLayer());
-                adjacentLoc.setLayerCoordinates((*i)->getLayerCoordinates());
+                Location adjacentLoc(adjacent->getLayer());
+                adjacentLoc.setLayerCoordinates(adjacent->getLayerCoordinates());
 
                 int32_t rotation = getAngleBetween(currentLoc, adjacentLoc);
                 std::vector<ModelCoordinate> coords =
                     grid->toMultiCoordinates(adjacentLoc.getLayerCoordinates(), m_route->getOccupiedCells(rotation));
-                std::vector<ModelCoordinate>::iterator coord_it = coords.begin();
+                auto coord_it = coords.begin();
                 for (; coord_it != coords.end(); ++coord_it) {
                     Cell* cell = m_currentCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            std::vector<Cell*>::iterator bc_it =
-                                std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);
+                            auto bc_it =
+                                std::ranges::find(m_ignoredBlockers, cell);
                             if (bc_it == m_ignoredBlockers.end()) {
                                 blocker = true;
                                 break;
@@ -231,7 +231,7 @@ namespace FIFE
                             // check if cell is on one of the areas
                             bool sameAreas                                 = false;
                             const std::list<std::string> areas             = m_route->getLimitedAreas();
-                            std::list<std::string>::const_iterator area_it = areas.begin();
+                            auto area_it = areas.begin();
                             for (; area_it != areas.end(); ++area_it) {
                                 if (m_currentCache->isCellInArea(*area_it, cell)) {
                                     sameAreas = true;
@@ -255,9 +255,9 @@ namespace FIFE
                 // check if cell is on one of the areas
                 bool sameAreas                                 = false;
                 const std::list<std::string> areas             = m_route->getLimitedAreas();
-                std::list<std::string>::const_iterator area_it = areas.begin();
+                auto area_it = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
-                    if (m_currentCache->isCellInArea(*area_it, *i)) {
+                    if (m_currentCache->isCellInArea(*area_it, adjacent)) {
                         sameAreas = true;
                         break;
                     }
@@ -345,33 +345,33 @@ namespace FIFE
             Location loc;
             Cell* cell = nullptr;
             // find nearest portal (air-line distance)
-            for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
-                if ((*it)->getZone() != m_startZone) {
+            for (auto & it : cells) {
+                if (it->getZone() != m_startZone) {
                     continue;
                 }
-                TransitionInfo* trans = (*it)->getTransition();
+                TransitionInfo* trans = it->getTransition();
                 Cell* transTarget     = trans->m_layer->getCellCache()->getCell(trans->m_mc);
                 if (transTarget->getZone() != m_endZone) {
                     continue;
                 }
                 if (cell == nullptr) {
-                    loc.setLayer((*it)->getLayer());
-                    loc.setLayerCoordinates((*it)->getLayerCoordinates());
-                    cell = *it;
+                    loc.setLayer(it->getLayer());
+                    loc.setLayerCoordinates(it->getLayerCoordinates());
+                    cell = it;
                     continue;
                 }
-                Location temp((*it)->getLayer());
-                temp.setLayerCoordinates((*it)->getLayerCoordinates());
+                Location temp(it->getLayer());
+                temp.setLayerCoordinates(it->getLayerCoordinates());
                 Location loc1(cell->getTransition()->m_layer);
                 loc1.setLayerCoordinates(cell->getTransition()->m_mc);
-                Location loc2((*it)->getTransition()->m_layer);
-                loc2.setLayerCoordinates((*it)->getTransition()->m_mc);
+                Location loc2(it->getTransition()->m_layer);
+                loc2.setLayerCoordinates(it->getTransition()->m_mc);
 
                 double temp_distance    = temp.getLayerDistanceTo(m_from) + loc2.getLayerDistanceTo(m_to);
                 double current_distance = loc.getLayerDistanceTo(m_from) + loc1.getLayerDistanceTo(m_to);
                 if (current_distance > temp_distance) {
                     loc  = temp;
-                    cell = *it;
+                    cell = it;
                 }
             }
             if (cell != nullptr) {
@@ -385,7 +385,7 @@ namespace FIFE
         // in case no transition is there then return
         std::vector<Cell*> endTransCells;
         std::vector<Cell*> tmpTransCells      = m_endCache->getTransitionCells();
-        std::vector<Cell*>::iterator tcell_it = tmpTransCells.begin();
+        auto tcell_it = tmpTransCells.begin();
         for (; tcell_it != tmpTransCells.end(); ++tcell_it) {
             Zone* zone = (*tcell_it)->getZone();
             if (zone == m_endZone) {
@@ -412,7 +412,7 @@ namespace FIFE
         // fetch zones
         std::vector<Zone*> zones;
         const std::list<Layer*>& allLayers       = m_from.getLayer()->getMap()->getLayers();
-        std::list<Layer*>::const_iterator lay_it = allLayers.begin();
+        auto lay_it = allLayers.begin();
         for (; lay_it != allLayers.end(); ++lay_it) {
             CellCache* cache = (*lay_it)->getCellCache();
             if (cache != nullptr) {
@@ -424,7 +424,7 @@ namespace FIFE
         // sort zones by iterator distance
         std::map<Zone*, int32_t> zoneDistanceMap;
         std::map<int32_t, Zone*> distanceZoneMap;
-        for (std::vector<Zone*>::iterator zit = zones.begin(); zit != zones.end(); ++zit) {
+        for (auto zit = zones.begin(); zit != zones.end(); ++zit) {
             // pseudo distance
             int32_t distance = std::distance(zones.begin(), zit);
             zoneDistanceMap.insert(std::pair<Zone*, int32_t>(*zit, distance));
@@ -466,7 +466,7 @@ namespace FIFE
             if (transCells.empty()) {
                 continue;
             }
-            std::vector<Cell*>::iterator cell_it = transCells.begin();
+            auto cell_it = transCells.begin();
             for (; cell_it != transCells.end(); ++cell_it) {
                 // transition info
                 TransitionInfo* trans = (*cell_it)->getTransition();
@@ -511,7 +511,7 @@ namespace FIFE
             }
             // so here we fetch the transistions
             Location lastLoc = m_from;
-            for (std::list<Zone*>::iterator lit = betweenZones.begin(); lit != betweenZones.end(); ++lit) {
+            for (auto lit = betweenZones.begin(); lit != betweenZones.end(); ++lit) {
                 ++lit;
                 if (lit == betweenZones.end()) {
                     break;
@@ -527,8 +527,8 @@ namespace FIFE
                 Cell* transCell = nullptr;
                 double nextCost = 0.0;
                 Location newLoc = lastLoc;
-                for (std::vector<Cell*>::iterator cit = tempCells.begin(); cit != tempCells.end(); ++cit) {
-                    Cell* nextCell            = *cit;
+                for (auto & tempCell : tempCells) {
+                    Cell* nextCell            = tempCell;
                     TransitionInfo* nextTrans = nextCell->getTransition();
                     Cell* transTargetCell     = nextTrans->m_layer->getCellCache()->getCell(nextTrans->m_mc);
                     // skip wrong transitions
@@ -536,12 +536,12 @@ namespace FIFE
                         continue;
                     }
                     // nearest transistion (air-line distance)
-                    Location tmpLoc((*cit)->getLayer());
-                    tmpLoc.setLayerCoordinates((*cit)->getLayerCoordinates());
+                    Location tmpLoc(tempCell->getLayer());
+                    tmpLoc.setLayerCoordinates(tempCell->getLayerCoordinates());
                     double locCost = lastLoc.getLayerDistanceTo(tmpLoc);
                     if ((transCell == nullptr) || locCost < nextCost) {
                         nextCost  = locCost;
-                        transCell = *cit;
+                        transCell = tempCell;
                         newLoc.setLayer(transTargetCell->getLayer());
                         newLoc.setLayerCoordinates(transTargetCell->getLayerCoordinates());
                     }

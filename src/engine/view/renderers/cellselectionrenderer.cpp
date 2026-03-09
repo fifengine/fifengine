@@ -63,21 +63,21 @@ namespace FIFE
     void CellSelectionRenderer::selectLocation(const Location* loc)
     {
         if (loc != nullptr) {
-            std::vector<Location>::const_iterator it = m_locations.begin();
+            auto it = m_locations.begin();
             for (; it != m_locations.end(); it++) {
                 if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
                     return;
                 }
             }
 
-            m_locations.push_back(Location(*loc));
+            m_locations.emplace_back(*loc);
         }
     }
 
     void CellSelectionRenderer::deselectLocation(const Location* loc)
     {
         if (loc != nullptr) {
-            std::vector<Location>::iterator it = m_locations.begin();
+            auto it = m_locations.begin();
             for (; it != m_locations.end(); it++) {
                 if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
                     m_locations.erase(it);
@@ -93,7 +93,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<Location>::const_iterator locit = m_locations.begin();
+        auto locit = m_locations.begin();
         for (; locit != m_locations.end(); locit++) {
             const Location loc = *locit;
             if (layer != loc.getLayer()) {
@@ -108,7 +108,7 @@ namespace FIFE
 
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, loc.getLayerCoordinates());
-            std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+            auto it = vertices.begin();
             ScreenPoint firstpt                                  = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;

@@ -18,9 +18,9 @@ namespace FIFE
 
     Exception::Exception(const std::string& msg) : std::runtime_error(msg), m_what(msg) { }
 
-    Exception::~Exception() throw() = default;
+    Exception::~Exception() noexcept = default;
 
-    const char* Exception::what() const throw()
+    const char* Exception::what() const noexcept
     {
         return m_what.c_str();
     }

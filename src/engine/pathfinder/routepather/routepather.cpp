@@ -90,8 +90,8 @@ namespace FIFE
 
     bool RoutePather::sessionIdValid(const int32_t sessionId)
     {
-        for (SessionList::const_iterator i = m_registeredSessionIds.begin(); i != m_registeredSessionIds.end(); ++i) {
-            if ((*i) == sessionId) {
+        for (int & m_registeredSessionId : m_registeredSessionIds) {
+            if (m_registeredSessionId == sessionId) {
                 return true;
             }
         }
@@ -100,7 +100,7 @@ namespace FIFE
 
     bool RoutePather::invalidateSessionId(const int32_t sessionId)
     {
-        for (SessionList::iterator i = m_registeredSessionIds.begin(); i != m_registeredSessionIds.end(); ++i) {
+        for (auto i = m_registeredSessionIds.begin(); i != m_registeredSessionIds.end(); ++i) {
             if ((*i) == sessionId) {
                 m_registeredSessionIds.erase(i);
                 return true;
@@ -112,7 +112,7 @@ namespace FIFE
     Route* RoutePather::createRoute(
         const Location& start, const Location& end, bool immediate, const std::string& costId)
     {
-        Route* route = new Route(start, end);
+        auto* route = new Route(start, end);
         if (!costId.empty()) {
             route->setCostId(costId);
         }
@@ -161,8 +161,8 @@ namespace FIFE
                 if ((endZone == nullptr) || startCell->isZoneProtected()) {
                     bool found                          = false;
                     const std::vector<Cell*>& neighbors = endCell->getNeighbors();
-                    for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                        Zone* tmpZone = (*it)->getZone();
+                    for (auto neighbor : neighbors) {
+                        Zone* tmpZone = neighbor->getZone();
                         if (tmpZone != nullptr) {
                             endZone = tmpZone;
                             if (tmpZone == startZone) {
@@ -173,8 +173,8 @@ namespace FIFE
                     }
                     if (!found && startCell->isZoneProtected()) {
                         const std::vector<Cell*>& neighbors = startCell->getNeighbors();
-                        for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                            Zone* tmpZone = (*it)->getZone();
+                        for (auto neighbor : neighbors) {
+                            Zone* tmpZone = neighbor->getZone();
                             if (tmpZone != nullptr) {
                                 if (tmpZone == startZone) {
                                     endZone = tmpZone;
@@ -199,7 +199,7 @@ namespace FIFE
             // check if target or neighbors are on one of the areas
             bool sameAreas                                 = false;
             const std::list<std::string> areas             = route->getLimitedAreas();
-            std::list<std::string>::const_iterator area_it = areas.begin();
+            auto area_it = areas.begin();
             for (; area_it != areas.end(); ++area_it) {
                 if (endCache->isCellInArea(*area_it, endCell)) {
                     sameAreas = true;
@@ -213,7 +213,7 @@ namespace FIFE
                 }
                 area_it = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
-                    std::vector<Cell*>::const_iterator neigh_it = neighbors.begin();
+                    auto neigh_it = neighbors.begin();
                     for (; neigh_it != neighbors.end(); ++neigh_it) {
                         if (endCache->isCellInArea(*area_it, *neigh_it)) {
                             sameAreas = true;
@@ -286,11 +286,11 @@ namespace FIFE
                     currentNode.getLayerCoordinates(), route->getOccupiedCells(route->getRotation()));
                 newCoords.push_back(currentNode.getLayerCoordinates());
 
-                std::vector<ModelCoordinate>::const_iterator nco_it = newCoords.begin();
+                auto nco_it = newCoords.begin();
                 for (; nco_it != newCoords.end(); ++nco_it) {
                     if (currentNode.getLayer()->cellContainsBlockingInstance(*nco_it)) {
                         bool found                                          = false;
-                        std::vector<ModelCoordinate>::const_iterator oco_it = oldCoords.begin();
+                        auto oco_it = oldCoords.begin();
                         for (; oco_it != oldCoords.end(); ++oco_it) {
                             if (*oco_it == *nco_it) {
                                 found = true;

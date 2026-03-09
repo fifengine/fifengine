@@ -28,12 +28,12 @@ namespace FIFE
         m_poolSize    = 0;
 
         m_collectTimer.setInterval(1000 * 60);
-        m_collectTimer.setCallback(std::bind(&TextRenderPool::removeOldEntries, this));
+        m_collectTimer.setCallback([this] { removeOldEntries(); });
     }
 
     TextRenderPool::~TextRenderPool()
     {
-        type_pool::iterator it = m_pool.begin();
+        auto it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
             delete it->image;
         }
@@ -43,7 +43,7 @@ namespace FIFE
     {
         SDL_Color c = fontbase->getColor();
 
-        type_pool::iterator it = m_pool.begin();
+        auto it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
             if (it->antialias != fontbase->isAntiAlias()) {
                 continue;
@@ -107,7 +107,7 @@ namespace FIFE
     void TextRenderPool::removeOldEntries()
     {
 
-        type_pool::iterator it = m_pool.begin();
+        auto it = m_pool.begin();
         uint32_t now           = TimeManager::instance()->getTime();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000 * 60) {
@@ -127,7 +127,7 @@ namespace FIFE
 
     void TextRenderPool::invalidateCachedText()
     {
-        type_pool::iterator it = m_pool.begin();
+        auto it = m_pool.begin();
         while (it != m_pool.end()) {
             it->image->invalidate();
             ++it;

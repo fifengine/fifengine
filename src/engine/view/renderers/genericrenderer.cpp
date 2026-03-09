@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -210,7 +211,7 @@ namespace FIFE
     }
 
     GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text, bool zoomed) :
-        GenericRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(text), m_zoomed(zoomed)
+        GenericRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text)), m_zoomed(zoomed)
     {
     }
     void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
@@ -368,7 +369,7 @@ namespace FIFE
     }
     void GenericRenderer::removeAll(const std::string& group)
     {
-        std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             delete *info_it;
         }
@@ -378,9 +379,9 @@ namespace FIFE
     // Remove all groups
     void GenericRenderer::removeAll()
     {
-        std::map<std::string, std::vector<GenericRendererElementInfo*>>::iterator it = m_groups.begin();
+        auto it = m_groups.begin();
         for (; it != m_groups.end(); ++it) {
-            std::vector<GenericRendererElementInfo*>::const_iterator info_it = it->second.begin();
+            auto info_it = it->second.begin();
             for (; info_it != it->second.end(); ++info_it) {
                 delete *info_it;
             }
@@ -395,9 +396,9 @@ namespace FIFE
 
     void GenericRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        std::map<std::string, std::vector<GenericRendererElementInfo*>>::iterator group_it = m_groups.begin();
+        auto group_it = m_groups.begin();
         for (; group_it != m_groups.end(); ++group_it) {
-            std::vector<GenericRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
+            auto info_it = group_it->second.begin();
             for (; info_it != group_it->second.end(); ++info_it) {
                 (*info_it)->render(cam, layer, instances, m_renderbackend);
             }

@@ -41,7 +41,7 @@ namespace FIFE
 
     CellGrid* HexGrid::clone()
     {
-        HexGrid* nGrid = new HexGrid(m_axial);
+        auto* nGrid = new HexGrid(m_axial);
         nGrid->setRotation(m_rotation);
         nGrid->setXScale(m_xscale);
         nGrid->setYScale(m_yscale);
@@ -123,7 +123,7 @@ namespace FIFE
             // each uneven row has shifted coordinate of 0.5 horizontally
             // shift has to be gradual on vertical axis
             double ay         = ABS(y);
-            int32_t i_layer_y = static_cast<int32_t>(ay);
+            auto i_layer_y = static_cast<int32_t>(ay);
             double offset     = ay - static_cast<double>(i_layer_y);
             if ((i_layer_y % 2) == 1) {
                 offset = 1 - offset;
@@ -178,9 +178,9 @@ namespace FIFE
         }
         ExactModelCoordinate lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
 
-        int32_t x = static_cast<int32_t>(lc.x);
-        int32_t y = static_cast<int32_t>(lc.y);
-        int32_t z = static_cast<int32_t>(lc.z);
+        auto x = static_cast<int32_t>(lc.x);
+        auto y = static_cast<int32_t>(lc.y);
+        auto z = static_cast<int32_t>(lc.z);
 
         // distance of given point from our approximation
         // If y uneven dx=-dx and dy=-dy
@@ -232,8 +232,8 @@ namespace FIFE
     {
         FL_DBG(_log, LMsg("===============\ngetting vertices for ") << cell);
         vtx.clear();
-        double x = static_cast<double>(cell.x);
-        double y = static_cast<double>(cell.y);
+        auto x = static_cast<double>(cell.x);
+        auto y = static_cast<double>(cell.y);
         double horiz_shift;
         if (m_axial) {
             horiz_shift = HEX_TO_EDGE * cell.y;
@@ -277,7 +277,7 @@ namespace FIFE
         const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse)
     {
         std::vector<ModelCoordinate> coords;
-        std::vector<ModelCoordinate>::const_iterator it = orig.begin();
+        auto it = orig.begin();
         if (reverse) {
             for (; it != orig.end(); ++it) {
                 ModelCoordinate mc = position;

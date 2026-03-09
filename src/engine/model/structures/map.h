@@ -77,7 +77,7 @@ namespace FIFE
          * To add map to model, one should call Model::addMap (otherwise
          * map is not registered with the engine properly)
          */
-        Map(const std::string& identifier,
+        Map(std::string  identifier,
             RenderBackend* renderbackend,
             const std::vector<RendererBase*>& renderers,
             TimeProvider* tp_master = NULL);

@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -56,7 +57,7 @@ namespace FIFE
 
     void Animation::free()
     {
-        std::vector<FrameInfo>::iterator it = m_frames.begin();
+        auto it = m_frames.begin();
         for (; it != m_frames.end(); ++it) {
             (*it).image->free();
         }
@@ -111,7 +112,7 @@ namespace FIFE
     int32_t Animation::getFrameIndex(uint32_t timestamp)
     {
         int32_t val = -1;
-        if ((static_cast<int32_t>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
+        if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
             std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
             --i;
             val = i->second.index;
@@ -140,7 +141,7 @@ namespace FIFE
     ImagePtr Animation::getFrameByTimestamp(uint32_t timestamp)
     {
         ImagePtr val;
-        if ((static_cast<int32_t>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
+        if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
             std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
             --i;
             val = i->second.image;
@@ -154,8 +155,8 @@ namespace FIFE
     std::vector<ImagePtr> Animation::getFrames()
     {
         std::vector<ImagePtr> frames;
-        for (std::vector<FrameInfo>::iterator it = m_frames.begin(); it != m_frames.end(); ++it) {
-            frames.push_back((*it).image);
+        for (auto & m_frame : m_frames) {
+            frames.push_back(m_frame.image);
         }
         return frames;
     }

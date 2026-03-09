@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <set>
 #include <string>
+#include <utility>
 
 // 3rd party library includes
 
@@ -26,7 +27,7 @@ namespace FIFE
      */
     static Logger _log(LM_VFS);
 
-    VFSDirectory::VFSDirectory(VFS* vfs, const std::string& root) : VFSSource(vfs), m_root(root)
+    VFSDirectory::VFSDirectory(VFS* vfs, std::string  root) : VFSSource(vfs), m_root(std::move(root))
     {
         FL_DBG(_log, LMsg("VFSDirectory created with root path ") << m_root);
         if (!m_root.empty() && *(m_root.end() - 1) != '/') {

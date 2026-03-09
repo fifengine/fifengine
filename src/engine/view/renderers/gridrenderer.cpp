@@ -134,12 +134,12 @@ namespace FIFE
         int32_t cvy2 = round((cv.y + cv.h) * 1.25);
         cv.x -= round((cv.x + cv.w) * 0.125);
         cv.y -= round((cv.y + cv.h) * 0.125);
-        RenderList::const_iterator instance_it = instances.begin();
+        auto instance_it = instances.begin();
         for (; instance_it != instances.end(); ++instance_it) {
             Instance* instance = (*instance_it)->instance;
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-            std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+            auto it = vertices.begin();
             ScreenPoint firstpt                                  = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;

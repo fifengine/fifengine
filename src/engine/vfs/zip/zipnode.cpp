@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <string>
+#include <utility>
 #include <vector>
 
 // FIFE includes
@@ -24,9 +25,9 @@ namespace
      */
     FIFE::ZipNode* FindNameInContainer(const FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        for (FIFE::ZipNodeContainer::const_iterator iter = container.begin(); iter != container.end(); ++iter) {
-            if ((*iter)->getName() == name) {
-                return *iter;
+        for (auto iter : container) {
+            if (iter->getName() == name) {
+                return iter;
             }
         }
 
@@ -35,7 +36,7 @@ namespace
 
     FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        for (FIFE::ZipNodeContainer::iterator iter = container.begin(); iter != container.end(); ++iter) {
+        for (auto iter = container.begin(); iter != container.end(); ++iter) {
             if ((*iter)->getName() == name) {
                 return iter;
             }
@@ -49,7 +50,7 @@ namespace FIFE
 {
     ZipEntryData::ZipEntryData() : comp(0), crc32(0), size_comp(0), size_real(0), offset(0) { }
 
-    ZipNode::ZipNode(const std::string& name, ZipNode* parent /*=0*/) : m_name(name), m_parent(parent)
+    ZipNode::ZipNode(std::string  name, ZipNode* parent /*=0*/) : m_name(std::move(name)), m_parent(parent)
     {
 
         // set the content type based on whether
@@ -163,7 +164,7 @@ namespace FIFE
 
     ZipNode* ZipNode::addChild(const std::string& name)
     {
-        ZipNode* child = new ZipNode(name, this);
+        auto* child = new ZipNode(name, this);
         if (child != nullptr) {
             if (child->getContentType() == ZipContentType::File) {
                 m_fileChildren.push_back(child);
@@ -182,7 +183,7 @@ namespace FIFE
         if (child != nullptr) {
             if (child->getContentType() == ZipContentType::File) {
                 ZipNodeContainer::iterator iter;
-                iter = std::find(m_fileChildren.begin(), m_fileChildren.end(), child);
+                iter = std::ranges::find(m_fileChildren, child);
 
                 if (iter != m_fileChildren.end()) {
                     delete *iter;
@@ -195,14 +196,14 @@ namespace FIFE
     void ZipNode::removeChild(const std::string& name)
     {
         if (HasExtension(name)) {
-            ZipNodeContainer::iterator iter = FindNameInContainer(m_fileChildren, name);
+            auto iter = FindNameInContainer(m_fileChildren, name);
 
             if (iter != m_fileChildren.end()) {
                 delete *iter;
                 m_fileChildren.erase(iter);
             }
         } else {
-            ZipNodeContainer::iterator iter = FindNameInContainer(m_directoryChildren, name);
+            auto iter = FindNameInContainer(m_directoryChildren, name);
 
             if (iter != m_directoryChildren.end()) {
                 delete *iter;

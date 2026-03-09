@@ -29,7 +29,7 @@ namespace FIFE
     {
         VFS* vfs = VFS::instance();
 
-        Image* img = dynamic_cast<Image*>(res);
+        auto* img = dynamic_cast<Image*>(res);
 
         // Have to save the images x and y shift or it gets lost when it's
         // loaded again.

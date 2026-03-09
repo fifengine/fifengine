@@ -82,7 +82,7 @@ namespace FIFE
     void EngineSettings::setBitsPerPixel(uint8_t bitsperpixel)
     {
         std::vector<uint8_t> pv          = getPossibleBitsPerPixel();
-        std::vector<uint8_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
+        auto i = std::ranges::find(pv, bitsperpixel);
         if (i != pv.end()) {
             m_bitsperpixel = bitsperpixel;
             return;
@@ -131,7 +131,7 @@ namespace FIFE
     void EngineSettings::setRenderBackend(const std::string& renderbackend)
     {
         std::vector<std::string> pv          = getPossibleRenderBackends();
-        std::vector<std::string>::iterator i = std::find(pv.begin(), pv.end(), renderbackend);
+        auto i = std::ranges::find(pv, renderbackend);
         if (i != pv.end()) {
             m_renderbackend = renderbackend;
             return;
@@ -148,8 +148,8 @@ namespace FIFE
     std::vector<std::string> EngineSettings::getPossibleRenderBackends()
     {
         std::vector<std::string> tmp;
-        tmp.push_back("SDL");
-        tmp.push_back("OpenGL");
+        tmp.emplace_back("SDL");
+        tmp.emplace_back("OpenGL");
         return tmp;
     }
 

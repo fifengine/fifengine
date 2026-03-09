@@ -96,7 +96,7 @@ namespace FIFE
 
     void RenderTarget::removeAll(const std::string& group)
     {
-        std::vector<OffRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+        auto info_it = m_groups[group].begin();
         for (; info_it != m_groups[group].end(); ++info_it) {
             delete *info_it;
         }
@@ -111,9 +111,9 @@ namespace FIFE
 
     void RenderTarget::render()
     {
-        std::map<std::string, std::vector<OffRendererElementInfo*>>::iterator group_it = m_groups.begin();
+        auto group_it = m_groups.begin();
         for (; group_it != m_groups.end(); ++group_it) {
-            std::vector<OffRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
+            auto info_it = group_it->second.begin();
             for (; info_it != group_it->second.end(); ++info_it) {
                 (*info_it)->render(m_renderbackend);
             }
@@ -152,7 +152,7 @@ namespace FIFE
 
     void TargetRenderer::setRenderTarget(const std::string& targetname, bool discard, int32_t ndraws)
     {
-        RenderJobMap::iterator it = m_targets.find(targetname);
+        auto it = m_targets.find(targetname);
         if (it != m_targets.end()) {
             it->second.ndraws  = ndraws;
             it->second.discard = discard;
@@ -162,21 +162,21 @@ namespace FIFE
     void TargetRenderer::render()
     {
         if (!m_targets.empty()) {
-            for (RenderJobMap::iterator it = m_targets.begin(); it != m_targets.end(); ++it) {
-                if (it->second.ndraws != -1) {
-                    if (it->second.ndraws <= it->second.lasttime_draw) {
-                        RenderTargetPtr rt = it->second.target;
-                        m_renderbackend->attachRenderTarget(rt->m_target, it->second.discard);
+            for (auto & m_target : m_targets) {
+                if (m_target.second.ndraws != -1) {
+                    if (m_target.second.ndraws <= m_target.second.lasttime_draw) {
+                        RenderTargetPtr rt = m_target.second.target;
+                        m_renderbackend->attachRenderTarget(rt->m_target, m_target.second.discard);
                         rt->render();
                         m_renderbackend->detachRenderTarget();
 
-                        if (it->second.ndraws == 0) {
-                            it->second.ndraws = -1;
+                        if (m_target.second.ndraws == 0) {
+                            m_target.second.ndraws = -1;
                         } else {
-                            it->second.lasttime_draw = 1;
+                            m_target.second.lasttime_draw = 1;
                         }
                     } else {
-                        ++it->second.lasttime_draw;
+                        ++m_target.second.lasttime_draw;
                     }
                 }
             }

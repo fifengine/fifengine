@@ -28,7 +28,7 @@ namespace FIFE
 
     ImageFontBase::~ImageFontBase()
     {
-        type_glyphs::iterator i = m_glyphs.begin();
+        auto i = m_glyphs.begin();
         for (; i != m_glyphs.end(); ++i) {
             SDL_FreeSurface(i->second.surface);
         }
@@ -40,7 +40,7 @@ namespace FIFE
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
             uint32_t codepoint             = utf8::next(text_it, text.end());
-            type_glyphs::const_iterator it = m_glyphs.find(codepoint);
+            auto it = m_glyphs.find(codepoint);
 
             if (it != m_glyphs.end()) {
                 w += it->second.surface->w + getGlyphSpacing();
@@ -72,7 +72,7 @@ namespace FIFE
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
             uint32_t codepoint       = utf8::next(text_it, text.end());
-            type_glyphs::iterator it = m_glyphs.find(codepoint);
+            auto it = m_glyphs.find(codepoint);
 
             if (it == m_glyphs.end()) {
                 if (m_placeholder.surface == nullptr) {

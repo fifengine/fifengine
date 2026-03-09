@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <utility>
 
 // 3rd party library includes
 
@@ -17,8 +18,8 @@
 namespace FIFE
 {
 
-    RawDataFile::RawDataFile(const std::string& file) :
-        m_file(file), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0)
+    RawDataFile::RawDataFile(std::string  file) :
+        m_file(std::move(file)), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0)
     {
         if (!m_stream) {
             throw CannotOpenFile(m_file);

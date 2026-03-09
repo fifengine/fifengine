@@ -31,8 +31,8 @@ namespace FIFE
     {
         size_t totalSize = 0;
 
-        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             totalSize += it->second->getSize();
@@ -43,8 +43,8 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesCreated() const
     {
-        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
         size_t count                          = 0;
 
         for (; it != itend; ++it) {
@@ -58,8 +58,8 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesLoaded() const
     {
-        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
         size_t count                          = 0;
 
         for (; it != itend; ++it) {
@@ -78,7 +78,7 @@ namespace FIFE
 
     AnimationPtr AnimationManager::create(IResourceLoader* loader)
     {
-        Animation* ptr = new Animation(loader);
+        auto* ptr = new Animation(loader);
         return add(ptr);
     }
 
@@ -92,13 +92,13 @@ namespace FIFE
             return getPtr(name);
         }
 
-        Animation* ptr = new Animation(name, loader);
+        auto* ptr = new Animation(name, loader);
         return add(ptr);
     }
 
     AnimationPtr AnimationManager::load(const std::string& name, IResourceLoader* loader)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
 
         if (nit != m_animNameMap.end()) {
             if (nit->second->getState() == IResource::RES_NOT_LOADED) {
@@ -147,7 +147,7 @@ namespace FIFE
 
     bool AnimationManager::exists(const std::string& name)
     {
-        AnimationNameMapIterator it = m_animNameMap.find(name);
+        auto it = m_animNameMap.find(name);
         if (it != m_animNameMap.end()) {
             return true;
         }
@@ -157,7 +157,7 @@ namespace FIFE
 
     bool AnimationManager::exists(ResourceHandle handle)
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             return true;
         }
@@ -167,7 +167,7 @@ namespace FIFE
 
     void AnimationManager::reload(const std::string& name)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
 
         if (nit != m_animNameMap.end()) {
             if (nit->second->getState() == IResource::RES_LOADED) {
@@ -182,7 +182,7 @@ namespace FIFE
 
     void AnimationManager::reload(ResourceHandle handle)
     {
-        AnimationHandleMapIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
 
         if (it != m_animHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -198,8 +198,8 @@ namespace FIFE
 
     void AnimationManager::reloadAll()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -211,8 +211,8 @@ namespace FIFE
 
     void AnimationManager::loadUnreferenced()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -227,7 +227,7 @@ namespace FIFE
 
     void AnimationManager::free(const std::string& name)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
 
         if (nit != m_animNameMap.end()) {
             if (nit->second->getState() == IResource::RES_LOADED) {
@@ -241,7 +241,7 @@ namespace FIFE
 
     void AnimationManager::free(ResourceHandle handle)
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
                 it->second->free();
@@ -255,8 +255,8 @@ namespace FIFE
 
     void AnimationManager::freeAll()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         int32_t count = 0;
 
@@ -272,8 +272,8 @@ namespace FIFE
 
     void AnimationManager::freeUnreferenced()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -289,8 +289,8 @@ namespace FIFE
 
     void AnimationManager::remove(AnimationPtr& resource)
     {
-        AnimationHandleMapIterator it = m_animHandleMap.find(resource->getHandle());
-        AnimationNameMapIterator nit  = m_animNameMap.find(resource->getName());
+        auto it = m_animHandleMap.find(resource->getHandle());
+        auto nit  = m_animNameMap.find(resource->getName());
 
         if (it != m_animHandleMap.end()) {
             m_animHandleMap.erase(it);
@@ -312,7 +312,7 @@ namespace FIFE
     {
         std::size_t handle;
 
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
         if (nit != m_animNameMap.end()) {
             handle = nit->second->getHandle();
             m_animNameMap.erase(nit);
@@ -321,7 +321,7 @@ namespace FIFE
             return;
         }
 
-        AnimationHandleMapIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             m_animHandleMap.erase(it);
             return;
@@ -334,7 +334,7 @@ namespace FIFE
     {
         std::string name;
 
-        AnimationHandleMapIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
 
         if (it != m_animHandleMap.end()) {
             name = it->second->getName();
@@ -347,7 +347,7 @@ namespace FIFE
             return;
         }
 
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
         if (nit != m_animNameMap.end()) {
             m_animNameMap.erase(nit);
             return;
@@ -371,8 +371,8 @@ namespace FIFE
 
     void AnimationManager::removeUnreferenced()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         std::vector<int> imgHandles;
 
@@ -384,8 +384,8 @@ namespace FIFE
             }
         }
 
-        for (std::vector<int>::iterator it = imgHandles.begin(); it != imgHandles.end(); ++it) {
-            remove(*it);
+        for (int & imgHandle : imgHandles) {
+            remove(imgHandle);
         }
 
         FL_DBG(
@@ -395,7 +395,7 @@ namespace FIFE
 
     AnimationPtr AnimationManager::get(const std::string& name)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
 
         if (nit != m_animNameMap.end()) {
             if (nit->second->getState() != IResource::RES_LOADED) {
@@ -412,7 +412,7 @@ namespace FIFE
 
     AnimationPtr AnimationManager::get(ResourceHandle handle)
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             if (it->second->getState() != IResource::RES_LOADED) {
                 // resource is not loaded so load it
@@ -424,12 +424,12 @@ namespace FIFE
         FL_WARN(
             _log, LMsg("AnimationManager::get(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
 
-        return AnimationPtr();
+        return {};
     }
 
     AnimationPtr AnimationManager::getPtr(const std::string& name)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
 
         if (nit != m_animNameMap.end()) {
             return nit->second;
@@ -437,12 +437,12 @@ namespace FIFE
 
         FL_WARN(_log, LMsg("AnimationManager::getPtr(std::string) - ") << "Resource " << name << " is undefined.");
 
-        return AnimationPtr();
+        return {};
     }
 
     AnimationPtr AnimationManager::getPtr(ResourceHandle handle)
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             return it->second;
         }
@@ -451,12 +451,12 @@ namespace FIFE
             _log,
             LMsg("AnimationManager::getPtr(ResourceHandle) - ") << "Resource handle " << handle << " is undefined.");
 
-        return AnimationPtr();
+        return {};
     }
 
     ResourceHandle AnimationManager::getResourceHandle(const std::string& name)
     {
-        AnimationNameMapIterator nit = m_animNameMap.find(name);
+        auto nit = m_animNameMap.find(name);
         if (nit != m_animNameMap.end()) {
             return nit->second->getHandle();
         }
@@ -470,7 +470,7 @@ namespace FIFE
 
     void AnimationManager::invalidate(const std::string& name)
     {
-        AnimationNameMapIterator it = m_animNameMap.find(name);
+        auto it = m_animNameMap.find(name);
         if (it != m_animNameMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
                 it->second.get()->invalidate();
@@ -480,7 +480,7 @@ namespace FIFE
 
     void AnimationManager::invalidate(ResourceHandle handle)
     {
-        AnimationHandleMapIterator it = m_animHandleMap.find(handle);
+        auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
                 it->second.get()->invalidate();
@@ -490,8 +490,8 @@ namespace FIFE
 
     void AnimationManager::invalidateAll()
     {
-        AnimationHandleMapIterator it    = m_animHandleMap.begin();
-        AnimationHandleMapIterator itend = m_animHandleMap.end();
+        auto it    = m_animHandleMap.begin();
+        auto itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {

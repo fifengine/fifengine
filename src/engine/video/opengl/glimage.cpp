@@ -148,7 +148,7 @@ namespace FIFE
             validateShared();
         }
 
-        GLImage* img = static_cast<GLImage*>(overlay.get());
+        auto* img = static_cast<GLImage*>(overlay.get());
         img->forceLoadInternal();
 
         static_cast<RenderBackendOpenGL*>(rb)->addImageToArray(
@@ -202,7 +202,7 @@ namespace FIFE
             validateShared();
         }
 
-        GLImage* img = static_cast<GLImage*>(overlay.get());
+        auto* img = static_cast<GLImage*>(overlay.get());
         img->forceLoadInternal();
 
         static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(
@@ -251,7 +251,7 @@ namespace FIFE
             m_tex_coords[3] = 1.0F;
         }
 
-        uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
+        auto* data = static_cast<uint8_t*>(m_surface->pixels);
         int32_t pitch = m_surface->pitch;
 
         assert(!m_texId);
@@ -310,7 +310,7 @@ namespace FIFE
         int32_t bpp_source  = m_surface->format->BitsPerPixel;
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
-            uint16_t* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];
+            auto* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];
             memset(oglbuffer, 0x00, m_chunk_size_w * m_chunk_size_h * sizeof(uint16_t));
 
             for (uint32_t y = 0; y < height; ++y) {
@@ -330,7 +330,7 @@ namespace FIFE
                     }
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
-                        uint8_t lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
+                        auto lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                         r           = lum;
                         g           = lum;
                         b           = lum;
@@ -362,7 +362,7 @@ namespace FIFE
 
         if (GLEW_ARB_texture_non_power_of_two && RenderBackend::instance()->isNPOTEnabled()) {
             if (RenderBackend::instance()->isColorKeyEnabled()) {
-                uint8_t* oglbuffer = new uint8_t[width * height * 4];
+                auto* oglbuffer = new uint8_t[width * height * 4];
                 memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
 
                 for (uint32_t y = 0; y < height; ++y) {
@@ -379,7 +379,7 @@ namespace FIFE
                         }
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         if (monochrome) {
-                            uint8_t lum        = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
+                            auto lum        = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                             oglbuffer[gid + 0] = lum;
                             oglbuffer[gid + 1] = lum;
                             oglbuffer[gid + 2] = lum;
@@ -401,14 +401,14 @@ namespace FIFE
 
                 delete[] oglbuffer;
             } else if (monochrome) {
-                uint8_t* oglbuffer = new uint8_t[width * height * 4];
+                auto* oglbuffer = new uint8_t[width * height * 4];
                 memcpy(oglbuffer, data, width * height * 4 * sizeof(uint8_t));
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
                         uint32_t gid = x + (y * pitch);
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
-                        uint8_t lum = static_cast<uint8_t>(
+                        auto lum = static_cast<uint8_t>(
                             (oglbuffer[gid + 0] * 0.3) + (oglbuffer[gid + 1] * 0.59) + (oglbuffer[gid + 2] * 0.11));
                         oglbuffer[gid + 0] = lum;
                         oglbuffer[gid + 1] = lum;
@@ -444,7 +444,7 @@ namespace FIFE
             }
             // Non power of 2 textures are not supported, we need to pad the size of texture to nearest power of 2
         } else {
-            uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
+            auto* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
             memset(oglbuffer, 0x00, m_chunk_size_w * m_chunk_size_h * sizeof(uint32_t));
 
             for (uint32_t y = 0; y < height; ++y) {
@@ -464,7 +464,7 @@ namespace FIFE
                     }
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
-                        uint8_t lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
+                        auto lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                         r           = lum;
                         g           = lum;
                         b           = lum;
@@ -517,7 +517,7 @@ namespace FIFE
 
     void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region)
     {
-        GLImage* img = static_cast<GLImage*>(shared.get());
+        auto* img = static_cast<GLImage*>(shared.get());
 
         m_shared_img   = img;
         m_texId        = img->m_texId;
@@ -590,7 +590,7 @@ namespace FIFE
             // if it does not exist, it is generated.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
                 ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
-                GLImage* img      = static_cast<GLImage*>(newAtlas.get());
+                auto* img      = static_cast<GLImage*>(newAtlas.get());
                 m_atlas_img       = newAtlas;
                 m_shared_img      = img;
             }

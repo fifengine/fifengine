@@ -29,7 +29,7 @@ namespace FIFE
     {
         static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
-            RawData* rdp   = reinterpret_cast<RawData*>(datasource);
+            auto* rdp   = reinterpret_cast<RawData*>(datasource);
             size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
             size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
             if (len != 0U) {
@@ -40,7 +40,7 @@ namespace FIFE
 
         static int32_t seek(void* datasource, ogg_int64_t offset, int32_t whence)
         {
-            RawData* rdp = reinterpret_cast<RawData*>(datasource);
+            auto* rdp = reinterpret_cast<RawData*>(datasource);
             switch (whence) {
             case SEEK_SET:
                 (*rdp).setIndex(static_cast<uint32_t>(offset));
@@ -62,7 +62,7 @@ namespace FIFE
 
         static long tell(void* datasource)
         {
-            RawData* rdp = reinterpret_cast<RawData*>(datasource);
+            auto* rdp = reinterpret_cast<RawData*>(datasource);
             return (*rdp).getCurrentIndex();
         }
     } // namespace OGG_cb

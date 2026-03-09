@@ -85,7 +85,7 @@ namespace FIFE
         if (object->getVisual<ObjectVisual>() != nullptr) {
             throw Duplicate("Object already contains visualization");
         }
-        ObjectVisual* v = new ObjectVisual();
+        auto* v = new ObjectVisual();
         object->adoptVisual(v);
         return v;
     }
@@ -115,7 +115,7 @@ namespace FIFE
             c.setColorOverlayImage(tmp.getColorOverlayImage());
 
             const std::map<Color, Color>& colorMap    = tmp.getColors();
-            std::map<Color, Color>::const_iterator it = colorMap.begin();
+            auto it = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -166,7 +166,7 @@ namespace FIFE
         if (instance->getVisual<InstanceVisual>() != nullptr) {
             throw Duplicate("Instance already contains visualization");
         }
-        InstanceVisual* v = new InstanceVisual();
+        auto* v = new InstanceVisual();
         instance->setVisual(v);
         v->m_instance = instance;
         return v;
@@ -220,7 +220,7 @@ namespace FIFE
         if (action->getVisual<ActionVisual>() != nullptr) {
             throw Duplicate("Action already contains visualization");
         }
-        ActionVisual* v = new ActionVisual();
+        auto* v = new ActionVisual();
         action->adoptVisual(v);
         return v;
     }
@@ -258,7 +258,7 @@ namespace FIFE
             return;
         }
         int32_t closestMatch                  = 0;
-        AngleAnimationOverlayMap::iterator it = m_animationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+        auto it = m_animationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_animationOverlayMap.end()) {
             it->second.erase(order);
             if (it->second.empty()) {
@@ -278,7 +278,7 @@ namespace FIFE
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
             const std::map<Color, Color>& colorMap    = tmp.getColors();
-            std::map<Color, Color>::const_iterator it = colorMap.begin();
+            auto it = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -320,7 +320,7 @@ namespace FIFE
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
             const std::map<Color, Color>& colorMap    = tmp.getColors();
-            std::map<Color, Color>::const_iterator it = colorMap.begin();
+            auto it = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -334,10 +334,10 @@ namespace FIFE
         }
 
         int32_t closestMatch = 0;
-        AngleColorAnimationOverlayMap::iterator it =
+        auto it =
             m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_colorAnimationOverlayMap.end()) {
-            std::map<int32_t, OverlayColors>::iterator sit = it->second.find(order);
+            auto sit = it->second.find(order);
             if (sit != it->second.end()) {
                 return &it->second[order];
             }
@@ -352,7 +352,7 @@ namespace FIFE
         }
 
         int32_t closestMatch = 0;
-        AngleColorAnimationOverlayMap::iterator it =
+        auto it =
             m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_colorAnimationOverlayMap.end()) {
             it->second.erase(order);
@@ -375,7 +375,7 @@ namespace FIFE
     void ActionVisual::convertToOverlays(bool color)
     {
         bool colorOverlay                = color && !m_colorOverlayMap.empty();
-        type_angle2id::const_iterator it = m_map.begin();
+        auto it = m_map.begin();
         for (; it != m_map.end(); ++it) {
             addAnimationOverlay(it->first, 0, getAnimationByAngle(it->first));
             if (colorOverlay) {

@@ -51,8 +51,8 @@ namespace FIFE
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
-            for (std::vector<Instance*>::iterator i = instances.begin(); i != instances.end(); ++i) {
-                m_cache->updateInstance(*i);
+            for (auto & instance : instances) {
+                m_cache->updateInstance(instance);
             }
         }
 
@@ -79,8 +79,8 @@ namespace FIFE
         inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
         {
             if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
-                InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
-                InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+                auto* liv = lhs->instance->getVisual<InstanceVisual>();
+                auto* riv = rhs->instance->getVisual<InstanceVisual>();
                 return liv->getStackPosition() < riv->getStackPosition();
             }
             return lhs->screenpoint.z < rhs->screenpoint.z;
@@ -131,8 +131,8 @@ namespace FIFE
             ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
             lpos.x += lpos.y / 2;
             rpos.x += rpos.y / 2;
-            InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
-            InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+            auto* liv = lhs->instance->getVisual<InstanceVisual>();
+            auto* riv = rhs->instance->getVisual<InstanceVisual>();
             int32_t lvc         = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
                           liv->getStackPosition();
             int32_t rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
@@ -162,8 +162,8 @@ namespace FIFE
                 const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
                 const ExactModelCoordinate& rpos = rhs->instance->getLocationRef().getExactLayerCoordinatesRef();
                 if (Mathd::Equal(lpos.z, rpos.z)) {
-                    InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
-                    InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
+                    auto* liv = lhs->instance->getVisual<InstanceVisual>();
+                    auto* riv = rhs->instance->getVisual<InstanceVisual>();
                     return liv->getStackPosition() < riv->getStackPosition();
                 }
                 return lpos.z < rpos.z;
@@ -194,12 +194,12 @@ namespace FIFE
     LayerCache::~LayerCache()
     {
         // removes all Entries
-        for (std::vector<Entry*>::iterator it = m_entries.begin(); it != m_entries.end(); ++it) {
-            delete *it;
+        for (auto & m_entrie : m_entries) {
+            delete m_entrie;
         }
         // removes all RenderItems
-        for (std::vector<RenderItem*>::iterator it = m_renderItems.begin(); it != m_renderItems.end(); ++it) {
-            delete *it;
+        for (auto & m_renderItem : m_renderItems) {
+            delete m_renderItem;
         }
         m_layer->removeChangeListener(m_layerObserver);
         delete m_layerObserver;
@@ -223,13 +223,13 @@ namespace FIFE
     void LayerCache::reset()
     {
         // removes all Entries
-        for (std::vector<Entry*>::iterator it = m_entries.begin(); it != m_entries.end(); ++it) {
-            delete *it;
+        for (auto & m_entrie : m_entries) {
+            delete m_entrie;
         }
         m_entries.clear();
         // removes all RenderItems
-        for (std::vector<RenderItem*>::iterator it = m_renderItems.begin(); it != m_renderItems.end(); ++it) {
-            delete *it;
+        for (auto & m_renderItem : m_renderItems) {
+            delete m_renderItem;
         }
         m_renderItems.clear();
         m_instance_map.clear();
@@ -240,8 +240,8 @@ namespace FIFE
         delete m_tree;
         m_tree                                  = new CacheTree;
         const std::vector<Instance*>& instances = m_layer->getInstances();
-        for (std::vector<Instance*>::const_iterator i = instances.begin(); i != instances.end(); ++i) {
-            addInstance(*i);
+        for (auto instance : instances) {
+            addInstance(instance);
         }
     }
 
@@ -290,7 +290,7 @@ namespace FIFE
         assert(entry->instanceIndex == m_instance_map[instance]);
         RenderItem* item = m_renderItems[entry->instanceIndex];
         // removes entry from updates
-        std::set<int32_t>::iterator it = m_entriesToUpdate.find(entry->entryIndex);
+        auto it = m_entriesToUpdate.find(entry->entryIndex);
         if (it != m_entriesToUpdate.end()) {
             m_entriesToUpdate.erase(it);
         }
@@ -305,7 +305,7 @@ namespace FIFE
 
         // removes instance from RenderList
         RenderList& renderList = m_camera->getRenderListRef(m_layer);
-        for (RenderList::iterator it = renderList.begin(); it != renderList.end(); ++it) {
+        for (auto it = renderList.begin(); it != renderList.end(); ++it) {
             if ((*it)->instance == instance) {
                 renderList.erase(it);
                 break;
@@ -381,7 +381,7 @@ namespace FIFE
         // this is only a bit faster, but works without this block too.
         if (!m_layer->areInstancesVisible()) {
             FL_DBG(_log, "Layer instances hidden");
-            std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
+            auto entry_it = m_entriesToUpdate.begin();
             for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
                 Entry* entry       = m_entries[*entry_it];
                 entry->forceUpdate = false;
@@ -399,7 +399,7 @@ namespace FIFE
                 // std::cout << "update entries: " << int32_t(m_entriesToUpdate.size()) << " remove entries: " <<
                 // int32_t(entryToRemove.size()) <<"\n";
                 if (!entryToRemove.empty()) {
-                    std::set<int32_t>::iterator entry_it = entryToRemove.begin();
+                    auto entry_it = entryToRemove.begin();
                     for (; entry_it != entryToRemove.end(); ++entry_it) {
                         m_entriesToUpdate.erase(*entry_it);
                     }
@@ -436,8 +436,8 @@ namespace FIFE
             std::vector<int32_t> index_list;
             collect(viewport, index_list);
             // fill renderlist
-            for (uint32_t i = 0; i != index_list.size(); ++i) {
-                Entry* entry     = m_entries[index_list[i]];
+            for (int i : index_list) {
+                Entry* entry     = m_entries[i];
                 RenderItem* item = m_renderItems[entry->instanceIndex];
                 if (!item->image || !entry->visible) {
                     continue;
@@ -454,10 +454,10 @@ namespace FIFE
                 // calculates zmin and zmax of the current viewport
                 Rect r = m_camera->getMapViewPort();
                 std::vector<ExactModelCoordinate> coords;
-                coords.push_back(ExactModelCoordinate(r.x, r.y));
-                coords.push_back(ExactModelCoordinate(r.x, r.y + r.h));
-                coords.push_back(ExactModelCoordinate(r.x + r.w, r.y));
-                coords.push_back(ExactModelCoordinate(r.x + r.w, r.y + r.h));
+                coords.emplace_back(r.x, r.y);
+                coords.emplace_back(r.x, r.y + r.h);
+                coords.emplace_back(r.x + r.w, r.y);
+                coords.emplace_back(r.x + r.w, r.y + r.h);
                 for (uint8_t i = 0; i < 4; ++i) {
                     double z = m_camera->toVirtualScreenCoordinates(coords[i]).z;
                     m_zMin   = std::min(z, m_zMin);
@@ -472,8 +472,7 @@ namespace FIFE
     void LayerCache::fullUpdate(Camera::Transform transform)
     {
         bool rotationChange = (transform & Camera::RotationTransform) == Camera::RotationTransform;
-        for (uint32_t i = 0; i != m_entries.size(); ++i) {
-            Entry* entry = m_entries[i];
+        for (auto entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (rotationChange || entry->forceUpdate) {
                     bool force = entry->forceUpdate;
@@ -496,8 +495,7 @@ namespace FIFE
     void LayerCache::fullCoordinateUpdate(Camera::Transform transform)
     {
         bool zoomChange = (transform & Camera::ZoomTransform) == Camera::ZoomTransform;
-        for (uint32_t i = 0; i != m_entries.size(); ++i) {
-            Entry* entry = m_entries[i];
+        for (auto entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (entry->forceUpdate) {
                     updateVisual(entry);
@@ -518,7 +516,7 @@ namespace FIFE
     {
         RenderList needSorting;
         Rect viewport                              = m_camera->getViewPort();
-        std::set<int32_t>::const_iterator entry_it = m_entriesToUpdate.begin();
+        auto entry_it = m_entriesToUpdate.begin();
         for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
             Entry* entry       = m_entries[*entry_it];
             entry->forceUpdate = false;
@@ -544,7 +542,7 @@ namespace FIFE
                     needSorting.push_back(item);
                 } else {
                     // remove from renderlist
-                    for (RenderList::iterator it = renderlist.begin(); it != renderlist.end(); ++it) {
+                    for (auto it = renderlist.begin(); it != renderlist.end(); ++it) {
                         if ((*it)->instance == item->instance) {
                             renderlist.erase(it);
                             break;
@@ -578,7 +576,7 @@ namespace FIFE
     {
         RenderItem* item       = m_renderItems[entry->instanceIndex];
         Instance* instance     = item->instance;
-        InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+        auto* visual = instance->getVisual<InstanceVisual>();
         item->facingAngle      = instance->getRotation();
         int32_t angle          = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
         Action* action         = instance->getCurrentAction();
@@ -620,13 +618,13 @@ namespace FIFE
         entry->forceUpdate = (action != nullptr);
 
         if (action != nullptr) {
-            ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+            auto* actionVisual = action->getVisual<ActionVisual>();
             bool colorOverlay          = actionVisual->isColorOverlay();
             // assumed all have the same size
             if (actionVisual->isAnimationOverlay()) {
                 std::map<int32_t, AnimationPtr> animations   = actionVisual->getAnimationOverlay(angle);
-                std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
-                std::vector<ImagePtr>* animOverlays          = new std::vector<ImagePtr>();
+                auto it = animations.begin();
+                auto* animOverlays          = new std::vector<ImagePtr>();
                 std::vector<OverlayColors*>* animationColorOverlays =
                     colorOverlay ? new std::vector<OverlayColors*>() : nullptr;
                 for (; it != animations.end(); ++it) {
@@ -792,9 +790,9 @@ namespace FIFE
                 float a                        = (lmin - lmax) / det;
                 float b                        = (lmax * m_zMin - lmin * m_zMax) / det;
 
-                RenderList::iterator it = renderlist.begin();
+                auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {
-                    InstanceVisual* vis = (*it)->instance->getVisual<InstanceVisual>();
+                    auto* vis = (*it)->instance->getVisual<InstanceVisual>();
                     float& z            = (*it)->vertexZ;
                     z                   = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
                 }
@@ -804,19 +802,19 @@ namespace FIFE
             switch (strat) {
             case SORTING_CAMERA: {
                 InstanceDistanceSortCamera ids;
-                std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+                std::ranges::stable_sort(renderlist, ids);
             } break;
             case SORTING_LOCATION: {
                 InstanceDistanceSortLocation ids(m_camera->getRotation());
-                std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+                std::ranges::stable_sort(renderlist, ids);
             } break;
             case SORTING_CAMERA_AND_LOCATION: {
                 InstanceDistanceSortCameraAndLocation ids;
-                std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+                std::ranges::stable_sort(renderlist, ids);
             } break;
             default: {
                 InstanceDistanceSortCamera ids;
-                std::stable_sort(renderlist.begin(), renderlist.end(), ids);
+                std::ranges::stable_sort(renderlist, ids);
             } break;
             }
         }

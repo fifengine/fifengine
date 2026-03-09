@@ -2,10 +2,12 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -40,17 +42,9 @@ namespace FIFE
     {
     public:
         ActionInfo(IPather* pather, const Location& curloc) :
-            m_action(nullptr),
-            m_target(nullptr),
-            m_speed(0),
-            m_repeating(false),
-            m_action_start_time(0),
-            m_action_offset_time(0),
-            m_prev_call_time(0),
-            m_pather(pather),
-            m_leader(nullptr),
-            m_route(nullptr),
-            m_delete_route(true)
+
+            m_pather(pather)
+
         {
         }
 
@@ -67,36 +61,36 @@ namespace FIFE
         }
 
         // Current action, owned by object
-        Action* m_action;
+        Action* m_action{nullptr};
         // target location for ongoing movement
-        Location* m_target;
+        Location* m_target{nullptr};
         // current movement speed
-        double m_speed;
+        double m_speed{0};
         // should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
-        bool m_repeating;
+        bool m_repeating{false};
         // action start time (ticks)
-        uint32_t m_action_start_time;
+        uint32_t m_action_start_time{0};
         // action offset time (ticks) for resuming an action
-        uint32_t m_action_offset_time;
+        uint32_t m_action_offset_time{0};
         // ticks since last call
-        uint32_t m_prev_call_time;
+        uint32_t m_prev_call_time{0};
         // pather
         IPather* m_pather;
         // leader for follow activity
-        Instance* m_leader;
+        Instance* m_leader{nullptr};
         // pointer to route that contain path and additional information
-        Route* m_route;
-        bool m_delete_route;
+        Route* m_route{nullptr};
+        bool m_delete_route{true};
     };
 
     class SayInfo
     {
     public:
-        SayInfo(const std::string& txt, uint32_t duration) : m_txt(txt), m_duration(duration), m_start_time(0) { }
+        SayInfo(std::string  txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration) { }
 
         std::string m_txt;
         uint32_t m_duration;
-        uint32_t m_start_time;
+        uint32_t m_start_time{0};
     };
 
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
@@ -168,17 +162,17 @@ namespace FIFE
         }
 
         if (source.m_changeInfo != ICHANGE_NO_CHANGES) {
-            std::vector<InstanceChangeListener*>::iterator i = m_changeListeners.begin();
+            auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
                 if (nullptr != *i) {
                     (*i)->onInstanceChanged(&source, source.m_changeInfo);
                 }
                 ++i;
             }
-            // Really remove "removed" listeners.
-            m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
-                m_changeListeners.end());
+                // Really remove "removed" listeners.
+                m_changeListeners.erase(
+                    std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
+                    m_changeListeners.end());
         }
     }
 
@@ -206,13 +200,13 @@ namespace FIFE
             Layer* layer                         = m_location.getLayer();
             const ExactModelCoordinate& emc      = m_location.getExactLayerCoordinatesRef();
             const std::set<Object*>& multis      = object->getMultiParts();
-            std::set<Object*>::const_iterator it = multis.begin();
+            auto it = multis.begin();
             for (; it != multis.end(); ++it, ++count) {
                 if (*it == m_object) {
                     continue;
                 }
                 std::vector<ModelCoordinate> partcoords        = (*it)->getMultiPartCoordinates(m_rotation);
-                std::vector<ModelCoordinate>::iterator coordit = partcoords.begin();
+                auto coordit = partcoords.begin();
                 for (; coordit != partcoords.end(); ++coordit) {
                     ExactModelCoordinate tmp_emc(emc.x + (*coordit).x, emc.y + (*coordit).y, emc.z + (*coordit).z);
                     std::ostringstream counter;
@@ -244,7 +238,7 @@ namespace FIFE
         }
 
         if (!m_multiInstances.empty()) {
-            std::vector<Instance*>::iterator it = m_multiInstances.begin();
+            auto it = m_multiInstances.begin();
             for (; it != m_multiInstances.end(); ++it) {
                 (*it)->removeDeleteListener(this);
                 (*it)->setMainMultiInstance(nullptr);
@@ -374,7 +368,7 @@ namespace FIFE
         if (m_activity == nullptr) {
             return;
         }
-        std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+        auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if ((*i) == listener) {
                 *i = nullptr;
@@ -397,7 +391,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+        auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onInstanceActionFrame(this, action, frame);
@@ -411,7 +405,7 @@ namespace FIFE
         if (m_activity == nullptr) {
             return;
         }
-        std::vector<InstanceChangeListener*>::iterator i = m_activity->m_changeListeners.begin();
+        auto i = m_activity->m_changeListeners.begin();
         while (i != m_activity->m_changeListeners.end()) {
             if ((*i) == listener) {
                 *i = nullptr;
@@ -453,7 +447,7 @@ namespace FIFE
         }
 
         if (isMultiObject()) {
-            std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+            auto multi_it = m_multiInstances.begin();
             for (; multi_it != m_multiInstances.end(); ++multi_it) {
                 (*multi_it)->initializeAction(actionName);
             }
@@ -716,7 +710,7 @@ namespace FIFE
                 if (m_location.getLayer() != nextLocation.getLayer()) {
                     m_location.getLayer()->getMap()->addInstanceForTransfer(this, nextLocation);
                     if (!m_multiInstances.empty()) {
-                        std::vector<Instance*>::iterator it = m_multiInstances.begin();
+                        auto it = m_multiInstances.begin();
                         for (; it != m_multiInstances.end(); ++it) {
                             Location newloc = nextLocation;
                             std::vector<ModelCoordinate> tmpcoords =
@@ -736,7 +730,7 @@ namespace FIFE
             if (m_location.getLayer() != nextLocation.getLayer()) {
                 m_location.getLayer()->getMap()->addInstanceForTransfer(this, nextLocation);
                 if (!m_multiInstances.empty()) {
-                    std::vector<Instance*>::iterator it = m_multiInstances.begin();
+                    auto it = m_multiInstances.begin();
                     for (; it != m_multiInstances.end(); ++it) {
                         Location newloc = nextLocation;
                         std::vector<ModelCoordinate> tmpcoords =
@@ -858,12 +852,12 @@ namespace FIFE
         }
 
         if (isMultiObject()) {
-            std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+            auto multi_it = m_multiInstances.begin();
             for (; multi_it != m_multiInstances.end(); ++multi_it) {
                 (*multi_it)->finalizeAction();
             }
         }
-        std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+        auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onInstanceActionFinished(this, action);
@@ -871,9 +865,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(
-                m_activity->m_actionListeners.begin(),
-                m_activity->m_actionListeners.end(),
+            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(),
                 (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
@@ -896,12 +888,12 @@ namespace FIFE
         m_activity->m_action = nullptr;
 
         if (isMultiObject()) {
-            std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+            auto multi_it = m_multiInstances.begin();
             for (; multi_it != m_multiInstances.end(); ++multi_it) {
                 (*multi_it)->cancelAction();
             }
         }
-        std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
+        auto i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if (*i != nullptr) {
                 (*i)->onInstanceActionCancelled(this, action);
@@ -909,9 +901,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(
-                m_activity->m_actionListeners.begin(),
-                m_activity->m_actionListeners.end(),
+            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(),
                 (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
@@ -1149,7 +1139,7 @@ namespace FIFE
             }
             double mcos                         = Mathd::Cos(static_cast<double>(rot) * (Mathd::pi() / 180.0));
             double msin                         = Mathd::Sin(static_cast<double>(rot) * (Mathd::pi() / 180.0));
-            std::vector<Instance*>::iterator it = m_multiInstances.begin();
+            auto it = m_multiInstances.begin();
             for (; it != m_multiInstances.end(); ++it) {
                 // use rotation 0 to get the "default" coordinate
                 std::vector<ModelCoordinate> mcv = (*it)->getObject()->getMultiPartCoordinates(0);
@@ -1170,7 +1160,7 @@ namespace FIFE
         if (!m_ownObject) {
             createOwnObject();
         }
-        ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+        auto* objVis = m_object->getVisual<ObjectVisual>();
         objVis->addStaticColorOverlay(angle, colors);
         prepareForUpdate();
         m_activity->m_additional |= ICHANGE_VISUAL;
@@ -1181,14 +1171,14 @@ namespace FIFE
         if (!m_ownObject) {
             return nullptr;
         }
-        ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+        auto* objVis = m_object->getVisual<ObjectVisual>();
         return objVis->getStaticColorOverlay(angle);
     }
 
     void Instance::removeStaticColorOverlay(int32_t angle)
     {
         if (m_ownObject) {
-            ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+            auto* objVis = m_object->getVisual<ObjectVisual>();
             objVis->removeStaticColorOverlay(angle);
             prepareForUpdate();
             m_activity->m_additional |= ICHANGE_VISUAL;
@@ -1200,7 +1190,7 @@ namespace FIFE
         if (!m_ownObject) {
             return false;
         }
-        ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
+        auto* objVis = m_object->getVisual<ObjectVisual>();
         return objVis->isColorOverlay();
     }
 
@@ -1250,7 +1240,7 @@ namespace FIFE
         if (visual != nullptr) {
             return visual->getAnimationOverlay(angle);
         }
-        return std::map<int32_t, AnimationPtr>();
+        return {};
     }
 
     void Instance::removeAnimationOverlay(const std::string& actionName, uint32_t angle, int32_t order)
@@ -1321,7 +1311,7 @@ namespace FIFE
     {
         if (!m_ownObject) {
             m_ownObject       = true;
-            ObjectVisual* ov  = m_object->getVisual<ObjectVisual>();
+            auto* ov  = m_object->getVisual<ObjectVisual>();
             ObjectVisual* nov = nullptr;
             m_object          = new Object(m_object->getId(), m_object->getNamespace(), m_object);
             if (ov == nullptr) {
@@ -1349,7 +1339,7 @@ namespace FIFE
                 bool replace = getCurrentAction() == action;
                 // check if its the default action
                 bool defaultAction = m_object->getDefaultAction() == action;
-                ActionVisual* av   = action->getVisual<ActionVisual>();
+                auto* av   = action->getVisual<ActionVisual>();
                 action             = m_object->createAction(actionName, defaultAction);
                 nav                = new ActionVisual(*av);
                 action->adoptVisual(nav);
@@ -1372,7 +1362,7 @@ namespace FIFE
     {
         if (!m_deleteListeners.empty()) {
             std::vector<InstanceDeleteListener*>::iterator itor;
-            itor = std::find(m_deleteListeners.begin(), m_deleteListeners.end(), listener);
+            itor = std::ranges::find(m_deleteListeners, listener);
             if (itor != m_deleteListeners.end()) {
                 if ((*itor) == listener) {
                     *itor = nullptr;
@@ -1391,7 +1381,7 @@ namespace FIFE
             m_activity->m_actionInfo->m_leader = nullptr;
         }
         if (isMultiObject()) {
-            std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
+            auto multi_it = m_multiInstances.begin();
             for (; multi_it != m_multiInstances.end(); ++multi_it) {
                 if (*multi_it == instance) {
                     m_multiInstances.erase(multi_it);

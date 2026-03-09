@@ -54,7 +54,7 @@ namespace FIFE
         SDL_LockSurface(surface);
 
         uint32_t size      = width * height * 4;
-        uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
+        auto* pixeldata = static_cast<uint8_t*>(surface->pixels);
         std::copy(data, data + size, pixeldata);
         SDL_UnlockSurface(surface);
         reset(surface);
@@ -67,7 +67,7 @@ namespace FIFE
         SDL_LockSurface(surface);
 
         uint32_t size      = width * height * 4;
-        uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
+        auto* pixeldata = static_cast<uint8_t*>(surface->pixels);
         std::copy(data, data + size, pixeldata);
         SDL_UnlockSurface(surface);
         reset(surface);

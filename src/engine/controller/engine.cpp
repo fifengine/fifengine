@@ -132,7 +132,7 @@ namespace FIFE
             m_guimanager->resizeTopContainer(0, 0, mode.getWidth(), mode.getHeight());
         }
 
-        std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
+        auto i = m_changelisteners.begin();
         while (i != m_changelisteners.end()) {
             (*i)->onScreenModeChanged(mode);
             ++i;
@@ -221,7 +221,7 @@ namespace FIFE
         std::string driver = m_settings.getVideoDriver();
         if (!driver.empty()) {
             std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
-            if (std::find(drivers.begin(), drivers.end(), driver) == drivers.end()) {
+            if (std::ranges::find(drivers, driver) == drivers.end()) {
                 FL_WARN(
                     _log,
                     "Selected video driver is not supported for your Operating System!  Reverting to default driver.");
@@ -236,7 +236,7 @@ namespace FIFE
         driver = m_settings.getSDLDriver();
         if (!driver.empty()) {
             std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
-            if (std::find(drivers.begin(), drivers.end(), driver) == drivers.end()) {
+            if (std::ranges::find(drivers, driver) == drivers.end()) {
                 FL_WARN(
                     _log,
                     "Selected render driver is not supported for your Operating System!  Reverting to default driver.");
@@ -324,7 +324,7 @@ namespace FIFE
         // properly remove all the renderers created during init
         delete m_offrenderer;
         delete m_targetrenderer;
-        std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();
+        auto rendererIter = m_renderers.begin();
         for (; rendererIter != m_renderers.end(); ++rendererIter) {
             delete *rendererIter;
         }
@@ -385,7 +385,7 @@ namespace FIFE
 
     void Engine::removeChangeListener(IEngineChangeListener* listener)
     {
-        std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
+        auto i = m_changelisteners.begin();
         while (i != m_changelisteners.end()) {
             if ((*i) == listener) {
                 m_changelisteners.erase(i);

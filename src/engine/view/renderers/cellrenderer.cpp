@@ -91,13 +91,13 @@ namespace FIFE
 
         Rect layerView                   = cam->getLayerViewPort(layer);
         std::vector<Cell*> cells         = cache->getCellsInRect(layerView);
-        std::vector<Cell*>::iterator cit = cells.begin();
+        auto cit = cells.begin();
         for (; cit != cells.end(); ++cit) {
             if (m_blockingEnabled) {
                 if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                     std::vector<ExactModelCoordinate> vertices;
                     cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                    std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+                    auto it = vertices.begin();
                     int32_t halfind                                      = vertices.size() / 2;
                     ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                     Point pt1(firstpt.x, firstpt.y);
@@ -123,10 +123,10 @@ namespace FIFE
             if (render_costs) {
                 bool match = false;
                 double cost;
-                std::set<std::string>::iterator cost_it = m_visualCosts.begin();
+                auto cost_it = m_visualCosts.begin();
                 for (; cost_it != m_visualCosts.end(); ++cost_it) {
                     std::vector<std::string> cell_costs      = cache->getCellCosts(*cit);
-                    std::vector<std::string>::iterator cc_it = cell_costs.begin();
+                    auto cc_it = cell_costs.begin();
                     for (; cc_it != cell_costs.end(); ++cc_it) {
                         if (*cc_it == *cost_it) {
                             match = true;
@@ -167,20 +167,20 @@ namespace FIFE
         }
 
         if (m_pathVisualEnabled && !m_visualPaths.empty()) {
-            std::vector<Instance*>::iterator it = m_visualPaths.begin();
+            auto it = m_visualPaths.begin();
             for (; it != m_visualPaths.end(); ++it) {
                 Route* route = (*it)->getRoute();
                 if (route != nullptr) {
                     Path path = route->getPath();
                     if (!path.empty()) {
-                        Path::iterator pit = path.begin();
+                        auto pit = path.begin();
                         for (; pit != path.end(); ++pit) {
                             if ((*pit).getLayer() != layer) {
                                 continue;
                             }
                             std::vector<ExactModelCoordinate> vertices;
                             cg->getVertices(vertices, (*pit).getLayerCoordinates());
-                            std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+                            auto it = vertices.begin();
                             int32_t halfind                                      = vertices.size() / 2;
                             ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                             Point pt1(firstpt.x, firstpt.y);
@@ -253,7 +253,7 @@ namespace FIFE
 
     void CellRenderer::removePathVisual(Instance* instance)
     {
-        for (std::vector<Instance*>::iterator it = m_visualPaths.begin(); it != m_visualPaths.end(); ++it) {
+        for (auto it = m_visualPaths.begin(); it != m_visualPaths.end(); ++it) {
 
             if (*it == instance) {
                 m_visualPaths.erase(it);
@@ -273,7 +273,7 @@ namespace FIFE
 
     bool CellRenderer::isEnabledCost(const std::string& costId)
     {
-        std::set<std::string>::iterator it = m_visualCosts.find(costId);
+        auto it = m_visualCosts.find(costId);
         if (it != m_visualCosts.end()) {
             return true;
         }

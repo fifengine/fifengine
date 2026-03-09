@@ -26,7 +26,7 @@ namespace FIFE
 
     void TimeEvent::managerUpdateEvent(uint32_t time)
     {
-        int32_t time_delta = static_cast<int32_t>(time - m_last_updated);
+        auto time_delta = static_cast<int32_t>(time - m_last_updated);
         if (m_period < 0) {
             return;
         } else if (m_period == 0 || time_delta >= m_period) {

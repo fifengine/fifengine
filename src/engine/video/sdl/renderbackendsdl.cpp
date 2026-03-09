@@ -316,7 +316,7 @@ namespace FIFE
             int32_t j = n - 1;
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
-                    int32_t x = static_cast<int32_t>(
+                    auto x = static_cast<int32_t>(
                         points[i].x +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
@@ -346,7 +346,7 @@ namespace FIFE
             return;
         }
 
-        std::vector<Point>::const_iterator it = points.begin();
+        auto it = points.begin();
         Point old                             = *it;
         ++it;
         if (width > 1) {
@@ -479,7 +479,7 @@ namespace FIFE
 
     void RenderBackendSDL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float rad = static_cast<float>(radius);
+        auto rad = static_cast<float>(radius);
         for (float dy = 1; dy <= r; dy += 1.0) {
             float dx  = Mathf::Floor(Mathf::Sqrt((2.0 * rad * dy) - (dy * dy)));
             int32_t x = p.x - dx;
@@ -551,7 +551,7 @@ namespace FIFE
             int32_t j = n - 1;
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
-                    int32_t x = static_cast<int32_t>(
+                    auto x = static_cast<int32_t>(
                         points[i].x +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
@@ -636,21 +636,21 @@ namespace FIFE
             // create destination surface
             SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
 
-            uint32_t* src_pointer      = static_cast<uint32_t*>(src->pixels);
+            auto* src_pointer      = static_cast<uint32_t*>(src->pixels);
             uint32_t* src_help_pointer = src_pointer;
-            uint32_t* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
+            auto* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
 
             int32_t x;
             int32_t y;
             int32_t* sx_ca;
             int32_t* sy_ca;
-            int32_t sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
-            int32_t sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
+            auto sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
+            auto sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
             int32_t sx_c = 0;
             int32_t sy_c = 0;
 
             // Allocates memory and calculates row wide&height
-            int32_t* sx_a = new int32_t[dst->w + 1];
+            auto* sx_a = new int32_t[dst->w + 1];
             sx_ca         = sx_a;
             for (x = 0; x <= dst->w; x++) {
                 *sx_ca = sx_c;
@@ -659,7 +659,7 @@ namespace FIFE
                 sx_c += sx;
             }
 
-            int32_t* sy_a = new int32_t[dst->h + 1];
+            auto* sy_a = new int32_t[dst->h + 1];
             sy_ca         = sy_a;
             for (y = 0; y <= dst->h; y++) {
                 *sy_ca = sy_c;
@@ -730,7 +730,7 @@ namespace FIFE
 
     void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard)
     {
-        SDLImage* image      = static_cast<SDLImage*>(img.get());
+        auto* image      = static_cast<SDLImage*>(img.get());
         m_target             = img->getSurface();
         SDL_Texture* texture = image->getTexture();
         if (texture == nullptr) {

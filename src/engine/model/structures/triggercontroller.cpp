@@ -30,7 +30,7 @@ namespace FIFE
 
     TriggerController::~TriggerController()
     {
-        TriggerNameMapIterator it = m_triggerNameMap.begin();
+        auto it = m_triggerNameMap.begin();
         for (; it != m_triggerNameMap.end(); ++it) {
             delete it->second;
         }
@@ -40,7 +40,7 @@ namespace FIFE
     {
         // assert(!exists(triggerName));
 
-        Trigger* trigger = new Trigger(triggerName);
+        auto* trigger = new Trigger(triggerName);
 
         std::pair<TriggerNameMapIterator, bool> returnValue;
         returnValue = m_triggerNameMap.insert(TriggerNameMapPair(triggerName, trigger));
@@ -72,8 +72,8 @@ namespace FIFE
         assert(layer);
 
         Trigger* trigger = createTrigger(triggerName);
-        for (std::vector<ModelCoordinate>::const_iterator it = coords.begin(); it != coords.end(); ++it) {
-            trigger->assign(layer, *it);
+        for (const auto & coord : coords) {
+            trigger->assign(layer, coord);
         }
         return trigger;
     }
@@ -85,8 +85,8 @@ namespace FIFE
 
         Trigger* trigger         = createTrigger(triggerName);
         std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
-        for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
-            trigger->assign(*it);
+        for (auto & cell : cells) {
+            trigger->assign(cell);
         }
         return trigger;
     }
@@ -105,8 +105,8 @@ namespace FIFE
         const std::string& triggerName, const std::vector<Location>& locs)
     {
         Trigger* trigger = createTrigger(triggerName);
-        for (std::vector<Location>::const_iterator it = locs.begin(); it != locs.end(); ++it) {
-            trigger->assign((*it).getLayer(), (*it).getLayerCoordinates());
+        for (const auto & loc : locs) {
+            trigger->assign(loc.getLayer(), loc.getLayerCoordinates());
         }
         return trigger;
     }
@@ -123,8 +123,8 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnCells(const std::string& triggerName, const std::vector<Cell*>& cells)
     {
         Trigger* trigger = createTrigger(triggerName);
-        for (std::vector<Cell*>::const_iterator it = cells.begin(); it != cells.end(); ++it) {
-            trigger->assign(*it);
+        for (auto cell : cells) {
+            trigger->assign(cell);
         }
         return trigger;
     }
@@ -140,7 +140,7 @@ namespace FIFE
 
     Trigger* TriggerController::getTrigger(const std::string& triggerName)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             return it->second;
         }
@@ -149,7 +149,7 @@ namespace FIFE
 
     void TriggerController::deleteTrigger(const std::string& triggerName)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             delete it->second;
             m_triggerNameMap.erase(it);
@@ -159,7 +159,7 @@ namespace FIFE
     void TriggerController::removeTriggerFromCoordinate(
         const std::string& triggerName, Layer* layer, const ModelCoordinate& pt)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             it->second->remove(layer, pt);
         }
@@ -168,28 +168,28 @@ namespace FIFE
     void TriggerController::removeTriggerFromCoordinates(
         const std::string& triggerName, Layer* layer, const std::vector<ModelCoordinate>& coords)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (std::vector<ModelCoordinate>::const_iterator cit = coords.begin(); cit != coords.end(); ++cit) {
-                it->second->remove(layer, *cit);
+            for (const auto & coord : coords) {
+                it->second->remove(layer, coord);
             }
         }
     }
 
     void TriggerController::removeTriggerFromRect(const std::string& triggerName, Layer* layer, const Rect& rec)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
-            for (std::vector<Cell*>::iterator cit = cells.begin(); cit != cells.end(); ++cit) {
-                it->second->remove(*cit);
+            for (auto & cell : cells) {
+                it->second->remove(cell);
             }
         }
     }
 
     void TriggerController::removeTriggerFromLocation(const std::string& triggerName, const Location& loc)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             it->second->remove(loc.getLayer(), loc.getLayerCoordinates());
         }
@@ -198,17 +198,17 @@ namespace FIFE
     void TriggerController::removeTriggerFromLocations(
         const std::string& triggerName, const std::vector<Location>& locs)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (std::vector<Location>::const_iterator cit = locs.begin(); cit != locs.end(); ++cit) {
-                it->second->remove((*cit).getLayer(), (*cit).getLayerCoordinates());
+            for (const auto & loc : locs) {
+                it->second->remove(loc.getLayer(), loc.getLayerCoordinates());
             }
         }
     }
 
     void TriggerController::removeTriggerFromCell(const std::string& triggerName, Cell* cell)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             it->second->remove(cell);
         }
@@ -216,17 +216,17 @@ namespace FIFE
 
     void TriggerController::removeTriggerFromCells(const std::string& triggerName, const std::vector<Cell*>& cells)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (std::vector<Cell*>::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
-                it->second->remove(*cit);
+            for (auto cell : cells) {
+                it->second->remove(cell);
             }
         }
     }
 
     void TriggerController::removeTriggerFromInstance(const std::string& triggerName, Instance* instance)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(triggerName);
+        auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             if (it->second->getAttached() == instance) {
                 it->second->detach();
@@ -237,7 +237,7 @@ namespace FIFE
     std::vector<Trigger*> TriggerController::getAllTriggers()
     {
         std::vector<Trigger*> triggers;
-        TriggerNameMapIterator it = m_triggerNameMap.begin();
+        auto it = m_triggerNameMap.begin();
         for (; it != m_triggerNameMap.end(); ++it) {
             triggers.push_back(it->second);
         }
@@ -247,7 +247,7 @@ namespace FIFE
     std::vector<std::string> TriggerController::getAllTriggerNames()
     {
         std::vector<std::string> names;
-        TriggerNameMapIterator it = m_triggerNameMap.begin();
+        auto it = m_triggerNameMap.begin();
         for (; it != m_triggerNameMap.end(); ++it) {
             names.push_back(it->first);
         }
@@ -256,7 +256,7 @@ namespace FIFE
 
     bool TriggerController::exists(const std::string& name)
     {
-        TriggerNameMapIterator it = m_triggerNameMap.find(name);
+        auto it = m_triggerNameMap.find(name);
         if (it != m_triggerNameMap.end()) {
             return true;
         }

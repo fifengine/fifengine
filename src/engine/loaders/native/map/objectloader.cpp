@@ -409,7 +409,7 @@ namespace FIFE
                                 success       = imageElement->QueryIntAttribute("direction", &direction);
 
                                 if (success == XML::SUCCESS) {
-                                    ObjectVisual* objVisual = obj->getVisual<ObjectVisual>();
+                                    auto* objVisual = obj->getVisual<ObjectVisual>();
 
                                     if (objVisual != nullptr) {
                                         objVisual->addStaticImage(
@@ -435,7 +435,7 @@ namespace FIFE
                             if (soundElement != nullptr) {
                                 const char* clip = XML::Attribute(soundElement, "source");
                                 if (clip != nullptr) {
-                                    ActionAudio* audio = new ActionAudio();
+                                    auto* audio = new ActionAudio();
                                     action->adoptAudio(audio);
                                     audio->setSoundFileName(clip);
 
@@ -522,7 +522,7 @@ namespace FIFE
                                 if (animationId != nullptr) {
                                     AnimationPtr animation = m_animationManager->getPtr(animationId);
                                     if (animation) {
-                                        ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+                                        auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(animation->getDirection(), animation);
                                             action->setDuration(animation->getDuration());
@@ -627,7 +627,7 @@ namespace FIFE
                                             animation->addFrame(framePtr, delay);
                                         }
 
-                                        ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+                                        auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(dir, animation);
                                             action->setDuration(animation->getDuration());
@@ -660,7 +660,7 @@ namespace FIFE
                                         if (success != XML::SUCCESS) {
                                             direction = animation->getDirection();
                                         }
-                                        ActionVisual* actionVisual = action->getVisual<ActionVisual>();
+                                        auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(direction, animation);
                                             action->setDuration(animation->getDuration());

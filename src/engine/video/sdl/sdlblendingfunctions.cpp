@@ -26,8 +26,8 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGBA8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const ColorRGBA8* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        ColorRGBA8* dstColor       = reinterpret_cast<ColorRGBA8*>(dst);
+        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
+        auto* dstColor       = reinterpret_cast<ColorRGBA8*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = alpha * srcColor->a;
@@ -46,8 +46,8 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const ColorRGBA8* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        ColorRGB8* dstColor        = reinterpret_cast<ColorRGB8*>(dst);
+        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
+        auto* dstColor        = reinterpret_cast<ColorRGB8*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = alpha * srcColor->a;
@@ -65,8 +65,8 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA8_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const ColorRGBA8* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        uint16_t* dstColor         = reinterpret_cast<uint16_t*>(dst);
+        const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
+        auto* dstColor         = reinterpret_cast<uint16_t*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = (alpha * srcColor->a) >> 8;
@@ -85,8 +85,8 @@ namespace FIFE
 
     void SDL_BlendRow_RGBA4_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
-        const uint16_t* srcColor = reinterpret_cast<const uint16_t*>(src);
-        uint16_t* dstColor       = reinterpret_cast<uint16_t*>(dst);
+        const auto* srcColor = reinterpret_cast<const uint16_t*>(src);
+        auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t c1 = *dstColor;

@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <string>
+#include <utility>
 
 // 3rd party library includes
 
@@ -18,7 +19,7 @@
 
 namespace FIFE
 {
-    Action::Action(const std::string& identifier) : m_id(identifier), m_duration(0), m_visual(nullptr), m_audio(nullptr)
+    Action::Action(std::string  identifier) : m_id(std::move(identifier)), m_duration(0), m_visual(nullptr), m_audio(nullptr)
     {
     }
 

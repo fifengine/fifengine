@@ -217,9 +217,9 @@ namespace FIFE
             m_manager->deactivateFilter(m_directFilter, this);
         }
         std::vector<SoundEffect*> effects = m_effects;
-        for (std::vector<SoundEffect*>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            if (*it != nullptr) {
-                m_manager->removeEmitterFromSoundEffect(*it, this);
+        for (auto & effect : effects) {
+            if (effect != nullptr) {
+                m_manager->removeEmitterFromSoundEffect(effect, this);
             }
         }
         // release buffer and source handle
@@ -506,7 +506,7 @@ namespace FIFE
         if (m_soundClip) {
             // convert to milliseconds
             double samplerate = static_cast<double>(getSampleRate()) / 1000.0;
-            double bitres     = static_cast<double>(getBitResolution());
+            auto bitres     = static_cast<double>(getBitResolution());
             // convert to bits
             double size   = static_cast<double>(getDecodedLength()) * 8.0;
             double stereo = (isStereo() ? 2.0 : 1.0);
@@ -869,9 +869,9 @@ namespace FIFE
     void SoundEmitter::addEffect(SoundEffect* effect)
     {
         bool added = false;
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if ((*it) == nullptr) {
-                (*it) = effect;
+        for (auto & m_effect : m_effects) {
+            if (m_effect == nullptr) {
+                m_effect = effect;
                 added = true;
                 break;
             }
@@ -883,9 +883,9 @@ namespace FIFE
 
     void SoundEmitter::removeEffect(SoundEffect* effect)
     {
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (effect == *it) {
-                (*it) = nullptr;
+        for (auto & m_effect : m_effects) {
+            if (effect == m_effect) {
+                m_effect = nullptr;
                 break;
             }
         }
@@ -894,8 +894,8 @@ namespace FIFE
     uint8_t SoundEmitter::getEffectCount()
     {
         uint8_t counter = 0;
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it != nullptr) {
+        for (auto & m_effect : m_effects) {
+            if (m_effect != nullptr) {
                 ++counter;
             }
         }
@@ -905,8 +905,8 @@ namespace FIFE
     uint8_t SoundEmitter::getEffectNumber(SoundEffect* effect)
     {
         uint8_t number = 0;
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (effect == *it) {
+        for (auto & m_effect : m_effects) {
+            if (effect == m_effect) {
                 break;
             }
             ++number;
@@ -926,9 +926,9 @@ namespace FIFE
 
     void SoundEmitter::activateEffects()
     {
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it != nullptr) {
-                m_manager->activateEffect(*it, this);
+        for (auto & m_effect : m_effects) {
+            if (m_effect != nullptr) {
+                m_manager->activateEffect(m_effect, this);
             }
         }
         if (m_directFilter != nullptr) {
@@ -938,9 +938,9 @@ namespace FIFE
 
     void SoundEmitter::deactivateEffects()
     {
-        for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it != nullptr) {
-                m_manager->deactivateEffect(*it, this);
+        for (auto & m_effect : m_effects) {
+            if (m_effect != nullptr) {
+                m_manager->deactivateEffect(m_effect, this);
             }
         }
         if (m_directFilter != nullptr) {
@@ -962,7 +962,7 @@ namespace FIFE
 
     void SoundEmitter::removeListener(SoundEmitterListener* listener)
     {
-        std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
+        auto i = m_listeners.begin();
         while (i != m_listeners.end()) {
             if ((*i) == listener) {
                 *i = nullptr;
@@ -976,7 +976,7 @@ namespace FIFE
 
     void SoundEmitter::callOnSoundFinished()
     {
-        std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
+        auto i = m_listeners.begin();
         for (; i != m_listeners.end(); ++i) {
             if (*i != nullptr) {
                 (*i)->onSoundFinished(m_emitterId, m_soundClipId);

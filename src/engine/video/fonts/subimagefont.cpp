@@ -52,7 +52,7 @@ namespace FIFE
         surface = tmp;
 
         // Prepare the data for extracting the glyphs.
-        uint32_t* pixels = reinterpret_cast<uint32_t*>(surface->pixels);
+        auto* pixels = reinterpret_cast<uint32_t*>(surface->pixels);
 
         int32_t x = 0;
 

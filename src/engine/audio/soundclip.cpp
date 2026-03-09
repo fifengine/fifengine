@@ -64,10 +64,10 @@ namespace FIFE
 
         if (!m_isStream) {
             // only for non-streaming buffers
-            SoundBufferEntry* ptr = new SoundBufferEntry();
+            auto* ptr = new SoundBufferEntry();
 
             // iterate the bufs and fill them with data
-            for (int32_t i = 0; i < BUFFER_NUM; i++) {
+            for (unsigned int & buffer : ptr->buffers) {
 
                 if (m_decoder->decode(BUFFER_LEN)) {
                     // EOF or error
@@ -75,10 +75,10 @@ namespace FIFE
                 }
 
                 // generate buffer and fill it with data
-                alGenBuffers(1, &ptr->buffers[i]);
+                alGenBuffers(1, &buffer);
 
                 alBufferData(
-                    ptr->buffers[i],
+                    buffer,
                     m_decoder->getALFormat(),
                     m_decoder->getBuffer(),
                     m_decoder->getBufferSize(),
@@ -210,8 +210,8 @@ namespace FIFE
     void SoundClip::acquireStream(uint32_t streamid)
     {
         SoundBufferEntry* ptr = m_buffervec.at(streamid);
-        for (int32_t i = 0; i < BUFFER_NUM; i++) {
-            if (getStream(streamid, ptr->buffers[i])) {
+        for (unsigned int buffer : ptr->buffers) {
+            if (getStream(streamid, buffer)) {
                 break;
             }
         }

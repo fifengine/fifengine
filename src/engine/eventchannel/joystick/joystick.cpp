@@ -169,7 +169,7 @@ namespace FIFE
             return convertRange(SDL_JoystickGetAxis(m_joystickHandle, axis));
         }
 
-        SDL_GameControllerAxis sdlAxis = static_cast<SDL_GameControllerAxis>(axis);
+        auto sdlAxis = static_cast<SDL_GameControllerAxis>(axis);
         return convertRange(SDL_GameControllerGetAxis(m_controllerHandle, sdlAxis));
     }
 
@@ -193,7 +193,7 @@ namespace FIFE
             return false;
         }
 
-        SDL_GameControllerButton sdlButton = static_cast<SDL_GameControllerButton>(button);
+        auto sdlButton = static_cast<SDL_GameControllerButton>(button);
         if (SDL_GameControllerGetButton(m_controllerHandle, sdlButton) == 1) {
             return true;
         }

@@ -48,8 +48,8 @@ namespace FIFE
             dir_names.push_back(name);
         }
 
-        for (std::list<std::string>::iterator i = dir_names.begin(); i != dir_names.end(); ++i) {
-            loadFileList(*i);
+        for (auto & dir_name : dir_names) {
+            loadFileList(dir_name);
         }
     }
 
@@ -88,7 +88,7 @@ namespace FIFE
 
     const RawDataDAT1::s_info& DAT1::getInfo(const std::string& name) const
     {
-        type_filelist::const_iterator i = m_filelist.find(name);
+        auto i = m_filelist.find(name);
         if (i == m_filelist.end()) {
             throw NotFound(name);
         }
@@ -112,7 +112,7 @@ namespace FIFE
         std::string path = pathstr;
 
         // Normalize the path
-        if (path.find("./") == 0) {
+        if (path.starts_with("./")) {
             path.erase(0, 2);
         }
 
@@ -121,10 +121,10 @@ namespace FIFE
             path += '/';
         }
 
-        type_filelist::const_iterator end = m_filelist.end();
-        for (type_filelist::const_iterator i = m_filelist.begin(); i != end; ++i) {
+        auto end = m_filelist.end();
+        for (auto i = m_filelist.begin(); i != end; ++i) {
             const std::string& file = i->first;
-            if (file.find(path) == 0) {
+            if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
                 bool isdir = cleanedfile.find('/') != std::string::npos;         // if we still have a / it's a subdir
 

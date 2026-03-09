@@ -64,7 +64,7 @@ namespace FIFE
             const ZipEntryData& entryData = node->getZipEntryData();
 
             m_zipfile->setIndex(entryData.offset);
-            uint8_t* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
+            auto* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
             if (entryData.comp == 8) {                        // compressed using deflate
                 FL_DBG(
                     _log,

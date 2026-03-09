@@ -98,25 +98,25 @@ namespace FIFE
 
     uint16_t RawData::read16Little()
     {
-        uint16_t val = readSingle<uint16_t>();
+        auto val = readSingle<uint16_t>();
         return littleToHost(val);
     }
 
     uint32_t RawData::read32Little()
     {
-        uint32_t val = readSingle<uint32_t>();
+        auto val = readSingle<uint32_t>();
         return littleToHost(val);
     }
 
     uint16_t RawData::read16Big()
     {
-        uint16_t val = readSingle<uint16_t>();
+        auto val = readSingle<uint16_t>();
         return bigToHost(val);
     }
 
     uint32_t RawData::read32Big()
     {
-        uint32_t val = readSingle<uint32_t>();
+        auto val = readSingle<uint32_t>();
         return bigToHost(val);
     }
 
