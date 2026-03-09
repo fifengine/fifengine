@@ -178,7 +178,7 @@ namespace FIFE
 
     void FifechanManager::add(fcn::Widget* widget)
     {
-        if (m_widgets.count(widget) == 0u) {
+        if (!m_widgets.contains(widget)) {
             m_fcn_topcontainer->add(widget);
             m_widgets.insert(widget);
         }
@@ -186,7 +186,7 @@ namespace FIFE
 
     void FifechanManager::remove(fcn::Widget* widget)
     {
-        if (m_widgets.count(widget) != 0u) {
+        if (m_widgets.contains(widget)) {
             m_widgets.erase(widget);
             m_fcn_topcontainer->remove(widget);
         }

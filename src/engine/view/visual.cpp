@@ -292,7 +292,7 @@ namespace FIFE
         }
         int32_t closestMatch = 0;
         int32_t index        = getIndexByAngle(angle, m_map, closestMatch);
-        if (m_colorOverlayMap.find(index) == m_colorOverlayMap.end()) {
+        if (!m_colorOverlayMap.contains(index)) {
             return nullptr;
         }
         return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];

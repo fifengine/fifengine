@@ -83,7 +83,7 @@ namespace FIFE
 
     bool DAT1::fileExists(const std::string& name) const
     {
-        return m_filelist.find(name) != m_filelist.end();
+        return m_filelist.contains(name);
     }
 
     const RawDataDAT1::s_info& DAT1::getInfo(const std::string& name) const

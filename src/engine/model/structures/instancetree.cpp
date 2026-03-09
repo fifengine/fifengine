@@ -30,7 +30,7 @@ namespace FIFE
         InstanceTreeNode* node = m_tree.find_container(coords.x, coords.y, 0, 0);
         InstanceList& list     = node->data();
         list.push_back(instance);
-        if (m_reverse.find(instance) != m_reverse.end()) {
+        if (m_reverse.contains(instance)) {
             FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
             return;
         }

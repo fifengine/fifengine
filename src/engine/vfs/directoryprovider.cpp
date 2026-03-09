@@ -51,6 +51,6 @@ namespace FIFE
 
     bool DirectoryProvider::hasSource(const std::string& path) const
     {
-        return m_sources.count(path) > 0;
+        return m_sources.contains(path);
     }
 } // namespace FIFE
