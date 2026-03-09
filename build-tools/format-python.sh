@@ -62,7 +62,16 @@ VIRTUAL_ENV=${VIRTUAL_ENV:-/tmp/fife-python-venv}
 python3 -m venv "$VIRTUAL_ENV"
 export PATH="$VIRTUAL_ENV/bin:$PATH"
 
-pip install --prefer-binary --no-cache-dir --upgrade pip
+run_in_venv() {
+  printf 'Running:'
+  for arg in "$VIRTUAL_ENV/bin/python" -m "$@"; do
+    printf ' %q' "$arg"
+  done
+  printf '\n'
+  "$VIRTUAL_ENV/bin/python" -m "$@"
+}
+
+run_in_venv pip install --prefer-binary --no-cache-dir --upgrade pip
 packages=()
 if [[ "$run_black" == true ]]; then
   packages+=(black)
@@ -75,7 +84,7 @@ if [[ "$run_mypy" == true ]]; then
 fi
 
 if [[ ${#packages[@]} -gt 0 ]]; then
-  pip install --prefer-binary --no-cache-dir "${packages[@]}"
+  run_in_venv pip install --prefer-binary --no-cache-dir "${packages[@]}"
 fi
 
 # Paths to check (mirror QA workflow)
@@ -99,18 +108,15 @@ if [[ ${#EXISTING[@]} -eq 0 ]]; then
 fi
 
 if [[ "$run_black" == true ]]; then
-  echo "Running black --check on: ${EXISTING[*]}"
-  black --check "${EXISTING[@]}"
+  run_in_venv black "${EXISTING[@]}"
 fi
 
 if [[ "$run_ruff" == true ]]; then
-  echo "Running ruff on: ${EXISTING[*]}"
-  ruff check "${EXISTING[@]}"
+  run_in_venv ruff check "${EXISTING[@]}"
 fi
 
 if [[ "$run_mypy" == true && -d src/python/fife ]]; then
-  echo "Running mypy on src/python/fife"
-  mypy src/python/fife
+  run_in_venv mypy src/python/fife
 fi
 
 echo "Python formatting/lint/type checks complete."
