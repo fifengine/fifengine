@@ -81,7 +81,7 @@ namespace FIFE
         } else if (keyType == Key::Backspace && getCaretPosition() > 0) {
             TextField::keyPressed(keyEvent);
         } else if (keyType == Key::Enter) {
-            if (getText() != "") {
+            if (!getText().empty()) {
                 if (m_callback) {
                     m_callback(getText());
                 }

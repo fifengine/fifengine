@@ -292,7 +292,7 @@ namespace FIFE
             }
         }
         if (!found) {
-            if (driver != "") {
+            if (!driver.empty()) {
                 throw NotSupported("Could not find a matching render driver!");
             }
             m_renderDriverName  = "";

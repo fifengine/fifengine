@@ -173,8 +173,8 @@ namespace FIFE
         std::string currentpath                        = "/";
         std::vector<std::string>::const_iterator token = tokens.begin();
         while (token != tokens.end()) {
-            if (*token != "") {
-                if (*token != "." && *token != ".." && listDirectories(currentpath, *token).size() == 0) {
+            if (!(*token).empty()) {
+                if (*token != "." && *token != ".." && listDirectories(currentpath, *token).empty()) {
                     return false;
                 } else {
                     currentpath += *token + "/";

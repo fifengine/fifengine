@@ -272,7 +272,7 @@ namespace FIFE
     bool Object::isSpecialCost() const
     {
         if (m_moveProperty != nullptr) {
-            return m_moveProperty->m_costId != "";
+            return !m_moveProperty->m_costId.empty();
         }
         if (m_inherited != nullptr) {
             return m_inherited->isSpecialCost();

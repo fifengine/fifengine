@@ -36,7 +36,7 @@ namespace FIFE
 
     void GuiFont::drawString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
     {
-        if (text == "") {
+        if (text.empty()) {
             return;
         }
 
@@ -67,7 +67,7 @@ namespace FIFE
 
     void GuiFont::drawMultiLineString(fcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y)
     {
-        if (text == "") {
+        if (text.empty()) {
             return;
         }
 

@@ -238,13 +238,13 @@ namespace FIFE
         int32_t fontsize       = size;
 
         // Set default settings if necessary
-        if (fontpath == "") {
+        if (fontpath.empty()) {
             fontpath = m_fontpath;
         }
         if (fontsize == 0) {
             fontsize = m_fontsize;
         }
-        if (fontglyphs == "") {
+        if (fontglyphs.empty()) {
             fontglyphs = m_fontglyphs;
         }
 

@@ -73,7 +73,7 @@ namespace FIFE
                 if ((*it)->isSpecialSpeed()) {
                     cache->setSpeedMultiplier(this, (*it)->getSpeed());
                 }
-                if ((*it)->getObject()->getArea() != "") {
+                if (!(*it)->getObject()->getArea().empty()) {
                     cache->addCellToArea((*it)->getObject()->getArea(), this);
                 }
                 callOnInstanceEntered(*it);
@@ -94,7 +94,7 @@ namespace FIFE
             if (instance->isSpecialSpeed()) {
                 cache->setSpeedMultiplier(this, instance->getSpeed());
             }
-            if (instance->getObject()->getArea() != "") {
+            if (!instance->getObject()->getArea().empty()) {
                 cache->addCellToArea(instance->getObject()->getArea(), this);
             }
             callOnInstanceEntered(instance);
@@ -130,7 +130,7 @@ namespace FIFE
                 }
             }
         }
-        if (instance->getObject()->getArea() != "") {
+        if (!instance->getObject()->getArea().empty()) {
             cache->removeCellFromArea(instance->getObject()->getArea(), this);
         }
         callOnInstanceExited(instance);

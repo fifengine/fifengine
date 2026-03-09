@@ -106,7 +106,7 @@ namespace fcn
             if (getParent() != nullptr) {
                 DockArea* newDockArea      = nullptr;
                 std::list<Widget*> widgets = getParent()->getWidgetsIn(getDimension(), this);
-                if (widgets.size() > 0) {
+                if (!widgets.empty()) {
                     std::list<Widget*>::iterator it = widgets.begin();
                     for (; it != widgets.end(); ++it) {
                         // check if the Widget is a DockArea
@@ -114,7 +114,7 @@ namespace fcn
                         if (tmp == nullptr) {
                             // check if the Widget contains a DockArea
                             std::list<Widget*> deepWidgets = (*it)->getWidgetsIn((*it)->getChildrenArea());
-                            if (deepWidgets.size() > 0) {
+                            if (!deepWidgets.empty()) {
                                 Rectangle dim = getDimension();
                                 getAbsolutePosition(dim.x, dim.y);
                                 std::list<Widget*>::iterator dit = deepWidgets.begin();

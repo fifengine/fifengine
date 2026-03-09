@@ -28,7 +28,7 @@ namespace FIFE
 
 std::string FIFE::VFSSource::fixPath(std::string path) const
 {
-    if (path.size() == 0u) {
+    if (path.empty()) {
         return path;
     }
 

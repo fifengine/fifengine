@@ -556,7 +556,7 @@ namespace FIFE
 
     void SoundManager::addToGroup(SoundEmitter* emitter)
     {
-        if (emitter->getGroup() != "") {
+        if (!emitter->getGroup().empty()) {
             m_groups[emitter->getGroup()].push_back(emitter);
         }
     }
@@ -564,7 +564,7 @@ namespace FIFE
     void SoundManager::removeFromGroup(SoundEmitter* emitter)
     {
         std::string group = emitter->getGroup();
-        if (group == "") {
+        if (group.empty()) {
             return;
         }
         EmitterGroupsIterator groupIt = m_groups.find(group);
@@ -591,7 +591,7 @@ namespace FIFE
 
     void SoundManager::removeGroup(const std::string& group)
     {
-        if (group == "") {
+        if (group.empty()) {
             return;
         }
         EmitterGroupsIterator groupIt = m_groups.find(group);

@@ -27,7 +27,7 @@ namespace FIFE
     {
 
         m_route->setRouteStatus(ROUTE_SEARCHING);
-        m_specialCost           = route->getCostId() != "";
+        m_specialCost           = !route->getCostId().empty();
         m_ignoreDynamicBlockers = route->isDynamicBlockerIgnored();
         if (m_multicell) {
             Location loc                                       = route->getStartNode();

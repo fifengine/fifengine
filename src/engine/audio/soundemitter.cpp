@@ -249,7 +249,7 @@ namespace FIFE
             }
         }
 
-        if (m_group != "") {
+        if (!m_group.empty()) {
             m_manager->removeFromGroup(this);
             m_group = "";
         }
@@ -771,11 +771,11 @@ namespace FIFE
     void SoundEmitter::setGroup(const std::string& group)
     {
         if (group != m_group) {
-            if (m_group != "") {
+            if (!m_group.empty()) {
                 m_manager->removeFromGroup(this);
             }
             m_group = group;
-            if (m_group != "") {
+            if (!m_group.empty()) {
                 m_manager->addToGroup(this);
             }
         }

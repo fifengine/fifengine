@@ -128,7 +128,7 @@ namespace FIFE
         if (SDL_InitSubSystem(flags) < 0) {
             throw SDLException(SDL_GetError());
         }
-        if (driver != "") {
+        if (!driver.empty()) {
             if (SDL_VideoInit(driver.c_str()) < 0) {
                 throw SDLException(SDL_GetError());
             }
@@ -161,7 +161,7 @@ namespace FIFE
     {
         setScreenMode(mode);
         if (m_window != nullptr) {
-            if (icon != "") {
+            if (!icon.empty()) {
                 SDL_Surface* img = IMG_Load(icon.c_str());
                 if (img != nullptr) {
                     SDL_SetWindowIcon(m_window, img);

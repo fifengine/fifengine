@@ -220,7 +220,7 @@ namespace FIFE
         }
 
         std::string driver = m_settings.getVideoDriver();
-        if (driver != "") {
+        if (!driver.empty()) {
             std::vector<std::string> drivers = m_devcaps.getAvailableVideoDrivers();
             if (std::find(drivers.begin(), drivers.end(), driver) == drivers.end()) {
                 FL_WARN(
@@ -235,7 +235,7 @@ namespace FIFE
 
         // in case of SDL we use this to create the SDL_Renderer
         driver = m_settings.getSDLDriver();
-        if (driver != "") {
+        if (!driver.empty()) {
             std::vector<std::string> drivers = m_devcaps.getAvailableRenderDrivers();
             if (std::find(drivers.begin(), drivers.end(), driver) == drivers.end()) {
                 FL_WARN(

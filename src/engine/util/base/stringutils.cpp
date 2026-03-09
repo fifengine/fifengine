@@ -52,7 +52,7 @@ namespace FIFE
             ++curr;
         }
 
-        if (tokens.size() == 0) {
+        if (tokens.empty()) {
             tokens.push_back(makeInt32(str));
             return tokens;
         }

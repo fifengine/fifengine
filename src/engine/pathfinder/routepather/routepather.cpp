@@ -113,7 +113,7 @@ namespace FIFE
         const Location& start, const Location& end, bool immediate, const std::string& costId)
     {
         Route* route = new Route(start, end);
-        if (costId != "") {
+        if (!costId.empty()) {
             route->setCostId(costId);
         }
         if (immediate) {

@@ -135,7 +135,7 @@ namespace FIFE
     {
         assert(utf8::is_valid(text.begin(), text.end()));
         std::string::const_iterator cur;
-        if (text.size() == 0) {
+        if (text.empty()) {
             return 0;
         }
         if (x <= 0) {

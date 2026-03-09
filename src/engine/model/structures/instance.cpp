@@ -491,7 +491,7 @@ namespace FIFE
         if (route == nullptr) {
             route = new Route(m_location, *m_activity->m_actionInfo->m_target);
             route->setRotation(getRotation());
-            if (costId != "") {
+            if (!costId.empty()) {
                 route->setCostId(costId);
             }
             if (isMultiCell()) {
@@ -642,7 +642,7 @@ namespace FIFE
         delete m_activity->m_sayInfo;
         m_activity->m_sayInfo = nullptr;
 
-        if (text != "") {
+        if (!text.empty()) {
             m_activity->m_sayInfo               = new SayInfo(text, duration);
             m_activity->m_sayInfo->m_start_time = getRuntime();
         }
