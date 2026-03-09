@@ -37,7 +37,10 @@ def _preload_optional_gui_backend():
 
 _preload_optional_gui_backend()
 
-fife = importlib.import_module(".fife", __name__)
+if TYPE_CHECKING:
+    from . import fife as fife
+else:
+    fife = importlib.import_module(".fife", __name__)
 
 if TYPE_CHECKING:
     from . import fifechan as _fifechan
