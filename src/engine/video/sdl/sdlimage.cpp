@@ -72,7 +72,7 @@ namespace FIFE
 
     void SDLImage::invalidate()
     {
-        if (m_texture && !m_shared) {
+        if ((m_texture != nullptr) && !m_shared) {
             SDL_DestroyTexture(m_texture);
         }
         m_texture = nullptr;
@@ -115,15 +115,15 @@ namespace FIFE
         SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
 
         // create texture
-        if (!m_texture) {
-            if (!m_surface) {
+        if (m_texture == nullptr) {
+            if (m_surface == nullptr) {
                 load();
             }
             m_texture = SDL_CreateTextureFromSurface(renderer, m_surface);
         }
 
         // set additonal color and alpha mods
-        if (rgb) {
+        if (rgb != nullptr) {
             SDL_SetTextureColorMod(m_texture, rgb[0], rgb[1], rgb[2]);
             SDL_SetTextureAlphaMod(m_texture, rgb[3]);
         } else {
@@ -141,7 +141,7 @@ namespace FIFE
     size_t SDLImage::getSize()
     {
         size_t size = 0;
-        if (m_surface && !m_shared) {
+        if ((m_surface != nullptr) && !m_shared) {
             size += m_surface->h * m_surface->pitch;
         }
 
@@ -154,13 +154,13 @@ namespace FIFE
             shared->load();
         }
         SDL_Surface* surface = shared->getSurface();
-        if (!surface) {
+        if (surface == nullptr) {
             shared->load();
             surface = shared->getSurface();
         }
         SDLImage* image = static_cast<SDLImage*>(shared.get());
         m_texture       = image->getTexture();
-        if (!m_texture) {
+        if (m_texture == nullptr) {
             // create atlas texture
             SDL_Renderer* renderer = static_cast<RenderBackendSDL*>(RenderBackend::instance())->getRenderer();
             m_texture              = SDL_CreateTextureFromSurface(renderer, surface);
@@ -226,7 +226,7 @@ namespace FIFE
         if (m_texture == texture) {
             return;
         }
-        if (m_texture && !m_shared) {
+        if ((m_texture != nullptr) && !m_shared) {
             SDL_DestroyTexture(m_texture);
         }
         m_texture = texture;

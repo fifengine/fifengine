@@ -151,7 +151,8 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             Rect r;
             Rect viewport = cam->getViewPort();
-            uint32_t width, height;
+            uint32_t width;
+            uint32_t height;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
@@ -189,7 +190,8 @@ namespace FIFE
             ImagePtr img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
             Rect viewport = cam->getViewPort();
-            uint32_t width, height;
+            uint32_t width;
+            uint32_t height;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
@@ -218,7 +220,8 @@ namespace FIFE
             Image* img = m_font->getAsImageMultiline(m_text);
             Rect r;
             Rect viewport = cam->getViewPort();
-            uint32_t width, height;
+            uint32_t width;
+            uint32_t height;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
@@ -256,7 +259,8 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             Rect r;
             Rect viewport = cam->getViewPort();
-            uint32_t width, height;
+            uint32_t width;
+            uint32_t height;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
                 height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
@@ -295,7 +299,7 @@ namespace FIFE
         return new GenericRenderer(*this);
     }
 
-    GenericRenderer::~GenericRenderer() { }
+    GenericRenderer::~GenericRenderer() = default;
     void GenericRenderer::addLine(
         const std::string& group, RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {

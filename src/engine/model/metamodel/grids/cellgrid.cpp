@@ -35,7 +35,7 @@ namespace FIFE
         updateMatrices();
     }
 
-    CellGrid::~CellGrid() { }
+    CellGrid::~CellGrid() = default;
 
     void CellGrid::getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates)
     {

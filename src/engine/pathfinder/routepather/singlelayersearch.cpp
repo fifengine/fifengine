@@ -41,7 +41,7 @@ namespace FIFE
         m_gCosts.resize(max_index, 0.0);
     }
 
-    SingleLayerSearch::~SingleLayerSearch() { }
+    SingleLayerSearch::~SingleLayerSearch() = default;
 
     void SingleLayerSearch::updateSearch()
     {
@@ -66,7 +66,7 @@ namespace FIFE
         ModelCoordinate nextCoord = m_cellCache->convertIntToCoord(m_next);
         CellGrid* grid            = m_cellCache->getLayer()->getCellGrid();
         Cell* nextCell            = m_cellCache->getCell(nextCoord);
-        if (!nextCell) {
+        if (nextCell == nullptr) {
             return;
         }
         int32_t cellZ                       = nextCell->getLayerCoordinates().z;
@@ -112,7 +112,7 @@ namespace FIFE
                 std::vector<ModelCoordinate>::iterator coord_it = coords.begin();
                 for (; coord_it != coords.end(); ++coord_it) {
                     Cell* cell = m_cellCache->getCell(*coord_it);
-                    if (cell) {
+                    if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
                             std::vector<Cell*>::iterator bc_it =
                                 std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);

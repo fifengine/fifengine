@@ -59,7 +59,7 @@ namespace FIFE
                 newBlock->right = (u + 1) * width;
 
                 AtlasBlock const * intersection = intersects(newBlock);
-                if (!intersection) {
+                if (intersection == nullptr) {
                     freePixels -= width * height * pixelSize;
                     assert(freePixels >= 0);
 
@@ -70,7 +70,7 @@ namespace FIFE
                         --squeezed.left;
                         --squeezed.right;
 
-                        if (!(intersection = intersects(&squeezed))) {
+                        if ((intersection = intersects(&squeezed)) == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
                             int blockWidth = newBlock->getWidth();
@@ -80,7 +80,7 @@ namespace FIFE
                                 squeezed.left -= blockWidth / div;
                                 squeezed.right -= blockWidth / div;
 
-                                if ((intersection = intersects(&squeezed))) {
+                                if ((intersection = intersects(&squeezed)) != nullptr) {
                                     squeezed.left += blockWidth / div;
                                     squeezed.right += blockWidth / div;
                                 }
@@ -88,7 +88,7 @@ namespace FIFE
                             }
 
                             // linear search
-                            while (!(intersection = intersects(&squeezed)) && squeezed.left > 0) {
+                            while (((intersection = intersects(&squeezed)) == nullptr) && squeezed.left > 0) {
                                 --squeezed.left;
                                 --squeezed.right;
                             }
@@ -105,7 +105,7 @@ namespace FIFE
                         --squeezed.top;
                         --squeezed.bottom;
 
-                        if (!(intersection = intersects(&squeezed))) {
+                        if ((intersection = intersects(&squeezed)) == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
                             int blockHeight = newBlock->getHeight();
@@ -115,7 +115,7 @@ namespace FIFE
                                 squeezed.top -= blockHeight / div;
                                 squeezed.bottom -= blockHeight / div;
 
-                                if ((intersection = intersects(&squeezed))) {
+                                if ((intersection = intersects(&squeezed)) != nullptr) {
                                     squeezed.top += blockHeight / div;
                                     squeezed.bottom += blockHeight / div;
                                 }
@@ -123,7 +123,7 @@ namespace FIFE
                             }
 
                             // linear search
-                            while (!(intersection = intersects(&squeezed)) && squeezed.top > 0) {
+                            while (((intersection = intersects(&squeezed)) == nullptr) && squeezed.top > 0) {
                                 --squeezed.top;
                                 --squeezed.bottom;
                             }
@@ -160,16 +160,18 @@ namespace FIFE
             if (bwidth < width) {
                 // look for next power of 2 for width
                 uint32_t powof2 = 1;
-                while (powof2 < bwidth)
+                while (powof2 < bwidth) {
                     powof2 <<= 1;
+                }
                 width = std::min(powof2, width);
             }
 
             if (bheight < height) {
                 // look for next power of 2 for width
                 uint32_t powof2 = 1;
-                while (powof2 < bheight)
+                while (powof2 < bheight) {
                     powof2 <<= 1;
+                }
                 height = std::min(powof2, height);
             }
 
@@ -182,8 +184,9 @@ namespace FIFE
     AtlasBlock const * AtlasPage::intersects(AtlasBlock const * block) const
     {
         for (size_t b = 0; b < blocks.size() - 1; ++b) {
-            if (!blocks[b].intersects(*block).isTrivial())
+            if (!blocks[b].intersects(*block).isTrivial()) {
                 return block;
+            }
         }
         // no intersection
         return nullptr;
@@ -193,7 +196,7 @@ namespace FIFE
     {
         for (Pages::iterator page = pages.begin(); page != pages.end(); ++page) {
             AtlasBlock* block = page->getBlock(width, height);
-            if (block) {
+            if (block != nullptr) {
                 return block;
             }
         }

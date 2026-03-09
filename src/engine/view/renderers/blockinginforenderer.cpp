@@ -50,7 +50,7 @@ namespace FIFE
         return new BlockingInfoRenderer(*this);
     }
 
-    BlockingInfoRenderer::~BlockingInfoRenderer() { }
+    BlockingInfoRenderer::~BlockingInfoRenderer() = default;
 
     BlockingInfoRenderer* BlockingInfoRenderer::getInstance(IRendererContainer* cnt)
     {
@@ -60,14 +60,14 @@ namespace FIFE
     void BlockingInfoRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         CellGrid* cg = layer->getCellGrid();
-        if (!cg) {
+        if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
 
         Rect cv          = cam->getViewPort();
         CellCache* cache = layer->getCellCache();
-        if (cache) {
+        if (cache != nullptr) {
             const std::vector<std::vector<Cell*>>& cells       = cache->getCells();
             std::vector<std::vector<Cell*>>::const_iterator it = cells.begin();
             for (; it != cells.end(); ++it) {

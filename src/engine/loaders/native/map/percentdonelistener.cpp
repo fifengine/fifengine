@@ -18,11 +18,11 @@ namespace FIFE
     const uint32_t minPercent = 0;
     const uint32_t maxPercent = 100;
 
-    PercentDoneListener::~PercentDoneListener() { }
+    PercentDoneListener::~PercentDoneListener() = default;
 
     PercentDoneCallback::PercentDoneCallback() : m_totalElements(0), m_percent(1), m_numberOfEvents(0), m_count(0) { }
 
-    PercentDoneCallback::~PercentDoneCallback() { }
+    PercentDoneCallback::~PercentDoneCallback() = default;
 
     void PercentDoneCallback::setTotalNumberOfElements(unsigned int totalElements)
     {
@@ -78,7 +78,7 @@ namespace FIFE
 
     void PercentDoneCallback::addListener(PercentDoneListener* listener)
     {
-        if (listener) {
+        if (listener != nullptr) {
             m_listeners.push_back(listener);
         }
     }

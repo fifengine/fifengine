@@ -25,12 +25,12 @@ namespace FIFE
 {
 
     Object::BasicObjectProperty::BasicObjectProperty() :
-        m_area(""), m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
+         m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
     {
     }
     Object::BasicObjectProperty::~BasicObjectProperty()
     {
-        if (m_actions) {
+        if (m_actions != nullptr) {
             std::map<std::string, Action*>::const_iterator i(m_actions->begin());
             while (i != m_actions->end()) {
                 delete i->second;
@@ -41,18 +41,18 @@ namespace FIFE
     }
 
     Object::MovableObjectProperty::MovableObjectProperty() :
-        m_pather(nullptr), m_costId(""), m_cost(1.0), m_speed(1.0), m_zRange(0)
+        m_pather(nullptr),  m_cost(1.0), m_speed(1.0), m_zRange(0)
     {
     }
-    Object::MovableObjectProperty::~MovableObjectProperty() { }
+    Object::MovableObjectProperty::~MovableObjectProperty() = default;
 
     Object::MultiObjectProperty::MultiObjectProperty() : m_multiPart(false), m_restrictedRotation(false) { }
-    Object::MultiObjectProperty::~MultiObjectProperty() { }
+    Object::MultiObjectProperty::~MultiObjectProperty() = default;
 
     Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited) :
         m_id(identifier),
         m_namespace(name_space),
-        m_filename(""),
+        
         m_inherited(inherited),
         m_visual(nullptr),
         m_basicProperty(nullptr),
@@ -72,11 +72,11 @@ namespace FIFE
     Action* Object::createAction(const std::string& identifier, bool is_default)
     {
         std::map<std::string, Action*>* actions;
-        if (!m_basicProperty) {
+        if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }
 
-        if (!m_basicProperty->m_actions) {
+        if (m_basicProperty->m_actions == nullptr) {
             m_basicProperty->m_actions = new std::map<std::string, Action*>;
         }
         actions = m_basicProperty->m_actions;
@@ -89,10 +89,10 @@ namespace FIFE
         }
 
         Action* a = getAction(identifier, false);
-        if (!a) {
+        if (a == nullptr) {
             a                      = new Action(identifier);
             (*actions)[identifier] = a;
-            if (is_default || (!m_basicProperty->m_defaultAction)) {
+            if (is_default || (m_basicProperty->m_defaultAction == nullptr)) {
                 m_basicProperty->m_defaultAction = a;
             }
         }
@@ -102,16 +102,16 @@ namespace FIFE
     Action* Object::getAction(const std::string& identifier, bool deepsearch) const
     {
         std::map<std::string, Action*>* actions = nullptr;
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             actions = m_basicProperty->m_actions;
         }
 
         std::map<std::string, Action*>::const_iterator i;
-        if (actions) {
+        if (actions != nullptr) {
             i = actions->find(identifier);
         }
-        if ((!actions) || (i == actions->end())) {
-            if (m_inherited && deepsearch) {
+        if ((actions == nullptr) || (i == actions->end())) {
+            if ((m_inherited != nullptr) && deepsearch) {
                 return m_inherited->getAction(identifier);
             }
             return nullptr;
@@ -122,11 +122,11 @@ namespace FIFE
     std::list<std::string> Object::getActionIds() const
     {
         std::map<std::string, Action*>* actions = nullptr;
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             actions = m_basicProperty->m_actions;
         }
         std::list<std::string> action_ids;
-        if (actions) {
+        if (actions != nullptr) {
             std::map<std::string, Action*>::const_iterator actions_it = actions->begin();
             for (; actions_it != actions->end(); ++actions_it) {
                 action_ids.push_back(actions_it->first);
@@ -140,31 +140,31 @@ namespace FIFE
         std::map<std::string, Action*>::const_iterator i;
         Action* action                          = nullptr;
         std::map<std::string, Action*>* actions = nullptr;
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             actions = m_basicProperty->m_actions;
         }
-        if (actions) {
+        if (actions != nullptr) {
             i = actions->find(identifier);
         }
-        if ((!actions) || (i == actions->end())) {
-            if (m_inherited) {
+        if ((actions == nullptr) || (i == actions->end())) {
+            if (m_inherited != nullptr) {
                 action = m_inherited->getAction(identifier);
             }
         } else {
             action = i->second;
         }
 
-        if (action && m_basicProperty) {
+        if ((action != nullptr) && (m_basicProperty != nullptr)) {
             m_basicProperty->m_defaultAction = action;
         }
     }
 
     Action* Object::getDefaultAction() const
     {
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             return m_basicProperty->m_defaultAction;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getDefaultAction();
         }
         return nullptr;
@@ -172,7 +172,7 @@ namespace FIFE
 
     void Object::setPather(IPather* pather)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_pather = pather;
@@ -180,10 +180,10 @@ namespace FIFE
 
     IPather* Object::getPather() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_pather;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getPather();
         }
         return nullptr;
@@ -196,7 +196,7 @@ namespace FIFE
 
     void Object::adoptVisual(IVisual* visual)
     {
-        if (m_visual && m_visual != visual) {
+        if ((m_visual != nullptr) && m_visual != visual) {
             delete m_visual;
         }
         m_visual = visual;
@@ -204,7 +204,7 @@ namespace FIFE
 
     void Object::setBlocking(bool blocking)
     {
-        if (!m_basicProperty) {
+        if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }
         m_basicProperty->m_blocking = blocking;
@@ -212,10 +212,10 @@ namespace FIFE
 
     bool Object::isBlocking() const
     {
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             return m_basicProperty->m_blocking;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isBlocking();
         }
         return false;
@@ -223,7 +223,7 @@ namespace FIFE
 
     void Object::setStatic(bool stat)
     {
-        if (!m_basicProperty) {
+        if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }
         m_basicProperty->m_static = stat;
@@ -231,8 +231,8 @@ namespace FIFE
 
     bool Object::isStatic() const
     {
-        if (!m_basicProperty) {
-            if (m_inherited) {
+        if (m_basicProperty == nullptr) {
+            if (m_inherited != nullptr) {
                 return m_inherited->isStatic();
             }
             return false;
@@ -252,7 +252,7 @@ namespace FIFE
 
     void Object::setCellStackPosition(uint8_t position)
     {
-        if (!m_basicProperty) {
+        if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }
         m_basicProperty->m_cellStack = position;
@@ -260,10 +260,10 @@ namespace FIFE
 
     uint8_t Object::getCellStackPosition() const
     {
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             return m_basicProperty->m_cellStack;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getCellStackPosition();
         }
         return 0;
@@ -271,10 +271,10 @@ namespace FIFE
 
     bool Object::isSpecialCost() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_costId != "";
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isSpecialCost();
         }
         return false;
@@ -282,7 +282,7 @@ namespace FIFE
 
     void Object::setCostId(const std::string& cost)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_costId = cost;
@@ -290,10 +290,10 @@ namespace FIFE
 
     std::string Object::getCostId() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_costId;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getCostId();
         }
         return "";
@@ -301,7 +301,7 @@ namespace FIFE
 
     void Object::setCost(double cost)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_cost = cost;
@@ -309,10 +309,10 @@ namespace FIFE
 
     double Object::getCost() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_cost;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getCost();
         }
         return 1.0;
@@ -320,10 +320,10 @@ namespace FIFE
 
     bool Object::isSpecialSpeed() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return !Mathd::Equal(m_moveProperty->m_speed, 1.0);
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isSpecialSpeed();
         }
         return false;
@@ -331,7 +331,7 @@ namespace FIFE
 
     void Object::setSpeed(double speed)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_speed = speed;
@@ -339,10 +339,10 @@ namespace FIFE
 
     double Object::getSpeed() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_speed;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getSpeed();
         }
         return 1.0;
@@ -350,10 +350,10 @@ namespace FIFE
 
     bool Object::isMultiObject() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return !m_multiProperty->m_multiPartIds.empty();
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isMultiObject();
         }
         return false;
@@ -361,7 +361,7 @@ namespace FIFE
 
     void Object::addMultiPartId(const std::string& partId)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_multiPartIds.push_back(partId);
@@ -369,10 +369,10 @@ namespace FIFE
 
     std::list<std::string> Object::getMultiPartIds() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_multiPartIds;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getMultiPartIds();
         }
         return std::list<std::string>();
@@ -380,7 +380,7 @@ namespace FIFE
 
     void Object::removeMultiPartId(const std::string& partId)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             return;
         }
         std::list<std::string>::iterator it = m_multiProperty->m_multiPartIds.begin();
@@ -394,7 +394,7 @@ namespace FIFE
 
     void Object::removeAllMultiPartIds()
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             return;
         }
         m_multiProperty->m_multiPartIds.clear();
@@ -402,10 +402,10 @@ namespace FIFE
 
     bool Object::isMultiPart() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_multiPart;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isMultiPart();
         }
         return false;
@@ -413,7 +413,7 @@ namespace FIFE
 
     void Object::setMultiPart(bool part)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_multiPart = part;
@@ -421,7 +421,7 @@ namespace FIFE
 
     void Object::addMultiPart(Object* obj)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_multiParts.insert(obj);
@@ -429,10 +429,10 @@ namespace FIFE
 
     std::set<Object*> Object::getMultiParts() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_multiParts;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getMultiParts();
         }
         return std::set<Object*>();
@@ -440,7 +440,7 @@ namespace FIFE
 
     void Object::removeMultiPart(Object* obj)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             return;
         }
         m_multiProperty->m_multiParts.erase(obj);
@@ -448,7 +448,7 @@ namespace FIFE
 
     void Object::removeMultiParts()
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             return;
         }
         m_multiProperty->m_multiParts.clear();
@@ -456,7 +456,7 @@ namespace FIFE
 
     void Object::addMultiPartCoordinate(int32_t rotation, ModelCoordinate coord)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_multiPartCoordinates.insert(std::pair<int32_t, ModelCoordinate>(rotation, coord));
@@ -465,10 +465,10 @@ namespace FIFE
 
     std::multimap<int32_t, ModelCoordinate> Object::getMultiPartCoordinates() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_multiPartCoordinates;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getMultiPartCoordinates();
         }
         return std::multimap<int32_t, ModelCoordinate>();
@@ -478,7 +478,7 @@ namespace FIFE
     {
         std::vector<ModelCoordinate> coordinates;
 
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             int32_t closest = 0;
             getIndexByAngle(rotation, m_multiProperty->m_partAngleMap, closest);
             std::pair<
@@ -489,7 +489,7 @@ namespace FIFE
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
             }
-        } else if (m_inherited) {
+        } else if (m_inherited != nullptr) {
             return m_inherited->getMultiPartCoordinates(rotation);
         }
         return coordinates;
@@ -498,7 +498,7 @@ namespace FIFE
     std::vector<ModelCoordinate> Object::getMultiObjectCoordinates(int32_t rotation) const
     {
         std::vector<ModelCoordinate> coordinates;
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             if (m_multiProperty->m_multiObjectCoordinates.empty()) {
                 std::set<Object*>::iterator subit = m_multiProperty->m_multiParts.begin();
                 for (; subit != m_multiProperty->m_multiParts.end(); ++subit) {
@@ -523,7 +523,7 @@ namespace FIFE
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
             }
-        } else if (m_inherited) {
+        } else if (m_inherited != nullptr) {
             return m_inherited->getMultiObjectCoordinates(rotation);
         }
         return coordinates;
@@ -531,7 +531,7 @@ namespace FIFE
 
     void Object::setRotationAnchor(const ExactModelCoordinate& anchor)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_rotationAnchor = anchor;
@@ -539,10 +539,10 @@ namespace FIFE
 
     ExactModelCoordinate Object::getRotationAnchor() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_rotationAnchor;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getRotationAnchor();
         }
         return ExactModelCoordinate();
@@ -550,7 +550,7 @@ namespace FIFE
 
     void Object::setRestrictedRotation(bool restrict)
     {
-        if (!m_multiProperty) {
+        if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_restrictedRotation = restrict;
@@ -558,10 +558,10 @@ namespace FIFE
 
     bool Object::isRestrictedRotation() const
     {
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             return m_multiProperty->m_restrictedRotation;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->isRestrictedRotation();
         }
         return false;
@@ -570,13 +570,13 @@ namespace FIFE
     int32_t Object::getRestrictedRotation(int32_t rotation)
     {
         int32_t closest = rotation;
-        if (m_multiProperty) {
+        if (m_multiProperty != nullptr) {
             if (!m_multiProperty->m_multiAngleMap.empty()) {
                 getIndexByAngle(rotation, m_multiProperty->m_multiAngleMap, closest);
             } else if (!m_multiProperty->m_partAngleMap.empty()) {
                 getIndexByAngle(rotation, m_multiProperty->m_partAngleMap, closest);
             }
-        } else if (m_inherited) {
+        } else if (m_inherited != nullptr) {
             return m_inherited->getRestrictedRotation(rotation);
         }
         return closest;
@@ -584,7 +584,7 @@ namespace FIFE
 
     void Object::setZStepRange(int32_t zRange)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_zRange = zRange;
@@ -592,10 +592,10 @@ namespace FIFE
 
     int32_t Object::getZStepRange() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_zRange;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getZStepRange();
         }
         return 0;
@@ -603,7 +603,7 @@ namespace FIFE
 
     void Object::setArea(const std::string& id)
     {
-        if (!m_basicProperty) {
+        if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }
         m_basicProperty->m_area = id;
@@ -611,10 +611,10 @@ namespace FIFE
 
     std::string Object::getArea() const
     {
-        if (m_basicProperty) {
+        if (m_basicProperty != nullptr) {
             return m_basicProperty->m_area;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getArea();
         }
         return "";
@@ -622,7 +622,7 @@ namespace FIFE
 
     void Object::addWalkableArea(const std::string& id)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             m_moveProperty = new MovableObjectProperty();
         }
         m_moveProperty->m_walkableAreas.push_back(id);
@@ -632,7 +632,7 @@ namespace FIFE
 
     void Object::removeWalkableArea(const std::string& id)
     {
-        if (!m_moveProperty) {
+        if (m_moveProperty == nullptr) {
             return;
         }
         m_moveProperty->m_walkableAreas.remove(id);
@@ -640,10 +640,10 @@ namespace FIFE
 
     std::list<std::string> Object::getWalkableAreas() const
     {
-        if (m_moveProperty) {
+        if (m_moveProperty != nullptr) {
             return m_moveProperty->m_walkableAreas;
         }
-        if (m_inherited) {
+        if (m_inherited != nullptr) {
             return m_inherited->getWalkableAreas();
         }
         return std::list<std::string>();

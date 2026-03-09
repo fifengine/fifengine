@@ -39,12 +39,14 @@ namespace FIFE
     {
         type_sources sources             = m_sources;
         type_sources::const_iterator end = sources.end();
-        for (type_sources::iterator i = sources.begin(); i != end; ++i)
+        for (type_sources::iterator i = sources.begin(); i != end; ++i) {
             delete *i;
+        }
 
         type_providers::const_iterator end2 = m_providers.end();
-        for (type_providers::iterator j = m_providers.begin(); j != end2; ++j)
+        for (type_providers::iterator j = m_providers.begin(); j != end2; ++j) {
             delete *j;
+        }
 
         m_providers.clear();
     }
@@ -67,8 +69,9 @@ namespace FIFE
         type_providers::const_iterator end = m_providers.end();
         for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
             VFSSourceProvider* provider = *i;
-            if (!provider->isReadable(path))
+            if (!provider->isReadable(path)) {
                 continue;
+            }
 
             try {
                 VFSSource* source = provider->createSource(path);
@@ -95,7 +98,7 @@ namespace FIFE
     void VFS::addNewSource(const std::string& path)
     {
         VFSSource* source = createSource(path);
-        if (source) {
+        if (source != nullptr) {
             addSource(source);
         } else {
             FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
@@ -110,8 +113,9 @@ namespace FIFE
     void VFS::removeSource(VFSSource* source)
     {
         type_sources::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
-        if (i != m_sources.end())
+        if (i != m_sources.end()) {
             m_sources.erase(i);
+        }
     }
 
     void VFS::removeSource(const std::string& path)
@@ -187,8 +191,9 @@ namespace FIFE
         FL_DBG(_log, LMsg("Opening: ") << path);
 
         VFSSource* source = getSourceForFile(path);
-        if (!source)
+        if (source == nullptr) {
             throw NotFound(path);
+        }
 
         return source->open(path);
     }
@@ -252,8 +257,9 @@ namespace FIFE
             if (provider->hasSource(path)) {
                 const VFSSource* source        = provider->getSource(path);
                 type_sources::const_iterator i = std::find(m_sources.begin(), m_sources.end(), source);
-                if (i == m_sources.end())
+                if (i == m_sources.end()) {
                     return false;
+                }
                 return true;
             }
         }

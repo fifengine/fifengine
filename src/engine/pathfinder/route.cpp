@@ -33,12 +33,12 @@ namespace FIFE
         m_rotation(0),
         m_replanned(false),
         m_ignoresBlocker(false),
-        m_costId(""),
+        
         m_object(nullptr)
     {
     }
 
-    Route::~Route() { }
+    Route::~Route() = default;
 
     void Route::setRouteStatus(RouteStatusInfo status)
     {
@@ -140,11 +140,13 @@ namespace FIFE
             return false;
         }
         if (step > 0) {
-            for (int32_t i = 0; i < step; ++i, ++m_current)
+            for (int32_t i = 0; i < step; ++i, ++m_current) {
                 ;
+            }
         } else {
-            for (int32_t i = 0; i > step; --i, --m_current)
+            for (int32_t i = 0; i > step; --i, --m_current) {
                 ;
+            }
         }
         m_walked += step;
 
@@ -258,7 +260,7 @@ namespace FIFE
 
     bool Route::isMultiCell()
     {
-        if (m_object) {
+        if (m_object != nullptr) {
             return m_object->isMultiObject();
         }
         return false;
@@ -276,7 +278,7 @@ namespace FIFE
 
     std::vector<ModelCoordinate> Route::getOccupiedCells(int32_t rotation)
     {
-        if (m_object) {
+        if (m_object != nullptr) {
             return m_object->getMultiObjectCoordinates(rotation);
         }
         std::vector<ModelCoordinate> coords;
@@ -285,7 +287,7 @@ namespace FIFE
 
     int32_t Route::getZStepRange()
     {
-        if (!m_object) {
+        if (m_object == nullptr) {
             return -1;
         }
         return m_object->getZStepRange();
@@ -293,7 +295,7 @@ namespace FIFE
 
     bool Route::isAreaLimited()
     {
-        if (m_object) {
+        if (m_object != nullptr) {
             if (!m_object->getWalkableAreas().empty()) {
                 return true;
             }
@@ -304,7 +306,7 @@ namespace FIFE
     const std::list<std::string> Route::getLimitedAreas()
     {
         std::list<std::string> areas;
-        if (m_object) {
+        if (m_object != nullptr) {
             areas = m_object->getWalkableAreas();
         }
         return areas;

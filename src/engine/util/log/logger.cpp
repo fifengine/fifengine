@@ -35,7 +35,7 @@ namespace FIFE
 
     Logger::Logger(logmodule_t module) : m_module(module) { }
 
-    Logger::~Logger() { }
+    Logger::~Logger() = default;
 
     void Logger::log(LogManager::LogLevel level, const std::string& msg)
     {
@@ -49,7 +49,7 @@ namespace FIFE
 
     LogManager* LogManager::instance()
     {
-        if (!m_instance) {
+        if (m_instance == nullptr) {
             m_instance = new LogManager();
         }
         return m_instance;
@@ -68,7 +68,7 @@ namespace FIFE
         if (!isVisible(module)) {
             return;
         }
-        std::string lvlstr = "";
+        std::string lvlstr;
         switch (level) {
         case LEVEL_DEBUG:
             lvlstr = "DEBUG";
@@ -153,7 +153,7 @@ namespace FIFE
         if (logtofile) {
             m_logfile = new std::ofstream("fife.log");
         } else {
-            if (m_logfile) {
+            if (m_logfile != nullptr) {
                 delete m_logfile;
             }
         }

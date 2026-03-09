@@ -18,10 +18,10 @@ namespace FIFE
 {
     TimeProvider::TimeProvider(TimeProvider* master) : m_master(master), m_multiplier(1.0)
     {
-        m_time_static = m_time_scaled = master ? master->getGameTime() : TimeManager::instance()->getTime();
+        m_time_static = m_time_scaled = (master != nullptr) ? master->getGameTime() : TimeManager::instance()->getTime();
     }
 
-    TimeProvider::~TimeProvider() { }
+    TimeProvider::~TimeProvider() = default;
 
     void TimeProvider::setMultiplier(float multiplier)
     {
@@ -30,7 +30,7 @@ namespace FIFE
         }
         m_time_static = getPreciseGameTime();
         m_time_scaled =
-            m_master ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime());
+            (m_master != nullptr) ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime());
         m_multiplier = multiplier;
     }
 
@@ -41,7 +41,7 @@ namespace FIFE
 
     float TimeProvider::getTotalMultiplier() const
     {
-        if (m_master) {
+        if (m_master != nullptr) {
             return m_master->getTotalMultiplier() * m_multiplier;
         } else {
             return m_multiplier;
@@ -55,7 +55,7 @@ namespace FIFE
 
     double TimeProvider::getPreciseGameTime() const
     {
-        return m_time_static + m_multiplier * ((m_master ? m_master->getPreciseGameTime() :
+        return m_time_static + m_multiplier * (((m_master != nullptr) ? m_master->getPreciseGameTime() :
                                                            static_cast<float>(TimeManager::instance()->getTime())) -
                                                m_time_scaled);
     }

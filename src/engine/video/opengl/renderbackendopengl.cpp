@@ -160,7 +160,7 @@ namespace FIFE
         const ScreenMode& mode, const std::string& title, const std::string& icon)
     {
         setScreenMode(mode);
-        if (m_window) {
+        if (m_window != nullptr) {
             if (icon != "") {
                 SDL_Surface* img = IMG_Load(icon.c_str());
                 if (img != nullptr) {
@@ -209,7 +209,7 @@ namespace FIFE
                 flags | SDL_WINDOW_SHOWN);
         }
 
-        if (!m_window) {
+        if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
         }
         // make sure the window have the right settings
@@ -233,7 +233,7 @@ namespace FIFE
         // set the window surface as main surface, not really needed anymore
         m_screen = SDL_GetWindowSurface(m_window);
         m_target = m_screen;
-        if (!m_screen) {
+        if (m_screen == nullptr) {
             throw SDLException(SDL_GetError());
         }
 
@@ -356,7 +356,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::endFrame()
     {
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_GL_SwapWindow(m_window);
         }
         RenderBackend::endFrame();
@@ -543,7 +543,7 @@ namespace FIFE
     void RenderBackendOpenGL::setLighting(float red, float green, float blue)
     {
         if (m_state.lightmodel != 0) {
-            GLfloat lightDiffuse[] = {red, green, blue, 1.0f};
+            GLfloat lightDiffuse[] = {red, green, blue, 1.0F};
             glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
         }
     }
@@ -662,14 +662,14 @@ namespace FIFE
 
     void RenderBackendOpenGL::setEnvironmentalColor(uint32_t texUnit, const uint8_t* rgba)
     {
-        if (memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4) || m_state.active_tex != texUnit) {
+        if ((memcmp(m_state.env_color, rgba, sizeof(uint8_t) * 4) != 0) || m_state.active_tex != texUnit) {
 
             memcpy(m_state.env_color, rgba, sizeof(uint8_t) * 4);
             GLfloat rgbaf[4] = {
-                static_cast<float>(m_state.env_color[0]) / 255.0f,
-                static_cast<float>(m_state.env_color[1]) / 255.0f,
-                static_cast<float>(m_state.env_color[2]) / 255.0f,
-                static_cast<float>(m_state.env_color[3]) / 255.0f};
+                static_cast<float>(m_state.env_color[0]) / 255.0F,
+                static_cast<float>(m_state.env_color[1]) / 255.0F,
+                static_cast<float>(m_state.env_color[2]) / 255.0F,
+                static_cast<float>(m_state.env_color[3]) / 255.0F};
 
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
@@ -983,11 +983,11 @@ namespace FIFE
             }
             if (ro.overlay_type != overlay_type ||
                 (ro.overlay_type != OVERLAY_TYPE_NONE &&
-                 (memcmp(rgba, ro.rgba, sizeof(uint8_t) * 4) || ro.overlay_id != texture_id2))) {
+                 ((memcmp(rgba, ro.rgba, sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
                 mt     = true;
                 render = true;
             }
-            if (m_state.lightmodel) {
+            if (m_state.lightmodel != 0u) {
                 if (ro.src != src || ro.dst != dst) {
                     blending = true;
                     render   = true;
@@ -1183,7 +1183,7 @@ namespace FIFE
                 *currentElements = ro.size;
 
                 // if lighting is enabled we have to consider a few more values
-                if (m_state.lightmodel) {
+                if (m_state.lightmodel != 0u) {
                     // change blending
                     if (blending) {
                         src = ro.src;
@@ -1465,7 +1465,7 @@ namespace FIFE
             }
             if (ro.overlay_type != overlay_type ||
                 (ro.overlay_type != OVERLAY_TYPE_NONE &&
-                 (memcmp(color, ro.rgba, sizeof(uint8_t) * 4) || ro.overlay_id != texture_id2))) {
+                 ((memcmp(color, ro.rgba, sizeof(uint8_t) * 4) != 0) || ro.overlay_id != texture_id2))) {
                 mt     = true;
                 render = true;
             }
@@ -1583,7 +1583,8 @@ namespace FIFE
 
     bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        if ((x < 0) || (x >= (int32_t)m_target->w) || (y < 0) || (y >= (int32_t)m_target->h)) {
+        if ((x < 0) || (x >= static_cast<int32_t>(m_target->w)) || (y < 0) ||
+            (y >= static_cast<int32_t>(m_target->h))) {
             return false;
         }
         renderDataP rd;
@@ -2075,7 +2076,7 @@ namespace FIFE
         RenderObject ro(GL_TRIANGLES, 6, id);
 
         // texture quad without alpha
-        if (alpha == 255 && !rgba) {
+        if (alpha == 255 && (rgba == nullptr)) {
             renderDataT rd;
             rd.vertex[0] = static_cast<float>(rect.x);
             rd.vertex[1] = static_cast<float>(rect.y);
@@ -2104,7 +2105,7 @@ namespace FIFE
             uint32_t indices[] = {index, index + 1, index + 2, index, index + 2, index + 3};
             m_tIndices.insert(m_tIndices.end(), indices, indices + 6);
         } else {
-            if (rgba) {
+            if (rgba != nullptr) {
                 renderData2TC rd;
                 rd.vertex[0] = static_cast<float>(rect.x);
                 rd.vertex[1] = static_cast<float>(rect.y);
@@ -2193,7 +2194,7 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
-        if (rgba) {
+        if (rgba != nullptr) {
             renderData2TC rd;
             rd.vertex[0] = static_cast<float>(rect.x);
             rd.vertex[1] = static_cast<float>(rect.y);
@@ -2269,7 +2270,7 @@ namespace FIFE
         uint32_t id, const Rect& rect, float vertexZ, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
         // texture quad without alpha and coloring
-        if (alpha == 255 && !rgba) {
+        if (alpha == 255 && (rgba == nullptr)) {
             // ToDo: Consider if this is better.
             /*RenderZObjectTest* renderObj = getRenderBufferObject(id);
             uint32_t offset = renderObj->index + renderObj->elements;
@@ -2331,7 +2332,7 @@ namespace FIFE
             m_renderTextureObjectsZ.push_back(ro);
         } else {
             // multitexture with color, second texel is used for m_maskOverlay
-            if (rgba) {
+            if (rgba != nullptr) {
                 renderData2TCZ rd;
                 rd.vertex[0] = static_cast<float>(rect.x);
                 rd.vertex[1] = static_cast<float>(rect.y);
@@ -2418,7 +2419,7 @@ namespace FIFE
         uint8_t alpha,
         uint8_t const * rgba)
     {
-        if (rgba) {
+        if (rgba != nullptr) {
             renderData2TCZ rd;
             rd.vertex[0] = static_cast<float>(rect.x);
             rd.vertex[1] = static_cast<float>(rect.y);
@@ -2586,7 +2587,7 @@ namespace FIFE
         uint8_t* pixels;
         SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24, RMASK, GMASK, BMASK, NULLMASK);
 
-        if (!surface) {
+        if (surface == nullptr) {
             return;
         }
 
@@ -2631,7 +2632,7 @@ namespace FIFE
         // create source surface
         SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32, RMASK, GMASK, BMASK, AMASK);
 
-        if (!src) {
+        if (src == nullptr) {
             return;
         }
 
@@ -2660,7 +2661,10 @@ namespace FIFE
         uint32_t* src_help_pointer = src_pointer;
         uint32_t* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
 
-        int32_t x, y, *sx_ca, *sy_ca;
+        int32_t x;
+        int32_t y;
+        int32_t* sx_ca;
+        int32_t* sy_ca;
         int32_t sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
         int32_t sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
         int32_t sx_c = 0;
@@ -2702,7 +2706,8 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            src_help_pointer = (uint32_t*)((uint8_t*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
+            src_help_pointer =
+                reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(src_help_pointer) + (*sy_ca >> 16) * src->pitch);
         }
 
         if (SDL_MUSTLOCK(dst)) {
@@ -2727,9 +2732,9 @@ namespace FIFE
         glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
         if (clear) {
             if (m_isbackgroundcolor) {
-                float red   = float(m_backgroundcolor.r / 255.0);
-                float green = float(m_backgroundcolor.g / 255.0);
-                float blue  = float(m_backgroundcolor.b / 255.0);
+                float red   = static_cast<float>(m_backgroundcolor.r / 255.0);
+                float green = static_cast<float>(m_backgroundcolor.g / 255.0);
+                float blue  = static_cast<float>(m_backgroundcolor.b / 255.0);
                 glClearColor(red, green, blue, 0.0);
                 m_isbackgroundcolor = false;
             }
@@ -2839,7 +2844,7 @@ namespace FIFE
         GLuint texId = 0;
 
         GLImage* glImage = dynamic_cast<GLImage*>(texture.get());
-        if (glImage) {
+        if (glImage != nullptr) {
             glImage->forceLoadInternal();
             texId = glImage->getTexId();
         }

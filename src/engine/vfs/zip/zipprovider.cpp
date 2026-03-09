@@ -24,12 +24,14 @@ namespace FIFE
     {
         // File name must have a .zip extension:
         // TODO: Case sensitive?
-        if (file.find(".zip") == std::string::npos)
+        if (file.find(".zip") == std::string::npos) {
             return false;
+        }
 
         // File should exist:
-        if (!getVFS()->exists(file))
+        if (!getVFS()->exists(file)) {
             return false;
+        }
 
         // File should start with the bytes "PK":
         // TODO: ...

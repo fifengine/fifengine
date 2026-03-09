@@ -40,7 +40,7 @@ namespace FIFE
         SDL_Surface* surface = img->getSurface();
         m_colorkey           = RenderBackend::instance()->getColorKey();
 
-        if (!surface) {
+        if (surface == nullptr) {
             throw CannotOpenFile(filename);
         }
 
@@ -86,13 +86,16 @@ namespace FIFE
         std::string::const_iterator text_it = glyphs.begin();
         while (text_it != glyphs.end()) {
             int32_t w = 0;
-            while (x < surface->w && pixels[x] == separator)
+            while (x < surface->w && pixels[x] == separator) {
                 ++x;
-            if (x == surface->w)
+            }
+            if (x == surface->w) {
                 break;
+            }
 
-            while (x + w < surface->w && pixels[x + w] != separator)
+            while (x + w < surface->w && pixels[x + w] != separator) {
                 ++w;
+            }
 
             src.x = x;
             src.w = w;

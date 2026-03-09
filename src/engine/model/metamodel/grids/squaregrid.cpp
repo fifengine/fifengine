@@ -38,7 +38,7 @@ namespace FIFE
         return nGrid;
     }
 
-    SquareGrid::~SquareGrid() { }
+    SquareGrid::~SquareGrid() = default;
 
     bool SquareGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target)
     {
@@ -50,7 +50,7 @@ namespace FIFE
         if ((x <= 1) && (y <= 1)) {
             if (m_allow_diagonals) {
                 return true;
-            } else if (x ^ y) {
+            } else if ((x ^ y) != 0) {
                 return true;
             }
         }

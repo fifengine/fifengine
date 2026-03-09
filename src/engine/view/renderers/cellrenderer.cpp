@@ -61,7 +61,7 @@ namespace FIFE
         return new CellRenderer(*this);
     }
 
-    CellRenderer::~CellRenderer() { }
+    CellRenderer::~CellRenderer() = default;
 
     CellRenderer* CellRenderer::getInstance(IRendererContainer* cnt)
     {
@@ -76,17 +76,17 @@ namespace FIFE
     void CellRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         CellGrid* cg = layer->getCellGrid();
-        if (!cg) {
+        if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;
         }
         CellCache* cache = layer->getCellCache();
-        if (!cache) {
+        if (cache == nullptr) {
             FL_WARN(_log, "No cellcache on layer created, cannot draw cells");
             return;
         }
 
-        const bool render_costs = (!m_visualCosts.empty() && m_font);
+        const bool render_costs = (!m_visualCosts.empty() && (m_font != nullptr));
         const bool zoomed       = !Mathd::Equal(1.0, cam->getZoom());
 
         Rect layerView                   = cam->getLayerViewPort(layer);
@@ -170,7 +170,7 @@ namespace FIFE
             std::vector<Instance*>::iterator it = m_visualPaths.begin();
             for (; it != m_visualPaths.end(); ++it) {
                 Route* route = (*it)->getRoute();
-                if (route) {
+                if (route != nullptr) {
                     Path path = route->getPath();
                     if (!path.empty()) {
                         Path::iterator pit = path.begin();

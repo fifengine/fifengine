@@ -46,7 +46,7 @@ namespace FIFE
 
     void SoundClip::load()
     {
-        if (m_loader) {
+        if (m_loader != nullptr) {
             m_loader->load(this);
         } else { // no loader specified so find one to use
             if (m_name.find(".ogg", m_name.size() - 4) != std::string::npos) {
@@ -105,7 +105,7 @@ namespace FIFE
                 // erase all elements from the list
                 std::vector<SoundBufferEntry*>::iterator it;
                 for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
-                    if ((*it) && (*it)->buffers[0] != 0) {
+                    if (((*it) != nullptr) && (*it)->buffers[0] != 0) {
                         alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
                     }
                     delete (*it);
@@ -151,7 +151,7 @@ namespace FIFE
             }
         }
         // create new sound buffer entry
-        if (!ptr) {
+        if (ptr == nullptr) {
             ptr = new SoundBufferEntry();
             m_buffervec.push_back(ptr);
             id = m_buffervec.size() - 1;
@@ -204,7 +204,7 @@ namespace FIFE
             return pos /
                    (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1) * m_decoder->getSampleRate());
         }
-        return 0.0f;
+        return 0.0F;
     }
 
     void SoundClip::acquireStream(uint32_t streamid)

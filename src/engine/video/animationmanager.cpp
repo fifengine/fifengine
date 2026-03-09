@@ -25,13 +25,14 @@ namespace FIFE
      */
     static Logger _log(LM_RESMGR);
 
-    AnimationManager::~AnimationManager() { }
+    AnimationManager::~AnimationManager() = default;
 
     size_t AnimationManager::getMemoryUsed() const
     {
         size_t totalSize = 0;
 
-        AnimationHandleMapConstIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             totalSize += it->second->getSize();
@@ -42,8 +43,9 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesCreated() const
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
-        size_t count = 0;
+        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
+        size_t count                          = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_NOT_LOADED) {
@@ -56,8 +58,9 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesLoaded() const
     {
-        AnimationHandleMapConstIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
-        size_t count = 0;
+        AnimationHandleMapConstIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapConstIterator itend = m_animHandleMap.end();
+        size_t count                          = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -195,7 +198,8 @@ namespace FIFE
 
     void AnimationManager::reloadAll()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -207,7 +211,8 @@ namespace FIFE
 
     void AnimationManager::loadUnreferenced()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -250,7 +255,8 @@ namespace FIFE
 
     void AnimationManager::freeAll()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         int32_t count = 0;
 
@@ -266,7 +272,8 @@ namespace FIFE
 
     void AnimationManager::freeUnreferenced()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -364,7 +371,8 @@ namespace FIFE
 
     void AnimationManager::removeUnreferenced()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         std::vector<int> imgHandles;
 
@@ -482,7 +490,8 @@ namespace FIFE
 
     void AnimationManager::invalidateAll()
     {
-        AnimationHandleMapIterator it = m_animHandleMap.begin(), itend = m_animHandleMap.end();
+        AnimationHandleMapIterator it    = m_animHandleMap.begin();
+        AnimationHandleMapIterator itend = m_animHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {

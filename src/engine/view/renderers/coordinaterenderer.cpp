@@ -62,7 +62,7 @@ namespace FIFE
         return new CoordinateRenderer(*this);
     }
 
-    CoordinateRenderer::~CoordinateRenderer() { }
+    CoordinateRenderer::~CoordinateRenderer() = default;
 
     CoordinateRenderer* CoordinateRenderer::getInstance(IRendererContainer* cnt)
     {

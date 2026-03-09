@@ -49,7 +49,7 @@ namespace FIFE
     {
         if (position != m_pipeline_position) {
             m_pipeline_position = position;
-            if (m_listener) {
+            if (m_listener != nullptr) {
                 m_listener->onRendererPipelinePositionChanged(this);
             }
         }
@@ -59,7 +59,7 @@ namespace FIFE
     {
         if (m_enabled != enabled) {
             m_enabled = enabled;
-            if (m_listener) {
+            if (m_listener != nullptr) {
                 m_listener->onRendererEnabledChanged(this);
             }
         }

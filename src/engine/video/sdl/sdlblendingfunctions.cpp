@@ -32,7 +32,7 @@ namespace FIFE
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = alpha * srcColor->a;
 
-            if (aMulA) {
+            if (aMulA != 0u) {
                 uint32_t OneMin_aMulA = 65535 - aMulA;
                 dstColor->r           = (aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16;
                 dstColor->g           = (aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16;
@@ -51,7 +51,7 @@ namespace FIFE
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = alpha * srcColor->a;
-            if (aMulA) {
+            if (aMulA != 0u) {
                 uint32_t OneMin_aMulA = 65535 - aMulA;
                 dstColor->r           = (aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16;
                 dstColor->g           = (aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16;
@@ -70,7 +70,7 @@ namespace FIFE
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = (alpha * srcColor->a) >> 8;
-            if (aMulA) {
+            if (aMulA != 0u) {
                 uint32_t OneMin_aMulA = 255 - aMulA;
                 uint32_t c            = *dstColor;
                 *dstColor             = (((srcColor->b * aMulA) + (((c & 0xF800) >> 8) * OneMin_aMulA)) & 0xF800) |
@@ -94,7 +94,7 @@ namespace FIFE
 
             uint32_t aMulA = c2 & 0xF;
             aMulA          = (alpha * aMulA) / 15; ///< upgrade to range 0-255
-            if (aMulA) {
+            if (aMulA != 0u) {
                 uint32_t OneMin_aMulA = 255 - aMulA;
                 uint32_t result;
                 result = ((((c2 & 0xF000) | 0x0800) * aMulA) + ((c1 & 0xF800) * OneMin_aMulA)) & 0xF80000;

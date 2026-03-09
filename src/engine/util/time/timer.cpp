@@ -25,8 +25,9 @@ namespace FIFE
 
     void Timer::start()
     {
-        if (m_active)
+        if (m_active) {
             return;
+        }
         setLastUpdateTime(TimeManager::instance()->getTime());
         TimeManager::instance()->registerEvent(this);
         m_active = true;
@@ -34,8 +35,9 @@ namespace FIFE
 
     void Timer::stop()
     {
-        if (!m_active)
+        if (!m_active) {
             return;
+        }
         TimeManager::instance()->unregisterEvent(this);
         m_active = false;
     }
@@ -52,8 +54,9 @@ namespace FIFE
 
     void Timer::updateEvent(uint32_t)
     {
-        if (!m_active)
+        if (!m_active) {
             return;
+        }
 
         if (m_callback) {
             m_callback();

@@ -45,20 +45,25 @@ namespace FIFE
 
         type_pool::iterator it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
-            if (it->antialias != fontbase->isAntiAlias())
+            if (it->antialias != fontbase->isAntiAlias()) {
                 continue;
+            }
 
-            if (it->glyph_spacing != fontbase->getGlyphSpacing())
+            if (it->glyph_spacing != fontbase->getGlyphSpacing()) {
                 continue;
+            }
 
-            if (it->row_spacing != fontbase->getRowSpacing())
+            if (it->row_spacing != fontbase->getRowSpacing()) {
                 continue;
+            }
 
-            if (it->color.r != c.r || it->color.g != c.g || it->color.b != c.b)
+            if (it->color.r != c.r || it->color.g != c.g || it->color.b != c.b) {
                 continue;
+            }
 
-            if (it->text != text)
+            if (it->text != text) {
                 continue;
+            }
 
             // Stay sorted after access time
             it->timestamp = TimeManager::instance()->getTime();
@@ -85,8 +90,9 @@ namespace FIFE
 
         // Some minimal amount of entries -> start collection timer
         // Don't have a timer active if only _some_ text is pooled.
-        if (m_poolSize >= m_poolMaxSize / 10)
+        if (m_poolSize >= m_poolMaxSize / 10) {
             m_collectTimer.start();
+        }
 
         // Maintain max pool size
         if (m_poolSize < m_poolMaxSize) {
@@ -114,8 +120,9 @@ namespace FIFE
         }
 
         // Stop if nothing can grow old =)
-        if (m_poolSize == 0)
+        if (m_poolSize == 0) {
             m_collectTimer.stop();
+        }
     }
 
     void TextRenderPool::invalidateCachedText()

@@ -23,7 +23,7 @@ namespace FIFE
 
     GuiImage::GuiImage(ImagePtr img) : fcn::Image(), m_imgPtr(img) { }
 
-    GuiImage::~GuiImage() { }
+    GuiImage::~GuiImage() = default;
 
     void GuiImage::free()
     {
@@ -32,15 +32,17 @@ namespace FIFE
 
     int32_t GuiImage::getWidth() const
     {
-        if (!m_imgPtr)
+        if (!m_imgPtr) {
             return 0;
+        }
         return m_imgPtr->getWidth();
     }
 
     int32_t GuiImage::getHeight() const
     {
-        if (!m_imgPtr)
+        if (!m_imgPtr) {
             return 0;
+        }
         return m_imgPtr->getHeight();
     }
 

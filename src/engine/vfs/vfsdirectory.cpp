@@ -29,11 +29,12 @@ namespace FIFE
     VFSDirectory::VFSDirectory(VFS* vfs, const std::string& root) : VFSSource(vfs), m_root(root)
     {
         FL_DBG(_log, LMsg("VFSDirectory created with root path ") << m_root);
-        if (!m_root.empty() && *(m_root.end() - 1) != '/')
+        if (!m_root.empty() && *(m_root.end() - 1) != '/') {
             m_root.append(1, '/');
+        }
     }
 
-    VFSDirectory::~VFSDirectory() { }
+    VFSDirectory::~VFSDirectory() = default;
 
     bool VFSDirectory::fileExists(const std::string& name) const
     {
@@ -42,8 +43,9 @@ namespace FIFE
         fs::path path(filename);
         std::ifstream file(path.string().c_str());
 
-        if (file)
+        if (file) {
             return true;
+        }
 
         return false;
     }
@@ -77,13 +79,15 @@ namespace FIFE
 
         try {
             fs::path path(dir);
-            if (!fs::exists(path) || !fs::is_directory(path))
+            if (!fs::exists(path) || !fs::is_directory(path)) {
                 return list;
+            }
 
             fs::directory_iterator end;
             for (fs::directory_iterator i(path); i != end; ++i) {
-                if (fs::is_directory(*i) != directorys)
+                if (fs::is_directory(*i) != directorys) {
                     continue;
+                }
 
                 std::string filename = GetFilenameFromDirectoryIterator(i);
                 if (!filename.empty()) {

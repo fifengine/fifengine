@@ -22,8 +22,7 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     ActionAudio::ActionAudio() :
-        m_name(""),
-        m_group(""),
+        
         m_volume(1.0),
         m_maxVolume(1.0),
         m_minVolume(0.0),
@@ -42,7 +41,7 @@ namespace FIFE
         m_velocity = AudioSpaceCoordinate(0.0, 0.0, 0.0);
     }
 
-    ActionAudio::~ActionAudio() { }
+    ActionAudio::~ActionAudio() = default;
 
     void ActionAudio::setSoundFileName(const std::string& name)
     {

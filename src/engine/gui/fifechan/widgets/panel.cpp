@@ -42,7 +42,7 @@ namespace fcn
 
     Panel::Panel(bool dockable) : m_dockable(dockable), m_docked(false) { }
 
-    Panel::~Panel() { }
+    Panel::~Panel() = default;
 
     void Panel::setDockable(bool dockable)
     {
@@ -103,7 +103,7 @@ namespace fcn
     {
         DockArea* dockArea = nullptr;
         if (!isDocked()) {
-            if (getParent()) {
+            if (getParent() != nullptr) {
                 DockArea* newDockArea      = nullptr;
                 std::list<Widget*> widgets = getParent()->getWidgetsIn(getDimension(), this);
                 if (widgets.size() > 0) {
@@ -111,7 +111,7 @@ namespace fcn
                     for (; it != widgets.end(); ++it) {
                         // check if the Widget is a DockArea
                         DockArea* tmp = dynamic_cast<DockArea*>(*it);
-                        if (!tmp) {
+                        if (tmp == nullptr) {
                             // check if the Widget contains a DockArea
                             std::list<Widget*> deepWidgets = (*it)->getWidgetsIn((*it)->getChildrenArea());
                             if (deepWidgets.size() > 0) {
@@ -120,7 +120,7 @@ namespace fcn
                                 std::list<Widget*>::iterator dit = deepWidgets.begin();
                                 for (; dit != deepWidgets.end(); ++dit) {
                                     tmp = dynamic_cast<DockArea*>(*dit);
-                                    if (tmp) {
+                                    if (tmp != nullptr) {
                                         Rectangle tdim = (*dit)->getDimension();
                                         (*dit)->getAbsolutePosition(tdim.x, tdim.y);
                                         if (dim.isIntersecting(tdim)) {
@@ -130,7 +130,7 @@ namespace fcn
                                     }
                                 }
                             }
-                            if (!tmp) {
+                            if (tmp == nullptr) {
                                 continue;
                             }
                         }
@@ -190,7 +190,7 @@ namespace fcn
                 getDockedArea()->adaptLayout(false);
             }
         } else if (mouseEvent.getButton() == MouseEvent::Button::Right) {
-            if (getDockedArea()) {
+            if (getDockedArea() != nullptr) {
                 restoreCursor();
             }
         }

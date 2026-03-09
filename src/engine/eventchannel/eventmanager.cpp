@@ -180,21 +180,21 @@ namespace FIFE
 
     void EventManager::addJoystickListener(IJoystickListener* listener)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->addJoystickListener(listener);
         }
     }
 
     void EventManager::addJoystickListenerFront(IJoystickListener* listener)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->addJoystickListenerFront(listener);
         }
     }
 
     void EventManager::removeJoystickListener(IJoystickListener* listener)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->removeJoystickListener(listener);
         }
     }
@@ -204,8 +204,9 @@ namespace FIFE
         std::deque<ICommandListener*> listeners   = m_commandListeners;
         std::deque<ICommandListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive())
+            if (!(*i)->isActive()) {
                 continue;
+            }
             (*i)->onCommand(command);
             if (command.isConsumed()) {
                 break;
@@ -218,8 +219,9 @@ namespace FIFE
         std::deque<IKeyListener*> listeners   = m_keyListeners;
         std::deque<IKeyListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener()))
+            if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) {
                 continue;
+            }
             switch (evt.getType()) {
             case KeyEvent::PRESSED:
                 (*i)->keyPressed(evt);
@@ -241,8 +243,9 @@ namespace FIFE
         std::deque<ITextListener*> listeners   = m_textListeners;
         std::deque<ITextListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive())
+            if (!(*i)->isActive()) {
                 continue;
+            }
             switch (evt.getType()) {
             case TextEvent::INPUT:
                 (*i)->textInput(evt);
@@ -264,8 +267,9 @@ namespace FIFE
         std::deque<IMouseListener*> listeners   = m_mouseListeners;
         std::deque<IMouseListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener()))
+            if (!(*i)->isActive() || (evt.isConsumedByWidgets() && !(*i)->isGlobalListener())) {
                 continue;
+            }
             switch (evt.getType()) {
             case MouseEvent::MOVED:
                 (*i)->mouseMoved(evt);
@@ -315,8 +319,9 @@ namespace FIFE
         std::deque<ISdlEventListener*> listeners   = m_sdleventListeners;
         std::deque<ISdlEventListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive())
+            if (!(*i)->isActive()) {
                 continue;
+            }
             ret = ret || (*i)->onSdlEvent(evt);
         }
         return ret;
@@ -327,8 +332,9 @@ namespace FIFE
         std::deque<IDropListener*> listeners   = m_dropListeners;
         std::deque<IDropListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive())
+            if (!(*i)->isActive()) {
                 continue;
+            }
             (*i)->fileDropped(evt);
             if (evt.isConsumed()) {
                 break;
@@ -358,7 +364,8 @@ namespace FIFE
     {
         // The double SDL_PollEvent calls don't throw away events,
         // but try to combine (mouse motion) events.
-        SDL_Event event, next_event;
+        SDL_Event event;
+        SDL_Event next_event;
         bool has_next_event = (SDL_PollEvent(&event) != 0);
         while (has_next_event) {
             has_next_event = (SDL_PollEvent(&next_event) != 0);
@@ -404,7 +411,7 @@ namespace FIFE
             case SDL_JOYHATMOTION:
             case SDL_JOYDEVICEADDED:
             case SDL_JOYDEVICEREMOVED: {
-                if (m_joystickManager) {
+                if (m_joystickManager != nullptr) {
                     m_joystickManager->processJoystickEvent(event);
                 }
                 break;
@@ -412,7 +419,7 @@ namespace FIFE
             case SDL_CONTROLLERBUTTONDOWN:
             case SDL_CONTROLLERBUTTONUP:
             case SDL_CONTROLLERAXISMOTION: {
-                if (m_joystickManager) {
+                if (m_joystickManager != nullptr) {
                     m_joystickManager->processControllerEvent(event);
                 }
                 break;
@@ -478,9 +485,10 @@ namespace FIFE
         fillKeyEvent(event, keyevt);
         m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
         // if event is not filtered it gets dispatched, even it is a function key
-        if (!m_keyfilter || !m_keyfilter->isFiltered(keyevt)) {
-            if (dispatchSdlEvent(event))
+        if ((m_keyfilter == nullptr) || !m_keyfilter->isFiltered(keyevt)) {
+            if (dispatchSdlEvent(event)) {
                 keyevt.consumedByWidgets();
+            }
         }
 
         dispatchKeyEvent(keyevt);
@@ -571,8 +579,9 @@ namespace FIFE
             m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
         }
 
-        if (dispatchSdlEvent(event))
+        if (dispatchSdlEvent(event)) {
             mouseevt.consumedByWidgets();
+        }
 
         dispatchMouseEvent(mouseevt);
     }
@@ -704,9 +713,9 @@ namespace FIFE
 
     void EventManager::fillModifiers(InputEvent& evt)
     {
-        evt.setAltPressed(m_keystatemap[Key::ALT_GR] | m_keystatemap[Key::LEFT_ALT] | m_keystatemap[Key::RIGHT_ALT]);
-        evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] | m_keystatemap[Key::RIGHT_CONTROL]);
-        evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] | m_keystatemap[Key::RIGHT_SHIFT]);
+        evt.setAltPressed((static_cast<int>(m_keystatemap[Key::ALT_GR]) | static_cast<int>(m_keystatemap[Key::LEFT_ALT]) | static_cast<int>(m_keystatemap[Key::RIGHT_ALT])) != 0);
+        evt.setControlPressed((static_cast<int>(m_keystatemap[Key::LEFT_CONTROL]) | static_cast<int>(m_keystatemap[Key::RIGHT_CONTROL])) != 0);
+        evt.setShiftPressed((static_cast<int>(m_keystatemap[Key::LEFT_SHIFT]) | static_cast<int>(m_keystatemap[Key::RIGHT_SHIFT])) != 0);
     }
 
     EventSourceType EventManager::getEventSourceType()
@@ -746,13 +755,13 @@ namespace FIFE
 
     bool EventManager::isClipboardText() const
     {
-        return SDL_HasClipboardText();
+        return SDL_HasClipboardText() != 0u;
     }
 
     std::string EventManager::getClipboardText() const
     {
         std::string text;
-        if (SDL_HasClipboardText()) {
+        if (SDL_HasClipboardText() != 0u) {
             text = std::string(SDL_GetClipboardText());
         }
         return text;
@@ -765,9 +774,9 @@ namespace FIFE
 
     void EventManager::setJoystickSupport(bool support)
     {
-        if (support && !m_joystickManager) {
+        if (support && (m_joystickManager == nullptr)) {
             m_joystickManager = new JoystickManager();
-        } else if (!support && m_joystickManager) {
+        } else if (!support && (m_joystickManager != nullptr)) {
             delete m_joystickManager;
             m_joystickManager = nullptr;
         }
@@ -775,7 +784,7 @@ namespace FIFE
 
     Joystick* EventManager::getJoystick(int32_t instanceId)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             return m_joystickManager->getJoystick(instanceId);
         }
         return nullptr;
@@ -783,7 +792,7 @@ namespace FIFE
 
     uint8_t EventManager::getJoystickCount() const
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             return m_joystickManager->getJoystickCount();
         }
         return 0;
@@ -791,21 +800,21 @@ namespace FIFE
 
     void EventManager::loadGamepadMapping(const std::string& file)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->loadMapping(file);
         }
     }
 
     void EventManager::saveGamepadMapping(const std::string guid, const std::string& file)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->saveMapping(guid, file);
         }
     }
 
     void EventManager::saveGamepadMappings(const std::string& file)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->saveMappings(file);
         }
     }
@@ -813,7 +822,7 @@ namespace FIFE
     std::string EventManager::getGamepadStringMapping(const std::string& guid)
     {
         std::string mapping;
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             mapping = m_joystickManager->getStringMapping(guid);
         }
         return mapping;
@@ -821,7 +830,7 @@ namespace FIFE
 
     void EventManager::setGamepadStringMapping(const std::string& mapping)
     {
-        if (m_joystickManager) {
+        if (m_joystickManager != nullptr) {
             m_joystickManager->setStringMapping(mapping);
         }
     }

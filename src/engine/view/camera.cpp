@@ -48,11 +48,11 @@ namespace FIFE
         Camera* m_camera;
 
     public:
-        MapObserver(Camera* camera)
+        explicit MapObserver(Camera* camera)
         {
             m_camera = camera;
         }
-        ~MapObserver() override { }
+        ~MapObserver() override = default;
 
         void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
 
@@ -109,7 +109,7 @@ namespace FIFE
     Camera::~Camera()
     {
         // Trigger removal of LayerCaches and MapObserver
-        if (m_map) {
+        if (m_map != nullptr) {
             m_map->removeChangeListener(m_map_observer);
             const std::list<Layer*>& layers = m_map->getLayers();
             for (std::list<Layer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
@@ -192,9 +192,9 @@ namespace FIFE
     {
         DoubleMatrix matrix;
         matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
-        if (m_location.getLayer()) {
+        if (m_location.getLayer() != nullptr) {
             CellGrid* cg = m_location.getLayer()->getCellGrid();
-            if (cg) {
+            if (cg != nullptr) {
                 ExactModelCoordinate pt = m_location.getMapCoordinates();
                 matrix.applyTranslate(-pt.x * m_referenceScaleX, -pt.y * m_referenceScaleY, -pt.z * m_referenceScaleX);
             }
@@ -245,9 +245,9 @@ namespace FIFE
         }
 
         CellGrid* cell_grid = nullptr;
-        if (location.getLayer()) {
+        if (location.getLayer() != nullptr) {
             cell_grid = location.getLayer()->getCellGrid();
-            if (!cell_grid) {
+            if (cell_grid == nullptr) {
                 throw Exception("Location layer without cellgrid given to Camera::setLocation");
             }
         } else {
@@ -277,12 +277,12 @@ namespace FIFE
 
     Location Camera::getLocation()
     {
-        if (m_location.getLayer()) {
+        if (m_location.getLayer() != nullptr) {
             m_location.setMapCoordinates(m_position);
             return m_location;
         }
         Location loc = Location();
-        if (m_map && m_map->getLayerCount() > 0) {
+        if ((m_map != nullptr) && m_map->getLayerCount() > 0) {
             loc.setLayer(m_map->getLayers().back());
             loc.setMapCoordinates(m_position);
         }
@@ -567,7 +567,10 @@ namespace FIFE
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
                 }
-                uint8_t r, g, b, a = 0;
+                uint8_t r;
+                uint8_t g;
+                uint8_t b;
+                uint8_t a = 0;
                 int32_t x = screen_coords.x - vc.dimensions.x;
                 int32_t y = screen_coords.y - vc.dimensions.y;
                 if (zoomed) {
@@ -580,7 +583,7 @@ namespace FIFE
                     x          = static_cast<int32_t>(round(fx / fsw * fow));
                     y          = static_cast<int32_t>(round(fy / fsh * foh));
                 }
-                if (vc.getAnimationOverlay()) {
+                if (vc.getAnimationOverlay() != nullptr) {
                     std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
                     std::vector<ImagePtr>::iterator it = ao->begin();
                     for (; it != ao->end(); ++it) {
@@ -624,7 +627,10 @@ namespace FIFE
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
                 }
-                uint8_t r, g, b, a = 0;
+                uint8_t r;
+                uint8_t g;
+                uint8_t b;
+                uint8_t a                   = 0;
                 int32_t intersection_left   = std::max(screen_rect.x, vc.dimensions.x);
                 int32_t intersection_right  = std::min(screen_rect.right(), vc.dimensions.right());
                 int32_t intersection_top    = std::max(screen_rect.y, vc.dimensions.y);
@@ -644,7 +650,7 @@ namespace FIFE
                             x          = static_cast<int32_t>(round(fx / fsw * fow));
                             y          = static_cast<int32_t>(round(fy / fsh * foh));
                         }
-                        if (vc.getAnimationOverlay()) {
+                        if (vc.getAnimationOverlay() != nullptr) {
                             std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
                             std::vector<ImagePtr>::iterator it = ao->begin();
                             for (; it != ao->end(); ++it) {
@@ -679,7 +685,7 @@ found_non_transparent_pixel:;
     {
         instances.clear();
         Layer* layer = loc.getLayer();
-        if (!layer) {
+        if (layer == nullptr) {
             return;
         }
 
@@ -702,7 +708,7 @@ found_non_transparent_pixel:;
 
     void Camera::attach(Instance* instance)
     {
-        if (instance && instance != m_attachedTo) {
+        if ((instance != nullptr) && instance != m_attachedTo) {
             m_attachedTo = instance;
         }
     }
@@ -714,7 +720,7 @@ found_non_transparent_pixel:;
 
     void Camera::update()
     {
-        if (!m_attachedTo) {
+        if (m_attachedTo == nullptr) {
             return;
         }
         ExactModelCoordinate pos = m_attachedTo->getLocationRef().getMapCoordinates();
@@ -924,7 +930,7 @@ found_non_transparent_pixel:;
         if (m_img_overlay) {
             ImagePtr resptr = ImageManager::instance()->get(m_img_id);
             Image* img      = resptr.get();
-            if (img) {
+            if (img != nullptr) {
                 if (m_img_fill) {
                     r.w = width;
                     r.h = height;
@@ -969,7 +975,7 @@ found_non_transparent_pixel:;
         // ToDo: Add and fix support for SDL backend, for SDL it works only on the lowest layer(alpha/transparent bug).
         LayerCache* cache   = m_cache[layer];
         ImagePtr cacheImage = cache->getCacheImage();
-        if (!cacheImage.get()) {
+        if (cacheImage.get() == nullptr) {
             // the cacheImage name will be, camera id + _virtual_layer_image_ + layer id
             cacheImage = ImageManager::instance()->loadBlank(
                 m_id + "_virtual_layer_image_" + layer->getId(), m_viewport.w, m_viewport.h);
@@ -1020,7 +1026,7 @@ found_non_transparent_pixel:;
 
     void Camera::updateRenderLists()
     {
-        if (!m_map) {
+        if (m_map == nullptr) {
             FL_ERR(_log, "No map for camera found");
             return;
         }
@@ -1029,7 +1035,7 @@ found_non_transparent_pixel:;
         std::list<Layer*>::const_iterator layer_it = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             LayerCache* cache = m_cache[*layer_it];
-            if (!cache) {
+            if (cache == nullptr) {
                 addLayer(*layer_it);
                 cache = m_cache[*layer_it];
                 FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
@@ -1047,7 +1053,7 @@ found_non_transparent_pixel:;
     {
         updateRenderLists();
 
-        if (!m_map) {
+        if (m_map == nullptr) {
             return;
         }
 

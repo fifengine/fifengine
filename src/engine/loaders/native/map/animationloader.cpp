@@ -46,7 +46,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(animationFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     // TODO - this could be expanded to do more checks
                     const std::string xml = data->readString(data->getDataLength());
@@ -69,7 +69,7 @@ namespace FIFE
         XML::Element* root = animFile.RootElement();
 
         if (XML::HasName(root, "assets")) {
-            if (root->FirstChildElement("animation")) {
+            if (root->FirstChildElement("animation") != nullptr) {
                 return true;
             }
         }
@@ -90,7 +90,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(animationFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -138,7 +138,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(animationFile);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -167,7 +167,7 @@ namespace FIFE
         XML::Element* root = doc.RootElement();
 
         if (XML::HasName(root, "assets")) {
-            for (XML::Element* animationElem = root->FirstChildElement("animation"); animationElem;
+            for (XML::Element* animationElem = root->FirstChildElement("animation"); animationElem != nullptr;
                  animationElem               = animationElem->NextSiblingElement("animation")) {
                 AnimationPtr animation = loadAnimation(filename, animationElem);
                 if (animation) {
@@ -182,7 +182,7 @@ namespace FIFE
     AnimationPtr AnimationLoader::loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem)
     {
         AnimationPtr animation;
-        if (!animationElem) {
+        if (animationElem == nullptr) {
             return animation;
         }
 
@@ -192,7 +192,7 @@ namespace FIFE
         bool alreadyLoaded = false;
         // first try to use the id, if no id exists it use the filename as fallback
         const char* animationId = XML::Attribute(animationElem, "id");
-        if (animationId) {
+        if (animationId != nullptr) {
             if (!m_animationManager->exists(animationId)) {
                 animation = m_animationManager->create(animationId);
             } else {
@@ -235,10 +235,10 @@ namespace FIFE
         XML::QueryAttribute(animationElem, "x_offset", &animXoffset);
         XML::QueryAttribute(animationElem, "y_offset", &animYoffset);
 
-        for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement;
+        for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement != nullptr;
              frameElement               = frameElement->NextSiblingElement("frame")) {
             const char* sourceId = XML::Attribute(frameElement, "source");
-            if (sourceId) {
+            if (sourceId != nullptr) {
                 fs::path framePath(filename);
 
                 if (HasParentPath(framePath)) {

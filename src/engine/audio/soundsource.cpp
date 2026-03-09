@@ -27,11 +27,11 @@ namespace FIFE
     class SoundChangeListener : public InstanceChangeListener
     {
     public:
-        SoundChangeListener(SoundSource* source)
+        explicit SoundChangeListener(SoundSource* source)
         {
             m_source = source;
         }
-        ~SoundChangeListener() override { }
+        ~SoundChangeListener() override = default;
 
         void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
         {
@@ -67,18 +67,18 @@ namespace FIFE
     void SoundSource::setActionAudio(ActionAudio* audio)
     {
         if (audio != m_audio) {
-            if (m_audio) {
+            if (m_audio != nullptr) {
                 m_emitter->stop();
             }
 
             m_audio = audio;
-            if (m_audio) {
+            if (m_audio != nullptr) {
                 updateSoundEmitter();
                 m_emitter->play();
             } else {
                 m_emitter->reset();
             }
-        } else if (audio && !m_emitter->isLooping()) {
+        } else if ((audio != nullptr) && !m_emitter->isLooping()) {
             m_emitter->rewind();
             m_emitter->play();
         }
@@ -91,14 +91,14 @@ namespace FIFE
 
     void SoundSource::setPosition()
     {
-        if (m_audio) {
+        if (m_audio != nullptr) {
             m_emitter->setPosition(m_instance->getLocationRef().getMapCoordinates());
         }
     }
 
     void SoundSource::setDirection()
     {
-        if (m_audio && m_audio->isDirection()) {
+        if ((m_audio != nullptr) && m_audio->isDirection()) {
             m_emitter->setDirection(m_instance->getFacingLocation().getMapCoordinates());
         }
     }

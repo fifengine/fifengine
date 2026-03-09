@@ -27,9 +27,8 @@ namespace FIFE
         m_controllerHandle(nullptr),
         m_instanceId(-1),
         m_joystickId(joystickId),
-        m_deviceIndex(deviceIndex),
-        m_guidStr(""),
-        m_name("")
+        m_deviceIndex(deviceIndex)
+        
     {
     }
 
@@ -70,12 +69,12 @@ namespace FIFE
 
     void Joystick::open()
     {
-        if (m_joystickHandle) {
+        if (m_joystickHandle != nullptr) {
             close();
         }
 
         m_joystickHandle = SDL_JoystickOpen(m_deviceIndex);
-        if (m_joystickHandle) {
+        if (m_joystickHandle != nullptr) {
             m_instanceId = SDL_JoystickInstanceID(m_joystickHandle);
 
             char tmp[33];
@@ -85,7 +84,7 @@ namespace FIFE
 
             openController();
             const char* name = SDL_JoystickNameForIndex(m_deviceIndex);
-            if (isController() && !name) {
+            if (isController() && (name == nullptr)) {
                 name = SDL_GameControllerNameForIndex(m_deviceIndex);
             }
             m_name = std::string(name);
@@ -97,7 +96,7 @@ namespace FIFE
     void Joystick::close()
     {
         closeController();
-        if (m_joystickHandle) {
+        if (m_joystickHandle != nullptr) {
             SDL_JoystickClose(m_joystickHandle);
             m_joystickHandle = nullptr;
         }
@@ -107,7 +106,7 @@ namespace FIFE
 
     bool Joystick::isConnected() const
     {
-        return m_joystickHandle && SDL_JoystickGetAttached(m_joystickHandle);
+        return (m_joystickHandle != nullptr) && (SDL_JoystickGetAttached(m_joystickHandle) != 0u);
     }
 
     bool Joystick::isController() const
@@ -118,7 +117,7 @@ namespace FIFE
     void Joystick::openController()
     {
         closeController();
-        if (!SDL_IsGameController(m_deviceIndex)) {
+        if (SDL_IsGameController(m_deviceIndex) == 0u) {
             return;
         }
 
@@ -127,7 +126,7 @@ namespace FIFE
 
     void Joystick::closeController()
     {
-        if (m_controllerHandle) {
+        if (m_controllerHandle != nullptr) {
             SDL_GameControllerClose(m_controllerHandle);
             m_controllerHandle = nullptr;
         }
@@ -203,14 +202,14 @@ namespace FIFE
 
     float Joystick::convertRange(int16_t value) const
     {
-        float range = static_cast<float>(value) / 32768.0f;
-        if (Mathf::FAbs(range) < 0.01f) {
-            return 0.0f;
+        float range = static_cast<float>(value) / 32768.0F;
+        if (Mathf::FAbs(range) < 0.01F) {
+            return 0.0F;
         }
-        if (range < -0.99f) {
-            return -1.0f;
-        } else if (range > 0.99f) {
-            return 1.0f;
+        if (range < -0.99F) {
+            return -1.0F;
+        } else if (range > 0.99F) {
+            return 1.0F;
         }
         return range;
     }

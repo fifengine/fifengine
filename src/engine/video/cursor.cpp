@@ -51,7 +51,7 @@ namespace FIFE
     {
         m_cursor_type = CURSOR_NATIVE;
 
-        if (!SDL_ShowCursor(1)) {
+        if (SDL_ShowCursor(1) == 0) {
             SDL_PumpEvents();
         }
         setNativeCursor(cursor_id);
@@ -71,10 +71,10 @@ namespace FIFE
             if (!setNativeImageCursor(image)) {
                 return;
             }
-            if (!SDL_ShowCursor(1)) {
+            if (SDL_ShowCursor(1) == 0) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor(0)) {
+        } else if (SDL_ShowCursor(0) != 0) {
             SDL_PumpEvents();
         }
 
@@ -93,10 +93,10 @@ namespace FIFE
             if (!setNativeImageCursor(anim->getFrameByTimestamp(0))) {
                 return;
             }
-            if (!SDL_ShowCursor(1)) {
+            if (SDL_ShowCursor(1) == 0) {
                 SDL_PumpEvents();
             }
-        } else if (SDL_ShowCursor(0)) {
+        } else if (SDL_ShowCursor(0) != 0) {
             SDL_PumpEvents();
         }
         m_animtime = m_timemanager->getTime();
@@ -197,7 +197,7 @@ namespace FIFE
             img              = m_cursor_drag_animation->getFrameByTimestamp(animtime);
         }
 
-        if (img != 0) {
+        if (static_cast<int>(img) != 0) {
             Rect area(
                 m_mx + m_drag_offset_x + img->getXShift(),
                 m_my + m_drag_offset_y + img->getYShift(),
@@ -218,7 +218,7 @@ namespace FIFE
             img2             = m_cursor_animation->getFrameByTimestamp(animtime);
         }
 
-        if (img2 != 0) {
+        if (static_cast<int>(img2) != 0) {
             if (m_native_image_cursor_enabled) {
                 setNativeImageCursor(img2);
             } else {
@@ -266,7 +266,7 @@ namespace FIFE
     {
         cursor_id          = getNativeId(cursor_id);
         SDL_Cursor* cursor = SDL_CreateSystemCursor(static_cast<SDL_SystemCursor>(cursor_id));
-        if (!cursor) {
+        if (cursor == nullptr) {
             FL_WARN(_log, "No cursor matching cursor_id was found.");
             return;
         }

@@ -25,7 +25,7 @@ namespace FIFE
 
     TimeManager::TimeManager() : m_current_time(0), m_time_delta(UNDEFINED_TIME_DELTA), m_average_frame_time(0) { }
 
-    TimeManager::~TimeManager() { }
+    TimeManager::~TimeManager() = default;
 
     void TimeManager::update()
     {
@@ -40,7 +40,8 @@ namespace FIFE
             m_current_time = SDL_GetTicks();
             m_time_delta   = m_current_time - m_time_delta;
         }
-        m_average_frame_time = m_average_frame_time * avg_multiplier + double(m_time_delta) * (1.0 - avg_multiplier);
+        m_average_frame_time =
+            m_average_frame_time * avg_multiplier + static_cast<double>(m_time_delta) * (1.0 - avg_multiplier);
 
         // Update live events.
         //
@@ -49,7 +50,7 @@ namespace FIFE
         // -> Ugly segfault
         for (size_t i = 0; i < m_events_list.size(); ++i) {
             TimeEvent* event = m_events_list[i];
-            if (event) {
+            if (event != nullptr) {
                 event->managerUpdateEvent(m_current_time);
             }
         }

@@ -44,12 +44,12 @@ namespace FIFE
     {
 
         // if end zone is invalid (static blocker) then change it
-        if (!m_endZone) {
+        if (m_endZone == nullptr) {
             Cell* endcell                       = m_endCache->getCell(m_to.getLayerCoordinates());
             const std::vector<Cell*>& neighbors = endcell->getNeighbors();
             for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
                 Zone* tmpzone = (*it)->getZone();
-                if (tmpzone) {
+                if (tmpzone != nullptr) {
                     m_endZone = tmpzone;
                     if (tmpzone == m_startZone) {
                         break;
@@ -71,7 +71,7 @@ namespace FIFE
             const std::vector<Cell*>& neighbors = startCell->getNeighbors();
             for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
                 Zone* tmpzone = (*it)->getZone();
-                if (tmpzone) {
+                if (tmpzone != nullptr) {
                     if (tmpzone != m_startZone) {
                         m_startZone = tmpzone;
                         break;
@@ -90,7 +90,7 @@ namespace FIFE
         }
     }
 
-    MultiLayerSearch::~MultiLayerSearch() { }
+    MultiLayerSearch::~MultiLayerSearch() = default;
 
     void MultiLayerSearch::createSearchFrontier(int32_t startInt, CellCache* cache)
     {
@@ -119,7 +119,7 @@ namespace FIFE
             if (m_betweenTargets.empty()) {
                 TransitionInfo* trans =
                     m_currentCache->getCell(m_currentCache->convertIntToCoord(m_lastDestCoordInt))->getTransition();
-                if (trans) {
+                if (trans != nullptr) {
                     m_lastStartCoordInt = m_endCache->convertCoordToInt(trans->m_mc);
                 }
                 m_currentCache     = m_endCache;
@@ -128,7 +128,7 @@ namespace FIFE
                 if (m_lastDestCoordInt != -1) {
                     TransitionInfo* trans =
                         m_currentCache->getCell(m_currentCache->convertIntToCoord(m_lastDestCoordInt))->getTransition();
-                    if (trans) {
+                    if (trans != nullptr) {
                         m_lastStartCoordInt = trans->m_layer->getCellCache()->convertCoordToInt(trans->m_mc);
                     }
                 }
@@ -165,7 +165,7 @@ namespace FIFE
         ModelCoordinate nextCoord = m_currentCache->convertIntToCoord(m_next);
         CellGrid* grid            = m_currentCache->getLayer()->getCellGrid();
         Cell* nextCell            = m_currentCache->getCell(nextCoord);
-        if (!nextCell) {
+        if (nextCell == nullptr) {
             return;
         }
         int32_t cellZ                       = nextCell->getLayerCoordinates().z;
@@ -218,7 +218,7 @@ namespace FIFE
                 std::vector<ModelCoordinate>::iterator coord_it = coords.begin();
                 for (; coord_it != coords.end(); ++coord_it) {
                     Cell* cell = m_currentCache->getCell(*coord_it);
-                    if (cell) {
+                    if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
                             std::vector<Cell*>::iterator bc_it =
                                 std::find(m_ignoredBlockers.begin(), m_ignoredBlockers.end(), cell);
@@ -354,7 +354,7 @@ namespace FIFE
                 if (transTarget->getZone() != m_endZone) {
                     continue;
                 }
-                if (!cell) {
+                if (cell == nullptr) {
                     loc.setLayer((*it)->getLayer());
                     loc.setLayerCoordinates((*it)->getLayerCoordinates());
                     cell = *it;
@@ -374,7 +374,7 @@ namespace FIFE
                     cell = *it;
                 }
             }
-            if (cell) {
+            if (cell != nullptr) {
                 m_betweenTargets.push_back(cell);
             }
         }
@@ -415,7 +415,7 @@ namespace FIFE
         std::list<Layer*>::const_iterator lay_it = allLayers.begin();
         for (; lay_it != allLayers.end(); ++lay_it) {
             CellCache* cache = (*lay_it)->getCellCache();
-            if (cache) {
+            if (cache != nullptr) {
                 const std::vector<Zone*>& tmp_zones = cache->getZones();
                 zones.insert(zones.end(), tmp_zones.begin(), tmp_zones.end());
             }
@@ -539,7 +539,7 @@ namespace FIFE
                     Location tmpLoc((*cit)->getLayer());
                     tmpLoc.setLayerCoordinates((*cit)->getLayerCoordinates());
                     double locCost = lastLoc.getLayerDistanceTo(tmpLoc);
-                    if (!transCell || locCost < nextCost) {
+                    if ((transCell == nullptr) || locCost < nextCost) {
                         nextCost  = locCost;
                         transCell = *cit;
                         newLoc.setLayer(transTargetCell->getLayer());
@@ -547,7 +547,7 @@ namespace FIFE
                     }
                 }
                 // found valid transition cell
-                if (transCell) {
+                if (transCell != nullptr) {
                     m_betweenTargets.push_back(transCell);
                     lastLoc = newLoc;
                 }

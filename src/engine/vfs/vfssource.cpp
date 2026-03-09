@@ -28,15 +28,18 @@ namespace FIFE
 
 std::string FIFE::VFSSource::fixPath(std::string path) const
 {
-    if (!path.size())
+    if (path.size() == 0u) {
         return path;
+    }
 
     size_t pos;
-    while ((pos = path.find('\\')) != std::string::npos)
+    while ((pos = path.find('\\')) != std::string::npos) {
         path[pos] = '/';
+    }
 
-    if (path[0] == '/')
+    if (path[0] == '/') {
         path = path.substr(1, path.length());
+    }
 
     return path;
 }

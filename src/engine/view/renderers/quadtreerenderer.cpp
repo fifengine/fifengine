@@ -48,7 +48,7 @@ namespace FIFE
         return new QuadTreeRenderer(*this);
     }
 
-    QuadTreeRenderer::~QuadTreeRenderer() { }
+    QuadTreeRenderer::~QuadTreeRenderer() = default;
     RenderVisitor::RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera)
     {
 
@@ -57,14 +57,15 @@ namespace FIFE
         m_camera        = camera;
     }
 
-    RenderVisitor::~RenderVisitor() { }
+    RenderVisitor::~RenderVisitor() = default;
 
     template <typename T>
     bool RenderVisitor::visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d)
     {
 
-        if (d == 0)
+        if (d == 0) {
             visited = 0;
+        }
 
         int32_t x    = node->x();
         int32_t y    = node->y();
@@ -94,7 +95,7 @@ namespace FIFE
     void QuadTreeRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         CellGrid* cg = layer->getCellGrid();
-        if (!cg) {
+        if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;
         }

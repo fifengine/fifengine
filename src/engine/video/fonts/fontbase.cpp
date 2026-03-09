@@ -31,7 +31,7 @@ namespace FIFE
         mColor(),
         mGlyphSpacing(0),
         mRowSpacing(0),
-        mFilename(""),
+        
         m_antiAlias(true),
         m_boldStyle(false),
         m_italicStyle(false),
@@ -135,10 +135,12 @@ namespace FIFE
     {
         assert(utf8::is_valid(text.begin(), text.end()));
         std::string::const_iterator cur;
-        if (text.size() == 0)
+        if (text.size() == 0) {
             return 0;
-        if (x <= 0)
+        }
+        if (x <= 0) {
             return 0;
+        }
 
         cur = text.begin();
 
@@ -165,7 +167,7 @@ namespace FIFE
     Image* FontBase::getAsImage(const std::string& text)
     {
         Image* image = m_pool.getRenderedText(this, text);
-        if (!image) {
+        if (image == nullptr) {
             SDL_Surface* textSurface = renderString(text);
             image                    = RenderBackend::instance()->createImage(textSurface);
             m_pool.addRenderedText(this, text, image);
@@ -180,18 +182,20 @@ namespace FIFE
         utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
         // std::cout << "Text:" << text << '\n';
         Image* image = m_pool.getRenderedText(this, text);
-        if (!image) {
+        if (image == nullptr) {
             std::vector<SDL_Surface*> lines;
             std::string::const_iterator it = text.begin();
             // split text as needed
-            int32_t render_width = 0, render_height = 0;
+            int32_t render_width  = 0;
+            int32_t render_height = 0;
             do {
                 uint32_t codepoint = 0;
                 std::string line;
                 while (codepoint != newline && it != text.end()) {
                     codepoint = utf8::next(it, text.end());
-                    if (codepoint != newline)
+                    if (codepoint != newline) {
                         utf8::append(codepoint, back_inserter(line));
+                    }
                 }
                 // std::cout << "Line:" << line << '\n';
                 SDL_Surface* text_surface = renderString(line);
@@ -204,7 +208,7 @@ namespace FIFE
             render_height = (getRowSpacing() + getHeight()) * lines.size();
             SDL_Surface* final_surface =
                 SDL_CreateRGBSurface(0, render_width, render_height, 32, RMASK, GMASK, BMASK, AMASK);
-            if (!final_surface) {
+            if (final_surface == nullptr) {
                 throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
             }
             SDL_FillRect(final_surface, nullptr, 0x00000000);
@@ -252,11 +256,13 @@ namespace FIFE
             bool haveNewLine = false;
             while (getWidth(line) < render_width && pos != text.end()) {
                 uint32_t codepoint = utf8::next(pos, text.end());
-                if (codepoint == whitespace && !line.empty())
+                if (codepoint == whitespace && !line.empty()) {
                     break_pos.push_back(std::make_pair(line.length(), pos));
+                }
 
-                if (codepoint != newline)
+                if (codepoint != newline) {
                     utf8::append(codepoint, back_inserter(line));
+                }
 
                 // Special case: Already newlines in string:
                 if (codepoint == newline) {
@@ -266,11 +272,13 @@ namespace FIFE
                     break;
                 }
             }
-            if (haveNewLine)
+            if (haveNewLine) {
                 continue;
+            }
 
-            if (pos == text.end())
+            if (pos == text.end()) {
                 break;
+            }
 
             if (break_pos.empty()) {
                 // No break position and line length smaller than 2

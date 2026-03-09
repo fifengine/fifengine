@@ -48,7 +48,7 @@ namespace FIFE
         return new CellSelectionRenderer(*this);
     }
 
-    CellSelectionRenderer::~CellSelectionRenderer() { }
+    CellSelectionRenderer::~CellSelectionRenderer() = default;
 
     CellSelectionRenderer* CellSelectionRenderer::getInstance(IRendererContainer* cnt)
     {
@@ -101,7 +101,7 @@ namespace FIFE
             }
 
             CellGrid* cg = layer->getCellGrid();
-            if (!cg) {
+            if (cg == nullptr) {
                 FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
                 continue;
             }

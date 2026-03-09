@@ -14,7 +14,7 @@
 namespace FIFE
 {
 
-    RawDataSource::RawDataSource() { }
+    RawDataSource::RawDataSource() = default;
 
-    RawDataSource::~RawDataSource() { }
+    RawDataSource::~RawDataSource() = default;
 } // namespace FIFE

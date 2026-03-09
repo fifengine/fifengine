@@ -47,11 +47,11 @@ namespace FIFE
     class InstanceRendererDeleteListener : public InstanceDeleteListener
     {
     public:
-        InstanceRendererDeleteListener(InstanceRenderer* r)
+        explicit InstanceRendererDeleteListener(InstanceRenderer* r)
         {
             m_renderer = r;
         }
-        ~InstanceRendererDeleteListener() override { }
+        ~InstanceRendererDeleteListener() override = default;
 
         void onInstanceDeleted(Instance* instance) override
         {
@@ -85,7 +85,7 @@ namespace FIFE
         }
     }
 
-    InstanceRenderer::AreaInfo::~AreaInfo() { }
+    InstanceRenderer::AreaInfo::~AreaInfo() = default;
 
     InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt)
     {
@@ -342,14 +342,14 @@ namespace FIFE
                 }
             }
             // overlay
-            if (vc.m_overlay) {
+            if (vc.m_overlay != nullptr) {
                 renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
                 vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
             }
 
-            if (outlineImage) {
+            if (outlineImage != nullptr) {
                 outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
                 m_renderbackend->changeRenderInfos(RENDER_DATA_TEXCOLOR_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
             }
@@ -490,7 +490,7 @@ namespace FIFE
                             ALWAYS,
                             recoloring ? OVERLAY_TYPE_COLOR : OVERLAY_TYPE_NONE);
                     }
-                    if (outlineImage) {
+                    if (outlineImage != nullptr) {
                         outlineImage->render(vc.dimensions, vc.transparency);
                         m_renderbackend->changeRenderInfos(
                             RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
@@ -499,14 +499,14 @@ namespace FIFE
                 }
             }
             // overlay
-            if (vc.m_overlay) {
+            if (vc.m_overlay != nullptr) {
                 renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
                 vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
             }
 
-            if (outlineImage) {
+            if (outlineImage != nullptr) {
                 outlineImage->render(vc.dimensions, vc.transparency);
                 m_renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
             }
@@ -527,7 +527,7 @@ namespace FIFE
         std::vector<OverlayColors*>* animationColorOverlay = vc.getAnimationColorOverlay();
 
         // animation overlay without color overlay
-        if (animationOverlay && !animationColorOverlay) {
+        if ((animationOverlay != nullptr) && (animationColorOverlay == nullptr)) {
             if (withZ) {
                 for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end();
                      ++it) {
@@ -540,12 +540,12 @@ namespace FIFE
                 }
             }
             // animation overlay with color overlay
-        } else if (animationOverlay && animationColorOverlay) {
+        } else if ((animationOverlay != nullptr) && (animationColorOverlay != nullptr)) {
             std::vector<OverlayColors*>::iterator ovit = animationColorOverlay->begin();
             std::vector<ImagePtr>::iterator it         = animationOverlay->begin();
             for (; it != animationOverlay->end(); ++it, ++ovit) {
                 OverlayColors* oc = (*ovit);
-                if (!oc) {
+                if (oc == nullptr) {
                     if (withZ) {
                         (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                     } else {
@@ -756,7 +756,7 @@ namespace FIFE
             addToCheck(info.outline);
         }
         // special case for animation overlay
-        if (vc.getAnimationOverlay()) {
+        if (vc.getAnimationOverlay() != nullptr) {
             return bindMultiOutline(info, vc, cam);
         }
         // NOTE: Since r3721 outline is just the 'border' so to render everything correctly
@@ -1049,10 +1049,10 @@ namespace FIFE
     ImagePtr InstanceRenderer::getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors)
     {
         // multi color overlay
-        const std::map<Color, Color>& colorMap    = colors ? colors->getColors() : vc.getColorOverlay()->getColors();
+        const std::map<Color, Color>& colorMap    = (colors != nullptr) ? colors->getColors() : vc.getColorOverlay()->getColors();
         std::map<Color, Color>::const_iterator it = colorMap.begin();
         ImagePtr colorOverlayImage =
-            colors ? colors->getColorOverlayImage() : vc.getColorOverlay()->getColorOverlayImage();
+            (colors != nullptr) ? colors->getColorOverlayImage() : vc.getColorOverlay()->getColorOverlayImage();
         ImagePtr colorOverlay;
 
         // create name
@@ -1493,7 +1493,7 @@ namespace FIFE
 
     bool InstanceRenderer::isValidImage(const ImagePtr& image)
     {
-        if (image.get()) {
+        if (image.get() != nullptr) {
             if (image.get()->getState() == IResource::RES_LOADED) {
                 return true;
             }

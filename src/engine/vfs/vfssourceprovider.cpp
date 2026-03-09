@@ -24,11 +24,11 @@ namespace FIFE
 
     VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(nullptr), m_name(name) { }
 
-    VFSSourceProvider::~VFSSourceProvider() { }
+    VFSSourceProvider::~VFSSourceProvider() = default;
 
     void VFSSourceProvider::setVFS(VFS* vfs)
     {
-        if (m_vfs) {
+        if (m_vfs != nullptr) {
             FL_WARN(_log, "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
             return;
         }

@@ -46,7 +46,7 @@ namespace FIFE
             std::string pathString = GetPathIteratorAsString(iter);
             tempNode               = node->getChild(pathString);
 
-            if (!tempNode) {
+            if (tempNode == nullptr) {
                 // attempt to add the child since it was not found
                 // and reset the node to the new child node
                 node = node->addChild(pathString);
@@ -55,7 +55,7 @@ namespace FIFE
                 node = tempNode;
             }
 
-            if (node) {
+            if (node != nullptr) {
                 // node was found or added, set the return node properly
                 returnNode = node;
             } else {
@@ -83,7 +83,7 @@ namespace FIFE
                 // look for the path name in the child nodes
                 tempNode = node->getChild(pathString);
 
-                if (tempNode) {
+                if (tempNode != nullptr) {
                     node = tempNode;
 
                     // node was found so we reset the return node

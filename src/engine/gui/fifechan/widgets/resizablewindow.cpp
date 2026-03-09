@@ -104,7 +104,7 @@ namespace fcn
         initCursors();
     }
 
-    ResizableWindow::~ResizableWindow() { }
+    ResizableWindow::~ResizableWindow() = default;
 
     void ResizableWindow::initCursors()
     {

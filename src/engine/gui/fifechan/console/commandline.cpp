@@ -30,7 +30,7 @@ namespace FIFE
         m_suppressBlinkTimer.setCallback(std::bind(&CommandLine::startBlinking, this));
     }
 
-    CommandLine::~CommandLine() { }
+    CommandLine::~CommandLine() = default;
 
     void CommandLine::toggleCaretVisible()
     {
@@ -102,8 +102,9 @@ namespace FIFE
 
     void CommandLine::drawCaret(fcn::Graphics* graphics, int32_t x)
     {
-        if (!m_caretVisible)
+        if (!m_caretVisible) {
             return;
+        }
 
         graphics->setColor(getForegroundColor());
         graphics->drawLine(x, getHeight() - 2, x, 1);

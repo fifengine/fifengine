@@ -68,8 +68,9 @@ namespace FIFE
 
     void RawData::setIndex(uint32_t index)
     {
-        if (index > getDataLength())
+        if (index > getDataLength()) {
             throw IndexOverflow(__FUNCTION__);
+        }
 
         m_index_current = index;
     }
@@ -148,13 +149,15 @@ namespace FIFE
 
     bool RawData::getLine(std::string& buffer)
     {
-        if (getCurrentIndex() >= getDataLength())
+        if (getCurrentIndex() >= getDataLength()) {
             return false;
+        }
 
         buffer = "";
         char c;
-        while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n')
+        while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n') {
             buffer += c;
+        }
 
         return true;
     }

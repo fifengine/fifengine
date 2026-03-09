@@ -101,10 +101,10 @@ namespace FIFE
         alGetAuxiliaryEffectSlotiv   = (LPALGETAUXILIARYEFFECTSLOTIV)alGetProcAddress("alGetAuxiliaryEffectSlotiv");
         alGetAuxiliaryEffectSlotf    = (LPALGETAUXILIARYEFFECTSLOTF)alGetProcAddress("alGetAuxiliaryEffectSlotf");
         alGetAuxiliaryEffectSlotfv   = (LPALGETAUXILIARYEFFECTSLOTFV)alGetProcAddress("alGetAuxiliaryEffectSlotfv");
-        if (!(alGenAuxiliaryEffectSlots && alDeleteAuxiliaryEffectSlots && alIsAuxiliaryEffectSlot &&
-              alAuxiliaryEffectSloti && alAuxiliaryEffectSlotiv && alAuxiliaryEffectSlotf && alAuxiliaryEffectSlotfv &&
-              alGetAuxiliaryEffectSloti && alGetAuxiliaryEffectSlotiv && alGetAuxiliaryEffectSlotf &&
-              alGetAuxiliaryEffectSlotfv)) {
+        if (!((alGenAuxiliaryEffectSlots != nullptr) && (alDeleteAuxiliaryEffectSlots != nullptr) && (alIsAuxiliaryEffectSlot != nullptr) &&
+              (alAuxiliaryEffectSloti != nullptr) && (alAuxiliaryEffectSlotiv != nullptr) && (alAuxiliaryEffectSlotf != nullptr) && (alAuxiliaryEffectSlotfv != nullptr) &&
+              (alGetAuxiliaryEffectSloti != nullptr) && (alGetAuxiliaryEffectSlotiv != nullptr) && (alGetAuxiliaryEffectSlotf != nullptr) &&
+              (alGetAuxiliaryEffectSlotfv != nullptr))) {
             FL_WARN(_log, LMsg() << "Failed initializing slot function pointers\n");
             return;
         }
@@ -121,8 +121,8 @@ namespace FIFE
         alGetEffectiv   = (LPALGETEFFECTIV)alGetProcAddress("alGetEffectiv");
         alGetEffectf    = (LPALGETEFFECTF)alGetProcAddress("alGetEffectf");
         alGetEffectfv   = (LPALGETEFFECTFV)alGetProcAddress("alGetEffectfv");
-        if (!(alGenEffects && alDeleteEffects && alIsEffect && alEffecti && alEffectiv && alEffectf && alEffectfv &&
-              alGetEffecti && alGetEffectiv && alGetEffectf && alGetEffectfv)) {
+        if (!((alGenEffects != nullptr) && (alDeleteEffects != nullptr) && (alIsEffect != nullptr) && (alEffecti != nullptr) && (alEffectiv != nullptr) && (alEffectf != nullptr) && (alEffectfv != nullptr) &&
+              (alGetEffecti != nullptr) && (alGetEffectiv != nullptr) && (alGetEffectf != nullptr) && (alGetEffectfv != nullptr))) {
             FL_WARN(_log, LMsg() << "Failed initializing effect function pointers\n");
             return;
         }
@@ -139,8 +139,8 @@ namespace FIFE
         alGetFilteriv   = (LPALGETFILTERIV)alGetProcAddress("alGetFilteriv");
         alGetFilterf    = (LPALGETFILTERF)alGetProcAddress("alGetFilterf");
         alGetFilterfv   = (LPALGETFILTERFV)alGetProcAddress("alGetFilterfv");
-        if (!(alGenFilters && alDeleteFilters && alIsFilter && alFilteri && alFilteriv && alFilterf && alFilterfv &&
-              alGetFilteri && alGetFilteriv && alGetFilterf && alGetFilterfv)) {
+        if (!((alGenFilters != nullptr) && (alDeleteFilters != nullptr) && (alIsFilter != nullptr) && (alFilteri != nullptr) && (alFilteriv != nullptr) && (alFilterf != nullptr) && (alFilterfv != nullptr) &&
+              (alGetFilteri != nullptr) && (alGetFilteriv != nullptr) && (alGetFilterf != nullptr) && (alGetFilterfv != nullptr))) {
             FL_WARN(_log, LMsg() << "Failed initializing filter function pointers\n");
             return;
         }
@@ -198,7 +198,7 @@ namespace FIFE
         } else if (type == SE_EFFECT_EAXREVERB) {
             effect = new EaxReverb();
         }
-        if (effect) {
+        if (effect != nullptr) {
             m_effects.push_back(effect);
         }
         return effect;
@@ -221,7 +221,7 @@ namespace FIFE
     void SoundEffectManager::deleteSoundEffect(SoundEffect* effect)
     {
         disableSoundEffect(effect);
-        if (effect->getFilter()) {
+        if (effect->getFilter() != nullptr) {
             removeSoundFilterFromSoundEffect(effect, effect->getFilter());
         }
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
@@ -251,7 +251,7 @@ namespace FIFE
         }
 
         ALuint slot   = m_freeSlots.front();
-        ALuint filter = effect->getFilter() ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
+        ALuint filter = (effect->getFilter() != nullptr) ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
         m_freeSlots.pop();
         alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, effect->getEffectId());
         effect->setSlotId(slot);
@@ -295,7 +295,7 @@ namespace FIFE
         }
         m_effectEmitters[effect].push_back(emitter);
         emitter->addEffect(effect);
-        if (emitter - isActive()) {
+        if ((emitter - static_cast<int>(isActive())) != nullptr) {
             activateEffect(effect, emitter);
         }
     }
@@ -330,7 +330,7 @@ namespace FIFE
 
     void SoundEffectManager::addSoundFilterToSoundEffect(SoundEffect* effect, SoundFilter* filter)
     {
-        if (effect->getFilter()) {
+        if (effect->getFilter() != nullptr) {
             FL_WARN(_log, LMsg() << "SoundEffect already has a filter");
             return;
         }
@@ -377,7 +377,7 @@ namespace FIFE
             return;
         }
         ALuint number = static_cast<ALuint>(emitter->getEffectNumber(effect));
-        ALuint filter = effect->getFilter() ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
+        ALuint filter = (effect->getFilter() != nullptr) ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
         alSource3i(emitter->getSource(), AL_AUXILIARY_SEND_FILTER, effect->getSlotId(), number, filter);
     }
 
@@ -465,7 +465,7 @@ namespace FIFE
 
     void SoundEffectManager::addEmitterToDirectSoundFilter(SoundFilter* filter, SoundEmitter* emitter)
     {
-        if (emitter->getDirectFilter()) {
+        if (emitter->getDirectFilter() != nullptr) {
             FL_WARN(_log, LMsg() << "SoundEmitter already has a direct filter");
             return;
         }

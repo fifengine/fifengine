@@ -71,7 +71,12 @@ namespace FIFE
 
     void Console::reLayout()
     {
-        int32_t w, h, b, input_h, bbar_h, button_w;
+        int32_t w;
+        int32_t h;
+        int32_t b;
+        int32_t input_h;
+        int32_t bbar_h;
+        int32_t button_w;
         w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
         h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
         b        = 0;
@@ -172,8 +177,9 @@ namespace FIFE
 
     void Console::doShow()
     {
-        if (m_isAttached)
+        if (m_isAttached) {
             return;
+        }
         m_isAttached = true;
         FifechanManager::instance()->add(this);
         FifechanManager::instance()->getTopContainer()->moveToTop(this);
@@ -185,8 +191,9 @@ namespace FIFE
 
     void Console::doHide()
     {
-        if (!m_isAttached)
+        if (!m_isAttached) {
             return;
+        }
         m_isAttached = false;
         FifechanManager::instance()->remove(this);
         m_fpsTimer.stop();
@@ -212,23 +219,25 @@ namespace FIFE
     void Console::toggleShowHide()
     {
         m_hiding = !m_hiding;
-        if (!m_hiding)
+        if (!m_hiding) {
             doShow();
+        }
         m_animationTimer.start();
     }
 
     void Console::execute(std::string cmd)
     {
         FL_DBG(_log, LMsg("in execute with command ") << cmd);
-        if (cmd.empty())
+        if (cmd.empty()) {
             return;
+        }
 
         // copy input to output
         println(m_prompt + cmd);
 
         // run the command
         try {
-            if (m_consoleexec) {
+            if (m_consoleexec != nullptr) {
                 std::string resp = m_consoleexec->onConsoleCommand(cmd);
                 println(resp);
             } else {
@@ -272,7 +281,7 @@ namespace FIFE
 
     void Console::action(const fcn::ActionEvent& event)
     {
-        if (m_consoleexec) {
+        if (m_consoleexec != nullptr) {
             m_consoleexec->onToolsClick();
         } else {
             FL_WARN(_log, "ConsoleExecuter not bind, but tools button clicked");

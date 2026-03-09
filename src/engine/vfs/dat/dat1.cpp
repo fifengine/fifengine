@@ -48,8 +48,9 @@ namespace FIFE
             dir_names.push_back(name);
         }
 
-        for (std::list<std::string>::iterator i = dir_names.begin(); i != dir_names.end(); ++i)
+        for (std::list<std::string>::iterator i = dir_names.begin(); i != dir_names.end(); ++i) {
             loadFileList(*i);
+        }
     }
 
     void DAT1::loadFileList(const std::string& dirname)
@@ -88,8 +89,9 @@ namespace FIFE
     const RawDataDAT1::s_info& DAT1::getInfo(const std::string& name) const
     {
         type_filelist::const_iterator i = m_filelist.find(name);
-        if (i == m_filelist.end())
+        if (i == m_filelist.end()) {
             throw NotFound(name);
+        }
 
         return i->second;
     }

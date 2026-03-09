@@ -129,7 +129,7 @@ namespace FIFE
         // recreate main screen
         m_renderbackend->createMainScreen(mode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
 
-        if (m_guimanager) {
+        if (m_guimanager != nullptr) {
             m_guimanager->resizeTopContainer(0, 0, mode.getWidth(), mode.getHeight());
         }
 
@@ -366,7 +366,7 @@ namespace FIFE
             m_model->update();
         }
 
-        if (m_guimanager) {
+        if (m_guimanager != nullptr) {
             m_guimanager->turn();
         }
 

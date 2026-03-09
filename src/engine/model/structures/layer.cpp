@@ -44,7 +44,7 @@ namespace FIFE
         m_sortingStrategy(SORTING_CAMERA),
         m_walkable(false),
         m_interact(false),
-        m_walkableId(""),
+        
         m_cellCache(nullptr),
         m_changeListeners(),
         m_changedInstances(),
@@ -60,7 +60,7 @@ namespace FIFE
         // if this is a interact layer
         if (m_interact) {
             Layer* temp = m_map->getLayer(m_walkableId);
-            if (temp) {
+            if (temp != nullptr) {
                 temp->removeInteractLayer(this);
             }
         }
@@ -132,7 +132,7 @@ namespace FIFE
 
     bool Layer::addInstance(Instance* instance, const ExactModelCoordinate& p)
     {
-        if (!instance) {
+        if (instance == nullptr) {
             FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
             return false;
         }
@@ -246,8 +246,9 @@ namespace FIFE
     {
         std::vector<Instance*>::iterator it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
-            if ((*it)->getId() == id)
+            if ((*it)->getId() == id) {
                 return *it;
+            }
         }
 
         return nullptr;
@@ -258,8 +259,9 @@ namespace FIFE
         std::vector<Instance*> matching_instances;
         std::vector<Instance*>::iterator it = m_instances.begin();
         for (; it != m_instances.end(); ++it) {
-            if ((*it)->getId() == id)
+            if ((*it)->getId() == id) {
                 matching_instances.push_back(*it);
+            }
         }
         return matching_instances;
     }
@@ -396,7 +398,7 @@ namespace FIFE
 
     void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const
     {
-        if (!layer) {
+        if (layer == nullptr) {
             layer = this;
         }
 
@@ -481,9 +483,9 @@ namespace FIFE
     bool Layer::cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate)
     {
         bool blockingInstance = false;
-        if (m_cellCache) {
+        if (m_cellCache != nullptr) {
             Cell* cell = m_cellCache->getCell(cellCoordinate);
-            if (cell) {
+            if (cell != nullptr) {
                 return cell->getCellType() != CTYPE_NO_BLOCKER;
             }
         } else {
@@ -503,9 +505,9 @@ namespace FIFE
     std::vector<Instance*> Layer::getBlockingInstances(const ModelCoordinate& cellCoordinate)
     {
         std::vector<Instance*> blockingInstances;
-        if (m_cellCache) {
+        if (m_cellCache != nullptr) {
             Cell* cell = m_cellCache->getCell(cellCoordinate);
-            if (cell) {
+            if (cell != nullptr) {
                 const std::set<Instance*>& blocker = cell->getInstances();
                 for (std::set<Instance*>::const_iterator it = blocker.begin(); it != blocker.end(); ++it) {
                     if ((*it)->isBlocking()) {
@@ -601,7 +603,7 @@ namespace FIFE
 
     void Layer::createCellCache()
     {
-        if (!m_cellCache && m_walkable) {
+        if ((m_cellCache == nullptr) && m_walkable) {
             m_cellCache = new CellCache(this);
         }
     }

@@ -21,7 +21,7 @@ namespace FIFE
     void ResourceAnimationLoader::load(IResource* res)
     {
         Animation* anim = dynamic_cast<Animation*>(res);
-        if (anim) {
+        if (anim != nullptr) {
             std::vector<ImagePtr> frames = anim->getFrames();
             for (std::vector<ImagePtr>::iterator it = frames.begin(); it != frames.end(); ++it) {
                 if ((*it)->getState() != IResource::RES_LOADED) {

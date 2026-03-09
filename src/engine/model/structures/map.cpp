@@ -36,7 +36,7 @@ namespace FIFE
         const std::vector<RendererBase*>& renderers,
         TimeProvider* tp_master) :
         m_id(identifier),
-        m_filename(""),
+        
         m_timeProvider(tp_master),
         m_changeListeners(),
         m_changedLayers(),
@@ -65,8 +65,9 @@ namespace FIFE
     {
         std::list<Layer*>::const_iterator it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
-            if ((*it)->getId() == id)
+            if ((*it)->getId() == id) {
                 return *it;
+            }
         }
         return nullptr;
     }
@@ -80,8 +81,9 @@ namespace FIFE
     {
         std::list<Layer*>::const_iterator it = m_layers.begin();
         for (; it != m_layers.end(); ++it) {
-            if (identifier == (*it)->getId())
+            if (identifier == (*it)->getId()) {
                 throw NameClash(identifier);
+            }
         }
 
         Layer* layer = new Layer(identifier, this, grid);
@@ -143,7 +145,8 @@ namespace FIFE
         std::list<Layer*>::iterator it = m_layers.begin();
         Layer* layer                   = *it;
         for (; it != m_layers.end(); ++it) {
-            ModelCoordinate newMin, newMax;
+            ModelCoordinate newMin;
+            ModelCoordinate newMax;
             (*it)->getMinMaxCoordinates(newMin, newMax, layer);
 
             if (newMin.x < min.x) {
@@ -194,7 +197,7 @@ namespace FIFE
                 m_changedLayers.push_back(*it);
             }
             CellCache* cache = (*it)->getCellCache();
-            if (cache) {
+            if (cache != nullptr) {
                 cellCaches.push_back(cache);
             }
         }
@@ -243,7 +246,7 @@ namespace FIFE
 
     Camera* Map::addCamera(const std::string& id, const Rect& viewport)
     {
-        if (getCamera(id)) {
+        if (getCamera(id) != nullptr) {
             std::string errorStr = "Camera: " + id + " already exists";
             throw NameClash(errorStr);
         }
@@ -337,7 +340,7 @@ namespace FIFE
         for (; layit != m_layers.end(); ++layit) {
             if ((*layit)->isInteract()) {
                 Layer* temp = getLayer((*layit)->getWalkableId());
-                if (temp) {
+                if (temp != nullptr) {
                     temp->addInteractLayer(*layit);
                 }
             }
@@ -357,7 +360,7 @@ namespace FIFE
         std::list<Layer*>::iterator layit = m_layers.begin();
         for (; layit != m_layers.end(); ++layit) {
             CellCache* cache = (*layit)->getCellCache();
-            if (cache) {
+            if (cache != nullptr) {
                 cache->createCells();
                 cache->forceUpdate();
             }

@@ -60,7 +60,7 @@ namespace FIFE
 
         assert(node != 0);
 
-        if (node) {
+        if (node != nullptr) {
             const ZipEntryData& entryData = node->getZipEntryData();
 
             m_zipfile->setIndex(entryData.offset);
@@ -89,7 +89,7 @@ namespace FIFE
 
                 int32_t err = inflate(&zstream, Z_FINISH);
                 if (err != Z_STREAM_END) {
-                    if (zstream.msg) {
+                    if (zstream.msg != nullptr) {
                         FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
                     } else {
                         FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
@@ -161,13 +161,13 @@ namespace FIFE
                                  << offset);
 
         m_zipfile->moveIndex(compsize);
-        if (gflags & (0x01 << 3)) {
+        if ((gflags & (0x01 << 3)) != 0) {
             crc      = m_zipfile->read32Little();
             compsize = m_zipfile->read32Little();
             realsize = m_zipfile->read32Little();
         }
 
-        if (lmodtime || lmoddate) { } // shut up the compiler (warnings of unused variables)
+        if ((lmodtime != 0u) || (lmoddate != 0u)) { } // shut up the compiler (warnings of unused variables)
 
         ZipEntryData data;
         data.comp      = comp;
@@ -179,7 +179,7 @@ namespace FIFE
         std::string filename = filePath.string();
         ZipNode* node        = m_zipTree.addNode(filename);
 
-        if (node) {
+        if (node != nullptr) {
             // store the zip entry information in the node
             node->setZipEntryData(data);
         }
@@ -195,7 +195,7 @@ namespace FIFE
 
         ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
-        if (node) {
+        if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::File);
             ZipNodeContainer::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {
@@ -215,7 +215,7 @@ namespace FIFE
 
         ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
-        if (node) {
+        if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::Directory);
             ZipNodeContainer::iterator iter;
             for (iter = files.begin(); iter != files.end(); ++iter) {

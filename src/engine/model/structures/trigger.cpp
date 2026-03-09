@@ -28,11 +28,11 @@ namespace FIFE
         public InstanceDeleteListener
     {
     public:
-        TriggerChangeListener(Trigger* trigger)
+        explicit TriggerChangeListener(Trigger* trigger)
         {
             m_trigger = trigger;
         }
-        ~TriggerChangeListener() override { }
+        ~TriggerChangeListener() override = default;
 
         // InstanceDeleteListener callback
         void onInstanceDeleted(Instance* instance) override
@@ -145,7 +145,7 @@ namespace FIFE
         Trigger* m_trigger;
     };
 
-    Trigger::Trigger() : m_name(""), m_triggered(false), m_enabledAll(false), m_attached(nullptr)
+    Trigger::Trigger() :  m_triggered(false), m_enabledAll(false), m_attached(nullptr)
     {
         m_changeListener = new TriggerChangeListener(this);
     }
@@ -199,7 +199,7 @@ namespace FIFE
             m_triggered                                = true;
             std::vector<ITriggerListener*>::iterator i = m_triggerListeners.begin();
             while (i != m_triggerListeners.end()) {
-                if (*i) {
+                if (*i != nullptr) {
                     (*i)->onTriggered();
                 }
                 ++i;
@@ -273,7 +273,7 @@ namespace FIFE
     void Trigger::assign(Layer* layer, const ModelCoordinate& pt)
     {
         Cell* cell = layer->getCellCache()->getCell(pt);
-        if (!cell) {
+        if (cell == nullptr) {
             return;
         }
         std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
@@ -286,7 +286,7 @@ namespace FIFE
     void Trigger::remove(Layer* layer, const ModelCoordinate& pt)
     {
         Cell* cell = layer->getCellCache()->getCell(pt);
-        if (!cell) {
+        if (cell == nullptr) {
             return;
         }
         std::vector<Cell*>::iterator it = std::find(m_assigned.begin(), m_assigned.end(), cell);
@@ -325,7 +325,7 @@ namespace FIFE
             return;
         }
 
-        if (m_attached) {
+        if (m_attached != nullptr) {
             detach();
         }
         m_attached = instance;
@@ -335,7 +335,7 @@ namespace FIFE
 
     void Trigger::detach()
     {
-        if (m_attached) {
+        if (m_attached != nullptr) {
             m_attached->removeDeleteListener(m_changeListener);
             m_attached->removeChangeListener(m_changeListener);
             m_attached = nullptr;
@@ -364,7 +364,7 @@ namespace FIFE
             coord.x += mc.x;
             coord.y += mc.y;
             Cell* c = cache->getCell(coord);
-            if (c) {
+            if (c != nullptr) {
                 newCells.push_back(c);
             }
         }

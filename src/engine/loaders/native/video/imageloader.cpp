@@ -44,9 +44,9 @@ namespace FIFE
             data->readInto(darray.get(), datalen);
             SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
 
-            SDL_Surface* surface = IMG_Load_RW(rwops, false);
+            SDL_Surface* surface = IMG_Load_RW(rwops, 0);
 
-            if (!surface) {
+            if (surface == nullptr) {
                 throw SDLException(std::string("Fatal Error when loading image into a SDL_Surface: ") + SDL_GetError());
             }
 
@@ -67,7 +67,7 @@ namespace FIFE
                     SDL_Surface* conv       = SDL_ConvertSurface(surface, &dst_format, 0);
                     dst_format.BitsPerPixel = dstbits;
 
-                    if (!conv) {
+                    if (conv == nullptr) {
                         throw SDLException(
                             std::string("Fatal Error when converting surface to the screen format: ") + SDL_GetError());
                     }

@@ -26,11 +26,11 @@ namespace FIFE
     class NodeInstanceDeleteListener : public InstanceDeleteListener
     {
     public:
-        NodeInstanceDeleteListener(RendererNode* node)
+        explicit NodeInstanceDeleteListener(RendererNode* node)
         {
             m_node = node;
         }
-        ~NodeInstanceDeleteListener() override { }
+        ~NodeInstanceDeleteListener() override = default;
 
         void onInstanceDeleted(Instance* instance) override
         {
@@ -258,7 +258,7 @@ namespace FIFE
     {
         checkDeleteListener();
         m_instance = instance;
-        if (m_instance) {
+        if (m_instance != nullptr) {
             m_instance->addDeleteListener(m_listener);
         }
     }
@@ -269,18 +269,18 @@ namespace FIFE
             return;
         }
         checkDeleteListener();
-        if (m_instance) {
+        if (m_instance != nullptr) {
             m_instance->removeDeleteListener(m_listener);
         }
         m_instance = instance;
-        if (m_instance) {
+        if (m_instance != nullptr) {
             m_instance->addDeleteListener(m_listener);
         }
     }
 
     void RendererNode::removeInstance(Instance* instance, bool listener)
     {
-        if (m_instance == instance && instance) {
+        if (m_instance == instance && (instance != nullptr)) {
             if (listener) {
                 m_instance->removeDeleteListener(m_listener);
             }
@@ -290,7 +290,7 @@ namespace FIFE
 
     void RendererNode::checkDeleteListener()
     {
-        if (m_listener) {
+        if (m_listener != nullptr) {
             return;
         }
         m_listener = new NodeInstanceDeleteListener(this);

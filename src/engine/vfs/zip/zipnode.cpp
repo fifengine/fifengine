@@ -84,7 +84,7 @@ namespace FIFE
     {
         // traverse up the hierarchy of parents
         // to build the full path
-        if (m_parent) {
+        if (m_parent != nullptr) {
             fs::path path(m_parent->getFullName());
             path /= m_name;
             return (path.string());
@@ -164,7 +164,7 @@ namespace FIFE
     ZipNode* ZipNode::addChild(const std::string& name)
     {
         ZipNode* child = new ZipNode(name, this);
-        if (child) {
+        if (child != nullptr) {
             if (child->getContentType() == ZipContentType::File) {
                 m_fileChildren.push_back(child);
             } else if (child->getContentType() == ZipContentType::Directory) {
@@ -179,7 +179,7 @@ namespace FIFE
 
     void ZipNode::removeChild(ZipNode* child)
     {
-        if (child) {
+        if (child != nullptr) {
             if (child->getContentType() == ZipContentType::File) {
                 ZipNodeContainer::iterator iter;
                 iter = std::find(m_fileChildren.begin(), m_fileChildren.end(), child);

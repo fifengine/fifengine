@@ -90,7 +90,7 @@ namespace fcn
         // set first frame as new image
         if (mAnimation->getFrameCount() > 0) {
             mFrameIndex = 0;
-            if (mCurrentImage) {
+            if (mCurrentImage != nullptr) {
                 delete mCurrentImage;
                 mCurrentImage = nullptr;
             }
@@ -153,7 +153,7 @@ namespace fcn
             }
             if (index != mFrameIndex) {
                 mFrameIndex = index;
-                if (mCurrentImage) {
+                if (mCurrentImage != nullptr) {
                     delete mCurrentImage;
                     mCurrentImage = nullptr;
                 }

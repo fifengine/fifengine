@@ -45,19 +45,22 @@ namespace FIFE
     ImagePtr Atlas::getImage(const std::string& id)
     {
         SubimageMap::iterator iter = m_subimages.find(id);
-        if (iter == m_subimages.end())
+        if (iter == m_subimages.end()) {
             return ImagePtr();
+        }
         return iter->second.image;
     }
 
     ImagePtr Atlas::getImage(uint32_t index)
     {
-        if (index > getImageCount())
+        if (index > getImageCount()) {
             return ImagePtr();
+        }
 
         SubimageMap::iterator iter = m_subimages.begin();
-        for (uint32_t i = 0; i < index; ++i, ++iter)
+        for (uint32_t i = 0; i < index; ++i, ++iter) {
             ;
+        }
         return iter->second.image;
     }
 
@@ -81,7 +84,7 @@ namespace FIFE
     {
     }
 
-    AtlasLoader::~AtlasLoader() { }
+    AtlasLoader::~AtlasLoader() = default;
 
     bool AtlasLoader::isLoadable(const std::string& filename)
     {
@@ -92,7 +95,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(atlasFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -117,7 +120,7 @@ namespace FIFE
         XML::Element* root = atlasFile.RootElement();
 
         if (XML::HasName(root, "assets")) {
-            if (root->FirstChildElement("atlas")) {
+            if (root->FirstChildElement("atlas") != nullptr) {
                 return true;
             }
         }
@@ -142,7 +145,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(atlasFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -194,7 +197,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(atlasFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -223,7 +226,7 @@ namespace FIFE
         XML::Element* root = doc.RootElement();
 
         if (XML::HasName(root, "assets")) {
-            for (XML::Element* atlasElem = root->FirstChildElement("atlas"); atlasElem;
+            for (XML::Element* atlasElem = root->FirstChildElement("atlas"); atlasElem != nullptr;
                  atlasElem               = atlasElem->NextSiblingElement("atlas")) {
                 AtlasPtr atlas = loadAtlas(filename, atlasElem);
                 if (atlas) {
@@ -238,12 +241,12 @@ namespace FIFE
     AtlasPtr AtlasLoader::loadAtlas(const std::string& filename, tinyxml2::XMLElement* atlasElem)
     {
         AtlasPtr atlas;
-        if (!atlasElem) {
+        if (atlasElem == nullptr) {
             return atlas;
         }
 
         const char* atlasSource = XML::Attribute(atlasElem, "source");
-        if (atlasSource) {
+        if (atlasSource != nullptr) {
             const char* atlasId = XML::Attribute(atlasElem, "id");
 
             fs::path atlasPath(filename);
@@ -266,12 +269,12 @@ namespace FIFE
                 atlas->setPackedImage(m_imageManager->getPtr(atlas->getName()));
             }
             // Create subimages with given id and individual position and size
-            if (atlasElem->FirstChildElement("subimage")) {
+            if (atlasElem->FirstChildElement("subimage") != nullptr) {
                 for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != nullptr;
                      imageElem               = imageElem->NextSiblingElement("subimage")) {
 
                     const char* subimageId = XML::Attribute(imageElem, "id");
-                    if (subimageId) {
+                    if (subimageId != nullptr) {
                         Rect region;
                         XML::QueryAttribute(imageElem, "xpos", &region.x);
                         XML::QueryAttribute(imageElem, "ypos", &region.y);
@@ -280,7 +283,7 @@ namespace FIFE
 
                         std::string finalname;
                         // atlas id is optional here
-                        if (atlasId) {
+                        if (atlasId != nullptr) {
                             finalname = std::string(atlasId) + ":" + subimageId;
                         } else {
                             finalname = subimageId;
@@ -312,7 +315,7 @@ namespace FIFE
                 // file extension of the atlas is also used as subimage extension
                 std::string extension = GetExtension(std::string(atlasSource));
                 // we need an atlas id
-                if (!atlasId) {
+                if (atlasId == nullptr) {
                     atlasId = atlasSource;
                 }
 

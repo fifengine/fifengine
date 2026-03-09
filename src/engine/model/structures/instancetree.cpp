@@ -22,7 +22,7 @@ namespace FIFE
 
     InstanceTree::InstanceTree() : FifeClass() { }
 
-    InstanceTree::~InstanceTree() { }
+    InstanceTree::~InstanceTree() = default;
 
     void InstanceTree::addInstance(Instance* instance)
     {
@@ -40,7 +40,7 @@ namespace FIFE
     void InstanceTree::removeInstance(Instance* instance)
     {
         InstanceTreeNode* node = m_reverse[instance];
-        if (!node) {
+        if (node == nullptr) {
             FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");
             return;
         }
@@ -91,7 +91,7 @@ namespace FIFE
         node->apply_visitor(collector);
 
         node = node->parent();
-        while (node) {
+        while (node != nullptr) {
             for (InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
                 ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
                 if (rect.contains(Point(coords.x, coords.y))) {

@@ -35,7 +35,7 @@ namespace FIFE
 
     RenderTarget::RenderTarget(RenderBackend* rb, ImagePtr& image) : m_renderbackend(rb), m_target(image) { }
 
-    RenderTarget::~RenderTarget() { }
+    RenderTarget::~RenderTarget() = default;
 
     void RenderTarget::addLine(const std::string& group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
@@ -122,7 +122,7 @@ namespace FIFE
 
     TargetRenderer::TargetRenderer(RenderBackend* renderbackend) : m_renderbackend(renderbackend) { }
 
-    TargetRenderer::~TargetRenderer() { }
+    TargetRenderer::~TargetRenderer() = default;
 
     RenderTargetPtr TargetRenderer::createRenderTarget(const std::string& name, uint32_t width, uint32_t height)
     {

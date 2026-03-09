@@ -58,7 +58,7 @@ namespace FIFE
         return new FloatingTextRenderer(*this);
     }
 
-    FloatingTextRenderer::~FloatingTextRenderer() { }
+    FloatingTextRenderer::~FloatingTextRenderer() = default;
 
     void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {

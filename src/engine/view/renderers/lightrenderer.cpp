@@ -237,7 +237,7 @@ namespace FIFE
     {
         return new LightRenderer(*this);
     }
-    LightRenderer::~LightRenderer() { }
+    LightRenderer::~LightRenderer() = default;
     // Add a static lightmap
     void LightRenderer::addImage(const std::string& group, RendererNode n, ImagePtr image, int32_t src, int32_t dst)
     {

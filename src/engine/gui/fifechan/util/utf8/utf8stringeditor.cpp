@@ -20,7 +20,8 @@ namespace fcn
 
     int UTF8StringEditor::nextChar(const std::string& text, int byteOffset)
     {
-        std::string::const_iterator c, e;
+        std::string::const_iterator c;
+        std::string::const_iterator e;
 
         c = text.begin() + byteOffset;
         e = text.end();
@@ -31,7 +32,8 @@ namespace fcn
 
     int UTF8StringEditor::prevChar(const std::string& text, int byteOffset)
     {
-        std::string::const_iterator c, b;
+        std::string::const_iterator c;
+        std::string::const_iterator b;
 
         c = text.begin() + byteOffset;
         b = text.begin();
@@ -42,7 +44,8 @@ namespace fcn
 
     int UTF8StringEditor::eraseChar(std::string& text, int byteOffset)
     {
-        std::string::iterator begin, cur;
+        std::string::iterator begin;
+        std::string::iterator cur;
         begin = text.begin() + byteOffset;
         cur   = begin;
         utf8::next(cur, text.end());
@@ -80,11 +83,14 @@ namespace fcn
 
     int UTF8StringEditor::getOffset(const std::string& text, int charIndex)
     {
-        std::string::const_iterator cur, end;
-        int bytes = 0, i;
+        std::string::const_iterator cur;
+        std::string::const_iterator end;
+        int bytes = 0;
+        int i;
 
-        if (charIndex < 0)
+        if (charIndex < 0) {
             return 0;
+        }
 
         cur = text.begin();
         end = text.end();

@@ -92,7 +92,7 @@ namespace FIFE
 
     void GLImage::cleanup()
     {
-        if (m_texId) {
+        if (m_texId != 0u) {
             if (!m_shared) {
                 glDeleteTextures(1, &m_texId);
             }
@@ -100,7 +100,7 @@ namespace FIFE
             m_compressed = false;
         }
 
-        m_tex_coords[0] = m_tex_coords[1] = m_tex_coords[2] = m_tex_coords[3] = 0.0f;
+        m_tex_coords[0] = m_tex_coords[1] = m_tex_coords[2] = m_tex_coords[3] = 0.0F;
     }
 
     void GLImage::render(const Rect& rect, uint8_t alpha, uint8_t const * rgb)
@@ -118,7 +118,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (!m_texId) {
+        if (m_texId == 0u) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -142,7 +142,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (!m_texId) {
+        if (m_texId == 0u) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -171,7 +171,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (!m_texId) {
+        if (m_texId == 0u) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -196,7 +196,7 @@ namespace FIFE
             return;
         }
 
-        if (!m_texId) {
+        if (m_texId == 0u) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -219,7 +219,7 @@ namespace FIFE
         }
         // ultimate possibility to load the image
         // is used e.g. in case a cursor or gui image is freed even if there is a reference
-        if (!m_surface) {
+        if (m_surface == nullptr) {
             if (m_state == IResource::RES_NOT_LOADED) {
                 load();
             }
@@ -239,16 +239,16 @@ namespace FIFE
         }
 
         // used to calculate the fill ratio for given chunk
-        m_tex_coords[0] = m_tex_coords[1] = 0.0f;
+        m_tex_coords[0] = m_tex_coords[1] = 0.0F;
         m_tex_coords[2] = static_cast<float>(m_surface->w % m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
         m_tex_coords[3] = static_cast<float>(m_surface->h % m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
 
-        if (m_tex_coords[2] == 0.0f) {
-            m_tex_coords[2] = 1.0f;
+        if (m_tex_coords[2] == 0.0F) {
+            m_tex_coords[2] = 1.0F;
         }
 
-        if (m_tex_coords[3] == 0.0f) {
-            m_tex_coords[3] = 1.0f;
+        if (m_tex_coords[3] == 0.0F) {
+            m_tex_coords[3] = 1.0F;
         }
 
         uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
@@ -528,7 +528,7 @@ namespace FIFE
         m_compressed   = m_shared_img->m_compressed;
         m_atlas_name   = m_shared_img->getName();
 
-        if (m_texId) {
+        if (m_texId != 0u) {
             generateGLSharedTexture(img, region);
         }
 
@@ -547,14 +547,14 @@ namespace FIFE
     void GLImage::validateShared()
     {
         // if image is valid we can return
-        if (m_shared_img->m_texId && m_shared_img->m_texId == m_texId) {
+        if ((m_shared_img->m_texId != 0u) && m_shared_img->m_texId == m_texId) {
             return;
         }
 
         if (m_shared_img->getState() == IResource::RES_NOT_LOADED) {
             m_shared_img->load();
             m_shared_img->generateGLTexture();
-        } else if (!m_shared_img->m_texId) {
+        } else if (m_shared_img->m_texId == 0u) {
             m_shared_img->generateGLTexture();
         }
 
@@ -568,7 +568,7 @@ namespace FIFE
     {
         Image::copySubimage(xoffset, yoffset, img);
 
-        if (m_texId) {
+        if (m_texId != 0u) {
             static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
             glTexSubImage2D(
                 GL_TEXTURE_2D,
@@ -600,7 +600,7 @@ namespace FIFE
                 m_texId      = m_shared_img->m_texId;
                 m_surface    = m_shared_img->m_surface;
                 m_compressed = m_shared_img->m_compressed;
-                if (m_texId) {
+                if (m_texId != 0u) {
                     generateGLSharedTexture(m_shared_img, m_subimagerect);
                 }
             }

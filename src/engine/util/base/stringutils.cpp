@@ -32,10 +32,10 @@ namespace FIFE
 
         start = curr = static_cast<int>(str.find_first_not_of(delim));
 
-        while (str[curr]) {
+        while (str[curr] != 0) {
             if (str[curr] == group) {
                 curr = static_cast<int>(str.find_first_of(group, curr + 1));
-                if ((size_t)curr == std::string::npos) {
+                if (static_cast<size_t>(curr) == std::string::npos) {
                     return IntVector();
                 }
 

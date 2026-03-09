@@ -37,8 +37,9 @@ namespace FIFE
 
         FL_LOG(_log, LMsg("MFFalloutDAT2") << "FileListLength: " << fileListLength << " ArchiveSize: " << archiveSize);
 
-        if (archiveSize != m_data->getDataLength())
+        if (archiveSize != m_data->getDataLength()) {
             throw InvalidFormat("size mismatch");
+        }
 
         m_data->setIndex(archiveSize - fileListLength - 8);
         m_filecount    = m_data->read32Little();
@@ -60,8 +61,9 @@ namespace FIFE
         // Load more items per call,
         // otherwise it takes _ages_ until everything is in.
         uint32_t load_per_cycle = 50;
-        if (load_per_cycle > m_filecount)
+        if (load_per_cycle > m_filecount) {
             load_per_cycle = m_filecount;
+        }
         m_filecount -= load_per_cycle;
 
         // Save the old index in an exception save way.
@@ -70,7 +72,7 @@ namespace FIFE
         // Move index to file list and read the entries.
         m_data->setIndex(m_currentIndex);
         RawDataDAT2::s_info info;
-        while (load_per_cycle--) {
+        while ((load_per_cycle--) != 0u) {
             uint32_t namelen = m_data->read32Little();
             info.name        = fixPath(m_data->readString(namelen));
 
@@ -128,12 +130,12 @@ namespace FIFE
 
         // We might have another chance to find the file
         // if the number of file entries not zero.
-        if (m_filecount && i == m_filelist.end()) {
+        if ((m_filecount != 0u) && i == m_filelist.end()) {
             FL_LOG(
                 _log,
                 LMsg("MFFalloutDAT2") << "Missing '" << name << "' in partially(" << m_filecount << ") loaded "
                                       << m_datpath);
-            while (m_filecount && i == m_filelist.end()) {
+            while ((m_filecount != 0u) && i == m_filelist.end()) {
                 readFileEntry();
                 i = m_filelist.find(name);
             }
@@ -159,7 +161,7 @@ namespace FIFE
         // Force loading the complete file entries
         // This is a costly operation... right after startup.
         // Later this should do nothing.
-        while (m_filecount) {
+        while (m_filecount != 0u) {
             readFileEntry();
         }
 

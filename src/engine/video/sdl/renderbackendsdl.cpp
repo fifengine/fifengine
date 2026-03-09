@@ -66,7 +66,7 @@ namespace FIFE
     void RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon)
     {
         setScreenMode(mode);
-        if (m_window) {
+        if (m_window != nullptr) {
             if (icon != "") {
                 SDL_Surface* img = IMG_Load(icon.c_str());
                 if (img != nullptr) {
@@ -85,7 +85,7 @@ namespace FIFE
         uint16_t bitsPerPixel = mode.getBPP();
         uint32_t flags        = mode.getSDLFlags();
         // in case of recreating
-        if (m_window) {
+        if (m_window != nullptr) {
             SDL_DestroyRenderer(m_renderer);
             SDL_DestroyWindow(m_window);
             m_screen = nullptr;
@@ -110,7 +110,7 @@ namespace FIFE
                 flags | SDL_WINDOW_SHOWN);
         }
 
-        if (!m_window) {
+        if (m_window == nullptr) {
             throw SDLException(SDL_GetError());
         }
         // make sure the window have the right settings
@@ -129,7 +129,7 @@ namespace FIFE
             flags |= SDL_RENDERER_PRESENTVSYNC;
         }
         m_renderer = SDL_CreateRenderer(m_window, mode.getRenderDriverIndex(), flags);
-        if (!m_renderer) {
+        if (m_renderer == nullptr) {
             throw SDLException(SDL_GetError());
         }
         // set texture filtering
@@ -146,7 +146,7 @@ namespace FIFE
         // set the window surface as main surface, not really needed anymore
         m_screen = SDL_GetWindowSurface(m_window);
         m_target = m_screen;
-        if (!m_screen) {
+        if (m_screen == nullptr) {
             throw SDLException(SDL_GetError());
         }
 
@@ -321,7 +321,7 @@ namespace FIFE
                                           static_cast<float>(points[j].y - points[i].y) *
                                           static_cast<float>(points[j].x - points[i].x));
                     xs.push_back(x);
-                    for (int32_t k = xs.size() - 1; k && xs[k - 1] > xs[k]; --k) {
+                    for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
                     }
                 }
@@ -556,7 +556,7 @@ namespace FIFE
                                           static_cast<float>(points[j].y - points[i].y) *
                                           static_cast<float>(points[j].x - points[i].x));
                     xs.push_back(x);
-                    for (int32_t k = xs.size() - 1; k && xs[k - 1] > xs[k]; --k) {
+                    for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
                     }
                 }
@@ -593,13 +593,13 @@ namespace FIFE
 
     void RenderBackendSDL::captureScreen(const std::string& filename)
     {
-        if (m_screen) {
+        if (m_screen != nullptr) {
             const uint32_t swidth  = getWidth();
             const uint32_t sheight = getHeight();
 
             SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24, RMASK, GMASK, BMASK, NULLMASK);
 
-            if (!surface) {
+            if (surface == nullptr) {
                 return;
             }
 
@@ -612,7 +612,7 @@ namespace FIFE
 
     void RenderBackendSDL::captureScreen(const std::string& filename, uint32_t width, uint32_t height)
     {
-        if (m_screen) {
+        if (m_screen != nullptr) {
             const uint32_t swidth  = getWidth();
             const uint32_t sheight = getHeight();
             const bool same_size   = (width == swidth && height == sheight);
@@ -628,7 +628,7 @@ namespace FIFE
             // create source surface
             SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32, RMASK, GMASK, BMASK, AMASK);
 
-            if (!src) {
+            if (src == nullptr) {
                 return;
             }
             // copy screen suface to source surface
@@ -640,7 +640,10 @@ namespace FIFE
             uint32_t* src_help_pointer = src_pointer;
             uint32_t* dst_pointer      = static_cast<uint32_t*>(dst->pixels);
 
-            int32_t x, y, *sx_ca, *sy_ca;
+            int32_t x;
+            int32_t y;
+            int32_t* sx_ca;
+            int32_t* sy_ca;
             int32_t sx   = static_cast<int32_t>(0xffff * src->w / dst->w);
             int32_t sy   = static_cast<int32_t>(0xffff * src->h / dst->h);
             int32_t sx_c = 0;
@@ -686,7 +689,8 @@ namespace FIFE
                     dst_pointer++;
                 }
                 sy_ca++;
-                src_help_pointer = (uint32_t*)((uint8_t*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
+                src_help_pointer = reinterpret_cast<uint32_t*>(
+                    reinterpret_cast<uint8_t*>(src_help_pointer) + (*sy_ca >> 16) * src->pitch);
             }
 
             if (SDL_MUSTLOCK(dst)) {
@@ -729,7 +733,7 @@ namespace FIFE
         SDLImage* image      = static_cast<SDLImage*>(img.get());
         m_target             = img->getSurface();
         SDL_Texture* texture = image->getTexture();
-        if (!texture) {
+        if (texture == nullptr) {
             texture =
                 SDL_CreateTexture(m_renderer, m_rgba_format.format, SDL_TEXTUREACCESS_TARGET, m_target->w, m_target->h);
             image->setTexture(texture);

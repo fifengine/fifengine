@@ -73,7 +73,7 @@ namespace fcn
         setLeftResizable(false);
     }
 
-    DockArea::~DockArea() { }
+    DockArea::~DockArea() = default;
 
     void DockArea::setActiveDockArea(bool active)
     {
@@ -227,9 +227,9 @@ namespace fcn
                 }
             }
         }
-        if (placeBefore || placeAfter) {
+        if ((placeBefore != nullptr) || (placeAfter != nullptr)) {
             mChildren.remove(widget);
-            if (placeBefore) {
+            if (placeBefore != nullptr) {
                 std::list<Widget*>::iterator it = std::find(mChildren.begin(), mChildren.end(), placeBefore);
                 mChildren.insert(it, widget);
             } else {
@@ -244,7 +244,7 @@ namespace fcn
     void DockArea::repositionDockAreas()
     {
         Widget* parent = getParent();
-        if (parent) {
+        if (parent != nullptr) {
             DockArea* top                   = nullptr;
             DockArea* right                 = nullptr;
             DockArea* bottom                = nullptr;
@@ -253,7 +253,7 @@ namespace fcn
             std::list<Widget*>::iterator it = widgets.begin();
             for (; it != widgets.end(); ++it) {
                 DockArea* tmp = dynamic_cast<DockArea*>(*it);
-                if (!tmp) {
+                if (tmp == nullptr) {
                     continue;
                 }
                 tmp->keepInBounds();
@@ -268,8 +268,8 @@ namespace fcn
                 }
             }
 
-            if (top) {
-                if (right) {
+            if (top != nullptr) {
+                if (right != nullptr) {
                     if (top->getY() + top->getHeight() >= right->getY() ||
                         top->getY() + top->getHeight() + 1 < right->getY()) {
                         int32_t newY = top->getY() + top->getHeight() + 1;
@@ -278,7 +278,7 @@ namespace fcn
                         right->setHeight(right->getHeight() + diff);
                     }
                 }
-                if (left) {
+                if (left != nullptr) {
                     if (top->getY() + top->getHeight() >= left->getY() ||
                         top->getY() + top->getHeight() + 1 < left->getY()) {
                         int32_t newY = top->getY() + top->getHeight() + 1;
@@ -287,7 +287,7 @@ namespace fcn
                         left->setHeight(left->getHeight() + diff);
                     }
                 }
-                if (bottom) {
+                if (bottom != nullptr) {
                     if (top->getY() + top->getHeight() >= bottom->getY()) {
                         int32_t newY = top->getY() + top->getHeight() + 1;
                         int32_t diff = newY - bottom->getY();
@@ -297,8 +297,8 @@ namespace fcn
                 }
             }
 
-            if (bottom) {
-                if (right) {
+            if (bottom != nullptr) {
+                if (right != nullptr) {
                     if (right->getY() + right->getHeight() >= bottom->getY() ||
                         right->getY() + right->getHeight() + 1 < bottom->getY()) {
                         Size min = right->getMinSize();
@@ -309,7 +309,7 @@ namespace fcn
                         right->setMinSize(min);
                     }
                 }
-                if (left) {
+                if (left != nullptr) {
                     if (left->getY() + left->getHeight() >= bottom->getY() ||
                         left->getY() + left->getHeight() + 1 < bottom->getY()) {
                         Size min = left->getMinSize();
@@ -327,7 +327,7 @@ namespace fcn
     void DockArea::keepInBounds()
     {
         Widget* parent = getParent();
-        if (!parent) {
+        if (parent == nullptr) {
             return;
         }
         Rectangle childArea = parent->getChildrenArea();

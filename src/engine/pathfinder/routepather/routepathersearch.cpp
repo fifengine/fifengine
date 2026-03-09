@@ -35,14 +35,14 @@ namespace FIFE
             std::vector<ModelCoordinate>::const_iterator co_it = coords.begin();
             for (; co_it != coords.end(); ++co_it) {
                 Cell* cell = loc.getLayer()->getCellCache()->getCell(*co_it);
-                if (cell) {
+                if (cell != nullptr) {
                     m_ignoredBlockers.push_back(cell);
                 }
             }
         }
     }
 
-    RoutePatherSearch::~RoutePatherSearch() { }
+    RoutePatherSearch::~RoutePatherSearch() = default;
 
     int32_t RoutePatherSearch::getSessionId() const
     {

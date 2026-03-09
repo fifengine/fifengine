@@ -38,7 +38,7 @@ namespace FIFE
         m_layer = layer;
     }
 
-    Location::~Location() { }
+    Location::~Location() = default;
 
     void Location::reset()
     {
@@ -59,7 +59,7 @@ namespace FIFE
 
     Map* Location::getMap() const
     {
-        if (!m_layer) {
+        if (m_layer == nullptr) {
             return nullptr;
         }
         return m_layer->getMap();
@@ -123,7 +123,7 @@ namespace FIFE
 
     bool Location::isValid(const Layer* layer) const
     {
-        return (layer && layer->getCellGrid());
+        return ((layer != nullptr) && (layer->getCellGrid() != nullptr));
     }
 
     ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const

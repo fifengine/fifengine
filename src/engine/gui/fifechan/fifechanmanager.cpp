@@ -50,8 +50,8 @@ namespace FIFE
         m_defaultfont(nullptr),
         m_fonts(),
         m_logic_executed(false),
-        m_enabled_console(true),
-        m_backend("")
+        m_enabled_console(true)
+        
     {
 
         m_fcn_gui->setInput(m_input);
@@ -85,7 +85,7 @@ namespace FIFE
 
     bool FifechanManager::onSdlEvent(SDL_Event& evt)
     {
-        if (!m_input) {
+        if (m_input == nullptr) {
             FL_WARN(_log, "FifechanManager, FifechanGUI->getInput == 0 ... discarding events!");
             return false;
         }
@@ -120,7 +120,7 @@ namespace FIFE
         case SDL_MOUSEMOTION:
             m_lastMotionX = evt.motion.x;
             m_lastMotionY = evt.motion.y;
-            if (m_fcn_topcontainer->getWidgetAt(evt.motion.x, evt.motion.y)) {
+            if (m_fcn_topcontainer->getWidgetAt(evt.motion.x, evt.motion.y) != nullptr) {
                 m_had_mouse = true;
                 m_input->pushInput(evt);
                 return true;
@@ -136,7 +136,7 @@ namespace FIFE
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-            if (m_focushandler->getFocused()) {
+            if (m_focushandler->getFocused() != nullptr) {
                 m_input->pushInput(evt);
                 return true;
             }
@@ -166,7 +166,7 @@ namespace FIFE
         }
         m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
         invalidateFonts();
-        if (m_console) {
+        if (m_console != nullptr) {
             m_console->reLayout();
         }
     }
@@ -178,7 +178,7 @@ namespace FIFE
 
     void FifechanManager::add(fcn::Widget* widget)
     {
-        if (!m_widgets.count(widget)) {
+        if (m_widgets.count(widget) == 0u) {
             m_fcn_topcontainer->add(widget);
             m_widgets.insert(widget);
         }
@@ -186,7 +186,7 @@ namespace FIFE
 
     void FifechanManager::remove(fcn::Widget* widget)
     {
-        if (m_widgets.count(widget)) {
+        if (m_widgets.count(widget) != 0u) {
             m_widgets.erase(widget);
             m_fcn_topcontainer->remove(widget);
         }
@@ -291,7 +291,7 @@ namespace FIFE
 
         m_defaultfont = createFont();
         fcn::Widget::setGlobalFont(m_defaultfont);
-        if (m_console) {
+        if (m_console != nullptr) {
             m_console->reLayout();
         }
 
@@ -300,8 +300,9 @@ namespace FIFE
 
     void FifechanManager::turn()
     {
-        if (!m_logic_executed)
+        if (!m_logic_executed) {
             m_fcn_gui->logic();
+        }
         m_logic_executed = false;
         m_fcn_gui->draw();
     }

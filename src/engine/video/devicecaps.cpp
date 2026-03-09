@@ -29,7 +29,7 @@ namespace FIFE
         m_SDLFlags(0),
         m_format(0),
         m_display(0),
-        m_renderDriver(""),
+        
         m_renderDriverIndex(-1)
     {
     }
@@ -42,7 +42,7 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
-        m_renderDriver(""),
+        
         m_renderDriverIndex(-1)
     {
     }
@@ -55,7 +55,7 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
-        m_renderDriver(""),
+        
         m_renderDriverIndex(-1)
     {
     }
@@ -110,9 +110,9 @@ namespace FIFE
         return false;
     }
 
-    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"), m_renderDriverName(""), m_renderDriverIndex(-1) { }
+    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"),  m_renderDriverIndex(-1) { }
 
-    DeviceCaps::~DeviceCaps() { }
+    DeviceCaps::~DeviceCaps() = default;
 
     void DeviceCaps::reset()
     {
@@ -231,7 +231,8 @@ namespace FIFE
         uint8_t display) const
     {
         ScreenMode mode;
-        SDL_DisplayMode target, closest;
+        SDL_DisplayMode target;
+        SDL_DisplayMode closest;
         bool foundMode = false;
 
         // Set the desired resolution, etc.
@@ -248,7 +249,7 @@ namespace FIFE
         target.driverdata   = nullptr; // initialize to 0
 
         // only first display
-        if (SDL_GetClosestDisplayMode(display, &target, &closest)) {
+        if (SDL_GetClosestDisplayMode(display, &target, &closest) != nullptr) {
             uint32_t flags = 0;
             if (renderer == "OpenGL") {
                 if (fs) {

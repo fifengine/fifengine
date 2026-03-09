@@ -53,7 +53,7 @@ namespace FIFE
         return nGrid;
     }
 
-    HexGrid::~HexGrid() { }
+    HexGrid::~HexGrid() = default;
 
     bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target)
     {
@@ -68,7 +68,7 @@ namespace FIFE
             } else {
                 if (y == 0) {
                     return true;
-                } else if (curpos.y & 1) {
+                } else if ((curpos.y & 1) != 0) {
                     if (x >= 0) {
                         return true;
                     }
@@ -173,8 +173,9 @@ namespace FIFE
         ExactModelCoordinate elc = coords;
 
         // approximate conversion using squares instead of hexes
-        if (static_cast<int32_t>(round(elc.y)) & 1)
+        if ((static_cast<int32_t>(round(elc.y)) & 1) != 0) {
             elc.x -= 0.5;
+        }
         ExactModelCoordinate lc = ExactModelCoordinate(round(elc.x), round(elc.y), round(elc.z));
 
         int32_t x = static_cast<int32_t>(lc.x);
@@ -184,7 +185,7 @@ namespace FIFE
         // distance of given point from our approximation
         // If y uneven dx=-dx and dy=-dy
         double dx, dy;
-        if (y & 1) {
+        if ((y & 1) != 0) {
             dx = elc.x - lc.x;
             dy = elc.y - lc.y;
         } else {
@@ -195,17 +196,19 @@ namespace FIFE
         // adjustment for cases where our approximation lies beyond the hex edge
         if (ABS(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * ABS(dx)) * VERTICAL_MULTIP_INV)) {
             int8_t ddx, ddy;
-            if (dx > 0)
+            if (dx > 0) {
                 ddx = -1;
-            else
+            } else {
                 ddx = 0;
+            }
 
-            if (dy > 0)
+            if (dy > 0) {
                 ddy = -1;
-            else
+            } else {
                 ddy = 1;
+            }
 
-            if (y & 1) {
+            if ((y & 1) != 0) {
                 ddx = -ddx;
                 ddy = -ddy;
             }
@@ -215,10 +218,11 @@ namespace FIFE
         }
 
         if (m_axial) {
-            if (y >= 0)
+            if (y >= 0) {
                 x -= y / 2;
-            else
+            } else {
                 x -= (y - 1) / 2;
+            }
         }
 
         return ModelCoordinate(x, y, z);

@@ -43,11 +43,11 @@ namespace FIFE
     class CacheLayerChangeListener : public LayerChangeListener
     {
     public:
-        CacheLayerChangeListener(LayerCache* cache)
+        explicit CacheLayerChangeListener(LayerCache* cache)
         {
             m_cache = cache;
         }
-        ~CacheLayerChangeListener() override { }
+        ~CacheLayerChangeListener() override = default;
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
@@ -90,7 +90,7 @@ namespace FIFE
     class InstanceDistanceSortLocation
     {
     public:
-        InstanceDistanceSortLocation(double rotation)
+        explicit InstanceDistanceSortLocation(double rotation)
         {
             if ((rotation >= 0) && (rotation <= 60)) { // 30 deg
                 xtox = 0;
@@ -209,7 +209,7 @@ namespace FIFE
     void LayerCache::setLayer(Layer* layer)
     {
         if (m_layer != layer) {
-            if (m_layer) {
+            if (m_layer != nullptr) {
                 m_layer->removeChangeListener(m_layerObserver);
                 delete m_layerObserver;
             }
@@ -295,7 +295,7 @@ namespace FIFE
             m_entriesToUpdate.erase(it);
         }
         // removes entry from CacheTree
-        if (entry->node) {
+        if (entry->node != nullptr) {
             entry->node->data().erase(entry->entryIndex);
             entry->node = nullptr;
         }
@@ -370,7 +370,7 @@ namespace FIFE
         CacheTreeCollector collector(index_list, viewport);
         node->apply_visitor(collector);
         node = node->parent();
-        while (node) {
+        while (node != nullptr) {
             collector.visit(node);
             node = node->parent();
         }
@@ -584,7 +584,7 @@ namespace FIFE
         Action* action         = instance->getCurrentAction();
         ImagePtr image;
 
-        if (visual) {
+        if (visual != nullptr) {
             uint8_t layerTrans    = m_layer->getLayerTransparency();
             uint8_t instanceTrans = visual->getTransparency();
             if (layerTrans != 0) {
@@ -606,7 +606,7 @@ namespace FIFE
         // delete old overlay
         item->deleteOverlayData();
 
-        if (!action) {
+        if (action == nullptr) {
             // Try static images then default action.
             int32_t image_id = item->getStaticImageIndexByAngle(angle, instance);
             if (image_id == -1) {
@@ -619,7 +619,7 @@ namespace FIFE
         }
         entry->forceUpdate = (action != nullptr);
 
-        if (action) {
+        if (action != nullptr) {
             ActionVisual* actionVisual = action->getVisual<ActionVisual>();
             bool colorOverlay          = actionVisual->isColorOverlay();
             // assumed all have the same size
@@ -636,7 +636,7 @@ namespace FIFE
 
                     if (colorOverlay) {
                         OverlayColors* co = actionVisual->getColorOverlay(angle, it->first);
-                        if (co) {
+                        if (co != nullptr) {
                             AnimationPtr ovAnim = co->getColorOverlayAnimation();
                             animationTime       = instance->getActionRuntime() % ovAnim->getDuration();
                             co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
@@ -671,7 +671,7 @@ namespace FIFE
                 }
                 if (colorOverlay) {
                     OverlayColors* co = actionVisual->getColorOverlay(angle);
-                    if (co) {
+                    if (co != nullptr) {
                         AnimationPtr ovAnim = co->getColorOverlayAnimation();
                         animationTime       = instance->getActionRuntime() % ovAnim->getDuration();
                         co->setColorOverlayImage(ovAnim->getFrameByTimestamp(animationTime));
@@ -734,9 +734,9 @@ namespace FIFE
         updateScreenCoordinate(item);
 
         CacheTree::Node* node = m_tree->find_container(item->bbox);
-        if (node) {
+        if (node != nullptr) {
             if (node != entry->node) {
-                if (entry->node) {
+                if (entry->node != nullptr) {
                     entry->node->data().erase(entry->entryIndex);
                 }
                 entry->node = node;

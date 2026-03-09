@@ -22,7 +22,7 @@ namespace FIFE
 {
     static Logger _log(LM_RESMGR);
 
-    SoundClipManager::~SoundClipManager() { }
+    SoundClipManager::~SoundClipManager() = default;
 
     size_t SoundClipManager::getMemoryUsed() const
     {

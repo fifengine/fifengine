@@ -27,13 +27,13 @@ namespace FIFE
      */
     static Logger _log(LM_VIEW);
 
-    OverlayColors::OverlayColors() { }
+    OverlayColors::OverlayColors() = default;
 
     OverlayColors::OverlayColors(ImagePtr image) : m_image(image) { }
 
     OverlayColors::OverlayColors(AnimationPtr animation) : m_animation(animation) { }
 
-    OverlayColors::~OverlayColors() { }
+    OverlayColors::~OverlayColors() = default;
 
     void OverlayColors::setColorOverlayImage(ImagePtr image)
     {
@@ -74,15 +74,15 @@ namespace FIFE
         m_colorMap.clear();
     }
 
-    Visual2DGfx::Visual2DGfx() { }
+    Visual2DGfx::Visual2DGfx() = default;
 
-    Visual2DGfx::~Visual2DGfx() { }
+    Visual2DGfx::~Visual2DGfx() = default;
 
-    ObjectVisual::ObjectVisual() { }
+    ObjectVisual::ObjectVisual() = default;
 
     ObjectVisual* ObjectVisual::create(Object* object)
     {
-        if (object->getVisual<ObjectVisual>()) {
+        if (object->getVisual<ObjectVisual>() != nullptr) {
             throw Duplicate("Object already contains visualization");
         }
         ObjectVisual* v = new ObjectVisual();
@@ -90,7 +90,7 @@ namespace FIFE
         return v;
     }
 
-    ObjectVisual::~ObjectVisual() { }
+    ObjectVisual::~ObjectVisual() = default;
 
     void ObjectVisual::addStaticImage(uint32_t angle, int32_t image_index)
     {
@@ -163,7 +163,7 @@ namespace FIFE
 
     InstanceVisual* InstanceVisual::create(Instance* instance)
     {
-        if (instance->getVisual<InstanceVisual>()) {
+        if (instance->getVisual<InstanceVisual>() != nullptr) {
             throw Duplicate("Instance already contains visualization");
         }
         InstanceVisual* v = new InstanceVisual();
@@ -172,7 +172,7 @@ namespace FIFE
         return v;
     }
 
-    InstanceVisual::~InstanceVisual() { }
+    InstanceVisual::~InstanceVisual() = default;
 
     void InstanceVisual::setTransparency(uint8_t transparency)
     {
@@ -217,7 +217,7 @@ namespace FIFE
 
     ActionVisual* ActionVisual::create(Action* action)
     {
-        if (action->getVisual<ActionVisual>()) {
+        if (action->getVisual<ActionVisual>() != nullptr) {
             throw Duplicate("Action already contains visualization");
         }
         ActionVisual* v = new ActionVisual();
@@ -225,7 +225,7 @@ namespace FIFE
         return v;
     }
 
-    ActionVisual::~ActionVisual() { }
+    ActionVisual::~ActionVisual() = default;
 
     void ActionVisual::addAnimation(uint32_t angle, AnimationPtr animationptr)
     {

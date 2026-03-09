@@ -39,7 +39,7 @@ namespace FIFE
         // m_atlasSaver = new AtlasSaver();
     }
 
-    MapSaver::~MapSaver() { }
+    MapSaver::~MapSaver() = default;
 
     void MapSaver::setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver)
     {
@@ -136,7 +136,7 @@ namespace FIFE
             XML::Element* instancesElement = doc.NewElement("instances");
             layerElement->InsertEndChild(instancesElement);
 
-            std::string currentNamespace = "";
+            std::string currentNamespace;
             typedef std::vector<Instance*> InstancesContainer;
             InstancesContainer instances = (*iter)->getInstances();
             for (InstancesContainer::iterator iter = instances.begin(); iter != instances.end(); ++iter) {
@@ -198,7 +198,7 @@ namespace FIFE
         mapElement->InsertEndChild(cellcachesElement);
         for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
             CellCache* cache = (*iter)->getCellCache();
-            if (!cache) {
+            if (cache == nullptr) {
                 continue;
             }
             // add cellcache tag to document
@@ -259,7 +259,7 @@ namespace FIFE
                             isNarrow = true;
                         }
                     }
-                    if (costsEmpty && defaultCost && defaultSpeed && areasEmpty && cellBlocker && !transition &&
+                    if (costsEmpty && defaultCost && defaultSpeed && areasEmpty && cellBlocker && (transition == nullptr) &&
                         !isNarrow) {
                         continue;
                     }
@@ -307,7 +307,7 @@ namespace FIFE
                         }
                     }
                     // add transition tag
-                    if (transition) {
+                    if (transition != nullptr) {
                         XML::Element* transitionElement = doc.NewElement("transition");
                         transitionElement->SetAttribute("id", transition->m_layer->getId().c_str());
                         transitionElement->SetAttribute("x", transition->m_mc.x);
@@ -340,7 +340,7 @@ namespace FIFE
                 triggerElement->SetAttribute("name", (*iter)->getName().c_str());
                 triggerElement->SetAttribute("triggered", (*iter)->isTriggered());
                 triggerElement->SetAttribute("all_instances", (*iter)->isEnabledForAllInstances());
-                if ((*iter)->getAttached()) {
+                if ((*iter)->getAttached() != nullptr) {
                     triggerElement->SetAttribute("attached_instance", (*iter)->getAttached()->getId().c_str());
                     triggerElement->SetAttribute(
                         "attached_layer", (*iter)->getAttached()->getLocationRef().getLayer()->getId().c_str());

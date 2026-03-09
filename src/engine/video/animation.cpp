@@ -45,7 +45,7 @@ namespace FIFE
 
     void Animation::load()
     {
-        if (m_loader) {
+        if (m_loader != nullptr) {
             m_loader->load(this);
         } else {
             ResourceAnimationLoader loader;

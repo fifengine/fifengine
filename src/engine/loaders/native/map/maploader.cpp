@@ -57,8 +57,8 @@ namespace FIFE
         m_imageManager(imageManager),
         m_animationManager(AnimationManager::instance()),
         m_renderBackend(renderBackend),
-        m_loaderName("fife"),
-        m_mapDirectory("")
+        m_loaderName("fife")
+        
     {
         AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
         AtlasLoaderPtr atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
@@ -66,7 +66,7 @@ namespace FIFE
             new ObjectLoader(m_model, m_vfs, m_imageManager, m_animationManager, animationLoader, atlasLoader));
     }
 
-    MapLoader::~MapLoader() { }
+    MapLoader::~MapLoader() = default;
 
     Map* MapLoader::load(const std::string& filename)
     {
@@ -92,7 +92,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(mapFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -124,10 +124,10 @@ namespace FIFE
         // so we can just parse out the contents
         const XML::Element* root = mapFile.RootElement();
 
-        if (root) {
+        if (root != nullptr) {
             const char* loaderName = XML::Attribute(root, "loaderName");
 
-            if (loaderName) {
+            if (loaderName != nullptr) {
                 m_loaderName = loaderName;
             }
 
@@ -137,7 +137,7 @@ namespace FIFE
 
             const char* mapName = XML::Attribute(root, "id");
 
-            if (mapName) {
+            if (mapName != nullptr) {
                 try {
                     map = m_model->createMap(mapName);
                 } catch (NameClash& e) {
@@ -147,33 +147,33 @@ namespace FIFE
                     throw;
                 }
 
-                if (map) {
+                if (map != nullptr) {
                     map->setFilename(mapFilename);
 
-                    std::string ns = "";
-                    for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
+                    std::string ns;
+                    for (const XML::Element* importElement = root->FirstChildElement("import"); importElement != nullptr;
                          importElement                     = importElement->NextSiblingElement("import")) {
                         const char* importDir  = XML::Attribute(importElement, "dir");
                         const char* importFile = XML::Attribute(importElement, "file");
 
-                        std::string directory = "";
-                        if (importDir) {
+                        std::string directory;
+                        if (importDir != nullptr) {
                             directory = importDir;
                         }
 
-                        std::string file = "";
-                        if (importFile) {
+                        std::string file;
+                        if (importFile != nullptr) {
                             file = importFile;
                         }
 
-                        if (importDir && !importFile) {
+                        if ((importDir != nullptr) && (importFile == nullptr)) {
                             fs::path fullPath(m_mapDirectory);
                             fullPath /= directory;
                             loadImportDirectory(fullPath.string());
-                        } else if (importFile) {
+                        } else if (importFile != nullptr) {
                             fs::path fullFilePath(file);
                             fs::path fullDirPath(directory);
-                            if (importDir) {
+                            if (importDir != nullptr) {
                                 fullDirPath = fs::path(m_mapDirectory);
                                 fullDirPath /= directory;
                             } else {
@@ -195,7 +195,7 @@ namespace FIFE
                                 std::list<std::string>::const_iterator multi_it = multiParts.begin();
                                 for (; multi_it != multiParts.end(); ++multi_it) {
                                     Object* partObj = m_model->getObject(*multi_it, *name_it);
-                                    if (partObj) {
+                                    if (partObj != nullptr) {
                                         partObj->setMultiPart(true);
                                         (*object_it)->addMultiPart(partObj);
                                     }
@@ -205,7 +205,7 @@ namespace FIFE
                     }
 
                     // iterate over elements looking for layers
-                    for (const XML::Element* layerElement = root->FirstChildElement("layer"); layerElement;
+                    for (const XML::Element* layerElement = root->FirstChildElement("layer"); layerElement != nullptr;
                          layerElement                     = layerElement->NextSiblingElement("layer")) {
                         // defaults
                         double xOffset  = 0.0;
@@ -233,7 +233,7 @@ namespace FIFE
 
                         if (xOffsetRetVal == XML::SUCCESS && yOffsetRetVal == XML::SUCCESS &&
                             xScaleRetVal == XML::SUCCESS && yScaleRetVal == XML::SUCCESS &&
-                            rotationRetVal == XML::SUCCESS && layerName && pathing && gridType) {
+                            rotationRetVal == XML::SUCCESS && (layerName != nullptr) && (pathing != nullptr) && (gridType != nullptr)) {
 
                             PathingStrategy pathStrategy = CELL_EDGES_ONLY;
                             if (std::string(pathing) == "cell_edges_and_diagonals") {
@@ -241,7 +241,7 @@ namespace FIFE
                             }
 
                             SortingStrategy sortStrategy = SORTING_CAMERA;
-                            if (sorting) {
+                            if (sorting != nullptr) {
                                 if (std::string(sorting) == "location") {
                                     sortStrategy = SORTING_LOCATION;
                                 } else if (std::string(sorting) == "camera_and_location") {
@@ -250,13 +250,13 @@ namespace FIFE
                             }
 
                             CellGrid* grid = nullptr;
-                            if (gridType) {
+                            if (gridType != nullptr) {
                                 grid = m_model->getCellGrid(gridType);
                             } else {
                                 grid = m_model->getCellGrid("square");
                             }
 
-                            if (grid) {
+                            if (grid != nullptr) {
                                 grid->setXShift(xOffset);
                                 grid->setXScale(xScale);
                                 grid->setYShift(yOffset);
@@ -273,14 +273,14 @@ namespace FIFE
                                     assert(false);
                                 }
 
-                                if (layer) {
+                                if (layer != nullptr) {
                                     layer->setPathingStrategy(pathStrategy);
                                     layer->setSortingStrategy(sortStrategy);
-                                    if (layerType) {
+                                    if (layerType != nullptr) {
                                         if (std::string(layerType) == "walkable") {
                                             layer->setWalkable(true);
                                         } else if (std::string(layerType) == "interact") {
-                                            layer->setInteract(true, layerTypeName ? layerTypeName : "");
+                                            layer->setInteract(true, (layerTypeName != nullptr) ? layerTypeName : "");
                                         }
                                     }
 
@@ -288,9 +288,9 @@ namespace FIFE
                                     double curr_y = 0;
 
                                     for (const XML::Element* instances = layerElement->FirstChildElement("instances");
-                                         instances;
+                                         instances != nullptr;
                                          instances = instances->NextSiblingElement("instances")) {
-                                        for (const XML::Element* instance = instances->FirstChildElement("i"); instance;
+                                        for (const XML::Element* instance = instances->FirstChildElement("i"); instance != nullptr;
                                              instance                     = instance->NextSiblingElement("i")) {
                                             double x      = 0;
                                             double y      = 0;
@@ -303,17 +303,17 @@ namespace FIFE
                                             const char* objectId   = XML::Attribute(instance, "o");
                                             const char* costId     = XML::Attribute(instance, "cost_id");
 
-                                            if (!objectId) {
+                                            if (objectId == nullptr) {
                                                 objectId = XML::Attribute(instance, "object");
                                             }
 
-                                            if (!objectId) {
+                                            if (objectId == nullptr) {
                                                 objectId = XML::Attribute(instance, "obj");
                                             }
 
                                             const char* namespaceId = XML::Attribute(instance, "ns");
 
-                                            if (!namespaceId) {
+                                            if (namespaceId == nullptr) {
                                                 namespaceId = XML::Attribute(instance, "namespace");
                                             }
 
@@ -342,16 +342,16 @@ namespace FIFE
                                             int cellStackRetVal =
                                                 XML::QueryAttribute(instance, "cellstack", &cellStack);
 
-                                            if (objectId) {
-                                                if (namespaceId) {
+                                            if (objectId != nullptr) {
+                                                if (namespaceId != nullptr) {
                                                     ns = namespaceId;
                                                 }
 
                                                 Object* object = m_model->getObject(objectId, ns);
 
-                                                if (object) {
+                                                if (object != nullptr) {
                                                     Instance* inst = nullptr;
-                                                    if (instanceId) {
+                                                    if (instanceId != nullptr) {
                                                         inst = layer->createInstance(
                                                             object, ExactModelCoordinate(x, y, z), instanceId);
                                                     } else {
@@ -359,7 +359,7 @@ namespace FIFE
                                                             object, ExactModelCoordinate(x, y, z));
                                                     }
 
-                                                    if (inst) {
+                                                    if (inst != nullptr) {
                                                         if (rRetVal != XML::SUCCESS) {
                                                             ObjectVisual* objVisual = object->getVisual<ObjectVisual>();
                                                             std::vector<int> angles;
@@ -373,7 +373,7 @@ namespace FIFE
 
                                                         InstanceVisual* instVisual = InstanceVisual::create(inst);
 
-                                                        if (instVisual && (stackRetVal == XML::SUCCESS)) {
+                                                        if ((instVisual != nullptr) && (stackRetVal == XML::SUCCESS)) {
                                                             instVisual->setStackPosition(stackpos);
                                                         }
 
@@ -381,7 +381,7 @@ namespace FIFE
                                                             inst->setCellStackPosition(cellStack);
                                                         }
 
-                                                        if (costId) {
+                                                        if (costId != nullptr) {
                                                             double cost = 0;
                                                             int costRetVal =
                                                                 XML::QueryAttribute(instance, "cost", &cost);
@@ -390,7 +390,7 @@ namespace FIFE
                                                             }
                                                         }
 
-                                                        if (object->getAction("default")) {
+                                                        if (object->getAction("default") != nullptr) {
                                                             Location target(layer);
 
                                                             inst->actRepeat("default", target);
@@ -419,23 +419,23 @@ namespace FIFE
                     // init CellCaches
                     map->initializeCellCaches();
                     // add Cells from xml File
-                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements != nullptr;
                          cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
-                             cacheElement;
+                             cacheElement != nullptr;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
                             double cacheCost    = 1.0;
                             double cacheSpeed   = 1.0;
                             const char* layerId = XML::Attribute(cacheElement, "id");
 
-                            if (layerId) {
+                            if (layerId != nullptr) {
                                 cacheElement->QueryDoubleAttribute("default_cost", &cacheCost);
                                 cacheElement->QueryDoubleAttribute("default_speed", &cacheSpeed);
 
                                 Layer* layer = map->getLayer(layerId);
-                                if (layer) {
+                                if (layer != nullptr) {
                                     CellCache* cache = layer->getCellCache();
-                                    if (cache) {
+                                    if (cache != nullptr) {
                                         int searchNarrow = 0;
                                         cacheElement->QueryIntAttribute("search_narrow", &searchNarrow);
                                         cache->setSearchNarrowCells(searchNarrow != 0);
@@ -443,7 +443,7 @@ namespace FIFE
                                         cache->setDefaultCostMultiplier(cacheCost);
                                         cache->setDefaultSpeedMultiplier(cacheSpeed);
                                         for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
-                                             cellElement;
+                                             cellElement != nullptr;
                                              cellElement = cellElement->NextSiblingElement("cell")) {
                                             int cellX   = 0;
                                             int cellY   = 0;
@@ -454,7 +454,7 @@ namespace FIFE
                                                 Cell* cell = cache->createCell(mc);
 
                                                 const char* cellBlocker = XML::Attribute(cellElement, "blocker_type");
-                                                if (cellBlocker) {
+                                                if (cellBlocker != nullptr) {
                                                     if (std::string(cellBlocker) == "no_blocker") {
                                                         CellTypeInfo cti = CTYPE_CELL_NO_BLOCKER;
                                                         cell->setCellType(cti);
@@ -484,12 +484,12 @@ namespace FIFE
                                                 // add cost with given id to cell
                                                 for (const XML::Element* costElement =
                                                          cellElement->FirstChildElement("cost");
-                                                     costElement;
+                                                     costElement != nullptr;
                                                      costElement = costElement->NextSiblingElement("cost")) {
                                                     const char* costId = XML::Attribute(costElement, "id");
                                                     double cost        = 1.0;
                                                     success = costElement->QueryDoubleAttribute("value", &cost);
-                                                    if (costId && success == XML::SUCCESS) {
+                                                    if ((costId != nullptr) && success == XML::SUCCESS) {
                                                         cache->registerCost(costId, cost);
                                                         cache->addCellToCost(costId, cell);
                                                     }
@@ -497,10 +497,10 @@ namespace FIFE
                                                 // add area to cell
                                                 for (const XML::Element* areaElement =
                                                          cellElement->FirstChildElement("area");
-                                                     areaElement;
+                                                     areaElement != nullptr;
                                                      areaElement = areaElement->NextSiblingElement("area")) {
                                                     const char* areaId = XML::Attribute(areaElement, "id");
-                                                    if (areaId) {
+                                                    if (areaId != nullptr) {
                                                         cache->addCellToArea(areaId, cell);
                                                     }
                                                 }
@@ -514,19 +514,19 @@ namespace FIFE
                     // finalize CellCaches
                     map->finalizeCellCaches();
                     // add Transistions
-                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements != nullptr;
                          cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
-                             cacheElement;
+                             cacheElement != nullptr;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
                             const char* layerId = XML::Attribute(cacheElement, "id");
-                            if (layerId) {
+                            if (layerId != nullptr) {
                                 Layer* layer = map->getLayer(layerId);
-                                if (layer) {
+                                if (layer != nullptr) {
                                     CellCache* cache = layer->getCellCache();
-                                    if (cache) {
+                                    if (cache != nullptr) {
                                         for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
-                                             cellElement;
+                                             cellElement != nullptr;
                                              cellElement = cellElement->NextSiblingElement("cell")) {
                                             int cellX   = 0;
                                             int cellY   = 0;
@@ -535,12 +535,12 @@ namespace FIFE
                                             if (success == XML::SUCCESS) {
                                                 ModelCoordinate mc(cellX, cellY);
                                                 Cell* cell = cache->getCell(mc);
-                                                if (!cell) {
+                                                if (cell == nullptr) {
                                                     continue;
                                                 }
                                                 for (const XML::Element* transitionElement =
                                                          cellElement->FirstChildElement("transition");
-                                                     transitionElement;
+                                                     transitionElement != nullptr;
                                                      transitionElement =
                                                          transitionElement->NextSiblingElement("transition")) {
                                                     int targetX = 0;
@@ -554,10 +554,10 @@ namespace FIFE
                                                         Layer* targetLayer = nullptr;
                                                         const char* targetLayerId =
                                                             XML::Attribute(transitionElement, "id");
-                                                        if (targetLayerId) {
+                                                        if (targetLayerId != nullptr) {
                                                             targetLayer = map->getLayer(targetLayerId);
                                                         }
-                                                        if (!targetLayer) {
+                                                        if (targetLayer == nullptr) {
                                                             targetLayer = layer;
                                                         }
 
@@ -574,11 +574,11 @@ namespace FIFE
                         }
                     }
 
-                    for (const XML::Element* triggerElements = root->FirstChildElement("triggers"); triggerElements;
+                    for (const XML::Element* triggerElements = root->FirstChildElement("triggers"); triggerElements != nullptr;
                          triggerElements                     = triggerElements->NextSiblingElement("triggers")) {
                         TriggerController* triggerController = map->getTriggerController();
                         for (const XML::Element* triggerElement = triggerElements->FirstChildElement("trigger");
-                             triggerElement;
+                             triggerElement != nullptr;
                              triggerElement = triggerElement->NextSiblingElement("trigger")) {
                             const char* triggerName = XML::Attribute(triggerElement, "name");
                             int triggered           = 0;
@@ -596,20 +596,20 @@ namespace FIFE
 
                             const char* instanceId = XML::Attribute(triggerElement, "attached_instance");
                             const char* layerId    = XML::Attribute(triggerElement, "attached_layer");
-                            if (instanceId && layerId) {
+                            if ((instanceId != nullptr) && (layerId != nullptr)) {
                                 Layer* layer = map->getLayer(layerId);
-                                if (layer) {
+                                if (layer != nullptr) {
                                     Instance* instance = layer->getInstance(instanceId);
-                                    if (instance) {
+                                    if (instance != nullptr) {
                                         trigger->attach(instance);
                                     }
                                 }
                             }
                             for (const XML::Element* assignElement = triggerElement->FirstChildElement("assign");
-                                 assignElement;
+                                 assignElement != nullptr;
                                  assignElement = assignElement->NextSiblingElement("assign")) {
                                 layerId = XML::Attribute(assignElement, "layer_id");
-                                if (!layerId) {
+                                if (layerId == nullptr) {
                                     continue;
                                 }
                                 int x = 0;
@@ -617,28 +617,28 @@ namespace FIFE
                                 assignElement->QueryIntAttribute("x", &x);
                                 assignElement->QueryIntAttribute("y", &y);
                                 Layer* layer = map->getLayer(layerId);
-                                if (layer) {
+                                if (layer != nullptr) {
                                     trigger->assign(layer, ModelCoordinate(x, y));
                                 }
                             }
                             for (const XML::Element* enabledElement = triggerElement->FirstChildElement("enabled");
-                                 enabledElement;
+                                 enabledElement != nullptr;
                                  enabledElement = enabledElement->NextSiblingElement("enabled")) {
                                 layerId    = XML::Attribute(enabledElement, "layer_id");
                                 instanceId = XML::Attribute(enabledElement, "instance_id");
-                                if (!instanceId || !layerId) {
+                                if ((instanceId == nullptr) || (layerId == nullptr)) {
                                     continue;
                                 }
                                 Layer* layer = map->getLayer(layerId);
-                                if (layer) {
+                                if (layer != nullptr) {
                                     Instance* instance = layer->getInstance(instanceId);
-                                    if (instance) {
+                                    if (instance != nullptr) {
                                         trigger->enableForInstance(instance);
                                     }
                                 }
                             }
                             for (const XML::Element* conditionElement = triggerElement->FirstChildElement("condition");
-                                 conditionElement;
+                                 conditionElement != nullptr;
                                  conditionElement = conditionElement->NextSiblingElement("condition")) {
                                 int conditionId = -1;
                                 conditionElement->QueryIntAttribute("id", &conditionId);
@@ -649,7 +649,7 @@ namespace FIFE
                         }
                     }
 
-                    for (const XML::Element* cameraElement = root->FirstChildElement("camera"); cameraElement;
+                    for (const XML::Element* cameraElement = root->FirstChildElement("camera"); cameraElement != nullptr;
                          cameraElement                     = cameraElement->NextSiblingElement("camera")) {
                         const char* cameraId = XML::Attribute(cameraElement, "id");
 
@@ -658,7 +658,7 @@ namespace FIFE
                         int success       = cameraElement->QueryIntAttribute("ref_cell_width", &refCellWidth);
                         success &= cameraElement->QueryIntAttribute("ref_cell_height", &refCellHeight);
 
-                        if (cameraId && success == XML::SUCCESS) {
+                        if ((cameraId != nullptr) && success == XML::SUCCESS) {
                             double tilt     = 0.0;
                             double zoom     = 1.0;
                             double rotation = 0.0;
@@ -672,7 +672,7 @@ namespace FIFE
 
                             Camera* cam = nullptr;
 
-                            if (viewport) {
+                            if (viewport != nullptr) {
                                 // parse out the viewport parameters
                                 IntVector viewportParameters = tokenize(viewport, ',');
 
@@ -702,7 +702,7 @@ namespace FIFE
                                 }
                             }
 
-                            if (cam) {
+                            if (cam != nullptr) {
                                 cam->setCellImageDimensions(refCellWidth, refCellHeight);
                                 cam->setRotation(rotation);
                                 cam->setTilt(tilt);
@@ -713,7 +713,7 @@ namespace FIFE
 
                                 // active instance renderer for camera
                                 InstanceRenderer* instanceRenderer = InstanceRenderer::getInstance(cam);
-                                if (instanceRenderer) {
+                                if (instanceRenderer != nullptr) {
                                     instanceRenderer->activateAllLayers(map);
                                 }
                             }
@@ -782,7 +782,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(mapFilename);
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -793,14 +793,14 @@ namespace FIFE
 
                     const XML::Element* root = mapFile.RootElement();
 
-                    if (root) {
+                    if (root != nullptr) {
                         const char* loaderName = XML::Attribute(root, "loader");
 
                         // if the file does not specify a loader but was opened and parsed
                         // correctly then we know we have a compatible extension so we will
                         // attempt to load it, if it does specify a loader then the loader
                         // name will be checked
-                        if (!loaderName || (loaderName && std::string(loaderName) == getLoaderName())) {
+                        if ((loaderName == nullptr) || ((loaderName != nullptr) && std::string(loaderName) == getLoaderName())) {
                             return true;
                         }
                     }

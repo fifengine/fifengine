@@ -39,14 +39,15 @@ namespace fcn
                 fcn::Rectangle(0, getHeight() - getHeight() * mValue / 100, getWidth(), getHeight() * mValue / 100));
         }
 
-        if (mImage)
+        if (mImage != nullptr) {
             graphics->drawImage(mImage, 0, 0);
+        }
     }
 
     void PercentageBar::setForegroundImage(Image* image)
     {
         mImage = image;
-        if (mImage) {
+        if (mImage != nullptr) {
             setHeight(image->getHeight());
             setWidth(image->getWidth());
         }

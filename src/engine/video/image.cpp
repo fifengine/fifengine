@@ -75,7 +75,7 @@ namespace FIFE
 
     void Image::reset(SDL_Surface* surface)
     {
-        if (m_surface && !m_shared) {
+        if ((m_surface != nullptr) && !m_shared) {
             SDL_FreeSurface(m_surface);
         }
 
@@ -91,7 +91,7 @@ namespace FIFE
 
     void Image::load()
     {
-        if (m_loader) {
+        if (m_loader != nullptr) {
             m_loader->load(this);
         } else {
             ImageLoader loader;
@@ -122,7 +122,7 @@ namespace FIFE
     {
         if (m_shared) {
             return m_subimagerect.w;
-        } else if (!m_surface) {
+        } else if (m_surface == nullptr) {
             return 0;
         }
         return m_surface->w;
@@ -132,7 +132,7 @@ namespace FIFE
     {
         if (m_shared) {
             return m_subimagerect.h;
-        } else if (!m_surface) {
+        } else if (m_surface == nullptr) {
             return 0;
         }
         return m_surface->h;
@@ -140,7 +140,7 @@ namespace FIFE
 
     size_t Image::getSize()
     {
-        if (!m_surface || m_shared) {
+        if ((m_surface == nullptr) || m_shared) {
             return 0;
         }
         return m_surface->h * m_surface->pitch;
@@ -165,14 +165,15 @@ namespace FIFE
                 r = g = b = a = nullptr;
                 return;
             }
-            p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
+            p = static_cast<Uint8*>(m_surface->pixels) + y * m_surface->pitch + x * bpp;
         } else {
             if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
                 ((y + m_subimagerect.y) >= m_surface->h)) {
                 r = g = b = a = nullptr;
                 return;
             }
-            p = (Uint8*)m_surface->pixels + (y + m_subimagerect.y) * m_surface->pitch + (x + m_subimagerect.x) * bpp;
+            p = static_cast<Uint8*>(m_surface->pixels) + (y + m_subimagerect.y) * m_surface->pitch +
+                (x + m_subimagerect.x) * bpp;
         }
 
         uint32_t pixel = 0;
@@ -182,7 +183,7 @@ namespace FIFE
             break;
 
         case 2:
-            pixel = *(Uint16*)p;
+            pixel = *reinterpret_cast<Uint16*>(p);
             break;
 
         case 3:
@@ -194,7 +195,7 @@ namespace FIFE
             break;
 
         case 4:
-            pixel = *(Uint32*)p;
+            pixel = *reinterpret_cast<Uint32*>(p);
             break;
         }
         SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
@@ -247,9 +248,9 @@ namespace FIFE
         SDL_LockSurface(const_cast<SDL_Surface*>(&surface));
 
         colortype = PNG_COLOR_TYPE_RGB;
-        if (surface.format->palette) {
+        if (surface.format->palette != nullptr) {
             colortype |= PNG_COLOR_TYPE_PALETTE;
-        } else if (surface.format->Amask) {
+        } else if (surface.format->Amask != 0u) {
             colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
         } else {
         }
@@ -270,7 +271,7 @@ namespace FIFE
 
         rowpointers = new png_bytep[surface.h];
         for (int32_t i = 0; i < surface.h; i++) {
-            rowpointers[i] = (png_bytep)(Uint8*)surface.pixels + i * surface.pitch;
+            rowpointers[i] = static_cast<png_bytep>(static_cast<Uint8*>(surface.pixels)) + i * surface.pitch;
         }
         // write the image
         png_write_image(pngptr, rowpointers);
@@ -299,9 +300,9 @@ namespace FIFE
 
     void Image::copySubimage(uint32_t xoffset, uint32_t yoffset, const ImagePtr& srcimg)
     {
-        if (!srcimg->m_surface) {
+        if (srcimg->m_surface == nullptr) {
             return;
-        } else if (!m_surface) {
+        } else if (m_surface == nullptr) {
             m_surface =
                 SDL_CreateRGBSurface(0, srcimg->getWidth(), srcimg->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
         }
@@ -355,7 +356,7 @@ namespace FIFE
 
         int32_t bpp = surface->format->BytesPerPixel;
         SDL_LockSurface(surface);
-        Uint8* p     = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+        Uint8* p     = static_cast<Uint8*>(surface->pixels) + y * surface->pitch + x * bpp;
         Uint32 pixel = SDL_MapRGBA(surface->format, r, g, b, a);
         switch (bpp) {
         case 1:
@@ -363,7 +364,7 @@ namespace FIFE
             break;
 
         case 2:
-            *(Uint16*)p = pixel;
+            *reinterpret_cast<Uint16*>(p) = pixel;
             break;
 
         case 3:
@@ -379,7 +380,7 @@ namespace FIFE
             break;
 
         case 4:
-            *(Uint32*)p = pixel;
+            *reinterpret_cast<Uint32*>(p) = pixel;
             break;
         }
         SDL_UnlockSurface(surface);

@@ -36,11 +36,11 @@ namespace FIFE
     class CellCacheChangeListener : public LayerChangeListener
     {
     public:
-        CellCacheChangeListener(Layer* layer)
+        explicit CellCacheChangeListener(Layer* layer)
         {
             m_layer = layer;
         }
-        ~CellCacheChangeListener() override { }
+        ~CellCacheChangeListener() override = default;
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
@@ -93,7 +93,7 @@ namespace FIFE
                             std::vector<ModelCoordinate>::iterator mcit = coordinates.begin();
                             for (; mcit != coordinates.end(); ++mcit) {
                                 Cell* cell = m_layer->getCellCache()->getCell(*mcit);
-                                if (cell) {
+                                if (cell != nullptr) {
                                     cell->removeInstance(*it);
                                 }
                             }
@@ -103,7 +103,7 @@ namespace FIFE
                             mcit = coordinates.begin();
                             for (; mcit != coordinates.end(); ++mcit) {
                                 Cell* cell = m_layer->getCellCache()->getCell(*mcit);
-                                if (cell) {
+                                if (cell != nullptr) {
                                     cell->addInstance(*it);
                                 }
                             }
@@ -116,10 +116,10 @@ namespace FIFE
                             if (oldcell == newcell) {
                                 continue;
                             }
-                            if (oldcell) {
+                            if (oldcell != nullptr) {
                                 oldcell->removeInstance(*i);
                             }
-                            if (newcell) {
+                            if (newcell != nullptr) {
                                 newcell->addInstance(*i);
                             }
                         }
@@ -138,7 +138,7 @@ namespace FIFE
                             (*i)->getLocationRef().getExactLayerCoordinatesRef()));
                     }
                     Cell* cell = m_layer->getCellCache()->getCell(mc);
-                    if (cell) {
+                    if (cell != nullptr) {
                         cell->changeInstance(*i);
                     }
                 }
@@ -160,10 +160,10 @@ namespace FIFE
                     if (oldcell == newcell) {
                         continue;
                     }
-                    if (oldcell) {
+                    if (oldcell != nullptr) {
                         oldcell->removeInstance(*i);
                     }
-                    if (newcell) {
+                    if (newcell != nullptr) {
                         newcell->addInstance(*i);
                     }
                 }
@@ -201,14 +201,14 @@ namespace FIFE
                             cache->resize();
                         }
                         Cell* cell = cache->getCell(*mcit);
-                        if (cell) {
+                        if (cell != nullptr) {
                             cell->addInstance(*it);
                         }
                     }
                 }
             }
             Cell* cell = cache->getCell(mc);
-            if (cell) {
+            if (cell != nullptr) {
                 cell->addInstance(instance);
             }
         }
@@ -235,14 +235,14 @@ namespace FIFE
                     std::vector<ModelCoordinate>::iterator mcit = coordinates.begin();
                     for (; mcit != coordinates.end(); ++mcit) {
                         Cell* cell = cache->getCell(*mcit);
-                        if (cell) {
+                        if (cell != nullptr) {
                             cell->removeInstance(*it);
                         }
                     }
                 }
             }
             Cell* cell = cache->getCell(mc);
-            if (cell) {
+            if (cell != nullptr) {
                 cell->removeInstance(instance);
             }
             // updates size on the next cache update (happens on same pump)
@@ -264,7 +264,7 @@ namespace FIFE
 
     void Zone::addCell(Cell* cell)
     {
-        if (!cell->getZone()) {
+        if (cell->getZone() == nullptr) {
             cell->setZone(this);
             m_cells.insert(cell);
         }
@@ -315,10 +315,10 @@ namespace FIFE
         std::set<Cell*>::iterator it = m_cells.begin();
         for (; it != m_cells.end(); ++it) {
             TransitionInfo* trans = (*it)->getTransition();
-            if (!trans) {
+            if (trans == nullptr) {
                 continue;
             }
-            if (layer) {
+            if (layer != nullptr) {
                 if (layer == (*it)->getLayer()) {
                     transitions.push_back(*it);
                 }
@@ -332,11 +332,11 @@ namespace FIFE
     class ZoneCellChangeListener : public CellChangeListener
     {
     public:
-        ZoneCellChangeListener(CellCache* cache)
+        explicit ZoneCellChangeListener(CellCache* cache)
         {
             m_cache = cache;
         }
-        ~ZoneCellChangeListener() override { }
+        ~ZoneCellChangeListener() override = default;
 
         void onInstanceEnteredCell(Cell* cell, Instance* instance) override { }
 
@@ -354,11 +354,11 @@ namespace FIFE
                 std::vector<Cell*>::const_iterator it = neighbors.begin();
                 for (; it != neighbors.end(); ++it) {
                     Zone* z = (*it)->getZone();
-                    if (z && z != z1) {
+                    if ((z != nullptr) && z != z1) {
                         z2 = z;
                     }
                 }
-                if (z1 && z2) {
+                if ((z1 != nullptr) && (z2 != nullptr)) {
                     cell->setZoneProtected(false);
                     m_cache->mergeZones(z1, z2);
                 }
@@ -382,7 +382,8 @@ namespace FIFE
         // create cell change listener
         m_cellZoneListener = new ZoneCellChangeListener(this);
         // set base size
-        ModelCoordinate min, max;
+        ModelCoordinate min;
+        ModelCoordinate max;
         m_layer->getMinMaxCoordinates(min, max);
         m_size.w = max.x;
         m_size.h = max.y;
@@ -552,7 +553,7 @@ namespace FIFE
             for (; it != m_cells.end(); ++it) {
                 std::vector<Cell*>::iterator cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
-                    if (*cit) {
+                    if (*cit != nullptr) {
                         delete *cit;
                         *cit = nullptr;
                     }
@@ -576,7 +577,7 @@ namespace FIFE
                     for (std::vector<ModelCoordinate>::iterator mi = coordinates.begin(); mi != coordinates.end();
                          ++mi) {
                         Cell* c = getCell(*mi);
-                        if (*cit == c || !c) {
+                        if (*cit == c || (c == nullptr)) {
                             continue;
                         }
                         if (zCheck) {
@@ -598,7 +599,7 @@ namespace FIFE
             for (uint32_t x = 0; x < m_width; ++x) {
                 ModelCoordinate mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
-                if (!cell) {
+                if (cell == nullptr) {
                     cell          = new Cell(convertCoordToInt(mc), mc, m_layer);
                     m_cells[x][y] = cell;
                 }
@@ -641,7 +642,7 @@ namespace FIFE
                 m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
                 for (std::vector<ModelCoordinate>::iterator mi = coordinates.begin(); mi != coordinates.end(); ++mi) {
                     Cell* c = getCell(*mi);
-                    if (*cit == c || !c) {
+                    if (*cit == c || (c == nullptr)) {
                         continue;
                     }
                     if (!selfblocker && c->getCellType() != CTYPE_STATIC_BLOCKER &&
@@ -662,7 +663,7 @@ namespace FIFE
             std::vector<Cell*>::iterator cit = (*it).begin();
             for (; cit != (*it).end(); ++cit) {
                 Cell* cell = *cit;
-                if (cell->getZone() || cell->isInserted()) {
+                if ((cell->getZone() != nullptr) || cell->isInserted()) {
                     continue;
                 }
                 if (cell->getCellType() == CTYPE_STATIC_BLOCKER || cell->getCellType() == CTYPE_CELL_BLOCKER) {
@@ -711,7 +712,7 @@ namespace FIFE
     Cell* CellCache::createCell(const ModelCoordinate& mc)
     {
         Cell* cell = getCell(mc);
-        if (!cell) {
+        if (cell == nullptr) {
             cell                                          = new Cell(convertCoordToInt(mc), mc, m_layer);
             m_cells[(mc.x - m_size.x)][(mc.y - m_size.y)] = cell;
         }
@@ -768,7 +769,7 @@ namespace FIFE
             for (uint32_t x = 0; x < m_width; ++x) {
                 ModelCoordinate mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
-                if (cell) {
+                if (cell != nullptr) {
                     // convert coordinates
                     ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
                     ModelCoordinate inter_mc =
@@ -798,7 +799,7 @@ namespace FIFE
             for (uint32_t x = 0; x < m_width; ++x) {
                 ModelCoordinate mc(m_size.x + x, m_size.y + y);
                 Cell* cell = getCell(mc);
-                if (cell) {
+                if (cell != nullptr) {
                     // convert coordinates
                     ExactModelCoordinate emc(FIFE::intPt2doublePt(mc));
                     ModelCoordinate inter_mc =
@@ -897,7 +898,7 @@ namespace FIFE
         std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
         for (std::vector<ModelCoordinate>::iterator it = coords.begin(); it != coords.end(); ++it) {
             Cell* c = getCell(*it);
-            if (c) {
+            if (c != nullptr) {
                 if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
                     return cells;
                 }
@@ -920,7 +921,7 @@ namespace FIFE
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
                 Cell* c = getCell(current);
-                if (c) {
+                if (c != nullptr) {
                     cells.push_back(c);
                 }
             }
@@ -939,7 +940,7 @@ namespace FIFE
             current.x = rec.x;
             for (; current.x < target.x; ++current.x) {
                 Cell* c = getCell(current);
-                if (c && c->getCellType() != CTYPE_NO_BLOCKER) {
+                if ((c != nullptr) && c->getCellType() != CTYPE_NO_BLOCKER) {
                     cells.push_back(c);
                 }
             }
@@ -959,7 +960,7 @@ namespace FIFE
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
                 Cell* c = getCell(current);
-                if (c) {
+                if (c != nullptr) {
                     uint16_t dx       = center.x - current.x;
                     uint16_t dy       = center.y - current.y;
                     uint16_t distance = dx * dx + dy * dy;
@@ -968,18 +969,21 @@ namespace FIFE
 
                         current.x = center.x + dx;
                         c         = getCell(current);
-                        if (c)
+                        if (c != nullptr) {
                             cells.push_back(c);
+                        }
 
                         current.y = center.y + dy;
                         c         = getCell(current);
-                        if (c)
+                        if (c != nullptr) {
                             cells.push_back(c);
+                        }
 
                         current.x = center.x - dx;
                         c         = getCell(current);
-                        if (c)
+                        if (c != nullptr) {
                             cells.push_back(c);
+                        }
 
                         current.y = center.y - dy;
                     }
@@ -990,16 +994,18 @@ namespace FIFE
         current.y = center.y - radius;
         for (; current.y <= target.y; current.y++) {
             Cell* c = getCell(current);
-            if (c)
+            if (c != nullptr) {
                 cells.push_back(c);
+            }
         }
 
         current.y = center.y;
         current.x = center.x - radius;
         for (; current.x <= target.x; current.x++) {
             Cell* c = getCell(current);
-            if (c)
+            if (c != nullptr) {
                 cells.push_back(c);
+            }
         }
         return cells;
     }
@@ -1174,7 +1180,7 @@ namespace FIFE
     {
         double cost    = m_layer->getCellGrid()->getAdjacentCost(adjacent, next);
         Cell* nextcell = getCell(next);
-        if (nextcell) {
+        if (nextcell != nullptr) {
             if (!nextcell->defaultCost()) {
                 cost *= nextcell->getCostMultiplier();
             } else {
@@ -1189,7 +1195,7 @@ namespace FIFE
     {
         double cost    = m_layer->getCellGrid()->getAdjacentCost(adjacent, next);
         Cell* nextcell = getCell(next);
-        if (nextcell) {
+        if (nextcell != nullptr) {
             if (existsCostForCell(costId, nextcell)) {
                 cost *= getCost(costId);
             } else {
@@ -1206,7 +1212,7 @@ namespace FIFE
     bool CellCache::getCellSpeedMultiplier(const ModelCoordinate& cell, double& multiplier)
     {
         Cell* nextcell = getCell(cell);
-        if (nextcell) {
+        if (nextcell != nullptr) {
             if (!nextcell->defaultSpeed()) {
                 multiplier = nextcell->getSpeedMultiplier();
                 return true;
@@ -1322,14 +1328,14 @@ namespace FIFE
 
     std::vector<Cell*> CellCache::getTransitionCells(Layer* layer)
     {
-        if (!layer) {
+        if (layer == nullptr) {
             return m_transitions;
         }
         std::vector<Cell*> cells;
         std::vector<Cell*>::iterator it = m_transitions.begin();
         for (; it != m_transitions.end(); ++it) {
             TransitionInfo* trans = (*it)->getTransition();
-            if (trans) {
+            if (trans != nullptr) {
                 if (trans->m_layer == layer) {
                     cells.push_back(*it);
                 }
@@ -1376,7 +1382,7 @@ namespace FIFE
             }
         }
 
-        if (!zi) {
+        if (zi == nullptr) {
             zi = new Zone(id);
             m_zones.push_back(zi);
         }
@@ -1398,7 +1404,7 @@ namespace FIFE
     void CellCache::splitZone(Cell* cell)
     {
         Zone* currentZone = cell->getZone();
-        if (!currentZone) {
+        if (currentZone == nullptr) {
             return;
         }
 
@@ -1441,7 +1447,7 @@ namespace FIFE
 
     void CellCache::mergeZones(Zone* zone1, Zone* zone2)
     {
-        if (!zone1 || !zone2) {
+        if ((zone1 == nullptr) || (zone2 == nullptr)) {
             return;
         }
         Zone* addZone = zone2;
@@ -1557,7 +1563,7 @@ namespace FIFE
     std::vector<std::string> CellCache::getAreas()
     {
         std::vector<std::string> areas;
-        std::string last("");
+        std::string last;
         StringCellIterator it = m_cellAreas.begin();
         for (; it != m_cellAreas.end(); ++it) {
             if (last != (*it).first) {
@@ -1606,7 +1612,8 @@ namespace FIFE
     Rect CellCache::calculateCurrentSize()
     {
         // set base size
-        ModelCoordinate min, max;
+        ModelCoordinate min;
+        ModelCoordinate max;
         m_layer->getMinMaxCoordinates(min, max);
         Rect newsize(min.x, min.y, max.x, max.y);
 

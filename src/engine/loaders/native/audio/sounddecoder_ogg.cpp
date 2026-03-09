@@ -32,7 +32,7 @@ namespace FIFE
             RawData* rdp   = reinterpret_cast<RawData*>(datasource);
             size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
             size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
-            if (len) {
+            if (len != 0u) {
                 rdp->readInto(reinterpret_cast<uint8_t*>(ptr), len);
             }
             return len;
@@ -77,11 +77,11 @@ namespace FIFE
         }
 
         vorbis_info* vi = ov_info(&m_ovf, -1);
-        if (!vi) {
+        if (vi == nullptr) {
             throw InvalidFormat("Error fetching OggVorbis info");
         }
 
-        if (!ov_seekable(&m_ovf)) {
+        if (ov_seekable(&m_ovf) == 0) {
             throw InvalidFormat("OggVorbis file has to be seekable");
         }
 

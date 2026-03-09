@@ -59,7 +59,7 @@ namespace FIFE
         // delete effect manager
         delete m_effectManager;
 
-        if (m_device) {
+        if (m_device != nullptr) {
             alcDestroyContext(m_context);
             alcCloseDevice(m_device);
             m_device = nullptr;
@@ -74,14 +74,14 @@ namespace FIFE
     {
         m_device = alcOpenDevice(nullptr);
 
-        if (!m_device || alcGetError(m_device) != ALC_NO_ERROR) {
+        if ((m_device == nullptr) || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Could not open audio device - deactivating audio module");
             m_device = nullptr;
             return;
         }
 
         m_context = alcCreateContext(m_device, nullptr);
-        if (!m_context || alcGetError(m_device) != ALC_NO_ERROR) {
+        if ((m_context == nullptr) || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Couldn't create audio context - deactivating audio module");
             m_device = nullptr;
             return;
@@ -162,7 +162,7 @@ namespace FIFE
         m_state = SM_STATE_PLAY;
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
             SoundEmitter* emitter = (*it);
-            if (!emitter) {
+            if (emitter == nullptr) {
                 continue;
             }
             emitter->play();
@@ -174,7 +174,7 @@ namespace FIFE
         m_state = SM_STATE_PAUSE;
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
             SoundEmitter* emitter = (*it);
-            if (!emitter) {
+            if (emitter == nullptr) {
                 continue;
             }
             emitter->pause();
@@ -186,7 +186,7 @@ namespace FIFE
         m_state = SM_STATE_STOP;
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
             SoundEmitter* emitter = (*it);
-            if (!emitter) {
+            if (emitter == nullptr) {
                 continue;
             }
             emitter->stop();
@@ -197,7 +197,7 @@ namespace FIFE
     {
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
             SoundEmitter* emitter = (*it);
-            if (!emitter) {
+            if (emitter == nullptr) {
                 continue;
             }
             emitter->rewind();
@@ -347,7 +347,7 @@ namespace FIFE
         // first check emitters
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
             SoundEmitter* emitter = (*it);
-            if (!emitter) {
+            if (emitter == nullptr) {
                 continue;
             }
             emitter->setCheckDifference();
@@ -405,7 +405,7 @@ namespace FIFE
                 break;
             }
         }
-        if (!ptr) {
+        if (ptr == nullptr) {
             ptr = new SoundEmitter(this, m_emitterVec.size());
             m_emitterVec.push_back(ptr);
         }

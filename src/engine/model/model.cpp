@@ -35,11 +35,11 @@ namespace FIFE
         Model* m_model;
 
     public:
-        ModelMapObserver(Model* model)
+        explicit ModelMapObserver(Model* model)
         {
             m_model = model;
         }
-        ~ModelMapObserver() override { }
+        ~ModelMapObserver() override = default;
 
         void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
 
@@ -71,8 +71,9 @@ namespace FIFE
         }
         delete m_mapObserver;
 
-        for (std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
+        for (std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace) {
             purge_map(nspace->second);
+        }
         purge(m_pathers);
         purge(m_createdGrids);
         purge(m_adoptedGrids);
@@ -131,8 +132,9 @@ namespace FIFE
 
     void Model::removeCellGrid(CellGrid* grid)
     {
-        if (!grid)
+        if (grid == nullptr) {
             return;
+        }
 
         for (std::vector<CellGrid*>::iterator it = m_createdGrids.begin(); it != m_createdGrids.end(); ++it) {
             if (*it == grid) {
@@ -147,8 +149,9 @@ namespace FIFE
     {
         std::list<Map*>::const_iterator it = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
-            if ((*it)->getId() == identifier)
+            if ((*it)->getId() == identifier) {
                 return *it;
+            }
         }
 
         throw NotFound(std::string("Tried to get non-existent map: ") + identifier + ".");
@@ -207,7 +210,7 @@ namespace FIFE
     {
         // Find or create namespace
         namespace_t* nspace = selectNamespace(name_space);
-        if (!nspace) {
+        if (nspace == nullptr) {
             m_namespaces.push_back(namespace_t(name_space, objectmap_t()));
             nspace = selectNamespace(name_space);
         }
@@ -244,8 +247,9 @@ namespace FIFE
 
         // Check if the namespace exists
         namespace_t* nspace = selectNamespace(object->getNamespace());
-        if (!nspace)
+        if (nspace == nullptr) {
             return true;
+        }
 
         // If yes - delete+erase object.
         objectmap_t::iterator it = nspace->second.find(object->getId());
@@ -263,8 +267,9 @@ namespace FIFE
         std::list<Layer*>::const_iterator jt;
         for (std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
             for (jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
-                if ((*jt)->hasInstances())
+                if ((*jt)->hasInstances()) {
                     return false;
+                }
             }
         }
 
@@ -284,10 +289,11 @@ namespace FIFE
     Object* Model::getObject(const std::string& id, const std::string& name_space)
     {
         namespace_t* nspace = selectNamespace(name_space);
-        if (nspace) {
+        if (nspace != nullptr) {
             objectmap_t::iterator it = nspace->second.find(id);
-            if (it != nspace->second.end())
+            if (it != nspace->second.end()) {
                 return it->second;
+            }
         }
         return nullptr;
     }
@@ -296,10 +302,11 @@ namespace FIFE
     {
         std::list<Object*> object_list;
         const namespace_t* nspace = selectNamespace(name_space);
-        if (nspace) {
+        if (nspace != nullptr) {
             objectmap_t::const_iterator it = nspace->second.begin();
-            for (; it != nspace->second.end(); ++it)
+            for (; it != nspace->second.end(); ++it) {
                 object_list.push_back(it->second);
+            }
         }
 
         return object_list;
@@ -319,8 +326,9 @@ namespace FIFE
 
     Model::namespace_t* Model::selectNamespace(const std::string& name_space)
     {
-        if (m_lastNamespace && m_lastNamespace->first == name_space)
+        if ((m_lastNamespace != nullptr) && m_lastNamespace->first == name_space) {
             return m_lastNamespace;
+        }
         std::list<namespace_t>::iterator nspace = m_namespaces.begin();
         for (; nspace != m_namespaces.end(); ++nspace) {
             if (nspace->first == name_space) {

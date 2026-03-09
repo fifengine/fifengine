@@ -58,7 +58,7 @@ namespace FIFE
         }
     }
 
-    ObjectLoader::~ObjectLoader() { }
+    ObjectLoader::~ObjectLoader() = default;
 
     void ObjectLoader::setAnimationLoader(const AnimationLoaderPtr& animationLoader)
     {
@@ -93,7 +93,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(objectPath.string());
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -141,7 +141,7 @@ namespace FIFE
         XML::Element* root = objectFile.RootElement();
 
         if (XML::HasName(root, "assets")) {
-            if (root->FirstChildElement("object")) {
+            if (root->FirstChildElement("object") != nullptr) {
                 return true;
             }
         }
@@ -158,7 +158,7 @@ namespace FIFE
         try {
             RawData* data = m_vfs->open(objectPath.string());
 
-            if (data) {
+            if (data != nullptr) {
                 if (data->getDataLength() != 0) {
                     const std::string xml = data->readString(data->getDataLength());
 
@@ -183,37 +183,37 @@ namespace FIFE
 
             return;
         }
-        std::string objectDirectory = "";
+        std::string objectDirectory;
         if (HasParentPath(objectPath)) {
             objectDirectory = GetParentPath(objectPath).string();
         }
 
         // if we get here then loading the file went well
         XML::Element* root = objectFile.RootElement();
-        if (root) {
-            for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
+        if (root != nullptr) {
+            for (const XML::Element* importElement = root->FirstChildElement("import"); importElement != nullptr;
                  importElement                     = importElement->NextSiblingElement("import")) {
                 const char* importDir  = XML::Attribute(importElement, "dir");
                 const char* importFile = XML::Attribute(importElement, "file");
 
-                std::string directory = "";
-                if (importDir) {
+                std::string directory;
+                if (importDir != nullptr) {
                     directory = importDir;
                 }
 
-                std::string file = "";
-                if (importFile) {
+                std::string file;
+                if (importFile != nullptr) {
                     file = importFile;
                 }
 
-                if (importDir && !importFile) {
+                if ((importDir != nullptr) && (importFile == nullptr)) {
                     fs::path fullPath(objectDirectory);
                     fullPath /= directory;
                     loadImportDirectory(fullPath.string());
-                } else if (importFile) {
+                } else if (importFile != nullptr) {
                     fs::path fullFilePath(file);
                     fs::path fullDirPath(directory);
-                    if (importDir) {
+                    if (importDir != nullptr) {
                         fullDirPath = fs::path(objectDirectory);
                         fullDirPath /= directory;
                     } else {
@@ -226,18 +226,18 @@ namespace FIFE
         }
 
         if (XML::HasName(root, "assets")) {
-            for (XML::Element* objectElem = root->FirstChildElement("object"); objectElem;
+            for (XML::Element* objectElem = root->FirstChildElement("object"); objectElem != nullptr;
                  objectElem               = objectElem->NextSiblingElement("object")) {
                 const char* objectId    = XML::Attribute(objectElem, "id");
                 const char* namespaceId = XML::Attribute(objectElem, "namespace");
 
                 Object* obj = nullptr;
-                if (objectId && namespaceId) {
+                if ((objectId != nullptr) && (namespaceId != nullptr)) {
                     const char* parentId = XML::Attribute(objectElem, "parent");
 
-                    if (parentId) {
+                    if (parentId != nullptr) {
                         Object* parent = m_model->getObject(parentId, namespaceId);
-                        if (parent) {
+                        if (parent != nullptr) {
                             try {
                                 obj = m_model->createObject(objectId, namespaceId, parent);
                             } catch (NameClash&) {
@@ -260,7 +260,7 @@ namespace FIFE
                     }
                 }
 
-                if (obj) {
+                if (obj != nullptr) {
                     obj->setFilename(objectPath.string());
                     ObjectVisual::create(obj);
 
@@ -274,14 +274,14 @@ namespace FIFE
 
                     const char* pather = XML::Attribute(objectElem, "pather");
 
-                    if (pather) {
+                    if (pather != nullptr) {
                         obj->setPather(m_model->getPather(pather));
                     } else {
                         obj->setPather(m_model->getPather("RoutePather"));
                     }
 
                     const char* costId = XML::Attribute(objectElem, "cost_id");
-                    if (costId) {
+                    if (costId != nullptr) {
                         obj->setCostId(costId);
                         double cost = 1.0;
                         int success = objectElem->QueryDoubleAttribute("cost", &cost);
@@ -291,7 +291,7 @@ namespace FIFE
                     }
 
                     const char* areaId = XML::Attribute(objectElem, "area_id");
-                    if (areaId) {
+                    if (areaId != nullptr) {
                         obj->setArea(areaId);
                     }
 
@@ -303,10 +303,10 @@ namespace FIFE
 
                     // loop over all walkable areas
                     for (XML::Element* walkableElement = objectElem->FirstChildElement("walkable_area");
-                         walkableElement;
+                         walkableElement != nullptr;
                          walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
                         const char* walkableId = XML::Attribute(walkableElement, "id");
-                        if (walkableId) {
+                        if (walkableId != nullptr) {
                             obj->addWalkableArea(walkableId);
                         }
                     }
@@ -336,19 +336,19 @@ namespace FIFE
                     }
 
                     // loop over all multi parts
-                    for (XML::Element* multiElement = objectElem->FirstChildElement("multipart"); multiElement;
+                    for (XML::Element* multiElement = objectElem->FirstChildElement("multipart"); multiElement != nullptr;
                          multiElement               = multiElement->NextSiblingElement("multipart")) {
                         const char* partId = XML::Attribute(multiElement, "id");
-                        if (partId) {
+                        if (partId != nullptr) {
                             obj->addMultiPartId(partId);
                         }
-                        for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation;
+                        for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation != nullptr;
                              multiRotation               = multiRotation->NextSiblingElement("rotation")) {
                             int rotation = 0;
                             multiRotation->QueryIntAttribute("rot", &rotation);
                             // relative coordinates which are used to position the object
                             for (XML::Element* multiCoordinate = multiRotation->FirstChildElement("occupied_coord");
-                                 multiCoordinate;
+                                 multiCoordinate != nullptr;
                                  multiCoordinate = multiCoordinate->NextSiblingElement("occupied_coord")) {
                                 int x   = 0;
                                 int y   = 0;
@@ -364,11 +364,11 @@ namespace FIFE
                     }
 
                     // loop over all image tags
-                    for (XML::Element* imageElement = objectElem->FirstChildElement("image"); imageElement;
+                    for (XML::Element* imageElement = objectElem->FirstChildElement("image"); imageElement != nullptr;
                          imageElement               = imageElement->NextSiblingElement("image")) {
                         const char* sourceId = XML::Attribute(imageElement, "source");
 
-                        if (sourceId) {
+                        if (sourceId != nullptr) {
                             fs::path imagePath(filename);
 
                             if (HasParentPath(imagePath)) {
@@ -409,7 +409,7 @@ namespace FIFE
                                 if (success == XML::SUCCESS) {
                                     ObjectVisual* objVisual = obj->getVisual<ObjectVisual>();
 
-                                    if (objVisual) {
+                                    if (objVisual != nullptr) {
                                         objVisual->addStaticImage(
                                             direction, static_cast<int32_t>(imagePtr->getHandle()));
                                     }
@@ -418,71 +418,84 @@ namespace FIFE
                         }
                     }
 
-                    for (XML::Element* actionElement = objectElem->FirstChildElement("action"); actionElement;
+                    for (XML::Element* actionElement = objectElem->FirstChildElement("action"); actionElement != nullptr;
                          actionElement               = actionElement->NextSiblingElement("action")) {
                         const char* actionId = XML::Attribute(actionElement, "id");
 
-                        if (actionId) {
+                        if (actionId != nullptr) {
                             int isDefault = 0;
                             actionElement->QueryIntAttribute("default", &isDefault);
                             Action* action = obj->createAction(actionId, (isDefault != 0));
 
                             // Fetch ActionAudio data
                             XML::Element* soundElement = actionElement->FirstChildElement("sound");
-                            if (soundElement) {
+                            if (soundElement != nullptr) {
                                 const char* clip = XML::Attribute(soundElement, "source");
-                                if (clip) {
+                                if (clip != nullptr) {
                                     ActionAudio* audio = new ActionAudio();
                                     action->adoptAudio(audio);
                                     audio->setSoundFileName(clip);
 
                                     const char* group = XML::Attribute(soundElement, "group");
-                                    if (group) {
+                                    if (group != nullptr) {
                                         audio->setGroupName(group);
                                     }
 
                                     float value = 0;
                                     int success = XML::QueryAttribute(soundElement, "volume", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setGain(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "max_volume", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setMaxGain(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "min_volume", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setMinGain(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "ref_distance", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setReferenceDistance(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "max_distance", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setMaxDistance(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "rolloff", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setRolloff(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "pitch", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setPitch(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "cone_inner_angle", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setConeInnerAngle(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "cone_outer_angle", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setConeOuterAngle(value);
+                                    }
                                     success = XML::QueryAttribute(soundElement, "cone_outer_gain", &value);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setConeOuterGain(value);
+                                    }
 
                                     int boolValue = 0;
                                     success       = soundElement->QueryIntAttribute("looping", &boolValue);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setLooping(boolValue != 0);
+                                    }
                                     success = soundElement->QueryIntAttribute("relative_position", &boolValue);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setRelativePositioning(boolValue != 0);
+                                    }
                                     success = soundElement->QueryIntAttribute("direction", &boolValue);
-                                    if (success == XML::SUCCESS)
+                                    if (success == XML::SUCCESS) {
                                         audio->setDirection(boolValue != 0);
+                                    }
 
                                     double vx = 0;
                                     double vy = 0;
@@ -498,15 +511,15 @@ namespace FIFE
                             // Create and fetch ActionVisual
                             ActionVisual::create(action);
 
-                            for (XML::Element* animElement = actionElement->FirstChildElement("animation"); animElement;
+                            for (XML::Element* animElement = actionElement->FirstChildElement("animation"); animElement != nullptr;
                                  animElement               = animElement->NextSiblingElement("animation")) {
                                 // Fetch already created animation
                                 const char* animationId = XML::Attribute(animElement, "animation_id");
-                                if (animationId) {
+                                if (animationId != nullptr) {
                                     AnimationPtr animation = m_animationManager->getPtr(animationId);
                                     if (animation) {
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();
-                                        if (actionVisual) {
+                                        if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(animation->getDirection(), animation);
                                             action->setDuration(animation->getDuration());
                                             continue;
@@ -516,7 +529,7 @@ namespace FIFE
 
                                 // Create animated spritesheet
                                 const char* sourceId = XML::Attribute(animElement, "atlas");
-                                if (sourceId) {
+                                if (sourceId != nullptr) {
                                     fs::path atlasPath(filename);
 
                                     if (HasParentPath(atlasPath)) {
@@ -549,7 +562,7 @@ namespace FIFE
                                     int nDir = 0;
 
                                     for (XML::Element* dirElement = animElement->FirstChildElement("direction");
-                                         dirElement;
+                                         dirElement != nullptr;
                                          dirElement = dirElement->NextSiblingElement("direction")) {
                                         int dir;
                                         dirElement->QueryIntAttribute("dir", &dir);
@@ -611,7 +624,7 @@ namespace FIFE
                                         }
 
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();
-                                        if (actionVisual) {
+                                        if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(dir, animation);
                                             action->setDuration(animation->getDuration());
                                         }
@@ -622,7 +635,7 @@ namespace FIFE
 
                                 // Load animation.xml with frames
                                 sourceId = XML::Attribute(animElement, "source");
-                                if (sourceId) {
+                                if (sourceId != nullptr) {
                                     int direction = 0;
                                     int success   = XML::QueryAttribute(animElement, "direction", &direction);
 
@@ -639,12 +652,12 @@ namespace FIFE
                                         animation = m_animationLoader->load(animPath.string());
                                     }
 
-                                    if (action && animation) {
+                                    if ((action != nullptr) && animation) {
                                         if (success != XML::SUCCESS) {
                                             direction = animation->getDirection();
                                         }
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();
-                                        if (actionVisual) {
+                                        if (actionVisual != nullptr) {
                                             actionVisual->addAnimation(direction, animation);
                                             action->setDuration(animation->getDuration());
                                         }

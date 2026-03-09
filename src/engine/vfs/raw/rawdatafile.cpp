@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <string>^
+#include <string>
 
 // 3rd party library includes
 
@@ -20,15 +20,16 @@ namespace FIFE
     RawDataFile::RawDataFile(const std::string& file) :
         m_file(file), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0)
     {
-        if (!m_stream)
+        if (!m_stream) {
             throw CannotOpenFile(m_file);
+        }
 
         m_stream.seekg(0, std::ios::end);
         m_filesize = m_stream.tellg();
         m_stream.seekg(0, std::ios::beg);
     }
 
-    RawDataFile::~RawDataFile() { }
+    RawDataFile::~RawDataFile() = default;
 
     uint32_t RawDataFile::getSize() const
     {

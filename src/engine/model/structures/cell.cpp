@@ -43,17 +43,17 @@ namespace FIFE
         if (!m_deleteListeners.empty()) {
             std::vector<CellDeleteListener*>::iterator it = m_deleteListeners.begin();
             for (; it != m_deleteListeners.end(); ++it) {
-                if (*it) {
+                if (*it != nullptr) {
                     (*it)->onCellDeleted(this);
                 }
             }
         }
         // remove cell from zone
-        if (m_zone) {
+        if (m_zone != nullptr) {
             m_zone->removeCell(this);
         }
         // delete m_transition;
-        if (m_transition) {
+        if (m_transition != nullptr) {
             deleteTransition();
         }
         // remove cell from cache (costs, narrow, area)
@@ -342,11 +342,11 @@ namespace FIFE
     void Cell::resetNeighbors()
     {
         m_neighbors.clear();
-        if (m_transition) {
+        if (m_transition != nullptr) {
             CellCache* cache = m_transition->m_layer->getCellCache();
-            if (cache) {
+            if (cache != nullptr) {
                 Cell* cell = cache->getCell(m_transition->m_mc);
-                if (cell) {
+                if (cell != nullptr) {
                     m_neighbors.push_back(cell);
                 }
             }
@@ -373,7 +373,7 @@ namespace FIFE
         m_transition = trans;
 
         Cell* c = layer->getCellCache()->getCell(mc);
-        if (c) {
+        if (c != nullptr) {
             m_neighbors.push_back(c);
             c->addDeleteListener(this);
             m_layer->getCellCache()->addTransition(this);
@@ -385,7 +385,7 @@ namespace FIFE
 
     void Cell::deleteTransition()
     {
-        if (m_transition) {
+        if (m_transition != nullptr) {
             Cell* oldc                      = m_transition->m_layer->getCellCache()->getCell(m_transition->m_mc);
             std::vector<Cell*>::iterator it = m_neighbors.begin();
             for (; it != m_neighbors.end(); ++it) {
@@ -457,7 +457,7 @@ namespace FIFE
 
         std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
-            if (*i) {
+            if (*i != nullptr) {
                 (*i)->onInstanceEnteredCell(this, instance);
             }
             ++i;
@@ -472,7 +472,7 @@ namespace FIFE
 
         std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
-            if (*i) {
+            if (*i != nullptr) {
                 (*i)->onInstanceExitedCell(this, instance);
             }
             ++i;
@@ -487,7 +487,7 @@ namespace FIFE
 
         std::vector<CellChangeListener*>::iterator i = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
-            if (*i) {
+            if (*i != nullptr) {
                 (*i)->onBlockingChangedCell(this, m_type, blocks);
             }
             ++i;

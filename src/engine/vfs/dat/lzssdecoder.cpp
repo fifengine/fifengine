@@ -17,8 +17,8 @@
 namespace FIFE
 {
 
-    LZSSDecoder::LZSSDecoder() { }
-    LZSSDecoder::~LZSSDecoder() { }
+    LZSSDecoder::LZSSDecoder()  = default;
+    LZSSDecoder::~LZSSDecoder() = default;
 
     void LZSSDecoder::decode(RawData* input, uint8_t* output, const uint32_t outputsize)
     {
@@ -30,7 +30,7 @@ namespace FIFE
             uint16_t blockdesc   = input->read16Big();
             uint16_t bytesToRead = blockdesc & 0x7fff;
 
-            if (blockdesc & 0x8000) { // uncompressed
+            if ((blockdesc & 0x8000) != 0) { // uncompressed
                 input->readInto(output + m_outindex, bytesToRead);
                 m_outindex += bytesToRead;
             } else {
@@ -73,7 +73,7 @@ namespace FIFE
                 flags = c | 0xff00; /* uses higher byte cleverly to count eight */
             }
 
-            if (flags & 1) {
+            if ((flags & 1) != 0u) {
                 c                 = in[ibuf++];
                 out[m_outindex++] = c;
 

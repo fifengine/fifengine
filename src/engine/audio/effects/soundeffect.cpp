@@ -326,8 +326,8 @@ namespace FIFE
 
     void Chorus::setFeedback(float value)
     {
-        value      = std::min(value, 1.0f);
-        value      = std::max(value, -1.0f);
+        value      = std::min(value, 1.0F);
+        value      = std::max(value, -1.0F);
         m_feedback = value;
         alEffectf(m_effect, AL_CHORUS_FEEDBACK, m_feedback);
     }
@@ -339,7 +339,7 @@ namespace FIFE
 
     void Chorus::setDelay(float value)
     {
-        value   = std::min(value, 0.016f);
+        value   = std::min(value, 0.016F);
         value   = std::max(value, 0.0F);
         m_delay = value;
         alEffectf(m_effect, AL_CHORUS_DELAY, m_delay);
@@ -422,7 +422,7 @@ namespace FIFE
         return m_eqBandwidth;
     }
 
-    Echo::Echo() : m_delay(0.1F), m_lrDelay(0.1F), m_damping(0.5F), m_feedback(0.5F), m_spread(-1.0f)
+    Echo::Echo() : m_delay(0.1F), m_lrDelay(0.1F), m_damping(0.5F), m_feedback(0.5F), m_spread(-1.0F)
     {
         m_effectType = SE_EFFECT_ECHO;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_ECHO);
@@ -443,7 +443,7 @@ namespace FIFE
 
     void Echo::setLrDelay(float value)
     {
-        value     = std::min(value, 0.404f);
+        value     = std::min(value, 0.404F);
         value     = std::max(value, 0.0F);
         m_lrDelay = value;
         alEffectf(m_effect, AL_ECHO_LRDELAY, m_lrDelay);
@@ -483,7 +483,7 @@ namespace FIFE
     void Echo::setSpread(float value)
     {
         value    = std::min(value, 1.0F);
-        value    = std::max(value, -1.0f);
+        value    = std::max(value, -1.0F);
         m_spread = value;
         alEffectf(m_effect, AL_ECHO_SPREAD, m_spread);
     }
@@ -494,7 +494,7 @@ namespace FIFE
     }
 
     Flanger::Flanger() :
-        m_waveformTriangle(true), m_phase(0), m_rate(0.27F), m_depth(1.0F), m_feedback(-0.5F), m_delay(0.002f)
+        m_waveformTriangle(true), m_phase(0), m_rate(0.27F), m_depth(1.0F), m_feedback(-0.5F), m_delay(0.002F)
     {
         m_effectType = SE_EFFECT_FLANGER;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_FLANGER);
@@ -531,7 +531,7 @@ namespace FIFE
     void Flanger::setRate(float value)
     {
         value  = std::min(value, 10.0F);
-        value  = std::max(value, 0.0f);
+        value  = std::max(value, 0.0F);
         m_rate = value;
         alEffectf(m_effect, AL_FLANGER_RATE, m_rate);
     }
@@ -601,8 +601,8 @@ namespace FIFE
 
     void FrequencyShifter::setLeftDirection(uint8_t value)
     {
-        value           = std::min(value, uint8_t(2));
-        value           = std::max(value, uint8_t(0));
+        value           = std::min(value, static_cast<uint8_t>(2));
+        value           = std::max(value, static_cast<uint8_t>(0));
         m_leftDirection = value;
         alEffecti(m_effect, AL_FREQUENCY_SHIFTER_LEFT_DIRECTION, m_leftDirection);
     }
@@ -614,8 +614,8 @@ namespace FIFE
 
     void FrequencyShifter::setRightDirection(uint8_t value)
     {
-        value            = std::min(value, uint8_t(2));
-        value            = std::max(value, uint8_t(0));
+        value            = std::min(value, static_cast<uint8_t>(2));
+        value            = std::max(value, static_cast<uint8_t>(0));
         m_rightDirection = value;
         alEffecti(m_effect, AL_FREQUENCY_SHIFTER_RIGHT_DIRECTION, m_rightDirection);
     }
@@ -626,7 +626,7 @@ namespace FIFE
     }
 
     VocalMorpher::VocalMorpher() :
-        m_phonemeA(0), m_phonemeB(10), m_phonemeCoarseA(0), m_phonemeCoarseB(0), m_waveform(0), m_rate(1.41f)
+        m_phonemeA(0), m_phonemeB(10), m_phonemeCoarseA(0), m_phonemeCoarseB(0), m_waveform(0), m_rate(1.41F)
     {
         m_effectType = SE_EFFECT_VOCAL_MORPHER;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_VOCAL_MORPHER);
@@ -634,8 +634,8 @@ namespace FIFE
 
     void VocalMorpher::setPhonemeA(uint16_t value)
     {
-        value      = std::min(value, uint16_t(29));
-        value      = std::max(value, uint16_t(0));
+        value      = std::min(value, static_cast<uint16_t>(29));
+        value      = std::max(value, static_cast<uint16_t>(0));
         m_phonemeA = value;
         alEffecti(m_effect, AL_VOCAL_MORPHER_PHONEMEA, m_phonemeA);
     }
@@ -647,8 +647,8 @@ namespace FIFE
 
     void VocalMorpher::setPhonemeB(uint16_t value)
     {
-        value      = std::min(value, uint16_t(29));
-        value      = std::max(value, uint16_t(0));
+        value      = std::min(value, static_cast<uint16_t>(29));
+        value      = std::max(value, static_cast<uint16_t>(0));
         m_phonemeB = value;
         alEffecti(m_effect, AL_VOCAL_MORPHER_PHONEMEB, m_phonemeB);
     }
@@ -660,8 +660,8 @@ namespace FIFE
 
     void VocalMorpher::setPhonemeCoarseA(int16_t value)
     {
-        value            = std::min(value, int16_t(24));
-        value            = std::max(value, int16_t(-24));
+        value            = std::min(value, static_cast<int16_t>(24));
+        value            = std::max(value, static_cast<int16_t>(-24));
         m_phonemeCoarseA = value;
         alEffecti(m_effect, AL_VOCAL_MORPHER_PHONEMEA_COARSE_TUNING, m_phonemeCoarseA);
     }
@@ -673,8 +673,8 @@ namespace FIFE
 
     void VocalMorpher::setPhonemeCoarseB(int16_t value)
     {
-        value            = std::min(value, int16_t(24));
-        value            = std::max(value, int16_t(-24));
+        value            = std::min(value, static_cast<int16_t>(24));
+        value            = std::max(value, static_cast<int16_t>(-24));
         m_phonemeCoarseB = value;
         alEffecti(m_effect, AL_VOCAL_MORPHER_PHONEMEB_COARSE_TUNING, m_phonemeCoarseB);
     }
@@ -686,8 +686,8 @@ namespace FIFE
 
     void VocalMorpher::setWaveform(uint8_t value)
     {
-        value      = std::min(value, uint8_t(2));
-        value      = std::max(value, uint8_t(0));
+        value      = std::min(value, static_cast<uint8_t>(2));
+        value      = std::max(value, static_cast<uint8_t>(0));
         m_waveform = value;
         alEffecti(m_effect, AL_VOCAL_MORPHER_WAVEFORM, m_waveform);
     }
@@ -699,8 +699,8 @@ namespace FIFE
 
     void VocalMorpher::setRate(float value)
     {
-        value  = std::min(value, 10.0f);
-        value  = std::max(value, 0.0f);
+        value  = std::min(value, 10.0F);
+        value  = std::max(value, 0.0F);
         m_rate = value;
         alEffectf(m_effect, AL_VOCAL_MORPHER_RATE, m_rate);
     }
@@ -718,8 +718,8 @@ namespace FIFE
 
     void PitchShifter::setCoarseTune(int16_t value)
     {
-        value        = std::min(value, int16_t(12));
-        value        = std::max(value, int16_t(-12));
+        value        = std::min(value, static_cast<int16_t>(12));
+        value        = std::max(value, static_cast<int16_t>(-12));
         m_coarseTune = value;
         alEffecti(m_effect, AL_PITCH_SHIFTER_COARSE_TUNE, m_coarseTune);
     }
@@ -731,8 +731,8 @@ namespace FIFE
 
     void PitchShifter::setFineTune(int16_t value)
     {
-        value      = std::min(value, int16_t(50));
-        value      = std::max(value, int16_t(-50));
+        value      = std::min(value, static_cast<int16_t>(50));
+        value      = std::max(value, static_cast<int16_t>(-50));
         m_fineTune = value;
         alEffecti(m_effect, AL_PITCH_SHIFTER_FINE_TUNE, m_fineTune);
     }
@@ -750,8 +750,8 @@ namespace FIFE
 
     void RingModulator::setFrequency(float value)
     {
-        value       = std::min(value, 8000.0f);
-        value       = std::max(value, 0.0f);
+        value       = std::min(value, 8000.0F);
+        value       = std::max(value, 0.0F);
         m_frequency = value;
         alEffectf(m_effect, AL_RING_MODULATOR_FREQUENCY, m_frequency);
     }
@@ -763,8 +763,8 @@ namespace FIFE
 
     void RingModulator::setHighpassCutoff(float value)
     {
-        value            = std::min(value, 24000.0f);
-        value            = std::max(value, 0.0f);
+        value            = std::min(value, 24000.0F);
+        value            = std::max(value, 0.0F);
         m_highpassCutoff = value;
         alEffectf(m_effect, AL_RING_MODULATOR_HIGHPASS_CUTOFF, m_highpassCutoff);
     }
@@ -776,8 +776,8 @@ namespace FIFE
 
     void RingModulator::setWaveform(uint8_t value)
     {
-        value      = std::min(value, uint8_t(2));
-        value      = std::max(value, uint8_t(0));
+        value      = std::min(value, static_cast<uint8_t>(2));
+        value      = std::max(value, static_cast<uint8_t>(0));
         m_waveform = value;
         alEffecti(m_effect, AL_RING_MODULATOR_WAVEFORM, m_waveform);
     }
@@ -787,7 +787,7 @@ namespace FIFE
         return m_waveform;
     }
 
-    Autowah::Autowah() : m_attackTime(0.06F), m_releaseTime(0.06F), m_resonance(1000.0F), m_peakGain(11.22f)
+    Autowah::Autowah() : m_attackTime(0.06F), m_releaseTime(0.06F), m_resonance(1000.0F), m_peakGain(11.22F)
     {
         m_effectType = SE_EFFECT_AUTOWAH;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_AUTOWAH);
@@ -795,8 +795,8 @@ namespace FIFE
 
     void Autowah::setAttackTime(float value)
     {
-        value        = std::min(value, 1.0f);
-        value        = std::max(value, 0.0001f);
+        value        = std::min(value, 1.0F);
+        value        = std::max(value, 0.0001F);
         m_attackTime = value;
         alEffectf(m_effect, AL_AUTOWAH_ATTACK_TIME, m_attackTime);
     }
@@ -808,8 +808,8 @@ namespace FIFE
 
     void Autowah::setReleaseTime(float value)
     {
-        value         = std::min(value, 1.0f);
-        value         = std::max(value, 0.0001f);
+        value         = std::min(value, 1.0F);
+        value         = std::max(value, 0.0001F);
         m_releaseTime = value;
         alEffectf(m_effect, AL_AUTOWAH_RELEASE_TIME, m_releaseTime);
     }
@@ -821,8 +821,8 @@ namespace FIFE
 
     void Autowah::setResonance(float value)
     {
-        value       = std::min(value, 1000.0f);
-        value       = std::max(value, 2.0f);
+        value       = std::min(value, 1000.0F);
+        value       = std::max(value, 2.0F);
         m_resonance = value;
         alEffectf(m_effect, AL_AUTOWAH_RESONANCE, m_resonance);
     }
@@ -834,8 +834,8 @@ namespace FIFE
 
     void Autowah::setPeakGain(float value)
     {
-        value      = std::min(value, 31621.0f);
-        value      = std::max(value, 0.00003f);
+        value      = std::min(value, 31621.0F);
+        value      = std::max(value, 0.00003F);
         m_peakGain = value;
         alEffectf(m_effect, AL_AUTOWAH_PEAK_GAIN, m_peakGain);
     }
@@ -872,7 +872,7 @@ namespace FIFE
         m_mid2Center(3000.0F),
         m_mid2Width(1.0F),
         m_highGain(1.0F),
-        m_highCutoff(6000.0f)
+        m_highCutoff(6000.0F)
     {
         m_effectType = SE_EFFECT_EQUALIZER;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_EQUALIZER);
@@ -880,8 +880,8 @@ namespace FIFE
 
     void Equalizer::setLowGain(float value)
     {
-        value     = std::min(value, 7.943f);
-        value     = std::max(value, 0.126f);
+        value     = std::min(value, 7.943F);
+        value     = std::max(value, 0.126F);
         m_lowGain = value;
         alEffectf(m_effect, AL_EQUALIZER_LOW_GAIN, m_lowGain);
     }
@@ -1170,12 +1170,12 @@ namespace FIFE
 
     void EaxReverb::setReflectionsPan(const AudioSpaceCoordinate& coordinate)
     {
-        m_reflectionsPan.x = std::min(coordinate.x, double(1.0));
-        m_reflectionsPan.x = std::max(coordinate.x, double(-1.0));
-        m_reflectionsPan.y = std::min(coordinate.y, double(1.0));
-        m_reflectionsPan.y = std::max(coordinate.y, double(-1.0));
-        m_reflectionsPan.z = std::min(coordinate.z, double(1.0));
-        m_reflectionsPan.z = std::max(coordinate.z, double(-1.0));
+        m_reflectionsPan.x = std::min(coordinate.x, (1.0));
+        m_reflectionsPan.x = std::max(coordinate.x, (-1.0));
+        m_reflectionsPan.y = std::min(coordinate.y, (1.0));
+        m_reflectionsPan.y = std::max(coordinate.y, (-1.0));
+        m_reflectionsPan.z = std::min(coordinate.z, (1.0));
+        m_reflectionsPan.z = std::max(coordinate.z, (-1.0));
 
         ALfloat vec[3] = {
             static_cast<ALfloat>(m_reflectionsPan.x),
@@ -1204,8 +1204,8 @@ namespace FIFE
 
     void EaxReverb::setLateReverbDelay(float value)
     {
-        value              = std::min(value, 0.1f);
-        value              = std::max(value, 0.0f);
+        value              = std::min(value, 0.1F);
+        value              = std::max(value, 0.0F);
         m_reflectionsDelay = value;
         alEffectf(m_effect, AL_EAXREVERB_LATE_REVERB_DELAY, m_reflectionsDelay);
     }
@@ -1217,12 +1217,12 @@ namespace FIFE
 
     void EaxReverb::setLateReverbPan(const AudioSpaceCoordinate& coordinate)
     {
-        m_lateReverbPan.x = std::min(coordinate.x, double(1.0));
-        m_lateReverbPan.x = std::max(coordinate.x, double(-1.0));
-        m_lateReverbPan.y = std::min(coordinate.y, double(1.0));
-        m_lateReverbPan.y = std::max(coordinate.y, double(-1.0));
-        m_lateReverbPan.z = std::min(coordinate.z, double(1.0));
-        m_lateReverbPan.z = std::max(coordinate.z, double(-1.0));
+        m_lateReverbPan.x = std::min(coordinate.x, (1.0));
+        m_lateReverbPan.x = std::max(coordinate.x, (-1.0));
+        m_lateReverbPan.y = std::min(coordinate.y, (1.0));
+        m_lateReverbPan.y = std::max(coordinate.y, (-1.0));
+        m_lateReverbPan.z = std::min(coordinate.z, (1.0));
+        m_lateReverbPan.z = std::max(coordinate.z, (-1.0));
 
         ALfloat vec[3] = {
             static_cast<ALfloat>(m_lateReverbPan.x),
@@ -1238,8 +1238,8 @@ namespace FIFE
 
     void EaxReverb::setEchoTime(float value)
     {
-        value      = std::min(value, 0.25f);
-        value      = std::max(value, 0.075f);
+        value      = std::min(value, 0.25F);
+        value      = std::max(value, 0.075F);
         m_echoTime = value;
         alEffectf(m_effect, AL_EAXREVERB_ECHO_TIME, m_echoTime);
     }
@@ -1251,8 +1251,8 @@ namespace FIFE
 
     void EaxReverb::setEchoDepth(float value)
     {
-        value       = std::min(value, 1.0f);
-        value       = std::max(value, 0.0f);
+        value       = std::min(value, 1.0F);
+        value       = std::max(value, 0.0F);
         m_echoDepth = value;
         alEffectf(m_effect, AL_EAXREVERB_ECHO_DEPTH, m_echoDepth);
     }
@@ -1374,7 +1374,7 @@ namespace FIFE
         setHfReference(prop.flHFReference);
         setLfReference(prop.flLFReference);
         setRoomRolloffFactor(prop.flRoomRolloffFactor);
-        setDecayHfLimit(prop.iDecayHFLimit ? true : false);
+        setDecayHfLimit((prop.iDecayHFLimit != 0) ? true : false);
     }
 
 } // namespace FIFE

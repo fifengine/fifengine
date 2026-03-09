@@ -43,7 +43,7 @@ namespace FIFE
         m_backgroundcolor.b = 0;
     }
 
-    RenderBackend::~RenderBackend() { }
+    RenderBackend::~RenderBackend() = default;
 
     void RenderBackend::deinit()
     {
@@ -62,7 +62,7 @@ namespace FIFE
     {
         if (m_isframelimit) {
             uint16_t frame_time     = SDL_GetTicks() - m_frame_start;
-            const float frame_limit = 1000.0f / m_framelimit;
+            const float frame_limit = 1000.0F / m_framelimit;
             if (frame_time < frame_limit) {
                 SDL_Delay(static_cast<Uint32>(frame_limit) - frame_time);
             }
@@ -284,7 +284,7 @@ namespace FIFE
             double blend  = muk * munk;
             muk *= mu;
             munk /= 1.0 - mu;
-            while (tmpn) {
+            while (tmpn != 0) {
                 blend *= static_cast<double>(tmpn);
                 tmpn--;
                 if (tmpi > 1) {

@@ -52,7 +52,7 @@ namespace fcn
         addWidgetListener(this);
     }
 
-    ClickLabel::~ClickLabel() { }
+    ClickLabel::~ClickLabel() = default;
 
     void ClickLabel::setCaption(const std::string& caption)
     {
@@ -102,7 +102,7 @@ namespace fcn
 
     void ClickLabel::wrapText()
     {
-        if (isTextWrapping() && mGuiFont) {
+        if (isTextWrapping() && (mGuiFont != nullptr)) {
             int32_t w    = getWidth() - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
             mWrappedText = mGuiFont->splitTextToWidth(mCaption, w);
         }
@@ -124,11 +124,11 @@ namespace fcn
 
     void ClickLabel::adjustSize()
     {
-        if (mGuiFont) {
+        if (mGuiFont != nullptr) {
             int32_t w = getWidth();
             int32_t h = 0;
             if (isTextWrapping()) {
-                if (getParent()) {
+                if (getParent() != nullptr) {
                     w = getParent()->getChildrenArea().width;
                 }
                 int32_t textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
@@ -177,7 +177,7 @@ namespace fcn
             }
         }
 
-        if (mGuiFont) {
+        if (mGuiFont != nullptr) {
             graphics->setColor(getForegroundColor());
             const std::string& text = isTextWrapping() ? mWrappedText : mCaption;
             FIFE::Image* image      = mGuiFont->getAsImageMultiline(text);

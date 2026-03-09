@@ -34,7 +34,7 @@ namespace FIFE
         m_soundClipId(0),
         m_streamId(0),
         m_emitterId(uid),
-        m_group(""),
+        
         m_samplesOffset(0),
         m_active(false),
         m_fadeIn(false),
@@ -65,7 +65,7 @@ namespace FIFE
 
     void SoundEmitter::setSource(ALuint source)
     {
-        if (!source && m_source) {
+        if ((source == 0u) && (m_source != 0u)) {
             alSourceStop(m_source);
 
             // Release all buffers
@@ -115,9 +115,10 @@ namespace FIFE
         ALuint buffer;
         alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &procs);
 
-        while (procs--) {
+        while ((procs--) != 0) {
             // needed for correct cursor position
-            float samplesOffset, newOffset;
+            float samplesOffset;
+            float newOffset;
             alGetSourcef(m_source, AL_SAMPLE_OFFSET, &samplesOffset);
 
             alSourceUnqueueBuffers(m_source, 1, &buffer);
@@ -212,12 +213,12 @@ namespace FIFE
     void SoundEmitter::reset(bool defaultall)
     {
         // remove effects and filter
-        if (m_directFilter) {
+        if (m_directFilter != nullptr) {
             m_manager->deactivateFilter(m_directFilter, this);
         }
         std::vector<SoundEffect*> effects = m_effects;
         for (std::vector<SoundEffect*>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            if (*it) {
+            if (*it != nullptr) {
                 m_manager->removeEmitterFromSoundEffect(*it, this);
             }
         }
@@ -596,10 +597,10 @@ namespace FIFE
     float SoundEmitter::getCursor(SoundPositionType type)
     {
         if (!m_soundClip || !isActive()) {
-            return 0.0f;
+            return 0.0F;
         }
 
-        ALfloat pos = 0.0f;
+        ALfloat pos = 0.0F;
 
         switch (type) {
         case SD_BYTE_POS:
@@ -807,7 +808,7 @@ namespace FIFE
             if (m_internData.loop) {
                 timediff = timediff % getDuration();
             }
-            float time = static_cast<float>(timediff) / 1000.0f;
+            float time = static_cast<float>(timediff) / 1000.0F;
             attachSoundClip();
             setCursor(SD_TIME_POS, time);
             if (m_soundClip && isActive()) {
@@ -869,7 +870,7 @@ namespace FIFE
     {
         bool added = false;
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (!(*it)) {
+            if ((*it) == nullptr) {
                 (*it) = effect;
                 added = true;
                 break;
@@ -894,7 +895,7 @@ namespace FIFE
     {
         uint8_t counter = 0;
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it) {
+            if (*it != nullptr) {
                 ++counter;
             }
         }
@@ -926,11 +927,11 @@ namespace FIFE
     void SoundEmitter::activateEffects()
     {
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it) {
+            if (*it != nullptr) {
                 m_manager->activateEffect(*it, this);
             }
         }
-        if (m_directFilter) {
+        if (m_directFilter != nullptr) {
             m_manager->activateFilter(m_directFilter, this);
         }
     }
@@ -938,11 +939,11 @@ namespace FIFE
     void SoundEmitter::deactivateEffects()
     {
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (*it) {
+            if (*it != nullptr) {
                 m_manager->deactivateEffect(*it, this);
             }
         }
-        if (m_directFilter) {
+        if (m_directFilter != nullptr) {
             m_manager->deactivateFilter(m_directFilter, this);
         }
     }
@@ -977,7 +978,7 @@ namespace FIFE
     {
         std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
         for (; i != m_listeners.end(); ++i) {
-            if (*i) {
+            if (*i != nullptr) {
                 (*i)->onSoundFinished(m_emitterId, m_soundClipId);
             }
         }

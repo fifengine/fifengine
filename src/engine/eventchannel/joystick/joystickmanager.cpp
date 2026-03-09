@@ -71,7 +71,7 @@ namespace FIFE
                 break;
             }
         }
-        if (!joystick) {
+        if (joystick == nullptr) {
             joystick = new Joystick(m_joysticks.size(), deviceIndex);
             m_joysticks.push_back(joystick);
         } else {
@@ -142,7 +142,7 @@ namespace FIFE
     {
         SDL_JoystickGUID realGuid = SDL_JoystickGetGUIDFromString(guid.c_str());
         char* mapping             = SDL_GameControllerMappingForGUID(realGuid);
-        if (!mapping) {
+        if (mapping == nullptr) {
             throw SDLException(SDL_GetError());
             return std::string();
         }
@@ -226,7 +226,7 @@ namespace FIFE
             joyevt.setType(JoystickEvent::DEVICE_ADDED);
             // Note: In this case it's the device index, instead of instance id
             Joystick* joy = addJoystick(event.jdevice.which);
-            if (joy) {
+            if (joy != nullptr) {
                 joyevt.setInstanceId(joy->getInstanceId());
             } else {
                 dispatch = false;
@@ -284,8 +284,9 @@ namespace FIFE
         std::deque<IJoystickListener*> listeners   = m_joystickListeners;
         std::deque<IJoystickListener*>::iterator i = listeners.begin();
         for (; i != listeners.end(); ++i) {
-            if (!(*i)->isActive())
+            if (!(*i)->isActive()) {
                 continue;
+            }
             switch (evt.getType()) {
             case JoystickEvent::AXIS_MOTION:
                 (*i)->axisMotion(evt);
@@ -330,14 +331,14 @@ namespace FIFE
 
     float JoystickManager::convertRange(int16_t value)
     {
-        float range = static_cast<float>(value) / 32768.0f;
-        if (Mathf::FAbs(range) < 0.01f) {
-            return 0.0f;
+        float range = static_cast<float>(value) / 32768.0F;
+        if (Mathf::FAbs(range) < 0.01F) {
+            return 0.0F;
         }
-        if (range < -0.99f) {
-            return -1.0f;
-        } else if (range > 0.99f) {
-            return 1.0f;
+        if (range < -0.99F) {
+            return -1.0F;
+        } else if (range > 0.99F) {
+            return 1.0F;
         }
         return range;
     }

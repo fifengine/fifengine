@@ -47,7 +47,7 @@ namespace FIFE
                 continue;
             }
 
-            if (m_placeholder.surface) {
+            if (m_placeholder.surface != nullptr) {
                 w += m_placeholder.surface->w + getGlyphSpacing();
             }
         }
@@ -75,7 +75,7 @@ namespace FIFE
             type_glyphs::iterator it = m_glyphs.find(codepoint);
 
             if (it == m_glyphs.end()) {
-                if (!m_placeholder.surface) {
+                if (m_placeholder.surface == nullptr) {
                     continue;
                 }
                 glyph = &m_placeholder;

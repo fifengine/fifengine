@@ -141,7 +141,7 @@ namespace FIFE
         CellCache* startCache = start.getLayer()->getCellCache();
         CellCache* endCache   = end.getLayer()->getCellCache();
 
-        if (!startCache || !endCache) {
+        if ((startCache == nullptr) || (endCache == nullptr)) {
             return false;
         }
 
@@ -158,12 +158,12 @@ namespace FIFE
             Zone* endZone   = endCell->getZone();
             if (startZone != endZone) {
                 // look for special cases (start is zone border or end is static blocker)
-                if (!endZone || startCell->isZoneProtected()) {
+                if ((endZone == nullptr) || startCell->isZoneProtected()) {
                     bool found                          = false;
                     const std::vector<Cell*>& neighbors = endCell->getNeighbors();
                     for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
                         Zone* tmpZone = (*it)->getZone();
-                        if (tmpZone) {
+                        if (tmpZone != nullptr) {
                             endZone = tmpZone;
                             if (tmpZone == startZone) {
                                 found = true;
@@ -175,7 +175,7 @@ namespace FIFE
                         const std::vector<Cell*>& neighbors = startCell->getNeighbors();
                         for (std::vector<Cell*>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
                             Zone* tmpZone = (*it)->getZone();
-                            if (tmpZone) {
+                            if (tmpZone != nullptr) {
                                 if (tmpZone == startZone) {
                                     endZone = tmpZone;
                                     break;
@@ -185,7 +185,7 @@ namespace FIFE
                     }
                 }
                 // target and all neighbors are static blockers
-                if (!endZone) {
+                if (endZone == nullptr) {
                     return false;
                 }
                 // same CellCache but different zones
@@ -326,7 +326,7 @@ namespace FIFE
         CellGrid* nodeGrid             = currentNode.getLayer()->getCellGrid();
         ExactModelCoordinate targetPos = currentNode.getMapCoordinates();
         Cell* tmpCell                  = nodeCache->getCell(currentNode.getLayerCoordinates());
-        if (tmpCell) {
+        if (tmpCell != nullptr) {
             targetPos.z = tmpCell->getLayerCoordinates().z + nodeGrid->getZShift();
         }
         double dx       = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
@@ -350,7 +350,7 @@ namespace FIFE
             CellGrid* prevGrid           = prevNode.getLayer()->getCellGrid();
             ExactModelCoordinate prevPos = route->getPreviousNode().getMapCoordinates();
             tmpCell                      = prevCache->getCell(prevNode.getLayerCoordinates());
-            if (tmpCell) {
+            if (tmpCell != nullptr) {
                 prevPos.z = tmpCell->getLayerCoordinates().z + prevGrid->getZShift();
             }
             double cell_dz = (targetPos.z - prevPos.z);
@@ -385,11 +385,11 @@ namespace FIFE
             bool cw = route->walkToNextNode();
             // check transistion
             CellCache* cache = nextLocation.getLayer()->getCellCache();
-            if (cache) {
+            if (cache != nullptr) {
                 Cell* cell = cache->getCell(nextLocation.getLayerCoordinates());
-                if (cell) {
+                if (cell != nullptr) {
                     TransitionInfo* ti = cell->getTransition();
-                    if (ti) {
+                    if (ti != nullptr) {
                         // "beam" if it is a part of path
                         if (cw &&
                             !cell->getLayer()->getCellGrid()->isAccessible(
