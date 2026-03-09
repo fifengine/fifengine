@@ -196,7 +196,7 @@ namespace FIFE
         virtual std::string getAttrStr() const
         {
             std::stringstream ss;
-            ss << InputEvent::getAttrStr() << std::endl;
+            ss << InputEvent::getAttrStr() << '\n';
             ss << "event = " << mouseEventType2str(m_eventType) << ", ";
             ss << "button = " << mouseButtonType2str(m_buttonType) << ", ";
             ss << "x = " << m_x << ", ";

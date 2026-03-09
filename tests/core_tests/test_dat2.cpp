@@ -43,11 +43,11 @@ TEST_CASE("DAT2_test")
     CHECK(vfs->exists(COMPRESSED_FILE));
 
     try {
-        std::cout << "adding Source" << std::endl;
+        std::cout << "adding Source" << '\n';
         vfs->addSource(new DAT2(vfs.get(), COMPRESSED_FILE));
-        std::cout << "added Source" << std::endl;
+        std::cout << "added Source" << '\n';
     } catch (Exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what() << '\n';
     }
 
     CHECK(vfs->exists(RAW_FILE));
@@ -57,7 +57,7 @@ TEST_CASE("DAT2_test")
     FIFE::RawData* fcomp = vfs->open("dat2vfstest.map");
 
     CHECK((fraw->getDataLength()) == (fcomp->getDataLength()));
-    // std::cout << "data length match, length = " << fcomp->getDataLength() << std::endl;
+    // std::cout << "data length match, length = " << fcomp->getDataLength() << '\n';
 
     unsigned int smaller_len = fraw->getDataLength();
     if (fcomp->getDataLength() < smaller_len) {
@@ -68,17 +68,17 @@ TEST_CASE("DAT2_test")
     uint8_t* d_comp = new uint8_t[fcomp->getDataLength()];
     fraw->readInto(d_raw, fraw->getDataLength());
     fcomp->readInto(d_comp, fcomp->getDataLength());
-    // std::cout << "scanning data..." << std::endl;
+    // std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t rawc  = d_raw[i];
         uint8_t compc = d_comp[i];
         CHECK((compc) == (rawc));
         // std::cout
         //	<< "raw: " << std::setbase(16) << rawc
-        //	<< " comp: " << std::setbase(16) << compc << std::endl;
+        //	<< " comp: " << std::setbase(16) << compc << '\n';
         break;
     }
-    // std::cout << "scanning finished" << std::endl;
+    // std::cout << "scanning finished" << '\n';
 
     delete[] d_raw;
     delete[] d_comp;

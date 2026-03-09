@@ -98,8 +98,7 @@ namespace FIFE
 
                     if (!XML::Parse(mapFile, xml)) {
                         std::ostringstream oss;
-                        oss << " Failed to load" << mapFilename << " : " << __FILE__ << " [" << __LINE__ << "]"
-                            << std::endl;
+                        oss << " Failed to load" << mapFilename << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
                         FL_ERR(_log, oss.str());
 
                         delete data;
@@ -399,8 +398,7 @@ namespace FIFE
                                                     } else {
                                                         std::ostringstream oss;
                                                         oss << " Failed to create instance of object " << objectId
-                                                            << " : " << __FILE__ << " [" << __LINE__ << "]"
-                                                            << std::endl;
+                                                            << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
                                                         FL_ERR(_log, oss.str());
                                                     }
                                                 }

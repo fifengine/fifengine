@@ -86,7 +86,7 @@ TEST_CASE("test_decoder")
     RawData* fcomp = vfs->open("ziptest_content/maps/test.map");
 
     CHECK_EQ(fraw->getDataLength(), fcomp->getDataLength());
-    std::cout << "9" << std::endl;
+    std::cout << "9" << '\n';
     unsigned int smaller_len = fraw->getDataLength();
     if (fcomp->getDataLength() < smaller_len) {
         smaller_len = fcomp->getDataLength();
@@ -97,13 +97,13 @@ TEST_CASE("test_decoder")
     fraw->readInto(d_raw, fraw->getDataLength());
     fcomp->readInto(d_comp, fcomp->getDataLength());
 
-    std::cout << "scanning data..." << std::endl;
+    std::cout << "scanning data..." << '\n';
     for (unsigned int i = 0; i < smaller_len; i++) {
         uint8_t rawc  = d_raw[i];
         uint8_t compc = d_comp[i];
         CHECK_EQ(rawc, compc);
     }
-    std::cout << "scanning finished" << std::endl;
+    std::cout << "scanning finished" << '\n';
     delete[] d_raw;
     delete[] d_comp;
     delete fraw;

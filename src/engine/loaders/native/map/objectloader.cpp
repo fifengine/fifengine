@@ -100,7 +100,7 @@ namespace FIFE
                     if (!XML::Parse(objectFile, xml)) {
                         std::ostringstream oss;
                         oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
-                            << std::endl;
+                            << '\n';
                         FL_ERR(_log, oss.str());
 
                         delete data;
@@ -109,7 +109,7 @@ namespace FIFE
                 } else {
                     std::ostringstream oss;
                     oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
-                        << std::endl;
+                        << '\n';
                     FL_ERR(_log, oss.str());
 
                     return false;
@@ -120,16 +120,14 @@ namespace FIFE
                 data = 0;
             } else {
                 std::ostringstream oss;
-                oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
-                    << std::endl;
+                oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
                 FL_ERR(_log, oss.str());
 
                 return false;
             }
         } catch (NotFound&) {
             std::ostringstream oss;
-            oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
-                << std::endl;
+            oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
             FL_ERR(_log, oss.str());
 
             // TODO - should we abort here
@@ -176,8 +174,7 @@ namespace FIFE
             }
         } catch (NotFound&) {
             std::ostringstream oss;
-            oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
-                << std::endl;
+            oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
             FL_ERR(_log, oss.str());
 
             // TODO - should we abort here

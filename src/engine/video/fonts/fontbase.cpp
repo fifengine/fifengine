@@ -178,7 +178,7 @@ namespace FIFE
         const uint8_t newline_utf8 = '\n';
         uint32_t newline;
         utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
-        // std::cout << "Text:" << text << std::endl;
+        // std::cout << "Text:" << text << '\n';
         Image* image = m_pool.getRenderedText(this, text);
         if (!image) {
             std::vector<SDL_Surface*> lines;
@@ -193,7 +193,7 @@ namespace FIFE
                     if (codepoint != newline)
                         utf8::append(codepoint, back_inserter(line));
                 }
-                // std::cout << "Line:" << line << std::endl;
+                // std::cout << "Line:" << line << '\n';
                 SDL_Surface* text_surface = renderString(line);
                 if (text_surface->w > render_width) {
                     render_width = text_surface->w;

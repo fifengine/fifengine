@@ -95,10 +95,10 @@ namespace FIFE
             break;
         }
         if (m_logtoprompt) {
-            std::cout << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
+            std::cout << moduleInfos[module].name << ":" << lvlstr << ":" << msg << '\n';
         }
         if (m_logtofile) {
-            *m_logfile << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
+            *m_logfile << moduleInfos[module].name << ":" << lvlstr << ":" << msg << '\n';
         }
         if (level == LEVEL_PANIC) {
             abort();
@@ -200,7 +200,7 @@ namespace FIFE
                     stream << m;
                     std::string msg = "Log module definition ids do not match in index ";
                     msg += stream.str();
-                    std::cout << msg << std::endl;
+                    std::cout << msg << '\n';
                     throw InvalidFormat(msg);
                 }
                 module_check_stack.clear();

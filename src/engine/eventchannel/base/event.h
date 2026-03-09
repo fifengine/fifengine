@@ -107,8 +107,8 @@ namespace FIFE
         virtual std::string getDebugString() const
         {
             std::stringstream ss;
-            ss << getName() << std::endl;
-            ss << getAttrStr() << std::endl;
+            ss << getName() << '\n';
+            ss << getAttrStr() << '\n';
             return ss.str();
         }
 

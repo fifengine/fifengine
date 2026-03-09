@@ -171,7 +171,7 @@ namespace FIFE
         virtual std::string getAttrStr() const
         {
             std::stringstream ss;
-            ss << Event::getAttrStr() << std::endl;
+            ss << Event::getAttrStr() << '\n';
             ss << "shift = " << m_isShiftPressed << ", ";
             ss << "ctrl = " << m_isControlPressed << ", ";
             ss << "alt = " << m_isAltPressed << ", ";

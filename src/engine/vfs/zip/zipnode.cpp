@@ -235,19 +235,19 @@ namespace FIFE
 std::ostream& operator<<(std::ostream& os, const FIFE::ZipNode& node)
 {
     // print node name first
-    os << node.getName() << std::endl;
+    os << node.getName() << '\n';
 
     // print all file children
     FIFE::ZipNodeContainer fileChildren = node.getChildren(FIFE::ZipContentType::File);
     FIFE::ZipNodeContainer::iterator iter;
     for (iter = fileChildren.begin(); iter != fileChildren.end(); ++iter) {
-        os << *(*iter) << std::endl;
+        os << *(*iter) << '\n';
     }
 
     // print all directory children (recursively)
     FIFE::ZipNodeContainer directoryChildren = node.getChildren(FIFE::ZipContentType::Directory);
     for (iter = directoryChildren.begin(); iter != directoryChildren.end(); ++iter) {
-        os << *(*iter) << std::endl;
+        os << *(*iter) << '\n';
     }
 
     return os;
