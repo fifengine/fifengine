@@ -1632,7 +1632,7 @@ namespace FIFE
         float xDiff = p2.x - p1.x;
         float yDiff = p2.y - p1.y;
         float halfW = static_cast<float>(width) / 2.0;
-        float angle = Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi()) + 90.0;
+        float angle = (Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi())) + 90.0;
         if (angle < 0.0) {
             angle += 360.0;
         } else if (angle > 360.0) {
@@ -2597,8 +2597,8 @@ namespace FIFE
         uint8_t* imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = (sheight - 1); y >= 0; --y) {
-            uint8_t* rowbegin = pixels + y * swidth * 3;
-            uint8_t* rowend   = rowbegin + swidth * 3;
+            uint8_t* rowbegin = pixels + (y * swidth * 3);
+            uint8_t* rowend   = rowbegin + (swidth * 3);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2645,8 +2645,8 @@ namespace FIFE
         uint8_t* imagepixels = reinterpret_cast<uint8_t*>(src->pixels);
         // Copy the "reversed_image" memory to the "image" memory
         for (int32_t y = (sheight - 1); y >= 0; --y) {
-            uint8_t* rowbegin = pixels + y * swidth * 4;
-            uint8_t* rowend   = rowbegin + swidth * 4;
+            uint8_t* rowbegin = pixels + (y * swidth * 4);
+            uint8_t* rowend   = rowbegin + (swidth * 4);
 
             std::copy(rowbegin, rowend, imagepixels);
 
@@ -2707,7 +2707,7 @@ namespace FIFE
             }
             sy_ca++;
             src_help_pointer =
-                reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(src_help_pointer) + (*sy_ca >> 16) * src->pitch);
+                reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(src_help_pointer) + ((*sy_ca >> 16) * src->pitch));
         }
 
         if (SDL_MUSTLOCK(dst)) {

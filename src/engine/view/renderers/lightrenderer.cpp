@@ -225,11 +225,11 @@ namespace FIFE
         return dynamic_cast<LightRenderer*>(cnt->getRenderer("LightRenderer"));
     }
     LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position) :
-        RendererBase(renderbackend, position), m_groups()
+        RendererBase(renderbackend, position) 
     {
         setEnabled(false);
     }
-    LightRenderer::LightRenderer(const LightRenderer& old) : RendererBase(old), m_groups()
+    LightRenderer::LightRenderer(const LightRenderer& old) : RendererBase(old) 
     {
         setEnabled(false);
     }

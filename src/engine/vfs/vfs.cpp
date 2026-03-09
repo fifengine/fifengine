@@ -28,7 +28,7 @@ namespace FIFE
      */
     static Logger _log(LM_VFS);
 
-    VFS::VFS() : m_sources() { }
+    VFS::VFS()  { }
 
     VFS::~VFS()
     {

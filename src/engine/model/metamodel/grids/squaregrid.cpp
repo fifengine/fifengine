@@ -22,7 +22,7 @@ namespace FIFE
 {
     static Logger _log(LM_SQUAREGRID);
 
-    SquareGrid::SquareGrid() : CellGrid() { }
+    SquareGrid::SquareGrid()  { }
 
     CellGrid* SquareGrid::clone()
     {

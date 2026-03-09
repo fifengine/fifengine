@@ -30,7 +30,7 @@ namespace FIFE
         m_manager(manager),
         m_source(0),
         m_directFilter(nullptr),
-        m_soundClip(),
+        
         m_soundClipId(0),
         m_streamId(0),
         m_emitterId(uid),

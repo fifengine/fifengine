@@ -27,7 +27,7 @@ namespace FIFE
 {
 
     FontBase::FontBase() :
-        m_pool(),
+        
         mColor(),
         mGlyphSpacing(0),
         mRowSpacing(0),

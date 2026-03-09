@@ -330,7 +330,7 @@ namespace FIFE
                     }
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
-                        uint8_t lum = static_cast<uint8_t>(r * 0.3 + g * 0.59 + b * 0.11);
+                        uint8_t lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                         r           = lum;
                         g           = lum;
                         b           = lum;
@@ -367,7 +367,7 @@ namespace FIFE
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t gid = x + y * pitch;
+                        uint32_t gid = x + (y * pitch);
 
                         uint8_t r = oglbuffer[gid + 0];
                         uint8_t g = oglbuffer[gid + 1];
@@ -379,7 +379,7 @@ namespace FIFE
                         }
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         if (monochrome) {
-                            uint8_t lum        = static_cast<uint8_t>(r * 0.3 + g * 0.59 + b * 0.11);
+                            uint8_t lum        = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                             oglbuffer[gid + 0] = lum;
                             oglbuffer[gid + 1] = lum;
                             oglbuffer[gid + 2] = lum;
@@ -406,10 +406,10 @@ namespace FIFE
 
                 for (uint32_t y = 0; y < height; ++y) {
                     for (uint32_t x = 0; x < width * 4; x += 4) {
-                        uint32_t gid = x + y * pitch;
+                        uint32_t gid = x + (y * pitch);
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         uint8_t lum = static_cast<uint8_t>(
-                            oglbuffer[gid + 0] * 0.3 + oglbuffer[gid + 1] * 0.59 + oglbuffer[gid + 2] * 0.11);
+                            (oglbuffer[gid + 0] * 0.3) + (oglbuffer[gid + 1] * 0.59) + (oglbuffer[gid + 2] * 0.11));
                         oglbuffer[gid + 0] = lum;
                         oglbuffer[gid + 1] = lum;
                         oglbuffer[gid + 2] = lum;
@@ -464,7 +464,7 @@ namespace FIFE
                     }
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
-                        uint8_t lum = static_cast<uint8_t>(r * 0.3 + g * 0.59 + b * 0.11);
+                        uint8_t lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                         r           = lum;
                         g           = lum;
                         b           = lum;

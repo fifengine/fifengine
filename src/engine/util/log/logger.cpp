@@ -176,7 +176,7 @@ namespace FIFE
         return true;
     }
 
-    LogManager::LogManager() : m_level(LEVEL_DEBUG), module_check_stack(), m_logtofile(false), m_logtoprompt(false)
+    LogManager::LogManager() : m_level(LEVEL_DEBUG),  m_logtofile(false), m_logtoprompt(false)
     {
         validateModuleDescription(LM_CORE);
         m_logfile = nullptr;

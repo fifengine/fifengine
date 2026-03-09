@@ -36,7 +36,7 @@ namespace fcn
             graphics->fillRectangle(fcn::Rectangle(0, 0, getWidth() * mValue / 100, getHeight()));
         } else {
             graphics->fillRectangle(
-                fcn::Rectangle(0, getHeight() - getHeight() * mValue / 100, getWidth(), getHeight() * mValue / 100));
+                fcn::Rectangle(0, getHeight() - (getHeight() * mValue / 100), getWidth(), getHeight() * mValue / 100));
         }
 
         if (mImage != nullptr) {

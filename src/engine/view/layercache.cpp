@@ -134,9 +134,9 @@ namespace FIFE
             InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
             InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
             int32_t lvc =
-                ceil(xtox * lpos.x + ytox * lpos.y) + ceil(xtoy * lpos.x + ytoy * lpos.y) + liv->getStackPosition();
+                ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) + liv->getStackPosition();
             int32_t rvc =
-                ceil(xtox * rpos.x + ytox * rpos.y) + ceil(xtoy * rpos.x + ytoy * rpos.y) + riv->getStackPosition();
+                ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) + riv->getStackPosition();
             if (lvc == rvc) {
                 if (Mathd::Equal(lpos.z, rpos.z)) {
                     return liv->getStackPosition() < riv->getStackPosition();
@@ -788,7 +788,7 @@ namespace FIFE
                 static const float stackdelta  = (FLT_EPSILON * 100.0);
                 int32_t numlayers              = m_layer->getLayerCount();
                 float lmin                     = m_layer->getZOffset();
-                float lmax                     = lmin + globalrange / numlayers;
+                float lmax                     = lmin + (globalrange / numlayers);
                 float a                        = (lmin - lmax) / det;
                 float b                        = (lmax * m_zMin - lmin * m_zMax) / det;
 

@@ -46,8 +46,7 @@ namespace FIFE
         m_interact(false),
         
         m_cellCache(nullptr),
-        m_changeListeners(),
-        m_changedInstances(),
+        
         m_changed(false),
         m_static(false)
     {
@@ -323,7 +322,7 @@ namespace FIFE
             for (; current.x < center.x; current.x++) {
                 uint16_t dx       = center.x - current.x;
                 uint16_t dy       = center.y - current.y;
-                uint16_t distance = dx * dx + dy * dy;
+                uint16_t distance = (dx * dx) + (dy * dy);
                 if (distance <= radiusp2) {
                     m_instanceTree->findInstances(current, 0, 0, matchingInstances);
                     if (!matchingInstances.empty()) {
@@ -434,7 +433,7 @@ namespace FIFE
             }
         }
 
-        float offset = globalmax - (numlayers - (thislayer - 1)) * (globalrange / numlayers);
+        float offset = globalmax - ((numlayers - (thislayer - 1)) * (globalrange / numlayers));
         return offset;
     }
 

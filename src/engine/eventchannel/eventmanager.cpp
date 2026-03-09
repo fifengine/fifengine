@@ -30,12 +30,7 @@ namespace FIFE
     static Logger _log(LM_EVTCHANNEL);
 
     EventManager::EventManager() :
-        m_commandListeners(),
-        m_keyListeners(),
-        m_textListeners(),
-        m_mouseListeners(),
-        m_sdleventListeners(),
-        m_keystatemap(),
+        
         m_keyfilter(nullptr),
         m_mousestate(0),
         m_mostrecentbtn(MouseEvent::EMPTY),
@@ -525,7 +520,7 @@ namespace FIFE
                 m_lastTicks        = ticks;
                 float dx           = static_cast<float>(tmp_x - m_oldX);
                 float dy           = static_cast<float>(tmp_y - m_oldY);
-                float distance     = Mathf::Sqrt(dx * dx + dy * dy);
+                float distance     = Mathf::Sqrt((dx * dx) + (dy * dy));
                 float acceleration = static_cast<float>((distance / difference) / difference);
                 float velocity     = (m_oldVelocity + acceleration * difference) / 2;
                 if (velocity > m_mouseSensitivity + 1) {

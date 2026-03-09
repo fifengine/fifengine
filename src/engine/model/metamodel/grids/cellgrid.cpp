@@ -20,9 +20,7 @@ namespace FIFE
     static Logger _log(LM_CELLGRID);
 
     CellGrid::CellGrid() :
-        FifeClass(),
-        m_matrix(),
-        m_inverse_matrix(),
+        
         m_xshift(0),
         m_yshift(0),
         m_zshift(0),
@@ -66,7 +64,7 @@ namespace FIFE
     int32_t CellGrid::orientation(
         const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2)
     {
-        double o = (pt2.x - pt1.x) * (pt.y - pt1.y) - (pt.x - pt1.x) * (pt2.y - pt1.y);
+        double o = ((pt2.x - pt1.x) * (pt.y - pt1.y)) - ((pt.x - pt1.x) * (pt2.y - pt1.y));
         if (o > 0.0) {
             return 1;
         } else if (o < 0.0) {

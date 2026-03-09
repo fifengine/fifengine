@@ -370,7 +370,7 @@ namespace FIFE
                 double rx                       = listenerPos.x - emitterPos.x;
                 double ry                       = listenerPos.y - emitterPos.y;
                 double rz                       = listenerPos.z - emitterPos.z;
-                inRange                         = maxDistance >= Mathd::Sqrt(rx * rx + ry * ry + rz * rz);
+                inRange                         = maxDistance >= Mathd::Sqrt((rx * rx) + (ry * ry) + (rz * rz));
             }
             // remove active not in range
             if (!inRange) {

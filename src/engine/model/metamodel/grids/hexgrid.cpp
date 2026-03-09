@@ -25,11 +25,11 @@ namespace FIFE
     static const double HEX_TO_EDGE         = HEX_WIDTH / 2;
     static const double HEX_TO_CORNER       = 0.5 / Mathd::Cos(Mathd::pi() / 6);
     static const double HEX_EDGE_HALF       = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
-    static const double VERTICAL_MULTIP     = Mathd::Sqrt(HEX_WIDTH * HEX_WIDTH - HEX_TO_EDGE * HEX_TO_EDGE);
+    static const double VERTICAL_MULTIP     = Mathd::Sqrt((HEX_WIDTH * HEX_WIDTH) - (HEX_TO_EDGE * HEX_TO_EDGE));
     static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
     static const double HEX_EDGE_GRADIENT   = 1 / Mathd::Sqrt(3);
 
-    HexGrid::HexGrid(bool axial) : CellGrid(), m_axial(axial)
+    HexGrid::HexGrid(bool axial) :  m_axial(axial)
     {
         FL_DBG(_log, "Constructing new HexGrid");
         FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);
@@ -315,7 +315,7 @@ namespace FIFE
     std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end)
     {
         std::vector<ModelCoordinate> coords;
-        int32_t doubleDeltaX = 2 * (end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
+        int32_t doubleDeltaX = (2 * (end.x - start.x)) + ABS(end.y % 2) - ABS(start.y % 2);
         int32_t deltaX       = (end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
         int32_t deltaY       = end.y - start.y;
 

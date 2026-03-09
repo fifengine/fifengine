@@ -38,8 +38,7 @@ namespace FIFE
         m_id(identifier),
         
         m_timeProvider(tp_master),
-        m_changeListeners(),
-        m_changedLayers(),
+        
         m_renderBackend(renderBackend),
         m_renderers(renderers),
         m_changed(false)

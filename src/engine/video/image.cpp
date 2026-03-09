@@ -356,7 +356,7 @@ namespace FIFE
 
         int32_t bpp = surface->format->BytesPerPixel;
         SDL_LockSurface(surface);
-        Uint8* p     = static_cast<Uint8*>(surface->pixels) + y * surface->pitch + x * bpp;
+        Uint8* p     = static_cast<Uint8*>(surface->pixels) + (y * surface->pitch) + (x * bpp);
         Uint32 pixel = SDL_MapRGBA(surface->format, r, g, b, a);
         switch (bpp) {
         case 1:

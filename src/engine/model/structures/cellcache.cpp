@@ -509,7 +509,7 @@ namespace FIFE
                     // out of range in the old size, so we create a new cell
                     if (old_x < 0 || old_x >= static_cast<int32_t>(m_width) || old_y < 0 ||
                         old_y >= static_cast<int32_t>(m_height)) {
-                        int32_t coordId = x + y * w;
+                        int32_t coordId = x + (y * w);
                         cell            = new Cell(coordId, mc, m_layer);
                         cells[x][y]     = cell;
 
@@ -542,7 +542,7 @@ namespace FIFE
                         cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
                         m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = nullptr;
                         cells[x][y]                                                         = cell;
-                        int32_t coordId                                                     = x + y * w;
+                        int32_t coordId                                                     = x + (y * w);
                         cell->setCellId(coordId);
                         cell->resetNeighbors();
                     }
@@ -867,7 +867,7 @@ namespace FIFE
     int32_t CellCache::convertCoordToInt(const ModelCoordinate& coord) const
     {
         ModelCoordinate newcoords(coord.x - m_size.x, coord.y - m_size.y);
-        return newcoords.x + newcoords.y * m_width;
+        return newcoords.x + (newcoords.y * m_width);
     }
 
     ModelCoordinate CellCache::convertIntToCoord(const int32_t cell) const
@@ -963,7 +963,7 @@ namespace FIFE
                 if (c != nullptr) {
                     uint16_t dx       = center.x - current.x;
                     uint16_t dy       = center.y - current.y;
-                    uint16_t distance = dx * dx + dy * dy;
+                    uint16_t distance = (dx * dx) + (dy * dy);
                     if (distance <= radiusp2) {
                         cells.push_back(c);
 

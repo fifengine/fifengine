@@ -76,8 +76,8 @@ namespace fcn
                 // setInnerBorderSize(m_state.innerBorder);
                 //  center it
                 Rectangle childrenRec = getParent()->getChildrenArea();
-                int32_t x             = childrenRec.x + childrenRec.width / 2 - getWidth() / 2;
-                int32_t y             = childrenRec.y + childrenRec.height / 2 - getHeight() / 2;
+                int32_t x             = childrenRec.x + (childrenRec.width / 2) - (getWidth() / 2);
+                int32_t y             = childrenRec.y + (childrenRec.height / 2) - (getHeight() / 2);
                 setPosition(x, y);
                 setResizable(m_state.resizable);
                 setMovable(m_state.movable);

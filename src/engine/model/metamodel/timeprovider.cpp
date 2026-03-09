@@ -55,9 +55,9 @@ namespace FIFE
 
     double TimeProvider::getPreciseGameTime() const
     {
-        return m_time_static + m_multiplier * (((m_master != nullptr) ? m_master->getPreciseGameTime() :
+        return m_time_static + (m_multiplier * (((m_master != nullptr) ? m_master->getPreciseGameTime() :
                                                            static_cast<float>(TimeManager::instance()->getTime())) -
-                                               m_time_scaled);
+                                               m_time_scaled));
     }
 
     uint32_t scaleTime(float multiplier, uint32_t ticks)

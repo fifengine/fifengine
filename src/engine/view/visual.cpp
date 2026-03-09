@@ -213,7 +213,7 @@ namespace FIFE
         return m_stackposition;
     }
 
-    ActionVisual::ActionVisual() : m_animation_map(), m_map() { }
+    ActionVisual::ActionVisual()  { }
 
     ActionVisual* ActionVisual::create(Action* action)
     {

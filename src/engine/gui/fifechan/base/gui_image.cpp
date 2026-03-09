@@ -19,9 +19,9 @@ namespace FIFE
 {
     static Logger _log(LM_GUI);
 
-    GuiImage::GuiImage() : fcn::Image(), m_imgPtr() { }
+    GuiImage::GuiImage()  { }
 
-    GuiImage::GuiImage(ImagePtr img) : fcn::Image(), m_imgPtr(img) { }
+    GuiImage::GuiImage(ImagePtr img) :  m_imgPtr(img) { }
 
     GuiImage::~GuiImage() = default;
 

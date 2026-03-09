@@ -73,16 +73,15 @@ namespace FIFE
         m_viewport(viewport),
         m_renderbackend(renderbackend),
         m_position(ExactModelCoordinate(0, 0, 0)),
-        m_matrix(),
-        m_inverse_matrix(),
+        
         m_tilt(0),
         m_rotation(0),
         m_zoom(1),
         m_zToY(0),
         m_enabledZToY(false),
-        m_location(),
+        
         m_curOrigin(ScreenPoint(0, 0, 0)),
-        m_mapViewPort(),
+        
         m_mapViewPortUpdated(false),
         m_screenCellWidth(1),
         m_screenCellHeight(1),
@@ -91,12 +90,11 @@ namespace FIFE
         m_enabled(true),
         m_attachedTo(nullptr),
         m_transform(NoneTransform),
-        m_renderers(),
-        m_pipeline(),
+        
         m_updated(false),
-        m_layerToInstances(),
+        
         m_lighting(false),
-        m_light_colors(),
+        
         m_col_overlay(false),
         m_img_overlay(false),
         m_ani_overlay(false)
@@ -397,7 +395,7 @@ namespace FIFE
         }
         double scale = m_zoom;
         m_matrix.applyScale(scale, scale, scale);
-        m_matrix.applyTranslate(+m_viewport.x + m_viewport.w / 2, +m_viewport.y + m_viewport.h / 2, 0);
+        m_matrix.applyTranslate(+m_viewport.x + (m_viewport.w / 2), +m_viewport.y + (m_viewport.h / 2), 0);
         m_inverse_matrix = m_matrix.inverse();
 
         m_vs_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
@@ -415,10 +413,10 @@ namespace FIFE
         // set the z transformation to unity
         const int32_t N = 4;
         for (int32_t i = 0; i != N; ++i) {
-            m_vscreen_2_screen[2 * N + i] = 0;
-            m_vscreen_2_screen[i * N + 2] = 0;
+            m_vscreen_2_screen[(2 * N) + i] = 0;
+            m_vscreen_2_screen[(i * N) + 2] = 0;
         }
-        m_vscreen_2_screen[2 * N + 2] = 1;
+        m_vscreen_2_screen[(2 * N) + 2] = 1;
         m_screen_2_vscreen            = m_vscreen_2_screen.inverse();
 
         m_mapViewPortUpdated = false;
@@ -917,7 +915,7 @@ found_non_transparent_pixel:;
         }
         uint16_t width  = m_viewport.w;
         uint16_t height = m_viewport.h;
-        Point pm        = Point(m_viewport.x + width / 2, m_viewport.y + height / 2);
+        Point pm        = Point(m_viewport.x + (width / 2), m_viewport.y + (height / 2));
         Rect r;
 
         // color overlay

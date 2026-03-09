@@ -331,7 +331,7 @@ namespace FIFE
         }
         double dx       = (targetPos.x - instancePos.x) * nodeGrid->getXScale();
         double dy       = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
-        double distance = Mathd::Sqrt(dx * dx + dy * dy);
+        double distance = Mathd::Sqrt((dx * dx) + (dy * dy));
         // cell speed multi
         double multi;
         if (nodeCache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
@@ -357,7 +357,7 @@ namespace FIFE
             if (!Mathd::Equal(cell_dz, 0.0)) {
                 double cell_dx       = (targetPos.x - prevPos.x);
                 double cell_dy       = (targetPos.y - prevPos.y);
-                double cell_distance = Mathd::Sqrt(cell_dx * cell_dx + cell_dy * cell_dy);
+                double cell_distance = Mathd::Sqrt((cell_dx * cell_dx) + (cell_dy * cell_dy));
                 if (cell_dz > 0) {
                     if (locationsEqual(current, currentNode)) {
                         instancePos.z = targetPos.z;

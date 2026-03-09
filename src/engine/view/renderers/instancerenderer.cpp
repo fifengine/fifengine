@@ -71,7 +71,7 @@ namespace FIFE
     {
     }
 
-    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), groups(), w(1), h(1), trans(0), front(true), z(0) { }
+    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr),  w(1), h(1), trans(0), front(true), z(0) { }
 
     InstanceRenderer::OutlineInfo::~OutlineInfo()
     {
@@ -570,12 +570,12 @@ namespace FIFE
                                 }
                                 float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
                                 Color c(
-                                    coloringColor[0] * (1.0 - alphaFactor1) +
-                                        (c_it->second.getR() * alphaFactor2) * alphaFactor1,
-                                    coloringColor[1] * (1.0 - alphaFactor1) +
-                                        (c_it->second.getG() * alphaFactor2) * alphaFactor1,
-                                    coloringColor[2] * (1.0 - alphaFactor1) +
-                                        (c_it->second.getB() * alphaFactor2) * alphaFactor1,
+                                    (coloringColor[0] * (1.0 - alphaFactor1)) +
+                                        ((c_it->second.getR() * alphaFactor2) * alphaFactor1),
+                                    (coloringColor[1] * (1.0 - alphaFactor1)) +
+                                        ((c_it->second.getG() * alphaFactor2) * alphaFactor1),
+                                    (coloringColor[2] * (1.0 - alphaFactor1)) +
+                                        ((c_it->second.getB() * alphaFactor2) * alphaFactor1),
                                     255);
                                 temp->changeColor(c_it->first, c);
                             }
@@ -655,12 +655,12 @@ namespace FIFE
                         }
                         float alphaFactor2 = static_cast<float>(c_it->second.getAlpha() / 255.0);
                         Color c(
-                            coloringColor[0] * (1.0 - alphaFactor1) +
-                                (c_it->second.getR() * alphaFactor2) * alphaFactor1,
-                            coloringColor[1] * (1.0 - alphaFactor1) +
-                                (c_it->second.getG() * alphaFactor2) * alphaFactor1,
-                            coloringColor[2] * (1.0 - alphaFactor1) +
-                                (c_it->second.getB() * alphaFactor2) * alphaFactor1,
+                            (coloringColor[0] * (1.0 - alphaFactor1)) +
+                                ((c_it->second.getR() * alphaFactor2) * alphaFactor1),
+                            (coloringColor[1] * (1.0 - alphaFactor1)) +
+                                ((c_it->second.getG() * alphaFactor2) * alphaFactor1),
+                            (coloringColor[2] * (1.0 - alphaFactor1)) +
+                                ((c_it->second.getB() * alphaFactor2) * alphaFactor1),
                             255);
                         temp->changeColor(c_it->first, c);
                     }
@@ -1018,9 +1018,9 @@ namespace FIFE
                         overlay_surface,
                         x,
                         y,
-                        info.r * (1.0 - alphaFactor) + r * alphaFactor,
-                        info.g * (1.0 - alphaFactor) + g * alphaFactor,
-                        info.b * (1.0 - alphaFactor) + b * alphaFactor,
+                        (info.r * (1.0 - alphaFactor)) + (r * alphaFactor),
+                        (info.g * (1.0 - alphaFactor)) + (g * alphaFactor),
+                        (info.b * (1.0 - alphaFactor)) + (b * alphaFactor),
                         a);
                 }
             }

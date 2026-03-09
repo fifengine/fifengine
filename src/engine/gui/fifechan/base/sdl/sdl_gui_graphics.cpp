@@ -63,7 +63,7 @@ namespace FIFE
             mFont->drawString(this, text, x, y);
             break;
         case fcn::Graphics::Alignment::Center:
-            mFont->drawString(this, text, x - mFont->getWidth(text) / 2, y);
+            mFont->drawString(this, text, x - (mFont->getWidth(text) / 2), y);
             break;
         case fcn::Graphics::Alignment::Right:
             mFont->drawString(this, text, x - mFont->getWidth(text), y);

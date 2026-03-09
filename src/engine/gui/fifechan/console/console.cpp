@@ -28,7 +28,7 @@ namespace FIFE
     static Logger _log(LM_CONSOLE);
 
     Console::Console() :
-        fcn::Container(),
+        
         m_consoleexec(nullptr),
         m_input(new CommandLine()),
         m_output(new fcn::TextBox()),
@@ -98,14 +98,14 @@ namespace FIFE
 
         setSize(w, h);
 
-        m_outputscrollarea->setSize(w - 2 * b, h - input_h - 3 * b - bbar_h);
+        m_outputscrollarea->setSize(w - (2 * b), h - input_h - (3 * b) - bbar_h);
         m_outputscrollarea->setPosition(b, 0);
 
         m_input->setPosition(b, h - input_h - b - bbar_h);
-        m_input->setSize(w - 2 * b, input_h);
+        m_input->setSize(w - (2 * b), input_h);
 
         m_status->setPosition(b, h - b - bbar_h);
-        m_status->setSize(w - 2 * b, bbar_h);
+        m_status->setSize(w - (2 * b), bbar_h);
 
         m_toolsbutton->setPosition(w - button_w, h - b - bbar_h);
         m_toolsbutton->setSize(button_w, bbar_h);

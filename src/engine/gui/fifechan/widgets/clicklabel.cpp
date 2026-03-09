@@ -103,7 +103,7 @@ namespace fcn
     void ClickLabel::wrapText()
     {
         if (isTextWrapping() && (mGuiFont != nullptr)) {
-            int32_t w    = getWidth() - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+            int32_t w    = getWidth() - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
             mWrappedText = mGuiFont->splitTextToWidth(mCaption, w);
         }
     }
@@ -131,7 +131,7 @@ namespace fcn
                 if (getParent() != nullptr) {
                     w = getParent()->getChildrenArea().width;
                 }
-                int32_t textW = w - 2 * getBorderSize() - getPaddingLeft() - getPaddingRight();
+                int32_t textW = w - (2 * getBorderSize()) - getPaddingLeft() - getPaddingRight();
                 int32_t maxW  = isFixedSize() ? getFixedSize().getWidth() : getMaxSize().getWidth();
                 if (textW < 1) {
                     w     = maxW;
@@ -185,7 +185,7 @@ namespace fcn
             int32_t textX = 0;
             int32_t textY =
                 offsetRec.y + getPaddingTop() +
-                (getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2;
+                ((getHeight() - offsetRec.height - getPaddingTop() - getPaddingBottom() - image->getHeight()) / 2);
 
             switch (getAlignment()) {
             case Graphics::Alignment::Left:

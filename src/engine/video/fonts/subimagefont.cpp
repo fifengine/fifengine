@@ -31,7 +31,7 @@ namespace FIFE
      */
     static Logger _log(LM_GUI);
 
-    SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs) : ImageFontBase()
+    SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs)  
     {
 
         FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);

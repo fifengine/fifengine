@@ -100,8 +100,8 @@ namespace FIFE
                     if (m_background) {
                         m_renderbackend->fillRectangle(
                             p,
-                            r.w + 2 * overdraw,
-                            r.h + 2 * overdraw,
+                            r.w + (2 * overdraw),
+                            r.h + (2 * overdraw),
                             m_backcolor.r,
                             m_backcolor.g,
                             m_backcolor.b,
@@ -111,8 +111,8 @@ namespace FIFE
                     if (m_backborder) {
                         m_renderbackend->drawRectangle(
                             p,
-                            r.w + 2 * overdraw,
-                            r.h + 2 * overdraw,
+                            r.w + (2 * overdraw),
+                            r.h + (2 * overdraw),
                             m_backbordercolor.r,
                             m_backbordercolor.g,
                             m_backbordercolor.b,

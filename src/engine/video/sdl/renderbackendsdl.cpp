@@ -275,7 +275,7 @@ namespace FIFE
         float xDiff = p2.x - p1.x;
         float yDiff = p2.y - p1.y;
         float halfW = static_cast<float>(width) / 2.0;
-        float angle = Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi()) + 90.0;
+        float angle = (Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi())) + 90.0;
         if (angle < 0.0) {
             angle += 360.0;
         } else if (angle > 360.0) {
@@ -317,9 +317,9 @@ namespace FIFE
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     int32_t x = static_cast<int32_t>(
-                        points[i].x + static_cast<float>(y - points[i].y) /
+                        points[i].x + (static_cast<float>(y - points[i].y) /
                                           static_cast<float>(points[j].y - points[i].y) *
-                                          static_cast<float>(points[j].x - points[i].x));
+                                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
                     for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
@@ -504,9 +504,9 @@ namespace FIFE
         }
 
         float angle = static_cast<float>(s) * step;
-        Point oldPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+        Point oldPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
         for (; s <= e; ++s, angle += step) {
-            Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+            Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
             drawLine(oldPoint, newPoint, r, g, b, a);
             oldPoint = newPoint;
         }
@@ -531,14 +531,14 @@ namespace FIFE
         int32_t yMin = p.y;
         float angle  = static_cast<float>(s) * step;
         for (; s <= e; ++s, angle += step) {
-            Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+            Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
             yMax = std::max(yMax, newPoint.y);
             yMin = std::min(yMin, newPoint.y);
             points.push_back(newPoint);
         }
         // add end point (again)
         angle = static_cast<float>(e) * step;
-        Point newPoint(radius * Mathf::Cos(angle) + p.x, radius * Mathf::Sin(angle) + p.y);
+        Point newPoint((radius * Mathf::Cos(angle)) + p.x, (radius * Mathf::Sin(angle)) + p.y);
         points.push_back(newPoint);
         yMax = std::max(yMax, newPoint.y);
         yMin = std::min(yMin, newPoint.y);
@@ -552,9 +552,9 @@ namespace FIFE
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     int32_t x = static_cast<int32_t>(
-                        points[i].x + static_cast<float>(y - points[i].y) /
+                        points[i].x + (static_cast<float>(y - points[i].y) /
                                           static_cast<float>(points[j].y - points[i].y) *
-                                          static_cast<float>(points[j].x - points[i].x));
+                                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
                     for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
@@ -690,7 +690,7 @@ namespace FIFE
                 }
                 sy_ca++;
                 src_help_pointer = reinterpret_cast<uint32_t*>(
-                    reinterpret_cast<uint8_t*>(src_help_pointer) + (*sy_ca >> 16) * src->pitch);
+                    reinterpret_cast<uint8_t*>(src_help_pointer) + ((*sy_ca >> 16) * src->pitch));
             }
 
             if (SDL_MUSTLOCK(dst)) {

@@ -109,8 +109,7 @@ namespace FIFE
         m_speed(0),
         m_timeMultiplier(1.0),
         
-        m_changeListeners(),
-        m_actionListeners(),
+        
         m_actionInfo(nullptr),
         m_sayInfo(nullptr),
         m_timeProvider(nullptr),

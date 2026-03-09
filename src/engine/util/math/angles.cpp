@@ -88,7 +88,7 @@ namespace FIFE
         double dx = (c2.x - c1.x);
         // add grid rotation to angle, to guarantee uniform angles (not grid based)
         int32_t angle =
-            round(Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi()) + loc1.getLayer()->getCellGrid()->getRotation());
+            round((Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())) + loc1.getLayer()->getCellGrid()->getRotation());
         if (angle < 0) {
             angle += 360;
         }
