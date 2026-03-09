@@ -43,7 +43,7 @@ namespace FIFE
     AtlasBlock* AtlasPage::getBlock(uint32_t width, uint32_t height)
     {
         if (static_cast<int32_t>(width * height * pixelSize) > freePixels) {
-            return 0;
+            return nullptr;
         }
 
         blocks.push_back(AtlasBlock(Rect(), 0));
@@ -140,7 +140,7 @@ namespace FIFE
         }
         // couldn't find suitable place for a new block
         blocks.pop_back();
-        return 0;
+        return nullptr;
     }
 
     void AtlasPage::shrink(bool pot)
@@ -186,7 +186,7 @@ namespace FIFE
                 return block;
         }
         // no intersection
-        return 0;
+        return nullptr;
     }
 
     AtlasBlock* AtlasBook::getBlock(uint32_t width, uint32_t height)

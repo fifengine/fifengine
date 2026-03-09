@@ -162,14 +162,14 @@ namespace FIFE
 
         if (!isSharedImage()) {
             if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
-                r = g = b = a = 0;
+                r = g = b = a = nullptr;
                 return;
             }
             p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
         } else {
             if ((x < 0) || ((x + m_subimagerect.x) >= m_surface->w) || (y < 0) ||
                 ((y + m_subimagerect.y) >= m_surface->h)) {
-                r = g = b = a = 0;
+                r = g = b = a = nullptr;
                 return;
             }
             p = (Uint8*)m_surface->pixels + (y + m_subimagerect.y) * m_surface->pitch + (x + m_subimagerect.x) * bpp;
@@ -215,22 +215,22 @@ namespace FIFE
 
         fp = fopen(filename.c_str(), "wb");
 
-        if (fp == NULL) {
+        if (fp == nullptr) {
             return;
         }
 
         // create the png file
-        pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-        if (pngptr == NULL) {
+        pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+        if (pngptr == nullptr) {
             fclose(fp);
             return;
         }
 
         // create information struct
         infoptr = png_create_info_struct(pngptr);
-        if (infoptr == NULL) {
+        if (infoptr == nullptr) {
             fclose(fp);
-            png_destroy_write_struct(&pngptr, (png_infopp)NULL);
+            png_destroy_write_struct(&pngptr, (png_infopp) nullptr);
             return;
         }
 
@@ -323,7 +323,7 @@ namespace FIFE
                     static_cast<Uint16>(rect.h)};
                 SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
             } else {
-                SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+                SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);
             }
         } else {
             SDL_Rect dstrect = {
@@ -340,7 +340,7 @@ namespace FIFE
                     static_cast<Uint16>(rect.h)};
                 SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
             } else {
-                SDL_BlitSurface(srcimg->m_surface, NULL, m_surface, &dstrect);
+                SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);
             }
         }
         // enable blending

@@ -36,7 +36,7 @@ namespace FIFE
         m_mouseListeners(),
         m_sdleventListeners(),
         m_keystatemap(),
-        m_keyfilter(0),
+        m_keyfilter(nullptr),
         m_mousestate(0),
         m_mostrecentbtn(MouseEvent::EMPTY),
         m_mouseSensitivity(0.0),

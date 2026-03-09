@@ -70,23 +70,23 @@ namespace FIFE
     static Logger _log(LM_CONTROLLER);
 
     Engine::Engine() :
-        m_renderbackend(0),
-        m_guimanager(0),
-        m_eventmanager(0),
-        m_soundmanager(0),
-        m_timemanager(0),
-        m_imagemanager(0),
-        m_animationmanager(0),
-        m_soundclipmanager(0),
-        m_vfs(0),
-        m_model(0),
-        m_logmanager(0),
-        m_cursor(0),
+        m_renderbackend(nullptr),
+        m_guimanager(nullptr),
+        m_eventmanager(nullptr),
+        m_soundmanager(nullptr),
+        m_timemanager(nullptr),
+        m_imagemanager(nullptr),
+        m_animationmanager(nullptr),
+        m_soundclipmanager(nullptr),
+        m_vfs(nullptr),
+        m_model(nullptr),
+        m_logmanager(nullptr),
+        m_cursor(nullptr),
         m_destroyed(false),
         m_settings(),
         m_devcaps(),
-        m_offrenderer(0),
-        m_targetrenderer(0),
+        m_offrenderer(nullptr),
+        m_targetrenderer(nullptr),
         m_changelisteners()
     {
 #ifdef USE_COCOA

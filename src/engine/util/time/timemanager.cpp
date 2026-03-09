@@ -56,7 +56,7 @@ namespace FIFE
 
         // Remove dead events
         std::vector<TimeEvent*>::iterator it;
-        it = std::remove(m_events_list.begin(), m_events_list.end(), static_cast<TimeEvent*>(0));
+        it = std::remove(m_events_list.begin(), m_events_list.end(), static_cast<TimeEvent*>(nullptr));
         m_events_list.erase(it, m_events_list.end());
     }
 
@@ -72,7 +72,7 @@ namespace FIFE
         for (size_t i = 0; i < m_events_list.size(); ++i) {
             TimeEvent*& event_i = m_events_list[i];
             if (event_i == event) {
-                event_i = 0;
+                event_i = nullptr;
                 return;
             }
         }

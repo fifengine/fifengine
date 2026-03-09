@@ -22,7 +22,7 @@ namespace fcn
 
     PercentageBar::PercentageBar()
     {
-        mImage = 0;
+        mImage = nullptr;
 
         setOrientation(HORIZONTAL);
         setValue(0);

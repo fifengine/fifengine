@@ -37,7 +37,7 @@ namespace FIFE
         m_layer_area(),
         m_tmploc(),
         m_c(),
-        m_font(0),
+        m_font(nullptr),
         m_font_color(false),
         m_zoom(true)
     {

@@ -72,7 +72,7 @@ namespace FIFE
 
         ov_callbacks ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
 
-        if (0 > ov_open_callbacks(m_file.get(), &m_ovf, 0, 0, ocb)) {
+        if (0 > ov_open_callbacks(m_file.get(), &m_ovf, nullptr, 0, ocb)) {
             throw InvalidFormat("Error opening OggVorbis file");
         }
 
@@ -135,7 +135,7 @@ namespace FIFE
 
     void SoundDecoderOgg::releaseBuffer()
     {
-        if (m_data != NULL) {
+        if (m_data != nullptr) {
             delete[] m_data;
             m_data = nullptr;
         }

@@ -250,7 +250,7 @@ namespace FIFE
                 return *it;
         }
 
-        return 0;
+        return nullptr;
     }
 
     std::vector<Instance*> Layer::getInstances(const std::string& id)

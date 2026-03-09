@@ -158,7 +158,7 @@ namespace FIFE
 
     void Cursor::invalidate()
     {
-        if (m_native_cursor != NULL) {
+        if (m_native_cursor != nullptr) {
             SDL_FreeCursor(m_native_cursor);
             m_native_cursor = nullptr;
             m_native_cursor_image.reset();
@@ -271,7 +271,7 @@ namespace FIFE
             return;
         }
         SDL_SetCursor(cursor);
-        if (m_native_cursor != NULL) {
+        if (m_native_cursor != nullptr) {
             SDL_FreeCursor(m_native_cursor);
         }
         m_native_cursor = cursor;
@@ -296,7 +296,7 @@ namespace FIFE
         }
 
         SDL_Cursor* cursor = SDL_CreateColorCursor(temp_image->getSurface(), -image->getXShift(), -image->getYShift());
-        if (cursor == NULL) {
+        if (cursor == nullptr) {
             FL_WARN(
                 _log, LMsg("SDL_CreateColorCursor: \"") << SDL_GetError() << "\". Falling back to software cursor.");
             if (image->isSharedImage()) {
@@ -311,7 +311,7 @@ namespace FIFE
         if (image->isSharedImage()) {
             ImageManager::instance()->remove(temp_image);
         }
-        if (m_native_cursor != NULL) {
+        if (m_native_cursor != nullptr) {
             SDL_FreeCursor(m_native_cursor);
         }
         m_native_cursor = cursor;

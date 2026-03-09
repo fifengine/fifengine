@@ -67,7 +67,7 @@ namespace FIFE
 
             return m_pool.front().image;
         }
-        return 0;
+        return nullptr;
     }
 
     void TextRenderPool::addRenderedText(FontBase* fontbase, const std::string& text, Image* image)

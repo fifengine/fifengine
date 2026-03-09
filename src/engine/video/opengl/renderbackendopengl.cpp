@@ -77,12 +77,12 @@ namespace FIFE
         m_state.active_tex          = 0;
         m_state.alpha_test          = 0.0;
         m_state.vertex_pointer_size = 2;
-        m_state.color_pointer       = 0;
-        m_state.tex_pointer[0]      = 0;
-        m_state.tex_pointer[1]      = 0;
-        m_state.tex_pointer[2]      = 0;
-        m_state.tex_pointer[3]      = 0;
-        m_state.vertex_pointer      = 0;
+        m_state.color_pointer       = nullptr;
+        m_state.tex_pointer[0]      = nullptr;
+        m_state.tex_pointer[1]      = nullptr;
+        m_state.tex_pointer[2]      = nullptr;
+        m_state.tex_pointer[3]      = nullptr;
+        m_state.vertex_pointer      = nullptr;
 
         m_state.sten_enabled = false;
         m_state.sten_ref     = 0;
@@ -163,7 +163,7 @@ namespace FIFE
         if (m_window) {
             if (icon != "") {
                 SDL_Surface* img = IMG_Load(icon.c_str());
-                if (img != NULL) {
+                if (img != nullptr) {
                     SDL_SetWindowIcon(m_window, img);
                     SDL_FreeSurface(img);
                 }
@@ -905,11 +905,11 @@ namespace FIFE
         uint32_t elementsTC  = 0;
         uint32_t elements2TC = 0;
 
-        int32_t* currentIndex     = 0;
-        uint32_t* currentElements = 0;
+        int32_t* currentIndex     = nullptr;
+        uint32_t* currentElements = nullptr;
 
         // index buffer pointer
-        uint32_t* indexBuffer = 0;
+        uint32_t* indexBuffer = nullptr;
 
         // stride
         const uint32_t strideP   = sizeof(renderDataP);
@@ -2792,7 +2792,11 @@ namespace FIFE
         } else if (!m_target_discard && (!GLEW_EXT_framebuffer_object || !m_useframebuffer)) {
             // if we wanna just add something to render target, we need to first render previous contents
             addImageToArray(
-                targetid, m_img_target->getArea(), static_cast<GLImage*>(m_img_target.get())->getTexCoords(), 255, 0);
+                targetid,
+                m_img_target->getArea(),
+                static_cast<GLImage*>(m_img_target.get())->getTexCoords(),
+                255,
+                nullptr);
         }
     }
 

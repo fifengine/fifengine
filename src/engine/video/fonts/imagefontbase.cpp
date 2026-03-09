@@ -63,11 +63,11 @@ namespace FIFE
     {
         SDL_Surface* surface = SDL_CreateRGBSurface(0, getWidth(text), getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
 
-        SDL_FillRect(surface, 0, 0x00000000);
+        SDL_FillRect(surface, nullptr, 0x00000000);
 
         SDL_Rect dst;
         dst.x = dst.y  = 0;
-        s_glyph* glyph = 0;
+        s_glyph* glyph = nullptr;
 
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
@@ -85,7 +85,7 @@ namespace FIFE
             dst.y = glyph->offset.y;
             dst.x += glyph->offset.x;
 
-            SDL_BlitSurface(glyph->surface, 0, surface, &dst);
+            SDL_BlitSurface(glyph->surface, nullptr, surface, &dst);
             dst.x += glyph->surface->w + getGlyphSpacing();
         }
 

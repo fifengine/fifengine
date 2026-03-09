@@ -76,7 +76,7 @@ namespace FIFE
         bool limitedArea                    = m_route->isAreaLimited();
         const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
         for (std::vector<Cell*>::const_iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
-            if (*i == NULL) {
+            if (*i == nullptr) {
                 continue;
             }
             if ((*i)->getLayer()->getCellCache() != m_cellCache) {

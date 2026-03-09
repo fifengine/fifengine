@@ -39,7 +39,7 @@ namespace FIFE
         free();
 
         // delete decoder
-        if (m_deleteDecoder && m_decoder != NULL) {
+        if (m_deleteDecoder && m_decoder != nullptr) {
             delete m_decoder;
         }
     }
@@ -143,7 +143,7 @@ namespace FIFE
         SoundBufferEntry* ptr = nullptr;
         uint32_t id           = 0;
         for (uint32_t i = 0; i < m_buffervec.size(); i++) {
-            if (m_buffervec.at(i) == NULL) {
+            if (m_buffervec.at(i) == nullptr) {
                 ptr               = new SoundBufferEntry();
                 m_buffervec.at(i) = ptr;
                 id                = i;

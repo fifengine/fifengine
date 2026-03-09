@@ -117,7 +117,7 @@ namespace FIFE
 
                 // done with data delete resource
                 delete data;
-                data = 0;
+                data = nullptr;
             } else {
                 std::ostringstream oss;
                 oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]" << '\n';
@@ -170,7 +170,7 @@ namespace FIFE
 
                 // done with data delete resource
                 delete data;
-                data = 0;
+                data = nullptr;
             }
         } catch (NotFound&) {
             std::ostringstream oss;
@@ -247,7 +247,7 @@ namespace FIFE
                         }
                     } else {
                         // this will make sure the object has not already been loaded
-                        if (m_model->getObject(objectId, namespaceId) == NULL) {
+                        if (m_model->getObject(objectId, namespaceId) == nullptr) {
                             try {
                                 obj = m_model->createObject(objectId, namespaceId);
                             } catch (NameClash& e) {

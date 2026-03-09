@@ -52,7 +52,7 @@ namespace FIFE
 
     void SdlGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment)
     {
-        if (mFont == NULL) {
+        if (mFont == nullptr) {
             throw GuiException("SdlGuiGraphics::drawText() - No font set!");
         }
 

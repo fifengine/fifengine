@@ -54,7 +54,7 @@ namespace FIFE
 
     void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment)
     {
-        if (mFont == NULL) {
+        if (mFont == nullptr) {
             throw GuiException("OpenGLGuiGraphics::drawText() - No font set!");
         }
 

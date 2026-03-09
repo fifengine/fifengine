@@ -207,7 +207,7 @@ namespace FIFE
         }
         // remove null pointer
         m_triggerListeners.erase(
-            std::remove(m_triggerListeners.begin(), m_triggerListeners.end(), (ITriggerListener*)NULL),
+            std::remove(m_triggerListeners.begin(), m_triggerListeners.end(), (ITriggerListener*)nullptr),
             m_triggerListeners.end());
     }
 
@@ -338,7 +338,7 @@ namespace FIFE
         if (m_attached) {
             m_attached->removeDeleteListener(m_changeListener);
             m_attached->removeChangeListener(m_changeListener);
-            m_attached = 0;
+            m_attached = nullptr;
         }
     }
 

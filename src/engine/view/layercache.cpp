@@ -175,9 +175,9 @@ namespace FIFE
     LayerCache::LayerCache(Camera* camera)
     {
         m_camera        = camera;
-        m_layer         = 0;
-        m_layerObserver = 0;
-        m_tree          = 0;
+        m_layer         = nullptr;
+        m_layerObserver = nullptr;
+        m_tree          = nullptr;
         m_zMin          = 0.0;
         m_zMax          = 0.0;
         m_zoom          = camera->getZoom();
@@ -274,7 +274,7 @@ namespace FIFE
             entry->entryIndex    = index;
         }
 
-        entry->node        = 0;
+        entry->node        = nullptr;
         entry->forceUpdate = true;
         entry->visible     = true;
         entry->updateInfo  = EntryFullUpdate;
@@ -297,7 +297,7 @@ namespace FIFE
         // removes entry from CacheTree
         if (entry->node) {
             entry->node->data().erase(entry->entryIndex);
-            entry->node = 0;
+            entry->node = nullptr;
         }
         entry->instanceIndex = -1;
         entry->forceUpdate   = false;
@@ -617,7 +617,7 @@ namespace FIFE
                 image = ImageManager::instance()->get(image_id);
             }
         }
-        entry->forceUpdate = (action != 0);
+        entry->forceUpdate = (action != nullptr);
 
         if (action) {
             ActionVisual* actionVisual = action->getVisual<ActionVisual>();
@@ -628,7 +628,7 @@ namespace FIFE
                 std::map<int32_t, AnimationPtr>::iterator it = animations.begin();
                 std::vector<ImagePtr>* animOverlays          = new std::vector<ImagePtr>();
                 std::vector<OverlayColors*>* animationColorOverlays =
-                    colorOverlay ? new std::vector<OverlayColors*>() : 0;
+                    colorOverlay ? new std::vector<OverlayColors*>() : nullptr;
                 for (; it != animations.end(); ++it) {
                     uint32_t animationTime = instance->getActionRuntime() % it->second->getDuration();
                     image                  = it->second->getFrameByTimestamp(animationTime);

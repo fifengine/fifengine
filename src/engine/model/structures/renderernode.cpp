@@ -164,14 +164,14 @@ namespace FIFE
 
     void RendererNode::setRelative(const Location& relative_location)
     {
-        if (m_instance == NULL) {
+        if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Location) - ") << "No instance attached.");
         }
         m_location = relative_location;
     }
     void RendererNode::setRelative(const Location& relative_location, Point relative_point)
     {
-        if (m_instance == NULL) {
+        if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Location, Point) - ") << "No instance attached.");
         }
         m_location = relative_location;
@@ -179,7 +179,7 @@ namespace FIFE
     }
     void RendererNode::setRelative(const Point& relative_point)
     {
-        if (m_instance == NULL || m_location == NULL) {
+        if (m_instance == nullptr || m_location == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Point) - ") << "No instance or location attached.");
         }
         m_point = relative_point;
@@ -187,28 +187,28 @@ namespace FIFE
 
     Instance* RendererNode::getAttachedInstance()
     {
-        if (m_instance == NULL) {
+        if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedInstance() - ") << "No instance attached.");
         }
         return m_instance;
     }
     Location RendererNode::getAttachedLocation()
     {
-        if (m_instance != NULL || m_location == NULL) {
+        if (m_instance != nullptr || m_location == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedLocation() - ") << "No location attached.");
         }
         return m_location;
     }
     Layer* RendererNode::getAttachedLayer()
     {
-        if (m_layer == NULL) {
+        if (m_layer == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedLayer() - ") << "No layer attached.");
         }
         return m_layer;
     }
     Point RendererNode::getAttachedPoint()
     {
-        if (m_instance != NULL || m_location != NULL) {
+        if (m_instance != nullptr || m_location != nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedPoint() - ") << "No point attached.");
         }
         return m_point;
@@ -216,14 +216,14 @@ namespace FIFE
 
     Location RendererNode::getOffsetLocation()
     {
-        if (m_instance == NULL || m_location == NULL) {
+        if (m_instance == nullptr || m_location == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getOffsetLocation() - ") << "No location as offset used.");
         }
         return m_location;
     }
     Point RendererNode::getOffsetPoint()
     {
-        if (m_instance == NULL && m_location == NULL) {
+        if (m_instance == nullptr && m_location == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::getOffsetPoint() - ") << "No point as offset used.");
         }
         return m_point;
@@ -299,22 +299,22 @@ namespace FIFE
     Point RendererNode::getCalculatedPoint(Camera* cam, Layer* layer, const bool zoomed)
     {
         ScreenPoint p;
-        if (m_instance != NULL) {
-            if (m_layer == NULL) {
+        if (m_instance != nullptr) {
+            if (m_layer == nullptr) {
                 m_layer = m_instance->getLocationRef().getLayer();
             }
-            if (m_location != NULL) {
+            if (m_location != nullptr) {
                 p = cam->toScreenCoordinates(
                     m_instance->getLocationRef().getMapCoordinates() + m_location.getMapCoordinates());
             } else {
                 p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates());
             }
-        } else if (m_location != NULL) {
-            if (m_layer == NULL) {
+        } else if (m_location != nullptr) {
+            if (m_layer == nullptr) {
                 m_layer = m_location.getLayer();
             }
             p = cam->toScreenCoordinates(m_location.getMapCoordinates());
-        } else if (m_layer == NULL) {
+        } else if (m_layer == nullptr) {
             // FIXME
             FL_WARN(
                 _log,

@@ -277,7 +277,7 @@ namespace FIFE
             }
             nspace = m_namespaces.erase(nspace);
         }
-        m_lastNamespace = 0;
+        m_lastNamespace = nullptr;
         return true;
     }
 
@@ -328,7 +328,7 @@ namespace FIFE
                 return m_lastNamespace;
             }
         }
-        m_lastNamespace = 0;
+        m_lastNamespace = nullptr;
         return nullptr;
     }
 

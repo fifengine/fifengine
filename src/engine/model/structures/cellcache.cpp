@@ -412,7 +412,7 @@ namespace FIFE
 
         m_cells.resize(m_width);
         for (uint32_t i = 0; i < m_width; ++i) {
-            m_cells[i].resize(m_height, NULL);
+            m_cells[i].resize(m_height, nullptr);
         }
     }
 
@@ -495,7 +495,7 @@ namespace FIFE
             std::vector<std::vector<Cell*>> cells;
             cells.resize(w);
             for (uint32_t i = 0; i < w; ++i) {
-                cells[i].resize(h, NULL);
+                cells[i].resize(h, nullptr);
             }
             const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
             for (uint32_t y = 0; y < h; ++y) {
@@ -1368,7 +1368,7 @@ namespace FIFE
 
     Zone* CellCache::getZone(uint32_t id)
     {
-        Zone* zi = 0;
+        Zone* zi = nullptr;
         for (std::vector<Zone*>::iterator i = m_zones.begin(); i != m_zones.end(); ++i) {
             if ((*i)->getId() == id) {
                 zi = (*i);

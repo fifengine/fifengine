@@ -982,6 +982,6 @@ namespace FIFE
             }
         }
         m_listeners.erase(
-            std::remove(m_listeners.begin(), m_listeners.end(), (SoundEmitterListener*)NULL), m_listeners.end());
+            std::remove(m_listeners.begin(), m_listeners.end(), (SoundEmitterListener*)nullptr), m_listeners.end());
     }
 } // namespace FIFE

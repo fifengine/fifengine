@@ -19,7 +19,7 @@ namespace FIFE
 {
     void ControllerMappingSaver::save(const std::string data, const std::string& filename)
     {
-        FILE* fp = 0;
+        FILE* fp = nullptr;
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
         fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
 #else

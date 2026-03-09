@@ -40,8 +40,8 @@ namespace FIFE
         filePath = fs::path(filename);
 
         ZipNode* node       = m_rootNode;
-        ZipNode* tempNode   = 0;
-        ZipNode* returnNode = 0;
+        ZipNode* tempNode   = nullptr;
+        ZipNode* returnNode = nullptr;
         for (fs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
             std::string pathString = GetPathIteratorAsString(iter);
             tempNode               = node->getChild(pathString);
@@ -60,7 +60,7 @@ namespace FIFE
                 returnNode = node;
             } else {
                 // node was not found and could not be added
-                return 0;
+                return nullptr;
             }
         }
 
@@ -70,8 +70,8 @@ namespace FIFE
     ZipNode* ZipTree::getNode(const std::string& name) const
     {
         fs::path filePath(name);
-        ZipNode* returnNode = 0;
-        ZipNode* tempNode   = 0;
+        ZipNode* returnNode = nullptr;
+        ZipNode* tempNode   = nullptr;
         ZipNode* node       = getRootNode();
         for (fs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
             std::string pathString = GetPathIteratorAsString(iter);

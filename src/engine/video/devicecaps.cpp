@@ -245,7 +245,7 @@ namespace FIFE
             target.format = SDL_PIXELFORMAT_RGB888;
         }
         target.refresh_rate = refresh;
-        target.driverdata   = 0; // initialize to 0
+        target.driverdata   = nullptr; // initialize to 0
 
         // only first display
         if (SDL_GetClosestDisplayMode(display, &target, &closest)) {

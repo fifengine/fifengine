@@ -29,7 +29,7 @@ namespace FIFE
 
     Console::Console() :
         fcn::Container(),
-        m_consoleexec(0),
+        m_consoleexec(nullptr),
         m_input(new CommandLine()),
         m_output(new fcn::TextBox()),
         m_outputscrollarea(new fcn::ScrollArea(m_output)),

@@ -61,7 +61,7 @@ namespace FIFE
 
         if (hasSource(path)) {
             FL_WARN(_log, LMsg(path) << " is already used as VFS source");
-            return 0;
+            return nullptr;
         }
 
         type_providers::const_iterator end = m_providers.end();
@@ -89,7 +89,7 @@ namespace FIFE
         }
 
         FL_WARN(_log, LMsg("no provider for ") << path << " found");
-        return 0;
+        return nullptr;
     }
 
     void VFS::addNewSource(const std::string& path)
@@ -144,7 +144,7 @@ namespace FIFE
 
     bool VFS::exists(const std::string& file) const
     {
-        return getSourceForFile(file) != 0;
+        return getSourceForFile(file) != nullptr;
     }
 
     std::vector<std::string> VFS::split(const std::string& str, char delimiter) const

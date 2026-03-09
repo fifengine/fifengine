@@ -33,7 +33,7 @@ namespace FIFE
     FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
         m_renderbackend(renderbackend),
-        m_font(0),
+        m_font(nullptr),
         m_font_color(false),
         m_background(false),
         m_backborder(false)

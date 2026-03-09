@@ -31,7 +31,7 @@ namespace FIFE
 
         mFont = TTF_OpenFont(filename.c_str(), size);
 
-        if (mFont == NULL) {
+        if (mFont == nullptr) {
             throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
         }
 
@@ -119,11 +119,11 @@ namespace FIFE
     {
         if (text.empty()) {
             SDL_Surface* surface = SDL_CreateRGBSurface(0, 1, getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
-            SDL_FillRect(surface, 0, 0x00000000);
+            SDL_FillRect(surface, nullptr, 0x00000000);
             return surface;
         }
 
-        SDL_Surface* renderedText = 0;
+        SDL_Surface* renderedText = nullptr;
         if (m_antiAlias) {
             renderedText = TTF_RenderUTF8_Blended(mFont, text.c_str(), mColor);
         } else {
@@ -131,11 +131,11 @@ namespace FIFE
         }
         // Workaround for a freetype bug, see here:
         // http://www.nabble.com/SDL_ttf-and-DPMSDisable-bug-is-back-or-still-there-to9578884.html
-        if (renderedText == 0 && !m_antiAlias) {
+        if (renderedText == nullptr && !m_antiAlias) {
             renderedText = TTF_RenderUTF8_Blended(mFont, text.c_str(), mColor);
         }
         // Still could not render? Something went horribly wrong!
-        if (renderedText == 0) {
+        if (renderedText == nullptr) {
             throw FIFE::SDLException(TTF_GetError());
         }
         return renderedText;

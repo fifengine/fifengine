@@ -92,7 +92,7 @@ namespace fcn
             mFrameIndex = 0;
             if (mCurrentImage) {
                 delete mCurrentImage;
-                mCurrentImage = 0;
+                mCurrentImage = nullptr;
             }
             mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));
             setImage(mCurrentImage);
@@ -155,7 +155,7 @@ namespace fcn
                 mFrameIndex = index;
                 if (mCurrentImage) {
                     delete mCurrentImage;
-                    mCurrentImage = 0;
+                    mCurrentImage = nullptr;
                 }
                 if (mFrameIndex >= 0) {
                     mCurrentImage = new FIFE::GuiImage(mAnimation->getFrame(mFrameIndex));

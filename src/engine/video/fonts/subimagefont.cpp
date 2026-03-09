@@ -48,7 +48,7 @@ namespace FIFE
         // and copy the Pixelbuffers surface
         SDL_Surface* tmp = SDL_CreateRGBSurface(0, surface->w, surface->h, 32, RMASK, GMASK, BMASK, NULLMASK);
 
-        SDL_BlitSurface(surface, 0, tmp, 0);
+        SDL_BlitSurface(surface, nullptr, tmp, nullptr);
         surface = tmp;
 
         // Prepare the data for extracting the glyphs.
@@ -99,8 +99,8 @@ namespace FIFE
 
             tmp = SDL_CreateRGBSurface(0, w, surface->h, 32, RMASK, GMASK, BMASK, NULLMASK);
 
-            SDL_FillRect(tmp, 0, colorkey);
-            SDL_BlitSurface(surface, &src, tmp, 0);
+            SDL_FillRect(tmp, nullptr, colorkey);
+            SDL_BlitSurface(surface, &src, tmp, nullptr);
 
             // Disable alpha blending, so that we use colorkeying
             // SDL_SetAlpha(tmp,0,255);
@@ -119,7 +119,7 @@ namespace FIFE
         if (m_glyphs.find('?') != m_glyphs.end()) {
             m_placeholder = m_glyphs['?'];
         } else {
-            m_placeholder.surface = 0;
+            m_placeholder.surface = nullptr;
         }
 
         m_height = surface->h;

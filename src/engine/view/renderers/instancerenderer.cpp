@@ -239,7 +239,7 @@ namespace FIFE
             }
 
             uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = 0;
+            Image* outlineImage      = nullptr;
             bool recoloring          = false;
             if (any_effects) {
                 // coloring
@@ -262,7 +262,7 @@ namespace FIFE
                         outlineImage = bindOutline(outline_it->second, vc, cam);
                     } else {
                         bindOutline(outline_it->second, vc, cam)
-                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
                     }
                 }
             }
@@ -297,11 +297,11 @@ namespace FIFE
                 renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
-                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
             }
 
             if (outlineImage != nullptr) {
-                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
                 m_renderbackend->changeRenderInfos(RENDER_DATA_TEXTURE_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
             }
         }
@@ -337,7 +337,7 @@ namespace FIFE
                         outlineImage = bindOutline(outline_it->second, vc, cam);
                     } else {
                         bindOutline(outline_it->second, vc, cam)
-                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+                            ->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
                     }
                 }
             }
@@ -346,11 +346,11 @@ namespace FIFE
                 renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
-                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
             }
 
             if (outlineImage) {
-                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
+                outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(nullptr));
                 m_renderbackend->changeRenderInfos(RENDER_DATA_TEXCOLOR_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
             }
         }
@@ -421,7 +421,7 @@ namespace FIFE
             // instance->getLocationRef().getLayerCoordinates());
 
             uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = 0;
+            Image* outlineImage      = nullptr;
             bool recoloring          = false;
             if (any_effects) {
                 // coloring
@@ -464,7 +464,7 @@ namespace FIFE
                             break;
                         }
                     }
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                     if (found) {
                         m_renderbackend->changeRenderInfos(
                             RENDER_DATA_WITHOUT_Z,
@@ -503,7 +503,7 @@ namespace FIFE
                 renderOverlay(RENDER_DATA_WITHOUT_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
-                vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
             }
 
             if (outlineImage) {
@@ -531,12 +531,12 @@ namespace FIFE
             if (withZ) {
                 for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end();
                      ++it) {
-                    (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                    (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                 }
             } else {
                 for (std::vector<ImagePtr>::iterator it = animationOverlay->begin(); it != animationOverlay->end();
                      ++it) {
-                    (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                    (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                 }
             }
             // animation overlay with color overlay
@@ -547,9 +547,9 @@ namespace FIFE
                 OverlayColors* oc = (*ovit);
                 if (!oc) {
                     if (withZ) {
-                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                     } else {
-                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                     }
                 } else {
                     if (oc->getColors().size() > 1) {
@@ -590,10 +590,11 @@ namespace FIFE
                             factor[3]         = 0;
                         }
                         if (withZ) {
-                            (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                            (*it)->renderZ(
+                                vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                             (*it)->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
                         } else {
-                            (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                            (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                             (*it)->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
                         }
                         continue;
@@ -617,14 +618,14 @@ namespace FIFE
                         }
                     }
                     if (withZ) {
-                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                        (*it)->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                         if (!noOverlay) {
                             (*it)->renderZ(vc.dimensions, vertexZ, oc->getColorOverlayImage(), vc.transparency, rgba);
                             m_renderbackend->changeRenderInfos(
                                 type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                         }
                     } else {
-                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                        (*it)->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                         if (!noOverlay) {
                             (*it)->render(vc.dimensions, oc->getColorOverlayImage(), vc.transparency, rgba);
                             m_renderbackend->changeRenderInfos(
@@ -675,10 +676,10 @@ namespace FIFE
                     factor[3]         = 0;
                 }
                 if (withZ) {
-                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                     vc.image->renderZ(vc.dimensions, vertexZ, multiColorOverlay, vc.transparency, factor);
                 } else {
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                     vc.image->render(vc.dimensions, multiColorOverlay, vc.transparency, factor);
                 }
             } else {
@@ -701,7 +702,7 @@ namespace FIFE
                     }
                 }
                 if (withZ) {
-                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
+                    vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                     if (!noOverlay) {
                         vc.image->renderZ(
                             vc.dimensions, vertexZ, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
@@ -709,7 +710,7 @@ namespace FIFE
                             type, 1, 4, 5, true, false, 0, KEEP, ALWAYS, OVERLAY_TYPE_COLOR_AND_TEXTURE);
                     }
                 } else {
-                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : 0);
+                    vc.image->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                     if (!noOverlay) {
                         vc.image->render(vc.dimensions, colorOverlay->getColorOverlayImage(), vc.transparency, rgba);
                         m_renderbackend->changeRenderInfos(

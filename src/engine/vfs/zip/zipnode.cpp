@@ -30,7 +30,7 @@ namespace
             }
         }
 
-        return 0;
+        return nullptr;
     }
 
     FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, const std::string& name)
@@ -135,7 +135,7 @@ namespace FIFE
         switch (contentType) {
         default: // fall through on purpose
         case ZipContentType::All: {
-            ZipNode* node = 0;
+            ZipNode* node = nullptr;
             if (hasExtension) {
                 node = FindNameInContainer(m_fileChildren, name);
             } else {
@@ -146,14 +146,14 @@ namespace FIFE
         }
         case ZipContentType::File: {
             if (!hasExtension) {
-                return 0;
+                return nullptr;
             }
 
             return FindNameInContainer(m_fileChildren, name);
         }
         case ZipContentType::Directory: {
             if (hasExtension) {
-                return 0;
+                return nullptr;
             }
 
             return FindNameInContainer(m_directoryChildren, name);

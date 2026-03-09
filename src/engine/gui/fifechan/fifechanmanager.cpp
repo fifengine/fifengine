@@ -41,13 +41,13 @@ namespace FIFE
 
     FifechanManager::FifechanManager() :
         m_fcn_gui(new fcn::Gui()),
-        m_focushandler(0),
+        m_focushandler(nullptr),
         m_fcn_topcontainer(new fcn::Container()),
         m_imgloader(new GuiImageLoader()),
         m_input(new fcn::SDLInput()),
-        m_console(0),
-        m_cursor(0),
-        m_defaultfont(0),
+        m_console(nullptr),
+        m_cursor(nullptr),
+        m_defaultfont(nullptr),
         m_fonts(),
         m_logic_executed(false),
         m_enabled_console(true),
@@ -90,7 +90,7 @@ namespace FIFE
             return false;
         }
 
-        bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != 0;
+        bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
 
         switch (evt.type) {
         case SDL_MOUSEWHEEL:
@@ -128,7 +128,7 @@ namespace FIFE
             if (m_had_mouse) {
                 // We only keep the mouse if a widget/window has requested
                 // dragging.
-                m_had_mouse = m_focushandler->getDraggedWidget() != 0;
+                m_had_mouse = m_focushandler->getDraggedWidget() != nullptr;
                 m_input->pushInput(evt);
                 return true;
             }

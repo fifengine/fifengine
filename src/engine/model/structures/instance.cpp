@@ -172,14 +172,14 @@ namespace FIFE
         if (source.m_changeInfo != ICHANGE_NO_CHANGES) {
             std::vector<InstanceChangeListener*>::iterator i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
-                if (NULL != *i) {
+                if (nullptr != *i) {
                     (*i)->onInstanceChanged(&source, source.m_changeInfo);
                 }
                 ++i;
             }
             // Really remove "removed" listeners.
             m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)NULL),
+                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
                 m_changeListeners.end());
         }
     }
@@ -233,7 +233,7 @@ namespace FIFE
     {
         std::vector<InstanceDeleteListener*>::iterator itor;
         for (itor = m_deleteListeners.begin(); itor != m_deleteListeners.end(); ++itor) {
-            if (*itor != NULL) {
+            if (*itor != nullptr) {
                 (*itor)->onInstanceDeleted(this);
             }
         }
@@ -281,7 +281,7 @@ namespace FIFE
 
     bool Instance::isActive() const
     {
-        return (m_activity != 0);
+        return (m_activity != nullptr);
     }
 
     Object* Instance::getObject()
@@ -781,7 +781,7 @@ namespace FIFE
         }
         // remove DeleteListeners
         m_deleteListeners.erase(
-            std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), (InstanceDeleteListener*)NULL),
+            std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), (InstanceDeleteListener*)nullptr),
             m_deleteListeners.end());
 
         if (!m_activity->m_timeProvider) {
@@ -831,7 +831,7 @@ namespace FIFE
             m_activity->m_changeListeners.empty()) {
             // delete superfluous activity
             delete m_activity;
-            m_activity = 0;
+            m_activity = nullptr;
             return ICHANGE_NO_CHANGES;
         }
         return m_changeInfo;
@@ -875,7 +875,7 @@ namespace FIFE
             std::remove(
                 m_activity->m_actionListeners.begin(),
                 m_activity->m_actionListeners.end(),
-                (InstanceActionListener*)NULL),
+                (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
 
@@ -912,7 +912,7 @@ namespace FIFE
             std::remove(
                 m_activity->m_actionListeners.begin(),
                 m_activity->m_actionListeners.end(),
-                (InstanceActionListener*)NULL),
+                (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
 
@@ -1176,7 +1176,7 @@ namespace FIFE
     OverlayColors* Instance::getStaticColorOverlay(int32_t angle)
     {
         if (!m_ownObject) {
-            return 0;
+            return nullptr;
         }
         ObjectVisual* objVis = m_object->getVisual<ObjectVisual>();
         return objVis->getStaticColorOverlay(angle);
@@ -1319,7 +1319,7 @@ namespace FIFE
         if (!m_ownObject) {
             m_ownObject       = true;
             ObjectVisual* ov  = m_object->getVisual<ObjectVisual>();
-            ObjectVisual* nov = 0;
+            ObjectVisual* nov = nullptr;
             m_object          = new Object(m_object->getId(), m_object->getNamespace(), m_object);
             if (!ov) {
                 ObjectVisual::create(m_object);

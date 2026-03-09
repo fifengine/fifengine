@@ -50,7 +50,7 @@ namespace FIFE
     bool ZipSource::fileExists(const std::string& file) const
     {
         fs::path path(file);
-        return (m_zipTree.getNode(path.string()) != 0);
+        return (m_zipTree.getNode(path.string()) != nullptr);
     }
 
     RawData* ZipSource::open(const std::string& path) const
@@ -84,7 +84,7 @@ namespace FIFE
                 if (inflateInit2(&zstream, -15) != Z_OK) {
                     FL_ERR(_log, LMsg("inflateInit2 failed"));
                     delete[] data;
-                    return 0;
+                    return nullptr;
                 }
 
                 int32_t err = inflate(&zstream, Z_FINISH);
@@ -97,7 +97,7 @@ namespace FIFE
 
                     inflateEnd(&zstream);
                     delete[] data;
-                    return 0;
+                    return nullptr;
                 }
 
                 inflateEnd(&zstream);
@@ -106,13 +106,13 @@ namespace FIFE
             } else {
                 FL_ERR(_log, LMsg("unsupported compression"));
                 delete[] data;
-                return 0;
+                return nullptr;
             }
 
             return new RawData(new ZipFileSource(data, entryData.size_real));
         }
 
-        return 0;
+        return nullptr;
     }
 
     void ZipSource::readIndex()

@@ -21,7 +21,9 @@ namespace FIFE
 {
     const int32_t STATIC_IMAGE_NOT_INITIALIZED = -1;
 
-    OverlayData::OverlayData() : colorOverlay(0), animationOverlayImages(0), animationColorOverlays(0) { }
+    OverlayData::OverlayData() : colorOverlay(nullptr), animationOverlayImages(nullptr), animationColorOverlays(nullptr)
+    {
+    }
 
     OverlayData::~OverlayData()
     {

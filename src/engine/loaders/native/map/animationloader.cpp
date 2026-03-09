@@ -59,7 +59,7 @@ namespace FIFE
 
                 // done with data delete resource
                 delete data;
-                data = 0;
+                data = nullptr;
             }
         } catch (NotFound&) {
             return false;
@@ -101,7 +101,7 @@ namespace FIFE
 
                     // done with data delete resource
                     delete data;
-                    data = 0;
+                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
@@ -149,7 +149,7 @@ namespace FIFE
 
                     // done with data delete resource
                     delete data;
-                    data = 0;
+                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {

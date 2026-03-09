@@ -108,7 +108,7 @@ namespace FIFE
 
                 // done with data delete resource
                 delete data;
-                data = 0;
+                data = nullptr;
             }
         } catch (NotFound& e) {
             FL_ERR(_log, e.what());
@@ -808,7 +808,7 @@ namespace FIFE
 
                 // done with file delete the resource
                 delete data;
-                data = 0;
+                data = nullptr;
             }
         } catch (NotFound& e) {
             FL_ERR(_log, e.what());

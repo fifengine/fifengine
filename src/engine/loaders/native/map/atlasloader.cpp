@@ -107,7 +107,7 @@ namespace FIFE
 
                 // done with data delete resource
                 delete data;
-                data = 0;
+                data = nullptr;
             }
         } catch (NotFound&) {
             return false;
@@ -153,7 +153,7 @@ namespace FIFE
 
                     // done with data delete resource
                     delete data;
-                    data = 0;
+                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
@@ -205,7 +205,7 @@ namespace FIFE
 
                     // done with data delete resource
                     delete data;
-                    data = 0;
+                    data = nullptr;
                 }
             }
         } catch (NotFound& e) {
@@ -267,7 +267,7 @@ namespace FIFE
             }
             // Create subimages with given id and individual position and size
             if (atlasElem->FirstChildElement("subimage")) {
-                for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != 0;
+                for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != nullptr;
                      imageElem               = imageElem->NextSiblingElement("subimage")) {
 
                     const char* subimageId = XML::Attribute(imageElem, "id");

@@ -69,7 +69,7 @@ namespace FIFE
         if (m_window) {
             if (icon != "") {
                 SDL_Surface* img = IMG_Load(icon.c_str());
-                if (img != NULL) {
+                if (img != nullptr) {
                     SDL_SetWindowIcon(m_window, img);
                     SDL_FreeSurface(img);
                 }
@@ -603,7 +603,7 @@ namespace FIFE
                 return;
             }
 
-            SDL_BlitSurface(m_screen, NULL, surface, NULL);
+            SDL_BlitSurface(m_screen, nullptr, surface, nullptr);
 
             Image::saveAsPng(filename, *surface);
             SDL_FreeSurface(surface);
@@ -632,7 +632,7 @@ namespace FIFE
                 return;
             }
             // copy screen suface to source surface
-            SDL_BlitSurface(m_screen, NULL, src, NULL);
+            SDL_BlitSurface(m_screen, nullptr, src, nullptr);
             // create destination surface
             SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
 
@@ -742,7 +742,7 @@ namespace FIFE
     {
         SDL_RenderPresent(m_renderer);
         m_target = m_screen;
-        SDL_SetRenderTarget(m_renderer, NULL);
+        SDL_SetRenderTarget(m_renderer, nullptr);
     }
 
     void RenderBackendSDL::renderGuiGeometry(

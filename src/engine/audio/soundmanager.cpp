@@ -32,8 +32,8 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     SoundManager::SoundManager() :
-        m_context(0),
-        m_device(0),
+        m_context(nullptr),
+        m_device(nullptr),
         m_muteVol(0),
         m_volume(1.0),
         m_maxDistance(50.0),
@@ -49,7 +49,7 @@ namespace FIFE
     {
         // delete all soundemitters
         for (std::vector<SoundEmitter*>::iterator it = m_emitterVec.begin(); it != m_emitterVec.end(); ++it) {
-            if ((*it) != NULL) {
+            if ((*it) != nullptr) {
                 delete (*it);
             }
         }
@@ -80,7 +80,7 @@ namespace FIFE
             return;
         }
 
-        m_context = alcCreateContext(m_device, NULL);
+        m_context = alcCreateContext(m_device, nullptr);
         if (!m_context || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Couldn't create audio context - deactivating audio module");
             m_device = nullptr;
@@ -399,7 +399,7 @@ namespace FIFE
     {
         SoundEmitter* ptr = nullptr;
         for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
-            if (m_emitterVec.at(i) == NULL) {
+            if (m_emitterVec.at(i) == nullptr) {
                 ptr                = new SoundEmitter(this, i);
                 m_emitterVec.at(i) = ptr;
                 break;

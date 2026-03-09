@@ -207,7 +207,7 @@ namespace FIFE
             if (!final_surface) {
                 throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
             }
-            SDL_FillRect(final_surface, 0, 0x00000000);
+            SDL_FillRect(final_surface, nullptr, 0x00000000);
             int32_t ypos = 0;
             for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
                 SDL_Rect dst_rect = {0, 0, 0, 0};
@@ -216,7 +216,7 @@ namespace FIFE
                 // Disable alpha blending
                 // SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
                 SDL_SetSurfaceBlendMode(*i, SDL_BLENDMODE_NONE);
-                SDL_BlitSurface(*i, 0, final_surface, &dst_rect);
+                SDL_BlitSurface(*i, nullptr, final_surface, &dst_rect);
                 ypos += getRowSpacing() + getHeight();
                 SDL_FreeSurface(*i);
             }
