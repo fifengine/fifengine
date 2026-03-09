@@ -83,10 +83,10 @@ namespace FIFE
         m_logmanager(nullptr),
         m_cursor(nullptr),
         m_destroyed(false),
-        
+
         m_offrenderer(nullptr),
         m_targetrenderer(nullptr)
-        
+
     {
 #ifdef USE_COCOA
         // The next lines ensure that Cocoa is initialzed correctly.

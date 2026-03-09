@@ -71,7 +71,7 @@ namespace FIFE
     {
     }
 
-    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr),  w(1), h(1), trans(0), front(true), z(0) { }
+    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), w(1), h(1), trans(0), front(true), z(0) { }
 
     InstanceRenderer::OutlineInfo::~OutlineInfo()
     {
@@ -1049,7 +1049,8 @@ namespace FIFE
     ImagePtr InstanceRenderer::getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors)
     {
         // multi color overlay
-        const std::map<Color, Color>& colorMap    = (colors != nullptr) ? colors->getColors() : vc.getColorOverlay()->getColors();
+        const std::map<Color, Color>& colorMap =
+            (colors != nullptr) ? colors->getColors() : vc.getColorOverlay()->getColors();
         std::map<Color, Color>::const_iterator it = colorMap.begin();
         ImagePtr colorOverlayImage =
             (colors != nullptr) ? colors->getColorOverlayImage() : vc.getColorOverlay()->getColorOverlayImage();

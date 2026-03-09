@@ -145,7 +145,7 @@ namespace FIFE
         Trigger* m_trigger;
     };
 
-    Trigger::Trigger() :  m_triggered(false), m_enabledAll(false), m_attached(nullptr)
+    Trigger::Trigger() : m_triggered(false), m_enabledAll(false), m_attached(nullptr)
     {
         m_changeListener = new TriggerChangeListener(this);
     }

@@ -33,7 +33,7 @@ namespace FIFE
         m_refreshRate(60),
         m_displayIndex(0),
         m_vSync(false),
-        
+
         m_initialvolume(MAXIMUM_VOLUME / 2),
         m_renderbackend("SDL"),
         m_sdlremovefakealpha(false),
@@ -48,7 +48,7 @@ namespace FIFE
         m_screenwidth(800),
         m_screenheight(600),
         m_windowtitle("FIFE"),
-        
+
         m_defaultfontpath("fonts/FreeSans.ttf"),
         m_defaultfontsize(8),
         m_defaultfontglyphs(

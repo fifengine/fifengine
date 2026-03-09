@@ -48,10 +48,10 @@ namespace FIFE
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),
-        
+
         m_logic_executed(false),
         m_enabled_console(true)
-        
+
     {
 
         m_fcn_gui->setInput(m_input);

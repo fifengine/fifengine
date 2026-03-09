@@ -28,7 +28,7 @@ namespace FIFE
         m_instanceId(-1),
         m_joystickId(joystickId),
         m_deviceIndex(deviceIndex)
-        
+
     {
     }
 
@@ -106,7 +106,7 @@ namespace FIFE
 
     bool Joystick::isConnected() const
     {
-        return (m_joystickHandle != nullptr) && (SDL_JoystickGetAttached(m_joystickHandle) != 0u);
+        return (m_joystickHandle != nullptr) && (SDL_JoystickGetAttached(m_joystickHandle) != 0U);
     }
 
     bool Joystick::isController() const
@@ -117,7 +117,7 @@ namespace FIFE
     void Joystick::openController()
     {
         closeController();
-        if (SDL_IsGameController(m_deviceIndex) == 0u) {
+        if (SDL_IsGameController(m_deviceIndex) == 0U) {
             return;
         }
 

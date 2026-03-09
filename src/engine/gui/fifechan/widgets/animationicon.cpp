@@ -38,7 +38,7 @@ namespace fcn
 {
     AnimationIcon::AnimationIcon() :
         mTimemanager(FIFE::TimeManager::instance()),
-        
+
         mCurrentImage(nullptr),
         mAnimtime(0),
         mFrameIndex(-1),

@@ -22,7 +22,7 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     ActionAudio::ActionAudio() :
-        
+
         m_volume(1.0),
         m_maxVolume(1.0),
         m_minVolume(0.0),

@@ -23,7 +23,7 @@
 namespace FIFE
 {
 
-    TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size)  
+    TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size)
     {
         mFilename  = filename;
         mFont      = nullptr;

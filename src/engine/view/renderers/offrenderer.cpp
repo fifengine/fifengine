@@ -165,7 +165,7 @@ namespace FIFE
     }
 
     OffRenderer::OffRenderer(RenderBackend* renderbackend) :
-         m_renderbackend(renderbackend), m_enabled(false), m_area(renderbackend->getArea())
+        m_renderbackend(renderbackend), m_enabled(false), m_area(renderbackend->getArea())
     {
     }
 

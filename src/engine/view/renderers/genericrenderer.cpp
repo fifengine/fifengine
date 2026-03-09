@@ -284,12 +284,12 @@ namespace FIFE
     }
 
     GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int32_t position) :
-        RendererBase(renderbackend, position) 
+        RendererBase(renderbackend, position)
     {
         setEnabled(false);
     }
 
-    GenericRenderer::GenericRenderer(const GenericRenderer& old) : RendererBase(old) 
+    GenericRenderer::GenericRenderer(const GenericRenderer& old) : RendererBase(old)
     {
         setEnabled(false);
     }

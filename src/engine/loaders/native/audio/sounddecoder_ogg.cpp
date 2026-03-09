@@ -32,7 +32,7 @@ namespace FIFE
             RawData* rdp   = reinterpret_cast<RawData*>(datasource);
             size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
             size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
-            if (len != 0u) {
+            if (len != 0U) {
                 rdp->readInto(reinterpret_cast<uint8_t*>(ptr), len);
             }
             return len;

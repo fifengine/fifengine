@@ -259,8 +259,8 @@ namespace FIFE
                             isNarrow = true;
                         }
                     }
-                    if (costsEmpty && defaultCost && defaultSpeed && areasEmpty && cellBlocker && (transition == nullptr) &&
-                        !isNarrow) {
+                    if (costsEmpty && defaultCost && defaultSpeed && areasEmpty && cellBlocker &&
+                        (transition == nullptr) && !isNarrow) {
                         continue;
                     }
                     // add cell tag to document

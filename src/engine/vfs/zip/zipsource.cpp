@@ -3,10 +3,10 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
 #include <set>
-#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -167,7 +167,7 @@ namespace FIFE
             realsize = m_zipfile->read32Little();
         }
 
-        if ((lmodtime != 0u) || (lmoddate != 0u)) { } // shut up the compiler (warnings of unused variables)
+        if ((lmodtime != 0U) || (lmoddate != 0U)) { } // shut up the compiler (warnings of unused variables)
 
         ZipEntryData data;
         data.comp      = comp;

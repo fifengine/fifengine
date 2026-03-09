@@ -29,7 +29,7 @@ namespace FIFE
     static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
     static const double HEX_EDGE_GRADIENT   = 1 / Mathd::Sqrt(3);
 
-    HexGrid::HexGrid(bool axial) :  m_axial(axial)
+    HexGrid::HexGrid(bool axial) : m_axial(axial)
     {
         FL_DBG(_log, "Constructing new HexGrid");
         FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);

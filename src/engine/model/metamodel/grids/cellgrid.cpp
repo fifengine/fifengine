@@ -20,7 +20,7 @@ namespace FIFE
     static Logger _log(LM_CELLGRID);
 
     CellGrid::CellGrid() :
-        
+
         m_xshift(0),
         m_yshift(0),
         m_zshift(0),

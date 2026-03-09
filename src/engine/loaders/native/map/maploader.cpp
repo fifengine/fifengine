@@ -58,7 +58,7 @@ namespace FIFE
         m_animationManager(AnimationManager::instance()),
         m_renderBackend(renderBackend),
         m_loaderName("fife")
-        
+
     {
         AnimationLoaderPtr animationLoader(new AnimationLoader(m_vfs, m_imageManager, m_animationManager));
         AtlasLoaderPtr atlasLoader(new AtlasLoader(m_model, m_vfs, m_imageManager, m_animationManager));
@@ -151,8 +151,9 @@ namespace FIFE
                     map->setFilename(mapFilename);
 
                     std::string ns;
-                    for (const XML::Element* importElement = root->FirstChildElement("import"); importElement != nullptr;
-                         importElement                     = importElement->NextSiblingElement("import")) {
+                    for (const XML::Element* importElement = root->FirstChildElement("import");
+                         importElement != nullptr;
+                         importElement = importElement->NextSiblingElement("import")) {
                         const char* importDir  = XML::Attribute(importElement, "dir");
                         const char* importFile = XML::Attribute(importElement, "file");
 
@@ -233,7 +234,8 @@ namespace FIFE
 
                         if (xOffsetRetVal == XML::SUCCESS && yOffsetRetVal == XML::SUCCESS &&
                             xScaleRetVal == XML::SUCCESS && yScaleRetVal == XML::SUCCESS &&
-                            rotationRetVal == XML::SUCCESS && (layerName != nullptr) && (pathing != nullptr) && (gridType != nullptr)) {
+                            rotationRetVal == XML::SUCCESS && (layerName != nullptr) && (pathing != nullptr) &&
+                            (gridType != nullptr)) {
 
                             PathingStrategy pathStrategy = CELL_EDGES_ONLY;
                             if (std::string(pathing) == "cell_edges_and_diagonals") {
@@ -290,8 +292,9 @@ namespace FIFE
                                     for (const XML::Element* instances = layerElement->FirstChildElement("instances");
                                          instances != nullptr;
                                          instances = instances->NextSiblingElement("instances")) {
-                                        for (const XML::Element* instance = instances->FirstChildElement("i"); instance != nullptr;
-                                             instance                     = instance->NextSiblingElement("i")) {
+                                        for (const XML::Element* instance = instances->FirstChildElement("i");
+                                             instance != nullptr;
+                                             instance = instance->NextSiblingElement("i")) {
                                             double x      = 0;
                                             double y      = 0;
                                             double z      = 0;
@@ -419,8 +422,9 @@ namespace FIFE
                     // init CellCaches
                     map->initializeCellCaches();
                     // add Cells from xml File
-                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements != nullptr;
-                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches");
+                         cacheElements != nullptr;
+                         cacheElements = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement != nullptr;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
@@ -514,8 +518,9 @@ namespace FIFE
                     // finalize CellCaches
                     map->finalizeCellCaches();
                     // add Transistions
-                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements != nullptr;
-                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches");
+                         cacheElements != nullptr;
+                         cacheElements = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement != nullptr;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
@@ -574,8 +579,9 @@ namespace FIFE
                         }
                     }
 
-                    for (const XML::Element* triggerElements = root->FirstChildElement("triggers"); triggerElements != nullptr;
-                         triggerElements                     = triggerElements->NextSiblingElement("triggers")) {
+                    for (const XML::Element* triggerElements = root->FirstChildElement("triggers");
+                         triggerElements != nullptr;
+                         triggerElements = triggerElements->NextSiblingElement("triggers")) {
                         TriggerController* triggerController = map->getTriggerController();
                         for (const XML::Element* triggerElement = triggerElements->FirstChildElement("trigger");
                              triggerElement != nullptr;
@@ -649,8 +655,9 @@ namespace FIFE
                         }
                     }
 
-                    for (const XML::Element* cameraElement = root->FirstChildElement("camera"); cameraElement != nullptr;
-                         cameraElement                     = cameraElement->NextSiblingElement("camera")) {
+                    for (const XML::Element* cameraElement = root->FirstChildElement("camera");
+                         cameraElement != nullptr;
+                         cameraElement = cameraElement->NextSiblingElement("camera")) {
                         const char* cameraId = XML::Attribute(cameraElement, "id");
 
                         int refCellWidth  = 0;
@@ -800,7 +807,8 @@ namespace FIFE
                         // correctly then we know we have a compatible extension so we will
                         // attempt to load it, if it does specify a loader then the loader
                         // name will be checked
-                        if ((loaderName == nullptr) || ((loaderName != nullptr) && std::string(loaderName) == getLoaderName())) {
+                        if ((loaderName == nullptr) ||
+                            ((loaderName != nullptr) && std::string(loaderName) == getLoaderName())) {
                             return true;
                         }
                     }

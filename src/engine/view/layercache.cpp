@@ -133,10 +133,10 @@ namespace FIFE
             rpos.x += rpos.y / 2;
             InstanceVisual* liv = lhs->instance->getVisual<InstanceVisual>();
             InstanceVisual* riv = rhs->instance->getVisual<InstanceVisual>();
-            int32_t lvc =
-                ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) + liv->getStackPosition();
-            int32_t rvc =
-                ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) + riv->getStackPosition();
+            int32_t lvc         = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
+                          liv->getStackPosition();
+            int32_t rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
+                          riv->getStackPosition();
             if (lvc == rvc) {
                 if (Mathd::Equal(lpos.z, rpos.z)) {
                     return liv->getStackPosition() < riv->getStackPosition();

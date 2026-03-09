@@ -28,7 +28,7 @@ namespace FIFE
     static Logger _log(LM_CONSOLE);
 
     Console::Console() :
-        
+
         m_consoleexec(nullptr),
         m_input(new CommandLine()),
         m_output(new fcn::TextBox()),

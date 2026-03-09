@@ -92,7 +92,7 @@ namespace FIFE
 
     void GLImage::cleanup()
     {
-        if (m_texId != 0u) {
+        if (m_texId != 0U) {
             if (!m_shared) {
                 glDeleteTextures(1, &m_texId);
             }
@@ -118,7 +118,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (m_texId == 0u) {
+        if (m_texId == 0U) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -142,7 +142,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (m_texId == 0u) {
+        if (m_texId == 0U) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -171,7 +171,7 @@ namespace FIFE
             rect.y > static_cast<int32_t>(target->h)) {
             return;
         }
-        if (m_texId == 0u) {
+        if (m_texId == 0U) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -196,7 +196,7 @@ namespace FIFE
             return;
         }
 
-        if (m_texId == 0u) {
+        if (m_texId == 0U) {
             generateGLTexture();
         } else if (m_shared) {
             validateShared();
@@ -528,7 +528,7 @@ namespace FIFE
         m_compressed   = m_shared_img->m_compressed;
         m_atlas_name   = m_shared_img->getName();
 
-        if (m_texId != 0u) {
+        if (m_texId != 0U) {
             generateGLSharedTexture(img, region);
         }
 
@@ -547,14 +547,14 @@ namespace FIFE
     void GLImage::validateShared()
     {
         // if image is valid we can return
-        if ((m_shared_img->m_texId != 0u) && m_shared_img->m_texId == m_texId) {
+        if ((m_shared_img->m_texId != 0U) && m_shared_img->m_texId == m_texId) {
             return;
         }
 
         if (m_shared_img->getState() == IResource::RES_NOT_LOADED) {
             m_shared_img->load();
             m_shared_img->generateGLTexture();
-        } else if (m_shared_img->m_texId == 0u) {
+        } else if (m_shared_img->m_texId == 0U) {
             m_shared_img->generateGLTexture();
         }
 
@@ -568,7 +568,7 @@ namespace FIFE
     {
         Image::copySubimage(xoffset, yoffset, img);
 
-        if (m_texId != 0u) {
+        if (m_texId != 0U) {
             static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
             glTexSubImage2D(
                 GL_TEXTURE_2D,
@@ -600,7 +600,7 @@ namespace FIFE
                 m_texId      = m_shared_img->m_texId;
                 m_surface    = m_shared_img->m_surface;
                 m_compressed = m_shared_img->m_compressed;
-                if (m_texId != 0u) {
+                if (m_texId != 0U) {
                     generateGLSharedTexture(m_shared_img, m_subimagerect);
                 }
             }

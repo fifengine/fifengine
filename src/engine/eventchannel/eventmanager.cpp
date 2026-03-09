@@ -30,7 +30,7 @@ namespace FIFE
     static Logger _log(LM_EVTCHANNEL);
 
     EventManager::EventManager() :
-        
+
         m_keyfilter(nullptr),
         m_mousestate(0),
         m_mostrecentbtn(MouseEvent::EMPTY),
@@ -708,9 +708,15 @@ namespace FIFE
 
     void EventManager::fillModifiers(InputEvent& evt)
     {
-        evt.setAltPressed((static_cast<int>(m_keystatemap[Key::ALT_GR]) | static_cast<int>(m_keystatemap[Key::LEFT_ALT]) | static_cast<int>(m_keystatemap[Key::RIGHT_ALT])) != 0);
-        evt.setControlPressed((static_cast<int>(m_keystatemap[Key::LEFT_CONTROL]) | static_cast<int>(m_keystatemap[Key::RIGHT_CONTROL])) != 0);
-        evt.setShiftPressed((static_cast<int>(m_keystatemap[Key::LEFT_SHIFT]) | static_cast<int>(m_keystatemap[Key::RIGHT_SHIFT])) != 0);
+        evt.setAltPressed(
+            (static_cast<int>(m_keystatemap[Key::ALT_GR]) | static_cast<int>(m_keystatemap[Key::LEFT_ALT]) |
+             static_cast<int>(m_keystatemap[Key::RIGHT_ALT])) != 0);
+        evt.setControlPressed(
+            (static_cast<int>(m_keystatemap[Key::LEFT_CONTROL]) |
+             static_cast<int>(m_keystatemap[Key::RIGHT_CONTROL])) != 0);
+        evt.setShiftPressed(
+            (static_cast<int>(m_keystatemap[Key::LEFT_SHIFT]) | static_cast<int>(m_keystatemap[Key::RIGHT_SHIFT])) !=
+            0);
     }
 
     EventSourceType EventManager::getEventSourceType()
@@ -750,13 +756,13 @@ namespace FIFE
 
     bool EventManager::isClipboardText() const
     {
-        return SDL_HasClipboardText() != 0u;
+        return SDL_HasClipboardText() != 0U;
     }
 
     std::string EventManager::getClipboardText() const
     {
         std::string text;
-        if (SDL_HasClipboardText() != 0u) {
+        if (SDL_HasClipboardText() != 0U) {
             text = std::string(SDL_GetClipboardText());
         }
         return text;

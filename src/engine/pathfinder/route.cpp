@@ -33,7 +33,7 @@ namespace FIFE
         m_rotation(0),
         m_replanned(false),
         m_ignoresBlocker(false),
-        
+
         m_object(nullptr)
     {
     }

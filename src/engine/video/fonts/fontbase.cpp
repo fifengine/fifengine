@@ -27,11 +27,11 @@ namespace FIFE
 {
 
     FontBase::FontBase() :
-        
+
         mColor(),
         mGlyphSpacing(0),
         mRowSpacing(0),
-        
+
         m_antiAlias(true),
         m_boldStyle(false),
         m_italicStyle(false),

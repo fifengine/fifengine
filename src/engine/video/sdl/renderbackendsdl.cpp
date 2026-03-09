@@ -317,9 +317,9 @@ namespace FIFE
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     int32_t x = static_cast<int32_t>(
-                        points[i].x + (static_cast<float>(y - points[i].y) /
-                                          static_cast<float>(points[j].y - points[i].y) *
-                                          static_cast<float>(points[j].x - points[i].x)));
+                        points[i].x +
+                        (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
+                         static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
                     for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
@@ -552,9 +552,9 @@ namespace FIFE
             for (int32_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     int32_t x = static_cast<int32_t>(
-                        points[i].x + (static_cast<float>(y - points[i].y) /
-                                          static_cast<float>(points[j].y - points[i].y) *
-                                          static_cast<float>(points[j].x - points[i].x)));
+                        points[i].x +
+                        (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
+                         static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
                     for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);

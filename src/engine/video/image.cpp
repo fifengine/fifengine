@@ -250,7 +250,7 @@ namespace FIFE
         colortype = PNG_COLOR_TYPE_RGB;
         if (surface.format->palette != nullptr) {
             colortype |= PNG_COLOR_TYPE_PALETTE;
-        } else if (surface.format->Amask != 0u) {
+        } else if (surface.format->Amask != 0U) {
             colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
         } else {
         }

@@ -73,15 +73,15 @@ namespace FIFE
         m_viewport(viewport),
         m_renderbackend(renderbackend),
         m_position(ExactModelCoordinate(0, 0, 0)),
-        
+
         m_tilt(0),
         m_rotation(0),
         m_zoom(1),
         m_zToY(0),
         m_enabledZToY(false),
-        
+
         m_curOrigin(ScreenPoint(0, 0, 0)),
-        
+
         m_mapViewPortUpdated(false),
         m_screenCellWidth(1),
         m_screenCellHeight(1),
@@ -90,11 +90,11 @@ namespace FIFE
         m_enabled(true),
         m_attachedTo(nullptr),
         m_transform(NoneTransform),
-        
+
         m_updated(false),
-        
+
         m_lighting(false),
-        
+
         m_col_overlay(false),
         m_img_overlay(false),
         m_ani_overlay(false)
@@ -417,7 +417,7 @@ namespace FIFE
             m_vscreen_2_screen[(i * N) + 2] = 0;
         }
         m_vscreen_2_screen[(2 * N) + 2] = 1;
-        m_screen_2_vscreen            = m_vscreen_2_screen.inverse();
+        m_screen_2_vscreen              = m_vscreen_2_screen.inverse();
 
         m_mapViewPortUpdated = false;
         // FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));

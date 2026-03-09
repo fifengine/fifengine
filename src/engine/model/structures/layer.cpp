@@ -44,9 +44,9 @@ namespace FIFE
         m_sortingStrategy(SORTING_CAMERA),
         m_walkable(false),
         m_interact(false),
-        
+
         m_cellCache(nullptr),
-        
+
         m_changed(false),
         m_static(false)
     {

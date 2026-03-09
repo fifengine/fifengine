@@ -25,8 +25,7 @@ namespace FIFE
      */
     static Logger _log(LM_FO_LOADERS);
 
-    DAT2::DAT2(VFS* vfs, const std::string& file) :
-        VFSSource(vfs), m_datpath(file), m_data(vfs->open(file)) 
+    DAT2::DAT2(VFS* vfs, const std::string& file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))
     {
 
         FL_LOG(_log, LMsg("MFFalloutDAT2") << "loading: " << file << " filesize: " << m_data->getDataLength());
@@ -72,7 +71,7 @@ namespace FIFE
         // Move index to file list and read the entries.
         m_data->setIndex(m_currentIndex);
         RawDataDAT2::s_info info;
-        while ((load_per_cycle--) != 0u) {
+        while ((load_per_cycle--) != 0U) {
             uint32_t namelen = m_data->read32Little();
             info.name        = fixPath(m_data->readString(namelen));
 
@@ -130,12 +129,12 @@ namespace FIFE
 
         // We might have another chance to find the file
         // if the number of file entries not zero.
-        if ((m_filecount != 0u) && i == m_filelist.end()) {
+        if ((m_filecount != 0U) && i == m_filelist.end()) {
             FL_LOG(
                 _log,
                 LMsg("MFFalloutDAT2") << "Missing '" << name << "' in partially(" << m_filecount << ") loaded "
                                       << m_datpath);
-            while ((m_filecount != 0u) && i == m_filelist.end()) {
+            while ((m_filecount != 0U) && i == m_filelist.end()) {
                 readFileEntry();
                 i = m_filelist.find(name);
             }
@@ -161,7 +160,7 @@ namespace FIFE
         // Force loading the complete file entries
         // This is a costly operation... right after startup.
         // Later this should do nothing.
-        while (m_filecount != 0u) {
+        while (m_filecount != 0U) {
             readFileEntry();
         }
 

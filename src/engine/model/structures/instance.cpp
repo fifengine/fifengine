@@ -108,8 +108,7 @@ namespace FIFE
         m_soundSource(nullptr),
         m_speed(0),
         m_timeMultiplier(1.0),
-        
-        
+
         m_actionInfo(nullptr),
         m_sayInfo(nullptr),
         m_timeProvider(nullptr),
@@ -826,8 +825,8 @@ namespace FIFE
                 }
             }
         } else if (
-            (m_activity->m_actionInfo == nullptr) && m_changeInfo == ICHANGE_NO_CHANGES && m_activity->m_actionListeners.empty() &&
-            m_activity->m_changeListeners.empty()) {
+            (m_activity->m_actionInfo == nullptr) && m_changeInfo == ICHANGE_NO_CHANGES &&
+            m_activity->m_actionListeners.empty() && m_activity->m_changeListeners.empty()) {
             // delete superfluous activity
             delete m_activity;
             m_activity = nullptr;
@@ -927,7 +926,8 @@ namespace FIFE
 
     Location Instance::getTargetLocation() const
     {
-        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr) && (m_activity->m_actionInfo->m_target != nullptr)) {
+        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr) &&
+            (m_activity->m_actionInfo->m_target != nullptr)) {
             return *m_activity->m_actionInfo->m_target;
         }
         return m_location;
@@ -1386,7 +1386,8 @@ namespace FIFE
 
     void Instance::onInstanceDeleted(Instance* instance)
     {
-        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr) && m_activity->m_actionInfo->m_leader == instance) {
+        if ((m_activity != nullptr) && (m_activity->m_actionInfo != nullptr) &&
+            m_activity->m_actionInfo->m_leader == instance) {
             m_activity->m_actionInfo->m_leader = nullptr;
         }
         if (isMultiObject()) {

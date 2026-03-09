@@ -987,7 +987,7 @@ namespace FIFE
                 mt     = true;
                 render = true;
             }
-            if (m_state.lightmodel != 0u) {
+            if (m_state.lightmodel != 0U) {
                 if (ro.src != src || ro.dst != dst) {
                     blending = true;
                     render   = true;
@@ -1183,7 +1183,7 @@ namespace FIFE
                 *currentElements = ro.size;
 
                 // if lighting is enabled we have to consider a few more values
-                if (m_state.lightmodel != 0u) {
+                if (m_state.lightmodel != 0U) {
                     // change blending
                     if (blending) {
                         src = ro.src;
@@ -2706,8 +2706,8 @@ namespace FIFE
                 dst_pointer++;
             }
             sy_ca++;
-            src_help_pointer =
-                reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(src_help_pointer) + ((*sy_ca >> 16) * src->pitch));
+            src_help_pointer = reinterpret_cast<uint32_t*>(
+                reinterpret_cast<uint8_t*>(src_help_pointer) + ((*sy_ca >> 16) * src->pitch));
         }
 
         if (SDL_MUSTLOCK(dst)) {

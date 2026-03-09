@@ -336,14 +336,16 @@ namespace FIFE
                     }
 
                     // loop over all multi parts
-                    for (XML::Element* multiElement = objectElem->FirstChildElement("multipart"); multiElement != nullptr;
-                         multiElement               = multiElement->NextSiblingElement("multipart")) {
+                    for (XML::Element* multiElement = objectElem->FirstChildElement("multipart");
+                         multiElement != nullptr;
+                         multiElement = multiElement->NextSiblingElement("multipart")) {
                         const char* partId = XML::Attribute(multiElement, "id");
                         if (partId != nullptr) {
                             obj->addMultiPartId(partId);
                         }
-                        for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation != nullptr;
-                             multiRotation               = multiRotation->NextSiblingElement("rotation")) {
+                        for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation");
+                             multiRotation != nullptr;
+                             multiRotation = multiRotation->NextSiblingElement("rotation")) {
                             int rotation = 0;
                             multiRotation->QueryIntAttribute("rot", &rotation);
                             // relative coordinates which are used to position the object
@@ -418,8 +420,9 @@ namespace FIFE
                         }
                     }
 
-                    for (XML::Element* actionElement = objectElem->FirstChildElement("action"); actionElement != nullptr;
-                         actionElement               = actionElement->NextSiblingElement("action")) {
+                    for (XML::Element* actionElement = objectElem->FirstChildElement("action");
+                         actionElement != nullptr;
+                         actionElement = actionElement->NextSiblingElement("action")) {
                         const char* actionId = XML::Attribute(actionElement, "id");
 
                         if (actionId != nullptr) {
@@ -511,8 +514,9 @@ namespace FIFE
                             // Create and fetch ActionVisual
                             ActionVisual::create(action);
 
-                            for (XML::Element* animElement = actionElement->FirstChildElement("animation"); animElement != nullptr;
-                                 animElement               = animElement->NextSiblingElement("animation")) {
+                            for (XML::Element* animElement = actionElement->FirstChildElement("animation");
+                                 animElement != nullptr;
+                                 animElement = animElement->NextSiblingElement("animation")) {
                                 // Fetch already created animation
                                 const char* animationId = XML::Attribute(animElement, "animation_id");
                                 if (animationId != nullptr) {

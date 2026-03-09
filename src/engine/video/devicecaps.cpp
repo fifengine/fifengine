@@ -29,7 +29,7 @@ namespace FIFE
         m_SDLFlags(0),
         m_format(0),
         m_display(0),
-        
+
         m_renderDriverIndex(-1)
     {
     }
@@ -42,7 +42,7 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
-        
+
         m_renderDriverIndex(-1)
     {
     }
@@ -55,7 +55,7 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
-        
+
         m_renderDriverIndex(-1)
     {
     }
@@ -110,7 +110,7 @@ namespace FIFE
         return false;
     }
 
-    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"),  m_renderDriverIndex(-1) { }
+    DeviceCaps::DeviceCaps() : m_videoDriverName("dummy"), m_renderDriverIndex(-1) { }
 
     DeviceCaps::~DeviceCaps() = default;
 

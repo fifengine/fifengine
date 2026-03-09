@@ -34,7 +34,7 @@ namespace FIFE
 
     RenderItem::RenderItem(Instance* parent) :
         instance(parent),
-        
+
         vertexZ(0),
         facingAngle(0),
         transparency(255),

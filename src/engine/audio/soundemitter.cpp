@@ -30,11 +30,11 @@ namespace FIFE
         m_manager(manager),
         m_source(0),
         m_directFilter(nullptr),
-        
+
         m_soundClipId(0),
         m_streamId(0),
         m_emitterId(uid),
-        
+
         m_samplesOffset(0),
         m_active(false),
         m_fadeIn(false),
@@ -65,7 +65,7 @@ namespace FIFE
 
     void SoundEmitter::setSource(ALuint source)
     {
-        if ((source == 0u) && (m_source != 0u)) {
+        if ((source == 0U) && (m_source != 0U)) {
             alSourceStop(m_source);
 
             // Release all buffers

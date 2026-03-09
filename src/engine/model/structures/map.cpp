@@ -36,9 +36,9 @@ namespace FIFE
         const std::vector<RendererBase*>& renderers,
         TimeProvider* tp_master) :
         m_id(identifier),
-        
+
         m_timeProvider(tp_master),
-        
+
         m_renderBackend(renderBackend),
         m_renderers(renderers),
         m_changed(false)

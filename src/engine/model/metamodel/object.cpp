@@ -25,7 +25,7 @@ namespace FIFE
 {
 
     Object::BasicObjectProperty::BasicObjectProperty() :
-         m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
+        m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
     {
     }
     Object::BasicObjectProperty::~BasicObjectProperty()
@@ -40,8 +40,7 @@ namespace FIFE
         }
     }
 
-    Object::MovableObjectProperty::MovableObjectProperty() :
-        m_pather(nullptr),  m_cost(1.0), m_speed(1.0), m_zRange(0)
+    Object::MovableObjectProperty::MovableObjectProperty() : m_pather(nullptr), m_cost(1.0), m_speed(1.0), m_zRange(0)
     {
     }
     Object::MovableObjectProperty::~MovableObjectProperty() = default;
@@ -52,7 +51,7 @@ namespace FIFE
     Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited) :
         m_id(identifier),
         m_namespace(name_space),
-        
+
         m_inherited(inherited),
         m_visual(nullptr),
         m_basicProperty(nullptr),

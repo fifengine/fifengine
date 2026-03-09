@@ -38,7 +38,7 @@
 namespace fcn
 {
     ResizableWindow::ResizableWindow() :
-        
+
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
         m_resizable(true),
@@ -60,7 +60,7 @@ namespace fcn
     }
 
     ResizableWindow::ResizableWindow(bool resizable) :
-        
+
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
         m_resizable(resizable),
@@ -82,7 +82,7 @@ namespace fcn
     }
 
     ResizableWindow::ResizableWindow(const std::string& caption, bool resizable) :
-        
+
         m_cursor(FIFE::FifechanManager::instance()->getCursor()),
         m_borderDistance(5),
         m_resizable(resizable),

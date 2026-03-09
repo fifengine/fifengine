@@ -73,7 +73,7 @@ namespace FIFE
                 flags = c | 0xff00; /* uses higher byte cleverly to count eight */
             }
 
-            if ((flags & 1) != 0u) {
+            if ((flags & 1) != 0U) {
                 c                 = in[ibuf++];
                 out[m_outindex++] = c;
 

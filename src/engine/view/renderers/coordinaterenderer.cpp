@@ -34,7 +34,7 @@ namespace FIFE
 
     CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position) :
         RendererBase(renderbackend, position),
-        
+
         m_font(nullptr),
         m_font_color(false),
         m_zoom(true)
@@ -44,7 +44,7 @@ namespace FIFE
 
     CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old) :
         RendererBase(old),
-        
+
         m_font(old.m_font),
         m_font_color(false),
         m_color(old.m_color),

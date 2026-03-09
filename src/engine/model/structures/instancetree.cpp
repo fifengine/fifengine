@@ -20,7 +20,7 @@ namespace FIFE
 {
     static Logger _log(LM_STRUCTURES);
 
-    InstanceTree::InstanceTree()  { }
+    InstanceTree::InstanceTree() = default;
 
     InstanceTree::~InstanceTree() = default;
 
