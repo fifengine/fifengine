@@ -30,9 +30,9 @@ namespace FIFE
         {
             m_node = node;
         }
-        virtual ~NodeInstanceDeleteListener() { }
+        ~NodeInstanceDeleteListener() override { }
 
-        virtual void onInstanceDeleted(Instance* instance)
+        void onInstanceDeleted(Instance* instance) override
         {
             m_node->removeInstance(instance, false);
         }

@@ -47,21 +47,21 @@ namespace FIFE
         {
             m_cache = cache;
         }
-        virtual ~CacheLayerChangeListener() { }
+        ~CacheLayerChangeListener() override { }
 
-        virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances)
+        void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
             for (std::vector<Instance*>::iterator i = instances.begin(); i != instances.end(); ++i) {
                 m_cache->updateInstance(*i);
             }
         }
 
-        virtual void onInstanceCreate(Layer* layer, Instance* instance)
+        void onInstanceCreate(Layer* layer, Instance* instance) override
         {
             m_cache->addInstance(instance);
         }
 
-        virtual void onInstanceDelete(Layer* layer, Instance* instance)
+        void onInstanceDelete(Layer* layer, Instance* instance) override
         {
             m_cache->removeInstance(instance);
         }

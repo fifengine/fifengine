@@ -40,9 +40,9 @@ namespace FIFE
         {
             m_layer = layer;
         }
-        virtual ~CellCacheChangeListener() { }
+        ~CellCacheChangeListener() override { }
 
-        virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances)
+        void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
             for (std::vector<Instance*>::iterator i = instances.begin(); i != instances.end(); ++i) {
                 if ((*i)->isMultiCell()) {
@@ -170,7 +170,7 @@ namespace FIFE
             }
         }
 
-        virtual void onInstanceCreate(Layer* layer, Instance* instance)
+        void onInstanceCreate(Layer* layer, Instance* instance) override
         {
             ModelCoordinate mc;
             if (m_layer == layer) {
@@ -213,7 +213,7 @@ namespace FIFE
             }
         }
 
-        virtual void onInstanceDelete(Layer* layer, Instance* instance)
+        void onInstanceDelete(Layer* layer, Instance* instance) override
         {
             ModelCoordinate mc;
             if (m_layer == layer) {
@@ -336,13 +336,13 @@ namespace FIFE
         {
             m_cache = cache;
         }
-        virtual ~ZoneCellChangeListener() { }
+        ~ZoneCellChangeListener() override { }
 
-        virtual void onInstanceEnteredCell(Cell* cell, Instance* instance) { }
+        void onInstanceEnteredCell(Cell* cell, Instance* instance) override { }
 
-        virtual void onInstanceExitedCell(Cell* cell, Instance* instance) { }
+        void onInstanceExitedCell(Cell* cell, Instance* instance) override { }
 
-        virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks)
+        void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) override
         {
             if (blocks) {
                 cell->setZoneProtected(true);

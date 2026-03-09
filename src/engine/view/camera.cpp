@@ -52,16 +52,16 @@ namespace FIFE
         {
             m_camera = camera;
         }
-        virtual ~MapObserver() { }
+        ~MapObserver() override { }
 
-        virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) { }
+        void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
 
-        virtual void onLayerCreate(Map* map, Layer* layer)
+        void onLayerCreate(Map* map, Layer* layer) override
         {
             m_camera->addLayer(layer);
         }
 
-        virtual void onLayerDelete(Map* map, Layer* layer)
+        void onLayerDelete(Map* map, Layer* layer) override
         {
             m_camera->removeLayer(layer);
         }

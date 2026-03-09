@@ -31,9 +31,9 @@ namespace FIFE
         {
             m_source = source;
         }
-        virtual ~SoundChangeListener() { }
+        ~SoundChangeListener() override { }
 
-        virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info)
+        void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
         {
             if ((info & ICHANGE_LOC) == ICHANGE_LOC) {
                 m_source->setPosition();

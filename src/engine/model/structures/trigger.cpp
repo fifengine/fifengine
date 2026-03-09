@@ -32,10 +32,10 @@ namespace FIFE
         {
             m_trigger = trigger;
         }
-        virtual ~TriggerChangeListener() { }
+        ~TriggerChangeListener() override { }
 
         // InstanceDeleteListener callback
-        virtual void onInstanceDeleted(Instance* instance)
+        void onInstanceDeleted(Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::find(types.begin(), types.end(), INSTANCE_TRIGGER_DELETE) != types.end()) {
@@ -45,7 +45,7 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        virtual void onInstanceEnteredCell(Cell* cell, Instance* instance)
+        void onInstanceEnteredCell(Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::find(types.begin(), types.end(), CELL_TRIGGER_ENTER) != types.end()) {
@@ -58,7 +58,7 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        virtual void onInstanceExitedCell(Cell* cell, Instance* instance)
+        void onInstanceExitedCell(Cell* cell, Instance* instance) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::find(types.begin(), types.end(), CELL_TRIGGER_EXIT) != types.end()) {
@@ -71,7 +71,7 @@ namespace FIFE
         }
 
         // CellChangeListener callback
-        virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks)
+        void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::find(types.begin(), types.end(), CELL_TRIGGER_BLOCKING_CHANGE) != types.end()) {
@@ -80,7 +80,7 @@ namespace FIFE
         }
 
         // InstanceChangeListener callback
-        virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info)
+        void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
         {
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (m_trigger->getAttached() == instance && (info & ICHANGE_CELL) == ICHANGE_CELL) {

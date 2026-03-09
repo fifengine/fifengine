@@ -51,9 +51,9 @@ namespace FIFE
         {
             m_renderer = r;
         }
-        virtual ~InstanceRendererDeleteListener() { }
+        ~InstanceRendererDeleteListener() override { }
 
-        virtual void onInstanceDeleted(Instance* instance)
+        void onInstanceDeleted(Instance* instance) override
         {
             m_renderer->removeInstance(instance);
         }

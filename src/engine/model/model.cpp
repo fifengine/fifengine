@@ -39,13 +39,13 @@ namespace FIFE
         {
             m_model = model;
         }
-        virtual ~ModelMapObserver() { }
+        ~ModelMapObserver() override { }
 
-        virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) { }
+        void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
 
-        virtual void onLayerCreate(Map* map, Layer* layer) { }
+        void onLayerCreate(Map* map, Layer* layer) override { }
 
-        virtual void onLayerDelete(Map* map, Layer* layer)
+        void onLayerDelete(Map* map, Layer* layer) override
         {
             m_model->removeCellGrid(layer->getCellGrid());
         }
