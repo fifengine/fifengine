@@ -5,6 +5,8 @@
 
 // Platform specific includes
 #include <sstream>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <string>
+#include <vector>
 
 // This needs to be here, before Fifechan includes gl.h
 #include "video/opengl/fife_opengl.h"

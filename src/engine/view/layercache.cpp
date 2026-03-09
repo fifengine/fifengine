@@ -2,7 +2,11 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cfloat>
+#include <map>
+#include <set>
+#include <vector>
 
 // 3rd party library includes
 

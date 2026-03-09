@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <map>
+#include <string>
 #include <vector>
 
 // Platform specific includes

@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <list>
+#include <utility>
 
 namespace FIFE
 {

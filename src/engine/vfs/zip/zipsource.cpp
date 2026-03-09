@@ -7,6 +7,7 @@
 #include <memory>
 #include <set>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 // 3rd party library includes

@@ -5,6 +5,7 @@
 #define FIFE_ACTIONAUDIO_H
 
 // Standard C++ library includes
+#include <string>
 
 // Platform specific includes
 

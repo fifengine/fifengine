@@ -2,9 +2,12 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
+#include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 // 3rd party library includes
 #include <SDL.h>

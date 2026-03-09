@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <string>
 
 // 3rd party library includes
 #include <SDL.h>

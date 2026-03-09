@@ -5,6 +5,8 @@
 #define FIFE_PATHFINDER_MULTILAYERSEARCH
 
 // Standard C++ library includes
+#include <list>
+#include <vector>
 
 // 3rd party library includes
 

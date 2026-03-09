@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <memory>
+#include <string>
 
 // 3rd party library includes
 #include <zlib.h>

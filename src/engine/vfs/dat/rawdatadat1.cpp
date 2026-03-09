@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <memory>
+#include <string>
 
 // 3rd party library includes
 

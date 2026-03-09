@@ -5,6 +5,8 @@
 #define FIFE_VIDEO_RENDERBACKENSD_OPENGL_RENDERBACKENDOPENGL_H
 
 // Standard C++ library includes
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

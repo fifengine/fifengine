@@ -5,6 +5,7 @@
 #define FIFE_GUI_OPENGL_GRAPHICS_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 #include <fifechan/backends/opengl/openglgraphics.hpp>

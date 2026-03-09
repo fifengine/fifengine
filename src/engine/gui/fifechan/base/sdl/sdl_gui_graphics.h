@@ -5,6 +5,7 @@
 #define FIFE_GUI_SDL_GRAPHICS_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 #include <fifechan/backends/sdl2/sdl2graphics.hpp>

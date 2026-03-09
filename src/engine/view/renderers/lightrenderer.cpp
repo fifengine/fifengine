@@ -2,9 +2,13 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <SDL.h>
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <map>
+#include <string>
+#include <utility>
 
 // 3rd party library includes
 

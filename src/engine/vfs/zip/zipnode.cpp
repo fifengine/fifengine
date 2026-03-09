@@ -4,6 +4,8 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <filesystem>
+#include <string>
+#include <vector>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

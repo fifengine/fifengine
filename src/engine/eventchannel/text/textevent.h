@@ -5,10 +5,9 @@
 #define FIFE_EVENTCHANNEL_TEXTEVENT_H
 
 // Standard C++ library includes
-//
+#include <string>
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

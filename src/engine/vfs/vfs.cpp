@@ -4,6 +4,9 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <regex>
+#include <set>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL.h>

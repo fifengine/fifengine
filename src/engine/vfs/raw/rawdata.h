@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <memory>
+#include <string>
 #include <vector>
 
 // Platform specific includes

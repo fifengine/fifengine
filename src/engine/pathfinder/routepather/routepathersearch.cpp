@@ -18,6 +18,7 @@
 #include "util/math/fife_math.h"
 
 #include "routepathersearch.h"
+#include <vector>
 
 namespace FIFE
 {

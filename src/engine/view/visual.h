@@ -5,6 +5,7 @@
 #define FIFE_VIEW_VISUAL_H
 
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 

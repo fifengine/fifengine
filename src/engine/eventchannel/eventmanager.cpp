@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <deque>
 #include <iostream>
+#include <string>
 
 // 3rd party library includes
 

@@ -5,6 +5,7 @@
 #define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 #include <SDL_video.h>

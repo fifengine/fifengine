@@ -5,7 +5,9 @@
 #define FIFE_PATHFINDER_ROUTEPATHER
 
 // Standard C++ library includes
+#include <list>
 #include <map>
+#include <string>
 #include <vector>
 
 // 3rd party library includes

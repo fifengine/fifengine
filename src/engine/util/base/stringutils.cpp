@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <cstdio>
+#include <string>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

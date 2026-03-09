@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes

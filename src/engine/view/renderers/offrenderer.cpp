@@ -2,6 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <map>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

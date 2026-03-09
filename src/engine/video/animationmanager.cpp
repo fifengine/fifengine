@@ -3,6 +3,9 @@
 
 // Standard C++ library includes
 #include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

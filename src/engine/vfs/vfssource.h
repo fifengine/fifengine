@@ -5,6 +5,7 @@
 #define FIFE_VFS_VFSSOURCE_H
 
 // Standard C++ library includes
+#include <set>
 #include <string>
 
 // 3rd party library includes

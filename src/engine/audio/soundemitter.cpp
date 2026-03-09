@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <string>
+#include <vector>
 
 // Platform specific includes
 

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <list>
 
 // 3rd party library includes
 
@@ -9,9 +10,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "rendererbase.h"
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
+#include "rendererbase.h"
 #include "util/log/logger.h"
 
 namespace FIFE

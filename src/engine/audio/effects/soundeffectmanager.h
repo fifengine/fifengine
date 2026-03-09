@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <map>
 #include <queue>
+#include <vector>
 
 // Platform specific includes
 

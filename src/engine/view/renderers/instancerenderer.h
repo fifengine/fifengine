@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <list>
+#include <map>
 #include <string>
 
 // 3rd party library includes

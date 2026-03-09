@@ -4,6 +4,8 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -57,10 +59,6 @@
 #include "view/renderers/targetrenderer.h"
 
 #ifdef USE_COCOA
-
-    #include <dlfcn.h>
-    #include <objc/message.h>
-
 int32_t main(int32_t argc, char** argv)
 {
     return 0;

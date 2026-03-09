@@ -6,6 +6,7 @@
 
 // Standard C++ library includes
 #include <stack>
+#include <string>
 
 // 3rd party library includes
 #include <SDL.h>

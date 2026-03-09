@@ -5,6 +5,7 @@
 #define FCN_UTF8STRINGEDITOR_HPP
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 #include <fifechan.hpp>

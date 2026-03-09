@@ -6,9 +6,12 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <list>
+#include <map>
 #include <set>
 #include <stack>
 #include <string>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes

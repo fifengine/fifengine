@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <vector>
 
 // 3rd party library includes
 

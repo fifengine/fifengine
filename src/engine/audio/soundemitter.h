@@ -5,6 +5,8 @@
 #define FIFE_SOUNDEMITTER_H_
 
 // Standard C++ library includes
+#include <string>
+#include <vector>
 
 // Platform specific includes
 

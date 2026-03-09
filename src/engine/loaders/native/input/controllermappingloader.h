@@ -5,6 +5,7 @@
 #define FIFE_INPUT_LOADERS_CONTROLLER_MAPPING_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 

@@ -5,6 +5,7 @@
 #define FIFE_GUI_CEGuiInputProcessor
 
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 #include <SDL.h>

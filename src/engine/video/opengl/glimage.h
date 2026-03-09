@@ -5,6 +5,7 @@
 #define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
 
 // Standard C++ library includes
+#include <string>
 #include <vector>
 
 // Platform specific includes

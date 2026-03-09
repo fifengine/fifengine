@@ -29,6 +29,7 @@
 
 #ifdef HAVE_OPENGL
     #include "video/opengl/fife_opengl.h"
+    #include <stack>
 #endif
 
 namespace FIFE

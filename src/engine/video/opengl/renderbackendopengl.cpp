@@ -2,6 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
+#include <string>
+#include <vector>
 
 // Platform specific includes
 

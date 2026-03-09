@@ -2,6 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cstdio>
+#include <set>
+#include <string>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

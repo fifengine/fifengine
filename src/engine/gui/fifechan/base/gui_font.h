@@ -5,6 +5,7 @@
 #define FIFE_GUI_FONT_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 #include <fifechan/font.hpp>

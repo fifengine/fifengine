@@ -5,6 +5,8 @@
 #define FIFE_GUI_WIDGETS_RESIZABLEWINDOW_H
 
 // Standard C++ library includes
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <fifechan.hpp>

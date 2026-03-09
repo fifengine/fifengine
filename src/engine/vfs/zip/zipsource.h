@@ -5,6 +5,7 @@
 #define FIFE_ZIP_SOURCE_H
 
 // Standard C++ library includes
+#include <set>
 #include <string>
 
 // 3rd party library includes

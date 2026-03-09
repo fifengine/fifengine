@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <stddef.h>
+#include <string>
 #include <utility>
 
 // 3rd party library includes

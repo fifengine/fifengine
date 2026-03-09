@@ -5,6 +5,7 @@
 #define FIFE_PATHFINDER_SINGLELAYERSEARCH
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 

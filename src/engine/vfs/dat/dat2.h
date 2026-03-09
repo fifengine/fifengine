@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 // Platform specific includes

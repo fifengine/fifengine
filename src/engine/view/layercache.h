@@ -5,9 +5,11 @@
 #define FIFE_VIEW_LAYERCACHE_H
 
 // Standard C++ library includes
+#include <deque>
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 

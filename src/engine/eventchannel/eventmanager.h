@@ -5,19 +5,17 @@
 #define FIFE_EVENTCHANNEL_EVENTMANAGER_H
 
 // Standard C++ library includes
-//
 #include <deque>
 #include <list>
 #include <map>
+#include <string>
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
 #include "eventchannel/command/command.h"
 #include "eventchannel/command/icommandcontroller.h"
 #include "eventchannel/command/icommandlistener.h"

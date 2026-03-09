@@ -6,8 +6,10 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <SDL.h>

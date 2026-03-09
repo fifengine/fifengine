@@ -5,6 +5,9 @@
 #define FIFE_GENERICRENDERER_H
 
 // Standard C++ library includes
+#include <map>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

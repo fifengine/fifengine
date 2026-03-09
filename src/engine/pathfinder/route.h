@@ -6,6 +6,8 @@
 
 // Standard C++ library includes
 #include <list>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 

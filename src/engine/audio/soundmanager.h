@@ -5,7 +5,10 @@
 #define FIFE_SOUNDMANAGER_H
 
 // Standard C++ library includes
+#include <map>
 #include <queue>
+#include <string>
+#include <vector>
 
 // Platform specific includes
 

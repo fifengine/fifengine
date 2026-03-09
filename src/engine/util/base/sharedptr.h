@@ -7,6 +7,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <functional>
+#include <utility>
 
 // 3rd party library includes
 

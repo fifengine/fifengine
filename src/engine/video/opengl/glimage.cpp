@@ -4,6 +4,8 @@
 // Standard C++ library includes
 #include <cassert>
 #include <iostream>
+#include <string>
+
 // 3rd party library includes
 
 // FIFE includes

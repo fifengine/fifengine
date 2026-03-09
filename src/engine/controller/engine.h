@@ -11,6 +11,8 @@
 
 // Platform specific includes
 #ifdef USE_COCOA
+    #include <dlfcn.h>
+    #include <objc/message.h>
     #include <objc/runtime.h>
 #endif
 
