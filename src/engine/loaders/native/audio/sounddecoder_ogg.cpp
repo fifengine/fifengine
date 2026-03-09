@@ -90,7 +90,7 @@ namespace FIFE
         m_is8bit     = false;
         m_declength  = (m_isstereo ? 2 : 1) * 2 * ov_pcm_total(&m_ovf, -1);
         m_datasize   = 0;
-        m_data       = NULL;
+        m_data       = nullptr;
     }
 
     SoundDecoderOgg::~SoundDecoderOgg()
@@ -137,7 +137,7 @@ namespace FIFE
     {
         if (m_data != NULL) {
             delete[] m_data;
-            m_data = NULL;
+            m_data = nullptr;
         }
     }
 } // namespace FIFE

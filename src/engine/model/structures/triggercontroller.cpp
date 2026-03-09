@@ -144,7 +144,7 @@ namespace FIFE
         if (it != m_triggerNameMap.end()) {
             return it->second;
         }
-        return NULL;
+        return nullptr;
     }
 
     void TriggerController::deleteTrigger(const std::string& triggerName)

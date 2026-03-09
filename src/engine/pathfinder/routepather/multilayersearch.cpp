@@ -343,7 +343,7 @@ namespace FIFE
         std::vector<Cell*> cells = m_startCache->getTransitionCells(m_endCache->getLayer());
         if (!cells.empty()) {
             Location loc;
-            Cell* cell = NULL;
+            Cell* cell = nullptr;
             // find nearest portal (air-line distance)
             for (std::vector<Cell*>::iterator it = cells.begin(); it != cells.end(); ++it) {
                 if ((*it)->getZone() != m_startZone) {
@@ -524,7 +524,7 @@ namespace FIFE
                     continue;
                 }
 
-                Cell* transCell = NULL;
+                Cell* transCell = nullptr;
                 double nextCost = 0.0;
                 Location newLoc = lastLoc;
                 for (std::vector<Cell*>::iterator cit = tempCells.begin(); cit != tempCells.end(); ++cit) {

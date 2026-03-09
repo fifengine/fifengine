@@ -234,7 +234,7 @@ namespace FIFE
                 const char* objectId    = XML::Attribute(objectElem, "id");
                 const char* namespaceId = XML::Attribute(objectElem, "namespace");
 
-                Object* obj = NULL;
+                Object* obj = nullptr;
                 if (objectId && namespaceId) {
                     const char* parentId = XML::Attribute(objectElem, "parent");
 

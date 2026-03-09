@@ -68,7 +68,7 @@ namespace FIFE
             if ((*it)->getId() == id)
                 return *it;
         }
-        return NULL;
+        return nullptr;
     }
 
     uint32_t Map::getLayerCount() const
@@ -287,7 +287,7 @@ namespace FIFE
             }
         }
 
-        return NULL;
+        return nullptr;
     }
 
     const std::vector<Camera*>& Map::getCameras() const

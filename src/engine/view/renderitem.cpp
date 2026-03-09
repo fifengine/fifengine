@@ -88,7 +88,7 @@ namespace FIFE
         if (m_overlay) {
             return m_overlay->animationOverlayImages;
         }
-        return NULL;
+        return nullptr;
     }
 
     std::vector<OverlayColors*>* RenderItem::getAnimationColorOverlay() const
@@ -96,7 +96,7 @@ namespace FIFE
         if (m_overlay) {
             return m_overlay->animationColorOverlays;
         }
-        return NULL;
+        return nullptr;
     }
 
     void RenderItem::setColorOverlay(OverlayColors* co)
@@ -112,7 +112,7 @@ namespace FIFE
         if (m_overlay) {
             return m_overlay->colorOverlay;
         }
-        return NULL;
+        return nullptr;
     }
 
     void RenderItem::deleteOverlayData()

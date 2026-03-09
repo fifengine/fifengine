@@ -40,7 +40,7 @@ namespace FIFE
     FIFE::VFSSource* ZipProvider::createSource(const std::string& file)
     {
         if (isReadable(file)) {
-            VFSSource* source = NULL;
+            VFSSource* source = nullptr;
             if (hasSource(file)) {
                 source = m_sources[file];
             } else {
@@ -55,7 +55,7 @@ namespace FIFE
 
     VFSSource* ZipProvider::getSource(const std::string& path) const
     {
-        VFSSource* source = NULL;
+        VFSSource* source = nullptr;
         if (hasSource(path)) {
             source = m_sources.find(path)->second;
         }

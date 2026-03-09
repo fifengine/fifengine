@@ -62,7 +62,7 @@ namespace FIFE
         if (m_device) {
             alcDestroyContext(m_context);
             alcCloseDevice(m_device);
-            m_device = NULL;
+            m_device = nullptr;
         }
 
         if (alcGetError(NULL) != ALC_NO_ERROR) {
@@ -76,21 +76,21 @@ namespace FIFE
 
         if (!m_device || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Could not open audio device - deactivating audio module");
-            m_device = NULL;
+            m_device = nullptr;
             return;
         }
 
         m_context = alcCreateContext(m_device, NULL);
         if (!m_context || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Couldn't create audio context - deactivating audio module");
-            m_device = NULL;
+            m_device = nullptr;
             return;
         }
 
         alcMakeContextCurrent(m_context);
         if (alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Couldn't change current audio context - deactivating audio module");
-            m_device = NULL;
+            m_device = nullptr;
             return;
         }
         // create and initialize the effect manager
@@ -397,7 +397,7 @@ namespace FIFE
 
     SoundEmitter* SoundManager::createEmitter()
     {
-        SoundEmitter* ptr = NULL;
+        SoundEmitter* ptr = nullptr;
         for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
             if (m_emitterVec.at(i) == NULL) {
                 ptr                = new SoundEmitter(this, i);
@@ -426,7 +426,7 @@ namespace FIFE
             releaseSource(*ptr);
         }
         delete *ptr;
-        *ptr = NULL;
+        *ptr = nullptr;
     }
 
     void SoundManager::deleteEmitter(SoundEmitter* emitter)

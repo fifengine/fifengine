@@ -160,7 +160,7 @@ namespace FIFE
     {
         if (m_native_cursor != NULL) {
             SDL_FreeCursor(m_native_cursor);
-            m_native_cursor = NULL;
+            m_native_cursor = nullptr;
             m_native_cursor_image.reset();
 
             m_invalidated = true;

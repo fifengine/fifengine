@@ -99,7 +99,7 @@ namespace FIFE
         closeController();
         if (m_joystickHandle) {
             SDL_JoystickClose(m_joystickHandle);
-            m_joystickHandle = NULL;
+            m_joystickHandle = nullptr;
         }
         m_instanceId  = -1;
         m_deviceIndex = -1;
@@ -112,7 +112,7 @@ namespace FIFE
 
     bool Joystick::isController() const
     {
-        return m_controllerHandle != NULL;
+        return m_controllerHandle != nullptr;
     }
 
     void Joystick::openController()
@@ -129,7 +129,7 @@ namespace FIFE
     {
         if (m_controllerHandle) {
             SDL_GameControllerClose(m_controllerHandle);
-            m_controllerHandle = NULL;
+            m_controllerHandle = nullptr;
         }
     }
 

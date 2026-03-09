@@ -88,7 +88,7 @@ namespace FIFE
         if (m_window) {
             SDL_DestroyRenderer(m_renderer);
             SDL_DestroyWindow(m_window);
-            m_screen = NULL;
+            m_screen = nullptr;
         }
         // create window
         uint8_t displayIndex = mode.getDisplay();

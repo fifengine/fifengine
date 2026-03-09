@@ -58,7 +58,7 @@ namespace FIFE
 
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
-        Joystick* joystick = NULL;
+        Joystick* joystick = nullptr;
         for (std::vector<Joystick*>::iterator it = m_activeJoysticks.begin(); it != m_activeJoysticks.end(); ++it) {
             if ((*it)->getDeviceIndex() == deviceIndex) {
                 return joystick;
@@ -86,7 +86,7 @@ namespace FIFE
 
     Joystick* JoystickManager::getJoystick(int32_t instanceId)
     {
-        Joystick* joy                            = NULL;
+        Joystick* joy                            = nullptr;
         std::map<int32_t, uint32_t>::iterator it = m_joystickIndices.find(instanceId);
         if (it != m_joystickIndices.end()) {
             joy = m_joysticks[it->second];

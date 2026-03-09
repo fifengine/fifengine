@@ -44,7 +44,7 @@ namespace FIFE
         m_pathColor.b       = 255;
         m_blockingEnabled   = false;
         m_pathVisualEnabled = false;
-        m_font              = NULL;
+        m_font              = nullptr;
     }
 
     CellRenderer::CellRenderer(const CellRenderer& old) :
@@ -53,7 +53,7 @@ namespace FIFE
         setEnabled(false);
         m_blockingEnabled   = false;
         m_pathVisualEnabled = false;
-        m_font              = NULL;
+        m_font              = nullptr;
     }
 
     RendererBase* CellRenderer::clone()

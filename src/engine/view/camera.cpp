@@ -244,7 +244,7 @@ namespace FIFE
             return;
         }
 
-        CellGrid* cell_grid = NULL;
+        CellGrid* cell_grid = nullptr;
         if (location.getLayer()) {
             cell_grid = location.getLayer()->getCellGrid();
             if (!cell_grid) {
@@ -709,7 +709,7 @@ found_non_transparent_pixel:;
 
     void Camera::detach()
     {
-        m_attachedTo = NULL;
+        m_attachedTo = nullptr;
     }
 
     void Camera::update()

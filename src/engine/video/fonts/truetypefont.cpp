@@ -26,7 +26,7 @@ namespace FIFE
     TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size) : FIFE::FontBase()
     {
         mFilename  = filename;
-        mFont      = NULL;
+        mFont      = nullptr;
         mFontStyle = TTF_STYLE_NORMAL;
 
         mFont = TTF_OpenFont(filename.c_str(), size);

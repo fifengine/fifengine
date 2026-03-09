@@ -31,7 +31,7 @@ MODULE_INFO_RELATIONSHIPS
 
 namespace FIFE
 {
-    LogManager* LogManager::m_instance = NULL;
+    LogManager* LogManager::m_instance = nullptr;
 
     Logger::Logger(logmodule_t module) : m_module(module) { }
 

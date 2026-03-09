@@ -769,7 +769,7 @@ namespace FIFE
             m_joystickManager = new JoystickManager();
         } else if (!support && m_joystickManager) {
             delete m_joystickManager;
-            m_joystickManager = NULL;
+            m_joystickManager = nullptr;
         }
     }
 
@@ -778,7 +778,7 @@ namespace FIFE
         if (m_joystickManager) {
             return m_joystickManager->getJoystick(instanceId);
         }
-        return NULL;
+        return nullptr;
     }
 
     uint8_t EventManager::getJoystickCount() const

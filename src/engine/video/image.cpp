@@ -114,7 +114,7 @@ namespace FIFE
     SDL_Surface* Image::detachSurface()
     {
         SDL_Surface* srf = m_surface;
-        m_surface        = NULL;
+        m_surface        = nullptr;
         return srf;
     }
 
@@ -211,7 +211,7 @@ namespace FIFE
         png_structp pngptr;
         png_infop infoptr;
         int32_t colortype;
-        png_bytep* rowpointers = NULL;
+        png_bytep* rowpointers = nullptr;
 
         fp = fopen(filename.c_str(), "wb");
 

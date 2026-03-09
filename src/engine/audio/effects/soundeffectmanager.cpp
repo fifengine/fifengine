@@ -29,43 +29,43 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     // Effect Slots
-    LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = NULL;
-    LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = NULL;
-    LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = NULL;
-    LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = NULL;
-    LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = NULL;
-    LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = NULL;
-    LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = NULL;
-    LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = NULL;
-    LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = NULL;
-    LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = NULL;
-    LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = NULL;
+    LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots       = nullptr;
+    LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots = nullptr;
+    LPALISAUXILIARYEFFECTSLOT alIsAuxiliaryEffectSlot           = nullptr;
+    LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti             = nullptr;
+    LPALAUXILIARYEFFECTSLOTIV alAuxiliaryEffectSlotiv           = nullptr;
+    LPALAUXILIARYEFFECTSLOTF alAuxiliaryEffectSlotf             = nullptr;
+    LPALAUXILIARYEFFECTSLOTFV alAuxiliaryEffectSlotfv           = nullptr;
+    LPALGETAUXILIARYEFFECTSLOTI alGetAuxiliaryEffectSloti       = nullptr;
+    LPALGETAUXILIARYEFFECTSLOTIV alGetAuxiliaryEffectSlotiv     = nullptr;
+    LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf       = nullptr;
+    LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv     = nullptr;
 
     // Effects
-    LPALGENEFFECTS alGenEffects       = NULL;
-    LPALDELETEEFFECTS alDeleteEffects = NULL;
-    LPALISEFFECT alIsEffect           = NULL;
-    LPALEFFECTI alEffecti             = NULL;
-    LPALEFFECTIV alEffectiv           = NULL;
-    LPALEFFECTF alEffectf             = NULL;
-    LPALEFFECTFV alEffectfv           = NULL;
-    LPALGETEFFECTI alGetEffecti       = NULL;
-    LPALGETEFFECTIV alGetEffectiv     = NULL;
-    LPALGETEFFECTF alGetEffectf       = NULL;
-    LPALGETEFFECTFV alGetEffectfv     = NULL;
+    LPALGENEFFECTS alGenEffects       = nullptr;
+    LPALDELETEEFFECTS alDeleteEffects = nullptr;
+    LPALISEFFECT alIsEffect           = nullptr;
+    LPALEFFECTI alEffecti             = nullptr;
+    LPALEFFECTIV alEffectiv           = nullptr;
+    LPALEFFECTF alEffectf             = nullptr;
+    LPALEFFECTFV alEffectfv           = nullptr;
+    LPALGETEFFECTI alGetEffecti       = nullptr;
+    LPALGETEFFECTIV alGetEffectiv     = nullptr;
+    LPALGETEFFECTF alGetEffectf       = nullptr;
+    LPALGETEFFECTFV alGetEffectfv     = nullptr;
 
     // Filters
-    LPALGENFILTERS alGenFilters       = NULL;
-    LPALDELETEFILTERS alDeleteFilters = NULL;
-    LPALISFILTER alIsFilter           = NULL;
-    LPALFILTERI alFilteri             = NULL;
-    LPALFILTERIV alFilteriv           = NULL;
-    LPALFILTERF alFilterf             = NULL;
-    LPALFILTERFV alFilterfv           = NULL;
-    LPALGETFILTERI alGetFilteri       = NULL;
-    LPALGETFILTERIV alGetFilteriv     = NULL;
-    LPALGETFILTERF alGetFilterf       = NULL;
-    LPALGETFILTERFV alGetFilterfv     = NULL;
+    LPALGENFILTERS alGenFilters       = nullptr;
+    LPALDELETEFILTERS alDeleteFilters = nullptr;
+    LPALISFILTER alIsFilter           = nullptr;
+    LPALFILTERI alFilteri             = nullptr;
+    LPALFILTERIV alFilteriv           = nullptr;
+    LPALFILTERF alFilterf             = nullptr;
+    LPALFILTERFV alFilterfv           = nullptr;
+    LPALGETFILTERI alGetFilteri       = nullptr;
+    LPALGETFILTERIV alGetFilteriv     = nullptr;
+    LPALGETFILTERF alGetFilterf       = nullptr;
+    LPALGETFILTERFV alGetFilterfv     = nullptr;
 
     SoundEffectManager::SoundEffectManager() : m_device(NULL), m_active(false), m_createdSlots(0), m_maxSlots(0) { }
 
@@ -170,7 +170,7 @@ namespace FIFE
 
     SoundEffect* SoundEffectManager::createSoundEffect(SoundEffectType type)
     {
-        SoundEffect* effect = NULL;
+        SoundEffect* effect = nullptr;
         if (type == SE_EFFECT_REVERB) {
             effect = new Reverb();
         } else if (type == SE_EFFECT_CHORUS) {
@@ -208,7 +208,7 @@ namespace FIFE
     {
         std::map<SoundEffectPreset, EFXEAXREVERBPROPERTIES>::iterator it = m_presets.find(type);
         if (it == m_presets.end()) {
-            return NULL;
+            return nullptr;
         }
         SoundEffect* effect = new EaxReverb();
         m_effects.push_back(effect);

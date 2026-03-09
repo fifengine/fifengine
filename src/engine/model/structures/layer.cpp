@@ -624,7 +624,7 @@ namespace FIFE
                 m_interacts.clear();
             }
             delete m_cellCache;
-            m_cellCache = NULL;
+            m_cellCache = nullptr;
             m_walkable  = false;
         }
     }

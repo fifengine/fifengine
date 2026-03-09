@@ -92,7 +92,7 @@ namespace fcn
 
     DockArea* Panel::getDockedArea()
     {
-        DockArea* dockedArea = NULL;
+        DockArea* dockedArea = nullptr;
         if (isDocked()) {
             dockedArea = dynamic_cast<DockArea*>(getParent());
         }
@@ -101,10 +101,10 @@ namespace fcn
 
     DockArea* Panel::findDockArea()
     {
-        DockArea* dockArea = NULL;
+        DockArea* dockArea = nullptr;
         if (!isDocked()) {
             if (getParent()) {
-                DockArea* newDockArea      = NULL;
+                DockArea* newDockArea      = nullptr;
                 std::list<Widget*> widgets = getParent()->getWidgetsIn(getDimension(), this);
                 if (widgets.size() > 0) {
                     std::list<Widget*>::iterator it = widgets.begin();
@@ -126,7 +126,7 @@ namespace fcn
                                         if (dim.isIntersecting(tdim)) {
                                             break;
                                         }
-                                        tmp = NULL;
+                                        tmp = nullptr;
                                     }
                                 }
                             }

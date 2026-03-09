@@ -248,8 +248,8 @@ namespace FIFE
             fontglyphs = m_fontglyphs;
         }
 
-        IFont* font      = NULL;
-        GuiFont* guifont = NULL;
+        IFont* font      = nullptr;
+        GuiFont* guifont = nullptr;
         if (GetExtension(fontpath) == ".ttf" || GetExtension(fontpath) == ".ttc") {
             font = new TrueTypeFont(fontpath, fontsize);
         } else {

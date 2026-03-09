@@ -286,7 +286,7 @@ namespace FIFE
 
     void Console::removeConsoleExecuter()
     {
-        m_consoleexec = NULL;
+        m_consoleexec = nullptr;
     }
 
     void Console::setIOFont(GuiFont* font)

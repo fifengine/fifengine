@@ -70,7 +70,7 @@ namespace FIFE
 
     Map* MapLoader::load(const std::string& filename)
     {
-        Map* map = NULL;
+        Map* map = nullptr;
 
         // reset percent done listener just in case
         // it has residual data from last load
@@ -250,7 +250,7 @@ namespace FIFE
                                 }
                             }
 
-                            CellGrid* grid = NULL;
+                            CellGrid* grid = nullptr;
                             if (gridType) {
                                 grid = m_model->getCellGrid(gridType);
                             } else {
@@ -266,7 +266,7 @@ namespace FIFE
                                 grid->setZScale(zScale);
                                 grid->setRotation(rotation);
 
-                                Layer* layer = NULL;
+                                Layer* layer = nullptr;
                                 try {
                                     layer = map->createLayer(layerName, grid);
                                 } catch (NameClash&) {
@@ -351,7 +351,7 @@ namespace FIFE
                                                 Object* object = m_model->getObject(objectId, ns);
 
                                                 if (object) {
-                                                    Instance* inst = NULL;
+                                                    Instance* inst = nullptr;
                                                     if (instanceId) {
                                                         inst = layer->createInstance(
                                                             object, ExactModelCoordinate(x, y, z), instanceId);
@@ -553,7 +553,7 @@ namespace FIFE
                                                     transitionElement->QueryIntAttribute("z", &targetZ);
                                                     if (success == XML::SUCCESS) {
                                                         ModelCoordinate mc(targetX, targetY, targetZ);
-                                                        Layer* targetLayer = NULL;
+                                                        Layer* targetLayer = nullptr;
                                                         const char* targetLayerId =
                                                             XML::Attribute(transitionElement, "id");
                                                         if (targetLayerId) {
@@ -672,7 +672,7 @@ namespace FIFE
 
                             const char* viewport = XML::Attribute(cameraElement, "viewport");
 
-                            Camera* cam = NULL;
+                            Camera* cam = nullptr;
 
                             if (viewport) {
                                 // parse out the viewport parameters

@@ -140,7 +140,7 @@ namespace FIFE
 
     uint32_t SoundClip::beginStreaming()
     {
-        SoundBufferEntry* ptr = NULL;
+        SoundBufferEntry* ptr = nullptr;
         uint32_t id           = 0;
         for (uint32_t i = 0; i < m_buffervec.size(); i++) {
             if (m_buffervec.at(i) == NULL) {
@@ -266,7 +266,7 @@ namespace FIFE
     {
         SoundBufferEntry** ptr = &m_buffervec.at(streamid);
         delete *ptr;
-        *ptr = NULL;
+        *ptr = nullptr;
     }
 
     void SoundClip::adobtDecoder(SoundDecoder* decoder)

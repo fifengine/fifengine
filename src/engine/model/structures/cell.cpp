@@ -276,7 +276,7 @@ namespace FIFE
     void Cell::resetZone()
     {
         m_inserted = false;
-        m_zone     = NULL;
+        m_zone     = nullptr;
     }
 
     bool Cell::isInserted()
@@ -379,7 +379,7 @@ namespace FIFE
             m_layer->getCellCache()->addTransition(this);
         } else {
             delete m_transition;
-            m_transition = NULL;
+            m_transition = nullptr;
         }
     }
 
@@ -397,7 +397,7 @@ namespace FIFE
             oldc->removeDeleteListener(this);
             m_layer->getCellCache()->removeTransition(this);
             delete m_transition;
-            m_transition = NULL;
+            m_transition = nullptr;
         }
     }
 
@@ -416,7 +416,7 @@ namespace FIFE
         std::vector<CellDeleteListener*>::iterator it = m_deleteListeners.begin();
         for (; it != m_deleteListeners.end(); ++it) {
             if (*it == listener) {
-                *it = NULL;
+                *it = nullptr;
                 break;
             }
         }
@@ -443,7 +443,7 @@ namespace FIFE
         std::vector<CellChangeListener*>::iterator it = m_changeListeners.begin();
         for (; it != m_changeListeners.end(); ++it) {
             if (*it == listener) {
-                *it = NULL;
+                *it = nullptr;
                 break;
             }
         }

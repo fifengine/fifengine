@@ -62,7 +62,7 @@ namespace FIFE
     void SDLImage::resetSdlimage()
     {
         m_colorkey = RenderBackend::instance()->getColorKey();
-        m_texture  = NULL;
+        m_texture  = nullptr;
     }
 
     SDLImage::~SDLImage()
@@ -75,7 +75,7 @@ namespace FIFE
         if (m_texture && !m_shared) {
             SDL_DestroyTexture(m_texture);
         }
-        m_texture = NULL;
+        m_texture = nullptr;
     }
 
     void SDLImage::setSurface(SDL_Surface* surface)

@@ -174,7 +174,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::setScreenMode(const ScreenMode& mode)
     {
-        bool recreate         = m_window != NULL;
+        bool recreate         = m_window != nullptr;
         uint16_t width        = mode.getWidth();
         uint16_t height       = mode.getHeight();
         uint16_t bitsPerPixel = mode.getBPP();
@@ -182,8 +182,8 @@ namespace FIFE
         // in case of recreating
         if (recreate) {
             SDL_DestroyWindow(m_window);
-            m_window = NULL;
-            m_screen = NULL;
+            m_window = nullptr;
+            m_screen = nullptr;
 
             if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
                 glDeleteFramebuffers(1, &m_fbo_id);

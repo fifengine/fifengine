@@ -101,7 +101,7 @@ namespace FIFE
 
     Action* Object::getAction(const std::string& identifier, bool deepsearch) const
     {
-        std::map<std::string, Action*>* actions = NULL;
+        std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty) {
             actions = m_basicProperty->m_actions;
         }
@@ -114,14 +114,14 @@ namespace FIFE
             if (m_inherited && deepsearch) {
                 return m_inherited->getAction(identifier);
             }
-            return NULL;
+            return nullptr;
         }
         return i->second;
     }
 
     std::list<std::string> Object::getActionIds() const
     {
-        std::map<std::string, Action*>* actions = NULL;
+        std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty) {
             actions = m_basicProperty->m_actions;
         }
@@ -138,8 +138,8 @@ namespace FIFE
     void Object::setDefaultAction(const std::string& identifier)
     {
         std::map<std::string, Action*>::const_iterator i;
-        Action* action                          = NULL;
-        std::map<std::string, Action*>* actions = NULL;
+        Action* action                          = nullptr;
+        std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty) {
             actions = m_basicProperty->m_actions;
         }
@@ -167,7 +167,7 @@ namespace FIFE
         if (m_inherited) {
             return m_inherited->getDefaultAction();
         }
-        return NULL;
+        return nullptr;
     }
 
     void Object::setPather(IPather* pather)
@@ -186,7 +186,7 @@ namespace FIFE
         if (m_inherited) {
             return m_inherited->getPather();
         }
-        return NULL;
+        return nullptr;
     }
 
     Object* Object::getInherited() const

@@ -181,8 +181,8 @@ namespace fcn
 
     void DockArea::repositionWidget(Widget* widget)
     {
-        Widget* placeBefore = NULL;
-        Widget* placeAfter  = NULL;
+        Widget* placeBefore = nullptr;
+        Widget* placeAfter  = nullptr;
 
         Rectangle dim = widget->getDimension();
         widget->getAbsolutePosition(dim.x, dim.y);
@@ -245,10 +245,10 @@ namespace fcn
     {
         Widget* parent = getParent();
         if (parent) {
-            DockArea* top                   = NULL;
-            DockArea* right                 = NULL;
-            DockArea* bottom                = NULL;
-            DockArea* left                  = NULL;
+            DockArea* top                   = nullptr;
+            DockArea* right                 = nullptr;
+            DockArea* bottom                = nullptr;
+            DockArea* left                  = nullptr;
             std::list<Widget*> widgets      = parent->getWidgetsIn(parent->getChildrenArea());
             std::list<Widget*>::iterator it = widgets.begin();
             for (; it != widgets.end(); ++it) {

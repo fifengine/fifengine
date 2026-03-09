@@ -103,7 +103,7 @@ namespace FIFE
             }
         }
         FL_WARN(_log, "No pather of requested type \"" + pathername + "\" found.");
-        return NULL;
+        return nullptr;
     }
 
     void Model::adoptCellGrid(CellGrid* grid)
@@ -122,7 +122,7 @@ namespace FIFE
             }
         }
         FL_WARN(_log, "No cellgrid of requested type \"" + gridtype + "\" found.");
-        return NULL;
+        return nullptr;
     }
 
     void Model::removeCellGrid(CellGrid* grid)
@@ -285,7 +285,7 @@ namespace FIFE
             if (it != nspace->second.end())
                 return it->second;
         }
-        return NULL;
+        return nullptr;
     }
 
     std::list<Object*> Model::getObjects(const std::string& name_space) const
@@ -310,7 +310,7 @@ namespace FIFE
             }
         }
 
-        return NULL;
+        return nullptr;
     }
 
     Model::namespace_t* Model::selectNamespace(const std::string& name_space)
@@ -325,7 +325,7 @@ namespace FIFE
             }
         }
         m_lastNamespace = 0;
-        return NULL;
+        return nullptr;
     }
 
     void Model::update()

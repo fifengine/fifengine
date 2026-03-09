@@ -27,7 +27,7 @@ namespace FIFE
     FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path)
     {
         if (isReadable(path)) {
-            VFSSource* source = NULL;
+            VFSSource* source = nullptr;
             if (hasSource(path)) {
                 source = m_sources[path];
             } else {
@@ -42,7 +42,7 @@ namespace FIFE
 
     VFSSource* DirectoryProvider::getSource(const std::string& path) const
     {
-        VFSSource* source = NULL;
+        VFSSource* source = nullptr;
         if (hasSource(path)) {
             source = m_sources.find(path)->second;
         }

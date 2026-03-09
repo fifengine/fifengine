@@ -45,7 +45,7 @@ namespace FIFE
         m_exact_layer_coords.x = 0;
         m_exact_layer_coords.y = 0;
         m_exact_layer_coords.z = 0;
-        m_layer                = NULL;
+        m_layer                = nullptr;
     }
 
     Location& Location::operator=(const Location& rhs)
@@ -60,7 +60,7 @@ namespace FIFE
     Map* Location::getMap() const
     {
         if (!m_layer) {
-            return NULL;
+            return nullptr;
         }
         return m_layer->getMap();
     }

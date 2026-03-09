@@ -379,7 +379,7 @@ namespace FIFE
         std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionListeners.begin();
         while (i != m_activity->m_actionListeners.end()) {
             if ((*i) == listener) {
-                *i = NULL;
+                *i = nullptr;
                 return;
             }
             ++i;
@@ -416,7 +416,7 @@ namespace FIFE
         std::vector<InstanceChangeListener*>::iterator i = m_activity->m_changeListeners.begin();
         while (i != m_activity->m_changeListeners.end()) {
             if ((*i) == listener) {
-                *i = NULL;
+                *i = nullptr;
                 return;
             }
             ++i;
@@ -429,7 +429,7 @@ namespace FIFE
         assert(m_object);
 
         initializeChanges();
-        const Action* old_action = m_activity->m_actionInfo ? m_activity->m_actionInfo->m_action : NULL;
+        const Action* old_action = m_activity->m_actionInfo ? m_activity->m_actionInfo->m_action : nullptr;
         if (m_activity->m_actionInfo) {
             cancelAction();
         }
@@ -437,7 +437,7 @@ namespace FIFE
         m_activity->m_actionInfo->m_action = m_object->getAction(actionName);
         if (!m_activity->m_actionInfo->m_action) {
             delete m_activity->m_actionInfo;
-            m_activity->m_actionInfo = NULL;
+            m_activity->m_actionInfo = nullptr;
             throw NotFound(std::string("action ") + actionName + " not found");
         }
         m_activity->m_actionInfo->m_prev_call_time = getRuntime();
@@ -563,7 +563,7 @@ namespace FIFE
                 return info->m_route;
             }
         }
-        return NULL;
+        return nullptr;
     }
 
     void Instance::setCellStackPosition(uint8_t stack)
@@ -640,7 +640,7 @@ namespace FIFE
     {
         initializeChanges();
         delete m_activity->m_sayInfo;
-        m_activity->m_sayInfo = NULL;
+        m_activity->m_sayInfo = nullptr;
 
         if (text != "") {
             m_activity->m_sayInfo               = new SayInfo(text, duration);
@@ -653,7 +653,7 @@ namespace FIFE
         if (m_activity && m_activity->m_sayInfo) {
             return &m_activity->m_sayInfo->m_txt;
         }
-        return NULL;
+        return nullptr;
     }
 
     bool Instance::processMovement()
@@ -849,10 +849,10 @@ namespace FIFE
 
         Action* action = m_activity->m_actionInfo->m_action;
         delete m_activity->m_actionInfo;
-        m_activity->m_actionInfo = NULL;
+        m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the finalized action
-        m_activity->m_action = NULL;
+        m_activity->m_action = nullptr;
 
         // stop audio
         if (action->getAudio() && m_activity->m_soundSource) {
@@ -891,10 +891,10 @@ namespace FIFE
 
         Action* action = m_activity->m_actionInfo->m_action;
         delete m_activity->m_actionInfo;
-        m_activity->m_actionInfo = NULL;
+        m_activity->m_actionInfo = nullptr;
         // this is needed in case the new action is set on the same pump and
         // it is the same action as the canceled action
-        m_activity->m_action = NULL;
+        m_activity->m_action = nullptr;
 
         if (isMultiObject()) {
             std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();
@@ -921,7 +921,7 @@ namespace FIFE
         if (m_activity && m_activity->m_actionInfo) {
             return m_activity->m_actionInfo->m_action;
         }
-        return NULL;
+        return nullptr;
     }
 
     Location Instance::getTargetLocation() const
@@ -989,7 +989,7 @@ namespace FIFE
             multiplier = m_activity->m_timeProvider->getMultiplier();
         }
         delete m_activity->m_timeProvider;
-        m_activity->m_timeProvider = NULL;
+        m_activity->m_timeProvider = nullptr;
 
         if (m_location.getLayer()) {
             Map* map = m_location.getLayer()->getMap();
@@ -1217,7 +1217,7 @@ namespace FIFE
         if (visual) {
             return visual->getColorOverlay(angle);
         }
-        return NULL;
+        return nullptr;
     }
 
     void Instance::removeColorOverlay(const std::string& actionName, int32_t angle)
@@ -1277,7 +1277,7 @@ namespace FIFE
         if (visual) {
             return visual->getColorOverlay(angle, order);
         }
-        return NULL;
+        return nullptr;
     }
 
     void Instance::removeColorOverlay(const std::string& actionName, int32_t angle, int32_t order)
@@ -1332,7 +1332,7 @@ namespace FIFE
 
     ActionVisual* Instance::getActionVisual(const std::string& actionName, bool create)
     {
-        ActionVisual* nav = NULL;
+        ActionVisual* nav = nullptr;
         if (!m_ownObject) {
             createOwnObject();
         }
@@ -1372,7 +1372,7 @@ namespace FIFE
             itor = std::find(m_deleteListeners.begin(), m_deleteListeners.end(), listener);
             if (itor != m_deleteListeners.end()) {
                 if ((*itor) == listener) {
-                    *itor = NULL;
+                    *itor = nullptr;
                     return;
                 }
             } else {
@@ -1384,7 +1384,7 @@ namespace FIFE
     void Instance::onInstanceDeleted(Instance* instance)
     {
         if (m_activity && m_activity->m_actionInfo && m_activity->m_actionInfo->m_leader == instance) {
-            m_activity->m_actionInfo->m_leader = NULL;
+            m_activity->m_actionInfo->m_leader = nullptr;
         }
         if (isMultiObject()) {
             std::vector<Instance*>::iterator multi_it = m_multiInstances.begin();

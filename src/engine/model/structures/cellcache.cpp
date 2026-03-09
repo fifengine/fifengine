@@ -349,7 +349,7 @@ namespace FIFE
                 m_cache->splitZone(cell);
             } else {
                 Zone* z1                              = cell->getZone();
-                Zone* z2                              = NULL;
+                Zone* z2                              = nullptr;
                 const std::vector<Cell*>& neighbors   = cell->getNeighbors();
                 std::vector<Cell*>::const_iterator it = neighbors.begin();
                 for (; it != neighbors.end(); ++it) {
@@ -502,7 +502,7 @@ namespace FIFE
                 for (uint32_t x = 0; x < w; ++x) {
                     // transfer cells
                     ModelCoordinate mc(newsize.x + x, newsize.y + y);
-                    Cell* cell    = NULL;
+                    Cell* cell    = nullptr;
                     int32_t old_x = mc.x - m_size.x;
                     int32_t old_y = mc.y - m_size.y;
                     // out of range in the old size, so we create a new cell
@@ -539,7 +539,7 @@ namespace FIFE
                         // transfer ownership
                     } else {
                         cell = m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)];
-                        m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = NULL;
+                        m_cells[static_cast<uint32_t>(old_x)][static_cast<uint32_t>(old_y)] = nullptr;
                         cells[x][y]                                                         = cell;
                         int32_t coordId                                                     = x + y * w;
                         cell->setCellId(coordId);
@@ -554,7 +554,7 @@ namespace FIFE
                 for (; cit != (*it).end(); ++cit) {
                     if (*cit) {
                         delete *cit;
-                        *cit = NULL;
+                        *cit = nullptr;
                     }
                 }
             }
@@ -724,7 +724,7 @@ namespace FIFE
         int32_t y = mc.y - m_size.y;
 
         if (x < 0 || x >= static_cast<int32_t>(m_width) || y < 0 || y >= static_cast<int32_t>(m_height)) {
-            return NULL;
+            return nullptr;
         }
 
         return m_cells[static_cast<uint32_t>(x)][static_cast<uint32_t>(y)];

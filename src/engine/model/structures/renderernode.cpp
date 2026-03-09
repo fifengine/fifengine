@@ -150,7 +150,7 @@ namespace FIFE
     void RendererNode::setAttached(const Point& attached_point)
     {
         changeInstance(NULL);
-        m_location = NULL;
+        m_location = nullptr;
         m_point    = attached_point;
     }
 
@@ -276,7 +276,7 @@ namespace FIFE
             if (listener) {
                 m_instance->removeDeleteListener(m_listener);
             }
-            m_instance = NULL;
+            m_instance = nullptr;
         }
     }
 

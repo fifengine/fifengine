@@ -180,7 +180,7 @@ namespace FIFE
         while (i != m_triggerListeners.end()) {
             if ((*i) == listener) {
                 // set the pointer to null, so it can be removed later
-                *i = NULL;
+                *i = nullptr;
                 return;
             }
             ++i;

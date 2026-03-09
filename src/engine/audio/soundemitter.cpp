@@ -884,7 +884,7 @@ namespace FIFE
     {
         for (std::vector<SoundEffect*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it) {
             if (effect == *it) {
-                (*it) = NULL;
+                (*it) = nullptr;
                 break;
             }
         }
@@ -964,7 +964,7 @@ namespace FIFE
         std::vector<SoundEmitterListener*>::iterator i = m_listeners.begin();
         while (i != m_listeners.end()) {
             if ((*i) == listener) {
-                *i = NULL;
+                *i = nullptr;
                 return;
             }
             ++i;

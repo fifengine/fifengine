@@ -240,8 +240,8 @@ namespace FIFE
 
     void Reverb::setRoomRolloffFactor(float value)
     {
-        value               = std::min(value, 10.0f);
-        value               = std::max(value, 0.0f);
+        value               = std::min(value, 10.0F);
+        value               = std::max(value, 0.0F);
         m_roomRolloffFactor = value;
         alEffectf(m_effect, AL_REVERB_ROOM_ROLLOFF_FACTOR, m_roomRolloffFactor);
     }
@@ -263,7 +263,7 @@ namespace FIFE
     }
 
     Chorus::Chorus() :
-        m_waveformTriangle(true), m_phase(90), m_rate(1.1F), m_depth(0.1F), m_feedback(0.25F), m_delay(0.016f)
+        m_waveformTriangle(true), m_phase(90), m_rate(1.1F), m_depth(0.1F), m_feedback(0.25F), m_delay(0.016F)
     {
         m_effectType = SE_EFFECT_CHORUS;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_CHORUS);
@@ -350,7 +350,7 @@ namespace FIFE
     }
 
     Distortion::Distortion() :
-        m_edge(0.2F), m_gain(0.05F), m_lowpassCutoff(8000.0F), m_eqCenter(3600.0F), m_eqBandwidth(3600.0f)
+        m_edge(0.2F), m_gain(0.05F), m_lowpassCutoff(8000.0F), m_eqCenter(3600.0F), m_eqBandwidth(3600.0F)
     {
         m_effectType = SE_EFFECT_DISTORTION;
         alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_DISTORTION);
@@ -542,8 +542,8 @@ namespace FIFE
 
     void Flanger::setDepth(float value)
     {
-        value   = std::min(value, 1.0f);
-        value   = std::max(value, 0.0f);
+        value   = std::min(value, 1.0F);
+        value   = std::max(value, 0.0F);
         m_depth = value;
         alEffectf(m_effect, AL_FLANGER_DEPTH, m_depth);
     }
@@ -555,8 +555,8 @@ namespace FIFE
 
     void Flanger::setFeedback(float value)
     {
-        value      = std::min(value, 1.0f);
-        value      = std::max(value, -1.0f);
+        value      = std::min(value, 1.0F);
+        value      = std::max(value, -1.0F);
         m_feedback = value;
         alEffectf(m_effect, AL_FLANGER_FEEDBACK, m_feedback);
     }
@@ -568,8 +568,8 @@ namespace FIFE
 
     void Flanger::setDelay(float value)
     {
-        value   = std::min(value, 0.004f);
-        value   = std::max(value, 0.0f);
+        value   = std::min(value, 0.004F);
+        value   = std::max(value, 0.0F);
         m_delay = value;
         alEffectf(m_effect, AL_FLANGER_DELAY, m_delay);
     }
@@ -587,8 +587,8 @@ namespace FIFE
 
     void FrequencyShifter::setFrequency(float value)
     {
-        value       = std::min(value, 24000.0f);
-        value       = std::max(value, 0.0f);
+        value       = std::min(value, 24000.0F);
+        value       = std::max(value, 0.0F);
         m_frequency = value;
         alEffectf(m_effect, AL_FREQUENCY_SHIFTER_FREQUENCY, m_frequency);
     }
@@ -892,8 +892,8 @@ namespace FIFE
 
     void Equalizer::setLowCutoff(float value)
     {
-        value       = std::min(value, 800.0f);
-        value       = std::max(value, 50.0f);
+        value       = std::min(value, 800.0F);
+        value       = std::max(value, 50.0F);
         m_lowCutoff = value;
         alEffectf(m_effect, AL_EQUALIZER_LOW_CUTOFF, m_lowCutoff);
     }
@@ -905,8 +905,8 @@ namespace FIFE
 
     void Equalizer::setMid1Gain(float value)
     {
-        value      = std::min(value, 7.943f);
-        value      = std::max(value, 0.126f);
+        value      = std::min(value, 7.943F);
+        value      = std::max(value, 0.126F);
         m_mid1Gain = value;
         alEffectf(m_effect, AL_EQUALIZER_MID1_GAIN, m_mid1Gain);
     }
@@ -918,8 +918,8 @@ namespace FIFE
 
     void Equalizer::setMid1Center(float value)
     {
-        value        = std::min(value, 3000.0f);
-        value        = std::max(value, 200.0f);
+        value        = std::min(value, 3000.0F);
+        value        = std::max(value, 200.0F);
         m_mid1Center = value;
         alEffectf(m_effect, AL_EQUALIZER_MID1_CENTER, m_mid1Center);
     }
@@ -931,8 +931,8 @@ namespace FIFE
 
     void Equalizer::setMid1Width(float value)
     {
-        value       = std::min(value, 1.0f);
-        value       = std::max(value, 0.01f);
+        value       = std::min(value, 1.0F);
+        value       = std::max(value, 0.01F);
         m_mid1Width = value;
         alEffectf(m_effect, AL_EQUALIZER_MID1_WIDTH, m_mid1Width);
     }
@@ -944,8 +944,8 @@ namespace FIFE
 
     void Equalizer::setMid2Gain(float value)
     {
-        value      = std::min(value, 7.943f);
-        value      = std::max(value, 0.126f);
+        value      = std::min(value, 7.943F);
+        value      = std::max(value, 0.126F);
         m_mid2Gain = value;
         alEffectf(m_effect, AL_EQUALIZER_MID2_GAIN, m_mid2Gain);
     }
@@ -957,8 +957,8 @@ namespace FIFE
 
     void Equalizer::setMid2Center(float value)
     {
-        value        = std::min(value, 8000.0f);
-        value        = std::max(value, 1000.0f);
+        value        = std::min(value, 8000.0F);
+        value        = std::max(value, 1000.0F);
         m_mid2Center = value;
         alEffectf(m_effect, AL_EQUALIZER_MID2_CENTER, m_mid2Center);
     }
@@ -970,8 +970,8 @@ namespace FIFE
 
     void Equalizer::setMid2Width(float value)
     {
-        value       = std::min(value, 1.0f);
-        value       = std::max(value, 0.01f);
+        value       = std::min(value, 1.0F);
+        value       = std::max(value, 0.01F);
         m_mid2Width = value;
         alEffectf(m_effect, AL_EQUALIZER_MID2_WIDTH, m_mid2Width);
     }
@@ -983,8 +983,8 @@ namespace FIFE
 
     void Equalizer::setHighGain(float value)
     {
-        value      = std::min(value, 7.943f);
-        value      = std::max(value, 0.126f);
+        value      = std::min(value, 7.943F);
+        value      = std::max(value, 0.126F);
         m_highGain = value;
         alEffectf(m_effect, AL_EQUALIZER_HIGH_GAIN, m_highGain);
     }
@@ -996,8 +996,8 @@ namespace FIFE
 
     void Equalizer::setHighCutoff(float value)
     {
-        value        = std::min(value, 16000.0f);
-        value        = std::max(value, 4000.0f);
+        value        = std::min(value, 16000.0F);
+        value        = std::max(value, 4000.0F);
         m_highCutoff = value;
         alEffectf(m_effect, AL_EQUALIZER_HIGH_CUTOFF, m_highCutoff);
     }
@@ -1039,8 +1039,8 @@ namespace FIFE
 
     void EaxReverb::setDensity(float value)
     {
-        value     = std::min(value, 1.0f);
-        value     = std::max(value, 0.0f);
+        value     = std::min(value, 1.0F);
+        value     = std::max(value, 0.0F);
         m_density = value;
         alEffectf(m_effect, AL_EAXREVERB_DENSITY, m_density);
     }
@@ -1052,8 +1052,8 @@ namespace FIFE
 
     void EaxReverb::setDiffusion(float value)
     {
-        value       = std::min(value, 1.0f);
-        value       = std::max(value, 0.0f);
+        value       = std::min(value, 1.0F);
+        value       = std::max(value, 0.0F);
         m_diffusion = value;
         alEffectf(m_effect, AL_EAXREVERB_DIFFUSION, m_diffusion);
     }
@@ -1065,8 +1065,8 @@ namespace FIFE
 
     void EaxReverb::setGain(float value)
     {
-        value  = std::min(value, 1.0f);
-        value  = std::max(value, 0.0f);
+        value  = std::min(value, 1.0F);
+        value  = std::max(value, 0.0F);
         m_gain = value;
         alEffectf(m_effect, AL_EAXREVERB_GAIN, m_gain);
     }
@@ -1078,8 +1078,8 @@ namespace FIFE
 
     void EaxReverb::setGainHf(float value)
     {
-        value    = std::min(value, 1.0f);
-        value    = std::max(value, 0.0f);
+        value    = std::min(value, 1.0F);
+        value    = std::max(value, 0.0F);
         m_gainHf = value;
         alEffectf(m_effect, AL_EAXREVERB_GAINHF, m_gainHf);
     }
@@ -1091,8 +1091,8 @@ namespace FIFE
 
     void EaxReverb::setGainLf(float value)
     {
-        value    = std::min(value, 1.0f);
-        value    = std::max(value, 0.0f);
+        value    = std::min(value, 1.0F);
+        value    = std::max(value, 0.0F);
         m_gainLf = value;
         alEffectf(m_effect, AL_EAXREVERB_GAINLF, m_gainLf);
     }
@@ -1104,8 +1104,8 @@ namespace FIFE
 
     void EaxReverb::setDecayTime(float value)
     {
-        value       = std::min(value, 20.0f);
-        value       = std::max(value, 0.1f);
+        value       = std::min(value, 20.0F);
+        value       = std::max(value, 0.1F);
         m_decayTime = value;
         alEffectf(m_effect, AL_EAXREVERB_DECAY_TIME, m_decayTime);
     }
