@@ -30,7 +30,8 @@ namespace FIFE
         if (info.type == 0x40) { // compressed
             LZSSDecoder decoder;
             decoder.decode(input.get(), getRawData(), getSize());
-        } else
+        } else {
             input->readInto(getRawData(), getSize());
+        }
     }
 } // namespace FIFE

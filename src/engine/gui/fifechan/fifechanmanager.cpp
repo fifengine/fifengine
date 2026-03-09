@@ -204,18 +204,23 @@ namespace FIFE
 
     void FifechanManager::init(const std::string& backend, int32_t screenWidth, int32_t screenHeight)
     {
+#ifdef HAVE_OPENGL
         if (backend == "SDL") {
             m_gui_graphics = new SdlGuiGraphics();
-        }
-#ifdef HAVE_OPENGL
-        else if (backend == "OpenGL") {
+        } else if (backend == "OpenGL") {
             m_gui_graphics = new OpenGLGuiGraphics();
-        }
-#endif
-        else {
+        } else {
             // should never get here
             assert(0);
         }
+#else
+        if (backend == "SDL") {
+            m_gui_graphics = new SdlGuiGraphics();
+        } else {
+            // should never get here
+            assert(0);
+        }
+#endif
         m_backend = backend;
 
         m_fcn_gui->setGraphics(m_gui_graphics);
@@ -304,11 +309,11 @@ namespace FIFE
     KeyEvent FifechanManager::translateKeyEvent(const fcn::KeyEvent& fcnevt)
     {
         KeyEvent keyevt;
-        if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Pressed))
+        if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Pressed)) {
             keyevt.setType(KeyEvent::PRESSED);
-        else if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Released))
+        } else if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Released)) {
             keyevt.setType(KeyEvent::RELEASED);
-        else {
+        } else {
             FL_WARN(
                 _log, LMsg("FifechanManager::translateKeyEvent() - ") << "Unknown event type: " << fcnevt.getType());
             keyevt.setType(KeyEvent::UNKNOWN);

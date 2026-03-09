@@ -24,7 +24,7 @@ namespace FIFE
     class IAtlasLoader
     {
     public:
-        virtual ~IAtlasLoader() { };
+        virtual ~IAtlasLoader() { }
 
         /** determines whether the resource is in
          *	the correct format for this loader

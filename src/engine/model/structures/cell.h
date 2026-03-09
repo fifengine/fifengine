@@ -58,7 +58,7 @@ namespace FIFE
             m_difflayer = false;
             m_immediate = true;
         }
-        ~TransitionInfo() { };
+        ~TransitionInfo() { }
         //! target layer
         Layer* m_layer;
         //! target coordinates
@@ -74,7 +74,7 @@ namespace FIFE
     class CellDeleteListener
     {
     public:
-        virtual ~CellDeleteListener() { };
+        virtual ~CellDeleteListener() { }
 
         /** Called when a cell gets deleted.
          * @param cell which will be deleted.
@@ -87,7 +87,7 @@ namespace FIFE
     class CellChangeListener
     {
     public:
-        virtual ~CellChangeListener() { };
+        virtual ~CellChangeListener() { }
 
         /** Called when some instance entered the cell.
          * @param cell where enter occurred.

@@ -100,12 +100,13 @@ namespace utf8
     template <typename octet_iterator>
     octet_iterator append(uint32_t cp, octet_iterator result)
     {
-        if (!utf8::internal::is_code_point_valid(cp))
+        if (!utf8::internal::is_code_point_valid(cp)) {
             throw invalid_code_point(cp);
+        }
 
-        if (cp < 0x80) // one octet
+        if (cp < 0x80) { // one octet
             *(result++) = static_cast<uint8_t>(cp);
-        else if (cp < 0x800) { // two octets
+        } else if (cp < 0x800) { // two octets
             *(result++) = static_cast<uint8_t>((cp >> 6) | 0xc0);
             *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
         } else if (cp < 0x10000) { // three octets
@@ -237,17 +238,20 @@ namespace utf8
             if (utf8::internal::is_lead_surrogate(cp)) {
                 if (start != end) {
                     uint32_t trail_surrogate = utf8::internal::mask16(*start++);
-                    if (utf8::internal::is_trail_surrogate(trail_surrogate))
+                    if (utf8::internal::is_trail_surrogate(trail_surrogate)) {
                         cp = (cp << 10) + trail_surrogate + internal::SURROGATE_OFFSET;
-                    else
+                    } else {
                         throw invalid_utf16(static_cast<uint16_t>(trail_surrogate));
-                } else
+                    }
+                } else {
                     throw invalid_utf16(static_cast<uint16_t>(cp));
+                }
 
             }
             // Lone trail surrogate
-            else if (utf8::internal::is_trail_surrogate(cp))
+            else if (utf8::internal::is_trail_surrogate(cp)) {
                 throw invalid_utf16(static_cast<uint16_t>(cp));
+            }
 
             result = utf8::append(cp, result);
         }
@@ -262,8 +266,9 @@ namespace utf8
             if (cp > 0xffff) { // make a surrogate pair
                 *result++ = static_cast<uint16_t>((cp >> 10) + internal::LEAD_OFFSET);
                 *result++ = static_cast<uint16_t>((cp & 0x3ff) + internal::TRAIL_SURROGATE_MIN);
-            } else
+            } else {
                 *result++ = static_cast<uint16_t>(cp);
+            }
         }
         return result;
     }

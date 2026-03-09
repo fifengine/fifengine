@@ -26,7 +26,7 @@ namespace FIFE
     class ITriggerListener
     {
     public:
-        virtual ~ITriggerListener() { };
+        virtual ~ITriggerListener() { }
 
         virtual void onTriggered() = 0;
     };

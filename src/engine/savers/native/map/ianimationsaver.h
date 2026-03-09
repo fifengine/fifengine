@@ -21,7 +21,7 @@ namespace FIFE
     class IAnimationSaver
     {
     public:
-        virtual ~IAnimationSaver() { };
+        virtual ~IAnimationSaver() { }
 
         /** responsible for saving the animation
          */

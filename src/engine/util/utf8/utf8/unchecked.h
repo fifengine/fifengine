@@ -36,9 +36,9 @@ namespace utf8
         template <typename octet_iterator>
         octet_iterator append(uint32_t cp, octet_iterator result)
         {
-            if (cp < 0x80) // one octet
+            if (cp < 0x80) { // one octet
                 *(result++) = static_cast<uint8_t>(cp);
-            else if (cp < 0x800) { // two octets
+            } else if (cp < 0x800) { // two octets
                 *(result++) = static_cast<uint8_t>((cp >> 6) | 0xc0);
                 *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
             } else if (cp < 0x10000) { // three octets
@@ -147,8 +147,9 @@ namespace utf8
                 if (cp > 0xffff) { // make a surrogate pair
                     *result++ = static_cast<uint16_t>((cp >> 10) + internal::LEAD_OFFSET);
                     *result++ = static_cast<uint16_t>((cp & 0x3ff) + internal::TRAIL_SURROGATE_MIN);
-                } else
+                } else {
                     *result++ = static_cast<uint16_t>(cp);
+                }
             }
             return result;
         }

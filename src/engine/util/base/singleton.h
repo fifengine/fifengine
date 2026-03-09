@@ -88,8 +88,8 @@ namespace FIFE
     private:
         static T* m_instance;
 
-        DynamicSingleton(const DynamicSingleton<T>&) { };
-        DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) { };
+        DynamicSingleton(const DynamicSingleton<T>&) { }
+        DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) { }
     };
 
     template <typename T>

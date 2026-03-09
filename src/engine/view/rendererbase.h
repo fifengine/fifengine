@@ -80,7 +80,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~RendererBase() { };
+        virtual ~RendererBase() { }
 
         /** This method is called by the view to ask renderer to draw its rendering aspect based on
          * given parameters. Renderers receive non-clipped instance stack since there is no

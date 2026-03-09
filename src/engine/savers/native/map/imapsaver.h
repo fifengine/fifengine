@@ -27,7 +27,7 @@ namespace FIFE
     class IMapSaver
     {
     public:
-        virtual ~IMapSaver() { };
+        virtual ~IMapSaver() { }
 
         /** allows setting which object saver will be
          * used to save object files

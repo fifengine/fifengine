@@ -50,7 +50,7 @@ namespace FIFE
         uint8_t* m_data;
         uint32_t m_datalen;
 
-        RawDataMemSource(const RawDataMemSource&) { };
+        RawDataMemSource(const RawDataMemSource&) { }
         RawDataMemSource& operator=(const RawDataMemSource)
         {
             return *this;

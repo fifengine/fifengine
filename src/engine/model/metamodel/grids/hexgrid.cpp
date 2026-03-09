@@ -62,16 +62,19 @@ namespace FIFE
 
         if (ABS(x) <= 1 && ABS(y) <= 1) {
             if (m_axial) {
-                if (y == 0 || x == 0 || x == -y)
+                if (y == 0 || x == 0 || x == -y) {
                     return true;
+                }
             } else {
                 if (y == 0) {
                     return true;
                 } else if (curpos.y & 1) {
-                    if (x >= 0)
+                    if (x >= 0) {
                         return true;
-                } else if (x <= 0)
+                    }
+                } else if (x <= 0) {
                     return true;
+                }
             }
         }
         return false;

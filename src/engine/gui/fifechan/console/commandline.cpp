@@ -67,7 +67,7 @@ namespace FIFE
                 } else {
                     setText(m_history[m_history_position]);
                 }
-            };
+            }
         } else if (keyType == Key::Up && !m_history.empty()) {
             if (m_history_position > 0) {
                 if (m_history_position == m_history.size()) {
@@ -75,7 +75,7 @@ namespace FIFE
                 }
                 --m_history_position;
                 setText(m_history[m_history_position]);
-            };
+            }
         } else if (keyType == Key::Delete && getCaretPosition() < getText().size()) {
             TextField::keyPressed(keyEvent);
         } else if (keyType == Key::Backspace && getCaretPosition() > 0) {

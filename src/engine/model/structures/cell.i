@@ -24,7 +24,7 @@ namespace FIFE {
 	%feature("director") CellChangeListener;
 	class CellChangeListener {
 	public:
-		virtual ~CellChangeListener() {};
+		virtual ~CellChangeListener() {}
 		virtual void onInstanceEnteredCell(Cell* cell, Instance* instance) = 0;
 		virtual void onInstanceExitedCell(Cell* cell, Instance* instance) = 0;
 		virtual void onBlockingChangedCell(Cell* cell, CellTypeInfo type, bool blocks) = 0;
@@ -33,7 +33,7 @@ namespace FIFE {
 	%feature("director") CellDeleteListener;
 	class CellDeleteListener {
 	public:
-		virtual ~CellDeleteListener() {};
+		virtual ~CellDeleteListener() {}
 		virtual void onCellDeleted(Cell* cell) = 0;
 	};
 

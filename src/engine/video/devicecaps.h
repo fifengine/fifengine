@@ -35,7 +35,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        ~ScreenMode() { };
+        ~ScreenMode() { }
 
         bool operator<(const ScreenMode& rhs) const;
 
@@ -46,7 +46,7 @@ namespace FIFE
         uint16_t getWidth() const
         {
             return m_width;
-        };
+        }
 
         /** Returns the height of the screen mode.
          * @note If both width and height are 0 it means that ALL modes are available
@@ -55,14 +55,14 @@ namespace FIFE
         uint16_t getHeight() const
         {
             return m_height;
-        };
+        }
 
         /** Returns the number of bits per pixel this mode uses.
          */
         uint16_t getBPP() const
         {
             return m_bpp;
-        };
+        }
 
         /** Returns the refresh rate in Hz of this mode.
          */
@@ -76,28 +76,28 @@ namespace FIFE
         uint32_t getSDLFlags() const
         {
             return m_SDLFlags;
-        };
+        }
 
         /** True if this is a fullscreen mode.  False if it is a windowed mode.
          */
         bool isFullScreen() const
         {
             return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) ? true : false;
-        };
+        }
 
         /** True if this mode uses the OpenGL renderer.  False otherwise.
          */
         bool isOpenGL() const
         {
             return (m_SDLFlags & SDL_WINDOW_OPENGL) ? true : false;
-        };
+        }
 
         /** Is this screen mode an SDL only screen mode
          */
         bool isSDL() const
         {
             return (!(m_SDLFlags & SDL_WINDOW_OPENGL)) ? true : false;
-        };
+        }
 
         /** Sets the pixel format enum.
          */

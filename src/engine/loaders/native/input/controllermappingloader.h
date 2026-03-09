@@ -21,7 +21,7 @@ namespace FIFE
     class ControllerMappingLoader
     {
     public:
-        ControllerMappingLoader() { };
+        ControllerMappingLoader() { }
 
         /** Loads mapping from file.
          */

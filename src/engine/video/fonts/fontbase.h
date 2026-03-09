@@ -32,7 +32,7 @@ namespace FIFE
     {
     public:
         FontBase();
-        virtual ~FontBase() { };
+        virtual ~FontBase() { }
 
         void invalidate();
         void setRowSpacing(int32_t spacing);

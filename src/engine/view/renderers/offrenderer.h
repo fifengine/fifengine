@@ -25,8 +25,8 @@ namespace FIFE
     class OffRendererElementInfo
     {
     public:
-        virtual void render(RenderBackend* renderbackend) { };
-        virtual ~OffRendererElementInfo() { };
+        virtual void render(RenderBackend* renderbackend) { }
+        virtual ~OffRendererElementInfo() { }
     };
 
     class OffRendererLineInfo : public OffRendererElementInfo
@@ -34,7 +34,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererLineInfo(Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererLineInfo() { };
+        virtual ~OffRendererLineInfo() { }
 
     private:
         Point m_edge1;
@@ -49,7 +49,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererPointInfo(Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererPointInfo() { };
+        virtual ~OffRendererPointInfo() { }
 
     private:
         Point m_anchor;
@@ -63,7 +63,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererTriangleInfo(Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererTriangleInfo() { };
+        virtual ~OffRendererTriangleInfo() { }
 
     private:
         Point m_edge1;
@@ -79,7 +79,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererQuadInfo(Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererQuadInfo() { };
+        virtual ~OffRendererQuadInfo() { }
 
     private:
         Point m_edge1;
@@ -97,7 +97,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererVertexInfo(Point center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererVertexInfo() { };
+        virtual ~OffRendererVertexInfo() { }
 
     private:
         Point m_center;
@@ -113,7 +113,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererImageInfo(Point n, ImagePtr image);
-        virtual ~OffRendererImageInfo() { };
+        virtual ~OffRendererImageInfo() { }
 
     private:
         Point m_anchor;
@@ -124,7 +124,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererAnimationInfo(Point n, AnimationPtr animation);
-        virtual ~OffRendererAnimationInfo() { };
+        virtual ~OffRendererAnimationInfo() { }
 
     private:
         Point m_anchor;
@@ -137,7 +137,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererTextInfo(Point n, IFont* font, std::string text);
-        virtual ~OffRendererTextInfo() { };
+        virtual ~OffRendererTextInfo() { }
 
     private:
         Point m_anchor;
@@ -149,7 +149,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend);
         OffRendererResizeInfo(Point n, ImagePtr image, int32_t width, int32_t height);
-        virtual ~OffRendererResizeInfo() { };
+        virtual ~OffRendererResizeInfo() { }
 
     private:
         Point m_anchor;

@@ -159,9 +159,6 @@ endif()
 
 # GCC and Clang compiler options
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  # TODO: set standard globally for now, change this to target_compile_options
-  set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC ${CMAKE_CXX_FLAGS}")
-
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-error")
   else()

@@ -29,7 +29,7 @@ namespace FIFE
     {
     public:
         LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst);
-        virtual ~LightRendererElementInfo() { };
+        virtual ~LightRendererElementInfo() { }
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
         virtual std::string getName()                                                                       = 0;
@@ -37,15 +37,15 @@ namespace FIFE
         RendererNode* getNode()
         {
             return &m_anchor;
-        };
+        }
         int32_t getSrcBlend()
         {
             return m_src;
-        };
+        }
         int32_t getDstBlend()
         {
             return m_dst;
-        };
+        }
 
         void setStencil(uint8_t stencil_ref);
         int32_t getStencil();
@@ -54,23 +54,23 @@ namespace FIFE
         virtual std::vector<uint8_t> getColor()
         {
             return std::vector<uint8_t>();
-        };
+        }
         virtual float getRadius()
         {
             return 0;
-        };
+        }
         virtual int32_t getSubdivisions()
         {
             return 0;
-        };
+        }
         virtual float getXStretch()
         {
             return 0;
-        };
+        }
         virtual float getYStretch()
         {
             return 0;
-        };
+        }
 
     protected:
         RendererNode m_anchor;
@@ -84,17 +84,17 @@ namespace FIFE
     {
     public:
         LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
-        virtual ~LightRendererImageInfo() { };
+        virtual ~LightRendererImageInfo() { }
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
         virtual std::string getName()
         {
             return "image";
-        };
+        }
         ImagePtr getImage()
         {
             return m_image;
-        };
+        }
 
     private:
         ImagePtr m_image;
@@ -104,17 +104,17 @@ namespace FIFE
     {
     public:
         LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
-        virtual ~LightRendererAnimationInfo() { };
+        virtual ~LightRendererAnimationInfo() { }
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
         virtual std::string getName()
         {
             return "animation";
-        };
+        }
         AnimationPtr getAnimation()
         {
             return m_animation;
-        };
+        }
 
     private:
         AnimationPtr m_animation;
@@ -137,31 +137,31 @@ namespace FIFE
             uint8_t b,
             int32_t src,
             int32_t dst);
-        virtual ~LightRendererSimpleLightInfo() { };
+        virtual ~LightRendererSimpleLightInfo() { }
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
         virtual std::string getName()
         {
             return "simple";
-        };
+        }
 
         std::vector<uint8_t> getColor();
         float getRadius()
         {
             return m_radius;
-        };
+        }
         int32_t getSubdivisions()
         {
             return m_subdivisions;
-        };
+        }
         float getXStretch()
         {
             return m_xstretch;
-        };
+        }
         float getYStretch()
         {
             return m_ystretch;
-        };
+        }
 
     private:
         uint8_t m_intensity;
@@ -179,18 +179,18 @@ namespace FIFE
     public:
         LightRendererResizeInfo(
             RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
-        virtual ~LightRendererResizeInfo() { };
+        virtual ~LightRendererResizeInfo() { }
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
         virtual std::string getName()
         {
             return "resize";
-        };
+        }
 
         ImagePtr getImage()
         {
             return m_image;
-        };
+        }
 
     private:
         ImagePtr m_image;

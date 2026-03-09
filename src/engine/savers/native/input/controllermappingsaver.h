@@ -21,7 +21,7 @@ namespace FIFE
     class ControllerMappingSaver
     {
     public:
-        ControllerMappingSaver() { };
+        ControllerMappingSaver() { }
 
         /** Saves mapping to file.
          */

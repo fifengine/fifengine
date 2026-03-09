@@ -25,7 +25,7 @@ namespace FIFE
     class IObjectSaver
     {
     public:
-        virtual ~IObjectSaver() { };
+        virtual ~IObjectSaver() { }
 
         /** allows setting which animation saver will be
          * used to save animation files

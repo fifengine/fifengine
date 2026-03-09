@@ -187,10 +187,10 @@ namespace fcn {
 		virtual bool isModalFocused() const;
 		virtual bool isModalMouseInputFocused() const;
 		virtual Widget *getWidgetAt(int32_t x, int32_t y);
-		virtual void moveToTop(Widget* widget) { };
-		virtual void moveToBottom(Widget* widget) { };
-		virtual void focusNext() { };
-		virtual void focusPrevious() { };
+			  virtual void moveToTop(Widget* widget) { }
+			  virtual void moveToBottom(Widget* widget) { }
+			  virtual void focusNext() { }
+			  virtual void focusPrevious() { }
 		virtual void addActionListener(ActionListener* actionListener);
 		virtual void removeActionListener(ActionListener* actionListener);
 		virtual void addMouseListener(MouseListener* actionListener);

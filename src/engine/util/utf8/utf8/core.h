@@ -267,10 +267,12 @@ namespace utf8
                         code_point = cp;
                         ++it;
                         return UTF8_OK;
-                    } else
+                    } else {
                         err = OVERLONG_SEQUENCE;
-                } else
+                    }
+                } else {
                     err = INVALID_CODE_POINT;
+                }
             }
 
             // Failure branch - restore the original value of the iterator

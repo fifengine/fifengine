@@ -47,7 +47,7 @@ namespace FIFE
         {
             m_cache = cache;
         }
-        virtual ~CacheLayerChangeListener() { };
+        virtual ~CacheLayerChangeListener() { }
 
         virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances)
         {
