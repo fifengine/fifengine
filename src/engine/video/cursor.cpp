@@ -31,7 +31,7 @@ namespace FIFE
         m_cursor_id(NC_ARROW),
         m_cursor_type(CURSOR_NATIVE),
         m_drag_type(CURSOR_NONE),
-        m_native_cursor(NULL),
+        m_native_cursor(nullptr),
         m_renderbackend(renderbackend),
         m_animtime(0),
         m_drag_animtime(0),

@@ -67,7 +67,7 @@ namespace FIFE
     LPALGETFILTERF alGetFilterf       = nullptr;
     LPALGETFILTERFV alGetFilterfv     = nullptr;
 
-    SoundEffectManager::SoundEffectManager() : m_device(NULL), m_active(false), m_createdSlots(0), m_maxSlots(0) { }
+    SoundEffectManager::SoundEffectManager() : m_device(nullptr), m_active(false), m_createdSlots(0), m_maxSlots(0) { }
 
     SoundEffectManager::~SoundEffectManager()
     {
@@ -354,7 +354,7 @@ namespace FIFE
         std::vector<SoundEffect*>::iterator effectEnd = filterIt->second.end();
         while (effectIt != effectEnd) {
             if ((*effectIt) == effect) {
-                effect->setFilter(NULL);
+                effect->setFilter(nullptr);
                 if (effect->isEnabled()) {
                     disableSoundEffect(effect);
                     enableSoundEffect(effect);
@@ -406,7 +406,7 @@ namespace FIFE
                 if (filterIt != m_filterdEmitters.end()) {
                     std::vector<SoundEmitter*>::iterator emitterIt = filterIt->second.begin();
                     for (; emitterIt != filterIt->second.end(); ++emitterIt) {
-                        (*emitterIt)->setDirectFilter(NULL);
+                        (*emitterIt)->setDirectFilter(nullptr);
                     }
                 }
                 m_filterdEmitters.erase(filterIt);
@@ -414,7 +414,7 @@ namespace FIFE
                 if (filterItt != m_filterdEffects.end()) {
                     std::vector<SoundEffect*>::iterator effectIt = filterItt->second.begin();
                     for (; effectIt != filterItt->second.end(); ++effectIt) {
-                        (*effectIt)->setFilter(NULL);
+                        (*effectIt)->setFilter(nullptr);
                         if ((*effectIt)->isEnabled()) {
                             disableSoundEffect(*effectIt);
                             enableSoundEffect(*effectIt);
@@ -491,7 +491,7 @@ namespace FIFE
                 if (emitter->isActive()) {
                     deactivateFilter(filter, emitter);
                 }
-                emitter->setDirectFilter(NULL);
+                emitter->setDirectFilter(nullptr);
                 filterIt->second.erase(emitterIt++);
                 found = true;
             } else {

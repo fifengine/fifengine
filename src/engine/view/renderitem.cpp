@@ -38,7 +38,7 @@ namespace FIFE
         facingAngle(0),
         transparency(255),
         currentFrame(-1),
-        m_overlay(0),
+        m_overlay(nullptr),
         m_cachedStaticImgId(STATIC_IMAGE_NOT_INITIALIZED),
         m_cachedStaticImgAngle(0)
     {
@@ -76,7 +76,7 @@ namespace FIFE
 
     void RenderItem::setAnimationOverlay(std::vector<ImagePtr>* ao, std::vector<OverlayColors*>* aco)
     {
-        if (!m_overlay) {
+        if (m_overlay == nullptr) {
             m_overlay = new OverlayData();
         }
         m_overlay->animationOverlayImages = ao;
@@ -85,7 +85,7 @@ namespace FIFE
 
     std::vector<ImagePtr>* RenderItem::getAnimationOverlay() const
     {
-        if (m_overlay) {
+        if (m_overlay != nullptr) {
             return m_overlay->animationOverlayImages;
         }
         return nullptr;
@@ -93,7 +93,7 @@ namespace FIFE
 
     std::vector<OverlayColors*>* RenderItem::getAnimationColorOverlay() const
     {
-        if (m_overlay) {
+        if (m_overlay != nullptr) {
             return m_overlay->animationColorOverlays;
         }
         return nullptr;
@@ -101,7 +101,7 @@ namespace FIFE
 
     void RenderItem::setColorOverlay(OverlayColors* co)
     {
-        if (!m_overlay) {
+        if (m_overlay == nullptr) {
             m_overlay = new OverlayData();
         }
         m_overlay->colorOverlay = co;
@@ -119,13 +119,13 @@ namespace FIFE
     {
         if (m_overlay) {
             delete m_overlay;
-            m_overlay = 0;
+            m_overlay = nullptr;
         }
     }
 
     void RenderItem::reset()
     {
-        instance   = 0;
+        instance   = nullptr;
         dimensions = Rect();
         image.reset();
         transparency        = 255;

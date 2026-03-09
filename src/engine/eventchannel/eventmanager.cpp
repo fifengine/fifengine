@@ -47,7 +47,7 @@ namespace FIFE
         m_oldY(0),
         m_lastTicks(0),
         m_oldVelocity(0.0),
-        m_joystickManager(NULL)
+        m_joystickManager(nullptr)
     {
     }
 

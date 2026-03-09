@@ -80,7 +80,7 @@ namespace FIFE
 
         /** Sets precise layer coordinates to this location
          *  @throws NotSet in the following cases:
-         *     - layer is not set (NULL)
+         *     - layer is not set (nullptr)
          *     - layer does not have cellgrid assigned
          *  @param coordinates coordinates to set
          */
@@ -88,7 +88,7 @@ namespace FIFE
 
         /** Sets "cell precise" layer coordinates to this location
          *  @throws NotSet in the following cases:
-         *     - layer is not set (NULL)
+         *     - layer is not set (nullptr)
          *     - layer does not have cellgrid assigned
          * @see setLayerCoordinates(const ExactModelCoordinate& coordinates)
          */
@@ -112,7 +112,7 @@ namespace FIFE
 
         /** Gets exact layer coordinates of this location mapped on given layer
          *  @throws NotSet in the following cases:
-         *     - given layer is not set (NULL)
+         *     - given layer is not set (nullptr)
          *     - given layer does not have cellgrid assigned
          * @return exact layer coordinates
          */

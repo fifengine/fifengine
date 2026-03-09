@@ -41,7 +41,7 @@ namespace FIFE
         m_state(SM_STATE_INACTIV),
         m_sources(),
         m_createdSources(0),
-        m_effectManager(NULL)
+        m_effectManager(nullptr)
     {
     }
 
@@ -65,14 +65,14 @@ namespace FIFE
             m_device = nullptr;
         }
 
-        if (alcGetError(NULL) != ALC_NO_ERROR) {
+        if (alcGetError(nullptr) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "error closing openal device");
         }
     }
 
     void SoundManager::init()
     {
-        m_device = alcOpenDevice(NULL);
+        m_device = alcOpenDevice(nullptr);
 
         if (!m_device || alcGetError(m_device) != ALC_NO_ERROR) {
             FL_ERR(_log, LMsg() << "Could not open audio device - deactivating audio module");

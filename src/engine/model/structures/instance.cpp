@@ -40,16 +40,16 @@ namespace FIFE
     {
     public:
         ActionInfo(IPather* pather, const Location& curloc) :
-            m_action(NULL),
-            m_target(NULL),
+            m_action(nullptr),
+            m_target(nullptr),
             m_speed(0),
             m_repeating(false),
             m_action_start_time(0),
             m_action_offset_time(0),
             m_prev_call_time(0),
             m_pather(pather),
-            m_leader(NULL),
-            m_route(NULL),
+            m_leader(nullptr),
+            m_route(nullptr),
             m_delete_route(true)
         {
         }
@@ -104,16 +104,16 @@ namespace FIFE
         m_oldLocation(source.m_location),
         m_rotation(source.m_rotation),
         m_oldRotation(source.m_rotation),
-        m_action(NULL),
-        m_soundSource(NULL),
+        m_action(nullptr),
+        m_soundSource(nullptr),
         m_speed(0),
         m_timeMultiplier(1.0),
         m_sayText(""),
         m_changeListeners(),
         m_actionListeners(),
-        m_actionInfo(NULL),
-        m_sayInfo(NULL),
-        m_timeProvider(NULL),
+        m_actionInfo(nullptr),
+        m_sayInfo(nullptr),
+        m_timeProvider(nullptr),
         m_blocking(source.m_blocking),
         m_additional(ICHANGE_NO_CHANGES)
     {
@@ -187,19 +187,19 @@ namespace FIFE
     Instance::Instance(Object* object, const Location& location, const std::string& identifier) :
         m_id(identifier),
         m_rotation(0),
-        m_activity(NULL),
+        m_activity(nullptr),
         m_changeInfo(ICHANGE_NO_CHANGES),
         m_object(object),
         m_ownObject(false),
         m_location(location),
-        m_visual(NULL),
+        m_visual(nullptr),
         m_blocking(object->isBlocking()),
         m_overrideBlocking(false),
         m_cellStackPos(object->getCellStackPosition()),
         m_specialCost(object->isSpecialCost()),
         m_cost(object->getCost()),
         m_costId(object->getCostId()),
-        m_mainMultiInstance(NULL)
+        m_mainMultiInstance(nullptr)
     {
         // create multi object instances
         if (object->isMultiObject()) {
@@ -249,7 +249,7 @@ namespace FIFE
             std::vector<Instance*>::iterator it = m_multiInstances.begin();
             for (; it != m_multiInstances.end(); ++it) {
                 (*it)->removeDeleteListener(this);
-                (*it)->setMainMultiInstance(NULL);
+                (*it)->setMainMultiInstance(nullptr);
             }
         }
 
@@ -451,7 +451,7 @@ namespace FIFE
             }
             m_activity->m_soundSource->setActionAudio(m_activity->m_actionInfo->m_action->getAudio());
         } else if (old_action && old_action->getAudio()) {
-            m_activity->m_soundSource->setActionAudio(NULL);
+            m_activity->m_soundSource->setActionAudio(nullptr);
         }
 
         if (isMultiObject()) {
@@ -856,7 +856,7 @@ namespace FIFE
 
         // stop audio
         if (action->getAudio() && m_activity->m_soundSource) {
-            m_activity->m_soundSource->setActionAudio(NULL);
+            m_activity->m_soundSource->setActionAudio(nullptr);
         }
 
         if (isMultiObject()) {
@@ -998,7 +998,7 @@ namespace FIFE
             }
         }
         if (!m_activity->m_timeProvider) {
-            m_activity->m_timeProvider = new TimeProvider(NULL);
+            m_activity->m_timeProvider = new TimeProvider(nullptr);
         }
         m_activity->m_timeProvider->setMultiplier(multiplier);
     }

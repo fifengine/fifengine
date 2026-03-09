@@ -39,7 +39,7 @@ namespace fcn
     AnimationIcon::AnimationIcon() :
         mTimemanager(FIFE::TimeManager::instance()),
         mAnimation(FIFE::AnimationPtr()),
-        mCurrentImage(NULL),
+        mCurrentImage(nullptr),
         mAnimtime(0),
         mFrameIndex(-1),
         mRepeat(true),
@@ -55,7 +55,7 @@ namespace fcn
     AnimationIcon::AnimationIcon(FIFE::AnimationPtr animation) :
         mTimemanager(FIFE::TimeManager::instance()),
         mAnimation(animation),
-        mCurrentImage(NULL),
+        mCurrentImage(nullptr),
         mAnimtime(0),
         mFrameIndex(-1),
         mRepeat(true),

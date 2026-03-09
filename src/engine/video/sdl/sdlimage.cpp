@@ -210,7 +210,7 @@ namespace FIFE
         // save the image offsets
         int32_t xshift = m_xshift;
         int32_t yshift = m_yshift;
-        setSurface(NULL);
+        setSurface(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;
         m_state  = IResource::RES_NOT_LOADED;

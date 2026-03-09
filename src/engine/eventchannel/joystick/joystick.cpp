@@ -23,8 +23,8 @@ namespace FIFE
     static Logger _log(LM_EVTCHANNEL);
 
     Joystick::Joystick(int32_t joystickId, int32_t deviceIndex) :
-        m_joystickHandle(NULL),
-        m_controllerHandle(NULL),
+        m_joystickHandle(nullptr),
+        m_controllerHandle(nullptr),
         m_instanceId(-1),
         m_joystickId(joystickId),
         m_deviceIndex(deviceIndex),

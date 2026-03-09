@@ -32,7 +32,7 @@ namespace FIFE
         m_from(route->getStartNode()),
         m_startCache(m_from.getLayer()->getCellCache()),
         m_endCache(m_to.getLayer()->getCellCache()),
-        m_currentCache(NULL),
+        m_currentCache(nullptr),
         m_startZone(m_startCache->getCell(m_from.getLayerCoordinates())->getZone()),
         m_endZone(m_endCache->getCell(m_to.getLayerCoordinates())->getZone()),
         m_startCoordInt(m_startCache->convertCoordToInt(m_from.getLayerCoordinates())),

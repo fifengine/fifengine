@@ -25,7 +25,7 @@ namespace FIFE
 {
 
     Object::BasicObjectProperty::BasicObjectProperty() :
-        m_area(""), m_actions(NULL), m_defaultAction(NULL), m_blocking(false), m_static(false), m_cellStack(0)
+        m_area(""), m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
     {
     }
     Object::BasicObjectProperty::~BasicObjectProperty()
@@ -41,7 +41,7 @@ namespace FIFE
     }
 
     Object::MovableObjectProperty::MovableObjectProperty() :
-        m_pather(NULL), m_costId(""), m_cost(1.0), m_speed(1.0), m_zRange(0)
+        m_pather(nullptr), m_costId(""), m_cost(1.0), m_speed(1.0), m_zRange(0)
     {
     }
     Object::MovableObjectProperty::~MovableObjectProperty() { }
@@ -54,10 +54,10 @@ namespace FIFE
         m_namespace(name_space),
         m_filename(""),
         m_inherited(inherited),
-        m_visual(NULL),
-        m_basicProperty(NULL),
-        m_moveProperty(NULL),
-        m_multiProperty(NULL)
+        m_visual(nullptr),
+        m_basicProperty(nullptr),
+        m_moveProperty(nullptr),
+        m_multiProperty(nullptr)
     {
     }
 

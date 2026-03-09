@@ -62,7 +62,7 @@ namespace FIFE
 
     void CellSelectionRenderer::selectLocation(const Location* loc)
     {
-        if (loc) {
+        if (loc != nullptr) {
             std::vector<Location>::const_iterator it = m_locations.begin();
             for (; it != m_locations.end(); it++) {
                 if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {
@@ -76,7 +76,7 @@ namespace FIFE
 
     void CellSelectionRenderer::deselectLocation(const Location* loc)
     {
-        if (loc) {
+        if (loc != nullptr) {
             std::vector<Location>::iterator it = m_locations.begin();
             for (; it != m_locations.end(); it++) {
                 if ((*it).getLayerCoordinates() == loc->getLayerCoordinates()) {

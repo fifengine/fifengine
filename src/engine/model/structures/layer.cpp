@@ -45,7 +45,7 @@ namespace FIFE
         m_walkable(false),
         m_interact(false),
         m_walkableId(""),
-        m_cellCache(NULL),
+        m_cellCache(nullptr),
         m_changeListeners(),
         m_changedInstances(),
         m_changed(false),

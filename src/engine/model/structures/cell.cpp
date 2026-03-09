@@ -30,8 +30,8 @@ namespace FIFE
         m_coordId(coordint),
         m_coordinate(coordinate),
         m_layer(layer),
-        m_zone(NULL),
-        m_transition(NULL),
+        m_zone(nullptr),
+        m_transition(nullptr),
         m_inserted(false),
         m_protect(false)
     {

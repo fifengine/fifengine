@@ -26,7 +26,7 @@ namespace FIFE
         m_renderbackend(renderbackend),
         m_enabled(false),
         m_pipeline_position(DEFAULT_RENDERER_POSITION),
-        m_listener(NULL)
+        m_listener(nullptr)
     {
         setPipelinePosition(position);
     }
@@ -35,13 +35,13 @@ namespace FIFE
         m_renderbackend(old.m_renderbackend),
         m_enabled(old.m_enabled),
         m_pipeline_position(old.m_pipeline_position),
-        m_listener(NULL)
+        m_listener(nullptr)
     {
         setPipelinePosition(old.m_pipeline_position);
     }
 
     RendererBase::RendererBase() :
-        m_renderbackend(NULL), m_enabled(false), m_pipeline_position(DEFAULT_RENDERER_POSITION), m_listener(NULL)
+        m_renderbackend(nullptr), m_enabled(false), m_pipeline_position(DEFAULT_RENDERER_POSITION), m_listener(nullptr)
     {
     }
 

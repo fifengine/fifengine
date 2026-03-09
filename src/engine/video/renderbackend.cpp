@@ -16,9 +16,9 @@
 namespace FIFE
 {
     RenderBackend::RenderBackend(const SDL_Color& colorkey) :
-        m_window(NULL),
-        m_screen(NULL),
-        m_target(NULL),
+        m_window(nullptr),
+        m_screen(nullptr),
+        m_target(nullptr),
         m_compressimages(false),
         m_useframebuffer(false),
         m_usenpot(false),

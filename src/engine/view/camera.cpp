@@ -89,7 +89,7 @@ namespace FIFE
         m_referenceScaleX(1),
         m_referenceScaleY(1),
         m_enabled(true),
-        m_attachedTo(NULL),
+        m_attachedTo(nullptr),
         m_transform(NoneTransform),
         m_renderers(),
         m_pipeline(),

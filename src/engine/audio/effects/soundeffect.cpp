@@ -24,7 +24,8 @@ namespace FIFE
      */
     static Logger _log(LM_AUDIO);
 
-    SoundEffect::SoundEffect() : m_effect(0), m_slot(0), m_effectType(SE_EFFECT_NULL), m_enabled(false), m_filter(NULL)
+    SoundEffect::SoundEffect() :
+        m_effect(0), m_slot(0), m_effectType(SE_EFFECT_NULL), m_enabled(false), m_filter(nullptr)
     {
 
         alGenEffects(1, &m_effect);

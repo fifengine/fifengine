@@ -25,30 +25,30 @@ namespace FIFE
 {
 
     Image::Image(IResourceLoader* loader) :
-        IResource(createUniqueImageName(), loader), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(createUniqueImageName(), loader), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(const std::string& name, IResourceLoader* loader) :
-        IResource(name, loader), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name, loader), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
     }
 
     Image::Image(SDL_Surface* surface) :
-        IResource(createUniqueImageName()), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(createUniqueImageName()), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         reset(surface);
     }
 
     Image::Image(const std::string& name, SDL_Surface* surface) :
-        IResource(name), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         reset(surface);
     }
 
     //@todo make a private function to handle this
     Image::Image(const uint8_t* data, uint32_t width, uint32_t height) :
-        IResource(createUniqueImageName()), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(createUniqueImageName()), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
         SDL_LockSurface(surface);
@@ -61,7 +61,7 @@ namespace FIFE
     }
 
     Image::Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
-        IResource(name), m_surface(NULL), m_xshift(0), m_yshift(0), m_shared(false)
+        IResource(name), m_surface(nullptr), m_xshift(0), m_yshift(0), m_shared(false)
     {
         SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
         SDL_LockSurface(surface);
@@ -86,7 +86,7 @@ namespace FIFE
 
     Image::~Image()
     {
-        reset(NULL);
+        reset(nullptr);
     }
 
     void Image::load()
@@ -105,7 +105,7 @@ namespace FIFE
         // save the image offsets
         int32_t xshift = m_xshift;
         int32_t yshift = m_yshift;
-        reset(NULL);
+        reset(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;
         m_state  = IResource::RES_NOT_LOADED;

@@ -125,7 +125,7 @@ namespace FIFE
     OverlayColors* ObjectVisual::getStaticColorOverlay(int32_t angle)
     {
         if (m_colorOverlayMap.empty()) {
-            return 0;
+            return nullptr;
         }
         int32_t closestMatch = 0;
         return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
@@ -159,7 +159,7 @@ namespace FIFE
         }
     }
 
-    InstanceVisual::InstanceVisual() : m_transparency(0), m_visible(true), m_stackposition(0), m_instance(NULL) { }
+    InstanceVisual::InstanceVisual() : m_transparency(0), m_visible(true), m_stackposition(0), m_instance(nullptr) { }
 
     InstanceVisual* InstanceVisual::create(Instance* instance)
     {
@@ -288,12 +288,12 @@ namespace FIFE
     OverlayColors* ActionVisual::getColorOverlay(int32_t angle)
     {
         if (m_colorOverlayMap.empty()) {
-            return 0;
+            return nullptr;
         }
         int32_t closestMatch = 0;
         int32_t index        = getIndexByAngle(angle, m_map, closestMatch);
         if (m_colorOverlayMap.find(index) == m_colorOverlayMap.end()) {
-            return 0;
+            return nullptr;
         }
         return &m_colorOverlayMap[getIndexByAngle(angle, m_map, closestMatch)];
     }
@@ -330,7 +330,7 @@ namespace FIFE
     OverlayColors* ActionVisual::getColorOverlay(int32_t angle, int32_t order)
     {
         if (m_colorAnimationOverlayMap.empty()) {
-            return 0;
+            return nullptr;
         }
 
         int32_t closestMatch = 0;
@@ -342,7 +342,7 @@ namespace FIFE
                 return &it->second[order];
             }
         }
-        return 0;
+        return nullptr;
     }
 
     void ActionVisual::removeColorOverlay(int32_t angle, int32_t order)
@@ -380,7 +380,7 @@ namespace FIFE
             addAnimationOverlay(it->first, 0, getAnimationByAngle(it->first));
             if (colorOverlay) {
                 OverlayColors* oldC = getColorOverlay(it->first);
-                if (oldC) {
+                if (oldC != nullptr) {
                     OverlayColors c = OverlayColors(*oldC);
                     addColorOverlay(it->first, 0, c);
                 }

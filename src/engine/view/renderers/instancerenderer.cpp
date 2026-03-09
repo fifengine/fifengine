@@ -63,15 +63,15 @@ namespace FIFE
     };
 
     InstanceRenderer::OutlineInfo::OutlineInfo(InstanceRenderer* r) :
-        r(0), g(0), b(0), width(1), threshold(1), dirty(false), curimg(NULL), renderer(r)
+        r(0), g(0), b(0), width(1), threshold(1), dirty(false), curimg(nullptr), renderer(r)
     {
     }
     InstanceRenderer::ColoringInfo::ColoringInfo(InstanceRenderer* r) :
-        r(0), g(0), b(0), a(128), dirty(false), curimg(NULL), renderer(r)
+        r(0), g(0), b(0), a(128), dirty(false), curimg(nullptr), renderer(r)
     {
     }
 
-    InstanceRenderer::AreaInfo::AreaInfo() : instance(NULL), groups(), w(1), h(1), trans(0), front(true), z(0) { }
+    InstanceRenderer::AreaInfo::AreaInfo() : instance(nullptr), groups(), w(1), h(1), trans(0), front(true), z(0) { }
 
     InstanceRenderer::OutlineInfo::~OutlineInfo()
     {
@@ -155,7 +155,7 @@ namespace FIFE
     {
         //		FL_DBG(_log, "Iterating layer...");
         CellGrid* cg = layer->getCellGrid();
-        if (!cg) {
+        if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
             return;
         }
@@ -293,14 +293,14 @@ namespace FIFE
             //				}
             //			}
             // overlay
-            if (vc.m_overlay) {
+            if (vc.m_overlay != nullptr) {
                 renderOverlay(RENDER_DATA_MULTITEXTURE_Z, &vc, coloringColor, recoloring);
                 // no overlay
             } else {
                 vc.image->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : 0);
             }
 
-            if (outlineImage) {
+            if (outlineImage != nullptr) {
                 outlineImage->renderZ(vc.dimensions, vertexZ, vc.transparency, static_cast<uint8_t*>(0));
                 m_renderbackend->changeRenderInfos(RENDER_DATA_TEXTURE_Z, 1, 4, 5, false, true, 255, REPLACE, ALWAYS);
             }
@@ -314,7 +314,7 @@ namespace FIFE
             float vertexZ      = it->first;
 
             uint8_t coloringColor[4] = {0};
-            Image* outlineImage      = 0;
+            Image* outlineImage      = nullptr;
             bool recoloring          = false;
             if (any_effects) {
                 // coloring

@@ -29,7 +29,7 @@ namespace FIFE
     SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) :
         m_manager(manager),
         m_source(0),
-        m_directFilter(NULL),
+        m_directFilter(nullptr),
         m_soundClip(),
         m_soundClipId(0),
         m_streamId(0),

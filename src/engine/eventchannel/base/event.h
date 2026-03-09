@@ -34,7 +34,7 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        Event() : m_isConsumed(false), m_eventSource(NULL), m_timestamp(SDL_GetTicks()) { }
+        Event() : m_isConsumed(false), m_eventSource(nullptr), m_timestamp(SDL_GetTicks()) { }
 
         /** Destructor.
          */

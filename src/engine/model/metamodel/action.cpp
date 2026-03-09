@@ -18,7 +18,9 @@
 
 namespace FIFE
 {
-    Action::Action(const std::string& identifier) : m_id(identifier), m_duration(0), m_visual(NULL), m_audio(NULL) { }
+    Action::Action(const std::string& identifier) : m_id(identifier), m_duration(0), m_visual(nullptr), m_audio(nullptr)
+    {
+    }
 
     Action::~Action()
     {

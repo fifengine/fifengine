@@ -46,7 +46,7 @@ namespace FIFE
         SoundSource* m_source;
     };
 
-    SoundSource::SoundSource(Instance* instance) : m_instance(instance), m_audio(NULL)
+    SoundSource::SoundSource(Instance* instance) : m_instance(instance), m_audio(nullptr)
     {
 
         m_emitter  = SoundManager::instance()->createEmitter();

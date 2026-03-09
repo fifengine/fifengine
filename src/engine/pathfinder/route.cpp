@@ -34,7 +34,7 @@ namespace FIFE
         m_replanned(false),
         m_ignoresBlocker(false),
         m_costId(""),
-        m_object(NULL)
+        m_object(nullptr)
     {
     }
 

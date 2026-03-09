@@ -62,7 +62,7 @@ namespace FIFE
 
     void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        if (!m_font) {
+        if (m_font == nullptr) {
             // no font selected.. nothing to render
             return;
         }
@@ -76,7 +76,7 @@ namespace FIFE
         for (; instance_it != instances.end(); ++instance_it) {
             Instance* instance         = (*instance_it)->instance;
             const std::string* saytext = instance->getSayText();
-            if (saytext) {
+            if (saytext != nullptr) {
                 const Rect& ir = (*instance_it)->dimensions;
                 Image* img     = m_font->getAsImageMultiline(*saytext);
                 Rect r;

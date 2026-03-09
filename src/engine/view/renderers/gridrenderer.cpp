@@ -56,7 +56,7 @@ namespace FIFE
     void GridRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         CellGrid* cg = layer->getCellGrid();
-        if (!cg) {
+        if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;
         }

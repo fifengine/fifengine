@@ -46,52 +46,60 @@ namespace FIFE
         const Location& relative_location,
         Layer* relative_layer,
         const Point& relative_point) :
-        m_instance(NULL),
+        m_instance(nullptr),
         m_location(relative_location),
         m_layer(relative_layer),
         m_point(relative_point),
-        m_listener(NULL)
+        m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(
         Instance* attached_instance, const Location& relative_location, const Point& relative_point) :
-        m_instance(NULL), m_location(relative_location), m_layer(NULL), m_point(relative_point), m_listener(NULL)
+        m_instance(nullptr),
+        m_location(relative_location),
+        m_layer(nullptr),
+        m_point(relative_point),
+        m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point) :
-        m_instance(NULL), m_location(NULL), m_layer(relative_layer), m_point(relative_point), m_listener(NULL)
+        m_instance(nullptr), m_location(nullptr), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, const Point& relative_point) :
-        m_instance(NULL), m_location(NULL), m_layer(NULL), m_point(relative_point), m_listener(NULL)
+        m_instance(nullptr), m_location(nullptr), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(const Location& attached_location, Layer* relative_layer, const Point& relative_point) :
-        m_instance(NULL),
+        m_instance(nullptr),
         m_location(attached_location),
         m_layer(relative_layer),
         m_point(relative_point),
-        m_listener(NULL)
+        m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const Location& attached_location, const Point& relative_point) :
-        m_instance(NULL), m_location(attached_location), m_layer(NULL), m_point(relative_point), m_listener(NULL)
+        m_instance(nullptr),
+        m_location(attached_location),
+        m_layer(nullptr),
+        m_point(relative_point),
+        m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(Layer* attached_layer, const Point& relative_point) :
-        m_instance(NULL), m_location(NULL), m_layer(attached_layer), m_point(relative_point), m_listener(NULL)
+        m_instance(nullptr), m_location(nullptr), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const Point& attached_point) :
-        m_instance(NULL), m_location(NULL), m_layer(NULL), m_point(attached_point), m_listener(NULL)
+        m_instance(nullptr), m_location(nullptr), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const RendererNode& old) :
-        m_instance(NULL), m_location(old.m_location), m_layer(old.m_layer), m_point(old.m_point), m_listener(NULL)
+        m_instance(nullptr), m_location(old.m_location), m_layer(old.m_layer), m_point(old.m_point), m_listener(nullptr)
     {
         addInstance(old.m_instance);
     }
@@ -134,13 +142,13 @@ namespace FIFE
     }
     void RendererNode::setAttached(const Location& attached_location, const Point& relative_point)
     {
-        changeInstance(NULL);
+        changeInstance(nullptr);
         m_location = attached_location;
         m_point    = relative_point;
     }
     void RendererNode::setAttached(const Location& attached_location)
     {
-        changeInstance(NULL);
+        changeInstance(nullptr);
         m_location = attached_location;
     }
     void RendererNode::setAttached(Layer* attached_layer)
@@ -149,7 +157,7 @@ namespace FIFE
     }
     void RendererNode::setAttached(const Point& attached_point)
     {
-        changeInstance(NULL);
+        changeInstance(nullptr);
         m_location = nullptr;
         m_point    = attached_point;
     }

@@ -25,12 +25,12 @@ namespace FIFE
     static Logger _log(LM_AUDIO);
 
     SoundClip::SoundClip(IResourceLoader* loader) :
-        IResource(createUniqueClipName(), loader), m_isStream(false), m_decoder(NULL), m_deleteDecoder(false)
+        IResource(createUniqueClipName(), loader), m_isStream(false), m_decoder(nullptr), m_deleteDecoder(false)
     {
     }
 
     SoundClip::SoundClip(const std::string& name, IResourceLoader* loader) :
-        IResource(name, loader), m_isStream(false), m_decoder(NULL), m_deleteDecoder(false)
+        IResource(name, loader), m_isStream(false), m_decoder(nullptr), m_deleteDecoder(false)
     {
     }
 
