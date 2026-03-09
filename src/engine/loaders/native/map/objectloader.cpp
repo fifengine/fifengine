@@ -7,12 +7,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/xml/xmlhelper.h"
 #include "audio/actionaudio.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/object.h"
 #include "model/model.h"
 #include "util/log/logger.h"
+#include "util/xml/xmlhelper.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
@@ -192,7 +192,7 @@ namespace FIFE
         XML::Element* root = objectFile.RootElement();
         if (root) {
             for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
-                 importElement                    = importElement->NextSiblingElement("import")) {
+                 importElement                     = importElement->NextSiblingElement("import")) {
                 const char* importDir  = XML::Attribute(importElement, "dir");
                 const char* importFile = XML::Attribute(importElement, "file");
 
@@ -227,7 +227,7 @@ namespace FIFE
 
         if (XML::HasName(root, "assets")) {
             for (XML::Element* objectElem = root->FirstChildElement("object"); objectElem;
-                 objectElem              = objectElem->NextSiblingElement("object")) {
+                 objectElem               = objectElem->NextSiblingElement("object")) {
                 const char* objectId    = XML::Attribute(objectElem, "id");
                 const char* namespaceId = XML::Attribute(objectElem, "namespace");
 
@@ -337,13 +337,13 @@ namespace FIFE
 
                     // loop over all multi parts
                     for (XML::Element* multiElement = objectElem->FirstChildElement("multipart"); multiElement;
-                         multiElement              = multiElement->NextSiblingElement("multipart")) {
+                         multiElement               = multiElement->NextSiblingElement("multipart")) {
                         const char* partId = XML::Attribute(multiElement, "id");
                         if (partId) {
                             obj->addMultiPartId(partId);
                         }
                         for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation;
-                             multiRotation              = multiRotation->NextSiblingElement("rotation")) {
+                             multiRotation               = multiRotation->NextSiblingElement("rotation")) {
                             int rotation = 0;
                             multiRotation->QueryIntAttribute("rot", &rotation);
                             // relative coordinates which are used to position the object
@@ -365,7 +365,7 @@ namespace FIFE
 
                     // loop over all image tags
                     for (XML::Element* imageElement = objectElem->FirstChildElement("image"); imageElement;
-                         imageElement              = imageElement->NextSiblingElement("image")) {
+                         imageElement               = imageElement->NextSiblingElement("image")) {
                         const char* sourceId = XML::Attribute(imageElement, "source");
 
                         if (sourceId) {
@@ -419,7 +419,7 @@ namespace FIFE
                     }
 
                     for (XML::Element* actionElement = objectElem->FirstChildElement("action"); actionElement;
-                         actionElement              = actionElement->NextSiblingElement("action")) {
+                         actionElement               = actionElement->NextSiblingElement("action")) {
                         const char* actionId = XML::Attribute(actionElement, "id");
 
                         if (actionId) {
@@ -499,7 +499,7 @@ namespace FIFE
                             ActionVisual::create(action);
 
                             for (XML::Element* animElement = actionElement->FirstChildElement("animation"); animElement;
-                                 animElement              = animElement->NextSiblingElement("animation")) {
+                                 animElement               = animElement->NextSiblingElement("animation")) {
                                 // Fetch already created animation
                                 const char* animationId = XML::Attribute(animElement, "animation_id");
                                 if (animationId) {

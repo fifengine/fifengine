@@ -7,13 +7,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/xml/xmlhelper.h"
 #include "model/model.h"
 #include "model/structures/layer.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
+#include "util/xml/xmlhelper.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
@@ -221,7 +221,7 @@ namespace FIFE
 
         if (XML::HasName(root, "assets")) {
             for (XML::Element* atlasElem = root->FirstChildElement("atlas"); atlasElem;
-                 atlasElem              = atlasElem->NextSiblingElement("atlas")) {
+                 atlasElem               = atlasElem->NextSiblingElement("atlas")) {
                 AtlasPtr atlas = loadAtlas(filename, atlasElem);
                 if (atlas) {
                     atlasVector.push_back(atlas);
@@ -265,7 +265,7 @@ namespace FIFE
             // Create subimages with given id and individual position and size
             if (atlasElem->FirstChildElement("subimage")) {
                 for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != 0;
-                     imageElem              = imageElem->NextSiblingElement("subimage")) {
+                     imageElem               = imageElem->NextSiblingElement("subimage")) {
 
                     const char* subimageId = XML::Attribute(imageElem, "id");
                     if (subimageId) {

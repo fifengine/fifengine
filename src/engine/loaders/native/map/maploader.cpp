@@ -151,7 +151,7 @@ namespace FIFE
 
                     std::string ns = "";
                     for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
-                        importElement                    = importElement->NextSiblingElement("import")) {
+                         importElement                     = importElement->NextSiblingElement("import")) {
                         const char* importDir  = XML::Attribute(importElement, "dir");
                         const char* importFile = XML::Attribute(importElement, "file");
 
@@ -205,7 +205,7 @@ namespace FIFE
 
                     // iterate over elements looking for layers
                     for (const XML::Element* layerElement = root->FirstChildElement("layer"); layerElement;
-                        layerElement                    = layerElement->NextSiblingElement("layer")) {
+                         layerElement                     = layerElement->NextSiblingElement("layer")) {
                         // defaults
                         double xOffset  = 0.0;
                         double yOffset  = 0.0;
@@ -286,11 +286,11 @@ namespace FIFE
                                     double curr_x = 0;
                                     double curr_y = 0;
 
-                                     for (const XML::Element* instances = layerElement->FirstChildElement("instances");
+                                    for (const XML::Element* instances = layerElement->FirstChildElement("instances");
                                          instances;
                                          instances = instances->NextSiblingElement("instances")) {
                                         for (const XML::Element* instance = instances->FirstChildElement("i"); instance;
-                                            instance                    = instance->NextSiblingElement("i")) {
+                                             instance                     = instance->NextSiblingElement("i")) {
                                             double x      = 0;
                                             double y      = 0;
                                             double z      = 0;
@@ -338,7 +338,8 @@ namespace FIFE
                                             }
 
                                             int stackRetVal = XML::QueryAttribute(instance, "stackpos", &stackpos);
-                                            int cellStackRetVal = XML::QueryAttribute(instance, "cellstack", &cellStack);
+                                            int cellStackRetVal =
+                                                XML::QueryAttribute(instance, "cellstack", &cellStack);
 
                                             if (objectId) {
                                                 if (namespaceId) {
@@ -381,7 +382,8 @@ namespace FIFE
 
                                                         if (costId) {
                                                             double cost = 0;
-                                                            int costRetVal = XML::QueryAttribute(instance, "cost", &cost);
+                                                            int costRetVal =
+                                                                XML::QueryAttribute(instance, "cost", &cost);
                                                             if (costRetVal == XML::SUCCESS) {
                                                                 inst->setCost(costId, cost);
                                                             }
@@ -418,12 +420,12 @@ namespace FIFE
                     map->initializeCellCaches();
                     // add Cells from xml File
                     for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
-                         cacheElements                    = cacheElements->NextSiblingElement("cellcaches")) {
+                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
-                            double cacheCost           = 1.0;
-                            double cacheSpeed          = 1.0;
+                            double cacheCost    = 1.0;
+                            double cacheSpeed   = 1.0;
                             const char* layerId = XML::Attribute(cacheElement, "id");
 
                             if (layerId) {
@@ -440,7 +442,7 @@ namespace FIFE
 
                                         cache->setDefaultCostMultiplier(cacheCost);
                                         cache->setDefaultSpeedMultiplier(cacheSpeed);
-                                for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
+                                        for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
                                              cellElement;
                                              cellElement = cellElement->NextSiblingElement("cell")) {
                                             int cellX   = 0;
@@ -485,8 +487,8 @@ namespace FIFE
                                                      costElement;
                                                      costElement = costElement->NextSiblingElement("cost")) {
                                                     const char* costId = XML::Attribute(costElement, "id");
-                                                    double cost = 1.0;
-                                                    success     = costElement->QueryDoubleAttribute("value", &cost);
+                                                    double cost        = 1.0;
+                                                    success = costElement->QueryDoubleAttribute("value", &cost);
                                                     if (costId && success == XML::SUCCESS) {
                                                         cache->registerCost(costId, cost);
                                                         cache->addCellToCost(costId, cell);
@@ -513,7 +515,7 @@ namespace FIFE
                     map->finalizeCellCaches();
                     // add Transistions
                     for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
-                         cacheElements                    = cacheElements->NextSiblingElement("cellcaches")) {
+                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
                         for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
@@ -550,7 +552,8 @@ namespace FIFE
                                                     if (success == XML::SUCCESS) {
                                                         ModelCoordinate mc(targetX, targetY, targetZ);
                                                         Layer* targetLayer = NULL;
-                                                        const char* targetLayerId = XML::Attribute(transitionElement, "id");
+                                                        const char* targetLayerId =
+                                                            XML::Attribute(transitionElement, "id");
                                                         if (targetLayerId) {
                                                             targetLayer = map->getLayer(targetLayerId);
                                                         }
@@ -572,14 +575,14 @@ namespace FIFE
                     }
 
                     for (const XML::Element* triggerElements = root->FirstChildElement("triggers"); triggerElements;
-                         triggerElements                    = triggerElements->NextSiblingElement("triggers")) {
+                         triggerElements                     = triggerElements->NextSiblingElement("triggers")) {
                         TriggerController* triggerController = map->getTriggerController();
                         for (const XML::Element* triggerElement = triggerElements->FirstChildElement("trigger");
                              triggerElement;
                              triggerElement = triggerElement->NextSiblingElement("trigger")) {
                             const char* triggerName = XML::Attribute(triggerElement, "name");
-                            int triggered                  = 0;
-                            int allInstances               = 0;
+                            int triggered           = 0;
+                            int allInstances        = 0;
                             triggerElement->QueryIntAttribute("triggered", &triggered);
                             triggerElement->QueryIntAttribute("all_instances", &allInstances);
 
@@ -647,7 +650,7 @@ namespace FIFE
                     }
 
                     for (const XML::Element* cameraElement = root->FirstChildElement("camera"); cameraElement;
-                         cameraElement                    = cameraElement->NextSiblingElement("camera")) {
+                         cameraElement                     = cameraElement->NextSiblingElement("camera")) {
                         const char* cameraId = XML::Attribute(cameraElement, "id");
 
                         int refCellWidth  = 0;

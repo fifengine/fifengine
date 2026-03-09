@@ -7,11 +7,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/xml/xmlhelper.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/resource/resourcemanager.h"
+#include "util/xml/xmlhelper.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
@@ -81,7 +81,7 @@ namespace FIFE
 
         std::string animationFilename = GetFilenameFromPath(animPath);
 
-    XML::Document doc;
+        XML::Document doc;
 
         AnimationPtr animation;
 
@@ -129,7 +129,7 @@ namespace FIFE
 
         std::string animationFile = animPath.string();
 
-    XML::Document doc;
+        XML::Document doc;
 
         std::vector<AnimationPtr> animationVector;
 
@@ -166,7 +166,7 @@ namespace FIFE
 
         if (XML::HasName(root, "assets")) {
             for (XML::Element* animationElem = root->FirstChildElement("animation"); animationElem;
-                 animationElem              = animationElem->NextSiblingElement("animation")) {
+                 animationElem               = animationElem->NextSiblingElement("animation")) {
                 AnimationPtr animation = loadAnimation(filename, animationElem);
                 if (animation) {
                     animationVector.push_back(animation);
@@ -234,7 +234,7 @@ namespace FIFE
         XML::QueryAttribute(animationElem, "y_offset", &animYoffset);
 
         for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement;
-             frameElement              = frameElement->NextSiblingElement("frame")) {
+             frameElement               = frameElement->NextSiblingElement("frame")) {
             const char* sourceId = XML::Attribute(frameElement, "source");
             if (sourceId) {
                 fs::path framePath(filename);
