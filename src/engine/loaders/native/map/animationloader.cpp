@@ -3,13 +3,11 @@
 
 // Standard C++ library includes
 
-// 3rd party library includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/xml/xmlhelper.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
@@ -41,7 +39,7 @@ namespace FIFE
         fs::path animPath(filename);
 
         std::string animationFilename = animPath.string();
-        TiXmlDocument animFile;
+        XML::Document animFile;
 
         try {
             RawData* data = m_vfs->open(animationFilename);
@@ -49,9 +47,10 @@ namespace FIFE
             if (data) {
                 if (data->getDataLength() != 0) {
                     // TODO - this could be expanded to do more checks
-                    animFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (animFile.Error()) {
+                    if (!XML::Parse(animFile, xml)) {
+                        delete data;
                         return false;
                     }
                 }
@@ -65,9 +64,9 @@ namespace FIFE
         }
 
         // if we get here then loading the file went well
-        TiXmlElement* root = animFile.RootElement();
+        XML::Element* root = animFile.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
+        if (XML::HasName(root, "assets")) {
             if (root->FirstChildElement("animation")) {
                 return true;
             }
@@ -82,7 +81,7 @@ namespace FIFE
 
         std::string animationFilename = GetFilenameFromPath(animPath);
 
-        TiXmlDocument doc;
+    XML::Document doc;
 
         AnimationPtr animation;
 
@@ -91,9 +90,10 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    doc.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (doc.Error()) {
+                    if (!XML::Parse(doc, xml)) {
+                        delete data;
                         return animation;
                     }
 
@@ -114,9 +114,9 @@ namespace FIFE
 
         // if we get here then everything loaded properly
         // so we can just parse out the contents
-        TiXmlElement* root = doc.RootElement();
+        XML::Element* root = doc.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
+        if (XML::HasName(root, "assets")) {
             animation = loadAnimation(filename, root->FirstChildElement("animation"));
         }
 
@@ -129,7 +129,7 @@ namespace FIFE
 
         std::string animationFile = animPath.string();
 
-        TiXmlDocument doc;
+    XML::Document doc;
 
         std::vector<AnimationPtr> animationVector;
 
@@ -138,9 +138,10 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    doc.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (doc.Error()) {
+                    if (!XML::Parse(doc, xml)) {
+                        delete data;
                         return animationVector;
                     }
 
@@ -161,11 +162,11 @@ namespace FIFE
 
         // if we get here then everything loaded properly
         // so we can just parse out the contents
-        TiXmlElement* root = doc.RootElement();
+        XML::Element* root = doc.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
-            for (TiXmlElement* animationElem = root->FirstChildElement("animation"); animationElem;
-                 animationElem               = animationElem->NextSiblingElement("animation")) {
+        if (XML::HasName(root, "assets")) {
+            for (XML::Element* animationElem = root->FirstChildElement("animation"); animationElem;
+                 animationElem              = animationElem->NextSiblingElement("animation")) {
                 AnimationPtr animation = loadAnimation(filename, animationElem);
                 if (animation) {
                     animationVector.push_back(animation);
@@ -176,7 +177,7 @@ namespace FIFE
         return animationVector;
     }
 
-    AnimationPtr AnimationLoader::loadAnimation(const std::string& filename, TiXmlElement* animationElem)
+    AnimationPtr AnimationLoader::loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem)
     {
         AnimationPtr animation;
         if (!animationElem) {
@@ -188,12 +189,12 @@ namespace FIFE
 
         bool alreadyLoaded = false;
         // first try to use the id, if no id exists it use the filename as fallback
-        const std::string* animationId = animationElem->Attribute(std::string("id"));
+        const char* animationId = XML::Attribute(animationElem, "id");
         if (animationId) {
-            if (!m_animationManager->exists(*animationId)) {
-                animation = m_animationManager->create(*animationId);
+            if (!m_animationManager->exists(animationId)) {
+                animation = m_animationManager->create(animationId);
             } else {
-                animation     = m_animationManager->getPtr(*animationId);
+                animation     = m_animationManager->getPtr(animationId);
                 alreadyLoaded = animation->getFrameCount() != 0;
             }
         } else {
@@ -220,31 +221,31 @@ namespace FIFE
         int animXoffset = 0;
         int animYoffset = 0;
 
-        int success = animationElem->QueryValueAttribute("direction", &direction);
-        if (success == TIXML_SUCCESS) {
+        int success = XML::QueryAttribute(animationElem, "direction", &direction);
+        if (success == XML::SUCCESS) {
             animation->setDirection(direction);
         }
-        success = animationElem->QueryValueAttribute("action_frame", &actionFrame);
-        if (success == TIXML_SUCCESS) {
+        success = XML::QueryAttribute(animationElem, "action_frame", &actionFrame);
+        if (success == XML::SUCCESS) {
             animation->setActionFrame(actionFrame);
         }
-        animationElem->QueryValueAttribute("delay", &animDelay);
-        animationElem->QueryValueAttribute("x_offset", &animXoffset);
-        animationElem->QueryValueAttribute("y_offset", &animYoffset);
+        XML::QueryAttribute(animationElem, "delay", &animDelay);
+        XML::QueryAttribute(animationElem, "x_offset", &animXoffset);
+        XML::QueryAttribute(animationElem, "y_offset", &animYoffset);
 
-        for (TiXmlElement* frameElement = animationElem->FirstChildElement("frame"); frameElement;
-             frameElement               = frameElement->NextSiblingElement("frame")) {
-            const std::string* sourceId = frameElement->Attribute(std::string("source"));
+        for (XML::Element* frameElement = animationElem->FirstChildElement("frame"); frameElement;
+             frameElement              = frameElement->NextSiblingElement("frame")) {
+            const char* sourceId = XML::Attribute(frameElement, "source");
             if (sourceId) {
                 fs::path framePath(filename);
 
                 if (HasParentPath(framePath)) {
-                    framePath = GetParentPath(framePath) / *sourceId;
+                    framePath = GetParentPath(framePath) / sourceId;
                     if (!fs::exists(framePath)) {
-                        framePath = fs::path(*sourceId);
+                        framePath = fs::path(sourceId);
                     }
                 } else {
-                    framePath = fs::path(*sourceId);
+                    framePath = fs::path(sourceId);
                 }
 
                 ImagePtr imagePtr;
@@ -256,24 +257,24 @@ namespace FIFE
 
                 if (imagePtr) {
                     int frameXoffset = 0;
-                    success          = frameElement->QueryValueAttribute("x_offset", &frameXoffset);
-                    if (success == TIXML_SUCCESS) {
+                    success          = XML::QueryAttribute(frameElement, "x_offset", &frameXoffset);
+                    if (success == XML::SUCCESS) {
                         imagePtr->setXShift(frameXoffset);
                     } else {
                         imagePtr->setXShift(animXoffset);
                     }
 
                     int frameYoffset = 0;
-                    success          = frameElement->QueryValueAttribute("y_offset", &frameYoffset);
-                    if (success == TIXML_SUCCESS) {
+                    success          = XML::QueryAttribute(frameElement, "y_offset", &frameYoffset);
+                    if (success == XML::SUCCESS) {
                         imagePtr->setYShift(frameYoffset);
                     } else {
                         imagePtr->setYShift(animYoffset);
                     }
 
                     int frameDelay = 0;
-                    success        = frameElement->QueryValueAttribute("delay", &frameDelay);
-                    if (success == TIXML_SUCCESS) {
+                    success        = XML::QueryAttribute(frameElement, "delay", &frameDelay);
+                    if (success == XML::SUCCESS) {
                         animation->addFrame(imagePtr, frameDelay);
                     } else {
                         animation->addFrame(imagePtr, animDelay);

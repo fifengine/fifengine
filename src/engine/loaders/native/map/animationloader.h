@@ -17,7 +17,10 @@
 
 #include "ianimationloader.h"
 
-class TiXmlElement;
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 namespace FIFE
 {
@@ -47,7 +50,7 @@ namespace FIFE
         virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename);
 
     private:
-        AnimationPtr loadAnimation(const std::string& filename, TiXmlElement* animationElem);
+        AnimationPtr loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem);
 
         VFS* m_vfs;
         ImageManager* m_imageManager;

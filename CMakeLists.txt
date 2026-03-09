@@ -173,9 +173,6 @@ endif()
 #                                 Defines
 #------------------------------------------------------------------------------
 
-# define for using TinyXML with Standard Template Library (STL) support enabled
-add_definitions(-DTIXML_USE_STL)
-
 if(logging)
   add_definitions(-DLOG_ENABLED)
 endif(logging)
@@ -736,7 +733,7 @@ find_package(SDL2_ttf CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
-find_package(TinyXML CONFIG REQUIRED)
+find_package(tinyxml2 CONFIG REQUIRED)
 find_package(Ogg CONFIG REQUIRED) # Ogg, not OGG
 find_package(Vorbis CONFIG REQUIRED) # Vorbis, not VORBIS
 find_package(GLEW CONFIG REQUIRED)
@@ -892,7 +889,7 @@ if(build-python)
       Vorbis::vorbis
       Vorbis::vorbisfile
       Ogg::ogg
-      unofficial-tinyxml::unofficial-tinyxml
+      tinyxml2::tinyxml2
   )
 
   if(opengl)
@@ -1013,7 +1010,7 @@ if(build-library)
         Vorbis::vorbisfile
         Vorbis::vorbisenc
         OpenAL::OpenAL
-        unofficial-tinyxml::unofficial-tinyxml
+        tinyxml2::tinyxml2
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main> $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
         $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
         $<TARGET_NAME_IF_EXISTS:SDL2_ttf::SDL2_ttf>

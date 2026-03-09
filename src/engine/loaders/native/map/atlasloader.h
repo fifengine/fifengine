@@ -18,7 +18,10 @@
 
 #include "iatlasloader.h"
 
-class TiXmlElement;
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 namespace FIFE
 {
@@ -105,7 +108,7 @@ namespace FIFE
         virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename);
 
     private:
-        AtlasPtr loadAtlas(const std::string& filename, TiXmlElement* atlasElem);
+        AtlasPtr loadAtlas(const std::string& filename, tinyxml2::XMLElement* atlasElem);
 
         Model* m_model;
         VFS* m_vfs;

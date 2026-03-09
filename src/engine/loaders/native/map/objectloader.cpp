@@ -3,13 +3,11 @@
 
 // Standard C++ library includes
 
-// 3rd party library includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/xml/xmlhelper.h"
 #include "audio/actionaudio.h"
 #include "model/metamodel/action.h"
 #include "model/metamodel/object.h"
@@ -87,21 +85,22 @@ namespace FIFE
     {
         fs::path objectPath(filename);
 
-        TiXmlDocument objectFile;
+        XML::Document objectFile;
 
         try {
             RawData* data = m_vfs->open(objectPath.string());
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    objectFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (objectFile.Error()) {
+                    if (!XML::Parse(objectFile, xml)) {
                         std::ostringstream oss;
                         oss << " Failed to load" << objectPath.string() << " : " << __FILE__ << " [" << __LINE__ << "]"
                             << std::endl;
                         FL_ERR(_log, oss.str());
 
+                        delete data;
                         return false;
                     }
                 } else {
@@ -138,9 +137,9 @@ namespace FIFE
         }
 
         // if we get here then loading the file went well
-        TiXmlElement* root = objectFile.RootElement();
+        XML::Element* root = objectFile.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
+        if (XML::HasName(root, "assets")) {
             if (root->FirstChildElement("object")) {
                 return true;
             }
@@ -153,16 +152,17 @@ namespace FIFE
     {
         fs::path objectPath(filename);
 
-        TiXmlDocument objectFile;
+        XML::Document objectFile;
 
         try {
             RawData* data = m_vfs->open(objectPath.string());
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    objectFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (objectFile.Error()) {
+                    if (!XML::Parse(objectFile, xml)) {
+                        delete data;
                         return;
                     }
                 }
@@ -189,21 +189,21 @@ namespace FIFE
         }
 
         // if we get here then loading the file went well
-        TiXmlElement* root = objectFile.RootElement();
+        XML::Element* root = objectFile.RootElement();
         if (root) {
-            for (const TiXmlElement* importElement = root->FirstChildElement("import"); importElement;
-                 importElement                     = importElement->NextSiblingElement("import")) {
-                const std::string* importDir  = importElement->Attribute(std::string("dir"));
-                const std::string* importFile = importElement->Attribute(std::string("file"));
+            for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
+                 importElement                    = importElement->NextSiblingElement("import")) {
+                const char* importDir  = XML::Attribute(importElement, "dir");
+                const char* importFile = XML::Attribute(importElement, "file");
 
                 std::string directory = "";
                 if (importDir) {
-                    directory = *importDir;
+                    directory = importDir;
                 }
 
                 std::string file = "";
                 if (importFile) {
-                    file = *importFile;
+                    file = importFile;
                 }
 
                 if (importDir && !importFile) {
@@ -225,21 +225,21 @@ namespace FIFE
             }
         }
 
-        if (root && root->ValueStr() == "assets") {
-            for (TiXmlElement* objectElem = root->FirstChildElement("object"); objectElem;
-                 objectElem               = objectElem->NextSiblingElement("object")) {
-                const std::string* objectId    = objectElem->Attribute(std::string("id"));
-                const std::string* namespaceId = objectElem->Attribute(std::string("namespace"));
+        if (XML::HasName(root, "assets")) {
+            for (XML::Element* objectElem = root->FirstChildElement("object"); objectElem;
+                 objectElem              = objectElem->NextSiblingElement("object")) {
+                const char* objectId    = XML::Attribute(objectElem, "id");
+                const char* namespaceId = XML::Attribute(objectElem, "namespace");
 
                 Object* obj = NULL;
                 if (objectId && namespaceId) {
-                    const std::string* parentId = objectElem->Attribute(std::string("parent"));
+                    const char* parentId = XML::Attribute(objectElem, "parent");
 
                     if (parentId) {
-                        Object* parent = m_model->getObject(*parentId, *namespaceId);
+                        Object* parent = m_model->getObject(parentId, namespaceId);
                         if (parent) {
                             try {
-                                obj = m_model->createObject(*objectId, *namespaceId, parent);
+                                obj = m_model->createObject(objectId, namespaceId, parent);
                             } catch (NameClash&) {
                                 // TODO - handle exception
                                 assert(false);
@@ -247,9 +247,9 @@ namespace FIFE
                         }
                     } else {
                         // this will make sure the object has not already been loaded
-                        if (m_model->getObject(*objectId, *namespaceId) == NULL) {
+                        if (m_model->getObject(objectId, namespaceId) == NULL) {
                             try {
-                                obj = m_model->createObject(*objectId, *namespaceId);
+                                obj = m_model->createObject(objectId, namespaceId);
                             } catch (NameClash& e) {
                                 FL_ERR(_log, e.what());
 
@@ -272,42 +272,42 @@ namespace FIFE
                     objectElem->QueryIntAttribute("static", &isStatic);
                     obj->setStatic(isStatic != 0);
 
-                    const std::string* pather = objectElem->Attribute(std::string("pather"));
+                    const char* pather = XML::Attribute(objectElem, "pather");
 
                     if (pather) {
-                        obj->setPather(m_model->getPather(*pather));
+                        obj->setPather(m_model->getPather(pather));
                     } else {
                         obj->setPather(m_model->getPather("RoutePather"));
                     }
 
-                    const std::string* costId = objectElem->Attribute(std::string("cost_id"));
+                    const char* costId = XML::Attribute(objectElem, "cost_id");
                     if (costId) {
-                        obj->setCostId(*costId);
+                        obj->setCostId(costId);
                         double cost = 1.0;
                         int success = objectElem->QueryDoubleAttribute("cost", &cost);
-                        if (success == TIXML_SUCCESS) {
+                        if (success == XML::SUCCESS) {
                             obj->setCost(cost);
                         }
                     }
 
-                    const std::string* areaId = objectElem->Attribute(std::string("area_id"));
+                    const char* areaId = XML::Attribute(objectElem, "area_id");
                     if (areaId) {
-                        obj->setArea(*areaId);
+                        obj->setArea(areaId);
                     }
 
                     double speed = 1.0;
                     int success  = root->QueryDoubleAttribute("speed", &speed);
-                    if (success == TIXML_SUCCESS) {
+                    if (success == XML::SUCCESS) {
                         obj->setSpeed(speed);
                     }
 
                     // loop over all walkable areas
-                    for (TiXmlElement* walkableElement = objectElem->FirstChildElement("walkable_area");
+                    for (XML::Element* walkableElement = objectElem->FirstChildElement("walkable_area");
                          walkableElement;
                          walkableElement = walkableElement->NextSiblingElement("walkable_area")) {
-                        const std::string* walkableId = walkableElement->Attribute(std::string("id"));
+                        const char* walkableId = XML::Attribute(walkableElement, "id");
                         if (walkableId) {
-                            obj->addWalkableArea(*walkableId);
+                            obj->addWalkableArea(walkableId);
                         }
                     }
 
@@ -319,9 +319,9 @@ namespace FIFE
                     double ay = 0;
                     double az = 0;
 
-                    int xRetVal = objectElem->QueryValueAttribute("anchor_x", &ax);
-                    int yRetVal = objectElem->QueryValueAttribute("anchor_y", &ay);
-                    if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+                    int xRetVal = XML::QueryAttribute(objectElem, "anchor_x", &ax);
+                    int yRetVal = XML::QueryAttribute(objectElem, "anchor_y", &ay);
+                    if (xRetVal == XML::SUCCESS && yRetVal == XML::SUCCESS) {
                         obj->setRotationAnchor(ExactModelCoordinate(ax, ay, az));
                     }
 
@@ -331,30 +331,30 @@ namespace FIFE
 
                     int zStep   = 0;
                     int zRetVal = objectElem->QueryIntAttribute("z_step_limit", &zStep);
-                    if (zRetVal == TIXML_SUCCESS) {
+                    if (zRetVal == XML::SUCCESS) {
                         obj->setZStepRange(zStep);
                     }
 
                     // loop over all multi parts
-                    for (TiXmlElement* multiElement = objectElem->FirstChildElement("multipart"); multiElement;
-                         multiElement               = multiElement->NextSiblingElement("multipart")) {
-                        const std::string* partId = multiElement->Attribute(std::string("id"));
+                    for (XML::Element* multiElement = objectElem->FirstChildElement("multipart"); multiElement;
+                         multiElement              = multiElement->NextSiblingElement("multipart")) {
+                        const char* partId = XML::Attribute(multiElement, "id");
                         if (partId) {
-                            obj->addMultiPartId(*partId);
+                            obj->addMultiPartId(partId);
                         }
-                        for (TiXmlElement* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation;
-                             multiRotation               = multiRotation->NextSiblingElement("rotation")) {
+                        for (XML::Element* multiRotation = multiElement->FirstChildElement("rotation"); multiRotation;
+                             multiRotation              = multiRotation->NextSiblingElement("rotation")) {
                             int rotation = 0;
                             multiRotation->QueryIntAttribute("rot", &rotation);
                             // relative coordinates which are used to position the object
-                            for (TiXmlElement* multiCoordinate = multiRotation->FirstChildElement("occupied_coord");
+                            for (XML::Element* multiCoordinate = multiRotation->FirstChildElement("occupied_coord");
                                  multiCoordinate;
                                  multiCoordinate = multiCoordinate->NextSiblingElement("occupied_coord")) {
                                 int x   = 0;
                                 int y   = 0;
-                                xRetVal = multiCoordinate->QueryValueAttribute("x", &x);
-                                yRetVal = multiCoordinate->QueryValueAttribute("y", &y);
-                                if (xRetVal == TIXML_SUCCESS && yRetVal == TIXML_SUCCESS) {
+                                xRetVal = XML::QueryAttribute(multiCoordinate, "x", &x);
+                                yRetVal = XML::QueryAttribute(multiCoordinate, "y", &y);
+                                if (xRetVal == XML::SUCCESS && yRetVal == XML::SUCCESS) {
                                     int z = 0;
                                     multiCoordinate->QueryIntAttribute("z", &z);
                                     obj->addMultiPartCoordinate(rotation, ModelCoordinate(x, y, z));
@@ -364,21 +364,21 @@ namespace FIFE
                     }
 
                     // loop over all image tags
-                    for (TiXmlElement* imageElement = objectElem->FirstChildElement("image"); imageElement;
-                         imageElement               = imageElement->NextSiblingElement("image")) {
-                        const std::string* sourceId = imageElement->Attribute(std::string("source"));
+                    for (XML::Element* imageElement = objectElem->FirstChildElement("image"); imageElement;
+                         imageElement              = imageElement->NextSiblingElement("image")) {
+                        const char* sourceId = XML::Attribute(imageElement, "source");
 
                         if (sourceId) {
                             fs::path imagePath(filename);
 
                             if (HasParentPath(imagePath)) {
-                                imagePath = GetParentPath(imagePath) / *sourceId;
+                                imagePath = GetParentPath(imagePath) / sourceId;
                             } else {
-                                imagePath = fs::path(*sourceId);
+                                imagePath = fs::path(sourceId);
                             }
 
                             if (!fs::exists(imagePath)) {
-                                imagePath = fs::path(*sourceId);
+                                imagePath = fs::path(sourceId);
                             }
 
                             ImagePtr imagePtr;
@@ -392,21 +392,21 @@ namespace FIFE
                                 int xOffset = 0;
                                 int success = imageElement->QueryIntAttribute("x_offset", &xOffset);
 
-                                if (success == TIXML_SUCCESS) {
+                                if (success == XML::SUCCESS) {
                                     imagePtr->setXShift(xOffset);
                                 }
 
                                 int yOffset = 0;
                                 success     = imageElement->QueryIntAttribute("y_offset", &yOffset);
 
-                                if (success == TIXML_SUCCESS) {
+                                if (success == XML::SUCCESS) {
                                     imagePtr->setYShift(yOffset);
                                 }
 
                                 int direction = 0;
                                 success       = imageElement->QueryIntAttribute("direction", &direction);
 
-                                if (success == TIXML_SUCCESS) {
+                                if (success == XML::SUCCESS) {
                                     ObjectVisual* objVisual = obj->getVisual<ObjectVisual>();
 
                                     if (objVisual) {
@@ -418,78 +418,78 @@ namespace FIFE
                         }
                     }
 
-                    for (TiXmlElement* actionElement = objectElem->FirstChildElement("action"); actionElement;
-                         actionElement               = actionElement->NextSiblingElement("action")) {
-                        const std::string* actionId = actionElement->Attribute(std::string("id"));
+                    for (XML::Element* actionElement = objectElem->FirstChildElement("action"); actionElement;
+                         actionElement              = actionElement->NextSiblingElement("action")) {
+                        const char* actionId = XML::Attribute(actionElement, "id");
 
                         if (actionId) {
                             int isDefault = 0;
                             actionElement->QueryIntAttribute("default", &isDefault);
-                            Action* action = obj->createAction(*actionId, (isDefault != 0));
+                            Action* action = obj->createAction(actionId, (isDefault != 0));
 
                             // Fetch ActionAudio data
-                            TiXmlElement* soundElement = actionElement->FirstChildElement("sound");
+                            XML::Element* soundElement = actionElement->FirstChildElement("sound");
                             if (soundElement) {
-                                const std::string* clip = soundElement->Attribute(std::string("source"));
+                                const char* clip = XML::Attribute(soundElement, "source");
                                 if (clip) {
                                     ActionAudio* audio = new ActionAudio();
                                     action->adoptAudio(audio);
-                                    audio->setSoundFileName(*clip);
+                                    audio->setSoundFileName(clip);
 
-                                    const std::string* group = soundElement->Attribute(std::string("group"));
+                                    const char* group = XML::Attribute(soundElement, "group");
                                     if (group) {
-                                        audio->setGroupName(*group);
+                                        audio->setGroupName(group);
                                     }
 
                                     float value = 0;
-                                    int success = soundElement->QueryValueAttribute("volume", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    int success = XML::QueryAttribute(soundElement, "volume", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setGain(value);
-                                    success = soundElement->QueryValueAttribute("max_volume", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "max_volume", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setMaxGain(value);
-                                    success = soundElement->QueryValueAttribute("min_volume", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "min_volume", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setMinGain(value);
-                                    success = soundElement->QueryValueAttribute("ref_distance", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "ref_distance", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setReferenceDistance(value);
-                                    success = soundElement->QueryValueAttribute("max_distance", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "max_distance", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setMaxDistance(value);
-                                    success = soundElement->QueryValueAttribute("rolloff", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "rolloff", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setRolloff(value);
-                                    success = soundElement->QueryValueAttribute("pitch", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "pitch", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setPitch(value);
-                                    success = soundElement->QueryValueAttribute("cone_inner_angle", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "cone_inner_angle", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setConeInnerAngle(value);
-                                    success = soundElement->QueryValueAttribute("cone_outer_angle", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "cone_outer_angle", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setConeOuterAngle(value);
-                                    success = soundElement->QueryValueAttribute("cone_outer_gain", &value);
-                                    if (success == TIXML_SUCCESS)
+                                    success = XML::QueryAttribute(soundElement, "cone_outer_gain", &value);
+                                    if (success == XML::SUCCESS)
                                         audio->setConeOuterGain(value);
 
                                     int boolValue = 0;
                                     success       = soundElement->QueryIntAttribute("looping", &boolValue);
-                                    if (success == TIXML_SUCCESS)
+                                    if (success == XML::SUCCESS)
                                         audio->setLooping(boolValue != 0);
                                     success = soundElement->QueryIntAttribute("relative_position", &boolValue);
-                                    if (success == TIXML_SUCCESS)
+                                    if (success == XML::SUCCESS)
                                         audio->setRelativePositioning(boolValue != 0);
                                     success = soundElement->QueryIntAttribute("direction", &boolValue);
-                                    if (success == TIXML_SUCCESS)
+                                    if (success == XML::SUCCESS)
                                         audio->setDirection(boolValue != 0);
 
                                     double vx = 0;
                                     double vy = 0;
                                     double vz = 0;
-                                    if (soundElement->QueryValueAttribute("x_velocity", &vx) == TIXML_SUCCESS &&
-                                        soundElement->QueryValueAttribute("y_velocity", &vy) == TIXML_SUCCESS) {
-                                        soundElement->QueryValueAttribute("z_velocity", &vz);
+                                    if (XML::QueryAttribute(soundElement, "x_velocity", &vx) == XML::SUCCESS &&
+                                        XML::QueryAttribute(soundElement, "y_velocity", &vy) == XML::SUCCESS) {
+                                        XML::QueryAttribute(soundElement, "z_velocity", &vz);
                                         audio->setVelocity(AudioSpaceCoordinate(vx, vy, vz));
                                     }
                                 }
@@ -498,12 +498,12 @@ namespace FIFE
                             // Create and fetch ActionVisual
                             ActionVisual::create(action);
 
-                            for (TiXmlElement* animElement = actionElement->FirstChildElement("animation"); animElement;
-                                 animElement               = animElement->NextSiblingElement("animation")) {
+                            for (XML::Element* animElement = actionElement->FirstChildElement("animation"); animElement;
+                                 animElement              = animElement->NextSiblingElement("animation")) {
                                 // Fetch already created animation
-                                const std::string* animationId = animElement->Attribute(std::string("animation_id"));
+                                const char* animationId = XML::Attribute(animElement, "animation_id");
                                 if (animationId) {
-                                    AnimationPtr animation = m_animationManager->getPtr(*animationId);
+                                    AnimationPtr animation = m_animationManager->getPtr(animationId);
                                     if (animation) {
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual) {
@@ -515,14 +515,14 @@ namespace FIFE
                                 }
 
                                 // Create animated spritesheet
-                                const std::string* sourceId = animElement->Attribute(std::string("atlas"));
+                                const char* sourceId = XML::Attribute(animElement, "atlas");
                                 if (sourceId) {
                                     fs::path atlasPath(filename);
 
                                     if (HasParentPath(atlasPath)) {
-                                        atlasPath = GetParentPath(atlasPath) / *sourceId;
+                                        atlasPath = GetParentPath(atlasPath) / sourceId;
                                     } else {
-                                        atlasPath = fs::path(*sourceId);
+                                        atlasPath = fs::path(sourceId);
                                     }
 
                                     ImagePtr atlasImgPtr;
@@ -540,15 +540,15 @@ namespace FIFE
                                     int frameWidth  = 0;
                                     int frameHeight = 0;
 
-                                    animElement->QueryValueAttribute("width", &frameWidth);
-                                    animElement->QueryValueAttribute("height", &frameHeight);
-                                    animElement->QueryValueAttribute("frames", &animFrames);
-                                    animElement->QueryValueAttribute("delay", &animDelay);
-                                    animElement->QueryValueAttribute("x_offset", &animXoffset);
-                                    animElement->QueryValueAttribute("y_offset", &animYoffset);
+                                    XML::QueryAttribute(animElement, "width", &frameWidth);
+                                    XML::QueryAttribute(animElement, "height", &frameHeight);
+                                    XML::QueryAttribute(animElement, "frames", &animFrames);
+                                    XML::QueryAttribute(animElement, "delay", &animDelay);
+                                    XML::QueryAttribute(animElement, "x_offset", &animXoffset);
+                                    XML::QueryAttribute(animElement, "y_offset", &animYoffset);
                                     int nDir = 0;
 
-                                    for (TiXmlElement* dirElement = animElement->FirstChildElement("direction");
+                                    for (XML::Element* dirElement = animElement->FirstChildElement("direction");
                                          dirElement;
                                          dirElement = dirElement->NextSiblingElement("direction")) {
                                         int dir;
@@ -556,36 +556,37 @@ namespace FIFE
 
                                         static char tmp[64];
                                         snprintf(tmp, 64, "%03d", dir);
-                                        std::string aniId      = *objectId + ":" + *actionId + ":" + std::string(tmp);
+                                        std::string aniId =
+                                            std::string(objectId) + ":" + actionId + ":" + std::string(tmp);
                                         AnimationPtr animation = m_animationManager->create(aniId);
 
                                         int frames;
-                                        int success = dirElement->QueryValueAttribute("frames", &frames);
-                                        if (success != TIXML_SUCCESS) {
+                                        int success = XML::QueryAttribute(dirElement, "frames", &frames);
+                                        if (success != XML::SUCCESS) {
                                             frames = animFrames;
                                         }
 
                                         int delay;
-                                        success = dirElement->QueryValueAttribute("delay", &delay);
-                                        if (success != TIXML_SUCCESS) {
+                                        success = XML::QueryAttribute(dirElement, "delay", &delay);
+                                        if (success != XML::SUCCESS) {
                                             delay = animDelay;
                                         }
 
                                         int xoffset;
-                                        success = dirElement->QueryValueAttribute("x_offset", &xoffset);
-                                        if (success != TIXML_SUCCESS) {
+                                        success = XML::QueryAttribute(dirElement, "x_offset", &xoffset);
+                                        if (success != XML::SUCCESS) {
                                             xoffset = animXoffset;
                                         }
 
                                         int yoffset;
-                                        success = dirElement->QueryValueAttribute("y_offset", &yoffset);
-                                        if (success != TIXML_SUCCESS) {
+                                        success = XML::QueryAttribute(dirElement, "y_offset", &yoffset);
+                                        if (success != XML::SUCCESS) {
                                             yoffset = animYoffset;
                                         }
 
                                         int action_frame;
-                                        success = dirElement->QueryValueAttribute("action_frame", &action_frame);
-                                        if (success == TIXML_SUCCESS) {
+                                        success = XML::QueryAttribute(dirElement, "action_frame", &action_frame);
+                                        if (success == XML::SUCCESS) {
                                             animation->setActionFrame(action_frame);
                                         }
 
@@ -594,7 +595,7 @@ namespace FIFE
                                             snprintf(tmpBuf, 64, "%03d:%04d", dir, iframe);
 
                                             std::string frameId =
-                                                *objectId + ":" + *actionId + ":" + std::string(tmpBuf);
+                                                std::string(objectId) + ":" + actionId + ":" + std::string(tmpBuf);
                                             Rect region(
                                                 frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight);
                                             ImagePtr framePtr;
@@ -620,17 +621,17 @@ namespace FIFE
                                 }
 
                                 // Load animation.xml with frames
-                                sourceId = animElement->Attribute(std::string("source"));
+                                sourceId = XML::Attribute(animElement, "source");
                                 if (sourceId) {
                                     int direction = 0;
-                                    int success   = animElement->QueryValueAttribute("direction", &direction);
+                                    int success   = XML::QueryAttribute(animElement, "direction", &direction);
 
                                     fs::path animPath(filename);
 
                                     if (HasParentPath(animPath)) {
-                                        animPath = GetParentPath(animPath) / *sourceId;
+                                        animPath = GetParentPath(animPath) / sourceId;
                                     } else {
-                                        animPath = fs::path(*sourceId);
+                                        animPath = fs::path(sourceId);
                                     }
 
                                     AnimationPtr animation;
@@ -639,7 +640,7 @@ namespace FIFE
                                     }
 
                                     if (action && animation) {
-                                        if (success != TIXML_SUCCESS) {
+                                        if (success != XML::SUCCESS) {
                                             direction = animation->getDirection();
                                         }
                                         ActionVisual* actionVisual = action->getVisual<ActionVisual>();

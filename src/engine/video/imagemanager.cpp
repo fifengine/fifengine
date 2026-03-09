@@ -4,9 +4,6 @@
 // Standard C++ library includes
 #include <map>
 
-// 3rd party library includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory

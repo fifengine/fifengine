@@ -3,13 +3,11 @@
 
 // Standard C++ library includes
 
-// 3rd party library includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/xml/xmlhelper.h"
 #include "model/model.h"
 #include "model/structures/layer.h"
 #include "util/base/exception.h"
@@ -86,19 +84,21 @@ namespace FIFE
     {
         fs::path atlasPath(filename);
         std::string atlasFilename = atlasPath.string();
-        TiXmlDocument atlasFile;
+        XML::Document atlasFile;
 
         try {
             RawData* data = m_vfs->open(atlasFilename);
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    atlasFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (atlasFile.Error()) {
+                    if (!XML::Parse(atlasFile, xml)) {
+                        delete data;
                         return false;
                     }
                 } else {
+                    delete data;
                     return false;
                 }
 
@@ -111,9 +111,9 @@ namespace FIFE
         }
 
         // if we get here then loading the file went well
-        TiXmlElement* root = atlasFile.RootElement();
+        XML::Element* root = atlasFile.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
+        if (XML::HasName(root, "assets")) {
             if (root->FirstChildElement("atlas")) {
                 return true;
             }
@@ -133,7 +133,7 @@ namespace FIFE
             atlasPathDirectory = GetParentPath(atlasPath);
         }
 
-        TiXmlDocument doc;
+        XML::Document doc;
         AtlasPtr atlas;
 
         try {
@@ -141,9 +141,10 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    doc.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (doc.Error()) {
+                    if (!XML::Parse(doc, xml)) {
+                        delete data;
                         return atlas;
                     }
 
@@ -164,9 +165,9 @@ namespace FIFE
 
         // if we get here then everything loaded properly
         // so we can just parse out the contents
-        TiXmlElement* root = doc.RootElement();
+        XML::Element* root = doc.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
+        if (XML::HasName(root, "assets")) {
             atlas = loadAtlas(filename, root->FirstChildElement("atlas"));
         }
 
@@ -184,7 +185,7 @@ namespace FIFE
             atlasPathDirectory = GetParentPath(atlasPath);
         }
 
-        TiXmlDocument doc;
+        XML::Document doc;
         std::vector<AtlasPtr> atlasVector;
 
         try {
@@ -192,9 +193,10 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    doc.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (doc.Error()) {
+                    if (!XML::Parse(doc, xml)) {
+                        delete data;
                         return atlasVector;
                     }
 
@@ -215,11 +217,11 @@ namespace FIFE
 
         // if we get here then everything loaded properly
         // so we can just parse out the contents
-        TiXmlElement* root = doc.RootElement();
+        XML::Element* root = doc.RootElement();
 
-        if (root && root->ValueStr() == "assets") {
-            for (TiXmlElement* atlasElem = root->FirstChildElement("atlas"); atlasElem;
-                 atlasElem               = atlasElem->NextSiblingElement("atlas")) {
+        if (XML::HasName(root, "assets")) {
+            for (XML::Element* atlasElem = root->FirstChildElement("atlas"); atlasElem;
+                 atlasElem              = atlasElem->NextSiblingElement("atlas")) {
                 AtlasPtr atlas = loadAtlas(filename, atlasElem);
                 if (atlas) {
                     atlasVector.push_back(atlas);
@@ -230,16 +232,16 @@ namespace FIFE
         return atlasVector;
     }
 
-    AtlasPtr AtlasLoader::loadAtlas(const std::string& filename, TiXmlElement* atlasElem)
+    AtlasPtr AtlasLoader::loadAtlas(const std::string& filename, tinyxml2::XMLElement* atlasElem)
     {
         AtlasPtr atlas;
         if (!atlasElem) {
             return atlas;
         }
 
-        const std::string* atlasSource = atlasElem->Attribute(std::string("source"));
+        const char* atlasSource = XML::Attribute(atlasElem, "source");
         if (atlasSource) {
-            const std::string* atlasId = atlasElem->Attribute(std::string("id"));
+            const char* atlasId = XML::Attribute(atlasElem, "id");
 
             fs::path atlasPath(filename);
             fs::path atlasPathDirectory;
@@ -249,7 +251,7 @@ namespace FIFE
             }
 
             // Atlas itself doesn't have appended id
-            fs::path atlasImagePath = atlasPathDirectory / *atlasSource;
+            fs::path atlasImagePath = atlasPathDirectory / atlasSource;
             atlas.reset(new Atlas(atlasImagePath.string()));
 
             // End-user could create the same atlas for the second time.
@@ -262,23 +264,23 @@ namespace FIFE
             }
             // Create subimages with given id and individual position and size
             if (atlasElem->FirstChildElement("subimage")) {
-                for (TiXmlElement* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != 0;
-                     imageElem               = imageElem->NextSiblingElement("subimage")) {
+                for (XML::Element* imageElem = atlasElem->FirstChildElement("subimage"); imageElem != 0;
+                     imageElem              = imageElem->NextSiblingElement("subimage")) {
 
-                    const std::string* subimageId = imageElem->Attribute(std::string("id"));
+                    const char* subimageId = XML::Attribute(imageElem, "id");
                     if (subimageId) {
                         Rect region;
-                        imageElem->QueryValueAttribute("xpos", &region.x);
-                        imageElem->QueryValueAttribute("ypos", &region.y);
-                        imageElem->QueryValueAttribute("width", &region.w);
-                        imageElem->QueryValueAttribute("height", &region.h);
+                        XML::QueryAttribute(imageElem, "xpos", &region.x);
+                        XML::QueryAttribute(imageElem, "ypos", &region.y);
+                        XML::QueryAttribute(imageElem, "width", &region.w);
+                        XML::QueryAttribute(imageElem, "height", &region.h);
 
                         std::string finalname;
                         // atlas id is optional here
                         if (atlasId) {
-                            finalname = *atlasId + ":" + *subimageId;
+                            finalname = std::string(atlasId) + ":" + subimageId;
                         } else {
-                            finalname = *subimageId;
+                            finalname = subimageId;
                         }
                         ImagePtr subImage;
 
@@ -300,12 +302,12 @@ namespace FIFE
                 int atlasHeight    = 0;
                 int subimageWidth  = 0;
                 int subimageHeight = 0;
-                atlasElem->QueryValueAttribute("atlas_width", &atlasWidth);
-                atlasElem->QueryValueAttribute("atlas_height", &atlasHeight);
-                atlasElem->QueryValueAttribute("subimage_width", &subimageWidth);
-                atlasElem->QueryValueAttribute("subimage_height", &subimageHeight);
+                XML::QueryAttribute(atlasElem, "atlas_width", &atlasWidth);
+                XML::QueryAttribute(atlasElem, "atlas_height", &atlasHeight);
+                XML::QueryAttribute(atlasElem, "subimage_width", &subimageWidth);
+                XML::QueryAttribute(atlasElem, "subimage_height", &subimageHeight);
                 // file extension of the atlas is also used as subimage extension
-                std::string extension = GetExtension(*atlasSource);
+                std::string extension = GetExtension(std::string(atlasSource));
                 // we need an atlas id
                 if (!atlasId) {
                     atlasId = atlasSource;
@@ -323,7 +325,7 @@ namespace FIFE
                             static char tmp[64];
                             snprintf(tmp, 64, "%04d", frame);
                             std::ostringstream finalname;
-                            finalname << *atlasId << ":" << std::string(tmp) << extension;
+                            finalname << atlasId << ":" << std::string(tmp) << extension;
 
                             ImagePtr subImage;
                             if (!m_imageManager->exists(finalname.str())) {

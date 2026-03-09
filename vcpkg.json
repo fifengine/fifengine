@@ -27,7 +27,7 @@
     "libpng",
     "libvorbis",
     "openal-soft",
-    "tinyxml",
+    "tinyxml2",
     "zlib",
     "catch2"
   ],

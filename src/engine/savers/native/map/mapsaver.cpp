@@ -3,9 +3,6 @@
 
 // Standard C++ library includes
 
-// 3rd party library includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
@@ -21,6 +18,7 @@
 #include "model/structures/triggercontroller.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
+#include "util/xml/xmlhelper.h"
 #include "view/camera.h"
 #include "view/visual.h"
 
@@ -56,39 +54,37 @@ namespace FIFE
 
     void MapSaver::save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles)
     {
-        TiXmlDocument doc;
-
-        // add xml declaration
-        TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "ascii", "");
-        doc.LinkEndChild(decl);
+        XML::Document doc;
+        auto* declaration = doc.NewDeclaration(R"(xml version="1.0" encoding="ascii")");
+        doc.InsertEndChild(declaration);
 
         // add map element
-        TiXmlElement* mapElement = new TiXmlElement("map");
-        mapElement->SetAttribute("id", map.getId());
+        XML::Element* mapElement = doc.NewElement("map");
+        mapElement->SetAttribute("id", map.getId().c_str());
         mapElement->SetAttribute("format", "1.0");
-        doc.LinkEndChild(mapElement);
+        doc.InsertEndChild(mapElement);
 
         for (std::vector<std::string>::const_iterator iter = importFiles.begin(); iter != importFiles.end(); ++iter) {
-            TiXmlElement* importElement = new TiXmlElement("import");
-            importElement->SetAttribute("file", *iter);
+            XML::Element* importElement = doc.NewElement("import");
+            importElement->SetAttribute("file", iter->c_str());
 
             // link to map element
-            mapElement->LinkEndChild(importElement);
+            mapElement->InsertEndChild(importElement);
         }
 
         typedef std::list<Layer*> LayerList;
         LayerList layers = map.getLayers();
         for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
-            TiXmlElement* layerElement = new TiXmlElement("layer");
+            XML::Element* layerElement = doc.NewElement("layer");
             CellGrid* grid             = (*iter)->getCellGrid();
-            layerElement->SetAttribute("id", (*iter)->getId());
-            layerElement->SetDoubleAttribute("x_offset", grid->getXShift());
-            layerElement->SetDoubleAttribute("y_offset", grid->getYShift());
-            layerElement->SetDoubleAttribute("z_offset", grid->getZShift());
-            layerElement->SetDoubleAttribute("x_scale", grid->getXScale());
-            layerElement->SetDoubleAttribute("y_scale", grid->getYScale());
-            layerElement->SetDoubleAttribute("rotation", grid->getRotation());
-            layerElement->SetAttribute("grid_type", grid->getType());
+            layerElement->SetAttribute("id", (*iter)->getId().c_str());
+            layerElement->SetAttribute("x_offset", grid->getXShift());
+            layerElement->SetAttribute("y_offset", grid->getYShift());
+            layerElement->SetAttribute("z_offset", grid->getZShift());
+            layerElement->SetAttribute("x_scale", grid->getXScale());
+            layerElement->SetAttribute("y_scale", grid->getYScale());
+            layerElement->SetAttribute("rotation", grid->getRotation());
+            layerElement->SetAttribute("grid_type", grid->getType().c_str());
             layerElement->SetAttribute("transparency", (*iter)->getLayerTransparency());
 
             std::string pathingStrategy;
@@ -103,7 +99,7 @@ namespace FIFE
                 pathingStrategy = "cell_edges_only";
             } break;
             }
-            layerElement->SetAttribute("pathing", pathingStrategy);
+            layerElement->SetAttribute("pathing", pathingStrategy.c_str());
 
             std::string sortingStrategy;
             switch ((*iter)->getSortingStrategy()) {
@@ -120,21 +116,21 @@ namespace FIFE
                 sortingStrategy = "camera";
             } break;
             }
-            layerElement->SetAttribute("sorting", sortingStrategy);
+            layerElement->SetAttribute("sorting", sortingStrategy.c_str());
 
             if ((*iter)->isWalkable()) {
                 layerElement->SetAttribute("layer_type", "walkable");
             } else if ((*iter)->isInteract()) {
                 layerElement->SetAttribute("layer_type", "interact");
-                layerElement->SetAttribute("layer_type_id", (*iter)->getWalkableId());
+                layerElement->SetAttribute("layer_type_id", (*iter)->getWalkableId().c_str());
             }
 
             // add layer to document
-            mapElement->LinkEndChild(layerElement);
+            mapElement->InsertEndChild(layerElement);
 
             // add instances tag to document
-            TiXmlElement* instancesElement = new TiXmlElement("instances");
-            layerElement->LinkEndChild(instancesElement);
+            XML::Element* instancesElement = doc.NewElement("instances");
+            layerElement->InsertEndChild(instancesElement);
 
             std::string currentNamespace = "";
             typedef std::vector<Instance*> InstancesContainer;
@@ -147,25 +143,25 @@ namespace FIFE
                 }
 
                 // create instance element
-                TiXmlElement* instanceElement = new TiXmlElement("i");
+                XML::Element* instanceElement = doc.NewElement("i");
 
                 if (!obj->getNamespace().empty() && currentNamespace != obj->getNamespace()) {
-                    instanceElement->SetAttribute("ns", obj->getNamespace());
+                    instanceElement->SetAttribute("ns", obj->getNamespace().c_str());
 
                     // update current namespace
                     currentNamespace = obj->getNamespace();
                 }
 
                 if (!(*iter)->getId().empty()) {
-                    instanceElement->SetAttribute("id", (*iter)->getId());
+                    instanceElement->SetAttribute("id", (*iter)->getId().c_str());
                 }
 
-                instanceElement->SetAttribute("o", obj->getId());
+                instanceElement->SetAttribute("o", obj->getId().c_str());
 
                 ExactModelCoordinate position = (*iter)->getLocationRef().getExactLayerCoordinates();
-                instanceElement->SetDoubleAttribute("x", position.x);
-                instanceElement->SetDoubleAttribute("y", position.y);
-                instanceElement->SetDoubleAttribute("z", position.z);
+                instanceElement->SetAttribute("x", position.x);
+                instanceElement->SetAttribute("y", position.y);
+                instanceElement->SetAttribute("z", position.z);
                 instanceElement->SetAttribute("r", (*iter)->getRotation());
 
                 if ((*iter)->isBlocking()) {
@@ -178,34 +174,34 @@ namespace FIFE
 
                 if ((*iter)->isSpecialCost()) {
                     if (!obj->isSpecialCost()) {
-                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId());
-                        instanceElement->SetDoubleAttribute("cost", (*iter)->getCost());
+                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId().c_str());
+                        instanceElement->SetAttribute("cost", (*iter)->getCost());
                     } else if (
                         (*iter)->getCostId() != obj->getCostId() || !Mathd::Equal((*iter)->getCost(), obj->getCost())) {
-                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId());
-                        instanceElement->SetDoubleAttribute("cost", (*iter)->getCost());
+                        instanceElement->SetAttribute("cost_id", (*iter)->getCostId().c_str());
+                        instanceElement->SetAttribute("cost", (*iter)->getCost());
                     }
                 }
 
                 InstanceVisual* instanceVisual = (*iter)->getVisual<InstanceVisual>();
                 instanceElement->SetAttribute("stackpos", instanceVisual->getStackPosition());
 
-                instancesElement->LinkEndChild(instanceElement);
+                instancesElement->InsertEndChild(instanceElement);
             }
         }
         // add cellcaches tag to document
-        TiXmlElement* cellcachesElement = new TiXmlElement("cellcaches");
-        mapElement->LinkEndChild(cellcachesElement);
+        XML::Element* cellcachesElement = doc.NewElement("cellcaches");
+        mapElement->InsertEndChild(cellcachesElement);
         for (LayerList::iterator iter = layers.begin(); iter != layers.end(); ++iter) {
             CellCache* cache = (*iter)->getCellCache();
             if (!cache) {
                 continue;
             }
             // add cellcache tag to document
-            TiXmlElement* cellcacheElement = new TiXmlElement("cellcache");
-            cellcacheElement->SetAttribute("id", (*iter)->getId());
-            cellcacheElement->SetDoubleAttribute("default_cost", cache->getDefaultCostMultiplier());
-            cellcacheElement->SetDoubleAttribute("default_speed", cache->getDefaultSpeedMultiplier());
+            XML::Element* cellcacheElement = doc.NewElement("cellcache");
+            cellcacheElement->SetAttribute("id", (*iter)->getId().c_str());
+            cellcacheElement->SetAttribute("default_cost", cache->getDefaultCostMultiplier());
+            cellcacheElement->SetAttribute("default_speed", cache->getDefaultSpeedMultiplier());
             cellcacheElement->SetAttribute("search_narrow", cache->isSearchNarrowCells());
 
             const std::set<Cell*>& narrowCells = cache->getNarrowCells();
@@ -265,14 +261,14 @@ namespace FIFE
                     }
                     // add cell tag to document
                     ModelCoordinate cellCoord = cell->getLayerCoordinates();
-                    TiXmlElement* cellElement = new TiXmlElement("cell");
+                    XML::Element* cellElement = doc.NewElement("cell");
                     cellElement->SetAttribute("x", cellCoord.x);
                     cellElement->SetAttribute("y", cellCoord.y);
                     if (!defaultCost) {
-                        cellElement->SetDoubleAttribute("default_cost", cell->getCostMultiplier());
+                        cellElement->SetAttribute("default_cost", cell->getCostMultiplier());
                     }
                     if (!defaultSpeed) {
-                        cellElement->SetDoubleAttribute("default_speed", cell->getSpeedMultiplier());
+                        cellElement->SetAttribute("default_speed", cell->getSpeedMultiplier());
                     }
 
                     if (!cellBlocker) {
@@ -290,10 +286,10 @@ namespace FIFE
                         std::list<std::string>::iterator cost_it = costIds.begin();
                         for (; cost_it != costIds.end(); ++cost_it) {
                             if (cache->existsCostForCell(*cost_it, cell)) {
-                                TiXmlElement* costElement = new TiXmlElement("cost");
-                                costElement->SetAttribute("id", *cost_it);
-                                costElement->SetDoubleAttribute("value", cache->getCost(*cost_it));
-                                cellElement->LinkEndChild(costElement);
+                                XML::Element* costElement = doc.NewElement("cost");
+                                costElement->SetAttribute("id", cost_it->c_str());
+                                costElement->SetAttribute("value", cache->getCost(*cost_it));
+                                cellElement->InsertEndChild(costElement);
                             }
                         }
                     }
@@ -301,15 +297,15 @@ namespace FIFE
                     if (!areasEmpty) {
                         std::vector<std::string>::iterator area_it = cellAreaIds.begin();
                         for (; area_it != cellAreaIds.end(); ++area_it) {
-                            TiXmlElement* areaElement = new TiXmlElement("area");
-                            areaElement->SetAttribute("id", *area_it);
-                            areaElement->LinkEndChild(areaElement);
+                            XML::Element* areaElement = doc.NewElement("area");
+                            areaElement->SetAttribute("id", area_it->c_str());
+                            cellElement->InsertEndChild(areaElement);
                         }
                     }
                     // add transition tag
                     if (transition) {
-                        TiXmlElement* transitionElement = new TiXmlElement("transition");
-                        transitionElement->SetAttribute("id", transition->m_layer->getId());
+                        XML::Element* transitionElement = doc.NewElement("transition");
+                        transitionElement->SetAttribute("id", transition->m_layer->getId().c_str());
                         transitionElement->SetAttribute("x", transition->m_mc.x);
                         transitionElement->SetAttribute("y", transition->m_mc.y);
                         if (transition->m_mc.z != 0) {
@@ -320,49 +316,50 @@ namespace FIFE
                         } else {
                             transitionElement->SetAttribute("immediate", false);
                         }
-                        cellElement->LinkEndChild(transitionElement);
+                        cellElement->InsertEndChild(transitionElement);
                     }
-                    cellcacheElement->LinkEndChild(cellElement);
+                    cellcacheElement->InsertEndChild(cellElement);
                 }
             }
-            cellcachesElement->LinkEndChild(cellcacheElement);
+            cellcachesElement->InsertEndChild(cellcacheElement);
         }
 
         TriggerController* triggerController = map.getTriggerController();
         std::vector<Trigger*> triggers       = triggerController->getAllTriggers();
         if (!triggers.empty()) {
             // add triggers tag to document
-            TiXmlElement* triggersElement = new TiXmlElement("triggers");
-            mapElement->LinkEndChild(triggersElement);
+            XML::Element* triggersElement = doc.NewElement("triggers");
+            mapElement->InsertEndChild(triggersElement);
             for (std::vector<Trigger*>::iterator iter = triggers.begin(); iter != triggers.end(); ++iter) {
                 // add trigger tag to document
-                TiXmlElement* triggerElement = new TiXmlElement("trigger");
-                triggerElement->SetAttribute("name", (*iter)->getName());
+                XML::Element* triggerElement = doc.NewElement("trigger");
+                triggerElement->SetAttribute("name", (*iter)->getName().c_str());
                 triggerElement->SetAttribute("triggered", (*iter)->isTriggered());
                 triggerElement->SetAttribute("all_instances", (*iter)->isEnabledForAllInstances());
                 if ((*iter)->getAttached()) {
-                    triggerElement->SetAttribute("attached_instance", (*iter)->getAttached()->getId());
+                    triggerElement->SetAttribute("attached_instance", (*iter)->getAttached()->getId().c_str());
                     triggerElement->SetAttribute(
-                        "attached_layer", (*iter)->getAttached()->getLocationRef().getLayer()->getId());
+                        "attached_layer", (*iter)->getAttached()->getLocationRef().getLayer()->getId().c_str());
                 }
                 const std::vector<Cell*>& cells = (*iter)->getAssignedCells();
                 if (!cells.empty()) {
                     for (std::vector<Cell*>::const_iterator citer = cells.begin(); citer != cells.end(); ++citer) {
-                        TiXmlElement* cellElement = new TiXmlElement("assign");
-                        cellElement->SetAttribute("layer_id", (*citer)->getLayer()->getId());
+                        XML::Element* cellElement = doc.NewElement("assign");
+                        cellElement->SetAttribute("layer_id", (*citer)->getLayer()->getId().c_str());
                         cellElement->SetAttribute("x", (*citer)->getLayerCoordinates().x);
                         cellElement->SetAttribute("y", (*citer)->getLayerCoordinates().y);
-                        triggerElement->LinkEndChild(cellElement);
+                        triggerElement->InsertEndChild(cellElement);
                     }
                 }
                 const std::vector<Instance*>& instances = (*iter)->getEnabledInstances();
                 if (!instances.empty()) {
                     for (std::vector<Instance*>::const_iterator citer = instances.begin(); citer != instances.end();
                          ++citer) {
-                        TiXmlElement* instanceElement = new TiXmlElement("enabled");
-                        instanceElement->SetAttribute("layer_id", (*citer)->getLocationRef().getLayer()->getId());
-                        instanceElement->SetAttribute("instance_id", (*citer)->getId());
-                        triggerElement->LinkEndChild(instanceElement);
+                        XML::Element* instanceElement = doc.NewElement("enabled");
+                        instanceElement->SetAttribute(
+                            "layer_id", (*citer)->getLocationRef().getLayer()->getId().c_str());
+                        instanceElement->SetAttribute("instance_id", (*citer)->getId().c_str());
+                        triggerElement->InsertEndChild(instanceElement);
                     }
                 }
                 const std::vector<TriggerCondition>& conditions = (*iter)->getTriggerConditions();
@@ -370,12 +367,12 @@ namespace FIFE
                     for (std::vector<TriggerCondition>::const_iterator citer = conditions.begin();
                          citer != conditions.end();
                          ++citer) {
-                        TiXmlElement* conditionElement = new TiXmlElement("condition");
+                        XML::Element* conditionElement = doc.NewElement("condition");
                         conditionElement->SetAttribute("id", (*citer));
-                        triggerElement->LinkEndChild(conditionElement);
+                        triggerElement->InsertEndChild(conditionElement);
                     }
                 }
-                triggersElement->LinkEndChild(triggerElement);
+                triggersElement->InsertEndChild(triggerElement);
             }
         }
 
@@ -383,21 +380,21 @@ namespace FIFE
         CameraContainer cameras = map.getCameras();
         for (CameraContainer::iterator iter = cameras.begin(); iter != cameras.end(); ++iter) {
             if ((*iter)->getMap()->getId() == map.getId()) {
-                TiXmlElement* cameraElement = new TiXmlElement("camera");
+                XML::Element* cameraElement = doc.NewElement("camera");
 
-                cameraElement->SetAttribute("id", (*iter)->getId());
-                cameraElement->SetDoubleAttribute("zoom", (*iter)->getZoom());
-                cameraElement->SetDoubleAttribute("tilt", (*iter)->getTilt());
-                cameraElement->SetDoubleAttribute("rotation", (*iter)->getRotation());
+                cameraElement->SetAttribute("id", (*iter)->getId().c_str());
+                cameraElement->SetAttribute("zoom", (*iter)->getZoom());
+                cameraElement->SetAttribute("tilt", (*iter)->getTilt());
+                cameraElement->SetAttribute("rotation", (*iter)->getRotation());
                 if ((*iter)->isZToYEnabled()) {
-                    cameraElement->SetDoubleAttribute("ztoy", (*iter)->getZToY());
+                    cameraElement->SetAttribute("ztoy", (*iter)->getZToY());
                 }
 
                 Rect viewport = (*iter)->getViewPort();
                 std::ostringstream viewportString;
                 viewportString << viewport.x << "," << viewport.y << "," << viewport.w << "," << viewport.h;
 
-                cameraElement->SetAttribute("viewport", viewportString.str());
+                cameraElement->SetAttribute("viewport", viewportString.str().c_str());
 
                 Point p = (*iter)->getCellImageDimensions();
                 cameraElement->SetAttribute("ref_cell_width", p.x);
@@ -420,23 +417,15 @@ namespace FIFE
                         }
 
                         lightingColorString << lightingColor[i];
-
-                        cameraElement->SetAttribute("light_color", lightingColorString.str());
                     }
+
+                    cameraElement->SetAttribute("light_color", lightingColorString.str().c_str());
                 }
 
-                mapElement->LinkEndChild(cameraElement);
+                mapElement->InsertEndChild(cameraElement);
             }
         }
 
-        FILE* fp = 0;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-        fp = _fsopen(filename.c_str(), "w", _SH_DENYNO);
-#else
-        fp = fopen(filename.c_str(), "w");
-#endif
-        // save the map xml file
-        doc.SaveFile(fp);
-        fclose(fp);
+        doc.SaveFile(filename.c_str());
     }
 } // namespace FIFE

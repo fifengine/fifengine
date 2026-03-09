@@ -49,11 +49,11 @@ foreach(test_source ${FIFE_CORE_TEST_SOURCES})
         Vorbis::vorbisfile
         Vorbis::vorbisenc
         OpenAL::OpenAL
-        unofficial-tinyxml::unofficial-tinyxml
+        tinyxml2::tinyxml2
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2>
         $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-          $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+        $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
   )
 
   if(opengl)

@@ -5,9 +5,6 @@
 #include <string>
 #include <vector>
 
-// 3rd party includes
-#include <tinyxml.h>
-
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
@@ -27,6 +24,7 @@
 #include "util/log/logger.h"
 #include "util/resource/resource.h"
 #include "util/structures/rect.h"
+#include "util/xml/xmlhelper.h"
 #include "vfs/filesystem.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
@@ -85,7 +83,7 @@ namespace FIFE
             }
         }
 
-        TiXmlDocument mapFile;
+        XML::Document mapFile;
 
         std::string mapFilename = mapPath.string();
 
@@ -94,14 +92,15 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (mapFile.Error()) {
+                    if (!XML::Parse(mapFile, xml)) {
                         std::ostringstream oss;
                         oss << " Failed to load" << mapFilename << " : " << __FILE__ << " [" << __LINE__ << "]"
                             << std::endl;
                         FL_ERR(_log, oss.str());
 
+                        delete data;
                         return map;
                     }
                 }
@@ -122,24 +121,24 @@ namespace FIFE
 
         // if we get here then everything loaded properly
         // so we can just parse out the contents
-        const TiXmlElement* root = mapFile.RootElement();
+        const XML::Element* root = mapFile.RootElement();
 
         if (root) {
-            const std::string* loaderName = root->Attribute(std::string("loaderName"));
+            const char* loaderName = XML::Attribute(root, "loaderName");
 
             if (loaderName) {
-                m_loaderName = *loaderName;
+                m_loaderName = loaderName;
             }
 
             int numElements = 0;
-            root->QueryValueAttribute("elements", &numElements);
+            XML::QueryAttribute(root, "elements", &numElements);
             m_percentDoneListener.setTotalNumberOfElements(numElements);
 
-            const std::string* mapName = root->Attribute(std::string("id"));
+            const char* mapName = XML::Attribute(root, "id");
 
             if (mapName) {
                 try {
-                    map = m_model->createMap(*mapName);
+                    map = m_model->createMap(mapName);
                 } catch (NameClash& e) {
                     FL_ERR(_log, e.what());
 
@@ -151,19 +150,19 @@ namespace FIFE
                     map->setFilename(mapFilename);
 
                     std::string ns = "";
-                    for (const TiXmlElement* importElement = root->FirstChildElement("import"); importElement;
-                         importElement                     = importElement->NextSiblingElement("import")) {
-                        const std::string* importDir  = importElement->Attribute(std::string("dir"));
-                        const std::string* importFile = importElement->Attribute(std::string("file"));
+                    for (const XML::Element* importElement = root->FirstChildElement("import"); importElement;
+                        importElement                    = importElement->NextSiblingElement("import")) {
+                        const char* importDir  = XML::Attribute(importElement, "dir");
+                        const char* importFile = XML::Attribute(importElement, "file");
 
                         std::string directory = "";
                         if (importDir) {
-                            directory = *importDir;
+                            directory = importDir;
                         }
 
                         std::string file = "";
                         if (importFile) {
-                            file = *importFile;
+                            file = importFile;
                         }
 
                         if (importDir && !importFile) {
@@ -205,8 +204,8 @@ namespace FIFE
                     }
 
                     // iterate over elements looking for layers
-                    for (const TiXmlElement* layerElement = root->FirstChildElement("layer"); layerElement;
-                         layerElement                     = layerElement->NextSiblingElement("layer")) {
+                    for (const XML::Element* layerElement = root->FirstChildElement("layer"); layerElement;
+                        layerElement                    = layerElement->NextSiblingElement("layer")) {
                         // defaults
                         double xOffset  = 0.0;
                         double yOffset  = 0.0;
@@ -216,42 +215,42 @@ namespace FIFE
                         double zScale   = 1.0;
                         double rotation = 0.0;
 
-                        int xOffsetRetVal = layerElement->QueryValueAttribute("x_offset", &xOffset);
-                        int yOffsetRetVal = layerElement->QueryValueAttribute("y_offset", &yOffset);
-                        layerElement->QueryValueAttribute("z_offset", &zOffset);
-                        int xScaleRetVal = layerElement->QueryValueAttribute("x_scale", &xScale);
-                        int yScaleRetVal = layerElement->QueryValueAttribute("y_scale", &yScale);
-                        layerElement->QueryValueAttribute("z_scale", &zScale);
-                        int rotationRetVal = layerElement->QueryValueAttribute("rotation", &rotation);
+                        int xOffsetRetVal = XML::QueryAttribute(layerElement, "x_offset", &xOffset);
+                        int yOffsetRetVal = XML::QueryAttribute(layerElement, "y_offset", &yOffset);
+                        XML::QueryAttribute(layerElement, "z_offset", &zOffset);
+                        int xScaleRetVal = XML::QueryAttribute(layerElement, "x_scale", &xScale);
+                        int yScaleRetVal = XML::QueryAttribute(layerElement, "y_scale", &yScale);
+                        XML::QueryAttribute(layerElement, "z_scale", &zScale);
+                        int rotationRetVal = XML::QueryAttribute(layerElement, "rotation", &rotation);
 
-                        const std::string* layerName     = layerElement->Attribute(std::string("id"));
-                        const std::string* pathing       = layerElement->Attribute(std::string("pathing"));
-                        const std::string* sorting       = layerElement->Attribute(std::string("sorting"));
-                        const std::string* gridType      = layerElement->Attribute(std::string("grid_type"));
-                        const std::string* layerType     = layerElement->Attribute(std::string("layer_type"));
-                        const std::string* layerTypeName = layerElement->Attribute(std::string("layer_type_id"));
+                        const char* layerName     = XML::Attribute(layerElement, "id");
+                        const char* pathing       = XML::Attribute(layerElement, "pathing");
+                        const char* sorting       = XML::Attribute(layerElement, "sorting");
+                        const char* gridType      = XML::Attribute(layerElement, "grid_type");
+                        const char* layerType     = XML::Attribute(layerElement, "layer_type");
+                        const char* layerTypeName = XML::Attribute(layerElement, "layer_type_id");
 
-                        if (xOffsetRetVal == TIXML_SUCCESS && yOffsetRetVal == TIXML_SUCCESS &&
-                            xScaleRetVal == TIXML_SUCCESS && yScaleRetVal == TIXML_SUCCESS &&
-                            rotationRetVal == TIXML_SUCCESS && layerName && pathing && gridType) {
+                        if (xOffsetRetVal == XML::SUCCESS && yOffsetRetVal == XML::SUCCESS &&
+                            xScaleRetVal == XML::SUCCESS && yScaleRetVal == XML::SUCCESS &&
+                            rotationRetVal == XML::SUCCESS && layerName && pathing && gridType) {
 
                             PathingStrategy pathStrategy = CELL_EDGES_ONLY;
-                            if ("cell_edges_and_diagonals" == *pathing) {
+                            if (std::string(pathing) == "cell_edges_and_diagonals") {
                                 pathStrategy = CELL_EDGES_AND_DIAGONALS;
                             }
 
                             SortingStrategy sortStrategy = SORTING_CAMERA;
                             if (sorting) {
-                                if (*sorting == "location") {
+                                if (std::string(sorting) == "location") {
                                     sortStrategy = SORTING_LOCATION;
-                                } else if (*sorting == "camera_and_location") {
+                                } else if (std::string(sorting) == "camera_and_location") {
                                     sortStrategy = SORTING_CAMERA_AND_LOCATION;
                                 }
                             }
 
                             CellGrid* grid = NULL;
                             if (gridType) {
-                                grid = m_model->getCellGrid(*gridType);
+                                grid = m_model->getCellGrid(gridType);
                             } else {
                                 grid = m_model->getCellGrid("square");
                             }
@@ -267,7 +266,7 @@ namespace FIFE
 
                                 Layer* layer = NULL;
                                 try {
-                                    layer = map->createLayer(*layerName, grid);
+                                    layer = map->createLayer(layerName, grid);
                                 } catch (NameClash&) {
                                     // TODO - handle exception
                                     assert(false);
@@ -277,21 +276,21 @@ namespace FIFE
                                     layer->setPathingStrategy(pathStrategy);
                                     layer->setSortingStrategy(sortStrategy);
                                     if (layerType) {
-                                        if (*layerType == "walkable") {
+                                        if (std::string(layerType) == "walkable") {
                                             layer->setWalkable(true);
-                                        } else if (*layerType == "interact") {
-                                            layer->setInteract(true, *layerTypeName);
+                                        } else if (std::string(layerType) == "interact") {
+                                            layer->setInteract(true, layerTypeName ? layerTypeName : "");
                                         }
                                     }
 
                                     double curr_x = 0;
                                     double curr_y = 0;
 
-                                    for (const TiXmlElement* instances = layerElement->FirstChildElement("instances");
+                                     for (const XML::Element* instances = layerElement->FirstChildElement("instances");
                                          instances;
                                          instances = instances->NextSiblingElement("instances")) {
-                                        for (const TiXmlElement* instance = instances->FirstChildElement("i"); instance;
-                                             instance                     = instance->NextSiblingElement("i")) {
+                                        for (const XML::Element* instance = instances->FirstChildElement("i"); instance;
+                                            instance                    = instance->NextSiblingElement("i")) {
                                             double x      = 0;
                                             double y      = 0;
                                             double z      = 0;
@@ -299,68 +298,67 @@ namespace FIFE
                                             int stackpos  = 0;
                                             int cellStack = 0;
 
-                                            const std::string* instanceId = instance->Attribute(std::string("id"));
-                                            const std::string* objectId   = instance->Attribute(std::string("o"));
-                                            const std::string* costId     = instance->Attribute(std::string("cost_id"));
+                                            const char* instanceId = XML::Attribute(instance, "id");
+                                            const char* objectId   = XML::Attribute(instance, "o");
+                                            const char* costId     = XML::Attribute(instance, "cost_id");
 
                                             if (!objectId) {
-                                                objectId = instance->Attribute(std::string("object"));
+                                                objectId = XML::Attribute(instance, "object");
                                             }
 
                                             if (!objectId) {
-                                                objectId = instance->Attribute(std::string("obj"));
+                                                objectId = XML::Attribute(instance, "obj");
                                             }
 
-                                            const std::string* namespaceId = instance->Attribute(std::string("ns"));
+                                            const char* namespaceId = XML::Attribute(instance, "ns");
 
                                             if (!namespaceId) {
-                                                namespaceId = instance->Attribute(std::string("namespace"));
+                                                namespaceId = XML::Attribute(instance, "namespace");
                                             }
 
-                                            int xRetVal = instance->QueryValueAttribute("x", &x);
-                                            int yRetVal = instance->QueryValueAttribute("y", &y);
-                                            instance->QueryValueAttribute("z", &z);
-                                            int rRetVal = instance->QueryValueAttribute("r", &r);
+                                            int xRetVal = XML::QueryAttribute(instance, "x", &x);
+                                            int yRetVal = XML::QueryAttribute(instance, "y", &y);
+                                            XML::QueryAttribute(instance, "z", &z);
+                                            int rRetVal = XML::QueryAttribute(instance, "r", &r);
 
-                                            if (xRetVal == TIXML_SUCCESS) {
+                                            if (xRetVal == XML::SUCCESS) {
                                                 curr_x = x;
                                             } else {
                                                 x = ++curr_x;
                                             }
 
-                                            if (yRetVal == TIXML_SUCCESS) {
+                                            if (yRetVal == XML::SUCCESS) {
                                                 curr_y = y;
                                             } else {
                                                 y = curr_y;
                                             }
 
-                                            if (rRetVal != TIXML_SUCCESS) {
-                                                rRetVal = instance->QueryValueAttribute("rotation", &r);
+                                            if (rRetVal != XML::SUCCESS) {
+                                                rRetVal = XML::QueryAttribute(instance, "rotation", &r);
                                             }
 
-                                            int stackRetVal = instance->QueryValueAttribute("stackpos", &stackpos);
-                                            int cellStackRetVal =
-                                                instance->QueryValueAttribute("cellstack", &cellStack);
+                                            int stackRetVal = XML::QueryAttribute(instance, "stackpos", &stackpos);
+                                            int cellStackRetVal = XML::QueryAttribute(instance, "cellstack", &cellStack);
 
                                             if (objectId) {
                                                 if (namespaceId) {
-                                                    ns = *namespaceId;
+                                                    ns = namespaceId;
                                                 }
 
-                                                Object* object = m_model->getObject(*objectId, ns);
+                                                Object* object = m_model->getObject(objectId, ns);
 
                                                 if (object) {
                                                     Instance* inst = NULL;
                                                     if (instanceId) {
                                                         inst = layer->createInstance(
-                                                            object, ExactModelCoordinate(x, y, z), *instanceId);
+                                                            object, ExactModelCoordinate(x, y, z), instanceId);
                                                     } else {
                                                         inst = layer->createInstance(
                                                             object, ExactModelCoordinate(x, y, z));
                                                     }
 
                                                     if (inst) {
-                                                        if (rRetVal != TIXML_SUCCESS) {
+                                                        if (rRetVal != XML::SUCCESS) {
                                                             ObjectVisual* objVisual = object->getVisual<ObjectVisual>();
                                                             std::vector<int> angles;
                                                             objVisual->getStaticImageAngles(angles);
@@ -373,20 +371,19 @@ namespace FIFE
 
                                                         InstanceVisual* instVisual = InstanceVisual::create(inst);
 
-                                                        if (instVisual && (stackRetVal == TIXML_SUCCESS)) {
+                                                        if (instVisual && (stackRetVal == XML::SUCCESS)) {
                                                             instVisual->setStackPosition(stackpos);
                                                         }
 
-                                                        if (cellStackRetVal == TIXML_SUCCESS) {
+                                                        if (cellStackRetVal == XML::SUCCESS) {
                                                             inst->setCellStackPosition(cellStack);
                                                         }
 
                                                         if (costId) {
                                                             double cost = 0;
-                                                            int costRetVal =
-                                                                instance->QueryValueAttribute("cost", &cost);
-                                                            if (costRetVal == TIXML_SUCCESS) {
-                                                                inst->setCost(*costId, cost);
+                                                            int costRetVal = XML::QueryAttribute(instance, "cost", &cost);
+                                                            if (costRetVal == XML::SUCCESS) {
+                                                                inst->setCost(costId, cost);
                                                             }
                                                         }
 
@@ -397,7 +394,7 @@ namespace FIFE
                                                         }
                                                     } else {
                                                         std::ostringstream oss;
-                                                        oss << " Failed to create instance of object " << *objectId
+                                                        oss << " Failed to create instance of object " << objectId
                                                             << " : " << __FILE__ << " [" << __LINE__ << "]"
                                                             << std::endl;
                                                         FL_ERR(_log, oss.str());
@@ -420,20 +417,20 @@ namespace FIFE
                     // init CellCaches
                     map->initializeCellCaches();
                     // add Cells from xml File
-                    for (const TiXmlElement* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
-                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
-                        for (const TiXmlElement* cacheElement = cacheElements->FirstChildElement("cellcache");
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
+                         cacheElements                    = cacheElements->NextSiblingElement("cellcaches")) {
+                        for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
                             double cacheCost           = 1.0;
                             double cacheSpeed          = 1.0;
-                            const std::string* layerId = cacheElement->Attribute(std::string("id"));
+                            const char* layerId = XML::Attribute(cacheElement, "id");
 
                             if (layerId) {
                                 cacheElement->QueryDoubleAttribute("default_cost", &cacheCost);
                                 cacheElement->QueryDoubleAttribute("default_speed", &cacheSpeed);
 
-                                Layer* layer = map->getLayer(*layerId);
+                                Layer* layer = map->getLayer(layerId);
                                 if (layer) {
                                     CellCache* cache = layer->getCellCache();
                                     if (cache) {
@@ -443,24 +440,23 @@ namespace FIFE
 
                                         cache->setDefaultCostMultiplier(cacheCost);
                                         cache->setDefaultSpeedMultiplier(cacheSpeed);
-                                        for (const TiXmlElement* cellElement = cacheElement->FirstChildElement("cell");
+                                for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
                                              cellElement;
                                              cellElement = cellElement->NextSiblingElement("cell")) {
                                             int cellX   = 0;
                                             int cellY   = 0;
                                             int success = cellElement->QueryIntAttribute("x", &cellX);
                                             success &= cellElement->QueryIntAttribute("y", &cellY);
-                                            if (success == TIXML_SUCCESS) {
+                                            if (success == XML::SUCCESS) {
                                                 ModelCoordinate mc(cellX, cellY);
                                                 Cell* cell = cache->createCell(mc);
 
-                                                const std::string* cellBlocker =
-                                                    cellElement->Attribute(std::string("blocker_type"));
+                                                const char* cellBlocker = XML::Attribute(cellElement, "blocker_type");
                                                 if (cellBlocker) {
-                                                    if (*cellBlocker == "no_blocker") {
+                                                    if (std::string(cellBlocker) == "no_blocker") {
                                                         CellTypeInfo cti = CTYPE_CELL_NO_BLOCKER;
                                                         cell->setCellType(cti);
-                                                    } else if (*cellBlocker == "blocker") {
+                                                    } else if (std::string(cellBlocker) == "blocker") {
                                                         CellTypeInfo cti = CTYPE_CELL_BLOCKER;
                                                         cell->setCellType(cti);
                                                     }
@@ -469,12 +465,12 @@ namespace FIFE
                                                 double cellCost  = 1.0;
                                                 double cellSpeed = 1.0;
                                                 success = cellElement->QueryDoubleAttribute("default_cost", &cellCost);
-                                                if (success == TIXML_SUCCESS) {
+                                                if (success == XML::SUCCESS) {
                                                     cell->setCostMultiplier(cellCost);
                                                 }
                                                 success =
                                                     cellElement->QueryDoubleAttribute("default_speed", &cellSpeed);
-                                                if (success == TIXML_SUCCESS) {
+                                                if (success == XML::SUCCESS) {
                                                     cell->setSpeedMultiplier(cellSpeed);
                                                 }
 
@@ -484,28 +480,26 @@ namespace FIFE
                                                     cache->addNarrowCell(cell);
                                                 }
                                                 // add cost with given id to cell
-                                                for (const TiXmlElement* costElement =
+                                                for (const XML::Element* costElement =
                                                          cellElement->FirstChildElement("cost");
                                                      costElement;
                                                      costElement = costElement->NextSiblingElement("cost")) {
-                                                    const std::string* costId =
-                                                        costElement->Attribute(std::string("id"));
+                                                    const char* costId = XML::Attribute(costElement, "id");
                                                     double cost = 1.0;
                                                     success     = costElement->QueryDoubleAttribute("value", &cost);
-                                                    if (costId && success == TIXML_SUCCESS) {
-                                                        cache->registerCost(*costId, cost);
-                                                        cache->addCellToCost(*costId, cell);
+                                                    if (costId && success == XML::SUCCESS) {
+                                                        cache->registerCost(costId, cost);
+                                                        cache->addCellToCost(costId, cell);
                                                     }
                                                 }
                                                 // add area to cell
-                                                for (const TiXmlElement* areaElement =
+                                                for (const XML::Element* areaElement =
                                                          cellElement->FirstChildElement("area");
                                                      areaElement;
                                                      areaElement = areaElement->NextSiblingElement("area")) {
-                                                    const std::string* areaId =
-                                                        areaElement->Attribute(std::string("id"));
+                                                    const char* areaId = XML::Attribute(areaElement, "id");
                                                     if (areaId) {
-                                                        cache->addCellToArea(*areaId, cell);
+                                                        cache->addCellToArea(areaId, cell);
                                                     }
                                                 }
                                             }
@@ -518,31 +512,31 @@ namespace FIFE
                     // finalize CellCaches
                     map->finalizeCellCaches();
                     // add Transistions
-                    for (const TiXmlElement* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
-                         cacheElements                     = cacheElements->NextSiblingElement("cellcaches")) {
-                        for (const TiXmlElement* cacheElement = cacheElements->FirstChildElement("cellcache");
+                    for (const XML::Element* cacheElements = root->FirstChildElement("cellcaches"); cacheElements;
+                         cacheElements                    = cacheElements->NextSiblingElement("cellcaches")) {
+                        for (const XML::Element* cacheElement = cacheElements->FirstChildElement("cellcache");
                              cacheElement;
                              cacheElement = cacheElement->NextSiblingElement("cellcache")) {
-                            const std::string* layerId = cacheElement->Attribute(std::string("id"));
+                            const char* layerId = XML::Attribute(cacheElement, "id");
                             if (layerId) {
-                                Layer* layer = map->getLayer(*layerId);
+                                Layer* layer = map->getLayer(layerId);
                                 if (layer) {
                                     CellCache* cache = layer->getCellCache();
                                     if (cache) {
-                                        for (const TiXmlElement* cellElement = cacheElement->FirstChildElement("cell");
+                                        for (const XML::Element* cellElement = cacheElement->FirstChildElement("cell");
                                              cellElement;
                                              cellElement = cellElement->NextSiblingElement("cell")) {
                                             int cellX   = 0;
                                             int cellY   = 0;
                                             int success = cellElement->QueryIntAttribute("x", &cellX);
                                             success &= cellElement->QueryIntAttribute("y", &cellY);
-                                            if (success == TIXML_SUCCESS) {
+                                            if (success == XML::SUCCESS) {
                                                 ModelCoordinate mc(cellX, cellY);
                                                 Cell* cell = cache->getCell(mc);
                                                 if (!cell) {
                                                     continue;
                                                 }
-                                                for (const TiXmlElement* transitionElement =
+                                                for (const XML::Element* transitionElement =
                                                          cellElement->FirstChildElement("transition");
                                                      transitionElement;
                                                      transitionElement =
@@ -553,13 +547,12 @@ namespace FIFE
                                                     success     = transitionElement->QueryIntAttribute("x", &targetX);
                                                     success &= transitionElement->QueryIntAttribute("y", &targetY);
                                                     transitionElement->QueryIntAttribute("z", &targetZ);
-                                                    if (success == TIXML_SUCCESS) {
+                                                    if (success == XML::SUCCESS) {
                                                         ModelCoordinate mc(targetX, targetY, targetZ);
                                                         Layer* targetLayer = NULL;
-                                                        const std::string* targetLayerId =
-                                                            transitionElement->Attribute(std::string("id"));
+                                                        const char* targetLayerId = XML::Attribute(transitionElement, "id");
                                                         if (targetLayerId) {
-                                                            targetLayer = map->getLayer(*targetLayerId);
+                                                            targetLayer = map->getLayer(targetLayerId);
                                                         }
                                                         if (!targetLayer) {
                                                             targetLayer = layer;
@@ -578,19 +571,19 @@ namespace FIFE
                         }
                     }
 
-                    for (const TiXmlElement* triggerElements = root->FirstChildElement("triggers"); triggerElements;
-                         triggerElements                     = triggerElements->NextSiblingElement("triggers")) {
+                    for (const XML::Element* triggerElements = root->FirstChildElement("triggers"); triggerElements;
+                         triggerElements                    = triggerElements->NextSiblingElement("triggers")) {
                         TriggerController* triggerController = map->getTriggerController();
-                        for (const TiXmlElement* triggerElement = triggerElements->FirstChildElement("trigger");
+                        for (const XML::Element* triggerElement = triggerElements->FirstChildElement("trigger");
                              triggerElement;
                              triggerElement = triggerElement->NextSiblingElement("trigger")) {
-                            const std::string* triggerName = triggerElement->Attribute(std::string("name"));
+                            const char* triggerName = XML::Attribute(triggerElement, "name");
                             int triggered                  = 0;
                             int allInstances               = 0;
                             triggerElement->QueryIntAttribute("triggered", &triggered);
                             triggerElement->QueryIntAttribute("all_instances", &allInstances);
 
-                            Trigger* trigger = triggerController->createTrigger(*triggerName);
+                            Trigger* trigger = triggerController->createTrigger(triggerName);
                             if (triggered > 0) {
                                 trigger->setTriggered();
                             }
@@ -598,21 +591,21 @@ namespace FIFE
                                 trigger->enableForAllInstances();
                             }
 
-                            const std::string* instanceId = triggerElement->Attribute(std::string("attached_instance"));
-                            const std::string* layerId    = triggerElement->Attribute(std::string("attached_layer"));
+                            const char* instanceId = XML::Attribute(triggerElement, "attached_instance");
+                            const char* layerId    = XML::Attribute(triggerElement, "attached_layer");
                             if (instanceId && layerId) {
-                                Layer* layer = map->getLayer(*layerId);
+                                Layer* layer = map->getLayer(layerId);
                                 if (layer) {
-                                    Instance* instance = layer->getInstance(*instanceId);
+                                    Instance* instance = layer->getInstance(instanceId);
                                     if (instance) {
                                         trigger->attach(instance);
                                     }
                                 }
                             }
-                            for (const TiXmlElement* assignElement = triggerElement->FirstChildElement("assign");
+                            for (const XML::Element* assignElement = triggerElement->FirstChildElement("assign");
                                  assignElement;
                                  assignElement = assignElement->NextSiblingElement("assign")) {
-                                layerId = assignElement->Attribute(std::string("layer_id"));
+                                layerId = XML::Attribute(assignElement, "layer_id");
                                 if (!layerId) {
                                     continue;
                                 }
@@ -620,28 +613,28 @@ namespace FIFE
                                 int y = 0;
                                 assignElement->QueryIntAttribute("x", &x);
                                 assignElement->QueryIntAttribute("y", &y);
-                                Layer* layer = map->getLayer(*layerId);
+                                Layer* layer = map->getLayer(layerId);
                                 if (layer) {
                                     trigger->assign(layer, ModelCoordinate(x, y));
                                 }
                             }
-                            for (const TiXmlElement* enabledElement = triggerElement->FirstChildElement("enabled");
+                            for (const XML::Element* enabledElement = triggerElement->FirstChildElement("enabled");
                                  enabledElement;
                                  enabledElement = enabledElement->NextSiblingElement("enabled")) {
-                                layerId    = enabledElement->Attribute(std::string("layer_id"));
-                                instanceId = enabledElement->Attribute(std::string("instance_id"));
+                                layerId    = XML::Attribute(enabledElement, "layer_id");
+                                instanceId = XML::Attribute(enabledElement, "instance_id");
                                 if (!instanceId || !layerId) {
                                     continue;
                                 }
-                                Layer* layer = map->getLayer(*layerId);
+                                Layer* layer = map->getLayer(layerId);
                                 if (layer) {
-                                    Instance* instance = layer->getInstance(*instanceId);
+                                    Instance* instance = layer->getInstance(instanceId);
                                     if (instance) {
                                         trigger->enableForInstance(instance);
                                     }
                                 }
                             }
-                            for (const TiXmlElement* conditionElement = triggerElement->FirstChildElement("condition");
+                            for (const XML::Element* conditionElement = triggerElement->FirstChildElement("condition");
                                  conditionElement;
                                  conditionElement = conditionElement->NextSiblingElement("condition")) {
                                 int conditionId = -1;
@@ -653,16 +646,16 @@ namespace FIFE
                         }
                     }
 
-                    for (const TiXmlElement* cameraElement = root->FirstChildElement("camera"); cameraElement;
-                         cameraElement                     = cameraElement->NextSiblingElement("camera")) {
-                        const std::string* cameraId = cameraElement->Attribute(std::string("id"));
+                    for (const XML::Element* cameraElement = root->FirstChildElement("camera"); cameraElement;
+                         cameraElement                    = cameraElement->NextSiblingElement("camera")) {
+                        const char* cameraId = XML::Attribute(cameraElement, "id");
 
                         int refCellWidth  = 0;
                         int refCellHeight = 0;
                         int success       = cameraElement->QueryIntAttribute("ref_cell_width", &refCellWidth);
                         success &= cameraElement->QueryIntAttribute("ref_cell_height", &refCellHeight);
 
-                        if (cameraId && success == TIXML_SUCCESS) {
+                        if (cameraId && success == XML::SUCCESS) {
                             double tilt     = 0.0;
                             double zoom     = 1.0;
                             double rotation = 0.0;
@@ -672,13 +665,13 @@ namespace FIFE
                             cameraElement->QueryDoubleAttribute("rotation", &rotation);
                             success = cameraElement->QueryDoubleAttribute("ztoy", &zToY);
 
-                            const std::string* viewport = cameraElement->Attribute(std::string("viewport"));
+                            const char* viewport = XML::Attribute(cameraElement, "viewport");
 
                             Camera* cam = NULL;
 
                             if (viewport) {
                                 // parse out the viewport parameters
-                                IntVector viewportParameters = tokenize(*viewport, ',');
+                                IntVector viewportParameters = tokenize(viewport, ',');
 
                                 // make sure the right number of viewport parameters were parsed
                                 if (viewportParameters.size() == 4) {
@@ -689,7 +682,7 @@ namespace FIFE
                                         viewportParameters[3]);
 
                                     try {
-                                        cam = map->addCamera(*cameraId, rect);
+                                        cam = map->addCamera(cameraId, rect);
                                     } catch (NameClash&) {
                                         // TODO - handle exception
                                         assert(false);
@@ -699,7 +692,7 @@ namespace FIFE
                                 Rect rect(0, 0, m_renderBackend->getScreenWidth(), m_renderBackend->getScreenHeight());
 
                                 try {
-                                    cam = map->addCamera(*cameraId, rect);
+                                    cam = map->addCamera(cameraId, rect);
                                 } catch (NameClash&) {
                                     // TODO - handle exception
                                     assert(false);
@@ -711,7 +704,7 @@ namespace FIFE
                                 cam->setRotation(rotation);
                                 cam->setTilt(tilt);
                                 cam->setZoom(zoom);
-                                if (success == TIXML_SUCCESS) {
+                                if (success == XML::SUCCESS) {
                                     cam->setZToY(zToY);
                                 }
 
@@ -779,7 +772,7 @@ namespace FIFE
     {
         fs::path mapPath(filename);
 
-        TiXmlDocument mapFile;
+        XML::Document mapFile;
 
         std::string mapFilename = mapPath.string();
 
@@ -788,22 +781,23 @@ namespace FIFE
 
             if (data) {
                 if (data->getDataLength() != 0) {
-                    mapFile.Parse(data->readString(data->getDataLength()).c_str());
+                    const std::string xml = data->readString(data->getDataLength());
 
-                    if (mapFile.Error()) {
+                    if (!XML::Parse(mapFile, xml)) {
+                        delete data;
                         return false;
                     }
 
-                    const TiXmlElement* root = mapFile.RootElement();
+                    const XML::Element* root = mapFile.RootElement();
 
                     if (root) {
-                        const std::string* loaderName = root->Attribute(std::string("loader"));
+                        const char* loaderName = XML::Attribute(root, "loader");
 
                         // if the file does not specify a loader but was opened and parsed
                         // correctly then we know we have a compatible extension so we will
                         // attempt to load it, if it does specify a loader then the loader
                         // name will be checked
-                        if (!loaderName || (loaderName && *loaderName == getLoaderName())) {
+                        if (!loaderName || (loaderName && std::string(loaderName) == getLoaderName())) {
                             return true;
                         }
                     }
