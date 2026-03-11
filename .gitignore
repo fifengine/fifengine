@@ -5,7 +5,7 @@ vcpkg_installed/
 dependencies/
 
 # Generated Doxygen files
-doc/doxygen/html
+docs/doxygen/html
 
 # Folders of Python Tools
 __pycache__/

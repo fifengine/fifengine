@@ -1,26 +1,46 @@
-# Clang Tidy - Config
----
-Checks: '-*
- bugprone-*,
- -bugprone-easily-swappable-parameters
- cert-*,
- -cert-err33-c
- cppcoreguidelines-*,
- -cppcoreguidelines-pro-bounds-pointer-arithmetic
- -cppcoreguidelines-pro-type-vararg
- -cppcoreguidelines-avoid-c-arrays
- -cppcoreguidelines-no-malloc
- -cppcoreguidelines-owning-memory
- -cppcoreguidelines-pro-bounds-array-to-pointer-decay
- misc-*,
- -misc-include-cleaner
- modernize-*,
- -modernize-use-trailing-return-type
- performance-*,
- readability-*,
- -readability-identifier-length
- -readability-function-cognitive-complexity
- -readability-static-accessed-through-instance
- '
+#
+# clang-tidy configuration file.
+#
+# https://clang.llvm.org/extra/clang-tidy/
+# https://clang.llvm.org/extra/clang-tidy/checks/list.html
+#
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  clang-diagnostic-*,
+  -clang-analyzer-*,
+  cert-err34-c,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-narrowing-conversions,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-type-union-access,
+  google-explicit-constructor,
+  misc*,
+  misc-uniqueptr-reset-release,
+  -misc-no-recursion,
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  modernize*,
+  -modernize-use-auto,
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-convert-member-functions-to-static
 
-WarningsAsErrors: '*'
+WarningsAsErrors: >
+  clang-analyzer-security.*
+# Analyze only headers under include/ and not system headers.
+HeaderFilterRegex: '^src/.*'
+SystemHeaders: false
+# Use our .clang-format file when applying fixes.
+FormatStyle: file
