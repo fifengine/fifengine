@@ -4,6 +4,8 @@
 // Standard C++ library includes
 
 // Platform specific includes
+#include <algorithm>
+#include <iterator>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -211,9 +213,10 @@ namespace FIFE
     {
         SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
-        std::any_of(ptr->buffers.begin(), ptr->buffers.end(), [&](unsigned int buffer) {
+        bool reachedEOF = std::any_of(std::begin(ptr->buffers), std::end(ptr->buffers), [&](unsigned int buffer) {
             return getStream(streamid, buffer);
         });
+        (void)reachedEOF;
     }
 
     bool SoundClip::getStream(uint32_t streamid, ALuint buffer)

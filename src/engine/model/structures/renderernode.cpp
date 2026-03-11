@@ -65,12 +65,12 @@ namespace FIFE
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point) :
-        m_instance(nullptr), m_location(nullptr), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_location(), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, const Point& relative_point) :
-        m_instance(nullptr), m_location(nullptr), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_location(), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
@@ -91,11 +91,11 @@ namespace FIFE
     {
     }
     RendererNode::RendererNode(Layer* attached_layer, const Point& relative_point) :
-        m_instance(nullptr), m_location(nullptr), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_location(), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const Point& attached_point) :
-        m_instance(nullptr), m_location(nullptr), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
+        m_instance(nullptr), m_location(), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const RendererNode& old) :
@@ -158,8 +158,8 @@ namespace FIFE
     void RendererNode::setAttached(const Point& attached_point)
     {
         changeInstance(nullptr);
-        m_location = nullptr;
-        m_point    = attached_point;
+        m_location.reset();
+        m_point = attached_point;
     }
 
     void RendererNode::setRelative(const Location& relative_location)
@@ -179,7 +179,7 @@ namespace FIFE
     }
     void RendererNode::setRelative(const Point& relative_point)
     {
-        if (m_instance == nullptr || m_location == nullptr) {
+        if (m_instance == nullptr || !m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Point) - ") << "No instance or location attached.");
         }
         m_point = relative_point;
@@ -194,7 +194,7 @@ namespace FIFE
     }
     Location RendererNode::getAttachedLocation()
     {
-        if (m_instance != nullptr || m_location == nullptr) {
+        if (m_instance != nullptr || !m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedLocation() - ") << "No location attached.");
         }
         return m_location;
@@ -208,7 +208,7 @@ namespace FIFE
     }
     Point RendererNode::getAttachedPoint()
     {
-        if (m_instance != nullptr || m_location != nullptr) {
+        if (m_instance != nullptr || m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::getAttachedPoint() - ") << "No point attached.");
         }
         return m_point;
@@ -216,14 +216,14 @@ namespace FIFE
 
     Location RendererNode::getOffsetLocation()
     {
-        if (m_instance == nullptr || m_location == nullptr) {
+        if (m_instance == nullptr || !m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::getOffsetLocation() - ") << "No location as offset used.");
         }
         return m_location;
     }
     Point RendererNode::getOffsetPoint()
     {
-        if (m_instance == nullptr && m_location == nullptr) {
+        if (m_instance == nullptr && !m_location.isValid()) {
             FL_WARN(_log, LMsg("RendererNode::getOffsetPoint() - ") << "No point as offset used.");
         }
         return m_point;
@@ -303,13 +303,13 @@ namespace FIFE
             if (m_layer == nullptr) {
                 m_layer = m_instance->getLocationRef().getLayer();
             }
-            if (m_location != nullptr) {
+            if (m_location.isValid()) {
                 p = cam->toScreenCoordinates(
                     m_instance->getLocationRef().getMapCoordinates() + m_location.getMapCoordinates());
             } else {
                 p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates());
             }
-        } else if (m_location != nullptr) {
+        } else if (m_location.isValid()) {
             if (m_layer == nullptr) {
                 m_layer = m_location.getLayer();
             }

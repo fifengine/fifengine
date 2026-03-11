@@ -305,12 +305,13 @@ namespace FIFE
 
         // removes instance from RenderList
         RenderList& renderList = m_camera->getRenderListRef(m_layer);
-        auto it                = std::find_if(renderList.begin(), renderList.end(), [instance](const auto& item) {
+
+        auto itRenderList = std::find_if(renderList.begin(), renderList.end(), [instance](const auto& item) {
             return item->instance == instance;
         });
 
-        if (it != renderList.end()) {
-            renderList.erase(it);
+        if (itRenderList != renderList.end()) {
+            renderList.erase(itRenderList);
         }
         // resets RenderItem
         item->reset();
