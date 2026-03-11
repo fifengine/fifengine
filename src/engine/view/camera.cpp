@@ -68,7 +68,7 @@ namespace FIFE
         }
     };
 
-    Camera::Camera(std::string  id, Map* map, const Rect& viewport, RenderBackend* renderbackend) :
+    Camera::Camera(std::string id, Map* map, const Rect& viewport, RenderBackend* renderbackend) :
         m_id(std::move(id)),
         m_map(map),
         m_viewport(viewport),
@@ -556,8 +556,8 @@ namespace FIFE
         bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
         bool special_alpha = alpha != 0;
 
-        const RenderList& layer_instances      = m_layerToInstances[&layer];
-        auto instance_it = layer_instances.end();
+        const RenderList& layer_instances = m_layerToInstances[&layer];
+        auto instance_it                  = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i          = (*instance_it)->instance;
@@ -579,12 +579,12 @@ namespace FIFE
                     auto foh = static_cast<double>(vc.image->getHeight());
                     auto fsw = static_cast<double>(vc.dimensions.w);
                     auto fsh = static_cast<double>(vc.dimensions.h);
-                    x          = static_cast<int32_t>(round(fx / fsw * fow));
-                    y          = static_cast<int32_t>(round(fy / fsh * foh));
+                    x        = static_cast<int32_t>(round(fx / fsw * fow));
+                    y        = static_cast<int32_t>(round(fy / fsh * foh));
                 }
                 if (vc.getAnimationOverlay() != nullptr) {
-                    std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
-                    auto it = ao->begin();
+                    std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+                    auto it                   = ao->begin();
                     for (; it != ao->end(); ++it) {
                         if ((*it)->isSharedImage()) {
                             (*it)->forceLoadInternal();
@@ -615,8 +615,8 @@ namespace FIFE
         bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
         bool special_alpha = alpha != 0;
 
-        const RenderList& layer_instances      = m_layerToInstances[&layer];
-        auto instance_it = layer_instances.end();
+        const RenderList& layer_instances = m_layerToInstances[&layer];
+        auto instance_it                  = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
@@ -646,12 +646,12 @@ namespace FIFE
                             auto foh = static_cast<double>(vc.image->getHeight());
                             auto fsw = static_cast<double>(vc.dimensions.w);
                             auto fsh = static_cast<double>(vc.dimensions.h);
-                            x          = static_cast<int32_t>(round(fx / fsw * fow));
-                            y          = static_cast<int32_t>(round(fy / fsh * foh));
+                            x        = static_cast<int32_t>(round(fx / fsw * fow));
+                            y        = static_cast<int32_t>(round(fy / fsh * foh));
                         }
                         if (vc.getAnimationOverlay() != nullptr) {
-                            std::vector<ImagePtr>* ao          = vc.getAnimationOverlay();
-                            auto it = ao->begin();
+                            std::vector<ImagePtr>* ao = vc.getAnimationOverlay();
+                            auto it                   = ao->begin();
                             for (; it != ao->end(); ++it) {
                                 if ((*it)->isSharedImage()) {
                                     (*it)->forceLoadInternal();
@@ -688,8 +688,8 @@ found_non_transparent_pixel:;
             return;
         }
 
-        const RenderList& layer_instances      = m_layerToInstances[layer];
-        auto instance_it = layer_instances.end();
+        const RenderList& layer_instances = m_layerToInstances[layer];
+        auto instance_it                  = layer_instances.end();
         while (instance_it != layer_instances.begin()) {
             --instance_it;
             Instance* i = (*instance_it)->instance;
@@ -1030,8 +1030,8 @@ found_non_transparent_pixel:;
             return;
         }
 
-        const std::list<Layer*>& layers            = m_map->getLayers();
-        auto layer_it = layers.begin();
+        const std::list<Layer*>& layers = m_map->getLayers();
+        auto layer_it                   = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             LayerCache* cache = m_cache[*layer_it];
             if (cache == nullptr) {
@@ -1064,8 +1064,8 @@ found_non_transparent_pixel:;
             }
         }
 
-        const std::list<Layer*>& layers            = m_map->getLayers();
-        auto layer_it = layers.begin();
+        const std::list<Layer*>& layers = m_map->getLayers();
+        auto layer_it                   = layers.begin();
         for (; layer_it != layers.end(); ++layer_it) {
             // layer with static flag will rendered as one texture
             if ((*layer_it)->isStatic()) {

@@ -280,8 +280,8 @@ namespace FIFE
 
     void SoundClipManager::remove(SoundClipPtr& resource)
     {
-        auto it = m_sclipHandleMap.find(resource->getHandle());
-        auto nit  = m_sclipNameMap.find(resource->getName());
+        auto it  = m_sclipHandleMap.find(resource->getHandle());
+        auto nit = m_sclipNameMap.find(resource->getName());
 
         if (it != m_sclipHandleMap.end()) {
             m_sclipHandleMap.erase(it);

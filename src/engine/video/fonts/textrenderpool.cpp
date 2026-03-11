@@ -28,7 +28,9 @@ namespace FIFE
         m_poolSize    = 0;
 
         m_collectTimer.setInterval(1000 * 60);
-        m_collectTimer.setCallback([this] { removeOldEntries(); });
+        m_collectTimer.setCallback([this] {
+            removeOldEntries();
+        });
     }
 
     TextRenderPool::~TextRenderPool()
@@ -107,8 +109,8 @@ namespace FIFE
     void TextRenderPool::removeOldEntries()
     {
 
-        auto it = m_pool.begin();
-        uint32_t now           = TimeManager::instance()->getTime();
+        auto it      = m_pool.begin();
+        uint32_t now = TimeManager::instance()->getTime();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000 * 60) {
                 delete it->image;

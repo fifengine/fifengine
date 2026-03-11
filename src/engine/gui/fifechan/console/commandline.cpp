@@ -23,11 +23,15 @@ namespace FIFE
     {
 
         m_blinkTimer.setInterval(500);
-        m_blinkTimer.setCallback([this] { toggleCaretVisible(); });
+        m_blinkTimer.setCallback([this] {
+            toggleCaretVisible();
+        });
         m_blinkTimer.start();
 
         m_suppressBlinkTimer.setInterval(2000);
-        m_suppressBlinkTimer.setCallback([this] { startBlinking(); });
+        m_suppressBlinkTimer.setCallback([this] {
+            startBlinking();
+        });
     }
 
     CommandLine::~CommandLine() = default;

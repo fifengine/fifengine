@@ -195,8 +195,7 @@ namespace FIFE
             ModelCoordinate adjacentCoord = adjacent->getLayerCoordinates();
             if ((adjacentInt == m_next || blocker) && adjacentInt != m_destCoordInt) {
                 if (blocker && m_multicell) {
-                    auto bc_it =
-                        std::ranges::find(m_ignoredBlockers, adjacent);
+                    auto bc_it = std::ranges::find(m_ignoredBlockers, adjacent);
                     if (bc_it == m_ignoredBlockers.end()) {
                         continue;
                     }
@@ -220,8 +219,7 @@ namespace FIFE
                     Cell* cell = m_currentCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            auto bc_it =
-                                std::ranges::find(m_ignoredBlockers, cell);
+                            auto bc_it = std::ranges::find(m_ignoredBlockers, cell);
                             if (bc_it == m_ignoredBlockers.end()) {
                                 blocker = true;
                                 break;
@@ -229,9 +227,9 @@ namespace FIFE
                         }
                         if (limitedArea) {
                             // check if cell is on one of the areas
-                            bool sameAreas                                 = false;
-                            const std::list<std::string> areas             = m_route->getLimitedAreas();
-                            auto area_it = areas.begin();
+                            bool sameAreas                     = false;
+                            const std::list<std::string> areas = m_route->getLimitedAreas();
+                            auto area_it                       = areas.begin();
                             for (; area_it != areas.end(); ++area_it) {
                                 if (m_currentCache->isCellInArea(*area_it, cell)) {
                                     sameAreas = true;
@@ -253,9 +251,9 @@ namespace FIFE
                 }
             } else if (limitedArea) {
                 // check if cell is on one of the areas
-                bool sameAreas                                 = false;
-                const std::list<std::string> areas             = m_route->getLimitedAreas();
-                auto area_it = areas.begin();
+                bool sameAreas                     = false;
+                const std::list<std::string> areas = m_route->getLimitedAreas();
+                auto area_it                       = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
                     if (m_currentCache->isCellInArea(*area_it, adjacent)) {
                         sameAreas = true;
@@ -345,7 +343,7 @@ namespace FIFE
             Location loc;
             Cell* cell = nullptr;
             // find nearest portal (air-line distance)
-            for (auto & it : cells) {
+            for (auto& it : cells) {
                 if (it->getZone() != m_startZone) {
                     continue;
                 }
@@ -384,8 +382,8 @@ namespace FIFE
     {
         // in case no transition is there then return
         std::vector<Cell*> endTransCells;
-        std::vector<Cell*> tmpTransCells      = m_endCache->getTransitionCells();
-        auto tcell_it = tmpTransCells.begin();
+        std::vector<Cell*> tmpTransCells = m_endCache->getTransitionCells();
+        auto tcell_it                    = tmpTransCells.begin();
         for (; tcell_it != tmpTransCells.end(); ++tcell_it) {
             Zone* zone = (*tcell_it)->getZone();
             if (zone == m_endZone) {
@@ -411,8 +409,8 @@ namespace FIFE
 
         // fetch zones
         std::vector<Zone*> zones;
-        const std::list<Layer*>& allLayers       = m_from.getLayer()->getMap()->getLayers();
-        auto lay_it = allLayers.begin();
+        const std::list<Layer*>& allLayers = m_from.getLayer()->getMap()->getLayers();
+        auto lay_it                        = allLayers.begin();
         for (; lay_it != allLayers.end(); ++lay_it) {
             CellCache* cache = (*lay_it)->getCellCache();
             if (cache != nullptr) {
@@ -527,7 +525,7 @@ namespace FIFE
                 Cell* transCell = nullptr;
                 double nextCost = 0.0;
                 Location newLoc = lastLoc;
-                for (auto & tempCell : tempCells) {
+                for (auto& tempCell : tempCells) {
                     Cell* nextCell            = tempCell;
                     TransitionInfo* nextTrans = nextCell->getTransition();
                     Cell* transTargetCell     = nextTrans->m_layer->getCellCache()->getCell(nextTrans->m_mc);

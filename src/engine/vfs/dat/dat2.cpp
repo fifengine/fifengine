@@ -49,7 +49,9 @@ namespace FIFE
         // Do not read the complete file list at startup.
         // Instead read a chunk each frame.
         m_timer.setInterval(0);
-        m_timer.setCallback([this] { readFileEntry(); });
+        m_timer.setCallback([this] {
+            readFileEntry();
+        });
         m_timer.start();
     }
 

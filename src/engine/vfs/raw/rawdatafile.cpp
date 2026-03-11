@@ -18,7 +18,7 @@
 namespace FIFE
 {
 
-    RawDataFile::RawDataFile(std::string  file) :
+    RawDataFile::RawDataFile(std::string file) :
         m_file(std::move(file)), m_stream(m_file.c_str(), std::ios::binary), m_filesize(0)
     {
         if (!m_stream) {

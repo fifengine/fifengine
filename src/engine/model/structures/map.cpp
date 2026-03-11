@@ -31,7 +31,7 @@ namespace FIFE
 {
 
     Map::Map(
-        std::string  identifier,
+        std::string identifier,
         RenderBackend* renderBackend,
         const std::vector<RendererBase*>& renderers,
         TimeProvider* tp_master) :
@@ -87,8 +87,8 @@ namespace FIFE
 
         auto* layer = new Layer(identifier, this, grid);
         m_layers.push_back(layer);
-        m_changed                                   = true;
-        auto i = m_changeListeners.begin();
+        m_changed = true;
+        auto i    = m_changeListeners.begin();
         while (i != m_changeListeners.end()) {
             (*i)->onLayerCreate(this, layer);
             ++i;
@@ -117,8 +117,8 @@ namespace FIFE
 
     void Map::deleteLayers()
     {
-        std::list<Layer*> temp_layers       = m_layers;
-        auto temp_it = temp_layers.begin();
+        std::list<Layer*> temp_layers = m_layers;
+        auto temp_it                  = temp_layers.begin();
         for (; temp_it != temp_layers.end(); ++temp_it) {
             auto i = m_changeListeners.begin();
             while (i != m_changeListeners.end()) {
@@ -141,8 +141,8 @@ namespace FIFE
         if (m_layers.empty()) {
             return;
         }
-        auto it = m_layers.begin();
-        Layer* layer                   = *it;
+        auto it      = m_layers.begin();
+        Layer* layer = *it;
         for (; it != m_layers.end(); ++it) {
             ModelCoordinate newMin;
             ModelCoordinate newMax;
@@ -201,7 +201,7 @@ namespace FIFE
             }
         }
         // loop over Caches and update
-        for (auto & cellCache : cellCaches) {
+        for (auto& cellCache : cellCaches) {
             cellCache->update();
         }
         if (!m_changedLayers.empty()) {
@@ -299,8 +299,8 @@ namespace FIFE
 
     uint32_t Map::getActiveCameraCount() const
     {
-        uint32_t count                          = 0;
-        auto it = m_cameras.begin();
+        uint32_t count = 0;
+        auto it        = m_cameras.begin();
         for (; it != m_cameras.end(); ++it) {
             if ((*it)->isEnabled()) {
                 count += 1;

@@ -73,10 +73,10 @@ namespace FIFE
     SoundEffectManager::~SoundEffectManager()
     {
         // SoundEmitters are destroyed beforehand
-        for (auto & m_filter : m_filters) {
+        for (auto& m_filter : m_filters) {
             delete m_filter;
         }
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             delete m_effect;
         }
     }
@@ -155,7 +155,7 @@ namespace FIFE
         m_active = true;
 
         // create max effect slots
-        for (unsigned int & m_effectSlot : m_effectSlots) {
+        for (unsigned int& m_effectSlot : m_effectSlots) {
             alGenAuxiliaryEffectSlots(1, &m_effectSlot);
             if (alGetError() != AL_NO_ERROR) {
                 break;
@@ -296,7 +296,7 @@ namespace FIFE
 
     void SoundEffectManager::addEmitterToSoundEffect(SoundEffect* effect, SoundEmitter* emitter)
     {
-        if (std::cmp_equal(emitter->getEffectCount() , m_maxSlots)) {
+        if (std::cmp_equal(emitter->getEffectCount(), m_maxSlots)) {
             FL_WARN(_log, LMsg() << "Maximal effect number for SoundEmitter reached");
             return;
         }
@@ -314,7 +314,7 @@ namespace FIFE
             FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown effect");
             return;
         }
-        bool found                                      = false;
+        bool found      = false;
         auto emitterIt  = effectIt->second.begin();
         auto emitterEnd = effectIt->second.end();
         while (emitterIt != emitterEnd) {
@@ -356,7 +356,7 @@ namespace FIFE
             FL_WARN(_log, LMsg() << "SoundEffect can not removed from unknown filter");
             return;
         }
-        bool found                                    = false;
+        bool found     = false;
         auto effectIt  = filterIt->second.begin();
         auto effectEnd = filterIt->second.end();
         while (effectIt != effectEnd) {
@@ -383,7 +383,7 @@ namespace FIFE
         if (!effect->isEnabled()) {
             return;
         }
-        auto number = static_cast<ALuint>(emitter->getEffectNumber(effect));
+        auto number   = static_cast<ALuint>(emitter->getEffectNumber(effect));
         ALuint filter = (effect->getFilter() != nullptr) ? effect->getFilter()->getFilterId() : AL_FILTER_NULL;
         alSource3i(emitter->getSource(), AL_AUXILIARY_SEND_FILTER, effect->getSlotId(), number, filter);
     }
@@ -490,7 +490,7 @@ namespace FIFE
             FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown filter");
             return;
         }
-        bool found                                      = false;
+        bool found      = false;
         auto emitterIt  = filterIt->second.begin();
         auto emitterEnd = filterIt->second.end();
         while (emitterIt != emitterEnd) {

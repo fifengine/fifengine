@@ -37,8 +37,8 @@ namespace FIFE
 
     void VFS::cleanup()
     {
-        type_sources sources             = m_sources;
-        auto end = sources.end();
+        type_sources sources = m_sources;
+        auto end             = sources.end();
         for (auto i = sources.begin(); i != end; ++i) {
             delete *i;
         }
@@ -124,8 +124,8 @@ namespace FIFE
         for (auto i = m_providers.begin(); i != end; ++i) {
             VFSSourceProvider* provider = *i;
             if (provider->hasSource(path)) {
-                VFSSource* source        = provider->getSource(path);
-                auto i = std::ranges::find(m_sources, source);
+                VFSSource* source = provider->getSource(path);
+                auto i            = std::ranges::find(m_sources, source);
                 if (i == m_sources.end()) {
                     removeSource(*i);
                     return;
@@ -170,8 +170,8 @@ namespace FIFE
         const std::string newpath       = path + "/";
         std::vector<std::string> tokens = split(newpath, '/');
 
-        std::string currentpath                        = "/";
-        auto token = tokens.begin();
+        std::string currentpath = "/";
+        auto token              = tokens.begin();
         while (token != tokens.end()) {
             if (!(*token).empty()) {
                 if (*token != "." && *token != ".." && listDirectories(currentpath, *token).empty()) {
@@ -255,8 +255,8 @@ namespace FIFE
         for (auto i = m_providers.begin(); i != end; ++i) {
             const VFSSourceProvider* provider = *i;
             if (provider->hasSource(path)) {
-                const VFSSource* source        = provider->getSource(path);
-                auto i = std::ranges::find(m_sources, source);
+                const VFSSource* source = provider->getSource(path);
+                auto i                  = std::ranges::find(m_sources, source);
                 if (i == m_sources.end()) {
                     return false;
                 }

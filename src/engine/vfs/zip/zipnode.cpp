@@ -50,7 +50,7 @@ namespace FIFE
 {
     ZipEntryData::ZipEntryData() : comp(0), crc32(0), size_comp(0), size_real(0), offset(0) { }
 
-    ZipNode::ZipNode(std::string  name, ZipNode* parent /*=0*/) : m_name(std::move(name)), m_parent(parent)
+    ZipNode::ZipNode(std::string name, ZipNode* parent /*=0*/) : m_name(std::move(name)), m_parent(parent)
     {
 
         // set the content type based on whether

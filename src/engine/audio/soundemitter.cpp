@@ -217,7 +217,7 @@ namespace FIFE
             m_manager->deactivateFilter(m_directFilter, this);
         }
         std::vector<SoundEffect*> effects = m_effects;
-        for (auto & effect : effects) {
+        for (auto& effect : effects) {
             if (effect != nullptr) {
                 m_manager->removeEmitterFromSoundEffect(effect, this);
             }
@@ -506,7 +506,7 @@ namespace FIFE
         if (m_soundClip) {
             // convert to milliseconds
             double samplerate = static_cast<double>(getSampleRate()) / 1000.0;
-            auto bitres     = static_cast<double>(getBitResolution());
+            auto bitres       = static_cast<double>(getBitResolution());
             // convert to bits
             double size   = static_cast<double>(getDecodedLength()) * 8.0;
             double stereo = (isStereo() ? 2.0 : 1.0);
@@ -869,10 +869,10 @@ namespace FIFE
     void SoundEmitter::addEffect(SoundEffect* effect)
     {
         bool added = false;
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (m_effect == nullptr) {
                 m_effect = effect;
-                added = true;
+                added    = true;
                 break;
             }
         }
@@ -883,7 +883,7 @@ namespace FIFE
 
     void SoundEmitter::removeEffect(SoundEffect* effect)
     {
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (effect == m_effect) {
                 m_effect = nullptr;
                 break;
@@ -894,7 +894,7 @@ namespace FIFE
     uint8_t SoundEmitter::getEffectCount()
     {
         uint8_t counter = 0;
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (m_effect != nullptr) {
                 ++counter;
             }
@@ -905,7 +905,7 @@ namespace FIFE
     uint8_t SoundEmitter::getEffectNumber(SoundEffect* effect)
     {
         uint8_t number = 0;
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (effect == m_effect) {
                 break;
             }
@@ -926,7 +926,7 @@ namespace FIFE
 
     void SoundEmitter::activateEffects()
     {
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (m_effect != nullptr) {
                 m_manager->activateEffect(m_effect, this);
             }
@@ -938,7 +938,7 @@ namespace FIFE
 
     void SoundEmitter::deactivateEffects()
     {
-        for (auto & m_effect : m_effects) {
+        for (auto& m_effect : m_effects) {
             if (m_effect != nullptr) {
                 m_manager->deactivateEffect(m_effect, this);
             }

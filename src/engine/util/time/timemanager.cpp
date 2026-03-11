@@ -68,7 +68,7 @@ namespace FIFE
     void TimeManager::unregisterEvent(TimeEvent* event)
     {
         // Unregister.
-        for (auto & event_i : m_events_list) {
+        for (auto& event_i : m_events_list) {
             if (event_i == event) {
                 event_i = nullptr;
                 return;

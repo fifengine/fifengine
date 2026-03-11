@@ -245,12 +245,12 @@ namespace fcn
     {
         Widget* parent = getParent();
         if (parent != nullptr) {
-            DockArea* top                   = nullptr;
-            DockArea* right                 = nullptr;
-            DockArea* bottom                = nullptr;
-            DockArea* left                  = nullptr;
-            std::list<Widget*> widgets      = parent->getWidgetsIn(parent->getChildrenArea());
-            auto it = widgets.begin();
+            DockArea* top              = nullptr;
+            DockArea* right            = nullptr;
+            DockArea* bottom           = nullptr;
+            DockArea* left             = nullptr;
+            std::list<Widget*> widgets = parent->getWidgetsIn(parent->getChildrenArea());
+            auto it                    = widgets.begin();
             for (; it != widgets.end(); ++it) {
                 auto* tmp = dynamic_cast<DockArea*>(*it);
                 if (tmp == nullptr) {

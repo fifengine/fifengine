@@ -48,7 +48,7 @@ namespace FIFE
             dir_names.push_back(name);
         }
 
-        for (auto & dir_name : dir_names) {
+        for (auto& dir_name : dir_names) {
             loadFileList(dir_name);
         }
     }

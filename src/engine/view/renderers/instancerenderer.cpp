@@ -109,7 +109,9 @@ namespace FIFE
         }
         // init timer
         m_timer.setInterval(m_interval);
-        m_timer.setCallback([this] { check(); });
+        m_timer.setCallback([this] {
+            check();
+        });
         // create delete listener
         m_delete_listener = new InstanceRendererDeleteListener(this);
     }
@@ -131,7 +133,9 @@ namespace FIFE
         }
         // init timer
         m_timer.setInterval(m_interval);
-        m_timer.setCallback([this] { check(); });
+        m_timer.setCallback([this] {
+            check();
+        });
         // create delete listener
         m_delete_listener = new InstanceRendererDeleteListener(this);
     }
@@ -209,8 +213,8 @@ namespace FIFE
                         }
                     }
 
-                    std::string str_name                      = instance->getObject()->getNamespace();
-                    auto group_it = infoa.groups.begin();
+                    std::string str_name = instance->getObject()->getNamespace();
+                    auto group_it        = infoa.groups.begin();
                     for (; group_it != infoa.groups.end(); ++group_it) {
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
@@ -243,8 +247,8 @@ namespace FIFE
             bool recoloring          = false;
             if (any_effects) {
                 // coloring
-                auto coloring_it = m_instance_colorings.find(instance);
-                const bool coloring                        = coloring_it != m_instance_colorings.end();
+                auto coloring_it    = m_instance_colorings.find(instance);
+                const bool coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -253,8 +257,8 @@ namespace FIFE
                     recoloring       = true;
                 }
                 // outline
-                auto outline_it = m_instance_outlines.find(instance);
-                const bool outline                        = outline_it != m_instance_outlines.end();
+                auto outline_it    = m_instance_outlines.find(instance);
+                const bool outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -318,8 +322,8 @@ namespace FIFE
             bool recoloring          = false;
             if (any_effects) {
                 // coloring
-                auto coloring_it = m_instance_colorings.find(instance);
-                const bool coloring                        = coloring_it != m_instance_colorings.end();
+                auto coloring_it    = m_instance_colorings.find(instance);
+                const bool coloring = coloring_it != m_instance_colorings.end();
                 if (coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -328,8 +332,8 @@ namespace FIFE
                     recoloring       = true;
                 }
                 // outline
-                auto outline_it = m_instance_outlines.find(instance);
-                const bool outline                        = outline_it != m_instance_outlines.end();
+                auto outline_it    = m_instance_outlines.find(instance);
+                const bool outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -394,8 +398,8 @@ namespace FIFE
                         }
                     }
 
-                    std::string str_name                      = instance->getObject()->getNamespace();
-                    auto group_it = infoa.groups.begin();
+                    std::string str_name = instance->getObject()->getNamespace();
+                    auto group_it        = infoa.groups.begin();
                     for (; group_it != infoa.groups.end(); ++group_it) {
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
@@ -425,8 +429,8 @@ namespace FIFE
             bool recoloring          = false;
             if (any_effects) {
                 // coloring
-                auto coloring_it = m_instance_colorings.find(instance);
-                const bool coloring                        = coloring_it != m_instance_colorings.end();
+                auto coloring_it    = m_instance_colorings.find(instance);
+                const bool coloring = coloring_it != m_instance_colorings.end();
                 if (coloring && !m_need_bind_coloring) {
                     coloringColor[0] = coloring_it->second.r;
                     coloringColor[1] = coloring_it->second.g;
@@ -435,8 +439,8 @@ namespace FIFE
                     recoloring       = true;
                 }
                 // outline
-                auto outline_it = m_instance_outlines.find(instance);
-                const bool outline                        = outline_it != m_instance_outlines.end();
+                auto outline_it    = m_instance_outlines.find(instance);
+                const bool outline = outline_it != m_instance_outlines.end();
                 if (outline) {
                     if (lm != 0) {
                         // first render normal image without stencil and alpha test (0)
@@ -455,9 +459,9 @@ namespace FIFE
             }
             if (lm != 0) {
                 if (unlit) {
-                    bool found                                = false;
-                    std::string lit_name                      = instance->getObject()->getNamespace();
-                    auto unlit_it = m_unlit_groups.begin();
+                    bool found           = false;
+                    std::string lit_name = instance->getObject()->getNamespace();
+                    auto unlit_it        = m_unlit_groups.begin();
                     for (; unlit_it != m_unlit_groups.end(); ++unlit_it) {
                         if (lit_name.find(*unlit_it) != std::string::npos) {
                             found = true;
@@ -529,18 +533,18 @@ namespace FIFE
         // animation overlay without color overlay
         if ((animationOverlay != nullptr) && (animationColorOverlay == nullptr)) {
             if (withZ) {
-                for (auto & it : *animationOverlay) {
+                for (auto& it : *animationOverlay) {
                     it->renderZ(vc.dimensions, vertexZ, vc.transparency, recoloring ? coloringColor : nullptr);
                 }
             } else {
-                for (auto & it : *animationOverlay) {
+                for (auto& it : *animationOverlay) {
                     it->render(vc.dimensions, vc.transparency, recoloring ? coloringColor : nullptr);
                 }
             }
             // animation overlay with color overlay
         } else if ((animationOverlay != nullptr) && (animationColorOverlay != nullptr)) {
             auto ovit = animationColorOverlay->begin();
-            auto it         = animationOverlay->begin();
+            auto it   = animationOverlay->begin();
             for (; it != animationOverlay->end(); ++it, ++ovit) {
                 OverlayColors* oc = (*ovit);
                 if (oc == nullptr) {
@@ -551,16 +555,16 @@ namespace FIFE
                     }
                 } else {
                     if (oc->getColors().size() > 1) {
-                        auto cit = oc->getColors().begin();
-                        uint8_t factor[4]                          = {0, 0, 0, cit->second.getAlpha()};
+                        auto cit          = oc->getColors().begin();
+                        uint8_t factor[4] = {0, 0, 0, cit->second.getAlpha()};
                         // multi color overlay
                         ImagePtr multiColorOverlay;
                         if (recoloring) {
                             // create temp OverlayColors
-                            auto* temp                         = new OverlayColors(oc->getColorOverlayImage());
-                            auto alphaFactor1                          = static_cast<float>(coloringColor[3] / 255.0);
+                            auto* temp                                  = new OverlayColors(oc->getColorOverlayImage());
+                            auto alphaFactor1                           = static_cast<float>(coloringColor[3] / 255.0);
                             const std::map<Color, Color>& defaultColors = oc->getColors();
-                            for (const auto & defaultColor : defaultColors) {
+                            for (const auto& defaultColor : defaultColors) {
                                 if (defaultColor.second.getAlpha() == 0) {
                                     continue;
                                 }
@@ -596,8 +600,8 @@ namespace FIFE
                         continue;
                     }
                     // single color overlay
-                    auto color_it = oc->getColors().begin();
-                    uint8_t rgba[4]                                 = {
+                    auto color_it   = oc->getColors().begin();
+                    uint8_t rgba[4] = {
                         color_it->second.getR(),
                         color_it->second.getG(),
                         color_it->second.getB(),
@@ -605,7 +609,7 @@ namespace FIFE
                     bool noOverlay = rgba[3] == 255;
                     if (recoloring) {
                         if (!noOverlay) {
-                            auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                            auto alphaFactor1  = static_cast<float>(coloringColor[3] / 255.0);
                             float alphaFactor2 = 1.0 - static_cast<float>(rgba[3] / 255.0);
                             rgba[0] = coloringColor[0] * (1.0 - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1;
                             rgba[1] = coloringColor[1] * (1.0 - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1;
@@ -636,14 +640,14 @@ namespace FIFE
                 // multi color overlay
                 ImagePtr multiColorOverlay;
                 // interpolation factor
-                auto it = colorOverlay->getColors().begin();
-                uint8_t factor[4]                         = {0, 0, 0, it->second.getAlpha()};
+                auto it           = colorOverlay->getColors().begin();
+                uint8_t factor[4] = {0, 0, 0, it->second.getAlpha()};
                 if (recoloring) {
                     // create temp OverlayColors
-                    auto* temp = new OverlayColors(colorOverlay->getColorOverlayImage());
-                    auto alphaFactor1  = static_cast<float>(coloringColor[3] / 255.0);
+                    auto* temp        = new OverlayColors(colorOverlay->getColorOverlayImage());
+                    auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
                     const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
-                    for (const auto & defaultColor : defaultColors) {
+                    for (const auto& defaultColor : defaultColors) {
                         if (defaultColor.second.getAlpha() == 0) {
                             continue;
                         }
@@ -678,8 +682,8 @@ namespace FIFE
                 }
             } else {
                 // single color overlay
-                auto color_it = colorOverlay->getColors().begin();
-                uint8_t rgba[4]                                 = {
+                auto color_it   = colorOverlay->getColors().begin();
+                uint8_t rgba[4] = {
                     color_it->second.getR(),
                     color_it->second.getG(),
                     color_it->second.getB(),
@@ -687,7 +691,7 @@ namespace FIFE
                 bool noOverlay = rgba[3] == 255;
                 if (recoloring) {
                     if (!noOverlay) {
-                        auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                        auto alphaFactor1  = static_cast<float>(coloringColor[3] / 255.0);
                         float alphaFactor2 = 1.0 - static_cast<float>(rgba[3] / 255.0);
                         rgba[0] = coloringColor[0] * (1.0 - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1;
                         rgba[1] = coloringColor[1] * (1.0 - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1;
@@ -792,7 +796,7 @@ namespace FIFE
             for (int32_t y = 0; y < outline_surface->h; y++) {
                 vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
                 if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-                    if (std::cmp_less(a , prev_a)) {
+                    if (std::cmp_less(a, prev_a)) {
                         for (int32_t yy = y; yy < y + info.width; yy++) {
                             Image::putPixel(outline_surface, x, yy, info.r, info.g, info.b);
                         }
@@ -811,7 +815,7 @@ namespace FIFE
             for (int32_t x = 0; x < outline_surface->w; x++) {
                 vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
                 if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-                    if (std::cmp_less(a , prev_a)) {
+                    if (std::cmp_less(a, prev_a)) {
                         for (int32_t xx = x; xx < x + info.width; xx++) {
                             Image::putPixel(outline_surface, xx, y, info.r, info.g, info.b);
                         }
@@ -857,7 +861,7 @@ namespace FIFE
         uint32_t mw                              = 0;
         uint32_t mh                              = 0;
         std::vector<ImagePtr>* animationOverlays = vc.getAnimationOverlay();
-        auto it       = animationOverlays->begin();
+        auto it                                  = animationOverlays->begin();
         for (; it != animationOverlays->end(); ++it) {
             // With lazy loading we can come upon a situation where we need to generate outline from
             // uninitialised shared image
@@ -895,7 +899,7 @@ namespace FIFE
                 for (uint32_t y = 0; y < (*it)->getHeight(); y++) {
                     (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-                        if (std::cmp_less(a , prev_a)) {
+                        if (std::cmp_less(a, prev_a)) {
                             for (uint32_t yy = y; yy < y + info.width; yy++) {
                                 int32_t tx = x + (mw / 2 - (*it)->getWidth() / 2);
                                 int32_t ty = yy + (mh / 2 - (*it)->getHeight() / 2);
@@ -919,7 +923,7 @@ namespace FIFE
                 for (uint32_t x = 0; x < (*it)->getWidth(); x++) {
                     (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
-                        if (std::cmp_less(a , prev_a)) {
+                        if (std::cmp_less(a, prev_a)) {
                             for (uint32_t xx = x; xx < x + info.width; xx++) {
                                 int32_t tx = xx + (mw / 2 - (*it)->getWidth() / 2);
                                 int32_t ty = y + (mh / 2 - (*it)->getHeight() / 2);
@@ -1143,7 +1147,8 @@ namespace FIFE
             // already exists in the map so lets just update its outline info
             OutlineInfo& info = insertiter.first->second;
 
-            if (std::cmp_not_equal(info.r , r) || std::cmp_not_equal(info.g , g) || std::cmp_not_equal(info.b , b) || info.width != width) {
+            if (std::cmp_not_equal(info.r, r) || std::cmp_not_equal(info.g, g) || std::cmp_not_equal(info.b, b) ||
+                info.width != width) {
                 // only update the outline info if its changed since the last call
                 // flag the outline info as dirty so it will get processed during rendering
                 info.r         = r;
@@ -1188,7 +1193,8 @@ namespace FIFE
             // already exists in the map so lets just update its coloring info
             ColoringInfo& info = insertiter.first->second;
 
-            if (std::cmp_not_equal(info.r , r) || std::cmp_not_equal(info.g , g) || std::cmp_not_equal(info.b , b) || std::cmp_not_equal(info.a , a)) {
+            if (std::cmp_not_equal(info.r, r) || std::cmp_not_equal(info.g, g) || std::cmp_not_equal(info.b, b) ||
+                std::cmp_not_equal(info.a, a)) {
                 // only update the coloring info if its changed since the last call
                 info.r     = r;
                 info.b     = b;
@@ -1435,8 +1441,8 @@ namespace FIFE
 
     void InstanceRenderer::check()
     {
-        uint32_t now                 = TimeManager::instance()->getTime();
-        auto it = m_check_images.begin();
+        uint32_t now = TimeManager::instance()->getTime();
+        auto it      = m_check_images.begin();
         // free unused images
         while (it != m_check_images.end()) {
             if (now - it->timestamp > m_interval) {

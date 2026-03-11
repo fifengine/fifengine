@@ -50,7 +50,7 @@ namespace FIFE
 
     JoystickManager::~JoystickManager()
     {
-        for (auto & m_joystick : m_joysticks) {
+        for (auto& m_joystick : m_joysticks) {
             delete m_joystick;
         }
 
@@ -60,13 +60,13 @@ namespace FIFE
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
         Joystick* joystick = nullptr;
-        for (auto & m_activeJoystick : m_activeJoysticks) {
+        for (auto& m_activeJoystick : m_activeJoysticks) {
             if (m_activeJoystick->getDeviceIndex() == deviceIndex) {
                 return joystick;
             }
         }
         std::string guidStr = getGuidString(deviceIndex);
-        for (auto & m_joystick : m_joysticks) {
+        for (auto& m_joystick : m_joysticks) {
             if (!m_joystick->isConnected() && m_joystick->getGuid() == guidStr) {
                 joystick = m_joystick;
                 break;
@@ -87,8 +87,8 @@ namespace FIFE
 
     Joystick* JoystickManager::getJoystick(int32_t instanceId)
     {
-        Joystick* joy                            = nullptr;
-        auto it = m_joystickIndices.find(instanceId);
+        Joystick* joy = nullptr;
+        auto it       = m_joystickIndices.find(instanceId);
         if (it != m_joystickIndices.end()) {
             joy = m_joysticks[it->second];
         }
@@ -115,7 +115,7 @@ namespace FIFE
     {
         m_mappingLoader.load(file);
         // check if one of the joysticks can now be opened as gamecontroller
-        for (auto & m_activeJoystick : m_activeJoysticks) {
+        for (auto& m_activeJoystick : m_activeJoysticks) {
             if (!m_activeJoystick->isController()) {
                 m_activeJoystick->openController();
                 addControllerGuid(m_activeJoystick);
@@ -166,7 +166,7 @@ namespace FIFE
         int32_t result = SDL_GameControllerAddMapping(mapping.c_str());
         if (result == 1) {
             // check if one of the joysticks can now be opened as gamecontroller
-            for (auto & m_activeJoystick : m_activeJoysticks) {
+            for (auto& m_activeJoystick : m_activeJoysticks) {
                 if (!m_activeJoystick->isController()) {
                     m_activeJoystick->openController();
                     addControllerGuid(m_activeJoystick);
@@ -191,9 +191,7 @@ namespace FIFE
     {
         if (listener->isActive()) {
             listener->setActive(false);
-            for (auto it = m_joystickListeners.begin();
-                 it != m_joystickListeners.end();
-                 ++it) {
+            for (auto it = m_joystickListeners.begin(); it != m_joystickListeners.end(); ++it) {
                 if (*it == listener) {
                     m_joystickListeners.erase(it);
                     break;
@@ -282,8 +280,8 @@ namespace FIFE
 
     void JoystickManager::dispatchJoystickEvent(JoystickEvent& evt)
     {
-        std::deque<IJoystickListener*> listeners   = m_joystickListeners;
-        auto i = listeners.begin();
+        std::deque<IJoystickListener*> listeners = m_joystickListeners;
+        auto i                                   = listeners.begin();
         for (; i != listeners.end(); ++i) {
             if (!(*i)->isActive()) {
                 continue;

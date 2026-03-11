@@ -89,16 +89,16 @@ namespace FIFE
         const bool render_costs = (!m_visualCosts.empty() && (m_font != nullptr));
         const bool zoomed       = !Mathd::Equal(1.0, cam->getZoom());
 
-        Rect layerView                   = cam->getLayerViewPort(layer);
-        std::vector<Cell*> cells         = cache->getCellsInRect(layerView);
-        auto cit = cells.begin();
+        Rect layerView           = cam->getLayerViewPort(layer);
+        std::vector<Cell*> cells = cache->getCellsInRect(layerView);
+        auto cit                 = cells.begin();
         for (; cit != cells.end(); ++cit) {
             if (m_blockingEnabled) {
                 if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                     std::vector<ExactModelCoordinate> vertices;
                     cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                    auto it = vertices.begin();
-                    int32_t halfind                                      = vertices.size() / 2;
+                    auto it             = vertices.begin();
+                    int32_t halfind     = vertices.size() / 2;
                     ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                     Point pt1(firstpt.x, firstpt.y);
                     Point pt2;
@@ -125,8 +125,8 @@ namespace FIFE
                 double cost;
                 auto cost_it = m_visualCosts.begin();
                 for (; cost_it != m_visualCosts.end(); ++cost_it) {
-                    std::vector<std::string> cell_costs      = cache->getCellCosts(*cit);
-                    auto cc_it = cell_costs.begin();
+                    std::vector<std::string> cell_costs = cache->getCellCosts(*cit);
+                    auto cc_it                          = cell_costs.begin();
                     for (; cc_it != cell_costs.end(); ++cc_it) {
                         if (*cc_it == *cost_it) {
                             match = true;
@@ -180,8 +180,8 @@ namespace FIFE
                             }
                             std::vector<ExactModelCoordinate> vertices;
                             cg->getVertices(vertices, (*pit).getLayerCoordinates());
-                            auto it = vertices.begin();
-                            int32_t halfind                                      = vertices.size() / 2;
+                            auto it             = vertices.begin();
+                            int32_t halfind     = vertices.size() / 2;
                             ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                             Point pt1(firstpt.x, firstpt.y);
                             Point pt2;

@@ -33,7 +33,7 @@ namespace FIFE
     class VFSSourceProvider
     {
     public:
-        VFSSourceProvider(std::string  name);
+        VFSSourceProvider(std::string name);
         virtual ~VFSSourceProvider();
 
         /** Returns the name of this VFSSourceProvider

@@ -44,7 +44,7 @@ namespace FIFE
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
-            for (auto & instance : instances) {
+            for (auto& instance : instances) {
                 if (instance->isMultiCell()) {
                     bool rotchange = (instance->getChangeInfo() & ICHANGE_ROTATION) == ICHANGE_ROTATION;
                     bool locchange = (instance->getChangeInfo() & ICHANGE_LOC) == ICHANGE_LOC;
@@ -85,7 +85,7 @@ namespace FIFE
 
                         CellGrid* cg                                 = m_layer->getCellGrid();
                         const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                        auto it    = multiinstances.begin();
+                        auto it                                      = multiinstances.begin();
                         for (; it != multiinstances.end(); ++it) {
                             // remove
                             std::vector<ModelCoordinate> coordinates =
@@ -190,7 +190,7 @@ namespace FIFE
                 instance->updateMultiInstances();
                 CellGrid* cg                                 = m_layer->getCellGrid();
                 const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                auto it    = multiinstances.begin();
+                auto it                                      = multiinstances.begin();
                 for (; it != multiinstances.end(); ++it) {
                     std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
                         mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
@@ -228,7 +228,7 @@ namespace FIFE
                 instance->updateMultiInstances();
                 CellGrid* cg                                 = m_layer->getCellGrid();
                 const std::vector<Instance*>& multiinstances = instance->getMultiInstances();
-                auto it    = multiinstances.begin();
+                auto it                                      = multiinstances.begin();
                 for (; it != multiinstances.end(); ++it) {
                     std::vector<ModelCoordinate> coordinates = cg->toMultiCoordinates(
                         mc, (*it)->getObject()->getMultiPartCoordinates(instance->getRotation()));
@@ -348,10 +348,10 @@ namespace FIFE
                 cell->setZoneProtected(true);
                 m_cache->splitZone(cell);
             } else {
-                Zone* z1                              = cell->getZone();
-                Zone* z2                              = nullptr;
-                const std::vector<Cell*>& neighbors   = cell->getNeighbors();
-                auto it = neighbors.begin();
+                Zone* z1                            = cell->getZone();
+                Zone* z2                            = nullptr;
+                const std::vector<Cell*>& neighbors = cell->getNeighbors();
+                auto it                             = neighbors.begin();
                 for (; it != neighbors.end(); ++it) {
                     Zone* z = (*it)->getZone();
                     if ((z != nullptr) && z != z1) {
@@ -574,7 +574,7 @@ namespace FIFE
                     int32_t cellZ = (*cit)->getLayerCoordinates().z;
                     std::vector<ModelCoordinate> coordinates;
                     m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
-                    for (auto & coordinate : coordinates) {
+                    for (auto& coordinate : coordinates) {
                         Cell* c = getCell(coordinate);
                         if (*cit == c || (c == nullptr)) {
                             continue;
@@ -639,7 +639,7 @@ namespace FIFE
                     (*cit)->getCellType() == CTYPE_STATIC_BLOCKER || (*cit)->getCellType() == CTYPE_CELL_BLOCKER;
                 std::vector<ModelCoordinate> coordinates;
                 m_layer->getCellGrid()->getAccessibleCoordinates((*cit)->getLayerCoordinates(), coordinates);
-                for (auto & coordinate : coordinates) {
+                for (auto& coordinate : coordinates) {
                     Cell* c = getCell(coordinate);
                     if (*cit == c || (c == nullptr)) {
                         continue;
@@ -807,7 +807,7 @@ namespace FIFE
                     interact->getInstanceTree()->findInstances(inter_mc, 0, 0, interact_instances);
                     if (!interact_instances.empty()) {
                         // remove interact Instances from Cell
-                        for (auto & interact_instance : interact_instances) {
+                        for (auto& interact_instance : interact_instances) {
                             cell->removeInstance(interact_instance);
                         }
                     }
@@ -892,7 +892,7 @@ namespace FIFE
     {
         std::vector<Cell*> cells;
         std::vector<ModelCoordinate> coords = m_layer->getCellGrid()->getCoordinatesInLine(pt1, pt2);
-        for (auto & coord : coords) {
+        for (auto& coord : coords) {
             Cell* c = getCell(coord);
             if (c != nullptr) {
                 if (blocker && c->getCellType() != CTYPE_NO_BLOCKER) {
@@ -1015,7 +1015,7 @@ namespace FIFE
         int32_t s                   = (sangle + 360) % 360;
         int32_t e                   = (eangle + 360) % 360;
         bool greater                = (s > e) ? true : false;
-        for (auto & tmpCell : tmpCells) {
+        for (auto& tmpCell : tmpCells) {
             int32_t angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
@@ -1087,7 +1087,7 @@ namespace FIFE
     {
         if (existsCost(costId)) {
             StringCellPair result = m_costsToCells.equal_range(costId);
-            auto it = result.first;
+            auto it               = result.first;
             for (; it != result.second; ++it) {
                 if ((*it).second == cell) {
                     return;
@@ -1120,7 +1120,7 @@ namespace FIFE
     void CellCache::removeCellFromCost(const std::string& costId, Cell* cell)
     {
         StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 m_costsToCells.erase(it);
@@ -1141,7 +1141,7 @@ namespace FIFE
     {
         std::vector<Cell*> cells;
         StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             cells.push_back((*it).second);
         }
@@ -1163,7 +1163,7 @@ namespace FIFE
     bool CellCache::existsCostForCell(const std::string& costId, Cell* cell)
     {
         StringCellPair result = m_costsToCells.equal_range(costId);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 return true;
@@ -1259,8 +1259,8 @@ namespace FIFE
 
     double CellCache::getCostMultiplier(Cell* cell)
     {
-        double cost                          = 1.0;
-        auto it = m_costMultipliers.find(cell);
+        double cost = 1.0;
+        auto it     = m_costMultipliers.find(cell);
         if (it != m_costMultipliers.end()) {
             cost = it->second;
         }
@@ -1293,8 +1293,8 @@ namespace FIFE
 
     double CellCache::getSpeedMultiplier(Cell* cell)
     {
-        double speed                         = 1.0;
-        auto it = m_speedMultipliers.find(cell);
+        double speed = 1.0;
+        auto it      = m_speedMultipliers.find(cell);
         if (it != m_speedMultipliers.end()) {
             speed = it->second;
         }
@@ -1347,7 +1347,7 @@ namespace FIFE
         while (search) {
             bool found = false;
             if (!m_zones.empty()) {
-                for (auto & m_zone : m_zones) {
+                for (auto& m_zone : m_zones) {
                     if (m_zone->getId() == id) {
                         found = true;
                         ++id;
@@ -1371,7 +1371,7 @@ namespace FIFE
     Zone* CellCache::getZone(uint32_t id)
     {
         Zone* zi = nullptr;
-        for (auto & m_zone : m_zones) {
+        for (auto& m_zone : m_zones) {
             if (m_zone->getId() == id) {
                 zi = m_zone;
                 break;
@@ -1523,7 +1523,7 @@ namespace FIFE
     void CellCache::removeCellFromArea(const std::string& id, Cell* cell)
     {
         StringCellPair result = m_cellAreas.equal_range(id);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 m_cellAreas.erase(it);
@@ -1584,7 +1584,7 @@ namespace FIFE
     {
         std::vector<Cell*> cells;
         StringCellPair result = m_cellAreas.equal_range(id);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             cells.push_back((*it).second);
         }
@@ -1594,7 +1594,7 @@ namespace FIFE
     bool CellCache::isCellInArea(const std::string& id, Cell* cell)
     {
         StringCellPair result = m_cellAreas.equal_range(id);
-        auto it = result.first;
+        auto it               = result.first;
         for (; it != result.second; ++it) {
             if ((*it).second == cell) {
                 return true;

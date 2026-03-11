@@ -62,13 +62,13 @@ namespace FIFE
     Model::~Model()
     {
         // first remove the map observer, we delete all grids anyway
-        for (auto & m_map : m_maps) {
+        for (auto& m_map : m_maps) {
             m_map->removeChangeListener(m_mapObserver);
             delete m_map;
         }
         delete m_mapObserver;
 
-        for (auto & m_namespace : m_namespaces) {
+        for (auto& m_namespace : m_namespaces) {
             purge_map(m_namespace.second);
         }
         purge(m_pathers);
@@ -174,7 +174,7 @@ namespace FIFE
     void Model::deleteMaps()
     {
         // first remove the map observer, we delete all grids anyway
-        for (auto & m_map : m_maps) {
+        for (auto& m_map : m_maps) {
             m_map->removeChangeListener(m_mapObserver);
             delete m_map;
         }
@@ -185,8 +185,8 @@ namespace FIFE
 
     uint32_t Model::getActiveCameraCount() const
     {
-        uint32_t count                     = 0;
-        auto it = m_maps.begin();
+        uint32_t count = 0;
+        auto it        = m_maps.begin();
         for (; it != m_maps.end(); ++it) {
             count += (*it)->getActiveCameraCount();
         }
@@ -219,7 +219,7 @@ namespace FIFE
         }
 
         // Finally insert & create
-        auto* object             = new Object(identifier, name_space, parent);
+        auto* object               = new Object(identifier, name_space, parent);
         nspace->second[identifier] = object;
         return object;
     }
@@ -231,7 +231,7 @@ namespace FIFE
         // Check if any instances exist. If yes - bail out.
         std::list<Layer*>::const_iterator jt;
         std::vector<Instance*>::const_iterator kt;
-        for (auto & m_map : m_maps) {
+        for (auto& m_map : m_maps) {
             for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
                     Object* o = (*kt)->getObject();
@@ -262,7 +262,7 @@ namespace FIFE
     {
         // If we have layers with instances - bail out.
         std::list<Layer*>::const_iterator jt;
-        for (auto & m_map : m_maps) {
+        for (auto& m_map : m_maps) {
             for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 if ((*jt)->hasInstances()) {
                     return false;

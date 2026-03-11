@@ -297,7 +297,7 @@ namespace FIFE
                         }
                         subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                        AtlasData atlasData = {.rect=region, .image=subImage};
+                        AtlasData atlasData = {.rect = region, .image = subImage};
                         atlas->addImage(finalname, atlasData);
                     }
                 }
@@ -341,7 +341,7 @@ namespace FIFE
                             }
                             subImage->useSharedImage(atlas->getPackedImage(), region);
 
-                            AtlasData atlasData = {.rect=region, .image=subImage};
+                            AtlasData atlasData = {.rect = region, .image = subImage};
                             atlas->addImage(finalname.str(), atlasData);
 
                             ++frame;

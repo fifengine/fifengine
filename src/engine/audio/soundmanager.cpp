@@ -48,7 +48,7 @@ namespace FIFE
     SoundManager::~SoundManager()
     {
         // delete all soundemitters
-        for (auto & it : m_emitterVec) {
+        for (auto& it : m_emitterVec) {
             if (it != nullptr) {
                 delete it;
             }
@@ -106,7 +106,7 @@ namespace FIFE
         alListenerf(AL_GAIN, m_volume);
 
         // create max sources
-        for (unsigned int & m_source : m_sources) {
+        for (unsigned int& m_source : m_sources) {
             alGenSources(1, &m_source);
             if (alGetError() != AL_NO_ERROR) {
                 break;
@@ -338,7 +338,7 @@ namespace FIFE
             return;
         }
         AudioSpaceCoordinate listenerPos = getListenerPosition();
-        auto maxDistance               = static_cast<double>(m_maxDistance);
+        auto maxDistance                 = static_cast<double>(m_maxDistance);
 
         // first check emitters
         for (auto emitter : m_emitterVec) {
@@ -379,7 +379,7 @@ namespace FIFE
             }
         }
         // then update active
-        for (auto & m_activeEmitter : m_activeEmitters) {
+        for (auto& m_activeEmitter : m_activeEmitters) {
             m_activeEmitter.first->update();
         }
     }
@@ -566,7 +566,7 @@ namespace FIFE
             FL_WARN(_log, LMsg() << "SoundEmitter can not removed from unknown group");
             return;
         }
-        bool found                                      = false;
+        bool found      = false;
         auto emitterIt  = groupIt->second.begin();
         auto emitterEnd = groupIt->second.end();
         while (emitterIt != emitterEnd) {
@@ -594,7 +594,7 @@ namespace FIFE
             return;
         }
         std::vector<SoundEmitter*> emitters = groupIt->second;
-        for (auto & emitter : emitters) {
+        for (auto& emitter : emitters) {
             emitter->setGroup("");
         }
         m_groups.erase(group);
@@ -603,10 +603,10 @@ namespace FIFE
     void SoundManager::removeAllGroups()
     {
         std::vector<std::string> groups;
-        for (auto & m_group : m_groups) {
+        for (auto& m_group : m_groups) {
             groups.push_back(m_group.first);
         }
-        for (auto & group : groups) {
+        for (auto& group : groups) {
             removeGroup(group);
         }
         m_groups.clear();

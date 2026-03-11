@@ -68,9 +68,9 @@ namespace FIFE
             return;
         }
 
-        auto instance_it = instances.begin();
-        uint32_t lm                            = m_renderbackend->getLightingModel();
-        SDL_Color old_color                    = m_font->getColor();
+        auto instance_it    = instances.begin();
+        uint32_t lm         = m_renderbackend->getLightingModel();
+        SDL_Color old_color = m_font->getColor();
         if (m_font_color) {
             m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.a);
         }

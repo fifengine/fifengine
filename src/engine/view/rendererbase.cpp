@@ -92,8 +92,8 @@ namespace FIFE
     {
         clearActiveLayers();
 
-        const std::list<Layer*>& tmp         = map->getLayers();
-        auto it = tmp.begin();
+        const std::list<Layer*>& tmp = map->getLayers();
+        auto it                      = tmp.begin();
         for (; it != tmp.end(); ++it) {
             addActiveLayer(*it);
         }

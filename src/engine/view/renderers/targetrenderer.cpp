@@ -162,7 +162,7 @@ namespace FIFE
     void TargetRenderer::render()
     {
         if (!m_targets.empty()) {
-            for (auto & m_target : m_targets) {
+            for (auto& m_target : m_targets) {
                 if (m_target.second.ndraws != -1) {
                     if (m_target.second.ndraws <= m_target.second.lasttime_draw) {
                         RenderTargetPtr rt = m_target.second.target;

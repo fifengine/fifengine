@@ -23,7 +23,7 @@ namespace FIFE
      */
     static Logger _log(LM_VFS);
 
-    VFSSourceProvider::VFSSourceProvider(std::string  name) : m_vfs(nullptr), m_name(std::move(name)) { }
+    VFSSourceProvider::VFSSourceProvider(std::string name) : m_vfs(nullptr), m_name(std::move(name)) { }
 
     VFSSourceProvider::~VFSSourceProvider() = default;
 

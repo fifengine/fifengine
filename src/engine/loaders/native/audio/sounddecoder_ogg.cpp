@@ -29,7 +29,7 @@ namespace FIFE
     {
         static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
-            auto* rdp   = reinterpret_cast<RawData*>(datasource);
+            auto* rdp      = reinterpret_cast<RawData*>(datasource);
             size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
             size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
             if (len != 0U) {

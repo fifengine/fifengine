@@ -348,10 +348,10 @@ namespace FIFE
         auto* y    = new float[n];
         auto* xtmp = new float[n];
         auto* ytmp = new float[n];
-        float xb    = 2.0;
-        float yb    = 2.0;
-        x[0]        = xrhs[0] / xb;
-        y[0]        = yrhs[0] / yb;
+        float xb   = 2.0;
+        float yb   = 2.0;
+        x[0]       = xrhs[0] / xb;
+        y[0]       = yrhs[0] / yb;
         // Decomposition and forward substitution.
         for (int32_t i = 1; i < n; i++) {
             xtmp[i] = 1 / xb;

@@ -53,12 +53,16 @@ namespace FIFE
         m_isAttached = false;
 
         m_fpsTimer.setInterval(500);
-        m_fpsTimer.setCallback([this] { updateCaption(); });
+        m_fpsTimer.setCallback([this] {
+            updateCaption();
+        });
 
         m_hiding = true;
 
         m_animationTimer.setInterval(20);
-        m_animationTimer.setCallback([this] { updateAnimation(); });
+        m_animationTimer.setCallback([this] {
+            updateAnimation();
+        });
 
         m_toolsbutton->addActionListener(this);
         m_toolsbutton->setFocusable(false);
@@ -269,7 +273,7 @@ namespace FIFE
                 rows_text.push_back(m_output->getTextRow(i));
             }
             m_output->setText("");
-            for (const auto & i : rows_text) {
+            for (const auto& i : rows_text) {
                 m_output->addRow(i);
             }
         }

@@ -147,7 +147,7 @@ namespace FIFE
     void AtlasPage::shrink(bool pot)
     {
         AtlasBlock boundaryBox(Rect(), 0);
-        for (auto & block : blocks) {
+        for (auto& block : blocks) {
             boundaryBox.merge(block);
         }
 
@@ -195,7 +195,7 @@ namespace FIFE
 
     AtlasBlock* AtlasBook::getBlock(uint32_t width, uint32_t height)
     {
-        for (auto & page : pages) {
+        for (auto& page : pages) {
             AtlasBlock* block = page.getBlock(width, height);
             if (block != nullptr) {
                 return block;
@@ -219,7 +219,7 @@ namespace FIFE
 
     void AtlasBook::shrink(bool pot)
     {
-        for (auto & page : pages) {
+        for (auto& page : pages) {
             page.shrink(pot);
         }
     }

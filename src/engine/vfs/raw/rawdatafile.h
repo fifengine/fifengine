@@ -32,7 +32,7 @@ namespace FIFE
          * @param file The path to the file to load.
          * @throw CannotOpenFile
          */
-        RawDataFile(std::string  file);
+        RawDataFile(std::string file);
         virtual ~RawDataFile();
 
         virtual uint32_t getSize() const;

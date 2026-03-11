@@ -251,7 +251,7 @@ namespace FIFE
             m_tex_coords[3] = 1.0F;
         }
 
-        auto* data = static_cast<uint8_t*>(m_surface->pixels);
+        auto* data    = static_cast<uint8_t*>(m_surface->pixels);
         int32_t pitch = m_surface->pitch;
 
         assert(!m_texId);
@@ -331,9 +331,9 @@ namespace FIFE
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
                         auto lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
-                        r           = lum;
-                        g           = lum;
-                        b           = lum;
+                        r        = lum;
+                        g        = lum;
+                        b        = lum;
                     }
                     oglbuffer[(y * m_chunk_size_w) + x] =
                         ((r >> 4) << 12) | ((g >> 4) << 8) | ((b >> 4) << 4) | ((a >> 4) << 0);
@@ -379,7 +379,7 @@ namespace FIFE
                         }
                         // if monochrome rendering is enabled, then the colors are converted to grayscale
                         if (monochrome) {
-                            auto lum        = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
+                            auto lum           = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
                             oglbuffer[gid + 0] = lum;
                             oglbuffer[gid + 1] = lum;
                             oglbuffer[gid + 2] = lum;
@@ -465,9 +465,9 @@ namespace FIFE
                     // if monochrome rendering is enabled, then the colors are converted to grayscale
                     if (monochrome) {
                         auto lum = static_cast<uint8_t>((r * 0.3) + (g * 0.59) + (b * 0.11));
-                        r           = lum;
-                        g           = lum;
-                        b           = lum;
+                        r        = lum;
+                        g        = lum;
+                        b        = lum;
                     }
 
                     oglbuffer[(y * m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a << 24);
@@ -590,7 +590,7 @@ namespace FIFE
             // if it does not exist, it is generated.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
                 ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
-                auto* img      = static_cast<GLImage*>(newAtlas.get());
+                auto* img         = static_cast<GLImage*>(newAtlas.get());
                 m_atlas_img       = newAtlas;
                 m_shared_img      = img;
             }

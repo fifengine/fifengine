@@ -34,7 +34,7 @@ namespace FIFE
      */
     static Logger _log(LM_STRUCTURES);
 
-    Layer::Layer(std::string  identifier, Map* map, CellGrid* grid) :
+    Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_id(std::move(identifier)),
         m_map(map),
         m_instancesVisibility(true),
@@ -300,7 +300,7 @@ namespace FIFE
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         std::vector<ModelCoordinate> coords = m_grid->getCoordinatesInLine(pt1, pt2);
-        for (auto & coord : coords) {
+        for (auto& coord : coords) {
             m_instanceTree->findInstances(coord, 0, 0, matchingInstances);
             if (!matchingInstances.empty()) {
                 instances.insert(instances.end(), matchingInstances.begin(), matchingInstances.end());
@@ -381,8 +381,9 @@ namespace FIFE
         int32_t s                           = (sangle + 360) % 360;
         int32_t e                           = (eangle + 360) % 360;
         bool greater                        = (s > e) ? true : false;
-        for (auto & tmpInstance : tmpInstances) {
-            int32_t angle = getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
+        for (auto& tmpInstance : tmpInstances) {
+            int32_t angle =
+                getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
             if (greater) {
                 if (angle >= s || angle <= e) {
                     instances.push_back(tmpInstance);
@@ -426,8 +427,8 @@ namespace FIFE
         int32_t numlayers              = m_map->getLayerCount();
         int32_t thislayer              = 1; // we don't need 0 indexed
 
-        const std::list<Layer*>& layers        = m_map->getLayers();
-        auto iter = layers.begin();
+        const std::list<Layer*>& layers = m_map->getLayers();
+        auto iter                       = layers.begin();
         for (; iter != layers.end(); ++iter, ++thislayer) {
             if (*iter == this) {
                 break;
@@ -446,8 +447,8 @@ namespace FIFE
     void Layer::setInstancesVisible(bool vis)
     {
         if (m_instancesVisibility != vis) {
-            m_instancesVisibility               = vis;
-            auto it = m_instances.begin();
+            m_instancesVisibility = vis;
+            auto it               = m_instances.begin();
             for (; it != m_instances.end(); ++it) {
                 (*it)->callOnVisibleChange();
             }
@@ -457,8 +458,8 @@ namespace FIFE
     void Layer::setLayerTransparency(uint8_t transparency)
     {
         if (m_transparency != transparency) {
-            m_transparency                      = transparency;
-            auto it = m_instances.begin();
+            m_transparency = transparency;
+            auto it        = m_instances.begin();
             for (; it != m_instances.end(); ++it) {
                 (*it)->callOnTransparencyChange();
             }
@@ -491,8 +492,7 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end();
-                 ++j) {
+            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
                 if ((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
                     blockingInstance = true;
                     break;
@@ -518,8 +518,7 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end();
-                 ++j) {
+            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
                 if ((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
                     blockingInstances.push_back(*j);
                 }

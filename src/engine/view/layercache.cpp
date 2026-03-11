@@ -51,7 +51,7 @@ namespace FIFE
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
         {
-            for (auto & instance : instances) {
+            for (auto& instance : instances) {
                 m_cache->updateInstance(instance);
             }
         }
@@ -131,9 +131,9 @@ namespace FIFE
             ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
             lpos.x += lpos.y / 2;
             rpos.x += rpos.y / 2;
-            auto* liv = lhs->instance->getVisual<InstanceVisual>();
-            auto* riv = rhs->instance->getVisual<InstanceVisual>();
-            int32_t lvc         = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
+            auto* liv   = lhs->instance->getVisual<InstanceVisual>();
+            auto* riv   = rhs->instance->getVisual<InstanceVisual>();
+            int32_t lvc = ceil((xtox * lpos.x) + (ytox * lpos.y)) + ceil((xtoy * lpos.x) + (ytoy * lpos.y)) +
                           liv->getStackPosition();
             int32_t rvc = ceil((xtox * rpos.x) + (ytox * rpos.y)) + ceil((xtoy * rpos.x) + (ytoy * rpos.y)) +
                           riv->getStackPosition();
@@ -194,11 +194,11 @@ namespace FIFE
     LayerCache::~LayerCache()
     {
         // removes all Entries
-        for (auto & m_entrie : m_entries) {
+        for (auto& m_entrie : m_entries) {
             delete m_entrie;
         }
         // removes all RenderItems
-        for (auto & m_renderItem : m_renderItems) {
+        for (auto& m_renderItem : m_renderItems) {
             delete m_renderItem;
         }
         m_layer->removeChangeListener(m_layerObserver);
@@ -223,12 +223,12 @@ namespace FIFE
     void LayerCache::reset()
     {
         // removes all Entries
-        for (auto & m_entrie : m_entries) {
+        for (auto& m_entrie : m_entries) {
             delete m_entrie;
         }
         m_entries.clear();
         // removes all RenderItems
-        for (auto & m_renderItem : m_renderItems) {
+        for (auto& m_renderItem : m_renderItems) {
             delete m_renderItem;
         }
         m_renderItems.clear();
@@ -515,7 +515,7 @@ namespace FIFE
     void LayerCache::updateEntries(std::set<int32_t>& removes, RenderList& renderlist)
     {
         RenderList needSorting;
-        Rect viewport                              = m_camera->getViewPort();
+        Rect viewport = m_camera->getViewPort();
         auto entry_it = m_entriesToUpdate.begin();
         for (; entry_it != m_entriesToUpdate.end(); ++entry_it) {
             Entry* entry       = m_entries[*entry_it];
@@ -574,12 +574,12 @@ namespace FIFE
 
     bool LayerCache::updateVisual(Entry* entry)
     {
-        RenderItem* item       = m_renderItems[entry->instanceIndex];
-        Instance* instance     = item->instance;
-        auto* visual = instance->getVisual<InstanceVisual>();
-        item->facingAngle      = instance->getRotation();
-        int32_t angle          = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
-        Action* action         = instance->getCurrentAction();
+        RenderItem* item   = m_renderItems[entry->instanceIndex];
+        Instance* instance = item->instance;
+        auto* visual       = instance->getVisual<InstanceVisual>();
+        item->facingAngle  = instance->getRotation();
+        int32_t angle      = static_cast<int32_t>(m_camera->getRotation()) + item->facingAngle;
+        Action* action     = instance->getCurrentAction();
         ImagePtr image;
 
         if (visual != nullptr) {
@@ -619,12 +619,12 @@ namespace FIFE
 
         if (action != nullptr) {
             auto* actionVisual = action->getVisual<ActionVisual>();
-            bool colorOverlay          = actionVisual->isColorOverlay();
+            bool colorOverlay  = actionVisual->isColorOverlay();
             // assumed all have the same size
             if (actionVisual->isAnimationOverlay()) {
-                std::map<int32_t, AnimationPtr> animations   = actionVisual->getAnimationOverlay(angle);
-                auto it = animations.begin();
-                auto* animOverlays          = new std::vector<ImagePtr>();
+                std::map<int32_t, AnimationPtr> animations = actionVisual->getAnimationOverlay(angle);
+                auto it                                    = animations.begin();
+                auto* animOverlays                         = new std::vector<ImagePtr>();
                 std::vector<OverlayColors*>* animationColorOverlays =
                     colorOverlay ? new std::vector<OverlayColors*>() : nullptr;
                 for (; it != animations.end(); ++it) {
@@ -793,8 +793,8 @@ namespace FIFE
                 auto it = renderlist.begin();
                 for (; it != renderlist.end(); ++it) {
                     auto* vis = (*it)->instance->getVisual<InstanceVisual>();
-                    float& z            = (*it)->vertexZ;
-                    z                   = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
+                    float& z  = (*it)->vertexZ;
+                    z         = (a * (*it)->screenpoint.z + b) + vis->getStackPosition() * stackdelta;
                 }
             }
         } else {

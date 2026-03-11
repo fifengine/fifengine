@@ -114,8 +114,7 @@ namespace FIFE
                     Cell* cell = m_cellCache->getCell(*coord_it);
                     if (cell != nullptr) {
                         if (cell->getCellType() > blockerThreshold) {
-                            auto bc_it =
-                                std::ranges::find(m_ignoredBlockers, cell);
+                            auto bc_it = std::ranges::find(m_ignoredBlockers, cell);
                             if (bc_it == m_ignoredBlockers.end()) {
                                 blocker = true;
                                 break;
@@ -123,9 +122,9 @@ namespace FIFE
                         }
                         if (limitedArea) {
                             // check if cell is on one of the areas
-                            bool sameAreas                                 = false;
-                            const std::list<std::string> areas             = m_route->getLimitedAreas();
-                            auto area_it = areas.begin();
+                            bool sameAreas                     = false;
+                            const std::list<std::string> areas = m_route->getLimitedAreas();
+                            auto area_it                       = areas.begin();
                             for (; area_it != areas.end(); ++area_it) {
                                 if (m_cellCache->isCellInArea(*area_it, cell)) {
                                     sameAreas = true;
@@ -147,9 +146,9 @@ namespace FIFE
                 }
             } else if (limitedArea) {
                 // check if cell is on one of the areas
-                bool sameAreas                                 = false;
-                const std::list<std::string> areas             = m_route->getLimitedAreas();
-                auto area_it = areas.begin();
+                bool sameAreas                     = false;
+                const std::list<std::string> areas = m_route->getLimitedAreas();
+                auto area_it                       = areas.begin();
                 for (; area_it != areas.end(); ++area_it) {
                     if (m_cellCache->isCellInArea(*area_it, adjacent)) {
                         sameAreas = true;

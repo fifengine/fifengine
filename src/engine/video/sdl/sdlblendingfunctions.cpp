@@ -47,7 +47,7 @@ namespace FIFE
     void SDL_BlendRow_RGBA8_to_RGB8(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
         const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        auto* dstColor        = reinterpret_cast<ColorRGB8*>(dst);
+        auto* dstColor       = reinterpret_cast<ColorRGB8*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = alpha * srcColor->a;
@@ -66,7 +66,7 @@ namespace FIFE
     void SDL_BlendRow_RGBA8_to_RGB565(const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n)
     {
         const auto* srcColor = reinterpret_cast<const ColorRGBA8*>(src);
-        auto* dstColor         = reinterpret_cast<uint16_t*>(dst);
+        auto* dstColor       = reinterpret_cast<uint16_t*>(dst);
 
         for (int32_t i = n; 0 < i; --i) {
             uint32_t aMulA = (alpha * srcColor->a) >> 8;

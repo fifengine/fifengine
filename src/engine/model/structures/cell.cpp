@@ -161,7 +161,7 @@ namespace FIFE
                     continue;
                 }
                 uint8_t stackpos = m_instance->getCellStackPosition();
-                if (std::cmp_less(stackpos , pos)) {
+                if (std::cmp_less(stackpos, pos)) {
                     continue;
                 }
                 // update cell z
@@ -169,7 +169,7 @@ namespace FIFE
                     m_instance->getObject()->isStatic()) {
                     m_coordinate.z = m_instance->getLocationRef().getLayerCoordinates().z;
                 }
-                if (std::cmp_greater(m_instance->getCellStackPosition() , pos)) {
+                if (std::cmp_greater(m_instance->getCellStackPosition(), pos)) {
                     pos = m_instance->getCellStackPosition();
                     if (m_instance->isBlocking()) {
                         if (!m_instance->getObject()->isStatic()) {
@@ -387,8 +387,8 @@ namespace FIFE
     void Cell::deleteTransition()
     {
         if (m_transition != nullptr) {
-            Cell* oldc                      = m_transition->m_layer->getCellCache()->getCell(m_transition->m_mc);
-            auto it = m_neighbors.begin();
+            Cell* oldc = m_transition->m_layer->getCellCache()->getCell(m_transition->m_mc);
+            auto it    = m_neighbors.begin();
             for (; it != m_neighbors.end(); ++it) {
                 if (*it == oldc) {
                     m_neighbors.erase(it);

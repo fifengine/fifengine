@@ -65,7 +65,7 @@ namespace FIFE
 
             m_zipfile->setIndex(entryData.offset);
             auto* data = new uint8_t[entryData.size_real]; // beware of me - one day i WILL cause memory leaks
-            if (entryData.comp == 8) {                        // compressed using deflate
+            if (entryData.comp == 8) {                     // compressed using deflate
                 FL_DBG(
                     _log,
                     LMsg("trying to uncompress file ") << path << " (compressed with method " << entryData.comp << ")");

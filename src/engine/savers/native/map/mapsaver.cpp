@@ -68,7 +68,7 @@ namespace FIFE
         mapElement->SetAttribute("format", "1.0");
         doc.InsertEndChild(mapElement);
 
-        for (const auto & importFile : importFiles) {
+        for (const auto& importFile : importFiles) {
             XML::Element* importElement = doc.NewElement("import");
             importElement->SetAttribute("file", importFile.c_str());
 
@@ -76,9 +76,9 @@ namespace FIFE
             mapElement->InsertEndChild(importElement);
         }
 
-        using LayerList = std::list<Layer*>;
+        using LayerList  = std::list<Layer*>;
         LayerList layers = map.getLayers();
-        for (auto & layer : layers) {
+        for (auto& layer : layers) {
             XML::Element* layerElement = doc.NewElement("layer");
             CellGrid* grid             = layer->getCellGrid();
             layerElement->SetAttribute("id", layer->getId().c_str());
@@ -137,9 +137,9 @@ namespace FIFE
             layerElement->InsertEndChild(instancesElement);
 
             std::string currentNamespace;
-            using InstancesContainer = std::vector<Instance*>;
+            using InstancesContainer     = std::vector<Instance*>;
             InstancesContainer instances = layer->getInstances();
-            for (auto & instance : instances) {
+            for (auto& instance : instances) {
                 Object* obj = instance->getObject();
                 // don't save part instances
                 if (obj->isMultiPart()) {
@@ -181,7 +181,8 @@ namespace FIFE
                         instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
                         instanceElement->SetAttribute("cost", instance->getCost());
                     } else if (
-                        instance->getCostId() != obj->getCostId() || !Mathd::Equal(instance->getCost(), obj->getCost())) {
+                        instance->getCostId() != obj->getCostId() ||
+                        !Mathd::Equal(instance->getCost(), obj->getCost())) {
                         instanceElement->SetAttribute("cost_id", instance->getCostId().c_str());
                         instanceElement->SetAttribute("cost", instance->getCost());
                     }
@@ -196,7 +197,7 @@ namespace FIFE
         // add cellcaches tag to document
         XML::Element* cellcachesElement = doc.NewElement("cellcaches");
         mapElement->InsertEndChild(cellcachesElement);
-        for (auto & layer : layers) {
+        for (auto& layer : layers) {
             CellCache* cache = layer->getCellCache();
             if (cache == nullptr) {
                 continue;
@@ -211,8 +212,8 @@ namespace FIFE
             const std::set<Cell*>& narrowCells = cache->getNarrowCells();
             bool saveNarrows                   = !cache->isSearchNarrowCells() && !narrowCells.empty();
 
-            const std::vector<std::vector<Cell*>>& cells       = cache->getCells();
-            auto it = cells.begin();
+            const std::vector<std::vector<Cell*>>& cells = cache->getCells();
+            auto it                                      = cells.begin();
             for (; it != cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
@@ -231,7 +232,7 @@ namespace FIFE
                         if (!cellInstances.empty()) {
                             auto area_it = areaIds.begin();
                             for (; area_it != areaIds.end(); ++area_it) {
-                                bool objectArea                                 = false;
+                                bool objectArea  = false;
                                 auto instance_it = cellInstances.begin();
                                 for (; instance_it != cellInstances.end(); ++instance_it) {
                                     if ((*instance_it)->getObject()->getArea() == *area_it) {
@@ -334,7 +335,7 @@ namespace FIFE
             // add triggers tag to document
             XML::Element* triggersElement = doc.NewElement("triggers");
             mapElement->InsertEndChild(triggersElement);
-            for (auto & trigger : triggers) {
+            for (auto& trigger : triggers) {
                 // add trigger tag to document
                 XML::Element* triggerElement = doc.NewElement("trigger");
                 triggerElement->SetAttribute("name", trigger->getName().c_str());
@@ -377,9 +378,9 @@ namespace FIFE
             }
         }
 
-        using CameraContainer = std::vector<Camera*>;
+        using CameraContainer   = std::vector<Camera*>;
         CameraContainer cameras = map.getCameras();
-        for (auto & camera : cameras) {
+        for (auto& camera : cameras) {
             if (camera->getMap()->getId() == map.getId()) {
                 XML::Element* cameraElement = doc.NewElement("camera");
 

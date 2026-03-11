@@ -72,7 +72,7 @@ namespace FIFE
         assert(layer);
 
         Trigger* trigger = createTrigger(triggerName);
-        for (const auto & coord : coords) {
+        for (const auto& coord : coords) {
             trigger->assign(layer, coord);
         }
         return trigger;
@@ -85,7 +85,7 @@ namespace FIFE
 
         Trigger* trigger         = createTrigger(triggerName);
         std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
-        for (auto & cell : cells) {
+        for (auto& cell : cells) {
             trigger->assign(cell);
         }
         return trigger;
@@ -105,7 +105,7 @@ namespace FIFE
         const std::string& triggerName, const std::vector<Location>& locs)
     {
         Trigger* trigger = createTrigger(triggerName);
-        for (const auto & loc : locs) {
+        for (const auto& loc : locs) {
             trigger->assign(loc.getLayer(), loc.getLayerCoordinates());
         }
         return trigger;
@@ -170,7 +170,7 @@ namespace FIFE
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (const auto & coord : coords) {
+            for (const auto& coord : coords) {
                 it->second->remove(layer, coord);
             }
         }
@@ -181,7 +181,7 @@ namespace FIFE
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
-            for (auto & cell : cells) {
+            for (auto& cell : cells) {
                 it->second->remove(cell);
             }
         }
@@ -200,7 +200,7 @@ namespace FIFE
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (const auto & loc : locs) {
+            for (const auto& loc : locs) {
                 it->second->remove(loc.getLayer(), loc.getLayerCoordinates());
             }
         }

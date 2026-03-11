@@ -53,7 +53,7 @@ namespace FIFE
         SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
         SDL_LockSurface(surface);
 
-        uint32_t size      = width * height * 4;
+        uint32_t size   = width * height * 4;
         auto* pixeldata = static_cast<uint8_t*>(surface->pixels);
         std::copy(data, data + size, pixeldata);
         SDL_UnlockSurface(surface);
@@ -66,7 +66,7 @@ namespace FIFE
         SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
         SDL_LockSurface(surface);
 
-        uint32_t size      = width * height * 4;
+        uint32_t size   = width * height * 4;
         auto* pixeldata = static_cast<uint8_t*>(surface->pixels);
         std::copy(data, data + size, pixeldata);
         SDL_UnlockSurface(surface);

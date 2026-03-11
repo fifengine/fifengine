@@ -30,9 +30,9 @@ namespace FIFE
         m_specialCost           = !route->getCostId().empty();
         m_ignoreDynamicBlockers = route->isDynamicBlockerIgnored();
         if (m_multicell) {
-            Location loc                                       = route->getStartNode();
-            std::vector<ModelCoordinate> coords                = route->getOccupiedArea();
-            auto co_it = coords.begin();
+            Location loc                        = route->getStartNode();
+            std::vector<ModelCoordinate> coords = route->getOccupiedArea();
+            auto co_it                          = coords.begin();
             for (; co_it != coords.end(); ++co_it) {
                 Cell* cell = loc.getLayer()->getCellCache()->getCell(*co_it);
                 if (cell != nullptr) {

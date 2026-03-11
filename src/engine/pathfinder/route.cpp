@@ -327,7 +327,7 @@ namespace FIFE
     {
         Path p;
         if (!m_path.empty()) {
-            for (auto & it : m_path) {
+            for (auto& it : m_path) {
                 Layer* layer = it.getLayer();
                 if (layer->cellContainsBlockingInstance(it.getLayerCoordinates())) {
                     p.push_back(it);

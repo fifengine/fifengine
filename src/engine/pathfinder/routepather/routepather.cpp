@@ -90,7 +90,7 @@ namespace FIFE
 
     bool RoutePather::sessionIdValid(const int32_t sessionId)
     {
-        for (int & m_registeredSessionId : m_registeredSessionIds) {
+        for (int& m_registeredSessionId : m_registeredSessionIds) {
             if (m_registeredSessionId == sessionId) {
                 return true;
             }
@@ -197,9 +197,9 @@ namespace FIFE
 
         if (route->isAreaLimited()) {
             // check if target or neighbors are on one of the areas
-            bool sameAreas                                 = false;
-            const std::list<std::string> areas             = route->getLimitedAreas();
-            auto area_it = areas.begin();
+            bool sameAreas                     = false;
+            const std::list<std::string> areas = route->getLimitedAreas();
+            auto area_it                       = areas.begin();
             for (; area_it != areas.end(); ++area_it) {
                 if (endCache->isCellInArea(*area_it, endCell)) {
                     sameAreas = true;
@@ -289,7 +289,7 @@ namespace FIFE
                 auto nco_it = newCoords.begin();
                 for (; nco_it != newCoords.end(); ++nco_it) {
                     if (currentNode.getLayer()->cellContainsBlockingInstance(*nco_it)) {
-                        bool found                                          = false;
+                        bool found  = false;
                         auto oco_it = oldCoords.begin();
                         for (; oco_it != oldCoords.end(); ++oco_it) {
                             if (*oco_it == *nco_it) {

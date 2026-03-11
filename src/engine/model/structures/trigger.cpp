@@ -52,8 +52,7 @@ namespace FIFE
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, CELL_TRIGGER_ENTER) != types.end()) {
                 const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
-                if (m_trigger->isEnabledForAllInstances() ||
-                    std::ranges::find(restrict, instance) != restrict.end()) {
+                if (m_trigger->isEnabledForAllInstances() || std::ranges::find(restrict, instance) != restrict.end()) {
                     m_trigger->setTriggered();
                 }
             }
@@ -65,8 +64,7 @@ namespace FIFE
             const std::vector<TriggerCondition>& types = m_trigger->getTriggerConditions();
             if (std::ranges::find(types, CELL_TRIGGER_EXIT) != types.end()) {
                 const std::vector<Instance*>& restrict = m_trigger->getEnabledInstances();
-                if (m_trigger->isEnabledForAllInstances() ||
-                    std::ranges::find(restrict, instance) != restrict.end()) {
+                if (m_trigger->isEnabledForAllInstances() || std::ranges::find(restrict, instance) != restrict.end()) {
                     m_trigger->setTriggered();
                 }
             }
@@ -152,7 +150,7 @@ namespace FIFE
         m_changeListener = new TriggerChangeListener(this);
     }
 
-    Trigger::Trigger(std::string  name) :
+    Trigger::Trigger(std::string name) :
         m_name(std::move(name)), m_triggered(false), m_enabledAll(false), m_attached(nullptr)
     {
         m_changeListener = new TriggerChangeListener(this);
@@ -170,8 +168,7 @@ namespace FIFE
 
     void Trigger::addTriggerListener(ITriggerListener* listener)
     {
-        auto it =
-            std::ranges::find(m_triggerListeners, listener);
+        auto it = std::ranges::find(m_triggerListeners, listener);
         if (it == m_triggerListeners.end()) {
             m_triggerListeners.push_back(listener);
         }
@@ -198,8 +195,8 @@ namespace FIFE
     void Trigger::setTriggered()
     {
         if (!m_triggered) {
-            m_triggered                                = true;
-            auto i = m_triggerListeners.begin();
+            m_triggered = true;
+            auto i      = m_triggerListeners.begin();
             while (i != m_triggerListeners.end()) {
                 if (*i != nullptr) {
                     (*i)->onTriggered();
@@ -215,8 +212,7 @@ namespace FIFE
 
     void Trigger::addTriggerCondition(TriggerCondition type)
     {
-        auto it =
-            std::ranges::find(m_triggerConditions, type);
+        auto it = std::ranges::find(m_triggerConditions, type);
         if (it == m_triggerConditions.end()) {
             m_triggerConditions.push_back(type);
         }
@@ -229,8 +225,7 @@ namespace FIFE
 
     void Trigger::removeTriggerCondition(TriggerCondition type)
     {
-        auto it =
-            std::ranges::find(m_triggerConditions, type);
+        auto it = std::ranges::find(m_triggerConditions, type);
         if (it != m_triggerConditions.end()) {
             m_triggerConditions.erase(it);
         }

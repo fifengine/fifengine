@@ -213,7 +213,7 @@ namespace FIFE
             }
             SDL_FillRect(final_surface, nullptr, 0x00000000);
             int32_t ypos = 0;
-            for (auto & line : lines) {
+            for (auto& line : lines) {
                 SDL_Rect dst_rect = {0, 0, 0, 0};
                 dst_rect.y        = ypos;
 

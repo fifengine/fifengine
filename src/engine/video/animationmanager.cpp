@@ -43,9 +43,9 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesCreated() const
     {
-        auto it    = m_animHandleMap.begin();
-        auto itend = m_animHandleMap.end();
-        size_t count                          = 0;
+        auto it      = m_animHandleMap.begin();
+        auto itend   = m_animHandleMap.end();
+        size_t count = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_NOT_LOADED) {
@@ -58,9 +58,9 @@ namespace FIFE
 
     size_t AnimationManager::getTotalResourcesLoaded() const
     {
-        auto it    = m_animHandleMap.begin();
-        auto itend = m_animHandleMap.end();
-        size_t count                          = 0;
+        auto it      = m_animHandleMap.begin();
+        auto itend   = m_animHandleMap.end();
+        size_t count = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -289,8 +289,8 @@ namespace FIFE
 
     void AnimationManager::remove(AnimationPtr& resource)
     {
-        auto it = m_animHandleMap.find(resource->getHandle());
-        auto nit  = m_animNameMap.find(resource->getName());
+        auto it  = m_animHandleMap.find(resource->getHandle());
+        auto nit = m_animNameMap.find(resource->getName());
 
         if (it != m_animHandleMap.end()) {
             m_animHandleMap.erase(it);
@@ -384,7 +384,7 @@ namespace FIFE
             }
         }
 
-        for (int & imgHandle : imgHandles) {
+        for (int& imgHandle : imgHandles) {
             remove(imgHandle);
         }
 

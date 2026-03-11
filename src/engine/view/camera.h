@@ -62,7 +62,7 @@ namespace FIFE
          * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
          * @param renderbackend to use with rendering
          */
-        Camera(std::string  id, Map* map, const Rect& viewport, RenderBackend* renderbackend);
+        Camera(std::string id, Map* map, const Rect& viewport, RenderBackend* renderbackend);
 
         /** Destructor
          */

@@ -108,8 +108,8 @@ namespace FIFE
 
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, loc.getLayerCoordinates());
-            auto it = vertices.begin();
-            ScreenPoint firstpt                                  = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+            auto it             = vertices.begin();
+            ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;
             ++it;

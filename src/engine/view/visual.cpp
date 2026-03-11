@@ -114,8 +114,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayImage(tmp.getColorOverlayImage());
 
-            const std::map<Color, Color>& colorMap    = tmp.getColors();
-            auto it = colorMap.begin();
+            const std::map<Color, Color>& colorMap = tmp.getColors();
+            auto it                                = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -257,8 +257,8 @@ namespace FIFE
         if (m_animationOverlayMap.empty()) {
             return;
         }
-        int32_t closestMatch                  = 0;
-        auto it = m_animationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+        int32_t closestMatch = 0;
+        auto it              = m_animationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_animationOverlayMap.end()) {
             it->second.erase(order);
             if (it->second.empty()) {
@@ -277,8 +277,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
-            const std::map<Color, Color>& colorMap    = tmp.getColors();
-            auto it = colorMap.begin();
+            const std::map<Color, Color>& colorMap = tmp.getColors();
+            auto it                                = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -319,8 +319,8 @@ namespace FIFE
             OverlayColors& c  = inserter.first->second;
             c.setColorOverlayAnimation(tmp.getColorOverlayAnimation());
 
-            const std::map<Color, Color>& colorMap    = tmp.getColors();
-            auto it = colorMap.begin();
+            const std::map<Color, Color>& colorMap = tmp.getColors();
+            auto it                                = colorMap.begin();
             for (; it != colorMap.end(); ++it) {
                 c.changeColor(it->first, it->second);
             }
@@ -334,8 +334,7 @@ namespace FIFE
         }
 
         int32_t closestMatch = 0;
-        auto it =
-            m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+        auto it              = m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_colorAnimationOverlayMap.end()) {
             auto sit = it->second.find(order);
             if (sit != it->second.end()) {
@@ -352,8 +351,7 @@ namespace FIFE
         }
 
         int32_t closestMatch = 0;
-        auto it =
-            m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
+        auto it              = m_colorAnimationOverlayMap.find(getIndexByAngle(angle, m_map, closestMatch));
         if (it != m_colorAnimationOverlayMap.end()) {
             it->second.erase(order);
             if (it->second.empty()) {
@@ -374,8 +372,8 @@ namespace FIFE
 
     void ActionVisual::convertToOverlays(bool color)
     {
-        bool colorOverlay                = color && !m_colorOverlayMap.empty();
-        auto it = m_map.begin();
+        bool colorOverlay = color && !m_colorOverlayMap.empty();
+        auto it           = m_map.begin();
         for (; it != m_map.end(); ++it) {
             addAnimationOverlay(it->first, 0, getAnimationByAngle(it->first));
             if (colorOverlay) {

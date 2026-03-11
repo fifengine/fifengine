@@ -44,9 +44,9 @@ namespace FIFE
 
     size_t ImageManager::getTotalResourcesCreated() const
     {
-        auto it    = m_imgHandleMap.begin();
-        auto itend = m_imgHandleMap.end();
-        size_t count                      = 0;
+        auto it      = m_imgHandleMap.begin();
+        auto itend   = m_imgHandleMap.end();
+        size_t count = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_NOT_LOADED) {
@@ -59,9 +59,9 @@ namespace FIFE
 
     size_t ImageManager::getTotalResourcesLoaded() const
     {
-        auto it    = m_imgHandleMap.begin();
-        auto itend = m_imgHandleMap.end();
-        size_t count                      = 0;
+        auto it      = m_imgHandleMap.begin();
+        auto itend   = m_imgHandleMap.end();
+        size_t count = 0;
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -310,8 +310,8 @@ namespace FIFE
 
     void ImageManager::remove(ImagePtr& resource)
     {
-        auto it = m_imgHandleMap.find(resource->getHandle());
-        auto nit  = m_imgNameMap.find(resource->getName());
+        auto it  = m_imgHandleMap.find(resource->getHandle());
+        auto nit = m_imgNameMap.find(resource->getName());
 
         if (it != m_imgHandleMap.end()) {
             m_imgHandleMap.erase(it);
@@ -403,7 +403,7 @@ namespace FIFE
             }
         }
 
-        for (int & imgHandle : imgHandles) {
+        for (int& imgHandle : imgHandles) {
             remove(imgHandle);
         }
 

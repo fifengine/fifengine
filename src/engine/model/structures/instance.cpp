@@ -86,7 +86,7 @@ namespace FIFE
     class SayInfo
     {
     public:
-        SayInfo(std::string  txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration) { }
+        SayInfo(std::string txt, uint32_t duration) : m_txt(std::move(txt)), m_duration(duration) { }
 
         std::string m_txt;
         uint32_t m_duration;
@@ -169,10 +169,10 @@ namespace FIFE
                 }
                 ++i;
             }
-                // Really remove "removed" listeners.
-                m_changeListeners.erase(
-                    std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
-                    m_changeListeners.end());
+            // Really remove "removed" listeners.
+            m_changeListeners.erase(
+                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
+                m_changeListeners.end());
         }
     }
 
@@ -195,18 +195,18 @@ namespace FIFE
     {
         // create multi object instances
         if (object->isMultiObject()) {
-            m_mainMultiInstance                  = this;
-            uint32_t count                       = 0;
-            Layer* layer                         = m_location.getLayer();
-            const ExactModelCoordinate& emc      = m_location.getExactLayerCoordinatesRef();
-            const std::set<Object*>& multis      = object->getMultiParts();
-            auto it = multis.begin();
+            m_mainMultiInstance             = this;
+            uint32_t count                  = 0;
+            Layer* layer                    = m_location.getLayer();
+            const ExactModelCoordinate& emc = m_location.getExactLayerCoordinatesRef();
+            const std::set<Object*>& multis = object->getMultiParts();
+            auto it                         = multis.begin();
             for (; it != multis.end(); ++it, ++count) {
                 if (*it == m_object) {
                     continue;
                 }
-                std::vector<ModelCoordinate> partcoords        = (*it)->getMultiPartCoordinates(m_rotation);
-                auto coordit = partcoords.begin();
+                std::vector<ModelCoordinate> partcoords = (*it)->getMultiPartCoordinates(m_rotation);
+                auto coordit                            = partcoords.begin();
                 for (; coordit != partcoords.end(); ++coordit) {
                     ExactModelCoordinate tmp_emc(emc.x + (*coordit).x, emc.y + (*coordit).y, emc.z + (*coordit).z);
                     std::ostringstream counter;
@@ -865,7 +865,9 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(),
+            std::remove(
+                m_activity->m_actionListeners.begin(),
+                m_activity->m_actionListeners.end(),
                 (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
@@ -901,7 +903,9 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(),
+            std::remove(
+                m_activity->m_actionListeners.begin(),
+                m_activity->m_actionListeners.end(),
                 (InstanceActionListener*)nullptr),
             m_activity->m_actionListeners.end());
     }
@@ -1137,9 +1141,9 @@ namespace FIFE
             if (m_object->isRestrictedRotation()) {
                 rot = m_object->getRestrictedRotation(m_rotation);
             }
-            double mcos                         = Mathd::Cos(static_cast<double>(rot) * (Mathd::pi() / 180.0));
-            double msin                         = Mathd::Sin(static_cast<double>(rot) * (Mathd::pi() / 180.0));
-            auto it = m_multiInstances.begin();
+            double mcos = Mathd::Cos(static_cast<double>(rot) * (Mathd::pi() / 180.0));
+            double msin = Mathd::Sin(static_cast<double>(rot) * (Mathd::pi() / 180.0));
+            auto it     = m_multiInstances.begin();
             for (; it != m_multiInstances.end(); ++it) {
                 // use rotation 0 to get the "default" coordinate
                 std::vector<ModelCoordinate> mcv = (*it)->getObject()->getMultiPartCoordinates(0);
@@ -1311,7 +1315,7 @@ namespace FIFE
     {
         if (!m_ownObject) {
             m_ownObject       = true;
-            auto* ov  = m_object->getVisual<ObjectVisual>();
+            auto* ov          = m_object->getVisual<ObjectVisual>();
             ObjectVisual* nov = nullptr;
             m_object          = new Object(m_object->getId(), m_object->getNamespace(), m_object);
             if (ov == nullptr) {
@@ -1339,7 +1343,7 @@ namespace FIFE
                 bool replace = getCurrentAction() == action;
                 // check if its the default action
                 bool defaultAction = m_object->getDefaultAction() == action;
-                auto* av   = action->getVisual<ActionVisual>();
+                auto* av           = action->getVisual<ActionVisual>();
                 action             = m_object->createAction(actionName, defaultAction);
                 nav                = new ActionVisual(*av);
                 action->adoptVisual(nav);

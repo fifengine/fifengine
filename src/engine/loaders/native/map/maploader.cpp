@@ -185,15 +185,15 @@ namespace FIFE
                         }
                     }
                     // converts multiobject part id to object pointer
-                    std::list<std::string> namespaces        = m_model->getNamespaces();
-                    auto name_it = namespaces.begin();
+                    std::list<std::string> namespaces = m_model->getNamespaces();
+                    auto name_it                      = namespaces.begin();
                     for (; name_it != namespaces.end(); ++name_it) {
-                        std::list<Object*> objects             = m_model->getObjects(*name_it);
-                        auto object_it = objects.begin();
+                        std::list<Object*> objects = m_model->getObjects(*name_it);
+                        auto object_it             = objects.begin();
                         for (; object_it != objects.end(); ++object_it) {
                             if ((*object_it)->isMultiObject()) {
-                                const std::list<std::string>& multiParts        = (*object_it)->getMultiPartIds();
-                                auto multi_it = multiParts.begin();
+                                const std::list<std::string>& multiParts = (*object_it)->getMultiPartIds();
+                                auto multi_it                            = multiParts.begin();
                                 for (; multi_it != multiParts.end(); ++multi_it) {
                                     Object* partObj = m_model->getObject(*multi_it, *name_it);
                                     if (partObj != nullptr) {

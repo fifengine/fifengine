@@ -155,7 +155,7 @@ namespace FIFE
     std::vector<ImagePtr> Animation::getFrames()
     {
         std::vector<ImagePtr> frames;
-        for (auto & m_frame : m_frames) {
+        for (auto& m_frame : m_frames) {
             frames.push_back(m_frame.image);
         }
         return frames;

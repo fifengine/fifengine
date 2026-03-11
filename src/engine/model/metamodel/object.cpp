@@ -48,7 +48,7 @@ namespace FIFE
     Object::MultiObjectProperty::MultiObjectProperty() : m_multiPart(false), m_restrictedRotation(false) { }
     Object::MultiObjectProperty::~MultiObjectProperty() = default;
 
-    Object::Object(std::string  identifier, std::string  name_space, Object* inherited) :
+    Object::Object(std::string identifier, std::string name_space, Object* inherited) :
         m_id(std::move(identifier)),
         m_namespace(std::move(name_space)),
 
@@ -484,7 +484,7 @@ namespace FIFE
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiPartCoordinates.equal_range(closest);
-            auto it = result.first;
+            auto it    = result.first;
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);
             }
@@ -504,8 +504,7 @@ namespace FIFE
                     const std::multimap<int32_t, ModelCoordinate>& subcoords = (*subit)->getMultiPartCoordinates();
                     m_multiProperty->m_multiObjectCoordinates.insert(subcoords.begin(), subcoords.end());
                 }
-                auto it =
-                    m_multiProperty->m_multiObjectCoordinates.begin();
+                auto it = m_multiProperty->m_multiObjectCoordinates.begin();
                 for (; it != m_multiProperty->m_multiObjectCoordinates.end(); ++it) {
                     m_multiProperty->m_multiAngleMap[(*it).first] = (*it).first;
                 }
@@ -516,7 +515,7 @@ namespace FIFE
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiObjectCoordinates.equal_range(closest);
-            auto it = result.first;
+            auto it    = result.first;
             ModelCoordinate parent(0, 0);
             coordinates.push_back(parent);
             for (; it != result.second; ++it) {

@@ -67,7 +67,7 @@ namespace FIFE
             auto* ptr = new SoundBufferEntry();
 
             // iterate the bufs and fill them with data
-            for (unsigned int & buffer : ptr->buffers) {
+            for (unsigned int& buffer : ptr->buffers) {
 
                 if (m_decoder->decode(BUFFER_LEN)) {
                     // EOF or error

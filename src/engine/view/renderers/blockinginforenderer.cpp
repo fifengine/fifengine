@@ -68,8 +68,8 @@ namespace FIFE
         Rect cv          = cam->getViewPort();
         CellCache* cache = layer->getCellCache();
         if (cache != nullptr) {
-            const std::vector<std::vector<Cell*>>& cells       = cache->getCells();
-            auto it = cells.begin();
+            const std::vector<std::vector<Cell*>>& cells = cache->getCells();
+            auto it                                      = cells.begin();
             for (; it != cells.end(); ++it) {
                 auto cit = (*it).begin();
                 for (; cit != (*it).end(); ++cit) {
@@ -82,8 +82,8 @@ namespace FIFE
                     if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                         std::vector<ExactModelCoordinate> vertices;
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                        auto it = vertices.begin();
-                        int32_t halfind                                      = vertices.size() / 2;
+                        auto it             = vertices.begin();
+                        int32_t halfind     = vertices.size() / 2;
                         ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                         Point pt1(firstpt.x, firstpt.y);
                         Point pt2;
@@ -113,8 +113,8 @@ namespace FIFE
                 }
                 std::vector<ExactModelCoordinate> vertices;
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-                auto it = vertices.begin();
-                int32_t halfind                                      = vertices.size() / 2;
+                auto it             = vertices.begin();
+                int32_t halfind     = vertices.size() / 2;
                 ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                 Point pt1(firstpt.x, firstpt.y);
                 Point pt2;

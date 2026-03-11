@@ -70,13 +70,13 @@ namespace FIFE
         Point p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            auto width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
-            auto height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
-            r.x             = p.x - width / 2;
-            r.y             = p.y - height / 2;
-            r.w             = width;
-            r.h             = height;
+            Rect viewport = cam->getViewPort();
+            auto width    = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
+            auto height   = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+            r.x           = p.x - width / 2;
+            r.y           = p.y - height / 2;
+            r.w           = width;
+            r.h           = height;
 
             if (r.intersects(viewport)) {
                 uint8_t lm = renderbackend->getLightingModel();
@@ -108,13 +108,13 @@ namespace FIFE
                 scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
             ImagePtr img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            auto width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-            auto height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
-            r.x             = p.x - width / 2;
-            r.y             = p.y - height / 2;
-            r.w             = width;
-            r.h             = height;
+            Rect viewport = cam->getViewPort();
+            auto width    = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
+            auto height   = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+            r.x           = p.x - width / 2;
+            r.y           = p.y - height / 2;
+            r.w           = width;
+            r.h           = height;
 
             if (r.intersects(viewport)) {
                 uint8_t lm = renderbackend->getLightingModel();
@@ -139,13 +139,13 @@ namespace FIFE
         Point p = m_anchor.getCalculatedPoint(cam, layer, true);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            auto width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-            auto height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
-            r.x             = p.x - width / 2;
-            r.y             = p.y - height / 2;
-            r.w             = width;
-            r.h             = height;
+            Rect viewport = cam->getViewPort();
+            auto width    = static_cast<uint32_t>(round(m_width * cam->getZoom()));
+            auto height   = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+            r.x           = p.x - width / 2;
+            r.y           = p.y - height / 2;
+            r.w           = width;
+            r.h           = height;
 
             if (r.intersects(viewport)) {
                 uint8_t lm = renderbackend->getLightingModel();
