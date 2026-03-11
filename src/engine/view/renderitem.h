@@ -38,7 +38,7 @@ namespace FIFE
     class RenderItem
     {
     public:
-        RenderItem(Instance* parent);
+        explicit RenderItem(Instance* parent);
         ~RenderItem();
         Instance* instance;
 

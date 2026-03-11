@@ -30,7 +30,7 @@ namespace FIFE
     class VFSSource
     {
     public:
-        VFSSource(VFS* vfs);
+        explicit VFSSource(VFS* vfs);
         virtual ~VFSSource();
 
         /** check if the given file exists

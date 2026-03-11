@@ -133,12 +133,11 @@ namespace FIFE
             return;
         }
 
-        for (auto it = m_createdGrids.begin(); it != m_createdGrids.end(); ++it) {
-            if (*it == grid) {
-                delete *it;
-                m_createdGrids.erase(it);
-                return;
-            }
+        auto it = std::find(m_createdGrids.begin(), m_createdGrids.end(), grid);
+        if (it != m_createdGrids.end()) {
+            delete *it;
+            m_createdGrids.erase(it);
+            return;
         }
     }
 
@@ -263,10 +262,11 @@ namespace FIFE
         // If we have layers with instances - bail out.
         std::list<Layer*>::const_iterator jt;
         for (auto& m_map : m_maps) {
-            for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
-                if ((*jt)->hasInstances()) {
-                    return false;
-                }
+            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](Layer* layer) {
+                return layer->hasInstances();
+            });
+            if (jt != m_map->getLayers().end()) {
+                return false;
             }
         }
 

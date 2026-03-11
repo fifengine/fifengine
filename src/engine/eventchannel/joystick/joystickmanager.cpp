@@ -60,17 +60,17 @@ namespace FIFE
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
         Joystick* joystick = nullptr;
-        for (auto& m_activeJoystick : m_activeJoysticks) {
-            if (m_activeJoystick->getDeviceIndex() == deviceIndex) {
-                return joystick;
-            }
+        if (std::any_of(m_activeJoysticks.begin(), m_activeJoysticks.end(), [deviceIndex](Joystick* j) {
+                return j->getDeviceIndex() == deviceIndex;
+            })) {
+            return joystick;
         }
         std::string guidStr = getGuidString(deviceIndex);
-        for (auto& m_joystick : m_joysticks) {
-            if (!m_joystick->isConnected() && m_joystick->getGuid() == guidStr) {
-                joystick = m_joystick;
-                break;
-            }
+        auto it             = std::find_if(m_joysticks.begin(), m_joysticks.end(), [&guidStr](Joystick* j) {
+            return !j->isConnected() && j->getGuid() == guidStr;
+        });
+        if (it != m_joysticks.end()) {
+            joystick = *it;
         }
         if (joystick == nullptr) {
             joystick = new Joystick(m_joysticks.size(), deviceIndex);
@@ -191,11 +191,9 @@ namespace FIFE
     {
         if (listener->isActive()) {
             listener->setActive(false);
-            for (auto it = m_joystickListeners.begin(); it != m_joystickListeners.end(); ++it) {
-                if (*it == listener) {
-                    m_joystickListeners.erase(it);
-                    break;
-                }
+            auto it = std::find(m_joystickListeners.begin(), m_joystickListeners.end(), listener);
+            if (it != m_joystickListeners.end()) {
+                m_joystickListeners.erase(it);
             }
         }
     }

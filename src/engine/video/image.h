@@ -34,14 +34,14 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        Image(IResourceLoader* loader = 0);
-        Image(const std::string& name, IResourceLoader* loader = 0);
+        explicit Image(IResourceLoader* loader = 0);
+        explicit Image(const std::string& name, IResourceLoader* loader = 0);
 
         /** Constructor.
          * @note Takes ownership of the SDL Surface
          * @param surface SDL Surface in RGBA format
          */
-        Image(SDL_Surface* surface);
+        explicit Image(SDL_Surface* surface);
         Image(const std::string& name, SDL_Surface* surface);
 
         /** Constructor
@@ -49,7 +49,7 @@ namespace FIFE
          * @param width Width of the image.
          * @param height Height of the image.
          */
-        Image(const uint8_t* data, uint32_t width, uint32_t height);
+        explicit Image(const uint8_t* data, uint32_t width, uint32_t height);
         Image(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
         /** Destructor.

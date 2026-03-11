@@ -43,7 +43,7 @@ namespace utf8
         uint32_t cp;
 
     public:
-        invalid_code_point(uint32_t cp) : cp(cp) { }
+        explicit invalid_code_point(uint32_t cp) : cp(cp) { }
         virtual const char* what() const throw()
         {
             return "Invalid code point";
@@ -59,7 +59,7 @@ namespace utf8
         uint8_t u8;
 
     public:
-        invalid_utf8(uint8_t u) : u8(u) { }
+        explicit invalid_utf8(uint8_t u) : u8(u) { }
         virtual const char* what() const throw()
         {
             return "Invalid UTF-8";
@@ -75,7 +75,7 @@ namespace utf8
         uint16_t u16;
 
     public:
-        invalid_utf16(uint16_t u) : u16(u) { }
+        explicit invalid_utf16(uint16_t u) : u16(u) { }
         virtual const char* what() const throw()
         {
             return "Invalid UTF-16";

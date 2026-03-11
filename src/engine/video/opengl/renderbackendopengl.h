@@ -28,7 +28,7 @@ namespace FIFE
     class RenderBackendOpenGL : public RenderBackend
     {
     public:
-        RenderBackendOpenGL(const SDL_Color& colorkey);
+        explicit RenderBackendOpenGL(const SDL_Color& colorkey);
         virtual ~RenderBackendOpenGL();
         virtual const std::string& getName() const;
         virtual void startFrame();

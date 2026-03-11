@@ -23,7 +23,7 @@ namespace FIFE
     class HexGrid : public CellGrid
     {
     public:
-        HexGrid(bool axial = false);
+        explicit HexGrid(bool axial = false);
         virtual ~HexGrid();
 
         bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);

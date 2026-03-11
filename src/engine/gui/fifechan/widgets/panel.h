@@ -22,7 +22,7 @@ namespace fcn
     {
     public:
         Panel();
-        Panel(bool dockable);
+        explicit Panel(bool dockable);
 
         virtual ~Panel();
 

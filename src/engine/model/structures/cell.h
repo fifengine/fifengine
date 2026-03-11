@@ -52,7 +52,7 @@ namespace FIFE
     class TransitionInfo
     {
     public:
-        TransitionInfo(Layer* layer)
+        explicit TransitionInfo(Layer* layer)
         {
             m_layer     = layer;
             m_difflayer = false;

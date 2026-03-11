@@ -41,7 +41,7 @@ namespace FIFE
             RES_LOADED
         };
 
-        IResource(const std::string& name, IResourceLoader* loader = 0) :
+        explicit IResource(const std::string& name, IResourceLoader* loader = 0) :
             m_name(name), m_loader(loader), m_state(RES_NOT_LOADED), m_handle(m_curhandle++)
         {
         }

@@ -85,7 +85,7 @@ namespace FIFE
     class LMsg
     {
     public:
-        LMsg(const std::string& msg = "") : str(msg) { }
+        explicit LMsg(const std::string& msg = "") : str(msg) { }
         ~LMsg() { }
 
         template <typename T>
@@ -221,7 +221,7 @@ namespace FIFE
     public:
         /** Creates new logger and associates it with given module
          */
-        Logger(logmodule_t module);
+        explicit Logger(logmodule_t module);
 
         /** Destructor
          */
@@ -259,7 +259,7 @@ namespace FIFE
     struct pprint
     {
         void* p;
-        pprint(void* _p) : p(_p) { }
+        explicit pprint(void* _p) : p(_p) { }
     };
 } // namespace FIFE
 

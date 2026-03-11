@@ -90,21 +90,20 @@ namespace FIFE
 
     bool RoutePather::sessionIdValid(const int32_t sessionId)
     {
-        for (int& m_registeredSessionId : m_registeredSessionIds) {
-            if (m_registeredSessionId == sessionId) {
-                return true;
-            }
+        if (std::any_of(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), [sessionId](int id) {
+                return id == sessionId;
+            })) {
+            return true;
         }
         return false;
     }
 
     bool RoutePather::invalidateSessionId(const int32_t sessionId)
     {
-        for (auto i = m_registeredSessionIds.begin(); i != m_registeredSessionIds.end(); ++i) {
-            if ((*i) == sessionId) {
-                m_registeredSessionIds.erase(i);
-                return true;
-            }
+        auto it = std::find(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), sessionId);
+        if (it != m_registeredSessionIds.end()) {
+            m_registeredSessionIds.erase(it);
+            return true;
         }
         return false;
     }

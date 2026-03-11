@@ -21,7 +21,7 @@ namespace fcn
     {
     public:
         DockArea();
-        DockArea(bool active);
+        explicit DockArea(bool active);
         virtual ~DockArea();
 
         void setActiveDockArea(bool active);

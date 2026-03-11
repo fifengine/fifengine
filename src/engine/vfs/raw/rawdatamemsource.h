@@ -35,7 +35,7 @@ namespace FIFE
          *	Create a new RawDataMemSource that allocates datalen bytes.
          * @param datalen the datalen to allocate
          */
-        RawDataMemSource(uint32_t datalen);
+        explicit RawDataMemSource(uint32_t datalen);
         virtual ~RawDataMemSource();
 
         /** Get a Pointer to the data

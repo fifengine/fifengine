@@ -175,7 +175,7 @@ namespace FIFE
             ImagePtr outline;
             Image* curimg;
             InstanceRenderer* renderer;
-            OutlineInfo(InstanceRenderer* r);
+            explicit OutlineInfo(InstanceRenderer* r);
             ~OutlineInfo();
         };
         // contains per-instance information for overlay drawing
@@ -190,7 +190,7 @@ namespace FIFE
             ImagePtr overlay;
             Image* curimg;
             InstanceRenderer* renderer;
-            ColoringInfo(InstanceRenderer* r);
+            explicit ColoringInfo(InstanceRenderer* r);
             ~ColoringInfo();
         };
         class AreaInfo

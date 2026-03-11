@@ -136,10 +136,12 @@ namespace FIFE
 
     VFSSource* VFS::getSourceForFile(const std::string& file) const
     {
-        for (auto m_source : m_sources) {
-            if (m_source->fileExists(file)) {
-                return m_source;
-            }
+        auto it = std::find_if(m_sources.begin(), m_sources.end(), [&file](VFSSource* s) {
+            return s->fileExists(file);
+        });
+
+        if (it != m_sources.end()) {
+            return *it;
         }
 
         FL_WARN(_log, LMsg("no source for ") << file << " found");

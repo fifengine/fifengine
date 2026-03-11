@@ -305,11 +305,12 @@ namespace FIFE
 
         // removes instance from RenderList
         RenderList& renderList = m_camera->getRenderListRef(m_layer);
-        for (auto it = renderList.begin(); it != renderList.end(); ++it) {
-            if ((*it)->instance == instance) {
-                renderList.erase(it);
-                break;
-            }
+        auto it                = std::find_if(renderList.begin(), renderList.end(), [instance](const auto& item) {
+            return item->instance == instance;
+        });
+
+        if (it != renderList.end()) {
+            renderList.erase(it);
         }
         // resets RenderItem
         item->reset();
@@ -542,11 +543,12 @@ namespace FIFE
                     needSorting.push_back(item);
                 } else {
                     // remove from renderlist
-                    for (auto it = renderlist.begin(); it != renderlist.end(); ++it) {
-                        if ((*it)->instance == item->instance) {
-                            renderlist.erase(it);
-                            break;
-                        }
+                    auto it = std::find_if(renderlist.begin(), renderlist.end(), [&](const auto& element) {
+                        return element->instance == item->instance;
+                    });
+
+                    if (it != renderlist.end()) {
+                        renderlist.erase(it);
                     }
                 }
             } else if (onScreenA && onScreenB && positionUpdate) {

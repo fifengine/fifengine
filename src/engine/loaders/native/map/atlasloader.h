@@ -41,7 +41,7 @@ namespace FIFE
     class Atlas
     {
     public:
-        Atlas(const std::string& name) : m_name(name)
+        explicit Atlas(const std::string& name) : m_name(name)
         {
             ;
         }

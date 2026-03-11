@@ -31,12 +31,12 @@ namespace FIFE
         RendererNode(
             Instance* attached_instance, const Location& relative_location, const Point& relative_point = Point(0, 0));
         RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point = Point(0, 0));
-        RendererNode(Instance* attached_instance, const Point& relative_point = Point(0, 0));
+        explicit RendererNode(Instance* attached_instance, const Point& relative_point = Point(0, 0));
         RendererNode(
             const Location& attached_location, Layer* relative_layer, const Point& relative_point = Point(0, 0));
-        RendererNode(const Location& attached_location, const Point& relative_point = Point(0, 0));
-        RendererNode(Layer* attached_layer, const Point& relative_point = Point(0, 0));
-        RendererNode(const Point& attached_point);
+        explicit RendererNode(const Location& attached_location, const Point& relative_point = Point(0, 0));
+        explicit RendererNode(Layer* attached_layer, const Point& relative_point = Point(0, 0));
+        explicit RendererNode(const Point& attached_point);
         RendererNode(const RendererNode& old);
         RendererNode& operator=(const RendererNode& source);
         ~RendererNode();

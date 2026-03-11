@@ -35,7 +35,7 @@ namespace FIFE
          *
          * @param period The period of the event. See class description.
          */
-        TimeEvent(int32_t period = -1);
+        explicit TimeEvent(int32_t period = -1);
 
         /** Destructor.
          *

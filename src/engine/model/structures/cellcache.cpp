@@ -1347,12 +1347,11 @@ namespace FIFE
         while (search) {
             bool found = false;
             if (!m_zones.empty()) {
-                for (auto& m_zone : m_zones) {
-                    if (m_zone->getId() == id) {
-                        found = true;
-                        ++id;
-                        break;
-                    }
+                if (std::any_of(m_zones.begin(), m_zones.end(), [id](Zone* z) {
+                        return z->getId() == id;
+                    })) {
+                    found = true;
+                    ++id;
                 }
             }
             search = found;
@@ -1371,11 +1370,11 @@ namespace FIFE
     Zone* CellCache::getZone(uint32_t id)
     {
         Zone* zi = nullptr;
-        for (auto& m_zone : m_zones) {
-            if (m_zone->getId() == id) {
-                zi = m_zone;
-                break;
-            }
+        auto it  = std::find_if(m_zones.begin(), m_zones.end(), [id](Zone* z) {
+            return z->getId() == id;
+        });
+        if (it != m_zones.end()) {
+            zi = *it;
         }
 
         if (zi == nullptr) {
@@ -1388,12 +1387,12 @@ namespace FIFE
 
     void CellCache::removeZone(Zone* zone)
     {
-        for (auto i = m_zones.begin(); i != m_zones.end(); ++i) {
-            if (*i == zone) {
-                delete *i;
-                m_zones.erase(i);
-                break;
-            }
+        auto it = std::find_if(m_zones.begin(), m_zones.end(), [zone](Zone* z) {
+            return z == zone;
+        });
+        if (it != m_zones.end()) {
+            delete *it;
+            m_zones.erase(it);
         }
     }
 
@@ -1407,12 +1406,12 @@ namespace FIFE
         Zone* newZone = createZone();
         std::stack<Cell*> cellstack;
         const std::vector<Cell*>& neighbors = cell->getNeighbors();
-        for (auto nc : neighbors) {
-            if (nc->isInserted() && !nc->isZoneProtected() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
-                nc->getCellType() != CTYPE_CELL_BLOCKER) {
-                cellstack.push(nc);
-                break;
-            }
+        auto it                             = std::find_if(neighbors.begin(), neighbors.end(), [](Cell* nc) {
+            return nc->isInserted() && !nc->isZoneProtected() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
+                   nc->getCellType() != CTYPE_CELL_BLOCKER;
+        });
+        if (it != neighbors.end()) {
+            cellstack.push(*it);
         }
 
         while (!cellstack.empty()) {

@@ -32,8 +32,8 @@ namespace FIFE
         /** Constructors
          */
         OverlayColors();
-        OverlayColors(ImagePtr image);
-        OverlayColors(AnimationPtr animation);
+        explicit OverlayColors(ImagePtr image);
+        explicit OverlayColors(AnimationPtr animation);
 
         /** Destructor
          */

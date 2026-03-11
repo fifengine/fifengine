@@ -29,7 +29,7 @@ namespace FIFE
         /** Constructor
          * Creates the given file system's VFS Source.
          */
-        VFSDirectory(VFS* vfs, std::string root = "./");
+        explicit VFSDirectory(VFS* vfs, std::string root = "./");
         /** Destructor
          */
         virtual ~VFSDirectory();

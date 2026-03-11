@@ -278,7 +278,7 @@ namespace FIFE
         /** Constructor
          * @param key value of the key
          */
-        Key(KeyType key = INVALID_KEY) : m_key(key) { }
+        explicit Key(KeyType key = INVALID_KEY) : m_key(key) { }
 
         /** Destructor.
          */

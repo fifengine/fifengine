@@ -114,7 +114,7 @@ namespace FIFE
         /** Constructor.
          * @param colorkey The colorkey to use.
          */
-        RenderBackend(const SDL_Color& colorkey);
+        explicit RenderBackend(const SDL_Color& colorkey);
 
         /** Destructor.
          */

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <map>
 #include <string>
 #include <utility>
@@ -603,12 +604,20 @@ namespace FIFE
     void SoundManager::removeAllGroups()
     {
         std::vector<std::string> groups;
-        for (auto& m_group : m_groups) {
-            groups.push_back(m_group.first);
-        }
-        for (auto& group : groups) {
+        groups.reserve(m_groups.size());
+
+        std::transform(
+            m_groups.begin(),
+            m_groups.end(),
+            std::back_inserter(groups),
+            [](const auto& groupPair) -> const std::string& {
+                return groupPair.first;
+            });
+
+        for (const auto& group : groups) {
             removeGroup(group);
         }
+
         m_groups.clear();
     }
 

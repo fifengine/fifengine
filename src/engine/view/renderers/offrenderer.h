@@ -163,7 +163,7 @@ namespace FIFE
         /** constructor.
          * @param renderbackend to use
          */
-        OffRenderer(RenderBackend* renderbackend);
+        explicit OffRenderer(RenderBackend* renderbackend);
 
         /** Destructor.
          */

@@ -29,7 +29,7 @@ namespace FIFE
         /** Constructor.
          * @param msg The error mesage to be stored.
          */
-        Exception(const std::string& msg);
+        explicit Exception(const std::string& msg);
 
         /** Destructor.
          */

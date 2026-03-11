@@ -74,11 +74,13 @@ namespace FIFE
     {
         if (listener->isActive()) {
             listener->setActive(false);
-            for (auto it = vec.begin(); it != vec.end(); ++it) {
-                if (*it == listener) {
-                    vec.erase(it);
-                    break;
-                }
+
+            auto it = std::find_if(vec.begin(), vec.end(), [&](const T& item) {
+                return item == listener;
+            });
+
+            if (it != vec.end()) {
+                vec.erase(it);
             }
         }
     }

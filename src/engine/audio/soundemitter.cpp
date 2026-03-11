@@ -869,12 +869,12 @@ namespace FIFE
     void SoundEmitter::addEffect(SoundEffect* effect)
     {
         bool added = false;
-        for (auto& m_effect : m_effects) {
-            if (m_effect == nullptr) {
-                m_effect = effect;
-                added    = true;
-                break;
-            }
+        auto it    = std::find_if(m_effects.begin(), m_effects.end(), [](SoundEffect* e) {
+            return e == nullptr;
+        });
+        if (it != m_effects.end()) {
+            *it   = effect;
+            added = true;
         }
         if (!added) {
             m_effects.push_back(effect);
@@ -883,23 +883,19 @@ namespace FIFE
 
     void SoundEmitter::removeEffect(SoundEffect* effect)
     {
-        for (auto& m_effect : m_effects) {
-            if (effect == m_effect) {
-                m_effect = nullptr;
-                break;
-            }
+        auto it = std::find_if(m_effects.begin(), m_effects.end(), [effect](SoundEffect* e) {
+            return e == effect;
+        });
+        if (it != m_effects.end()) {
+            *it = nullptr;
         }
     }
 
     uint8_t SoundEmitter::getEffectCount()
     {
-        uint8_t counter = 0;
-        for (auto& m_effect : m_effects) {
-            if (m_effect != nullptr) {
-                ++counter;
-            }
-        }
-        return counter;
+        return static_cast<uint8_t>(std::count_if(m_effects.begin(), m_effects.end(), [](const auto& effect) {
+            return effect != nullptr;
+        }));
     }
 
     uint8_t SoundEmitter::getEffectNumber(SoundEffect* effect)

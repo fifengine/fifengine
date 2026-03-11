@@ -404,12 +404,9 @@ namespace FIFE
 
                 std::vector<float> lightingColor = camera->getLightingColor();
                 bool writeLightingColor          = false;
-                for (float i : lightingColor) {
-                    if (i < 1.0) {
-                        writeLightingColor = true;
-                        break;
-                    }
-                }
+                writeLightingColor               = std::any_of(lightingColor.begin(), lightingColor.end(), [](float v) {
+                    return v < 1.0f;
+                });
 
                 if (writeLightingColor) {
                     std::ostringstream lightingColorString;

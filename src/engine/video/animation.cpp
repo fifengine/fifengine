@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
+#include <iterator>
 #include <map>
 #include <string>
 #include <utility>
@@ -155,9 +157,12 @@ namespace FIFE
     std::vector<ImagePtr> Animation::getFrames()
     {
         std::vector<ImagePtr> frames;
-        for (auto& m_frame : m_frames) {
-            frames.push_back(m_frame.image);
-        }
+        frames.reserve(m_frames.size());
+
+        std::transform(m_frames.begin(), m_frames.end(), std::back_inserter(frames), [](const auto& frame) {
+            return frame.image;
+        });
+
         return frames;
     }
 

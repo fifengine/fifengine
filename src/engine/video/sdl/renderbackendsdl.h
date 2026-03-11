@@ -28,7 +28,7 @@ namespace FIFE
     class RenderBackendSDL : public RenderBackend
     {
     public:
-        RenderBackendSDL(const SDL_Color& colorkey);
+        explicit RenderBackendSDL(const SDL_Color& colorkey);
         virtual ~RenderBackendSDL();
         virtual const std::string& getName() const;
         virtual void startFrame();

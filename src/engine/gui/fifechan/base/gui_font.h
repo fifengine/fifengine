@@ -25,7 +25,7 @@ namespace FIFE
         /** Constructor
          *  Takes the ownership of given font
          */
-        GuiFont(IFont* font);
+        explicit GuiFont(IFont* font);
         virtual ~GuiFont();
 
         int32_t getStringIndexAt(const std::string& text, int32_t x) const;

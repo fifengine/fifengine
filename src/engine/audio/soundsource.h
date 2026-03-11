@@ -28,7 +28,7 @@ namespace FIFE
     class SoundSource
     {
     public:
-        SoundSource(Instance* instance);
+        explicit SoundSource(Instance* instance);
         ~SoundSource();
 
         /** Sets the ActionAudio. Owned by Object.

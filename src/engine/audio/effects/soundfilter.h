@@ -29,7 +29,7 @@ namespace FIFE
         /** Constructor
          * @param type The filter type.
          */
-        SoundFilter(SoundFilterType type);
+        explicit SoundFilter(SoundFilterType type);
 
         /** Destructor
          */

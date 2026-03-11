@@ -32,7 +32,7 @@ namespace FIFE
     class RawData
     {
     public:
-        RawData(RawDataSource* datasource);
+        explicit RawData(RawDataSource* datasource);
         virtual ~RawData();
 
         /** get the data as a vector of bytes
@@ -184,7 +184,7 @@ namespace FIFE
     class IndexSaver
     {
     public:
-        IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) { }
+        explicit IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) { }
 
         ~IndexSaver()
         {

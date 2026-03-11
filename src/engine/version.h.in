@@ -51,7 +51,7 @@ namespace FIFE {
     inline const int getVersionId() {
         return FIFE_MAJOR_VERSION * 10000 + FIFE_MINOR_VERSION * 100 + FIFE_PATCH_VERSION; // 3.2.1 = 30201
     }
-} //FIFE
+} // namespace FIFE
 
 #endif //FIFE_VERSION_H
 

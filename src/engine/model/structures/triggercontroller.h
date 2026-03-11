@@ -41,7 +41,7 @@ namespace FIFE
          *
          * @param map A pointer to the map that the controller will interact with.
          */
-        TriggerController(Map* map);
+        explicit TriggerController(Map* map);
 
         /** Destructor.
          */

@@ -49,7 +49,7 @@ namespace fcn
          *
          * @param caption The caption of the label.
          */
-        ClickLabel(const std::string& caption);
+        explicit ClickLabel(const std::string& caption);
 
         virtual ~ClickLabel();
 

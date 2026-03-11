@@ -39,7 +39,7 @@ namespace FIFE
         /** Constructor
          * @param id A integer value used as identifier. Simple counter values are used.
          */
-        Zone(uint32_t id);
+        explicit Zone(uint32_t id);
 
         /** Destructor
          */
@@ -102,7 +102,7 @@ namespace FIFE
         /** Constructor
          * @param layer A pointer to the associated layer.
          */
-        CellCache(Layer* layer);
+        explicit CellCache(Layer* layer);
 
         /** Destructor
          */

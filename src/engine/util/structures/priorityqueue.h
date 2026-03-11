@@ -40,7 +40,7 @@ namespace FIFE
          *
          * @param ordering The ordering the priority queue should use.
          */
-        PriorityQueue(const Ordering ordering) : m_ordering(ordering) { }
+        explicit PriorityQueue(const Ordering ordering) : m_ordering(ordering) { }
 
         /** Pushes a new element onto the queue.
          *

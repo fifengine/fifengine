@@ -210,11 +210,10 @@ namespace FIFE
     void SoundClip::acquireStream(uint32_t streamid)
     {
         SoundBufferEntry* ptr = m_buffervec.at(streamid);
-        for (unsigned int buffer : ptr->buffers) {
-            if (getStream(streamid, buffer)) {
-                break;
-            }
-        }
+
+        std::any_of(ptr->buffers.begin(), ptr->buffers.end(), [&](unsigned int buffer) {
+            return getStream(streamid, buffer);
+        });
     }
 
     bool SoundClip::getStream(uint32_t streamid, ALuint buffer)

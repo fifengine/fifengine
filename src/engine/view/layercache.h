@@ -36,7 +36,7 @@ namespace FIFE
     public:
         typedef QuadTree<std::set<int32_t>> CacheTree;
 
-        LayerCache(Camera* camera);
+        explicit LayerCache(Camera* camera);
         ~LayerCache();
 
         void setLayer(Layer* layer);

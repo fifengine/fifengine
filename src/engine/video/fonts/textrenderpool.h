@@ -39,7 +39,7 @@ namespace FIFE
         /** Constructor
          *  Constructs a pool with a maximum of poolSize entries
          */
-        TextRenderPool(size_t poolSize = 200);
+        explicit TextRenderPool(size_t poolSize = 200);
 
         /** Destructor
          */

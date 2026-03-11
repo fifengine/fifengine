@@ -18,31 +18,27 @@
 
 namespace
 {
-    /** helper function to find a value in a ZipNodeContainer
-     *  @param container the ZipNodeContainer to search through
-        @param the name to search for
-        @return the ZipNode pointer, or NULL if not found
+    /**
+     * Helper function to find a value in a ZipNodeContainer
+     *
+     * @param container the ZipNodeContainer to search through
+     * @param name the name to search for
+     * @return the ZipNode pointer, or NULL if not found
      */
     FIFE::ZipNode* FindNameInContainer(const FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        for (auto iter : container) {
-            if (iter->getName() == name) {
-                return iter;
-            }
-        }
+        auto it = std::find_if(container.begin(), container.end(), [&](const auto* node) {
+            return node->getName() == name;
+        });
 
-        return nullptr;
+        return (it != container.end()) ? *it : nullptr;
     }
 
     FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        for (auto iter = container.begin(); iter != container.end(); ++iter) {
-            if ((*iter)->getName() == name) {
-                return iter;
-            }
-        }
-
-        return container.end();
+        return std::find_if(container.begin(), container.end(), [&](const auto* node) {
+            return node->getName() == name;
+        });
     }
 } // namespace
 

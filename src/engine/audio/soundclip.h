@@ -44,8 +44,8 @@ namespace FIFE
     class SoundClip : public IResource
     {
     public:
-        SoundClip(IResourceLoader* loader = 0);
-        SoundClip(const std::string& name, IResourceLoader* loader = 0);
+        explicit SoundClip(IResourceLoader* loader = 0);
+        explicit SoundClip(const std::string& name, IResourceLoader* loader = 0);
 
         ~SoundClip();
 

@@ -54,7 +54,7 @@ namespace FIFE
          *  @param name the name of the node
          *  @param parent the parent of this node, defaults to NULL
          */
-        ZipNode(std::string name, ZipNode* parent = 0);
+        explicit ZipNode(std::string name, ZipNode* parent = 0);
 
         /** destructor
          */

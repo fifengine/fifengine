@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
@@ -253,12 +254,9 @@ namespace FIFE
 
     void CellRenderer::removePathVisual(Instance* instance)
     {
-        for (auto it = m_visualPaths.begin(); it != m_visualPaths.end(); ++it) {
-
-            if (*it == instance) {
-                m_visualPaths.erase(it);
-                break;
-            }
+        auto it = std::find(m_visualPaths.begin(), m_visualPaths.end(), instance);
+        if (it != m_visualPaths.end()) {
+            m_visualPaths.erase(it);
         }
     }
 

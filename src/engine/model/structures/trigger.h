@@ -85,7 +85,7 @@ namespace FIFE
          * be referred to in the map file.
          *
          */
-        Trigger(std::string name);
+        explicit Trigger(std::string name);
 
         /** Destructor.
          */

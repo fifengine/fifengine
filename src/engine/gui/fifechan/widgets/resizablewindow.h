@@ -43,8 +43,8 @@ namespace fcn
         };
 
         ResizableWindow();
-        ResizableWindow(bool resizable);
-        ResizableWindow(const std::string& caption, bool resizable = true);
+        explicit ResizableWindow(bool resizable);
+        explicit ResizableWindow(const std::string& caption, bool resizable = true);
         virtual ~ResizableWindow();
 
         /** Sets the size of the area that is active for resize events.

@@ -60,7 +60,7 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        Cursor(RenderBackend* renderbackend);
+        explicit Cursor(RenderBackend* renderbackend);
 
         /** Destructor.
          */

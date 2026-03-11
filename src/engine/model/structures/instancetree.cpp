@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 
 // 3rd party library includes
 
@@ -46,11 +47,12 @@ namespace FIFE
         }
         m_reverse.erase(instance);
         InstanceList& list = node->data();
-        for (auto i = list.begin(); i != list.end(); ++i) {
-            if ((*i) == instance) {
-                list.erase(i);
-                return;
-            }
+        auto it            = std::find_if(list.begin(), list.end(), [instance](Instance* i) {
+            return i == instance;
+        });
+        if (it != list.end()) {
+            list.erase(it);
+            return;
         }
         FL_WARN(
             _log, "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");

@@ -34,7 +34,7 @@ namespace FIFE
 
         /** Utility constructor
          */
-        Location(Layer* layer);
+        explicit Location(Layer* layer);
 
         /** Destructor
          */

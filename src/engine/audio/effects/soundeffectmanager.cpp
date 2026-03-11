@@ -228,23 +228,23 @@ namespace FIFE
     void SoundEffectManager::deleteSoundEffect(SoundEffect* effect)
     {
         disableSoundEffect(effect);
+
         if (effect->getFilter() != nullptr) {
             removeSoundFilterFromSoundEffect(effect, effect->getFilter());
         }
-        for (auto it = m_effects.begin(); it != m_effects.end(); ++it) {
-            if (effect == *it) {
-                auto effectIt = m_effectEmitters.find(effect);
-                if (effectIt != m_effectEmitters.end()) {
-                    auto emitterIt = effectIt->second.begin();
-                    for (; emitterIt != effectIt->second.end(); ++emitterIt) {
-                        (*emitterIt)->removeEffect(effect);
-                    }
+
+        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+        if (it != m_effects.end()) {
+            auto effectIt = m_effectEmitters.find(effect);
+            if (effectIt != m_effectEmitters.end()) {
+                for (auto emitter : effectIt->second) {
+                    emitter->removeEffect(effect);
                 }
                 m_effectEmitters.erase(effectIt);
-                delete *it;
-                m_effects.erase(it);
-                break;
             }
+
+            delete *it;
+            m_effects.erase(it);
         }
     }
 
@@ -407,32 +407,31 @@ namespace FIFE
     void SoundEffectManager::deleteSoundFilter(SoundFilter* filter)
     {
         disableDirectSoundFilter(filter);
-        for (auto it = m_filters.begin(); it != m_filters.end(); ++it) {
-            if (filter == *it) {
-                auto filterIt = m_filterdEmitters.find(filter);
-                if (filterIt != m_filterdEmitters.end()) {
-                    auto emitterIt = filterIt->second.begin();
-                    for (; emitterIt != filterIt->second.end(); ++emitterIt) {
-                        (*emitterIt)->setDirectFilter(nullptr);
-                    }
+
+        auto it = std::find(m_filters.begin(), m_filters.end(), filter);
+        if (it != m_filters.end()) {
+            auto filterIt = m_filterdEmitters.find(filter);
+            if (filterIt != m_filterdEmitters.end()) {
+                for (auto emitter : filterIt->second) {
+                    emitter->setDirectFilter(nullptr);
                 }
                 m_filterdEmitters.erase(filterIt);
-                auto filterItt = m_filterdEffects.find(filter);
-                if (filterItt != m_filterdEffects.end()) {
-                    auto effectIt = filterItt->second.begin();
-                    for (; effectIt != filterItt->second.end(); ++effectIt) {
-                        (*effectIt)->setFilter(nullptr);
-                        if ((*effectIt)->isEnabled()) {
-                            disableSoundEffect(*effectIt);
-                            enableSoundEffect(*effectIt);
-                        }
+            }
+
+            auto filterItt = m_filterdEffects.find(filter);
+            if (filterItt != m_filterdEffects.end()) {
+                for (auto effect : filterItt->second) {
+                    effect->setFilter(nullptr);
+                    if (effect->isEnabled()) {
+                        disableSoundEffect(effect);
+                        enableSoundEffect(effect);
                     }
                 }
                 m_filterdEffects.erase(filterItt);
-                delete *it;
-                m_filters.erase(it);
-                break;
             }
+
+            delete *it;
+            m_filters.erase(it);
         }
     }
 

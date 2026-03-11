@@ -524,7 +524,7 @@ namespace FIFE
         class InstanceActivity
         {
         public:
-            InstanceActivity(Instance& source);
+            explicit InstanceActivity(Instance& source);
             ~InstanceActivity();
 
             // ----- Fields related to change tracking -----

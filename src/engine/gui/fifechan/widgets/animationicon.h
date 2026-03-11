@@ -42,7 +42,7 @@ namespace fcn
          *
          * @param animation The animation to display.
          */
-        AnimationIcon(FIFE::AnimationPtr animation);
+        explicit AnimationIcon(FIFE::AnimationPtr animation);
 
         /**
          * Destructor.

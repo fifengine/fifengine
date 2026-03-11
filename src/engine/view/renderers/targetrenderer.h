@@ -78,7 +78,7 @@ namespace FIFE
         /** Constructor.
          * @param renderbackend to use
          */
-        TargetRenderer(RenderBackend* renderbackend);
+        explicit TargetRenderer(RenderBackend* renderbackend);
 
         /** Destructor.
          */

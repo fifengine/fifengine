@@ -24,11 +24,11 @@ namespace FIFE
     class SDLImage : public Image
     {
     public:
-        SDLImage(IResourceLoader* loader = 0);
-        SDLImage(const std::string& name, IResourceLoader* loader = 0);
-        SDLImage(SDL_Surface* surface);
+        explicit SDLImage(IResourceLoader* loader = 0);
+        explicit SDLImage(const std::string& name, IResourceLoader* loader = 0);
+        explicit SDLImage(SDL_Surface* surface);
         SDLImage(const std::string& name, SDL_Surface* surface);
-        SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
+        explicit SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
         SDLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
 
         virtual ~SDLImage();
