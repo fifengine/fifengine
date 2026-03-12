@@ -35,11 +35,11 @@ namespace FIFE
     class Matrix
     {
     public:
-        Matrix<T>() { }
+        Matrix() { }
         template <typename U>
         friend class Matrix;
         template <typename U>
-        Matrix<T>(const Matrix<U>& mat)
+        Matrix(const Matrix<U>& mat)
         {
             memmove(m, mat.m, 16 * sizeof(T));
         }
