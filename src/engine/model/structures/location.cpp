@@ -14,6 +14,7 @@
 #include "util/base/exception.h"
 
 #include "layer.h"
+#include "location.h"
 
 namespace FIFE
 {
