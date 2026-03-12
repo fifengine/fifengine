@@ -9,15 +9,6 @@
 // 3rd party library includes
 
 // GLEW
-// On Windows:
-//   when building a static library or executable: GLEW_STATIC
-//   when building a dll: GLEW_BUILD
-#ifdef BUILD_SHARED_LIBS
-    #define GLEW_BUILD
-#else
-    #define GLEW_STATIC
-#endif
-
 #include "GL/glew.h"
 
 // FIFE includes
