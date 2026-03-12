@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <cstdio>
+#include <format>
 #include <string>
 #include <vector>
 
@@ -328,10 +329,7 @@ namespace FIFE
                         for (int x = 0; x < x_rows; ++x) {
                             region.x = x * subimageWidth;
 
-                            static char tmp[64];
-                            snprintf(tmp, 64, "%04d", frame);
-                            std::ostringstream finalname;
-                            finalname << atlasId << ":" << std::string(tmp) << extension;
+                            std::string finalname = std::format("{}:{:04d}{}", atlasId, frame, extension);
 
                             ImagePtr subImage;
                             if (!m_imageManager->exists(finalname.str())) {

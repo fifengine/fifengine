@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <cstdio>
+#include <format>
 #include <set>
 #include <string>
 
@@ -571,10 +572,7 @@ namespace FIFE
                                         int dir;
                                         dirElement->QueryIntAttribute("dir", &dir);
 
-                                        static char tmp[64];
-                                        snprintf(tmp, 64, "%03d", dir);
-                                        std::string aniId =
-                                            std::string(objectId) + ":" + actionId + ":" + std::string(tmp);
+                                        std::string aniId      = std::format("{}:{}:{:03d}", objectId, actionId, dir);
                                         AnimationPtr animation = m_animationManager->create(aniId);
 
                                         int frames;
@@ -608,11 +606,8 @@ namespace FIFE
                                         }
 
                                         for (int iframe = 0; iframe < frames; ++iframe) {
-                                            static char tmpBuf[64];
-                                            snprintf(tmpBuf, 64, "%03d:%04d", dir, iframe);
-
                                             std::string frameId =
-                                                std::string(objectId) + ":" + actionId + ":" + std::string(tmpBuf);
+                                                std::format("{}:{}:{:03d}:{:04d}", objectId, actionId, dir, iframe);
                                             Rect region(
                                                 frameWidth * iframe, frameHeight * nDir, frameWidth, frameHeight);
                                             ImagePtr framePtr;
