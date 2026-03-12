@@ -155,7 +155,7 @@ namespace FIFE
          */
         virtual const std::string& getName() const
         {
-            const static std::string eventName("InputEvent");
+            static const std::string eventName("InputEvent");
             return eventName;
         }
 
