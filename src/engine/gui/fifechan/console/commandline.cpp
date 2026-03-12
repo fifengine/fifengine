@@ -17,7 +17,7 @@
 
 namespace FIFE
 {
-    using namespace fcn;
+    using fcn::Key;
 
     CommandLine::CommandLine() : m_history_position(0)
     {
