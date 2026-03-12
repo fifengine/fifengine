@@ -332,15 +332,15 @@ namespace FIFE
                             std::string finalname = std::format("{}:{:04d}{}", atlasId, frame, extension);
 
                             ImagePtr subImage;
-                            if (!m_imageManager->exists(finalname.str())) {
-                                subImage = m_imageManager->create(finalname.str());
+                            if (!m_imageManager->exists(finalname)) {
+                                subImage = m_imageManager->create(finalname);
                             } else {
-                                subImage = m_imageManager->getPtr(finalname.str());
+                                subImage = m_imageManager->getPtr(finalname);
                             }
                             subImage->useSharedImage(atlas->getPackedImage(), region);
 
                             AtlasData atlasData = {.rect = region, .image = subImage};
-                            atlas->addImage(finalname.str(), atlasData);
+                            atlas->addImage(finalname, atlasData);
 
                             ++frame;
                         }
