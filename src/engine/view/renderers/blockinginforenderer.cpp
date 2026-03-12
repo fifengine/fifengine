@@ -82,14 +82,14 @@ namespace FIFE
                     if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                         std::vector<ExactModelCoordinate> vertices;
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                        auto it             = vertices.begin();
+                        auto vit            = vertices.begin();
                         int32_t halfind     = vertices.size() / 2;
-                        ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                        ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                         Point pt1(firstpt.x, firstpt.y);
                         Point pt2;
-                        ++it;
-                        for (; it != vertices.end(); it++) {
-                            ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                        ++vit;
+                        for (; vit != vertices.end(); vit++) {
+                            ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                             pt2.x           = pts.x;
                             pt2.y           = pts.y;
                             m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);
@@ -113,14 +113,14 @@ namespace FIFE
                 }
                 std::vector<ExactModelCoordinate> vertices;
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-                auto it             = vertices.begin();
+                auto vit            = vertices.begin();
                 int32_t halfind     = vertices.size() / 2;
-                ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                 Point pt1(firstpt.x, firstpt.y);
                 Point pt2;
-                ++it;
-                for (; it != vertices.end(); it++) {
-                    ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                ++vit;
+                for (; vit != vertices.end(); vit++) {
+                    ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                     pt2.x           = pts.x;
                     pt2.y           = pts.y;
                     m_renderbackend->drawLine(pt1, pt2, m_color.r, m_color.g, m_color.b);

@@ -290,9 +290,9 @@ namespace FIFE
         assert(entry->instanceIndex == m_instance_map[instance]);
         RenderItem* item = m_renderItems[entry->instanceIndex];
         // removes entry from updates
-        auto it = m_entriesToUpdate.find(entry->entryIndex);
-        if (it != m_entriesToUpdate.end()) {
-            m_entriesToUpdate.erase(it);
+        auto entriesToUpdateIt = m_entriesToUpdate.find(entry->entryIndex);
+        if (entriesToUpdateIt != m_entriesToUpdate.end()) {
+            m_entriesToUpdate.erase(entriesToUpdateIt);
         }
         // removes entry from CacheTree
         if (entry->node != nullptr) {

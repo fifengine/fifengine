@@ -193,14 +193,14 @@ namespace FIFE
                         for (unsigned int flag : flags) {
                             // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
                             // mode.refresh_rate, flags[j]));
-                            ScreenMode m(mode.w, mode.h, bpp, mode.refresh_rate, flag);
-                            m.setFormat(mode.format);
-                            m.setDisplay(i);
+                            ScreenMode sm(mode.w, mode.h, bpp, mode.refresh_rate, flag);
+                            sm.setFormat(mode.format);
+                            sm.setDisplay(i);
                             if (renderDriver) {
-                                m.setRenderDriverName(m_renderDriverName);
-                                m.setRenderDriverIndex(m_renderDriverIndex);
+                                sm.setRenderDriverName(m_renderDriverName);
+                                sm.setRenderDriverIndex(m_renderDriverIndex);
                             }
-                            m_screenModes.push_back(m);
+                            m_screenModes.push_back(sm);
                         }
                     }
                 } else {

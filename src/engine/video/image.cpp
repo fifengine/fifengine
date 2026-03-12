@@ -316,12 +316,12 @@ namespace FIFE
                 static_cast<Uint16>(srcimg->getWidth()),
                 static_cast<Uint16>(srcimg->getHeight())};
             if (srcimg->isSharedImage()) {
-                Rect const & rect = srcimg->getSubImageRect();
-                SDL_Rect srcrect  = {
-                    static_cast<Sint16>(rect.x),
-                    static_cast<Sint16>(rect.y),
-                    static_cast<Uint16>(rect.w),
-                    static_cast<Uint16>(rect.h)};
+                Rect const & srcRect = srcimg->getSubImageRect();
+                SDL_Rect srcrect     = {
+                    static_cast<Sint16>(srcRect.x),
+                    static_cast<Sint16>(srcRect.y),
+                    static_cast<Uint16>(srcRect.w),
+                    static_cast<Uint16>(srcRect.h)};
                 SDL_BlitSurface(srcimg->m_surface, &srcrect, m_surface, &dstrect);
             } else {
                 SDL_BlitSurface(srcimg->m_surface, nullptr, m_surface, &dstrect);

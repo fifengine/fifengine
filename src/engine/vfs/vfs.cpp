@@ -126,7 +126,8 @@ namespace FIFE
             }
 
             VFSSource* source = provider->getSource(path);
-            auto it           = std::ranges::find(m_sources, source);
+
+            auto it = std::ranges::find(m_sources, source);
 
             if (it != m_sources.end()) {
                 removeSource(*it);
@@ -259,8 +260,9 @@ namespace FIFE
             const VFSSourceProvider* provider = *i;
             if (provider->hasSource(path)) {
                 const VFSSource* source = provider->getSource(path);
-                auto i                  = std::ranges::find(m_sources, source);
-                if (i == m_sources.end()) {
+
+                auto srcIt = std::ranges::find(m_sources, source);
+                if (srcIt == m_sources.end()) {
                     return false;
                 }
                 return true;

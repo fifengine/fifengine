@@ -393,7 +393,7 @@ namespace FIFE
 
                             if (imagePtr) {
                                 int xOffset = 0;
-                                int success = imageElement->QueryIntAttribute("x_offset", &xOffset);
+                                success     = imageElement->QueryIntAttribute("x_offset", &xOffset);
 
                                 if (success == XML::SUCCESS) {
                                     imagePtr->setXShift(xOffset);
@@ -445,45 +445,45 @@ namespace FIFE
                                         audio->setGroupName(group);
                                     }
 
-                                    float value = 0;
-                                    int success = XML::QueryAttribute(soundElement, "volume", &value);
-                                    if (success == XML::SUCCESS) {
+                                    float value      = 0;
+                                    int success_attr = XML::QueryAttribute(soundElement, "volume", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setGain(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "max_volume", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "max_volume", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setMaxGain(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "min_volume", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "min_volume", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setMinGain(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "ref_distance", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "ref_distance", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setReferenceDistance(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "max_distance", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "max_distance", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setMaxDistance(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "rolloff", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "rolloff", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setRolloff(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "pitch", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "pitch", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setPitch(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "cone_inner_angle", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "cone_inner_angle", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setConeInnerAngle(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "cone_outer_angle", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "cone_outer_angle", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setConeOuterAngle(value);
                                     }
-                                    success = XML::QueryAttribute(soundElement, "cone_outer_gain", &value);
-                                    if (success == XML::SUCCESS) {
+                                    success_attr = XML::QueryAttribute(soundElement, "cone_outer_gain", &value);
+                                    if (success_attr == XML::SUCCESS) {
                                         audio->setConeOuterGain(value);
                                     }
 
@@ -576,26 +576,26 @@ namespace FIFE
                                         AnimationPtr animation = m_animationManager->create(aniId);
 
                                         int frames;
-                                        int success = XML::QueryAttribute(dirElement, "frames", &frames);
-                                        if (success != XML::SUCCESS) {
+                                        int success_attr = XML::QueryAttribute(dirElement, "frames", &frames);
+                                        if (success_attr != XML::SUCCESS) {
                                             frames = animFrames;
                                         }
 
                                         int delay;
-                                        success = XML::QueryAttribute(dirElement, "delay", &delay);
-                                        if (success != XML::SUCCESS) {
+                                        success_attr = XML::QueryAttribute(dirElement, "delay", &delay);
+                                        if (success_attr != XML::SUCCESS) {
                                             delay = animDelay;
                                         }
 
                                         int xoffset;
-                                        success = XML::QueryAttribute(dirElement, "x_offset", &xoffset);
-                                        if (success != XML::SUCCESS) {
+                                        success_attr = XML::QueryAttribute(dirElement, "x_offset", &xoffset);
+                                        if (success_attr != XML::SUCCESS) {
                                             xoffset = animXoffset;
                                         }
 
                                         int yoffset;
-                                        success = XML::QueryAttribute(dirElement, "y_offset", &yoffset);
-                                        if (success != XML::SUCCESS) {
+                                        success_attr = XML::QueryAttribute(dirElement, "y_offset", &yoffset);
+                                        if (success_attr != XML::SUCCESS) {
                                             yoffset = animYoffset;
                                         }
 
@@ -635,8 +635,8 @@ namespace FIFE
                                 // Load animation.xml with frames
                                 sourceId = XML::Attribute(animElement, "source");
                                 if (sourceId != nullptr) {
-                                    int direction = 0;
-                                    int success   = XML::QueryAttribute(animElement, "direction", &direction);
+                                    int direction    = 0;
+                                    int success_attr = XML::QueryAttribute(animElement, "direction", &direction);
 
                                     fs::path animPath(filename);
 
@@ -652,7 +652,7 @@ namespace FIFE
                                     }
 
                                     if ((action != nullptr) && animation) {
-                                        if (success != XML::SUCCESS) {
+                                        if (success_attr != XML::SUCCESS) {
                                             direction = animation->getDirection();
                                         }
                                         auto* actionVisual = action->getVisual<ActionVisual>();

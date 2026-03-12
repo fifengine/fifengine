@@ -555,7 +555,7 @@ namespace FIFE
                                                     success &= transitionElement->QueryIntAttribute("y", &targetY);
                                                     transitionElement->QueryIntAttribute("z", &targetZ);
                                                     if (success == XML::SUCCESS) {
-                                                        ModelCoordinate mc(targetX, targetY, targetZ);
+                                                        ModelCoordinate mc_target(targetX, targetY, targetZ);
                                                         Layer* targetLayer = nullptr;
                                                         const char* targetLayerId =
                                                             XML::Attribute(transitionElement, "id");
@@ -568,7 +568,7 @@ namespace FIFE
 
                                                         int immediate = 0;
                                                         transitionElement->QueryIntAttribute("immediate", &immediate);
-                                                        cell->createTransition(targetLayer, mc, immediate != 0);
+                                                        cell->createTransition(targetLayer, mc_target, immediate != 0);
                                                     }
                                                 }
                                             }

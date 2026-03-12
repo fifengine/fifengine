@@ -181,14 +181,14 @@ namespace FIFE
                             }
                             std::vector<ExactModelCoordinate> vertices;
                             cg->getVertices(vertices, (*pit).getLayerCoordinates());
-                            auto it             = vertices.begin();
+                            auto vertIt         = vertices.begin();
                             int32_t halfind     = vertices.size() / 2;
-                            ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                            ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
                             Point pt1(firstpt.x, firstpt.y);
                             Point pt2;
-                            ++it;
-                            for (; it != vertices.end(); it++) {
-                                ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                            ++vertIt;
+                            for (; vertIt != vertices.end(); ++vertIt) {
+                                ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
                                 pt2.x           = pts.x;
                                 pt2.y           = pts.y;
                                 m_renderbackend->drawLine(pt1, pt2, m_pathColor.r, m_pathColor.g, m_pathColor.b);

@@ -171,8 +171,8 @@ namespace FIFE
                         }
                     }
                     if (!found && startCell->isZoneProtected()) {
-                        const std::vector<Cell*>& neighbors = startCell->getNeighbors();
-                        for (auto neighbor : neighbors) {
+                        const std::vector<Cell*>& startNeighbors = startCell->getNeighbors();
+                        for (auto neighbor : startNeighbors) {
                             Zone* tmpZone = neighbor->getZone();
                             if (tmpZone != nullptr) {
                                 if (tmpZone == startZone) {

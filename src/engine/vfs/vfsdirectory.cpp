@@ -79,13 +79,13 @@ namespace FIFE
         }
 
         try {
-            fs::path path(dir);
-            if (!fs::exists(path) || !fs::is_directory(path)) {
+            fs::path dirPath(dir);
+            if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
                 return list;
             }
 
             fs::directory_iterator end;
-            for (fs::directory_iterator i(path); i != end; ++i) {
+            for (fs::directory_iterator i(dirPath); i != end; ++i) {
                 if (fs::is_directory(*i) != directorys) {
                     continue;
                 }
