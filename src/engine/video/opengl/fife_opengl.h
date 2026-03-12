@@ -14,19 +14,21 @@
 //   when building a dll: GLEW_BUILD
 #ifdef BUILD_SHARED_LIBS
     #define GLEW_BUILD
-else
+#else
     #define GLEW_STATIC
 #endif
 
 #include "GL/glew.h"
 
-    // FIFE includes
-    // These includes are split up in two parts, separated by one empty line
-    // First block: files included from the FIFE root src directory
-    // Second block: files included from the same folder
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 
-    namespace FIFE
+namespace FIFE
 {
+
+   // TODO
 
 } // FIFE
 
