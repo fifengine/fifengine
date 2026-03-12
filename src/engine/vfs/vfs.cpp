@@ -120,16 +120,17 @@ namespace FIFE
 
     void VFS::removeSource(const std::string& path)
     {
-        auto end = m_providers.end();
-        for (auto i = m_providers.begin(); i != end; ++i) {
-            VFSSourceProvider* provider = *i;
-            if (provider->hasSource(path)) {
-                VFSSource* source = provider->getSource(path);
-                auto i            = std::ranges::find(m_sources, source);
-                if (i == m_sources.end()) {
-                    removeSource(*i);
-                    return;
-                }
+        for (VFSSourceProvider* provider : m_providers) {
+            if (!provider->hasSource(path)) {
+                continue;
+            }
+
+            VFSSource* source = provider->getSource(path);
+            auto it           = std::ranges::find(m_sources, source);
+
+            if (it != m_sources.end()) {
+                removeSource(*it);
+                return;
             }
         }
     }
