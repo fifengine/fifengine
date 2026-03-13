@@ -24,7 +24,7 @@ namespace fcn
         Panel();
         explicit Panel(bool dockable);
 
-        virtual ~Panel() override;
+        ~Panel() override;
 
         /** Sets if the widget is dockable.
          * @param dockable True if the widget should be dockable, otherwise false.
@@ -50,22 +50,22 @@ namespace fcn
 
         // Inherited from ResizableWindow
 
-        virtual void resizeToContent(bool recursiv = true) override;
-        virtual void expandContent(bool recursiv = true) override;
+        void resizeToContent(bool recursiv = true) override;
+        void expandContent(bool recursiv = true) override;
 
         // Inherited from ResizableWindow / MouseListener
 
-        virtual void mouseEntered(MouseEvent& mouseEvent) override;
+        void mouseEntered(MouseEvent& mouseEvent) override;
 
-        virtual void mouseExited(MouseEvent& mouseEvent) override;
+        void mouseExited(MouseEvent& mouseEvent) override;
 
-        virtual void mousePressed(MouseEvent& mouseEvent) override;
+        void mousePressed(MouseEvent& mouseEvent) override;
 
-        virtual void mouseReleased(MouseEvent& mouseEvent) override;
+        void mouseReleased(MouseEvent& mouseEvent) override;
 
-        virtual void mouseMoved(MouseEvent& mouseEvent) override;
+        void mouseMoved(MouseEvent& mouseEvent) override;
 
-        virtual void mouseDragged(MouseEvent& mouseEvent) override;
+        void mouseDragged(MouseEvent& mouseEvent) override;
 
     protected:
         DockArea* getDockedArea();

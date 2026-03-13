@@ -35,30 +35,13 @@ namespace FIFE
          * @param path the filename to check
          * @return true if readable, false otherwise
          */
-        virtual bool isReadable(const std::string& path) const override;
+        bool isReadable(const std::string& path) const override;
 
-        /** Create a new instance of a VFSSource initialized with the given directory
-         * This will only pass if the path is readable and recognized
-         * as a directory as per the description of isReadable
-         *
-         * @param path the directory to open
-         * @return the new VFSSource
-         */
-        virtual VFSSource* createSource(const std::string& path) override;
+        VFSSource* createSource(const std::string& path) override;
 
-        /** Get the source instance of the path
-         *
-         * @param path The source path
-         * @return A VFSSource or NULL of none is present
-         */
-        virtual VFSSource* getSource(const std::string& path) const override;
+        VFSSource* getSource(const std::string& path) const override;
 
-        /** Check whether the provider already has created a source with that path
-         *
-         * @param path The path to the source
-         * @return true if the provider has already created a source with that path, false if not
-         */
-        virtual bool hasSource(const std::string& path) const override;
+        bool hasSource(const std::string& path) const override;
 
     private:
         std::string m_name;

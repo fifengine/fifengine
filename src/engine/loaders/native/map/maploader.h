@@ -35,7 +35,7 @@ namespace FIFE
     public:
         MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
 
-        virtual ~MapLoader() override;
+        ~MapLoader() override;
 
         /**
          * @see IMapLoader::setObjectLoader

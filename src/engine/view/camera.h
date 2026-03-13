@@ -66,7 +66,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Camera() override;
+        ~Camera() override;
 
         /** Gets the identifier for this camera.
          */

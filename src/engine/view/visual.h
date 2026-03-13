@@ -82,7 +82,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~ObjectVisual() override;
+        ~ObjectVisual() override;
 
         /** Adds new static image with given angle (degrees)
          * Static images are used in case there are no actions active in the instance
@@ -152,7 +152,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~InstanceVisual() override;
+        ~InstanceVisual() override;
 
         /** Sets transparency value for object to be visualized
          *  @param transparency set the transparency
@@ -207,7 +207,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~ActionVisual() override;
+        ~ActionVisual() override;
 
         /** Adds new animation with given angle (degrees)
          */

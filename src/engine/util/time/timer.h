@@ -57,7 +57,7 @@ namespace FIFE
          *
          *  Stops and destroys the timer.
          */
-        virtual ~Timer() override;
+        ~Timer() override;
 
         /** Set the interval in milliseconds
          *

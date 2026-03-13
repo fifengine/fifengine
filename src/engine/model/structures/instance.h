@@ -90,7 +90,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Instance() override;
+        ~Instance() override;
 
         /** Get the identifier for this instance; possibly null.
          */

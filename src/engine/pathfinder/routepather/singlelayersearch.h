@@ -37,7 +37,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~SingleLayerSearch() override;
+        ~SingleLayerSearch() override;
 
         /** Updates the search.
          *

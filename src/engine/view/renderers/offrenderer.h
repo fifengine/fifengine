@@ -34,7 +34,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererLineInfo(Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererLineInfo() override;
+        ~OffRendererLineInfo() override;
 
     private:
         Point m_edge1;
@@ -49,7 +49,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererPointInfo(Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererPointInfo() override;
+        ~OffRendererPointInfo() override;
 
     private:
         Point m_anchor;
@@ -63,7 +63,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererTriangleInfo(Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererTriangleInfo() override;
+        ~OffRendererTriangleInfo() override;
 
     private:
         Point m_edge1;
@@ -79,7 +79,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererQuadInfo(Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererQuadInfo() override;
+        ~OffRendererQuadInfo() override;
 
     private:
         Point m_edge1;
@@ -97,7 +97,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererVertexInfo(Point center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererVertexInfo() override;
+        ~OffRendererVertexInfo() override;
 
     private:
         Point m_center;
@@ -113,7 +113,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererImageInfo(Point n, ImagePtr image);
-        virtual ~OffRendererImageInfo() override;
+        ~OffRendererImageInfo() override;
 
     private:
         Point m_anchor;
@@ -124,7 +124,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererAnimationInfo(Point n, AnimationPtr animation);
-        virtual ~OffRendererAnimationInfo() override;
+        ~OffRendererAnimationInfo() override;
 
     private:
         Point m_anchor;
@@ -137,7 +137,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererTextInfo(Point n, IFont* font, std::string text);
-        virtual ~OffRendererTextInfo() override;
+        ~OffRendererTextInfo() override;
 
     private:
         Point m_anchor;
@@ -149,7 +149,7 @@ namespace FIFE
     public:
         void render(RenderBackend* renderbackend) override;
         OffRendererResizeInfo(Point n, ImagePtr image, int32_t width, int32_t height);
-        virtual ~OffRendererResizeInfo() override;
+        ~OffRendererResizeInfo() override;
 
     private:
         Point m_anchor;

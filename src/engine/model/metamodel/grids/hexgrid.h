@@ -24,7 +24,7 @@ namespace FIFE
     {
     public:
         explicit HexGrid(bool axial = false);
-        virtual ~HexGrid() override;
+        ~HexGrid() override;
 
         bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
         const std::string& getType() const override;

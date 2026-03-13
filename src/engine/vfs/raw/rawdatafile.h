@@ -33,10 +33,10 @@ namespace FIFE
          * @throw CannotOpenFile
          */
         explicit RawDataFile(std::string file);
-        virtual ~RawDataFile() override;
+        ~RawDataFile() override;
 
-        virtual uint32_t getSize() const override;
-        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
+        uint32_t getSize() const override;
+        void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
 
     private:
         std::string m_file;

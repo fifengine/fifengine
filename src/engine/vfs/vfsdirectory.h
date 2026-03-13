@@ -32,31 +32,14 @@ namespace FIFE
         explicit VFSDirectory(VFS* vfs, std::string root = "./");
         /** Destructor
          */
-        virtual ~VFSDirectory() override;
+        ~VFSDirectory() override;
 
-        /** Tests whether a file can be opened.
-         * @param filename The file to test.
-         * @return True, if the file filename can be opened.
-         */
-        virtual bool fileExists(const std::string& filename) const override;
-        /** Opens a file.
-         * @param filename The file to open.
-         */
-        virtual RawData* open(const std::string& filename) const override;
+        bool fileExists(const std::string& filename) const override;
+        RawData* open(const std::string& filename) const override;
 
-        /** List files in a directory
-         * @param path The directory to list the files in
-         * @return A string list of filenames
-         * Will return an empty list on \b any error
-         */
-        virtual std::set<std::string> listFiles(const std::string& path) const override;
+        std::set<std::string> listFiles(const std::string& path) const override;
 
-        /** List directories in a directory
-         * @param path The directory to list the directories in
-         * @return A string list of directories
-         * Will return an empty list on \b any error
-         */
-        virtual std::set<std::string> listDirectories(const std::string& path) const override;
+        std::set<std::string> listDirectories(const std::string& path) const override;
 
     private:
         std::string m_root;

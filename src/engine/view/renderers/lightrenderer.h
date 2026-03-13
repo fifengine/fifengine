@@ -84,10 +84,10 @@ namespace FIFE
     {
     public:
         LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
-        virtual ~LightRendererImageInfo() override;
+        ~LightRendererImageInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        virtual std::string getName() override
+        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        std::string getName() override
         {
             return "image";
         }
@@ -104,10 +104,10 @@ namespace FIFE
     {
     public:
         LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
-        virtual ~LightRendererAnimationInfo() override;
+        ~LightRendererAnimationInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        virtual std::string getName() override
+        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        std::string getName() override
         {
             return "animation";
         }
@@ -137,10 +137,10 @@ namespace FIFE
             uint8_t b,
             int32_t src,
             int32_t dst);
-        virtual ~LightRendererSimpleLightInfo() override;
+        ~LightRendererSimpleLightInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        virtual std::string getName() override
+        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        std::string getName() override
         {
             return "simple";
         }
@@ -179,10 +179,10 @@ namespace FIFE
     public:
         LightRendererResizeInfo(
             RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
-        virtual ~LightRendererResizeInfo() override;
+        ~LightRendererResizeInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        virtual std::string getName() override
+        void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        std::string getName() override
         {
             return "resize";
         }

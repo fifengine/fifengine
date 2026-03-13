@@ -123,7 +123,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Cell() override;
+        ~Cell() override;
 
         /** Adds instances to this cell.
          * @param instances A const reference to list that contains instances.

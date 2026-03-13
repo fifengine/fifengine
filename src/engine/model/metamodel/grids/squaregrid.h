@@ -24,7 +24,7 @@ namespace FIFE
     {
     public:
         SquareGrid();
-        virtual ~SquareGrid() override;
+        ~SquareGrid() override;
 
         const std::string& getType() const override;
         const std::string& getName() const override;

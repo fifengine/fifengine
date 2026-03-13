@@ -93,22 +93,13 @@ namespace FIFE
     public:
         AtlasLoader(Model* model, VFS* vfs, ImageManager* imageManager, AnimationManager* animationManager);
 
-        virtual ~AtlasLoader() override;
+        ~AtlasLoader() override;
 
-        /**
-         * @see IAtlasLoader::isLoadable
-         */
-        virtual bool isLoadable(const std::string& filename) override;
+        bool isLoadable(const std::string& filename) override;
 
-        /**
-         * @see IAtlasLoader::load
-         */
-        virtual AtlasPtr load(const std::string& filename) override;
+        AtlasPtr load(const std::string& filename) override;
 
-        /**
-         * @see IAtlasLoader::loadMultiple
-         */
-        virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) override;
+        std::vector<AtlasPtr> loadMultiple(const std::string& filename) override;
 
     private:
         AtlasPtr loadAtlas(const std::string& filename, tinyxml2::XMLElement* atlasElem);

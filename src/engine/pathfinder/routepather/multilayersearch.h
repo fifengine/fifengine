@@ -39,7 +39,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~MultiLayerSearch() override;
+        ~MultiLayerSearch() override;
 
         /** Updates the search.
          *

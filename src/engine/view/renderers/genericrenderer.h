@@ -36,7 +36,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererLineInfo(RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~GenericRendererLineInfo() override;
+        ~GenericRendererLineInfo() override;
 
     private:
         RendererNode m_edge1;
@@ -51,7 +51,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererPointInfo(RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~GenericRendererPointInfo() override;
+        ~GenericRendererPointInfo() override;
 
     private:
         RendererNode m_anchor;
@@ -66,7 +66,7 @@ namespace FIFE
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererTriangleInfo(
             RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~GenericRendererTriangleInfo() override;
+        ~GenericRendererTriangleInfo() override;
 
     private:
         RendererNode m_edge1;
@@ -90,7 +90,7 @@ namespace FIFE
             uint8_t g,
             uint8_t b,
             uint8_t a);
-        virtual ~GenericRendererQuadInfo() override;
+        ~GenericRendererQuadInfo() override;
 
     private:
         RendererNode m_edge1;
@@ -108,7 +108,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererVertexInfo(RendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~GenericRendererVertexInfo() override;
+        ~GenericRendererVertexInfo() override;
 
     private:
         RendererNode m_center;
@@ -124,7 +124,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererImageInfo(RendererNode n, ImagePtr image, bool zoomed = true);
-        virtual ~GenericRendererImageInfo() override;
+        ~GenericRendererImageInfo() override;
 
     private:
         RendererNode m_anchor;
@@ -136,7 +136,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererAnimationInfo(RendererNode n, AnimationPtr animation, bool zoomed = true);
-        virtual ~GenericRendererAnimationInfo() override;
+        ~GenericRendererAnimationInfo() override;
 
     private:
         RendererNode m_anchor;
@@ -150,7 +150,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererTextInfo(RendererNode n, IFont* font, std::string text, bool zoomed = true);
-        virtual ~GenericRendererTextInfo() override;
+        ~GenericRendererTextInfo() override;
 
     private:
         RendererNode m_anchor;
@@ -163,7 +163,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, bool zoomed = true);
-        virtual ~GenericRendererResizeInfo() override;
+        ~GenericRendererResizeInfo() override;
 
     private:
         RendererNode m_anchor;
