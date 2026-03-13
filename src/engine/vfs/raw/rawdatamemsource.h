@@ -36,25 +36,22 @@ namespace FIFE
          * @param datalen the datalen to allocate
          */
         explicit RawDataMemSource(uint32_t datalen);
-        virtual ~RawDataMemSource();
+        virtual ~RawDataMemSource() override;
 
         /** Get a Pointer to the data
          * You need to use this function to fill the class with meaningfull data.
          */
         uint8_t* getRawData() const;
 
-        virtual uint32_t getSize() const;
-        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length);
+        virtual uint32_t getSize() const override;
+        virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
 
     private:
         uint8_t* m_data;
         uint32_t m_datalen;
 
-        RawDataMemSource(const RawDataMemSource&) { }
-        RawDataMemSource& operator=(const RawDataMemSource)
-        {
-            return *this;
-        }
+        RawDataMemSource(const RawDataMemSource&)            = delete;
+        RawDataMemSource& operator=(const RawDataMemSource&) = delete;
     };
 
 } // namespace FIFE

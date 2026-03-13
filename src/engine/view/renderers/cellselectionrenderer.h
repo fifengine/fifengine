@@ -88,7 +88,7 @@ namespace FIFE
          *
          * @return A vector that contains all selected locations.
          */
-        const std::vector<Location> getLocations() const
+        const std::vector<Location>& getLocations() const
         {
             return m_locations;
         }

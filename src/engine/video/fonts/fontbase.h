@@ -32,35 +32,35 @@ namespace FIFE
     {
     public:
         FontBase();
-        virtual ~FontBase() { }
+        virtual ~FontBase() override;
 
-        void invalidate();
-        void setRowSpacing(int32_t spacing);
-        int32_t getRowSpacing() const;
-        void setGlyphSpacing(int32_t spacing);
-        int32_t getGlyphSpacing() const;
+        void invalidate() override;
+        void setRowSpacing(int32_t spacing) override;
+        int32_t getRowSpacing() const override;
+        void setGlyphSpacing(int32_t spacing) override;
+        int32_t getGlyphSpacing() const override;
 
-        virtual void setAntiAlias(bool antiAlias);
-        virtual bool isAntiAlias() const;
-        virtual void setBoldStyle(bool style);
-        virtual bool isBoldStyle() const;
-        virtual void setItalicStyle(bool style);
-        virtual bool isItalicStyle() const;
-        virtual void setUnderlineStyle(bool style);
-        virtual bool isUnderlineStyle() const;
-        virtual void setStrikethroughStyle(bool style);
-        virtual bool isStrikethroughStyle() const;
+        virtual void setAntiAlias(bool antiAlias) override;
+        virtual bool isAntiAlias() const override;
+        virtual void setBoldStyle(bool style) override;
+        virtual bool isBoldStyle() const override;
+        virtual void setItalicStyle(bool style) override;
+        virtual bool isItalicStyle() const override;
+        virtual void setUnderlineStyle(bool style) override;
+        virtual bool isUnderlineStyle() const override;
+        virtual void setStrikethroughStyle(bool style) override;
+        virtual bool isStrikethroughStyle() const override;
 
-        virtual void setDynamicColoring(bool coloring);
-        virtual bool isDynamicColoring() const;
+        virtual void setDynamicColoring(bool coloring) override;
+        virtual bool isDynamicColoring() const override;
 
-        virtual int32_t getStringIndexAt(const std::string& text, int32_t x) const;
+        virtual int32_t getStringIndexAt(const std::string& text, int32_t x) const override;
 
-        Image* getAsImage(const std::string& text);
-        Image* getAsImageMultiline(const std::string& text);
-        std::string splitTextToWidth(const std::string& text, int32_t render_width);
+        Image* getAsImage(const std::string& text) override;
+        Image* getAsImageMultiline(const std::string& text) override;
+        std::string splitTextToWidth(const std::string& text, int32_t render_width) override;
 
-        SDL_Color getColor() const;
+        SDL_Color getColor() const override;
 
         virtual SDL_Surface* renderString(const std::string& text) = 0;
 

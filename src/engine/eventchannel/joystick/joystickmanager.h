@@ -40,7 +40,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~JoystickManager() override;
+        ~JoystickManager() override;
 
         /** Adds a joystick with the given device index.
          */
@@ -64,7 +64,7 @@ namespace FIFE
 
         /** Saves controller mapping for given GUID in the specified file.
          */
-        void saveMapping(const std::string guid, const std::string& file);
+        void saveMapping(const std::string& guid, const std::string& file);
 
         /** Saves all controller mappings that were used during the season.
          */

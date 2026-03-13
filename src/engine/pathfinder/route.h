@@ -125,7 +125,7 @@ namespace FIFE
         /** Returns the path.
          * @return The path which contains all steps.
          */
-        Path getPath();
+        const Path& getPath();
 
         /** Cuts path after the given length.
          * @param length The new length of the path.

@@ -37,19 +37,19 @@ namespace FIFE
         /**
          * Destructor.
          */
-        virtual ~ImageFontBase();
+        virtual ~ImageFontBase() override;
 
         /** Get the width in pixels a given text would occupy
          *  @param text The text that should be measured.
          */
-        virtual int32_t getWidth(const std::string& text) const;
+        virtual int32_t getWidth(const std::string& text) const override;
 
         /** Get the height in pixels a text line would occupy
          */
-        virtual int32_t getHeight() const;
+        virtual int32_t getHeight() const override;
 
-        virtual SDL_Surface* renderString(const std::string& text);
-        virtual void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        virtual SDL_Surface* renderString(const std::string& text) override;
+        virtual void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
 
     protected:
         // A glyph (visible character)

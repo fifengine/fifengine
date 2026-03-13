@@ -129,7 +129,7 @@ namespace FIFE
                 bool isdir = cleanedfile.find('/') != std::string::npos;         // if we still have a / it's a subdir
 
                 if (isdir) {
-                    cleanedfile = cleanedfile.substr(0, cleanedfile.find('/'));
+                    cleanedfile.resize(cleanedfile.find('/'));
                     if (cleanedfile.find('/') != cleanedfile.rfind('/')) {
                         // check if this is a direct subdir
                         continue;

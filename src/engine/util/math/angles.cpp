@@ -48,7 +48,7 @@ namespace FIFE
         // take care of the backward wrapping case
         if (u == angle2id.begin()) {
             tmp = angle2id.end();
-            tmp--;
+            --tmp;
             int32_t ld = u->first - wangle;
             int32_t ud = 360 - tmp->first + wangle;
             if (ud > ld) {

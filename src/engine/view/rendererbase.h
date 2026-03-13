@@ -157,7 +157,7 @@ namespace FIFE
 
         /** Returns list of activated layer
          */
-        std::list<Layer*> getActiveLayers() const
+        const std::list<Layer*>& getActiveLayers() const
         {
             return m_active_layers;
         }

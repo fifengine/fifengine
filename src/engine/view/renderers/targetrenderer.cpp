@@ -28,9 +28,8 @@ namespace FIFE
     static Logger _log(LM_VIEWVIEW);
 
     RenderTarget::RenderTarget(RenderBackend* rb, const std::string& name, uint32_t width, uint32_t height) :
-        m_renderbackend(rb)
+        m_renderbackend(rb), m_target(ImageManager::instance()->loadBlank(name, width, height))
     {
-        m_target = ImageManager::instance()->loadBlank(name, width, height);
     }
 
     RenderTarget::RenderTarget(RenderBackend* rb, ImagePtr& image) : m_renderbackend(rb), m_target(image) { }

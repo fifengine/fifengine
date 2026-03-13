@@ -65,12 +65,12 @@ namespace FIFE
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, Layer* relative_layer, const Point& relative_point) :
-        m_instance(nullptr), m_location(), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_layer(relative_layer), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
     RendererNode::RendererNode(Instance* attached_instance, const Point& relative_point) :
-        m_instance(nullptr), m_location(), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_layer(nullptr), m_point(relative_point), m_listener(nullptr)
     {
         addInstance(attached_instance);
     }
@@ -91,11 +91,11 @@ namespace FIFE
     {
     }
     RendererNode::RendererNode(Layer* attached_layer, const Point& relative_point) :
-        m_instance(nullptr), m_location(), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
+        m_instance(nullptr), m_layer(attached_layer), m_point(relative_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const Point& attached_point) :
-        m_instance(nullptr), m_location(), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
+        m_instance(nullptr), m_layer(nullptr), m_point(attached_point), m_listener(nullptr)
     {
     }
     RendererNode::RendererNode(const RendererNode& old) :
@@ -110,6 +110,7 @@ namespace FIFE
             m_location = source.m_location;
             m_layer    = source.m_layer;
             m_point    = source.m_point;
+            m_listener = source.m_listener ? source.m_listener : new NodeInstanceDeleteListener(this);
         }
         return *this;
     }

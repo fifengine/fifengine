@@ -19,7 +19,7 @@
 namespace FIFE
 {
 
-    CEGuiManager::CEGuiManager()
+    CEGuiManager::CEGuiManager() : m_guiRoot(nullptr), m_lastTimePulse(0.0)
     {
 #ifdef HAVE_OPENGL
         CEGUI::OpenGLRenderer::bootstrapSystem();
@@ -29,8 +29,6 @@ namespace FIFE
         throw GuiException("CEGUI can be used only if opengl is enabled!");
 #endif
         m_inputProcessor = new CEGuiInputProcessor();
-
-        m_lastTimePulse = TimeManager::instance()->getTime() / 1000.0;
     }
 
     CEGuiManager::~CEGuiManager()

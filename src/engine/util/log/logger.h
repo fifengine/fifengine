@@ -185,7 +185,7 @@ namespace FIFE
         /** Gets display name for given module id
          * E.g. LM_AUDIO -> "Audio"
          */
-        std::string getModuleName(logmodule_t module);
+        const std::string& getModuleName(logmodule_t module);
 
     private:
         void validateModule(logmodule_t m);

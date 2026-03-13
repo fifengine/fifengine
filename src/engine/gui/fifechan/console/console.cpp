@@ -34,7 +34,9 @@ namespace FIFE
         m_output(new fcn::TextBox()),
         m_outputscrollarea(new fcn::ScrollArea(m_output)),
         m_status(new fcn::Label()),
-        m_toolsbutton(new fcn::Button("Tools"))
+        m_toolsbutton(new fcn::Button("Tools")),
+        m_hiddenPos(0),
+        m_animationDelta(0)
     {
         reLayout();
 
@@ -45,7 +47,7 @@ namespace FIFE
 
         setOpaque(true);
 
-        m_input->setCallback([this](std::string command) {
+        m_input->setCallback([this](const std::string& command) {
             execute(command);
         });
         m_prompt = "-- ";
@@ -229,7 +231,7 @@ namespace FIFE
         m_animationTimer.start();
     }
 
-    void Console::execute(std::string cmd)
+    void Console::execute(const std::string& cmd)
     {
         FL_DBG(_log, LMsg("in execute with command ") << cmd);
         if (cmd.empty()) {

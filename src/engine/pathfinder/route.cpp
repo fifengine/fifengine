@@ -177,7 +177,7 @@ namespace FIFE
         m_walked = 1;
     }
 
-    Path Route::getPath()
+    const Path& Route::getPath()
     {
         return m_path;
     }

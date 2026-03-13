@@ -473,7 +473,7 @@ namespace FIFE
         auto it = m_animNameMap.find(name);
         if (it != m_animNameMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
-                it->second.get()->invalidate();
+                it->second->invalidate();
             }
         }
     }
@@ -483,7 +483,7 @@ namespace FIFE
         auto it = m_animHandleMap.find(handle);
         if (it != m_animHandleMap.end()) {
             if (it->second->getState() == IResource::RES_LOADED) {
-                it->second.get()->invalidate();
+                it->second->invalidate();
             }
         }
     }
@@ -495,7 +495,7 @@ namespace FIFE
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
-                it->second.get()->invalidate();
+                it->second->invalidate();
             }
         }
     }

@@ -129,7 +129,7 @@ namespace FIFE
 
         /** Sets the render driver name.
          */
-        void setRenderDriverName(const std::string driver)
+        void setRenderDriverName(const std::string& driver)
         {
             m_renderDriver = driver;
         }
@@ -197,21 +197,21 @@ namespace FIFE
 
         /** Gets the available video drivers for your operating system
          */
-        std::vector<std::string> getAvailableVideoDrivers() const
+        const std::vector<std::string>& getAvailableVideoDrivers() const
         {
             return m_availableVideoDrivers;
         };
 
         /** Gets the available render drivers for your operating system
          */
-        std::vector<std::string> getAvailableRenderDrivers() const
+        const std::vector<std::string>& getAvailableRenderDrivers() const
         {
             return m_availableRenderDrivers;
         };
 
         /** Returns a vector containing screen modes.
          */
-        std::vector<ScreenMode> getSupportedScreenModes() const
+        const std::vector<ScreenMode>& getSupportedScreenModes() const
         {
             return m_screenModes;
         };
@@ -234,7 +234,7 @@ namespace FIFE
 
         /** Returns the name of the current video driver.
          */
-        std::string getVideoDriverName() const
+        const std::string& getVideoDriverName() const
         {
             return m_videoDriverName;
         }
@@ -249,7 +249,7 @@ namespace FIFE
         /** Returns the name of the current render driver or
          *  an empty string to initialize the first one supporting the requested flags.
          */
-        std::string getRenderDriverName() const
+        const std::string& getRenderDriverName() const
         {
             return m_renderDriverName;
         }

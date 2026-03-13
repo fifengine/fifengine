@@ -34,13 +34,12 @@ namespace FIFE
         m_vSync(false),
         m_isframelimit(false),
         m_frame_start(0),
-        m_framelimit(60)
+        m_framelimit(60),
+        m_guiClip(),
+        m_backgroundcolor{0, 0, 0, 0}
     {
 
         m_isbackgroundcolor = false;
-        m_backgroundcolor.r = 0;
-        m_backgroundcolor.g = 0;
-        m_backgroundcolor.b = 0;
     }
 
     RenderBackend::~RenderBackend() = default;

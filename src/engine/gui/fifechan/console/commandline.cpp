@@ -19,7 +19,7 @@ namespace FIFE
 {
     using fcn::Key;
 
-    CommandLine::CommandLine() : m_history_position(0)
+    CommandLine::CommandLine() : m_history_position(0), m_caretVisible(true)
     {
 
         m_blinkTimer.setInterval(500);

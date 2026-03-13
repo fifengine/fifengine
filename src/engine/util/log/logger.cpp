@@ -28,36 +28,36 @@ struct ModuleInfo
 };
 
 ModuleInfo moduleInfos[] = {
-    {LM_AUDIO, LM_CORE, "Audio"},
-    {LM_CONTROLLER, LM_CORE, "Controller"},
-    {LM_EVTCHANNEL, LM_CORE, "Event Channel"},
-    {LM_GUI, LM_CORE, "GUI"},
-    {LM_CONSOLE, LM_GUI, "Console"},
-    {LM_LOADERS, LM_CORE, "Loaders"},
-    {LM_NATIVE_LOADERS, LM_LOADERS, "Native loaders"},
-    {LM_FO_LOADERS, LM_LOADERS, "Fallout loaders"},
-    {LM_SAVERS, LM_CORE, "Savers"},
-    {LM_NATIVE_SAVERS, LM_CORE, "Native savers"},
-    {LM_MODEL, LM_CORE, "Model"},
-    {LM_STRUCTURES, LM_MODEL, "Structures"},
-    {LM_INSTANCE, LM_STRUCTURES, "Instance"},
-    {LM_LOCATION, LM_STRUCTURES, "Location"},
-    {LM_METAMODEL, LM_MODEL, "Metamodel"},
-    {LM_CELLGRID, LM_METAMODEL, "Cellgrid"},
-    {LM_SQUAREGRID, LM_METAMODEL, "Squaregrid"},
-    {LM_HEXGRID, LM_METAMODEL, "Hexgrid"},
-    {LM_PATHFINDER, LM_CORE, "Pathfinder"},
-    {LM_UTIL, LM_CORE, "Util"},
-    {LM_RESMGR, LM_UTIL, "Resource Manager"},
-    {LM_VFS, LM_CORE, "VFS"},
-    {LM_VIDEO, LM_CORE, "Video"},
-    {LM_VIEW, LM_CORE, "View"},
-    {LM_CAMERA, LM_VIEW, "Camera"},
-    {LM_VIEWVIEW, LM_VIEW, "View::View"},
-    {LM_XML, LM_CORE, "XML"},
-    {LM_EXCEPTION, LM_CORE, "Exception"},
-    {LM_SCRIPT, LM_CORE, "Script"},
-    {LM_CURSOR, LM_CORE, "Cursor"}};
+    {.module = LM_AUDIO, .parent = LM_CORE, .name = "Audio"},
+    {.module = LM_CONTROLLER, .parent = LM_CORE, .name = "Controller"},
+    {.module = LM_EVTCHANNEL, .parent = LM_CORE, .name = "Event Channel"},
+    {.module = LM_GUI, .parent = LM_CORE, .name = "GUI"},
+    {.module = LM_CONSOLE, .parent = LM_GUI, .name = "Console"},
+    {.module = LM_LOADERS, .parent = LM_CORE, .name = "Loaders"},
+    {.module = LM_NATIVE_LOADERS, .parent = LM_LOADERS, .name = "Native loaders"},
+    {.module = LM_FO_LOADERS, .parent = LM_LOADERS, .name = "Fallout loaders"},
+    {.module = LM_SAVERS, .parent = LM_CORE, .name = "Savers"},
+    {.module = LM_NATIVE_SAVERS, .parent = LM_CORE, .name = "Native savers"},
+    {.module = LM_MODEL, .parent = LM_CORE, .name = "Model"},
+    {.module = LM_STRUCTURES, .parent = LM_MODEL, .name = "Structures"},
+    {.module = LM_INSTANCE, .parent = LM_STRUCTURES, .name = "Instance"},
+    {.module = LM_LOCATION, .parent = LM_STRUCTURES, .name = "Location"},
+    {.module = LM_METAMODEL, .parent = LM_MODEL, .name = "Metamodel"},
+    {.module = LM_CELLGRID, .parent = LM_METAMODEL, .name = "Cellgrid"},
+    {.module = LM_SQUAREGRID, .parent = LM_METAMODEL, .name = "Squaregrid"},
+    {.module = LM_HEXGRID, .parent = LM_METAMODEL, .name = "Hexgrid"},
+    {.module = LM_PATHFINDER, .parent = LM_CORE, .name = "Pathfinder"},
+    {.module = LM_UTIL, .parent = LM_CORE, .name = "Util"},
+    {.module = LM_RESMGR, .parent = LM_UTIL, .name = "Resource Manager"},
+    {.module = LM_VFS, .parent = LM_CORE, .name = "VFS"},
+    {.module = LM_VIDEO, .parent = LM_CORE, .name = "Video"},
+    {.module = LM_VIEW, .parent = LM_CORE, .name = "View"},
+    {.module = LM_CAMERA, .parent = LM_VIEW, .name = "Camera"},
+    {.module = LM_VIEWVIEW, .parent = LM_VIEW, .name = "View::View"},
+    {.module = LM_XML, .parent = LM_CORE, .name = "XML"},
+    {.module = LM_EXCEPTION, .parent = LM_CORE, .name = "Exception"},
+    {.module = LM_SCRIPT, .parent = LM_CORE, .name = "Script"},
+    {.module = LM_CURSOR, .parent = LM_CORE, .name = "Cursor"}};
 // end
 
 namespace FIFE
@@ -207,7 +207,7 @@ namespace FIFE
         return true;
     }
 
-    LogManager::LogManager() : m_level(LEVEL_DEBUG), m_logtofile(false), m_logtoprompt(false)
+    LogManager::LogManager() : m_level(LEVEL_DEBUG), m_logtofile(false), m_logtoprompt(false), m_modules{}
     {
         validateModuleDescription(LM_CORE);
         m_logfile = nullptr;
@@ -245,7 +245,7 @@ namespace FIFE
         }
     }
 
-    std::string LogManager::getModuleName(logmodule_t module)
+    const std::string& LogManager::getModuleName(logmodule_t module)
     {
         return moduleInfos[module].name;
     }

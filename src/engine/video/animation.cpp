@@ -35,11 +35,7 @@ namespace FIFE
     {
     }
 
-    Animation::~Animation()
-    {
-        // note: we don't need to free the images, as they are handled via
-        // smart references.
-    }
+    Animation::~Animation() = default;
 
     size_t Animation::getSize()
     {

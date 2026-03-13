@@ -179,7 +179,8 @@ namespace FIFE
         case SD_TIME_POS:
             value /= static_cast<float>(m_decoder->getSampleRate());
         case SD_SAMPLE_POS:
-            pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
+            pos = static_cast<uint64_t>(
+                (m_decoder->getBitResolution() / 8.0) * (m_decoder->isStereo() ? 2.0 : 1.0) * value);
             break;
         }
 
@@ -199,12 +200,13 @@ namespace FIFE
         uint64_t pos = m_buffervec.at(streamid)->deccursor;
         switch (type) {
         case SD_BYTE_POS:
-            return pos;
+            return static_cast<float>(pos);
         case SD_SAMPLE_POS:
-            return pos / (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1));
+            return static_cast<float>(pos) /
+                   (m_decoder->getBitResolution() / 8.0 * (m_decoder->isStereo() ? 2.0 : 1.0));
         case SD_TIME_POS:
-            return pos /
-                   (m_decoder->getBitResolution() / 8 * (m_decoder->isStereo() ? 2 : 1) * m_decoder->getSampleRate());
+            return static_cast<float>(pos) / (m_decoder->getBitResolution() / 8.0 *
+                                              (m_decoder->isStereo() ? 2.0 : 1.0) * m_decoder->getSampleRate());
         }
         return 0.0F;
     }

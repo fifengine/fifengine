@@ -38,9 +38,9 @@
 
 namespace fcn
 {
-    Panel::Panel() : m_dockable(true), m_docked(false) { }
+    Panel::Panel() : m_dockable(true), m_docked(false), m_state() { }
 
-    Panel::Panel(bool dockable) : m_dockable(dockable), m_docked(false) { }
+    Panel::Panel(bool dockable) : m_dockable(dockable), m_docked(false), m_state() { }
 
     Panel::~Panel() = default;
 
@@ -149,7 +149,7 @@ namespace fcn
         if (!m_docked) {
             ResizableWindow::resizeToContent(recursiv);
         } else {
-            Window::resizeToContent(recursiv);
+            ResizableWindow::resizeToContent(recursiv);
         }
     }
 

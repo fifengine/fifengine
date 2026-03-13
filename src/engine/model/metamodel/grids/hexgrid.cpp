@@ -246,7 +246,7 @@ namespace FIFE
         }
         double tx, ty;
 
-#define ADD_PT(_x, _y) vtx.push_back(ExactModelCoordinate(_x, _y));
+#define ADD_PT(_x, _y) vtx.emplace_back(_x, _y);
         // FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
         ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;

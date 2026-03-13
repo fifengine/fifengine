@@ -156,7 +156,7 @@ namespace FIFE
 
         /** Gets currently set renderbackend name
          */
-        std::string getRenderBackend()
+        const std::string& getRenderBackend()
         {
             return m_renderbackend;
         }
@@ -284,7 +284,7 @@ namespace FIFE
 
         /** Gets current path for default font
          */
-        std::string getDefaultFontPath()
+        const std::string& getDefaultFontPath()
         {
             return m_defaultfontpath;
         }
@@ -313,7 +313,7 @@ namespace FIFE
 
         /** Gets current glyphs for default font
          */
-        std::string getDefaultFontGlyphs()
+        const std::string& getDefaultFontGlyphs()
         {
             return m_defaultfontglyphs;
         }
@@ -331,7 +331,7 @@ namespace FIFE
 
         /** Gets the current window title
          */
-        std::string getWindowTitle()
+        const std::string& getWindowTitle()
         {
             return m_windowtitle;
         }
@@ -349,7 +349,7 @@ namespace FIFE
 
         /** Gets the icon in the window title bar
          */
-        std::string getWindowIcon()
+        const std::string& getWindowIcon()
         {
             return m_windowicon;
         }

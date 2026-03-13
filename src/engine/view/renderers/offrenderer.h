@@ -32,9 +32,9 @@ namespace FIFE
     class OffRendererLineInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererLineInfo(Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererLineInfo() { }
+        virtual ~OffRendererLineInfo() override;
 
     private:
         Point m_edge1;
@@ -47,9 +47,9 @@ namespace FIFE
     class OffRendererPointInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererPointInfo(Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererPointInfo() { }
+        virtual ~OffRendererPointInfo() override;
 
     private:
         Point m_anchor;
@@ -61,9 +61,9 @@ namespace FIFE
     class OffRendererTriangleInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererTriangleInfo(Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererTriangleInfo() { }
+        virtual ~OffRendererTriangleInfo() override;
 
     private:
         Point m_edge1;
@@ -77,9 +77,9 @@ namespace FIFE
     class OffRendererQuadInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererQuadInfo(Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererQuadInfo() { }
+        virtual ~OffRendererQuadInfo() override;
 
     private:
         Point m_edge1;
@@ -95,9 +95,9 @@ namespace FIFE
     class OffRendererVertexInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererVertexInfo(Point center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        virtual ~OffRendererVertexInfo() { }
+        virtual ~OffRendererVertexInfo() override;
 
     private:
         Point m_center;
@@ -111,9 +111,9 @@ namespace FIFE
     class OffRendererImageInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererImageInfo(Point n, ImagePtr image);
-        virtual ~OffRendererImageInfo() { }
+        virtual ~OffRendererImageInfo() override;
 
     private:
         Point m_anchor;
@@ -122,9 +122,9 @@ namespace FIFE
     class OffRendererAnimationInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererAnimationInfo(Point n, AnimationPtr animation);
-        virtual ~OffRendererAnimationInfo() { }
+        virtual ~OffRendererAnimationInfo() override;
 
     private:
         Point m_anchor;
@@ -135,9 +135,9 @@ namespace FIFE
     class OffRendererTextInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererTextInfo(Point n, IFont* font, std::string text);
-        virtual ~OffRendererTextInfo() { }
+        virtual ~OffRendererTextInfo() override;
 
     private:
         Point m_anchor;
@@ -147,9 +147,9 @@ namespace FIFE
     class OffRendererResizeInfo : public OffRendererElementInfo
     {
     public:
-        void render(RenderBackend* renderbackend);
+        void render(RenderBackend* renderbackend) override;
         OffRendererResizeInfo(Point n, ImagePtr image, int32_t width, int32_t height);
-        virtual ~OffRendererResizeInfo() { }
+        virtual ~OffRendererResizeInfo() override;
 
     private:
         Point m_anchor;

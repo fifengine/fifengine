@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
-#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <utility>
 
@@ -16,9 +16,7 @@ namespace FIFE
 {
     int32_t makeInt32(const std::string& str)
     {
-        int32_t ret;
-        sscanf(str.c_str(), "%d", &ret);
-        return ret;
+        return static_cast<int32_t>(std::strtol(str.c_str(), nullptr, 10));
     }
 
     IntVector tokenize(const std::string& str, char delim, char group)

@@ -60,6 +60,9 @@ namespace FIFE
         SoundEmitter* m_emitter;
         //! InstanceChangeListener for position and direction
         SoundChangeListener* m_listener;
+
+        SoundSource(const SoundSource&)            = delete;
+        SoundSource& operator=(const SoundSource&) = delete;
     };
 } // namespace FIFE
 

@@ -212,7 +212,7 @@ namespace FIFE
     void OpenGLGuiGraphics::_beginDraw()
     {
         fcn::Rectangle area(0, 0, mWidth, mHeight);
-        fcn::Graphics::pushClipArea(area);
+        pushClipArea(area);
         m_renderbackend->pushClipArea(Rect(0, 0, mWidth, mHeight), false);
     }
 
@@ -221,7 +221,7 @@ namespace FIFE
         m_renderbackend->renderVertexArrays();
 
         // Cleanup
-        fcn::Graphics::popClipArea();
+        popClipArea();
         m_renderbackend->popClipArea();
     }
 
@@ -229,7 +229,7 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::Graphics::pushClipArea(area);
+        fcn::OpenGLGraphics::pushClipArea(area);
 
         // Due to some odd conception in guiChan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -245,7 +245,7 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::Graphics::popClipArea();
+        fcn::OpenGLGraphics::popClipArea();
         m_renderbackend->popClipArea();
     }
 

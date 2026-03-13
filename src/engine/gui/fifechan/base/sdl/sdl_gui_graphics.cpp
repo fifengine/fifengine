@@ -198,20 +198,20 @@ namespace FIFE
     void SdlGuiGraphics::_beginDraw()
     {
         fcn::Rectangle area(0, 0, mTarget->w, mTarget->h);
-        fcn::Graphics::pushClipArea(area);
+        pushClipArea(area);
         m_renderbackend->pushClipArea(Rect(0, 0, mTarget->w, mTarget->h), false);
     }
 
     void SdlGuiGraphics::_endDraw()
     {
         // Cleanup
-        fcn::Graphics::popClipArea();
+        popClipArea();
         m_renderbackend->popClipArea();
     }
 
     bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area)
     {
-        fcn::Graphics::pushClipArea(area);
+        fcn::SDLGraphics::pushClipArea(area);
 
         // Due to some odd conception in Fifechan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -225,7 +225,7 @@ namespace FIFE
 
     void SdlGuiGraphics::popClipArea()
     {
-        fcn::Graphics::popClipArea();
+        fcn::SDLGraphics::popClipArea();
         m_renderbackend->popClipArea();
     }
 

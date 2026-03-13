@@ -258,8 +258,9 @@ namespace FIFE
             return SDL_SYSTEM_CURSOR_NO;
         case NC_HAND:
             return SDL_SYSTEM_CURSOR_HAND;
+        default:
+            return cursor_id;
         }
-        return cursor_id;
     }
 
     void Cursor::setNativeCursor(uint32_t cursor_id)

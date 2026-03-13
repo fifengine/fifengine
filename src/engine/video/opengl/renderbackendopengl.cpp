@@ -32,7 +32,7 @@ namespace FIFE
     {
     public:
         RenderObject(GLenum m, uint16_t s, uint32_t t1 = 0, uint32_t t2 = 0) :
-            mode(m), size(s), texture_id(t1), overlay_id(t2)
+            mode(m), size(s), texture_id(t1), overlay_id(t2), rgba{0}
 
         {
         }
@@ -53,7 +53,8 @@ namespace FIFE
         uint8_t rgba[4];
     };
 
-    RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey), m_maskOverlay(0)
+    RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) :
+        RenderBackend(colorkey), m_maskOverlay(0), m_target_discard(false)
     {
 
         m_state.tex_enabled[0]      = false;
@@ -1884,7 +1885,7 @@ namespace FIFE
         rd.color[1] = g;
         rd.color[2] = b;
         rd.color[3] = a;
-        for (uint16_t i = 0; i < subdivisions - 1; ++i) {
+        for (int i = 0; i < subdivisions - 1; ++i) {
             rd.vertex[0] = radius * Mathf::Cos(angle) + p.x;
             rd.vertex[1] = radius * Mathf::Sin(angle) + p.y;
             m_renderPrimitiveDatas.push_back(rd);

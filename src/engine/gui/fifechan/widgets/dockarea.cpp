@@ -391,7 +391,7 @@ namespace fcn
         if (m_resizing) {
             ResizableWindow::resizeToContent(recursiv);
         } else {
-            Window::resizeToContent(recursiv);
+            ResizableWindow::resizeToContent(recursiv);
         }
         if (isRightSide()) {
             int32_t wDiff = oldDimension.width - getWidth();

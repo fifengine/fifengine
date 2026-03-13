@@ -90,7 +90,7 @@ namespace FIFE
          *
          * @todo generalize the generated command and the regexp used.
          */
-        void execute(std::string cmd);
+        void execute(const std::string& cmd);
 
         /** Update the FPS caption
          *  @note Is a timer callback.

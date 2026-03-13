@@ -45,23 +45,23 @@ namespace FIFE
         /**
          * Destructor.
          */
-        virtual ~TrueTypeFont();
+        virtual ~TrueTypeFont() override;
 
         // Inherited from Font
 
-        virtual int32_t getWidth(const std::string& text) const;
+        virtual int32_t getWidth(const std::string& text) const override;
 
-        virtual int32_t getHeight() const;
+        virtual int32_t getHeight() const override;
 
-        virtual void setBoldStyle(bool style);
-        virtual void setItalicStyle(bool style);
-        virtual void setUnderlineStyle(bool style);
-        virtual void setStrikethroughStyle(bool style);
+        virtual void setBoldStyle(bool style) override;
+        virtual void setItalicStyle(bool style) override;
+        virtual void setUnderlineStyle(bool style) override;
+        virtual void setStrikethroughStyle(bool style) override;
         virtual int32_t getFontStyleMask() const;
 
-        virtual SDL_Surface* renderString(const std::string& text);
+        virtual SDL_Surface* renderString(const std::string& text) override;
 
-        virtual void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        virtual void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) override;
 
     protected:
         TTF_Font* mFont;

@@ -68,7 +68,7 @@ namespace fcn
         cut = newText.begin() + byteOffset;
         utf8::next(cut, newText.end());
         // cut the string to real length
-        newText   = std::string(newText.begin(), cut);
+        newText.assign(newText.begin(), cut);
         newOffset = newText.size();
         // make new text
         text = newText + text.substr(byteOffset);

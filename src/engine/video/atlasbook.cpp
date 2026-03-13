@@ -71,7 +71,8 @@ namespace FIFE
                         --squeezed.left;
                         --squeezed.right;
 
-                        if ((intersection = intersects(&squeezed)) == nullptr) {
+                        intersection = intersects(&squeezed);
+                        if (intersection == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
                             int blockWidth = newBlock->getWidth();
@@ -81,7 +82,8 @@ namespace FIFE
                                 squeezed.left -= blockWidth / div;
                                 squeezed.right -= blockWidth / div;
 
-                                if ((intersection = intersects(&squeezed)) != nullptr) {
+                                intersection = intersects(&squeezed);
+                                if (intersection != nullptr) {
                                     squeezed.left += blockWidth / div;
                                     squeezed.right += blockWidth / div;
                                 }
@@ -89,7 +91,8 @@ namespace FIFE
                             }
 
                             // linear search
-                            while (((intersection = intersects(&squeezed)) == nullptr) && squeezed.left > 0) {
+                            intersection = intersects(&squeezed);
+                            while ((intersection == nullptr) && squeezed.left > 0) {
                                 --squeezed.left;
                                 --squeezed.right;
                             }
@@ -106,7 +109,8 @@ namespace FIFE
                         --squeezed.top;
                         --squeezed.bottom;
 
-                        if ((intersection = intersects(&squeezed)) == nullptr) {
+                        intersection = intersects(&squeezed);
+                        if (intersection == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
                             int blockHeight = newBlock->getHeight();
@@ -116,7 +120,8 @@ namespace FIFE
                                 squeezed.top -= blockHeight / div;
                                 squeezed.bottom -= blockHeight / div;
 
-                                if ((intersection = intersects(&squeezed)) != nullptr) {
+                                intersection = intersects(&squeezed);
+                                if (intersection != nullptr) {
                                     squeezed.top += blockHeight / div;
                                     squeezed.bottom += blockHeight / div;
                                 }
@@ -124,7 +129,8 @@ namespace FIFE
                             }
 
                             // linear search
-                            while (((intersection = intersects(&squeezed)) == nullptr) && squeezed.top > 0) {
+                            intersection = intersects(&squeezed);
+                            while ((intersection == nullptr) && squeezed.top > 0) {
                                 --squeezed.top;
                                 --squeezed.bottom;
                             }

@@ -173,10 +173,7 @@ namespace FIFE
         }
 
         RawData(const RawData&);
-        RawData& operator=(const RawData&)
-        {
-            return *this;
-        };
+        RawData& operator=(const RawData&) = delete;
 
         static bool littleEndian();
     };
@@ -200,10 +197,7 @@ namespace FIFE
         uint32_t m_index;
 
         IndexSaver(const IndexSaver&);
-        IndexSaver& operator=(const IndexSaver&)
-        {
-            return *this;
-        }
+        IndexSaver& operator=(const IndexSaver&) = delete;
     };
 
 } // namespace FIFE

@@ -15,12 +15,12 @@
 
 namespace FIFE
 {
-    CEGuiInputProcessor::CEGuiInputProcessor()
+    CEGuiInputProcessor::CEGuiInputProcessor() : m_keymap()
     {
         initializeKeyMap();
     }
 
-    CEGuiInputProcessor::~CEGuiInputProcessor() { }
+    CEGuiInputProcessor::~CEGuiInputProcessor() = default;
 
     bool CEGuiInputProcessor::onSdlEvent(SDL_Event& event)
     {

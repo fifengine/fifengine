@@ -54,6 +54,9 @@ namespace FIFE
 
     private:
         ZipNode* m_rootNode;
+
+        ZipTree(const ZipTree&)            = delete;
+        ZipTree& operator=(const ZipTree&) = delete;
     };
 } // namespace FIFE
 

@@ -172,7 +172,7 @@ namespace FIFE
 
         /** Saves controller mapping for given GUID in the specified file.
          */
-        void saveGamepadMapping(const std::string guid, const std::string& file);
+        void saveGamepadMapping(const std::string& guid, const std::string& file);
 
         /** Saves all controller mappings that were used during the season.
          */

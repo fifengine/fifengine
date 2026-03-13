@@ -129,8 +129,8 @@ namespace FIFE
 
                 if (zoomed) {
                     double zoom = cam->getZoom();
-                    r.x         = drawpt.x - ((imgx->getWidth() + imgc->getWidth() + imgy->getWidth()) / 2) * zoom;
-                    r.y         = drawpt.y - (imgx->getHeight() / 2) * zoom;
+                    r.x         = drawpt.x - ((imgx->getWidth() + imgc->getWidth() + imgy->getWidth()) / 2.0) * zoom;
+                    r.y         = drawpt.y - (imgx->getHeight() / 2.0) * zoom;
                     r.w         = imgx->getWidth() * zoom;
                     r.h         = imgx->getHeight() * zoom;
                     imgx->render(r);

@@ -20,7 +20,7 @@
 
 namespace fcn
 {
-    ClickLabel::ClickLabel()
+    ClickLabel::ClickLabel() : mAlignment(Graphics::Alignment::Left), mOpaque(true)
     {
         mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
         setAlignment(Graphics::Alignment::Left);
@@ -35,7 +35,7 @@ namespace fcn
         addWidgetListener(this);
     }
 
-    ClickLabel::ClickLabel(const std::string& caption)
+    ClickLabel::ClickLabel(const std::string& caption) : mAlignment(Graphics::Alignment::Left), mOpaque(true)
     {
         mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
         setCaption(caption);

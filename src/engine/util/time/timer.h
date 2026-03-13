@@ -57,7 +57,7 @@ namespace FIFE
          *
          *  Stops and destroys the timer.
          */
-        virtual ~Timer();
+        virtual ~Timer() override;
 
         /** Set the interval in milliseconds
          *
@@ -89,7 +89,7 @@ namespace FIFE
     protected:
         bool m_active;
         type_callback m_callback;
-        void updateEvent(uint32_t);
+        void updateEvent(uint32_t) override;
     };
 
 } // namespace FIFE

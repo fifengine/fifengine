@@ -21,19 +21,19 @@ namespace FIFE
     static std::string INVALID_LAYER_SET = "Cannot set layer coordinates, given layer is not initialized properly";
     static std::string INVALID_LAYER_GET = "Cannot get layer coordinates, layer is not initialized properly";
 
-    Location::Location()
+    Location::Location() : m_layer(nullptr)
     {
         reset();
     }
 
-    Location::Location(const Location& loc)
+    Location::Location(const Location& loc) : m_layer(nullptr)
     {
         reset();
         m_layer              = loc.m_layer;
         m_exact_layer_coords = loc.m_exact_layer_coords;
     }
 
-    Location::Location(Layer* layer)
+    Location::Location(Layer* layer) : m_layer(nullptr)
     {
         reset();
         m_layer = layer;
@@ -51,6 +51,9 @@ namespace FIFE
 
     Location& Location::operator=(const Location& rhs)
     {
+        if (this == &rhs) {
+            return *this;
+        }
         m_layer                = rhs.m_layer;
         m_exact_layer_coords.x = rhs.m_exact_layer_coords.x;
         m_exact_layer_coords.y = rhs.m_exact_layer_coords.y;

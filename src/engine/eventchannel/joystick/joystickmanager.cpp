@@ -123,7 +123,7 @@ namespace FIFE
         }
     }
 
-    void JoystickManager::saveMapping(const std::string guid, const std::string& file)
+    void JoystickManager::saveMapping(const std::string& guid, const std::string& file)
     {
         std::string stringMapping = getStringMapping(guid);
         m_mappingSaver.save(stringMapping, file);

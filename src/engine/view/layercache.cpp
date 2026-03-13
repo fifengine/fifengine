@@ -76,7 +76,7 @@ namespace FIFE
     class InstanceDistanceSortCamera
     {
     public:
-        inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
         {
             if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
                 auto* liv = lhs->instance->getVisual<InstanceVisual>();
@@ -125,7 +125,7 @@ namespace FIFE
             }
         }
 
-        inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
         {
             ExactModelCoordinate lpos = lhs->instance->getLocationRef().getExactLayerCoordinates();
             ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();
@@ -156,7 +156,7 @@ namespace FIFE
     class InstanceDistanceSortCameraAndLocation
     {
     public:
-        inline bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
         {
             if (Mathd::Equal(lhs->screenpoint.z, rhs->screenpoint.z)) {
                 const ExactModelCoordinate& lpos = lhs->instance->getLocationRef().getExactLayerCoordinatesRef();
@@ -720,8 +720,8 @@ namespace FIFE
         if (image) {
             int32_t w        = image->getWidth();
             int32_t h        = image->getHeight();
-            screenPosition.x = (screenPosition.x - w / 2) + image->getXShift();
-            screenPosition.y = (screenPosition.y - h / 2) + image->getYShift();
+            screenPosition.x = (screenPosition.x - w / 2.0) + image->getXShift();
+            screenPosition.y = (screenPosition.y - h / 2.0) + image->getYShift();
             item->bbox.w     = w;
             item->bbox.h     = h;
         } else {

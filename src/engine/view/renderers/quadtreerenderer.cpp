@@ -49,7 +49,7 @@ namespace FIFE
     }
 
     QuadTreeRenderer::~QuadTreeRenderer() = default;
-    RenderVisitor::RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera)
+    RenderVisitor::RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera) : visited(0)
     {
 
         m_renderbackend = rb;

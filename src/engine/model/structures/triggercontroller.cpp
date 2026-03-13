@@ -81,10 +81,11 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnRect(const std::string& triggerName, Layer* layer, const Rect& rec)
     {
         assert(layer);
-        assert(layer->getCellCache());
+        CellCache* cellCache = layer->getCellCache();
+        assert(cellCache);
 
         Trigger* trigger         = createTrigger(triggerName);
-        std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
+        std::vector<Cell*> cells = cellCache->getCellsInRect(rec);
         for (auto& cell : cells) {
             trigger->assign(cell);
         }
@@ -94,7 +95,8 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnLocation(const std::string& triggerName, const Location& loc)
     {
         assert(loc.getLayer());
-        assert(loc.getLayer()->getCellCache());
+        CellCache* cellCache = loc.getLayer()->getCellCache();
+        assert(cellCache);
 
         Trigger* trigger = createTrigger(triggerName);
         trigger->assign(loc.getLayer(), loc.getLayerCoordinates());

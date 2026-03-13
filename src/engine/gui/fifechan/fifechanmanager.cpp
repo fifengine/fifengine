@@ -45,6 +45,8 @@ namespace FIFE
         m_fcn_topcontainer(new fcn::Container()),
         m_imgloader(new GuiImageLoader()),
         m_input(new fcn::SDLInput()),
+        m_gui_graphics(nullptr),
+        m_fontsize(0),
         m_console(nullptr),
         m_cursor(nullptr),
         m_defaultfont(nullptr),

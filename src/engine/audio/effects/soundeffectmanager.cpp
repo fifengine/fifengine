@@ -68,7 +68,10 @@ namespace FIFE
     LPALGETFILTERF alGetFilterf       = nullptr;
     LPALGETFILTERFV alGetFilterfv     = nullptr;
 
-    SoundEffectManager::SoundEffectManager() : m_device(nullptr), m_active(false), m_createdSlots(0), m_maxSlots(0) { }
+    SoundEffectManager::SoundEffectManager() :
+        m_device(nullptr), m_active(false), m_createdSlots(0), m_maxSlots(0), m_effectSlots{}
+    {
+    }
 
     SoundEffectManager::~SoundEffectManager()
     {

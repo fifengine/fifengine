@@ -51,8 +51,9 @@ namespace FIFE
             case SEEK_END:
                 (*rdp).setIndex((*rdp).getDataLength() - 1 + static_cast<uint32_t>(offset));
                 return 0;
+            default:
+                return -1;
             }
-            return -1;
         }
 
         static int32_t close(void* datasource)
@@ -67,7 +68,7 @@ namespace FIFE
         }
     } // namespace OGG_cb
 
-    SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp)
+    SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp), m_ovf{}
     {
 
         ov_callbacks ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};

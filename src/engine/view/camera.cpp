@@ -98,7 +98,12 @@ namespace FIFE
 
         m_col_overlay(false),
         m_img_overlay(false),
-        m_ani_overlay(false)
+        m_ani_overlay(false),
+        m_overlay_color{0, 0, 0, 0},
+        m_img_id(-1),
+        m_img_fill(false),
+        m_ani_fill(false),
+        m_start_time(0)
     {
 
         m_map_observer = new MapObserver(this);
@@ -396,7 +401,7 @@ namespace FIFE
         }
         double scale = m_zoom;
         m_matrix.applyScale(scale, scale, scale);
-        m_matrix.applyTranslate(+m_viewport.x + (m_viewport.w / 2), +m_viewport.y + (m_viewport.h / 2), 0);
+        m_matrix.applyTranslate(+m_viewport.x + (m_viewport.w / 2.0), +m_viewport.y + (m_viewport.h / 2.0), 0);
         m_inverse_matrix = m_matrix.inverse();
 
         m_vs_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
@@ -771,7 +776,8 @@ found_non_transparent_pixel:;
 
     void Camera::onRendererEnabledChanged(RendererBase* renderer)
     {
-        assert(m_renderers[renderer->getName()]);
+        const std::string& rendererName = renderer->getName();
+        assert(m_renderers.find(rendererName) != m_renderers.end());
         if (renderer->isEnabled()) {
             FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
             m_pipeline.push_back(renderer);

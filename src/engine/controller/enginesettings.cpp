@@ -35,6 +35,17 @@ namespace FIFE
         m_vSync(false),
 
         m_initialvolume(MAXIMUM_VOLUME / 2),
+        m_videodriver(
+#if defined(__unix__)
+            "x11"
+#elif defined(WIN32)
+            "windib"
+#elif defined(__APPLE_CC__)
+            "x11"
+#else
+            ""
+#endif
+            ),
         m_renderbackend("SDL"),
         m_sdlremovefakealpha(false),
         m_oglcompressimages(false),
@@ -51,8 +62,7 @@ namespace FIFE
 
         m_defaultfontpath("fonts/FreeSans.ttf"),
         m_defaultfontsize(8),
-        m_defaultfontglyphs(
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""),
+        m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
         m_iscolorkeyenabled(false),
         m_lighting(0),
         m_isframelimit(false),
@@ -60,21 +70,9 @@ namespace FIFE
         m_mousesensitivity(0.0),
         m_mouseacceleration(false),
         m_nativeimagecursor(false),
-        m_joystickSupport(false)
+        m_joystickSupport(false),
+        m_colorkey{255, 0, 255}
     {
-        m_colorkey.r = 255;
-        m_colorkey.g = 0;
-        m_colorkey.b = 255;
-
-#if defined(__unix__)
-        m_videodriver = "x11";
-#elif defined(WIN32)
-        m_videodriver = "windib";
-#elif defined(__APPLE_CC__)
-        m_videodriver = "x11";
-#else
-        m_videodriver = "";
-#endif
     }
 
     EngineSettings::~EngineSettings() = default;

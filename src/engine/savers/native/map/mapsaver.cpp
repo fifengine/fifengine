@@ -32,12 +32,7 @@ namespace FIFE
 {
     static Logger _log(LM_NATIVE_SAVERS);
 
-    MapSaver::MapSaver()
-    {
-        // m_objectSaver = new ObjectSaver();
-        // m_animationSaver = new AnimationSaver();
-        // m_atlasSaver = new AtlasSaver();
-    }
+    MapSaver::MapSaver() = default;
 
     MapSaver::~MapSaver() = default;
 

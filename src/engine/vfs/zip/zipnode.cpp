@@ -72,7 +72,7 @@ namespace FIFE
         m_directoryChildren.clear();
     }
 
-    std::string ZipNode::getName() const
+    const std::string& ZipNode::getName() const
     {
         return m_name;
     }

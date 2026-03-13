@@ -352,6 +352,8 @@ namespace FIFE
                     return true;
                 }
                 return false;
+            default:
+                break;
             }
         }
         return false;
@@ -421,6 +423,8 @@ namespace FIFE
                 }
                 break;
             }
+            default:
+                break;
             }
             if (has_next_event) {
                 event = next_event;
@@ -523,7 +527,7 @@ namespace FIFE
                 auto dx           = static_cast<float>(tmp_x - m_oldX);
                 auto dy           = static_cast<float>(tmp_y - m_oldY);
                 float distance    = Mathf::Sqrt((dx * dx) + (dy * dy));
-                auto acceleration = static_cast<float>((distance / difference) / difference);
+                auto acceleration = (distance / difference) / difference;
                 float velocity    = (m_oldVelocity + acceleration * difference) / 2;
                 if (velocity > m_mouseSensitivity + 1) {
                     velocity = m_mouseSensitivity + 1;
@@ -808,7 +812,7 @@ namespace FIFE
         }
     }
 
-    void EventManager::saveGamepadMapping(const std::string guid, const std::string& file)
+    void EventManager::saveGamepadMapping(const std::string& guid, const std::string& file)
     {
         if (m_joystickManager != nullptr) {
             m_joystickManager->saveMapping(guid, file);

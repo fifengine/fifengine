@@ -84,10 +84,10 @@ namespace FIFE
     {
     public:
         LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
-        virtual ~LightRendererImageInfo() { }
+        virtual ~LightRendererImageInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-        virtual std::string getName()
+        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        virtual std::string getName() override
         {
             return "image";
         }
@@ -104,10 +104,10 @@ namespace FIFE
     {
     public:
         LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
-        virtual ~LightRendererAnimationInfo() { }
+        virtual ~LightRendererAnimationInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-        virtual std::string getName()
+        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        virtual std::string getName() override
         {
             return "animation";
         }
@@ -137,28 +137,28 @@ namespace FIFE
             uint8_t b,
             int32_t src,
             int32_t dst);
-        virtual ~LightRendererSimpleLightInfo() { }
+        virtual ~LightRendererSimpleLightInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-        virtual std::string getName()
+        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        virtual std::string getName() override
         {
             return "simple";
         }
 
-        std::vector<uint8_t> getColor();
-        float getRadius()
+        std::vector<uint8_t> getColor() override;
+        float getRadius() override
         {
             return m_radius;
         }
-        int32_t getSubdivisions()
+        int32_t getSubdivisions() override
         {
             return m_subdivisions;
         }
-        float getXStretch()
+        float getXStretch() override
         {
             return m_xstretch;
         }
-        float getYStretch()
+        float getYStretch() override
         {
             return m_ystretch;
         }
@@ -179,10 +179,10 @@ namespace FIFE
     public:
         LightRendererResizeInfo(
             RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
-        virtual ~LightRendererResizeInfo() { }
+        virtual ~LightRendererResizeInfo() override;
 
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
-        virtual std::string getName()
+        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
+        virtual std::string getName() override
         {
             return "resize";
         }

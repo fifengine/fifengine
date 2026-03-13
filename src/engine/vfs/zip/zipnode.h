@@ -63,7 +63,7 @@ namespace FIFE
         /** accessor for the name of this node
          *
          */
-        std::string getName() const;
+        const std::string& getName() const;
 
         /** accessor for the absolute path name of this node
          */

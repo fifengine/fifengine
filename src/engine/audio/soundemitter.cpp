@@ -563,13 +563,13 @@ namespace FIFE
         } else {
             switch (type) {
             case SD_BYTE_POS:
-                m_samplesOffset = value / (getBitResolution() / 8 * (isStereo() ? 2 : 1));
+                m_samplesOffset = static_cast<uint64_t>(value / (getBitResolution() / 8.0 * (isStereo() ? 2.0 : 1.0)));
                 break;
             case SD_SAMPLE_POS:
                 m_samplesOffset = value;
                 break;
             case SD_TIME_POS:
-                m_samplesOffset = value * getSampleRate();
+                m_samplesOffset = static_cast<uint64_t>(value * getSampleRate());
                 break;
             }
             alGetSourcei(m_source, AL_SOURCE_STATE, &state);
@@ -617,13 +617,13 @@ namespace FIFE
         if (m_soundClip->isStream()) {
             switch (type) {
             case SD_BYTE_POS:
-                pos += m_samplesOffset * (getBitResolution() / 8 * (isStereo() ? 2 : 1));
+                pos += m_samplesOffset * (getBitResolution() / 8.0 * (isStereo() ? 2.0 : 1.0));
                 break;
             case SD_SAMPLE_POS:
                 pos += m_samplesOffset;
                 break;
             case SD_TIME_POS:
-                pos += m_samplesOffset / getSampleRate();
+                pos += static_cast<uint64_t>(m_samplesOffset / static_cast<double>(getSampleRate()));
                 break;
             }
         }

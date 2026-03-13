@@ -25,7 +25,7 @@ namespace FIFE
 
         /** Saves mapping to file.
          */
-        void save(const std::string data, const std::string& filename);
+        void save(const std::string& data, const std::string& filename);
     };
 } // namespace FIFE
 #endif

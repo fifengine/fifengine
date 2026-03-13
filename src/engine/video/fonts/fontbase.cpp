@@ -299,8 +299,8 @@ namespace FIFE
                 // line = line.erase(line.length() - 1);
                 //--pos;
             } else {
-                line = line.substr(0, break_pos.back().first);
-                pos  = break_pos.back().second;
+                line.resize(break_pos.back().first);
+                pos = break_pos.back().second;
             }
             output.append(line);
         }

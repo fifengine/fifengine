@@ -66,7 +66,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Camera();
+        virtual ~Camera() override;
 
         /** Gets the identifier for this camera.
          */
@@ -350,7 +350,7 @@ namespace FIFE
 
         /** Gets renderer with given name
          */
-        RendererBase* getRenderer(const std::string& name);
+        RendererBase* getRenderer(const std::string& name) override;
 
         /** resets active layer information on all renderers.
          */
@@ -360,9 +360,9 @@ namespace FIFE
          */
         void calculateZValue(DoublePoint3D& screen_coords);
 
-        void onRendererPipelinePositionChanged(RendererBase* renderer);
+        void onRendererPipelinePositionChanged(RendererBase* renderer) override;
 
-        void onRendererEnabledChanged(RendererBase* renderer);
+        void onRendererEnabledChanged(RendererBase* renderer) override;
 
         /** Sets lighting color
          */
@@ -521,6 +521,10 @@ namespace FIFE
         bool m_img_fill;
         bool m_ani_fill;
         uint32_t m_start_time;
+
+    private:
+        Camera(const Camera&)            = delete;
+        Camera& operator=(const Camera&) = delete;
     };
 } // namespace FIFE
 #endif

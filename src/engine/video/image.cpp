@@ -197,6 +197,9 @@ namespace FIFE
         case 4:
             pixel = *reinterpret_cast<Uint32*>(p);
             break;
+
+        default:
+            break;
         }
         SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
     }
@@ -381,6 +384,9 @@ namespace FIFE
 
         case 4:
             *reinterpret_cast<Uint32*>(p) = pixel;
+            break;
+
+        default:
             break;
         }
         SDL_UnlockSurface(surface);

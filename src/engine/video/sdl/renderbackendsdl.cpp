@@ -217,7 +217,7 @@ namespace FIFE
 
     void RenderBackendSDL::setLightingModel(uint32_t lighting)
     {
-        SDLException("Lighting not available under SDL");
+        throw SDLException("Lighting not available under SDL");
     }
 
     uint32_t RenderBackendSDL::getLightingModel() const
