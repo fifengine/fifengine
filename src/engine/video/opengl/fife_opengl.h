@@ -19,8 +19,8 @@
 namespace FIFE
 {
 
-   // TODO
+    // TODO
 
-} // FIFE
+} // namespace FIFE
 
 #endif

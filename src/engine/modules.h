@@ -51,40 +51,4 @@ enum logmodule_t
     LM_MODULE_MAX // sentinel
 };
 
-/** Module hierarchy definition + display strings
- * format = module, module parent, module display name
- */
-#define MODULE_INFO_RELATIONSHIPS                          \
-    ModuleInfo moduleInfos[] = {                           \
-        {LM_AUDIO, LM_CORE, "Audio"},                      \
-        {LM_CONTROLLER, LM_CORE, "Controller"},            \
-        {LM_EVTCHANNEL, LM_CORE, "Event Channel"},         \
-        {LM_GUI, LM_CORE, "GUI"},                          \
-        {LM_CONSOLE, LM_GUI, "Console"},                   \
-        {LM_LOADERS, LM_CORE, "Loaders"},                  \
-        {LM_NATIVE_LOADERS, LM_LOADERS, "Native loaders"}, \
-        {LM_FO_LOADERS, LM_LOADERS, "Fallout loaders"},    \
-        {LM_SAVERS, LM_CORE, "Savers"},                    \
-        {LM_NATIVE_SAVERS, LM_CORE, "Native savers"},      \
-        {LM_MODEL, LM_CORE, "Model"},                      \
-        {LM_STRUCTURES, LM_MODEL, "Structures"},           \
-        {LM_INSTANCE, LM_STRUCTURES, "Instance"},          \
-        {LM_LOCATION, LM_STRUCTURES, "Location"},          \
-        {LM_METAMODEL, LM_MODEL, "Metamodel"},             \
-        {LM_CELLGRID, LM_METAMODEL, "Cellgrid"},           \
-        {LM_SQUAREGRID, LM_METAMODEL, "Squaregrid"},       \
-        {LM_HEXGRID, LM_METAMODEL, "Hexgrid"},             \
-        {LM_PATHFINDER, LM_CORE, "Pathfinder"},            \
-        {LM_UTIL, LM_CORE, "Util"},                        \
-        {LM_RESMGR, LM_UTIL, "Resource Manager"},          \
-        {LM_VFS, LM_CORE, "VFS"},                          \
-        {LM_VIDEO, LM_CORE, "Video"},                      \
-        {LM_VIEW, LM_CORE, "View"},                        \
-        {LM_CAMERA, LM_VIEW, "Camera"},                    \
-        {LM_VIEWVIEW, LM_VIEW, "View::View"},              \
-        {LM_XML, LM_CORE, "XML"},                          \
-        {LM_EXCEPTION, LM_CORE, "Exception"},              \
-        {LM_SCRIPT, LM_CORE, "Script"},                    \
-        {LM_CURSOR, LM_CORE, "Cursor"}};
-
 #endif
