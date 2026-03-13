@@ -20,6 +20,7 @@
 // Second block: files included from the same folder
 
 #include "rawdatasource.h"
+#include "util/base/exception.h"
 
 namespace FIFE
 {
@@ -188,7 +189,10 @@ namespace FIFE
 
         ~IndexSaver()
         {
-            m_rd->setIndex(m_index);
+            try {
+                m_rd->setIndex(m_index);
+            } catch (const IndexOverflow&) {
+            }
         }
 
     private:
