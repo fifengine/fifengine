@@ -35,12 +35,12 @@ namespace FIFE
     public:
         MapLoader(Model* model, VFS* vfs, ImageManager* imageManager, RenderBackend* renderBackend);
 
-        ~MapLoader();
+        virtual ~MapLoader() override;
 
         /**
          * @see IMapLoader::setObjectLoader
          */
-        void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader);
+        void setObjectLoader(const FIFE::ObjectLoaderPtr& objectLoader) override;
 
         /**
          * @see IMapLoader::getObjectLoader
@@ -50,7 +50,7 @@ namespace FIFE
         /**
          * @see IMapLoader::setAnimationLoader
          */
-        void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader);
+        void setAnimationLoader(const FIFE::AnimationLoaderPtr& animationLoader) override;
 
         /**
          * @see IMapLoader::getAnimationLoader
@@ -60,7 +60,7 @@ namespace FIFE
         /**
          * @see IMapLoader::setAtlasLoader
          */
-        void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader);
+        void setAtlasLoader(const FIFE::AtlasLoaderPtr& atlasLoader) override;
 
         /**
          * @see IMapLoader::getAtlasLoader
@@ -70,12 +70,12 @@ namespace FIFE
         /**
          * @see IMapLoader::isLoadable
          */
-        bool isLoadable(const std::string& filename) const;
+        bool isLoadable(const std::string& filename) const override;
 
         /**
          * @see IMapLoader::load
          */
-        Map* load(const std::string& filename);
+        Map* load(const std::string& filename) override;
 
         /** used to load an object file
          * if directory is provided then file is assumed relative to directory

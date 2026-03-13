@@ -90,7 +90,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~Instance();
+        virtual ~Instance() override;
 
         /** Get the identifier for this instance; possibly null.
          */
@@ -369,7 +369,7 @@ namespace FIFE
 
         /** callback so other instances we depend on can notify us if they go away
          */
-        void onInstanceDeleted(Instance* instance);
+        void onInstanceDeleted(Instance* instance) override;
 
         /** Returns a pointer to the route, in case there is no, it returns NULL.
          */

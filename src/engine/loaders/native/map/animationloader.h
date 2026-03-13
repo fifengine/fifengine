@@ -38,17 +38,17 @@ namespace FIFE
         /**
          * @see IAnimationLoader::isLoadable
          */
-        virtual bool isLoadable(const std::string& filename);
+        virtual bool isLoadable(const std::string& filename) override;
 
         /**
          * @see IAnimationLoader::load
          */
-        virtual AnimationPtr load(const std::string& filename);
+        virtual AnimationPtr load(const std::string& filename) override;
 
         /**
          * @see IAnimationLoader::loadMultiple
          */
-        virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename);
+        virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) override;
 
     private:
         AnimationPtr loadAnimation(const std::string& filename, tinyxml2::XMLElement* animationElem);

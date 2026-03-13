@@ -123,7 +123,7 @@ namespace FIFE
 
         /** Destructor
          */
-        ~Cell();
+        virtual ~Cell() override;
 
         /** Adds instances to this cell.
          * @param instances A const reference to list that contains instances.
@@ -309,7 +309,7 @@ namespace FIFE
          * @param cell A pointer to the cell which will be deleted.
          * @see CellDeleteListener
          */
-        void onCellDeleted(Cell* cell);
+        void onCellDeleted(Cell* cell) override;
 
         /** Adds new cell change listener.
          * @param listener A pointer to the listener.

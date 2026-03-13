@@ -40,7 +40,7 @@ namespace FIFE
 
         /** Destructor
          */
-        virtual ~JoystickManager();
+        virtual ~JoystickManager() override;
 
         /** Adds a joystick with the given device index.
          */
@@ -79,9 +79,9 @@ namespace FIFE
         void setStringMapping(const std::string& mapping);
 
         // Implementation from IJoystickController.
-        void addJoystickListener(IJoystickListener* listener);
-        void addJoystickListenerFront(IJoystickListener* listener);
-        void removeJoystickListener(IJoystickListener* listener);
+        void addJoystickListener(IJoystickListener* listener) override;
+        void addJoystickListenerFront(IJoystickListener* listener) override;
+        void removeJoystickListener(IJoystickListener* listener) override;
 
         /** Creates and process joystick events.
          */
@@ -96,7 +96,7 @@ namespace FIFE
         void dispatchJoystickEvent(JoystickEvent& evt);
 
         // Implementation from IEventSource.
-        EventSourceType getEventSourceType();
+        EventSourceType getEventSourceType() override;
 
     private:
         /** Return GUID for given device index as string.

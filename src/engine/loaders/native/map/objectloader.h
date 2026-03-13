@@ -38,37 +38,37 @@ namespace FIFE
             const AnimationLoaderPtr& animationLoader = AnimationLoaderPtr(),
             const AtlasLoaderPtr& atlasLoader         = AtlasLoaderPtr());
 
-        ~ObjectLoader();
+        virtual ~ObjectLoader() override;
 
         /**
          * @see IObjectLoader::setAnimationLoader
          */
-        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader);
+        virtual void setAnimationLoader(const AnimationLoaderPtr& animationLoader) override;
 
         /**
          * @see IObjectLoader::getAnimationLoader
          */
-        virtual AnimationLoaderPtr getAnimationLoader();
+        virtual AnimationLoaderPtr getAnimationLoader() override;
 
         /**
          * @see IObjectLoader::setAtlasLoader
          */
-        virtual void setAtlasLoader(const AtlasLoaderPtr& atlasLoader);
+        virtual void setAtlasLoader(const AtlasLoaderPtr& atlasLoader) override;
 
         /**
          * @see IObjectLoader::getAtlasLoader
          */
-        virtual AtlasLoaderPtr getAtlasLoader();
+        virtual AtlasLoaderPtr getAtlasLoader() override;
 
         /**
          * @see IObjectLoader::isLoadable
          */
-        virtual bool isLoadable(const std::string& filename) const;
+        virtual bool isLoadable(const std::string& filename) const override;
 
         /**
          * @see IObjectLoader::load
          */
-        virtual void load(const std::string& filename);
+        virtual void load(const std::string& filename) override;
 
         /** used to load an object, atlas or animation file
          * if directory is provided then file is assumed relative to directory

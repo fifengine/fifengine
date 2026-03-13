@@ -31,27 +31,28 @@ namespace FIFE
 
         /** destructor
          */
-        ~MapSaver();
+        virtual ~MapSaver() override;
 
         /** allows setting which object saver will be
          * used to save object files
          */
-        virtual void setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver);
+        virtual void setObjectSaver(const FIFE::ObjectSaverPtr& objectSaver) override;
 
         /** allows setting which animation saver will be
          * used to save animation files
          */
-        virtual void setAnimationSaver(const FIFE::AnimationSaverPtr& animationSaver);
+        virtual void setAnimationSaver(const FIFE::AnimationSaverPtr& animationSaver) override;
 
         /** allows setting which atlas saver will be
          * used to save atlas files
          */
-        virtual void setAtlasSaver(const FIFE::AtlasSaverPtr& atlasSaver);
+        virtual void setAtlasSaver(const FIFE::AtlasSaverPtr& atlasSaver) override;
 
         /** responsible for saving the map resource
          * used to save map files
          */
-        virtual void save(const Map& map, const std::string& filename, const std::vector<std::string>& importFiles);
+        virtual void save(
+            const Map& map, const std::string& filename, const std::vector<std::string>& importFiles) override;
 
     private:
         ObjectSaverPtr m_objectSaver;

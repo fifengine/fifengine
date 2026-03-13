@@ -24,26 +24,28 @@ namespace FIFE
     {
     public:
         SquareGrid();
-        virtual ~SquareGrid();
+        virtual ~SquareGrid() override;
 
-        const std::string& getType() const;
-        const std::string& getName() const;
-        bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
-        double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-        double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-        uint32_t getCellSideCount() const
+        const std::string& getType() const override;
+        const std::string& getName() const override;
+        bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
+        double getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
+        double getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target) override;
+        uint32_t getCellSideCount() const override
         {
             return 4;
         }
-        ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
-        ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
-        ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
-        ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(const ExactModelCoordinate& exact_layer_coords);
-        void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
+        ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) override;
+        ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord) override;
+        ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord) override;
+        ModelCoordinate toLayerCoordinatesFromExactLayerCoordinates(
+            const ExactModelCoordinate& exact_layer_coords) override;
+        void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) override;
         std::vector<ModelCoordinate> toMultiCoordinates(
-            const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse);
-        std::vector<ModelCoordinate> getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end);
-        CellGrid* clone();
+            const ModelCoordinate& position, const std::vector<ModelCoordinate>& orig, bool reverse) override;
+        std::vector<ModelCoordinate> getCoordinatesInLine(
+            const ModelCoordinate& start, const ModelCoordinate& end) override;
+        CellGrid* clone() override;
     };
 } // namespace FIFE
 

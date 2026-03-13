@@ -39,19 +39,19 @@ namespace FIFE
 
         /** Destructor
          */
-        ~MultiLayerSearch();
+        virtual ~MultiLayerSearch() override;
 
         /** Updates the search.
          *
          * Each update checks all neighbors of the last checked coordinate and selects the most favorable.
          */
-        void updateSearch();
+        void updateSearch() override;
 
         /** Calculates final path.
          *
          * If the search is successful then a path is created.
          */
-        void calcPath();
+        void calcPath() override;
 
     private:
         /** Creates or resets the SearchFrontier.
