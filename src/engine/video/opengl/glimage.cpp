@@ -304,10 +304,9 @@ namespace FIFE
             m_compressed = false;
         }
 
-        bool monochrome     = RenderBackend::instance()->isMonochromeEnabled();
-        SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
-        int32_t bpp_target  = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
-        int32_t bpp_source  = m_surface->format->BitsPerPixel;
+        bool monochrome    = RenderBackend::instance()->isMonochromeEnabled();
+        int32_t bpp_target = RenderBackend::instance()->getPixelFormat().BitsPerPixel;
+        int32_t bpp_source = m_surface->format->BitsPerPixel;
         // create 16 bit texture, RGBA_4444
         if (bpp_target == 16 && bpp_source == 32) {
             auto* oglbuffer = new uint16_t[m_chunk_size_w * m_chunk_size_h];

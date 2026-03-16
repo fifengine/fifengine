@@ -123,6 +123,7 @@ namespace FIFE
             }
         }
 
+        (void)ret;
         return m_datasize == 0;
     }
 

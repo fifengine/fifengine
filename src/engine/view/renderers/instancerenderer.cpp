@@ -175,7 +175,6 @@ namespace FIFE
     {
         // FIXME: Unlit is currently broken, maybe it would be the best to change Lightsystem
         const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
-        const bool unlit       = !m_unlit_groups.empty();
         uint32_t lm            = m_renderbackend->getLightingModel();
         // thanks to multimap, we will have transparent instances already sorted by their z value (key)
         std::multimap<float, RenderItem*> transparentInstances;
@@ -314,7 +313,6 @@ namespace FIFE
         for (; it != transparentInstances.end(); ++it) {
             RenderItem& vc     = *(it->second);
             Instance* instance = vc.instance;
-            uint8_t alpha      = vc.transparency;
             float vertexZ      = it->first;
 
             uint8_t coloringColor[4] = {0};
@@ -520,10 +518,9 @@ namespace FIFE
     void InstanceRenderer::renderOverlay(
         RenderDataType type, RenderItem* item, uint8_t const * coloringColor, bool recoloring)
     {
-        RenderItem& vc     = *item;
-        Instance* instance = vc.instance;
-        bool withZ         = type != RENDER_DATA_WITHOUT_Z;
-        float vertexZ      = vc.vertexZ;
+        RenderItem& vc = *item;
+        bool withZ     = type != RENDER_DATA_WITHOUT_Z;
+        float vertexZ  = vc.vertexZ;
 
         // animation overlay
         std::vector<ImagePtr>* animationOverlay = vc.getAnimationOverlay();

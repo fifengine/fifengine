@@ -182,7 +182,6 @@ namespace FIFE
                             std::vector<ExactModelCoordinate> vertices;
                             cg->getVertices(vertices, (*pit).getLayerCoordinates());
                             auto vertIt         = vertices.begin();
-                            int32_t halfind     = vertices.size() / 2;
                             ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vertIt));
                             Point pt1(firstpt.x, firstpt.y);
                             Point pt2;

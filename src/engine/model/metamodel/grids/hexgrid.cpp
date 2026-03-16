@@ -316,7 +316,6 @@ namespace FIFE
     {
         std::vector<ModelCoordinate> coords;
         int32_t doubleDeltaX = (2 * (end.x - start.x)) + ABS(end.y % 2) - ABS(start.y % 2);
-        int32_t deltaX       = (end.x - start.x) + ABS(end.y % 2) - ABS(start.y % 2);
         int32_t deltaY       = end.y - start.y;
 
         // int8_t signX = (deltaX >= 0) ? 1 : -1;

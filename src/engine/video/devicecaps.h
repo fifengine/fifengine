@@ -37,6 +37,11 @@ namespace FIFE
          */
         ~ScreenMode() { }
 
+        static const uint32_t WINDOWED_OPENGL   = 0x00000002;
+        static const uint32_t FULLSCREEN_OPENGL = 0x00000003;
+        static const uint32_t WINDOWED_SDL      = 0;
+        static const uint32_t FULLSCREEN_SDL    = 0x00000001;
+
         bool operator<(const ScreenMode& rhs) const;
 
         /** Returns the width of the screen mode.
