@@ -169,6 +169,20 @@ namespace FIFE
             return m_renderDriverIndex;
         }
 
+        /** Sets the render driver name.
+         */
+        void setRenderDriverName(const std::string& driver)
+        {
+            m_renderDriver = driver;
+        }
+
+        /** Returns the render driver name.
+         */
+        const std::string& getRenderDriverName() const
+        {
+            return m_renderDriver;
+        }
+
     private:
         uint16_t m_width;
         uint16_t m_height;

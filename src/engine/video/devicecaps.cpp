@@ -164,22 +164,22 @@ namespace FIFE
         uint32_t flags[kNumFlags];
 
         // OpenGL, windowed
-        flags[0] = ScreenMode::WINDOWED_OPENGL;
+        flags[0] = SDL_WINDOW_OPENGL;
         // OpenGL, fullscreen
-        flags[1] = ScreenMode::FULLSCREEN_OPENGL;
+        flags[1] = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
         // SDL, windowed
-        flags[2] = ScreenMode::WINDOWED_SDL;
+        flags[2] = 0;
         // SDL, fullscreen
-        flags[3] = ScreenMode::FULLSCREEN_SDL;
+        flags[3] = SDL_WINDOW_FULLSCREEN;
 
 #else
         constexpr uint32_t kNumFlags = 2;
         uint32_t flags[kNumFlags];
 
         // SDL, windowed
-        flags[0] = ScreenMode::WINDOWED_SDL;
+        flags[0] = 0;
         // SDL, fullscreen
-        flags[1] = ScreenMode::FULLSCREEN_SDL;
+        flags[1] = SDL_WINDOW_FULLSCREEN;
 #endif
 
         // BITS PER PIXEL
