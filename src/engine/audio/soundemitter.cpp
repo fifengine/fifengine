@@ -978,7 +978,6 @@ namespace FIFE
                 (*i)->onSoundFinished(m_emitterId, m_soundClipId);
             }
         }
-        m_listeners.erase(
-            std::remove(m_listeners.begin(), m_listeners.end(), (SoundEmitterListener*)nullptr), m_listeners.end());
+        m_listeners.erase(std::remove(m_listeners.begin(), m_listeners.end(), nullptr), m_listeners.end());
     }
 } // namespace FIFE

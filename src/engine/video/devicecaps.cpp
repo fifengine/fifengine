@@ -152,8 +152,8 @@ namespace FIFE
         fillAvailableDrivers();
         // FLAGS
 #ifdef HAVE_OPENGL
-        const uint32_t numFlags = 4;
-        uint32_t flags[numFlags];
+        constexpr uint32_t kNumFlags = 4;
+        uint32_t flags[kNumFlags];
 
         // OpenGL, windowed
         flags[0] = ScreenMode::WINDOWED_OPENGL;
@@ -165,8 +165,8 @@ namespace FIFE
         flags[3] = ScreenMode::FULLSCREEN_SDL;
 
 #else
-        const uint32_t numFlags = 2;
-        uint32_t flags[numFlags];
+        constexpr uint32_t kNumFlags = 2;
+        uint32_t flags[kNumFlags];
 
         // SDL, windowed
         flags[0] = ScreenMode::WINDOWED_SDL;
@@ -175,8 +175,8 @@ namespace FIFE
 #endif
 
         // BITS PER PIXEL
-        const uint32_t numBPP = 3;
-        uint16_t bpps[numBPP];
+        constexpr uint32_t kNumBPP = 3;
+        int16_t bpps[kNumBPP];
 
         bpps[0] = 16;
         bpps[1] = 24;
@@ -189,7 +189,7 @@ namespace FIFE
             uint8_t displayModes = SDL_GetNumDisplayModes(i);
             for (uint8_t m = 0; m != displayModes; m++) {
                 if (SDL_GetDisplayMode(i, m, &mode) == 0) {
-                    for (unsigned short bpp : bpps) {
+                    for (int16_t bpp : bpps) {
                         for (unsigned int flag : flags) {
                             // m_screenModes.push_back(ScreenMode(mode.w, mode.h, SDL_BITSPERPIXEL(mode.format),
                             // mode.refresh_rate, flags[j]));

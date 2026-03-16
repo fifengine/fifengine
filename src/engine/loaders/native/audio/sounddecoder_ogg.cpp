@@ -61,7 +61,7 @@ namespace FIFE
             return 0;
         }
 
-        static long tell(void* datasource)
+        static int64_t tell(void* datasource)
         {
             auto* rdp = reinterpret_cast<RawData*>(datasource);
             return (*rdp).getCurrentIndex();

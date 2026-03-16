@@ -215,13 +215,11 @@ namespace FIFE
 
         if (!m_deleteListeners.empty()) {
             m_deleteListeners.erase(
-                std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), (CellDeleteListener*)nullptr),
-                m_deleteListeners.end());
+                std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), nullptr), m_deleteListeners.end());
         }
         if (!m_changeListeners.empty()) {
             m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (CellChangeListener*)nullptr),
-                m_changeListeners.end());
+                std::remove(m_changeListeners.begin(), m_changeListeners.end(), nullptr), m_changeListeners.end());
         }
     }
 

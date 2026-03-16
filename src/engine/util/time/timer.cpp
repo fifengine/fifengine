@@ -52,7 +52,7 @@ namespace FIFE
         m_callback = cb;
     }
 
-    void Timer::updateEvent(uint32_t)
+    void Timer::updateEvent(uint32_t /*time*/)
     {
         if (!m_active) {
             return;

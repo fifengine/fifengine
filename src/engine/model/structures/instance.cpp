@@ -171,8 +171,7 @@ namespace FIFE
             }
             // Really remove "removed" listeners.
             m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), (InstanceChangeListener*)nullptr),
-                m_changeListeners.end());
+                std::remove(m_changeListeners.begin(), m_changeListeners.end(), nullptr), m_changeListeners.end());
         }
     }
 
@@ -773,8 +772,7 @@ namespace FIFE
         }
         // remove DeleteListeners
         m_deleteListeners.erase(
-            std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), (InstanceDeleteListener*)nullptr),
-            m_deleteListeners.end());
+            std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), nullptr), m_deleteListeners.end());
 
         if (m_activity->m_timeProvider == nullptr) {
             bindTimeProvider();
@@ -865,10 +863,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(
-                m_activity->m_actionListeners.begin(),
-                m_activity->m_actionListeners.end(),
-                (InstanceActionListener*)nullptr),
+            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(), nullptr),
             m_activity->m_actionListeners.end());
     }
 
@@ -903,10 +898,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(
-                m_activity->m_actionListeners.begin(),
-                m_activity->m_actionListeners.end(),
-                (InstanceActionListener*)nullptr),
+            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(), nullptr),
             m_activity->m_actionListeners.end());
     }
 

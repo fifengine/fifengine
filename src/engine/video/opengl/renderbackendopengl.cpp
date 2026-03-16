@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+#include "renderbackendopengl.h"
+
 // Standard C++ library includes
 #include <algorithm>
 #include <string>
@@ -17,9 +19,8 @@
 #include "util/log/logger.h"
 #include "video/devicecaps.h"
 
-#include "SDL_image.h"
 #include "glimage.h"
-#include "renderbackendopengl.h"
+#include "SDL_image.h"
 
 namespace FIFE
 {

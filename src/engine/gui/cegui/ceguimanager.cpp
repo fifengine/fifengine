@@ -70,7 +70,7 @@ namespace FIFE
     {
 
         double timeNow   = TimeManager::instance()->getTime() / 1000.0;
-        float time_pulse = float(timeNow - m_lastTimePulse);
+        float time_pulse = static_cast<float>(timeNow - m_lastTimePulse);
 
         CEGUI::System::getSingleton().injectTimePulse(time_pulse);
         CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(time_pulse);
