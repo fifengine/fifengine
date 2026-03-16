@@ -151,9 +151,9 @@ namespace FIFE
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport = cam->getViewPort();
-            uint32_t width;
-            uint32_t height;
+            Rect viewport   = cam->getViewPort();
+            uint32_t width  = 0;
+            uint32_t height = 0;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
@@ -190,9 +190,9 @@ namespace FIFE
                 scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
             ImagePtr img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
-            Rect viewport = cam->getViewPort();
-            uint32_t width;
-            uint32_t height;
+            Rect viewport   = cam->getViewPort();
+            uint32_t width  = 0;
+            uint32_t height = 0;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
@@ -220,9 +220,9 @@ namespace FIFE
         if (m_anchor.getLayer() == layer) {
             Image* img = m_font->getAsImageMultiline(m_text);
             Rect r;
-            Rect viewport = cam->getViewPort();
-            uint32_t width;
-            uint32_t height;
+            Rect viewport   = cam->getViewPort();
+            uint32_t width  = 0;
+            uint32_t height = 0;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
                 height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
@@ -259,9 +259,9 @@ namespace FIFE
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport = cam->getViewPort();
-            uint32_t width;
-            uint32_t height;
+            Rect viewport   = cam->getViewPort();
+            uint32_t width  = 0;
+            uint32_t height = 0;
             if (m_zoomed) {
                 width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
                 height = static_cast<uint32_t>(round(m_height * cam->getZoom()));

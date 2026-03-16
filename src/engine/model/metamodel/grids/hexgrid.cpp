@@ -184,7 +184,7 @@ namespace FIFE
 
         // distance of given point from our approximation
         // If y uneven dx=-dx and dy=-dy
-        double dx, dy;
+        double dx = 0.0, dy = 0.0;
         if ((y & 1) != 0) {
             dx = elc.x - lc.x;
             dy = elc.y - lc.y;
@@ -195,7 +195,7 @@ namespace FIFE
 
         // adjustment for cases where our approximation lies beyond the hex edge
         if (ABS(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * ABS(dx)) * VERTICAL_MULTIP_INV)) {
-            int8_t ddx, ddy;
+            int8_t ddx = 0, ddy = 0;
             if (dx > 0) {
                 ddx = -1;
             } else {
@@ -232,9 +232,9 @@ namespace FIFE
     {
         FL_DBG(_log, LMsg("===============\ngetting vertices for ") << cell);
         vtx.clear();
-        auto x = static_cast<double>(cell.x);
-        auto y = static_cast<double>(cell.y);
-        double horiz_shift;
+        auto x             = static_cast<double>(cell.x);
+        auto y             = static_cast<double>(cell.y);
+        double horiz_shift = 0.0;
         if (m_axial) {
             horiz_shift = HEX_TO_EDGE * cell.y;
         } else {
@@ -244,7 +244,7 @@ namespace FIFE
                 FL_DBG(_log, "on uneven row");
             }
         }
-        double tx, ty;
+        double tx = 0.0, ty = 0.0;
 
 #define ADD_PT(_x, _y) vtx.emplace_back(_x, _y);
         // FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)

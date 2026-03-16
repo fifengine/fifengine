@@ -52,14 +52,14 @@ namespace FIFE
 
         char buffer[kRingBufferSize + kMatchLengthUpperLimit - 1];
         int32_t ibuf = 0;
-        int32_t c;
+        int32_t c    = 0;
 
-        int32_t i;
-        int32_t j;
-        int32_t k;
-        int32_t r;
+        int32_t i = 0;
+        int32_t j = 0;
+        int32_t k = 0;
+        int32_t r = 0;
 
-        uint32_t flags;
+        uint32_t flags = 0;
 
         for (i = 0; i < kRingBufferSize - kMatchLengthUpperLimit; i++) {
             buffer[i] = ' ';

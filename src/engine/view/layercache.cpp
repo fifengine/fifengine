@@ -249,8 +249,8 @@ namespace FIFE
     {
         assert(m_instance_map.find(instance) == m_instance_map.end());
 
-        RenderItem* item;
-        Entry* entry;
+        RenderItem* item = nullptr;
+        Entry* entry     = nullptr;
         if (m_freeEntries.empty()) {
             // creates new RenderItem
             item = new RenderItem(instance);

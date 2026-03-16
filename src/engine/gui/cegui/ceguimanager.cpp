@@ -68,7 +68,6 @@ namespace FIFE
 
     void CEGuiManager::injectTimePulse()
     {
-
         double timeNow   = TimeManager::instance()->getTime() / 1000.0;
         float time_pulse = static_cast<float>(timeNow - m_lastTimePulse);
 

@@ -519,7 +519,7 @@ namespace FIFE
                 m_enter       = false;
             }
 
-            float modifier;
+            float modifier = 0.0f;
             if (m_acceleration) {
                 uint32_t ticks    = SDL_GetTicks();
                 auto difference   = static_cast<float>((ticks - m_lastTicks) + 1);

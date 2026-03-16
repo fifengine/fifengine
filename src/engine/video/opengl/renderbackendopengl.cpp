@@ -19,8 +19,8 @@
 #include "util/log/logger.h"
 #include "video/devicecaps.h"
 
-#include "glimage.h"
 #include "SDL_image.h"
+#include "glimage.h"
 
 namespace FIFE
 {
@@ -725,8 +725,8 @@ namespace FIFE
 
     void RenderBackendOpenGL::changeBlending(int32_t src, int32_t dst)
     {
-        GLenum src_fact;
-        GLenum dst_fact;
+        GLenum src_fact = GL_ZERO;
+        GLenum dst_fact = GL_ZERO;
 
         switch (src) {
         case 0:
@@ -2563,7 +2563,7 @@ namespace FIFE
         const uint32_t swidth  = getWidth();
         const uint32_t sheight = getHeight();
 
-        uint8_t* pixels;
+        uint8_t* pixels      = nullptr;
         SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24, RMASK, GMASK, BMASK, NULLMASK);
 
         if (surface == nullptr) {
@@ -2607,7 +2607,7 @@ namespace FIFE
             return;
         }
 
-        uint8_t* pixels;
+        uint8_t* pixels = nullptr;
         // create source surface
         SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32, RMASK, GMASK, BMASK, AMASK);
 
@@ -2640,14 +2640,14 @@ namespace FIFE
         uint32_t* src_help_pointer = src_pointer;
         auto* dst_pointer          = static_cast<uint32_t*>(dst->pixels);
 
-        int32_t x;
-        int32_t y;
-        int32_t* sx_ca;
-        int32_t* sy_ca;
-        auto sx      = static_cast<int32_t>(0xffff * src->w / dst->w);
-        auto sy      = static_cast<int32_t>(0xffff * src->h / dst->h);
-        int32_t sx_c = 0;
-        int32_t sy_c = 0;
+        int32_t x      = 0;
+        int32_t y      = 0;
+        int32_t* sx_ca = nullptr;
+        int32_t* sy_ca = nullptr;
+        auto sx        = static_cast<int32_t>(0xffff * src->w / dst->w);
+        auto sy        = static_cast<int32_t>(0xffff * src->h / dst->h);
+        int32_t sx_c   = 0;
+        int32_t sy_c   = 0;
 
         // Allocates memory and calculates row wide&height
         auto* sx_a = new int32_t[dst->w + 1];

@@ -77,18 +77,12 @@ namespace FIFE
 
     void Console::reLayout()
     {
-        int32_t w;
-        int32_t h;
-        int32_t b;
-        int32_t input_h;
-        int32_t bbar_h;
-        int32_t button_w;
-        w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
-        h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
-        b        = 0;
-        input_h  = getFont()->getHeight();
-        bbar_h   = input_h;
-        button_w = 80;
+        int32_t w        = RenderBackend::instance()->getScreenWidth() * 4 / 5;
+        int32_t h        = RenderBackend::instance()->getScreenHeight() * 4 / 5;
+        int32_t b        = 0;
+        int32_t input_h  = getFont()->getHeight();
+        int32_t bbar_h   = input_h;
+        int32_t button_w = 80;
 
         fcn::Color black(0x00, 0, 0, 0xff);
         fcn::Color white(0xff, 0xff, 0xff, 0xff);

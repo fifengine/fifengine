@@ -110,15 +110,15 @@ namespace FIFE
             return;
         }
 
-        ALint procs;
-        ALint bufs;
-        ALuint buffer;
+        ALint procs   = 0;
+        ALint bufs    = 0;
+        ALuint buffer = 0;
         alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &procs);
 
         while ((procs--) != 0) {
             // needed for correct cursor position
-            float samplesOffset;
-            float newOffset;
+            float samplesOffset = 0.0f;
+            float newOffset     = 0.0f;
             alGetSourcef(m_source, AL_SAMPLE_OFFSET, &samplesOffset);
 
             alSourceUnqueueBuffers(m_source, 1, &buffer);
@@ -747,7 +747,7 @@ namespace FIFE
         if (!isActive()) {
             return m_internData.soundState;
         }
-        ALint state;
+        ALint state = 0;
         alGetSourcei(m_source, AL_SOURCE_STATE, &state);
         switch (state) {
         case AL_INITIAL:

@@ -70,7 +70,7 @@ namespace FIFE
 
     Action* Object::createAction(const std::string& identifier, bool is_default)
     {
-        std::map<std::string, Action*>* actions;
+        std::map<std::string, Action*>* actions = nullptr;
         if (m_basicProperty == nullptr) {
             m_basicProperty = new BasicObjectProperty();
         }

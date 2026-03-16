@@ -96,7 +96,7 @@ namespace FIFE
             aMulA          = (alpha * aMulA) / 15; ///< upgrade to range 0-255
             if (aMulA != 0U) {
                 uint32_t OneMin_aMulA = 255 - aMulA;
-                uint32_t result;
+                uint32_t result       = 0;
                 result = ((((c2 & 0xF000) | 0x0800) * aMulA) + ((c1 & 0xF800) * OneMin_aMulA)) & 0xF80000;
                 result |= (((((c2 & 0x0F00) >> 1) | 0x0040) * aMulA) + ((c1 & 0x07E0) * OneMin_aMulA)) & 0x07E000;
                 result |= (((((c2 & 0x00F0) >> 3) | 0x0001) * aMulA) + ((c1 & 0x001F) * OneMin_aMulA)) & 0x001F00;

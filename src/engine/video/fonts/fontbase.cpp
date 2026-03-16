@@ -178,7 +178,7 @@ namespace FIFE
     Image* FontBase::getAsImageMultiline(const std::string& text)
     {
         const uint8_t newline_utf8 = '\n';
-        uint32_t newline;
+        uint32_t newline           = 0;
         utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
         // std::cout << "Text:" << text << '\n';
         Image* image = m_pool.getRenderedText(this, text);
@@ -234,7 +234,7 @@ namespace FIFE
     {
         const uint32_t whitespace  = ' ';
         const uint8_t newline_utf8 = '\n';
-        uint32_t newline;
+        uint32_t newline           = 0;
         utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
         if (render_width <= 0 || text.empty()) {
             return text;

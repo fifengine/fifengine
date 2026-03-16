@@ -52,8 +52,8 @@ namespace FIFE
 
     int32_t TrueTypeFont::getWidth(const std::string& text) const
     {
-        int32_t w;
-        int32_t h;
+        int32_t w = 0;
+        int32_t h = 0;
         assert(utf8::is_valid(text.begin(), text.end()));
         TTF_SizeUTF8(mFont, text.c_str(), &w, &h);
         return w;

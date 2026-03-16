@@ -154,7 +154,7 @@ namespace FIFE
 
     void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a)
     {
-        Uint8* p;
+        Uint8* p = nullptr;
 
         assert(m_surface);
 
@@ -211,10 +211,10 @@ namespace FIFE
 
     void Image::saveAsPng(const std::string& filename, const SDL_Surface& surface)
     {
-        FILE* fp;
-        png_structp pngptr;
-        png_infop infoptr;
-        int32_t colortype;
+        FILE* fp               = nullptr;
+        png_structp pngptr     = nullptr;
+        png_infop infoptr      = nullptr;
+        int32_t colortype      = 0;
         png_bytep* rowpointers = nullptr;
 
         fp = fopen(filename.c_str(), "wb");

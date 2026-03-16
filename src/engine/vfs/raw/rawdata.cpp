@@ -154,7 +154,7 @@ namespace FIFE
         }
 
         buffer = "";
-        char c;
+        char c = 0;
         while (getCurrentIndex() < getDataLength() && (c = read8()) != '\n') {
             buffer += c;
         }

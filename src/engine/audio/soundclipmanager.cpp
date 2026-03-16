@@ -301,7 +301,7 @@ namespace FIFE
 
     void SoundClipManager::remove(const std::string& name)
     {
-        std::size_t handle;
+        std::size_t handle = 0;
 
         auto nit = m_sclipNameMap.find(name);
         if (nit != m_sclipNameMap.end()) {

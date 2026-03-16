@@ -569,37 +569,37 @@ namespace FIFE
                                     for (XML::Element* dirElement = animElement->FirstChildElement("direction");
                                          dirElement != nullptr;
                                          dirElement = dirElement->NextSiblingElement("direction")) {
-                                        int dir;
+                                        int dir = 0;
                                         dirElement->QueryIntAttribute("dir", &dir);
 
                                         std::string aniId      = std::format("{}:{}:{:03d}", objectId, actionId, dir);
                                         AnimationPtr animation = m_animationManager->create(aniId);
 
-                                        int frames;
+                                        int frames       = 0;
                                         int success_attr = XML::QueryAttribute(dirElement, "frames", &frames);
                                         if (success_attr != XML::SUCCESS) {
                                             frames = animFrames;
                                         }
 
-                                        int delay;
+                                        int delay    = 0;
                                         success_attr = XML::QueryAttribute(dirElement, "delay", &delay);
                                         if (success_attr != XML::SUCCESS) {
                                             delay = animDelay;
                                         }
 
-                                        int xoffset;
+                                        int xoffset  = 0;
                                         success_attr = XML::QueryAttribute(dirElement, "x_offset", &xoffset);
                                         if (success_attr != XML::SUCCESS) {
                                             xoffset = animXoffset;
                                         }
 
-                                        int yoffset;
+                                        int yoffset  = 0;
                                         success_attr = XML::QueryAttribute(dirElement, "y_offset", &yoffset);
                                         if (success_attr != XML::SUCCESS) {
                                             yoffset = animYoffset;
                                         }
 
-                                        int action_frame;
+                                        int action_frame = 0;
                                         success = XML::QueryAttribute(dirElement, "action_frame", &action_frame);
                                         if (success == XML::SUCCESS) {
                                             animation->setActionFrame(action_frame);

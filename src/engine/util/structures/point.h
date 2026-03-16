@@ -115,8 +115,8 @@ namespace FIFE
          */
         T length() const
         {
-            double sq;
-            sq = x * x + y * y;
+            double sq = 0.0;
+            sq        = x * x + y * y;
             return static_cast<T>(Mathd::Sqrt(sq));
         }
 
@@ -291,8 +291,8 @@ namespace FIFE
          */
         T length() const
         {
-            double sq;
-            sq = x * x + y * y + z * z;
+            double sq = 0.0;
+            sq        = x * x + y * y + z * z;
             return static_cast<T>(Mathd::Sqrt(sq));
         }
 

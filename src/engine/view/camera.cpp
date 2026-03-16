@@ -571,9 +571,9 @@ namespace FIFE
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
                 }
-                uint8_t r;
-                uint8_t g;
-                uint8_t b;
+                uint8_t r = 0;
+                uint8_t g = 0;
+                uint8_t b = 0;
                 uint8_t a = 0;
                 int32_t x = screen_coords.x - vc.dimensions.x;
                 int32_t y = screen_coords.y - vc.dimensions.y;
@@ -631,9 +631,9 @@ namespace FIFE
                 if (vc.image->isSharedImage()) {
                     vc.image->forceLoadInternal();
                 }
-                uint8_t r;
-                uint8_t g;
-                uint8_t b;
+                uint8_t r                   = 0;
+                uint8_t g                   = 0;
+                uint8_t b                   = 0;
                 uint8_t a                   = 0;
                 int32_t intersection_left   = std::max(screen_rect.x, vc.dimensions.x);
                 int32_t intersection_right  = std::min(screen_rect.right(), vc.dimensions.right());

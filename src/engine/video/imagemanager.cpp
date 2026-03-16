@@ -330,7 +330,7 @@ namespace FIFE
 
     void ImageManager::remove(const std::string& name)
     {
-        std::size_t handle;
+        std::size_t handle = 0;
 
         auto nit = m_imgNameMap.find(name);
         if (nit != m_imgNameMap.end()) {

@@ -122,8 +122,8 @@ namespace FIFE
             }
 
             if (render_costs) {
-                bool match = false;
-                double cost;
+                bool match   = false;
+                double cost  = 0.0;
                 auto cost_it = m_visualCosts.begin();
                 for (; cost_it != m_visualCosts.end(); ++cost_it) {
                     std::vector<std::string> cell_costs = cache->getCellCosts(*cit);

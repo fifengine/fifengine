@@ -232,7 +232,7 @@ namespace FIFE
             route->setSessionId(sessionId);
         }
 
-        RoutePatherSearch* newSearch;
+        RoutePatherSearch* newSearch = nullptr;
         if (multilayer) {
             newSearch = new MultiLayerSearch(route, sessionId);
         } else {
@@ -332,7 +332,7 @@ namespace FIFE
         double dy       = (targetPos.y - instancePos.y) * nodeGrid->getYScale();
         double distance = Mathd::Sqrt((dx * dx) + (dy * dy));
         // cell speed multi
-        double multi;
+        double multi = 0.0;
         if (nodeCache->getCellSpeedMultiplier(current.getLayerCoordinates(), multi)) {
             speed *= multi;
         } else {

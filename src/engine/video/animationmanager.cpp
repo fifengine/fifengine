@@ -310,7 +310,7 @@ namespace FIFE
 
     void AnimationManager::remove(const std::string& name)
     {
-        std::size_t handle;
+        std::size_t handle = 0;
 
         auto nit = m_animNameMap.find(name);
         if (nit != m_animNameMap.end()) {

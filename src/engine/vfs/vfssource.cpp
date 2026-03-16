@@ -32,7 +32,7 @@ std::string FIFE::VFSSource::fixPath(std::string path) const
         return path;
     }
 
-    size_t pos;
+    size_t pos = 0;
     while ((pos = path.find('\\')) != std::string::npos) {
         path[pos] = '/';
     }

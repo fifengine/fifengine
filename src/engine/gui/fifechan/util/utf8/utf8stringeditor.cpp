@@ -57,8 +57,8 @@ namespace fcn
     int UTF8StringEditor::insertChar(std::string& text, int byteOffset, int ch)
     {
         std::string newText;
-        std::string::iterator cut;
-        int newOffset;
+        std::string::iterator cut = std::string::iterator();
+        int newOffset             = 0;
 
         // make a temp string from left part of the caret (+6 extra chars)
         newText = text.substr(0, byteOffset) + "        ";
@@ -83,10 +83,10 @@ namespace fcn
 
     int UTF8StringEditor::getOffset(const std::string& text, int charIndex)
     {
-        std::string::const_iterator cur;
-        std::string::const_iterator end;
-        int bytes = 0;
-        int i;
+        std::string::const_iterator cur = std::string::const_iterator();
+        std::string::const_iterator end = std::string::const_iterator();
+        int bytes                       = 0;
+        int i                           = 0;
 
         if (charIndex < 0) {
             return 0;

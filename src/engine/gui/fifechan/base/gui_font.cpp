@@ -53,7 +53,7 @@ namespace FIFE
             return;
         }
 
-        Image* image;
+        Image* image = nullptr;
         if (isDynamicColoring()) {
             SDL_Color color = getColor();
             setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
@@ -75,7 +75,7 @@ namespace FIFE
 
         const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 
-        Image* image;
+        Image* image = nullptr;
         if (isDynamicColoring()) {
             SDL_Color color = getColor();
             setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
