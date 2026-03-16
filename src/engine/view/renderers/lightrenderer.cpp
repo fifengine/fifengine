@@ -65,6 +65,9 @@ namespace FIFE
         LightRendererElementInfo(anchor, src, dst), m_image(image)
     {
     }
+
+    LightRendererImageInfo::~LightRendererImageInfo() = default;
+
     void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         Point p = m_anchor.getCalculatedPoint(cam, layer, true);
@@ -99,6 +102,9 @@ namespace FIFE
         m_time_scale(1.0)
     {
     }
+
+    LightRendererAnimationInfo::~LightRendererAnimationInfo() = default;
+
     void LightRendererAnimationInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -134,6 +140,9 @@ namespace FIFE
         LightRendererElementInfo(anchor, src, dst), m_image(image), m_width(width), m_height(height)
     {
     }
+
+    LightRendererResizeInfo::~LightRendererResizeInfo() = default;
+
     void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         Point p = m_anchor.getCalculatedPoint(cam, layer, true);
@@ -183,6 +192,9 @@ namespace FIFE
         m_blue(b)
     {
     }
+
+    LightRendererSimpleLightInfo::~LightRendererSimpleLightInfo() = default;
+
     void LightRendererSimpleLightInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {

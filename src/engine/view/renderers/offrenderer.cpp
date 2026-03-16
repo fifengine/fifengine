@@ -35,6 +35,9 @@ namespace FIFE
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    OffRendererLineInfo::~OffRendererLineInfo() = default;
+
     void OffRendererLineInfo::render(RenderBackend* renderbackend)
     {
         renderbackend->drawLine(m_edge1, m_edge2, m_red, m_green, m_blue, m_alpha);
@@ -44,6 +47,9 @@ namespace FIFE
         OffRendererElementInfo(), m_anchor(anchor), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    OffRendererPointInfo::~OffRendererPointInfo() = default;
+
     void OffRendererPointInfo::render(RenderBackend* renderbackend)
     {
         renderbackend->putPixel(m_anchor.x, m_anchor.y, m_red, m_green, m_blue, m_alpha);
@@ -54,6 +60,9 @@ namespace FIFE
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_edge3(n3), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    OffRendererTriangleInfo::~OffRendererTriangleInfo() = default;
+
     void OffRendererTriangleInfo::render(RenderBackend* renderbackend)
     {
         renderbackend->drawTriangle(m_edge1, m_edge2, m_edge3, m_red, m_green, m_blue, m_alpha);
@@ -72,6 +81,9 @@ namespace FIFE
         m_alpha(a)
     {
     }
+
+    OffRendererQuadInfo::~OffRendererQuadInfo() = default;
+
     void OffRendererQuadInfo::render(RenderBackend* renderbackend)
     {
         renderbackend->drawQuad(m_edge1, m_edge2, m_edge3, m_edge4, m_red, m_green, m_blue, m_alpha);
@@ -82,6 +94,9 @@ namespace FIFE
         OffRendererElementInfo(), m_center(center), m_size(size), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    OffRendererVertexInfo::~OffRendererVertexInfo() = default;
+
     void OffRendererVertexInfo::render(RenderBackend* renderbackend)
     {
         renderbackend->drawVertex(m_center, m_size, m_red, m_green, m_blue, m_alpha);
@@ -91,6 +106,9 @@ namespace FIFE
         OffRendererElementInfo(), m_anchor(anchor), m_image(image)
     {
     }
+
+    OffRendererImageInfo::~OffRendererImageInfo() = default;
+
     void OffRendererImageInfo::render(RenderBackend* renderbackend)
     {
         Rect r;
@@ -112,6 +130,9 @@ namespace FIFE
         m_time_scale(1.0)
     {
     }
+
+    OffRendererAnimationInfo::~OffRendererAnimationInfo() = default;
+
     void OffRendererAnimationInfo::render(RenderBackend* renderbackend)
     {
         int32_t animtime =
@@ -133,6 +154,9 @@ namespace FIFE
         OffRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text))
     {
     }
+
+    OffRendererTextInfo::~OffRendererTextInfo() = default;
+
     void OffRendererTextInfo::render(RenderBackend* renderbackend)
     {
         Image* img = m_font->getAsImageMultiline(m_text);
@@ -152,6 +176,9 @@ namespace FIFE
         OffRendererElementInfo(), m_anchor(anchor), m_image(image), m_width(width), m_height(height)
     {
     }
+
+    OffRendererResizeInfo::~OffRendererResizeInfo() = default;
+
     void OffRendererResizeInfo::render(RenderBackend* renderbackend)
     {
         Rect r;

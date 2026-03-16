@@ -42,6 +42,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    GenericRendererLineInfo::~GenericRendererLineInfo() = default;
+
     void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         Point p1 = m_edge1.getCalculatedPoint(cam, layer);
@@ -59,6 +62,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_anchor(anchor), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    GenericRendererPointInfo::~GenericRendererPointInfo() = default;
+
     void GenericRendererPointInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -76,6 +82,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_edge3(n3), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    GenericRendererTriangleInfo::~GenericRendererTriangleInfo() = default;
+
     void GenericRendererTriangleInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -110,6 +119,9 @@ namespace FIFE
         m_alpha(a)
     {
     }
+
+    GenericRendererQuadInfo::~GenericRendererQuadInfo() = default;
+
     void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         Point p1 = m_edge1.getCalculatedPoint(cam, layer);
@@ -129,6 +141,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_center(center), m_size(size), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
+
+    GenericRendererVertexInfo::~GenericRendererVertexInfo() = default;
+
     void GenericRendererVertexInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -145,6 +160,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_anchor(anchor), m_image(image), m_zoomed(zoomed)
     {
     }
+
+    GenericRendererImageInfo::~GenericRendererImageInfo() = default;
+
     void GenericRendererImageInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -181,6 +199,9 @@ namespace FIFE
         m_zoomed(zoomed)
     {
     }
+
+    GenericRendererAnimationInfo::~GenericRendererAnimationInfo() = default;
+
     void GenericRendererAnimationInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
@@ -214,6 +235,9 @@ namespace FIFE
         GenericRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text)), m_zoomed(zoomed)
     {
     }
+
+    GenericRendererTextInfo::~GenericRendererTextInfo() = default;
+
     void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
@@ -253,6 +277,9 @@ namespace FIFE
         m_zoomed(zoomed)
     {
     }
+
+    GenericRendererResizeInfo::~GenericRendererResizeInfo() = default;
+
     void GenericRendererResizeInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {

@@ -41,6 +41,8 @@ namespace FIFE
     {
     }
 
+    FontBase::~FontBase() { }
+
     void FontBase::invalidate()
     {
         m_pool.invalidateCachedText();
