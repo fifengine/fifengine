@@ -700,11 +700,11 @@ namespace FIFE
     {
         if (sdlevt.type == SDL_TEXTINPUT) {
             txtevt.setType(TextEvent::INPUT);
-            Text t(sdlevt.text.text);
+            Text t(&sdlevt.text.text[0]);
             txtevt.setText(t);
         } else if (sdlevt.type == SDL_TEXTEDITING) {
             txtevt.setType(TextEvent::EDIT);
-            Text t(sdlevt.edit.text, sdlevt.edit.start, sdlevt.edit.length);
+            Text t(&sdlevt.edit.text[0], sdlevt.edit.start, sdlevt.edit.length);
             txtevt.setText(t);
         } else {
             FL_WARN(

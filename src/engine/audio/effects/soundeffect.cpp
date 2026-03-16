@@ -1181,7 +1181,7 @@ namespace FIFE
             static_cast<ALfloat>(m_reflectionsPan.x),
             static_cast<ALfloat>(m_reflectionsPan.y),
             static_cast<ALfloat>(m_reflectionsPan.z)};
-        alEffectfv(m_effect, AL_EAXREVERB_REFLECTIONS_PAN, vec);
+        alEffectfv(m_effect, AL_EAXREVERB_REFLECTIONS_PAN, &vec[0]);
     }
 
     AudioSpaceCoordinate EaxReverb::getReflectionsPan() const
@@ -1228,7 +1228,7 @@ namespace FIFE
             static_cast<ALfloat>(m_lateReverbPan.x),
             static_cast<ALfloat>(m_lateReverbPan.y),
             static_cast<ALfloat>(m_lateReverbPan.z)};
-        alEffectfv(m_effect, AL_EAXREVERB_LATE_REVERB_PAN, vec);
+        alEffectfv(m_effect, AL_EAXREVERB_LATE_REVERB_PAN, &vec[0]);
     }
 
     AudioSpaceCoordinate EaxReverb::getLateReverbPan() const

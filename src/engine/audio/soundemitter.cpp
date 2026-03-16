@@ -172,7 +172,7 @@ namespace FIFE
                 static_cast<ALfloat>(direction.x),
                 static_cast<ALfloat>(direction.y),
                 static_cast<ALfloat>(direction.z)};
-            alSourcefv(m_source, AL_DIRECTION, vec);
+            alSourcefv(m_source, AL_DIRECTION, &vec[0]);
         }
         m_internData.direction = direction;
     }

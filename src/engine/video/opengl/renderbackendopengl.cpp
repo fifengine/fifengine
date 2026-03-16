@@ -536,7 +536,7 @@ namespace FIFE
     {
         if (m_state.lightmodel != 0) {
             GLfloat lightDiffuse[] = {red, green, blue, 1.0F};
-            glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, &lightDiffuse[0]);
         }
     }
 
@@ -670,7 +670,7 @@ namespace FIFE
                 glClientActiveTexture(GL_TEXTURE0 + texUnit);
             }
 
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, rgbaf);
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, &rgbaf[0]);
         }
     }
 
@@ -1079,7 +1079,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(2);
                         bindTexture(1, m_maskOverlay);
-                        setEnvironmentalColor(1, ro.rgba);
+                        setEnvironmentalColor(1, &ro.rgba[0]);
                         enableTextures(0);
 
                         // set pointer
@@ -1097,7 +1097,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(1);
                         bindTexture(2, ro.overlay_id);
-                        setEnvironmentalColor(2, ro.rgba);
+                        setEnvironmentalColor(2, &ro.rgba[0]);
                         enableTextures(0);
 
                         // set pointer
@@ -1115,7 +1115,7 @@ namespace FIFE
                         disableTextures(2);
                         disableTextures(1);
                         bindTexture(3, ro.overlay_id);
-                        setEnvironmentalColor(3, ro.rgba);
+                        setEnvironmentalColor(3, &ro.rgba[0]);
                         enableTextures(0);
 
                         // set pointer
@@ -1472,7 +1472,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(2);
                         bindTexture(1, m_maskOverlay);
-                        setEnvironmentalColor(1, ro.rgba);
+                        setEnvironmentalColor(1, &ro.rgba[0]);
                         enableTextures(0);
 
                         texture_id2 = m_maskOverlay;
@@ -1481,7 +1481,7 @@ namespace FIFE
                         disableTextures(3);
                         disableTextures(1);
                         bindTexture(2, ro.overlay_id);
-                        setEnvironmentalColor(2, ro.rgba);
+                        setEnvironmentalColor(2, &ro.rgba[0]);
                         enableTextures(0);
 
                         texture_id2 = ro.overlay_id;
@@ -1490,7 +1490,7 @@ namespace FIFE
                         disableTextures(2);
                         disableTextures(1);
                         bindTexture(3, ro.overlay_id);
-                        setEnvironmentalColor(3, ro.rgba);
+                        setEnvironmentalColor(3, &ro.rgba[0]);
                         enableTextures(0);
 
                         texture_id2 = ro.overlay_id;

@@ -321,8 +321,8 @@ namespace FIFE
     {
         char tmp[33];
         SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(deviceIndex);
-        SDL_JoystickGetGUIDString(guid, tmp, sizeof(tmp));
-        std::string guidString(tmp);
+        SDL_JoystickGetGUIDString(guid, &tmp[0], sizeof(tmp));
+        std::string guidString(&tmp[0]);
         return guidString;
     }
 

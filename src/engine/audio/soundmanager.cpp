@@ -56,7 +56,7 @@ namespace FIFE
         }
         m_emitterVec.clear();
         // delete all sources
-        alDeleteSources(m_createdSources, m_sources);
+        alDeleteSources(m_createdSources, &m_sources[0]);
         // delete effect manager
         delete m_effectManager;
 
@@ -101,7 +101,7 @@ namespace FIFE
         // set listener position
         alListener3f(AL_POSITION, 0.0, 0.0, 0.0);
         ALfloat vec1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-        alListenerfv(AL_ORIENTATION, vec1);
+        alListenerfv(AL_ORIENTATION, &vec1[0]);
 
         // set volume
         alListenerf(AL_GAIN, m_volume);
@@ -255,7 +255,7 @@ namespace FIFE
     {
         if (isActive()) {
             ALfloat vec[3];
-            alGetListenerfv(AL_POSITION, vec);
+            alGetListenerfv(AL_POSITION, &vec[0]);
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();
@@ -271,7 +271,7 @@ namespace FIFE
                 0.0,
                 0.0,
                 1.0};
-            alListenerfv(AL_ORIENTATION, vec);
+            alListenerfv(AL_ORIENTATION, &vec[0]);
         }
     }
 
@@ -279,7 +279,7 @@ namespace FIFE
     {
         if (isActive()) {
             ALfloat vec[6];
-            alGetListenerfv(AL_ORIENTATION, vec);
+            alGetListenerfv(AL_ORIENTATION, &vec[0]);
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();
@@ -300,7 +300,7 @@ namespace FIFE
     {
         if (isActive()) {
             ALfloat vec[3];
-            alGetListenerfv(AL_VELOCITY, vec);
+            alGetListenerfv(AL_VELOCITY, &vec[0]);
             return AudioSpaceCoordinate(vec[0], vec[1], vec[2]);
         }
         return AudioSpaceCoordinate();

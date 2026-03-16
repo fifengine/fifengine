@@ -69,7 +69,8 @@ namespace FIFE
             auto* ptr = new SoundBufferEntry();
 
             // iterate the bufs and fill them with data
-            for (unsigned int& buffer : ptr->buffers) {
+            for (auto it = std::begin(ptr->buffers); it != std::end(ptr->buffers); ++it) {
+                unsigned int& buffer = *it;
 
                 if (m_decoder->decode(BUFFER_LEN)) {
                     // EOF or error
@@ -108,7 +109,7 @@ namespace FIFE
                 std::vector<SoundBufferEntry*>::iterator it;
                 for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
                     if (((*it) != nullptr) && (*it)->buffers[0] != 0) {
-                        alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
+                        alDeleteBuffers(BUFFER_NUM, &(*it)->buffers[0]);
                     }
                     delete (*it);
                 }
@@ -137,7 +138,7 @@ namespace FIFE
 
     ALuint* SoundClip::getBuffers(uint32_t streamid) const
     {
-        return m_buffervec.at(streamid)->buffers;
+        return &m_buffervec.at(streamid)->buffers[0];
     }
 
     uint32_t SoundClip::beginStreaming()
@@ -161,7 +162,7 @@ namespace FIFE
 
         ptr->usedbufs  = 0;
         ptr->deccursor = 0;
-        alGenBuffers(BUFFER_NUM, ptr->buffers);
+        alGenBuffers(BUFFER_NUM, &ptr->buffers[0]);
 
         CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 
@@ -262,7 +263,7 @@ namespace FIFE
     {
         // release the buffers
         SoundBufferEntry* ptr = m_buffervec.at(streamid);
-        alDeleteBuffers(BUFFER_NUM, ptr->buffers);
+        alDeleteBuffers(BUFFER_NUM, &ptr->buffers[0]);
         ptr->buffers[0] = 0;
     }
 
