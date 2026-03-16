@@ -27,8 +27,8 @@ class Slider(Widget):
             - update docstrings
     """
 
-    HORIZONTAL = fifechan.Slider.Horizontal
-    VERTICAL = fifechan.Slider.Vertical
+    HORIZONTAL = fifechan.Slider.Orientation_Horizontal
+    VERTICAL = fifechan.Slider.Orientation_Vertical
 
     ATTRIBUTES = Widget.ATTRIBUTES + [
         IntAttr("orientation"),

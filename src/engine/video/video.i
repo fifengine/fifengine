@@ -290,6 +290,10 @@ namespace FIFE {
 		bool isOpenGL();
 		bool isSDL() const;
 		uint8_t getDisplay() const;
+		void setWindowPositionX(int32_t x);
+		int32_t getWindowPositionX() const;
+		void setWindowPositionY(int32_t y);
+		int32_t getWindowPositionY() const;
 		const std::string& getRenderDriverName() const;
 
 		static const uint32_t WINDOWED_OPENGL;

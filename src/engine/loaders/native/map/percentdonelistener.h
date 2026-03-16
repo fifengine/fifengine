@@ -35,7 +35,7 @@ namespace FIFE
         void incrementCount();
         void reset();
         void addListener(PercentDoneListener* listener);
-        void removeListener(PercentDoneListener* listener);
+        void removeListener(const PercentDoneListener* listener);
 
     private:
         void fireEvent(uint32_t percent);

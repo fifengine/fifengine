@@ -84,7 +84,7 @@ namespace FIFE
          * returned.
          * @return A vector which contains the transition cells.
          */
-        std::vector<Cell*> getTransitionCells(Layer* layer = NULL);
+        std::vector<Cell*> getTransitionCells(const Layer* layer = NULL);
 
     private:
         //! identifier

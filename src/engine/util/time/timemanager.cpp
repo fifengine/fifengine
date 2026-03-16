@@ -68,7 +68,7 @@ namespace FIFE
     void TimeManager::unregisterEvent(TimeEvent* event)
     {
         // Unregister.
-        auto it = std::find_if(m_events_list.begin(), m_events_list.end(), [event](TimeEvent* e) {
+        auto it = std::find_if(m_events_list.begin(), m_events_list.end(), [event](const TimeEvent* e) {
             return e == event;
         });
         if (it != m_events_list.end()) {

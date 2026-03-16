@@ -27,10 +27,12 @@ SETTINGS_GUI_XML = """\
 		<VBox>
 			<Label text="Resolution:" />
 			<Label text="Renderer:" />
+			<Label text="Display:" />
 		</VBox>
-		<VBox min_size="120,60">
+		<VBox min_size="120,90">
 			<DropDown name="screen_resolution" min_size="120,0" />
 			<DropDown name="render_backend" min_size="120,0" />
+			<DropDown name="display" min_size="120,0" />
 		</VBox>
 	</HBox>
 	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />

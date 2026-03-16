@@ -351,7 +351,7 @@ class XMLMapSaver(object):
         cameralist = map.getCameras()
 
         for cam in cameralist:
-            if cam.getMap().getId() == map.getId():
+            if cam.getLocation().getMap().getId() == map.getId():
                 celldimensions = cam.getCellImageDimensions()
                 viewport = cam.getViewPort()
 

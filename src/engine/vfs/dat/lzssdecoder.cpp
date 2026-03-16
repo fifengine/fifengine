@@ -44,7 +44,7 @@ namespace FIFE
         }
     }
 
-    void LZSSDecoder::LZSSDecode(uint8_t* in, int64_t len, uint8_t* out)
+    void LZSSDecoder::LZSSDecode(const uint8_t* in, int64_t len, uint8_t* out)
     {
         constexpr int64_t kRingBufferSize        = 4096;
         constexpr int64_t kMatchLengthUpperLimit = 18;

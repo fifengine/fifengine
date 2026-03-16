@@ -124,11 +124,11 @@ namespace FIFE
 
         /** Internal function to do the OpenAL calls to activate the SoundFilter for the SoundEmitter.
          */
-        void activateFilter(SoundFilter* filter, SoundEmitter* emitter);
+        void activateFilter(const SoundFilter* filter, const SoundEmitter* emitter);
 
         /** Internal function to do the OpenAL calls to deactivate the SoundFilter for the SoundEmitter.
          */
-        void deactivateFilter(SoundFilter* filter, SoundEmitter* emitter);
+        void deactivateFilter(const SoundFilter* filter, const SoundEmitter* emitter);
 
     private:
         //! Inital the presets

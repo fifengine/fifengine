@@ -92,6 +92,29 @@ namespace FIFE
         }
         // create window
         uint8_t displayIndex = mode.getDisplay();
+        int32_t windowX      = mode.getWindowPositionX();
+        int32_t windowY      = mode.getWindowPositionY();
+
+        // Determine X position
+        int xPos;
+        if (windowX >= 0) {
+            xPos = windowX;
+        } else if (mode.isFullScreen()) {
+            xPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+        } else {
+            xPos = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+        }
+
+        // Determine Y position
+        int yPos;
+        if (windowY >= 0) {
+            yPos = windowY;
+        } else if (mode.isFullScreen()) {
+            yPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+        } else {
+            yPos = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+        }
+
         if (mode.isFullScreen()) {
             m_window = SDL_CreateWindow(
                 "",
@@ -101,13 +124,7 @@ namespace FIFE
                 height,
                 flags | SDL_WINDOW_SHOWN);
         } else {
-            m_window = SDL_CreateWindow(
-                "",
-                SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
-                SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
-                width,
-                height,
-                flags | SDL_WINDOW_SHOWN);
+            m_window = SDL_CreateWindow("", xPos, yPos, width, height, flags | SDL_WINDOW_SHOWN);
         }
 
         if (m_window == nullptr) {

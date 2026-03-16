@@ -279,7 +279,7 @@ namespace FIFE
         }
     }
 
-    void RendererNode::removeInstance(Instance* instance, bool listener)
+    void RendererNode::removeInstance(const Instance* instance, bool listener)
     {
         if (m_instance == instance && (instance != nullptr)) {
             if (listener) {

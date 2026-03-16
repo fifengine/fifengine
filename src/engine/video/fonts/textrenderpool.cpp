@@ -41,7 +41,7 @@ namespace FIFE
         }
     }
 
-    Image* TextRenderPool::getRenderedText(FontBase* fontbase, const std::string& text)
+    Image* TextRenderPool::getRenderedText(const FontBase* fontbase, const std::string& text)
     {
         SDL_Color c = fontbase->getColor();
 
@@ -77,7 +77,7 @@ namespace FIFE
         return nullptr;
     }
 
-    void TextRenderPool::addRenderedText(FontBase* fontbase, const std::string& text, Image* image)
+    void TextRenderPool::addRenderedText(const FontBase* fontbase, const std::string& text, Image* image)
     {
         // Construct a entry and add it.
         s_pool_entry centry;

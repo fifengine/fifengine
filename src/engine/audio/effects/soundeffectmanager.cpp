@@ -513,14 +513,14 @@ namespace FIFE
         }
     }
 
-    void SoundEffectManager::activateFilter(SoundFilter* filter, SoundEmitter* emitter)
+    void SoundEffectManager::activateFilter(const SoundFilter* filter, const SoundEmitter* emitter)
     {
         if (filter->isEnabled()) {
             alSourcei(emitter->getSource(), AL_DIRECT_FILTER, filter->getFilterId());
         }
     }
 
-    void SoundEffectManager::deactivateFilter(SoundFilter* filter, SoundEmitter* emitter)
+    void SoundEffectManager::deactivateFilter(const SoundFilter* filter, const SoundEmitter* emitter)
     {
         if (filter->isEnabled()) {
             alSourcei(emitter->getSource(), AL_DIRECT_FILTER, AL_FILTER_NULL);

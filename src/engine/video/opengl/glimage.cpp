@@ -109,8 +109,8 @@ namespace FIFE
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb   = RenderBackend::instance();
-        SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb         = RenderBackend::instance();
+        const SDL_Surface* target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -133,8 +133,8 @@ namespace FIFE
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb   = RenderBackend::instance();
-        SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb         = RenderBackend::instance();
+        const SDL_Surface* target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -162,8 +162,8 @@ namespace FIFE
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb   = RenderBackend::instance();
-        SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb         = RenderBackend::instance();
+        const SDL_Surface* target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render
@@ -186,8 +186,8 @@ namespace FIFE
         if (0 == alpha) {
             return;
         }
-        RenderBackend* rb   = RenderBackend::instance();
-        SDL_Surface* target = rb->getRenderTargetSurface();
+        RenderBackend* rb         = RenderBackend::instance();
+        const SDL_Surface* target = rb->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         // not on the screen.  dont render

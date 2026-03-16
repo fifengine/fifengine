@@ -71,7 +71,7 @@ namespace FIFE
 
         void addInstance(Instance* instance);
         void changeInstance(Instance* instance);
-        void removeInstance(Instance* instance, bool listener = true);
+        void removeInstance(const Instance* instance, bool listener = true);
 
         Point getCalculatedPoint(Camera* cam, Layer* layer, const bool zoomed = false);
 

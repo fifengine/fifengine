@@ -197,7 +197,7 @@ namespace FIFE
         DoubleMatrix matrix;
         matrix.loadScale(m_referenceScaleX, m_referenceScaleY, m_referenceScaleX);
         if (m_location.getLayer() != nullptr) {
-            CellGrid* cg = m_location.getLayer()->getCellGrid();
+            const CellGrid* cg = m_location.getLayer()->getCellGrid();
             if (cg != nullptr) {
                 ExactModelCoordinate pt = m_location.getMapCoordinates();
                 matrix.applyTranslate(-pt.x * m_referenceScaleX, -pt.y * m_referenceScaleY, -pt.z * m_referenceScaleX);
@@ -248,7 +248,7 @@ namespace FIFE
             return;
         }
 
-        CellGrid* cell_grid = nullptr;
+        const CellGrid* cell_grid = nullptr;
         if (location.getLayer() != nullptr) {
             cell_grid = location.getLayer()->getCellGrid();
             if (cell_grid == nullptr) {

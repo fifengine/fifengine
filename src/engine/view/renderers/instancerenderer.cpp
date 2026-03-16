@@ -158,7 +158,7 @@ namespace FIFE
     void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
         //		FL_DBG(_log, "Iterating layer...");
-        CellGrid* cg = layer->getCellGrid();
+        const CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
             return;

@@ -153,15 +153,15 @@ namespace FIFE
 
         bool multilayer = startCache != endCache;
         if (!multilayer) {
-            Zone* startZone = startCell->getZone();
-            Zone* endZone   = endCell->getZone();
+            const Zone* startZone = startCell->getZone();
+            const Zone* endZone   = endCell->getZone();
             if (startZone != endZone) {
                 // look for special cases (start is zone border or end is static blocker)
                 if ((endZone == nullptr) || startCell->isZoneProtected()) {
                     bool found                          = false;
                     const std::vector<Cell*>& neighbors = endCell->getNeighbors();
                     for (auto neighbor : neighbors) {
-                        Zone* tmpZone = neighbor->getZone();
+                        const Zone* tmpZone = neighbor->getZone();
                         if (tmpZone != nullptr) {
                             endZone = tmpZone;
                             if (tmpZone == startZone) {

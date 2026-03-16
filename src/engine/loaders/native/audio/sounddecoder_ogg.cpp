@@ -77,7 +77,7 @@ namespace FIFE
             throw InvalidFormat("Error opening OggVorbis file");
         }
 
-        vorbis_info* vi = ov_info(&m_ovf, -1);
+        const vorbis_info* vi = ov_info(&m_ovf, -1);
         if (vi == nullptr) {
             throw InvalidFormat("Error fetching OggVorbis info");
         }

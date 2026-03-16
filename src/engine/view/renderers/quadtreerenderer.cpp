@@ -94,7 +94,7 @@ namespace FIFE
 
     void QuadTreeRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
-        CellGrid* cg = layer->getCellGrid();
+        const CellGrid* cg = layer->getCellGrid();
         if (cg == nullptr) {
             FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
             return;

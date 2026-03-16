@@ -82,7 +82,7 @@ namespace FIFE
         }
     }
 
-    void PercentDoneCallback::removeListener(PercentDoneListener* listener)
+    void PercentDoneCallback::removeListener(const PercentDoneListener* listener)
     {
         auto iter = m_listeners.begin();
         for (; iter != m_listeners.end(); ++iter) {

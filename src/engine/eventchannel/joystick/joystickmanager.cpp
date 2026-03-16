@@ -60,7 +60,7 @@ namespace FIFE
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
         Joystick* joystick = nullptr;
-        if (std::any_of(m_activeJoysticks.begin(), m_activeJoysticks.end(), [deviceIndex](Joystick* j) {
+        if (std::any_of(m_activeJoysticks.begin(), m_activeJoysticks.end(), [deviceIndex](const Joystick* j) {
                 return j->getDeviceIndex() == deviceIndex;
             })) {
             return joystick;

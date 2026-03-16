@@ -233,7 +233,7 @@ namespace FIFE
         for (auto& m_map : m_maps) {
             for (jt = m_map->getLayers().begin(); jt != m_map->getLayers().end(); ++jt) {
                 for (kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
-                    Object* o = (*kt)->getObject();
+                    const Object* o = (*kt)->getObject();
                     if (o == object) {
                         return false;
                     }
@@ -262,7 +262,7 @@ namespace FIFE
         // If we have layers with instances - bail out.
         std::list<Layer*>::const_iterator jt;
         for (auto& m_map : m_maps) {
-            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](Layer* layer) {
+            jt = std::find_if(m_map->getLayers().begin(), m_map->getLayers().end(), [](const Layer* layer) {
                 return layer->hasInstances();
             });
             if (jt != m_map->getLayers().end()) {

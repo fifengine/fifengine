@@ -508,9 +508,10 @@ namespace FIFE
             Cell* cell = m_cellCache->getCell(cellCoordinate);
             if (cell != nullptr) {
                 const std::set<Instance*>& blocker = cell->getInstances();
-                std::copy_if(blocker.begin(), blocker.end(), std::back_inserter(blockingInstances), [](Instance* inst) {
-                    return inst->isBlocking();
-                });
+                std::copy_if(
+                    blocker.begin(), blocker.end(), std::back_inserter(blockingInstances), [](const Instance* inst) {
+                        return inst->isBlocking();
+                    });
             }
         } else {
             std::list<Instance*> adjacentInstances;

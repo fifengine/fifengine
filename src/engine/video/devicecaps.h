@@ -127,42 +127,47 @@ namespace FIFE
             return m_display;
         }
 
-        /** Sets the render driver name.
+        /** Sets window X position (-1 = use default/centered)
          */
-        void setRenderDriverName(const std::string& driver)
+        void setWindowPositionX(int32_t x)
         {
-            m_renderDriver = driver;
+            m_windowX = x;
         }
 
-        /** Returns the render driver name. Default is "".
+        /** Returns the window X position (-1 = use default/centered)
          */
-        const std::string& getRenderDriverName() const
+        int32_t getWindowPositionX() const
         {
-            return m_renderDriver;
+            return m_windowX;
         }
 
-        /** Sets the index of the render driver used by SDL.
+        /** Sets window Y position (-1 = use default/centered)
+         */
+        void setWindowPositionY(int32_t y)
+        {
+            m_windowY = y;
+        }
+
+        /** Returns the window Y position (-1 = use default/centered)
+         */
+        int32_t getWindowPositionY() const
+        {
+            return m_windowY;
+        }
+
+        /** Sets the render driver index.
          */
         void setRenderDriverIndex(int8_t index)
         {
             m_renderDriverIndex = index;
         }
 
-        /** Returns the index of the render driver. Default is -1.
+        /** Returns the render driver index.
          */
         int8_t getRenderDriverIndex() const
         {
             return m_renderDriverIndex;
         }
-
-        // OpenGL, windowed
-        static const uint32_t WINDOWED_OPENGL = SDL_WINDOW_OPENGL;
-        // OpenGL, fullscreen
-        static const uint32_t FULLSCREEN_OPENGL = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
-        // SDL, windowed
-        static const uint32_t WINDOWED_SDL = 0;
-        // SDL, fullscreen
-        static const uint32_t FULLSCREEN_SDL = SDL_WINDOW_FULLSCREEN;
 
     private:
         uint16_t m_width;
@@ -172,6 +177,8 @@ namespace FIFE
         uint32_t m_SDLFlags;
         uint32_t m_format;
         uint8_t m_display;
+        int32_t m_windowX;
+        int32_t m_windowY;
         std::string m_renderDriver;
         int8_t m_renderDriverIndex;
     }; // ScreenMode

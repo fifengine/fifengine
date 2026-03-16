@@ -51,11 +51,11 @@ namespace FIFE
 
         /** Get a string image
          */
-        Image* getRenderedText(FontBase* fontbase, const std::string& text);
+        Image* getRenderedText(const FontBase* fontbase, const std::string& text);
 
         /** Add a string image
          */
-        void addRenderedText(FontBase* fontbase, const std::string& text, Image* image);
+        void addRenderedText(const FontBase* fontbase, const std::string& text, Image* image);
 
         /** Remove entries not used since a minute
          *  Is a timer callback.

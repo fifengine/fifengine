@@ -29,6 +29,8 @@ namespace FIFE
         m_SDLFlags(0),
         m_format(0),
         m_display(0),
+        m_windowX(-1),
+        m_windowY(-1),
 
         m_renderDriverIndex(-1)
     {
@@ -42,6 +44,8 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
+        m_windowX(-1),
+        m_windowY(-1),
 
         m_renderDriverIndex(-1)
     {
@@ -55,6 +59,8 @@ namespace FIFE
         m_SDLFlags(SDLFlags),
         m_format(0),
         m_display(0),
+        m_windowX(-1),
+        m_windowY(-1),
 
         m_renderDriverIndex(-1)
     {
@@ -69,6 +75,8 @@ namespace FIFE
         m_refreshRate       = rhs.getRefreshRate();
         m_format            = rhs.getFormat();
         m_display           = rhs.getDisplay();
+        m_windowX           = rhs.getWindowPositionX();
+        m_windowY           = rhs.getWindowPositionY();
         m_renderDriver      = rhs.getRenderDriverName();
         m_renderDriverIndex = rhs.getRenderDriverIndex();
     }

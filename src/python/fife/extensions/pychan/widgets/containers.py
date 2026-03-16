@@ -426,24 +426,24 @@ class Container(Widget):
 
     def _setLayout(self, layout):
         if layout == "vertical" or layout == "Vertical" or layout == "VERTICAL":
-            self.real_widget.setLayout(fifechan.Container.Vertical)
+            self.real_widget.setLayout(fifechan.Container.LayoutPolicy_Vertical)
         elif layout == "horizontal" or layout == "Horizontal" or layout == "HORIZONTAL":
-            self.real_widget.setLayout(fifechan.Container.Horizontal)
+            self.real_widget.setLayout(fifechan.Container.LayoutPolicy_Horizontal)
         elif layout == "circular" or layout == "Circular" or layout == "CIRCULAR":
-            self.real_widget.setLayout(fifechan.Container.Circular)
+            self.real_widget.setLayout(fifechan.Container.LayoutPolicy_Circular)
         elif layout == "autosize" or layout == "AutoSize" or layout == "AUTOSIZE":
-            self.real_widget.setLayout(fifechan.Container.AutoSize)
+            self.real_widget.setLayout(fifechan.Container.LayoutPolicy_AutoSize)
         else:
-            self.real_widget.setLayout(fifechan.Container.Absolute)
+            self.real_widget.setLayout(fifechan.Container.LayoutPolicy_Absolute)
 
     def _getLayout(self):
-        if self.real_widget.getLayout() == fifechan.Container.Circular:
+        if self.real_widget.getLayout() == fifechan.Container.LayoutPolicy_Circular:
             return "Circular"
-        elif self.real_widget.getLayout() == fifechan.Container.Horizontal:
+        elif self.real_widget.getLayout() == fifechan.Container.LayoutPolicy_Horizontal:
             return "Horizontal"
-        elif self.real_widget.getLayout() == fifechan.Container.Vertical:
+        elif self.real_widget.getLayout() == fifechan.Container.LayoutPolicy_Vertical:
             return "Vertical"
-        elif self.real_widget.getLayout() == fifechan.Container.AutoSize:
+        elif self.real_widget.getLayout() == fifechan.Container.LayoutPolicy_AutoSize:
             return "AutoSize"
         return "Absolute"
 

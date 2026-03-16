@@ -57,7 +57,7 @@ def createProperties():
     try:
         import inspect
 
-        getargspec = inspect.getargspec
+        getargspec = inspect.getfullargspec
     except ImportError:
         print(
             "Pythonize: inspect not available - properties are generated with dummy argspec."

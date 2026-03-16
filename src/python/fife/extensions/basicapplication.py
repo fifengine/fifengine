@@ -123,6 +123,8 @@ class ApplicationBase(object):
         engineSetting.setFullScreen(self._finalSetting["FullScreen"])
         engineSetting.setRefreshRate(self._finalSetting["RefreshRate"])
         engineSetting.setDisplay(self._finalSetting["Display"])
+        engineSetting.setWindowPositionX(self._finalSetting["WindowPositionX"])
+        engineSetting.setWindowPositionY(self._finalSetting["WindowPositionY"])
         engineSetting.setVSync(self._finalSetting["VSync"])
         engineSetting.setVideoDriver(self._finalSetting["VideoDriver"])
         engineSetting.setSDLDriver(self._finalSetting["RenderDriver"])

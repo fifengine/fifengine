@@ -338,7 +338,7 @@ namespace FIFE
 
         /** Return the number of the given effect. Used from SoundEffectManager.
          */
-        uint8_t getEffectNumber(SoundEffect* effect);
+        uint8_t getEffectNumber(const SoundEffect* effect);
 
         /** Sets the direct filter. Used from SoundEffectManager.
          */
@@ -368,7 +368,7 @@ namespace FIFE
         /** Removes associated SoundEmitter listener
          * @param listener to remove
          */
-        void removeListener(SoundEmitterListener* listener);
+        void removeListener(const SoundEmitterListener* listener);
 
     private:
         /** Internal function to attach a SoundClip to the source

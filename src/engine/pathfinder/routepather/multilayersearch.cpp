@@ -385,7 +385,7 @@ namespace FIFE
         std::vector<Cell*> tmpTransCells = m_endCache->getTransitionCells();
         auto tcell_it                    = tmpTransCells.begin();
         for (; tcell_it != tmpTransCells.end(); ++tcell_it) {
-            Zone* zone = (*tcell_it)->getZone();
+            const Zone* zone = (*tcell_it)->getZone();
             if (zone == m_endZone) {
                 endTransCells.push_back(*tcell_it);
             }
@@ -398,7 +398,7 @@ namespace FIFE
         tmpTransCells = m_startCache->getTransitionCells();
         tcell_it      = tmpTransCells.begin();
         for (; tcell_it != tmpTransCells.end(); ++tcell_it) {
-            Zone* zone = (*tcell_it)->getZone();
+            const Zone* zone = (*tcell_it)->getZone();
             if (zone == m_startZone) {
                 startTransCells.push_back(*tcell_it);
             }
@@ -514,7 +514,7 @@ namespace FIFE
                 if (lit == betweenZones.end()) {
                     break;
                 }
-                Zone* nextZone = *lit;
+                const Zone* nextZone = *lit;
                 --lit;
                 Zone* currentZone            = *lit;
                 std::vector<Cell*> tempCells = currentZone->getTransitionCells();

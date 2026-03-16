@@ -41,6 +41,10 @@ namespace FIFE {
 		uint16_t getRefreshRate() const;
 		void setDisplay(uint8_t display);
 		uint8_t getDisplay() const;
+		void setWindowPositionX(int32_t x);
+		int32_t getWindowPositionX() const;
+		void setWindowPositionY(int32_t y);
+		int32_t getWindowPositionY() const;
 		void setVSync(bool vsync);
 		bool isVSync() const;
 		void setSDLDriver(const std::string& driver);

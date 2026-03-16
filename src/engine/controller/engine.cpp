@@ -259,6 +259,10 @@ namespace FIFE
             m_settings.getRefreshRate(),
             m_settings.getDisplay());
 
+        // Set window position
+        m_screenMode.setWindowPositionX(m_settings.getWindowPositionX());
+        m_screenMode.setWindowPositionY(m_settings.getWindowPositionY());
+
         FL_LOG(_log, "Creating main screen");
         m_renderbackend->createMainScreen(m_screenMode, m_settings.getWindowTitle(), m_settings.getWindowIcon());
         FL_LOG(_log, "Main screen created");

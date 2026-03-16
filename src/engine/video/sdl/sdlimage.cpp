@@ -91,7 +91,7 @@ namespace FIFE
             return;
         }
 
-        SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
+        const SDL_Surface* target = RenderBackend::instance()->getRenderTargetSurface();
         assert(target != m_surface); // can't draw on the source surface
 
         if (rect.right() < 0 || rect.x > static_cast<int32_t>(target->w) || rect.bottom() < 0 ||

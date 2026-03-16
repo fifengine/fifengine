@@ -214,7 +214,7 @@ namespace FIFE
 
     void SoundClip::acquireStream(uint32_t streamid)
     {
-        SoundBufferEntry* ptr = m_buffervec.at(streamid);
+        const SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
         bool reachedEOF = std::any_of(std::begin(ptr->buffers), std::end(ptr->buffers), [&](unsigned int buffer) {
             return getStream(streamid, buffer);

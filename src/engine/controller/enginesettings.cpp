@@ -32,6 +32,8 @@ namespace FIFE
         m_fullscreen(false),
         m_refreshRate(60),
         m_displayIndex(0),
+        m_windowX(-1),
+        m_windowY(-1),
         m_vSync(false),
 
         m_initialvolume(MAXIMUM_VOLUME / 2),

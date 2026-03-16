@@ -93,6 +93,34 @@ namespace FIFE
             return m_displayIndex;
         }
 
+        /** Sets window X position (-1 = use default/centered)
+         */
+        void setWindowPositionX(int32_t x)
+        {
+            m_windowX = x;
+        }
+
+        /** Gets the window X position (-1 = use default/centered)
+         */
+        int32_t getWindowPositionX() const
+        {
+            return m_windowX;
+        }
+
+        /** Sets window Y position (-1 = use default/centered)
+         */
+        void setWindowPositionY(int32_t y)
+        {
+            m_windowY = y;
+        }
+
+        /** Gets the window Y position (-1 = use default/centered)
+         */
+        int32_t getWindowPositionY() const
+        {
+            return m_windowY;
+        }
+
         /** Sets Vsync. Synchronized updates with vertical refresh rate.
          */
         void setVSync(bool vsync)
@@ -452,6 +480,8 @@ namespace FIFE
         bool m_fullscreen;
         uint16_t m_refreshRate;
         uint8_t m_displayIndex;
+        int32_t m_windowX;
+        int32_t m_windowY;
         bool m_vSync;
         std::string m_renderDriver;
         float m_initialvolume;

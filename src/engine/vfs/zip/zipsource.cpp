@@ -56,7 +56,7 @@ namespace FIFE
     RawData* ZipSource::open(const std::string& path) const
     {
         fs::path filePath(path);
-        ZipNode* node = m_zipTree.getNode(filePath.string());
+        const ZipNode* node = m_zipTree.getNode(filePath.string());
 
         assert(node != 0);
 
@@ -193,7 +193,7 @@ namespace FIFE
 
         fs::path fixedPath(path);
 
-        ZipNode* node = m_zipTree.getNode(fixedPath.string());
+        const ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
         if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::File);
@@ -213,7 +213,7 @@ namespace FIFE
 
         fs::path fixedPath(path);
 
-        ZipNode* node = m_zipTree.getNode(fixedPath.string());
+        const ZipNode* node = m_zipTree.getNode(fixedPath.string());
 
         if (node != nullptr) {
             ZipNodeContainer files = node->getChildren(ZipContentType::Directory);

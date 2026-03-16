@@ -130,9 +130,9 @@ if in_fife:
     # fifechan.KeyListener.__init__ = lambda x : x
 else:
     fifechan.Point = _point
-    fifechan.ScrollArea.SHOW_AUTO = fifechan.ScrollArea.ShowAuto
-    fifechan.ScrollArea.SHOW_NEVER = fifechan.ScrollArea.ShowNever
-    fifechan.ScrollArea.SHOW_ALWAYS = fifechan.ScrollArea.ShowAlways
+    fifechan.ScrollArea.SHOW_AUTO = fifechan.ScrollArea.ScrollPolicy_ShowAuto
+    fifechan.ScrollArea.SHOW_NEVER = fifechan.ScrollArea.ScrollPolicy_ShowNever
+    fifechan.ScrollArea.SHOW_ALWAYS = fifechan.ScrollArea.ScrollPolicy_ShowAlways
 
 assert isinstance(_multilistener(), fifechan.ActionListener)
 assert isinstance(_multilistener(), fifechan.MouseListener)

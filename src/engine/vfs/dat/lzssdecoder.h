@@ -40,7 +40,7 @@ namespace FIFE
     private:
         uint32_t m_outlen;
         uint32_t m_outindex;
-        void LZSSDecode(uint8_t* in, int64_t len, uint8_t* out);
+        void LZSSDecode(const uint8_t* in, int64_t len, uint8_t* out);
     };
 
 } // namespace FIFE

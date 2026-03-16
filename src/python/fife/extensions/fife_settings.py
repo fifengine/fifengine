@@ -90,6 +90,8 @@ class Setting(object):
             "FullScreen": [True, False],
             "RefreshRate": [0, 200],
             "Display": [0, 9],
+            "WindowPositionX": [-1, 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1920],
+            "WindowPositionY": [-1, 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
             "VSync": [True, False],
             "PychanDebug": [True, False],
             "ProfilingOn": [True, False],
@@ -167,6 +169,8 @@ class Setting(object):
             "FullScreen": False,
             "RefreshRate": 60,
             "Display": 0,
+            "WindowPositionX": -1,
+            "WindowPositionY": -1,
             "VSync": False,
             "PychanDebug": False,
             "ProfilingOn": False,
@@ -432,7 +436,7 @@ class Setting(object):
                             and int(e_value[1]) in range(0, 256)
                             and int(e_value[2]) in range(0, 256)
                         ):
-                            self._settingsFromFile[name] = [
+                            self._settingsFromFile[module][name] = [
                                 int(e_value[0]),
                                 int(e_value[1]),
                                 int(e_value[2]),

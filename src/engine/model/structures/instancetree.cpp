@@ -47,7 +47,7 @@ namespace FIFE
         }
         m_reverse.erase(instance);
         InstanceList& list = node->data();
-        auto it            = std::find_if(list.begin(), list.end(), [instance](Instance* i) {
+        auto it            = std::find_if(list.begin(), list.end(), [instance](const Instance* i) {
             return i == instance;
         });
         if (it != list.end()) {
