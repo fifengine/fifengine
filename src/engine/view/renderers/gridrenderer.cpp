@@ -151,30 +151,14 @@ namespace FIFE
                 Point cpt1      = pt1;
                 Point cpt2      = pt2;
 
-                if (cpt1.x < cv.x) {
-                    cpt1.x = cv.x;
-                }
-                if (cpt2.x < cv.x) {
-                    cpt2.x = cv.x;
-                }
-                if (cpt1.y < cv.y) {
-                    cpt1.y = cv.y;
-                }
-                if (cpt2.y < cv.y) {
-                    cpt2.y = cv.y;
-                }
-                if (cpt1.x > cvx2) {
-                    cpt1.x = cvx2;
-                }
-                if (cpt2.x > cvx2) {
-                    cpt2.x = cvx2;
-                }
-                if (cpt1.y > cvy2) {
-                    cpt1.y = cvy2;
-                }
-                if (cpt2.y > cvy2) {
-                    cpt2.y = cvy2;
-                }
+                cpt1.x = std::max(cpt1.x, cv.x);
+                cpt2.x = std::max(cpt2.x, cv.x);
+                cpt1.y = std::max(cpt1.y, cv.y);
+                cpt2.y = std::max(cpt2.y, cv.y);
+                cpt1.x = std::min(cpt1.x, cvx2);
+                cpt2.x = std::min(cpt2.x, cvx2);
+                cpt1.y = std::min(cpt1.y, cvy2);
+                cpt2.y = std::min(cpt2.y, cvy2);
 
                 m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
                 pt1 = pt2;

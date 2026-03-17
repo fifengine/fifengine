@@ -409,10 +409,7 @@ namespace fcn
             int y = mouseEvent.getY();
             if (m_resizeLeft) {
                 int oldW = getWidth();
-                int newW = oldW - x;
-                if (newW < 0) {
-                    newW = 0;
-                }
+                int newW = std::max(0, oldW - x);
                 setWidth(newW);
                 if (m_shove) {
                     setX(getX() + x);
@@ -430,10 +427,7 @@ namespace fcn
 
             if (m_resizeTop) {
                 int oldH = getHeight();
-                int newH = oldH - y;
-                if (newH < 0) {
-                    newH = 0;
-                }
+                int newH = std::max(0, oldH - y);
                 setHeight(newH);
                 if (m_shove) {
                     setY(getY() + y);

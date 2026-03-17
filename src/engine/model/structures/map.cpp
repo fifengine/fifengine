@@ -148,18 +148,10 @@ namespace FIFE
             ModelCoordinate newMax;
             (*it)->getMinMaxCoordinates(newMin, newMax, layer);
 
-            if (newMin.x < min.x) {
-                min.x = newMin.x;
-            }
-            if (newMax.x > max.x) {
-                max.x = newMax.x;
-            }
-            if (newMin.y < min.y) {
-                min.y = newMin.y;
-            }
-            if (newMax.y > max.y) {
-                max.y = newMax.y;
-            }
+            min.x = std::min(min.x, static_cast<double>(newMin.x));
+            max.x = std::max(max.x, static_cast<double>(newMax.x));
+            min.y = std::min(min.y, static_cast<double>(newMin.y));
+            max.y = std::max(max.y, static_cast<double>(newMax.y));
         }
         Location lmin(layer);
         Location lmax(layer);

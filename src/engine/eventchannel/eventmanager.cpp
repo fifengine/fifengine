@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <deque>
 #include <iostream>
 #include <string>
@@ -529,11 +530,9 @@ namespace FIFE
                 float distance    = Mathf::Sqrt((dx * dx) + (dy * dy));
                 auto acceleration = (distance / difference) / difference;
                 float velocity    = (m_oldVelocity + acceleration * difference) / 2;
-                if (velocity > m_mouseSensitivity + 1) {
-                    velocity = m_mouseSensitivity + 1;
-                }
-                m_oldVelocity = velocity;
-                modifier      = velocity;
+                velocity          = std::min(velocity, m_mouseSensitivity + 1);
+                m_oldVelocity     = velocity;
+                modifier          = velocity;
             } else {
                 modifier = m_mouseSensitivity;
             }

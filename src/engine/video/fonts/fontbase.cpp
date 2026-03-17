@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <string>
 #include <utility>
@@ -201,9 +202,7 @@ namespace FIFE
                 }
                 // std::cout << "Line:" << line << '\n';
                 SDL_Surface* text_surface = renderString(line);
-                if (text_surface->w > render_width) {
-                    render_width = text_surface->w;
-                }
+                render_width              = std::max(render_width, text_surface->w);
                 lines.push_back(text_surface);
             } while (it != text.end());
 

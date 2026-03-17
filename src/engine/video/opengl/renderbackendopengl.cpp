@@ -1892,11 +1892,9 @@ namespace FIFE
     {
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = round(Mathf::pi() / (5.0 / (2.0 * radius)));
-        if (subdivisions < 12) {
-            subdivisions = 12;
-        }
-        const float step = Mathf::twoPi() / subdivisions;
-        float angle      = 0;
+        subdivisions         = std::max(subdivisions, 12);
+        const float step     = Mathf::twoPi() / subdivisions;
+        float angle          = 0;
 
         renderDataP rd;
         rd.color[0] = r;
@@ -1920,13 +1918,11 @@ namespace FIFE
     {
         // set side length to 5 and calculate needed divisions
         int32_t subdivisions = round(Mathf::pi() / (5.0 / (2.0 * radius)));
-        if (subdivisions < 12) {
-            subdivisions = 12;
-        }
-        const float step   = Mathf::twoPi() / subdivisions;
-        float angle        = Mathf::twoPi();
-        uint32_t index     = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
-        uint32_t lastIndex = index;
+        subdivisions         = std::max(subdivisions, 12);
+        const float step     = Mathf::twoPi() / subdivisions;
+        float angle          = Mathf::twoPi();
+        uint32_t index       = m_pIndices.empty() ? 0 : m_pIndices.back() + 1;
+        uint32_t lastIndex   = index;
 
         // center vertex
         renderDataP rd;

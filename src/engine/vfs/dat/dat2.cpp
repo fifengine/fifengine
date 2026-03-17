@@ -62,9 +62,7 @@ namespace FIFE
         // Load more items per call,
         // otherwise it takes _ages_ until everything is in.
         uint32_t load_per_cycle = 50;
-        if (load_per_cycle > m_filecount) {
-            load_per_cycle = m_filecount;
-        }
+        load_per_cycle          = std::min(load_per_cycle, m_filecount);
         m_filecount -= load_per_cycle;
 
         // Save the old index in an exception save way.
