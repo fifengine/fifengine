@@ -34,7 +34,9 @@ else
   fi
 fi
 
-echo "Using $($CLANG_FORMAT --version)"
+# Display the binary and version being used
+VERSION=$("$CLANG_FORMAT" --version)
+echo "Using clang-format ($VERSION)"
 
 if [[ -z "${CI:-}" && -z "${GITHUB_ACTIONS:-}" ]]; then
   if ! command -v dos2unix >/dev/null 2>&1; then

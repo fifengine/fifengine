@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+# --------------------------------------------------------------------------
+# CPPLINT helper
+#
+# This script sets up a virtual environment and installs cpplint, then runs
+# cpplint on the specified directories.
+#
+# Usage:
+# -  ./build-tools/cpplint.sh
+#   Checks for required tools and runs cpplint on the specified directories.
+# - ./build-tools/cpplint.sh > cpplint.log 2> cpplint-todo.log
+#
+# Notes
+# - This script targets Debian/Ubuntu-like systems for package installation.
+# -----------------------------------------------------------------------------
+
 set -euo pipefail
 
 if ! command -v python3 >/dev/null 2>&1; then

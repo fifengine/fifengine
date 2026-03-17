@@ -4,10 +4,16 @@ out/
 vcpkg_installed/
 dependencies/
 
+# Demos
+demos/
+
 # Generated Doxygen files
 docs/doxygen/html
 
-# Folders of Python Tools
+# Python Tools
 __pycache__/
-.ruff-cache/
+.ruff_cache/
 .mypy_cache/
+
+# Build Engine
+./engine/
