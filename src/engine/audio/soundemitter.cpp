@@ -869,7 +869,8 @@ namespace FIFE
     void SoundEmitter::addEffect(SoundEffect* effect)
     {
         bool added = false;
-        auto it    = std::find_if(m_effects.begin(), m_effects.end(), [](const SoundEffect* e) {
+
+        auto it = std::ranges::find_if(m_effects, [](const SoundEffect* e) {
             return e == nullptr;
         });
         if (it != m_effects.end()) {
@@ -883,7 +884,7 @@ namespace FIFE
 
     void SoundEmitter::removeEffect(SoundEffect* effect)
     {
-        auto it = std::find_if(m_effects.begin(), m_effects.end(), [effect](const SoundEffect* e) {
+        auto it = std::ranges::find_if(m_effects, [effect](const SoundEffect* e) {
             return e == effect;
         });
         if (it != m_effects.end()) {

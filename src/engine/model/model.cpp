@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <string>
 #include <vector>
@@ -133,7 +134,7 @@ namespace FIFE
             return;
         }
 
-        auto it = std::find(m_createdGrids.begin(), m_createdGrids.end(), grid);
+        auto it = std::ranges::find(m_createdGrids, grid);
         if (it != m_createdGrids.end()) {
             delete *it;
             m_createdGrids.erase(it);

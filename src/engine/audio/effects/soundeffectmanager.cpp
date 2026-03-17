@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <map>
 #include <utility>
 #include <vector>
@@ -236,7 +237,7 @@ namespace FIFE
             removeSoundFilterFromSoundEffect(effect, effect->getFilter());
         }
 
-        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+        auto it = std::ranges::find(m_effects, effect);
         if (it != m_effects.end()) {
             auto effectIt = m_effectEmitters.find(effect);
             if (effectIt != m_effectEmitters.end()) {
@@ -411,7 +412,7 @@ namespace FIFE
     {
         disableDirectSoundFilter(filter);
 
-        auto it = std::find(m_filters.begin(), m_filters.end(), filter);
+        auto it = std::ranges::find(m_filters, filter);
         if (it != m_filters.end()) {
             auto filterIt = m_filterdEmitters.find(filter);
             if (filterIt != m_filterdEmitters.end()) {

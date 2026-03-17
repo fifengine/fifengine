@@ -1349,7 +1349,7 @@ namespace FIFE
         while (search) {
             bool found = false;
             if (!m_zones.empty()) {
-                if (std::any_of(m_zones.begin(), m_zones.end(), [id](const Zone* z) {
+                if (std::ranges::any_of(m_zones, [id](const Zone* z) {
                         return z->getId() == id;
                     })) {
                     found = true;
@@ -1372,7 +1372,7 @@ namespace FIFE
     Zone* CellCache::getZone(uint32_t id)
     {
         Zone* zi = nullptr;
-        auto it  = std::find_if(m_zones.begin(), m_zones.end(), [id](const Zone* z) {
+        auto it  = std::ranges::find_if(m_zones, [id](const Zone* z) {
             return z->getId() == id;
         });
         if (it != m_zones.end()) {
@@ -1389,7 +1389,7 @@ namespace FIFE
 
     void CellCache::removeZone(Zone* zone)
     {
-        auto it = std::find_if(m_zones.begin(), m_zones.end(), [zone](const Zone* z) {
+        auto it = std::ranges::find_if(m_zones, [zone](const Zone* z) {
             return z == zone;
         });
         if (it != m_zones.end()) {
@@ -1408,7 +1408,7 @@ namespace FIFE
         Zone* newZone = createZone();
         std::stack<Cell*> cellstack;
         const std::vector<Cell*>& neighbors = cell->getNeighbors();
-        auto it                             = std::find_if(neighbors.begin(), neighbors.end(), [](Cell* nc) {
+        auto it                             = std::ranges::find_if(neighbors, [](Cell* nc) {
             return nc->isInserted() && !nc->isZoneProtected() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                    nc->getCellType() != CTYPE_CELL_BLOCKER;
         });

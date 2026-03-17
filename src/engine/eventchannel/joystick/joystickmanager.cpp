@@ -6,6 +6,7 @@
 #include <deque>
 #include <iostream>
 #include <map>
+#include <ranges>
 #include <string>
 #include <utility>
 #include <vector>
@@ -60,7 +61,7 @@ namespace FIFE
     Joystick* JoystickManager::addJoystick(int32_t deviceIndex)
     {
         Joystick* joystick = nullptr;
-        if (std::any_of(m_activeJoysticks.begin(), m_activeJoysticks.end(), [deviceIndex](const Joystick* j) {
+        if (std::ranges::any_of(m_activeJoysticks, [deviceIndex](const Joystick* j) {
                 return j->getDeviceIndex() == deviceIndex;
             })) {
             return joystick;
@@ -97,7 +98,7 @@ namespace FIFE
 
     void JoystickManager::removeJoystick(Joystick* joystick)
     {
-        auto it = std::ranges::find(m_activeJoysticks, joystick);
+        auto it = std::find(m_activeJoysticks.begin(), m_activeJoysticks.end(), joystick);
         if (it != m_activeJoysticks.end()) {
             m_joystickIndices.erase((*it)->getInstanceId());
             removeControllerGuid(*it);
