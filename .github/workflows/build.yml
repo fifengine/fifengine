@@ -241,17 +241,24 @@ jobs:
       - name: 🔽 Install CMake
         run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
 
-      - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        if: matrix.config.os == 'windows-2025'
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl.exe
+      # - name: 🛠️ Setup Visual Studio Developer Command Prompt
+      #   if: matrix.config.os == 'windows-2025'
+      #   run: |
+      #     call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+      #     cl.exe
 
+      # - name: 🛠️ Setup Visual Studio Developer Command Prompt
+      #   if: matrix.config.os == 'windows-2025-vs2026'
+      #   run: |
+      #     call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+      #     cl.exe
+
+      # WARNING
+      # ENV VCPKG_ROOT is redefined by this action
+      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
+      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
       - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        if: matrix.config.os == 'windows-2025-vs2026'
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl.exe
+        uses: ilammy/msvc-dev-cmd@v1
 
       # Default Location is "c:\vcpkg"
       - name: 🔽 Define VCPKG_ROOT
