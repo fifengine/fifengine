@@ -126,7 +126,7 @@ jobs:
             --quiet \
             --inline-suppr \
             --error-exitcode=1 \
-            src
+            src tests/core_tests
         #continue-on-error: true
 
 # ---------------------------------------------------------------------------------------
