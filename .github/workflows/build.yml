@@ -258,10 +258,6 @@ jobs:
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           cl.exe
-        if: matrix.config.os == 'windows-2025-vs2026'
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl.exe
 
       # Default Location is "c:\vcpkg"
       - name: 🔽 Define VCPKG_ROOT
