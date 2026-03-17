@@ -248,6 +248,16 @@ jobs:
           cl.exe
 
       - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        if: matrix.config.os == 'windows-2025'
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cl.exe
+
+      - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        if: matrix.config.os == 'windows-2025-vs2026'
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cl.exe
         if: matrix.config.os == 'windows-2025-vs2026'
         run: |
           call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
@@ -342,7 +352,7 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
             -DFIFECHAN_BUILD_FROM_SOURCE=ON ^
-            -VCPKG_MANIFEST_MODE=ON
+            -DVCPKG_MANIFEST_MODE=ON
 
       - name: 3/4 🏗️ Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
