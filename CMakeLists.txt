@@ -131,29 +131,36 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # MSVC compiler options
+# https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=msvc-170
 if(WIN32 AND MSVC)
-  # build on all cores
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /nologo")
+  add_compile_options(/nologo) # Suppress Startup Banner
+  add_compile_options(/MP)     # Build on all cores
+  add_compile_options(/Gm-)    # Disable minimal rebuild
 
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0 /O2")
+    add_compile_options(/W0) # Disable warnings
+
+    add_compile_options(/GF) # Enables string pooling
+    add_compile_options(/GS) # Buffer security checks
+
+    # Enable optimizations /O2?
+    add_compile_options(/Oi) # generate intrinsic functions
+
+    if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+	  add_compile_options(/Z7) # Enable debug symbols
+	endif()
   else()
-    # warning level: /W<level 0 to 4> or /Wall
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /Od")
+    # Debug build
+    add_compile_options(/W3) # warning level: /W<level 0 to 4> or /Wall
+    add_compile_options(/Od) # disable optimizations
   endif()
 
   # ensure we use minimal "windows.h" lib without the crazy min max macros
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"WIN32_LEAN_AND_MEAN\"")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D \"NOMINMAX\"")
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
+  add_definitions(-DNOMINMAX)
 
   # avoid "C1128: number of sections exceeded object file format limit: compile with /bigobj"
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-
-  # disable SAFESEH - to avoid "LNK2026: module unsafe" on "OpenAL32.lib"
-  set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} /D /SAFESEH:NO")
-  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
-  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+  add_compile_options(/bigobj)
 
 endif()
 
