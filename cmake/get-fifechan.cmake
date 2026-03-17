@@ -92,6 +92,8 @@ else()
     "-DFIFEGUI_TESTS=OFF"
     # disabled: we only need the lib and this requires sdl_mixer
     "-DFIFEGUI_EXAMPLES=OFF"
+    # explicitly enable OpenGL (defaults to ON but be explicit)
+    "-DENABLE_OPENGL=ON"
     # append lists
     ${_FIFECHAN_VCPKG_ARGS}
     ${_FIFECHAN_PREFIX_ARGS}
