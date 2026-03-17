@@ -29,6 +29,8 @@
 %}
 
 %include "eventchannel/key/key.h"
+// delete the enum value KEY_DELETE, as it conflicts with the C++ delete keyword
+%rename(DELETE) FIFE::Key::KeyType::KEY_DELETE;
 %include "eventchannel/text/text.h"
 %include "eventchannel/source/eventsourcetypes.h"
 %include "eventchannel/command/commandids.h"
@@ -134,7 +136,7 @@ namespace FIFE {
 		virtual void textEdit(TextEvent& evt) = 0;
 		virtual ~ITextListener();
 	};
-	
+
 	%feature("director") ISdlEventListener;
 	class ISdlEventListener {
 	public:
@@ -347,7 +349,7 @@ namespace FIFE {
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
-		
+
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
 		void setKeyFilter(IKeyFilter* keyFilter);
