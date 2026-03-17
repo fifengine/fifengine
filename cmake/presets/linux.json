@@ -203,7 +203,7 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-13",
-        "CMAKE_CXX_COMPILER": "clang++-14"
+        "CMAKE_CXX_COMPILER": "clang++-13"
       }
     },
     {
