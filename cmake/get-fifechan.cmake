@@ -85,7 +85,7 @@ else()
     "-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>"
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
-    "-DVCPKG_MANIFEST_MODE=OFF"
+    "-DVCPKG_MANIFEST_MODE=ON"
     # disabled: we only need the lib
     "-DFIFEGUI_TESTS=OFF"
     # disabled: we only need the lib and this requires sdl_mixer
@@ -107,6 +107,7 @@ else()
       INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
       CMAKE_ARGS ${FIFECHAN_CMAKE_ARGS}
       UPDATE_DISCONNECTED TRUE  # avoid fetching on every configure
+      UPDATE_COMMAND ""        # disable automatic git update/checkout during configure
     )
   endif()
 
