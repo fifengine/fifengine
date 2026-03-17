@@ -8,7 +8,7 @@ include(ExternalProject)
 option(FIFECHAN_BUILD_FROM_SOURCE "Build FifeChan from source instead of using pre-built binaries (Windows)" OFF)
 
 #set(FIFECHAN_VERSION "0.1.5" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
-set(FIFECHAN_VERSION "origin/one" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
+set(FIFECHAN_VERSION "origin/main" CACHE STRING "The FifeChan version (can be: tag, branch, commit hash) to fetch")
 set(FIFECHAN_GIT_REPO "https://github.com/fifengine/fifechan.git" CACHE STRING "FifeChan git repository URL")
 
 # Required dependency paths (provided by dependencies/CMakeLists.txt)
