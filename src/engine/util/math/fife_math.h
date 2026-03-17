@@ -149,7 +149,7 @@ namespace FIFE
         }
     };
 
-     /**
+    /**
      * Specialization of float traits for double.
      *
      * float_traits specialization for `double`.
@@ -231,7 +231,6 @@ namespace FIFE
             return DBL_INV_LOG_10;
         }
     };
-
 
     /**
      * Template utility providing math functions and constants for numeric type T.

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
@@ -150,24 +151,21 @@ namespace FIFE
         std::vector<ModelCoordinate> coords;
         int32_t dx = std::abs(end.x - start.x);
         int32_t dy = std::abs(end.y - start.y);
-        int8_t sx  = -1;
-        int8_t sy  = -1;
-
-        if (start.x < end.x) {
-            sx = 1;
-        }
-        if (start.y < end.y) {
-            sy = 1;
-        }
+        int8_t sx  = (start.x < end.x) ? 1 : -1;
+        int8_t sy  = (start.y < end.y) ? 1 : -1;
 
         int32_t err  = dx - dy;
         int32_t err2 = err * 2;
         ModelCoordinate current(start);
-        bool finished = false;
-        while (!finished) {
+
+        // We know how many points to generate: max(dx, dy) + 1
+        int32_t steps = std::max(dx, dy);
+
+        for (int32_t i = 0; i <= steps; ++i) {
             coords.push_back(current);
-            if (current.x == end.x && current.y == end.y) {
-                finished = true;
+
+            // No need to calculate the next step after the last point
+            if (i == steps) {
                 break;
             }
 
