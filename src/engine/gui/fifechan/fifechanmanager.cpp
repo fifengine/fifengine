@@ -454,7 +454,7 @@ namespace FIFE
             value = Key::ESCAPE;
             break;
         case fcn::Key::Delete:
-            value = Key::DELETE;
+            value = Key::KEY_DELETE;
             break;
         case fcn::Key::Insert:
             value = Key::INSERT;

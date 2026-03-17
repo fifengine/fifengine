@@ -119,7 +119,7 @@ namespace FIFE
             INSERT       = SDLK_INSERT,
             HOME         = SDLK_HOME,
             PAGE_UP      = SDLK_PAGEUP,
-            DELETE       = SDLK_DELETE,
+            KEY_DELETE   = SDLK_DELETE,
             END          = SDLK_END,
             PAGE_DOWN    = SDLK_PAGEDOWN,
             RIGHT        = SDLK_RIGHT,
