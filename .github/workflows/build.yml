@@ -266,7 +266,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1
         with:
           variant: sccache
-          key: build-${{ matrix.config.preset }}-${{ github.ref }}
+          key: build-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('.github/workflows/build.yml') }}
           restore-keys: |
             build-${{ matrix.config.preset }}-${{ github.ref }}
             build-${{ matrix.config.preset }}
