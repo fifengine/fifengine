@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <set>
@@ -408,8 +410,8 @@ namespace FIFE
             }
         }
 
-        m_width  = ABS(m_size.w - m_size.x) + 1;
-        m_height = ABS(m_size.h - m_size.y) + 1;
+        m_width  = std::abs(m_size.w - m_size.x) + 1;
+        m_height = std::abs(m_size.h - m_size.y) + 1;
 
         m_cells.resize(m_width);
         for (uint32_t i = 0; i < m_width; ++i) {
@@ -490,8 +492,8 @@ namespace FIFE
         // check if size has changed
         Rect newsize = rec;
         if (newsize.x != m_size.x || newsize.y != m_size.y || newsize.w != m_size.w || newsize.h != m_size.h) {
-            uint32_t w = ABS(newsize.w - newsize.x) + 1;
-            uint32_t h = ABS(newsize.h - newsize.y) + 1;
+            uint32_t w = std::abs(newsize.w - newsize.x) + 1;
+            uint32_t h = std::abs(newsize.h - newsize.y) + 1;
 
             std::vector<std::vector<Cell*>> cells;
             cells.resize(w);
@@ -580,7 +582,7 @@ namespace FIFE
                             continue;
                         }
                         if (zCheck) {
-                            if (ABS(c->getLayerCoordinates().z - cellZ) > m_neighborZ) {
+                            if (std::abs(c->getLayerCoordinates().z - cellZ) > m_neighborZ) {
                                 continue;
                             }
                         }

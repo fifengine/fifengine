@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <string>
@@ -188,7 +190,7 @@ namespace FIFE
             if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
                 continue;
             }
-            if (zLimited && ABS(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
+            if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
             bool blocker                  = adjacent->getCellType() > blockerThreshold;
@@ -478,7 +480,7 @@ namespace FIFE
                     continue;
                 }
                 // iterator distance as cost
-                double cost = costs[next] + static_cast<double>(ABS(nextInt - startZone));
+                double cost = costs[next] + static_cast<double>(std::abs(nextInt - startZone));
                 if (sf[nextInt] == -1) {
                     sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(nextInt, cost));
                     costs[nextInt] = cost;

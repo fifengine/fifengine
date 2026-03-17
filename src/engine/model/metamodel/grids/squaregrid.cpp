@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -45,8 +47,8 @@ namespace FIFE
         if (curpos == target) {
             return true;
         }
-        uint8_t x = ABS(target.x - curpos.x);
-        uint8_t y = ABS(target.y - curpos.y);
+        uint8_t x = std::abs(target.x - curpos.x);
+        uint8_t y = std::abs(target.y - curpos.y);
         if ((x <= 1) && (y <= 1)) {
             if (m_allow_diagonals) {
                 return true;
@@ -62,7 +64,7 @@ namespace FIFE
     {
         if (curpos == target) {
             return 0.0;
-        } else if (ABS(target.x - curpos.x) ^ ABS(target.y - curpos.y)) {
+        } else if (std::abs(target.x - curpos.x) ^ std::abs(target.y - curpos.y)) {
             return 1.0;
         }
         return 1.4;
@@ -70,7 +72,7 @@ namespace FIFE
 
     double SquareGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
     {
-        return static_cast<double>(ABS(target.x - curpos.x) + ABS(target.y - curpos.y));
+        return static_cast<double>(std::abs(target.x - curpos.x) + std::abs(target.y - curpos.y));
     }
 
     const std::string& SquareGrid::getType() const
@@ -146,8 +148,8 @@ namespace FIFE
         const ModelCoordinate& start, const ModelCoordinate& end)
     {
         std::vector<ModelCoordinate> coords;
-        int32_t dx = ABS(end.x - start.x);
-        int32_t dy = ABS(end.y - start.y);
+        int32_t dx = std::abs(end.x - start.x);
+        int32_t dy = std::abs(end.y - start.y);
         int8_t sx  = -1;
         int8_t sy  = -1;
 

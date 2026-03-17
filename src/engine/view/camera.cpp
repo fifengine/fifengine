@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <string>
@@ -330,8 +332,8 @@ namespace FIFE
             // makes the viewport a bit larger
             m_mapViewPort.x      = min.x - 1;
             m_mapViewPort.y      = min.y - 1;
-            m_mapViewPort.w      = ABS(max.x - min.x) + 2;
-            m_mapViewPort.h      = ABS(max.y - min.y) + 2;
+            m_mapViewPort.w      = std::abs(max.x - min.x) + 2;
+            m_mapViewPort.h      = std::abs(max.y - min.y) + 2;
             m_mapViewPortUpdated = true;
         }
 
@@ -349,8 +351,8 @@ namespace FIFE
         mapView.x = loc.getLayerCoordinates().x;
         mapView.y = loc.getLayerCoordinates().y;
         loc.setMapCoordinates(emc);
-        mapView.w = ABS(loc.getLayerCoordinates().x - mapView.x);
-        mapView.h = ABS(loc.getLayerCoordinates().y - mapView.y);
+        mapView.w = std::abs(loc.getLayerCoordinates().x - mapView.x);
+        mapView.h = std::abs(loc.getLayerCoordinates().y - mapView.y);
 
         return mapView;
     }

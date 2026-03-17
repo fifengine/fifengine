@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <list>
 #include <string>
 #include <vector>
@@ -86,7 +88,7 @@ namespace FIFE
             if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
                 continue;
             }
-            if (zLimited && ABS(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
+            if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
                 continue;
             }
             bool blocker                  = adjacent->getCellType() > blockerThreshold;

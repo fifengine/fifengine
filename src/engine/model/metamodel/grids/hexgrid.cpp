@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <cmath>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -60,7 +62,7 @@ namespace FIFE
         int32_t x = target.x - curpos.x;
         int32_t y = target.y - curpos.y;
 
-        if (ABS(x) <= 1 && ABS(y) <= 1) {
+        if (std::abs(x) <= 1 && std::abs(y) <= 1) {
             if (m_axial) {
                 if (y == 0 || x == 0 || x == -y) {
                     return true;
@@ -90,7 +92,7 @@ namespace FIFE
 
     double HexGrid::getHeuristicCost(const ModelCoordinate& curpos, const ModelCoordinate& target)
     {
-        return static_cast<double>(ABS(target.x - curpos.x) + ABS(target.y - curpos.y));
+        return static_cast<double>(std::abs(target.x - curpos.x) + std::abs(target.y - curpos.y));
     }
 
     const std::string& HexGrid::getType() const
@@ -122,7 +124,7 @@ namespace FIFE
         } else {
             // each uneven row has shifted coordinate of 0.5 horizontally
             // shift has to be gradual on vertical axis
-            double ay      = ABS(y);
+            double ay      = std::abs(y);
             auto i_layer_y = static_cast<int32_t>(ay);
             double offset  = ay - static_cast<double>(i_layer_y);
             if ((i_layer_y % 2) == 1) {
@@ -194,7 +196,7 @@ namespace FIFE
         }
 
         // adjustment for cases where our approximation lies beyond the hex edge
-        if (ABS(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * ABS(dx)) * VERTICAL_MULTIP_INV)) {
+        if (std::abs(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * std::abs(dx)) * VERTICAL_MULTIP_INV)) {
             int8_t ddx = 0, ddy = 0;
             if (dx > 0) {
                 ddx = -1;
@@ -315,7 +317,7 @@ namespace FIFE
     std::vector<ModelCoordinate> HexGrid::getCoordinatesInLine(const ModelCoordinate& start, const ModelCoordinate& end)
     {
         std::vector<ModelCoordinate> coords;
-        int32_t doubleDeltaX = (2 * (end.x - start.x)) + ABS(end.y % 2) - ABS(start.y % 2);
+        int32_t doubleDeltaX = (2 * (end.x - start.x)) + std::abs(end.y % 2) - std::abs(start.y % 2);
         int32_t deltaY       = end.y - start.y;
 
         // int8_t signX = (deltaX >= 0) ? 1 : -1;
@@ -325,12 +327,12 @@ namespace FIFE
         ModelCoordinate current(start);
         coords.push_back(current);
         int32_t err = 0;
-        if (ABS(deltaY) < ABS(doubleDeltaX)) {
-            int32_t errX = 3 * ABS(doubleDeltaX);
-            int32_t errY = 3 * ABS(deltaY);
+        if (std::abs(deltaY) < std::abs(doubleDeltaX)) {
+            int32_t errX = 3 * std::abs(doubleDeltaX);
+            int32_t errY = 3 * std::abs(deltaY);
             while (current.x != end.x || current.y != end.y) {
                 err += errY;
-                if (err > ABS(doubleDeltaX)) {
+                if (err > std::abs(doubleDeltaX)) {
                     if (signX == -1) {
                         if (signY == -1) {
                             // down left
@@ -374,8 +376,8 @@ namespace FIFE
                 coords.push_back(current);
             }
         } else {
-            int32_t errX = ABS(doubleDeltaX);
-            int32_t errY = ABS(deltaY);
+            int32_t errX = std::abs(doubleDeltaX);
+            int32_t errY = std::abs(deltaY);
             while (current.x != end.x || current.y != end.y) {
                 err += errX;
                 if (err > 0) {
