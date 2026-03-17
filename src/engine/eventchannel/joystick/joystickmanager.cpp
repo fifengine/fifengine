@@ -348,7 +348,7 @@ namespace FIFE
         }
         std::pair<std::map<std::string, uint8_t>::iterator, bool> ret;
         ret = m_gamepadGuids.insert(std::pair<std::string, uint8_t>(joystick->getGuid(), 1));
-        if (ret.second == false) {
+        if (!ret.second) {
             ++ret.first->second;
         }
     }

@@ -473,7 +473,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::enableTextures(uint32_t texUnit)
     {
-        if (m_state.tex_enabled[texUnit] == false) {
+        if (!m_state.tex_enabled[texUnit]) {
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
                 glActiveTexture(GL_TEXTURE0 + texUnit);
@@ -491,7 +491,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::disableTextures(uint32_t texUnit)
     {
-        if (m_state.tex_enabled[texUnit] == true) {
+        if (m_state.tex_enabled[texUnit]) {
             if (m_state.active_tex != texUnit) {
                 m_state.active_tex = texUnit;
                 glActiveTexture(GL_TEXTURE0 + texUnit);
@@ -726,7 +726,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::enableScissorTest()
     {
-        if (m_state.scissor_test == false) {
+        if (!m_state.scissor_test) {
             m_state.scissor_test = true;
             glEnable(GL_SCISSOR_TEST);
         }
@@ -734,7 +734,7 @@ namespace FIFE
 
     void RenderBackendOpenGL::disableScissorTest()
     {
-        if (m_state.scissor_test == true) {
+        if (m_state.scissor_test) {
             m_state.scissor_test = false;
             glDisable(GL_SCISSOR_TEST);
         }

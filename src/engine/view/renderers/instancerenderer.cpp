@@ -1142,7 +1142,7 @@ namespace FIFE
         std::pair<InstanceToOutlines_t::iterator, bool> insertiter =
             m_instance_outlines.insert(std::make_pair(instance, newinfo));
 
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             // the insertion did not happen because the instance
             // already exists in the map so lets just update its outline info
             OutlineInfo& info = insertiter.first->second;
@@ -1188,7 +1188,7 @@ namespace FIFE
         std::pair<InstanceToColoring_t::iterator, bool> insertiter =
             m_instance_colorings.insert(std::make_pair(instance, newinfo));
 
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             // the insertion did not happen because the instance
             // already exists in the map so lets just update its coloring info
             ColoringInfo& info = insertiter.first->second;
@@ -1235,7 +1235,7 @@ namespace FIFE
         std::pair<InstanceToAreas_t::iterator, bool> insertiter =
             m_instance_areas.insert(std::make_pair(instance, newinfo));
 
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             // the insertion did not happen because the instance
             // already exists in the map so lets just update its area info
             AreaInfo& info = insertiter.first->second;

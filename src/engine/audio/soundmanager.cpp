@@ -433,7 +433,7 @@ namespace FIFE
     {
         std::pair<std::map<SoundEmitter*, ALuint>::iterator, bool> ret;
         ret = m_activeEmitters.insert(std::pair<SoundEmitter*, ALuint>(emitter, m_freeSources.front()));
-        if (ret.second == false) {
+        if (!ret.second) {
             FL_WARN(_log, LMsg() << "SoundEmitter already have an source handler");
         }
         emitter->setSource(m_freeSources.front());

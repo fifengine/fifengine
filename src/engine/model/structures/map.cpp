@@ -305,7 +305,7 @@ namespace FIFE
     {
         std::pair<std::map<Instance*, Location>::iterator, bool> insertiter =
             m_transferInstances.insert(std::make_pair(instance, target));
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             Location& loc = insertiter.first->second;
             loc.setLayer(target.getLayer());
             loc.setExactLayerCoordinates(target.getExactLayerCoordinates());

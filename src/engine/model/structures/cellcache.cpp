@@ -1036,7 +1036,7 @@ namespace FIFE
     {
         std::pair<std::map<std::string, double>::iterator, bool> insertiter;
         insertiter = m_costsTable.insert(std::pair<std::string, double>(costId, cost));
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             double& old_cost = insertiter.first->second;
             old_cost         = cost;
         }
@@ -1253,7 +1253,7 @@ namespace FIFE
     {
         std::pair<std::map<Cell*, double>::iterator, bool> insertiter =
             m_costMultipliers.insert(std::pair<Cell*, double>(cell, multi));
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             double& old = insertiter.first->second;
             old         = multi;
         }
@@ -1287,7 +1287,7 @@ namespace FIFE
     {
         std::pair<std::map<Cell*, double>::iterator, bool> insertiter =
             m_speedMultipliers.insert(std::pair<Cell*, double>(cell, multi));
-        if (insertiter.second == false) {
+        if (!insertiter.second) {
             double& old = insertiter.first->second;
             old         = multi;
         }
