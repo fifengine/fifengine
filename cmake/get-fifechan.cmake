@@ -26,23 +26,24 @@ if(WIN32 AND MSVC AND NOT FIFECHAN_BUILD_FROM_SOURCE)
 
     # === On Windows download the pre-compiled development binaries ===
 
-    ExternalProject_Add(
-      fifechan
-      PREFIX ${DEPENDENCY_EXTRACT_DIR}
-      DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
-      URL https://github.com/fifengine/fifechan/releases/download/0.1.5/fifechan-shared-dev-f848a38-VC15-x86.zip
-      URL_MD5 4459fb7da09f3b26fa1a4116710ffa1d
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND
-      COMMAND
-        ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/bin ${DEPENDENCY_INSTALL_DIR}/bin
-      COMMAND
-        ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib ${DEPENDENCY_INSTALL_DIR}/lib
-      COMMAND
-        ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include
-        ${DEPENDENCY_INSTALL_DIR}/include/fifechan
-    )
+    # Disabled until FifeGUI Release v0.2.0 to force usage of FIFECHAN_BUILD_FROM_SOURCE
+    # ExternalProject_Add(
+    #   fifechan
+    #   PREFIX ${DEPENDENCY_EXTRACT_DIR}
+    #   DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
+    #   URL https://github.com/fifengine/fifechan/releases/download/0.1.5/fifechan-shared-dev-f848a38-VC15-x86.zip
+    #   URL_MD5 4459fb7da09f3b26fa1a4116710ffa1d
+    #   CONFIGURE_COMMAND ""
+    #   BUILD_COMMAND ""
+    #   INSTALL_COMMAND
+    #   COMMAND
+    #     ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/bin ${DEPENDENCY_INSTALL_DIR}/bin
+    #   COMMAND
+    #     ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/lib ${DEPENDENCY_INSTALL_DIR}/lib
+    #   COMMAND
+    #     ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCY_EXTRACT_DIR}/src/fifechan/include
+    #     ${DEPENDENCY_INSTALL_DIR}/include/fifechan
+    # )
 
 else()
 
@@ -103,12 +104,9 @@ else()
       DOWNLOAD_DIR ${DEPENDENCY_DOWNLOAD_DIR}
       GIT_REPOSITORY ${FIFECHAN_GIT_REPO}
       GIT_TAG ${FIFECHAN_VERSION}  # can be: tag, branch, commit hash
-      GIT_SHALLOW TRUE
       GIT_PROGRESS TRUE
       INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
       CMAKE_ARGS ${FIFECHAN_CMAKE_ARGS}
-      UPDATE_DISCONNECTED TRUE  # avoid fetching on every configure
-      UPDATE_COMMAND ""        # disable automatic git update/checkout during configure
     )
   endif()
 
