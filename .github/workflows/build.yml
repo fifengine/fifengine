@@ -76,7 +76,7 @@ jobs:
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
       - name: 🎯 Setup Build Cache
-        uses: hendrikmuhs/ccache-action@v1
+        uses: hendrikmuhs/ccache-action@v1 # https://github.com/hendrikmuhs/ccache-action
         with:
           key: build-${{ matrix.config.preset }}-${{ github.ref }}
           restore-keys: |
@@ -241,12 +241,17 @@ jobs:
       - name: 🔽 Install CMake
         run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
 
-      # WARNING
-      # ENV VCPKG_ROOT is redefined by this action
-      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
-      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
       - name: 🛠️ Setup Visual Studio Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.config.os == 'windows-2025'
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cl.exe
+
+      - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        if: matrix.config.os == 'windows-2025-vs2026'
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+          cl.exe
 
       # Default Location is "c:\vcpkg"
       - name: 🔽 Define VCPKG_ROOT
@@ -336,7 +341,8 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
-            -DFIFECHAN_BUILD_FROM_SOURCE=ON
+            -DFIFECHAN_BUILD_FROM_SOURCE=ON ^
+            -VCPKG_MANIFEST_MODE=ON
 
       - name: 3/4 🏗️ Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
