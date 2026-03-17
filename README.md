@@ -111,12 +111,79 @@ The built library `libfife.so` will be located in `out/build/clang20-x64-linux-r
 - For debug build, use preset `clang20-x64-linux-dbg`
 - For different compilers, use appropriate presets (see `CMakePresets.json`)
 
+#### Build Targets
+
+To list all available build targets:
+
+```bash
+cmake --build <build-dir> --target help
+```
+
+Existing Targets:
+
+Target                | Description                     | CMake Options Required
+---                   | ---                             | ---
+1. fife               | C++ library                     | -Dbuild-library=ON
+2. fife.headers       | Custom target for headers       |
+3. fife.swig-wrappers | Custom target for SWIG wrappers |
+4. fife_swig          | Python extension for FIFE       | -Dbuild-python=ON (default)
+5. fifechan_swig      | Python extension for fifechan   | -Dbuild-python=ON -Dfifechan=ON (default)
+6. C++ tests:         | Various test_*                  | -Dbuild-library=ON -Dbuild-tests=ON
+
+#### Build commands (example):
+
+##### Build SWIG Python modules
+
+```
+cmake -B build -S . -Dbuild-python=ON
+cmake --build build --target fife_swig fifechan_swig
+```
+##### Build C++ library + tests
+
+```
+cmake -B build -S . -Dbuild-library=ON -Dbuild-tests=ON
+cmake --build build
+```
 
 ## 4) Tests
+
+The folllowing tests are available:
+
+- fife_test (`tests/fife_test/`): Custom runner run.py
+- swig_tests (`tests/swig_tests/`): Uses unittest
+- extension_tests (`tests/extension_tests/`): Uses unittest
+- core_tests (`tests/core_tests/`): Uses Catch2 (C++)
 
 The test tool can be found within the `<FIFE>/tests/fife_test` directory.
 You can launch it by running `run.py`. Open the console with `F10`.
 To run a test enter `run` and the test name like `PathfinderTest`.
+
+Prerequisites:
+1. Build fife_swig (and optionally fifechan_swig)
+2. Install or set PYTHONPATH to include the built modules
+
+### Running C++ Core Tests
+
+C++ tests use Catch2 and require the fife library target to exist.
+
+Prerequisites:
+1. Configure with `-Dbuild-library=ON -Dbuild-tests=ON`
+2. Build the targets
+
+Running tests:
+
+# Via CTest (after building)
+
+```
+cd build
+ctest --test-dir . -L core -V
+```
+
+# Or run directly
+
+./test_dat1
+./test_dat2
+
 
 ## 5) Python Demos
 
