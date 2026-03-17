@@ -8,7 +8,7 @@
 #include <string>
 
 // 3rd party library includes
-#include <fifechan/backends/opengl/openglgraphics.hpp>
+#include <fifechan/backends/opengl/graphics.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -20,7 +20,7 @@ namespace FIFE
 
     /** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
      */
-    class OpenGLGuiGraphics : public fcn::OpenGLGraphics
+    class OpenGLGuiGraphics : public fcn::opengl::Graphics
     {
     public:
         /** Constructor

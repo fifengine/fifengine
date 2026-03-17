@@ -92,7 +92,11 @@ namespace FIFE
         LMsg& operator<<(const T& t)
         {
             std::ostringstream stream;
-            stream << t;
+            if constexpr (std::is_enum_v<T>) {
+                stream << static_cast<std::underlying_type_t<T>>(t);
+            } else {
+                stream << t;
+            }
             str += stream.str();
             return *this;
         }

@@ -8,7 +8,7 @@
 #include <string>
 
 // 3rd party library includes
-#include <fifechan/backends/sdl2/sdl2graphics.hpp>
+#include <fifechan/backends/sdl2/graphics.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -20,7 +20,7 @@ namespace FIFE
 
     /** Overrides Fifechan Graphics to enable usage of normal fife images & related facilities
      */
-    class SdlGuiGraphics : public fcn::SDLGraphics
+    class SdlGuiGraphics : public fcn::sdl2::Graphics
     {
     public:
         /** Constructor

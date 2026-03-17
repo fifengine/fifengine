@@ -275,6 +275,7 @@ namespace FIFE
             EJECT           = SDLK_EJECT,
             SLEEP           = SDLK_SLEEP
         };
+
         /** Constructor
          * @param key value of the key
          */

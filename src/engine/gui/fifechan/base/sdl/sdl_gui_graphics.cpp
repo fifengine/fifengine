@@ -19,6 +19,7 @@
 #include "video/renderbackend.h"
 
 #include "sdl_gui_graphics.h"
+#include "video/sdl/renderbackendsdl.h"
 
 namespace FIFE
 {
@@ -27,12 +28,15 @@ namespace FIFE
     SdlGuiGraphics::SdlGuiGraphics()
     {
         m_renderbackend = RenderBackend::instance();
-        setTarget(m_renderbackend->getScreenSurface());
+        // New fifechan SDL backend expects an SDL_Renderer and dimensions
+        auto* rb_sdl = static_cast<RenderBackendSDL*>(m_renderbackend);
+        setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 
     void SdlGuiGraphics::updateTarget()
     {
-        setTarget(m_renderbackend->getScreenSurface());
+        auto* rb_sdl = static_cast<RenderBackendSDL*>(m_renderbackend);
+        setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 
     void SdlGuiGraphics::drawImage(
@@ -197,9 +201,12 @@ namespace FIFE
 
     void SdlGuiGraphics::_beginDraw()
     {
-        fcn::Rectangle area(0, 0, mTarget->w, mTarget->h);
+        fcn::Rectangle area(
+            0, 0, static_cast<int>(m_renderbackend->getWidth()), static_cast<int>(m_renderbackend->getHeight()));
         pushClipArea(area);
-        m_renderbackend->pushClipArea(Rect(0, 0, mTarget->w, mTarget->h), false);
+        m_renderbackend->pushClipArea(
+            Rect(0, 0, static_cast<int>(m_renderbackend->getWidth()), static_cast<int>(m_renderbackend->getHeight())),
+            false);
     }
 
     void SdlGuiGraphics::_endDraw()
@@ -211,7 +218,7 @@ namespace FIFE
 
     bool SdlGuiGraphics::pushClipArea(fcn::Rectangle area)
     {
-        fcn::SDLGraphics::pushClipArea(area);
+        fcn::sdl2::Graphics::pushClipArea(area);
 
         // Due to some odd conception in Fifechan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -225,7 +232,7 @@ namespace FIFE
 
     void SdlGuiGraphics::popClipArea()
     {
-        fcn::SDLGraphics::popClipArea();
+        fcn::sdl2::Graphics::popClipArea();
         m_renderbackend->popClipArea();
     }
 

@@ -221,7 +221,7 @@ namespace fcn {
 		virtual void add(Widget* widget);
 		virtual void add(Widget* widget, int32_t x, int32_t y);
 		virtual void remove(Widget* widget);
-		virtual void clear();
+		virtual void removeAllChildren();
 		enum class LayoutPolicy : uint8_t {
 			Absolute,
 			AutoSize,
@@ -240,6 +240,8 @@ namespace fcn {
 		void setBackgroundWidget(Widget* widget);
 		Widget* getBackgroundWidget();
 	};
+
+%rename(clear) ::fcn::Container::removeAllChildren;
 
 	%feature("notabstract") Button;
 	class Button: public Widget {

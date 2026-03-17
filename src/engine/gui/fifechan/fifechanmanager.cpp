@@ -5,6 +5,11 @@
 #include <string>
 #include <vector>
 
+// OpenGL - include GLEW first before any other OpenGL headers
+#ifdef HAVE_OPENGL
+    #include <GL/glew.h>
+#endif
+
 // 3rd party library includes
 #include <fifechan.hpp>
 #include <fifechan/backends/sdl2/sdl.hpp>
@@ -44,7 +49,7 @@ namespace FIFE
         m_focushandler(nullptr),
         m_fcn_topcontainer(new fcn::Container()),
         m_imgloader(new GuiImageLoader()),
-        m_input(new fcn::SDLInput()),
+        m_input(new fcn::sdl2::Input()),
         m_gui_graphics(nullptr),
         m_fontsize(0),
         m_console(nullptr),
@@ -312,9 +317,9 @@ namespace FIFE
     KeyEvent FifechanManager::translateKeyEvent(const fcn::KeyEvent& fcnevt)
     {
         KeyEvent keyevt;
-        if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Pressed)) {
+        if (fcnevt.getType() == fcn::KeyEvent::Type::Pressed) {
             keyevt.setType(KeyEvent::PRESSED);
-        } else if (fcnevt.getType() == static_cast<unsigned int>(fcn::KeyEvent::Type::Released)) {
+        } else if (fcnevt.getType() == fcn::KeyEvent::Type::Released) {
             keyevt.setType(KeyEvent::RELEASED);
         } else {
             FL_WARN(

@@ -38,7 +38,7 @@ namespace FIFE
             return len;
         }
 
-        static int32_t seek(void* datasource, ogg_int64_t offset, int32_t whence)
+        static int seek(void* datasource, ogg_int64_t offset, int whence)
         {
             auto* rdp = reinterpret_cast<RawData*>(datasource);
             switch (whence) {
@@ -56,15 +56,15 @@ namespace FIFE
             }
         }
 
-        static int32_t close(void* datasource)
+        static int close(void* datasource)
         {
             return 0;
         }
 
-        static int64_t tell(void* datasource)
+        static long tell(void* datasource)
         {
             auto* rdp = reinterpret_cast<RawData*>(datasource);
-            return (*rdp).getCurrentIndex();
+            return static_cast<long>((*rdp).getCurrentIndex());
         }
     } // namespace OGG_cb
 

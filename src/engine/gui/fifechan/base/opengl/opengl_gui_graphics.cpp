@@ -8,8 +8,7 @@
 // This needs to be here, before Fifechan includes gl.h
 #include "video/opengl/fife_opengl.h"
 
-// 3rd party library includes
-#include <fifechan/backends/opengl/opengl.hpp>
+#include <fifechan/backends/opengl/graphics.hpp>
 #include <fifechan/font.hpp>
 
 // FIFE includes
@@ -229,7 +228,7 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::OpenGLGraphics::pushClipArea(area);
+        fcn::opengl::Graphics::pushClipArea(area);
 
         // Due to some odd conception in guiChan some of area
         // has xOffset and yOffset > 0. And if it happens we
@@ -245,7 +244,7 @@ namespace FIFE
     {
         // Render what we gathered so far
         m_renderbackend->renderVertexArrays();
-        fcn::OpenGLGraphics::popClipArea();
+        fcn::opengl::Graphics::popClipArea();
         m_renderbackend->popClipArea();
     }
 

@@ -28,7 +28,10 @@ namespace fcn
     class Gui;
     class Container;
     class Widget;
-    class SDLInput;
+    namespace sdl2
+    {
+        class Input;
+    }
     class FocusHandler;
 
 } // namespace fcn
@@ -206,7 +209,7 @@ namespace FIFE
         // The imageloader.
         GuiImageLoader* m_imgloader;
         // The input controller.
-        fcn::SDLInput* m_input;
+        fcn::sdl2::Input* m_input;
         // The console.
         Console* m_console;
         // Acess to the Cursor class.
