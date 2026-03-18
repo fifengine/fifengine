@@ -77,10 +77,7 @@ namespace FIFE
         // SDL_SetAlpha(surface,0,255);
         // SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
-        FL_DBG(
-            _log,
-            LMsg("image_font") << " glyph separator is " << pprint(reinterpret_cast<void*>(separator))
-                               << " transparent color is " << pprint(reinterpret_cast<void*>(colorkey)));
+        FL_DBG(_log, LMsg("image_font") << " glyph separator is " << separator << " transparent color is " << colorkey);
 
         // Finally extract all glyphs
         std::string::const_iterator text_it = glyphs.begin();
