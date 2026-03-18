@@ -210,11 +210,18 @@ jobs:
           }
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-VS2026-Readme.md
         - {
-            job_name: "Win | VC18 | Release",
+            job_name: "Win | VC18 | Shared | Release",
             os: windows-2025-vs2026,
             preset: vc18-x64-windows-rel,
             triplet: x64-windows,
             artifact-name: libfife-vc18-x64-windows
+          }
+        - {
+            job_name: "Win | VC18 | Shared | Debug",
+            os: windows-2025-vs2026,
+            preset: vc18-x64-windows-debug,
+            triplet: x64-windows,
+            artifact-name: libfife-vc18-x64-windows-debug
           }
 
     env:

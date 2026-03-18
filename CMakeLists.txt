@@ -83,6 +83,11 @@ include(SetupVcpkg)
 include(FeatureSummary)
 include(GNUInstallDirs)
 
+# Install runtime DLLs on Windows
+if(WIN32)
+  include(InstallRuntimeDeps)
+endif()
+
 # Ensure SWIG python template files are available in the build tree.
 # this allows out-of-source builds and the SWIG invocation to find
 # `engine/swigwrappers/python/extensions.i.templ` without manual copying.
@@ -1078,6 +1083,16 @@ endif(build-library)
 # target in that case.
 if(NOT TARGET fife AND TARGET fife_swig)
   add_custom_target(fife DEPENDS fife_swig)
+endif()
+
+#------------------------------------------------------------------------------
+# Install Runtime DLLs (Windows)
+# Copies all DLLs and transitive dependencies to CMAKE_INSTALL_LIBDIR
+#------------------------------------------------------------------------------
+if(WIN32)
+  install_fifechan_dlls()
+  install_vcpkg_dlls()
+  install_runtime_dlls()
 endif()
 
 #-------------------------------------------------------------------
