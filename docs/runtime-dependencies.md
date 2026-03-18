@@ -88,7 +88,7 @@ fife.dll
 
 ## Transitive Dependencies (System DLLs)
 
-The build system uses CMake's `file(GET_RUNTIME_DEPENDENCIES_INFO)` to
+The build system uses CMake's `file(GET_RUNTIME_DEPENDENCIES)` to
 automatically collect all transitive DLL dependencies.
 
 The following Windows system DLLs are typically included:

@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # InstallRuntimeDeps.cmake
 # Copies runtime DLLs to CMAKE_INSTALL_LIBDIR during install phase
-# Uses GET_RUNTIME_DEPENDENCIES_INFO for transitive dependency collection
+# Uses GET_RUNTIME_DEPENDENCIES for transitive dependency collection
 #
 # For Debug builds, DLLs are installed to CMAKE_INSTALL_LIBDIR/debug/
 # For Release/RelWithDebInfo builds, DLLs are installed to CMAKE_INSTALL_LIBDIR/
@@ -125,15 +125,13 @@ function(install_runtime_dlls)
         endif()
         list(APPEND _PROCESSED "${_DLL}")
 
-        file(GET_RUNTIME_DEPENDENCIES_INFO
-            OUTPUT_VARIABLE _OUT
-            FILES "${_DLL}"
-            CONTEXT_TYPE RESOLVED_DLL
-            CONTEXT_FILE "${_DLL}"
+        file(GET_RUNTIME_DEPENDENCIES
+            RESOLVED_DEPENDENCIES_VAR _deps
+            UNRESOLVED_DEPENDENCIES_VAR _unres
+            LIBRARIES "${_DLL}"
         )
 
-        string(REGEX MATCHALL "[A-Za-z]:[^ \"]+\\.dll" _TRANS "${_OUT}")
-        foreach(_T IN LISTS _TRANS)
+        foreach(_T IN LISTS _deps)
             list(FIND _PROCESSED "${_T}" _I)
             if(_I EQUAL -1)
                 list(FIND _TO_PROCESS "${_T}" _I2)
