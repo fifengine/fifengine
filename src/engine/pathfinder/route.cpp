@@ -304,7 +304,7 @@ namespace FIFE
         return false;
     }
 
-    const std::list<std::string> Route::getLimitedAreas()
+    std::list<std::string> Route::getLimitedAreas()
     {
         std::list<std::string> areas;
         if (m_object != nullptr) {

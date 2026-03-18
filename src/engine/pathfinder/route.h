@@ -209,7 +209,7 @@ namespace FIFE
         int32_t getZStepRange();
 
         bool isAreaLimited();
-        const std::list<std::string> getLimitedAreas();
+        std::list<std::string> getLimitedAreas();
 
         /** Sets the route to ignore dynamic blocker.
          * @param ignore A boolean that indicates if true the route ignores blocker, otherwise false.

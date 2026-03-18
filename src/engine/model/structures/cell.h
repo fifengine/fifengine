@@ -257,7 +257,7 @@ namespace FIFE
         /** Returns the layer coordinates of this cell.
          * @return A const reference to a ModelCoordinate.
          */
-        const ModelCoordinate getLayerCoordinates() const;
+        ModelCoordinate getLayerCoordinates() const;
 
         /** Adds a neighbor cell to this cell.
          * @param cell A pointer to the cell that should added as neighbor.

@@ -324,7 +324,7 @@ namespace FIFE
         return m_coordId;
     }
 
-    const ModelCoordinate Cell::getLayerCoordinates() const
+    ModelCoordinate Cell::getLayerCoordinates() const
     {
         return m_coordinate;
     }
