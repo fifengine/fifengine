@@ -29,9 +29,9 @@ namespace FIFE
     {
         static size_t read(void* ptr, size_t size, size_t nmemb, void* datasource)
         {
-            auto* rdp      = reinterpret_cast<RawData*>(datasource);
-            size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
-            size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
+            auto* rdp            = reinterpret_cast<RawData*>(datasource);
+            const size_t restlen = rdp->getDataLength() - rdp->getCurrentIndex();
+            const size_t len     = (restlen <= size * nmemb) ? restlen : size * nmemb;
             if (len != 0U) {
                 rdp->readInto(reinterpret_cast<uint8_t*>(ptr), len);
             }
@@ -71,7 +71,7 @@ namespace FIFE
     SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp), m_ovf{}
     {
 
-        ov_callbacks ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
+        const ov_callbacks ocb = {OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell};
 
         if (0 > ov_open_callbacks(m_file.get(), &m_ovf, nullptr, 0, ocb)) {
             throw InvalidFormat("Error opening OggVorbis file");

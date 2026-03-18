@@ -56,8 +56,8 @@ namespace FIFE
 
     void CommandLine::keyPressed(fcn::KeyEvent& keyEvent)
     {
-        fcn::Key key    = keyEvent.getKey();
-        int32_t keyType = key.getValue();
+        const fcn::Key key    = keyEvent.getKey();
+        const int32_t keyType = key.getValue();
 
         if (keyType == Key::Left && getCaretPosition() > 0) {
             TextField::keyPressed(keyEvent);

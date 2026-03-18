@@ -169,10 +169,10 @@ namespace FIFE
         if (!m_transferInstances.empty()) {
             auto it = m_transferInstances.begin();
             for (; it != m_transferInstances.end(); ++it) {
-                Instance* inst      = (*it).first;
-                Location target_loc = (*it).second;
-                Layer* source       = inst->getOldLocationRef().getLayer();
-                Layer* target       = target_loc.getLayer();
+                Instance* inst            = (*it).first;
+                const Location target_loc = (*it).second;
+                Layer* source             = inst->getOldLocationRef().getLayer();
+                Layer* target             = target_loc.getLayer();
                 if (source != target) {
                     source->removeInstance(inst);
                     target->addInstance(inst, target_loc.getExactLayerCoordinates());
@@ -213,8 +213,8 @@ namespace FIFE
             }
         }
 
-        bool retval = m_changed;
-        m_changed   = false;
+        const bool retval = m_changed;
+        m_changed         = false;
         return retval;
     }
 
@@ -238,7 +238,7 @@ namespace FIFE
     Camera* Map::addCamera(const std::string& id, const Rect& viewport)
     {
         if (getCamera(id) != nullptr) {
-            std::string errorStr = "Camera: " + id + " already exists";
+            const std::string errorStr = "Camera: " + id + " already exists";
             throw NameClash(errorStr);
         }
 
@@ -303,7 +303,7 @@ namespace FIFE
 
     void Map::addInstanceForTransfer(Instance* instance, const Location& target)
     {
-        std::pair<std::map<Instance*, Location>::iterator, bool> insertiter =
+        const std::pair<std::map<Instance*, Location>::iterator, bool> insertiter =
             m_transferInstances.insert(std::make_pair(instance, target));
         if (!insertiter.second) {
             Location& loc = insertiter.first->second;

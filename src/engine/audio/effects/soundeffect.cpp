@@ -1177,7 +1177,7 @@ namespace FIFE
         m_reflectionsPan.z = std::min(coordinate.z, (1.0));
         m_reflectionsPan.z = std::max(coordinate.z, (-1.0));
 
-        ALfloat vec[3] = {
+        const ALfloat vec[3] = {
             static_cast<ALfloat>(m_reflectionsPan.x),
             static_cast<ALfloat>(m_reflectionsPan.y),
             static_cast<ALfloat>(m_reflectionsPan.z)};
@@ -1224,7 +1224,7 @@ namespace FIFE
         m_lateReverbPan.z = std::min(coordinate.z, (1.0));
         m_lateReverbPan.z = std::max(coordinate.z, (-1.0));
 
-        ALfloat vec[3] = {
+        const ALfloat vec[3] = {
             static_cast<ALfloat>(m_lateReverbPan.x),
             static_cast<ALfloat>(m_lateReverbPan.y),
             static_cast<ALfloat>(m_lateReverbPan.z)};

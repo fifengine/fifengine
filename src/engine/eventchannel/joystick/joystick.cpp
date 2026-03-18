@@ -78,7 +78,7 @@ namespace FIFE
             m_instanceId = SDL_JoystickInstanceID(m_joystickHandle);
 
             char tmp[33];
-            SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(m_deviceIndex);
+            const SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(m_deviceIndex);
             SDL_JoystickGetGUIDString(guid, tmp, sizeof(tmp));
             m_guidStr = std::string(tmp);
 
@@ -202,7 +202,7 @@ namespace FIFE
 
     float Joystick::convertRange(int16_t value) const
     {
-        float range = static_cast<float>(value) / 32768.0F;
+        const float range = static_cast<float>(value) / 32768.0F;
         if (Mathf::FAbs(range) < 0.01F) {
             return 0.0F;
         }

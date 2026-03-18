@@ -28,7 +28,7 @@ namespace FIFE
     {
         VFS* vfs = VFS::instance();
 
-        std::string filename = res->getName();
+        const std::string filename = res->getName();
 
         RawData* rdptr = vfs->open(filename);
         dynamic_cast<SoundClip*>(res)->adobtDecoder(new SoundDecoderOgg(rdptr));

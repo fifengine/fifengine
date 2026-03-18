@@ -198,7 +198,7 @@ namespace FIFE
 
     float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const
     {
-        uint64_t pos = m_buffervec.at(streamid)->deccursor;
+        const uint64_t pos = m_buffervec.at(streamid)->deccursor;
         switch (type) {
         case SD_BYTE_POS:
             return static_cast<float>(pos);
@@ -216,7 +216,7 @@ namespace FIFE
     {
         const SoundBufferEntry* ptr = m_buffervec.at(streamid);
 
-        bool reachedEOF = std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
+        const bool reachedEOF = std::ranges::any_of(ptr->buffers, [&](unsigned int buffer) {
             return getStream(streamid, buffer);
         });
         (void)reachedEOF;
@@ -299,8 +299,8 @@ namespace FIFE
     std::string SoundClip::createUniqueClipName()
     {
         // automated counting for name generation, in case the user doesn't provide a name
-        static uint32_t uniqueNumber = 0;
-        static std::string baseName  = "soundclip";
+        static uint32_t uniqueNumber      = 0;
+        static const std::string baseName = "soundclip";
 
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;

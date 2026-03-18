@@ -68,8 +68,8 @@ namespace FIFE
 
     void CEGuiManager::injectTimePulse()
     {
-        double timeNow   = TimeManager::instance()->getTime() / 1000.0;
-        float time_pulse = static_cast<float>(timeNow - m_lastTimePulse);
+        double timeNow         = TimeManager::instance()->getTime() / 1000.0;
+        const float time_pulse = static_cast<float>(timeNow - m_lastTimePulse);
 
         CEGUI::System::getSingleton().injectTimePulse(time_pulse);
         CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(time_pulse);

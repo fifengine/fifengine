@@ -77,7 +77,7 @@ namespace FIFE
     bool CEGuiInputProcessor::processTextInput(SDL_Event& event)
     {
         CEGUI::String character(event.text.text);
-        bool consumed = false;
+        const bool consumed = false;
         if (!character.empty()) {
             consumed = CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(character[0]);
         }
@@ -87,7 +87,7 @@ namespace FIFE
 
     bool CEGuiInputProcessor::processMouseInput(SDL_Event& event)
     {
-        bool consumed = false;
+        const bool consumed = false;
 
         switch (event.type) {
         case SDL_MOUSEBUTTONDOWN: {

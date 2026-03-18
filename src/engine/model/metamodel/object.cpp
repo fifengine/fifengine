@@ -480,7 +480,7 @@ namespace FIFE
         if (m_multiProperty != nullptr) {
             int32_t closest = 0;
             getIndexByAngle(rotation, m_multiProperty->m_partAngleMap, closest);
-            std::pair<
+            const std::pair<
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiPartCoordinates.equal_range(closest);
@@ -511,12 +511,12 @@ namespace FIFE
             }
             int32_t closest = 0;
             getIndexByAngle(rotation, m_multiProperty->m_multiAngleMap, closest);
-            std::pair<
+            const std::pair<
                 std::multimap<int32_t, ModelCoordinate>::iterator,
                 std::multimap<int32_t, ModelCoordinate>::iterator>
                 result = m_multiProperty->m_multiObjectCoordinates.equal_range(closest);
             auto it    = result.first;
-            ModelCoordinate parent(0, 0);
+            const ModelCoordinate parent(0, 0);
             coordinates.push_back(parent);
             for (; it != result.second; ++it) {
                 coordinates.push_back((*it).second);

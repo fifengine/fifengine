@@ -193,12 +193,13 @@ namespace FIFE
         if (m_drag_type == CURSOR_IMAGE) {
             img = m_cursor_drag_image;
         } else if (m_drag_type == CURSOR_ANIMATION) {
-            int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
-            img              = m_cursor_drag_animation->getFrameByTimestamp(animtime);
+            const int32_t animtime =
+                (m_timemanager->getTime() - m_drag_animtime) % m_cursor_drag_animation->getDuration();
+            img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
         }
 
         if (static_cast<int>(img) != 0) {
-            Rect area(
+            const Rect area(
                 m_mx + m_drag_offset_x + img->getXShift(),
                 m_my + m_drag_offset_y + img->getYShift(),
                 img->getWidth(),
@@ -214,8 +215,8 @@ namespace FIFE
         if (m_cursor_type == CURSOR_IMAGE) {
             img2 = m_cursor_image;
         } else if (m_cursor_type == CURSOR_ANIMATION) {
-            int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
-            img2             = m_cursor_animation->getFrameByTimestamp(animtime);
+            const int32_t animtime = (m_timemanager->getTime() - m_animtime) % m_cursor_animation->getDuration();
+            img2                   = m_cursor_animation->getFrameByTimestamp(animtime);
         }
 
         if (static_cast<int>(img2) != 0) {

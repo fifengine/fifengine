@@ -136,7 +136,7 @@ namespace FIFE
             return false;
         }
 
-        int32_t pos = static_cast<int32_t>(m_walked) + step;
+        const int32_t pos = static_cast<int32_t>(m_walked) + step;
         if (pos < 0 || pos >= static_cast<int32_t>(m_path.size())) {
             return false;
         }
@@ -199,7 +199,7 @@ namespace FIFE
             return;
         }
 
-        uint32_t newend = m_walked + length - 1;
+        const uint32_t newend = m_walked + length - 1;
         if (newend > m_path.size()) {
             return;
         }

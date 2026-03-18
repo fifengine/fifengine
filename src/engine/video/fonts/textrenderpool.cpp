@@ -43,7 +43,7 @@ namespace FIFE
 
     Image* TextRenderPool::getRenderedText(const FontBase* fontbase, const std::string& text)
     {
-        SDL_Color c = fontbase->getColor();
+        const SDL_Color c = fontbase->getColor();
 
         auto it = m_pool.begin();
         for (; it != m_pool.end(); ++it) {
@@ -109,8 +109,8 @@ namespace FIFE
     void TextRenderPool::removeOldEntries()
     {
 
-        auto it      = m_pool.begin();
-        uint32_t now = TimeManager::instance()->getTime();
+        auto it            = m_pool.begin();
+        const uint32_t now = TimeManager::instance()->getTime();
         while (it != m_pool.end()) {
             if ((now - it->timestamp) > 1000 * 60) {
                 delete it->image;

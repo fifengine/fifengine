@@ -343,14 +343,14 @@ namespace FIFE
         if (m_assigned.empty()) {
             return;
         }
-        ModelCoordinate newPos = m_attached->getLocationRef().getLayerCoordinates();
-        ModelCoordinate oldPos = m_attached->getOldLocationRef().getLayerCoordinates();
+        const ModelCoordinate newPos = m_attached->getLocationRef().getLayerCoordinates();
+        const ModelCoordinate oldPos = m_attached->getOldLocationRef().getLayerCoordinates();
         moveTo(newPos, oldPos);
     }
 
     void Trigger::moveTo(const ModelCoordinate& newPos, const ModelCoordinate& oldPos)
     {
-        ModelCoordinate mc(newPos.x - oldPos.x, newPos.y - oldPos.y);
+        const ModelCoordinate mc(newPos.x - oldPos.x, newPos.y - oldPos.y);
 
         CellCache* cache = m_attached->getLocationRef().getLayer()->getCellCache();
         std::vector<Cell*> newCells;

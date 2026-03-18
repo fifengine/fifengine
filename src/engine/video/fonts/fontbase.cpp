@@ -285,7 +285,7 @@ namespace FIFE
 
             bool haveNewLine = false;
             while (getWidth(line) < render_width && pos != text.end()) {
-                uint32_t codepoint = utf8::next(pos, text.end());
+                const uint32_t codepoint = utf8::next(pos, text.end());
                 if (codepoint == whitespace && !line.empty()) {
                     break_pos.emplace_back(line.length(), pos);
                 }

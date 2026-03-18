@@ -36,7 +36,7 @@ namespace FIFE
 
         FL_LOG(_log, LMsg("fifechan_image_font, loading ") << filename << " glyphs " << glyphs);
 
-        ImagePtr img         = ImageManager::instance()->load(filename);
+        const ImagePtr img   = ImageManager::instance()->load(filename);
         SDL_Surface* surface = img->getSurface();
         m_colorkey           = RenderBackend::instance()->getColorKey();
 
@@ -61,8 +61,8 @@ namespace FIFE
         src.h = surface->h;
         src.y = 0;
 
-        uint32_t separator = pixels[0];
-        uint32_t colorkey  = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
+        const uint32_t separator = pixels[0];
+        uint32_t colorkey        = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
         // if colorkey feature is not enabled then manually find the color key in the font
         if (!RenderBackend::instance()->isColorKeyEnabled()) {

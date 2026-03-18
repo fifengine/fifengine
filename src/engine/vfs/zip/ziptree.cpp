@@ -69,12 +69,12 @@ namespace FIFE
 
     ZipNode* ZipTree::getNode(const std::string& name) const
     {
-        fs::path filePath(name);
+        const fs::path filePath(name);
         ZipNode* returnNode = nullptr;
         ZipNode* tempNode   = nullptr;
         ZipNode* node       = getRootNode();
         for (fs::path::iterator iter = filePath.begin(); iter != filePath.end(); ++iter) {
-            std::string pathString = GetPathIteratorAsString(iter);
+            const std::string pathString = GetPathIteratorAsString(iter);
 
             if (pathString == ".." && (node != getRootNode())) {
                 // handle ".." path case by setting the node back to the parent

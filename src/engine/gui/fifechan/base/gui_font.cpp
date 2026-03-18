@@ -71,13 +71,13 @@ namespace FIFE
             return;
         }
 
-        int32_t yoffset = getRowSpacing() / 2;
+        const int32_t yoffset = getRowSpacing() / 2;
 
         const fcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 
         Image* image = nullptr;
         if (isDynamicColoring()) {
-            SDL_Color color = getColor();
+            const SDL_Color color = getColor();
             setColor(graphics->getColor().r, graphics->getColor().g, graphics->getColor().b, graphics->getColor().a);
             image = getAsImageMultiline(text);
             setColor(color.r, color.g, color.b, color.a);

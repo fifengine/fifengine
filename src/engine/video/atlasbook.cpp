@@ -75,7 +75,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
-                            int blockWidth = newBlock->getWidth();
+                            const int blockWidth = newBlock->getWidth();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -113,7 +113,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
-                            int blockHeight = newBlock->getHeight();
+                            const int blockHeight = newBlock->getHeight();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -161,8 +161,8 @@ namespace FIFE
         assert(boundaryBox.top == 0);
 
         if (pot) {
-            uint32_t bwidth  = boundaryBox.getWidth();
-            uint32_t bheight = boundaryBox.getHeight();
+            const uint32_t bwidth  = boundaryBox.getWidth();
+            const uint32_t bheight = boundaryBox.getHeight();
 
             if (bwidth < width) {
                 // look for next power of 2 for width

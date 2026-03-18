@@ -45,7 +45,7 @@ namespace FIFE
         const auto* g_img = dynamic_cast<const GuiImage*>(image);
         assert(g_img);
 
-        ImagePtr fifeimg               = g_img->getFIFEImage();
+        const ImagePtr fifeimg         = g_img->getFIFEImage();
         const fcn::ClipRectangle& clip = getCurrentClipArea();
         Rect rect(dstX, dstY, width, height);
         rect.x += clip.xOffset;
@@ -201,7 +201,7 @@ namespace FIFE
 
     void SdlGuiGraphics::_beginDraw()
     {
-        fcn::Rectangle area(
+        const fcn::Rectangle area(
             0, 0, static_cast<int>(m_renderbackend->getWidth()), static_cast<int>(m_renderbackend->getHeight()));
         pushClipArea(area);
         m_renderbackend->pushClipArea(

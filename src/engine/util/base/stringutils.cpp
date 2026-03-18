@@ -38,12 +38,12 @@ namespace FIFE
                     return {};
                 }
 
-                std::string token = str.substr(start + 1, curr - start - 1);
+                const std::string token = str.substr(start + 1, curr - start - 1);
                 tokens.push_back(makeInt32(token));
                 start = curr + 1;
             } else if (str[curr] == delim) {
                 if (str[curr - 1] != delim && str[curr - 1] != group) {
-                    std::string token = str.substr(start, curr - start);
+                    const std::string token = str.substr(start, curr - start);
                     tokens.push_back(makeInt32(token));
                 }
                 start = curr + 1;
@@ -57,7 +57,7 @@ namespace FIFE
         }
 
         if (str[curr - 1] != delim && str[curr - 1] != group) {
-            std::string token = str.substr(start, curr - 1);
+            const std::string token = str.substr(start, curr - 1);
             tokens.push_back(makeInt32(token));
         }
 

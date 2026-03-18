@@ -26,8 +26,8 @@ namespace FIFE
         m_outlen   = outputsize;
 
         while (m_outindex < outputsize) {
-            uint16_t blockdesc   = input->read16Big();
-            uint16_t bytesToRead = blockdesc & 0x7fff;
+            const uint16_t blockdesc   = input->read16Big();
+            const uint16_t bytesToRead = blockdesc & 0x7fff;
 
             if ((blockdesc & 0x8000) != 0) { // uncompressed
                 input->readInto(output + m_outindex, bytesToRead);

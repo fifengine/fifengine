@@ -71,7 +71,7 @@ namespace FIFE
 
     std::string DAT1::readString()
     {
-        uint8_t length = m_data->read8();
+        const uint8_t length = m_data->read8();
         return m_data->readString(length);
     }
 
@@ -116,7 +116,7 @@ namespace FIFE
             path.erase(0, 2);
         }
 
-        size_t lastIndex = path.size();
+        const size_t lastIndex = path.size();
         if (lastIndex != 0 && path[lastIndex - 1] != '/') {
             path += '/';
         }
@@ -126,7 +126,7 @@ namespace FIFE
             const std::string& file = i->first;
             if (file.starts_with(path)) {
                 std::string cleanedfile = file.substr(path.size(), file.size()); // strip the pathstr
-                bool isdir = cleanedfile.find('/') != std::string::npos;         // if we still have a / it's a subdir
+                const bool isdir = cleanedfile.find('/') != std::string::npos;   // if we still have a / it's a subdir
 
                 if (isdir) {
                     cleanedfile.resize(cleanedfile.find('/'));

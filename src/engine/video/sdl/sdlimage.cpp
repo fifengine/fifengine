@@ -105,7 +105,7 @@ namespace FIFE
         tarRect.w = rect.w;
         tarRect.h = rect.h;
 
-        Rect tmpRect = m_shared ? getSubImageRect() : getArea();
+        const Rect tmpRect = m_shared ? getSubImageRect() : getArea();
         SDL_Rect srcRect;
         srcRect.x = tmpRect.x;
         srcRect.y = tmpRect.y;
@@ -196,8 +196,8 @@ namespace FIFE
             // check atlas image
             // if it does not exist, it is created.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
-                ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
-                m_atlas_img       = newAtlas;
+                const ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
+                m_atlas_img             = newAtlas;
             }
             useSharedImage(m_atlas_img, m_subimagerect);
         } else {
@@ -208,8 +208,8 @@ namespace FIFE
     void SDLImage::free()
     {
         // save the image offsets
-        int32_t xshift = m_xshift;
-        int32_t yshift = m_yshift;
+        const int32_t xshift = m_xshift;
+        const int32_t yshift = m_yshift;
         setSurface(nullptr);
         m_xshift = xshift;
         m_yshift = yshift;

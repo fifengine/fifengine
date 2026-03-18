@@ -97,7 +97,7 @@ namespace FIFE
             return false;
         }
 
-        bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
+        const bool overWidget = m_fcn_topcontainer->getWidgetAt(m_lastMotionX, m_lastMotionY) != nullptr;
 
         switch (evt.type) {
         case SDL_MOUSEWHEEL:

@@ -30,7 +30,7 @@ namespace FIFE
         input->setIndex(info.offset);
 
         if (info.type == 1) { // compressed
-            std::unique_ptr<uint8_t[]> compressed(new uint8_t[info.packedLength]);
+            const std::unique_ptr<uint8_t[]> compressed(new uint8_t[info.packedLength]);
             input->readInto(compressed.get(), info.packedLength);
 
             uLongf dstlen = info.unpackedLength;

@@ -46,7 +46,7 @@ namespace FIFE
         const auto* g_img = dynamic_cast<const GuiImage*>(image);
         assert(g_img);
 
-        ImagePtr fifeimg               = g_img->getFIFEImage();
+        const ImagePtr fifeimg         = g_img->getFIFEImage();
         const fcn::ClipRectangle& clip = mClipStack.top();
         fifeimg->render(Rect(dstX + clip.xOffset, dstY + clip.yOffset, width, height));
     }
@@ -96,8 +96,8 @@ namespace FIFE
         } else if (y1 == y2) {
                 x2 += 1;
         }*/
-        Point pbegin(x1, y1);
-        Point pend(x2, y2);
+        const Point pbegin(x1, y1);
+        const Point pend(x2, y2);
 
         m_renderbackend->drawLine(pbegin, pend, mColor.r, mColor.g, mColor.b, mColor.a);
         // m_renderbackend->putPixel(pbegin.x, pbegin.y,
@@ -210,7 +210,7 @@ namespace FIFE
 
     void OpenGLGuiGraphics::_beginDraw()
     {
-        fcn::Rectangle area(0, 0, mWidth, mHeight);
+        const fcn::Rectangle area(0, 0, mWidth, mHeight);
         pushClipArea(area);
         m_renderbackend->pushClipArea(Rect(0, 0, mWidth, mHeight), false);
     }

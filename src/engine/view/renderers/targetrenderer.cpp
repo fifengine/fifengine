@@ -131,7 +131,7 @@ namespace FIFE
         rj.target        = RenderTargetPtr(new RenderTarget(m_renderbackend, name, width, height));
         rj.discard       = false;
 
-        std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(name, rj));
+        const std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(name, rj));
 
         return ret.first->second.target;
     }
@@ -144,7 +144,7 @@ namespace FIFE
         rj.target        = RenderTargetPtr(new RenderTarget(m_renderbackend, image));
         rj.discard       = false;
 
-        std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(image->getName(), rj));
+        const std::pair<RenderJobMap::iterator, bool> ret = m_targets.insert(std::make_pair(image->getName(), rj));
 
         return ret.first->second.target;
     }
@@ -164,7 +164,7 @@ namespace FIFE
             for (auto& m_target : m_targets) {
                 if (m_target.second.ndraws != -1) {
                     if (m_target.second.ndraws <= m_target.second.lasttime_draw) {
-                        RenderTargetPtr rt = m_target.second.target;
+                        const RenderTargetPtr rt = m_target.second.target;
                         m_renderbackend->attachRenderTarget(rt->m_target, m_target.second.discard);
                         rt->render();
                         m_renderbackend->detachRenderTarget();

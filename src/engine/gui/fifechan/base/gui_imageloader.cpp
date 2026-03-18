@@ -53,7 +53,7 @@ namespace FIFE
             // because we gonna update texture on-the fly (via TexSubImage)
             // we cant really use compressed texture
             RenderBackend* rb = RenderBackend::instance();
-            bool prev         = rb->isImageCompressingEnabled();
+            const bool prev   = rb->isImageCompressingEnabled();
             rb->setImageCompressingEnabled(false);
             m_atlases[block->page]->forceLoadInternal();
             rb->setImageCompressingEnabled(prev);
@@ -67,8 +67,8 @@ namespace FIFE
         imgManager->remove(tmpimg);
 
         // create shared image and return it
-        ImagePtr img = imgManager->create(filename);
-        Rect region(block->left, block->top, block->getWidth(), block->getHeight());
+        const ImagePtr img = imgManager->create(filename);
+        const Rect region(block->left, block->top, block->getWidth(), block->getHeight());
         img->useSharedImage(m_atlases[block->page], region);
 
         return new GuiImage(img);

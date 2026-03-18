@@ -25,8 +25,8 @@ namespace FIFE
         VFS* vfs = VFS::instance();
 
         std::unique_ptr<RawData> data(vfs->open(filename));
-        size_t datalen = data->getDataLength();
-        std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
+        const size_t datalen = data->getDataLength();
+        const std::unique_ptr<uint8_t[]> darray(new uint8_t[datalen]);
         data->readInto(darray.get(), datalen);
         SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), static_cast<int>(datalen));
         if (SDL_GameControllerAddMappingsFromRW(rwops, 0) == -1) {

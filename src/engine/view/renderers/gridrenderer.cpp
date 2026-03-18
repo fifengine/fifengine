@@ -129,9 +129,9 @@ namespace FIFE
         //		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
 
         // make the viewport 25% larger
-        Rect cv      = cam->getViewPort();
-        int32_t cvx2 = round((cv.x + cv.w) * 1.25);
-        int32_t cvy2 = round((cv.y + cv.h) * 1.25);
+        Rect cv            = cam->getViewPort();
+        const int32_t cvx2 = round((cv.x + cv.w) * 1.25);
+        const int32_t cvy2 = round((cv.y + cv.h) * 1.25);
         cv.x -= round((cv.x + cv.w) * 0.125);
         cv.y -= round((cv.y + cv.h) * 0.125);
         auto instance_it = instances.begin();
@@ -139,17 +139,17 @@ namespace FIFE
             Instance* instance = (*instance_it)->instance;
             std::vector<ExactModelCoordinate> vertices;
             cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-            auto it             = vertices.begin();
-            ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+            auto it                   = vertices.begin();
+            const ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
             Point pt1(firstpt.x, firstpt.y);
             Point pt2;
             ++it;
             for (; it != vertices.end(); it++) {
-                ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-                pt2.x           = pts.x;
-                pt2.y           = pts.y;
-                Point cpt1      = pt1;
-                Point cpt2      = pt2;
+                const ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+                pt2.x                 = pts.x;
+                pt2.y                 = pts.y;
+                Point cpt1            = pt1;
+                Point cpt2            = pt2;
 
                 cpt1.x = std::max(cpt1.x, cv.x);
                 cpt2.x = std::max(cpt2.x, cv.x);

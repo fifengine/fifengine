@@ -22,7 +22,7 @@ namespace FIFE
     {
         auto* anim = dynamic_cast<Animation*>(res);
         if (anim != nullptr) {
-            std::vector<ImagePtr> frames = anim->getFrames();
+            const std::vector<ImagePtr> frames = anim->getFrames();
             for (auto& frame : frames) {
                 if (frame->getState() != IResource::RES_LOADED) {
                     frame->load();

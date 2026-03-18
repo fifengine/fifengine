@@ -127,7 +127,7 @@ namespace FIFE
 
     ZipNode* ZipNode::getChild(const std::string& name, ZipContentType::Enum contentType /*=ZipContentType::All*/) const
     {
-        bool hasExtension = HasExtension(name);
+        const bool hasExtension = HasExtension(name);
 
         switch (contentType) {
         default: // fall through on purpose

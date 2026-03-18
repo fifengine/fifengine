@@ -182,7 +182,7 @@ namespace FIFE
         m_soundclipmanager = new SoundClipManager();
 
         FL_LOG(_log, "Creating render backend");
-        std::string rbackend(m_settings.getRenderBackend());
+        const std::string rbackend(m_settings.getRenderBackend());
         if (rbackend == "SDL") {
             m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
             FL_LOG(_log, "SDL Render backend created");
@@ -248,7 +248,7 @@ namespace FIFE
         FL_LOG(_log, "Querying device capabilities");
         m_devcaps.fillDeviceCaps();
 
-        uint16_t bpp = m_settings.getBitsPerPixel();
+        const uint16_t bpp = m_settings.getBitsPerPixel();
 
         m_screenMode = m_devcaps.getNearestScreenMode(
             m_settings.getScreenWidth(),

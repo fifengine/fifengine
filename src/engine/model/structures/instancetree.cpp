@@ -27,9 +27,9 @@ namespace FIFE
 
     void InstanceTree::addInstance(Instance* instance)
     {
-        ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
-        InstanceTreeNode* node = m_tree.find_container(coords.x, coords.y, 0, 0);
-        InstanceList& list     = node->data();
+        const ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
+        InstanceTreeNode* node       = m_tree.find_container(coords.x, coords.y, 0, 0);
+        InstanceList& list           = node->data();
         list.push_back(instance);
         if (m_reverse.contains(instance)) {
             FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
@@ -88,7 +88,7 @@ namespace FIFE
     {
         list.clear();
         InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
-        Rect rect(point.x, point.y, w, h);
+        const Rect rect(point.x, point.y, w, h);
         InstanceListCollector collector(&list, rect);
 
         node->apply_visitor(collector);
@@ -96,7 +96,7 @@ namespace FIFE
         node = node->parent();
         while (node != nullptr) {
             for (InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
-                ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
+                const ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
                 if (rect.contains(Point(coords.x, coords.y))) {
                     list.push_back(*it);
                 }

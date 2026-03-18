@@ -75,8 +75,8 @@ namespace FIFE
     std::string Animation::createUniqueAnimationName()
     {
         // automated counting for name generation, in case the user doesn't provide a name
-        static uint32_t uniqueNumber = 0;
-        static std::string baseName  = "animation";
+        static uint32_t uniqueNumber      = 0;
+        static const std::string baseName = "animation";
 
         std::ostringstream oss;
         oss << uniqueNumber << "_" << baseName;
@@ -101,9 +101,9 @@ namespace FIFE
             m_animation_endtime = duration;
         } else {
             --i;
-            uint32_t frametime    = i->first + i->second.duration;
-            m_framemap[frametime] = info;
-            m_animation_endtime   = frametime + duration;
+            const uint32_t frametime = i->first + i->second.duration;
+            m_framemap[frametime]    = info;
+            m_animation_endtime      = frametime + duration;
         }
     }
 
@@ -120,7 +120,7 @@ namespace FIFE
 
     bool Animation::isValidIndex(int32_t index) const
     {
-        int32_t size = m_frames.size();
+        const int32_t size = m_frames.size();
         return size > 0 && index >= 0 && index < size;
     }
 

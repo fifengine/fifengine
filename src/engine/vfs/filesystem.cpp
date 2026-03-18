@@ -61,7 +61,7 @@ namespace FIFE
 
     bool HasExtension(const fs::path& path)
     {
-        std::string extension = GetExtension(path);
+        const std::string extension = GetExtension(path);
         return !(extension.empty() || extension == ".");
     }
 

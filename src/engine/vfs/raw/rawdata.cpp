@@ -31,7 +31,7 @@ namespace FIFE
     std::vector<uint8_t> RawData::getDataInBytes()
     {
         // get the total file size
-        uint32_t size = getDataLength();
+        const uint32_t size = getDataLength();
 
         // create output vector
         std::vector<uint8_t> target;

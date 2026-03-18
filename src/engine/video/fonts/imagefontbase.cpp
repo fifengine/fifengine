@@ -39,8 +39,8 @@ namespace FIFE
         int32_t w                           = 0;
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
-            uint32_t codepoint = utf8::next(text_it, text.end());
-            auto it            = m_glyphs.find(codepoint);
+            const uint32_t codepoint = utf8::next(text_it, text.end());
+            auto it                  = m_glyphs.find(codepoint);
 
             if (it != m_glyphs.end()) {
                 w += it->second.surface->w + getGlyphSpacing();
@@ -71,8 +71,8 @@ namespace FIFE
 
         std::string::const_iterator text_it = text.begin();
         while (text_it != text.end()) {
-            uint32_t codepoint = utf8::next(text_it, text.end());
-            auto it            = m_glyphs.find(codepoint);
+            const uint32_t codepoint = utf8::next(text_it, text.end());
+            auto it                  = m_glyphs.find(codepoint);
 
             if (it == m_glyphs.end()) {
                 if (m_placeholder.surface == nullptr) {

@@ -84,8 +84,8 @@ namespace FIFE
         CellCache* cellCache = layer->getCellCache();
         assert(cellCache);
 
-        Trigger* trigger         = createTrigger(triggerName);
-        std::vector<Cell*> cells = cellCache->getCellsInRect(rec);
+        Trigger* trigger               = createTrigger(triggerName);
+        const std::vector<Cell*> cells = cellCache->getCellsInRect(rec);
         for (auto& cell : cells) {
             trigger->assign(cell);
         }
@@ -182,7 +182,7 @@ namespace FIFE
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
+            const std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
             for (auto& cell : cells) {
                 it->second->remove(cell);
             }

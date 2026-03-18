@@ -106,7 +106,7 @@ namespace FIFE
         }
 
         // was not found so create and load resource
-        SoundClipPtr ptr = create(name, loader);
+        const SoundClipPtr ptr = create(name, loader);
         ptr->load();
 
         if (ptr->getState() == IResource::RES_NOT_LOADED) {
@@ -125,7 +125,7 @@ namespace FIFE
         assert(res);
         assert(!(exists(res->getHandle()) || exists(res->getName())));
 
-        SoundClipPtr resptr(res);
+        const SoundClipPtr resptr(res);
 
         std::pair<SoundClipHandleMapIterator, bool> returnValue;
         returnValue = m_sclipHandleMap.insert(SoundClipHandleMapPair(res->getHandle(), resptr));
@@ -359,7 +359,7 @@ namespace FIFE
         // should always be equal
         assert(m_sclipHandleMap.size() == m_sclipNameMap.size());
 
-        size_t count = m_sclipHandleMap.size();
+        const size_t count = m_sclipHandleMap.size();
 
         m_sclipHandleMap.clear();
         m_sclipNameMap.clear();
@@ -398,7 +398,7 @@ namespace FIFE
         }
 
         // not found so attempt to create and load the resource
-        SoundClipPtr ptr = load(name);
+        const SoundClipPtr ptr = load(name);
         return ptr;
     }
 
