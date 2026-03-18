@@ -275,7 +275,7 @@ namespace FIFE
 #endif
         FL_LOG(_log, "Creating sound manager");
         m_soundmanager = new SoundManager();
-        m_soundmanager->setVolume(m_settings.getInitialVolume() / 10.0f);
+        m_soundmanager->setVolume(m_settings.getInitialVolume() / 10.0F);
 
         FL_LOG(_log, "Creating renderers");
         m_offrenderer    = new OffRenderer(m_renderbackend);

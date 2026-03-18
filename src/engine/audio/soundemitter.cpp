@@ -117,8 +117,8 @@ namespace FIFE
 
         while ((procs--) != 0) {
             // needed for correct cursor position
-            float samplesOffset = 0.0f;
-            float newOffset     = 0.0f;
+            float samplesOffset = 0.0F;
+            float newOffset     = 0.0F;
             alGetSourcef(m_source, AL_SAMPLE_OFFSET, &samplesOffset);
 
             alSourceUnqueueBuffers(m_source, 1, &buffer);

@@ -400,7 +400,7 @@ namespace FIFE
                 std::vector<float> lightingColor = camera->getLightingColor();
                 bool writeLightingColor          = false;
                 writeLightingColor               = std::any_of(lightingColor.begin(), lightingColor.end(), [](float v) {
-                    return v < 1.0f;
+                    return v < 1.0F;
                 });
 
                 if (writeLightingColor) {
