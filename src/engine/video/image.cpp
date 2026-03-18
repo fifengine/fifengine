@@ -254,7 +254,8 @@ namespace FIFE
         png_init_io(pngptr, fp);
 
         // lock the surface for access (we strip it off of const but we promise not to modify it, just read)
-        SDL_LockSurface(const_cast<SDL_Surface*>(&surface));
+        SDL_Surface* surfacePtr = const_cast<SDL_Surface*>(&surface);
+        SDL_LockSurface(surfacePtr);
 
         colortype = PNG_COLOR_TYPE_RGB;
         if (surface.format->palette != nullptr) {
@@ -286,7 +287,7 @@ namespace FIFE
         png_write_image(pngptr, rowpointers);
         png_write_end(pngptr, infoptr);
 
-        SDL_UnlockSurface(const_cast<SDL_Surface*>(&surface));
+        SDL_UnlockSurface(surfacePtr);
         delete[] rowpointers;
         png_destroy_write_struct(&pngptr, &infoptr);
         fclose(fp);
