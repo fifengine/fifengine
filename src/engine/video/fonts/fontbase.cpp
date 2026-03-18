@@ -218,7 +218,7 @@ namespace FIFE
             SDL_Surface* text_surface = renderString(line);
 
             // Safety: skip empty lines
-            if (!text_surface) {
+            if (text_surface == nullptr) {
                 continue;
             }
 
@@ -232,7 +232,7 @@ namespace FIFE
         SDL_Surface* final_surface =
             SDL_CreateRGBSurface(0, render_width, render_height, 32, RMASK, GMASK, BMASK, AMASK);
 
-        if (!final_surface) {
+        if (final_surface == nullptr) {
             for (auto* surf : lines) {
                 SDL_FreeSurface(surf);
             }

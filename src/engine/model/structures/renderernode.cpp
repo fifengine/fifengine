@@ -110,7 +110,7 @@ namespace FIFE
             m_location = source.m_location;
             m_layer    = source.m_layer;
             m_point    = source.m_point;
-            m_listener = source.m_listener ? source.m_listener : new NodeInstanceDeleteListener(this);
+            m_listener = source.m_listener != nullptr ? source.m_listener : new NodeInstanceDeleteListener(this);
         }
         return *this;
     }
