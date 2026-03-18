@@ -29,7 +29,7 @@ namespace FIFE
          * In case there there is no provider master, you can use NULL
          */
         explicit TimeProvider(TimeProvider* master);
-        ~TimeProvider();
+        ~TimeProvider() = default;
 
         /** With multiplier, you can adjust the time speed. 0.5 means time runs half as slow,
          * while 2.0 means it runs twice as fast

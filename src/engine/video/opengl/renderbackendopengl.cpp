@@ -193,7 +193,7 @@ namespace FIFE
         int32_t windowY      = mode.getWindowPositionY();
 
         // Determine X position
-        int xPos;
+        int xPos{};
         if (windowX >= 0) {
             xPos = windowX;
         } else if (mode.isFullScreen()) {
@@ -203,7 +203,7 @@ namespace FIFE
         }
 
         // Determine Y position
-        int yPos;
+        int yPos{};
         if (windowY >= 0) {
             yPos = windowY;
         } else if (mode.isFullScreen()) {

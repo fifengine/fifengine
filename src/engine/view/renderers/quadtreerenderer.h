@@ -29,7 +29,7 @@ namespace FIFE
         Layer* m_layer;
         Camera* m_camera;
         RenderVisitor(RenderBackend* rb, Layer* layer, Camera* camera);
-        ~RenderVisitor();
+        ~RenderVisitor() = default;
         template <typename T>
         bool visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
     };

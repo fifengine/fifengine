@@ -28,7 +28,7 @@ namespace FIFE
 
         /** Destructor
          */
-        ~LZSSDecoder();
+        ~LZSSDecoder() = default;
 
         /** Decodes from a file into a pointer.
          * @param input The VFS file to read from

@@ -39,8 +39,6 @@ namespace FIFE
         m_layer = layer;
     }
 
-    Location::~Location() = default;
-
     void Location::reset()
     {
         m_exact_layer_coords.x = 0;

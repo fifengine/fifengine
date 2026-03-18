@@ -18,7 +18,6 @@ namespace FIFE
 {
 
     LZSSDecoder::LZSSDecoder() : m_outlen(0), m_outindex(0) { }
-    LZSSDecoder::~LZSSDecoder() = default;
 
     void LZSSDecoder::decode(RawData* input, uint8_t* output, const uint32_t outputsize)
     {

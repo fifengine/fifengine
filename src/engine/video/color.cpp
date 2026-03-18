@@ -19,8 +19,6 @@ namespace FIFE
 {
     Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha) : m_r(r), m_g(g), m_b(b), m_a(alpha) { }
 
-    Color::~Color() = default;
-
     void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
     {
         m_r = r;

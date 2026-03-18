@@ -229,7 +229,7 @@ namespace FIFE
 
         /** Destructor
          */
-        ~Logger();
+        ~Logger() = default;
 
         /** logs given message with given log level
          */

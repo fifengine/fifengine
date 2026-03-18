@@ -38,7 +38,7 @@ namespace FIFE
 
         /** Destructor
          */
-        ~Location();
+        ~Location() = default;
 
         /** Resets location (so that layer and coordinate information becomes invalid)
          */

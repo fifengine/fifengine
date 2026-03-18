@@ -95,7 +95,7 @@ namespace FIFE
 
         auto locit = m_locations.begin();
         for (; locit != m_locations.end(); locit++) {
-            const Location loc = *locit;
+            const Location& loc = *locit;
             if (layer != loc.getLayer()) {
                 continue;
             }

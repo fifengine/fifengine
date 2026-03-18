@@ -20,8 +20,6 @@ namespace FIFE
         initializeKeyMap();
     }
 
-    CEGuiInputProcessor::~CEGuiInputProcessor() = default;
-
     bool CEGuiInputProcessor::onSdlEvent(SDL_Event& event)
     {
         bool consumed = false;

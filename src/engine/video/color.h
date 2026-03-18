@@ -34,7 +34,7 @@ namespace FIFE
 
         /** Destructor
          */
-        ~Color();
+        ~Color() = default;
 
         /** Compares equality of two colors
          */

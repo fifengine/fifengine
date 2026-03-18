@@ -27,7 +27,7 @@ namespace FIFE
 
         /** Destructor.
          */
-        ~CEGuiInputProcessor();
+        ~CEGuiInputProcessor() = default;
 
         /** Injects input to the CEGUI system.
          *

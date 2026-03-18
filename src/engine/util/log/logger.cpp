@@ -66,8 +66,6 @@ namespace FIFE
 
     Logger::Logger(logmodule_t module) : m_module(module) { }
 
-    Logger::~Logger() = default;
-
     void Logger::log(LogManager::LogLevel level, const std::string& msg)
     {
         LogManager::instance()->log(level, m_module, msg);

@@ -105,7 +105,6 @@ namespace FIFE
 
     void ObjectVisual::addStaticColorOverlay(uint32_t angle, const OverlayColors& colors)
     {
-        OverlayColors t    = colors;
         m_map[angle % 360] = angle % 360;
         std::pair<AngleColorOverlayMap::iterator, bool> inserter =
             m_colorOverlayMap.insert(std::make_pair(angle % 360, colors));

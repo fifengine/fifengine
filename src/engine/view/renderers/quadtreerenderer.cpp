@@ -57,8 +57,6 @@ namespace FIFE
         m_camera        = camera;
     }
 
-    RenderVisitor::~RenderVisitor() = default;
-
     template <typename T>
     bool RenderVisitor::visit(QuadNode<T, InstanceTree::MIN_TREE_SIZE>* node, int32_t d)
     {

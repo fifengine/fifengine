@@ -22,8 +22,6 @@ namespace FIFE
             (master != nullptr) ? master->getGameTime() : TimeManager::instance()->getTime();
     }
 
-    TimeProvider::~TimeProvider() = default;
-
     void TimeProvider::setMultiplier(float multiplier)
     {
         if (multiplier < 0.0) {
