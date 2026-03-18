@@ -346,11 +346,11 @@ namespace FIFE
 
     class CacheTreeCollector
     {
-        std::vector<int32_t>& m_indices;
+        std::vector<int32_t>* m_indices;
         Rect m_viewport;
 
     public:
-        CacheTreeCollector(std::vector<int32_t>& indices, const Rect& viewport) :
+        CacheTreeCollector(std::vector<int32_t>* indices, const Rect& viewport) :
             m_indices(indices), m_viewport(viewport)
         {
         }
@@ -362,14 +362,14 @@ namespace FIFE
         if (!m_viewport.intersects(Rect(node->x(), node->y(), node->size(), node->size()))) {
             return false;
         }
-        m_indices.insert(m_indices.end(), node->data().begin(), node->data().end());
+        m_indices->insert(m_indices->end(), node->data().begin(), node->data().end());
         return true;
     }
 
     void LayerCache::collect(const Rect& viewport, std::vector<int32_t>& index_list)
     {
         CacheTree::Node* node = m_tree->find_container(viewport);
-        CacheTreeCollector collector(index_list, viewport);
+        CacheTreeCollector collector(&index_list, viewport);
         node->apply_visitor(collector);
         node = node->parent();
         while (node != nullptr) {

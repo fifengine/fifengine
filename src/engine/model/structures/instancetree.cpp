@@ -62,9 +62,9 @@ namespace FIFE
     class InstanceListCollector
     {
     public:
-        InstanceTree::InstanceList& instanceList;
+        InstanceTree::InstanceList* instanceList;
         Rect searchRect;
-        InstanceListCollector(InstanceTree::InstanceList& a_instanceList, const Rect& rect) :
+        InstanceListCollector(InstanceTree::InstanceList* a_instanceList, const Rect& rect) :
             instanceList(a_instanceList), searchRect(rect)
         {
         }
@@ -77,7 +77,7 @@ namespace FIFE
         for (InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
             ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
             if (searchRect.contains(Point(coords.x, coords.y))) {
-                instanceList.push_back(*it);
+                instanceList->push_back(*it);
             }
         }
         return true;
@@ -89,7 +89,7 @@ namespace FIFE
         list.clear();
         InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
         Rect rect(point.x, point.y, w, h);
-        InstanceListCollector collector(list, rect);
+        InstanceListCollector collector(&list, rect);
 
         node->apply_visitor(collector);
 
