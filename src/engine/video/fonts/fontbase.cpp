@@ -137,6 +137,7 @@ namespace FIFE
     int32_t FontBase::getStringIndexAt(const std::string& text, int32_t x) const
     {
         assert(utf8::is_valid(text.begin(), text.end()));
+
         std::string::const_iterator cur;
         if (text.empty()) {
             return 0;
@@ -172,7 +173,8 @@ namespace FIFE
         Image* image = m_pool.getRenderedText(this, text);
         if (image == nullptr) {
             SDL_Surface* textSurface = renderString(text);
-            image                    = RenderBackend::instance()->createImage(textSurface);
+
+            image = RenderBackend::instance()->createImage(textSurface);
             m_pool.addRenderedText(this, text, image);
         }
         return image;
@@ -180,54 +182,81 @@ namespace FIFE
 
     Image* FontBase::getAsImageMultiline(const std::string& text)
     {
-        const uint8_t newline_utf8 = '\n';
-        uint32_t newline           = 0;
-        utf8::utf8to32(&newline_utf8, &newline_utf8 + 1, &newline);
-        // std::cout << "Text:" << text << '\n';
         Image* image = m_pool.getRenderedText(this, text);
-        if (image == nullptr) {
-            std::vector<SDL_Surface*> lines;
-            std::string::const_iterator it = text.begin();
-            // split text as needed
-            int32_t render_width  = 0;
-            int32_t render_height = 0;
-            do {
-                uint32_t codepoint = 0;
-                std::string line;
-                while (codepoint != newline && it != text.end()) {
-                    codepoint = utf8::next(it, text.end());
-                    if (codepoint != newline) {
-                        utf8::append(codepoint, back_inserter(line));
-                    }
-                }
-                // std::cout << "Line:" << line << '\n';
-                SDL_Surface* text_surface = renderString(line);
-                render_width              = std::max(render_width, text_surface->w);
-                lines.push_back(text_surface);
-            } while (it != text.end());
-
-            render_height = (getRowSpacing() + getHeight()) * lines.size();
-            SDL_Surface* final_surface =
-                SDL_CreateRGBSurface(0, render_width, render_height, 32, RMASK, GMASK, BMASK, AMASK);
-            if (final_surface == nullptr) {
-                throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
-            }
-            SDL_FillRect(final_surface, nullptr, 0x00000000);
-            int32_t ypos = 0;
-            for (auto& line : lines) {
-                SDL_Rect dst_rect = {0, 0, 0, 0};
-                dst_rect.y        = ypos;
-
-                // Disable alpha blending
-                // SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-                SDL_SetSurfaceBlendMode(line, SDL_BLENDMODE_NONE);
-                SDL_BlitSurface(line, nullptr, final_surface, &dst_rect);
-                ypos += getRowSpacing() + getHeight();
-                SDL_FreeSurface(line);
-            }
-            image = RenderBackend::instance()->createImage(final_surface);
-            m_pool.addRenderedText(this, text, image);
+        if (image != nullptr) {
+            return image;
         }
+
+        constexpr uint32_t newline_codepoint = '\n';
+
+        std::vector<SDL_Surface*> lines;
+        lines.reserve(16); // TODO: 16 is a heuristic value
+
+        int32_t render_width = 0;
+
+        using Utf8Iter = utf8::iterator<std::string::const_iterator>;
+        Utf8Iter it(text.begin(), text.begin(), text.end());
+        const Utf8Iter end(text.end(), text.begin(), text.end());
+
+        while (it != end) {
+            std::string line;
+            line.reserve(64); // TODO: 64 is a heuristic value
+
+            // Build one line
+            while (it != end && *it != newline_codepoint) {
+                utf8::append(*it, std::back_inserter(line));
+                ++it;
+            }
+
+            // std::cout << "Line:" << line << '\n';
+
+            // Skip newline if present
+            if (it != end && *it == newline_codepoint) {
+                ++it;
+            }
+
+            SDL_Surface* text_surface = renderString(line);
+
+            // Safety: skip empty lines
+            if (!text_surface) {
+                continue;
+            }
+
+            render_width = std::max(render_width, text_surface->w);
+            lines.emplace_back(text_surface);
+        }
+
+        const int32_t row_height    = getRowSpacing() + getHeight();
+        const int32_t render_height = row_height * static_cast<int32_t>(lines.size());
+
+        SDL_Surface* final_surface =
+            SDL_CreateRGBSurface(0, render_width, render_height, 32, RMASK, GMASK, BMASK, AMASK);
+
+        if (!final_surface) {
+            for (auto* surf : lines) {
+                SDL_FreeSurface(surf);
+            }
+            throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
+        }
+
+        SDL_FillRect(final_surface, nullptr, 0x00000000);
+
+        int32_t ypos = 0;
+        for (auto* line_surf : lines) {
+            SDL_Rect dst_rect{0, ypos, line_surf->w, line_surf->h};
+
+            // Disable alpha blending
+            // SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
+            SDL_SetSurfaceBlendMode(line_surf, SDL_BLENDMODE_NONE);
+            SDL_BlitSurface(line_surf, nullptr, final_surface, &dst_rect);
+
+            ypos += row_height;
+            SDL_FreeSurface(line_surf);
+        }
+
+        image = RenderBackend::instance()->createImage(final_surface);
+        m_pool.addRenderedText(this, text, image);
+
         return image;
     }
 
