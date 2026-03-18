@@ -28,7 +28,8 @@ namespace FIFE
     {
         size_t totalSize = 0;
 
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         for (; it != itend; ++it) {
             totalSize += it->second->getSize();
@@ -39,7 +40,8 @@ namespace FIFE
 
     size_t SoundClipManager::getTotalResourcesCreated() const
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it      = m_sclipHandleMap.begin();
+        auto itend   = m_sclipHandleMap.end();
         size_t count = 0;
 
         for (; it != itend; ++it) {
@@ -53,7 +55,8 @@ namespace FIFE
 
     size_t SoundClipManager::getTotalResourcesLoaded() const
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it      = m_sclipHandleMap.begin();
+        auto itend   = m_sclipHandleMap.end();
         size_t count = 0;
 
         for (; it != itend; ++it) {
@@ -193,7 +196,8 @@ namespace FIFE
 
     void SoundClipManager::reloadAll()
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         for (; it != itend; ++it) {
             if (it->second->getState() == IResource::RES_LOADED) {
@@ -205,7 +209,8 @@ namespace FIFE
 
     void SoundClipManager::loadUnreferenced()
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -248,7 +253,8 @@ namespace FIFE
 
     void SoundClipManager::freeAll()
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
 
@@ -264,7 +270,8 @@ namespace FIFE
 
     void SoundClipManager::freeUnreferenced()
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -362,7 +369,8 @@ namespace FIFE
 
     void SoundClipManager::removeUnreferenced()
     {
-        auto it = m_sclipHandleMap.begin(), itend = m_sclipHandleMap.end();
+        auto it    = m_sclipHandleMap.begin();
+        auto itend = m_sclipHandleMap.end();
 
         int32_t count = 0;
         for (; it != itend; ++it) {

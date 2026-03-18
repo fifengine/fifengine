@@ -785,7 +785,10 @@ namespace FIFE
             SDL_CreateRGBSurface(0, vc.image->getWidth(), vc.image->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
 
         // TODO: optimize...
-        uint8_t r, g, b, a = 0;
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 0;
 
         // vertical sweep
         for (int32_t x = 0; x < outline_surface->w; x++) {
@@ -1006,7 +1009,10 @@ namespace FIFE
         SDL_Surface* overlay_surface =
             SDL_CreateRGBSurface(0, vc.image->getWidth(), vc.image->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
 
-        uint8_t r = 0, g = 0, b = 0, a = 0;
+        uint8_t r        = 0;
+        uint8_t g        = 0;
+        uint8_t b        = 0;
+        uint8_t a        = 0;
         auto alphaFactor = static_cast<float>(info.a / 255.0);
         for (int32_t x = 0; x < overlay_surface->w; x++) {
             for (int32_t y = 0; y < overlay_surface->h; y++) {
@@ -1084,7 +1090,10 @@ namespace FIFE
             SDL_Surface* overlay_surface = SDL_CreateRGBSurface(
                 0, colorOverlayImage->getWidth(), colorOverlayImage->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
 
-            uint8_t r = 0, g = 0, b = 0, a = 0;
+            uint8_t r = 0;
+            uint8_t g = 0;
+            uint8_t b = 0;
+            uint8_t a = 0;
             for (int32_t x = 0; x < overlay_surface->w; x++) {
                 for (int32_t y = 0; y < overlay_surface->h; y++) {
                     colorOverlayImage->getPixelRGBA(x, y, &r, &g, &b, &a);

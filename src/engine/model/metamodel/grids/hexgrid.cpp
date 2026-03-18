@@ -186,7 +186,8 @@ namespace FIFE
 
         // distance of given point from our approximation
         // If y uneven dx=-dx and dy=-dy
-        double dx = 0.0, dy = 0.0;
+        double dx = 0.0;
+        double dy = 0.0;
         if ((y & 1) != 0) {
             dx = elc.x - lc.x;
             dy = elc.y - lc.y;
@@ -246,7 +247,8 @@ namespace FIFE
                 FL_DBG(_log, "on uneven row");
             }
         }
-        double tx = 0.0, ty = 0.0;
+        double tx = 0.0;
+        double ty = 0.0;
 
 #define ADD_PT(_x, _y) vtx.emplace_back(_x, _y);
         // FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
