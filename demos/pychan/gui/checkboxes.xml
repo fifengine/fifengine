@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<Window title="FlowContainer Example" min_size="400,400">
+  <FlowContainer border_size="2" hexpand="1" min_size="300,78">
+    <Label font="samanata_large" text="Do you see the animation"/>
+    <AnimationIcon animation="gui/animations/question_mark/animation.xml"/>
+  </FlowContainer>
+  <AnimationIcon animation="gui/animations/animation.xml"/>
+  <AnimationIcon animation="gui/animations/question_mark/animation.xml"/>
+  <!--<AnimationIcon size="200,200" tile="True" animation="gui/animations/cog/animation.xml" />-->
+  <FlowContainer layout="vertical" vexpand="1" hexpand="0" border_size="2">
+    <Label text="Text 1" font="samanata_large"/>
+    <Label text="Text 2"/>
+    <Label text="Text 3"/>
+    <Label text="Text 4" font="samanata_small"/>
+    <Label text="Text 5"/>
+    <Label text="Text 6"/>
+    <Label text="Text 7"/>
+    <Label text="Text 8"/>
+    <Label text="Text 9"/>
+    <Label text="Text 10"/>
+    <Icon image="gui/backgrounds/stripe.png"/>
+    <Label text="Text 11"/>
+    <Label text="Text 12"/>
+    <Label text="Text 13" font="samanata_large"/>
+    <Label text="Text 14"/>
+    <Label text="Text 15"/>
+    <Label text="Text 16"/>
+    <Label text="Text 17"/>
+    <Label text="Text 18"/>
+    <Label text="Text 19"/>
+    <Label text="Text 20"/>
+  </FlowContainer>
+  <!--<Label wrap_text="1" text="Some CheckBoxes:[br]Test1 test2 [br] Test3 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890"/>
+  <Label wrap_text="1" text="Some CheckBoxes: Test1 test2 Test3 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890"/>
+	<CheckBox text="Inclusive choice 1" marker_style="0"/>
+	<CheckBox text="Inclusive choice 2" marker_style="1"/>
+  <CheckBox text="Inclusive choice 3" marker_style="2"/>
+  <CheckBox text="Inclusive choice 4" marker_style="3"/>
+  <CheckBox text="Inclusive choice 5" marker_style="4"/>
+  <ToggleButton text="ToggleButton"/>
+  <Container size="400,200">
+    <Label wrap_text="1" text="Absolute values work." font="samanata_large" position="20,20" foreground_color="128,0,0" />
+    <Label wrap_text="1" text="_____" font="samanata_large" position="184,20" foreground_color="128,0,0" />
+    <Label wrap_text="1" text=" Baseline ok?" font="samanata_large" position="236,20" foreground_color="128,0,0" />
+    <Label wrap_text="1" text="It's tiresome, though." position="20,50" background_color="255,0,0" />
+    <Label wrap_text="1" text="1It's tiresome, though. 2It's tiresome, though. 3It's tiresome, though. 4It's tiresome, though. 5It's tiresome, though." position="20,50" background_color="255,0,0" />
+  </Container>-->
+  <Button name="closeButton" text="Close"/>
+</Window>

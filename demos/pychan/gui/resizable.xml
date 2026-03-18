@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ResizableWindow title="Resizable Window Example" min_size="10, 10" max_size="400, 400" size="200, 100">
+  <Label text="ResizableContainer"/>
+  <CBox border_size="0">
+    <!--<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>
+		<Label text="*"/>-->
+    <Label text="12"/>
+    <Label text="1"/>
+    <Label text="2"/>
+    <Label text="3"/>
+    <Label text="4"/>
+    <Label text="5"/>
+    <Label text="6"/>
+    <Label text="7"/>
+    <Label text="8"/>
+    <Label text="9"/>
+    <Label text="10"/>
+    <Label text="11"/>
+  </CBox>
+  <CBox border_size="0">
+    <Label background_color="255,10,10" min_size="12, 12" text=""/>
+    <Label background_color="255,20,20" min_size="12, 12" text=""/>
+    <Label background_color="255,30,30" min_size="12, 12" text=""/>
+    <Label background_color="255,40,40" min_size="12, 12" text=""/>
+    <Label background_color="255,50,50" min_size="12, 12" text=""/>
+    <Label background_color="255,60,60" min_size="12, 12" text=""/>
+    <Label background_color="255,70,70" min_size="12, 12" text=""/>
+    <Label background_color="255,80,80" min_size="12, 12" text=""/>
+    <Label background_color="255,90,90" min_size="12, 12" text=""/>
+    <Label background_color="255,100,100" min_size="12, 12" text=""/>
+    <Label background_color="255,110,110" min_size="12, 12" text=""/>
+    <Label background_color="255,120,120" min_size="12, 12" text=""/>
+  </CBox>
+  <Button name="closeButton" text="Close"/>
+</ResizableWindow>

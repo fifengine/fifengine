@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<fonts>
+  <font name="FreeMono" type="truetype" source="fonts/freefont/FreeMono.ttf" size="12" antialias="1" color="255,255,255"/>
+  <font name="FreeSans" type="truetype" source="fonts/freefont/FreeSans.ttf" size="12" antialias="1" color="255,255,255"/>
+</fonts>

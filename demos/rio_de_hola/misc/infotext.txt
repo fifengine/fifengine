@@ -1,0 +1,27 @@
+Welcome to the FIFE Rio de hola demo game
+
+Keybindings:
+--------------
+- C = Toggles coordinates on / off
+- F = Enable/Disable fog of war
+- O = Rotate main camera
+- P = Make screenshot
+- R = Reload map (useful for map editing)
+- S = Second camera on / off
+- T = Toggles grid on / off
+
+- F10 = Toggle console on / off
+- ESC = Quit techdemo
+- LMB = Move agent around
+
+- 1,2 = Change global light intensity
+- 3,4 = Change light source intensity
+
+- CTRL + MouseWheelUp = Zoom in
+- CTRL + MouseWheelDown = Zoom out
+- CTRL + 0, CTRL + Num0 = Reset zoom
+
+Have fun,
+The FIFE team
+
+http://www.fifengine.net

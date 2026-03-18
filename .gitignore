@@ -4,9 +4,6 @@ out/
 vcpkg_installed/
 dependencies/
 
-# Demos
-demos/
-
 # Generated Doxygen files
 docs/doxygen/html
 

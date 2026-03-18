@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<Window title="Proof-of-concept: Gui animations" size="300,450" min_size="300,450" max_size="300,450">
+  <VBox>
+    <HBox>
+      <Button name="example_move" text="Move it!"/>
+      <Button name="example_color" text="Tint it!"/>
+      <Button name="example_resize" text="Crush it!"/>
+      <Button name="example_all" text="All together now..."/>
+    </HBox>
+    <HBox>
+      <Label text="Timer delay"/>
+      <Slider name="delay" scale_start="0" scale_end="50" size="100,10" min_size="100,10" max_size="100,10"/>
+      <Label name="delay_label"/>
+    </HBox>
+  </VBox>
+  <Container name="progress_wrapper" size="200,50" min_size="200,50" max_size="200,50">
+    <PercentageBar name="progressbar" orientation="0" size="200,50" max_size="200,50" min_size="200,50" foreground_color="55,0,0"/>
+    <!--		
+		<PercentageBar name="progressbar2" orientation="0" size="200,50" max_size="200,50" min_size="200,50" image="gui/icons/pychan_logo.png"/>
+-->
+  </Container>
+  <Container name="move_wrapper" size="200,105" min_size="200,105" max_size="200,105">
+    <Icon name="move" image="gui/icons/pychan_logo.png"/>
+  </Container>
+  <Container name="color_wrapper" padding="0" margins="0,0" spacing="0,0" size="186,94" min_size="186,94" max_size="186,94">
+    <HBox padding="2" margins="0,0" spacing="2,2">
+      <VBox name="color" border_size="0" size="90,90" min_size="90,90" max_size="90,90" base_color="255,255,255,100">
+			</VBox>
+      <HBox padding="0" margins="0,0" spacing="0,0" border_size="0" size="90,90" min_size="90,90" max_size="90,90">
+        <VBox padding="0" margins="0,0" spacing="0,0" border_size="0" size="30,90" max_size="30,90" min_size="30,90">
+          <Label text=" " name="color_1_1" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_1_2" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_1_3" background_color="130,130,0" fixed_size="30,30"/>
+        </VBox>
+        <VBox padding="0" margins="0,0" spacing="0,0" border_size="0" fixed_size="30,90">
+          <Label text=" " name="color_2_1" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_2_2" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_2_3" background_color="130,130,0" fixed_size="30,30"/>
+        </VBox>
+        <VBox padding="0" margins="0,0" spacing="0,0" border_size="0" fixed_size="30,90">
+          <Label text=" " name="color_3_1" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_3_2" background_color="130,130,0" fixed_size="30,30"/>
+          <Label text=" " name="color_3_3" background_color="130,130,0" fixed_size="30,30"/>
+        </VBox>
+      </HBox>
+    </HBox>
+  </Container>
+  <Container name="resize_wrapper" margins="0,0" spacing="0,0" size="200,105" min_size="200,105" max_size="200,105">
+    <VBox name="resize" size="100,100" min_size="100,100" max_size="100,100" base_color="255,255,255,100">
+		</VBox>
+  </Container>
+  <Button name="closeButton" text="Close"/>
+</Window>
