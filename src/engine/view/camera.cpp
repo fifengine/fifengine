@@ -182,9 +182,7 @@ namespace FIFE
         if (!Mathd::Equal(m_zoom, zoom)) {
             m_transform |= ZoomTransform;
             m_zoom = zoom;
-            if (m_zoom < 0.001) {
-                m_zoom = 0.001;
-            }
+            m_zoom = std::max(m_zoom, 0.001);
             updateMatrices();
         }
     }
