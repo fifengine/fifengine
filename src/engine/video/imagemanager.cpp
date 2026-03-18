@@ -173,21 +173,13 @@ namespace FIFE
     bool ImageManager::exists(const std::string& name)
     {
         auto it = m_imgNameMap.find(name);
-        if (it != m_imgNameMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_imgNameMap.end();
     }
 
     bool ImageManager::exists(ResourceHandle handle)
     {
         auto it = m_imgHandleMap.find(handle);
-        if (it != m_imgHandleMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_imgHandleMap.end();
     }
 
     void ImageManager::reload(const std::string& name)

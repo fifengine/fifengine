@@ -220,7 +220,7 @@ namespace FIFE
     {
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
-            for (auto cell : cells) {
+            for (auto* cell : cells) {
                 it->second->remove(cell);
             }
         }
@@ -259,11 +259,7 @@ namespace FIFE
     bool TriggerController::exists(const std::string& name)
     {
         auto it = m_triggerNameMap.find(name);
-        if (it != m_triggerNameMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_triggerNameMap.end();
     }
 
 } // namespace FIFE

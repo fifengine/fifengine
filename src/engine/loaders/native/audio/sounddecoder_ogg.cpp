@@ -129,10 +129,7 @@ namespace FIFE
 
     bool SoundDecoderOgg::setCursor(uint64_t pos)
     {
-        if (ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0) {
-            return true;
-        }
-        return false;
+        return ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0;
     }
 
     void SoundDecoderOgg::releaseBuffer()

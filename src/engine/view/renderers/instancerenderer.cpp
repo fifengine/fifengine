@@ -100,12 +100,8 @@ namespace FIFE
             m_need_sorting       = false;
             m_need_bind_coloring = false;
         } else {
-            m_need_sorting = true;
-            if (m_renderbackend->getName() == "SDL") {
-                m_need_bind_coloring = true;
-            } else {
-                m_need_bind_coloring = false;
-            }
+            m_need_sorting       = true;
+            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
         }
         // init timer
         m_timer.setInterval(m_interval);
@@ -124,12 +120,8 @@ namespace FIFE
             m_need_sorting       = false;
             m_need_bind_coloring = false;
         } else {
-            m_need_sorting = true;
-            if (m_renderbackend->getName() == "SDL") {
-                m_need_bind_coloring = true;
-            } else {
-                m_need_bind_coloring = false;
-            }
+            m_need_sorting       = true;
+            m_need_bind_coloring = m_renderbackend->getName() == "SDL";
         }
         // init timer
         m_timer.setInterval(m_interval);
@@ -719,19 +711,9 @@ namespace FIFE
     inline bool aboveThreshold(int32_t threshold, int32_t alpha, int32_t prev_alpha)
     {
         if (threshold > 1) {
-            // new behavior
-            if (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha)) {
-                return true;
-            } else {
-                return false;
-            }
+            return (((alpha - threshold) >= 0 || (prev_alpha - threshold) >= 0) && (alpha != prev_alpha));
         } else {
-            // old behavior
-            if ((alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha)) {
-                return true;
-            } else {
-                return false;
-            }
+            return (alpha == 0 || prev_alpha == 0) && (alpha != prev_alpha);
         }
     }
 

@@ -187,17 +187,11 @@ namespace FIFE
             return false;
         }
         if (!isController()) {
-            if (SDL_JoystickGetButton(m_joystickHandle, button) == 1) {
-                return true;
-            }
-            return false;
+            return SDL_JoystickGetButton(m_joystickHandle, button) == 1;
         }
 
         auto sdlButton = static_cast<SDL_GameControllerButton>(button);
-        if (SDL_GameControllerGetButton(m_controllerHandle, sdlButton) == 1) {
-            return true;
-        }
-        return false;
+        return SDL_GameControllerGetButton(m_controllerHandle, sdlButton) == 1;
     }
 
     float Joystick::convertRange(int16_t value) const

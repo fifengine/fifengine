@@ -184,11 +184,8 @@ namespace FIFE
         m_zoomed        = !Mathd::Equal(m_zoom, 1.0);
         m_straightZoom  = Mathd::Equal(fmod(m_zoom, 1.0), 0.0);
 
-        if (RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled()) {
-            m_needSorting = false;
-        } else {
-            m_needSorting = true;
-        }
+        m_needSorting =
+            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled());
     }
 
     LayerCache::~LayerCache()
@@ -240,7 +237,7 @@ namespace FIFE
         delete m_tree;
         m_tree                                  = new CacheTree;
         const std::vector<Instance*>& instances = m_layer->getInstances();
-        for (auto instance : instances) {
+        for (auto* instance : instances) {
             addInstance(instance);
         }
     }
@@ -474,7 +471,7 @@ namespace FIFE
     void LayerCache::fullUpdate(Camera::Transform transform)
     {
         bool rotationChange = (transform & Camera::RotationTransform) == Camera::RotationTransform;
-        for (auto entry : m_entries) {
+        for (auto* entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (rotationChange || entry->forceUpdate) {
                     bool force = entry->forceUpdate;
@@ -497,7 +494,7 @@ namespace FIFE
     void LayerCache::fullCoordinateUpdate(Camera::Transform transform)
     {
         bool zoomChange = (transform & Camera::ZoomTransform) == Camera::ZoomTransform;
-        for (auto entry : m_entries) {
+        for (auto* entry : m_entries) {
             if (entry->instanceIndex != -1) {
                 if (entry->forceUpdate) {
                     updateVisual(entry);

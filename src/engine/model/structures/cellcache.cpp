@@ -259,7 +259,7 @@ namespace FIFE
 
     Zone::~Zone()
     {
-        for (auto m_cell : m_cells) {
+        for (auto* m_cell : m_cells) {
             m_cell->resetZone();
         }
     }
@@ -285,7 +285,7 @@ namespace FIFE
     {
         const std::set<Cell*>& cells = zone->getCells();
         m_cells.insert(cells.begin(), cells.end());
-        for (auto cell : cells) {
+        for (auto* cell : cells) {
             cell->setZone(this);
         }
         zone->resetCells();
@@ -680,7 +680,7 @@ namespace FIFE
                     zone->addCell(c);
 
                     const std::vector<Cell*>& neighbors = c->getNeighbors();
-                    for (auto nc : neighbors) {
+                    for (auto* nc : neighbors) {
                         if (!nc->isInserted() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                             nc->getCellType() != CTYPE_CELL_BLOCKER) {
                             nc->setInserted(true);
@@ -856,10 +856,7 @@ namespace FIFE
         int32_t x = location.getLayerCoordinates().x - m_size.x;
         int32_t y = location.getLayerCoordinates().y - m_size.y;
 
-        if (x < 0 || static_cast<uint32_t>(x) >= m_width || y < 0 || static_cast<uint32_t>(y) >= m_height) {
-            return false;
-        }
-        return true;
+        return !(x < 0 || static_cast<uint32_t>(x) >= m_width || y < 0 || static_cast<uint32_t>(y) >= m_height);
     }
 
     int32_t CellCache::convertCoordToInt(const ModelCoordinate& coord) const
@@ -1016,7 +1013,7 @@ namespace FIFE
         std::vector<Cell*> tmpCells = getCellsInCircle(center, radius);
         int32_t s                   = (sangle + 360) % 360;
         int32_t e                   = (eangle + 360) % 360;
-        bool greater                = (s > e) ? true : false;
+        bool greater                = s > e;
         for (auto& tmpCell : tmpCells) {
             int32_t angle = getAngleBetween(exactCenter, intPt2doublePt(tmpCell->getLayerCoordinates()));
             if (greater) {
@@ -1063,10 +1060,7 @@ namespace FIFE
     bool CellCache::existsCost(const std::string& costId)
     {
         auto it = m_costsTable.find(costId);
-        if (it != m_costsTable.end()) {
-            return true;
-        }
-        return false;
+        return it != m_costsTable.end();
     }
 
     std::list<std::string> CellCache::getCosts()
@@ -1243,10 +1237,7 @@ namespace FIFE
     bool CellCache::isDefaultCost(Cell* cell)
     {
         auto it = m_costMultipliers.find(cell);
-        if (it != m_costMultipliers.end()) {
-            return false;
-        }
-        return true;
+        return it == m_costMultipliers.end();
     }
 
     void CellCache::setCostMultiplier(Cell* cell, double multi)
@@ -1277,10 +1268,7 @@ namespace FIFE
     bool CellCache::isDefaultSpeed(Cell* cell)
     {
         auto it = m_speedMultipliers.find(cell);
-        if (it != m_speedMultipliers.end()) {
-            return false;
-        }
-        return true;
+        return it == m_speedMultipliers.end();
     }
 
     void CellCache::setSpeedMultiplier(Cell* cell, double multi)
@@ -1427,7 +1415,7 @@ namespace FIFE
                 continue;
             }
             const std::vector<Cell*>& neigh = c->getNeighbors();
-            for (auto nc : neigh) {
+            for (auto* nc : neigh) {
                 if (nc->getZone() == currentZone && nc->isInserted() && nc->getCellType() != CTYPE_STATIC_BLOCKER &&
                     nc->getCellType() != CTYPE_CELL_BLOCKER) {
                     cellstack.push(nc);
@@ -1549,10 +1537,7 @@ namespace FIFE
     bool CellCache::existsArea(const std::string& id)
     {
         auto it = m_cellAreas.find(id);
-        if (it == m_cellAreas.end()) {
-            return false;
-        }
-        return true;
+        return it != m_cellAreas.end();
     }
 
     std::vector<std::string> CellCache::getAreas()

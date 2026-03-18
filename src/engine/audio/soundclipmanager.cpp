@@ -146,21 +146,13 @@ namespace FIFE
     bool SoundClipManager::exists(const std::string& name)
     {
         auto it = m_sclipNameMap.find(name);
-        if (it != m_sclipNameMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_sclipNameMap.end();
     }
 
     bool SoundClipManager::exists(ResourceHandle handle)
     {
         auto it = m_sclipHandleMap.find(handle);
-        if (it != m_sclipHandleMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_sclipHandleMap.end();
     }
 
     void SoundClipManager::reload(const std::string& name)

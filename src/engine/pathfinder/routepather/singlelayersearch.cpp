@@ -77,7 +77,7 @@ namespace FIFE
         uint8_t blockerThreshold            = m_ignoreDynamicBlockers ? 2 : 1;
         bool limitedArea                    = m_route->isAreaLimited();
         const std::vector<Cell*>& adjacents = nextCell->getNeighbors();
-        for (auto adjacent : adjacents) {
+        for (auto* adjacent : adjacents) {
             if (adjacent == nullptr) {
                 continue;
             }

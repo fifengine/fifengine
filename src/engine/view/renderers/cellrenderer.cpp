@@ -271,9 +271,6 @@ namespace FIFE
     bool CellRenderer::isEnabledCost(const std::string& costId)
     {
         auto it = m_visualCosts.find(costId);
-        if (it != m_visualCosts.end()) {
-            return true;
-        }
-        return false;
+        return it != m_visualCosts.end();
     }
 } // namespace FIFE

@@ -48,7 +48,7 @@ namespace FIFE
         // It is very important to NOT use iterators (over a vector)
         // here, as an event might add enough events to resize the vector.
         // -> Ugly segfault
-        for (auto event : m_events_list) {
+        for (auto* event : m_events_list) {
             if (event != nullptr) {
                 event->managerUpdateEvent(m_current_time);
             }

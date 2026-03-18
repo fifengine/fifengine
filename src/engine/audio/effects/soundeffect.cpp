@@ -1374,7 +1374,7 @@ namespace FIFE
         setHfReference(prop.flHFReference);
         setLfReference(prop.flLFReference);
         setRoomRolloffFactor(prop.flRoomRolloffFactor);
-        setDecayHfLimit((prop.iDecayHFLimit != 0) ? true : false);
+        setDecayHfLimit(prop.iDecayHFLimit != 0);
     }
 
 } // namespace FIFE

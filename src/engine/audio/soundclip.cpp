@@ -69,7 +69,7 @@ namespace FIFE
             auto* ptr = new SoundBufferEntry();
 
             // iterate the bufs and fill them with data
-            for (auto it = std::begin(ptr->buffers); it != std::end(ptr->buffers); ++it) {
+            for (auto* it = std::begin(ptr->buffers); it != std::end(ptr->buffers); ++it) {
                 unsigned int& buffer = *it;
 
                 if (m_decoder->decode(BUFFER_LEN)) {

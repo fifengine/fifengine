@@ -148,21 +148,13 @@ namespace FIFE
     bool AnimationManager::exists(const std::string& name)
     {
         auto it = m_animNameMap.find(name);
-        if (it != m_animNameMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_animNameMap.end();
     }
 
     bool AnimationManager::exists(ResourceHandle handle)
     {
         auto it = m_animHandleMap.find(handle);
-        if (it != m_animHandleMap.end()) {
-            return true;
-        }
-
-        return false;
+        return it != m_animHandleMap.end();
     }
 
     void AnimationManager::reload(const std::string& name)

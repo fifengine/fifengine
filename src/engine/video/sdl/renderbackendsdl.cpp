@@ -274,10 +274,7 @@ namespace FIFE
     bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-        if (SDL_RenderDrawPoint(m_renderer, x, y) == 0) {
-            return true;
-        }
-        return false;
+        return SDL_RenderDrawPoint(m_renderer, x, y) == 0;
     }
 
     void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)

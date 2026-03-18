@@ -90,12 +90,9 @@ namespace FIFE
 
     bool RoutePather::sessionIdValid(const int32_t sessionId)
     {
-        if (std::any_of(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), [sessionId](int id) {
-                return id == sessionId;
-            })) {
-            return true;
-        }
-        return false;
+        return std::any_of(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), [sessionId](int id) {
+            return id == sessionId;
+        });
     }
 
     bool RoutePather::invalidateSessionId(const int32_t sessionId)
@@ -160,7 +157,7 @@ namespace FIFE
                 if ((endZone == nullptr) || startCell->isZoneProtected()) {
                     bool found                          = false;
                     const std::vector<Cell*>& neighbors = endCell->getNeighbors();
-                    for (auto neighbor : neighbors) {
+                    for (auto* neighbor : neighbors) {
                         const Zone* tmpZone = neighbor->getZone();
                         if (tmpZone != nullptr) {
                             endZone = tmpZone;
@@ -172,7 +169,7 @@ namespace FIFE
                     }
                     if (!found && startCell->isZoneProtected()) {
                         const std::vector<Cell*>& startNeighbors = startCell->getNeighbors();
-                        for (auto neighbor : startNeighbors) {
+                        for (auto* neighbor : startNeighbors) {
                             Zone* tmpZone = neighbor->getZone();
                             if (tmpZone != nullptr) {
                                 if (tmpZone == startZone) {

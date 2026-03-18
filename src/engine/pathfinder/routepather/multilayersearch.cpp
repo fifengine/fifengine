@@ -49,7 +49,7 @@ namespace FIFE
         if (m_endZone == nullptr) {
             Cell* endcell                       = m_endCache->getCell(m_to.getLayerCoordinates());
             const std::vector<Cell*>& neighbors = endcell->getNeighbors();
-            for (auto neighbor : neighbors) {
+            for (auto* neighbor : neighbors) {
                 Zone* tmpzone = neighbor->getZone();
                 if (tmpzone != nullptr) {
                     m_endZone = tmpzone;
@@ -179,7 +179,7 @@ namespace FIFE
         if (adjacents.empty()) {
             return;
         }
-        for (auto adjacent : adjacents) {
+        for (auto* adjacent : adjacents) {
             if (adjacent == nullptr) {
                 continue;
             }

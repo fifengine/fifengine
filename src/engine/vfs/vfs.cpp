@@ -262,10 +262,7 @@ namespace FIFE
                 const VFSSource* source = provider->getSource(path);
 
                 auto srcIt = std::ranges::find(m_sources, source);
-                if (srcIt == m_sources.end()) {
-                    return false;
-                }
-                return true;
+                return srcIt != m_sources.end();
             }
         }
         return false;

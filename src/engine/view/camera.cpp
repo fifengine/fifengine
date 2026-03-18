@@ -118,7 +118,7 @@ namespace FIFE
         if (m_map != nullptr) {
             m_map->removeChangeListener(m_map_observer);
             const std::list<Layer*>& layers = m_map->getLayers();
-            for (auto layer : layers) {
+            for (auto* layer : layers) {
                 removeLayer(layer);
             }
         }
@@ -746,11 +746,7 @@ found_non_transparent_pixel:;
 
     void Camera::resetUpdates()
     {
-        if (m_transform == NoneTransform) {
-            m_updated = false;
-        } else {
-            m_updated = true;
-        }
+        m_updated   = m_transform != NoneTransform;
         m_transform = NoneTransform;
     }
 

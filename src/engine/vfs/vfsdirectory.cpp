@@ -44,11 +44,7 @@ namespace FIFE
         fs::path path(filename);
         std::ifstream file(path.string().c_str());
 
-        if (file) {
-            return true;
-        }
-
-        return false;
+        return file.is_open();
     }
 
     RawData* VFSDirectory::open(const std::string& file) const

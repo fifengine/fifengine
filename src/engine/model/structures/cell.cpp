@@ -65,7 +65,7 @@ namespace FIFE
     void Cell::addInstances(const std::list<Instance*>& instances)
     {
         CellCache* cache = m_layer->getCellCache();
-        for (auto instance : instances) {
+        for (auto* instance : instances) {
             std::pair<std::set<Instance*>::iterator, bool> ret = m_instances.insert(instance);
             if (ret.second) {
                 if (instance->isSpecialCost()) {
@@ -157,7 +157,7 @@ namespace FIFE
         if (!m_instances.empty()) {
             int32_t pos    = -1;
             bool cellblock = (m_type == CTYPE_CELL_NO_BLOCKER || m_type == CTYPE_CELL_BLOCKER);
-            for (auto m_instance : m_instances) {
+            for (auto* m_instance : m_instances) {
                 if (cellblock) {
                     continue;
                 }

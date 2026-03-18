@@ -159,7 +159,7 @@ namespace FIFE
     void SoundManager::play()
     {
         m_state = SM_STATE_PLAY;
-        for (auto emitter : m_emitterVec) {
+        for (auto* emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -170,7 +170,7 @@ namespace FIFE
     void SoundManager::pause()
     {
         m_state = SM_STATE_PAUSE;
-        for (auto emitter : m_emitterVec) {
+        for (auto* emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -181,7 +181,7 @@ namespace FIFE
     void SoundManager::stop()
     {
         m_state = SM_STATE_STOP;
-        for (auto emitter : m_emitterVec) {
+        for (auto* emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -191,7 +191,7 @@ namespace FIFE
 
     void SoundManager::rewind()
     {
-        for (auto emitter : m_emitterVec) {
+        for (auto* emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }
@@ -340,7 +340,7 @@ namespace FIFE
         auto maxDistance                 = static_cast<double>(m_maxDistance);
 
         // first check emitters
-        for (auto emitter : m_emitterVec) {
+        for (auto* emitter : m_emitterVec) {
             if (emitter == nullptr) {
                 continue;
             }

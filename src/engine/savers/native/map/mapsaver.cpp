@@ -343,7 +343,7 @@ namespace FIFE
                 }
                 const std::vector<Cell*>& cells = trigger->getAssignedCells();
                 if (!cells.empty()) {
-                    for (auto cell : cells) {
+                    for (auto* cell : cells) {
                         XML::Element* cellElement = doc.NewElement("assign");
                         cellElement->SetAttribute("layer_id", cell->getLayer()->getId().c_str());
                         cellElement->SetAttribute("x", cell->getLayerCoordinates().x);
@@ -353,7 +353,7 @@ namespace FIFE
                 }
                 const std::vector<Instance*>& instances = trigger->getEnabledInstances();
                 if (!instances.empty()) {
-                    for (auto instance : instances) {
+                    for (auto* instance : instances) {
                         XML::Element* instanceElement = doc.NewElement("enabled");
                         instanceElement->SetAttribute(
                             "layer_id", instance->getLocationRef().getLayer()->getId().c_str());

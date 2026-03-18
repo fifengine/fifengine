@@ -380,7 +380,7 @@ namespace FIFE
         std::vector<Instance*> tmpInstances = getInstancesInCircle(center, radius);
         int32_t s                           = (sangle + 360) % 360;
         int32_t e                           = (eangle + 360) % 360;
-        bool greater                        = (s > e) ? true : false;
+        bool greater                        = s > e;
         for (auto& tmpInstance : tmpInstances) {
             int32_t angle =
                 getAngleBetween(exactCenter, intPt2doublePt(tmpInstance->getLocationRef().getLayerCoordinates()));
@@ -410,7 +410,7 @@ namespace FIFE
             min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
             max = min;
 
-            for (auto m_instance : m_instances) {
+            for (auto* m_instance : m_instances) {
                 ModelCoordinate coord = m_instance->getLocationRef().getLayerCoordinates(layer);
                 min.x                 = std::min(min.x, coord.x);
                 max.x                 = std::max(max.x, coord.x);
