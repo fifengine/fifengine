@@ -36,7 +36,8 @@ namespace FIFE
         m_frame_start(0),
         m_framelimit(60),
         m_guiClip(),
-        m_backgroundcolor{0, 0, 0, 0}
+        m_backgroundcolor{0, 0, 0, 0},
+        m_rgba_format{}
     {
 
         m_isbackgroundcolor = false;
