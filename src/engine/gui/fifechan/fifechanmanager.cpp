@@ -167,9 +167,9 @@ namespace FIFE
     void FifechanManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
         if (m_backend == "SDL") {
-            static_cast<SdlGuiGraphics*>(m_gui_graphics)->updateTarget();
+            dynamic_cast<SdlGuiGraphics*>(m_gui_graphics)->updateTarget();
         } else {
-            static_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
+            dynamic_cast<OpenGLGuiGraphics*>(m_gui_graphics)->updateTarget();
         }
         m_fcn_topcontainer->setDimension(fcn::Rectangle(x, y, width, height));
         invalidateFonts();

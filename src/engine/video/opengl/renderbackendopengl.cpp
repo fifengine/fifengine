@@ -2752,7 +2752,7 @@ namespace FIFE
         m_img_target->forceLoadInternal();
         m_target = m_img_target->getSurface();
 
-        auto* glimage = static_cast<GLImage*>(m_img_target.get());
+        auto* glimage = dynamic_cast<GLImage*>(m_img_target.get());
 
         GLuint targetid = glimage->getTexId();
         uint32_t w      = m_img_target->getWidth();
@@ -2797,7 +2797,7 @@ namespace FIFE
             addImageToArray(
                 targetid,
                 m_img_target->getArea(),
-                static_cast<GLImage*>(m_img_target.get())->getTexCoords(),
+                dynamic_cast<GLImage*>(m_img_target.get())->getTexCoords(),
                 255,
                 nullptr);
         }
@@ -2813,7 +2813,7 @@ namespace FIFE
         if (GLEW_EXT_framebuffer_object && m_useframebuffer) {
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         } else {
-            bindTexture(0, static_cast<GLImage*>(m_img_target.get())->getTexId());
+            bindTexture(0, dynamic_cast<GLImage*>(m_img_target.get())->getTexId());
             glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, m_img_target->getWidth(), m_img_target->getHeight(), 0);
         }
 

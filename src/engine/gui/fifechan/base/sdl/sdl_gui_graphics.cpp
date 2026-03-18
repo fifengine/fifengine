@@ -29,13 +29,13 @@ namespace FIFE
     {
         m_renderbackend = RenderBackend::instance();
         // New fifechan SDL backend expects an SDL_Renderer and dimensions
-        auto* rb_sdl = static_cast<RenderBackendSDL*>(m_renderbackend);
+        auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
         setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 
     void SdlGuiGraphics::updateTarget()
     {
-        auto* rb_sdl = static_cast<RenderBackendSDL*>(m_renderbackend);
+        auto* rb_sdl = dynamic_cast<RenderBackendSDL*>(m_renderbackend);
         setTarget(rb_sdl->getRenderer(), m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 

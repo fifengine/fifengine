@@ -31,7 +31,7 @@ namespace FIFE
     OpenGLGuiGraphics::OpenGLGuiGraphics()
     {
         mColor          = fcn::Color(255, 255, 255, 255);
-        m_renderbackend = static_cast<RenderBackendOpenGL*>(RenderBackend::instance());
+        m_renderbackend = dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance());
         setTargetPlane(m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 

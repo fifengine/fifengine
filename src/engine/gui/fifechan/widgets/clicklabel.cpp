@@ -22,7 +22,7 @@ namespace fcn
 {
     ClickLabel::ClickLabel() : mAlignment(Graphics::Alignment::Left), mOpaque(true)
     {
-        mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
         mTextWrapping = false;
@@ -37,7 +37,7 @@ namespace fcn
 
     ClickLabel::ClickLabel(const std::string& caption) : mAlignment(Graphics::Alignment::Left), mOpaque(true)
     {
-        mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         setCaption(caption);
         setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
@@ -57,7 +57,7 @@ namespace fcn
     void ClickLabel::setCaption(const std::string& caption)
     {
         mCaption = caption;
-        mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         wrapText();
     }
 
@@ -208,9 +208,8 @@ namespace fcn
 
     void ClickLabel::fontChanged()
     {
-        mGuiFont = static_cast<FIFE::GuiFont*>(getFont());
+        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         wrapText();
-        adjustSize();
     }
 
     void ClickLabel::mousePressed(MouseEvent& mouseEvent)

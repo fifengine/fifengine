@@ -747,7 +747,7 @@ namespace FIFE
 
     void RenderBackendSDL::attachRenderTarget(ImagePtr& img, bool discard)
     {
-        auto* image          = static_cast<SDLImage*>(img.get());
+        auto* image          = dynamic_cast<SDLImage*>(img.get());
         m_target             = img->getSurface();
         SDL_Texture* texture = image->getTexture();
         if (texture == nullptr) {

@@ -192,10 +192,10 @@ namespace FIFE
             validateShared();
         }
 
-        auto* img = static_cast<GLImage*>(overlay.get());
+        auto* img = dynamic_cast<GLImage*>(overlay.get());
         img->forceLoadInternal();
 
-        static_cast<RenderBackendOpenGL*>(rb)->addImageToArray(
+        dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArray(
             rect, m_texId, &m_tex_coords[0], img->getTexId(), img->getTexCoords(), alpha, rgb);
         // rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
     }
@@ -220,7 +220,7 @@ namespace FIFE
         } else if (m_shared) {
             validateShared();
         }
-        static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(m_texId, rect, vertexZ, &m_tex_coords[0], alpha, rgb);
+        dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(m_texId, rect, vertexZ, &m_tex_coords[0], alpha, rgb);
         // rb->addImageToArray(m_texId, rect, m_tex_coords, alpha, rgb);
     }
 
@@ -246,10 +246,10 @@ namespace FIFE
             validateShared();
         }
 
-        auto* img = static_cast<GLImage*>(overlay.get());
+        auto* img = dynamic_cast<GLImage*>(overlay.get());
         img->forceLoadInternal();
 
-        static_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(
+        dynamic_cast<RenderBackendOpenGL*>(rb)->addImageToArrayZ(
             rect, vertexZ, m_texId, &m_tex_coords[0], img->getTexId(), img->getTexCoords(), alpha, rgb);
         // rb->addImageToArray(rect, m_texId, m_tex_coords, img->getTexId(), img->getTexCoords(), alpha, rgb);
     }
@@ -303,7 +303,7 @@ namespace FIFE
         // get texture id from opengl
         glGenTextures(1, &m_texId);
         // set focus on that texture
-        static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+        dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
         // set filters for texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -560,7 +560,7 @@ namespace FIFE
 
     void GLImage::useSharedImage(const ImagePtr& shared, const Rect& region)
     {
-        auto* img = static_cast<GLImage*>(shared.get());
+        auto* img = dynamic_cast<GLImage*>(shared.get());
 
         m_shared_img   = img;
         m_texId        = img->m_texId;
@@ -612,7 +612,7 @@ namespace FIFE
         Image::copySubimage(xoffset, yoffset, img);
 
         if (m_texId != 0U) {
-            static_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
+            dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance())->bindTexture(m_texId);
             glTexSubImage2D(
                 GL_TEXTURE_2D,
                 0,
@@ -633,7 +633,7 @@ namespace FIFE
             // if it does not exist, it is generated.
             if (!ImageManager::instance()->exists(m_atlas_name)) {
                 ImagePtr newAtlas = ImageManager::instance()->create(m_atlas_name);
-                auto* img         = static_cast<GLImage*>(newAtlas.get());
+                auto* img         = dynamic_cast<GLImage*>(newAtlas.get());
                 m_atlas_img       = newAtlas;
                 m_shared_img      = img;
             }

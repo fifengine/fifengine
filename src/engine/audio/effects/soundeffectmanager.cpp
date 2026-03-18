@@ -224,7 +224,7 @@ namespace FIFE
         SoundEffect* effect = new EaxReverb();
         m_effects.push_back(effect);
 
-        auto* reverb = static_cast<EaxReverb*>(effect);
+        auto* reverb = dynamic_cast<EaxReverb*>(effect);
         reverb->loadPreset(it->second);
         return effect;
     }
