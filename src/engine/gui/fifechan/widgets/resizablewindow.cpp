@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <algorithm>
 #include <cassert>
 #include <string>
 
