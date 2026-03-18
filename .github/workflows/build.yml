@@ -440,6 +440,17 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
+      - name: 🔽 Install System Dependencies
+        run: |
+          apt-get update -qq
+          apt-get install -y \
+            libglu1-mesa-dev \
+            libfreetype6-dev \
+            libxmu-dev \
+            libxi-dev \
+            libgl-dev \
+            libltdl-dev
+
       - name: ✏ Define Build Paths
         run: |
           echo "BUILD_DIR=out/build/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
