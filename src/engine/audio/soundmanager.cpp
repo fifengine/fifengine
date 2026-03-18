@@ -50,9 +50,7 @@ namespace FIFE
     {
         // delete all soundemitters
         for (auto& it : m_emitterVec) {
-            if (it != nullptr) {
-                delete it;
-            }
+            delete it;
         }
         m_emitterVec.clear();
         // delete all sources

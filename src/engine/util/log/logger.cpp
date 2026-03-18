@@ -182,9 +182,7 @@ namespace FIFE
         if (logtofile) {
             m_logfile = new std::ofstream("fife.log");
         } else {
-            if (m_logfile != nullptr) {
-                delete m_logfile;
-            }
+            delete m_logfile;
         }
         m_logtofile = logtofile;
     }
