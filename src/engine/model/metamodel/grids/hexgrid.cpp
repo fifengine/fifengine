@@ -198,7 +198,8 @@ namespace FIFE
 
         // adjustment for cases where our approximation lies beyond the hex edge
         if (std::abs(dy) > ((HEX_TO_CORNER - HEX_EDGE_GRADIENT * std::abs(dx)) * VERTICAL_MULTIP_INV)) {
-            int8_t ddx = 0, ddy = 0;
+            int8_t ddx = 0;
+            int8_t ddy = 0;
             if (dx > 0) {
                 ddx = -1;
             } else {

@@ -42,7 +42,7 @@ namespace FIFE
     {
     }
 
-    FontBase::~FontBase() { }
+    FontBase::~FontBase() = default;
 
     void FontBase::invalidate()
     {

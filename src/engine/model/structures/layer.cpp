@@ -516,9 +516,9 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            for (auto j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
-                if ((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
-                    blockingInstances.push_back(*j);
+            for (auto* j : adjacentInstances) {
+                if (j->isBlocking() && j->getLocationRef().getLayerCoordinates() == cellCoordinate) {
+                    blockingInstances.push_back(j);
                 }
             }
         }
