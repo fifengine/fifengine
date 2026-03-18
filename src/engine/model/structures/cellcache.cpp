@@ -509,8 +509,8 @@ namespace FIFE
                     int32_t old_x = mc.x - m_size.x;
                     int32_t old_y = mc.y - m_size.y;
                     // out of range in the old size, so we create a new cell
-                    if (old_x < 0 || old_x >= static_cast<int32_t>(m_width) || old_y < 0 ||
-                        old_y >= static_cast<int32_t>(m_height)) {
+                    if (old_x < 0 || static_cast<uint32_t>(old_x) >= m_width || old_y < 0 ||
+                        static_cast<uint32_t>(old_y) >= m_height) {
                         int32_t coordId = x + (y * w);
                         cell            = new Cell(coordId, mc, m_layer);
                         cells[x][y]     = cell;
@@ -724,7 +724,7 @@ namespace FIFE
         int32_t x = mc.x - m_size.x;
         int32_t y = mc.y - m_size.y;
 
-        if (x < 0 || x >= static_cast<int32_t>(m_width) || y < 0 || y >= static_cast<int32_t>(m_height)) {
+        if (x < 0 || static_cast<uint32_t>(x) >= m_width || y < 0 || static_cast<uint32_t>(y) >= m_height) {
             return nullptr;
         }
 
@@ -856,7 +856,7 @@ namespace FIFE
         int32_t x = location.getLayerCoordinates().x - m_size.x;
         int32_t y = location.getLayerCoordinates().y - m_size.y;
 
-        if (x < 0 || x >= static_cast<int32_t>(m_width) || y < 0 || y >= static_cast<int32_t>(m_height)) {
+        if (x < 0 || static_cast<uint32_t>(x) >= m_width || y < 0 || static_cast<uint32_t>(y) >= m_height) {
             return false;
         }
         return true;

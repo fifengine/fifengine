@@ -137,7 +137,7 @@ namespace FIFE
         }
 
         const int32_t pos = static_cast<int32_t>(m_walked) + step;
-        if (pos < 0 || pos >= static_cast<int32_t>(m_path.size())) {
+        if (pos < 0 || static_cast<size_t>(pos) >= m_path.size()) {
             return false;
         }
         if (step > 0) {
