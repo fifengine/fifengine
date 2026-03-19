@@ -455,6 +455,8 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v6 # https://github.com/actions/checkout
 
+      # - libxcrypt depends on ltdl development files from the system package manager
+      # - python3-dev is required for the python bindings
       - name: 🔽 Install System Dependencies
         run: |
           apt-get update -qq
@@ -465,7 +467,8 @@ jobs:
             libxi-dev \
             libgl-dev \
             libltdl-dev \
-            python3
+            python3 \
+            python3-dev
 
       - name: ✏ Define Build Paths
         run: |
@@ -484,11 +487,11 @@ jobs:
             cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}
             cache-vcpkg-container-${{ matrix.config.preset }}
 
-      - name: 🔽 Clone VCPKG (if missing)
-        run: |
-          if [[ ! -d "${VCPKG_ROOT}" ]]; then
-            git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
-          fi
+      #- name: 🔽 Clone VCPKG (if missing)
+      #  run: |
+      #    if [[ ! -d "${VCPKG_ROOT}" ]]; then
+      #      git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
+      #    fi
 
       - name: 🔽 Update VCPKG (latest TAG)
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
