@@ -92,6 +92,11 @@ PATHS=(
   src/python/fife
   tests/extension_tests
   tests/swig_tests
+  demos/cegui
+  demos/pychan
+  demos/rio_de_hola
+  demos/rpg
+  demos/shooter
   run_tests.py
 )
 

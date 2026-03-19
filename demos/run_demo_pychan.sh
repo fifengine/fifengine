@@ -41,4 +41,4 @@ echo "=== Step 7: Run pychan demo ==="
 export PYTHONPATH="$ENGINE_PYTHON_DIR:$PYTHONPATH"
 export LD_LIBRARY_PATH="$BUILD_DIR:/workspaces/fifengine/out/fife-dependencies/install/lib:/workspaces/fifengine/vcpkg_installed/x64-linux/lib:$LD_LIBRARY_PATH"
 
-python3 pychan_demo.py
+python3 run.py
