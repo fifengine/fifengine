@@ -550,6 +550,7 @@ jobs:
 
       - name: 2/4 🛠️ CMake ➔ Configure (Preset)
         run: |
+          export PATH="${{ env.DEPS_DIR }}/build-tools/swig/bin:$PATH"
           cmake --preset "${{ matrix.config.preset }}" \
             -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/x64-linux"
 
