@@ -176,6 +176,17 @@
       ]
     },
     {
+      "name": "vc18-x64-windows-rdi",
+      "configurePreset": "vc18-x64-windows-rdi",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig-wrappers"
+      ]
+    },
+    {
       "name": "clangcl-x64-windows-static-rel",
       "configurePreset": "clangcl-x64-windows-static-rel",
       "targets": [

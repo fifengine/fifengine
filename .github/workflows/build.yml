@@ -216,12 +216,20 @@ jobs:
             triplet: x64-windows,
             artifact-name: libfife-vc18-x64-windows
           }
+        # disabled, because "Linker cannot open file 'python314_d.lib'"
+        # - {
+        #     job_name: "Win | VC18 | Shared | Debug",
+        #     os: windows-2025-vs2026,
+        #     preset: vc18-x64-windows-dbg,
+        #     triplet: x64-windows,
+        #     artifact-name: libfife-vc18-x64-windows-debug
+        #   }
         - {
-            job_name: "Win | VC18 | Shared | Debug",
+            job_name: "Win | VC18 | Shared | RelWithDebInfo",
             os: windows-2025-vs2026,
-            preset: vc18-x64-windows-debug,
+            preset: vc18-x64-windows-rdi,
             triplet: x64-windows,
-            artifact-name: libfife-vc18-x64-windows-debug
+            artifact-name: libfife-vc18-x64-windows-rdi
           }
 
     env:
@@ -418,13 +426,13 @@ jobs:
       matrix:
         config:
           - {
-              job_name: "Linux | Clang-20 | Release",
+              job_name: "Linux | Clang20 | Release",
               image_version: "bookworm-latest",
               preset: "clang20-x64-linux-rel",
               artifact-name: "libfife-clang20-x64-linux"
             }
           - {
-              job_name: "Linux | Clang-21 | Release",
+              job_name: "Linux | Clang21 | Release",
               image_version: "trixie-latest",
               preset: "clang21-x64-linux-rel",
               artifact-name: "libfife-clang21-x64-linux"
@@ -504,6 +512,19 @@ jobs:
         run: |
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
           "${VCPKG_ROOT}/vcpkg" integrate install
+
+      - name: 📦 Install VCPKG dependencies
+        run: |
+          "${VCPKG_ROOT}/vcpkg" install --triplet x64-linux --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
+
+      - name: 💾 Save VCPKG cache
+        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ${{ env.VCPKG_ROOT }}/packages
+            ~/.cache/vcpkg/archives
+          key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 1/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
