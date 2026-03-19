@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------------
 # InstallRuntimeDeps.cmake
 # Copies runtime DLLs to CMAKE_INSTALL_LIBDIR during install phase
-# Uses GET_RUNTIME_DEPENDENCIES for transitive dependency collection
 #
 # For Debug builds, DLLs are installed to CMAKE_INSTALL_LIBDIR/debug/
 # For Release/RelWithDebInfo builds, DLLs are installed to CMAKE_INSTALL_LIBDIR/
@@ -105,7 +104,7 @@ endfunction()
 
 #------------------------------------------------------------------------------
 # install_runtime_dlls
-# Installs all collected DLLs and their transitive dependencies
+# Installs collected DLLs.
 #------------------------------------------------------------------------------
 function(install_runtime_dlls)
     if(NOT WIN32 OR _RUNTIME_DLLS STREQUAL "")
@@ -114,43 +113,53 @@ function(install_runtime_dlls)
 
     _get_dll_destination(_DEST)
 
-    set(_PROCESSED "")
-    set(_TO_PROCESS "${_RUNTIME_DLLS}")
+    set(_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/InstallRuntimeDepsImpl.cmake")
 
-    while(_TO_PROCESS)
-        list(POP_FRONT _TO_PROCESS _DLL)
-        list(FIND _PROCESSED "${_DLL}" _IDX)
-        if(NOT _IDX EQUAL -1)
-            continue()
-        endif()
-        list(APPEND _PROCESSED "${_DLL}")
+    file(CONFIGURE OUTPUT "${_SCRIPT_FILE}"
+        CONTENT [[
+        message(STATUS "Installing runtime DLLs to @_DEST@...")
 
+        # 1. Resolve ALL dependencies recursively in one call
         file(GET_RUNTIME_DEPENDENCIES
-            RESOLVED_DEPENDENCIES_VAR _deps
+            LIBRARIES @_RUNTIME_DLLS@
+            RESOLVED_DEPENDENCIES_VAR _all_deps
             UNRESOLVED_DEPENDENCIES_VAR _unres
-            LIBRARIES "${_DLL}"
+            POST_EXCLUDE_REGEXES
+                # Exclude Windows System Directories (Case Insensitiveish)
+                ".*[/\\\\](System32|SysWOW64)[/\\\\].*"
+                ".*[/\\\\]Windows[/\\\\].*"
+                # Exclude VC Redist (usually in System32 or WinSxS, but good to be explicit)
+                ".*[/\\\\]WinSxS[/\\\\].*"
         )
 
-        foreach(_T IN LISTS _deps)
-            list(FIND _PROCESSED "${_T}" _I)
-            if(_I EQUAL -1)
-                list(FIND _TO_PROCESS "${_T}" _I2)
-                if(_I2 EQUAL -1)
-                    list(APPEND _TO_PROCESS "${_T}")
-                endif()
+        # 2. Install the filtered list
+        set(_INSTALLED_COUNT 0)
+        foreach(_DLL IN LISTS _all_deps)
+            if(EXISTS "${_DLL}")
+                get_filename_component(_NAME "${_DLL}" NAME)
+                file(COPY "${_DLL}" DESTINATION "@_DEST@"
+                     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                      GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+                message(STATUS "  Installed: ${_NAME}")
+                math(EXPR _INSTALLED_COUNT "${_INSTALLED_COUNT} + 1")
+            else()
+                message(WARNING "  Skipped (not found): ${_DLL}")
             endif()
         endforeach()
-    endwhile()
 
-    install(CODE "
-        message(STATUS \"Installing runtime DLLs to \\\${_DEST}...\")
-        foreach(_DLL ${_PROCESSED})
-            get_filename_component(_NAME \"\${_DLL}\" NAME)
-            file(COPY \"\${_DLL}\" DESTINATION \"\${_DEST}\"
-                 FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                              GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-            message(STATUS \"  Installed: \${_NAME}\")
-        endforeach()
-        message(STATUS \"Runtime DLL installation complete.\")
-    ")
+        # 3. Report Unresolved
+        list(LENGTH _unres _unres_len)
+        if(_unres_len GREATER 0)
+            message(WARNING "  Unresolved dependencies (@_unres_len@):")
+            foreach(_u IN LISTS _unres)
+                message(WARNING "    ${_u}")
+            endforeach()
+        endif()
+
+        message(STATUS "Runtime DLL installation complete. (${_INSTALLED_COUNT} files)")
+        ]]
+        @ONLY
+    )
+
+    install(SCRIPT "${_SCRIPT_FILE}")
 endfunction()

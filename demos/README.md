@@ -5,7 +5,8 @@ They are meant to be used as examples and starting points for your own projects.
 They are not meant to be complete games, but rather to show how to use the engine.
 
 This folder has quick start scripts, which will will compile Fifengine
-and run the demos. They are using the "clang20-x64-linux-rel" build preset.
+and run the demos. They are written for start within the Devcontainer
+using the "clang20-x64-linux-rel" build preset.
 
 You can also run the demos directly by running the `run.py` script in each demo's directory.
 
