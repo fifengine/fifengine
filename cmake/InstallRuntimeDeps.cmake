@@ -47,7 +47,7 @@ endfunction()
 #------------------------------------------------------------------------------
 # install_fifechan_dlls
 # Collects FifeChan DLLs from the dependencies build directory
-# Searches both release and debug directories
+# Only collects DLLs matching the current build type
 #------------------------------------------------------------------------------
 function(install_fifechan_dlls)
     if(NOT WIN32)
@@ -61,8 +61,14 @@ function(install_fifechan_dlls)
 
     set(_FIFECHAN_NAMES fifechan fifechan_sdl fifechan_opengl)
 
-    # Search in: lib/, bin/, lib/debug/, bin/debug/
-    foreach(_SUBDIR lib bin lib/debug bin/debug)
+    # Only search the directory matching the current build type
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_SEARCH_SUBDIRS "lib/debug" "bin/debug")
+    else()
+        set(_SEARCH_SUBDIRS "lib" "bin")
+    endif()
+
+    foreach(_SUBDIR IN LISTS _SEARCH_SUBDIRS)
         set(_SEARCH_DIR "${DEPENDENCY_INSTALL_DIR}/${_SUBDIR}")
         if(EXISTS "${_SEARCH_DIR}")
             foreach(_NAME IN LISTS _FIFECHAN_NAMES)
@@ -78,7 +84,7 @@ endfunction()
 #------------------------------------------------------------------------------
 # install_vcpkg_dlls
 # Collects vcpkg-managed DLLs from the vcpkg installed directory
-# Searches both release (bin/) and debug (debug/bin/) directories
+# Only collects DLLs matching the current build type
 #------------------------------------------------------------------------------
 function(install_vcpkg_dlls)
     if(NOT WIN32)
@@ -90,16 +96,20 @@ function(install_vcpkg_dlls)
         return()
     endif()
 
-    # Search both release and debug directories
-    foreach(_SUBDIR "bin" "debug/bin")
-        set(_VCPKG_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/${_SUBDIR}")
-        if(EXISTS "${_VCPKG_DIR}")
-            file(GLOB _DLL_FILES "${_VCPKG_DIR}/*.dll")
-            foreach(_DLL IN LISTS _DLL_FILES)
-                _collect_dll("${_DLL}")
-            endforeach()
-        endif()
-    endforeach()
+    # Only search the directory matching the current build type
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_VCPKG_SUBDIR "debug/bin")
+    else()
+        set(_VCPKG_SUBDIR "bin")
+    endif()
+
+    set(_VCPKG_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/${_VCPKG_SUBDIR}")
+    if(EXISTS "${_VCPKG_DIR}")
+        file(GLOB _DLL_FILES "${_VCPKG_DIR}/*.dll")
+        foreach(_DLL IN LISTS _DLL_FILES)
+            _collect_dll("${_DLL}")
+        endforeach()
+    endif()
 endfunction()
 
 #------------------------------------------------------------------------------
@@ -117,6 +127,7 @@ function(install_runtime_dlls)
 
     file(CONFIGURE OUTPUT "${_SCRIPT_FILE}"
         CONTENT [[
+        cmake_policy(SET CMP0207 NEW)
         message(STATUS "Installing runtime DLLs to @_DEST@...")
 
         # 1. Resolve ALL dependencies recursively in one call
