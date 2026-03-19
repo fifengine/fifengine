@@ -464,7 +464,8 @@ jobs:
             libxmu-dev \
             libxi-dev \
             libgl-dev \
-            libltdl-dev
+            libltdl-dev \
+            python3
 
       - name: ✏ Define Build Paths
         run: |

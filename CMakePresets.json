@@ -125,6 +125,14 @@
       }
     },
     {
+      "name": "clang21-x64-linux-rel",
+      "displayName": "Clang21 Release",
+      "inherits": "clang21-x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "gcc12-x64-linux-rel",
       "displayName": "GCC12 Release",
       "inherits": "gcc12-x64-linux",
@@ -200,6 +208,17 @@
     {
       "name": "clangcl-x64-windows-static-dbg",
       "configurePreset": "clangcl-x64-windows-static-dbg",
+      "targets": [
+        "fife",
+        "fife_swig",
+        "fifechan_swig",
+        "fife.headers",
+        "fife.swig-wrappers"
+      ]
+    },
+    {
+      "name": "clang21-x64-linux-rel",
+      "configurePreset": "clang21-x64-linux-rel",
       "targets": [
         "fife",
         "fife_swig",
