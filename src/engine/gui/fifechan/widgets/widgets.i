@@ -27,9 +27,9 @@ namespace fcn {
 	class AnimationIcon: public Icon {
 	public:
 		AnimationIcon();
-		AnimationIcon(FIFE::AnimationPtr animation);
+		AnimationIcon(const FIFE::AnimationPtr& animation);
 		virtual ~AnimationIcon();
-		void setAnimation(FIFE::AnimationPtr animation);
+		void setAnimation(const FIFE::AnimationPtr& animation);
 		FIFE::AnimationPtr getAnimation() const;
 		void setRepeating(bool repeat);
 		bool isRepeating() const;

@@ -167,7 +167,7 @@ namespace FIFE
         }
         m_location = relative_location;
     }
-    void RendererNode::setRelative(const Location& relative_location, Point relative_point)
+    void RendererNode::setRelative(const Location& relative_location, const Point& relative_point)
     {
         if (m_instance == nullptr) {
             FL_WARN(_log, LMsg("RendererNode::setRelative(Location, Point) - ") << "No instance attached.");

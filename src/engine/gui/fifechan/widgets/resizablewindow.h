@@ -128,13 +128,13 @@ namespace fcn
          * @param direction The cursor direction to set.
          * @param image ImagePtr to a image used for the cursor
          */
-        void set(CursorDirections direction, FIFE::ImagePtr image);
+        void set(CursorDirections direction, const FIFE::ImagePtr& image);
 
         /** Sets the mouse cursor type to animation for the specified direction.
          * @param direction The cursor direction to set.
          * @param anim AnimationPtr to a loaded animation used for the cursor
          */
-        void set(CursorDirections direction, FIFE::AnimationPtr anim);
+        void set(CursorDirections direction, const FIFE::AnimationPtr& anim);
 
         /** Gets the mouse cursor type for the specified direction.
          */

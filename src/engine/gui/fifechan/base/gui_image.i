@@ -25,7 +25,7 @@ namespace FIFE {
 	class GuiImage: public fcn::Image {
 	public:
 		GuiImage();
-		GuiImage(FIFE::ImagePtr Image);
+		GuiImage(const FIFE::ImagePtr& Image);
 		int32_t getWidth() const;
 		int32_t getHeight() const;
 	};

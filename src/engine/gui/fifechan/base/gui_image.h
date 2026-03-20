@@ -25,7 +25,7 @@ namespace FIFE
     {
     public:
         GuiImage();
-        explicit GuiImage(ImagePtr img);
+        explicit GuiImage(const ImagePtr& img);
         ~GuiImage();
         void free();
         int32_t getWidth() const;

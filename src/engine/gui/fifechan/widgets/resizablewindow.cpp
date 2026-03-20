@@ -268,7 +268,7 @@ namespace fcn
         state.cursorAnimation.reset();
     }
 
-    void ResizableWindow::set(CursorDirections direction, FIFE::ImagePtr image)
+    void ResizableWindow::set(CursorDirections direction, const FIFE::ImagePtr& image)
     {
         CursorState& state = m_cursors[direction];
         state.cursorType   = FIFE::CURSOR_IMAGE;
@@ -277,7 +277,7 @@ namespace fcn
         state.cursorAnimation.reset();
     }
 
-    void ResizableWindow::set(CursorDirections direction, FIFE::AnimationPtr anim)
+    void ResizableWindow::set(CursorDirections direction, const FIFE::AnimationPtr& anim)
     {
         CursorState& state = m_cursors[direction];
         state.cursorType   = FIFE::CURSOR_ANIMATION;

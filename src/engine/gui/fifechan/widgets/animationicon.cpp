@@ -52,7 +52,7 @@ namespace fcn
         adjustSize();
     }
 
-    AnimationIcon::AnimationIcon(FIFE::AnimationPtr animation) :
+    AnimationIcon::AnimationIcon(const FIFE::AnimationPtr& animation) :
         mTimemanager(FIFE::TimeManager::instance()),
         mAnimation(animation),
         mCurrentImage(nullptr),
@@ -79,7 +79,7 @@ namespace fcn
         delete mCurrentImage;
     }
 
-    void AnimationIcon::setAnimation(FIFE::AnimationPtr animation)
+    void AnimationIcon::setAnimation(const FIFE::AnimationPtr& animation)
     {
         mAnimation = animation;
         if (mPlay) {

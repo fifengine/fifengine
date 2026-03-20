@@ -51,7 +51,7 @@ namespace FIFE
         void setAttached(const Point& attached_point);
 
         void setRelative(const Location& relative_location);
-        void setRelative(const Location& relative_location, Point relative_point);
+        void setRelative(const Location& relative_location, const Point& relative_point);
         void setRelative(const Point& relative_point);
 
         Instance* getAttachedInstance();

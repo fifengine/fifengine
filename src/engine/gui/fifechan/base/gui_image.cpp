@@ -21,7 +21,7 @@ namespace FIFE
 
     GuiImage::GuiImage() = default;
 
-    GuiImage::GuiImage(ImagePtr img) : m_imgPtr(img) { }
+    GuiImage::GuiImage(const ImagePtr& img) : m_imgPtr(img) { }
 
     GuiImage::~GuiImage() = default;
 

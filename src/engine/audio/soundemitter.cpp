@@ -264,7 +264,7 @@ namespace FIFE
         m_manager->releaseEmitter(m_emitterId);
     }
 
-    void SoundEmitter::setSoundClip(SoundClipPtr soundClip)
+    void SoundEmitter::setSoundClip(const SoundClipPtr& soundClip)
     {
         // equal clip
         if (m_soundClipId == soundClip->getHandle()) {

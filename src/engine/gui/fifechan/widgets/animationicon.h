@@ -42,7 +42,7 @@ namespace fcn
          *
          * @param animation The animation to display.
          */
-        explicit AnimationIcon(FIFE::AnimationPtr animation);
+        explicit AnimationIcon(const FIFE::AnimationPtr& animation);
 
         /**
          * Destructor.
@@ -54,7 +54,7 @@ namespace fcn
          *
          * @param animation The animation to display.
          */
-        void setAnimation(FIFE::AnimationPtr animation);
+        void setAnimation(const FIFE::AnimationPtr& animation);
 
         /**
          * Gets the current animation.

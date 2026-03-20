@@ -39,7 +39,7 @@ namespace FIFE {
 		bool isActive() const;
 		uint8_t getEffectCount();
 
-		void setSoundClip(SoundClipPtr soundClip);
+		void setSoundClip(const SoundClipPtr& soundClip);
 		SoundClipPtr getSoundClip();
 		void reset(bool defaultall = false);
 		void release();

@@ -247,7 +247,7 @@ namespace FIFE
          * @param rotation A integer value for the angle.
          * @param coord A ModelCoordinate as relative coordinate, 0,0 is always the multi object center.
          */
-        void addMultiPartCoordinate(int32_t rotation, ModelCoordinate coord);
+        void addMultiPartCoordinate(int32_t rotation, const ModelCoordinate& coord);
 
         /** Returns all rotationally dependent coordinates from this object part.
          * @return A const reference to a multimap which contains the coordinates per rotation.

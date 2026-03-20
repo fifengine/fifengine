@@ -453,7 +453,7 @@ namespace FIFE
         m_multiProperty->m_multiParts.clear();
     }
 
-    void Object::addMultiPartCoordinate(int32_t rotation, ModelCoordinate coord)
+    void Object::addMultiPartCoordinate(int32_t rotation, const ModelCoordinate& coord)
     {
         if (m_multiProperty == nullptr) {
             m_multiProperty = new MultiObjectProperty();
