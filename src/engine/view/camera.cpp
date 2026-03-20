@@ -138,7 +138,7 @@ namespace FIFE
         // Trigger addition of LayerCaches and MapObserver
         m_map->addChangeListener(m_map_observer);
         const std::list<Layer*>& layers = m_map->getLayers();
-        for (auto layer : layers) {
+        for (auto* layer : layers) {
             addLayer(layer);
         }
     }

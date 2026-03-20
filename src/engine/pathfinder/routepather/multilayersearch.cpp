@@ -71,7 +71,7 @@ namespace FIFE
         // if it is a protected cell it can have a second startzone
         if (m_betweenTargets.empty() && startCell->isZoneProtected()) {
             const std::vector<Cell*>& neighbors = startCell->getNeighbors();
-            for (auto neighbor : neighbors) {
+            for (auto* neighbor : neighbors) {
                 Zone* tmpzone = neighbor->getZone();
                 if (tmpzone != nullptr) {
                     if (tmpzone != m_startZone) {

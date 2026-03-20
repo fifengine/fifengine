@@ -125,7 +125,7 @@ namespace FIFE
     Trigger* TriggerController::createTriggerOnCells(const std::string& triggerName, const std::vector<Cell*>& cells)
     {
         Trigger* trigger = createTrigger(triggerName);
-        for (auto cell : cells) {
+        for (auto* cell : cells) {
             trigger->assign(cell);
         }
         return trigger;
@@ -183,7 +183,7 @@ namespace FIFE
         auto it = m_triggerNameMap.find(triggerName);
         if (it != m_triggerNameMap.end()) {
             const std::vector<Cell*> cells = layer->getCellCache()->getCellsInRect(rec);
-            for (auto& cell : cells) {
+            for (const auto& cell : cells) {
                 it->second->remove(cell);
             }
         }
