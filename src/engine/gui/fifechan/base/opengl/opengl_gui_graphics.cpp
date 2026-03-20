@@ -28,10 +28,10 @@ namespace FIFE
 {
     static Logger _log(LM_GUI);
 
-    OpenGLGuiGraphics::OpenGLGuiGraphics()
+    OpenGLGuiGraphics::OpenGLGuiGraphics() :
+        m_renderbackend(dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance()))
     {
-        mColor          = fcn::Color(255, 255, 255, 255);
-        m_renderbackend = dynamic_cast<RenderBackendOpenGL*>(RenderBackend::instance());
+        mColor = fcn::Color(255, 255, 255, 255);
         setTargetPlane(m_renderbackend->getWidth(), m_renderbackend->getHeight());
     }
 

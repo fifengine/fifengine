@@ -43,10 +43,7 @@ namespace FIFE
     class CacheLayerChangeListener : public LayerChangeListener
     {
     public:
-        explicit CacheLayerChangeListener(LayerCache* cache)
-        {
-            m_cache = cache;
-        }
+        explicit CacheLayerChangeListener(LayerCache* cache) : m_cache(cache) { }
         ~CacheLayerChangeListener() override = default;
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
@@ -172,20 +169,19 @@ namespace FIFE
         }
     };
 
-    LayerCache::LayerCache(Camera* camera)
+    LayerCache::LayerCache(Camera* camera) :
+        m_camera(camera),
+        m_layer(nullptr),
+        m_layerObserver(nullptr),
+        m_tree(nullptr),
+        m_zMin(0.0),
+        m_zMax(0.0),
+        m_zoom(camera->getZoom()),
+        m_zoomed(!Mathd::Equal(m_zoom, 1.0)),
+        m_straightZoom(Mathd::Equal(fmod(m_zoom, 1.0), 0.0)),
+        m_needSorting(
+            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled()))
     {
-        m_camera        = camera;
-        m_layer         = nullptr;
-        m_layerObserver = nullptr;
-        m_tree          = nullptr;
-        m_zMin          = 0.0;
-        m_zMax          = 0.0;
-        m_zoom          = camera->getZoom();
-        m_zoomed        = !Mathd::Equal(m_zoom, 1.0);
-        m_straightZoom  = Mathd::Equal(fmod(m_zoom, 1.0), 0.0);
-
-        m_needSorting =
-            !(RenderBackend::instance()->getName() == "OpenGL" && RenderBackend::instance()->isDepthBufferEnabled());
     }
 
     LayerCache::~LayerCache()

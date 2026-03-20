@@ -66,19 +66,19 @@ namespace FIFE
     {
     }
 
-    ScreenMode::ScreenMode(const ScreenMode& rhs)
+    ScreenMode::ScreenMode(const ScreenMode& rhs) :
+        m_width(rhs.getWidth()),
+        m_height(rhs.getHeight()),
+        m_bpp(rhs.getBPP()),
+        m_SDLFlags(rhs.getSDLFlags()),
+        m_refreshRate(rhs.getRefreshRate()),
+        m_format(rhs.getFormat()),
+        m_display(rhs.getDisplay()),
+        m_windowX(rhs.getWindowPositionX()),
+        m_windowY(rhs.getWindowPositionY()),
+        m_renderDriver(rhs.getRenderDriverName()),
+        m_renderDriverIndex(rhs.getRenderDriverIndex())
     {
-        m_width             = rhs.getWidth();
-        m_height            = rhs.getHeight();
-        m_bpp               = rhs.getBPP();
-        m_SDLFlags          = rhs.getSDLFlags();
-        m_refreshRate       = rhs.getRefreshRate();
-        m_format            = rhs.getFormat();
-        m_display           = rhs.getDisplay();
-        m_windowX           = rhs.getWindowPositionX();
-        m_windowY           = rhs.getWindowPositionY();
-        m_renderDriver      = rhs.getRenderDriverName();
-        m_renderDriverIndex = rhs.getRenderDriverIndex();
     }
 
     bool ScreenMode::operator<(const ScreenMode& rhs) const

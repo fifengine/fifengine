@@ -20,10 +20,8 @@
 namespace fcn
 {
 
-    PercentageBar::PercentageBar() : mValue(0.0), mOrientation(HORIZONTAL)
+    PercentageBar::PercentageBar() : mValue(0.0), mOrientation(HORIZONTAL), mImage(nullptr)
     {
-        mImage = nullptr;
-
         setOrientation(HORIZONTAL);
         setValue(0);
     }

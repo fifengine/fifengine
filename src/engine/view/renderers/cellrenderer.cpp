@@ -34,27 +34,27 @@ namespace FIFE
 {
     static Logger _log(LM_VIEWVIEW);
 
-    CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position) : RendererBase(renderbackend, position)
+    CellRenderer::CellRenderer(RenderBackend* renderbackend, int32_t position) :
+        RendererBase(renderbackend, position), m_blockingEnabled(false), m_pathVisualEnabled(false), m_font(nullptr)
     {
         setEnabled(false);
-        m_blockerColor.r    = 255;
-        m_blockerColor.g    = 0;
-        m_blockerColor.b    = 0;
-        m_pathColor.r       = 0;
-        m_pathColor.g       = 0;
-        m_pathColor.b       = 255;
-        m_blockingEnabled   = false;
-        m_pathVisualEnabled = false;
-        m_font              = nullptr;
+        m_blockerColor.r = 255;
+        m_blockerColor.g = 0;
+        m_blockerColor.b = 0;
+        m_pathColor.r    = 0;
+        m_pathColor.g    = 0;
+        m_pathColor.b    = 255;
     }
 
     CellRenderer::CellRenderer(const CellRenderer& old) :
-        RendererBase(old), m_blockerColor(old.m_blockerColor), m_pathColor(old.m_pathColor)
+        RendererBase(old),
+        m_blockerColor(old.m_blockerColor),
+        m_pathColor(old.m_pathColor),
+        m_blockingEnabled(false),
+        m_pathVisualEnabled(false),
+        m_font(nullptr)
     {
         setEnabled(false);
-        m_blockingEnabled   = false;
-        m_pathVisualEnabled = false;
-        m_font              = nullptr;
     }
 
     RendererBase* CellRenderer::clone()

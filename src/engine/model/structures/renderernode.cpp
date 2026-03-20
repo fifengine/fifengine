@@ -26,10 +26,7 @@ namespace FIFE
     class NodeInstanceDeleteListener : public InstanceDeleteListener
     {
     public:
-        explicit NodeInstanceDeleteListener(RendererNode* node)
-        {
-            m_node = node;
-        }
+        explicit NodeInstanceDeleteListener(RendererNode* node) : m_node(node) { }
         ~NodeInstanceDeleteListener() override = default;
 
         void onInstanceDeleted(Instance* instance) override

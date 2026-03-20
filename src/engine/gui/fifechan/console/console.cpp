@@ -36,7 +36,10 @@ namespace FIFE
         m_status(new fcn::Label()),
         m_toolsbutton(new fcn::Button("Tools")),
         m_hiddenPos(0),
-        m_animationDelta(0)
+        m_animationDelta(0),
+        m_prompt("-- "),
+        m_isAttached(false),
+        m_hiding(true)
     {
         reLayout();
 
@@ -50,16 +53,11 @@ namespace FIFE
         m_input->setCallback([this](const std::string& command) {
             execute(command);
         });
-        m_prompt = "-- ";
-
-        m_isAttached = false;
 
         m_fpsTimer.setInterval(500);
         m_fpsTimer.setCallback([this] {
             updateCaption();
         });
-
-        m_hiding = true;
 
         m_animationTimer.setInterval(20);
         m_animationTimer.setCallback([this] {

@@ -20,12 +20,11 @@
 
 namespace fcn
 {
-    ClickLabel::ClickLabel() : mAlignment(Graphics::Alignment::Left), mOpaque(true)
+    ClickLabel::ClickLabel() :
+        mAlignment(Graphics::Alignment::Left), mOpaque(true), mGuiFont(nullptr), mTextWrapping(false)
     {
-        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
-        mTextWrapping = false;
         setBorderSize(0);
         mHasMouse = false, mKeyPressed = false, mMousePressed = false;
 
@@ -35,13 +34,12 @@ namespace fcn
         addWidgetListener(this);
     }
 
-    ClickLabel::ClickLabel(const std::string& caption) : mAlignment(Graphics::Alignment::Left), mOpaque(true)
+    ClickLabel::ClickLabel(const std::string& caption) :
+        mAlignment(Graphics::Alignment::Left), mOpaque(true), mGuiFont(nullptr), mTextWrapping(false)
     {
-        mGuiFont = dynamic_cast<FIFE::GuiFont*>(getFont());
         setCaption(caption);
         setAlignment(Graphics::Alignment::Left);
         setOpaque(true);
-        mTextWrapping = false;
         setBorderSize(0);
         mHasMouse = false, mKeyPressed = false, mMousePressed = false;
 

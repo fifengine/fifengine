@@ -36,10 +36,7 @@ namespace FIFE
         Model* m_model;
 
     public:
-        explicit ModelMapObserver(Model* model)
-        {
-            m_model = model;
-        }
+        explicit ModelMapObserver(Model* model) : m_model(model) { }
         ~ModelMapObserver() override = default;
 
         void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
@@ -54,10 +51,12 @@ namespace FIFE
 
     Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers) :
 
-        m_lastNamespace(nullptr), m_timeprovider(nullptr), m_renderbackend(renderbackend), m_renderers(renderers)
+        m_lastNamespace(nullptr),
+        m_timeprovider(nullptr),
+        m_renderbackend(renderbackend),
+        m_renderers(renderers),
+        m_mapObserver(new ModelMapObserver(this))
     {
-
-        m_mapObserver = new ModelMapObserver(this);
     }
 
     Model::~Model()

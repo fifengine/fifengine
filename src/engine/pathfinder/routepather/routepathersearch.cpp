@@ -23,12 +23,14 @@
 namespace FIFE
 {
     RoutePatherSearch::RoutePatherSearch(Route* route, const int32_t sessionId) :
-        m_route(route), m_multicell(route->isMultiCell()), m_sessionId(sessionId), m_status(search_status_incomplete)
+        m_route(route),
+        m_multicell(route->isMultiCell()),
+        m_sessionId(sessionId),
+        m_status(search_status_incomplete),
+        m_specialCost(!route->getCostId().empty()),
+        m_ignoreDynamicBlockers(route->isDynamicBlockerIgnored())
     {
-
         m_route->setRouteStatus(ROUTE_SEARCHING);
-        m_specialCost           = !route->getCostId().empty();
-        m_ignoreDynamicBlockers = route->isDynamicBlockerIgnored();
         if (m_multicell) {
             const Location loc                  = route->getStartNode();
             std::vector<ModelCoordinate> coords = route->getOccupiedArea();

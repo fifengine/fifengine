@@ -51,10 +51,7 @@ namespace FIFE
         Camera* m_camera;
 
     public:
-        explicit MapObserver(Camera* camera)
-        {
-            m_camera = camera;
-        }
+        explicit MapObserver(Camera* camera) : m_camera(camera) { }
         ~MapObserver() override = default;
 
         void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) override { }
@@ -105,10 +102,9 @@ namespace FIFE
         m_img_id(-1),
         m_img_fill(false),
         m_ani_fill(false),
-        m_start_time(0)
+        m_start_time(0),
+        m_map_observer(new MapObserver(this))
     {
-
-        m_map_observer = new MapObserver(this);
         init();
     }
 

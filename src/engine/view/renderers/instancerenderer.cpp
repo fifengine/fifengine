@@ -47,10 +47,7 @@ namespace FIFE
     class InstanceRendererDeleteListener : public InstanceDeleteListener
     {
     public:
-        explicit InstanceRendererDeleteListener(InstanceRenderer* r)
-        {
-            m_renderer = r;
-        }
+        explicit InstanceRendererDeleteListener(InstanceRenderer* r) : m_renderer(r) { }
         ~InstanceRendererDeleteListener() override = default;
 
         void onInstanceDeleted(Instance* instance) override

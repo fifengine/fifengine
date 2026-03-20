@@ -21,10 +21,7 @@ static const uint32_t ATLAS_SIZE = 512;
 
 namespace FIFE
 {
-    GuiImageLoader::GuiImageLoader()
-    {
-        m_atlasbook = new AtlasBook(ATLAS_SIZE, ATLAS_SIZE);
-    }
+    GuiImageLoader::GuiImageLoader() : m_atlasbook(new AtlasBook(ATLAS_SIZE, ATLAS_SIZE)) { }
 
     GuiImageLoader::~GuiImageLoader()
     {

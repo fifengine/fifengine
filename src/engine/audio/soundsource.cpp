@@ -27,10 +27,7 @@ namespace FIFE
     class SoundChangeListener : public InstanceChangeListener
     {
     public:
-        explicit SoundChangeListener(SoundSource* source)
-        {
-            m_source = source;
-        }
+        explicit SoundChangeListener(SoundSource* source) : m_source(source) { }
         ~SoundChangeListener() override = default;
 
         void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
@@ -46,11 +43,12 @@ namespace FIFE
         SoundSource* m_source;
     };
 
-    SoundSource::SoundSource(Instance* instance) : m_instance(instance), m_audio(nullptr)
+    SoundSource::SoundSource(Instance* instance) :
+        m_instance(instance),
+        m_audio(nullptr),
+        m_emitter(SoundManager::instance()->createEmitter()),
+        m_listener(new SoundChangeListener(this))
     {
-
-        m_emitter  = SoundManager::instance()->createEmitter();
-        m_listener = new SoundChangeListener(this);
         m_instance->addChangeListener(m_listener);
 
         // inital data

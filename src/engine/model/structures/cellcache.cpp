@@ -38,10 +38,7 @@ namespace FIFE
     class CellCacheChangeListener : public LayerChangeListener
     {
     public:
-        explicit CellCacheChangeListener(Layer* layer)
-        {
-            m_layer = layer;
-        }
+        explicit CellCacheChangeListener(Layer* layer) : m_layer(layer) { }
         ~CellCacheChangeListener() override = default;
 
         void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) override
@@ -334,10 +331,7 @@ namespace FIFE
     class ZoneCellChangeListener : public CellChangeListener
     {
     public:
-        explicit ZoneCellChangeListener(CellCache* cache)
-        {
-            m_cache = cache;
-        }
+        explicit ZoneCellChangeListener(CellCache* cache) : m_cache(cache) { }
         ~ZoneCellChangeListener() override = default;
 
         void onInstanceEnteredCell(Cell* cell, Instance* instance) override { }
@@ -379,10 +373,10 @@ namespace FIFE
         m_blockingUpdate(false),
         m_sizeUpdate(false),
         m_searchNarrow(true),
-        m_staticSize(false)
+        m_staticSize(false),
+        m_cellZoneListener(new ZoneCellChangeListener(this)),
+        m_cellListener(new CellCacheChangeListener(m_layer))
     {
-        // create cell change listener
-        m_cellZoneListener = new ZoneCellChangeListener(this);
         // set base size
         ModelCoordinate min;
         ModelCoordinate max;
@@ -392,8 +386,7 @@ namespace FIFE
         m_size.x = min.x;
         m_size.y = min.y;
 
-        // create and add layer listener
-        m_cellListener = new CellCacheChangeListener(m_layer);
+        m_layer->addChangeListener(m_cellListener);
         m_layer->addChangeListener(m_cellListener);
         const std::vector<Layer*>& interacts = m_layer->getInteractLayers();
         if (!interacts.empty()) {

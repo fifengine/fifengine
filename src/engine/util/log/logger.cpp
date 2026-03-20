@@ -203,10 +203,10 @@ namespace FIFE
         return true;
     }
 
-    LogManager::LogManager() : m_level(LEVEL_DEBUG), m_logtofile(false), m_logtoprompt(false), m_modules{}
+    LogManager::LogManager() :
+        m_level(LEVEL_DEBUG), m_logtofile(false), m_logtoprompt(false), m_modules{}, m_logfile(nullptr)
     {
         validateModuleDescription(LM_CORE);
-        m_logfile = nullptr;
         clearVisibleModules();
     }
 

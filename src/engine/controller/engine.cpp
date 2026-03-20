@@ -80,7 +80,7 @@ namespace FIFE
         m_soundclipmanager(nullptr),
         m_vfs(nullptr),
         m_model(nullptr),
-        m_logmanager(nullptr),
+        m_logmanager(LogManager::instance()),
         m_cursor(nullptr),
         m_destroyed(false),
 
@@ -106,7 +106,6 @@ namespace FIFE
         m_autoreleasePool              = objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
     #endif
 #endif
-        m_logmanager = LogManager::instance();
     }
 
     EngineSettings& Engine::getSettings()

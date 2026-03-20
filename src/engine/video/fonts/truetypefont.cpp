@@ -23,13 +23,10 @@
 namespace FIFE
 {
 
-    TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size)
+    TrueTypeFont::TrueTypeFont(const std::string& filename, int32_t size) :
+        FontBase(), mFont(TTF_OpenFont(filename.c_str(), size)), mFontStyle(TTF_STYLE_NORMAL)
     {
-        mFilename  = filename;
-        mFont      = nullptr;
-        mFontStyle = TTF_STYLE_NORMAL;
-
-        mFont = TTF_OpenFont(filename.c_str(), size);
+        mFilename = filename;
 
         if (mFont == nullptr) {
             throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");

@@ -57,7 +57,11 @@ namespace FIFE
         m_defaultfont(nullptr),
 
         m_logic_executed(false),
-        m_enabled_console(true)
+        m_enabled_console(true),
+        m_had_mouse(false),
+        m_had_widget(false),
+        m_lastMotionX(0),
+        m_lastMotionY(0)
 
     {
 
@@ -69,10 +73,6 @@ namespace FIFE
 
         m_fcn_topcontainer->setOpaque(false);
         m_fcn_topcontainer->setFocusable(false);
-        m_had_mouse   = false;
-        m_had_widget  = false;
-        m_lastMotionX = 0;
-        m_lastMotionY = 0;
     }
 
     FifechanManager::~FifechanManager()

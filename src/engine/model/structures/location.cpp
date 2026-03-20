@@ -26,17 +26,11 @@ namespace FIFE
         reset();
     }
 
-    Location::Location(const Location& loc) : m_layer(nullptr)
-    {
-        reset();
-        m_layer              = loc.m_layer;
-        m_exact_layer_coords = loc.m_exact_layer_coords;
-    }
+    Location::Location(const Location& loc) : m_layer(loc.m_layer), m_exact_layer_coords(loc.m_exact_layer_coords) { }
 
-    Location::Location(Layer* layer) : m_layer(nullptr)
+    Location::Location(Layer* layer) : m_layer(layer)
     {
         reset();
-        m_layer = layer;
     }
 
     void Location::reset()
