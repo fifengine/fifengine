@@ -55,7 +55,7 @@ namespace FIFE
         }
 
         // Remove dead events
-        auto it = std::remove(m_events_list.begin(), m_events_list.end(), static_cast<TimeEvent*>(nullptr));
+        auto it = std::ranges::remove(m_events_list, static_cast<TimeEvent*>(nullptr)).begin();
         m_events_list.erase(it, m_events_list.end());
     }
 
@@ -68,7 +68,7 @@ namespace FIFE
     void TimeManager::unregisterEvent(TimeEvent* event)
     {
         // Unregister.
-        auto it = std::find_if(m_events_list.begin(), m_events_list.end(), [event](const TimeEvent* e) {
+        auto it = std::ranges::find_if(m_events_list, [event](const TimeEvent* e) {
             return e == event;
         });
         if (it != m_events_list.end()) {

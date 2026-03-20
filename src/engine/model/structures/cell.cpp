@@ -214,12 +214,10 @@ namespace FIFE
         updateCellBlockingInfo();
 
         if (!m_deleteListeners.empty()) {
-            m_deleteListeners.erase(
-                std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), nullptr), m_deleteListeners.end());
+            m_deleteListeners.erase(std::ranges::remove(m_deleteListeners, nullptr).begin(), m_deleteListeners.end());
         }
         if (!m_changeListeners.empty()) {
-            m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), nullptr), m_changeListeners.end());
+            m_changeListeners.erase(std::ranges::remove(m_changeListeners, nullptr).begin(), m_changeListeners.end());
         }
     }
 

@@ -155,7 +155,7 @@ namespace FIFE
         std::vector<ImagePtr> frames;
         frames.reserve(m_frames.size());
 
-        std::transform(m_frames.begin(), m_frames.end(), std::back_inserter(frames), [](const auto& frame) {
+        std::ranges::transform(m_frames, std::back_inserter(frames), [](const auto& frame) {
             return frame.image;
         });
 

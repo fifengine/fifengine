@@ -219,7 +219,7 @@ namespace FIFE
 
         // sort the list to keep the most preferred modes at the top of the selection process
         std::sort(m_screenModes.begin(), m_screenModes.end());
-        std::reverse(m_screenModes.begin(), m_screenModes.end());
+        std::ranges::reverse(m_screenModes);
     }
 
     ScreenMode DeviceCaps::getNearestScreenMode(

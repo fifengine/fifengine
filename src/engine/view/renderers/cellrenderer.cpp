@@ -253,7 +253,7 @@ namespace FIFE
 
     void CellRenderer::removePathVisual(Instance* instance)
     {
-        auto it = std::find(m_visualPaths.begin(), m_visualPaths.end(), instance);
+        auto it = std::ranges::find(m_visualPaths, instance);
         if (it != m_visualPaths.end()) {
             m_visualPaths.erase(it);
         }

@@ -849,7 +849,7 @@ namespace FIFE
         int32_t x = location.getLayerCoordinates().x - m_size.x;
         int32_t y = location.getLayerCoordinates().y - m_size.y;
 
-        return !(x < 0 || static_cast<uint32_t>(x) >= m_width || y < 0 || static_cast<uint32_t>(y) >= m_height);
+        return x >= 0 && static_cast<uint32_t>(x) < m_width && y >= 0 && static_cast<uint32_t>(y) < m_height;
     }
 
     int32_t CellCache::convertCoordToInt(const ModelCoordinate& coord) const

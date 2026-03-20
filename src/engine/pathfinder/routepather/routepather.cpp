@@ -90,14 +90,14 @@ namespace FIFE
 
     bool RoutePather::sessionIdValid(const int32_t sessionId)
     {
-        return std::any_of(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), [sessionId](int id) {
+        return std::ranges::any_of(m_registeredSessionIds, [sessionId](int id) {
             return id == sessionId;
         });
     }
 
     bool RoutePather::invalidateSessionId(const int32_t sessionId)
     {
-        auto it = std::find(m_registeredSessionIds.begin(), m_registeredSessionIds.end(), sessionId);
+        auto it = std::ranges::find(m_registeredSessionIds, sessionId);
         if (it != m_registeredSessionIds.end()) {
             m_registeredSessionIds.erase(it);
             return true;

@@ -604,13 +604,9 @@ namespace FIFE
         std::vector<std::string> groups;
         groups.reserve(m_groups.size());
 
-        std::transform(
-            m_groups.begin(),
-            m_groups.end(),
-            std::back_inserter(groups),
-            [](const auto& groupPair) -> const std::string& {
-                return groupPair.first;
-            });
+        std::ranges::transform(m_groups, std::back_inserter(groups), [](const auto& groupPair) -> const std::string& {
+            return groupPair.first;
+        });
 
         for (const auto& group : groups) {
             removeGroup(group);

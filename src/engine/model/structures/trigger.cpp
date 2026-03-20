@@ -205,8 +205,7 @@ namespace FIFE
             }
         }
         // remove null pointer
-        m_triggerListeners.erase(
-            std::remove(m_triggerListeners.begin(), m_triggerListeners.end(), nullptr), m_triggerListeners.end());
+        m_triggerListeners.erase(std::ranges::remove(m_triggerListeners, nullptr).begin(), m_triggerListeners.end());
     }
 
     void Trigger::addTriggerCondition(TriggerCondition type)

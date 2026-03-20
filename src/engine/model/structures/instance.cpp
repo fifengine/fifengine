@@ -170,8 +170,7 @@ namespace FIFE
                 ++i;
             }
             // Really remove "removed" listeners.
-            m_changeListeners.erase(
-                std::remove(m_changeListeners.begin(), m_changeListeners.end(), nullptr), m_changeListeners.end());
+            m_changeListeners.erase(std::ranges::remove(m_changeListeners, nullptr).begin(), m_changeListeners.end());
         }
     }
 
@@ -771,8 +770,7 @@ namespace FIFE
             return ICHANGE_NO_CHANGES;
         }
         // remove DeleteListeners
-        m_deleteListeners.erase(
-            std::remove(m_deleteListeners.begin(), m_deleteListeners.end(), nullptr), m_deleteListeners.end());
+        m_deleteListeners.erase(std::ranges::remove(m_deleteListeners, nullptr).begin(), m_deleteListeners.end());
 
         if (m_activity->m_timeProvider == nullptr) {
             bindTimeProvider();
@@ -863,8 +861,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(), nullptr),
-            m_activity->m_actionListeners.end());
+            std::ranges::remove(m_activity->m_actionListeners, nullptr).begin(), m_activity->m_actionListeners.end());
     }
 
     void Instance::cancelAction()
@@ -898,8 +895,7 @@ namespace FIFE
             ++i;
         }
         m_activity->m_actionListeners.erase(
-            std::remove(m_activity->m_actionListeners.begin(), m_activity->m_actionListeners.end(), nullptr),
-            m_activity->m_actionListeners.end());
+            std::ranges::remove(m_activity->m_actionListeners, nullptr).begin(), m_activity->m_actionListeners.end());
     }
 
     Action* Instance::getCurrentAction() const

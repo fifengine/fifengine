@@ -299,7 +299,7 @@ namespace FIFE
         // removes instance from RenderList
         RenderList& renderList = m_camera->getRenderListRef(m_layer);
 
-        auto itRenderList = std::find_if(renderList.begin(), renderList.end(), [instance](const auto& item) {
+        auto itRenderList = std::ranges::find_if(renderList, [instance](const auto& item) {
             return item->instance == instance;
         });
 
@@ -537,7 +537,7 @@ namespace FIFE
                     needSorting.push_back(item);
                 } else {
                     // remove from renderlist
-                    auto it = std::find_if(renderlist.begin(), renderlist.end(), [&](const auto& element) {
+                    auto it = std::ranges::find_if(renderlist, [&](const auto& element) {
                         return element->instance == item->instance;
                     });
 

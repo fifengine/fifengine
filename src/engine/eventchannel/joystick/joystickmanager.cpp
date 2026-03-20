@@ -67,7 +67,8 @@ namespace FIFE
             return joystick;
         }
         std::string guidStr = getGuidString(deviceIndex);
-        auto it             = std::find_if(m_joysticks.begin(), m_joysticks.end(), [&guidStr](Joystick* j) {
+
+        auto it = std::ranges::find_if(m_joysticks, [&guidStr](Joystick* j) {
             return !j->isConnected() && j->getGuid() == guidStr;
         });
         if (it != m_joysticks.end()) {
@@ -98,7 +99,7 @@ namespace FIFE
 
     void JoystickManager::removeJoystick(Joystick* joystick)
     {
-        auto it = std::find(m_activeJoysticks.begin(), m_activeJoysticks.end(), joystick);
+        auto it = std::ranges::find(m_activeJoysticks, joystick);
         if (it != m_activeJoysticks.end()) {
             m_joystickIndices.erase((*it)->getInstanceId());
             removeControllerGuid(*it);
@@ -191,7 +192,7 @@ namespace FIFE
     {
         if (listener->isActive()) {
             listener->setActive(false);
-            auto it = std::find(m_joystickListeners.begin(), m_joystickListeners.end(), listener);
+            auto it = std::ranges::find(m_joystickListeners, listener);
             if (it != m_joystickListeners.end()) {
                 m_joystickListeners.erase(it);
             }

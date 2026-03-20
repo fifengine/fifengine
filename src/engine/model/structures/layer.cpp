@@ -492,7 +492,7 @@ namespace FIFE
         } else {
             std::list<Instance*> adjacentInstances;
             m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
-            if (std::any_of(adjacentInstances.begin(), adjacentInstances.end(), [&cellCoordinate](Instance* inst) {
+            if (std::ranges::any_of(adjacentInstances, [&cellCoordinate](Instance* inst) {
                     return inst->isBlocking() && inst->getLocationRef().getLayerCoordinates() == cellCoordinate;
                 })) {
                 blockingInstance = true;
@@ -508,10 +508,9 @@ namespace FIFE
             Cell* cell = m_cellCache->getCell(cellCoordinate);
             if (cell != nullptr) {
                 const std::set<Instance*>& blocker = cell->getInstances();
-                std::copy_if(
-                    blocker.begin(), blocker.end(), std::back_inserter(blockingInstances), [](const Instance* inst) {
-                        return inst->isBlocking();
-                    });
+                std::ranges::copy_if(blocker, std::back_inserter(blockingInstances), [](const Instance* inst) {
+                    return inst->isBlocking();
+                });
             }
         } else {
             std::list<Instance*> adjacentInstances;

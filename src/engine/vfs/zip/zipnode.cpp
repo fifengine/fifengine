@@ -27,7 +27,7 @@ namespace
      */
     FIFE::ZipNode* FindNameInContainer(const FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        auto it = std::find_if(container.begin(), container.end(), [&](const auto* node) {
+        auto it = std::ranges::find_if(container, [&](const auto* node) {
             return node->getName() == name;
         });
 
@@ -36,7 +36,7 @@ namespace
 
     FIFE::ZipNodeContainer::iterator FindNameInContainer(FIFE::ZipNodeContainer& container, const std::string& name)
     {
-        return std::find_if(container.begin(), container.end(), [&](const auto* node) {
+        return std::ranges::find_if(container, [&](const auto* node) {
             return node->getName() == name;
         });
     }
