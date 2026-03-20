@@ -146,7 +146,6 @@ namespace FIFE
         char* mapping             = SDL_GameControllerMappingForGUID(realGuid);
         if (mapping == nullptr) {
             throw SDLException(SDL_GetError());
-            return {};
         }
 
         std::string stringMapping(mapping);

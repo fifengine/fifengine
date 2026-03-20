@@ -320,7 +320,6 @@ namespace FIFE
     {
         if (display >= getDisplayCount()) {
             throw NotSupported("Could not find a matching display!");
-            return "Invalid";
         }
         std::string displayName(SDL_GetDisplayName(display));
         return displayName;
