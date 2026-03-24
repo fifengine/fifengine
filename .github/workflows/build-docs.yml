@@ -1,0 +1,125 @@
+#
+# .github/workflows/build-docs.yml
+#
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jens A. Koch.
+# This file is part of fifengine/fifengine.
+#
+
+name: Build Docs
+
+on:
+  # You can run this workflow manually.
+  workflow_dispatch:
+  # This workflow runs on pushed tags.
+  push:
+    tags:
+      - '*'
+
+# Improve CI concurrency by automatically cancelling outdated jobs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # Required to push to gh-pages branch.
+  pages: write
+  id-token: write
+
+jobs:
+
+# ---------------------------------------------------------------------------------------
+
+  build:
+
+# ---------------------------------------------------------------------------------------
+
+    runs-on: ubuntu-latest
+
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    steps:
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6 # https://github.com/actions/checkout
+
+      # Install the latest version of Doxygen from upstream release tags.
+      - name: 🔽 Install Doxygen (latest version from GitHub)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq wget make
+
+          LATEST_VERSION="$(wget -qO- "https://api.github.com/repos/doxygen/doxygen/tags" | jq -r '.[0].name | split("_") | join(".")[8:]')"
+          wget "https://doxygen.nl/files/doxygen-${LATEST_VERSION}.linux.bin.tar.gz" -O - | tar -xzv --directory=/tmp/
+          cd /tmp/doxygen-*
+          sudo make install
+
+      - name: 🔽 Setup Graphviz and Sphinx for Documentation
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz python3-sphinx python3-sphinx-rtd-theme
+
+      - name: ℹ Show Tool Versions
+        run: |
+          doxygen -v
+          dot -V
+          sphinx-build --version
+
+      - name: 🛠️ Build API Documentation
+        run: |
+          doxygen doxygen.conf > doxygen.log 2> doxygen-error.log
+
+      - name: 🔎 Doxygen Log
+        run: |
+          cat doxygen.log
+
+      - name: 🔼 Upload Doxygen Error Log as Artifacts
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        with:
+          name: doxygen-error-log
+          path: doxygen-error.log
+
+      - name: Push to Github Pages
+        run: |
+          echo "Configure git user"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          echo "Create orphan gh-pages branch (no history)"
+          git checkout --orphan gh-pages
+          echo "Reset index to unstage all files from main"
+          git reset
+          echo "Create api folder and copy doxygen content"
+          mkdir -p api
+          cp -r docs/doxygen/html/* api/
+          echo "Stage only specific files and folders for commit"
+          git add README.md
+          git add api/
+          echo "Commit and push"
+          git commit -m "Update API documentation for version ${{ github.ref_name }}"
+          git push origin gh-pages --force
+
+      # - name: 🔼 Upload Documentation Artifact
+      #   uses: actions/upload-pages-artifact@v4 # https://github.com/actions/upload-pages-artifact
+      #   with:
+      #     path: docs/doxygen/html
+
+# # ---------------------------------------------------------------------------------------
+
+#   deploy:
+
+# # ---------------------------------------------------------------------------------------
+
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     environment:
+#       name: github-pages
+#       url: ${{ steps.deployment.outputs.page_url }}
+
+#     steps:
+#       - name: 📄 Setup GitHub Pages
+#         uses: actions/configure-pages@v5 # https://github.com/actions/configure-pages
+
+#       - name: 🚀 Deploy to GitHub Pages
+#         id: deployment
+#         uses: actions/deploy-pages@v4 # https://github.com/actions/deploy-pages
