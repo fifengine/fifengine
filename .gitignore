@@ -4,14 +4,24 @@ out/
 vcpkg_installed/
 dependencies/
 
-# Generated Doxygen files
-docs/doxygen/html
+# Generated Doxygen files (C++ API docs)
+docs/doxygen/html/
+
+# Generated Sphinx files (Python API docs)
+docs/sphinx/html/
 
 # Python Tools
 __pycache__/
 .ruff_cache/
 .mypy_cache/
 *.pyc
+.venv/
 
 # Build Engine
 ./engine/
+
+.cache/
+
+# Python Virtual Envs
+.venv/
+.venv-sphinx/
