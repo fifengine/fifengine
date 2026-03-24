@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+# -----------------------------------------------------------------------------
+# Python formatting/linting/type checking helper
+#
+# Purpose
+# - This mimics the CI QA workflow locally.
+# - Setup Python virtual environment using uv.
+# - Run black, ruff, and/or mypy on Python source files.
+#
+# Usage
+# - ./build-tools/format-python.sh
+#     Run all tools (black, ruff, mypy).
+# - ./build-tools/format-python.sh --black > black.log
+#     Run only black formatting.
+# - ./build-tools/format-python.sh --ruff > ruff.log
+#     Run only ruff linting.
+# - ./build-tools/format-python.sh --mypy > mypy.log
+#     Run only mypy type checking.
+# - ./build-tools/format-python.sh --black --ruff
+#     Run specific tools only.
+#
+# Notes
+# - This script uses uv for Python package management.
+# - Checks src/python/fife and various demos/tests directories.
+# -----------------------------------------------------------------------------
+
 set -euo pipefail
 
 if ! command -v python3 >/dev/null 2>&1; then
@@ -59,7 +84,18 @@ if [[ "$flags_provided" != true ]]; then
 fi
 
 VIRTUAL_ENV=${VIRTUAL_ENV:-/tmp/fife-python-venv}
-python3 -m venv "$VIRTUAL_ENV"
+
+if ! command -v uv >/dev/null 2>&1; then
+  echo "Installing uv..."
+  pip install uv
+fi
+
+if [[ -d "$VIRTUAL_ENV" ]]; then
+  echo "Using existing virtual environment: $VIRTUAL_ENV"
+else
+  echo "Creating virtual environment: $VIRTUAL_ENV"
+  uv venv "$VIRTUAL_ENV"
+fi
 export PATH="$VIRTUAL_ENV/bin:$PATH"
 
 run_in_venv() {
@@ -71,7 +107,6 @@ run_in_venv() {
   "$VIRTUAL_ENV/bin/python" -m "$@"
 }
 
-run_in_venv pip install --prefer-binary --no-cache-dir --upgrade pip
 packages=()
 if [[ "$run_black" == true ]]; then
   packages+=(black)
@@ -84,7 +119,7 @@ if [[ "$run_mypy" == true ]]; then
 fi
 
 if [[ ${#packages[@]} -gt 0 ]]; then
-  run_in_venv pip install --prefer-binary --no-cache-dir "${packages[@]}"
+  uv pip install "${packages[@]}"
 fi
 
 # Paths to check (mirror QA workflow)
