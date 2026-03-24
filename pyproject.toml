@@ -1,6 +1,61 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+[project]
+name = "libfife"
+version = "0.4.2"
+description = "FIFE library"
+requires-python = ">=3.11"
+dependencies = []
+authors = [
+  { name = "Fifengine contributors" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: C++",
+  "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://www.fifengine.net"
+Repository = "https://github.com/fifengine/fifengine"
+Source = "https://github.com/fifengine/fifengine"
+Changelog = "https://github.com/fifengine/fifengine/blob/master/CHANGELOG.md"
+Documentation = "https://docs.fifengine.net/"
+Tracker = "https://github.com/fifengine/fifengine/issues"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+# -----------------------
+# Build System
+# -----------------------
+#   External dependencies (not bundled by default):
+#     libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
+#   Bundling external deps into the wheel (for redistributable wheels):
+#     auditwheel (Linux)
+#     delocate (macOS)
+#     delvewheel (Windows)
+#     These can copy those .so/.dylib/.dll into the wheel and patch load paths.
+#     This is done in CI via cibuildwheel as a post-build step of the wheel.
+
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+# We need to pass in CMAKE_TOOLCHAIN_FILE for VCPKG.
+[tool.scikit-build]
+cmake.args = ["-DVCPKG_TARGET_TRIPLET=x64-linux"]
+
+[tool.scikit-build.wheel.packages]
+fife = "src/python/fife"
+
+# -----------------------
+# Additional Python Tools
+# -----------------------
+
 [tool.black]
 line-length = 90
 target-version = ["py311"]
