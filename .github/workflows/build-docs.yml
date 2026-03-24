@@ -65,7 +65,7 @@ jobs:
           dot -V
           sphinx-build --version
 
-      - name: 🛠️ Build API Documentation
+      - name: 🛠️ Build C++ API Documentation using Doxygen
         run: |
           doxygen doxygen.conf > doxygen.log 2> doxygen-error.log
 
@@ -79,6 +79,19 @@ jobs:
           name: doxygen-error-log
           path: doxygen-error.log
 
+      - name: 🔽 Setup Python Environment for Sphinx
+        run: |
+          pip install uv
+          uv venv .venv-sphinx
+          source .venv-sphinx/bin/activate
+          uv pip install -r docs/sphinx/requirements.txt
+          uv pip install sphinx-autodoc-typehints myst-parser
+
+      - name: 🛠️ Build Python API Documentation
+        run: |
+          source .venv-sphinx/bin/activate
+          sphinx-build -b html docs/sphinx docs/sphinx/html
+
       - name: Push to Github Pages
         run: |
           echo "Configure git user"
@@ -91,6 +104,9 @@ jobs:
           echo "Create api folder and copy doxygen content"
           mkdir -p api
           cp -r docs/doxygen/html/* api/
+          echo "Create api folder and copy sphinx content"
+          mkdir -p api/python
+          cp -r docs/sphinx/html/* api/python/
           echo "Stage only specific files and folders for commit"
           git add README.md
           git add api/
