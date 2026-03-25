@@ -494,7 +494,7 @@ jobs:
       #    fi
 
       - name: 🔽 Update VCPKG (latest TAG)
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           cd "${VCPKG_ROOT}"
           git fetch --tags --force
@@ -512,7 +512,7 @@ jobs:
           git checkout "${LATEST_VCPKG_TAG}"
 
       - name: 🛠️ Setup VCPKG
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
           "${VCPKG_ROOT}/vcpkg" integrate install
