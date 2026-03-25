@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
+# ---------------------------------------------------------------------
+# Project
+# ---------------------------------------------------------------------
+
 [project]
 name = "libfife"
 version = "0.4.2"
@@ -12,10 +16,11 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: C++",
   "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
   "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: C++",
 ]
 
 [project.urls]
@@ -29,9 +34,9 @@ Tracker = "https://github.com/fifengine/fifengine/issues"
 [project.optional-dependencies]
 dev = ["pytest"]
 
-# -----------------------
+# ---------------------------------------------------------------------
 # Build System
-# -----------------------
+# ---------------------------------------------------------------------
 #   External dependencies (not bundled by default):
 #     libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
 #   Bundling external deps into the wheel (for redistributable wheels):
@@ -39,22 +44,50 @@ dev = ["pytest"]
 #     delocate (macOS)
 #     delvewheel (Windows)
 #     These can copy those .so/.dylib/.dll into the wheel and patch load paths.
-#     This is done in CI via cibuildwheel as a post-build step of the wheel.
+#     This is done during CI via cibuildwheel as a post-build step of the wheel.
 
 [build-system]
-requires = ["scikit-build-core"]
+requires = [
+    "scikit-build-core",
+    "cmake",
+    "ninja",
+    "packaging"
+]
 build-backend = "scikit_build_core.build"
 
 # We need to pass in CMAKE_TOOLCHAIN_FILE for VCPKG.
 [tool.scikit-build]
+build.verbose = true
+cmake.build-type = "Release"
 cmake.args = ["-DVCPKG_TARGET_TRIPLET=x64-linux"]
 
 [tool.scikit-build.wheel.packages]
 fife = "src/python/fife"
 
-# -----------------------
+# ---------------------------------------------------------------------
+# cibuildwheel
+# ---------------------------------------------------------------------
+
+# maybe build = "cp{311,312,313,314}-manylinux_x86_64"
+
+[tool.cibuildwheel]
+archs = ["x86_64"]
+build = "cp{311}-manylinux_x86_64"
+skip = "pp* *-musllinux_*"
+
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "manylinux_2_28"
+
+# ---------------------------------------------------------------------
+# Check wheel contents
+# ---------------------------------------------------------------------
+
+#[tool.check-wheel-contents]
+#toplevel = ["fife"]
+
+# ---------------------------------------------------------------------
 # Additional Python Tools
-# -----------------------
+# ---------------------------------------------------------------------
 
 [tool.black]
 line-length = 90
