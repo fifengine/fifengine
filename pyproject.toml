@@ -59,10 +59,11 @@ build-backend = "scikit_build_core.build"
 [tool.scikit-build]
 build.verbose = true
 cmake.build-type = "Release"
-cmake.args = ["-DVCPKG_TARGET_TRIPLET=x64-linux"]
+cmake.args = ["-DVCPKG_TARGET_TRIPLET=x64-linux", "-DPYTHON_SITE_PACKAGES=."]
 
-[tool.scikit-build.wheel.packages]
-fife = "src/python/fife"
+[tool.scikit-build.wheel]
+install-dir = ""
+exclude = ["**/__pycache__", "**/*.pyc", "**/.git"]
 
 # ---------------------------------------------------------------------
 # cibuildwheel
@@ -82,8 +83,8 @@ manylinux-x86_64-image = "manylinux_2_28"
 # Check wheel contents
 # ---------------------------------------------------------------------
 
-#[tool.check-wheel-contents]
-#toplevel = ["fife"]
+[tool.check-wheel-contents]
+toplevel = ["fife"]
 
 # ---------------------------------------------------------------------
 # Additional Python Tools
