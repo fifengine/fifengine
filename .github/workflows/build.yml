@@ -1,4 +1,15 @@
-name: Build fifengine
+#
+# .github/workflows/build.yml
+#
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jens A. Koch.
+# This file is part of fifengine/fifengine.
+#
+
+# -----------------------------------------------------------------------------
+# This workflow builds the FIFEngine C++ library and Python bindings.
+# -----------------------------------------------------------------------------
+name: Build FIFEngine (C++ & Swig)
 
 on:
   push:

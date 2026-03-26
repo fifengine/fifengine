@@ -1,0 +1,203 @@
+#
+# .github/workflows/build-wheels.yml
+#
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jens A. Koch.
+# This file is part of fifengine/fifengine.
+#
+
+# -----------------------------------------------------------------------------
+# This workflow builds Python wheels for the Python bindings of FIFEngine.
+# -----------------------------------------------------------------------------
+name: Build FIFEngine (Python Wheels)
+
+on:
+  push:
+    #branches: [ master, main, resurge ]
+  pull_request:
+    #branches: [ master, main ]
+  workflow_dispatch:
+
+# Improve CI concurrency by automatically cancelling outdated jobs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+# ---------------------------------------------------------------------------------------
+
+  build-wheels-windows:
+
+# ---------------------------------------------------------------------------------------
+
+    name: "${{ matrix.config.job_name }}"
+
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md
+        - {
+            job_name: "Win | VC17 | Release",
+            os: windows-2025,
+            preset: vc17-x64-windows-rel,
+            triplet: x64-windows,
+            artifact-name: wheels-windows-vc17
+          }
+        # https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-VS2026-Readme.md
+        - {
+            job_name: "Win | VC18 | Release",
+            os: windows-2025-vs2026,
+            preset: vc18-x64-windows-rel,
+            triplet: x64-windows,
+            artifact-name: wheels-windows-vc18
+          }
+
+    env:
+      VCPKG_DISABLE_METRICS: 1
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}\vcpkg_installed
+      SOURCE_DIR:          ${{ github.workspace }}
+      BUILD_DIR:           ${{ github.workspace }}\build
+      DEPS_DIR:            ${{ github.workspace }}\out\fife-dependencies
+
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v6 # https://github.com/actions/checkout
+
+      # https://community.chocolatey.org/packages/ninja
+      - name: 🔽 Install Ninja
+        run: choco install ninja --no-progress
+
+      # https://community.chocolatey.org/packages/cmake
+      - name: 🔽 Install CMake
+        run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
+
+      # WARNING
+      # ENV VCPKG_ROOT is redefined by this action
+      # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
+      # instead of "c:\vcpkg", which is important for the pre-installed VCPKG on GHA.
+      - name: 🛠️ Setup Visual Studio Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # Default Location is "c:\vcpkg"
+      - name: 🔽 Define VCPKG_ROOT
+        shell: pwsh
+        run: |
+          $VCPKG_ROOT=$($env:VCPKG_INSTALLATION_ROOT)
+          echo "VCPKG_ROOT=$($VCPKG_ROOT)" >> $env:GITHUB_ENV
+
+      - name: 🎯 Setup VCPKG Cache
+        id: cache-vcpkg
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_ROOT }}\packages
+            ~\AppData\Local\vcpkg\archives\
+          key: cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-vcpkg-wheels-${{ matrix.config.preset }}-
+
+      - name: 🎯 Setup Dependencies Cache
+        id: cache-deps
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          restore-keys: |
+            cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-
+            cache-deps-wheels-${{ matrix.config.preset }}-
+
+      - name: 🔽 1/3 Setup VCPKG
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${{ env.VCPKG_ROOT }}"
+          echo "[VCPKG] Updating registry..."
+          git fetch --tags
+          LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
+          git checkout $LATEST_VCPKG_TAG
+          echo "[VCPKG] Bootstrapping..."
+          bootstrap-vcpkg.bat
+          echo "[VCPKG] Integrating with the system..."
+          vcpkg integrate install
+
+      - name: 2/3 📦 Install VCPKG dependencies
+        run: |
+          vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
+
+      # Force a save of the VCPKG packages, until the workflow goes fully green.
+      - name: 💾 Save VCPKG cache
+        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_ROOT }}\packages
+            ~\AppData\Local\vcpkg\archives\
+          key: cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+
+      - name: 3/3 🧩 Configure non-vcpkg dependencies (fifechan, SWIG)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cmake ^
+            -S dependencies ^
+            -B "%DEPS_DIR%\build" ^
+            -G Ninja ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DFIFE_DEPENDENCIES_ROOT="%DEPS_DIR%" ^
+            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
+            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
+            -DFIFECHAN_BUILD_FROM_SOURCE=ON
+
+      - name: 3/3 🏗️ Build non-vcpkg dependencies (fifechan, SWIG)
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          cmake --build "%DEPS_DIR%\build" --parallel
+
+      - name: 💾 Save Dependencies cache
+        if: ${{ always() && !cancelled() && steps.cache-deps.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v6 # https://github.com/actions/setup-python
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: |
+          pip install uv
+          uv pip install cibuildwheel
+
+      - name: Build wheels
+        run: cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD: "cp311-win_amd64 cp312-win_amd64 cp313-win_amd64"
+          CIBW_ENVIRONMENT: >
+            VCPKG_ROOT=$VCPKG_ROOT
+            VCPKG_TARGET_TRIPLET=x64-windows
+          CIBW_CONFIG_SETTINGS: >
+            cmake.define.CMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake
+            cmake.define.VCPKG_TARGET_TRIPLET=x64-windows
+            cmake.define.CMAKE_BUILD_TYPE=Release
+            cmake.define.CMAKE_PREFIX_PATH=%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}
+
+      - uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
+        with:
+          name: ${{ matrix.config.artifact-name }}
+          path: wheelhouse/*.whl
