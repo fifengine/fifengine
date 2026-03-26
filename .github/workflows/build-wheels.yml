@@ -180,9 +180,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install build tools
-        run: |
-          pip install uv
-          uv pip install cibuildwheel
+        run: python -m pip install cibuildwheel
 
       - name: Build wheels
         run: cibuildwheel --output-dir wheelhouse
