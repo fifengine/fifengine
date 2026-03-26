@@ -58,11 +58,11 @@ requires = [
 ]
 build-backend = "scikit_build_core.build"
 
-# We need to pass in CMAKE_TOOLCHAIN_FILE for VCPKG.
+# We need to pass in VCPKG_TARGET_TRIPLET, CMAKE_TOOLCHAIN_FILE for VCPKG.
 [tool.scikit-build]
 build.verbose = true
 cmake.build-type = "Release"
-cmake.args = ["-DVCPKG_TARGET_TRIPLET=x64-linux", "-DPYTHON_SITE_PACKAGES=."]
+cmake.args = ["-DPYTHON_SITE_PACKAGES=."]
 
 [tool.scikit-build.wheel]
 install-dir = ""
