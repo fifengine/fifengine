@@ -192,12 +192,12 @@ jobs:
             VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
             DEPS_DIR=${{ env.DEPS_DIR }}
           CIBW_CONFIG_SETTINGS: |
-            cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}\scripts\buildsystems\vcpkg.cmake
+            cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             cmake.define.VCPKG_MANIFEST_MODE=OFF
             cmake.define.VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
             cmake.define.CMAKE_BUILD_TYPE=Release
-            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}\install;${{ env.VCPKG_INSTALLED_DIR }}\${{ matrix.config.triplet }}
+            cmake.define.CMAKE_PREFIX_PATH=${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}
 
       - uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         with:
