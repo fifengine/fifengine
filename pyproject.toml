@@ -54,8 +54,6 @@ dev = ["pytest"]
 [build-system]
 requires = [
     "scikit-build-core",
-    "cmake",
-    "ninja",
     "packaging"
 ]
 build-backend = "scikit_build_core.build"
