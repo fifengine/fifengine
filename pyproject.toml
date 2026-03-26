@@ -37,14 +37,19 @@ dev = ["pytest"]
 # ---------------------------------------------------------------------
 # Build System
 # ---------------------------------------------------------------------
-#   External dependencies (not bundled by default):
-#     libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
-#   Bundling external deps into the wheel (for redistributable wheels):
-#     auditwheel (Linux)
-#     delocate (macOS)
-#     delvewheel (Windows)
-#     These can copy those .so/.dylib/.dll into the wheel and patch load paths.
-#     This is done during CI via cibuildwheel as a post-build step of the wheel.
+# 1. scikit_build_core -> drives CMake build process
+# 2. cibuildwheel      -> orchestrates
+# 3. vcpkg             -> dependencies
+# ---------------------------------------------------------------------
+# External dependencies (not bundled by default):
+#   libfifechan_sdl2.so, libfifechan_opengl.so, SDL2, OpenAL, etc.
+# Bundling external deps into the wheel (for redistributable wheels):
+#   Windows: delevewheel
+#   Linux:   auditwheel
+#   Mac:     delocate
+# These can copy those .so/.dylib/.dll into the wheel and patch load paths.
+# This is done during CI via cibuildwheel as a post-build step of the wheel.
+# ---------------------------------------------------------------------
 
 [build-system]
 requires = [
@@ -69,15 +74,16 @@ exclude = ["**/__pycache__", "**/*.pyc", "**/.git"]
 # cibuildwheel
 # ---------------------------------------------------------------------
 
-# maybe build = "cp{311,312,313,314}-manylinux_x86_64"
-
 [tool.cibuildwheel]
-archs = ["x86_64"]
-build = "cp{311}-manylinux_x86_64"
-skip = "pp* *-musllinux_*"
+build = "cp{311,312,313}-*"
+skip = "*-musllinux_*"
 
 [tool.cibuildwheel.linux]
+archs = ["x86_64"]
 manylinux-x86_64-image = "manylinux_2_28"
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
 
 # ---------------------------------------------------------------------
 # Check wheel contents
