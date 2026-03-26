@@ -20,6 +20,19 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON)
 
 #
+# Hint for Linux users: vcpkg is optional and system packages are commonly used.
+#
+if(USE_VCPKG AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    message(STATUS
+        "[VCPKG]  Hint: Linux builds commonly use system packages instead of vcpkg.\n"
+        "            To disable vcpkg:\n"
+        "              - configure with: -DUSE_VCPKG=OFF\n"
+        "              - do not set -DCMAKE_TOOLCHAIN_FILE to <path_to>/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    )
+    message(STATUS "")
+endif()
+
+#
 # VCPKG_ROOT
 #
 # Please set VCPKG_ROOT on your env: export VCPKG_ROOT=/opt/vcpkg/bin
@@ -30,11 +43,31 @@ set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON)
 #   This avoids passing -DCMAKE_TOOLCHAIN_FILE. This is way shorter!
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
-  # do nothing, CMAKE_TOOLCHAIN_FILE is already set
+  # do nothing, User explicitly set the CMAKE_TOOLCHAIN_FILE
+  message(STATUS "[VCPKG]  Enabled (toolchain provided via CMAKE_TOOLCHAIN_FILE)")
+
 elseif(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+   # infer toolchain automatically
+  set(_vcpkg_toolchain_file "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+
+  # ensure the toolchain file exists before setting CMAKE_TOOLCHAIN_FILE,
+  # otherwise the user will get a confusing error about missing toolchain file later on
+  if(EXISTS "${_vcpkg_toolchain_file}")
+    set(CMAKE_TOOLCHAIN_FILE "${_vcpkg_toolchain_file}" CACHE STRING "")
+    message(STATUS "[VCPKG]  Enabled (toolchain automatically set from VCPKG_ROOT)")
+  else()
+    message(WARNING
+      "[VCPKG] VCPKG_ROOT is set but the toolchain file was not found:\n"
+      "        ${_vcpkg_toolchain_file}"
+    )
+  endif()
+
 else()
-  message(WARNING "One of -DCMAKE_TOOLCHAIN_FILE or the VCPKG_ROOT environment variable should be set. Install vcpkg and set VCPKG_ROOT, or pass -DCMAKE_TOOLCHAIN_FILE=<path-to-vcpkg.cmake>.")
+    message(WARNING
+    "One of -DCMAKE_TOOLCHAIN_FILE or the VCPKG_ROOT environment variable should be set. "
+    "Install vcpkg and set VCPKG_ROOT, or pass "
+    "-DCMAKE_TOOLCHAIN_FILE=<path-to>/vcpkg/scripts/buildsystems/vcpkg.cmake."
+  )
 endif()
 
 #
@@ -93,9 +126,20 @@ else()
   endif()
 endif()
 
+
+# Init variables, which are not always defined.
+if(NOT DEFINED VCPKG_INSTALL_OPTIONS)
+  set(VCPKG_INSTALL_OPTIONS "" CACHE STRING "")
+endif()
+
+if(NOT DEFINED VCPKG_APPLOCAL_DEPS)
+  set(VCPKG_APPLOCAL_DEPS "" CACHE BOOL OFF)
+endif()
+
 #
 # Print VCPKG configuration overview
 #
+
 message(STATUS "")
 message(STATUS "[VCPKG]  Configuration Overview:")
 message(STATUS "")
@@ -110,6 +154,5 @@ message(STATUS "[VCPKG]  VCPKG_APPLOCAL_DEPS           -> '${VCPKG_APPLOCAL_DEPS
 message(STATUS "[VCPKG]  VCPKG_FEATURE_FLAGS           -> '${VCPKG_FEATURE_FLAGS}'")
 message(STATUS "[VCPKG]  VCPKG_MANIFEST_FILE           -> '${VCPKG_MANIFEST_FILE}'")
 message(STATUS "[VCPKG]  VCPKG_INSTALLED_DIR           -> '${VCPKG_INSTALLED_DIR}'")
-message(STATUS "[VCPKG]  VCPKG_DEFAULT_TRIPLET         -> '${VCPKG_DEFAULT_TRIPLET}'")
 message(STATUS "[VCPKG]  VCPKG_TARGET_TRIPLET          -> '${VCPKG_TARGET_TRIPLET}'")
 message(STATUS "")

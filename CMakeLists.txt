@@ -2,7 +2,23 @@
 #                                 Fifengine
 #------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25...4.2)
+
+# include additional CMake scripts
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+#-------------------------------------------------------------------
+# Setup VCPKG and install Dependencies
+#-------------------------------------------------------------------
+
+# USE_VCPKG defaults to true, so that SetupVcpkg is included.
+set(USE_VCPKG TRUE CACHE BOOL "Use vcpkg for dependencies")
+
+# This configures VCPKG to install the dependencies defined in vcpkg.json
+# automatically during the configure step of CMake (vcpkg install).
+if(USE_VCPKG)
+   include(SetupVcpkg)
+endif()
 
 #------------------------------------------------------------------------------
 #                                 Version
@@ -64,6 +80,11 @@ configure_file (
 #                                 Options
 #------------------------------------------------------------------------------
 
+#option(BUILD_SHARED_LIBS     "Build using shared libraries"                     OFF)
+
+# TODO: ENABLE_OPENGL, ENABLE_FIFECHAN, ENABLE_CEGUI, ENABLE_LOGGING
+# TODO: FIFE_PYTHON, FIFE_LIBRARY, FIFE_TESTS
+
 option(opengl           "Enable OpenGL support"                                 ON)
 option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
 option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
@@ -72,21 +93,27 @@ option(build-python     "Build the python extension module"                     
 option(build-library    "Build and install files to directly develop with C++"  OFF)
 option(build-tests      "Build C++ core tests"                                  OFF)
 
-#------------------------------------------------------------------------------
-#                                 Configure
-#------------------------------------------------------------------------------
+# Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
+# It is not a build option, because it must be set before project().
 
-# set path to our custom CMAKE scripts
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+#-------------------------------------------------------------------
+# CMake Includes
+#-------------------------------------------------------------------
 
-include(SetupVcpkg)
+# Project local includes
+include(ShowBuildTargetProperties)
+if(WIN32)
+  # Install runtime DLLs on Windows
+  include(InstallRuntimeDeps)
+endif()
+
+# CMake provided includes
 include(FeatureSummary)
 include(GNUInstallDirs)
 
-# Install runtime DLLs on Windows
-if(WIN32)
-  include(InstallRuntimeDeps)
-endif()
+#------------------------------------------------------------------------------
+#                                 Configure
+#------------------------------------------------------------------------------
 
 # Ensure SWIG python template files are available in the build tree.
 # this allows out-of-source builds and the SWIG invocation to find
@@ -1006,7 +1033,12 @@ if(build-library)
 
   add_library(fife ${FIFE_SOURCES})
 
-  set_target_properties(fife PROPERTIES SOVERSION ${FIFE_VERSION})
+  set_target_properties(fife PROPERTIES
+    VERSION                ${FIFE_VERSION}
+    SOVERSION              ${FIFE_VERSION}
+  )
+
+  show_build_target_properties(fife)
 
   target_link_libraries(
     fife
