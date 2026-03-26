@@ -80,18 +80,18 @@ configure_file (
 #                                 Options
 #------------------------------------------------------------------------------
 
-#option(BUILD_SHARED_LIBS     "Build using shared libraries"                     OFF)
+#option(BUILD_SHARED_LIBS     "Build using shared libraries"                OFF)
 
 # TODO: ENABLE_OPENGL, ENABLE_FIFECHAN, ENABLE_CEGUI, ENABLE_LOGGING
 # TODO: FIFE_PYTHON, FIFE_LIBRARY, FIFE_TESTS
 
-option(opengl           "Enable OpenGL support"                                 ON)
-option(fifechan         "Enable Fifechan GUI subsystem"                         ON)
-option(cegui            "Enable Crazy Eddie's GUI subsystem"                    OFF)
-option(logging          "Enable logging"                                        ON)
-option(build-python     "Build the python extension module"                     ON)
-option(build-library    "Build and install files to directly develop with C++"  OFF)
-option(build-tests      "Build C++ core tests"                                  OFF)
+option(opengl           "Enable OpenGL support"                              ON)
+option(fifechan         "Enable Fifechan GUI subsystem"                      ON)
+option(cegui            "Enable Crazy Eddie's GUI subsystem"                OFF)
+option(logging          "Enable logging"                                     ON)
+option(build-python     "Build python extension module"                      ON)
+option(build-library    "Build C++ library"                                 OFF)
+option(build-tests      "Build C++ tests"                                   OFF)
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.
 # It is not a build option, because it must be set before project().
@@ -228,25 +228,33 @@ endif(cegui)
 # Add the install location of the non-vcpkg dependencies to CMAKE_PREFIX_PATH
 # to allow find_package to find them. This is needed for SWIG and Fifechan.
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/install")
-message(STATUS "Extended CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
 #------------------------------------------------------------------------------
-#                                 Display Status
+# Display Status
 #------------------------------------------------------------------------------
 
+message(STATUS "---------------------------------------------------------------------")
+message(STATUS "[ 🛠️ ] Building FIFE v${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
+message(STATUS "---------------------------------------------------------------------")
+message(STATUS "[INFO] Source dir               -> '${PROJECT_SOURCE_DIR}'.")
+message(STATUS "[INFO] Build  directory         -> '${PROJECT_BINARY_DIR}'.")
+message(STATUS "[INFO] Installation path        -> '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
+message(STATUS "[INFO] Dependencies folder      -> '${PROJECT_SOURCE_DIR}/out/fife-dependencies'.")
 message(STATUS "")
-message(STATUS "== Building FIFE v${FIFE_VERSION} using build type '${CMAKE_BUILD_TYPE}'.")
-message(STATUS "------------------------------------------------------------------------------")
-message(STATUS "Source directory    -> '${PROJECT_SOURCE_DIR}'.")
-message(STATUS "Build  directory    -> '${PROJECT_BINARY_DIR}'.")
-message(STATUS "Installation path   -> '${CMAKE_INSTALL_PREFIX}' (set -DCMAKE_INSTALL_PREFIX=<path> to change).")
-message(STATUS "Dependencies folder -> '${PROJECT_SOURCE_DIR}/out/fife-dependencies'.")
-message(STATUS "CMAKE_PREFIX_PATH     -> '${CMAKE_PREFIX_PATH}'.")
+message(STATUS "[INFO] Build shared libraries   -> '${BUILD_SHARED_LIBS}'.")
 message(STATUS "")
-message(STATUS "CMake version       -> '${CMAKE_VERSION}'.")
-message(STATUS "CXX Compiler ID     -> '${CMAKE_CXX_COMPILER_ID}'.")
-message(STATUS "CXX Compiler Flags  -> '${CMAKE_CXX_FLAGS}'.")
+message(STATUS "[INFO] Enable OpenGL support               -> '${opengl}'")
+message(STATUS "[INFO] Enable Fifechan GUI subsystem       -> '${fifechan}'")
+message(STATUS "[INFO] Enable Crazy Eddie's GUI subsystem  -> '${cegui}'")
+message(STATUS "[INFO] Enable logging                      -> '${logging}'")
+message(STATUS "[INFO] Build the python extension module   -> '${build-python}'")
+message(STATUS "[INFO] Build C++ library                   -> '${build-library}'")
+message(STATUS "[INFO] Build C++ tests                     -> '${build-tests}'")
 message(STATUS "")
+message(STATUS "[INFO] CMake version            -> '${CMAKE_VERSION}'.")
+message(STATUS "[INFO] CXX Compiler ID          -> '${CMAKE_CXX_COMPILER_ID}'.")
+message(STATUS "[INFO] CXX Compiler Flags       -> '${CMAKE_CXX_FLAGS}'.")
+message(STATUS "---------------------------------------------------------------------")
 
 #------------------------------------------------------------------------------
 #                                 Source Files
