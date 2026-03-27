@@ -28,7 +28,7 @@ from fife.extensions.pychan.pychanbasicapplication import PychanApplicationBase
 from scripts import world
 from scripts.common import eventlistenerbase
 
-TDS = FifePychanSettings(app_name="rio_de_hola")
+TDS = FifePychanSettings(app_name="rio_de_hola", settings_file="./settings.xml")
 
 
 class KeyFilter(fife.IKeyFilter):

@@ -24,7 +24,7 @@ from fife.extensions.fife_settings import Setting
 
 print("Using the FIFE python module found here: ", os.path.dirname(fife.__file__))
 
-DemoSettings = Setting(app_name="CEGUI Demo")
+DemoSettings = Setting(app_name="CEGUI Demo", settings_file="./settings.xml")
 
 
 class CEGUIDemo(CEGUIApplicationBase):
