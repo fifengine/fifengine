@@ -4,6 +4,9 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+# include additional CMake scripts
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../CMake")
+
 project(fife-dependencies)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
@@ -18,8 +21,6 @@ set(
   CACHE PATH "Root directory for dependency artifacts (install/downloads/extracted/build-tools)"
 )
 get_filename_component(FIFE_DEPENDENCIES_ROOT "${FIFE_DEPENDENCIES_ROOT}" ABSOLUTE)
-# Keep module includes local to this repository.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "${FIFE_DEPENDENCIES_ROOT}/install" CACHE PATH "default install path" FORCE)
