@@ -4,9 +4,9 @@
 %module fifechan
 %{
 #include <fifechan.hpp>
-#include <fifechan/actionevent.hpp>
-#include <fifechan/event.hpp>
-#include <fifechan/keyevent.hpp>
+#include <fifechan/events/actionevent.hpp>
+#include <fifechan/events/event.hpp>
+#include <fifechan/events/keyevent.hpp>
 %}
 
 namespace fcn {
