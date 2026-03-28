@@ -142,7 +142,7 @@ namespace FIFE
     {
         m_destroyed = false;
 
-        FL_LOG(_log, LMsg("Fifengine v") << FIFE::getVersion());
+        FL_LOG(_log, LMsg("Fifengine v") << FIFE::app_version::get_version());
         FL_LOG(_log, "================== Engine initialize start =================");
         m_timemanager = new TimeManager();
         FL_LOG(_log, "Time manager created");
