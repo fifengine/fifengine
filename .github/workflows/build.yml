@@ -7,9 +7,9 @@
 #
 
 # -----------------------------------------------------------------------------
-# This workflow builds the FIFEngine C++ library and Python bindings.
+# This workflow builds the Fifengine C++ library.
 # -----------------------------------------------------------------------------
-name: Build FIFEngine (C++ & Swig)
+name: Build Fifengine (C++ Library)
 
 on:
   push:
@@ -170,7 +170,7 @@ jobs:
             --preset ${{ matrix.config.preset }} \
             -B ${{ env.BUILD_DIR }} \
             -Dfifechan=ON \
-            -Dbuild-python=ON \
+            -Dbuild-python=OFF \
             -Dbuild-library=ON \
             -DVCPKG_MANIFEST_MODE=OFF \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
@@ -393,7 +393,7 @@ jobs:
             --preset ${{ matrix.config.preset }} ^
             -B "%BUILD_DIR%" ^
             -Dfifechan=ON ^
-            -Dbuild-python=ON ^
+            -Dbuild-python=OFF ^
             -Dbuild-library=ON ^
             -DCMAKE_PREFIX_PATH="%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}" ^
             -DVCPKG_MANIFEST_MODE=OFF ^

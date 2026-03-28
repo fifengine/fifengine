@@ -7,9 +7,18 @@
 #
 
 # -----------------------------------------------------------------------------
-# This workflow builds Python wheels for the Python bindings of FIFEngine.
+# This workflow builds Python wheels for the Python bindings of Fifengine.
 # -----------------------------------------------------------------------------
-name: Build FIFEngine (Python Wheels)
+# This workflow uses cibuildwheel to run the full build pipeline:
+#  1. Compile the C++ library
+#  2. Generate the Python bindings using Swig
+#  3. Package the result into Python wheel distributions
+#
+# The generated wheels are stored as workflow artifacts.
+# Publishing to PyPI is handled by a separate workflow, triggered manually
+# or automatically on version tags.
+# -----------------------------------------------------------------------------
+name: Build Fifengine (Python Wheels)
 
 on:
   push:
