@@ -860,9 +860,6 @@ if(fifechan)
       "${PROJECT_BINARY_DIR}/fifechan.i"
     )
   endif(build-python)
-
-  # TODO remove (when FIFECHAN provides import target)
-  include_directories(${FIFECHAN_INCLUDE_DIR})
 endif(fifechan)
 
 if(cegui)
