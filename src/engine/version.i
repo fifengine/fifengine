@@ -3,15 +3,18 @@
 
 %module fife
 %{
-#include "version.h"
+#include "version.hpp"
 %}
 
 namespace FIFE {
-    inline const char* getVersion();
-    inline const char* getVersionShort();
-    inline int getMajor();
-    inline int getMinor();
-    inline int getPatch();
-    inline const char* getHash();
-    inline const int getVersionId();
+    inline const char* get_name();
+    inline const char* get_version();
+    inline const char* get_license();
+    inline const char* get_description();
+    inline const char* get_homepage();
+    inline const char* get_copyright();
+    inline int get_major();
+    inline int get_minor();
+    inline int get_patch();
+    inline int get_version_id();
 } //FIFE

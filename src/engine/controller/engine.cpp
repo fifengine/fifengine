@@ -42,7 +42,7 @@
 #include "model/metamodel/grids/squaregrid.h"
 #include "model/model.h"
 #include "pathfinder/routepather/routepather.h"
-#include "version.h"
+#include "version.hpp"
 #include "video/image.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "view/renderers/blockinginforenderer.h"

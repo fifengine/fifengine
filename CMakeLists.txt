@@ -20,60 +20,39 @@ if(USE_VCPKG)
    include(SetupVcpkg)
 endif()
 
-#------------------------------------------------------------------------------
-#                                 Version
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------
+# Gather Version Data
+#-------------------------------------------------------------------
 
-set(FIFE_MAJOR_VERSION 0)
-set(FIFE_MINOR_VERSION 4)
-set(FIFE_PATCH_VERSION 2)
-set(FIFE_VERSION_SHORT ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION})
-
-# check if "git" is installed
-find_program(GIT_TOOL git DOC "Git version control")
-mark_as_advanced(GIT_TOOL)
-
-# get git commit hash, if source folder is a git repository
-find_file(GIT_DIR NAMES .git PATHS ${CMAKE_SOURCE_DIR} NO_DEFAULT_PATH)
-
-if(GIT_TOOL AND GIT_DIR)
-  execute_process(
-    COMMAND git rev-parse --short=7 HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_COMMIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  set(FIFE_GIT_HASH ${GIT_COMMIT_HASH})
-  unset(GIT_DIR)
-else()
-  # not a git repo, possibly a source download
-  set(FIFE_GIT_HASH "")
-endif()
-
-if(GIT_COMMIT_HASH)
-  set(FIFE_VERSION ${FIFE_VERSION_SHORT}+build.${FIFE_GIT_HASH})
-else()
-  set(FIFE_VERSION ${FIFE_VERSION_SHORT})
-endif()
+# vcpkg.json is the primary source for version data.
+# FIFE_VERSION is used to set the project version.
+# FIFE_VERSION and the other tokens are used in version.hpp.in.
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg.json VCPKG_JSON_STRING)
+string(JSON FIFE_NAME     GET ${VCPKG_JSON_STRING} "name")
+string(JSON FIFE_VERSION  GET ${VCPKG_JSON_STRING} "version-string")
+string(JSON FIFE_LICENSE  GET ${VCPKG_JSON_STRING} "license")
+string(JSON FIFE_DESC     GET ${VCPKG_JSON_STRING} "description")
+string(JSON FIFE_HOMEPAGE GET ${VCPKG_JSON_STRING} "homepage")
+string(TIMESTAMP CURRENT_YEAR "%Y")
 
 #------------------------------------------------------------------------------
 #                                 Project
 #------------------------------------------------------------------------------
 
-project(fifengine
-  VERSION ${FIFE_MAJOR_VERSION}.${FIFE_MINOR_VERSION}.${FIFE_PATCH_VERSION}
-  LANGUAGES CXX
-)
+project(fifengine VERSION ${FIFE_VERSION} LANGUAGES CXX)
 
-#------------------------------------------------------------------------------
-#                                 Versionize
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------
+# Versionize the project
+#-------------------------------------------------------------------
 
-message("== Updating version.h with version information and git meta data.")
-
+# Here we populate the version.hpp file with version data.
+# This must be done after project() is called,
+# else the version variables are not available (PROJECT_* tokens).
+# See the version.hpp.in file for the tokens that are replaced.
 configure_file (
-  "${PROJECT_SOURCE_DIR}/src/engine/version.h.in"
-  "${PROJECT_SOURCE_DIR}/src/engine/version.h"
+  "${PROJECT_SOURCE_DIR}/src/engine/version.hpp.in"
+  "${PROJECT_SOURCE_DIR}/src/engine/version.hpp"
+  @ONLY
 )
 
 #------------------------------------------------------------------------------
@@ -222,7 +201,7 @@ if(cegui)
 endif(cegui)
 
 #------------------------------------------------------------------------------
-#                           Find Dependencies - Windows
+# Find Dependencies (non-vcpkg)
 #------------------------------------------------------------------------------
 
 # Add the install location of the non-vcpkg dependencies to CMAKE_PREFIX_PATH
