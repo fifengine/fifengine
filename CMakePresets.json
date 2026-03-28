@@ -6,9 +6,9 @@
     "patch": 0
   },
   "include": [
-    "cmake/presets/base.json",
-    "cmake/presets/windows.json",
-    "cmake/presets/linux.json"
+    "CMake/presets/base.json",
+    "CMake/presets/windows.json",
+    "CMake/presets/linux.json"
   ],
   "configurePresets": [
     {
