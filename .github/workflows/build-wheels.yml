@@ -211,6 +211,7 @@ jobs:
             VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
             VCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
             DEPS_DIR=${{ env.DEPS_DIR }}
+            CMAKE_BUILD_PARALLEL_LEVEL=4
           CIBW_CONFIG_SETTINGS: |
             cmake.define.CMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
             cmake.define.VCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
