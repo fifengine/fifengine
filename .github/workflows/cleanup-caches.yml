@@ -1,0 +1,60 @@
+#
+# .github/workflows/cleanup-caches.yml
+#
+# SPDX-FileCopyrightText: 2026 Jens A. Koch.
+# SPDX-License-Identifier: BSL-1.0
+#
+
+name: Clean Caches
+
+on:
+  # You can manually run this workflow.
+  workflow_dispatch:
+
+jobs:
+
+# ---------------------------------------------------------------------------------------
+
+  cleanup-caches:
+
+# ---------------------------------------------------------------------------------------
+
+    name: "Cleanup Caches"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: ✂ Delete all caches
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let deleted_count = 0;
+            async function deleteAllCaches() {
+              for (let page = 1;; page++) {
+                const response = await github.request('GET /repos/{owner}/{repo}/actions/caches', {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  per_page: 100,
+                  page: page
+                });
+                const caches = response.data.actions_caches || [];
+                if (caches.length === 0) break;
+                for (const cache of caches) {
+                  try {
+                    console.log(`[Deleting] Cache id ${cache.id} (${cache.key})`);
+                    await github.request('DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}', {
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      cache_id: cache.id
+                    });
+                    deleted_count++;
+                  } catch (error) {
+                    console.warn(`⚠️ Failed to delete cache ${cache.id}: ${error.message}`);
+                  }
+                }
+                if (caches.length < 100) break;
+              }
+            }
+            await deleteAllCaches();
+            console.log(`✅ Deleted ${deleted_count} caches.`);

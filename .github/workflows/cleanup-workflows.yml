@@ -1,0 +1,205 @@
+#
+# .github/workflows/cleanup-workflows.yml
+#
+# SPDX-FileCopyrightText: 2021 Ching Chow.
+# SPDX-FileCopyrightText: 2021-2026 Jens A. Koch.
+# SPDX-License-Identifier: BSL-1.0
+#
+
+name: Clean Workflow Runs
+
+on:
+  # This workflow runs at 03:20 daily.
+  # The irregular time is used to avoid Github high load times.
+  schedule:
+    - cron: "20 3 * * *" # GMT
+  # You can manually run this workflow.
+  workflow_dispatch:
+
+jobs:
+
+# ---------------------------------------------------------------------------------------
+
+  cleanup-workflows:
+
+# ---------------------------------------------------------------------------------------
+
+    name: "Cleanup Workflows"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: ✂ Remove cancelled or skipped workflow runs
+        uses: actions/github-script@v8 # https://github.com/actions/github-script
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const cancelled = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+              status: 'cancelled'
+            });
+            const skipped = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+              status: 'skipped'
+            });
+            for (const response of [cancelled, skipped]) {
+              for (const run of response.data.workflow_runs) {
+                console.log(`[Deleting] Run id ${run.id} of '${run.name}' is a cancelled or skipped run.`);
+                await github.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id
+                });
+              }
+            }
+
+      - name: ✂ Remove 14 days old workflows runs
+        uses: actions/github-script@v8 # https://github.com/actions/github-script
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const days_to_expiration = 14;
+            const ms_in_day = 86400000;
+            const now = Date.now();
+            const pages = 5;
+            // list the workflows runs to remove here
+            const workflows = [
+              'build.yml',
+              'build-wheels.yml',
+              'qa.yml'
+            ]
+            let runs_to_delete = [];
+            for (const workflow of workflows) {
+              for (let page = 0; page < pages; page += 1) {
+                let response = await github.rest.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  page: page,
+                  per_page: 50,
+                  repo: context.repo.repo,
+                  workflow_id: workflow
+                });
+                if (response.data.workflow_runs.length === 0) break;
+                if (response.data.workflow_runs.length > 0) {
+                  for (const run of response.data.workflow_runs) {
+                    if (now - Date.parse(run.created_at) > ms_in_day * days_to_expiration) {
+                      runs_to_delete.push([run.id, run.name]);
+                    }
+                  }
+                }
+                if (response.data.workflow_runs.length < 50) break;
+              }
+            }
+            for (const run of runs_to_delete) {
+              console.log(`[Deleting] Run id ${run[0]} of '${run[1]}' is older than ${days_to_expiration} days.`);
+              try {
+                await github.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run[0]
+                });
+              } catch (error) {
+                // ignore errors
+              }
+            }
+
+      # https://api.github.com/repos/jakoch/cpp-devbox/actions/workflows/clean-workflows.yml/runs
+      - name: ✂ Remove runs of the cleanup workflow itself
+        uses: actions/github-script@v8 # https://github.com/actions/github-script
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pages = 5;
+            let runs_to_delete = [];
+            // Get all workflows
+            const { data: workflowsData } = await github.rest.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            // Find workflow by name
+            const workflowName = "Clean Workflow Runs";
+            const workflow = workflowsData.workflows.find(w => w.name === workflowName);
+            if (!workflow) {
+              console.log(`❌ No workflow named ${workflowName} found.`);
+              return;
+            }
+            const workflowId = workflow.id;
+            console.log(`✅ Found workflow ID: ${workflowId}`);
+            // Fetch workflow runs
+            for (let page = 0; page < pages; page += 1) {
+              const response = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: workflowId, // Use dynamically fetched ID
+                page: page,
+                per_page: 50,
+              });
+              if (response.data.workflow_runs.length === 0) break;
+              if (response.data.workflow_runs.length > 0) {
+                for (const run of response.data.workflow_runs) {
+                    runs_to_delete.push([run.id, run.name]);
+                }
+              }
+              if (response.data.workflow_runs.length < 50) break;
+            }
+            // Delete workflow runs
+            for (const run of runs_to_delete) {
+              console.log(`[Deleting] Run id ${run[0]} of '${run[1]}'.`);
+              try {
+                await github.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run[0]
+                });
+              } catch (error) {
+                // ignore errors
+              }
+            }
+
+      - name: ✂ Remove Dependabot workflow runs
+        uses: actions/github-script@v8 # https://github.com/actions/github-script
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const MAX_PAGES = 20;
+            const PER_PAGE = 100;
+            let runs_to_delete = [];
+            // Get all workflows
+            for (let page = 1; page <= MAX_PAGES; page++) {
+              const response = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: PER_PAGE,
+                page: page
+              });
+              const runs = response.data.workflow_runs;
+              if (!runs || runs.length === 0) break;
+              // Find workflow by actor login (username)
+              for (const run of runs) {
+                if (run.actor?.login === "dependabot[bot]") {
+                  runs_to_delete.push([run.id, run.name]);
+                }
+              }
+              if (runs.length < PER_PAGE) break;
+            }
+            if (runs_to_delete.length === 0) {
+              console.log("✅ No Dependabot runs found.");
+              return;
+            }
+            console.log(`🗑️ Found ${runs_to_delete.length} runs to delete.`);
+            for (const [runId, runName] of runs_to_delete) {
+              console.log(`[Deleting] Run #${runId} (${runName})`);
+              try {
+                await github.rest.actions.deleteWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: runId
+                });
+              } catch (error) {
+                console.warn(`⚠️ Failed to delete run ${runId}: ${error.message}`);
+              }
+            }
+            console.log("✅ Cleanup complete.");
