@@ -120,7 +120,7 @@ jobs:
             cache-deps-${{ matrix.config.preset }}-
 
       - name: 🔽 1/4 Setup VCPKG
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           cd ${{ env.VCPKG_ROOT }}
@@ -333,7 +333,7 @@ jobs:
       # Windows: "c:\vcpkg"
       # Linux: /usr/local/share/vcpkg
       - name: 🔽 1/4 Setup VCPKG
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
