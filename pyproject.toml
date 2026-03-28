@@ -68,6 +68,11 @@ cmake.args = ["-DPYTHON_SITE_PACKAGES=."]
 install-dir = ""
 exclude = ["**/__pycache__", "**/*.pyc", "**/.git"]
 
+[[tool.scikit-build.wheel.packages]]
+path = "."
+dest = "fife"
+include = ["AUTHORS", "CHANGELOG.md", "LICENSE.md", "README.md"]
+
 # ---------------------------------------------------------------------
 # cibuildwheel
 # ---------------------------------------------------------------------
