@@ -811,7 +811,7 @@ if(BUILD_PYTHON_BINDINGS)
   foreach(filename ${FIFE_CORE_SWIG})
     list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
     set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-  endforeach(filename ${FIFE_CORE_SWIG})
+  endforeach()
 endif()
 
 if(ENABLE_FIFEGUI)
@@ -822,17 +822,20 @@ if(ENABLE_FIFEGUI)
 
   if(BUILD_PYTHON_BINDINGS)
     set(SWIG_MODULE_fifechan_EXTRA_DEPS)
+
+    # Files in FIFE_FCHAN_SWIG_LIB go into CMAKE_SWIG_INCLUSIONS_FCHAN (fifechan module)
     foreach(filename ${FIFE_FCHAN_SWIG_LIB})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "src/engine/${filename}")
       set(CMAKE_SWIG_INCLUSIONS_FCHAN "${CMAKE_SWIG_INCLUSIONS_FCHAN}%include ${filename}\n")
-    endforeach(filename ${FIFE_FCHAN_SWIG_LIB})
+    endforeach()
 
+    # Files in FIFE_FCHAN_SWIG go into CMAKE_SWIG_INCLUSIONS (fife module).
     foreach(filename ${FIFE_FCHAN_SWIG})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
       list(APPEND SWIG_MODULE_fifechan_EXTRA_DEPS "src/engine/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-    endforeach(filename ${FIFE_FCHAN_SWIG})
+    endforeach()
 
     set(CMAKE_SWIG_IMPORTS "${CMAKE_SWIG_IMPORTS}%import(module=\"fife.fifechan\") ${PROJECT_BINARY_DIR}/fifechan.i")
 
@@ -845,10 +848,12 @@ endif(ENABLE_FIFEGUI)
 
 if(ENABLE_CEGUI)
   if(BUILD_PYTHON_BINDINGS)
+
+    # Files in FIFE_CEGUI_SWIG go into CMAKE_SWIG_INCLUSIONS (fife module).
     foreach(filename ${FIFE_CEGUI_SWIG})
       list(APPEND SWIG_MODULE_fife_EXTRA_DEPS "src/engine/${filename}")
       set(CMAKE_SWIG_INCLUSIONS "${CMAKE_SWIG_INCLUSIONS}%include ${filename}\n")
-    endforeach(filename ${FIFE_CEGUI_SWIG})
+    endforeach()
   endif(BUILD_PYTHON_BINDINGS)
 endif(ENABLE_CEGUI)
 
