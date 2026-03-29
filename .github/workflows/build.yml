@@ -136,15 +136,15 @@ jobs:
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
 
       # Force a save of the VCPKG packages, until the workflow goes fully green.
-      - name: 💾 Save VCPKG cache
-        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5 # https://github.com/actions/cache
-        with:
-          path: |
-            ${{ env.VCPKG_INSTALLED_DIR }}
-            ${{ env.VCPKG_ROOT }}/packages
-            /home/runner/.cache/vcpkg/archives/
-          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+      # - name: 💾 Save VCPKG cache
+      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+      #   uses: actions/cache/save@v5 # https://github.com/actions/cache
+      #   with:
+      #     path: |
+      #       ${{ env.VCPKG_INSTALLED_DIR }}
+      #       ${{ env.VCPKG_ROOT }}/packages
+      #       /home/runner/.cache/vcpkg/archives/
+      #     key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -352,15 +352,15 @@ jobs:
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
       # Force a save of the VCPKG packages, until the workflow goes fully green.
-      - name: 💾 Save VCPKG cache
-        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5 # https://github.com/actions/cache
-        with:
-          path: |
-            ${{ env.VCPKG_INSTALLED_DIR }}
-            ${{ env.VCPKG_ROOT }}\packages
-            ~\AppData\Local\vcpkg\archives\
-          key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+      # - name: 💾 Save VCPKG cache
+      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+      #   uses: actions/cache/save@v5 # https://github.com/actions/cache
+      #   with:
+      #     path: |
+      #       ${{ env.VCPKG_INSTALLED_DIR }}
+      #       ${{ env.VCPKG_ROOT }}\packages
+      #       ~\AppData\Local\vcpkg\archives\
+      #     key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 3/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -488,14 +488,16 @@ jobs:
           echo "BUILD_DIR=out/build/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
           echo "INSTALL_DIR=out/install/${{ matrix.config.preset }}" >> "$GITHUB_ENV"
 
-      - name: 🎯 Setup Package Cache (vcpkg)
+      - name: 🎯 Setup VCPKG Cache
         id: cache-vcpkg
         uses: actions/cache@v5 # https://github.com/actions/cache
         with:
+          # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md#configuration
           path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
             ${{ env.VCPKG_ROOT }}/packages
             ~/.cache/vcpkg/archives
-          key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}
+          key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}
             cache-vcpkg-container-${{ matrix.config.preset }}
@@ -534,14 +536,15 @@ jobs:
         run: |
           "${VCPKG_ROOT}/vcpkg" install --triplet x64-linux --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
-      - name: 💾 Save VCPKG cache
-        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5
-        with:
-          path: |
-            ${{ env.VCPKG_ROOT }}/packages
-            ~/.cache/vcpkg/archives
-          key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+      # - name: 💾 Save VCPKG cache
+      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+      #   uses: actions/cache/save@v5
+      #   with:
+      #     path: |
+      #       ${{ env.VCPKG_INSTALLED_DIR }}
+      #       ${{ env.VCPKG_ROOT }}/packages
+      #       ~/.cache/vcpkg/archives
+      #     key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 1/4 🧩 Configure non-vcpkg dependencies
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'

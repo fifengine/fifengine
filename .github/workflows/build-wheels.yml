@@ -151,15 +151,15 @@ jobs:
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
       # Force a save of the VCPKG packages, until the workflow goes fully green.
-      - name: 💾 Save VCPKG cache
-        if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v5 # https://github.com/actions/cache
-        with:
-          path: |
-            ${{ env.VCPKG_INSTALLED_DIR }}
-            ${{ env.VCPKG_ROOT }}\packages
-            ~\AppData\Local\vcpkg\archives\
-          key: cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
+      # - name: 💾 Save VCPKG cache
+      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
+      #   uses: actions/cache/save@v5 # https://github.com/actions/cache
+      #   with:
+      #     path: |
+      #       ${{ env.VCPKG_INSTALLED_DIR }}
+      #       ${{ env.VCPKG_ROOT }}\packages
+      #       ~\AppData\Local\vcpkg\archives\
+      #     key: cache-vcpkg-wheels-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
 
       - name: 3/3 🧩 Configure non-vcpkg dependencies (fifechan, SWIG)
         if: steps.cache-deps.outputs.cache-hit != 'true'
