@@ -65,8 +65,8 @@ option(ENABLE_OPENGL          "Enable OpenGL support"                        ON)
 option(ENABLE_FIFEGUI         "Enable Fifechan GUI subsystem"                ON)
 option(ENABLE_CEGUI           "Enable Crazy Eddie's GUI subsystem"          OFF)
 option(ENABLE_LOGGING         "Enable logging"                               ON)
-option(BUILD_PYTHON_BINDINGS  "Build python extension module"                ON)
-option(BUILD_LIBRARY          "Build C++ library"                           OFF)
+option(BUILD_PYTHON_BINDINGS  "Build python extension module"               OFF)
+option(BUILD_LIBRARY          "Build C++ library"                            ON)
 option(BUILD_TESTS            "Build C++ tests"                             OFF)
 
 # Reminder: The variable USE_VCPKG exists, which controls SetupVcpkg.

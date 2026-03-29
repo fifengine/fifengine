@@ -119,34 +119,26 @@ jobs:
             cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
             cache-deps-${{ matrix.config.preset }}-
 
-      - name: 🔽 1/4 Setup VCPKG
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: 🔽 1.1 Setup VCPKG
         run: |
           set -euo pipefail
+          echo "[VCPKG] Updating registry..."
           cd ${{ env.VCPKG_ROOT }}
           git reset --hard
           git pull --quiet
+          echo "[VCPKG] Bootstrapping..."
           ./bootstrap-vcpkg.sh
+          echo "[VCPKG] Integrating with the system..."
+          vcpkg integrate install
 
-      - name: 2/4 📦 Install VCPKG dependencies
+      - name: 📦 1.2 Install VCPKG dependencies
         run: |
           set -euo pipefail
           "${{ env.VCPKG_ROOT }}/vcpkg" install --triplet "${{ matrix.config.triplet }}" --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
           ls -lahr "${{ env.VCPKG_ROOT }}" || true
           ls -lahr "${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}/" || true
 
-      # Force a save of the VCPKG packages, until the workflow goes fully green.
-      # - name: 💾 Save VCPKG cache
-      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-      #   uses: actions/cache/save@v5 # https://github.com/actions/cache
-      #   with:
-      #     path: |
-      #       ${{ env.VCPKG_INSTALLED_DIR }}
-      #       ${{ env.VCPKG_ROOT }}/packages
-      #       /home/runner/.cache/vcpkg/archives/
-      #     key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
-
-      - name: 3/4 🧩 Configure non-vcpkg dependencies
+      - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake \
@@ -159,29 +151,29 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: 3/4 🏗️ Build non-vcpkg dependencies
+      - name: 🏗️ 2.2 Install non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
-      - name: 4/4 🛠️ Configure fifengine
+      - name: 🛠️ 3.1 Configure fifengine
         run: |
           cmake \
             --preset ${{ matrix.config.preset }} \
             -B ${{ env.BUILD_DIR }} \
-            -Dfifechan=ON \
-            -Dbuild-python=OFF \
-            -Dbuild-library=ON \
-            -DVCPKG_MANIFEST_MODE=OFF \
+            -DENABLE_FIFEGUI=ON \
+            -DBUILD_PYTHON_BINDINGS=OFF \
+            -DBUILD_LIBRARY=ON \
+            -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}" \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_MANIFEST_MODE=OFF \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
-            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }} \
-            -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/${{ matrix.config.triplet }}"
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: 4/4 🙏 Build fifengine
+      - name: 🙏 3.2 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
 
-      - name: 4/4 📦 Install fifengine
+      - name: 📦 3.3 Install fifengine
         run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
@@ -267,18 +259,6 @@ jobs:
       - name: 🔽 Install CMake
         run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --apply-install-arguments-to-dependencies --no-progress
 
-      # - name: 🛠️ Setup Visual Studio Developer Command Prompt
-      #   if: matrix.config.os == 'windows-2025'
-      #   run: |
-      #     call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-      #     cl.exe
-
-      # - name: 🛠️ Setup Visual Studio Developer Command Prompt
-      #   if: matrix.config.os == 'windows-2025-vs2026'
-      #   run: |
-      #     call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-      #     cl.exe
-
       # WARNING
       # ENV VCPKG_ROOT is redefined by this action
       # and set to "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\vcpkg"
@@ -332,13 +312,12 @@ jobs:
       # Default Locations (env var VCPKG_INSTALLATION_ROOT):
       # Windows: "c:\vcpkg"
       # Linux: /usr/local/share/vcpkg
-      - name: 🔽 1/4 Setup VCPKG
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: 🔽 1.1 Setup VCPKG
         shell: bash
         run: |
           set -euo pipefail
-          cd "${{ env.VCPKG_ROOT }}"
           echo "[VCPKG] Updating registry..."
+          cd "${{ env.VCPKG_ROOT }}"
           git fetch --tags
           LATEST_VCPKG_TAG=$(git describe --tags --abbrev=0)
           git checkout $LATEST_VCPKG_TAG
@@ -347,22 +326,11 @@ jobs:
           echo "[VCPKG] Integrating with the system..."
           vcpkg integrate install
 
-      - name: 2/4 📦 Install VCPKG dependencies
+      - name: 📦 1.2 Install VCPKG dependencies
         run: |
           vcpkg install --triplet ${{ matrix.config.triplet }} --x-install-root "%VCPKG_INSTALLED_DIR%"
 
-      # Force a save of the VCPKG packages, until the workflow goes fully green.
-      # - name: 💾 Save VCPKG cache
-      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-      #   uses: actions/cache/save@v5 # https://github.com/actions/cache
-      #   with:
-      #     path: |
-      #       ${{ env.VCPKG_INSTALLED_DIR }}
-      #       ${{ env.VCPKG_ROOT }}\packages
-      #       ~\AppData\Local\vcpkg\archives\
-      #     key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
-
-      - name: 3/4 🧩 Configure non-vcpkg dependencies
+      - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake ^
@@ -376,7 +344,7 @@ jobs:
             -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
             -DFIFECHAN_BUILD_FROM_SOURCE=ON
 
-      - name: 3/4 🏗️ Build non-vcpkg dependencies
+      - name: 🏗️ 2.2 Build non-vcpkg dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build "%DEPS_DIR%\build" --parallel
@@ -387,26 +355,27 @@ jobs:
       #   We need to override it to use the one we fetched.
       #   If SWIG_EXECUTABLE is not set, the system one will be used (C:/ProgramData/chocolatey/lib/swig/)
       #   If SWIG_DIR is not set, SWIG_LIB will be the system one (C:/ProgramData/chocolatey/lib/swig/tools/install/swigwin-4.3.1/Lib)
-      - name: 4/4 🛠️ Configure fifengine
+      - name: 🛠️ 3.1 Configure fifengine
         run: |
           cmake ^
             --preset ${{ matrix.config.preset }} ^
             -B "%BUILD_DIR%" ^
-            -Dfifechan=ON ^
-            -Dbuild-python=OFF ^
-            -Dbuild-library=ON ^
+            -DENABLE_FIFEGUI=ON ^
+            -DBUILD_PYTHON_BINDINGS=OFF ^
+            -DBUILD_LIBRARY=ON ^
             -DCMAKE_PREFIX_PATH="%DEPS_DIR%\install;%VCPKG_INSTALLED_DIR%\${{ matrix.config.triplet }}" ^
-            -DVCPKG_MANIFEST_MODE=OFF ^
             -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+            -DVCPKG_MANIFEST_MODE=OFF ^
             -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} ^
-            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%" ^
-            -DSWIG_EXECUTABLE="%DEPS_DIR%\build-tools\swig\swig.exe" ^
-            -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
+            -DVCPKG_INSTALLED_DIR="%VCPKG_INSTALLED_DIR%"
 
-      - name: 4/4 🙏 Build fifengine
+        #    -DSWIG_EXECUTABLE="%DEPS_DIR%\build-tools\swig\swig.exe" ^
+        #    -DSWIG_DIR="%DEPS_DIR%\build-tools\swig\Lib"
+
+      - name: 🙏 3.2 Build fifengine
         run: cmake --build ${{ env.BUILD_DIR }}
 
-      - name: 4/4 📦 Install fifengine
+      - name: 📦 3.3 Install fifengine
         run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }}
 
       - name: ❔ CHECK important folders, to see if everything is present (after building)
@@ -440,12 +409,14 @@ jobs:
               job_name: "Linux | Clang20 | Release",
               image_version: "bookworm-latest",
               preset: "clang20-x64-linux-rel",
+              triplet: x64-linux,
               artifact-name: "libfife-clang20-x64-linux"
             }
           - {
               job_name: "Linux | Clang21 | Release",
               image_version: "trixie-latest",
               preset: "clang21-x64-linux-rel",
+              triplet: x64-linux,
               artifact-name: "libfife-clang21-x64-linux"
             }
 
@@ -454,6 +425,8 @@ jobs:
       VCPKG_FORCE_SYSTEM_BINARIES: 1
       VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching,registries
       SOURCE_DIR: ${{ github.workspace }}
+      BUILD_DIR:   ${{ github.workspace }}/build
+      INSTALL_DIR: ${{ github.workspace }}/install
       VCPKG_ROOT: /opt/vcpkg
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
       DEPS_DIR: ${{ github.workspace }}/out/fife-dependencies
@@ -502,15 +475,9 @@ jobs:
             cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}
             cache-vcpkg-container-${{ matrix.config.preset }}
 
-      #- name: 🔽 Clone VCPKG (if missing)
-      #  run: |
-      #    if [[ ! -d "${VCPKG_ROOT}" ]]; then
-      #      git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
-      #    fi
-
-      - name: 🔽 Update VCPKG (latest TAG)
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: 🔽 Update VCPKG (to latest tag of package registry)
         run: |
+          echo "[VCPKG] Updating registry..."
           cd "${VCPKG_ROOT}"
           git fetch --tags --force
 
@@ -526,27 +493,18 @@ jobs:
 
           git checkout "${LATEST_VCPKG_TAG}"
 
-      - name: 🛠️ Setup VCPKG
-        #if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: 🔽 1.1 Setup VCPKG
         run: |
+          echo "[VCPKG] Bootstrapping..."
           "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+          echo "[VCPKG] Integrating with the system..."
           "${VCPKG_ROOT}/vcpkg" integrate install
 
-      - name: 📦 Install VCPKG dependencies
+      - name: 📦 1.2 Install VCPKG dependencies
         run: |
           "${VCPKG_ROOT}/vcpkg" install --triplet x64-linux --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
-      # - name: 💾 Save VCPKG cache
-      #   if: ${{ always() && !cancelled() && steps.cache-vcpkg.outputs.cache-hit != 'true' }}
-      #   uses: actions/cache/save@v5
-      #   with:
-      #     path: |
-      #       ${{ env.VCPKG_INSTALLED_DIR }}
-      #       ${{ env.VCPKG_ROOT }}/packages
-      #       ~/.cache/vcpkg/archives
-      #     key: cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
-
-      - name: 1/4 🧩 Configure non-vcpkg dependencies
+      - name: 🧩 2.1 Configure non-vcpkg dependencies
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           cmake \
@@ -556,29 +514,34 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DFIFE_DEPENDENCIES_ROOT=${{ env.DEPS_DIR }} \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=x64-linux \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: 1/4 🏗️ Build non-vcpkg dependencies
+      - name: 🏗️ 2.2 Build non-vcpkg dependencies
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
-      - name: 2/4 🛠️ CMake ➔ Configure (Preset)
+      - name: 🛠️ 3.1 Configure fifengine
         run: |
           export PATH="${{ env.DEPS_DIR }}/build-tools/swig/bin:$PATH"
-          cmake --preset "${{ matrix.config.preset }}" \
-            -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/x64-linux"
+          cmake \
+            --preset "${{ matrix.config.preset }}" \
+            -B ${{ env.BUILD_DIR }} \
+            -DENABLE_FIFEGUI=ON \
+            -DBUILD_PYTHON_BINDINGS=OFF \
+            -DBUILD_LIBRARY=ON \
+            -DVCPKG_MANIFEST_MODE=OFF \
+            -DCMAKE_PREFIX_PATH="${{ env.DEPS_DIR }}/install;${{ env.VCPKG_INSTALLED_DIR }}/x64-linux" \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
-      - name: 3/4 🙏 CMake ➔ Build
-        run: |
-          cmake --build "${BUILD_DIR}"
+      - name: 🙏 3.2 Build fifengine
+        run: cmake --build ${{ env.BUILD_DIR }}
 
-      - name: 4/4 📦 CMake ➔ Install
-        run: |
-          cmake --install "${BUILD_DIR}" \
-            --prefix "${INSTALL_DIR}" \
-            --verbose
+      - name: 📦 3.3 Install fifengine
+        run: cmake --install ${{ env.BUILD_DIR }} --prefix ${{ env.INSTALL_DIR }} --verbose
 
       - name: 🧪 CTest ➔ Run Tests
         run: |
@@ -588,7 +551,7 @@ jobs:
 
       - name: ❔ CHECK folders, to see if everything is present (after building)
         run: |
-          find "${INSTALL_DIR}" -type f | sort
+          find "${{ env.INSTALL_DIR }}" -type f | sort
 
       - name: 🔼 Upload Build Artifact
         uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
