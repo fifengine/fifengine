@@ -5,11 +5,11 @@
 find_package(Catch2 CONFIG REQUIRED)
 
 if(NOT TARGET fife)
-  message(FATAL_ERROR "Core tests require target 'fife'. Configure with -Dbuild-library=ON when enabling tests.")
+  message(FATAL_ERROR "Core tests require target 'fife'. Configure with -DBUILD_LIBRARY=ON when enabling tests.")
 endif()
 
-option(core-tests-gui-experimental "Build GUI/imagepool core tests (currently unported to current engine APIs)" OFF)
-option(core-tests-zip "Build zip core test (currently unstable)" OFF)
+option(CORE_TESTS_GUI_EXPERIMENTAL "Build GUI/imagepool core tests (currently unported to current engine APIs)" OFF)
+option(CORE_TESTS_ZIP              "Build zip core test (currently unstable)" OFF)
 
 set(
   FIFE_CORE_TEST_SOURCES
@@ -20,11 +20,11 @@ set(
   test_vfs.cpp
 )
 
-if(core-tests-zip)
+if(CORE_TESTS_ZIP)
   list(APPEND FIFE_CORE_TEST_SOURCES test_zip.cpp)
 endif()
 
-if(core-tests-gui-experimental)
+if(CORE_TESTS_GUI_EXPERIMENTAL)
   list(APPEND FIFE_CORE_TEST_SOURCES
     test_gui.cpp
     test_imagepool.cpp
@@ -56,22 +56,22 @@ foreach(test_source ${FIFE_CORE_TEST_SOURCES})
         $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
   )
 
-  if(opengl)
+  if(ENABLE_OPENGL)
     target_link_libraries(${test_name} PRIVATE ${OPENGL_gl_LIBRARY} GLEW::GLEW)
-  endif(opengl)
+  endif()
 
-  if(fifechan)
+  if(ENABLE_FIFEGUI)
     target_link_libraries(${test_name} PRIVATE ${FIFECHAN_LIBRARIES})
     if(TARGET Fifechan::opengl)
       target_link_libraries(${test_name} PRIVATE Fifechan::opengl)
     elseif(DEFINED FIFECHAN_opengl_LIBRARY AND EXISTS "${FIFECHAN_opengl_LIBRARY}")
       target_link_libraries(${test_name} PRIVATE "${FIFECHAN_opengl_LIBRARY}")
     endif()
-  endif(fifechan)
+  endif(ENABLE_FIFEGUI)
 
-  if(cegui)
+  if(ENABLE_CEGUI)
     target_link_libraries(${test_name} PRIVATE ${CEGUI_LIBRARIES} ${CEGUI_OpenGLRenderer_LIBRARIES})
-  endif(cegui)
+  endif()
 
   add_test(NAME ${test_name} COMMAND ${test_name})
   set_tests_properties(${test_name} PROPERTIES LABELS core WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
