@@ -7,7 +7,7 @@
 
 [project]
 name = "libfife"
-version = "0.4.2"
+version = "0.5.0"
 description = "FIFE library"
 requires-python = ">=3.13"
 dependencies = []
