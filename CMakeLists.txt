@@ -1062,22 +1062,33 @@ if(BUILD_LIBRARY)
   # Provide a namespace alias for the library (fife::fife)
   add_library(fife::fife ALIAS fife)
 
+  # Build conditional file lists for target_sources
+  set(FIFE_PUBLIC_HEADERS ${FIFE_CORE_HDR})
+  if(ENABLE_FIFEGUI)
+    list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_FCHAN_HDR})
+  endif()
+  if(ENABLE_CEGUI)
+    list(APPEND FIFE_PUBLIC_HEADERS ${FIFE_CEGUI_HDR})
+  endif()
+
+  set(FIFE_PRIVATE_SOURCES ${FIFE_CORE_SRC})
+  if(ENABLE_FIFEGUI)
+    list(APPEND FIFE_PRIVATE_SOURCES ${FIFE_FCHAN_SRC})
+  endif()
+
   # define public interface for the library
   target_sources(fife
     PUBLIC
     FILE_SET fife_public_headers TYPE HEADERS
-    BASE_DIRS src/engine
+    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
     FILES
-      ${FIFE_CORE_HDR}
-      $<$<BOOL:${ENABLE_FIFEGUI}>:${FIFE_FCHAN_HDR}>
-      $<$<BOOL:${ENABLE_CEGUI}>:${FIFE_CEGUI_HDR}>
+      ${FIFE_PUBLIC_HEADERS}
   )
 
   # define private sources for the library
   target_sources(fife
     PRIVATE
-      ${FIFE_CORE_SRC}
-      $<$<BOOL:${ENABLE_FIFEGUI}>:${FIFE_FCHAN_SRC}>
+      ${FIFE_PRIVATE_SOURCES}
   )
 
   set_target_properties(fife PROPERTIES
