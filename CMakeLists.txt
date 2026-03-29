@@ -1160,7 +1160,7 @@ if(BUILD_LIBRARY)
   )
 
   # TODO check if this install folder is correct
-  install(FILES src/engine/version.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife)
+  install(FILES src/engine/version.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fife)
 
 endif(BUILD_LIBRARY)
 
