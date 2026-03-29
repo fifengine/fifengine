@@ -62,10 +62,8 @@ foreach(test_source ${FIFE_CORE_TEST_SOURCES})
 
   if(ENABLE_FIFEGUI)
     target_link_libraries(${test_name} PRIVATE ${FIFECHAN_LIBRARIES})
-    if(TARGET Fifechan::opengl)
-      target_link_libraries(${test_name} PRIVATE Fifechan::opengl)
-    elseif(DEFINED FIFECHAN_opengl_LIBRARY AND EXISTS "${FIFECHAN_opengl_LIBRARY}")
-      target_link_libraries(${test_name} PRIVATE "${FIFECHAN_opengl_LIBRARY}")
+    if(TARGET fifechan::fifechan_opengl)
+      target_link_libraries(${test_name} PRIVATE fifechan::fifechan_opengl)
     endif()
   endif(ENABLE_FIFEGUI)
 

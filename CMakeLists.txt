@@ -973,17 +973,15 @@ if(BUILD_PYTHON_BINDINGS)
     target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan)
     target_link_libraries(fife_swig PRIVATE fifechan::fifechan)
 
-    if(TARGET Fifechan::opengl)
-      target_link_libraries(fife_swig PRIVATE Fifechan::opengl)
-      target_link_libraries(fifechan_swig PRIVATE Fifechan::opengl)
-    elseif(DEFINED FIFECHAN_opengl_LIBRARY AND EXISTS "${FIFECHAN_opengl_LIBRARY}")
-      target_link_libraries(fife_swig PRIVATE "${FIFECHAN_opengl_LIBRARY}")
-      target_link_libraries(fifechan_swig PRIVATE "${FIFECHAN_opengl_LIBRARY}")
+    if(TARGET fifechan::fifechan_opengl)
+      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_opengl)
+      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_opengl)
     endif()
   endif(ENABLE_FIFEGUI)
 
   if(ENABLE_CEGUI)
-    target_link_libraries(fife_swig PRIVATE ${CEGUI_LIBRARIES})
+    # TODO use targets
+    target_link_libraries(fife_swig PRIVATE cegui::cegui)
     target_link_libraries(fife_swig PRIVATE ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif()
 
@@ -1121,10 +1119,8 @@ if(BUILD_LIBRARY)
   # Fifechan + OpenGL
   # keep if/elseif for clarity, generator expressions make it hard to read otherwise
   if(ENABLE_FIFEGUI AND ENABLE_OPENGL)
-    if(TARGET Fifechan::opengl)
-      target_link_libraries(fife PRIVATE Fifechan::opengl)
-    elseif(DEFINED FIFECHAN_opengl_LIBRARY AND EXISTS "${FIFECHAN_opengl_LIBRARY}")
-      target_link_libraries(fife PRIVATE "${FIFECHAN_opengl_LIBRARY}")
+    if(TARGET fifechan::fifechan_opengl)
+      target_link_libraries(fife PRIVATE fifechan::fifechan_opengl)
     endif()
   endif()
 
