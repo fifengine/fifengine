@@ -916,7 +916,8 @@ if(BUILD_PYTHON_BINDINGS)
   )
 
   if(ENABLE_OPENGL)
-    target_link_libraries(fife_swig PRIVATE OpenGL::OpenGL GLEW::GLEW)
+
+    target_link_libraries(fife_swig PRIVATE OpenGL::GL GLEW::GLEW)
   endif()
 
   if(ENABLE_FIFEGUI)
@@ -1082,7 +1083,7 @@ if(BUILD_LIBRARY)
     PRIVATE
       $<$<BOOL:${ENABLE_FIFEGUI}>:${FIFECHAN_LIBRARIES}>
 
-      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::OpenGL>
+      $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
       $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
 
       $<$<BOOL:${ENABLE_CEGUI}>:${CEGUI_LIBRARIES}>
