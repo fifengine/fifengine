@@ -26,6 +26,10 @@
         "CMAKE_VERBOSE_MAKEFILE": {
           "type": "BOOL",
           "value": "ON"
+        },
+        "CMAKE_CXX_SCAN_FOR_MODULES": {
+          "type": "BOOL",
+          "value": "OFF"
         }
       }
     },
