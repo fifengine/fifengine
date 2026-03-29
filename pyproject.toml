@@ -9,7 +9,7 @@
 name = "libfife"
 version = "0.4.2"
 description = "FIFE library"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = []
 authors = [
   { name = "Fifengine contributors" },
@@ -101,12 +101,12 @@ toplevel = ["fife"]
 
 [tool.black]
 line-length = 90
-target-version = ["py311"]
+target-version = ["py313"]
 extend-exclude = "^(build|out|vcpkg_installed|engine/swigwrappers)/"
 
 [tool.ruff]
 line-length = 90
-target-version = "py311"
+target-version = "py313"
 extend-exclude = ["build", "out", "vcpkg_installed", "engine/swigwrappers"]
 
 [tool.ruff.lint]
@@ -116,7 +116,7 @@ select = ["E", "F", "W", "I"]
 "*.py" = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 files = ["src/python/fife"]
 ignore_missing_imports = true
 show_error_codes = true
