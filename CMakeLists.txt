@@ -970,8 +970,8 @@ if(BUILD_PYTHON_BINDINGS)
       target_link_libraries(fifechan_swig PRIVATE Python3::Module)
     endif()
 
-    target_link_libraries(fifechan_swig PRIVATE ${FIFECHAN_LIBRARIES})
-    target_link_libraries(fife_swig PRIVATE ${FIFECHAN_LIBRARIES})
+    target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan)
+    target_link_libraries(fife_swig PRIVATE fifechan::fifechan)
 
     if(TARGET Fifechan::opengl)
       target_link_libraries(fife_swig PRIVATE Fifechan::opengl)
@@ -1093,7 +1093,7 @@ if(BUILD_LIBRARY)
     PRIVATE
       fife_options
       ZLIB::ZLIB
-      ${PNG_LIBRARIES}
+      PNG::PNG
       GLEW::GLEW
       Ogg::ogg
       Vorbis::vorbis
@@ -1109,7 +1109,7 @@ if(BUILD_LIBRARY)
 
   target_link_libraries(fife
     PRIVATE
-      $<$<BOOL:${ENABLE_FIFEGUI}>:${FIFECHAN_LIBRARIES}>
+      $<$<BOOL:${ENABLE_FIFEGUI}>:fifechan::fifechan>
 
       $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
       $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
