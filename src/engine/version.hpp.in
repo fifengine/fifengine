@@ -24,77 +24,77 @@
 namespace FIFE
 {
 
-struct semantic_version
-{
-    int major = @PROJECT_VERSION_MAJOR@;
-    int minor = @PROJECT_VERSION_MINOR@;
-    int patch = @PROJECT_VERSION_PATCH@;
-};
-
-class app_version
-{
-public:
-    static constexpr std::string_view name        = "@FIFE_NAME@";
-    static constexpr std::string_view version     = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@";
-    static constexpr std::string_view license     = "@FIFE_LICENSE@";
-    static constexpr std::string_view description = "@FIFE_DESC@";
-    static constexpr std::string_view homepage    = "@FIFE_HOMEPAGE@";
-    static constexpr std::string_view copyright   = "Copyright (c) Fifengine contributors, 2005-@CURRENT_YEAR@.";
-
-    static constexpr semantic_version semver{@PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@};
-
-    static constexpr int version_id = @PROJECT_VERSION_MAJOR@ * 10000 + @PROJECT_VERSION_MINOR@ * 100 + @PROJECT_VERSION_PATCH@;
-
-    static constexpr char const* get_name()
+    struct semantic_version
     {
-        return name.data();
-    }
+        int major = @PROJECT_VERSION_MAJOR@;
+        int minor = @PROJECT_VERSION_MINOR@;
+        int patch = @PROJECT_VERSION_PATCH@;
+    };
 
-    static constexpr char const* get_version()
+    class app_version
     {
-        return version.data();
-    }
+    public:
+        static constexpr std::string_view name        = "@FIFE_NAME@";
+        static constexpr std::string_view version     = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@";
+        static constexpr std::string_view license     = "@FIFE_LICENSE@";
+        static constexpr std::string_view description = "@FIFE_DESC@";
+        static constexpr std::string_view homepage    = "@FIFE_HOMEPAGE@";
+        static constexpr std::string_view copyright   = "Copyright (c) Fifengine contributors, 2005-@CURRENT_YEAR@.";
 
-    static constexpr char const* get_license()
-    {
-        return license.data();
-    }
+        static constexpr semantic_version semver{@PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@};
 
-    static constexpr char const* get_description()
-    {
-        return description.data();
-    }
+        static constexpr int version_id = @PROJECT_VERSION_MAJOR@ * 10000 + @PROJECT_VERSION_MINOR@ * 100 + @PROJECT_VERSION_PATCH@;
 
-    static constexpr char const* get_homepage()
-    {
-        return homepage.data();
-    }
+        static constexpr char const* get_name()
+        {
+            return name.data();
+        }
 
-    static constexpr char const* get_copyright()
-    {
-        return copyright.data();
-    }
+        static constexpr char const* get_version()
+        {
+            return version.data();
+        }
 
-    static constexpr int get_major()
-    {
-        return semver.major;
-    }
+        static constexpr char const* get_license()
+        {
+            return license.data();
+        }
 
-    static constexpr int get_minor()
-    {
-        return semver.minor;
-    }
+        static constexpr char const* get_description()
+        {
+            return description.data();
+        }
 
-    static constexpr int get_patch()
-    {
-        return semver.patch;
-    }
+        static constexpr char const* get_homepage()
+        {
+            return homepage.data();
+        }
 
-    static constexpr int get_version_id()
-    {
-        return version_id;
-    }
-};
+        static constexpr char const* get_copyright()
+        {
+            return copyright.data();
+        }
+
+        static constexpr int get_major()
+        {
+            return semver.major;
+        }
+
+        static constexpr int get_minor()
+        {
+            return semver.minor;
+        }
+
+        static constexpr int get_patch()
+        {
+            return semver.patch;
+        }
+
+        static constexpr int get_version_id()
+        {
+            return version_id;
+        }
+    };
 
 } // namespace FIFE
 

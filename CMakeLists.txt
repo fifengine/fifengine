@@ -614,8 +614,24 @@ add_custom_target(fife.headers SOURCES
 )
 
 #------------------------------------------------------------------------------
-# SWIG Files
+# SWIG Interface Files
 #------------------------------------------------------------------------------
+
+# The .i files are SWIG interface files.
+# They define how the C++ code is exposed to the target language (here Python).
+#
+# 1. We have the following interface file sets:
+#   - FIFE_CORE_SWIG: The main SWIG interface files for the core engine.
+#   - FIFE_CEGUI_SWIG: The SWIG interface files for the CEGUI subsystem.
+#   - FIFE_FCHAN_SWIG_LIB: The SWIG interface files for the FIFECHAN library (the base components).
+#     These files declare the `%module fifechan` and are included in the seperate fifechan.i template.
+#   - FIFE_FCHAN_SWIG: The SWIG interface files for the FIFE-specific extensions to FIFECHAN library (the actual GUI components).
+#     The files declare the `%module fife` and become part of the main fife.i template.
+# 2. During configure_file(), all files are concatenated into CMAKE_SWIG_INCLUSIONS
+# 3. This is used in fife.i.templ, which is the main SWIG interface file.
+#    It includes CMAKE_SWIG_INCLUSIONS, which means all the .i files are included in the SWIG processing.
+#    This is the single fife.i file that SWIG uses to generate the bindings.
+# 4. Then swig_add_library() is called to generate the Python bindings.
 
 # Core
 set(
@@ -711,8 +727,7 @@ source_group("fife.core.gui.cegui"          FILES ${FIFE_CEGUI_SWIG})
 source_group("fife.core.gui.fifechan.lib"   FILES ${FIFE_FCHAN_SWIG_LIB})
 source_group("fife.core.gui.fifechan"       FILES ${FIFE_FCHAN_SWIG})
 
-# TODO some files for this source_group are not found
-#add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG})
+add_custom_target(fife.swig SOURCES ${FIFE_CORE_SWIG} ${FIFE_CEGUI_SWIG} ${FIFE_FCHAN_SWIG_LIB} ${FIFE_FCHAN_SWIG})
 
 #------------------------------------------------------------------------------
 # SWIG WRAPPER Files
@@ -853,6 +868,8 @@ endif()
 # - https://cmake.org/cmake/help/latest/module/FindPython3.html
 # - https://cmake.org/cmake/help/latest/module/FindSWIG.html
 # - https://cmake.org/cmake/help/latest/module/UseSWIG.html
+# Relevant Swig docs:
+# - https://www.swig.org/Doc4.4/Python.html
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
@@ -861,6 +878,12 @@ if(BUILD_PYTHON_BINDINGS)
   message(STATUS "Python includes:      ${Python3_INCLUDE_DIRS}")
   message(STATUS "Python module target: Python3::Module")
 
+  # Used SWIG flags:
+  # -fastdispatch            # Faster overload dispatcher code
+  # -dirvtable               # Pseudo virtual table for director dispatch
+  # -fastproxy               # Direct C API calls instead of Python proxy wrappers
+  # -keyword                 # Enable keyword arguments
+  # -w511 -w473 -w404 -w314  # Warning suppression flags
   set(
     CMAKE_SWIG_FLAGS
     -fastdispatch
@@ -873,13 +896,13 @@ if(BUILD_PYTHON_BINDINGS)
     -w314
   )
 
-  set_source_files_properties("${PROJECT_BINARY_DIR}/fife.i" PROPERTIES CPLUSPLUS ON)
-
   set(FIFE_SOURCES ${FIFE_CORE_SRC})
 
   if(ENABLE_FIFEGUI)
     list(APPEND FIFE_SOURCES ${FIFE_FCHAN_SRC})
   endif()
+
+  set_property(SOURCE "${PROJECT_BINARY_DIR}/fife.i" PROPERTY CPLUSPLUS ON)
 
   swig_add_library(fife_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fife.i" ${FIFE_SOURCES})
 
@@ -916,12 +939,11 @@ if(BUILD_PYTHON_BINDINGS)
   )
 
   if(ENABLE_OPENGL)
-
     target_link_libraries(fife_swig PRIVATE OpenGL::GL GLEW::GLEW)
   endif()
 
   if(ENABLE_FIFEGUI)
-    set_source_files_properties("${PROJECT_BINARY_DIR}/fifechan.i" PROPERTIES CPLUSPLUS ON)
+    set_property(SOURCE "${PROJECT_BINARY_DIR}/fifechan.i" PROPERTY CPLUSPLUS ON)
 
     swig_add_library(fifechan_swig LANGUAGE python SOURCES "${PROJECT_BINARY_DIR}/fifechan.i")
 
