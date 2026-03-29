@@ -815,9 +815,9 @@ if(BUILD_PYTHON_BINDINGS)
 endif()
 
 if(ENABLE_FIFEGUI)
-  find_package(FIFECHAN COMPONENTS sdl REQUIRED)
+  find_package(fifechan COMPONENTS sdl REQUIRED)
   if(ENABLE_OPENGL)
-    find_package(FIFECHAN COMPONENTS opengl REQUIRED)
+    find_package(fifechan COMPONENTS opengl REQUIRED)
   endif()
 
   if(BUILD_PYTHON_BINDINGS)
