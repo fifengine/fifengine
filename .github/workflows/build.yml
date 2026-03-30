@@ -182,7 +182,7 @@ jobs:
           ls -lahr ${{ env.INSTALL_DIR }}
 
       - name: 🔼 Upload build artifacts
-        uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ env.INSTALL_DIR }}/**/*
@@ -387,7 +387,7 @@ jobs:
           dir ${{ env.INSTALL_DIR }}
 
       - name: 🔼 Upload build artifacts
-        uses: actions/upload-artifact@v6 # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7 # https://github.com/actions/upload-artifact
         with:
           name: ${{ matrix.config.artifact-name }}
           path: ${{ env.INSTALL_DIR }}/**/*
