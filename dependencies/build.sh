@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cmake -S "$SCRIPT_DIR" \
-      -B "$SCRIPT_DIR/../out/fife-dependencies/build" \
+      -B "$SCRIPT_DIR/../out/fife-dependencies/x64-linux/build" \
       -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
@@ -17,4 +17,4 @@ cmake -S "$SCRIPT_DIR" \
 
 cmake --build "$SCRIPT_DIR/../out/fife-dependencies/build"
 
-ls -la "$SCRIPT_DIR/../out/fife-dependencies/install/lib/cmake/fifechan/" | grep "fifechan"
+ls -la "$SCRIPT_DIR/../out/fife-dependencies/x64-linux/install/lib/cmake/fifechan/" | grep "fifechan"
