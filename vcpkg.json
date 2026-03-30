@@ -4,7 +4,8 @@
   "description": "Fifengine is a multi-platform isometric game engine written in C++.",
   "homepage": "https://github.com/fifengine/fifengine",
   "license": "LGPL-2.1",
-  "supports": "windows & x86 & x64",
+  "supports": "windows,linux,osx",
+  "builtin-baseline": "c3867e714dd3a51c272826eea77267876517ed99",
   "dependencies": [
     {
       "name": "sdl2",
@@ -31,5 +32,5 @@
     "zlib",
     "catch2"
   ],
-  "builtin-baseline": "c3867e714dd3a51c272826eea77267876517ed99"
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json"
 }
