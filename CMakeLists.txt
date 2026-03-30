@@ -171,19 +171,21 @@ if(WIN32 AND MSVC)
     # Enable optimizations /O2?
     add_compile_options(/Oi) # generate intrinsic functions
 
-    if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-	  add_compile_options(/Z7) # Enable debug symbols
-	endif()
+  elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+
+    add_compile_options(/Wall) # warning level: /W<level 0 to 4> or /Wall
+
   else()
     # Debug build
     add_compile_options(/W3) # warning level: /W<level 0 to 4> or /Wall
     add_compile_options(/Od) # disable optimizations
   endif()
 
-  # avoid "C1128: number of sections exceeded object file format limit: compile with /bigobj"
+  # avoid "C1128: number of sections exceeded object file format limit
   add_compile_options(/bigobj)
 
 endif()
+
 
 # GCC and Clang compiler options
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
