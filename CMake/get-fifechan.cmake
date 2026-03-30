@@ -112,37 +112,9 @@ else()
     )
   endif()
 
-  # Stable wrapper target for callers expecting an install-like target.
+  # stable alias for the install step
   if(NOT TARGET fifechan-install)
     add_custom_target(fifechan-install DEPENDS fifechan)
   endif()
 
-endif()
-
-# Export expected install locations and create imported targets
-set(FIFECHAN_BUILT_INCLUDE_DIR "${DEPENDENCY_INSTALL_DIR}/include" CACHE PATH "FifeChan include dir from get-fifechan")
-set(FIFECHAN_BUILT_LIBRARY_DIR "${DEPENDENCY_INSTALL_DIR}/lib" CACHE PATH "FifeChan lib dir from get-fifechan")
-
-if(NOT TARGET Fifechan::fifechan)
-  add_library(Fifechan::fifechan UNKNOWN IMPORTED)
-  set_target_properties(Fifechan::fifechan PROPERTIES
-    INTERFACE_LINK_LIBRARIES "-L${FIFECHAN_BUILT_LIBRARY_DIR} -lfifechan"
-    INTERFACE_INCLUDE_DIRECTORIES "${FIFECHAN_BUILT_INCLUDE_DIR}"
-  )
-endif()
-
-if(NOT TARGET Fifechan::sdl)
-  add_library(Fifechan::sdl UNKNOWN IMPORTED)
-  set_target_properties(Fifechan::sdl PROPERTIES
-    INTERFACE_LINK_LIBRARIES "-L${FIFECHAN_BUILT_LIBRARY_DIR} -lfifechan_sdl"
-    INTERFACE_INCLUDE_DIRECTORIES "${FIFECHAN_BUILT_INCLUDE_DIR}"
-  )
-endif()
-
-if(NOT TARGET Fifechan::opengl)
-  add_library(Fifechan::opengl UNKNOWN IMPORTED)
-  set_target_properties(Fifechan::opengl PROPERTIES
-    INTERFACE_LINK_LIBRARIES "-L${FIFECHAN_BUILT_LIBRARY_DIR} -lfifechan_opengl"
-    INTERFACE_INCLUDE_DIRECTORIES "${FIFECHAN_BUILT_INCLUDE_DIR}"
-  )
 endif()
