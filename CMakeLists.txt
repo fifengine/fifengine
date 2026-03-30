@@ -1103,7 +1103,20 @@ if(BUILD_LIBRARY)
     SOVERSION              ${FIFE_VERSION}
   )
 
+  # Create unique compile PDB per-target to avoid MSVC C1041 conflicts
+  if(MSVC)
+    set_target_properties(fife PROPERTIES
+      COMPILE_PDB_NAME "fife_compile"
+      COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/compile_pdbs/$<CONFIG>"
+    )
+  endif()
+
   show_build_target_properties(fife)
+
+  # Enable /FS to allow multiple cl.exe instances to safely write PDBs
+  if(MSVC)
+    target_compile_options(fife PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/FS>)
+  endif()
 
   target_link_libraries(fife
     PRIVATE
