@@ -16,3 +16,5 @@ cmake -S "$SCRIPT_DIR" \
       -DCMAKE_PREFIX_PATH=/opt/vcpkg/installed/x64-linux
 
 cmake --build "$SCRIPT_DIR/../out/fife-dependencies/build"
+
+ls -la "$SCRIPT_DIR/../out/fife-dependencies/install/lib/cmake/fifechan/" | grep "fifechan"
