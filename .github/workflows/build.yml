@@ -105,8 +105,8 @@ jobs:
             /home/runner/.cache/vcpkg/archives/
           key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-vcpkg-${{ matrix.config.preset }}-
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-vcpkg-${{ matrix.config.preset }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
@@ -116,8 +116,8 @@ jobs:
             ${{ env.DEPS_DIR }}
           key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
-            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-deps-${{ matrix.config.preset }}-
+            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-deps-${{ matrix.config.preset }}
 
       - name: 🔽 1.1 Setup VCPKG
         run: |
@@ -295,8 +295,8 @@ jobs:
             ~\AppData\Local\vcpkg\archives\
           key: cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-vcpkg-${{ matrix.config.preset }}-
+            cache-vcpkg-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-vcpkg-${{ matrix.config.preset }}
 
       - name: 🎯 Setup Dependencies Cache
         id: cache-deps
@@ -306,8 +306,8 @@ jobs:
             ${{ env.DEPS_DIR }}
           key: cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
           restore-keys: |
-            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}-
-            cache-deps-${{ matrix.config.preset }}-
+            cache-deps-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-deps-${{ matrix.config.preset }}
 
       # Default Locations (env var VCPKG_INSTALLATION_ROOT):
       # Windows: "c:\vcpkg"
@@ -475,6 +475,17 @@ jobs:
             cache-vcpkg-container-${{ matrix.config.preset }}-${{ github.ref }}
             cache-vcpkg-container-${{ matrix.config.preset }}
 
+      - name: 🎯 Setup Dependencies Cache
+        id: cache-deps
+        uses: actions/cache@v5 # https://github.com/actions/cache
+        with:
+          path: |
+            ${{ env.DEPS_DIR }}
+          key: cache-deps--container-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('dependencies/CMakeLists.txt', 'cmake/get-fifechan.cmake', 'cmake/get-swig.cmake') }}
+          restore-keys: |
+            cache-deps--container-${{ matrix.config.preset }}-${{ github.ref }}
+            cache-deps--container-${{ matrix.config.preset }}
+
       - name: 🔽 Update VCPKG (to latest tag of package registry)
         run: |
           echo "[VCPKG] Updating registry..."
@@ -505,7 +516,7 @@ jobs:
           "${VCPKG_ROOT}/vcpkg" install --triplet x64-linux --x-install-root="${{ env.VCPKG_INSTALLED_DIR }}"
 
       - name: 🧩 2.1 Configure non-vcpkg dependencies
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake \
             -S dependencies \
@@ -518,7 +529,7 @@ jobs:
             -DVCPKG_INSTALLED_DIR=${{ env.VCPKG_INSTALLED_DIR }}
 
       - name: 🏗️ 2.2 Build non-vcpkg dependencies
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           cmake --build ${{ env.DEPS_DIR }}/build --parallel
 
