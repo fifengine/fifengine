@@ -975,6 +975,11 @@ if(BUILD_PYTHON_BINDINGS)
     target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan)
     target_link_libraries(fife_swig PRIVATE fifechan::fifechan)
 
+    if(TARGET fifechan::fifechan_sdl2)
+      target_link_libraries(fife_swig PRIVATE fifechan::fifechan_sdl2)
+      target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_sdl2)
+    endif()
+
     if(TARGET fifechan::fifechan_opengl)
       target_link_libraries(fife_swig PRIVATE fifechan::fifechan_opengl)
       target_link_libraries(fifechan_swig PRIVATE fifechan::fifechan_opengl)
