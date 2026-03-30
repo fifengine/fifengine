@@ -125,6 +125,8 @@ function(install_runtime_dlls)
 
     set(_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/InstallRuntimeDepsImpl.cmake")
 
+    set(_unres_len 0)
+
     file(CONFIGURE OUTPUT "${_SCRIPT_FILE}"
         CONTENT [[
         cmake_policy(SET CMP0207 NEW)
