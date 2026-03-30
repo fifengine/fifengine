@@ -157,7 +157,8 @@
         "generator-ninja",
         "compiler-msvc-vc17",
         "build-folders-default",
-        "vcpkg-triplet-x64-windows"
+        "vcpkg-triplet-x64-windows",
+        "use-sccache"
       ]
     },
     {
@@ -187,7 +188,8 @@
         "generator-ninja",
         "compiler-msvc-vc17",
         "build-folders-default",
-        "vcpkg-triplet-x64-windows-static"
+        "vcpkg-triplet-x64-windows-static",
+        "use-sccache"
       ]
     },
     {
@@ -217,7 +219,8 @@
         "generator-ninja",
         "compiler-msvc-vc17",
         "build-folders-default",
-        "vcpkg-triplet-x64-windows"
+        "vcpkg-triplet-x64-windows",
+        "use-sccache"
       ]
     },
     {
@@ -249,7 +252,8 @@
         "compiler-msvc-vc18",
         "build-folders-default",
         "vcpkg-triplet-x64-windows",
-        "build-type-debug"
+        "build-type-debug",
+        "use-sccache"
       ]
     },
     {
@@ -279,7 +283,8 @@
         "generator-ninja",
         "compiler-msvc-vc18",
         "build-folders-default",
-        "vcpkg-triplet-x64-windows-static"
+        "vcpkg-triplet-x64-windows-static",
+        "use-sccache"
       ]
     },
     {
