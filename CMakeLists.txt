@@ -1135,6 +1135,12 @@ if(BUILD_LIBRARY)
     endif()
   endif()
 
+  if(ENABLE_FIFEGUI)
+    if(TARGET fifechan::fifechan_sdl2)
+      target_link_libraries(fife PRIVATE fifechan::fifechan_sdl2)
+    endif()
+  endif()
+
   if(BUILD_TESTS)
     include(CTest)
     add_subdirectory(tests/core_tests)
