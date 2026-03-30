@@ -87,7 +87,7 @@ jobs:
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
       - name: 🎯 Setup Build Cache
-        uses: hendrikmuhs/ccache-action@v1.2.21 # https://github.com/hendrikmuhs/ccache-action
+        uses: hendrikmuhs/ccache-action@v1.2.22 # https://github.com/hendrikmuhs/ccache-action
         with:
           key: build-${{ matrix.config.preset }}-${{ github.ref }}
           restore-keys: |
@@ -276,7 +276,7 @@ jobs:
       # Reminder: This step requires that the CMakePresets for CI contain
       # "CMAKE_CXX_COMPILER_LAUNCHER": "sccache".
       - name: 🎯 Setup Build Cache
-        uses: hendrikmuhs/ccache-action@v1.2.21 # https://github.com/hendrikmuhs/ccache-action
+        uses: hendrikmuhs/ccache-action@v1.2.22 # https://github.com/hendrikmuhs/ccache-action
         with:
           variant: sccache
           key: build-${{ matrix.config.preset }}-${{ github.ref }}-${{ hashFiles('.github/workflows/build.yml') }}
