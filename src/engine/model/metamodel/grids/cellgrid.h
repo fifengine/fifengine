@@ -135,7 +135,7 @@ namespace FIFE
         /** Get the cellgrid x shift
          *  @return The x shift
          */
-        const double getXShift() const
+        double getXShift() const
         {
             return m_xshift;
         }
@@ -152,7 +152,7 @@ namespace FIFE
         /** Get the cellgrid y shift
          *  @return The y shift in map coords
          */
-        const double getYShift() const
+        double getYShift() const
         {
             return m_yshift;
         }
@@ -169,7 +169,7 @@ namespace FIFE
         /** Get the cellgrid z shift
          *  @return The z shift in map coords
          */
-        const double getZShift() const
+        double getZShift() const
         {
             return m_zshift;
         }
@@ -204,7 +204,7 @@ namespace FIFE
         /** Get the cellgrid x-scaling
          *  @return The x-scale of cellgrid
          */
-        const double getXScale() const
+        double getXScale() const
         {
             return m_xscale;
         }
@@ -212,7 +212,7 @@ namespace FIFE
         /** Get the cellgrid y-scaling
          *  @return The y-scale of cellgrid
          */
-        const double getYScale() const
+        double getYScale() const
         {
             return m_yscale;
         }
@@ -220,7 +220,7 @@ namespace FIFE
         /** Get the cellgrid z-scaling
          *  @return The z-scale of cellgrid
          */
-        const double getZScale() const
+        double getZScale() const
         {
             return m_zscale;
         }
@@ -237,7 +237,7 @@ namespace FIFE
         /** Get the cellgrid rotation
          *  @return rotation The rotation of the cellgrid
          */
-        const double getRotation() const
+        double getRotation() const
         {
             return m_rotation;
         }
@@ -253,7 +253,7 @@ namespace FIFE
         /** Get whether diagonal cell access is allowed
          *  @return True if diagonal access allowed, false if only cell edges allowed
          */
-        const bool getAllowDiagonals() const
+        bool getAllowDiagonals() const
         {
             return m_allow_diagonals;
         }
