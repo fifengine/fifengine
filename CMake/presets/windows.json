@@ -217,8 +217,7 @@
         "generator-ninja",
         "compiler-msvc-vc17",
         "build-folders-default",
-        "vcpkg-triplet-x64-windows",
-        "use-sccache"
+        "vcpkg-triplet-x64-windows"
       ]
     },
     {
