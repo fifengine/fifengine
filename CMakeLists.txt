@@ -197,13 +197,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
 endif()
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 # Find Dependencies (non-vcpkg)
 #------------------------------------------------------------------------------
 
 # Add the install location of the non-vcpkg dependencies to CMAKE_PREFIX_PATH
 # to allow find_package to find them. This is needed for SWIG and Fifechan.
-list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/install")
+list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/out/fife-dependencies/${VCPKG_TARGET_TRIPLET}/install")
 
 #------------------------------------------------------------------------------
 # Display Status
@@ -786,11 +785,10 @@ if(ENABLE_CEGUI)
     message(FATAL_ERROR "OpenGL cannot be disabled, when CEGUI is enabled.")
   endif(NOT ENABLE_OPENGL)
 
-  # TODO remove (when CEGUI provides import target)
+  # TODO use import targets
   target_include_directories(fife_options INTERFACE ${CEGUI_INCLUDE_DIR})
 
-  message("Using CEGUI v0.8+")
-  set(CEGUI TRUE)
+  message(STATUS "Using CEGUI v0.8+")
   set(FIFE_CORE_SRC ${FIFE_CORE_SRC} ${FIFE_CEGUI_SRC})
 endif()
 
@@ -988,7 +986,7 @@ if(BUILD_PYTHON_BINDINGS)
   endif(ENABLE_FIFEGUI)
 
   if(ENABLE_CEGUI)
-    # TODO use targets
+    # TODO use import targets
     target_link_libraries(fife_swig PRIVATE cegui::cegui)
     target_link_libraries(fife_swig PRIVATE ${CEGUI_OpenGLRenderer_LIBRARIES})
   endif()
@@ -1143,10 +1141,13 @@ if(BUILD_LIBRARY)
 
       $<$<BOOL:${ENABLE_OPENGL}>:OpenGL::GL>
       $<$<BOOL:${ENABLE_OPENGL}>:GLEW::GLEW>
-
-      $<$<BOOL:${ENABLE_CEGUI}>:${CEGUI_LIBRARIES}>
-      $<$<BOOL:${ENABLE_CEGUI}>:${CEGUI_OpenGLRenderer_LIBRARIES}>
   )
+
+  if(ENABLE_CEGUI)
+    # TODO use import targets
+    target_link_libraries(fife cegui::cegui)
+    target_link_libraries(fife ${CEGUI_OpenGLRenderer_LIBRARIES})
+  endif()
 
   # Fifechan + OpenGL
   # keep if/elseif for clarity, generator expressions make it hard to read otherwise
