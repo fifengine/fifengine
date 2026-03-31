@@ -27,13 +27,9 @@ namespace FIFE
      */
     static Logger _log(LM_VIEW);
 
-    OverlayColors::OverlayColors() = default;
-
     OverlayColors::OverlayColors(ImagePtr image) : m_image(image) { }
 
     OverlayColors::OverlayColors(AnimationPtr animation) : m_animation(animation) { }
-
-    OverlayColors::~OverlayColors() = default;
 
     void OverlayColors::setColorOverlayImage(ImagePtr image)
     {

@@ -35,6 +35,9 @@ namespace FIFE
          */
         virtual ~Exception() throw();
 
+        Exception(const Exception&) = default;
+        Exception& operator=(const Exception&) = default;
+
         /** Returns the error message.
          * @return The error message.
          */

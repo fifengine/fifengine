@@ -51,6 +51,8 @@ namespace FIFE
          */
         PointType2D(const PointType2D<T>& rhs) : x(rhs.x), y(rhs.y) { }
 
+        PointType2D<T>& operator=(const PointType2D<T>&) = default;
+
         /** Vector addition
          */
         PointType2D<T> operator+(const PointType2D<T>& p) const
@@ -223,6 +225,9 @@ namespace FIFE
         /** Copy Constructor
          */
         PointType3D(const PointType3D<T>& rhs) : x(rhs.x), y(rhs.y), z(rhs.z) { }
+
+        /** Assignment operator (explicitly defaulted to avoid MSVC C5267 warning) */
+        PointType3D<T>& operator=(const PointType3D<T>&) = default;
 
         /** Vector addition
          */

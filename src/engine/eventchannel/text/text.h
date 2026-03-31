@@ -32,6 +32,9 @@ namespace FIFE
         {
         }
 
+        Text(const Text&) = default;
+        Text& operator=(const Text&) = default;
+
         /** Destructor
          */
         virtual ~Text() { }

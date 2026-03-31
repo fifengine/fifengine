@@ -31,13 +31,13 @@ namespace FIFE
     public:
         /** Constructors
          */
-        OverlayColors();
+        OverlayColors() = default;
         explicit OverlayColors(ImagePtr image);
         explicit OverlayColors(AnimationPtr animation);
 
         /** Destructor
          */
-        ~OverlayColors();
+        ~OverlayColors() = default;
 
         void setColorOverlayImage(ImagePtr image);
         ImagePtr getColorOverlayImage();
@@ -82,7 +82,15 @@ namespace FIFE
 
         /** Destructor
          */
-        ~ObjectVisual() override;
+        ~ObjectVisual() override = default;
+
+        // Delete copy operations (prevents C5267 warning)
+        ObjectVisual(const ObjectVisual&) = delete;
+        ObjectVisual& operator=(const ObjectVisual&) = delete;
+
+        // Allow move operations
+        ObjectVisual(ObjectVisual&&) = default;
+        ObjectVisual& operator=(ObjectVisual&&) = default;
 
         /** Adds new static image with given angle (degrees)
          * Static images are used in case there are no actions active in the instance
@@ -207,7 +215,15 @@ namespace FIFE
 
         /** Destructor
          */
-        ~ActionVisual() override;
+        inline virtual ~ActionVisual() noexcept override = default;
+
+        // Delete copy operations (prevents C5267 warning)
+        ActionVisual(const ActionVisual&) = delete;
+        ActionVisual& operator=(const ActionVisual&) = delete;
+
+        // Allow move operations
+        ActionVisual(ActionVisual&&) = default;
+        ActionVisual& operator=(ActionVisual&&) = default;
 
         /** Adds new animation with given angle (degrees)
          */

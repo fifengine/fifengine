@@ -43,7 +43,11 @@ namespace FIFE
         {
             memmove(m, mat.m, 16 * sizeof(T));
         }
-        ~Matrix() { }
+
+        Matrix(const Matrix& other) = default;
+        Matrix& operator=(const Matrix& other) = default;
+
+        ~Matrix() = default;
 
         /** Adjoint method inverse, constant time inversion implementation
          */

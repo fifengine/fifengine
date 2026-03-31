@@ -33,9 +33,11 @@ namespace FIFE
         ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint16_t rate, uint32_t SDLFlags);
         ScreenMode(const ScreenMode& rhs);
 
+        ScreenMode& operator=(const ScreenMode&) = default;
+
         /** Destructor.
          */
-        ~ScreenMode() { }
+        ~ScreenMode() = default;
 
         static const uint32_t WINDOWED_OPENGL   = 0x00000002;
         static const uint32_t FULLSCREEN_OPENGL = 0x00000003;
