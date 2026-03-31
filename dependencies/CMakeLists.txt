@@ -51,8 +51,8 @@ endif()
 # Options
 #------------------------------------------------------------------------------
 
-option(FIFE_DEPENDENCY_SWIG     "Download and build dependency: SWIG"     ON)
-option(FIFE_DEPENDENCY_FIFECHAN "Download and build dependency: FIFECHAN" ON)
+option(FIFE_DEPENDENCY_FIFECHAN "Build and install dependency: FIFECHAN"     ON)
+option(FIFE_DEPENDENCY_SWIG     "Build and install dependency: SWIG"         ON)
 
 #------------------------------------------------------------------------------
 # Display Status
@@ -81,8 +81,8 @@ message(STATUS "----------------------------------------------------------------
 
 if(FIFE_DEPENDENCY_FIFECHAN)
   include(get-fifechan)
-endif(FIFE_DEPENDENCY_FIFECHAN)
+endif()
 
 if(FIFE_DEPENDENCY_SWIG)
   include(get-swig)
-endif(FIFE_DEPENDENCY_SWIG)
+endif()

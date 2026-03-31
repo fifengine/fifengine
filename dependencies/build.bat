@@ -50,23 +50,39 @@ call %VCPKG_ROOT%\vcpkg integrate install
 
 echo Using CMake command: %CMAKE_CMD%
 
+rem Set build and install directories
+set "BUILD_DIR=%SCRIPT_DIR%..\out\fife-dependencies\x64-windows\build"
+set "INSTALL_DIR=%SCRIPT_DIR%..\out\fife-dependencies\x64-windows\install"
+
 rem Configure
 "%CMAKE_CMD%" ^
       -S %SCRIPT_DIR% ^
-      -B %SCRIPT_DIR%..\out\fife-dependencies\x64-windows\build ^
+      -B %BUILD_DIR% ^
       -G Ninja ^
       -DCMAKE_BUILD_TYPE=Release ^
       -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ^
       -DVCPKG_TARGET_TRIPLET=x64-windows ^
-      -DCMAKE_PREFIX_PATH=%VCPKG_ROOT%/installed/x64-windows
+      -DCMAKE_PREFIX_PATH=%VCPKG_ROOT%/installed/x64-windows ^
+      -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR% ^
+      -DFIFECHAN_BUILD_FROM_SOURCE=ON ^
+      --fresh
 if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 rem Build
-"%CMAKE_CMD%" --build %SCRIPT_DIR%..\out\fife-dependencies\build
+"%CMAKE_CMD%" --build %BUILD_DIR% --verbose
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
+
+rem Install
+"%CMAKE_CMD%" --install %BUILD_DIR% --verbose
 if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 rem Verify Installation
-dir "%SCRIPT_DIR%..\out\fife-dependencies\x64-windows\install\lib\cmake\fifechan\" | findstr "fifechan"
+echo "Verifying installation in: %INSTALL_DIR%\lib\cmake\fifechan\"
+if not exist "%INSTALL_DIR%\lib\cmake\fifechan\" (
+    echo Error: Installation directory not found!
+    exit /b 1
+)
+dir "%INSTALL_DIR%\lib\cmake\fifechan\" | findstr "fifechan"
 if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 echo Build completed successfully.
