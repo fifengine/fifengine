@@ -24,8 +24,8 @@ namespace FIFE
     class SDLImage : public Image
     {
     public:
-        explicit SDLImage(IResourceLoader* loader = 0);
-        explicit SDLImage(const std::string& name, IResourceLoader* loader = 0);
+        explicit SDLImage(IResourceLoader* loader = nullptr);
+        explicit SDLImage(const std::string& name, IResourceLoader* loader = nullptr);
         explicit SDLImage(SDL_Surface* surface);
         SDLImage(const std::string& name, SDL_Surface* surface);
         explicit SDLImage(const uint8_t* data, uint32_t width, uint32_t height);
@@ -34,7 +34,7 @@ namespace FIFE
         virtual ~SDLImage();
         virtual void invalidate();
         virtual void setSurface(SDL_Surface* surface);
-        virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = 0);
+        virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr);
         virtual size_t getSize();
         virtual void useSharedImage(const ImagePtr& shared, const Rect& region);
         virtual void forceLoadInternal();

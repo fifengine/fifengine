@@ -49,8 +49,8 @@ namespace FIFE
         virtual void createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
         virtual void setScreenMode(const ScreenMode& mode);
 
-        virtual Image* createImage(IResourceLoader* loader = 0);
-        virtual Image* createImage(const std::string& name, IResourceLoader* loader = 0);
+        virtual Image* createImage(IResourceLoader* loader = nullptr);
+        virtual Image* createImage(const std::string& name, IResourceLoader* loader = nullptr);
         virtual Image* createImage(const uint8_t* data, uint32_t width, uint32_t height);
         virtual Image* createImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height);
         virtual Image* createImage(SDL_Surface* surface);

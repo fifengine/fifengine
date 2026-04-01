@@ -214,7 +214,7 @@ namespace FIFE
          * @param max A reference to a ModelCoordinate that will hold the maximum coordinate.
          * @param layer A pointer to another layer that can be used to cast coordinates bettween layers.
          */
-        void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
+        void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = nullptr) const;
 
         /** Calculates z offset for the layer.
          * Is in range [-100,100], see glOrtho settings. Used by LayerCache to calculate z values.

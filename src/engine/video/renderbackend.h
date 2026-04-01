@@ -184,8 +184,8 @@ namespace FIFE
          */
         virtual void setScreenMode(const ScreenMode& mode) = 0;
 
-        virtual Image* createImage(IResourceLoader* loader = 0)                          = 0;
-        virtual Image* createImage(const std::string& name, IResourceLoader* loader = 0) = 0;
+        virtual Image* createImage(IResourceLoader* loader = nullptr)                          = 0;
+        virtual Image* createImage(const std::string& name, IResourceLoader* loader = nullptr) = 0;
 
         /** Creates an Image suitable for this renderbackend.
          * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).

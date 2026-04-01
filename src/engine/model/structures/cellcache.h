@@ -84,7 +84,7 @@ namespace FIFE
          * returned.
          * @return A vector which contains the transition cells.
          */
-        std::vector<Cell*> getTransitionCells(const Layer* layer = NULL);
+        std::vector<Cell*> getTransitionCells(const Layer* layer = nullptr);
 
     private:
         //! identifier
@@ -453,7 +453,7 @@ namespace FIFE
          * returned.
          * @return A vector which contains the transition cells.
          */
-        std::vector<Cell*> getTransitionCells(Layer* layer = NULL);
+        std::vector<Cell*> getTransitionCells(Layer* layer = nullptr);
 
         /** Returns zones of this CellCache.
          * @return A vector which contains the zones.

@@ -39,8 +39,8 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        explicit Animation(IResourceLoader* loader = 0);
-        explicit Animation(const std::string& name, IResourceLoader* loader = 0);
+        explicit Animation(IResourceLoader* loader = nullptr);
+        explicit Animation(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Destructor. Decreases the reference count of all referred images.
          */

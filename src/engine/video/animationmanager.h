@@ -67,7 +67,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual AnimationPtr create(IResourceLoader* loader = 0);
+        virtual AnimationPtr create(IResourceLoader* loader = nullptr);
 
         /** Creates a blank Animation but does not load it immediately
          *
@@ -83,7 +83,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = 0);
+        virtual AnimationPtr create(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Creates a blank resource and loads it from disk
          *
@@ -103,7 +103,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual AnimationPtr load(const std::string& name, IResourceLoader* loader = 0);
+        virtual AnimationPtr load(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Add an Animation to the manager
          *

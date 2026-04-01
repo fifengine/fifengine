@@ -239,7 +239,7 @@ namespace FIFE
         Image* bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
         Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
 
-        ImagePtr getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors = 0);
+        ImagePtr getMultiColorOverlay(const RenderItem& vc, OverlayColors* colors = nullptr);
 
         void renderUnsorted(Camera* cam, Layer* layer, RenderList& instances);
         void renderAlreadySorted(Camera* cam, Layer* layer, RenderList& instances);

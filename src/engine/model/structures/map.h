@@ -80,7 +80,7 @@ namespace FIFE
         Map(std::string identifier,
             RenderBackend* renderbackend,
             const std::vector<RendererBase*>& renderers,
-            TimeProvider* tp_master = NULL);
+            TimeProvider* tp_master = nullptr);
 
         /** Destructor
          */

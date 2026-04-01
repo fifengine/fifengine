@@ -34,8 +34,8 @@ namespace FIFE
     public:
         /** Constructor.
          */
-        explicit Image(IResourceLoader* loader = 0);
-        explicit Image(const std::string& name, IResourceLoader* loader = 0);
+        explicit Image(IResourceLoader* loader = nullptr);
+        explicit Image(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Constructor.
          * @note Takes ownership of the SDL Surface
@@ -66,15 +66,15 @@ namespace FIFE
          * @param alpha The alpha value, with which to draw self.
          * @param rgb The color value of overlay if any.
          */
-        virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = 0) = 0;
-        virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = 0)
+        virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr) = 0;
+        virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(overlay);
             static_cast<void>(alpha);
             static_cast<void>(rgb);
         }
-        virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = 0)
+        virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(vertexZ);
@@ -82,7 +82,7 @@ namespace FIFE
             static_cast<void>(rgb);
         }
         virtual void renderZ(
-            const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = 0)
+            const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(vertexZ);
@@ -92,7 +92,7 @@ namespace FIFE
         }
 
         virtual void renderZ(
-            const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const * rgb = 0)
+            const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(vertexZ);

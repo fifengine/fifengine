@@ -93,7 +93,7 @@ namespace FIFE
          * @param parent Objects may optionally inherit values from a parent object.
          * @note This object belongs to the model, so don't delete the returned pointer
          */
-        Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent = 0);
+        Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent = nullptr);
 
         /** Attempt to remove an object from the model
          *  Fails and returns false if the object is referenced by an instance.

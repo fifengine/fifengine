@@ -67,7 +67,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual ImagePtr create(IResourceLoader* loader = 0);
+        virtual ImagePtr create(IResourceLoader* loader = nullptr);
 
         /** Creates a blank Image but does not load it immediately
          *
@@ -83,7 +83,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual ImagePtr create(const std::string& name, IResourceLoader* loader = 0);
+        virtual ImagePtr create(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Creates a blank resource and loads it from disk
          *
@@ -103,7 +103,7 @@ namespace FIFE
          * @see IResourceLoader
          *
          */
-        virtual ImagePtr load(const std::string& name, IResourceLoader* loader = 0);
+        virtual ImagePtr load(const std::string& name, IResourceLoader* loader = nullptr);
 
         /** Loads a blank resource
          *

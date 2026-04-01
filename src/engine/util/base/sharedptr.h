@@ -31,7 +31,7 @@ namespace FIFE
          * default constructor
          * creates a null shared pointer
          */
-        SharedPtr() : m_ptr(0), m_refCount(0) { }
+        SharedPtr() : m_ptr(nullptr), m_refCount(nullptr) { }
 
         /** Constructor
          * takes over ownership of the provided pointer
@@ -79,8 +79,8 @@ namespace FIFE
                 // delete and set pointers to null
                 delete m_ptr;
                 delete m_refCount;
-                m_ptr      = 0;
-                m_refCount = 0;
+                m_ptr      = nullptr;
+                m_refCount = nullptr;
             }
         }
 
