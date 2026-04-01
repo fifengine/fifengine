@@ -202,7 +202,7 @@ namespace FIFE
             img = m_cursor_drag_animation->getFrameByTimestamp(animtime);
         }
 
-        if (static_cast<int>(img) != 0) {
+        if (img) {
             const uint32_t dragWidth  = img->getWidth();
             const uint32_t dragHeight = img->getHeight();
             assert(dragWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
@@ -227,7 +227,7 @@ namespace FIFE
             img2                   = m_cursor_animation->getFrameByTimestamp(animtime);
         }
 
-        if (static_cast<int>(img2) != 0) {
+        if (img2) {
             if (m_native_image_cursor_enabled) {
                 setNativeImageCursor(img2);
             } else {

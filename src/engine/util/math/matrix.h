@@ -39,7 +39,7 @@ namespace FIFE
         template <typename U>
         friend class Matrix;
         template <typename U>
-        Matrix(const Matrix<U>& mat)
+        explicit Matrix(const Matrix<U>& mat)
         {
             for (int32_t index = 0; index < 16; ++index) {
                 (*this)[index] = static_cast<T>(mat[index]);

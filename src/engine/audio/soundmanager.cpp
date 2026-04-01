@@ -349,7 +349,7 @@ namespace FIFE
             emitter->setCheckDifference();
 
             bool active = emitter->isActive();
-            bool clip   = emitter->getSoundClip();
+            bool clip   = static_cast<bool>(emitter->getSoundClip());
             bool plays  = !emitter->isFinished();
             // remove active without clip or stopped
             if (!clip || !plays) {
