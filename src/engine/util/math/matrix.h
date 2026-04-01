@@ -459,7 +459,7 @@ namespace FIFE
     };
 
     using DoubleMatrix = Matrix<double>;
-    using IntMatrix = Matrix<int32_t>;
+    using IntMatrix    = Matrix<int32_t>;
     /** Print coords of the Matrix to a stream
      */
     template <typename T>

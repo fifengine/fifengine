@@ -37,6 +37,7 @@ namespace FIFE
         virtual void save(const std::string& filename) = 0;
     };
 
-    using ObjectSaverPtr = SharedPtr<FIFE::IObjectSaver>;} // namespace FIFE
+    using ObjectSaverPtr = SharedPtr<FIFE::IObjectSaver>;
+} // namespace FIFE
 
 #endif

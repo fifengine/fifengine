@@ -601,7 +601,7 @@ namespace FIFE
     private:
         using StringCellMultimap = std::multimap<std::string, Cell*>;
         using StringCellIterator = StringCellMultimap::iterator;
-        using StringCellPair = std::pair<StringCellIterator, StringCellIterator>;
+        using StringCellPair     = std::pair<StringCellIterator, StringCellIterator>;
         /** Returns the current size.
          * @return A rect that contains the min, max coordinates.
          */

@@ -105,8 +105,8 @@ namespace FIFE
         }
 
     private:
-        using ElementList = std::list<value_type>;
-        using ElementListIt = typename ElementList::iterator;
+        using ElementList        = std::list<value_type>;
+        using ElementListIt      = typename ElementList::iterator;
         using ElementListConstIt = typename ElementList::const_iterator;
         // A list of valuetype pairs that represents the pq.
         ElementList m_elements;

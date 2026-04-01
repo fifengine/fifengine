@@ -207,7 +207,7 @@ namespace FIFE
         };
         using InstanceToOutlines_t = std::map<Instance*, OutlineInfo>;
         using InstanceToColoring_t = std::map<Instance*, ColoringInfo>;
-        using InstanceToAreas_t = std::map<Instance*, AreaInfo>;
+        using InstanceToAreas_t    = std::map<Instance*, AreaInfo>;
         InstanceToOutlines_t m_instance_outlines;
         InstanceToColoring_t m_instance_colorings;
         InstanceToAreas_t m_instance_areas;

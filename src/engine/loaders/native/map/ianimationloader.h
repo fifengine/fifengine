@@ -40,6 +40,7 @@ namespace FIFE
         virtual std::vector<AnimationPtr> loadMultiple(const std::string& filename) = 0;
     };
 
-    using AnimationLoaderPtr = SharedPtr<IAnimationLoader>;} // namespace FIFE
+    using AnimationLoaderPtr = SharedPtr<IAnimationLoader>;
+} // namespace FIFE
 
 #endif

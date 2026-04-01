@@ -41,6 +41,7 @@ namespace FIFE
         virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
     };
 
-    using AtlasLoaderPtr = SharedPtr<FIFE::IAtlasLoader>;} // namespace FIFE
+    using AtlasLoaderPtr = SharedPtr<FIFE::IAtlasLoader>;
+} // namespace FIFE
 
 #endif

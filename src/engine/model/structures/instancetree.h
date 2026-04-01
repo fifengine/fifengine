@@ -28,7 +28,7 @@ namespace FIFE
     public:
         static const int32_t MIN_TREE_SIZE = 2;
 
-        using InstanceList = std::list<Instance*>;
+        using InstanceList     = std::list<Instance*>;
         using InstanceQuadTree = QuadTree<InstanceList, MIN_TREE_SIZE>;
         using InstanceTreeNode = InstanceQuadTree::Node;
         /** Constructor

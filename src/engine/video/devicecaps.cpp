@@ -221,7 +221,9 @@ namespace FIFE
         }
 
         // sort the list to keep the most preferred modes at the top of the selection process
-        std::ranges::sort(m_screenModes, [](const ScreenMode& lhs, const ScreenMode& rhs) { return lhs < rhs; });
+        std::ranges::sort(m_screenModes, [](const ScreenMode& lhs, const ScreenMode& rhs) {
+            return lhs < rhs;
+        });
         std::ranges::reverse(m_screenModes);
     }
 

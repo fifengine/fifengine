@@ -236,8 +236,8 @@ namespace FIFE
         return true;
     }
 
-    using Rect = RectType<int32_t>;
-    using FloatRect = RectType<float>;
+    using Rect       = RectType<int32_t>;
+    using FloatRect  = RectType<float>;
     using DoubleRect = RectType<double>;
 } // namespace FIFE
 

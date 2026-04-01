@@ -207,9 +207,9 @@ namespace FIFE
         return os << "(" << p.x << ":" << p.y << ")";
     }
 
-    using Point = PointType2D<int32_t>;
-    using DoublePoint = PointType2D<double>;
-    using PointVector = std::vector<Point>;
+    using Point             = PointType2D<int32_t>;
+    using DoublePoint       = PointType2D<double>;
+    using PointVector       = std::vector<Point>;
     using DoublePointVector = std::vector<DoublePoint>;
     /** A 3D Point
      *
@@ -375,9 +375,9 @@ namespace FIFE
         return os << "(" << p.x << ":" << p.y << ":" << p.z << ")";
     }
 
-    using Point3D = PointType3D<int32_t>;
-    using DoublePoint3D = PointType3D<double>;
-    using Point3DVector = std::vector<Point3D>;
+    using Point3D             = PointType3D<int32_t>;
+    using DoublePoint3D       = PointType3D<double>;
+    using Point3DVector       = std::vector<Point3D>;
     using DoublePoint3DVector = std::vector<DoublePoint3D>;
     /** Convert from 2D double point to 2D int32_t point
      */

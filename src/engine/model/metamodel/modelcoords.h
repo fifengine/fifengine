@@ -18,7 +18,7 @@ namespace FIFE
 {
     using AudioSpaceCoordinate = DoublePoint3D;
     using ExactModelCoordinate = DoublePoint3D;
-    using ModelCoordinate = Point3D;
+    using ModelCoordinate      = Point3D;
 } // namespace FIFE
 
 #endif

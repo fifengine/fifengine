@@ -66,7 +66,8 @@ namespace FIFE
          * @param rgb The color value of overlay if any.
          */
         virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = nullptr) = 0;
-        virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
+        virtual void render(
+            const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(overlay);
@@ -81,7 +82,11 @@ namespace FIFE
             static_cast<void>(rgb);
         }
         virtual void renderZ(
-            const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = nullptr)
+            const Rect& rect,
+            float vertexZ,
+            const ImagePtr& overlay,
+            uint8_t alpha       = 255,
+            uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(vertexZ);
@@ -91,7 +96,11 @@ namespace FIFE
         }
 
         virtual void renderZ(
-            const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const * rgb = nullptr)
+            const Rect& rect,
+            float vertexZ,
+            uint8_t alpha       = 255,
+            bool forceNewBatch  = false,
+            uint8_t const * rgb = nullptr)
         {
             static_cast<void>(rect);
             static_cast<void>(vertexZ);
