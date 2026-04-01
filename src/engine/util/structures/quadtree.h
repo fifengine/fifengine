@@ -79,16 +79,21 @@ namespace FIFE
         template <typename Visitor>
         void apply_visitor(Visitor& visitor, int32_t d = 0)
         {
-            if (!visitor.visit(this, d))
+            if (!visitor.visit(this, d)) {
                 return;
-            if (m_nodes[0])
+            }
+            if (m_nodes[0]) {
                 m_nodes[0]->apply_visitor(visitor, d + 1);
-            if (m_nodes[1])
+            }
+            if (m_nodes[1]) {
                 m_nodes[1]->apply_visitor(visitor, d + 1);
-            if (m_nodes[2])
+            }
+            if (m_nodes[2]) {
                 m_nodes[2]->apply_visitor(visitor, d + 1);
-            if (m_nodes[3])
+            }
+            if (m_nodes[3]) {
                 m_nodes[3]->apply_visitor(visitor, d + 1);
+            }
         }
 
         /** Return the X position of the node.
@@ -221,14 +226,18 @@ namespace FIFE
     template <typename DataType, int32_t MinimumSize>
     inline bool QuadNode<DataType, MinimumSize>::contains(int32_t x, int32_t y, int32_t w, int32_t h) const
     {
-        if (x < m_x)
+        if (x < m_x) {
             return false;
-        if (y < m_y)
+        }
+        if (y < m_y) {
             return false;
-        if (x + w >= m_x + m_size)
+        }
+        if (x + w >= m_x + m_size) {
             return false;
-        if (y + h >= m_y + m_size)
+        }
+        if (y + h >= m_y + m_size) {
             return false;
+        }
         return true;
     }
 
@@ -313,10 +322,12 @@ namespace FIFE
         /*
                 If used only by the tree, these two are superfluous.
         */
-        if (contains(x, y, w, h))
+        if (contains(x, y, w, h)) {
             return this;
-        if (m_parent)
+        }
+        if (m_parent) {
             return m_parent;
+        }
 
         if (x >= m_x) {
             if (y >= m_y) { // we are node 0
@@ -352,8 +363,9 @@ namespace FIFE
     template <typename DataType, int32_t MinimumSize>
     void QuadNode<DataType, MinimumSize>::splice()
     {
-        if (m_size <= MinimumSize)
+        if (m_size <= MinimumSize) {
             return;
+        }
 
         if (m_nodes[0] == 0) {
             m_nodes[0] = new QuadNode<DataType, MinimumSize>(this, m_x, m_y, m_size / 2);

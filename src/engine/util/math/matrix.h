@@ -68,8 +68,9 @@ namespace FIFE
          */
         inline Matrix& operator/=(T val)
         {
-            for (int32_t i = 0; i < 16; ++i)
+            for (int32_t i = 0; i < 16; ++i) {
                 (*this)[i] /= val;
+            }
             return *this;
         }
 
