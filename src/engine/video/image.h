@@ -25,8 +25,7 @@
 namespace FIFE
 {
     class Image;
-    typedef SharedPtr<Image> ImagePtr;
-
+    using ImagePtr = SharedPtr<Image>;
     /** Base Class for Images.
      */
     class Image : public IResource

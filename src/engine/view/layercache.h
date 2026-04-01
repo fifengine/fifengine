@@ -34,8 +34,7 @@ namespace FIFE
     class LayerCache
     {
     public:
-        typedef QuadTree<std::set<int32_t>> CacheTree;
-
+        using CacheTree = QuadTree<std::set<int32_t>>;
         explicit LayerCache(Camera* camera);
         ~LayerCache();
 
@@ -58,8 +57,7 @@ namespace FIFE
             EntryPositionUpdate = 0x02,
             EntryFullUpdate     = 0x03
         };
-        typedef uint8_t RenderEntryUpdate;
-
+        using RenderEntryUpdate = uint8_t;
         struct Entry
         {
             // Node in m_tree;

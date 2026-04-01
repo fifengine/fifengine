@@ -39,11 +39,9 @@ namespace FIFE
         ROUTE_SOLVED,
         ROUTE_FAILED
     };
-    typedef uint8_t RouteStatusInfo;
-
+    using RouteStatusInfo = uint8_t;
     //! A path is a list with locations. Each location holds the coordinate for one cell.
-    typedef std::list<Location> Path;
-
+    using Path = std::list<Location>;
     /** A basic route.
      * Holds the path and all related infos.
      */
@@ -239,8 +237,7 @@ namespace FIFE
 
     private:
         //! path iterator
-        typedef Path::iterator PathIterator;
-
+        using PathIterator = Path::iterator;
         //! search status
         RouteStatusInfo m_status;
 

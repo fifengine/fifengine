@@ -26,8 +26,7 @@ namespace FIFE
     class CommandLine : public fcn::TextField
     {
     public:
-        typedef std::function<void(std::string)> type_callback;
-
+        using type_callback = std::function<void(std::string)>;
         /** Constructor
          */
         CommandLine();

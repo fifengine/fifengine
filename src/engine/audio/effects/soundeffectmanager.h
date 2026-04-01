@@ -148,15 +148,15 @@ namespace FIFE
         //! Holds all SoundEffects
         std::vector<SoundEffect*> m_effects;
         //! Holds SoundEffects together with the added SoundEmitters
-        typedef std::map<SoundEffect*, std::vector<SoundEmitter*>> SoundEffectEmitterMap;
+        using SoundEffectEmitterMap = std::map<SoundEffect*, std::vector<SoundEmitter*>>;
         SoundEffectEmitterMap m_effectEmitters;
         //! Holds all SoundFilters
         std::vector<SoundFilter*> m_filters;
         //! Holds SoundFilters together with the added SoundEmitters
-        typedef std::map<SoundFilter*, std::vector<SoundEmitter*>> SoundFilterEmitterMap;
+        using SoundFilterEmitterMap = std::map<SoundFilter*, std::vector<SoundEmitter*>>;
         SoundFilterEmitterMap m_filterdEmitters;
         //! Holds SoundFilters together with the added SoundEffects
-        typedef std::map<SoundFilter*, std::vector<SoundEffect*>> SoundFilterEffectMap;
+        using SoundFilterEffectMap = std::map<SoundFilter*, std::vector<SoundEffect*>>;
         SoundFilterEffectMap m_filterdEffects;
         //! Establishes the relationship between SoundEffectPreset and EFXEAXREVERBPROPERTIES
         std::map<SoundEffectPreset, EFXEAXREVERBPROPERTIES> m_presets;

@@ -149,7 +149,7 @@ namespace FIFE
 
         type_angle2id m_angle2img;
 
-        typedef std::map<uint32_t, OverlayColors> AngleColorOverlayMap;
+        using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
         AngleColorOverlayMap m_colorOverlayMap;
         type_angle2id m_map;
     };
@@ -313,16 +313,16 @@ namespace FIFE
         ActionVisual();
 
         // animations associated with this action
-        typedef std::map<uint32_t, AnimationPtr> AngleAnimationMap;
+        using AngleAnimationMap = std::map<uint32_t, AnimationPtr>;
         AngleAnimationMap m_animation_map;
 
-        typedef std::map<uint32_t, std::map<int32_t, AnimationPtr>> AngleAnimationOverlayMap;
+        using AngleAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, AnimationPtr>>;
         AngleAnimationOverlayMap m_animationOverlayMap;
 
-        typedef std::map<uint32_t, OverlayColors> AngleColorOverlayMap;
+        using AngleColorOverlayMap = std::map<uint32_t, OverlayColors>;
         AngleColorOverlayMap m_colorOverlayMap;
 
-        typedef std::map<uint32_t, std::map<int32_t, OverlayColors>> AngleColorAnimationOverlayMap;
+        using AngleColorAnimationOverlayMap = std::map<uint32_t, std::map<int32_t, OverlayColors>>;
         AngleColorAnimationOverlayMap m_colorAnimationOverlayMap;
         // need this map to use the getIndexByAngle() function in angles.h
         type_angle2id m_map;

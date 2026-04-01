@@ -353,9 +353,8 @@ namespace FIFE
         void setMinGain(const std::string& group, float gain);
 
     private:
-        typedef std::map<std::string, std::vector<SoundEmitter*>> EmitterGroups;
-        typedef EmitterGroups::iterator EmitterGroupsIterator;
-
+        using EmitterGroups         = std::map<std::string, std::vector<SoundEmitter*>>;
+        using EmitterGroupsIterator = EmitterGroups::iterator;
         /** Sets the source handle
          *
          * @param emitter The Emitter pointer.

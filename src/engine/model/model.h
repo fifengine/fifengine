@@ -159,8 +159,8 @@ namespace FIFE
 
         std::list<Map*> m_maps;
 
-        typedef std::map<std::string, Object*> objectmap_t;
-        typedef std::pair<std::string, objectmap_t> namespace_t;
+        using objectmap_t = std::map<std::string, Object*>;
+        using namespace_t = std::pair<std::string, objectmap_t>;
         std::list<namespace_t> m_namespaces;
 
         /// Used to remember last 'selected' namespace.

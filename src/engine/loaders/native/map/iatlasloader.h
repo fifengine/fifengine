@@ -19,8 +19,7 @@
 namespace FIFE
 {
     class Atlas;
-    typedef SharedPtr<Atlas> AtlasPtr;
-
+    using AtlasPtr = SharedPtr<Atlas>;
     class IAtlasLoader
     {
     public:
@@ -42,7 +41,6 @@ namespace FIFE
         virtual std::vector<AtlasPtr> loadMultiple(const std::string& filename) = 0;
     };
 
-    typedef SharedPtr<FIFE::IAtlasLoader> AtlasLoaderPtr;
-} // namespace FIFE
+    using AtlasLoaderPtr = SharedPtr<FIFE::IAtlasLoader>;} // namespace FIFE
 
 #endif

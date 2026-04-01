@@ -599,10 +599,9 @@ namespace FIFE
         void update();
 
     private:
-        typedef std::multimap<std::string, Cell*> StringCellMultimap;
-        typedef StringCellMultimap::iterator StringCellIterator;
-        typedef std::pair<StringCellIterator, StringCellIterator> StringCellPair;
-
+        using StringCellMultimap = std::multimap<std::string, Cell*>;
+        using StringCellIterator = StringCellMultimap::iterator;
+        using StringCellPair = std::pair<StringCellIterator, StringCellIterator>;
         /** Returns the current size.
          * @return A rect that contains the min, max coordinates.
          */

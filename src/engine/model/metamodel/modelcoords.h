@@ -16,9 +16,9 @@
 
 namespace FIFE
 {
-    typedef DoublePoint3D AudioSpaceCoordinate;
-    typedef DoublePoint3D ExactModelCoordinate;
-    typedef Point3D ModelCoordinate;
+    using AudioSpaceCoordinate = DoublePoint3D;
+    using ExactModelCoordinate = DoublePoint3D;
+    using ModelCoordinate = Point3D;
 } // namespace FIFE
 
 #endif

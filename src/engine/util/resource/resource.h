@@ -18,8 +18,7 @@
 namespace FIFE
 {
 
-    typedef std::size_t ResourceHandle;
-
+    using ResourceHandle = std::size_t;
     class IResource;
 
     class IResourceLoader
@@ -82,8 +81,7 @@ namespace FIFE
         static ResourceHandle m_curhandle;
     };
 
-    typedef SharedPtr<IResource> ResourcePtr;
-
+    using ResourcePtr = SharedPtr<IResource>;
 } // namespace FIFE
 
 #endif

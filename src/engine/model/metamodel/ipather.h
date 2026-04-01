@@ -22,8 +22,7 @@ namespace FIFE
     class Route;
 
     //! A path is a list with locations. Each location holds the coordinate for one cell.
-    typedef std::list<Location> Path;
-
+    using Path = std::list<Location>;
     enum PriorityType
     {
         HIGH_PRIORITY,

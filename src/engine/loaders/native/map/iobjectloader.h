@@ -53,7 +53,6 @@ namespace FIFE
         virtual void load(const std::string& filename) = 0;
     };
 
-    typedef SharedPtr<FIFE::IObjectLoader> ObjectLoaderPtr;
-} // namespace FIFE
+    using ObjectLoaderPtr = SharedPtr<FIFE::IObjectLoader>;} // namespace FIFE
 
 #endif

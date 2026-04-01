@@ -236,10 +236,9 @@ namespace FIFE
         return true;
     }
 
-    typedef RectType<int32_t> Rect;
-    typedef RectType<float> FloatRect;
-    typedef RectType<double> DoubleRect;
-
+    using Rect = RectType<int32_t>;
+    using FloatRect = RectType<float>;
+    using DoubleRect = RectType<double>;
 } // namespace FIFE
 
 #endif

@@ -113,7 +113,6 @@ namespace FIFE
         int32_t m_cachedStaticImgAngle;
     };
 
-    typedef std::vector<RenderItem*> RenderList;
-} // namespace FIFE
+    using RenderList = std::vector<RenderItem*>;} // namespace FIFE
 
 #endif

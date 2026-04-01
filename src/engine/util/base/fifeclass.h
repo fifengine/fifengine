@@ -17,8 +17,7 @@
 namespace FIFE
 {
 
-    typedef std::size_t fifeid_t;
-
+    using fifeid_t = std::size_t;
     /** Base class for all fife classes
      * Used e.g. to track instances over swig conversion
      */

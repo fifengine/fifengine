@@ -46,7 +46,7 @@ namespace FIFE
         uint32_t m_numberOfEvents;
         uint32_t m_count;
 
-        typedef std::vector<PercentDoneListener*> ListenerContainer;
+        using ListenerContainer = std::vector<PercentDoneListener*>;
         ListenerContainer m_listeners;
     };
 } // namespace FIFE

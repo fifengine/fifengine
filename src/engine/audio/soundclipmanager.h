@@ -340,16 +340,14 @@ namespace FIFE
         virtual ResourceHandle getResourceHandle(const std::string& name);
 
     private:
-        typedef std::map<ResourceHandle, SoundClipPtr> SoundClipHandleMap;
-        typedef std::map<ResourceHandle, SoundClipPtr>::iterator SoundClipHandleMapIterator;
-        typedef std::map<ResourceHandle, SoundClipPtr>::const_iterator SoundClipHandleMapConstIterator;
-        typedef std::pair<ResourceHandle, SoundClipPtr> SoundClipHandleMapPair;
-
-        typedef std::map<std::string, SoundClipPtr> SoundClipNameMap;
-        typedef std::map<std::string, SoundClipPtr>::iterator SoundClipNameMapIterator;
-        typedef std::map<std::string, SoundClipPtr>::const_iterator SoundClipNameMapConstIterator;
-        typedef std::pair<std::string, SoundClipPtr> SoundClipNameMapPair;
-
+        using SoundClipHandleMap              = std::map<ResourceHandle, SoundClipPtr>;
+        using SoundClipHandleMapIterator      = std::map<ResourceHandle, SoundClipPtr>::iterator;
+        using SoundClipHandleMapConstIterator = std::map<ResourceHandle, SoundClipPtr>::const_iterator;
+        using SoundClipHandleMapPair          = std::pair<ResourceHandle, SoundClipPtr>;
+        using SoundClipNameMap                = std::map<std::string, SoundClipPtr>;
+        using SoundClipNameMapIterator        = std::map<std::string, SoundClipPtr>::iterator;
+        using SoundClipNameMapConstIterator   = std::map<std::string, SoundClipPtr>::const_iterator;
+        using SoundClipNameMapPair            = std::pair<std::string, SoundClipPtr>;
         SoundClipHandleMap m_sclipHandleMap;
 
         SoundClipNameMap m_sclipNameMap;

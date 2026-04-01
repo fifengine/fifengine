@@ -60,8 +60,7 @@ namespace FIFE
         ICHANGE_STACKPOS        = 0x0400,
         ICHANGE_VISUAL          = 0x0800
     };
-    typedef uint32_t InstanceChangeInfo;
-
+    using InstanceChangeInfo = uint32_t;
     class InstanceChangeListener
     {
     public:

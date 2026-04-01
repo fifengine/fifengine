@@ -347,16 +347,14 @@ namespace FIFE
         virtual void invalidateAll();
 
     private:
-        typedef std::map<ResourceHandle, AnimationPtr> AnimationHandleMap;
-        typedef std::map<ResourceHandle, AnimationPtr>::iterator AnimationHandleMapIterator;
-        typedef std::map<ResourceHandle, AnimationPtr>::const_iterator AnimationHandleMapConstIterator;
-        typedef std::pair<ResourceHandle, AnimationPtr> AnimationHandleMapPair;
-
-        typedef std::map<std::string, AnimationPtr> AnimationNameMap;
-        typedef std::map<std::string, AnimationPtr>::iterator AnimationNameMapIterator;
-        typedef std::map<std::string, AnimationPtr>::const_iterator AnimationNameMapConstIterator;
-        typedef std::pair<std::string, AnimationPtr> AnimationNameMapPair;
-
+        using AnimationHandleMap = std::map<ResourceHandle, AnimationPtr>;
+        using AnimationHandleMapIterator = std::map<ResourceHandle, AnimationPtr>::iterator;
+        using AnimationHandleMapConstIterator = std::map<ResourceHandle, AnimationPtr>::const_iterator;
+        using AnimationHandleMapPair = std::pair<ResourceHandle, AnimationPtr>;
+        using AnimationNameMap = std::map<std::string, AnimationPtr>;
+        using AnimationNameMapIterator = std::map<std::string, AnimationPtr>::iterator;
+        using AnimationNameMapConstIterator = std::map<std::string, AnimationPtr>::const_iterator;
+        using AnimationNameMapPair = std::pair<std::string, AnimationPtr>;
         AnimationHandleMap m_animHandleMap;
 
         AnimationNameMap m_animNameMap;

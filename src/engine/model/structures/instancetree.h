@@ -28,10 +28,9 @@ namespace FIFE
     public:
         static const int32_t MIN_TREE_SIZE = 2;
 
-        typedef std::list<Instance*> InstanceList;
-        typedef QuadTree<InstanceList, MIN_TREE_SIZE> InstanceQuadTree;
-        typedef InstanceQuadTree::Node InstanceTreeNode;
-
+        using InstanceList = std::list<Instance*>;
+        using InstanceQuadTree = QuadTree<InstanceList, MIN_TREE_SIZE>;
+        using InstanceTreeNode = InstanceQuadTree::Node;
         /** Constructor
          *
          */

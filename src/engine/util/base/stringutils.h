@@ -12,7 +12,7 @@
 
 namespace FIFE
 {
-    typedef std::vector<int32_t> IntVector;
+    using IntVector = std::vector<int32_t>;
     int makeInt32(const std::string& str);
     IntVector tokenize(const std::string& str, char delim, char group = 0);
 } // namespace FIFE

@@ -29,8 +29,7 @@ namespace FIFE
             Descending //!< highest priority first.
         };
 
-        typedef std::pair<index_type, priority_type> value_type;
-
+        using value_type = std::pair<index_type, priority_type>;
         /** Constructor
          *
          */
@@ -106,10 +105,9 @@ namespace FIFE
         }
 
     private:
-        typedef std::list<value_type> ElementList;
-        typedef typename ElementList::iterator ElementListIt;
-        typedef typename ElementList::const_iterator ElementListConstIt;
-
+        using ElementList = std::list<value_type>;
+        using ElementListIt = typename ElementList::iterator;
+        using ElementListConstIt = typename ElementList::const_iterator;
         // A list of valuetype pairs that represents the pq.
         ElementList m_elements;
 

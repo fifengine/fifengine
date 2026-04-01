@@ -80,7 +80,7 @@ namespace FIFE
         const std::string& getName() const;
 
     protected:
-        typedef std::map<std::string, AtlasData> SubimageMap;
+        using SubimageMap = std::map<std::string, AtlasData>;
         SubimageMap m_subimages;
         ImagePtr m_image;
 

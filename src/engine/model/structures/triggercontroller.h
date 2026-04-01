@@ -206,11 +206,10 @@ namespace FIFE
         //! Pointer to the map this controller is associated with.
         Map* m_map;
 
-        typedef std::map<std::string, Trigger*> TriggerNameMap;
-        typedef std::map<std::string, Trigger*>::iterator TriggerNameMapIterator;
-        typedef std::map<std::string, Trigger*>::const_iterator TriggerNameMapConstIterator;
-        typedef std::pair<std::string, Trigger*> TriggerNameMapPair;
-
+        using TriggerNameMap = std::map<std::string, Trigger*>;
+        using TriggerNameMapIterator = std::map<std::string, Trigger*>::iterator;
+        using TriggerNameMapConstIterator = std::map<std::string, Trigger*>::const_iterator;
+        using TriggerNameMapPair = std::pair<std::string, Trigger*>;
         //! Trigger name map
         TriggerNameMap m_triggerNameMap;
     };

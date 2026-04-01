@@ -153,10 +153,10 @@ namespace FIFE
         bool hasSource(const std::string& path) const;
 
     private:
-        typedef std::vector<VFSSourceProvider*> type_providers;
+        using type_providers = std::vector<VFSSourceProvider*>;
         type_providers m_providers;
 
-        typedef std::vector<VFSSource*> type_sources;
+        using type_sources = std::vector<VFSSource*>;
         type_sources m_sources;
 
         std::set<std::string> filterList(const std::set<std::string>& list, const std::string& fregex) const;

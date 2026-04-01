@@ -44,8 +44,7 @@ namespace FIFE
     class Timer : protected TimeEvent
     {
     public:
-        typedef std::function<void()> type_callback;
-
+        using type_callback = std::function<void()>;
         /** Default constructor.
          *
          *  Constructs an idle timer, use @see setInterval and @see setCallback

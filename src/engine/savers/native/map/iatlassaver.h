@@ -27,7 +27,6 @@ namespace FIFE
         virtual void save(const std::string& filename) = 0;
     };
 
-    typedef SharedPtr<FIFE::IAtlasSaver> AtlasSaverPtr;
-} // namespace FIFE
+    using AtlasSaverPtr = SharedPtr<FIFE::IAtlasSaver>;} // namespace FIFE
 
 #endif

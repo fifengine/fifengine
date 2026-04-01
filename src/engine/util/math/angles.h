@@ -17,8 +17,7 @@
 
 namespace FIFE
 {
-    typedef std::map<uint32_t, int32_t> type_angle2id;
-
+    using type_angle2id = std::map<uint32_t, int32_t>;
     /** Returns id for given angle from angle2id map
      * in case there are no elements in the map, negative value is returned
      */

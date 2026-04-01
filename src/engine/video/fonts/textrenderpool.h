@@ -63,7 +63,7 @@ namespace FIFE
         void removeOldEntries();
 
     protected:
-        typedef struct
+        struct s_pool_entry
         {
             std::string text;
             SDL_Color color;
@@ -73,9 +73,9 @@ namespace FIFE
             uint32_t timestamp;
 
             Image* image;
-        } s_pool_entry;
+        };
 
-        typedef std::list<s_pool_entry> type_pool;
+        using type_pool = std::list<s_pool_entry>;
         type_pool m_pool;
         size_t m_poolSize;
         size_t m_poolMaxSize;

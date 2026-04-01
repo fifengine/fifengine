@@ -160,8 +160,7 @@ namespace FIFE
             COLOR   = 0x02,
             AREA    = 0x04
         };
-        typedef uint8_t Effect;
-
+        using Effect = uint8_t;
         // contains per-instance information for outline drawing
         class OutlineInfo
         {
@@ -206,21 +205,20 @@ namespace FIFE
             AreaInfo();
             ~AreaInfo();
         };
-        typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
-        typedef std::map<Instance*, ColoringInfo> InstanceToColoring_t;
-        typedef std::map<Instance*, AreaInfo> InstanceToAreas_t;
-
+        using InstanceToOutlines_t = std::map<Instance*, OutlineInfo>;
+        using InstanceToColoring_t = std::map<Instance*, ColoringInfo>;
+        using InstanceToAreas_t = std::map<Instance*, AreaInfo>;
         InstanceToOutlines_t m_instance_outlines;
         InstanceToColoring_t m_instance_colorings;
         InstanceToAreas_t m_instance_areas;
 
         // struct to hold the ImagePtr with a timestamp
-        typedef struct
+        struct s_image_entry
         {
             ImagePtr image;
             uint32_t timestamp;
-        } s_image_entry;
-        typedef std::list<s_image_entry> ImagesToCheck_t;
+        };
+        using ImagesToCheck_t = std::list<s_image_entry>;
         // old effect images
         ImagesToCheck_t m_check_images;
         // timer
@@ -228,7 +226,7 @@ namespace FIFE
 
         // InstanceDeleteListener to automatically remove Instance effect (outline, coloring, ...)
         InstanceDeleteListener* m_delete_listener;
-        typedef std::map<Instance*, Effect> InstanceToEffects_t;
+        using InstanceToEffects_t = std::map<Instance*, Effect>;
         InstanceToEffects_t m_assigned_instances;
 
         void renderOverlay(RenderDataType type, RenderItem* item, uint8_t const * coloringColor, bool recoloring);

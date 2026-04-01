@@ -104,14 +104,11 @@ namespace FIFE
 
     private:
         //! A path is a list with locations. Each location holds the coordinate for one cell.
-        typedef std::list<Location> Path;
-
+        using Path = std::list<Location>;
         //! Holds the searches and their priority.
-        typedef PriorityQueue<RoutePatherSearch*, int32_t> SessionQueue;
-
+        using SessionQueue = PriorityQueue<RoutePatherSearch*, int32_t>;
         //! Holds the sessions.
-        typedef std::list<int32_t> SessionList;
-
+        using SessionList = std::list<int32_t>;
         /** Adds a session id to the session map.
          *
          * Stores the given session id in the session map.

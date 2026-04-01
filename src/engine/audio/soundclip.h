@@ -132,7 +132,7 @@ namespace FIFE
         std::string createUniqueClipName();
     };
 
-    typedef SharedPtr<SoundClip> SoundClipPtr;
+    using SoundClipPtr = SharedPtr<SoundClip>;
 } // namespace FIFE
 
 #endif

@@ -364,16 +364,14 @@ namespace FIFE
         virtual void invalidateAll();
 
     private:
-        typedef std::map<ResourceHandle, ImagePtr> ImageHandleMap;
-        typedef std::map<ResourceHandle, ImagePtr>::iterator ImageHandleMapIterator;
-        typedef std::map<ResourceHandle, ImagePtr>::const_iterator ImageHandleMapConstIterator;
-        typedef std::pair<ResourceHandle, ImagePtr> ImageHandleMapPair;
-
-        typedef std::map<std::string, ImagePtr> ImageNameMap;
-        typedef std::map<std::string, ImagePtr>::iterator ImageNameMapIterator;
-        typedef std::map<std::string, ImagePtr>::const_iterator ImageNameMapConstIterator;
-        typedef std::pair<std::string, ImagePtr> ImageNameMapPair;
-
+        using ImageHandleMap = std::map<ResourceHandle, ImagePtr>;
+        using ImageHandleMapIterator = std::map<ResourceHandle, ImagePtr>::iterator;
+        using ImageHandleMapConstIterator = std::map<ResourceHandle, ImagePtr>::const_iterator;
+        using ImageHandleMapPair = std::pair<ResourceHandle, ImagePtr>;
+        using ImageNameMap = std::map<std::string, ImagePtr>;
+        using ImageNameMapIterator = std::map<std::string, ImagePtr>::iterator;
+        using ImageNameMapConstIterator = std::map<std::string, ImagePtr>::const_iterator;
+        using ImageNameMapPair = std::pair<std::string, ImagePtr>;
         ImageHandleMap m_imgHandleMap;
 
         ImageNameMap m_imgNameMap;

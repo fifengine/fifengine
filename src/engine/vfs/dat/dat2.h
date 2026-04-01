@@ -66,7 +66,7 @@ namespace FIFE
     private:
         std::string m_datpath;
         mutable std::unique_ptr<RawData> m_data;
-        typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
+        using type_filelist = std::map<std::string, RawDataDAT2::s_info>;
         mutable type_filelist m_filelist;
 
         /// number of file entries to read

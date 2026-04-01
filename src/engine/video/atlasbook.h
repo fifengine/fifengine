@@ -114,7 +114,7 @@ namespace FIFE
         uint32_t page;
         int32_t freePixels;
 
-        typedef std::vector<AtlasBlock> Blocks;
+        using Blocks = std::vector<AtlasBlock>;
         Blocks blocks;
     };
 
@@ -144,7 +144,7 @@ namespace FIFE
         uint32_t pageWidth, pageHeight;
         uint32_t pixelSize;
 
-        typedef std::vector<AtlasPage> Pages;
+        using Pages = std::vector<AtlasPage>;
         Pages pages;
     };
 } // namespace FIFE

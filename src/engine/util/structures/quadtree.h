@@ -158,8 +158,7 @@ namespace FIFE
     class QuadTree
     {
     public:
-        typedef QuadNode<DataType, MinimumSize> Node;
-
+        using Node = QuadNode<DataType, MinimumSize>;
         /** Create a new QuadTree
          *  @param x The X position of the starting node.
          *  @param y The Y position of the starting node.

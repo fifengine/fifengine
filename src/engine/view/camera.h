@@ -28,14 +28,13 @@
 namespace FIFE
 {
 
-    typedef Point3D ScreenPoint;
+    using ScreenPoint = Point3D;
     class Layer;
     class Instance;
     class RenderBackend;
     class LayerCache;
     class MapObserver;
-    typedef std::map<Layer*, RenderList> t_layer_to_instances;
-
+    using t_layer_to_instances = std::map<Layer*, RenderList>;
     /** Camera describes properties of a view port shown in the main screen
      *  Main screen can have multiple cameras active simultanously
      *  Different cameras can have different properties, like location
@@ -53,8 +52,7 @@ namespace FIFE
             PositionTransform = 0x08,
             ZTransform        = 0x10
         };
-        typedef uint32_t Transform;
-
+        using Transform = uint32_t;
         /** Constructor
          * Camera needs to be added to the view. If not done so, it is not rendered.
          * @param id identifier for the camera

@@ -28,7 +28,6 @@ namespace FIFE
         virtual void save(const std::string& filename) = 0;
     };
 
-    typedef SharedPtr<IAnimationSaver> AnimationSaverPtr;
-} // namespace FIFE
+    using AnimationSaverPtr = SharedPtr<IAnimationSaver>;} // namespace FIFE
 
 #endif

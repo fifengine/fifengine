@@ -70,8 +70,7 @@ namespace FIFE
         RenderBackend* m_renderbackend;
         ImagePtr m_target;
     };
-    typedef SharedPtr<RenderTarget> RenderTargetPtr;
-
+    using RenderTargetPtr = SharedPtr<RenderTarget>;
     class TargetRenderer
     {
     public:
@@ -104,7 +103,7 @@ namespace FIFE
             RenderTargetPtr target;
             bool discard;
         };
-        typedef std::map<std::string, RenderJob> RenderJobMap;
+        using RenderJobMap = std::map<std::string, RenderJob>;
         RenderJobMap m_targets;
         RenderBackend* m_renderbackend;
     };

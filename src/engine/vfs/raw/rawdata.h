@@ -178,8 +178,7 @@ namespace FIFE
 
         static bool littleEndian();
     };
-    typedef std::shared_ptr<RawData> RawDataPtr;
-
+    using RawDataPtr = std::shared_ptr<RawData>;
     class IndexSaver
     {
     public:

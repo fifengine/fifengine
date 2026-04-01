@@ -45,8 +45,7 @@ namespace FIFE
         CTYPE_STATIC_BLOCKER  = 3,
         CTYPE_CELL_BLOCKER    = 4
     };
-    typedef uint8_t CellTypeInfo;
-
+    using CellTypeInfo = uint8_t;
     /** Simple class to hold the data for transistions.
      */
     class TransitionInfo

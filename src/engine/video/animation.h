@@ -162,8 +162,7 @@ namespace FIFE
         int32_t m_animation_endtime;
     };
 
-    typedef SharedPtr<Animation> AnimationPtr;
-
+    using AnimationPtr = SharedPtr<Animation>;
 } // namespace FIFE
 
 #endif

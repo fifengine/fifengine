@@ -207,11 +207,10 @@ namespace FIFE
         return os << "(" << p.x << ":" << p.y << ")";
     }
 
-    typedef PointType2D<int32_t> Point;
-    typedef PointType2D<double> DoublePoint;
-    typedef std::vector<Point> PointVector;
-    typedef std::vector<DoublePoint> DoublePointVector;
-
+    using Point = PointType2D<int32_t>;
+    using DoublePoint = PointType2D<double>;
+    using PointVector = std::vector<Point>;
+    using DoublePointVector = std::vector<DoublePoint>;
     /** A 3D Point
      *
      * This is a small helper class to aid in 3d vector arithmetics.
@@ -376,11 +375,10 @@ namespace FIFE
         return os << "(" << p.x << ":" << p.y << ":" << p.z << ")";
     }
 
-    typedef PointType3D<int32_t> Point3D;
-    typedef PointType3D<double> DoublePoint3D;
-    typedef std::vector<Point3D> Point3DVector;
-    typedef std::vector<DoublePoint3D> DoublePoint3DVector;
-
+    using Point3D = PointType3D<int32_t>;
+    using DoublePoint3D = PointType3D<double>;
+    using Point3DVector = std::vector<Point3D>;
+    using DoublePoint3DVector = std::vector<DoublePoint3D>;
     /** Convert from 2D double point to 2D int32_t point
      */
     inline Point doublePt2intPt(DoublePoint pt)

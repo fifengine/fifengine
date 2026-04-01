@@ -56,7 +56,7 @@ namespace FIFE
     private:
         std::string m_datpath;
         std::unique_ptr<RawData> m_data;
-        typedef std::map<std::string, RawDataDAT1::s_info> type_filelist;
+        using type_filelist = std::map<std::string, RawDataDAT1::s_info>;
         type_filelist m_filelist;
 
         std::set<std::string> list(const std::string& pathstr, bool dirs) const;
