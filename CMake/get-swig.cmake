@@ -79,10 +79,6 @@ else()
     BUILD_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig make
     INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir ${DEPENDENCY_EXTRACT_DIR}/src/swig make install
     INSTALL_DIR ${_SWIG_INSTALL_DIR}
-    LOG_DOWNLOAD 1
-    LOG_CONFIGURE 1
-    LOG_BUILD 1
-    LOG_INSTALL 1
   )
 
   # swig binary inside /bin folder of the installation directory

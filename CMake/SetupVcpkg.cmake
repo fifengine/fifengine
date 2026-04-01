@@ -140,8 +140,9 @@ endif()
 # Print VCPKG configuration overview
 #
 
-message(STATUS "")
+message(STATUS "---------------------------------------------------------------------")
 message(STATUS "[VCPKG]  Configuration Overview:")
+message(STATUS "---------------------------------------------------------------------")
 message(STATUS "")
 message(STATUS "[INFO]   ENV.VCPKG_ROOT                -> '$ENV{VCPKG_ROOT}'")
 message(STATUS "[INFO]   BUILD_SHARED_LIBS             -> '${BUILD_SHARED_LIBS}'")
@@ -155,4 +156,4 @@ message(STATUS "[VCPKG]  VCPKG_FEATURE_FLAGS           -> '${VCPKG_FEATURE_FLAGS
 message(STATUS "[VCPKG]  VCPKG_MANIFEST_FILE           -> '${VCPKG_MANIFEST_FILE}'")
 message(STATUS "[VCPKG]  VCPKG_INSTALLED_DIR           -> '${VCPKG_INSTALLED_DIR}'")
 message(STATUS "[VCPKG]  VCPKG_TARGET_TRIPLET          -> '${VCPKG_TARGET_TRIPLET}'")
-message(STATUS "")
+message(STATUS "---------------------------------------------------------------------")

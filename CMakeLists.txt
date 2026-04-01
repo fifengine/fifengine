@@ -42,13 +42,13 @@ string(TIMESTAMP CURRENT_YEAR "%Y")
 project(fifengine VERSION ${FIFE_VERSION} LANGUAGES CXX)
 
 #-------------------------------------------------------------------
-# Versionize the project
+# Apply versioning
 #-------------------------------------------------------------------
 
-# Here we populate the version.hpp file with version data.
+# Populate version.hpp with version data.
 # This must be done after project() is called,
-# else the version variables are not available (PROJECT_* tokens).
-# See the version.hpp.in file for the tokens that are replaced.
+# otherwise PROJECT_* variables are not available.
+# See version.hpp.in for the replaced tokens.
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/src/engine/version.hpp.in"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/engine/version.hpp"
@@ -136,7 +136,7 @@ endif()
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "#Please build outside of the source tree!\n
                        Make an out-of-source-tree folder for building and run CMake there:\n
-                       mkdir ../_build; cd ../_build; cmake ../fifengine\n
+                       mkdir ../out/build; cd ../out/build; cmake ../../fifengine\n
                        Before that, cleanup:\nrm -rf CMakeCache.txt CMakeFiles")
 endif()
 
@@ -151,16 +151,27 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Compiler Options
 #------------------------------------------------------------------------------
 
-# TODO enforce globally. change this to target_compile_options
+# TODO enforced globally. change this to target_compile_options
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # MSVC compiler options
+# TODO this should probably be moved into a seperate file and be a function to set it on a target.
 # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=msvc-170
-if(WIN32 AND MSVC)
+if(MSVC)
   add_compile_options(/nologo) # Suppress Startup Banner
   add_compile_options(/MP)     # Build on all cores
   add_compile_options(/Gm-)    # Disable minimal rebuild
+  add_compile_options(/utf-8)  # Use UTF-8 encoding for source files and compiler output
+
+  add_compile_options(/permissive-)     # enforce C++ standard conformance
+  add_compile_options(/Zc:__cplusplus)  # report correct C++ standard in __cplusplus macro
+  add_compile_options(/Zc:preprocessor) # use the C++20 compliant preprocessor
+
+  # avoid "C1128: number of sections exceeded object file format limit
+  add_compile_options(/bigobj)
+
+  add_compile_options(/diagnostics:caret) # Show the source line for warnings and errors
 
   if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_options(/W0) # Disable warnings
@@ -175,14 +186,29 @@ if(WIN32 AND MSVC)
 
     add_compile_options(/Wall) # warning level: /W<level 0 to 4> or /Wall
 
-  else()
-    # Debug build
-    add_compile_options(/W3) # warning level: /W<level 0 to 4> or /Wall
+  elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+    # Just My Code debugging (disable stepping into system headers and external code)
+    add_compile_options(/JMC)
+
+    add_compile_options(/Wall) # warning level: /W<level 0 to 4> or /Wall
     add_compile_options(/Od) # disable optimizations
+
   endif()
 
-  # avoid "C1128: number of sections exceeded object file format limit
-  add_compile_options(/bigobj)
+  # ignore warnings from external headers
+  # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+  add_compile_options(
+    /external:W0 /external:anglebrackets
+    "/external:IC:\\Program Files\\Microsoft Visual Studio"
+    "/external:IC:\\Program Files (x86)\\Windows Kits"
+  )
+
+  # Disable MSVC warnings
+  add_compile_options(/wd4514) # unreferenced inline function has been removed
+  add_compile_options(/wd4710) # function not inlined
+  add_compile_options(/wd4820) # Disable warning about padding added to structures for alignment
+  add_compile_options(/wd5045) # Compiler will insert Spectre mitigation
 
 endif()
 
