@@ -292,7 +292,7 @@ namespace FIFE
         saveAsPng(filename, *m_surface);
     }
 
-    void Image::saveAsPng(const std::string& filename, const SDL_Surface& surface)
+    void Image::saveAsPng(const std::string& filename, SDL_Surface& surface)
     {
         FILE* fp               = nullptr;
         png_structp pngptr     = nullptr;
@@ -337,9 +337,8 @@ namespace FIFE
         // initialize io
         png_init_io(pngptr, fp);
 
-        // lock the surface for access (we strip it off of const but we promise not to modify it, just read)
-        SDL_Surface* surfacePtr = const_cast<SDL_Surface*>(&surface);
-        SDL_LockSurface(surfacePtr);
+        // lock the surface for pixel access while encoding
+        SDL_LockSurface(&surface);
 
         colortype = PNG_COLOR_TYPE_RGB;
         if (surface.format->palette != nullptr) {
@@ -372,7 +371,7 @@ namespace FIFE
         png_write_image(pngptr, rowpointers);
         png_write_end(pngptr, infoptr);
 
-        SDL_UnlockSurface(surfacePtr);
+        SDL_UnlockSurface(&surface);
         delete[] rowpointers;
         png_destroy_write_struct(&pngptr, &infoptr);
         fclose(fp);

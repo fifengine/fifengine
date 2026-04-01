@@ -129,7 +129,7 @@ namespace FIFE
 
         /** Saves the SDL_Surface to png format
          */
-        static void saveAsPng(const std::string& filename, const SDL_Surface& surface);
+        static void saveAsPng(const std::string& filename, SDL_Surface& surface);
         static bool putPixel(
             SDL_Surface* surface, int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
