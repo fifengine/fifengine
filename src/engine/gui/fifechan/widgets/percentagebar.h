@@ -40,6 +40,9 @@ namespace fcn
         PercentageBar();
         virtual ~PercentageBar() { }
 
+        PercentageBar(const PercentageBar&) = delete;
+        PercentageBar& operator=(const PercentageBar&) = delete;
+
         // Inherited from Widget
 
         virtual void draw(Graphics* graphics);
@@ -88,7 +91,7 @@ namespace fcn
         /**
          * Holds the current value of the percentage bar.
          */
-        double mValue;
+        int32_t mValue;
 
         /**
          * Holds the orientation of the percentage bar. A percentage bar can be drawn

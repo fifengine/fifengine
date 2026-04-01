@@ -20,7 +20,7 @@
 namespace fcn
 {
 
-    PercentageBar::PercentageBar() : mValue(0.0), mOrientation(HORIZONTAL), mImage(nullptr)
+    PercentageBar::PercentageBar() : mImage(nullptr), mValue(0), mOrientation(HORIZONTAL)
     {
         setOrientation(HORIZONTAL);
         setValue(0);
@@ -31,10 +31,10 @@ namespace fcn
         graphics->setColor(getForegroundColor());
 
         if (getOrientation() == HORIZONTAL) {
-            graphics->fillRectangle(fcn::Rectangle(0, 0, getWidth() * mValue / 100, getHeight()));
+            graphics->fillRectangle(fcn::Rectangle(0, 0, (getWidth() * mValue) / 100, getHeight()));
         } else {
-            graphics->fillRectangle(
-                fcn::Rectangle(0, getHeight() - (getHeight() * mValue / 100), getWidth(), getHeight() * mValue / 100));
+            const int32_t filledHeight = (getHeight() * mValue) / 100;
+            graphics->fillRectangle(fcn::Rectangle(0, getHeight() - filledHeight, getWidth(), filledHeight));
         }
 
         if (mImage != nullptr) {

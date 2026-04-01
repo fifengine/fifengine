@@ -1309,7 +1309,7 @@ namespace FIFE
             if (ov == nullptr) {
                 ObjectVisual::create(m_object);
             } else {
-                nov = new ObjectVisual(*ov);
+                nov = ov->clone();
                 m_object->adoptVisual(nov);
             }
         }
@@ -1333,7 +1333,7 @@ namespace FIFE
                 bool defaultAction = m_object->getDefaultAction() == action;
                 auto* av           = action->getVisual<ActionVisual>();
                 action             = m_object->createAction(actionName, defaultAction);
-                nav                = new ActionVisual(*av);
+                nav                = av->clone();
                 action->adoptVisual(nav);
                 if (replace) {
                     m_activity->m_actionInfo->m_action = action;

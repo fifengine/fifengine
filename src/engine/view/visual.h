@@ -92,6 +92,11 @@ namespace FIFE
         ObjectVisual(ObjectVisual&&) = default;
         ObjectVisual& operator=(ObjectVisual&&) = default;
 
+        /**
+         * Creates a heap-allocated deep copy of this visual.
+         */
+        ObjectVisual* clone() const;
+
         /** Adds new static image with given angle (degrees)
          * Static images are used in case there are no actions active in the instance
          * There can be several static images for different angles, that are used in
@@ -224,6 +229,9 @@ namespace FIFE
         // Allow move operations
         ActionVisual(ActionVisual&&) = default;
         ActionVisual& operator=(ActionVisual&&) = default;
+
+        // Create a heap-allocated deep-copy of this visual
+        ActionVisual* clone() const;
 
         /** Adds new animation with given angle (degrees)
          */

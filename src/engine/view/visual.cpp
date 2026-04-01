@@ -86,8 +86,6 @@ namespace FIFE
         return v;
     }
 
-    ObjectVisual::~ObjectVisual() = default;
-
     void ObjectVisual::addStaticImage(uint32_t angle, int32_t image_index)
     {
         m_angle2img[angle % 360] = image_index;
@@ -152,6 +150,15 @@ namespace FIFE
             angles.push_back(i->first);
             ++i;
         }
+    }
+
+    ObjectVisual* ObjectVisual::clone() const
+    {
+        auto* v = new ObjectVisual();
+        v->m_angle2img = m_angle2img;
+        v->m_colorOverlayMap = m_colorOverlayMap;
+        v->m_map = m_map;
+        return v;
     }
 
     InstanceVisual::InstanceVisual() : m_transparency(0), m_visible(true), m_stackposition(0), m_instance(nullptr) { }
@@ -219,8 +226,6 @@ namespace FIFE
         action->adoptVisual(v);
         return v;
     }
-
-    ActionVisual::~ActionVisual() = default;
 
     void ActionVisual::addAnimation(uint32_t angle, AnimationPtr animationptr)
     {
@@ -379,5 +384,16 @@ namespace FIFE
                 }
             }
         }
+    }
+
+    ActionVisual* ActionVisual::clone() const
+    {
+        auto* v = new ActionVisual();
+        v->m_animation_map = m_animation_map;
+        v->m_animationOverlayMap = m_animationOverlayMap;
+        v->m_colorOverlayMap = m_colorOverlayMap;
+        v->m_colorAnimationOverlayMap = m_colorAnimationOverlayMap;
+        v->m_map = m_map;
+        return v;
     }
 } // namespace FIFE
