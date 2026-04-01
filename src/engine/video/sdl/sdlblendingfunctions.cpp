@@ -34,9 +34,9 @@ namespace FIFE
 
             if (aMulA != 0U) {
                 uint32_t OneMin_aMulA = 65535 - aMulA;
-                dstColor->r           = (aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16;
-                dstColor->g           = (aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16;
-                dstColor->b           = (aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16;
+                dstColor->r           = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
+                dstColor->g           = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
+                dstColor->b           = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
                 dstColor->a           = 255;
             }
             ++dstColor;
@@ -53,9 +53,9 @@ namespace FIFE
             uint32_t aMulA = alpha * srcColor->a;
             if (aMulA != 0U) {
                 uint32_t OneMin_aMulA = 65535 - aMulA;
-                dstColor->r           = (aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16;
-                dstColor->g           = (aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16;
-                dstColor->b           = (aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16;
+                dstColor->r           = static_cast<uint8_t>((aMulA * srcColor->r + OneMin_aMulA * dstColor->r) >> 16);
+                dstColor->g           = static_cast<uint8_t>((aMulA * srcColor->g + OneMin_aMulA * dstColor->g) >> 16);
+                dstColor->b           = static_cast<uint8_t>((aMulA * srcColor->b + OneMin_aMulA * dstColor->b) >> 16);
             }
 
             ++dstColor;
