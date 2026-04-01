@@ -18,8 +18,6 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdatamemsource.h"
 
-#include "rawdatadat2.h"
-
 namespace FIFE
 {
 
