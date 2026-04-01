@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Exit on errors, unset vars, and pipe failures
 set -euo pipefail
 
 # Remember the original dir

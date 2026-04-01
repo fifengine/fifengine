@@ -17,6 +17,11 @@
 # - ./build-tools/tidy.sh path/to/file.cpp
 #     Runs clang-tidy only on the provided file.
 #
+# By default the script looks for the build directory at
+#    ./out/build/clang20-x64-linux-rel
+# This can be overridden by setting the BUILD_DIR environment variable, e.g.:
+#    BUILD_DIR=/path/to/build ./build-tools/tidy.sh
+#
 # Notes
 # - This script discovers a compatible clang-tidy binary in this order:
 #   CLANG_TIDY env var, then clang-tidy-20/19/18/17 fallbacks.
@@ -30,9 +35,12 @@ if [[ $# -gt 1 ]]; then
   exit 1
 fi
 
+PRESET="clang20-x64-linux-rel"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${SCRIPT_DIR}/.."
-BUILD_DIR="${REPO_ROOT}/build"
+# Allow overriding build directory via env var BUILD_DIR for CI or local presets.
+BUILD_DIR="${BUILD_DIR:-${REPO_ROOT}/out/build/${PRESET}}"
 COMPILE_COMMANDS="${BUILD_DIR}/compile_commands.json"
 
 # Ensure compile database exists.
