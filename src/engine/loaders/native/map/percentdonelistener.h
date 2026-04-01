@@ -40,7 +40,6 @@ namespace FIFE
     private:
         void fireEvent(uint32_t percent);
 
-    private:
         uint32_t m_totalElements;
         uint32_t m_percent;
         uint32_t m_numberOfEvents;

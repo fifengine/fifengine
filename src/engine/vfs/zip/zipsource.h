@@ -54,7 +54,6 @@ namespace FIFE
         void readIndex();
         bool readFileToIndex();
 
-    private:
         ZipTree m_zipTree;
         RawData* m_zipfile;
     };
