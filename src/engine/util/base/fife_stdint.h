@@ -19,7 +19,7 @@ typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
     #endif
 #else
-    #include <stdint.h>
+    #include <cstdint>
 #endif
 
 // 3rd party library includes

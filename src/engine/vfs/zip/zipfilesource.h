@@ -5,7 +5,7 @@
 #define FIFE_VFS_ZIP_ZIPFILESOURCE_H
 
 #include "vfs/raw/rawdatasource.h"
-#include <stdint.h>
+#include <cstdint>
 
 namespace FIFE
 {
