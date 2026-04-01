@@ -26,7 +26,7 @@ namespace FIFE
     public:
         /** Constructor
          */
-        DropEvent() : InputEvent(), m_path("") { }
+        DropEvent() : InputEvent(), m_path() { }
 
         /** Destructor.
          */
