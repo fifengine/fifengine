@@ -20,6 +20,9 @@
 *.vcproj text eol=crlf
 *.sln text eol=crlf
 
+# Declare files that will always have LF endings
+*.sh text eol=lf
+
 # Denote all files that are truly binary
 *.png binary
 *.gif binary
