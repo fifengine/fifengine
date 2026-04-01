@@ -26,22 +26,27 @@ namespace FIFE
     class Exception : public std::runtime_error
     {
     public:
-        /** Constructor.
+        /**
+         * Constructor.
+         *
          * @param msg The error mesage to be stored.
          */
         explicit Exception(const std::string& msg);
 
-        /** Destructor.
+        /**
+         * Destructor.
          */
-        virtual ~Exception() throw();
+        virtual ~Exception() noexcept;
 
         Exception(const Exception&)            = default;
         Exception& operator=(const Exception&) = default;
 
-        /** Returns the error message.
+        /**
+         * Returns the error message.
+         *
          * @return The error message.
          */
-        virtual const char* what() const throw();
+        virtual const char* what() const noexcept;
 
         virtual const std::string& getTypeStr() const
         {
