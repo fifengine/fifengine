@@ -33,7 +33,7 @@ namespace FIFE
         /** Constructor
          *
          */
-        PriorityQueue(void) : m_ordering(Ascending) { }
+        PriorityQueue() : m_ordering(Ascending) { }
 
         /** Constructor
          *
@@ -54,7 +54,7 @@ namespace FIFE
          *
          * Removes and deletes the highest priority element.
          */
-        void popElement(void);
+        void popElement();
 
         /** Changes the priority of an element.
          *
@@ -70,7 +70,7 @@ namespace FIFE
         /** Removes all elements from the priority queue.
          *
          */
-        void clear(void);
+        void clear();
 
         /** Retrieves the element with the highest priority.
          *
@@ -79,7 +79,7 @@ namespace FIFE
          *
          * @return A const reference to the highest priority element.
          */
-        const value_type getPriorityElement(void) const
+        const value_type getPriorityElement() const
         {
 
             assert(!empty());
@@ -91,7 +91,7 @@ namespace FIFE
          *
          * @return true if it is empty, false otherwise.
          */
-        bool empty(void) const
+        bool empty() const
         {
             return m_elements.empty();
         }
@@ -99,7 +99,7 @@ namespace FIFE
         /** Returns the current size of the queue.
          *
          */
-        size_t size(void) const
+        size_t size() const
         {
             return m_elements.size();
         }
@@ -170,7 +170,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::pushElement(const value_typ
 }
 
 template <typename index_type, typename priority_type>
-void FIFE::PriorityQueue<index_type, priority_type>::popElement(void)
+void FIFE::PriorityQueue<index_type, priority_type>::popElement()
 {
 
     if (!empty()) {
@@ -203,7 +203,7 @@ bool FIFE::PriorityQueue<index_type, priority_type>::changeElementPriority(
 }
 
 template <typename index_type, typename priority_type>
-void FIFE::PriorityQueue<index_type, priority_type>::clear(void)
+void FIFE::PriorityQueue<index_type, priority_type>::clear()
 {
 
     m_elements.clear();

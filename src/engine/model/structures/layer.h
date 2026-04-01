@@ -120,7 +120,7 @@ namespace FIFE
         /** Get the instance tree.
          * @return this layers instance tree.
          */
-        InstanceTree* getInstanceTree(void) const;
+        InstanceTree* getInstanceTree() const;
 
         /** Check existance of objects on this layer
          * @return True, if objects exist.
