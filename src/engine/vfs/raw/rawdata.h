@@ -142,7 +142,7 @@ namespace FIFE
 
     private:
         RawDataSource* m_datasource;
-        size_t m_index_current;
+        uint32_t m_index_current;
 
         template <typename T>
         T littleToHost(T value) const
@@ -165,7 +165,8 @@ namespace FIFE
         template <typename T>
         T revert(T value) const
         {
-            T retval;
+            // Value-initialize to avoid "may be used uninitialized" warnings
+            T retval{};
             for (uint32_t i = 0; i < sizeof(T); ++i)
                 reinterpret_cast<uint8_t*>(&retval)[i] = reinterpret_cast<uint8_t*>(&value)[sizeof(T) - 1 - i];
 

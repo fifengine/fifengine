@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <list>
 #include <string>
 #include <utility>
@@ -221,7 +223,8 @@ namespace FIFE
 
     uint32_t Route::getPathLength()
     {
-        return m_path.size();
+        assert(m_path.size() <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(m_path.size());
     }
 
     uint32_t Route::getWalkedLength()

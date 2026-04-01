@@ -46,6 +46,9 @@ namespace FIFE
          */
         virtual ~AnimationManager();
 
+        AnimationManager(const AnimationManager&)            = delete;
+        AnimationManager& operator=(const AnimationManager&) = delete;
+
         virtual size_t getMemoryUsed() const;
         virtual size_t getTotalResourcesCreated() const;
         virtual size_t getTotalResourcesLoaded() const;

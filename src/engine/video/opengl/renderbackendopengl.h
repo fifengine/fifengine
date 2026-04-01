@@ -30,6 +30,10 @@ namespace FIFE
     public:
         explicit RenderBackendOpenGL(const SDL_Color& colorkey);
         virtual ~RenderBackendOpenGL();
+
+        RenderBackendOpenGL(const RenderBackendOpenGL&)            = delete;
+        RenderBackendOpenGL& operator=(const RenderBackendOpenGL&) = delete;
+
         virtual const std::string& getName() const;
         virtual void startFrame();
         virtual void endFrame();

@@ -26,6 +26,9 @@ namespace fcn
 
         ~Panel() override;
 
+        Panel(const Panel&)            = delete;
+        Panel& operator=(const Panel&) = delete;
+
         /** Sets if the widget is dockable.
          * @param dockable True if the widget should be dockable, otherwise false.
          */

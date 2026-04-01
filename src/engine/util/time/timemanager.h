@@ -37,6 +37,9 @@ namespace FIFE
          */
         TimeManager();
 
+        TimeManager(const TimeManager&)            = delete;
+        TimeManager& operator=(const TimeManager&) = delete;
+
         /** Destructor.
          */
         virtual ~TimeManager();

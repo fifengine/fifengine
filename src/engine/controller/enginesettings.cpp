@@ -25,7 +25,7 @@ namespace FIFE
      */
     static Logger _log(LM_CONTROLLER);
 
-    const float MAXIMUM_VOLUME = 10.0;
+    constexpr float MAXIMUM_VOLUME = 10.0F;
 
     EngineSettings::EngineSettings() :
         m_bitsperpixel(0),
@@ -36,7 +36,26 @@ namespace FIFE
         m_windowY(-1),
         m_vSync(false),
 
-        m_initialvolume(MAXIMUM_VOLUME / 2),
+        m_initialvolume(MAXIMUM_VOLUME / 2.0F),
+        m_renderbackend("SDL"),
+        m_sdlremovefakealpha(false),
+        m_oglcompressimages(false),
+        m_ogluseframebuffer(true),
+        m_oglusenpot(true),
+        m_oglMipmapping(false),
+        m_oglMonochrome(false),
+        m_oglTextureFilter(TEXTURE_FILTER_NONE),
+        m_oglDepthBuffer(false),
+        m_alphaTestValue(0.3F),
+        m_screenwidth(800),
+        m_screenheight(600),
+        m_windowtitle("FIFE"),
+
+        m_defaultfontpath("fonts/FreeSans.ttf"),
+        m_defaultfontsize(8),
+        m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
+        m_iscolorkeyenabled(false),
+        m_colorkey{255, 0, 255},
         m_videodriver(
 #if defined(__unix__)
             "x11"
@@ -48,32 +67,13 @@ namespace FIFE
             ""
 #endif
             ),
-        m_renderbackend("SDL"),
-        m_sdlremovefakealpha(false),
-        m_oglcompressimages(false),
-        m_ogluseframebuffer(true),
-        m_oglusenpot(true),
-        m_oglMipmapping(false),
-        m_oglMonochrome(false),
-        m_oglTextureFilter(TEXTURE_FILTER_NONE),
-        m_oglDepthBuffer(false),
-        m_alphaTestValue(0.3),
-        m_screenwidth(800),
-        m_screenheight(600),
-        m_windowtitle("FIFE"),
-
-        m_defaultfontpath("fonts/FreeSans.ttf"),
-        m_defaultfontsize(8),
-        m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\\\""),
-        m_iscolorkeyenabled(false),
         m_lighting(0),
         m_isframelimit(false),
         m_framelimit(60),
-        m_mousesensitivity(0.0),
+        m_mousesensitivity(0.0F),
         m_mouseacceleration(false),
         m_nativeimagecursor(false),
-        m_joystickSupport(false),
-        m_colorkey{255, 0, 255}
+        m_joystickSupport(false)
     {
     }
 
@@ -116,7 +116,7 @@ namespace FIFE
                     << " Tried to set initial volume to an unsupporded value of " << volume
                     << ".  Setting volume to the default value of 5 (minumum is 0, maximum is 10)");
 
-            m_initialvolume = 5.0;
+            m_initialvolume = 5.0F;
             return;
         }
 

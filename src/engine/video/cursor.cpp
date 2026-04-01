@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -145,8 +147,10 @@ namespace FIFE
 
     void Cursor::setPosition(uint32_t x, uint32_t y)
     {
-        m_mx = x;
-        m_my = y;
+        assert(x <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+        assert(y <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+        m_mx = static_cast<int32_t>(x);
+        m_my = static_cast<int32_t>(y);
         SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), m_mx, m_my);
     }
 
@@ -199,11 +203,15 @@ namespace FIFE
         }
 
         if (static_cast<int>(img) != 0) {
+            const uint32_t dragWidth  = img->getWidth();
+            const uint32_t dragHeight = img->getHeight();
+            assert(dragWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            assert(dragHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
             const Rect area(
                 m_mx + m_drag_offset_x + img->getXShift(),
                 m_my + m_drag_offset_y + img->getYShift(),
-                img->getWidth(),
-                img->getHeight());
+                static_cast<int32_t>(dragWidth),
+                static_cast<int32_t>(dragHeight));
             m_renderbackend->pushClipArea(area, false);
             img->render(area);
             m_renderbackend->renderVertexArrays();
@@ -223,7 +231,15 @@ namespace FIFE
             if (m_native_image_cursor_enabled) {
                 setNativeImageCursor(img2);
             } else {
-                Rect area(m_mx + img2->getXShift(), m_my + img2->getYShift(), img2->getWidth(), img2->getHeight());
+                const uint32_t cursorWidth  = img2->getWidth();
+                const uint32_t cursorHeight = img2->getHeight();
+                assert(cursorWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+                assert(cursorHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+                Rect area(
+                    m_mx + img2->getXShift(),
+                    m_my + img2->getYShift(),
+                    static_cast<int32_t>(cursorWidth),
+                    static_cast<int32_t>(cursorHeight));
                 m_renderbackend->pushClipArea(area, false);
                 img2->render(area);
                 m_renderbackend->renderVertexArrays();

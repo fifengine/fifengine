@@ -55,6 +55,9 @@ namespace FIFE
          */
         virtual ~Console();
 
+        Console(const Console&)            = delete;
+        Console& operator=(const Console&) = delete;
+
         /** Print one or more lines to the console output
          */
         void println(const std::string& s);

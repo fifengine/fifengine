@@ -26,6 +26,10 @@ namespace FIFE
         /** Constructor
          */
         OpenGLGuiGraphics();
+
+        OpenGLGuiGraphics(const OpenGLGuiGraphics&)            = delete;
+        OpenGLGuiGraphics& operator=(const OpenGLGuiGraphics&) = delete;
+
         void updateTarget();
         virtual void drawImage(
             const fcn::Image* image,

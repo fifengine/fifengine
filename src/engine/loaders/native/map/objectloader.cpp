@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
 #include <cstdio>
 #include <format>
+#include <limits>
 #include <set>
 #include <string>
 
@@ -314,7 +316,9 @@ namespace FIFE
 
                     int cellStack = 0;
                     objectElem->QueryIntAttribute("cellstack", &cellStack);
-                    obj->setCellStackPosition(cellStack);
+                    assert(cellStack >= 0);
+                    assert(cellStack <= std::numeric_limits<uint8_t>::max());
+                    obj->setCellStackPosition(static_cast<uint8_t>(cellStack));
 
                     double ax = 0;
                     double ay = 0;
@@ -413,8 +417,10 @@ namespace FIFE
                                     auto* objVisual = obj->getVisual<ObjectVisual>();
 
                                     if (objVisual != nullptr) {
+                                        assert(direction >= 0);
                                         objVisual->addStaticImage(
-                                            direction, static_cast<int32_t>(imagePtr->getHandle()));
+                                            static_cast<uint32_t>(direction),
+                                            static_cast<int32_t>(imagePtr->getHandle()));
                                     }
                                 }
                             }
@@ -624,7 +630,8 @@ namespace FIFE
 
                                         auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
-                                            actionVisual->addAnimation(dir, animation);
+                                            assert(dir >= 0);
+                                            actionVisual->addAnimation(static_cast<uint32_t>(dir), animation);
                                             action->setDuration(animation->getDuration());
                                         }
                                         ++nDir;
@@ -653,11 +660,15 @@ namespace FIFE
 
                                     if ((action != nullptr) && animation) {
                                         if (success_attr != XML::SUCCESS) {
-                                            direction = animation->getDirection();
+                                            assert(
+                                                animation->getDirection() <=
+                                                static_cast<uint32_t>(std::numeric_limits<int>::max()));
+                                            direction = static_cast<int>(animation->getDirection());
                                         }
                                         auto* actionVisual = action->getVisual<ActionVisual>();
                                         if (actionVisual != nullptr) {
-                                            actionVisual->addAnimation(direction, animation);
+                                            assert(direction >= 0);
+                                            actionVisual->addAnimation(static_cast<uint32_t>(direction), animation);
                                             action->setDuration(animation->getDuration());
                                         }
                                     }

@@ -120,6 +120,9 @@ namespace FIFE
          */
         virtual ~RenderBackend();
 
+        RenderBackend(const RenderBackend&)            = delete;
+        RenderBackend& operator=(const RenderBackend&) = delete;
+
         /** The name of the renderbackend.
          * @return The name of this renderbackend.
          */

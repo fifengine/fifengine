@@ -52,9 +52,8 @@ namespace FIFE
                 fireEvent(maxPercent);
             } else {
                 // calculate percent done
-                const uint32_t percentDone = static_cast<uint32_t>(
-                    (static_cast<uint64_t>(m_count) * maxPercent) / m_totalElements
-                );
+                const uint32_t percentDone =
+                    static_cast<uint32_t>((static_cast<uint64_t>(m_count) * maxPercent) / m_totalElements);
 
                 if ((percentDone % m_percent) == 0 && (percentDone != m_percent * m_numberOfEvents)) {
                     // keep track of how many times event has occurred

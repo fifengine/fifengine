@@ -42,6 +42,9 @@ namespace FIFE
          * @param info The .DAT file entry, as retrieved by MFFalloutDAT1
          */
         RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info);
+
+        RawDataDAT1(const RawDataDAT1&)            = delete;
+        RawDataDAT1& operator=(const RawDataDAT1&) = delete;
     };
 
 } // namespace FIFE

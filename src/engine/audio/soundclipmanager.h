@@ -46,6 +46,9 @@ namespace FIFE
          */
         virtual ~SoundClipManager();
 
+        SoundClipManager(const SoundClipManager&)            = delete;
+        SoundClipManager& operator=(const SoundClipManager&) = delete;
+
         virtual size_t getMemoryUsed() const;
         virtual size_t getTotalResourcesCreated() const;
         virtual size_t getTotalResourcesLoaded() const;

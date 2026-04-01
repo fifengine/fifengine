@@ -32,14 +32,8 @@ namespace FIFE
     class PointType2D
     {
     public:
-        union
-        {
-            T val[2];
-            struct
-            {
-                T x, y;
-            };
-        };
+        T x;
+        T y;
 
         /** Constructor
          *
@@ -181,7 +175,27 @@ namespace FIFE
         inline T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 2);
-            return val[ind];
+            switch (ind) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            default:
+                return x;
+            }
+        }
+
+        inline const T& operator[](int32_t ind) const
+        {
+            assert(ind > -1 && ind < 2);
+            switch (ind) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            default:
+                return x;
+            }
         }
     };
 
@@ -207,14 +221,9 @@ namespace FIFE
     class PointType3D
     {
     public:
-        union
-        {
-            T val[3];
-            struct
-            {
-                T x, y, z;
-            };
-        };
+        T x;
+        T y;
+        T z;
 
         /** Constructor
          *
@@ -331,7 +340,31 @@ namespace FIFE
         inline T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 3);
-            return val[ind];
+            switch (ind) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+            default:
+                return x;
+            }
+        }
+
+        inline const T& operator[](int32_t ind) const
+        {
+            assert(ind > -1 && ind < 3);
+            switch (ind) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+            default:
+                return x;
+            }
         }
     };
 

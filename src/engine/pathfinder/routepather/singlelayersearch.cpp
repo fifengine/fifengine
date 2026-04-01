@@ -3,8 +3,10 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <list>
 #include <string>
 #include <vector>
@@ -26,6 +28,21 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] std::size_t toIndex(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<std::size_t>(value);
+        }
+
+        [[nodiscard]] std::size_t toSize(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<std::size_t>(value);
+        }
+    } // namespace
+
     SingleLayerSearch::SingleLayerSearch(Route* route, const int32_t sessionId) :
         RoutePatherSearch(route, sessionId),
         m_to(route->getEndNode()),
@@ -38,9 +55,9 @@ namespace FIFE
 
         m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(m_startCoordInt, 0.0));
         int32_t max_index = m_cellCache->getMaxIndex();
-        m_spt.resize(max_index, -1);
-        m_sf.resize(max_index, -1);
-        m_gCosts.resize(max_index, 0.0);
+        m_spt.resize(toSize(max_index), -1);
+        m_sf.resize(toSize(max_index), -1);
+        m_gCosts.resize(toSize(max_index), 0.0);
     }
 
     SingleLayerSearch::~SingleLayerSearch() = default;
@@ -55,8 +72,9 @@ namespace FIFE
 
         PriorityQueue<int32_t, double>::value_type topvalue = m_sortedfrontier.getPriorityElement();
         m_sortedfrontier.popElement();
-        m_next        = topvalue.first;
-        m_spt[m_next] = m_sf[m_next];
+        m_next                      = topvalue.first;
+        const std::size_t nextIndex = toIndex(m_next);
+        m_spt[nextIndex]            = m_sf[nextIndex];
         // found destination
         if (m_destCoordInt == m_next) {
             setSearchStatus(search_status_complete);
@@ -84,8 +102,9 @@ namespace FIFE
             if (adjacent->getLayer()->getCellCache() != m_cellCache) {
                 continue;
             }
-            int32_t adjacentInt = adjacent->getCellId();
-            if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
+            int32_t adjacentInt             = adjacent->getCellId();
+            const std::size_t adjacentIndex = toIndex(adjacentInt);
+            if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
                 continue;
             }
             if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
@@ -162,21 +181,21 @@ namespace FIFE
                 }
             }
 
-            double gCost = m_gCosts[m_next];
+            double gCost = m_gCosts[nextIndex];
             if (m_specialCost) {
                 gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId());
             } else {
                 gCost += m_cellCache->getAdjacentCost(adjacentCoord, nextCoord);
             }
             double hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
-            if (m_sf[adjacentInt] == -1) {
+            if (m_sf[adjacentIndex] == -1) {
                 m_sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-                m_gCosts[adjacentInt] = gCost;
-                m_sf[adjacentInt]     = m_next;
-            } else if (gCost < m_gCosts[adjacentInt] && m_spt[adjacentInt] == -1) {
+                m_gCosts[adjacentIndex] = gCost;
+                m_sf[adjacentIndex]     = m_next;
+            } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
                 m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
-                m_gCosts[adjacentInt] = gCost;
-                m_sf[adjacentInt]     = m_next;
+                m_gCosts[adjacentIndex] = gCost;
+                m_sf[adjacentIndex]     = m_next;
             }
         }
     }
@@ -191,13 +210,14 @@ namespace FIFE
         newnode.setExactLayerCoordinates(FIFE::intPt2doublePt(m_to.getLayerCoordinates()));
         path.push_back(newnode);
         while (current != end) {
-            if (m_spt[current] < 0) {
+            const std::size_t currentIndex = toIndex(current);
+            if (m_spt[currentIndex] < 0) {
                 // This is when the size of m_spt can not handle the distance of the location
                 setSearchStatus(search_status_failed);
                 m_route->setRouteStatus(ROUTE_FAILED);
                 break;
             }
-            current                      = m_spt[current];
+            current                      = m_spt[currentIndex];
             ModelCoordinate currentCoord = m_cellCache->convertIntToCoord(current);
             newnode.setLayerCoordinates(currentCoord);
             path.push_front(newnode);

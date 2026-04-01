@@ -51,9 +51,9 @@ namespace FIFE
         delete m_overlay;
     }
 
-    int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance)
+    int32_t RenderItem::getStaticImageIndexByAngle(int32_t angle, Instance* itemInstance)
     {
-        auto* objVis = instance->getObject()->getVisual<ObjectVisual>();
+        auto* objVis = itemInstance->getObject()->getVisual<ObjectVisual>();
         if (objVis == nullptr) {
             return STATIC_IMAGE_NOT_INITIALIZED;
         }

@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -58,7 +60,9 @@ namespace FIFE
 
     uint32_t RawData::getDataLength() const
     {
-        return m_datasource->getSize();
+        const size_t dataLength = m_datasource->getSize();
+        assert(dataLength <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(dataLength);
     }
 
     uint32_t RawData::getCurrentIndex() const
@@ -82,13 +86,16 @@ namespace FIFE
 
     void RawData::readInto(uint8_t* buffer, size_t len)
     {
-        if (m_index_current + len > getDataLength()) {
-            FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << len << " : " << getDataLength());
+        assert(len <= std::numeric_limits<uint32_t>::max());
+        const uint32_t checkedLen = static_cast<uint32_t>(len);
+
+        if (m_index_current + checkedLen > getDataLength()) {
+            FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << checkedLen << " : " << getDataLength());
             throw IndexOverflow(__FUNCTION__);
         }
 
-        m_datasource->readInto(buffer, m_index_current, len);
-        m_index_current += len;
+        m_datasource->readInto(buffer, m_index_current, checkedLen);
+        m_index_current += checkedLen;
     }
 
     uint8_t RawData::read8()
@@ -134,17 +141,18 @@ namespace FIFE
     void RawData::read(std::string& outbuffer, int32_t size)
     {
         if ((size < 0) || ((size + m_index_current) > getDataLength())) {
-            size = getDataLength() - m_index_current;
+            const int32_t remaining = static_cast<int32_t>(getDataLength() - m_index_current);
+            size                    = remaining;
         }
         if (size == 0) {
             outbuffer = "";
             return;
         }
 
-        outbuffer.resize(size);
+        outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), size);
+        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)

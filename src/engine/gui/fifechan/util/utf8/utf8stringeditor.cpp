@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
 #include <iostream>
+#include <limits>
 #include <string>
 
 // 3rd party library includes
@@ -27,7 +29,9 @@ namespace fcn
         e = text.end();
 
         utf8::next(c, e);
-        return std::string(text.begin(), c).size();
+        const size_t nextOffset = std::string(text.begin(), c).size();
+        assert(nextOffset <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return static_cast<int>(nextOffset);
     }
 
     int UTF8StringEditor::prevChar(const std::string& text, int byteOffset)
@@ -39,7 +43,9 @@ namespace fcn
         b = text.begin();
 
         utf8::prior(c, b);
-        return std::string(b, c).size();
+        const size_t previousOffset = std::string(b, c).size();
+        assert(previousOffset <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return static_cast<int>(previousOffset);
     }
 
     int UTF8StringEditor::eraseChar(std::string& text, int byteOffset)
@@ -69,7 +75,8 @@ namespace fcn
         utf8::next(cut, newText.end());
         // cut the string to real length
         newText.assign(newText.begin(), cut);
-        newOffset = newText.size();
+        assert(newText.size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        newOffset = static_cast<int>(newText.size());
         // make new text
         text = newText + text.substr(byteOffset);
 
@@ -98,6 +105,8 @@ namespace fcn
             utf8::next(cur, end);
         }
 
-        return std::string(text.begin(), cur).size();
+        const size_t offset = std::string(text.begin(), cur).size();
+        assert(offset <= static_cast<size_t>(std::numeric_limits<int>::max()));
+        return static_cast<int>(offset);
     }
 }; // namespace fcn

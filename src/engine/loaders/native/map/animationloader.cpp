@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -225,7 +226,8 @@ namespace FIFE
 
         int success = XML::QueryAttribute(animationElem, "direction", &direction);
         if (success == XML::SUCCESS) {
-            animation->setDirection(direction);
+            assert(direction >= 0);
+            animation->setDirection(static_cast<uint32_t>(direction));
         }
         success = XML::QueryAttribute(animationElem, "action_frame", &actionFrame);
         if (success == XML::SUCCESS) {

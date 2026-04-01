@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
 #include <iostream>
 
 // 3rd party library includes
@@ -17,31 +18,45 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] uint32_t normalizeAngleKey(const int32_t angle)
+        {
+            return static_cast<uint32_t>(((angle % 360) + 360) % 360);
+        }
+
+        [[nodiscard]] int32_t toSignedAngle(const uint32_t angle)
+        {
+            assert(angle <= 360U);
+            return static_cast<int32_t>(angle);
+        }
+    } // namespace
+
     int32_t getIndexByAngle(int32_t angle, const type_angle2id& angle2id, int32_t& closestMatchingAngle)
     {
         if (angle2id.empty()) {
             return -1;
         }
         if (angle2id.size() == 1) {
-            closestMatchingAngle = angle2id.begin()->first;
+            closestMatchingAngle = toSignedAngle(angle2id.begin()->first);
             return angle2id.begin()->second;
         }
 
-        int32_t wangle = (360 + angle) % 360;
+        const uint32_t wangle = normalizeAngleKey(angle);
         auto u(angle2id.upper_bound(wangle));
         type_angle2id::const_iterator tmp;
 
         // take care of the forward wrapping case
         if (u == angle2id.end()) {
-            int32_t ud = wangle - (--u)->first;
-            int32_t ld = 360 - wangle + angle2id.begin()->first;
+            const int32_t ud = toSignedAngle(wangle - (--u)->first);
+            const int32_t ld = toSignedAngle(360U - wangle + angle2id.begin()->first);
             if (ud > ld) {
                 // wrapped value (first)
-                closestMatchingAngle = angle2id.begin()->first;
+                closestMatchingAngle = toSignedAngle(angle2id.begin()->first);
                 return angle2id.begin()->second;
             }
             // non-wrapped value
-            closestMatchingAngle = u->first;
+            closestMatchingAngle = toSignedAngle(u->first);
             return u->second;
         }
 
@@ -49,26 +64,26 @@ namespace FIFE
         if (u == angle2id.begin()) {
             tmp = angle2id.end();
             --tmp;
-            int32_t ld = u->first - wangle;
-            int32_t ud = 360 - tmp->first + wangle;
+            const int32_t ld = toSignedAngle(u->first - wangle);
+            const int32_t ud = toSignedAngle(360U - tmp->first + wangle);
             if (ud > ld) {
                 // non-wrapped value (first)
-                closestMatchingAngle = angle2id.begin()->first;
+                closestMatchingAngle = toSignedAngle(angle2id.begin()->first);
                 return angle2id.begin()->second;
             }
             // wrapped value (last)
-            closestMatchingAngle = tmp->first;
+            closestMatchingAngle = toSignedAngle(tmp->first);
             return tmp->second;
         }
 
         // value in the middle...
-        int32_t ud  = u->first - wangle;
-        int32_t ucm = u->first;
-        int32_t ui  = u->second;
+        const int32_t ud  = toSignedAngle(u->first - wangle);
+        const int32_t ucm = toSignedAngle(u->first);
+        const int32_t ui  = u->second;
         u--;
-        int32_t ld  = wangle - u->first;
-        int32_t lcm = u->first;
-        int32_t li  = u->second;
+        const int32_t ld  = toSignedAngle(wangle - u->first);
+        const int32_t lcm = toSignedAngle(u->first);
+        const int32_t li  = u->second;
 
         // if ud and ls is equal then lcm is prefered (next angle)
         if (ud < ld) {
@@ -87,8 +102,8 @@ namespace FIFE
         double dy = (c2.y - c1.y);
         double dx = (c2.x - c1.x);
         // add grid rotation to angle, to guarantee uniform angles (not grid based)
-        int32_t angle =
-            round((Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())) + loc1.getLayer()->getCellGrid()->getRotation());
+        int32_t angle = static_cast<int32_t>(
+            round((Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())) + loc1.getLayer()->getCellGrid()->getRotation()));
         if (angle < 0) {
             angle += 360;
         }
@@ -114,7 +129,7 @@ namespace FIFE
         double dy = (emc2.y - emc1.y);
         double dx = (emc2.x - emc1.x);
 
-        int32_t angle = round(Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi()));
+        int32_t angle = static_cast<int32_t>(round(Mathd::ATan2(-dy, dx) * (180.0 / Mathd::pi())));
         if (angle < 0) {
             angle += 360;
         }

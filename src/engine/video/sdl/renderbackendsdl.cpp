@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -29,6 +31,21 @@ namespace FIFE
      *  @relates Logger
      */
     static Logger _log(LM_VIDEO);
+
+    namespace
+    {
+        int32_t toInt32Dimension(uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        int32_t toDisplayWindowPos(uint8_t displayIndex, bool centered)
+        {
+            return centered ? static_cast<int32_t>(SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex)) :
+                              static_cast<int32_t>(SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex));
+        }
+    } // namespace
 
     RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey), m_renderer(nullptr) { }
 
@@ -100,9 +117,9 @@ namespace FIFE
         if (windowX >= 0) {
             xPos = windowX;
         } else if (mode.isFullScreen()) {
-            xPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+            xPos = toDisplayWindowPos(displayIndex, false);
         } else {
-            xPos = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+            xPos = toDisplayWindowPos(displayIndex, true);
         }
 
         // Determine Y position
@@ -110,16 +127,16 @@ namespace FIFE
         if (windowY >= 0) {
             yPos = windowY;
         } else if (mode.isFullScreen()) {
-            yPos = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+            yPos = toDisplayWindowPos(displayIndex, false);
         } else {
-            yPos = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+            yPos = toDisplayWindowPos(displayIndex, true);
         }
 
         if (mode.isFullScreen()) {
             m_window = SDL_CreateWindow(
                 "",
-                SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex),
-                SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex),
+                toDisplayWindowPos(displayIndex, false),
+                toDisplayWindowPos(displayIndex, false),
                 width,
                 height,
                 flags | SDL_WINDOW_SHOWN);
@@ -234,6 +251,7 @@ namespace FIFE
 
     void RenderBackendSDL::setLightingModel(uint32_t lighting)
     {
+        static_cast<void>(lighting);
         throw SDLException("Lighting not available under SDL");
     }
 
@@ -242,19 +260,36 @@ namespace FIFE
         return 0;
     }
 
-    void RenderBackendSDL::setLighting(float red, float green, float blue) { }
+    void RenderBackendSDL::setLighting(float red, float green, float blue)
+    {
+        static_cast<void>(red);
+        static_cast<void>(green);
+        static_cast<void>(blue);
+    }
 
     void RenderBackendSDL::resetLighting() { }
 
-    void RenderBackendSDL::resetStencilBuffer(uint8_t buffer) { }
+    void RenderBackendSDL::resetStencilBuffer(uint8_t buffer)
+    {
+        static_cast<void>(buffer);
+    }
 
-    void RenderBackendSDL::changeBlending(int32_t scr, int32_t dst) { }
+    void RenderBackendSDL::changeBlending(int32_t scr, int32_t dst)
+    {
+        static_cast<void>(scr);
+        static_cast<void>(dst);
+    }
 
     void RenderBackendSDL::renderVertexArrays() { }
 
     void RenderBackendSDL::addImageToArray(
         uint32_t id, const Rect& rec, float const * st, uint8_t alpha, uint8_t const * rgba)
     {
+        static_cast<void>(id);
+        static_cast<void>(rec);
+        static_cast<void>(st);
+        static_cast<void>(alpha);
+        static_cast<void>(rgba);
     }
 
     void RenderBackendSDL::changeRenderInfos(
@@ -269,6 +304,16 @@ namespace FIFE
         GLConstants stenfunc,
         OverlayType otype)
     {
+        static_cast<void>(type);
+        static_cast<void>(elements);
+        static_cast<void>(src);
+        static_cast<void>(dst);
+        static_cast<void>(light);
+        static_cast<void>(stentest);
+        static_cast<void>(stenref);
+        static_cast<void>(stenop);
+        static_cast<void>(stenfunc);
+        static_cast<void>(otype);
     }
 
     bool RenderBackendSDL::putPixel(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -286,20 +331,20 @@ namespace FIFE
     void RenderBackendSDL::drawThickLine(
         const Point& p1, const Point& p2, uint8_t width, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        float xDiff = p2.x - p1.x;
-        float yDiff = p2.y - p1.y;
-        float halfW = static_cast<float>(width) / 2.0;
-        float angle = (Mathf::ATan2(yDiff, xDiff) * (180.0 / Mathf::pi())) + 90.0;
-        if (angle < 0.0) {
-            angle += 360.0;
-        } else if (angle > 360.0) {
-            angle -= 360.0;
+        const float xDiff = static_cast<float>(p2.x - p1.x);
+        const float yDiff = static_cast<float>(p2.y - p1.y);
+        const float halfW = static_cast<float>(width) / 2.0F;
+        float angle       = (Mathf::ATan2(yDiff, xDiff) * (180.0F / Mathf::pi())) + 90.0F;
+        if (angle < 0.0F) {
+            angle += 360.0F;
+        } else if (angle > 360.0F) {
+            angle -= 360.0F;
         }
-        angle *= Mathf::pi() / 180.0;
-        float cornerX = halfW * Mathf::Cos(angle);
-        float cornerY = halfW * Mathf::Sin(angle);
-        int32_t yMax  = p1.y;
-        int32_t yMin  = p1.y;
+        angle *= Mathf::pi() / 180.0F;
+        const float cornerX = halfW * Mathf::Cos(angle);
+        const float cornerY = halfW * Mathf::Sin(angle);
+        int32_t yMax        = p1.y;
+        int32_t yMin        = p1.y;
 
         std::vector<Point> points;
         Point p(p1.x + cornerX, p1.y + cornerY);
@@ -323,25 +368,25 @@ namespace FIFE
         points.push_back(p);
 
         // scan-line fill algorithm
-        int32_t y = yMin;
-        int32_t n = points.size();
+        int32_t y           = yMin;
+        const std::size_t n = points.size();
         for (; y <= yMax; ++y) {
             std::vector<int32_t> xs;
-            int32_t j = n - 1;
-            for (int32_t i = 0; i < n; j = i++) {
+            std::size_t j = n - 1;
+            for (std::size_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     auto x = static_cast<int32_t>(
                         points[i].x +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
-                    for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
+                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
                     }
                 }
             }
 
-            for (int32_t i = 0; i < xs.size(); i += 2) {
+            for (std::size_t i = 0; i < xs.size(); i += 2) {
                 int32_t x1 = xs[i];
                 int32_t x2 = xs[i + 1];
                 // vertical line
@@ -384,7 +429,7 @@ namespace FIFE
         if (points.size() < 2) {
             return;
         }
-        int32_t elements = points.size();
+        const int32_t elements = static_cast<int32_t>(points.size());
         if (elements < 3 || steps < 2) {
             return;
         }
@@ -493,13 +538,13 @@ namespace FIFE
 
     void RenderBackendSDL::drawFillCircle(const Point& p, uint32_t radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
-        auto rad = static_cast<float>(radius);
-        for (float dy = 1; dy <= r; dy += 1.0) {
-            float dx  = Mathf::Floor(Mathf::Sqrt((2.0 * rad * dy) - (dy * dy)));
-            int32_t x = p.x - dx;
+        const float rad = static_cast<float>(radius);
+        for (float dy = 1.0F; dy <= rad; dy += 1.0F) {
+            const float dx = Mathf::Floor(Mathf::Sqrt((2.0F * rad * dy) - (dy * dy)));
+            int32_t x      = p.x - static_cast<int32_t>(dx);
             for (; x <= p.x + dx; x++) {
-                putPixel(x, p.y + rad - dy, r, g, b, a);
-                putPixel(x, p.y - rad + dy, r, g, b, a);
+                putPixel(x, p.y + static_cast<int32_t>(rad - dy), r, g, b, a);
+                putPixel(x, p.y - static_cast<int32_t>(rad - dy), r, g, b, a);
             }
         }
     }
@@ -558,25 +603,25 @@ namespace FIFE
         yMin = std::min(yMin, newPoint.y);
 
         // scan-line fill algorithm
-        int32_t y = yMin;
-        int32_t n = points.size();
+        int32_t y           = yMin;
+        const std::size_t n = points.size();
         for (; y <= yMax; ++y) {
             std::vector<int32_t> xs;
-            int32_t j = n - 1;
-            for (int32_t i = 0; i < n; j = i++) {
+            std::size_t j = n - 1;
+            for (std::size_t i = 0; i < n; j = i++) {
                 if ((points[i].y < y && y <= points[j].y) || (points[j].y < y && y <= points[i].y)) {
                     auto x = static_cast<int32_t>(
                         points[i].x +
                         (static_cast<float>(y - points[i].y) / static_cast<float>(points[j].y - points[i].y) *
                          static_cast<float>(points[j].x - points[i].x)));
                     xs.push_back(x);
-                    for (int32_t k = xs.size() - 1; (k != 0) && xs[k - 1] > xs[k]; --k) {
+                    for (std::size_t k = xs.size() - 1; (k != 0U) && xs[k - 1] > xs[k]; --k) {
                         std::swap(xs[k - 1], xs[k]);
                     }
                 }
             }
 
-            for (int32_t i = 0; i < xs.size(); i += 2) {
+            for (std::size_t i = 0; i < xs.size(); i += 2) {
                 int32_t x1 = xs[i];
                 int32_t x2 = xs[i + 1];
                 // vertical line
@@ -599,6 +644,15 @@ namespace FIFE
         uint8_t green,
         uint8_t blue)
     {
+        static_cast<void>(p);
+        static_cast<void>(intensity);
+        static_cast<void>(radius);
+        static_cast<void>(subdivisions);
+        static_cast<void>(xstretch);
+        static_cast<void>(ystretch);
+        static_cast<void>(red);
+        static_cast<void>(green);
+        static_cast<void>(blue);
     }
 
     void RenderBackendSDL::enableScissorTest() { }
@@ -608,10 +662,13 @@ namespace FIFE
     void RenderBackendSDL::captureScreen(const std::string& filename)
     {
         if (m_screen != nullptr) {
-            const uint32_t swidth  = getWidth();
-            const uint32_t sheight = getHeight();
+            const uint32_t swidth       = getWidth();
+            const uint32_t sheight      = getHeight();
+            const int32_t surfaceWidth  = toInt32Dimension(swidth);
+            const int32_t surfaceHeight = toInt32Dimension(sheight);
 
-            SDL_Surface* surface = SDL_CreateRGBSurface(0, swidth, sheight, 24, RMASK, GMASK, BMASK, NULLMASK);
+            SDL_Surface* surface =
+                SDL_CreateRGBSurface(0, surfaceWidth, surfaceHeight, 24, RMASK, GMASK, BMASK, NULLMASK);
 
             if (surface == nullptr) {
                 return;
@@ -640,7 +697,8 @@ namespace FIFE
                 return;
             }
             // create source surface
-            SDL_Surface* src = SDL_CreateRGBSurface(0, swidth, sheight, 32, RMASK, GMASK, BMASK, AMASK);
+            SDL_Surface* src = SDL_CreateRGBSurface(
+                0, toInt32Dimension(swidth), toInt32Dimension(sheight), 32, RMASK, GMASK, BMASK, AMASK);
 
             if (src == nullptr) {
                 return;
@@ -648,7 +706,8 @@ namespace FIFE
             // copy screen suface to source surface
             SDL_BlitSurface(m_screen, nullptr, src, nullptr);
             // create destination surface
-            SDL_Surface* dst = SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, AMASK);
+            SDL_Surface* dst = SDL_CreateRGBSurface(
+                0, toInt32Dimension(width), toInt32Dimension(height), 32, RMASK, GMASK, BMASK, AMASK);
 
             auto* src_pointer          = static_cast<uint32_t*>(src->pixels);
             uint32_t* src_help_pointer = src_pointer;
@@ -748,8 +807,12 @@ namespace FIFE
         m_target             = img->getSurface();
         SDL_Texture* texture = image->getTexture();
         if (texture == nullptr) {
-            texture =
-                SDL_CreateTexture(m_renderer, m_rgba_format.format, SDL_TEXTUREACCESS_TARGET, m_target->w, m_target->h);
+            texture = SDL_CreateTexture(
+                m_renderer,
+                m_rgba_format.format,
+                SDL_TEXTUREACCESS_TARGET,
+                toInt32Dimension(static_cast<uint32_t>(m_target->w)),
+                toInt32Dimension(static_cast<uint32_t>(m_target->h)));
             image->setTexture(texture);
         }
         SDL_SetRenderTarget(m_renderer, texture);
@@ -769,5 +832,9 @@ namespace FIFE
         const DoublePoint& translation,
         ImagePtr texture)
     {
+        static_cast<void>(vertices);
+        static_cast<void>(indices);
+        static_cast<void>(translation);
+        static_cast<void>(texture);
     }
 } // namespace FIFE

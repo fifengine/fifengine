@@ -62,6 +62,9 @@ namespace FIFE
 
         ~SoundManager();
 
+        SoundManager(const SoundManager&)            = delete;
+        SoundManager& operator=(const SoundManager&) = delete;
+
         /** Initializes the audio system
          */
         void init();

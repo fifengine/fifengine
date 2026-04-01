@@ -221,6 +221,8 @@ namespace FIFE
                 continue;
             }
             switch (evt.getType()) {
+            case KeyEvent::UNKNOWN:
+                break;
             case KeyEvent::PRESSED:
                 (*i)->keyPressed(evt);
                 break;
@@ -245,6 +247,8 @@ namespace FIFE
                 continue;
             }
             switch (evt.getType()) {
+            case TextEvent::UNKNOWN:
+                break;
             case TextEvent::INPUT:
                 (*i)->textInput(evt);
                 break;
@@ -269,6 +273,8 @@ namespace FIFE
                 continue;
             }
             switch (evt.getType()) {
+            case MouseEvent::UNKNOWN_EVENT:
+                break;
             case MouseEvent::MOVED:
                 (*i)->mouseMoved(evt);
                 break;
@@ -511,8 +517,8 @@ namespace FIFE
     void EventManager::processMouseEvent(SDL_Event event)
     {
         if (event.type == SDL_MOUSEMOTION && (!Mathf::Equal(m_mouseSensitivity, 0.0) || m_acceleration)) {
-            uint16_t tmp_x = event.motion.x;
-            uint16_t tmp_y = event.motion.y;
+            int32_t tmp_x = event.motion.x;
+            int32_t tmp_y = event.motion.y;
             if (m_enter) {
                 m_oldX        = tmp_x;
                 m_oldY        = tmp_y;
@@ -537,12 +543,12 @@ namespace FIFE
                 modifier = m_mouseSensitivity;
             }
 
-            auto tmp_xrel = static_cast<int16_t>(tmp_x - m_oldX);
-            auto tmp_yrel = static_cast<int16_t>(tmp_y - m_oldY);
+            const int32_t tmp_xrel = tmp_x - m_oldX;
+            const int32_t tmp_yrel = tmp_y - m_oldY;
             if ((tmp_xrel != 0) || (tmp_yrel != 0)) {
-                Rect screen = RenderBackend::instance()->getArea();
-                auto x_fact = static_cast<int16_t>(round(static_cast<float>(tmp_xrel * modifier)));
-                auto y_fact = static_cast<int16_t>(round(static_cast<float>(tmp_yrel * modifier)));
+                Rect screen          = RenderBackend::instance()->getArea();
+                const int32_t x_fact = static_cast<int32_t>(round(static_cast<float>(tmp_xrel) * modifier));
+                const int32_t y_fact = static_cast<int32_t>(round(static_cast<float>(tmp_yrel) * modifier));
                 if ((tmp_x + x_fact) > screen.w) {
                     tmp_x = screen.w;
                 } else if ((tmp_x + x_fact) < screen.x) {
@@ -736,10 +742,10 @@ namespace FIFE
 
     void EventManager::setMouseSensitivity(float sensitivity)
     {
-        if (sensitivity < -0.99) {
-            sensitivity = -0.99;
-        } else if (sensitivity > 10.0) {
-            sensitivity = 10.0;
+        if (sensitivity < -0.99F) {
+            sensitivity = -0.99F;
+        } else if (sensitivity > 10.0F) {
+            sensitivity = 10.0F;
         }
         m_mouseSensitivity = sensitivity;
     }

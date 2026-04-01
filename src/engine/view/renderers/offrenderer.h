@@ -25,7 +25,10 @@ namespace FIFE
     class OffRendererElementInfo
     {
     public:
-        virtual void render(RenderBackend* renderbackend) { }
+        virtual void render(RenderBackend* renderbackend)
+        {
+            static_cast<void>(renderbackend);
+        }
         virtual ~OffRendererElementInfo() { }
     };
 

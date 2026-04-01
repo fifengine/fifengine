@@ -379,6 +379,12 @@ namespace FIFE
         case fcn::MouseEvent::Type::WheelMovedUp:
             mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
             break;
+        case fcn::MouseEvent::Type::WheelMovedRight:
+            mouseevt.setType(MouseEvent::WHEEL_MOVED_RIGHT);
+            break;
+        case fcn::MouseEvent::Type::WheelMovedLeft:
+            mouseevt.setType(MouseEvent::WHEEL_MOVED_LEFT);
+            break;
         default:
             mouseevt.setType(MouseEvent::UNKNOWN_EVENT);
         }
@@ -398,6 +404,9 @@ namespace FIFE
             break;
         case fcn::MouseEvent::Button::X2:
             mouseevt.setButton(MouseEvent::X2);
+            break;
+        case fcn::MouseEvent::Button::Empty:
+            mouseevt.setButton(MouseEvent::EMPTY);
             break;
         default:
             mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);

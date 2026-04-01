@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <list>
 #include <string>
 #include <vector>
@@ -167,7 +169,8 @@ namespace FIFE
 
     uint32_t Model::getMapCount() const
     {
-        return m_maps.size();
+        assert(m_maps.size() <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(m_maps.size());
     }
 
     void Model::deleteMaps()

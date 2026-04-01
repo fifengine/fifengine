@@ -82,9 +82,9 @@ namespace FIFE
                     if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                         std::vector<ExactModelCoordinate> vertices;
                         cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                        auto vit            = vertices.begin();
-                        int32_t halfind     = vertices.size() / 2;
-                        ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                        auto vit                  = vertices.begin();
+                        const std::size_t halfind = vertices.size() / 2;
+                        ScreenPoint firstpt       = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                         Point pt1(firstpt.x, firstpt.y);
                         Point pt2;
                         ++vit;
@@ -113,9 +113,9 @@ namespace FIFE
                 }
                 std::vector<ExactModelCoordinate> vertices;
                 cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
-                auto vit            = vertices.begin();
-                int32_t halfind     = vertices.size() / 2;
-                ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
+                auto vit                  = vertices.begin();
+                const std::size_t halfind = vertices.size() / 2;
+                ScreenPoint firstpt       = cam->toScreenCoordinates(cg->toMapCoordinates(*vit));
                 Point pt1(firstpt.x, firstpt.y);
                 Point pt2;
                 ++vit;

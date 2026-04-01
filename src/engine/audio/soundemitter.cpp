@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -25,6 +27,32 @@
 namespace FIFE
 {
     static Logger _log(LM_AUDIO);
+
+    namespace
+    {
+        [[nodiscard]] ALsizei toOpenALSize(const uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<ALsizei>::max()));
+            return static_cast<ALsizei>(value);
+        }
+
+        [[nodiscard]] uint32_t toTimestampMillis(const uint64_t value)
+        {
+            assert(value <= static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
+            return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] uint32_t toResourceHandle(const std::size_t value)
+        {
+            assert(value <= static_cast<std::size_t>(std::numeric_limits<uint32_t>::max()));
+            return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] float sampleFrameBytes(SoundEmitter* emitter)
+        {
+            return (static_cast<float>(emitter->getBitResolution()) / 8.0F) * (emitter->isStereo() ? 2.0F : 1.0F);
+        }
+    } // namespace
 
     SoundEmitter::SoundEmitter(SoundManager* manager, uint32_t uid) :
         m_manager(manager),
@@ -272,7 +300,7 @@ namespace FIFE
         }
 
         detachSoundClip();
-        m_soundClipId = soundClip->getHandle();
+        m_soundClipId = toResourceHandle(soundClip->getHandle());
         m_soundClip   = soundClip;
 
         attachSoundClip();
@@ -296,7 +324,7 @@ namespace FIFE
                 return;
             }
             // non-streaming
-            alSourceQueueBuffers(m_source, m_soundClip->countBuffers(), m_soundClip->getBuffers());
+            alSourceQueueBuffers(m_source, toOpenALSize(m_soundClip->countBuffers()), m_soundClip->getBuffers());
             alSourcei(m_source, AL_LOOPING, m_internData.loop ? AL_TRUE : AL_FALSE);
 
         } else {
@@ -384,7 +412,7 @@ namespace FIFE
         if (!Mathf::Equal(zero, outTime)) {
             m_fadeOut = true;
             setGain(0.0F);
-            m_fadeOutEndTimestamp   = m_internData.playTimestamp + getDuration();
+            m_fadeOutEndTimestamp   = m_internData.playTimestamp + toTimestampMillis(getDuration());
             m_fadeOutStartTimestamp = m_fadeOutEndTimestamp - static_cast<uint32_t>(outTime * 1000.0F);
         }
     }
@@ -534,7 +562,7 @@ namespace FIFE
             return true;
         }
         // roughly check, in the case the clip do not plays (is not active)
-        return (m_internData.playTimestamp + m_playCheckDifference + static_cast<uint32_t>(getDuration())) <=
+        return (m_internData.playTimestamp + m_playCheckDifference + toTimestampMillis(getDuration())) <=
                TimeManager::instance()->getTime();
     }
 
@@ -563,13 +591,13 @@ namespace FIFE
         } else {
             switch (type) {
             case SD_BYTE_POS:
-                m_samplesOffset = static_cast<uint64_t>(value / (getBitResolution() / 8.0 * (isStereo() ? 2.0 : 1.0)));
+                m_samplesOffset = value / sampleFrameBytes(this);
                 break;
             case SD_SAMPLE_POS:
                 m_samplesOffset = value;
                 break;
             case SD_TIME_POS:
-                m_samplesOffset = static_cast<uint64_t>(value * getSampleRate());
+                m_samplesOffset = value * static_cast<float>(getSampleRate());
                 break;
             }
             alGetSourcei(m_source, AL_SOURCE_STATE, &state);
@@ -617,13 +645,13 @@ namespace FIFE
         if (m_soundClip->isStream()) {
             switch (type) {
             case SD_BYTE_POS:
-                pos += m_samplesOffset * (getBitResolution() / 8.0 * (isStereo() ? 2.0 : 1.0));
+                pos += static_cast<ALfloat>(m_samplesOffset * sampleFrameBytes(this));
                 break;
             case SD_SAMPLE_POS:
                 pos += m_samplesOffset;
                 break;
             case SD_TIME_POS:
-                pos += static_cast<uint64_t>(m_samplesOffset / static_cast<double>(getSampleRate()));
+                pos += static_cast<ALfloat>(m_samplesOffset / static_cast<float>(getSampleRate()));
                 break;
             }
         }
@@ -806,7 +834,7 @@ namespace FIFE
         if (m_internData.soundState == SD_PLAYING_STATE) {
             uint32_t timediff = TimeManager::instance()->getTime() - m_internData.playTimestamp - m_playCheckDifference;
             if (m_internData.loop) {
-                timediff = timediff % getDuration();
+                timediff = timediff % toTimestampMillis(getDuration());
             }
             float time = static_cast<float>(timediff) / 1000.0F;
             attachSoundClip();

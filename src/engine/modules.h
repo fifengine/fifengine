@@ -13,7 +13,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-/** Modules available for logging
+/**
+ * Modules available for logging
  */
 enum logmodule_t
 {

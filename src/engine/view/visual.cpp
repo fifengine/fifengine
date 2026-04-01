@@ -154,14 +154,14 @@ namespace FIFE
 
     ObjectVisual* ObjectVisual::clone() const
     {
-        auto* v = new ObjectVisual();
-        v->m_angle2img = m_angle2img;
+        auto* v              = new ObjectVisual();
+        v->m_angle2img       = m_angle2img;
         v->m_colorOverlayMap = m_colorOverlayMap;
-        v->m_map = m_map;
+        v->m_map             = m_map;
         return v;
     }
 
-    InstanceVisual::InstanceVisual() : m_transparency(0), m_visible(true), m_stackposition(0), m_instance(nullptr) { }
+    InstanceVisual::InstanceVisual() : m_instance(nullptr), m_stackposition(0), m_transparency(0), m_visible(true) { }
 
     InstanceVisual* InstanceVisual::create(Instance* instance)
     {
@@ -388,12 +388,12 @@ namespace FIFE
 
     ActionVisual* ActionVisual::clone() const
     {
-        auto* v = new ActionVisual();
-        v->m_animation_map = m_animation_map;
-        v->m_animationOverlayMap = m_animationOverlayMap;
-        v->m_colorOverlayMap = m_colorOverlayMap;
+        auto* v                       = new ActionVisual();
+        v->m_animation_map            = m_animation_map;
+        v->m_animationOverlayMap      = m_animationOverlayMap;
+        v->m_colorOverlayMap          = m_colorOverlayMap;
         v->m_colorAnimationOverlayMap = m_colorAnimationOverlayMap;
-        v->m_map = m_map;
+        v->m_map                      = m_map;
         return v;
     }
 } // namespace FIFE

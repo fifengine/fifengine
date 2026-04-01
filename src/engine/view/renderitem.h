@@ -46,7 +46,7 @@ namespace FIFE
          * @return id for static image
          * @see ObjectVisual::getStaticImageIndexByAngle
          */
-        int32_t getStaticImageIndexByAngle(uint32_t angle, Instance* instance);
+        int32_t getStaticImageIndexByAngle(int32_t angle, Instance* instance);
 
         /** Sets AnimationOverlay and if available AnimationOverlayColors.
          * Note: Ownership of the vectors do change.

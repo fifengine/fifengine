@@ -3,7 +3,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
 #include <iterator>
+#include <limits>
 #include <map>
 #include <string>
 #include <utility>
@@ -26,12 +28,12 @@ namespace FIFE
 {
 
     Animation::Animation(IResourceLoader* loader) :
-        IResource(createUniqueAnimationName(), loader), m_action_frame(-1), m_animation_endtime(-1), m_direction(0)
+        IResource(createUniqueAnimationName(), loader), m_direction(0), m_action_frame(-1), m_animation_endtime(-1)
     {
     }
 
     Animation::Animation(const std::string& name, IResourceLoader* loader) :
-        IResource(name, loader), m_action_frame(-1), m_animation_endtime(-1), m_direction(0)
+        IResource(name, loader), m_direction(0), m_action_frame(-1), m_animation_endtime(-1)
     {
     }
 
@@ -90,20 +92,24 @@ namespace FIFE
     void Animation::addFrame(ImagePtr image, uint32_t duration)
     {
         FrameInfo info;
-        info.index    = m_frames.size();
+        assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());
+        info.index    = static_cast<uint32_t>(m_frames.size());
         info.duration = duration;
         info.image    = image;
         m_frames.push_back(info);
 
         std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.end());
         if (i == m_framemap.begin()) {
-            m_framemap[0]       = info;
-            m_animation_endtime = duration;
+            m_framemap[0] = info;
+            assert(duration <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            m_animation_endtime = static_cast<int32_t>(duration);
         } else {
             --i;
-            const uint32_t frametime = i->first + i->second.duration;
-            m_framemap[frametime]    = info;
-            m_animation_endtime      = frametime + duration;
+            const uint32_t frametime        = i->first + i->second.duration;
+            m_framemap[frametime]           = info;
+            const uint32_t animationEndTime = frametime + duration;
+            assert(animationEndTime <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            m_animation_endtime = static_cast<int32_t>(animationEndTime);
         }
     }
 
@@ -113,14 +119,16 @@ namespace FIFE
         if ((std::cmp_less_equal(timestamp, m_animation_endtime)) && (m_animation_endtime > 0)) {
             std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
             --i;
-            val = i->second.index;
+            assert(i->second.index <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            val = static_cast<int32_t>(i->second.index);
         }
         return val;
     }
 
     bool Animation::isValidIndex(int32_t index) const
     {
-        const int32_t size = m_frames.size();
+        assert(m_frames.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        const int32_t size = static_cast<int32_t>(m_frames.size());
         return size > 0 && index >= 0 && index < size;
     }
 
@@ -128,7 +136,7 @@ namespace FIFE
     {
         ImagePtr image;
         if (isValidIndex(index)) {
-            image = m_frames[index].image;
+            image = m_frames[static_cast<size_t>(index)].image;
             if (image->getState() == IResource::RES_NOT_LOADED) {
                 image->load();
             }
@@ -165,14 +173,18 @@ namespace FIFE
     int32_t Animation::getFrameDuration(int32_t index) const
     {
         if (isValidIndex(index)) {
-            return m_frames[index].duration;
+            assert(
+                m_frames[static_cast<size_t>(index)].duration <=
+                static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(m_frames[static_cast<size_t>(index)].duration);
         }
         return -1;
     }
 
     uint32_t Animation::getFrameCount() const
     {
-        return m_frames.size();
+        assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(m_frames.size());
     }
 
     void Animation::setDirection(uint32_t direction)

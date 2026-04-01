@@ -3,9 +3,12 @@
 
 // Standard C++ library includes
 
+#include <cassert>
+
 // Platform specific includes
 #include <algorithm>
 #include <iterator>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -25,6 +28,26 @@
 namespace FIFE
 {
     static Logger _log(LM_AUDIO);
+
+    namespace
+    {
+        [[nodiscard]] ALsizei toOpenALSize(const uint64_t value)
+        {
+            assert(value <= static_cast<uint64_t>(std::numeric_limits<ALsizei>::max()));
+            return static_cast<ALsizei>(value);
+        }
+
+        [[nodiscard]] uint32_t toStreamId(const std::size_t value)
+        {
+            assert(value <= static_cast<std::size_t>(std::numeric_limits<uint32_t>::max()));
+            return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] double bytesPerSampleFrame(const SoundDecoder* decoder)
+        {
+            return (static_cast<double>(decoder->getBitResolution()) / 8.0) * (decoder->isStereo() ? 2.0 : 1.0);
+        }
+    } // namespace
 
     SoundClip::SoundClip(IResourceLoader* loader) :
         IResource(createUniqueClipName(), loader), m_isStream(false), m_decoder(nullptr), m_deleteDecoder(false)
@@ -84,8 +107,8 @@ namespace FIFE
                     buffer,
                     m_decoder->getALFormat(),
                     m_decoder->getBuffer(),
-                    m_decoder->getBufferSize(),
-                    m_decoder->getSampleRate());
+                    toOpenALSize(m_decoder->getBufferSize()),
+                    toOpenALSize(m_decoder->getSampleRate()));
 
                 CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error copying data to buffers")
 
@@ -157,7 +180,7 @@ namespace FIFE
         if (ptr == nullptr) {
             ptr = new SoundBufferEntry();
             m_buffervec.push_back(ptr);
-            id = m_buffervec.size() - 1;
+            id = toStreamId(m_buffervec.size() - 1);
         }
 
         ptr->usedbufs  = 0;
@@ -179,9 +202,9 @@ namespace FIFE
             break;
         case SD_TIME_POS:
             value /= static_cast<float>(m_decoder->getSampleRate());
+            [[fallthrough]];
         case SD_SAMPLE_POS:
-            pos = static_cast<uint64_t>(
-                (m_decoder->getBitResolution() / 8.0) * (m_decoder->isStereo() ? 2.0 : 1.0) * value);
+            pos = static_cast<uint64_t>(bytesPerSampleFrame(m_decoder) * static_cast<double>(value));
             break;
         }
 
@@ -203,11 +226,11 @@ namespace FIFE
         case SD_BYTE_POS:
             return static_cast<float>(pos);
         case SD_SAMPLE_POS:
-            return static_cast<float>(pos) /
-                   (m_decoder->getBitResolution() / 8.0 * (m_decoder->isStereo() ? 2.0 : 1.0));
+            return static_cast<float>(static_cast<double>(pos) / bytesPerSampleFrame(m_decoder));
         case SD_TIME_POS:
-            return static_cast<float>(pos) / (m_decoder->getBitResolution() / 8.0 *
-                                              (m_decoder->isStereo() ? 2.0 : 1.0) * m_decoder->getSampleRate());
+            return static_cast<float>(
+                static_cast<double>(pos) /
+                (bytesPerSampleFrame(m_decoder) * static_cast<double>(m_decoder->getSampleRate())));
         }
         return 0.0F;
     }
@@ -246,8 +269,8 @@ namespace FIFE
             buffer,
             m_decoder->getALFormat(),
             m_decoder->getBuffer(),
-            m_decoder->getBufferSize(),
-            m_decoder->getSampleRate());
+            toOpenALSize(m_decoder->getBufferSize()),
+            toOpenALSize(m_decoder->getSampleRate()));
 
         // update cursor
         ptr->deccursor += m_decoder->getBufferSize();

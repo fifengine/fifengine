@@ -61,6 +61,9 @@ namespace FIFE
          */
         virtual ~FifechanManager();
 
+        FifechanManager(const FifechanManager&)            = delete;
+        FifechanManager& operator=(const FifechanManager&) = delete;
+
         /** Gets the member pointer to the Fifechan GUI.
          *
          * @return The member pointer to the Fifechan GUI.

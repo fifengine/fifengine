@@ -26,15 +26,17 @@ namespace FIFE
             return tokens;
         }
 
-        int curr  = 0;
-        int start = 0;
+        std::string::size_type curr = str.find_first_not_of(delim);
+        if (curr == std::string::npos) {
+            return tokens;
+        }
 
-        start = curr = static_cast<int>(str.find_first_not_of(delim));
+        std::string::size_type start = curr;
 
-        while (str[curr] != 0) {
+        while (curr < str.size()) {
             if (str[curr] == group) {
-                curr = static_cast<int>(str.find_first_of(group, curr + 1));
-                if (std::cmp_equal(curr, std::string::npos)) {
+                curr = str.find_first_of(group, curr + 1);
+                if (curr == std::string::npos) {
                     return {};
                 }
 
@@ -57,7 +59,7 @@ namespace FIFE
         }
 
         if (str[curr - 1] != delim && str[curr - 1] != group) {
-            const std::string token = str.substr(start, curr - 1);
+            const std::string token = str.substr(start, curr - start);
             tokens.push_back(makeInt32(token));
         }
 

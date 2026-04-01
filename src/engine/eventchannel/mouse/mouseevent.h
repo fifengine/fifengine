@@ -243,6 +243,9 @@ namespace FIFE
             case MouseEvent::DRAGGED:
                 s = "dragged";
                 break;
+            case MouseEvent::UNKNOWN_EVENT:
+                s = "unknown";
+                break;
             default:
                 break;
             }

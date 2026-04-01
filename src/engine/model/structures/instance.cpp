@@ -96,18 +96,17 @@ namespace FIFE
     Instance::InstanceActivity::InstanceActivity(Instance& source) :
         m_location(source.m_location),
         m_oldLocation(source.m_location),
-        m_rotation(source.m_rotation),
-        m_oldRotation(source.m_rotation),
         m_action(nullptr),
         m_soundSource(nullptr),
-        m_speed(0),
-        m_timeMultiplier(1.0),
-
         m_actionInfo(nullptr),
         m_sayInfo(nullptr),
         m_timeProvider(nullptr),
-        m_blocking(source.m_blocking),
-        m_additional(ICHANGE_NO_CHANGES)
+        m_speed(0),
+        m_rotation(source.m_rotation),
+        m_oldRotation(source.m_rotation),
+        m_timeMultiplier(1.0),
+        m_additional(ICHANGE_NO_CHANGES),
+        m_blocking(source.m_blocking)
     {
     }
 
@@ -177,19 +176,20 @@ namespace FIFE
     Instance::Instance(Object* object, const Location& location, const std::string& identifier) :
         m_id(identifier),
         m_rotation(0),
-        m_activity(nullptr),
-        m_changeInfo(ICHANGE_NO_CHANGES),
-        m_object(object),
-        m_ownObject(false),
         m_location(location),
+
+        m_activity(nullptr),
+        m_object(object),
         m_visual(nullptr),
+        m_mainMultiInstance(nullptr),
+        m_cost(object->getCost()),
+        m_changeInfo(ICHANGE_NO_CHANGES),
+        m_ownObject(false),
         m_blocking(object->isBlocking()),
         m_overrideBlocking(false),
         m_cellStackPos(object->getCellStackPosition()),
         m_specialCost(object->isSpecialCost()),
-        m_cost(object->getCost()),
-        m_costId(object->getCostId()),
-        m_mainMultiInstance(nullptr)
+        m_costId(object->getCostId())
     {
         // create multi object instances
         if (object->isMultiObject()) {

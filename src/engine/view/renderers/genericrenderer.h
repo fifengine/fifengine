@@ -27,7 +27,13 @@ namespace FIFE
     class GenericRendererElementInfo
     {
     public:
-        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) { }
+        virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
+        {
+            static_cast<void>(cam);
+            static_cast<void>(layer);
+            static_cast<void>(instances);
+            static_cast<void>(renderbackend);
+        }
         virtual ~GenericRendererElementInfo() { }
     };
 

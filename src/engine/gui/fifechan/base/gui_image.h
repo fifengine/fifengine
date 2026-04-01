@@ -27,6 +27,10 @@ namespace FIFE
         GuiImage();
         explicit GuiImage(const ImagePtr& img);
         ~GuiImage();
+
+        GuiImage(const GuiImage&)            = delete;
+        GuiImage& operator=(const GuiImage&) = delete;
+
         void free();
         int32_t getWidth() const;
         int32_t getHeight() const;

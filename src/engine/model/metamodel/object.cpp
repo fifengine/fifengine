@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
 #include <list>
 #include <map>
 #include <set>
@@ -23,6 +24,14 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] uint32_t toAngleKey(const int32_t rotation)
+        {
+            assert(rotation >= 0);
+            return static_cast<uint32_t>(rotation);
+        }
+    } // namespace
 
     Object::BasicObjectProperty::BasicObjectProperty() :
         m_actions(nullptr), m_defaultAction(nullptr), m_blocking(false), m_static(false), m_cellStack(0)
@@ -459,7 +468,7 @@ namespace FIFE
             m_multiProperty = new MultiObjectProperty();
         }
         m_multiProperty->m_multiPartCoordinates.insert(std::pair<int32_t, ModelCoordinate>(rotation, coord));
-        m_multiProperty->m_partAngleMap[rotation] = rotation;
+        m_multiProperty->m_partAngleMap[toAngleKey(rotation)] = rotation;
     }
 
     std::multimap<int32_t, ModelCoordinate> Object::getMultiPartCoordinates() const
@@ -506,7 +515,7 @@ namespace FIFE
                 }
                 auto it = m_multiProperty->m_multiObjectCoordinates.begin();
                 for (; it != m_multiProperty->m_multiObjectCoordinates.end(); ++it) {
-                    m_multiProperty->m_multiAngleMap[(*it).first] = (*it).first;
+                    m_multiProperty->m_multiAngleMap[toAngleKey((*it).first)] = (*it).first;
                 }
             }
             int32_t closest = 0;

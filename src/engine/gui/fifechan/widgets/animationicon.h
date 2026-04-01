@@ -49,6 +49,9 @@ namespace fcn
          */
         virtual ~AnimationIcon();
 
+        AnimationIcon(const AnimationIcon&)            = delete;
+        AnimationIcon& operator=(const AnimationIcon&) = delete;
+
         /**
          * Sets the animation to display.
          *

@@ -204,7 +204,7 @@ namespace FIFE
     }
 
     LogManager::LogManager() :
-        m_level(LEVEL_DEBUG), m_logtofile(false), m_logtoprompt(false), m_modules{}, m_logfile(nullptr)
+        m_level(LEVEL_DEBUG), m_logfile(nullptr), m_modules{}, m_logtofile(false), m_logtoprompt(false)
     {
         validateModuleDescription(LM_CORE);
         clearVisibleModules();

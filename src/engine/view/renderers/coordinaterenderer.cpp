@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 
 // 3rd party library includes
 
@@ -27,6 +29,15 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+    } // namespace
+
     /** Logger to use for this source file.
      *  @relates Logger
      */
@@ -79,6 +90,7 @@ namespace FIFE
     const int32_t MAX_COORD = 9999999;
     void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
+        static_cast<void>(instances);
         if (m_font == nullptr) {
             // no font selected.. nothing to render
             return;
@@ -125,32 +137,36 @@ namespace FIFE
                 Image* imgc = m_font->getAsImage(sts.str());
                 sts.str("");
                 sts << mc.y;
-                Image* imgy = m_font->getAsImage(sts.str());
+                Image* imgy              = m_font->getAsImage(sts.str());
+                const int32_t widthX     = toScreenSize(imgx->getWidth());
+                const int32_t widthComma = toScreenSize(imgc->getWidth());
+                const int32_t widthY     = toScreenSize(imgy->getWidth());
+                const int32_t heightX    = toScreenSize(imgx->getHeight());
 
                 if (zoomed) {
-                    double zoom = cam->getZoom();
-                    r.x         = drawpt.x - ((imgx->getWidth() + imgc->getWidth() + imgy->getWidth()) / 2.0) * zoom;
-                    r.y         = drawpt.y - (imgx->getHeight() / 2.0) * zoom;
-                    r.w         = imgx->getWidth() * zoom;
-                    r.h         = imgx->getHeight() * zoom;
+                    const double zoom = cam->getZoom();
+                    r.x = static_cast<int32_t>(round(drawpt.x - ((widthX + widthComma + widthY) / 2.0) * zoom));
+                    r.y = static_cast<int32_t>(round(drawpt.y - (heightX / 2.0) * zoom));
+                    r.w = static_cast<int32_t>(round(widthX * zoom));
+                    r.h = static_cast<int32_t>(round(heightX * zoom));
                     imgx->render(r);
                     r.x += r.w;
-                    r.w = imgc->getWidth() * zoom;
+                    r.w = static_cast<int32_t>(round(widthComma * zoom));
                     imgc->render(r);
                     r.x += r.w;
-                    r.w = imgy->getWidth() * zoom;
+                    r.w = static_cast<int32_t>(round(widthY * zoom));
                     imgy->render(r);
                 } else {
-                    r.x = drawpt.x - (imgx->getWidth() + imgc->getWidth() + imgy->getWidth()) / 2;
-                    r.y = drawpt.y - imgx->getHeight() / 2;
-                    r.w = imgx->getWidth();
-                    r.h = imgx->getHeight();
+                    r.x = drawpt.x - (widthX + widthComma + widthY) / 2;
+                    r.y = drawpt.y - heightX / 2;
+                    r.w = widthX;
+                    r.h = heightX;
                     imgx->render(r);
                     r.x += r.w;
-                    r.w = imgc->getWidth();
+                    r.w = widthComma;
                     imgc->render(r);
                     r.x += r.w;
-                    r.w = imgy->getWidth();
+                    r.w = widthY;
                     imgy->render(r);
                 }
             }

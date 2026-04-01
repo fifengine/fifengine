@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <vector>
 
 // 3rd party library includes
@@ -75,16 +77,20 @@ namespace FIFE
 
     uint32_t RenderBackend::getWidth() const
     {
-        return m_screen->w;
+        assert(m_screen->w >= 0);
+        return static_cast<uint32_t>(m_screen->w);
     }
 
     uint32_t RenderBackend::getHeight() const
     {
-        return m_screen->h;
+        assert(m_screen->h >= 0);
+        return static_cast<uint32_t>(m_screen->h);
     }
 
     const Rect& RenderBackend::getArea() const
     {
+        assert(m_screen->w >= 0);
+        assert(m_screen->h >= 0);
         static Rect r(0, 0, m_screen->w, m_screen->h);
         return r;
     }
@@ -276,11 +282,12 @@ namespace FIFE
         double muk  = 1.0;
         double mu   = static_cast<double>(t) / static_cast<double>(elements);
         double munk = Mathd::Pow(1.0 - mu, static_cast<double>(n));
-        for (int32_t i = 0; i <= n; ++i) {
-            int32_t tmpn  = n;
-            int32_t tmpi  = i;
-            int32_t diffn = n - i;
-            double blend  = muk * munk;
+        for (size_t pointIndex = 0; pointIndex <= static_cast<size_t>(n); ++pointIndex) {
+            const int32_t i = static_cast<int32_t>(pointIndex);
+            int32_t tmpn    = n;
+            int32_t tmpi    = i;
+            int32_t diffn   = n - i;
+            double blend    = muk * munk;
             muk *= mu;
             munk /= 1.0 - mu;
             while (tmpn != 0) {
@@ -295,8 +302,8 @@ namespace FIFE
                     diffn--;
                 }
             }
-            px += static_cast<double>(points[i].x) * blend;
-            py += static_cast<double>(points[i].y) * blend;
+            px += static_cast<double>(points[pointIndex].x) * blend;
+            py += static_cast<double>(points[pointIndex].y) * blend;
         }
 
         return Point(static_cast<int32_t>(px), static_cast<int32_t>(py));
@@ -308,7 +315,9 @@ namespace FIFE
             return;
         }
 
-        int32_t n = points.size() - 1;
+        const size_t segmentCount = points.size() - 1;
+        assert(segmentCount <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        const int32_t n = static_cast<int32_t>(segmentCount);
         // min 2 points
         if (n < 1) {
             return;
@@ -329,46 +338,47 @@ namespace FIFE
         }
 
         // calculate x and y values
-        auto* xrhs = new float[n];
-        auto* yrhs = new float[n];
+        auto* xrhs = new float[segmentCount];
+        auto* yrhs = new float[segmentCount];
         // first
         xrhs[0] = points[0].x + 2 * points[1].x;
         yrhs[0] = points[0].y + 2 * points[1].y;
         // last
-        xrhs[n - 1] = (8 * points[n - 1].x + points[n].x) / 2.0;
-        yrhs[n - 1] = (8 * points[n - 1].y + points[n].y) / 2.0;
+        xrhs[segmentCount - 1] = (8 * points[segmentCount - 1].x + points[segmentCount].x) / 2.0F;
+        yrhs[segmentCount - 1] = (8 * points[segmentCount - 1].y + points[segmentCount].y) / 2.0F;
         // rest
-        for (int32_t i = 1; i < n - 1; ++i) {
+        for (size_t i = 1; i + 1 < segmentCount; ++i) {
             xrhs[i] = 4 * points[i].x + 2 * points[i + 1].x;
             yrhs[i] = 4 * points[i].y + 2 * points[i + 1].y;
         }
 
-        auto* x    = new float[n];
-        auto* y    = new float[n];
-        auto* xtmp = new float[n];
-        auto* ytmp = new float[n];
+        auto* x    = new float[segmentCount];
+        auto* y    = new float[segmentCount];
+        auto* xtmp = new float[segmentCount];
+        auto* ytmp = new float[segmentCount];
         float xb   = 2.0;
         float yb   = 2.0;
         x[0]       = xrhs[0] / xb;
         y[0]       = yrhs[0] / yb;
         // Decomposition and forward substitution.
-        for (int32_t i = 1; i < n; i++) {
-            xtmp[i] = 1 / xb;
-            ytmp[i] = 1 / yb;
-            xb      = (i < n - 1 ? 4.0 : 3.5) - xtmp[i];
-            yb      = (i < n - 1 ? 4.0 : 3.5) - ytmp[i];
+        for (size_t i = 1; i < segmentCount; ++i) {
+            xtmp[i] = 1.0F / xb;
+            ytmp[i] = 1.0F / yb;
+            xb      = (i + 1 < segmentCount ? 4.0F : 3.5F) - xtmp[i];
+            yb      = (i + 1 < segmentCount ? 4.0F : 3.5F) - ytmp[i];
             x[i]    = (xrhs[i] - x[i - 1]) / xb;
             y[i]    = (yrhs[i] - y[i - 1]) / yb;
         }
         // Backward substitution
-        for (int32_t i = 1; i < n; i++) {
-            x[n - i - 1] -= xtmp[n - i] * x[n - i];
-            y[n - i - 1] -= ytmp[n - i] * y[n - i];
+        for (size_t i = 1; i < segmentCount; ++i) {
+            const size_t backIndex = segmentCount - i;
+            x[backIndex - 1] -= xtmp[backIndex] * x[backIndex];
+            y[backIndex - 1] -= ytmp[backIndex] * y[backIndex];
         }
 
         // start point
         newPoints.push_back(points[0]);
-        for (int32_t i = 0; i < n - 1; ++i) {
+        for (size_t i = 0; i + 1 < segmentCount; ++i) {
             p.x = x[i];
             p.y = y[i];
             newPoints.push_back(p);
@@ -378,14 +388,14 @@ namespace FIFE
 
             newPoints.push_back(points[i + 1]);
         }
-        p.x = x[n - 1];
-        p.y = y[n - 1];
+        p.x = x[segmentCount - 1];
+        p.y = y[segmentCount - 1];
         newPoints.push_back(p);
-        p.x = (points[n].x + x[n - 1]) / 2;
-        p.y = (points[n].y + y[n - 1]) / 2;
+        p.x = (points[segmentCount].x + x[segmentCount - 1]) / 2;
+        p.y = (points[segmentCount].y + y[segmentCount - 1]) / 2;
         newPoints.push_back(p);
         // end point
-        newPoints.push_back(points[n]);
+        newPoints.push_back(points[segmentCount]);
 
         delete[] xrhs;
         delete[] yrhs;

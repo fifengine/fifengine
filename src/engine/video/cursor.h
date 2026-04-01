@@ -162,14 +162,14 @@ namespace FIFE
 
         /** Gets the current mouse x position
          */
-        uint32_t getX() const
+        int32_t getX() const
         {
             return m_mx;
         }
 
         /** Gets the current mouse y position
          */
-        uint32_t getY() const
+        int32_t getY() const
         {
             return m_my;
         }

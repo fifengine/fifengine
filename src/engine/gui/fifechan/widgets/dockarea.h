@@ -24,6 +24,9 @@ namespace fcn
         explicit DockArea(bool active);
         ~DockArea() override;
 
+        DockArea(const DockArea&)            = delete;
+        DockArea& operator=(const DockArea&) = delete;
+
         void setActiveDockArea(bool active);
         bool isActiveDockArea() const;
 

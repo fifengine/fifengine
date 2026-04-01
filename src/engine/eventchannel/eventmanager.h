@@ -228,8 +228,8 @@ namespace FIFE
         bool m_acceleration;
         bool m_warp;
         bool m_enter;
-        uint16_t m_oldX;
-        uint16_t m_oldY;
+        int32_t m_oldX;
+        int32_t m_oldY;
         uint32_t m_lastTicks;
         float m_oldVelocity;
 

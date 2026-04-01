@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <limits>
 #include <string>
 
 // 3rd party library includes
@@ -21,6 +22,22 @@
 namespace FIFE
 {
     static Logger _log(LM_EVTCHANNEL);
+
+    namespace
+    {
+        uint8_t clampJoystickCount(int value)
+        {
+            if (value <= 0) {
+                return 0;
+            }
+
+            if (value > static_cast<int>(std::numeric_limits<uint8_t>::max())) {
+                return std::numeric_limits<uint8_t>::max();
+            }
+
+            return static_cast<uint8_t>(value);
+        }
+    } // namespace
 
     Joystick::Joystick(int32_t joystickId, int32_t deviceIndex) :
         m_joystickHandle(nullptr),
@@ -136,7 +153,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = SDL_JoystickNumAxes(m_joystickHandle);
+            number = clampJoystickCount(SDL_JoystickNumAxes(m_joystickHandle));
         }
         return number;
     }
@@ -145,7 +162,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = SDL_JoystickNumButtons(m_joystickHandle);
+            number = clampJoystickCount(SDL_JoystickNumButtons(m_joystickHandle));
         }
         return number;
     }
@@ -154,7 +171,7 @@ namespace FIFE
     {
         uint8_t number = 0;
         if (isConnected()) {
-            number = SDL_JoystickNumHats(m_joystickHandle);
+            number = clampJoystickCount(SDL_JoystickNumHats(m_joystickHandle));
         }
         return number;
     }
@@ -178,7 +195,7 @@ namespace FIFE
         if (hat < 0 || !isConnected()) {
             return HAT_INVALID;
         }
-        return SDL_JoystickGetHat(m_joystickHandle, hat);
+        return static_cast<int8_t>(SDL_JoystickGetHat(m_joystickHandle, hat));
     }
 
     bool Joystick::isButtonPressed(int8_t button) const

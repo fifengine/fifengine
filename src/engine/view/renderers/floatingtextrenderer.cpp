@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -26,6 +28,22 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        [[nodiscard]] uint16_t toRectExtent(const int32_t value)
+        {
+            assert(value >= 0);
+            assert(value <= std::numeric_limits<uint16_t>::max());
+            return static_cast<uint16_t>(value);
+        }
+    } // namespace
+
     /** Logger to use for this source file.
      *  @relates Logger
      */
@@ -63,6 +81,8 @@ namespace FIFE
 
     void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances)
     {
+        static_cast<void>(cam);
+        static_cast<void>(layer);
         if (m_font == nullptr) {
             // no font selected.. nothing to render
             return;
@@ -78,14 +98,16 @@ namespace FIFE
             Instance* instance         = (*instance_it)->instance;
             const std::string* saytext = instance->getSayText();
             if (saytext != nullptr) {
-                const Rect& ir = (*instance_it)->dimensions;
-                Image* img     = m_font->getAsImageMultiline(*saytext);
+                const Rect& ir            = (*instance_it)->dimensions;
+                Image* img                = m_font->getAsImageMultiline(*saytext);
+                const int32_t imageWidth  = toScreenSize(img->getWidth());
+                const int32_t imageHeight = toScreenSize(img->getHeight());
                 Rect r;
-                r.x = (ir.x + ir.w / 2) - img->getWidth() / 2; /// the center of the text rect is always aligned to the
-                                                               /// instance's rect center.
-                r.y = ir.y - img->getHeight();                 /// make the text rect floating higher than the instance.
-                r.w = img->getWidth();
-                r.h = img->getHeight();
+                r.x = (ir.x + ir.w / 2) - imageWidth / 2; /// the center of the text rect is always aligned to the
+                                                          /// instance's rect center.
+                r.y = ir.y - imageHeight;                 /// make the text rect floating higher than the instance.
+                r.w = imageWidth;
+                r.h = imageHeight;
                 // Without this check it can happen that changeRenderInfos() call produces an out_of_range error
                 // because the image rendering can be skipped, if it's not on the screen.
                 // The result is that it tried to modify more objects as exist.
@@ -101,8 +123,8 @@ namespace FIFE
                     if (m_background) {
                         m_renderbackend->fillRectangle(
                             p,
-                            r.w + (2 * overdraw),
-                            r.h + (2 * overdraw),
+                            toRectExtent(r.w + (2 * overdraw)),
+                            toRectExtent(r.h + (2 * overdraw)),
                             m_backcolor.r,
                             m_backcolor.g,
                             m_backcolor.b,
@@ -112,8 +134,8 @@ namespace FIFE
                     if (m_backborder) {
                         m_renderbackend->drawRectangle(
                             p,
-                            r.w + (2 * overdraw),
-                            r.h + (2 * overdraw),
+                            toRectExtent(r.w + (2 * overdraw)),
+                            toRectExtent(r.h + (2 * overdraw)),
                             m_backbordercolor.r,
                             m_backbordercolor.g,
                             m_backbordercolor.b,

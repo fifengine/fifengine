@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 // 3rd party library includes
@@ -28,8 +29,16 @@ namespace FIFE
         uint32_t left, right, top, bottom;
 
         AtlasBlock(const Rect& rect, uint32_t page) :
-            page(page), left(rect.x), right(rect.right()), top(rect.y), bottom(rect.bottom())
+            page(page),
+            left(static_cast<uint32_t>(rect.x)),
+            right(static_cast<uint32_t>(rect.right())),
+            top(static_cast<uint32_t>(rect.y)),
+            bottom(static_cast<uint32_t>(rect.bottom()))
         {
+            assert(rect.x >= 0);
+            assert(rect.y >= 0);
+            assert(rect.right() >= 0);
+            assert(rect.bottom() >= 0);
         }
 
         AtlasBlock() { }
@@ -75,8 +84,13 @@ namespace FIFE
     {
     public:
         AtlasPage(uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t page) :
-            width(width), height(height), pixelSize(pixelSize), page(page), freePixels(width * height * pixelSize)
+            width(width),
+            height(height),
+            pixelSize(pixelSize),
+            page(page),
+            freePixels(static_cast<int32_t>(width * height * pixelSize))
         {
+            assert((width * height * pixelSize) <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         }
 
         AtlasBlock* getBlock(uint32_t width, uint32_t height);

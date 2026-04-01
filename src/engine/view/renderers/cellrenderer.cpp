@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <set>
 #include <string>
 #include <vector>
@@ -98,8 +100,10 @@ namespace FIFE
                 if ((*cit)->getCellType() != CTYPE_NO_BLOCKER) {
                     std::vector<ExactModelCoordinate> vertices;
                     cg->getVertices(vertices, (*cit)->getLayerCoordinates());
-                    auto it             = vertices.begin();
-                    int32_t halfind     = vertices.size() / 2;
+                    auto it                      = vertices.begin();
+                    const size_t halfVertexIndex = vertices.size() / 2;
+                    assert(halfVertexIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+                    int32_t halfind     = static_cast<int32_t>(halfVertexIndex);
                     ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
                     Point pt1(firstpt.x, firstpt.y);
                     Point pt2;

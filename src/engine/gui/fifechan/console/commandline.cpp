@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <limits>
 
 // 3rd party library includes
 
@@ -96,7 +97,8 @@ namespace FIFE
         } else if (keyType == Key::Home) {
             setCaretPosition(0);
         } else if (keyType == Key::End) {
-            setCaretPosition(getText().size());
+            assert(getText().size() <= static_cast<size_t>(std::numeric_limits<int>::max()));
+            setCaretPosition(static_cast<int>(getText().size()));
         } else if (key.isCharacter() || static_cast<uint32_t>(key.getValue()) > 255) {
             TextField::keyPressed(keyEvent);
         }

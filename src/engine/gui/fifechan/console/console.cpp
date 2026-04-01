@@ -260,10 +260,10 @@ namespace FIFE
 
         // Assure the maximum number of rows
         if (m_output->getNumberOfRows() > m_maxOutputRows) {
-            unsigned rows      = m_output->getNumberOfRows();
-            int32_t delta_rows = rows - m_maxOutputRows;
+            const unsigned rows     = m_output->getNumberOfRows();
+            const unsigned firstRow = rows - m_maxOutputRows;
             std::vector<std::string> rows_text;
-            for (size_t i = delta_rows; i != rows; ++i) {
+            for (unsigned i = firstRow; i < rows; ++i) {
                 rows_text.push_back(m_output->getTextRow(i));
             }
             m_output->setText("");

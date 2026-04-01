@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <map>
 #include <string>
 #include <utility>
@@ -391,15 +393,18 @@ namespace FIFE
     SoundEmitter* SoundManager::createEmitter()
     {
         SoundEmitter* ptr = nullptr;
-        for (uint32_t i = 0; i < m_emitterVec.size(); i++) {
-            if (m_emitterVec.at(i) == nullptr) {
-                ptr                = new SoundEmitter(this, i);
-                m_emitterVec.at(i) = ptr;
+        for (size_t index = 0; index < m_emitterVec.size(); ++index) {
+            if (m_emitterVec.at(index) == nullptr) {
+                assert(index <= std::numeric_limits<uint32_t>::max());
+                const uint32_t emitterIndex = static_cast<uint32_t>(index);
+                ptr                         = new SoundEmitter(this, emitterIndex);
+                m_emitterVec.at(index)      = ptr;
                 break;
             }
         }
         if (ptr == nullptr) {
-            ptr = new SoundEmitter(this, m_emitterVec.size());
+            assert(m_emitterVec.size() <= std::numeric_limits<uint32_t>::max());
+            ptr = new SoundEmitter(this, static_cast<uint32_t>(m_emitterVec.size()));
             m_emitterVec.push_back(ptr);
         }
         return ptr;

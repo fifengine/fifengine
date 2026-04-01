@@ -32,6 +32,7 @@ namespace FIFE
 
         void onInstanceChanged(Instance* instance, InstanceChangeInfo info) override
         {
+            static_cast<void>(instance);
             if ((info & ICHANGE_LOC) == ICHANGE_LOC) {
                 m_source->setPosition();
             } else if ((info & ICHANGE_ROTATION) == ICHANGE_ROTATION) {
@@ -47,8 +48,9 @@ namespace FIFE
         m_instance(instance),
         m_audio(nullptr),
         m_emitter(SoundManager::instance()->createEmitter()),
-        m_listener(new SoundChangeListener(this))
+        m_listener(nullptr)
     {
+        m_listener = new SoundChangeListener(this);
         m_instance->addChangeListener(m_listener);
 
         // inital data

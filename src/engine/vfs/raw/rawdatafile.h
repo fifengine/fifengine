@@ -35,6 +35,9 @@ namespace FIFE
         explicit RawDataFile(std::string file);
         ~RawDataFile() override;
 
+        RawDataFile(const RawDataFile&)            = delete;
+        RawDataFile& operator=(const RawDataFile&) = delete;
+
         uint32_t getSize() const override;
         void readInto(uint8_t* buffer, uint32_t start, uint32_t length) override;
 

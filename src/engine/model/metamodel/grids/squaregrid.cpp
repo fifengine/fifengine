@@ -48,8 +48,8 @@ namespace FIFE
         if (curpos == target) {
             return true;
         }
-        uint8_t x = std::abs(target.x - curpos.x);
-        uint8_t y = std::abs(target.y - curpos.y);
+        const int32_t x = std::abs(target.x - curpos.x);
+        const int32_t y = std::abs(target.y - curpos.y);
         if ((x <= 1) && (y <= 1)) {
             if (m_allow_diagonals) {
                 return true;
@@ -107,7 +107,10 @@ namespace FIFE
     ModelCoordinate SquareGrid::toLayerCoordinatesFromExactLayerCoordinates(
         const ExactModelCoordinate& exact_layer_coords)
     {
-        ModelCoordinate result(round(exact_layer_coords.x), round(exact_layer_coords.y), round(exact_layer_coords.z));
+        ModelCoordinate result(
+            static_cast<int32_t>(round(exact_layer_coords.x)),
+            static_cast<int32_t>(round(exact_layer_coords.y)),
+            static_cast<int32_t>(round(exact_layer_coords.z)));
         return result;
     }
 

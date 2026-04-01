@@ -300,11 +300,11 @@ namespace FIFE {
 		};
 		JoystickEventType getType() const;
 		int32_t getInstanceId() const;
-		int8_t getAxis() const;
+		int16_t getAxis() const;
 		float getAxisValue() const;
-		int8_t getHat() const;
-		int8_t getHatValue() const;
-		int8_t getButton() const;
+		int16_t getHat() const;
+		int16_t getHatValue() const;
+		int16_t getButton() const;
 		bool isController() const;
 		virtual ~JoystickEvent();
 	private:

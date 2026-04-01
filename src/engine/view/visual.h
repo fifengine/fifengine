@@ -85,11 +85,11 @@ namespace FIFE
         ~ObjectVisual() override = default;
 
         // Delete copy operations (prevents C5267 warning)
-        ObjectVisual(const ObjectVisual&) = delete;
+        ObjectVisual(const ObjectVisual&)            = delete;
         ObjectVisual& operator=(const ObjectVisual&) = delete;
 
         // Allow move operations
-        ObjectVisual(ObjectVisual&&) = default;
+        ObjectVisual(ObjectVisual&&)            = default;
         ObjectVisual& operator=(ObjectVisual&&) = default;
 
         /**
@@ -203,10 +203,10 @@ namespace FIFE
         /** Constructor
          */
         InstanceVisual();
+        Instance* m_instance;
+        int32_t m_stackposition;
         uint8_t m_transparency;
         bool m_visible;
-        int32_t m_stackposition;
-        Instance* m_instance;
     };
 
     /** Action visual contains data that is needed to visualize different actions on screen
@@ -223,11 +223,11 @@ namespace FIFE
         inline virtual ~ActionVisual() noexcept override = default;
 
         // Delete copy operations (prevents C5267 warning)
-        ActionVisual(const ActionVisual&) = delete;
+        ActionVisual(const ActionVisual&)            = delete;
         ActionVisual& operator=(const ActionVisual&) = delete;
 
         // Allow move operations
-        ActionVisual(ActionVisual&&) = default;
+        ActionVisual(ActionVisual&&)            = default;
         ActionVisual& operator=(ActionVisual&&) = default;
 
         // Create a heap-allocated deep-copy of this visual

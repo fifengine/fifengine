@@ -3,7 +3,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
 #include <iostream>
+#include <limits>
 #include <string>
 
 // 3rd party library includes
@@ -135,8 +137,8 @@ namespace FIFE
     {
         // video driver section (x11, windows, dummy, ...)
         m_availableVideoDrivers.clear();
-        uint8_t driverCount = SDL_GetNumVideoDrivers();
-        for (uint8_t i = 0; i != driverCount; i++) {
+        const int driverCount = SDL_GetNumVideoDrivers();
+        for (int i = 0; i != driverCount; ++i) {
             std::string driver(SDL_GetVideoDriver(i));
             m_availableVideoDrivers.push_back(driver);
         }
@@ -145,8 +147,8 @@ namespace FIFE
         // render driver section (opengl, direct3d, software, ...)
         m_availableRenderDrivers.clear();
         SDL_RendererInfo info;
-        driverCount = SDL_GetNumRenderDrivers();
-        for (uint8_t i = 0; i != driverCount; i++) {
+        const int renderDriverCount = SDL_GetNumRenderDrivers();
+        for (int i = 0; i != renderDriverCount; ++i) {
             SDL_GetRenderDriverInfo(i, &info);
             std::string name(info.name);
             m_availableRenderDrivers.push_back(name);
@@ -190,12 +192,12 @@ namespace FIFE
         bpps[1] = 24;
         bpps[2] = 32;
 
-        bool renderDriver    = m_renderDriverIndex != -1;
-        uint8_t displayCount = SDL_GetNumVideoDisplays();
-        for (uint8_t i = 0; i != displayCount; i++) {
+        bool renderDriver      = m_renderDriverIndex != -1;
+        const int displayCount = SDL_GetNumVideoDisplays();
+        for (int i = 0; i != displayCount; ++i) {
             SDL_DisplayMode mode;
-            uint8_t displayModes = SDL_GetNumDisplayModes(i);
-            for (uint8_t m = 0; m != displayModes; m++) {
+            const int displayModes = SDL_GetNumDisplayModes(i);
+            for (int m = 0; m != displayModes; ++m) {
                 if (SDL_GetDisplayMode(i, m, &mode) == 0) {
                     for (int16_t bpp : bpps) {
                         for (unsigned int flag : flags) {
@@ -203,7 +205,8 @@ namespace FIFE
                             // mode.refresh_rate, flags[j]));
                             ScreenMode sm(mode.w, mode.h, bpp, mode.refresh_rate, flag);
                             sm.setFormat(mode.format);
-                            sm.setDisplay(i);
+                            assert(i <= std::numeric_limits<uint8_t>::max());
+                            sm.setDisplay(static_cast<uint8_t>(i));
                             if (renderDriver) {
                                 sm.setRenderDriverName(m_renderDriverName);
                                 sm.setRenderDriverIndex(m_renderDriverIndex);
@@ -289,8 +292,9 @@ namespace FIFE
 
     void DeviceCaps::setRenderDriverName(const std::string& driver)
     {
-        bool found          = false;
-        uint8_t driverCount = m_availableRenderDrivers.size();
+        bool found = false;
+        assert(m_availableRenderDrivers.size() <= std::numeric_limits<uint8_t>::max());
+        const uint8_t driverCount = static_cast<uint8_t>(m_availableRenderDrivers.size());
         for (uint8_t i = 0; i != driverCount; i++) {
             if (driver == m_availableRenderDrivers[i]) {
                 m_renderDriverName  = driver;
@@ -312,8 +316,10 @@ namespace FIFE
 
     uint8_t DeviceCaps::getDisplayCount() const
     {
-        uint8_t displayCount = SDL_GetNumVideoDisplays();
-        return displayCount;
+        const int displayCount = SDL_GetNumVideoDisplays();
+        assert(displayCount >= 0);
+        assert(displayCount <= std::numeric_limits<uint8_t>::max());
+        return static_cast<uint8_t>(displayCount);
     }
 
     std::string DeviceCaps::getDisplayName(uint8_t display) const

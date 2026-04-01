@@ -534,18 +534,6 @@ namespace FIFE
             Location m_location;
             //! location on previous cell
             Location m_oldLocation;
-            //! rotation on previous round
-            int32_t m_rotation;
-            //! rotation on previous round
-            int32_t m_oldRotation;
-            //! action on previous round. NOTE: might become invalid, only used for address comparison
-            Action* m_action;
-            //! sound source of action audio on previous round
-            SoundSource* m_soundSource;
-            //! speed on previous round
-            double m_speed;
-            //! time multiplier on previous round
-            float m_timeMultiplier;
             //! say text on previous round
             std::string m_sayText;
             //! listeners for changes
@@ -554,31 +542,51 @@ namespace FIFE
             // ----- Fields related to generic activity -----
             //! listeners for action related events
             std::vector<InstanceActionListener*> m_actionListeners;
+            //! action on previous round. NOTE: might become invalid, only used for address comparison
+            Action* m_action;
+            //! sound source of action audio on previous round
+            SoundSource* m_soundSource;
             //! action information, allocated when actions are bind
             ActionInfo* m_actionInfo;
             //! text to say + duration, allocated when something is said
             SayInfo* m_sayInfo;
             //! time scaler for this instance
             TimeProvider* m_timeProvider;
-            //! blocking status on previous round
-            bool m_blocking;
+            //! speed on previous round
+            double m_speed;
+            //! rotation on previous round
+            int32_t m_rotation;
+            //! rotation on previous round
+            int32_t m_oldRotation;
+            //! time multiplier on previous round
+            float m_timeMultiplier;
             //! additional change info, used for visual class (transparency, visible, stackpos)
             InstanceChangeInfo m_additional;
+            //! blocking status on previous round
+            bool m_blocking;
         };
-        InstanceActivity* m_activity;
-        //! bitmask stating current changes
-        InstanceChangeInfo m_changeInfo;
+        //! current location
+        Location m_location;
         //! listeners for deletion of the instance
         std::vector<InstanceDeleteListener*> m_deleteListeners;
+        //! holds cost id
+        std::string m_costId;
+        //! vector that holds all multi instances
+        std::vector<Instance*> m_multiInstances;
+        InstanceActivity* m_activity;
 
         //! object where instantiated from
         Object* m_object;
-        //! indicates if m_object is customized
-        bool m_ownObject;
-        //! current location
-        Location m_location;
         //! instance visualization
         IVisual* m_visual;
+        //! pointer to the main multi instance
+        Instance* m_mainMultiInstance;
+        //! holds cost value
+        double m_cost;
+        //! bitmask stating current changes
+        InstanceChangeInfo m_changeInfo;
+        //! indicates if m_object is customized
+        bool m_ownObject;
         //! instance blocking info
         bool m_blocking;
         //! allow to override the blocking property
@@ -587,14 +595,6 @@ namespace FIFE
         uint8_t m_cellStackPos;
         //! indicates special cost
         bool m_specialCost;
-        //! holds cost value
-        double m_cost;
-        //! holds cost id
-        std::string m_costId;
-        //! vector that holds all multi instances
-        std::vector<Instance*> m_multiInstances;
-        //! pointer to the main multi instance
-        Instance* m_mainMultiInstance;
 
         Instance(const Instance&);
         Instance& operator=(const Instance&);

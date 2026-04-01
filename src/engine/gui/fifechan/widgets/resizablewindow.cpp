@@ -34,7 +34,7 @@
 #include "gui/fifechan/fifechanmanager.h"
 #include "util/base/exception.h"
 
-#include "resizablewindow.h"
+#include "gui/fifechan/widgets/resizablewindow.h"
 
 namespace fcn
 {

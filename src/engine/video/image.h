@@ -67,16 +67,38 @@ namespace FIFE
          * @param rgb The color value of overlay if any.
          */
         virtual void render(const Rect& rect, uint8_t alpha = 255, uint8_t const * rgb = 0) = 0;
-        virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = 0) { }
-        virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = 0) { }
+        virtual void render(const Rect& rect, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = 0)
+        {
+            static_cast<void>(rect);
+            static_cast<void>(overlay);
+            static_cast<void>(alpha);
+            static_cast<void>(rgb);
+        }
+        virtual void renderZ(const Rect& rect, float vertexZ, uint8_t alpha = 255, uint8_t const * rgb = 0)
+        {
+            static_cast<void>(rect);
+            static_cast<void>(vertexZ);
+            static_cast<void>(alpha);
+            static_cast<void>(rgb);
+        }
         virtual void renderZ(
             const Rect& rect, float vertexZ, const ImagePtr& overlay, uint8_t alpha = 255, uint8_t const * rgb = 0)
         {
+            static_cast<void>(rect);
+            static_cast<void>(vertexZ);
+            static_cast<void>(overlay);
+            static_cast<void>(alpha);
+            static_cast<void>(rgb);
         }
 
         virtual void renderZ(
             const Rect& rect, float vertexZ, uint8_t alpha = 255, bool forceNewBatch = false, uint8_t const * rgb = 0)
         {
+            static_cast<void>(rect);
+            static_cast<void>(vertexZ);
+            static_cast<void>(alpha);
+            static_cast<void>(forceNewBatch);
+            static_cast<void>(rgb);
         }
 
         /** Removes underlying SDL_Surface from the image (if exists) and returns this
@@ -168,6 +190,8 @@ namespace FIFE
     protected:
         // The SDL Surface used.
         SDL_Surface* m_surface;
+        // Area which this image occupy in shared image
+        Rect m_subimagerect;
         // The X shift of the Image
         int32_t m_xshift;
         // The Y shift of the Image
@@ -183,8 +207,6 @@ namespace FIFE
 
         // Does this image share data with another
         bool m_shared;
-        // Area which this image occupy in shared image
-        Rect m_subimagerect;
 
     private:
         std::string createUniqueImageName();

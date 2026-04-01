@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <list>
 #include <set>
 #include <string>
@@ -133,7 +135,8 @@ namespace FIFE
 
             int numElements = 0;
             XML::QueryAttribute(root, "elements", &numElements);
-            m_percentDoneListener.setTotalNumberOfElements(numElements);
+            assert(numElements >= 0);
+            m_percentDoneListener.setTotalNumberOfElements(static_cast<unsigned int>(numElements));
 
             const char* mapName = XML::Attribute(root, "id");
 
@@ -381,7 +384,9 @@ namespace FIFE
                                                         }
 
                                                         if (cellStackRetVal == XML::SUCCESS) {
-                                                            inst->setCellStackPosition(cellStack);
+                                                            assert(cellStack >= 0);
+                                                            assert(cellStack <= std::numeric_limits<uint8_t>::max());
+                                                            inst->setCellStackPosition(static_cast<uint8_t>(cellStack));
                                                         }
 
                                                         if (costId != nullptr) {
@@ -699,7 +704,11 @@ namespace FIFE
                                     }
                                 }
                             } else {
-                                Rect rect(0, 0, m_renderBackend->getScreenWidth(), m_renderBackend->getScreenHeight());
+                                const uint32_t screenWidth  = m_renderBackend->getScreenWidth();
+                                const uint32_t screenHeight = m_renderBackend->getScreenHeight();
+                                assert(screenWidth <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+                                assert(screenHeight <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+                                Rect rect(0, 0, static_cast<int32_t>(screenWidth), static_cast<int32_t>(screenHeight));
 
                                 try {
                                     cam = map->addCamera(cameraId, rect);
@@ -710,7 +719,10 @@ namespace FIFE
                             }
 
                             if (cam != nullptr) {
-                                cam->setCellImageDimensions(refCellWidth, refCellHeight);
+                                assert(refCellWidth >= 0);
+                                assert(refCellHeight >= 0);
+                                cam->setCellImageDimensions(
+                                    static_cast<uint32_t>(refCellWidth), static_cast<uint32_t>(refCellHeight));
                                 cam->setRotation(rotation);
                                 cam->setTilt(tilt);
                                 cam->setZoom(zoom);

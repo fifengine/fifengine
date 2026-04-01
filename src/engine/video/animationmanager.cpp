@@ -366,7 +366,7 @@ namespace FIFE
         auto it    = m_animHandleMap.begin();
         auto itend = m_animHandleMap.end();
 
-        std::vector<int> imgHandles;
+        std::vector<ResourceHandle> imgHandles;
 
         int32_t count = 0;
         for (; it != itend; ++it) {
@@ -376,7 +376,7 @@ namespace FIFE
             }
         }
 
-        for (int& imgHandle : imgHandles) {
+        for (ResourceHandle imgHandle : imgHandles) {
             remove(imgHandle);
         }
 

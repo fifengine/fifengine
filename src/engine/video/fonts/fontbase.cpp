@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <list>
 #include <string>
 #include <utility>
@@ -155,16 +157,19 @@ namespace FIFE
             buff = std::string(text.begin(), cur);
 
             if (getWidth(buff) > x) {
-                return buff.size();
+                assert(buff.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+                return static_cast<int32_t>(buff.size());
             } else {
                 utf8::next(cur, text.end());
             }
         }
 
         if (x > getWidth(text)) {
-            return text.size();
+            assert(text.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(text.size());
         } else {
-            return buff.size();
+            assert(buff.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(buff.size());
         }
     }
 

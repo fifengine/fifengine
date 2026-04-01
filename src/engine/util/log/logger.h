@@ -203,15 +203,16 @@ namespace FIFE
         static LogManager* m_instance;
         // current filter level
         LogLevel m_level;
-        // visibility array for modules
-        bool m_modules[LM_MODULE_MAX];
         // used during module description validation to check cycles in hierarchy
         std::vector<logmodule_t> module_check_stack;
 
+        std::ofstream* m_logfile;
+
+        // visibility array for modules
+        bool m_modules[LM_MODULE_MAX];
+
         bool m_logtofile;
         bool m_logtoprompt;
-
-        std::ofstream* m_logfile;
     };
 
     /** Create a Logger instance to communicate with LogManager

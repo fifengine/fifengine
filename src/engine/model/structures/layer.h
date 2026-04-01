@@ -370,38 +370,38 @@ namespace FIFE
     protected:
         //! string identifier
         std::string m_id;
-        //! pointer to map
-        Map* m_map;
-        //! if true the instances are visibility otherwise they are skipped during rendering
-        bool m_instancesVisibility;
-        //! transparency, value 0 means total visible, 128 semi-transparent and 255 invisibility
-        uint8_t m_transparency;
         //! all the instances on this layer
         std::vector<Instance*> m_instances;
         //! all the active instances on this layer
         std::set<Instance*> m_activeInstances;
-        //! The instance tree
-        InstanceTree* m_instanceTree;
-        //! layer's cellgrid
-        CellGrid* m_grid;
-        //! pathing strategy for the layer
-        PathingStrategy m_pathingStrategy;
-        //! sorting strategy for rendering
-        SortingStrategy m_sortingStrategy;
-        //! is walkable true/false
-        bool m_walkable;
-        //! is interact true/false
-        bool m_interact;
         //! walkable id
         std::string m_walkableId;
         //! all assigned interact layers
         std::vector<Layer*> m_interacts;
-        //! pointer to cellcache
-        CellCache* m_cellCache;
         //! listeners for layer changes
         std::vector<LayerChangeListener*> m_changeListeners;
         //! holds changed instances after each update
         std::vector<Instance*> m_changedInstances;
+        //! pointer to map
+        Map* m_map;
+        //! The instance tree
+        InstanceTree* m_instanceTree;
+        //! layer's cellgrid
+        CellGrid* m_grid;
+        //! pointer to cellcache
+        CellCache* m_cellCache;
+        //! pathing strategy for the layer
+        PathingStrategy m_pathingStrategy;
+        //! sorting strategy for rendering
+        SortingStrategy m_sortingStrategy;
+        //! transparency, value 0 means total visible, 128 semi-transparent and 255 invisibility
+        uint8_t m_transparency;
+        //! if true the instances are visibility otherwise they are skipped during rendering
+        bool m_instancesVisibility;
+        //! is walkable true/false
+        bool m_walkable;
+        //! is interact true/false
+        bool m_interact;
         //! true if layer (or it's instance) information was changed during previous update round
         bool m_changed;
         //! true if layer is static

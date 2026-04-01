@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <deque>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <ranges>
 #include <string>
@@ -75,7 +76,10 @@ namespace FIFE
             joystick = *it;
         }
         if (joystick == nullptr) {
-            joystick = new Joystick(m_joysticks.size(), deviceIndex);
+            if (m_joysticks.size() > static_cast<size_t>(std::numeric_limits<int32_t>::max())) {
+                throw InvalidFormat("Too many joystick instances registered");
+            }
+            joystick = new Joystick(static_cast<int32_t>(m_joysticks.size()), deviceIndex);
             m_joysticks.push_back(joystick);
         } else {
             joystick->setDeviceIndex(deviceIndex);
@@ -304,6 +308,7 @@ namespace FIFE
             case JoystickEvent::DEVICE_REMOVED:
                 (*i)->deviceRemoved(evt);
                 break;
+            case JoystickEvent::UNKNOWN_EVENT:
             default:
                 break;
             }

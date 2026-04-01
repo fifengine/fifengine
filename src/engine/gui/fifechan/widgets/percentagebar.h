@@ -40,7 +40,7 @@ namespace fcn
         PercentageBar();
         virtual ~PercentageBar() { }
 
-        PercentageBar(const PercentageBar&) = delete;
+        PercentageBar(const PercentageBar&)            = delete;
         PercentageBar& operator=(const PercentageBar&) = delete;
 
         // Inherited from Widget

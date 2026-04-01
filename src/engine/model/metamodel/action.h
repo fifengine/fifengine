@@ -70,7 +70,9 @@ namespace FIFE
         template <typename T>
         T* getVisual() const
         {
-            return reinterpret_cast<T*>(m_visual);
+            // Use dynamic_cast to safely downcast across polymorphic types.
+            // This avoids unsafe reinterpret_cast and preserves runtime checks.
+            return dynamic_cast<T*>(m_visual);
         }
 
         /** Sets audio to be used. Transfers ownership.

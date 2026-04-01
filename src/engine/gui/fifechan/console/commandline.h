@@ -36,6 +36,9 @@ namespace FIFE
          */
         ~CommandLine();
 
+        CommandLine(const CommandLine&)            = delete;
+        CommandLine& operator=(const CommandLine&) = delete;
+
         void keyPressed(fcn::KeyEvent& keyEvent);
         virtual void drawCaret(fcn::Graphics* graphics, int32_t x);
 

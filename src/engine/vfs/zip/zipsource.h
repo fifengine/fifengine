@@ -38,6 +38,9 @@ namespace FIFE
         ZipSource(VFS* vfs, const std::string& zip_file);
         ~ZipSource();
 
+        ZipSource(const ZipSource&)            = delete;
+        ZipSource& operator=(const ZipSource&) = delete;
+
         /// WARNING: fileExists, listFiles and listDirectories are not
         // thread-safe, and will probably break if called from multiple
         // threads at the same time.

@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <algorithm>
+#include <limits>
 
 // Platform specific includes
 
@@ -40,23 +42,38 @@ namespace FIFE
 
         static int seek(void* datasource, ogg_int64_t offset, int whence)
         {
-            auto* rdp = reinterpret_cast<RawData*>(datasource);
+            auto* rdp                 = reinterpret_cast<RawData*>(datasource);
+            const int64_t data_length = static_cast<int64_t>(rdp->getDataLength());
+
             switch (whence) {
-            case SEEK_SET:
-                (*rdp).setIndex(static_cast<uint32_t>(offset));
+            case SEEK_SET: {
+                if (offset < 0 || offset >= data_length) {
+                    return -1;
+                }
+                rdp->setIndex(static_cast<uint32_t>(offset));
                 return 0;
+            }
             case SEEK_CUR:
-                (*rdp).moveIndex(static_cast<uint32_t>(offset));
+                if (offset < static_cast<ogg_int64_t>(std::numeric_limits<int32_t>::min()) ||
+                    offset > static_cast<ogg_int64_t>(std::numeric_limits<int32_t>::max())) {
+                    return -1;
+                }
+                rdp->moveIndex(static_cast<int32_t>(offset));
                 return 0;
-            case SEEK_END:
-                (*rdp).setIndex((*rdp).getDataLength() - 1 + static_cast<uint32_t>(offset));
+            case SEEK_END: {
+                const int64_t target_index = data_length - 1 + static_cast<int64_t>(offset);
+                if (target_index < 0 || target_index >= data_length) {
+                    return -1;
+                }
+                rdp->setIndex(static_cast<uint32_t>(target_index));
                 return 0;
+            }
             default:
                 return -1;
             }
         }
 
-        static int close(void* datasource)
+        static int close(void*)
         {
             return 0;
         }
@@ -86,12 +103,21 @@ namespace FIFE
             throw InvalidFormat("OggVorbis file has to be seekable");
         }
 
-        m_isstereo   = vi->channels == 2;
-        m_samplerate = vi->rate;
-        m_is8bit     = false;
-        m_declength  = (m_isstereo ? 2 : 1) * 2 * ov_pcm_total(&m_ovf, -1);
-        m_datasize   = 0;
-        m_data       = nullptr;
+        if (vi->rate < 0) {
+            throw InvalidFormat("Invalid negative OggVorbis sample rate");
+        }
+
+        m_isstereo                  = vi->channels == 2;
+        m_samplerate                = static_cast<uint64_t>(vi->rate);
+        m_is8bit                    = false;
+        const ogg_int64_t pcm_total = ov_pcm_total(&m_ovf, -1);
+        if (pcm_total < 0) {
+            throw InvalidFormat("Error fetching decoded OggVorbis length");
+        }
+
+        m_declength = (m_isstereo ? 2ULL : 1ULL) * 2ULL * static_cast<uint64_t>(pcm_total);
+        m_datasize  = 0;
+        m_data      = nullptr;
     }
 
     SoundDecoderOgg::~SoundDecoderOgg()
@@ -113,9 +139,13 @@ namespace FIFE
         m_datasize = 0;
 
         while (length - m_datasize > 0) {
-            ret = ov_read(&m_ovf, m_data + m_datasize, length - m_datasize, 0, 2, 1, &stream);
+            const uint64_t remaining_bytes = length - m_datasize;
+            const int chunk_size           = static_cast<int>(
+                std::min<uint64_t>(remaining_bytes, static_cast<uint64_t>(std::numeric_limits<int>::max())));
+
+            ret = ov_read(&m_ovf, m_data + m_datasize, chunk_size, 0, 2, 1, &stream);
             if (ret > 0) {
-                m_datasize += ret;
+                m_datasize += static_cast<uint64_t>(ret);
             } else if (ret == OV_HOLE) {
                 continue;
             } else if (ret == 0 || ret <= OV_EREAD) {
@@ -129,7 +159,12 @@ namespace FIFE
 
     bool SoundDecoderOgg::setCursor(uint64_t pos)
     {
-        return ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0;
+        const uint64_t sample_position = pos / ((m_isstereo ? 2ULL : 1ULL) * 2ULL);
+        if (sample_position > static_cast<uint64_t>(std::numeric_limits<ogg_int64_t>::max())) {
+            return false;
+        }
+
+        return ov_pcm_seek(&m_ovf, static_cast<ogg_int64_t>(sample_position)) == 0;
     }
 
     void SoundDecoderOgg::releaseBuffer()

@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -73,7 +75,8 @@ namespace FIFE
 
     uint32_t Map::getLayerCount() const
     {
-        return m_layers.size();
+        assert(m_layers.size() <= std::numeric_limits<uint32_t>::max());
+        return static_cast<uint32_t>(m_layers.size());
     }
 
     Layer* Map::createLayer(const std::string& identifier, CellGrid* grid)

@@ -26,6 +26,9 @@ namespace FIFE
     public:
         explicit SoundDecoderOgg(RawData* ptr);
 
+        SoundDecoderOgg(const SoundDecoderOgg&)            = delete;
+        SoundDecoderOgg& operator=(const SoundDecoderOgg&) = delete;
+
         ~SoundDecoderOgg();
 
         /** Returns the decoded length of the file in bytes

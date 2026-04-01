@@ -3,8 +3,10 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -28,6 +30,27 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] std::size_t toIndex(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<std::size_t>(value);
+        }
+
+        [[nodiscard]] std::size_t toSize(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<std::size_t>(value);
+        }
+
+        [[nodiscard]] int32_t toInt32(const std::size_t value)
+        {
+            assert(value <= static_cast<std::size_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+    } // namespace
+
     MultiLayerSearch::MultiLayerSearch(Route* route, const int32_t sessionId) :
         RoutePatherSearch(route, sessionId),
         m_to(route->getEndNode()),
@@ -104,9 +127,9 @@ namespace FIFE
         // fill with defaults
         m_sortedFrontier.pushElement(PriorityQueue<int32_t, double>::value_type(startInt, 0.0));
         int32_t max_index = cache->getMaxIndex();
-        m_spt.resize(max_index, -1);
-        m_sf.resize(max_index, -1);
-        m_gCosts.resize(max_index, 0.0);
+        m_spt.resize(toSize(max_index), -1);
+        m_sf.resize(toSize(max_index), -1);
+        m_gCosts.resize(toSize(max_index), 0.0);
         m_next = 0;
     }
 
@@ -144,8 +167,9 @@ namespace FIFE
 
         PriorityQueue<int32_t, double>::value_type topvalue = m_sortedFrontier.getPriorityElement();
         m_sortedFrontier.popElement();
-        m_next        = topvalue.first;
-        m_spt[m_next] = m_sf[m_next];
+        m_next                      = topvalue.first;
+        const std::size_t nextIndex = toIndex(m_next);
+        m_spt[nextIndex]            = m_sf[nextIndex];
         // found destination
         if (m_destCoordInt == m_next && m_betweenTargets.empty()) {
             if (m_endCache == m_currentCache) {
@@ -186,8 +210,9 @@ namespace FIFE
             if (adjacent->getLayer()->getCellCache() != m_currentCache) {
                 continue;
             }
-            int32_t adjacentInt = adjacent->getCellId();
-            if (m_sf[adjacentInt] != -1 && m_spt[adjacentInt] != -1) {
+            int32_t adjacentInt             = adjacent->getCellId();
+            const std::size_t adjacentIndex = toIndex(adjacentInt);
+            if (m_sf[adjacentIndex] != -1 && m_spt[adjacentIndex] != -1) {
                 continue;
             }
             if (zLimited && std::abs(cellZ - adjacent->getLayerCoordinates().z) > maxZ) {
@@ -267,21 +292,21 @@ namespace FIFE
                 }
             }
 
-            double gCost = m_gCosts[m_next];
+            double gCost = m_gCosts[nextIndex];
             if (m_specialCost) {
                 gCost += m_currentCache->getAdjacentCost(adjacentCoord, nextCoord, m_route->getCostId());
             } else {
                 gCost += m_currentCache->getAdjacentCost(adjacentCoord, nextCoord);
             }
             double hCost = grid->getHeuristicCost(adjacentCoord, destCoord);
-            if (m_sf[adjacentInt] == -1) {
+            if (m_sf[adjacentIndex] == -1) {
                 m_sortedFrontier.pushElement(PriorityQueue<int32_t, double>::value_type(adjacentInt, gCost + hCost));
-                m_gCosts[adjacentInt] = gCost;
-                m_sf[adjacentInt]     = m_next;
-            } else if (gCost < m_gCosts[adjacentInt] && m_spt[adjacentInt] == -1) {
+                m_gCosts[adjacentIndex] = gCost;
+                m_sf[adjacentIndex]     = m_next;
+            } else if (gCost < m_gCosts[adjacentIndex] && m_spt[adjacentIndex] == -1) {
                 m_sortedFrontier.changeElementPriority(adjacentInt, gCost + hCost);
-                m_gCosts[adjacentInt] = gCost;
-                m_sf[adjacentInt]     = m_next;
+                m_gCosts[adjacentIndex] = gCost;
+                m_sf[adjacentIndex]     = m_next;
             }
         }
     }
@@ -296,13 +321,14 @@ namespace FIFE
         newnode.setLayerCoordinates(m_currentCache->convertIntToCoord(current));
         path.push_back(newnode);
         while (current != end) {
-            if (m_spt[current] < 0) {
+            const std::size_t currentIndex = toIndex(current);
+            if (m_spt[currentIndex] < 0) {
                 // This is when the size of m_spt can not handle the distance of the location
                 setSearchStatus(search_status_failed);
                 m_route->setRouteStatus(ROUTE_FAILED);
                 break;
             }
-            current = m_spt[current];
+            current = m_spt[currentIndex];
             newnode.setLayerCoordinates(m_currentCache->convertIntToCoord(current));
             path.push_front(newnode);
         }
@@ -324,13 +350,14 @@ namespace FIFE
             m_currentCache->getCell(m_currentCache->convertIntToCoord(current))->getLayerCoordinates());
         path.push_back(newnode);
         while (current != end) {
-            if (m_spt[current] < 0) {
+            const std::size_t currentIndex = toIndex(current);
+            if (m_spt[currentIndex] < 0) {
                 // This is when the size of m_spt can not handle the distance of the location
                 setSearchStatus(search_status_failed);
                 m_route->setRouteStatus(ROUTE_FAILED);
                 break;
             }
-            current = m_spt[current];
+            current = m_spt[currentIndex];
             newnode.setLayerCoordinates(m_currentCache->convertIntToCoord(current));
             path.push_front(newnode);
         }
@@ -426,7 +453,7 @@ namespace FIFE
         std::map<int32_t, Zone*> distanceZoneMap;
         for (auto zit = zones.begin(); zit != zones.end(); ++zit) {
             // pseudo distance
-            int32_t distance = std::distance(zones.begin(), zit);
+            const auto distance = toInt32(static_cast<std::size_t>(std::distance(zones.begin(), zit)));
             zoneDistanceMap.insert(std::pair<Zone*, int32_t>(*zit, distance));
             distanceZoneMap.insert(std::pair<int32_t, Zone*>(distance, *zit));
         }
@@ -439,7 +466,7 @@ namespace FIFE
         // add start zone
         sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(startZone, 0.0));
         // max size zones
-        int32_t max_index = zones.size();
+        const std::size_t max_index = zones.size();
         // shortest tree
         std::vector<int32_t> spt(max_index, -1);
         // search frontier
@@ -453,8 +480,9 @@ namespace FIFE
             }
             PriorityQueue<int32_t, double>::value_type topvalue = sortedfrontier.getPriorityElement();
             sortedfrontier.popElement();
-            int32_t next = topvalue.first;
-            spt[next]    = sf[next];
+            int32_t next                = topvalue.first;
+            const std::size_t nextIndex = toIndex(next);
+            spt[nextIndex]              = sf[nextIndex];
             // found destination zone
             if (targetZone == next) {
                 found = true;
@@ -480,15 +508,16 @@ namespace FIFE
                     continue;
                 }
                 // iterator distance as cost
-                double cost = costs[next] + static_cast<double>(std::abs(nextInt - startZone));
-                if (sf[nextInt] == -1) {
+                double cost                    = costs[nextIndex] + static_cast<double>(std::abs(nextInt - startZone));
+                const std::size_t nextIntIndex = toIndex(nextInt);
+                if (sf[nextIntIndex] == -1) {
                     sortedfrontier.pushElement(PriorityQueue<int32_t, double>::value_type(nextInt, cost));
-                    costs[nextInt] = cost;
-                    sf[nextInt]    = next;
-                } else if (cost < costs[nextInt] && spt[nextInt] == -1) {
+                    costs[nextIntIndex] = cost;
+                    sf[nextIntIndex]    = next;
+                } else if (cost < costs[nextIntIndex] && spt[nextIntIndex] == -1) {
                     sortedfrontier.changeElementPriority(nextInt, cost);
-                    costs[nextInt] = cost;
-                    sf[nextInt]    = next;
+                    costs[nextIntIndex] = cost;
+                    sf[nextIntIndex]    = next;
                 }
             }
         }
@@ -502,10 +531,11 @@ namespace FIFE
             Zone* tempZone = distanceZoneMap.find(current)->second;
             betweenZones.push_back(tempZone);
             while (current != end) {
-                if (spt[current] < 0) {
+                const std::size_t currentIndex = toIndex(current);
+                if (spt[currentIndex] < 0) {
                     return;
                 }
-                current  = spt[current];
+                current  = spt[currentIndex];
                 tempZone = distanceZoneMap.find(current)->second;
                 betweenZones.push_front(tempZone);
             }

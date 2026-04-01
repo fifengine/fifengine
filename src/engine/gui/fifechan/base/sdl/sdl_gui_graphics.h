@@ -26,6 +26,10 @@ namespace FIFE
         /** Constructor
          */
         SdlGuiGraphics();
+
+        SdlGuiGraphics(const SdlGuiGraphics&)            = delete;
+        SdlGuiGraphics& operator=(const SdlGuiGraphics&) = delete;
+
         void updateTarget();
         virtual void drawImage(
             const fcn::Image* image,

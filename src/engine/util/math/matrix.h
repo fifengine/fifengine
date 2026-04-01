@@ -41,10 +41,12 @@ namespace FIFE
         template <typename U>
         Matrix(const Matrix<U>& mat)
         {
-            memmove(m, mat.m, 16 * sizeof(T));
+            for (int32_t index = 0; index < 16; ++index) {
+                (*this)[index] = static_cast<T>(mat[index]);
+            }
         }
 
-        Matrix(const Matrix& other) = default;
+        Matrix(const Matrix& other)            = default;
         Matrix& operator=(const Matrix& other) = default;
 
         ~Matrix() = default;
@@ -66,8 +68,8 @@ namespace FIFE
          */
         inline Matrix& operator/=(T val)
         {
-            for (unsigned i = 0; i < 16; ++i)
-                m[i] /= val;
+            for (int32_t i = 0; i < 16; ++i)
+                (*this)[i] /= val;
             return *this;
         }
 
@@ -220,12 +222,82 @@ namespace FIFE
         inline T& operator[](int32_t ind)
         {
             assert(ind > -1 && ind < 16);
-            return m[ind];
+            switch (ind) {
+            case 0:
+                return m0;
+            case 1:
+                return m1;
+            case 2:
+                return m2;
+            case 3:
+                return m3;
+            case 4:
+                return m4;
+            case 5:
+                return m5;
+            case 6:
+                return m6;
+            case 7:
+                return m7;
+            case 8:
+                return m8;
+            case 9:
+                return m9;
+            case 10:
+                return m10;
+            case 11:
+                return m11;
+            case 12:
+                return m12;
+            case 13:
+                return m13;
+            case 14:
+                return m14;
+            case 15:
+                return m15;
+            default:
+                return m0;
+            }
         }
         inline const T& operator[](int32_t ind) const
         {
             assert(ind > -1 && ind < 16);
-            return m[ind];
+            switch (ind) {
+            case 0:
+                return m0;
+            case 1:
+                return m1;
+            case 2:
+                return m2;
+            case 3:
+                return m3;
+            case 4:
+                return m4;
+            case 5:
+                return m5;
+            case 6:
+                return m6;
+            case 7:
+                return m7;
+            case 8:
+                return m8;
+            case 9:
+                return m9;
+            case 10:
+                return m10;
+            case 11:
+                return m11;
+            case 12:
+                return m12;
+            case 13:
+                return m13;
+            case 14:
+                return m14;
+            case 15:
+                return m15;
+            default:
+                return m0;
+            }
         }
 
         /** Apply the matrix dot product to this matrix
@@ -383,14 +455,7 @@ namespace FIFE
         }
 
     public:
-        union
-        {
-            T m[16];
-            struct
-            {
-                T m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15;
-            };
-        };
+        T m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15;
     };
 
     typedef Matrix<double> DoubleMatrix;

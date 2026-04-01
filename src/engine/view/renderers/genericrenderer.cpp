@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <map>
 #include <string>
 #include <utility>
@@ -32,6 +34,28 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        [[nodiscard]] uint32_t toAnimationTimestamp(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] uint8_t toVertexSize(const int32_t value)
+        {
+            assert(value >= 0);
+            assert(value <= std::numeric_limits<uint8_t>::max());
+            return static_cast<uint8_t>(value);
+        }
+    } // namespace
+
     /** Logger to use for this source file.
      *  @relates Logger
      */
@@ -47,6 +71,7 @@ namespace FIFE
 
     void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p1 = m_edge1.getCalculatedPoint(cam, layer);
         Point p2 = m_edge2.getCalculatedPoint(cam, layer);
         if (m_edge1.getLayer() == layer) {
@@ -68,6 +93,7 @@ namespace FIFE
     void GenericRendererPointInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p = m_anchor.getCalculatedPoint(cam, layer);
         if (m_anchor.getLayer() == layer) {
             renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
@@ -88,6 +114,7 @@ namespace FIFE
     void GenericRendererTriangleInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p1 = m_edge1.getCalculatedPoint(cam, layer);
         Point p2 = m_edge2.getCalculatedPoint(cam, layer);
         Point p3 = m_edge3.getCalculatedPoint(cam, layer);
@@ -124,6 +151,7 @@ namespace FIFE
 
     void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p1 = m_edge1.getCalculatedPoint(cam, layer);
         Point p2 = m_edge2.getCalculatedPoint(cam, layer);
         Point p3 = m_edge3.getCalculatedPoint(cam, layer);
@@ -147,9 +175,10 @@ namespace FIFE
     void GenericRendererVertexInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p = m_center.getCalculatedPoint(cam, layer);
         if (m_center.getLayer() == layer) {
-            renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
+            renderbackend->drawVertex(p, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
             if (renderbackend->getLightingModel() > 0) {
                 renderbackend->changeRenderInfos(RENDER_DATA_WITHOUT_Z, 1, 4, 5, false, false, 0, KEEP, ALWAYS);
             }
@@ -166,18 +195,20 @@ namespace FIFE
     void GenericRendererImageInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
+        static_cast<void>(renderbackend);
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            uint32_t width  = 0;
-            uint32_t height = 0;
+            Rect viewport  = cam->getViewPort();
+            int32_t width  = 0;
+            int32_t height = 0;
             if (m_zoomed) {
-                width  = static_cast<uint32_t>(round(m_image->getWidth() * cam->getZoom()));
-                height = static_cast<uint32_t>(round(m_image->getHeight() * cam->getZoom()));
+                width  = static_cast<int32_t>(round(m_image->getWidth() * cam->getZoom()));
+                height = static_cast<int32_t>(round(m_image->getHeight() * cam->getZoom()));
             } else {
-                width  = m_image->getWidth();
-                height = m_image->getHeight();
+                width  = toScreenSize(m_image->getWidth());
+                height = toScreenSize(m_image->getHeight());
             }
             r.x = p.x - width / 2;
             r.y = p.y - height / 2;
@@ -205,21 +236,24 @@ namespace FIFE
     void GenericRendererAnimationInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
+        static_cast<void>(renderbackend);
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
-            int32_t animtime =
-                scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
+            const uint32_t duration = toAnimationTimestamp(m_animation->getDuration());
+            const uint32_t animtime =
+                scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
             ImagePtr img = m_animation->getFrameByTimestamp(animtime);
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            uint32_t width  = 0;
-            uint32_t height = 0;
+            Rect viewport  = cam->getViewPort();
+            int32_t width  = 0;
+            int32_t height = 0;
             if (m_zoomed) {
-                width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-                height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+                width  = static_cast<int32_t>(round(img->getWidth() * cam->getZoom()));
+                height = static_cast<int32_t>(round(img->getHeight() * cam->getZoom()));
             } else {
-                width  = img->getWidth();
-                height = img->getHeight();
+                width  = toScreenSize(img->getWidth());
+                height = toScreenSize(img->getHeight());
             }
             r.x = p.x - width / 2;
             r.y = p.y - height / 2;
@@ -240,19 +274,20 @@ namespace FIFE
 
     void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Image* img = m_font->getAsImageMultiline(m_text);
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            uint32_t width  = 0;
-            uint32_t height = 0;
+            Rect viewport  = cam->getViewPort();
+            int32_t width  = 0;
+            int32_t height = 0;
             if (m_zoomed) {
-                width  = static_cast<uint32_t>(round(img->getWidth() * cam->getZoom()));
-                height = static_cast<uint32_t>(round(img->getHeight() * cam->getZoom()));
+                width  = static_cast<int32_t>(round(img->getWidth() * cam->getZoom()));
+                height = static_cast<int32_t>(round(img->getHeight() * cam->getZoom()));
             } else {
-                width  = img->getWidth();
-                height = img->getHeight();
+                width  = toScreenSize(img->getWidth());
+                height = toScreenSize(img->getHeight());
             }
             r.x = p.x - width / 2;
             r.y = p.y - height / 2;
@@ -283,15 +318,17 @@ namespace FIFE
     void GenericRendererResizeInfo::render(
         Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend)
     {
+        static_cast<void>(instances);
+        static_cast<void>(renderbackend);
         Point p = m_anchor.getCalculatedPoint(cam, layer, m_zoomed);
         if (m_anchor.getLayer() == layer) {
             Rect r;
-            Rect viewport   = cam->getViewPort();
-            uint32_t width  = 0;
-            uint32_t height = 0;
+            Rect viewport  = cam->getViewPort();
+            int32_t width  = 0;
+            int32_t height = 0;
             if (m_zoomed) {
-                width  = static_cast<uint32_t>(round(m_width * cam->getZoom()));
-                height = static_cast<uint32_t>(round(m_height * cam->getZoom()));
+                width  = static_cast<int32_t>(round(m_width * cam->getZoom()));
+                height = static_cast<int32_t>(round(m_height * cam->getZoom()));
             } else {
                 width  = m_width;
                 height = m_height;

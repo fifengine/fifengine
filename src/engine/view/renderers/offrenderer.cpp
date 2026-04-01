@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <map>
 #include <string>
 #include <utility>
@@ -26,6 +28,28 @@
 
 namespace FIFE
 {
+    namespace
+    {
+        [[nodiscard]] int32_t toScreenSize(const uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        [[nodiscard]] uint32_t toAnimationTimestamp(const int32_t value)
+        {
+            assert(value >= 0);
+            return static_cast<uint32_t>(value);
+        }
+
+        [[nodiscard]] uint8_t toVertexSize(const int32_t value)
+        {
+            assert(value >= 0);
+            assert(value <= std::numeric_limits<uint8_t>::max());
+            return static_cast<uint8_t>(value);
+        }
+    } // namespace
+
     /** Logger to use for this source file.
      *  @relates Logger
      */
@@ -99,7 +123,7 @@ namespace FIFE
 
     void OffRendererVertexInfo::render(RenderBackend* renderbackend)
     {
-        renderbackend->drawVertex(m_center, m_size, m_red, m_green, m_blue, m_alpha);
+        renderbackend->drawVertex(m_center, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
     }
 
     OffRendererImageInfo::OffRendererImageInfo(Point anchor, ImagePtr image) :
@@ -111,13 +135,14 @@ namespace FIFE
 
     void OffRendererImageInfo::render(RenderBackend* renderbackend)
     {
+        static_cast<void>(renderbackend);
         Rect r;
-        uint16_t width  = m_image->getWidth();
-        uint16_t height = m_image->getHeight();
-        r.x             = m_anchor.x - width / 2;
-        r.y             = m_anchor.y - height / 2;
-        r.w             = width;
-        r.h             = height;
+        const int32_t width  = toScreenSize(m_image->getWidth());
+        const int32_t height = toScreenSize(m_image->getHeight());
+        r.x                  = m_anchor.x - width / 2;
+        r.y                  = m_anchor.y - height / 2;
+        r.w                  = width;
+        r.h                  = height;
 
         m_image->render(r);
     }
@@ -135,17 +160,18 @@ namespace FIFE
 
     void OffRendererAnimationInfo::render(RenderBackend* renderbackend)
     {
-        int32_t animtime =
-            scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % m_animation->getDuration();
-        ImagePtr img = m_animation->getFrameByTimestamp(animtime);
+        static_cast<void>(renderbackend);
+        const uint32_t duration = toAnimationTimestamp(m_animation->getDuration());
+        const uint32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % duration;
+        ImagePtr img            = m_animation->getFrameByTimestamp(animtime);
 
         Rect r;
-        uint16_t width  = img->getWidth();
-        uint16_t height = img->getHeight();
-        r.x             = m_anchor.x - width / 2;
-        r.y             = m_anchor.y - height / 2;
-        r.w             = width;
-        r.h             = height;
+        const int32_t width  = toScreenSize(img->getWidth());
+        const int32_t height = toScreenSize(img->getHeight());
+        r.x                  = m_anchor.x - width / 2;
+        r.y                  = m_anchor.y - height / 2;
+        r.w                  = width;
+        r.h                  = height;
 
         img->render(r);
     }
@@ -159,15 +185,16 @@ namespace FIFE
 
     void OffRendererTextInfo::render(RenderBackend* renderbackend)
     {
+        static_cast<void>(renderbackend);
         Image* img = m_font->getAsImageMultiline(m_text);
 
         Rect r;
-        uint16_t width  = img->getWidth();
-        uint16_t height = img->getHeight();
-        r.x             = m_anchor.x - width / 2;
-        r.y             = m_anchor.y - height / 2;
-        r.w             = width;
-        r.h             = height;
+        const int32_t width  = toScreenSize(img->getWidth());
+        const int32_t height = toScreenSize(img->getHeight());
+        r.x                  = m_anchor.x - width / 2;
+        r.y                  = m_anchor.y - height / 2;
+        r.w                  = width;
+        r.h                  = height;
 
         img->render(r);
     }
@@ -181,13 +208,14 @@ namespace FIFE
 
     void OffRendererResizeInfo::render(RenderBackend* renderbackend)
     {
+        static_cast<void>(renderbackend);
         Rect r;
-        uint16_t width  = m_width;
-        uint16_t height = m_height;
-        r.x             = m_anchor.x - width / 2;
-        r.y             = m_anchor.y - height / 2;
-        r.w             = width;
-        r.h             = height;
+        const int32_t width  = m_width;
+        const int32_t height = m_height;
+        r.x                  = m_anchor.x - width / 2;
+        r.y                  = m_anchor.y - height / 2;
+        r.w                  = width;
+        r.h                  = height;
 
         m_image->render(r);
     }

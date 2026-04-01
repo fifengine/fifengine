@@ -27,7 +27,7 @@ namespace FIFE
 
         while (m_outindex < outputsize) {
             const uint16_t blockdesc   = input->read16Big();
-            const uint16_t bytesToRead = blockdesc & 0x7fff;
+            const uint16_t bytesToRead = static_cast<uint16_t>(blockdesc & 0x7fffU);
 
             if ((blockdesc & 0x8000) != 0) { // uncompressed
                 input->readInto(output + m_outindex, bytesToRead);
@@ -35,7 +35,7 @@ namespace FIFE
             } else {
                 // Allocate +2 bytes so that on corrupt data the LZSS
                 // decoder won't crash the input buffer.
-                std::vector<uint8_t> indata(bytesToRead + 2);
+                std::vector<uint8_t> indata(static_cast<size_t>(bytesToRead) + 2U);
                 input->readInto(&indata[0], bytesToRead);
                 LZSSDecode(&indata[0], bytesToRead, output);
                 // Note outindex is advanced inside LZSSDecode.
@@ -70,12 +70,12 @@ namespace FIFE
             flags >>= 1;
             if ((flags & 256) == 0) {
                 c     = in[ibuf++];
-                flags = c | 0xff00; /* uses higher byte cleverly to count eight */
+                flags = static_cast<uint32_t>(c | 0xff00); /* uses higher byte cleverly to count eight */
             }
 
             if ((flags & 1) != 0U) {
                 c                 = in[ibuf++];
-                out[m_outindex++] = c;
+                out[m_outindex++] = static_cast<uint8_t>(c);
 
                 buffer[r++] = c;
                 r &= (kRingBufferSize - 1);
@@ -89,7 +89,7 @@ namespace FIFE
                 for (k = 0; k <= j; k++) {
                     c = static_cast<unsigned char>(buffer[(i + k) & (kRingBufferSize - 1)]);
 
-                    out[m_outindex++] = c;
+                    out[m_outindex++] = static_cast<uint8_t>(c);
 
                     buffer[r++] = c;
                     r &= (kRingBufferSize - 1);

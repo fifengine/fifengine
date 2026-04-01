@@ -74,11 +74,13 @@ namespace FIFE
         }
 
     private:
+        // Holds Atlas Name if this is a shared image
+        std::string m_atlas_name;
+        // Holds Atlas ImagePtr if this is a shared image
+        ImagePtr m_atlas_img;
+
         // texture coords to use
         GLfloat m_tex_coords[4];
-
-        // Was this image compressed by OpenGL driver during loading ?
-        bool m_compressed;
 
         //     [0]    [2]    ->(x)
         // [1]  +------+
@@ -91,10 +93,6 @@ namespace FIFE
         //     (y)
         // To map these indices with previous one:
         // [0]:=[1]:=0.0f, [2]:=m_col_tex_coords, [3]:=m_row_tex_coords
-
-        /** Holds texture ids that are used to access textures in GL rendering context
-         */
-        GLuint m_texId;
 
         /** Frees allocated memory and calls resetGlImage
          */
@@ -110,16 +108,19 @@ namespace FIFE
         void generateGLSharedTexture(const GLImage* shared, const Rect& region);
         void validateShared();
 
+        GLImage* m_shared_img;
+
+        /** Holds texture ids that are used to access textures in GL rendering context
+         */
+        GLuint m_texId;
+
         uint32_t m_chunk_size_w;
         uint32_t m_chunk_size_h;
 
         SDL_Color m_colorkey;
 
-        GLImage* m_shared_img;
-        // Holds Atlas ImagePtr if this is a shared image
-        ImagePtr m_atlas_img;
-        // Holds Atlas Name if this is a shared image
-        std::string m_atlas_name;
+        // Was this image compressed by OpenGL driver during loading ?
+        bool m_compressed;
     };
 
 } // namespace FIFE

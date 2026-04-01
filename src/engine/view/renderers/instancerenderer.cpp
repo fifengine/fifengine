@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -43,6 +45,34 @@ namespace FIFE
      *  @relates Logger
      */
     static Logger _log(LM_VIEWVIEW);
+
+    namespace
+    {
+        int32_t toInt32Dimension(uint32_t value)
+        {
+            assert(value <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+            return static_cast<int32_t>(value);
+        }
+
+        uint8_t toUint8Channel(int32_t value)
+        {
+            assert(value >= 0);
+            assert(value <= std::numeric_limits<uint8_t>::max());
+            return static_cast<uint8_t>(value);
+        }
+
+        uint8_t toUint8Channel(double value)
+        {
+            assert(value >= 0.0);
+            assert(value <= static_cast<double>(std::numeric_limits<uint8_t>::max()));
+            return static_cast<uint8_t>(value);
+        }
+
+        float alphaFraction(uint8_t alpha)
+        {
+            return static_cast<float>(alpha) / 255.0F;
+        }
+    } // namespace
 
     class InstanceRendererDeleteListener : public InstanceDeleteListener
     {
@@ -101,7 +131,7 @@ namespace FIFE
             m_need_bind_coloring = m_renderbackend->getName() == "SDL";
         }
         // init timer
-        m_timer.setInterval(m_interval);
+        m_timer.setInterval(toInt32Dimension(m_interval));
         m_timer.setCallback([this] {
             check();
         });
@@ -121,7 +151,7 @@ namespace FIFE
             m_need_bind_coloring = m_renderbackend->getName() == "SDL";
         }
         // init timer
-        m_timer.setInterval(m_interval);
+        m_timer.setInterval(toInt32Dimension(m_interval));
         m_timer.setCallback([this] {
             check();
         });
@@ -207,13 +237,15 @@ namespace FIFE
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
                             Rect rec;
+                            const int32_t areaWidth  = toInt32Dimension(infoa.w);
+                            const int32_t areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
-                            rec.x = p.x - infoa.w / 2;
-                            rec.y = p.y - infoa.h / 2;
-                            rec.w = infoa.w;
-                            rec.h = infoa.h;
+                            rec.x = p.x - areaWidth / 2;
+                            rec.y = p.y - areaHeight / 2;
+                            rec.w = areaWidth;
+                            rec.h = areaHeight;
                             if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
-                                vc.transparency = 255 - infoa.trans;
+                                vc.transparency = toUint8Channel(255 - static_cast<int32_t>(infoa.trans));
                                 // dirty hack to reset the transparency on next pump
                                 auto* visual = instance->getVisual<InstanceVisual>();
                                 visual->setVisible(!visual->isVisible());
@@ -391,13 +423,15 @@ namespace FIFE
                         if (str_name.find((*group_it)) != std::string::npos) {
                             ScreenPoint p;
                             Rect rec;
+                            const int32_t areaWidth  = toInt32Dimension(infoa.w);
+                            const int32_t areaHeight = toInt32Dimension(infoa.h);
                             p     = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
-                            rec.x = p.x - infoa.w / 2;
-                            rec.y = p.y - infoa.h / 2;
-                            rec.w = infoa.w;
-                            rec.h = infoa.h;
+                            rec.x = p.x - areaWidth / 2;
+                            rec.y = p.y - areaHeight / 2;
+                            rec.w = areaWidth;
+                            rec.h = areaHeight;
                             if (infoa.instance != instance && vc.dimensions.intersects(rec)) {
-                                vc.transparency = 255 - infoa.trans;
+                                vc.transparency = toUint8Channel(255 - static_cast<int32_t>(infoa.trans));
                                 // dirty hack to reset the transparency on next pump
                                 auto* visual = instance->getVisual<InstanceVisual>();
                                 visual->setVisible(!visual->isVisible());
@@ -554,19 +588,22 @@ namespace FIFE
                                 if (defaultColor.second.getAlpha() == 0) {
                                     continue;
                                 }
-                                auto alphaFactor2 = static_cast<float>(defaultColor.second.getAlpha() / 255.0);
+                                const float alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                                 Color c(
-                                    (coloringColor[0] * (1.0 - alphaFactor1)) +
-                                        ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1),
-                                    (coloringColor[1] * (1.0 - alphaFactor1)) +
-                                        ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1),
-                                    (coloringColor[2] * (1.0 - alphaFactor1)) +
-                                        ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1),
+                                    toUint8Channel(
+                                        (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
+                                    toUint8Channel(
+                                        (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
+                                    toUint8Channel(
+                                        (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                        ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
                                     255);
                                 temp->changeColor(defaultColor.first, c);
                             }
                             // create new factor
-                            factor[3] = static_cast<uint8_t>(255 - factor[3]);
+                            factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
                             factor[3] = std::min(coloringColor[3], factor[3]);
                             // get overlay image with temp colors
                             multiColorOverlay = getMultiColorOverlay(vc, temp);
@@ -591,15 +628,18 @@ namespace FIFE
                         color_it->second.getR(),
                         color_it->second.getG(),
                         color_it->second.getB(),
-                        static_cast<uint8_t>(255 - color_it->second.getAlpha())};
+                        toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
                     bool noOverlay = rgba[3] == 255;
                     if (recoloring) {
                         if (!noOverlay) {
-                            auto alphaFactor1  = static_cast<float>(coloringColor[3] / 255.0);
-                            float alphaFactor2 = 1.0 - static_cast<float>(rgba[3] / 255.0);
-                            rgba[0] = coloringColor[0] * (1.0 - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1;
-                            rgba[1] = coloringColor[1] * (1.0 - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1;
-                            rgba[2] = coloringColor[2] * (1.0 - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1;
+                            const float alphaFactor1 = alphaFraction(coloringColor[3]);
+                            const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                            rgba[0]                  = toUint8Channel(
+                                coloringColor[0] * (1.0F - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1);
+                            rgba[1] = toUint8Channel(
+                                coloringColor[1] * (1.0F - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1);
+                            rgba[2] = toUint8Channel(
+                                coloringColor[2] * (1.0F - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1);
                             rgba[3] = std::min(coloringColor[3], rgba[3]);
                         }
                     }
@@ -630,26 +670,29 @@ namespace FIFE
                 uint8_t factor[4] = {0, 0, 0, it->second.getAlpha()};
                 if (recoloring) {
                     // create temp OverlayColors
-                    auto* temp        = new OverlayColors(colorOverlay->getColorOverlayImage());
-                    auto alphaFactor1 = static_cast<float>(coloringColor[3] / 255.0);
+                    auto* temp               = new OverlayColors(colorOverlay->getColorOverlayImage());
+                    const float alphaFactor1 = alphaFraction(coloringColor[3]);
                     const std::map<Color, Color>& defaultColors = colorOverlay->getColors();
                     for (const auto& defaultColor : defaultColors) {
                         if (defaultColor.second.getAlpha() == 0) {
                             continue;
                         }
-                        auto alphaFactor2 = static_cast<float>(defaultColor.second.getAlpha() / 255.0);
+                        const float alphaFactor2 = alphaFraction(defaultColor.second.getAlpha());
                         Color c(
-                            (coloringColor[0] * (1.0 - alphaFactor1)) +
-                                ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1),
-                            (coloringColor[1] * (1.0 - alphaFactor1)) +
-                                ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1),
-                            (coloringColor[2] * (1.0 - alphaFactor1)) +
-                                ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1),
+                            toUint8Channel(
+                                (coloringColor[0] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getR() * alphaFactor2) * alphaFactor1)),
+                            toUint8Channel(
+                                (coloringColor[1] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getG() * alphaFactor2) * alphaFactor1)),
+                            toUint8Channel(
+                                (coloringColor[2] * (1.0F - alphaFactor1)) +
+                                ((defaultColor.second.getB() * alphaFactor2) * alphaFactor1)),
                             255);
                         temp->changeColor(defaultColor.first, c);
                     }
                     // create new factor
-                    factor[3] = static_cast<uint8_t>(255 - factor[3]);
+                    factor[3] = toUint8Channel(255 - static_cast<int32_t>(factor[3]));
                     factor[3] = std::min(coloringColor[3], factor[3]);
                     // get overlay image with temp colors
                     multiColorOverlay = getMultiColorOverlay(vc, temp);
@@ -673,15 +716,18 @@ namespace FIFE
                     color_it->second.getR(),
                     color_it->second.getG(),
                     color_it->second.getB(),
-                    static_cast<uint8_t>(255 - color_it->second.getAlpha())};
+                    toUint8Channel(255 - static_cast<int32_t>(color_it->second.getAlpha()))};
                 bool noOverlay = rgba[3] == 255;
                 if (recoloring) {
                     if (!noOverlay) {
-                        auto alphaFactor1  = static_cast<float>(coloringColor[3] / 255.0);
-                        float alphaFactor2 = 1.0 - static_cast<float>(rgba[3] / 255.0);
-                        rgba[0] = coloringColor[0] * (1.0 - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1;
-                        rgba[1] = coloringColor[1] * (1.0 - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1;
-                        rgba[2] = coloringColor[2] * (1.0 - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1;
+                        const float alphaFactor1 = alphaFraction(coloringColor[3]);
+                        const float alphaFactor2 = 1.0F - alphaFraction(rgba[3]);
+                        rgba[0]                  = toUint8Channel(
+                            coloringColor[0] * (1.0F - alphaFactor1) + (rgba[0] * alphaFactor2) * alphaFactor1);
+                        rgba[1] = toUint8Channel(
+                            coloringColor[1] * (1.0F - alphaFactor1) + (rgba[1] * alphaFactor2) * alphaFactor1);
+                        rgba[2] = toUint8Channel(
+                            coloringColor[2] * (1.0F - alphaFactor1) + (rgba[2] * alphaFactor2) * alphaFactor1);
                         rgba[3] = std::min(coloringColor[3], rgba[3]);
                     }
                 }
@@ -716,6 +762,7 @@ namespace FIFE
 
     Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
     {
+        static_cast<void>(cam);
         bool valid = isValidImage(info.outline);
         if (!info.dirty && info.curimg == vc.image.get() && valid) {
             removeFromCheck(info.outline);
@@ -760,8 +807,9 @@ namespace FIFE
             vc.image->forceLoadInternal();
         }
 
-        SDL_Surface* outline_surface =
-            SDL_CreateRGBSurface(0, vc.image->getWidth(), vc.image->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
+        const int32_t imageWidth     = toInt32Dimension(vc.image->getWidth());
+        const int32_t imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* outline_surface = SDL_CreateRGBSurface(0, imageWidth, imageHeight, 32, RMASK, GMASK, BMASK, AMASK);
 
         // TODO: optimize...
         uint8_t r = 0;
@@ -830,6 +878,7 @@ namespace FIFE
 
     Image* InstanceRenderer::bindMultiOutline(OutlineInfo& info, RenderItem& vc, Camera* cam)
     {
+        static_cast<void>(cam);
         // NOTE: Since r3721 outline is just the 'border' so to render everything correctly
         // we need to first render normal image, and then its outline.
         // This helps much with lighting stuff and doesn't require from us to copy image.
@@ -865,7 +914,10 @@ namespace FIFE
             found = true;
         }
 
-        SDL_Surface* outline_surface = SDL_CreateRGBSurface(0, mw, mh, 32, RMASK, GMASK, BMASK, AMASK);
+        const int32_t outlineWidth  = toInt32Dimension(mw);
+        const int32_t outlineHeight = toInt32Dimension(mh);
+        SDL_Surface* outline_surface =
+            SDL_CreateRGBSurface(0, outlineWidth, outlineHeight, 32, RMASK, GMASK, BMASK, AMASK);
 
         // TODO: optimize...
         uint8_t r = 0;
@@ -875,22 +927,24 @@ namespace FIFE
 
         it = animationOverlays->begin();
         for (; it != animationOverlays->end(); ++it) {
+            const int32_t overlayWidth  = toInt32Dimension((*it)->getWidth());
+            const int32_t overlayHeight = toInt32Dimension((*it)->getHeight());
             // vertical sweep
-            for (uint32_t x = 0; x < (*it)->getWidth(); x++) {
+            for (int32_t x = 0; x < overlayWidth; x++) {
                 int32_t prev_a = 0;
-                for (uint32_t y = 0; y < (*it)->getHeight(); y++) {
+                for (int32_t y = 0; y < overlayHeight; y++) {
                     (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
                         if (std::cmp_less(a, prev_a)) {
-                            for (uint32_t yy = y; yy < y + info.width; yy++) {
-                                int32_t tx = x + (mw / 2 - (*it)->getWidth() / 2);
-                                int32_t ty = yy + (mh / 2 - (*it)->getHeight() / 2);
+                            for (int32_t yy = y; yy < y + info.width; yy++) {
+                                int32_t tx = x + (outlineWidth / 2 - overlayWidth / 2);
+                                int32_t ty = yy + (outlineHeight / 2 - overlayHeight / 2);
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         } else {
-                            for (uint32_t yy = y - info.width; yy < y; yy++) {
-                                int32_t tx = x + (mw / 2 - (*it)->getWidth() / 2);
-                                int32_t ty = yy + (mh / 2 - (*it)->getHeight() / 2);
+                            for (int32_t yy = y - info.width; yy < y; yy++) {
+                                int32_t tx = x + (outlineWidth / 2 - overlayWidth / 2);
+                                int32_t ty = yy + (outlineHeight / 2 - overlayHeight / 2);
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         }
@@ -900,21 +954,21 @@ namespace FIFE
             }
 
             // horizontal sweep
-            for (uint32_t y = 0; y < (*it)->getHeight(); y++) {
+            for (int32_t y = 0; y < overlayHeight; y++) {
                 int32_t prev_a = 0;
-                for (uint32_t x = 0; x < (*it)->getWidth(); x++) {
+                for (int32_t x = 0; x < overlayWidth; x++) {
                     (*it)->getPixelRGBA(x, y, &r, &g, &b, &a);
                     if (aboveThreshold(info.threshold, static_cast<int32_t>(a), prev_a)) {
                         if (std::cmp_less(a, prev_a)) {
-                            for (uint32_t xx = x; xx < x + info.width; xx++) {
-                                int32_t tx = xx + (mw / 2 - (*it)->getWidth() / 2);
-                                int32_t ty = y + (mh / 2 - (*it)->getHeight() / 2);
+                            for (int32_t xx = x; xx < x + info.width; xx++) {
+                                int32_t tx = xx + (outlineWidth / 2 - overlayWidth / 2);
+                                int32_t ty = y + (outlineHeight / 2 - overlayHeight / 2);
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         } else {
-                            for (uint32_t xx = x - info.width; xx < x; xx++) {
-                                int32_t tx = xx + (mw / 2 - (*it)->getWidth() / 2);
-                                int32_t ty = y + (mh / 2 - (*it)->getHeight() / 2);
+                            for (int32_t xx = x - info.width; xx < x; xx++) {
+                                int32_t tx = xx + (outlineWidth / 2 - overlayWidth / 2);
+                                int32_t ty = y + (outlineHeight / 2 - overlayHeight / 2);
                                 Image::putPixel(outline_surface, tx, ty, info.r, info.g, info.b);
                             }
                         }
@@ -946,6 +1000,7 @@ namespace FIFE
 
     Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam)
     {
+        static_cast<void>(cam);
         bool valid = isValidImage(info.overlay);
         if (!info.dirty && info.curimg == vc.image.get() && valid) {
             removeFromCheck(info.overlay);
@@ -985,14 +1040,15 @@ namespace FIFE
         }
 
         // not found so we create it
-        SDL_Surface* overlay_surface =
-            SDL_CreateRGBSurface(0, vc.image->getWidth(), vc.image->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
+        const int32_t imageWidth     = toInt32Dimension(vc.image->getWidth());
+        const int32_t imageHeight    = toInt32Dimension(vc.image->getHeight());
+        SDL_Surface* overlay_surface = SDL_CreateRGBSurface(0, imageWidth, imageHeight, 32, RMASK, GMASK, BMASK, AMASK);
 
-        uint8_t r        = 0;
-        uint8_t g        = 0;
-        uint8_t b        = 0;
-        uint8_t a        = 0;
-        auto alphaFactor = static_cast<float>(info.a / 255.0);
+        uint8_t r               = 0;
+        uint8_t g               = 0;
+        uint8_t b               = 0;
+        uint8_t a               = 0;
+        const float alphaFactor = alphaFraction(info.a);
         for (int32_t x = 0; x < overlay_surface->w; x++) {
             for (int32_t y = 0; y < overlay_surface->h; y++) {
                 vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
@@ -1001,9 +1057,9 @@ namespace FIFE
                         overlay_surface,
                         x,
                         y,
-                        (info.r * (1.0 - alphaFactor)) + (r * alphaFactor),
-                        (info.g * (1.0 - alphaFactor)) + (g * alphaFactor),
-                        (info.b * (1.0 - alphaFactor)) + (b * alphaFactor),
+                        toUint8Channel((info.r * (1.0F - alphaFactor)) + (r * alphaFactor)),
+                        toUint8Channel((info.g * (1.0F - alphaFactor)) + (g * alphaFactor)),
+                        toUint8Channel((info.b * (1.0F - alphaFactor)) + (b * alphaFactor)),
                         a);
                 }
             }
@@ -1066,8 +1122,10 @@ namespace FIFE
             }
 
             // not found so we create it
-            SDL_Surface* overlay_surface = SDL_CreateRGBSurface(
-                0, colorOverlayImage->getWidth(), colorOverlayImage->getHeight(), 32, RMASK, GMASK, BMASK, AMASK);
+            const int32_t overlayWidth  = toInt32Dimension(colorOverlayImage->getWidth());
+            const int32_t overlayHeight = toInt32Dimension(colorOverlayImage->getHeight());
+            SDL_Surface* overlay_surface =
+                SDL_CreateRGBSurface(0, overlayWidth, overlayHeight, 32, RMASK, GMASK, BMASK, AMASK);
 
             uint8_t r = 0;
             uint8_t g = 0;
@@ -1116,9 +1174,9 @@ namespace FIFE
         Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width, int32_t threshold)
     {
         OutlineInfo newinfo(this);
-        newinfo.r         = r;
-        newinfo.g         = g;
-        newinfo.b         = b;
+        newinfo.r         = toUint8Channel(r);
+        newinfo.g         = toUint8Channel(g);
+        newinfo.b         = toUint8Channel(b);
         newinfo.threshold = threshold;
         newinfo.width     = width;
         newinfo.dirty     = true;
@@ -1139,9 +1197,9 @@ namespace FIFE
                 info.width != width) {
                 // only update the outline info if its changed since the last call
                 // flag the outline info as dirty so it will get processed during rendering
-                info.r         = r;
-                info.b         = b;
-                info.g         = g;
+                info.r         = toUint8Channel(r);
+                info.b         = toUint8Channel(b);
+                info.g         = toUint8Channel(g);
                 info.width     = width;
                 info.threshold = threshold;
                 info.dirty     = true;
@@ -1163,10 +1221,10 @@ namespace FIFE
     void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t a)
     {
         ColoringInfo newinfo(this);
-        newinfo.r     = r;
-        newinfo.g     = g;
-        newinfo.b     = b;
-        newinfo.a     = a;
+        newinfo.r     = toUint8Channel(r);
+        newinfo.g     = toUint8Channel(g);
+        newinfo.b     = toUint8Channel(b);
+        newinfo.a     = toUint8Channel(a);
         newinfo.dirty = true;
 
         // attempts to insert the element into the coloring map
@@ -1184,10 +1242,10 @@ namespace FIFE
             if (std::cmp_not_equal(info.r, r) || std::cmp_not_equal(info.g, g) || std::cmp_not_equal(info.b, b) ||
                 std::cmp_not_equal(info.a, a)) {
                 // only update the coloring info if its changed since the last call
-                info.r     = r;
-                info.b     = b;
-                info.g     = g;
-                info.a     = a;
+                info.r     = toUint8Channel(r);
+                info.b     = toUint8Channel(b);
+                info.g     = toUint8Channel(g);
+                info.a     = toUint8Channel(a);
                 info.dirty = true;
             }
         } else {
@@ -1396,7 +1454,7 @@ namespace FIFE
     {
         if (m_interval != interval * 1000) {
             m_interval = interval * 1000;
-            m_timer.setInterval(m_interval);
+            m_timer.setInterval(toInt32Dimension(m_interval));
         }
     }
 

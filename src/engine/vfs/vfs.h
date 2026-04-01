@@ -48,6 +48,9 @@ namespace FIFE
          */
         virtual ~VFS();
 
+        VFS(const VFS&)            = delete;
+        VFS& operator=(const VFS&) = delete;
+
         void cleanup();
 
         /** add new VFSSourceProvider

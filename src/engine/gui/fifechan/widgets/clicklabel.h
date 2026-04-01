@@ -53,6 +53,9 @@ namespace fcn
 
         virtual ~ClickLabel();
 
+        ClickLabel(const ClickLabel&)            = delete;
+        ClickLabel& operator=(const ClickLabel&) = delete;
+
         /**
          * Gets the caption of the label.
          *

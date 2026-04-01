@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005 - 2026 Fifengine contributors
 
 // Standard C++ library includes
+#include <cassert>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -26,7 +28,10 @@ namespace FIFE
         }
 
         m_stream.seekg(0, std::ios::end);
-        m_filesize = m_stream.tellg();
+        const std::streamoff streamSize = m_stream.tellg();
+        assert(streamSize >= 0);
+        assert(streamSize <= static_cast<std::streamoff>(std::numeric_limits<uint32_t>::max()));
+        m_filesize = static_cast<uint32_t>(streamSize);
         m_stream.seekg(0, std::ios::beg);
     }
 

@@ -86,14 +86,14 @@ namespace FIFE
 
         /** Return the index number of axis for joystick, or the Joystick::ContollerAxis for controller.
          */
-        int8_t getAxis() const
+        int16_t getAxis() const
         {
             return m_axis;
         }
 
         /** Sets the axis index number or the Joystick::ControllerAxis.
          */
-        void setAxis(int8_t axis)
+        void setAxis(int16_t axis)
         {
             m_axis = axis;
         }
@@ -114,42 +114,42 @@ namespace FIFE
 
         /** Return the hat index.
          */
-        int8_t getHat() const
+        int16_t getHat() const
         {
             return m_hat;
         }
 
         /** Sets the hat index.
          */
-        void setHat(int8_t hat)
+        void setHat(int16_t hat)
         {
             m_hat = hat;
         }
 
         /** Return the hat value, see Joystick::Hat.
          */
-        int8_t getHatValue() const
+        int16_t getHatValue() const
         {
             return m_hatValue;
         }
 
         /** Sets the hat value.
          */
-        void setHatValue(int8_t value)
+        void setHatValue(int16_t value)
         {
             m_hatValue = value;
         }
 
         /** Return the button index for joystick, or Joystick::ControllerButton for controller.
          */
-        int8_t getButton() const
+        int16_t getButton() const
         {
             return m_button;
         }
 
         /** Sets the button index or Joystick::ControllerButton.
          */
-        void setButton(int8_t button)
+        void setButton(int16_t button)
         {
             m_button = button;
         }
@@ -217,15 +217,15 @@ namespace FIFE
         //! Joystick instance id
         int32_t m_instanceId;
         //! Axis index
-        int8_t m_axis;
+        int16_t m_axis;
         //! Axis value
         float m_axisValue;
         //! Hat index
-        int8_t m_hat;
+        int16_t m_hat;
         //! Hat value
-        int8_t m_hatValue;
+        int16_t m_hatValue;
         //! Button index
-        int8_t m_button;
+        int16_t m_button;
         //! Is gamecontroller
         bool m_controller;
     };

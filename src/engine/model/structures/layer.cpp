@@ -3,6 +3,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
+#include <limits>
 #include <list>
 #include <set>
 #include <string>
@@ -36,17 +38,16 @@ namespace FIFE
 
     Layer::Layer(std::string identifier, Map* map, CellGrid* grid) :
         m_id(std::move(identifier)),
-        m_map(map),
-        m_instancesVisibility(true),
-        m_transparency(0),
         m_instanceTree(new InstanceTree()),
         m_grid(grid),
+        m_cellCache(nullptr),
+        m_map(map),
         m_pathingStrategy(CELL_EDGES_ONLY),
         m_sortingStrategy(SORTING_CAMERA),
+        m_transparency(0),
+        m_instancesVisibility(true),
         m_walkable(false),
         m_interact(false),
-
-        m_cellCache(nullptr),
 
         m_changed(false),
         m_static(false)
@@ -314,16 +315,16 @@ namespace FIFE
         std::vector<Instance*> instances;
         std::list<Instance*> matchingInstances;
         // radius power 2
-        uint16_t radiusp2 = (radius + 1) * radius;
+        const int32_t radiusp2 = static_cast<int32_t>(radius + 1) * static_cast<int32_t>(radius);
 
         ModelCoordinate current(center.x - radius, center.y - radius);
         ModelCoordinate target(center.x + radius, center.y + radius);
         for (; current.y < center.y; current.y++) {
             current.x = center.x - radius;
             for (; current.x < center.x; current.x++) {
-                uint16_t dx       = center.x - current.x;
-                uint16_t dy       = center.y - current.y;
-                uint16_t distance = (dx * dx) + (dy * dy);
+                const int32_t dx       = center.x - current.x;
+                const int32_t dy       = center.y - current.y;
+                const int32_t distance = (dx * dx) + (dy * dy);
                 if (distance <= radiusp2) {
                     m_instanceTree->findInstances(current, 0, 0, matchingInstances);
                     if (!matchingInstances.empty()) {
@@ -424,8 +425,11 @@ namespace FIFE
     {
         static const float globalmax   = 100.0;
         static const float globalrange = 200.0;
-        int32_t numlayers              = m_map->getLayerCount();
-        int32_t thislayer              = 1; // we don't need 0 indexed
+        const uint32_t mapLayerCount   = m_map->getLayerCount();
+        assert(mapLayerCount > 0);
+        assert(mapLayerCount <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+        const int32_t numlayers = static_cast<int32_t>(mapLayerCount);
+        int32_t thislayer       = 1; // we don't need 0 indexed
 
         const std::list<Layer*>& layers = m_map->getLayers();
         auto iter                       = layers.begin();
@@ -435,7 +439,9 @@ namespace FIFE
             }
         }
 
-        float offset = globalmax - ((numlayers - (thislayer - 1)) * (globalrange / numlayers));
+        const float layerSpan   = globalrange / static_cast<float>(numlayers);
+        const float layerOffset = static_cast<float>(numlayers - (thislayer - 1));
+        float offset            = globalmax - (layerOffset * layerSpan);
         return offset;
     }
 

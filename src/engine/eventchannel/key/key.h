@@ -281,7 +281,7 @@ namespace FIFE
          */
         explicit Key(KeyType key = INVALID_KEY) : m_key(key) { }
 
-        Key(const Key&) = default;
+        Key(const Key&)            = default;
         Key& operator=(const Key&) = default;
 
         /** Destructor.

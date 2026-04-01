@@ -25,12 +25,12 @@ namespace FIFE
     GLImage::GLImage(IResourceLoader* loader) :
         Image(loader),
         m_tex_coords{0, 0, 0, 0},
-        m_compressed(false),
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         resetGlimage();
@@ -39,12 +39,12 @@ namespace FIFE
     GLImage::GLImage(const std::string& name, IResourceLoader* loader) :
         Image(name, loader),
         m_tex_coords{0, 0, 0, 0},
-        m_compressed(false),
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         resetGlimage();
@@ -53,12 +53,12 @@ namespace FIFE
     GLImage::GLImage(SDL_Surface* surface) :
         Image(surface),
         m_tex_coords{0, 0, 0, 0},
-        m_compressed(false),
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         resetGlimage();
@@ -66,13 +66,13 @@ namespace FIFE
 
     GLImage::GLImage(const std::string& name, SDL_Surface* surface) :
         Image(name, surface),
-        m_compressed(false),
         m_tex_coords{0, 0, 0, 0},
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         resetGlimage();
@@ -80,13 +80,13 @@ namespace FIFE
 
     GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height) :
         Image(data, width, height),
-        m_compressed(false),
         m_tex_coords{0, 0, 0, 0},
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         assert(m_surface);
@@ -95,13 +95,13 @@ namespace FIFE
 
     GLImage::GLImage(const std::string& name, const uint8_t* data, uint32_t width, uint32_t height) :
         Image(name, data, width, height),
-        m_compressed(false),
         m_tex_coords{0, 0, 0, 0},
+        m_shared_img(nullptr),
         m_texId(0),
         m_chunk_size_w(0),
         m_chunk_size_h(0),
         m_colorkey{0, 0, 0, 0},
-        m_shared_img(nullptr)
+        m_compressed(false)
     {
 
         assert(m_surface);

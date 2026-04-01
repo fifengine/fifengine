@@ -47,6 +47,9 @@ namespace fcn
         explicit ResizableWindow(const std::string& caption, bool resizable = true);
         virtual ~ResizableWindow();
 
+        ResizableWindow(const ResizableWindow&)            = delete;
+        ResizableWindow& operator=(const ResizableWindow&) = delete;
+
         /** Sets the size of the area that is active for resize events.
          * @param border The distance from the edge that is active for resize events.
          */

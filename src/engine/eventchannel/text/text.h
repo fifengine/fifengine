@@ -32,7 +32,7 @@ namespace FIFE
         {
         }
 
-        Text(const Text&) = default;
+        Text(const Text&)            = default;
         Text& operator=(const Text&) = default;
 
         /** Destructor

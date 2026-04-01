@@ -129,7 +129,7 @@ namespace FIFE
 
         /** Gets the total duration for the whole animation
          */
-        uint32_t getDuration() const
+        int32_t getDuration() const
         {
             return m_animation_endtime;
         }
@@ -154,12 +154,12 @@ namespace FIFE
         std::map<uint32_t, FrameInfo> m_framemap;
         // vector of frames for fast indexed access
         std::vector<FrameInfo> m_frames;
+        // Direction for this animation
+        uint32_t m_direction;
         // Action frame of the Animation.
         int32_t m_action_frame;
         // time when animation ends (zero based)
         int32_t m_animation_endtime;
-        // Direction for this animation
-        uint32_t m_direction;
     };
 
     typedef SharedPtr<Animation> AnimationPtr;

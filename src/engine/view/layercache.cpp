@@ -3,7 +3,9 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <cassert>
 #include <cfloat>
+#include <limits>
 #include <map>
 #include <set>
 #include <vector>
@@ -248,12 +250,16 @@ namespace FIFE
             // creates new RenderItem
             item = new RenderItem(instance);
             m_renderItems.push_back(item);
-            m_instance_map[instance] = m_renderItems.size() - 1;
+            const size_t renderItemIndex = m_renderItems.size() - 1;
+            assert(renderItemIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+            m_instance_map[instance] = static_cast<int32_t>(renderItemIndex);
             // creates new Entry
             entry = new Entry();
             m_entries.push_back(entry);
-            entry->instanceIndex = m_renderItems.size() - 1;
-            entry->entryIndex    = m_entries.size() - 1;
+            entry->instanceIndex    = static_cast<int32_t>(renderItemIndex);
+            const size_t entryIndex = m_entries.size() - 1;
+            assert(entryIndex <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+            entry->entryIndex = static_cast<int32_t>(entryIndex);
         } else {
             // uses free/unused RenderItem
             int32_t index = m_freeEntries.front();

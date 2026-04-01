@@ -46,6 +46,9 @@ namespace FIFE
          */
         virtual ~ImageManager();
 
+        ImageManager(const ImageManager&)            = delete;
+        ImageManager& operator=(const ImageManager&) = delete;
+
         virtual size_t getMemoryUsed() const;
         virtual size_t getTotalResourcesCreated() const;
         virtual size_t getTotalResourcesLoaded() const;

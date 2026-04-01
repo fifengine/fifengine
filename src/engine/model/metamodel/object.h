@@ -117,7 +117,7 @@ namespace FIFE
         template <typename T>
         T* getVisual() const
         {
-            return reinterpret_cast<T*>(m_visual);
+            return dynamic_cast<T*>(m_visual);
         }
 
         /** Sets if object blocks movement
@@ -394,11 +394,14 @@ namespace FIFE
             //! Destructor
             ~MovableObjectProperty();
 
-            //! pointer to pathfinder
-            IPather* m_pather;
-
             //! cost identifier
             std::string m_costId;
+
+            //! list contains walkable area ids
+            std::list<std::string> m_walkableAreas;
+
+            //! pointer to pathfinder
+            IPather* m_pather;
 
             //! cost value, default 1.0
             double m_cost;
@@ -408,9 +411,6 @@ namespace FIFE
 
             //! z range value
             int32_t m_zRange;
-
-            //! list contains walkable area ids
-            std::list<std::string> m_walkableAreas;
         };
 
         class MultiObjectProperty
@@ -422,17 +422,8 @@ namespace FIFE
             //! Destructor
             ~MultiObjectProperty();
 
-            //! indicates if object is part of multi object
-            bool m_multiPart;
-
-            //! indicates if object uses only restricted rotations
-            bool m_restrictedRotation;
-
             //! list with part identifiers
             std::list<std::string> m_multiPartIds;
-
-            //! rotation anchor
-            ExactModelCoordinate m_rotationAnchor;
 
             //! set contains part objects
             std::set<Object*> m_multiParts;
@@ -448,6 +439,15 @@ namespace FIFE
 
             //! multi object coordinates
             std::multimap<int32_t, ModelCoordinate> m_multiObjectCoordinates;
+
+            //! rotation anchor
+            ExactModelCoordinate m_rotationAnchor;
+
+            //! indicates if object is part of multi object
+            bool m_multiPart;
+
+            //! indicates if object uses only restricted rotations
+            bool m_restrictedRotation;
         };
 
         BasicObjectProperty* m_basicProperty;

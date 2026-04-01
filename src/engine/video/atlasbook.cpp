@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 // 3rd party library includes
@@ -75,7 +76,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.left;
                             ++squeezed.right;
-                            const int blockWidth = newBlock->getWidth();
+                            const uint32_t blockWidth = newBlock->getWidth();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -113,7 +114,7 @@ namespace FIFE
                         if (intersection == nullptr) {
                             ++squeezed.top;
                             ++squeezed.bottom;
-                            const int blockHeight = newBlock->getHeight();
+                            const uint32_t blockHeight = newBlock->getHeight();
 
                             // binary search
                             for (int i = 0, div = 2; i < 4; ++i) {
@@ -219,7 +220,8 @@ namespace FIFE
         assert(minPageWidth <= pageWidth);
         assert(minPageHeight <= pageHeight);
 
-        pages.emplace_back(pageWidth, pageHeight, pixelSize, pages.size());
+        assert(pages.size() <= static_cast<size_t>(std::numeric_limits<uint32_t>::max()));
+        pages.emplace_back(pageWidth, pageHeight, pixelSize, static_cast<uint32_t>(pages.size()));
         return &pages[pages.size() - 1];
     }
 
