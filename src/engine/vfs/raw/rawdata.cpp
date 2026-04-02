@@ -42,7 +42,7 @@ namespace FIFE
         target.resize(size);
 
         // read bytes directly into vector
-        readInto(&target[0], target.size());
+        readInto(target.data(), target.size());
 
         return target;
     }
@@ -131,7 +131,7 @@ namespace FIFE
     {
         std::vector<uint8_t> strVector;
         strVector.resize(len);
-        readInto(&strVector[0], len);
+        readInto(strVector.data(), len);
 
         std::string ret(strVector.begin(), strVector.end());
 
@@ -152,7 +152,7 @@ namespace FIFE
         outbuffer.resize(static_cast<size_t>(size));
 
         // read directly into string
-        readInto(reinterpret_cast<uint8_t*>(&outbuffer[0]), static_cast<size_t>(size));
+        readInto(reinterpret_cast<uint8_t*>(outbuffer.data()), static_cast<size_t>(size));
     }
 
     bool RawData::getLine(std::string& buffer)

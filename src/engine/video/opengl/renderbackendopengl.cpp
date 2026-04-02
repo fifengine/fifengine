@@ -1024,7 +1024,7 @@ namespace FIFE
                 disableColorArray();
                 setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
                 setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
-                indexBuffer     = &m_tIndices[0];
+                indexBuffer     = m_tIndices.data();
                 currentIndex    = &indexT;
                 currentElements = &elementsT;
                 // texture with color/alpha
@@ -1034,7 +1034,7 @@ namespace FIFE
                 setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
                 setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
                 setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
-                indexBuffer     = &m_tcIndices[0];
+                indexBuffer     = m_tcIndices.data();
                 currentIndex    = &indexTC;
                 currentElements = &elementsTC;
                 // primitive
@@ -1043,7 +1043,7 @@ namespace FIFE
                 enableColorArray();
                 setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
                 setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
-                indexBuffer     = &m_pIndices[0];
+                indexBuffer     = m_pIndices.data();
                 currentIndex    = &indexP;
                 currentElements = &elementsP;
             }
@@ -1053,7 +1053,7 @@ namespace FIFE
             setVertexPointer(2, stride2TC, &m_renderMultitextureDatas[0].vertex);
             setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
             setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
-            indexBuffer     = &m_tc2Indices[0];
+            indexBuffer     = m_tc2Indices.data();
             currentIndex    = &index2TC;
             currentElements = &elements2TC;
         }
@@ -1123,13 +1123,13 @@ namespace FIFE
                                 setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
                                 setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
                                 setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
-                                indexBuffer     = &m_tcIndices[0];
+                                indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
                                 setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
                                 setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
-                                indexBuffer     = &m_pIndices[0];
+                                indexBuffer     = m_pIndices.data();
                                 currentElements = &elementsP;
                                 currentIndex    = &indexP;
                             }
@@ -1139,7 +1139,7 @@ namespace FIFE
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
                             setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
                             setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
-                            indexBuffer     = &m_tIndices[0];
+                            indexBuffer     = m_tIndices.data();
                             currentElements = &elementsT;
                             currentIndex    = &indexT;
                         }
@@ -1160,20 +1160,20 @@ namespace FIFE
                                 setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
                                 setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
                                 setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
-                                indexBuffer     = &m_tcIndices[0];
+                                indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
                                 setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
                                 setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
-                                indexBuffer     = &m_tIndices[0];
+                                indexBuffer     = m_tIndices.data();
                                 currentIndex    = &indexT;
                                 currentElements = &elementsT;
                             }
                         } else {
                             setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
                             setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
-                            indexBuffer     = &m_pIndices[0];
+                            indexBuffer     = m_pIndices.data();
                             currentElements = &elementsP;
                             currentIndex    = &indexP;
                         }
@@ -1191,7 +1191,7 @@ namespace FIFE
                         setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
                         setTexCoordPointer(1, stride2TC, &m_renderMultitextureDatas[0].texel2);
                         setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
-                        indexBuffer = &m_tc2Indices[0];
+                        indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = m_maskOverlay;
                         currentElements = &elements2TC;
@@ -1209,7 +1209,7 @@ namespace FIFE
                         setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
                         setTexCoordPointer(2, stride2TC, &m_renderMultitextureDatas[0].texel2);
                         setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
-                        indexBuffer = &m_tc2Indices[0];
+                        indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = ro.overlay_id;
                         currentElements = &elements2TC;
@@ -1227,7 +1227,7 @@ namespace FIFE
                         setColorPointer(stride2TC, &m_renderMultitextureDatas[0].color);
                         setTexCoordPointer(3, stride2TC, &m_renderMultitextureDatas[0].texel2);
                         setTexCoordPointer(0, stride2TC, &m_renderMultitextureDatas[0].texel);
-                        indexBuffer = &m_tc2Indices[0];
+                        indexBuffer = m_tc2Indices.data();
 
                         texture_id2     = ro.overlay_id;
                         currentElements = &elements2TC;
@@ -1248,13 +1248,13 @@ namespace FIFE
                                 setVertexPointer(2, strideTC, &m_renderTextureColorDatas[0].vertex);
                                 setTexCoordPointer(0, strideTC, &m_renderTextureColorDatas[0].texel);
                                 setColorPointer(strideTC, &m_renderTextureColorDatas[0].color);
-                                indexBuffer     = &m_tcIndices[0];
+                                indexBuffer     = m_tcIndices.data();
                                 currentElements = &elementsTC;
                                 currentIndex    = &indexTC;
                             } else {
                                 setVertexPointer(2, strideT, &m_renderTextureDatas[0].vertex);
                                 setTexCoordPointer(0, strideT, &m_renderTextureDatas[0].texel);
-                                indexBuffer     = &m_tIndices[0];
+                                indexBuffer     = m_tIndices.data();
                                 currentElements = &elementsT;
                                 currentIndex    = &indexT;
                             }
@@ -1265,7 +1265,7 @@ namespace FIFE
                         if (ro.overlay_type == OVERLAY_TYPE_NONE) {
                             setVertexPointer(2, strideP, &m_renderPrimitiveDatas[0].vertex);
                             setColorPointer(strideP, &m_renderPrimitiveDatas[0].color);
-                            indexBuffer     = &m_pIndices[0];
+                            indexBuffer     = m_pIndices.data();
                             currentElements = &elementsP;
                             currentIndex    = &indexP;
                         }
@@ -2976,7 +2976,7 @@ namespace FIFE
             glTexCoordPointer(2, GL_DOUBLE, sizeof(GuiVertex), &vertices[0].texCoords);
         }
 
-        glDrawElements(GL_TRIANGLES, toGLsizei(indices.size()), GL_UNSIGNED_INT, &indices[0]);
+        glDrawElements(GL_TRIANGLES, toGLsizei(indices.size()), GL_UNSIGNED_INT, indices.data());
 
         glPopMatrix();
     }

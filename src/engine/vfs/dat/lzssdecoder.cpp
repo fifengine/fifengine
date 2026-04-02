@@ -36,8 +36,8 @@ namespace FIFE
                 // Allocate +2 bytes so that on corrupt data the LZSS
                 // decoder won't crash the input buffer.
                 std::vector<uint8_t> indata(static_cast<size_t>(bytesToRead) + 2U);
-                input->readInto(&indata[0], bytesToRead);
-                LZSSDecode(&indata[0], bytesToRead, output);
+                input->readInto(indata.data(), bytesToRead);
+                LZSSDecode(indata.data(), bytesToRead, output);
                 // Note outindex is advanced inside LZSSDecode.
             }
         }
