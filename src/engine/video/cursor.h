@@ -84,12 +84,12 @@ namespace FIFE
         /** Sets the current mouse cursor type to image
          * @param image ImagePtr to a image used for the cursor
          */
-        void set(ImagePtr image);
+        void set(const ImagePtr& image);
 
         /** Sets the current mouse cursor type to animation
          * @param anim AnimationPtr to a loaded animation used for the cursor
          */
-        void set(AnimationPtr anim);
+        void set(const AnimationPtr& anim);
 
         /** Sets the current drag image cursor
          * @param image ImagePtr to a image used for the drag
@@ -97,7 +97,7 @@ namespace FIFE
          * @param drag_offset_y Y Offset to display image when dragging.
          * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
          */
-        void setDrag(ImagePtr image, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
+        void setDrag(const ImagePtr& image, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
 
         /** Sets the current drag animated cursor
          * @param anim AnimationPtr to a loaded animation used for the drag
@@ -105,7 +105,7 @@ namespace FIFE
          * @param drag_offset_y Y Offset to display animation when dragging.
          * @note to reset the cursors drag call cursor.setDrag(Cursor::CURSOR_NONE, 0, 0)
          */
-        void setDrag(AnimationPtr anim, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
+        void setDrag(const AnimationPtr& anim, int32_t drag_offset_x = 0, int32_t drag_offset_y = 0);
 
         /** Resets the cursor drag type to CURSOR_NONE
          */
@@ -206,7 +206,7 @@ namespace FIFE
          * Falls back to software cursor on failure.
          * @return false on error, true otherwise
          */
-        bool setNativeImageCursor(ImagePtr image);
+        bool setNativeImageCursor(const ImagePtr& image);
 
         /** To get some consistancy between platforms, this function checks
          * if cursor_id matches any of the values in NativeCursor, and

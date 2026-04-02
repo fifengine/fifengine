@@ -113,7 +113,7 @@ namespace FIFE
          * @param coordinate A ModelCoordinate that specifies the coordinates of the cell.
          * @param layer A pointer to the layer which is associated with the cell.
          */
-        Cell(int32_t coordint, ModelCoordinate coordinate, Layer* layer);
+        Cell(int32_t coordint, const ModelCoordinate& coordinate, Layer* layer);
 
         /** Destructor
          */

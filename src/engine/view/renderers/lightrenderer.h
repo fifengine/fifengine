@@ -28,7 +28,7 @@ namespace FIFE
     class LightRendererElementInfo
     {
     public:
-        LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst);
+        LightRendererElementInfo(const RendererNode& n, int32_t src, int32_t dst);
         virtual ~LightRendererElementInfo() = default;
 
         virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) = 0;
@@ -83,7 +83,7 @@ namespace FIFE
     class LightRendererImageInfo : public LightRendererElementInfo
     {
     public:
-        LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst);
+        LightRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst);
         ~LightRendererImageInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -103,7 +103,7 @@ namespace FIFE
     class LightRendererAnimationInfo : public LightRendererElementInfo
     {
     public:
-        LightRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, int32_t src, int32_t dst);
+        LightRendererAnimationInfo(const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst);
         ~LightRendererAnimationInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -126,7 +126,7 @@ namespace FIFE
     {
     public:
         LightRendererSimpleLightInfo(
-            RendererNode anchor,
+            const RendererNode& anchor,
             uint8_t intensity,
             float radius,
             int32_t subdivisions,
@@ -178,7 +178,7 @@ namespace FIFE
     {
     public:
         LightRendererResizeInfo(
-            RendererNode anchor, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
+            const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, int32_t src, int32_t dst);
         ~LightRendererResizeInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -224,12 +224,17 @@ namespace FIFE
          */
         static LightRenderer* getInstance(IRendererContainer* cnt);
 
-        void addImage(const std::string& group, RendererNode n, ImagePtr image, int32_t src = -1, int32_t dst = -1);
+        void addImage(
+            const std::string& group, const RendererNode& n, const ImagePtr& image, int32_t src = -1, int32_t dst = -1);
         void addAnimation(
-            const std::string& group, RendererNode n, AnimationPtr animation, int32_t src = -1, int32_t dst = -1);
+            const std::string& group,
+            const RendererNode& n,
+            const AnimationPtr& animation,
+            int32_t src = -1,
+            int32_t dst = -1);
         void addSimpleLight(
             const std::string& group,
-            RendererNode n,
+            const RendererNode& n,
             uint8_t intensity,
             float radius,
             int32_t subdivisions,
@@ -242,8 +247,8 @@ namespace FIFE
             int32_t dst = -1);
         void resizeImage(
             const std::string& group,
-            RendererNode n,
-            ImagePtr image,
+            const RendererNode& n,
+            const ImagePtr& image,
             int32_t width,
             int32_t height,
             int32_t src = -1,

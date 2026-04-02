@@ -62,7 +62,7 @@ namespace FIFE
         m_cursor_animation.reset();
     }
 
-    void Cursor::set(ImagePtr image)
+    void Cursor::set(const ImagePtr& image)
     {
         assert(image != 0);
 
@@ -84,7 +84,7 @@ namespace FIFE
         m_cursor_animation.reset();
     }
 
-    void Cursor::set(AnimationPtr anim)
+    void Cursor::set(const AnimationPtr& anim)
     {
         assert(anim != 0);
 
@@ -107,7 +107,7 @@ namespace FIFE
         m_cursor_image.reset();
     }
 
-    void Cursor::setDrag(ImagePtr image, int32_t drag_offset_x, int32_t drag_offset_y)
+    void Cursor::setDrag(const ImagePtr& image, int32_t drag_offset_x, int32_t drag_offset_y)
     {
         assert(image != 0);
 
@@ -119,7 +119,7 @@ namespace FIFE
         m_cursor_drag_animation.reset();
     }
 
-    void Cursor::setDrag(AnimationPtr anim, int32_t drag_offset_x, int32_t drag_offset_y)
+    void Cursor::setDrag(const AnimationPtr& anim, int32_t drag_offset_x, int32_t drag_offset_y)
     {
         assert(anim != 0);
 
@@ -295,7 +295,7 @@ namespace FIFE
         m_native_cursor = cursor;
     }
 
-    bool Cursor::setNativeImageCursor(ImagePtr image)
+    bool Cursor::setNativeImageCursor(const ImagePtr& image)
     {
         if (image == m_native_cursor_image) {
             // we're already using this image

@@ -442,7 +442,7 @@ namespace FIFE
         screen_coords.z = Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy);
     }
 
-    ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated)
+    ExactModelCoordinate Camera::toMapCoordinates(const ScreenPoint& screen_coords, bool z_calculated)
     {
         DoublePoint3D double_screen_coords = intPt2doublePt(screen_coords);
         if (!z_calculated) {
@@ -560,7 +560,7 @@ namespace FIFE
     }
 
     void Camera::getMatchingInstances(
-        ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
+        const ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
         bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
@@ -619,7 +619,8 @@ namespace FIFE
         }
     }
 
-    void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
+    void Camera::getMatchingInstances(
+        const Rect& screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha)
     {
         instances.clear();
         bool zoomed        = !Mathd::Equal(m_zoom, 1.0);
@@ -897,7 +898,7 @@ found_non_transparent_pixel:;
         m_img_id      = -1;
     }
 
-    void Camera::setOverlayAnimation(AnimationPtr anim, bool fill)
+    void Camera::setOverlayAnimation(const AnimationPtr& anim, bool fill)
     {
         m_ani_overlay = true;
         m_ani_ptr     = anim;

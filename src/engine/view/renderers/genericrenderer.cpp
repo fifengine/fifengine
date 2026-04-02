@@ -62,7 +62,7 @@ namespace FIFE
     static Logger _log(LM_VIEWVIEW);
 
     GenericRendererLineInfo::GenericRendererLineInfo(
-        RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const RendererNode& n1, const RendererNode& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         GenericRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -83,7 +83,7 @@ namespace FIFE
     }
 
     GenericRendererPointInfo::GenericRendererPointInfo(
-        RendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const RendererNode& anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         GenericRendererElementInfo(), m_anchor(anchor), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -104,7 +104,13 @@ namespace FIFE
     }
 
     GenericRendererTriangleInfo::GenericRendererTriangleInfo(
-        RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const RendererNode& n1,
+        const RendererNode& n2,
+        const RendererNode& n3,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a) :
         GenericRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_edge3(n3), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -127,10 +133,10 @@ namespace FIFE
     }
 
     GenericRendererQuadInfo::GenericRendererQuadInfo(
-        RendererNode n1,
-        RendererNode n2,
-        RendererNode n3,
-        RendererNode n4,
+        const RendererNode& n1,
+        const RendererNode& n2,
+        const RendererNode& n3,
+        const RendererNode& n4,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -165,7 +171,7 @@ namespace FIFE
     }
 
     GenericRendererVertexInfo::GenericRendererVertexInfo(
-        RendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const RendererNode& center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         GenericRendererElementInfo(), m_center(center), m_size(size), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -185,7 +191,7 @@ namespace FIFE
         }
     }
 
-    GenericRendererImageInfo::GenericRendererImageInfo(RendererNode anchor, ImagePtr image, bool zoomed) :
+    GenericRendererImageInfo::GenericRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, bool zoomed) :
         GenericRendererElementInfo(), m_anchor(anchor), m_image(image), m_zoomed(zoomed)
     {
     }
@@ -221,7 +227,7 @@ namespace FIFE
     }
 
     GenericRendererAnimationInfo::GenericRendererAnimationInfo(
-        RendererNode anchor, AnimationPtr animation, bool zoomed) :
+        const RendererNode& anchor, const AnimationPtr& animation, bool zoomed) :
         GenericRendererElementInfo(),
         m_anchor(anchor),
         m_animation(animation),
@@ -265,7 +271,8 @@ namespace FIFE
         }
     }
 
-    GenericRendererTextInfo::GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text, bool zoomed) :
+    GenericRendererTextInfo::GenericRendererTextInfo(
+        const RendererNode& anchor, IFont* font, std::string text, bool zoomed) :
         GenericRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text)), m_zoomed(zoomed)
     {
     }
@@ -303,7 +310,7 @@ namespace FIFE
     }
 
     GenericRendererResizeInfo::GenericRendererResizeInfo(
-        RendererNode anchor, ImagePtr image, int32_t width, int32_t height, bool zoomed) :
+        const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, bool zoomed) :
         GenericRendererElementInfo(),
         m_anchor(anchor),
         m_image(image),
@@ -366,21 +373,28 @@ namespace FIFE
 
     GenericRenderer::~GenericRenderer() = default;
     void GenericRenderer::addLine(
-        const std::string& group, RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group,
+        const RendererNode& n1,
+        const RendererNode& n2,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b, a);
         m_groups[group].push_back(info);
     }
-    void GenericRenderer::addPoint(const std::string& group, RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void GenericRenderer::addPoint(
+        const std::string& group, const RendererNode& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void GenericRenderer::addTriangle(
         const std::string& group,
-        RendererNode n1,
-        RendererNode n2,
-        RendererNode n3,
+        const RendererNode& n1,
+        const RendererNode& n2,
+        const RendererNode& n3,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -391,10 +405,10 @@ namespace FIFE
     }
     void GenericRenderer::addQuad(
         const std::string& group,
-        RendererNode n1,
-        RendererNode n2,
-        RendererNode n3,
-        RendererNode n4,
+        const RendererNode& n1,
+        const RendererNode& n2,
+        const RendererNode& n3,
+        const RendererNode& n4,
         uint8_t r,
         uint8_t g,
         uint8_t b,
@@ -404,29 +418,35 @@ namespace FIFE
         m_groups[group].push_back(info);
     }
     void GenericRenderer::addVertex(
-        const std::string& group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group, const RendererNode& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void GenericRenderer::addText(
-        const std::string& group, RendererNode n, IFont* font, const std::string& text, bool zoomed)
+        const std::string& group, const RendererNode& n, IFont* font, const std::string& text, bool zoomed)
     {
         GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text, zoomed);
         m_groups[group].push_back(info);
     }
-    void GenericRenderer::addImage(const std::string& group, RendererNode n, ImagePtr image, bool zoomed)
+    void GenericRenderer::addImage(const std::string& group, const RendererNode& n, const ImagePtr& image, bool zoomed)
     {
         GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image, zoomed);
         m_groups[group].push_back(info);
     }
-    void GenericRenderer::addAnimation(const std::string& group, RendererNode n, AnimationPtr animation, bool zoomed)
+    void GenericRenderer::addAnimation(
+        const std::string& group, const RendererNode& n, const AnimationPtr& animation, bool zoomed)
     {
         GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation, zoomed);
         m_groups[group].push_back(info);
     }
     void GenericRenderer::resizeImage(
-        const std::string& group, RendererNode n, ImagePtr image, int32_t width, int32_t height, bool zoomed)
+        const std::string& group,
+        const RendererNode& n,
+        const ImagePtr& image,
+        int32_t width,
+        int32_t height,
+        bool zoomed)
     {
         GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height, zoomed);
         m_groups[group].push_back(info);

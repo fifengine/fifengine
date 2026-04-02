@@ -40,7 +40,7 @@ namespace FIFE
      */
     static Logger _log(LM_VIEWVIEW);
 
-    LightRendererElementInfo::LightRendererElementInfo(RendererNode n, int32_t src, int32_t dst) :
+    LightRendererElementInfo::LightRendererElementInfo(const RendererNode& n, int32_t src, int32_t dst) :
         m_anchor(n), m_src(src), m_dst(dst), m_stencil(false), m_stencil_ref(0)
     {
     }
@@ -61,7 +61,8 @@ namespace FIFE
         m_stencil     = false;
         m_stencil_ref = 0;
     }
-    LightRendererImageInfo::LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst) :
+    LightRendererImageInfo::LightRendererImageInfo(
+        const RendererNode& anchor, const ImagePtr& image, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image)
     {
     }
@@ -95,7 +96,7 @@ namespace FIFE
         }
     }
     LightRendererAnimationInfo::LightRendererAnimationInfo(
-        RendererNode anchor, AnimationPtr animation, int32_t src, int32_t dst) :
+        const RendererNode& anchor, const AnimationPtr& animation, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst),
         m_animation(animation),
         m_start_time(TimeManager::instance()->getTime()),
@@ -136,7 +137,7 @@ namespace FIFE
         }
     }
     LightRendererResizeInfo::LightRendererResizeInfo(
-        RendererNode anchor, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst) :
+        const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, int32_t src, int32_t dst) :
         LightRendererElementInfo(anchor, src, dst), m_image(image), m_width(width), m_height(height)
     {
     }
@@ -170,7 +171,7 @@ namespace FIFE
         }
     }
     LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(
-        RendererNode anchor,
+        const RendererNode& anchor,
         uint8_t intensity,
         float radius,
         int32_t subdivisions,
@@ -250,14 +251,15 @@ namespace FIFE
     }
     LightRenderer::~LightRenderer() = default;
     // Add a static lightmap
-    void LightRenderer::addImage(const std::string& group, RendererNode n, ImagePtr image, int32_t src, int32_t dst)
+    void LightRenderer::addImage(
+        const std::string& group, const RendererNode& n, const ImagePtr& image, int32_t src, int32_t dst)
     {
         LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
         m_groups[group].push_back(info);
     }
     // Add a animation lightmap
     void LightRenderer::addAnimation(
-        const std::string& group, RendererNode n, AnimationPtr animation, int32_t src, int32_t dst)
+        const std::string& group, const RendererNode& n, const AnimationPtr& animation, int32_t src, int32_t dst)
     {
         LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
         m_groups[group].push_back(info);
@@ -265,7 +267,7 @@ namespace FIFE
     // Add a simple light
     void LightRenderer::addSimpleLight(
         const std::string& group,
-        RendererNode n,
+        const RendererNode& n,
         uint8_t intensity,
         float radius,
         int32_t subdivisions,
@@ -284,8 +286,8 @@ namespace FIFE
     // Resize an Image
     void LightRenderer::resizeImage(
         const std::string& group,
-        RendererNode n,
-        ImagePtr image,
+        const RendererNode& n,
+        const ImagePtr& image,
         int32_t width,
         int32_t height,
         int32_t src,

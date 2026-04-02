@@ -89,7 +89,7 @@ namespace FIFE
         return name;
     }
 
-    void Animation::addFrame(ImagePtr image, uint32_t duration)
+    void Animation::addFrame(const ImagePtr& image, uint32_t duration)
     {
         FrameInfo info;
         assert(m_frames.size() <= std::numeric_limits<uint32_t>::max());

@@ -27,7 +27,7 @@ namespace FIFE
 
     static Logger _log(LM_STRUCTURES);
 
-    Cell::Cell(int32_t coordint, ModelCoordinate coordinate, Layer* layer) :
+    Cell::Cell(int32_t coordint, const ModelCoordinate& coordinate, Layer* layer) :
         m_coordId(coordint),
         m_coordinate(coordinate),
         m_layer(layer),

@@ -29,26 +29,41 @@ namespace FIFE
          */
         ~RenderTarget();
 
-        void addLine(const std::string& group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-        void addPoint(const std::string& group, Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addLine(
+            const std::string& group,
+            const Point& n1,
+            const Point& n2,
+            uint8_t r,
+            uint8_t g,
+            uint8_t b,
+            uint8_t a = 255);
+        void addPoint(const std::string& group, const Point& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
         void addTriangle(
-            const std::string& group, Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+            const std::string& group,
+            const Point& n1,
+            const Point& n2,
+            const Point& n3,
+            uint8_t r,
+            uint8_t g,
+            uint8_t b,
+            uint8_t a = 255);
         void addQuad(
             const std::string& group,
-            Point n1,
-            Point n2,
-            Point n3,
-            Point n4,
+            const Point& n1,
+            const Point& n2,
+            const Point& n3,
+            const Point& n4,
             uint8_t r,
             uint8_t g,
             uint8_t b,
             uint8_t a = 255);
         void addVertex(
-            const std::string& group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-        void addText(const std::string& group, Point n, IFont* font, const std::string& text);
-        void addImage(const std::string& group, Point n, ImagePtr image);
-        void addAnimation(const std::string& group, Point n, AnimationPtr animation);
-        void resizeImage(const std::string& group, Point n, ImagePtr image, int32_t width, int32_t height);
+            const std::string& group, const Point& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addText(const std::string& group, const Point& n, IFont* font, const std::string& text);
+        void addImage(const std::string& group, const Point& n, const ImagePtr& image);
+        void addAnimation(const std::string& group, const Point& n, const AnimationPtr& animation);
+        void resizeImage(
+            const std::string& group, const Point& n, const ImagePtr& image, int32_t width, int32_t height);
         void removeAll(const std::string& group);
         void removeAll();
         void render();

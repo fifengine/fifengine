@@ -55,7 +55,8 @@ namespace FIFE
      */
     static Logger _log(LM_VIEWVIEW);
 
-    OffRendererLineInfo::OffRendererLineInfo(Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+    OffRendererLineInfo::OffRendererLineInfo(
+        const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -67,7 +68,7 @@ namespace FIFE
         renderbackend->drawLine(m_edge1, m_edge2, m_red, m_green, m_blue, m_alpha);
     }
 
-    OffRendererPointInfo::OffRendererPointInfo(Point anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+    OffRendererPointInfo::OffRendererPointInfo(const Point& anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_anchor(anchor), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -80,7 +81,7 @@ namespace FIFE
     }
 
     OffRendererTriangleInfo::OffRendererTriangleInfo(
-        Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const Point& n1, const Point& n2, const Point& n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_edge1(n1), m_edge2(n2), m_edge3(n3), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -93,7 +94,14 @@ namespace FIFE
     }
 
     OffRendererQuadInfo::OffRendererQuadInfo(
-        Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const Point& n1,
+        const Point& n2,
+        const Point& n3,
+        const Point& n4,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a) :
         OffRendererElementInfo(),
         m_edge1(n1),
         m_edge2(n2),
@@ -114,7 +122,7 @@ namespace FIFE
     }
 
     OffRendererVertexInfo::OffRendererVertexInfo(
-        Point center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
+        const Point& center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) :
         OffRendererElementInfo(), m_center(center), m_size(size), m_red(r), m_green(g), m_blue(b), m_alpha(a)
     {
     }
@@ -126,7 +134,7 @@ namespace FIFE
         renderbackend->drawVertex(m_center, toVertexSize(m_size), m_red, m_green, m_blue, m_alpha);
     }
 
-    OffRendererImageInfo::OffRendererImageInfo(Point anchor, ImagePtr image) :
+    OffRendererImageInfo::OffRendererImageInfo(const Point& anchor, const ImagePtr& image) :
         OffRendererElementInfo(), m_anchor(anchor), m_image(image)
     {
     }
@@ -147,7 +155,7 @@ namespace FIFE
         m_image->render(r);
     }
 
-    OffRendererAnimationInfo::OffRendererAnimationInfo(Point anchor, AnimationPtr animation) :
+    OffRendererAnimationInfo::OffRendererAnimationInfo(const Point& anchor, const AnimationPtr& animation) :
         OffRendererElementInfo(),
         m_anchor(anchor),
         m_animation(animation),
@@ -176,7 +184,7 @@ namespace FIFE
         img->render(r);
     }
 
-    OffRendererTextInfo::OffRendererTextInfo(Point anchor, IFont* font, std::string text) :
+    OffRendererTextInfo::OffRendererTextInfo(const Point& anchor, IFont* font, std::string text) :
         OffRendererElementInfo(), m_anchor(anchor), m_font(font), m_text(std::move(text))
     {
     }
@@ -199,7 +207,8 @@ namespace FIFE
         img->render(r);
     }
 
-    OffRendererResizeInfo::OffRendererResizeInfo(Point anchor, ImagePtr image, int32_t width, int32_t height) :
+    OffRendererResizeInfo::OffRendererResizeInfo(
+        const Point& anchor, const ImagePtr& image, int32_t width, int32_t height) :
         OffRendererElementInfo(), m_anchor(anchor), m_image(image), m_width(width), m_height(height)
     {
     }
@@ -250,50 +259,67 @@ namespace FIFE
         return m_area;
     }
 
-    void OffRenderer::addLine(const std::string& group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void OffRenderer::addLine(
+        const std::string& group, const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererLineInfo(n1, n2, r, g, b, a);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addPoint(const std::string& group, Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void OffRenderer::addPoint(const std::string& group, const Point& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererPointInfo(n, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void OffRenderer::addTriangle(
-        const std::string& group, Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group,
+        const Point& n1,
+        const Point& n2,
+        const Point& n3,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererTriangleInfo(n1, n2, n3, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void OffRenderer::addQuad(
-        const std::string& group, Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group,
+        const Point& n1,
+        const Point& n2,
+        const Point& n3,
+        const Point& n4,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
         m_groups[group].push_back(info);
     }
     void OffRenderer::addVertex(
-        const std::string& group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group, const Point& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addText(const std::string& group, Point n, IFont* font, const std::string& text)
+    void OffRenderer::addText(const std::string& group, const Point& n, IFont* font, const std::string& text)
     {
         OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addImage(const std::string& group, Point n, ImagePtr image)
+    void OffRenderer::addImage(const std::string& group, const Point& n, const ImagePtr& image)
     {
         OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::addAnimation(const std::string& group, Point n, AnimationPtr animation)
+    void OffRenderer::addAnimation(const std::string& group, const Point& n, const AnimationPtr& animation)
     {
         OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
         m_groups[group].push_back(info);
     }
-    void OffRenderer::resizeImage(const std::string& group, Point n, ImagePtr image, int32_t width, int32_t height)
+    void OffRenderer::resizeImage(
+        const std::string& group, const Point& n, const ImagePtr& image, int32_t width, int32_t height)
     {
         OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
         m_groups[group].push_back(info);

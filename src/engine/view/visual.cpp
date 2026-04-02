@@ -27,11 +27,11 @@ namespace FIFE
      */
     static Logger _log(LM_VIEW);
 
-    OverlayColors::OverlayColors(ImagePtr image) : m_image(image) { }
+    OverlayColors::OverlayColors(const ImagePtr& image) : m_image(image) { }
 
-    OverlayColors::OverlayColors(AnimationPtr animation) : m_animation(animation) { }
+    OverlayColors::OverlayColors(const AnimationPtr& animation) : m_animation(animation) { }
 
-    void OverlayColors::setColorOverlayImage(ImagePtr image)
+    void OverlayColors::setColorOverlayImage(const ImagePtr& image)
     {
         m_image = image;
     }
@@ -41,7 +41,7 @@ namespace FIFE
         return m_image;
     }
 
-    void OverlayColors::setColorOverlayAnimation(AnimationPtr animation)
+    void OverlayColors::setColorOverlayAnimation(const AnimationPtr& animation)
     {
         m_animation = animation;
     }
@@ -227,7 +227,7 @@ namespace FIFE
         return v;
     }
 
-    void ActionVisual::addAnimation(uint32_t angle, AnimationPtr animationptr)
+    void ActionVisual::addAnimation(uint32_t angle, const AnimationPtr& animationptr)
     {
         m_animation_map[angle % 360] = animationptr;
         m_map[angle % 360]           = angle % 360;
@@ -239,7 +239,7 @@ namespace FIFE
         return m_animation_map[getIndexByAngle(angle, m_map, closestMatch)];
     }
 
-    void ActionVisual::addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr)
+    void ActionVisual::addAnimationOverlay(uint32_t angle, int32_t order, const AnimationPtr& animationptr)
     {
         std::map<int32_t, AnimationPtr>& orderMap = m_animationOverlayMap[angle % 360];
         m_map[angle % 360]                        = angle % 360;

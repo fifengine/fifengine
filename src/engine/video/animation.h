@@ -59,7 +59,7 @@ namespace FIFE
          * @param image Pointer to Image. Does not transfer the ownership
          * @param duration Duration for given frame in the animation
          */
-        void addFrame(ImagePtr image, uint32_t duration);
+        void addFrame(const ImagePtr& image, uint32_t duration);
 
         /** Get the frame index that matches given timestamp. In case there is no exact match,
          * correct frame is calculated. E.g. if there are frames for timestamps 50 and 100

@@ -47,7 +47,7 @@ namespace FIFE
         void updateInstance(Instance* instance);
 
         ImagePtr getCacheImage();
-        void setCacheImage(ImagePtr image);
+        void setCacheImage(const ImagePtr& image);
 
     private:
         enum RenderEntryUpdateType : uint8_t

@@ -32,16 +32,16 @@ namespace FIFE
         /** Constructors
          */
         OverlayColors() = default;
-        explicit OverlayColors(ImagePtr image);
-        explicit OverlayColors(AnimationPtr animation);
+        explicit OverlayColors(const ImagePtr& image);
+        explicit OverlayColors(const AnimationPtr& animation);
 
         /** Destructor
          */
         ~OverlayColors() = default;
 
-        void setColorOverlayImage(ImagePtr image);
+        void setColorOverlayImage(const ImagePtr& image);
         ImagePtr getColorOverlayImage();
-        void setColorOverlayAnimation(AnimationPtr animation);
+        void setColorOverlayAnimation(const AnimationPtr& animation);
         AnimationPtr getColorOverlayAnimation();
         void changeColor(const Color& source, const Color& target);
         const std::map<Color, Color>& getColors();
@@ -235,7 +235,7 @@ namespace FIFE
 
         /** Adds new animation with given angle (degrees)
          */
-        void addAnimation(uint32_t angle, AnimationPtr animationptr);
+        void addAnimation(uint32_t angle, const AnimationPtr& animationptr);
 
         /** Gets index to animation closest to given angle
          * @return animation index, -1 if no animations available
@@ -244,7 +244,7 @@ namespace FIFE
 
         /** Adds new animation overlay with given angle (degrees) and order
          */
-        void addAnimationOverlay(uint32_t angle, int32_t order, AnimationPtr animationptr);
+        void addAnimationOverlay(uint32_t angle, int32_t order, const AnimationPtr& animationptr);
 
         /** Gets map with animations closest to given angle
          * @return animation map

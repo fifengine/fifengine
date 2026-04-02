@@ -254,7 +254,7 @@ namespace FIFE
          * @param z_calculated if true, z-value (depth cut point) is pre-calculated. If false, camera calculates it
          * @return point in map coordinates
          */
-        ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated = true);
+        ExactModelCoordinate toMapCoordinates(const ScreenPoint& screen_coords, bool z_calculated = true);
 
         /** Transforms given point from map coordinates to screen coordinates
          *  @return point in screen coordinates
@@ -297,7 +297,7 @@ namespace FIFE
          *        considered a hit.
          */
         void getMatchingInstances(
-            ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
+            const ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
         /** Returns instances that match given screen coordinate
          * @param screen_rect rect that contains screen coordinates to be used for search
@@ -307,7 +307,8 @@ namespace FIFE
          *        that have an alpha value higher than what is specified here are
          *        considered a hit.
          */
-        void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
+        void getMatchingInstances(
+            const Rect& screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha = 0);
 
         /** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
          * instance is first in returned list
@@ -405,7 +406,7 @@ namespace FIFE
         /** Sets a animation as overlay,
          *  if fill is true the animation gets the viewport size.
          */
-        void setOverlayAnimation(AnimationPtr anim, bool fill = false);
+        void setOverlayAnimation(const AnimationPtr& anim, bool fill = false);
 
         /** Returns an AnimationPtr to the overlay animation
          */

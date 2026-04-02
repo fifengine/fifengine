@@ -827,7 +827,7 @@ namespace FIFE
         return m_cacheImage;
     }
 
-    void LayerCache::setCacheImage(ImagePtr image)
+    void LayerCache::setCacheImage(const ImagePtr& image)
     {
         m_cacheImage = image;
     }

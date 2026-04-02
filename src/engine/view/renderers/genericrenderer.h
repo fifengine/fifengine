@@ -41,7 +41,8 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererLineInfo(RendererNode n1, RendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        GenericRendererLineInfo(
+            const RendererNode& n1, const RendererNode& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         ~GenericRendererLineInfo() override;
 
     private:
@@ -56,7 +57,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererPointInfo(RendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        GenericRendererPointInfo(const RendererNode& anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         ~GenericRendererPointInfo() override;
 
     private:
@@ -71,7 +72,13 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererTriangleInfo(
-            RendererNode n1, RendererNode n2, RendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+            const RendererNode& n1,
+            const RendererNode& n2,
+            const RendererNode& n3,
+            uint8_t r,
+            uint8_t g,
+            uint8_t b,
+            uint8_t a);
         ~GenericRendererTriangleInfo() override;
 
     private:
@@ -88,10 +95,10 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererQuadInfo(
-            RendererNode n1,
-            RendererNode n2,
-            RendererNode n3,
-            RendererNode n4,
+            const RendererNode& n1,
+            const RendererNode& n2,
+            const RendererNode& n3,
+            const RendererNode& n4,
             uint8_t r,
             uint8_t g,
             uint8_t b,
@@ -113,7 +120,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererVertexInfo(RendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        GenericRendererVertexInfo(const RendererNode& center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         ~GenericRendererVertexInfo() override;
 
     private:
@@ -129,7 +136,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererImageInfo(RendererNode anchor, ImagePtr image, bool zoomed = true);
+        GenericRendererImageInfo(const RendererNode& anchor, const ImagePtr& image, bool zoomed = true);
         ~GenericRendererImageInfo() override;
 
     private:
@@ -141,7 +148,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, bool zoomed = true);
+        GenericRendererAnimationInfo(const RendererNode& anchor, const AnimationPtr& animation, bool zoomed = true);
         ~GenericRendererAnimationInfo() override;
 
     private:
@@ -155,7 +162,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text, bool zoomed = true);
+        GenericRendererTextInfo(const RendererNode& anchor, IFont* font, std::string text, bool zoomed = true);
         ~GenericRendererTextInfo() override;
 
     private:
@@ -169,7 +176,7 @@ namespace FIFE
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
         GenericRendererResizeInfo(
-            RendererNode anchor, ImagePtr image, int32_t width, int32_t height, bool zoomed = true);
+            const RendererNode& anchor, const ImagePtr& image, int32_t width, int32_t height, bool zoomed = true);
         ~GenericRendererResizeInfo() override;
 
     private:
@@ -236,8 +243,8 @@ namespace FIFE
          */
         void addLine(
             const std::string& group,
-            RendererNode n1,
-            RendererNode n2,
+            const RendererNode& n1,
+            const RendererNode& n2,
             uint8_t r,
             uint8_t g,
             uint8_t b,
@@ -252,7 +259,8 @@ namespace FIFE
          * @param b The value for blue, range 0-255.
          * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
          */
-        void addPoint(const std::string& group, RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+        void addPoint(
+            const std::string& group, const RendererNode& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
         /** Adds a triangle.
          *
@@ -267,9 +275,9 @@ namespace FIFE
          */
         void addTriangle(
             const std::string& group,
-            RendererNode n1,
-            RendererNode n2,
-            RendererNode n3,
+            const RendererNode& n1,
+            const RendererNode& n2,
+            const RendererNode& n3,
             uint8_t r,
             uint8_t g,
             uint8_t b,
@@ -289,10 +297,10 @@ namespace FIFE
          */
         void addQuad(
             const std::string& group,
-            RendererNode n1,
-            RendererNode n2,
-            RendererNode n3,
-            RendererNode n4,
+            const RendererNode& n1,
+            const RendererNode& n2,
+            const RendererNode& n3,
+            const RendererNode& n4,
             uint8_t r,
             uint8_t g,
             uint8_t b,
@@ -309,7 +317,13 @@ namespace FIFE
          * @param a The value for alpha, range 0-255. Default value is 255, full opaque.
          */
         void addVertex(
-            const std::string& group, RendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+            const std::string& group,
+            const RendererNode& n,
+            int32_t size,
+            uint8_t r,
+            uint8_t g,
+            uint8_t b,
+            uint8_t a = 255);
 
         /** Adds text.
          *
@@ -320,7 +334,7 @@ namespace FIFE
          * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
          */
         void addText(
-            const std::string& group, RendererNode n, IFont* font, const std::string& text, bool zoomed = true);
+            const std::string& group, const RendererNode& n, IFont* font, const std::string& text, bool zoomed = true);
 
         /** Adds an image.
          *
@@ -329,7 +343,7 @@ namespace FIFE
          * @param image The used image.
          * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
          */
-        void addImage(const std::string& group, RendererNode n, ImagePtr image, bool zoomed = true);
+        void addImage(const std::string& group, const RendererNode& n, const ImagePtr& image, bool zoomed = true);
 
         /** Adds an animation.
          *
@@ -338,7 +352,8 @@ namespace FIFE
          * @param animation The used animation.
          * @param zoomed A flag that indicates whether the camera zoom to be used. Default is true.
          */
-        void addAnimation(const std::string& group, RendererNode n, AnimationPtr animation, bool zoomed = true);
+        void addAnimation(
+            const std::string& group, const RendererNode& n, const AnimationPtr& animation, bool zoomed = true);
 
         /** Adds an image with another size.
          *
@@ -351,8 +366,8 @@ namespace FIFE
          */
         void resizeImage(
             const std::string& group,
-            RendererNode n,
-            ImagePtr image,
+            const RendererNode& n,
+            const ImagePtr& image,
             int32_t width,
             int32_t height,
             bool zoomed = true);

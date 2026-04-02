@@ -381,7 +381,7 @@ namespace FIFE
     using DoublePoint3DVector = std::vector<DoublePoint3D>;
     /** Convert from 2D double point to 2D int32_t point
      */
-    inline Point doublePt2intPt(DoublePoint pt)
+    inline Point doublePt2intPt(const DoublePoint& pt)
     {
         Point tmp(static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)));
         return tmp;
@@ -389,7 +389,7 @@ namespace FIFE
 
     /** Convert from 3D double point to 3D int32_t point
      */
-    inline Point3D doublePt2intPt(DoublePoint3D pt)
+    inline Point3D doublePt2intPt(const DoublePoint3D& pt)
     {
         Point3D tmp(
             static_cast<int32_t>(round(pt.x)), static_cast<int32_t>(round(pt.y)), static_cast<int32_t>(round(pt.z)));
@@ -398,7 +398,7 @@ namespace FIFE
 
     /** Convert from 2D int32_t point to 2D double point
      */
-    inline DoublePoint intPt2doublePt(Point pt)
+    inline DoublePoint intPt2doublePt(const Point& pt)
     {
         DoublePoint tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
         return tmp;
@@ -406,7 +406,7 @@ namespace FIFE
 
     /** Convert from 3D int32_t point to 3D double point
      */
-    inline DoublePoint3D intPt2doublePt(Point3D pt)
+    inline DoublePoint3D intPt2doublePt(const Point3D& pt)
     {
         DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
         return tmp;

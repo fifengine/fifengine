@@ -36,58 +36,75 @@ namespace FIFE
 
     RenderTarget::~RenderTarget() = default;
 
-    void RenderTarget::addLine(const std::string& group, Point n1, Point n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderTarget::addLine(
+        const std::string& group, const Point& n1, const Point& n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererLineInfo(n1, n2, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addPoint(const std::string& group, Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void RenderTarget::addPoint(const std::string& group, const Point& n, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererPointInfo(n, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
     void RenderTarget::addTriangle(
-        const std::string& group, Point n1, Point n2, Point n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group,
+        const Point& n1,
+        const Point& n2,
+        const Point& n3,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererTriangleInfo(n1, n2, n3, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
     void RenderTarget::addQuad(
-        const std::string& group, Point n1, Point n2, Point n3, Point n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group,
+        const Point& n1,
+        const Point& n2,
+        const Point& n3,
+        const Point& n4,
+        uint8_t r,
+        uint8_t g,
+        uint8_t b,
+        uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
     void RenderTarget::addVertex(
-        const std::string& group, Point n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        const std::string& group, const Point& n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         OffRendererElementInfo* info = new OffRendererVertexInfo(n, size, r, g, b, a);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addText(const std::string& group, Point n, IFont* font, const std::string& text)
+    void RenderTarget::addText(const std::string& group, const Point& n, IFont* font, const std::string& text)
     {
         OffRendererElementInfo* info = new OffRendererTextInfo(n, font, text);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addImage(const std::string& group, Point n, ImagePtr image)
+    void RenderTarget::addImage(const std::string& group, const Point& n, const ImagePtr& image)
     {
         OffRendererElementInfo* info = new OffRendererImageInfo(n, image);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::addAnimation(const std::string& group, Point n, AnimationPtr animation)
+    void RenderTarget::addAnimation(const std::string& group, const Point& n, const AnimationPtr& animation)
     {
         OffRendererElementInfo* info = new OffRendererAnimationInfo(n, animation);
         m_groups[group].push_back(info);
     }
 
-    void RenderTarget::resizeImage(const std::string& group, Point n, ImagePtr image, int32_t width, int32_t height)
+    void RenderTarget::resizeImage(
+        const std::string& group, const Point& n, const ImagePtr& image, int32_t width, int32_t height)
     {
         OffRendererElementInfo* info = new OffRendererResizeInfo(n, image, width, height);
         m_groups[group].push_back(info);
