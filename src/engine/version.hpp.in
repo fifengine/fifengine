@@ -34,16 +34,24 @@ namespace FIFE
     class app_version
     {
     public:
+        // clang-format off
         static constexpr std::string_view name        = "@FIFE_NAME@";
         static constexpr std::string_view version     = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@";
         static constexpr std::string_view license     = "@FIFE_LICENSE@";
         static constexpr std::string_view description = "@FIFE_DESC@";
         static constexpr std::string_view homepage    = "@FIFE_HOMEPAGE@";
         static constexpr std::string_view copyright   = "Copyright (c) Fifengine contributors, 2005-@CURRENT_YEAR@.";
-
-        static constexpr semantic_version semver{@PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@};
-
+        static constexpr semantic_version semver{
+            .major = @PROJECT_VERSION_MAJOR@,
+            .minor = @PROJECT_VERSION_MINOR@,
+            .patch = @PROJECT_VERSION_PATCH@,
+        };
         static constexpr int version_id = @PROJECT_VERSION_MAJOR@ * 10000 + @PROJECT_VERSION_MINOR@ * 100 + @PROJECT_VERSION_PATCH@;
+        // clang-format on
+
+        /**
+         * Getters - c_str() types
+         */
 
         static constexpr char const* get_name()
         {
