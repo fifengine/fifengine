@@ -24,7 +24,7 @@ namespace FIFE
     {
     public:
         // Hat positions.
-        enum Hat
+        enum Hat : int8_t
         {
             HAT_INVALID   = -1,
             HAT_CENTERED  = 0,
@@ -39,7 +39,7 @@ namespace FIFE
         };
 
         // The list of axes available from a controller.
-        enum ContollerAxis
+        enum ContollerAxis : int8_t
         {
             CONTOLLER_AXIS_INVALID = -1,
             CONTOLLER_AXIS_LEFTX,
@@ -52,7 +52,7 @@ namespace FIFE
         };
 
         // The list of buttons available from a controller.
-        enum ControllerButton
+        enum ControllerButton : int8_t
         {
             CONTOLLER_BUTTON_INVALID = -1,
             CONTOLLER_BUTTON_A,

@@ -19,7 +19,7 @@ namespace FIFE
 
     /** Sound filter type
      */
-    enum SoundFilterType
+    enum SoundFilterType : uint8_t
     {
         SF_FILTER_NULL,
         SF_FILTER_LOWPASS,
@@ -29,7 +29,7 @@ namespace FIFE
 
     /** Sound effect type
      */
-    enum SoundEffectType
+    enum SoundEffectType : uint8_t
     {
         SE_EFFECT_NULL,
         SE_EFFECT_REVERB,
@@ -49,7 +49,7 @@ namespace FIFE
 
     /** Presets for EAX Reverb
      */
-    enum SoundEffectPreset
+    enum SoundEffectPreset : uint8_t
     {
         SE_PRESET_GENERIC,
         SE_PRESET_PADDEDCELL,

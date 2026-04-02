@@ -22,7 +22,7 @@ namespace fcn
     class ResizableWindow : public Window, public KeyListener, public FocusListener
     {
     public:
-        enum CursorDirections
+        enum CursorDirections : uint8_t
         {
             // left
             CURSOR_DIRECTION_L = 0,

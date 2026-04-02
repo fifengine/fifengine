@@ -50,7 +50,7 @@ namespace FIFE
         void setCacheImage(ImagePtr image);
 
     private:
-        enum RenderEntryUpdateType
+        enum RenderEntryUpdateType : uint8_t
         {
             EntryNoneUpdate     = 0x00,
             EntryVisualUpdate   = 0x01,

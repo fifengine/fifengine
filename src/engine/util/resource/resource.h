@@ -34,7 +34,7 @@ namespace FIFE
     class IResource
     {
     public:
-        enum ResourceState
+        enum ResourceState : uint8_t
         {
             RES_INVALID = 0,
             RES_NOT_LOADED,

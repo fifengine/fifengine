@@ -39,7 +39,7 @@ namespace FIFE
         /** An enumeration of the different status the search can be in.
          *
          */
-        enum SearchStatus
+        enum SearchStatus : uint8_t
         {
             search_status_failed,
             search_status_complete,

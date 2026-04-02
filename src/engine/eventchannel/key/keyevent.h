@@ -26,7 +26,7 @@ namespace FIFE
     class KeyEvent : public InputEvent
     {
     public:
-        enum KeyEventType
+        enum KeyEventType : int8_t
         {
             UNKNOWN  = -1,
             PRESSED  = 0,

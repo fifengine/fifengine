@@ -25,7 +25,7 @@ namespace FIFE
 
     /** Different types of audio-file positions
      */
-    enum SoundPositionType
+    enum SoundPositionType : uint8_t
     {
         SD_SAMPLE_POS,
         SD_TIME_POS,

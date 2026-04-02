@@ -21,7 +21,7 @@ namespace FIFE
 {
     /**  Types for different commands
      */
-    enum CommandType
+    enum CommandType : int8_t
     {
         CMD_UNKNOWN            = -1,
         CMD_QUIT_GAME          = SDL_WINDOWEVENT_CLOSE,

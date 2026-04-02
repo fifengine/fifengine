@@ -26,7 +26,7 @@ namespace FIFE
         /**
          * Mouse event types.
          */
-        enum MouseEventType
+        enum MouseEventType : int8_t
         {
             UNKNOWN_EVENT     = -1,
             MOVED             = 0,
@@ -45,7 +45,7 @@ namespace FIFE
         /**
          * Mouse button types.
          */
-        enum MouseButtonType
+        enum MouseButtonType : uint8_t
         {
             EMPTY          = 0,
             LEFT           = 1,

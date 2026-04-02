@@ -26,7 +26,7 @@ namespace FIFE
     class JoystickEvent : public InputEvent
     {
     public:
-        enum JoystickEventType
+        enum JoystickEventType : uint8_t
         {
             UNKNOWN_EVENT = 0,
             AXIS_MOTION,

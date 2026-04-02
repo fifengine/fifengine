@@ -27,7 +27,7 @@ namespace FIFE
     class TextEvent : public InputEvent
     {
     public:
-        enum TextEventType
+        enum TextEventType : uint8_t
         {
             UNKNOWN = 0,
             INPUT   = 1,

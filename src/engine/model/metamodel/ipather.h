@@ -23,7 +23,7 @@ namespace FIFE
 
     //! A path is a list with locations. Each location holds the coordinate for one cell.
     using Path = std::list<Location>;
-    enum PriorityType
+    enum PriorityType : uint8_t
     {
         HIGH_PRIORITY,
         MEDIUM_PRIORITY,

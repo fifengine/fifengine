@@ -31,7 +31,7 @@ namespace FIFE
         virtual void onTriggered() = 0;
     };
 
-    enum TriggerCondition
+    enum TriggerCondition : uint8_t
     {
         // cell conditions
         CELL_TRIGGER_ENTER = 0,

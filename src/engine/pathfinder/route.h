@@ -31,7 +31,7 @@ namespace FIFE
      * ROUTE_SOLVED means that a path could be found.
      * ROUTE_FAILED means the search failed. No path could be found.
      */
-    enum RouteStatus
+    enum RouteStatus : uint8_t
     {
         ROUTE_CREATED = 0,
         ROUTE_SEARCHING,

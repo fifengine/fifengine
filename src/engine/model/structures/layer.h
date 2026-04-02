@@ -40,13 +40,13 @@ namespace FIFE
      * CELL_EDGES_AND_DIAGONALS allows pather to use both cell edges and diagonals when moving instances from cell to
      * cell on map
      */
-    enum PathingStrategy
+    enum PathingStrategy : uint8_t
     {
         CELL_EDGES_ONLY,
         CELL_EDGES_AND_DIAGONALS
     };
 
-    enum SortingStrategy
+    enum SortingStrategy : uint8_t
     {
         SORTING_CAMERA,
         SORTING_LOCATION,

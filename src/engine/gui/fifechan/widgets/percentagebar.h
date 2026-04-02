@@ -27,7 +27,7 @@ namespace fcn
     class PercentageBar : public Widget
     {
     public:
-        enum Orientation
+        enum Orientation : uint8_t
         {
             HORIZONTAL = 0,
             VERTICAL

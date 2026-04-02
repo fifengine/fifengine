@@ -25,7 +25,7 @@ namespace FIFE
 
     /** State of the audio file
      */
-    enum SoundStateType
+    enum SoundStateType : uint8_t
     {
         SD_UNKNOWN_STATE,
         SD_INITIAL_STATE,

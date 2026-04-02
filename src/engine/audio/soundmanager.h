@@ -29,7 +29,7 @@ namespace FIFE
 
     /** Distance model from OpenAL
      */
-    enum SoundDistanceModelType
+    enum SoundDistanceModelType : uint8_t
     {
         SD_DISTANCE_NONE,
         SD_DISTANCE_INVERSE,
@@ -42,7 +42,7 @@ namespace FIFE
 
     /** SoundManager state
      */
-    enum SoundManagerState
+    enum SoundManagerState : uint8_t
     {
         SM_STATE_INACTIV,
         SM_STATE_PLAY,

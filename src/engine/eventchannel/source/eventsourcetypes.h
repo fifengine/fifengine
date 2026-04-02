@@ -21,7 +21,7 @@ namespace FIFE
 
     /**  Types for different event sources
      */
-    enum EventSourceType
+    enum EventSourceType : uint8_t
     {
         ES_ENGINE          = 1,
         ES_FIFECHAN_WIDGET = 2,

@@ -22,7 +22,7 @@ namespace FIFE
 
     struct ZipContentType
     {
-        enum Enum
+        enum Enum : uint8_t
         {
             File = 0,  // specifies files as content type
             Directory, // specifies directories as content type

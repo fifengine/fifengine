@@ -153,7 +153,7 @@ namespace FIFE
         bool m_need_sorting;
         bool m_need_bind_coloring;
 
-        enum InstanceRendererEffect
+        enum InstanceRendererEffect : uint8_t
         {
             NOTHING = 0x00,
             OUTLINE = 0x01,

@@ -28,7 +28,7 @@ namespace FIFE
      * image -> cursor from image pool
      * animation -> cursor from animation pool
      */
-    enum MouseCursorType
+    enum MouseCursorType : uint8_t
     {
         CURSOR_NONE,
         CURSOR_NATIVE,

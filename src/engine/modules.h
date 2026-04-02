@@ -16,7 +16,7 @@
 /**
  * Modules available for logging
  */
-enum logmodule_t
+enum logmodule_t : signed char
 {
     LM_CORE = -1,
     LM_AUDIO,

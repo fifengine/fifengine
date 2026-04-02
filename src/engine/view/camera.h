@@ -43,7 +43,7 @@ namespace FIFE
     class Camera : public IRendererListener, public IRendererContainer
     {
     public:
-        enum TransformType
+        enum TransformType : uint8_t
         {
             NoneTransform     = 0x00,
             TiltTransform     = 0x01,

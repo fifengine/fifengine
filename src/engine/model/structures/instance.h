@@ -45,7 +45,7 @@ namespace FIFE
         virtual void onInstanceActionFrame(Instance* instance, Action* action, int32_t frame) = 0;
     };
 
-    enum InstanceChangeType
+    enum InstanceChangeType : uint16_t
     {
         ICHANGE_NO_CHANGES      = 0x0000,
         ICHANGE_LOC             = 0x0001,

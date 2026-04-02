@@ -37,7 +37,7 @@ namespace FIFE
      * CTYPE_CELL_NO_BLOCKER means there will never be a blocker. Regardless of the instances on this cell.
      * CTYPE_CELL_BLOCKER means there will always be a blocker. Regardless of the instances on this cell.
      */
-    enum CellType
+    enum CellType : uint8_t
     {
         CTYPE_NO_BLOCKER      = 0,
         CTYPE_CELL_NO_BLOCKER = 1,

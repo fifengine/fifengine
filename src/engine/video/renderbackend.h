@@ -38,7 +38,7 @@ namespace FIFE
     class Image;
 
 #ifdef HAVE_OPENGL
-    enum GLConstants
+    enum GLConstants : uint16_t
     {
         KEEP     = GL_KEEP,
         ZERO     = GL_ZERO,
@@ -56,7 +56,7 @@ namespace FIFE
         ALWAYS   = GL_ALWAYS
     };
 #else
-    enum GLConstants
+    enum GLConstants : uint16_t
     {
         KEEP = 0,
         ZERO,
@@ -75,7 +75,7 @@ namespace FIFE
     };
 #endif
 
-    enum OverlayType
+    enum OverlayType : uint8_t
     {
         OVERLAY_TYPE_NONE                = 0,
         OVERLAY_TYPE_COLOR               = 1,
@@ -83,7 +83,7 @@ namespace FIFE
         OVERLAY_TYPE_TEXTURES_AND_FACTOR = 3
     };
 
-    enum TextureFiltering
+    enum TextureFiltering : uint8_t
     {
         TEXTURE_FILTER_NONE        = 0,
         TEXTURE_FILTER_BILINEAR    = 1,
@@ -91,7 +91,7 @@ namespace FIFE
         TEXTURE_FILTER_ANISOTROPIC = 3
     };
 
-    enum RenderDataType
+    enum RenderDataType : uint8_t
     {
         RENDER_DATA_WITHOUT_Z      = 0,
         RENDER_DATA_TEXTURE_Z      = 1,
