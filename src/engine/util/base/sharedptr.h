@@ -238,7 +238,6 @@ namespace FIFE
             }
         }
 
-    private:
         T* m_ptr;
         uint32_t* m_refCount;
     };

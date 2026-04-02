@@ -293,10 +293,7 @@ namespace FIFE
         bool isPrintable() const
         {
             std::string name = getAsString();
-            if (!name.empty()) {
-                return true;
-            }
-            return false;
+            return !name.empty();
         }
 
         bool isFunctionKey() const

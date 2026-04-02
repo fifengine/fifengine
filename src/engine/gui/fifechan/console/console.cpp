@@ -302,8 +302,9 @@ namespace FIFE
         m_output->setFont(font);
     }
 
-    void Console::focusLost(const fcn::Event&)
+    void Console::focusLost(const fcn::Event& event)
     {
+        static_cast<void>(event);
         hide();
     }
 } // namespace FIFE

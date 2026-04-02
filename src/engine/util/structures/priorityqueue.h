@@ -79,7 +79,7 @@ namespace FIFE
          *
          * @return A const reference to the highest priority element.
          */
-        const value_type getPriorityElement() const
+        value_type getPriorityElement() const
         {
 
             assert(!empty());

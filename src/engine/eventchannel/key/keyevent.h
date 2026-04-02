@@ -28,9 +28,9 @@ namespace FIFE
     public:
         enum KeyEventType
         {
-            UNKNOWN = -1,
-            PRESSED = 0,
-            RELEASED
+            UNKNOWN  = -1,
+            PRESSED  = 0,
+            RELEASED = 1
         };
 
         /** Constructor

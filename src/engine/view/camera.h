@@ -520,7 +520,6 @@ namespace FIFE
         bool m_ani_fill;
         uint32_t m_start_time;
 
-    private:
         Camera(const Camera&)            = delete;
         Camera& operator=(const Camera&) = delete;
     };

@@ -88,7 +88,7 @@ namespace FIFE
     protected:
         bool m_active;
         type_callback m_callback;
-        void updateEvent(uint32_t) override;
+        void updateEvent(uint32_t time) override;
     };
 
 } // namespace FIFE

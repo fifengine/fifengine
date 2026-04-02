@@ -73,8 +73,9 @@ namespace FIFE
             }
         }
 
-        static int close(void*)
+        static int close(void* datasource)
         {
+            static_cast<void>(datasource);
             return 0;
         }
 

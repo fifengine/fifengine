@@ -366,7 +366,11 @@ namespace FIFE
         glViewport(0, 0, toGLsizei(width), toGLsizei(height));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, width, height, 0, -100, 100);
+        const GLdouble left   = 0.0;
+        const GLdouble right  = static_cast<GLdouble>(width);
+        const GLdouble bottom = static_cast<GLdouble>(height);
+        const GLdouble top    = 0.0;
+        glOrtho(left, right, bottom, top, -100.0, 100.0);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 

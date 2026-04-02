@@ -43,10 +43,7 @@ namespace FIFE
          */
         bool isPrintable() const
         {
-            if (!m_text.empty()) {
-                return true;
-            }
-            return false;
+            return !m_text.empty();
         }
 
         /** Gets the string, encoded as UTF-8.

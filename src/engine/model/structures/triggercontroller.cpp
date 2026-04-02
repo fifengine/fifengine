@@ -86,7 +86,7 @@ namespace FIFE
 
         Trigger* trigger               = createTrigger(triggerName);
         const std::vector<Cell*> cells = cellCache->getCellsInRect(rec);
-        for (auto& cell : cells) {
+        for (const auto& cell : cells) {
             trigger->assign(cell);
         }
         return trigger;

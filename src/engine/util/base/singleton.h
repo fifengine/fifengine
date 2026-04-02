@@ -43,9 +43,13 @@ namespace FIFE
         virtual ~StaticSingleton() { }
 
     private:
-        StaticSingleton(const StaticSingleton<T>&) { }
-        StaticSingleton<T>& operator=(const StaticSingleton<T>&)
+        StaticSingleton(const StaticSingleton<T>& rhs)
         {
+            static_cast<void>(rhs);
+        }
+        StaticSingleton<T>& operator=(const StaticSingleton<T>& rhs)
+        {
+            static_cast<void>(rhs);
             return this;
         }
     };
@@ -88,8 +92,14 @@ namespace FIFE
     private:
         static T* m_instance;
 
-        DynamicSingleton(const DynamicSingleton<T>&) { }
-        DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) { }
+        DynamicSingleton(const DynamicSingleton<T>& rhs)
+        {
+            static_cast<void>(rhs);
+        }
+        DynamicSingleton<T&> operator=(const DynamicSingleton<T>& rhs)
+        {
+            static_cast<void>(rhs);
+        }
     };
 
     template <typename T>

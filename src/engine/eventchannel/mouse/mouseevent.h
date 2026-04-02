@@ -28,18 +28,18 @@ namespace FIFE
          */
         enum MouseEventType
         {
-            UNKNOWN_EVENT = -1,
-            MOVED         = 0,
-            PRESSED,
-            RELEASED,
-            WHEEL_MOVED_DOWN,
-            WHEEL_MOVED_UP,
-            WHEEL_MOVED_RIGHT,
-            WHEEL_MOVED_LEFT,
-            CLICKED,
-            ENTERED,
-            EXITED,
-            DRAGGED
+            UNKNOWN_EVENT     = -1,
+            MOVED             = 0,
+            PRESSED           = 1,
+            RELEASED          = 2,
+            WHEEL_MOVED_DOWN  = 3,
+            WHEEL_MOVED_UP    = 4,
+            WHEEL_MOVED_RIGHT = 5,
+            WHEEL_MOVED_LEFT  = 6,
+            CLICKED           = 7,
+            ENTERED           = 8,
+            EXITED            = 9,
+            DRAGGED           = 10
         };
 
         /**

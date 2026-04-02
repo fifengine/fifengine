@@ -89,21 +89,21 @@ namespace FIFE
          */
         bool isFullScreen() const
         {
-            return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) ? true : false;
+            return (m_SDLFlags & SDL_WINDOW_FULLSCREEN) != 0;
         }
 
         /** True if this mode uses the OpenGL renderer.  False otherwise.
          */
         bool isOpenGL() const
         {
-            return (m_SDLFlags & SDL_WINDOW_OPENGL) ? true : false;
+            return (m_SDLFlags & SDL_WINDOW_OPENGL) != 0;
         }
 
         /** Is this screen mode an SDL only screen mode
          */
         bool isSDL() const
         {
-            return (!(m_SDLFlags & SDL_WINDOW_OPENGL)) ? true : false;
+            return (m_SDLFlags & SDL_WINDOW_OPENGL) == 0;
         }
 
         /** Sets the pixel format enum.
