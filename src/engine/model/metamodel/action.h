@@ -53,7 +53,7 @@ namespace FIFE
 
         /** Gets the duration of this action
          */
-        uint32_t getDuration()
+        uint32_t getDuration() const
         {
             return m_duration;
         }

@@ -225,7 +225,7 @@ namespace FIFE
         m_blockingEnabled = enabled;
     }
 
-    bool CellRenderer::isEnabledBlocking()
+    bool CellRenderer::isEnabledBlocking() const
     {
         return m_blockingEnabled;
     }
@@ -235,7 +235,7 @@ namespace FIFE
         m_pathVisualEnabled = enabled;
     }
 
-    bool CellRenderer::isEnabledPathVisual()
+    bool CellRenderer::isEnabledPathVisual() const
     {
         return m_pathVisualEnabled;
     }

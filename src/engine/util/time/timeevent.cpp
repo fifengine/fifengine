@@ -40,12 +40,12 @@ namespace FIFE
         m_period = period;
     }
 
-    int32_t TimeEvent::getPeriod()
+    int32_t TimeEvent::getPeriod() const
     {
         return m_period;
     }
 
-    uint32_t TimeEvent::getLastUpdateTime()
+    uint32_t TimeEvent::getLastUpdateTime() const
     {
         return m_last_updated;
     }

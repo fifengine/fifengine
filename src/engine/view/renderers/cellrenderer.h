@@ -89,7 +89,7 @@ namespace FIFE
          *
          * @return A bool, true if visualization is enabled, otherwise false.
          */
-        bool isEnabledBlocking();
+        bool isEnabledBlocking() const;
 
         /** Enables path visualization.
          *
@@ -101,7 +101,7 @@ namespace FIFE
          *
          * @return A bool, true if visualization is enabled, otherwise false.
          */
-        bool isEnabledPathVisual();
+        bool isEnabledPathVisual() const;
 
         /** Adds a instance to path visualization. The current path is automatically rendered.
          *

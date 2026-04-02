@@ -47,7 +47,7 @@ namespace FIFE
 
         /** Return the OpenAL auxiliary slot handle.
          */
-        ALuint getSlotId();
+        ALuint getSlotId() const;
 
         /** Return sound effect type.
          * @see SoundEffectType

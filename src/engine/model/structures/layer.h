@@ -207,7 +207,7 @@ namespace FIFE
 
         /** Returns the layer's transparency value
          */
-        uint8_t getLayerTransparency();
+        uint8_t getLayerTransparency() const;
 
         /** Retrieves the minimum/maximum coordinates of instances on the layer.
          * @param min A reference to a ModelCoordinate that will hold the minimum coordinate.
@@ -283,7 +283,7 @@ namespace FIFE
         /** Returns if a layer is walkable.
          * @return A boolean, true if the layer is walkable otherwise false.
          */
-        bool isWalkable();
+        bool isWalkable() const;
 
         /** Sets interact for the layer. The data(size, instances) from all interact layers
          *  and the walkable layer will merged into one CellCache.
@@ -295,7 +295,7 @@ namespace FIFE
         /** Returns if a layer is interact.
          * @return A boolean, true if the layer is interact otherwise false.
          */
-        bool isInteract();
+        bool isInteract() const;
 
         /** Returns the id of the walkable layer if this is a interact layer otherwise the string is empty.
          * @return A const reference to a string that refer to the id of the walkable layer.
@@ -342,7 +342,7 @@ namespace FIFE
 
         /** Returns true, if layer information was changed during previous update round
          */
-        bool isChanged();
+        bool isChanged() const;
 
         /** Returns instances that were changed during previous update round.
          * @note does not contain created or deleted instances
@@ -365,7 +365,7 @@ namespace FIFE
         /** Returns true, if layer is static.
          * @return A boolean, true if the layer is static, otherwise false.
          */
-        bool isStatic();
+        bool isStatic() const;
 
     protected:
         //! string identifier

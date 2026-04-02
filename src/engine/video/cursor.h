@@ -181,7 +181,7 @@ namespace FIFE
 
         /** Get the current mouse position
          */
-        void getPosition(int32_t* x, int32_t* y);
+        void getPosition(int32_t* x, int32_t* y) const;
 
         /** Enables or disables the native image cursor feature.
          * If enabled, cursors set to an image or an animation will be set using SDL

@@ -163,12 +163,12 @@ namespace FIFE
          * @see setCellImageDimensions
          * @return Point containing x=width and y=height
          */
-        Point getCellImageDimensions();
+        Point getCellImageDimensions() const;
 
         /** Gets screen cell image dimensions for given layer.
          * @return Point containing x=width and y=height
          */
-        Point getCellImageDimensions(Layer* layer);
+        Point getCellImageDimensions(Layer* layer) const;
 
         /** Gets x reference scale for cell image dimensions
          */
@@ -282,7 +282,7 @@ namespace FIFE
 
         /** Gets if camera is enabled / disabled
          */
-        bool isEnabled();
+        bool isEnabled() const;
 
         /** Returns reference to RenderList.
          */
@@ -340,7 +340,7 @@ namespace FIFE
 
         /** Returns true if camera view has been updated, otherwise false
          */
-        bool isUpdated()
+        bool isUpdated() const
         {
             return m_updated;
         }
@@ -383,7 +383,7 @@ namespace FIFE
 
         /** Returns a vector that contain the overlay color
          */
-        std::vector<uint8_t> getOverlayColor();
+        std::vector<uint8_t> getOverlayColor() const;
 
         /** Resets the color overlay
          */
@@ -396,7 +396,7 @@ namespace FIFE
 
         /** Returns the pool id of the overlay image
          */
-        int32_t getOverlayImage();
+        int32_t getOverlayImage() const;
 
         /** Resets the image overlay
          */
@@ -453,11 +453,11 @@ namespace FIFE
 
         /** Gets logical cell image dimensions for given layer
          */
-        DoublePoint getLogicalCellDimensions(Layer* layer);
+        DoublePoint getLogicalCellDimensions(Layer* layer) const;
 
         /** Gets logical cell image dimensions and ignores the layer and cellgrid
          */
-        DoublePoint getLogicalCellDimensions();
+        DoublePoint getLogicalCellDimensions() const;
 
         /** Renders the overlay(color, image, animation) for the camera.
          */

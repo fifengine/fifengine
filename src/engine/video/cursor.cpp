@@ -154,7 +154,7 @@ namespace FIFE
         SDL_WarpMouseInWindow(RenderBackend::instance()->getWindow(), m_mx, m_my);
     }
 
-    void Cursor::getPosition(int32_t* x, int32_t* y)
+    void Cursor::getPosition(int32_t* x, int32_t* y) const
     {
         *x = m_mx;
         *y = m_my;

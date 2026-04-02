@@ -255,7 +255,7 @@ namespace FIFE
         m_enabledAll = true;
     }
 
-    bool Trigger::isEnabledForAllInstances()
+    bool Trigger::isEnabledForAllInstances() const
     {
         return m_enabledAll;
     }

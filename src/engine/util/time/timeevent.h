@@ -64,13 +64,13 @@ namespace FIFE
          *
          * @return The period of the event. See class description.
          */
-        int32_t getPeriod();
+        int32_t getPeriod() const;
 
         /** Get the last time the event was updated.
          *
          * @return Time of last update.
          */
-        uint32_t getLastUpdateTime();
+        uint32_t getLastUpdateTime() const;
 
         /** Set the last time the event was updated.
          *

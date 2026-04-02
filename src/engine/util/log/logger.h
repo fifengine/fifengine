@@ -177,7 +177,7 @@ namespace FIFE
 
         /** Returns if LogManager is set to log to prompt
          */
-        bool isLogToPrompt();
+        bool isLogToPrompt() const;
 
         /** Sets LogManager to log to a file
          */
@@ -185,7 +185,7 @@ namespace FIFE
 
         /** Returns if LogManager is set to log to a file
          */
-        bool isLogToFile();
+        bool isLogToFile() const;
 
         /** Gets display name for given module id
          * E.g. LM_AUDIO -> "Audio"

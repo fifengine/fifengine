@@ -124,7 +124,7 @@ namespace FIFE
             }
         }
 
-        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs)
+        bool operator()(RenderItem* const & lhs, RenderItem* const & rhs) const
         {
             ExactModelCoordinate lpos = lhs->instance->getLocationRef().getExactLayerCoordinates();
             ExactModelCoordinate rpos = rhs->instance->getLocationRef().getExactLayerCoordinates();

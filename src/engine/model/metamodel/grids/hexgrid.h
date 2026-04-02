@@ -48,8 +48,8 @@ namespace FIFE
         CellGrid* clone() override;
 
     private:
-        double getXZigzagOffset(double y);
-        ModelCoordinate toLayerCoordinatesHelper(const ExactModelCoordinate& coords);
+        double getXZigzagOffset(double y) const;
+        ModelCoordinate toLayerCoordinatesHelper(const ExactModelCoordinate& coords) const;
 
         bool m_axial;
     };

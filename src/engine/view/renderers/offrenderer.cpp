@@ -235,7 +235,7 @@ namespace FIFE
         m_enabled = enabled;
     }
 
-    bool OffRenderer::isEnabled()
+    bool OffRenderer::isEnabled() const
     {
         return m_enabled;
     }

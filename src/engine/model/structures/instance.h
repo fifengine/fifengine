@@ -380,11 +380,11 @@ namespace FIFE
 
         /** Gets the cell stack position.
          */
-        uint8_t getCellStackPosition();
+        uint8_t getCellStackPosition() const;
 
         /** Returns true if instance or object have special cost otherwise false.
          */
-        bool isSpecialCost();
+        bool isSpecialCost() const;
 
         /** Sets for the given cost id a cost.
          *  @param id name of the cost id

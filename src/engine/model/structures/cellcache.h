@@ -194,12 +194,12 @@ namespace FIFE
         /** Returns width of the CellCache.
          * @return A unsigned integer that is the width.
          */
-        uint32_t getWidth();
+        uint32_t getWidth() const;
 
         /** Returns height of the CellCache.
          * @return A unsigned integer that is the height.
          */
-        uint32_t getHeight();
+        uint32_t getHeight() const;
 
         /** Checks whether the location is in CellCache range.
          * @param location A const reference to location which should be checked.
@@ -232,7 +232,7 @@ namespace FIFE
         /** Gets maximal z range for neighbors. By default disabled with the value -1.
          * @return The maximal z range as int.
          */
-        int32_t getMaxNeighborZ();
+        int32_t getMaxNeighborZ() const;
 
         /** Returns all cells in the line.
          * @param pt1 A const reference to the ModelCoordinate where the line begin.
@@ -380,7 +380,7 @@ namespace FIFE
         /** Gets default cost for this CellCache.
          * @return A double, the cost.
          */
-        double getDefaultCostMultiplier();
+        double getDefaultCostMultiplier() const;
 
         /** Sets default speed for this CellCache.
          * @param multi A double, the speed.
@@ -390,7 +390,7 @@ namespace FIFE
         /** Gets default speed for this CellCache.
          * @return A double, the speed.
          */
-        double getDefaultSpeedMultiplier();
+        double getDefaultSpeedMultiplier() const;
 
         /** Gets if cell uses default cost multiplier.
          * @param cell A pointer to the cell.
@@ -511,7 +511,7 @@ namespace FIFE
          * Note that narrow cells will only saved if this is disabled.
          * @return A boolean, if true the automatic search is enabled, otherwise false.
          */
-        bool isSearchNarrowCells();
+        bool isSearchNarrowCells() const;
 
         /** Sets if narrow cells should be searched automatic.
          * @param search A boolean, if true the automatic search is enabled, otherwise false.
@@ -592,7 +592,7 @@ namespace FIFE
         /** Returns if the cache size is static.
          * @return A boolean, true if the cache size is static, otherwise false.
          */
-        bool isStaticSize();
+        bool isStaticSize() const;
 
         void setBlockingUpdate(bool update);
         void setSizeUpdate(bool update);

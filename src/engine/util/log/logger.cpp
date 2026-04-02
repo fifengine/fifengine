@@ -172,7 +172,7 @@ namespace FIFE
         m_logtoprompt = logtoprompt;
     }
 
-    bool LogManager::isLogToPrompt()
+    bool LogManager::isLogToPrompt() const
     {
         return m_logtoprompt;
     }
@@ -187,7 +187,7 @@ namespace FIFE
         m_logtofile = logtofile;
     }
 
-    bool LogManager::isLogToFile()
+    bool LogManager::isLogToFile() const
     {
         return m_logtofile;
     }

@@ -66,7 +66,7 @@ namespace FIFE
         /** Returns route status.
          * @return The seach status that is set.
          */
-        RouteStatusInfo getRouteStatus();
+        RouteStatusInfo getRouteStatus() const;
 
         /** Sets the start location.
          * @param node A const reference to the start location.
@@ -138,7 +138,7 @@ namespace FIFE
         /** Gets if the route is replanned.
          * @return A boolean, if true the route is replanned, otherwise false.
          */
-        bool isReplanned();
+        bool isReplanned() const;
 
         /** Returns the length of the path.
          * @return The path length.
@@ -148,7 +148,7 @@ namespace FIFE
         /** Returns the walked steps.
          * @return The number of walked steps.
          */
-        uint32_t getWalkedLength();
+        uint32_t getWalkedLength() const;
 
         /** Sets the session identifier.
          * @param id A integer as identifier for the search session.
@@ -158,7 +158,7 @@ namespace FIFE
         /** Returns the session identifier.
          * @return A integer as identifier for the search session.
          */
-        int32_t getSessionId();
+        int32_t getSessionId() const;
 
         /** Sets the current rotation.
          * @param rotation The rotation as integer.
@@ -168,7 +168,7 @@ namespace FIFE
         /** Returns the current rotation.
          * @return The rotation as integer.
          */
-        int32_t getRotation();
+        int32_t getRotation() const;
 
         /** Sets cost identifier which should be used for pathfinding.
          * @param cost A const reference to the string that contains the identifier.
@@ -217,7 +217,7 @@ namespace FIFE
         /** Gets if the route ignores dynamic blocker.
          * @return A boolean, if true the route ignores blocker, otherwise false.
          */
-        bool isDynamicBlockerIgnored();
+        bool isDynamicBlockerIgnored() const;
 
         /** Returns the blocking locations of the path.
          * Only useful in case the blocking ignore flag is set.

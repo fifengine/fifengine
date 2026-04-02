@@ -545,7 +545,7 @@ namespace FIFE
         return 0;
     }
 
-    uint32_t SoundEmitter::getPlayTimestamp()
+    uint32_t SoundEmitter::getPlayTimestamp() const
     {
         return m_internData.playTimestamp;
     }
@@ -770,7 +770,7 @@ namespace FIFE
         return m_internData.coneOuterGain;
     }
 
-    SoundStateType SoundEmitter::getState()
+    SoundStateType SoundEmitter::getState() const
     {
         if (!isActive()) {
             return m_internData.soundState;

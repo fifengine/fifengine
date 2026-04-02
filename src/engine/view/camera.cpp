@@ -261,12 +261,12 @@ namespace FIFE
         m_curOrigin = toScreenCoordinates(m_position);
     }
 
-    Point Camera::getCellImageDimensions()
+    Point Camera::getCellImageDimensions() const
     {
         return Point(m_screenCellWidth, m_screenCellHeight);
     }
 
-    Point Camera::getCellImageDimensions(Layer* layer)
+    Point Camera::getCellImageDimensions(Layer* layer) const
     {
         Point p;
         DoublePoint dimensions = getLogicalCellDimensions(layer);
@@ -365,7 +365,7 @@ namespace FIFE
         m_enabled = enabled;
     }
 
-    bool Camera::isEnabled()
+    bool Camera::isEnabled() const
     {
         return m_enabled;
     }
@@ -473,7 +473,7 @@ namespace FIFE
         return m_screen_2_vscreen * intPt2doublePt(p);
     }
 
-    DoublePoint Camera::getLogicalCellDimensions(Layer* layer)
+    DoublePoint Camera::getLogicalCellDimensions(Layer* layer) const
     {
         assert(layer);
         CellGrid* cg = layer->getCellGrid();
@@ -508,7 +508,7 @@ namespace FIFE
         return DoublePoint(x2 - x1, y2 - y1);
     }
 
-    DoublePoint Camera::getLogicalCellDimensions()
+    DoublePoint Camera::getLogicalCellDimensions() const
     {
         std::vector<ExactModelCoordinate> vertices;
         vertices.emplace_back(-0.5, -0.5);
@@ -854,7 +854,7 @@ found_non_transparent_pixel:;
         m_overlay_color.a = alpha;
     }
 
-    std::vector<uint8_t> Camera::getOverlayColor()
+    std::vector<uint8_t> Camera::getOverlayColor() const
     {
         std::vector<uint8_t> colors;
         if (m_col_overlay) {
@@ -882,7 +882,7 @@ found_non_transparent_pixel:;
         m_img_fill    = fill;
     }
 
-    int32_t Camera::getOverlayImage()
+    int32_t Camera::getOverlayImage() const
     {
         int32_t id = -1;
         if (m_img_overlay) {

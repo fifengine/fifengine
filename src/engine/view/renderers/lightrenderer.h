@@ -38,17 +38,17 @@ namespace FIFE
         {
             return &m_anchor;
         }
-        int32_t getSrcBlend()
+        int32_t getSrcBlend() const
         {
             return m_src;
         }
-        int32_t getDstBlend()
+        int32_t getDstBlend() const
         {
             return m_dst;
         }
 
         void setStencil(uint8_t stencil_ref);
-        int32_t getStencil();
+        int32_t getStencil() const;
         void removeStencil();
 
         virtual std::vector<uint8_t> getColor()

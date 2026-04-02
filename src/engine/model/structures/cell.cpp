@@ -277,7 +277,7 @@ namespace FIFE
         m_zone     = nullptr;
     }
 
-    bool Cell::isInserted()
+    bool Cell::isInserted() const
     {
         return m_inserted;
     }
@@ -287,7 +287,7 @@ namespace FIFE
         m_inserted = inserted;
     }
 
-    bool Cell::isZoneProtected()
+    bool Cell::isZoneProtected() const
     {
         return m_protect;
     }
@@ -297,7 +297,7 @@ namespace FIFE
         m_protect = protect;
     }
 
-    CellTypeInfo Cell::getCellType()
+    CellTypeInfo Cell::getCellType() const
     {
         return m_type;
     }
@@ -317,7 +317,7 @@ namespace FIFE
         m_coordId = id;
     }
 
-    int32_t Cell::getCellId()
+    int32_t Cell::getCellId() const
     {
         return m_coordId;
     }

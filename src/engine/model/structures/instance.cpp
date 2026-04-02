@@ -561,12 +561,12 @@ namespace FIFE
         m_cellStackPos = stack;
     }
 
-    uint8_t Instance::getCellStackPosition()
+    uint8_t Instance::getCellStackPosition() const
     {
         return m_cellStackPos;
     }
 
-    bool Instance::isSpecialCost()
+    bool Instance::isSpecialCost() const
     {
         return m_specialCost;
     }

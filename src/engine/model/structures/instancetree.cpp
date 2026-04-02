@@ -68,10 +68,10 @@ namespace FIFE
             instanceList(a_instanceList), searchRect(rect)
         {
         }
-        bool visit(InstanceTree::InstanceTreeNode* node, int32_t d);
+        bool visit(InstanceTree::InstanceTreeNode* node, int32_t d) const;
     };
 
-    bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int32_t d)
+    bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int32_t d) const
     {
         InstanceTree::InstanceList& list = node->data();
         for (InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {

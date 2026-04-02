@@ -53,7 +53,7 @@ namespace FIFE
             return m_name;
         }
 
-        ResourceHandle getHandle()
+        ResourceHandle getHandle() const
         {
             return m_handle;
         }

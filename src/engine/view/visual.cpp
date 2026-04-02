@@ -184,7 +184,7 @@ namespace FIFE
         }
     }
 
-    uint8_t InstanceVisual::getTransparency()
+    uint8_t InstanceVisual::getTransparency() const
     {
         return m_transparency;
     }
@@ -197,7 +197,7 @@ namespace FIFE
         }
     }
 
-    bool InstanceVisual::isVisible()
+    bool InstanceVisual::isVisible() const
     {
         return m_visible;
     }
@@ -210,7 +210,7 @@ namespace FIFE
         }
     }
 
-    int32_t InstanceVisual::getStackPosition()
+    int32_t InstanceVisual::getStackPosition() const
     {
         return m_stackposition;
     }

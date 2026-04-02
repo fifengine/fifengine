@@ -151,7 +151,7 @@ namespace FIFE
         }
     }
 
-    void SoundManager::unmute()
+    void SoundManager::unmute() const
     {
         if (isActive()) {
             alListenerf(AL_GAIN, m_muteVol);
@@ -240,7 +240,7 @@ namespace FIFE
         return m_distanceModel;
     }
 
-    void SoundManager::setListenerPosition(const AudioSpaceCoordinate& position)
+    void SoundManager::setListenerPosition(const AudioSpaceCoordinate& position) const
     {
         if (isActive()) {
             alListener3f(
@@ -261,7 +261,7 @@ namespace FIFE
         return AudioSpaceCoordinate();
     }
 
-    void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation)
+    void SoundManager::setListenerOrientation(const AudioSpaceCoordinate& orientation) const
     {
         if (isActive()) {
             ALfloat vec[6] = {
@@ -285,7 +285,7 @@ namespace FIFE
         return AudioSpaceCoordinate();
     }
 
-    void SoundManager::setListenerVelocity(const AudioSpaceCoordinate& velocity)
+    void SoundManager::setListenerVelocity(const AudioSpaceCoordinate& velocity) const
     {
         if (isActive()) {
             alListener3f(
@@ -306,7 +306,7 @@ namespace FIFE
         return AudioSpaceCoordinate();
     }
 
-    void SoundManager::setDopplerFactor(float factor)
+    void SoundManager::setDopplerFactor(float factor) const
     {
         if (isActive()) {
             if (factor >= 0.0) {

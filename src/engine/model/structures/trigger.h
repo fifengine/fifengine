@@ -133,7 +133,7 @@ namespace FIFE
          * @return bool true if the trigger has been triggered, false
          * otherwise.
          */
-        bool isTriggered()
+        bool isTriggered() const
         {
             return m_triggered;
         };
@@ -180,7 +180,7 @@ namespace FIFE
 
         /** Returns if trigger is enabled for all instances.
          */
-        bool isEnabledForAllInstances();
+        bool isEnabledForAllInstances() const;
 
         /** Disables trigger for all instances.
          */

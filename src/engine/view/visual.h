@@ -175,7 +175,7 @@ namespace FIFE
         /** Gets current transparency value (0-255)
          *  @return current transparency value
          */
-        uint8_t getTransparency();
+        uint8_t getTransparency() const;
 
         /** Sets visibility value for object to be visualized
          *  @param visible is object visible or not
@@ -185,7 +185,7 @@ namespace FIFE
         /** Is instance visible or not
          *  @return is instance visible or not
          */
-        bool isVisible();
+        bool isVisible() const;
 
         /** Sets stack position of the instance
          *  Stack position is used to define the order in which instances residing
@@ -197,7 +197,7 @@ namespace FIFE
         /** Gets current stack position of instance
          *  @return current stack position
          */
-        int32_t getStackPosition();
+        int32_t getStackPosition() const;
 
     private:
         /** Constructor

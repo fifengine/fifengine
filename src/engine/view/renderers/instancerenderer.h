@@ -140,7 +140,7 @@ namespace FIFE
 
         /** Returns true if coloring need binding, otherwise false
          */
-        bool needColorBinding()
+        bool needColorBinding() const
         {
             return m_need_bind_coloring;
         }

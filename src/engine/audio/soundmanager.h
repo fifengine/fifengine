@@ -93,7 +93,7 @@ namespace FIFE
 
         /** Unmutes to volume before mute() was called.
          */
-        void unmute();
+        void unmute() const;
 
         /** Plays all SoundEmitters.
          */
@@ -121,7 +121,7 @@ namespace FIFE
 
         /** Sets the position of the listener (alter ego).
          */
-        void setListenerPosition(const AudioSpaceCoordinate& position);
+        void setListenerPosition(const AudioSpaceCoordinate& position) const;
 
         /** Return the position of the listener (alter ego).
          */
@@ -129,7 +129,7 @@ namespace FIFE
 
         /** Sets the orientation of the listener (alter ego).
          */
-        void setListenerOrientation(const AudioSpaceCoordinate& orientation);
+        void setListenerOrientation(const AudioSpaceCoordinate& orientation) const;
 
         /** Return the orientation of the listener (alter ego).
          */
@@ -137,7 +137,7 @@ namespace FIFE
 
         /** Sets the velocity of the listener (alter ego).
          */
-        void setListenerVelocity(const AudioSpaceCoordinate& velocity);
+        void setListenerVelocity(const AudioSpaceCoordinate& velocity) const;
 
         /** Return the velocity of the listener (alter ego).
          */
@@ -145,7 +145,7 @@ namespace FIFE
 
         /** Sets factor for doppler effect.
          */
-        void setDopplerFactor(float factor);
+        void setDopplerFactor(float factor) const;
 
         /** Return factor for doppler effect.
          */

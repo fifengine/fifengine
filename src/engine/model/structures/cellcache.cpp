@@ -831,12 +831,12 @@ namespace FIFE
         resize(rec);
     }
 
-    uint32_t CellCache::getWidth()
+    uint32_t CellCache::getWidth() const
     {
         return m_width;
     }
 
-    uint32_t CellCache::getHeight()
+    uint32_t CellCache::getHeight() const
     {
         return m_height;
     }
@@ -875,7 +875,7 @@ namespace FIFE
         m_neighborZ = z;
     }
 
-    int32_t CellCache::getMaxNeighborZ()
+    int32_t CellCache::getMaxNeighborZ() const
     {
         return m_neighborZ;
     }
@@ -1212,7 +1212,7 @@ namespace FIFE
         m_defaultCostMulti = multi;
     }
 
-    double CellCache::getDefaultCostMultiplier()
+    double CellCache::getDefaultCostMultiplier() const
     {
         return m_defaultCostMulti;
     }
@@ -1222,7 +1222,7 @@ namespace FIFE
         m_defaultSpeedMulti = multi;
     }
 
-    double CellCache::getDefaultSpeedMultiplier()
+    double CellCache::getDefaultSpeedMultiplier() const
     {
         return m_defaultSpeedMulti;
     }
@@ -1467,7 +1467,7 @@ namespace FIFE
         m_narrowCells.clear();
     }
 
-    bool CellCache::isSearchNarrowCells()
+    bool CellCache::isSearchNarrowCells() const
     {
         return m_searchNarrow;
     }
@@ -1610,7 +1610,7 @@ namespace FIFE
         m_staticSize = staticSize;
     }
 
-    bool CellCache::isStaticSize()
+    bool CellCache::isStaticSize() const
     {
         return m_staticSize;
     }

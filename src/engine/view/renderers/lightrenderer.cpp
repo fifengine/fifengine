@@ -49,7 +49,7 @@ namespace FIFE
         m_stencil     = true;
         m_stencil_ref = stencil_ref;
     }
-    int32_t LightRendererElementInfo::getStencil()
+    int32_t LightRendererElementInfo::getStencil() const
     {
         if (!m_stencil) {
             return -1;

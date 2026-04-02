@@ -117,7 +117,7 @@ namespace FIFE
         return hexGrid;
     }
 
-    double HexGrid::getXZigzagOffset(double y)
+    double HexGrid::getXZigzagOffset(double y) const
     {
         if (m_axial) {
             return HEX_TO_EDGE * y;
@@ -168,7 +168,7 @@ namespace FIFE
         return toLayerCoordinatesHelper(elc);
     }
 
-    ModelCoordinate HexGrid::toLayerCoordinatesHelper(const ExactModelCoordinate& coords)
+    ModelCoordinate HexGrid::toLayerCoordinatesHelper(const ExactModelCoordinate& coords) const
     {
         // this helper method takes exact layer coordinates with zigzag removed
         // and converts them to layer coordinates

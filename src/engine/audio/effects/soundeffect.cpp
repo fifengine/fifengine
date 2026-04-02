@@ -46,7 +46,7 @@ namespace FIFE
         m_slot = slot;
     }
 
-    ALuint SoundEffect::getSlotId()
+    ALuint SoundEffect::getSlotId() const
     {
         return m_slot;
     }

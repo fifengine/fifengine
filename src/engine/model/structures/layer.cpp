@@ -472,7 +472,7 @@ namespace FIFE
         }
     }
 
-    uint8_t Layer::getLayerTransparency()
+    uint8_t Layer::getLayerTransparency() const
     {
         return m_transparency;
     }
@@ -556,7 +556,7 @@ namespace FIFE
         m_walkable = walkable;
     }
 
-    bool Layer::isWalkable()
+    bool Layer::isWalkable() const
     {
         return m_walkable;
     }
@@ -567,7 +567,7 @@ namespace FIFE
         m_walkableId = id;
     }
 
-    bool Layer::isInteract()
+    bool Layer::isInteract() const
     {
         return m_interact;
     }
@@ -685,7 +685,7 @@ namespace FIFE
         }
     }
 
-    bool Layer::isChanged()
+    bool Layer::isChanged() const
     {
         return m_changed;
     }
@@ -700,7 +700,7 @@ namespace FIFE
         m_static = stati;
     }
 
-    bool Layer::isStatic()
+    bool Layer::isStatic() const
     {
         return m_static;
     }

@@ -50,7 +50,7 @@ namespace FIFE
         }
     }
 
-    RouteStatusInfo Route::getRouteStatus()
+    RouteStatusInfo Route::getRouteStatus() const
     {
         return m_status;
     }
@@ -217,7 +217,7 @@ namespace FIFE
         m_replanned = replanned;
     }
 
-    bool Route::isReplanned()
+    bool Route::isReplanned() const
     {
         return m_replanned;
     }
@@ -228,7 +228,7 @@ namespace FIFE
         return static_cast<uint32_t>(m_path.size());
     }
 
-    uint32_t Route::getWalkedLength()
+    uint32_t Route::getWalkedLength() const
     {
         return m_walked;
     }
@@ -238,7 +238,7 @@ namespace FIFE
         m_sessionId = id;
     }
 
-    int32_t Route::getSessionId()
+    int32_t Route::getSessionId() const
     {
         return m_sessionId;
     }
@@ -248,7 +248,7 @@ namespace FIFE
         m_rotation = rotation;
     }
 
-    int32_t Route::getRotation()
+    int32_t Route::getRotation() const
     {
         return m_rotation;
     }
@@ -322,7 +322,7 @@ namespace FIFE
         m_ignoresBlocker = ignore;
     }
 
-    bool Route::isDynamicBlockerIgnored()
+    bool Route::isDynamicBlockerIgnored() const
     {
         return m_ignoresBlocker;
     }

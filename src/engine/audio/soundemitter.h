@@ -238,7 +238,7 @@ namespace FIFE
 
         /** Returns timestamp of the last play start in milliseconds
          */
-        uint32_t getPlayTimestamp();
+        uint32_t getPlayTimestamp() const;
 
         /** Returns true if clip is finished.
          */
@@ -314,7 +314,7 @@ namespace FIFE
 
         /** Returns the state of the audio file
          */
-        SoundStateType getState();
+        SoundStateType getState() const;
 
         /** Sets the group name. Adds the emitter automatically to the group.
          */

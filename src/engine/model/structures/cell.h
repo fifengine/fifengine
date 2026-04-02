@@ -211,7 +211,7 @@ namespace FIFE
         /** Returns whether the cell is part of a zone.
          * @return True if the cell is inserted into a zone, otherwise false.
          */
-        bool isInserted();
+        bool isInserted() const;
 
         /** Mark cell as inserted.
          * @param inserted A boolean, true marks the cell as inserted, false as not inserted.
@@ -221,7 +221,7 @@ namespace FIFE
         /** Returns whether the zone on this cell is protected.
          * @return True if the zone is protected, otherwise false.
          */
-        bool isZoneProtected();
+        bool isZoneProtected() const;
 
         /** Mark zone on this cell as protected.
          * @param protect A boolean, true marks the cell as inserted.
@@ -231,7 +231,7 @@ namespace FIFE
         /** Returns blocker type.
          * @see CellType
          */
-        CellTypeInfo getCellType();
+        CellTypeInfo getCellType() const;
 
         /** Sets blocker type.
          * @see CellType
@@ -251,7 +251,7 @@ namespace FIFE
         /** Returns the cell identifier.
          * @return A unique int value that is used as identifier. Based on the cell position.
          */
-        int32_t getCellId();
+        int32_t getCellId() const;
 
         /** Returns the layer coordinates of this cell.
          * @return A const reference to a ModelCoordinate.
