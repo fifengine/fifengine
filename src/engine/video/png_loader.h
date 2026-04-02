@@ -4,13 +4,23 @@
 extern "C" {
 #endif
 
-typedef struct
+#ifdef __cplusplus
+struct png_image_result
+{
+    unsigned char* data;
+    int width;
+    int height;
+    int channels;
+};
+#else
+typedef struct png_image_result
 {
     unsigned char* data;
     int width;
     int height;
     int channels;
 } png_image_result;
+#endif
 
 /**
  * Load a PNG file from disk. Returns 1 on success, 0 on failure.
