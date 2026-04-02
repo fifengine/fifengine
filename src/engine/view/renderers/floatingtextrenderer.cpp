@@ -111,8 +111,8 @@ namespace FIFE
                 // Without this check it can happen that changeRenderInfos() call produces an out_of_range error
                 // because the image rendering can be skipped, if it's not on the screen.
                 // The result is that it tried to modify more objects as exist.
-                if (r.right() < 0 || r.x > static_cast<int32_t>(m_renderbackend->getWidth()) || r.bottom() < 0 ||
-                    r.y > static_cast<int32_t>(m_renderbackend->getHeight())) {
+                if (r.right() < 0 || std::cmp_greater(r.x, m_renderbackend->getWidth()) || r.bottom() < 0 ||
+                    std::cmp_greater(r.y, m_renderbackend->getHeight())) {
                     continue;
                 }
                 if (m_background || m_backborder) {

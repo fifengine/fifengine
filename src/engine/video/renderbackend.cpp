@@ -4,6 +4,7 @@
 // Standard C++ library includes
 #include <cassert>
 #include <limits>
+#include <utility>
 #include <vector>
 
 // 3rd party library includes
@@ -282,7 +283,7 @@ namespace FIFE
         double muk  = 1.0;
         double mu   = static_cast<double>(t) / static_cast<double>(elements);
         double munk = Mathd::Pow(1.0 - mu, static_cast<double>(n));
-        for (size_t pointIndex = 0; pointIndex <= static_cast<size_t>(n); ++pointIndex) {
+        for (size_t pointIndex = 0; std::cmp_less_equal(pointIndex, n); ++pointIndex) {
             const int32_t i = static_cast<int32_t>(pointIndex);
             int32_t tmpn    = n;
             int32_t tmpi    = i;

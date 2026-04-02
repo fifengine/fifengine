@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <utility>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -31,7 +32,7 @@ namespace FIFE
                 return 0;
             }
 
-            if (value > static_cast<int>(std::numeric_limits<uint8_t>::max())) {
+            if (std::cmp_greater(value, std::numeric_limits<uint8_t>::max())) {
                 return std::numeric_limits<uint8_t>::max();
             }
 

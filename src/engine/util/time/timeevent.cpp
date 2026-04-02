@@ -3,6 +3,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <utility>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -19,7 +20,9 @@ namespace FIFE
 
     TimeEvent::TimeEvent(int32_t period) : m_period(period), m_last_updated(TimeManager::instance()->getTime()) { }
 
-    TimeEvent::~TimeEvent() { }
+    TimeEvent::~TimeEvent()
+    {
+    }
 
     void TimeEvent::managerUpdateEvent(uint32_t time)
     {
@@ -28,7 +31,7 @@ namespace FIFE
         }
 
         const uint32_t time_delta = time - m_last_updated;
-        if (m_period == 0 || time_delta >= static_cast<uint32_t>(m_period)) {
+        if (m_period == 0 || std::cmp_greater_equal(time_delta, m_period)) {
             updateEvent(time_delta);
             m_last_updated = time;
         }
