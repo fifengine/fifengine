@@ -56,7 +56,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererPointInfo(RendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        GenericRendererPointInfo(RendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         ~GenericRendererPointInfo() override;
 
     private:
@@ -129,7 +129,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererImageInfo(RendererNode n, ImagePtr image, bool zoomed = true);
+        GenericRendererImageInfo(RendererNode anchor, ImagePtr image, bool zoomed = true);
         ~GenericRendererImageInfo() override;
 
     private:
@@ -141,7 +141,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererAnimationInfo(RendererNode n, AnimationPtr animation, bool zoomed = true);
+        GenericRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, bool zoomed = true);
         ~GenericRendererAnimationInfo() override;
 
     private:
@@ -155,7 +155,7 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererTextInfo(RendererNode n, IFont* font, std::string text, bool zoomed = true);
+        GenericRendererTextInfo(RendererNode anchor, IFont* font, std::string text, bool zoomed = true);
         ~GenericRendererTextInfo() override;
 
     private:
@@ -168,7 +168,8 @@ namespace FIFE
     {
     public:
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
-        GenericRendererResizeInfo(RendererNode n, ImagePtr image, int32_t width, int32_t height, bool zoomed = true);
+        GenericRendererResizeInfo(
+            RendererNode anchor, ImagePtr image, int32_t width, int32_t height, bool zoomed = true);
         ~GenericRendererResizeInfo() override;
 
     private:

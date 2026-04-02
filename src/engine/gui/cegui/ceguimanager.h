@@ -58,7 +58,7 @@ namespace FIFE
 
         /** Sets the root window of the gui system.
          */
-        void setRootWindow(CEGUI::Window* setRootWindow);
+        void setRootWindow(CEGUI::Window* root);
 
         /** @return The root window of the gui system.
          */

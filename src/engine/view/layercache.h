@@ -74,7 +74,7 @@ namespace FIFE
             RenderEntryUpdate updateInfo;
         };
 
-        void collect(const Rect& viewport, std::vector<int32_t>& indices);
+        void collect(const Rect& viewport, std::vector<int32_t>& index_list);
         void reset();
         void fullUpdate(Camera::Transform transform);
         void fullCoordinateUpdate(Camera::Transform transform);

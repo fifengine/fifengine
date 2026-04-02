@@ -83,7 +83,7 @@ namespace FIFE
          *
          *  @param callback A @c std::function returning void
          */
-        void setCallback(const type_callback& callback);
+        void setCallback(const type_callback& cb);
 
     protected:
         bool m_active;

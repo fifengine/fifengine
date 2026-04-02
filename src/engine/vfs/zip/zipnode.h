@@ -97,7 +97,7 @@ namespace FIFE
          *  @param child the name to add as a child node
          *  @return the newly created child ZipNode
          */
-        ZipNode* addChild(const std::string& child);
+        ZipNode* addChild(const std::string& name);
 
         /** allows removing a child from this node
          *  @param child the child node to remove

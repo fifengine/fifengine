@@ -49,7 +49,7 @@ namespace FIFE
          * @param vfs A pointer to the VFS.
          * @param path A Fallout2 DAT file - e.g. master.DAT
          */
-        DAT2(VFS* vfs, const std::string& path);
+        DAT2(VFS* vfs, const std::string& file);
 
         bool fileExists(const std::string& name) const;
         RawData* open(const std::string& file) const;
@@ -80,7 +80,7 @@ namespace FIFE
         void readFileEntry() const;
 
         /// find a file entry
-        type_filelist::const_iterator findFileEntry(const std::string& name) const;
+        type_filelist::const_iterator findFileEntry(const std::string& path) const;
 
         std::set<std::string> list(const std::string& pathstr, bool dirs) const;
 

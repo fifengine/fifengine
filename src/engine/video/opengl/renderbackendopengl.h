@@ -44,7 +44,7 @@ namespace FIFE
         virtual void setLighting(float red, float green, float blue);
         virtual void resetLighting();
         virtual void resetStencilBuffer(uint8_t buffer);
-        virtual void changeBlending(int32_t scr, int32_t dst);
+        virtual void changeBlending(int32_t src, int32_t dst);
 
         virtual void createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
         virtual void setScreenMode(const ScreenMode& mode);
@@ -171,7 +171,7 @@ namespace FIFE
         void enableTextures(uint32_t texUnit);
         void disableTextures(uint32_t texUnit);
         void bindTexture(uint32_t texUnit, GLuint texId);
-        void bindTexture(GLuint textId);
+        void bindTexture(GLuint texId);
 
     protected:
         virtual void setClipArea(const Rect& cliparea, bool clear);

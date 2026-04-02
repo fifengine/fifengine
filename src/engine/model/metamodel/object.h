@@ -183,7 +183,7 @@ namespace FIFE
         /** Sets the speed modifier.
          * @param cost A double which value is used as speed multiplier.
          */
-        void setSpeed(double cost);
+        void setSpeed(double speed);
 
         /** Returns the speed modifier.
          * @return A double which value is used as speed multiplier.

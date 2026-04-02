@@ -259,12 +259,12 @@ namespace FIFE
         /** Transforms given point from map coordinates to screen coordinates
          *  @return point in screen coordinates
          */
-        ScreenPoint toScreenCoordinates(const ExactModelCoordinate& map_coords);
+        ScreenPoint toScreenCoordinates(const ExactModelCoordinate& elevation_coords);
 
         /** Transforms given point from map coordinates to virtual screen coordinates
          *  @return point in virtual screen coordinates
          */
-        DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& map_coords);
+        DoublePoint3D toVirtualScreenCoordinates(const ExactModelCoordinate& elevation_coords);
 
         /** Transforms given point from virtual screen coordinates to screen coordinates
          *  @return point in screen coordinates

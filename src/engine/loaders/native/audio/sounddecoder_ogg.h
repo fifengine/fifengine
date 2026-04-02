@@ -24,7 +24,7 @@ namespace FIFE
     class SoundDecoderOgg : public SoundDecoder
     {
     public:
-        explicit SoundDecoderOgg(RawData* ptr);
+        explicit SoundDecoderOgg(RawData* rdp);
 
         SoundDecoderOgg(const SoundDecoderOgg&)            = delete;
         SoundDecoderOgg& operator=(const SoundDecoderOgg&) = delete;

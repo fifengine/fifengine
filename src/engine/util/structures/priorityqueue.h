@@ -124,7 +124,7 @@ namespace FIFE
          * @param entry A const reference to a value_type which represents the element to be added to the
          * pq.
          */
-        void orderUp(const value_type& entry);
+        void orderUp(const value_type& val);
 
         /** Orders a PQ element down the list.
          *

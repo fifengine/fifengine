@@ -51,7 +51,7 @@ namespace FIFE
     {
     public:
         void render(RenderBackend* renderbackend) override;
-        OffRendererPointInfo(Point n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        OffRendererPointInfo(Point anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         ~OffRendererPointInfo() override;
 
     private:
@@ -115,7 +115,7 @@ namespace FIFE
     {
     public:
         void render(RenderBackend* renderbackend) override;
-        OffRendererImageInfo(Point n, ImagePtr image);
+        OffRendererImageInfo(Point anchor, ImagePtr image);
         ~OffRendererImageInfo() override;
 
     private:
@@ -126,7 +126,7 @@ namespace FIFE
     {
     public:
         void render(RenderBackend* renderbackend) override;
-        OffRendererAnimationInfo(Point n, AnimationPtr animation);
+        OffRendererAnimationInfo(Point anchor, AnimationPtr animation);
         ~OffRendererAnimationInfo() override;
 
     private:
@@ -139,7 +139,7 @@ namespace FIFE
     {
     public:
         void render(RenderBackend* renderbackend) override;
-        OffRendererTextInfo(Point n, IFont* font, std::string text);
+        OffRendererTextInfo(Point anchor, IFont* font, std::string text);
         ~OffRendererTextInfo() override;
 
     private:
@@ -151,7 +151,7 @@ namespace FIFE
     {
     public:
         void render(RenderBackend* renderbackend) override;
-        OffRendererResizeInfo(Point n, ImagePtr image, int32_t width, int32_t height);
+        OffRendererResizeInfo(Point anchor, ImagePtr image, int32_t width, int32_t height);
         ~OffRendererResizeInfo() override;
 
     private:

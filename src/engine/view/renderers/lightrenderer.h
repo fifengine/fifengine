@@ -83,7 +83,7 @@ namespace FIFE
     class LightRendererImageInfo : public LightRendererElementInfo
     {
     public:
-        LightRendererImageInfo(RendererNode n, ImagePtr image, int32_t src, int32_t dst);
+        LightRendererImageInfo(RendererNode anchor, ImagePtr image, int32_t src, int32_t dst);
         ~LightRendererImageInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -103,7 +103,7 @@ namespace FIFE
     class LightRendererAnimationInfo : public LightRendererElementInfo
     {
     public:
-        LightRendererAnimationInfo(RendererNode n, AnimationPtr animation, int32_t src, int32_t dst);
+        LightRendererAnimationInfo(RendererNode anchor, AnimationPtr animation, int32_t src, int32_t dst);
         ~LightRendererAnimationInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
@@ -126,7 +126,7 @@ namespace FIFE
     {
     public:
         LightRendererSimpleLightInfo(
-            RendererNode n,
+            RendererNode anchor,
             uint8_t intensity,
             float radius,
             int32_t subdivisions,
@@ -178,7 +178,7 @@ namespace FIFE
     {
     public:
         LightRendererResizeInfo(
-            RendererNode n, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
+            RendererNode anchor, ImagePtr image, int32_t width, int32_t height, int32_t src, int32_t dst);
         ~LightRendererResizeInfo() override;
 
         void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) override;
