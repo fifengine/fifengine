@@ -75,7 +75,7 @@ namespace FIFE
             decRefCount();
 
             // check to see if we need to delete
-            if (m_refCount && *m_refCount == 0) {
+            if (m_refCount != nullptr && *m_refCount == 0) {
                 // delete and set pointers to null
                 delete m_ptr;
                 delete m_refCount;
@@ -163,7 +163,7 @@ namespace FIFE
         {
             assert(m_refCount);
 
-            if (!m_refCount) {
+            if (m_refCount == nullptr) {
                 return 0;
             }
 
@@ -223,7 +223,7 @@ namespace FIFE
          */
         void incRefCount()
         {
-            if (m_refCount) {
+            if (m_refCount != nullptr) {
                 ++(*m_refCount);
             }
         }
@@ -233,7 +233,7 @@ namespace FIFE
          */
         void decRefCount()
         {
-            if (m_refCount) {
+            if (m_refCount != nullptr) {
                 --(*m_refCount);
             }
         }

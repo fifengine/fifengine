@@ -28,7 +28,7 @@ namespace FIFE
          * @param length length of the text edit event
          */
         explicit Text(const char* text = nullptr, int32_t start = 0, int32_t length = 0) :
-            m_text(text ? text : ""), m_start(start), m_length(length)
+            m_text(text != nullptr ? text : ""), m_start(start), m_length(length)
         {
         }
 

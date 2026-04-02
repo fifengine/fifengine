@@ -49,7 +49,7 @@ namespace FIFE
 
         VFS* getVFS() const
         {
-            if (!m_vfs) {
+            if (m_vfs == nullptr) {
                 throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
             }
             return m_vfs;
