@@ -119,10 +119,7 @@ namespace FIFE
         virtual ~IMouseListener() = default;
 
     protected:
-        IMouseListener()
-        {
-            m_global = false;
-        }
+        IMouseListener() : m_global(false) { }
 
     private:
         bool m_global;

@@ -59,10 +59,7 @@ namespace FIFE
         virtual ~IKeyListener() = default;
 
     protected:
-        IKeyListener()
-        {
-            m_global = false;
-        }
+        IKeyListener() : m_global(false) { }
 
     private:
         bool m_global;

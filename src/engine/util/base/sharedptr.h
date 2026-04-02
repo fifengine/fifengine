@@ -58,10 +58,8 @@ namespace FIFE
          * to this shared pointer type
          */
         template <typename U>
-        SharedPtr(const SharedPtr<U>& rhs)
+        SharedPtr(const SharedPtr<U>& rhs) : m_ptr(rhs.get()), m_refCount(rhs.useCountPtr())
         {
-            m_ptr      = rhs.get();
-            m_refCount = rhs.useCountPtr();
             incRefCount();
         }
 

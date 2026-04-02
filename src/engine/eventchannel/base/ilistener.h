@@ -41,10 +41,7 @@ namespace FIFE
         virtual ~IListener() = default;
 
     protected:
-        IListener()
-        {
-            m_active = false;
-        }
+        IListener() : m_active(false) { }
 
     private:
         bool m_active;

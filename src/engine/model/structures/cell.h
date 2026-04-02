@@ -51,12 +51,7 @@ namespace FIFE
     class TransitionInfo
     {
     public:
-        explicit TransitionInfo(Layer* layer)
-        {
-            m_layer     = layer;
-            m_difflayer = false;
-            m_immediate = true;
-        }
+        explicit TransitionInfo(Layer* layer) : m_layer(layer), m_mc(), m_difflayer(false), m_immediate(true) { }
         ~TransitionInfo() = default;
         //! target layer
         Layer* m_layer;
