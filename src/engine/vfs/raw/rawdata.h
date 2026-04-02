@@ -194,13 +194,15 @@ namespace FIFE
         {
             try {
                 m_rd->setIndex(m_index);
-            } catch (const IndexOverflow&) {
+            } catch (const IndexOverflow& err) {
+                (void)err;
             }
         }
 
     private:
         RawData* m_rd;
         uint32_t m_index;
+
     };
 
 } // namespace FIFE
