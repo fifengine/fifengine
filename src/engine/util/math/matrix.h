@@ -388,73 +388,75 @@ namespace FIFE
 
     private:
         // TODO cleanup
-#define cofactor_maker(f1, mj1, mi1, f2, mj2, mi2, f3, mj3, mi3)                                   \
-    (((f1) * (((mj1) * (mi1)) - ((mj2) * (mi3)))) + ((f2) * (((mj2) * (mi2)) - ((mj3) * (mi1)))) + \
-     ((f3) * (((mj3) * (mi3)) - ((mj1) * (mi2)))))
+        static constexpr T cofactorMaker(T f1, T mj1, T mi1, T f2, T mj2, T mi2, T f3, T mj3, T mi3)
+        {
+            return ((f1) * (((mj1) * (mi1)) - ((mj2) * (mi3)))) + ((f2) * (((mj2) * (mi2)) - ((mj3) * (mi1)))) +
+                   ((f3) * (((mj3) * (mi3)) - ((mj1) * (mi2))));
+        }
 
         T cofactorm0() const
         {
-            return cofactor_maker(m5, m10, m15, m6, m11, m13, m7, m9, m14);
+            return cofactorMaker(m5, m10, m15, m6, m11, m13, m7, m9, m14);
         }
         T cofactorm1() const
         {
-            return cofactor_maker(m6, m11, m12, m7, m8, m14, m4, m10, m15);
+            return cofactorMaker(m6, m11, m12, m7, m8, m14, m4, m10, m15);
         }
         T cofactorm2() const
         {
-            return cofactor_maker(m7, m8, m13, m4, m9, m15, m5, m11, m12);
+            return cofactorMaker(m7, m8, m13, m4, m9, m15, m5, m11, m12);
         }
         T cofactorm3() const
         {
-            return cofactor_maker(m4, m9, m14, m5, m10, m12, m6, m8, m13);
+            return cofactorMaker(m4, m9, m14, m5, m10, m12, m6, m8, m13);
         }
         T cofactorm4() const
         {
-            return cofactor_maker(m9, m14, m3, m10, m15, m1, m11, m13, m2);
+            return cofactorMaker(m9, m14, m3, m10, m15, m1, m11, m13, m2);
         }
         T cofactorm5() const
         {
-            return cofactor_maker(m10, m15, m0, m11, m12, m2, m8, m14, m3);
+            return cofactorMaker(m10, m15, m0, m11, m12, m2, m8, m14, m3);
         }
         T cofactorm6() const
         {
-            return cofactor_maker(m11, m12, m1, m8, m13, m3, m9, m15, m0);
+            return cofactorMaker(m11, m12, m1, m8, m13, m3, m9, m15, m0);
         }
         T cofactorm7() const
         {
-            return cofactor_maker(m8, m13, m2, m9, m14, m0, m10, m12, m1);
+            return cofactorMaker(m8, m13, m2, m9, m14, m0, m10, m12, m1);
         }
         T cofactorm8() const
         {
-            return cofactor_maker(m13, m2, m7, m14, m3, m5, m15, m1, m6);
+            return cofactorMaker(m13, m2, m7, m14, m3, m5, m15, m1, m6);
         }
         T cofactorm9() const
         {
-            return cofactor_maker(m14, m13, m4, m15, m0, m6, m12, m2, m7);
+            return cofactorMaker(m14, m13, m4, m15, m0, m6, m12, m2, m7);
         }
         T cofactorm10() const
         {
-            return cofactor_maker(m15, m0, m5, m12, m1, m7, m13, m3, m4);
+            return cofactorMaker(m15, m0, m5, m12, m1, m7, m13, m3, m4);
         }
         T cofactorm11() const
         {
-            return cofactor_maker(m12, m1, m6, m13, m2, m4, m14, m0, m5);
+            return cofactorMaker(m12, m1, m6, m13, m2, m4, m14, m0, m5);
         }
         T cofactorm12() const
         {
-            return cofactor_maker(m1, m6, m11, m2, m7, m9, m3, m5, m10);
+            return cofactorMaker(m1, m6, m11, m2, m7, m9, m3, m5, m10);
         }
         T cofactorm13() const
         {
-            return cofactor_maker(m2, m7, m8, m3, m4, m10, m10, m6, m11);
+            return cofactorMaker(m2, m7, m8, m3, m4, m10, m10, m6, m11);
         }
         T cofactorm14() const
         {
-            return cofactor_maker(m3, m4, m9, m0, m5, m11, m1, m7, m8);
+            return cofactorMaker(m3, m4, m9, m0, m5, m11, m1, m7, m8);
         }
         T cofactorm15() const
         {
-            return cofactor_maker(m0, m5, m10, m1, m6, m8, m2, m4, m9);
+            return cofactorMaker(m0, m5, m10, m1, m6, m8, m2, m4, m9);
         }
 
     public:

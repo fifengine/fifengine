@@ -251,31 +251,33 @@ namespace FIFE
         double tx = 0.0;
         double ty = 0.0;
 
-#define ADD_PT(_x, _y) vtx.emplace_back(_x, _y);
-        // FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
+        const auto addPt = [&vtx](double px, double py) {
+            vtx.emplace_back(px, py);
+        };
+        // FL_DBG(_log, LMsg("Added point ") << px << ", " << py)
         ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
 
         ty = y - VERTICAL_MULTIP_INV * HEX_TO_CORNER;
         tx = x - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
 
         ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
         tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
 
         ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
         tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
 
         ty = y + VERTICAL_MULTIP_INV * HEX_TO_CORNER;
         tx = x - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
 
         ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
         tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
-        ADD_PT(tx, ty);
+        addPt(tx, ty);
     }
 
     std::vector<ModelCoordinate> HexGrid::toMultiCoordinates(

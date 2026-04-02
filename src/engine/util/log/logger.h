@@ -27,42 +27,47 @@
 
 #ifdef LOG_ENABLED
 
-    /** Logs given message with log level "debug" using given logger instance
+    /**
+     * Logs given message with log level "debug" using given logger instance
      */
-    #define FL_DBG(logger, msg)                                                \
+    #define FL_DBG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));            \
         } while (0)
 
-    /** Logs given message with log level "log" using given logger instance
+    /**
+     * Logs given message with log level "log" using given logger instance
      */
-    #define FL_LOG(logger, msg)                                                \
+    #define FL_LOG(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));              \
         } while (0)
 
-    /** Logs given message with log level "warning" using given logger instance
+    /**
+     * Logs given message with log level "warning" using given logger instance
      */
-    #define FL_WARN(logger, msg)                                               \
+    #define FL_WARN(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */   \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));             \
         } while (0)
 
-    /** Logs given message with log level "error" using given logger instance
+    /**
+     * Logs given message with log level "error" using given logger instance
      */
-    #define FL_ERR(logger, msg)                                                \
+    #define FL_ERR(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */    \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));            \
         } while (0)
 
-    /** Logs given message with log level "pacic" using given logger instance.
+    /**
+     * Logs given message with log level "pacic" using given logger instance.
      * Causes also program to abort
      */
-    #define FL_PANIC(logger, msg)                                              \
+    #define FL_PANIC(logger, msg) /* NOLINT(cppcoreguidelines-macro-usage) */  \
         do {                                                                   \
             if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
                 (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));            \
@@ -80,7 +85,8 @@
 namespace FIFE
 {
 
-    /** Helper class to create log strings out from separate parts
+    /**
+     * Helper class to create log strings out from separate parts
      * Usage: LMsg("some text") << variable << ", " << other variable
      */
     class LMsg
@@ -105,16 +111,18 @@ namespace FIFE
         std::string str;
     };
 
-    /** Logmanager takes care of log filtering and output direction
+    /**
+     * Logmanager takes care of log filtering and output direction
      */
     class LogManager
     {
     public:
-        /** Loglevel is used to set a treshold for output messages + related filter
+        /**
+         * Loglevel is used to set a treshold for output messages + related filter
          * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
          * log message is not outputted
          */
-        enum LogLevel : uint8_t
+        enum LogLevel
         {
             LEVEL_DEBUG = 0,
             LEVEL_LOG   = 1,
@@ -123,15 +131,18 @@ namespace FIFE
             LEVEL_PANIC = 4
         };
 
-        /** Returns instance to log manager. Log manager is a singleton class
+        /**
+         * Returns instance to log manager. Log manager is a singleton class
          */
         static LogManager* instance();
 
-        /** Destructor
+        /**
+         * Destructor
          */
         ~LogManager();
 
-        /** Logs given message
+        /**
+         * Logs given message
          * @param level level of this log (e.g. warning)
          * @param module module where this log message is coming from. Modules are defined in modules.h-file
          * @param msg message to log
@@ -139,17 +150,20 @@ namespace FIFE
          */
         void log(LogLevel level, logmodule_t module, const std::string& msg);
 
-        /** Sets currently used level filter.
+        /**
+         * Sets currently used level filter.
          * For usage, @see LogManager::LogLevel
          */
         void setLevelFilter(LogLevel level);
 
-        /** Gets currently used level filter.
+        /**
+         * Gets currently used level filter.
          * @see LogManager::LogLevel
          */
         LogLevel getLevelFilter();
 
-        /** Adds visible module into logmanager
+        /**
+         * Adds visible module into logmanager
          * Module corresponds some module in the engine. Modules may contain other modules.
          * Modules and their structure is defined in file modules.h.
          * In case module is not visible, LogManager filters corresponding log messages
@@ -159,35 +173,43 @@ namespace FIFE
          */
         void addVisibleModule(logmodule_t module);
 
-        /** Removes visible module, @see addVisibleModule
+        /**
+         * Removes visible module, @see addVisibleModule
          */
         void removeVisibleModule(logmodule_t module);
 
-        /** Removes all visible modules, @see addVisibleModule
+        /**
+         * Removes all visible modules, @see addVisibleModule
          */
         void clearVisibleModules();
 
-        /** Tells if given module is visible
+        /**
+         * Tells if given module is visible
          */
         bool isVisible(logmodule_t module);
 
-        /** Sets LogManager to log to prompt
+        /**
+         * Sets LogManager to log to prompt
          */
         void setLogToPrompt(bool logtoprompt);
 
-        /** Returns if LogManager is set to log to prompt
+        /**
+        Returns if LogManager is set to log to prompt
          */
         bool isLogToPrompt() const;
 
-        /** Sets LogManager to log to a file
+        /**
+         * Sets LogManager to log to a file
          */
         void setLogToFile(bool logtofile);
 
-        /** Returns if LogManager is set to log to a file
+        /**
+         * Returns if LogManager is set to log to a file
          */
         bool isLogToFile() const;
 
-        /** Gets display name for given module id
+        /**
+         * Gets display name for given module id
          * E.g. LM_AUDIO -> "Audio"
          */
         const std::string& getModuleName(logmodule_t module);
@@ -216,7 +238,8 @@ namespace FIFE
         bool m_logtoprompt;
     };
 
-    /** Create a Logger instance to communicate with LogManager
+    /**
+     * Create a Logger instance to communicate with LogManager
      * Logger stores information about the current module thus reducing
      * the typing needed for individual traces
      * Common way of doing things is to instantiate a static Logger on
@@ -225,24 +248,29 @@ namespace FIFE
     class Logger
     {
     public:
-        /** Creates new logger and associates it with given module
+        /**
+         * Creates new logger and associates it with given module
          */
         explicit Logger(logmodule_t module);
 
-        /** Destructor
+        /**
+         * Destructor
          */
         ~Logger() = default;
 
-        /** logs given message with given log level
+        /**
+         * logs given message with given log level
          */
         void log(LogManager::LogLevel level, const std::string& msg);
 
-        /** logs given message with given log level.
+        /**
+         * logs given message with given log level.
          * Message is wrapped into LMsg instance for easy formatting
          */
         void log(LogManager::LogLevel level, const LMsg& msg);
 
-        /** gets module where this logger is associated to
+        /**
+         * gets module where this logger is associated to
          */
         logmodule_t getModule() const
         {
@@ -253,7 +281,8 @@ namespace FIFE
         logmodule_t m_module;
     };
 
-    /** Helper for printing a pointer
+    /**
+     * Helper for printing a pointer
      *
      * This is a helper structure that allows printing any kind of pointer
      * on (hopefully) any platform in hex, kind of like the %p format
@@ -271,7 +300,8 @@ namespace FIFE
 
 namespace std
 {
-    /** Print a pprint object to an ostream.
+    /**
+     * Print a pprint object to an ostream.
      *
      * This is pure Stroustrup, overloading the ostream operator<< to print
      * a formatted pointer from a pprint object to an ostream.

@@ -4,9 +4,9 @@
 #ifndef FIFE_SINGLETON_H
 #define FIFE_SINGLETON_H
 
-#define SINGLEFRIEND(classname)                    \
-    friend class FIFE::StaticSingleton<classname>; \
-    classname();                                   \
+#define SINGLEFRIEND(classname) /* NOLINT(cppcoreguidelines-macro-usage) */ \
+    friend class FIFE::StaticSingleton<classname>;                          \
+    classname();                                                            \
     virtual ~classname();
 
 // Standard C++ library includes

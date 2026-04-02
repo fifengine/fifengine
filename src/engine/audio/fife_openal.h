@@ -23,12 +23,12 @@
 // clang-format off
 #ifdef LOG_ENABLED
 
-    #define CHECK_OPENAL_LOG(logger, level, msg) \
+    #define CHECK_OPENAL_LOG(logger, level, msg) /* NOLINT(cppcoreguidelines-macro-usage) */ \
         if (AL_NO_ERROR != alGetError()) {       \
             (logger).log((level), (msg));        \
         }
 
-    #define CHECK_OPENAL_LOG_DETAIL(logger, level, msg)                      \
+    #define CHECK_OPENAL_LOG_DETAIL(logger, level, msg) /* NOLINT(cppcoreguidelines-macro-usage) */ \
         {                                                                    \
             ALenum error;                                                    \
             error = alGetError();                                            \
@@ -45,9 +45,9 @@
 #endif // LOG_ENABLED
 // clang-format on
 
-#define CHECK_OPENAL_EXCEPTION(msg)    \
-    if (AL_NO_ERROR != alGetError()) { \
-        throw Exception((msg));        \
+#define CHECK_OPENAL_EXCEPTION(msg) /* NOLINT(cppcoreguidelines-macro-usage) */ \
+    if (AL_NO_ERROR != alGetError()) {                                          \
+        throw Exception((msg));                                                 \
     }
 
 #endif // FIFE_FIFE_OPENAL_H
