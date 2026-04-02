@@ -29,43 +29,43 @@
 
     /** Logs given message with log level "debug" using given logger instance
      */
-    #define FL_DBG(logger, msg)                                              \
-        do {                                                                 \
-            if (FIFE::LogManager::instance()->isVisible(logger.getModule())) \
-                logger.log(FIFE::LogManager::LEVEL_DEBUG, msg);              \
+    #define FL_DBG(logger, msg)                                                \
+        do {                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
+                (logger).log(FIFE::LogManager::LEVEL_DEBUG, (msg));            \
         } while (0)
 
     /** Logs given message with log level "log" using given logger instance
      */
-    #define FL_LOG(logger, msg)                                              \
-        do {                                                                 \
-            if (FIFE::LogManager::instance()->isVisible(logger.getModule())) \
-                logger.log(FIFE::LogManager::LEVEL_LOG, msg);                \
+    #define FL_LOG(logger, msg)                                                \
+        do {                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
+                (logger).log(FIFE::LogManager::LEVEL_LOG, (msg));              \
         } while (0)
 
     /** Logs given message with log level "warning" using given logger instance
      */
-    #define FL_WARN(logger, msg)                                             \
-        do {                                                                 \
-            if (FIFE::LogManager::instance()->isVisible(logger.getModule())) \
-                logger.log(FIFE::LogManager::LEVEL_WARN, msg);               \
+    #define FL_WARN(logger, msg)                                               \
+        do {                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
+                (logger).log(FIFE::LogManager::LEVEL_WARN, (msg));             \
         } while (0)
 
     /** Logs given message with log level "error" using given logger instance
      */
-    #define FL_ERR(logger, msg)                                              \
-        do {                                                                 \
-            if (FIFE::LogManager::instance()->isVisible(logger.getModule())) \
-                logger.log(FIFE::LogManager::LEVEL_ERROR, msg);              \
+    #define FL_ERR(logger, msg)                                                \
+        do {                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
+                (logger).log(FIFE::LogManager::LEVEL_ERROR, (msg));            \
         } while (0)
 
     /** Logs given message with log level "pacic" using given logger instance.
      * Causes also program to abort
      */
-    #define FL_PANIC(logger, msg)                                            \
-        do {                                                                 \
-            if (FIFE::LogManager::instance()->isVisible(logger.getModule())) \
-                logger.log(FIFE::LogManager::LEVEL_PANIC, msg);              \
+    #define FL_PANIC(logger, msg)                                              \
+        do {                                                                   \
+            if (FIFE::LogManager::instance()->isVisible((logger).getModule())) \
+                (logger).log(FIFE::LogManager::LEVEL_PANIC, (msg));            \
         } while (0)
 
 #else
